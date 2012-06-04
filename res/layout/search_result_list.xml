@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical" >
+
+     <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:padding="4dp"
+            android:background="@android:color/white">
+
+            <EditText
+                    android:id="@+id/searchText"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"/>
+
+            <ImageButton
+                    android:id="@+id/searchButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/action_search"
+
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp"
+                    android:paddingTop="5dp"
+                    android:paddingBottom="5dp"
+                    android:background="@color/green"/>
+
+        </LinearLayout>
+    
+    
+	<ListView 
+	  android:id="@+id/search_results_list"
+	  android:layout_width="fill_parent"
+	  android:layout_height="wrap_content"  
+	  ></ListView>
+	
+	<!-- filler -->
+	<TextView android:layout_height="0dip" 
+          android:layout_width="fill_parent"
+          android:layout_weight="1" />
+	
+	
+	<Spinner 
+	 android:id="@+id/chose_organisation"   
+	 android:layout_width="wrap_content"
+	 android:layout_height="wrap_content"
+	 android:layout_gravity="center_horizontal"
+	    />
+
+</LinearLayout>

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="org.evergreen.android"
+    android:versionCode="1"
+    android:versionName="1.0" >
+
+    <uses-sdk android:minSdkVersion="8" />
+	<uses-permission android:name="android.permission.INTERNET" /> 
+    <application
+        android:icon="@drawable/ic_launcher"
+        android:label="@string/app_name" 
+        android:theme="@style/EvergreenTheme"
+        >
+        <activity
+            android:name=".searchCatalog.SearchCatalogListView"
+            android:label="@string/app_name" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        
+        <activity android:name=".searchCatalog.RecordDetails_Info"></activity>
+   		<activity android:name=".searchCatalog.RecordDetails_Content"></activity>
+        <activity android:name=".searchCatalog.RecordDetails_Details"></activity>
+        <activity android:name=".searchCatalog.RecordDetails"></activity>
+        <activity android:name=".searchCatalog.RecordDetails_Simple"></activity>
+    </application>
+    
+</manifest>
