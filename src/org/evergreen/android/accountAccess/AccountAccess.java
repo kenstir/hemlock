@@ -60,21 +60,49 @@ public class AccountAccess {
 	public static String METHOD_FETCH_NON_CAT_CIRCS = "open-ils.circ.open_non_cataloged_circulation.user";
 	
 	/** The METHOD_FETCH_CIRC_BY_ID 
-	 * description : Retrieves a circ object by ID
+	 * description : Retrieves a circ object by ID.
 	 * @param : authtoken, circ_id
-	 * @returns : "circ" class
+	 * @returns : "circ" class. Fields of interest : renewal_remaining, due_date 
 	 */
 	public static String METHOD_FETCH_CIRC_BY_ID = "open-ils.circ.retrieve";
 	
 	/** The METHOD_FETCH_MODS_FROM_COPY
-	 * description :
+	 * description : used to return info
 	 * @param : target_copy
-	 * @returns : mvr class OSRF Object
+	 * @returns : mvr class OSRF Object. Fields of interest : title, author 
 	 */
 	public static String METHOD_FETCH_MODS_FROM_COPY = "open-ils.search.biblio.mods_from_copy";
 	
+	/** The METHOD_FETCH_COPY 
+	 * description : used to return info for a PRE_CATALOGED object
+	 * @param : target_copy
+	 * @returns : acp class OSRF Object. Fields of interest : dummy_title, dummy_author
+	 */
 	public static String METHOD_FETCH_COPY = "open-ils.search.asset.copy.retrieve";
+	/**
+	 * The METHOD_RENEW_CIRC
+	 * description : used to renew a circulation object
+	 * @param : HashMap ex :{	{"patron":id,"copyid":copy_id,"opac_renewal":1} }
+	 * @returnes : acn, acp, circ, mus, mbts
+	 */
+	public static String METHOD_RENEW_CIRC = "open-ils.circ.renew";
 	
+	// Used for Holds Tab
+	
+	/** METHOD_FETCH_HOLDS
+	 *  @param : authtoken, userID
+	 *  @returns: List of "ahr" OSPFObject 
+	 * 
+	 */
+	public static String METHOD_FETCH_HOLDS = "open-ils.circ.holds.retrieve";
+	// if holdtype == M
+	public static String METHOD_FETCH_MRMODS = "open-ils.search.biblio.metarecord.mods_slim.retrieve";
+	// if holdtype == T
+	public static String METHOD_FETCH_RMODS = "open-ils.search.biblio.records.mods_slim.retrieve";
+	
+	public static String METHOD_FETCH_HOLD_STATUS = "open-ils.circ.hold.queue_stats.retrieve";
+	
+	public static String METHOD_UPDATE_HOLD = "open-ils.circ.hold.update";
 	/** The conn. */
 	public HttpConnection conn;
 
@@ -92,9 +120,10 @@ public class AccountAccess {
 	/** The auth time. */
 	private Integer authTime = null;
 	
+	private Integer userID = null;
 	//for demo purpose
 	/** The user name. */
-	private String userName = "admin";
+	private String userName = "daniel";
 
 	/** The password. */
 	private String password = "demo123";
@@ -168,7 +197,7 @@ public class AccountAccess {
 	 *
 	 * @return the account summary
 	 */
-	public void getAccountSummary(){
+	public OSRFObject getAccountSummary(){
 		
 		Method method = new Method(METHOD_AUTH_SESSION_RETRV);
 
@@ -181,7 +210,12 @@ public class AccountAccess {
 		while ((resp = req.recv()) != null) {
 			System.out.println("Sync Response: " + resp);
 			 OSRFObject au = (OSRFObject) resp;
+			 userID = au.getInt("id");
+			 System.out.println("User Id " + userID);
+			 
+			 return au;
 		}
+		return null;
 	}
 	/**
 	 * Authenticate init.
@@ -226,7 +260,8 @@ public class AccountAccess {
 		Method method = new Method(METHOD_AUTH_COMPLETE);
 		
 		HashMap<String,String> complexParam = new HashMap<String, String>();
-		
+		//TODO parameter for user login
+		complexParam.put("type", "opac");
 		
 		complexParam.put("username", userName);
 		complexParam.put("password", hash);
@@ -270,7 +305,7 @@ public class AccountAccess {
 		Method method = new Method(METHOD_FETCH_CHECKED_OUT_SUM);
 
 		method.addParam(authToken);
-		method.addParam(1);
+		method.addParam(userID);
 		
 		//sync request
 		HttpRequest req = new GatewayRequest(conn, SERVICE_ACTOR, method).send();
@@ -300,7 +335,8 @@ public class AccountAccess {
 				out.add(retrieveCircRecord(out_id.get(i)));
 
 				System.out.println(out.get(i).get("target_copy"));
-				fetchModsFromCopy((out.get(i).get("target_copy"))+"");
+				fetchInfoForCheckedOutItem(out.get(i).get("target_copy")+"");
+				
 			}
 			for(int i=0;i<lost_id.size();i++){
 				//System.out.println(out.get(i));
@@ -316,6 +352,28 @@ public class AccountAccess {
 			}
 		}
 	}
+	/* Fetch info for Checked Out Items
+	 * It uses two methods  : open-ils.search.biblio.mods_from_copy or in case
+	 * of pre-cataloged records it uses open-ils.search.asset.copy.retriev
+	 * Usefull info : title and author 
+	 *  (for acp : dummy_title, dummy_author)
+	 */
+	private OSRFObject fetchInfoForCheckedOutItem(String target_copy){
+		
+		OSRFObject result;
+		OSRFObject info_mvr = fetchModsFromCopy(target_copy);
+		//if title or author not inserted, request acp with copy_target
+		result = info_mvr;
+		OSRFObject info_acp = null;
+		
+		if(info_mvr.get("title") == null || info_mvr.get("author") == null){
+			info_acp = fetchAssetCopy(target_copy);
+			result = info_acp;
+		}
+		
+		return result;
+	}
+	
 	/* Retreives the Circ record
 	 * @param : target_copy from circ
 	 * @returns : "circ" OSRFObject 
@@ -340,7 +398,7 @@ public class AccountAccess {
 		return null;
 	}
 	
-	private void fetchModsFromCopy(String target_copy){
+	private OSRFObject fetchModsFromCopy(String target_copy){
 		
 		Method method = new Method(METHOD_FETCH_MODS_FROM_COPY);
 
@@ -353,6 +411,52 @@ public class AccountAccess {
 		while ((resp = req.recv()) != null) {
 			System.out.println("Sync Response: " + resp);
 			OSRFObject mvr = (OSRFObject) resp;
+			
+			return mvr;
+		}
+		
+		return null;
+	}
+	
+	private OSRFObject fetchAssetCopy(String target_copy){
+		
+		Method method = new Method(METHOD_FETCH_COPY);
+
+		method.addParam(target_copy);
+		
+		//sync request
+		HttpRequest req = new GatewayRequest(conn, SERVICE_SEARCH, method).send();
+		Object resp;
+
+		while ((resp = req.recv()) != null) {
+			System.out.println("Sync Response: " + resp);
+			OSRFObject acp = (OSRFObject) resp;
+			
+			return acp;
+		}
+		
+		return null;
+	}
+	
+	private void renewCirc(Integer target_copy){
+		
+		Method method = new Method(METHOD_RENEW_CIRC);
+
+		HashMap<String,Integer> complexParam = new HashMap<String, Integer>();
+		complexParam.put("patron", this.userID);		
+		complexParam.put("copyid", target_copy);
+		complexParam.put("opac_renewal", 1);
+
+		method.addParam(complexParam);
+		
+		//sync request
+		HttpRequest req = new GatewayRequest(conn, SERVICE_CIRC, method).send();
+		Object resp;
+
+		while ((resp = req.recv()) != null) {
+			System.out.println("Sync Response: " + resp);
+			OSRFObject acp = (OSRFObject) resp;
+
 		}
 	}
 
