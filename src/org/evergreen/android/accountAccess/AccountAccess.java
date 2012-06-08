@@ -43,6 +43,10 @@ public class AccountAccess {
 	
 	public static String SERVICE_SEARCH = "open-ils.search";
 	
+	public static String SERVICE_SERIAL = "open-ils.serial";
+	
+	public static String SERVICE_FIELDER = "open-ils.fielder";
+	
 	/** The METHOD_FETCH_CHECKED_OUT_SUM
 	 *  description : for a given user returns a a structure of circulation objects sorted by
 	 *  out, overdue, lost, claims_returned, long_overdue; A list of ID's returned for each type : "out":[id1,id2,...]   
@@ -89,20 +93,85 @@ public class AccountAccess {
 	
 	// Used for Holds Tab
 	
-	/** METHOD_FETCH_HOLDS
+	/** The METHOD_FETCH_HOLDS
 	 *  @param : authtoken, userID
-	 *  @returns: List of "ahr" OSPFObject 
-	 * 
+	 *  @returns: List of "ahr" OSPFObject . Fields of interest : pickup_lib
 	 */
 	public static String METHOD_FETCH_HOLDS = "open-ils.circ.holds.retrieve";
+	
+	/** The METHOD_FETCH_ORG_SETTINGS
+	 *  description : retrieves a setting from the organization unit
+	 *  @param : org_id, String with setting property to return
+	 *  @returns : returns the requested value of the setting
+	 */
+	public static String METHOD_FETCH_ORG_SETTINGS = "open-ils.actor.ou_setting.ancestor_default";
+	
+	/** The METHOD_FETCH_MRMODS
+	 * 
+	 */
 	// if holdtype == M
 	public static String METHOD_FETCH_MRMODS = "open-ils.search.biblio.metarecord.mods_slim.retrieve";
 	// if holdtype == T
 	public static String METHOD_FETCH_RMODS = "open-ils.search.biblio.records.mods_slim.retrieve";
+	//if hold type V
+	public static String METHOD_FETCH_VOLUME = "open-ils.search.asset.call_number.retrieve";
+	//if hold type I
+	public static String METHOD_FETCH_ISSUANCE = "open-ils.serial.issuance.pub_fleshed.batch.retrieve";
 	
 	public static String METHOD_FETCH_HOLD_STATUS = "open-ils.circ.hold.queue_stats.retrieve";
 	
+	/** The METHOD_UPDATE_HOLD
+	 *  description : Updates the specified hold. If session user != hold user then session user 
+	 *  must have UPDATE_HOLD permissions 
+	 *  @param : authtoken, ahr object
+	 *  @returns : hold_is on success, event or error on failure 
+	 */
 	public static String METHOD_UPDATE_HOLD = "open-ils.circ.hold.update";
+
+	/** The METHOD_CANCEL_HOLD
+	 *  description : Cancels the specified hold. session user != hold user 
+	 *  must have CANCEL_HOLD permissions.
+	 *  @param : authtoken, hold_ids, one after another : 1,21,33,.... 
+	 *  @returns : 1 on success, event or error on failure
+	 */
+	public static String METHOD_CANCEL_HOLD = "open-ils.circ.hold.cancel";
+	
+	/** The METHOD_VERIFY_HOLD_POSSIBLE
+	 *  description : 
+	 *  @param : authtoken , hashmap 	{"titleid":38,"mrid":35,"volume_id":null,"issuanceid":null,
+	 *  "copy_id":null,"hold_type":"T","holdable_formats":null,"patronid":2,"depth":0,"pickup_lib":"8","partid":null}
+	 *  @returns :  hashmap with "success" : 1 field or 
+	 */
+	public static String METHOD_VERIFY_HOLD_POSSIBLE = "open-ils.circ.title_hold.is_possible";
+	
+	/** The METHOD_CREATE_HOLD
+	 *  description : 
+	 *  @param : authtoken, ahr OSRFObject 
+	 *  @returns : hash with messages : "success" : 1 field or 
+	 */
+	public static String METHOD_CREATE_HOLD = "	open-ils.circ.holds.create";
+	
+	/** The METHODS_FETCH_FINES_SUMMARY
+	 * description : 
+	 * @param : authToken, UserID
+	 * @returns: "mous" OSRFObject. fields: balance_owed, total_owed, total_paid
+	 */
+	public static String METHOD_FETCH_FINES_SUMMARY = "open-ils.actor.user.fines.summary";
+	
+	/** The METHOD_FETCH_TRANSACTIONS
+	 * description: For a given user retrieves a list of fleshed transactions. List of objects, each object is a hash 
+	 * containing : transaction, circ, record
+	 * @param : authToken, userID
+	 * @returns : array of objects, must investigate
+	 */
+	public static String METHOD_FETCH_TRANSACTIONS = "open-ils.actor.user.transactions.have_charged.fleshed";
+	
+	/** The METHOD_FETCH_MONEY_BILLING
+	 *  description :
+	 *  @param : authToken, transaction_id;
+	 */
+	public static String METHOD_FETCH_MONEY_BILLING = "open-ils.circ.money.billing.retrieve.all";
+	
 	/** The conn. */
 	public HttpConnection conn;
 
@@ -300,6 +369,8 @@ public class AccountAccess {
 	}
 
 	
+	//------------------------Checked Out Items Section -------------------------//
+	
 	public void getItemsCheckedOut(){
 		
 		Method method = new Method(METHOD_FETCH_CHECKED_OUT_SUM);
@@ -437,7 +508,9 @@ public class AccountAccess {
 		
 		return null;
 	}
-	
+	/* Method used to renew a circulation record based on target_copy_id
+	 * Returns many objects, don't think they are needed
+	 */
 	private void renewCirc(Integer target_copy){
 		
 		Method method = new Method(METHOD_RENEW_CIRC);
@@ -455,9 +528,229 @@ public class AccountAccess {
 
 		while ((resp = req.recv()) != null) {
 			System.out.println("Sync Response: " + resp);
-			OSRFObject acp = (OSRFObject) resp;
+			OSRFObject a_lot = (OSRFObject) resp;
 
 		}
 	}
 
+	//------------------------Holds Section --------------------------------------//
+	
+	public Object fetchOrgSettings(Integer org_id, String setting){
+		
+		Method method = new Method(METHOD_FETCH_ORG_SETTINGS);
+
+		method.addParam(org_id);
+		method.addParam(setting);
+		
+		//sync request
+		HttpRequest req = new GatewayRequest(conn, SERVICE_ACTOR, method).send();
+		Object resp;
+
+		while ((resp = req.recv()) != null) {
+			System.out.println("Sync Response: " + resp);
+			//TODO Do something with the property
+			OSRFObject response = (OSRFObject) resp;
+			return response;
+		}
+		return null;
+	}
+	
+	
+	
+	public void getHolds(){
+		
+		Method method = new Method(METHOD_FETCH_HOLDS);
+
+		method.addParam(authToken);
+		method.addParam(userID);
+		
+		//sync request
+		HttpRequest req = new GatewayRequest(conn, SERVICE_CIRC, method).send();
+		Object resp;
+
+		List<OSRFObject> listHoldsAhr = null;
+		
+		// holds description for each hold
+		List<OSRFObject> listHoldsMvr = null;
+		
+		//status of holds, fields like : potential_copies, status, total_holds, queue_position, estimated_wait
+		List<HashMap<String,Integer>> listHoldsStatus = null; 
+
+		while ((resp = req.recv()) != null) {
+			System.out.println("Sync Response: " + resp);
+			//list of ahr objects
+			listHoldsAhr = (List<OSRFObject>) resp;
+		
+		}
+		
+		for(int i=0;i<listHoldsAhr.size();i++){
+			fetchHoldTitleInfo(listHoldsAhr.get(i));
+			fetchHoldStatus(listHoldsAhr.get(i));
+		}
+		
+	}
+	
+	/* hold target type :
+	 *  M - metarecord
+	 *  T - record
+	 *  V - volume
+	 *  I - issuance
+	 *  C - copy
+	 *  P - pat
+	 */
+	
+	private Object fetchHoldTitleInfo(OSRFObject holdArhObject){
+		
+		
+		String holdType = (String)holdArhObject.get("hold_type");
+		
+		String method = null;
+		
+		Object response;
+		Object holdInfo = null;
+		if(holdType.equals("T") || holdType.equals("M")){
+			
+			if(holdType.equals("T")) 
+				method = METHOD_FETCH_MRMODS;
+			if(holdType.equals("M"))
+				method = METHOD_FETCH_RMODS;
+			
+			holdInfo = doRequest(SERVICE_SEARCH, method, new Object[]{holdArhObject.get("target")});
+
+		}
+		else{
+				//multiple objects per hold ????
+				holdInfo = holdFetchObjects(holdArhObject);
+;
+			}
+		return holdInfo;
+	}
+	
+	private Object holdFetchObjects(OSRFObject hold){
+		
+		String type = (String)hold.get("hold_type");
+		
+		if(type.equals("C")){
+			//fetch_copy
+			OSRFObject copyObject = fetchAssetCopy(hold.getString("target"));	
+			//fetch_volume from copyObject.call_number field
+			Integer call_number = copyObject.getInt("call_number");
+			
+			if(call_number != null){
+				OSRFObject volume = (OSRFObject) doRequest(SERVICE_CIRC, METHOD_FETCH_VOLUME, new Object[]{copyObject.getInt("call_number")});	
+			//in volume object : record
+			}
+			
+			return copyObject;
+		}
+		else
+			if(type.equals("V")){
+				//fetch_volume
+				OSRFObject volume = (OSRFObject) doRequest(SERVICE_CIRC, METHOD_FETCH_VOLUME, new Object[]{hold.getInt("target")});
+				//in volume object : record 
+			}
+			else
+				if(type.equals("I")){	
+					OSRFObject issuance = (OSRFObject) doRequest(SERVICE_SERIAL, METHOD_FETCH_ISSUANCE, new Object[]{hold.getInt("target")});
+				}
+				else
+					if(type.equals("P")){
+						HashMap<String, Object> param = new HashMap<String, Object>(0);
+						
+						param.put("cache", 1);
+						param.put("fields", new String[]{"label","record"});
+							HashMap<String, Integer> queryParam = new HashMap<String, Integer>();
+							//PART_ID use "target field in hold"
+							queryParam.put("id", hold.getInt("target"));
+						param.put("query",queryParam);
+						
+						//returns mvr object
+						OSRFObject part = (OSRFObject) doRequest(SERVICE_FIELDER,"open-ils.fielder.bmp.atomic",new Object[]{});
+					}
+			
+		return null;
+	}
+	
+	
+	public Object fetchHoldStatus(OSRFObject hold){
+		
+		Integer hold_id = hold.getInt("id");
+		// MAP : potential_copies, status, total_holds, queue_position, estimated_wait
+		Object hold_status = doRequest(SERVICE_CIRC, METHOD_FETCH_HOLD_STATUS, new Object[]{authToken,hold_id});
+	
+		return hold_status;
+	}
+	
+	
+	public Object cancelHold(OSRFObject hold){
+		
+		Integer hold_id = hold.getInt("id");
+		
+		Object response = doRequest(SERVICE_CIRC, METHOD_CANCEL_HOLD, new Object[]{authToken,hold_id});
+		
+		return response;
+	}
+	
+	public Object updateHold(OSRFObject newHoldObject){
+		//TODO verify that object is correct passed to the server
+		Object response = doRequest(SERVICE_CIRC, METHOD_UPDATE_HOLD, new Object[]{authToken,newHoldObject});
+		
+		return response;
+	}
+	
+	public Object createHold(OSRFObject newHoldObject){
+		
+	Object response = doRequest(SERVICE_CIRC, METHOD_CREATE_HOLD, new Object[]{authToken,newHoldObject});
+		
+		return response;
+	}
+	// ?? return boolean 
+	public Object isHoldPossible(HashMap<String,?> valuesHold){
+		
+		
+		Object response = doRequest(SERVICE_CIRC, METHOD_VERIFY_HOLD_POSSIBLE, new Object[]{authToken,valuesHold});
+		
+		return response;
+	}
+	
+	//----------------------------Fines Summary------------------------------------//
+	
+	private OSRFObject getFinesSummary(){
+		
+		OSRFObject finesSummary = (OSRFObject) doRequest(SERVICE_ACTOR, METHOD_FETCH_FINES_SUMMARY, new Object[]{authToken,userID});
+		
+		return finesSummary;
+	}
+	
+	private Object getTransactions(){
+		
+		Object transactions = doRequest(SERVICE_ACTOR, METHOD_FETCH_TRANSACTIONS, new Object[]{authToken,userID});
+		
+		return transactions;
+	}
+	
+	private Object doRequest(String service, String methodName, Object[] params){
+		
+		
+		//TODO check params and throw errors
+		Method method = new Method(methodName);
+
+		for(int i=0;i<params.length;i++)
+		method.addParam(params[i]);
+		
+		//sync request
+		HttpRequest req = new GatewayRequest(conn, service, method).send();
+		Object resp;
+
+		while ((resp = req.recv()) != null) {
+			System.out.println("Sync Response: " + resp);
+			Object response = (Object) resp;
+			return response;
+		}
+		return null;
+		
+	}
+	
+	
+	
 }
