@@ -151,6 +151,8 @@ public class AccountAccess {
 	 */
 	public static String METHOD_CREATE_HOLD = "	open-ils.circ.holds.create";
 	
+	//Used for Fines 
+	
 	/** The METHODS_FETCH_FINES_SUMMARY
 	 * description : 
 	 * @param : authToken, UserID
@@ -171,6 +173,27 @@ public class AccountAccess {
 	 *  @param : authToken, transaction_id;
 	 */
 	public static String METHOD_FETCH_MONEY_BILLING = "open-ils.circ.money.billing.retrieve.all";
+	
+	
+	//Used for book bags
+	/** The METHOD_FLESH_CONTAINERS
+	 * description : Retrieves all un-fleshed buckets by class assigned to a given user
+	 * VIEW_CONTAINER permissions is requestID != owner ID
+	 * @param : authtoken, UserID, "biblio", "bookbag"
+	 * @returns : array of "cbreb" OSRFObjects
+	 */
+	public static String METHOD_FLESH_CONTAINERS = "open-ils.actor.container.retrieve_by_class.authoritative";
+	
+	
+	/** The METHOD_FLESH_PUBLIC_CONTAINER
+	 * description : array of contaoners correspondig to a id 
+	 * @param : authtoken , "biblio" , boobkbag ID
+	 * @returns : array of "crebi" OSRF objects (content of bookbag, id's of elements to get more info)
+	 */
+	public static String METHOD_FLESH_PUBLIC_CONTAINER = "open-ils.actor.container.flesh";
+	
+	
+	
 	
 	/** The conn. */
 	public HttpConnection conn;
@@ -715,7 +738,7 @@ public class AccountAccess {
 	
 	//----------------------------Fines Summary------------------------------------//
 	
-	private OSRFObject getFinesSummary(){
+	public OSRFObject getFinesSummary(){
 		
 		OSRFObject finesSummary = (OSRFObject) doRequest(SERVICE_ACTOR, METHOD_FETCH_FINES_SUMMARY, new Object[]{authToken,userID});
 		
@@ -727,6 +750,26 @@ public class AccountAccess {
 		Object transactions = doRequest(SERVICE_ACTOR, METHOD_FETCH_TRANSACTIONS, new Object[]{authToken,userID});
 		
 		return transactions;
+	}
+	
+	public Object getBookbags(){
+		
+		Object response = doRequest(SERVICE_ACTOR, METHOD_FLESH_CONTAINERS, new Object[]{authToken,userID,"biblio","bookbag"});
+	
+		List<OSRFObject> bookbags = (List<OSRFObject>)response;
+		
+		for(int i=0;i<bookbags.size();i++){
+			
+			getBookbagContent(bookbags.get(i).getInt("id"));
+		}
+		
+		
+		return bookbags;
+	}
+	
+	private Object getBookbagContent(Integer bookbagID){
+		
+		return doRequest(SERVICE_ACTOR, METHOD_FLESH_PUBLIC_CONTAINER, new Object[]{authToken,"biblio",bookbagID});
 	}
 	
 	private Object doRequest(String service, String methodName, Object[] params){
