@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.evergreen.android.R;
+import org.evergreen.android.globals.GlobalConfigs;
 import org.open_ils.idl.IDLParser;
 
 import android.app.Activity;
@@ -55,14 +56,18 @@ public class SearchCatalogListView extends Activity{
 	
 	private Spinner choseOrganisation;
 	
+	private GlobalConfigs globalConfigs;
+	
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.search_result_list);
 
+        //singleton initialize necessary IDL and Org data
+        globalConfigs = GlobalConfigs.getGlobalConfigs();
         
         context = this;
-        search = new SearchCatalog("http://ulysses.calvin.edu","en-US",this);
+        search = new SearchCatalog("http://ulysses.calvin.edu",this);
                 
         recordList= new ArrayList<RecordInfo>();
 
@@ -155,10 +160,10 @@ public class SearchCatalogListView extends Activity{
         
         int selectedPos = 0;
         ArrayList<String> list = new ArrayList<String>();
-        for(int i=0;i<search.organisations.size();i++){
-        	list.add(search.organisations.get(i).name);
+        for(int i=0;i<globalConfigs.organisations.size();i++){
+        	list.add(globalConfigs.organisations.get(i).name);
         	
-        	if(search.organisations.get(i).level -1 == 0)
+        	if(globalConfigs.organisations.get(i).level -1 == 0)
         		selectedPos = i;
         }
         
@@ -172,7 +177,7 @@ public class SearchCatalogListView extends Activity{
 			public void onItemSelected(AdapterView<?> arg0, View arg1,
 					int ID, long arg3) {
 				//select the specific organization
-				search.selectOrganisation(search.organisations.get(ID));
+				search.selectOrganisation(globalConfigs.organisations.get(ID));
 				
 			}
 			
