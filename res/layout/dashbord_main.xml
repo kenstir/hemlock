@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="6dip"
+    android:layout_weight="1"
+     >
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1">
+        <Button android:id="@+id/home_btn_feature1"
+            style="@style/HomeButton"
+            android:onClick="onClickFeature"
+            android:text="@string/title_feature1"
+            android:drawableTop="@drawable/find_96"/>
+        <Button android:id="@+id/home_btn_feature2"
+            style="@style/HomeButton"
+            android:onClick="onClickFeature"
+            android:text="@string/title_feature2"
+            android:drawableTop="@drawable/account_pref"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1">
+        <Button android:id="@+id/home_btn_feature3"
+            style="@style/HomeButton"
+            android:onClick="onClickFeature"
+            android:text="@string/title_feature3"
+            android:drawableTop="@drawable/check_out"/>
+        <Button android:id="@+id/home_btn_feature4"
+            style="@style/HomeButton"
+            android:onClick="onClickFeature"
+            android:text="@string/title_feature4"
+            android:drawableTop="@drawable/holds"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1">
+        <Button android:id="@+id/home_btn_feature5"
+            style="@style/HomeButton"
+            android:onClick="onClickFeature"
+            android:text="@string/title_feature5"
+            android:drawableTop="@drawable/fines"/>
+        <Button android:id="@+id/home_btn_feature6"
+            style="@style/HomeButton"
+            android:onClick="onClickFeature"
+            android:text="@string/title_feature6"
+            android:drawableTop="@drawable/book_bag"/>
+    </LinearLayout>
+
+</LinearLayout>

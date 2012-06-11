@@ -1,6 +1,170 @@
 package org.evergreen.android.globals;
 
+import java.io.InputStream;
+import java.security.KeyStore.LoadStoreParameter;
+import java.util.ArrayList;
+import java.util.StringTokenizer;
+
+import org.evergreen.android.searchCatalog.Organisation;
+import org.open_ils.idl.IDLParser;
+
+import android.util.Log;
+
 public class GlobalConfigs {
 
-	//public static String httpAddress = "http://ulysses.calvin.edu";
+	public static String httpAddress = "http://ulysses.calvin.edu";
+
+	private boolean init = false;
+
+	private static String TAG = "GlobalConfigs";
+	
+	/** The locale. */
+	public String locale = "en-US";  
+	
+	private static GlobalConfigs globalConfigSingleton = null;
+	/** The organisations. */
+	public ArrayList<Organisation> organisations;
+	
+	/** The collections request. */
+	private String collectionsRequest = "/opac/common/js/";
+	
+	
+	private GlobalConfigs(){
+		
+		initialize();
+	}
+	
+	public static GlobalConfigs getGlobalConfigs(){
+		
+		if(globalConfigSingleton == null)
+		{
+			globalConfigSingleton = new GlobalConfigs();
+		}
+		
+		return globalConfigSingleton;
+	}
+	
+	/* Initialize function that retrieves IDL file and Orgs file
+	 */
+	private boolean initialize(){
+		
+		if(init == false){
+			
+			collectionsRequest += locale + "/OrgTree.js";
+			init = true;
+			loadIDLFile();
+			getOrganisations();
+			return true;
+		}
+		return false;
+	}
+	
+	private static void loadIDLFile(){
+	    	
+		   	 String idlFile = "/reports/fm_IDL.xml";
+		   	 try{
+		   		Log.d("debug","Read fm");
+		   		InputStream in_IDL = Utils.getNetInputStream(httpAddress + idlFile);
+		   		IDLParser parser = new IDLParser(in_IDL);
+		   		parser.parse();
+		   	}catch(Exception e){
+		   		System.err.println("Error in parsing IDL file " + idlFile + " " + e.getMessage());
+		   	};
+	   	
+	   }
+
+	/**
+	 * Gets the organisations get's OrgTree.js from server, parses the input and recovers the organisations
+	 *
+	 * @return the organisations
+	 */
+	private void getOrganisations(){
+		
+		String orgFile = null;
+		try{
+			orgFile = Utils.getNetPageContent(httpAddress+collectionsRequest);
+			System.out.println("Request org " + httpAddress + collectionsRequest );
+		}catch(Exception e){};
+		
+		
+		if(orgFile != null){
+			System.out.println("Page content " + orgFile);
+			
+			String orgArray = orgFile.substring( orgFile.indexOf("=")+1, orgFile.indexOf(";"));  
+			
+			String arrayContent = orgArray.substring(orgArray.indexOf("[")+1,orgArray.lastIndexOf("]"));
+			
+			
+			Log.d(TAG,"Array to pe parsed " + arrayContent);
+			
+			//parser for list
+			
+			//format [104,2,1,"Curriculum Center",1,"CURRICULUM"]  : [id,level,parent,name,can_have_volumes_bool,short_name]
+			
+			int index = 0;
+			while(true){
+				
+				if(index >= arrayContent.length())
+					break;
+				
+				int start = arrayContent.indexOf("[", index)+1;
+				int stop = arrayContent.indexOf("]", index);
+				
+				Log.d(TAG," start stop length index" + start+ " " + stop + " " + arrayContent.length() + " " + index);
+				if(start == -1 || stop == -1)
+					break;
+				
+				index = stop+1;
+				
+				String content = arrayContent.substring(start,stop);
+				
+				System.out.println("Content " + content);
+				
+				StringTokenizer tokenizer = new StringTokenizer(content,",");
+				
+				Organisation org = new Organisation();
+				
+				//first is ID
+				String element = (String)tokenizer.nextElement();
+				System.out.println("Element  " + element);
+				try{
+					org.id = Integer.parseInt(element);
+				}catch(Exception e){};
+				
+				//level
+				element = (String)tokenizer.nextElement();
+				System.out.println("Element  " + element);
+				try{
+					org.level = Integer.parseInt(element);
+				}catch(Exception e){};
+				
+				//parent
+				element = (String)tokenizer.nextElement();
+				System.out.println("Element  " + element);
+				try{
+					org.parent = Integer.parseInt(element);
+				}catch(Exception e){};
+				
+				//name
+				element = (String)tokenizer.nextToken("\",");
+				System.out.println("Element  " + element);
+				org.name = element;
+				
+				//can_have_volume_boo.
+				element = (String)tokenizer.nextElement();
+				System.out.println("Element  " + element);
+				try{
+					org.canHaveVolumesBool = Integer.parseInt(element);
+				}catch(Exception e){};
+				
+				//short name
+				element = (String)tokenizer.nextToken("\",");
+				System.out.println("Element  " + element);
+				org.shortName = element;
+				
+				organisations.add(org);
+			}
+			
+		}
+	}
 }
