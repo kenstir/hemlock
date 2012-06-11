@@ -2,6 +2,7 @@
 package org.evergreen.android.views;
 
 import org.evergreen.android.R;
+import org.evergreen.android.globals.GlobalConfigs;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -24,9 +25,13 @@ public class MainScreenDashboard extends Activity {
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.dashbord_main);
+		
+		//init here globals, 
+		//TODO in future do a splash screen (loading data)
+		
+		GlobalConfigs globalConfigs = GlobalConfigs.getGlobalConfigs();
 	}
 
 	/**
