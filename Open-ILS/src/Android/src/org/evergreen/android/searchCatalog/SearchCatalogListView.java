@@ -64,7 +64,7 @@ public class SearchCatalogListView extends Activity{
         setContentView(R.layout.search_result_list);
 
         //singleton initialize necessary IDL and Org data
-        globalConfigs = GlobalConfigs.getGlobalConfigs();
+        globalConfigs = GlobalConfigs.getGlobalConfigs(this);
         
         context = this;
         search = new SearchCatalog("http://ulysses.calvin.edu",this);

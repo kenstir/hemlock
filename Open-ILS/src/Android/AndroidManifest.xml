@@ -30,7 +30,11 @@
             android:name=".searchCatalog.SearchCatalogListView"
             android:label="@string/app_name" >
         </activity>
-        
+        <activity
+            android:name=".views.ApplicationPreferences"
+            >
+            
+        </activity>
         <activity android:name=".searchCatalog.RecordDetails_Info"></activity>
    		<activity android:name=".searchCatalog.RecordDetails_Content"></activity>
         <activity android:name=".searchCatalog.RecordDetails_Details"></activity>

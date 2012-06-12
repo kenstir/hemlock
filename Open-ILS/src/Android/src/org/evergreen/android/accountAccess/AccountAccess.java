@@ -14,6 +14,9 @@ import org.opensrf.net.http.HttpConnection;
 import org.opensrf.net.http.HttpRequest;
 import org.opensrf.util.OSRFObject;
 
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
+
 /**
  * The Class AuthenticateUser.
  */
@@ -215,10 +218,10 @@ public class AccountAccess {
 	private Integer userID = null;
 	//for demo purpose
 	/** The user name. */
-	private String userName = "daniel";
+	public static String userName = "daniel";
 
 	/** The password. */
-	private String password = "demo123";
+	public static String password = "demo123";
 	
 	/**
 	 * Instantiates a new authenticate user.
@@ -274,14 +277,21 @@ public class AccountAccess {
 	    return "";
 	}
 	
+	public static void setAccountInfo(String username, String password){
+		
+		AccountAccess.userName = username;
+		AccountAccess.password = password;
+		
+	}
+	
 	/**
 	 * Authenticate.
 	 */
-	public void authenticate(){
+	public boolean authenticate(){
 		
 		String seed = authenticateInit();
 		
-		authenticateComplete(seed);
+		return authenticateComplete(seed);
 	}
 
 	/**
@@ -341,9 +351,10 @@ public class AccountAccess {
 	 * Phase 2 of login process
 	 * Application send's username and hash to confirm login
 	 * @param seed the seed
+	 * @returns bollean if auth was ok
 	 */
-	private void authenticateComplete(String seed) {
-		
+	private boolean authenticateComplete(String seed) {
+
 		//calculate hash to pass to server for authentication process phase 2
 		//seed = "b18a9063e0c6f49dfe7a854cc6ab5775";
 		String hash = md5(seed+md5(password));
@@ -384,10 +395,12 @@ public class AccountAccess {
 				}catch(Exception e){
 					System.err.println("Error in parsing authtime " + e.getMessage());
 				}
-				System.out.println();
+				
+				return true;
 			}
 		}
 		
+		return false;
 		
 	}
 
@@ -793,7 +806,5 @@ public class AccountAccess {
 		return null;
 		
 	}
-	
-	
 	
 }
