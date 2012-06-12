@@ -6,21 +6,21 @@
     android:padding="6dip"
     android:layout_weight="1"
      >
-    <LinearLayout
+       <LinearLayout
         android:orientation="horizontal"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_weight="1">
-        <Button android:id="@+id/main_btn_search"
+        <Button android:id="@+id/account_btn_check_out"
             style="@style/HomeButton"
             android:onClick="onClickFeature"
-            android:text="@string/title_search"
-            android:drawableTop="@drawable/find_96"/>
-        <Button android:id="@+id/main_btn_account"
+            android:text="@string/title_check_out"
+            android:drawableTop="@drawable/check_out"/>
+        <Button android:id="@+id/account_btn_holds"
             style="@style/HomeButton"
             android:onClick="onClickFeature"
-            android:text="@string/title_my_account"
-            android:drawableTop="@drawable/account_pref"/>
+            android:text="@string/title_holds"
+            android:drawableTop="@drawable/holds"/>
     </LinearLayout>
 
     <LinearLayout
@@ -28,13 +28,16 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_weight="1">
-        <Button android:id="@+id/main_btn_app_settings"
+        <Button android:id="@+id/account_btn_fines"
             style="@style/HomeButton"
             android:onClick="onClickFeature"
-            android:text="@string/title_application_settings"
-            android:drawableTop="@drawable/settings"/>
-        
+            android:text="@string/title_fines"
+            android:drawableTop="@drawable/fines"/>
+        <Button android:id="@+id/account_btn_book_bags"
+            style="@style/HomeButton"
+            android:onClick="onClickFeature"
+            android:text="@string/title_book_bags"
+            android:drawableTop="@drawable/book_bag"/>
     </LinearLayout>
-
 
 </LinearLayout>

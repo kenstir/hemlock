@@ -5,12 +5,11 @@ import org.evergreen.android.R;
 import org.evergreen.android.globals.GlobalConfigs;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
 
-public class MainScreenDashboard extends Activity {
+public class AccountScreenDashboard extends Activity {
 
 	/**
 	 * onCreate - called when the activity is first created.
@@ -27,12 +26,8 @@ public class MainScreenDashboard extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.dashbord_main);
+		setContentView(R.layout.dashbord_account);
 		
-		//init here globals, 
-		//TODO in future do a splash screen (loading data)
-		
-		GlobalConfigs globalConfigs = GlobalConfigs.getGlobalConfigs();
 	}
 
 	/**
@@ -113,17 +108,19 @@ public class MainScreenDashboard extends Activity {
 	{
 	    int id = v.getId ();
 	    switch (id) {
-	    
-	      case R.id.main_btn_search :
-	           //startActivity (new Intent(getApplicationContext(), F1Activity.class));
-	           break;
-	      case R.id.main_btn_account:
-	           startActivity (new Intent(getApplicationContext(), AccountScreenDashboard.class));
-	           break;
-	      case R.id.main_btn_app_settings :
+	   
+	      case R.id.account_btn_check_out :
 	           //startActivity (new Intent(getApplicationContext(), F3Activity.class));
 	           break;
-
+	      case R.id.account_btn_holds:
+	           //startActivity (new Intent(getApplicationContext(), F4Activity.class));
+	           break;
+	      case R.id.account_btn_fines :
+	           //startActivity (new Intent(getApplicationContext(), F5Activity.class));
+	           break;
+	      case R.id.account_btn_book_bags :
+	           //startActivity (new Intent(getApplicationContext(), F6Activity.class));
+	           break;
 	      default: 
 	    	   break;
 	    

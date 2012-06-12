@@ -4,11 +4,12 @@
     <string name="hello">Hello World, EvergreenAppActivity!</string>
     <string name="app_name">EvergreenApp</string>
 
-    <string name="title_feature1">Search</string>
-    <string name="title_feature2">Account</string>
-    <string name="title_feature3">Check out items</string>
-    <string name="title_feature4">Holds</string>
-    <string name="title_feature5">Fines</string>
-    <string name="title_feature6">Book bags</string>
+    <string name="title_search">Search</string>
+    <string name="title_my_account">My Account</string>
+    <string name="title_application_settings">App. Settings </string>
+    <string name="title_check_out">Check out items</string>
+    <string name="title_holds">Holds</string>
+    <string name="title_fines">Fines</string>
+    <string name="title_book_bags">Book bags</string>
     
 </resources>
