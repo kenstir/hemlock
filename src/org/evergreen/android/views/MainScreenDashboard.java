@@ -32,7 +32,7 @@ public class MainScreenDashboard extends Activity {
 		//init here globals, 
 		//TODO in future do a splash screen (loading data)
 		
-		GlobalConfigs globalConfigs = GlobalConfigs.getGlobalConfigs();
+		GlobalConfigs globalConfigs = GlobalConfigs.getGlobalConfigs(this);
 	}
 
 	/**
@@ -121,7 +121,7 @@ public class MainScreenDashboard extends Activity {
 	           startActivity (new Intent(getApplicationContext(), AccountScreenDashboard.class));
 	           break;
 	      case R.id.main_btn_app_settings :
-	           //startActivity (new Intent(getApplicationContext(), F3Activity.class));
+	           startActivity(new Intent(getApplicationContext(),ApplicationPreferences.class));
 	           break;
 
 	      default: 

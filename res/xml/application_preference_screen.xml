@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:key="first_preferencescreen">
+	 <PreferenceCategory
+	   android:summary="Username and password information"
+	   android:title="Login information" >
+	  	<EditTextPreference
+	     android:key="username"
+	     android:summary="Please enter your login username"
+	     android:title="Username" />
+	  	<EditTextPreference
+	     android:key="password"
+	     android:summary="Enter your password"
+	     android:title="Password"
+	     android:inputType="textPassword"
+	      />
+	 </PreferenceCategory>
+   
+	 
+	 	 <PreferenceCategory
+	   android:summary="Username and password information"
+	   android:title="Login information" >
+	  	<EditTextPreference
+	     android:key="library_url"
+	     android:summary="Please enter the library url in format http://"
+	     android:title="Library url address" />
+
+	 </PreferenceCategory>
+   
+</PreferenceScreen> 

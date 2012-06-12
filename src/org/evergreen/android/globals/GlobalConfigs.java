@@ -1,13 +1,16 @@
 package org.evergreen.android.globals;
 
 import java.io.InputStream;
-import java.security.KeyStore.LoadStoreParameter;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
 
+import org.evergreen.android.accountAccess.AccountAccess;
 import org.evergreen.android.searchCatalog.Organisation;
 import org.open_ils.idl.IDLParser;
 
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.util.Log;
 
 public class GlobalConfigs {
@@ -29,16 +32,16 @@ public class GlobalConfigs {
 	private String collectionsRequest = "/opac/common/js/";
 	
 	
-	private GlobalConfigs(){
+	private GlobalConfigs(Context context){
 		
-		initialize();
+		initialize(context);
 	}
 	
-	public static GlobalConfigs getGlobalConfigs(){
+	public static GlobalConfigs getGlobalConfigs(Context context){
 		
 		if(globalConfigSingleton == null)
 		{
-			globalConfigSingleton = new GlobalConfigs();
+			globalConfigSingleton = new GlobalConfigs(context);
 		}
 		
 		return globalConfigSingleton;
@@ -46,7 +49,7 @@ public class GlobalConfigs {
 	
 	/* Initialize function that retrieves IDL file and Orgs file
 	 */
-	private boolean initialize(){
+	private boolean initialize(Context context){
 		
 		if(init == false){
 			
@@ -54,6 +57,11 @@ public class GlobalConfigs {
 			init = true;
 			loadIDLFile();
 			getOrganisations();
+		
+			SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+			GlobalConfigs.httpAddress = preferences.getString("library_url", "");
+			AccountAccess.setAccountInfo(preferences.getString("username", ""), preferences.getString("password", ""));
+			
 			return true;
 		}
 		return false;
