@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.evergreen.android.R;
 import org.evergreen.android.globals.GlobalConfigs;
-import org.open_ils.idl.IDLParser;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
@@ -13,7 +12,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -29,12 +32,8 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 public class SearchCatalogListView extends Activity{
-    /**
-	 * 
-	 */
 
-
-	/** Called when the activity is first created. */
+	private String TAG ="SearchCatalogListView";
 	
 	private List<RecordInfo> recordList;
 	
@@ -58,6 +57,10 @@ public class SearchCatalogListView extends Activity{
 	
 	private GlobalConfigs globalConfigs;
 	
+	private static final int PLACE_HOLD = 0;
+	
+	private static final int DETAILS = 1;
+	
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -77,11 +80,14 @@ public class SearchCatalogListView extends Activity{
     		
     	// Get reference to ListView holder
     	lv = (ListView) this.findViewById(R.id.search_results_list);
-    		
+    	
     	//System.out.println("Here it is "  + lv);
     	// Set the ListView adapter
     	lv.setAdapter(adapter);
     	
+    	
+    	
+    	registerForContextMenu(lv);
     	
     	lv.setOnItemClickListener(new OnItemClickListener() {
     		
@@ -188,6 +194,50 @@ public class SearchCatalogListView extends Activity{
         
         });
     
+    }
+    
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v,
+        ContextMenuInfo menuInfo) {
+    	
+    	Log.d(TAG, "context menu");
+      if (v.getId()==R.id.search_results_list) {
+    	  
+        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo)menuInfo;
+        menu.setHeaderTitle("Options");
+        
+          menu.add(Menu.NONE, DETAILS,0,"Details");
+          menu.add(Menu.NONE,PLACE_HOLD,1,"Place Hold");
+        
+      }
+    }
+    
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+    	// TODO Auto-generated method stub
+    	AdapterView.AdapterContextMenuInfo menuArrayItem = (AdapterView.AdapterContextMenuInfo)item.getMenuInfo();
+    	int menuItemIndex = item.getItemId();
+    	
+    	switch(item.getItemId()){
+    		
+    		case DETAILS : {
+       			RecordInfo info = (RecordInfo)lv.getItemAtPosition(menuArrayItem.position);
+    			//start activity with book details
+    			
+    			Intent intent = new Intent(getBaseContext(),RecordDetails_Simple.class);
+    			//serialize object and pass it to next activity
+    			intent.putExtra("recordInfo", info);
+    			
+    			startActivity(intent);
+    		}
+    		break;
+    		case PLACE_HOLD : {
+    			
+    		}
+    		break;
+    	}
+    	
+    	return super.onContextItemSelected(item);
     }
     
     class SearchArrayAdapter extends ArrayAdapter<RecordInfo> {
