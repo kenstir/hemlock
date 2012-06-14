@@ -62,6 +62,10 @@ public class GlobalConfigs {
 			GlobalConfigs.httpAddress = preferences.getString("library_url", "");
 			AccountAccess.setAccountInfo(preferences.getString("username", ""), preferences.getString("password", ""));
 			
+			//authenticate
+			AccountAccess ac = new AccountAccess(GlobalConfigs.httpAddress);
+			ac.authenticate();
+			
 			return true;
 		}
 		return false;
@@ -94,7 +98,7 @@ public class GlobalConfigs {
 			System.out.println("Request org " + httpAddress + collectionsRequest );
 		}catch(Exception e){};
 		
-		
+		organisations = new ArrayList<Organisation>();
 		
 		if(orgFile != null){
 			organisations = new ArrayList<Organisation>();

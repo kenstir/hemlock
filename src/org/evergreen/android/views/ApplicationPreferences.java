@@ -27,10 +27,13 @@ public class ApplicationPreferences extends PreferenceActivity implements OnShar
 	
 	private ProgressDialog progressDialog;
 	
+	private ApplicationPreferences reference;
 	
 	private Context context;
 	
 	private String TAG = "ApplicationPreferences";
+	
+	private Thread connectionThread = null;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 
@@ -39,12 +42,35 @@ public class ApplicationPreferences extends PreferenceActivity implements OnShar
 		addPreferencesFromResource(R.xml.application_preference_screen);
 		
 		context = this;
-		
+		reference = this;
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
 		//register preference listener
 		prefs.registerOnSharedPreferenceChangeListener(this);
 	}
 
+	
+	@Override
+	protected void onResume() {
+		super.onResume();
+		reference = this;
+	}
+	@Override
+	protected void onPause() {
+		super.onPause();
+		reference = null;
+	}
+	
+	@Override
+	protected void onStop() {
+		super.onStop();
+		reference = null;
+	}
+	
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+		reference = null;
+	}
 	@Override
 	public void onSharedPreferenceChanged(SharedPreferences sharedPreferences,
 			String key) {
@@ -60,10 +86,10 @@ public class ApplicationPreferences extends PreferenceActivity implements OnShar
 				}
 		
 		//test connection
+		if(!isFinishing())
+			progressDialog = ProgressDialog.show(this, "Account login", "Please wait while we test the new user account information");	
 		
-		progressDialog = ProgressDialog.show(this, "Account login", "Please wait while we test the new user account information");	
-		
-		Thread thread = new Thread(new Runnable() {
+		connectionThread = new Thread(new Runnable() {
 			
 			@Override
 			public void run() {
@@ -71,7 +97,7 @@ public class ApplicationPreferences extends PreferenceActivity implements OnShar
 				boolean routeToAddress = true;
 				AccountAccess account = new AccountAccess(GlobalConfigs.httpAddress);
 				try{
-					Utils.checkNetworkStatus((ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE), getApplicationContext());
+					Utils.checkNetworkStatus((ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE), context);
 				}catch(NoNetworkAccessException e){
 					routeToAddress = false;
 					
@@ -81,10 +107,12 @@ public class ApplicationPreferences extends PreferenceActivity implements OnShar
 						
 						@Override
 						public void run() {
-							progressDialog.dismiss();
-							AlertDialog.Builder builder = new AlertDialog.Builder(context);
-							builder.setMessage("There seams to be no network connectivity! Do you want to start network settings?").setPositiveButton("Yes", dialogClickListener)
-						    .setNegativeButton("No", dialogClickListener).show();
+							if(reference != null){
+								progressDialog.dismiss();
+								AlertDialog.Builder builder = new AlertDialog.Builder(context);
+								builder.setMessage("There seams to be no network connectivity! Do you want to start network settings?").setPositiveButton("Yes", dialogClickListener)
+								.setNegativeButton("No", dialogClickListener).show();
+							}
 						}
 					});
 
@@ -96,7 +124,8 @@ public class ApplicationPreferences extends PreferenceActivity implements OnShar
 						
 						@Override
 						public void run() {
-							Toast.makeText(getApplicationContext(), "There is no route to host :" + GlobalConfigs.httpAddress, Toast.LENGTH_LONG);
+							if(reference != null)
+								Toast.makeText(getApplicationContext(), "There is no route to host :" + GlobalConfigs.httpAddress, Toast.LENGTH_LONG).show();
 						}
 	
 					});
@@ -110,8 +139,10 @@ public class ApplicationPreferences extends PreferenceActivity implements OnShar
 							
 							@Override
 							public void run() {
-								progressDialog.dismiss();
-								Toast.makeText(context, "Autenthication successfully established :" + GlobalConfigs.httpAddress, Toast.LENGTH_LONG);
+								if(reference != null){
+									progressDialog.dismiss();
+									Toast.makeText(context, "Autenthication successfully established :" + GlobalConfigs.httpAddress, Toast.LENGTH_LONG).show();
+								}
 							}
 						});
 					}else{
@@ -119,8 +150,10 @@ public class ApplicationPreferences extends PreferenceActivity implements OnShar
 							
 							@Override
 							public void run() {
-								progressDialog.dismiss();
-								Toast.makeText(context, "Please check username and password ", Toast.LENGTH_LONG);
+								if(reference != null){
+									progressDialog.dismiss();
+									Toast.makeText(context, "Please check username and password ", Toast.LENGTH_LONG).show();
+								}
 							}
 						});
 					}
@@ -130,13 +163,15 @@ public class ApplicationPreferences extends PreferenceActivity implements OnShar
 						
 						@Override
 						public void run() {
-						progressDialog.dismiss();	
+						if(reference != null)	
+							progressDialog.dismiss();	
 						}
 					});
 			}
 		});
 		
-		thread.start();
+		connectionThread.start();
+
 	}
 /*
  *  Dialog interface for starting the network settings

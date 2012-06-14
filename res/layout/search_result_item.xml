@@ -15,29 +15,34 @@
         android:layout_marginRight="6dip"
 		android:src="@drawable/address_book"/>
 	
+	
+	
 	<LinearLayout 
 	android:layout_width="wrap_content"
     android:layout_height="fill_parent"
-    android:orientation="vertical" 
+    android:orientation="vertical"
+    android:gravity="center_vertical" 
+	android:paddingLeft="4dip"
 	>
 		<TextView
 		android:id="@+id/search_record_title"
-		android:paddingLeft="10dip"
-		android:gravity="left"
+		style="@style/TitleSearchStyleList"
 		android:layout_width="wrap_content"
-		android:layout_height="wrap_content" />   
+		android:layout_height="wrap_content"
+		
+		 />   
 	    
-		    	<TextView
+		<TextView
 		android:id="@+id/search_record_author"
-		android:paddingRight="10dip"
+		style="@style/AuthorSearchStyleList"
 		android:layout_width="wrap_content"
-		android:gravity="right"
-		android:layout_height="wrap_content" />
+		android:layout_height="wrap_content"
+
+		/>
 		    
-		    		<TextView
+		<TextView
 		android:id="@+id/search_record_publishing"
-		android:paddingRight="10dip"
-		android:gravity="right"
+		style="@style/PubSearchStyleList"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content" />
 
