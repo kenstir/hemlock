@@ -95,7 +95,10 @@ public class GlobalConfigs {
 		}catch(Exception e){};
 		
 		
+		
 		if(orgFile != null){
+			organisations = new ArrayList<Organisation>();
+			
 			System.out.println("Page content " + orgFile);
 			
 			String orgArray = orgFile.substring( orgFile.indexOf("=")+1, orgFile.indexOf(";"));  
