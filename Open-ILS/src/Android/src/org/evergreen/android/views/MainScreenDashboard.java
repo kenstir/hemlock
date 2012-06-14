@@ -3,6 +3,7 @@ package org.evergreen.android.views;
 
 import org.evergreen.android.R;
 import org.evergreen.android.globals.GlobalConfigs;
+import org.evergreen.android.searchCatalog.SearchCatalogListView;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -115,7 +116,7 @@ public class MainScreenDashboard extends Activity {
 	    switch (id) {
 	    
 	      case R.id.main_btn_search :
-	           //startActivity (new Intent(getApplicationContext(), F1Activity.class));
+	           startActivity (new Intent(getApplicationContext(), SearchCatalogListView.class));
 	           break;
 	      case R.id.main_btn_account:
 	           startActivity (new Intent(getApplicationContext(), AccountScreenDashboard.class));
