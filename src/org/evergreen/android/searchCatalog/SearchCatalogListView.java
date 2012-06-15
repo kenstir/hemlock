@@ -60,6 +60,8 @@ public class SearchCatalogListView extends Activity{
 	private static final int PLACE_HOLD = 0;
 	
 	private static final int DETAILS = 1;
+
+	private final ImageDownloader imageDownloader = new ImageDownloader();
 	
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -112,13 +114,12 @@ public class SearchCatalogListView extends Activity{
         choseOrganisation = (Spinner) findViewById(R.id.chose_organisation);
         
         searchButton = (ImageButton) findViewById(R.id.searchButton);
-        
+
         searchButton.setOnClickListener(new OnClickListener() {
 	
         
 			@Override
 			public void onClick(View v) {
-				// TODO Auto-generated method stub
 				
 				final String text = searchText.getText().toString();
 				
@@ -134,22 +135,22 @@ public class SearchCatalogListView extends Activity{
 						
 						@Override
 						public void run() {
-							// TODO Auto-generated method stub
 							searchResults = search.getSearchResults(text);
 							
 							runOnUiThread(new Runnable() {
 								
 								@Override
 								public void run() {
-									// TODO Auto-generated method stub
+
 									recordList.clear();
 									if(searchResults.size()>0){
-										//TODO
+										
 										for(int j=0;j<searchResults.size();j++)
 											recordList.add(searchResults.get(j));
 									}
 									adapter.notifyDataSetChanged();
 									progressDialog.dismiss();
+									
 								}
 							});
 							
@@ -157,7 +158,6 @@ public class SearchCatalogListView extends Activity{
 					});
 					
 					searchThread.start();
-
 
 				}
 			}
@@ -214,7 +214,6 @@ public class SearchCatalogListView extends Activity{
     
     @Override
     public boolean onContextItemSelected(MenuItem item) {
-    	// TODO Auto-generated method stub
     	AdapterView.AdapterContextMenuInfo menuArrayItem = (AdapterView.AdapterContextMenuInfo)item.getMenuInfo();
     	int menuItemIndex = item.getItemId();
     	
@@ -232,7 +231,7 @@ public class SearchCatalogListView extends Activity{
     		}
     		break;
     		case PLACE_HOLD : {
-    			
+    			//TODO
     		}
     		break;
     	}
@@ -282,6 +281,10 @@ public class SearchCatalogListView extends Activity{
     		// Get reference to ImageView 
     		recordImage = (ImageView) row.findViewById(R.id.search_record_img);
     		
+    		//TODO fix bugs + features
+    		String imageHref= GlobalConfigs.httpAddress + "/opac/extras/ac/jacket/small/"+record.doc_id;
+    		//start async download of image 
+    		imageDownloader.download(imageHref, recordImage);
     		// Get reference to TextView - title
     		recordTitle = (TextView) row.findViewById(R.id.search_record_title);
     		
@@ -300,7 +303,6 @@ public class SearchCatalogListView extends Activity{
     		return row;
     	}
     }
-    
 
 }
 

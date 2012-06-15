@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.opensrf.util.OSRFObject;
+
 public class RecordInfo implements Serializable{
 
 	
@@ -37,15 +39,20 @@ public class RecordInfo implements Serializable{
 	
 	public String series = null;
 	
-	public RecordInfo(Map<String,?> info){
+	//tcn field
+	public String image = null;
+	
+	public RecordInfo(OSRFObject info){
 		
 		try{
 			
-			this.title = (String)info.get("title");
-			this.author = (String)info.get("author");
-			this.pubdate = (String)info.get("pubdate");
-			this.publisher = (String)info.get("publisher");
-			this.doc_id = (Integer)info.get("doc_id");
+			
+			this.title = info.getString("title");
+			this.author = info.getString("author");
+			this.pubdate = info.getString("pubdate");
+			this.publisher = info.getString("publisher");
+			this.doc_id = info.getInt("doc_id");
+			this.image = info.getString("tcn");
 			
 		}
 		catch(Exception e){System.out.println("Exception basic info " + e.getMessage());};

@@ -1,11 +1,14 @@
 package org.evergreen.android.globals;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.net.InetAddress;
+import java.net.MalformedURLException;
 import java.net.SocketTimeoutException;
+import java.net.URL;
+import java.net.URLConnection;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
@@ -17,10 +20,12 @@ import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.test.IsolatedContext;
 import android.util.Log;
+import android.widget.ImageView;
 
 public class Utils {
 
@@ -173,5 +178,41 @@ public class Utils {
 
 		return result;
 	}
-	
+
+	public static void bookCoverImage(ImageView picture, String imageID, int size){
+		
+		String urlS = (GlobalConfigs.httpAddress + "/opac/extras/ac/jacket/small/" + imageID);
+        
+        Bitmap bmp = null; //create a new Bitmap variable called bmp, and initialize it to null
+
+        try {
+
+                URL url = new URL(urlS); //create a URL object from the urlS string above
+                URLConnection conn = url.openConnection(); //save conn as a URLConnection
+
+                conn.connect(); //connect to the URLConnection conn
+                InputStream is = conn.getInputStream(); //get the image from the URLConnection conn using InputStream is
+                BufferedInputStream bis = new BufferedInputStream(is); //create a BufferedInputStream called bis from is
+                bmp = BitmapFactory.decodeStream(bis); //use bis to convert the stream to a bitmap image, and save it to bmp
+                int bmpHeight = bmp.getHeight(); //stores the original height of the image
+                if(bmpHeight != 1){
+                        double scale = size/(double)bmpHeight; //sets the scaling number to match the desired size
+                        double bmpWidthh = (double)bmp.getWidth() * scale; //scales and stores the original width into the desired one
+                        int bmpWidth = (int)bmpWidthh; //gets the width of the picture and saves it
+                        bmp = Bitmap.createScaledBitmap(bmp, bmpWidth, size, true); //creates and stores a new bmp with desired dimensions
+                }
+                
+        } catch (MalformedURLException e) { //catch errors
+                e.printStackTrace();
+        } catch(IOException e){
+                e.printStackTrace();
+        } catch(IllegalStateException e){
+                e.printStackTrace();
+        }
+        picture.setImageBitmap(bmp); //send the Bitmap image bmp to pic, and call the method to set the image.
+        
+
+	}
+
+
 }

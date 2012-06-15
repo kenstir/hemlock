@@ -14,6 +14,7 @@ import org.opensrf.net.http.GatewayRequest;
 import org.opensrf.net.http.HttpConnection;
 import org.opensrf.net.http.HttpRequest;
 import org.opensrf.net.http.HttpRequestHandler;
+import org.opensrf.util.OSRFObject;
 
 import android.content.Context;
 import android.util.Log;
@@ -94,8 +95,10 @@ public class SearchCatalog {
 	        		if(this.selectedOrganization.level != null)
 	        			complexParm.put("depth", this.selectedOrganization.level-1);
 	        	}
-	        	/*
+	        	//TODO change here, multiple result per page
 	        	complexParm.put("limit", 10);
+	        	
+	        	/*
 	        	complexParm.put("offset",0);
 	        	complexParm.put("visibility_limit", 3000);
 	        	complexParm.put("default_class","keyword");
@@ -164,7 +167,7 @@ public class SearchCatalog {
 	 * @param id the id
 	 * @return the item short info
 	 */
-	private Map<String,?> getItemShortInfo(String id){
+	private OSRFObject getItemShortInfo(String id){
 		
 		Method method = new Method(METHOD_SLIM_RETRIVE);
 		
@@ -174,7 +177,7 @@ public class SearchCatalog {
 	        Object resp;
 	        while ( (resp = req.recv()) != null) {
 	            System.out.println("Sync Response: " + resp);
-	            return (Map<String,?>)resp;
+	            return (OSRFObject)resp;
 	        }
 		
 	        return null;
