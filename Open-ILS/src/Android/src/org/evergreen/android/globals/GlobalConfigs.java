@@ -55,12 +55,14 @@ public class GlobalConfigs {
 			
 			collectionsRequest += locale + "/OrgTree.js";
 			init = true;
+			SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+			GlobalConfigs.httpAddress = preferences.getString("library_url", "");
+			
 			loadIDLFile();
 			getOrganisations();
 		
-			SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-			GlobalConfigs.httpAddress = preferences.getString("library_url", "");
 			AccountAccess.setAccountInfo(preferences.getString("username", ""), preferences.getString("password", ""));
+			
 			
 			//authenticate
 			AccountAccess ac = new AccountAccess(GlobalConfigs.httpAddress);
