@@ -72,7 +72,7 @@ public class SearchCatalogListView extends Activity{
         globalConfigs = GlobalConfigs.getGlobalConfigs(this);
         
         context = this;
-        search = new SearchCatalog("http://ulysses.calvin.edu",this);
+        search = new SearchCatalog(this);
                 
         recordList= new ArrayList<RecordInfo>();
 
@@ -121,9 +121,7 @@ public class SearchCatalogListView extends Activity{
 			@Override
 			public void onClick(View v) {
 				
-				final String text = searchText.getText().toString();
-				
-				
+				final String text = searchText.getText().toString();				
 				progressDialog = new ProgressDialog(context);
 				
 				progressDialog.setMessage("Fetching data");
