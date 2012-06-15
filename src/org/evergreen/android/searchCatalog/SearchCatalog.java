@@ -46,6 +46,13 @@ public class SearchCatalog {
 	private Organisation selectedOrganization = null;
 	
 	private Context context;
+	
+	public Integer offset;
+	
+	public Integer visible;
+	
+	public Integer searchLimit = 10;
+	
 	/**
 	 * Instantiates a new search catalog.
 	 *
@@ -72,11 +79,11 @@ public class SearchCatalog {
 
 	/**
 	 * Gets the search results
-	 *
+	 * 
 	 * @param searchWords the search words
 	 * @return the search results
 	 */
-	public ArrayList<RecordInfo> getSearchResults(String searchWords){
+	public ArrayList<RecordInfo> getSearchResults(String searchWords, Integer offset){
 		
 		
 		ArrayList<RecordInfo> resultsRecordInfo = new ArrayList<RecordInfo>();
@@ -94,7 +101,9 @@ public class SearchCatalog {
 	        			complexParm.put("depth", this.selectedOrganization.level-1);
 	        	}
 	        	//TODO change here, multiple result per page
-	        	complexParm.put("limit", 50);
+	        	complexParm.put("limit", searchLimit);
+	        	
+		        complexParm.put("offset",offset);
 	        	
 	        	/*
 	        	complexParm.put("offset",0);
@@ -112,6 +121,7 @@ public class SearchCatalog {
 	        method.addParam(searchWords);
 	        method.addParam(1);
 	        
+	        
 	        // sync test
 	        HttpRequest req = new GatewayRequest(conn, SERVICE, method).send();
 	        Object resp;
@@ -120,6 +130,7 @@ public class SearchCatalog {
 	        
 	        ArrayList<String> ids = new ArrayList<String>();
 	        
+ 
 	        while ( (resp = req.recv()) != null){
 	            System.out.println("Sync Response: " + resp);
 	            
@@ -128,6 +139,8 @@ public class SearchCatalog {
 	            System.out.println(" ids : " + response.get("ids") + " " );
 	            
 	            List<List<String>> result_ids = (List) response.get("ids");
+
+	            visible =Integer.parseInt((String)response.get("count"));
 	            
 	            for(int i=0;i<result_ids.size();i++){
 	            	ids.add(result_ids.get(i).get(0));

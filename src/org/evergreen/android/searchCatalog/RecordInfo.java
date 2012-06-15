@@ -42,11 +42,20 @@ public class RecordInfo implements Serializable{
 	//tcn field
 	public String image = null;
 	
+	public boolean dummy = false;
+	
+	public RecordInfo(){
+		this.title = "Test title";
+		this.author = "Test author";
+		this.pubdate = "Publication date";
+		
+		//marks the fact that this is a record made from no info
+		this.dummy = true;
+	}
 	public RecordInfo(OSRFObject info){
 		
 		try{
-			
-			
+
 			this.title = info.getString("title");
 			this.author = info.getString("author");
 			this.pubdate = info.getString("pubdate");

@@ -6,6 +6,8 @@ import java.util.List;
 import org.evergreen.android.R;
 import org.evergreen.android.globals.GlobalConfigs;
 
+import com.google.android.maps.ItemizedOverlay;
+
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -24,6 +26,7 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -61,6 +64,8 @@ public class SearchCatalogListView extends Activity{
 	
 	private static final int DETAILS = 1;
 
+	private TextView searchResultsNumber;
+	
 	private final ImageDownloader imageDownloader = new ImageDownloader();
 	
     @Override
@@ -79,15 +84,32 @@ public class SearchCatalogListView extends Activity{
         // Create a customized ArrayAdapter
         adapter = new SearchArrayAdapter(
     				getApplicationContext(), R.layout.search_result_item, recordList);
-    		
+    	
+        searchResultsNumber = (TextView) findViewById(R.id.search_result_number);
+        
     	// Get reference to ListView holder
     	lv = (ListView) this.findViewById(R.id.search_results_list);
     	
+    	 
+    	// Creating a button - Load More
+    	Button btnLoadMore = new Button(this);
+    	btnLoadMore.setText("Load More");
+    	
+    	// Adding button to listview at footer
+    	//lv.addFooterView(btnLoadMore);
+    	
+    	View footerView = findViewById(R.layout.search_result_footer_view);
+    	//call before set adapter
+    	//lv.addFooterView(footerView);
+    	
     	//System.out.println("Here it is "  + lv);
+    	
+		progressDialog = new ProgressDialog(context);
+		
+		progressDialog.setMessage("Fetching data");
     	// Set the ListView adapter
     	lv.setAdapter(adapter);
-    	
-    	
+
     	
     	registerForContextMenu(lv);
     	
@@ -99,13 +121,65 @@ public class SearchCatalogListView extends Activity{
     			
     		
     			RecordInfo info = (RecordInfo)lv.getItemAtPosition(position);
-    			//start activity with book details
     			
-    			Intent intent = new Intent(getBaseContext(),RecordDetails_Simple.class);
-    			//serialize object and pass it to next activity
-    			intent.putExtra("recordInfo", info);
-    			
-    			startActivity(intent);
+    			if(info.dummy == true){
+    				progressDialog = new ProgressDialog(context);
+    				
+    				progressDialog.setMessage("Fetching data");
+    				progressDialog.show();
+    				final String text = searchText.getText().toString();
+    				
+    				Thread searchThreadwithOffset = new Thread(new Runnable() {
+						
+						@Override
+						public void run() {
+							searchResults = search.getSearchResults(text,recordList.size()-1);
+							
+							runOnUiThread(new Runnable() {
+								
+								@Override
+								public void run() {
+
+									//don't clear record list
+									//recordList.clear();
+									if(searchResults.size()>0){
+										
+										//remove previous more button
+										recordList.remove(recordList.size()-1);
+										
+										for(int j=0;j<searchResults.size();j++)
+											recordList.add(searchResults.get(j));
+										
+									//add extra record to display more option button
+									if(search.visible > recordList.size()){
+											recordList.add(new RecordInfo());
+											searchResultsNumber.setText(adapter.getCount()-1 +" out of "+search.visible);
+										}
+									else
+										searchResultsNumber.setText(adapter.getCount() +" out of "+search.visible);
+									}
+									else{
+										searchResultsNumber.setText(adapter.getCount() +" out of "+search.visible);
+									}
+									adapter.notifyDataSetChanged();
+									progressDialog.dismiss();
+								}
+							});
+							
+						}
+					});
+					
+					searchThreadwithOffset.start();
+    			}
+    			else{
+	    			//start activity with book details
+	    			
+	    			Intent intent = new Intent(getBaseContext(),RecordDetails_Simple.class);
+	    			//serialize object and pass it to next activity
+	    			intent.putExtra("recordInfo", info);
+	    			
+	    			startActivity(intent);
+    			}
     		}
 		});
         
@@ -133,7 +207,7 @@ public class SearchCatalogListView extends Activity{
 						
 						@Override
 						public void run() {
-							searchResults = search.getSearchResults(text);
+							searchResults = search.getSearchResults(text,0);
 							
 							runOnUiThread(new Runnable() {
 								
@@ -145,9 +219,21 @@ public class SearchCatalogListView extends Activity{
 										
 										for(int j=0;j<searchResults.size();j++)
 											recordList.add(searchResults.get(j));
+										
+									//add extra record to display more option button
+									if(search.visible > recordList.size()){
+										recordList.add(new RecordInfo());
+										searchResultsNumber.setText(recordList.size()-1 +" out of "+search.visible);
+										}
+									else
+										searchResultsNumber.setText(recordList.size() +" out of "+search.visible);
 									}
+									else
+										searchResultsNumber.setText(recordList.size() +" out of "+search.visible);
+									
 									adapter.notifyDataSetChanged();
 									progressDialog.dismiss();
+									
 									
 								}
 							});
@@ -264,21 +350,38 @@ public class SearchCatalogListView extends Activity{
 
     	public View getView(int position, View convertView, ViewGroup parent) {
     		View row = convertView;
-    		if (row == null) {
-    			// ROW INFLATION
-    			Log.d(tag, "Starting XML Row Inflation ... ");
-    			LayoutInflater inflater = (LayoutInflater) this.getContext()
-    					.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-    			row = inflater.inflate(R.layout.search_result_item, parent, false);
-    			Log.d(tag, "Successfully completed XML Row Inflation!");
-    		}
-
+    		
     		// Get item
     		RecordInfo record = getItem(position);
     		
+    		if(record.dummy == true)
+    		{
+				Log.d(tag, "Starting XML view more infaltion ... ");
+    			LayoutInflater inflater = (LayoutInflater) this.getContext()
+    					.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+    			row = inflater.inflate(R.layout.search_result_footer_view, parent, false);
+    			Log.d(tag, "Successfully completed XML view more Inflation!");
+
+    			
+			}
+    		else{
+    		
+    			//if it is the right type of view
+		    		if (row == null || row.findViewById(R.id.search_record_title) == null) {
+	
+			    			Log.d(tag, "Starting XML Row Inflation ... ");
+			    			LayoutInflater inflater = (LayoutInflater) this.getContext()
+			    					.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+			    			row = inflater.inflate(R.layout.search_result_item, parent, false);
+			    			Log.d(tag, "Successfully completed XML Row Inflation!");
+	
+		    		}
+    		
+		    
+
+    		Log.d(TAG, "reord image value " + recordImage);
     		// Get reference to ImageView 
     		recordImage = (ImageView) row.findViewById(R.id.search_record_img);
-    		
     		//TODO fix bugs + features
     		String imageHref= GlobalConfigs.httpAddress + "/opac/extras/ac/jacket/small/"+record.isbn;
     		//start async download of image 
@@ -297,7 +400,8 @@ public class SearchCatalogListView extends Activity{
     		recordTitle.setText(record.title);
     		recordAuthor.setText(record.author);
     		recordPublisher.setText(record.pubdate + " " + record.publisher);
-
+    		}
+    		
     		return row;
     	}
     }
