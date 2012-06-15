@@ -42,7 +42,7 @@ public class ImageDownloader {
     public enum Mode { NO_ASYNC_TASK, NO_DOWNLOADED_DRAWABLE, CORRECT }
     private Mode mode = Mode.CORRECT;
    
-    private int MIN_IMG_HEIGHT = 100;
+    private int MIN_IMG_HEIGHT = 75;
     
     /**
      * Download the specified image from the Internet and binds it to the provided ImageView. The
@@ -151,8 +151,17 @@ public class ImageDownloader {
         // AndroidHttpClient is not allowed to be used from the main thread
         final HttpClient client = (mode == Mode.NO_ASYNC_TASK) ? new DefaultHttpClient() :
             AndroidHttpClient.newInstance("Android");
-        final HttpGet getRequest = new HttpGet(url);
-
+    	
+        HttpGet getRequest = null;
+        try{
+        	getRequest = new HttpGet(url);
+        }catch(Exception e){
+            if ((client instanceof AndroidHttpClient)) {
+                ((AndroidHttpClient) client).close();
+            }
+        	return null;
+        }
+    	
         try {
             HttpResponse response = client.execute(getRequest);
             final int statusCode = response.getStatusLine().getStatusCode();
@@ -251,7 +260,9 @@ public class ImageDownloader {
             }
 
             addBitmapToCache(url, bitmap);
+            
 
+            
             if (imageViewReference != null) {
                 ImageView imageView = imageViewReference.get();
                 BitmapDownloaderTask bitmapDownloaderTask = getBitmapDownloaderTask(imageView);
@@ -259,10 +270,14 @@ public class ImageDownloader {
                 // Or if we don't use any bitmap to task association (NO_DOWNLOADED_DRAWABLE mode)
                 if ((this == bitmapDownloaderTask) || (mode != Mode.CORRECT)) {
                     imageView.setImageBitmap(bitmap);
+                }   
+
+                if(bitmap == null){
+                	if(imageView != null)
+                		imageView.setImageResource(R.drawable.address_book);
                 }
-                else
-                	imageView.setImageResource(R.drawable.address_book);
             }
+
         }
     }
 
@@ -302,7 +317,7 @@ public class ImageDownloader {
      * Garbage Collector.
      */
    
-    private static final int HARD_CACHE_CAPACITY = 10;
+    private static final int HARD_CACHE_CAPACITY = 20;
     private static final int DELAY_BEFORE_PURGE = 10 * 1000; // in milliseconds
 
     // Hard cache, with a fixed maximum capacity and a life duration
