@@ -123,6 +123,7 @@ public class SearchCatalogListView extends Activity{
     			RecordInfo info = (RecordInfo)lv.getItemAtPosition(position);
     			
     			if(info.dummy == true){
+    				//this is the more view item button 
     				progressDialog = new ProgressDialog(context);
     				
     				progressDialog.setMessage("Fetching data");
@@ -251,7 +252,7 @@ public class SearchCatalogListView extends Activity{
         int selectedPos = 0;
         ArrayList<String> list = new ArrayList<String>();
         for(int i=0;i<globalConfigs.organisations.size();i++){
-        	list.add(globalConfigs.organisations.get(i).name);
+        	list.add(globalConfigs.organisations.get(i).padding + globalConfigs.organisations.get(i).name);
         	
         	if(globalConfigs.organisations.get(i).level -1 == 0)
         		selectedPos = i;

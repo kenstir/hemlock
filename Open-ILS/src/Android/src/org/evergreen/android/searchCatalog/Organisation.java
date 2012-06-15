@@ -14,6 +14,9 @@ public class Organisation {
 	
 	public Integer canHaveVolumesBool = null;
 	
+	//used for indent display
+	public String padding = "";
+	
 	public Organisation(){
 		
 	}

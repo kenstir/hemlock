@@ -1,6 +1,7 @@
 package org.evergreen.android.globals;
 
 import java.io.InputStream;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
 
@@ -143,21 +144,21 @@ public class GlobalConfigs {
 				
 				//first is ID
 				String element = (String)tokenizer.nextElement();
-				System.out.println("Element  " + element);
+				System.out.println("Id  " + element);
 				try{
 					org.id = Integer.parseInt(element);
 				}catch(Exception e){};
 				
 				//level
 				element = (String)tokenizer.nextElement();
-				System.out.println("Element  " + element);
+				System.out.println("Level   " + element);
 				try{
 					org.level = Integer.parseInt(element);
 				}catch(Exception e){};
 				
 				//parent
 				element = (String)tokenizer.nextElement();
-				System.out.println("Element  " + element);
+				System.out.println("parent  " + element);
 				try{
 					org.parent = Integer.parseInt(element);
 				}catch(Exception e){};
@@ -182,6 +183,46 @@ public class GlobalConfigs {
 				organisations.add(org);
 			}
 			
+			ArrayList<Organisation> orgs = new ArrayList<Organisation>();
+			
+			for(int i=0;i<organisations.size();i++){
+
+				StringBuilder padding = new StringBuilder();
+				for(int j=0; j<organisations.get(i).level-1;j++)
+					padding.append("  ");
+					
+				organisations.get(i).padding = padding.toString();
+			}
+			
+			int size = organisations.size();
+			int level = 0;
+			while(orgs.size() < size){
+				
+				
+				for(int i=0;i<organisations.size();i++){
+					Organisation org = organisations.get(i);
+					if(level == org.level){
+						boolean add = false;
+						for(int j=0;j<orgs.size();j++){
+							
+							if(orgs.get(j).id == org.parent){
+								orgs.add(j+1,org);
+								add = true;
+								Log.d(TAG, "Added " + org.name + " " + org.level);
+								break;
+							}
+						}
+						
+						if(add == false){
+							orgs.add(org);
+							Log.d(TAG, "Added " + org.name + " " + org.level);
+						}
+					}
+						
+				}
+				level ++;
+			}
+			organisations = orgs;
 		}
 	}
 }
