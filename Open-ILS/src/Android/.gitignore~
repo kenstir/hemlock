@@ -1,1 +1,4 @@
+#ignore class objects
 *.class
+*.dex
+bin/**/*
