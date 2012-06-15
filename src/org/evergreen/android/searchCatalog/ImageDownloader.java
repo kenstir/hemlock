@@ -15,6 +15,7 @@ import org.apache.http.HttpStatus;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.evergreen.android.R;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -41,7 +42,7 @@ public class ImageDownloader {
     public enum Mode { NO_ASYNC_TASK, NO_DOWNLOADED_DRAWABLE, CORRECT }
     private Mode mode = Mode.CORRECT;
    
-    private int MIN_IMG_HEIGHT = 75;
+    private int MIN_IMG_HEIGHT = 100;
     
     /**
      * Download the specified image from the Internet and binds it to the provided ImageView. The
@@ -259,6 +260,8 @@ public class ImageDownloader {
                 if ((this == bitmapDownloaderTask) || (mode != Mode.CORRECT)) {
                     imageView.setImageBitmap(bitmap);
                 }
+                else
+                	imageView.setImageResource(R.drawable.address_book);
             }
         }
     }
@@ -276,6 +279,7 @@ public class ImageDownloader {
 
         public DownloadedDrawable(BitmapDownloaderTask bitmapDownloaderTask) {
             super(Color.BLACK);
+            
             bitmapDownloaderTaskReference =
                 new WeakReference<BitmapDownloaderTask>(bitmapDownloaderTask);
         }
