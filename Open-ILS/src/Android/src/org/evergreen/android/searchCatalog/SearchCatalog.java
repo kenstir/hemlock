@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
 
+import org.evergreen.android.globals.GlobalConfigs;
 import org.evergreen.android.globals.Utils;
 import org.open_ils.idl.IDLParser;
 import org.opensrf.Method;
@@ -36,8 +37,6 @@ public class SearchCatalog {
 	/** The conn. */
 	public HttpConnection conn;
 	
-	/** The http address. */
-	public String httpAddress = "http://ulysses.calvin.edu";
 	
 	/** The TAG. */
 	public String TAG = "SearchCatalog";
@@ -53,13 +52,12 @@ public class SearchCatalog {
 	 * @param httpAddress the http address
 	 * @param locale the locale
 	 */
-	public SearchCatalog(String httpAddress, Context context) {
+	public SearchCatalog(Context context) {
 		super();
 		this.context = context;
-		this.httpAddress = httpAddress;
 		try{
 			// configure the connection
-			conn = new HttpConnection(httpAddress+"/osrf-gateway-v1");
+			conn = new HttpConnection(GlobalConfigs.httpAddress+"/osrf-gateway-v1");
 
 			
 		}catch(Exception e){
@@ -96,7 +94,7 @@ public class SearchCatalog {
 	        			complexParm.put("depth", this.selectedOrganization.level-1);
 	        	}
 	        	//TODO change here, multiple result per page
-	        	complexParm.put("limit", 10);
+	        	complexParm.put("limit", 50);
 	        	
 	        	/*
 	        	complexParm.put("offset",0);
