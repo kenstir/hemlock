@@ -280,7 +280,7 @@ public class SearchCatalogListView extends Activity{
     		recordImage = (ImageView) row.findViewById(R.id.search_record_img);
     		
     		//TODO fix bugs + features
-    		String imageHref= GlobalConfigs.httpAddress + "/opac/extras/ac/jacket/small/"+record.doc_id;
+    		String imageHref= GlobalConfigs.httpAddress + "/opac/extras/ac/jacket/small/"+record.isbn;
     		//start async download of image 
     		imageDownloader.download(imageHref, recordImage);
     		// Get reference to TextView - title
