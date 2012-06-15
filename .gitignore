@@ -1,3 +1,4 @@
 #ignore class objects
 *.class
-bin/**/*
+*.dex
+/bin/**/*
