@@ -8,14 +8,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.evergreen.android.globals.Utils;
 import org.opensrf.Method;
 import org.opensrf.net.http.GatewayRequest;
 import org.opensrf.net.http.HttpConnection;
 import org.opensrf.net.http.HttpRequest;
 import org.opensrf.util.OSRFObject;
-
-import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
 
 /**
  * The Class AuthenticateUser.
@@ -325,20 +323,10 @@ public class AccountAccess {
 	 */
 	private String authenticateInit() {
 
-		Method method = new Method(METHOD_AUTH_INIT);
-
-		method.addParam(userName);
-
-		// sync test
-		HttpRequest req = new GatewayRequest(conn, SERVICE_AUTH, method).send();
-		Object resp;
-		
 		String seed = null;
-		
-		while ((resp = req.recv()) != null) {
-			System.out.println("Sync Response: " + resp);
-			seed = resp.toString();
-		}
+
+		Object resp  = (Object) Utils.doRequest(conn, SERVICE_AUTH, METHOD_AUTH_INIT, new Object[]{userName});
+		seed = resp.toString();
 		
 		System.out.println("Seed " + seed);
 		
@@ -360,8 +348,6 @@ public class AccountAccess {
 		String hash = md5(seed+md5(password));
 		System.out.println("Hash " + hash);
 		
-		Method method = new Method(METHOD_AUTH_COMPLETE);
-		
 		HashMap<String,String> complexParam = new HashMap<String, String>();
 		//TODO parameter for user login
 		complexParam.put("type", "opac");
@@ -369,18 +355,10 @@ public class AccountAccess {
 		complexParam.put("username", userName);
 		complexParam.put("password", hash);
 
-		
-		method.addParam(complexParam);
 		System.out.println("Compelx param " + complexParam);
 		
-		// sync test
-		HttpRequest req = new GatewayRequest(conn, SERVICE_AUTH, method).send();
-		Object resp;
+		Object resp  =  Utils.doRequest(conn, SERVICE_AUTH, METHOD_AUTH_COMPLETE, new Object[]{complexParam});
 
-		
-		while ((resp = req.recv()) != null) {
-			System.out.println("Sync Response: " + resp);
-			
 			String queryResult = ((Map<String,String>) resp).get("textcode");
 			 
 			System.out.println("Result " + queryResult);
@@ -398,7 +376,6 @@ public class AccountAccess {
 				
 				return true;
 			}
-		}
 		
 		return false;
 		
@@ -408,17 +385,7 @@ public class AccountAccess {
 	//------------------------Checked Out Items Section -------------------------//
 	
 	public void getItemsCheckedOut(){
-		
-		Method method = new Method(METHOD_FETCH_CHECKED_OUT_SUM);
 
-		method.addParam(authToken);
-		method.addParam(userID);
-		
-		//sync request
-		HttpRequest req = new GatewayRequest(conn, SERVICE_ACTOR, method).send();
-		Object resp;
-
-		
 		ArrayList<OSRFObject> long_overdue = new ArrayList<OSRFObject>();
 		ArrayList<OSRFObject> claims_returned = new ArrayList<OSRFObject>();
 		ArrayList<OSRFObject> lost = new ArrayList<OSRFObject>();
@@ -428,9 +395,9 @@ public class AccountAccess {
 		List<String> claims_returned_id;
 		List<String> lost_id;
 		List<String> out_id;
-		while ((resp = req.recv()) != null) {
-			System.out.println("Sync Response: " + resp);
-			
+		
+		Object resp  =  Utils.doRequest(conn, SERVICE_ACTOR, METHOD_FETCH_CHECKED_OUT_SUM, new Object[]{authToken, userID});
+
 			long_overdue_id = (List<String>)((Map<String,?>)resp).get("long_overdue");
 			claims_returned_id = (List<String>)((Map<String,?>)resp).get("claims_returned");
 			lost_id = (List<String>)((Map<String,?>)resp).get("lost");
@@ -457,7 +424,7 @@ public class AccountAccess {
 				//System.out.println(out.get(i));
 				long_overdue.add(retrieveCircRecord(long_overdue_id.get(i)));
 			}
-		}
+		
 	}
 	/* Fetch info for Checked Out Items
 	 * It uses two methods  : open-ils.search.biblio.mods_from_copy or in case
@@ -486,123 +453,51 @@ public class AccountAccess {
 	 * @returns : "circ" OSRFObject 
 	 */
 	private OSRFObject retrieveCircRecord(String id){
-		
-		Method method = new Method(METHOD_FETCH_CIRC_BY_ID);
 
-		method.addParam(authToken);
-		method.addParam(id);
-		
-		//sync request
-		HttpRequest req = new GatewayRequest(conn, SERVICE_CIRC, method).send();
-		Object resp;
-
-		while ((resp = req.recv()) != null) {
-			System.out.println("Sync Response: " + resp);
-			OSRFObject circ = (OSRFObject) resp;
-			return circ;
-		}
-		
-		return null;
+		OSRFObject circ  = (OSRFObject) Utils.doRequest(conn, SERVICE_CIRC, METHOD_FETCH_CIRC_BY_ID, new Object[]{authToken,id});
+		return circ;
 	}
 	
 	private OSRFObject fetchModsFromCopy(String target_copy){
-		
-		Method method = new Method(METHOD_FETCH_MODS_FROM_COPY);
 
-		method.addParam(target_copy);
-		
-		//sync request
-		HttpRequest req = new GatewayRequest(conn, SERVICE_SEARCH, method).send();
-		Object resp;
-
-		while ((resp = req.recv()) != null) {
-			System.out.println("Sync Response: " + resp);
-			OSRFObject mvr = (OSRFObject) resp;
-			
-			return mvr;
-		}
-		
-		return null;
+		//sync request		
+		OSRFObject mvr  = (OSRFObject) Utils.doRequest(conn, SERVICE_SEARCH, METHOD_FETCH_MODS_FROM_COPY, new Object[]{target_copy});
+	
+		return mvr;
 	}
 	
 	private OSRFObject fetchAssetCopy(String target_copy){
 		
-		Method method = new Method(METHOD_FETCH_COPY);
-
-		method.addParam(target_copy);
+		OSRFObject acp  = (OSRFObject) Utils.doRequest(conn, SERVICE_SEARCH, METHOD_FETCH_COPY, new Object[]{target_copy});
 		
-		//sync request
-		HttpRequest req = new GatewayRequest(conn, SERVICE_SEARCH, method).send();
-		Object resp;
-
-		while ((resp = req.recv()) != null) {
-			System.out.println("Sync Response: " + resp);
-			OSRFObject acp = (OSRFObject) resp;
-			
-			return acp;
-		}
-		
-		return null;
+		return acp;
 	}
 	/* Method used to renew a circulation record based on target_copy_id
 	 * Returns many objects, don't think they are needed
 	 */
 	private void renewCirc(Integer target_copy){
 		
-		Method method = new Method(METHOD_RENEW_CIRC);
-
 		HashMap<String,Integer> complexParam = new HashMap<String, Integer>();
 		complexParam.put("patron", this.userID);		
 		complexParam.put("copyid", target_copy);
 		complexParam.put("opac_renewal", 1);
-
-		method.addParam(complexParam);
 		
-		//sync request
-		HttpRequest req = new GatewayRequest(conn, SERVICE_CIRC, method).send();
-		Object resp;
-
-		while ((resp = req.recv()) != null) {
-			System.out.println("Sync Response: " + resp);
-			OSRFObject a_lot = (OSRFObject) resp;
-
-		}
+		OSRFObject a_lot = (OSRFObject) Utils.doRequest(conn, SERVICE_CIRC, METHOD_RENEW_CIRC, new Object[]{complexParam});
+		
 	}
 
 	//------------------------Holds Section --------------------------------------//
 	
 	public Object fetchOrgSettings(Integer org_id, String setting){
 		
-		Method method = new Method(METHOD_FETCH_ORG_SETTINGS);
-
-		method.addParam(org_id);
-		method.addParam(setting);
+		OSRFObject response  = (OSRFObject) Utils.doRequest(conn, SERVICE_ACTOR, METHOD_FETCH_ORG_SETTINGS, new Object[]{org_id,setting});
+		return response;
 		
-		//sync request
-		HttpRequest req = new GatewayRequest(conn, SERVICE_ACTOR, method).send();
-		Object resp;
-
-		while ((resp = req.recv()) != null) {
-			System.out.println("Sync Response: " + resp);
-			//TODO Do something with the property
-			OSRFObject response = (OSRFObject) resp;
-			return response;
-		}
-		return null;
 	}
 	
 	
 	
 	public void getHolds(){
-		
-		Method method = new Method(METHOD_FETCH_HOLDS);
-
-		method.addParam(authToken);
-		method.addParam(userID);
-		
-		//sync request
-		HttpRequest req = new GatewayRequest(conn, SERVICE_CIRC, method).send();
-		Object resp;
 
 		List<OSRFObject> listHoldsAhr = null;
 		
@@ -612,12 +507,7 @@ public class AccountAccess {
 		//status of holds, fields like : potential_copies, status, total_holds, queue_position, estimated_wait
 		List<HashMap<String,Integer>> listHoldsStatus = null; 
 
-		while ((resp = req.recv()) != null) {
-			System.out.println("Sync Response: " + resp);
-			//list of ahr objects
-			listHoldsAhr = (List<OSRFObject>) resp;
-		
-		}
+		listHoldsAhr = (List<OSRFObject>) Utils.doRequest(conn, SERVICE_CIRC, METHOD_FETCH_HOLDS, new Object[]{authToken,userID});
 		
 		for(int i=0;i<listHoldsAhr.size();i++){
 			fetchHoldTitleInfo(listHoldsAhr.get(i));
@@ -651,7 +541,7 @@ public class AccountAccess {
 			if(holdType.equals("M"))
 				method = METHOD_FETCH_RMODS;
 			
-			holdInfo = doRequest(SERVICE_SEARCH, method, new Object[]{holdArhObject.get("target")});
+			holdInfo = Utils.doRequest(conn,SERVICE_SEARCH, method, new Object[]{holdArhObject.get("target")});
 
 		}
 		else{
@@ -673,7 +563,7 @@ public class AccountAccess {
 			Integer call_number = copyObject.getInt("call_number");
 			
 			if(call_number != null){
-				OSRFObject volume = (OSRFObject) doRequest(SERVICE_CIRC, METHOD_FETCH_VOLUME, new Object[]{copyObject.getInt("call_number")});	
+				OSRFObject volume = (OSRFObject) Utils.doRequest(conn,SERVICE_CIRC, METHOD_FETCH_VOLUME, new Object[]{copyObject.getInt("call_number")});	
 			//in volume object : record
 			}
 			
@@ -682,12 +572,12 @@ public class AccountAccess {
 		else
 			if(type.equals("V")){
 				//fetch_volume
-				OSRFObject volume = (OSRFObject) doRequest(SERVICE_CIRC, METHOD_FETCH_VOLUME, new Object[]{hold.getInt("target")});
+				OSRFObject volume = (OSRFObject) Utils.doRequest(conn,SERVICE_CIRC, METHOD_FETCH_VOLUME, new Object[]{hold.getInt("target")});
 				//in volume object : record 
 			}
 			else
 				if(type.equals("I")){	
-					OSRFObject issuance = (OSRFObject) doRequest(SERVICE_SERIAL, METHOD_FETCH_ISSUANCE, new Object[]{hold.getInt("target")});
+					OSRFObject issuance = (OSRFObject) Utils.doRequest(conn,SERVICE_SERIAL, METHOD_FETCH_ISSUANCE, new Object[]{hold.getInt("target")});
 				}
 				else
 					if(type.equals("P")){
@@ -701,7 +591,7 @@ public class AccountAccess {
 						param.put("query",queryParam);
 						
 						//returns mvr object
-						OSRFObject part = (OSRFObject) doRequest(SERVICE_FIELDER,"open-ils.fielder.bmp.atomic",new Object[]{});
+						OSRFObject part = (OSRFObject) Utils.doRequest(conn,SERVICE_FIELDER,"open-ils.fielder.bmp.atomic",new Object[]{});
 					}
 			
 		return null;
@@ -712,7 +602,7 @@ public class AccountAccess {
 		
 		Integer hold_id = hold.getInt("id");
 		// MAP : potential_copies, status, total_holds, queue_position, estimated_wait
-		Object hold_status = doRequest(SERVICE_CIRC, METHOD_FETCH_HOLD_STATUS, new Object[]{authToken,hold_id});
+		Object hold_status = Utils.doRequest(conn,SERVICE_CIRC, METHOD_FETCH_HOLD_STATUS, new Object[]{authToken,hold_id});
 	
 		return hold_status;
 	}
@@ -722,21 +612,21 @@ public class AccountAccess {
 		
 		Integer hold_id = hold.getInt("id");
 		
-		Object response = doRequest(SERVICE_CIRC, METHOD_CANCEL_HOLD, new Object[]{authToken,hold_id});
+		Object response = Utils.doRequest(conn,SERVICE_CIRC, METHOD_CANCEL_HOLD, new Object[]{authToken,hold_id});
 		
 		return response;
 	}
 	
 	public Object updateHold(OSRFObject newHoldObject){
 		//TODO verify that object is correct passed to the server
-		Object response = doRequest(SERVICE_CIRC, METHOD_UPDATE_HOLD, new Object[]{authToken,newHoldObject});
+		Object response = Utils.doRequest(conn,SERVICE_CIRC, METHOD_UPDATE_HOLD, new Object[]{authToken,newHoldObject});
 		
 		return response;
 	}
 	
 	public Object createHold(OSRFObject newHoldObject){
 		
-	Object response = doRequest(SERVICE_CIRC, METHOD_CREATE_HOLD, new Object[]{authToken,newHoldObject});
+	Object response = Utils.doRequest(conn,SERVICE_CIRC, METHOD_CREATE_HOLD, new Object[]{authToken,newHoldObject});
 		
 		return response;
 	}
@@ -744,7 +634,7 @@ public class AccountAccess {
 	public Object isHoldPossible(HashMap<String,?> valuesHold){
 		
 		
-		Object response = doRequest(SERVICE_CIRC, METHOD_VERIFY_HOLD_POSSIBLE, new Object[]{authToken,valuesHold});
+		Object response = Utils.doRequest(conn,SERVICE_CIRC, METHOD_VERIFY_HOLD_POSSIBLE, new Object[]{authToken,valuesHold});
 		
 		return response;
 	}
@@ -753,21 +643,21 @@ public class AccountAccess {
 	
 	public OSRFObject getFinesSummary(){
 		
-		OSRFObject finesSummary = (OSRFObject) doRequest(SERVICE_ACTOR, METHOD_FETCH_FINES_SUMMARY, new Object[]{authToken,userID});
+		OSRFObject finesSummary = (OSRFObject) Utils.doRequest(conn,SERVICE_ACTOR, METHOD_FETCH_FINES_SUMMARY, new Object[]{authToken,userID});
 		
 		return finesSummary;
 	}
 	
 	private Object getTransactions(){
 		
-		Object transactions = doRequest(SERVICE_ACTOR, METHOD_FETCH_TRANSACTIONS, new Object[]{authToken,userID});
+		Object transactions = Utils.doRequest(conn,SERVICE_ACTOR, METHOD_FETCH_TRANSACTIONS, new Object[]{authToken,userID});
 		
 		return transactions;
 	}
 	
 	public Object getBookbags(){
 		
-		Object response = doRequest(SERVICE_ACTOR, METHOD_FLESH_CONTAINERS, new Object[]{authToken,userID,"biblio","bookbag"});
+		Object response = Utils.doRequest(conn,SERVICE_ACTOR, METHOD_FLESH_CONTAINERS, new Object[]{authToken,userID,"biblio","bookbag"});
 	
 		List<OSRFObject> bookbags = (List<OSRFObject>)response;
 		
@@ -782,29 +672,7 @@ public class AccountAccess {
 	
 	private Object getBookbagContent(Integer bookbagID){
 		
-		return doRequest(SERVICE_ACTOR, METHOD_FLESH_PUBLIC_CONTAINER, new Object[]{authToken,"biblio",bookbagID});
-	}
-	
-	private Object doRequest(String service, String methodName, Object[] params){
-		
-		
-		//TODO check params and throw errors
-		Method method = new Method(methodName);
-
-		for(int i=0;i<params.length;i++)
-		method.addParam(params[i]);
-		
-		//sync request
-		HttpRequest req = new GatewayRequest(conn, service, method).send();
-		Object resp;
-
-		while ((resp = req.recv()) != null) {
-			System.out.println("Sync Response: " + resp);
-			Object response = (Object) resp;
-			return response;
-		}
-		return null;
-		
+		return Utils.doRequest(conn,SERVICE_ACTOR, METHOD_FLESH_PUBLIC_CONTAINER, new Object[]{authToken,"biblio",bookbagID});
 	}
 	
 }

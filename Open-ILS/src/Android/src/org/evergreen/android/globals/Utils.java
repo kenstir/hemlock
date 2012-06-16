@@ -18,6 +18,11 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
+import org.evergreen.android.accountAccess.SessionNotFoundException;
+import org.opensrf.Method;
+import org.opensrf.net.http.GatewayRequest;
+import org.opensrf.net.http.HttpConnection;
+import org.opensrf.net.http.HttpRequest;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -212,6 +217,28 @@ public class Utils {
         picture.setImageBitmap(bmp); //send the Bitmap image bmp to pic, and call the method to set the image.
         
 
+	}
+	
+	public static Object doRequest(HttpConnection conn, String service, String methodName, Object[] params) throws SessionNotFoundException{
+
+		//TODO check params and throw errors
+		Method method = new Method(methodName);
+
+		for(int i=0;i<params.length;i++)
+		method.addParam(params[i]);
+		
+		//sync request
+		HttpRequest req = new GatewayRequest(conn, service, method).send();
+		Object resp;
+
+		while ((resp = req.recv()) != null) {
+			System.out.println("Sync Response: " + resp);
+			Object response = (Object) resp;
+			return response;
+			
+		}
+		return null;
+		
 	}
 
 
