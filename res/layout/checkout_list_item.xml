@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:gravity="left|center"
+   	android:paddingBottom="3px"
+	android:paddingTop="3px" 
+	android:paddingLeft="3px" 
+    android:orientation="horizontal" >
+
+	<LinearLayout 
+	android:layout_width="wrap_content"
+    android:layout_height="fill_parent"
+    android:orientation="vertical"
+    android:gravity="center_vertical" 
+	android:paddingLeft="4dip"
+	>
+		<TextView
+		android:id="@+id/checkout_record_title"
+		style="@style/TitleSearchStyleList"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"/>   
+	    
+		<TextView
+		android:id="@+id/checkout_record_author"
+		style="@style/AuthorSearchStyleList"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"/>
+		    
+		<TextView
+		android:id="@+id/checkout_renewals_remaining"
+		style="@style/PubSearchStyleList"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"/>
+		
+		<TextView
+		android:id="@+id/checkout_due_date"
+		style="@style/PubSearchStyleList"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"/>
+
+	</LinearLayout>
+</LinearLayout>

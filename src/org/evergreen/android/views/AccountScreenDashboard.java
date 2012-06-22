@@ -2,9 +2,10 @@
 package org.evergreen.android.views;
 
 import org.evergreen.android.R;
-import org.evergreen.android.globals.GlobalConfigs;
+import org.evergreen.android.accountAccess.ItemsCheckOutListView;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
@@ -110,7 +111,7 @@ public class AccountScreenDashboard extends Activity {
 	    switch (id) {
 	   
 	      case R.id.account_btn_check_out :
-	           //startActivity (new Intent(getApplicationContext(), F3Activity.class));
+	           startActivity (new Intent(getApplicationContext(),ItemsCheckOutListView.class));
 	           break;
 	      case R.id.account_btn_holds:
 	           //startActivity (new Intent(getApplicationContext(), F4Activity.class));

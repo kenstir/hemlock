@@ -9,6 +9,7 @@ import java.net.MalformedURLException;
 import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.Map;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
@@ -18,7 +19,7 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
-import org.evergreen.android.accountAccess.SessionNotFoundException;
+import org.evergreen.android.accountAccess.AccountAccess;
 import org.opensrf.Method;
 import org.opensrf.net.http.GatewayRequest;
 import org.opensrf.net.http.HttpConnection;
@@ -218,15 +219,17 @@ public class Utils {
         
 
 	}
-	
-	public static Object doRequest(HttpConnection conn, String service, String methodName, Object[] params) throws SessionNotFoundException{
-
+	//TODO throw NO_SESSION 
+	public static Object doRequest(HttpConnection conn, String service, String methodName, Object[] params) //throws SessionNotFoundException{
+	{
 		//TODO check params and throw errors
 		Method method = new Method(methodName);
-
-		for(int i=0;i<params.length;i++)
-		method.addParam(params[i]);
-		
+		System.out.println();
+		for(int i=0;i<params.length;i++){
+			method.addParam(params[i]);
+			System.out.print("Param "+i+":" + params[i]);
+		}
+		System.out.println();
 		//sync request
 		HttpRequest req = new GatewayRequest(conn, service, method).send();
 		Object resp;
@@ -234,12 +237,37 @@ public class Utils {
 		while ((resp = req.recv()) != null) {
 			System.out.println("Sync Response: " + resp);
 			Object response = (Object) resp;
-			return response;
+			
+				try{
+					String textcode = ((Map<String,String>)response).get("textcode");
+					if(textcode != null){
+						if(textcode.equals("NO_SESSION")){
+							response = requireNewSession(conn, service, methodName, params);
+						}
+						
+					}
+				}catch(Exception e){
+					
+				}
+				return response;
 			
 		}
 		return null;
 		
 	}
-
+	
+	public static Object requireNewSession(HttpConnection conn, String service, String methodName, Object[] params){
+		
+		AccountAccess ac = AccountAccess.getAccountAccess();
+		boolean success = ac.authenticate();
+		
+		Object response = null;
+		
+		if(success){
+			response =  doRequest(conn, service, methodName, params);
+		}
+		
+		return response;
+	}
 
 }

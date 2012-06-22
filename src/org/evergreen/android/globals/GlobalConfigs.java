@@ -66,7 +66,7 @@ public class GlobalConfigs {
 			
 			
 			//authenticate
-			AccountAccess ac = new AccountAccess(GlobalConfigs.httpAddress);
+			AccountAccess ac = AccountAccess.getAccountAccess(GlobalConfigs.httpAddress);
 			ac.authenticate();
 			
 			return true;

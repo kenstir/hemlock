@@ -75,6 +75,8 @@ public class ApplicationPreferences extends PreferenceActivity implements OnShar
 	public void onSharedPreferenceChanged(SharedPreferences sharedPreferences,
 			String key) {
 		
+		
+		
 		if(key.equals("username")){
 			AccountAccess.userName = sharedPreferences.getString("username", "");
 		}else
@@ -95,7 +97,7 @@ public class ApplicationPreferences extends PreferenceActivity implements OnShar
 			public void run() {
 				
 				boolean routeToAddress = true;
-				AccountAccess account = new AccountAccess(GlobalConfigs.httpAddress);
+				AccountAccess account = AccountAccess.getAccountAccess(GlobalConfigs.httpAddress);
 				try{
 					Utils.checkNetworkStatus((ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE), context);
 				}catch(NoNetworkAccessException e){
