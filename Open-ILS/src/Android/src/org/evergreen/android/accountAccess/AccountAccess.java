@@ -17,6 +17,7 @@ import org.opensrf.util.OSRFObject;
 
 /**
  * The Class AuthenticateUser.
+ * Singleton class
  */
 public class AccountAccess {
 
@@ -221,12 +222,13 @@ public class AccountAccess {
 	/** The password. */
 	public static String password = "demo123";
 	
+	private static AccountAccess accountAccess = null;
 	/**
 	 * Instantiates a new authenticate user.
 	 *
 	 * @param httpAddress the http address
 	 */
-	public AccountAccess(String httpAddress) {
+	private AccountAccess(String httpAddress) {
 
 		this.httpAddress = httpAddress;
 
@@ -243,6 +245,42 @@ public class AccountAccess {
 
 	}
 
+	public static AccountAccess getAccountAccess(String httpAddress){
+		
+		if(accountAccess == null){
+			accountAccess = new AccountAccess(httpAddress);
+		}
+		if(!httpAddress.equals(accountAccess.httpAddress))
+			accountAccess.updateHttpAddress(httpAddress);
+			
+		return accountAccess;
+	}
+	
+	// the object must be initialized before 
+	public static AccountAccess getAccountAccess(){
+		
+		if(accountAccess != null){
+			return accountAccess;
+		}
+		
+		return null;
+	}
+	/*
+	 * Change the Http conn to a new library address
+	 */
+	public void updateHttpAddress(String httpAddress){
+		
+		try {
+			// configure the connection
+			
+			System.out.println("Connection with " + httpAddress);
+			conn = new HttpConnection(httpAddress + "/osrf-gateway-v1");
+
+		} catch (Exception e) {
+			System.err.println("Exception in establishing connection "
+					+ e.getMessage());
+		}
+	}
 	/**
 	 * Md5.
 	 *
@@ -374,6 +412,8 @@ public class AccountAccess {
 					System.err.println("Error in parsing authtime " + e.getMessage());
 				}
 				
+				//get user ID
+				accountAccess.getAccountSummary();
 				return true;
 			}
 		
@@ -384,17 +424,25 @@ public class AccountAccess {
 	
 	//------------------------Checked Out Items Section -------------------------//
 	
-	public void getItemsCheckedOut(){
+	public ArrayList<CircRecord> getItemsCheckedOut(){
 
+		
+		ArrayList<CircRecord> circRecords = new ArrayList<CircRecord>();
+		/*
 		ArrayList<OSRFObject> long_overdue = new ArrayList<OSRFObject>();
 		ArrayList<OSRFObject> claims_returned = new ArrayList<OSRFObject>();
 		ArrayList<OSRFObject> lost = new ArrayList<OSRFObject>();
 		ArrayList<OSRFObject> out = new ArrayList<OSRFObject>();
+		ArrayList<OSRFObject> overdue = new ArrayList<OSRFObject>();
+		*/
 		
+		//fetch ids
 		List<String> long_overdue_id;
+		List<String> overdue_id;
 		List<String> claims_returned_id;
 		List<String> lost_id;
 		List<String> out_id;
+		
 		
 		Object resp  =  Utils.doRequest(conn, SERVICE_ACTOR, METHOD_FETCH_CHECKED_OUT_SUM, new Object[]{authToken, userID});
 
@@ -402,16 +450,34 @@ public class AccountAccess {
 			claims_returned_id = (List<String>)((Map<String,?>)resp).get("claims_returned");
 			lost_id = (List<String>)((Map<String,?>)resp).get("lost");
 			out_id = (List<String>)((Map<String,?>)resp).get("out");
+			overdue_id = (List<String>)((Map<String,?>)resp).get("overdue");
 			
 			//get all the record circ info
-			for(int i=0;i<out_id.size();i++){
-				//System.out.println(out.get(i));
-				out.add(retrieveCircRecord(out_id.get(i)));
-
-				System.out.println(out.get(i).get("target_copy"));
-				fetchInfoForCheckedOutItem(out.get(i).get("target_copy")+"");
-				
-			}
+			if(out_id != null)
+				for(int i=0;i<out_id.size();i++){
+					//get circ 
+					OSRFObject circ = retrieveCircRecord(out_id.get(i));
+					CircRecord circRecord = new CircRecord(circ, CircRecord.OUT,Integer.parseInt(out_id.get(i)));
+					//get info
+					fetchInfoForCheckedOutItem(circ.getInt("target_copy"), circRecord);
+					circRecords.add(circRecord);
+					
+					//System.out.println(out.get(i).get("target_copy"));
+					//fetchInfoForCheckedOutItem(out.get(i).get("target_copy")+"");	
+				}
+			
+			if(overdue_id != null)
+				for(int i=0;i<overdue_id.size();i++){
+					//get circ 
+					OSRFObject circ = retrieveCircRecord(overdue_id.get(i));
+					CircRecord circRecord = new CircRecord(circ, CircRecord.OVERDUE, Integer.parseInt(overdue_id.get(i)));
+					//fetch info
+					fetchInfoForCheckedOutItem(circ.getInt("target_copy"), circRecord);
+					circRecords.add(circRecord);
+					
+				}
+			//TODO are we using this too? In the opac they are not used
+			/*
 			for(int i=0;i<lost_id.size();i++){
 				//System.out.println(out.get(i));
 				lost.add(retrieveCircRecord(lost_id.get(i)));
@@ -424,31 +490,11 @@ public class AccountAccess {
 				//System.out.println(out.get(i));
 				long_overdue.add(retrieveCircRecord(long_overdue_id.get(i)));
 			}
-		
+			 */
+			
+			return circRecords;
 	}
-	/* Fetch info for Checked Out Items
-	 * It uses two methods  : open-ils.search.biblio.mods_from_copy or in case
-	 * of pre-cataloged records it uses open-ils.search.asset.copy.retriev
-	 * Usefull info : title and author 
-	 *  (for acp : dummy_title, dummy_author)
-	 */
-	private OSRFObject fetchInfoForCheckedOutItem(String target_copy){
-		
-		OSRFObject result;
-		OSRFObject info_mvr = fetchModsFromCopy(target_copy);
-		//if title or author not inserted, request acp with copy_target
-		result = info_mvr;
-		OSRFObject info_acp = null;
-		
-		if(info_mvr.get("title") == null || info_mvr.get("author") == null){
-			info_acp = fetchAssetCopy(target_copy);
-			result = info_acp;
-		}
-		
-		return result;
-	}
-	
-	/* Retreives the Circ record
+	/* Retrieves the Circ record
 	 * @param : target_copy from circ
 	 * @returns : "circ" OSRFObject 
 	 */
@@ -458,7 +504,40 @@ public class AccountAccess {
 		return circ;
 	}
 	
-	private OSRFObject fetchModsFromCopy(String target_copy){
+	/* Fetch info for Checked Out Items
+	 * It uses two methods  : open-ils.search.biblio.mods_from_copy or in case
+	 * of pre-cataloged records it uses open-ils.search.asset.copy.retriev
+	 * Usefull info : title and author 
+	 *  (for acp : dummy_title, dummy_author)
+	 */
+	private OSRFObject fetchInfoForCheckedOutItem(Integer target_copy, CircRecord circRecord){
+		
+		if(target_copy == null)
+			return null;
+		
+		OSRFObject result;
+		System.out.println("Mods from copy");
+		OSRFObject info_mvr = fetchModsFromCopy(target_copy);
+		//if title or author not inserted, request acp with copy_target
+		result = info_mvr;
+		OSRFObject info_acp = null;
+
+		//the logic to establish mvr or acp is copied from the opac
+		if(info_mvr.getString("title") == null || info_mvr.getString("author") == null){
+			System.out.println("Asset");
+			info_acp = fetchAssetCopy(target_copy);
+			result = info_acp;
+			circRecord.acp = info_acp;
+			circRecord.circ_info_type = CircRecord.ACP_OBJ_TYPE;
+		}
+		else{
+			circRecord.mvr = info_mvr;
+			circRecord.circ_info_type = CircRecord.MVR_OBJ_TYPE;
+		}
+		return result;
+	}
+	
+	private OSRFObject fetchModsFromCopy(Integer target_copy){
 
 		//sync request		
 		OSRFObject mvr  = (OSRFObject) Utils.doRequest(conn, SERVICE_SEARCH, METHOD_FETCH_MODS_FROM_COPY, new Object[]{target_copy});
@@ -466,12 +545,15 @@ public class AccountAccess {
 		return mvr;
 	}
 	
-	private OSRFObject fetchAssetCopy(String target_copy){
+	private OSRFObject fetchAssetCopy(Integer target_copy){
 		
 		OSRFObject acp  = (OSRFObject) Utils.doRequest(conn, SERVICE_SEARCH, METHOD_FETCH_COPY, new Object[]{target_copy});
 		
 		return acp;
 	}
+
+	
+
 	/* Method used to renew a circulation record based on target_copy_id
 	 * Returns many objects, don't think they are needed
 	 */
@@ -558,7 +640,7 @@ public class AccountAccess {
 		
 		if(type.equals("C")){
 			//fetch_copy
-			OSRFObject copyObject = fetchAssetCopy(hold.getString("target"));	
+			OSRFObject copyObject = fetchAssetCopy(hold.getInt("target"));	
 			//fetch_volume from copyObject.call_number field
 			Integer call_number = copyObject.getInt("call_number");
 			

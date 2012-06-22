@@ -38,6 +38,10 @@
             >
             
         </activity>
+        <!-- Checkout Activities -->
+        <activity android:name=".accountAccess.ItemsCheckOutListView"></activity>
+        
+        
         <activity android:name=".searchCatalog.RecordDetails_Info"></activity>
    		<activity android:name=".searchCatalog.RecordDetails_Content"></activity>
         <activity android:name=".searchCatalog.RecordDetails_Details"></activity>
