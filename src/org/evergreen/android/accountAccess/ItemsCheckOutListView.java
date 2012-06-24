@@ -4,21 +4,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.evergreen.android.R;
-import org.evergreen.android.globals.GlobalConfigs;
-import org.evergreen.android.searchCatalog.RecordInfo;
-import org.opensrf.util.OSRFObject;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class ItemsCheckOutListView extends Activity{
 
@@ -31,6 +30,10 @@ public class ItemsCheckOutListView extends Activity{
 	private CheckOutArrayAdapter listAdapter = null;
 
 	private ArrayList<CircRecord> circRecords = null;
+
+	private Context context;
+	
+	private ProgressDialog progressDialog;
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -39,6 +42,7 @@ public class ItemsCheckOutListView extends Activity{
 		
 		setContentView(R.layout.checkout_list);
 		
+		context = this;
 		accountAccess = AccountAccess.getAccountAccess();
 		
 		lv = (ListView) findViewById(R.id.checkout_items_list);
@@ -49,11 +53,10 @@ public class ItemsCheckOutListView extends Activity{
 		lv.setAdapter(listAdapter);
 		
 
-
+		
 		listAdapter.notifyDataSetChanged();
 
 	}
-	
 	
 	  class CheckOutArrayAdapter extends ArrayAdapter<CircRecord> {
 	    	private static final String tag = "CheckoutArrayAdapter";
@@ -62,6 +65,7 @@ public class ItemsCheckOutListView extends Activity{
 	    	private TextView recordAuthor;
 	    	private TextView recordDueDate;
 	    	private TextView recordRenewals;
+	    	private TextView renewButton;
 	    	
 	    	private List<CircRecord> records = new ArrayList<CircRecord>();
 
@@ -83,7 +87,7 @@ public class ItemsCheckOutListView extends Activity{
 	    		View row = convertView;
 	    		
 	    		// Get item
-	    		CircRecord record = getItem(position);
+	    		final CircRecord record = getItem(position);
 	    		
 	    		
 	    		if(record == null)
@@ -120,12 +124,72 @@ public class ItemsCheckOutListView extends Activity{
 		    
 		    		//Get remaining renewals
 		    		recordRenewals = (TextView) row.findViewById(R.id.checkout_renewals_remaining);
+		    		
+		    		renewButton = (TextView) row.findViewById(R.id.renew_button);
+		    		
+		    		renewButton.setText("renew : " + record.getRenewals());
+		    		
+		    		renewButton.setOnClickListener(new OnClickListener() {
+						
+						@Override
+						public void onClick(View v) {
+								
+								Thread renew = new Thread(new Runnable() {
+									
+									@Override
+									public void run() {
+										boolean refresh = true;
+										AccountAccess ac = AccountAccess.getAccountAccess();
+										
+										runOnUiThread(new Runnable() {	
+											@Override
+											public void run() {
+												progressDialog = new ProgressDialog(context);
+												progressDialog.show(context, "Renew item", "Please wait");
+											}
+										});
+										
+										try{
+											ac.renewCirc(record.getTargetCopy());
+										}catch(MaxRenewalsException e){
+											runOnUiThread(new Runnable() {
+												
+												@Override
+												public void run() {
+													progressDialog.dismiss();
+													Toast.makeText(context, "Max renewals reached", Toast.LENGTH_SHORT).show();
+												}
+											});
+											
+											refresh = false;
+										}
+										if(refresh){
+											circRecords = accountAccess.getItemsCheckedOut();
+											listAdapter.clear();
+											for(int i=0;i<circRecords.size();i++){
+												listAdapter.add(circRecords.get(i));
+											}
+											runOnUiThread(new Runnable() {
+												
+												@Override
+												public void run() {
+													progressDialog.dismiss();
+													listAdapter.notifyDataSetChanged();
+												}
+											});
+										}
+									}
+								});
+								
+								renew.start();
+						}
+					});
 		    		//set text
 		    		System.out.println("Row" + record.getTitle() + " " + record.getAuthor() + " " + record.getDueDate() + " " + record.getRenewals());
 		    		recordTitle.setText(record.getTitle());
 		    		recordAuthor.setText(record.getAuthor());
 		    		recordDueDate.setText(record.getDueDate());
-		    		recordRenewals.setText(record.getRenewals());
+		    		recordRenewals.setText(record.getRenewals()+"");
 	    		}
 	    		
 	    		return row;

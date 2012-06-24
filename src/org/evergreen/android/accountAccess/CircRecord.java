@@ -97,11 +97,18 @@ public class CircRecord {
 		return title;
 	}
 	
-	public String getRenewals(){
-		
+	public Integer getRenewals(){
+
 		if(circ != null)
-			circ.getInt("renewal_remaining");
+			return circ.getInt("renewal_remaining");
 			
+		return null;
+	}
+	
+	public Integer getTargetCopy(){
+		if(circ != null)
+			return circ.getInt("target_copy");
+		
 		return null;
 	}
 	

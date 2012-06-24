@@ -135,12 +135,12 @@ public class Utils {
 		        }
 		}
 
+		System.out.println("Network access " + networkAccessEnabled);
 		
 		if(networkAccessEnabled){
 			//check to see if httpAddress is avaialble using the network connection 
 			// 2 seconds timeout
 			httpAddressAccessReachable = checkIfNetAddressIsReachable(GlobalConfigs.httpAddress);
-		
 			if(httpAddressAccessReachable == false)
 				throw new NoAccessToHttpAddress();
 		}
@@ -161,11 +161,12 @@ public class Utils {
 
 		    HttpParams httpParameters = new BasicHttpParams();  
 
-		    //timeout to 3 seconds
-		    HttpConnectionParams.setConnectionTimeout(httpParameters, 3000);
+		    //timeout to 1 seconds
+		    HttpConnectionParams.setConnectionTimeout(httpParameters, 1000);
 		    HttpClient httpClient = new DefaultHttpClient(httpParameters);
 		    HttpResponse response = httpClient.execute(request);
 
+		    //System.out.println("Check network response" + response);
 		    int status = response.getStatusLine().getStatusCode();
 
 		    if (status == HttpStatus.SC_OK) 
