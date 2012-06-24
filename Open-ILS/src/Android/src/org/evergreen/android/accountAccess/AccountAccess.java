@@ -363,8 +363,10 @@ public class AccountAccess {
 
 		String seed = null;
 
+		System.out.println("Send request to " + httpAddress);
 		Object resp  = (Object) Utils.doRequest(conn, SERVICE_AUTH, METHOD_AUTH_INIT, new Object[]{userName});
-		seed = resp.toString();
+		if(resp != null)
+			seed = resp.toString();
 		
 		System.out.println("Seed " + seed);
 		
@@ -396,7 +398,9 @@ public class AccountAccess {
 		System.out.println("Compelx param " + complexParam);
 		
 		Object resp  =  Utils.doRequest(conn, SERVICE_AUTH, METHOD_AUTH_COMPLETE, new Object[]{complexParam});
-
+		if(resp == null)
+			return false;
+		
 			String queryResult = ((Map<String,String>) resp).get("textcode");
 			 
 			System.out.println("Result " + queryResult);
@@ -557,14 +561,22 @@ public class AccountAccess {
 	/* Method used to renew a circulation record based on target_copy_id
 	 * Returns many objects, don't think they are needed
 	 */
-	private void renewCirc(Integer target_copy){
+	public void renewCirc(Integer target_copy) throws MaxRenewalsException{
 		
 		HashMap<String,Integer> complexParam = new HashMap<String, Integer>();
 		complexParam.put("patron", this.userID);		
 		complexParam.put("copyid", target_copy);
 		complexParam.put("opac_renewal", 1);
 		
-		OSRFObject a_lot = (OSRFObject) Utils.doRequest(conn, SERVICE_CIRC, METHOD_RENEW_CIRC, new Object[]{complexParam});
+		Object a_lot = (Object) Utils.doRequest(conn, SERVICE_CIRC, METHOD_RENEW_CIRC, new Object[]{authToken,complexParam});
+		
+		Map<String,String> resp = (Map<String,String>)a_lot;
+		
+		if(resp.get("textcode") != null){
+			if(resp.get("textcode").equals("MAX_RENEWALS_REACHED"))
+				throw new MaxRenewalsException();
+		}
+		
 		
 	}
 

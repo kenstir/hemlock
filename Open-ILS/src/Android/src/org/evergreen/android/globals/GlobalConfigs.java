@@ -1,16 +1,19 @@
 package org.evergreen.android.globals;
 
 import java.io.InputStream;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
 
 import org.evergreen.android.accountAccess.AccountAccess;
 import org.evergreen.android.searchCatalog.Organisation;
+import org.evergreen.android.views.ApplicationPreferences;
 import org.open_ils.idl.IDLParser;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
@@ -59,6 +62,18 @@ public class GlobalConfigs {
 			SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
 			GlobalConfigs.httpAddress = preferences.getString("library_url", "");
 			
+			System.out.println("Check for network conenctivity");
+			try{
+				Utils.checkNetworkStatus((ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE), context);
+			}catch(NoNetworkAccessException e){
+				
+			}catch(NoAccessToHttpAddress e){
+
+				System.out.println("No access to network");
+				Intent preferencesAnctivity = new Intent(context, ApplicationPreferences.class);
+				context.startActivity(preferencesAnctivity);
+			}
+			
 			loadIDLFile();
 			getOrganisations();
 		
@@ -97,6 +112,7 @@ public class GlobalConfigs {
 		
 		String orgFile = null;
 		try{
+			//using https: address
 			orgFile = Utils.getNetPageContent(httpAddress+collectionsRequest);
 			System.out.println("Request org " + httpAddress + collectionsRequest );
 		}catch(Exception e){};
@@ -107,6 +123,9 @@ public class GlobalConfigs {
 			organisations = new ArrayList<Organisation>();
 			
 			System.out.println("Page content " + orgFile);
+			//in case of wrong file
+			if(orgFile.indexOf("=") == -1)
+				return;
 			
 			String orgArray = orgFile.substring( orgFile.indexOf("=")+1, orgFile.indexOf(";"));  
 			
