@@ -146,6 +146,7 @@ public class ItemsCheckOutListView extends Activity{
 											public void run() {
 												progressDialog = new ProgressDialog(context);
 												progressDialog.setMessage("Renew item please wait.");
+												progressDialog.show();
 											}
 										});
 										
