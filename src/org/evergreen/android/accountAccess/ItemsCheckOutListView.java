@@ -145,7 +145,7 @@ public class ItemsCheckOutListView extends Activity{
 											@Override
 											public void run() {
 												progressDialog = new ProgressDialog(context);
-												progressDialog.show(context, "Renew item", "Please wait");
+												progressDialog.setMessage("Renew item please wait.");
 											}
 										});
 										
