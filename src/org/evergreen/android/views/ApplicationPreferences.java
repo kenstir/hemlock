@@ -34,13 +34,14 @@ public class ApplicationPreferences extends PreferenceActivity implements OnShar
 	private String TAG = "ApplicationPreferences";
 	
 	private Thread connectionThread = null;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 
 		super.onCreate(savedInstanceState);
 		
 		addPreferencesFromResource(R.xml.application_preference_screen);
-		
+
 		context = this;
 		reference = this;
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
@@ -85,8 +86,36 @@ public class ApplicationPreferences extends PreferenceActivity implements OnShar
 			}else
 				if(key.equals("library_url")){
 					GlobalConfigs.httpAddress = sharedPreferences.getString("library_url", "");
+					
+					if(GlobalConfigs.loadedIDL == false){
+						
+						progressDialog = new ProgressDialog(context);
+						progressDialog.setMessage("Please wait while downloading FM IDL file and OrgTree");
+
+						Thread loadIDLThread = new Thread(new Runnable() {
+							
+							@Override
+							public void run() {
+								System.out.println("FM idl download");
+								GlobalConfigs sg = GlobalConfigs.getGlobalConfigs(context);
+								sg.loadIDLFile();
+								sg.getOrganisations();
+							}
+						});
+						
+						loadIDLThread.start();
+						
+						//wait for execution
+						try{
+							loadIDLThread.join();
+						}catch(Exception e){}
+						
+						progressDialog.dismiss();
+					}
+					
 				}
 		
+			
 		//test connection
 		if(!isFinishing())
 			progressDialog = ProgressDialog.show(this, "Account login", "Please wait while we test the new user account information");	

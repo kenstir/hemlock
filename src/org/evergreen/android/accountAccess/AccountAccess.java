@@ -201,7 +201,7 @@ public class AccountAccess {
 	public HttpConnection conn;
 
 	/** The http address. */
-	public String httpAddress = "http://ulysses.calvin.edu";
+	private String httpAddress = "http://ulysses.calvin.edu";
 
 	/** The TAG. */
 	public String TAG = "AuthenticareUser";
@@ -245,11 +245,20 @@ public class AccountAccess {
 
 	}
 
+	public boolean isAuthenticated(){
+		
+		if(authToken != null)
+			return true;
+		
+		return false;
+	}
+	
 	public static AccountAccess getAccountAccess(String httpAddress){
 		
 		if(accountAccess == null){
 			accountAccess = new AccountAccess(httpAddress);
 		}
+		System.out.println(" Addresses " + httpAddress + " " + accountAccess.httpAddress);
 		if(!httpAddress.equals(accountAccess.httpAddress))
 			accountAccess.updateHttpAddress(httpAddress);
 			
@@ -269,10 +278,10 @@ public class AccountAccess {
 	 * Change the Http conn to a new library address
 	 */
 	public void updateHttpAddress(String httpAddress){
-		
+		System.out.println("update http address of account access to " + httpAddress);
 		try {
 			// configure the connection
-			
+			this.httpAddress =  httpAddress;
 			System.out.println("Connection with " + httpAddress);
 			conn = new HttpConnection(httpAddress + "/osrf-gateway-v1");
 
@@ -395,6 +404,7 @@ public class AccountAccess {
 		complexParam.put("username", userName);
 		complexParam.put("password", hash);
 
+		System.out.println("Password " + password);
 		System.out.println("Compelx param " + complexParam);
 		
 		Object resp  =  Utils.doRequest(conn, SERVICE_AUTH, METHOD_AUTH_COMPLETE, new Object[]{complexParam});

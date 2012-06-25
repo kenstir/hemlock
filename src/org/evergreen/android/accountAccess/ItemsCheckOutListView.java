@@ -45,16 +45,37 @@ public class ItemsCheckOutListView extends Activity{
 		context = this;
 		accountAccess = AccountAccess.getAccountAccess();
 		
-		lv = (ListView) findViewById(R.id.checkout_items_list);
+		Thread getCirc = new Thread(new Runnable() {
+			
+			@Override
+			public void run() {
+				lv = (ListView) findViewById(R.id.checkout_items_list);
+				circRecords = accountAccess.getItemsCheckedOut();			
+				listAdapter = new CheckOutArrayAdapter(context, R.layout.checkout_list_item, circRecords);
+				lv.setAdapter(listAdapter);
+	
+				listAdapter.notifyDataSetChanged();
+				
+				runOnUiThread(new Runnable() {
+					
+					@Override
+					public void run() {
+						progressDialog.dismiss();	
+					}
+				});
+			}
+		});
 		
-		circRecords = accountAccess.getItemsCheckedOut();
 		
-		listAdapter = new CheckOutArrayAdapter(this, R.layout.checkout_list_item, circRecords);
-		lv.setAdapter(listAdapter);
-		
+		if(accountAccess.isAuthenticated()){
+			progressDialog = new ProgressDialog(context);
+			progressDialog.setMessage("Please wait while retrieving circ data");
+			getCirc.start();
+			
+		}
+		else
+			Toast.makeText(context, "You must be authenticated to retrieve circ records", Toast.LENGTH_LONG);
 
-		
-		listAdapter.notifyDataSetChanged();
 
 	}
 	

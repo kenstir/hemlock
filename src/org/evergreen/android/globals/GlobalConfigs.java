@@ -25,6 +25,10 @@ public class GlobalConfigs {
 
 	private static String TAG = "GlobalConfigs";
 	
+	public static boolean loadedIDL = false;
+	
+	public static boolean loadedOrgTree = false;
+	
 	/** The locale. */
 	public String locale = "en-US";  
 	
@@ -89,7 +93,7 @@ public class GlobalConfigs {
 		return false;
 	}
 	
-	private static void loadIDLFile(){
+	public void loadIDLFile(){
 	    	
 		   	 String idlFile = "/reports/fm_IDL.xml";
 		   	 try{
@@ -101,6 +105,7 @@ public class GlobalConfigs {
 		   		System.err.println("Error in parsing IDL file " + idlFile + " " + e.getMessage());
 		   	};
 	   	
+		   	loadedIDL = true; 
 	   }
 
 	/**
@@ -108,7 +113,7 @@ public class GlobalConfigs {
 	 *
 	 * @return the organisations
 	 */
-	private void getOrganisations(){
+	public void getOrganisations(){
 		
 		String orgFile = null;
 		try{
@@ -242,6 +247,8 @@ public class GlobalConfigs {
 				level ++;
 			}
 			organisations = orgs;
+			
+			loadedOrgTree = true;
 		}
 	}
 }
