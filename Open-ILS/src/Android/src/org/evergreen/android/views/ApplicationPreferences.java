@@ -34,6 +34,8 @@ public class ApplicationPreferences extends PreferenceActivity implements OnShar
 	private String TAG = "ApplicationPreferences";
 	
 	private Thread connectionThread = null;
+	
+	private Thread coreFilesDownload = null;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -47,6 +49,7 @@ public class ApplicationPreferences extends PreferenceActivity implements OnShar
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
 		//register preference listener
 		prefs.registerOnSharedPreferenceChangeListener(this);
+		
 	}
 
 	
@@ -76,50 +79,7 @@ public class ApplicationPreferences extends PreferenceActivity implements OnShar
 	public void onSharedPreferenceChanged(SharedPreferences sharedPreferences,
 			String key) {
 		
-		
-		
-		if(key.equals("username")){
-			AccountAccess.userName = sharedPreferences.getString("username", "");
-		}else
-			if(key.equals("password")){
-				AccountAccess.password = sharedPreferences.getString("password", "");
-			}else
-				if(key.equals("library_url")){
-					GlobalConfigs.httpAddress = sharedPreferences.getString("library_url", "");
-					
-					
-						
-						progressDialog = new ProgressDialog(context);
-						progressDialog.setMessage("Please wait while downloading FM IDL file and OrgTree");
-						progressDialog.show();
-						
-						Thread loadIDLThread = new Thread(new Runnable() {
-							
-							@Override
-							public void run() {
-								System.out.println("FM idl download");
-								GlobalConfigs sg = GlobalConfigs.getGlobalConfigs(context);
-								sg.loadIDLFile();
-								sg.getOrganisations();
-							}
-						});
-						
-						loadIDLThread.start();
-						
-						//wait for execution
-						try{
-							loadIDLThread.join();
-						}catch(Exception e){}
-						
-						progressDialog.dismiss();
-					}
-					
-				
-		
-			
-		//test connection
-		if(!isFinishing())
-			progressDialog = ProgressDialog.show(this, "Account login", "Please wait while we test the new user account information");	
+		boolean httpAddressChange = false;
 		
 		connectionThread = new Thread(new Runnable() {
 			
@@ -202,8 +162,52 @@ public class ApplicationPreferences extends PreferenceActivity implements OnShar
 			}
 		});
 		
-		connectionThread.start();
+		
+		if(key.equals("username")){
+			AccountAccess.userName = sharedPreferences.getString("username", "");
+		}else
+			if(key.equals("password")){
+				AccountAccess.password = sharedPreferences.getString("password", "");
+			}else
+				if(key.equals("library_url")){
+					GlobalConfigs.httpAddress = sharedPreferences.getString("library_url", "");
+	
+					httpAddressChange = true;
+					System.out.println("Show dialog");
+					
+						progressDialog = ProgressDialog.show(context, "Core files", "Downloading FM_IDL and OrgTree");
+									
+						coreFilesDownload = new Thread(new Runnable() {
+							
+							@Override
+							public void run() {
+								System.out.println("FM idl download");
+								GlobalConfigs sg = GlobalConfigs.getGlobalConfigs(context);
+								sg.loadIDLFile();
+								sg.getOrganisations();
+								
+								runOnUiThread(new Runnable() {
+									public void run() {
+										progressDialog.dismiss();
+									}
+								});
+								
+								connectionThread.start();
+							}
+						});
+						
+						coreFilesDownload.start();
+						
+						//wait for execution
+	
+					}
 
+		//test connection
+		if(!isFinishing() && httpAddressChange == false){
+			progressDialog = ProgressDialog.show(this, "Account login", "Please wait while we test the new user account information");	
+
+			connectionThread.start();
+		}
 	}
 /*
  *  Dialog interface for starting the network settings
