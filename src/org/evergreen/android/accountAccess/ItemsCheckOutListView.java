@@ -55,18 +55,21 @@ public class ItemsCheckOutListView extends Activity{
 			public void run() {
 				
 				circRecords = accountAccess.getItemsCheckedOut();			
-				
-				for(int i=0;i<circRecords.size();i++)
-					listAdapter.add(circRecords.get(i));
-					
-					
-				listAdapter.notifyDataSetChanged();
-				
+	
 				runOnUiThread(new Runnable() {
 					
 					@Override
 					public void run() {
+						for(int i=0;i<circRecords.size();i++)
+							listAdapter.add(circRecords.get(i));
+						
+						
 						progressDialog.dismiss();	
+						
+						if(circRecords.size() == 0)
+							Toast.makeText(context, "No circ records", Toast.LENGTH_LONG);
+						
+						listAdapter.notifyDataSetChanged();
 					}
 				});
 			}
@@ -76,6 +79,7 @@ public class ItemsCheckOutListView extends Activity{
 		if(accountAccess.isAuthenticated()){
 			progressDialog = new ProgressDialog(context);
 			progressDialog.setMessage("Please wait while retrieving circ data");
+			progressDialog.show();
 			getCirc.start();
 			
 		}

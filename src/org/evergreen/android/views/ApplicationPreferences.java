@@ -87,11 +87,12 @@ public class ApplicationPreferences extends PreferenceActivity implements OnShar
 				if(key.equals("library_url")){
 					GlobalConfigs.httpAddress = sharedPreferences.getString("library_url", "");
 					
-					if(GlobalConfigs.loadedIDL == false){
+					
 						
 						progressDialog = new ProgressDialog(context);
 						progressDialog.setMessage("Please wait while downloading FM IDL file and OrgTree");
-
+						progressDialog.show();
+						
 						Thread loadIDLThread = new Thread(new Runnable() {
 							
 							@Override
@@ -113,7 +114,7 @@ public class ApplicationPreferences extends PreferenceActivity implements OnShar
 						progressDialog.dismiss();
 					}
 					
-				}
+				
 		
 			
 		//test connection
