@@ -44,16 +44,22 @@ public class ItemsCheckOutListView extends Activity{
 		
 		context = this;
 		accountAccess = AccountAccess.getAccountAccess();
+		lv = (ListView) findViewById(R.id.checkout_items_list);
+		circRecords = new ArrayList<CircRecord>();
+		listAdapter = new CheckOutArrayAdapter(context, R.layout.checkout_list_item, circRecords);
+		lv.setAdapter(listAdapter);
 		
 		Thread getCirc = new Thread(new Runnable() {
 			
 			@Override
 			public void run() {
-				lv = (ListView) findViewById(R.id.checkout_items_list);
+				
 				circRecords = accountAccess.getItemsCheckedOut();			
-				listAdapter = new CheckOutArrayAdapter(context, R.layout.checkout_list_item, circRecords);
-				lv.setAdapter(listAdapter);
-	
+				
+				for(int i=0;i<circRecords.size();i++)
+					listAdapter.add(circRecords.get(i));
+					
+					
 				listAdapter.notifyDataSetChanged();
 				
 				runOnUiThread(new Runnable() {
