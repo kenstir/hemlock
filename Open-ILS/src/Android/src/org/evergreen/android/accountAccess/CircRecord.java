@@ -4,6 +4,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import org.evergreen.android.globals.GlobalConfigs;
 import org.opensrf.util.OSRFObject;
 
 /**
@@ -34,8 +35,6 @@ public class CircRecord {
 	public static final int LOST = 4;
 	
 	public int circ_id = -1;
-	
-	private static final String datePattern = "yyyy-MM-dd'T'hh:mm:ssZ";
 	
 	private Date circ_due_date = null;
 	
@@ -114,18 +113,9 @@ public class CircRecord {
 	
 	private void parseDate(OSRFObject circ){
 		
-		final SimpleDateFormat sdf = new SimpleDateFormat(datePattern);
-        
-		if(circ.getString("due_date") != null)
-			try
-	        {
-	            this.circ_due_date = sdf.parse(circ.getString("due_date"));
-	            System.out.println(this.circ_due_date);
-	        } 
-	        catch (ParseException e)
-	        {
-	            e.printStackTrace();
-	        }
+		this.circ_due_date = GlobalConfigs.parseDate(circ.getString("due_date"));
+		System.out.println(this.circ_due_date);
+
 	}
 	
 }

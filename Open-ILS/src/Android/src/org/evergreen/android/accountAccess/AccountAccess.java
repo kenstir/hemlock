@@ -111,11 +111,11 @@ public class AccountAccess {
 	/** The METHOD_FETCH_MRMODS
 	 * 
 	 */
-	// if holdtype == M
+	// if holdtype == M  return mvr OSRFObject
 	public static String METHOD_FETCH_MRMODS = "open-ils.search.biblio.metarecord.mods_slim.retrieve";
-	// if holdtype == T
+	// if holdtype == T return mvr OSRFObject
 	public static String METHOD_FETCH_RMODS = "open-ils.search.biblio.records.mods_slim.retrieve";
-	//if hold type V
+	//if hold type V 
 	public static String METHOD_FETCH_VOLUME = "open-ils.search.asset.call_number.retrieve";
 	//if hold type I
 	public static String METHOD_FETCH_ISSUANCE = "open-ils.serial.issuance.pub_fleshed.batch.retrieve";
@@ -601,23 +601,34 @@ public class AccountAccess {
 	
 	
 	
-	public void getHolds(){
+	public List<HoldItem> getHolds(){
 
+		
+		ArrayList<HoldItem> holds = new ArrayList<HoldItem>();
+		
+		//fields of interest : expire_time
 		List<OSRFObject> listHoldsAhr = null;
 		
 		// holds description for each hold
 		List<OSRFObject> listHoldsMvr = null;
 		
 		//status of holds, fields like : potential_copies, status, total_holds, queue_position, estimated_wait
-		List<HashMap<String,Integer>> listHoldsStatus = null; 
-
+		List<HashMap<String,Integer>> listHoldsStatus = null;
+		
 		listHoldsAhr = (List<OSRFObject>) Utils.doRequest(conn, SERVICE_CIRC, METHOD_FETCH_HOLDS, new Object[]{authToken,userID});
 		
-		for(int i=0;i<listHoldsAhr.size();i++){
-			fetchHoldTitleInfo(listHoldsAhr.get(i));
-			fetchHoldStatus(listHoldsAhr.get(i));
-		}
-		
+		//for(int i=0;i<listHoldsAhr.size();i++){
+			//create hold item
+			HoldItem hold = new HoldItem(listHoldsAhr.get(0));
+			//get title 
+			fetchHoldTitleInfo(listHoldsAhr.get(0), hold);
+			
+			//get status 
+			fetchHoldStatus(listHoldsAhr.get(0),hold);
+			
+			holds.add(hold);
+		//}
+		return holds;
 	}
 	
 	/* hold target type :
@@ -629,7 +640,7 @@ public class AccountAccess {
 	 *  P - pat
 	 */
 	
-	private Object fetchHoldTitleInfo(OSRFObject holdArhObject){
+	private Object fetchHoldTitleInfo(OSRFObject holdArhObject, HoldItem hold){
 		
 		
 		String holdType = (String)holdArhObject.get("hold_type");
@@ -647,11 +658,15 @@ public class AccountAccess {
 			
 			holdInfo = Utils.doRequest(conn,SERVICE_SEARCH, method, new Object[]{holdArhObject.get("target")});
 
+			System.out.println("Hold here " + holdInfo);
+			((OSRFObject)holdInfo).getString("title");
+			((OSRFObject)holdInfo).getString("author");
+			
 		}
 		else{
 				//multiple objects per hold ????
 				holdInfo = holdFetchObjects(holdArhObject);
-;
+
 			}
 		return holdInfo;
 	}
@@ -702,12 +717,15 @@ public class AccountAccess {
 	}
 	
 	
-	public Object fetchHoldStatus(OSRFObject hold){
+	public Object fetchHoldStatus(OSRFObject hold, HoldItem holdObj){
 		
 		Integer hold_id = hold.getInt("id");
 		// MAP : potential_copies, status, total_holds, queue_position, estimated_wait
 		Object hold_status = Utils.doRequest(conn,SERVICE_CIRC, METHOD_FETCH_HOLD_STATUS, new Object[]{authToken,hold_id});
 	
+		//get status
+		holdObj.status = ((Map<String,Integer>)hold_status).get("status");
+		
 		return hold_status;
 	}
 	

@@ -41,6 +41,8 @@
         <!-- Checkout Activities -->
         <activity android:name=".accountAccess.ItemsCheckOutListView"></activity>
         
+        <!-- Holds Activities -->
+        <activity android:name=".accountAccess.HoldsListView"></activity>
         
         <activity android:name=".searchCatalog.RecordDetails_Info"></activity>
    		<activity android:name=".searchCatalog.RecordDetails_Content"></activity>

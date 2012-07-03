@@ -1,7 +1,10 @@
 package org.evergreen.android.globals;
 
 import java.io.InputStream;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.StringTokenizer;
 
 import org.evergreen.android.accountAccess.AccountAccess;
@@ -9,7 +12,6 @@ import org.evergreen.android.searchCatalog.Organisation;
 import org.evergreen.android.views.ApplicationPreferences;
 import org.open_ils.idl.IDLParser;
 
-import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -28,6 +30,9 @@ public class GlobalConfigs {
 	public static boolean loadedIDL = false;
 	
 	public static boolean loadedOrgTree = false;
+	
+	//to parse date from requests
+	public static final String datePattern = "yyyy-MM-dd'T'hh:mm:ssZ";
 	
 	/** The locale. */
 	public String locale = "en-US";  
@@ -65,30 +70,36 @@ public class GlobalConfigs {
 			init = true;
 			SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
 			GlobalConfigs.httpAddress = preferences.getString("library_url", "");
-			
+			boolean noNetworkAccess = false;
 			System.out.println("Check for network conenctivity");
 			try{
 				Utils.checkNetworkStatus((ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE), context);
-			}catch(NoNetworkAccessException e){
 				
+			}catch(NoNetworkAccessException e){
+				noNetworkAccess = true;
 			}catch(NoAccessToHttpAddress e){
 
 				System.out.println("No access to network");
 				Intent preferencesAnctivity = new Intent(context, ApplicationPreferences.class);
 				context.startActivity(preferencesAnctivity);
+				
+				noNetworkAccess = true;
+				
 			}
+			if(!noNetworkAccess){
+				loadIDLFile();
+				getOrganisations();
 			
-			loadIDLFile();
-			getOrganisations();
-		
-			AccountAccess.setAccountInfo(preferences.getString("username", ""), preferences.getString("password", ""));
-			
-			
-			//authenticate
-			AccountAccess ac = AccountAccess.getAccountAccess(GlobalConfigs.httpAddress);
-			ac.authenticate();
-			
-			return true;
+				AccountAccess.setAccountInfo(preferences.getString("username", ""), preferences.getString("password", ""));
+				
+				
+				//authenticate
+				AccountAccess ac = AccountAccess.getAccountAccess(GlobalConfigs.httpAddress);
+				ac.authenticate();
+				
+				return true;
+			}
+			return false;
 		}
 		return false;
 	}
@@ -251,4 +262,26 @@ public class GlobalConfigs {
 			loadedOrgTree = true;
 		}
 	}
+	//parse from opac methods query results to Java date
+	public static Date parseDate(String dateString){
+		
+		if(dateString == null)
+			return null;
+		
+		Date date = null;
+		final SimpleDateFormat sdf = new SimpleDateFormat(GlobalConfigs.datePattern);
+        
+			try
+	        {
+	            date = sdf.parse(dateString);
+	            System.out.println(date);
+	        } 
+	        catch (ParseException e)
+	        {
+	            e.printStackTrace();
+	        }
+			
+			return date;
+	}
+	
 }

@@ -230,7 +230,7 @@ public class Utils {
 			method.addParam(params[i]);
 			System.out.print("Param "+i+":" + params[i]);
 		}
-		System.out.println();
+		System.out.println("Request to method " + methodName + " service " + service + " conn " + conn);
 		//sync request
 		HttpRequest req = new GatewayRequest(conn, service, method).send();
 		Object resp;
@@ -248,7 +248,7 @@ public class Utils {
 						
 					}
 				}catch(Exception e){
-					
+					System.err.println("Exception in retreive" + e.getMessage());
 				}
 				return response;
 			

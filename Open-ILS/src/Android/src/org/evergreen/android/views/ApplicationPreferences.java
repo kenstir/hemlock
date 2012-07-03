@@ -160,8 +160,7 @@ public class ApplicationPreferences extends PreferenceActivity implements OnShar
 						}
 					});
 			}
-		});
-		
+		});	
 		
 		if(key.equals("username")){
 			AccountAccess.userName = sharedPreferences.getString("username", "");
