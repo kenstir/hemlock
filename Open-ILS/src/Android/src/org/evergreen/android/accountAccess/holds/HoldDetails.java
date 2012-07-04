@@ -4,10 +4,12 @@ import java.util.Calendar;
 
 import org.evergreen.android.R;
 import org.evergreen.android.accountAccess.AccountAccess;
-import org.evergreen.android.searchCatalog.RecordInfo;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.AlertDialog.Builder;
 import android.app.DatePickerDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.text.format.DateFormat;
 import android.text.format.Time;
@@ -18,7 +20,7 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TextView;
 
-public class PlaceHold extends Activity{
+public class HoldDetails extends Activity{
 
 	
 	private TextView recipient;
@@ -35,9 +37,11 @@ public class PlaceHold extends Activity{
 	
 	private EditText expiration_date;
 	
-	private Button placeHold;
+	private Button updateHold;
 	
-	private Button cancel;
+	private Button cancelHold;
+	
+	private Button back;
 	
 	private DatePickerDialog datePicker = null;
 	
@@ -45,9 +49,9 @@ public class PlaceHold extends Activity{
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
-		setContentView(R.layout.place_hold);
+		setContentView(R.layout.hold_details);
 		
-		RecordInfo record = (RecordInfo) getIntent().getSerializableExtra("recordInfo");
+		final HoldRecord record = (HoldRecord) getIntent().getSerializableExtra("holdRecord");
 		
 		accountAccess = AccountAccess.getAccountAccess();
 		
@@ -56,8 +60,10 @@ public class PlaceHold extends Activity{
 		author = (TextView) findViewById(R.id.hold_author);
 		physical_description = (TextView) findViewById(R.id.hold_physical_description);
 		screen_title = (TextView) findViewById(R.id.header_title);
-		cancel = (Button) findViewById(R.id.cancel_hold);
-		placeHold = (Button) findViewById(R.id.place_hold);
+		cancelHold = (Button) findViewById(R.id.cancel_hold_button);
+		updateHold = (Button) findViewById(R.id.update_hold_button);
+		back = (Button) findViewById(R.id.back_button);
+		
 		expiration_date = (EditText) findViewById(R.id.hold_expiration_date);
 		
 		screen_title.setText("Place Hold");
@@ -65,30 +71,49 @@ public class PlaceHold extends Activity{
 		recipient.setText(accountAccess.userName);
 		title.setText(record.title);
 		author.setText(record.author);
-		physical_description.setText(record.physical_description);
+		if(record.recordInfo != null)
+			physical_description.setText(record.recordInfo.physical_description);
 		
 		System.out.println(record.title + " " + record.author);
 		
-		cancel.setOnClickListener(new OnClickListener() {
+		back.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				finish();
 			}
 		});
 		
-		final Integer record_id = record.doc_id;
-		
-		placeHold.setOnClickListener(new OnClickListener() {
+		cancelHold.setOnClickListener(new OnClickListener() {
+			
 			@Override
 			public void onClick(View v) {
+			
+
+				Builder confirmationDialogBuilder = new AlertDialog.Builder(getApplicationContext());
+			    confirmationDialogBuilder.setMessage(R.string.cancel_hold_dialog_message);
+			    
+			    confirmationDialogBuilder.setNegativeButton(android.R.string.no, null);
+			    confirmationDialogBuilder.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+			      @Override
+			      public void onClick(DialogInterface dialog, int which) {
+			        
+			    	  System.out.println("Remove hold with id" + record.ahr.getInt("id"));
+			    	  accountAccess.cancelHold(record.ahr);
+			      }
+			    });
+			    confirmationDialogBuilder.create().show();
 				
-				//accountAccess.createHold(record_id);
-				
-				accountAccess.getHoldPreCreateInfo(record_id, 4);
 			}
 		});
 		
-		
+		updateHold.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+
+				//update new values
+				accountAccess.updateHold(record.ahr);
+			}
+		});
 		
 		Calendar cal = Calendar.getInstance();
 		datePicker = new DatePickerDialog(this,

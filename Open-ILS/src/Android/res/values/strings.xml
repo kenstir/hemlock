@@ -29,6 +29,9 @@
     <string name="suspend_hold">Suspend Hold</string>
     <string name="place_hold">Place hold</string>
     <string name="cancel">Cancel</string>
-    
+    <string name="cancel_hold">Cancel hold</string>
+    <string name="back">Back</string>
+    <string name="update_hold">Update Hold</string>
+    <string name="cancel_hold_dialog_message">Are you sure you want to cancel this hold?</string>
     
 </resources>

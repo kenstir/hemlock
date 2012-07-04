@@ -44,7 +44,7 @@
         <!-- Holds Activities -->
         <activity android:name=".accountAccess.holds.HoldsListView"></activity>
         <activity android:name=".accountAccess.holds.PlaceHold"></activity>
-        
+        <activity android:name=".accountAccess.holds.HoldDetails"></activity>
         
         <activity android:name=".searchCatalog.RecordDetails_Info"></activity>
    		<activity android:name=".searchCatalog.RecordDetails_Content"></activity>
