@@ -9,6 +9,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
 import android.app.DatePickerDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.text.format.DateFormat;
@@ -22,6 +23,12 @@ import android.widget.TextView;
 
 public class HoldDetails extends Activity{
 
+	
+	public static final int RESULT_CODE_DELETE_HOLD = 0;
+	
+	public static final int RESULT_CODE_UPDATE_HOLD = 1;
+	
+	public static final int RESULT_CODE_CANCEL = 2;
 	
 	private TextView recipient;
 	
@@ -45,13 +52,17 @@ public class HoldDetails extends Activity{
 	
 	private DatePickerDialog datePicker = null;
 	
+	private Context context;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		
+		context = this;
 		setContentView(R.layout.hold_details);
 		
 		final HoldRecord record = (HoldRecord) getIntent().getSerializableExtra("holdRecord");
+		
+		System.out.println("Record " + record + " " + record.title + " " + record.ahr);
 		
 		accountAccess = AccountAccess.getAccountAccess();
 		
@@ -89,7 +100,7 @@ public class HoldDetails extends Activity{
 			public void onClick(View v) {
 			
 
-				Builder confirmationDialogBuilder = new AlertDialog.Builder(getApplicationContext());
+				Builder confirmationDialogBuilder = new AlertDialog.Builder(context);
 			    confirmationDialogBuilder.setMessage(R.string.cancel_hold_dialog_message);
 			    
 			    confirmationDialogBuilder.setNegativeButton(android.R.string.no, null);
@@ -98,7 +109,13 @@ public class HoldDetails extends Activity{
 			      public void onClick(DialogInterface dialog, int which) {
 			        
 			    	  System.out.println("Remove hold with id" + record.ahr.getInt("id"));
+			    	  
+			    	  //TODO put into thread
 			    	  accountAccess.cancelHold(record.ahr);
+			    	  
+			    	  setResult(RESULT_CODE_DELETE_HOLD);
+			    	  
+			    	  finish();
 			      }
 			    });
 			    confirmationDialogBuilder.create().show();
