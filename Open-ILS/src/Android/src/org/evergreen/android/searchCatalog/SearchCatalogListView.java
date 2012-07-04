@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.evergreen.android.R;
+import org.evergreen.android.accountAccess.holds.PlaceHold;
 import org.evergreen.android.globals.GlobalConfigs;
 
 import com.google.android.maps.ItemizedOverlay;
@@ -302,12 +303,14 @@ public class SearchCatalogListView extends Activity{
     	AdapterView.AdapterContextMenuInfo menuArrayItem = (AdapterView.AdapterContextMenuInfo)item.getMenuInfo();
     	int menuItemIndex = item.getItemId();
     	
+    	RecordInfo info = (RecordInfo)lv.getItemAtPosition(menuArrayItem.position);
+		//start activity with book details
+		
+    	
     	switch(item.getItemId()){
     		
     		case DETAILS : {
-       			RecordInfo info = (RecordInfo)lv.getItemAtPosition(menuArrayItem.position);
-    			//start activity with book details
-    			
+       			
     			Intent intent = new Intent(getBaseContext(),RecordDetails_Simple.class);
     			//serialize object and pass it to next activity
     			intent.putExtra("recordInfo", info);
@@ -316,7 +319,12 @@ public class SearchCatalogListView extends Activity{
     		}
     		break;
     		case PLACE_HOLD : {
-    			//TODO
+
+    			Intent intent = new Intent(getBaseContext(),PlaceHold.class);
+    			
+    			intent.putExtra("recordInfo", info);
+    			
+    			startActivity(intent);
     		}
     		break;
     	}

@@ -31,6 +31,8 @@ public class RecordInfo implements Serializable{
 	
 	public String subject = null;
 	
+	public String doc_type = null;
+	
 	public String online_loc = null;
 	
 	public String synopsis = null;
@@ -62,7 +64,7 @@ public class RecordInfo implements Serializable{
 			this.publisher = info.getString("publisher");
 			this.doc_id = info.getInt("doc_id");
 			this.image = info.getString("tcn");
-			
+			this.doc_type = info.getString("doc_type");
 		}
 		catch(Exception e){System.out.println("Exception basic info " + e.getMessage());};
 		

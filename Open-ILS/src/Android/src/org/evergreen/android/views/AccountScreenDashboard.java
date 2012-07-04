@@ -2,8 +2,8 @@
 package org.evergreen.android.views;
 
 import org.evergreen.android.R;
-import org.evergreen.android.accountAccess.HoldsListView;
 import org.evergreen.android.accountAccess.ItemsCheckOutListView;
+import org.evergreen.android.accountAccess.holds.HoldsListView;
 
 import android.app.Activity;
 import android.content.Intent;

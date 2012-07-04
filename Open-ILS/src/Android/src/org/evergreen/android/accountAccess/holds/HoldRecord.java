@@ -1,11 +1,11 @@
-package org.evergreen.android.accountAccess;
+package org.evergreen.android.accountAccess.holds;
 
 import java.util.Date;
 
 import org.evergreen.android.globals.GlobalConfigs;
 import org.opensrf.util.OSRFObject;
 
-public class HoldItem {
+public class HoldRecord {
 
 	//metarecord
 	public static final int M = 0;
@@ -40,11 +40,14 @@ public class HoldItem {
 	*  holdStatus <= 3 => TRANSIT 
 	*/
 	
+	//only for P types
+	public String part_label = null; 
+	
 	public Integer status = null;
 	
 	public Boolean active = null;
 	
-	public HoldItem(OSRFObject ahr){
+	public HoldRecord(OSRFObject ahr){
 		
 		this.target = ahr.getInt("target");
 		String type = ahr.getString("hold_type");
@@ -70,6 +73,21 @@ public class HoldItem {
 		this.expire_time = GlobalConfigs.parseDate(ahr.getString("expire_time"));
 						
 	}
-	
+	//based on status integer field retreive hold status in text
+	public String getHoldStatus(){
+		
+		String holdStatus = "";
+		
+		if(holdType == 7)
+			return "Suspended";
+		if(holdType == 4)
+			return "Available";
+		if(holdType == 3)
+			return "Waiting";
+		if(holdType < 3)
+			return "Transit";
+		
+		return holdStatus;
+	}
 	
 }

@@ -225,12 +225,15 @@ public class Utils {
 	{
 		//TODO check params and throw errors
 		Method method = new Method(methodName);
-		System.out.println();
+		
+		System.out.println("Method :" + methodName + " param:");
 		for(int i=0;i<params.length;i++){
 			method.addParam(params[i]);
 			System.out.print("Param "+i+":" + params[i]);
 		}
-		System.out.println("Request to method " + methodName + " service " + service + " conn " + conn);
+		//need space
+		System.out.println();
+		
 		//sync request
 		HttpRequest req = new GatewayRequest(conn, service, method).send();
 		Object resp;
@@ -243,6 +246,7 @@ public class Utils {
 					String textcode = ((Map<String,String>)response).get("textcode");
 					if(textcode != null){
 						if(textcode.equals("NO_SESSION")){
+							System.out.println("REQUIRE NEW SESSION");
 							response = requireNewSession(conn, service, methodName, params);
 						}
 						
