@@ -14,4 +14,21 @@
     <string name="search_result_text"> Search result :</string>
     <string name="renew_button">renew</string>
     
+    <!-- Place Hold Activity View -->
+    
+    <string name="recipient">Recipient</string>
+    <string name="title">Title</string>
+    <string name="author">Author</string>
+    <string name="physical_description">Physical Description</string>
+    <string name="contact_telephone">Contact tel</string>
+    <string name="enable_phone_notification"> Phone notification</string>
+    <string name="contact_email_address">Contact email address </string>
+    <string name="enable_email_notification"></string>
+    <string name="pickup_location">Pickup location</string>
+    <string name="expiration_date">Expiration Date</string>
+    <string name="suspend_hold">Suspend Hold</string>
+    <string name="place_hold">Place hold</string>
+    <string name="cancel">Cancel</string>
+    
+    
 </resources>

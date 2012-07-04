@@ -1,6 +1,7 @@
 
 package org.evergreen.android.accountAccess;
 
+import java.lang.annotation.Target;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
@@ -8,6 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.evergreen.android.accountAccess.holds.HoldRecord;
 import org.evergreen.android.globals.Utils;
 import org.opensrf.Method;
 import org.opensrf.net.http.GatewayRequest;
@@ -114,8 +116,8 @@ public class AccountAccess {
 	// if holdtype == M  return mvr OSRFObject
 	public static String METHOD_FETCH_MRMODS = "open-ils.search.biblio.metarecord.mods_slim.retrieve";
 	// if holdtype == T return mvr OSRFObject
-	public static String METHOD_FETCH_RMODS = "open-ils.search.biblio.records.mods_slim.retrieve";
-	//if hold type V 
+	public static String METHOD_FETCH_RMODS = "open-ils.search.biblio.record.mods_slim.retrieve";
+	//if hold type V
 	public static String METHOD_FETCH_VOLUME = "open-ils.search.asset.call_number.retrieve";
 	//if hold type I
 	public static String METHOD_FETCH_ISSUANCE = "open-ils.serial.issuance.pub_fleshed.batch.retrieve";
@@ -142,6 +144,19 @@ public class AccountAccess {
 	 *  description : 
 	 *  @param : authtoken , hashmap 	{"titleid":38,"mrid":35,"volume_id":null,"issuanceid":null,
 	 *  "copy_id":null,"hold_type":"T","holdable_formats":null,"patronid":2,"depth":0,"pickup_lib":"8","partid":null}
+	 *  parameters : (desc in OpenILS::Application::Circ::holds perldoc)
+	 *  patron_id ID of hold recipient
+	 *  depth (hold range depth, default 0)
+	 *  pickup_lib destination for hold, fallback value for selection_ou
+	 *  selection_ou
+	 *  issuanceid
+	 *  partid
+	 *  titleid
+	 *  volume_id
+	 *  copy_id
+	 *  mrid
+	 *  hold_type
+	 *  
 	 *  @returns :  hashmap with "success" : 1 field or 
 	 */
 	public static String METHOD_VERIFY_HOLD_POSSIBLE = "open-ils.circ.title_hold.is_possible";
@@ -195,8 +210,6 @@ public class AccountAccess {
 	public static String METHOD_FLESH_PUBLIC_CONTAINER = "open-ils.actor.container.flesh";
 	
 	
-	
-	
 	/** The conn. */
 	public HttpConnection conn;
 
@@ -209,7 +222,7 @@ public class AccountAccess {
 	/** The auth token. 
 	 *  Sent with every request that needs authentication
 	 * */
-	private String authToken = null;
+	public static String authToken = null;
 	
 	/** The auth time. */
 	private Integer authTime = null;
@@ -417,10 +430,10 @@ public class AccountAccess {
 			
 			if(queryResult.equals("SUCCESS")){
 				Object payload = ((Map<String,String>) resp).get("payload");
-				authToken = ((Map<String,String>)payload).get("authtoken");
+				accountAccess.authToken = ((Map<String,String>)payload).get("authtoken");
 				try{
-					System.out.println(((Map<String,Integer>)payload).get("authtoken"));
-					authTime = ((Map<String,Integer>)payload).get("authtime");
+					System.out.println(authToken);
+					accountAccess.authTime = ((Map<String,Integer>)payload).get("authtime");
 					
 				}catch(Exception e){
 					System.err.println("Error in parsing authtime " + e.getMessage());
@@ -601,33 +614,27 @@ public class AccountAccess {
 	
 	
 	
-	public List<HoldItem> getHolds(){
+	public List<HoldRecord> getHolds(){
 
 		
-		ArrayList<HoldItem> holds = new ArrayList<HoldItem>();
+		ArrayList<HoldRecord> holds = new ArrayList<HoldRecord>();
 		
 		//fields of interest : expire_time
 		List<OSRFObject> listHoldsAhr = null;
-		
-		// holds description for each hold
-		List<OSRFObject> listHoldsMvr = null;
-		
-		//status of holds, fields like : potential_copies, status, total_holds, queue_position, estimated_wait
-		List<HashMap<String,Integer>> listHoldsStatus = null;
-		
+
 		listHoldsAhr = (List<OSRFObject>) Utils.doRequest(conn, SERVICE_CIRC, METHOD_FETCH_HOLDS, new Object[]{authToken,userID});
 		
-		//for(int i=0;i<listHoldsAhr.size();i++){
+		for(int i=0;i<listHoldsAhr.size();i++){
 			//create hold item
-			HoldItem hold = new HoldItem(listHoldsAhr.get(0));
+			HoldRecord hold = new HoldRecord(listHoldsAhr.get(i));
 			//get title 
-			fetchHoldTitleInfo(listHoldsAhr.get(0), hold);
+			fetchHoldTitleInfo(listHoldsAhr.get(i), hold);
 			
 			//get status 
-			fetchHoldStatus(listHoldsAhr.get(0),hold);
+			fetchHoldStatus(listHoldsAhr.get(i),hold);
 			
 			holds.add(hold);
-		//}
+		}
 		return holds;
 	}
 	
@@ -640,84 +647,139 @@ public class AccountAccess {
 	 *  P - pat
 	 */
 	
-	private Object fetchHoldTitleInfo(OSRFObject holdArhObject, HoldItem hold){
+	private Object fetchHoldTitleInfo(OSRFObject holdArhObject, HoldRecord hold){
 		
 		
 		String holdType = (String)holdArhObject.get("hold_type");
 		
 		String method = null;
 		
+		
+		
 		Object response;
 		Object holdInfo = null;
 		if(holdType.equals("T") || holdType.equals("M")){
 			
-			if(holdType.equals("T")) 
+			if(holdType.equals("M")) 
 				method = METHOD_FETCH_MRMODS;
-			if(holdType.equals("M"))
+			if(holdType.equals("T"))
 				method = METHOD_FETCH_RMODS;
-			
+			System.out.println();
 			holdInfo = Utils.doRequest(conn,SERVICE_SEARCH, method, new Object[]{holdArhObject.get("target")});
 
-			System.out.println("Hold here " + holdInfo);
-			((OSRFObject)holdInfo).getString("title");
-			((OSRFObject)holdInfo).getString("author");
+			//System.out.println("Hold here " + holdInfo);
+			hold.title = ((OSRFObject)holdInfo).getString("title");
+			hold.author = ((OSRFObject)holdInfo).getString("author");
 			
 		}
 		else{
 				//multiple objects per hold ????
-				holdInfo = holdFetchObjects(holdArhObject);
+				holdInfo = holdFetchObjects(holdArhObject, hold);
 
 			}
 		return holdInfo;
 	}
 	
-	private Object holdFetchObjects(OSRFObject hold){
+	private Object holdFetchObjects(OSRFObject hold, HoldRecord holdObj){
 		
 		String type = (String)hold.get("hold_type");
 		
+		System.out.println("Hold Type " + type);
 		if(type.equals("C")){
+			
+			/* steps 
+			* asset.copy'->'asset.call_number'->'biblio.record_entry'
+			* or, in IDL ids, acp->acn->bre
+			*/
+			
 			//fetch_copy
 			OSRFObject copyObject = fetchAssetCopy(hold.getInt("target"));	
 			//fetch_volume from copyObject.call_number field
 			Integer call_number = copyObject.getInt("call_number");
 			
 			if(call_number != null){
-				OSRFObject volume = (OSRFObject) Utils.doRequest(conn,SERVICE_CIRC, METHOD_FETCH_VOLUME, new Object[]{copyObject.getInt("call_number")});	
+				
+				OSRFObject volume = (OSRFObject) Utils.doRequest(conn,SERVICE_SEARCH, METHOD_FETCH_VOLUME, new Object[]{copyObject.getInt("call_number")});	
 			//in volume object : record
+				Integer record = volume.getInt("record");
+				
+				//part label
+				holdObj.part_label = volume.getString("label");
+						
+				System.out.println("Record " + record);
+				OSRFObject holdInfo = (OSRFObject)Utils.doRequest(conn,SERVICE_SEARCH,  METHOD_FETCH_RMODS, new Object[]{record});
+
+				holdObj.title = holdInfo.getString("title");
+				holdObj.author = holdInfo.getString("author");
 			}
+			
+			
 			
 			return copyObject;
 		}
 		else
 			if(type.equals("V")){
+				//must test
+				
 				//fetch_volume
-				OSRFObject volume = (OSRFObject) Utils.doRequest(conn,SERVICE_CIRC, METHOD_FETCH_VOLUME, new Object[]{hold.getInt("target")});
+				OSRFObject volume = (OSRFObject) Utils.doRequest(conn,SERVICE_SEARCH, METHOD_FETCH_VOLUME, new Object[]{hold.getInt("target")});
 				//in volume object : record 
+				
+				//in volume object : record
+				Integer record = volume.getInt("record");
+				
+				//part label
+				holdObj.part_label = volume.getString("label");
+						
+				System.out.println("Record " + record);
+				OSRFObject holdInfo = (OSRFObject)Utils.doRequest(conn,SERVICE_SEARCH,  METHOD_FETCH_RMODS, new Object[]{record});
+
+				holdObj.title = holdInfo.getString("title");
+				holdObj.author = holdInfo.getString("author");
 			}
 			else
 				if(type.equals("I")){	
 					OSRFObject issuance = (OSRFObject) Utils.doRequest(conn,SERVICE_SERIAL, METHOD_FETCH_ISSUANCE, new Object[]{hold.getInt("target")});
+				//TODO
+					
 				}
 				else
 					if(type.equals("P")){
-						HashMap<String, Object> param = new HashMap<String, Object>(0);
+						HashMap<String, Object> param = new HashMap<String, Object>();
 						
 						param.put("cache", 1);
-						param.put("fields", new String[]{"label","record"});
+						
+						ArrayList<String> fieldsList = new ArrayList<String>();
+						fieldsList.add("label");
+						fieldsList.add("record");
+						
+						param.put("fields", fieldsList);
 							HashMap<String, Integer> queryParam = new HashMap<String, Integer>();
 							//PART_ID use "target field in hold"
 							queryParam.put("id", hold.getInt("target"));
 						param.put("query",queryParam);
 						
-						//returns mvr object
-						OSRFObject part = (OSRFObject) Utils.doRequest(conn,SERVICE_FIELDER,"open-ils.fielder.bmp.atomic",new Object[]{});
+						//returns [{record:id, label=part label}]
+						
+						List<Object> part = (List<Object>)Utils.doRequest(conn,SERVICE_FIELDER,"open-ils.fielder.bmp.atomic",new Object[]{param});
+						
+						Map<String,?> partObj =(Map<String,?>)part.get(0);
+						
+						Integer recordID = (Integer)partObj.get("record"); 
+						String part_label = (String)partObj.get("label");
+						
+						OSRFObject holdInfo = (OSRFObject)Utils.doRequest(conn,SERVICE_SEARCH,  METHOD_FETCH_RMODS, new Object[]{recordID});
+
+						holdObj.part_label = part_label;
+						holdObj.title = holdInfo.getString("title");
+						holdObj.author = holdInfo.getString("author");
 					}
 			
 		return null;
 	}
 	
 	
-	public Object fetchHoldStatus(OSRFObject hold, HoldItem holdObj){
+	public Object fetchHoldStatus(OSRFObject hold, HoldRecord holdObj){
 		
 		Integer hold_id = hold.getInt("id");
 		// MAP : potential_copies, status, total_holds, queue_position, estimated_wait
@@ -746,20 +808,72 @@ public class AccountAccess {
 		return response;
 	}
 	
-	public Object createHold(OSRFObject newHoldObject){
+	public Object createHold(Integer recordID){
 		
-	Object response = Utils.doRequest(conn,SERVICE_CIRC, METHOD_CREATE_HOLD, new Object[]{authToken,newHoldObject});
+	OSRFObject ahr = new OSRFObject("ahr");
+	ahr.put("target", recordID);
+	ahr.put("usr", userID);
+	ahr.put("requestor", userID);
+	ahr.put("hold_type", "T");
+	ahr.put("pickup_lib", 4);
+	ahr.put("selection_ou",8);
+	
+	//selection_ou from where it was selected 
+	//pick_up lib
+	//type
+	
+	Object response = Utils.doRequest(conn,SERVICE_CIRC, METHOD_CREATE_HOLD, new Object[]{authToken,ahr});
 		
 		return response;
 	}
 	// ?? return boolean 
-	public Object isHoldPossible(HashMap<String,?> valuesHold){
+	public Object isHoldPossible(Integer pickup_lib,Integer recordID){
 		
 		
-		Object response = Utils.doRequest(conn,SERVICE_CIRC, METHOD_VERIFY_HOLD_POSSIBLE, new Object[]{authToken,valuesHold});
+		HashMap<String,Integer> mapAsk = getHoldPreCreateInfo(recordID, pickup_lib);
+		mapAsk.put("pickup_lib", pickup_lib);
+		mapAsk.put("hold_type", null);
+		mapAsk.put("patronid", userID);
+		mapAsk.put("volume_id", null);
+		mapAsk.put("issuanceid", null);
+		mapAsk.put("copy_id", null);
+		mapAsk.put("depth", 0);
+		mapAsk.put("part_id", null);
+		mapAsk.put("holdable_formats", null);
+		//{"titleid":63,"mrid":60,"volume_id":null,"issuanceid":null,"copy_id":null,"hold_type":"T","holdable_formats":null,
+		//"patronid":2,"depth":0,"pickup_lib":"8","partid":null}
+		
+		
+		Object response = Utils.doRequest(conn,SERVICE_CIRC, METHOD_VERIFY_HOLD_POSSIBLE, new Object[]{authToken,mapAsk});
 		
 		return response;
 	}
+	//return 
+	public HashMap<String,Integer> getHoldPreCreateInfo(Integer recordID, Integer pickup_lib){
+	
+		
+		HashMap<String, Integer> param = new HashMap<String, Integer>();
+		
+		param.put("pickup_lib",pickup_lib);
+		param.put("record", recordID);
+		
+		Map<String,?> response = (Map<String,?>)Utils.doRequest(conn, SERVICE_SEARCH, "open-ils.search.metabib.record_to_descriptors", new Object[]{param});
+		
+		Integer metarecordID = Integer.parseInt((String)response.get("metarecord"));
+		
+		
+		HashMap<String,Integer> map = new HashMap<String, Integer>();
+		map.put("titleid", recordID);
+		map.put("mrid", metarecordID);
+		
+		return map;
+		/* Methods to get necessary info on hold
+		open-ils.search.metabib.record_to_descriptors
+		
+		open-ils.search.biblio.record_hold_parts
+		*/
+	}
+
 	
 	//----------------------------Fines Summary------------------------------------//
 	
