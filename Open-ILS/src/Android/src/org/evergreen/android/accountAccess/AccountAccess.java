@@ -1,7 +1,6 @@
 
 package org.evergreen.android.accountAccess;
 
-import java.lang.annotation.Target;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
@@ -11,6 +10,7 @@ import java.util.Map;
 
 import org.evergreen.android.accountAccess.holds.HoldRecord;
 import org.evergreen.android.globals.Utils;
+import org.evergreen.android.searchCatalog.RecordInfo;
 import org.opensrf.Method;
 import org.opensrf.net.http.GatewayRequest;
 import org.opensrf.net.http.HttpConnection;
@@ -670,6 +670,7 @@ public class AccountAccess {
 			//System.out.println("Hold here " + holdInfo);
 			hold.title = ((OSRFObject)holdInfo).getString("title");
 			hold.author = ((OSRFObject)holdInfo).getString("author");
+			hold.recordInfo = new RecordInfo((OSRFObject)holdInfo);
 			
 		}
 		else{
@@ -711,6 +712,7 @@ public class AccountAccess {
 
 				holdObj.title = holdInfo.getString("title");
 				holdObj.author = holdInfo.getString("author");
+				holdObj.recordInfo = new RecordInfo((OSRFObject)holdInfo);
 			}
 			
 			
@@ -736,6 +738,7 @@ public class AccountAccess {
 
 				holdObj.title = holdInfo.getString("title");
 				holdObj.author = holdInfo.getString("author");
+				holdObj.recordInfo = new RecordInfo((OSRFObject)holdInfo);
 			}
 			else
 				if(type.equals("I")){	
@@ -773,6 +776,7 @@ public class AccountAccess {
 						holdObj.part_label = part_label;
 						holdObj.title = holdInfo.getString("title");
 						holdObj.author = holdInfo.getString("author");
+						holdObj.recordInfo = new RecordInfo((OSRFObject)holdInfo);
 					}
 			
 		return null;
@@ -792,13 +796,18 @@ public class AccountAccess {
 	}
 	
 	
-	public Object cancelHold(OSRFObject hold){
+	public boolean cancelHold(OSRFObject hold){
 		
 		Integer hold_id = hold.getInt("id");
 		
 		Object response = Utils.doRequest(conn,SERVICE_CIRC, METHOD_CANCEL_HOLD, new Object[]{authToken,hold_id});
 		
-		return response;
+		//delete successful 
+		if(response.toString().equals("1"))
+			return true;
+		
+		return false;
+		
 	}
 	
 	public Object updateHold(OSRFObject newHoldObject){

@@ -36,6 +36,8 @@ public class HoldsListView extends Activity{
 
 	private Context context;
 	
+	Runnable getHoldsRunnable= null;
+	
 	private ProgressDialog progressDialog;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -52,7 +54,7 @@ public class HoldsListView extends Activity{
 		listAdapter = new HoldsArrayAdapter(context, R.layout.holds_list_item, holdRecords);
 		lv.setAdapter(listAdapter);
 		
-		Thread getHoldsThread = new Thread(new Runnable() {
+		getHoldsRunnable = new Runnable() {
 			@Override
 			public void run() {
 				
@@ -72,12 +74,15 @@ public class HoldsListView extends Activity{
 					}
 				});
 			}
-		});
+		};
 		
 		if(accountAccess.isAuthenticated()){
 			progressDialog = new ProgressDialog(context);
 			progressDialog.setMessage("Loading holds");
 			progressDialog.show();
+			
+			//thread to retrieve holds
+			Thread getHoldsThread = new Thread(getHoldsRunnable);
 			getHoldsThread.start();
 			
 		}
@@ -96,11 +101,44 @@ public class HoldsListView extends Activity{
 					
 					intent.putExtra("holdRecord", record);
 					
-					startActivity(intent);
+					//doae not matter request code, only result code
+					startActivityForResult(intent, 0);
 			}
 		});
 	}
-	
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		// TODO Auto-generated method stub
+		super.onActivityResult(requestCode, resultCode, data);
+		
+		switch(resultCode){
+		
+		case HoldDetails.RESULT_CODE_CANCEL : { 
+			//nothing
+			}break;
+			
+		case HoldDetails.RESULT_CODE_DELETE_HOLD : {
+			//refresh ui
+			progressDialog = new ProgressDialog(context);
+			progressDialog.setMessage("Loading holds");
+			progressDialog.show();
+			//thread to retrieve holds
+			Thread getHoldsThread = new Thread(getHoldsRunnable);
+			getHoldsThread.start();
+		}break;
+		
+		case HoldDetails.RESULT_CODE_UPDATE_HOLD : {
+			//refresh ui
+			progressDialog = new ProgressDialog(context);
+			progressDialog.setMessage("Loading holds");
+			progressDialog.show();
+			//thread to retrieve holds
+			Thread getHoldsThread = new Thread(getHoldsRunnable);
+			getHoldsThread.start();
+		}break;
+		
+		}
+	}
 	
 	class HoldsArrayAdapter extends ArrayAdapter<HoldRecord> {
     	private static final String tag = "CheckoutArrayAdapter";
