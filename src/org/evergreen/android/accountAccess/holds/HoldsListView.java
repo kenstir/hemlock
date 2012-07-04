@@ -9,11 +9,14 @@ import org.evergreen.android.accountAccess.AccountAccess;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -81,6 +84,21 @@ public class HoldsListView extends Activity{
 		else
 			Toast.makeText(context, "You must be authenticated to retrieve circ records", Toast.LENGTH_LONG);
 
+		
+		lv.setOnItemClickListener(new OnItemClickListener() {
+
+			@Override
+			public void onItemClick(AdapterView<?> arg0, View arg1, int position,
+					long arg3) {
+					HoldRecord record = (HoldRecord) lv.getItemAtPosition(position);
+					
+					Intent intent = new Intent(getApplicationContext(),HoldDetails.class);
+					
+					intent.putExtra("holdRecord", record);
+					
+					startActivity(intent);
+			}
+		});
 	}
 	
 	

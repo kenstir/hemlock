@@ -1,13 +1,11 @@
 package org.evergreen.android.accountAccess.holds;
 
-import java.io.Serializable;
 import java.util.Date;
 
 import org.evergreen.android.globals.GlobalConfigs;
-import org.evergreen.android.searchCatalog.RecordInfo;
 import org.opensrf.util.OSRFObject;
 
-public class HoldRecord implements Serializable{
+public class HoldItem {
 
 	//metarecord
 	public static final int M = 0;
@@ -49,18 +47,10 @@ public class HoldRecord implements Serializable{
 	
 	public Boolean active = null;
 	
-	//must also be serializable
-	public OSRFObject ahr = null;
-	//record info with more etails
-	public RecordInfo recordInfo = null;
-	
-	
-	public HoldRecord(OSRFObject ahr){
+	public HoldItem(OSRFObject ahr){
 		
 		this.target = ahr.getInt("target");
 		String type = ahr.getString("hold_type");
-		
-		this.ahr = ahr;
 		
 		if(type.equals("M")){
 			holdType = M;

@@ -222,7 +222,7 @@ public class AccountAccess {
 	/** The auth token. 
 	 *  Sent with every request that needs authentication
 	 * */
-	public static String authToken = null;
+	public String authToken = null;
 	
 	/** The auth time. */
 	private Integer authTime = null;
@@ -859,8 +859,9 @@ public class AccountAccess {
 		
 		Map<String,?> response = (Map<String,?>)Utils.doRequest(conn, SERVICE_SEARCH, "open-ils.search.metabib.record_to_descriptors", new Object[]{param});
 		
-		Integer metarecordID = Integer.parseInt((String)response.get("metarecord"));
-		
+		Object obj = response.get("metarecord");
+		System.out.println(obj);
+		Integer metarecordID = Integer.parseInt(obj.toString());
 		
 		HashMap<String,Integer> map = new HashMap<String, Integer>();
 		map.put("titleid", recordID);

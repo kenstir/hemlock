@@ -35,18 +35,25 @@
 	        android:layout_centerInParent="true"
 	     	>
 	        <Button
-	            android:id="@+id/cancel_hold"
+	            android:id="@+id/back_button"
 	            android:layout_width="100dip"
 	            android:layout_height="wrap_content"
-	            android:text="@string/cancel"
+	            android:text="@string/back"
 	            />
 	        
 	        <Button 
-	            android:id="@+id/place_hold"
+	            android:id="@+id/cancel_hold_button"
 	            android:layout_width="100dip"
 	            android:layout_height="wrap_content"
-	            android:text="@string/place_hold"
+	            android:text="@string/cancel_hold"
 	            />	 
+	            
+	         <Button 
+	            android:id="@+id/update_hold_button"
+	            android:layout_width="100dip"
+	            android:layout_height="wrap_content"
+	            android:text="@string/update_hold"
+	            />	
 	    </LinearLayout>
     
     <ScrollView 

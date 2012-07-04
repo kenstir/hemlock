@@ -4,7 +4,8 @@
 	<classpathentry kind="src" path="gen"/>
 	<classpathentry kind="con" path="com.android.ide.eclipse.adt.ANDROID_FRAMEWORK"/>
 	<classpathentry kind="con" path="com.android.ide.eclipse.adt.LIBRARIES"/>
-	<classpathentry kind="lib" path="lib/org.opensrf.jar"/>
 	<classpathentry kind="lib" path="lib/simple-xml-2.6.4.jar"/>
+	<classpathentry kind="lib" path="lib/org.opensrf2_serialized_reg.jar"/>
+	<classpathentry kind="lib" path="lib/org.openils_idl.jar"/>
 	<classpathentry kind="output" path="bin/classes"/>
 </classpath>
