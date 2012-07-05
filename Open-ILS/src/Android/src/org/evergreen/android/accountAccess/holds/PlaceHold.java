@@ -1,21 +1,29 @@
 package org.evergreen.android.accountAccess.holds;
 
 import java.util.Calendar;
+import java.util.Date;
 
 import org.evergreen.android.R;
 import org.evergreen.android.accountAccess.AccountAccess;
+import org.evergreen.android.globals.GlobalConfigs;
 import org.evergreen.android.searchCatalog.RecordInfo;
 
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.os.Bundle;
 import android.text.format.DateFormat;
-import android.text.format.Time;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemSelectedListener;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 public class PlaceHold extends Activity{
@@ -35,11 +43,29 @@ public class PlaceHold extends Activity{
 	
 	private EditText expiration_date;
 	
+	private EditText phone_number;
+	
+	private CheckBox phone_notification;
+	
+	private CheckBox email_notification;
+	
 	private Button placeHold;
 	
 	private Button cancel;
 	
+	private CheckBox suspendHold;
+	
+	private Spinner orgSelector;
+	
 	private DatePickerDialog datePicker = null;
+	
+	private DatePickerDialog thaw_datePicker = null;
+	
+	private EditText thaw_date_edittext;
+	
+	private Date expire_date = null;
+	
+	private Date thaw_date = null;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -59,15 +85,22 @@ public class PlaceHold extends Activity{
 		cancel = (Button) findViewById(R.id.cancel_hold);
 		placeHold = (Button) findViewById(R.id.place_hold);
 		expiration_date = (EditText) findViewById(R.id.hold_expiration_date);
-		
+		phone_notification = (CheckBox) findViewById(R.id.hold_enable_phone_notification);
+		phone_number= (EditText) findViewById(R.id.hold_contact_telephone);
+		email_notification = (CheckBox) findViewById(R.id.hold_enable_email_notification);
+		suspendHold = (CheckBox) findViewById(R.id.hold_suspend_hold);
+		orgSelector = (Spinner) findViewById(R.id.hold_pickup_location);
+		thaw_date_edittext = (EditText) findViewById(R.id.hold_thaw_date);
 		screen_title.setText("Place Hold");
 		
 		recipient.setText(accountAccess.userName);
 		title.setText(record.title);
 		author.setText(record.author);
 		physical_description.setText(record.physical_description);
-		
-		System.out.println(record.title + " " + record.author);
+
+		//hide edit text
+		disableView(thaw_date_edittext);
+		disableView(phone_number);
 		
 		cancel.setOnClickListener(new OnClickListener() {
 			@Override
@@ -82,25 +115,63 @@ public class PlaceHold extends Activity{
 			@Override
 			public void onClick(View v) {
 				
-				//accountAccess.createHold(record_id);
+				
 				
 				accountAccess.getHoldPreCreateInfo(record_id, 4);
+				accountAccess.isHoldPossible(4, record_id);
+				
+				String expire_date_s = null;
+				String thaw_date_s = null;
+				if(expire_date != null)
+					expire_date_s = GlobalConfigs.getStringDate(expire_date);
+				if(thaw_date != null)
+					thaw_date_s = GlobalConfigs.getStringDate(thaw_date);
+				
+				accountAccess.createHold(record_id,4,email_notification.isChecked(),phone_notification.isChecked(),phone_number.getText().toString(),suspendHold.isChecked(),expire_date_s,thaw_date_s);
 			}
 		});
 		
 		
+		phone_notification.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+			
+			@Override
+			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+
+				if(isChecked){
+					enableView(phone_number);
+				}
+				else
+					disableView(phone_number);
+			}
+		});
+		
+		suspendHold.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+			
+			@Override
+			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+				
+				if(isChecked){
+					enableView(thaw_date_edittext);
+				}else
+				{
+					disableView(thaw_date_edittext);
+				}
+			}
+		});
 		
 		Calendar cal = Calendar.getInstance();
+		
 		datePicker = new DatePickerDialog(this,
 		         new DatePickerDialog.OnDateSetListener() {
 		 
 		         public void onDateSet(DatePicker view, int year,
 		                                             int monthOfYear, int dayOfMonth)
 		         {
-		                    Time chosenDate = new Time();
-		                    chosenDate.set(dayOfMonth, monthOfYear, year);
-		                    long dtDob = chosenDate.toMillis(true);
-		                    CharSequence strDate = DateFormat.format("MMMM dd, yyyy", dtDob);
+		        	 
+
+		                    Date chosenDate = new Date(year, monthOfYear,dayOfMonth);                 
+		                    expire_date = chosenDate;
+		                    CharSequence strDate = DateFormat.format("MMMM dd, yyyy", chosenDate);
 		                    expiration_date.setText(strDate);
 		                    //set current date          
 		        }}, cal.get(Calendar.YEAR),cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH));
@@ -112,6 +183,54 @@ public class PlaceHold extends Activity{
 			}
 		});
 		
+		thaw_datePicker = new DatePickerDialog(this,
+		         new DatePickerDialog.OnDateSetListener() {
+		 
+		         public void onDateSet(DatePicker view, int year,
+		                                             int monthOfYear, int dayOfMonth)
+		         {
+		        	 
+		        	 		
+		                    Date chosenDate = new Date(year, monthOfYear,dayOfMonth);                 
+		                    thaw_date = chosenDate;
+		                    CharSequence strDate = DateFormat.format("MMMM dd, yyyy", chosenDate);
+		                    expiration_date.setText(strDate);
+		                    //set current date          
+		        }}, cal.get(Calendar.YEAR),cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH));
+	
+		thaw_date_edittext.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				thaw_datePicker.show();	
+			}
+		});
+		
+		
+		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,android.R.layout.simple_spinner_item,list);
+        orgSelector.setAdapter(adapter);
+    	
+        orgSelector.setSelection();
+        
+        orgSelectorn.setOnItemSelectedListener(new OnItemSelectedListener() {
+			@Override
+			public void onItemSelected(AdapterView<?> arg0, View arg1,
+					int ID, long arg3) {
+				//select the specific organization
+				search.selectOrganisation(globalConfigs.organisations.get(ID));
+				
+			}
+	}
+	
+	public void disableView(View view){
+		
+		//view.setFocusable(false);
+		
+		view.setVisibility(View.INVISIBLE);
+	}
+	
+	public void enableView(View view){
+		view.setVisibility(View.VISIBLE);
 	}
 	
 }

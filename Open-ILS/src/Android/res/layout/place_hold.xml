@@ -153,7 +153,7 @@
 		            android:text="@string/contact_telephone"
 		            />
 		        
-		        <TextView 
+		        <EditText
 		            android:id="@+id/hold_contact_telephone"
 		            android:layout_width="0dip"
 		            android:layout_height="wrap_content"
@@ -264,7 +264,28 @@
 		            android:gravity="center"
 		            />    
 	    </LinearLayout>
- 	     
+ 	         <LinearLayout 
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:orientation="horizontal"
+	        >
+		        <TextView 
+		            android:layout_width="0dip"
+		            android:layout_height="wrap_content"
+		            android:layout_weight="2"
+		            android:text="@string/thaw_date"
+		            />
+		        
+		        <EditText 
+		            android:id="@+id/hold_thaw_date"
+		            android:layout_width="0dip"
+		            android:layout_height="wrap_content"
+		            android:layout_weight="4"
+		            android:gravity="center"
+		            />
+		        
+		        
+	    </LinearLayout>
        </LinearLayout>
     
     </ScrollView>

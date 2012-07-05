@@ -166,7 +166,7 @@ public class AccountAccess {
 	 *  @param : authtoken, ahr OSRFObject 
 	 *  @returns : hash with messages : "success" : 1 field or 
 	 */
-	public static String METHOD_CREATE_HOLD = "	open-ils.circ.holds.create";
+	public static String METHOD_CREATE_HOLD = "open-ils.circ.holds.create";
 	
 	//Used for Fines 
 	
@@ -817,19 +817,26 @@ public class AccountAccess {
 		return response;
 	}
 	
-	public Object createHold(Integer recordID){
+	public Object createHold(Integer recordID, Integer pickup_lib, boolean email_notify, boolean phone_notify, String phone, boolean suspendHold, String expire_time,String thaw_date){
 		
 	OSRFObject ahr = new OSRFObject("ahr");
 	ahr.put("target", recordID);
 	ahr.put("usr", userID);
 	ahr.put("requestor", userID);
-	ahr.put("hold_type", "T");
-	ahr.put("pickup_lib", 4);
-	ahr.put("selection_ou",8);
 	
-	//selection_ou from where it was selected 
-	//pick_up lib
-	//type
+	//do not set hold type, the systems knows the hold type
+	//ahr.put("hold_type", "T");
+	ahr.put("pickup_lib", pickup_lib); //pick-up lib
+	ahr.put("phone_notify", phone);
+	ahr.put("email_notify", email_notify);
+	ahr.put("expire_time",expire_time);
+	//frozen set, what this means ? 
+	ahr.put("frozen", suspendHold);
+	//only if it is frozen
+	ahr.put("thaw_date",thaw_date);
+	
+	//extra parameters (not mandatory for hold creation)
+
 	
 	Object response = Utils.doRequest(conn,SERVICE_CIRC, METHOD_CREATE_HOLD, new Object[]{authToken,ahr});
 		
