@@ -39,18 +39,23 @@
             
         </activity>
         <!-- Checkout Activities -->
-        <activity android:name=".accountAccess.ItemsCheckOutListView"></activity>
+        <activity android:name=".accountAccess.checkout.ItemsCheckOutListView"></activity>
         
         <!-- Holds Activities -->
         <activity android:name=".accountAccess.holds.HoldsListView"></activity>
         <activity android:name=".accountAccess.holds.PlaceHold"></activity>
         <activity android:name=".accountAccess.holds.HoldDetails"></activity>
         
+        <!-- Fines Activities -->
+        <activity android:name=".accountAccess.fines.FinesActivity"></activity>
+        
         <activity android:name=".searchCatalog.RecordDetails_Info"></activity>
    		<activity android:name=".searchCatalog.RecordDetails_Content"></activity>
         <activity android:name=".searchCatalog.RecordDetails_Details"></activity>
         <activity android:name=".searchCatalog.RecordDetails"></activity>
         <activity android:name=".searchCatalog.RecordDetails_Simple"></activity>
+        
+        
     </application>
     
 </manifest>

@@ -1,4 +1,4 @@
-package org.evergreen.android.accountAccess;
+package org.evergreen.android.accountAccess.checkout;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;

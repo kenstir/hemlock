@@ -34,4 +34,11 @@
     <string name="update_hold">Update Hold</string>
     <string name="cancel_hold_dialog_message">Are you sure you want to cancel this hold?</string>
     <string name="thaw_date">Automatically activate hold one</string>
+    
+    
+    <!-- Fines Activity -->
+    <string name="total_owned">Total Owned </string>
+    <string name="total_paid">Total Paid</string>
+    <string name="balance_owed">Balance Owed</string>
+    
 </resources>

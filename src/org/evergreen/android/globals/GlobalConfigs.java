@@ -33,7 +33,7 @@ public class GlobalConfigs {
 	
 	//to parse date from requests
 	public static final String datePattern = "yyyy-MM-dd'T'hh:mm:ssZ";
-	
+
 	/** The locale. */
 	public String locale = "en-US";  
 	

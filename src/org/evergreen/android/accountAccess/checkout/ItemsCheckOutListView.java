@@ -1,9 +1,11 @@
-package org.evergreen.android.accountAccess;
+package org.evergreen.android.accountAccess.checkout;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import org.evergreen.android.R;
+import org.evergreen.android.accountAccess.AccountAccess;
+import org.evergreen.android.accountAccess.MaxRenewalsException;
 
 import android.app.Activity;
 import android.app.ProgressDialog;

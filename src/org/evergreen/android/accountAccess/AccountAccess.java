@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.evergreen.android.accountAccess.checkout.CircRecord;
 import org.evergreen.android.accountAccess.holds.HoldRecord;
 import org.evergreen.android.globals.Utils;
 import org.evergreen.android.searchCatalog.RecordInfo;
@@ -824,16 +825,17 @@ public class AccountAccess {
 	ahr.put("usr", userID);
 	ahr.put("requestor", userID);
 	
+	//TODO
 	//do not set hold type, the systems knows the hold type
-	//ahr.put("hold_type", "T");
+	ahr.put("hold_type", null);
 	ahr.put("pickup_lib", pickup_lib); //pick-up lib
-	ahr.put("phone_notify", phone);
-	ahr.put("email_notify", email_notify);
-	ahr.put("expire_time",expire_time);
+	//ahr.put("phone_notify", phone);
+	//ahr.put("email_notify", email_notify);
+	//ahr.put("expire_time",expire_time);
 	//frozen set, what this means ? 
 	ahr.put("frozen", suspendHold);
 	//only if it is frozen
-	ahr.put("thaw_date",thaw_date);
+	//ahr.put("thaw_date",thaw_date);
 	
 	//extra parameters (not mandatory for hold creation)
 
@@ -894,11 +896,21 @@ public class AccountAccess {
 	
 	//----------------------------Fines Summary------------------------------------//
 	
-	public OSRFObject getFinesSummary(){
+	public float[] getFinesSummary(){
 		
+		//mous object
 		OSRFObject finesSummary = (OSRFObject) Utils.doRequest(conn,SERVICE_ACTOR, METHOD_FETCH_FINES_SUMMARY, new Object[]{authToken,userID});
 		
-		return finesSummary;
+		float fines[] = new float[3];
+		try{
+			fines[0] = Float.parseFloat(finesSummary.getString("total_owed"));
+			fines[1] = Float.parseFloat(finesSummary.getString("total_paid"));
+			fines[2] = Float.parseFloat(finesSummary.getString("balance_owed"));
+		}catch(Exception e){
+			System.err.println("Exception in parsing fines " + e.getMessage());
+		}
+		
+		return fines;
 	}
 	
 	private Object getTransactions(){
@@ -907,6 +919,8 @@ public class AccountAccess {
 		
 		return transactions;
 	}
+	
+	//---------------------------------------Book bags-----------------------------------//
 	
 	public Object getBookbags(){
 		

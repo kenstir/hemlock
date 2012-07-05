@@ -1,5 +1,6 @@
 package org.evergreen.android.accountAccess.holds;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -67,12 +68,15 @@ public class PlaceHold extends Activity{
 	
 	private Date thaw_date = null;
 	
+	private GlobalConfigs globalConfigs = null;
+	
+	private int selectedOrgPos = 0;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
 		setContentView(R.layout.place_hold);
-		
+		globalConfigs = GlobalConfigs.getGlobalConfigs(this);
 		RecordInfo record = (RecordInfo) getIntent().getSerializableExtra("recordInfo");
 		
 		accountAccess = AccountAccess.getAccountAccess();
@@ -115,10 +119,9 @@ public class PlaceHold extends Activity{
 			@Override
 			public void onClick(View v) {
 				
-				
-				
 				accountAccess.getHoldPreCreateInfo(record_id, 4);
 				accountAccess.isHoldPossible(4, record_id);
+				
 				
 				String expire_date_s = null;
 				String thaw_date_s = null;
@@ -127,10 +130,13 @@ public class PlaceHold extends Activity{
 				if(thaw_date != null)
 					thaw_date_s = GlobalConfigs.getStringDate(thaw_date);
 				
-				accountAccess.createHold(record_id,4,email_notification.isChecked(),phone_notification.isChecked(),phone_number.getText().toString(),suspendHold.isChecked(),expire_date_s,thaw_date_s);
+				System.out.println("date expire: " + expire_date_s + " " + expire_date);
+				int selectedOrgID = -1;
+				if(globalConfigs.organisations.size() > selectedOrgPos)
+					selectedOrgID = globalConfigs.organisations.get(selectedOrgPos).id;
+				accountAccess.createHold(record_id,selectedOrgID,email_notification.isChecked(),phone_notification.isChecked(),phone_number.getText().toString(),suspendHold.isChecked(),expire_date_s,thaw_date_s);
 			}
 		});
-		
 		
 		phone_notification.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 			
@@ -168,8 +174,8 @@ public class PlaceHold extends Activity{
 		                                             int monthOfYear, int dayOfMonth)
 		         {
 		        	 
-
-		                    Date chosenDate = new Date(year, monthOfYear,dayOfMonth);                 
+		        	 		
+		                    Date chosenDate = new Date(year-1900, monthOfYear,dayOfMonth);                 
 		                    expire_date = chosenDate;
 		                    CharSequence strDate = DateFormat.format("MMMM dd, yyyy", chosenDate);
 		                    expiration_date.setText(strDate);
@@ -190,11 +196,11 @@ public class PlaceHold extends Activity{
 		                                             int monthOfYear, int dayOfMonth)
 		         {
 		        	 
-		        	 		
-		                    Date chosenDate = new Date(year, monthOfYear,dayOfMonth);                 
+		        	 
+		                    Date chosenDate = new Date(year-1900, monthOfYear,dayOfMonth);                 
 		                    thaw_date = chosenDate;
 		                    CharSequence strDate = DateFormat.format("MMMM dd, yyyy", chosenDate);
-		                    expiration_date.setText(strDate);
+		                    thaw_date_edittext.setText(strDate);
 		                    //set current date          
 		        }}, cal.get(Calendar.YEAR),cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH));
 	
@@ -206,20 +212,30 @@ public class PlaceHold extends Activity{
 			}
 		});
 		
-		
+		ArrayList<String> list = new ArrayList<String>();
+        for(int i=0;i<globalConfigs.organisations.size();i++){
+        	list.add(globalConfigs.organisations.get(i).padding + globalConfigs.organisations.get(i).name);
+        	
+        	if(globalConfigs.organisations.get(i).level -1 == 0)
+        		selectedOrgPos = i;
+        }
 		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,android.R.layout.simple_spinner_item,list);
         orgSelector.setAdapter(adapter);
-    	
-        orgSelector.setSelection();
         
-        orgSelectorn.setOnItemSelectedListener(new OnItemSelectedListener() {
+        orgSelector.setSelection(selectedOrgPos);
+        
+        orgSelector.setOnItemSelectedListener(new OnItemSelectedListener() {
 			@Override
 			public void onItemSelected(AdapterView<?> arg0, View arg1,
 					int ID, long arg3) {
-				//select the specific organization
-				search.selectOrganisation(globalConfigs.organisations.get(ID));
+			
+				selectedOrgPos = ID;
 				
 			}
+			
+			public void onNothingSelected(android.widget.AdapterView<?> arg0) {
+				}
+        });
 	}
 	
 	public void disableView(View view){
