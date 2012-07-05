@@ -23,7 +23,7 @@
     <string name="contact_telephone">Contact tel</string>
     <string name="enable_phone_notification"> Phone notification</string>
     <string name="contact_email_address">Contact email address </string>
-    <string name="enable_email_notification"></string>
+    <string name="enable_email_notification">Email notification</string>
     <string name="pickup_location">Pickup location</string>
     <string name="expiration_date">Expiration Date</string>
     <string name="suspend_hold">Suspend Hold</string>
@@ -33,5 +33,5 @@
     <string name="back">Back</string>
     <string name="update_hold">Update Hold</string>
     <string name="cancel_hold_dialog_message">Are you sure you want to cancel this hold?</string>
-    
+    <string name="thaw_date">Automatically activate hold one</string>
 </resources>

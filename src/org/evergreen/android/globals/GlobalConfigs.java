@@ -97,6 +97,9 @@ public class GlobalConfigs {
 				AccountAccess ac = AccountAccess.getAccountAccess(GlobalConfigs.httpAddress);
 				ac.authenticate();
 				
+				//TODO getorg hidding levels
+				//getOrgHiddentDepth();
+				
 				return true;
 			}
 			return false;
@@ -261,6 +264,32 @@ public class GlobalConfigs {
 			
 			loadedOrgTree = true;
 		}
+	}
+	
+	public void getOrgHiddentDepth(){
+		
+		// logic can be found in the opac_utils.js file in web/opac/common/js
+		
+		
+		for(int i=0; i<organisations.size();i++){
+			
+			AccountAccess ac = AccountAccess.getAccountAccess();
+			
+			Object obj = ac.fetchOrgSettings(organisations.get(i).id, "opac.org_unit_hiding.depth");
+			
+			
+		}
+		
+	}
+	
+	
+	
+	public static String getStringDate(Date date){
+		
+		final SimpleDateFormat sdf = new SimpleDateFormat(GlobalConfigs.datePattern);
+		  
+		return sdf.format(date);
+		
 	}
 	//parse from opac methods query results to Java date
 	public static Date parseDate(String dateString){
