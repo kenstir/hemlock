@@ -61,6 +61,14 @@
          </TableLayout>
 
         
+         <TextView 
+             android:layout_width="fill_parent"
+             android:layout_height="wrap_content"
+             android:text="@string/overdue_materials"
+             android:textSize="18sp"
+             android:paddingTop="10dip"
+             android:paddingBottom="5dip"
+             />
 
 	<ListView 
 	  android:id="@+id/fines_overdue_materials_list"
