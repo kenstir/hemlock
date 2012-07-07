@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.evergreen.android.accountAccess.checkout.CircRecord;
+import org.evergreen.android.accountAccess.fines.FinesRecord;
 import org.evergreen.android.accountAccess.holds.HoldRecord;
 import org.evergreen.android.globals.Utils;
 import org.evergreen.android.searchCatalog.RecordInfo;
@@ -183,8 +184,8 @@ public class AccountAccess {
 	 * containing : transaction, circ, record
 	 * @param : authToken, userID
 	 * @returns : array of objects, must investigate
-	 */
-	public static String METHOD_FETCH_TRANSACTIONS = "open-ils.actor.user.transactions.have_charged.fleshed";
+	 */												  
+	public static String METHOD_FETCH_TRANSACTIONS = "open-ils.actor.user.transactions.have_charge.fleshed";
 	
 	/** The METHOD_FETCH_MONEY_BILLING
 	 *  description :
@@ -936,11 +937,26 @@ public class AccountAccess {
 		return fines;
 	}
 	
-	private Object getTransactions(){
+	public ArrayList<FinesRecord> getTransactions(){
+		
+		ArrayList<FinesRecord> finesRecords = new ArrayList<FinesRecord>();
 		
 		Object transactions = Utils.doRequest(conn,SERVICE_ACTOR, METHOD_FETCH_TRANSACTIONS, new Object[]{authToken,userID});
 		
-		return transactions;
+		
+		//get Array
+		
+		List<Map<String,OSRFObject>> list = (List<Map<String,OSRFObject>>)transactions;
+		
+		for(int i=0;i<list.size();i++){
+			
+			Map<String,OSRFObject> item = list.get(i);
+			
+			FinesRecord record = new FinesRecord(item.get("circ"),item.get("record"),item.get("transaction"));
+			finesRecords.add(record);
+		}
+		
+		return finesRecords;
 	}
 	
 	//---------------------------------------Book bags-----------------------------------//
