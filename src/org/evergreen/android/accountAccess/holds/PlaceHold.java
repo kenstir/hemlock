@@ -145,11 +145,11 @@ public class PlaceHold extends Activity{
 				
 				String expire_date_s = null;
 				String thaw_date_s = null;
-				if(expire_date != null)
+				if (expire_date != null)
 					expire_date_s = GlobalConfigs.getStringDate(expire_date);
-				if(thaw_date != null)
+				if (thaw_date != null)
 					thaw_date_s = GlobalConfigs.getStringDate(thaw_date);
-				
+
 				System.out.println("date expire: " + expire_date_s + " " + expire_date);
 				int selectedOrgID = -1;
 				if(globalConfigs.organisations.size() > selectedOrgPos)

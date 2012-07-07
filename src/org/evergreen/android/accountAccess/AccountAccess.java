@@ -812,9 +812,19 @@ public class AccountAccess {
 		
 	}
 	
-	public Object updateHold(OSRFObject newHoldObject){
+	public Object updateHold(OSRFObject ahr,Integer pickup_lib, boolean email_notify, boolean phone_notify, String phone, boolean suspendHold, String expire_time,String thaw_date){
 		//TODO verify that object is correct passed to the server
-		Object response = Utils.doRequest(conn,SERVICE_CIRC, METHOD_UPDATE_HOLD, new Object[]{authToken,newHoldObject});
+
+		ahr.put("pickup_lib", pickup_lib); //pick-up lib
+		ahr.put("phone_notify", phone);
+		ahr.put("email_notify", email_notify);
+		ahr.put("expire_time",expire_time);
+		//frozen set, what this means ? 
+		ahr.put("frozen", suspendHold);
+		//only if it is frozen
+	    ahr.put("thaw_date",thaw_date);
+		
+		Object response = Utils.doRequest(conn,SERVICE_CIRC, METHOD_UPDATE_HOLD, new Object[]{authToken,ahr});
 		
 		return response;
 	}
