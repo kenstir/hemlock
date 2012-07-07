@@ -818,7 +818,7 @@ public class AccountAccess {
 		return response;
 	}
 	
-	public Object createHold(Integer recordID, Integer pickup_lib, boolean email_notify, boolean phone_notify, String phone, boolean suspendHold, String expire_time,String thaw_date){
+	public String[] createHold(Integer recordID, Integer pickup_lib, boolean email_notify, boolean phone_notify, String phone, boolean suspendHold, String expire_time,String thaw_date){
 		
 	OSRFObject ahr = new OSRFObject("ahr");
 	ahr.put("target", recordID);
@@ -826,23 +826,46 @@ public class AccountAccess {
 	ahr.put("requestor", userID);
 	
 	//TODO
-	//do not set hold type, the systems knows the hold type
-	ahr.put("hold_type", null);
+	//only gold type 'T' for now
+	ahr.put("hold_type", "T");
 	ahr.put("pickup_lib", pickup_lib); //pick-up lib
-	//ahr.put("phone_notify", phone);
-	//ahr.put("email_notify", email_notify);
-	//ahr.put("expire_time",expire_time);
+	ahr.put("phone_notify", phone);
+	ahr.put("email_notify", email_notify);
+	ahr.put("expire_time",expire_time);
 	//frozen set, what this means ? 
 	ahr.put("frozen", suspendHold);
 	//only if it is frozen
-	//ahr.put("thaw_date",thaw_date);
+    ahr.put("thaw_date",thaw_date);
 	
 	//extra parameters (not mandatory for hold creation)
 
 	
 	Object response = Utils.doRequest(conn,SERVICE_CIRC, METHOD_CREATE_HOLD, new Object[]{authToken,ahr});
 		
-		return response;
+	String[] resp = new String[3];
+	//if we can get hold ID then we return true
+		try{
+			
+			List<Integer> list= (List<Integer>)response;
+			if(list.get(0)>-1)
+				resp[0] = "true";
+				
+			
+		}catch(Exception e){
+			
+			List<?> respErrorMessage = (List<?>) response;
+			
+			Object map = respErrorMessage.get(0);
+			resp[0]="false";
+			
+			resp[1] = ((Map<String,String>)map).get("textcode");
+			resp[2] = ((Map<String,String>)map).get("desc");
+		};
+	
+		System.out.println("Result " + resp[1] + " " + resp[2]);
+
+		//else we return false
+		return resp;
 	}
 	// ?? return boolean 
 	public Object isHoldPossible(Integer pickup_lib,Integer recordID){

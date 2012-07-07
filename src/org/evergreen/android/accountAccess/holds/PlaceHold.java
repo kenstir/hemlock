@@ -11,6 +11,9 @@ import org.evergreen.android.searchCatalog.RecordInfo;
 
 import android.app.Activity;
 import android.app.DatePickerDialog;
+import android.app.ProgressDialog;
+import android.content.Context;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.text.format.DateFormat;
 import android.view.View;
@@ -26,6 +29,7 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class PlaceHold extends Activity{
 
@@ -68,9 +72,15 @@ public class PlaceHold extends Activity{
 	
 	private Date thaw_date = null;
 	
+	private Runnable placeHoldRunnable;
+	
 	private GlobalConfigs globalConfigs = null;
 	
 	private int selectedOrgPos = 0;
+	
+	private ProgressDialog progressDialog;
+	
+	private Context context;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -78,6 +88,8 @@ public class PlaceHold extends Activity{
 		setContentView(R.layout.place_hold);
 		globalConfigs = GlobalConfigs.getGlobalConfigs(this);
 		RecordInfo record = (RecordInfo) getIntent().getSerializableExtra("recordInfo");
+		
+		context = this;
 		
 		accountAccess = AccountAccess.getAccountAccess();
 		
@@ -115,9 +127,17 @@ public class PlaceHold extends Activity{
 		
 		final Integer record_id = record.doc_id;
 		
-		placeHold.setOnClickListener(new OnClickListener() {
+		placeHoldRunnable = new Runnable() {
+			
 			@Override
-			public void onClick(View v) {
+			public void run() {
+				
+				runOnUiThread(new Runnable() {
+					@Override
+					public void run() {
+						progressDialog = ProgressDialog.show(context, "Please wait", "Placing hold");
+					}
+				});
 				
 				accountAccess.getHoldPreCreateInfo(record_id, 4);
 				accountAccess.isHoldPossible(4, record_id);
@@ -134,7 +154,33 @@ public class PlaceHold extends Activity{
 				int selectedOrgID = -1;
 				if(globalConfigs.organisations.size() > selectedOrgPos)
 					selectedOrgID = globalConfigs.organisations.get(selectedOrgPos).id;
-				accountAccess.createHold(record_id,selectedOrgID,email_notification.isChecked(),phone_notification.isChecked(),phone_number.getText().toString(),suspendHold.isChecked(),expire_date_s,thaw_date_s);
+				
+				final String[] holdPlaced = accountAccess.createHold(record_id,selectedOrgID,email_notification.isChecked(),phone_notification.isChecked(),phone_number.getText().toString(),suspendHold.isChecked(),expire_date_s,thaw_date_s);
+			
+				runOnUiThread(new Runnable() {
+					@Override
+					public void run() {
+						progressDialog.dismiss();	
+						
+						if(holdPlaced[0].equals("true")){
+							Toast.makeText(context, "Hold Succesfully placed", Toast.LENGTH_LONG).show();
+							finish();	
+							}
+						else
+							Toast.makeText(context, "Error in placing hold : " + holdPlaced[2], Toast.LENGTH_LONG).show();
+						
+							
+					}
+				});
+			}
+		};
+		
+		placeHold.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				
+				Thread placeholdThread = new Thread(placeHoldRunnable);
+				placeholdThread.start();
 			}
 		});
 		
@@ -237,16 +283,21 @@ public class PlaceHold extends Activity{
 				}
         });
 	}
-	
 	public void disableView(View view){
 		
 		//view.setFocusable(false);
+		view.setFocusable(false);
 		
-		view.setVisibility(View.INVISIBLE);
+		view.setBackgroundColor(Color.argb(255, 100, 100, 100));
+		//view.setVisibility(View.INVISIBLE);
 	}
 	
 	public void enableView(View view){
-		view.setVisibility(View.VISIBLE);
+		//view.setVisibility(View.VISIBLE);
+		
+		view.setFocusableInTouchMode(true);
+		
+		view.setBackgroundColor(Color.argb(255, 255,255,255));
 	}
 	
 }
