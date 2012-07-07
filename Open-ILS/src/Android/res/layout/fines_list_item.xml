@@ -12,19 +12,19 @@
             <TextView 
      android:id="@+id/fines_title" 
      android:layout_width="fill_parent"   
-     android:layout_height="wrap_content"
+     android:layout_height="fill_parent"
      android:layout_weight="10"
      
      
         />
             
-                         <TextView 
+      <TextView 
      android:id="@+id/fines_balance_owed"
      android:layout_width="fill_parent"   
      android:layout_height="fill_parent"
      android:textColor="@color/red"   
      android:textStyle="bold" 
-     android:layout_weight="4"
+     android:layout_weight="2"
      android:layout_gravity="right"  
         />  
         

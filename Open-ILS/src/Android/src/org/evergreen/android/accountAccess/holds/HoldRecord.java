@@ -55,6 +55,16 @@ public class HoldRecord implements Serializable{
 	public RecordInfo recordInfo = null;
 	
 	
+	public boolean email_notification = false;
+	
+	public boolean phone_notification = false;
+	
+	public boolean suspended = false;
+	
+	public Date thaw_date;
+	
+	public int pickup_lib;
+	
 	public HoldRecord(OSRFObject ahr){
 		
 		this.target = ahr.getInt("target");
@@ -81,7 +91,22 @@ public class HoldRecord implements Serializable{
 								holdType = P;
 	
 		this.expire_time = GlobalConfigs.parseDate(ahr.getString("expire_time"));
-						
+	
+		this.thaw_date = GlobalConfigs.parseDate(ahr.getString("thaw_date"));
+		String res = ahr.getString("email_notify");
+		
+		if(res.equals("t"))
+			this.email_notification = true;
+		res = ahr.getString("phone_notify");
+		if(res.equals("t"))
+			this.phone_notification = true;
+		
+		res = ahr.getString("frozen");
+		if(res.equals("t"))
+			this.suspended = true;
+		pickup_lib = ahr.getInt("pickup_lib");
+		
+		
 	}
 	//based on status integer field retreive hold status in text
 	public String getHoldStatus(){
