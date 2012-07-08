@@ -10,47 +10,7 @@
     android:orientation="vertical">
 
 
-	    <TextView  
-	    xmlns:android="http://schemas.android.com/apk/res/android"
-	    style="@style/sectionHeader"  
-	    android:text="Basic Information"
-		/> 
-	    
-	    
-	    <TextView 
-		style="@style/textLarge"
-	    android:text="TITLE"   
-	        />
-	
-	     <TextView
-	    android:id="@+id/record_details_simple_title"
-		style="@style/textSmall"
-	    />
-	    
-	    <TextView  
-		style="@style/textLarge"
-	    android:text="AUTHOR"   
-	        />
-	    
-	    <TextView
-	    android:id="@+id/record_details_simple_author"
-		style="@style/textSmall"   
-	    />
-	        
-	    <TextView  
-		style="@style/textLarge"
-	    android:text="PUBLISHER"   
-	        />
-	    
-	    <TextView
-	    android:id="@+id/record_details_simple_publisher"
-		style="@style/textSmall"   
-	        />
-		<TextView 
-		style="@style/spacer"    
-		/>
-	    
-	   	<TextView  
+	<TextView  
 	    xmlns:android="http://schemas.android.com/apk/res/android"
 	    style="@style/sectionHeader"  
 	    android:text="Content"

@@ -176,7 +176,7 @@ public class SearchCatalogListView extends Activity{
     			else{
 	    			//start activity with book details
 	    			
-	    			Intent intent = new Intent(getBaseContext(),RecordDetails_Simple.class);
+	    			Intent intent = new Intent(getBaseContext(),TabsView.class);
 	    			//serialize object and pass it to next activity
 	    			intent.putExtra("recordInfo", info);
 	    			

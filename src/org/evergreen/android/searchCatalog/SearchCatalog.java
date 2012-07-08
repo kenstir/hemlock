@@ -34,6 +34,23 @@ public class SearchCatalog {
 	/** The METHO d_ sli m_ retrive. */
 	public static String METHOD_SLIM_RETRIVE  = "open-ils.search.biblio.record.mods_slim.retrieve";
 
+	/** Method 
+	 * @param : no parameters 
+	 * @returns : returns array of ccs objects
+	 */
+	
+	public static String METHOD_COPY_STATUS_ALL ="open-ils.search.config.copy_status.retrieve.all";
+	
+	/**
+	* Method that returns library where record with id is
+	* @param : record ID to get all libraries, or just book ID, Current Library ID, User ID
+	* @returns : [[["4","","CONCERTO 27","","Stacks",{"0":5}],["4","","PERFORM 27","","Stacks",{"0":2}]]]
+	*    "0":% is the available books
+	*  [org_id, call_number_sufix, copy_location, status1:count, status2:count ..]
+	*/
+	public static String METHOD_COPY_LOCATION_COUNTS = "open-ils.search.biblio.copy_location_counts.summary.retrieve";
+
+	
 	/** The conn. */
 	public HttpConnection conn;
 	
