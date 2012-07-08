@@ -50,7 +50,7 @@ public class SearchCatalog {
 	*/
 	public static String METHOD_COPY_LOCATION_COUNTS = "open-ils.search.biblio.copy_location_counts.summary.retrieve";
 
-	
+	public static SearchCatalog searchCatalogSingleton = null;
 	/** The conn. */
 	public HttpConnection conn;
 	
@@ -60,25 +60,32 @@ public class SearchCatalog {
 	
 	//the org on witch the searches will be made
 	/** The selected organization. */
-	private Organisation selectedOrganization = null;
-	
-	private Context context;
-	
+	public Organisation selectedOrganization = null;
+
 	public Integer offset;
 	
 	public Integer visible;
 	
 	public Integer searchLimit = 10;
 	
+	
+	
+	public static SearchCatalog getInstance(){
+		
+		if(searchCatalogSingleton == null){
+			searchCatalogSingleton = new SearchCatalog();
+		}
+		
+		return searchCatalogSingleton;
+	}
 	/**
 	 * Instantiates a new search catalog.
 	 *
 	 * @param httpAddress the http address
 	 * @param locale the locale
 	 */
-	public SearchCatalog(Context context) {
+	private SearchCatalog() {
 		super();
-		this.context = context;
 		try{
 			// configure the connection
 			conn = new HttpConnection(GlobalConfigs.httpAddress+"/osrf-gateway-v1");
@@ -264,6 +271,13 @@ public class SearchCatalog {
 
 	}
 
+	
+	public Object getLocationCount(Integer recordID, Integer orgID, Integer orgDepth){
+		
+		List<?> list = (List<?>)Utils.doRequest(conn, SERVICE, METHOD_COPY_LOCATION_COUNTS, new Object[]{recordID, orgID, orgDepth});
+		
+		return list;
+	}
 	
 	/**
 	 * Select organisation.

@@ -17,6 +17,8 @@ public class TabsView extends BaseSampleActivity {
     private static final String[] CONTENT = new String[] { "Details", "Advanced"};
 
     
+    private SearchCatalog search;
+    
     private RecordInfo record;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,9 +27,15 @@ public class TabsView extends BaseSampleActivity {
 
         record = (RecordInfo) getIntent().getSerializableExtra("recordInfo");
 		
+        Integer orgID = getIntent().getIntExtra("orgID", -1);
+        Integer orgDepth = getIntent().getIntExtra("depth", -1);
         
         mAdapter = new SearchFragmentAdapter(getSupportFragmentManager());
 
+        search = SearchCatalog.getInstance();
+        search.getLocationCount(record.doc_id, orgID, orgDepth);
+        
+        
         
         //mAdapter.getItem(0).
         

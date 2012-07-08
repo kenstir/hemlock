@@ -78,7 +78,7 @@ public class SearchCatalogListView extends Activity{
         globalConfigs = GlobalConfigs.getGlobalConfigs(this);
         
         context = this;
-        search = new SearchCatalog(this);
+        search = SearchCatalog.getInstance();
                 
         recordList= new ArrayList<RecordInfo>();
 
@@ -179,7 +179,8 @@ public class SearchCatalogListView extends Activity{
 	    			Intent intent = new Intent(getBaseContext(),TabsView.class);
 	    			//serialize object and pass it to next activity
 	    			intent.putExtra("recordInfo", info);
-	    			
+	    			intent.putExtra("orgID",search.selectedOrganization.id);
+	    			intent.putExtra("depth",(search.selectedOrganization.level-1));
 	    			startActivity(intent);
     			}
     		}
