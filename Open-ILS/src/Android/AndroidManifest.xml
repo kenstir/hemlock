@@ -33,11 +33,15 @@
             android:theme="@android:style/Theme.Light.NoTitleBar"
             >
         </activity>
-        <activity
-            android:name=".views.ApplicationPreferences"
-            >
+        <activity android:name="org.evergreen.android.views.ApplicationPreferences"></activity>
+        
             
-        </activity>
+        <!-- Search -->    
+        <activity android:name=".searchCatalog.TabsView"
+            android:label="Tabs/Styled"
+            android:theme="@style/StyledIndicators"
+            ></activity>  
+
         <!-- Checkout Activities -->
         <activity android:name=".accountAccess.checkout.ItemsCheckOutListView"></activity>
         
