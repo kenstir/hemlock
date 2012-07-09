@@ -1,4 +1,8 @@
 #ignore class objects
 *.class
 *.dex
-bin/**/*
+bin/
+gen/
+
+.classpath
+.project
