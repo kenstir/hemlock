@@ -1,6 +1,9 @@
 package org.evergreen.android.searchCatalog;
 
 import org.evergreen.android.R;
+import org.evergreen.android.globals.NoAccessToServer;
+import org.evergreen.android.globals.NoNetworkAccessException;
+import org.evergreen.android.globals.Utils;
 import org.evergreen.android.utils.ui.AdvancedDetailsFragment;
 import org.evergreen.android.utils.ui.BaseSampleActivity;
 import org.evergreen.android.utils.ui.BasicDetailsFragment;
@@ -8,6 +11,8 @@ import org.evergreen.android.utils.ui.TabPageIndicator;
 import org.evergreen.android.utils.ui.TestFragment;
 import org.evergreen.android.utils.ui.TestFragmentAdapter;
 
+import android.content.Context;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -32,11 +37,16 @@ public class TabsView extends BaseSampleActivity {
         
         mAdapter = new SearchFragmentAdapter(getSupportFragmentManager());
 
-        search = SearchCatalog.getInstance();
-        search.getLocationCount(record.doc_id, orgID, orgDepth);
+        search = SearchCatalog.getInstance((ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE));    
         
-        
-        
+        try {
+			search.getLocationCount(record.doc_id, orgID, orgDepth);
+		} catch (NoNetworkAccessException e) {
+			Utils.showNetworkNotAvailableDialog(this);
+		} catch (NoAccessToServer e) {
+			Utils.showServerNotAvailableDialog(this);
+		}
+
         //mAdapter.getItem(0).
         
         mPager = (ViewPager)findViewById(R.id.pager);

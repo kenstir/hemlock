@@ -3,7 +3,7 @@ package org.evergreen.android.views;
 import org.evergreen.android.R;
 import org.evergreen.android.accountAccess.AccountAccess;
 import org.evergreen.android.globals.GlobalConfigs;
-import org.evergreen.android.globals.NoAccessToHttpAddress;
+import org.evergreen.android.globals.NoAccessToServer;
 import org.evergreen.android.globals.NoNetworkAccessException;
 import org.evergreen.android.globals.Utils;
 
@@ -87,9 +87,9 @@ public class ApplicationPreferences extends PreferenceActivity implements OnShar
 			public void run() {
 				
 				boolean routeToAddress = true;
-				AccountAccess account = AccountAccess.getAccountAccess(GlobalConfigs.httpAddress);
+				AccountAccess account = AccountAccess.getAccountAccess(GlobalConfigs.httpAddress,(ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE));
 				try{
-					Utils.checkNetworkStatus((ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE), context);
+					Utils.checkNetworkStatus((ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE));
 				}catch(NoNetworkAccessException e){
 					routeToAddress = false;
 					
@@ -108,7 +108,7 @@ public class ApplicationPreferences extends PreferenceActivity implements OnShar
 						}
 					});
 
-				}catch(NoAccessToHttpAddress e){
+				}catch(NoAccessToServer e){
 					
 					Log.d(TAG, " no route to hoast");
 					routeToAddress = false;
@@ -125,30 +125,35 @@ public class ApplicationPreferences extends PreferenceActivity implements OnShar
 
 				
 				if(routeToAddress){
-					if(account.authenticate()){
-									
-						runOnUiThread(new Runnable() {
-							
-							@Override
-							public void run() {
-								if(reference != null){
-									progressDialog.dismiss();
-									Toast.makeText(context, "Autenthication successfully established :" + GlobalConfigs.httpAddress, Toast.LENGTH_LONG).show();
+					
+					try{
+						if(account.authenticate()){
+										
+							runOnUiThread(new Runnable() {
+								
+								@Override
+								public void run() {
+									if(reference != null){
+										progressDialog.dismiss();
+										Toast.makeText(context, "Autenthication successfully established :" + GlobalConfigs.httpAddress, Toast.LENGTH_LONG).show();
+									}
 								}
-							}
-						});
-					}else{
-						runOnUiThread(new Runnable() {
-							
-							@Override
-							public void run() {
-								if(reference != null){
-									progressDialog.dismiss();
-									Toast.makeText(context, "Please check username and password ", Toast.LENGTH_LONG).show();
+							});
+						}else{
+							runOnUiThread(new Runnable() {
+								
+								@Override
+								public void run() {
+									if(reference != null){
+										progressDialog.dismiss();
+										Toast.makeText(context, "Please check username and password ", Toast.LENGTH_LONG).show();
+									}
 								}
-							}
-						});
-					}
+							});
+						}
+						
+					}catch(Exception e){}
+					
 				}
 				else
 					runOnUiThread(new Runnable() {

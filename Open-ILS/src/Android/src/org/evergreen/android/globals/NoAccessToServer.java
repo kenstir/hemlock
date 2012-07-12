@@ -1,6 +1,6 @@
 package org.evergreen.android.globals;
 
-public class NoAccessToHttpAddress extends Exception{
+public class NoAccessToServer extends Exception{
 
 	/**
 	 * 

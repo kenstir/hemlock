@@ -6,7 +6,11 @@ import java.util.Date;
 
 import org.evergreen.android.R;
 import org.evergreen.android.accountAccess.AccountAccess;
+import org.evergreen.android.accountAccess.SessionNotFoundException;
 import org.evergreen.android.globals.GlobalConfigs;
+import org.evergreen.android.globals.NoAccessToServer;
+import org.evergreen.android.globals.NoNetworkAccessException;
+import org.evergreen.android.globals.Utils;
 import org.evergreen.android.searchCatalog.RecordInfo;
 
 import android.app.Activity;
@@ -138,9 +142,10 @@ public class PlaceHold extends Activity{
 						progressDialog = ProgressDialog.show(context, "Please wait", "Placing hold");
 					}
 				});
+				//TODO verify hold possible 
 				
-				accountAccess.getHoldPreCreateInfo(record_id, 4);
-				accountAccess.isHoldPossible(4, record_id);
+				//accountAccess.getHoldPreCreateInfo(record_id, 4);
+				//accountAccess.isHoldPossible(4, record_id);
 				
 				
 				String expire_date_s = null;
@@ -155,8 +160,26 @@ public class PlaceHold extends Activity{
 				if(globalConfigs.organisations.size() > selectedOrgPos)
 					selectedOrgID = globalConfigs.organisations.get(selectedOrgPos).id;
 				
-				final String[] holdPlaced = accountAccess.createHold(record_id,selectedOrgID,email_notification.isChecked(),phone_notification.isChecked(),phone_number.getText().toString(),suspendHold.isChecked(),expire_date_s,thaw_date_s);
+				
+				
+				String[] stringResponse = new String[]{"false"};
+				try {
+					stringResponse = accountAccess.createHold(record_id,selectedOrgID,email_notification.isChecked(),phone_notification.isChecked(),phone_number.getText().toString(),suspendHold.isChecked(),expire_date_s,thaw_date_s);
+				} catch (SessionNotFoundException e) {
+					
+					try{
+						if(accountAccess.authenticate())
+							stringResponse = accountAccess.createHold(record_id,selectedOrgID,email_notification.isChecked(),phone_notification.isChecked(),phone_number.getText().toString(),suspendHold.isChecked(),expire_date_s,thaw_date_s);
+					}catch(Exception e1){}
+					
+				} catch (NoNetworkAccessException e) {
+					Utils.showNetworkNotAvailableDialog(context);
+				} catch (NoAccessToServer e) {
+					Utils.showServerNotAvailableDialog(context);
+				}
 			
+				final String[] holdPlaced = stringResponse;
+				
 				runOnUiThread(new Runnable() {
 					@Override
 					public void run() {

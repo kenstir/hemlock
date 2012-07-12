@@ -11,6 +11,8 @@ import java.util.Map;
 import org.evergreen.android.accountAccess.checkout.CircRecord;
 import org.evergreen.android.accountAccess.fines.FinesRecord;
 import org.evergreen.android.accountAccess.holds.HoldRecord;
+import org.evergreen.android.globals.NoAccessToServer;
+import org.evergreen.android.globals.NoNetworkAccessException;
 import org.evergreen.android.globals.Utils;
 import org.evergreen.android.searchCatalog.RecordInfo;
 import org.opensrf.Method;
@@ -18,6 +20,8 @@ import org.opensrf.net.http.GatewayRequest;
 import org.opensrf.net.http.HttpConnection;
 import org.opensrf.net.http.HttpRequest;
 import org.opensrf.util.OSRFObject;
+
+import android.net.ConnectivityManager;
 
 /**
  * The Class AuthenticateUser.
@@ -226,6 +230,8 @@ public class AccountAccess {
 	 * */
 	public String authToken = null;
 	
+	private ConnectivityManager cm;
+	
 	/** The auth time. */
 	private Integer authTime = null;
 	
@@ -243,10 +249,11 @@ public class AccountAccess {
 	 *
 	 * @param httpAddress the http address
 	 */
-	private AccountAccess(String httpAddress) {
+	private AccountAccess(String httpAddress, ConnectivityManager cm) {
 
 		this.httpAddress = httpAddress;
-
+		this.cm = cm;
+		
 		try {
 			// configure the connection
 			
@@ -268,10 +275,10 @@ public class AccountAccess {
 		return false;
 	}
 	
-	public static AccountAccess getAccountAccess(String httpAddress){
+	public static AccountAccess getAccountAccess(String httpAddress, ConnectivityManager cm){
 		
 		if(accountAccess == null){
-			accountAccess = new AccountAccess(httpAddress);
+			accountAccess = new AccountAccess(httpAddress,cm);
 		}
 		System.out.println(" Addresses " + httpAddress + " " + accountAccess.httpAddress);
 		if(!httpAddress.equals(accountAccess.httpAddress))
@@ -347,7 +354,7 @@ public class AccountAccess {
 	/**
 	 * Authenticate.
 	 */
-	public boolean authenticate(){
+	public boolean authenticate() throws NoNetworkAccessException, NoAccessToServer{
 		
 		String seed = authenticateInit();
 		
@@ -383,12 +390,12 @@ public class AccountAccess {
 	 * Authenticate init.
 	 * @return seed for phase 2 of login
 	 */
-	private String authenticateInit() {
+	private String authenticateInit() throws NoAccessToServer,NoNetworkAccessException{
 
 		String seed = null;
 
 		System.out.println("Send request to " + httpAddress);
-		Object resp  = (Object) Utils.doRequest(conn, SERVICE_AUTH, METHOD_AUTH_INIT, new Object[]{userName});
+		Object resp  = (Object) Utils.doRequest(conn, SERVICE_AUTH, METHOD_AUTH_INIT, cm,new Object[]{userName});
 		if(resp != null)
 			seed = resp.toString();
 		
@@ -405,7 +412,7 @@ public class AccountAccess {
 	 * @param seed the seed
 	 * @returns bollean if auth was ok
 	 */
-	private boolean authenticateComplete(String seed) {
+	private boolean authenticateComplete(String seed) throws NoAccessToServer, NoNetworkAccessException {
 
 		//calculate hash to pass to server for authentication process phase 2
 		//seed = "b18a9063e0c6f49dfe7a854cc6ab5775";
@@ -422,7 +429,7 @@ public class AccountAccess {
 		System.out.println("Password " + password);
 		System.out.println("Compelx param " + complexParam);
 		
-		Object resp  =  Utils.doRequest(conn, SERVICE_AUTH, METHOD_AUTH_COMPLETE, new Object[]{complexParam});
+		Object resp  =  Utils.doRequest(conn, SERVICE_AUTH, METHOD_AUTH_COMPLETE, cm, new Object[]{complexParam});
 		if(resp == null)
 			return false;
 		
@@ -453,7 +460,7 @@ public class AccountAccess {
 	
 	//------------------------Checked Out Items Section -------------------------//
 	
-	public ArrayList<CircRecord> getItemsCheckedOut(){
+	public ArrayList<CircRecord> getItemsCheckedOut() throws SessionNotFoundException, NoNetworkAccessException, NoAccessToServer{
 
 		
 		ArrayList<CircRecord> circRecords = new ArrayList<CircRecord>();
@@ -473,7 +480,7 @@ public class AccountAccess {
 		List<String> out_id;
 		
 		
-		Object resp  =  Utils.doRequest(conn, SERVICE_ACTOR, METHOD_FETCH_CHECKED_OUT_SUM, new Object[]{authToken, userID});
+		Object resp  =  Utils.doRequest(conn, SERVICE_ACTOR, METHOD_FETCH_CHECKED_OUT_SUM, authToken, cm, new Object[]{authToken, userID});
 
 			long_overdue_id = (List<String>)((Map<String,?>)resp).get("long_overdue");
 			claims_returned_id = (List<String>)((Map<String,?>)resp).get("claims_returned");
@@ -527,9 +534,9 @@ public class AccountAccess {
 	 * @param : target_copy from circ
 	 * @returns : "circ" OSRFObject 
 	 */
-	private OSRFObject retrieveCircRecord(String id){
+	private OSRFObject retrieveCircRecord(String id) throws SessionNotFoundException, NoNetworkAccessException, NoAccessToServer{
 
-		OSRFObject circ  = (OSRFObject) Utils.doRequest(conn, SERVICE_CIRC, METHOD_FETCH_CIRC_BY_ID, new Object[]{authToken,id});
+		OSRFObject circ  = (OSRFObject) Utils.doRequest(conn, SERVICE_CIRC, METHOD_FETCH_CIRC_BY_ID, authToken, cm, new Object[]{authToken,id});
 		return circ;
 	}
 	
@@ -539,7 +546,7 @@ public class AccountAccess {
 	 * Usefull info : title and author 
 	 *  (for acp : dummy_title, dummy_author)
 	 */
-	private OSRFObject fetchInfoForCheckedOutItem(Integer target_copy, CircRecord circRecord){
+	private OSRFObject fetchInfoForCheckedOutItem(Integer target_copy, CircRecord circRecord) throws NoNetworkAccessException, NoAccessToServer{
 		
 		if(target_copy == null)
 			return null;
@@ -566,17 +573,17 @@ public class AccountAccess {
 		return result;
 	}
 	
-	private OSRFObject fetchModsFromCopy(Integer target_copy){
+	private OSRFObject fetchModsFromCopy(Integer target_copy) throws NoNetworkAccessException, NoAccessToServer{
 
 		//sync request		
-		OSRFObject mvr  = (OSRFObject) Utils.doRequest(conn, SERVICE_SEARCH, METHOD_FETCH_MODS_FROM_COPY, new Object[]{target_copy});
+		OSRFObject mvr  = (OSRFObject) Utils.doRequest(conn, SERVICE_SEARCH, METHOD_FETCH_MODS_FROM_COPY, cm, new Object[]{target_copy});
 	
 		return mvr;
 	}
 	
-	private OSRFObject fetchAssetCopy(Integer target_copy){
+	private OSRFObject fetchAssetCopy(Integer target_copy) throws NoNetworkAccessException, NoAccessToServer{
 		
-		OSRFObject acp  = (OSRFObject) Utils.doRequest(conn, SERVICE_SEARCH, METHOD_FETCH_COPY, new Object[]{target_copy});
+		OSRFObject acp  = (OSRFObject) Utils.doRequest(conn, SERVICE_SEARCH, METHOD_FETCH_COPY, cm, new Object[]{target_copy});
 		
 		return acp;
 	}
@@ -586,14 +593,14 @@ public class AccountAccess {
 	/* Method used to renew a circulation record based on target_copy_id
 	 * Returns many objects, don't think they are needed
 	 */
-	public void renewCirc(Integer target_copy) throws MaxRenewalsException{
+	public void renewCirc(Integer target_copy) throws MaxRenewalsException, SessionNotFoundException, NoNetworkAccessException, NoAccessToServer{ 
 		
 		HashMap<String,Integer> complexParam = new HashMap<String, Integer>();
 		complexParam.put("patron", this.userID);		
 		complexParam.put("copyid", target_copy);
 		complexParam.put("opac_renewal", 1);
 		
-		Object a_lot = (Object) Utils.doRequest(conn, SERVICE_CIRC, METHOD_RENEW_CIRC, new Object[]{authToken,complexParam});
+		Object a_lot = (Object) Utils.doRequest(conn, SERVICE_CIRC, METHOD_RENEW_CIRC, authToken, cm, new Object[]{authToken,complexParam});
 		
 		Map<String,String> resp = (Map<String,String>)a_lot;
 		
@@ -607,16 +614,16 @@ public class AccountAccess {
 
 	//------------------------Holds Section --------------------------------------//
 	
-	public Object fetchOrgSettings(Integer org_id, String setting){
+	public Object fetchOrgSettings(Integer org_id, String setting)throws SessionNotFoundException, NoNetworkAccessException, NoAccessToServer{
 		
-		OSRFObject response  = (OSRFObject) Utils.doRequest(conn, SERVICE_ACTOR, METHOD_FETCH_ORG_SETTINGS, new Object[]{org_id,setting});
+		OSRFObject response  = (OSRFObject) Utils.doRequest(conn, SERVICE_ACTOR, METHOD_FETCH_ORG_SETTINGS, cm, new Object[]{org_id,setting});
 		return response;
 		
 	}
 	
 	
 	
-	public List<HoldRecord> getHolds(){
+	public List<HoldRecord> getHolds() throws SessionNotFoundException, NoNetworkAccessException, NoAccessToServer{
 
 		
 		ArrayList<HoldRecord> holds = new ArrayList<HoldRecord>();
@@ -624,7 +631,7 @@ public class AccountAccess {
 		//fields of interest : expire_time
 		List<OSRFObject> listHoldsAhr = null;
 
-		listHoldsAhr = (List<OSRFObject>) Utils.doRequest(conn, SERVICE_CIRC, METHOD_FETCH_HOLDS, new Object[]{authToken,userID});
+		listHoldsAhr = (List<OSRFObject>) Utils.doRequest(conn, SERVICE_CIRC, METHOD_FETCH_HOLDS, authToken, cm, new Object[]{authToken,userID});
 		
 		for(int i=0;i<listHoldsAhr.size();i++){
 			//create hold item
@@ -649,7 +656,7 @@ public class AccountAccess {
 	 *  P - pat
 	 */
 	
-	private Object fetchHoldTitleInfo(OSRFObject holdArhObject, HoldRecord hold){
+	private Object fetchHoldTitleInfo(OSRFObject holdArhObject, HoldRecord hold) throws NoNetworkAccessException, NoAccessToServer{
 		
 		
 		String holdType = (String)holdArhObject.get("hold_type");
@@ -667,7 +674,7 @@ public class AccountAccess {
 			if(holdType.equals("T"))
 				method = METHOD_FETCH_RMODS;
 			System.out.println();
-			holdInfo = Utils.doRequest(conn,SERVICE_SEARCH, method, new Object[]{holdArhObject.get("target")});
+			holdInfo = Utils.doRequest(conn,SERVICE_SEARCH, method, cm, new Object[]{holdArhObject.get("target")});
 
 			//System.out.println("Hold here " + holdInfo);
 			hold.title = ((OSRFObject)holdInfo).getString("title");
@@ -683,7 +690,7 @@ public class AccountAccess {
 		return holdInfo;
 	}
 	
-	private Object holdFetchObjects(OSRFObject hold, HoldRecord holdObj){
+	private Object holdFetchObjects(OSRFObject hold, HoldRecord holdObj) throws  NoNetworkAccessException, NoAccessToServer{
 		
 		String type = (String)hold.get("hold_type");
 		
@@ -702,7 +709,7 @@ public class AccountAccess {
 			
 			if(call_number != null){
 				
-				OSRFObject volume = (OSRFObject) Utils.doRequest(conn,SERVICE_SEARCH, METHOD_FETCH_VOLUME, new Object[]{copyObject.getInt("call_number")});	
+				OSRFObject volume = (OSRFObject) Utils.doRequest(conn,SERVICE_SEARCH, METHOD_FETCH_VOLUME, cm, new Object[]{copyObject.getInt("call_number")});	
 			//in volume object : record
 				Integer record = volume.getInt("record");
 				
@@ -710,7 +717,7 @@ public class AccountAccess {
 				holdObj.part_label = volume.getString("label");
 						
 				System.out.println("Record " + record);
-				OSRFObject holdInfo = (OSRFObject)Utils.doRequest(conn,SERVICE_SEARCH,  METHOD_FETCH_RMODS, new Object[]{record});
+				OSRFObject holdInfo = (OSRFObject)Utils.doRequest(conn,SERVICE_SEARCH,  METHOD_FETCH_RMODS, cm, new Object[]{record});
 
 				holdObj.title = holdInfo.getString("title");
 				holdObj.author = holdInfo.getString("author");
@@ -726,7 +733,7 @@ public class AccountAccess {
 				//must test
 				
 				//fetch_volume
-				OSRFObject volume = (OSRFObject) Utils.doRequest(conn,SERVICE_SEARCH, METHOD_FETCH_VOLUME, new Object[]{hold.getInt("target")});
+				OSRFObject volume = (OSRFObject) Utils.doRequest(conn,SERVICE_SEARCH, METHOD_FETCH_VOLUME, cm, new Object[]{hold.getInt("target")});
 				//in volume object : record 
 				
 				//in volume object : record
@@ -736,7 +743,7 @@ public class AccountAccess {
 				holdObj.part_label = volume.getString("label");
 						
 				System.out.println("Record " + record);
-				OSRFObject holdInfo = (OSRFObject)Utils.doRequest(conn,SERVICE_SEARCH,  METHOD_FETCH_RMODS, new Object[]{record});
+				OSRFObject holdInfo = (OSRFObject)Utils.doRequest(conn,SERVICE_SEARCH,  METHOD_FETCH_RMODS, cm, new Object[]{record});
 
 				holdObj.title = holdInfo.getString("title");
 				holdObj.author = holdInfo.getString("author");
@@ -744,7 +751,7 @@ public class AccountAccess {
 			}
 			else
 				if(type.equals("I")){	
-					OSRFObject issuance = (OSRFObject) Utils.doRequest(conn,SERVICE_SERIAL, METHOD_FETCH_ISSUANCE, new Object[]{hold.getInt("target")});
+					OSRFObject issuance = (OSRFObject) Utils.doRequest(conn,SERVICE_SERIAL, METHOD_FETCH_ISSUANCE, cm, new Object[]{hold.getInt("target")});
 				//TODO
 					
 				}
@@ -766,14 +773,14 @@ public class AccountAccess {
 						
 						//returns [{record:id, label=part label}]
 						
-						List<Object> part = (List<Object>)Utils.doRequest(conn,SERVICE_FIELDER,"open-ils.fielder.bmp.atomic",new Object[]{param});
+						List<Object> part = (List<Object>)Utils.doRequest(conn,SERVICE_FIELDER,"open-ils.fielder.bmp.atomic", cm, new Object[]{param});
 						
 						Map<String,?> partObj =(Map<String,?>)part.get(0);
 						
 						Integer recordID = (Integer)partObj.get("record"); 
 						String part_label = (String)partObj.get("label");
 						
-						OSRFObject holdInfo = (OSRFObject)Utils.doRequest(conn,SERVICE_SEARCH,  METHOD_FETCH_RMODS, new Object[]{recordID});
+						OSRFObject holdInfo = (OSRFObject)Utils.doRequest(conn,SERVICE_SEARCH,  METHOD_FETCH_RMODS, cm, new Object[]{recordID});
 
 						holdObj.part_label = part_label;
 						holdObj.title = holdInfo.getString("title");
@@ -785,11 +792,11 @@ public class AccountAccess {
 	}
 	
 	
-	public Object fetchHoldStatus(OSRFObject hold, HoldRecord holdObj){
+	public Object fetchHoldStatus(OSRFObject hold, HoldRecord holdObj) throws SessionNotFoundException, NoNetworkAccessException, NoAccessToServer{
 		
 		Integer hold_id = hold.getInt("id");
 		// MAP : potential_copies, status, total_holds, queue_position, estimated_wait
-		Object hold_status = Utils.doRequest(conn,SERVICE_CIRC, METHOD_FETCH_HOLD_STATUS, new Object[]{authToken,hold_id});
+		Object hold_status = Utils.doRequest(conn,SERVICE_CIRC, METHOD_FETCH_HOLD_STATUS, authToken, cm, new Object[]{authToken,hold_id});
 	
 		//get status
 		holdObj.status = ((Map<String,Integer>)hold_status).get("status");
@@ -798,11 +805,11 @@ public class AccountAccess {
 	}
 	
 	
-	public boolean cancelHold(OSRFObject hold){
+	public boolean cancelHold(OSRFObject hold) throws SessionNotFoundException, NoNetworkAccessException, NoAccessToServer{
 		
 		Integer hold_id = hold.getInt("id");
 		
-		Object response = Utils.doRequest(conn,SERVICE_CIRC, METHOD_CANCEL_HOLD, new Object[]{authToken,hold_id});
+		Object response = Utils.doRequest(conn,SERVICE_CIRC, METHOD_CANCEL_HOLD, authToken, cm, new Object[]{authToken,hold_id});
 		
 		//delete successful 
 		if(response.toString().equals("1"))
@@ -812,7 +819,8 @@ public class AccountAccess {
 		
 	}
 	
-	public Object updateHold(OSRFObject ahr,Integer pickup_lib, boolean email_notify, boolean phone_notify, String phone, boolean suspendHold, String expire_time,String thaw_date){
+	public Object updateHold(OSRFObject ahr,Integer pickup_lib, boolean email_notify, boolean phone_notify, String phone, boolean suspendHold, String expire_time,String thaw_date)
+			throws SessionNotFoundException, NoNetworkAccessException, NoAccessToServer{
 		//TODO verify that object is correct passed to the server
 
 		ahr.put("pickup_lib", pickup_lib); //pick-up lib
@@ -824,12 +832,13 @@ public class AccountAccess {
 		//only if it is frozen
 	    ahr.put("thaw_date",thaw_date);
 		
-		Object response = Utils.doRequest(conn,SERVICE_CIRC, METHOD_UPDATE_HOLD, new Object[]{authToken,ahr});
+		Object response = Utils.doRequest(conn,SERVICE_CIRC, METHOD_UPDATE_HOLD, authToken, cm, new Object[]{authToken,ahr});
 		
 		return response;
 	}
 	
-	public String[] createHold(Integer recordID, Integer pickup_lib, boolean email_notify, boolean phone_notify, String phone, boolean suspendHold, String expire_time,String thaw_date){
+	public String[] createHold(Integer recordID, Integer pickup_lib, boolean email_notify, boolean phone_notify, String phone, boolean suspendHold, String expire_time,String thaw_date)
+			throws SessionNotFoundException, NoNetworkAccessException, NoAccessToServer{
 		
 	OSRFObject ahr = new OSRFObject("ahr");
 	ahr.put("target", recordID);
@@ -851,7 +860,7 @@ public class AccountAccess {
 	//extra parameters (not mandatory for hold creation)
 
 	
-	Object response = Utils.doRequest(conn,SERVICE_CIRC, METHOD_CREATE_HOLD, new Object[]{authToken,ahr});
+	Object response = Utils.doRequest(conn,SERVICE_CIRC, METHOD_CREATE_HOLD, authToken, cm, new Object[]{authToken,ahr});
 		
 	String[] resp = new String[3];
 	//if we can get hold ID then we return true
@@ -879,7 +888,8 @@ public class AccountAccess {
 		return resp;
 	}
 	// ?? return boolean 
-	public Object isHoldPossible(Integer pickup_lib,Integer recordID){
+	public Object isHoldPossible(Integer pickup_lib,Integer recordID)
+			throws SessionNotFoundException, NoNetworkAccessException, NoAccessToServer{
 		
 		
 		HashMap<String,Integer> mapAsk = getHoldPreCreateInfo(recordID, pickup_lib);
@@ -896,12 +906,13 @@ public class AccountAccess {
 		//"patronid":2,"depth":0,"pickup_lib":"8","partid":null}
 		
 		
-		Object response = Utils.doRequest(conn,SERVICE_CIRC, METHOD_VERIFY_HOLD_POSSIBLE, new Object[]{authToken,mapAsk});
+		Object response = Utils.doRequest(conn,SERVICE_CIRC, METHOD_VERIFY_HOLD_POSSIBLE, authToken, cm, new Object[]{authToken,mapAsk});
 		
 		return response;
 	}
 	//return 
-	public HashMap<String,Integer> getHoldPreCreateInfo(Integer recordID, Integer pickup_lib){
+	public HashMap<String,Integer> getHoldPreCreateInfo(Integer recordID, Integer pickup_lib)
+	throws NoNetworkAccessException, NoAccessToServer{
 	
 		
 		HashMap<String, Integer> param = new HashMap<String, Integer>();
@@ -909,7 +920,7 @@ public class AccountAccess {
 		param.put("pickup_lib",pickup_lib);
 		param.put("record", recordID);
 		
-		Map<String,?> response = (Map<String,?>)Utils.doRequest(conn, SERVICE_SEARCH, "open-ils.search.metabib.record_to_descriptors", new Object[]{param});
+		Map<String,?> response = (Map<String,?>)Utils.doRequest(conn, SERVICE_SEARCH, "open-ils.search.metabib.record_to_descriptors", cm, new Object[]{param});
 		
 		Object obj = response.get("metarecord");
 		System.out.println(obj);
@@ -930,10 +941,11 @@ public class AccountAccess {
 	
 	//----------------------------Fines Summary------------------------------------//
 	
-	public float[] getFinesSummary(){
+	public float[] getFinesSummary()
+			throws SessionNotFoundException, NoNetworkAccessException, NoAccessToServer{
 		
 		//mous object
-		OSRFObject finesSummary = (OSRFObject) Utils.doRequest(conn,SERVICE_ACTOR, METHOD_FETCH_FINES_SUMMARY, new Object[]{authToken,userID});
+		OSRFObject finesSummary = (OSRFObject) Utils.doRequest(conn,SERVICE_ACTOR, METHOD_FETCH_FINES_SUMMARY, authToken, cm, new Object[]{authToken,userID});
 		
 		float fines[] = new float[3];
 		try{
@@ -947,11 +959,12 @@ public class AccountAccess {
 		return fines;
 	}
 	
-	public ArrayList<FinesRecord> getTransactions(){
+	public ArrayList<FinesRecord> getTransactions()
+	throws SessionNotFoundException, NoNetworkAccessException, NoAccessToServer{
 		
 		ArrayList<FinesRecord> finesRecords = new ArrayList<FinesRecord>();
 		
-		Object transactions = Utils.doRequest(conn,SERVICE_ACTOR, METHOD_FETCH_TRANSACTIONS, new Object[]{authToken,userID});
+		Object transactions = Utils.doRequest(conn,SERVICE_ACTOR, METHOD_FETCH_TRANSACTIONS, authToken, cm, new Object[]{authToken,userID});
 		
 		
 		//get Array
@@ -971,9 +984,10 @@ public class AccountAccess {
 	
 	//---------------------------------------Book bags-----------------------------------//
 	
-	public Object getBookbags(){
+	public Object getBookbags()
+			throws SessionNotFoundException, NoNetworkAccessException, NoAccessToServer{
 		
-		Object response = Utils.doRequest(conn,SERVICE_ACTOR, METHOD_FLESH_CONTAINERS, new Object[]{authToken,userID,"biblio","bookbag"});
+		Object response = Utils.doRequest(conn,SERVICE_ACTOR, METHOD_FLESH_CONTAINERS, authToken, cm, new Object[]{authToken,userID,"biblio","bookbag"});
 	
 		List<OSRFObject> bookbags = (List<OSRFObject>)response;
 		
@@ -986,9 +1000,10 @@ public class AccountAccess {
 		return bookbags;
 	}
 	
-	private Object getBookbagContent(Integer bookbagID){
+	private Object getBookbagContent(Integer bookbagID)
+			throws SessionNotFoundException, NoNetworkAccessException, NoAccessToServer{
 		
-		return Utils.doRequest(conn,SERVICE_ACTOR, METHOD_FLESH_PUBLIC_CONTAINER, new Object[]{authToken,"biblio",bookbagID});
+		return Utils.doRequest(conn,SERVICE_ACTOR, METHOD_FLESH_PUBLIC_CONTAINER, authToken, cm, new Object[]{authToken,"biblio",bookbagID});
 	}
 	
 }

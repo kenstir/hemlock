@@ -6,13 +6,16 @@ import java.util.List;
 import org.evergreen.android.R;
 import org.evergreen.android.accountAccess.holds.PlaceHold;
 import org.evergreen.android.globals.GlobalConfigs;
-
-import com.google.android.maps.ItemizedOverlay;
+import org.evergreen.android.globals.NoAccessToServer;
+import org.evergreen.android.globals.NoNetworkAccessException;
+import org.evergreen.android.globals.Utils;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.ContextMenu;
@@ -78,7 +81,7 @@ public class SearchCatalogListView extends Activity{
         globalConfigs = GlobalConfigs.getGlobalConfigs(this);
         
         context = this;
-        search = SearchCatalog.getInstance();
+        search = SearchCatalog.getInstance((ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE));
                 
         recordList= new ArrayList<RecordInfo>();
 
@@ -111,6 +114,7 @@ public class SearchCatalogListView extends Activity{
     	// Set the ListView adapter
     	lv.setAdapter(adapter);
 
+    	searchResults = new ArrayList<RecordInfo>();
     	
     	registerForContextMenu(lv);
     	
@@ -135,7 +139,16 @@ public class SearchCatalogListView extends Activity{
 						
 						@Override
 						public void run() {
-							searchResults = search.getSearchResults(text,recordList.size()-1);
+							
+							searchResults.clear();
+							
+							try {
+								searchResults = search.getSearchResults(text,recordList.size()-1);
+							} catch (NoNetworkAccessException e) {
+								Utils.showNetworkNotAvailableDialog(context);
+							} catch (NoAccessToServer e) {
+								Utils.showServerNotAvailableDialog(context);
+							}
 							
 							runOnUiThread(new Runnable() {
 								
@@ -202,7 +215,7 @@ public class SearchCatalogListView extends Activity{
 				progressDialog = new ProgressDialog(context);
 				
 				progressDialog.setMessage("Fetching data");
-				progressDialog.show();
+				//progressDialog.show();
 				
 				if(text.length()>0){
 					
@@ -210,14 +223,26 @@ public class SearchCatalogListView extends Activity{
 						
 						@Override
 						public void run() {
-							searchResults = search.getSearchResults(text,0);
 							
+							searchResults.clear();
+							
+							try {
+								searchResults = search.getSearchResults(text,0);
+							} catch (NoNetworkAccessException e) {	
+								System.out.println("no network access in search");
+								SearchCatalogListView.this.runOnUiThread(Utils.showNetworkNotAvailableDialog(context));
+								
+							} catch (NoAccessToServer e) {
+								SearchCatalogListView.this.runOnUiThread(Utils.showServerNotAvailableDialog(context));								
+							}
+								
 							runOnUiThread(new Runnable() {
 								
 								@Override
 								public void run() {
 
 									recordList.clear();
+									
 									if(searchResults.size()>0){
 										
 										for(int j=0;j<searchResults.size();j++)
@@ -253,13 +278,14 @@ public class SearchCatalogListView extends Activity{
         
         int selectedPos = 0;
         ArrayList<String> list = new ArrayList<String>();
-        for(int i=0;i<globalConfigs.organisations.size();i++){
-        	list.add(globalConfigs.organisations.get(i).padding + globalConfigs.organisations.get(i).name);
-        	
-        	if(globalConfigs.organisations.get(i).level -1 == 0)
-        		selectedPos = i;
+        if(globalConfigs.organisations != null){
+	        for(int i=0;i<globalConfigs.organisations.size();i++){
+	        	list.add(globalConfigs.organisations.get(i).padding + globalConfigs.organisations.get(i).name);
+	        	
+	        	if(globalConfigs.organisations.get(i).level -1 == 0)
+	        		selectedPos = i;
+	        }
         }
-        
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,android.R.layout.simple_spinner_item,list);
         choseOrganisation.setAdapter(adapter);
     	

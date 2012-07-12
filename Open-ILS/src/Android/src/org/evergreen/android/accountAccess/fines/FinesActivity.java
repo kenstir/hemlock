@@ -5,6 +5,10 @@ import java.util.List;
 
 import org.evergreen.android.R;
 import org.evergreen.android.accountAccess.AccountAccess;
+import org.evergreen.android.accountAccess.SessionNotFoundException;
+import org.evergreen.android.globals.NoAccessToServer;
+import org.evergreen.android.globals.NoNetworkAccessException;
+import org.evergreen.android.globals.Utils;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
@@ -67,10 +71,38 @@ public class FinesActivity extends Activity{
 			@Override
 			public void run() {
 				
-				final float[] fines = ac.getFinesSummary();
+				float[] finesR = null;
+				try {
+					finesR = ac.getFinesSummary();
+				} catch (SessionNotFoundException e) {
+					try{
+						if(ac.authenticate())
+							finesR = ac.getFinesSummary();
+					}catch(Exception e1){}
+				} catch (NoNetworkAccessException e) {
+					Utils.showNetworkNotAvailableDialog(context);
+				} catch (NoAccessToServer e) {
+					Utils.showServerNotAvailableDialog(context);
+				}
 				
-				final ArrayList<FinesRecord> finesRecords = ac.getTransactions();
+				ArrayList<FinesRecord> frecords = null;
+				try {
+					frecords = ac.getTransactions();
+				} catch (SessionNotFoundException e) {
+					
+					try{
+						if(ac.authenticate())
+							frecords = ac.getTransactions();
+					}catch(Exception e1){}
+					
+				} catch (NoNetworkAccessException e) {
+					Utils.showNetworkNotAvailableDialog(context);
+				} catch (NoAccessToServer e) {
+					Utils.showServerNotAvailableDialog(context);
+				}
 				
+				final ArrayList<FinesRecord> finesRecords = frecords;
+				final float[] fines = finesR;
 				runOnUiThread(new Runnable() {		
 					@Override
 					public void run() {	
