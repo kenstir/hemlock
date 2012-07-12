@@ -145,9 +145,9 @@ public class SearchCatalogListView extends Activity{
 							try {
 								searchResults = search.getSearchResults(text,recordList.size()-1);
 							} catch (NoNetworkAccessException e) {
-								Utils.showNetworkNotAvailableDialog(context);
+								runOnUiThread(Utils.showNetworkNotAvailableDialog(context));
 							} catch (NoAccessToServer e) {
-								Utils.showServerNotAvailableDialog(context);
+								runOnUiThread(Utils.showServerNotAvailableDialog(context));
 							}
 							
 							runOnUiThread(new Runnable() {
