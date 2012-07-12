@@ -1,15 +1,17 @@
 
 package org.evergreen.android.searchCatalog;
 
+import java.io.NotSerializableException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.StringTokenizer;
 
+import org.evergreen.android.accountAccess.SessionNotFoundException;
 import org.evergreen.android.globals.GlobalConfigs;
+import org.evergreen.android.globals.NoAccessToServer;
+import org.evergreen.android.globals.NoNetworkAccessException;
 import org.evergreen.android.globals.Utils;
-import org.open_ils.idl.IDLParser;
 import org.opensrf.Method;
 import org.opensrf.net.http.GatewayRequest;
 import org.opensrf.net.http.HttpConnection;
@@ -18,6 +20,7 @@ import org.opensrf.net.http.HttpRequestHandler;
 import org.opensrf.util.OSRFObject;
 
 import android.content.Context;
+import android.net.ConnectivityManager;
 import android.util.Log;
 
 /**
@@ -68,12 +71,12 @@ public class SearchCatalog {
 	
 	public Integer searchLimit = 10;
 	
+	private ConnectivityManager cm;
 	
-	
-	public static SearchCatalog getInstance(){
+	public static SearchCatalog getInstance(ConnectivityManager cm){
 		
 		if(searchCatalogSingleton == null){
-			searchCatalogSingleton = new SearchCatalog();
+			searchCatalogSingleton = new SearchCatalog(cm);
 		}
 		
 		return searchCatalogSingleton;
@@ -84,8 +87,11 @@ public class SearchCatalog {
 	 * @param httpAddress the http address
 	 * @param locale the locale
 	 */
-	private SearchCatalog() {
+	private SearchCatalog(ConnectivityManager cm) {
 		super();
+		
+		this.cm = cm;
+		
 		try{
 			// configure the connection
 			conn = new HttpConnection(GlobalConfigs.httpAddress+"/osrf-gateway-v1");
@@ -107,7 +113,7 @@ public class SearchCatalog {
 	 * @param searchWords the search words
 	 * @return the search results
 	 */
-	public ArrayList<RecordInfo> getSearchResults(String searchWords, Integer offset){
+	public ArrayList<RecordInfo> getSearchResults(String searchWords, Integer offset) throws NoNetworkAccessException, NoAccessToServer{
 		
 		
 		ArrayList<RecordInfo> resultsRecordInfo = new ArrayList<RecordInfo>();
@@ -139,45 +145,26 @@ public class SearchCatalog {
 	        {
 	        	System.out.println("Exception in JSON " + e.getMessage());
 	        }
-	        
-	        System.out.println("JSON argument " + complexParm);
-	        method.addParam(complexParm);
-	        method.addParam(searchWords);
-	        method.addParam(1);
-	        
-	        
-	        // sync test
-	        HttpRequest req = new GatewayRequest(conn, SERVICE, method).send();
-	        Object resp;
-	        
-	        //why in while ?
-	        
-	        ArrayList<String> ids = new ArrayList<String>();
-	        
- 
-	        while ( (resp = req.recv()) != null){
-	            System.out.println("Sync Response: " + resp);
-	            
-	            Map<String,?> response = (Map<String,?>) resp;
-	            
-	            System.out.println(" ids : " + response.get("ids") + " " );
-	            
-	            List<List<String>> result_ids = (List) response.get("ids");
 
-	            visible =Integer.parseInt((String)response.get("count"));
+	        
+	        Object resp = Utils.doRequest(conn, SERVICE, METHOD_MULTICASS_SEARCH, cm, new Object[]{complexParm,searchWords,1});
+
+	        ArrayList<String> ids = new ArrayList<String>();
+
+	        System.out.println("Sync Response: " + resp);
+	            
+	        Map<String,?> response = (Map<String,?>) resp;
+	            
+	        System.out.println(" ids : " + response.get("ids") + " " );
+	            
+	        List<List<String>> result_ids = (List) response.get("ids");
+
+	        visible =Integer.parseInt((String)response.get("count"));
 	            
 	            for(int i=0;i<result_ids.size();i++){
 	            	ids.add(result_ids.get(i).get(0));
 	            }
 
-	        }
-	        // exceptions are captured instead of thrown, 
-	        // primarily to better support async requests
-	        if (req.failed()) {
-	            req.getFailure().printStackTrace();
-	            return null;
-	        }
-	        
 	        
 	        System.out.println("Ids " + ids);
 	        
@@ -225,32 +212,13 @@ public class SearchCatalog {
 	 * @param searchWords the search words
 	 * @return the object
 	 */
-	public Object searchCatalog(String searchWords){
-		
-		
-        Method method = new Method(METHOD_SLIM_RETRIVE);
+	public Object searchCatalog(String searchWords) 
+			throws NoNetworkAccessException, NoAccessToServer{
 
-        method.addParam("keyword");
-        method.addParam(searchWords);
+        Object response = Utils.doRequest(conn, SERVICE, METHOD_SLIM_RETRIVE, cm, new Object[]{"keyword", searchWords});
         
+        return response;
         
-        // sync test
-        HttpRequest req = new GatewayRequest(conn, SERVICE, method).send();
-        Object resp;
-        while ( (resp = req.recv()) != null) {
-            System.out.println("Sync Response: " + resp);
-            return resp;
-        }
-     
-        
-        // exceptions are captured instead of thrown, 
-        // primarily to better support async requests
-        if (req.failed()) {
-            req.getFailure().printStackTrace();
-            return null;
-        }
-        
-        return null;
 	}
 	
 	/**
@@ -272,11 +240,11 @@ public class SearchCatalog {
 	}
 
 	
-	public Object getLocationCount(Integer recordID, Integer orgID, Integer orgDepth){
+	public Object getLocationCount(Integer recordID, Integer orgID, Integer orgDepth) throws NoNetworkAccessException, NoAccessToServer{
 		
-		List<?> list = (List<?>)Utils.doRequest(conn, SERVICE, METHOD_COPY_LOCATION_COUNTS, new Object[]{recordID, orgID, orgDepth});
-		
+		List<?> list = (List<?>)Utils.doRequest(conn, SERVICE, METHOD_COPY_LOCATION_COUNTS, cm, new Object[]{recordID, orgID, orgDepth});
 		return list;
+		
 	}
 	
 	/**

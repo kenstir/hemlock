@@ -19,13 +19,15 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
-import org.evergreen.android.accountAccess.AccountAccess;
+import org.evergreen.android.accountAccess.SessionNotFoundException;
 import org.opensrf.Method;
 import org.opensrf.net.http.GatewayRequest;
 import org.opensrf.net.http.HttpConnection;
 import org.opensrf.net.http.HttpRequest;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.ConnectivityManager;
@@ -110,8 +112,8 @@ public class Utils {
 	 *  		NoAccessToHttpAddress if the library remote server can't be reached
 	 *   
 	 */
-	public static boolean checkNetworkStatus(ConnectivityManager cm, Context context )
-			throws NoNetworkAccessException, NoAccessToHttpAddress{
+	public static boolean checkNetworkStatus(ConnectivityManager cm)
+			throws NoNetworkAccessException, NoAccessToServer{
 		
 		boolean HaveConnectedWifi = false;
 		boolean HaveConnectedMobile = false;
@@ -142,7 +144,7 @@ public class Utils {
 			// 2 seconds timeout
 			httpAddressAccessReachable = checkIfNetAddressIsReachable(GlobalConfigs.httpAddress);
 			if(httpAddressAccessReachable == false)
-				throw new NoAccessToHttpAddress();
+				throw new NoAccessToServer();
 		}
 
 		if(!networkAccessEnabled)
@@ -152,7 +154,8 @@ public class Utils {
 		
 	}
 	
-	public static boolean checkIfNetAddressIsReachable(String url){
+	
+	public static boolean checkIfNetAddressIsReachable(String url) throws NoAccessToServer{
 		
 		boolean result = false;
 		try
@@ -178,6 +181,7 @@ public class Utils {
 		catch (SocketTimeoutException e)
 		{
 		    result = false; // this is somewhat expected
+		    throw new NoAccessToServer();
 		}
 		catch (Exception e) {
 			Log.d(TAG, "Exception in is reachable " + e.getMessage());
@@ -220,9 +224,18 @@ public class Utils {
         
 
 	}
-	//TODO throw NO_SESSION 
-	public static Object doRequest(HttpConnection conn, String service, String methodName, Object[] params) //throws SessionNotFoundException{
-	{
+
+	public static Object doRequest(HttpConnection conn, String service, String methodName, String authToken, ConnectivityManager cm, Object[] params ) 
+			throws SessionNotFoundException, NoNetworkAccessException, NoAccessToServer{
+		
+		
+		//check for network connectivity
+		checkNetworkStatus(cm);
+		
+		//check to see if EG http server is reachable
+		checkIfNetAddressIsReachable(GlobalConfigs.httpAddress);
+		
+		
 		//TODO check params and throw errors
 		Method method = new Method(methodName);
 		
@@ -247,7 +260,7 @@ public class Utils {
 					if(textcode != null){
 						if(textcode.equals("NO_SESSION")){
 							System.out.println("REQUIRE NEW SESSION");
-							response = requireNewSession(conn, service, methodName, params);
+							throw new SessionNotFoundException();
 						}
 						
 					}
@@ -261,18 +274,54 @@ public class Utils {
 		
 	}
 	
-	public static Object requireNewSession(HttpConnection conn, String service, String methodName, Object[] params){
+	//does not require authToken 
+	public static Object doRequest(HttpConnection conn, String service, String methodName, ConnectivityManager cm, Object[] params ) 
+			throws NoNetworkAccessException, NoAccessToServer{
 		
-		AccountAccess ac = AccountAccess.getAccountAccess();
-		boolean success = ac.authenticate();
 		
-		Object response = null;
+		//check for network connectivity
+		checkNetworkStatus(cm);
 		
-		if(success){
-			response =  doRequest(conn, service, methodName, params);
+		//check to see if EG http server is reachable
+		checkIfNetAddressIsReachable(GlobalConfigs.httpAddress);
+		
+		
+		//TODO check params and throw errors
+		Method method = new Method(methodName);
+		
+		System.out.println("Method :" + methodName + " param:");
+		for(int i=0;i<params.length;i++){
+			method.addParam(params[i]);
+			System.out.print("Param "+i+":" + params[i]);
 		}
+		//need space
+		System.out.println();
 		
-		return response;
+		//sync request
+		HttpRequest req = new GatewayRequest(conn, service, method).send();
+		Object resp;
+
+		while ((resp = req.recv()) != null) {
+			System.out.println("Sync Response: " + resp);
+			Object response = (Object) resp;
+
+			return response;
+			
+		}
+		return null;
+		
 	}
 
+	
+	
+	public static ShowServerNotAvailableRunnable showServerNotAvailableDialog(Context context){
+		
+		return new ShowServerNotAvailableRunnable(context);
+	}
+	
+	public static ShowNetworkNotAvailableRunnable showNetworkNotAvailableDialog(Context context){
+	
+		return new ShowNetworkNotAvailableRunnable(context);
+	}
+	
 }

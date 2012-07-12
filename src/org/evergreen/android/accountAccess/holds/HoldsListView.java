@@ -5,6 +5,10 @@ import java.util.List;
 
 import org.evergreen.android.R;
 import org.evergreen.android.accountAccess.AccountAccess;
+import org.evergreen.android.accountAccess.SessionNotFoundException;
+import org.evergreen.android.globals.NoAccessToServer;
+import org.evergreen.android.globals.NoNetworkAccessException;
+import org.evergreen.android.globals.Utils;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
@@ -58,7 +62,21 @@ public class HoldsListView extends Activity{
 			@Override
 			public void run() {
 				
-				holdRecords = accountAccess.getHolds();
+				try {
+					holdRecords = accountAccess.getHolds();
+				} catch (SessionNotFoundException e) {
+					//TODO other way?
+					try{
+						if(accountAccess.authenticate())
+							holdRecords = accountAccess.getHolds();
+					}catch(Exception eauth){
+						System.out.println("Exception in reAuth");
+					}
+				} catch (NoNetworkAccessException e) {
+					Utils.showNetworkNotAvailableDialog(context);
+				} catch (NoAccessToServer e) {
+					Utils.showServerNotAvailableDialog(context);
+				}
 			
 				runOnUiThread(new Runnable() {
 					@Override

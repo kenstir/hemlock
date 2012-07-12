@@ -8,6 +8,7 @@ import java.util.Date;
 import java.util.StringTokenizer;
 
 import org.evergreen.android.accountAccess.AccountAccess;
+import org.evergreen.android.accountAccess.SessionNotFoundException;
 import org.evergreen.android.searchCatalog.Organisation;
 import org.evergreen.android.views.ApplicationPreferences;
 import org.open_ils.idl.IDLParser;
@@ -73,11 +74,11 @@ public class GlobalConfigs {
 			boolean noNetworkAccess = false;
 			System.out.println("Check for network conenctivity");
 			try{
-				Utils.checkNetworkStatus((ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE), context);
+				Utils.checkNetworkStatus((ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE));
 				
 			}catch(NoNetworkAccessException e){
 				noNetworkAccess = true;
-			}catch(NoAccessToHttpAddress e){
+			}catch(NoAccessToServer e){
 
 				System.out.println("No access to network");
 				Intent preferencesAnctivity = new Intent(context, ApplicationPreferences.class);
@@ -94,8 +95,10 @@ public class GlobalConfigs {
 				
 				
 				//authenticate
-				AccountAccess ac = AccountAccess.getAccountAccess(GlobalConfigs.httpAddress);
-				ac.authenticate();
+				AccountAccess ac = AccountAccess.getAccountAccess(GlobalConfigs.httpAddress,(ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE));
+				try{
+					ac.authenticate();
+				}catch(Exception e){}
 				
 				//TODO getorg hidding levels
 				//getOrgHiddentDepth();
@@ -130,14 +133,16 @@ public class GlobalConfigs {
 	public void getOrganisations(){
 		
 		String orgFile = null;
+		
+		
+		organisations = new ArrayList<Organisation>();
+		
 		try{
 			//using https: address
 			orgFile = Utils.getNetPageContent(httpAddress+collectionsRequest);
 			System.out.println("Request org " + httpAddress + collectionsRequest );
 		}catch(Exception e){};
-		
-		organisations = new ArrayList<Organisation>();
-		
+	
 		if(orgFile != null){
 			organisations = new ArrayList<Organisation>();
 			
@@ -274,12 +279,16 @@ public class GlobalConfigs {
 		for(int i=0; i<organisations.size();i++){
 			
 			AccountAccess ac = AccountAccess.getAccountAccess();
-			
-			Object obj = ac.fetchOrgSettings(organisations.get(i).id, "opac.org_unit_hiding.depth");
-			
-			
-		}
 		
+			try{
+				Object obj = ac.fetchOrgSettings(organisations.get(i).id, "opac.org_unit_hiding.depth");
+			}catch(NoNetworkAccessException e){}
+			catch(NoAccessToServer e){}
+			catch(SessionNotFoundException e) {// not used here
+				}
+			
+			}
+
 	}
 	
 	

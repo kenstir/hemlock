@@ -6,7 +6,11 @@ import java.util.Date;
 
 import org.evergreen.android.R;
 import org.evergreen.android.accountAccess.AccountAccess;
+import org.evergreen.android.accountAccess.SessionNotFoundException;
 import org.evergreen.android.globals.GlobalConfigs;
+import org.evergreen.android.globals.NoAccessToServer;
+import org.evergreen.android.globals.NoNetworkAccessException;
+import org.evergreen.android.globals.Utils;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -195,8 +199,28 @@ public class HoldDetails extends Activity {
 									
 									@Override
 									public void run() {
-										accountAccess.cancelHold(record.ahr);
-									
+										
+										try {
+											accountAccess.cancelHold(record.ahr);
+										}  catch (NoNetworkAccessException e) {
+											Utils.showNetworkNotAvailableDialog(context);
+										} catch (NoAccessToServer e) {
+											Utils.showServerNotAvailableDialog(context);
+											
+										}catch (SessionNotFoundException e) {
+											//TODO other way?
+											try{
+												if(accountAccess.authenticate())
+													accountAccess.cancelHold(record.ahr);
+											}catch(Exception eauth){
+												System.out.println("Exception in reAuth");
+											}
+										}		
+										
+										
+										
+										
+										
 										runOnUiThread(new Runnable() {
 											@Override
 											public void run() {
@@ -228,11 +252,35 @@ public class HoldDetails extends Activity {
 				if (thaw_date != null)
 					thaw_date_s = GlobalConfigs.getStringDate(thaw_date);
 
-				accountAccess.updateHold(record.ahr, selectedOrgPos,
-						email_notification.isChecked(), phone_notification
-								.isChecked(),
-						phone_number.getText().toString(), suspendHold
-								.isChecked(), expire_date_s, thaw_date_s);
+
+				
+				try {
+					accountAccess.updateHold(record.ahr, selectedOrgPos,
+							email_notification.isChecked(), phone_notification
+									.isChecked(),
+							phone_number.getText().toString(), suspendHold
+									.isChecked(), expire_date_s, thaw_date_s);
+				}  catch (NoNetworkAccessException e) {
+					Utils.showNetworkNotAvailableDialog(context);
+				} catch (NoAccessToServer e) {
+					Utils.showServerNotAvailableDialog(context);
+					
+				}catch (SessionNotFoundException e) {
+					//TODO other way?
+					try{
+						if(accountAccess.authenticate())
+							accountAccess.updateHold(record.ahr, selectedOrgPos,
+									email_notification.isChecked(), phone_notification
+											.isChecked(),
+									phone_number.getText().toString(), suspendHold
+											.isChecked(), expire_date_s, thaw_date_s);
+					}catch(Exception eauth){
+						System.out.println("Exception in reAuth");
+					}
+				}
+				
+				
+				
 				
 				runOnUiThread(new Runnable() {
 					@Override

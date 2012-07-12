@@ -6,6 +6,10 @@ import java.util.List;
 import org.evergreen.android.R;
 import org.evergreen.android.accountAccess.AccountAccess;
 import org.evergreen.android.accountAccess.MaxRenewalsException;
+import org.evergreen.android.accountAccess.SessionNotFoundException;
+import org.evergreen.android.globals.NoAccessToServer;
+import org.evergreen.android.globals.NoNetworkAccessException;
+import org.evergreen.android.globals.Utils;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
@@ -56,7 +60,23 @@ public class ItemsCheckOutListView extends Activity{
 			@Override
 			public void run() {
 				
-				circRecords = accountAccess.getItemsCheckedOut();			
+				
+				try {
+					circRecords = accountAccess.getItemsCheckedOut();
+				}  catch (NoNetworkAccessException e) {
+					Utils.showNetworkNotAvailableDialog(context);
+				} catch (NoAccessToServer e) {
+					Utils.showServerNotAvailableDialog(context);
+					
+				}catch (SessionNotFoundException e) {
+					//TODO other way?
+					try{
+						if(accountAccess.authenticate())
+							circRecords = accountAccess.getItemsCheckedOut();
+					}catch(Exception eauth){
+						System.out.println("Exception in reAuth");
+					}
+				}			
 	
 				runOnUiThread(new Runnable() {
 					
@@ -183,22 +203,52 @@ public class ItemsCheckOutListView extends Activity{
 											}
 										});
 										
-										try{
-											ac.renewCirc(record.getTargetCopy());
-										}catch(MaxRenewalsException e){
-											runOnUiThread(new Runnable() {
+										
+											try {
+												ac.renewCirc(record.getTargetCopy());
+											} catch (MaxRenewalsException e1) {
+												runOnUiThread(new Runnable() {
+													
+													@Override
+													public void run() {
+														progressDialog.dismiss();
+														Toast.makeText(context, "Max renewals reached", Toast.LENGTH_SHORT).show();
+													}
+												});
 												
-												@Override
-												public void run() {
-													progressDialog.dismiss();
-													Toast.makeText(context, "Max renewals reached", Toast.LENGTH_SHORT).show();
+												refresh = false;
+											} catch (SessionNotFoundException e1) {
+												try{
+													if(accountAccess.authenticate())
+														ac.renewCirc(record.getTargetCopy());
+												}catch(Exception eauth){
+													System.out.println("Exception in reAuth");
 												}
-											});
-											
-											refresh = false;
-										}
+											} catch (NoNetworkAccessException e1) {
+												Utils.showNetworkNotAvailableDialog(context);
+											} catch (NoAccessToServer e1) {
+												Utils.showServerNotAvailableDialog(context);
+											}
+							
 										if(refresh){
-											circRecords = accountAccess.getItemsCheckedOut();
+											
+											try {
+												circRecords = accountAccess.getItemsCheckedOut();
+											}  catch (NoNetworkAccessException e) {
+												Utils.showNetworkNotAvailableDialog(context);
+											} catch (NoAccessToServer e) {
+												Utils.showServerNotAvailableDialog(context);
+												
+											}catch (SessionNotFoundException e) {
+												//TODO other way?
+												try{
+													if(accountAccess.authenticate())
+														circRecords = accountAccess.getItemsCheckedOut();
+												}catch(Exception eauth){
+													System.out.println("Exception in reAuth");
+												}
+											}		
+											
 											listAdapter.clear();
 											for(int i=0;i<circRecords.size();i++){
 												listAdapter.add(circRecords.get(i));
