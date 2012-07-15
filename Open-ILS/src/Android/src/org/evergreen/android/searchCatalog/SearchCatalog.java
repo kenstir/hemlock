@@ -1,13 +1,12 @@
 
 package org.evergreen.android.searchCatalog;
 
-import java.io.NotSerializableException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.evergreen.android.accountAccess.SessionNotFoundException;
 import org.evergreen.android.globals.GlobalConfigs;
 import org.evergreen.android.globals.NoAccessToServer;
 import org.evergreen.android.globals.NoNetworkAccessException;
@@ -19,7 +18,6 @@ import org.opensrf.net.http.HttpRequest;
 import org.opensrf.net.http.HttpRequestHandler;
 import org.opensrf.util.OSRFObject;
 
-import android.content.Context;
 import android.net.ConnectivityManager;
 import android.util.Log;
 
@@ -53,10 +51,17 @@ public class SearchCatalog {
 	*/
 	public static String METHOD_COPY_LOCATION_COUNTS = "open-ils.search.biblio.copy_location_counts.summary.retrieve";
 
+	/**
+	 * Get copy statuses like Available, Checked_out , in_progress and others, ccs OSRFObjects
+	 */
+	public static String METHOD_GET_COPY_STATUSES = "open-ils.search.config.copy_status.retrieve.all";
+	
 	public static SearchCatalog searchCatalogSingleton = null;
 	/** The conn. */
 	public HttpConnection conn;
 	
+	//TODO get statuses on load
+	//open-ils.search.config.copy_status.retrieve.all 
 	
 	/** The TAG. */
 	public String TAG = "SearchCatalog";
@@ -174,7 +179,18 @@ public class SearchCatalog {
 	        for(int i=0;i<ids.size();i++){
 	        	
 	        	RecordInfo record = new RecordInfo(getItemShortInfo(ids.get(i)));
+	        	//get copy information
 	        	resultsRecordInfo.add(record);
+	        	
+	        	//get copy count 
+	        	List<List<Object>> list= (List<List<Object>>)getLocationCount(Integer.parseInt(ids.get(i)), this.selectedOrganization.id, this.selectedOrganization.level-1);
+	        	
+	        	for(int j=0; j<list.size();j++){
+	        		CopyInformation copyInfo = new CopyInformation(list.get(j));
+	        		
+	        		record.copyInformationList.add(copyInfo);
+	        	}
+	        	
 	        	System.out.println("Title " + record.title + " Author " + record.author + " Pub date" + record.pubdate +" Publisher" + record.publisher);
 	        }
 		
@@ -239,6 +255,25 @@ public class SearchCatalog {
 
 	}
 
+	
+	public Object getCopyStatuses() throws NoNetworkAccessException, NoAccessToServer{
+		
+		List<OSRFObject> ccs_list = (List<OSRFObject>)Utils.doRequest(conn, SERVICE, METHOD_COPY_STATUS_ALL, cm, new Object[]{});
+		
+		CopyInformation.availableOrgStatuses = new LinkedHashMap<String,String>();
+		
+		for(int i=0;i<ccs_list.size();i++){
+			OSRFObject ccs_obj = ccs_list.get(i);
+			if(ccs_obj.getString("opac_visible").equals("t")){
+				
+				CopyInformation.availableOrgStatuses.put(ccs_obj.getInt("id")+"", ccs_obj.getString("name"));
+				System.out.println("Add status " + ccs_obj.getString("name"));
+				
+			}
+		}
+		
+		return ccs_list;
+	}
 	
 	public Object getLocationCount(Integer recordID, Integer orgID, Integer orgDepth) throws NoNetworkAccessException, NoAccessToServer{
 		
