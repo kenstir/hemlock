@@ -48,6 +48,11 @@
             android:label="Tabs/Styled"
             android:theme="@style/StyledIndicators"
             ></activity>  
+            
+        <activity android:name=".searchCatalog.SampleUnderlinesNoFade"
+            android:label="Underlines/No Fade"
+            >
+        </activity>
 
         <!-- Checkout Activities -->
         <activity android:name=".accountAccess.checkout.ItemsCheckOutListView"></activity>

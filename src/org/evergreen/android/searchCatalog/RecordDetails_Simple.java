@@ -22,7 +22,10 @@ public class RecordDetails_Simple extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		
 		setContentView(R.layout.record_details_simple);
+		
+		
 		
 		titleTextView = (TextView) findViewById(R.id.record_details_simple_title);
 		authorTextView = (TextView) findViewById(R.id.record_details_simple_author);
