@@ -10,6 +10,7 @@ import java.util.StringTokenizer;
 import org.evergreen.android.accountAccess.AccountAccess;
 import org.evergreen.android.accountAccess.SessionNotFoundException;
 import org.evergreen.android.searchCatalog.Organisation;
+import org.evergreen.android.searchCatalog.SearchCatalog;
 import org.evergreen.android.views.ApplicationPreferences;
 import org.open_ils.idl.IDLParser;
 
@@ -91,6 +92,8 @@ public class GlobalConfigs {
 				loadIDLFile();
 				getOrganisations();
 			
+				getCopyStatusesAvailable((ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE));
+				
 				AccountAccess.setAccountInfo(preferences.getString("username", ""), preferences.getString("password", ""));
 				
 				
@@ -269,6 +272,22 @@ public class GlobalConfigs {
 			
 			loadedOrgTree = true;
 		}
+	}
+	
+	public void getCopyStatusesAvailable(ConnectivityManager cm){
+		
+		SearchCatalog search = SearchCatalog.getInstance(cm);
+		
+		try {
+			search.getCopyStatuses();
+		} catch (NoNetworkAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (NoAccessToServer e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	
 	}
 	
 	public void getOrgHiddentDepth(){

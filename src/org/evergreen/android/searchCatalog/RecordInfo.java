@@ -1,6 +1,7 @@
 package org.evergreen.android.searchCatalog;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -46,16 +47,19 @@ public class RecordInfo implements Serializable{
 	
 	public boolean dummy = false;
 	
+	public List<CopyInformation> copyInformationList = null;
+	
 	public RecordInfo(){
 		this.title = "Test title";
 		this.author = "Test author";
 		this.pubdate = "Publication date";
+		copyInformationList = new ArrayList<CopyInformation>();
 		
 		//marks the fact that this is a record made from no info
 		this.dummy = true;
 	}
 	public RecordInfo(OSRFObject info){
-		
+		copyInformationList = new ArrayList<CopyInformation>();
 		try{
 
 			this.title = info.getString("title");

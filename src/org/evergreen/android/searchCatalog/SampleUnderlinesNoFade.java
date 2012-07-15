@@ -57,8 +57,6 @@ public class SampleUnderlinesNoFade extends BaseSampleActivity {
         public Fragment getItem(int position) {
         		// position +1 for 1 - size values
         		return BasicDetailsFragment.newInstance(records.get(position),position+1,records.size());
-        	
-           
         }
 
         @Override

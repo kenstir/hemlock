@@ -1,18 +1,21 @@
 package org.evergreen.android.utils.ui;
 
+import java.util.Iterator;
+import java.util.Map.Entry;
+import java.util.Set;
+
 import org.evergreen.android.R;
+import org.evergreen.android.searchCatalog.CopyInformation;
 import org.evergreen.android.searchCatalog.RecordInfo;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewGroup.LayoutParams;
 import android.widget.LinearLayout;
-import android.widget.ScrollView;
 import android.widget.TextView;
-import android.widget.LinearLayout.LayoutParams;
 
 public class BasicDetailsFragment extends Fragment{
 
@@ -81,6 +84,50 @@ public class BasicDetailsFragment extends Fragment{
 			synopsisTextView.setText(record.synopsis);
 			
 			isbnTextView.setText(record.isbn);
+			
+			
+			
+			for(int i=0;i<record.copyInformationList.size();i++){
+				
+				View copy_info_view = inflater.inflate(R.layout.copy_information, null);
+	
+				// fill in any details dynamically here
+				TextView library = (TextView) copy_info_view.findViewById(R.id.copy_information_library);
+				TextView call_number = (TextView) copy_info_view.findViewById(R.id.copy_information_call_number);
+				TextView copy_location = (TextView) copy_info_view.findViewById(R.id.copy_information_copy_location);
+
+				library.setText(record.copyInformationList.get(i).org_id+"");
+				call_number.setText(record.copyInformationList.get(i).call_number_sufix);
+				copy_location.setText(record.copyInformationList.get(i).copy_location);
+				
+				// insert into main view
+				LinearLayout insertPoint = (LinearLayout) layout.findViewById(R.id.content_layout);
+				insertPoint.addView(copy_info_view, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.FILL_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+
+				LinearLayout copy_statuses = (LinearLayout) copy_info_view.findViewById(R.id.copy_information_statuses);
+				
+				
+				CopyInformation info = record.copyInformationList.get(i);
+				
+				Set<Entry<String,String>> set = info.statusInformation.entrySet();
+				
+				Iterator<Entry<String, String>> it = set.iterator();
+				
+				while(it.hasNext()){
+					
+					Entry<String,String> ent = it.next();
+					TextView statusName = new TextView(getActivity());
+					statusName.setText(ent.getKey() + " : " + ent.getValue());
+					
+					copy_statuses.addView(statusName, new LayoutParams(LayoutParams.WRAP_CONTENT,LayoutParams.WRAP_CONTENT));
+					
+				}
+
+
+				
+			}
+			
+			
 			
 			
 	        return layout;
