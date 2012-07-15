@@ -189,11 +189,14 @@ public class SearchCatalogListView extends Activity{
     			else{
 	    			//start activity with book details
 	    			
-	    			Intent intent = new Intent(getBaseContext(),TabsView.class);
+	    			Intent intent = new Intent(getBaseContext(),SampleUnderlinesNoFade.class);
 	    			//serialize object and pass it to next activity
 	    			intent.putExtra("recordInfo", info);
 	    			intent.putExtra("orgID",search.selectedOrganization.id);
 	    			intent.putExtra("depth",(search.selectedOrganization.level-1));
+	    			
+	    			intent.putExtra("recordList", searchResults);
+	    			intent.putExtra("recordPosition", position);
 	    			startActivity(intent);
     			}
     		}
@@ -215,7 +218,7 @@ public class SearchCatalogListView extends Activity{
 				progressDialog = new ProgressDialog(context);
 				
 				progressDialog.setMessage("Fetching data");
-				//progressDialog.show();
+				progressDialog.show();
 				
 				if(text.length()>0){
 					
