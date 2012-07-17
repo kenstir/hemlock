@@ -1,8 +1,14 @@
 package org.evergreen.android.views.splashscreen;
 
+import org.evergreen.android.accountAccess.AccountAccess;
+import org.evergreen.android.globals.GlobalConfigs;
+
+import android.content.Context;
+import android.net.ConnectivityManager;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 public class LoadingTask extends AsyncTask<String, Integer, Integer> {
 
@@ -15,14 +21,21 @@ public class LoadingTask extends AsyncTask<String, Integer, Integer> {
 	// This is the listener that will be told when this task is finished
 	private final LoadingTaskFinishedListener finishedListener;
 
+	private Context context;
+	
+	private TextView progressText;
+	
+	private String text;
 	/**
 	 * A Loading task that will load some resources that are necessary for the app to start
 	 * @param progressBar - the progress bar you want to update while the task is in progress
 	 * @param finishedListener - the listener that will be told when this task is finished
 	 */
-	public LoadingTask(ProgressBar progressBar, LoadingTaskFinishedListener finishedListener) {
+	public LoadingTask(ProgressBar progressBar, LoadingTaskFinishedListener finishedListener, Context context, TextView progressText) {
 		this.progressBar = progressBar;
 		this.finishedListener = finishedListener;
+		this.context = context;
+		this.progressText = progressText;
 	}
 
 	@Override
@@ -45,21 +58,27 @@ public class LoadingTask extends AsyncTask<String, Integer, Integer> {
 	private void downloadResources() {
 		// We are just imitating some process thats takes a bit of time (loading of resources / downloading)
 		int count = 10;
-		for (int i = 0; i < count; i++) {
-
-			// Update the progress bar after every step
-			int progress = (int) ((i / (float) count) * 100);
-			publishProgress(progress);
-
-			// Do some long loading things
-			try { Thread.sleep(1000); } catch (InterruptedException ignore) {}
-		}
+		text = "download files";
+		publishProgress(50);
+		
+		GlobalConfigs gl = GlobalConfigs.getGlobalConfigs(context);
+		text = "authenticate user";
+		publishProgress(70);
+		
+		AccountAccess ac = AccountAccess.getAccountAccess(GlobalConfigs.httpAddress,(ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE));
+		try{
+			ac.authenticate();
+		}catch(Exception e){}
+		text = "loading application";
+		publishProgress(100);
+		
 	}
 
 	@Override
 	protected void onProgressUpdate(Integer... values) {
 		super.onProgressUpdate(values);
 		progressBar.setProgress(values[0]); // This is ran on the UI thread so it is ok to update our progress bar ( a UI view ) here
+		progressText.setText(text);
 	}
 
 	@Override

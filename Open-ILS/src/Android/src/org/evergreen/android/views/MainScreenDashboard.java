@@ -33,7 +33,6 @@ public class MainScreenDashboard extends Activity {
 		//init here globals, 
 		//TODO in future do a splash screen (loading data)
 		
-		GlobalConfigs globalConfigs = GlobalConfigs.getGlobalConfigs(this);
 	}
 
 	/**
