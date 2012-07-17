@@ -10,18 +10,25 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 public class SplashActivity extends Activity implements LoadingTaskFinishedListener {
 
+	
+	private TextView progressText;
+	
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         // Show the splash screen
         setContentView(R.layout.activity_splash);
+        
+        progressText = (TextView) findViewById(R.id.action_in_progress);
+        
         // Find the progress bar
         ProgressBar progressBar = (ProgressBar) findViewById(R.id.activity_splash_progress_bar);
         // Start your loading
-        new LoadingTask(progressBar, this).execute("www.google.co.uk"); // Pass in whatever you need a url is just an example we don't use it in this tutorial
+        new LoadingTask(progressBar, this, this, progressText).execute("download"); // Pass in whatever you need a url is just an example we don't use it in this tutorial
     }
 
     // This is the callback for when your async task has finished

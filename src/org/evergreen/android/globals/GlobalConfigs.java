@@ -44,7 +44,7 @@ public class GlobalConfigs {
 	public ArrayList<Organisation> organisations;
 	
 	/** The collections request. */
-	private String collectionsRequest = "/opac/common/js/";
+	private String collectionsRequest = "/opac/common/js/" + locale + "/OrgTree.js";
 	
 	
 	private GlobalConfigs(Context context){
@@ -68,7 +68,6 @@ public class GlobalConfigs {
 		
 		if(init == false){
 			
-			collectionsRequest += locale + "/OrgTree.js";
 			init = true;
 			SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
 			GlobalConfigs.httpAddress = preferences.getString("library_url", "");
@@ -95,14 +94,7 @@ public class GlobalConfigs {
 				getCopyStatusesAvailable((ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE));
 				
 				AccountAccess.setAccountInfo(preferences.getString("username", ""), preferences.getString("password", ""));
-				
-				
-				//authenticate
-				AccountAccess ac = AccountAccess.getAccountAccess(GlobalConfigs.httpAddress,(ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE));
-				try{
-					ac.authenticate();
-				}catch(Exception e){}
-				
+
 				//TODO getorg hidding levels
 				//getOrgHiddentDepth();
 				
@@ -341,4 +333,15 @@ public class GlobalConfigs {
 			return date;
 	}
 	
+	public String getOrganizationName(int id){
+		
+		for(int i=0;i<organisations.size();i++){
+			System.out.println("Id " + organisations.get(i).id + " " + i);
+			if(organisations.get(i).id == id)
+				return organisations.get(i).name;
+		}
+		
+		System.out.println("out here");
+		return null;
+	}
 }

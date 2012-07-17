@@ -189,7 +189,7 @@ public class ApplicationPreferences extends PreferenceActivity implements OnShar
 								GlobalConfigs sg = GlobalConfigs.getGlobalConfigs(context);
 								sg.loadIDLFile();
 								sg.getOrganisations();
-								
+								sg.getCopyStatusesAvailable((ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE));
 								runOnUiThread(new Runnable() {
 									public void run() {
 										progressDialog.dismiss();

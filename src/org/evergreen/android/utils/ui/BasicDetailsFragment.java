@@ -5,6 +5,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.evergreen.android.R;
+import org.evergreen.android.globals.GlobalConfigs;
 import org.evergreen.android.searchCatalog.CopyInformation;
 import org.evergreen.android.searchCatalog.RecordInfo;
 
@@ -60,6 +61,9 @@ public class BasicDetailsFragment extends Fragment{
 	    @Override
 	    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 	    
+	    	
+	    	GlobalConfigs gl = GlobalConfigs.getGlobalConfigs(getActivity());
+	    	
 	    	LinearLayout layout = (LinearLayout) inflater.inflate(R.layout.record_details_basic_fragment, null);
 
 	    	record_header = (TextView) layout.findViewById(R.id.record_header_text);
@@ -96,7 +100,9 @@ public class BasicDetailsFragment extends Fragment{
 				TextView call_number = (TextView) copy_info_view.findViewById(R.id.copy_information_call_number);
 				TextView copy_location = (TextView) copy_info_view.findViewById(R.id.copy_information_copy_location);
 
-				library.setText(record.copyInformationList.get(i).org_id+"");
+			
+				
+				library.setText(gl.getOrganizationName(record.copyInformationList.get(i).org_id) + " ");
 				call_number.setText(record.copyInformationList.get(i).call_number_sufix);
 				copy_location.setText(record.copyInformationList.get(i).copy_location);
 				
