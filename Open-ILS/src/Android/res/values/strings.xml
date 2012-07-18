@@ -43,4 +43,7 @@
     <string name="balance_owed">Balance Owed</string>
     <string name="overdue_materials">Overdue Materials</string>
     
+    <!-- Bookbag Activities -->
+    <string name="delete_button">delete</string>
+    
 </resources>
