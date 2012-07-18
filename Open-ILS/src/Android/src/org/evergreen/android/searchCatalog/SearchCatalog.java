@@ -262,16 +262,17 @@ public class SearchCatalog {
 		
 		CopyInformation.availableOrgStatuses = new LinkedHashMap<String,String>();
 		
-		for(int i=0;i<ccs_list.size();i++){
-			OSRFObject ccs_obj = ccs_list.get(i);
-			if(ccs_obj.getString("opac_visible").equals("t")){
-				
-				CopyInformation.availableOrgStatuses.put(ccs_obj.getInt("id")+"", ccs_obj.getString("name"));
-				System.out.println("Add status " + ccs_obj.getString("name"));
-				
+		if(ccs_list != null){
+			for(int i=0;i<ccs_list.size();i++){
+				OSRFObject ccs_obj = ccs_list.get(i);
+				if(ccs_obj.getString("opac_visible").equals("t")){
+					
+					CopyInformation.availableOrgStatuses.put(ccs_obj.getInt("id")+"", ccs_obj.getString("name"));
+					System.out.println("Add status " + ccs_obj.getString("name"));
+					
+				}
 			}
 		}
-		
 		return ccs_list;
 	}
 	
