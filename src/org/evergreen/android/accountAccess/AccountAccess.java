@@ -800,7 +800,6 @@ public class AccountAccess {
 	
 		//get status
 		holdObj.status = ((Map<String,Integer>)hold_status).get("status");
-		
 		return hold_status;
 	}
 	

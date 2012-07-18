@@ -175,9 +175,6 @@ public class ItemsCheckOutListView extends Activity{
 		    		//Get reference to TextView - record Publisher date+publisher
 		    		recordDueDate = (TextView) row.findViewById(R.id.checkout_due_date);
 		    
-		    		//Get remaining renewals
-		    		recordRenewals = (TextView) row.findViewById(R.id.checkout_renewals_remaining);
-		    		
 		    		renewButton = (TextView) row.findViewById(R.id.renew_button);
 		    		
 		    		renewButton.setText("renew : " + record.getRenewals());
@@ -249,14 +246,16 @@ public class ItemsCheckOutListView extends Activity{
 												}
 											}		
 											
-											listAdapter.clear();
-											for(int i=0;i<circRecords.size();i++){
-												listAdapter.add(circRecords.get(i));
-											}
+											
 											runOnUiThread(new Runnable() {
-												
+					
 												@Override
 												public void run() {
+													listAdapter.clear();
+													for(int i=0;i<circRecords.size();i++){
+														listAdapter.add(circRecords.get(i));
+													}
+													
 													progressDialog.dismiss();
 													listAdapter.notifyDataSetChanged();
 												}
@@ -273,7 +272,6 @@ public class ItemsCheckOutListView extends Activity{
 		    		recordTitle.setText(record.getTitle());
 		    		recordAuthor.setText(record.getAuthor());
 		    		recordDueDate.setText(record.getDueDate());
-		    		recordRenewals.setText(record.getRenewals()+"");
 	    		}
 	    		
 	    		return row;
