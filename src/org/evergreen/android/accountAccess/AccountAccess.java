@@ -8,6 +8,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.evergreen.android.accountAccess.bookbags.BookBag;
+import org.evergreen.android.accountAccess.bookbags.BookBagItem;
 import org.evergreen.android.accountAccess.checkout.CircRecord;
 import org.evergreen.android.accountAccess.fines.FinesRecord;
 import org.evergreen.android.accountAccess.holds.HoldRecord;
@@ -983,26 +985,40 @@ public class AccountAccess {
 	
 	//---------------------------------------Book bags-----------------------------------//
 	
-	public Object getBookbags()
+	public ArrayList<BookBag> getBookbags()
 			throws SessionNotFoundException, NoNetworkAccessException, NoAccessToServer{
 		
 		Object response = Utils.doRequest(conn,SERVICE_ACTOR, METHOD_FLESH_CONTAINERS, authToken, cm, new Object[]{authToken,userID,"biblio","bookbag"});
 	
 		List<OSRFObject> bookbags = (List<OSRFObject>)response;
 		
+		ArrayList<BookBag> bookBagObj = new ArrayList<BookBag>();
+		
 		for(int i=0;i<bookbags.size();i++){
 			
-			getBookbagContent(bookbags.get(i).getInt("id"));
+			BookBag bag = new BookBag(bookbags.get(i));	
+			getBookbagContent(bag,bookbags.get(i).getInt("id"));
+		
+			bookBagObj.add(bag);
 		}
-		
-		
-		return bookbags;
+		return bookBagObj;
 	}
 	
-	private Object getBookbagContent(Integer bookbagID)
+	private Object getBookbagContent(BookBag bag, Integer bookbagID)
 			throws SessionNotFoundException, NoNetworkAccessException, NoAccessToServer{
 		
-		return Utils.doRequest(conn,SERVICE_ACTOR, METHOD_FLESH_PUBLIC_CONTAINER, authToken, cm, new Object[]{authToken,"biblio",bookbagID});
+		Map<String,?> map =(Map<String,?>) Utils.doRequest(conn,SERVICE_ACTOR, METHOD_FLESH_PUBLIC_CONTAINER, authToken, cm, new Object[]{authToken,"biblio",bookbagID});
+	
+		List<OSRFObject> items =(List<OSRFObject>) map.get("items"); 
+		
+		for(int i=0;i<items.size();i++){
+			
+			BookBagItem bookBagItem = new BookBagItem(items.get(i));
+			
+			bag.items.add(bookBagItem);
+		}
+		
+		return items;
 	}
 	
 }

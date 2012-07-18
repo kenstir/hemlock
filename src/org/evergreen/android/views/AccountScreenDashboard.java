@@ -2,6 +2,7 @@
 package org.evergreen.android.views;
 
 import org.evergreen.android.R;
+import org.evergreen.android.accountAccess.bookbags.BookbagsListView;
 import org.evergreen.android.accountAccess.checkout.ItemsCheckOutListView;
 import org.evergreen.android.accountAccess.fines.FinesActivity;
 import org.evergreen.android.accountAccess.holds.HoldsListView;
@@ -122,7 +123,7 @@ public class AccountScreenDashboard extends Activity {
 	           startActivity (new Intent(getApplicationContext(), FinesActivity.class));
 	           break;
 	      case R.id.account_btn_book_bags :
-	           //startActivity (new Intent(getApplicationContext(), F6Activity.class));
+	           startActivity (new Intent(getApplicationContext(), BookbagsListView.class));
 	           break;
 	      default: 
 	    	   break;

@@ -71,6 +71,8 @@
         <activity android:name=".searchCatalog.RecordDetails"></activity>
         <activity android:name=".searchCatalog.RecordDetails_Simple"></activity>
         
+        <!-- Bookbags -->
+        <activity android:name=".accountAccess.bookbags.BookbagsListView"></activity>
         
     </application>
     
