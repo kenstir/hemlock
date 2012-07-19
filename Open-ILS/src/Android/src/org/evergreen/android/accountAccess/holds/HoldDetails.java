@@ -278,10 +278,7 @@ public class HoldDetails extends Activity {
 						System.out.println("Exception in reAuth");
 					}
 				}
-				
-				
-				
-				
+	
 				runOnUiThread(new Runnable() {
 					@Override
 					public void run() {

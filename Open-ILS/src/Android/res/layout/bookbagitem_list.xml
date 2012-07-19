@@ -3,32 +3,35 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:orientation="vertical" >
-   
+    
+    
     <LinearLayout 
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         >
-
+        
+          <TextView 
+            android:text="@string/bookbag_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            />
+        
         <TextView 
+            android:id="@+id/bookbag_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/create_bookbag"
             />
-        <EditText 
-            android:id="@+id/bookbag_create_name"
-            android:layout_width="200dip"
-            android:layout_height="wrap_content"
-            android:hint="@string/bookbag_name"
-            />
-        <Button
-            android:id="@+id/bookbag_create_button"
+        
+        <Button 
+            android:id="@+id/remove_bookbag"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/create"
+            android:text="@string/delete_button"
             />
         
     </LinearLayout>
+    
     
 	<LinearLayout 
 	android:layout_width="fill_parent"
@@ -36,49 +39,36 @@
     android:orientation="horizontal"
     android:gravity="center_vertical" 
 	android:paddingLeft="5dip"
-	android:paddingTop="10dip"
 	>
 	   
 		<TextView
-		style="@style/TitleSearchStyleList"
 		android:layout_width="fill_parent"
 		android:layout_height="wrap_content"
 		android:layout_weight="1"
-		android:text="@string/bags_name"
+		android:text="@string/title"
+		android:gravity="center"
 		/>   
 	    
 		<TextView
-		style="@style/TitleSearchStyleList"
 		android:layout_width="fill_parent"
 		android:layout_height="wrap_content"
 		android:layout_weight="1"
 		android:gravity="center"
-		android:text="@string/bags_items"
+		android:text="@string/author"
 		/>
-		
-		
+
 		<TextView
-		style="@style/TitleSearchStyleList"
-		android:layout_width="fill_parent"
-		android:layout_height="wrap_content"
-		android:layout_weight="1"
-		android:gravity="center"
-		android:text="@string/bags_shared"
-		/>
-		
-		<TextView
-		 style="@style/TitleSearchStyleList"
 		 android:layout_width="wrap_content"
 		 android:layout_height="wrap_content"
 		 android:text="@string/bags_action" 
 		 android:layout_gravity="right"
 		 android:gravity="center"
-		    />
+		  />
 		
 	</LinearLayout>
      
 	<ListView 
-	  android:id="@+id/bookbag_list"
+	  android:id="@+id/bookbagitem_list"
 	  android:layout_width="fill_parent"
 	  android:layout_height="wrap_content"  
 	  android:paddingTop="10dip"
