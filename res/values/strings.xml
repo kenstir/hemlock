@@ -45,5 +45,14 @@
     
     <!-- Bookbag Activities -->
     <string name="delete_button">delete</string>
-    
+    <string name="bags_name">name</string>
+    <string name="bags_items">no items</string>
+    <string name="bags_shared">shared</string>
+    <string name="bags_action">action</string>
+    <string name="details">details</string>
+    <string name="bookbagitem_remove">remove</string>
+    <string name="create_bookbag">New : </string>
+    <string name="create">create</string>
+    <string name="bookbag_name">bookbag name</string>
+    <string name="add_button">add</string>
 </resources>

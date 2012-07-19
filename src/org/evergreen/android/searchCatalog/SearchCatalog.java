@@ -178,7 +178,7 @@ public class SearchCatalog {
 
 	        for(int i=0;i<ids.size();i++){
 	        	
-	        	RecordInfo record = new RecordInfo(getItemShortInfo(ids.get(i)));
+	        	RecordInfo record = new RecordInfo(getItemShortInfo(Integer.parseInt(ids.get(i))));
 	        	//get copy information
 	        	resultsRecordInfo.add(record);
 	        	
@@ -205,7 +205,7 @@ public class SearchCatalog {
 	 * @param id the id
 	 * @return the item short info
 	 */
-	private OSRFObject getItemShortInfo(String id){
+	private OSRFObject getItemShortInfo(Integer id){
 		
 		Method method = new Method(METHOD_SLIM_RETRIVE);
 		
@@ -281,6 +281,19 @@ public class SearchCatalog {
 		List<?> list = (List<?>)Utils.doRequest(conn, SERVICE, METHOD_COPY_LOCATION_COUNTS, cm, new Object[]{recordID, orgID, orgDepth});
 		return list;
 		
+	}
+	
+	
+	public ArrayList<RecordInfo> getRecordsInfo(ArrayList<Integer> ids){
+		
+		ArrayList<RecordInfo> recordInfoArray = new ArrayList<RecordInfo>();
+		
+		for(int i=0;i<ids.size();i++){
+			RecordInfo recordInfo = new RecordInfo(getItemShortInfo(ids.get(i)));
+			recordInfoArray.add(recordInfo);
+		}
+		
+		return recordInfoArray;
 	}
 	
 	/**

@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.evergreen.android.R;
+import org.evergreen.android.accountAccess.AccountAccess;
+import org.evergreen.android.accountAccess.SessionNotFoundException;
+import org.evergreen.android.accountAccess.bookbags.BookBag;
 import org.evergreen.android.accountAccess.holds.PlaceHold;
 import org.evergreen.android.globals.GlobalConfigs;
 import org.evergreen.android.globals.NoAccessToServer;
@@ -37,6 +40,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class SearchCatalogListView extends Activity{
 
@@ -67,8 +71,14 @@ public class SearchCatalogListView extends Activity{
 	private static final int PLACE_HOLD = 0;
 	
 	private static final int DETAILS = 1;
+	
+	private static final int BOOK_BAG = 2;
 
 	private TextView searchResultsNumber;
+	
+	private ArrayList<BookBag> bookBags;
+	
+	private Integer bookbag_selected = -1;
 	
 	private final ImageDownloader imageDownloader = new ImageDownloader();
 	
@@ -310,6 +320,54 @@ public class SearchCatalogListView extends Activity{
         
         });
     
+        //get bookbags
+        Runnable getBookbagsRunnable = new Runnable() {
+			
+			@Override
+			public void run() {
+				runOnUiThread(new Runnable() {
+					@Override
+					public void run() {
+						progressDialog = ProgressDialog.show(context, "Plese wait", "retrieving Bookbag data");
+					}
+				});
+				AccountAccess accountAccess = AccountAccess.getAccountAccess();
+				try {
+					bookBags = accountAccess.getBookbags();
+				}  catch (NoNetworkAccessException e) {
+					Utils.showNetworkNotAvailableDialog(context);
+				} catch (NoAccessToServer e) {
+					Utils.showServerNotAvailableDialog(context);
+					
+				}catch (SessionNotFoundException e) {
+					//TODO other way?
+					try{
+						if(accountAccess.authenticate())
+							accountAccess.getBookbags();
+					}catch(Exception eauth){
+						System.out.println("Exception in reAuth");
+					}
+				}			
+	
+				runOnUiThread(new Runnable() {
+					
+					@Override
+					public void run() {
+						progressDialog.dismiss();
+						
+		    			
+						
+					}
+				});
+				
+				
+			}
+		};
+
+		Thread getBookBags = new Thread(getBookbagsRunnable);
+		getBookBags.start();
+        
+        
     }
     
     @Override
@@ -324,6 +382,7 @@ public class SearchCatalogListView extends Activity{
         
           menu.add(Menu.NONE, DETAILS,0,"Details");
           menu.add(Menu.NONE,PLACE_HOLD,1,"Place Hold");
+          menu.add(Menu.NONE,BOOK_BAG,2,"Add to bookbag");
         
       }
     }
@@ -333,7 +392,7 @@ public class SearchCatalogListView extends Activity{
     	AdapterView.AdapterContextMenuInfo menuArrayItem = (AdapterView.AdapterContextMenuInfo)item.getMenuInfo();
     	int menuItemIndex = item.getItemId();
     	
-    	RecordInfo info = (RecordInfo)lv.getItemAtPosition(menuArrayItem.position);
+    	final RecordInfo info = (RecordInfo)lv.getItemAtPosition(menuArrayItem.position);
 		//start activity with book details
 		
     	
@@ -355,6 +414,96 @@ public class SearchCatalogListView extends Activity{
     			intent.putExtra("recordInfo", info);
     			
     			startActivity(intent);
+    		}
+    		
+    		case BOOK_BAG : {
+    			
+    			
+    			if(bookBags.size() > 0){
+	    			String array_spinner[] = new String[bookBags.size()];
+					
+	    			for(int i=0;i<array_spinner.length;i++)
+	    				array_spinner[i] = bookBags.get(i).name;
+	    			
+	
+	    			AlertDialog.Builder builder;
+	    			AlertDialog alertDialog;
+	
+	    			LayoutInflater inflater = (LayoutInflater) context.getSystemService(LAYOUT_INFLATER_SERVICE);
+	    			View layout = inflater.inflate(R.layout.bookbag_spinner,null);
+	
+	    			Spinner s = (Spinner) layout.findViewById(R.id.bookbag_spinner);
+	
+	    			Button add = (Button) layout.findViewById(R.id.add_to_bookbag_button);
+	    			ArrayAdapter adapter = new ArrayAdapter(context,android.R.layout.simple_spinner_item, array_spinner);
+	
+	    			s.setAdapter(adapter);
+	    			
+	    			
+	    			add.setOnClickListener(new OnClickListener() {
+						
+						@Override
+						public void onClick(View v) {
+							// TODO Auto-generated method stub
+							Thread addtoBookbag = new Thread(new Runnable() {
+								@Override
+								public void run() {
+									AccountAccess ac = AccountAccess.getAccountAccess();
+									try {
+										ac.addRecordToBookBag(info.doc_id, bookBags.get(bookbag_selected).id);
+									} catch (SessionNotFoundException e) {
+										// TODO Auto-generated catch block
+										e.printStackTrace();
+									} catch (NoAccessToServer e) {
+										// TODO Auto-generated catch block
+										e.printStackTrace();
+									} catch (NoNetworkAccessException e) {
+										// TODO Auto-generated catch block
+										e.printStackTrace();
+									}
+								
+									runOnUiThread(new Runnable() {
+										@Override
+										public void run() {
+											progressDialog.dismiss();
+										}
+									});
+
+								}
+					});
+							progressDialog.show(context, "Please wait", "Add to bookbag");
+							addtoBookbag.start();
+						}});
+	    			
+	    			builder = new AlertDialog.Builder(context);
+	    			builder.setView(layout);
+	    			alertDialog = builder.create();
+	    			alertDialog.show();
+	    			
+	    			
+	    			
+	    			s.setOnItemSelectedListener(new OnItemSelectedListener() {
+
+						@Override
+						public void onItemSelected(AdapterView<?> arg0, View arg1,
+								int position, long arg3) {
+							
+						bookbag_selected = position;
+						}
+
+						@Override
+						public void onNothingSelected(AdapterView<?> arg0) {
+							// TODO Auto-generated method stub
+							
+						}
+					
+	    			});
+
+    			
+    			}
+    			else
+    				Toast.makeText(context, "No bookbags", Toast.LENGTH_SHORT).show();
+    			
     		}
     		break;
     	}

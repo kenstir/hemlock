@@ -218,6 +218,13 @@ public class AccountAccess {
 	public static String METHOD_FLESH_PUBLIC_CONTAINER = "open-ils.actor.container.flesh";
 	
 	
+	public static String METHOD_CONTAINER_DELETE = "open-ils.actor.container.item.delete";
+	
+	public static String METHOD_CONTAINER_CREATE = "open-ils.actor.container.create";
+
+	public static String METHOD_CONTAINER_ITEM_CREATE = "open-ils.actor.container.item.create";
+	
+	public static String METHOD_CONTAINER_FULL_DELETE = "open-ils.actor.container.full_delete";
 	/** The conn. */
 	public HttpConnection conn;
 
@@ -1019,6 +1026,49 @@ public class AccountAccess {
 		}
 		
 		return items;
+	}
+	
+	public void removeBookbagItem(Integer id) throws SessionNotFoundException, NoNetworkAccessException, NoAccessToServer {
+		
+		removeContainer("biblio", id);
+		
+	}
+	
+	public void createBookbag(String name) throws SessionNotFoundException, NoNetworkAccessException, NoAccessToServer{
+		
+		OSRFObject cbreb = new OSRFObject("cbreb");
+		cbreb.put("btype", "bookbag");
+		cbreb.put("name", name);
+		cbreb.put("pub", false);
+		cbreb.put("owner",userID);
+		
+		createContainer("biblio",cbreb);
+	}
+	
+	public void deleteBookBag(Integer id) throws SessionNotFoundException, NoNetworkAccessException, NoAccessToServer {
+		
+		Object response  = Utils.doRequest(conn, SERVICE_ACTOR, METHOD_CONTAINER_FULL_DELETE, authToken, cm, new Object[]{authToken,"biblio",id});
+	}
+	
+	public void addRecordToBookBag(Integer record_id, Integer bookbag_id) throws SessionNotFoundException, NoAccessToServer, NoNetworkAccessException{
+		
+		OSRFObject cbrebi = new OSRFObject("cbrebi"); 
+		cbrebi.put("bucket", bookbag_id);
+		cbrebi.put("target_biblio_record_entry", record_id);
+		cbrebi.put("id", null);
+		
+		Object response  = Utils.doRequest(conn, SERVICE_ACTOR, METHOD_CONTAINER_ITEM_CREATE, authToken, cm, new Object[]{authToken,"biblio",cbrebi});
+	}
+	
+	private void removeContainer(String container, Integer id) throws SessionNotFoundException, NoNetworkAccessException, NoAccessToServer {
+		
+		Object response  = Utils.doRequest(conn, SERVICE_ACTOR, METHOD_CONTAINER_DELETE, authToken, cm, new Object[]{authToken,container,id});
+	}
+	
+	
+	private void createContainer(String container, Object parameter) throws SessionNotFoundException, NoNetworkAccessException, NoAccessToServer{
+		
+		Object response  = Utils.doRequest(conn, SERVICE_ACTOR, METHOD_CONTAINER_CREATE, authToken, cm, new Object[]{authToken,container,parameter});
 	}
 	
 }

@@ -1,10 +1,11 @@
 package org.evergreen.android.accountAccess.bookbags;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 import org.opensrf.util.OSRFObject;
 
-public class BookBag {
+public class BookBag implements Serializable{
 	
 	public int id;
 	
@@ -12,7 +13,7 @@ public class BookBag {
 
 	public String description = null;
 	
-	public String shared = null;
+	public Boolean shared = null;
 	
 	public ArrayList<BookBagItem> items = null;
 	
@@ -27,9 +28,9 @@ public class BookBag {
 		String pub_visible  = object.getString("pub");
 		
 		if(pub_visible.equals("f"))
-			this.shared = "false";
+			this.shared = false;
 		else
-			this.shared = "true";
+			this.shared = true;
 	}
 	
 }

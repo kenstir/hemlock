@@ -73,6 +73,7 @@
         
         <!-- Bookbags -->
         <activity android:name=".accountAccess.bookbags.BookbagsListView"></activity>
+        <activity android:name=".accountAccess.bookbags.BookBagDetails"></activity>
         
     </application>
     

@@ -22,7 +22,7 @@
     </LinearLayout>
      
 	<ListView 
-	  android:id="@+id/bookbag_list"
+	  android:id="@+id/checkout_items_list"
 	  android:layout_width="fill_parent"
 	  android:layout_height="wrap_content"  
 	  >
