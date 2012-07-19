@@ -60,6 +60,8 @@ private String TAG = "BookBags";
 	
 	private Button delete_bookbag_button;
 	
+	
+	private Runnable getBookBagsItemsRunnable;
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
@@ -162,7 +164,7 @@ private String TAG = "BookBags";
 
 		});
 		
-		Thread getBookBags = new Thread(new Runnable() {
+		getBookBagsItemsRunnable = new Runnable() {
 			
 			@Override
 			public void run() {
@@ -183,6 +185,9 @@ private String TAG = "BookBags";
 					
 					@Override
 					public void run() {
+						
+						listAdapter.clear();
+						
 						for(int i=0;i<bookBag.items.size();i++)
 							listAdapter.add(bookBag.items.get(i));
 						
@@ -198,12 +203,13 @@ private String TAG = "BookBags";
 				
 				
 			}
-		});
+		};
 		
-		progressDialog = new ProgressDialog(context);
-		progressDialog.setMessage("Please wait while retrieving Book Bag data");
-		progressDialog.show();
+		Thread getBookBags = new Thread(getBookBagsItemsRunnable);
+		
+		progressDialog = ProgressDialog.show(context, "Please wait", "retrieving bookbag data");
 		getBookBags.start();
+
 
 	
 				
@@ -302,7 +308,17 @@ private String TAG = "BookBags";
 									runOnUiThread(new Runnable() {
 										@Override
 										public void run() {
-											progressDialog.dismiss();	
+											progressDialog.dismiss();
+											
+											Thread getBookBags = new Thread(getBookBagsItemsRunnable);
+											setResult(RESULT_CODE_UPDATE);
+											
+											
+											bookBag.items.remove(record);
+											progressDialog = ProgressDialog.show(context, "Please wait", "retrieving bookbag data");
+											getBookBags.start();
+											
+											
 										}
 									});
 								}

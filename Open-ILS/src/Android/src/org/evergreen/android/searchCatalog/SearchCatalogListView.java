@@ -427,7 +427,7 @@ public class SearchCatalogListView extends Activity{
 	    			
 	
 	    			AlertDialog.Builder builder;
-	    			AlertDialog alertDialog;
+
 	
 	    			LayoutInflater inflater = (LayoutInflater) context.getSystemService(LAYOUT_INFLATER_SERVICE);
 	    			View layout = inflater.inflate(R.layout.bookbag_spinner,null);
@@ -438,7 +438,9 @@ public class SearchCatalogListView extends Activity{
 	    			ArrayAdapter adapter = new ArrayAdapter(context,android.R.layout.simple_spinner_item, array_spinner);
 	
 	    			s.setAdapter(adapter);
-	    			
+	    			builder = new AlertDialog.Builder(context);
+	    			builder.setView(layout);
+	    			final AlertDialog alertDialog = builder.create();
 	    			
 	    			add.setOnClickListener(new OnClickListener() {
 						
@@ -466,18 +468,18 @@ public class SearchCatalogListView extends Activity{
 										@Override
 										public void run() {
 											progressDialog.dismiss();
+											alertDialog.dismiss();
 										}
 									});
 
 								}
 					});
-							progressDialog.show(context, "Please wait", "Add to bookbag");
+							progressDialog = ProgressDialog.show(context, "Please wait", "Add to bookbag");
 							addtoBookbag.start();
+
 						}});
 	    			
-	    			builder = new AlertDialog.Builder(context);
-	    			builder.setView(layout);
-	    			alertDialog = builder.create();
+
 	    			alertDialog.show();
 	    			
 	    			
