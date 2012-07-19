@@ -187,17 +187,11 @@ public class BookbagsListView extends Activity{
 		
 		
 		if(accountAccess.isAuthenticated()){
-			getBookBags.start();
-			
+			getBookBags.start();	
 		}
 		else
 			Toast.makeText(context, "You must be authenticated to retrieve circ records", Toast.LENGTH_LONG);
-
-	
-				
-
 	}
-	
 	
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
