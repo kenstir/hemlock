@@ -71,6 +71,9 @@ public class ItemsCheckOutListView extends Activity{
 				}catch (SessionNotFoundException e) {
 					//TODO other way?
 					try{
+						
+						Log.d(TAG, "REAUTH " + "in process" );
+						
 						if(accountAccess.authenticate())
 							circRecords = accountAccess.getItemsCheckedOut();
 					}catch(Exception eauth){
