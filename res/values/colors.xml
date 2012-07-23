@@ -35,4 +35,7 @@
     <color name="white">#ffffff</color>
     <color name="blue">#1e90ff</color>
     <color name="red">#ff0000</color>
+    
+    <color name="actionbar_title_color">#224894</color>
+    
 </resources>
