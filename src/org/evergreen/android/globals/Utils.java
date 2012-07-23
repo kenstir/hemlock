@@ -255,18 +255,21 @@ public class Utils {
 			System.out.println("Sync Response: " + resp);
 			Object response = (Object) resp;
 			
-				try{
-					String textcode = ((Map<String,String>)response).get("textcode");
-					if(textcode != null){
-						if(textcode.equals("NO_SESSION")){
-							System.out.println("REQUIRE NEW SESSION");
-							throw new SessionNotFoundException();
-						}
-						
-					}
-				}catch(Exception e){
-					System.err.println("Exception in retreive" + e.getMessage());
+			String textcode = null;
+			try{
+				textcode = ((Map<String,String>)response).get("textcode");
+			}catch(Exception e){
+				System.err.println("Exception in retreive" + e.getMessage());
+			}
+				
+			if(textcode != null){
+				if(textcode.equals("NO_SESSION")){
+					//System.out.println("REQUIRE NEW SESSION");
+						throw new SessionNotFoundException();
+			}
+					
 				}
+				
 				return response;
 			
 		}

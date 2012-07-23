@@ -640,7 +640,9 @@ public class AccountAccess {
 		//fields of interest : expire_time
 		List<OSRFObject> listHoldsAhr = null;
 
-		listHoldsAhr = (List<OSRFObject>) Utils.doRequest(conn, SERVICE_CIRC, METHOD_FETCH_HOLDS, authToken, cm, new Object[]{authToken,userID});
+		Object resp =  Utils.doRequest(conn, SERVICE_CIRC, METHOD_FETCH_HOLDS, authToken, cm, new Object[]{authToken,userID});
+		
+		listHoldsAhr = (List<OSRFObject>) resp;
 		
 		for(int i=0;i<listHoldsAhr.size();i++){
 			//create hold item
@@ -655,7 +657,6 @@ public class AccountAccess {
 		}
 		return holds;
 	}
-	
 	/* hold target type :
 	 *  M - metarecord
 	 *  T - record
