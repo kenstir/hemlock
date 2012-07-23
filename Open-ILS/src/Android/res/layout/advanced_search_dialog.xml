@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical" >
+
+
+        <Spinner 
+        android:id="@+id/advanced_spinner_index"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:entries="@array/advanced_search_index"
+        />
+            
+        <Spinner 
+        android:id="@+id/advanced_spinner_option"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:entries="@array/advanced_search_options"
+        android:layout_toRightOf="@id/advanced_spinner_index" 
+        />
+        
+        <LinearLayout 
+            android:id="@+id/advanced_search_filter_container"
+            android:layout_below="@id/advanced_spinner_index"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            >
+            
+        	<EditText 
+        	android:id="@+id/advanced_search_text"
+        	android:layout_width="0dip"
+        	android:layout_height="wrap_content"
+        	android:layout_weight="1"
+        	android:hint="@string/advanced_search_hint"
+        	android:singleLine="true"
+        	/>
+
+        
+        	<Button 
+            android:id="@+id/advanced_search_add_filter_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/advanced_search_add_filter_button"
+            />  
+            
+            
+        </LinearLayout>
+        
+        <ScrollView
+            android:id="@+id/advanced_search_scrollview"
+            android:layout_width="fill_parent"
+            android:layout_height="100dip"
+            android:layout_below="@id/advanced_search_filter_container"
+            >
+            
+            <LinearLayout 
+                android:id="@+id/advanced_search_filters"
+                android:orientation="vertical"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:background="@color/white"
+                >
+				
+				<TextView 
+			    android:layout_height="wrap_content"
+			    android:layout_width="wrap_content"
+			    android:text="@string/advanced_search_filter_text"
+			    />
+			 
+            </LinearLayout>
+        </ScrollView>
+        
+
+        <Button 
+            android:id="@+id/advanced_search_cancel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/advanced_search_scrollview"
+            android:text="cancel"
+            />
+        
+        
+        <Button
+            android:id="@+id/advanced_search_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/advanced_search_scrollview"
+            android:layout_toRightOf="@id/advanced_search_cancel"
+            android:text="search"
+            
+            />
+
+</RelativeLayout>

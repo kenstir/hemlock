@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="advanced_search_index">
+		<item>Keyword</item>
+		<item>Title</item>
+		<item>Author</item>
+		<item>Subject</item>
+		<item>Series</item>
+    </string-array>
+    
+    <string-array name="advanced_search_options">
+		<item>Contains</item>
+		<item>Does not contain</item>
+		<item>Matches exactly</item>
+    </string-array>
+    
+</resources>

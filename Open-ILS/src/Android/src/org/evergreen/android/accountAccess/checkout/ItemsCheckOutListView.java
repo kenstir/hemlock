@@ -10,7 +10,6 @@ import org.evergreen.android.accountAccess.SessionNotFoundException;
 import org.evergreen.android.globals.NoAccessToServer;
 import org.evergreen.android.globals.NoNetworkAccessException;
 import org.evergreen.android.globals.Utils;
-import org.evergreen.android.utils.ui.actionbar.ActionBarActivity;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
@@ -29,7 +28,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class ItemsCheckOutListView extends ActionBarActivity{
+public class ItemsCheckOutListView extends Activity{
 
 	private String TAG = "ItemsCheckOutListView";
 	
@@ -128,31 +127,7 @@ public class ItemsCheckOutListView extends ActionBarActivity{
 	
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		 switch (item.getItemId()) {
-         case android.R.id.home:
-             Toast.makeText(this, "Tapped home", Toast.LENGTH_SHORT).show();
-             break;
-
-         case R.id.menu_refresh:
-             Toast.makeText(this, "Fake refreshing...", Toast.LENGTH_SHORT).show();
-             getActionBarHelper().setRefreshActionItemState(true);
-             getWindow().getDecorView().postDelayed(
-                     new Runnable() {
-                         @Override
-                         public void run() {
-                             getActionBarHelper().setRefreshActionItemState(false);
-                         }
-                     }, 1000);
-             break;
-
-         case R.id.menu_search:
-             Toast.makeText(this, "Tapped search", Toast.LENGTH_SHORT).show();
-             break;
-
-         case R.id.menu_share:
-             Toast.makeText(this, "Tapped share", Toast.LENGTH_SHORT).show();
-             break;
-     }
+		
 		return super.onOptionsItemSelected(item);
 	}
 	
