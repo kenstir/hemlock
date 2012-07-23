@@ -36,6 +36,21 @@
     <color name="blue">#1e90ff</color>
     <color name="red">#ff0000</color>
     
-    <color name="actionbar_title_color">#224894</color>
+    
+    
+    <!-- Menu Buttons -->
+    <color name="pres1">#de9d00</color>
+    <color name="pres2">#de4400</color>
+    <color name="stro3">#eee</color>
+    <color name="focu1">#000</color>
+    <color name="focu2">#000</color>
+    <color name="stro2">#fff</color>
+    <color name="norm1">#0068de</color>
+    <color name="norm2">#00ccde</color>
+    
+	<!-- Header portion -->
+    <color name="header_gradient_start">#a10000</color>
+    <color name="header_gradient_stop">#aA0000</color>
+    <color name="library_logo_text_coor">#ffffff</color>
     
 </resources>

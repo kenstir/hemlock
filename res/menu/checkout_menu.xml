@@ -11,11 +11,5 @@
         android:icon="@drawable/ic_launcher"
         android:orderInCategory="0"
         android:showAsAction="always" />
-
-    <item android:id="@+id/menu_share"
-        android:title="share"
-        android:icon="@drawable/ic_menu_share"
-        android:orderInCategory="1"
-        android:showAsAction="never" />
 </menu>
 

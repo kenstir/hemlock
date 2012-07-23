@@ -15,6 +15,7 @@ import org.evergreen.android.globals.Utils;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -23,12 +24,16 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.View.OnKeyListener;
 import android.view.ViewGroup;
+import android.view.ViewGroup.LayoutParams;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemSelectedListener;
@@ -37,6 +42,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -82,18 +88,86 @@ public class SearchCatalogListView extends Activity{
 	
 	private final ImageDownloader imageDownloader = new ImageDownloader();
 	
+	private Runnable searchForResultsRunnable = null;
+	
+	private View searchOptionsMenu = null;
+	
+	private Button advancedSearchButton = null;
+	
+	private Button homeButton = null;
+	
+	private String advancedSearchString = null;
+	
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.search_result_list);
+        setTitle("Browse catalog");
+        
+        
+        homeButton = (Button) findViewById(R.id.library_logo);
+        
+        homeButton.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				searchOptionsMenu.setVisibility(View.VISIBLE);	
+			}
+		});
+        
+        advancedSearchButton = (Button) findViewById(R.id.menu_advanced_search_button);
+        
+        advancedSearchButton.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				//show advanced view dialog
+				
+				final Dialog dialog = new Dialog(context);
+                dialog.setContentView(R.layout.advanced_search_dialog);
+                dialog.setTitle("Advanced search");
+             
+                final LinearLayout layout = (LinearLayout) dialog.findViewById(R.id.advanced_search_filters);
 
+                Button addFilter = (Button) dialog.findViewById(R.id.advanced_search_add_filter_button);
+                
+                final Spinner search_index = (Spinner) dialog.findViewById(R.id.advanced_spinner_index);
+                final Spinner search_option = (Spinner) dialog.findViewById(R.id.advanced_spinner_option);
+                final EditText search_filter_text = (EditText) dialog.findViewById(R.id.advanced_search_text);
+      
+                addFilter.setOnClickListener(new OnClickListener() {
+					@Override
+					public void onClick(View v) {
+		                TextView text = new TextView(context);
+		                text.setLayoutParams(new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT));
+		                text.setText(search_index.getSelectedItem().toString() + " " + search_option.getSelectedItem().toString() + " " + search_filter_text.getText().toString());
+		                layout.addView(text);
+
+					}
+				});
+
+                
+                Button cancel = (Button) dialog.findViewById(R.id.advanced_search_cancel);
+                
+                cancel.setOnClickListener(new OnClickListener() {
+					@Override
+					public void onClick(View v) {
+						dialog.dismiss();
+					}
+				});
+                
+                
+                
+                dialog.setCancelable(true);
+                dialog.show();
+			}
+		});
+        
         //singleton initialize necessary IDL and Org data
         globalConfigs = GlobalConfigs.getGlobalConfigs(this);
         
         context = this;
         search = SearchCatalog.getInstance((ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE));
                 
-        recordList= new ArrayList<RecordInfo>();
+        recordList = new ArrayList<RecordInfo>();
 
         // Create a customized ArrayAdapter
         adapter = new SearchArrayAdapter(
@@ -104,6 +178,7 @@ public class SearchCatalogListView extends Activity{
     	// Get reference to ListView holder
     	lv = (ListView) this.findViewById(R.id.search_results_list);
     	
+    	searchOptionsMenu = findViewById(R.id.search_preference_options);
     	 
     	// Creating a button - Load More
     	Button btnLoadMore = new Button(this);
@@ -127,6 +202,71 @@ public class SearchCatalogListView extends Activity{
     	searchResults = new ArrayList<RecordInfo>();
     	
     	registerForContextMenu(lv);
+    	
+    	searchForResultsRunnable = new Runnable() {
+			
+			@Override
+			public void run() {
+				
+				final String text = searchText.getText().toString();	
+				
+				if(text.length()<1)
+					return;
+				
+				runOnUiThread(new Runnable() {
+					@Override
+					public void run() {
+						
+						searchOptionsMenu.setVisibility(View.GONE);
+						progressDialog = new ProgressDialog(context);
+						
+						progressDialog.setMessage("Fetching data");
+						progressDialog.show();
+					}
+				});
+				
+				try {
+					searchResults = search.getSearchResults(text,0);
+				} catch (NoNetworkAccessException e) {	
+					System.out.println("no network access in search");
+					SearchCatalogListView.this.runOnUiThread(Utils.showNetworkNotAvailableDialog(context));
+					
+				} catch (NoAccessToServer e) {
+					SearchCatalogListView.this.runOnUiThread(Utils.showServerNotAvailableDialog(context));								
+				}
+					
+				runOnUiThread(new Runnable() {
+					
+					@Override
+					public void run() {
+
+						recordList.clear();
+						
+						if(searchResults.size()>0){
+							
+							for(int j=0;j<searchResults.size();j++)
+								recordList.add(searchResults.get(j));
+							
+						//add extra record to display more option button
+						if(search.visible > recordList.size()){
+							recordList.add(new RecordInfo());
+							searchResultsNumber.setText(recordList.size()-1 +" out of "+search.visible);
+							}
+						else
+							searchResultsNumber.setText(recordList.size() +" out of "+search.visible);
+						}
+						else
+							searchResultsNumber.setText(recordList.size() +" out of "+search.visible);
+						
+						adapter.notifyDataSetChanged();
+						progressDialog.dismiss();
+						
+						
+					}
+				});
+				
+			}
+		};
     	
     	lv.setOnItemClickListener(new OnItemClickListener() {
     		
@@ -214,6 +354,21 @@ public class SearchCatalogListView extends Activity{
         
         searchText = (EditText) findViewById(R.id.searchText);
  
+        
+        searchText.setOnKeyListener(new OnKeyListener() {
+			
+			@Override
+			public boolean onKey(View v, int keyCode, KeyEvent event) {
+			
+				if(keyCode == KeyEvent.KEYCODE_ENTER){
+					Thread searchThread = new Thread(searchForResultsRunnable);
+					
+					searchThread.start();
+				}
+				return false;
+			}
+		});
+        
         choseOrganisation = (Spinner) findViewById(R.id.chose_organisation);
         
         searchButton = (ImageButton) findViewById(R.id.searchButton);
@@ -222,69 +377,9 @@ public class SearchCatalogListView extends Activity{
 	
         
 			@Override
-			public void onClick(View v) {
-				
-				final String text = searchText.getText().toString();				
-				progressDialog = new ProgressDialog(context);
-				
-				progressDialog.setMessage("Fetching data");
-				progressDialog.show();
-				
-				if(text.length()>0){
-					
-					Thread searchThread = new Thread(new Runnable() {
-						
-						@Override
-						public void run() {
-							
-							searchResults.clear();
-							
-							try {
-								searchResults = search.getSearchResults(text,0);
-							} catch (NoNetworkAccessException e) {	
-								System.out.println("no network access in search");
-								SearchCatalogListView.this.runOnUiThread(Utils.showNetworkNotAvailableDialog(context));
-								
-							} catch (NoAccessToServer e) {
-								SearchCatalogListView.this.runOnUiThread(Utils.showServerNotAvailableDialog(context));								
-							}
-								
-							runOnUiThread(new Runnable() {
-								
-								@Override
-								public void run() {
-
-									recordList.clear();
-									
-									if(searchResults.size()>0){
-										
-										for(int j=0;j<searchResults.size();j++)
-											recordList.add(searchResults.get(j));
-										
-									//add extra record to display more option button
-									if(search.visible > recordList.size()){
-										recordList.add(new RecordInfo());
-										searchResultsNumber.setText(recordList.size()-1 +" out of "+search.visible);
-										}
-									else
-										searchResultsNumber.setText(recordList.size() +" out of "+search.visible);
-									}
-									else
-										searchResultsNumber.setText(recordList.size() +" out of "+search.visible);
-									
-									adapter.notifyDataSetChanged();
-									progressDialog.dismiss();
-									
-									
-								}
-							});
-							
-						}
-					});
-					
+			public void onClick(View v) {	
+					Thread searchThread = new Thread(searchForResultsRunnable);				
 					searchThread.start();
-
-				}
 			}
 		});
 
@@ -368,6 +463,23 @@ public class SearchCatalogListView extends Activity{
 		getBookBags.start();
         
         
+    }
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+		MenuInflater menuInflater = getMenuInflater();
+	    menuInflater.inflate(R.menu.search_menu, menu);
+    	return super.onCreateOptionsMenu(menu);
+    }
+    
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+    	 switch (item.getItemId()) {
+         case android.R.id.home:
+             Toast.makeText(this, "Tapped home", Toast.LENGTH_SHORT).show();
+             break;
+             
+     }
+    	return super.onOptionsItemSelected(item);
     }
     
     @Override

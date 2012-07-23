@@ -1,6 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <!-- Header portion  -->
+    <string name="library_text_logo"> Evergreen </string>
+    <string name="my_account_button_text">My Account</string>
+    <string name="options_button_text">Options</string>
+    
+    <string name="search_hint">What are you looking for?</string>
+    <string name="advanced_search_hint">Enter text here</string>
+    <string name="advanced_search_add_filter_button">Add filter</string>
+    <string name="advanced_search_filter_text">Added filters:</string>
+    
+    <string name="menu_button_advanced_search">Advanced search</string>
+    <string name="menu_button_library_hours">Library hours</string>
+    <string name="menu_button_application_preferences">Preferences</string>
+    
+    
     <string name="hello">Hello World, EvergreenAppActivity!</string>
     <string name="app_name">EvergreenApp</string>
 
