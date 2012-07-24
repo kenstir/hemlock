@@ -3,16 +3,19 @@ package org.evergreen.android.utils.ui;
 import java.util.Iterator;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.zip.Inflater;
 
 import org.evergreen.android.R;
 import org.evergreen.android.globals.GlobalConfigs;
 import org.evergreen.android.searchCatalog.CopyInformation;
 import org.evergreen.android.searchCatalog.RecordInfo;
+import org.evergreen.android.searchCatalog.SearchCatalog;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.LinearLayout;
@@ -36,7 +39,16 @@ public class BasicDetailsFragment extends Fragment{
 	private TextView synopsisTextView;
 	private TextView isbnTextView;
 	
+	private TextView copyCountTestView;
 	
+	private LinearLayout showMore;
+	
+	private SearchCatalog search = null;
+	
+	private GlobalConfigs gl;
+
+	//max display info
+	private int list_size = 3;
 	
 	    public static BasicDetailsFragment newInstance(RecordInfo record, Integer position, Integer total) {
 	    	BasicDetailsFragment fragment = new BasicDetailsFragment(record,position,total);
@@ -49,9 +61,16 @@ public class BasicDetailsFragment extends Fragment{
 	    	this.record = record;
 	    	this.position = position;
 	    	this.total = total;
-	    	
+
+	    	search = SearchCatalog.getInstance();
 	    }
 
+	    public BasicDetailsFragment(){
+
+	    	search = SearchCatalog.getInstance();
+	    }
+	    
+	    
 	    @Override
 	    public void onCreate(Bundle savedInstanceState) {
 	        super.onCreate(savedInstanceState);
@@ -62,12 +81,13 @@ public class BasicDetailsFragment extends Fragment{
 	    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 	    
 	    	
-	    	GlobalConfigs gl = GlobalConfigs.getGlobalConfigs(getActivity());
+	    	gl = GlobalConfigs.getGlobalConfigs(getActivity());
 	    	
 	    	LinearLayout layout = (LinearLayout) inflater.inflate(R.layout.record_details_basic_fragment, null);
 
 	    	record_header = (TextView) layout.findViewById(R.id.record_header_text);
-	    	
+	    	copyCountTestView = (TextView) layout.findViewById(R.id.record_details_simple_copy_count);
+	    	showMore = (LinearLayout) layout.findViewById(R.id.record_details_show_more);
 	    	titleTextView = (TextView) layout.findViewById(R.id.record_details_simple_title);
 			authorTextView = (TextView) layout.findViewById(R.id.record_details_simple_author);
 			publisherTextView = (TextView) layout.findViewById(R.id.record_details_simple_publisher);
@@ -77,7 +97,7 @@ public class BasicDetailsFragment extends Fragment{
 			synopsisTextView = (TextView) layout.findViewById(R.id.record_details_simple_synopsis);
 			isbnTextView = (TextView) layout.findViewById(R.id.record_details_simple_isbn);
 			
-			record_header.setText("Record :" + position + " out of " + total  );
+			record_header.setText("Record " + position + "of " + total  );
 			
 			titleTextView.setText(record.title);
 			authorTextView.setText(record.author);
@@ -89,9 +109,62 @@ public class BasicDetailsFragment extends Fragment{
 			
 			isbnTextView.setText(record.isbn);
 			
+			int current_org = 0;
+			if(search != null)
+			 current_org = search.selectedOrganization.id;
 			
+			System.out.println("Size " + record.copyCountListInfo.size());
+			for(int i=0;i<record.copyCountListInfo.size();i++){
+				//TODO
+				System.out.println(current_org + " " + record.copyCountListInfo.get(i).org_id + " " + record.copyCountListInfo.get(i).count);
+				if(record.copyCountListInfo.get(i).org_id == current_org){
+					int total = record.copyCountListInfo.get(i).count;
+					int available = record.copyCountListInfo.get(i).available;
+					copyCountTestView.setText(available + " / " + total);
+					break;
+				}
+			}
+
+			final LayoutInflater inf = inflater;
+			final LinearLayout lay = layout;
 			
-			for(int i=0;i<record.copyInformationList.size();i++){
+			//add more details
+			showMore.setOnClickListener(new OnClickListener() {
+				
+				@Override
+				public void onClick(View v) {
+					// TODO Auto-generated method stub
+					
+				
+					
+					System.out.println("Show more tabed");
+					// insert into main view
+					LinearLayout insertPoint = (LinearLayout) lay.findViewById(R.id.record_details_copy_information);
+					addCopyInfo(list_size, record.copyCountListInfo.size(), inf, insertPoint);
+					
+				}
+			});
+
+			if(list_size > record.copyInformationList.size())
+				list_size = record.copyInformationList.size();
+
+			// insert into main view
+			LinearLayout insertPoint = (LinearLayout) layout.findViewById(R.id.record_details_copy_information);
+			addCopyInfo(0, list_size, inflater, insertPoint);
+			
+
+	        return layout;
+	    }
+
+	    @Override
+	    public void onSaveInstanceState(Bundle outState) {
+	        super.onSaveInstanceState(outState);
+	    }
+	    
+	    
+	    public void addCopyInfo(int start, int stop, LayoutInflater inflater, LinearLayout insertPoint){
+	    	
+	    	for(int i=start;i<stop;i++){
 				
 				View copy_info_view = inflater.inflate(R.layout.copy_information, null);
 	
@@ -107,7 +180,6 @@ public class BasicDetailsFragment extends Fragment{
 				copy_location.setText(record.copyInformationList.get(i).copy_location);
 				
 				// insert into main view
-				LinearLayout insertPoint = (LinearLayout) layout.findViewById(R.id.content_layout);
 				insertPoint.addView(copy_info_view, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.FILL_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
 
 				LinearLayout copy_statuses = (LinearLayout) copy_info_view.findViewById(R.id.copy_information_statuses);
@@ -128,19 +200,8 @@ public class BasicDetailsFragment extends Fragment{
 					copy_statuses.addView(statusName, new LayoutParams(LayoutParams.WRAP_CONTENT,LayoutParams.WRAP_CONTENT));
 					
 				}
-
-
-				
+			
 			}
-			
-			
-			
-			
-	        return layout;
-	    }
-
-	    @Override
-	    public void onSaveInstanceState(Bundle outState) {
-	        super.onSaveInstanceState(outState);
+	    	
 	    }
 }

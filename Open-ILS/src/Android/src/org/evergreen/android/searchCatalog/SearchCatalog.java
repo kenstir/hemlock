@@ -56,6 +56,16 @@ public class SearchCatalog {
 	 */
 	public static String METHOD_GET_COPY_STATUSES = "open-ils.search.config.copy_status.retrieve.all";
 	
+	/**
+	 *  Get copy count information
+	 *  @param :   org_unit_id, record_id, "" ?
+	 *  @returns: objects [{"transcendant":null,"count":35,"org_unit":1,"depth":0,"unshadow":35,"available":35},
+	 *  {"transcendant":null,"count":14,"org_unit":2,"depth":1,"unshadow":14,"available":14},{"transcendant":null,"count":7,"org_unit":4,"depth":2,"unshadow":7,"available":7}]
+	 */
+	public static String METHOD_GET_COPY_COUNT = "open-ils.search.biblio.record.copy_count";
+	
+	
+	
 	public static SearchCatalog searchCatalogSingleton = null;
 	/** The conn. */
 	public HttpConnection conn;
@@ -86,6 +96,12 @@ public class SearchCatalog {
 		
 		return searchCatalogSingleton;
 	}
+	
+	public static SearchCatalog getInstance(){
+	
+		return searchCatalogSingleton;
+	}
+	
 	/**
 	 * Instantiates a new search catalog.
 	 *
@@ -181,6 +197,8 @@ public class SearchCatalog {
 	        	RecordInfo record = new RecordInfo(getItemShortInfo(Integer.parseInt(ids.get(i))));
 	        	//get copy information
 	        	resultsRecordInfo.add(record);
+	        	
+	        	record.copyCountListInfo = getCopyCount(Integer.parseInt(ids.get(i)), this.selectedOrganization.id);
 	        	
 	        	//get copy count 
 	        	List<List<Object>> list= (List<List<Object>>)getLocationCount(Integer.parseInt(ids.get(i)), this.selectedOrganization.id, this.selectedOrganization.level-1);
@@ -303,12 +321,27 @@ public class SearchCatalog {
 	 */
 	public void selectOrganisation(Organisation org){
 		
-		
 		Log.d(TAG,"Select search organisation " + (org.level-1) + " " + org.id ); 
 		this.selectedOrganization = org;
 		
-		
 	}
 	
+	public ArrayList<CopyCountInformation> getCopyCount(Integer recordID, Integer orgID) throws NoNetworkAccessException, NoAccessToServer{
+		
+		List<?> list = (List<?>)Utils.doRequest(conn, SERVICE, METHOD_GET_COPY_COUNT, cm, new Object[]{orgID, recordID, ""});
+		
+		ArrayList<CopyCountInformation> copyInfoList = new ArrayList<CopyCountInformation>();
+		
+		if(list == null)
+			return copyInfoList;
+
+		for(int i=0;i<list.size();i++){
+			
+			CopyCountInformation copyInfo = new CopyCountInformation(list.get(i));
+			copyInfoList.add(copyInfo);
+		}
+		
+		return copyInfoList;
+	}
 
 }

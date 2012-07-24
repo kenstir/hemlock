@@ -29,6 +29,9 @@
     <string name="search_result_text"> Search result :</string>
     <string name="renew_button">renew</string>
     
+    <!-- Search Details View -->
+    <string name="show_more_text">Show More...</string>
+    
     <!-- Place Hold Activity View -->
     
     <string name="recipient">Recipient</string>

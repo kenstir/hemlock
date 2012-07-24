@@ -7,68 +7,121 @@
 
     <LinearLayout
         android:layout_width="fill_parent"
-        android:layout_height="30dip"
-        android:background="@color/blue"
-        android:layout_marginTop="10dip"
+        android:layout_height="wrap_content"
+		style="@style/SearchDetailsInfoSeparator"
          >
 
         <TextView
             android:id="@+id/record_header_text"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:textSize="20sp" 
-            android:textColor="@color/white"
+            android:textColor="@color/blue"
+            android:gravity="center"
+            android:textSize="@dimen/search_details_rect_text_size"
+            android:textStyle="bold"
             />
+        
     </LinearLayout>
 
     <ScrollView
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent" >
-
+        android:layout_height="fill_parent"
+        android:layout_marginTop="5dip">
+        
+        
         <LinearLayout
             android:id="@+id/content_layout"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical" >
+            
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                >
+                <LinearLayout 
+                    android:layout_width="0dip"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                >
+                
+	                <TextView
+	                android:id="@+id/record_details_simple_title"
+	                style="@style/textLarge" 
+	                />
+	                
+	                <TextView
+	                android:id="@+id/record_details_simple_author"
+	                style="@style/textSmall" 
+	                android:layout_marginTop="5dip"
+	                />
+	                
+	                <TextView
+	                android:id="@+id/record_details_simple_publisher"
+	                style="@style/textSmall" 
+	                android:layout_marginTop="3dip"
+	                />
+                </LinearLayout>
+                
+                <ImageView 
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/no_image"
+                    android:layout_marginRight="5dip"
+                    android:layout_marginBottom="5dip"
+                    />
+                
+            </LinearLayout>
+
+
 
             <TextView
-                xmlns:android="http://schemas.android.com/apk/res/android"
-                style="@style/sectionHeader"
-                android:text="Basic Information" />
+                android:id="@+id/record_details_simple_copy_count"
+                style="@style/SeparatorInformation"
+            	
+            />
 
-            <TextView
-                style="@style/textLarge"
-                android:text="TITLE" />
+			<LinearLayout
+			    android:id="@+id/record_details_copy_information"
+			    android:layout_width="fill_parent"
+			    android:layout_height="wrap_content"
+			    android:orientation="vertical"
+			    >    
+			</LinearLayout>
+        
+		<LinearLayout
+		android:id="@+id/record_details_show_more"    
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+		style="@style/SearchDetailsInfoSeparator"
+		android:orientation="horizontal"
+         >
 
-            <TextView
-                android:id="@+id/record_details_simple_title"
-                style="@style/textSmall" />
-
-            <TextView
-                style="@style/textLarge"
-                android:text="AUTHOR" />
-
-            <TextView
-                android:id="@+id/record_details_simple_author"
-                style="@style/textSmall" />
-
-            <TextView
-                style="@style/textLarge"
-                android:text="PUBLISHER" />
-
-            <TextView
-                android:id="@+id/record_details_simple_publisher"
-                style="@style/textSmall" />
-
-            <TextView
-                xmlns:android="http://schemas.android.com/apk/res/android"
-                style="@style/sectionHeader"
-                android:text="Content" />
-
-            <TextView
+		    
+		<ImageView 
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:src="@drawable/navigation_expand"
+		    />    
+		    
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/blue"
+            android:text="@string/show_more_text"
+            android:textSize="@dimen/search_details_rect_text_size"
+            android:textStyle="bold"
+        />
+        
+    	</LinearLayout>
+			
+			<TextView
                 style="@style/textLarge"
                 android:text="SUBJECT" />
-
+		
             <TextView
                 android:id="@+id/record_details_simple_subject"
                 style="@style/textSmall" />
@@ -90,22 +143,13 @@
                 style="@style/textSmall" />
 
             <TextView
-                xmlns:android="http://schemas.android.com/apk/res/android"
-                style="@style/sectionHeader"
-                android:text="Other" />
-
-            <TextView
                 style="@style/textLarge"
                 android:text="ISBN" />
 
             <TextView
                 android:id="@+id/record_details_simple_isbn"
                 style="@style/textSmall" />
-            
-            <TextView
-                xmlns:android="http://schemas.android.com/apk/res/android"
-                style="@style/sectionHeader"
-                android:text="Copy information" />
+
             
         </LinearLayout>
     </ScrollView>
