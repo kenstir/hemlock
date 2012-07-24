@@ -19,41 +19,10 @@
     android:orientation="vertical"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:background="@color/white"
     >
 
-    <RelativeLayout
-        android:id="@+id/header"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:background="@drawable/header_rounded_corners"
-        android:paddingTop="3dip"
-        >
-        
-        <Button 
-            android:id="@+id/library_logo"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/library_text_logo"
-            style="@style/LibraryLogoText"
-            android:layout_alignParentLeft="true"
-            android:padding="10dip"
-            />
+	<include android:id="@+id/header_actionbar" layout="@layout/simple_actionbar"/>
 
-        <Button
-            android:id="@+id/my_acount_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/my_account_button_text"
-            android:layout_alignParentRight="true"
-            android:padding="10dip"
-            />
-
-    </RelativeLayout>
-    
-    
-    
     <android.support.v4.view.ViewPager
         android:id="@+id/pager"
         android:layout_width="fill_parent"
@@ -62,7 +31,6 @@
         android:layout_marginTop="5dip"
         android:layout_marginLeft="4dip"
         android:layout_marginRight="4dip"
-        android:background="@drawable/details_rounded_corners"
         />
     <org.evergreen.android.utils.ui.UnderlinePageIndicator
         android:id="@+id/indicator"

@@ -21,5 +21,6 @@
     <dimen name="text_size_large">22sp</dimen>
 
     
-    <dimen name="library_logo_text_size">18sp</dimen>
+    <dimen name="library_logo_text_size">16sp</dimen>
+    <dimen name="search_details_rect_text_size">16dip</dimen>
 </resources>

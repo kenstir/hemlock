@@ -15,10 +15,7 @@ import android.support.v4.view.ViewPager;
 import android.widget.ListView;
 
 public class SampleUnderlinesNoFade extends BaseSampleActivity {
-    
-	
-	private RecordInfo record;
-	
+
 	private List<RecordInfo> records;
 	
 	
@@ -26,13 +23,9 @@ public class SampleUnderlinesNoFade extends BaseSampleActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.simple_underlines);
-
-        
-        
+   
         records = (List<RecordInfo>)getIntent().getSerializableExtra("recordList");
-        
-        record = (RecordInfo) getIntent().getSerializableExtra("recordInfo");
-        
+
         int record_position = getIntent().getIntExtra("recordPosition", 0);
         mAdapter = new SearchFragmentAdapter(getSupportFragmentManager());
 
