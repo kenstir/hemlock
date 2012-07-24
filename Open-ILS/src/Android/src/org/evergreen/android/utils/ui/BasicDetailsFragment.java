@@ -74,9 +74,10 @@ public class BasicDetailsFragment extends Fragment{
 	    @Override
 	    public void onCreate(Bundle savedInstanceState) {
 	        super.onCreate(savedInstanceState);
-
+	        if(savedInstanceState != null)
+	        	record = (RecordInfo) savedInstanceState.getSerializable("recordInfo");
 	    }
-
+	    
 	    @Override
 	    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 	    
@@ -158,7 +159,8 @@ public class BasicDetailsFragment extends Fragment{
 
 	    @Override
 	    public void onSaveInstanceState(Bundle outState) {
-	        super.onSaveInstanceState(outState);
+	    	outState.putSerializable("recordInfo", record);
+	    	super.onSaveInstanceState(outState);
 	    }
 	    
 	    
