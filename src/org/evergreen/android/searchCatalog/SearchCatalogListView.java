@@ -176,6 +176,9 @@ public class SearchCatalogListView extends Activity{
                 dialog.show();
 			}
 		});
+        //get bookbags
+        AccountAccess ac = AccountAccess.getAccountAccess();
+        bookBags = ac.bookBags;
         
         libraryHoursButton = (Button) findViewById(R.id.library_hours_button);
         libraryHoursButton.setOnClickListener(new OnClickListener() {
@@ -447,54 +450,6 @@ public class SearchCatalogListView extends Activity{
 			}
         
         });
-    
-        //get bookbags
-        Runnable getBookbagsRunnable = new Runnable() {
-			
-			@Override
-			public void run() {
-				runOnUiThread(new Runnable() {
-					@Override
-					public void run() {
-						progressDialog = ProgressDialog.show(context, "Plese wait", "retrieving Bookbag data");
-					}
-				});
-				AccountAccess accountAccess = AccountAccess.getAccountAccess();
-				try {
-					bookBags = accountAccess.getBookbags();
-				}  catch (NoNetworkAccessException e) {
-					Utils.showNetworkNotAvailableDialog(context);
-				} catch (NoAccessToServer e) {
-					Utils.showServerNotAvailableDialog(context);
-					
-				}catch (SessionNotFoundException e) {
-					//TODO other way?
-					try{
-						if(accountAccess.authenticate())
-							accountAccess.getBookbags();
-					}catch(Exception eauth){
-						System.out.println("Exception in reAuth");
-					}
-				}			
-	
-				runOnUiThread(new Runnable() {
-					
-					@Override
-					public void run() {
-						progressDialog.dismiss();
-						
-		    			
-						
-					}
-				});
-				
-				
-			}
-		};
-
-		Thread getBookBags = new Thread(getBookbagsRunnable);
-		getBookBags.start();
-        
         
     }
     @Override

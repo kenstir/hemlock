@@ -16,6 +16,13 @@
     
     
     
+    <string name="server_name_dialog">http:// </string>
+    <string name="username">username : </string>
+    <string name="password">password : </string>
+    
+    <string name="cancel_button">cancel</string>
+    <string name="connect_button">connect</string>
+    
     <string name="search_hint">What are you looking for?</string>
     <string name="advanced_search_hint">Enter text here</string>
     <string name="advanced_search_add_filter_button">Add filter</string>

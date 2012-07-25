@@ -24,6 +24,7 @@ import org.opensrf.net.http.HttpRequest;
 import org.opensrf.util.OSRFObject;
 
 import android.net.ConnectivityManager;
+import android.util.Log;
 
 /**
  * The Class AuthenticateUser.
@@ -225,6 +226,9 @@ public class AccountAccess {
 	public static String METHOD_CONTAINER_ITEM_CREATE = "open-ils.actor.container.item.create";
 	
 	public static String METHOD_CONTAINER_FULL_DELETE = "open-ils.actor.container.full_delete";
+	
+	public ArrayList<BookBag> bookBags = null;
+	
 	/** The conn. */
 	public HttpConnection conn;
 
@@ -458,7 +462,12 @@ public class AccountAccess {
 				}
 				
 				//get user ID
-				accountAccess.getAccountSummary();
+				try{
+					accountAccess.getAccountSummary();
+				}catch(Exception e){
+					Log.d(TAG, "Error in retrieving account info, this is normal if it is before IDL load");
+				}
+				
 				return true;
 			}
 		
@@ -1001,6 +1010,9 @@ public class AccountAccess {
 		List<OSRFObject> bookbags = (List<OSRFObject>)response;
 		
 		ArrayList<BookBag> bookBagObj = new ArrayList<BookBag>();
+		
+		//in order to refresh bookbags
+		this.bookBags = bookBagObj;
 		
 		for(int i=0;i<bookbags.size();i++){
 			

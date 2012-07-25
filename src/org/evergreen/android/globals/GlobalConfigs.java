@@ -23,7 +23,7 @@ import android.util.Log;
 
 public class GlobalConfigs {
 
-	public static String httpAddress = "http://ulysses.calvin.edu";
+	public static String httpAddress = "";
 
 	private boolean init = false;
 
