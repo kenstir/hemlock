@@ -6,6 +6,7 @@
     <string name="my_account_button_text">My Account</string>
     <string name="options_button_text">Options</string>
     
+    <string name="search_details_title">search details</string>
     <string name="checkout_items_title">checkout items</string>
     <string name="hold_items_title">holds</string>
     <string name="hold_place_title">place hold</string>

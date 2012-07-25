@@ -1010,9 +1010,11 @@ public class AccountAccess {
 		List<OSRFObject> bookbags = (List<OSRFObject>)response;
 		
 		ArrayList<BookBag> bookBagObj = new ArrayList<BookBag>();
-		
 		//in order to refresh bookbags
 		this.bookBags = bookBagObj;
+		
+		if(bookbags == null)
+			return bookBagObj;
 		
 		for(int i=0;i<bookbags.size();i++){
 			
