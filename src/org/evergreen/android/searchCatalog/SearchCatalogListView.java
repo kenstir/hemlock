@@ -286,13 +286,13 @@ public class SearchCatalogListView extends Activity{
 						//add extra record to display more option button
 						if(search.visible > recordList.size()){
 							recordList.add(new RecordInfo());
-							searchResultsNumber.setText(recordList.size()-1 +" out of "+search.visible);
+							searchResultsNumber.setText( + recordList.size()-1 +" out of "+search.visible);
 							}
 						else
-							searchResultsNumber.setText(recordList.size() +" out of "+search.visible);
+							searchResultsNumber.setText( + recordList.size() +" out of "+search.visible);
 						}
 						else
-							searchResultsNumber.setText(recordList.size() +" out of "+search.visible);
+							searchResultsNumber.setText( + recordList.size() +" out of "+search.visible);
 						
 						adapter.notifyDataSetChanged();
 						progressDialog.dismiss();
@@ -667,7 +667,7 @@ public class SearchCatalogListView extends Activity{
     		// Get reference to ImageView 
     		recordImage = (ImageView) row.findViewById(R.id.search_record_img);
     		//TODO fix bugs + features
-    		String imageHref= GlobalConfigs.httpAddress + "/opac/extras/ac/jacket/small/"+record.isbn;
+    		String imageHref = GlobalConfigs.httpAddress + "/opac/extras/ac/jacket/small/"+record.isbn;
     		//start async download of image 
     		imageDownloader.download(imageHref, recordImage);
     		// Get reference to TextView - title

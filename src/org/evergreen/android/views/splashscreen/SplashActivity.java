@@ -6,6 +6,7 @@ import org.evergreen.android.globals.GlobalConfigs;
 import org.evergreen.android.globals.NoAccessToServer;
 import org.evergreen.android.globals.NoNetworkAccessException;
 import org.evergreen.android.globals.Utils;
+import org.evergreen.android.searchCatalog.SearchCatalogListView;
 import org.evergreen.android.views.MainScreenDashboard;
 import org.evergreen.android.views.splashscreen.LoadingTask.LoadingTaskFinishedListener;
 
@@ -226,7 +227,7 @@ public class SplashActivity extends Activity implements
 
 	private void startApp() {
 		Intent intent = new Intent(SplashActivity.this,
-				MainScreenDashboard.class);
+				SearchCatalogListView.class);
 		startActivity(intent);
 	}
 }
