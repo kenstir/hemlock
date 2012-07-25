@@ -1,8 +1,12 @@
 package org.evergreen.android.views.splashscreen;
 
 import org.evergreen.android.accountAccess.AccountAccess;
+import org.evergreen.android.accountAccess.SessionNotFoundException;
 import org.evergreen.android.globals.GlobalConfigs;
+import org.evergreen.android.globals.NoAccessToServer;
+import org.evergreen.android.globals.NoNetworkAccessException;
 
+import android.app.Activity;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.os.AsyncTask;
@@ -25,22 +29,25 @@ public class LoadingTask extends AsyncTask<String, Integer, Integer> {
 	
 	private TextView progressText;
 	
+	private Activity callingActivity;
+	
 	private String text;
 	/**
 	 * A Loading task that will load some resources that are necessary for the app to start
 	 * @param progressBar - the progress bar you want to update while the task is in progress
 	 * @param finishedListener - the listener that will be told when this task is finished
 	 */
-	public LoadingTask(ProgressBar progressBar, LoadingTaskFinishedListener finishedListener, Context context, TextView progressText) {
+	public LoadingTask(ProgressBar progressBar, LoadingTaskFinishedListener finishedListener, Context context, TextView progressText, Activity callingActivity) {
 		this.progressBar = progressBar;
 		this.finishedListener = finishedListener;
 		this.context = context;
 		this.progressText = progressText;
+		this.callingActivity = callingActivity;
 	}
 
 	@Override
 	protected Integer doInBackground(String... params) {
-		Log.i("Tutorial", "Starting task with url: "+params[0]);
+		Log.i("Start download", "Starting task with url: "+params[0]);
 		if(resourcesDontAlreadyExist()){
 			downloadResources();
 		}
@@ -69,6 +76,20 @@ public class LoadingTask extends AsyncTask<String, Integer, Integer> {
 		try{
 			ac.authenticate();
 		}catch(Exception e){}
+		text = "get user bookbags";
+		publishProgress(90);
+		
+		try {
+			ac.bookBags = ac.getBookbags();
+		} catch (SessionNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (NoNetworkAccessException e) {
+			e.printStackTrace();
+		} catch (NoAccessToServer e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		text = "loading application";
 		publishProgress(100);
 		
