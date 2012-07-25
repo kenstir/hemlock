@@ -11,31 +11,33 @@ import org.evergreen.android.globals.GlobalConfigs;
 import org.evergreen.android.globals.NoAccessToServer;
 import org.evergreen.android.globals.NoNetworkAccessException;
 import org.evergreen.android.globals.Utils;
+import org.evergreen.android.searchCatalog.SearchCatalogListView;
+import org.evergreen.android.views.AccountScreenDashboard;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.ProgressDialog;
 import android.app.AlertDialog.Builder;
 import android.app.DatePickerDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.text.format.DateFormat;
-import android.text.format.Time;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.AdapterView.OnItemSelectedListener;
-import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.Toast;
 
 public class HoldDetails extends Activity {
@@ -96,6 +98,12 @@ public class HoldDetails extends Activity {
 
 	private GlobalConfigs globalConfigs;
 
+	private Button homeButton;
+	
+	private Button myAccountButton;
+	
+	private TextView headerTitle;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -103,6 +111,27 @@ public class HoldDetails extends Activity {
 		setContentView(R.layout.hold_details);
 		globalConfigs = GlobalConfigs.getGlobalConfigs(this);
 
+		
+		homeButton = (Button) findViewById(R.id.library_logo);
+		myAccountButton = (Button) findViewById(R.id.my_acount_button);
+		headerTitle = (TextView) findViewById(R.id.header_title);
+		headerTitle.setText(R.string.hold_details_title);
+		homeButton.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				Intent intent = new Intent(getApplicationContext(),SearchCatalogListView.class);
+				startActivity(intent);
+			}
+		});
+		myAccountButton.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				Intent intent = new Intent(getApplicationContext(), AccountScreenDashboard.class);
+				startActivity(intent);
+			}
+		});
+		
+		
 		final HoldRecord record = (HoldRecord) getIntent()
 				.getSerializableExtra("holdRecord");
 
@@ -115,7 +144,6 @@ public class HoldDetails extends Activity {
 		title = (TextView) findViewById(R.id.hold_title);
 		author = (TextView) findViewById(R.id.hold_author);
 		physical_description = (TextView) findViewById(R.id.hold_physical_description);
-		screen_title = (TextView) findViewById(R.id.header_title);
 		cancelHold = (Button) findViewById(R.id.cancel_hold_button);
 		updateHold = (Button) findViewById(R.id.update_hold_button);
 		back = (Button) findViewById(R.id.back_button);
@@ -128,10 +156,6 @@ public class HoldDetails extends Activity {
 		orgSelector = (Spinner) findViewById(R.id.hold_pickup_location);
 		expiration_date = (EditText) findViewById(R.id.hold_expiration_date);
 		thaw_date_edittext = (EditText) findViewById(R.id.hold_thaw_date);
-
-		screen_title.setText("Place Hold");
-
-
 
 		recipient.setText(accountAccess.userName);
 		title.setText(record.title);

@@ -9,6 +9,8 @@ import org.evergreen.android.accountAccess.SessionNotFoundException;
 import org.evergreen.android.globals.NoAccessToServer;
 import org.evergreen.android.globals.NoNetworkAccessException;
 import org.evergreen.android.globals.Utils;
+import org.evergreen.android.searchCatalog.SearchCatalogListView;
+import org.evergreen.android.views.AccountScreenDashboard;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
@@ -52,12 +54,41 @@ public class BookbagsListView extends Activity{
 	
 	private Runnable getBookbagsRunnable;
 	
+	private Button homeButton;
+	
+	private Button myAccountButton;
+	
+	private TextView headerTitle;
+	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
 		
 		setContentView(R.layout.bookbag_list);
+		
+		 //header portion actions
+        homeButton = (Button) findViewById(R.id.library_logo);
+        myAccountButton = (Button) findViewById(R.id.my_acount_button);
+        headerTitle = (TextView) findViewById(R.id.header_title);
+        headerTitle.setText(R.string.bookbag_items_title);
+        
+        myAccountButton.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				Intent intent = new Intent(getApplicationContext(),AccountScreenDashboard.class);
+				startActivity(intent);
+			}
+		});
+        
+        homeButton.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				Intent intent = new Intent(getApplicationContext(),SearchCatalogListView.class);
+				startActivity(intent);
+			}
+		});
+        //end header portion actions
 		
 		context = this;
 		accountAccess = AccountAccess.getAccountAccess();

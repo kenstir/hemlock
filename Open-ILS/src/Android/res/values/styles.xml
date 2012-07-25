@@ -148,6 +148,10 @@
         <item name="android:textStyle">bold</item>
    </style>
    
+   
+   <style name="Content">
+       <item name="android:layout_marginTop">5dip</item>
+   </style>
     
     <!--  Menu List Buttons -->
    <style name="MenuListButton">

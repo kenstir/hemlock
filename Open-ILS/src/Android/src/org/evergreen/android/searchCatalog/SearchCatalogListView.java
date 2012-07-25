@@ -12,6 +12,8 @@ import org.evergreen.android.globals.GlobalConfigs;
 import org.evergreen.android.globals.NoAccessToServer;
 import org.evergreen.android.globals.NoNetworkAccessException;
 import org.evergreen.android.globals.Utils;
+import org.evergreen.android.views.AccountScreenDashboard;
+import org.evergreen.android.views.ApplicationPreferences;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -21,6 +23,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
+import android.preference.PreferenceActivity;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
@@ -94,7 +97,13 @@ public class SearchCatalogListView extends Activity{
 	
 	private Button advancedSearchButton = null;
 	
+	private Button libraryHoursButton = null;
+	
+	private Button preferenceButton = null;
+	
 	private Button homeButton = null;
+	
+	private Button myAccountButton = null;
 	
 	private String advancedSearchString = null;
 	
@@ -104,7 +113,16 @@ public class SearchCatalogListView extends Activity{
         setContentView(R.layout.search_result_list);
         setTitle("Browse catalog");
         
+        myAccountButton = (Button) findViewById(R.id.my_acount_button);
         
+        myAccountButton.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				Intent intent = new Intent(getApplicationContext(),AccountScreenDashboard.class);
+				startActivity(intent);
+			}
+		});
+
         homeButton = (Button) findViewById(R.id.library_logo);
         
         homeButton.setOnClickListener(new OnClickListener() {
@@ -113,7 +131,8 @@ public class SearchCatalogListView extends Activity{
 				searchOptionsMenu.setVisibility(View.VISIBLE);	
 			}
 		});
-        
+        //end header portion actions
+
         advancedSearchButton = (Button) findViewById(R.id.menu_advanced_search_button);
         
         advancedSearchButton.setOnClickListener(new OnClickListener() {
@@ -152,12 +171,26 @@ public class SearchCatalogListView extends Activity{
 					public void onClick(View v) {
 						dialog.dismiss();
 					}
-				});
-                
-                
-                
+				});   
                 dialog.setCancelable(true);
                 dialog.show();
+			}
+		});
+        
+        libraryHoursButton = (Button) findViewById(R.id.library_hours_button);
+        libraryHoursButton.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+			}
+		});
+        
+        preferenceButton = (Button) findViewById(R.id.preference_button);
+        preferenceButton.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				Intent intent = new Intent(getApplicationContext(), ApplicationPreferences.class);
+				startActivity(intent);
 			}
 		});
         
@@ -593,22 +626,17 @@ public class SearchCatalogListView extends Activity{
 	    			
 
 	    			alertDialog.show();
-	    			
-	    			
-	    			
+	
 	    			s.setOnItemSelectedListener(new OnItemSelectedListener() {
 
 						@Override
 						public void onItemSelected(AdapterView<?> arg0, View arg1,
-								int position, long arg3) {
-							
+								int position, long arg3) {	
 						bookbag_selected = position;
 						}
 
 						@Override
 						public void onNothingSelected(AdapterView<?> arg0) {
-							// TODO Auto-generated method stub
-							
 						}
 					
 	    			});
@@ -626,6 +654,7 @@ public class SearchCatalogListView extends Activity{
     }
     
     class SearchArrayAdapter extends ArrayAdapter<RecordInfo> {
+    	
     	private static final String tag = "SearchArrayAdapter";
     	private Context context;
     	private ImageView recordImage;
@@ -677,10 +706,8 @@ public class SearchCatalogListView extends Activity{
 			    			row = inflater.inflate(R.layout.search_result_item, parent, false);
 			    			Log.d(tag, "Successfully completed XML Row Inflation!");
 	
-		    		}
-    		
-		    
-
+		    }
+		    		
     		Log.d(TAG, "reord image value " + recordImage);
     		// Get reference to ImageView 
     		recordImage = (ImageView) row.findViewById(R.id.search_record_img);

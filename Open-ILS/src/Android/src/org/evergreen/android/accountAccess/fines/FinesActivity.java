@@ -9,17 +9,22 @@ import org.evergreen.android.accountAccess.SessionNotFoundException;
 import org.evergreen.android.globals.NoAccessToServer;
 import org.evergreen.android.globals.NoNetworkAccessException;
 import org.evergreen.android.globals.Utils;
+import org.evergreen.android.searchCatalog.SearchCatalogListView;
+import org.evergreen.android.views.AccountScreenDashboard;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.View.OnClickListener;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -42,6 +47,11 @@ public class FinesActivity extends Activity{
 	
 	private OverdueMaterialsArrayAdapter  listAdapter;
 	
+	private Button homeButton;
+	
+	private Button myAccountButton;
+	
+	private TextView headerTitle;
 	
 	private Context context;
 	@Override
@@ -49,6 +59,30 @@ public class FinesActivity extends Activity{
 		super.onCreate(savedInstanceState);
 		
 		setContentView(R.layout.fines);
+		
+		 //header portion actions
+        homeButton = (Button) findViewById(R.id.library_logo);
+        myAccountButton = (Button) findViewById(R.id.my_acount_button);
+        headerTitle = (TextView) findViewById(R.id.header_title);
+        headerTitle.setText(R.string.fines_title);
+        
+        myAccountButton.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				Intent intent = new Intent(getApplicationContext(),AccountScreenDashboard.class);
+				startActivity(intent);
+			}
+		});
+        
+        homeButton.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				Intent intent = new Intent(getApplicationContext(),SearchCatalogListView.class);
+				startActivity(intent);
+			}
+		});
+        //end header portion actions
+		
 		lv = (ListView) findViewById(R.id.fines_overdue_materials_list);
 		
 		total_owned = (TextView) findViewById(R.id.fines_total_owned);

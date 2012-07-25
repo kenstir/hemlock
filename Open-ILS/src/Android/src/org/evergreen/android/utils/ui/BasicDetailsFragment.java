@@ -135,9 +135,7 @@ public class BasicDetailsFragment extends Fragment{
 				@Override
 				public void onClick(View v) {
 					// TODO Auto-generated method stub
-					
-				
-					
+
 					System.out.println("Show more tabed");
 					// insert into main view
 					LinearLayout insertPoint = (LinearLayout) lay.findViewById(R.id.record_details_copy_information);
