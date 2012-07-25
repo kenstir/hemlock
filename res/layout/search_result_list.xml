@@ -38,6 +38,8 @@
             android:layout_height="wrap_content"
             android:padding="4dp"
             android:id="@+id/search_text_container"
+            android:focusable="true" 
+    		android:focusableInTouchMode="true"
             android:layout_below="@id/library_logo">
 
             <EditText
@@ -101,6 +103,7 @@
              />
          
             <Button 
+             android:id="@+id/library_hours_button"
              android:layout_width="fill_parent"
              android:layout_height="wrap_content"
              android:text="@string/menu_button_library_hours"
@@ -109,7 +112,8 @@
              />
                   
             
-            <Button 
+            <Button
+             android:id="@+id/preference_button" 
              android:layout_width="fill_parent"
              android:layout_height="wrap_content"
              android:text="@string/menu_button_application_preferences"

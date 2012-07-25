@@ -11,6 +11,8 @@ import org.evergreen.android.globals.NoNetworkAccessException;
 import org.evergreen.android.globals.Utils;
 import org.evergreen.android.searchCatalog.RecordInfo;
 import org.evergreen.android.searchCatalog.SearchCatalog;
+import org.evergreen.android.searchCatalog.SearchCatalogListView;
+import org.evergreen.android.views.AccountScreenDashboard;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -19,6 +21,7 @@ import android.app.Service;
 import android.app.AlertDialog.Builder;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.util.Log;
@@ -60,6 +63,11 @@ private String TAG = "BookBags";
 	
 	private Button delete_bookbag_button;
 	
+	private Button homeButton;
+	
+	private Button myAccountButton;
+	
+	private TextView headerTitle;
 	
 	private Runnable getBookBagsItemsRunnable;
 	@Override
@@ -68,6 +76,29 @@ private String TAG = "BookBags";
 		super.onCreate(savedInstanceState);
 		
 		setContentView(R.layout.bookbagitem_list);
+		 //header portion actions
+        homeButton = (Button) findViewById(R.id.library_logo);
+        myAccountButton = (Button) findViewById(R.id.my_acount_button);
+        headerTitle = (TextView) findViewById(R.id.header_title);
+        headerTitle.setText(R.string.bookbag_details_title);
+        
+        myAccountButton.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				Intent intent = new Intent(getApplicationContext(),AccountScreenDashboard.class);
+				startActivity(intent);
+			}
+		});
+        
+        homeButton.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				Intent intent = new Intent(getApplicationContext(),SearchCatalogListView.class);
+				startActivity(intent);
+			}
+		});
+        //end header portion actions
+		
 		accountAccess = AccountAccess.getAccountAccess();
 		bookBag = (BookBag) getIntent().getSerializableExtra("bookBag");
 		
@@ -125,15 +156,6 @@ private String TAG = "BookBags";
 
 								progressDialog = ProgressDialog.show(context, "Please wait", "Deleting Bookbag");
 								deleteBookbag.start();
-								
-										runOnUiThread(new Runnable() {
-											@Override
-											public void run() {
-												progressDialog.dismiss();
-												setResult(RESULT_CODE_UPDATE);
-												finish();	
-											}
-										});
 									}
 								});
 

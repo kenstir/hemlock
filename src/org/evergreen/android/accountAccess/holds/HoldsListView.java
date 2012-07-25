@@ -9,6 +9,8 @@ import org.evergreen.android.accountAccess.SessionNotFoundException;
 import org.evergreen.android.globals.NoAccessToServer;
 import org.evergreen.android.globals.NoNetworkAccessException;
 import org.evergreen.android.globals.Utils;
+import org.evergreen.android.searchCatalog.SearchCatalogListView;
+import org.evergreen.android.views.AccountScreenDashboard;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
@@ -18,10 +20,12 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -42,6 +46,12 @@ public class HoldsListView extends Activity{
 	
 	Runnable getHoldsRunnable= null;
 	
+	private Button homeButton;
+	
+	private Button myAccountButton;
+	
+	private TextView headerTitle;
+
 	private ProgressDialog progressDialog;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +59,28 @@ public class HoldsListView extends Activity{
 		
 		setContentView(R.layout.holds_list);
 		
+		 //header portion actions
+        homeButton = (Button) findViewById(R.id.library_logo);
+        myAccountButton = (Button) findViewById(R.id.my_acount_button);
+        headerTitle = (TextView) findViewById(R.id.header_title);
+        headerTitle.setText(R.string.hold_items_title);
+        
+        myAccountButton.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				Intent intent = new Intent(getApplicationContext(),AccountScreenDashboard.class);
+				startActivity(intent);
+			}
+		});
+        
+        homeButton.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				Intent intent = new Intent(getApplicationContext(),SearchCatalogListView.class);
+				startActivity(intent);
+			}
+		});
+        //end header portion actions
 		
 		lv = (ListView)findViewById(R.id.holds_item_list);
 		context = this;

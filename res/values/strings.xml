@@ -6,6 +6,16 @@
     <string name="my_account_button_text">My Account</string>
     <string name="options_button_text">Options</string>
     
+    <string name="checkout_items_title">checkout items</string>
+    <string name="hold_items_title">holds</string>
+    <string name="hold_place_title">place hold</string>
+    <string name="hold_details_title">hold details</string>
+    <string name="bookbag_items_title">bookbags</string>
+    <string name="bookbag_details_title">bookbag details</string>
+    <string name="fines_title">fines</string>
+    
+    
+    
     <string name="search_hint">What are you looking for?</string>
     <string name="advanced_search_hint">Enter text here</string>
     <string name="advanced_search_add_filter_button">Add filter</string>
