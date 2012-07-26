@@ -149,6 +149,12 @@
    </style>
    
    
+   <style name="SearchDetailsActionButton">
+       <item name="android:background">@drawable/details_button</item>
+       <item name="android:textColor">@drawable/dark_text_color</item>
+       
+   </style>
+   
    <style name="HeaderTitle">
        <item name="android:background">@drawable/header_rounded_corners</item>
        <item name="android:textSize">16dip</item>

@@ -1,16 +1,25 @@
 package org.evergreen.android.utils.ui;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Map.Entry;
 import java.util.Set;
-import java.util.zip.Inflater;
 
 import org.evergreen.android.R;
+import org.evergreen.android.accountAccess.AccountAccess;
+import org.evergreen.android.accountAccess.SessionNotFoundException;
+import org.evergreen.android.accountAccess.bookbags.BookBag;
+import org.evergreen.android.accountAccess.holds.PlaceHold;
 import org.evergreen.android.globals.GlobalConfigs;
+import org.evergreen.android.globals.NoAccessToServer;
+import org.evergreen.android.globals.NoNetworkAccessException;
 import org.evergreen.android.searchCatalog.CopyInformation;
 import org.evergreen.android.searchCatalog.RecordInfo;
 import org.evergreen.android.searchCatalog.SearchCatalog;
 
+import android.app.Dialog;
+import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -18,8 +27,14 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemSelectedListener;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class BasicDetailsFragment extends Fragment{
 
@@ -39,13 +54,25 @@ public class BasicDetailsFragment extends Fragment{
 	private TextView synopsisTextView;
 	private TextView isbnTextView;
 	
-	private TextView copyCountTestView;
+	private TextView copyCountTestView;	
+	
+	private Button placeHoldButton;
+	
+	private Button addToBookbagButton;
 	
 	private LinearLayout showMore;
 	
 	private SearchCatalog search = null;
 	
 	private GlobalConfigs gl;
+	
+	private ProgressDialog progressDialog;
+	
+	private Integer bookbag_selected;
+	
+	private Dialog dialog;
+	
+	private ArrayList<BookBag> bookBags;
 
 	//max display info
 	private int list_size = 3;
@@ -84,7 +111,8 @@ public class BasicDetailsFragment extends Fragment{
 	    	
 	    	gl = GlobalConfigs.getGlobalConfigs(getActivity());
 	    	
-	    	LinearLayout layout = (LinearLayout) inflater.inflate(R.layout.record_details_basic_fragment, null);
+	    	LinearLayout layout = (LinearLayout) inflater.inflate(R.layout.record_details_basic_fragment,null);
+
 
 	    	record_header = (TextView) layout.findViewById(R.id.record_header_text);
 	    	copyCountTestView = (TextView) layout.findViewById(R.id.record_details_simple_copy_count);
@@ -97,6 +125,105 @@ public class BasicDetailsFragment extends Fragment{
 			subjectTextView = (TextView) layout.findViewById(R.id.record_details_simple_subject);
 			synopsisTextView = (TextView) layout.findViewById(R.id.record_details_simple_synopsis);
 			isbnTextView = (TextView) layout.findViewById(R.id.record_details_simple_isbn);
+
+	    	placeHoldButton = (Button) layout.findViewById(R.id.simple_place_hold_button);
+	    	addToBookbagButton = (Button) layout.findViewById(R.id.simple_add_to_bookbag_button);
+
+	    	placeHoldButton.setOnClickListener(new OnClickListener() {
+				
+				@Override
+				public void onClick(View v) {
+					Intent intent = new Intent(getActivity().getApplicationContext(),PlaceHold.class);
+					intent.putExtra("recordInfo",record);
+					startActivity(intent);
+				}
+			});
+
+			AccountAccess ac = AccountAccess.getAccountAccess();
+
+			bookBags = ac.bookBags;
+    			String array_spinner[] = new String[bookBags.size()];
+				
+    			for(int i=0;i<array_spinner.length;i++)
+    				array_spinner[i] = bookBags.get(i).name;
+    				
+
+    			dialog = new Dialog(getActivity());
+    			dialog.setContentView(R.layout.bookbag_spinner);
+    			dialog.setTitle("Choose bookbag");
+    			Spinner s = (Spinner) dialog.findViewById(R.id.bookbag_spinner);
+
+    			Button add = (Button) dialog.findViewById(R.id.add_to_bookbag_button);
+    			ArrayAdapter adapter = new ArrayAdapter(getActivity().getApplicationContext(),android.R.layout.simple_spinner_item, array_spinner);
+    			s.setAdapter(adapter);
+			
+    			add.setOnClickListener(new OnClickListener() {
+					
+					@Override
+					public void onClick(View v) {
+						// TODO Auto-generated method stub
+						Thread addtoBookbag = new Thread(new Runnable() {
+							@Override
+							public void run() {
+								AccountAccess ac = AccountAccess.getAccountAccess();
+								try {
+									ac.addRecordToBookBag(record.doc_id, ac.bookBags.get(bookbag_selected).id);
+								} catch (SessionNotFoundException e) {
+									// TODO Auto-generated catch block
+									e.printStackTrace();
+								} catch (NoAccessToServer e) {
+									// TODO Auto-generated catch block
+									e.printStackTrace();
+								} catch (NoNetworkAccessException e) {
+									// TODO Auto-generated catch block
+									e.printStackTrace();
+								}
+							
+								getActivity().runOnUiThread(new Runnable() {
+									@Override
+									public void run() {
+										progressDialog.dismiss();
+										dialog.dismiss();
+									}
+								});
+
+							}
+				});
+						progressDialog = ProgressDialog.show(getActivity(), "Please wait", "Add to bookbag");
+						addtoBookbag.start();
+
+					}});
+    			s.setOnItemSelectedListener(new OnItemSelectedListener() {
+
+					@Override
+					public void onItemSelected(AdapterView<?> arg0, View arg1,
+							int position, long arg3) {	
+					bookbag_selected = position;
+					}
+
+					@Override
+					public void onNothingSelected(AdapterView<?> arg0) {
+					}
+				
+    			});
+
+    			
+			addToBookbagButton.setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					getActivity().runOnUiThread(new Runnable() {
+						@Override
+						public void run() {
+						
+						if(bookBags.size() > 0)
+							dialog.show();
+						else
+							Toast.makeText(getActivity(), "No bookbags", Toast.LENGTH_SHORT).show();
+						}
+						
+					});
+				}
+			});
 			
 			record_header.setText("Record " + position + "of " + total  );
 			
@@ -109,6 +236,7 @@ public class BasicDetailsFragment extends Fragment{
 			synopsisTextView.setText(record.synopsis);
 			
 			isbnTextView.setText(record.isbn);
+
 			
 			int current_org = 0;
 			if(search != null)
@@ -152,6 +280,7 @@ public class BasicDetailsFragment extends Fragment{
 			addCopyInfo(0, list_size, inflater, insertPoint);
 			
 
+			
 	        return layout;
 	    }
 

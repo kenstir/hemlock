@@ -74,8 +74,29 @@
                     />
                 
             </LinearLayout>
-
-
+            
+            <RelativeLayout 
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                >
+                <Button
+                    android:id="@+id/simple_place_hold_button"
+                    style="@style/SearchDetailsActionButton"
+                    android:layout_height="wrap_content"
+                    android:layout_width="150dip"
+                    android:layout_alignParentLeft="true"
+                    android:text="@string/button_place_hold"    
+                    />
+                
+                <Button
+                    android:id="@+id/simple_add_to_bookbag_button"
+                    style="@style/SearchDetailsActionButton"
+                    android:layout_height="wrap_content"
+                    android:layout_width="150dip"
+                    android:layout_alignParentRight="true"
+					android:text="@string/button_add_to_bookbag"
+                    />
+            </RelativeLayout>
 
             <TextView
                 android:id="@+id/record_details_simple_copy_count"

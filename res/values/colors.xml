@@ -53,7 +53,15 @@
     <color name="header_gradient_stop">#6F9669</color>
     <color name="library_logo_text_coor">#000</color>
     
+    
+    
+    <color name="dark_green">#387962</color>
+    <color name="light_green">#E0F6E0</color>
+    <color name="normal_green">#A7EA9D</color>
+    
     <color name="header_title">#ffffff</color>
+    
+    <color name="button_stroke">#aaa</color>
     
     <!-- Search Details -->
     <color name="dark">#000</color>

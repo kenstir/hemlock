@@ -15,11 +15,14 @@
     <string name="bookbag_details_title">bookbag details</string>
     <string name="fines_title">fines</string>
     
-    
+    <string name="button_place_hold">Place Hold</string>
+    <string name="button_add_to_bookbag">Add to Bookbag</string>
     
     <string name="server_name_dialog">http:// </string>
     <string name="username">username : </string>
     <string name="password">password : </string>
+    
+    <string name="bookbag_choose_text">Choose a bookbag from the list.</string>
     
     <string name="cancel_button">cancel</string>
     <string name="connect_button">connect</string>
