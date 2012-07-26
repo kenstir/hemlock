@@ -55,7 +55,7 @@ public class SearchCatalogListView extends Activity{
 
 	private String TAG ="SearchCatalogListView";
 	
-	private List<RecordInfo> recordList;
+	private ArrayList<RecordInfo> recordList;
 	
 	private EditText searchText;
 	
@@ -381,7 +381,7 @@ public class SearchCatalogListView extends Activity{
 	    			intent.putExtra("orgID",search.selectedOrganization.id);
 	    			intent.putExtra("depth",(search.selectedOrganization.level-1));
 	    			
-	    			intent.putExtra("recordList", searchResults);
+	    			intent.putExtra("recordList", recordList);
 	    			intent.putExtra("recordPosition", position);
 	    			startActivity(intent);
     			}
@@ -389,8 +389,7 @@ public class SearchCatalogListView extends Activity{
 		});
         
         searchText = (EditText) findViewById(R.id.searchText);
- 
-        
+
         searchText.setOnKeyListener(new OnKeyListener() {
 			
 			@Override
@@ -410,8 +409,7 @@ public class SearchCatalogListView extends Activity{
         searchButton = (ImageButton) findViewById(R.id.searchButton);
 
         searchButton.setOnClickListener(new OnClickListener() {
-	
-        
+
 			@Override
 			public void onClick(View v) {	
 					Thread searchThread = new Thread(searchForResultsRunnable);				
@@ -440,8 +438,7 @@ public class SearchCatalogListView extends Activity{
 			public void onItemSelected(AdapterView<?> arg0, View arg1,
 					int ID, long arg3) {
 				//select the specific organization
-				search.selectOrganisation(globalConfigs.organisations.get(ID));
-				
+				search.selectOrganisation(globalConfigs.organisations.get(ID));		
 			}
 			
 			@Override
@@ -514,21 +511,17 @@ public class SearchCatalogListView extends Activity{
     			intent.putExtra("recordInfo", info);
     			
     			startActivity(intent);
-    		}
-    		
+    		}	
     		case BOOK_BAG : {
-    			
-    			
+
     			if(bookBags.size() > 0){
 	    			String array_spinner[] = new String[bookBags.size()];
 					
 	    			for(int i=0;i<array_spinner.length;i++)
 	    				array_spinner[i] = bookBags.get(i).name;
-	    			
-	
+	    				
 	    			AlertDialog.Builder builder;
 
-	
 	    			LayoutInflater inflater = (LayoutInflater) context.getSystemService(LAYOUT_INFLATER_SERVICE);
 	    			View layout = inflater.inflate(R.layout.bookbag_spinner,null);
 	
@@ -578,8 +571,6 @@ public class SearchCatalogListView extends Activity{
 							addtoBookbag.start();
 
 						}});
-	    			
-
 	    			alertDialog.show();
 	
 	    			s.setOnItemSelectedListener(new OnItemSelectedListener() {
@@ -595,12 +586,9 @@ public class SearchCatalogListView extends Activity{
 						}
 					
 	    			});
-
-    			
     			}
     			else
     				Toast.makeText(context, "No bookbags", Toast.LENGTH_SHORT).show();
-    			
     		}
     		break;
     	}
@@ -647,8 +635,7 @@ public class SearchCatalogListView extends Activity{
     					.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     			row = inflater.inflate(R.layout.search_result_footer_view, parent, false);
     			Log.d(tag, "Successfully completed XML view more Inflation!");
-
-    			
+	
 			}
     		else{
     		
@@ -684,12 +671,8 @@ public class SearchCatalogListView extends Activity{
     		recordTitle.setText(record.title);
     		recordAuthor.setText(record.author);
     		recordPublisher.setText(record.pubdate + " " + record.publisher);
-    		}
-    		
+    		}		
     		return row;
     	}
     }
-
 }
-
-

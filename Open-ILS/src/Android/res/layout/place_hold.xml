@@ -4,26 +4,8 @@
     android:layout_height="match_parent" >
   
     
-    <LinearLayout
-		android:id="@+id/header"
-        android:layout_width="fill_parent"
-        android:layout_height="40dip"
-        android:background="@color/blue"
-        android:layout_alignParentTop="true"
-    >
-    	    <TextView
-    	        android:id="@+id/header_title"
-    	        android:layout_width="wrap_content"
-    	        android:layout_height="wrap_content"
-    	        android:paddingLeft="5dip"
-    	        android:paddingTop="5dip"
-    	        android:textColor="@color/white"
-    	        android:textStyle="bold"
-    	        android:textSize="16dip"
-    	        />
-
-        
-    </LinearLayout>
+	<include android:id="@+id/header_actionbar" layout="@layout/simple_actionbar"/>
+   
         
     	<LinearLayout
     	    android:id="@+id/action_bar"
@@ -54,7 +36,7 @@
         android:layout_height="wrap_content"
         android:fillViewport="true"
         android:layout_above="@id/action_bar"
-        android:layout_below="@id/header"
+        android:layout_below="@id/header_actionbar"
         >
        <LinearLayout 
            android:layout_width="fill_parent"

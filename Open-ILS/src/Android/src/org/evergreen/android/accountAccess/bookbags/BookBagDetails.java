@@ -78,7 +78,7 @@ private String TAG = "BookBags";
 		setContentView(R.layout.bookbagitem_list);
 		 //header portion actions
         homeButton = (ImageButton) findViewById(R.id.library_logo);
-        myAccountButton = (Button) findViewById(R.id.my_acount_button);
+        myAccountButton = (Button) findViewById(R.id.my_account_button);
         headerTitle = (TextView) findViewById(R.id.header_title);
         headerTitle.setText(R.string.bookbag_details_title);
         
