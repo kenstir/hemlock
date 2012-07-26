@@ -26,6 +26,7 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -46,7 +47,7 @@ public class HoldsListView extends Activity{
 	
 	Runnable getHoldsRunnable= null;
 	
-	private Button homeButton;
+	private ImageButton homeButton;
 	
 	private Button myAccountButton;
 	
@@ -60,7 +61,7 @@ public class HoldsListView extends Activity{
 		setContentView(R.layout.holds_list);
 		
 		 //header portion actions
-        homeButton = (Button) findViewById(R.id.library_logo);
+        homeButton = (ImageButton) findViewById(R.id.library_logo);
         myAccountButton = (Button) findViewById(R.id.my_acount_button);
         headerTitle = (TextView) findViewById(R.id.header_title);
         headerTitle.setText(R.string.hold_items_title);

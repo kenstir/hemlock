@@ -12,11 +12,14 @@ import org.evergreen.android.globals.NoAccessToServer;
 import org.evergreen.android.globals.NoNetworkAccessException;
 import org.evergreen.android.globals.Utils;
 import org.evergreen.android.searchCatalog.RecordInfo;
+import org.evergreen.android.searchCatalog.SearchCatalogListView;
+import org.evergreen.android.views.AccountScreenDashboard;
 
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.text.format.DateFormat;
@@ -31,6 +34,7 @@ import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -82,7 +86,14 @@ public class PlaceHold extends Activity{
 	
 	private int selectedOrgPos = 0;
 	
+	private ImageButton homeButton;
+	
+	private Button myAccountButton;
+	
+	private TextView headerTitle;
+	
 	private ProgressDialog progressDialog;
+	
 	
 	private Context context;
 	@Override
@@ -92,6 +103,27 @@ public class PlaceHold extends Activity{
 		setContentView(R.layout.place_hold);
 		globalConfigs = GlobalConfigs.getGlobalConfigs(this);
 		RecordInfo record = (RecordInfo) getIntent().getSerializableExtra("recordInfo");
+		
+		homeButton = (ImageButton) findViewById(R.id.library_logo);
+		myAccountButton = (Button) findViewById(R.id.my_acount_button);
+		headerTitle = (TextView) findViewById(R.id.header_title);
+		headerTitle.setText(R.string.hold_place_title);
+		
+		myAccountButton.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				Intent intent = new Intent(getApplicationContext(),AccountScreenDashboard.class);
+				startActivity(intent);
+			}
+		});
+		
+		homeButton.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				Intent intent = new Intent(getApplicationContext(),SearchCatalogListView.class);
+				startActivity(intent);
+			}
+		});
 		
 		context = this;
 		

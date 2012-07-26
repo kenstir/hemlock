@@ -17,6 +17,7 @@ import android.support.v4.view.ViewPager;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 public class SampleUnderlinesNoFade extends BaseSampleActivity {
@@ -25,7 +26,7 @@ public class SampleUnderlinesNoFade extends BaseSampleActivity {
 	
 	private Button myAccountButton;
 	
-	private Button homeButton;
+	private ImageButton homeButton;
 	
 	private TextView headerTitle;
 	
@@ -37,7 +38,7 @@ public class SampleUnderlinesNoFade extends BaseSampleActivity {
         records = (List<RecordInfo>)getIntent().getSerializableExtra("recordList");
         
         //header portion actions
-        homeButton = (Button) findViewById(R.id.library_logo);
+        homeButton = (ImageButton) findViewById(R.id.library_logo);
         myAccountButton = (Button) findViewById(R.id.my_acount_button);
         headerTitle = (TextView) findViewById(R.id.header_title);
         headerTitle.setText(R.string.search_details_title);

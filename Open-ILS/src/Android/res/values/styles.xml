@@ -149,6 +149,17 @@
    </style>
    
    
+   <style name="HeaderTitle">
+       <item name="android:background">@drawable/header_rounded_corners</item>
+       <item name="android:textSize">16dip</item>
+       <item name="android:textStyle">bold</item>
+       <item name="android:gravity">center</item>
+       <item name="android:paddingTop">2dip</item>
+       <item name="android:paddingLeft">5dip</item>
+       <item name="android:paddingBottom">2dip</item>
+       <item name="android:textColor">@color/header_title</item>
+   </style>
+   
    <style name="Content">
        <item name="android:layout_marginTop">5dip</item>
    </style>
@@ -163,9 +174,7 @@
 	<!-- Header portion start -->
 	
 	<style name="LibraryLogoText">
-        <item name="android:textColor">@color/library_logo_text_coor</item>
-        <item name="android:textSize">@dimen/library_logo_text_size</item>
-        <item name="android:textStyle">bold</item>
+		<item name="android:background">@drawable/logo_button</item>
     </style>
 	
 	<!-- Header portion end -->

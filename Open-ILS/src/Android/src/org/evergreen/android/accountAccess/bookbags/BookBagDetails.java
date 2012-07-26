@@ -8,7 +8,6 @@ import org.evergreen.android.accountAccess.AccountAccess;
 import org.evergreen.android.accountAccess.SessionNotFoundException;
 import org.evergreen.android.globals.NoAccessToServer;
 import org.evergreen.android.globals.NoNetworkAccessException;
-import org.evergreen.android.globals.Utils;
 import org.evergreen.android.searchCatalog.RecordInfo;
 import org.evergreen.android.searchCatalog.SearchCatalog;
 import org.evergreen.android.searchCatalog.SearchCatalogListView;
@@ -16,9 +15,9 @@ import org.evergreen.android.views.AccountScreenDashboard;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.AlertDialog.Builder;
 import android.app.ProgressDialog;
 import android.app.Service;
-import android.app.AlertDialog.Builder;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -33,6 +32,7 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -63,7 +63,7 @@ private String TAG = "BookBags";
 	
 	private Button delete_bookbag_button;
 	
-	private Button homeButton;
+	private ImageButton homeButton;
 	
 	private Button myAccountButton;
 	
@@ -77,7 +77,7 @@ private String TAG = "BookBags";
 		
 		setContentView(R.layout.bookbagitem_list);
 		 //header portion actions
-        homeButton = (Button) findViewById(R.id.library_logo);
+        homeButton = (ImageButton) findViewById(R.id.library_logo);
         myAccountButton = (Button) findViewById(R.id.my_acount_button);
         headerTitle = (TextView) findViewById(R.id.header_title);
         headerTitle.setText(R.string.bookbag_details_title);

@@ -8,7 +8,7 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
 	<uses-permission android:name="android.permission.INTERNET" /> 
     <application
-        android:icon="@drawable/ic_launcher"
+        android:icon="@drawable/evergreen_launcher_icon"
         android:label="@string/app_name" 
         android:theme="@style/EvergreenTheme"
         >
