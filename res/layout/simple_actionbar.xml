@@ -16,16 +16,16 @@
         android:paddingBottom="3dip"
         >
         
-        <Button 
+                <ImageButton 
             android:id="@+id/library_logo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/library_text_logo"
             style="@style/LibraryLogoText"
             android:layout_alignParentLeft="true"
-            android:padding="10dip"
+            android:src="@drawable/evergreen_launcher_icon_48"
+            android:layout_marginLeft="5dip"
             />
-        
+
         <Button
             android:id="@+id/my_acount_button"
             android:layout_width="wrap_content"
@@ -33,6 +33,7 @@
             android:text="@string/my_account_button_text"
             android:layout_alignParentRight="true"
             android:padding="10dip"
+            android:layout_marginTop="5dip"
             />
     </RelativeLayout>
     
@@ -42,13 +43,8 @@
             android:layout_height="wrap_content"
             android:singleLine="true"
             android:layout_below="@id/header"
-            android:paddingLeft="5dip"
-            android:paddingTop="2dip"
-            android:paddingBottom="2dip"
-            android:textStyle="bold"
-            android:gravity="center"
             android:layout_alignParentLeft="true"
-            android:background="@drawable/header_rounded_corners"
+            style="@style/HeaderTitle"
             />
         
 </RelativeLayout>

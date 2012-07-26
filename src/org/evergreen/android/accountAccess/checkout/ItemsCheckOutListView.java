@@ -28,6 +28,7 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -48,7 +49,7 @@ public class ItemsCheckOutListView extends Activity{
 	
 	private ProgressDialog progressDialog;
 	
-	private Button homeButton;
+	private ImageButton homeButton;
 	
 	private Button myAccountButton;
 	
@@ -63,7 +64,7 @@ public class ItemsCheckOutListView extends Activity{
 		setTitle("Checkout items");
 		
 		 //header portion actions
-        homeButton = (Button) findViewById(R.id.library_logo);
+        homeButton = (ImageButton) findViewById(R.id.library_logo);
         myAccountButton = (Button) findViewById(R.id.my_acount_button);
         headerTitle = (TextView) findViewById(R.id.header_title);
         headerTitle.setText(R.string.checkout_items_title);

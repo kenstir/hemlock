@@ -36,6 +36,7 @@ import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -98,7 +99,7 @@ public class HoldDetails extends Activity {
 
 	private GlobalConfigs globalConfigs;
 
-	private Button homeButton;
+	private ImageButton homeButton;
 	
 	private Button myAccountButton;
 	
@@ -112,7 +113,7 @@ public class HoldDetails extends Activity {
 		globalConfigs = GlobalConfigs.getGlobalConfigs(this);
 
 		
-		homeButton = (Button) findViewById(R.id.library_logo);
+		homeButton = (ImageButton) findViewById(R.id.library_logo);
 		myAccountButton = (Button) findViewById(R.id.my_acount_button);
 		headerTitle = (TextView) findViewById(R.id.header_title);
 		headerTitle.setText(R.string.hold_details_title);

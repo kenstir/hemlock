@@ -21,10 +21,11 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -47,7 +48,7 @@ public class FinesActivity extends Activity{
 	
 	private OverdueMaterialsArrayAdapter  listAdapter;
 	
-	private Button homeButton;
+	private ImageButton homeButton;
 	
 	private Button myAccountButton;
 	
@@ -61,7 +62,7 @@ public class FinesActivity extends Activity{
 		setContentView(R.layout.fines);
 		
 		 //header portion actions
-        homeButton = (Button) findViewById(R.id.library_logo);
+        homeButton = (ImageButton) findViewById(R.id.library_logo);
         myAccountButton = (Button) findViewById(R.id.my_acount_button);
         headerTitle = (TextView) findViewById(R.id.header_title);
         headerTitle.setText(R.string.fines_title);

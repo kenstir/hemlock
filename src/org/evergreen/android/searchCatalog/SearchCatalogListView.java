@@ -101,7 +101,7 @@ public class SearchCatalogListView extends Activity{
 	
 	private Button preferenceButton = null;
 	
-	private Button homeButton = null;
+	private ImageButton homeButton = null;
 	
 	private Button myAccountButton = null;
 	
@@ -123,7 +123,7 @@ public class SearchCatalogListView extends Activity{
 			}
 		});
 
-        homeButton = (Button) findViewById(R.id.library_logo);
+        homeButton = (ImageButton) findViewById(R.id.library_logo);
         
         homeButton.setOnClickListener(new OnClickListener() {
 			@Override

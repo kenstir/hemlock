@@ -49,10 +49,11 @@
     <color name="norm2">#00ccde</color>
     
 	<!-- Header portion -->
-    <color name="header_gradient_start">#a10000</color>
-    <color name="header_gradient_stop">#aA0000</color>
+    <color name="header_gradient_start">#E0F6E0</color>
+    <color name="header_gradient_stop">#6F9669</color>
     <color name="library_logo_text_coor">#000</color>
     
+    <color name="header_title">#ffffff</color>
     
     <!-- Search Details -->
     <color name="dark">#000</color>
