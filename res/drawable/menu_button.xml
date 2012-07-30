@@ -5,9 +5,9 @@
             <gradient android:startColor="@color/pres1"
                 android:endColor="@color/pres2" android:angle="270" />
             <stroke android:width="5dp" android:color="@color/stro3" />
-           	<corners android:radius="10dp" android:topRightRadius="80dp" android:bottomLeftRadius="80dp" />
-            <padding android:left="10dp" android:top="0dp"
-                android:right="10dp" android:bottom="0dp" />
+           	<corners android:radius="5dp" android:topRightRadius="5dp" android:bottomLeftRadius="5dp" />
+            <padding android:left="5dp" android:top="0dp"
+                android:right="5dp" android:bottom="0dp" />
         </shape>
     </item>
     <item android:state_focused="true">
@@ -15,18 +15,18 @@
             <gradient android:endColor="@color/focu1"
                 android:startColor="@color/focu2" android:angle="270" />
             <stroke android:width="5dp" android:color="@color/stro2" />
-			<corners android:radius="10dp" android:topRightRadius="80dp" android:bottomLeftRadius="80dp" />
-            <padding android:left="10dp" android:top="0dp"
-                android:right="10dp" android:bottom="0dp" />
+			<corners android:radius="5dp" android:topRightRadius="5dp" android:bottomLeftRadius="5dp" />
+            <padding android:left="5dp" android:top="0dp"
+                android:right="5dp" android:bottom="0dp" />
         </shape>
     </item>
     <item>
         <shape>
             <gradient android:endColor="@color/norm1"
                 android:startColor="@color/norm2" android:angle="270" />
-            <corners android:radius="10dp" android:topRightRadius="80dp" android:bottomLeftRadius="80dp" />
-            <padding android:left="10dp" android:top="0dp"
-                android:right="10dp" android:bottom="0dp" />
+            <corners android:radius="5dp" android:topRightRadius="5dp" android:bottomLeftRadius="5dp" />
+            <padding android:left="5dp" android:top="0dp"
+                android:right="5dp" android:bottom="0dp" />
         </shape>
     </item>
 

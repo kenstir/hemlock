@@ -381,7 +381,12 @@ public class SearchCatalogListView extends Activity{
 	    			intent.putExtra("orgID",search.selectedOrganization.id);
 	    			intent.putExtra("depth",(search.selectedOrganization.level-1));
 	    			
+	    			if(recordList.get(recordList.size()-1).dummy == true){
+	    				recordList.remove(recordList.size()-1);
+	    			}
+	    			
 	    			intent.putExtra("recordList", recordList);
+	    			//TODO put total number
 	    			intent.putExtra("recordPosition", position);
 	    			startActivity(intent);
     			}

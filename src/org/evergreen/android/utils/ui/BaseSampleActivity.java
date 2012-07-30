@@ -36,14 +36,12 @@ public abstract class BaseSampleActivity extends FragmentActivity {
 
             case R.id.add_page:
                 if (mAdapter.getCount() < 10) {
-                    mAdapter.setCount(mAdapter.getCount() + 1);
                     mIndicator.notifyDataSetChanged();
                 }
                 return true;
 
             case R.id.remove_page:
                 if (mAdapter.getCount() > 1) {
-                    mAdapter.setCount(mAdapter.getCount() - 1);
                     mIndicator.notifyDataSetChanged();
                 }
                 return true;

@@ -39,18 +39,20 @@
     
     
     <!-- Menu Buttons -->
-    <color name="pres1">#de9d00</color>
-    <color name="pres2">#de4400</color>
+    <color name="pres1">#2AD652</color>
+    <color name="pres2">#44EA81</color>
     <color name="stro3">#eee</color>
     <color name="focu1">#000</color>
     <color name="focu2">#000</color>
     <color name="stro2">#fff</color>
-    <color name="norm1">#0068de</color>
-    <color name="norm2">#00ccde</color>
+    <color name="norm1">#8FD2D8</color>
+    <color name="norm2">#88E2DF</color>
     
 	<!-- Header portion -->
     <color name="header_gradient_start">#E0F6E0</color>
-    <color name="header_gradient_stop">#6F9669</color>
+    <color name="grey">#ECECEC</color>
+    
+    <color name="header_gradient_stop">#1E7152</color>
     <color name="library_logo_text_coor">#000</color>
     
     
