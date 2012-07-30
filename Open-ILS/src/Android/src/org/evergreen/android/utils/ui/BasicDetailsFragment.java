@@ -101,8 +101,11 @@ public class BasicDetailsFragment extends Fragment{
 	    @Override
 	    public void onCreate(Bundle savedInstanceState) {
 	        super.onCreate(savedInstanceState);
-	        if(savedInstanceState != null)
+	        if(savedInstanceState != null){
 	        	record = (RecordInfo) savedInstanceState.getSerializable("recordInfo");
+	        	this.position = savedInstanceState.getInt("position");
+	        	this.total = savedInstanceState.getInt("total");
+	        }
 	    }
 	    
 	    @Override
@@ -243,8 +246,8 @@ public class BasicDetailsFragment extends Fragment{
 			 current_org = search.selectedOrganization.id;
 			
 			System.out.println("Size " + record.copyCountListInfo.size());
+			
 			for(int i=0;i<record.copyCountListInfo.size();i++){
-				//TODO
 				System.out.println(current_org + " " + record.copyCountListInfo.get(i).org_id + " " + record.copyCountListInfo.get(i).count);
 				if(record.copyCountListInfo.get(i).org_id == current_org){
 					int total = record.copyCountListInfo.get(i).count;
@@ -287,6 +290,8 @@ public class BasicDetailsFragment extends Fragment{
 	    @Override
 	    public void onSaveInstanceState(Bundle outState) {
 	    	outState.putSerializable("recordInfo", record);
+	    	outState.putInt("position", this.position);
+	    	outState.putInt("total", this.total);
 	    	super.onSaveInstanceState(outState);
 	    }
 	    

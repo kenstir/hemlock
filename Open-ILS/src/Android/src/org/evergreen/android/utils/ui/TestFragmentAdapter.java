@@ -23,10 +23,4 @@ public class TestFragmentAdapter extends FragmentPagerAdapter {
         return mCount;
     }
 
-    public void setCount(int count) {
-        if (count > 0 && count <= 10) {
-            mCount = count;
-            notifyDataSetChanged();
-        }
-    }
 }
