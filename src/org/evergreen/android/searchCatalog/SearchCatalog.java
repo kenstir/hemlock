@@ -202,12 +202,13 @@ public class SearchCatalog {
 	        	
 	        	//get copy count 
 	        	List<List<Object>> list= (List<List<Object>>)getLocationCount(Integer.parseInt(ids.get(i)), this.selectedOrganization.id, this.selectedOrganization.level-1);
-	        	
-	        	for(int j=0; j<list.size();j++){
-	        		CopyInformation copyInfo = new CopyInformation(list.get(j));
+
+	        	if(list != null)
+	        		for(int j=0; j<list.size();j++){
+	        			CopyInformation copyInfo = new CopyInformation(list.get(j));
 	        		
-	        		record.copyInformationList.add(copyInfo);
-	        	}
+	        			record.copyInformationList.add(copyInfo);
+	        		}
 	        	
 	        	System.out.println("Title " + record.title + " Author " + record.author + " Pub date" + record.pubdate +" Publisher" + record.publisher);
 	        }
