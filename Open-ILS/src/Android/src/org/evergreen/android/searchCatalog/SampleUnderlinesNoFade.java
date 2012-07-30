@@ -37,6 +37,10 @@ public class SampleUnderlinesNoFade extends BaseSampleActivity {
    
         records = (List<RecordInfo>)getIntent().getSerializableExtra("recordList");
         
+        if(records.get(records.size()-1).dummy == true)
+        	records.remove(records.size()-1);
+        
+        
         //header portion actions
         homeButton = (ImageButton) findViewById(R.id.library_logo);
         myAccountButton = (Button) findViewById(R.id.my_account_button);
