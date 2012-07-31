@@ -14,12 +14,14 @@ import org.evergreen.android.globals.GlobalConfigs;
 import org.evergreen.android.globals.NoAccessToServer;
 import org.evergreen.android.globals.NoNetworkAccessException;
 import org.evergreen.android.searchCatalog.CopyInformation;
+import org.evergreen.android.searchCatalog.ImageDownloader;
 import org.evergreen.android.searchCatalog.RecordInfo;
 import org.evergreen.android.searchCatalog.SearchCatalog;
 
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -31,6 +33,7 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -73,7 +76,10 @@ public class BasicDetailsFragment extends Fragment{
 	private Dialog dialog;
 	
 	private ArrayList<BookBag> bookBags;
+	
+	private final ImageDownloader imageDownloader = new ImageDownloader();
 
+	private ImageView recordImage;
 	//max display info
 	private int list_size = 3;
 	
@@ -129,6 +135,8 @@ public class BasicDetailsFragment extends Fragment{
 			synopsisTextView = (TextView) layout.findViewById(R.id.record_details_simple_synopsis);
 			isbnTextView = (TextView) layout.findViewById(R.id.record_details_simple_isbn);
 
+			recordImage = (ImageView) layout.findViewById(R.id.record_details_simple_image);
+			
 	    	placeHoldButton = (Button) layout.findViewById(R.id.simple_place_hold_button);
 	    	addToBookbagButton = (Button) layout.findViewById(R.id.simple_add_to_bookbag_button);
 
@@ -142,6 +150,12 @@ public class BasicDetailsFragment extends Fragment{
 				}
 			});
 
+    		String imageHref = GlobalConfigs.httpAddress + "/opac/extras/ac/jacket/large/"+record.isbn;
+
+    		//start async download of image 
+    		imageDownloader.download(imageHref, recordImage);
+	    	
+	    	
 			AccountAccess ac = AccountAccess.getAccountAccess();
 
 			bookBags = ac.bookBags;
