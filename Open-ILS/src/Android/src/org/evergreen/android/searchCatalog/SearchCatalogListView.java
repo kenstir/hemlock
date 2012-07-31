@@ -650,28 +650,28 @@ public class SearchCatalogListView extends Activity{
 			    			Log.d(tag, "Successfully completed XML Row Inflation!");
 	
 		    }
-		    		
-    		Log.d(TAG, "reord image value " + recordImage);
-    		// Get reference to ImageView 
-    		recordImage = (ImageView) row.findViewById(R.id.search_record_img);
-    		//TODO fix bugs + features
-    		String imageHref = GlobalConfigs.httpAddress + "/opac/extras/ac/jacket/small/"+record.isbn;
-    		//start async download of image 
-    		imageDownloader.download(imageHref, recordImage);
-    		// Get reference to TextView - title
-    		recordTitle = (TextView) row.findViewById(R.id.search_record_title);
-    		
-    		// Get reference to TextView - author
-    		recordAuthor = (TextView) row.findViewById(R.id.search_record_author);
-
-    		//Get referance to TextView - record Publisher date+publisher
-    		recordPublisher = (TextView) row.findViewById(R.id.search_record_publishing);
-    
-    		//set text
-    		
-    		recordTitle.setText(record.title);
-    		recordAuthor.setText(record.author);
-    		recordPublisher.setText(record.pubdate + " " + record.publisher);
+			    		
+	    		Log.d(TAG, "reord image value " + recordImage);
+	    		// Get reference to ImageView 
+	    		recordImage = (ImageView) row.findViewById(R.id.search_record_img);
+	    		//TODO fix bugs + features
+	    		String imageHref = GlobalConfigs.httpAddress + "/opac/extras/ac/jacket/small/"+record.isbn;
+	    		//start async download of image 
+	    		imageDownloader.download(imageHref, recordImage);
+	    		// Get reference to TextView - title
+	    		recordTitle = (TextView) row.findViewById(R.id.search_record_title);
+	    		
+	    		// Get reference to TextView - author
+	    		recordAuthor = (TextView) row.findViewById(R.id.search_record_author);
+	
+	    		//Get referance to TextView - record Publisher date+publisher
+	    		recordPublisher = (TextView) row.findViewById(R.id.search_record_publishing);
+	    
+	    		//set text
+	    		
+	    		recordTitle.setText(record.title);
+	    		recordAuthor.setText(record.author);
+	    		recordPublisher.setText(record.pubdate + " " + record.publisher);
     		}		
     		return row;
     	}

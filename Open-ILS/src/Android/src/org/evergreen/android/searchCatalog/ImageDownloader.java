@@ -44,6 +44,24 @@ public class ImageDownloader {
    
     private int MIN_IMG_HEIGHT = 75;
     
+    private int bitmap_width;
+    private int bitmap_height;
+    private boolean scale;
+    
+    public ImageDownloader(int min_img_height){
+    	
+    	MIN_IMG_HEIGHT = min_img_height;
+    }
+    
+    public ImageDownloader(){
+    	
+    }
+    
+    public ImageDownloader(int w, int h, boolean scale){
+    	this.bitmap_height = h;
+    	this.bitmap_width = w;
+    	this.scale = scale;
+    }
     /**
      * Download the specified image from the Internet and binds it to the provided ImageView. The
      * binding is immediate if the image is found in the cache and will be done asynchronously
@@ -269,12 +287,18 @@ public class ImageDownloader {
                 // Change bitmap only if this process is still associated with it
                 // Or if we don't use any bitmap to task association (NO_DOWNLOADED_DRAWABLE mode)
                 if ((this == bitmapDownloaderTask) || (mode != Mode.CORRECT)) {
-                	imageView.setImageBitmap(bitmap);
+                	Bitmap newScaledBitmap = null;
+                	if(bitmap != null && scale == true){
+                		newScaledBitmap = Bitmap.createScaledBitmap(bitmap, bitmap_width, bitmap_height, true);
+                		imageView.setImageBitmap(newScaledBitmap);
+                	}else{
+                		imageView.setImageBitmap(bitmap);
+                	}
                 }   
 
                 if(bitmap == null){
                 	if(imageView != null)
-                		imageView.setImageResource(R.drawable.address_book);
+                		imageView.setImageResource(R.drawable.no_image);
                 }
             }
 
