@@ -98,7 +98,7 @@
 
             <Button
                 android:id="@+id/menu_advanced_search_button"
-                style="@style/MenuListButton"
+                style="@style/MenuListOrangeButton"
                 android:layout_width="150dip"
                 android:layout_height="wrap_content"
                 android:drawableTop="@drawable/settings_small"
@@ -106,7 +106,7 @@
 
             <Button
                 android:id="@+id/library_hours_button"
-                style="@style/MenuListButton"
+                style="@style/MenuListBlueButton"
                 android:layout_width="150dip"
                 android:layout_height="wrap_content"
                 android:drawableTop="@drawable/settings_small"
@@ -120,7 +120,7 @@
 
             <Button
                 android:id="@+id/preference_button"
-                style="@style/MenuListButton"
+                style="@style/MenuListPurpleButton"
                 android:layout_width="150dip"
                 android:layout_height="wrap_content"
                 android:drawableTop="@drawable/settings_small"

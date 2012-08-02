@@ -128,7 +128,8 @@ public class SearchCatalogListView extends Activity{
         homeButton.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				searchOptionsMenu.setVisibility(View.VISIBLE);	
+				searchOptionsMenu.setVisibility(View.VISIBLE);
+				searchResultsNumber.setVisibility(View.INVISIBLE);
 			}
 		});
         //end header portion actions
@@ -254,6 +255,8 @@ public class SearchCatalogListView extends Activity{
 					public void run() {
 						
 						searchOptionsMenu.setVisibility(View.GONE);
+						searchResultsNumber.setVisibility(View.VISIBLE);
+						
 						progressDialog = new ProgressDialog(context);
 						
 						progressDialog.setMessage("Fetching data");
