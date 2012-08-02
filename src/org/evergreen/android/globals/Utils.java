@@ -288,8 +288,6 @@ public class Utils {
 		//check to see if EG http server is reachable
 		checkIfNetAddressIsReachable(GlobalConfigs.httpAddress);
 		
-		
-		//TODO check params and throw errors
 		Method method = new Method(methodName);
 		
 		System.out.println("Method :" + methodName + " param:");
@@ -314,8 +312,31 @@ public class Utils {
 		return null;
 		
 	}
+	// does not throw exception
+	// is fast than with checks for multiple method invocations like in search
+	public static Object doRequestSimple(HttpConnection conn, String service, String methodName, Object[] params){
+		Method method = new Method(methodName);
+		System.out.println("Method :" + methodName + " param:");
+		for(int i=0;i<params.length;i++){
+			method.addParam(params[i]);
+			System.out.print("Param "+i+":" + params[i]);
+		}
+		//need space
+		System.out.println();
+		
+		//sync request
+		HttpRequest req = new GatewayRequest(conn, service, method).send();
+		Object resp;
 
-	
+		while ((resp = req.recv()) != null) {
+			System.out.println("Sync Response: " + resp);
+			Object response = (Object) resp;
+
+			return response;
+			
+		}
+		return null;
+	}
 	
 	public static ShowServerNotAvailableRunnable showServerNotAvailableDialog(Context context){
 		

@@ -70,10 +70,9 @@
                     android:layout_width="140dip"
                     android:layout_height="180dip"
                     android:src="@drawable/no_image"
-                    android:layout_marginRight="5dip"
-                    android:layout_marginBottom="5dip"
                     android:padding="5dip"
                     android:background="@color/white"
+                    android:layout_margin="10dip"
                     />
                 
             </LinearLayout>

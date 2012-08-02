@@ -272,21 +272,16 @@ public class GlobalConfigs {
 		
 		try {
 			search.getCopyStatuses();
-		} catch (NoNetworkAccessException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (NoAccessToServer e) {
+		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-	
 	}
 	
 	public void getOrgHiddentDepth(){
 		
 		// logic can be found in the opac_utils.js file in web/opac/common/js
-		
-		
+
 		for(int i=0; i<organisations.size();i++){
 			
 			AccountAccess ac = AccountAccess.getAccountAccess();

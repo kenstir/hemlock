@@ -167,7 +167,7 @@ public class SearchCatalog {
 	        	System.out.println("Exception in JSON " + e.getMessage());
 	        }
 
-	        
+	        //do request and check for connectivity
 	        Object resp = Utils.doRequest(conn, SERVICE, METHOD_MULTICASS_SEARCH, cm, new Object[]{complexParm,searchWords,1});
 
 	        ArrayList<String> ids = new ArrayList<String>();
@@ -275,9 +275,9 @@ public class SearchCatalog {
 	}
 
 	
-	public Object getCopyStatuses() throws NoNetworkAccessException, NoAccessToServer{
+	public Object getCopyStatuses() {
 		
-		List<OSRFObject> ccs_list = (List<OSRFObject>)Utils.doRequest(conn, SERVICE, METHOD_COPY_STATUS_ALL, cm, new Object[]{});
+		List<OSRFObject> ccs_list = (List<OSRFObject>)Utils.doRequestSimple(conn, SERVICE, METHOD_COPY_STATUS_ALL, new Object[]{});
 		
 		CopyInformation.availableOrgStatuses = new LinkedHashMap<String,String>();
 		
@@ -295,9 +295,9 @@ public class SearchCatalog {
 		return ccs_list;
 	}
 	
-	public Object getLocationCount(Integer recordID, Integer orgID, Integer orgDepth) throws NoNetworkAccessException, NoAccessToServer{
+	public Object getLocationCount(Integer recordID, Integer orgID, Integer orgDepth){
 		
-		List<?> list = (List<?>)Utils.doRequest(conn, SERVICE, METHOD_COPY_LOCATION_COUNTS, cm, new Object[]{recordID, orgID, orgDepth});
+		List<?> list = (List<?>)Utils.doRequestSimple(conn, SERVICE, METHOD_COPY_LOCATION_COUNTS, new Object[]{recordID, orgID, orgDepth});
 		return list;
 		
 	}
@@ -327,9 +327,9 @@ public class SearchCatalog {
 		
 	}
 	
-	public ArrayList<CopyCountInformation> getCopyCount(Integer recordID, Integer orgID) throws NoNetworkAccessException, NoAccessToServer{
+	public ArrayList<CopyCountInformation> getCopyCount(Integer recordID, Integer orgID){
 		
-		List<?> list = (List<?>)Utils.doRequest(conn, SERVICE, METHOD_GET_COPY_COUNT, cm, new Object[]{orgID, recordID, ""});
+		List<?> list = (List<?>)Utils.doRequestSimple(conn, SERVICE, METHOD_GET_COPY_COUNT, new Object[]{orgID, recordID, ""});
 		
 		ArrayList<CopyCountInformation> copyInfoList = new ArrayList<CopyCountInformation>();
 		
