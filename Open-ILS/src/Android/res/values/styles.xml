@@ -176,6 +176,30 @@
 		<item name="android:layout_margin">5dip</item>
    </style>
     
+   <style name="MenuListRedButton">
+       <item name="android:background">@drawable/menu_red_button</item>
+		<item name="android:layout_margin">5dip</item>
+   </style>
+   
+   <style name="MenuListOrangeButton">
+       <item name="android:background">@drawable/menu_orange_button</item>
+		<item name="android:layout_margin">5dip</item>
+		<item name="android:textColor">@color/white</item>
+   </style>
+   
+   <style name="MenuListBlueButton">
+       <item name="android:background">@drawable/menu_blue_button</item>
+       <item name="android:layout_margin">5dip</item>
+       <item name="android:textColor">@color/white</item>
+   </style>
+   
+   <style name="MenuListPurpleButton">
+       <item name="android:background">@drawable/menu_purple_button</item>
+       <item name="android:layout_margin">5dip</item>
+       <item name="android:textColor">@color/white</item>
+   </style>
+   
+   
    <style name="DashboardButton">
         <item name="android:layout_gravity">center_vertical</item>
         <item name="android:layout_width">wrap_content</item>

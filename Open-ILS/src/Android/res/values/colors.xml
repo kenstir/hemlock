@@ -49,7 +49,7 @@
     <color name="norm2">#88E2DF</color>
     
 	<!-- Header portion -->
-    <color name="header_gradient_start">#E0F6E0</color>
+    <color name="header_gradient_start">#238962</color>
     <color name="grey">#ECECEC</color>
     
     <color name="header_gradient_stop">#1E7152</color>
