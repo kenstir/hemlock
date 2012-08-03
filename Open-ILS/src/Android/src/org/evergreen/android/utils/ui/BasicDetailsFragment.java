@@ -15,11 +15,13 @@ import org.evergreen.android.globals.NoAccessToServer;
 import org.evergreen.android.globals.NoNetworkAccessException;
 import org.evergreen.android.searchCatalog.CopyInformation;
 import org.evergreen.android.searchCatalog.ImageDownloader;
+import org.evergreen.android.searchCatalog.MoreCopyInformation;
 import org.evergreen.android.searchCatalog.RecordInfo;
 import org.evergreen.android.searchCatalog.SearchCatalog;
 
 import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
@@ -279,13 +281,10 @@ public class BasicDetailsFragment extends Fragment{
 				
 				@Override
 				public void onClick(View v) {
-					// TODO Auto-generated method stub
-
-					System.out.println("Show more tabed");
-					// insert into main view
-					LinearLayout insertPoint = (LinearLayout) lay.findViewById(R.id.record_details_copy_information);
-					addCopyInfo(list_size, record.copyCountListInfo.size(), inf, insertPoint);
-					
+					//show more details
+					Intent intent = new Intent(getActivity().getApplicationContext(),MoreCopyInformation.class);
+					intent.putExtra("recordInfo", record);
+					startActivity(intent);
 				}
 			});
 
