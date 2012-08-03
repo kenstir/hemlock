@@ -55,7 +55,7 @@ public class MoreCopyInformation extends Activity{
 		
 		setContentView(R.layout.copy_information_more);
 		gl = GlobalConfigs.getGlobalConfigs(context);
-		
+		context = this;
 		record = (RecordInfo) getIntent().getSerializableExtra("recordInfo");
 		
 		 //header portion actions
