@@ -34,26 +34,27 @@
         <activity android:name=".views.AccountScreenDashboard"
             		android:theme="@android:style/Theme.Light.NoTitleBar"
             ></activity>
-        <activity
-            android:name=".searchCatalog.SearchCatalogListView"
-            android:label="@string/app_name"
-            >
-           	
-        </activity>
+        
         <activity android:name="org.evergreen.android.views.ApplicationPreferences"></activity>
         
             
         <!-- Search -->    
-        <activity android:name=".searchCatalog.TabsView"
-            android:label="Tabs/Styled"
-            android:theme="@style/StyledIndicators"
-            ></activity>  
             
         <activity android:name=".searchCatalog.SampleUnderlinesNoFade"
             android:label="Underlines/No Fade"
             >
         </activity>
-
+		<activity android:name=".searchCatalog.MoreCopyInformation">
+		    
+		</activity>
+		<activity
+            android:name=".searchCatalog.SearchCatalogListView"
+            android:label="@string/app_name"
+            >
+           	
+        </activity>
+        
+        
         <!-- Checkout Activities -->
         <activity android:name=".accountAccess.checkout.ItemsCheckOutListView"></activity>
         
@@ -65,11 +66,6 @@
         <!-- Fines Activities -->
         <activity android:name=".accountAccess.fines.FinesActivity"></activity>
         
-        <activity android:name=".searchCatalog.RecordDetails_Info"></activity>
-   		<activity android:name=".searchCatalog.RecordDetails_Content"></activity>
-        <activity android:name=".searchCatalog.RecordDetails_Details"></activity>
-        <activity android:name=".searchCatalog.RecordDetails"></activity>
-        <activity android:name=".searchCatalog.RecordDetails_Simple"></activity>
         
         <!-- Bookbags -->
         <activity android:name=".accountAccess.bookbags.BookbagsListView"></activity>

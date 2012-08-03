@@ -501,10 +501,15 @@ public class SearchCatalogListView extends Activity{
     		
     		case DETAILS : {
        			
-    			Intent intent = new Intent(getBaseContext(),RecordDetails_Simple.class);
+    			Intent intent = new Intent(getBaseContext(),SampleUnderlinesNoFade.class);
     			//serialize object and pass it to next activity
     			intent.putExtra("recordInfo", info);
+    			intent.putExtra("orgID",search.selectedOrganization.id);
+    			intent.putExtra("depth",(search.selectedOrganization.level-1));
     			
+    			intent.putExtra("recordList", recordList);
+    			//TODO put total number
+    			intent.putExtra("recordPosition", menuArrayItem.position);
     			startActivity(intent);
     		}
     		break;
