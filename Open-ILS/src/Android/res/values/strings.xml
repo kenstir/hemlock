@@ -14,15 +14,22 @@
     <string name="bookbag_items_title">bookbags</string>
     <string name="bookbag_details_title">bookbag details</string>
     <string name="fines_title">fines</string>
+    <string name="copy_information_title">copy information</string>
     
     <string name="button_place_hold">Place Hold</string>
     <string name="button_add_to_bookbag">Add to Bookbag</string>
     
-    <string name="server_name_dialog">http:// </string>
-    <string name="username">username : </string>
-    <string name="password">password : </string>
+
     
     <string name="bookbag_choose_text">Choose a bookbag from the list.</string>
+    
+    <!-- first config activity -->
+    
+    <string name="first_config_message">Please enter the Evergreen server url, username and password of your account.</string>
+    <string name="server_name">EG server:</string>
+    <string name="username">Username: </string>
+    <string name="password">Password: </string>
+    
     
     <string name="cancel_button">cancel</string>
     <string name="connect_button">connect</string>
@@ -76,6 +83,7 @@
     <string name="hold_phone_hint">Contact phone number</string>
     <string name="hold_expire_time_hint">Hold expire time</string>
     <string name="hold_thaw_date_hint">Date when the hold is frozen</string>
+    
     <!-- Fines Activity -->
     <string name="total_owned">Total Owned </string>
     <string name="total_paid">Total Paid</string>

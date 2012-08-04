@@ -257,10 +257,7 @@ public class SearchCatalogListView extends Activity{
 						searchOptionsMenu.setVisibility(View.GONE);
 						searchResultsNumber.setVisibility(View.VISIBLE);
 						
-						progressDialog = new ProgressDialog(context);
-						
-						progressDialog.setMessage("Fetching data");
-						progressDialog.show();
+						progressDialog = ProgressDialog.show(context, "Please wait", "Fetching data");
 					}
 				});
 				
