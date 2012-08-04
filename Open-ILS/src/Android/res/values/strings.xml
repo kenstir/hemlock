@@ -31,10 +31,12 @@
     <string name="password">Password: </string>
     
     
-    <string name="cancel_button">cancel</string>
-    <string name="connect_button">connect</string>
+    <string name="cancel_button">Cancel</string>
+    <string name="connect_button">Connect</string>
     
     <string name="search_hint">What are you looking for?</string>
+    <string name="advanced_search">Search</string>
+    
     <string name="advanced_search_hint">Enter text here</string>
     <string name="advanced_search_add_filter_button">Add filter</string>
     <string name="advanced_search_filter_text">Added filters:</string>
