@@ -7,6 +7,7 @@ import org.evergreen.android.globals.NoAccessToServer;
 import org.evergreen.android.globals.NoNetworkAccessException;
 import org.evergreen.android.globals.Utils;
 import org.evergreen.android.searchCatalog.SearchCatalogListView;
+import org.evergreen.android.views.ConfigureApplicationActivity;
 import org.evergreen.android.views.MainScreenDashboard;
 import org.evergreen.android.views.splashscreen.LoadingTask.LoadingTaskFinishedListener;
 
@@ -36,19 +37,8 @@ public class SplashActivity extends Activity implements
 
 	private Context context;
 
-	private Dialog dialog = null;
-
-	private ProgressDialog progressDialog = null;
-
-	private EditText server_http;
-
-	private EditText username;
-
-	private EditText password;
-
 	private ProgressBar progressBar;
 
-	private SplashActivity activity;
 
 	private String TAG = "SplashActivity";
 
@@ -59,124 +49,6 @@ public class SplashActivity extends Activity implements
 		// Show the splash screen
 		setContentView(R.layout.activity_splash);
 
-		activity = this;
-		dialog = new Dialog(context);
-		dialog.setContentView(R.layout.dialog_configure_application);
-		dialog.setTitle("Configure application");
-
-		server_http = (EditText) dialog.findViewById(R.id.server_http_adress);
-		username = (EditText) dialog.findViewById(R.id.username);
-		password = (EditText) dialog.findViewById(R.id.password);
-		Button cancel = (Button) dialog.findViewById(R.id.cancel_button);
-		Button connect = (Button) dialog.findViewById(R.id.connect_button);
-
-		cancel.setOnClickListener(new OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-				Toast.makeText(context, "Exit application", Toast.LENGTH_SHORT)
-						.show();
-				finish();
-			}
-		});
-
-		connect.setOnClickListener(new OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-
-				Thread checkConn = new Thread(new Runnable() {
-					@Override
-					public void run() {
-
-						boolean server_address = false;
-						boolean auth = false;
-
-						try {
-							server_address = Utils
-									.checkIfNetAddressIsReachable(server_http
-											.getText().toString());
-						} catch (NoAccessToServer e) {
-							server_address = false;
-						}
-
-						if (server_address == true) {
-
-							SharedPreferences preferences = PreferenceManager
-									.getDefaultSharedPreferences(context);
-							SharedPreferences.Editor editor = preferences
-									.edit();
-							//store into preference
-							editor.putString("library_url", server_http
-									.getText().toString());
-
-							
-							editor.putString("username", username.getText().toString());
-							editor.putString("password", password.getText().toString());
-							
-							editor.commit();
-							GlobalConfigs.httpAddress = server_http.getText().toString();
-							AccountAccess accountAccess = AccountAccess
-									.getAccountAccess(GlobalConfigs.httpAddress,(ConnectivityManager) activity.getSystemService(Service.CONNECTIVITY_SERVICE));
-							
-							AccountAccess.setAccountInfo(username.getText().toString(),password.getText().toString());
-
-							try {
-								auth = accountAccess.authenticate();
-								Log.d(TAG, "Auth " + auth);
-							} catch (Exception e) {
-								System.out.println("Exception " + e.getMessage());
-							}
-
-							if (auth == true) {
-
-								runOnUiThread(new Runnable() {
-									@Override
-									public void run() {
-										progressDialog.dismiss();
-										dialog.dismiss();
-										// Start your loading
-										new LoadingTask(progressBar, activity,
-												activity, progressText, activity)
-												.execute("download");
-									}
-								});
-
-							} else {
-								runOnUiThread(new Runnable() {
-									@Override
-									public void run() {
-										progressDialog.dismiss();
-										Toast.makeText(context,
-												"Bad user login information",
-												Toast.LENGTH_LONG).show();
-									}
-								});
-							}
-
-						} else {
-							runOnUiThread(new Runnable() {
-								@Override
-								public void run() {
-									progressDialog.dismiss();
-									Toast.makeText(context,
-											"Bad library server url",
-											Toast.LENGTH_LONG).show();
-								}
-							});
-
-						}
-
-					}
-				});
-
-				progressDialog = ProgressDialog.show(context, "Please wait",
-						"Checking server and credentials");
-				checkConn.start();
-			}
-		});
-
-		dialog.setCancelable(true);
 
 		progressText = (TextView) findViewById(R.id.action_in_progress);
 
@@ -200,8 +72,10 @@ public class SplashActivity extends Activity implements
 		} catch (NoAccessToServer e) {
 			abort = true;
 
-			dialog.show();
-
+			//dialog.show();
+			Intent configureIntent = new Intent(this,ConfigureApplicationActivity.class);
+			startActivityForResult(configureIntent,0);
+			
 		}
 
 		if (abort != true) {
@@ -213,6 +87,19 @@ public class SplashActivity extends Activity implements
 		}
 	}
 
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		
+		switch(resultCode){
+		
+		case ConfigureApplicationActivity.RESULT_CONFIGURE_SUCCESS : {
+			new LoadingTask(progressBar, this, this, progressText, this);
+		
+		} break;
+		
+		}
+	}
+	
 	// This is the callback for when your async task has finished
 	@Override
 	public void onTaskFinished() {

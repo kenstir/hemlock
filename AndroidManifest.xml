@@ -37,6 +37,10 @@
         
         <activity android:name="org.evergreen.android.views.ApplicationPreferences"></activity>
         
+        <!-- First launch configuration activity -->
+        <activity
+            android:name="org.evergreen.android.views.ConfigureApplicationActivity"
+            ></activity>
             
         <!-- Search -->    
             

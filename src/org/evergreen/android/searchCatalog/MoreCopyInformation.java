@@ -62,7 +62,7 @@ public class MoreCopyInformation extends Activity{
         homeButton = (ImageButton) findViewById(R.id.library_logo);
         myAccountButton = (Button) findViewById(R.id.my_account_button);
         headerTitle = (TextView) findViewById(R.id.header_title);
-        headerTitle.setText(R.string.fines_title);
+        headerTitle.setText(R.string.copy_information_title);
         
         myAccountButton.setOnClickListener(new OnClickListener() {
 			@Override
