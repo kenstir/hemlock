@@ -140,41 +140,8 @@ public class SearchCatalogListView extends Activity{
 			@Override
 			public void onClick(View v) {
 				//show advanced view dialog
-				
-				final Dialog dialog = new Dialog(context);
-                dialog.setContentView(R.layout.advanced_search_dialog);
-                dialog.setTitle("Advanced search");
-             
-                final LinearLayout layout = (LinearLayout) dialog.findViewById(R.id.advanced_search_filters);
-
-                Button addFilter = (Button) dialog.findViewById(R.id.advanced_search_add_filter_button);
-                
-                final Spinner search_index = (Spinner) dialog.findViewById(R.id.advanced_spinner_index);
-                final Spinner search_option = (Spinner) dialog.findViewById(R.id.advanced_spinner_option);
-                final EditText search_filter_text = (EditText) dialog.findViewById(R.id.advanced_search_text);
-      
-                addFilter.setOnClickListener(new OnClickListener() {
-					@Override
-					public void onClick(View v) {
-		                TextView text = new TextView(context);
-		                text.setLayoutParams(new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT));
-		                text.setText(search_index.getSelectedItem().toString() + " " + search_option.getSelectedItem().toString() + " " + search_filter_text.getText().toString());
-		                layout.addView(text);
-
-					}
-				});
-
-                
-                Button cancel = (Button) dialog.findViewById(R.id.advanced_search_cancel);
-                
-                cancel.setOnClickListener(new OnClickListener() {
-					@Override
-					public void onClick(View v) {
-						dialog.dismiss();
-					}
-				});   
-                dialog.setCancelable(true);
-                dialog.show();
+				Intent advancedSearch = new Intent(context,AdvancedSearchActivity.class);
+				startActivityForResult(advancedSearch, 2);
 			}
 		});
         //get bookbags
@@ -217,19 +184,6 @@ public class SearchCatalogListView extends Activity{
     	
     	searchOptionsMenu = findViewById(R.id.search_preference_options);
     	 
-    	// Creating a button - Load More
-    	Button btnLoadMore = new Button(this);
-    	btnLoadMore.setText("Load More");
-    	
-    	// Adding button to listview at footer
-    	//lv.addFooterView(btnLoadMore);
-    	
-    	View footerView = findViewById(R.layout.search_result_footer_view);
-    	//call before set adapter
-    	//lv.addFooterView(footerView);
-    	
-    	//System.out.println("Here it is "  + lv);
-    	
 		progressDialog = new ProgressDialog(context);
 		
 		progressDialog.setMessage("Fetching data");
@@ -478,9 +432,9 @@ public class SearchCatalogListView extends Activity{
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo)menuInfo;
         menu.setHeaderTitle("Options");
         
-          menu.add(Menu.NONE, DETAILS,0,"Details");
-          menu.add(Menu.NONE,PLACE_HOLD,1,"Place Hold");
-          menu.add(Menu.NONE,BOOK_BAG,2,"Add to bookbag");
+        menu.add(Menu.NONE, DETAILS,0,"Details");
+        menu.add(Menu.NONE,PLACE_HOLD,1,"Place Hold");
+        menu.add(Menu.NONE,BOOK_BAG,2,"Add to bookbag");
         
       }
     }
@@ -602,6 +556,21 @@ public class SearchCatalogListView extends Activity{
     	return super.onContextItemSelected(item);
     }
     
+    
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    	
+    	switch(resultCode){
+    	
+    	case AdvancedSearchActivity.RESULT_ADVANCED_SEARCH : {
+    		Log.d(TAG, "result text"+data.getStringExtra("advancedSearchText"));
+    		searchText.setText(data.getStringExtra("advancedSearchText"));
+			Thread searchThread = new Thread(searchForResultsRunnable);				
+			searchThread.start();
+    	} break;
+	
+    	}
+    }
     class SearchArrayAdapter extends ArrayAdapter<RecordInfo> {
     	
     	private static final String tag = "SearchArrayAdapter";

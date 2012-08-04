@@ -39,7 +39,6 @@ public class SplashActivity extends Activity implements
 
 	private ProgressBar progressBar;
 
-
 	private String TAG = "SplashActivity";
 
 	@Override
@@ -89,11 +88,7 @@ public class SplashActivity extends Activity implements
 
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		
-		Log.d(TAG, "Result code return " + resultCode);
-		
 		switch(resultCode){
-		
 		case ConfigureApplicationActivity.RESULT_CONFIGURE_SUCCESS : {
 			new LoadingTask(progressBar, this, this, progressText, this).execute("download");
 		
