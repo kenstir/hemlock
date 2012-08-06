@@ -156,7 +156,7 @@
    </style>
    
    <style name="HeaderTitle">
-       <item name="android:background">@drawable/header_rounded_corners</item>
+       <item name="android:background">@drawable/title_header_background</item>
        <item name="android:textSize">16dip</item>
        <item name="android:textStyle">bold</item>
        <item name="android:gravity">center</item>
