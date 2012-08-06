@@ -28,7 +28,7 @@ public class AdvancedSearchActivity extends Activity{
 	
 	private Context context;
 
-	private ImageButton homeButton;
+	private Button homeButton;
 	
 	private Button myAccountButton;
 	
@@ -46,7 +46,7 @@ public class AdvancedSearchActivity extends Activity{
 		
 		
 		 //header portion actions
-        homeButton = (ImageButton) findViewById(R.id.library_logo);
+        homeButton = (Button) findViewById(R.id.library_logo);
         myAccountButton = (Button) findViewById(R.id.my_account_button);
         headerTitle = (TextView) findViewById(R.id.header_title);
         headerTitle.setText(R.string.advanced_search);
@@ -130,7 +130,7 @@ public class AdvancedSearchActivity extends Activity{
         cancel.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				
+				finish();
 			}
 		});   
         

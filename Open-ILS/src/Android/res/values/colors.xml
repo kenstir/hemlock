@@ -68,6 +68,12 @@
     
     <color name="background">#333</color>
     
+    <color name="menu_background_start">#585858</color>
+    <color name="menu_background_stop">#c8c8c8</color>
+    
+    <color name="menu_bottom_start">#636363</color>
+    <color name="menu_bottom_stop">#636363</color>
+    
     <!-- Search Details -->
     <color name="dark">#000</color>
 </resources>

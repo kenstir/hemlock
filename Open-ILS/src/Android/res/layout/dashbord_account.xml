@@ -5,6 +5,7 @@
     android:orientation="vertical"
     android:padding="6dip"
     android:layout_weight="1"
+    android:background="@drawable/background_grey_image"
      >
        <LinearLayout
         android:orientation="horizontal"
