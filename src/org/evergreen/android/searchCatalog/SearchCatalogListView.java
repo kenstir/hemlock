@@ -95,13 +95,15 @@ public class SearchCatalogListView extends Activity{
 	
 	private View searchOptionsMenu = null;
 	
-	private Button advancedSearchButton = null;
+	private ImageButton advancedSearchButton = null;
 	
-	private Button libraryHoursButton = null;
+	private ImageButton libraryHoursButton = null;
 	
-	private Button preferenceButton = null;
+	private ImageButton preferenceButton = null;
 	
-	private ImageButton homeButton = null;
+	private ImageButton barcodeScanButton = null;
+	
+	private Button homeButton = null;
 	
 	private Button myAccountButton = null;
 	
@@ -113,7 +115,7 @@ public class SearchCatalogListView extends Activity{
         setContentView(R.layout.search_result_list);
         setTitle("Browse catalog");
         
-        myAccountButton = (Button) findViewById(R.id.my_acount_button);
+        myAccountButton = (Button) findViewById(R.id.my_account_button);
         
         myAccountButton.setOnClickListener(new OnClickListener() {
 			@Override
@@ -123,7 +125,7 @@ public class SearchCatalogListView extends Activity{
 			}
 		});
 
-        homeButton = (ImageButton) findViewById(R.id.library_logo);
+        homeButton = (Button) findViewById(R.id.library_logo);
         
         homeButton.setOnClickListener(new OnClickListener() {
 			@Override
@@ -134,7 +136,7 @@ public class SearchCatalogListView extends Activity{
 		});
         //end header portion actions
 
-        advancedSearchButton = (Button) findViewById(R.id.menu_advanced_search_button);
+        advancedSearchButton = (ImageButton) findViewById(R.id.menu_advanced_search_button);
         
         advancedSearchButton.setOnClickListener(new OnClickListener() {
 			@Override
@@ -148,7 +150,7 @@ public class SearchCatalogListView extends Activity{
         AccountAccess ac = AccountAccess.getAccountAccess();
         bookBags = ac.bookBags;
         
-        libraryHoursButton = (Button) findViewById(R.id.library_hours_button);
+        libraryHoursButton = (ImageButton) findViewById(R.id.library_hours_button);
         libraryHoursButton.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -156,7 +158,7 @@ public class SearchCatalogListView extends Activity{
 			}
 		});
         
-        preferenceButton = (Button) findViewById(R.id.preference_button);
+        preferenceButton = (ImageButton) findViewById(R.id.preference_button);
         preferenceButton.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -164,6 +166,8 @@ public class SearchCatalogListView extends Activity{
 				startActivity(intent);
 			}
 		});
+        
+        barcodeScanButton = (ImageButton) findViewById(R.id.barcode_scan_button);
         
         //singleton initialize necessary IDL and Org data
         globalConfigs = GlobalConfigs.getGlobalConfigs(this);

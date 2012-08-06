@@ -55,7 +55,7 @@ public class BookbagsListView extends Activity{
 	
 	private Runnable getBookbagsRunnable;
 	
-	private ImageButton homeButton;
+	private Button homeButton;
 	
 	private Button myAccountButton;
 	
@@ -69,7 +69,7 @@ public class BookbagsListView extends Activity{
 		setContentView(R.layout.bookbag_list);
 		
 		 //header portion actions
-        homeButton = (ImageButton) findViewById(R.id.library_logo);
+        homeButton = (Button) findViewById(R.id.library_logo);
         myAccountButton = (Button) findViewById(R.id.my_account_button);
         headerTitle = (TextView) findViewById(R.id.header_title);
         headerTitle.setText(R.string.bookbag_items_title);

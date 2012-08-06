@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent">
+    android:layout_height="fill_parent"
+    android:background="@color/background"
+    >
 
     <RelativeLayout
         android:id="@+id/header"
@@ -12,18 +14,24 @@
         android:paddingTop="3dip"
         >
         
-        <ImageButton 
+                <Button
             android:id="@+id/library_logo"
+            style="@style/LibraryLogoText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            style="@style/LibraryLogoText"
             android:layout_alignParentLeft="true"
-            android:src="@drawable/evergreen_launcher_icon_48"
             android:layout_marginLeft="5dip"
+            android:drawableLeft="@drawable/evergreen_launcher_icon_48"
+            android:text="@string/library_text_logo" 
+            android:textColor="@color/white"
+            android:textSize="16dp"
+            android:typeface="monospace"
+            android:textStyle="bold"
+            android:paddingLeft="5dip"
             />
 
         <Button
-            android:id="@+id/my_acount_button"
+            android:id="@+id/my_account_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/my_account_button_text"
@@ -93,34 +101,36 @@
          >
 
              
-             <Button 
-         	 android:id="@+id/menu_advanced_search_button"
-             android:layout_width="100dip"
-             android:layout_height="wrap_content"
-             android:text="@string/menu_button_advanced_search"
-             android:drawableTop="@drawable/settings_small"
-             style="@style/MenuListButton"
-             />
-         
-            <Button 
-             android:id="@+id/library_hours_button"
-             android:layout_width="100dip"
-             android:layout_height="wrap_content"
-             android:text="@string/menu_button_library_hours"
-             android:drawableTop="@drawable/settings_small"
-             style="@style/MenuListButton"
-             />    
-                 
+             <ImageButton
+                android:id="@+id/menu_advanced_search_button"
+                style="@style/MenuListButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/advanced_search" />
+
+            <ImageButton
+                android:id="@+id/library_hours_button"
+                style="@style/MenuListButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/library_hours" />
             
-                 
-             <Button
-             android:id="@+id/preference_button" 
-             android:layout_width="100dip"
-             android:layout_height="wrap_content"
-             android:text="@string/menu_button_application_preferences"
-             android:drawableTop="@drawable/settings_small"
-             style="@style/MenuListButton"
-             />
+
+            <ImageButton
+                android:id="@+id/preference_button"
+                style="@style/MenuListButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/preferences"
+                />
+            
+                <ImageButton
+                android:id="@+id/barcode_scan_button"
+                style="@style/MenuListButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/barcode_scan"/>
+            
             
      </LinearLayout>
           <LinearLayout android:layout_width="fill_parent"

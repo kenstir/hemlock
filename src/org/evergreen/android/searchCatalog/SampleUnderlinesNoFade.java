@@ -26,7 +26,7 @@ public class SampleUnderlinesNoFade extends BaseSampleActivity {
 	
 	private Button myAccountButton;
 	
-	private ImageButton homeButton;
+	private Button homeButton;
 	
 	private TextView headerTitle;
 	
@@ -42,7 +42,7 @@ public class SampleUnderlinesNoFade extends BaseSampleActivity {
         
         
         //header portion actions
-        homeButton = (ImageButton) findViewById(R.id.library_logo);
+        homeButton = (Button) findViewById(R.id.library_logo);
         myAccountButton = (Button) findViewById(R.id.my_account_button);
         headerTitle = (TextView) findViewById(R.id.header_title);
         headerTitle.setText(R.string.search_details_title);

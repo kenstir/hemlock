@@ -6,35 +6,40 @@
     android:layout_height="wrap_content"
     >
 
-<RelativeLayout
+ <RelativeLayout
         android:id="@+id/header"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
         android:background="@drawable/one_header_rounded_corner"
+        android:orientation="horizontal"
         android:paddingTop="3dip"
-        android:paddingBottom="3dip"
-        >
-        
-                <ImageButton 
+        android:paddingBottom="2dip"
+         >
+
+        <Button
             android:id="@+id/library_logo"
+            style="@style/LibraryLogoText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            style="@style/LibraryLogoText"
             android:layout_alignParentLeft="true"
-            android:src="@drawable/evergreen_launcher_icon_48"
             android:layout_marginLeft="5dip"
+            android:drawableLeft="@drawable/evergreen_launcher_icon_48"
+            android:text="@string/library_text_logo" 
+            android:textColor="@color/white"
+            android:textSize="16dp"
+            android:typeface="monospace"
+            android:textStyle="bold"
+            android:paddingLeft="5dip"
             />
-
+        
         <Button
             android:id="@+id/my_account_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/my_account_button_text"
             android:layout_alignParentRight="true"
-            android:padding="10dip"
             android:layout_marginTop="5dip"
-            />
+            android:padding="10dip"
+            android:text="@string/my_account_button_text" />
     </RelativeLayout>
     
         <TextView 

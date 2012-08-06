@@ -65,6 +65,9 @@
     
     <color name="button_stroke">#aaa</color>
     
+    
+    <color name="background">#333</color>
+    
     <!-- Search Details -->
     <color name="dark">#000</color>
 </resources>

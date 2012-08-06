@@ -6,7 +6,9 @@
    	android:paddingBottom="3px"
 	android:paddingTop="3px" 
 	android:paddingLeft="3px" 
-    android:orientation="horizontal" >
+    android:orientation="horizontal"
+    android:background="@color/background"
+     >
 
 	<ImageView
 		android:id="@+id/search_record_img"

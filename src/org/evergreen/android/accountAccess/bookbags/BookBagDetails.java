@@ -63,7 +63,7 @@ private String TAG = "BookBags";
 	
 	private Button delete_bookbag_button;
 	
-	private ImageButton homeButton;
+	private Button homeButton;
 	
 	private Button myAccountButton;
 	
@@ -77,7 +77,7 @@ private String TAG = "BookBags";
 		
 		setContentView(R.layout.bookbagitem_list);
 		 //header portion actions
-        homeButton = (ImageButton) findViewById(R.id.library_logo);
+        homeButton = (Button) findViewById(R.id.library_logo);
         myAccountButton = (Button) findViewById(R.id.my_account_button);
         headerTitle = (TextView) findViewById(R.id.header_title);
         headerTitle.setText(R.string.bookbag_details_title);
