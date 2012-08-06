@@ -172,7 +172,7 @@
     
     <!--  Menu List Buttons -->
    <style name="MenuListButton">
-		<item name="android:background">@drawable/menu_button</item>
+		<item name="android:background">@android:color/transparent</item>
 		<item name="android:layout_margin">5dip</item>
    </style>
     
