@@ -8,6 +8,7 @@ import org.evergreen.android.accountAccess.AccountAccess;
 import org.evergreen.android.accountAccess.SessionNotFoundException;
 import org.evergreen.android.accountAccess.bookbags.BookBag;
 import org.evergreen.android.accountAccess.holds.PlaceHold;
+import org.evergreen.android.barcodescan.CaptureActivity;
 import org.evergreen.android.globals.GlobalConfigs;
 import org.evergreen.android.globals.NoAccessToServer;
 import org.evergreen.android.globals.NoNetworkAccessException;
@@ -168,7 +169,14 @@ public class SearchCatalogListView extends Activity{
 		});
         
         barcodeScanButton = (ImageButton) findViewById(R.id.barcode_scan_button);
-        
+        barcodeScanButton.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				Intent barcodeScan = new Intent(getApplicationContext(), CaptureActivity.class);
+				startActivityForResult(barcodeScan, 10);
+			}
+		});
         //singleton initialize necessary IDL and Org data
         globalConfigs = GlobalConfigs.getGlobalConfigs(this);
         

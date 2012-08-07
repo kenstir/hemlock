@@ -7,6 +7,14 @@
     <uses-sdk android:minSdkVersion="3" android:targetSdkVersion="14" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
 	<uses-permission android:name="android.permission.INTERNET" /> 
+	
+	<uses-permission android:name="android.permission.CAMERA" />
+	<uses-permission android:name="android.permission.VIBRATE"/>
+	<uses-permission android:name="android.permission.FLASHLIGHT"/>
+	<uses-permission android:name="android.permission.WAKE_LOCK" />
+	<uses-feature android:name="android.hardware.camera" />
+	<uses-feature android:name="android.hardware.camera.autofocus" />
+	
     <application
         android:icon="@drawable/evergreen_launcher_icon"
         android:label="@string/app_name" 
@@ -58,6 +66,17 @@
         <activity 
             android:name=".searchCatalog.AdvancedSearchActivity">
         </activity>
+        <activity android:name=".barcodescan.CaptureActivity"
+                  android:label="@string/app_name"
+                  android:screenOrientation="landscape"
+                  android:theme="@android:style/Theme.NoTitleBar"
+                  android:windowSoftInputMode="stateAlwaysHidden">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        
         
         <!-- Checkout Activities -->
         <activity android:name=".accountAccess.checkout.ItemsCheckOutListView"></activity>

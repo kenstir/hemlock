@@ -8,7 +8,9 @@
             <gradient
                 android:angle="270"
                 android:endColor="@color/header_gradient_stop"
-                android:startColor="@color/header_gradient_start" />
+                android:startColor="@color/header_gradient_start" 
+                
+                />
 
             <corners
                 android:bottomLeftRadius="8dp"
@@ -23,7 +25,9 @@
                 android:angle="270"
                 android:centerColor="#00ffffff"
                 android:endColor="#00ffffff"
-                android:startColor="#40ffffff" />
+                android:startColor="#40ffffff" 
+                android:useLevel="false"
+                />
 
             <corners
                 android:bottomLeftRadius="8dp"
