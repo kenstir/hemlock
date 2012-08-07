@@ -5,9 +5,18 @@
     android:orientation="vertical"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
+    android:padding="4dip"
     >
 
 	<include android:id="@+id/header_actionbar" layout="@layout/simple_actionbar"/>
+	
+	<TextView
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:text="@string/copy_information"
+	    android:layout_marginTop="5dip"
+	    android:layout_marginBottom="5dip"
+	    />
 	
 	<LinearLayout
 		android:id="@+id/record_details_copy_information"

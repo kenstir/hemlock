@@ -34,6 +34,8 @@
     <string name="cancel_button">Cancel</string>
     <string name="connect_button">Connect</string>
     
+    <!-- Search -->
+    
     <string name="search_hint">What are you looking for?</string>
     <string name="advanced_search">Search</string>
     
@@ -45,7 +47,7 @@
     <string name="menu_button_library_hours">Library hours</string>
     <string name="menu_button_application_preferences">Preferences</string>
     
-    
+    <string name="copy_information"> Availability of the book :</string>
     <string name="hello">Hello World, EvergreenAppActivity!</string>
     <string name="app_name">EvergreenApp</string>
 
@@ -104,4 +106,9 @@
     <string name="create">create</string>
     <string name="bookbag_name">bookbag name</string>
     <string name="add_button">add</string>
+    
+    
+    <!--  Camera -->
+     <string name="msg_camera_framework_bug">Sorry, the Android camera encountered a problem. You may need to restart the device.</string>
+     <string name="button_ok">OK</string>
 </resources>
