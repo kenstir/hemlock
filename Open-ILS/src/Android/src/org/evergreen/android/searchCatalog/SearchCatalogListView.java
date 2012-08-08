@@ -96,13 +96,13 @@ public class SearchCatalogListView extends Activity{
 	
 	private View searchOptionsMenu = null;
 	
-	private ImageButton advancedSearchButton = null;
+	private Button advancedSearchButton = null;
 	
-	private ImageButton libraryHoursButton = null;
+	private Button libraryHoursButton = null;
 	
-	private ImageButton preferenceButton = null;
+	private Button preferenceButton = null;
 	
-	private ImageButton barcodeScanButton = null;
+	private Button barcodeScanButton = null;
 	
 	private Button homeButton = null;
 	
@@ -137,7 +137,7 @@ public class SearchCatalogListView extends Activity{
 		});
         //end header portion actions
 
-        advancedSearchButton = (ImageButton) findViewById(R.id.menu_advanced_search_button);
+        advancedSearchButton = (Button) findViewById(R.id.menu_advanced_search_button);
         
         advancedSearchButton.setOnClickListener(new OnClickListener() {
 			@Override
@@ -151,7 +151,7 @@ public class SearchCatalogListView extends Activity{
         AccountAccess ac = AccountAccess.getAccountAccess();
         bookBags = ac.bookBags;
         
-        libraryHoursButton = (ImageButton) findViewById(R.id.library_hours_button);
+        libraryHoursButton = (Button) findViewById(R.id.library_hours_button);
         libraryHoursButton.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -159,7 +159,7 @@ public class SearchCatalogListView extends Activity{
 			}
 		});
         
-        preferenceButton = (ImageButton) findViewById(R.id.preference_button);
+        preferenceButton = (Button) findViewById(R.id.preference_button);
         preferenceButton.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -168,7 +168,7 @@ public class SearchCatalogListView extends Activity{
 			}
 		});
         
-        barcodeScanButton = (ImageButton) findViewById(R.id.barcode_scan_button);
+        barcodeScanButton = (Button) findViewById(R.id.barcode_scan_button);
         barcodeScanButton.setOnClickListener(new OnClickListener() {
 			
 			@Override

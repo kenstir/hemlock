@@ -1,6 +1,8 @@
 package org.evergreen.android.accountAccess.checkout;
 
+import java.sql.Date;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import org.evergreen.android.R;
@@ -15,9 +17,15 @@ import org.evergreen.android.views.AccountScreenDashboard;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
+import android.net.ParseException;
+import android.net.Uri;
 import android.os.Bundle;
+import android.text.format.Time;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -28,7 +36,9 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.ImageButton;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -55,11 +65,18 @@ public class ItemsCheckOutListView extends Activity{
 	
 	private TextView headerTitle;
 	
+	private TextView itemsNo;
+	
+
+	
+	private Activity thisActivity;
+	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
 		
+		thisActivity = this;
 		setContentView(R.layout.checkout_list);
 		setTitle("Checkout items");
 		
@@ -87,6 +104,7 @@ public class ItemsCheckOutListView extends Activity{
         //end header portion actions
 		
 		context = this;
+		itemsNo = (TextView) findViewById(R.id.checkout_items_number);
 		accountAccess = AccountAccess.getAccountAccess();
 		lv = (ListView) findViewById(R.id.checkout_items_list);
 		circRecords = new ArrayList<CircRecord>();
@@ -126,6 +144,7 @@ public class ItemsCheckOutListView extends Activity{
 						for(int i=0;i<circRecords.size();i++)
 							listAdapter.add(circRecords.get(i));
 						
+						itemsNo.setText(" " + circRecords.size() + "");
 						
 						progressDialog.dismiss();	
 						
@@ -149,6 +168,9 @@ public class ItemsCheckOutListView extends Activity{
 		else
 			Toast.makeText(context, "You must be authenticated to retrieve circ records", Toast.LENGTH_LONG);
 
+		
+		
+		
 
 	}
 	@Override
@@ -174,6 +196,7 @@ public class ItemsCheckOutListView extends Activity{
 	    	private TextView recordDueDate;
 	    	private TextView recordRenewals;
 	    	private TextView renewButton;
+	    	private CheckBox reminderNotification;
 	    	
 	    	private List<CircRecord> records = new ArrayList<CircRecord>();
 
@@ -231,6 +254,8 @@ public class ItemsCheckOutListView extends Activity{
 		    		recordDueDate = (TextView) row.findViewById(R.id.checkout_due_date);
 		    
 		    		renewButton = (TextView) row.findViewById(R.id.renew_button);
+		    		
+		    		reminderNotification = (CheckBox) row.findViewById(R.id.add_reminder_to_calendar);
 		    		
 		    		renewButton.setText("renew : " + record.getRenewals());
 		    		
@@ -322,6 +347,18 @@ public class ItemsCheckOutListView extends Activity{
 								renew.start();
 						}
 					});
+		    		
+		    		reminderNotification.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+		    			
+		    			@Override
+		    			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+
+		    				if(isChecked == true){
+		    	                Toast.makeText(context, "Add ", Toast.LENGTH_SHORT).show();
+		    				}
+		    			}
+		    		});
+		    		
 		    		//set text
 		    		System.out.println("Row" + record.getTitle() + " " + record.getAuthor() + " " + record.getDueDate() + " " + record.getRenewals());
 		    		recordTitle.setText(record.getTitle());

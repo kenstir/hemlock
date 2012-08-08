@@ -1,3 +1,16 @@
-<bitmap xmlns:android="http://schemas.android.com/apk/res/android"
-    android:src="@drawable/evergreen_1_256x256x32_grey"
-    android:gravity="center"/>
+<?xml version="1.0" encoding="UTF-8"?>
+<layer-list>
+    <item>
+        <shape
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            android:shape="rectangle" >
+             <solid android:color="@color/background" /> 
+        </shape>
+    </item>
+    <item>
+        <bitmap
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            android:gravity="center"
+            android:src="@drawable/evergreen_1_256x256x32_grey" />
+    </item>
+</layer-list>

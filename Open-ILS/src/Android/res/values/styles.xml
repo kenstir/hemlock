@@ -172,8 +172,12 @@
     
     <!--  Menu List Buttons -->
    <style name="MenuListButton">
-		<item name="android:background">@android:color/transparent</item>
 		<item name="android:layout_margin">5dip</item>
+		<item name="android:gravity">top|center_horizontal</item>
+		<item name="android:paddingTop">5dip</item>
+		<item name="android:textColor">#eee</item>
+		<item name="android:textStyle">bold</item>
+		
    </style>
     
    <style name="MenuListRedButton">

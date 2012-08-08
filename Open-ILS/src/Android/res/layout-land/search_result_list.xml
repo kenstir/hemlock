@@ -98,38 +98,49 @@
          android:orientation="horizontal"
          android:layout_below="@id/header"
          android:layout_centerHorizontal="true"
+         android:background="@drawable/background_grey_image"
+         android:gravity="center"
          >
 
              
-             <ImageButton
+              <Button
                 android:id="@+id/menu_advanced_search_button"
                 style="@style/MenuListButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/advanced_search" />
+                android:layout_width="96dp"
+                android:layout_height="96dp"
+                android:background="@drawable/advanced_search"
+               	android:text="@string/menu_advanced_search"
+                
+                 />
 
-            <ImageButton
+            <Button
                 android:id="@+id/library_hours_button"
                 style="@style/MenuListButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/library_hours" />
-            
+                android:layout_width="96dp"
+                android:layout_height="96dp"
+                android:background="@drawable/library_hours"
+                android:text="@string/menu_library_hours"
+                 />
 
-            <ImageButton
+
+            <Button
                 android:id="@+id/preference_button"
                 style="@style/MenuListButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/preferences"
+                android:layout_width="96dp"
+                android:layout_height="96dp"
+                android:background="@drawable/preferences"
+                android:text="@string/menu_preferences"
                 />
             
-                <ImageButton
+                <Button
                 android:id="@+id/barcode_scan_button"
                 style="@style/MenuListButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/barcode_scan"/>
+                android:layout_width="96dp"
+                android:layout_height="96dp"
+                android:background="@drawable/barcode_scan"
+                android:text="@string/menu_barcode_scan"
+                />
+            
             
             
      </LinearLayout>
