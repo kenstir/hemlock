@@ -14,6 +14,9 @@
 	<uses-permission android:name="android.permission.WAKE_LOCK" />
 	<uses-feature android:name="android.hardware.camera" />
 	<uses-feature android:name="android.hardware.camera.autofocus" />
+	<uses-permission android:name="android.permission.READ_CALENDAR" />
+    <uses-permission android:name="android.permission.WRITE_CALENDAR" />
+	
 	
     <application
         android:icon="@drawable/evergreen_launcher_icon"

@@ -1,6 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <!-- Main menu button text -->
+    <string name="menu_advanced_search">advanced search</string>
+    <string name="menu_preferences">settings</string>
+    <string name="menu_library_hours">library hours</string>
+    <string name="menu_barcode_scan">barcode scan</string>
+    
     <!-- Header portion  -->
     <string name="library_text_logo"> Evergreen </string>
     <string name="my_account_button_text">My Account</string>
@@ -87,6 +93,10 @@
     <string name="hold_phone_hint">Contact phone number</string>
     <string name="hold_expire_time_hint">Hold expire time</string>
     <string name="hold_thaw_date_hint">Date when the hold is frozen</string>
+    
+    <!-- Checkout items -->
+    <string name="checkout_item_txt">Checkout items: </string>
+    <string name="add_to_calendar">Calendar reminder</string>
     
     <!-- Fines Activity -->
     <string name="total_owned">Total Owned </string>
