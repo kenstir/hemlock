@@ -9,6 +9,7 @@ import org.evergreen.android.barcodescan.camera.CameraManager;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Handler;
@@ -37,6 +38,8 @@ public class CaptureActivity extends Activity implements SurfaceHolder.Callback 
 	// private HistoryManager historyManager;
 	private Result lastResult;
 	private String characterSet;
+	public static final int BARCODE_SEARCH = 1;
+	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -65,7 +68,6 @@ public class CaptureActivity extends Activity implements SurfaceHolder.Callback 
 		//database = new DBHelper(this);
 		
 		Log.d("BARCODE","Start application 2");
-		Toast.makeText(this, "Hello", Toast.LENGTH_LONG);
 	}
 	
 
@@ -146,34 +148,6 @@ public class CaptureActivity extends Activity implements SurfaceHolder.Callback 
 		return viewfinderView;
 	}
 
-	
-	public void handleDecode(Result points) {
-		/*
-		float[] newPoints = new float[8];
-		int i = 0;
-		for (ResultPoint point : points.getPoints()) {
-			newPoints[i] = point.getX();
-			i++;
-			newPoints[i] = point.getY();
-			i++;
-		}
-		resultPoints.setResultPoints(newPoints);
-		resultPoints.setDestination(destinationPoint.refx,destinationPoint.refy);
-		
-		resultPoints.invalidate();
-
-		//handleDecodeInternally(rawResult, resultHandler, barcode);
-		if (handler != null) {
-			handler.sendEmptyMessage(R.id.restart_preview);
-		}
-	*/
-		/*
-		if (handler != null) {
-			handler.sendEmptyMessage(R.id.restart_preview);
-		}
-		*/
-
-	}
 
 	private void displayFrameworkBugMessageAndExit(String info) {
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -195,13 +169,6 @@ public class CaptureActivity extends Activity implements SurfaceHolder.Callback 
 
 	}
 
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		// TODO Auto-generated method stub
-		super.onCreateOptionsMenu(menu);
-
-		return true;
-	}
 
 	/**
 	   * A valid barcode has been found, so give an indication of success and show the results.
@@ -212,6 +179,7 @@ public class CaptureActivity extends Activity implements SurfaceHolder.Callback 
 	  public void handleDecode(Result rawResult, Bitmap barcode) {
 		  
 
+		  /*
 		  AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		  builder.setMessage("Code bar Message : " + rawResult.getText())
 		         .setCancelable(false)
@@ -226,9 +194,14 @@ public class CaptureActivity extends Activity implements SurfaceHolder.Callback 
 
 		  AlertDialog alert = builder.create();
 		  alert.show();
+		  */
+		 	
 		 //Toast.makeText(this, rawResult.getText(), Toast.LENGTH_LONG).show(); 
 		 Log.d("BARCODE","Value"+ rawResult.getText());
-
+		 Intent intent = new Intent();
+		 intent.putExtra("barcodeValue", rawResult.getText());
+		 setResult(BARCODE_SEARCH, intent);
+		 finish();
 	  }
 
 }
