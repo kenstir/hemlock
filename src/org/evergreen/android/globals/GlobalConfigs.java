@@ -33,6 +33,9 @@ public class GlobalConfigs {
 	
 	public static boolean loadedOrgTree = false;
 	
+	//two days notification before checkout expires, this can be modified from preferences
+	public static int NOTIFICATION_BEFORE_CHECKOUT_EXPIRATION = 2; 
+	
 	//to parse date from requests
 	public static final String datePattern = "yyyy-MM-dd'T'hh:mm:ssZ";
 
