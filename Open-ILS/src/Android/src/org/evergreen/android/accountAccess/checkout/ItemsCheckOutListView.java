@@ -214,17 +214,26 @@ public class ItemsCheckOutListView extends Activity {
 				// get a Calendar object with current time
 				Calendar cal = Calendar.getInstance();
 
-				cal.set(dueDate.getYear(), dueDate.getMonth(), dueDate.getDay(), dueDate.getHours(), dueDate.getMinutes());
+				
+				cal.setTime(dueDate);
 
+				System.out.println("Cal :" + cal.get(Calendar.DAY_OF_MONTH) + " " + cal.get(Calendar.YEAR) + " " + cal.get(Calendar.MONTH));
+				System.out.println("Date " + new Date(cal.getTimeInMillis()) );
 				//just for test
 				cal.add(Calendar.HOUR, 4);
 				cal.add(Calendar.MINUTE, 37);
 				
 				NotificationAlert notifications = daoNotifications.fetch(checkoutRecord.circ_id);
+				NotificationAlert newNotificationInf = new NotificationAlert(checkoutRecord.circ_id, NotificationAlert.NOTIFICATION_INTENT
+						+ checkoutRecord.circ_id, cal.getTime(), "Checkout " + checkoutRecord.getAuthor() + " expires on " + checkoutRecord.getDueDate());
 				
-				if(notifications == null)
-					daoNotifications.insert(new NotificationAlert(checkoutRecord.circ_id, NotificationAlert.NOTIFICATION_INTENT
-							+ checkoutRecord.circ_id, cal.getTime(), "Checkout " + checkoutRecord.getAuthor() + " expires on " + checkoutRecord.getDueDate()), false);
+				if(notifications == null){
+					daoNotifications.insert(newNotificationInf, false);
+				}
+				else{
+					//update info in database
+					daoNotifications.update(newNotificationInf, checkoutRecord.circ_id);
+				}
 				
 				Intent intent = new Intent(context, NotificationReceiver.class);
 
