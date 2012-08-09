@@ -73,7 +73,6 @@ public final class CaptureActivityHandler extends Handler {
             (Bitmap) bundle.getParcelable(DecodeThread.BARCODE_BITMAP);
         
         activity.handleDecode((Result) message.obj, barcode);
-        activity.handleDecode((Result) message.obj);
 
         break;
       case R.id.restart_preview:
