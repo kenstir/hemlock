@@ -167,13 +167,18 @@ public class ApplicationPreferences extends PreferenceActivity implements OnShar
 			}
 		});	
 		
+		boolean checkConnection = false;
+		
 		if(key.equals("username")){
 			AccountAccess.userName = sharedPreferences.getString("username", "");
+			checkConnection = true;
 		}else
 			if(key.equals("password")){
 				AccountAccess.password = sharedPreferences.getString("password", "");
+				checkConnection = true;
 			}else
 				if(key.equals("library_url")){
+					checkConnection = true;
 					GlobalConfigs.httpAddress = sharedPreferences.getString("library_url", "");
 	
 					httpAddressChange = true;
@@ -207,7 +212,7 @@ public class ApplicationPreferences extends PreferenceActivity implements OnShar
 					}
 
 		//test connection
-		if(!isFinishing() && httpAddressChange == false){
+		if(!isFinishing() && httpAddressChange == false && checkConnection == true){
 			progressDialog = ProgressDialog.show(this, "Account login", "Please wait while we test the new user account information");	
 
 			connectionThread.start();

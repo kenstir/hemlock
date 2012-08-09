@@ -84,6 +84,10 @@ public class CircRecord {
 		return circ_due_date.toLocaleString();
 	}
 	
+	public Date getDueDateObject(){
+		return circ_due_date;
+	}
+	
 	public String getTitle(){
 		
 		String title = null;
