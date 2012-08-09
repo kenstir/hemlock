@@ -1,26 +1,54 @@
 package org.evergreen.android.accountAccess.checkout;
 
+import org.evergreen.android.views.splashscreen.SplashActivity;
+
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.Toast;
 
-public class NotificationReceiver extends BroadcastReceiver{
+public class NotificationReceiver extends BroadcastReceiver {
 
 	private String TAG = "NotificationManager";
+	public static final int NOTIFICATION_ID = 1;
+
 	@Override
 	public void onReceive(Context context, Intent intent) {
 
-		 Bundle bundle = intent.getExtras();
-	     String checkoutItemName = bundle.getString("checkoutName");
-	     Toast.makeText(context, "Notification received", Toast.LENGTH_SHORT).show();
-	     
-	     Log.d(TAG, "The " + checkoutItemName + " is about to expire");
-	     
-	     //send notification
+		String ns = Context.NOTIFICATION_SERVICE;
+		NotificationManager mNotificationManager = (NotificationManager) context
+				.getSystemService(ns);
+
+		Bundle bundle = intent.getExtras();
+		String checkoutMessage = bundle.getString("checkoutMessage");
+
+		Log.d(TAG, "The " + checkoutMessage + " is about to expire");
+		// send notification
+
+		int icon = android.R.drawable.ic_dialog_alert;
+		CharSequence tickerText = "Checkout item due date";
+		long when = System.currentTimeMillis();
+
+		Notification notification = new Notification(icon, tickerText, when);
+
+		CharSequence contentTitle = "EG - checkout item due date";
+		CharSequence contentText = checkoutMessage;
+		// start evergreen
+		Intent notificationIntent = new Intent(context, SplashActivity.class);
+		notificationIntent.putExtra("jump", "checkout_items");
+
+		PendingIntent contentIntent = PendingIntent.getActivity(context, 0,
+				notificationIntent, 0);
+
+		notification.setLatestEventInfo(context, contentTitle, contentText,
+				contentIntent);
+
+		mNotificationManager.notify(NOTIFICATION_ID, notification);
+
 	}
 
-	
 }
