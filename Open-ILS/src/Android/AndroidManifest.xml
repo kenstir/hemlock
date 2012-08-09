@@ -16,7 +16,7 @@
 	<uses-feature android:name="android.hardware.camera.autofocus" />
 	<uses-permission android:name="android.permission.READ_CALENDAR" />
     <uses-permission android:name="android.permission.WRITE_CALENDAR" />
-	
+	<uses-permission android:name="android.permission.REBOOT"/>
 	
     <application
         android:icon="@drawable/evergreen_launcher_icon"
@@ -26,7 +26,14 @@
         
         <!-- Notification receiver -->
         <receiver  android:process=":remote" android:name=".accountAccess.checkout.NotificationReceiver"></receiver>
-
+		<!-- Receiver to reinit notifications on reboot -->
+		<receiver android:name=".accountAccess.checkout.RebootReceiver">
+  			<intent-filter>
+    			<action android:name="android.intent.action.BOOT_COMPLETED"/>
+  			</intent-filter>
+		</receiver>
+        
+        
         <activity
             android:name=".views.splashscreen.SplashActivity"
             android:label="@string/app_name"

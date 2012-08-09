@@ -5,10 +5,12 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import org.androwrapee.db.DefaultDAO;
 import org.evergreen.android.R;
 import org.evergreen.android.accountAccess.AccountAccess;
 import org.evergreen.android.accountAccess.MaxRenewalsException;
 import org.evergreen.android.accountAccess.SessionNotFoundException;
+import org.evergreen.android.database.DatabaseManager;
 import org.evergreen.android.globals.NoAccessToServer;
 import org.evergreen.android.globals.NoNetworkAccessException;
 import org.evergreen.android.globals.Utils;
@@ -61,8 +63,6 @@ public class ItemsCheckOutListView extends Activity {
 	private TextView itemsNo;
 
 	private Activity thisActivity;
-
-	private static int NOTIFICATION_INTENT = 123456;
 	
 	private TextView overdueItems;
 	
@@ -190,18 +190,29 @@ public class ItemsCheckOutListView extends Activity {
 
 	public void setNotificationAlarms(ArrayList<CircRecord> records) {
 
+		
+		DefaultDAO<NotificationAlert> daoNotifications = DatabaseManager.getDAOInstance(context, NotificationAlert.class, NotificationAlert.tableName);
+		daoNotifications.open();
+
+		// Fetch all alarms
+		List<NotificationAlert> alarms = daoNotifications.fetchAll("");
+		
+		System.out.println(" Alarms " + alarms.size());
+
+		for(int i=0;i<alarms.size();i++){
+			System.out.println("notification " + alarms.get(i));
+		}
 		for (int i = 0; i < records.size(); i++) {
 
 			CircRecord checkoutRecord = records.get(i);
 
 			Date dueDate = checkoutRecord.getDueDateObject();
-
+	
 			// if due date in the future
 			if (currentDate.compareTo(dueDate) <= 0) {
+
 				// get a Calendar object with current time
 				Calendar cal = Calendar.getInstance();
-				// add 5 minutes to the calendar object
-				//cal.add(Calendar.MINUTE, 5);
 
 				cal.set(dueDate.getYear(), dueDate.getMonth(), dueDate.getDay(), dueDate.getHours(), dueDate.getMinutes());
 
@@ -209,18 +220,22 @@ public class ItemsCheckOutListView extends Activity {
 				cal.add(Calendar.HOUR, 4);
 				cal.add(Calendar.MINUTE, 37);
 				
+				NotificationAlert notifications = daoNotifications.fetch(checkoutRecord.circ_id);
+				
+				if(notifications == null)
+					daoNotifications.insert(new NotificationAlert(checkoutRecord.circ_id, NotificationAlert.NOTIFICATION_INTENT
+							+ checkoutRecord.circ_id, cal.getTime(), "Checkout " + checkoutRecord.getAuthor() + " expires on " + checkoutRecord.getDueDate()), false);
+				
 				Intent intent = new Intent(context, NotificationReceiver.class);
 
-				System.out.println("Set due date " + cal
-						+ " with intent val " + NOTIFICATION_INTENT
+				System.out.println("Set due date " + cal.getTime()
+						+ " with intent val " + NotificationAlert.NOTIFICATION_INTENT
 						+ checkoutRecord.circ_id);
-				intent.putExtra("checkoutName", checkoutRecord.getAuthor());
+				intent.putExtra("checkoutMessage", "The item " + checkoutRecord.getAuthor() + " is about to expire on " +checkoutRecord.getDueDate() );
 				
-				// In reality, you would want to have a static variable for the
-				// request code instead of 192837
 				// update the current intent if it exists
 				PendingIntent sender = PendingIntent.getBroadcast(this,
-						NOTIFICATION_INTENT + checkoutRecord.circ_id, intent,
+						NotificationAlert.NOTIFICATION_INTENT + checkoutRecord.circ_id, intent,
 						PendingIntent.FLAG_UPDATE_CURRENT);
 
 				// Get the AlarmManager service
@@ -228,6 +243,7 @@ public class ItemsCheckOutListView extends Activity {
 				am.set(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), sender);
 			}
 		}
+		daoNotifications.close();
 
 	}
 
