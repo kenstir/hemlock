@@ -1,13 +1,21 @@
 package org.evergreen.android.views;
 
+import java.util.Calendar;
+
 import org.evergreen.android.R;
 import org.evergreen.android.accountAccess.AccountAccess;
 import org.evergreen.android.globals.GlobalConfigs;
 import org.evergreen.android.globals.NoAccessToServer;
 import org.evergreen.android.globals.NoNetworkAccessException;
 import org.evergreen.android.globals.Utils;
+import org.evergreen.android.services.NotificationAlert;
+import org.evergreen.android.services.NotificationReceiver;
+import org.evergreen.android.services.PeriodicServiceBroadcastReceiver;
+import org.evergreen.android.services.ScheduledIntentService;
 
+import android.app.AlarmManager;
 import android.app.AlertDialog;
+import android.app.PendingIntent;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -210,6 +218,46 @@ public class ApplicationPreferences extends PreferenceActivity implements OnShar
 						//wait for execution
 	
 					}
+		if(key.equals("notifications_enabled")){
+		
+			if(sharedPreferences.getBoolean("notifications_enabled", false)){
+				
+				Toast.makeText(context, "Set up notification updates", Toast.LENGTH_SHORT).show();
+				//if enabled register the update service to run once per day
+				// get a Calendar object with current time
+				Calendar cal = Calendar.getInstance();
+
+				Intent bRecvIntent = new Intent(this,PeriodicServiceBroadcastReceiver.class);
+				bRecvIntent.setAction(ScheduledIntentService.ACTION);
+				// update the current intent if it exists
+				PendingIntent sender = PendingIntent.getBroadcast(this,
+						NotificationAlert.NOTIFICATION_INTENT + PeriodicServiceBroadcastReceiver.INTENT_ID, bRecvIntent,
+						PendingIntent.FLAG_UPDATE_CURRENT);
+
+				// Get the AlarmManager service
+				AlarmManager am = (AlarmManager) getSystemService(ALARM_SERVICE);
+				am.setRepeating(AlarmManager.RTC, cal.getTimeInMillis(), 10000 * ScheduledIntentService.SCHEDULE_TIME_INTERVAL, sender);
+			}
+			else
+			{
+				Toast.makeText(context, "Disable notification updates", Toast.LENGTH_SHORT).show();
+				//cancel the service
+				
+				Intent bRecvIntent = new Intent(this,PeriodicServiceBroadcastReceiver.class);
+				
+				// update the current intent if it exists
+				PendingIntent sender = PendingIntent.getBroadcast(this,
+						NotificationAlert.NOTIFICATION_INTENT + PeriodicServiceBroadcastReceiver.INTENT_ID, bRecvIntent,
+						PendingIntent.FLAG_UPDATE_CURRENT);
+
+				// Get the AlarmManager service
+				AlarmManager am = (AlarmManager) getSystemService(ALARM_SERVICE);
+				//cancel the service
+				am.cancel(sender);
+			}
+			//register the 
+			
+		}
 
 		//test connection
 		if(!isFinishing() && httpAddressChange == false && checkConnection == true){

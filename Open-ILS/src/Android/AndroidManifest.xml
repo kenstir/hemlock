@@ -25,13 +25,19 @@
         >
         
         <!-- Notification receiver -->
-        <receiver  android:process=":remote" android:name=".accountAccess.checkout.NotificationReceiver"></receiver>
+        <receiver  android:process=":remote" android:name=".services.NotificationReceiver"></receiver>
 		<!-- Receiver to reinit notifications on reboot -->
-		<receiver android:name=".accountAccess.checkout.RebootReceiver">
+		<receiver android:name=".services.RebootReceiver">
   			<intent-filter>
     			<action android:name="android.intent.action.BOOT_COMPLETED"/>
   			</intent-filter>
 		</receiver>
+		<receiver android:name=".services.PeriodicServiceBroadcastReceiver">
+   			<intent-filter>
+      			<action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
+  			</intent-filter>
+		</receiver>
+		<service android:name=".services.ScheduledIntentService"></service>
         
         
         <activity
