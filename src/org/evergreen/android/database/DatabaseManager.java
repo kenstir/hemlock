@@ -8,7 +8,7 @@ import org.androwrapee.db.DefaultDAO;
 import org.androwrapee.db.DefaultDatabaseHelper;
 import org.androwrapee.db.IllegalClassStructureException;
 import org.androwrapee.db.ReflectionManager;
-import org.evergreen.android.accountAccess.checkout.NotificationAlert;
+import org.evergreen.android.services.NotificationAlert;
 
 import android.content.Context;
 import android.util.Log;

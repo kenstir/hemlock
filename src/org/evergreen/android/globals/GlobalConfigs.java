@@ -23,6 +23,8 @@ import android.util.Log;
 
 public class GlobalConfigs {
 
+	public static String IDL_FILE_FROM_ROOT = "/reports/fm_IDL.xml";
+	
 	public static String httpAddress = "";
 
 	private boolean init = false;
@@ -110,14 +112,14 @@ public class GlobalConfigs {
 	
 	public void loadIDLFile(){
 	    	
-		   	 String idlFile = "/reports/fm_IDL.xml";
+		   	 
 		   	 try{
 		   		Log.d("debug","Read fm");
-		   		InputStream in_IDL = Utils.getNetInputStream(httpAddress + idlFile);
+		   		InputStream in_IDL = Utils.getNetInputStream(httpAddress + IDL_FILE_FROM_ROOT);
 		   		IDLParser parser = new IDLParser(in_IDL);
 		   		parser.parse();
 		   	}catch(Exception e){
-		   		System.err.println("Error in parsing IDL file " + idlFile + " " + e.getMessage());
+		   		System.err.println("Error in parsing IDL file " + IDL_FILE_FROM_ROOT + " " + e.getMessage());
 		   	};
 	   	
 		   	loadedIDL = true; 

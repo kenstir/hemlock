@@ -14,7 +14,7 @@
 		<item>Matches exactly</item>
     </string-array>
     
-    <string-array name="notification_preferences_list_values">
+    <integer-array name="notification_preferences_list_values">
         <item >1</item>
         <item >2</item>
         <item >3</item>
@@ -22,7 +22,7 @@
         <item >5</item>
         <item >6</item>
         <item >7</item>
-    </string-array>
+    </integer-array>
     
     <string-array name="notification_preferences_list_entries">
         <item >1 Day</item>

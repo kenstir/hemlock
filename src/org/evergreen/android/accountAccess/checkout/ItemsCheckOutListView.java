@@ -159,9 +159,6 @@ public class ItemsCheckOutListView extends Activity {
 						}
 						
 						overdueItems.setText(" " + overdueNo);
-						
-						// set alarms or renew them
-						setNotificationAlarms(circRecords);
 
 						progressDialog.dismiss();
 
@@ -188,73 +185,6 @@ public class ItemsCheckOutListView extends Activity {
 
 	}
 
-	public void setNotificationAlarms(ArrayList<CircRecord> records) {
-
-		
-		DefaultDAO<NotificationAlert> daoNotifications = DatabaseManager.getDAOInstance(context, NotificationAlert.class, NotificationAlert.tableName);
-		daoNotifications.open();
-
-		// Fetch all alarms
-		List<NotificationAlert> alarms = daoNotifications.fetchAll("");
-		
-		System.out.println(" Alarms " + alarms.size());
-
-		for(int i=0;i<alarms.size();i++){
-			System.out.println("notification " + alarms.get(i));
-		}
-		for (int i = 0; i < records.size(); i++) {
-
-			CircRecord checkoutRecord = records.get(i);
-
-			Date dueDate = checkoutRecord.getDueDateObject();
-	
-			// if due date in the future
-			if (currentDate.compareTo(dueDate) <= 0) {
-
-				// get a Calendar object with current time
-				Calendar cal = Calendar.getInstance();
-
-				
-				cal.setTime(dueDate);
-
-				System.out.println("Cal :" + cal.get(Calendar.DAY_OF_MONTH) + " " + cal.get(Calendar.YEAR) + " " + cal.get(Calendar.MONTH));
-				System.out.println("Date " + new Date(cal.getTimeInMillis()) );
-				//just for test
-				cal.add(Calendar.HOUR, 4);
-				cal.add(Calendar.MINUTE, 37);
-				
-				NotificationAlert notifications = daoNotifications.fetch(checkoutRecord.circ_id);
-				NotificationAlert newNotificationInf = new NotificationAlert(checkoutRecord.circ_id, NotificationAlert.NOTIFICATION_INTENT
-						+ checkoutRecord.circ_id, cal.getTime(), "Checkout " + checkoutRecord.getAuthor() + " expires on " + checkoutRecord.getDueDate());
-				
-				if(notifications == null){
-					daoNotifications.insert(newNotificationInf, false);
-				}
-				else{
-					//update info in database
-					daoNotifications.update(newNotificationInf, checkoutRecord.circ_id);
-				}
-				
-				Intent intent = new Intent(context, NotificationReceiver.class);
-
-				System.out.println("Set due date " + cal.getTime()
-						+ " with intent val " + NotificationAlert.NOTIFICATION_INTENT
-						+ checkoutRecord.circ_id);
-				intent.putExtra("checkoutMessage", "The item " + checkoutRecord.getAuthor() + " is about to expire on " +checkoutRecord.getDueDate() );
-				
-				// update the current intent if it exists
-				PendingIntent sender = PendingIntent.getBroadcast(this,
-						NotificationAlert.NOTIFICATION_INTENT + checkoutRecord.circ_id, intent,
-						PendingIntent.FLAG_UPDATE_CURRENT);
-
-				// Get the AlarmManager service
-				AlarmManager am = (AlarmManager) getSystemService(ALARM_SERVICE);
-				am.set(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), sender);
-			}
-		}
-		daoNotifications.close();
-
-	}
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {

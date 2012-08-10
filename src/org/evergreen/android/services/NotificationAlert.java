@@ -1,4 +1,4 @@
-package org.evergreen.android.accountAccess.checkout;
+package org.evergreen.android.services;
 
 import java.util.Date;
 

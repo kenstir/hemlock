@@ -1,4 +1,4 @@
-package org.evergreen.android.accountAccess.checkout;
+package org.evergreen.android.services;
 
 import org.evergreen.android.views.splashscreen.SplashActivity;
 
@@ -23,10 +23,10 @@ public class NotificationReceiver extends BroadcastReceiver {
 		NotificationManager mNotificationManager = (NotificationManager) context
 				.getSystemService(ns);
 
-		Bundle bundle = intent.getExtras();
-		String checkoutMessage = bundle.getString("checkoutMessage");
+		
+		String checkoutMessage = intent.getStringExtra("checkoutMesage");
 
-		Log.d(TAG, "The " + checkoutMessage + " is about to expire");
+		Log.d(TAG, "Message " + checkoutMessage);
 		// send notification
 
 		int icon = android.R.drawable.ic_dialog_alert;
@@ -35,6 +35,8 @@ public class NotificationReceiver extends BroadcastReceiver {
 
 		Notification notification = new Notification(icon, tickerText, when);
 
+		notification.defaults |= Notification.FLAG_AUTO_CANCEL;
+		
 		CharSequence contentTitle = "EG - checkout item due date";
 		CharSequence contentText = checkoutMessage;
 		// start evergreen
