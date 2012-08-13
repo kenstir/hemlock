@@ -44,6 +44,8 @@ public class ImageDownloader {
    
     private int MIN_IMG_HEIGHT = 75;
     
+    private int MIN_IMG_WIDTH = 30;
+    
     private int bitmap_width;
     private int bitmap_height;
     private boolean scale;
@@ -61,6 +63,7 @@ public class ImageDownloader {
     	this.bitmap_height = h;
     	this.bitmap_width = w;
     	this.scale = scale;
+    	MIN_IMG_HEIGHT = h;
     }
     /**
      * Download the specified image from the Internet and binds it to the provided ImageView. The
@@ -120,6 +123,7 @@ public class ImageDownloader {
                     DownloadedDrawable downloadedDrawable = new DownloadedDrawable(task);
                     imageView.setImageDrawable(downloadedDrawable);
                     imageView.setMinimumHeight(MIN_IMG_HEIGHT);
+                    imageView.setMinimumWidth(MIN_IMG_WIDTH);
                     task.execute(url);
                     break;
             }

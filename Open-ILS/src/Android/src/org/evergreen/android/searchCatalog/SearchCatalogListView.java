@@ -37,6 +37,7 @@ import android.view.View.OnClickListener;
 import android.view.View.OnKeyListener;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
 import android.widget.AdapterView;
@@ -226,6 +227,9 @@ public class SearchCatalogListView extends Activity {
 				runOnUiThread(new Runnable() {
 					@Override
 					public void run() {
+
+						InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+		                imm.hideSoftInputFromWindow(searchText.getWindowToken(), 0);
 
 						searchOptionsMenu.setVisibility(View.GONE);
 						searchResultsNumber.setVisibility(View.VISIBLE);

@@ -2,6 +2,7 @@ package org.evergreen.android.accountAccess.holds;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 import org.evergreen.android.globals.GlobalConfigs;
 import org.evergreen.android.searchCatalog.RecordInfo;
@@ -35,6 +36,7 @@ public class HoldRecord implements Serializable{
 	
 	public String author = null;
 	
+	public String types_of_resource;
 	
 	/* Hold status 
 	*  holdStatus == 4 => AVAILABLE
@@ -105,7 +107,6 @@ public class HoldRecord implements Serializable{
 		if(res.equals("t"))
 			this.suspended = true;
 		pickup_lib = ahr.getInt("pickup_lib");
-		
 		
 	}
 	//based on status integer field retreive hold status in text

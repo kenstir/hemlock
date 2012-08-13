@@ -37,6 +37,7 @@
         android:fillViewport="true"
         android:layout_above="@id/action_bar"
         android:layout_below="@id/header_actionbar"
+        android:padding="5dip"
         >
        <LinearLayout 
            android:layout_width="fill_parent"

@@ -1,14 +1,17 @@
 package org.evergreen.android.accountAccess.holds;
 
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.evergreen.android.R;
 import org.evergreen.android.accountAccess.AccountAccess;
 import org.evergreen.android.accountAccess.SessionNotFoundException;
+import org.evergreen.android.globals.GlobalConfigs;
 import org.evergreen.android.globals.NoAccessToServer;
 import org.evergreen.android.globals.NoNetworkAccessException;
 import org.evergreen.android.globals.Utils;
+import org.evergreen.android.searchCatalog.ImageDownloader;
 import org.evergreen.android.searchCatalog.SearchCatalogListView;
 import org.evergreen.android.views.AccountScreenDashboard;
 
@@ -27,6 +30,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -52,8 +56,12 @@ public class HoldsListView extends Activity{
 	private Button myAccountButton;
 	
 	private TextView headerTitle;
+	
+	private TextView holdsNoText;
 
 	private ProgressDialog progressDialog;
+	
+	private ImageDownloader imageDownloader;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -83,6 +91,10 @@ public class HoldsListView extends Activity{
 		});
         //end header portion actions
 		
+        holdsNoText = (TextView)findViewById(R.id.holds_number);
+        
+        imageDownloader = new ImageDownloader(40, 40, false);
+        
 		lv = (ListView)findViewById(R.id.holds_item_list);
 		context = this;
 		accountAccess = AccountAccess.getAccountAccess();
@@ -119,6 +131,7 @@ public class HoldsListView extends Activity{
 						for(int i=0;i<holdRecords.size();i++)
 							listAdapter.add(holdRecords.get(i));
 						
+						holdsNoText.setText(" "+listAdapter.getCount());
 						progressDialog.dismiss();
 						listAdapter.notifyDataSetChanged();
 						
@@ -126,6 +139,8 @@ public class HoldsListView extends Activity{
 				});
 			}
 		};
+		
+		
 		
 		if(accountAccess.isAuthenticated()){
 			progressDialog = new ProgressDialog(context);
@@ -166,6 +181,7 @@ public class HoldsListView extends Activity{
 		
 		case HoldDetails.RESULT_CODE_CANCEL : { 
 			//nothing
+			Log.d(TAG, "Do nothing");
 			}break;
 			
 		case HoldDetails.RESULT_CODE_DELETE_HOLD : {
@@ -176,6 +192,7 @@ public class HoldsListView extends Activity{
 			//thread to retrieve holds
 			Thread getHoldsThread = new Thread(getHoldsRunnable);
 			getHoldsThread.start();
+			Log.d(TAG, "Update on delete hold");
 		}break;
 		
 		case HoldDetails.RESULT_CODE_UPDATE_HOLD : {
@@ -186,6 +203,7 @@ public class HoldsListView extends Activity{
 			//thread to retrieve holds
 			Thread getHoldsThread = new Thread(getHoldsRunnable);
 			getHoldsThread.start();
+			Log.d(TAG, "Update on update hold");
 		}break;
 		
 		}
@@ -197,6 +215,7 @@ public class HoldsListView extends Activity{
     	private TextView holdTitle;
     	private TextView holdAuthor;
     	private TextView status;
+    	private ImageView hold_icon;
     	
     	private List<HoldRecord> records = new ArrayList<HoldRecord>();
 
@@ -230,6 +249,9 @@ public class HoldsListView extends Activity{
 
 
     		}
+    		
+    		hold_icon = (ImageView) row.findViewById(R.id.hold_resource_icon);
+    		
     		// Get reference to TextView - title
     		holdTitle = (TextView) row.findViewById(R.id.hold_title);
     		
@@ -240,8 +262,15 @@ public class HoldsListView extends Activity{
     		status = (TextView) row.findViewById(R.id.hold_status);
     		
 	    		//set text
-	    		
-	    	System.out.println("Row" + record.title + " " + record.author + " " + record.getHoldStatus());
+    		String imageResourceHref = GlobalConfigs.httpAddress + GlobalConfigs.hold_icon_address +record.types_of_resource +".jpg";
+    		
+    		if(imageResourceHref.contains(" ")){
+    			imageResourceHref = imageResourceHref.replace(" ", "%20");
+    		}
+		
+    		imageDownloader.download(imageResourceHref, hold_icon);
+		
+	    	System.out.println("Image " + imageResourceHref + " Row " + record.title + " " + record.author + " " + record.getHoldStatus() );
 	    	//set raw information
 	    	holdTitle.setText(record.title);
 	    	holdAuthor.setText(record.author);
