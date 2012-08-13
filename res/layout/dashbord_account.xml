@@ -3,10 +3,45 @@
     android:layout_width="fill_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="6dip"
-    android:layout_weight="1"
     android:background="@drawable/background_grey_image"
      >
+    
+    <RelativeLayout
+        android:id="@+id/header"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/header_rounded_corners"
+        android:orientation="horizontal"
+        android:paddingTop="3dip"
+        android:paddingBottom="2dip"
+         >
+
+        <Button
+            android:id="@+id/library_logo"
+            style="@style/LibraryLogoText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_marginLeft="5dip"
+            android:drawableLeft="@drawable/evergreen_launcher_icon_48"
+            android:text="@string/library_text_logo" 
+            android:textColor="@color/white"
+            android:textSize="16dp"
+            android:typeface="monospace"
+            android:textStyle="bold"
+            android:paddingLeft="5dip"
+            />
+        
+        <Button
+            android:id="@+id/my_account_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_marginTop="5dip"
+            android:padding="10dip"
+            android:text="@string/my_account_button_text" />
+    </RelativeLayout>
+    
        <LinearLayout
         android:orientation="horizontal"
         android:layout_width="fill_parent"
