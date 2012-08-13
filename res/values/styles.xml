@@ -43,14 +43,14 @@
     
      <style name="HomeButton">
         <item name="android:layout_gravity">center_vertical</item>
-        <item name="android:layout_width">fill_parent</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_weight">1</item>
+        <item name="android:layout_width">130dip</item>
+        <item name="android:layout_height">130dip</item>
+        <item name="android:layout_margin">5dip</item>
         <item name="android:gravity">center_horizontal</item>
         <item name="android:textSize">@dimen/text_size_medium</item>
         <item name="android:textStyle">normal</item>
-        <item name="android:textColor">@color/foreground1</item>
-        <item name="android:background">@null</item>
+        <item name="android:textColor">@color/dark</item>
+        <item name="android:background">@drawable/menu_background_button</item>
     </style>
     
      
