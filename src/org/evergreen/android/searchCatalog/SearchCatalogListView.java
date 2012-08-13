@@ -18,13 +18,11 @@ import org.evergreen.android.views.ApplicationPreferences;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
-import android.preference.PreferenceActivity;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
@@ -37,7 +35,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnKeyListener;
 import android.view.ViewGroup;
-import android.view.ViewGroup.LayoutParams;
+import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemSelectedListener;
@@ -46,7 +44,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -378,19 +375,26 @@ public class SearchCatalogListView extends Activity {
 
 		searchText = (EditText) findViewById(R.id.searchText);
 
+		//enter key now is labeled "Search" on virtual keyboard
+		searchText.setImeActionLabel("Search", EditorInfo.IME_ACTION_SEARCH);
+		searchText.setImeOptions(EditorInfo.IME_ACTION_SEARCH);
+		
+		
+		//enter key on virtual keyboard starts the search
 		searchText.setOnKeyListener(new OnKeyListener() {
-
-			@Override
-			public boolean onKey(View v, int keyCode, KeyEvent event) {
-
-				if (keyCode == KeyEvent.KEYCODE_ENTER) {
+		    public boolean onKey(View v, int keyCode, KeyEvent event) {
+		        // If the event is a key-down event on the "enter" button
+		        if ((event.getAction() == KeyEvent.ACTION_DOWN) &&
+		            ((keyCode == KeyEvent.KEYCODE_ENTER) || keyCode == EditorInfo.IME_ACTION_SEARCH)) {
+		          // Perform action on key press
 					Thread searchThread = new Thread(searchForResultsRunnable);
-
 					searchThread.start();
-				}
-				return false;
-			}
+		          return true;
+		        }
+		        return false;
+		    }
 		});
+
 
 		choseOrganisation = (Spinner) findViewById(R.id.chose_organisation);
 
