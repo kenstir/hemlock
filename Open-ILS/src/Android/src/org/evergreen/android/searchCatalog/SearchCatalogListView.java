@@ -205,8 +205,7 @@ public class SearchCatalogListView extends Activity {
 		searchOptionsMenu = findViewById(R.id.search_preference_options);
 
 		progressDialog = new ProgressDialog(context);
-
-		progressDialog.setMessage("Fetching data");
+		
 		// Set the ListView adapter
 		lv.setAdapter(adapter);
 
@@ -232,7 +231,7 @@ public class SearchCatalogListView extends Activity {
 						searchResultsNumber.setVisibility(View.VISIBLE);
 
 						progressDialog = ProgressDialog.show(context,
-								"Please wait", "Fetching data");
+								getResources().getText(R.string.dialog_please_wait), getResources().getText(R.string.dialog_fetching_data_message));
 					}
 				});
 
@@ -402,7 +401,7 @@ public class SearchCatalogListView extends Activity {
 						Log.d(TAG, "Load more data");
 						progressDialog = new ProgressDialog(context);
 
-						progressDialog.setMessage("Fetching data");
+						progressDialog.setMessage(getResources().getText(R.string.dialog_load_more_message));
 						progressDialog.show();
 
 						Thread searchThreadwithOffset = new Thread(
@@ -606,6 +605,7 @@ public class SearchCatalogListView extends Activity {
 
 			startActivity(intent);
 		}
+		break;
 		case BOOK_BAG: {
 
 			if (bookBags.size() > 0) {

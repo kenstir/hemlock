@@ -884,8 +884,8 @@ public class AccountAccess {
 	//if we can get hold ID then we return true
 		try{
 			
-			List<Integer> list= (List<Integer>)response;
-			if(list.get(0)>-1)
+			Integer id = Integer.parseInt(response.toString());
+			if(id >-1)
 				resp[0] = "true";
 				
 			
