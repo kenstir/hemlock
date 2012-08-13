@@ -6,11 +6,14 @@ import org.evergreen.android.accountAccess.bookbags.BookbagsListView;
 import org.evergreen.android.accountAccess.checkout.ItemsCheckOutListView;
 import org.evergreen.android.accountAccess.fines.FinesActivity;
 import org.evergreen.android.accountAccess.holds.HoldsListView;
+import org.evergreen.android.searchCatalog.SearchCatalogListView;
 
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
 
 
 public class AccountScreenDashboard extends Activity {
@@ -27,11 +30,34 @@ public class AccountScreenDashboard extends Activity {
 	 * 
 	 */
 
+	private Button homeButton = null;
+
+	private Button myAccountButton = null;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.dashbord_account);
 		
+		myAccountButton = (Button) findViewById(R.id.my_account_button);
+
+		myAccountButton.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				
+			}
+		});
+
+		homeButton = (Button) findViewById(R.id.library_logo);
+
+		homeButton.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				
+				Intent intent = new Intent(getApplicationContext(),SearchCatalogListView.class);
+				startActivity(intent);
+			}
+		});
 	}
 
 	/**
