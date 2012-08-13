@@ -21,20 +21,38 @@ public class FinesRecord {
 	
 	private Date checkin_time;
 	
+	// types are grocery and circulation
+	private int type;
+	
+	public static int FINE_GROCERY_TYPE = 1;
+	public static int FINE_CIRCULATION = 2;
+	
 	public FinesRecord(OSRFObject circ, OSRFObject mvr_record, OSRFObject mbts_transaction){
 	
 		
-		title = mvr_record.getString("title");
-		author = mvr_record.getString("author");
+		if(mbts_transaction.get("xact_type").toString().equals("circulation")){	
 		
-		balance_owed = mbts_transaction.getString("total_owed");
+			title = mvr_record.getString("title");
+			author = mvr_record.getString("author");
+			
+			if(circ.get("checkin_time") != null){
+				checkin_time = GlobalConfigs.parseDate(circ.getString("checkin_time"));
+			}
+			else
+				checkin_time = null;
 		
-		if(circ.get("checkin_time") != null){
-			checkin_time = GlobalConfigs.parseDate(circ.getString("checkin_time"));
 		}
 		else
-			checkin_time = null;
+		{
+			//grocery 
+			title = "Grocery billing";
+			author = mbts_transaction.getString("last_billing_note");
+			
+		}
 		
+			balance_owed = mbts_transaction.getString("total_owed");
+			
+
 	}
 	
 	//if returned or fines still acumulating
