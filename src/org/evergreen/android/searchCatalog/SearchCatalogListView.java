@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.evergreen.android.R;
+import org.evergreen.android.R.layout;
 import org.evergreen.android.accountAccess.AccountAccess;
 import org.evergreen.android.accountAccess.SessionNotFoundException;
 import org.evergreen.android.accountAccess.bookbags.BookBag;
@@ -36,6 +37,8 @@ import android.view.View.OnClickListener;
 import android.view.View.OnKeyListener;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
+import android.widget.AbsListView;
+import android.widget.AbsListView.OnScrollListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemSelectedListener;
@@ -106,6 +109,9 @@ public class SearchCatalogListView extends Activity {
 	private Button myAccountButton = null;
 
 	private String advancedSearchString = null;
+
+	// marks when the fetching record thread is started
+	private boolean loadingElements = false;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -255,16 +261,15 @@ public class SearchCatalogListView extends Activity {
 								recordList.add(searchResults.get(j));
 
 							// add extra record to display more option button
-							if (search.visible > recordList.size()) {
-								recordList.add(new RecordInfo());
-								searchResultsNumber.setText(+recordList.size()
-										- 1 + " out of " + search.visible);
-							} else
-								searchResultsNumber.setText(+recordList.size()
-										+ " out of " + search.visible);
-						} else
-							searchResultsNumber.setText(+recordList.size()
-									+ " out of " + search.visible);
+							/*
+							 * if (search.visible > recordList.size()) {
+							 * recordList.add(new RecordInfo());
+							 * searchResultsNumber.setText(+recordList.size() -
+							 * 1 + " out of " + search.visible); } else
+							 */
+						}
+						searchResultsNumber.setText(+recordList.size()
+								+ " out of " + search.visible);
 
 						adapter.notifyDataSetChanged();
 						progressDialog.dismiss();
@@ -366,35 +371,121 @@ public class SearchCatalogListView extends Activity {
 							(search.selectedOrganization.level - 1));
 
 					intent.putExtra("recordList", recordList);
-					// TODO put total number
 					intent.putExtra("recordPosition", position);
 					startActivity(intent);
 				}
 			}
 		});
 
-		searchText = (EditText) findViewById(R.id.searchText);
+		lv.setOnScrollListener(new OnScrollListener() {
 
-		//enter key now is labeled "Search" on virtual keyboard
-		searchText.setImeActionLabel("Search", EditorInfo.IME_ACTION_SEARCH);
-		searchText.setImeOptions(EditorInfo.IME_ACTION_SEARCH);
-		
-		
-		//enter key on virtual keyboard starts the search
-		searchText.setOnKeyListener(new OnKeyListener() {
-		    public boolean onKey(View v, int keyCode, KeyEvent event) {
-		        // If the event is a key-down event on the "enter" button
-		        if ((event.getAction() == KeyEvent.ACTION_DOWN) &&
-		            ((keyCode == KeyEvent.KEYCODE_ENTER) || keyCode == EditorInfo.IME_ACTION_SEARCH)) {
-		          // Perform action on key press
-					Thread searchThread = new Thread(searchForResultsRunnable);
-					searchThread.start();
-		          return true;
-		        }
-		        return false;
-		    }
+			@Override
+			public void onScrollStateChanged(AbsListView view, int scrollState) {
+				// TODO Auto-generated method stub
+
+			}
+
+			@Override
+			public void onScroll(AbsListView view, int firstVisibleItem,
+					int visibleItemCount, int totalItemCount) {
+				// TODO Auto-generated method stub
+
+				if (!loadingElements) {
+
+					Log.d(TAG, " Scroll adapter " + totalItemCount + " "
+							+ visibleItemCount + " " + firstVisibleItem + " "
+							+ adapter.getCount() + " " + search.visible);
+					if (totalItemCount > 0
+							&& (((totalItemCount - visibleItemCount) <= (firstVisibleItem)) && adapter
+									.getCount() < search.visible)) {
+						loadingElements = true;
+						Log.d(TAG, "Load more data");
+						progressDialog = new ProgressDialog(context);
+
+						progressDialog.setMessage("Fetching data");
+						progressDialog.show();
+
+						Thread searchThreadwithOffset = new Thread(
+								new Runnable() {
+
+									@Override
+									public void run() {
+
+										String text = searchText.getText()
+												.toString();
+										searchResults.clear();
+
+										try {
+											searchResults = search
+													.getSearchResults(
+															text,
+															 adapter.getCount());
+										} catch (NoNetworkAccessException e) {
+											runOnUiThread(Utils
+													.showNetworkNotAvailableDialog(context));
+										} catch (NoAccessToServer e) {
+											runOnUiThread(Utils
+													.showServerNotAvailableDialog(context));
+										}
+
+										runOnUiThread(new Runnable() {
+
+											@Override
+											public void run() {
+
+												// don't clear record list
+												// recordList.clear();
+												System.out.println("Returned " + searchResults.size() + " elements from search");
+												if (searchResults.size() > 0) {
+
+													for (int j = 0; j < searchResults
+															.size(); j++)
+														recordList
+																.add(searchResults
+																		.get(j));
+
+												}
+
+												searchResultsNumber.setText(adapter
+														.getCount()
+														+ " out of "
+														+ search.visible);
+
+												adapter.notifyDataSetChanged();
+												progressDialog.dismiss();
+												loadingElements = false;
+											}
+										});
+
+									}
+								});
+
+						searchThreadwithOffset.start();
+					}
+				}
+			}
 		});
 
+		searchText = (EditText) findViewById(R.id.searchText);
+
+		// enter key now is labeled "Search" on virtual keyboard
+		searchText.setImeActionLabel("Search", EditorInfo.IME_ACTION_SEARCH);
+		searchText.setImeOptions(EditorInfo.IME_ACTION_SEARCH);
+
+		// enter key on virtual keyboard starts the search
+		searchText.setOnKeyListener(new OnKeyListener() {
+			public boolean onKey(View v, int keyCode, KeyEvent event) {
+				// If the event is a key-down event on the "enter" button
+				if ((event.getAction() == KeyEvent.ACTION_DOWN)
+						&& ((keyCode == KeyEvent.KEYCODE_ENTER) || keyCode == EditorInfo.IME_ACTION_SEARCH)) {
+					// Perform action on key press
+					Thread searchThread = new Thread(searchForResultsRunnable);
+					searchThread.start();
+					return true;
+				}
+				return false;
+			}
+		});
 
 		choseOrganisation = (Spinner) findViewById(R.id.chose_organisation);
 
@@ -421,7 +512,7 @@ public class SearchCatalogListView extends Activity {
 			}
 		}
 		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
-				android.R.layout.simple_spinner_item, list);
+				layout.spinner_layout, list);
 		choseOrganisation.setAdapter(adapter);
 
 		choseOrganisation.setSelection(selectedPos);
@@ -708,7 +799,6 @@ public class SearchCatalogListView extends Activity {
 						.findViewById(R.id.search_record_publishing);
 
 				// set text
-
 				recordTitle.setText(record.title);
 				recordAuthor.setText(record.author);
 				recordPublisher

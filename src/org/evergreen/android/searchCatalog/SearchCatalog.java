@@ -185,7 +185,6 @@ public class SearchCatalog {
 	            for(int i=0;i<result_ids.size();i++){
 	            	ids.add(result_ids.get(i).get(0));
 	            }
-
 	        
 	        System.out.println("Ids " + ids);
 	        
