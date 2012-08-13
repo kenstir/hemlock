@@ -43,6 +43,11 @@
     <string name="search_hint">What are you looking for?</string>
     <string name="advanced_search">Search</string>
     
+    <string name="loading_dialog_text"></string>
+    <string name="dialog_please_wait">Please wait</string>
+    <string name="dialog_fetching_data_message">Fetching data</string>
+    <string name="dialog_load_more_message">Load more data</string>
+    
     <string name="advanced_search_hint">Enter text here</string>
     <string name="advanced_search_add_filter_button">Add filter</string>
     <string name="advanced_search_filter_text">Added filters:</string>

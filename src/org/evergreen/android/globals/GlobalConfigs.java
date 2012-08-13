@@ -232,7 +232,7 @@ public class GlobalConfigs {
 
 				StringBuilder padding = new StringBuilder();
 				for(int j=0; j<organisations.get(i).level-1;j++)
-					padding.append("  ");
+					padding.append("   ");
 					
 				organisations.get(i).padding = padding.toString();
 			}
