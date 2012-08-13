@@ -43,11 +43,11 @@ import android.widget.Toast;
 
 public class HoldDetails extends Activity {
 
-	public static final int RESULT_CODE_DELETE_HOLD = 0;
+	public static final int RESULT_CODE_DELETE_HOLD = 5;
 
-	public static final int RESULT_CODE_UPDATE_HOLD = 1;
-
-	public static final int RESULT_CODE_CANCEL = 2;
+	public static final int RESULT_CODE_UPDATE_HOLD = 6;
+	
+	public static final int RESULT_CODE_CANCEL = 7;
 
 	private TextView recipient;
 
@@ -241,11 +241,7 @@ public class HoldDetails extends Activity {
 												System.out.println("Exception in reAuth");
 											}
 										}		
-										
-										
-										
-										
-										
+		
 										runOnUiThread(new Runnable() {
 											@Override
 											public void run() {
@@ -277,8 +273,6 @@ public class HoldDetails extends Activity {
 				if (thaw_date != null)
 					thaw_date_s = GlobalConfigs.getStringDate(thaw_date);
 
-
-				
 				try {
 					accountAccess.updateHold(record.ahr, selectedOrgPos,
 							email_notification.isChecked(), phone_notification

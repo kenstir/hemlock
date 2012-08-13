@@ -35,6 +35,8 @@ public class GlobalConfigs {
 	
 	public static boolean loadedOrgTree = false;
 	
+	public static String hold_icon_address = "/opac/images/tor/"; 
+	
 	//two days notification before checkout expires, this can be modified from preferences
 	public static int NOTIFICATION_BEFORE_CHECKOUT_EXPIRATION = 2; 
 	

@@ -685,7 +685,7 @@ public class AccountAccess {
 		
 		
 		Object response;
-		Object holdInfo = null;
+		OSRFObject holdInfo = null;
 		if(holdType.equals("T") || holdType.equals("M")){
 			
 			if(holdType.equals("M")) 
@@ -693,13 +693,15 @@ public class AccountAccess {
 			if(holdType.equals("T"))
 				method = METHOD_FETCH_RMODS;
 			System.out.println();
-			holdInfo = Utils.doRequest(conn,SERVICE_SEARCH, method, cm, new Object[]{holdArhObject.get("target")});
+			holdInfo =  (OSRFObject)Utils.doRequest(conn,SERVICE_SEARCH, method, cm, new Object[]{holdArhObject.get("target")});
 
 			//System.out.println("Hold here " + holdInfo);
 			hold.title = ((OSRFObject)holdInfo).getString("title");
 			hold.author = ((OSRFObject)holdInfo).getString("author");
 			hold.recordInfo = new RecordInfo((OSRFObject)holdInfo);
-			
+			try{
+				hold.types_of_resource= ((List<Object>)holdInfo.get("types_of_resource")).get(0).toString();
+			}catch(Exception e){System.err.println("Can't get types of resurce type" + e.getMessage());};
 		}
 		else{
 				//multiple objects per hold ????
@@ -709,7 +711,7 @@ public class AccountAccess {
 		return holdInfo;
 	}
 	
-	private Object holdFetchObjects(OSRFObject hold, HoldRecord holdObj) throws  NoNetworkAccessException, NoAccessToServer{
+	private OSRFObject holdFetchObjects(OSRFObject hold, HoldRecord holdObj) throws  NoNetworkAccessException, NoAccessToServer{
 		
 		String type = (String)hold.get("hold_type");
 		
@@ -741,6 +743,9 @@ public class AccountAccess {
 				holdObj.title = holdInfo.getString("title");
 				holdObj.author = holdInfo.getString("author");
 				holdObj.recordInfo = new RecordInfo((OSRFObject)holdInfo);
+				try{
+					holdObj.types_of_resource= ((List<Object>)holdInfo.get("types_of_resource")).get(0).toString();
+				}catch(Exception e){System.err.println("Can't get types of resurce type" + e.getMessage());};
 			}
 			
 			
@@ -767,6 +772,9 @@ public class AccountAccess {
 				holdObj.title = holdInfo.getString("title");
 				holdObj.author = holdInfo.getString("author");
 				holdObj.recordInfo = new RecordInfo((OSRFObject)holdInfo);
+				try{
+					holdObj.types_of_resource= ((List<Object>)holdInfo.get("types_of_resource")).get(0).toString();
+				}catch(Exception e){System.err.println("Can't get types of resurce type" + e.getMessage());};
 			}
 			else
 				if(type.equals("I")){	
@@ -805,6 +813,9 @@ public class AccountAccess {
 						holdObj.title = holdInfo.getString("title");
 						holdObj.author = holdInfo.getString("author");
 						holdObj.recordInfo = new RecordInfo((OSRFObject)holdInfo);
+						try{
+							holdObj.types_of_resource= ((List<Object>)holdInfo.get("types_of_resource")).get(0).toString();
+						}catch(Exception e){System.err.println("Can't get types of resurce type" + e.getMessage());};
 					}
 			
 		return null;

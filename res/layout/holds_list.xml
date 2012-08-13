@@ -7,11 +7,14 @@
     <include android:id="@+id/header_actionbar" layout="@layout/simple_actionbar"/>
     
      <LinearLayout android:layout_width="fill_parent"
-         android:layout_height="wrap_content">
+         android:layout_height="wrap_content"
+         android:orientation="horizontal"
+         android:padding="5dp"
+         >
          <TextView 
              android:layout_width="wrap_content"
              android:layout_height="wrap_content"
-             android:text="@string/search_result_text"
+             android:text="@string/hold_items"
              />
          
          <TextView 
@@ -19,6 +22,7 @@
              android:layout_width="wrap_content"
              android:layout_height="wrap_content"
              android:textStyle="bold"
+             android:textSize="14sp"
              />
          
      </LinearLayout>
@@ -26,7 +30,7 @@
 	<ListView 
 	  android:id="@+id/holds_item_list"
 	  android:layout_width="fill_parent"
-	  android:layout_height="wrap_content"  
+	  android:layout_height="fill_parent"  
 	></ListView>
 
 </LinearLayout>
