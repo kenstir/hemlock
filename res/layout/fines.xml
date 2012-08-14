@@ -2,13 +2,16 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:orientation="vertical" >
+    android:orientation="vertical"
+    android:background="@color/background"
+     >
 
    	<include android:id="@+id/header_actionbar" layout="@layout/simple_actionbar"/>
     
          <TableLayout 
              android:layout_width="fill_parent"
              android:layout_height="wrap_content"
+             android:padding="5dip"
              >
             <TableRow 
                 android:layout_width="fill_parent"
@@ -70,6 +73,7 @@
              android:textSize="18sp"
              android:paddingTop="10dip"
              android:paddingBottom="5dip"
+             android:layout_marginLeft="10dip"
              />
 
 	<ListView 

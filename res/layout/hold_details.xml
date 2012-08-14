@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" >
+    android:layout_height="match_parent"
+    android:background="@drawable/background_grey_image"
+     >
   
   	<include android:id="@+id/header_actionbar" layout="@layout/simple_actionbar"/>
         
@@ -13,12 +15,15 @@
 	        android:gravity="center_horizontal"
 	        android:layout_alignParentBottom="true"
 	        android:layout_centerInParent="true"
+	        android:paddingBottom="3dip"
 	     	>
 	        <Button
 	            android:id="@+id/back_button"
 	            android:layout_width="100dip"
 	            android:layout_height="wrap_content"
 	            android:text="@string/back"
+	            style="@style/ApplicationButton"
+	            android:layout_margin="5dip"
 	            />
 	        
 	        <Button 
@@ -26,6 +31,8 @@
 	            android:layout_width="100dip"
 	            android:layout_height="wrap_content"
 	            android:text="@string/cancel_hold"
+	            style="@style/ApplicationButton"
+	            android:layout_margin="5dip"
 	            />	 
 	            
 	         <Button 
@@ -33,6 +40,8 @@
 	            android:layout_width="100dip"
 	            android:layout_height="wrap_content"
 	            android:text="@string/update_hold"
+	            style="@style/ApplicationButton"
+	            android:layout_margin="5dip"
 	            />	
 	    </LinearLayout>
     

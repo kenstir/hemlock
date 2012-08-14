@@ -6,4 +6,6 @@
     android:layout_gravity="center"
     android:textColor="@color/dark"
     android:padding="5dp"
-    android:gravity="center"/>
+    android:gravity="center"
+    android:singleLine="true"
+    />

@@ -2,7 +2,9 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:orientation="vertical" >
+    android:orientation="vertical"
+    android:background="@color/background"
+     >
    
     <include android:id="@+id/header_actionbar" layout="@layout/simple_actionbar"/>
     
@@ -29,6 +31,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/create"
+            style="@style/ApplicationButton"
             />
         
     </LinearLayout>
