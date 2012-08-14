@@ -5,7 +5,7 @@
     android:orientation="vertical"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:padding="4dip"
+    android:background="@drawable/background_grey_image"
     >
 
 	<include android:id="@+id/header_actionbar" layout="@layout/simple_actionbar"/>
@@ -18,13 +18,18 @@
 	    android:layout_marginBottom="5dip"
 	    />
 	
-	<LinearLayout
-		android:id="@+id/record_details_copy_information"
-		android:layout_width="fill_parent"
-		android:layout_height="wrap_content"
-		android:orientation="vertical"
-		>    
-	
-	</LinearLayout>
-	
+	<ScrollView 
+	    android:layout_width="fill_parent"
+	    android:layout_height="fill_parent"
+	    >
+		<LinearLayout
+			android:id="@+id/record_details_copy_information"
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:orientation="vertical"
+			android:padding="5dip"
+			>    
+		
+		</LinearLayout>
+	</ScrollView>
 </LinearLayout>

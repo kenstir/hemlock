@@ -6,14 +6,21 @@
    	android:paddingBottom="3dip"
 	android:paddingTop="3dip" 
 	android:paddingLeft="3dip" 
-    android:orientation="horizontal" >
+    android:orientation="horizontal"
+    android:background="@android:color/transparent"
+    >
     
-		<TextView
+    <LinearLayout 
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        >
+        <TextView
 		android:id="@+id/bookbagitem_title"
 		style="@style/TitleSearchStyleList"
 		android:layout_width="fill_parent"
 		android:layout_height="wrap_content"
-		android:layout_weight="1"
 		android:paddingLeft="3dip"
 		/>   
 	    
@@ -22,11 +29,11 @@
 		style="@style/AuthorSearchStyleList"
 		android:layout_width="fill_parent"
 		android:layout_height="wrap_content"
-		android:layout_weight="1"
-		android:gravity="center"
 		android:paddingLeft="3dip"
 		/>
-		
+        
+    </LinearLayout>
+			
 		<Button
 		 android:id="@+id/bookbagitem_remove_button"
 		 android:layout_width="wrap_content"
@@ -34,6 +41,9 @@
 		 android:text="@string/bookbagitem_remove" 
 		 android:layout_gravity="right"
 		 android:layout_weight="0"
+		 style="@style/ApplicationButton"
+		 android:layout_marginRight="5dip"
+		 
 		    />
 		
 </LinearLayout>

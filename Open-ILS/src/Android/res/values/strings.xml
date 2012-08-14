@@ -88,9 +88,9 @@
     <string name="suspend_hold">Suspend Hold</string>
     <string name="place_hold">Place hold</string>
     <string name="cancel">Cancel</string>
-    <string name="cancel_hold">Cancel hold</string>
+    <string name="cancel_hold">Delete</string>
     <string name="back">Back</string>
-    <string name="update_hold">Update Hold</string>
+    <string name="update_hold">Update</string>
     <string name="cancel_hold_dialog_message">Are you sure you want to cancel this hold?</string>
     <string name="thaw_date">Automatically activate hold one</string>
     <string name="hold_phone_hint">Contact phone number</string>
@@ -119,7 +119,7 @@
     <string name="bookbagitem_remove">remove</string>
     <string name="create_bookbag">New : </string>
     <string name="create">create</string>
-    <string name="bookbag_name">bookbag name</string>
+    <string name="bookbag_name">Bookbag name: </string>
     <string name="add_button">add</string>
     
     

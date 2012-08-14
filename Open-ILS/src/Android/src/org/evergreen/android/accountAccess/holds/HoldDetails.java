@@ -406,7 +406,7 @@ public class HoldDetails extends Activity {
 				selectedOrgPos = i;
 		}
 		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
-				android.R.layout.simple_spinner_item, list);
+				R.layout.spinner_layout, list);
 		orgSelector.setAdapter(adapter);
 
 		orgSelector.setSelection(selectedOrgPos);

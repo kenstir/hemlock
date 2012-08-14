@@ -2,7 +2,9 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:orientation="vertical" >
+    android:orientation="vertical" 
+    android:background="@drawable/background_grey_image"
+    >
     
     <include android:id="@+id/header_actionbar" layout="@layout/simple_actionbar"/>
     
@@ -22,6 +24,7 @@
             android:id="@+id/bookbag_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="5dip"
             />
         
         <Button 
@@ -29,50 +32,20 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/delete_button"
+            style="@style/ApplicationButton"
+            android:paddingLeft="15dip"
+            android:paddingRight="15dip"
+            android:layout_marginLeft="15dip"
             />
         
     </LinearLayout>
-    
-    
-	<LinearLayout 
-	android:layout_width="fill_parent"
-    android:layout_height="wrap_content"
-    android:orientation="horizontal"
-    android:gravity="center_vertical" 
-	android:paddingLeft="5dip"
-	>
-	   
-		<TextView
-		android:layout_width="fill_parent"
-		android:layout_height="wrap_content"
-		android:layout_weight="1"
-		android:text="@string/title"
-		android:gravity="center"
-		/>   
-	    
-		<TextView
-		android:layout_width="fill_parent"
-		android:layout_height="wrap_content"
-		android:layout_weight="1"
-		android:gravity="center"
-		android:text="@string/author"
-		/>
-
-		<TextView
-		 android:layout_width="wrap_content"
-		 android:layout_height="wrap_content"
-		 android:text="@string/bags_action" 
-		 android:layout_gravity="right"
-		 android:gravity="center"
-		  />
-		
-	</LinearLayout>
      
 	<ListView 
 	  android:id="@+id/bookbagitem_list"
 	  android:layout_width="fill_parent"
 	  android:layout_height="wrap_content"  
 	  android:paddingTop="10dip"
+	  android:background="@drawable/listview_background"
 	  ></ListView>
 
 </LinearLayout>

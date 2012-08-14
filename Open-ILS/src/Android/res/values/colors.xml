@@ -68,6 +68,9 @@
     
     <color name="background">#333</color>
     
+    <color name="application_button_start">#444</color>
+    <color name="application_button_stop">#444</color>
+    
     <!-- using alpha on header -->
     <color name="menu_background_start">#585858</color>
     <color name="menu_background_stop">#c8c8c8</color>
