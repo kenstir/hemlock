@@ -21,133 +21,136 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-public class ConfigureApplicationActivity extends Activity{
+public class ConfigureApplicationActivity extends Activity {
 
-	private String TAG = "ConfigureApplicationActivity";
-	
-	private ProgressDialog progressDialog = null;
+    private String TAG = "ConfigureApplicationActivity";
 
-	private EditText server_http;
+    private ProgressDialog progressDialog = null;
 
-	private EditText username;
+    private EditText server_http;
 
-	private EditText password;
-	
-	private Context context;
+    private EditText username;
 
-	
-	public static final int RESULT_CONFIGURE_SUCCESS = 10;
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		// TODO Auto-generated method stub
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.configure_application);
-		context = this;
-		server_http = (EditText) findViewById(R.id.server_http_adress);
-		username = (EditText) findViewById(R.id.username);
-		password = (EditText) findViewById(R.id.password);
-		
-		Button connect = (Button) findViewById(R.id.connect_button);
+    private EditText password;
 
+    private Context context;
 
-		connect.setOnClickListener(new OnClickListener() {
+    public static final int RESULT_CONFIGURE_SUCCESS = 10;
 
-			@Override
-			public void onClick(View v) {
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        // TODO Auto-generated method stub
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.configure_application);
+        context = this;
+        server_http = (EditText) findViewById(R.id.server_http_adress);
+        username = (EditText) findViewById(R.id.username);
+        password = (EditText) findViewById(R.id.password);
 
-				Thread checkConn = new Thread(new Runnable() {
-					@Override
-					public void run() {
+        Button connect = (Button) findViewById(R.id.connect_button);
 
-						boolean server_address = false;
-						boolean auth = false;
+        connect.setOnClickListener(new OnClickListener() {
 
-						try {
-							server_address = Utils
-									.checkIfNetAddressIsReachable(server_http
-											.getText().toString());
-						} catch (NoAccessToServer e) {
-							server_address = false;
-						}
+            @Override
+            public void onClick(View v) {
 
-						if (server_address == true) {
+                Thread checkConn = new Thread(new Runnable() {
+                    @Override
+                    public void run() {
 
-							SharedPreferences preferences = PreferenceManager
-									.getDefaultSharedPreferences(context);
-							SharedPreferences.Editor editor = preferences
-									.edit();
-							//store into preference
-							editor.putString("library_url", server_http
-									.getText().toString());
+                        boolean server_address = false;
+                        boolean auth = false;
 
-							
-							editor.putString("username", username.getText().toString());
-							editor.putString("password", password.getText().toString());
-							
-							editor.commit();
-							GlobalConfigs.httpAddress = server_http.getText().toString();
-							AccountAccess accountAccess = AccountAccess
-									.getAccountAccess(GlobalConfigs.httpAddress,(ConnectivityManager) getSystemService(Service.CONNECTIVITY_SERVICE));
-							
-							AccountAccess.setAccountInfo(username.getText().toString(),password.getText().toString());
+                        try {
+                            server_address = Utils
+                                    .checkIfNetAddressIsReachable(server_http
+                                            .getText().toString());
+                        } catch (NoAccessToServer e) {
+                            server_address = false;
+                        }
 
-							try {
-								auth = accountAccess.authenticate();
-								Log.d(TAG, "Auth " + auth);
-							} catch (Exception e) {
-								System.out.println("Exception " + e.getMessage());
-							}
+                        if (server_address == true) {
 
-							if (auth == true) {
+                            SharedPreferences preferences = PreferenceManager
+                                    .getDefaultSharedPreferences(context);
+                            SharedPreferences.Editor editor = preferences
+                                    .edit();
+                            // store into preference
+                            editor.putString("library_url", server_http
+                                    .getText().toString());
 
-								runOnUiThread(new Runnable() {
-									
-									@Override
-									public void run() {
-										progressDialog.dismiss();
-										setResult(RESULT_CONFIGURE_SUCCESS);
-										finish();
-										
-									}
-								});
+                            editor.putString("username", username.getText()
+                                    .toString());
+                            editor.putString("password", password.getText()
+                                    .toString());
 
-							
-							} else {
-								runOnUiThread(new Runnable() {
-									@Override
-									public void run() {
-										progressDialog.dismiss();
-										Toast.makeText(context,
-												"Bad user login information",
-												Toast.LENGTH_LONG).show();
-									}
-								});
-							}
-					
-						} else {
-							runOnUiThread(new Runnable() {
-								@Override
-								public void run() {
-									progressDialog.dismiss();
-									Toast.makeText(context,
-											"Bad library server url",
-											Toast.LENGTH_LONG).show();
-								}
-							});
+                            editor.commit();
+                            GlobalConfigs.httpAddress = server_http.getText()
+                                    .toString();
+                            AccountAccess accountAccess = AccountAccess
+                                    .getAccountAccess(
+                                            GlobalConfigs.httpAddress,
+                                            (ConnectivityManager) getSystemService(Service.CONNECTIVITY_SERVICE));
 
-						}
+                            AccountAccess.setAccountInfo(username.getText()
+                                    .toString(), password.getText().toString());
 
-					}
-				});
+                            try {
+                                auth = accountAccess.authenticate();
+                                Log.d(TAG, "Auth " + auth);
+                            } catch (Exception e) {
+                                System.out.println("Exception "
+                                        + e.getMessage());
+                            }
 
-				progressDialog = ProgressDialog.show(context, "Please wait",
-						"Checking server and credentials");
-				checkConn.start();
-			}
-		
-		});
-		
-	}
-	
-	
+                            if (auth == true) {
+
+                                runOnUiThread(new Runnable() {
+
+                                    @Override
+                                    public void run() {
+                                        progressDialog.dismiss();
+                                        setResult(RESULT_CONFIGURE_SUCCESS);
+                                        finish();
+
+                                    }
+                                });
+
+                            } else {
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        progressDialog.dismiss();
+                                        Toast.makeText(context,
+                                                "Bad user login information",
+                                                Toast.LENGTH_LONG).show();
+                                    }
+                                });
+                            }
+
+                        } else {
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    progressDialog.dismiss();
+                                    Toast.makeText(context,
+                                            "Bad library server url",
+                                            Toast.LENGTH_LONG).show();
+                                }
+                            });
+
+                        }
+
+                    }
+                });
+
+                progressDialog = ProgressDialog.show(context, "Please wait",
+                        "Checking server and credentials");
+                checkConn.start();
+            }
+
+        });
+
+    }
+
 }

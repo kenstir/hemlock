@@ -6,8 +6,8 @@ import android.view.View;
 import android.view.ViewGroup;
 
 /**
- * Custom layout that arranges children in a grid-like manner, optimizing for even horizontal and
- * vertical whitespace.
+ * Custom layout that arranges children in a grid-like manner, optimizing for
+ * even horizontal and vertical whitespace.
  */
 public class Dashboard extends ViewGroup {
 
@@ -50,15 +50,16 @@ public class Dashboard extends ViewGroup {
             child.measure(childWidthMeasureSpec, childHeightMeasureSpec);
 
             mMaxChildWidth = Math.max(mMaxChildWidth, child.getMeasuredWidth());
-            mMaxChildHeight = Math.max(mMaxChildHeight, child.getMeasuredHeight());
+            mMaxChildHeight = Math.max(mMaxChildHeight,
+                    child.getMeasuredHeight());
         }
 
         // Measure again for each child to be exactly the same size.
 
-        childWidthMeasureSpec = MeasureSpec.makeMeasureSpec(
-                mMaxChildWidth, MeasureSpec.EXACTLY);
-        childHeightMeasureSpec = MeasureSpec.makeMeasureSpec(
-                mMaxChildHeight, MeasureSpec.EXACTLY);
+        childWidthMeasureSpec = MeasureSpec.makeMeasureSpec(mMaxChildWidth,
+                MeasureSpec.EXACTLY);
+        childHeightMeasureSpec = MeasureSpec.makeMeasureSpec(mMaxChildHeight,
+                MeasureSpec.EXACTLY);
 
         for (int i = 0; i < count; i++) {
             final View child = getChildAt(i);
@@ -69,8 +70,7 @@ public class Dashboard extends ViewGroup {
             child.measure(childWidthMeasureSpec, childHeightMeasureSpec);
         }
 
-        setMeasuredDimension(
-                resolveSize(mMaxChildWidth, widthMeasureSpec),
+        setMeasuredDimension(resolveSize(mMaxChildWidth, widthMeasureSpec),
                 resolveSize(mMaxChildHeight, heightMeasureSpec));
     }
 
@@ -95,8 +95,10 @@ public class Dashboard extends ViewGroup {
             return;
         }
 
-        // Calculate what number of rows and columns will optimize for even horizontal and
-        // vertical whitespace between items. Start with a 1 x N grid, then try 2 x N, and so on.
+        // Calculate what number of rows and columns will optimize for even
+        // horizontal and
+        // vertical whitespace between items. Start with a 1 x N grid, then try
+        // 2 x N, and so on.
         int bestSpaceDifference = Integer.MAX_VALUE;
         int spaceDifference;
 
@@ -122,13 +124,15 @@ public class Dashboard extends ViewGroup {
                 // Found a better whitespace squareness/ratio
                 bestSpaceDifference = spaceDifference;
 
-                // If we found a better whitespace squareness and there's only 1 row, this is
+                // If we found a better whitespace squareness and there's only 1
+                // row, this is
                 // the best we can do.
                 if (rows == 1) {
                     break;
                 }
             } else {
-                // This is a worse whitespace ratio, use the previous value of cols and exit.
+                // This is a worse whitespace ratio, use the previous value of
+                // cols and exit.
                 --cols;
                 rows = (visibleCount - 1) / cols + 1;
                 hSpace = ((width - mMaxChildWidth * cols) / (cols + 1));
@@ -139,9 +143,11 @@ public class Dashboard extends ViewGroup {
             ++cols;
         }
 
-        // Lay out children based on calculated best-fit number of rows and cols.
+        // Lay out children based on calculated best-fit number of rows and
+        // cols.
 
-        // If we chose a layout that has negative horizontal or vertical space, force it to zero.
+        // If we chose a layout that has negative horizontal or vertical space,
+        // force it to zero.
         hSpace = Math.max(0, hSpace);
         vSpace = Math.max(0, vSpace);
 
@@ -164,11 +170,10 @@ public class Dashboard extends ViewGroup {
             left = hSpace * (col + 1) + width * col;
             top = vSpace * (row + 1) + height * row;
 
-            child.layout(left, top,
-                    (hSpace == 0 && col == cols - 1) ? r : (left + width),
-                    (vSpace == 0 && row == rows - 1) ? b : (top + height));
+            child.layout(left, top, (hSpace == 0 && col == cols - 1) ? r
+                    : (left + width), (vSpace == 0 && row == rows - 1) ? b
+                    : (top + height));
             ++visibleIndex;
         }
     }
 }
-
