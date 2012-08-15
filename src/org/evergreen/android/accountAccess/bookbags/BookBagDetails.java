@@ -37,320 +37,322 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class BookBagDetails extends Activity{
+public class BookBagDetails extends Activity {
 
-private String TAG = "BookBags";
-	
-	public static final int RESULT_CODE_UPDATE = 1;
+    private String TAG = "BookBags";
 
-	private SearchCatalog search;
-	
-	private AccountAccess accountAccess;
-	
-	private ListView lv;
-	
-	private BookBagItemsArrayAdapter listAdapter = null;
+    public static final int RESULT_CODE_UPDATE = 1;
 
-	private ArrayList<BookBagItem> bookBagItems = null;
+    private SearchCatalog search;
 
-	private Context context;
-	
-	private ProgressDialog progressDialog;
-	
-	private BookBag bookBag;
-	
-	private TextView bookbag_name;
-	
-	private Button delete_bookbag_button;
-	
-	private Button homeButton;
-	
-	private Button myAccountButton;
-	
-	private TextView headerTitle;
-	
-	private Runnable getBookBagsItemsRunnable;
-	@Override
-	public void onCreate(Bundle savedInstanceState) {
-		// TODO Auto-generated method stub
-		super.onCreate(savedInstanceState);
-		
-		setContentView(R.layout.bookbagitem_list);
-		 //header portion actions
+    private AccountAccess accountAccess;
+
+    private ListView lv;
+
+    private BookBagItemsArrayAdapter listAdapter = null;
+
+    private ArrayList<BookBagItem> bookBagItems = null;
+
+    private Context context;
+
+    private ProgressDialog progressDialog;
+
+    private BookBag bookBag;
+
+    private TextView bookbag_name;
+
+    private Button delete_bookbag_button;
+
+    private Button homeButton;
+
+    private Button myAccountButton;
+
+    private TextView headerTitle;
+
+    private Runnable getBookBagsItemsRunnable;
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        // TODO Auto-generated method stub
+        super.onCreate(savedInstanceState);
+
+        setContentView(R.layout.bookbagitem_list);
+        // header portion actions
         homeButton = (Button) findViewById(R.id.library_logo);
         myAccountButton = (Button) findViewById(R.id.my_account_button);
         headerTitle = (TextView) findViewById(R.id.header_title);
         headerTitle.setText(R.string.bookbag_details_title);
-        
+
         myAccountButton.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				Intent intent = new Intent(getApplicationContext(),AccountScreenDashboard.class);
-				startActivity(intent);
-			}
-		});
-        
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(),
+                        AccountScreenDashboard.class);
+                startActivity(intent);
+            }
+        });
+
         homeButton.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				Intent intent = new Intent(getApplicationContext(),SearchCatalogListView.class);
-				startActivity(intent);
-			}
-		});
-        //end header portion actions
-		
-		accountAccess = AccountAccess.getAccountAccess();
-		bookBag = (BookBag) getIntent().getSerializableExtra("bookBag");
-		
-		context = this;
-		search = SearchCatalog.getInstance((ConnectivityManager)getSystemService(Service.CONNECTIVITY_SERVICE));
-		bookbag_name = (TextView) findViewById(R.id.bookbag_name);
-		delete_bookbag_button = (Button) findViewById(R.id.remove_bookbag);
-		bookbag_name.setText(bookBag.name);
-		delete_bookbag_button.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-					
-				final Thread deleteBookbag = new Thread(new Runnable() {
-					
-					@Override
-					public void run() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(),
+                        SearchCatalogListView.class);
+                startActivity(intent);
+            }
+        });
+        // end header portion actions
 
-						try {
-							accountAccess.deleteBookBag(bookBag.id);
-						} catch (SessionNotFoundException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						} catch (NoNetworkAccessException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						} catch (NoAccessToServer e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
-						runOnUiThread(new Runnable() {
-							@Override
-							public void run() {
-								progressDialog.dismiss();
-								setResult(RESULT_CODE_UPDATE);
-								finish();
-							}
-						});
-					}
-				});
-				
-				Builder confirmationDialogBuilder = new AlertDialog.Builder(
-						context);
-				confirmationDialogBuilder
-						.setMessage("Delete bookbag?");
+        accountAccess = AccountAccess.getAccountAccess();
+        bookBag = (BookBag) getIntent().getSerializableExtra("bookBag");
 
-				confirmationDialogBuilder.setNegativeButton(
-						android.R.string.no, null);
-				confirmationDialogBuilder.setPositiveButton(
-						android.R.string.yes,
-						new DialogInterface.OnClickListener() {
-							@Override
-							public void onClick(DialogInterface dialog,
-									int which) {
+        context = this;
+        search = SearchCatalog
+                .getInstance((ConnectivityManager) getSystemService(Service.CONNECTIVITY_SERVICE));
+        bookbag_name = (TextView) findViewById(R.id.bookbag_name);
+        delete_bookbag_button = (Button) findViewById(R.id.remove_bookbag);
+        bookbag_name.setText(bookBag.name);
+        delete_bookbag_button.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
 
+                final Thread deleteBookbag = new Thread(new Runnable() {
 
-								progressDialog = ProgressDialog.show(context, "Please wait", "Deleting Bookbag");
-								deleteBookbag.start();
-									}
-								});
+                    @Override
+                    public void run() {
 
-				confirmationDialogBuilder.create().show();
-	
-			}
-		});
-		
-		lv = (ListView) findViewById(R.id.bookbagitem_list);
-		bookBagItems = new ArrayList<BookBagItem>();
-		listAdapter = new BookBagItemsArrayAdapter(context, R.layout.bookbagitem_list_item, bookBagItems);
-		lv.setAdapter(listAdapter);
-		
-		lv.setOnItemSelectedListener(new OnItemSelectedListener() {
+                        try {
+                            accountAccess.deleteBookBag(bookBag.id);
+                        } catch (SessionNotFoundException e) {
+                            // TODO Auto-generated catch block
+                            e.printStackTrace();
+                        } catch (NoNetworkAccessException e) {
+                            // TODO Auto-generated catch block
+                            e.printStackTrace();
+                        } catch (NoAccessToServer e) {
+                            // TODO Auto-generated catch block
+                            e.printStackTrace();
+                        }
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                progressDialog.dismiss();
+                                setResult(RESULT_CODE_UPDATE);
+                                finish();
+                            }
+                        });
+                    }
+                });
 
-			@Override
-			public void onItemSelected(AdapterView<?> arg0, View arg1,
-					int arg2, long arg3) {
-				
-				
-			}
+                Builder confirmationDialogBuilder = new AlertDialog.Builder(
+                        context);
+                confirmationDialogBuilder.setMessage("Delete bookbag?");
 
-			@Override
-			public void onNothingSelected(AdapterView<?> arg0) {
-				// TODO Auto-generated method stub
-				
-			}
+                confirmationDialogBuilder.setNegativeButton(
+                        android.R.string.no, null);
+                confirmationDialogBuilder.setPositiveButton(
+                        android.R.string.yes,
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog,
+                                    int which) {
 
-		});
-		
-		getBookBagsItemsRunnable = new Runnable() {
-			
-			@Override
-			public void run() {
+                                progressDialog = ProgressDialog.show(context,
+                                        "Please wait", "Deleting Bookbag");
+                                deleteBookbag.start();
+                            }
+                        });
 
-					ArrayList<RecordInfo> records = new ArrayList<RecordInfo>();
-					ArrayList<Integer> ids = new ArrayList<Integer>();
-					
-					for(int i=0;i<bookBag.items.size();i++){
-						ids.add(bookBag.items.get(i).target_copy);
-					}
-					records = search.getRecordsInfo(ids);
-					
-					for(int i=0;i<bookBag.items.size();i++){
-						bookBag.items.get(i).recordInfo = records.get(i);
-					}
-	
-				runOnUiThread(new Runnable() {
-					
-					@Override
-					public void run() {
-						
-						listAdapter.clear();
-						
-						for(int i=0;i<bookBag.items.size();i++)
-							listAdapter.add(bookBag.items.get(i));
-						
-						
-						progressDialog.dismiss();	
-						
-						if(bookBagItems.size() == 0)
-							Toast.makeText(context, "No circ records", Toast.LENGTH_LONG);
-						
-						listAdapter.notifyDataSetChanged();
-					}
-				});
-				
-				
-			}
-		};
-		
-		Thread getBookBags = new Thread(getBookBagsItemsRunnable);
-		
-		progressDialog = ProgressDialog.show(context, "Please wait", "retrieving bookbag data");
-		getBookBags.start();
+                confirmationDialogBuilder.create().show();
 
+            }
+        });
 
-	
-				
+        lv = (ListView) findViewById(R.id.bookbagitem_list);
+        bookBagItems = new ArrayList<BookBagItem>();
+        listAdapter = new BookBagItemsArrayAdapter(context,
+                R.layout.bookbagitem_list_item, bookBagItems);
+        lv.setAdapter(listAdapter);
 
-	}
-	
-	  class BookBagItemsArrayAdapter extends ArrayAdapter<BookBagItem> {
-	    	private static final String tag = "BookbagArrayAdapter";
-	    	
-	    	private TextView title;
-	    	private TextView author;
-	    	private Button remove;
-	    	
-	    	
-	    	private List<BookBagItem> records = new ArrayList<BookBagItem>();
+        lv.setOnItemSelectedListener(new OnItemSelectedListener() {
 
-	    	public BookBagItemsArrayAdapter(Context context, int textViewResourceId,
-	    			List<BookBagItem> objects) {
-	    		super(context, textViewResourceId, objects);
-	    		this.records = objects;
-	    	}
+            @Override
+            public void onItemSelected(AdapterView<?> arg0, View arg1,
+                    int arg2, long arg3) {
 
-	    	public int getCount() {
-	    		return this.records.size();
-	    	}
+            }
 
-	    	public BookBagItem getItem(int index) {
-	    		return this.records.get(index);
-	    	}
+            @Override
+            public void onNothingSelected(AdapterView<?> arg0) {
+                // TODO Auto-generated method stub
 
-	    	public View getView(int position, View convertView, ViewGroup parent) {
-	    		View row = convertView;
-	    		
-	    		// Get item
-	    		final BookBagItem record = getItem(position);
+            }
 
-	    		
-	    			//if it is the right type of view
-			    		if (row == null ) {
-		
-				    			Log.d(tag, "Starting XML Row Inflation ... ");
-				    			LayoutInflater inflater = (LayoutInflater) this.getContext()
-				    					.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-				    			row = inflater.inflate(R.layout.bookbagitem_list_item, parent, false);
-				    			Log.d(tag, "Successfully completed XML Row Inflation!");
-		
-			    		}
+        });
 
-		    		title = (TextView) row.findViewById(R.id.bookbagitem_title);
-		    		
-		    		author = (TextView) row.findViewById(R.id.bookbagitem_author);
-		    		
-		    		remove = (Button) row.findViewById(R.id.bookbagitem_remove_button);
-		    		
-		    		title.setText(record.recordInfo.title);
-		    		
-		    		author.setText(record.recordInfo.author);
-		    		
-		    		remove.setOnClickListener(new OnClickListener() {
-						
-						@Override
-						public void onClick(View v) {
-							
-							
-							Thread removeItem = new Thread(new Runnable() {
-								
-								@Override
-								public void run() {
-									
-									runOnUiThread(new Runnable() {
-										@Override
-										public void run() {
-											progressDialog = ProgressDialog.show(context, "Please wait", "Removing item");
-										}
-									});
-									
-									try {
-										accountAccess.removeBookbagItem(record.id);
-									} catch (SessionNotFoundException e) {
-										
-											try{
-												if(accountAccess.authenticate())
-													accountAccess.removeBookbagItem(record.id);
-											}catch(Exception e1){};
-										
-										e.printStackTrace();
-									} catch (NoNetworkAccessException e) {
-										// TODO Auto-generated catch block
-										e.printStackTrace();
-									} catch (NoAccessToServer e) {
-										// TODO Auto-generated catch block
-										e.printStackTrace();
-									}
-									
-									
-									runOnUiThread(new Runnable() {
-										@Override
-										public void run() {
-											progressDialog.dismiss();
-											
-											Thread getBookBags = new Thread(getBookBagsItemsRunnable);
-											setResult(RESULT_CODE_UPDATE);
-											
-											
-											bookBag.items.remove(record);
-											progressDialog = ProgressDialog.show(context, "Please wait", "retrieving bookbag data");
-											getBookBags.start();
-											
-											
-										}
-									});
-								}
-							});
-	
-							removeItem.start();
-						}
-					});
+        getBookBagsItemsRunnable = new Runnable() {
 
-	    		return row;
-	    	}
-	    }
+            @Override
+            public void run() {
+
+                ArrayList<RecordInfo> records = new ArrayList<RecordInfo>();
+                ArrayList<Integer> ids = new ArrayList<Integer>();
+
+                for (int i = 0; i < bookBag.items.size(); i++) {
+                    ids.add(bookBag.items.get(i).target_copy);
+                }
+                records = search.getRecordsInfo(ids);
+
+                for (int i = 0; i < bookBag.items.size(); i++) {
+                    bookBag.items.get(i).recordInfo = records.get(i);
+                }
+
+                runOnUiThread(new Runnable() {
+
+                    @Override
+                    public void run() {
+
+                        listAdapter.clear();
+
+                        for (int i = 0; i < bookBag.items.size(); i++)
+                            listAdapter.add(bookBag.items.get(i));
+
+                        progressDialog.dismiss();
+
+                        if (bookBagItems.size() == 0)
+                            Toast.makeText(context, "No circ records",
+                                    Toast.LENGTH_LONG);
+
+                        listAdapter.notifyDataSetChanged();
+                    }
+                });
+
+            }
+        };
+
+        Thread getBookBags = new Thread(getBookBagsItemsRunnable);
+
+        progressDialog = ProgressDialog.show(context, "Please wait",
+                "retrieving bookbag data");
+        getBookBags.start();
+
+    }
+
+    class BookBagItemsArrayAdapter extends ArrayAdapter<BookBagItem> {
+        private static final String tag = "BookbagArrayAdapter";
+
+        private TextView title;
+        private TextView author;
+        private Button remove;
+
+        private List<BookBagItem> records = new ArrayList<BookBagItem>();
+
+        public BookBagItemsArrayAdapter(Context context,
+                int textViewResourceId, List<BookBagItem> objects) {
+            super(context, textViewResourceId, objects);
+            this.records = objects;
+        }
+
+        public int getCount() {
+            return this.records.size();
+        }
+
+        public BookBagItem getItem(int index) {
+            return this.records.get(index);
+        }
+
+        public View getView(int position, View convertView, ViewGroup parent) {
+            View row = convertView;
+
+            // Get item
+            final BookBagItem record = getItem(position);
+
+            // if it is the right type of view
+            if (row == null) {
+
+                Log.d(tag, "Starting XML Row Inflation ... ");
+                LayoutInflater inflater = (LayoutInflater) this.getContext()
+                        .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                row = inflater.inflate(R.layout.bookbagitem_list_item, parent,
+                        false);
+                Log.d(tag, "Successfully completed XML Row Inflation!");
+
+            }
+
+            title = (TextView) row.findViewById(R.id.bookbagitem_title);
+
+            author = (TextView) row.findViewById(R.id.bookbagitem_author);
+
+            remove = (Button) row.findViewById(R.id.bookbagitem_remove_button);
+
+            title.setText(record.recordInfo.title);
+
+            author.setText(record.recordInfo.author);
+
+            remove.setOnClickListener(new OnClickListener() {
+
+                @Override
+                public void onClick(View v) {
+
+                    Thread removeItem = new Thread(new Runnable() {
+
+                        @Override
+                        public void run() {
+
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    progressDialog = ProgressDialog.show(
+                                            context, "Please wait",
+                                            "Removing item");
+                                }
+                            });
+
+                            try {
+                                accountAccess.removeBookbagItem(record.id);
+                            } catch (SessionNotFoundException e) {
+
+                                try {
+                                    if (accountAccess.authenticate())
+                                        accountAccess
+                                                .removeBookbagItem(record.id);
+                                } catch (Exception e1) {
+                                }
+                                ;
+
+                                e.printStackTrace();
+                            } catch (NoNetworkAccessException e) {
+                                // TODO Auto-generated catch block
+                                e.printStackTrace();
+                            } catch (NoAccessToServer e) {
+                                // TODO Auto-generated catch block
+                                e.printStackTrace();
+                            }
+
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    progressDialog.dismiss();
+
+                                    Thread getBookBags = new Thread(
+                                            getBookBagsItemsRunnable);
+                                    setResult(RESULT_CODE_UPDATE);
+
+                                    bookBag.items.remove(record);
+                                    progressDialog = ProgressDialog.show(
+                                            context, "Please wait",
+                                            "retrieving bookbag data");
+                                    getBookBags.start();
+
+                                }
+                            });
+                        }
+                    });
+
+                    removeItem.start();
+                }
+            });
+
+            return row;
+        }
+    }
 }

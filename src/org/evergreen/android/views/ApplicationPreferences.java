@@ -30,262 +30,295 @@ import android.provider.Settings;
 import android.util.Log;
 import android.widget.Toast;
 
-public class ApplicationPreferences extends PreferenceActivity implements OnSharedPreferenceChangeListener{
+public class ApplicationPreferences extends PreferenceActivity implements
+        OnSharedPreferenceChangeListener {
 
-	
-	private ProgressDialog progressDialog;
-	
-	private ApplicationPreferences reference;
-	
-	private Context context;
-	
-	private String TAG = "ApplicationPreferences";
-	
-	private Thread connectionThread = null;
-	
-	private Thread coreFilesDownload = null;
+    private ProgressDialog progressDialog;
 
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
+    private ApplicationPreferences reference;
 
-		super.onCreate(savedInstanceState);
-		
-		addPreferencesFromResource(R.xml.application_preference_screen);
+    private Context context;
 
-		context = this;
-		reference = this;
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-		//register preference listener
-		prefs.registerOnSharedPreferenceChangeListener(this);
-		
-	}
+    private String TAG = "ApplicationPreferences";
 
-	
-	@Override
-	protected void onResume() {
-		super.onResume();
-		reference = this;
-	}
-	@Override
-	protected void onPause() {
-		super.onPause();
-		reference = null;
-	}
-	
-	@Override
-	protected void onStop() {
-		super.onStop();
-		reference = null;
-	}
-	
-	@Override
-	protected void onDestroy() {
-		super.onDestroy();
-		reference = null;
-	}
-	@Override
-	public void onSharedPreferenceChanged(SharedPreferences sharedPreferences,
-			String key) {
-		
-		boolean httpAddressChange = false;
-		
-		connectionThread = new Thread(new Runnable() {
-			
-			@Override
-			public void run() {
-				
-				boolean routeToAddress = true;
-				AccountAccess account = AccountAccess.getAccountAccess(GlobalConfigs.httpAddress,(ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE));
-				try{
-					Utils.checkNetworkStatus((ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE));
-				}catch(NoNetworkAccessException e){
-					routeToAddress = false;
-					
-					Log.d(TAG," No network access");
-					
-					runOnUiThread(new Runnable() {
-						
-						@Override
-						public void run() {
-							if(reference != null){
-								progressDialog.dismiss();
-								AlertDialog.Builder builder = new AlertDialog.Builder(context);
-								builder.setMessage("There seams to be no network connectivity! Do you want to start network settings?").setPositiveButton("Yes", dialogClickListener)
-								.setNegativeButton("No", dialogClickListener).show();
-							}
-						}
-					});
+    private Thread connectionThread = null;
 
-				}catch(NoAccessToServer e){
-					
-					Log.d(TAG, " no route to hoast");
-					routeToAddress = false;
-					runOnUiThread(new Runnable() {
-						
-						@Override
-						public void run() {
-							if(reference != null)
-								Toast.makeText(getApplicationContext(), "There is no route to host :" + GlobalConfigs.httpAddress, Toast.LENGTH_LONG).show();
-						}
-	
-					});
-				}
+    private Thread coreFilesDownload = null;
 
-				
-				if(routeToAddress){
-					
-					try{
-						if(account.authenticate()){
-										
-							runOnUiThread(new Runnable() {
-								
-								@Override
-								public void run() {
-									if(reference != null){
-										progressDialog.dismiss();
-										Toast.makeText(context, "Autenthication successfully established :" + GlobalConfigs.httpAddress, Toast.LENGTH_LONG).show();
-									}
-								}
-							});
-						}else{
-							runOnUiThread(new Runnable() {
-								
-								@Override
-								public void run() {
-									if(reference != null){
-										progressDialog.dismiss();
-										Toast.makeText(context, "Please check username and password ", Toast.LENGTH_LONG).show();
-									}
-								}
-							});
-						}
-						
-					}catch(Exception e){}
-					
-				}
-				else
-					runOnUiThread(new Runnable() {
-						
-						@Override
-						public void run() {
-						if(reference != null)	
-							progressDialog.dismiss();	
-						}
-					});
-			}
-		});	
-		
-		boolean checkConnection = false;
-		
-		if(key.equals("username")){
-			AccountAccess.userName = sharedPreferences.getString("username", "");
-			checkConnection = true;
-		}else
-			if(key.equals("password")){
-				AccountAccess.password = sharedPreferences.getString("password", "");
-				checkConnection = true;
-			}else
-				if(key.equals("library_url")){
-					checkConnection = true;
-					GlobalConfigs.httpAddress = sharedPreferences.getString("library_url", "");
-	
-					httpAddressChange = true;
-					System.out.println("Show dialog");
-					
-						progressDialog = ProgressDialog.show(context, "Core files", "Downloading FM_IDL and OrgTree");
-									
-						coreFilesDownload = new Thread(new Runnable() {
-							
-							@Override
-							public void run() {
-								System.out.println("FM idl download");
-								GlobalConfigs sg = GlobalConfigs.getGlobalConfigs(context);
-								sg.loadIDLFile();
-								sg.getOrganisations();
-								sg.getCopyStatusesAvailable((ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE));
-								runOnUiThread(new Runnable() {
-									public void run() {
-										progressDialog.dismiss();
-									}
-								});
-								
-								connectionThread.start();
-							}
-						});
-						
-						coreFilesDownload.start();
-						
-						//wait for execution
-	
-					}
-		if(key.equals("notifications_enabled")){
-		
-			if(sharedPreferences.getBoolean("notifications_enabled", false)){
-				
-				Toast.makeText(context, "Set up notification updates", Toast.LENGTH_SHORT).show();
-				//if enabled register the update service to run once per day
-				// get a Calendar object with current time
-				Calendar cal = Calendar.getInstance();
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
 
-				Intent bRecvIntent = new Intent(this,PeriodicServiceBroadcastReceiver.class);
-				bRecvIntent.setAction(ScheduledIntentService.ACTION);
-				// update the current intent if it exists
-				PendingIntent sender = PendingIntent.getBroadcast(this,
-						NotificationAlert.NOTIFICATION_INTENT + PeriodicServiceBroadcastReceiver.INTENT_ID, bRecvIntent,
-						PendingIntent.FLAG_UPDATE_CURRENT);
+        super.onCreate(savedInstanceState);
 
-				// Get the AlarmManager service
-				AlarmManager am = (AlarmManager) getSystemService(ALARM_SERVICE);
-				am.setRepeating(AlarmManager.RTC, cal.getTimeInMillis(), 10000 * ScheduledIntentService.SCHEDULE_TIME_INTERVAL, sender);
-			}
-			else
-			{
-				Toast.makeText(context, "Disable notification updates", Toast.LENGTH_SHORT).show();
-				//cancel the service
-				
-				Intent bRecvIntent = new Intent(this,PeriodicServiceBroadcastReceiver.class);
-				
-				// update the current intent if it exists
-				PendingIntent sender = PendingIntent.getBroadcast(this,
-						NotificationAlert.NOTIFICATION_INTENT + PeriodicServiceBroadcastReceiver.INTENT_ID, bRecvIntent,
-						PendingIntent.FLAG_UPDATE_CURRENT);
+        addPreferencesFromResource(R.xml.application_preference_screen);
 
-				// Get the AlarmManager service
-				AlarmManager am = (AlarmManager) getSystemService(ALARM_SERVICE);
-				//cancel the service
-				am.cancel(sender);
-			}
-			//register the 
-			
-		}
+        context = this;
+        reference = this;
+        SharedPreferences prefs = PreferenceManager
+                .getDefaultSharedPreferences(context);
+        // register preference listener
+        prefs.registerOnSharedPreferenceChangeListener(this);
 
-		//test connection
-		if(!isFinishing() && httpAddressChange == false && checkConnection == true){
-			progressDialog = ProgressDialog.show(this, "Account login", "Please wait while we test the new user account information");	
+    }
 
-			connectionThread.start();
-		}
-	}
-/*
- *  Dialog interface for starting the network settings
- */
-	DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
-	    @Override
-	    public void onClick(DialogInterface dialog, int which) {
-	        switch (which){
-	        case DialogInterface.BUTTON_POSITIVE:
-	            //Yes button clicked
-	        	
-	        	context.startActivity(new Intent(Settings.ACTION_WIFI_SETTINGS));
+    @Override
+    protected void onResume() {
+        super.onResume();
+        reference = this;
+    }
 
-	            break;
+    @Override
+    protected void onPause() {
+        super.onPause();
+        reference = null;
+    }
 
-	        case DialogInterface.BUTTON_NEGATIVE:
-	            //No button clicked
-	        	
-	            break;
-	        }
-	    }
-	};
-	
+    @Override
+    protected void onStop() {
+        super.onStop();
+        reference = null;
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        reference = null;
+    }
+
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences,
+            String key) {
+
+        boolean httpAddressChange = false;
+
+        connectionThread = new Thread(new Runnable() {
+
+            @Override
+            public void run() {
+
+                boolean routeToAddress = true;
+                AccountAccess account = AccountAccess
+                        .getAccountAccess(
+                                GlobalConfigs.httpAddress,
+                                (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE));
+                try {
+                    Utils.checkNetworkStatus((ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE));
+                } catch (NoNetworkAccessException e) {
+                    routeToAddress = false;
+
+                    Log.d(TAG, " No network access");
+
+                    runOnUiThread(new Runnable() {
+
+                        @Override
+                        public void run() {
+                            if (reference != null) {
+                                progressDialog.dismiss();
+                                AlertDialog.Builder builder = new AlertDialog.Builder(
+                                        context);
+                                builder.setMessage(
+                                        "There seams to be no network connectivity! Do you want to start network settings?")
+                                        .setPositiveButton("Yes",
+                                                dialogClickListener)
+                                        .setNegativeButton("No",
+                                                dialogClickListener).show();
+                            }
+                        }
+                    });
+
+                } catch (NoAccessToServer e) {
+
+                    Log.d(TAG, " no route to hoast");
+                    routeToAddress = false;
+                    runOnUiThread(new Runnable() {
+
+                        @Override
+                        public void run() {
+                            if (reference != null)
+                                Toast.makeText(
+                                        getApplicationContext(),
+                                        "There is no route to host :"
+                                                + GlobalConfigs.httpAddress,
+                                        Toast.LENGTH_LONG).show();
+                        }
+
+                    });
+                }
+
+                if (routeToAddress) {
+
+                    try {
+                        if (account.authenticate()) {
+
+                            runOnUiThread(new Runnable() {
+
+                                @Override
+                                public void run() {
+                                    if (reference != null) {
+                                        progressDialog.dismiss();
+                                        Toast.makeText(
+                                                context,
+                                                "Autenthication successfully established :"
+                                                        + GlobalConfigs.httpAddress,
+                                                Toast.LENGTH_LONG).show();
+                                    }
+                                }
+                            });
+                        } else {
+                            runOnUiThread(new Runnable() {
+
+                                @Override
+                                public void run() {
+                                    if (reference != null) {
+                                        progressDialog.dismiss();
+                                        Toast.makeText(
+                                                context,
+                                                "Please check username and password ",
+                                                Toast.LENGTH_LONG).show();
+                                    }
+                                }
+                            });
+                        }
+
+                    } catch (Exception e) {
+                    }
+
+                } else
+                    runOnUiThread(new Runnable() {
+
+                        @Override
+                        public void run() {
+                            if (reference != null)
+                                progressDialog.dismiss();
+                        }
+                    });
+            }
+        });
+
+        boolean checkConnection = false;
+
+        if (key.equals("username")) {
+            AccountAccess.userName = sharedPreferences
+                    .getString("username", "");
+            checkConnection = true;
+        } else if (key.equals("password")) {
+            AccountAccess.password = sharedPreferences
+                    .getString("password", "");
+            checkConnection = true;
+        } else if (key.equals("library_url")) {
+            checkConnection = true;
+            GlobalConfigs.httpAddress = sharedPreferences.getString(
+                    "library_url", "");
+
+            httpAddressChange = true;
+            System.out.println("Show dialog");
+
+            progressDialog = ProgressDialog.show(context, "Core files",
+                    "Downloading FM_IDL and OrgTree");
+
+            coreFilesDownload = new Thread(new Runnable() {
+
+                @Override
+                public void run() {
+                    System.out.println("FM idl download");
+                    GlobalConfigs sg = GlobalConfigs.getGlobalConfigs(context);
+                    sg.loadIDLFile();
+                    sg.getOrganisations();
+                    sg.getCopyStatusesAvailable((ConnectivityManager) context
+                            .getSystemService(Context.CONNECTIVITY_SERVICE));
+                    runOnUiThread(new Runnable() {
+                        public void run() {
+                            progressDialog.dismiss();
+                        }
+                    });
+
+                    connectionThread.start();
+                }
+            });
+
+            coreFilesDownload.start();
+
+            // wait for execution
+
+        }
+        if (key.equals("notifications_enabled")) {
+
+            if (sharedPreferences.getBoolean("notifications_enabled", false)) {
+
+                Toast.makeText(context, "Set up notification updates",
+                        Toast.LENGTH_SHORT).show();
+                // if enabled register the update service to run once per day
+                // get a Calendar object with current time
+                Calendar cal = Calendar.getInstance();
+
+                Intent bRecvIntent = new Intent(this,
+                        PeriodicServiceBroadcastReceiver.class);
+                bRecvIntent.setAction(ScheduledIntentService.ACTION);
+                // update the current intent if it exists
+                PendingIntent sender = PendingIntent.getBroadcast(this,
+                        NotificationAlert.NOTIFICATION_INTENT
+                                + PeriodicServiceBroadcastReceiver.INTENT_ID,
+                        bRecvIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+                // Get the AlarmManager service
+                AlarmManager am = (AlarmManager) getSystemService(ALARM_SERVICE);
+                am.setRepeating(AlarmManager.RTC, cal.getTimeInMillis(),
+                        10000 * ScheduledIntentService.SCHEDULE_TIME_INTERVAL,
+                        sender);
+            } else {
+                Toast.makeText(context, "Disable notification updates",
+                        Toast.LENGTH_SHORT).show();
+                // cancel the service
+
+                Intent bRecvIntent = new Intent(this,
+                        PeriodicServiceBroadcastReceiver.class);
+
+                // update the current intent if it exists
+                PendingIntent sender = PendingIntent.getBroadcast(this,
+                        NotificationAlert.NOTIFICATION_INTENT
+                                + PeriodicServiceBroadcastReceiver.INTENT_ID,
+                        bRecvIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+                // Get the AlarmManager service
+                AlarmManager am = (AlarmManager) getSystemService(ALARM_SERVICE);
+                // cancel the service
+                am.cancel(sender);
+            }
+            // register the
+
+        }
+
+        // test connection
+        if (!isFinishing() && httpAddressChange == false
+                && checkConnection == true) {
+            progressDialog = ProgressDialog
+                    .show(this, "Account login",
+                            "Please wait while we test the new user account information");
+
+            connectionThread.start();
+        }
+    }
+
+    /*
+     * Dialog interface for starting the network settings
+     */
+    DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+        @Override
+        public void onClick(DialogInterface dialog, int which) {
+            switch (which) {
+            case DialogInterface.BUTTON_POSITIVE:
+                // Yes button clicked
+
+                context.startActivity(new Intent(Settings.ACTION_WIFI_SETTINGS));
+
+                break;
+
+            case DialogInterface.BUTTON_NEGATIVE:
+                // No button clicked
+
+                break;
+            }
+        }
+    };
+
 }

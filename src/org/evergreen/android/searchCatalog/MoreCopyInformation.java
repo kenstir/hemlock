@@ -35,100 +35,111 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
-public class MoreCopyInformation extends Activity{
+public class MoreCopyInformation extends Activity {
 
+    private Button homeButton;
 
-	private Button homeButton;
-	
-	private Button myAccountButton;
-	
-	private TextView headerTitle;
-	
-	private Context context;
-	
-	private RecordInfo record;
-	
-	private GlobalConfigs gl;
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		
-		setContentView(R.layout.copy_information_more);
-		gl = GlobalConfigs.getGlobalConfigs(context);
-		context = this;
-		record = (RecordInfo) getIntent().getSerializableExtra("recordInfo");
-		
-		 //header portion actions
+    private Button myAccountButton;
+
+    private TextView headerTitle;
+
+    private Context context;
+
+    private RecordInfo record;
+
+    private GlobalConfigs gl;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        setContentView(R.layout.copy_information_more);
+        gl = GlobalConfigs.getGlobalConfigs(context);
+        context = this;
+        record = (RecordInfo) getIntent().getSerializableExtra("recordInfo");
+
+        // header portion actions
         homeButton = (Button) findViewById(R.id.library_logo);
         myAccountButton = (Button) findViewById(R.id.my_account_button);
         headerTitle = (TextView) findViewById(R.id.header_title);
         headerTitle.setText(R.string.copy_information_title);
-        
+
         myAccountButton.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				Intent intent = new Intent(getApplicationContext(),AccountScreenDashboard.class);
-				startActivity(intent);
-			}
-		});
-        
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(),
+                        AccountScreenDashboard.class);
+                startActivity(intent);
+            }
+        });
+
         homeButton.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				Intent intent = new Intent(getApplicationContext(),SearchCatalogListView.class);
-				startActivity(intent);
-			}
-		});
-        //end header portion actions
-		
-        LayoutInflater inf = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(),
+                        SearchCatalogListView.class);
+                startActivity(intent);
+            }
+        });
+        // end header portion actions
 
-		// insert into main view
-		LinearLayout insertPoint = (LinearLayout) findViewById(R.id.record_details_copy_information);
-		addCopyInfo(inf, insertPoint);
-        
-	}
+        LayoutInflater inf = (LayoutInflater) context
+                .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
-	public void addCopyInfo( LayoutInflater inflater, LinearLayout insertPoint){
-    	
-    	for(int i=0;i<record.copyInformationList.size();i++){
-			
-			View copy_info_view = inflater.inflate(R.layout.copy_information, null);
+        // insert into main view
+        LinearLayout insertPoint = (LinearLayout) findViewById(R.id.record_details_copy_information);
+        addCopyInfo(inf, insertPoint);
 
-			// fill in any details dynamically here
-			TextView library = (TextView) copy_info_view.findViewById(R.id.copy_information_library);
-			TextView call_number = (TextView) copy_info_view.findViewById(R.id.copy_information_call_number);
-			TextView copy_location = (TextView) copy_info_view.findViewById(R.id.copy_information_copy_location);
+    }
 
-		
-			
-			library.setText(gl.getOrganizationName(record.copyInformationList.get(i).org_id) + " ");
-			call_number.setText(record.copyInformationList.get(i).call_number_sufix);
-			copy_location.setText(record.copyInformationList.get(i).copy_location);
-			
-			// insert into main view
-			insertPoint.addView(copy_info_view, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.FILL_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+    public void addCopyInfo(LayoutInflater inflater, LinearLayout insertPoint) {
 
-			LinearLayout copy_statuses = (LinearLayout) copy_info_view.findViewById(R.id.copy_information_statuses);
-			
-			
-			CopyInformation info = record.copyInformationList.get(i);
-			
-			Set<Entry<String,String>> set = info.statusInformation.entrySet();
-			
-			Iterator<Entry<String, String>> it = set.iterator();
-			
-			while(it.hasNext()){
-				
-				Entry<String,String> ent = it.next();
-				TextView statusName = new TextView(context);
-				statusName.setText(ent.getKey() + " : " + ent.getValue());
-				
-				copy_statuses.addView(statusName, new LayoutParams(LayoutParams.WRAP_CONTENT,LayoutParams.WRAP_CONTENT));
-				
-			}
-		
-		}
-    	
+        for (int i = 0; i < record.copyInformationList.size(); i++) {
+
+            View copy_info_view = inflater.inflate(R.layout.copy_information,
+                    null);
+
+            // fill in any details dynamically here
+            TextView library = (TextView) copy_info_view
+                    .findViewById(R.id.copy_information_library);
+            TextView call_number = (TextView) copy_info_view
+                    .findViewById(R.id.copy_information_call_number);
+            TextView copy_location = (TextView) copy_info_view
+                    .findViewById(R.id.copy_information_copy_location);
+
+            library.setText(gl.getOrganizationName(record.copyInformationList
+                    .get(i).org_id) + " ");
+            call_number
+                    .setText(record.copyInformationList.get(i).call_number_sufix);
+            copy_location
+                    .setText(record.copyInformationList.get(i).copy_location);
+
+            // insert into main view
+            insertPoint.addView(copy_info_view, new ViewGroup.LayoutParams(
+                    ViewGroup.LayoutParams.FILL_PARENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT));
+
+            LinearLayout copy_statuses = (LinearLayout) copy_info_view
+                    .findViewById(R.id.copy_information_statuses);
+
+            CopyInformation info = record.copyInformationList.get(i);
+
+            Set<Entry<String, String>> set = info.statusInformation.entrySet();
+
+            Iterator<Entry<String, String>> it = set.iterator();
+
+            while (it.hasNext()) {
+
+                Entry<String, String> ent = it.next();
+                TextView statusName = new TextView(context);
+                statusName.setText(ent.getKey() + " : " + ent.getValue());
+
+                copy_statuses.addView(statusName, new LayoutParams(
+                        LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
+
+            }
+
+        }
+
     }
 }

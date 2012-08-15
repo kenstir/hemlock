@@ -35,249 +35,258 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class HoldsListView extends Activity{
+public class HoldsListView extends Activity {
 
-	private String TAG = "HoldsListView";
-	
-	private AccountAccess accountAccess = null;
-	
-	private ListView lv;
-	
-	private HoldsArrayAdapter listAdapter = null;
+    private String TAG = "HoldsListView";
 
-	private List<HoldRecord> holdRecords = null;
+    private AccountAccess accountAccess = null;
 
-	private Context context;
-	
-	Runnable getHoldsRunnable= null;
-	
-	private Button homeButton;
-	
-	private Button myAccountButton;
-	
-	private TextView headerTitle;
-	
-	private TextView holdsNoText;
+    private ListView lv;
 
-	private ProgressDialog progressDialog;
-	
-	private ImageDownloader imageDownloader;
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		
-		setContentView(R.layout.holds_list);
-		
-		 //header portion actions
+    private HoldsArrayAdapter listAdapter = null;
+
+    private List<HoldRecord> holdRecords = null;
+
+    private Context context;
+
+    Runnable getHoldsRunnable = null;
+
+    private Button homeButton;
+
+    private Button myAccountButton;
+
+    private TextView headerTitle;
+
+    private TextView holdsNoText;
+
+    private ProgressDialog progressDialog;
+
+    private ImageDownloader imageDownloader;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        setContentView(R.layout.holds_list);
+
+        // header portion actions
         homeButton = (Button) findViewById(R.id.library_logo);
         myAccountButton = (Button) findViewById(R.id.my_account_button);
         headerTitle = (TextView) findViewById(R.id.header_title);
         headerTitle.setText(R.string.hold_items_title);
-        
+
         myAccountButton.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				Intent intent = new Intent(getApplicationContext(),AccountScreenDashboard.class);
-				startActivity(intent);
-			}
-		});
-        
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(),
+                        AccountScreenDashboard.class);
+                startActivity(intent);
+            }
+        });
+
         homeButton.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				Intent intent = new Intent(getApplicationContext(),SearchCatalogListView.class);
-				startActivity(intent);
-			}
-		});
-        //end header portion actions
-		
-        holdsNoText = (TextView)findViewById(R.id.holds_number);
-        
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(),
+                        SearchCatalogListView.class);
+                startActivity(intent);
+            }
+        });
+        // end header portion actions
+
+        holdsNoText = (TextView) findViewById(R.id.holds_number);
+
         imageDownloader = new ImageDownloader(40, 40, false);
-        
-		lv = (ListView)findViewById(R.id.holds_item_list);
-		context = this;
-		accountAccess = AccountAccess.getAccountAccess();
 
-		holdRecords = new ArrayList<HoldRecord>();
-		listAdapter = new HoldsArrayAdapter(context, R.layout.holds_list_item, holdRecords);
-		lv.setAdapter(listAdapter);
-		
-		getHoldsRunnable = new Runnable() {
-			@Override
-			public void run() {
-				
-				try {
-					holdRecords = accountAccess.getHolds();
-				} catch (SessionNotFoundException e) {
-					//TODO other way?
-					try{
-						if(accountAccess.authenticate())
-							holdRecords = accountAccess.getHolds();
-					}catch(Exception eauth){
-						System.out.println("Exception in reAuth");
-					}
-				} catch (NoNetworkAccessException e) {
-					Utils.showNetworkNotAvailableDialog(context);
-				} catch (NoAccessToServer e) {
-					Utils.showServerNotAvailableDialog(context);
-				}
-			
-				runOnUiThread(new Runnable() {
-					@Override
-					public void run() {
-						listAdapter.clear();
-						
-						for(int i=0;i<holdRecords.size();i++)
-							listAdapter.add(holdRecords.get(i));
-						
-						holdsNoText.setText(" "+listAdapter.getCount());
-						progressDialog.dismiss();
-						listAdapter.notifyDataSetChanged();
-						
-					}
-				});
-			}
-		};
-		
-		
-		
-		if(accountAccess.isAuthenticated()){
-			progressDialog = new ProgressDialog(context);
-			progressDialog.setMessage("Loading holds");
-			progressDialog.show();
-			
-			//thread to retrieve holds
-			Thread getHoldsThread = new Thread(getHoldsRunnable);
-			getHoldsThread.start();
-			
-		}
-		else
-			Toast.makeText(context, "You must be authenticated to retrieve circ records", Toast.LENGTH_LONG);
+        lv = (ListView) findViewById(R.id.holds_item_list);
+        context = this;
+        accountAccess = AccountAccess.getAccountAccess();
 
-		
-		lv.setOnItemClickListener(new OnItemClickListener() {
+        holdRecords = new ArrayList<HoldRecord>();
+        listAdapter = new HoldsArrayAdapter(context, R.layout.holds_list_item,
+                holdRecords);
+        lv.setAdapter(listAdapter);
 
-			@Override
-			public void onItemClick(AdapterView<?> arg0, View arg1, int position,
-					long arg3) {
-					HoldRecord record = (HoldRecord) lv.getItemAtPosition(position);
-					
-					Intent intent = new Intent(getApplicationContext(),HoldDetails.class);
-					
-					intent.putExtra("holdRecord", record);
-					
-					//doae not matter request code, only result code
-					startActivityForResult(intent, 0);
-			}
-		});
-	}
-	@Override
-	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		// TODO Auto-generated method stub
-		super.onActivityResult(requestCode, resultCode, data);
-		
-		switch(resultCode){
-		
-		case HoldDetails.RESULT_CODE_CANCEL : { 
-			//nothing
-			Log.d(TAG, "Do nothing");
-			}break;
-			
-		case HoldDetails.RESULT_CODE_DELETE_HOLD : {
-			//refresh ui
-			progressDialog = new ProgressDialog(context);
-			progressDialog.setMessage("Loading holds");
-			progressDialog.show();
-			//thread to retrieve holds
-			Thread getHoldsThread = new Thread(getHoldsRunnable);
-			getHoldsThread.start();
-			Log.d(TAG, "Update on delete hold");
-		}break;
-		
-		case HoldDetails.RESULT_CODE_UPDATE_HOLD : {
-			//refresh ui
-			progressDialog = new ProgressDialog(context);
-			progressDialog.setMessage("Loading holds");
-			progressDialog.show();
-			//thread to retrieve holds
-			Thread getHoldsThread = new Thread(getHoldsRunnable);
-			getHoldsThread.start();
-			Log.d(TAG, "Update on update hold");
-		}break;
-		
-		}
-	}
-	
-	class HoldsArrayAdapter extends ArrayAdapter<HoldRecord> {
-    	private static final String tag = "CheckoutArrayAdapter";
-    	
-    	private TextView holdTitle;
-    	private TextView holdAuthor;
-    	private TextView status;
-    	private ImageView hold_icon;
-    	
-    	private List<HoldRecord> records = new ArrayList<HoldRecord>();
+        getHoldsRunnable = new Runnable() {
+            @Override
+            public void run() {
 
-    	public HoldsArrayAdapter(Context context, int textViewResourceId,
-    			List<HoldRecord> objects) {
-    		super(context, textViewResourceId, objects);
-    		this.records = objects;
-    	}
+                try {
+                    holdRecords = accountAccess.getHolds();
+                } catch (SessionNotFoundException e) {
+                    // TODO other way?
+                    try {
+                        if (accountAccess.authenticate())
+                            holdRecords = accountAccess.getHolds();
+                    } catch (Exception eauth) {
+                        System.out.println("Exception in reAuth");
+                    }
+                } catch (NoNetworkAccessException e) {
+                    Utils.showNetworkNotAvailableDialog(context);
+                } catch (NoAccessToServer e) {
+                    Utils.showServerNotAvailableDialog(context);
+                }
 
-    	public int getCount() {
-    		return this.records.size();
-    	}
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        listAdapter.clear();
 
-    	public HoldRecord getItem(int index) {
-    		return this.records.get(index);
-    	}
+                        for (int i = 0; i < holdRecords.size(); i++)
+                            listAdapter.add(holdRecords.get(i));
 
-    	public View getView(int position, View convertView, ViewGroup parent) {
-    		View row = convertView;
-    		
-    		// Get item
-    		final HoldRecord record = getItem(position);
-    		
-    		if(row == null){
-	
-    			Log.d(tag, "Starting XML view more infaltion ... ");
-    			LayoutInflater inflater = (LayoutInflater) this.getContext()
-    					.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-    			row = inflater.inflate(R.layout.holds_list_item, parent, false);
-    			Log.d(tag, "Successfully completed XML view more Inflation!");
+                        holdsNoText.setText(" " + listAdapter.getCount());
+                        progressDialog.dismiss();
+                        listAdapter.notifyDataSetChanged();
 
+                    }
+                });
+            }
+        };
 
-    		}
-    		
-    		hold_icon = (ImageView) row.findViewById(R.id.hold_resource_icon);
-    		
-    		// Get reference to TextView - title
-    		holdTitle = (TextView) row.findViewById(R.id.hold_title);
-    		
-    		// Get reference to TextView author
-    		holdAuthor = (TextView) row.findViewById(R.id.hold_author);
+        if (accountAccess.isAuthenticated()) {
+            progressDialog = new ProgressDialog(context);
+            progressDialog.setMessage("Loading holds");
+            progressDialog.show();
 
-    		//Get hold status
-    		status = (TextView) row.findViewById(R.id.hold_status);
-    		
-	    		//set text
-    		String imageResourceHref = GlobalConfigs.httpAddress + GlobalConfigs.hold_icon_address +record.types_of_resource +".jpg";
-    		
-    		if(imageResourceHref.contains(" ")){
-    			imageResourceHref = imageResourceHref.replace(" ", "%20");
-    		}
-		
-    		imageDownloader.download(imageResourceHref, hold_icon);
-		
-	    	System.out.println("Image " + imageResourceHref + " Row " + record.title + " " + record.author + " " + record.getHoldStatus() );
-	    	//set raw information
-	    	holdTitle.setText(record.title);
-	    	holdAuthor.setText(record.author);
-	    	status.setText(record.getHoldStatus());
-    		
-    		
-    		return row;
-    	}
+            // thread to retrieve holds
+            Thread getHoldsThread = new Thread(getHoldsRunnable);
+            getHoldsThread.start();
+
+        } else
+            Toast.makeText(context,
+                    "You must be authenticated to retrieve circ records",
+                    Toast.LENGTH_LONG);
+
+        lv.setOnItemClickListener(new OnItemClickListener() {
+
+            @Override
+            public void onItemClick(AdapterView<?> arg0, View arg1,
+                    int position, long arg3) {
+                HoldRecord record = (HoldRecord) lv.getItemAtPosition(position);
+
+                Intent intent = new Intent(getApplicationContext(),
+                        HoldDetails.class);
+
+                intent.putExtra("holdRecord", record);
+
+                // doae not matter request code, only result code
+                startActivityForResult(intent, 0);
+            }
+        });
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        // TODO Auto-generated method stub
+        super.onActivityResult(requestCode, resultCode, data);
+
+        switch (resultCode) {
+
+        case HoldDetails.RESULT_CODE_CANCEL: {
+            // nothing
+            Log.d(TAG, "Do nothing");
+        }
+            break;
+
+        case HoldDetails.RESULT_CODE_DELETE_HOLD: {
+            // refresh ui
+            progressDialog = new ProgressDialog(context);
+            progressDialog.setMessage("Loading holds");
+            progressDialog.show();
+            // thread to retrieve holds
+            Thread getHoldsThread = new Thread(getHoldsRunnable);
+            getHoldsThread.start();
+            Log.d(TAG, "Update on delete hold");
+        }
+            break;
+
+        case HoldDetails.RESULT_CODE_UPDATE_HOLD: {
+            // refresh ui
+            progressDialog = new ProgressDialog(context);
+            progressDialog.setMessage("Loading holds");
+            progressDialog.show();
+            // thread to retrieve holds
+            Thread getHoldsThread = new Thread(getHoldsRunnable);
+            getHoldsThread.start();
+            Log.d(TAG, "Update on update hold");
+        }
+            break;
+
+        }
+    }
+
+    class HoldsArrayAdapter extends ArrayAdapter<HoldRecord> {
+        private static final String tag = "CheckoutArrayAdapter";
+
+        private TextView holdTitle;
+        private TextView holdAuthor;
+        private TextView status;
+        private ImageView hold_icon;
+
+        private List<HoldRecord> records = new ArrayList<HoldRecord>();
+
+        public HoldsArrayAdapter(Context context, int textViewResourceId,
+                List<HoldRecord> objects) {
+            super(context, textViewResourceId, objects);
+            this.records = objects;
+        }
+
+        public int getCount() {
+            return this.records.size();
+        }
+
+        public HoldRecord getItem(int index) {
+            return this.records.get(index);
+        }
+
+        public View getView(int position, View convertView, ViewGroup parent) {
+            View row = convertView;
+
+            // Get item
+            final HoldRecord record = getItem(position);
+
+            if (row == null) {
+
+                Log.d(tag, "Starting XML view more infaltion ... ");
+                LayoutInflater inflater = (LayoutInflater) this.getContext()
+                        .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                row = inflater.inflate(R.layout.holds_list_item, parent, false);
+                Log.d(tag, "Successfully completed XML view more Inflation!");
+
+            }
+
+            hold_icon = (ImageView) row.findViewById(R.id.hold_resource_icon);
+
+            // Get reference to TextView - title
+            holdTitle = (TextView) row.findViewById(R.id.hold_title);
+
+            // Get reference to TextView author
+            holdAuthor = (TextView) row.findViewById(R.id.hold_author);
+
+            // Get hold status
+            status = (TextView) row.findViewById(R.id.hold_status);
+
+            // set text
+            String imageResourceHref = GlobalConfigs.httpAddress
+                    + GlobalConfigs.hold_icon_address
+                    + record.types_of_resource + ".jpg";
+
+            if (imageResourceHref.contains(" ")) {
+                imageResourceHref = imageResourceHref.replace(" ", "%20");
+            }
+
+            imageDownloader.download(imageResourceHref, hold_icon);
+
+            System.out.println("Image " + imageResourceHref + " Row "
+                    + record.title + " " + record.author + " "
+                    + record.getHoldStatus());
+            // set raw information
+            holdTitle.setText(record.title);
+            holdAuthor.setText(record.author);
+            status.setText(record.getHoldStatus());
+
+            return row;
+        }
     }
 }

@@ -5,7 +5,8 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
 public class TestFragmentAdapter extends FragmentPagerAdapter {
-    protected static final String[] CONTENT = new String[] { "This", "Is", "A", "Test", };
+    protected static final String[] CONTENT = new String[] { "This", "Is", "A",
+            "Test", };
 
     private int mCount = CONTENT.length;
 
