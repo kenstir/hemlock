@@ -9,6 +9,7 @@ import org.androwrapee.db.DefaultDAO;
 import org.evergreen.android.R;
 import org.evergreen.android.accountAccess.AccountAccess;
 import org.evergreen.android.accountAccess.MaxRenewalsException;
+import org.evergreen.android.accountAccess.ServerErrorMessage;
 import org.evergreen.android.accountAccess.SessionNotFoundException;
 import org.evergreen.android.database.DatabaseManager;
 import org.evergreen.android.globals.NoAccessToServer;
@@ -304,12 +305,25 @@ public class ItemsCheckOutListView extends Activity {
 											progressDialog.dismiss();
 											Toast.makeText(context,
 													"Max renewals reached",
-													Toast.LENGTH_SHORT).show();
+													Toast.LENGTH_LONG).show();
 										}
 									});
 
 									refresh = false;
-								} catch (SessionNotFoundException e1) {
+								}catch (ServerErrorMessage error) {
+									
+									final String errorMessage = error.message; 
+									runOnUiThread(new Runnable() {
+
+										@Override
+										public void run() {
+											progressDialog.dismiss();
+											Toast.makeText(context,
+													errorMessage,
+													Toast.LENGTH_LONG).show();
+										}
+									});
+								}catch (SessionNotFoundException e1) {
 									try {
 										if (accountAccess.authenticate())
 											ac.renewCirc(record.getTargetCopy());

@@ -611,7 +611,7 @@ public class AccountAccess {
 	/* Method used to renew a circulation record based on target_copy_id
 	 * Returns many objects, don't think they are needed
 	 */
-	public void renewCirc(Integer target_copy) throws MaxRenewalsException, SessionNotFoundException, NoNetworkAccessException, NoAccessToServer{ 
+	public void renewCirc(Integer target_copy) throws MaxRenewalsException,ServerErrorMessage, SessionNotFoundException, NoNetworkAccessException, NoAccessToServer{ 
 		
 		HashMap<String,Integer> complexParam = new HashMap<String, Integer>();
 		complexParam.put("patron", this.userID);		
@@ -625,6 +625,7 @@ public class AccountAccess {
 		if(resp.get("textcode") != null){
 			if(resp.get("textcode").equals("MAX_RENEWALS_REACHED"))
 				throw new MaxRenewalsException();
+			throw new ServerErrorMessage(resp.get("desc").toString());
 		}
 		
 		
@@ -681,9 +682,7 @@ public class AccountAccess {
 		String holdType = (String)holdArhObject.get("hold_type");
 		
 		String method = null;
-		
-		
-		
+
 		Object response;
 		OSRFObject holdInfo = null;
 		if(holdType.equals("T") || holdType.equals("M")){
