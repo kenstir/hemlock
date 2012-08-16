@@ -44,7 +44,9 @@
 	<ListView 
 	  android:id="@+id/checkout_items_list"
 	  android:layout_width="fill_parent"
-	  android:layout_height="wrap_content" 
+	  android:layout_height="wrap_content"
+	  android:divider="@drawable/list_view_separator"
+      android:dividerHeight="1dp" 
 	  >
 	    
 	</ListView>

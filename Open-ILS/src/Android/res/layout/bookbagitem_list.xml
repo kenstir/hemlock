@@ -46,6 +46,8 @@
 	  android:layout_height="wrap_content"  
 	  android:paddingTop="10dip"
 	  android:background="@drawable/listview_background"
+	  android:divider="@drawable/list_view_separator"
+      android:dividerHeight="1dp"
 	  ></ListView>
 
 </LinearLayout>

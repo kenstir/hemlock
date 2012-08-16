@@ -1,3 +1,22 @@
+/*
+ * Copyright (C) 2012 Evergreen Open-ILS
+ * @author Daniel-Octavian Rizea
+ * 
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * or the License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be usefull,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software 
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
+ * 
+ */
 package org.evergreen.android.accountAccess;
 
 import java.security.MessageDigest;
@@ -52,202 +71,100 @@ public class AccountAccess {
     /** The SERVIC e_ circ. */
     public static String SERVICE_CIRC = "open-ils.circ";
 
+    /** The SERVIC e_ search. */
     public static String SERVICE_SEARCH = "open-ils.search";
 
+    /** The SERVIC e_ serial. */
     public static String SERVICE_SERIAL = "open-ils.serial";
 
+    /** The SERVIC e_ fielder. */
     public static String SERVICE_FIELDER = "open-ils.fielder";
 
-    /**
-     * The METHOD_FETCH_CHECKED_OUT_SUM description : for a given user returns a
-     * a structure of circulation objects sorted by out, overdue, lost,
-     * claims_returned, long_overdue; A list of ID's returned for each type :
-     * "out":[id1,id2,...]
-     * 
-     * @param : authtoken , UserID
-     * @returns: { "out":[id
-     *           's],"claims_returned":[],"long_overdue":[],"overdue":[],"lost":[]
-     *           }
-     */
+    /** The METHOD_FETCH_CHECKED_OUT_SUM description : for a given user returns a a structure of circulation objects sorted by out, overdue, lost, claims_returned, long_overdue; A list of ID's returned for each type : "out":[id1,id2,...] @returns: { "out":[id 's],"claims_returned":[],"long_overdue":[],"overdue":[],"lost":[] } */
     public static String METHOD_FETCH_CHECKED_OUT_SUM = "open-ils.actor.user.checked_out";
 
-    /**
-     * The METHOD_FETCH_NON_CAT_CIRCS description : for a given user, returns an
-     * id-list of non-cataloged circulations that are considered open for now. A
-     * circ is open if circ time + circ duration (based on type) is > than now
-     * 
-     * @param : authtoken, UserID
-     * @returns: Array of non-catalogen circ IDs, event or error
-     */
+    /** The METHOD_FETCH_NON_CAT_CIRCS description : for a given user, returns an id-list of non-cataloged circulations that are considered open for now. A circ is open if circ time + circ duration (based on type) is > than now @returns: Array of non-catalogen circ IDs, event or error */
     public static String METHOD_FETCH_NON_CAT_CIRCS = "open-ils.circ.open_non_cataloged_circulation.user";
 
-    /**
-     * The METHOD_FETCH_CIRC_BY_ID description : Retrieves a circ object by ID.
-     * 
-     * @param : authtoken, circ_id
-     * @returns : "circ" class. Fields of interest : renewal_remaining, due_date
-     */
+    /** The METHOD_FETCH_CIRC_BY_ID description : Retrieves a circ object by ID. @returns : "circ" class. Fields of interest : renewal_remaining, due_date */
     public static String METHOD_FETCH_CIRC_BY_ID = "open-ils.circ.retrieve";
 
-    /**
-     * The METHOD_FETCH_MODS_FROM_COPY description : used to return info
-     * 
-     * @param : target_copy
-     * @returns : mvr class OSRF Object. Fields of interest : title, author
-     */
+    /** The METHOD_FETCH_MODS_FROM_COPY description : used to return info. @returns : mvr class OSRF Object. Fields of interest : title, author */
     public static String METHOD_FETCH_MODS_FROM_COPY = "open-ils.search.biblio.mods_from_copy";
 
-    /**
-     * The METHOD_FETCH_COPY description : used to return info for a
-     * PRE_CATALOGED object
-     * 
-     * @param : target_copy
-     * @returns : acp class OSRF Object. Fields of interest : dummy_title,
-     *          dummy_author
-     */
+    /** The METHOD_FETCH_COPY description : used to return info for a PRE_CATALOGED object. @returns : acp class OSRF Object. Fields of interest : dummy_title, dummy_author */
     public static String METHOD_FETCH_COPY = "open-ils.search.asset.copy.retrieve";
-    /**
-     * The METHOD_RENEW_CIRC description : used to renew a circulation object
-     * 
-     * @param : HashMap ex :{ {"patron":id,"copyid":copy_id,"opac_renewal":1} }
-     * @returnes : acn, acp, circ, mus, mbts
-     */
+    
+    /** The METHOD_RENEW_CIRC description : used to renew a circulation object. @returnes : acn, acp, circ, mus, mbts */
     public static String METHOD_RENEW_CIRC = "open-ils.circ.renew";
 
     // Used for Holds Tab
 
-    /**
-     * The METHOD_FETCH_HOLDS
-     * 
-     * @param : authtoken, userID
-     * @returns: List of "ahr" OSPFObject . Fields of interest : pickup_lib
-     */
+    /** The METHOD_FETCH_HOLDS. @returns: List of "ahr" OSPFObject . Fields of interest : pickup_lib */
     public static String METHOD_FETCH_HOLDS = "open-ils.circ.holds.retrieve";
 
-    /**
-     * The METHOD_FETCH_ORG_SETTINGS description : retrieves a setting from the
-     * organization unit
-     * 
-     * @param : org_id, String with setting property to return
-     * @returns : returns the requested value of the setting
-     */
+    /** The METHOD_FETCH_ORG_SETTINGS description : retrieves a setting from the organization unit. @returns : returns the requested value of the setting */
     public static String METHOD_FETCH_ORG_SETTINGS = "open-ils.actor.ou_setting.ancestor_default";
 
-    /**
-     * The METHOD_FETCH_MRMODS
-     * 
-     */
+    /** The METHOD_FETCH_MRMODS. */
     // if holdtype == M return mvr OSRFObject
     public static String METHOD_FETCH_MRMODS = "open-ils.search.biblio.metarecord.mods_slim.retrieve";
     // if holdtype == T return mvr OSRFObject
+    /** The METHO d_ fetc h_ rmods. */
     public static String METHOD_FETCH_RMODS = "open-ils.search.biblio.record.mods_slim.retrieve";
     // if hold type V
+    /** The METHO d_ fetc h_ volume. */
     public static String METHOD_FETCH_VOLUME = "open-ils.search.asset.call_number.retrieve";
     // if hold type I
+    /** The METHO d_ fetc h_ issuance. */
     public static String METHOD_FETCH_ISSUANCE = "open-ils.serial.issuance.pub_fleshed.batch.retrieve";
 
+    /** The METHO d_ fetc h_ hol d_ status. */
     public static String METHOD_FETCH_HOLD_STATUS = "open-ils.circ.hold.queue_stats.retrieve";
 
-    /**
-     * The METHOD_UPDATE_HOLD description : Updates the specified hold. If
-     * session user != hold user then session user must have UPDATE_HOLD
-     * permissions
-     * 
-     * @param : authtoken, ahr object
-     * @returns : hold_is on success, event or error on failure
-     */
+    /** The METHOD_UPDATE_HOLD description : Updates the specified hold. If session user != hold user then session user must have UPDATE_HOLD permissions @returns : hold_is on success, event or error on failure */
     public static String METHOD_UPDATE_HOLD = "open-ils.circ.hold.update";
 
-    /**
-     * The METHOD_CANCEL_HOLD description : Cancels the specified hold. session
-     * user != hold user must have CANCEL_HOLD permissions.
-     * 
-     * @param : authtoken, hold_ids, one after another : 1,21,33,....
-     * @returns : 1 on success, event or error on failure
-     */
+    /** The METHOD_CANCEL_HOLD description : Cancels the specified hold. session user != hold user must have CANCEL_HOLD permissions. @returns : 1 on success, event or error on failure */
     public static String METHOD_CANCEL_HOLD = "open-ils.circ.hold.cancel";
 
-    /**
-     * The METHOD_VERIFY_HOLD_POSSIBLE description :
-     * 
-     * @param : authtoken , hashmap
-     *        {"titleid":38,"mrid":35,"volume_id":null,"issuanceid":null,
-     *        "copy_id"
-     *        :null,"hold_type":"T","holdable_formats":null,"patronid":2
-     *        ,"depth":0,"pickup_lib":"8","partid":null} parameters : (desc in
-     *        OpenILS::Application::Circ::holds perldoc) patron_id ID of hold
-     *        recipient depth (hold range depth, default 0) pickup_lib
-     *        destination for hold, fallback value for selection_ou selection_ou
-     *        issuanceid partid titleid volume_id copy_id mrid hold_type
-     * 
-     * @returns : hashmap with "success" : 1 field or
-     */
+    /** The METHOD_VERIFY_HOLD_POSSIBLE description :. @returns : hashmap with "success" : 1 field or */
     public static String METHOD_VERIFY_HOLD_POSSIBLE = "open-ils.circ.title_hold.is_possible";
 
-    /**
-     * The METHOD_CREATE_HOLD description :
-     * 
-     * @param : authtoken, ahr OSRFObject
-     * @returns : hash with messages : "success" : 1 field or
-     */
+    /** The METHOD_CREATE_HOLD description :. @returns : hash with messages : "success" : 1 field or */
     public static String METHOD_CREATE_HOLD = "open-ils.circ.holds.create";
 
     // Used for Fines
 
-    /**
-     * The METHODS_FETCH_FINES_SUMMARY description :
-     * 
-     * @param : authToken, UserID
-     * @returns: "mous" OSRFObject. fields: balance_owed, total_owed, total_paid
-     */
+    /** The METHODS_FETCH_FINES_SUMMARY description :. @returns: "mous" OSRFObject. fields: balance_owed, total_owed, total_paid */
     public static String METHOD_FETCH_FINES_SUMMARY = "open-ils.actor.user.fines.summary";
 
-    /**
-     * The METHOD_FETCH_TRANSACTIONS description: For a given user retrieves a
-     * list of fleshed transactions. List of objects, each object is a hash
-     * containing : transaction, circ, record
-     * 
-     * @param : authToken, userID
-     * @returns : array of objects, must investigate
-     */
+    /** The METHOD_FETCH_TRANSACTIONS description: For a given user retrieves a list of fleshed transactions. List of objects, each object is a hash containing : transaction, circ, record @returns : array of objects, must investigate */
     public static String METHOD_FETCH_TRANSACTIONS = "open-ils.actor.user.transactions.have_charge.fleshed";
 
-    /**
-     * The METHOD_FETCH_MONEY_BILLING description :
-     * 
-     * @param : authToken, transaction_id;
-     */
+    /** The METHOD_FETCH_MONEY_BILLING description :. */
     public static String METHOD_FETCH_MONEY_BILLING = "open-ils.circ.money.billing.retrieve.all";
 
     // Used for book bags
-    /**
-     * The METHOD_FLESH_CONTAINERS description : Retrieves all un-fleshed
-     * buckets by class assigned to a given user VIEW_CONTAINER permissions is
-     * requestID != owner ID
-     * 
-     * @param : authtoken, UserID, "biblio", "bookbag"
-     * @returns : array of "cbreb" OSRFObjects
-     */
+    /** The METHOD_FLESH_CONTAINERS description : Retrieves all un-fleshed buckets by class assigned to a given user VIEW_CONTAINER permissions is requestID != owner ID. @returns : array of "cbreb" OSRFObjects */
     public static String METHOD_FLESH_CONTAINERS = "open-ils.actor.container.retrieve_by_class.authoritative";
 
-    /**
-     * The METHOD_FLESH_PUBLIC_CONTAINER description : array of contaoners
-     * correspondig to a id
-     * 
-     * @param : authtoken , "biblio" , boobkbag ID
-     * @returns : array of "crebi" OSRF objects (content of bookbag, id's of
-     *          elements to get more info)
-     */
+    /** The METHOD_FLESH_PUBLIC_CONTAINER description : array of contaoners correspondig to a id. @returns : array of "crebi" OSRF objects (content of bookbag, id's of elements to get more info) */
     public static String METHOD_FLESH_PUBLIC_CONTAINER = "open-ils.actor.container.flesh";
 
+    /** The METHO d_ containe r_ delete. */
     public static String METHOD_CONTAINER_DELETE = "open-ils.actor.container.item.delete";
 
+    /** The METHO d_ containe r_ create. */
     public static String METHOD_CONTAINER_CREATE = "open-ils.actor.container.create";
 
+    /** The METHO d_ containe r_ ite m_ create. */
     public static String METHOD_CONTAINER_ITEM_CREATE = "open-ils.actor.container.item.create";
 
+    /** The METHO d_ containe r_ ful l_ delete. */
     public static String METHOD_CONTAINER_FULL_DELETE = "open-ils.actor.container.full_delete";
 
+    /** The book bags. */
     public ArrayList<BookBag> bookBags = null;
 
     /** The conn. */
@@ -264,11 +181,13 @@ public class AccountAccess {
      * */
     public String authToken = null;
 
+    /** The cm. */
     private ConnectivityManager cm;
 
     /** The auth time. */
     private Integer authTime = null;
 
+    /** The user id. */
     private Integer userID = null;
     // for demo purpose
     /** The user name. */
@@ -277,13 +196,14 @@ public class AccountAccess {
     /** The password. */
     public static String password = "demo123";
 
+    /** The account access. */
     private static AccountAccess accountAccess = null;
 
     /**
      * Instantiates a new authenticate user.
-     * 
-     * @param httpAddress
-     *            the http address
+     *
+     * @param httpAddress the http address
+     * @param cm the cm
      */
     private AccountAccess(String httpAddress, ConnectivityManager cm) {
 
@@ -303,6 +223,11 @@ public class AccountAccess {
 
     }
 
+    /**
+     * Checks if is authenticated.
+     *
+     * @return true, if is authenticated
+     */
     public boolean isAuthenticated() {
 
         if (authToken != null)
@@ -311,6 +236,13 @@ public class AccountAccess {
         return false;
     }
 
+    /**
+     * Gets the account access.
+     *
+     * @param httpAddress the http address
+     * @param cm the cm
+     * @return the account access
+     */
     public static AccountAccess getAccountAccess(String httpAddress,
             ConnectivityManager cm) {
 
@@ -326,6 +258,11 @@ public class AccountAccess {
     }
 
     // the object must be initialized before
+    /**
+     * Gets the account access.
+     *
+     * @return the account access
+     */
     public static AccountAccess getAccountAccess() {
 
         if (accountAccess != null) {
@@ -337,6 +274,11 @@ public class AccountAccess {
 
     /*
      * Change the Http conn to a new library address
+     */
+    /**
+     * Update http address.
+     *
+     * @param httpAddress the http address
      */
     public void updateHttpAddress(String httpAddress) {
         System.out.println("update http address of account access to "
@@ -388,6 +330,12 @@ public class AccountAccess {
         return "";
     }
 
+    /**
+     * Sets the account info.
+     *
+     * @param username the username
+     * @param password the password
+     */
     public static void setAccountInfo(String username, String password) {
 
         AccountAccess.userName = username;
@@ -397,6 +345,10 @@ public class AccountAccess {
 
     /**
      * Authenticate.
+     *
+     * @return true, if successful
+     * @throws NoNetworkAccessException the no network access exception
+     * @throws NoAccessToServer the no access to server
      */
     public boolean authenticate() throws NoNetworkAccessException,
             NoAccessToServer {
@@ -434,8 +386,10 @@ public class AccountAccess {
 
     /**
      * Authenticate init.
-     * 
+     *
      * @return seed for phase 2 of login
+     * @throws NoAccessToServer the no access to server
+     * @throws NoNetworkAccessException the no network access exception
      */
     private String authenticateInit() throws NoAccessToServer,
             NoNetworkAccessException {
@@ -456,9 +410,11 @@ public class AccountAccess {
     /**
      * Authenticate complete. Phase 2 of login process Application send's
      * username and hash to confirm login
-     * 
-     * @param seed
-     *            the seed
+     *
+     * @param seed the seed
+     * @return true, if successful
+     * @throws NoAccessToServer the no access to server
+     * @throws NoNetworkAccessException the no network access exception
      * @returns bollean if auth was ok
      */
     private boolean authenticateComplete(String seed) throws NoAccessToServer,
@@ -520,6 +476,14 @@ public class AccountAccess {
     // ------------------------Checked Out Items Section
     // -------------------------//
 
+    /**
+     * Gets the items checked out.
+     *
+     * @return the items checked out
+     * @throws SessionNotFoundException the session not found exception
+     * @throws NoNetworkAccessException the no network access exception
+     * @throws NoAccessToServer the no access to server
+     */
     public ArrayList<CircRecord> getItemsCheckedOut()
             throws SessionNotFoundException, NoNetworkAccessException,
             NoAccessToServer {
@@ -601,6 +565,15 @@ public class AccountAccess {
      * 
      * @returns : "circ" OSRFObject
      */
+    /**
+     * Retrieve circ record.
+     *
+     * @param id the id
+     * @return the oSRF object
+     * @throws SessionNotFoundException the session not found exception
+     * @throws NoNetworkAccessException the no network access exception
+     * @throws NoAccessToServer the no access to server
+     */
     private OSRFObject retrieveCircRecord(String id)
             throws SessionNotFoundException, NoNetworkAccessException,
             NoAccessToServer {
@@ -616,6 +589,15 @@ public class AccountAccess {
      * open-ils.search.biblio.mods_from_copy or in case of pre-cataloged records
      * it uses open-ils.search.asset.copy.retriev Usefull info : title and
      * author (for acp : dummy_title, dummy_author)
+     */
+    /**
+     * Fetch info for checked out item.
+     *
+     * @param target_copy the target_copy
+     * @param circRecord the circ record
+     * @return the oSRF object
+     * @throws NoNetworkAccessException the no network access exception
+     * @throws NoAccessToServer the no access to server
      */
     private OSRFObject fetchInfoForCheckedOutItem(Integer target_copy,
             CircRecord circRecord) throws NoNetworkAccessException,
@@ -646,6 +628,14 @@ public class AccountAccess {
         return result;
     }
 
+    /**
+     * Fetch mods from copy.
+     *
+     * @param target_copy the target_copy
+     * @return the oSRF object
+     * @throws NoNetworkAccessException the no network access exception
+     * @throws NoAccessToServer the no access to server
+     */
     private OSRFObject fetchModsFromCopy(Integer target_copy)
             throws NoNetworkAccessException, NoAccessToServer {
 
@@ -656,6 +646,14 @@ public class AccountAccess {
         return mvr;
     }
 
+    /**
+     * Fetch asset copy.
+     *
+     * @param target_copy the target_copy
+     * @return the oSRF object
+     * @throws NoNetworkAccessException the no network access exception
+     * @throws NoAccessToServer the no access to server
+     */
     private OSRFObject fetchAssetCopy(Integer target_copy)
             throws NoNetworkAccessException, NoAccessToServer {
 
@@ -668,6 +666,16 @@ public class AccountAccess {
     /*
      * Method used to renew a circulation record based on target_copy_id Returns
      * many objects, don't think they are needed
+     */
+    /**
+     * Renew circ.
+     *
+     * @param target_copy the target_copy
+     * @throws MaxRenewalsException the max renewals exception
+     * @throws ServerErrorMessage the server error message
+     * @throws SessionNotFoundException the session not found exception
+     * @throws NoNetworkAccessException the no network access exception
+     * @throws NoAccessToServer the no access to server
      */
     public void renewCirc(Integer target_copy) throws MaxRenewalsException,
             ServerErrorMessage, SessionNotFoundException,
@@ -695,6 +703,16 @@ public class AccountAccess {
     // ------------------------Holds Section
     // --------------------------------------//
 
+    /**
+     * Fetch org settings.
+     *
+     * @param org_id the org_id
+     * @param setting the setting
+     * @return the object
+     * @throws SessionNotFoundException the session not found exception
+     * @throws NoNetworkAccessException the no network access exception
+     * @throws NoAccessToServer the no access to server
+     */
     public Object fetchOrgSettings(Integer org_id, String setting)
             throws SessionNotFoundException, NoNetworkAccessException,
             NoAccessToServer {
@@ -706,6 +724,14 @@ public class AccountAccess {
 
     }
 
+    /**
+     * Gets the holds.
+     *
+     * @return the holds
+     * @throws SessionNotFoundException the session not found exception
+     * @throws NoNetworkAccessException the no network access exception
+     * @throws NoAccessToServer the no access to server
+     */
     public List<HoldRecord> getHolds() throws SessionNotFoundException,
             NoNetworkAccessException, NoAccessToServer {
 
@@ -738,6 +764,15 @@ public class AccountAccess {
      * copy P - pat
      */
 
+    /**
+     * Fetch hold title info.
+     *
+     * @param holdArhObject the hold arh object
+     * @param hold the hold
+     * @return the object
+     * @throws NoNetworkAccessException the no network access exception
+     * @throws NoAccessToServer the no access to server
+     */
     private Object fetchHoldTitleInfo(OSRFObject holdArhObject, HoldRecord hold)
             throws NoNetworkAccessException, NoAccessToServer {
 
@@ -777,6 +812,15 @@ public class AccountAccess {
         return holdInfo;
     }
 
+    /**
+     * Hold fetch objects.
+     *
+     * @param hold the hold
+     * @param holdObj the hold obj
+     * @return the oSRF object
+     * @throws NoNetworkAccessException the no network access exception
+     * @throws NoAccessToServer the no access to server
+     */
     private OSRFObject holdFetchObjects(OSRFObject hold, HoldRecord holdObj)
             throws NoNetworkAccessException, NoAccessToServer {
 
@@ -909,6 +953,16 @@ public class AccountAccess {
         return null;
     }
 
+    /**
+     * Fetch hold status.
+     *
+     * @param hold the hold
+     * @param holdObj the hold obj
+     * @return the object
+     * @throws SessionNotFoundException the session not found exception
+     * @throws NoNetworkAccessException the no network access exception
+     * @throws NoAccessToServer the no access to server
+     */
     public Object fetchHoldStatus(OSRFObject hold, HoldRecord holdObj)
             throws SessionNotFoundException, NoNetworkAccessException,
             NoAccessToServer {
@@ -925,6 +979,15 @@ public class AccountAccess {
         return hold_status;
     }
 
+    /**
+     * Cancel hold.
+     *
+     * @param hold the hold
+     * @return true, if successful
+     * @throws SessionNotFoundException the session not found exception
+     * @throws NoNetworkAccessException the no network access exception
+     * @throws NoAccessToServer the no access to server
+     */
     public boolean cancelHold(OSRFObject hold) throws SessionNotFoundException,
             NoNetworkAccessException, NoAccessToServer {
 
@@ -942,6 +1005,22 @@ public class AccountAccess {
 
     }
 
+    /**
+     * Update hold.
+     *
+     * @param ahr the ahr
+     * @param pickup_lib the pickup_lib
+     * @param email_notify the email_notify
+     * @param phone_notify the phone_notify
+     * @param phone the phone
+     * @param suspendHold the suspend hold
+     * @param expire_time the expire_time
+     * @param thaw_date the thaw_date
+     * @return the object
+     * @throws SessionNotFoundException the session not found exception
+     * @throws NoNetworkAccessException the no network access exception
+     * @throws NoAccessToServer the no access to server
+     */
     public Object updateHold(OSRFObject ahr, Integer pickup_lib,
             boolean email_notify, boolean phone_notify, String phone,
             boolean suspendHold, String expire_time, String thaw_date)
@@ -965,6 +1044,22 @@ public class AccountAccess {
         return response;
     }
 
+    /**
+     * Creates the hold.
+     *
+     * @param recordID the record id
+     * @param pickup_lib the pickup_lib
+     * @param email_notify the email_notify
+     * @param phone_notify the phone_notify
+     * @param phone the phone
+     * @param suspendHold the suspend hold
+     * @param expire_time the expire_time
+     * @param thaw_date the thaw_date
+     * @return the string[]
+     * @throws SessionNotFoundException the session not found exception
+     * @throws NoNetworkAccessException the no network access exception
+     * @throws NoAccessToServer the no access to server
+     */
     public String[] createHold(Integer recordID, Integer pickup_lib,
             boolean email_notify, boolean phone_notify, String phone,
             boolean suspendHold, String expire_time, String thaw_date)
@@ -1021,6 +1116,16 @@ public class AccountAccess {
     }
 
     // ?? return boolean
+    /**
+     * Checks if is hold possible.
+     *
+     * @param pickup_lib the pickup_lib
+     * @param recordID the record id
+     * @return the object
+     * @throws SessionNotFoundException the session not found exception
+     * @throws NoNetworkAccessException the no network access exception
+     * @throws NoAccessToServer the no access to server
+     */
     public Object isHoldPossible(Integer pickup_lib, Integer recordID)
             throws SessionNotFoundException, NoNetworkAccessException,
             NoAccessToServer {
@@ -1047,6 +1152,15 @@ public class AccountAccess {
     }
 
     // return
+    /**
+     * Gets the hold pre create info.
+     *
+     * @param recordID the record id
+     * @param pickup_lib the pickup_lib
+     * @return the hold pre create info
+     * @throws NoNetworkAccessException the no network access exception
+     * @throws NoAccessToServer the no access to server
+     */
     public HashMap<String, Integer> getHoldPreCreateInfo(Integer recordID,
             Integer pickup_lib) throws NoNetworkAccessException,
             NoAccessToServer {
@@ -1081,6 +1195,14 @@ public class AccountAccess {
     // ----------------------------Fines
     // Summary------------------------------------//
 
+    /**
+     * Gets the fines summary.
+     *
+     * @return the fines summary
+     * @throws SessionNotFoundException the session not found exception
+     * @throws NoNetworkAccessException the no network access exception
+     * @throws NoAccessToServer the no access to server
+     */
     public float[] getFinesSummary() throws SessionNotFoundException,
             NoNetworkAccessException, NoAccessToServer {
 
@@ -1101,6 +1223,14 @@ public class AccountAccess {
         return fines;
     }
 
+    /**
+     * Gets the transactions.
+     *
+     * @return the transactions
+     * @throws SessionNotFoundException the session not found exception
+     * @throws NoNetworkAccessException the no network access exception
+     * @throws NoAccessToServer the no access to server
+     */
     public ArrayList<FinesRecord> getTransactions()
             throws SessionNotFoundException, NoNetworkAccessException,
             NoAccessToServer {
@@ -1130,6 +1260,14 @@ public class AccountAccess {
     // ---------------------------------------Book
     // bags-----------------------------------//
 
+    /**
+     * Gets the bookbags.
+     *
+     * @return the bookbags
+     * @throws SessionNotFoundException the session not found exception
+     * @throws NoNetworkAccessException the no network access exception
+     * @throws NoAccessToServer the no access to server
+     */
     public ArrayList<BookBag> getBookbags() throws SessionNotFoundException,
             NoNetworkAccessException, NoAccessToServer {
 
@@ -1156,6 +1294,16 @@ public class AccountAccess {
         return bookBagObj;
     }
 
+    /**
+     * Gets the bookbag content.
+     *
+     * @param bag the bag
+     * @param bookbagID the bookbag id
+     * @return the bookbag content
+     * @throws SessionNotFoundException the session not found exception
+     * @throws NoNetworkAccessException the no network access exception
+     * @throws NoAccessToServer the no access to server
+     */
     private Object getBookbagContent(BookBag bag, Integer bookbagID)
             throws SessionNotFoundException, NoNetworkAccessException,
             NoAccessToServer {
@@ -1176,6 +1324,14 @@ public class AccountAccess {
         return items;
     }
 
+    /**
+     * Removes the bookbag item.
+     *
+     * @param id the id
+     * @throws SessionNotFoundException the session not found exception
+     * @throws NoNetworkAccessException the no network access exception
+     * @throws NoAccessToServer the no access to server
+     */
     public void removeBookbagItem(Integer id) throws SessionNotFoundException,
             NoNetworkAccessException, NoAccessToServer {
 
@@ -1183,6 +1339,14 @@ public class AccountAccess {
 
     }
 
+    /**
+     * Creates the bookbag.
+     *
+     * @param name the name
+     * @throws SessionNotFoundException the session not found exception
+     * @throws NoNetworkAccessException the no network access exception
+     * @throws NoAccessToServer the no access to server
+     */
     public void createBookbag(String name) throws SessionNotFoundException,
             NoNetworkAccessException, NoAccessToServer {
 
@@ -1195,6 +1359,14 @@ public class AccountAccess {
         createContainer("biblio", cbreb);
     }
 
+    /**
+     * Delete book bag.
+     *
+     * @param id the id
+     * @throws SessionNotFoundException the session not found exception
+     * @throws NoNetworkAccessException the no network access exception
+     * @throws NoAccessToServer the no access to server
+     */
     public void deleteBookBag(Integer id) throws SessionNotFoundException,
             NoNetworkAccessException, NoAccessToServer {
 
@@ -1203,6 +1375,15 @@ public class AccountAccess {
                         authToken, "biblio", id });
     }
 
+    /**
+     * Adds the record to book bag.
+     *
+     * @param record_id the record_id
+     * @param bookbag_id the bookbag_id
+     * @throws SessionNotFoundException the session not found exception
+     * @throws NoAccessToServer the no access to server
+     * @throws NoNetworkAccessException the no network access exception
+     */
     public void addRecordToBookBag(Integer record_id, Integer bookbag_id)
             throws SessionNotFoundException, NoAccessToServer,
             NoNetworkAccessException {
@@ -1217,6 +1398,15 @@ public class AccountAccess {
                         authToken, "biblio", cbrebi });
     }
 
+    /**
+     * Removes the container.
+     *
+     * @param container the container
+     * @param id the id
+     * @throws SessionNotFoundException the session not found exception
+     * @throws NoNetworkAccessException the no network access exception
+     * @throws NoAccessToServer the no access to server
+     */
     private void removeContainer(String container, Integer id)
             throws SessionNotFoundException, NoNetworkAccessException,
             NoAccessToServer {
@@ -1226,6 +1416,15 @@ public class AccountAccess {
                         authToken, container, id });
     }
 
+    /**
+     * Creates the container.
+     *
+     * @param container the container
+     * @param parameter the parameter
+     * @throws SessionNotFoundException the session not found exception
+     * @throws NoNetworkAccessException the no network access exception
+     * @throws NoAccessToServer the no access to server
+     */
     private void createContainer(String container, Object parameter)
             throws SessionNotFoundException, NoNetworkAccessException,
             NoAccessToServer {
