@@ -88,6 +88,8 @@
 	  android:layout_width="fill_parent"
 	  android:layout_height="wrap_content"  
 	  android:paddingTop="10dip"
+	  android:divider="@drawable/list_view_separator"
+      android:dividerHeight="1dp"
 	  ></ListView>
 
 </LinearLayout>
