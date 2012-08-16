@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<layer-list>
+    <item>
+        <shape
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            android:shape="rectangle" >
+            <gradient
+                android:angle="270"
+                android:endColor="@color/application_button_stop"
+                android:startColor="@color/application_button_start" 
+                />
+
+            <corners
+                android:radius="4dp" />
+            
+            <stroke 
+                android:width="1dp"
+                android:color="@color/dark"
+                />
+        </shape>
+    </item>
+    <item>
+        <shape
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            android:shape="rectangle" >
+            <gradient
+                android:angle="270"
+                android:centerColor="#40ffffff"
+                android:endColor="#40ffffff"
+                android:startColor="#80ffffff" 
+                android:useLevel="false"
+                />
+
+            <corners
+                android:radius="4dp"/>
+        </shape>
+    </item>
+
+</layer-list>
