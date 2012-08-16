@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:orientation="vertical"
+    android:orientation="vertical" 
     android:background="@drawable/background_grey_image"
     >
 
@@ -10,39 +10,30 @@
         android:id="@+id/header_actionbar"
         layout="@layout/simple_actionbar" />
 
-    <LinearLayout 
+    <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="10dip"
         android:orientation="horizontal"
-        >
-         <Spinner
-        android:id="@+id/advanced_spinner_index"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/header_actionbar"
-        android:layout_marginTop="10dip"
-        android:entries="@array/advanced_search_index" 
-        />
+        android:padding="5dip" >
 
-    <Spinner
-        android:id="@+id/advanced_spinner_option"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/header_actionbar"
-        android:layout_marginTop="10dip"
-        android:layout_toRightOf="@id/advanced_spinner_index"
-        android:entries="@array/advanced_search_options" 
-        />
-        
+        <Spinner
+            android:id="@+id/advanced_spinner_index"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:entries="@array/advanced_search_index" />
+
+        <Spinner
+            android:id="@+id/advanced_spinner_option"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:entries="@array/advanced_search_options"/>
     </LinearLayout>
-    
-   
 
     <LinearLayout
         android:id="@+id/advanced_search_filter_container"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/advanced_spinner_index"
         android:orientation="horizontal" >
 
         <EditText
@@ -55,19 +46,19 @@
 
         <Button
             android:id="@+id/advanced_search_add_filter_button"
+            style="@style/ApplicationButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/advanced_search_add_filter_button"
-            style="@style/ApplicationButton"
-             />
+            android:text="@string/advanced_search_add_filter_button" />
     </LinearLayout>
 
     <ScrollView
         android:id="@+id/advanced_search_scrollview"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:layout_weight="1"
-		>
+        android:layout_weight="1" 
+        android:padding="5dip"
+        >
 
         <LinearLayout
             android:id="@+id/advanced_search_filters"
@@ -82,35 +73,30 @@
         </LinearLayout>
     </ScrollView>
 
-
     <LinearLayout
         android:layout_width="fill_parent"
-        android:layout_height="80dip"
+        android:layout_height="60dip"
         android:background="@drawable/bottom_rounded_menu_background"
         android:gravity="center_horizontal"
         android:orientation="horizontal"
-        android:padding="10dip"
-         >
+        android:padding="5dip" >
 
         <Button
             android:id="@+id/advanced_search_cancel"
+            style="@style/ApplicationButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/cancel" 
-            style="@style/ApplicationButton"
-            android:padding="10dp"
-            />
+            android:padding="14dp"
+            android:text="@string/cancel" />
 
         <Button
             android:id="@+id/advanced_search_button"
+            style="@style/ApplicationButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/advanced_search"
             android:layout_marginLeft="10dp"
-            android:padding="10dp"
-            style="@style/ApplicationButton"
-             />
+            android:padding="14dp"
+            android:text="@string/advanced_search" />
     </LinearLayout>
-
 
 </LinearLayout>
