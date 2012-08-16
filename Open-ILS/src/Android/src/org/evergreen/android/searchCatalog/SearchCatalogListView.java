@@ -332,7 +332,7 @@ public class SearchCatalogListView extends Activity {
 
                             try {
                                 searchResults = search.getSearchResults(text,
-                                        recordList.size() - 1);
+                                        recordList.size());
                             } catch (NoNetworkAccessException e) {
                                 runOnUiThread(Utils
                                         .showNetworkNotAvailableDialog(context));
@@ -399,7 +399,7 @@ public class SearchCatalogListView extends Activity {
 
                     intent.putExtra("recordList", recordList);
                     intent.putExtra("recordPosition", position);
-                    startActivity(intent);
+                    startActivityForResult(intent, 10);
                 }
             }
         });
@@ -566,24 +566,6 @@ public class SearchCatalogListView extends Activity {
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater menuInflater = getMenuInflater();
-        menuInflater.inflate(R.menu.search_menu, menu);
-        return super.onCreateOptionsMenu(menu);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-        case android.R.id.home:
-            Toast.makeText(this, "Tapped home", Toast.LENGTH_SHORT).show();
-            break;
-
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
-    @Override
     public void onCreateContextMenu(ContextMenu menu, View v,
             ContextMenuInfo menuInfo) {
 
@@ -732,6 +714,24 @@ public class SearchCatalogListView extends Activity {
 
         switch (resultCode) {
 
+        case SampleUnderlinesNoFade.RETURN_DATA : {
+            
+            ArrayList<RecordInfo> records = (ArrayList)data.getSerializableExtra("recordList");
+        
+            recordList.clear();
+            for(int i=0;i<records.size();i++){
+                recordList.add(records.get(i));
+            }
+            adapter.notifyDataSetChanged();
+            
+            searchResultsNumber.setText(adapter
+                    .getCount()
+                    + " out of "
+                    + search.visible);
+            
+        }
+        break;
+        
         case AdvancedSearchActivity.RESULT_ADVANCED_SEARCH: {
             Log.d(TAG,
                     "result text" + data.getStringExtra("advancedSearchText"));
