@@ -3,7 +3,7 @@
     <string-array name="advanced_search_index">
 		<item>Keyword</item>
 		<item>Title</item>
-		<item>Suthor</item>
+		<item>Author</item>
 		<item>Subject</item>
 		<item>Series</item>
     </string-array>
