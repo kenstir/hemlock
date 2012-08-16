@@ -114,6 +114,8 @@ public class SearchCatalog {
     public Integer visible;
 
     public Integer searchLimit = 10;
+    
+    public String searchText = null;
 
     private ConnectivityManager cm;
 
@@ -168,6 +170,8 @@ public class SearchCatalog {
     public ArrayList<RecordInfo> getSearchResults(String searchWords,
             Integer offset) throws NoNetworkAccessException, NoAccessToServer {
 
+        searchText = searchWords;
+        
         ArrayList<RecordInfo> resultsRecordInfo = new ArrayList<RecordInfo>();
 
         Method method = new Method(METHOD_MULTICASS_SEARCH);

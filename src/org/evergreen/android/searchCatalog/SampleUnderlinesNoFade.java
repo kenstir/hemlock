@@ -19,47 +19,70 @@
  */
 package org.evergreen.android.searchCatalog;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.evergreen.android.R;
+import org.evergreen.android.globals.NoAccessToServer;
+import org.evergreen.android.globals.NoNetworkAccessException;
+import org.evergreen.android.globals.Utils;
 import org.evergreen.android.utils.ui.BaseSampleActivity;
 import org.evergreen.android.utils.ui.BasicDetailsFragment;
 import org.evergreen.android.utils.ui.TestFragmentAdapter;
 import org.evergreen.android.utils.ui.UnderlinePageIndicator;
 import org.evergreen.android.views.AccountScreenDashboard;
 
+import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.TextView;
 
 public class SampleUnderlinesNoFade extends BaseSampleActivity {
 
-    private List<RecordInfo> records;
+    private ArrayList<RecordInfo> records;
 
     private Button myAccountButton;
 
     private Button homeButton;
 
     private TextView headerTitle;
+    
+    private SearchCatalog search;
+    
+    private ArrayList<RecordInfo> searchRecords;
+    
+    private Context context;
 
+    private ProgressDialog progressDialog;
+    
+    private Runnable searchRunnableWithOffset;
+    
+    public static final int RETURN_DATA = 5;
+    
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.simple_underlines);
 
-        records = (List<RecordInfo>) getIntent().getSerializableExtra(
+        search = SearchCatalog.getInstance((ConnectivityManager)getSystemService(CONNECTIVITY_SERVICE));
+        
+        records = (ArrayList<RecordInfo>) getIntent().getSerializableExtra(
                 "recordList");
 
         if (records.get(records.size() - 1).dummy == true)
             records.remove(records.size() - 1);
 
+        context = this;
+        
         // header portion actions
         homeButton = (Button) findViewById(R.id.library_logo);
         myAccountButton = (Button) findViewById(R.id.my_account_button);
@@ -97,9 +120,70 @@ public class SampleUnderlinesNoFade extends BaseSampleActivity {
         indicator.setViewPager(mPager);
         indicator.setFades(false);
         mIndicator = indicator;
+        searchRunnableWithOffset = new Runnable() {
+
+            @Override
+            public void run() {
+
+                runOnUiThread(new Runnable() {
+                    
+                    @Override
+                    public void run() {
+                        progressDialog = ProgressDialog.show(context,null ,getResources().getText(R.string.dialog_load_more_message));
+                    }
+                });
+                
+                try {
+                    searchRecords = search.getSearchResults(search.searchText,
+                            records.size());
+                } catch (NoNetworkAccessException e) {
+                    runOnUiThread(Utils
+                            .showNetworkNotAvailableDialog(context));
+                } catch (NoAccessToServer e) {
+                    runOnUiThread(Utils
+                            .showServerNotAvailableDialog(context));
+                }
+
+                runOnUiThread(new Runnable() {
+
+                    @Override
+                    public void run() {
+
+                        // don't clear record list
+                        // recordList.clear();
+                        if (searchRecords.size() > 0) {
+
+                            for (int j = 0; j < searchRecords
+                                    .size(); j++)
+                                records.add(searchRecords.get(j));
+
+                            // add extra record to display more
+                            // option button
+
+                        }
+                        progressDialog.dismiss();
+                    }
+                });
+
+            }
+        };
 
     }
 
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            Intent intent = new Intent();
+            intent.putExtra("recordList", records);
+            setResult(RETURN_DATA, intent);
+            finish();
+            
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+
+    
     class SearchFragmentAdapter extends TestFragmentAdapter {
         public SearchFragmentAdapter(FragmentManager fm) {
             super(fm);
@@ -108,8 +192,14 @@ public class SampleUnderlinesNoFade extends BaseSampleActivity {
         @Override
         public Fragment getItem(int position) {
             // position +1 for 1 - size values
+            
+            if(position == records.size() - 1 && records.size() < search.visible){
+                    Thread getSearchResults = new Thread(searchRunnableWithOffset);
+                    getSearchResults.start();
+            }
             return BasicDetailsFragment.newInstance(records.get(position),
-                    position + 1, records.size());
+                    position + 1, search.visible);
+            
         }
 
         @Override
