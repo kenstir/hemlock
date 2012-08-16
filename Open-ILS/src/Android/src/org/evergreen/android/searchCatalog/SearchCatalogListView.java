@@ -783,16 +783,6 @@ public class SearchCatalogListView extends Activity {
             // Get item
             RecordInfo record = getItem(position);
 
-            if (record.dummy == true) {
-                Log.d(tag, "Starting XML view more infaltion ... ");
-                LayoutInflater inflater = (LayoutInflater) this.getContext()
-                        .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                row = inflater.inflate(R.layout.search_result_footer_view,
-                        parent, false);
-                Log.d(tag, "Successfully completed XML view more Inflation!");
-
-            } else {
-
                 // if it is the right type of view
                 if (row == null
                         || row.findViewById(R.id.search_record_title) == null) {
@@ -833,7 +823,7 @@ public class SearchCatalogListView extends Activity {
                 recordAuthor.setText(record.author);
                 recordPublisher
                         .setText(record.pubdate + " " + record.publisher);
-            }
+            
             return row;
         }
     }

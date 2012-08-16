@@ -250,16 +250,6 @@ public class ItemsCheckOutListView extends Activity {
             // Get item
             final CircRecord record = getItem(position);
 
-            if (record == null) {
-                Log.d(tag, "Starting XML view more infaltion ... ");
-                LayoutInflater inflater = (LayoutInflater) this.getContext()
-                        .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                row = inflater.inflate(R.layout.search_result_footer_view,
-                        parent, false);
-                Log.d(tag, "Successfully completed XML view more Inflation!");
-
-            } else {
-
                 // if it is the right type of view
                 if (row == null) {
 
@@ -407,7 +397,6 @@ public class ItemsCheckOutListView extends Activity {
                 recordTitle.setText(record.getTitle());
                 recordAuthor.setText(record.getAuthor());
                 recordDueDate.setText(record.getDueDate());
-            }
 
             return row;
         }

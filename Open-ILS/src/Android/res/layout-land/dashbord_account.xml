@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/background_grey_image"
+    android:orientation="vertical" >
+
+    <RelativeLayout
+        android:id="@+id/header"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/header_rounded_corners"
+        android:orientation="horizontal"
+        android:paddingBottom="2dip"
+        android:paddingTop="3dip" >
+
+        <Button
+            android:id="@+id/library_logo"
+            style="@style/LibraryLogoText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_marginLeft="5dip"
+            android:drawableLeft="@drawable/evergreen_launcher_icon_48"
+            android:paddingLeft="5dip"
+            android:text="@string/library_text_logo"
+            android:textColor="@color/white"
+            android:textSize="16dp"
+            android:textStyle="bold"
+            android:typeface="monospace" />
+
+        <Button
+            android:id="@+id/my_account_button"
+            style="@style/HeaderButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_marginTop="5dip"
+            android:padding="10dip"
+            android:text="@string/my_account_button_text" />
+    </RelativeLayout>
+
+    <ScrollView
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent" >
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            
+             >
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="horizontal" >
+
+                <Button
+                    android:id="@+id/account_btn_check_out"
+                    style="@style/HomeButton"
+                    android:drawableTop="@drawable/check_out"
+                    android:onClick="onClickFeature"
+                    android:text="@string/title_check_out" />
+
+                <Button
+                    android:id="@+id/account_btn_holds"
+                    style="@style/HomeButton"
+                    android:drawableTop="@drawable/holds"
+                    android:onClick="onClickFeature"
+                    android:text="@string/title_holds" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="horizontal" >
+
+                <Button
+                    android:id="@+id/account_btn_fines"
+                    style="@style/HomeButton"
+                    android:drawableTop="@drawable/fines"
+                    android:onClick="onClickFeature"
+                    android:text="@string/title_fines" />
+
+                <Button
+                    android:id="@+id/account_btn_book_bags"
+                    style="@style/HomeButton"
+                    android:drawableTop="@drawable/book_bag"
+                    android:onClick="onClickFeature"
+                    android:text="@string/title_book_bags" />
+            </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
+
+</LinearLayout>
