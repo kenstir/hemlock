@@ -182,12 +182,14 @@ public class Utils {
 
         boolean result = false;
         try {
+            
+            System.out.println("Check url " + url);
             HttpGet request = new HttpGet(url);
 
             HttpParams httpParameters = new BasicHttpParams();
 
             // timeout to 1 seconds
-            HttpConnectionParams.setConnectionTimeout(httpParameters, 1000);
+            HttpConnectionParams.setConnectionTimeout(httpParameters, 3000);
             HttpClient httpClient = new DefaultHttpClient(httpParameters);
             HttpResponse response = httpClient.execute(request);
 
