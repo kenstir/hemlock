@@ -19,6 +19,7 @@
  */
 package org.evergreen.android.accountAccess.fines;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -73,6 +74,8 @@ public class FinesActivity extends Activity {
     private TextView headerTitle;
 
     private Context context;
+    
+    private DecimalFormat decimalFormater;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -105,6 +108,7 @@ public class FinesActivity extends Activity {
         });
         // end header portion actions
 
+        decimalFormater = new DecimalFormat("#0.00");
         lv = (ListView) findViewById(R.id.fines_overdue_materials_list);
 
         total_owned = (TextView) findViewById(R.id.fines_total_owned);
@@ -170,9 +174,9 @@ public class FinesActivity extends Activity {
 
                         listAdapter.notifyDataSetChanged();
 
-                        total_owned.setText(fines[0] + "");
-                        total_paid.setText(fines[1] + "");
-                        balance_owed.setText(fines[2] + "");
+                        total_owned.setText(decimalFormater.format(fines[0]));
+                        total_paid.setText(decimalFormater.format(fines[1]));
+                        balance_owed.setText(decimalFormater.format(fines[2]));
                         progressDialog.dismiss();
                     }
                 });
@@ -238,7 +242,7 @@ public class FinesActivity extends Activity {
             // set raw information
             fineTitle.setText(record.title);
             fineAuthor.setText(record.author);
-            fineBalanceOwed.setText(record.balance_owed);
+            fineBalanceOwed.setText(decimalFormater.format(record.balance_owed));
             // status.setText(record.getHoldStatus());
             fineStatus.setText(record.getStatus());
 

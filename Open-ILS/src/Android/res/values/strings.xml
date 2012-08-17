@@ -155,4 +155,7 @@
      
      <string name="preference_notifications_each_day">Each day notifications</string>
      <string name="preference_notifications_each_day_summary">Give a notification in every day before the actual start notification period and due date</string>
+     
+     <string name="preference_notifications_title">Notification settings</string>
+     
 </resources>
