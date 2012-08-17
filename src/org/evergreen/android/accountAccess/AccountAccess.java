@@ -1311,16 +1311,21 @@ public class AccountAccess {
         Map<String, ?> map = (Map<String, ?>) Utils.doRequest(conn,
                 SERVICE_ACTOR, METHOD_FLESH_PUBLIC_CONTAINER, authToken, cm,
                 new Object[] { authToken, "biblio", bookbagID });
-
-        List<OSRFObject> items = (List<OSRFObject>) map.get("items");
-
-        for (int i = 0; i < items.size(); i++) {
-
-            BookBagItem bookBagItem = new BookBagItem(items.get(i));
-
-            bag.items.add(bookBagItem);
+        
+        List<OSRFObject> items  = new ArrayList<OSRFObject>();
+        
+        try{
+            items = (List<OSRFObject>) map.get("items");
+    
+            for (int i = 0; i < items.size(); i++) {
+    
+                BookBagItem bookBagItem = new BookBagItem(items.get(i));
+    
+                bag.items.add(bookBagItem);
         }
 
+        }catch(Exception e){};
+        
         return items;
     }
 

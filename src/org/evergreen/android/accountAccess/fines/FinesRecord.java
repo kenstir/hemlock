@@ -36,7 +36,7 @@ public class FinesRecord {
 
     public Date dateReturned;
 
-    public String balance_owed;
+    public Double balance_owed;
 
     private Date checkin_time;
 
@@ -67,8 +67,11 @@ public class FinesRecord {
 
         }
 
-        balance_owed = mbts_transaction.getString("total_owed");
-
+        try{
+            balance_owed =Double.parseDouble(mbts_transaction.getString("total_owed"));
+        }catch(Exception e){
+            System.err.println("Error in total owed string to double conversion " + e.getMessage());
+        }
     }
 
     // if returned or fines still acumulating
