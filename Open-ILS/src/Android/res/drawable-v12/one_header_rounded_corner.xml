@@ -10,7 +10,8 @@
                 android:endColor="@color/header_gradient_stop"
                 android:startColor="@color/header_gradient_start" />
 
-            <corners android:bottomLeftRadius="8dp" />
+            <corners android:bottomRightRadius="8dp" />
+            
         </shape>
     </item>
     <item>
