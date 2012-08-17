@@ -728,7 +728,6 @@ public class SearchCatalogListView extends Activity {
                     .getCount()
                     + " out of "
                     + search.visible);
-            
         }
         break;
         
@@ -801,7 +800,6 @@ public class SearchCatalogListView extends Activity {
                 // Get reference to ImageView
                 recordImage = (ImageView) row
                         .findViewById(R.id.search_record_img);
-                // TODO fix bugs + features
                 String imageHref = GlobalConfigs.httpAddress
                         + "/opac/extras/ac/jacket/small/" + record.isbn;
                 // start async download of image

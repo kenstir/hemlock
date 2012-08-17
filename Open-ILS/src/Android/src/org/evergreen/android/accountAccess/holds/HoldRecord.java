@@ -113,12 +113,15 @@ public class HoldRecord implements Serializable {
         if (res.equals("t"))
             this.email_notification = true;
         res = ahr.getString("phone_notify");
-        if (res.equals("t"))
-            this.phone_notification = true;
+
+        if (res != null)
+            if (res.equals("t"))
+                this.phone_notification = true;
 
         res = ahr.getString("frozen");
-        if (res.equals("t"))
-            this.suspended = true;
+        if (res != null)
+            if (res.equals("t"))
+                this.suspended = true;
         pickup_lib = ahr.getInt("pickup_lib");
 
     }
