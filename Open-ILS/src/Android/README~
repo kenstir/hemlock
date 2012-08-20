@@ -1,0 +1,64 @@
+==================================================================
+Copyright (C) Open-Ils Evergreen Android Client					
+V 1.0.0 Release
+author : Daniel-Octavian Rizea (danielrizea27@gmail.com)
+summer 2012
+==================================================================
+
+
+1.Project libraries:
+===================================================================
+
+Project relies on the following libraries :
+    - open-ils IDL, used for application - server communication and data interpretation
+    - opensrf (serialized reg), the standard opensrf library has been modified in order for the Reg class to be serializable
+    - androwrapee, is a database wrapper library over the SQLite database
+    - zxing library used for scanning barcodes
+    - android support v4 used for fragments backwards compatibility.
+
+2.Project structure :
+===================================================================
+
+Packages are under the root package org.evergreen.android :
+   
+    - org.evergreen.android.accountAccess:
+            accountAccess.holds
+            accountAccess.fines
+            accountAccess.bookbags
+            accountAccess.checkout
+
+This package handles the my account administration panel. In every subpackage the classes for the specific category are placed inside it.
+
+- org.evergreen.android.barcodescan:
+
+This package represents the barcode scan part of the project. It has a camera AR view class which helps scan the barcode. The class is limited for scanning 1D barcodes like UPC and EAN type barcodes.
+
+- org.evergreen.android.database
+
+This package contains the Database Manager class that is used to persist classes into SQLite memory.
+
+- org.evergreen.android.globals
+
+This package contains global configuration classes and utils methods and functions used within the project
+
+- org.evergreen.android.searchCatalog
+
+This package is used for the search option of the application.
+
+- org.evergreen.android.services
+
+This package contains background services and broadcast receivers used for settings notifications on items checkout expiration.
+
+- org.evergreen.android.utils.ui
+
+Classes for fragment uses. Some of them are not used in the project but can become useful.
+
+- org.evergreen.android.views
+
+Some global application views like the Splashscreen, ApplicationSettings, MyAccountDashboard or the ConfigureApplication view.
+
+3. Multiple languages support
+====================================================================
+
+Please read the android official documentation on localization : http://developer.android.com/guide/topics/resources/localization.html For supporting france, just create the values-fr directory in the res folder and place the strings.xml (translate it’s content, only the values of the strings) ad you are ready to go.
+
