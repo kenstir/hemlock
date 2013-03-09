@@ -60,11 +60,14 @@ public class SplashActivity extends Activity implements
     private static final int ABORT_SERVER_PROBLEM = 2;
     private static final int ABORT_NETWORK_CONN_PROLEM = 3;
     private static final int OK = 0;
-    
+    private int abort;
+    private SharedPreferences prefs;
+    private SplashActivity activity;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.context = this;
+        activity = this;
         // Show the splash screen
         setContentView(R.layout.activity_splash);
 
@@ -73,113 +76,132 @@ public class SplashActivity extends Activity implements
         // Find the progress bar
         progressBar = (ProgressBar) findViewById(R.id.activity_splash_progress_bar);
 
-        int abort = OK;
-        SharedPreferences prefs = PreferenceManager
+        abort = OK;
+        prefs= PreferenceManager
                 .getDefaultSharedPreferences(context);
         GlobalConfigs.httpAddress = prefs.getString("library_url", "");
         String username = prefs.getString("username", "username");
         String password = prefs.getString("password", "pas");
         AccountAccess.setAccountInfo(username, password);
 
-        try {
-            Utils.checkNetworkStatus((ConnectivityManager) getSystemService(Service.CONNECTIVITY_SERVICE));
-        } catch (NoNetworkAccessException e) {
-            abort = ABORT_NETWORK_CONN_PROLEM;
-            e.printStackTrace();
-        } catch (NoAccessToServer e) {
-            // you have no access to server or server down
-            abort = ABORT_SERVER_PROBLEM;
-            e.printStackTrace();
-        }
         
-        if(!prefs.contains("library_url")) {
-            Intent configureIntent = new Intent(this,
-                    ConfigureApplicationActivity.class);
-            startActivityForResult(configureIntent, 0);
-        }
         
-        if (abort == OK) {
-            // Start your loading
-            new LoadingTask(progressBar, this, this, progressText, this)
-                    .execute("download"); // Pass in whatever you need a url is
-                                          // just an example we don't use it
-                                          // in this tutorial
-        }
-        else
-        {
+        Thread checkConnThread = new Thread(new Runnable() {
             
-            
-            switch(abort) {
-            
-            case ABORT_NETWORK_CONN_PROLEM : {
-                AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
-                        context);
-         
-                    // set title
-                    alertDialogBuilder.setTitle("Network problem");
-         
-                    // set dialog message
-                    alertDialogBuilder
-                        .setMessage("You do not have your network activated. Please activate it.")
-                        .setCancelable(false)
-                        .setNegativeButton("exit",new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog,int id) {
-                                // if this button is clicked, just close
-                                // the dialog box and do nothing
-                                dialog.cancel();
-                                finish();
-                            }
-                        });
-         
-                        // create alert dialog
-                        alertDialog = alertDialogBuilder.create();
-         
-                        // show it
-                        alertDialog.show();
+            @Override
+            public void run() {
+                // TODO Auto-generated method stub
+                try {
+                    Utils.checkNetworkStatus((ConnectivityManager) getSystemService(Service.CONNECTIVITY_SERVICE));
+                } catch (NoNetworkAccessException e) {
+                    abort = ABORT_NETWORK_CONN_PROLEM;
+                    e.printStackTrace();
+                } catch (NoAccessToServer e) {
+                    // you have no access to server or server down
+                    abort = ABORT_SERVER_PROBLEM;
+                    e.printStackTrace();
+                }
                 
-            } break;
-            
-            case ABORT_SERVER_PROBLEM : {
-                AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
-                        context);
-         
-                    // set title
-                    alertDialogBuilder.setTitle("Evergreen server problem");
-         
-                    // set dialog message
-                    alertDialogBuilder
-                        .setMessage("Seams the server can't be found. Please configure the server address")
-                        .setCancelable(false)
-                        .setPositiveButton("Configure",new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog,int id) {
-                                // if this button is clicked, close
-                                // current activity
-                                
-                                Intent configureIntent = new Intent(context, 
-                                        ConfigureApplicationActivity.class);
-                                startActivityForResult(configureIntent, 0);
-                                
-                            }
-                          })
-                        .setNegativeButton("Cancel",new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog,int id) {
-                                // if this button is clicked, just close
-                                // the dialog box and do nothing
-                                dialog.cancel();
-                                finish();
-                            }
-                        });
-         
-                        // create alert dialog
-                        alertDialog = alertDialogBuilder.create();
-         
-                        // show it
-                        alertDialog.show();
-            } break;
-            
-            }
+                runOnUiThread(new Runnable() {
+                    
+                    @Override
+                    public void run() {
+                        if(!prefs.contains("library_url")) {
+                            Intent configureIntent = new Intent(context,
+                                    ConfigureApplicationActivity.class);
+                            startActivityForResult(configureIntent, 0);
+                        }
+                        
+                        if (abort == OK) {
+                            // Start your loading
+                            new LoadingTask(progressBar, activity, activity, progressText, activity)
+                                    .execute("download"); // Pass in whatever you need a url is
+                                                          // just an example we don't use it
+                                                          // in this tutorial
+                        }
+                        else
+                        {
 
-        }
+                            switch(abort) {
+                            
+                            case ABORT_NETWORK_CONN_PROLEM : {
+                                AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
+                                        context);
+                         
+                                    // set title
+                                    alertDialogBuilder.setTitle("Network problem");
+                         
+                                    // set dialog message
+                                    alertDialogBuilder
+                                        .setMessage("You do not have your network activated. Please activate it!")
+                                        .setCancelable(false)
+                                        .setNegativeButton("exit",new DialogInterface.OnClickListener() {
+                                            public void onClick(DialogInterface dialog,int id) {
+                                                // if this button is clicked, just close
+                                                // the dialog box and do nothing
+                                                dialog.cancel();
+                                                finish();
+                                            }
+                                        });
+                         
+                                        // create alert dialog
+                                        alertDialog = alertDialogBuilder.create();
+                         
+                                        // show it
+                                        alertDialog.show();
+                                
+                            } break;
+                            
+                            case ABORT_SERVER_PROBLEM : {
+                                AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
+                                        context);
+                         
+                                    // set title
+                                    alertDialogBuilder.setTitle("Evergreen server problem");
+                         
+                                    // set dialog message
+                                    alertDialogBuilder
+                                        .setMessage("Seams the server can't be found. Please configure the server address")
+                                        .setCancelable(false)
+                                        .setPositiveButton("Configure",new DialogInterface.OnClickListener() {
+                                            public void onClick(DialogInterface dialog,int id) {
+                                                // if this button is clicked, close
+                                                // current activity
+                                                
+                                                Intent configureIntent = new Intent(context, 
+                                                        ConfigureApplicationActivity.class);
+                                                startActivityForResult(configureIntent, 0);
+                                                
+                                            }
+                                          })
+                                        .setNegativeButton("Cancel",new DialogInterface.OnClickListener() {
+                                            public void onClick(DialogInterface dialog,int id) {
+                                                // if this button is clicked, just close
+                                                // the dialog box and do nothing
+                                                dialog.cancel();
+                                                finish();
+                                            }
+                                        });
+                         
+                                        // create alert dialog
+                                        alertDialog = alertDialogBuilder.create();
+                         
+                                        // show it
+                                        alertDialog.show();
+                            } break;
+                            
+                            }
+
+                        }
+                    }
+                });
+            }
+        });
+        
+        checkConnThread.start();
+        
+        
+        
     }
 
     
