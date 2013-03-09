@@ -161,6 +161,9 @@ public class Utils {
 
         System.out.println("Network access " + networkAccessEnabled);
 
+        if (!networkAccessEnabled)
+            throw new NoNetworkAccessException();
+        
         if (networkAccessEnabled) {
             // check to see if httpAddress is avaialble using the network
             // connection
@@ -169,10 +172,6 @@ public class Utils {
             if (httpAddressAccessReachable == false)
                 throw new NoAccessToServer();
         }
-
-        if (!networkAccessEnabled)
-            throw new NoNetworkAccessException();
-
         return networkAccessEnabled;
 
     }

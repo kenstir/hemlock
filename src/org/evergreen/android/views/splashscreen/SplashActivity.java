@@ -30,8 +30,10 @@ import org.evergreen.android.views.ConfigureApplicationActivity;
 import org.evergreen.android.views.splashscreen.LoadingTask.LoadingTaskFinishedListener;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Service;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
@@ -50,7 +52,15 @@ public class SplashActivity extends Activity implements
     private ProgressBar progressBar;
 
     private String TAG = "SplashActivity";
-
+    
+    private AlertDialog alertDialog;
+    
+    
+    private static final int ABORT = 1;
+    private static final int ABORT_SERVER_PROBLEM = 2;
+    private static final int ABORT_NETWORK_CONN_PROLEM = 3;
+    private static final int OK = 0;
+    
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -63,39 +73,125 @@ public class SplashActivity extends Activity implements
         // Find the progress bar
         progressBar = (ProgressBar) findViewById(R.id.activity_splash_progress_bar);
 
-        boolean abort = false;
-
+        int abort = OK;
         SharedPreferences prefs = PreferenceManager
                 .getDefaultSharedPreferences(context);
         GlobalConfigs.httpAddress = prefs.getString("library_url", "");
         String username = prefs.getString("username", "username");
         String password = prefs.getString("password", "pas");
         AccountAccess.setAccountInfo(username, password);
-        try {
 
+        try {
             Utils.checkNetworkStatus((ConnectivityManager) getSystemService(Service.CONNECTIVITY_SERVICE));
         } catch (NoNetworkAccessException e) {
-            abort = true;
+            abort = ABORT_NETWORK_CONN_PROLEM;
             e.printStackTrace();
         } catch (NoAccessToServer e) {
-            abort = true;
-
-            // dialog.show();
+            // you have no access to server or server down
+            abort = ABORT_SERVER_PROBLEM;
+            e.printStackTrace();
+        }
+        
+        if(!prefs.contains("library_url")) {
             Intent configureIntent = new Intent(this,
                     ConfigureApplicationActivity.class);
             startActivityForResult(configureIntent, 0);
-
         }
-
-        if (abort != true) {
+        
+        if (abort == OK) {
             // Start your loading
             new LoadingTask(progressBar, this, this, progressText, this)
                     .execute("download"); // Pass in whatever you need a url is
                                           // just an example we don't use it
                                           // in this tutorial
         }
+        else
+        {
+            
+            
+            switch(abort) {
+            
+            case ABORT_NETWORK_CONN_PROLEM : {
+                AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
+                        context);
+         
+                    // set title
+                    alertDialogBuilder.setTitle("Network problem");
+         
+                    // set dialog message
+                    alertDialogBuilder
+                        .setMessage("You do not have your network activated. Please activate it.")
+                        .setCancelable(false)
+                        .setNegativeButton("exit",new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog,int id) {
+                                // if this button is clicked, just close
+                                // the dialog box and do nothing
+                                dialog.cancel();
+                                finish();
+                            }
+                        });
+         
+                        // create alert dialog
+                        alertDialog = alertDialogBuilder.create();
+         
+                        // show it
+                        alertDialog.show();
+                
+            } break;
+            
+            case ABORT_SERVER_PROBLEM : {
+                AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
+                        context);
+         
+                    // set title
+                    alertDialogBuilder.setTitle("Evergreen server problem");
+         
+                    // set dialog message
+                    alertDialogBuilder
+                        .setMessage("Seams the server can't be found. Please configure the server address")
+                        .setCancelable(false)
+                        .setPositiveButton("Configure",new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog,int id) {
+                                // if this button is clicked, close
+                                // current activity
+                                
+                                Intent configureIntent = new Intent(context, 
+                                        ConfigureApplicationActivity.class);
+                                startActivityForResult(configureIntent, 0);
+                                
+                            }
+                          })
+                        .setNegativeButton("Cancel",new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog,int id) {
+                                // if this button is clicked, just close
+                                // the dialog box and do nothing
+                                dialog.cancel();
+                                finish();
+                            }
+                        });
+         
+                        // create alert dialog
+                        alertDialog = alertDialogBuilder.create();
+         
+                        // show it
+                        alertDialog.show();
+            } break;
+            
+            }
+
+        }
     }
 
+    
+    @Override
+    protected void onStop() {
+        // TODO Auto-generated method stub
+        super.onStop();
+        if(alertDialog != null) {
+            alertDialog.dismiss();
+        }
+    }
+    
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (resultCode) {

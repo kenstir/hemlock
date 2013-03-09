@@ -55,7 +55,6 @@ public class AccountScreenDashboard extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.dashbord_account);
-
         myAccountButton = (Button) findViewById(R.id.my_account_button);
 
         myAccountButton.setOnClickListener(new OnClickListener() {
