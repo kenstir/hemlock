@@ -27,6 +27,7 @@ use OpenILS::WWW::EGCatLoader::SMS;
 my $U = 'OpenILS::Application::AppUtils';
 
 use constant COOKIE_SES => 'ses';
+use constant COOKIE_LOGGEDIN => 'eg_loggedin';
 use constant COOKIE_PHYSICAL_LOC => 'eg_physical_loc';
 use constant COOKIE_SSS_EXPAND => 'eg_sss_expand';
 
@@ -114,6 +115,7 @@ sub load {
         $path =~ /opac\/my(opac\/lists|list)/;
 
     return $self->load_simple("home") if $path =~ m|opac/home|;
+    return $self->load_simple("css") if $path =~ m|opac/css|;
     return $self->load_simple("advanced") if
         $path =~ m:opac/(advanced|numeric|expert):;
 
@@ -127,6 +129,8 @@ sub load {
     return $self->load_mylist_move if $path =~ m|opac/mylist/move|;
     return $self->load_mylist if $path =~ m|opac/mylist|;
     return $self->load_cache_clear if $path =~ m|opac/cache/clear|;
+    return $self->load_temp_warn_post if $path =~ m|opac/temp_warn/post|;
+    return $self->load_temp_warn if $path =~ m|opac/temp_warn|;
 
     # ----------------------------------------------------------------
     #  Everything below here requires SSL
@@ -142,8 +146,9 @@ sub load {
         # when they're already logged in.
         return $self->generic_redirect(
             sprintf(
-                "https://%s%s/myopac/main",
-                $self->apache->hostname, $self->ctx->{opac_root}
+                "%s://%s%s/myopac/main",
+                $self->ctx->{proto},
+                $self->ctx->{hostname}, $self->ctx->{opac_root}
             )
         );
     }
@@ -158,6 +163,10 @@ sub load {
     #  Everything below here requires authentication
     # ----------------------------------------------------------------
     return $self->redirect_auth unless $self->editor->requestor;
+
+    # Don't cache anything requiring auth for security reasons
+    $self->apache->headers_out->add("cache-control" => "no-store, no-cache, must-revalidate");
+    $self->apache->headers_out->add("expires" => "-1");
 
     return $self->load_email_record if $path =~ m|opac/record/email|;
 
@@ -194,7 +203,7 @@ sub load {
 # -----------------------------------------------------------------------------
 sub redirect_ssl {
     my $self = shift;
-    my $new_page = sprintf('https://%s%s', $self->apache->hostname, $self->apache->unparsed_uri);
+    my $new_page = sprintf('%s://%s%s', ($self->ctx->{is_staff} ? 'oils' : 'https'), $self->ctx->{hostname}, $self->apache->unparsed_uri);
     return $self->generic_redirect($new_page);
 }
 
@@ -204,7 +213,7 @@ sub redirect_ssl {
 # -----------------------------------------------------------------------------
 sub redirect_auth {
     my $self = shift;
-    my $login_page = sprintf('https://%s%s/login', $self->apache->hostname, $self->ctx->{opac_root});
+    my $login_page = sprintf('%s://%s%s/login',($self->ctx->{is_staff} ? 'oils' : 'https'), $self->ctx->{hostname}, $self->ctx->{opac_root});
     my $redirect_to = uri_escape($self->apache->unparsed_uri);
     return $self->generic_redirect("$login_page?redirect_to=$redirect_to");
 }
@@ -229,17 +238,25 @@ sub load_common {
     my $e = $self->editor;
     my $ctx = $self->ctx;
 
+    # redirect non-https to https if we think we are already logged in
+    if ($self->cgi->cookie(COOKIE_LOGGEDIN)) {
+        return $self->redirect_ssl unless $self->cgi->https;
+    }
+
     $ctx->{referer} = $self->cgi->referer;
     $ctx->{path_info} = $self->cgi->path_info;
     $ctx->{full_path} = $ctx->{base_path} . $self->cgi->path_info;
     $ctx->{unparsed_uri} = $self->apache->unparsed_uri;
     $ctx->{opac_root} = $ctx->{base_path} . "/opac"; # absolute base url
-    $ctx->{is_staff} = 0; # Assume false, check for workstation id later.  Was: ($self->apache->headers_in->get('User-Agent') =~ /oils_xulrunner/);
+    my $oils_wrapper = $self->apache->headers_in->get('OILS-Wrapper') || '';
+    $ctx->{is_staff} = ($oils_wrapper =~ /true/);
+    $ctx->{proto} = 'oils' if $ctx->{is_staff};
+    $ctx->{hostname} = 'remote' if $ctx->{is_staff};
     $ctx->{physical_loc} = $self->get_physical_loc;
 
     # capture some commonly accessed pages
-    $ctx->{home_page} = 'http://' . $self->apache->hostname . $self->ctx->{opac_root} . "/home";
-    $ctx->{logout_page} = 'https://' . $self->apache->hostname . $self->ctx->{opac_root} . "/logout";
+    $ctx->{home_page} = $ctx->{proto} . '://' . $ctx->{hostname} . $self->ctx->{opac_root} . "/home";
+    $ctx->{logout_page} = ($ctx->{proto} eq 'http' ? 'https' : $ctx->{proto} ) . '://' . $ctx->{hostname} . $self->ctx->{opac_root} . "/logout";
 
     if($e->authtoken($self->cgi->cookie(COOKIE_SES))) {
 
@@ -248,12 +265,12 @@ sub load_common {
             $ctx->{authtoken} = $e->authtoken;
             $ctx->{authtime} = $e->authtime;
             $ctx->{user} = $e->requestor;
+            $ctx->{place_unfillable} = 1 if $e->requestor->wsid && $e->allowed('PLACE_UNFILLABLE_HOLD', $e->requestor->ws_ou);
 
             $ctx->{user_stats} = $U->simplereq(
                 'open-ils.actor', 
                 'open-ils.actor.user.opac.vital_stats', 
                 $e->authtoken, $e->requestor->id);
-            $ctx->{is_staff} = 1 if $e->requestor->wsid;
 
         } else {
 
@@ -271,6 +288,7 @@ sub load_common {
     $self->load_copy_location_groups;
     $self->staff_saved_searches_set_expansion_state if $ctx->{is_staff};
     $self->load_search_filter_groups($ctx->{search_ou});
+    $self->load_org_util_funcs;
 
     return Apache2::Const::OK;
 }
@@ -301,8 +319,11 @@ sub staff_saved_searches_set_expansion_state {
 
 # physical_loc (i.e. "original location") passed in as a URL 
 # param will replace any existing physical_loc stored as a cookie.
+# If specified via ENV that rules over all and we don't set cookies.
 sub get_physical_loc {
     my $self = shift;
+
+    return $ENV{physical_loc} if($ENV{physical_loc});
 
     if(my $physical_loc = $self->cgi->param('physical_loc')) {
         $self->apache->headers_out->add(
@@ -327,24 +348,31 @@ sub load_login {
     my $cgi = $self->cgi;
     my $ctx = $self->ctx;
 
+    $self->timelog("Load login begins");
+
     $ctx->{page} = 'login';
 
     my $username = $cgi->param('username');
+    $username =~ s/\s//g;  # Remove blanks
     my $password = $cgi->param('password');
-    my $org_unit = $cgi->param('loc') || $ctx->{aou_tree}->()->id;
+    my $org_unit = $ctx->{physical_loc} || $ctx->{aou_tree}->()->id;
     my $persist = $cgi->param('persist');
 
     # initial log form only
     return Apache2::Const::OK unless $username and $password;
 
-	my $seed = $U->simplereq(
-        'open-ils.auth', 
-		'open-ils.auth.authenticate.init', $username);
+    my $auth_proxy_enabled = 0; # default false
+    try { # if the service is not running, just let this fail silently
+        $auth_proxy_enabled = $U->simplereq(
+            'open-ils.auth_proxy',
+            'open-ils.auth_proxy.enabled');
+    } catch Error with {};
 
-    my $args = {	
-        username => $username, 
-        password => md5_hex($seed . md5_hex($password)), 
+    $self->timelog("Checked for auth proxy: $auth_proxy_enabled; org = $org_unit; username = $username");
+
+    my $args = {
         type => ($persist) ? 'persist' : 'opac',
+        org => $org_unit,
         agent => 'opac'
     };
 
@@ -353,11 +381,27 @@ sub load_login {
     # To avoid surprises, default to "Barcodes start with digits"
     $bc_regex = '^\d' unless $bc_regex;
 
-    $args->{barcode} = delete $args->{username} 
-        if $bc_regex and ($username =~ /$bc_regex/);
+    if ($bc_regex and ($username =~ /$bc_regex/)) {
+        $args->{barcode} = $username;
+    } else {
+        $args->{username} = $username;
+    }
 
-	my $response = $U->simplereq(
-        'open-ils.auth', 'open-ils.auth.authenticate.complete', $args);
+    my $response;
+    if (!$auth_proxy_enabled) {
+        my $seed = $U->simplereq(
+            'open-ils.auth',
+            'open-ils.auth.authenticate.init', $username);
+        $args->{password} = md5_hex($seed . md5_hex($password));
+        $response = $U->simplereq(
+            'open-ils.auth', 'open-ils.auth.authenticate.complete', $args);
+    } else {
+        $args->{password} = $password;
+        $response = $U->simplereq(
+            'open-ils.auth_proxy',
+            'open-ils.auth_proxy.login', $args);
+    }
+    $self->timelog("Checked password");
 
     if($U->event_code($response)) { 
         # login failed, report the reason to the template
@@ -370,15 +414,30 @@ sub load_login {
     my $acct = $self->apache->unparsed_uri;
     $acct =~ s|/login|/myopac/main|;
 
+    # both login-related cookies should expire at the same time
+    my $login_cookie_expires = ($persist) ? CORE::time + $response->{payload}->{authtime} : undef;
+
     return $self->generic_redirect(
         $cgi->param('redirect_to') || $acct,
-        $cgi->cookie(
-            -name => COOKIE_SES,
-            -path => '/',
-            -secure => 1,
-            -value => $response->{payload}->{authtoken},
-            -expires => ($persist) ? CORE::time + $response->{payload}->{authtime} : undef
-        )
+        [
+            # contains the actual auth token and should be sent only over https
+            $cgi->cookie(
+                -name => COOKIE_SES,
+                -path => '/',
+                -secure => 1,
+                -value => $response->{payload}->{authtoken},
+                -expires => $login_cookie_expires
+            ),
+            # contains only a hint that we are logged in, and is used to
+            # trigger a redirect to https
+            $cgi->cookie(
+                -name => COOKIE_LOGGEDIN,
+                -path => '/',
+                -secure => 0,
+                -value => '1',
+                -expires => $login_cookie_expires
+            )
+        ]
     );
 }
 
@@ -387,7 +446,7 @@ sub load_login {
 # -----------------------------------------------------------------------------
 sub load_logout {
     my $self = shift;
-    my $redirect_to = shift;
+    my $redirect_to = shift || $self->cgi->param('redirect_to');
 
     # If the user was adding anyting to an anonymous cache 
     # while logged in, go ahead and clear it out.
@@ -395,12 +454,21 @@ sub load_logout {
 
     return $self->generic_redirect(
         $redirect_to || $self->ctx->{home_page},
-        $self->cgi->cookie(
-            -name => COOKIE_SES,
-            -path => '/',
-            -value => '',
-            -expires => '-1h'
-        )
+        [
+            # clear value of and expire both of these login-related cookies
+            $self->cgi->cookie(
+                -name => COOKIE_SES,
+                -path => '/',
+                -value => '',
+                -expires => '-1h'
+            ),
+            $self->cgi->cookie(
+                -name => COOKIE_LOGGEDIN,
+                -path => '/',
+                -value => '',
+                -expires => '-1h'
+            )
+        ]
     );
 }
 

@@ -22,6 +22,7 @@
 
 <window id="bill_interface_win" width="700" height="550" oils_persist="sizemode width height" active="true"
     onload="try{ font_helper(); persist_helper(); my_init(); } catch(E) { alert(E); }"
+    onunload="try{ my_cleanup(); persist_helper_cleanup(); } catch(E) { alert(E); }"
     xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
     <!-- ///////////////////////////////////////////////////////////////////////////////////////////////////////////// -->
@@ -34,6 +35,7 @@
 
     <messagecatalog id="patronStrings" src="/xul/server/locale/<!--#echo var='locale'-->/patron.properties"/>
     <messagecatalog id="circStrings" src="/xul/server/locale/<!--#echo var='locale'-->/circ.properties"/>
+    <messagecatalog id="catStrings" src="/xul/server/locale/<!--#echo var='locale'-->/cat.properties"/>
 
     <commandset>
         <command id="opac" label="&staff.patron.bill_interface.show_in_catalog.label;" accesskey="&staff.patron.bill_interface.show_in_catalog.accesskey;" disabled="true"/>
@@ -45,14 +47,14 @@
     </commandset>
 
     <popupset>
-        <popup id="actions_popup">
+        <menupopup id="actions_popup">
             <menuitem command="opac" />
             <menuitem command="copy_details" />
             <menuitem command="voidall" />
             <menuitem command="refund" />
             <menuitem command="add" />
             <menuitem command="details" />
-        </popup>
+        </menupopup>
     </popupset>
 
     <vbox flex="1" class="my_overflow">

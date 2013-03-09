@@ -103,13 +103,13 @@ add-apt-repository ppa:pitti/postgresql
 +
   * Ubuntu Precise comes with PostgreSQL 9, so no additional steps are required.
 +
-  * Fedora 16 comes with PostgreSQL 9, so no additional steps are required.
+  * Fedora comes with PostgreSQL 9, so no additional steps are required.
 +
 3. On Debian and Ubuntu, run `aptitude update` as the *root* Linux account to
    retrieve the new packages from the backports repository.
 4. Issue the following commands as the *root* Linux account to install
    prerequisites using the `Makefile.install` prerequisite installer,
-   substituting `debian-squeeze`, `fedora16`, `ubuntu-lucid`, or
+   substituting `debian-squeeze`, `fedora`, `ubuntu-lucid`, or
    `ubuntu-precise` for <osname> below:
 +
 [source, bash]
@@ -203,7 +203,7 @@ services, and administration interfaces. Issue the following commands as the
 ------------------------------------------------------------------------------
 cp Open-ILS/examples/apache/eg.conf       /etc/apache2/sites-available/
 cp Open-ILS/examples/apache/eg_vhost.conf /etc/apache2/
-cp Open-ILS/examples/apache/startup.pl    /etc/apache2/
+cp Open-ILS/examples/apache/eg_startup    /etc/apache2/
 # Now set up SSL
 mkdir /etc/apache2/ssl
 cd /etc/apache2/ssl
@@ -214,7 +214,7 @@ cd /etc/apache2/ssl
 ------------------------------------------------------------------------------
 cp Open-ILS/examples/apache/eg.conf       /etc/httpd/conf.d/
 cp Open-ILS/examples/apache/eg_vhost.conf /etc/httpd/
-cp Open-ILS/examples/apache/startup.pl    /etc/httpd/
+cp Open-ILS/examples/apache/eg_startup    /etc/httpd/
 # Now set up SSL
 mkdir /etc/httpd/ssl
 cd /etc/httpd/ssl
@@ -301,7 +301,7 @@ destination file. The backup version of the destination file has a tilde (`~`)
 appended to the file name, so if you have forgotten the Jabber users and
 domains, you can retrieve the settings from the backup version of the files.
 
-`eg_db_config.pl`, described in the following section, sets the database
+`eg_db_config`, described in the following section, sets the database
 connection information in `opensrf.xml` for you.
 
 Creating the Evergreen database
@@ -329,7 +329,7 @@ make -f Open-ILS/src/extras/Makefile.install install_pgsql_server_debs_91
 You can install the packages required by Fedora on the machine of your choice
 using the following commands as the *root* Linux account:
 
-.(Fedora 16) Installing PostgreSQL server packages
+.(Fedora) Installing PostgreSQL server packages
 [source, bash]
 ------------------------------------------------------------------------------
 make -f Open-ILS/src/extras/Makefile.install install_fedora_pgsql_server
@@ -349,9 +349,10 @@ cpan Library::CallNumber::LC
 cpan MARC::Record
 cpan MARC::File::XML
 cpan UUID::Tiny
+cpan Rose::URI
 ------------------------------------------------------------------------------
 
-.(Fedora 16) Installing additional Perl modules on a standalone PostgreSQL 9 server
+.(Fedora) Installing additional Perl modules on a standalone PostgreSQL 9 server
 [source, bash]
 ------------------------------------------------------------------------------
 yum install gcc perl-XML-LibXML perl-XML-LibXSLT perl-Business-ISBN
@@ -382,7 +383,7 @@ with the values you want for the *egadmin* Evergreen administrator account:
 
 [source, bash]
 ------------------------------------------------------------------------------
-perl Open-ILS/src/support-scripts/eg_db_config.pl --update-config \
+perl Open-ILS/src/support-scripts/eg_db_config --update-config \
        --service all --create-database --create-schema --create-offline \
        --user <user> --password <password> --hostname <hostname> --port <port> \
        --database <dbname> --admin-user <admin-user> --admin-pass <admin-pass>
@@ -402,7 +403,7 @@ installed on a dedicated server.
 PostgreSQL 9.1 and later
 ^^^^^^^^^^^^^^^^^^^^^^^^
 To create the database instance on a remote database server running PostgreSQL
-9.1 or later, simply use the `--create-database` flag on `eg_db_config.pl`.
+9.1 or later, simply use the `--create-database` flag on `eg_db_config`.
 
 For PostgreSQL 9.0
 ^^^^^^^^^^^^^^^^^^
@@ -420,7 +421,7 @@ To create the database instance on a remote database server running PostgreSQL
 psql -vdb_name=<dbname> -vcontrib_dir=`pg_config --sharedir`/contrib -f create_database.sql
 ------------------------------------------------------------------------------
 
-Then you can issue the `eg_db_config.pl` command as above _without_ the
+Then you can issue the `eg_db_config` command as above _without_ the
 `--create-database` argument to create your schema and configure your
 configuration files.
 
@@ -486,7 +487,7 @@ Once you have installed and started Evergreen, test your connection to
 Evergreen via `srfsh`. As the *opensrf* Linux account, issue the following
 commands to start `srfsh` and try to log onto the Evergreen server using the
 *egadmin* Evergreen administrator user name and password that you set using the
-`eg_db_config.pl` command:
+`eg_db_config` command:
 
 [source, bash]
 ------------------------------------------------------------------------------

@@ -64,7 +64,7 @@ circ.util.show_copy_details = function(copy_id) {
     if (typeof copy_id == 'object' && copy_id != null) copy_id = copy_id.id();
 
     try {
-        var url = xulG.url_prefix( urls.XUL_COPY_DETAILS ); // + '?copy_id=' + copy_id;
+        var url = xulG.url_prefix('XUL_COPY_DETAILS'); // + '?copy_id=' + copy_id;
         var my_xulG = obj.win.open( url, 'show_copy_details', 'chrome,resizable,modal', { 'copy_id' : copy_id, 'new_tab' : xulG.new_tab, 'url_prefix' : xulG.url_prefix } );
 
         if (typeof my_xulG.retrieve_these_patrons == 'undefined') return;
@@ -115,7 +115,7 @@ circ.util.backdate_post_checkin = function(circ_ids) {
     );
 
     try {
-        var url = xulG.url_prefix( urls.XUL_BACKDATE );
+        var url = xulG.url_prefix('XUL_BACKDATE');
         var my_xulG = obj.win.open( url, 'backdate_post_checkin', 'chrome,resizable,modal', { 'circ_ids' : circ_ids } );
 
         return my_xulG;
@@ -136,7 +136,7 @@ circ.util.show_last_few_circs = function(selection_list) {
     for (var i = 0; i < selection_list.length; i++) {
         try {
             if (typeof selection_list[i].copy_id == 'undefined' || selection_list[i].copy_id == null) continue;
-            var url = xulG.url_prefix( urls.XUL_CIRC_SUMMARY ); // + '?copy_id=' + selection_list[i].copy_id + '&count=' + count;
+            var url = xulG.url_prefix('XUL_CIRC_SUMMARY'); // + '?copy_id=' + selection_list[i].copy_id + '&count=' + count;
             var my_xulG = obj.win.open( url, 'show_last_few_circs', 'chrome,resizable,modal', { 'copy_id' : selection_list[i].copy_id, 'new_tab' : xulG.new_tab, 'url_prefix': xulG.url_prefix } );
 
             if (typeof my_xulG.retrieve_these_patrons == 'undefined') continue;
@@ -2937,6 +2937,8 @@ circ.util.checkin_via_barcode2 = function(session,params,backdate,auto_print,che
             'notify_by_phone_msg' : '',
             'notify_by_email' : '',
             'notify_by_email_msg' : '',
+            'notify_by_text' : '',
+            'notify_by_text_msg' : '',
             'request_date' : '',
             'request_date_msg' : '',
             'shelf_expire_time' : '',
@@ -3746,6 +3748,7 @@ circ.util.renew_via_barcode = function ( params, async ) {
                         case null /* custom event */ : break;
                         case 5000 /* PERM_FAILURE */: break;
                         case 1212 /* PATRON_EXCEEDS_OVERDUE_COUNT */ : break;
+                        case 7002 /* PATRON_EXCEEDS_CHECKOUT_COUNT */ : break;
                         case 1213 /* PATRON_BARRED */ : break;
                         case 1215 /* CIRC_EXCEEDS_COPY_RANGE */ : break;
                         case 1224 /* PATRON_ACCOUNT_EXPIRED */ : break;
@@ -3957,9 +3960,9 @@ circ.util.find_acq_po = function(session, copy_id) {
                 if (r = openils.Util.readResponse(r)) {
                     if (r.purchase_order()) {
                         var url = urls.XUL_BROWSER + "?url=" +
-                            xulG.url_prefix(
-                                escape(urls.EG_ACQ_PO_VIEW +
-                                    "/" + r.purchase_order() + "/" + r.id())
+                            window.escape(
+                                xulG.url_prefix('EG_ACQ_PO_VIEW/')
+                                    + r.purchase_order() + "/" + r.id()
                             );
                         window.xulG.new_tab(
                             url, {"browser": true}, {

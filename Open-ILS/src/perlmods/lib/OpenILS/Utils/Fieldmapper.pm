@@ -1,28 +1,15 @@
 package Fieldmapper;
 use OpenSRF::Utils::JSON;
 use Data::Dumper;
-use base 'OpenSRF::Application';
 use OpenSRF::Utils::Logger;
 use OpenSRF::Utils::SettingsClient;
 use OpenSRF::System;
 use XML::LibXML;
+use Scalar::Util 'blessed';
 
 my $log = 'OpenSRF::Utils::Logger';
 
 use vars qw/$fieldmap $VERSION/;
-
-sub publish_fieldmapper {
-	my ($self,$client,$class) = @_;
-
-	return $fieldmap unless (defined $class);
-	return undef unless (exists($$fieldmap{$class}));
-	return {$class => $$fieldmap{$class}};
-}
-__PACKAGE__->register_method(
-	api_name	=> 'opensrf.open-ils.system.fieldmapper',
-	api_level	=> 1,
-	method		=> 'publish_fieldmapper',
-);
 
 #
 # To dump the Javascript version of the fieldmapper struct use the command:
@@ -330,6 +317,57 @@ sub RequiredField {
 	my $f = shift;
     return undef unless ($f);
 	return $$fieldmap{$self->class_name}{fields}{$f}{required};
+}
+
+sub toXML {
+    my $self = shift;
+    return undef unless (ref $self);
+
+    my $opts = shift || {};
+    my $no_virt = $$opts{no_virt}; # skip virtual fields
+    my $skip_fields = $$opts{skip_fields} || {}; # eg. {au => ['passwd']}
+    my @to_skip = @{$$skip_fields{$self->json_hint}} 
+        if $$skip_fields{$self->json_hint};
+
+    my $dom = XML::LibXML::Document->new;
+    my $root = $dom->createElement( $self->json_hint );
+    $dom->setDocumentElement( $root );
+
+    my @field_names = $no_virt ? $self->real_fields : $self->properties;
+
+    for my $f (@field_names) {
+        next if ($f eq 'isnew');
+        next if ($f eq 'ischanged');
+        next if ($f eq 'isdeleted');
+        next if (grep {$_ eq $f} @to_skip);
+
+        my $value = $self->$f();
+        my $element = $dom->createElement( $f );
+
+        $value = [$value] if (blessed($value)); # fm object
+
+        if (ref($value)) { # array
+            for my $k (@$value) {
+                if (blessed($k)) {
+                    my $subdoc = $k->toXML($opts);
+                    next unless $subdoc;
+                    my $subnode = $subdoc->documentElement;
+                    $dom->adoptNode($subnode);
+                    $element->appendChild($subnode);
+                } elsif (ref $k) { # not sure what to do here
+                    $element->appendText($k);
+                } else { # meh .. just append, I guess
+                    $element->appendText($k);
+                }
+            }
+        } else {
+            $element->appendText($value);
+        }
+
+        $root->appendChild($element);
+    }
+
+    return $dom;
 }
 
 sub ValidateField {

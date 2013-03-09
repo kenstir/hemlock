@@ -76,8 +76,8 @@ function retrieve_circ() {
 function retrieve_patron() {
     JSAN.use('patron.util'); 
 
-    g.patron_id = xul_param('patron_id',{'modal_xulG':true});
-    g.au_obj = xul_param('patron',{'modal_xulG':true});
+    g.patron_id = xul_param('patron_id');
+    g.au_obj = xul_param('patron');
 
     if (! g.au_obj) {
         g.au_obj = patron.util.retrieve_fleshed_au_via_id( ses(), g.patron_id );
@@ -93,7 +93,6 @@ function retrieve_patron() {
 
 function patron_bill_init() {
     try {
-        netscape.security.PrivilegeManager.enablePrivilege("UniversalXPConnect");
         if (typeof JSAN == 'undefined') { throw( $("commonStrings").getString('common.jsan.missing') ); }
         JSAN.errorLevel = "die"; // none, warn, or die
         JSAN.addRepository('/xul/server/');
@@ -106,7 +105,7 @@ function patron_bill_init() {
         JSAN.use('util.money');
         JSAN.use('util.widgets');
         JSAN.use('util.functional');
-        var override_default_billing_type = xul_param('override_default_billing_type',{'modal_xulG':true});
+        var override_default_billing_type = xul_param('override_default_billing_type');
         var billing_list = util.functional.filter_list( g.OpenILS.data.list.cbt, function (x) { return x.id() >= 100 || x.id() == override_default_billing_type } );
         var ml = util.widgets.make_menulist(
             util.functional.map_list(
@@ -117,7 +116,8 @@ function patron_bill_init() {
         );
         ml.setAttribute('id','billing_type');
         document.getElementById('menu_placeholder').appendChild(ml);
-        ml.addEventListener(
+        window.bill_wizard_event_listeners = new EventListenerList();
+        window.bill_wizard_event_listeners.add(ml, 
             'command',
             function() {
                 if ( g.OpenILS.data.hash.cbt[ ml.value ] ) {
@@ -134,15 +134,15 @@ function patron_bill_init() {
         if ( g.OpenILS.data.hash.cbt[ ml.value ] ) {
             $('bill_amount').value = g.OpenILS.data.hash.cbt[ ml.value ].default_price();
         }
-        var override_default_price = xul_param('override_default_price',{'modal_xulG':true});
+        var override_default_price = xul_param('override_default_price');
         if (override_default_price) {
             $('bill_amount').value = override_default_price;
         }
         $('bill_amount').select(); $('bill_amount').focus();
 
-        g.circ = xul_param('circ',{'modal_xulG':true});
-        if (xul_param('xact_id',{'modal_xulG':true})) { 
-            g.mbts_id = xul_param('xact_id',{'modal_xulG':true});
+        g.circ = xul_param('circ');
+        if (xul_param('xact_id')) { 
+            g.mbts_id = xul_param('xact_id');
             $('summary').hidden = false; 
             retrieve_mbts();
             retrieve_circ();
@@ -156,21 +156,28 @@ function patron_bill_init() {
 
 }
 
+function patron_bill_cleanup() {
+    try {
+        window.bill_wizard_event_listeners.removeAll();
+    } catch(E) {
+        var err_msg = $("commonStrings").getFormattedString('common.exception', ['patron/bill_wizard.xul', E]);
+        try { g.error.sdump('D_ERROR',err_msg); } catch(E) { dump(err_msg); }
+        alert(err_msg);
+    }
+
+}
+
 function patron_bill_finish() {
     try {
-        var do_not_process_bill = xul_param('do_not_process_bill',{'modal_xulG':true});
-        var xact_id = xul_param('xact_id',{'modal_xulG':true});
+        var do_not_process_bill = xul_param('do_not_process_bill');
+        var xact_id = xul_param('xact_id');
 
         if (do_not_process_bill) {
 
-            update_modal_xulG(
-                {
-                    'proceed' : true,
-                    'cbt_id' : $('billing_type').value,
-                    'amount' : $('bill_amount').value,
-                    'note' : $('bill_note').value
-                }
-            );
+            xulG.proceed = true;
+            xulG.cbt_id = $('billing_type').value;
+            xulG.amount = $('bill_amount').value;
+            xulG.note = $('bill_note').value;
 
         } else {
 
@@ -203,12 +210,8 @@ function patron_bill_finish() {
                 if (typeof mb_id.ilsevent != 'undefined') throw(mb_id);
                 //alert($('patronStrings').getString('staff.patron.bill_wizard.patron_bill_finish.billing_added'));
 
-                update_modal_xulG(
-                    {
-                        mb_id : mb_id,
-                        xact_id : xact_id
-                    }
-                );
+                xulG.mb_id = mb_id;
+                xulG.xact_id = xact_id;
 
             } else {
                 throw(xact_id);

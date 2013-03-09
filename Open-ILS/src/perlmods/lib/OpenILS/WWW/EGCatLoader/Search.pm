@@ -25,6 +25,11 @@ sub _prepare_biblio_search_basics {
 
         next unless $query =~ /\S/;
 
+        # Hack for journal title
+        if ($qtype eq 'jtitle') {
+            $qtype = 'title';
+        }
+
         # This stuff probably will need refined or rethought to better handle
         # the weird things Real Users will surely type in.
         $contains = "" unless defined $contains; # silence warning
@@ -38,6 +43,11 @@ sub _prepare_biblio_search_basics {
         } elsif ($contains eq 'exact') {
             $query =~ s/[\^\$]//g;
             $query = '^' . $query . '$';
+        } elsif ($contains eq 'starts') {
+            $query =~ s/"//g;
+            $query =~ s/[\^\$]//g;
+            $query = '^' . $query;
+            $query = ('"' . $query . '"') if index $query, ' ';
         }
         $query = "$qtype:$query" unless $qtype eq 'keyword' and $i == 0;
 
@@ -52,6 +62,8 @@ sub _prepare_biblio_search {
     my ($cgi, $ctx) = @_;
 
     my $query = _prepare_biblio_search_basics($cgi) || '';
+
+    $query .= ' ' . $ctx->{global_search_filter} if $ctx->{global_search_filter};
 
     foreach ($cgi->param('modifier')) {
         # The unless bit is to avoid stacking modifiers.
@@ -76,6 +88,11 @@ sub _prepare_biblio_search {
 
     if ($cgi->param("bookbag")) {
         $query .= " container(bre,bookbag," . int($cgi->param("bookbag")) . ")";
+    }
+
+    # Journal title hackery complete
+    if ($cgi->param("qtype") && $cgi->param("qtype") eq "jtitle") {
+        $query .= " bib_level(s)";
     }
 
     if ($cgi->param('pubdate') && $cgi->param('date1')) {
@@ -310,7 +327,7 @@ sub load_rresults {
         return $self->marc_expert_search(%args) if scalar($cgi->param("tag"));
         $self->timelog("Calling item barcode search");
         return $self->item_barcode_shortcut if (
-            $cgi->param("qtype") and ($cgi->param("qtype") eq "item_barcode")
+            $cgi->param("qtype") and ($cgi->param("qtype") eq "item_barcode") and not $internal
         );
         $self->timelog("Calling call number browse");
         return $self->call_number_browse_standalone if (
@@ -447,6 +464,9 @@ sub load_rresults {
         return $stat if $stat;
     }
 
+    # load temporary_list settings for user and ou:
+    $self->_load_lists_and_settings if ($ctx->{user});
+
     # shove recs into context in search results order
     for my $rec_id (@$rec_ids) {
         push(
@@ -498,8 +518,8 @@ sub check_1hit_redirect {
 
     my $base_url = sprintf(
         '%s://%s%s/record/%s',
-        $ctx->{proto}, 
-        $self->apache->hostname,
+        $self->ctx->{proto},
+        $self->ctx->{hostname},
         $self->ctx->{opac_root},
         $$rec_ids[0],
     );
@@ -507,7 +527,7 @@ sub check_1hit_redirect {
     # If we get here from the same record detail page to which we
     # now wish to redirect, do not perform the redirect.  This
     # approach seems to work well, with the rare exception of 
-    # performing a new serach directly from the detail page that 
+    # performing a new search directly from the detail page that 
     # happens to result in the same single hit.  In this case, the 
     # user will be left on the search results page.  This could be 
     # overcome w/ additional CGI, etc., but I'm not sure it's necessary.
@@ -558,10 +578,15 @@ sub item_barcode_shortcut {
         );
         $self->timelog("Returned from calling get_records_and_facets() for item_barcode");
 
+        my $stat = $self->check_1hit_redirect($rec_ids);
+        return $stat if $stat;
+
         $self->ctx->{records} = [@data];
         $self->ctx->{search_facets} = {};
         $self->ctx->{hit_count} = scalar @data;
         $self->ctx->{page_size} = $self->ctx->{hit_count};
+        # load temporary_list settings for user and ou:
+        $self->_load_lists_and_settings if ($self->ctx->{user});
 
         return Apache2::Const::OK;
     } {
@@ -616,10 +641,12 @@ sub marc_expert_search {
     }
 
     $self->timelog("Searching for MARC expert");
+    my $method = 'open-ils.search.biblio.marc';
+    $method .= '.staff' if $self->ctx->{is_staff};
     my $timeout = 120;
     my $ses = OpenSRF::AppSession->create('open-ils.search');
     my $req = $ses->request(
-        'open-ils.search.biblio.marc',
+        $method,
         {searches => $query, org_unit => $self->ctx->{search_ou}}, 
         $limit, $offset, $timeout);
 
@@ -655,6 +682,9 @@ sub marc_expert_search {
     );
     $self->timelog("Returned from calling get_records_and_facets() for MARC expert");
 
+    # load temporary_list settings for user and ou:
+    $self->_load_lists_and_settings if ($self->ctx->{user});
+
     $self->ctx->{records} = [@data];
 
     return Apache2::Const::OK;
@@ -665,12 +695,13 @@ sub call_number_browse_standalone {
 
     if (my $cnfrag = $self->cgi->param("query")) {
         my $url = sprintf(
-            'http%s://%s%s/cnbrowse?cn=%s',
-            $self->cgi->https ? "s" : "",
-            $self->apache->hostname,
+            '%s://%s%s/cnbrowse?cn=%s',
+            $self->ctx->{proto},
+            $self->ctx->{hostname},
             $self->ctx->{opac_root},
             $cnfrag # XXX some kind of escaping needed here?
         );
+        $url .= '&locg=' . $self->_get_search_lib() if ($self->_get_search_lib());
         return $self->generic_redirect($url);
     } else {
         return $self->generic_redirect; # return to search page

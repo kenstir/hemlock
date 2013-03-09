@@ -17,10 +17,12 @@ function my_init() {
 
         var copy_ids = xul_param('copy_ids');
 
+        window.place_hold_event_listeners = new EventListenerList();
+
         populate_hold_usr_textbox();
         populate_pickup_lib_menu();
 
-        $('request_btn').addEventListener(
+        window.place_hold_event_listeners.add($('request_btn'), 
             'command',
             function(ev) {
                 make_request(copy_ids,false);
@@ -30,6 +32,14 @@ function my_init() {
         
         set_remaining_event_listeners();
 
+    } catch(E) {
+        alert('Error in place_hold.js, my_init(): ' + E);
+    }
+}
+
+function my_cleanup() {
+    try {
+        window.place_hold_event_listeners.removeAll();
     } catch(E) {
         alert('Error in place_hold.js, my_init(): ' + E);
     }
@@ -134,7 +144,7 @@ function handle_failures(failures,failed_targets) {
                 )
             );
             addCSSClass(err_msg,'click_link');
-            err_msg.addEventListener(
+            window.place_hold_event_listeners.add(err_msg, 
                 'click',
                 function(copy_ids) {
                     return function(ev) {
@@ -156,7 +166,7 @@ function handle_failures(failures,failed_targets) {
             );
             err_box.appendChild(retry_btn);
 
-            retry_btn.addEventListener(
+            window.place_hold_event_listeners.add(retry_btn, 
                 'command',
                 function(copy_ids) {
                     return function(ev) {
@@ -177,7 +187,7 @@ function handle_failures(failures,failed_targets) {
             );
             err_box.appendChild(override_btn);
 
-            override_btn.addEventListener(
+            window.place_hold_event_listeners.add(override_btn, 
                 'command',
                 function(copy_ids) {
                     return function(ev) {
@@ -200,13 +210,13 @@ function handle_failures(failures,failed_targets) {
 function set_remaining_event_listeners() {
     try {
 
-        $('hold_type_menu').addEventListener(
+        window.place_hold_event_listeners.add($('hold_type_menu'), 
             'command',
             function(ev) { oils_lock_page(); },
             false
         );
 
-        $('cancel_btn').addEventListener(
+        window.place_hold_event_listeners.add($('cancel_btn'), 
             'command',
             function(ev) { xulG.close_tab(); },
             false
@@ -231,7 +241,7 @@ function populate_hold_usr_textbox() {
         'value',
         patron.util.format_name(au_obj)
     );
-    $('hold_usr_textbox').addEventListener(
+    window.place_hold_event_listeners.add($('hold_usr_textbox'), 
         'change',
         function(ev) {
             try {
@@ -288,7 +298,7 @@ function populate_pickup_lib_menu() {
 
         $('pickup_lib_menu_placeholder').appendChild(ml);
 
-        ml.addEventListener(
+        window.place_hold_event_listeners.add(ml, 
             'command',
             function(ev) { oils_lock_page(); },
             false
@@ -300,8 +310,6 @@ function populate_pickup_lib_menu() {
 }
 
 function ui_setup() {
-    netscape.security.PrivilegeManager.enablePrivilege(
-        "UniversalXPConnect");
     if (typeof JSAN == 'undefined') {
         throw( "The JSAN library object is missing.");
     }

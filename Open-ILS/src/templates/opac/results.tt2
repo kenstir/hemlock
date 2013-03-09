@@ -1,5 +1,4 @@
-[%  PROCESS "opac/parts/header.tt2";
-
+[%- PROCESS "opac/parts/header.tt2";
     WRAPPER "opac/parts/base.tt2";
     INCLUDE "opac/parts/topnav.tt2";
 
@@ -13,8 +12,11 @@
     page = page.match('^\d+$') ? page : 0; # verify page is a sane value
 
     page_count = ctx.page_size == 0 ? 1 : POSIX.ceil(ctx.hit_count / ctx.page_size);
-%]
-    <form action="[% ctx.opac_root %]/results" method="GET">
+
+    PROCESS "opac/parts/misc_util.tt2";
+    PROCESS get_library;
+-%]
+    <form action="[% ctx.opac_root %]/results" method="get">
     <div id="search-wrapper">
         [% INCLUDE "opac/parts/searchbar.tt2" took_care_of_form=1 %]
     </div>
@@ -22,7 +24,7 @@
         <div id="results_header_bar">
             <div id="results_header_inner">
                 <div class="results_header_btns">
-                    <a href="[% mkurl(ctx.opac_root _ '/home') %]">[% l('Another Search') %]</a>
+                    <a href="[% mkurl(ctx.opac_root _ '/home', {$loc_name => loc_value}, 1) %]">[% l('Another Search') %]</a>
                 </div>
                 <div class="results_header_btns">
                     <a href="[% mkurl(ctx.opac_root _ '/advanced') %]">[% l('Advanced Search') %]</a>
@@ -44,8 +46,7 @@
 
                     <div class='results_header_sel' id='simple-detail-view-links'>
                         [% IF CGI.param('detail_record_view') %]
-                        <a href="[% mkurl('', {detail_record_view => ''}) %]">[% l('Show Fewer Details') %]</a>
-                        [% ELSE %]
+                        <a href="[% mkurl('', {detail_record_view => ''}) %]">[% l('Show Fewer Details') %]</a> [% ELSE %]
                         <a href="[% mkurl('', {detail_record_view => 1}) %]">[% l('Show More Details') %]</a>
                         [% END %]
                     </div>
@@ -74,4 +75,4 @@
         </div>
         <br class="clear-both" />
     </div>
-[% END %]
+[%- END %]

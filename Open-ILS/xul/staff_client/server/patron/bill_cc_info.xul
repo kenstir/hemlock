@@ -21,6 +21,7 @@
 <window id="patron_bill" title="&staff.patron.bill_cc_info.title;"
     orient="vertical" style="overflow: auto" oils_persist="height width sizemode"
     onload="try{info_init(); font_helper(); refresh_fields(); persist_helper(); }catch(E){alert(E);}"
+    onunload="try {  persist_helper_cleanup(); } catch(E) { alert(E) }"
     xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
     <!-- ///////////////////////////////////////////////////////////////////////////////////////////////////////////// -->
@@ -92,7 +93,6 @@
         }
 
         function info_init() {
-            netscape.security.PrivilegeManager.enablePrivilege("UniversalXPConnect");
             if (typeof JSAN == 'undefined') { throw( $("commonStrings").getString('common.jsan.missing') ); }
             JSAN.errorLevel = "die"; // none, warn, or die
             JSAN.addRepository('/xul/server/');
@@ -109,7 +109,7 @@
             try {
                 patron = g.network.simple_request(
                     'FM_AU_FLESHED_RETRIEVE_VIA_ID',
-                    [ses(), xul_param('patron_id', {'modal_xulG': true})]
+                    [ses(), xul_param('patron_id')]
                 );
             } catch (e) {
                 alert ("Patron retrieval failed");

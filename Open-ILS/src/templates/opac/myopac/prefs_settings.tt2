@@ -1,11 +1,11 @@
 [%  PROCESS "opac/parts/header.tt2";
     PROCESS "opac/parts/org_selector.tt2";
     WRAPPER "opac/parts/myopac/prefs_base.tt2";
-    myopac_page = "prefs_notify";
+    myopac_page = "prefs";
     prefs_page = 'settings' %]
 
 
-    <form method='POST'>
+    <form method='post'>
 
        <table class="full-width data_grid" id="acct_search_main">
             <tbody>
@@ -77,7 +77,14 @@
                             [% IF ctx.user_setting_map.$setting; %] checked='checked' [% END %]/>
                     </td>
                 </tr>
-
+                <tr>
+                    <td>[% l('Skip warning when adding to temporary book list?') %]</td>
+                    <td>
+                        [% setting = 'opac.temporary_list_no_warn' %]
+                        <input name='[% setting %]' type="checkbox"
+                            [% IF ctx.user_setting_map.$setting %] checked='checked' [% END %]/>
+                    </td>
+                </tr>
                 <!--
                 <tr>
                     <td>[% l("Default Font Size") %]</td>

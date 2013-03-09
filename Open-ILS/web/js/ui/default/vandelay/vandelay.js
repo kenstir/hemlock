@@ -93,6 +93,10 @@ var copyStatusCache = {};
 var copyLocationCache = {};
 var localeStrings;
 
+// org settings
+var orgSettings = {};
+const DEFAULT_MATCH_SET = 'vandelay.default_match_set';
+
 /**
   * Grab initial data
   */
@@ -211,6 +215,13 @@ function vlInit() {
             }
         }
     );
+
+    orgSettings = fieldmapper.aou.fetchOrgSettingBatch(openils.User.user.ws_ou(), [
+        DEFAULT_MATCH_SET
+    ]);
+    for(k in orgSettings)
+        if(orgSettings[k])
+            orgSettings[k] = orgSettings[k].value;
 
     vlAttrEditorInit();
     vlExportInit();
@@ -344,8 +355,8 @@ function runStartupCommands() {
     dojo.style('vl-nav-bar', 'visibility', 'visible');
     if(currentQueueId)
         return retrieveQueuedRecords(currentType, currentQueueId, handleRetrieveRecords);
-    if (cgi.param('page', 'inspectq'))
-        return displayGlobalDiv('vl-queue-select-div');
+    if (cgi.param('page') == 'inspectq')
+        return vlShowQueueSelect();
         
     vlShowUploadForm();
 }
@@ -375,10 +386,18 @@ function uploadMARC(onload){
 function createQueue(queueName, type, onload, importDefId, matchSet) {
     var name = (type=='bib') ? 'bib' : 'authority';
     var method = 'open-ils.vandelay.'+ name +'_queue.create'
+
+    var qType = name;
+    if (vlUploadRecordType.getValue().match(/acq/)) 
+        var qType = 'acq';
+
+    console.log('record type ' + vlUploadRecordType.getValue());
+    console.log('record type ' + vlUploadRecordType.getValue());
+
     fieldmapper.standardRequest(
         ['open-ils.vandelay', method],
         {   async: true,
-            params: [authtoken, queueName, null, name, matchSet, importDefId],
+            params: [authtoken, queueName, null, qType, matchSet, importDefId],
             oncomplete : function(r) {
                 var queue = r.recv().content();
                 if(e = openils.Event.parse(queue)) 
@@ -498,7 +517,9 @@ function retrieveQueuedRecords(type, queueId, onload, doExport) {
     selectableGridRecords = {};
 
     if(!type) type = currentType;
+    else currentType = type;
     if(!queueId) queueId = currentQueueId;
+    else currentQueueId = queueId;
     if(!onload) onload = handleRetrieveRecords;
 
     var method = 'open-ils.vandelay.'+type+'_queue.records.retrieve';
@@ -1034,7 +1055,7 @@ function vlQueueGridNextPage() {
 function vlDeleteQueue(type, queueId, onload) {
     fieldmapper.standardRequest(
         ['open-ils.vandelay', 'open-ils.vandelay.'+type+'_queue.delete'],
-        {   async: true,
+        {   async: false,
             params: [authtoken, queueId],
             oncomplete: function(r) {
                 var resp = r.recv().content();
@@ -1311,6 +1332,9 @@ function batchUpload() {
     var queueName = dijit.byId('vl-queue-name').getValue();
     currentType = dijit.byId('vl-record-type').getValue();
 
+    // could be bib-acq, which makes no sense in most places
+    if (currentType.match(/bib/)) currentType = 'bib';
+
     var handleProcessSpool = function() {
         if( 
             vlUploadQueueImportNoMatch.checked || 
@@ -1352,28 +1376,29 @@ function batchUpload() {
     }
 }
 
+// Inspect Queue no longer uses stores, so put type matching here instead
+function vlGetQueueData(type, asStore) {
+    var filter;
+    switch(type) {
+        case 'bib-acq':
+            filter = 'acq';
+        case 'bib':
+            if(!filter) filter = 'bib';
+            var bibList = allUserBibQueues.filter(
+                function(q) {
+                    return (q.queue_type() == filter);
+                }
+            );
+            if (!asStore) return bibList;
+            return vbq.toStoreData(bibList);
+        case 'auth':
+            if (!asStore) return allUserAuthQueues;
+            return vaq.toStoreData(allUserAuthQueues);
+    }
+}
 
 function vlFleshQueueSelect(selector, type) {
-    var data;
-    if (type == 'bib') {
-        var bibList = allUserBibQueues.filter(
-            function(q) {
-                return (q.queue_type() == 'bib');
-            }
-        );
-        data = vbq.toStoreData(bibList);
-    } else if (type == 'bib-acq') {
-        // ACQ queues are a special type of bib queue
-        var acqList = allUserBibQueues.filter(
-            function(q) {
-                return (q.queue_type() == 'acq');
-            }
-        );
-        data = vbq.toStoreData(acqList);
-    } else {
-        data = vaq.toStoreData(allUserAuthQueues);
-    }
-
+    var data = vlGetQueueData(type, true);
     selector.store = new dojo.data.ItemFileReadStore({data:data});
     selector.setValue(null);
     selector.setDisplayedValue('');
@@ -1421,6 +1446,13 @@ function vlUpdateMatchSetSelector(type) {
     type = (type.match(/bib/)) ? 'biblio' : 'authority';
     vlUploadQueueMatchSet.store = 
         new dojo.data.ItemFileReadStore({data:vms.toStoreData(matchSets[type])});
+    // apply default match set
+    for (var i = 0; i < matchSets[type].length; i++) {
+        if (matchSets[type][i].id() == orgSettings[DEFAULT_MATCH_SET]) {
+            vlUploadQueueMatchSet.setValue(matchSets[type][i].id());
+            break;
+        }
+    }
 }
 
 function vlShowUploadForm() {
@@ -1457,9 +1489,48 @@ function vlShowUploadForm() {
 
 }
 
+function vlDeleteSelectedQueues() {
+    var checkboxes = document.getElementById('vlQueueSelectList').getElementsByTagName('input');
+    var type = vlQueueSelectType.attr('value').replace(/-.*/, '');
+    for(var i = 0; i < checkboxes.length; i++) {
+        if(checkboxes[i].getAttribute('name') == 'delete' && checkboxes[i].checked) {
+            vlDeleteQueue(type, checkboxes[i].getAttribute('value'), function () {});
+        }
+    }
+    window.location.reload();
+}
+
 function vlShowQueueSelect() {
     displayGlobalDiv('vl-queue-select-div');
-    vlFleshQueueSelect(vlQueueSelectQueueList, vlQueueSelectType.getValue());
+    var type = vlQueueSelectType.attr('value');
+    var data = vlGetQueueData(type, false);
+    type = type.replace(/-.*/, ''); // To remove any sub-typeish info.
+    var tbody = document.getElementById('vlQueueSelectList');
+    // Clear it out
+    while(tbody.firstChild) {
+        tbody.removeChild(tbody.firstChild);
+    }
+    // Add entries
+    for(var entry in data) {
+        var name = data[entry].name();
+        if(!name.match(/\S/))
+            name = '-';
+        var tr = document.createElement('tr');
+        var td = document.createElement('td');
+        var checkbox = document.createElement('input');
+        checkbox.setAttribute('type', 'checkbox');
+        checkbox.setAttribute('name', 'delete');
+        checkbox.setAttribute('value', data[entry].id());
+        td.appendChild(checkbox);
+        tr.appendChild(td);
+        td = document.createElement('td');
+        var a = document.createElement('a');
+        a.textContent = name;
+        a.setAttribute('href', "javascript:retrieveQueuedRecords('" + type + "', " + data[entry].id() + ");");
+        td.appendChild(a);
+        tr.appendChild(td);
+        tbody.appendChild(tr);
+    }
 }
 
 function vlShowMatchSetEditor() {
@@ -1473,19 +1544,12 @@ function vlShowMatchSetEditor() {
     );
 }
 
-function vlFetchQueueFromForm() {
-    currentType = vlQueueSelectType.attr('value').replace(/-.*/, ''); // trim bib-acq
-    currentQueueId = vlQueueSelectQueueList.getValue();
-    retrieveQueuedRecords(currentType, currentQueueId, handleRetrieveRecords);
-}
-
 function vlOpenMarcEditWindow(rec, postReloadHTMLHandler) {
     /*
         To run in Firefox directly, must set signed.applets.codebase_principal_support
         to true in about:config
     */
-    netscape.security.PrivilegeManager.enablePrivilege('UniversalXPConnect');
-    win = window.open('/xul/server/cat/marcedit.xul'); // XXX version?
+    win = window.open('/xul/server/cat/marcedit.xul','','chrome'); // XXX version?
 
     var type;
     if (currentType == 'bib') {

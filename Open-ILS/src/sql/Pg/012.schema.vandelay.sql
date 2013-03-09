@@ -104,6 +104,7 @@ CREATE TABLE vandelay.import_item_attr_definition (
     pub_note        TEXT,
     priv_note_title TEXT,
     priv_note       TEXT,
+    internal_id     TEXT,
 	CONSTRAINT vand_import_item_attr_def_idx UNIQUE (owner,name)
 );
 
@@ -173,7 +174,8 @@ CREATE TABLE vandelay.import_item (
     alert_message   TEXT,
     pub_note        TEXT,
     priv_note       TEXT,
-    opac_visible    BOOL
+    opac_visible    BOOL,
+    internal_id     BIGINT -- queue_type == 'acq' ? acq.lineitem_detail.id : asset.copy.id
 );
  
 CREATE TABLE vandelay.import_bib_trash_fields (
@@ -506,9 +508,9 @@ BEGIN
 
     -- generate the where clause and return that directly (into wq), and as
     -- a side-effect, populate the _vandelay_tmp_[qj]rows tables.
-    wq := vandelay.get_expr_from_match_set(match_set_id);
+    wq := vandelay.get_expr_from_match_set(match_set_id, tags_rstore);
 
-    query_ := 'SELECT DISTINCT(bre.id) AS record, ';
+    query_ := 'SELECT DISTINCT(record), ';
 
     -- qrows table is for the quality bits we add to the SELECT clause
     SELECT ARRAY_TO_STRING(
@@ -517,15 +519,14 @@ BEGIN
 
     -- our query string so far is the SELECT clause and the inital FROM.
     -- no JOINs yet nor the WHERE clause
-    query_ := query_ || coal || ' AS quality ' || E'\n' ||
-        'FROM biblio.record_entry bre ';
+    query_ := query_ || coal || ' AS quality ' || E'\n';
 
     -- jrows table is for the joins we must make (and the real text conditions)
     SELECT ARRAY_TO_STRING(ARRAY_ACCUM(j), E'\n') INTO joins
         FROM _vandelay_tmp_jrows;
 
     -- add those joins and the where clause to our query.
-    query_ := query_ || joins || E'\n' || 'WHERE ' || wq || ' AND not bre.deleted';
+    query_ := query_ || joins || E'\n' || 'JOIN biblio.record_entry bre ON (bre.id = record) ' || 'WHERE ' || wq || ' AND not bre.deleted';
 
     -- this will return rows of record,quality
     FOR rec IN EXECUTE query_ USING tags_rstore, svf_rstore LOOP
@@ -569,7 +570,8 @@ END;
 $func$ LANGUAGE PLPGSQL;
 
 CREATE OR REPLACE FUNCTION vandelay.get_expr_from_match_set(
-    match_set_id INTEGER
+    match_set_id INTEGER,
+    tags_rstore HSTORE
 ) RETURNS TEXT AS $$
 DECLARE
     root    vandelay.match_set_point;
@@ -577,12 +579,13 @@ BEGIN
     SELECT * INTO root FROM vandelay.match_set_point
         WHERE parent IS NULL AND match_set = match_set_id;
 
-    RETURN vandelay.get_expr_from_match_set_point(root);
+    RETURN vandelay.get_expr_from_match_set_point(root, tags_rstore);
 END;
 $$  LANGUAGE PLPGSQL;
 
 CREATE OR REPLACE FUNCTION vandelay.get_expr_from_match_set_point(
-    node vandelay.match_set_point
+    node vandelay.match_set_point,
+    tags_rstore HSTORE
 ) RETURNS TEXT AS $$
 DECLARE
     q           TEXT;
@@ -605,13 +608,13 @@ BEGIN
                 q := q || ' ' || this_op || ' ';
             END IF;
             i := i + 1;
-            q := q || vandelay.get_expr_from_match_set_point(child);
+            q := q || vandelay.get_expr_from_match_set_point(child, tags_rstore);
         END LOOP;
         q := q || ')';
         RETURN q;
     ELSIF node.bool_op IS NULL THEN
         PERFORM vandelay._get_expr_push_qrow(node);
-        PERFORM vandelay._get_expr_push_jrow(node);
+        PERFORM vandelay._get_expr_push_jrow(node, tags_rstore);
         RETURN vandelay._get_expr_render_one(node);
     ELSE
         RETURN '';
@@ -629,7 +632,8 @@ END;
 $$ LANGUAGE PLPGSQL;
 
 CREATE OR REPLACE FUNCTION vandelay._get_expr_push_jrow(
-    node vandelay.match_set_point
+    node vandelay.match_set_point,
+    tags_rstore HSTORE
 ) RETURNS VOID AS $$
 DECLARE
     jrow        TEXT;
@@ -637,10 +641,21 @@ DECLARE
     op          TEXT;
     tagkey      TEXT;
     caseless    BOOL;
+    jrow_count  INT;
+    my_using    TEXT;
+    my_join     TEXT;
 BEGIN
     -- remember $1 is tags_rstore, and $2 is svf_rstore
 
     caseless := FALSE;
+    SELECT COUNT(*) INTO jrow_count FROM _vandelay_tmp_jrows;
+    IF jrow_count > 0 THEN
+        my_using := ' USING (record)';
+        my_join := 'FULL OUTER JOIN';
+    ELSE
+        my_using := '';
+        my_join := 'FROM';
+    END IF;
 
     IF node.tag IS NOT NULL THEN
         caseless := (node.tag IN ('020', '022', '024'));
@@ -666,32 +681,68 @@ BEGIN
 
     my_alias := 'n' || node.id::TEXT;
 
-    jrow := 'LEFT JOIN (SELECT *, ' || node.quality ||
-        ' AS quality FROM metabib.';
+    jrow := my_join || ' (SELECT *, ';
     IF node.tag IS NOT NULL THEN
-        jrow := jrow || 'full_rec) ' || my_alias || ' ON (' ||
-            my_alias || '.record = bre.id AND ' || my_alias || '.tag = ''' ||
+        jrow := jrow  || node.quality ||
+            ' AS quality FROM metabib.full_rec mfr WHERE mfr.tag = ''' ||
             node.tag || '''';
         IF node.subfield IS NOT NULL THEN
-            jrow := jrow || ' AND ' || my_alias || '.subfield = ''' ||
+            jrow := jrow || ' AND mfr.subfield = ''' ||
                 node.subfield || '''';
         END IF;
         jrow := jrow || ' AND (';
-
-        IF caseless THEN
-            jrow := jrow || 'LOWER(' || my_alias || '.value) ' || op;
-        ELSE
-            jrow := jrow || my_alias || '.value ' || op;
-        END IF;
-
-        jrow := jrow || ' ANY(($1->''' || tagkey || ''')::TEXT[])))';
+        jrow := jrow || vandelay._node_tag_comparisons(caseless, op, tags_rstore, tagkey);
+        jrow := jrow || ')) ' || my_alias || my_using || E'\n';
     ELSE    -- svf
-        jrow := jrow || 'record_attr) ' || my_alias || ' ON (' ||
-            my_alias || '.id = bre.id AND (' ||
-            my_alias || '.attrs->''' || node.svf ||
-            ''' ' || op || ' $2->''' || node.svf || '''))';
+        jrow := jrow || 'id AS record, ' || node.quality ||
+            ' AS quality FROM metabib.record_attr mra WHERE mra.attrs->''' ||
+            node.svf || ''' ' || op || ' $2->''' || node.svf || ''') ' ||
+            my_alias || my_using || E'\n';
     END IF;
     INSERT INTO _vandelay_tmp_jrows (j) VALUES (jrow);
+END;
+$$ LANGUAGE PLPGSQL;
+
+CREATE OR REPLACE FUNCTION vandelay._node_tag_comparisons(
+    caseless BOOLEAN,
+    op TEXT,
+    tags_rstore HSTORE,
+    tagkey TEXT
+) RETURNS TEXT AS $$
+DECLARE
+    result  TEXT;
+    i       INT;
+    vals    TEXT[];
+BEGIN
+    i := 1;
+    vals := tags_rstore->tagkey;
+    result := '';
+
+    WHILE TRUE LOOP
+        IF i > 1 THEN
+            IF vals[i] IS NULL THEN
+                EXIT;
+            ELSE
+                result := result || ' OR ';
+            END IF;
+        END IF;
+
+        IF caseless THEN
+            result := result || 'LOWER(mfr.value) ' || op;
+        ELSE
+            result := result || 'mfr.value ' || op;
+        END IF;
+
+        result := result || ' ' || COALESCE('''' || vals[i] || '''', 'NULL');
+
+        IF vals[i] IS NULL THEN
+            EXIT;
+        END IF;
+        i := i + 1;
+    END LOOP;
+
+    RETURN result;
+
 END;
 $$ LANGUAGE PLPGSQL;
 
@@ -1217,7 +1268,10 @@ BEGIN
         RETURN FALSE;
     END IF;
 
-    IF dyn_profile.replace_rule <> '' THEN
+    IF dyn_profile.replace_rule = '' AND dyn_profile.preserve_rule = '' AND dyn_profile.add_rule = '' AND dyn_profile.strip_rule = '' THEN
+        --Since we have nothing to do, just return a NOOP "we did it"
+        RETURN TRUE;
+    ELSIF dyn_profile.replace_rule <> '' THEN
         source_marc = v_marc;
         target_marc = eg_marc;
         replace_rule = dyn_profile.replace_rule;
@@ -1263,7 +1317,10 @@ BEGIN
         RETURN NULL;
     END IF;
 
-    IF dyn_profile.replace_rule <> '' THEN
+    IF dyn_profile.replace_rule = '' AND dyn_profile.preserve_rule = '' AND dyn_profile.add_rule = '' AND dyn_profile.strip_rule = '' THEN
+        --Since we have nothing to do, just return what we were given.
+        RETURN target_marc;
+    ELSIF dyn_profile.replace_rule <> '' THEN
         trgt_marc = target_marc;
         tmpl_marc = template_marc;
         replace_rule = dyn_profile.replace_rule;
@@ -1638,7 +1695,10 @@ BEGIN
         RETURN FALSE;
     END IF;
 
-    IF dyn_profile.replace_rule <> '' THEN
+    IF dyn_profile.replace_rule = '' AND dyn_profile.preserve_rule = '' AND dyn_profile.add_rule = '' AND dyn_profile.strip_rule = '' THEN
+        --Since we have nothing to do, just return a NOOP "we did it"
+        RETURN TRUE;
+    ELSIF dyn_profile.replace_rule <> '' THEN
         source_marc = v_marc;
         target_marc = eg_marc;
         replace_rule = dyn_profile.replace_rule;

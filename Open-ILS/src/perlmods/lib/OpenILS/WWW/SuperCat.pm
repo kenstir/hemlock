@@ -271,6 +271,15 @@ sub child_init {
             }
         }
     }
+    return Apache2::Const::OK;
+}
+
+sub check_child_init() {
+    if (!defined $supercat || !defined $actor || !defined $search) {
+        # For some reason one (or more) of our appsessions is missing....
+        # So init!
+        child_init();
+    }
 }
 
 =head2 parse_feed_type($type)
@@ -367,6 +376,8 @@ sub oisbn {
     my $apache = shift;
     return Apache2::Const::DECLINED if (-e $apache->filename);
 
+    check_child_init();
+
     (my $isbn = $apache->path_info) =~ s{^.*?([^/]+)$}{$1}o;
 
     my $list = $supercat
@@ -397,6 +408,8 @@ sub unapi {
 
     my $apache = shift;
     return Apache2::Const::DECLINED if (-e $apache->filename);
+
+    check_child_init();
 
     my $cgi = new CGI;
 
@@ -727,6 +740,8 @@ sub supercat {
     my $apache = shift;
     return Apache2::Const::DECLINED if (-e $apache->filename);
 
+    check_child_init();
+
     my $cgi = new CGI;
 
     my $add_path = 0;
@@ -966,6 +981,8 @@ sub bookbag_feed {
     my $apache = shift;
     return Apache2::Const::DECLINED if (-e $apache->filename);
 
+    check_child_init();
+
     my $cgi = new CGI;
 
     my $year = (gmtime())[5] + 1900;
@@ -1055,6 +1072,8 @@ sub bookbag_feed {
 sub changes_feed {
     my $apache = shift;
     return Apache2::Const::DECLINED if (-e $apache->filename);
+
+    check_child_init();
 
     my $cgi = new CGI;
 
@@ -1202,6 +1221,8 @@ OSD
 sub opensearch_feed {
     my $apache = shift;
     return Apache2::Const::DECLINED if (-e $apache->filename);
+
+    check_child_init();
 
     my $cgi = new CGI;
     my $year = (gmtime())[5] + 1900;
@@ -1518,6 +1539,8 @@ sub string_browse {
     my $apache = shift;
     return Apache2::Const::DECLINED if (-e $apache->filename);
 
+    check_child_init();
+
     my $cgi = new CGI;
     my $year = (gmtime())[5] + 1900;
 
@@ -1600,6 +1623,8 @@ sub string_browse {
 sub string_startwith {
     my $apache = shift;
     return Apache2::Const::DECLINED if (-e $apache->filename);
+
+    check_child_init();
 
     my $cgi = new CGI;
     my $year = (gmtime())[5] + 1900;
@@ -1812,6 +1837,8 @@ my $ex_doc;
 sub sru_search {
     my $cgi = new CGI;
 
+    check_child_init();
+
     my $req = SRU::Request->newFromCGI( $cgi );
     my $resp = SRU::Response->newFromRequest( $req );
 
@@ -2021,6 +2048,8 @@ sub sru_search {
 my $auth_ex_doc;
 sub sru_auth_search {
     my $cgi = new CGI;
+
+    check_child_init();
 
     my $req = SRU::Request->newFromCGI( $cgi );
     my $resp = SRU::Response->newFromRequest( $req );

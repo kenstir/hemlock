@@ -271,6 +271,54 @@ vim:et:ts=4:sw=4:
 
         </added_content>
 
+        <!-- Config section for acq_order_reader.pl script.
+             It reads MARC order record files from disk (presumably
+             an FTP destination) and pushes the order records into ACQ.
+             THIS IS NOT EDI. -->
+        <acq_order_reader>
+
+            <!-- Root directory for all FTP'd ACQ order record files .
+                 If the script is configured to talk to a remote acq server,
+                 this directory has to be a read/write NFS share.  -->
+            <base_dir>/openils/var/data/acq_orders/</base_dir>
+
+            <!-- any files found in the shared subdir must be inspected
+                 (e.g. file name prefix) to determine the provider. -->
+            <shared_subdir>ALL</shared_subdir><!-- SUPPORT PENDING -->
+
+            <!-- providers that don't provide a mechanism to inspect the file
+                 have to push their files to provider-specific locations -->
+            <provider>
+                <ordering_agency>BR1</ordering_agency> <!-- who gets/manages the order -->
+                <provider_code>BAB</provider_code>   
+                <provider_owner>CONS</provider_owner>  <!-- provider provider_owner; org unit shortname -->
+                <subdir>CONS-BAB</subdir> <!-- file directory;  full path = base_dir + subdir -->
+                <activate_po>false</activate_po> <!-- activate PO at upload? -->
+                <vandelay>
+                    <import_no_match>true</import_no_match>
+                    <!-- Most Vandelay options are supported.  For bools, use true/false.
+                        match_quality_ratio 
+                        match_set 
+                        bib_source 
+                        merge_profile
+                        create_assets
+                        import_no_match 
+                        auto_overlay_exact 
+                        auto_overlay_1match 
+                        auto_overlay_best_match
+                    -->
+                </vandelay>
+            </provider>
+
+            <!-- Add more as needed...
+            <provider>
+                ...
+            </provider>
+            -->
+
+        </acq_order_reader>
+
+
         <!-- no apps are enabled globally by default -->
         <activeapps/> 
 
@@ -454,22 +502,6 @@ vim:et:ts=4:sw=4:
                     <use_staged_search>true</use_staged_search>
 
                     <!--
-                        For staged search, we estimate hits based on inclusion or exclusion.
-
-                        Valid settings:
-                            inclusion - visible ratio on superpage
-                            exclusion - excluded ratio on superpage
-                            delete_adjusted_inclusion - included ratio on superpage, ratio adjusted by deleted count
-                            delete_adjusted_exclusion - excluded ratio on superpage, ratio adjusted by deleted count
-
-                        Under normal circumstances, inclusion is the best strategy, and both delete_adjusted variants
-                        will return the same value +/- 1.  The exclusion strategy is the original, and works well
-                        when there are few deleted or excluded records, in other words, when the superpage is not
-                        sparsely populated with visible records.
-                    -->
-                    <estimation_strategy>inclusion</estimation_strategy>
-
-                    <!--
                         Evergreen uses a cover density algorithm for calculating relative ranking of matches.  There
                         are several tuning parameters and options available.  By default, no document length normalization
                         is applied.  From the Postgres documentation on ts_rank_cd() (the function used by Evergreen):
@@ -528,11 +560,8 @@ vim:et:ts=4:sw=4:
                     -->
                     <default_preferred_language_weight>5</default_preferred_language_weight>
 
-                    <!-- Baseline number of records to check for hit estimation. -->
-                    <superpage_size>1000</superpage_size>
-
-                    <!-- How many superpages to consider for searching overall. -->
-                    <max_superpages>10</max_superpages>
+                    <!-- How many search results to return. Defaults to superpage_size * max_superpages, if they are defined and it isn't. -->
+                    <max_search_results>10000</max_search_results>
 
                     <!-- zip code database file -->
                     <!--<zips_file>LOCALSTATEDIR/data/zips.txt</zips_file>-->
@@ -651,6 +680,27 @@ vim:et:ts=4:sw=4:
                     -->
                 </app_settings>
             </open-ils.trigger>
+
+            <open-ils.url_verify>
+                <keepalive>5</keepalive>
+                <stateless>1</stateless>
+                <language>perl</language>
+                <implementation>OpenILS::Application::URLVerify</implementation>
+                <max_requests>199</max_requests>
+                <unix_config>
+                    <unix_sock>open-ils.url_verify_unix.sock</unix_sock>
+                    <unix_pid>open-ils.url_verify_unix.pid</unix_pid>
+                    <max_requests>1000</max_requests>
+                    <unix_log>open-ils.url_verify_unix.log</unix_log>
+                    <min_children>1</min_children>
+                    <max_children>15</max_children>
+                    <min_spare_children>1</min_spare_children>
+                    <max_spare_children>5</max_spare_children>
+                </unix_config>
+                <app_settings>
+                    <user_agent>Evergreen %s Link Checker</user_agent>
+                </app_settings>
+            </open-ils.url_verify>
 
             <opensrf.math>
                 <keepalive>3</keepalive>
@@ -1014,6 +1064,10 @@ vim:et:ts=4:sw=4:
                     <min_spare_children>1</min_spare_children>
                     <max_spare_children>5</max_spare_children>
                 </unix_config>
+                <app_settings>
+                    <!-- batch_file_dir must be a protected, web-accessible, shared directory -->
+                    <batch_file_dir>/openils/var/web/collections</batch_file_dir>
+                </app_settings>
             </open-ils.collections>
 
             <open-ils.reporter>
@@ -1212,6 +1266,7 @@ vim:et:ts=4:sw=4:
                 <appname>open-ils.permacrud</appname>  
                 <appname>open-ils.pcrud</appname>  
                 <appname>open-ils.trigger</appname>  
+                <appname>open-ils.url_verify</appname>
                 <appname>open-ils.fielder</appname>  
                 <appname>open-ils.vandelay</appname>  
                 <appname>open-ils.serial</appname>  

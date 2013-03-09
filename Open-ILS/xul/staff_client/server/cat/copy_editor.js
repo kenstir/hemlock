@@ -3,13 +3,13 @@ var g = { 'disabled' : false };
 g.map_acn = {};
 
 function $(id) { return document.getElementById(id); }
+function $_(x) { return $('catStrings').getString(x); }
 
 function my_init() {
     try {
         /******************************************************************************************************/
         /* setup JSAN and some initial libraries */
 
-        netscape.security.PrivilegeManager.enablePrivilege("UniversalXPConnect");
         if (typeof JSAN == 'undefined') {
             throw( $('commonStrings').getString('common.jsan.missing') );
         }
@@ -26,13 +26,13 @@ function my_init() {
             $('non_unified_buttons').hidden = true;
         }
 
-        g.docid = xul_param('docid',{'modal_xulG':true});
-        g.handle_update = xul_param('handle_update',{'modal_xulG':true});
+        g.docid = xul_param('docid');
+        g.handle_update = xul_param('handle_update');
 
         /******************************************************************************************************/
         /* Get the copy ids from various sources and flesh them */
 
-        var copy_ids = xul_param('copy_ids',{'concat':true,'JSON2js_if_cgi':true,'JSON2js_if_xulG':true,'JSON2js_if_xpcom':true,'stash_name':'temp_copy_ids','clear_xpcom':true,'modal_xulG':true});
+        var copy_ids = xul_param('copy_ids',{'concat':true,'JSON2js_if_cgi':true,'JSON2js_if_xulG':true,'JSON2js_if_xpcom':true,'stash_name':'temp_copy_ids','clear_xpcom':true});
         if (!copy_ids) copy_ids = [];
 
         if (copy_ids.length > 0) g.copies = g.network.simple_request(
@@ -44,13 +44,43 @@ function my_init() {
         /* And other fleshed copies if any */
 
         if (!g.copies) g.copies = [];
-        var c = xul_param('copies',{'concat':true,'JSON2js_if_cgi':true,'JSON2js_if_xpcom':true,'stash_name':'temp_copies','clear_xpcom':true,'modal_xulG':true})
+        var c = xul_param('copies',{'concat':true,'JSON2js_if_cgi':true,'JSON2js_if_xpcom':true,'stash_name':'temp_copies','clear_xpcom':true})
         if (c) g.copies = g.copies.concat(c);
 
         /******************************************************************************************************/
         /* We try to retrieve callnumbers for existing copies, but for new copies, we rely on this */
 
-        g.callnumbers = xul_param('callnumbers',{'concat':true,'JSON2js_if_cgi':true,'JSON2js_if_xpcom':true,'stash_name':'temp_callnumbers','clear_xpcom':true,'modal_xulG':true});
+        g.callnumbers = xul_param('callnumbers',{'concat':true,'JSON2js_if_cgi':true,'JSON2js_if_xpcom':true,'stash_name':'temp_callnumbers','clear_xpcom':true});
+
+        /******************************************************************************************************/
+        /* If invoked from the Local Admin menu, rig up a fake item and disable save/create functionality */
+
+        if (xulG.admin) {
+            xulG.edit = 1;
+            var fake_item = new acp();
+            fake_item.id( -1 );
+            fake_item.barcode( 'fake_item' );
+            fake_item.call_number( -1 );
+            fake_item.circ_lib(ses('ws_ou'));
+            /* FIXME -- use constants; really, refactor this into a library somewhere that can be used by chrome and
+               remote xul for new copies */
+            fake_item.deposit(0);
+            fake_item.price(0);
+            fake_item.deposit_amount(0);
+            fake_item.fine_level(2); // Normal
+            fake_item.loan_duration(2); // Normal
+            fake_item.location(1); // Stacks
+            fake_item.status(0);
+            fake_item.circulate(get_db_true());
+            fake_item.holdable(get_db_true());
+            fake_item.opac_visible(get_db_true());
+            fake_item.ref(get_db_false());
+            fake_item.mint_condition(get_db_true());
+            g.copies = [ fake_item ];
+            $('save').hidden = true;
+            $('save').disabled = true;
+            $('non_unified_buttons').hidden = true;
+        }
 
         /******************************************************************************************************/
         /* Get preference (if it exists) for copy location label order */
@@ -72,7 +102,7 @@ function my_init() {
         /******************************************************************************************************/
         /* Is the interface an editor or a viewer, single or multi copy, existing copies or new copies? */
 
-        if (xul_param('edit',{'modal_xulG':true}) == '1') { 
+        if (xul_param('edit') == '1') { 
 
             g.edit = false;
 
@@ -410,7 +440,7 @@ g.delete_template = function() {
         if (typeof robj.ilsevent != 'undefined') {
             throw(robj);
         } else {
-            alert($('catStrings').getFormattedString('staff.cat.copy_editor.delete_template.confirm', [name]));
+            alert($('catStrings').getFormattedString('staff.cat.copy_editor.delete_template.success', [name]));
             setTimeout(
                 function() {
                     try {
@@ -431,7 +461,6 @@ g.delete_template = function() {
 
 g.export_templates = function() {
     try {
-        netscape.security.PrivilegeManager.enablePrivilege("UniversalXPConnect");
         JSAN.use('util.file'); var f = new util.file('');
         f.export_file( { 'title' : $('catStrings').getString('staff.cat.copy_editor.export_templates.title'), 'data' : g.templates } );
     } catch(E) {
@@ -444,7 +473,6 @@ g.export_templates = function() {
 
 g.import_templates = function() {
     try {
-        netscape.security.PrivilegeManager.enablePrivilege("UniversalXPConnect");
         JSAN.use('util.file'); var f = new util.file('');
         var temp = f.import_file( { 'title' : $('catStrings').getString('staff.cat.copy_editor.import_templates.title') } );
         if (temp) {
@@ -611,10 +639,15 @@ g.apply_owning_lib = function(ou_id) {
                 g.map_acn[copy.call_number()] = volume;
             }
             var old_volume = g.map_acn[copy.call_number()];
-            var acn_blob = g.network.simple_request(
-                'FM_ACN_FIND_OR_CREATE',
-                [ses(),old_volume.label(),old_volume.record(),ou_id,old_volume.prefix().id(),old_volume.suffix().id(),old_volume.label_class().id()]
-            );
+            var acn_blob;
+            if (! xulG.admin) {
+                acn_blob = g.network.simple_request(
+                    'FM_ACN_FIND_OR_CREATE',
+                    [ses(),old_volume.label(),old_volume.record(),ou_id,old_volume.prefix().id(),old_volume.suffix().id(),old_volume.label_class().id()]
+                );
+            } else {
+                acn_blob = { 'acn_id' : -1 }; // spawned from Local Admin menu, so fake item and call number
+            }
             if (typeof acn_blob.ilsevent != 'undefined') {
                 g.error.standard_unexpected_error_alert($('catStrings').getFormattedString('staff.cat.copy_editor.apply_owning_lib.call_number.error', [copy.barcode()]), acn_blob);
                 continue;
@@ -635,6 +668,7 @@ g.apply_owning_lib = function(ou_id) {
 g.safe_to_change_owning_lib = function() {
     try {
         if (xulG.unified_interface) { return false; }
+        if (xulG.admin) { return false; }
         var safe = true;
         for (var i = 0; i < g.copies.length; i++) {
             var cn = g.copies[i].call_number();
@@ -931,6 +965,13 @@ g.panes_and_field_names = {
         $('catStrings').getString('staff.cat.copy_editor.field.barcode.label'),
         {
             render: 'fm.barcode();',
+            input:
+                  'c = function (v) {'
+                +     'g.apply("barcode", v);'
+                +     'if (typeof post_c === "function") post_c(v);'
+                + '};'
+                + 'x = document.createElement("textbox");',
+            attr: { 'class': 'disabled' },
         }
     ], 
     [
@@ -1352,16 +1393,12 @@ g.render_input = function(node,blob) {
             groupbox.setAttribute('style','');
         }
 
-        vbox.addEventListener('mouseover',on_mouseover,false);
-        vbox.addEventListener('mouseout',on_mouseout,false);
         groupbox.addEventListener('mouseover',on_mouseover,false);
         groupbox.addEventListener('mouseout',on_mouseout,false);
-        groupbox.firstChild.addEventListener('mouseover',on_mouseover,false);
-        groupbox.firstChild.addEventListener('mouseout',on_mouseout,false);
 
         function on_click(ev){
             try {
-                if (block || g.disabled || !g.edit) {
+                if (block || g.disabled || !g.edit || ev.currentTarget.classList.contains('disabled')) {
                     return;
                 }
                 block = true;
@@ -1428,10 +1465,8 @@ g.render_input = function(node,blob) {
                 g.error.standard_unexpected_error_alert('render_input',E);
             }
         }
-        vbox.addEventListener('click',on_click, false);
-        hbox.addEventListener('click',on_click, false);
-        caption.addEventListener('click',on_click, false);
-        caption.addEventListener('keypress',function(ev) {
+        groupbox.addEventListener('click',on_click, false);
+        groupbox.addEventListener('keypress',function(ev) {
             if (ev.keyCode == 13 /* enter */ || ev.keyCode == 77 /* mac enter */) on_click();
         }, false);
         caption.setAttribute('style','-moz-user-focus: normal');
@@ -1447,17 +1482,24 @@ g.render_input = function(node,blob) {
 /* store the copies in the global xpcom stash */
 
 g.stash_and_close = function() {
+    var r = {textcode: ''};
     try {
         oils_unlock_page();
 
         if (g.handle_update) {
             try {
-                var r = g.network.request(
+                r = g.network.request(
                     api.FM_ACP_FLESHED_BATCH_UPDATE.app,
                     api.FM_ACP_FLESHED_BATCH_UPDATE.method,
                     [ ses(), g.copies, true ]
                 );
-                if (typeof r.ilsevent != 'undefined') {
+                if (r.textcode === 'ITEM_BARCODE_EXISTS') {
+                    alert('error with item update: ' + r.desc);
+                    var barcode = $($_('staff.cat.copy_editor.field.barcode.label'));
+                    barcode.parentNode.classList.remove('disabled');
+                    barcode.click();
+                }
+                else if (typeof r.ilsevent !== 'undefined') {
                     g.error.standard_unexpected_error_alert('copy update',r);
                 }
                 /* FIXME -- revisit the return value here */
@@ -1468,9 +1510,10 @@ g.stash_and_close = function() {
         //g.data.temp_copies = js2JSON( g.copies );
         //g.data.stash('temp_copies');
         xulG.copies = g.copies;
-        update_modal_xulG(xulG);
-        JSAN.use('util.widgets');
-        util.widgets.dispatch('close',window);
+        if (r.textcode !== 'ITEM_BARCODE_EXISTS') {
+            JSAN.use('util.widgets');
+            util.widgets.dispatch('close',window);
+        }
     } catch(E) {
         alert('Error in copy_editor.js, g.stash_and_close(): '+E);
     }
@@ -1632,6 +1675,9 @@ g.populate_stat_cats = function() {
             var entries = g.copies[i].stat_cat_entries();
             if (!entries) entries = [];
             for (var j = 0; j < entries.length; j++) {
+                if (typeof g.data.hash.asc[ entries[j].stat_cat() ] != 'undefined') {
+                    continue; // We already have this stat cat, so assume we have everything we need for this lib
+                }
                 var lib = entries[j].owner(); if (typeof lib == 'object') lib = lib.id();
                 sc_libs[ lib ] = true;
             }
@@ -1642,6 +1688,9 @@ g.populate_stat_cats = function() {
         sc_libs = {};
         for (var i = 0; i < g.copies.length; i++) {
             var circ_lib = g.copies[i].circ_lib(); if (typeof circ_lib == 'object') circ_lib = circ_lib.id();
+            if (typeof g.data.hash.my_aou[ circ_lib ] != 'undefined') {
+                continue; // We should already have everything we need for this lib
+            }
             sc_libs[ circ_lib ] = true;
         }
         add_common_ancestors(sc_libs);
@@ -1660,6 +1709,9 @@ g.populate_stat_cats = function() {
                     }
                 }
                 var owning_lib = g.map_acn[ cn_id ].owning_lib(); if (typeof owning_lib == 'object') owning_lib = owning_lib.id();
+                if (typeof g.data.hash.my_aou[ owning_lib ] != 'undefined') {
+                    continue; // We should already have everything we need for this lib
+                }
                 sc_libs[ owning_lib ] = true;
             }
         }

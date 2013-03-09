@@ -1,3 +1,7 @@
+    if(window.arguments && typeof window.arguments[0] == 'object' && typeof xulG == 'undefined') {
+        xulG = window.arguments[0];
+    }
+
     function $(id) { return document.getElementById(id); }
 
     function oils_unsaved_data_V() {
@@ -199,6 +203,15 @@
         }
     }
 
+    function oils_persist_hostname() {
+        if(location.protocol == 'oils:') {
+            JSAN.use('OpenILS.data'); var data = new OpenILS.data(); data.init({'via':'stash'});
+            return data.server_unadorned;
+        } else {
+            return location.hostname;
+        }
+    }
+
     function persist_helper(base_key_suffix) {
         try {
             if (base_key_suffix) {
@@ -206,6 +219,7 @@
             } else {
                 base_key_suffix = '';
             }
+            window.persist_helper_event_listeners = new EventListenerList();
 
             function gen_event_handler(etype,node) {
                 return function(ev) {
@@ -220,7 +234,6 @@
             function gen_oils_persist_handler(bk,node) {
                 return function(ev) {
                     try {
-                        netscape.security.PrivilegeManager.enablePrivilege("UniversalXPConnect");
                         var target;
                         if (ev.target.nodeName == 'command') {
                             target = node;
@@ -232,7 +245,7 @@
                             }
                         }
                         var filename = location.pathname.split('/')[ location.pathname.split('/').length - 1 ];
-                        var base_key = 'oils_persist_' + String(location.hostname + '_' + filename + '_' + target.getAttribute('id')).replace('/','_','g') + '_' + base_key_suffix;
+                        var base_key = 'oils_persist_' + String(oils_persist_hostname() + '_' + filename + '_' + target.getAttribute('id')).replace('/','_','g') + '_' + base_key_suffix;
                         var attribute_list = target.getAttribute('oils_persist').split(' ');
                         dump('on_oils_persist: <<< ' + target.nodeName + '.id = ' + target.id + '\t' + bk + '\n');
                         for (var j = 0; j < attribute_list.length; j++) {
@@ -282,12 +295,11 @@
                 };
             }
 
-            netscape.security.PrivilegeManager.enablePrivilege("UniversalXPConnect");
             var prefs = Components.classes['@mozilla.org/preferences-service;1'].getService(Components.interfaces['nsIPrefBranch']);
             var nodes = document.getElementsByAttribute('oils_persist','*');
             for (var i = 0; i < nodes.length; i++) {
                 var filename = location.pathname.split('/')[ location.pathname.split('/').length - 1 ];
-                var base_key = 'oils_persist_' + String(location.hostname + '_' + filename + '_' + nodes[i].getAttribute('id')).replace('/','_','g') + '_' + base_key_suffix;
+                var base_key = 'oils_persist_' + String(oils_persist_hostname() + '_' + filename + '_' + nodes[i].getAttribute('id')).replace('/','_','g') + '_' + base_key_suffix;
                 var attribute_list = nodes[i].getAttribute('oils_persist').split(' ');
                 dump('persist_helper: >>> ' + nodes[i].nodeName + '.id = ' + nodes[i].id + '\t' + base_key + '\n');
                 for (var j = 0; j < attribute_list.length; j++) {
@@ -360,12 +372,12 @@
                     }
                 }
                 if (cmd_el) {
-                    cmd_el.addEventListener(
+                    window.persist_helper_event_listeners.add(cmd_el, 
                         'command',
                         gen_event_handler('command',cmd_el),
                         false
                     );
-                    cmd_el.addEventListener(
+                    window.persist_helper_event_listeners.add(cmd_el, 
                         'oils_persist',
                         gen_oils_persist_handler( base_key, nodes[i] ),
                         false
@@ -391,13 +403,13 @@
                         }
                     }
                     for (var j = 0; j < event_types.length; j++) {
-                        node.addEventListener(
+                        window.persist_helper_event_listeners.add(node, 
                             event_types[j],
                             gen_event_handler(event_types[j],node),
                             false
                         );
                     }
-                    node.addEventListener(
+                    window.persist_helper_event_listeners.add(node, 
                         'oils_persist',
                         gen_oils_persist_handler( base_key, node ),
                         false
@@ -409,6 +421,14 @@
         }
     }
 
+    function persist_helper_cleanup() {
+        try {
+            window.persist_helper_event_listeners.removeAll();
+        } catch(E) {
+            alert('Error in persist_helper_cleanup(): ' + E);
+        }
+    }
+
     function getKeys(o) {
         var keys = [];
         for (var k in o) keys.push(k);
@@ -417,7 +437,6 @@
 
     function get_contentWindow(frame) {
         try {
-            netscape.security.PrivilegeManager.enablePrivilege('UniversalXPConnect');
             if (frame && frame.contentWindow) {
                 try {
                     if (typeof frame.contentWindow.wrappedJSObject != 'undefined') {
@@ -434,25 +453,6 @@
         } catch(E) {
             var Strings = $('offlineStrings') || $('commonStrings');
             alert(Strings.getFormattedString('openils.global_util.content_window.error', [frame, E]));
-        }
-    }
-
-    function update_modal_xulG(v) {
-        try {
-            if (typeof xulG != "undefined" && xulG.not_modal) {
-                xulG = v;
-                xulG.not_modal = true;
-                return;
-            }
-
-            JSAN.use('OpenILS.data'); var data = new OpenILS.data(); data.init({'via':'stash'});
-            var key = location.pathname + location.search + location.hash;
-            if (typeof data.modal_xulG_stack != 'undefined' && typeof data.modal_xulG_stack[key] != 'undefined') {
-                data.modal_xulG_stack[key][ data.modal_xulG_stack[key].length - 1 ] = v;
-                data.stash('modal_xulG_stack');
-            }
-        } catch(E) {
-            alert('FIXME: update_modal_xulG => ' + E);
         }
     }
 
@@ -484,18 +484,6 @@
                 }
             }
             if (typeof _params.no_xulG == 'undefined') {
-                if (typeof _params.modal_xulG != 'undefined') {
-                    if (typeof xulG != 'undefined' && xulG.not_modal) {
-                        // for interfaces that used to be modal but aren't now, do nothing
-                    } else {
-                        JSAN.use('OpenILS.data'); var data = new OpenILS.data(); data.init({'via':'stash'});
-                        var key = location.pathname + location.search + location.hash;
-                        //dump('xul_param, considering modal key = ' + key + '\n');
-                        if (typeof data.modal_xulG_stack != 'undefined' && typeof data.modal_xulG_stack[key] != 'undefined') {
-                            xulG = data.modal_xulG_stack[key][ data.modal_xulG_stack[key].length - 1 ];
-                        }
-                    }
-                }
                 if (typeof xulG == 'object' && typeof xulG[ param_name ] != 'undefined') {
                     var x = xulG[ param_name ];
                     //dump('\tfound via xulG = ' + x + '\n');
@@ -575,7 +563,6 @@
 
     function copy_to_clipboard(ev) {
         try {
-            netscape.security.PrivilegeManager.enablePrivilege('UniversalXPConnect');
             var text;
             if (typeof ev == 'object') {
                 if (typeof ev.target != 'undefined') {
@@ -589,7 +576,7 @@
                 .getService(Components.interfaces.nsIClipboardHelper);
             gClipboardHelper.copyString(text);
             var Strings = $('offlineStrings') || $('commonStrings');
-            alert(Strings.getFormattedString('openils.global_util.clipboard', [text]));
+            // alert(Strings.getFormattedString('openils.global_util.clipboard', [text]));
         } catch(E) {
             var Strings = $('offlineStrings') || $('commonStrings');
             alert(Strings.getFormattedString('openils.global_util.clipboard.error', [E]));    
@@ -598,7 +585,6 @@
 
     function clear_the_cache() {
         try {
-            netscape.security.PrivilegeManager.enablePrivilege('UniversalXPConnect');
             var cacheClass         = Components.classes["@mozilla.org/network/cache-service;1"];
             var cacheService    = cacheClass.getService(Components.interfaces.nsICacheService);
             cacheService.evictEntries(Components.interfaces.nsICache.STORE_ON_DISK);
@@ -615,8 +601,14 @@
     }
 
     function url_prefix(url) {
+        var base_url = url.match(/^[^?/|]+/);
+        if(base_url) {
+            base_url = base_url[0];
+            if(urls[base_url])
+                url = url.replace(/^[^?/|]+\|?/, urls[base_url]);
+        }
         if (url.match(/^\//)) url = urls.remote + url;
-        if (! url.match(/^(http|chrome):\/\//) && ! url.match(/^data:/) ) url = 'http://' + url;
+        if (! url.match(/^(http|https|chrome|oils):\/\//) && ! url.match(/^data:/) ) url = 'http://' + url;
         dump('url_prefix = ' + url + '\n');
         return url;
     }

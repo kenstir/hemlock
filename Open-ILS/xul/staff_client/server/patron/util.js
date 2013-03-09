@@ -388,7 +388,14 @@ patron.util.ausp_columns = function(modify,params) {
             'primary' : false, 'hidden' : false, 'editable' : false, 'render' : function(my) { 
                 return my.ausp ? data.hash.aou[ my.ausp.org_unit() ].shortname() : '';
             }
+        },
+        {
+            'persist' : 'hidden width ordinal', 'id' : 'ausp_org_unit_full', 'label' : commonStrings.getString('staff.ausp_org_unit_full_label'), 'flex' : 1,
+            'primary' : false, 'hidden' : true, 'editable' : false, 'render' : function(my) { 
+                return my.ausp ? data.hash.aou[ my.ausp.org_unit() ].name() : '';
+            }
         }
+
     ];
     for (var i = 0; i < c.length; i++) {
         if (modify[ c[i].id ]) {
@@ -847,7 +854,6 @@ patron.util.set_penalty_css = function(patron) {
 patron.util.merge = function(record_ids) {
     var error;
     try {
-        netscape.security.PrivilegeManager.enablePrivilege('UniversalXPConnect UniversalBrowserWrite');
         JSAN.use('util.error'); error = new util.error();
         JSAN.use('OpenILS.data'); var data = new OpenILS.data(); data.stash_retrieve();
         var horizontal_interface = String( data.hash.aous['ui.circ.patron_summary.horizontal'] ) == 'true';
@@ -888,7 +894,7 @@ patron.util.merge = function(record_ids) {
                 xml += '<tr valign="top">' + table_cell_with_lead_button( record_ids[i] );
             }
             xml += '<td nowrap="nowrap"><iframe style="' + iframe_css + '" flex="1" src="' + urls.XUL_PATRON_SUMMARY; 
-            xml += '?id=' + record_ids[i] + '&amp;show_name=1"/></td>';
+            xml += '?id=' + record_ids[i] + '&amp;show_name=1" oils_force_external="true"/></td>';
             if (horizontal_interface) {
                 xml += '</tr>';
             }
@@ -944,7 +950,6 @@ patron.util.format_name = function(patron_obj) {
 patron.util.work_log_patron_edit = function(p) {
     var error;
     try {
-        netscape.security.PrivilegeManager.enablePrivilege('UniversalXPConnect UniversalBrowserWrite');
         JSAN.use('util.error'); error = new util.error();
         error.work_log(
             document.getElementById('patronStrings').getFormattedString(

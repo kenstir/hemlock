@@ -8,7 +8,7 @@ Software Prerequisites:
 
   * **PostgreSQL**: Version 9.1 is recommended. The minimum supported version
     is 9.0.
-  * **Linux**: Evergreen 2.0 has been tested on Debian Squeeze (6.0),
+  * **Linux**: Evergreen 2.3 has been tested on Debian Squeeze (6.0),
     Ubuntu Lucid Lynx (10.04) and Ubuntu Precise Pangolin (12.04). If you are
     running an older version of these distributions, you may want to upgrade
     before upgrading Evergreen. For instructions on upgrading these
@@ -23,35 +23,6 @@ In the following instructions, you are asked to perform certain steps as either 
 To switch from the root user to a different user, issue the `su - [user]`
 command; for example, `su - opensrf`. Once you have become a non-root user, to
 become the root user again simply issue the `exit` command.
-
-[CAUTION]
-Pay attention to error output as you run these scripts. If you encounter errors
-that you cannot resolve yourself through additional troubleshooting, please
-report the errors to the http://evergreen-ils.org/listserv.php[Evergreen
-Technical Discussion List].
-
-Upgrade the Evergreen database schema
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-The upgrade of the Evergreen database schema is the lengthiest part of the
-upgrade process for sites with a significant amount of production data.
-
-Before running the upgrade script against your production Evergreen database,
-back up your database, restore it to a test server, and run the upgrade script
-against the test server. This enables you to determine how long the upgrade
-will take and whether any local customizations present problems for the
-stock upgrade script that require further tailoring of the upgrade script.
-The backup also enables you to cleanly restore your production data if
-anything goes wrong during the upgrade.
-
-Run the following script as a user with the ability to connect to the
-database server. Adjust the arguments to the `psql` command to reflect your
-database server connection information:
-
-[source, bash]
-----------------------------------------------------------
-cd /home/opensrf/Evergreen-ILS-2.1-rc1/Open-ILS/src/sql/Pg
-psql -U evergreen -h localhost -f version_upgrade/2.1-2.2-upgrade-db.sql evergreen
-----------------------------------------------------------
 
 Upgrade the Evergreen code
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -71,12 +42,12 @@ osrf_ctl.sh -l -a stop_all
  .. Back up the /openils directory.
 . Upgrade OpenSRF. Download and install the latest version of OpenSRF from
 the http://evergreen-ils.org/opensrf.php[OpenSRF download page].
-. As the opensrf user, download and extract Evergreen 2.2:
+. As the opensrf user, download and extract Evergreen 2.3:
 +
 [source, bash]
 -----------------------------------------------
-wget http://evergreen-ils.org/downloads/previews/Evergreen-ILS-2.2-rc1.tar.gz
-tar xzf Evergreen-ILS-2.2-rc1.tar.gz
+wget http://www.open-ils.org/downloads/Evergreen-ILS-2.3.3.tar.gz
+tar xzf Evergreen-ILS-2.3.3.tar.gz
 -----------------------------------------------
 +
 [NOTE]
@@ -86,11 +57,16 @@ For the latest edition of Evergreen, check the http://evergreen-ils.org/download
 +
 [source, bash]
 ----------------------------------------------
-cd /home/opensrf/Evergreen-ILS-2.2-rc1
+cd /home/opensrf/Evergreen-ILS-2.3.3
 ---------------------------------------------
 +
 On the next command, replace `[distribution]` with one of these values for your
 distribution of Debian or Ubuntu:
+
+indexterm:[Linux, Debian]
+
+indexterm:[Linux, Ubuntu]
+
 
   * `debian-squeeze` for Debian Squeeze (6.0)
   * `ubuntu-lucid` for Ubuntu Lucid Lynx (10.04)
@@ -105,7 +81,7 @@ make -f Open-ILS/src/extras/Makefile.install [distribution]
 +
 [source, bash]
 ------------------------------------------------------------
-cd /home/opensrf/Evergreen-ILS-2.2-rc1
+cd /home/opensrf/Evergreen-ILS-2.3.3
 ./configure --prefix=/openils --sysconfdir=/openils/conf
 make
 ------------------------------------------------------------
@@ -114,8 +90,8 @@ make
 +
 [source, bash]
 ------------------------------------------------------------
-cd /home/opensrf/Evergreen-ILS-2.2-rc1
-make STAFF_CLIENT_STAMP_ID=rel_2_2_rc1 install
+cd /home/opensrf/Evergreen-ILS-2.3.3
+make STAFF_CLIENT_STAMP_ID=rel_2_3_3 install
 ------------------------------------------------------------
 +
 . As the root user, change all files to be owned by the opensrf user and group:
@@ -125,62 +101,100 @@ make STAFF_CLIENT_STAMP_ID=rel_2_2_rc1 install
 chown -R opensrf:opensrf /openils
 ------------------------------------------------------------
 +
-. As the opensrf user, update the configuration files:
-+
-[source, bash]
------------------------------------------------------------
-cd /home/opensrf/Evergreen-ILS-2.2-rc1
-
-perl Open-ILS/src/support-scripts/eg_db_config.pl \
---create-offline --user evergreen --password evergreen \
---hostname localhost --port 5432 --database evergreen
-----------------------------------------------------------
-+
 . As the opensrf user, update the server symlink in /openils/var/web/xul/:
 +
 [source, bash]
 -----------------------------------------------------------
 cd /openils/var/web/xul/
 rm server
-ln -s rel_2_2_rc1/server
+ln -sf rel_2_3_3/server server
 ----------------------------------------------------------
 +
 . As the opensrf user, update opensrf_core.xml and opensrf.xml by copying the
   new example files (/openils/conf/opensrf_core.xml.example and
-  /openils/conf/opensrf.xml).
+  /openils/conf/opensrf.xml). The _-b_ option creates a backup copy of the old file.
 +
 [source, bash]
 ----------------------------------------------------------
-cp /openils/conf/opensrf_core.xml.example /openils/conf/opensrf_core.xml
-cp /openils/conf/opensrf.xml.example /openils/conf/opensrf.xml
+cp -b /openils/conf/opensrf_core.xml.example /openils/conf/opensrf_core.xml
+cp -b /openils/conf/opensrf.xml.example /openils/conf/opensrf.xml
 ----------------------------------------------------------
 +
 [CAUTION]
 Copying these configuration files will remove any customizations you have made to them. Remember to redo your customizations after copying them.
 +
-. Update Apache files:
+. As the opensrf user, update the configuration files:
++
+[source, bash]
+-------------------------------------------------------------------------
+cd /home/opensrf/Evergreen-ILS-2.3.3
+perl Open-ILS/src/support-scripts/eg_db_config --update-config --service all \
+--create-offline --database evergreen --host localhost --user evergreen --password evergreen
+-------------------------------------------------------------------------
++
+. As the _root_ user, update the Apache files:
++
+indexterm:[Apache]
 +
 [CAUTION]
 Copying these Apache configuration files will remove any customizations you have made to them. Remember to redo your customizations after copying them.
 For example, if you purchased an SSL certificate, you will need to edit eg.conf to point to the appropriate SSL certificate files.
 +
-.. Update /etc/apache2/startup.pl by copying the example from Open-ILS/examples/apache/startup.pl.
-.. Update /etc/apache2/eg_vhost.conf by copying the example from Open-ILS/examples/apache/eg_vhost.conf.
-.. Update /etc/apache2/sites-available/eg.conf by copying the example from Open-ILS/ examples/apache/eg.conf.
-. Update opensrf.xml with the database connection info:
-+
-As the opensrf user, if you are happy with the default settings in
-opensrf.xml.example, then:
+.. Update _/etc/apache2/eg_startup_ by copying the example from _Open-ILS/examples/apache/eg_startup_.
 +
 [source, bash]
--------------------------------------------------------------------------
-cp -b /openils/conf/opensrf.xml.example /openils/conf/opensrf.xml
-cd /home/opensrf/Evergreen-ILS-2.2-rc1
-perl Open-ILS/src/support-scripts/eg_db_config.pl --update-config --service all \
---database evergreen --host localhost --user evergreen --password evergreen
--------------------------------------------------------------------------
+----------------------------------------------------------
+cp /home/opensrf/Evergreen-ILS-2.3.3/Open-ILS/examples/apache/eg_startup /etc/apache2/eg_startup 
+----------------------------------------------------------
 +
-Otherwise, compare /openils/conf/opensrf.xml with /openils/conf/opensrf.xml.example and manually copy the new pieces into place in your existing opensrf.xml file
+.. Update /etc/apache2/eg_vhost.conf by copying the example from Open-ILS/examples/apache/eg_vhost.conf.
++
+[source, bash]
+----------------------------------------------------------
+cp /home/opensrf/Evergreen-ILS-2.3.3/Open-ILS/examples/apache/eg_vhost.conf /etc/apache2/eg_vhost.conf 
+----------------------------------------------------------
++
+.. Update /etc/apache2/sites-available/eg.conf by copying the example from Open-ILS/examples/apache/eg.conf.
++
+[source, bash]
+----------------------------------------------------------
+cp /home/opensrf/Evergreen-ILS-2.3.3/Open-ILS/examples/apache/eg.conf /etc/apache2/sites-available/eg.conf 
+----------------------------------------------------------
+
+Upgrade the Evergreen database schema
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+indexterm:[database schema]
+
+The upgrade of the Evergreen database schema is the lengthiest part of the
+upgrade process for sites with a significant amount of production data.
+
+Before running the upgrade script against your production Evergreen database,
+back up your database, restore it to a test server, and run the upgrade script
+against the test server. This enables you to determine how long the upgrade
+will take and whether any local customizations present problems for the
+stock upgrade script that require further tailoring of the upgrade script.
+The backup also enables you to cleanly restore your production data if
+anything goes wrong during the upgrade.
+
+[CAUTION]
+Pay attention to error output as you run the upgrade scripts. If you encounter errors
+that you cannot resolve yourself through additional troubleshooting, please
+report the errors to the http://evergreen-ils.org/listserv.php[Evergreen
+Technical Discussion List].
+
+Run the following script as a user with the ability to connect to the
+database server. Adjust the arguments to the `psql` command to reflect your
+database server connection information:
+
+[source, bash]
+----------------------------------------------------------
+cd /home/opensrf/Evergreen-ILS-2.3.3/Open-ILS/src/sql/Pg
+psql -U evergreen -h localhost -f version-upgrade/2.2-2.3.0-upgrade-db.sql evergreen
+psql -U evergreen -h localhost -f version-upgrade/2.3.0-2.3.1-upgrade-db.sql evergreen
+psql -U evergreen -h localhost -f version-upgrade/2.3.1-2.3.2-upgrade-db.sql evergreen
+psql -U evergreen -h localhost -f version-upgrade/2.3.2-2.3.3-upgrade-db.sql evergreen
+----------------------------------------------------------
 
 Restart Evergreen and Test
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -196,7 +210,7 @@ osrf_ctl.sh -l -a start_all
 [source, bash]
 --------------------------------------------------------------
 cd /openils/bin
-../autogen.sh
+./autogen.sh
 --------------------------------------------------------------
 +
 . Start srfsh and try logging in using your Evergreen username and password:

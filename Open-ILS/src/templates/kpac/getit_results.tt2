@@ -1,0 +1,67 @@
+[%  PROCESS "opac/parts/header.tt2";
+    PROCESS "kpac/parts/grid.tt2";
+    WRAPPER "kpac/parts/subpage.tt2";
+    PROCESS "opac/parts/misc_util.tt2"; # MARC 
+    attrs = {marc_xml => ctx.marc_xml};
+    PROCESS get_marc_attrs args=attrs;
+    ctx.page_title = l('Get it');
+    kill_params = ['list', 'hold', 'hold_failed', 'pickup_lib', 'action'];
+    title_html = attrs.title | html;
+%]
+          
+
+<div class="checkout_res_body">
+    [% IF ctx.added_to_anon %]
+        <h2 class="sub_header2">[% l('You Saved It!') %]</h2>
+        <p>
+        [% |l(title_html) %]
+        You successfully saved [_1].  <br/>
+        To manage your lists, go to <a href="[% mkurl(ctx.opac_root _ '/myopac/lists', {}, 1) %]">My Lists</a>
+        [% END %]
+        <p>
+    [% ELSIF ctx.added_to_list %]
+        [% list_html = ctx.list.name | html %]
+        <h2 class="sub_header2">[% l('You Saved It!') %]</h2>
+        <p>
+        [% |l(title_html, list_html) %]
+        You successfully saved [_1] to [_2]. <br/>  
+        To manage your lists, go to <a href="[% mkurl(ctx.opac_root _ '/myopac/lists', {}, 1) %]">My Lists</a>
+        [% END %]
+        <p>
+    [% ELSIF CGI.param('hold') %]
+        [% lib_html = ctx.get_aou(ctx.hold.pickup_lib).name | html %]
+        <h2 class="sub_header2">[% l('Hold Successful!') %]</h2>
+        <p>
+        [% |l(title_html, lib_html) %]
+        Your request for <a href="[% mkurl(ctx.kpac_root _ '/record/' _ ctx.bre_id, {}, kill_params) %]">[_1]</a> was successful.<br/>
+        You will be notified when your item is ready for pickup.  You will be able to pick your item up at [_2].
+        [% END %]
+        <p>
+    [% ELSE %]
+        <p>
+        [% |l(title_html) %]
+        Unable to request <a href="[% mkurl(ctx.kpac_root _ '/record/' _ ctx.bre_id, {}, kill_params) %]">[_1]</a>.<br/>
+        Please see a librarian.
+        [% END %]
+    [% END %]
+</div>
+
+<div class="sub_navigation2 checkout">
+    <table cellpadding="0" cellspacing="0" border="0" width="100%"><tr>
+        <td><a href="[% mkurl(ctx.kpac_root _ '/results', {}, kill_params) %]">
+            <img src="[% ctx.media_prefix %]/images/kpac/back_to_results_btn.png" /></a></td>
+        <td width="100%" class="nav_mid_bg">&nbsp;</td>
+        <td><img src="[% ctx.media_prefix %]/images/kpac/back_to_book.png" /></td>
+        <td nowrap="nowrap">
+            <a class="checkout_res_back" href="[% mkurl(ctx.kpac_root _ '/record/' _ ctx.bre_id, {}, kill_params) %]">
+                [%  title = attrs.title || '';
+                    IF title.length > 18; title = title.substr(18, title.length, '...'); END;
+                    l('Back to [_1]', title);
+                %]
+            </a>
+        </td>
+    </tr></table>
+</div>
+          
+[% END %]          
+

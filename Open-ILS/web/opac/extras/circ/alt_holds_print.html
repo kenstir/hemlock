@@ -38,12 +38,17 @@
         <script type="text/javascript" src="/js/dojo/dijit/dijit.js"></script>
         <script type="text/javascript" src="/js/dojo/openils/User.js"></script>
         <script type="text/javascript" src="/js/dojo/openils/Util.js"></script>
+        <script type="text/javascript" src="/js/dojo/openils/XUL.js"></script>
         <script type="text/javascript" src="/opac/extras/circ/alt_holds_print.js"></script>
         <script type="text/javascript">
             function my_init() {
                 cgi = new CGI();
                 authtoken = (typeof ses == "function" ? ses() : 0) ||
                     cgi.param("ses") || dojo.cookie("ses");
+                if(!authtoken && openils.XUL.isXUL()) {
+                    var stash = openils.XUL.getStash();
+                    authtoken = stash.session.key;
+                }
 
                 if (cgi.param("do") == "shelf_expired_holds") {
                     dojo.query("th[name=barcode_part]")[0].innerHTML = "Barcode";  /* XXX i18n. also, no support for part labels in this interface, at least for now */
@@ -78,6 +83,7 @@
                 <tr>
                     <th only="shelf_expired_holds">Patron</th>
                     <th only="shelf_expired_holds">Action</th>
+                    <th>Type</th>
                     <th>Title</th>
                     <th>Author</th>
                     <th>Shelving Location</th>
@@ -91,8 +97,9 @@
                 <tr>
                     <td only="shelf_expired_holds">${usr.display_name}</td>
                     <td only="shelf_expired_holds">${action}</td>
-                    <td type='opac/slot-data' query='datafield[tag=245]'></td>
-                    <td type='opac/slot-data' query='datafield[tag^=1]' limit='1'> </td>
+                    <td>${hold_type}</td>
+                    <td type='opac/slot-data' query='datafield[tag="245"]'></td>
+                    <td type='opac/slot-data' query='datafield[tag^="1"]' limit='1'> </td>
                     <td>${current_copy.location.name}</td>
                     <td>${current_copy.call_number.prefix.label} ${current_copy.call_number.label} ${current_copy.call_number.suffix.label}</td>
                     <td>${current_copy.barcode} ${current_copy.parts_stringified}</td>

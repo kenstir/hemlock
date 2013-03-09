@@ -20,13 +20,13 @@ INSERT INTO config.standing (id, value) VALUES (2, oils_i18n_gettext(2, 'Barred'
 SELECT SETVAL('config.standing_id_seq'::TEXT, 100);
 
 INSERT INTO config.standing_penalty (id,name,label,block_list,staff_alert)
-	VALUES (1,'PATRON_EXCEEDS_FINES',oils_i18n_gettext(1, 'Patron exceeds fine threshold', 'csp', 'label'),'CIRC|HOLD|RENEW', TRUE);
+	VALUES (1,'PATRON_EXCEEDS_FINES',oils_i18n_gettext(1, 'Patron exceeds fine threshold', 'csp', 'label'),'CIRC|FULFILL|HOLD|CAPTURE|RENEW', TRUE);
 INSERT INTO config.standing_penalty (id,name,label,block_list,staff_alert)
-	VALUES (2,'PATRON_EXCEEDS_OVERDUE_COUNT',oils_i18n_gettext(2, 'Patron exceeds max overdue item threshold', 'csp', 'label'),'CIRC|HOLD|RENEW', TRUE);
+	VALUES (2,'PATRON_EXCEEDS_OVERDUE_COUNT',oils_i18n_gettext(2, 'Patron exceeds max overdue item threshold', 'csp', 'label'),'CIRC|FULFILL|HOLD|CAPTURE|RENEW', TRUE);
 INSERT INTO config.standing_penalty (id,name,label,block_list,staff_alert)
-	VALUES (3,'PATRON_EXCEEDS_CHECKOUT_COUNT',oils_i18n_gettext(3, 'Patron exceeds max checked out item threshold', 'csp', 'label'),'CIRC', TRUE);
+	VALUES (3,'PATRON_EXCEEDS_CHECKOUT_COUNT',oils_i18n_gettext(3, 'Patron exceeds max checked out item threshold', 'csp', 'label'),'CIRC|FULFILL', TRUE);
 INSERT INTO config.standing_penalty (id,name,label,block_list,staff_alert)
-	VALUES (4,'PATRON_EXCEEDS_COLLECTIONS_WARNING',oils_i18n_gettext(4, 'Patron exceeds pre-collections warning fine threshold', 'csp', 'label'),'CIRC|HOLD|RENEW', TRUE);
+	VALUES (4,'PATRON_EXCEEDS_COLLECTIONS_WARNING',oils_i18n_gettext(4, 'Patron exceeds pre-collections warning fine threshold', 'csp', 'label'),'CIRC|FULFILL|HOLD|CAPTURE|RENEW', TRUE);
 
 INSERT INTO config.standing_penalty (id,name,label,staff_alert) VALUES (20,'ALERT_NOTE',oils_i18n_gettext(20, 'Alerting Note, no blocks', 'csp', 'label'),TRUE);
 INSERT INTO config.standing_penalty (id,name,label) VALUES (21,'SILENT_NOTE',oils_i18n_gettext(21, 'Note, no blocks', 'csp', 'label'));
@@ -123,7 +123,7 @@ INSERT INTO config.metabib_field ( id, field_class, name, label, format, xpath )
     (6, 'title', 'proper', oils_i18n_gettext(6, 'Title Proper', 'cmf', 'label'), 'mods32', $$//mods32:mods/mods32:titleNonfiling[mods32:title and not (@type)]$$ );
 
 INSERT INTO config.metabib_field ( id, field_class, name, label, format, xpath, facet_xpath, facet_field ) VALUES 
-    (7, 'author', 'corporate', oils_i18n_gettext(7, 'Corporate Author', 'cmf', 'label'), 'mods32', $$//mods32:mods/mods32:name[@type='corporate' and mods32:role/mods32:roleTerm[text()='creator']]$$, $$//*[local-name()='namePart']$$, TRUE ); -- /* to fool vim */;
+    (7, 'author', 'corporate', oils_i18n_gettext(7, 'Corporate Author', 'cmf', 'label'), 'mods32', $$//mods32:mods/mods32:name[@type='corporate' and (mods32:role/mods32:roleTerm[text()='creator'] or mods32:role/mods32:roleTerm[text()='aut'] or mods32:role/mods32:roleTerm[text()='cre'])]$$, $$//*[local-name()='namePart']$$, TRUE ); -- /* to fool vim */;
 INSERT INTO config.metabib_field ( id, field_class, name, label, format, xpath, facet_xpath, facet_field ) VALUES 
     (8, 'author', 'personal', oils_i18n_gettext(8, 'Personal Author', 'cmf', 'label'), 'mods32', $$//mods32:mods/mods32:name[@type='personal' and mods32:role/mods32:roleTerm[text()='creator']]$$, $$//*[local-name()='namePart']$$, TRUE ); -- /* to fool vim */;
 INSERT INTO config.metabib_field ( id, field_class, name, label, format, xpath, facet_xpath, facet_field ) VALUES 
@@ -332,6 +332,9 @@ INSERT INTO config.i18n_locale (code,marc_code,name,description)
     VALUES ('en-CA', 'eng', oils_i18n_gettext('en-CA', 'English (Canada)', 'i18n_l', 'name'),
 	oils_i18n_gettext('en-CA', 'Canadian English', 'i18n_l', 'description'));
 INSERT INTO config.i18n_locale (code,marc_code,name,description)
+    VALUES ('fi-FI', 'fin', oils_i18n_gettext('fi-FI', 'Finnish', 'i18n_l', 'name'),
+	oils_i18n_gettext('fi-FI', 'Finnish', 'i18n_l', 'description'));
+INSERT INTO config.i18n_locale (code,marc_code,name,description)
     VALUES ('fr-CA', 'fre', oils_i18n_gettext('fr-CA', 'French (Canada)', 'i18n_l', 'name'),
 	oils_i18n_gettext('fr-CA', 'Canadian French', 'i18n_l', 'description'));
 INSERT INTO config.i18n_locale (code,marc_code,name,description)
@@ -350,7 +353,7 @@ INSERT INTO config.i18n_locale (code,marc_code,name,description)
 -- Z39.50 server attributes
 
 INSERT INTO config.z3950_source (name, label, host, port, db, auth)
-	VALUES ('loc', oils_i18n_gettext('loc', 'Library of Congress', 'czs', 'label'), 'z3950.loc.gov', 7090, 'Voyager', FALSE);
+	VALUES ('loc', oils_i18n_gettext('loc', 'Library of Congress', 'czs', 'label'), 'lx2.loc.gov', 210, 'LCDB', FALSE);
 INSERT INTO config.z3950_source (name, label, host, port, db, auth)
 	VALUES ('oclc', oils_i18n_gettext('oclc', 'OCLC', 'czs', 'label'), 'zcat.oclc.org', 210, 'OLUCWorldCat', TRUE);
 INSERT INTO config.z3950_source (name, label, host, port, db, auth)
@@ -361,7 +364,7 @@ INSERT INTO config.z3950_attr (id, source, name, label, code, format)
 INSERT INTO config.z3950_attr (id, source, name, label, code, format)
 	VALUES (2, 'loc', 'isbn', oils_i18n_gettext(2, 'ISBN', 'cza', 'label'), 7, 6);
 INSERT INTO config.z3950_attr (id, source, name, label, code, format)
-	VALUES (3, 'loc', 'lccn', oils_i18n_gettext(3, 'LCCN', 'cza', 'label'), 9, 1);
+	VALUES (3, 'loc', 'lccn', oils_i18n_gettext(3, 'LCCN', 'cza', 'label'), 9, 6);
 INSERT INTO config.z3950_attr (id, source, name, label, code, format)
 	VALUES (4, 'loc', 'author', oils_i18n_gettext(4, 'Author', 'cza', 'label'), 1003, 6);
 INSERT INTO config.z3950_attr (id, source, name, label, code, format)
@@ -1557,7 +1560,32 @@ INSERT INTO permission.perm_list ( id, code, description ) VALUES
  ( 533, 'ADMIN_COPY_LOCATION_GROUP', oils_i18n_gettext( 533,
     'Allows a user to create/retrieve/update/delete copy location groups', 'ppl', 'description' )), 
  ( 534, 'ADMIN_USER_ACTIVITY_TYPE', oils_i18n_gettext( 534,
-    'Allows a user to create/retrieve/update/delete user activity types', 'ppl', 'description' ));
+    'Allows a user to create/retrieve/update/delete user activity types', 'ppl', 'description' )),
+( 535, 'VIEW_TRIGGER_EVENT', oils_i18n_gettext( 535,
+    'Allows a user to view circ- and hold-related action/trigger events', 'ppl', 'description')),
+( 536, 'IMPORT_OVERLAY_COPY', oils_i18n_gettext( 536,
+    'Allows a user to overlay copy data in MARC import', 'ppl', 'description')),
+ ( 537, 'ADMIN_SEARCH_FILTER_GROUP', oils_i18n_gettext( 537,
+    'Allows staff to manage search filter groups and entries', 'ppl', 'description' )),
+ ( 538, 'VIEW_SEARCH_FILTER_GROUP', oils_i18n_gettext( 538,
+    'Allows staff to view search filter groups and entries', 'ppl', 'description' )),
+ ( 539, 'UPDATE_ORG_UNIT_SETTING.ui.hide_copy_editor_fields', oils_i18n_gettext( 539,
+    'Allows staff to edit displayed copy editor fields', 'ppl', 'description' )),
+ ( 540, 'ADMIN_TOOLBAR_FOR_ORG', oils_i18n_gettext( 540,
+        'Allows a user to create, edit, and delete custom toolbars for org units', 'ppl', 'description')),
+ ( 541, 'ADMIN_TOOLBAR_FOR_WORKSTATION', oils_i18n_gettext( 541,
+        'Allows a user to create, edit, and delete custom toolbars for workstations', 'ppl', 'description')),
+ ( 542, 'ADMIN_TOOLBAR_FOR_USER', oils_i18n_gettext( 542,
+        'Allows a user to create, edit, and delete custom toolbars for users', 'ppl', 'description')),
+ ( 543, 'URL_VERIFY', oils_i18n_gettext( 543, 
+    'Allows a user to process and verify ULSs', 'ppl', 'description')),
+ ( 544, 'URL_VERIFY_UPDATE_SETTINGS', oils_i18n_gettext( 544, 
+    'Allows a user to configure URL verification org unit settings', 'ppl', 'description')),
+ ( 545, 'SAVED_FILTER_DIALOG_FILTERS', oils_i18n_gettext( 545,
+    'Allows users to save and load sets of filters for filter dialogs, available in certain staff interfaces', 'ppl', 'description')),
+ ( 546, 'ADMIN_HOLD_CAPTURE_SORT', oils_i18n_gettext( 546,
+        'Allows a user to make changes to best-hold selection sort order', 'ppl', 'description'))
+;
 
 
 SELECT SETVAL('permission.perm_list_id_seq'::TEXT, 1000);
@@ -2416,11 +2444,11 @@ INSERT INTO asset.call_number VALUES (-1,1,NOW(),1,NOW(),-1,1,'UNCATALOGED');
 -- circ matrix
 INSERT INTO config.circ_matrix_matchpoint (org_unit,grp,circulate,duration_rule,recurring_fine_rule,max_fine_rule) VALUES (1,1,true,11,1,1);
 
-INSERT INTO config.circ_matrix_weights(name, org_unit, grp, circ_modifier, marc_type, marc_form, marc_bib_level, marc_vr_format, copy_circ_lib, copy_owning_lib, user_home_ou, ref_flag, juvenile_flag, is_renewal, usr_age_upper_bound, usr_age_lower_bound, item_age) VALUES 
-    ('Default', 10.0, 11.0, 5.0, 4.0, 3.0, 2.0, 2.0, 8.0, 8.0, 8.0, 1.0, 6.0, 7.0, 0.0, 0.0, 0.0),
-    ('Org_Unit_First', 11.0, 10.0, 5.0, 4.0, 3.0, 2.0, 2.0, 8.0, 8.0, 8.0, 1.0, 6.0, 7.0, 0.0, 0.0, 0.0),
-    ('Item_Owner_First', 8.0, 8.0, 5.0, 4.0, 3.0, 2.0, 2.0, 10.0, 11.0, 8.0, 1.0, 6.0, 7.0, 0.0, 0.0, 0.0),
-    ('All_Equal', 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
+INSERT INTO config.circ_matrix_weights(name, org_unit, grp, circ_modifier, copy_location, marc_type, marc_form, marc_bib_level, marc_vr_format, copy_circ_lib, copy_owning_lib, user_home_ou, ref_flag, juvenile_flag, is_renewal, usr_age_upper_bound, usr_age_lower_bound, item_age) VALUES 
+    ('Default', 10.0, 11.0, 5.0, 5.0, 4.0, 3.0, 2.0, 2.0, 8.0, 8.0, 8.0, 1.0, 6.0, 7.0, 0.0, 0.0, 0.0),
+    ('Org_Unit_First', 11.0, 10.0, 5.0, 5.0, 4.0, 3.0, 2.0, 2.0, 8.0, 8.0, 8.0, 1.0, 6.0, 7.0, 0.0, 0.0, 0.0),
+    ('Item_Owner_First', 8.0, 8.0, 5.0, 5.0, 4.0, 3.0, 2.0, 2.0, 10.0, 11.0, 8.0, 1.0, 6.0, 7.0, 0.0, 0.0, 0.0),
+    ('All_Equal', 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
 
 -- hold matrix - 110.hold_matrix.sql:
 INSERT INTO config.hold_matrix_matchpoint (requestor_grp) VALUES (1);
@@ -2484,7 +2512,8 @@ INSERT INTO config.settings_group (name, label) VALUES
 ('booking', oils_i18n_gettext('config.settings_group.booking', 'Booking', 'coust', 'label')),
 ('offline', oils_i18n_gettext('config.settings_group.offline', 'Offline', 'coust', 'label')),
 ('receipt_template', oils_i18n_gettext('config.settings_group.receipt_template', 'Receipt Template', 'coust', 'label')),
-('sms', oils_i18n_gettext('sms','SMS Text Messages','csg','label'))
+('sms', oils_i18n_gettext('sms','SMS Text Messages','csg','label')),
+('vandelay', oils_i18n_gettext('vandelay','Vandelay','coust','label'))
 ;
 
 
@@ -2987,15 +3016,6 @@ INSERT into config.org_unit_setting_type
         'Any copies that have not been put into reshelving, in-transit, or on-holds-shelf (for a new hold) during the clear shelf process will be put into this status.  This is basically a purgatory status for copies waiting to be pulled from the shelf and processed by hand',
         'coust', 'description'),
     'link', 'ccs')
-
-,( 'circ.holds.clear_shelf.no_capture_holds', 'holds',
-    oils_i18n_gettext('circ.holds.clear_shelf.no_capture_holds',
-        'Bypass hold capture during clear shelf process',
-        'coust', 'label'),
-    oils_i18n_gettext('circ.holds.clear_shelf.no_capture_holds',
-        'During the clear shelf process, avoid capturing new holds on cleared items.',
-        'coust', 'description'),
-    'bool', null)
 
 ,( 'circ.holds.default_estimated_wait_interval', 'holds',
     oils_i18n_gettext('circ.holds.default_estimated_wait_interval',
@@ -4702,6 +4722,20 @@ INSERT into config.org_unit_setting_type
         'description'
     ),
     'string', null)
+,( 'vandelay.default_match_set', 'vandelay',
+    oils_i18n_gettext(
+        'vandelay.default_match_set',
+        'Default Record Match Set',
+        'coust',
+        'label'
+    ),
+    oils_i18n_gettext(
+        'vandelay.default_match_set',
+        'Default Record Match Set',
+        'coust',
+        'description'
+    ),
+    'string', null)
 
 ;
 
@@ -4847,6 +4881,7 @@ INSERT INTO container.biblio_record_entry_bucket_type (code,label) VALUES ('staf
 INSERT INTO container.biblio_record_entry_bucket_type (code,label) VALUES ('bookbag', oils_i18n_gettext('bookbag', 'Book Bag', 'cbrebt', 'label'));
 INSERT INTO container.biblio_record_entry_bucket_type (code,label) VALUES ('reading_list', oils_i18n_gettext('reading_list', 'Reading List', 'cbrebt', 'label'));
 INSERT INTO container.biblio_record_entry_bucket_type (code,label) VALUES ('template_merge',oils_i18n_gettext('template_merge','Template Merge Container', 'cbrebt', 'label'));
+INSERT INTO container.biblio_record_entry_bucket_type (code,label) VALUES ('url_verify', oils_i18n_gettext('url_verify', 'URL Verification Queue', 'cbrebt', 'label'));
 
 INSERT INTO container.user_bucket_type (code,label) VALUES ('misc', oils_i18n_gettext('misc', 'Miscellaneous', 'cubt', 'label'));
 INSERT INTO container.user_bucket_type (code,label) VALUES ('folks', oils_i18n_gettext('folks', 'Friends', 'cubt', 'label'));
@@ -6349,6 +6384,29 @@ INSERT INTO config.coded_value_map (id, ctype, code, value) VALUES
     (535, 'bib_level', 'm', oils_i18n_gettext('535', 'Monograph/Item', 'ccvm', 'value')),
     (536, 'bib_level', 's', oils_i18n_gettext('536', 'Serial', 'ccvm', 'value'));
 
+INSERT INTO config.coded_value_map(id, ctype, code, value) VALUES
+    (537, 'vr_format', 'a', oils_i18n_gettext('537', 'Beta', 'ccvm', 'value')),
+    (538, 'vr_format', 'b', oils_i18n_gettext('538', 'VHS', 'ccvm', 'value')),
+    (539, 'vr_format', 'c', oils_i18n_gettext('539', 'U-matic', 'ccvm', 'value')),
+    (540, 'vr_format', 'd', oils_i18n_gettext('540', 'EIAJ', 'ccvm', 'value')),
+    (541, 'vr_format', 'e', oils_i18n_gettext('541', 'Type C', 'ccvm', 'value')),
+    (542, 'vr_format', 'f', oils_i18n_gettext('542', 'Quadruplex', 'ccvm', 'value')),
+    (543, 'vr_format', 'g', oils_i18n_gettext('543', 'Laserdisc', 'ccvm', 'value')),
+    (544, 'vr_format', 'h', oils_i18n_gettext('544', 'CED videodisc', 'ccvm', 'value')),
+    (545, 'vr_format', 'i', oils_i18n_gettext('545', 'Betacam', 'ccvm', 'value')),
+    (546, 'vr_format', 'j', oils_i18n_gettext('546', 'Betacam SP', 'ccvm', 'value')),
+    (547, 'vr_format', 'k', oils_i18n_gettext('547', 'Super-VHS', 'ccvm', 'value')),
+    (548, 'vr_format', 'm', oils_i18n_gettext('548', 'M-II', 'ccvm', 'value')),
+    (549, 'vr_format', 'o', oils_i18n_gettext('549', 'D-2', 'ccvm', 'value')),
+    (550, 'vr_format', 'p', oils_i18n_gettext('550', '8 mm.', 'ccvm', 'value')),
+    (551, 'vr_format', 'q', oils_i18n_gettext('551', 'Hi-8 mm.', 'ccvm', 'value')),
+    (552, 'vr_format', 's', oils_i18n_gettext('552', 'Blu-ray disc', 'ccvm', 'value')),
+    (553, 'vr_format', 'u', oils_i18n_gettext('553', 'Unknown', 'ccvm', 'value')),
+    (554, 'vr_format', 'v', oils_i18n_gettext('554', 'DVD', 'ccvm', 'value')),
+    (555, 'vr_format', 'z', oils_i18n_gettext('555', 'Other', 'ccvm', 'value')),
+    (556, 'vr_format', ' ', oils_i18n_gettext('556', 'Unspecified', 'ccvm', 'value'));
+
+SELECT SETVAL('config.coded_value_map_id_seq'::TEXT, (SELECT max(id) FROM config.coded_value_map));
 
 -- Trigger Event Definitions -------------------------------------------------
 
@@ -7960,41 +8018,98 @@ INSERT INTO action_trigger.reactor (module, description)
 
 INSERT INTO action_trigger.event_definition (id, active, owner, name, hook, validator, reactor, cleanup_success, cleanup_failure, delay, delay_field, group_field, template) 
     VALUES (23, true, 1, 'PO JEDI', 'acqpo.activated', 'Acq::PurchaseOrderEDIRequired', 'GeneratePurchaseOrderJEDI', NULL, NULL, '00:00:00', NULL, NULL,
-$$[%- USE date -%]
-[%# start JEDI document 
-  # Vendor specific kludges:
-  # BT      - vendcode goes to NAD/BY *suffix*  w/ 91 qualifier
-  # INGRAM  - vendcode goes to NAD/BY *segment* w/ 91 qualifier (separately)
-  # BRODART - vendcode goes to FTX segment (lineitem level)
--%]
-[%- 
-IF target.provider.edi_default.vendcode && target.provider.code == 'BRODART';
-    xtra_ftx = target.provider.edi_default.vendcode;
-END;
+$$
+[%- USE date -%]
+[%
+    # extract some commonly used variables
+
+    VENDOR_SAN = target.provider.san;
+    VENDCODE = target.provider.edi_default.vendcode;
+    VENDACCT = target.provider.edi_default.vendacct;
+    ORG_UNIT_SAN = target.ordering_agency.mailing_address.san;
+
+    # set the vendor / provider
+
+    VENDOR_BT      = 0; # Baker & Taylor
+    VENDOR_INGRAM  = 0;
+    VENDOR_BRODART = 0;
+    VENDOR_MW_TAPE = 0; # Midwest Tape
+    VENDOR_RB      = 0; # Recorded Books
+    VENDOR_ULS     = 0; # ULS
+
+    IF    VENDOR_SAN == '1556150'; VENDOR_BT = 1;
+    ELSIF VENDOR_SAN == '1697684'; VENDOR_BRODART = 1;
+    ELSIF VENDOR_SAN == '1697978'; VENDOR_INGRAM = 1;
+    ELSIF VENDOR_SAN == '2549913'; VENDOR_MW_TAPE = 1;
+    ELSIF VENDOR_SAN == '1113984'; VENDOR_RB = 1;
+    ELSIF VENDOR_SAN == '1699342'; VENDOR_ULS = 1;
+    END;
+
+    # if true, pass the PO name as a secondary identifier
+    # RFF+LI:<name>/li_id
+    INC_PO_NAME = 0;
+    IF VENDOR_INGRAM;
+        INC_PO_NAME = 1;
+    END;
+
+    # GIR configuration --------------------------------------
+
+    INC_COPIES = 1; # copies on/off switch
+    INC_FUND = 0;
+    INC_CALLNUMBER = 0;
+    INC_ITEM_TYPE = 1;
+    INC_LOCATION = 0;
+    INC_COLLECTION_CODE = 1;
+    INC_OWNING_LIB = 1;
+    INC_QUANTITY = 1;
+    INC_COPY_ID = 0;
+
+    IF VENDOR_BT;
+        INC_CALLNUMBER = 1;
+    END;
+
+    IF VENDOR_BRODART;
+        INC_FUND = 1;
+    END;
+
+    IF VENDOR_MW_TAPE;
+        INC_FUND = 1;
+        INC_COLLECTION_CODE = 0;
+        INC_ITEM_TYPE = 0;
+    END;
+
+    # END GIR configuration ---------------------------------
+
 -%]
 [%- BLOCK big_block -%]
 {
-   "recipient":"[% target.provider.san %]",
-   "sender":"[% target.ordering_agency.mailing_address.san %]",
+   "recipient":"[% VENDOR_SAN %]",
+   "sender":"[% ORG_UNIT_SAN %]",
    "body": [{
      "ORDERS":[ "order", {
+
         "po_number":[% target.id %],
+
+        [% IF INC_PO_NAME %]
+        "po_name":"[% target.name | replace('\/', ' ') | replace('"', '\"') %]",
+        [% END %]
+
         "date":"[% date.format(date.now, '%Y%m%d') %]",
+
         "buyer":[
-            [%   IF   target.provider.edi_default.vendcode && (target.provider.code == 'BT' || target.provider.name.match('(?i)^BAKER & TAYLOR'))  -%]
-                {"id-qualifier": 91, "id":"[% target.ordering_agency.mailing_address.san _ ' ' _ target.provider.edi_default.vendcode %]"}
-            [%- ELSIF target.provider.edi_default.vendcode && target.provider.code == 'INGRAM' -%]
-                {"id":"[% target.ordering_agency.mailing_address.san %]"},
-                {"id-qualifier": 91, "id":"[% target.provider.edi_default.vendcode %]"}
-            [%- ELSE -%]
-                {"id":"[% target.ordering_agency.mailing_address.san %]"}
-            [%- END -%]
+            [% IF VENDOR_BT %]
+                {"id-qualifier": 91, "id":"[% ORG_UNIT_SAN %] [% VENDCODE %]"}
+            [% ELSE %]
+                {"id":"[% ORG_UNIT_SAN %]"},
+                {"id-qualifier": 91, "id":"[% VENDACCT %]"}
+            [% END %]
         ],
+
         "vendor":[
-            [%- # target.provider.name (target.provider.id) -%]
-            "[% target.provider.san %]",
+            "[% VENDOR_SAN %]",
             {"id-qualifier": 92, "id":"[% target.provider.id %]"}
         ],
+
         "currency":"[% target.provider.currency_type %]",
                 
         "items":[
@@ -8016,24 +8131,116 @@ END;
                 {"BTI":"[% helpers.get_li_attr_jedi('title',     '', li.attributes) %]"},
                 {"BPU":"[% helpers.get_li_attr_jedi('publisher', '', li.attributes) %]"},
                 {"BPD":"[% helpers.get_li_attr_jedi('pubdate',   '', li.attributes) %]"},
+                [% IF VENDOR_ULS -%]
+                {"BEN":"[% helpers.get_li_attr_jedi('edition',   '', li.attributes) %]"},
+                {"BAU":"[% helpers.get_li_attr_jedi('author',    '', li.attributes) %]"}
+                [%- ELSE -%]
                 {"BPH":"[% helpers.get_li_attr_jedi('pagination','', li.attributes) %]"}
+                [%- END %]
             ],
             [%- ftx_vals = []; 
-                FOR note IN li.lineitem_notes; 
+                FOR note IN li.lineitem_notes;
                     NEXT UNLESS note.vendor_public == 't'; 
                     ftx_vals.push(note.value); 
                 END; 
+                IF VENDOR_BRODART; # look for copy-level spec code
+                    FOR lid IN li.lineitem_details;
+                        IF lid.note;
+                            spec_note = lid.note.match('spec code ([a-zA-Z0-9_])');
+                            IF spec_note.0; ftx_vals.push(spec_note.0); END;
+                        END;
+                    END;
+                END; 
                 IF xtra_ftx;           ftx_vals.unshift(xtra_ftx); END; 
-                IF ftx_vals.size == 0; ftx_vals.unshift('');       END;  # BT needs FTX+LIN for every LI, even if it is an empty one
+
+                # BT & ULS want FTX+LIN for every LI, even if empty
+                IF ((VENDOR_BT OR VENDOR_ULS) AND ftx_vals.size == 0);
+                    ftx_vals.unshift('');
+                END;  
             -%]
 
             "free-text":[ 
                 [% FOR note IN ftx_vals -%] "[% note %]"[% UNLESS loop.last %], [% END %][% END %] 
             ],            
+
             "quantity":[% li.lineitem_details.size %]
-        }[% UNLESS loop.last %],[% END %]
-        [%-# TODO: lineitem details (later) -%]
-        [% END %]
+
+            [%- IF INC_COPIES -%]
+            ,"copies" : [
+                [%- compressed_copies = [];
+                    FOR lid IN li.lineitem_details;
+                        fund = lid.fund.code;
+                        item_type = lid.circ_modifier;
+                        callnumber = lid.cn_label;
+                        owning_lib = lid.owning_lib.shortname;
+                        location = lid.location;
+                        collection_code = lid.collection_code;
+    
+                        # when we have real copy data, treat it as authoritative for some fields
+                        acp = lid.eg_copy_id;
+                        IF acp;
+                            item_type = acp.circ_modifier;
+                            callnumber = acp.call_number.label;
+                            location = acp.location.name;
+                        END ;
+
+
+                        # collapse like copies into groups w/ quantity
+
+                        found_match = 0;
+                        IF !INC_COPY_ID; # INC_COPY_ID implies 1 copy per GIR
+                            FOR copy IN compressed_copies;
+                                IF  (fund == copy.fund OR (!fund AND !copy.fund)) AND
+                                    (item_type == copy.item_type OR (!item_type AND !copy.item_type)) AND
+                                    (callnumber == copy.callnumber OR (!callnumber AND !copy.callnumber)) AND
+                                    (owning_lib == copy.owning_lib OR (!owning_lib AND !copy.owning_lib)) AND
+                                    (location == copy.location OR (!location AND !copy.location)) AND
+                                    (collection_code == copy.collection_code OR (!collection_code AND !copy.collection_code));
+
+                                    copy.quantity = copy.quantity + 1;
+                                    found_match = 1;
+                                END;
+                            END;
+                        END;
+
+                        IF !found_match;
+                            compressed_copies.push({
+                                fund => fund,
+                                item_type => item_type,
+                                callnumber => callnumber,
+                                owning_lib => owning_lib,
+                                location => location,
+                                collection_code => collection_code,
+                                copy_id => lid.id, # for INC_COPY_ID
+                                quantity => 1
+                            });
+                        END;
+                    END;
+                    FOR copy IN compressed_copies;
+
+                    # If we assume owning_lib is required and set, 
+                    # it is safe to prepend each following copy field w/ a ","
+
+                    # B&T EDI requires expected GIR fields to be 
+                    # present regardless of whether a value exists.  
+                    # some fields are required to have a value in ACQ, 
+                    # though, so they are not forced into place below.
+
+                 %]{[%- IF INC_OWNING_LIB AND copy.owning_lib %] "owning_lib":"[% copy.owning_lib %]"[% END -%]
+                    [%- IF INC_FUND AND copy.fund %],"fund":"[% copy.fund %]"[% END -%]
+                    [%- IF INC_CALLNUMBER AND (VENDOR_BT OR copy.callnumber) %],"call_number":"[% copy.callnumber %]"[% END -%]
+                    [%- IF INC_ITEM_TYPE AND (VENDOR_BT OR copy.item_type) %],"item_type":"[% copy.item_type %]"[% END -%]
+                    [%- IF INC_LOCATION AND copy.location %],"copy_location":"[% copy.location %]"[% END -%]
+                    [%- IF INC_COLLECTION_CODE AND (VENDOR_BT OR copy.collection_code) %],"collection_code":"[% copy.collection_code %]"[% END -%]
+                    [%- IF INC_QUANTITY %],"quantity":"[% copy.quantity %]"[% END -%]
+                    [%- IF INC_COPY_ID %],"copy_id":"[% copy.copy_id %]" [% END %]}[% ',' UNLESS loop.last -%]
+                [%- END -%] [%# FOR compressed_copies -%]
+            ]
+            [%- END -%] [%# IF INC_COPIES %]
+
+        }[% UNLESS loop.last %],[% END -%]
+
+        [% END %] [%# END lineitems %]
         ],
         "line_items":[% target.lineitems.size %]
      }]  [%# close ORDERS array %]
@@ -8046,7 +8253,11 @@ $$
 
 INSERT INTO action_trigger.environment (event_def, path) VALUES 
   (23, 'lineitems.attributes'), 
-  (23, 'lineitems.lineitem_details'), 
+  (23, 'lineitems.lineitem_details.owning_lib'),
+  (23, 'lineitems.lineitem_details.location'),
+  (23, 'lineitems.lineitem_details.fund'),
+  (23, 'lineitems.lineitem_details.eg_copy_id.location'),
+  (23, 'lineitems.lineitem_details.eg_copy_id.call_number'),
   (23, 'lineitems.lineitem_notes'), 
   (23, 'ordering_agency.mailing_address'), 
   (23, 'provider'),
@@ -8682,6 +8893,7 @@ INSERT INTO acq.cancel_reason (keep_debits, id, org_unit, label, description) VA
 ('t',(  3+1000), 1, 'Changed',   'The information is to be or has been changed.'),
 ('t',(  4+1000), 1, 'No action',                  'This line item is not affected by the actual message.'),
 ('t',(  5+1000), 1, 'Accepted without amendment', 'This line item is entirely accepted by the seller.'),
+('f',(  7+1000), 1, 'Not accepted',               'This line item is not accepted by the seller.'),
 ('f',( 10+1000), 1, 'Not found',   'This line item is not found in the referenced message.'),
 ('t',( 24+1000), 1, 'Accepted with amendment, no confirmation required', 'Accepted with changes which require no confirmation.');
 
@@ -9926,8 +10138,15 @@ FOR item IN items;
     END;
     author = bibxml.findnodes('//*[@tag="100"]/*[@code="a"]').textContent;
     item_type = bibxml.findnodes('//*[local-name()="attributes"]/*[local-name()="field"][@name="item_type"]').getAttribute('coded-value');
-
-    helpers.csv_datum(title) %],[% helpers.csv_datum(author) %],[% helpers.csv_datum(item_type) %],[% FOR note IN item.notes; helpers.csv_datum(note.note); ","; END; "\n";
+    pub_date = "";
+    FOR pdatum IN bibxml.findnodes('//*[@tag="260"]/*[@code="c"]');
+        IF pub_date ;
+            pub_date = pub_date _ ", " _ pdatum.textContent;
+        ELSE ;
+            pub_date = pdatum.textContent;
+        END;
+    END;
+    helpers.csv_datum(title) %],[% helpers.csv_datum(author) %],[% helpers.csv_datum(pub_date) %],[% helpers.csv_datum(item_type) %],[% FOR note IN item.notes; helpers.csv_datum(note.note); ","; END; "\n";
 END -%]
 $$
 );
@@ -10080,7 +10299,7 @@ INSERT INTO authority.thesaurus (code, name, control_set) VALUES
     ('s', oils_i18n_gettext('s','Sears List of Subject Headings','at','name'), 1),
     ('v', oils_i18n_gettext('v','Repertoire de vedettes-matiere','at','name'), 1),
     ('z', oils_i18n_gettext('z','Other','at','name'), 1),
-    ('|', oils_i18n_gettext('|','No attempt to code','at','name'), 1);
+    ('|', oils_i18n_gettext('|','No attempt to code','at','name'), NULL);
 
 INSERT INTO action_trigger.hook ( key, core_type, description, passive ) VALUES (
     'reservation.available',
@@ -10174,7 +10393,24 @@ INSERT INTO config.usr_setting_type (name,grp,opac_visible,label,description,dat
         'description'
     ),
     'string'
-);
+), (
+    'ui.grid_columns.actor.user.event_log',
+    'gui',
+    FALSE,
+    oils_i18n_gettext(
+        'ui.grid_columns.actor.user.event_log',
+        'User Event Log',
+        'cust',
+        'label'
+    ),
+    oils_i18n_gettext(
+        'ui.grid_columns.actor.user.event_log',
+        'User Event Log Saved Column Settings',
+        'cust',
+        'description'
+    ),
+    'string'
+) ;
 
 SELECT setval( 'config.sms_carrier_id_seq', 1000 );
 INSERT INTO config.sms_carrier VALUES
@@ -11590,7 +11826,7 @@ INSERT INTO config.global_flag (name, enabled, label)
         )
     );
 
-INSERT INTO config.org_unit_setting_type ( name, label, description, datatype, grp )
+INSERT INTO config.org_unit_setting_type ( name, label, description, datatype, grp, update_perm )
     VALUES (
         'ui.hide_copy_editor_fields',
         oils_i18n_gettext(
@@ -11608,7 +11844,8 @@ INSERT INTO config.org_unit_setting_type ( name, label, description, datatype, g
             'description'
         ),
         'array',
-        'gui'
+        'gui',
+        539
     );
 
 INSERT into config.org_unit_setting_type 
@@ -11632,4 +11869,662 @@ INSERT into config.org_unit_setting_type
         ),
         'bool'
     );
+
+INSERT into config.org_unit_setting_type
+    (name, grp, label, description, datatype)
+    VALUES (
+        'opac.patron.temporary_list_warn',
+        'opac',
+        oils_i18n_gettext(
+            'opac.patron.temporary_list_warn',
+            'Warn patrons when adding to a temporary book list',
+            'coust',
+            'label'
+        ),
+        oils_i18n_gettext(
+            'opac.patron.temporary_list_warn',
+            'Present a warning dialog to the patron when a patron adds a book to a temporary book bag.',
+            'coust',
+            'description'
+        ),
+        'bool'
+    );
+
+INSERT INTO config.usr_setting_type
+    (name,grp,opac_visible,label,description,datatype)
+VALUES (
+    'opac.temporary_list_no_warn',
+    'opac',
+    TRUE,
+    oils_i18n_gettext(
+        'opac.temporary_list_no_warn',
+        'Opt out of warning when adding a book to a temporary book list',
+        'cust',
+        'label'
+    ),
+    oils_i18n_gettext(
+        'opac.temporary_list_no_warn',
+        'Opt out of warning when adding a book to a temporary book list',
+        'cust',
+        'description'
+    ),
+    'bool'
+);
+
+INSERT INTO config.usr_setting_type
+    (name,grp,opac_visible,label,description,datatype)
+VALUES (
+    'opac.default_list',
+    'opac',
+    FALSE,
+    oils_i18n_gettext(
+        'opac.default_list',
+        'Default list to use when adding to a bookbag',
+        'cust',
+        'label'
+    ),
+    oils_i18n_gettext(
+        'opac.default_list',
+        'Default list to use when adding to a bookbag',
+        'cust',
+        'description'
+    ),
+    'integer'
+);
+
+INSERT INTO config.org_unit_setting_type (
+    name, grp, label, description, datatype
+) VALUES (
+    'circ.staff.max_visible_event_age',
+    'circ',
+    'Maximum visible age of User Trigger Events in Staff Interfaces',
+    'If this is unset, staff can view User Trigger Events regardless of age. When this is set to an interval, it represents the age of the oldest possible User Trigger Event that can be viewed.',
+    'interval'
+);
+
+-- kid's opac main search filter
+
+INSERT INTO actor.search_filter_group (owner, code, label) 
+    VALUES (1, 'kpac_main', 'Kid''s OPAC Search Filter');
+
+INSERT INTO actor.search_query (label, query_text) 
+    VALUES ('Children''s Materials', 'audience(a,b,c)');
+INSERT INTO actor.search_query (label, query_text) 
+    VALUES ('Young Adult Materials', 'audience(j,d)');
+INSERT INTO actor.search_query (label, query_text) 
+    VALUES ('General/Adult Materials',  'audience(e,f,g, )');
+
+INSERT INTO actor.search_filter_group_entry (grp, query, pos)
+    VALUES (
+        (SELECT id FROM actor.search_filter_group WHERE code = 'kpac_main'),
+        (SELECT id FROM actor.search_query WHERE label = 'Children''s Materials'),
+        0
+    ); INSERT INTO actor.search_filter_group_entry (grp, query, pos) VALUES (
+        (SELECT id FROM actor.search_filter_group WHERE code = 'kpac_main'),
+        (SELECT id FROM actor.search_query WHERE label = 'Young Adult Materials'),
+        1
+    );
+INSERT INTO actor.search_filter_group_entry (grp, query, pos) 
+    VALUES (
+        (SELECT id FROM actor.search_filter_group WHERE code = 'kpac_main'),
+        (SELECT id FROM actor.search_query WHERE label = 'General/Adult Materials'),
+        2
+    );
+INSERT into config.org_unit_setting_type
+    (name, grp, label, description, datatype)
+    VALUES (
+        'acq.fund.allow_rollover_without_money',
+        'acq',
+        oils_i18n_gettext(
+            'acq.fund.allow_rollover_without_money',
+            'Allow funds to be rolled over without bringing the money along',
+            'coust',
+            'label'
+        ),
+        oils_i18n_gettext(
+            'acq.fund.allow_rollover_without_money',
+            'Allow funds to be rolled over without bringing the money along.  This makes money left in the old fund disappear, modeling its return to some outside entity.',
+            'coust',
+            'description'
+        ),
+        'bool'
+    );
+
+INSERT INTO config.org_unit_setting_type
+    (name, grp, label, description, datatype)
+    VALUES (
+        'circ.lost.xact_open_on_zero',
+        'finance',
+        oils_i18n_gettext(
+            'circ.lost.xact_open_on_zero',
+            'Leave transaction open when lost balance equals zero',
+            'coust',
+            'label'
+        ),
+        oils_i18n_gettext(
+            'circ.lost.xact_open_on_zero',
+            'Leave transaction open when lost balance equals zero.  This leaves the lost copy on the patron record when it is paid',
+            'coust',
+            'description'
+        ),
+        'bool'
+    );
+
+INSERT INTO config.org_unit_setting_type
+    (name, grp, label, description, datatype)
+    VALUES (
+        'circ.patron_expires_soon_warning',
+        'circ',
+        oils_i18n_gettext(
+            'circ.patron_expires_soon_warning',
+            'Warn when patron account is about to expire',
+            'coust',
+            'label'
+        ),
+        oils_i18n_gettext(
+            'circ.patron_expires_soon_warning',
+            'Warn when patron account is about to expire. If set, the staff client displays a warning this many days before the expiry of a patron account. Value is in number of days, for example: 3 for 3 days.',
+            'coust',
+            'description'
+        ),
+        'integer'
+    );
+
+INSERT INTO config.org_unit_setting_type (
+    name, label, grp, datatype
+) VALUES (
+    'circ.fines.truncate_to_max_fine',
+    oils_i18n_gettext(
+        'circ.fines.truncate_to_max_fine',
+        'Truncate fines to max fine amount',
+        'coust',
+        'label'
+    ),
+    'circ',
+    'bool'
+);
+
+
+INSERT INTO config.settings_group (name, label)
+    VALUES (
+        'url_verify',
+        oils_i18n_gettext(
+            'url_verify',
+            'URL Verify',
+            'csg',
+            'label'
+        )
+    );
+
+INSERT INTO config.org_unit_setting_type
+    (name, grp, label, description, datatype, update_perm)
+    VALUES (
+        'url_verify.url_verification_delay',
+        'url_verify',
+        oils_i18n_gettext(
+            'url_verify.url_verification_delay',
+            'Number of seconds to wait between URL test attempts.',
+            'coust',
+            'label'
+        ),
+        oils_i18n_gettext(
+            'url_verify.url_verification_delay',
+            'Throttling mechanism for batch URL verification runs.  Each running process will wait this number of seconds after a URL test before performing the next.',
+            'coust',
+            'description'
+        ),
+        'integer',
+        544
+    );
+
+INSERT INTO config.org_unit_setting_type
+    (name, grp, label, description, datatype, update_perm)
+    VALUES (
+        'url_verify.url_verification_max_redirects',
+        'url_verify',
+        oils_i18n_gettext(
+            'url_verify.url_verification_max_redirects',
+            'Maximum redirect lookups',
+            'coust',
+            'label'
+        ),
+        oils_i18n_gettext(
+            'url_verify.url_verification_max_redirects',
+            'For URLs returning 3XX redirects, this is the maximum number of redirects we will follow before giving up.',
+            'coust',
+            'description'
+        ),
+        'integer',
+        544
+    );
+
+INSERT INTO config.org_unit_setting_type
+    (name, grp, label, description, datatype, update_perm)
+    VALUES (
+        'url_verify.url_verification_max_wait',
+        'url_verify',
+        oils_i18n_gettext(
+            'url_verify.url_verification_max_wait',
+            'Maximum wait time (in seconds) for a URL to lookup',
+            'coust',
+            'label'
+        ),
+        oils_i18n_gettext(
+            'url_verify.url_verification_max_wait',
+            'If we exceed the wait time, the URL is marked as a "timeout" and the system moves on to the next URL',
+            'coust',
+            'description'
+        ),
+        'integer',
+        544
+    );
+
+INSERT INTO config.filter_dialog_interface (key, description) VALUES (
+    'url_verify',
+    oils_i18n_gettext(
+        'url_verify',
+        'All Link Checker filter dialogs',
+        'cfdi',
+        'description'
+    )
+);
+
+INSERT INTO config.usr_setting_type (name,grp,opac_visible,label,description,datatype) VALUES (
+    'ui.grid_columns.url_verify.select_urls',
+    'gui',
+    FALSE,
+    oils_i18n_gettext(
+        'ui.grid_columns.url_verify.select_urls',
+        'Link Checker''s URL Selection interface''s saved columns',
+        'cust',
+        'label'
+    ),
+    oils_i18n_gettext(
+        'ui.grid_columns.url_verify.select_urls',
+        'Link Checker''s URL Selection interface''s saved columns',
+        'cust',
+        'description'
+    ),
+    'string'
+);
+
+INSERT INTO config.usr_setting_type (name,grp,opac_visible,label,description,datatype) VALUES (
+    'ui.grid_columns.url_verify.review_attempt',
+    'gui',
+    FALSE,
+    oils_i18n_gettext(
+        'ui.grid_columns.url_verify.review_attempt',
+        'Link Checker''s Review Attempt interface''s saved columns',
+        'cust',
+        'label'
+    ),
+    oils_i18n_gettext(
+        'ui.grid_columns.url_verify.review_attempt',
+        'Link Checker''s Review Attempt interface''s saved columns',
+        'cust',
+        'description'
+    ),
+    'string'
+);
+
+INSERT INTO config.org_unit_setting_type
+    (name, grp, label, description, datatype, update_perm)
+    VALUES (
+        'url_verify.verification_batch_size',
+        'url_verify',
+        oils_i18n_gettext(
+            'url_verify.verification_batch_size',
+            'Number of URLs to test in parallel',
+            'coust',
+            'label'
+        ),
+        oils_i18n_gettext(
+            'url_verify.verification_batch_size',
+            'URLs are tested in batches.  This number defines the size of each batch and it directly relates to the number of back-end processes performing URL verification.',
+            'coust',
+            'description'
+        ),
+        'integer',
+        544
+    );
+
+INSERT INTO config.org_unit_setting_type
+    (name, label, description, grp, datatype, fm_class) 
+VALUES (
+    'acq.upload.default.create_po',
+    oils_i18n_gettext(
+        'acq.upload.default.create_po',
+        'Upload Create PO',
+        'coust',
+        'label'
+    ),
+     oils_i18n_gettext(
+        'acq.upload.default.create_po',
+        'Create a purchase order by default during ACQ file upload',
+        'coust',
+        'description'
+    ),
+   'acq',
+    'bool',
+    NULL
+), (
+    'acq.upload.default.activate_po',
+    oils_i18n_gettext(
+        'acq.upload.default.activate_po',
+        'Upload Activate PO',
+        'coust',
+        'label'
+    ),
+     oils_i18n_gettext(
+        'acq.upload.default.activate_po',
+        'Activate the purchase order by default during ACQ file upload',
+        'coust',
+        'description'
+    ),
+    'acq',
+    'bool',
+    NULL
+), (
+    'acq.upload.default.provider',
+    oils_i18n_gettext(
+        'acq.upload.default.provider',
+        'Upload Default Provider',
+        'coust',
+        'label'
+    ),
+     oils_i18n_gettext(
+        'acq.upload.default.provider',
+        'Default provider to use during ACQ file upload',
+        'coust',
+        'description'
+    ),
+    'acq',
+    'link',
+    'acqpro'
+), (
+    'acq.upload.default.vandelay.match_set',
+    oils_i18n_gettext(
+        'acq.upload.default.vandelay.match_set',
+        'Upload Default Match Set',
+        'coust',
+        'label'
+    ),
+     oils_i18n_gettext(
+        'acq.upload.default.vandelay.match_set',
+        'Default match set to use during ACQ file upload',
+        'coust',
+        'description'
+    ),
+    'acq',
+    'link',
+    'vms'
+), (
+    'acq.upload.default.vandelay.merge_profile',
+    oils_i18n_gettext(
+        'acq.upload.default.vandelay.merge_profile',
+        'Upload Default Merge Profile',
+        'coust',
+        'label'
+    ),
+     oils_i18n_gettext(
+        'acq.upload.default.vandelay.merge_profile',
+        'Default merge profile to use during ACQ file upload',
+        'coust',
+        'description'
+    ),
+    'acq',
+    'link',
+    'vmp'
+), (
+    'acq.upload.default.vandelay.import_non_matching',
+    oils_i18n_gettext(
+        'acq.upload.default.vandelay.import_non_matching',
+        'Upload Import Non Matching by Default',
+        'coust',
+        'label'
+    ),
+     oils_i18n_gettext(
+        'acq.upload.default.vandelay.import_non_matching',
+        'Import non-matching records by default during ACQ file upload',
+        'coust',
+        'description'
+    ),
+    'acq',
+    'bool',
+    NULL
+), (
+    'acq.upload.default.vandelay.merge_on_exact',
+    oils_i18n_gettext(
+        'acq.upload.default.vandelay.merge_on_exact',
+        'Upload Merge on Exact Match by Default',
+        'coust',
+        'label'
+    ),
+     oils_i18n_gettext(
+        'acq.upload.default.vandelay.merge_on_exact',
+        'Merge records on exact match by default during ACQ file upload',
+        'coust',
+        'description'
+    ),
+    'acq',
+    'bool',
+    NULL
+), (
+    'acq.upload.default.vandelay.merge_on_best',
+    oils_i18n_gettext(
+        'acq.upload.default.vandelay.merge_on_best',
+        'Upload Merge on Best Match by Default',
+        'coust',
+        'label'
+    ),
+     oils_i18n_gettext(
+        'acq.upload.default.vandelay.merge_on_best',
+        'Merge records on best match by default during ACQ file upload',
+        'coust',
+        'description'
+    ),
+    'acq',
+    'bool',
+    NULL
+), (
+    'acq.upload.default.vandelay.merge_on_single',
+    oils_i18n_gettext(
+        'acq.upload.default.vandelay.merge_on_single',
+        'Upload Merge on Single Match by Default',
+        'coust',
+        'label'
+    ),
+     oils_i18n_gettext(
+        'acq.upload.default.vandelay.merge_on_single',
+        'Merge records on single match by default during ACQ file upload',
+        'coust',
+        'description'
+    ),
+    'acq',
+    'bool',
+    NULL
+), (
+    'acq.upload.default.vandelay.quality_ratio',
+    oils_i18n_gettext(
+        'acq.upload.default.vandelay.quality_ratio',
+        'Upload Default Min. Quality Ratio',
+        'coust',
+        'label'
+    ),
+     oils_i18n_gettext(
+        'acq.upload.default.vandelay.quality_ratio',
+        'Default minimum quality ratio used during ACQ file upload',
+        'coust',
+        'description'
+    ),
+    'acq',
+    'integer',
+    NULL
+), (
+    'acq.upload.default.vandelay.low_quality_fall_thru_profile',
+    oils_i18n_gettext(
+        'acq.upload.default.vandelay.low_quality_fall_thru_profile',
+        'Upload Default Insufficient Quality Fall-Thru Profile',
+        'coust',
+        'label'
+    ),
+     oils_i18n_gettext(
+        'acq.upload.default.vandelay.low_quality_fall_thru_profile',
+        'Default low-quality fall through profile used during ACQ file upload',
+        'coust',
+        'description'
+    ),
+    'acq',
+    'link',
+    'vmp'
+), (
+    'acq.upload.default.vandelay.load_item_for_imported',
+    oils_i18n_gettext(
+        'acq.upload.default.vandelay.load_item_for_imported',
+        'Upload Load Items for Imported Records by Default',
+        'coust',
+        'label'
+    ),
+     oils_i18n_gettext(
+        'acq.upload.default.vandelay.load_item_for_imported',
+        'Load items for imported records by default during ACQ file upload',
+        'coust',
+        'description'
+    ),
+    'acq',
+    'bool',
+    NULL
+);
+
+
+INSERT INTO config.ts_config_list(id, name) VALUES
+    ('simple','Non-Stemmed Simple'),
+    ('danish_nostop','Danish Stemmed'),
+    ('dutch_nostop','Dutch Stemmed'),
+    ('english_nostop','English Stemmed'),
+    ('finnish_nostop','Finnish Stemmed'),
+    ('french_nostop','French Stemmed'),
+    ('german_nostop','German Stemmed'),
+    ('hungarian_nostop','Hungarian Stemmed'),
+    ('italian_nostop','Italian Stemmed'),
+    ('norwegian_nostop','Norwegian Stemmed'),
+    ('portuguese_nostop','Portuguese Stemmed'),
+    ('romanian_nostop','Romanian Stemmed'),
+    ('russian_nostop','Russian Stemmed'),
+    ('spanish_nostop','Spanish Stemmed'),
+    ('swedish_nostop','Swedish Stemmed'),
+    ('turkish_nostop','Turkish Stemmed');
+
+INSERT INTO config.metabib_class_ts_map(field_class, ts_config, index_weight, always) VALUES
+    ('keyword','simple','A',true),
+    ('keyword','english_nostop','C',true),
+    ('title','simple','A',true),
+    ('title','english_nostop','C',true),
+    ('author','simple','A',true),
+    ('author','english_nostop','C',true),
+    ('series','simple','A',true),
+    ('series','english_nostop','C',true),
+    ('subject','simple','A',true),
+    ('subject','english_nostop','C',true),
+    ('identifier','simple','A',true);
+
+INSERT INTO config.org_unit_setting_type (
+    name, label, description, datatype, fm_class, update_perm, grp
+) VALUES (
+    'circ.hold_capture_order',
+    oils_i18n_gettext(
+        'circ.hold_capture_order',
+        'Best-hold selection sort order',
+        'coust',
+        'label'
+    ),
+    oils_i18n_gettext(
+        'circ.hold_capture_order',
+        'Defines the sort order of holds when selecting a hold to fill using a given copy at capture time',
+        'coust',
+        'description'
+    ),
+    'link',
+    'cbho',
+    543,
+    'holds'
+);
+
+INSERT INTO config.org_unit_setting_type (
+    name, label, description, datatype, update_perm, grp
+) VALUES (
+    'circ.hold_go_home_interval',
+    oils_i18n_gettext(
+        'circ.hold_go_home_interval',
+        'Max foreign-circulation time',
+        'coust',
+        'label'
+    ),
+    oils_i18n_gettext(
+        'circ.hold_go_home_interval',
+        'Time a copy can spend circulating away from its circ lib before returning there to fill a hold (if one exists there)',
+        'coust',
+        'description'
+    ),
+    'interval',
+    543,
+    'holds'
+);
+
+
+INSERT INTO config.best_hold_order (
+    name,
+    pprox, aprox, priority, cut, depth, rtime, htime, hprox
+) VALUES (
+    'Traditional',
+    1, 2, 3, 4, 5, 6, 7, 8
+);
+
+INSERT INTO config.best_hold_order (
+    name,
+    hprox, pprox, aprox, priority, cut, depth, rtime, htime
+) VALUES (
+    'Traditional with Holds-always-go-home',
+    1, 2, 3, 4, 5, 6, 7, 8
+);
+
+INSERT INTO config.best_hold_order (
+    name,
+    htime, hprox, pprox, aprox, priority, cut, depth, rtime
+) VALUES (
+    'Traditional with Holds-go-home',
+    1, 2, 3, 4, 5, 6, 7, 8
+);
+
+INSERT INTO config.best_hold_order (
+    name,
+    priority, cut, rtime, depth, pprox, hprox, aprox, htime
+) VALUES (
+    'FIFO',
+    1, 2, 3, 4, 5, 6, 7, 8
+);
+
+INSERT INTO config.best_hold_order (
+    name,
+    hprox, priority, cut, rtime, depth, pprox, aprox, htime
+) VALUES (
+    'FIFO with Holds-always-go-home',
+    1, 2, 3, 4, 5, 6, 7, 8
+);
+
+INSERT INTO config.best_hold_order (
+    name,
+    htime, priority, cut, rtime, depth, pprox, aprox, hprox
+) VALUES (
+    'FIFO with Holds-go-home',
+    1, 2, 3, 4, 5, 6, 7, 8
+);
+
+INSERT INTO actor.org_unit_setting (
+    org_unit, name, value
+) VALUES (
+    (SELECT id FROM actor.org_unit WHERE parent_ou IS NULL),
+    'circ.hold_go_home_interval',
+    '"6 months"'
+);
 

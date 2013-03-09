@@ -1,56 +1,28 @@
 if (!dojo._hasResource["openils.widget.FlattenerFilterDialog"]) {
-    dojo._hasResource["openils.widget.FlattenerFilterDialog"] = true;
-
     dojo.provide("openils.widget.FlattenerFilterDialog");
-    dojo.require("openils.widget.PCrudFilterDialog");
+    dojo.require("openils.widget.FlattenerFilterPane");
+    dojo.require("dijit.Dialog");
 
     dojo.declare(
-        "openils.widget.FlattenerFilterDialog",
-        [openils.widget.PCrudFilterDialog], {
-            "mapTerminii": null,
-
-            "constructor": function(args) {
-                dojo.mixin(this, args);
-            },
-
-            "_buildFieldStore": function() {
-                var self = this;
-
-                if (!this.mapTerminii)
-                    throw new Error("No mapTerminii list; can't proceed");
-
-                var realFieldList = dojo.clone(this.mapTerminii).filter(
-                    function(o) {
-                        if (self.suppressFilterFields &&
-                            dojo.indexOf(
-                                self.suppressFilterFields, o.simple_name
-                            ) >= -1
-                        ) {
-                            return false;
-                        }
-
-                        return o.isfilter;
+        "openils.widget.FlattenerFilterDialog", [
+            dijit.Dialog, openils.widget.FlattenerFilterPane
+        ], {
+            "constructor": function() {
+                dojo.connect(
+                    this, "postCreate", this,
+                    function() {
+                        /* Of course I don't *want* to hardcode 400px below,
+                         * but without some kind of maxHeight, this dialog
+                         * can just grow forever, until it's no longer
+                         * possible to access the close button on the top or
+                         * the buttons at the bottom. */
+                        dojo.style(
+                            this.domNode, {
+                                "maxHeight": "400px", "overflow": "auto"
+                            }
+                        );
                     }
                 );
-
-                this.fieldStore = new dojo.data.ItemFileReadStore({
-                    "data": {
-                        "identifier": "simple_name",
-                        "name": "label",
-                        "items": realFieldList.map(
-                            function(item) {
-                                return {
-                                    "label": item.label,
-                                    "name": item.name,
-                                    "type": item.datatype,
-                                    "fmClass": item.fmClass,
-                                    "simple_name": item.simple_name,
-                                    "indirect": item.indirect
-                                };
-                            }
-                        )
-                    }
-                });
             }
         }
     );

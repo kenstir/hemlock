@@ -9,7 +9,7 @@
         <div id="your-acct-login">
             <a href="[% mkurl(ctx.opac_root _ '/myopac/main') %]" 
                 class="opac-button opac-button-header" id="home_myopac_link">
-                [% l('Your Account Log in') %]
+                [% l('My Account') %]
             </a>
         </div>
         [% ELSE %]
@@ -33,7 +33,7 @@
                 </span>
                 <span class="dash_divider">|</span>
                 <span class="dash-align">
-                    <a class="dash-link" href="[% mkurl(ctx.opac_root _ '/myopac/holds')
+                    <a class="dash-link" href="[% mkurl(ctx.opac_root _ '/myopac/holds', {}, ['available'])
                         %]"><span id="dash_holds">[% ctx.user_stats.holds.total
                         %]</span> [% l("On Hold") %]</a>
                 </span>
@@ -53,8 +53,9 @@
         </div>
         [% END %]
     </div>
+    [%- INCLUDE "opac/parts/locale_picker.tt2" %]
     <div class="common-no-pad"></div>
 </div>
 </div>
-[% END %]
 [% INCLUDE "opac/parts/topnav_links.tt2" %]
+[% END %]

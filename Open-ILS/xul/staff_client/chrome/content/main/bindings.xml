@@ -147,6 +147,18 @@
 				]]>
 			</constructor>
 
+			<destructor>                                                                                              
+				<![CDATA[                                                                                         
+				try {                                                                                                            
+					delete this._props;                                                                                      
+					delete this.sprintf;                                                                                     
+				} catch(E) {                                                                                                     
+					alert('Error destroying messagecatalog in bindings.xml: ' + E);                                             
+					throw(E);                                                                                                    
+				}                                                                                                                
+				]]>                                                                                               
+			</destructor>  
+
 			<property name="src">
 				<getter>
 					<![CDATA[
@@ -544,6 +556,12 @@
 					n.setAttribute('src','chrome://open_ils_staff_client/skin/media/images/opentriangle.gif');
 				]]>
 			</constructor>
+			<destructor>
+				<![CDATA[
+					var n = document.getAnonymousNodes(this)[0];
+					n.onclick = null;
+				]]>
+			</destructor>
 		</implementation>
 	</binding>
 

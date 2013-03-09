@@ -1,0 +1,31 @@
+[% PROCESS 'kpac/parts/util.tt2'; WRAPPER "kpac/parts/base.tt2" %]
+
+<!-- subpage is the main wrapper page for everything except 'home' -->
+
+<div class="main_top_shadow_sub">
+    <div class="main_mid_top_sub">
+        [% INCLUDE 'kpac/parts/breadcrumb.tt2' %]
+    </div>
+</div>
+<table cellpadding="0" cellspacing="0" border="0" width="100%">
+    <tr>
+        <td width="3" class="main_left_shadow"><div class="clear">&nbsp;</div></td>
+        <td valign="top" class="main_inside_cell" valign="top" height="300">
+            <div class="main_content_wrapper">
+                [% content %] 
+                <div class="clear">&nbsp;</div>
+            </div>
+        </td>
+        <td width="266" valign="top" class="sub_sidebar">
+            <div class="sub_sidebar_inner">
+                [% INCLUDE 'kpac/parts/searchbox.tt2' %]
+            </div>
+        </td>
+        <td width="3" class="main_right_shadow"><div class="clear">&nbsp;</div></td>
+    </tr>
+</table>
+<div class="main_bottom_shadow"><div class="main_mid_bottom_sub">&nbsp;</div></div>
+
+[% END %]  
+  
+

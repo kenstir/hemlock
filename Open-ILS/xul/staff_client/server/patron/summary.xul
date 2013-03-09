@@ -20,7 +20,8 @@
 <?xul-overlay href="/xul/server/OpenILS/util_overlay.xul"?>
 
 <window id="patron_summary_win" 
-    onload="try { font_helper(); my_init(); persist_helper(); } catch(E) { alert(E); }" onunload="try { observer.unregister(); } catch(E) { alert(E); }"
+    onload="try { font_helper(); my_init(); persist_helper(); } catch(E) { alert(E); }" 
+    onunload="try { my_cleanup(); persist_helper_cleanup(); } catch(E) { alert(E); }"
     xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
     <!-- ///////////////////////////////////////////////////////////////////////////////////////////////////////////// -->
@@ -37,12 +38,10 @@
         function myObserver() { this.register(); }
         myObserver.prototype = {
             register: function() {
-                netscape.security.PrivilegeManager.enablePrivilege("UniversalXPConnect");
                 var observerService = Components.classes["@mozilla.org/observer-service;1"].getService(Components.interfaces.nsIObserverService);
                 observerService.addObserver(this, "xul-overlay-merged", false);
             },
             unregister: function() {
-                netscape.security.PrivilegeManager.enablePrivilege("UniversalXPConnect");
                 var observerService = Components.classes["@mozilla.org/observer-service;1"].getService(Components.interfaces.nsIObserverService);
                 observerService.removeObserver(this, "xul-overlay-merged");
             },
@@ -55,7 +54,6 @@
                 
         function my_init() {
             try {
-                netscape.security.PrivilegeManager.enablePrivilege("UniversalXPConnect");
                 if (typeof JSAN == 'undefined') { throw( $("commonStrings").getString('common.jsan.missing') ); }
                 JSAN.errorLevel = "die"; // none, warn, or die
                 JSAN.addRepository('/xul/server/');
@@ -69,6 +67,17 @@
                 
                 observer = new myObserver();
                 document.loadOverlay(location.protocol + '//' + location.hostname + url,observer)
+            } catch(E) {
+                var err_msg = $("commonStrings").getFormattedString('common.exception', ['patron/summary.xul:my_init()', E]);
+                try { g.error.sdump('D_ERROR',err_msg); } catch(E) { dump(err_msg); }
+                alert(err_msg);
+            }
+        }
+
+        function my_cleanup() {
+            try {
+                observer.unregister();
+                g.summary.cleanup();
             } catch(E) {
                 var err_msg = $("commonStrings").getFormattedString('common.exception', ['patron/summary.xul:my_init()', E]);
                 try { g.error.sdump('D_ERROR',err_msg); } catch(E) { dump(err_msg); }
@@ -117,8 +126,6 @@
     
         function post_overlay() {
             try {
-                netscape.security.PrivilegeManager.enablePrivilege("UniversalXPConnect");
-
                 var patron_id = xul_param('id'); 
                 var patron_bc = xul_param('barcode'); 
 

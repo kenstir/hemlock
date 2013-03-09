@@ -30,16 +30,16 @@ function edit_penalty_init() {
         }
 
         /* set widget values */
-        document.getElementById('note_tb').value = xul_param('note',{'modal_xulG':true});
-        document.getElementById('csp_menupopup').setAttribute('value',xul_param('id',{'modal_xulG':true}));
-        if (xul_param('id',{'modal_xulG':true})==21) { // SILENT_NOTE
+        document.getElementById('note_tb').value = xul_param('note');
+        document.getElementById('csp_menupopup').setAttribute('value',xul_param('id'));
+        if (xul_param('id')==21) { // SILENT_NOTE
             document.getElementById('note_btn').checked = true;
-        } else if (xul_param('id',{'modal_xulG':true})==20) { // ALERT_NOTE
+        } else if (xul_param('id')==20) { // ALERT_NOTE
             document.getElementById('alert_btn').checked = true;
-        } else if (xul_param('id',{'modal_xulG':true})==25) { // STAFF_CHR
+        } else if (xul_param('id')==25) { // STAFF_CHR
             document.getElementById('block_btn').checked = true;
         } else {
-            var nl = document.getElementById('csp_menupopup').getElementsByAttribute('value',xul_param('id',{'modal_xulG':true}));
+            var nl = document.getElementById('csp_menupopup').getElementsByAttribute('value',xul_param('id'));
             if (nl.length > 0) {
                 document.getElementById('csp_menulist').setAttribute('label', nl[0].getAttribute('label'));
             } else {
@@ -48,7 +48,8 @@ function edit_penalty_init() {
         }
 
         /* set widget behavior */
-        document.getElementById('csp_menulist').addEventListener(
+        window.edit_standing_penalty_event_listeners = new EventListenerList();
+        window.edit_standing_penalty_event_listeners.add(document.getElementById('csp_menulist'), 
             'command',
             function() {
                 document.getElementById('note_btn').checked = false;
@@ -57,7 +58,7 @@ function edit_penalty_init() {
             },
             false
         );
-        document.getElementById('note_btn').addEventListener(
+        window.edit_standing_penalty_event_listeners.add(document.getElementById('note_btn'), 
             'command', 
             function() { 
                 document.getElementById('csp_menulist').setAttribute('label',''); 
@@ -65,7 +66,7 @@ function edit_penalty_init() {
             }, 
             false
         );
-        document.getElementById('alert_btn').addEventListener(
+        window.edit_standing_penalty_event_listeners.add(document.getElementById('alert_btn'), 
             'command', 
             function() { 
                 document.getElementById('csp_menulist').setAttribute('label',''); 
@@ -73,7 +74,7 @@ function edit_penalty_init() {
             }, 
             false
         );
-        document.getElementById('block_btn').addEventListener(
+        window.edit_standing_penalty_event_listeners.add(document.getElementById('block_btn'), 
             'command', 
             function() { 
                 document.getElementById('csp_menulist').setAttribute('label',''); 
@@ -81,10 +82,10 @@ function edit_penalty_init() {
             }, 
             false
         );
-        document.getElementById('cancel_btn').addEventListener(
+        window.edit_standing_penalty_event_listeners.add(document.getElementById('cancel_btn'), 
             'command', function() { window.close(); }, false
         );
-        document.getElementById('apply_btn').addEventListener(
+        window.edit_standing_penalty_event_listeners.add(document.getElementById('apply_btn'), 
             'command', 
             function() {
                 var note = document.getElementById('note_tb').value;
@@ -97,13 +98,9 @@ function edit_penalty_init() {
                         note = note + commonStrings.getFormattedString('staff.initials.format',[initials_tb.value,util.date.formatted_date(new Date(),'%F'), ses('ws_ou_shortname')]);
                     }
                 }
-                update_modal_xulG(
-                    {
-                        'id' : document.getElementById('csp_menupopup').getAttribute('value'),
-                        'note' : note,
-                        'modify' : 1
-                    }
-                )
+                xulG.id = document.getElementById('csp_menupopup').getAttribute('value');
+                xulG.note = note;
+                xulG.modify = 1;
                 window.close();
             }, 
             false
@@ -112,6 +109,16 @@ function edit_penalty_init() {
 
     } catch(E) {
         var err_prefix = 'standing_penalties.js -> penalty_init() : ';
+        if (error) error.standard_unexpected_error_alert(err_prefix,E); else alert(err_prefix + E);
+    }
+
+}
+
+function edit_penalty_cleanup() {
+    try {
+        window.edit_standing_penalty_event_listeners.removeAll();
+    } catch(E) {
+        var err_prefix = 'standing_penalties.js -> penalty_cleanup() : ';
         if (error) error.standard_unexpected_error_alert(err_prefix,E); else alert(err_prefix + E);
     }
 

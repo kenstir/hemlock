@@ -37,6 +37,21 @@ var cachedFunds = [];
 function initPage() {
     contextOrg = openils.User.user.ws_ou();
 
+    /* Reveal controls for rollover without money if org units say ok.
+     * Actual ability to do the operation is controlled in the database, of
+     * course. */
+    var ouSettings = fieldmapper.aou.fetchOrgSettingBatch(
+        openils.User.user.ws_ou(), ["acq.fund.allow_rollover_without_money"]
+    );
+    if (
+        ouSettings["acq.fund.allow_rollover_without_money"] &&
+        ouSettings["acq.fund.allow_rollover_without_money"].value
+    ) {
+        dojo.query(".encumb_only").forEach(
+            function(o) { openils.Util.show(o, "table-row"); }
+        );
+    }
+
     var connect = function() {
         dojo.connect(contextOrgSelector, 'onChange',
             function() {
@@ -173,6 +188,8 @@ function performRollover(args) {
     var dryRun = args.dry_run[0] == 'on';
     if(dryRun) method += '.dry_run';
 
+    var encumbOnly = args.encumb_only[0] == 'on';
+
     var count = 0;
     var amount_rolled = 0;
     var year = fundFilterYearSelect.attr('value'); // TODO alternate selector?
@@ -186,7 +203,8 @@ function performRollover(args) {
                 openils.User.authtoken, 
                 year,
                 contextOrg,
-                (args.child_orgs[0] == 'on')
+                (args.child_orgs[0] == 'on'),
+                { encumb_only : encumbOnly }
             ],
 
             onresponse : function(r) {
@@ -206,6 +224,10 @@ function performRollover(args) {
                         return -1;
                     }
                 )
+
+                // add the new, rolled funds to the cache.  Note that in dry-run 
+                // mode, these are ephemeral and no longer exist on the server.
+                cachedFunds = cachedFunds.concat(rolloverResponses);
 
                 dojo.byId('acq-fund-list-rollover-summary-header').innerHTML = 
                     dojo.string.substitute(

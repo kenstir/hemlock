@@ -1,6 +1,5 @@
 function my_init() {
     try {
-        netscape.security.PrivilegeManager.enablePrivilege("UniversalXPConnect");
         if (typeof JSAN == 'undefined') { throw( $("commonStrings").getString('common.jsan.missing') ); }
         JSAN.errorLevel = "die"; // none, warn, or die
         JSAN.addRepository('/xul/server/');
@@ -15,6 +14,7 @@ function my_init() {
         g.data.voided_billings = []; g.data.stash('voided_billings');
 
         g.error.sdump('D_TRACE','my_init() for bill2.xul');
+        window.bill_event_listeners = new EventListenerList();
 
         document.title = $("patronStrings").getString('staff.patron.bill_history.my_init.current_bills');
 
@@ -64,45 +64,57 @@ function my_init() {
     }
 }
 
+function my_cleanup() {
+    try {
+        window.bill_event_listeners.removeAll();
+        g.bill_list.cleanup();
+        g.bill_list.clear();
+    } catch(E) {
+        var err_msg = $("commonStrings").getFormattedString('common.exception', ['patron/bill2.xul', E]);
+        try { g.error.sdump('D_ERROR',err_msg); } catch(E) { dump(err_msg); }
+        alert(err_msg);
+    }
+}
+
 function event_listeners() {
     try {
-        $('details').addEventListener(
+        window.bill_event_listeners.add($('details'), 
             'command',
             handle_details,
             false
         );
 
-        $('add').addEventListener(
+        window.bill_event_listeners.add($('add'), 
             'command',
             handle_add,
             false
         );
 
-        $('voidall').addEventListener(
+        window.bill_event_listeners.add($('voidall'), 
             'command',
             handle_void_all,
             false
         );
 
-        $('refund').addEventListener(
+        window.bill_event_listeners.add($('refund'), 
             'command',
             handle_refund,
             false
         );
 
-        $('opac').addEventListener(
+        window.bill_event_listeners.add($('opac'), 
             'command',
             handle_opac,
             false
         );
 
-        $('copy_details').addEventListener(
+        window.bill_event_listeners.add($('copy_details'), 
             'command',
             handle_copy_details,
             false
         );
 
-        $('payment').addEventListener(
+        window.bill_event_listeners.add($('payment'), 
             'change',
             function(ev) {
                 if ($('payment_type').value == 'credit_payment') {
@@ -121,13 +133,13 @@ function event_listeners() {
             false
         );
 
-        $('payment').addEventListener(
+        window.bill_event_listeners.add($('payment'), 
             'focus',
             function(ev) { ev.target.select(); },
             false
         );
 
-        $('payment').addEventListener(
+        window.bill_event_listeners.add($('payment'), 
             'keypress',
             function(ev) {
                 if (! (ev.keyCode == 13 /* enter */ || ev.keyCode == 77 /* mac enter */) ) { return; }
@@ -137,7 +149,7 @@ function event_listeners() {
             false
         );
 
-        $('bill_patron_btn').addEventListener(
+        window.bill_event_listeners.add($('bill_patron_btn'), 
             'command',
             function() {
                 JSAN.use('util.window'); var win = new util.window();
@@ -147,12 +159,15 @@ function event_listeners() {
                     'chrome,resizable,modal',
                     { 'patron_id' : g.patron_id }
                 );
-                if (my_xulG.xact_id) { g.funcs.push( gen_list_append_func( my_xulG.xact_id ) ); /* FIXME: do something to update summary sidebar */ }
+                if (my_xulG.xact_id) {
+                    g.funcs.push( gen_list_append_func( my_xulG.xact_id ) );
+                    if (typeof window.xulG == 'object' && typeof window.xulG.on_money_change == 'function') window.xulG.on_money_change();
+                }
             },
             false
         );
 
-        $('bill_history_btn').addEventListener(
+        window.bill_event_listeners.add($('bill_history_btn'), 
             'command',
             function() {
                 xulG.display_window.g.patron.right_deck.reset_iframe( 
@@ -169,7 +184,7 @@ function event_listeners() {
             false
         );
 
-        $('convert_change_to_credit').addEventListener(
+        window.bill_event_listeners.add($('convert_change_to_credit'), 
             'command',
             function(ev) {
                 if (ev.target.checked) {
@@ -181,7 +196,7 @@ function event_listeners() {
             false
         );
 
-        $('apply_payment_btn').addEventListener(
+        window.bill_event_listeners.add($('apply_payment_btn'), 
             'command',
             function(ev) {
                 try {
@@ -508,7 +523,6 @@ function init_lists() {
             $('copy_details').setAttribute('disabled', g.bill_list_selection.length == 0);
         },
         'on_click' : function(ev) {
-            netscape.security.PrivilegeManager.enablePrivilege('UniversalXPConnect UniversalBrowserRead');
             var row = {}; var col = {}; var nobj = {};
             g.bill_list.node.treeBoxObject.getCellAt(ev.clientX,ev.clientY,row,col,nobj);
             if (row.value == -1) return;
@@ -840,7 +854,6 @@ function apply_payment() {
                 if (no_print_prompting) {
                     if (no_print_prompting.indexOf( "Bill Pay" ) > -1) { return; } // Skip print attempt
                 }
-                netscape.security.PrivilegeManager.enablePrivilege("UniversalXPConnect");
                 g.data.stash_retrieve();
                 var template = 'bill_payment';
                 JSAN.use('patron.util'); JSAN.use('util.functional');
@@ -916,6 +929,38 @@ function pay(payment_blob) {
             note : payment_blob.note
         }
         var robj = g.network.simple_request( 'BILL_PAY', [ ses(), payment_blob, g.patron.last_xact_id() ]);
+
+        try {
+            g.error.work_log(
+                $('circStrings').getFormattedString(
+                    robj && robj.payments
+                        ? 'staff.circ.work_log_payment_attempt.success.message'
+                        : 'staff.circ.work_log_payment_attempt.failure.message',
+                    [
+                        ses('staff_usrname'), // 1 - Staff Username
+                        g.patron.family_name(), // 2 - Patron Family
+                        g.patron.card().barcode(), // 3 - Patron Barcode
+                        g.previous_summary.original_balance, // 4 - Original Balance
+                        g.previous_summary.voided_balance, // 5 - Voided Balance
+                        g.previous_summary.payment_received, // 6 - Payment Received
+                        g.previous_summary.payment_applied, // 7 - Payment Applied
+                        g.previous_summary.change_given, // 8 - Change Given
+                        g.previous_summary.credit_given, // 9 - Credit Given
+                        g.previous_summary.new_balance, // 10 - New Balance
+                        g.previous_summary.payment_type, // 11 - Payment Type
+                        g.previous_summary.note, // 12 - Note
+                        robj && robj.textcode ? robj.textcode : robj // 13 - API call result
+                    ]
+                ), {
+                    'au_id' : g.patron.id(),
+                    'au_family_name' : g.patron.family_name(),
+                    'au_barcode' : g.patron.card().barcode()
+                }
+            );
+        } catch(E) {
+            alert('Error logging payment in bill2.js: ' + E);
+        }
+
         if (typeof robj.ilsevent != 'undefined') {
             switch(robj.textcode) {
                 case 'SUCCESS' : return true; break;

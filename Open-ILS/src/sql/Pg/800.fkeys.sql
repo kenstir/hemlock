@@ -39,6 +39,9 @@ ALTER TABLE actor.org_unit ADD CONSTRAINT actor_org_unit_billing_address_fkey FO
 ALTER TABLE actor.org_unit ADD CONSTRAINT actor_org_unit_holds_address_fkey FOREIGN KEY (holds_address) REFERENCES actor.org_address (id) DEFERRABLE INITIALLY DEFERRED;
 ALTER TABLE actor.org_unit ADD CONSTRAINT actor_org_unit_ill_address_fkey FOREIGN KEY (ill_address) REFERENCES actor.org_address (id) DEFERRABLE INITIALLY DEFERRED;
 
+ALTER TABLE actor.org_unit_proximity_adjustment ADD CONSTRAINT actor_org_unit_proximity_adjustment_circ_mod_fkey FOREIGN KEY (circ_mod) REFERENCES config.circ_modifier (code) DEFERRABLE INITIALLY DEFERRED;
+ALTER TABLE actor.org_unit_proximity_adjustment ADD CONSTRAINT actor_org_unit_proximity_copy_location_fkey FOREIGN KEY (copy_location) REFERENCES asset.copy_location (id) DEFERRABLE INITIALLY DEFERRED;
+
 ALTER TABLE acq.provider ADD CONSTRAINT acq_provider_edi_default_fkey FOREIGN KEY (edi_default) REFERENCES acq.edi_account (id) DEFERRABLE INITIALLY DEFERRED;
 
 ALTER TABLE biblio.record_note ADD CONSTRAINT biblio_record_note_record_fkey FOREIGN KEY (record) REFERENCES biblio.record_entry (id) ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED;
@@ -126,4 +129,17 @@ ALTER TABLE config.z3950_source ADD CONSTRAINT use_perm_fkey FOREIGN KEY (use_pe
 
 ALTER TABLE config.org_unit_setting_type_log ADD CONSTRAINT config_org_unit_setting_type_log_fkey FOREIGN KEY (org) REFERENCES actor.org_unit (id) ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED;
 
+ALTER TABLE config.filter_dialog_filter_set
+    ADD CONSTRAINT config_filter_dialog_filter_set_owning_lib_fkey
+    FOREIGN KEY (owning_lib) REFERENCES actor.org_unit (id)
+    ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED;
+
+ALTER TABLE config.filter_dialog_filter_set
+    ADD CONSTRAINT config_filter_dialog_filter_set_creator_fkey
+    FOREIGN KEY (creator) REFERENCES actor.usr (id)
+    ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED;
+
+ALTER TABLE config.filter_dialog_filter_set
+    ADD CONSTRAINT config_filter_dialog_filter_set_filters_check
+    CHECK (evergreen.is_json(filters));
 COMMIT;

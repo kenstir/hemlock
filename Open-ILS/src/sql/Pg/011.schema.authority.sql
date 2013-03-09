@@ -47,7 +47,7 @@ CREATE TABLE authority.control_set_bib_field (
 
 CREATE TABLE authority.thesaurus (
     code        TEXT    PRIMARY KEY,     -- MARC21 thesaurus code
-    control_set INT     NOT NULL REFERENCES authority.control_set (id) ON UPDATE CASCADE ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED,
+    control_set INT     REFERENCES authority.control_set (id) ON UPDATE CASCADE ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED,
     name        TEXT    NOT NULL UNIQUE, -- i18n
     description TEXT                     -- i18n
 );
@@ -408,7 +408,7 @@ BEGIN
         )::TEXT;
     END IF;
 
-    FOR main_entry IN SELECT * FROM authority.control_set_authority_field WHERE control_set = cset LOOP
+    FOR main_entry IN SELECT * FROM authority.control_set_authority_field acsaf WHERE acsaf.control_set = cset AND acsaf.main_entry IS NULL LOOP
         auth_field := XPATH('//*[@tag="'||main_entry.tag||'"][1]',source_xml::XML);
         IF ARRAY_LENGTH(auth_field,1) > 0 THEN
             FOR bib_field IN SELECT * FROM authority.control_set_bib_field WHERE authority_field = main_entry.id LOOP

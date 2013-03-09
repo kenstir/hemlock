@@ -24,10 +24,8 @@ AC_INIT(Open-ILS, trunk, open-ils-dev@list.georgialibraries.org)
 AM_INIT_AUTOMAKE([OpenILS], [trunk])
 AC_REVISION($Revision: 0.1 $)
 AC_CONFIG_SRCDIR([configure.ac])
-AC_PREFIX_DEFAULT([/openils/])
 AC_SUBST(prefix)
 AC_SUBST([abs_top_builddir])
-
 #-----------------------------------
 # Checks for programs.
 #-----------------------------------
@@ -106,6 +104,14 @@ AC_ARG_WITH([updateshost],
 [AUTOUPDATE_HOST=])
 AC_SUBST([AUTOUPDATE_HOST])
 
+# Default updates host?
+AC_ARG_WITH([initialhost],
+[  --with-initialhost=hostname    default hostname for staff client (default is blank)],
+[INITIAL_HOST=${withval}],
+[INITIAL_HOST=])
+AC_SUBST([INITIAL_HOST])
+
+
 # install Evergreen Apache modules?
 AC_ARG_ENABLE([apache-modules],
 [  --disable-apache-modules    disables installation of the Evergreen Apache modules ],
@@ -175,18 +181,24 @@ AM_CONDITIONAL([BUILDEGPYTHON], [test x$EG_PYTHON_INSTALL = xtrue])
 #-----------------------------------
 # Check for dependencies 
 #-----------------------------------
+AC_PATH_PROG([OSRF_CONFIG], [osrf_config])
+if test "x$OSRF_CONFIG" == "x"; then
+    AC_MSG_ERROR([Could not find osrf_config.
+    Ensure OpenSRF is installed and that the PATH environment variable includes
+    the OpenSRF executables. For example: PATH=\$PATH:/openils/bin ./configure])
+fi
 
 AC_ARG_WITH([opensrf-headers],
-[  --with-opensrf-headers=path location of the OpenSRF header files (default is /openils/include/)],
+[  --with-opensrf-headers=path location of the OpenSRF header files],
 [OPENSRF_HEADERS=${withval}],
-[OPENSRF_HEADERS=/openils/include/])
+[OPENSRF_HEADERS=`$OSRF_CONFIG --includedir`])
 AC_SUBST([OPENSRF_HEADERS])
 
 # We need this for JavaScript
 AC_ARG_WITH([opensrf-libs],
-[  --with-opensrf-libs=path    location of the OpenSRF libraries (default is /openils/lib/)],
+[  --with-opensrf-libs=path    location of the OpenSRF libraries],
 [OPENSRF_LIBS=${withval}],
-[OPENSRF_LIBS=/openils/lib/])
+[OPENSRF_LIBS=`$OSRF_CONFIG --libdir`])
 AC_SUBST([OPENSRF_LIBS])
 
 AC_ARG_WITH([tmp],
@@ -213,18 +225,6 @@ if ! test -x "$APXS2"; then
     done
 fi
 AC_SUBST([APXS2])
-
-AC_ARG_WITH([apache],
-[  --with-apache=path          location of the Apache headers (default is /usr/include/apache2)],
-[APACHE2_HEADERS=${withval}],
-[APACHE2_HEADERS=/usr/include/apache2])
-AC_SUBST([APACHE2_HEADERS])
-
-AC_ARG_WITH([apr],
-[  --with-apr=path             location of the Apache Portable Runtime (APR) headers (default is /usr/include/apr-1.0/)],
-[APR_HEADERS=${withval}],
-[APR_HEADERS=/usr/include/apr-1.0])
-AC_SUBST([APR_HEADERS])
 
 AC_ARG_WITH([libxml2],
 [  --with-libxml2=path         location of the libxml2 headers (default is /usr/include/libxml2)],
@@ -280,15 +280,6 @@ if test "x$openils_core" = "xtrue"; then
     # Checks for libraries. 
     #------------------------------------
 
-    # Check for the existence of libraries in non-standard locations
-
-    AC_MSG_CHECKING(for -lopensrf)
-    if test -e ${OPENSRF_LIBS}/libopensrf.so; then
-    AC_MSG_RESULT([yes])
-    else
-    AC_MSG_ERROR([*** libopensrf not found (or not in location specified to configure), aborting])
-    fi
-
     # Check for the rest of the libraries
 
     #check for dynamic linking functions
@@ -309,11 +300,16 @@ if test "x$openils_core" = "xtrue"; then
 
     AC_CHECK_LIB([expat], [main], [], AC_MSG_ERROR(*** OpenILS requires libexpat))
     AC_CHECK_LIB([ncurses], [main], [], AC_MSG_ERROR(*** OpenILS requires libncurses))
+
+    # IF the OpenSRF libs are installed in a non-standard location, such as
+    # /openils/lib, the compilation test will fail. Support that case.
+    LDFLAGS="-L$OPENSRF_LIBS"
+
+    AC_CHECK_LIB([opensrf], [osrfMessageFree], [], AC_MSG_ERROR(*** OpenILS requires libopensrf))
     AC_CHECK_LIB([readline], [main], [], AC_MSG_ERROR(*** OpenILS requires libreadline))
     AC_CHECK_LIB([xml2], [main], [], AC_MSG_ERROR(*** OpenILS requires libxml2))
     AC_CHECK_LIB([xslt], [main], [], AC_MSG_ERROR(*** OpenILS requires libxslt))
     AC_CHECK_LIB([pq], [main], [], AC_MSG_ERROR(*** OpenILS requires libpq))
-
 
     #------------------------------------
     # Checks for header files.
@@ -434,8 +430,6 @@ AC_MSG_RESULT([-------- Installation Directories --------])
 AC_MSG_RESULT(Installation directory prefix:            ${prefix})
 AC_MSG_RESULT(Temporary directory:                      ${TMP})
 AC_MSG_RESULT(APXS2 location:                           ${APXS2})
-AC_MSG_RESULT(Apache headers location:                  ${APACHE2_HEADERS})
-AC_MSG_RESULT(APR headers location:                     ${APR_HEADERS})
 AC_MSG_RESULT(libxml2 headers location:                 ${LIBXML2_HEADERS})
 AC_MSG_RESULT(libdbi location:                          ${DBI_LIBS})
 AC_MSG_RESULT(OpenSRF headers location:                 ${OPENSRF_HEADERS})

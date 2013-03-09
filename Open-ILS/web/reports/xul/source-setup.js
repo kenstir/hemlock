@@ -1,4 +1,5 @@
 dojo.requireLocalization("openils.reports", "reports");
+dojo.require('openils.XUL');
 
 var rpt_strings = dojo.i18n.getLocalization("openils.reports", "reports");
 var idlNS	= "http://opensrf.org/spec/IDL/base/v1";
@@ -24,13 +25,21 @@ function sortNames (a,b) {
 }
 
 function sortLabels (a,b) {
-	var aname =  a.getAttributeNS(rptNS, 'label').toLowerCase();
-	if (!aname) aname = a.getAttribute('name');
-	if (!aname) aname = a.getAttribute('id');
+	var aname =  a.getAttributeNS(rptNS, 'label');
 
-	var bname =  b.getAttributeNS(rptNS, 'label').toLowerCase();
-	if (!bname) bname = b.getAttribute('name');
-	if (!bname) bname = b.getAttribute('id');
+	if (aname) {
+		aname = aname.toLowerCase();
+	} else {
+		aname = a.getAttribute('name') || a.getAttribute('id');
+	}
+
+	var bname =  b.getAttributeNS(rptNS, 'label');
+
+	if (bname) {
+		bname = bname.toLowerCase();
+	} else {
+		bname = b.getAttribute('name') || b.getAttribute('id');
+	}
 
 	return aname < bname ? -1 : 1;
 }
@@ -39,7 +48,10 @@ function sortLabels (a,b) {
 function loadTemplate(id) {
 	var cgi = new CGI();
 	var session = cgi.param('ses');
-
+    if(!session && openils.XUL.isXUL()) {
+        var stash = openils.XUL.getStash();
+        session = stash.session.key;
+    }
 	var r = new Request('open-ils.reporter:open-ils.reporter.template.retrieve', session, id);
 
 	r.callback(
@@ -299,6 +311,9 @@ function populateDetailTree (tcNode, c, item) {
 
 		var type = fields[i].getAttributeNS(rptNS, 'datatype');
 		//if (!type) type = 'text';
+
+		var suppress = fields[i].getAttribute('suppress_controller');
+		if (suppress && suppress.indexOf('open-ils.reporter-store') > -1) continue;
 
 		var label = fields[i].getAttributeNS(rptNS, 'label');
 		var name = fields[i].getAttribute('name');

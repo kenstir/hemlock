@@ -8,21 +8,20 @@ use Encode;
 use Apache2::Const -compile => qw(OK DECLINED HTTP_INTERNAL_SERVER_ERROR);
 use Apache2::Log;
 use OpenSRF::EX qw(:try);
-use OpenILS::Utils::CStoreEditor;
+use OpenILS::Utils::CStoreEditor q/:funcs/;
+use List::MoreUtils qw/uniq/;
 
 use constant OILS_HTTP_COOKIE_SKIN => 'eg_skin';
 use constant OILS_HTTP_COOKIE_THEME => 'eg_theme';
 use constant OILS_HTTP_COOKIE_LOCALE => 'eg_locale';
 
 # cache string bundles
-my @registered_locales;
+my %registered_locales;
 
 sub handler {
     my $r = shift;
     my $ctx = load_context($r);
     my $base = $ctx->{base_path};
-
-    $r->content_type('text/html; encoding=utf8');
 
     my($template, $page_args, $as_xml) = find_template($r, $base, $ctx);
     $ctx->{page_args} = $page_args;
@@ -145,16 +144,36 @@ sub load_context {
     $ctx->{skin} = $cgi->cookie(OILS_HTTP_COOKIE_SKIN) || 'default';
     $ctx->{theme} = $cgi->cookie(OILS_HTTP_COOKIE_THEME) || 'default';
     $ctx->{proto} = $cgi->https ? 'https' : 'http';
+    $ctx->{ext_proto} = $ctx->{proto};
+    my $default_locale = $r->dir_config('OILSWebDefaultLocale') || 'en_us';
 
-    my @template_paths = $r->dir_config->get('OILSWebTemplatePath');
+    my @template_paths = uniq $r->dir_config->get('OILSWebTemplatePath');
     $ctx->{template_paths} = [ reverse @template_paths ];
 
     my %locales = $r->dir_config->get('OILSWebLocale');
     load_locale_handlers($ctx, %locales);
 
-    $ctx->{locale} = 
-        $cgi->cookie(OILS_HTTP_COOKIE_LOCALE) || 
-        parse_accept_lang($r->headers_in->get('Accept-Language')) || 'en_us';
+    $ctx->{locales} = \%registered_locales;
+
+    # Set a locale cookie if the requested locale is valid
+    my $set_locale = $cgi->param('set_eg_locale') || '';
+    if (!(grep {$_ eq $set_locale} keys %registered_locales)) {
+        $set_locale = '';
+    } else {
+        my $slc = $cgi->cookie({
+            '-name' => OILS_HTTP_COOKIE_LOCALE,
+            '-value' => $set_locale,
+            '-expires' => '+10y'
+        });
+        $r->headers_out->add('Set-Cookie' => $slc);
+    }
+
+    $ctx->{locale} = $set_locale ||
+        $cgi->cookie(OILS_HTTP_COOKIE_LOCALE) || $default_locale ||
+        parse_accept_lang($r->headers_in->get('Accept-Language'));
+
+    # set the editor default locale for each page load
+    $OpenILS::Utils::CStoreEditor::default_locale = parse_eg_locale($ctx->{locale});
 
     my $mprefix = $ctx->{media_prefix};
     if($mprefix and $mprefix !~ /^http/ and $mprefix !~ /^\//) {
@@ -165,7 +184,7 @@ sub load_context {
     return $ctx;
 }
 
-# turn Accept-Language into sometihng EG can understand
+# turn Accept-Language into something EG can understand
 # TODO: try all langs, not just the first
 sub parse_accept_lang {
     my $al = shift;
@@ -175,6 +194,18 @@ sub parse_accept_lang {
     return undef unless $locale;
     $locale =~ s/-/_/og;
     return $locale;
+}
+
+# Accept-Language uses locales like 'en', 'fr', 'fr_fr', while Evergreen
+# internally uses 'en-US', 'fr-CA', 'fr-FR' (always with the 2 lowercase,
+# hyphen, 2 uppercase convention)
+sub parse_eg_locale {
+    my $ua_locale = shift || 'en_us';
+
+    $ua_locale =~ m/^(..).?(..)?$/;
+    my $lang_code = lc($1);
+    my $region_code = $2 ? uc($2) : uc($1);
+    return "$lang_code-$region_code";
 }
 
 # Given a URI, finds the configured template and any extra page 
@@ -194,6 +225,12 @@ sub find_template {
 
     my @parts = split('/', $path);
     my $localpath = $path;
+
+    if ($localpath =~ m|opac/css|) {
+        $r->content_type('text/css; encoding=utf8');
+    } else {
+        $r->content_type('text/html; encoding=utf8');
+    }
     my @args;
     while(@parts) {
         last unless $localpath;
@@ -228,6 +265,7 @@ sub load_locale_handlers {
     my $ctx = shift;
     my %locales = @_;
 
+    my $editor = new_editor();
     my @locale_tags = sort { length($a) <=> length($b) } keys %locales;
 
     # always fall back to en_us, the assumed template language
@@ -236,7 +274,17 @@ sub load_locale_handlers {
     for my $idx (0..$#locale_tags) {
 
         my $tag = $locale_tags[$idx];
-        next if grep { $_ eq $tag } @registered_locales;
+        next if grep { $_ eq $tag } keys %registered_locales;
+
+        my $res = $editor->json_query({
+            "from" => [
+                "evergreen.get_locale_name",
+                $tag
+            ]
+        });
+
+        my $locale_name = $res->[0]->{"name"} if exists $res->[0]->{"name"};
+        next unless $locale_name;
 
         my $parent_tag = '';
         my $sub_idx = $idx;
@@ -258,6 +306,9 @@ sub load_locale_handlers {
             package OpenILS::WWW::EGWeb::I18N::$tag;
             use base 'OpenILS::WWW::EGWeb::I18N$parent_tag';
             if(\$messages) {
+                use Locale::Maketext::Lexicon {
+                    _decode => 1
+                };
                 use Locale::Maketext::Lexicon::Gettext;
                 if(open F, '$messages') {
                     our %Lexicon = (%Lexicon, %{ Locale::Maketext::Lexicon::Gettext->parse(<F>) });
@@ -272,7 +323,7 @@ sub load_locale_handlers {
         if ($@) {
             warn "$@\n" if $@;
         } else {
-            push(@registered_locales, $tag);
+            $registered_locales{"$tag"} = $locale_name;
         }
     }
 }

@@ -14,6 +14,7 @@ dojo.require('dojo.data.ItemFileReadStore');
 dojo.require('openils.widget.ProgressDialog');
 dojo.require('openils.PermaCrud');
 dojo.require("openils.widget.PCrudAutocompleteBox");
+dojo.require('openils.CGI');
 
 if (!localeStrings) {   /* we can do this because javascript doesn't have block scope */
     dojo.requireLocalization('openils.acq', 'acq');
@@ -80,6 +81,8 @@ function AcqLiTable() {
         }
     );
     this.vlAgent = new VLAgent();
+
+    this.focusLineitem = new openils.CGI().param('focus_li');
 
     dojo.byId("acq-lit-li-actions-selector").onchange = function() { 
         self.applySelectedLiAction(this.options[this.selectedIndex].value);
@@ -149,6 +152,37 @@ function AcqLiTable() {
         }
     };
 
+    /*
+     * Ensures this.focusLineitem is in view and causes a brief 
+     * border around the lineitem to come to life then fade.
+     */
+    this.focusLi = function() {
+        if (!this.focusLineitem) return;
+
+        // set during addLineitem()
+        var node = dojo.byId('li-title-ref-' + this.focusLineitem);
+
+        // LI may not yet be rendered
+        if (!node) return; 
+
+        // prevent numerous re-focuses
+        this.focusLineitem = null; 
+        
+        // causes the full row to be visible
+        dijit.scrollIntoView(node);
+
+        // may as well..
+        dojo.query('[attr=title]', node)[0].focus();
+
+        dojo.require('dojox.fx');
+
+        setTimeout(
+            function() {
+                dojox.fx.highlight({color : '#BB4433', node : node, duration : 2000}).play();
+            }, 
+        100);
+    };
+
     this.show = function(div) {
         openils.Util.hide('acq-lit-table-div');
         openils.Util.hide('acq-lit-info-div');
@@ -159,6 +193,7 @@ function AcqLiTable() {
         switch(div) {
             case 'list':
                 openils.Util.show('acq-lit-table-div');
+                this.focusLi();
                 break;
             case 'info':
                 openils.Util.show('acq-lit-info-div');
@@ -345,6 +380,9 @@ function AcqLiTable() {
         dojo.forEach(tds, function(td) {self.setRowAttr(td, liWrapper, td.getAttribute('attr'), td.getAttribute('attr_type'));});
         dojo.query('[name=source_label]', row)[0].appendChild(document.createTextNode(li.source_label()));
 
+        // so we can scroll to it later
+        dojo.query('[name=bib-info-cell]', row)[0].id = 'li-title-ref-' + li.id();
+
         var identifier =
             liWrapper.findAttr("isbn", "lineitem_marc_attr_definition") ||
             liWrapper.findAttr("upc", "lineitem_marc_attr_definition");
@@ -385,10 +423,12 @@ function AcqLiTable() {
         }
 
         nodeByName("worksheet_link", row).href =
-            oilsBasePath + "/acq/lineitem/worksheet/" + li.id();
+            oilsBasePath + "/acq/lineitem/worksheet/" + li.id() + 
+            '?source=' + encodeURIComponent(location.pathname + location.search)
 
         nodeByName("show_requests_link", row).href =
-            oilsBasePath + "/acq/picklist/user_request?lineitem=" + li.id();
+            oilsBasePath + "/acq/picklist/user_request?lineitem=" + li.id() + 
+            '?source=' + encodeURIComponent(location.pathname + location.search)
 
         dojo.query('[attr=title]', row)[0].onclick = function() {self.drawInfo(li.id())};
         dojo.query('[name=copieslink]', row)[0].onclick = function() {self.drawCopies(li.id())};
@@ -421,7 +461,11 @@ function AcqLiTable() {
             if(po && !this.isMeta) {
                 openils.Util.show(nodeByName('po', row), 'inline');
                 var link = nodeByName('po_link', row);
-                link.setAttribute('href', oilsBasePath + '/acq/po/view/' + li.purchase_order());
+                link.setAttribute('href', oilsBasePath +
+                    '/acq/po/view/' + li.purchase_order() +
+                    '?focus_li=' + li.id() +
+                    '&source=' + encodeURIComponent(location.pathname + location.search)
+                );
                 link.innerHTML += po.name();
 
                 openils.Util.show(nodeByName('pro', row), 'inline');
@@ -447,7 +491,11 @@ function AcqLiTable() {
 
                     openils.Util.show(nodeByName('pl', row), 'inline');
                     var link = nodeByName('pl_link', row);
-                    link.setAttribute('href', oilsBasePath + '/acq/picklist/view/' + li.picklist());
+                    link.setAttribute('href', oilsBasePath +
+                        '/acq/picklist/view/' + li.picklist() +
+                        '?focus_li=' + li.id() +
+                        '&source=' + encodeURIComponent(location.pathname + location.search)
+                    );
                     link.innerHTML += pl.name();
                 }
             }
@@ -472,6 +520,11 @@ function AcqLiTable() {
         if (skip_final_placement) {
             return row;
         }
+
+        // the last LI may be rendered after the call to show('list'),
+        // so make sure it's focused if necessary.
+        if (this.focusLineitem == li.id())
+            this.focusLi();
     };
 
     this._liCountClaims = function(li) {
@@ -709,6 +762,7 @@ function AcqLiTable() {
      */
     this.drawLiNotes = function(li) {
         var self = this;
+        this.focusLineitem = li.id();
 
         if (!acqLitAlertAlertText._store_ready)
             this._setAlertStore();
@@ -910,6 +964,7 @@ function AcqLiTable() {
     }
 
     this.drawInfo = function(liId) {
+        this.focusLineitem = liId;
         if (!this._isRelatedViewer) {
             var d = dojo.byId("acq-lit-info-related");
             if (!this.relCache[liId]) {
@@ -1034,6 +1089,9 @@ function AcqLiTable() {
                 oilsBasePath + "/acq/lineitem/related/" + li.id();
         }
 
+        // if a top scroll point is defined, jump up to it here
+        var node = dojo.byId('oils-scroll-to-top');
+        if (node) dijit.scrollIntoView(node);
     };
 
     this.generateMakeRecTab = function(bib_id,default_view, row) {
@@ -1045,7 +1103,7 @@ function AcqLiTable() {
                     no_xulG : false, 
                     show_nav_buttons : true, 
                     show_print_button : true, 
-                    opac_url : xulG.url_prefix(xulG.urls.opac_rdetail + bib_id),
+                    opac_url : xulG.url_prefix('opac_rdetail|' + bib_id),
                     default_view : default_view
                 }
             );
@@ -1072,8 +1130,20 @@ function AcqLiTable() {
     }
 
     this.drawCopies = function(liId, force_fetch) {
+        this.focusLineitem = liId;
         if (typeof force_fetch == "undefined")
             force_fetch = false;
+
+        var cgi = new openils.CGI();
+        var source = cgi.param('source');
+        if (source && source.match(/invoice/)) {
+            // got here from the invoice page, show the 'return-to-invoice' button
+            var cgi = new openils.CGI({url : source});
+            cgi.param('focus_li', liId);
+            openils.Util.show(dojo.byId('acq-lit-copies-back-to-invoice-button-wrapper'), 'inline');
+            var button = dojo.byId('acq-lit-copies-back-to-invoice-button');
+            button.onclick = function() { location.href = cgi.url() };
+        }
 
         openils.acq.Lineitem.fetchAndRender(liId, {}, 
             function(li, html) {
@@ -2066,6 +2136,14 @@ function AcqLiTable() {
                 location.href = oilsBasePath + '/acq/po/history/' + this.isPO;
                 break;
 
+            case 'batch_create_invoice':
+                this.batchCreateInvoice();
+                break;
+
+            case 'batch_link_invoice':
+                this.batchLinkInvoice();
+                break;
+
             case 'receive_po':
                 this.receivePO();
                 break;
@@ -2313,8 +2391,26 @@ function AcqLiTable() {
                 }
             }
         );
-    }
+    };
 
+    this.batchCreateInvoice = function() {
+        var liIds = this.getSelected(false, null, true /* id_list */)
+        if (!liIds.length) return;
+        var path = oilsBasePath + '/acq/invoice/view?create=1';
+        dojo.forEach(liIds, function(li, idx) { path += '&attach_li=' + li });
+        location.href = path;
+    };
+
+    this.batchLinkInvoice = function(create) {
+        var liIds = this.getSelected(false, null, true /* id_list */)
+        if (!liIds.length) return;
+        if (!self.invoiceLinkDialogManager) {
+            self.invoiceLinkDialogManager =
+                new InvoiceLinkDialogManager("li");
+        }
+        self.invoiceLinkDialogManager.target = liIds;
+        acqLitLinkInvoiceDialog.show();
+    };
 
     this.receivePO = function() {
         if (!this.isPO) return;
@@ -2580,12 +2676,10 @@ function AcqLiTable() {
         /*  To run in Firefox directly, must set signed.applets.codebase_principal_support
             to true in about:config */
 
-        if(!openils.XUL.enableXPConnect()) return;
-
         if(openils.XUL.isXUL()) {
-            win = window.open('/xul/' + openils.XUL.buildId() + '/server/cat/marcedit.xul');
+            win = window.open('/xul/' + openils.XUL.buildId() + '/server/cat/marcedit.xul','','chrome');
         } else {
-            win = window.open('/xul/server/cat/marcedit.xul'); 
+            win = window.open('/xul/server/cat/marcedit.xul','','chrome'); 
         }
         var self = this;
         win.xulG = {
@@ -2773,7 +2867,7 @@ function AcqLiTable() {
 
         win = window.open(
             oilsBasePath + '/acq/lineitem/findbib?query=' + escape(query),
-            '', 'resizable,scrollbars=1');
+            '', 'resizable,scrollbars=1,chrome');
 
         win.window.recordFound = function(bibId) { 
             win.close();

@@ -2,17 +2,28 @@
 # Makefile.am for xul/staff_client
 ## Process this file with automake to generate Makefile.in
 #---------------------------------------------------------
-
+export WEBDIR=@localstatedir@/web
 export STAFF_CLIENT_BUILD_ID = $$(/bin/cat build/BUILD_ID)
 export STAFF_CLIENT_VERSION = $$(/bin/cat build/VERSION)
 export STAFF_CLIENT_STAMP_ID = $$(/bin/cat build/STAMP_ID)
 
 # from http://closure-compiler.googlecode.com/files/compiler-latest.zip  FIXME: Autotools this?
 export CLOSURE_COMPILER_JAR = ~/closure-compiler/compiler.jar
-XULRUNNER_VERSION=3.6.25
+
+# XULRunner is our base.
+XULRUNNER_VERSION=14.0.1
 XULRUNNER_WINFILE=xulrunner-$(XULRUNNER_VERSION).en-US.win32.zip
-XULRUNNER_LINUXFILE=xulrunner-$(XULRUNNER_VERSION).en-US.linux-i686.tar.bz2
+XULRUNNER_LINUX32FILE=xulrunner-$(XULRUNNER_VERSION).en-US.linux-i686.tar.bz2
+XULRUNNER_LINUX64FILE=xulrunner-$(XULRUNNER_VERSION).en-US.linux-x86_64.tar.bz2
 XULRUNNER_URL=ftp://ftp.mozilla.org/pub/mozilla.org/xulrunner/releases/$(XULRUNNER_VERSION)/runtimes/
+XULRUNNER_MAJOR_VERSION=$$(echo ${XULRUNNER_VERSION} | cut -d. -f1)
+
+# Extensions we include when not an extension ourselves
+# Grab the latest. If that becomes a problem we can swap them out for specific versions.
+DOMINSPECTOR_URL=https://addons.mozilla.org/firefox/downloads/latest/6622/addon-6622-latest.xpi
+DOMINSPECTOR_ID=inspector@mozilla.org
+VENKMAN_URL=https://addons.mozilla.org/firefox/downloads/latest/216/addon-216-latest.xpi
+VENKMAN_ID={f13b157f-b174-47e7-a34d-4815ddfdfeb8}
 
 OPENSRF_JSLIBS = "$(OPENSRF_LIBS)/javascript"
 CHROME_LOCALES = $$(ls -1 chrome/locale)
@@ -83,6 +94,7 @@ build_dir:
 	@cp -fR defaults build/
 	@cp -fR components build/
 	@cp application.ini build/
+	@cp chrome.manifest build/
 	@if [ -f "install.mccoy.rdf" ]; then cp install.mccoy.rdf build/install.rdf; else cp install.rdf build/; fi
 	@cp -fR build/chrome/content/util/ build/server/
 	@cp -fR build/chrome/content/auth/ build/server/
@@ -90,6 +102,7 @@ build_dir:
 	@cp build/chrome/content/main/bindings.xml build/server/main/bindings.xml
 	@cp build/chrome/content/OpenILS/data.js build/server/OpenILS/data.js
 	@cp build/chrome/content/OpenILS/global_util.js build/server/OpenILS/global_util.js
+	@cp build/chrome/content/OpenILS/event_util.js build/server/OpenILS/event_util.js
 	@if [ -d branding ]; then cp -fR branding/* build/; fi
 	@external/prune_dirs.sh build/
 
@@ -124,8 +137,8 @@ stamp:
 	@/bin/date +"%Y%m%d.%H%M%S" > build/BUILD_ID
 	@if [ -n "${STAFF_CLIENT_BUILD_ID}" ]; then ( echo "Stamping with Build ID: ${STAFF_CLIENT_BUILD_ID}" ; echo ${STAFF_CLIENT_BUILD_ID} > build/BUILD_ID ) ; fi
 	@if [ -z "${STAFF_CLIENT_BUILD_ID}" ]; then ( echo "No Build ID for versioning" ; echo "none" > build/BUILD_ID ) ; fi
-	@sed -n -e '1 s/^.* \([^ ]*\)$$/\1/p' @top_srcdir@/README > build/VERSION
-	@if [ "${STAFF_CLIENT_VERSION}" == "master" ]; then echo "0${GIT_BRANCH}.${GIT_TAG}" > build/VERSION; fi 
+	@sed -n -e 's/^AC_INIT([^,]*, \([^,]*\),.*$$/\1/p' @top_srcdir@/configure.ac > build/VERSION
+	@if [ "${STAFF_CLIENT_VERSION}" == "trunk" ]; then echo "0${GIT_BRANCH}.${GIT_TAG}" > build/VERSION; fi 
 	@if [ -n "${STAFF_CLIENT_VERSION}" ]; then ( echo "Stamping with Version: ${STAFF_CLIENT_VERSION}" ; echo ${STAFF_CLIENT_VERSION} > build/VERSION ) ; fi
 	@if [ -z "${STAFF_CLIENT_VERSION}" ]; then ( echo "No Version" ; echo "none" > build/VERSION ) ; fi
 	@sed -e 's/\./_/g' -e 's/^\([0-9_]*\)$$/rel_&/' build/VERSION > build/STAMP_ID
@@ -142,11 +155,14 @@ stamp:
 	@if [ -n "${STAFF_CLIENT_STAMP_ID}" ]; then find build/ -name '*.js' -exec sed -i -e s/xul\\\/server/xul\\\/${STAFF_CLIENT_STAMP_ID}\\\/server/g {} \; ; fi
 	@if [ -n "${STAFF_CLIENT_STAMP_ID}" ]; then find build/ -name '*.xml' -exec sed -i -e s/xul\\\/server/xul\\\/${STAFF_CLIENT_STAMP_ID}\\\/server/g {} \; ; fi
 	@if [ -n "${STAFF_CLIENT_STAMP_ID}" ]; then find build/ -name 'constants.js' -exec sed -i -e "s/\(CLIENT_STAMP *= '\)'/\1${STAFF_CLIENT_STAMP_ID}'/" {} \; ; fi
+	@if [ -n "${STAFF_CLIENT_NAME}" ]; then sed -i -e s/^Name=.\*/Name=${STAFF_CLIENT_NAME}/ build/application.ini ; fi
 	@if [ -z "${AUTOUPDATE_HOST}" ]; then rm -f build/defaults/preferences/autoupdate.js; fi
 	@if [ -z "${AUTOUPDATE_HOST}" ]; then sed -i -e /updateURL/d build/install.rdf; fi
 	@if [ -n "${AUTOUPDATE_HOST}" ]; then echo "Applying automatic update host ${AUTOUPDATE_HOST}"; fi
 	@if [ -n "${AUTOUPDATE_HOST}" ]; then sed -i -e "s|::HOSTNAME::|${AUTOUPDATE_HOST}|" -e "s|https\?://\(https\?://\)|\1|" build/defaults/preferences/autoupdate.js; fi
 	@if [ -n "${AUTOUPDATE_HOST}" ]; then sed -i -e "s|::HOSTNAME::|${AUTOUPDATE_HOST}|" -e "s|https\?://\(https\?://\)|\1|" build/install.rdf; fi
+	@if [ -z "${INITIAL_HOST}" ]; then rm -f build/defaults/preferences/initialhost.js; fi
+	@if [ -n "${INITIAL_HOST}" ]; then sed -i -e "s/%INITIAL_HOST%/${INITIAL_HOST}/" build/defaults/preferences/initialhost.js; fi
 	@cp build/STAMP_ID PREV_STAMP_ID
 	@cp build/VERSION PREV_VERSION
 
@@ -200,7 +216,8 @@ compress-javascript: build
 
 clients:
 	@make win-client
-	@make linux-client
+	@make linux32-client
+	@make linux64-client
 	@make generic-client
 
 # By doing this we don't change the original build in the build folder
@@ -221,10 +238,33 @@ client_dir:
 client_app: client_dir
 	@echo 'Cleaning Extension Information'
 	@rm -f client/install.rdf
+	@echo 'Installing Extensions'
+	@mkdir -p client/extensions
+# Note: XULRunner before 4 requires extracted extensions
+# XULRunner after 4 keeps them in XPI form...unless their manifest says to unpack
+# This block is thus structured to make it easy to add the latter kind later.
+	@if [ ${XULRUNNER_MAJOR_VERSION} -lt 4 ]; then \
+		if [ -f extensions/${DOMINSPECTOR_ID}.xpi ]; then \
+			mkdir -p client/extensions/${DOMINSPECTOR_ID}/; \
+			unzip extensions/${DOMINSPECTOR_ID}.xpi -d client/extensions/${DOMINSPECTOR_ID}/; \
+		fi; \
+		if [ -f extensions/${VENKMAN_ID}.xpi ]; then \
+			mkdir -p client/extensions/${VENKMAN_ID}/; \
+			unzip extensions/${VENKMAN_ID}.xpi -d client/extensions/${VENKMAN_ID}/; \
+		fi; \
+	else \
+		if [ -f extensions/${DOMINSPECTOR_ID}.xpi ]; then \
+			cp extensions/${DOMINSPECTOR_ID}.xpi client/extensions/; \
+		fi; \
+		if [ -f extensions/${VENKMAN_ID}.xpi ]; then \
+			cp extensions/${VENKMAN_ID}.xpi client/extensions/; \
+		fi; \
+	fi
 
 # If automatic updates are enabled, or the standalone_xul_app.js is present,
 # the extension can break Firefox.
-# Remove those, and we need a chrome.manifest
+# Also, per machine registration + extension mode is probably a bad idea.
+# Remove those, and we need an updated chrome.manifest
 
 client_ext: client_dir
 	@echo 'Cleaning App Information'
@@ -232,8 +272,10 @@ client_ext: client_dir
 	@rm -f client/defaults/preferences/autoupdate.js
 	@rm -f client/defaults/preferences/autochannel.js
 	@rm -f client/defaults/preferences/standalone_xul_app.js
+	@rm -f client/defaults/preferences/aa_per_machine.js
 	@echo 'Prepping chrome.manifest'
 	@perl -ne 'if(/open_ils_staff_client/) { s/ (?!chrome:\/\/open_ils_staff_client)([^ ]*)$$/ chrome\/\1/; print; }' client/chrome/chrome.manifest > client/chrome.manifest
+	@grep -v manifest build/chrome.manifest >> client/chrome.manifest
 
 # Would merge client_ext into this one, but this way an installer that doesn't
 # use an xpi can be made for extension later, if desired
@@ -242,6 +284,21 @@ extension: client_ext
 	@echo ' * Packaging as an XPI'
 	@(cd client/ && zip -q -r ../evergreen.xpi * -x defaults/preferences/standalone_xul_app.js)
 	@md5sum evergreen.xpi > evergreen.xpi.md5
+
+# Fetch extensions to load into the client
+# This could be done in a "if they aren't there" fashion, but these are manually triggered anyway
+# That, and this way you can update the extensions by running this target again
+fetch-extensions: fetch-dom-inspector fetch-venkman
+
+fetch-dom-inspector:
+	@echo 'Fetching DOM Inspector'
+	@mkdir -p extensions/
+	@wget -Oextensions/${DOMINSPECTOR_ID}.xpi ${DOMINSPECTOR_URL}
+
+fetch-venkman:
+	@echo 'Fetching Venkman'
+	@mkdir -p extensions/
+	@wget -Oextensions/${VENKMAN_ID}.xpi ${VENKMAN_URL}
 
 # Generic client, as an xpi, theoretically suitable for --install-app usage
 
@@ -276,16 +333,32 @@ win-xulrunner: unzip_check branding_check client_app
 	@if [ ! -f ${XULRUNNER_WINFILE} ]; then wget ${XULRUNNER_URL}${XULRUNNER_WINFILE}; fi
 	@unzip -q ${XULRUNNER_WINFILE} -dclient
 	@if [ -f client/defaults/preferences/autoupdate.js ]; then echo 'pref("app.update.channel","win");' >> client/defaults/preferences/autochannel.js; fi;
+	@if [ -d branding_win ]; then cp -fR branding_win/* client/; fi
 	@echo 'Preparing stub'
 	@if [ -f xulrunner-stub.exe ]; then cp xulrunner-stub.exe client/evergreen.exe; rm client/xulrunner/xulrunner-stub.exe; else mv client/xulrunner/xulrunner-stub.exe client/evergreen.exe; fi
+	@if [ ${XULRUNNER_MAJOR_VERSION} -ge 4 -a -f client/xulrunner/mozcrt19.dll ]; then cp client/xulrunner/mozcrt19.dll client/; fi # XULRunner 4+ need this, if the file exists
+	@if [ ${XULRUNNER_MAJOR_VERSION} -ge 9 -a -f client/xulrunner/mozutils.dll ]; then cp client/xulrunner/mozutils.dll client/; fi # XULRunner 9+ need this, if the file exists
 
-linux-xulrunner: client_app
-	@echo 'Preparing Linux xulrunner'
-	@if [ ! -f ${XULRUNNER_LINUXFILE} ]; then wget ${XULRUNNER_URL}${XULRUNNER_LINUXFILE}; fi
-	@cd client; tar xjf ../${XULRUNNER_LINUXFILE}; cd ..
+linux32-xulrunner: client_app
+	@echo 'Preparing Linux (32 bit) xulrunner'
+	@if [ ! -f ${XULRUNNER_LINUX32FILE} ]; then wget ${XULRUNNER_URL}${XULRUNNER_LINUX32FILE}; fi
+	@cd client; tar xjf ../${XULRUNNER_LINUX32FILE}; cd ..
 	@if [ -f client/defaults/preferences/autoupdate.js ]; then echo 'pref("app.update.channel","lin");' >> client/defaults/preferences/autochannel.js; fi;
+	@if [ -d branding_lin ]; then cp -fR branding_lin/* client/; fi
 	@echo 'Preparing stub'
 	@mv client/xulrunner/xulrunner-stub client/evergreen
+
+linux64-xulrunner: client_app
+	@echo 'Preparing Linux (64 bit) xulrunner'
+	@if [ ! -f ${XULRUNNER_LINUX64FILE} ]; then wget ${XULRUNNER_URL}${XULRUNNER_LINUX64FILE}; fi
+	@cd client; tar xjf ../${XULRUNNER_LINUX64FILE}; cd ..
+	@if [ -f client/defaults/preferences/autoupdate.js ]; then echo 'pref("app.update.channel","lin64");' >> client/defaults/preferences/autochannel.js; fi;
+# Note: We assume that we want 32 bit branding files, but provide a way to override for 64 bit
+	@if [ -d branding_lin ]; then cp -fR branding_lin/* client/; fi
+	@if [ -d branding_lin64 ]; then cp -fR branding_lin64/* client/; fi
+	@echo 'Preparing stub'
+	@mv client/xulrunner/xulrunner-stub client/evergreen
+
 
 # Build a windows installer.
 
@@ -297,15 +370,21 @@ win-client: nsis_check win-xulrunner
 
 # For linux, just build a tar.bz2 archive
 
-linux-client: linux-xulrunner
-	@echo 'Packing as evergreen_staff_client.tar.bz2'
-	@rm -f evergreen_staff_client.tar.bz2
-	@cd client; tar cjf ../evergreen_staff_client.tar.bz2 *; cd ..
+linux32-client: linux32-xulrunner
+	@echo 'Packing as evergreen_staff_client_i686.tar.bz2'
+	@rm -f evergreen_staff_client_i686.tar.bz2
+	@cd client; tar cjf ../evergreen_staff_client_i686.tar.bz2 *; cd ..
+	@echo 'Done'
+
+linux64-client: linux64-xulrunner
+	@echo 'Packing as evergreen_staff_client_x86_64.tar.bz2'
+	@rm -f evergreen_staff_client_x86_64.tar.bz2
+	@cd client; tar cjf ../evergreen_staff_client_x86_64.tar.bz2 *; cd ..
 	@echo 'Done'
 
 # For running the updates script with the correct updates directory, optionally building clients as well
 
-updates updates-client win-updates win-updates-client linux-updates linux-updates-client generic-updates generic-updates-client extension-updates:
+updates updates-client win-updates win-updates-client linux32-updates linux32-updates-client linux64-updates linux64-updates-client generic-updates generic-updates-client extension-updates:
 	@if [ ! -f build/BUILD_ID ]; then echo 'ERROR! Current build not stamped!'; exit 1; fi
 	@if [ ! -x external/make_updates.sh ]; then chmod u+x external/make_updates.sh; fi
 	@if [ ! -x external/make_updates.sh ]; then echo 'ERROR! external/make_updates.sh is not executable!'; exit 1; fi

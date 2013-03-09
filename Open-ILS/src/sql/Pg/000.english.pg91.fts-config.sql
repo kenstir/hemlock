@@ -27,19 +27,31 @@ BEGIN
 END;
 $$ LANGUAGE PLPGSQL;
 
-DROP TEXT SEARCH DICTIONARY IF EXISTS english_nostop CASCADE;
+DO $$
+DECLARE
+lang TEXT;
+BEGIN
+FOR lang IN SELECT substring(pptsd.dictname from '(.*)_stem$') AS lang FROM pg_catalog.pg_ts_dict pptsd JOIN pg_catalog.pg_namespace ppn ON ppn.oid = pptsd.dictnamespace
+WHERE ppn.nspname = 'pg_catalog' AND pptsd.dictname LIKE '%_stem' LOOP
+RAISE NOTICE 'FOUND LANGUAGE %', lang;
 
-CREATE TEXT SEARCH DICTIONARY english_nostop (TEMPLATE=pg_catalog.snowball, language='english');
-COMMENT ON TEXT SEARCH DICTIONARY english_nostop IS 'English snowball stemmer with no stopwords for ASCII words only.';
+EXECUTE 'DROP TEXT SEARCH DICTIONARY IF EXISTS ' || lang || '_nostop CASCADE;
+CREATE TEXT SEARCH DICTIONARY ' || lang || '_nostop (TEMPLATE=pg_catalog.snowball, language=''' || lang || ''');
+COMMENT ON TEXT SEARCH DICTIONARY ' || lang || '_nostop IS ''' ||lang || ' snowball stemmer with no stopwords for ASCII words only.'';
+CREATE TEXT SEARCH CONFIGURATION ' || lang || '_nostop ( COPY = pg_catalog.' || lang || ' );
+ALTER TEXT SEARCH CONFIGURATION ' || lang || '_nostop ALTER MAPPING FOR word, hword, hword_part WITH pg_catalog.simple;
+ALTER TEXT SEARCH CONFIGURATION ' || lang || '_nostop ALTER MAPPING FOR asciiword, asciihword, hword_asciipart WITH ' || lang || '_nostop;';
 
-CREATE TEXT SEARCH CONFIGURATION title ( COPY = pg_catalog.english );
-ALTER TEXT SEARCH CONFIGURATION title ALTER MAPPING FOR word, hword, hword_part WITH pg_catalog.simple;
-ALTER TEXT SEARCH CONFIGURATION title ALTER MAPPING FOR asciiword, asciihword, hword_asciipart WITH english_nostop;
-CREATE TEXT SEARCH CONFIGURATION author ( COPY = title );
-CREATE TEXT SEARCH CONFIGURATION subject ( COPY = title );
-CREATE TEXT SEARCH CONFIGURATION keyword ( COPY = title );
-CREATE TEXT SEARCH CONFIGURATION identifier ( COPY = title );
-CREATE TEXT SEARCH CONFIGURATION series ( COPY = title );
-CREATE TEXT SEARCH CONFIGURATION "default" ( COPY = title );
+END LOOP;
+END;
+$$;
+--CREATE TEXT SEARCH CONFIGURATION title ( COPY = english_nostop );
+--CREATE TEXT SEARCH CONFIGURATION author ( COPY = english_nostop );
+--CREATE TEXT SEARCH CONFIGURATION subject ( COPY = english_nostop );
+CREATE TEXT SEARCH CONFIGURATION keyword ( COPY = english_nostop );
+--CREATE TEXT SEARCH CONFIGURATION identifier ( COPY = english_nostop );
+--CREATE TEXT SEARCH CONFIGURATION series ( COPY = english_nostop );
+CREATE TEXT SEARCH CONFIGURATION "default" ( COPY = english_nostop );
+
 
 COMMIT;

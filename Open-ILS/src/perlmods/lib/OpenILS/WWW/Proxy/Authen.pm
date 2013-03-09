@@ -27,6 +27,7 @@ sub import {
 
 sub child_init {
     OpenSRF::System->bootstrap_client( config_file => $bootstrap );
+    return Apache2::Const::OK;
 }
 
 sub handler {
@@ -74,7 +75,8 @@ sub handler {
                     $cookie = $cgi->cookie(
                         -name=>'ses',
                         -value=>$auth_ses,
-                        -path=>'/'
+                        -path=>'/',
+                        -secure=>1
                     );
                 }
             }

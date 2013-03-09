@@ -16,7 +16,8 @@ if (!dojo._hasResource["openils.FlattenerStore"]) {
     dojo.declare(
         "openils.FlattenerStore", null, {
 
-        "_last_fetch": null,        /* used internally */
+        "_last_fetch": null,        /* timestamp. used internally */
+        "_last_fetch_sort": null,   /* dijit sort object. used internally */
         "_flattener_url": "/opac/extras/flattener",
 
         /* Everything between here and the constructor can be specified in
@@ -172,10 +173,17 @@ if (!dojo._hasResource["openils.FlattenerStore"]) {
             req.queryOptions = req.queryOptions || {};
             req.abort = function() { console.warn("[unimplemented] abort()"); };
 
+            /* If we were asked to fetch without any sort order specified,
+             * try to use the last cached sort order, if any. */
+            req.sort = req.sort || this._last_fetch_sort;
+            this._last_fetch_sort = req.sort;
+
             if (!this.mapKey)
                 this._get_map_key();
 
-            return this._build_flattener_params(req);
+            var p = this._build_flattener_params(req);
+            console.debug("_fetch_prepare() returning " + dojo.toJson(p));
+            return p;
         },
 
         "_fetch_execute": function(params,handle_as,mime_type,onload,onerror) {
@@ -189,51 +197,6 @@ if (!dojo._hasResource["openils.FlattenerStore"]) {
                 "load": onload,
                 "error": onerror
             });
-        },
-
-        /* *** Nonstandard but public API - Please think hard about doing
-         * things the Dojo Way whenever possible before extending the API
-         * here. *** */
-
-        /* fetchToPrint() acts like a lot like fetch(), but doesn't call
-         * onBegin or onComplete.  */
-        "fetchToPrint": function(req) {
-            var callback_scope = req.scope || dojo.global;
-            var post_params;
-
-            try {
-                post_params = this._fetch_prepare(req);
-            } catch (E) {
-                if (typeof req.onError == "function")
-                    req.onError.call(callback_scope, E);
-                else
-                    throw E;
-            }
-
-            var process_fetch_all = dojo.hitch(
-                this, function(text) {
-                    this._retried_map_key_already = false;
-
-                    if (typeof req.onComplete == "function")
-                        req.onComplete.call(callback_scope, text, req);
-                }
-            );
-
-            var process_error = dojo.hitch(
-                this, function(response, ioArgs) {
-                    this._on_http_error(response, ioArgs, req, "fetchToPrint");
-                }
-            );
-
-            this._fetch_execute(
-                post_params,
-                "text",
-                "text/html",
-                process_fetch_all,
-                process_error
-            );
-
-            return req;
         },
 
         /* *** Begin dojo.data.api.Read methods *** */
@@ -350,6 +313,16 @@ if (!dojo._hasResource["openils.FlattenerStore"]) {
             var callback_scope = req.scope || dojo.global;
             var post_params;
 
+            /* Special options to support special operations (print and csv): */
+            req.flattenerOptions = dojo.mixin(
+                {}, /* target object */
+                {   /* default values */
+                    "handleAs": "json",
+                    "contentType": "application/json"
+                },
+                req.flattenerOptions /* optional input */
+            );
+
             try {
                 post_params = this._fetch_prepare(req);
             } catch (E) {
@@ -383,19 +356,25 @@ if (!dojo._hasResource["openils.FlattenerStore"]) {
                     else
                         might_be_a_lie += obj.length;
 
+                    console.debug(
+                        "process_fetch() calling onBegin with " +
+                        might_be_a_lie + ", " + dojo.toJson(req)
+                    );
                     req.onBegin.call(callback_scope, might_be_a_lie, req);
                 }
 
-                dojo.forEach(
-                    obj,
-                    function(item) {
-                        /* Cache items internally. */
-                        self._current_items[item[self.fmIdentifier]] = item;
+                if (req.flattenerOptions.handleAs == "json") {
+                    dojo.forEach(
+                        obj,
+                        function(item) {
+                            /* Cache items internally. */
+                            self._current_items[item[self.fmIdentifier]] = item;
 
-                        if (typeof req.onItem == "function")
-                            req.onItem.call(callback_scope, item, req);
-                    }
-                );
+                            if (typeof req.onItem == "function")
+                                req.onItem.call(callback_scope, item, req);
+                        }
+                    );
+                }
 
                 if (typeof req.onComplete == "function")
                     req.onComplete.call(callback_scope, obj, req);
@@ -411,8 +390,8 @@ if (!dojo._hasResource["openils.FlattenerStore"]) {
 
             this._fetch_execute(
                 post_params,
-                "json",
-                "application/json",
+                req.flattenerOptions.handleAs,
+                req.flattenerOptions.contentType,
                 function(obj) { process_fetch(obj, fetch_time); },
                 process_error
             );

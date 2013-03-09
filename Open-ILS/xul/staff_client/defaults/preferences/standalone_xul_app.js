@@ -9,8 +9,8 @@ pref("javascript.options.jit.content", true);
 pref("general.useragent.locale", "en-US");
 
 // We need something like this to get window.open to work in some places (where it complains about
-// navigator.xul not being registered.  But is about:blank the best value to use here?
-pref("browser.chromeURL","about:blank");
+// navigator.xul not being registered). The untrusted_window file provided the minimum required elements.
+pref("browser.chromeURL","chrome://open_ils_staff_client/content/util/untrusted_window.xul");
 
 // This one just makes things speedier.  We use a lot of XMLHttpRequest
 pref("network.http.max-persistent-connections-per-server",8);
@@ -66,3 +66,8 @@ pref("extensions.update.url", "chrome://mozapps/locale/extensions/extensions.pro
 pref("extensions.getMoreExtensionsURL", "chrome://mozapps/locale/extensions/extensions.properties");
 pref("extensions.getMoreThemesURL", "chrome://mozapps/locale/extensions/extensions.properties");
 
+// Allow opening of web stuff in external apps
+// suppress external-load warning for standard browser schemes
+pref("network.protocol-handler.warn-external.http", false);
+pref("network.protocol-handler.warn-external.https", false);
+pref("network.protocol-handler.warn-external.ftp", false);

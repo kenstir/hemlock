@@ -3,11 +3,8 @@ const rel_vert_pos_call_number_prefix = 2;
 const rel_vert_pos_call_number = 3;
 const rel_vert_pos_call_number_suffix = 4;
 
-var xulG = {};
-
 function my_init() {
     try {
-        netscape.security.PrivilegeManager.enablePrivilege("UniversalXPConnect");
         if (typeof JSAN == 'undefined') { throw( $("commonStrings").getString('common.jsan.missing') ); }
         JSAN.errorLevel = "die"; // none, warn, or die
         JSAN.addRepository('/xul/server/');
@@ -21,7 +18,7 @@ function my_init() {
 
         JSAN.use('cat.util');
 
-        g.volumes = xul_param('volumes',{'stash_name':'volumes_temp','clear_xpcom':true,'modal_xulG':true}); //JSON2js( g.data.volumes_temp );
+        g.volumes = xul_param('volumes',{'stash_name':'volumes_temp','clear_xpcom':true}); //JSON2js( g.data.volumes_temp );
         //g.data.volumes_temp = ''; g.data.stash('volumes_temp');
 
         var rows = document.getElementById('rows');
@@ -124,7 +121,6 @@ g.stash_and_close = function() {
         xulG.volumes = g.volumes;
         xulG.update_these_volumes = 1;
         xulG.auto_merge = document.getElementById('auto_merge').checked;
-        update_modal_xulG(xulG);
         window.close();
     } catch(E) {
         alert('FIXME: volume editor -> ' + E);

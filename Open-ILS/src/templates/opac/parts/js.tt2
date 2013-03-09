@@ -23,7 +23,7 @@
                 [% FOR summary IN ctx.mfhd_summaries %]
                 {
                     'id' : '[% summary.sre_id %]', 
-                    'label' : '[% summary.location %]',
+                    'label' : '[% summary.location | replace("'", "\\'") %]',
                     'entryNum' : '[% loop.index %]',
                     'owning_lib' : '[% summary.owning_lib %]'
                 },
@@ -59,24 +59,28 @@
 <script type="text/javascript" src="[% ctx.media_prefix %]/js/dojo/opensrf/opensrf_xhr.js?[% ctx.eg_cache_hash %]"></script>
 <script type="text/javascript" src="[% ctx.media_prefix %]/js/dojo/opensrf/JSON_v1.js?[% ctx.eg_cache_hash %]"></script>
 
-[% IF use_autosuggest.enabled == "t"; %]
+[% IF use_autosuggest.enabled == "t" AND basic_search != "f"; %]
 <script type="text/javascript">
     dojo.require("openils.widget.AutoSuggest");
 
     /* Set focus, and place the cursor at the end of the input string */
     dojo.addOnLoad(function() {
-        dijit.byId('search_box').focus();
+        /* Don't error out if the object doesn't exist, like on advanced search pages */
+        if (dojo.byId('search_box')) {
+            dijit.byId('search_box').focus();
 
-        var sb_value = dijit.byId('search_box').value;
-        /* Dojo won't trigger a change if the value doesn't change */
-        if (sb_value) {
-            dijit.byId('search_box').setValue(sb_value + ' ');
-            dijit.byId('search_box').setValue(sb_value);
+            var sb_value = dijit.byId('search_box').value;
+            /* Dojo won't trigger a change if the value doesn't change */
+            if (sb_value) {
+                dijit.byId('search_box').setValue(sb_value + ' ');
+                dijit.byId('search_box').setValue(sb_value);
+            }
         }
     });
 </script>
 [% END; # use_autosuggest %]
 
 [% INCLUDE "opac/parts/acjs.tt2" IF ctx.page == 'record' %]
+[% INCLUDE "opac/parts/ac_google_books.tt2" IF ctx.page == 'record' %]
 
 [%- END; # want_dojo -%]

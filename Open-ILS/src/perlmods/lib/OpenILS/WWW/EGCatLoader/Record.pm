@@ -15,13 +15,16 @@ our $ac_types = ['toc',  'anotes', 'excerpt', 'summary', 'reviews'];
 #   record : bre object
 sub load_record {
     my $self = shift;
+    my %kwargs = @_;
     my $ctx = $self->ctx;
     $ctx->{page} = 'record';  
 
     $self->timelog("load_record() began");
 
-    my $rec_id = $ctx->{page_args}->[0]
-        or return Apache2::Const::HTTP_BAD_REQUEST;
+    my $rec_id = $ctx->{page_args}->[0];
+
+    return Apache2::Const::HTTP_BAD_REQUEST 
+        unless $rec_id and $rec_id =~ /^\d+$/;
 
     $self->added_content_stage1($rec_id);
     $self->timelog("past added content stage 1");
@@ -46,8 +49,14 @@ sub load_record {
     }
     $self->timelog("past staff saved searches");
 
-    $self->fetch_related_search_info($rec_id);
+    $self->fetch_related_search_info($rec_id) unless $kwargs{no_search};
     $self->timelog("past related search info");
+
+    # Check for user and load lists and prefs
+    if ($self->ctx->{user}) {
+        $self->_load_lists_and_settings;
+        $self->timelog("load user lists and settings");
+    }
 
     # run copy retrieval in parallel to bib retrieval
     # XXX unapi
@@ -345,7 +354,7 @@ sub prepare_browse_call_numbers {
     my $cn = ($self->cgi->param("cn") || $self->any_call_number_label) or
         return [];
 
-    my $org_unit = $self->ctx->{get_aou}->($self->cgi->param('loc')) ||
+    my $org_unit = $self->ctx->{get_aou}->($self->_get_search_lib()) ||
         $self->ctx->{aou_tree}->();
 
     my $supercat = create OpenSRF::AppSession("open-ils.supercat");
@@ -369,13 +378,23 @@ sub prepare_browse_call_numbers {
 
 sub get_hold_copy_summary {
     my ($self, $rec_id, $org) = @_;
+    my $ctx = $self->ctx;
     
     my $search = OpenSRF::AppSession->create('open-ils.search');
     my $req1 = $search->request(
         'open-ils.search.biblio.record.copy_count', $org, $rec_id); 
 
+    # if org unit hiding applies, limit the hold count to holds
+    # whose pickup library is within our depth-scoped tree
+    my $count_args = {};
+    while ($org and $ctx->{org_within_hiding_scope}->($org)) {
+        $count_args->{pickup_lib_descendant} = $org;
+        $org = $ctx->{get_aou}->($org)->parent_ou;
+    }
+
     $self->ctx->{record_hold_count} = $U->simplereq(
-        'open-ils.circ', 'open-ils.circ.bre.holds.count', $rec_id);
+        'open-ils.circ', 'open-ils.circ.bre.holds.count', 
+        $rec_id, $count_args);
 
     $self->ctx->{copy_summary} = $req1->recv->content;
 
@@ -424,23 +443,43 @@ sub added_content_stage1 {
     my $key = $self->get_ac_key($rec_id);
     ($key = $key->{value}) =~ s/^\s+//g if $key;
 
+    # Connect to this machine's IP address, using the same 
+    # Host with which our caller used to connect to us.
+    # This avoids us having to route out of the cluster 
+    # and back in to reach the top-level virtualhost.
+    my $ac_addr = $ENV{SERVER_ADDR};
+    my $ac_host = $self->apache->hostname;
+    my $ac_failed = 0;
+
+    $logger->info("tpac: added content connecting to $ac_addr / $ac_host");
+
     $ctx->{added_content} = {};
     for my $type (@$ac_types) {
+        last if $ac_failed;
         $ctx->{added_content}->{$type} = {content => ''};
         $ctx->{added_content}->{$type}->{status} = $key ? 3 : 2;
 
         if ($key) {
             $logger->debug("tpac: starting added content request for $key => $type");
 
-            my $req = Net::HTTP::NB->new(Host => $self->apache->hostname);
+            # Net::HTTP::NB is non-blocking /after/ the initial connect()
+            # Passing Timeout=>1 ensures we wait no longer than 1 second to 
+            # connect to the local Evergreen instance (i.e. ourself).  
+            # Connecting to oneself should either be very fast (normal) 
+            # or very slow (routing problems).
 
+            my $req = Net::HTTP::NB->new(Host => $ac_addr, Timeout => 1);
             if (!$req) {
-                $logger->warn("Unable to fetch added content from " . $self->apache->hostname . ": $@");
+                $logger->warn("Unable to connect to $ac_addr / $ac_host".
+                    " for added content lookup for $key: $@");
+                $ac_failed = 1;
                 next;
             }
 
+            $req->host($self->apache->hostname);
+
             my $http_type = ($type eq $sel_type) ? 'GET' : 'HEAD';
-            $req->write_request($http_type => "/opac/extras/ac/$type/html/" . uri_escape($key));
+            $req->write_request($http_type => "/opac/extras/ac/$type/html/" . uri_escape_utf8($key));
             $ctx->{added_content}->{$type}->{request} = $req;
         }
     }

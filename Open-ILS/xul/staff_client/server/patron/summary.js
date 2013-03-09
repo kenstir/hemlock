@@ -19,6 +19,7 @@ patron.summary.prototype = {
     'init' : function( params ) {
 
         var obj = this;
+        obj.event_listeners = new EventListenerList();
 
         obj.barcode = params['barcode'];
         obj.id = params['id'];
@@ -901,14 +902,13 @@ patron.summary.prototype = {
             var caption = document.getElementById("PatronSummaryContact_caption");
             var arrow = document.getAnonymousNodes(caption)[0];
             var gb_content = document.getAnonymousNodes(caption.parentNode)[1];
-            arrow.addEventListener(
+            obj.event_listeners.add(arrow,
                 'click',
                 function() {
                     setTimeout(
                         function() {
                             //alert('setting shrink_state to ' + gb_content.hidden);
                             //caption.setAttribute('shrink_state',gb_content.hidden);
-                            netscape.security.PrivilegeManager.enablePrivilege('UniversalXPConnect');
                             JSAN.use('util.file'); var file = new util.file('patron_id_shrink');
                             file.set_object(String(gb_content.hidden)); file.close();
                         }, 0
@@ -917,7 +917,6 @@ patron.summary.prototype = {
             );
             //var shrink_state = caption.getAttribute('shrink_state');
             var shrink_state = false;
-            netscape.security.PrivilegeManager.enablePrivilege('UniversalXPConnect');
             JSAN.use('util.file'); var file = new util.file('patron_id_shrink');
             if (file._file.exists()) {
                 shrink_state = file.get_object(); file.close();
@@ -930,6 +929,20 @@ patron.summary.prototype = {
         } catch(E) {
             obj.error.sdump('D_ERROR','with shrink_state in summary.js: ' + E);
         }
+    },
+
+    'cleanup' : function() {
+        var obj = this;
+        if (typeof obj.group_list != 'undefined') {
+            obj.group_list.cleanup();
+            obj.group_list.clear();
+        }
+        if (typeof obj.stat_cat_list != 'undefined') {
+            obj.stat_cat_list.cleanup();
+            obj.stat_cat_list.clear();
+        }
+        obj.controller.cleanup();
+        obj.event_listeners.removeAll();
     },
 
     'retrieve' : function() {

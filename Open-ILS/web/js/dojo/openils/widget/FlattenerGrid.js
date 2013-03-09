@@ -1,6 +1,8 @@
 if (!dojo._hasResource["openils.widget.FlattenerGrid"]) {
     dojo.provide("openils.widget.FlattenerGrid");
 
+    dojo.requireLocalization("openils.widget", "FlattenerGrid");
+
     dojo.require("DojoSRF");
     dojo.require("dojox.grid.DataGrid");
     dojo.require("openils.FlattenerStore");
@@ -8,20 +10,42 @@ if (!dojo._hasResource["openils.widget.FlattenerGrid"]) {
     dojo.require("openils.widget.GridColumnPicker");
     dojo.require("openils.widget.EditDialog");  /* includes EditPane */
     dojo.require("openils.widget._GridHelperColumns");
+    dojo.require("openils.XUL");
 
     dojo.declare(
         "openils.widget.FlattenerGrid",
         [dojox.grid.DataGrid, openils.widget._GridHelperColumns], {
+            /* Later, might think about whether this should really be an
+             * "object" property like this or a "class" one (in dojo speak,
+             * since those terms don't really apply in pure JS)... */
+            "localeStrings": dojo.i18n.getLocalization(
+                "openils.widget", "FlattenerGrid"
+            ),
+
             /* These potential constructor arguments are useful to
              * FlattenerGrid in their own right */
             "columnReordering": true,
             "columnPersistKey": null,
             "autoCoreFields": false,
+            "autoCoreFieldsUnsorted": false,
+            "autoCoreFieldsFilter": false,
             "autoFieldFields": null,
-            "showLoadFilter": false,    /* use FlattenerFilterDialog */
+            "autoFieldFieldsUnsorted": null, /* array, subset of autoFieldFields */
+            "showLoadFilter": false,    /* use FlattenerFilter(Dialog|Pane) */
+            "filterAlwaysInDiv": null,  /* use FlattenerFilterPane and put its
+                                           content in this HTML element */
             "fetchLock": false,
+            "filterInitializers": null,
+            "filterWidgetBuilders": null,
+            "filterSemaphore": null,
+            "filterSemaphoreCallback": null,
+            "baseQuery": null,  /* Good place to mix in data from, say, context
+                                   OU selectors so that it should get mixed
+                                   correctly with the generated query from the
+                                   filter dialog. */
+            "savedFiltersInterface": null,
 
-            /* These potential constructor arguments maybe useful to
+            /* These potential constructor arguments may be useful to
              * FlattenerGrid in their own right, and are passed to
              * FlattenerStore. */
             "fmClass": null,
@@ -40,6 +64,7 @@ if (!dojo._hasResource["openils.widget.FlattenerGrid"]) {
             "editStyle": "dialog",      /* "dialog" or "pane" */
             "requiredFields": null,     /* affects create/edit dialogs */
             "suppressEditFields": null, /* affects create/edit dialogs */
+            "suppressFilterFields": null, /* affects filter dialog */
 
             /* _generateMap() lives to interpret the attributes of the
              * FlattenerGrid dijit itself plus those definined in
@@ -274,16 +299,23 @@ if (!dojo._hasResource["openils.widget.FlattenerGrid"]) {
                 return {"labels": labels, "columns": columns};
             },
 
-            "_getAutoFieldFields": function(fmclass) {
-                return dojo.clone(
+            "_getAutoFieldFields": function(fmclass, path) {
+                var field_list = dojo.clone(
                     fieldmapper.IDL.fmclasses[fmclass].fields)
                 .filter(
-                    function(field) {
-                        return !field.virtual && field.datatype != "link";
-                    }
-                ).sort(
-                    function(a, b) { return a.label > b.label ? 1 : -1; }
+                    function(f) { return !f.virtual && f.datatype != "link"; }
                 );
+                
+                /* Sort fields unless the path is named in grid property
+                 * 'autoFieldFieldsUnsorted' (array). */
+                if (!dojo.isArray(this.autoFieldFieldsUnsorted) ||
+                        this.autoFieldFieldsUnsorted.indexOf(path) == -1) {
+                    field_list = field_list.sort(
+                        function(a, b) { return a.label > b.label ? 1 : -1; }
+                    );
+                }
+
+                return field_list;
             },
 
             /* Take our core class (this.fmClass) and add table columns for
@@ -293,12 +325,16 @@ if (!dojo._hasResource["openils.widget.FlattenerGrid"]) {
                 var cell_list = this.structure[0].cells[0];
                 var fields = dojo.clone(
                     fieldmapper.IDL.fmclasses[this.fmClass].fields
-                ).sort(
-                    function(a, b) { return a.label > b.label ? 1 : -1; }
                 );
 
+                if (!this.autoCoreFieldsUnsorted) {
+                    fields = fields.sort(
+                        function(a, b) { return a.label > b.label ? 1 : -1; }
+                    );
+                }
+
                 dojo.forEach(
-                    fields, function(f) {
+                    fields, dojo.hitch(this, function(f) {
                         if (f.datatype == "link" || f.virtual)
                             return;
 
@@ -314,9 +350,9 @@ if (!dojo._hasResource["openils.widget.FlattenerGrid"]) {
                             "field": f.name,
                             "name": f.label,
                             "fsort": true,
-                            "_visible": false
+                            "ffilter": this.autoCoreFieldsFilter
                         });
-                    }
+                    })
                 );
             },
 
@@ -334,7 +370,9 @@ if (!dojo._hasResource["openils.widget.FlattenerGrid"]) {
                             return;
                         } else {
                             dojo.forEach(
-                                self._getAutoFieldFields(beginning.fmClass),
+                                self._getAutoFieldFields(
+                                    beginning.fmClass, path
+                                ),
                                 function(field) {
                                     var would_be_path =
                                         path + "." + field.name;
@@ -346,7 +384,6 @@ if (!dojo._hasResource["openils.widget.FlattenerGrid"]) {
                                                 c.fpath.match(wbp_re);
                                         }
                                     ).length) {
-                                        console.info("adding auto field" + would_be_path);
                                         self.structure[0].cells[0].push({
                                             "field": "AUTO_" + beginning.name +
                                                 "_" + field.name,
@@ -379,11 +416,18 @@ if (!dojo._hasResource["openils.widget.FlattenerGrid"]) {
 
                 this.fmIdentifier = this.fmIdentifier ||
                     fieldmapper.IDL.fmclasses[this.fmClass].pkey;
+
+                this.overrideEditWidgets = {};
+                this.overrideEditWidgetClass = {};
+                this.overrideWidgetArgs = {};
             },
 
             "startup": function() {
-                /* Save original query for further filtering later */
-                this._baseQuery = dojo.clone(this.query);
+                /* Save original query for further filtering later, unless
+                 * we've already defined baseQuery from the outside, in
+                 * which case it persists. */
+                if (!this.baseQuery)
+                    this.baseQuery = dojo.clone(this.query);
 
                 this._addAutoFields();
 
@@ -410,6 +454,20 @@ if (!dojo._hasResource["openils.widget.FlattenerGrid"]) {
                 }
 
                 this.inherited(arguments);
+
+                this.focus.focusHeader = function() {
+                    /* This prevents an unwanted automatic scroll of the
+                     * user's browser to the header row of the grid whenever
+                     * you touch the horizontal scrollbar.  The prevented
+                     * behavior was absolutely hateful, since if your grid was
+                     * larger than your window, touching the horizontal scroll-
+                     * bar meant scrolling up so that the same scrollbar was
+                     * now off your screen, and you could not manipulate it.
+                     *
+                     * There may be a more targeted way to fix the problem,
+                     * but this will do.  */
+                    console.log("focusHeader() suppressed");
+                };
             },
 
             "canSort": function(idx, skip_structure /* API abuse */) {
@@ -459,10 +517,6 @@ if (!dojo._hasResource["openils.widget.FlattenerGrid"]) {
 
                 this._showing_create_pane = false;
 
-                this.overrideEditWidgets = {};
-                this.overrideEditWidgetClass = {};
-                this.overrideWidgetArgs = {};
-
                 if (this.editOnEnter)
                     this._applyEditOnEnter();
                 else if (this.singleEditStyle)
@@ -479,32 +533,47 @@ if (!dojo._hasResource["openils.widget.FlattenerGrid"]) {
                 dojo.place(this.linkHolder.domNode, this.domNode, "before");
 
                 if (this.showLoadFilter) {
-                    dojo.require("openils.widget.FlattenerFilterDialog");
-                    this.filterDialog =
-                        new openils.widget.FlattenerFilterDialog({
+                    var which_filter_ui = this.filterAlwaysInDiv ?
+                        "FlattenerFilterPane" : "FlattenerFilterDialog";
+
+                    dojo.require("openils.widget." + which_filter_ui);
+                    this.filterUi =
+                        new openils.widget[which_filter_ui]({
                             "fmClass": this.fmClass,
-                            "mapTerminii": this.mapTerminii
+                            "mapTerminii": this.mapTerminii,
+                            "useDiv": this.filterAlwaysInDiv,
+                            "initializers": this.filterInitializers,
+                            "widgetBuilders": this.filterWidgetBuilders,
+                            "suppressFilterFields": this.suppressFilterFields,
+                            "savedFiltersInterface": this.savedFiltersInterface
                         });
 
-                    this.filterDialog.onApply = dojo.hitch(
+                    this.filterUi.onApply = dojo.hitch(
                         this, function(filter) {
                             this.filter(
-                                dojo.mixin(filter, this._baseQuery),
+                                dojo.mixin(filter, this.baseQuery),
                                 true    /* re-render */
                             );
                         }
                     );
 
-                    this.filterDialog.startup();
-                    dojo.create(
-                        "a", {
-                            "innerHTML": "Filter",  /* XXX i18n */
-                            "href": "javascript:void(0);",
-                            "onclick": dojo.hitch(this, function() {
-                                this.filterDialog.show();
-                            })
-                        }, this.linkHolder.domNode
-                    );
+                    this.filterUi.startup();
+
+                    if (this.filterSemaphore && this.filterSemaphore()) {
+                        if (this.filterSemaphoreCallback)
+                            this.filterSemaphoreCallback();
+                    }
+                    if (!this.filterAlwaysInDiv) {
+                        new dijit.form.Button(
+                            {
+                                "label": "Filter", /* XXX i18n */
+                                "onClick": dojo.hitch(
+                                    this, function() { this.filterUi.show(); }
+                                )
+                            },
+                            dojo.create("span", null, this.linkHolder.domNode)
+                        );
+                    }
                 }
             },
 
@@ -832,24 +901,118 @@ if (!dojo._hasResource["openils.widget.FlattenerGrid"]) {
                 );
             },
 
-            /* Print the same data that the Flattener is feeding to the
-             * grid, sorted the same way too. remove limit and offset (i.e.,
-             * print it all. */
-            "print": function() {
+            "getSelectedIDs": function() {
+                return this.getSelectedItems().map(
+                    dojo.hitch(
+                        this,
+                        function(item) { return this.store.getIdentity(item); }
+                    )
+                );
+            },
+
+            /* Return true if every row known to the grid is selected. Code
+             * that calls this function will do so when it thinks the user
+             * might actually mean "select everything this grid could show"
+             * even though we don't necessarily know (and the user hasn't
+             * necessarily noticed) whether the grid has been scrolled as far
+             * down as possible and all the possible results have been
+             * fetched by the grid's store. */
+            "everythingSeemsSelected": function() {
+                return dojo.query(
+                    "[name=autogrid.selector]", this.domNode
+                ).filter(
+                    function(c) { return (!c.disabled && !c.checked) }
+                ).length == 0;
+            },
+
+            "downloadCSV": function(filename_prefix, progress_dialog) {
+                filename_prefix = filename_prefix || "grid";
+                var localeStrings = this.localeStrings;
+
+                var mapkey_for_filename =
+                    this.store.mapKey ? this.store.mapKey.substr(-8, 8) : "X";
+
+                var dispositionArgs = {
+                    "defaultString": filename_prefix + "-" +
+                        mapkey_for_filename + ".csv",
+                    "defaultExtension": ".csv",
+                    "filterName": localeStrings.CSV_FILTER_NAME,
+                    "filterExtension": "*.csv",
+                    "filterAll": true
+                };
+
                 var coal = this._columnOrderingAndLabels();
                 var req = {
                     "query": this.query,
                     "queryOptions": {
-                        "all": true,
+                        "columns": coal.columns,
+                        "labels": coal.labels,
+                        "all": true
+                    },
+                    "flattenerOptions": {
+                        "contentType": "text/csv",
+                        "handleAs": "text"
+                    },
+                    "onComplete": function(text) {
+                        if (progress_dialog)
+                            progress_dialog.attr("title", "");
+                            progress_dialog.hide();
+                        openils.XUL.contentToFileSaveDialog(
+                            text, localeStrings.CSV_SAVE_DIALOG, dispositionArgs
+                        );
+                    }
+                };
+
+                if (progress_dialog) {
+                    progress_dialog.attr("title", localeStrings.FETCHING_CSV);
+                    progress_dialog.show(true);
+                }
+                this.store.fetch(req);
+            },
+
+            /* Print the same data that the Flattener is feeding to the
+             * grid, sorted the same way too. Remove limit and offset (i.e.,
+             * print it all) unless those are passed in to the print() method.
+             */
+            "print": function(limit, offset, query_mixin) {
+                var coal = this._columnOrderingAndLabels();
+                var req = {
+                    "query": dojo.mixin({}, this.query, query_mixin),
+                    "queryOptions": {
                         "columns": coal.columns,
                         "labels": coal.labels
+                    },
+                    "flattenerOptions": {
+                        "handleAs": "text", "contentType": "text/html"
                     },
                     "onComplete": function(text) {
                         openils.Util.printHtmlString(text);
                     }
                 };
 
-                this.store.fetchToPrint(req);
+                if (limit) {
+                    req.count = limit;
+                    req.start = offset || 0;
+                } else {
+                    req.queryOptions.all = true;
+                }
+
+                this.store.fetch(req);
+            },
+
+            "printSelected": function() {
+                var id_blob = {};
+                id_blob[this.store.getIdentityAttributes()[0]] =
+                    this.getSelectedIDs();
+
+                this.print(null, null, id_blob);
+            },
+
+            "setBaseQuery": function(query) {   /* sets a persistent query
+                                                   that always gets mixed in
+                                                   with whatever you do in the
+                                                   filter dialog */
+                this._baseQuery = dojo.clone(this.query = query);
             }
         }
     );

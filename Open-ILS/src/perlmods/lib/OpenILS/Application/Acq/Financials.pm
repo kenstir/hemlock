@@ -415,23 +415,23 @@ sub transfer_money_between_funds {
     return $e->die_event unless $e->allowed(['ADMIN_FUND','MANAGE_FUND'], $dfund->org, $dfund);
 
     if (!defined $dfund_amount) {
-        my $ratio = 1;
+
         if ($ofund->currency_type ne $dfund->currency_type) {
-            my $exchange_rate = $e->json_query({
-                "select"=>{"acqexr"=>["ratio"]}, 
-                "from"=>"acqexr", 
-                "where"=>{
-                    "from_currency"=>$ofund->currency_type,
-                    "to_currency"=>$dfund->currency_type
-                }
-            });
-            if (scalar(@$exchange_rate)<1) {
-                $logger->error('Unable to find exchange rate for ' . $ofund->currency_type . ' to ' . $dfund->currency_type);
-                return $e->die_event;
-            }
-            $ratio = @{$exchange_rate}[0]->{ratio};
+
+            $dfund_amount = $e->json_query({
+                from => [
+                    'acq.exchange_ratio',
+                    $ofund->currency_type,
+                    $dfund->currency_type,
+                    $ofund_amount
+                ]
+            })->[0]->{'acq.exchange_ratio'};
+
+        } else {
+
+            $dfund_amount = $ofund_amount;
         }
-        $dfund_amount = $ofund_amount * $ratio;
+
     } else {
         return $e->die_event unless $e->allowed("ACQ_XFER_MANUAL_DFUND_AMOUNT");
     }
@@ -1221,6 +1221,7 @@ __PACKAGE__->register_method (
             {desc => 'Fund Year to roll over', type => 'integer'},
             {desc => 'Org unit ID', type => 'integer'},
             {desc => 'Include Descendant Orgs (boolean)', type => 'integer'},
+            {desc => 'Option hash: limit, offset, encumb_only', type => 'object'},
         ],
         return => {desc => 'Returns a stream of all related funds for the next year including fund summary for each'}
     }
@@ -1277,6 +1278,7 @@ sub process_fiscal_rollover {
     $options ||= {};
 
     my $combined = ($self->api_name =~ /combined/); 
+    my $encumb_only = $U->is_true($options->{encumb_only}) ? 't' : 'f';
 
     my $org_ids = ($descendants) ? 
         [   
@@ -1308,22 +1310,16 @@ sub process_fiscal_rollover {
                 ($descendants) ? 
                     'acq.rollover_funds_by_org_tree' :
                     'acq.rollover_funds_by_org_unit',
-                $year, $e->requestor->id, $org_id
+                $year, $e->requestor->id, $org_id, $encumb_only
             ]
         });
     }
 
     # Fetch all funds for the specified org units for the subsequent year
-    my $fund_ids = $e->search_acq_fund([
-        {
-            year => int($year) + 1, 
+    my $fund_ids = $e->search_acq_fund(
+        [{  year => int($year) + 1, 
             org => $org_ids,
-            propagate => 't'
-        }, {
-            limit => $$options{limit} || 20,
-            offset => $$options{offset} || 0,
-        }
-        ], 
+            propagate => 't' }], 
         {idlist => 1}
     );
 
@@ -1338,7 +1334,7 @@ sub process_fiscal_rollover {
             my $sum = $e->json_query({
                 select => {acqftr => [{column => 'dest_amount', transform => 'sum'}]}, 
                 from => 'acqftr', 
-                where => {dest_fund => $fund->id, note => 'Rollover'}
+                where => {dest_fund => $fund->id, note => { like => 'Rollover%' } }
             })->[0];
 
             $amount = $sum->{dest_amount} if $sum;
@@ -1351,6 +1347,43 @@ sub process_fiscal_rollover {
     return undef;
 }
 
+__PACKAGE__->register_method(
+	method => 'org_fiscal_year',
+	api_name	=> 'open-ils.acq.org_unit.current_fiscal_year',
+	signature => {
+        desc => q/
+            Returns the current fiscal year for the given org unit.
+            If no fiscal year is configured, the current calendar
+            year is returned.
+        /,
+        params => [
+            {desc => 'Authentication token', type => 'string'},
+            {desc => 'Org unit ID', type => 'number'}
+        ],
+        return => {desc => 'Year as a string (e.g. "2012")'}
+    }
+);
+
+sub org_fiscal_year {
+    my($self, $conn, $auth, $org_id) = @_;
+
+    my $e = new_editor(authtoken => $auth);
+    return $e->event unless $e->checkauth;
+
+    my $year = $e->json_query({
+        select => {acqfy => ['year']},
+        from => {acqfy => {acqfc => {join => 'aou'}}},
+        where => {
+            '+acqfy' => {
+                year_begin => {'<=' => 'now'},
+                year_end => {'>=' => 'now'},
+            },
+            '+aou' => {id => $org_id}
+        }
+    })->[0];
+
+    return $year ? $year->{year} : DateTime->now->year;
+}
 
 1;
 

@@ -46,6 +46,9 @@ INSERT INTO config.internal_flag (name) VALUES ('ingest.disable_metabib_full_rec
 INSERT INTO config.internal_flag (name) VALUES ('ingest.disable_metabib_rec_descriptor');
 INSERT INTO config.internal_flag (name) VALUES ('ingest.disable_metabib_field_entry');
 INSERT INTO config.internal_flag (name) VALUES ('ingest.assume_inserts_only');
+INSERT INTO config.internal_flag (name) VALUES ('ingest.skip_browse_indexing');
+INSERT INTO config.internal_flag (name) VALUES ('ingest.skip_search_indexing');
+INSERT INTO config.internal_flag (name) VALUES ('ingest.skip_facet_indexing');
 INSERT INTO config.internal_flag (name) VALUES ('serial.rematerialize_on_same_holding_code');
 
 CREATE TABLE config.global_flag (
@@ -87,7 +90,7 @@ CREATE TRIGGER no_overlapping_deps
     BEFORE INSERT OR UPDATE ON config.db_patch_dependencies
     FOR EACH ROW EXECUTE PROCEDURE evergreen.array_overlap_check ('deprecates');
 
-INSERT INTO config.upgrade_log (version, applied_to) VALUES ('0715', :eg_version); -- dbs/berick
+INSERT INTO config.upgrade_log (version, applied_to) VALUES ('0764', :eg_version); -- gmcharlt/berick/bshum
 
 CREATE TABLE config.bib_source (
 	id		SERIAL	PRIMARY KEY,
@@ -169,7 +172,11 @@ CREATE TABLE config.metabib_class (
     name     TEXT    PRIMARY KEY,
     label    TEXT    NOT NULL UNIQUE,
     buoyant  BOOL    DEFAULT FALSE NOT NULL,
-    restrict BOOL    DEFAULT FALSE NOT NULL
+    restrict BOOL    DEFAULT FALSE NOT NULL,
+    a_weight NUMERIC  DEFAULT 1.0 NOT NULL,
+    b_weight NUMERIC  DEFAULT 0.4 NOT NULL,
+    c_weight NUMERIC  DEFAULT 0.2 NOT NULL,
+    d_weight NUMERIC  DEFAULT 0.1 NOT NULL
 );
 
 CREATE TABLE config.metabib_field (
@@ -197,6 +204,49 @@ or identifier.
 $$;
 
 CREATE UNIQUE INDEX config_metabib_field_class_name_idx ON config.metabib_field (field_class, name);
+
+CREATE TABLE config.ts_config_list (
+	id			TEXT PRIMARY KEY,
+	name		TEXT NOT NULL
+);
+COMMENT ON TABLE config.ts_config_list IS $$
+Full Text Configs
+
+A list of full text configs with names and descriptions.
+$$;
+
+CREATE TABLE config.metabib_class_ts_map (
+	id				SERIAL PRIMARY KEY,
+	field_class		TEXT NOT NULL REFERENCES config.metabib_class (name),
+	ts_config		TEXT NOT NULL REFERENCES config.ts_config_list (id),
+	active			BOOL NOT NULL DEFAULT TRUE,
+	index_weight	CHAR(1) NOT NULL DEFAULT 'C' CHECK (index_weight IN ('A','B','C','D')),
+	index_lang		TEXT NULL,
+	search_lang		TEXT NULL,
+	always			BOOL NOT NULL DEFAULT true
+);
+COMMENT ON TABLE config.metabib_class_ts_map IS $$
+Text Search Configs for metabib class indexing
+
+This table contains text search config definitions for
+storing index_vector values.
+$$;
+
+CREATE TABLE config.metabib_field_ts_map (
+	id				SERIAL PRIMARY KEY,
+	metabib_field	INT NOT NULL REFERENCES config.metabib_field (id),
+	ts_config		TEXT NOT NULL REFERENCES config.ts_config_list (id),
+	active			BOOL NOT NULL DEFAULT TRUE,
+	index_weight	CHAR(1) NOT NULL DEFAULT 'C' CHECK (index_weight IN ('A','B','C','D')),
+	index_lang		TEXT NULL,
+	search_lang		TEXT NULL
+);
+COMMENT ON TABLE config.metabib_field_ts_map IS $$
+Text Search Configs for metabib field indexing
+
+This table contains text search config definitions for
+storing index_vector values.
+$$;
 
 CREATE TABLE config.metabib_search_alias (
     alias       TEXT    PRIMARY KEY,
@@ -755,74 +805,34 @@ CREATE VIEW config.lit_form_map AS SELECT code, value, description FROM config.c
 CREATE VIEW config.audience_map AS SELECT code, value, description FROM config.coded_value_map WHERE ctype = 'audience';
 CREATE VIEW config.videorecording_format_map AS SELECT code, value FROM config.coded_value_map WHERE ctype = 'vr_format';
 
-CREATE OR REPLACE FUNCTION oils_tsearch2 () RETURNS TRIGGER AS $$
+CREATE OR REPLACE FUNCTION config.update_coded_value_map(in_ctype TEXT, in_code TEXT, in_value TEXT, in_description TEXT DEFAULT NULL, in_opac_visible BOOL DEFAULT NULL, in_search_label TEXT DEFAULT NULL, in_is_simple BOOL DEFAULT NULL, add_only BOOL DEFAULT FALSE) RETURNS VOID AS $f$
 DECLARE
-    normalizer      RECORD;
-    value           TEXT := '';
+    current_row config.coded_value_map%ROWTYPE;
 BEGIN
-
-    value := NEW.value;
-
-    IF TG_TABLE_NAME::TEXT ~ 'field_entry$' THEN
-        FOR normalizer IN
-            SELECT  n.func AS func,
-                    n.param_count AS param_count,
-                    m.params AS params
-              FROM  config.index_normalizer n
-                    JOIN config.metabib_field_index_norm_map m ON (m.norm = n.id)
-              WHERE field = NEW.field AND m.pos < 0
-              ORDER BY m.pos LOOP
-                EXECUTE 'SELECT ' || normalizer.func || '(' ||
-                    quote_literal( value ) ||
-                    CASE
-                        WHEN normalizer.param_count > 0
-                            THEN ',' || REPLACE(REPLACE(BTRIM(normalizer.params,'[]'),E'\'',E'\\\''),E'"',E'\'')
-                            ELSE ''
-                        END ||
-                    ')' INTO value;
-
-        END LOOP;
-
-        NEW.value := value;
+    -- Look for a current value
+    SELECT INTO current_row * FROM config.coded_value_map WHERE ctype = in_ctype AND code = in_code;
+    -- If we have one..
+    IF FOUND AND NOT add_only THEN
+        -- Update anything we were handed
+        current_row.value := COALESCE(current_row.value, in_value);
+        current_row.description := COALESCE(current_row.description, in_description);
+        current_row.opac_visible := COALESCE(current_row.opac_visible, in_opac_visible);
+        current_row.search_label := COALESCE(current_row.search_label, in_search_label);
+        current_row.is_simple := COALESCE(current_row.is_simple, in_is_simple);
+        UPDATE config.coded_value_map
+            SET
+                value = current_row.value,
+                description = current_row.description,
+                opac_visible = current_row.opac_visible,
+                search_label = current_row.search_label,
+                is_simple = current_row.is_simple
+            WHERE id = current_row.id;
+    ELSE
+        INSERT INTO config.coded_value_map(ctype, code, value, description, opac_visible, search_label, is_simple) VALUES
+            (in_ctype, in_code, in_value, in_description, COALESCE(in_opac_visible, TRUE), in_search_label, COALESCE(in_is_simple, FALSE));
     END IF;
-
-    IF NEW.index_vector = ''::tsvector THEN
-        RETURN NEW;
-    END IF;
-
-    IF TG_TABLE_NAME::TEXT ~ 'field_entry$' THEN
-        FOR normalizer IN
-            SELECT  n.func AS func,
-                    n.param_count AS param_count,
-                    m.params AS params
-              FROM  config.index_normalizer n
-                    JOIN config.metabib_field_index_norm_map m ON (m.norm = n.id)
-              WHERE field = NEW.field AND m.pos >= 0
-              ORDER BY m.pos LOOP
-                EXECUTE 'SELECT ' || normalizer.func || '(' ||
-                    quote_literal( value ) ||
-                    CASE
-                        WHEN normalizer.param_count > 0
-                            THEN ',' || REPLACE(REPLACE(BTRIM(normalizer.params,'[]'),E'\'',E'\\\''),E'"',E'\'')
-                            ELSE ''
-                        END ||
-                    ')' INTO value;
-
-        END LOOP;
-    END IF;
-
-    IF TG_TABLE_NAME::TEXT ~ 'browse_entry$' THEN
-        value :=  ARRAY_TO_STRING(
-            evergreen.regexp_split_to_array(value, E'\\W+'), ' '
-        );
-        value := public.search_normalize(value);
-    END IF;
-
-    NEW.index_vector = to_tsvector((TG_ARGV[0])::regconfig, value);
-
-    RETURN NEW;
 END;
-$$ LANGUAGE PLPGSQL;
+$f$ LANGUAGE PLPGSQL;
 
 -- List applied db patches that are deprecated by (and block the application of) my_db_patch
 CREATE OR REPLACE FUNCTION evergreen.upgrade_list_applied_deprecates ( my_db_patch TEXT ) RETURNS SETOF evergreen.patch AS $$
@@ -972,5 +982,47 @@ CREATE TABLE config.usr_activity_type (
 CREATE UNIQUE INDEX unique_wwh ON config.usr_activity_type 
     (COALESCE(ewho,''), COALESCE (ewhat,''), COALESCE(ehow,''));
 
+CREATE TABLE config.filter_dialog_interface (
+    key         TEXT                        PRIMARY KEY,
+    description TEXT
+);  
+
+CREATE TABLE config.filter_dialog_filter_set (
+    id          SERIAL                      PRIMARY KEY,
+    name        TEXT                        NOT NULL,
+    owning_lib  INT                         NOT NULL, -- REFERENCES actor.org_unit (id) DEFERRABLE INITIALLY DEFERRED,
+    creator     INT                         NOT NULL, -- REFERENCES actor.usr (id) DEFERRABLE INITIALLY DEFERRED,
+    create_time TIMESTAMP WITH TIME ZONE    NOT NULL DEFAULT NOW(),
+    interface   TEXT                        NOT NULL REFERENCES config.filter_dialog_interface (key) DEFERRABLE INITIALLY DEFERRED,
+    filters     TEXT                        NOT NULL, -- CHECK (evergreen.is_json(filters))
+    CONSTRAINT cfdfs_name_once_per_lib UNIQUE (name, owning_lib)
+);
+
+CREATE TABLE config.best_hold_order(
+    id          SERIAL      PRIMARY KEY,
+    name        TEXT        UNIQUE,   -- i18n
+    pprox       INT, -- copy capture <-> pickup lib prox
+    hprox       INT, -- copy circ lib <-> request lib prox
+    aprox       INT, -- copy circ lib <-> pickup lib ADJUSTED prox on ahcm
+    approx      INT, -- copy capture <-> pickup lib ADJUSTED prox from function
+    priority    INT, -- group hold priority
+    cut         INT, -- cut-in-line
+    depth       INT, -- selection depth
+    htime       INT, -- time since last home-lib circ exceeds org-unit setting
+    rtime       INT, -- request time
+    shtime      INT  -- time since copy last trip home exceeds org-unit setting
+);
+
+-- At least one of these columns must contain a non-null value
+ALTER TABLE config.best_hold_order ADD CHECK ((
+    pprox IS NOT NULL OR
+    hprox IS NOT NULL OR
+    aprox IS NOT NULL OR
+    priority IS NOT NULL OR
+    cut IS NOT NULL OR
+    depth IS NOT NULL OR
+    htime IS NOT NULL OR
+    rtime IS NOT NULL
+));
 
 COMMIT;

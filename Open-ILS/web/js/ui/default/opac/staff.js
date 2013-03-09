@@ -19,6 +19,13 @@ function staff_hold_usr_input_disabler(input) {
         Boolean(Number(input.value));
     staff_hold_usr_barcode_changed();
 }
+function no_hold_submit(event) {
+    if (event.which == 13) {
+        staff_hold_usr_barcode_changed();
+        return false;
+    }
+    return true;
+}
 var cur_hold_barcode = undefined;
 function staff_hold_usr_barcode_changed(isload) {
     if(typeof xulG != 'undefined' && xulG.get_barcode_and_settings) {
@@ -33,11 +40,25 @@ function staff_hold_usr_barcode_changed(isload) {
             if(barcode && barcode != '' && !document.getElementById('hold_usr_is_requestor_not').checked)
                 document.getElementById('hold_usr_is_requestor_not').checked = 'checked';
         }
-        if(barcode == undefined || barcode == '' || barcode == cur_hold_barcode)
+        if(barcode == undefined || barcode == '') {
+            document.getElementById('patron_name').innerHTML = '';
+            // No submitting on empty barcode, but empty barcode doesn't really count as "not found" either
+            document.getElementById('place_hold_submit').disabled = true;
+            document.getElementById("patron_usr_barcode_not_found").style.display = 'none';
+            cur_hold_barcode = null;
             return;
+        }
+        if(barcode == cur_hold_barcode)
+            return;
+        // No submitting until we think the barcode is valid
+        document.getElementById('place_hold_submit').disabled = true;
         var load_info = xulG.get_barcode_and_settings(window, barcode, only_settings);
-        if(load_info == false || load_info == undefined)
+        if(load_info == false || load_info == undefined) {
+            document.getElementById('patron_name').innerHTML = '';
+            document.getElementById("patron_usr_barcode_not_found").style.display = '';
+            cur_hold_barcode = null;
             return;
+        }
         cur_hold_barcode = load_info.barcode;
         if(!only_settings || (isload && isload !== true)) document.getElementById('hold_usr_input').value = load_info.barcode; // Safe at this point as we already set cur_hold_barcode
         if(load_info.settings['opac.default_pickup_location'])
@@ -62,6 +83,20 @@ function staff_hold_usr_barcode_changed(isload) {
         for(var i in update_elements) update_elements[i].value = load_info.settings['opac.default_sms_notify'];
         update_elements = document.getElementsByName('sms_carrier');
         for(var i in update_elements) update_elements[i].value = load_info.settings['opac.default_sms_carrier'];
+        update_elements = document.getElementsByName('email_notify');
+        for(var i in update_elements) {
+            update_elements[i].disabled = (load_info.user_email ? false : true);
+            if(update_elements[i].disabled) update_elements[i].checked = false;
+        }
+        update_elements = document.getElementsByName('email_address');
+        for(var i in update_elements) update_elements[i].textContent = load_info.user_email;
+        if(!document.getElementById('hold_usr_is_requestor').checked && document.getElementById('hold_usr_input').value) {
+            document.getElementById('patron_name').innerHTML = load_info.patron_name;
+            document.getElementById("patron_usr_barcode_not_found").style.display = 'none';
+        }
+        // Ok, now we can allow submitting again, unless this is a "true" load, in which case we likely have a blank barcode box active
+        if (isload !== true)
+            document.getElementById('place_hold_submit').disabled = false;
     }
 }
 window.onload = function() {

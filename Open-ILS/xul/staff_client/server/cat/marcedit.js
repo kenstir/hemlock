@@ -152,7 +152,6 @@ function set_flat_editor (useFlatText) {
 function my_init() {
     try {
 
-        netscape.security.PrivilegeManager.enablePrivilege("UniversalXPConnect");
         if (typeof JSAN == 'undefined') { throw( $("commonStrings").getString('common.jsan.missing') ); }
         JSAN.errorLevel = "die"; // none, warn, or die
         JSAN.addRepository('/xul/server/');
@@ -225,7 +224,6 @@ function my_init() {
         var locale = "en-US";
 
         // Try to get the locale from our preferences
-        netscape.security.PrivilegeManager.enablePrivilege("UniversalXPConnect");
         try {
             const Cc = Components.classes;
             const Ci = Components.interfaces;
@@ -269,7 +267,7 @@ function my_init() {
         context_menus = createComplexXULElement('popupset');
         document.documentElement.appendChild( context_menus );
 
-        tag_menu = createPopup({position : 'after_start', id : 'tags_popup'});
+        tag_menu = createMenuPopup({position : 'after_start', id : 'tags_popup'});
         context_menus.appendChild( tag_menu );
 
         tag_menu.appendChild(
@@ -312,7 +310,7 @@ function my_init() {
                 { label : $('catStrings').getString('staff.cat.marcedit.replace_006.label'),
                   oncommand : 
                     'var e = document.createEvent("KeyEvents");' +
-                    'e.initKeyEvent("keypress",1,1,null,1,0,0,0,64,0);' +
+                    'e.initKeyEvent("keypress",1,1,null,1,0,0,0,117,0);' +
                     'current_focus.inputField.dispatchEvent(e);'
                  }
             )
@@ -323,7 +321,7 @@ function my_init() {
                 { label : $('catStrings').getString('staff.cat.marcedit.replace_007.label'),
                   oncommand : 
                     'var e = document.createEvent("KeyEvents");' +
-                    'e.initKeyEvent("keypress",1,1,null,1,0,0,0,65,0);' +
+                    'e.initKeyEvent("keypress",1,1,null,1,0,0,0,118,0);' +
                     'current_focus.inputField.dispatchEvent(e);'
                 }
             )
@@ -334,7 +332,7 @@ function my_init() {
                 { label : $('catStrings').getString('staff.cat.marcedit.replace_008.label'),
                   oncommand : 
                     'var e = document.createEvent("KeyEvents");' +
-                    'e.initKeyEvent("keypress",1,1,null,1,0,0,0,66,0);' +
+                    'e.initKeyEvent("keypress",1,1,null,1,0,0,0,119,0);' +
                     'current_focus.inputField.dispatchEvent(e);'
                 }
             )
@@ -474,7 +472,7 @@ function setFocusToNextTag (row, direction) {
     var keep_looking = true;
     while (keep_looking && (direction == 'up' ? row = row.previousSibling : row = row.nextSibling)) {
         // Is it a datafield?
-        dojo.query('hbox hbox textbox', row).forEach(function(node, index, arr) {
+        dojo.query('hbox', row).query('hbox').query('textbox').forEach(function(node, index, arr) {
             node.focus();
             keep_looking = false;
         });
@@ -495,7 +493,7 @@ function setFocusToNextTag (row, direction) {
 function createMARCTextbox (element,attrs) {
 
     var box = createComplexXULElement('textbox', attrs, Array.prototype.slice.apply(arguments, [2]) );
-    box.addEventListener('keypress',function(ev) { netscape.security.PrivilegeManager.enablePrivilege("UniversalXPConnect"); if (!(ev.altKey || ev.ctrlKey || ev.metaKey)) { oils_lock_page(); } },false);
+    box.addEventListener('keypress',function(ev) { if (!(ev.altKey || ev.ctrlKey || ev.metaKey)) { oils_lock_page(); } },false);
     box.onkeypress = function (event) {
         var root_node;
         var node = element;
@@ -686,13 +684,13 @@ function createMARCTextbox (element,attrs) {
                     event.preventDefault();
                     return false;
                 }
-            } else if (event.keyCode == 64 && event.ctrlKey) { // ctrl + F6
+            } else if (event.keyCode == 117 && event.ctrlKey) { // ctrl + F6
                 createControlField('006','                                        ');
                 loadRecord();
-            } else if (event.keyCode == 65 && event.ctrlKey) { // ctrl + F7
+            } else if (event.keyCode == 118 && event.ctrlKey) { // ctrl + F7
                 createControlField('007','                                        ');
                 loadRecord();
-            } else if (event.keyCode == 66 && event.ctrlKey) { // ctrl + F8
+            } else if (event.keyCode == 119 && event.ctrlKey) { // ctrl + F8
                 createControlField('008','                                        ');
                 loadRecord();
             }
@@ -779,7 +777,7 @@ function changeFFEditor (type) {
     // Hide FFEditor rows that we don't need for our current type
     // If all of the labels for a given row do not include our
     // desired type in their set attribute, we can hide that row
-    dojo.query('rows row', grid).forEach(function(node, index, arr) {
+    dojo.query('rows', grid).query('row').forEach(function(node, index, arr) {
         if (dojo.query('label[set~=' + type + ']', node).length == 0) {
             node.hidden = true;
         }
@@ -1116,13 +1114,13 @@ function genToolTips () {
             )
         );
     
-        var i1_popup = createPopup({position : 'after_start', id : 't' + f.@tag + 'i1' });
+        var i1_popup = createMenuPopup({position : 'after_start', id : 't' + f.@tag + 'i1' });
         context_menus.appendChild( i1_popup );
     
-        var i2_popup = createPopup({position : 'after_start', id : 't' + f.@tag + 'i2' });
+        var i2_popup = createMenuPopup({position : 'after_start', id : 't' + f.@tag + 'i2' });
         context_menus.appendChild( i2_popup );
     
-        var sf_popup = createPopup({position : 'after_start', id : 't' + f.@tag + 'sf' });
+        var sf_popup = createMenuPopup({position : 'after_start', id : 't' + f.@tag + 'sf' });
         context_menus.appendChild( sf_popup );
     
         tooltip_hash['tag' + f.@tag] = f.description;
@@ -1497,7 +1495,7 @@ function getAuthorityContextMenu (target, sf) {
         auth_pages[menu_id] = 0;
     }
 
-    var sf_popup = createPopup({ id : menu_id, flex : 1 });
+    var sf_popup = createMenuPopup({ id : menu_id, flex : 1 });
 
     sf_popup.addEventListener("popuphiding", function(event) {
         if (show_auth_menu) {
@@ -1769,7 +1767,7 @@ function browseAuthority (sf_popup, menu_id, target, sf, limit, page) {
             var main_text = '';
             var see_from = [];
             var see_also = [];
-            var auth_id = dojox.xml.parser.textContent(dojo.query('datafield[tag="901"] subfield[code="c"]', record)[0]);
+            var auth_id = dojox.xml.parser.textContent(dojo.query('datafield[tag="901"]', record).query('subfield[code="c"]')[0]);
             var auth_org = dojox.xml.parser.textContent(dojo.query('controlfield[tag="003"]', record)[0]);
 
             // Grab the fields with tags beginning with 1 (main entries) and iterate through the subfields
@@ -1855,7 +1853,13 @@ function buildAuthorityPopup (entry_text, record, auth_org, auth_id, sf_popup, t
     }
     submenu.appendChild(popup);
 
-    dojo.query('datafield[tag^="1"], datafield[tag^="4"], datafield[tag^="5"]', record).forEach(function(field) {
+    dojo.query('datafield[tag^="1"]', record).forEach(function(field) {
+        buildAuthorityPopupSelector(field, grid, auth_org, auth_id);
+    });
+    dojo.query('datafield[tag^="4"]', record).forEach(function(field) {
+        buildAuthorityPopupSelector(field, grid, auth_org, auth_id);
+    });
+    dojo.query('datafield[tag^="5"]', record).forEach(function(field) {
         buildAuthorityPopupSelector(field, grid, auth_org, auth_id);
     });
 
@@ -2050,8 +2054,7 @@ function loadMarcEditor(pcrud, marcxml, target, sf) {
        To run in Firefox directly, must set signed.applets.codebase_principal_support
        to true in about:config
      */
-    netscape.security.PrivilegeManager.enablePrivilege('UniversalXPConnect');
-    win = window.open('/xul/server/cat/marcedit.xul'); // XXX version?
+    win = window.open('/xul/server/cat/marcedit.xul', '_blank', 'chrome'); // XXX version?
 
     // Match marc2are.pl last_xact_id format, roughly
     var now = new Date;

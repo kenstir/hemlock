@@ -296,17 +296,15 @@ util.network.prototype = {
             JSAN.use('util.window'); var win =  new util.window();
             var windowManager = Components.classes["@mozilla.org/appshell/window-mediator;1"].getService();
             var windowManagerInterface = windowManager.QueryInterface(Components.interfaces.nsIWindowMediator);
-            var enumerator = windowManagerInterface.getEnumerator(null);
+            var enumerator = windowManagerInterface.getEnumerator('eg_menu');
 
             var w; // set title on all appshell windows
             while ( w = enumerator.getNext() ) {
-                if (w.document.title.match(/^\d/)) {
-                    w.document.title = 
-                        win.appshell_name_increment() 
-                        + ': ' + data.list.au[0].usrname() 
-                        + '@' + data.ws_name;
-                        + '.' + data.server_unadorned 
-                }
+                w.document.title = 
+                    w.egwinid
+                    + ': ' + data.list.au[0].usrname() 
+                    + '@' + data.ws_name
+                    + '.' + data.server_unadorned; 
             }
         } catch(E) {
             obj.error.standard_unexpected_error_alert(offlineStrings.getString('network.window_title.error'),E);
@@ -327,7 +325,7 @@ util.network.prototype = {
             while ( w = enumerator.getNext() ) {
                 x = w.document.getElementById('oc_menuitem');
 
-                if(!offlinestrings) w.document.getElementById('offlineStrings');
+                if(!offlinestrings) offlinestrings = w.document.getElementById('offlineStrings');
                 if(permlist) w.g.menu.set_menu_access(permlist);
                 if(data.list.au.length > 1) {
                     addCSSClass(w.document.getElementById('main_tabbox'),'operator_change');
@@ -347,10 +345,11 @@ util.network.prototype = {
         var obj = this;
         try {
 
-        netscape.security.PrivilegeManager.enablePrivilege('UniversalXPConnect UniversalBrowserWrite');
         var url = urls.XUL_AUTH_SIMPLE;
         if (typeof xulG != 'undefined' && typeof xulG.url_prefix == 'function') url = xulG.url_prefix( url );
         JSAN.use('util.window'); var win = new util.window();
+        JSAN.use('OpenILS.data');
+        var data = new OpenILS.data(); data.init({'via':'stash'});
         var my_xulG = win.open(
             url,
             //+ '?login_type=staff'
@@ -360,26 +359,25 @@ util.network.prototype = {
             offlineStrings.getString('network.new_session.authorize'),
             'chrome,resizable,modal,width=700,height=500',
             {
-                'login_type' : 'staff',
+                'login_type' : text ? (data.session.login_type ? data.session.login_type : 'staff') : 'ochange',
                 'desc_brief' : text ? offlineStrings.getString('network.new_session.expired') : offlineStrings.getString('network.new_session.operator_change'),
                 'desc_full' : text ? offlineStrings.getString('network.new_session.expired.prompt') : offlineStrings.getString('network.new_session.operator_change.prompt')
                 //'simple_auth' : (new Date()).toString(),
             }
         );
-        JSAN.use('OpenILS.data');
-        var data = new OpenILS.data(); data.init({'via':'stash'});
+        data.stash_retrieve();
         if (typeof data.temporary_session != 'undefined' && data.temporary_session != '') {
             data.session.key = data.temporary_session.key; 
             data.session.authtime = data.temporary_session.authtime; 
+            data.session.is_perm = data.temporary_session.is_perm; // For operator change, otherwise ignorable.
+            data.session.login_type = data.temporary_session.login_type; // For timeouts *after* operator change.
             data.stash('session');
             try {
                 var ios = Components.classes["@mozilla.org/network/io-service;1"].getService(Components.interfaces.nsIIOService);
-                var cookieUri = ios.newURI("http://" + data.server_unadorned, null, null);
                 var cookieUriSSL = ios.newURI("https://" + data.server_unadorned, null, null);
                 var cookieSvc = Components.classes["@mozilla.org/cookieService;1"].getService(Components.interfaces.nsICookieService);
 
-                cookieSvc.setCookieString(cookieUri, null, "ses="+data.session.key, null);
-                cookieSvc.setCookieString(cookieUriSSL, null, "ses="+data.session.key, null);
+                cookieSvc.setCookieString(cookieUriSSL, null, "ses="+data.session.key + "; secure;", null);
 
             } catch(E) {
                 alert(offineStrings.getFormattedString('main.session_cookie.error', [E]));
@@ -422,7 +420,6 @@ util.network.prototype = {
             var obj = this;
             var robj = obj.get_result(req);
             if (robj != null && robj.ilsevent && robj.ilsevent == 5000) {
-                netscape.security.PrivilegeManager.enablePrivilege('UniversalXPConnect UniversalBrowserWrite');
                 if (location.href.match(/^chrome/)) {
                     //alert('Permission denied.');
                 } else {
@@ -489,7 +486,6 @@ util.network.prototype = {
                         return req;
                     }
 
-                    netscape.security.PrivilegeManager.enablePrivilege('UniversalXPConnect UniversalBrowserWrite');
                     var xml = '<vbox xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">' + 
                         '<groupbox><caption label="' + offlineStrings.getString('network.override.exceptions') + '"/>' + 
                         '<grid><columns><column/><column flex="1"/></columns><rows>';

@@ -15,6 +15,8 @@ use Unicode::Normalize;
 use OpenSRF::Utils::SettingsClient;
 use UUID::Tiny;
 use Encode;
+use DateTime;
+use DateTime::Format::ISO8601;
 
 # ---------------------------------------------------------------------------
 # Pile of utilty methods used accross applications.
@@ -138,8 +140,20 @@ sub rollback_db_session {
 # returns the event code otherwise
 sub event_code {
 	my( $self, $evt ) = @_;
-	return $evt->{ilsevent} if( ref($evt) eq 'HASH' and defined($evt->{ilsevent})) ;
+	return $evt->{ilsevent} if $self->is_event($evt);
 	return undef;
+}
+
+# some events, in particular auto-generated events, don't have an 
+# ilsevent key.  treat hashes with a 'textcode' key as events.
+sub is_event {
+	my ($self, $evt) = @_;
+	return (
+		ref($evt) eq 'HASH' and (
+			defined $evt->{ilsevent} or
+			defined $evt->{textcode}
+		)
+	);
 }
 
 # ---------------------------------------------------------------------------
@@ -189,89 +203,8 @@ sub simple_scalar_request {
 	return $val;
 }
 
-
-
-
-
-my $tree						= undef;
-my $orglist					= undef;
-my $org_typelist			= undef;
-my $org_typelist_hash	= {};
-
-sub __get_org_tree {
-	
-	# can we throw this version away??
-
-	my $self = shift;
-	if($tree) { return $tree; }
-
-	# see if it's in the cache
-	$tree = $cache_client->new()->get_cache('_orgtree');
-	if($tree) { return $tree; }
-
-	if(!$orglist) {
-		warn "Retrieving Org Tree\n";
-		$orglist = $self->simple_scalar_request( 
-			"open-ils.cstore", 
-			"open-ils.cstore.direct.actor.org_unit.search.atomic",
-			{ id => { '!=' => undef } }
-		);
-	}
-
-	if( ! $org_typelist ) {
-		warn "Retrieving org types\n";
-		$org_typelist = $self->simple_scalar_request( 
-			"open-ils.cstore", 
-			"open-ils.cstore.direct.actor.org_unit_type.search.atomic",
-			{ id => { '!=' => undef } }
-		);
-		$self->build_org_type($org_typelist);
-	}
-
-	$tree = $self->build_org_tree($orglist,1);
-	$cache_client->new()->put_cache('_orgtree', $tree);
-	return $tree;
-
-}
-
-my $slimtree = undef;
-sub get_slim_org_tree {
-
-	my $self = shift;
-	if($slimtree) { return $slimtree; }
-
-	# see if it's in the cache
-	$slimtree = $cache_client->new()->get_cache('slimorgtree');
-	if($slimtree) { return $slimtree; }
-
-	if(!$orglist) {
-		warn "Retrieving Org Tree\n";
-		$orglist = $self->simple_scalar_request( 
-			"open-ils.cstore", 
-			"open-ils.cstore.direct.actor.org_unit.search.atomic",
-			{ id => { '!=' => undef } }
-		);
-	}
-
-	$slimtree = $self->build_org_tree($orglist);
-	$cache_client->new->put_cache('slimorgtree', $slimtree);
-	return $slimtree;
-
-}
-
-
-sub build_org_type { 
-	my($self, $org_typelist)  = @_;
-	for my $type (@$org_typelist) {
-		$org_typelist_hash->{$type->id()} = $type;
-	}
-}
-
-
-
 sub build_org_tree {
-
-	my( $self, $orglist, $add_types ) = @_;
+	my( $self, $orglist ) = @_;
 
 	return $orglist unless ref $orglist; 
     return $$orglist[0] if @$orglist == 1;
@@ -283,11 +216,6 @@ sub build_org_tree {
 	for my $org (@list) {
 
 		next unless ($org);
-
-		if(!ref($org->ou_type()) and $add_types) {
-			$org->ou_type( $org_typelist_hash->{$org->ou_type()});
-		}
-
         next if (!defined($org->parent_ou) || $org->parent_ou eq "");
 
 		my ($parent) = grep { $_->id == $org->parent_ou } @list;
@@ -1220,22 +1148,6 @@ sub fetch_bill {
 	return($bill, $evt);
 }
 
-my $ORG_TREE;
-sub fetch_org_tree {
-	my $self = shift;
-	return $ORG_TREE if $ORG_TREE;
-	return $ORG_TREE = OpenILS::Utils::CStoreEditor->new->search_actor_org_unit( 
-		[
-			{"parent_ou" => undef },
-			{
-				flesh				=> -1,
-				flesh_fields	=> { aou =>  ['children'] },
-				order_by       => { aou => 'name'}
-			}
-		]
-	)->[0];
-}
-
 sub walk_org_tree {
 	my( $self, $node, $callback ) = @_;
 	return unless $node;
@@ -1456,11 +1368,12 @@ sub get_org_types {
 	return $org_types = OpenILS::Utils::CStoreEditor->new->retrieve_all_actor_org_unit_type();
 }
 
+my %ORG_TREE;
 sub get_org_tree {
 	my $self = shift;
 	my $locale = shift || '';
 	my $cache = OpenSRF::Utils::Cache->new("global", 0);
-	my $tree = $cache->get_cache("orgtree.$locale");
+	my $tree = $ORG_TREE{$locale} || $cache->get_cache("orgtree.$locale");
 	return $tree if $tree;
 
 	my $ses = OpenILS::Utils::CStoreEditor->new;
@@ -1476,6 +1389,7 @@ sub get_org_tree {
 		]
 	)->[0];
 
+    $ORG_TREE{$locale} = $tree;
 	$cache->put_cache("orgtree.$locale", $tree);
 	return $tree;
 }
@@ -2127,6 +2041,45 @@ sub basic_opac_copy_query {
         offset => $copy_offset
     };
 }
+
+# Compare two dates, date1 and date2. If date2 is not defined, then
+# DateTime->now will be used. Assumes dates are in ISO8601 format as
+# supported by DateTime::Format::ISO8601. (A future enhancement might
+# be to support other formats.)
+#
+# Returns -1 if $date1 < $date2
+# Returns 0 if $date1 == $date2
+# Returns 1 if $date1 > $date2
+sub datecmp {
+    my $self = shift;
+    my $date1 = shift;
+    my $date2 = shift;
+
+    # Check for timezone offsets and limit them to 2 digits:
+    if ($date1 && $date1 =~ /(?:-|\+)\d\d\d\d$/) {
+        $date1 = substr($date1, 0, length($date1) - 2);
+    }
+    if ($date2 && $date2 =~ /(?:-|\+)\d\d\d\d$/) {
+        $date2 = substr($date2, 0, length($date2) - 2);
+    }
+
+    # check date1:
+    unless (UNIVERSAL::isa($date1, "DateTime")) {
+        $date1 = DateTime::Format::ISO8601->parse_datetime($date1);
+    }
+
+    # Check for date2:
+    unless ($date2) {
+        $date2 = DateTime->now;
+    } else {
+        unless (UNIVERSAL::isa($date2, "DateTime")) {
+            $date2 = DateTime::Format::ISO8601->parse_datetime($date2);
+        }
+    }
+
+    return DateTime->compare($date1, $date2);
+}
+
 
 1;
 

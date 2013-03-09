@@ -86,7 +86,6 @@ function retrieve_circ() {
                 if (get_bool(r_circ.phone_renewal() ) ) r += 'PHONE ';
                 $('renewal').value = r || 'No';
 
-                netscape.security.PrivilegeManager.enablePrivilege("UniversalXPConnect");
                 var csb = $('copy_summary_vbox'); while (csb.firstChild) csb.removeChild(csb.lastChild);
                 var copy_summary = document.createElement('iframe'); csb.appendChild(copy_summary);
                 copy_summary.setAttribute('src',urls.XUL_COPY_SUMMARY); // + '?copy_id=' + r_circ.target_copy());
@@ -201,7 +200,6 @@ function retrieve_mp() {
 
 function my_init() {
     try {
-        netscape.security.PrivilegeManager.enablePrivilege("UniversalXPConnect");
         if (typeof JSAN == 'undefined') { throw( $("commonStrings").getString('common.jsan.missing') ); }
         JSAN.errorLevel = "die"; // none, warn, or die
         JSAN.addRepository('/xul/server/');
@@ -217,6 +215,8 @@ function my_init() {
 
         g.mbts_id = xul_param('mbts_id');
 
+        window.bill_details_event_listeners = new EventListenerList();
+
         retrieve_patron();
 
         retrieve_mbts();
@@ -226,19 +226,19 @@ function my_init() {
         retrieve_mb();
         retrieve_mp();
 
-        $('void').addEventListener(
+        window.bill_details_event_listeners.add($('void'), 
             'command',
             handle_void,
             false
         );
 
-        $('edit_bill_note').addEventListener(
+        window.bill_details_event_listeners.add($('edit_bill_note'), 
             'command',
             handle_edit_bill_note,
             false
         );
 
-        $('edit_payment_note').addEventListener(
+        window.bill_details_event_listeners.add($('edit_payment_note'), 
             'command',
             handle_edit_payment_note,
             false
@@ -246,6 +246,18 @@ function my_init() {
 
     } catch(E) {
         try { g.error.standard_unexpected_error_alert($("patronStrings").getString('staff.patron.bill_details.my_init.error'),E); } catch(F) { alert(E); }
+    }
+}
+
+function my_cleanup() {
+    try {
+        g.bill_list.cleanup();
+        g.bill_list.clear();
+        g.payment_list.cleanup();
+        g.payment_list.clear();
+        window.bill_details_event_listeners.removeAll();
+    } catch(E) {
+        try { g.error.standard_unexpected_error_alert($("patronStrings").getString('staff.patron.bill_details.my_cleanup.error'),E); } catch(F) { alert(E); }
     }
 }
 

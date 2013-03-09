@@ -39,7 +39,6 @@
 
 		function my_init() {
 			try {
-				netscape.security.PrivilegeManager.enablePrivilege("UniversalXPConnect");
 				if (typeof JSAN == 'undefined') { 
 					throw( $("commonStrings").getString('common.jsan.missing') );
 				}
@@ -53,10 +52,10 @@
 
 				g.error.sdump('D_TRACE','my_init() for notes.xul');
 
-				g.object_type = xul_param('object_type',{'modal_xulG':true});
-				g.object_id = xul_param('object_id',{'modal_xulG':true});
-				g.function_type = xul_param('function_type',{'modal_xulG':true});
-				g.constructor = xul_param('constructor',{'modal_xulG':true});
+				g.object_type = xul_param('object_type');
+				g.object_id = xul_param('object_id');
+				g.function_type = xul_param('function_type');
+				g.constructor = xul_param('constructor');
 
 				var window_title = xul_param('title',{'modal_xulG':true});
 				if (window_title) {
@@ -77,7 +76,11 @@
 		}
 
 		function retrieve_notes() {
-			g.notes = g.network.simple_request('FM_'+g.function_type+'_RETRIEVE_ALL',[ { 'authtoken' : ses(), 'object_id' : g.object_id } ]).reverse();
+			g.notes = g.network.simple_request(
+				'FM_' + g.function_type + '_RETRIEVE_ALL', [
+					{ 'authtoken' : ses(), 'object_id' : g.object_id }
+				]
+			);
 		}
 
 		function apply(node,field,value) {
@@ -201,7 +204,6 @@
 			}
 
 			try {
-				netscape.security.PrivilegeManager.enablePrivilege("UniversalXPConnect UniversalBrowserWrite");
 				value = value.replace(/\n/g, "&#10;"); // preserve newlines
 				var xml = '<groupbox xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul" flex="1"> \
 					<caption label="' + label_text + '"/> \

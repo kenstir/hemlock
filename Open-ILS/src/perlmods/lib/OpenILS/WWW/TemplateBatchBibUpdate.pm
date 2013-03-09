@@ -48,6 +48,7 @@ sub import {
 sub child_init {
     OpenSRF::System->bootstrap_client( config_file => $bootstrap );
     Fieldmapper->import(IDL => OpenSRF::Utils::SettingsClient->new->config_value("IDL"));
+    return Apache2::Const::OK;
 }
 
 sub handler {
@@ -232,11 +233,18 @@ sub show_processing_template {
             dojo.require('fieldmapper.AutoIDL');
             dojo.require('fieldmapper.dojoData');
             dojo.require('openils.User');
+            dojo.require('openils.XUL');
+            dojo.require('dojo.cookie');
             dojo.require('openils.CGI');
             dojo.require('openils.widget.ProgressDialog');
 
             var cgi = new openils.CGI();
-            var u = new openils.User({ authcookie : 'ses' });
+            var authtoken = dojo.cookie('ses') || cgi.param('ses');
+            if (!authtoken && openils.XUL.isXUL()) {
+                var stash = openils.XUL.getStash();
+                authtoken = stash.session.key;
+            }
+            var u = new openils.User({ authtoken: authtoken });
 
             dojo.addOnLoad(function () {
                 progress_dialog.show(true);
@@ -358,9 +366,16 @@ sub show_template {
             dojo.require('fieldmapper.dojoData');
             dojo.require('openils.User');
             dojo.require('openils.CGI');
+            dojo.require('openils.XUL');
+            dojo.require('dojo.cookie');
 
             var cgi = new openils.CGI();
-            var u = new openils.User({ authcookie : 'ses' });
+            var authtoken = dojo.cookie('ses') || cgi.param('ses');
+            if (!authtoken && openils.XUL.isXUL()) {
+                var stash = openils.XUL.getStash();
+                authtoken = stash.session.key;
+            }
+            var u = new openils.User({ authtoken: authtoken });
 
             var bucketStore = new dojo.data.ItemFileReadStore(
                 { data : cbreb.toStoreData(

@@ -5,10 +5,6 @@
 <!-- ****************** rdetail_summary.xml ***************************** -->
 <abbr class="unapi-id" title='tag:[% ctx.hostname %],[% date.format(date.now, '%Y') %]:biblio-record_entry/[% ctx.bre_id %]'></abbr>
 
-[%- IF ctx.refworks.enabled == 'true' %]
-    [% INCLUDE 'opac/parts/record/refworks.tt2' %]
-[%- END %]
-
 <hr />
 
 [%-# This holds the record summary information %]
@@ -23,14 +19,24 @@
     </div>
 
     <div id="rdetail_actions_div">
+        [%- search_ou = ctx.search_ou;
+            IF ctx.place_unfillable ||
+                ( attrs.marc_xml.findnodes('//*[local-name()="holdings" and @has_holdable="true"]').size > 0
+                    && (ctx.holds_block.enabled != 'true' || attrs.org_copy_counts.$search_ou.available == 0)
+                )
+         %]
         <div class="rdetail_aux_utils place_hold">
             <a href="[% mkurl(ctx.opac_root _ '/place_hold', 
                 {hold_target => ctx.bre_id, hold_type => 'T', hold_source_page => mkurl()}, stop_parms) %]" 
             class="no-dec"><img src="[% ctx.media_prefix %]/images/green_check.png" alt="[% l('place hold') %]" /><span 
             class="place_hold">[% l('Place Hold') %]</span></a>
         </div>
+        [%- END -%]
         <div class="rdetail_aux_utils toggle_list">
-        [%-  
+        [%  IF ctx.user;
+            INCLUDE "opac/parts/bookbag_actions.tt2";
+        %]
+        [%  ELSE;
             operation = ctx.mylist.grep(ctx.bre_id).size ? "delete" : "add";
             label = (operation == "add") ? l("Add to my list") : l("Remove from my list"); 
         %]
@@ -38,12 +44,16 @@
                 <img src="[% ctx.media_prefix %]/images/clipboard.png" alt="" />
                 [% label %]
             </a>
+        [% END %]
         </div>
         <div class="rdetail_aux_utils">
             <img src="[% ctx.media_prefix %]/images/clipboard.png" alt="" />
             <a href="[% mkurl(ctx.opac_root _ '/record/print/' _ ctx.bre_id) %]" class="no-dec">[% l('Print') %]</a> /
             <a href="[% mkurl(ctx.opac_root _ '/record/email/' _ ctx.bre_id) %]" class="no-dec">[% l('Email') %]</a>
         </div>
+        [%- IF ctx.refworks.enabled == 'true' %]
+            [%- INCLUDE 'opac/parts/record/refworks.tt2' %]
+        [%- END %]
     </div>
     <div id='rdetail_title_div'>
         [%- IF attrs.format_icon %]
@@ -52,6 +62,17 @@
         </div>
         [%- END %]
         <h1 id='rdetail_title' itemprop="name">[% attrs.title_extended | html %]</h1>
+        [%-
+            FOR link880 IN attrs.graphic_titles;
+                FOR alt IN link880.graphic;
+                    '<h2 class="graphic880"';
+                    IF alt.dir;
+                        ' dir="' _ alt.dir _ '"';
+                    END;
+                    '>'; alt.value | html; '</h2>';
+                END;
+            END;
+        -%]
         [%- INCLUDE "opac/parts/record/authors.tt2" %]
     </div>
 </div>
@@ -102,8 +123,20 @@ IF num_uris > 0;
     <span id="rdetail_hold_counts">
         <h2>[% l('Current holds') %]</h2>
         <p>
-            [%- l("[quant,_1,current hold,current holds] with [quant,_2,total copy,total copies].", 
-                ctx.record_hold_count, ctx.copy_summary.0.count) %]
+            [% 
+                # If org hiding is enabled/relevant, only show 
+                # counts for copies within the hiding scope.
+                count_entry = 0;
+                FOR count_chunk IN ctx.copy_summary;
+                    IF ctx.org_within_hiding_scope(count_chunk.org_unit);
+                        # always true when hiding is disabled
+                        LAST;
+                    END;
+                    count_entry = count_entry + 1;
+                END;
+                l("[quant,_1,current hold,current holds] with [quant,_2,total copy,total copies].", 
+                    ctx.record_hold_count, ctx.copy_summary.$count_entry.count) 
+            %]
         </p>
     </span>
 [%- INCLUDE "opac/parts/record/copy_table.tt2" copies=ctx.copies %]
@@ -136,21 +169,57 @@ IF num_uris > 0;
     <li id='rdetail_edition'>
         <strong class='rdetail_label'>[% l("Edition:") %]</strong>
         <span class='rdetail_value'>[% attrs.edition | html %]</span>
+        [%-
+        FOR entry IN attrs.graphic_editions;
+            FOR alt IN entry.graphic;
+                diratt = "";
+                IF alt.dir;
+                    diratt = ' dir="' _ alt.dir _ '"';
+                END;
+        -%]
+        <div class="graphic880 rdetail_value"[% diratt %]>
+            [% alt.value | html %]
+        </div>
+        [%-
+            END;
+        END;
+        -%]
     </li>
     [%- END %]
     [%- IF attrs.publisher %]
     <li id='rdetail_publisher'>
         <strong class='rdetail_label'>[% l("Publisher:") %]</strong>
-        <span class='rdetail_value' itemprop="publisher">[%
-            attrs.publisher | html;
-        %]</span>
-        [% IF attrs.pubdate; %]
-        <span itemprop="datePublished">[% attrs.pubdate | html; %]</span>
-        [% END; %]
+        <span class='rdetail_value' itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+        [%- IF attrs.pubplace; %]
+            <span itemprop="location">[% attrs.pubplace | html; %]</span>
+        [%- END; %]
+            <span itemprop="name">[% attrs.publisher | html; %]</span>
+        </span>
+        [%- IF attrs.pubdate; %]
+            <span itemprop="datePublished">[% attrs.pubdate | html; %]</span>
+        [%- END; %]
+        [%-
+        IF attrs.graphic_pubinfos.size > 0;
+            FOR entry IN attrs.graphic_pubinfos;
+                FOR alt IN entry.graphic;
+                    diratt = "";
+                    IF alt.dir;
+                        diratt = ' dir="' _ alt.dir _ '"';
+                    END;
+        -%]
+        <div class="graphic880"[% diratt %]>
+            [% alt.value | html %]
+        </div>
+        [%-
+                END;
+            END;
+        END
+        -%]
     </li>
     [%- END %]
 </ul>
 
+[%- INCLUDE "opac/parts/record/contents.tt2" %]
 [%- INCLUDE "opac/parts/record/subjects.tt2" %]
 [%- INCLUDE "opac/parts/record/series.tt2" %]
 [%- INCLUDE "opac/parts/record/extras.tt2" %]

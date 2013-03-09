@@ -17,6 +17,32 @@ use OpenILS::Application::Circ::CircCommon;
 use OpenILS::Application::AppUtils;
 my $U = "OpenILS::Application::AppUtils";
 
+# used in build_hold_sort_clause()
+my %HOLD_SORT_ORDER_BY = (
+    pprox => 'p.prox',
+    hprox => 'actor.org_unit_proximity(%d, h.request_lib)',  # $cp->circ_lib
+    aprox => 'COALESCE(hm.proximity, p.prox)',
+    approx => 'action.hold_copy_calculated_proximity(h.id, %d, %d)', # $cp,$here
+    priority => 'pgt.hold_priority',
+    cut => 'CASE WHEN h.cut_in_line IS TRUE THEN 0 ELSE 1 END',
+    depth => 'h.selection_depth',
+    rtime => 'h.request_time',
+    htime => q!
+        CASE WHEN
+            copy_has_not_been_home.result
+        THEN actor.org_unit_proximity(%d, h.request_lib)
+        ELSE 999
+        END
+    !,
+    shtime => q!
+        CASE WHEN
+            copy_has_not_been_home_even_to_idle.result
+        THEN actor.org_unit_proximity(%d, h.request_lib)
+        ELSE 999
+        END
+    !,
+);
+
 
 sub isTrue {
 	my $v = shift;
@@ -282,34 +308,201 @@ __PACKAGE__->register_method(
 	method          => 'grab_overdue',
 );
 
+sub get_hold_sort_order {
+    my ($ou) = @_;
+
+    my $dbh = action::hold_request->db_Main;
+
+    # The purpose of this function is to return column names in a DB-configured
+    # order, so it won't do to add columns here or change column names unless
+    # you also change the expectation of anything calling this function.
+
+    my $row = $dbh->selectrow_hashref(
+        q!
+        SELECT
+            cbho.pprox, cbho.hprox, cbho.aprox, cbho.approx, cbho.priority,
+            cbho.cut, cbho.depth, cbho.htime, cbho.shtime, cbho.rtime
+        FROM config.best_hold_order cbho
+        WHERE id = (
+            SELECT oils_json_to_text(value)::INT
+            FROM actor.org_unit_ancestor_setting('circ.hold_capture_order', ?)
+        )
+        !, undef, $ou
+    ) || {
+        pprox => 1, hprox => 8, aprox => 2, priority => 3,
+        cut => 4, depth => 5, htime => 7, rtime => 6
+    };
+
+    # Return only the keys of our hash, sorted by value,
+    # keys for null values omitted.
+    return [
+        grep { defined $row->{$_} } (
+            sort {$row->{$a} cmp $row->{$b}} keys %$row
+        )
+    ];
+}
+
+# Returns an ORDER BY clause
+# *and* a string with a CTE expression to precede the nearest-hold SQL query
+# *and* a string with extra JOIN statements needed
+sub build_hold_sort_clause {
+    my ($columns, $cp, $here) = @_;
+
+    my %order_by_sprintf_args = (
+        hprox => [$cp->circ_lib],
+        approx => [$cp->id, $here],
+        htime => [$cp->circ_lib],
+        shtime => [$cp->circ_lib]
+    );
+
+    my @clauses;
+    my $ctes_needed = 0;
+    foreach my $col (@$columns) {
+        if ($col eq 'htime' and not $ctes_needed) {
+            $ctes_needed = 1;
+        } elsif ($col eq 'shtime') {
+            $ctes_needed = 2;
+        }
+
+        my @args;
+        @args = @{$order_by_sprintf_args{$col}} if
+            exists $order_by_sprintf_args{$col};
+
+        push @clauses, sprintf($HOLD_SORT_ORDER_BY{$col}, @args);
+
+        last if $col eq 'rtime';    # rtime is effectively unique, no need for
+                                    # more order-by clauses after that.
+    }
+
+    my ($ctes, $joins);
+    if ($ctes_needed >= 1) {
+        # For our first auxiliary query, the question we seek to answer is, "has
+        # our copy been circulating away from home too long?" Two parts to
+        # answer this question.
+        #
+        # part 1: Have their been no checkouts at the copy's circ_lib since the
+        # beginning of our go-home interval?
+        # part 2: Was the last transit to affect our copy before the beginning
+        # of our go-home interval an outbound transit? i.e. away from circ-lib
+
+        # [We use sprintf because the outer function that's going to send one
+        # big query through DBI is blind to our process of dynamically building
+        # these CTEs, and it wouldn't know what bind parameters to pass unless
+        # we did a lot more work here. This is injection-safe because we only
+        # use the %d formatter.]
+        $ctes .= sprintf(q!
+, copy_has_not_been_home AS (
+    SELECT (
+        -- part 1
+        SELECT circ.id FROM action.circulation circ
+        JOIN go_home_interval ON (true)
+        WHERE
+            circ.target_copy = %d AND
+            circ.circ_lib = %d AND
+            circ.xact_start >= NOW() - go_home_interval.value
+    ) IS NULL AND (
+        -- part 2
+        SELECT atc.dest <> %d FROM action.transit_copy atc
+        JOIN go_home_interval ON (true)
+        WHERE
+            atc.id = (
+                SELECT MAX(id) FROM action.transit_copy atc_inner
+                WHERE
+                    atc_inner.target_copy = %d AND
+                    atc_inner.source_send_time < NOW() - go_home_interval.value
+            )
+    ) AS result
+) !, $cp->id, $cp->circ_lib, $cp->circ_lib, $cp->id);
+        $joins .= " JOIN copy_has_not_been_home ON (true) ";
+    }
+
+    if ($ctes_needed == 2) {
+        # In this auxiliary query, we ask the question, "has our copy come home
+        # by any means that we can determine, even if it didn't circulate once
+        # it came home, in the time defined by the go-home-interval?"
+        # answer this question. Two parts to this too (besides including the
+        # previous auxiliary query).
+        #
+        # 1: there have been no homebound transits for this copy since the
+        # beginning of the go-home interval.
+        # 2: there have been no checkins at home since the beginning of
+        # the go-home interval for this copy
+
+        $ctes .= sprintf(q!
+, copy_has_not_been_home_even_to_idle AS (
+    SELECT
+        copy_has_not_been_home.response AND (
+            -- part 1
+            SELECT atc.id FROM action.transit_copy atc
+            JOIN go_home_interval ON (true)
+            WHERE
+                atc.target_copy = %d AND
+                atc.dest = %d AND
+                atc.dest_recv_time >= NOW() - go_home_interval.value
+        ) IS NULL AND (
+            -- part 2
+            SELECT circ.id FROM action.circulation circ
+            JOIN go_home_interval ON (true)
+            WHERE
+                circ.target_copy = %d AND
+                circ.checkin_lib = %d AND
+                circ.checkin_time >= NOW() - go_home_interval.value
+        ) IS NULL
+    AS result
+) !, $cp->id, $cp->circ_lib, $cp->id, $cp->circ_lib);
+        $joins .= " JOIN copy_has_not_been_home_even_to_idle ON (true) ";
+    }
+
+    return (
+        join(", ", @clauses),
+        $ctes,
+        $joins
+    );
+}
+
 sub nearest_hold {
 	my $self = shift;
 	my $client = shift;
-	my $here = shift;
-	my $cp = shift;
+	my $here = shift;   # just the ID
+	my $cp = shift;     # now an object, formerly just the ID
 	my $limit = int(shift()) || 10;
 	my $age = shift() || '0 seconds';
 	my $fifo = shift();
 
+    $log->info("deprecated 'fifo' param true, but ignored") if isTrue $fifo;
+
+    my ($holdsort, $addl_cte, $addl_join) =
+        build_hold_sort_clause(get_hold_sort_order($here), $cp, $here);
+
 	local $OpenILS::Application::Storage::WRITE = 1;
 
-	my $holdsort = isTrue($fifo) ?
-            "pgt.hold_priority, CASE WHEN h.cut_in_line IS TRUE THEN 0 ELSE 1 END, h.request_time, h.selection_depth DESC, p.prox " :
-            "p.prox, pgt.hold_priority, CASE WHEN h.cut_in_line IS TRUE THEN 0 ELSE 1 END, h.selection_depth DESC, h.request_time ";
-
-	my $ids = action::hold_request->db_Main->selectcol_arrayref(<<"	SQL", {}, $here, $cp, $age);
+	my $ids = action::hold_request->db_Main->selectcol_arrayref(<<"	SQL", {}, $cp->circ_lib, $here, $cp->id, $age);
+        WITH go_home_interval AS (
+            SELECT OILS_JSON_TO_TEXT(
+                (SELECT value FROM actor.org_unit_ancestor_setting(
+                    'circ.hold_go_home_interval', ?
+                )
+            ))::INTERVAL AS value
+        )
+        $addl_cte
 		SELECT	h.id
 		  FROM	action.hold_request h
 			JOIN actor.org_unit_proximity p ON (p.from_org = ? AND p.to_org = h.pickup_lib)
 		  	JOIN action.hold_copy_map hm ON (hm.hold = h.id)
 		  	JOIN actor.usr au ON (au.id = h.usr)
 		  	JOIN permission.grp_tree pgt ON (au.profile = pgt.id)
+		  	LEFT JOIN actor.usr_standing_penalty ausp
+				ON ( au.id = ausp.usr AND ( ausp.stop_date IS NULL OR ausp.stop_date > NOW() ) )
+		  	LEFT JOIN config.standing_penalty csp
+				ON ( csp.id = ausp.standing_penalty AND csp.block_list LIKE '%CAPTURE%' )
+            $addl_join
 		  WHERE hm.target_copy = ?
 		  	AND (AGE(NOW(),h.request_time) >= CAST(? AS INTERVAL) OR p.prox = 0)
 			AND h.capture_time IS NULL
 		  	AND h.cancel_time IS NULL
 		  	AND (h.expire_time IS NULL OR h.expire_time > NOW())
-            AND h.frozen IS FALSE
+			AND h.frozen IS FALSE
+		  	AND csp.id IS NULL
 		ORDER BY CASE WHEN h.hold_type IN ('R','F') THEN 0 ELSE 1 END, $holdsort
 		LIMIT $limit
 	SQL
@@ -500,10 +693,15 @@ sub hold_pull_list {
 		  FROM	$h_table h
 		  	JOIN $a_table a ON (h.current_copy = a.id)
 		  	LEFT JOIN $ord_table ord ON (a.location = ord.location AND a.circ_lib = ord.org)
+			LEFT JOIN actor.usr_standing_penalty ausp 
+				ON ( h.usr = ausp.usr AND ( ausp.stop_date IS NULL OR ausp.stop_date > NOW() ) )
+			LEFT JOIN config.standing_penalty csp
+				ON ( csp.id = ausp.standing_penalty AND csp.block_list LIKE '%CAPTURE%' )
 		  WHERE	a.circ_lib = ?
 		  	AND h.capture_time IS NULL
 		  	AND h.cancel_time IS NULL
 		  	AND (h.expire_time IS NULL OR h.expire_time > NOW())
+			AND csp.id IS NULL
 			$status_filter
 		  ORDER BY CASE WHEN ord.position IS NOT NULL THEN ord.position ELSE 999 END, h.request_time
 		  LIMIT $limit
@@ -515,10 +713,15 @@ sub hold_pull_list {
             SELECT    count(*)
               FROM    $h_table h
                   JOIN $a_table a ON (h.current_copy = a.id)
+                  LEFT JOIN actor.usr_standing_penalty ausp 
+                    ON ( h.usr = ausp.usr AND ( ausp.stop_date IS NULL OR ausp.stop_date > NOW() ) )
+                  LEFT JOIN config.standing_penalty csp
+                    ON ( csp.id = ausp.standing_penalty AND csp.block_list LIKE '%CAPTURE%' )
               WHERE    a.circ_lib = ?
                   AND h.capture_time IS NULL
                   AND h.cancel_time IS NULL
                   AND (h.expire_time IS NULL OR h.expire_time > NOW())
+                  AND csp.id IS NULL
                 $status_filter
         SQL
     }
@@ -908,6 +1111,10 @@ sub generate_fines {
 				$c->$circ_lib_method->to_fieldmapper->id, 'circ.fines.charge_when_closed');
 			$skip_closed_check = $U->is_true($skip_closed_check);
 
+			my $truncate_to_max_fine = $U->ou_ancestor_setting_value(
+				$c->$circ_lib_method->to_fieldmapper->id, 'circ.fines.truncate_to_max_fine');
+			$truncate_to_max_fine = $U->is_true($truncate_to_max_fine);
+
 			my ($latest_billing_ts, $latest_amount) = ('',0);
 			for (my $bill = 1; $bill <= $pending_fine_count; $bill++) {
 	
@@ -946,8 +1153,15 @@ sub generate_fines {
 					next if (@cl);
 				}
 
-				$current_fine_total += $recurring_fine;
-				$latest_amount += $recurring_fine;
+				# The billing amount for this billing normally ought to be the recurring fine amount.
+				# However, if the recurring fine amount would cause total fines to exceed the max fine amount,
+				# we may wish to reduce the amount for this billing (if circ.fines.truncate_to_max_fine is true).
+				my $this_billing_amount = $recurring_fine;
+				if ( $truncate_to_max_fine && ($current_fine_total + $this_billing_amount) > $max_fine ) {
+					$this_billing_amount = ($max_fine - $current_fine_total);
+				}
+				$current_fine_total += $this_billing_amount;
+				$latest_amount += $this_billing_amount;
 				$latest_billing_ts = $timestamptz;
 
 				money::billing->create(
@@ -955,7 +1169,7 @@ sub generate_fines {
 					  note		=> "System Generated Overdue Fine",
 					  billing_type	=> "Overdue materials",
 					  btype		=> 1,
-					  amount	=> sprintf('%0.2f', $recurring_fine/100),
+					  amount	=> sprintf('%0.2f', $this_billing_amount/100),
 					  billing_ts	=> $timestamptz,
 					}
 				);
@@ -1245,17 +1459,18 @@ sub new_hold_copy_targeter {
 				push @$all_copies, $_cp if $_cp;
 			}
 
-            # Force and recall holds bypass pretty much everything
-            if ($hold->hold_type ne 'R' && $hold->hold_type ne 'F') {
-    			# trim unholdables
-	    		@$all_copies = grep {	isTrue($_->status->holdable) && 
-		    				isTrue($_->location->holdable) && 
-			    			isTrue($_->holdable) &&
-				    		!isTrue($_->deleted) &&
-					    	(isTrue($hold->mint_condition) ? isTrue($_->mint_condition) : 1) &&
-						    ($hold->hold_type ne 'P' ? $_->part_maps->count == 0 : 1)
-    					} @$all_copies;
-            }
+			# Force and recall holds bypass pretty much everything
+			if ($hold->hold_type ne 'R' && $hold->hold_type ne 'F') {
+				# trim unholdables
+				@$all_copies = grep {	isTrue($_->status->holdable) && 
+							isTrue($_->location->holdable) && 
+							isTrue($_->holdable) &&
+							!isTrue($_->deleted) &&
+							(isTrue($hold->mint_condition) ? isTrue($_->mint_condition) : 1) &&
+							( ( $hold->hold_type ne 'C' && $hold->hold_type ne 'I' # Copy-level holds don't care about parts
+								&& $hold->hold_type ne 'P' ) ? $_->part_maps->count == 0 : 1)
+						} @$all_copies;
+			}
 
 			# let 'em know we're still working
 			$client->status( new OpenSRF::DomainObject::oilsContinueStatus );
@@ -1277,15 +1492,19 @@ sub new_hold_copy_targeter {
 			# map the potentials, so that we can pick up checkins
 			# XXX Loop-based targeting may require that /only/ copies from this loop should be added to
 			# XXX the potentials list.  If this is the cased, hold_copy_map creation will move down further.
+			my $pu_lib = ''.$hold->pickup_lib;
+			my $prox_list = create_prox_list( $self, $pu_lib, $all_copies, $hold );
 			$log->debug( "\tMapping ".scalar(@$all_copies)." potential copies for hold ".$hold->id);
-			action::hold_copy_map->create( { hold => $hold->id, target_copy => $_->id } ) for (@$all_copies);
+			for my $prox ( keys %$prox_list ) {
+				action::hold_copy_map->create( { proximity => $prox, hold => $hold->id, target_copy => $_->id } ) for (@{$$prox_list{$prox}});
+			}
 
 			#$client->status( new OpenSRF::DomainObject::oilsContinueStatus );
 
 			my @good_copies;
 			for my $c (@$all_copies) {
 				# current target
-				next if ($c->id eq $hold->current_copy);
+				next if ($hold->current_copy and $c->id eq $hold->current_copy);
 
 				# skip on circ lib is closed IFF we care
 				my $ignore_closing;
@@ -1358,26 +1577,23 @@ sub new_hold_copy_targeter {
 				}
 			}
 
-            my $pu_lib = ''.$hold->pickup_lib;
+			# reset prox list after trimming good copies
+			$prox_list = create_prox_list( $self, $pu_lib, \@good_copies, $hold );
 
-			my $prox_list = [];
-			$$prox_list[0] =
-			[
-				grep {
-					''.$_->circ_lib eq $pu_lib &&
-                    ( $_->status == 0 || $_->status == 7 )
-				} @good_copies
-			];
 
-			$all_copies = [grep { $_->status == 0 || $_->status == 7 } grep {''.$_->circ_lib ne $pu_lib } @good_copies];
-			# $all_copies is now a list of copies not at the pickup library
-			
-            my $best;
-            if  ($hold->hold_type eq 'R' || $hold->hold_type eq 'F') { # Recall/Force holds bypass hold rules.
-                $best = $good_copies[0] if(scalar @good_copies);
-            } else {
-                $best = choose_nearest_copy($hold, $prox_list);
-            }
+			my $min_prox = [ sort keys %$prox_list ]->[0];
+			my $best;
+			if  ($hold->hold_type eq 'R' || $hold->hold_type eq 'F') { # Recall/Force holds bypass hold rules.
+				$best = $good_copies[0] if(scalar @good_copies);
+			} else {
+				$best = choose_nearest_copy($hold, { $min_prox => delete($$prox_list{$min_prox}) });
+			}
+
+			$all_copies = [];
+			for my $prox (keys %$prox_list) {
+				push @$all_copies, @{$$prox_list{$prox}};
+			}
+	
 			$client->status( new OpenSRF::DomainObject::oilsContinueStatus );
 
 			if (!$best) {
@@ -1465,11 +1681,12 @@ sub new_hold_copy_targeter {
 
 						die "OK\n";
 					}
+
+    				$prox_list = create_prox_list( $self, $pu_lib, $all_copies, $hold );
+
+    				$client->status( new OpenSRF::DomainObject::oilsContinueStatus );
+
 				}
-
-				$prox_list = create_prox_list( $self, $pu_lib, $all_copies );
-
-				$client->status( new OpenSRF::DomainObject::oilsContinueStatus );
 
 				$best = choose_nearest_copy($hold, $prox_list);
 			}
@@ -1790,6 +2007,10 @@ sub reservation_targeter {
 
 			$log->debug("\t".scalar(@good_resources)." resources available for targeting...");
 
+			# LFW: note that after the inclusion of hold proximity
+			# adjustment, this prox_list is the only prox_list
+			# array in this perl package.  Other occurences are
+			# hashes.
 			my $prox_list = [];
 			$$prox_list[0] =
 			[
@@ -1922,10 +2143,10 @@ sub choose_nearest_copy {
 	my $hold = shift;
 	my $prox_list = shift;
 
-	for my $p ( 0 .. int( scalar(@$prox_list) - 1) ) {
-		next unless (ref $$prox_list[$p]);
+	for my $p ( sort keys %$prox_list ) {
+		next unless (ref $$prox_list{$p});
 
-		my @capturable = @{ $$prox_list[$p] };
+		my @capturable = @{ $$prox_list{$p} };
 		next unless (@capturable);
 
 		my $rand = int(rand(scalar(@capturable)));
@@ -1954,12 +2175,13 @@ sub create_prox_list {
 	my $self = shift;
 	my $lib = shift;
 	my $copies = shift;
+	my $hold = shift;
 
 	my $actor = OpenSRF::AppSession->create('open-ils.actor');
 
-	my @prox_list;
+	my %prox_list;
 	for my $cp (@$copies) {
-		my ($prox) = $self->method_lookup('open-ils.storage.asset.copy.proximity')->run( $cp, $lib );
+		my ($prox) = $self->method_lookup('open-ils.storage.asset.copy.proximity')->run( $cp, $lib, $hold );
 		next unless (defined($prox));
 
         my $copy_circ_lib = ''.$cp->circ_lib;
@@ -1970,12 +2192,12 @@ sub create_prox_list {
         $self->{target_weight}{$copy_circ_lib} = $self->{target_weight}{$copy_circ_lib}{value} if (ref $self->{target_weight}{$copy_circ_lib});
         $self->{target_weight}{$copy_circ_lib} ||= 1;
 
-		$prox_list[$prox] = [] unless defined($prox_list[$prox]);
+		$prox_list{$prox} = [] unless defined($prox_list{$prox});
 		for my $w ( 1 .. $self->{target_weight}{$copy_circ_lib} ) {
-			push @{$prox_list[$prox]}, $cp;
+			push @{$prox_list{$prox}}, $cp;
 		}
 	}
-	return \@prox_list;
+	return \%prox_list;
 }
 
 sub volume_hold_capture {

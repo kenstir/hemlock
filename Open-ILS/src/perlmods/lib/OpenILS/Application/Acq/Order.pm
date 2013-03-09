@@ -274,7 +274,7 @@ sub promote_lineitem_holds {
             $hold->target( $li->eg_bib_id );
         }
 
-        $mgr->editor->create_actor_hold_request( $hold ) or return 0;
+        $mgr->editor->create_action_hold_request( $hold ) or return 0;
     }
 
     return $li;
@@ -321,10 +321,14 @@ sub create_lineitem_list_assets {
 
 sub test_vandelay_import_args {
     my $vandelay = shift;
+    my $q_needed = shift;
 
-    # we need a queue
-    return 0 unless $vandelay and 
-        ($vandelay->{queue_name} or $vandelay->{existing_queue});
+    # we need valid args and (sometimes) a queue
+    return 0 unless $vandelay and (
+        !$q_needed or
+        $vandelay->{queue_name} or 
+        $vandelay->{existing_queue}
+    );
 
     # match-based merge/overlay import
     return 2 if $vandelay->{merge_profile} and (
@@ -392,18 +396,44 @@ sub import_li_bibs_via_vandelay {
         return {li_ids => $li_ids};
     }
 
+    # see if we have any records that are not yet linked to VL records (i.e. 
+    # not in a queue).  This will tell us if lack of a queue name is an error.
+    my $non_queued = $e->search_acq_lineitem(
+        {id => $needs_importing, queued_record => undef},
+        {idlist => 1}
+    );
+
     # add the already-imported records to the response list
     push(@{$res->{li_ids}}, grep { $_ != @$needs_importing } @$li_ids);
 
     $logger->info("acq-vl: processing recs via Vandelay with args: ".Dumper($vandelay));
 
-    my $vl_stat = test_vandelay_import_args($vandelay);
+    my $vl_stat = test_vandelay_import_args($vandelay, scalar(@$non_queued));
     if ($vl_stat == 0) {
         $logger->error("acq-vl: invalid vandelay arguments for acq import (queue needed)");
         return $res;
     }
 
-    my $queue = find_or_create_vandelay_queue($e, $vandelay) or return $res;
+    my $queue;
+    if (@$non_queued) {
+        # when any non-queued lineitems exist, their vandelay counterparts 
+        # require a place to live.
+        $queue = find_or_create_vandelay_queue($e, $vandelay) or return $res;
+
+    } else {
+        # if all lineitems are already queued, the queue reported to the user
+        # is purely for information / convenience.  pick a random queue.
+        $queue = $e->retrieve_acq_lineitem([
+            $needs_importing->[0], {   
+                flesh => 2, 
+                flesh_fields => {
+                    jub => ['queued_record'], 
+                    vqbr => ['queue']
+                }
+            }
+        ])->queued_record->queue;
+    }
+
     $mgr->{args}->{queue} = $queue;
 
     # load the lineitems into the queue for merge processing
@@ -413,18 +443,28 @@ sub import_li_bibs_via_vandelay {
 
         my $li = $e->retrieve_acq_lineitem($li_id) or return $res;
 
-        my $vqbr = Fieldmapper::vandelay::queued_bib_record->new;
-        $vqbr->marc($li->marc);
-        $vqbr->queue($queue->id);
-        $vqbr->bib_source($vandelay->{bib_source} || undef); # avoid ''
-        $vqbr = $e->create_vandelay_queued_bib_record($vqbr) or return $res;
-        push(@vqbr_ids, $vqbr->id);
+        if ($li->queued_record) {
+            $logger->info("acq-vl: $li_id already linked to a vandelay record");
+            push(@vqbr_ids, $li->queued_record);
+
+        } else {
+            $logger->info("acq-vl: creating new vandelay record for lineitem $li_id");
+
+            # create a new VL queued record and link it up
+            my $vqbr = Fieldmapper::vandelay::queued_bib_record->new;
+            $vqbr->marc($li->marc);
+            $vqbr->queue($queue->id);
+            $vqbr->bib_source($vandelay->{bib_source} || undef); # avoid ''
+            $vqbr = $e->create_vandelay_queued_bib_record($vqbr) or return $res;
+            push(@vqbr_ids, $vqbr->id);
+
+            # tell the acq record which vandelay record it's linked to
+            $li->queued_record($vqbr->id);
+            $e->update_acq_lineitem($li) or return $res;
+        }
+
         $mgr->add_vqbr;
         $mgr->respond;
-
-        # tell the acq record which vandelay record it's linked to
-        $li->queued_record($vqbr->id);
-        $e->update_acq_lineitem($li) or return $res;
         push(@lis, $li);
     }
 
@@ -673,7 +713,8 @@ sub receive_lineitem_detail {
 
     if ($lid->eg_copy_id) {
         my $copy = $e->retrieve_asset_copy($lid->eg_copy_id) or return 0;
-        $copy->status(OILS_COPY_STATUS_IN_PROCESS);
+        # only update status if it hasn't already been updated
+        $copy->status(OILS_COPY_STATUS_IN_PROCESS) if $copy->status == OILS_COPY_STATUS_ON_ORDER;
         $copy->edit_date('now');
         $copy->editor($e->requestor->id);
         $copy->creator($e->requestor->id) if $U->ou_ancestor_setting_value(
@@ -760,7 +801,8 @@ sub set_lineitem_attr {
 # Lineitem Debits
 # ----------------------------------------------------------------------------
 sub create_lineitem_debits {
-    my ($mgr, $li, $dry_run) = @_; 
+    my ($mgr, $li, $dry_run, $options) = @_; 
+    $options ||= {};
 
     unless($li->estimated_unit_price) {
         $mgr->editor->event(OpenILS::Event->new('ACQ_LINEITEM_NO_PRICE', payload => $li->id));
@@ -778,6 +820,12 @@ sub create_lineitem_debits {
         {lineitem => $li->id}, 
         {idlist=>1}
     );
+
+    if (@$lid_ids == 0 and !$options->{zero_copy_activate}) {
+        $mgr->editor->event(OpenILS::Event->new('ACQ_LINEITEM_NO_COPIES', payload => $li->id));
+        $mgr->editor->rollback;
+        return 0;
+    }
 
     for my $lid_id (@$lid_ids) {
 
@@ -1324,6 +1372,17 @@ sub upload_records {
     my $activate_po     = $args->{activate_po};
     my $vandelay        = $args->{vandelay};
     my $ordering_agency = $args->{ordering_agency} || $e->requestor->ws_ou;
+    my $fiscal_year     = $args->{fiscal_year};
+
+    # if the user provides no fiscal year, find the
+    # current fiscal year for the ordering agency.
+    $fiscal_year ||= $U->simplereq(
+        'open-ils.acq',
+        'open-ils.acq.org_unit.current_fiscal_year',
+        $auth,
+        $ordering_agency
+    );
+
     my $po;
     my $evt;
 
@@ -1403,12 +1462,18 @@ sub upload_records {
         $mgr->respond;
         $li->provider($provider); # flesh it, we'll need it later
 
-        import_lineitem_details($mgr, $ordering_agency, $li) or return $mgr->editor->die_event;
+        import_lineitem_details($mgr, $ordering_agency, $li, $fiscal_year) 
+            or return $mgr->editor->die_event;
         $mgr->respond;
 
         push(@li_list, $li->id);
         $mgr->respond;
 	}
+
+    if ($po) {
+        $evt = extract_po_name($mgr, $po, \@li_list);
+        return $evt if $evt;
+    }
 
 	$e->commit;
     unlink($filename);
@@ -1427,8 +1492,46 @@ sub upload_records {
     return $mgr->respond_complete;
 }
 
+# see if the PO name is encoded in the newly imported records
+sub extract_po_name {
+    my ($mgr, $po, $li_ids) = @_;
+    my $e = $mgr->editor;
+
+    # find the first instance of the name
+    my $attr = $e->search_acq_lineitem_attr([
+        {   lineitem => $li_ids,
+            attr_type => 'lineitem_provider_attr_definition',
+            attr_name => 'purchase_order'
+        }, {
+            order_by => {aqlia => 'id'},
+            limit => 1
+        }
+    ])->[0] or return undef;
+
+    my $name = $attr->attr_value;
+
+    # see if another PO already has the name, provider, and org
+    my $existing = $e->search_acq_purchase_order(
+        {   name => $name,
+            ordering_agency => $po->ordering_agency,
+            provider => $po->provider
+        },
+        {idlist => 1}
+    )->[0];
+
+    # if a PO exists with the same name (and provider/org)
+    # tack the po ID into the name to differentiate
+    $name = sprintf("$name (%s)", $po->id) if $existing;
+
+    $logger->info("Extracted PO name: $name");
+
+    $po->name($name);
+    update_purchase_order($mgr, $po) or return $e->die_event;
+    return undef;
+}
+
 sub import_lineitem_details {
-    my($mgr, $ordering_agency, $li) = @_;
+    my($mgr, $ordering_agency, $li, $fiscal_year) = @_;
 
     my $holdings = $mgr->editor->json_query({from => ['acq.extract_provider_holding_data', $li->id]});
     return 1 unless @$holdings;
@@ -1441,7 +1544,7 @@ sub import_lineitem_details {
     while(1) {
         # create a lineitem detail for each copy in the data
 
-        my $compiled = extract_lineitem_detail_data($mgr, $org_path, $holdings, $idx);
+        my $compiled = extract_lineitem_detail_data($mgr, $org_path, $holdings, $idx, $fiscal_year);
         last unless defined $compiled;
         return 0 unless $compiled;
 
@@ -1477,7 +1580,7 @@ sub import_lineitem_details {
 
 # return hash on success, 0 on error, undef on no more holdings
 sub extract_lineitem_detail_data {
-    my($mgr, $org_path, $holdings, $index) = @_;
+    my($mgr, $org_path, $holdings, $index, $fiscal_year) = @_;
 
     my @data_list = grep { $_->{holding} eq $index } @$holdings;
     return undef unless @data_list;
@@ -1503,7 +1606,7 @@ sub extract_lineitem_detail_data {
             # search up the org tree for the most appropriate fund
             for my $org (@$org_path) {
                 $fund = $mgr->editor->search_acq_fund(
-                    {org => $org, code => $code, year => DateTime->now->year}, {idlist => 1})->[0];
+                    {org => $org, code => $code, year => $fiscal_year}, {idlist => 1})->[0];
                 last if $fund;
             }
         }
@@ -1546,17 +1649,28 @@ sub extract_lineitem_detail_data {
     # ---------------------------------------------------------------------
     # Shelving Location
     if( my $name = $compiled{copy_location}) {
-        my $loc = $mgr->cache($base_org, "copy_loc.$name");
+
+        my $cp_base_org = $base_org;
+
+        if ($compiled{owning_lib}) {
+            # start looking for copy locations at the copy 
+            # owning lib instaed of the upload context org
+            $cp_base_org = $compiled{owning_lib};
+        }
+
+        my $loc = $mgr->cache($cp_base_org, "copy_loc.$name");
         unless($loc) {
-            for my $org (@$org_path) {
+            my $org = $cp_base_org;
+            while ($org) {
                 $loc = $mgr->editor->search_asset_copy_location(
                     {owning_lib => $org, name => $name}, {idlist => 1})->[0];
                 last if $loc;
+                $org = $mgr->editor->retrieve_actor_org_unit($org)->parent_ou;
             }
         }
         return $killme->("Invalid copy location $name") unless $loc;
         $compiled{copy_location} = $loc;
-        $mgr->cache($base_org, "copy_loc.$name", $loc);
+        $mgr->cache($cp_base_org, "copy_loc.$name", $loc);
     }
 
     return \%compiled;
@@ -2305,13 +2419,14 @@ __PACKAGE__->register_method(
 );
 
 sub activate_purchase_order {
-    my($self, $conn, $auth, $po_id, $vandelay) = @_;
+    my($self, $conn, $auth, $po_id, $vandelay, $options) = @_;
+    $options ||= {};
 
     my $dry_run = ($self->api_name =~ /\.dry_run/) ? 1 : 0;
     my $e = new_editor(authtoken=>$auth);
     return $e->die_event unless $e->checkauth;
     my $mgr = OpenILS::Application::Acq::BatchManager->new(editor => $e, conn => $conn);
-    my $die_event = activate_purchase_order_impl($mgr, $po_id, $vandelay, $dry_run);
+    my $die_event = activate_purchase_order_impl($mgr, $po_id, $vandelay, $dry_run, $options);
     return $e->die_event if $die_event;
     $conn->respond_complete(1);
     $mgr->run_post_response_hooks unless $dry_run;
@@ -2320,7 +2435,7 @@ sub activate_purchase_order {
 
 # xacts managed within
 sub activate_purchase_order_impl {
-    my ($mgr, $po_id, $vandelay, $dry_run) = @_;
+    my ($mgr, $po_id, $vandelay, $dry_run, $options) = @_;
 
     # read-only until lineitem asset creation
     my $e = $mgr->editor;
@@ -2328,6 +2443,10 @@ sub activate_purchase_order_impl {
 
     my $po = $e->retrieve_acq_purchase_order($po_id) or return $e->die_event;
     return $e->die_event unless $e->allowed('CREATE_PURCHASE_ORDER', $po->ordering_agency);
+
+    return $e->die_event(OpenILS::Event->new('PO_ALREADY_ACTIVATED'))
+        if $po->order_date; # PO cannot be re-activated
+
     my $provider = $e->retrieve_acq_provider($po->provider);
 
     # find lineitems and create assets for all
@@ -2362,7 +2481,7 @@ sub activate_purchase_order_impl {
         $li->state('on-order');
         $li->claim_policy($provider->default_claim_policy)
             if $provider->default_claim_policy and !$li->claim_policy;
-        create_lineitem_debits($mgr, $li, $dry_run) or return $e->die_event;
+        create_lineitem_debits($mgr, $li, $dry_run, $options) or return $e->die_event;
         update_lineitem($mgr, $li) or return $e->die_event;
         $mgr->post_process( sub { create_lineitem_status_events($mgr, $li->id, 'aur.ordered'); });
         $mgr->respond;
@@ -3370,6 +3489,7 @@ sub add_li_to_po {
         return {success => 0, li => $li, error => 'bad-li-state'};
     }
 
+    $li->provider($po->provider);
     $li->purchase_order($po_id);
     $li->state('pending-order');
     update_lineitem($mgr, $li) or return $e->die_event;
@@ -3377,6 +3497,45 @@ sub add_li_to_po {
     $e->commit;
     return {success => 1};
 }
+
+__PACKAGE__->register_method(
+    method => 'po_lineitems_no_copies',
+    api_name => 'open-ils.acq.purchase_order.no_copy_lineitems.id_list',
+    stream => 1,
+    authoritative => 1, 
+    signature => {
+        desc => q/Returns the set of lineitem IDs for a given PO that have no copies attached/,
+        params => [
+            {desc => 'Authentication token', type => 'string'},
+            {desc => 'The purchase order id', type => 'number'},
+        ],
+        return => {desc => 'Stream of lineitem IDs on success, event on error'}
+    }
+);
+
+sub po_lineitems_no_copies {
+    my ($self, $conn, $auth, $po_id) = @_;
+
+    my $e = new_editor(authtoken => $auth);
+    return $e->event unless $e->checkauth;
+
+    # first check the view perms for LI's attached to this PO
+    my $po = $e->retrieve_acq_purchase_order($po_id) or return $e->event;
+    return $e->event unless $e->allowed('VIEW_PURCHASE_ORDER', $po->ordering_agency);
+
+    my $ids = $e->json_query({
+        select => {jub => ['id']},
+        from => {jub => {acqlid => {type => 'left'}}},
+        where => {
+            '+jub' => {purchase_order => $po_id},
+            '+acqlid' => {lineitem => undef}
+        }
+    });
+
+    $conn->respond($_->{id}) for @$ids;
+    return undef;
+}
+
 
 1;
 

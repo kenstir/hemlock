@@ -206,18 +206,51 @@ if(!dojo._hasResource['openils.widget.EditPane']) {
                 return this.fieldList.map(function(a) { return a.name });
             },
 
-            getFieldValue : function(field) {
+            // Apply a function for the name and formatted value of each field
+            // in this edit pane.  If any required value is null, then return
+            // an error object.
+            mapValues: function (fn) {
+                var e = 0, msg = this.fmIDL.label + ' ';
+                dojo.forEach(this.fieldList, function (f) {
+                    var v, w = f.widget;
+                    if ((v = w.getFormattedValue()) === null && w.isRequired()) { e++; }
+                    fn(f.name, v);
+                });
+                if (e > 0) {
+                    msg += 'edit pane has ' + e + ' required field(s) that contain no value(s)';
+                    return new Error(msg);
+                }
+            },
+
+            getFieldValue : function(field, checkRequired) {
                 for(var i in this.fieldList) {
                     if(field == this.fieldList[i].name) {
                         var val = this.fieldList[i].widget.getFormattedValue();
-                        if (val == null && /* XXX stricter check needed? */
+                        if (checkRequired &&
+                            val == null && /* XXX stricter check needed? */
                             this.fieldList[i].widget.isRequired()) {
                             throw new Error("req");
                         }
                         return val;
+
                     }
                 }
             },
+
+            getFieldWidget : function(field) {
+                for (var i in this.fieldList)
+                    if (field == this.fieldList[i].name)
+                        return this.fieldList[i].widget;
+            },
+
+            setFieldValue : function(field, val) {
+                for(var i in this.fieldList) {
+                    if(field == this.fieldList[i].name) {
+                        this.fieldList[i].widget.widget.attr('value', val);
+                    }
+                }
+            },
+
 
             performAutoEditAction : function() {
                 var self = this;
@@ -237,7 +270,7 @@ if(!dojo._hasResource['openils.widget.EditPane']) {
                 try {
                     for(var idx in fields) {
                         this.fmObject[fields[idx]](
-                            this.getFieldValue(fields[idx])
+                            this.getFieldValue(fields[idx], true)
                         );
                     }
                 } catch (E) {

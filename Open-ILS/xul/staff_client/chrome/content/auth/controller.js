@@ -147,10 +147,15 @@ auth.controller.prototype = {
                         ['render'],
                         function(e) {
                             return function() {
+                                var list = [];
                                 for (var s in obj.data.ws_info) {
+                                    list.push(s);
+                                }
+                                list.sort();
+                                for (var i = 0; i < list.length; i++) {
                                     var mi = document.createElement('menuitem');
-                                    mi.setAttribute('label',s);
-                                    mi.setAttribute('value',s);
+                                    mi.setAttribute('label',list[i]);
+                                    mi.setAttribute('value',list[i]);
                                     e.appendChild(mi);
                                 }
                             };
@@ -196,7 +201,6 @@ auth.controller.prototype = {
                                             ws.name /*+ ' @  ' + ws.lib_shortname*/
                                         )
                                     );
-                                    netscape.security.PrivilegeManager.enablePrivilege('UniversalXPConnect');
                                     JSAN.use('util.file'); var file = new util.file('last_ws_server');
                                     file.set_object(obj.controller.view.server_prompt.value);
                                     file.close();
@@ -272,7 +276,6 @@ auth.controller.prototype = {
         obj.session = new auth.session(obj.controller.view);
 
         obj.controller.render();
-        obj.test_server( obj.controller.view.server_prompt.value );
         obj.controller.render('ws_deck'); 
 
         if (typeof this.on_init == 'function') {
@@ -284,7 +287,6 @@ auth.controller.prototype = {
     'test_server' : function(url) {
         var obj = this;
         if (!url) {
-            netscape.security.PrivilegeManager.enablePrivilege('UniversalXPConnect');
             JSAN.use('util.file'); var file = new util.file('last_ws_server');
             if (file._file.exists()) {
                 url = file.get_object(); file.close();
@@ -317,9 +319,15 @@ auth.controller.prototype = {
                     if (x.status == 200) {
                         s.setAttribute('style','color: green;');
                     } else {
+                        if(x.status == 0) {
+                            s.setAttribute('value', document.getElementById('authStrings').getString('staff.auth.controller.error_hostname'));
+                            obj.controller.view.server_prompt.disabled = false;
+                            obj.controller.view.server_prompt.focus();
+                        }
                         s.setAttribute('style','color: red;');
                     }
-                    obj.test_version(url);
+                    if(x.status > 0)
+                        obj.test_version(url);
                 } catch(E) {
                     obj.controller.view.server_prompt.disabled = false;
                     obj.controller.view.server_prompt.focus();
@@ -554,9 +562,11 @@ auth.controller.prototype = {
         this.data.menu_perms = false;
         this.data.current_hotkeyset = undefined;
         this.data.enable_debug = this.data.debug_client;
+        this.data.session = undefined;
         this.data.stash('menu_perms');
         this.data.stash('current_hotkeyset');
         this.data.stash('enable_debug');
+        this.data.stash('session');
 
         /* FIXME - need some locking or object destruction for the async tests */
         /* this.test_server( this.controller.view.server_prompt.value ); */

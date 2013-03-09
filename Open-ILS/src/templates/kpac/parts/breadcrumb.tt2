@@ -1,0 +1,47 @@
+<div class="breadcrumb">
+    [% clear_params = ['action', 'hold', 'pickup_lib', 'ac', 'copy_limit', 'copy_offset', 'list'] %]
+
+    <!-- home page -->
+    <a href="[% mkurl(ctx.kpac_root _ '/home', {}, ['trail', 'page']) %]" 
+        class="bread_home"><img alt="[% l('Home') %]" 
+        src="[% ctx.media_prefix %]/images/kpac/home_icon.png" /></a>
+
+    <!-- category trail -->
+    [%  trail = CGI.param('trail'); 
+        trail = trail ? trail.split('/') : [];
+        FOR page_id IN trail;
+            page = ctx.kpac_config.pages.page.$page_id %]
+            <div class="bread_green_mid">&nbsp;</div>
+            <a href="[% mkurl(ctx.kpac_root _ '/category', 
+                {trail = trail_splice(page_id)}, clear_params) %]">[% page.name | html %]</a>
+    [%  END %]
+
+    [% IF ctx.page != 'index' AND ctx.page != 'category' %]
+
+        <!-- search results -->
+        <div class="bread_green_mid">&nbsp;</div>
+        <a href="[% mkurl(ctx.kpac_root _ '/results', {}, clear_params) %]">[% l('search results') | html %]</a>
+
+        [% IF ctx.page != 'rresult' %]
+
+            <!-- record title -->
+            <div class="bread_green_mid">&nbsp;</div>
+            [%  tlen = 18; # TODO config?
+                title = attrs.title || '';
+                IF title.length > tlen;
+                    title = l('[_1]...', title.substr(0, tlen - 3));
+                END;
+                # I know there's a way to do this all w/ substr, 
+                # but it's trying my patience.  this works.
+            %]
+            <a href="[% mkurl(ctx.kpac_root _ '/record/' _ ctx.bre_id, {}, clear_params) %]">[% title | html %]</a>
+
+            <!-- Get it -->
+            <div class="bread_green_last">&nbsp;</div>
+            <span class="bread_last">[% l('Get it') %]</span>
+            <div class="clear">&nbsp;</div>
+
+        [% END %]
+    [% END %]
+</div>
+

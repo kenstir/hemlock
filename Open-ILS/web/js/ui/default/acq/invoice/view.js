@@ -1,6 +1,8 @@
 dojo.require('dojo.date.locale');
 dojo.require('dojo.date.stamp');
+dojo.require('dojo.cookie');
 dojo.require('dijit.form.CheckBox');
+dojo.require('dijit.form.Button');
 dojo.require('dijit.form.CurrencyTextBox');
 dojo.require('dijit.form.NumberTextBox');
 dojo.require('openils.User');
@@ -11,6 +13,7 @@ dojo.require('openils.widget.EditPane');
 dojo.require('openils.widget.AutoFieldWidget');
 dojo.require('openils.widget.ProgressDialog');
 dojo.require('openils.acq.Lineitem');
+dojo.require('openils.XUL');
 
 dojo.requireLocalization('openils.acq', 'acq');
 var localeStrings = dojo.i18n.getLocalization('openils.acq', 'acq');
@@ -35,6 +38,10 @@ var virtualId = -1;
 var extraCopies = {};
 var extraCopiesFund;
 var widgetRegistry = {acqie : {}, acqii : {}};
+var focusLineitem;
+var searchInitDone = false;
+var termManager;
+var resultManager;
 
 function nodeByName(name, context) {
     return dojo.query('[name='+name+']', context)[0];
@@ -42,15 +49,40 @@ function nodeByName(name, context) {
 
 function init() {
 
-    attachLi = cgi.param('attach_li');
-    attachPo = cgi.param('attach_po');
+    attachLi = cgi.param('attach_li') || [];
+    if (!dojo.isArray(attachLi)) 
+        attachLi = [attachLi];
+
+    attachPo = cgi.param('attach_po') || [];
+    if (!dojo.isArray(attachPo)) 
+        attachPo = [attachPo];
+
+    focusLineitem = new openils.CGI().param('focus_li');
+
+    totalInvoicedBox = dojo.byId('acq-total-invoiced-box');
+    totalPaidBox = dojo.byId('acq-total-paid-box');
+    balanceOwedBox = dojo.byId('acq-total-balance-box');
 
     itemTypes = pcrud.retrieveAll('aiit');
+
+    dojo.byId('acq-invoice-summary-toggle-off').onclick = function() {
+        openils.Util.hide(dojo.byId('acq-invoice-summary'));
+        openils.Util.show(dojo.byId('acq-invoice-summary-small'));
+    };
+
+    dojo.byId('acq-invoice-summary-toggle-on').onclick = function() {
+        openils.Util.show(dojo.byId('acq-invoice-summary'));
+        openils.Util.hide(dojo.byId('acq-invoice-summary-small'));
+    }
 
     if(cgi.param('create')) {
         renderInvoice();
 
+        // show summary info by default for new invoices
+        dojo.byId('acq-invoice-summary-toggle-on').onclick();
+
     } else {
+        dojo.byId('acq-invoice-summary-toggle-off').onclick();
         fieldmapper.standardRequest(
             ['open-ils.acq', 'open-ils.acq.invoice.retrieve.authoritative'],
             {
@@ -78,7 +110,7 @@ function init() {
 function renderInvoice() {
 
     // in create mode, let the LI or PO render the invoice with seed data
-    if( !(cgi.param('create') && (attachPo || attachLi)) ) {
+    if( !(cgi.param('create') && (attachPo.length || attachLi.length)) ) {
         invoicePane = drawInvoicePane(dojo.byId('acq-view-invoice-div'), invoice);
     }
 
@@ -109,35 +141,40 @@ function renderInvoice() {
         );
     }
 
+    // display items and entries in ID order 
+    // which effectively equates to add order.
+    function idsort(a, b) { return a.id() < b.id() ? -1 : 1 }
+
     if(invoice) {
         dojo.forEach(
-            invoice.items(),
+            invoice.items().sort(idsort),
             function(item) {
                 addInvoiceItem(item);
             }
         );
 
         dojo.forEach(
-            invoice.entries(),
+            invoice.entries().sort(idsort),
             function(entry) {
                 addInvoiceEntry(entry);
             }
         );
     }
 
-    if(attachLi) doAttachLi();
-    if(attachPo) doAttachPo();
+    if(attachLi.length) doAttachLi();
+    if(attachPo.length) doAttachPo(0);
 }
 
-function doAttachLi() {
+function doAttachLi(skipInit) {
 
     //var invoiceArgs = {provider : lineitem.provider(), shipper : lineitem.provider()}; 
-    if(cgi.param('create')) {
+    if(cgi.param('create') && !skipInit) {
 
+        // use the first LI in the list to determine the default provider
         fieldmapper.standardRequest(
             ['open-ils.acq', 'open-ils.acq.lineitem.retrieve.authoritative'],
             {
-                params : [openils.User.authtoken, attachLi, {clear_marc:1}],
+                params : [openils.User.authtoken, attachLi[0], {clear_marc:1}],
                 oncomplete : function(r) {
                     var li = openils.Util.readResponse(r);
                     invoicePane = drawInvoicePane(
@@ -149,27 +186,34 @@ function doAttachLi() {
         );
     }
 
-    var entry = new fieldmapper.acqie();
-    entry.id(virtualId--);
-    entry.isnew(true);
-    entry.lineitem(attachLi);
-    addInvoiceEntry(entry);
+    dojo.forEach(attachLi,
+        function(li) {
+            var entry = new fieldmapper.acqie();
+            entry.id(virtualId--);
+            entry.isnew(true);
+            entry.lineitem(li);
+            addInvoiceEntry(entry);
+        }
+    );
 }
 
-function doAttachPo() {
+function doAttachPo(idx) {
+
+    if (idx == attachPo.length) return;
+    var poId = attachPo[idx];
 
     fieldmapper.standardRequest(
         ['open-ils.acq', 'open-ils.acq.purchase_order.retrieve'],
         {   async: true,
             params: [
-                openils.User.authtoken, attachPo, 
+                openils.User.authtoken, poId,
                 {flesh_lineitem_ids : true, flesh_po_items : true}
             ],
             oncomplete: function(r) {
                 var po = openils.Util.readResponse(r);
 
-                if(cgi.param('create')) {
-                    // render the invoice using some seed data from the PO
+                if(cgi.param('create') && idx == 0) {
+                    // render the invoice using some seed data from the first PO
                     var invoiceArgs = {provider : po.provider(), shipper : po.provider()}; 
                     invoicePane = drawInvoicePane(dojo.byId('acq-view-invoice-div'), null, invoiceArgs);
                 }
@@ -200,9 +244,243 @@ function doAttachPo() {
                         addInvoiceItem(item);
                     }
                 );
+
+                doAttachPo(++idx);
             }
         }
     );
+}
+
+// XUL cookie bits
+var cookieUriSSL, cookieSvc, cookieMgr;
+
+function performSearch(pageDir, clearFirst) {
+    if (clearFirst)
+        clearSearchResTable(); 
+
+    var searchObject = termManager.buildSearchObject();
+
+    if (openils.XUL.isXUL()) {
+
+        cookieSvc.setCookieString(cookieUriSSL, null, 
+            "invs=" + base64Encode(searchObject) + ';max-age=2592000', null);
+
+        cookieSvc.setCookieString(cookieUriSSL, null, 
+            "invc=" + dojo.byId("acq-unified-conjunction").getValue() + 
+                ';max-age=2592000', null);
+
+    } else {
+
+        dojo.cookie('invs', base64Encode(searchObject));
+        dojo.cookie('invc', dojo.byId("acq-unified-conjunction").getValue());
+    }
+
+    if (pageDir == 0) { // new search
+        resultsLoader.displayOffset = 0;
+    } else {
+        resultsLoader.displayOffset += pageDir * resultsLoader.displayLimit;
+    }
+
+    if (resultsLoader.displayOffset == 0) {
+        openils.Util.hide('acq-inv-search-prev');
+    } else {
+        openils.Util.show('acq-inv-search-prev', 'inline');
+    }
+
+    if (dojo.byId('acq-invoice-search-limit-invoiceable').checked) {
+        if (!searchObject.jub) 
+            searchObject.jub = [];
+
+        // exclude lineitems that are "cancelled" (sidebar: 'Mericans spell it 'canceled')
+        searchObject.jub.push({state : 'cancelled', '__not' : true});
+
+        // exclude lineitems already linked to this invoice
+        if (invoice && invoice.id() > 0) { 
+            if (!searchObject.acqinv)
+                searchObject.acqinv = [];
+            searchObject.acqinv.push({id : invoice.id(), '__not' : true});
+        }
+
+        // limit to lineitems that have invoiceable copies
+        searchObject.acqlisumi = [{item_count : 1, '_gte' : true}];
+
+        // limit to provider if a provider is selected
+        var provider = invoicePane.getFieldValue('provider');
+        if (provider) {
+            if (!searchObject.jub.filter(function(i) { return i.provider != null }).length)
+                searchObject.jub.push({provider : provider});
+        }
+    }
+
+    if (dojo.byId('acq-invoice-search-sort-title').checked) {
+        uriManager.order_by = 
+            [ {"class": "acqlia", "field":"attr_value", "transform":"first"} ];
+    }
+
+    resultsLoader.lastSearch = searchObject;
+    resultManager.go(searchObject)
+    console.log('Lineitem Search: ' + js2JSON(searchObject));
+    focusLastSearchInput();
+}
+
+
+function renderUnifiedSearch() {
+
+    if (!searchInitDone) {
+
+        searchInitDone = true;
+        termManager = new TermManager();
+        resultManager = new ResultManager();
+        resultsLoader = new searchResultsLoader();
+        uriManager = new URIManager();
+
+        // define custom lineitem result handler
+        resultManager.result_types = {
+            "lineitem": {
+                "search_options": { "id_list": true },
+                "revealer": function() { },
+                "finisher": function() {
+                    resultsLoader.batch_length = resultManager.count_results;
+                },
+                "adder": function(li) {
+                    resultsLoader.addLineitem(li);
+                },
+                "interface": resultsLoader
+            },
+            "no_results": {
+                "revealer": function() { }
+            }
+
+        };
+
+        resultManager.no_results_popup = true;
+        resultManager.submitter = smartSearchSubmitter;
+
+        var searchObject, searchConjunction;
+
+        if (openils.XUL.isXUL()) {
+    
+            if (!cookieSvc) {
+
+                var ios = Components.classes["@mozilla.org/network/io-service;1"]
+                    .getService(Components.interfaces.nsIIOService);
+
+                cookieUriSSL = ios.newURI("https://" + location.hostname, null, null);
+    
+                cookieSvc = Components.classes["@mozilla.org/cookieService;1"]
+                    .getService(Components.interfaces.nsICookieService);
+
+
+                cookieManager = Components.classes["@mozilla.org/cookiemanager;1"]
+                    .getService(Components.interfaces.nsICookieManager);
+            }
+
+            var iter = cookieManager.enumerator;
+            while (iter.hasMoreElements()) {
+                var cookie = iter.getNext();
+                if (cookie instanceof Components.interfaces.nsICookie) {
+                    if (cookie.name == 'invs')
+                        searchObject = cookie.value;
+                    if (cookie.name == 'invc')
+                        searchConjunction = cookie.value;
+                }
+            }
+
+        } else {
+            // useful for web-based testing
+            searchObject = dojo.cookie('invs');
+            searchConjunction = dojo.cookie('invc');
+        }
+
+        if (searchObject) {
+
+            // if there is a search object cookie, populate the search form
+            termManager.reflect(base64Decode(searchObject));
+            dojo.byId("acq-unified-conjunction").setValue(searchConjunction);
+
+        } else {
+            console.log('adding row');
+            termManager.addRow();
+        }
+    }
+
+    dojo.addClass(dojo.byId('oils-acq-invoice-table'), 'hidden');
+    dojo.removeClass(dojo.byId('oils-acq-invoice-search'), 'hidden');
+    focusLastSearchInput();
+}
+
+function focusLastSearchInput() {
+    // TODO: see about making this better and moving it into search/unified.js
+    var wnodes = dojo.query('[name=widget]');
+    var inputNode = wnodes.item(wnodes.length - 1).firstChild;
+    if (inputNode) {
+        try {
+            inputNode.select();
+        } catch(E) {
+            inputNode.focus();
+        }
+    }
+}
+
+var resultsTbody, resultsRow;
+function searchResultsLoader() {
+    this.displayOffset = 0;
+    this.displayLimit = 10;
+
+    if (!resultsTbody) {
+        resultsTbody = dojo.byId('acq-invoice-search-results-tbody');
+        resultsRow = resultsTbody.removeChild(dojo.byId('acq-invoice-search-results-tr'));
+    }
+
+    this.addLineitem = function(li_id) {
+        console.log('Adding search result lineitem ' + li_id);
+        var row = resultsRow.cloneNode(true);
+        resultsTbody.appendChild(row);
+        var checkbox = dojo.query('[name=search-results-checkbox]', row)[0];
+        checkbox.setAttribute('lineitem', li_id);
+
+        // this lineitem is already part of the invoice
+        if (dojo.query('[entry_lineitem_row=' + li_id + ']')[0]) {
+            checkbox.disabled = true;
+            dojo.addClass(checkbox.parentNode, 'search-results-already-invoiced');
+        }
+
+        openils.acq.Lineitem.fetchAndRender(
+            li_id, {}, 
+            function(li, html) { 
+                dojo.query('[name=search-results-content-div]', row)[0].innerHTML = html;
+            }
+        );
+    }
+}
+
+function addSelectedToInvoice() {
+    var inputs = dojo.query('[name=search-results-checkbox]');
+    attachLi = [];
+    dojo.forEach(inputs,
+        function(checkbox) {
+            if (checkbox.checked) {
+                attachLi.push(checkbox.getAttribute('lineitem'));
+                checkbox.disabled = true;
+                checkbox.checked = false;
+                dojo.addClass(checkbox.parentNode, 'search-results-already-invoiced');
+            }
+        }
+    );
+    doAttachLi(true);
+}
+
+allResSelected = false;
+function clearSearchResTable() {
+    allResSelected = false;
+    while (resultsTbody.childNodes[0])
+        resultsTbody.removeChild(resultsTbody.childNodes[0]);
+}
+
+function selectSearchResults() {
+    allResSelected = !allResSelected;
+    dojo.query('[name=search-results-checkbox]').forEach(
+        function(input) { input.checked = allResSelected });
 }
 
 function updateTotalCost() {
@@ -214,7 +492,7 @@ function updateTotalCost() {
     for(var id in widgetRegistry.acqie) 
         if(!widgetRegistry.acqie[id]._object.isdeleted())
             totalCost += Number(widgetRegistry.acqie[id].cost_billed.getFormattedValue());
-    totalInvoicedBox.attr('value', totalCost);
+    totalInvoicedBox.innerHTML = totalCost.toFixed(2);
 
     totalPaid = 0;    
     for(var id in widgetRegistry.acqii) 
@@ -223,27 +501,27 @@ function updateTotalCost() {
     for(var id in widgetRegistry.acqie) 
         if(!widgetRegistry.acqie[id]._object.isdeleted())
             totalPaid += Number(widgetRegistry.acqie[id].amount_paid.getFormattedValue());
-    totalPaidBox.attr('value', totalPaid);
+    totalPaidBox.innerHTML = totalPaid.toFixed(2);
 
     var buttonsDisabled = false;
 
     if(totalPaid > totalCost || totalPaid < 0) {
-        openils.Util.addCSSClass(totalPaidBox.domNode, 'acq-invoice-invalid-amount');
+        openils.Util.addCSSClass(totalPaidBox, 'acq-invoice-invalid-amount');
         invoiceSaveButton.attr('disabled', true);
         invoiceProrateButton.attr('disabled', true);
         buttonsDisabled = true;
     } else {
-        openils.Util.removeCSSClass(totalPaidBox.domNode, 'acq-invoice-invalid-amount');
+        openils.Util.removeCSSClass(totalPaidBox, 'acq-invoice-invalid-amount');
         invoiceSaveButton.attr('disabled', false);
         invoiceProrateButton.attr('disabled', false);
     }
 
     if(totalCost < 0) {
-        openils.Util.addCSSClass(totalInvoicedBox.domNode, 'acq-invoice-invalid-amount');
+        openils.Util.addCSSClass(totalInvoicedBox, 'acq-invoice-invalid-amount');
         invoiceSaveButton.attr('disabled', true);
         invoiceProrateButton.attr('disabled', true);
     } else {
-        openils.Util.removeCSSClass(totalInvoicedBox.domNode, 'acq-invoice-invalid-amount');
+        openils.Util.removeCSSClass(totalInvoicedBox, 'acq-invoice-invalid-amount');
         if(!buttonsDisabled) {
             invoiceSaveButton.attr('disabled', false);
             invoiceProrateButton.attr('disabled', false);
@@ -256,7 +534,9 @@ function updateTotalCost() {
         invoiceCloseButton.attr('disabled', true);
     }
 
-    balanceOwedBox.attr('value', (totalCost - totalPaid));
+    balanceOwedBox.innerHTML = (totalCost - totalPaid).toFixed(2);
+
+    updateExpectedCost();
 }
 
 
@@ -298,6 +578,7 @@ function addInvoiceItem(item) {
             } else if(field == 'cost_billed' || field == 'amount_paid') {
                 args = {required : true, style : 'width: 8em'};
             }
+
             registerWidget(
                 item,
                 field,
@@ -430,11 +711,71 @@ function updateReceiveLink(li) {
     link.onclick = function() { location.href =  oilsBasePath + '/acq/invoice/receive/' + invoiceId; };
 }
 
+/*
+ * Ensures focusLineitem is in view and causes a brief 
+ * border around the lineitem to come to life then fade.
+ */
+function focusLi() {
+    if (!focusLineitem) return;
+
+    // set during addLineitem()
+    var node = dojo.byId('li-title-ref-' + focusLineitem);
+
+    console.log('focus: li-title-ref-' + focusLineitem + ' : ' + node);
+
+    // LI may not yet be rendered
+    if (!node) return; 
+
+    console.log('focusing ' + focusLineitem);
+
+    // prevent numerous re-focuses
+    focusLineitem = null; 
+
+    // causes the full row to be visible
+    dijit.scrollIntoView(node);
+
+    dojo.require('dojox.fx');
+
+    setTimeout(
+        function() {
+            dojox.fx.highlight({color : '#BB4433', node : node, duration : 2000}).play();
+        }, 
+    100);
+}
+
+
+// expected cost is totalCostInvoiced + totalCostNotYetInvoiced
+function updateExpectedCost() {
+
+    var cost = Number(totalInvoicedBox.innerHTML || 0);
+
+    // for any LI's that are not yet billed (i.e. filled in)
+    // use the total expected cost for that lineitem.
+    for(var id in widgetRegistry.acqie) {
+        var entry = widgetRegistry.acqie[id]._object;
+        if(!entry.isdeleted()) {
+            if (Number(widgetRegistry.acqie[id].cost_billed.getFormattedValue()) == 0) {
+                var li = entry.lineitem();
+                cost += 
+                    Number(li.order_summary().estimated_amount()) - 
+                    Number(li.order_summary().paid_amount());
+            }
+        }
+    }
+
+    dojo.byId('acq-invoice-summary-cost').innerHTML = cost.toFixed(2);
+}
+
+var invoicEntryWidgets = {};
 function addInvoiceEntry(entry) {
+    console.log('Adding new entry for lineitem ' + entry.lineitem());
 
     openils.Util.removeCSSClass(dojo.byId('acq-invoice-entry-header'), 'hidden');
     openils.Util.removeCSSClass(dojo.byId('acq-invoice-entry-thead'), 'hidden');
     openils.Util.removeCSSClass(dojo.byId('acq-invoice-entry-tbody'), 'hidden');
+
+    dojo.byId('acq-invoice-summary-count').innerHTML = 
+        Number(dojo.byId('acq-invoice-summary-count').innerHTML) + 1;
 
     entryTbody = dojo.byId('acq-invoice-entry-tbody');
     if(entryTemplate == null) {
@@ -447,6 +788,7 @@ function addInvoiceEntry(entry) {
 
     var row = entryTemplate.cloneNode(true);
     row.setAttribute('lineitem', entry.lineitem());
+    row.setAttribute('entry_lineitem_row', entry.lineitem());
 
     openils.acq.Lineitem.fetchAndRender(
         entry.lineitem(), {}, 
@@ -455,13 +797,28 @@ function addInvoiceEntry(entry) {
             entry.purchase_order(li.purchase_order());
             nodeByName('title_details', row).innerHTML = html;
 
+            nodeByName('title_details', row).parentNode.id = 'li-title-ref-' + li.id();
+            console.log(dojo.byId('li-title-ref-' + li.id()));
+
             updateReceiveLink(li);
+
+            // set some default values if otherwise unset
+            if (!invoicePane.getFieldValue('receiver')) {
+                invoicePane.setFieldValue('receiver', li.purchase_order().ordering_agency());
+            }
+            if (!invoicePane.getFieldValue('provider')) {
+                invoicePane.setFieldValue('provider', li.purchase_order().provider());
+            }
 
             dojo.forEach(
                 ['inv_item_count', 'phys_item_count', 'cost_billed', 'amount_paid'],
                 function(field) {
                     var dijitArgs = {required : true, constraints : {min: 0}, style : 'width:6em'};
-                    if(!field.match(/count/)) dijitArgs.style = 'width:9em';
+                    if(field.match(/count/)) {
+                        dijitArgs.style = 'width:4em;';
+                    } else {
+                        dijitArgs.style = 'width:9em;';
+                    }
                     if(entry.isnew() && field == 'phys_item_count') {
                         // by default, attempt to pay for all non-canceled and as-of-yet-un-invoiced items
                         var count = Number(li.order_summary().item_count() || 0) - 
@@ -482,6 +839,7 @@ function addInvoiceEntry(entry) {
                             parentNode : nodeByName(field, row)
                         }),
                         function(w) {    
+
                             if(field == 'phys_item_count') {
                                 dojo.connect(w, 'onChange', 
                                     function() {
@@ -494,11 +852,22 @@ function addInvoiceEntry(entry) {
                                         }
                                     }
                                 )
-                            }
-                        }
+                            } // if
+
+                            if(field == 'inv_item_count' || field == 'cost_billed') {
+                                setPerCopyPrice(row, entry);
+                                // update the per-copy count as invoice count and cost billed change 
+                                dojo.connect(w, 'onChange', function() { setPerCopyPrice(row, entry) } );
+                            } 
+
+                        } // func
                     );
                 }
             );
+
+            updateTotalCost();
+            if (focusLineitem == li.id())
+                focusLi();
         }
     );
 
@@ -529,7 +898,22 @@ function addInvoiceEntry(entry) {
     }
 
     entryTbody.appendChild(row);
-    updateTotalCost();
+}
+
+function setPerCopyPrice(row, entry) {
+    var inv_w = widgetRegistry.acqie[entry.id()].inv_item_count;
+    var bill_w = widgetRegistry.acqie[entry.id()].cost_billed;
+
+    if (inv_w && bill_w) {
+        var invoiced = Number(inv_w.getFormattedValue());
+        var billed = Number(bill_w.getFormattedValue());
+        console.log(invoiced + ' : ' + billed);
+        if (invoiced > 0) {
+            nodeByName('amount_paid_per_copy', row).innerHTML = (billed / invoiced).toFixed(2);
+        } else {
+            nodeByName('amount_paid_per_copy', row).innerHTML = '0.00';
+        }
+    }
 }
 
 function liMarcAttr(lineitem, name) {
@@ -544,24 +928,50 @@ function liMarcAttr(lineitem, name) {
     return (attr) ? attr.attr_value() : '';
 }
 
-function saveChanges(doProrate, doClose, doReopen) {
-    createExtraCopies(
-        function() {
-            saveChangesPartTwo(doProrate, doClose, doReopen);
-        }
-    );
+function saveChanges(args) {
+    args = args || {};
+    createExtraCopies(function() { saveChangesPartTwo(args); });
 }
 
-function saveChangesPartTwo(doProrate, doClose, doReopen) {
-    
-    progressDialog.show(true);
+// Define a helper function to 'unflesh' sub-objects from an fmclass object.
+// 'this' specifies the object; the arguments specify a list of names of
+// sub-objects.
+function unflesh() {
+    var _, $ = this;
+    dojo.forEach(arguments, function (n) {
+        _ = $[n]();
+        if (_ !== null && typeof _ === 'object')
+            $[n]( _.id() );
+    });
+}
 
-    if(doReopen) {
+function saveChangesPartTwo(args) {
+    args = args || {};
+
+    if(args.reopen) {
         invoice.complete('f');
 
     } else {
 
+        // Prepare an invoice for submission
+        if(!invoice) {
+            invoice = new fieldmapper.acqinv();
+            invoice.isnew(true);
+        } else {
+            invoice.ischanged(true); // for now, just always update
+        }
 
+        var e = invoicePane.mapValues(function (n, v) { invoice[n](v); });
+        if (e instanceof Error) {
+            alert(e.message);
+            return;
+        }
+
+        if(args.close)
+            invoice.complete('t');
+
+
+        // Prepare any charge items
         var updateItems = [];
         for(var id in widgetRegistry.acqii) {
             var reg = widgetRegistry.acqii[id];
@@ -574,19 +984,17 @@ function saveChangesPartTwo(doProrate, doClose, doReopen) {
                         item[field]( reg[field].getFormattedValue() );
                 }
                 
-                // unflesh
-                if(item.purchase_order() != null && typeof item.purchase_order() == 'object')
-                    item.purchase_order( item.purchase_order().id() );
+                unflesh.call(item, 'purchase_order');
+
             }
         }
 
+        // Prepare any line items
         var updateEntries = [];
         for(var id in widgetRegistry.acqie) {
             var reg = widgetRegistry.acqie[id];
             var entry = reg._object;
             if(entry.ischanged() || entry.isnew() || entry.isdeleted()) {
-                entry.lineitem(entry.lineitem().id());
-                entry.purchase_order(entry.purchase_order().id());
                 updateEntries.push(entry);
                 if(entry.isnew()) entry.id(null);
 
@@ -595,33 +1003,12 @@ function saveChangesPartTwo(doProrate, doClose, doReopen) {
                         entry[field]( reg[field].getFormattedValue() );
                 }
                 
-                // unflesh
-                dojo.forEach(['purchase_order', 'lineitem'],
-                    function(field) {
-                        if(entry[field]() != null && typeof entry[field]() == 'object')
-                            entry[field]( entry[field]().id() );
-                    }
-                );
+                unflesh.call(entry, 'purchase_order', 'lineitem');
             }
         }
-
-        if(!invoice) {
-            invoice = new fieldmapper.acqinv();
-            invoice.isnew(true);
-        } else {
-            invoice.ischanged(true); // for now, just always update
-        }
-
-        dojo.forEach(invoicePane.fieldList, 
-            function(field) {
-                invoice[field.name]( field.widget.getFormattedValue() );
-            }
-        );
-
-        if(doClose) 
-            invoice.complete('t');
     }
 
+    progressDialog.show(true);
     fieldmapper.standardRequest(
         ['open-ils.acq', 'open-ils.acq.invoice.update'],
         {
@@ -630,9 +1017,13 @@ function saveChangesPartTwo(doProrate, doClose, doReopen) {
                 progressDialog.hide();
                 var invoice = openils.Util.readResponse(r);
                 if(invoice) {
-                    if(doProrate)
+                    if(args.prorate)
                         return prorateInvoice(invoice);
-                    location.href = oilsBasePath + '/acq/invoice/view/' + invoice.id();
+                    if (args.clear) {
+                        location.href = oilsBasePath + '/acq/invoice/view?create=1';
+                    } else {
+                        location.href = oilsBasePath + '/acq/invoice/view/' + invoice.id();
+                    }
                 }
             }
         }
@@ -690,6 +1081,134 @@ function storeExtraCopies(entry, numExtra) {
     extraItemsDialog.show();
 }
 
+function validateInvIdent(inv_ident, provider, receiver) {
+    if (!(inv_ident && provider && receiver)) {
+        console.info("not enough information to pre-validate inv_ident");
+        return;
+    }
+
+    openils.Util.show("ident-validation-spinner", "inline");
+    var pcrud = new openils.PermaCrud();
+    pcrud.search(
+        "acqinv", {"inv_ident": inv_ident, "provider": provider}, {
+            "oncomplete": function(r) {
+                openils.Util.hide("ident-validation-spinner");
+
+                /* This could throw an event about the user not having perms,
+                 * but in such a case the whole interface is already busted
+                 * anyway. */
+                r = openils.Util.readResponse(r);
+
+                var w = invoicePane.getFieldWidget("inv_ident").widget;
+                if (r.length) {
+                    alert(localeStrings.INVOICE_IDENT_COLLIDE);
+                    w.validator = function() { return false; };
+                    w.validate();
+                } else {
+                    w.validator = function() { return true; };
+                    w.validate();
+                }
+                w.focus();
+                pcrud.disconnect();
+            }
+        }
+    );
+}
+
+function drawInvoicePane(parentNode, inv, args) {
+    args = args || {};
+    var pane;
+
+    var override = {};
+    if(!inv) {
+        override = {
+            recv_date : {widgetValue : dojo.date.stamp.toISOString(new Date())},
+            //receiver : {widgetValue : openils.User.user.ws_ou()},
+            receiver : {
+                "dijitArgs": {
+                    "onChange": function(val) {
+                        validateInvIdent(
+                            invoicePane && invoicePane.getFieldValue("inv_ident"),
+                            invoicePane && invoicePane.getFieldValue("provider"),
+                            val
+                        );
+                    }
+                }
+            },
+            recv_method : {widgetValue : 'PPR'}
+        };
+    }
+
+    dojo.mixin(override, {
+        provider : { 
+            dijitArgs : { 
+                store_options : { base_filter : { active :"t" } },
+                onChange : function(val) {
+                    pane.setFieldValue('shipper', val);
+                    validateInvIdent(
+                        invoicePane && invoicePane.getFieldValue("inv_ident"),
+                        val,
+                        invoicePane && invoicePane.getFieldValue("receiver")
+                    );
+                }
+            } 
+        },
+        shipper  : { dijitArgs : { store_options : { base_filter : { active :"t" } } } }
+    });
+
+    for(var field in args) {
+        override[field] = {widgetValue : args[field]};
+    }
+
+    // push the name of the invoice into the name display field after update
+    override.inv_ident = dojo.mixin(
+        override.inv_ident,
+        {dijitArgs : {onChange :
+            function(newVal) {
+                validateInvIdent(
+                    newVal,
+                    invoicePane && invoicePane.getFieldValue("provider"),
+                    invoicePane && invoicePane.getFieldValue("receiver")
+                );
+
+                if (dojo.byId('acq-invoice-summary-name'))
+                    dojo.byId('acq-invoice-summary-name').innerHTML = newVal;
+            }
+        }}
+    );
+
+
+    pane = new openils.widget.EditPane({
+        fmObject : inv,
+        paneStackCount : 2,
+        fmClass : 'acqinv',
+        mode : (inv) ? 'edit' : 'create',
+        hideActionButtons : true,
+        overrideWidgetArgs : override,
+        readOnly : (inv) && openils.Util.isTrue(inv.complete()),
+        requiredFields : [
+            'inv_ident', 
+            'recv_date', 
+            'provider', 
+            'shipper'
+        ],
+        fieldOrder : [
+            'inv_ident', 
+            'recv_date', 
+            'recv_method', 
+            'inv_type', 
+            'provider', 
+            'shipper'
+        ],
+        suppressFields : ['id', 'complete']
+    });
+
+    pane.startup();
+    parentNode.appendChild(pane.domNode);
+    return pane;
+}
+
+
 function createExtraCopies(oncomplete) {
 
     var lids = [];
@@ -719,6 +1238,10 @@ function createExtraCopies(oncomplete) {
         }
     );
 
+}
+
+function smartSearchSubmitter() {
+    performSearch(0, !dojo.byId('acq-unified-build-progressively').checked);
 }
 
 

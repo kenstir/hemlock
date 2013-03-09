@@ -60,7 +60,7 @@ in over a dozen countries worldwide.
 // Push titles down one level.
 :leveloffset: 1
 
-include::RELEASE_NOTES_2_2.txt[]
+include::RELEASE_NOTES_2_3.txt[]
 
 // Return to normal title levels.
 :leveloffset: 0
@@ -86,13 +86,11 @@ include::installation/server_installation.txt[]
 // Return to normal title levels.
 :leveloffset: 0
 
+include::installation/staff_client_installation.txt[]
+
 include::installation/server_upgrade.txt[]
 
 include::installation/edi_setup.txt[]
-
-// include::staff_client_installation.txt[] 
-// include::org_unit_structure_initialization.txt[]
-// include::loading_data.txt[]
 
 
 System Configuration and Customization
@@ -103,19 +101,41 @@ Introduction
 
 The Evergreen system allows a free range of customizations to every aspect of
 the system. Use this part of the documentation to become familiar with the tools
-for  configuring the system as well as  customizing  the OPAC and staff client.  
+for configuring the system as well as customizing the catalog and staff client.  
 
-// include::global_system_configuration.txt[]
-// include::opac_customization.txt[]
+// Push titles down one level.
+:leveloffset: 1
+
+include::admin_initial_setup/describing_your_organization.txt[]
+
+include::admin_initial_setup/describing_your_people.txt[]
+
+include::admin_initial_setup/migrating_your_data.txt[]
+
+include::admin_initial_setup/importing_via_staff_client.txt[]
+
+include::admin_initial_setup/ordering_materials.txt[]
+
+include::admin_initial_setup/designing_your_catalog.txt[]
+
+include::admin_initial_setup/borrowing_items.txt[]
+
+// Return to normal title levels.
+:leveloffset: 0
 
 include::admin/template_toolkit.txt[]
+
+// Push titles down one level.
+:leveloffset: 1
+
+include::opac/new_skin_customizations.txt[]
+
+// Return to normal title levels.
+:leveloffset: 0
 
 include::admin/auto_suggest_search.txt[]
 
 include::admin/customize_staff_client.txt[]
-
-// include::backing_up.txt[]
- 
 
 
 Using the Staff Client
@@ -129,15 +149,21 @@ This part of the documentation deals with general Staff Client usage including
 logging in, navigation and shortcuts.
 
 
+include::admin/staff_client-login.txt[]
+
 include::admin/staff_client-tab_buttons.txt[]
 
 include::admin/staff_client-double_clicking.txt[]
+
+include::admin/staff_client-patron_border.txt[]
 
 include::admin/staff_client-sorting_columns.txt[]
 
 include::admin/staff_client-recent_searches.txt[]
 
 include::admin/staff_client-return_to_results_from_marc.txt[]
+
+include::admin/workstation_admin.txt[]
 
 System Administration From the Staff Client
 ===========================================
@@ -156,9 +182,13 @@ include::admin/authorities.txt[]
 
 include::admin/cn_prefixes_and_suffixes.txt[]
 
+include::admin/circulation_limit_groups.txt[]
+
 include::admin/restrict_Z39.50_sources_by_perm_group.txt[]
 
 include::admin/booking-admin.txt[]
+
+include::admin/permissions.txt[]
 
 include::admin/SMS_messaging.txt[]
 
@@ -188,8 +218,11 @@ include::admin/recent_staff_searches.txt[]
 
 include::admin/lsa-library_settings_editor.txt[]
 
+include::admin/lsa-standing_penalties.txt[]
+
 include::admin/lsa-statcat.txt[]
 
+include::admin/lsa-work_log.txt[]
 
 Acquisitions
 ===========
@@ -197,6 +230,8 @@ Acquisitions
 include::acquisitions/introduction.txt[]
 
 include::acquisitions/selection_lists_po.txt[]
+
+include::acquisitions/invoices.txt[]
 
 include::acquisitions/receive_items_from_invoice.txt[]
 
@@ -240,6 +275,7 @@ include::serials/G-Special_issue.txt[]
 
 include::serials/H-holdings_statements.txt[]
 
+include::serials/Group_Serials_Issues_in_the_OPAC_2.2.txt[]
 
 Circulation
 ===========
@@ -252,7 +288,21 @@ system.
 
 include::circulation/circulating_items.txt[]
 
+include::circulation/holds_management.txt[]
+
 include::circulation/booking.txt[]
+
+include::circulation/circulation_patron_records.txt[]
+
+include::circulation/triggered_events.txt[]
+
+// Push titles down one level.
+:leveloffset: 1
+
+include::circulation/offline_mode.txt[]
+
+// Return to normal title levels.
+:leveloffset: 0
 
 Reports
 =======
@@ -261,6 +311,26 @@ Introduction
 ------------
 
 Learn how to create and use reports in Evergreen. 
+
+include::reports/reporter_daemon.txt[]
+
+include::reports/reporter_folder.txt[]
+
+include::reports/reporter_create_templates.txt[]
+
+include::reports/reporter_generating_reports.txt[]
+
+include::reports/reporter_view_output.txt[]
+
+include::reports/reporter_cloning_shared_templates.txt[]
+
+include::reports/reporter_add_data_source.txt[]
+
+include::reports/reporter_running_recurring_reports.txt[]
+
+include::reports/reporter_template_terminology.txt[]
+
+include::reports/reporter_export_usingpgAdmin.txt[]
 
 Using the Public Access Catalog
 ===============================
@@ -271,6 +341,17 @@ Introduction
 Use this part for information about searching the Evergreen public access catalog.
 
 include::opac/my_lists.txt[]
+
+include::opac/kids_opac.txt[]
+
+// Push titles down one level.
+:leveloffset: 1
+
+include::opac/search_form.txt[]
+
+// Return to normal title levels.
+:leveloffset: 0
+
 
 Developer Resources
 ===================
@@ -284,22 +365,19 @@ communication protocols and standards used in Evergreen.
 // Push titles down one level.
 :leveloffset: 1
 
+include::development/intro_opensrf.txt[]
 include::development/updating_translations_launchpad.txt[]
 
 // Return to normal title levels.
 :leveloffset: 0
 
-[appendix]
-
 include::attributions.txt[]
 
 include::licensing.txt[]
 
+[appendix]
 Admonitions
 ===========
-
-Images used for Admonitions
----------------------------
 
 * Note 
 
@@ -317,4 +395,7 @@ image::media/caution.png[]
 
 image::media/tip.png[]
 
+[index]
+Index
+=====
 

@@ -20,6 +20,7 @@
 
 <window id="patron_info_group_win" width="700" height="550" active="true"
     onload="try{ my_init(); font_helper(); persist_helper(); } catch(E) { alert(E); }"
+    onunload="try { my_cleanup(); persist_helper_cleanup(); } catch(E) { alert(E); }"
     xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
     <!-- ///////////////////////////////////////////////////////////////////////////////////////////////////////////// -->
@@ -60,14 +61,14 @@
     </commandset>
 
     <popupset id="info_group_popupset">
-        <popup id="info_group_actions" position="at_pointer"> 
+        <menupopup id="info_group_actions" position="at_pointer"> 
             <menuitem command="clone" />
             <menuitem command="remove" />
             <menuitem command="move" />
             <menuitem command="add" />
             <menuitem command="retrieve_p" />
             <menuitem command="merge_p" />
-        </popup>
+        </menupopup>
     </popupset>
 
     <vbox flex="1" class="my_overflow" id="group_panel">

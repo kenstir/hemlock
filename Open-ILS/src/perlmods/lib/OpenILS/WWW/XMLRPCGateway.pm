@@ -20,8 +20,6 @@ use OpenSRF::Utils::SettingsClient;
 
 use RPC::XML qw/smart_encode/;
 use RPC::XML::Parser;
-use RPC::XML::Function;
-use RPC::XML::Method;
 use RPC::XML::Procedure;
 
 $RPC::XML::ENCODING = 'utf-8';
@@ -50,6 +48,7 @@ sub child_init {
 	OpenILS::Utils::Fieldmapper->require;
 	Fieldmapper->import(IDL => $idl);
 	OpenSRF::AppSession->ingress('apache');
+	return Apache2::Const::OK;
 }
 
 
@@ -84,6 +83,11 @@ sub handler {
 
 sub run_request {
     my( $service, $method, @args ) = @_;
+
+    $method =~ s/__/-/g;    # Our methods have dashes in them, but that's not
+                            # actually a valid character in XML-RPC method
+                            # names, and some clients enforce that restriction
+                            # on their users.
 
     # since multiple Perl clients run within mod_perl, 
     # we must set our ingress before each request.

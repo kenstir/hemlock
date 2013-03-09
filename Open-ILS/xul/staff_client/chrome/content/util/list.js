@@ -36,6 +36,7 @@ util.list.prototype = {
 
         var obj = this;
         obj.scratch_data = {};
+        obj.event_listeners = new EventListenerList();
 
         // If set, save and restore columns as if the tree/list id was the value of columns_saved_under
         obj.columns_saved_under = params.columns_saved_under;
@@ -128,7 +129,8 @@ util.list.prototype = {
                 treecols.appendChild(treecol);
 
                 if (this.columns[i].type == 'checkbox') {
-                    treecol.addEventListener(
+                    obj.event_listeners.add(
+                        treecol,
                         'click',
                         function(ev) {
                             setTimeout(
@@ -143,7 +145,8 @@ util.list.prototype = {
                         false
                     );
                 } else {
-                    treecol.addEventListener(
+                    obj.event_listeners.add(
+                        treecol,
                         'sort_first_asc',
                         function(ev) {
                             dump('sort_first_asc\n');
@@ -157,7 +160,8 @@ util.list.prototype = {
                         },
                         false
                     );
-                    treecol.addEventListener(
+                    obj.event_listeners.add(
+                        treecol,
                         'sort_first_desc',
                         function(ev) {
                             dump('sort_first_desc\n');
@@ -171,7 +175,8 @@ util.list.prototype = {
                         },
                         false
                     );
-                    treecol.addEventListener(
+                    obj.event_listeners.add(
+                        treecol,
                         'sort_next_asc',
                         function(ev) {
                             dump('sort_next_asc\n');
@@ -184,7 +189,8 @@ util.list.prototype = {
                         },
                         false
                     );
-                    treecol.addEventListener(
+                    obj.event_listeners.add(
+                        treecol,
                         'sort_next_desc',
                         function(ev) {
                             dump('sort_next_desc\n');
@@ -198,7 +204,8 @@ util.list.prototype = {
                         false
                     );
 
-                    treecol.addEventListener(
+                    obj.event_listeners.add(
+                        treecol,
                         'click', 
                         function(ev) {
                             if (ev.button == 2 /* context menu click */ || ev.target.getAttribute('no_sort')) {
@@ -233,7 +240,8 @@ util.list.prototype = {
                         false
                     );
 
-                    treecol.addEventListener(
+                    obj.event_listeners.add(
+                        treecol,
                         'sort',
                         function(ev) {
                             if (!obj.first_sort) {
@@ -281,7 +289,8 @@ util.list.prototype = {
         if (typeof params.on_checkbox_toggle == 'function') {
             this.on_checkbox_toggle = params.on_checkbox_toggle;
         }
-        this.node.addEventListener(
+        obj.event_listeners.add(
+            this.node,
             'select',
             function(ev) {
                 if (typeof params.on_select == 'function') {
@@ -296,14 +305,16 @@ util.list.prototype = {
             false
         );
         if (typeof params.on_click == 'function') {
-            this.node.addEventListener(
+            obj.event_listeners.add(
+                this.node,
                 'click',
                 params.on_click,
                 false
             );
         }
         if (typeof params.on_dblclick == 'function') {
-            this.node.addEventListener(
+            obj.event_listeners.add(
+                this.node,
                 'dblclick',
                 params.on_dblclick,
                 false
@@ -311,23 +322,27 @@ util.list.prototype = {
         }
 
         /*
-        this.node.addEventListener(
+        obj.event_listeners.add(
+            this.node,
             'mousemove',
             function(ev) { obj.detect_visible(); },
             false
         );
         */
-        this.node.addEventListener(
+        obj.event_listeners.add(
+            this.node,
             'keypress',
             function(ev) { obj.auto_retrieve(); },
             false
         );
-        this.node.addEventListener(
+        obj.event_listeners.add(
+            this.node,
             'click',
             function(ev) { obj.auto_retrieve(); },
             false
         );
-        window.addEventListener(
+        obj.event_listeners.add(
+            window,
             'resize',
             function(ev) { obj.auto_retrieve(); },
             false
@@ -345,7 +360,7 @@ util.list.prototype = {
         slider.addEventListener('command',function(){alert('slider command');},false);
         slider.addEventListener('scroll',function(){alert('slider scroll');},false);
         */
-        this.node.addEventListener('scroll',function(){ obj.auto_retrieve(); },false);
+        obj.event_listeners.add(this.node, 'scroll',function(){ obj.auto_retrieve(); },false);
 
         this.restores_columns(params);
     },
@@ -370,6 +385,11 @@ util.list.prototype = {
                 };
             }
         }
+    },
+
+    'cleanup' : function () {
+        var obj = this;
+        obj.event_listeners.removeAll();
     },
 
     'save_columns' : function (params) {
@@ -407,7 +427,6 @@ util.list.prototype = {
                 var col_ordinal = col.getAttribute('ordinal'); 
                 my_cols[ col_id ] = { 'hidden' : col_hidden, 'width' : col_width, 'ordinal' : col_ordinal };
             }
-            netscape.security.PrivilegeManager.enablePrivilege('UniversalXPConnect');
             JSAN.use('util.file'); var file = new util.file('tree_columns_for_'+window.escape(id));
             file.set_object(my_cols);
             file.close();
@@ -438,7 +457,6 @@ util.list.prototype = {
             var my_cols;
             if (! obj.data.hash.aous) { obj.data.hash.aous = {}; }
             if (! obj.data.hash.aous['gui.disable_local_save_columns']) {
-                netscape.security.PrivilegeManager.enablePrivilege('UniversalXPConnect');
                 JSAN.use('util.file'); var file = new util.file('tree_columns_for_'+window.escape(id));
                 if (file._file.exists()) {
                     my_cols = file.get_object(); file.close();
@@ -630,7 +648,8 @@ util.list.prototype = {
         obj.put_retrieving_label(treerow);
 
         if (typeof params.retrieve_row == 'function' || typeof this.retrieve_row == 'function') {
-            treerow.addEventListener(
+            obj.event_listeners.add(
+                treerow,
                 'flesh',
                 function() {
 
@@ -694,7 +713,8 @@ util.list.prototype = {
                 }
             }
         } else {
-            treerow.addEventListener(
+            obj.event_listeners.add(
+                treerow,
                 'flesh',
                 function() {
                     //dump('fleshing anon\n');
@@ -792,7 +812,8 @@ util.list.prototype = {
 
             s += 'found a retrieve_row function\n';
 
-            treerow.addEventListener(
+            obj.event_listeners.add(
+                treerow,
                 'flesh',
                 function() {
 
@@ -860,7 +881,8 @@ util.list.prototype = {
 
             s += 'did not find a retrieve_row function\n';
 
-            treerow.addEventListener(
+            obj.event_listeners.add(
+                treerow,
                 'flesh',
                 function() {
                     //dump('fleshing anon\n');
@@ -1075,7 +1097,7 @@ util.list.prototype = {
                                 dump('exec_on_all_fleshed, processing on_all_fleshed array, length = ' + obj.on_all_fleshed.length + '\n');
                                 var f = obj.on_all_fleshed.pop();
                                 if (typeof f == 'function') { 
-                                    try { f(); } catch(E) { obj.error.standard_unexpected_error_alert('_full_retrieve_tree callback',f); } 
+                                    try { f(); } catch(E) { obj.error.standard_unexpected_error_alert('_full_retrieve_tree callback',E); }
                                 }
                                 if (obj.on_all_fleshed.length > 0) arguments.callee(); 
                             } catch(E) {
@@ -1576,8 +1598,8 @@ util.list.prototype = {
                 params.staff = data.list.au[0];
             }
             if (!params.lib && data.list.au && data.list.au[0] && data.list.au[0].ws_ou() && data.hash.aou && data.hash.aou[ data.list.au[0].ws_ou() ]) {
-                params.lib = data.hash.aou[ data.list.au[0].ws_ou() ];
-                params.lib.children(null);
+                params.lib = JSON2js( js2JSON( data.hash.aou[ data.list.au[0].ws_ou() ] ) ); // clone this sucker
+                params.lib.children(null); // since we're modifying it
             }
             if (params.template && data.print_list_templates[ params.template ]) {
                 var template = data.print_list_templates[ params.template ];
@@ -1919,7 +1941,8 @@ util.list.prototype = {
         try {
             var x = document.getElementById(obj.node.id + '_clipfield');
             if (x) {
-                x.addEventListener(
+                obj.event_listeners.add(
+                    x,
                     'command',
                     function() {
                         obj.clipboard(params);
@@ -1932,7 +1955,8 @@ util.list.prototype = {
             }
             x = document.getElementById(obj.node.id + '_csv_to_clipboard');
             if (x) {
-                x.addEventListener(
+                obj.event_listeners.add(
+                    x,
                     'command',
                     function() {
                         obj.dump_csv_to_clipboard(params);
@@ -1945,7 +1969,8 @@ util.list.prototype = {
             }
             x = document.getElementById(obj.node.id + '_csv_to_printer');
             if (x) {
-                x.addEventListener(
+                obj.event_listeners.add(
+                    x,
                     'command',
                     function() {
                         obj.dump_csv_to_printer(params);
@@ -1958,7 +1983,8 @@ util.list.prototype = {
             }
             x = document.getElementById(obj.node.id + '_extended_to_printer');
             if (x) {
-                x.addEventListener(
+                obj.event_listeners.add(
+                    x,
                     'command',
                     function() {
                         obj.dump_extended_format_to_printer(params);
@@ -1972,7 +1998,8 @@ util.list.prototype = {
 
             x = document.getElementById(obj.node.id + '_csv_to_file');
             if (x) {
-                x.addEventListener(
+                obj.event_listeners.add(
+                    x,
                     'command',
                     function() {
                         obj.dump_csv_to_file(params);
@@ -1985,7 +2012,8 @@ util.list.prototype = {
             }
             x = document.getElementById(obj.node.id + '_save_columns');
             if (x) {
-                x.addEventListener(
+                obj.event_listeners.add(
+                    x,
                     'command',
                     function() {
                         obj.save_columns(params);

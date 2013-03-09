@@ -398,6 +398,7 @@ sub cn_browse {
     if (@$statuses || @$copy_locations) {
         @cp_filter = (
             '-exists' => {
+                limit => 1,
                 from  => 'acp',
 				where => {
                     call_number => { '=' => { '+acn' => 'id' } },
@@ -523,6 +524,7 @@ sub cn_startwith {
     if (@$statuses || @$copy_locations) {
         @cp_filter = (
             '-exists' => {
+                limit => 1,
                 from  => 'acp',
 				where => {
                     call_number => { '=' => { '+acn' => 'id' } },
@@ -2045,7 +2047,7 @@ sub basic_record_holdings {
 		my $found = 0;
 		for my $c (@{$cn->copies}) {
 			next unless grep {$c->circ_lib->id == $_} @ou_ids;
-			next unless ( $c->deleted eq 'f' || $c->deleted == 0 );
+			next unless _cp_is_visible($cn, $c);
 			$found = 1;
 			last;
 		}
@@ -2056,7 +2058,7 @@ sub basic_record_holdings {
 		for my $cp (@{$cn->copies}) {
 
 			next unless grep { $cp->circ_lib->id == $_ } @ou_ids;
-			next unless ( $cp->deleted eq 'f' || $cp->deleted == 0 );
+			next unless _cp_is_visible($cn, $cp);
 
 			push @{$holdings{$cn->label}{'copies'}}, {
                 barcode => $cp->barcode,
@@ -2069,6 +2071,24 @@ sub basic_record_holdings {
 	}
 
 	return \%holdings;
+}
+
+sub _cp_is_visible {
+    my $cn = shift;
+    my $cp = shift;
+
+    my $visible = 0;
+    if ( ($cp->deleted eq 'f' || $cp->deleted == 0) &&
+         $cp->location->opac_visible eq 't' && 
+         $cp->status->opac_visible eq 't' &&
+         $cp->opac_visible eq 't' &&
+         $cp->circ_lib->opac_visible eq 't' &&
+         $cn->owning_lib->opac_visible eq 't'
+    ) {
+        $visible = 1;
+    }
+
+    return $visible;
 }
 
 #__PACKAGE__->register_method(
@@ -2141,7 +2161,8 @@ sub new_record_holdings {
                 call_number => { '=' => {'+acn'=>'id'} },
                 deleted => 'f',
                 circ_lib => \@ou_ids
-              }
+              },
+              limit => 1
             }
         }
     ]);
@@ -2164,6 +2185,7 @@ sub new_record_holdings {
             %subselect = (
                 owning_lib => \@uri_ou_ids,
                 '-exists'  => {
+                    limit => 1,
                     from  => { auricnm => 'auri' },
                     where => {
                         call_number => { '=' => {'+acn'=>'id'} },
@@ -2181,7 +2203,8 @@ sub new_record_holdings {
                         call_number => { '=' => {'+acn'=>'id'} },
                         deleted => 'f',
                         circ_lib => \@ou_ids
-                      }
+                      },
+                      limit => 1
                     }
                 },
                 { '-and' => [
@@ -2191,7 +2214,8 @@ sub new_record_holdings {
                         where => {
                             call_number => { '=' => {'+acn'=>'id'} },
                             '+auri' => { active => 't' }
-                        }
+                        },
+                        limit => 1
                     }}
                 ]}
             ]);
@@ -2263,7 +2287,8 @@ sub new_record_holdings {
         { owning_lib => \@ou_ids },
         { '-exists'  =>
             { from  => 'sdist',
-              where => { holding_lib => \@ou_ids }
+              where => { holding_lib => \@ou_ids },
+              limit => 1
             }
         }
     ]);

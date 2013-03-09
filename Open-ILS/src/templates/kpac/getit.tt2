@@ -1,0 +1,135 @@
+[%  
+    PROCESS "opac/parts/header.tt2";
+    PROCESS "opac/parts/misc_util.tt2"; # MARC 
+    WRAPPER "kpac/parts/subpage.tt2";
+    attrs = {marc_xml => ctx.marc_xml};
+    INCLUDE get_marc_attrs args=attrs;
+    ctx.page_title = attrs.title | html 
+%]
+
+<div id="search_results_parent">
+    [% INCLUDE 'kpac/parts/record_row.tt2' rec_id=ctx.bre_id%]
+</div>
+          
+<div class="checkout_options">
+    <table cellpadding="0" cellspacing="0" border="0">
+        <tr>
+            <td valign="top" class="left_brain_cell">
+                <div class="left_brain">
+
+                    [% WRAPPER 'kpac/parts/help_popups.tt2' popup_id='card_help' %]
+                        <img src="[% ctx.media_prefix %]/images/kpac/library_card.png" alt="[% l('library card') %]" /></div></td>
+                    [% END %]
+                    [% WRAPPER 'kpac/parts/help_popups.tt2' popup_id='password_help' %]
+                        <p>[% l('Enter your password') %]</p>
+                    [% END %]
+
+                    <div class="top_side">
+                        <h2>[% l('get it!') %]</h2>
+                        <p>[% |l %]If you would like to place a hold on this item, please enter the 
+                            following information and click<br />Submit below:[% END %]</p>
+                    </div>
+
+                    <form method='POST'><!-- login + place hold form -->
+
+                        <div class="checkout_box">
+                            <div class="box1_top">&nbsp;</div>
+                            <div class="box_inside">
+
+                                [% IF !ctx.user %]
+                                    [% seed = l(' Enter Numbers... ') %]
+                                    <p>[% l('Library Card Number without spaces:') %]</p>
+                                    <div class="input_box">
+                                        <input name="username" type="text" class="text_box" style="color:#aaa;" value="[% seed %]" 
+                                            onfocus="if(this.value=='[% seed %]'){this.value='';this.style.color='#424242';}" 
+                                            onblur="if(this.value==''){this.value='[% seed %]'; this.style.color='#aaa';}" />
+                                    </div>
+                                    <a class="help_btn" href="javascript:;" 
+                                        onclick="helpPopup('card_help', this, event);"><img 
+                                        src="[% ctx.media_prefix %]/images/kpac/question_mark.png" alt="[% l('pin number help') %]" /></a>
+
+                                    <div class="clear">&nbsp;</div>
+                                    <div class="hr">&nbsp;</div>
+
+                                    <p>[% l('Password') %]</p>
+                                    <div class="input_box">
+                                        <input name="password" type="password" class="text_box" style="color:#aaa;" value="[% seed %]" 
+                                            onfocus="if(this.value=='[% seed %]'){this.value='';this.style.color='#424242';}" 
+                                            onblur="if(this.value==''){this.value='[% seed %]'; this.style.color='#aaa';}" />
+                                    </div>
+
+                                    <a class="help_btn" href="javascript:;" 
+                                        onclick="helpPopup('password_help', this, event);"><img 
+                                        src="[% ctx.media_prefix %]/images/kpac/question_mark.png" alt="[% l('password help') %]" /></a>
+
+                                    <div class="clear">&nbsp;</div>
+                                    <div class="hr">&nbsp;</div>
+                                [% END %]
+
+                                <p>[% l('Choose a Pickup Library:') %]</p>
+                                <div class="pickup_lib">
+                                    [%  def_lib = ctx.default_pickup_lib || ctx.physical_loc;
+                                        PROCESS "opac/parts/org_selector.tt2";
+                                        INCLUDE build_org_selector name='pickup_lib' 
+                                        value=def_lib id='pickup_lib' can_have_vols_only=1 %]
+                                </div>
+                            </div>
+                        </div>
+                        <div class="submit_btn">
+                            <input type='hidden' name='action' value='hold'/>
+                            <input type='image' src="[% ctx.media_prefix %]/images/kpac/review_submit_btn.png" alt="[% l('Submit') %]"/>
+                        </div>
+                    </form>
+                </div>
+            </td>
+
+            <td valign="top">
+                <div class="right_brain">
+                    <div class="top_side">
+                        <h2>[% l('save it!') %]</h2>
+                        <p>[% l('If you would like to save this item to a list to be requested later, click Submit below.') %]</p>
+                        [% IF ctx.user AND ctx.bookbags AND ctx.bookbags.size > 0 %]
+                        <br/>
+                        <p>
+                            [% l('You may also save this item to a list you have already created by selecting one of your lists below.') %]
+                        </p>
+                        [% END %]
+                    </div>
+                    <form method='POST'>
+                        <input type='hidden' name='action' value='save'/>
+                        [% IF ctx.user AND ctx.bookbags AND ctx.bookbags.size > 0 %]
+                            <div class="checkout_box">
+                                <div class="box1_top">&nbsp;</div>
+                                <div class="box_inside">
+                                    <p>[% l('Add to one of your lists?') %]</p>
+                                    <select name='bookbag'>
+                                        <option value='' selected='selected'>[% l('-- Temporary List --') %]</option>
+                                        [% FOR bbag IN ctx.bookbags %]
+                                            <option value="[% bbag.id %]">[% bbag.name | html %]</option>
+                                        [% END %]
+                                    </select>
+                                </div>
+                            </div>
+                        [% END %]
+                        <div class="submit_btn">
+                            <input type='image' src="[% ctx.media_prefix %]/images/kpac/review_submit_btn.png" alt="[% l('Submit') %]" />
+                        </div>
+                    </div>
+                </div>
+            </td>
+        </tr>
+    </table>
+</div>
+
+<div class="sub_navigation2 checkout">
+    <table cellpadding="0" cellspacing="0" border="0" width="100%">
+        <tr>
+            [%  # in the absence of a sane referer, return to the detail page
+                url = ctx.kpac_root _ (ctx.referer.match('results') ? '/results' : '/record/' _ ctx.bre_id) %]
+            <td><a href="[% mkurl(url) %]"><img src="[% ctx.media_prefix %]/images/kpac/cancel_back_btn.png" /></a></td>
+            <td width="100%" class="nav_mid_bg">&nbsp;</td>
+        </tr>
+    </table>
+</div>
+         
+[% END %]

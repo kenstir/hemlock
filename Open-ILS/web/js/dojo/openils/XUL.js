@@ -1,11 +1,11 @@
 if(!dojo._hasResource["openils.XUL"]) {
 
     dojo.provide("openils.XUL");
-    dojo.require('dojo.cookie');
     dojo.declare('openils.XUL', null, {});
 
     openils.XUL.isXUL = function() {
-        return Boolean(dojo.cookie('xul')) || Boolean(window.IAMXUL);
+        if(location.protocol == 'chrome:' || location.protocol == 'oils:') return true;
+        return Boolean(window.IAMXUL);
     }
 
  try {
@@ -16,11 +16,8 @@ if(!dojo._hasResource["openils.XUL"]) {
     openils.XUL.getStash = function() {
         if(openils.XUL.isXUL()) {
             try {
-                if(openils.XUL.enableXPConnect()) {
-                    netscape.security.PrivilegeManager.enablePrivilege('UniversalXPConnect');
-                    var CacheClass = new Components.Constructor("@mozilla.org/openils_data_cache;1", "nsIOpenILS");
-                    return new CacheClass().wrappedJSObject.OpenILS.prototype.data;
-                }
+                var CacheClass = Components.classes["@open-ils.org/openils_data_cache;1"].getService();
+                return CacheClass.wrappedJSObject.data;
             } catch(e) {
                 console.log("Error loading XUL stash: " + e);
                 return { 'error' : e };
@@ -57,7 +54,8 @@ if(!dojo._hasResource["openils.XUL"]) {
         var loc = xulG.url_prefix(url);
 
         if (wrap_in_browser) {
-            loc = xulG.urls.XUL_BROWSER + "?url=" + window.escape(loc);
+            var urls = xulG.urls || window.urls;
+            loc = urls.XUL_BROWSER + "?url=" + window.escape(loc);
             content_params = dojo.mixin(
                 {
                     "no_xulG": false, "show_print_button": true,
@@ -75,23 +73,6 @@ if(!dojo._hasResource["openils.XUL"]) {
      */
     openils.XUL.getNewSession = function(callback) {
         return xulG.get_new_session({callback : callback});
-    }
-
-    /** 
-     * This can be used by privileged Firefox in addition to XUL.
-     * To use use in Firefox directly, set signed.applets.codebase_principal_support to true in about:config
-     */ 
-    openils.XUL.enableXPConnect = function() {
-        try {
-            netscape.security.PrivilegeManager.enablePrivilege('UniversalXPConnect');
-        } catch (E) {
-            if(dojo.isFF) {
-                console.error("Unable to enable UniversalXPConnect privileges.  " +
-                    "Try setting 'signed.applets.codebase_principal_support' to true in about:config");
-            }
-            return false;
-        }
-        return true;
     }
 
     /* This class cuts down on the obscenely long incantations needed to
@@ -114,22 +95,18 @@ if(!dojo._hasResource["openils.XUL"]) {
             "iface": Components.interfaces.nsIFileOutputStream,
             "cls": "@mozilla.org/network/file-output-stream;1"
         },
+        "COS": {
+            "iface": Components.interfaces.nsIConverterOutputStream,
+            "cls": "@mozilla.org/intl/converter-output-stream;1"
+        },
         "create": function(key) {
             return Components.classes[this[key].cls].
                 createInstance(this[key].iface);
-        },
-        "getPrivilegeManager": function() {
-            return netscape.security.PrivilegeManager;
         }
     };
 
     openils.XUL.contentFromFileOpenDialog = function(windowTitle, sizeLimit) {
         var api = new openils.XUL.SimpleXPCOM();
-
-        /* The following enablePrivilege() call must happen at this exact
-         * level of scope -- not wrapped in another function -- otherwise
-         * it doesn't work. */
-        api.getPrivilegeManager().enablePrivilege("UniversalXPConnect");
 
         var picker = api.create("FP");
         picker.init(
@@ -150,7 +127,6 @@ if(!dojo._hasResource["openils.XUL"]) {
 
     openils.XUL.contentToFileSaveDialog = function(content, windowTitle, dispositionArgs) {
         var api = new openils.XUL.SimpleXPCOM();
-        api.getPrivilegeManager().enablePrivilege("UniversalXPConnect");
 
         var picker = api.create("FP");
         picker.init(
@@ -185,12 +161,40 @@ if(!dojo._hasResource["openils.XUL"]) {
                     result == api.FP.iface.returnReplace)) {
             if (!picker.file.exists())
                 picker.file.create(0, 0644); /* XXX hardcoded = bad */
+
             var fos = api.create("FOS");
             fos.init(picker.file, 42 /* WRONLY | CREAT | TRUNCATE */, 0644, 0);
-            return fos.write(content, content.length);
+
+            var cos = api.create("COS");
+            cos.init(fos, "UTF-8", 0, 0);   /* It's the 21st century. You don't
+                                                use ISO-8859-*. */
+            cos.writeString(content);
+            return cos.close();
         } else {
             return 0;
         }
     };
+
+    // returns a ref to a XUL localStorage interface
+    // localStorage is not directly accessible within oils://
+    // http://fartersoft.com/blog/2011/03/07/using-localstorage-in-firefox-extensions-for-persistent-data-storage/
+    openils.XUL.localStorage = function() {
+
+        // in browser mode, use the standard localStorage interface
+        if (!openils.XUL.isXUL()) 
+            return window.localStorage;
+
+        var url = location.protocol + '//' + location.hostname;
+        var ios = Components.classes["@mozilla.org/network/io-service;1"]
+                  .getService(Components.interfaces.nsIIOService);
+        var ssm = Components.classes["@mozilla.org/scriptsecuritymanager;1"]
+                  .getService(Components.interfaces.nsIScriptSecurityManager);
+        var dsm = Components.classes["@mozilla.org/dom/storagemanager;1"]
+                  .getService(Components.interfaces.nsIDOMStorageManager);
+        var uri = ios.newURI(url, "", null);
+        var principal = ssm.getCodebasePrincipal(uri);
+        return dsm.getLocalStorageForPrincipal(principal, "");
+    };
+
  }catch (e) {/*meh*/}
 }

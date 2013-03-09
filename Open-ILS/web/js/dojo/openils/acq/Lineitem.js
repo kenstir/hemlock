@@ -122,7 +122,7 @@ openils.acq.Lineitem.fetchAndRender = function(liId, args, callback) {
         ['open-ils.acq', 'open-ils.acq.lineitem.retrieve.authoritative'],
         {
             params : [ openils.User.authtoken, liId, args ],
-
+            async : true,
             oncomplete : function(r) {
                 var lineitem = openils.Util.readResponse(r);
                 if(!lineitem) return;
@@ -181,6 +181,7 @@ openils.acq.Lineitem.fetchAndRender = function(liId, args, callback) {
                         liLink,
                         (po) ? 'foo' : '', // forces class='hiddenfoo' i.e. not hidden
                         (pl) ? 'foo' : '', // ditto
+                        encodeURIComponent(location.pathname + location.search)
                     ],
                     function(str) {
                         // prevent long titles from filling up the page

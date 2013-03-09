@@ -145,6 +145,8 @@ static char* modulename = NULL;
 
 int writeAuditInfo( osrfMethodContext* ctx, const char* user_id, const char* ws_id);
 
+static char* _sanitize_savepoint_name( const char* sp );
+
 /**
 	@brief Connect to the database.
 	@return A database connection if successful, or NULL if not.
@@ -889,7 +891,15 @@ int setSavepoint( osrfMethodContext* ctx ) {
 	// Get the savepoint name from the method params
 	const char* spName = jsonObjectGetString( jsonObjectGetIndex(ctx->params, spNamePos) );
 
-	dbi_result result = dbi_conn_queryf( writehandle, "SAVEPOINT \"%s\";", spName );
+	if (!spName) {
+		osrfLogWarning(OSRF_LOG_MARK, "savepoint.set called with no name");
+		return -1;
+	}
+
+	char *safeSpName = _sanitize_savepoint_name( spName );
+
+	dbi_result result = dbi_conn_queryf( writehandle, "SAVEPOINT \"%s\";", safeSpName );
+	free( safeSpName );
 	if( !result ) {
 		const char* msg;
 		int errnum = dbi_conn_error( writehandle, &msg );
@@ -960,7 +970,15 @@ int releaseSavepoint( osrfMethodContext* ctx ) {
 	// Get the savepoint name from the method params
 	const char* spName = jsonObjectGetString( jsonObjectGetIndex(ctx->params, spNamePos) );
 
-	dbi_result result = dbi_conn_queryf( writehandle, "RELEASE SAVEPOINT \"%s\";", spName );
+	if (!spName) {
+		osrfLogWarning(OSRF_LOG_MARK, "savepoint.release called with no name");
+		return -1;
+	}
+
+	char *safeSpName = _sanitize_savepoint_name( spName );
+
+	dbi_result result = dbi_conn_queryf( writehandle, "RELEASE SAVEPOINT \"%s\";", safeSpName );
+	free( safeSpName );
 	if( !result ) {
 		const char* msg;
 		int errnum = dbi_conn_error( writehandle, &msg );
@@ -1031,7 +1049,15 @@ int rollbackSavepoint( osrfMethodContext* ctx ) {
 	// Get the savepoint name from the method params
 	const char* spName = jsonObjectGetString( jsonObjectGetIndex(ctx->params, spNamePos) );
 
-	dbi_result result = dbi_conn_queryf( writehandle, "ROLLBACK TO SAVEPOINT \"%s\";", spName );
+	if (!spName) {
+		osrfLogWarning(OSRF_LOG_MARK, "savepoint.rollback called with no name");
+		return -1;
+	}
+
+	char *safeSpName = _sanitize_savepoint_name( spName );
+
+	dbi_result result = dbi_conn_queryf( writehandle, "ROLLBACK TO SAVEPOINT \"%s\";", safeSpName );
+	free( safeSpName );
 	if( !result ) {
 		const char* msg;
 		int errnum = dbi_conn_error( writehandle, &msg );
@@ -4203,7 +4229,16 @@ char* SELECT (
 
 					// Look up the field in the IDL
 					const char* col_name = jsonObjectGetString( selfield );
-					osrfHash* field_def = osrfHashGet( class_field_set, col_name );
+					osrfHash* field_def;
+
+					if (!osrfStringArrayContains(
+							osrfHashGet(
+								osrfHashGet( class_field_set, col_name ),
+								"suppress_controller"),
+							modulename
+					))
+						field_def = osrfHashGet( class_field_set, col_name );
+
 					if( !field_def ) {
 						// No such field in current class
 						osrfLogError(
@@ -4282,7 +4317,16 @@ char* SELECT (
 							jsonObjectGetKeyConst( selfield, "column" ) );
 
 					// Get the field definition from the IDL
-					osrfHash* field_def = osrfHashGet( class_field_set, col_name );
+					osrfHash* field_def;
+					if (!osrfStringArrayContains(
+							osrfHashGet(
+								osrfHashGet( class_field_set, col_name ),
+								"suppress_controller"),
+							modulename
+					))
+						field_def = osrfHashGet( class_field_set, col_name );
+
+
 					if( !field_def ) {
 						// No such field in current class
 						osrfLogError(
@@ -4910,12 +4954,16 @@ char* SELECT (
 
 	if( limit ){
 		const char* str = jsonObjectGetString( limit );
-		buffer_fadd( sql_buf, " LIMIT %d", atoi( str ));
+		if (str) { // limit could be JSON_NULL, etc.
+			buffer_fadd( sql_buf, " LIMIT %d", atoi( str ));
+		}
 	}
 
 	if( offset ) {
 		const char* str = jsonObjectGetString( offset );
-		buffer_fadd( sql_buf, " OFFSET %d", atoi( str ));
+		if (str) {
+			buffer_fadd( sql_buf, " OFFSET %d", atoi( str ));
+		}
 	}
 
 	if( !(flags & SUBSELECT) )
@@ -5198,6 +5246,9 @@ static char* buildSELECT ( const jsonObject* search_hash, jsonObject* rest_of_qu
 			if( !field )
 				continue;
 
+			if (osrfStringArrayContains( osrfHashGet(field, "suppress_controller"), modulename ))
+				continue;
+
 			if( first ) {
 				first = 0;
 			} else {
@@ -5453,21 +5504,25 @@ static char* buildSELECT ( const jsonObject* search_hash, jsonObject* rest_of_qu
 		const jsonObject* limit = jsonObjectGetKeyConst( rest_of_query, "limit" );
 		if( limit ) {
 			const char* str = jsonObjectGetString( limit );
-			buffer_fadd(
-				sql_buf,
-				" LIMIT %d",
-				atoi(str)
-			);
+			if (str) {
+				buffer_fadd(
+					sql_buf,
+					" LIMIT %d",
+					atoi(str)
+				);
+			}
 		}
 
 		const jsonObject* offset = jsonObjectGetKeyConst( rest_of_query, "offset" );
 		if( offset ) {
 			const char* str = jsonObjectGetString( offset );
-			buffer_fadd(
-				sql_buf,
-				" OFFSET %d",
-				atoi( str )
-			);
+			if (str) {
+				buffer_fadd(
+					sql_buf,
+					" OFFSET %d",
+					atoi( str )
+				);
+			}
 		}
 	}
 
@@ -6048,6 +6103,10 @@ int doUpdate( osrfMethodContext* ctx ) {
 		if( str_is_true( osrfHashGet( field_def, "virtual") ) )
 			continue;
 
+		if (osrfStringArrayContains( osrfHashGet(field_def, "suppress_controller"), modulename ))
+			continue;
+
+
 		const char* field_name = osrfHashIteratorKey( field_itr );
 		if( ! strcmp( field_name, pkey ) )
 			continue;
@@ -6428,10 +6487,10 @@ static jsonObject* oilsMakeFieldmapperFromResult( dbi_result result, osrfHash* m
 						strftime( dt_string, sizeof( dt_string ), "%T", &gmdt );
 					} else if( !( attr & DBI_DATETIME_TIME )) {
 						localtime_r( &_tmp_dt, &gmdt );
-						strftime( dt_string, sizeof( dt_string ), "%F", &gmdt );
+						strftime( dt_string, sizeof( dt_string ), "%04Y-%m-%d", &gmdt );
 					} else {
 						localtime_r( &_tmp_dt, &gmdt );
-						strftime( dt_string, sizeof( dt_string ), "%FT%T%z", &gmdt );
+						strftime( dt_string, sizeof( dt_string ), "%04Y-%m-%dT%T%z", &gmdt );
 					}
 
 					jsonObjectSetIndex( object, fmIndex, jsonNewObject( dt_string ));
@@ -6514,10 +6573,10 @@ static jsonObject* oilsMakeJSONFromResult( dbi_result result ) {
 						strftime( dt_string, sizeof( dt_string ), "%T", &gmdt );
 					} else if( !( attr & DBI_DATETIME_TIME )) {
 						localtime_r( &_tmp_dt, &gmdt );
-						strftime( dt_string, sizeof( dt_string ), "%F", &gmdt );
+						strftime( dt_string, sizeof( dt_string ), "%04Y-%m-%d", &gmdt );
 					} else {
 						localtime_r( &_tmp_dt, &gmdt );
-						strftime( dt_string, sizeof( dt_string ), "%FT%T%z", &gmdt );
+						strftime( dt_string, sizeof( dt_string ), "%04Y-%m-%dT%T%z", &gmdt );
 					}
 
 					jsonObjectSetKey( object, columnName, jsonNewObject( dt_string ));
@@ -7230,9 +7289,49 @@ int writeAuditInfo( osrfMethodContext* ctx, const char* user_id, const char* ws_
 			return -1;
 		} else {
 			dbi_result_free( result );
-			return 0;
 		}
 	}
+	return 0;
+}
+
+/**
+	@brief Remove all but safe character from savepoint name
+	@param sp User-supplied savepoint name
+	@return sanitized savepoint name, or NULL
+
+    The caller is expected to free the returned string.  Note that
+    this function exists only because we can't use PQescapeLiteral
+    without either forking libdbi or abandoning it.
+*/
+static char* _sanitize_savepoint_name( const char* sp ) {
+
+	const char* safe_chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ012345789_";
+
+	// PostgreSQL uses NAMEDATALEN-1 as a max length for identifiers,
+	// and the default value of NAMEDATALEN is 64; that should be long enough
+	// for our purposes, and it's unlikely that anyone is going to recompile
+	// PostgreSQL to have a smaller value, so cap the identifier name
+	// accordingly to avoid the remote chance that someone manages to pass in a
+	// 12GB savepoint name
+	const int MAX_LITERAL_NAMELEN = 63;
+	int len = 0;
+	len = strlen( sp );
+	if (len > MAX_LITERAL_NAMELEN) {
+		len = MAX_LITERAL_NAMELEN;
+	}
+
+	char* safeSpName = safe_malloc( len + 1 );
+	int i = 0;
+	int j;
+	char* found;
+	for (j = 0; j < len; j++) {
+	found = strchr(safe_chars, sp[j]);
+		if (found) {
+			safeSpName[ i++ ] = found[0];
+		}
+	}
+	safeSpName[ i ] = '\0';
+	return safeSpName;
 }
 
 /*@}*/

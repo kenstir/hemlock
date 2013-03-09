@@ -19,6 +19,7 @@
 
 <window id="example_template_win" 
     onload="try { my_init(); font_helper(); persist_helper(); } catch(E) { alert(E); }"
+    onunload="try { persist_helper_cleanup(); } catch(E) { alert(E); }"
     xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
     <!-- ///////////////////////////////////////////////////////////////////////////////////////////////////////////// -->
@@ -37,8 +38,6 @@
         
         function my_init() {
             try {
-                netscape.security.PrivilegeManager.enablePrivilege("UniversalXPConnect");
-
                 /* load translatable strings for patron interfaces */
                 patronStrings = document.getElementById('patronStrings');
 

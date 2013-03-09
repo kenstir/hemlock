@@ -12,7 +12,6 @@ var numHolds            = 0;
 var listOffset            = 0;
 
 function pullListInit() {
-    netscape.security.PrivilegeManager.enablePrivilege("UniversalXPConnect");
     if (typeof JSAN == 'undefined') { throw( "The JSAN library object is missing."); }
     JSAN.errorLevel = "die"; // none, warn, or die
     JSAN.addRepository('/xul/server/');
@@ -98,6 +97,7 @@ function pullListDrawTitle( tbody, row, hold, idx, record ) {
 
 function pullListDrawCopy( tbody, row, hold, idx, copy ) {
 
+    $n(row, 'hold_type').appendChild(text(hold.hold_type()));
     $n(row, 'barcode').appendChild(text(copy.barcode()));
     $n(row, 'copy_location').appendChild(text(copy.location().name()));
     $n(row, 'copy_number').appendChild(text(copy.copy_number()));

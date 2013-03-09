@@ -16,6 +16,7 @@ circ.checkout.prototype = {
 
         var obj = this;
 
+        obj.event_listeners = new EventListenerList();
         obj.patron_id = params.patron_id;
 
         obj.auto_override_events = [];
@@ -87,7 +88,7 @@ circ.checkout.prototype = {
                                 e.appendChild( ml );
                                 ml.setAttribute('id','checkout_menulist');
                                 ml.setAttribute('accesskey','');
-                                ml.addEventListener(
+                                obj.event_listeners.add(ml,
                                     'command',
                                     function(ev) {
                                         var tb = obj.controller.view.checkout_barcode_entry_textbox;
@@ -120,7 +121,7 @@ circ.checkout.prototype = {
                         ['change'],
                         function(ev) { 
                             try {
-				document.getElementById('checkout_duedate_checkbox').checked = true;
+                                document.getElementById('checkout_duedate_checkbox').checked = true;
                                 if (obj.check_date(ev.target)) {
                                     ev.target.parentNode.setAttribute('style','');
                                 } else {
@@ -146,7 +147,6 @@ circ.checkout.prototype = {
                             } else {
                                 params.noncat = 1;
                                 params.noncat_type = obj.controller.view.checkout_menu.value;
-                                netscape.security.PrivilegeManager.enablePrivilege('UniversalXPConnect UniversalBrowserWrite');
                                 var r = window.prompt(
                                     document.getElementById('circStrings').getFormattedString('staff.circ.checkout.cmd_checkout_submit.msg', [obj.data.hash.cnct[params.noncat_type].name()]),
                                     '1',
@@ -270,6 +270,13 @@ circ.checkout.prototype = {
 
     },
 
+    'cleanup' : function() {
+        var obj = this;
+        obj.list.cleanup();
+        obj.controller.cleanup();
+        obj.event_listeners.removeAll();
+    },
+
     'check_disable' : function() {
         var obj = this;
         try {
@@ -349,10 +356,17 @@ circ.checkout.prototype = {
             obj.controller.view.checkout_barcode_entry_textbox.disabled = false;
             obj.controller.view.cmd_checkout_submit.setAttribute('disabled','false');
             obj.controller.view.cmd_checkout_submit.disabled = false;
-            if (util.date.check_past('YYYY-MM-DD',node.value) ) {
-                obj.controller.view.checkout_barcode_entry_textbox.setAttribute('disabled','true');
-                obj.controller.view.cmd_checkout_submit.setAttribute('disabled','true');
-                return false;
+            try {
+                if (util.date.check_past('YYYY-MM-DD',node.value) ) {
+                    obj.controller.view.checkout_barcode_entry_textbox.setAttribute('disabled','true');
+                    obj.controller.view.cmd_checkout_submit.setAttribute('disabled','true');
+                    return false;
+                }
+            }
+            catch (E) {
+                    obj.controller.view.checkout_barcode_entry_textbox.setAttribute('disabled','true');
+                    obj.controller.view.cmd_checkout_submit.setAttribute('disabled','true');
+                    return false;
             }
             return true;
         } catch(E) {
@@ -611,7 +625,7 @@ circ.checkout.prototype = {
                 if(in_barcode.type == 'actor') {
                     // Go to new patron (do not pass go, do not collect $200, do not prompt user)
                     var horizontal_interface = String( obj.data.hash.aous['ui.circ.patron_summary.horizontal'] ) == 'true';
-                    var loc = xulG.url_prefix( horizontal_interface ? urls.XUL_PATRON_HORIZ_DISPLAY : urls.XUL_PATRON_DISPLAY );
+                    var loc = xulG.url_prefix( horizontal_interface ? 'XUL_PATRON_HORIZ_DISPLAY' : 'XUL_PATRON_DISPLAY' );
                     xulG.set_tab( loc, {}, { 'barcode' : in_barcode.barcode } );
                     return;
                 }
@@ -742,7 +756,7 @@ circ.checkout.prototype = {
                 if (test_event(permit,1202 /* ITEM_NOT_CATALOGED */)) {
 
                     if ( 1 == obj.error.yns_alert(
-                        document.getElementById('circStrings').getString('staff.circ.checkout.not_cataloged.confirm'),
+                        document.getElementById('circStrings').getFormattedString('staff.circ.checkout.not_cataloged.confirm', [params.barcode]),
                         document.getElementById('circStrings').getString('staff.circ.alert'),
                         document.getElementById('circStrings').getString('staff.circ.cancel'),
                         document.getElementById('circStrings').getString('staff.circ.pre_cataloged'),
@@ -918,6 +932,8 @@ circ.checkout.prototype = {
                                 }
 
                                 if (foreign_circ) { // OFFER CANCEL, NORMAL CHECKIN, AND POSSIBLY FORGIVING-BACKDATED CHECKIN
+                                    if (msg.length) msg += ' / ';
+                                    msg+= document.getElementById('circStrings').getFormattedString('staff.circ.checkout.failed_to_patron_other', [ util.date.formatted_date( my_circ.create_time(), '%{localized_date}' ) ]);
                                     var r = obj.error.yns_alert(
                                         msg,
                                         document.getElementById('circStrings').getString('staff.circ.checkout.barcode.check_out_failed'),
@@ -948,6 +964,17 @@ circ.checkout.prototype = {
                                             }
                                         } );
                                     } else {
+
+                                        // Include info about date of previous checkout in warning
+                                        if (msg.length) msg += ' / ';
+                                        var cko_d = util.date.formatted_date( my_circ.create_time(), '%{localized_date}' );
+                                        var cur_d = util.date.formatted_date( new Date(), '%{localized_date}');
+                                        if (cko_d == cur_d) {
+                                            msg+= document.getElementById('circStrings').getString('staff.circ.checkout.failed_to_patron_today');
+                                        } else {
+                                            msg+= document.getElementById('circStrings').getString('staff.circ.checkout.failed_to_patron_renew');
+                                        }
+
                                         var r = obj.error.yns_alert(
                                             msg,
                                             document.getElementById('circStrings').getString('staff.circ.checkout.barcode.check_out_failed'),

@@ -40,10 +40,11 @@
                     dump('pulling in custom.js in util_overlay_offline.xul\n');
                     // Pull in local customizations
                     var r = new XMLHttpRequest();
-                    r.open("GET", xulG.url_prefix('/xul/server/skin/custom.js'), false);
+                    var custom_js = xulG.url_prefix('CUSTOM_JS');
+                    r.open("GET", custom_js, false);
                     r.send(null);
                     if (r.status == 200) {
-                        dump('Evaluating /xul/server/skin/custom.js\n');
+                        dump('Evaluating ' + custom_js + '\n');
                         eval( r.responseText );
                     }
                 } else {
@@ -59,6 +60,7 @@
         <script type="text/javascript" src="util/md5.js" />
         <script type="text/javascript" src="util/JSON_v1.js" />
         <script type="text/javascript" src="global_util.js" />   
+        <script type="text/javascript" src="event_util.js" />   
         <hbox id="debug_box" hidden="true" flex="1" style="border: red thin dashed">
             <label value="Debug:" />
             <textbox id="debug_tb" flex="1"/>

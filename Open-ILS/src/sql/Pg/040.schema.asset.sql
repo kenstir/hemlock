@@ -126,7 +126,7 @@ CREATE TABLE asset.opac_visible_copies (
 );
 COMMENT ON TABLE asset.opac_visible_copies IS $$
 Materialized view of copies that are visible in the OPAC, used by
-search.query_parser_fts() to speed up OPAC visibility checks on large
+staged search to speed up OPAC visibility checks on large
 databases.  Contents are maintained by a set of triggers.
 $$;
 CREATE INDEX opac_visible_copies_idx1 on asset.opac_visible_copies (record, circ_lib);
@@ -650,6 +650,28 @@ BEGIN
 END;
 $f$ LANGUAGE PLPGSQL;
 
+CREATE OR REPLACE FUNCTION asset.record_has_holdable_copy ( rid BIGINT ) RETURNS BOOL AS $f$
+BEGIN
+    PERFORM 1
+        FROM
+            asset.copy acp
+            JOIN asset.call_number acn ON acp.call_number = acn.id
+            JOIN asset.copy_location acpl ON acp.location = acpl.id
+            JOIN config.copy_status ccs ON acp.status = ccs.id
+        WHERE
+            acn.record = rid
+            AND acp.holdable = true
+            AND acpl.holdable = true
+            AND ccs.holdable = true
+            AND acp.deleted = false
+        LIMIT 1;
+    IF FOUND THEN
+        RETURN true;
+    END IF;
+    RETURN FALSE;
+END;
+$f$ LANGUAGE PLPGSQL;
+
 CREATE OR REPLACE FUNCTION asset.opac_ou_metarecord_copy_count (org INT, rid BIGINT) RETURNS TABLE (depth INT, org_unit INT, visible BIGINT, available BIGINT, unshadow BIGINT, transcendant INT) AS $f$
 DECLARE
     ans RECORD;
@@ -795,6 +817,29 @@ BEGIN
     END IF;
 
     RETURN;
+END;
+$f$ LANGUAGE PLPGSQL;
+
+CREATE OR REPLACE FUNCTION asset.metarecord_has_holdable_copy ( rid BIGINT ) RETURNS BOOL AS $f$
+BEGIN
+    PERFORM 1
+        FROM
+            asset.copy acp
+            JOIN asset.call_number acn ON acp.call_number = acn.id
+            JOIN asset.copy_location acpl ON acp.location = acpl.id
+            JOIN config.copy_status ccs ON acp.status = ccs.id
+            JOIN metabib.metarecord_source_map mmsm ON acn.record = mmsm.source
+        WHERE
+            mmsm.metarecord = rid
+            AND acp.holdable = true
+            AND acpl.holdable = true
+            AND ccs.holdable = true
+            AND acp.deleted = false
+        LIMIT 1;
+    IF FOUND THEN
+        RETURN true;
+    END IF;
+    RETURN FALSE;
 END;
 $f$ LANGUAGE PLPGSQL;
 

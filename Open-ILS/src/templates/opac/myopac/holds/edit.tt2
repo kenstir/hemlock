@@ -37,7 +37,7 @@
             <p>
                 <strong>[% l('Status') %]</strong>: [% hold.human_status %]
             </p>
-            <form method="POST">
+            <form method="post">
                 <table id="hold_editor_table">
                     <tr>
                         <th>
@@ -48,10 +48,10 @@
                         </th>
                         <td>
                             [% INCLUDE build_org_selector
-                                name='pickup_lib' value=ahr.pickup_lib %]
+                                name='pickup_lib' value=ahr.pickup_lib can_have_vols_only=1 %]
                         </td>
                     </tr>
-                    [% IF hold.hold.status < 3 %]
+                    [% IF hold.hold.status < 3 OR hold.hold.status == 7 %]
                     [%# The following actions cannot be performed on holds that 
                         have already been captured... %]
                     <tr>

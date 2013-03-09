@@ -11,12 +11,14 @@ my $U = 'OpenILS::Application::AppUtils';
 
 my $ro_object_subs; # cached subs
 our %cache = ( # cached data
-    map => {aou => {}}, # others added dynamically as needed
-    list => {},
-    search => {},
-    org_settings => {},
-    eg_cache_hash => undef,
-    search_filter_groups => {}
+    map => {en_us => {}},
+    list => {en_us => {}},
+    search => {en_us => {}},
+    org_settings => {en_us => {}},
+    search_filter_groups => {en_us => {}},
+    aou_tree => {en_us => undef},
+    aouct_tree => {},
+    eg_cache_hash => undef
 );
 
 sub init_ro_object_cache {
@@ -24,7 +26,7 @@ sub init_ro_object_cache {
     my $e = $self->editor;
     my $ctx = $self->ctx;
 
-    # reset org unit setting cache on each page load to avoid the 
+    # reset org unit setting cache on each page load to avoid the
     # requirement of reloading apache with each org-setting change
     $cache{org_settings} = {};
 
@@ -55,17 +57,17 @@ sub init_ro_object_cache {
         # Retrieve the full set of objects with class $hint
         $ro_object_subs->{$list_key} = sub {
             my $method = "retrieve_all_$eclass";
-            $cache{list}{$hint} = $e->$method() unless $cache{list}{$hint};
-            return $cache{list}{$hint};
+            $cache{list}{$ctx->{locale}}{$hint} = $e->$method() unless $cache{list}{$ctx->{locale}}{$hint};
+            return $cache{list}{$ctx->{locale}}{$hint};
         };
-    
+
         # locate object of class $hint with Ident field $id
         $cache{map}{$hint} = {};
         $ro_object_subs->{$get_key} = sub {
             my $id = shift;
-            return $cache{map}{$hint}{$id} if $cache{map}{$hint}{$id}; 
-            ($cache{map}{$hint}{$id}) = grep { $_->$ident_field eq $id } @{$ro_object_subs->{$list_key}->()};
-            return $cache{map}{$hint}{$id};
+            return $cache{map}{$ctx->{locale}}{$hint}{$id} if $cache{map}{$ctx->{locale}}{$hint}{$id};
+            ($cache{map}{$ctx->{locale}}{$hint}{$id}) = grep { $_->$ident_field eq $id } @{$ro_object_subs->{$list_key}->()};
+            return $cache{map}{$ctx->{locale}}{$hint}{$id};
         };
 
         # search for objects of class $hint where field=value
@@ -76,7 +78,7 @@ sub init_ro_object_cache {
             my $cacheval = $val;
             if (ref $val) {
                 $val = [sort(@$val)] if ref $val eq 'ARRAY';
-                $cacheval = OpenSRF::Utils::JSON->perl2JSON($val); 
+                $cacheval = OpenSRF::Utils::JSON->perl2JSON($val);
                 #$self->apache->log->info("cacheval : $cacheval");
             }
             my $search_obj = {$field => $val};
@@ -84,17 +86,17 @@ sub init_ro_object_cache {
                 $search_obj->{$filterfield} = $filterval;
                 $cacheval .= ':' . $filterfield . ':' . $filterval;
             }
-            $cache{search}{$hint}{$field} = {} unless $cache{search}{$hint}{$field};
-            $cache{search}{$hint}{$field}{$cacheval} = $e->$method($search_obj) 
-                unless $cache{search}{$hint}{$field}{$cacheval};
-            return $cache{search}{$hint}{$field}{$cacheval};
+            #$cache{search}{$ctx->{locale}}{$hint}{$field} = {} unless $cache{search}{$ctx->{locale}}{$hint}{$field};
+            $cache{search}{$ctx->{locale}}{$hint}{$field}{$cacheval} = $e->$method($search_obj)
+                unless $cache{search}{$ctx->{locale}}{$hint}{$field}{$cacheval};
+            return $cache{search}{$ctx->{locale}}{$hint}{$field}{$cacheval};
         };
     }
 
     $ro_object_subs->{aou_tree} = sub {
 
         # fetch the org unit tree
-        unless($cache{aou_tree}) {
+        unless($cache{aou_tree}{$ctx->{locale}}) {
             my $tree = $e->search_actor_org_unit([
 			    {   parent_ou => undef},
 			    {   flesh            => -1,
@@ -108,16 +110,17 @@ sub init_ro_object_cache {
             sub flesh_aout {
                 my $node = shift;
                 my $ro_object_subs = shift;
+                my $ctx = shift;
                 $node->ou_type( $ro_object_subs->{get_aout}->($node->ou_type) );
-                $cache{map}{aou}{$node->id} = $node;
-                flesh_aout($_, $ro_object_subs) foreach @{$node->children};
+                $cache{map}{$ctx->{locale}}{aou}{$node->id} = $node;
+                flesh_aout($_, $ro_object_subs, $ctx) foreach @{$node->children};
             };
-            flesh_aout($tree, $ro_object_subs);
+            flesh_aout($tree, $ro_object_subs, $ctx);
 
-            $cache{aou_tree} = $tree;
+            $cache{aou_tree}{$ctx->{locale}} = $tree;
         }
 
-        return $cache{aou_tree};
+        return $cache{aou_tree}{$ctx->{locale}};
     };
 
     # Add a special handler for the tree-shaped org unit cache
@@ -125,20 +128,20 @@ sub init_ro_object_cache {
         my $org_id = shift;
         return undef unless defined $org_id;
         $ro_object_subs->{aou_tree}->(); # force the org tree to load
-        return $cache{map}{aou}{$org_id};
+        return $cache{map}{$ctx->{locale}}{aou}{$org_id};
     };
 
     # Returns a flat list of aou objects.  often easier to manage than a tree.
     $ro_object_subs->{aou_list} = sub {
         $ro_object_subs->{aou_tree}->(); # force the org tree to load
-        return [ values %{$cache{map}{aou}} ];
+        return [ values %{$cache{map}{$ctx->{locale}}{aou}} ];
     };
 
     $ro_object_subs->{aouct_tree} = sub {
 
         # fetch the org unit tree
-        unless(exists $cache{aouct_tree}) {
-            $cache{aouct_tree} = undef;
+        unless(exists $cache{aouct_tree}{$ctx->{locale}}) {
+            $cache{aouct_tree}{$ctx->{locale}} = undef;
 
             my $tree_id = $e->search_actor_org_unit_custom_tree(
                 {purpose => 'opac', active => 't'},
@@ -169,17 +172,32 @@ sub init_ro_object_cache {
                     }
                 }
 
-                $cache{aouct_tree} = $node_tree->org_unit;
+                $cache{aouct_tree}{$ctx->{locale}} = $node_tree->org_unit;
             }
         }
 
-        return $cache{aouct_tree};
+        return $cache{aouct_tree}{$ctx->{locale}};
     };
 
     # turns an ISO date into something TT can understand
     $ro_object_subs->{parse_datetime} = sub {
         my $date = shift;
-        $date = DateTime::Format::ISO8601->new->parse_datetime(cleanse_ISO8601($date));
+
+        # Probably an accidental entry like '0212' instead of '2012',
+        # but 1) the leading 0 may get stripped in cstore and
+        # 2) DateTime::Format::ISO8601 returns an error as years
+        # must be 2 or 4 digits
+        if ($date =~ m/^\d{3}-/) {
+            $logger->warn("Invalid date had a 3-digit year: $date");
+            $date = '0' . $date;
+        } elsif ($date =~ m/^\d{1}-/) {
+            $logger->warn("Invalid date had a 1-digit year: $date");
+            $date = '000' . $date;
+        }
+
+        my $cleansed_date = cleanse_ISO8601($date);
+
+        $date = DateTime::Format::ISO8601->new->parse_datetime($cleansed_date);
         return sprintf(
             "%0.2d:%0.2d:%0.2d %0.2d-%0.2d-%0.4d",
             $date->hour,
@@ -195,14 +213,11 @@ sub init_ro_object_cache {
     $ro_object_subs->{get_org_setting} = sub {
         my($org_id, $setting) = @_;
 
-        $cache{org_settings}{$org_id} = {} 
-            unless $cache{org_settings}{$org_id};
-
-        $cache{org_settings}{$org_id}{$setting} = 
+        $cache{org_settings}{$ctx->{locale}}{$org_id}{$setting} =
             $U->ou_ancestor_setting_value($org_id, $setting)
-                unless exists $cache{org_settings}{$org_id}{$setting};
+                unless exists $cache{org_settings}{$ctx->{locale}}{$org_id}{$setting};
 
-        return $cache{org_settings}{$org_id}{$setting};
+        return $cache{org_settings}{$ctx->{locale}}{$org_id}{$setting};
     };
 
     $ctx->{$_} = $ro_object_subs->{$_} for keys %$ro_object_subs;
@@ -284,7 +299,7 @@ sub get_records_and_facets {
     # collect the facet data
     my $search = OpenSRF::AppSession->create('open-ils.search');
     my $facet_req = $search->request(
-        'open-ils.search.facet_cache.retrieve', $facet_key, 10
+        'open-ils.search.facet_cache.retrieve', $facet_key
     ) if $facet_key;
 
     # gather up the unapi recs
@@ -303,7 +318,13 @@ sub get_records_and_facets {
             for my $ent (keys %$entries) {
                 push(@entries, {value => $ent, count => $$entries{$ent}});
             };
-            @entries = sort { $b->{count} <=> $a->{count} } @entries;
+
+            # Sort facet entries by 1) count descending, 2) text ascending
+            @entries = sort {
+                $b->{count} <=> $a->{count} ||
+                $a->{value} cmp $b->{value}
+            } @entries;
+
             $facets->{$cmf_id} = {
                 cmf => $self->ctx->{get_cmf}->($cmf_id),
                 data => \@entries
@@ -363,6 +384,10 @@ sub _get_search_lib {
     $loc = $self->cgi->param('loc');
     return $loc if $loc;
 
+    if ($self->apache->headers_in->get('OILS-Search-Lib')) {
+        return $self->apache->headers_in->get('OILS-Search-Lib');
+    }
+
     my $pref_lib = $self->_get_pref_lib();
     return $pref_lib if $pref_lib;
 
@@ -377,6 +402,10 @@ sub _get_pref_lib {
     my $plib = $self->cgi->param('plib');
     return $plib if $plib;
 
+    if ($self->apache->headers_in->get('OILS-Pref-Lib')) {
+        return $self->apache->headers_in->get('OILS-Pref-Lib');
+    }
+
     if ($ctx->{user}) {
         # See if the user has a search library preference
         my $lset = $self->editor->search_actor_user_setting({
@@ -389,8 +418,8 @@ sub _get_pref_lib {
         return $ctx->{user}->home_ou;
     }
 
-    if ($self->cgi->param('physical_loc')) {
-        return $self->cgi->param('physical_loc');
+    if ($ctx->{physical_loc}) {
+        return $ctx->{physical_loc};
     }
 
 }
@@ -523,19 +552,20 @@ sub load_search_filter_groups {
     for my $org_id (@$org_list) {
 
         my $grps;
-        if (!$cache{search_filter_groups}{$org_id}) {
+        if (! ($grps = $cache{search_filter_groups}{$org_id}) ) {
             $grps = $self->editor->search_actor_search_filter_group([
                 {owner => $org_id},
                 {   flesh => 2, 
                     flesh_fields => {
                         asfg => ['entries'],
                         asfge => ['query']
-                    }
+                    },
+                    order_by => {asfge => 'pos'}
                 }
             ]);
             $cache{search_filter_groups}{$org_id} = $grps;
         }
-            
+
         # for the current context, if a descendant org has a group 
         # with a matching code replace the group from the parent.
         $seen{$_->code} = $_ for @$grps;
@@ -543,6 +573,105 @@ sub load_search_filter_groups {
 
     return $self->ctx->{search_filter_groups} = \%seen;
 }
+
+
+sub check_for_temp_list_warning {
+    my $self = shift;
+    my $ctx = $self->ctx;
+    my $cgi = $self->cgi;
+
+    my $lib = $self->_get_search_lib;
+    my $warn = ($ctx->{get_org_setting}->($lib || 1, 'opac.patron.temporary_list_warn')) ? 1 : 0;
+
+    if ($warn && $ctx->{user}) {
+        $self->_load_user_with_prefs;
+        my $map = $ctx->{user_setting_map};
+        $warn = 0 if ($$map{'opac.temporary_list_no_warn'});
+    }
+
+    # Check for a cookie disabling the warning.
+    $warn = 0 if ($warn && $cgi->cookie('no_temp_list_warn'));
+
+    return $warn;
+}
+
+sub load_org_util_funcs {
+    my $self = shift;
+    my $ctx = $self->ctx;
+
+    # evaluates to true if test_ou is within the same depth-
+    # scoped tree as ctx_ou. both ou's are org unit objects.
+    $ctx->{org_within_scope} = sub {
+        my ($ctx_ou, $test_ou, $depth) = @_;
+
+        return 1 if $ctx_ou->id == $test_ou->id;
+
+        if ($depth) {
+
+            # find the top-most ctx-org ancestor at the provided depth
+            while ($depth < $ctx_ou->ou_type->depth 
+                    and $ctx_ou->id != $test_ou->id) {
+                $ctx_ou = $ctx->{get_aou}->($ctx_ou->parent_ou);
+            }
+
+            # the preceeding loop may have landed on our org
+            return 1 if $ctx_ou->id == $test_ou->id;
+
+        } else {
+
+            return 1 if defined $depth; # $depth == 0;
+        }
+
+        for my $child (@{$ctx_ou->children}) {
+            return 1 if $ctx->{org_within_scope}->($child, $test_ou);
+        }
+
+        return 0;
+    };
+
+    # Returns true if the provided org unit is within the same 
+    # org unit hiding depth-scoped tree as the physical location.
+    # Org unit hiding is based on the immutable physical_loc
+    # and is not meant to change as search/pref/etc libs change
+    $ctx->{org_within_hiding_scope} = sub {
+        my $org_id = shift;
+        my $ploc = $ctx->{physical_loc} or return 1;
+
+        my $depth = $ctx->{get_org_setting}->(
+            $ploc, 'opac.org_unit_hiding.depth');
+
+        return 1 unless $depth; # 0 or undef
+
+        return $ctx->{org_within_scope}->( 
+            $ctx->{get_aou}->($ploc), 
+            $ctx->{get_aou}->($org_id), $depth);
+ 
+    };
+
+    # Evaluates to true if the context org (defaults to get_library) 
+    # is not within the hiding scope.  Also evaluates to true if the 
+    # user's pref_ou is set and it's out of hiding scope.
+    # Always evaluates to true when ctx.is_staff
+    $ctx->{org_hiding_disabled} = sub {
+        my $ctx_org = shift || $ctx->{search_ou};
+
+        return 1 if $ctx->{is_staff};
+
+        # beware locg values formatted as org:loc
+        $ctx_org =~ s/:.*//g;
+
+        return 1 if !$ctx->{org_within_hiding_scope}->($ctx_org);
+
+        return 1 if $ctx->{pref_ou} and $ctx->{pref_ou} != $ctx_org 
+            and !$ctx->{org_within_hiding_scope}->($ctx->{pref_ou});
+
+        return 0;
+    };
+
+}
+
+
+    
 
 
 1;

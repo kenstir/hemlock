@@ -41,7 +41,7 @@
             [% money(ctx.user_stats.fines.balance_owed) %]
         </span><br />
         [% IF (ctx.fines.grocery.size OR ctx.fines.circulation.size) AND ctx.get_org_setting(ctx.user.home_ou, 'credit.payments.allow') == 1 %]
-        <form action="[% ctx.opac_root %]/myopac/main_payment_form" method="GET"><input
+        <form action="[% ctx.opac_root %]/myopac/main_payment_form" method="get"><input
             type="submit" title="[% l('Pay Fines') %]" alt="[% l('Pay Fines') %]"
             value="[% l('Pay Fines') %]" class="pos-rel-top-5 opac-button" /></form>
         [% END %]
@@ -50,7 +50,13 @@
 
     <div style="width:662px;">
         <div style="float:left;">
-            <div style="padding:10px 0px;"></div>
+            <div style="padding:10px 0px;">
+            [%- IF date.format(ctx.parse_datetime(ctx.user.expire_date), '%s') < date.format(date.now , '%s');
+               fmt_expire_date = date.format(ctx.parse_datetime(ctx.user.expire_date), DATE_FORMAT);
+            %]
+            <span class="alert">[% l("Your library card expired on [_1]. Please contact a librarian to resolve this issue.", fmt_expire_date) %]</span>
+            [% END %]
+            </div>
             <div class="acct_sum_row">
                 <table width="100%" cellspacing="0" cellpadding="0">
                     <tr>
@@ -81,9 +87,22 @@
                     </tr>
                 </table>
             </div>
+
         </div>
     </div>
     <div class="clear-both"></div>
+
+    [% IF ctx.user.notes.0 %]
+    <table class="acct_notes">
+        <thead><th>[% l('Note title') %]</th><th>[% l('Content') %]</th></thead>
+        <tbody>
+        [% FOR note IN ctx.user.notes %]
+            <tr><td class='public-note-title'>[% note.title | html %]</td><td>[% note.value | html %]</td></tr>
+        [% END %]
+        </tbody>
+    </table>
+    [% END %]
+
     <div id='fines_payments_wrapper'>
         <div id='acct_fines_tabs'>
             [% IF myopac_main_page == 'main' %]

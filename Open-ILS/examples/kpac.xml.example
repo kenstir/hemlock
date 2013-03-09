@@ -1,0 +1,60 @@
+<kpac version="1.0" xmlns="http://evergreen-ils.org/spec/OPAC/kpac/v1">
+
+    <!-- 
+    If configured, all searches, including topic searches configured
+    below, will be appended with this filter.  The purpose is to restrict 
+    all searches within the kpac to a specific collection.
+
+    <global_filter>audience(a,b,c,d,j)</global_filter>
+    -->
+
+    <pages>
+        <!-- top-level layout pages -->
+        <page id="1" columns="5" name="Home" img="/images/home.jpg">
+            <cell type="topic">10</cell>
+            <cell type="topic">11</cell>
+            <cell type="topic">12</cell>
+            <cell type="topic">13</cell>
+            <cell type="topic">14</cell>
+            <cell type="topic">15</cell>
+            <cell type="topic">16</cell>
+            <cell type="topic">17</cell>
+            <cell type="topic">18</cell>
+            <cell type="topic">19</cell>
+        </page>
+
+        <!-- sample alternate layout -->
+        <page id="23" columns="3" name="ABC Home" img="/images/abc-logo.jpg">
+            <cell type="topic">11</cell>
+            <cell type="topic">10</cell>
+            <cell type="topic">12</cell>
+        </page>
+
+        <!-- topic pages -->
+        <page id="10" columns="3" name="Musical Instruments" img="category.png">
+            <cell name="Piano"    img="category.png" type="search">su:piano</cell>
+            <cell name="Guitar"   img="category.png" type="search">su:guitar</cell>
+            <cell name="Trumpet"  img="category.png" type="search">su:trumpet</cell>
+            <cell name="Drums"    img="category.png" type="search">su:drums</cell>
+            <cell name="Bass"     img="category.png" type="search">su:bass</cell>
+            <cell name="Clarinet" img="category.png" type="link">http://en.wikipedia.org/wiki/Clarinet</cell>
+        </page>
+        <page id="11" columns="3" name="Current Events" img="category.png">
+            <cell name="Entertainment"  img="category.png" type="search">su:entertainment sort(pubdate)#descending</cell>
+            <cell name="Politics"       img="category.png" type="search">su:politics sort(pubdate)#descending</cell>
+            <cell name="Economy"        img="category.png" type="search">su:economy sort(pubdate)#descending</cell>
+        </page>
+        <page id="12" columns="3" name="Programming" img="category.png"/>
+        <page id="13" columns="3" name="It's Alive!" img="category.png"/>
+        <page id="14" columns="3" name="Book Series" img="category.png"/>
+        <page id="15" columns="3" name="Book Series" img="category.png"/>
+        <page id="16" columns="3" name="Book Series" img="category.png"/>
+        <page id="17" columns="3" name="Book Series" img="category.png"/>
+        <page id="18" columns="3" name="Book Series" img="category.png"/>
+        <page id="19" columns="3" name="Book Series" img="category.png"/>
+    </pages>
+
+    <layout owner="1" page="1"/>
+    <layout owner="213" page="23"/>
+</kpac>
+<!-- vim: set ft=xml: -->

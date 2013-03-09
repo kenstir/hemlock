@@ -1,7 +1,7 @@
---Upgrade Script for 2.1 to 2.2-alpha2
+--Upgrade Script for 2.1 to 2.2.0
 
 -- Don't require use of -vegversion=something
-\set eg_version '''2.2'''
+\set eg_version '''2.2.0'''
 
 -- DROP objects that might have existed from a prior run of 0526
 -- Yes this is ironic.
@@ -11,7 +11,7 @@ DROP FUNCTION IF EXISTS evergreen.upgrade_list_applied_deprecates(TEXT);
 DROP FUNCTION IF EXISTS evergreen.upgrade_list_applied_supersedes(TEXT);
 
 BEGIN;
-INSERT INTO config.upgrade_log (version) VALUES ('2.2-beta2');
+INSERT INTO config.upgrade_log (version) VALUES ('2.2.0');
 
 INSERT INTO config.upgrade_log (version) VALUES ('0526'); --miker
 
@@ -1975,6 +1975,7 @@ ALTER TABLE vandelay.queued_authority_record
     ADD COLUMN error_detail TEXT;
 
 ALTER TABLE vandelay.authority_match DROP COLUMN matched_attr;
+ALTER TABLE vandelay.authority_match ADD COLUMN quality INTEGER NOT NULL DEFAULT 0;
 
 CREATE OR REPLACE FUNCTION vandelay.cleanup_authority_marc ( ) RETURNS TRIGGER AS $$
 BEGIN
@@ -2730,7 +2731,7 @@ CREATE TABLE authority.control_set_bib_field (
 
 CREATE TABLE authority.thesaurus (
     code        TEXT    PRIMARY KEY,     -- MARC21 thesaurus code
-    control_set INT     NOT NULL REFERENCES authority.control_set (id) ON UPDATE CASCADE ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED,
+    control_set INT     REFERENCES authority.control_set (id) ON UPDATE CASCADE ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED,
     name        TEXT    NOT NULL UNIQUE, -- i18n
     description TEXT                     -- i18n
 );
@@ -12417,6 +12418,37 @@ INSERT INTO permission.perm_list ( id, code, description )
         )
     );
 
+-- 0715.data.add_acq_config_group
+SELECT evergreen.upgrade_deps_block_check('0715', :eg_version);
+
+INSERT INTO config.settings_group (name, label) VALUES
+('acq', oils_i18n_gettext('config.settings_group.system', 'Acquisitions', 'coust', 'label'));
+
+UPDATE config.org_unit_setting_type
+    SET grp = 'acq'
+    WHERE name LIKE 'acq%';
+
+-- Evergreen DB patch 0716.coded_value_map_id_seq_fix.sql
+
+SELECT evergreen.upgrade_deps_block_check('0716', :eg_version);
+
+SELECT SETVAL('config.coded_value_map_id_seq'::TEXT, (SELECT max(id) FROM config.coded_value_map));
+
+
+-- Evergreen DB patch 0717.data.safer-control-set-defaults.sql
+
+SELECT evergreen.upgrade_deps_block_check('0717', :eg_version);
+
+-- Allow un-mapped thesauri
+-- ALTER TABLE authority.thesaurus ALTER COLUMN control_set DROP NOT NULL;
+-- XXX The above line is now covered by changes to the
+-- "CREATE TABLE authority.thesaurus" statement further up.
+
+-- Don't tie "No attempt to code" to LoC
+UPDATE authority.thesaurus SET control_set = NULL WHERE code = '|';
+UPDATE authority.record_entry SET control_set = NULL WHERE id IN (SELECT record FROM authority.rec_descriptor WHERE thesaurus = '|');
+
+
 COMMIT;
 
 \qecho ************************************************************************
@@ -16175,3 +16207,22 @@ CREATE INDEX ii_poi_idx on acq.invoice_item (po_item);
 
 DROP LANGUAGE plperl;
 
+\qecho Evergreen depends heavily on each bibliographic record containing
+\qecho a 901 field with a subfield "c" to hold the record ID. The following
+\qecho query identifies the bibs that are missing 901s or whose first
+\qecho 901$c is not equal to the bib ID. This *will* take a long time in a
+\qecho big database; as the schema updates are over now, you can cancel this
+\qecho if you are in a rush.
+
+SELECT id
+  FROM biblio.record_entry
+  WHERE (
+    (XPATH('//marc:datafield[@tag="901"][1]/marc:subfield[@code="c"]/text()', marc::XML, ARRAY[ARRAY['marc', 'http://www.loc.gov/MARC21/slim']]))[1]::TEXT IS NULL
+  OR
+    (XPATH('//marc:datafield[@tag="901"][1]/marc:subfield[@code="c"]/text()', marc::XML, ARRAY[ARRAY['marc', 'http://www.loc.gov/MARC21/slim']]))[1]::TEXT <> id::TEXT)
+  AND id > -1;
+
+\qecho If there are records with missing or incorrect 901$c values, you can
+\qecho generally rely on the triggers in the biblio.record_entry table to
+\qecho populate the 901$c properly; for each offending record, run:
+\qecho   UPDATE biblio.record_entry SET marc = marc WHERE id = <id>;

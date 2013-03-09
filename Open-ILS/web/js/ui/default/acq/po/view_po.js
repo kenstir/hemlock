@@ -1,3 +1,4 @@
+dojo.require("dijit.form.Button");
 dojo.require("dojo.string");
 dojo.require('dijit.layout.ContentPane');
 dojo.require('openils.PermaCrud');
@@ -299,6 +300,7 @@ function prepareInvoiceFeatures() {
 }
 
 function renderPo() {
+    var po_state = PO.state();
     dojo.byId("acq-po-view-id").innerHTML = PO.id();
     dojo.byId("acq-po-view-name").innerHTML = PO.name();
     makeProviderLink(
@@ -308,7 +310,7 @@ function renderPo() {
     dojo.byId("acq-po-view-total-li").innerHTML = PO.lineitem_count();
     dojo.byId("acq-po-view-total-enc").innerHTML = PO.amount_encumbered().toFixed(2);
     dojo.byId("acq-po-view-total-spent").innerHTML = PO.amount_spent().toFixed(2);
-    dojo.byId("acq-po-view-state").innerHTML = PO.state(); // TODO i18n
+    dojo.byId("acq-po-view-state").innerHTML = po_state; // TODO i18n
 
     if(PO.order_date()) {
         openils.Util.show('acq-po-activated-on', 'inline');
@@ -318,7 +320,11 @@ function renderPo() {
                     openils.Util.timeStamp(PO.order_date(), {formatLength:'short'})
                 ]
             );
-
+        if(po_state == "on-order" || po_state == "cancelled") {
+            dojo.removeAttr('receive_po', 'disabled');
+        } else if(po_state == "received") {
+            dojo.removeAttr('rollback_receive_po', 'disabled');
+        }
     }
 
     makePrepayWidget(
@@ -332,7 +338,7 @@ function renderPo() {
     // dojo.byId("acq-po-view-notes").innerHTML = PO.notes().length;
     poNoteTable.updatePoNotesCount();
 
-    if (PO.state() == "pending") {
+    if (po_state == "pending") {
         checkCouldActivatePo();
         if (PO.lineitem_count() > 1)
             openils.Util.show("acq-po-split");
@@ -352,6 +358,28 @@ function renderPo() {
         oilsBasePath + "/acq/po/history/" + PO.id()
     );
     openils.Util.show("acq-po-view-history", "inline");
+
+    
+    /* if we got here from the search/invoice page with a focused LI,
+     * return to the previous page with the same LI focused */
+    var cgi = new openils.CGI();
+    var source = cgi.param('source');
+    var focus_li = cgi.param('focus_li');
+    if (focus_li && source) {
+        dojo.forEach(
+            ['search', 'invoice'], // perhaps a wee bit too loose
+            function(srcType) {
+                if (source.match(new RegExp(srcType))) {
+                    openils.Util.show('acq-po-return-to-' + srcType);
+                    var newCgi = new openils.CGI({url : source});
+                    newCgi.param('focus_li', focus_li);
+                    dojo.byId('acq-po-return-to-' + srcType + '-button').onclick = function() {
+                        location.href = newCgi.url();
+                    }
+                }
+            }
+        );
+    }
 
     prepareInvoiceFeatures();
 }
@@ -446,7 +474,12 @@ function checkCouldActivatePo() {
 
     fieldmapper.standardRequest(
         ["open-ils.acq", "open-ils.acq.purchase_order.activate.dry_run"], {
-            "params": [openils.User.authtoken, PO.id()],
+            "params": [
+                openils.User.authtoken,
+                PO.id(),
+                null,  // vandelay options
+                {zero_copy_activate : dojo.byId('acq-po-activate-zero-copies').checked}
+            ],
             "async": true,
             "onresponse": function(r) {
                 if ((r = openils.Util.readResponse(r, true /* eventOk */))) {
@@ -476,6 +509,21 @@ function checkCouldActivatePo() {
                         d.innerHTML = localeStrings.NO + ": " +
                             other[0].desc + " (" + other[0].textcode + ")";
                         openils.Util.hide(a);
+                        
+                        if (other[0].textcode == 'ACQ_LINEITEM_NO_COPIES') {
+                            // when LIs w/ zero LIDs are present, list them
+                            fieldmapper.standardRequest(
+                                [   'open-ils.acq', 
+                                    'open-ils.acq.purchase_order.no_copy_lineitems.id_list.authoritative.atomic' ],
+                                {   async : true, 
+                                    params : [openils.User.authtoken, poId],
+                                    oncomplete : function(r) {
+                                        var ids = openils.Util.readResponse(r);
+                                        d.innerHTML += ' (' + ids + ')';
+                                    }
+                                }
+                            );
+                        }
                     } else if (stops.length) {
                         d.innerHTML =
                             dojo.string.substitute(
@@ -523,7 +571,12 @@ function activatePoStage2() {
     fieldmapper.standardRequest(
         ["open-ils.acq", "open-ils.acq.purchase_order.activate"], {
             "async": true,
-            "params": [openils.User.authtoken, PO.id()],
+            "params": [
+                openils.User.authtoken,
+                PO.id(),
+                null,  // vandelay options
+                {zero_copy_activate : dojo.byId('acq-po-activate-zero-copies').checked}
+            ],
             "onresponse": function(r) {
                 want_refresh = Boolean(openils.Util.readResponse(r));
             },

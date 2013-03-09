@@ -9,8 +9,8 @@
 <div id='holds_box' class='canvas' style='margin-top: 6px;'>
     <h1>[% l('Place Hold') %]</h1>
 
-    <form method="POST">
-        <input type="hidden" type="name" name="override" value="1" />
+    <form method="post">
+        <input type="hidden" name="override" value="1" />
         [% FOR k IN ctx.orig_params.keys %]
         <input type="hidden" name="[% k %]" value="[% ctx.orig_params.$k | html %]" />
         [% END %]
@@ -53,6 +53,24 @@
                         [% IF hdata.hold_success %]
 
                         <div class='success'>[% l("Hold was successfully placed"); %]</div>
+
+                        [% IF ctx.is_staff %]
+                            <script>
+                                window.addEventListener(
+                                    'load',
+                                    function() {
+                                        try {
+                                            if (typeof xulG != 'undefined' && xulG.opac_hold_placed) {
+                                                xulG.opac_hold_placed([% hdata.hold_success %]);
+                                            }
+                                        } catch(E) {
+                                            alert('Error updating Work Log with hold placement: ' + E);
+                                        }
+                                    },
+                                    false
+                                );
+                            </script>
+                        [% END %]
 
                         [% ELSIF hdata.hold_failed; any_failures = 1 %]
 
@@ -98,7 +116,7 @@
             <br/>
             <hr/>
             <div class='big-strong'>
-                [% |l %]You have permission to override some of the failed holds.<br/>  Click Submit to override and place your hold on the selected items.[% END %]
+                [% |l %]You have permission to override some of the failed holds. Click Submit to override and place your hold on the selected items.[% END %]
             </div>
             <span style='padding-right: 10px;'>
                 <input type="submit" name="submit" value="[% l('Submit') %]"

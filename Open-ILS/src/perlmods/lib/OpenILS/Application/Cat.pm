@@ -159,7 +159,7 @@ sub biblio_record_replace_marc  {
     my( $self, $conn, $auth, $recid, $newxml, $source, $oargs ) = @_;
     my $e = new_editor(authtoken=>$auth, xact=>1);
     return $e->die_event unless $e->checkauth;
-    return $e->die_event unless $e->allowed('CREATE_MARC', $e->requestor->ws_ou);
+    return $e->die_event unless $e->allowed('UPDATE_MARC', $e->requestor->ws_ou);
 
     my $fix_tcn = $self->api_name =~ /replace/o;
     if($self->api_name =~ /override/o) {
@@ -1286,7 +1286,7 @@ sub acn_sms_msg {
     my($self, $conn, $auth, $org_id, $carrier, $number, $target_ids) = @_;
 
     my $sms_enable = $U->ou_ancestor_setting_value(
-        $org_id || $U->fetch_org_tree->id,
+        $org_id || $U->get_org_tree->id,
         'sms.enable'
     );
     # We could maybe make a Validator for this on the templates
@@ -1295,7 +1295,7 @@ sub acn_sms_msg {
     }
 
     my $disable_auth = $U->ou_ancestor_setting_value(
-        $org_id || $U->fetch_org_tree->id,
+        $org_id || $U->get_org_tree->id,
         'sms.disable_authentication_requirement.callnumbers'
     );
 

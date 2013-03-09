@@ -7,15 +7,15 @@ msgid ""
 msgstr ""
 "Project-Id-Version: evergreen\n"
 "Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
-"POT-Creation-Date: 2011-04-18 21:45-0400\n"
-"PO-Revision-Date: 2011-12-08 01:17+0000\n"
-"Last-Translator: Tomas Abril <Unknown>\n"
+"POT-Creation-Date: 2012-04-28 14:17-0400\n"
+"PO-Revision-Date: 2012-07-06 19:40+0000\n"
+"Last-Translator: Job Diógenes Ribeiro Borges <jobdrb@gmail.com>\n"
 "Language-Team: Brazilian Portuguese <pt_BR@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2011-12-09 04:48+0000\n"
-"X-Generator: Launchpad (build 14450)\n"
+"X-Launchpad-Export-Date: 2012-07-07 05:14+0000\n"
+"X-Generator: Launchpad (build 15558)\n"
 "X-Poedit-Country: BRAZIL\n"
 "X-Poedit-Language: Portuguese\n"
 "X-Poedit-SourceCharset: UTF-8\n"
@@ -58,15 +58,15 @@ msgstr "Ajuste da Fonte Global definido para maior que o padrão"
 
 #: staff.admin.font_settings.status_msg.ALL_FONTS_XX_SMALL
 msgid "Global Font set to XX-Small"
-msgstr "Fonte Global definida para o tamanho minúsculo"
+msgstr "Fonte Global definida para extra-pequeno"
 
 #: staff.admin.font_settings.status_msg.ALL_FONTS_X_SMALL
 msgid "Global Font set to X-Small"
-msgstr "Fonte Global definida para o tamanho muito pequeno"
+msgstr "Fonte Global definida para tamanho X-Pequeno"
 
 #: staff.admin.font_settings.status_msg.ALL_FONTS_SMALL
 msgid "Global Font set to Small"
-msgstr "Fonte Global definida para o tamanho pequeno"
+msgstr "Fonte Global definida para tamanho pequeno"
 
 #: staff.admin.font_settings.status_msg.ALL_FONTS_MEDIUM
 msgid "Global Font set to Medium"
@@ -140,6 +140,34 @@ msgstr "Fonte Global definida para 17pts"
 msgid "Global Font set to 18pt"
 msgstr "Fonte Global definida para 18pts"
 
+#: staff.admin.toolbar.unsaved_changes
+msgid ""
+"Unsaved changes. Choose either Save Toolbar or Cancel Changes if you wish to "
+"select a different toolbar."
+msgstr ""
+"Alterações não salvas. Escolha Salvar Barra de Ferramentas ou Cancelar "
+"Alterações se você deseja selecionar uma barra de ferramentas diferente."
+
+#: staff.admin.toolbar.tab_name
+msgid "Toolbars"
+msgstr "Barras de ferramentas"
+
+#: staff.admin.toolbar.button_id.header
+msgid "Button ID"
+msgstr "ID do Botão"
+
+#: staff.admin.toolbar.label.header
+msgid "Label"
+msgstr "Rótulo"
+
+#: staff.admin.toolbar.toolbar_separator.list_entry
+msgid "Toolbar Separator"
+msgstr "Barra de Ferramentas - Separador"
+
+#: staff.admin.toolbar.toolbar_spacer.list_entry
+msgid "Toolbar Spacer"
+msgstr "Barra de ferramentas - Espaçador"
+
 #: staff.admin.transit_list.missing_list
 msgid "Missing library list."
 msgstr "Faltando lista de bibliotecas."
@@ -158,7 +186,7 @@ msgstr "Data invalida (%1$s,%2$s), definindo para Hoje"
 
 #: staff.admin.transit_list.date_processing.error
 msgid "error processing date"
-msgstr "erro ao tratar data"
+msgstr "erro ao processar data"
 
 #: staff.admin.transit_list.retrieving_transit.error
 msgid "error retrieving transits"
@@ -174,16 +202,15 @@ msgstr "erro ao obter linha"
 
 #: staff.admin.transit_list.empty_array.error
 msgid "Empty array returned by hold retrieve."
-msgstr ""
-"A recuperação do artigo colocado na reserva indica uma prateleira vazia."
+msgstr "Vetor vazio retornado ao obter reserva"
 
 #: staff.admin.transit_list.retrieve_hold.error
 msgid "retrieving hold id = %1$s for transit id = %2$s"
-msgstr "recuperação da ID %1s em reserva para o transito ID = %2$s"
+msgstr "recuperação da reserva ID %1s para o transito ID = %2$s"
 
 #: staff.admin.transit_list.transit_id.error
 msgid "retrieving transit id = %1$s"
-msgstr "recuperação do transito ID = %1$s"
+msgstr "obtendo transito ID = %1$s"
 
 #: staff.admin.offline_manage_xacts.init_list.organization
 msgid "Organization"
@@ -249,7 +276,7 @@ msgstr "Estação de Trabalho"
 
 #: staff.admin.offline_manage_xacts.init_error_list.timestamp
 msgid "Timestamp"
-msgstr "Marca de Tempo"
+msgstr "Registro de Horas"
 
 #: staff.admin.offline_manage_xacts.init_error_list.type
 msgid "Type"
@@ -273,15 +300,15 @@ msgstr "Código de Barra do Item"
 
 #: staff.admin.offline_manage_xacts.init_error_list.patron_barcode
 msgid "Patron Barcode"
-msgstr "Código de Barra do cliente"
+msgstr "Código de barras do Usuário"
 
 #: staff.admin.offline_manage_xacts.init_error_list.due_date
 msgid "Due Date"
-msgstr "Date de Entrega"
+msgstr "Data de Vencimento"
 
 #: staff.admin.offline_manage_xacts.init_error_list.count
 msgid "In House Use Count"
-msgstr "Nome de utilização interna"
+msgstr "Contagem de utilização interna"
 
 #: staff.admin.offline_manage_xacts.init_error_list.noncat
 msgid "Non-Cataloged?"
@@ -450,6 +477,8 @@ msgid ""
 "Workstation library %1$s is currently suppressing auto-print for these "
 "receipt/slip types based on a setting inherited from %2$s:"
 msgstr ""
+"A estação de trabalho %1 esta atualmente suprimindo a auto-impressão para "
+"este tipos de recibos/comprovantes baseado nas configurações vindas de  %2$s:"
 
 #. # 1 - workstation library shortname
 #: staff.admin.staff.do_not_auto_attempt_print_setting.current_setting_nonexistent
@@ -457,3 +486,5 @@ msgid ""
 "Workstation library %1$s is not currently suppressing auto-print for any "
 "receipt/slip types."
 msgstr ""
+"A estação de trabalho %1 não esta atualmente suprimindo a auto-impressão "
+"para qualquer tipo de recibo/comprovante."

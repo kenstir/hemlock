@@ -1,7 +1,7 @@
 [% PROCESS "opac/parts/org_selector.tt2" %]
 <div id="search-box">    
     [% UNLESS took_care_of_form -%]
-    <form action="[% ctx.opac_root %]/results" method="GET">
+    <form action="[% ctx.opac_root %]/results" method="get">
     [%- END %]
     <div>
         <span class="search_catalog_lbl">[% l('Search the Catalog') %]</span>
@@ -9,9 +9,14 @@
             id="home_adv_search_link"><span
             class="adv_search_font">[% l('Advanced Search') %]</span></a>
     </div>
-    <div style="font-weight: bold">[%- l('Search ');
-        INCLUDE "opac/parts/coded_value_selector.tt2"
-            attr=["mattype", "item_type"] none_ok=1 none_label=l('All Formats');
+    <div class="searchbar">[%- l('Search ');
+        IF search.basic_config.type == 'attr';
+            INCLUDE "opac/parts/coded_value_selector.tt2"
+                attr=search.basic_config.group none_ok=1 none_label=search.basic_config.none_label;
+        ELSIF search.basic_config.type == 'filter';
+            INCLUDE "opac/parts/filter_group_selector.tt2"
+                filter_group=search.basic_config.group none_ok=1 none_label=search.basic_config.none_label;
+        END;
             l(' for ');
         %]
         <span class='search_box_wrapper'>
@@ -24,7 +29,7 @@
                 store_args='{"org_unit_getter": function() { return [% ctx.search_ou %]; }}'
                 [%-     END # opac_visible -%]
                 [%- ELSE -%]
-                autofocus x-webkit-speech
+                    [% IF basic_search != "f" %] autofocus [% END %] x-webkit-speech
                 [%- END # autosuggest enabled %] />
         </span>
         [%- INCLUDE "opac/parts/qtype_selector.tt2" id="qtype";
@@ -57,7 +62,7 @@
     [% IF (is_advanced AND NOT is_special) AND CGI.param('qtype') %]
     <div class="opac-auto-102">
         [ <a href="[% mkurl(ctx.opac_root _ '/advanced') %]">[%
-            l('Click to Refine Your Original Search')
+            l('Refine My Original Search')
         %]</a> ]
     </div>
     [% END %]

@@ -24,6 +24,7 @@ patron.display.prototype = {
 
         var obj = this;
 
+        obj.event_listeners = new EventListenerList();
         obj.barcode = params['barcode'];
         obj.id = params['id'];
 
@@ -214,11 +215,12 @@ patron.display.prototype = {
                                 {
                                     'patron_id' : obj.patron.id(),
                                     'on_list_change' : function(b) {
-                                        netscape.security.PrivilegeManager.enablePrivilege("UniversalXPConnect");
                                         obj.summary_window.g.summary.controller.render('patron_checkouts');
                                         obj.summary_window.g.summary.controller.render('patron_standing_penalties');
                                         obj.summary_window.g.summary.controller.render('patron_bill');
-                                        obj.bill_window.g.bills.refresh(true);
+                                        if (obj.bill_window) {
+                                            obj.bill_window.refresh(true);
+                                        }
                                     },
                                     'url_prefix' : function(url,secure) { return xulG.url_prefix(url,secure); },
                                     'get_new_session' : function(a) { return xulG.get_new_session(a); },
@@ -226,7 +228,6 @@ patron.display.prototype = {
                                     'new_patron_tab' : function(a,b) { return xulG.new_patron_tab(a,b); }
                                 }
                             );
-                            netscape.security.PrivilegeManager.enablePrivilege("UniversalXPConnect");
                             obj.items_window = get_contentWindow(frame);
                         }
                     ],
@@ -249,7 +250,7 @@ patron.display.prototype = {
                                     //    if (param_count++ == 0) url += '?'; else url += '&';
                                     //    url += i + '=' + window.escape(p[i]);
                                     //}
-                                    var loc = xulG.url_prefix( urls.XUL_REMOTE_BROWSER ); // + '?url=' + window.escape( url );
+                                    var loc = xulG.url_prefix('XUL_REMOTE_BROWSER'); // + '?url=' + window.escape( url );
                                     xulG.new_tab(
                                         loc, 
                                         {}, 
@@ -296,7 +297,6 @@ patron.display.prototype = {
                                                 JSAN.use('patron.util'); 
                                                 patron.util.work_log_patron_edit(p);
                                                 if (obj.barcode) obj.barcode = p.card().barcode();
-                                                netscape.security.PrivilegeManager.enablePrivilege("UniversalXPConnect");
                                                 //obj.summary_window.g.summary.retrieve();
                                                 obj.refresh_all();
                                             } catch(E) {
@@ -344,10 +344,12 @@ patron.display.prototype = {
                         ['command'],
                         function(ev) {
                             obj.right_deck.set_iframe(
-                                urls.XUL_TRIGGER_EVENTS,
+                                xulG.url_prefix(urls.XUL_REMOTE_BROWSER),
                                 {},
                                 {
-                                    'patron_id' : obj.patron.id()
+                                    'url': urls.EG_TRIGGER_EVENTS + "?patron_id=" + obj.patron.id(),
+                                    'show_print_button': false,
+                                    'show_nav_buttons': false
                                 }
                             );
                         }
@@ -418,7 +420,7 @@ patron.display.prototype = {
                         ['command'],
                         function(ev) {
                             openils.XUL.newTabEasy(
-                                "/eg/booking/reservation",
+                                "BOOKING_RESERVATION",
                                 $("offlineStrings").getString(
                                     "menu.cmd_booking_reservation.tab"
                                 ), {
@@ -435,7 +437,7 @@ patron.display.prototype = {
                         ['command'],
                         function(ev) {
                             openils.XUL.newTabEasy(
-                                "/eg/booking/pickup",
+                                "BOOKING_PICKUP",
                                 $("offlineStrings").getString(
                                     "menu.cmd_booking_reservation_pickup.tab"
                                 ), {
@@ -452,7 +454,7 @@ patron.display.prototype = {
                         ['command'],
                         function(ev) {
                             openils.XUL.newTabEasy(
-                                "/eg/booking/return",
+                                "BOOKING_RETURN",
                                 $("offlineStrings").getString(
                                     "menu.cmd_booking_reservation_return.tab"
                                 ), {
@@ -487,7 +489,6 @@ patron.display.prototype = {
                                         'patron_barcode' : obj.patron.card().barcode(),
                                         'on_list_change' : function(h) {
                                             try {
-                                                netscape.security.PrivilegeManager.enablePrivilege("UniversalXPConnect");
                                                 obj.summary_window.g.summary.controller.render('patron_holds');
                                             } catch(E) {
                                                 alert(E);
@@ -522,12 +523,12 @@ patron.display.prototype = {
                                     'get_new_session' : function(a) { return xulG.get_new_session(a); },
                                     'new_tab' : function(a,b,c) { return xulG.new_tab(a,b,c); },
                                     'on_money_change' : function(b) {
-                                        netscape.security.PrivilegeManager.enablePrivilege("UniversalXPConnect");
+                                        obj.summary_window.g.summary.controller.render('patron_standing_penalties');
+                                        obj.summary_window.g.summary.controller.render('patron_bill');
                                         obj.summary_window.refresh();
                                     }
                                 }
                             );
-                            netscape.security.PrivilegeManager.enablePrivilege("UniversalXPConnect");
                             obj.bill_window = get_contentWindow(f);
                         }
                     ],
@@ -604,26 +605,33 @@ patron.display.prototype = {
             }
         );
 
-        var x = document.getElementById("PatronNavBar_checkout");
-        x.addEventListener( 'focus', function(xx) { return function() { try { document.getElementById("PatronNavBarScrollbox").ensureElementIsVisible(xx); } catch(E) {}; } }(x), false);
-        var x = document.getElementById("PatronNavBar_refresh");
-        x.addEventListener( 'focus', function(xx) { return function() { try { document.getElementById("PatronNavBarScrollbox").ensureElementIsVisible(xx); } catch(E) {}; } }(x), false);
-        var x = document.getElementById("PatronNavBar_items");
-        x.addEventListener( 'focus', function(xx) { return function() { try { document.getElementById("PatronNavBarScrollbox").ensureElementIsVisible(xx); } catch(E) {}; } }(x), false);
-        var x = document.getElementById("PatronNavBar_holds");
-        x.addEventListener( 'focus', function(xx) { return function() { try { document.getElementById("PatronNavBarScrollbox").ensureElementIsVisible(xx); } catch(E) {}; } }(x), false);
-        var x = document.getElementById("PatronNavBar_other");
-        x.addEventListener( 'focus', function(xx) { return function() { try { document.getElementById("PatronNavBarScrollbox").ensureElementIsVisible(xx); } catch(E) {}; } }(x), false);
-        var x = document.getElementById("PatronNavBar_edit");
-        x.addEventListener( 'focus', function(xx) { return function() { try { document.getElementById("PatronNavBarScrollbox").ensureElementIsVisible(xx); } catch(E) {}; } }(x), false);
-        var x = document.getElementById("PatronNavBar_bills");
-        x.addEventListener( 'focus', function(xx) { return function() { try { document.getElementById("PatronNavBarScrollbox").ensureElementIsVisible(xx); } catch(E) {}; } }(x), false);
-        var x = document.getElementById("PatronNavBar_messages");
-        x.addEventListener( 'focus', function(xx) { return function() { try { document.getElementById("PatronNavBarScrollbox").ensureElementIsVisible(xx); } catch(E) {}; } }(x), false);
+        var make_listener = function(xx) {
+            return function() { 
+                try { document.getElementById("PatronNavBarScrollbox").ensureElementIsVisible(xx); } catch(E) {}; 
+            }
+        };
+
+        
+        var need_focus_listeners = [
+            'PatronNavBar_checkout', 'PatronNavBar_refresh', 'PatronNavBar_items', 'PatronNavBar_holds',
+            'PatronNavBar_other', 'PatronNavBar_edit', 'PatronNavBar_bills', 'PatronNavBar_messages'
+        ];
+        for (var i = 0; i < need_focus_listeners.length; i++) {
+            var elementID = need_focus_listeners[i];
+            var x = document.getElementById(elementID);
+            obj.event_listeners.add(x, 'focus', make_listener(x), false);
+        }
 
         if (obj.barcode || obj.id) {
             if (typeof window.xulG == 'object' && typeof window.xulG.set_tab_name == 'function') {
                 try { window.xulG.set_tab_name($("patronStrings").getString('staff.patron.display.init.retrieving_patron')); } catch(E) { alert(E); }
+            }
+
+            var displayClickies = document.getElementById("pdm2hb1a").getElementsByTagName("label");
+            for (var i = 0; i < displayClickies.length; i++) {
+                if (displayClickies[i].getAttribute('command')) {
+                    displayClickies[i].setAttribute('onclick', 'this.doCommand();');
+                }
             }
 
             obj.controller.view.PatronNavBar.selectedIndex = 1;
@@ -671,12 +679,23 @@ patron.display.prototype = {
                     }
                 }
             );
-            netscape.security.PrivilegeManager.enablePrivilege("UniversalXPConnect");
             obj.summary_window = get_contentWindow(frame);
 
         } else {
             obj.render_search_form(params);
         }
+    },
+
+    'cleanup' : function( params ) {
+        var obj = this;
+        delete obj.search_result;
+        delete obj.search_window;
+        delete obj.patron;
+        delete obj.items_window;
+        delete obj.summary_window;
+        delete obj.checkout_window;
+        obj.controller.cleanup();
+        obj.event_listeners.removeAll();
     },
 
     'reset_nav_styling' : function(btn,dont_hide_summary) {
@@ -686,14 +705,12 @@ patron.display.prototype = {
                 this.skip_hide_summary = false;
                 dont_hide_summary = true;
             }
-            this.controller.view.cmd_patron_checkout.setAttribute('style','');
-            this.controller.view.cmd_patron_items.setAttribute('style','');
-            this.controller.view.cmd_patron_edit.setAttribute('style','');
-            this.controller.view.cmd_patron_other.setAttribute('style','');
-            this.controller.view.cmd_patron_holds.setAttribute('style','');
-            this.controller.view.cmd_patron_bills.setAttribute('style','');
-            this.controller.view.cmd_standing_penalties.setAttribute('style','');
-            this.controller.view[ btn ].setAttribute('style','background: blue; color: white;');
+            var buttons = document.getElementsByTagName('button');
+            for(var i = 0; i < buttons.length; i++) {
+                var command = buttons[i].getAttribute('command');
+                if(command == btn) buttons[i].setAttribute('style','background: blue; color: white;');
+                else buttons[i].setAttribute('style','');
+            }
             var auto_hide_patron_sidebar = String( this.OpenILS.data.hash.aous['circ.auto_hide_patron_summary'] ) == 'true';
             var x = document.getElementById('splitter_grippy'); 
             if (x && auto_hide_patron_sidebar && ! dont_hide_summary) {
@@ -768,9 +785,6 @@ patron.display.prototype = {
                                                 }
                                             }
                                         );
-                                        netscape.security.PrivilegeManager.enablePrivilege(
-                                            "UniversalXPConnect"
-                                        );
                                         obj.summary_window = get_contentWindow(frame);
                                         obj.patron = obj.summary_window.g.summary.patron;
                                         obj.controller.render('patron_name');
@@ -779,7 +793,6 @@ patron.display.prototype = {
                             }
                         }
                     );
-                    netscape.security.PrivilegeManager.enablePrivilege("UniversalXPConnect");
                     obj.search_result = get_contentWindow(list_frame);
                 }
             };
@@ -794,7 +807,6 @@ patron.display.prototype = {
                 {},
                 my_xulG
             );
-            netscape.security.PrivilegeManager.enablePrivilege("UniversalXPConnect");
             obj.search_window = get_contentWindow(form_frame);
             obj._already_defaulted_once = true;
     },
@@ -803,7 +815,6 @@ patron.display.prototype = {
 
     'refresh_deck' : function(url) {
         var obj = this;
-        netscape.security.PrivilegeManager.enablePrivilege("UniversalXPConnect");
         for (var i = 0; i < obj.right_deck.node.childNodes.length; i++) {
             try {
                 var f = obj.right_deck.node.childNodes[i];
@@ -848,14 +859,11 @@ patron.display.prototype = {
                     'patron' : obj.patron,
                     'check_stop_checkouts' : function() { return obj.check_stop_checkouts(); },
                     'on_list_change_old' : function(checkout) {
-                        netscape.security.PrivilegeManager.enablePrivilege("UniversalXPConnect");
                         var x = obj.summary_window.g.summary.controller.view.patron_checkouts;
                         var n = Number(x.getAttribute('value'));
                         x.setAttribute('value',n+1);
                     },
                     'on_list_change' : function(checkout,is_renewal) {
-                    
-                        netscape.security.PrivilegeManager.enablePrivilege("UniversalXPConnect");
                         // Downside here: an extra network call, open-ils.actor.user.checked_out.count.authoritative
                         obj.summary_window.g.summary.controller.render('patron_checkouts');
                         obj.summary_window.g.summary.controller.render('patron_standing_penalties');
@@ -891,7 +899,6 @@ patron.display.prototype = {
                     'url_prefix' : xulG.url_prefix
                 }
             );
-            netscape.security.PrivilegeManager.enablePrivilege("UniversalXPConnect");
             obj.checkout_window = get_contentWindow(frame);
         } catch(E) {
             alert('Error in spawn_checkout_interface(): ' + E);
@@ -943,7 +950,6 @@ patron.display.prototype = {
                 if (obj.stop_checkouts && obj.checkout_window) {
                     setTimeout( function() {
                         try {
-                            netscape.security.PrivilegeManager.enablePrivilege("UniversalXPConnect");
                             obj.checkout_window.g.checkout.check_disable();
                         } catch(E) { }
                     }, 1000);
@@ -993,9 +999,24 @@ patron.display.prototype = {
                     expire.setFullYear(expire_parts[0], expire_parts[1], expire_parts[2]);
                     expire = expire.getTime()/1000
 
+                    var preexpire = new Date();
+                    var preexpire_value;
+                    var preexpire_setting = obj.OpenILS.data.hash.aous['circ.patron_expires_soon_warning'];
+                    if (preexpire_setting) {
+                        if (typeof preexpire_setting == "string") { 
+                            preexpire_value = parseInt(preexpire_setting);  
+                        } else {
+                            preexpire_value = preexpire_setting;
+                        }
+                        preexpire.setDate(preexpire.getDate() + preexpire_value);
+                    }
+                    preexpire = preexpire.getTime()/1000;
+
                     if (expire < now) {
                         msg += $("patronStrings").getString('staff.patron.display.init.network_request.account_expired');
-                    obj.stop_checkouts = true;
+                        obj.stop_checkouts = true;
+                    } else if (expire < preexpire && preexpire_setting) {
+                        msg += $("patronStrings").getString('staff.patron.display.init.network_request.account_expire_soon');
                     }
                 }
                 var penalties = patron.standing_penalties();

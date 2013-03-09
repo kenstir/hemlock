@@ -4,7 +4,9 @@
 #
 # Makefile to install prerequisites for OpenSRF and Evergreen
 #
-# Currently supports Debian (squeeze), Ubuntu (10.04), Ubuntu (12.04) and Fedora (16).
+# Currently supports Debian (squeeze), Ubuntu (10.04), Ubuntu (12.04) and
+# Fedora (16 and 17).
+#
 # Installs Perl prereqs, libjs with Perl wrapper, libdbi, libdbi-drivers, and libyaz
 #
 # usage:
@@ -14,7 +16,7 @@
 # 	- or -
 # 	make -f Makefile.install ubuntu-precise
 # 	- or -
-# 	make -f Makefile.install fedora16
+# 	make -f Makefile.install fedora
 #
 # ---------------------------------------------------------------------
  
@@ -79,7 +81,6 @@ DEBS =  \
 	libnspr4-dev\
 	libole-storage-lite-perl\
 	libparent-perl \
-	libreadline5-dev\
 	libspreadsheet-writeexcel-perl\
 	libssh2-1-dev\
 	libtext-aspell-perl\
@@ -122,6 +123,7 @@ FEDORA_RPMS = \
 	libssh2-devel \
 	libyaz \
 	libyaz-devel \
+	mingw32-nsiswrapper \
 	mod_ssl \
 	ncurses-devel \
 	ncurses-libs \
@@ -129,13 +131,17 @@ FEDORA_RPMS = \
 	perl-Business-CreditCard \
 	perl-Business-ISBN \
 	perl-Business-ISBN-Data \
+	perl-CPAN \
 	perl-DBD-Pg \
 	perl-Email-Send \
 	perl-Email-Simple \
 	perl-GDGraph3d \
 	perl-JSON-XS \
 	perl-LDAP \
+	perl-Library-CallNumber-LC \
 	perl-Locale-Codes \
+	perl-MARC-Charset \
+	perl-MARC-Record \
 	perl-Net-IP \
 	perl-Net-SSH2 \
 	perl-OLE-Storage_Lite \
@@ -152,12 +158,12 @@ FEDORA_RPMS = \
 
 # Note: B:O:AuthorizeNet 3.21 fails with https://rt.cpan.org/Public/Bug/Display.html?id=55172
 # Should be fixed in 3.22
-# MARC::Record 2.0.1 is required but only 2.0.0 is packaged
+# MARC::Record 2.0.1+ is required but only 2.0.0 is packaged
 FEDORA_CPAN = \
 	Business::OnlinePayment \
 	Business::OnlinePayment::AuthorizeNet \
 	Business::OnlinePayment::PayPal \
-	MARC::Record \
+	MARC::File::XML \
 	UUID::Tiny
 
 PGSQL_90_RPMS = \
@@ -209,12 +215,12 @@ DEB_APACHE_DISMODS = \
 
 # Chronically unpackaged CPAN modules
 CPAN_MODULES = \
-	Business::EDI \
 	Business::OnlinePayment::PayPal \
 	Library::CallNumber::LC \
 	Net::Z3950::Simple2ZOOM \
 	Template::Plugin::POSIX \
-	SRU
+	SRU \
+	Rose::URI
 
 # More chronically unpackaged CPAN modules (available in Squeeze though)
 CPAN_MODULES_MORE = \
@@ -243,15 +249,15 @@ CPAN_MODULES_FORCE = \
 
 # Lucid Lynx needs the following additional CPAN modules.
 CPAN_MODULES_LUCID = \
-    RPC::XML::Function
+    Rose::URI
 
 # Precise Pangolin needs the following CPAN modules. All others are
-# avaialalbe as debs.
+# available as debs.
 CPAN_MODULES_PRECISE = \
     Business::CreditCard::Object \
     Business::OnlinePayment::PayPal \
     Template::Plugin::POSIX \
-    RPC::XML::Function
+    Rose::URI
 
 # ----------------------------------------------------------------------------
 
@@ -261,7 +267,7 @@ all:
 # these should be the same for any distro
 install: install_cpan install_js_sm install_cpan_force
 
-fedora16: install_fedora_rpms install_cpan_fedora install_cpan_marc install
+fedora: install_fedora_rpms install_cpan_fedora install_cpan_marc install
 
 debian-squeeze: squeeze generic_debian
 squeeze: install_pgsql_client_backport_debs_91  install_extra_debs_squeeze

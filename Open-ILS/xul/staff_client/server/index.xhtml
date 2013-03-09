@@ -41,9 +41,9 @@
         var search_depth = 0; // 0 = consortium, 1 = system, 2 = library, 3 = sub-library, etc.
         
         if(textbox && textbox.value != "") {
-                var opac_url =  xulG.url_prefix(urls.opac_rresult) + "?rt=keyword&tp=keyword&l=" + home_ou_id + "&d=" + search_depth +"&f=&t=" + escape(textbox.value);
+                var opac_url =  xulG.url_prefix('opac_rresult') + "?rt=keyword&tp=keyword&l=" + home_ou_id + "&d=" + search_depth +"&f=&t=" + escape(textbox.value);
                 if (urls.opac_rresult.match(/\/eg\/opac\/results/)) {
-                    opac_url =  xulG.url_prefix(urls.opac_rresult) + "?query=" + escape(textbox.value);
+                    opac_url =  xulG.url_prefix('opac_rresult') + "?query=" + escape(textbox.value);
                 }
                 var params = {'tab_name':'Catalog'};
                 var content_params = { 'session' : ses(), 'authtime' : ses('authtime'), 'opac_url' : opac_url };
@@ -74,6 +74,8 @@
 </script>
   <script type="text/javascript" src="OpenILS/global_util.js">
 </script>
+  <script type="text/javascript" src="OpenILS/event_util.js">
+</script>
   <script type="text/javascript" src="main/JSAN.js">
 </script>
   <script type="text/javascript">
@@ -81,6 +83,7 @@
         
                 //this function will allow for the "Hello, Staff Member" messages
                 function init() { 
+                        document.getElementById('quicksearch').focus();
                         SearchOnBlur();
                         JSAN.use('OpenILS.data'); 
                         var data = new OpenILS.data(); 
@@ -90,7 +93,7 @@
                         xulG.set_tab_name('Portal');
                 }
                 function jb_open_eg_web_page(path, label) {
-                        var loc = urls.XUL_BROWSER + '?url=' + window.escape(xulG.url_prefix(urls.EG_WEB_BASE) + '/' + path);
+                        var loc = urls.XUL_BROWSER + '?url=' + window.escape(xulG.url_prefix('EG_WEB_BASE') + '/' + path);
 
                         xulG.set_tab( 
                                 loc, 
@@ -99,7 +102,7 @@
                         );
                 }
                 function jb_open_eg_web_page_newtab(path, label) {
-                        var loc = urls.XUL_BROWSER + '?url=' + window.escape(xulG.url_prefix(urls.EG_WEB_BASE) + '/' + path);
+                        var loc = urls.XUL_BROWSER + '?url=' + window.escape(xulG.url_prefix('EG_WEB_BASE') + '/' + path);
 
                         xulG.new_tab( 
                                 loc, 
@@ -110,13 +113,7 @@
                 
                 //Place your helpdesk link here
                 function helpdesk(newtab) {
-                        loc = "http://evergreen-ils.org/communicate.php";
-                        var params = {'tab_name':'Evergreen Project Website'};
-                        
-                        if(newtab)
-                                xulG.new_tab(loc, params, {}); 
-                        else
-                                xulG.set_tab(loc, params, {}); 
+                        xulG.open_external("http://evergreen-ils.org/communicate.php");
                 }
                 
                 //A good place for a Google map.  Evergreen Indiana uses GIS data to create a Google map to verify if a library is within district boundaries
@@ -209,7 +206,7 @@
                                 jb_open_eg_web_page('vandelay/vandelay', 'Server Settings');
                 }
                 function local_admin_reports(newtab) {
-                        var loc = urls.XUL_BROWSER + '?url=' + window.escape( xulG.url_prefix(urls.XUL_REPORTS) + '?ses=' + ses());
+                        var loc = urls.XUL_BROWSER + '?url=' + window.escape( xulG.url_prefix('XUL_REPORTS') + '?ses=' + ses());
                         params = {'tab_name' : 'Reports', 'browser' : false }
                         content_params = {'no_xulG' : false, 'show_print_button' : false, show_nav_buttons : true }
                         if(newtab)
@@ -219,15 +216,13 @@
                 }
                 function find_patron(newtab) {
                         if(newtab)
-                                xulG.new_tab(urls.XUL_PATRON_DISPLAY,{},{});
+                                xulG.new_patron_tab({},{});
                         else
-                                xulG.set_tab(urls.XUL_PATRON_DISPLAY,{},{});
+                                xulG.set_patron_tab({},{});
                 }
                 
                 function spawn_search(s) {
-                        var loc = urls.XUL_PATRON_DISPLAY;
-                        loc += '?doit=1&amp;query=' + window.escape(js2JSON(s));
-                        xulG.new_tab( loc, {}, {} );
+                        xulG.new_patron_tab( {}, { 'doit' : 1, 'query' : js2JSON(s) } );
                 }
                 function register_patron(newtab) {
                         function spawn_editor(p) {
@@ -255,7 +250,6 @@
                 }
                 function toggle_tpac(mode) {
                     var use_tpac = false;
-                    netscape.security.PrivilegeManager.enablePrivilege("UniversalXPConnect");
                     var prefs = Components.classes['@mozilla.org/preferences-service;1'].getService(Components.interfaces['nsIPrefBranch']);
                     try {
                         use_tpac = prefs.getBoolPref('oils.use_tpac');
@@ -371,9 +365,9 @@
             <tr>
               <td height="50"><img src="skin/media/images/portal/forward.png" height="48" width="48"
               onclick="try { checkout(false); } catch(E) { alert(E); }" alt=
-              "Check Out Items" /></td>
+              "&staff.client.portal.checkout.description;" /></td>
 
-              <td><img class="newtabimg" src="skin/media/images/portal/newtab2.PNG" alt="Open in a new tab"
+              <td><img class="newtabimg" src="skin/media/images/portal/newtab2.PNG" alt="&staff.client.portal.open_new_tab.description;"
               onclick="try { checkout(true); } catch(E) { alert(E); }" /><a href="#"
               onclick=
               "try { checkout(false); } catch(E) { alert(E); }; return false;">&staff.client.portal.checkout;</a><br />
@@ -385,9 +379,9 @@
             <tr>
               <td height="50"><img src="skin/media/images/portal/back.png" height="48" width="48" onclick=
               "try { checkin(false); } catch(E) { alert(E); }" alt=
-              "Check In Items" /></td>
+              "&staff.client.portal.checkin.description;" /></td>
 
-              <td><img class="newtabimg" src="skin/media/images/portal/newtab2.PNG" alt="Open in a new tab"
+              <td><img class="newtabimg" src="skin/media/images/portal/newtab2.PNG" alt="&staff.client.portal.open_new_tab.description;"
               onclick="try { checkin(true); } catch(E) { alert(E); }" /> <a href="#"
               onclick=
               "try { checkin(false); } catch(E) { alert(E); }; return false;">&staff.client.portal.checkin;</a><br /></td>
@@ -396,9 +390,9 @@
             <tr>
               <td height="50"><img src="skin/media/images/portal/registerpatron.png" height="48" width="48"
               onclick="try { register_patron(false); } catch(E) { alert(E); }" alt=
-              "Register Patron" /></td>
+              "&staff.client.portal.patronreg.description;" /></td>
 
-              <td><img class="newtabimg" src="skin/media/images/portal/newtab2.PNG" alt="Open in a new tab"
+              <td><img class="newtabimg" src="skin/media/images/portal/newtab2.PNG" alt="&staff.client.portal.open_new_tab.description;"
               onclick="try { register_patron(true); } catch(E) { alert(E); }" /> <a href=
               "#" onclick=
               "try { register_patron(false); } catch(E) { alert(E); }; return false;">&staff.client.portal.patronreg;</a></td>
@@ -407,9 +401,9 @@
             <tr>
               <td height="50"><img src="skin/media/images/portal/retreivepatron.png" height="48" width="48"
               onclick="try { find_patron(false); } catch(E) { alert(E); }" alt=
-              "Search For Patron By Name" /></td>
+              "&staff.client.portal.patronsearch.description;" /></td>
 
-              <td><img class="newtabimg" src="skin/media/images/portal/newtab2.PNG" alt="Open in a new tab"
+              <td><img class="newtabimg" src="skin/media/images/portal/newtab2.PNG" alt="&staff.client.portal.open_new_tab.description;"
               onclick="try { find_patron(true); } catch(E) { alert(E); }" /> <a href="#"
               onclick=
               "try { find_patron(false); } catch(E) { alert(E); }; return false;">&staff.client.portal.patronsearch;</a></td>
@@ -418,9 +412,9 @@
             <tr>
               <td height="50"><img class="funcimg" src="skin/media/images/portal/holds.png" height="48"
               width="48" onclick="try { hold_pull_list(false); } catch(E) { alert(E); }"
-              alt="Pull List for Hold Requests" /></td>
+              alt="&staff.client.portal.holdlist.description;" /></td>
 
-              <td><img class="newtabimg" src="skin/media/images/portal/newtab2.PNG" alt="Open in a new tab"
+              <td><img class="newtabimg" src="skin/media/images/portal/newtab2.PNG" alt="&staff.client.portal.open_new_tab.description;"
               onclick="try { hold_pull_list(true); } catch(E) { alert(E); }" /> <a href=
               "#" onclick=
               "try { hold_pull_list(false); } catch(E) { alert(E); }; return false;">&staff.client.portal.holdlist;</a></td>
@@ -430,7 +424,7 @@
               <td height="50"><img src="skin/media/images/portal/map.PNG" alt="Locate Address In Map"
               onclick="try { address_map(false); } catch(E) { alert(E); }" /></td>
 
-              <td><img class="newtabimg" src="skin/media/images/portal/newtab2.PNG" alt="Open in a new tab"
+              <td><img class="newtabimg" src="skin/media/images/portal/newtab2.PNG" alt="&staff.client.portal.open_new_tab.description;"
               onclick="try { address_map(true); } catch(E) { alert(E); }" /> <a href="#"
               onclick=
               "try { address_map(false); } catch(E) { alert(E); }; return false;">&staff.client.portal.addrmap;</a></td>
@@ -450,7 +444,7 @@
               <td colspan="2" rowspan="1">
                 <form action="#" onsubmit="return SearchOnSubmit();">
                   <input id="quicksearch" onfocus="SearchOnFocus();" onblur=
-                  "SearchOnBlur();" /> <input value="Search" type="submit" />
+                  "SearchOnBlur();" onkeydown="SearchOnFocus();" /> <input value="&staff.client.portal.search.button;" type="submit" />
                 </form>
               </td>
             </tr>
@@ -458,9 +452,9 @@
             <tr>
               <td height="50"><img src="skin/media/images/portal/book.png" height="48" width="48" onclick=
               "try { catalog(false); } catch(E) { alert(E); }" alt=
-              "Advanced Search" /></td>
+              "&staff.client.portal.advsearch.description;" /></td>
 
-              <td><img class="newtabimg" src="skin/media/images/portal/newtab2.PNG" alt="Open in a new tab"
+              <td><img class="newtabimg" src="skin/media/images/portal/newtab2.PNG" alt="&staff.client.portal.open_new_tab.description;"
               onclick="try { catalog(true); } catch(E) { alert(E); }" /> <a href="#"
               onclick=
               "try { catalog(false); } catch(E) { alert(E); }; return false;">&staff.client.portal.advsearch;</a></td>
@@ -469,9 +463,9 @@
             <tr>
               <td height="50"><img src="skin/media/images/portal/book.png" height="48" width="48" onclick=
               "try { copy_status(false); } catch(E) { alert(E); }" alt=
-              "Item Status / Display" /></td>
+              "&staff.client.portal.itemstatus.description;" /></td>
 
-              <td><img class="newtabimg" src="skin/media/images/portal/newtab2.PNG" alt="Open in a new tab"
+              <td><img class="newtabimg" src="skin/media/images/portal/newtab2.PNG" alt="&staff.client.portal.open_new_tab.description;"
               onclick="try { copy_status(true); } catch(E) { alert(E); }" /> <a href="#"
               onclick=
               "try { copy_status(false); } catch(E) { alert(E); }; return false;">&staff.client.portal.itemstatus;</a></td>
@@ -480,9 +474,9 @@
             <tr>
               <td height="50"><img src="skin/media/images/portal/batchimport.png" height="48" width="48"
               onclick="try { MARC_batch_import(false); } catch(E) { alert(E); }" alt=
-              "MARC Batch Import / Export" /></td>
+              "&staff.client.portal.marcutil.description;" /></td>
 
-              <td><img class="newtabimg" src="skin/media/images/portal/newtab2.PNG" alt="Open in a new tab"
+              <td><img class="newtabimg" src="skin/media/images/portal/newtab2.PNG" alt="&staff.client.portal.open_new_tab.description;"
               onclick="try { MARC_batch_import(true); } catch(E) { alert(E); }" />
               <a href="#" onclick=
               "try { MARC_batch_import(false); } catch(E) { alert(E); }; return false;">&staff.client.portal.marcutil;</a></td>
@@ -490,9 +484,9 @@
 
             <tr>
               <td height="50"><img src="skin/media/images/portal/z3950.png" height="48" width="48" onclick=
-              "try { z39_50(false); } catch(E) { alert(E); }" alt="Z39.50 Import" /></td>
+              "try { z39_50(false); } catch(E) { alert(E); }" alt="&staff.client.portal.z3950.description;" /></td>
 
-              <td><img class="newtabimg" src="skin/media/images/portal/newtab2.PNG" alt="Open in a new tab"
+              <td><img class="newtabimg" src="skin/media/images/portal/newtab2.PNG" alt="&staff.client.portal.open_new_tab.description;"
               onclick="try { z39_50(true); } catch(E) { alert(E); }" /> <a href="#"
               onclick=
               "try { z39_50(false); } catch(E) { alert(E); }; return false;">&staff.client.portal.z3950;</a></td>
@@ -501,9 +495,9 @@
             <tr>
               <td height="50"><img src="skin/media/images/portal/bucket.png" height="48" width="48" onclick=
               "try { copy_buckets(false); } catch(E) { alert(E); }" alt=
-              "Copy Buckets" /></td>
+              "&staff.client.portal.copybuckets.description;" /></td>
 
-              <td><img class="newtabimg" src="skin/media/images/portal/newtab2.PNG" alt="Open in a new tab"
+              <td><img class="newtabimg" src="skin/media/images/portal/newtab2.PNG" alt="&staff.client.portal.open_new_tab.description;"
               onclick="try { copy_buckets(true); } catch(E) { alert(E); }" /> <a href="#"
               onclick=
               "try { copy_buckets(false); } catch(E) { alert(E); }; return false;">&staff.client.portal.copybuckets;</a></td>
@@ -512,9 +506,9 @@
             <tr>
               <td height="50"><img src="skin/media/images/portal/bucket.png" height="48" width="48" onclick=
               "try { record_buckets(false); } catch(E) { alert(E); }" alt=
-              "Record Buckets" /></td>
+              "&staff.client.portal.recordbuckets.description;" /></td>
 
-              <td><img class="newtabimg" src="skin/media/images/portal/newtab2.PNG" alt="Open in a new tab"
+              <td><img class="newtabimg" src="skin/media/images/portal/newtab2.PNG" alt="&staff.client.portal.open_new_tab.description;"
               onclick="try { record_buckets(true); } catch(E) { alert(E); }" /> <a href=
               "index.html#" onclick=
               "try { record_buckets(false); } catch(E) { alert(E); }; return false;">&staff.client.portal.recordbuckets;</a></td>
@@ -532,19 +526,18 @@
             <tr>
               <td height="50"><img src="skin/media/images/portal/helpdesk.png" height="48" width="48"
               onclick="try { helpdesk(false); } catch(E) { alert(E); }" alt=
-              "Submit A Helpdesk Ticket" /></td>
+              "&staff.client.portal.helpdesk.description;" /></td>
 
-              <td><img class="newtabimg" src="skin/media/images/portal/newtab2.PNG" alt="Open in a new tab"
-              onclick="try { helpdesk(true); } catch(E) { alert(E); }" /> <a href="#"
+              <td><a href="#"
               onclick="try { helpdesk(false); } catch(E) { alert(E); }">&staff.client.portal.helpdesk;</a></td>
             </tr>
 
             <tr>
               <td height="50"><img src="skin/media/images/portal/reports.png" height="48" width="48"
               onclick="try { local_admin_reports(false); } catch(E) { alert(E); }" alt=
-              "Reports" /></td>
+              "&staff.client.portal.reports.description;" /></td>
 
-              <td><img class="newtabimg" src="skin/media/images/portal/newtab2.PNG" alt="Open in a new tab"
+              <td><img class="newtabimg" src="skin/media/images/portal/newtab2.PNG" alt="&staff.client.portal.open_new_tab.description;"
               onclick="try { local_admin_reports(true); } catch(E) { alert(E); }" />
               <a href="#" onclick=
               "try { local_admin_reports(false); } catch(E) { alert(E); }; return false;">
@@ -554,9 +547,9 @@
             <tr>
               <td height="50"><img src="skin/media/images/portal/receipt_editor.png" height="48" width="48"
               onclick="try { receipt_editor(false); } catch(E) { alert(E); }" alt=
-              "Edit Receipt Templates" /></td>
+              "&staff.client.portal.receipts.description;" /></td>
 
-              <td><img class="newtabimg" src="skin/media/images/portal/newtab2.PNG" alt="Open in a new tab"
+              <td><img class="newtabimg" src="skin/media/images/portal/newtab2.PNG" alt="&staff.client.portal.open_new_tab.description;"
               onclick="try { receipt_editor(true); } catch(E) { alert(E); }" /> <a href=
               "#" onclick=
               "try { receipt_editor(false); } catch(E) { alert(E); }; return false;">&staff.client.portal.receipts;</a></td>

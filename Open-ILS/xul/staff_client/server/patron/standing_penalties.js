@@ -4,8 +4,6 @@ function default_focus() { document.getElementById('apply_btn').focus(); } // pa
 
 function penalty_init() {
     try {
-        netscape.security.PrivilegeManager.enablePrivilege("UniversalXPConnect"); 
-
         commonStrings = document.getElementById('commonStrings');
         patronStrings = document.getElementById('patronStrings');
 
@@ -30,17 +28,31 @@ function penalty_init() {
 
         init_list();
         init_archived_list();
+        window.standing_penalties_event_listeners = new EventListenerList();
         document.getElementById('date1').year = document.getElementById('date1').year - 1;
-        document.getElementById('cmd_apply_penalty').addEventListener('command', handle_apply_penalty, false);
-        document.getElementById('cmd_remove_penalty').addEventListener('command', handle_remove_penalty, false);
-        document.getElementById('cmd_edit_penalty').addEventListener('command', handle_edit_penalty, false);
-        document.getElementById('cmd_archive_penalty').addEventListener('command', handle_archive_penalty, false);
-        document.getElementById('cmd_retrieve_archived_penalties').addEventListener('command', handle_retrieve_archived_penalties, false);
+        window.standing_penalties_event_listeners.add(document.getElementById('cmd_apply_penalty'), 'command', handle_apply_penalty, false);
+        window.standing_penalties_event_listeners.add(document.getElementById('cmd_remove_penalty'), 'command', handle_remove_penalty, false);
+        window.standing_penalties_event_listeners.add(document.getElementById('cmd_edit_penalty'), 'command', handle_edit_penalty, false);
+        window.standing_penalties_event_listeners.add(document.getElementById('cmd_archive_penalty'), 'command', handle_archive_penalty, false);
+        window.standing_penalties_event_listeners.add(document.getElementById('cmd_retrieve_archived_penalties'), 'command', handle_retrieve_archived_penalties, false);
         populate_list();
         default_focus();
 
     } catch(E) {
         var err_prefix = 'standing_penalties.js -> penalty_init() : ';
+        if (error) error.standard_unexpected_error_alert(err_prefix,E); else alert(err_prefix + E);
+    }
+}
+
+function penalty_cleanup() {
+    try {
+        window.standing_penalties_event_listeners.removeAll();
+        list.cleanup();
+        list.clear();
+        archived_list.cleanup();
+        archived_list.clear();
+    } catch(E) {
+        var err_prefix = 'standing_penalties.js -> penalty_cleanup() : ';
         if (error) error.standard_unexpected_error_alert(err_prefix,E); else alert(err_prefix + E);
     }
 }
@@ -132,7 +144,6 @@ function populate_list() {
 
 function handle_apply_penalty(ev) {
     try {
-        netscape.security.PrivilegeManager.enablePrivilege("UniversalXPConnect"); 
         JSAN.use('util.window');
         var win = new util.window();
         var my_xulG = win.open(
@@ -229,7 +240,7 @@ function handle_remove_penalty(ev) {
                 */
                 document.getElementById('progress').hidden = true;
 
-                patron.util.set_penalty_css(xulG.patron, patron.display.w.document.documentElement);
+                //patron.util.set_penalty_css(xulG.patron);
             }
         );
         document.getElementById('progress').hidden = false;
@@ -269,7 +280,6 @@ function generate_penalty_remove_function(id) {
 function handle_edit_penalty(ev) {
     try {
 
-        netscape.security.PrivilegeManager.enablePrivilege("UniversalXPConnect"); 
         JSAN.use('util.window');
         var win = new util.window();
 
@@ -315,7 +325,7 @@ function handle_edit_penalty(ev) {
                                     row_params.row.my.csp = p.standing_penalty();
                                     list.refresh_row( row_params );
 
-                                    patron.util.set_penalty_css(xulG.patron, patron.display.w.document.documentElement);
+                                    //patron.util.set_penalty_css(xulG.patron);
                                     document.getElementById('progress').hidden = true;
                                 } catch(E) {
                                     alert(E);
@@ -379,7 +389,7 @@ function handle_archive_penalty(ev) {
                             if (--outstanding_requests==0) {
                                 document.getElementById('progress').hidden = true;
 
-                                patron.util.set_penalty_css(xulG.patron, patron.display.w.document.documentElement);
+                                //patron.util.set_penalty_css(xulG.patron);
                             }
                         }
                     }(ids[i])

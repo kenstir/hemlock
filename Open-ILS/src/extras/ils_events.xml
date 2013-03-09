@@ -753,6 +753,13 @@
 		<desc xml:lang="en-US">Attempt to suspend a hold after it has been captured.</desc>
 	</event>
 
+	<event code='1900' textcode='URL_VERIFY_NOT_SESSION_CREATOR'>
+		<desc xml:lang="en-US">You did not create this URL Verify session, so you cannot change it.  You may be able to clone it.</desc>
+	</event>
+
+	<event code='1901' textcode='URL_VERIFY_SESSION_ALREADY_SEARCHED'>
+		<desc xml:lang="en-US">This session has already been searched.</desc>
+	</event>
 
 	<event code='2000' textcode='BAD_PARAMS'>
 		<desc xml:lang="en-US">Invalid parameters were encountered in a method</desc>
@@ -769,6 +776,9 @@
         <event code='2004' textcode='ACTOR_USER_DELETE_OPEN_XACTS'>
                 <desc xml:lang="en-US">The user you have attempted to delete cannot be deleted because it has open circulations and/or unpaid bills.</desc>
         </event>
+	<event code='2005' textcode='OBJECT_UNIQUE_IDENTIFIER_USED'>
+		<desc xml:lang="en-US">You are trying to create an object with a unique identifier (such as a 'name' field) that is already in use.</desc>
+	</event>
 
     <!-- CREDIT EVENTS -->
 	<event code='4001' textcode='CREDIT_PROCESSOR_NOT_ENABLED'>
@@ -859,10 +869,10 @@
 		<desc xml:lang="en-US"> The requested copy has an alert message attached </desc>
 	</event>
 	<event code='7011' textcode='COPY_STATUS_LOST'>
-		<desc xml:lang="en-US">Copy has is marked as lost</desc>
+		<desc xml:lang="en-US">Copy is marked as lost</desc>
 	</event>
 	<event code='7012' textcode='COPY_STATUS_MISSING'>
-		<desc xml:lang="en-US">Copy has is marked as missing</desc>
+		<desc xml:lang="en-US">Copy is marked as missing</desc>
 	</event>
 	<event code='7013' textcode='PATRON_EXCEEDS_FINES'>
 		<desc xml:lang="en-US">The patron in question has reached the maximum fine amount</desc>

@@ -589,6 +589,12 @@ int oilsAuthComplete( osrfMethodContext* ctx ) {
 
 	const char* ws = (workstation) ? workstation : "";
 
+	/* Use __FILE__, harmless_line_number for creating
+	 * OILS_EVENT_AUTH_FAILED events (instead of OSRF_LOG_MARK) to avoid
+	 * giving away information about why an authentication attempt failed.
+	 */
+	int harmless_line_number = __LINE__;
+
 	if( !type )
 		 type = OILS_AUTH_STAFF;
 
@@ -642,8 +648,21 @@ int oilsAuthComplete( osrfMethodContext* ctx ) {
 		}
 	}
 
-	if(!userObj) {
-		response = oilsNewEvent( OSRF_LOG_MARK, OILS_EVENT_AUTH_FAILED );
+	int     barred = 0, deleted = 0;
+	char   *barred_str, *deleted_str;
+
+	if(userObj) {
+		barred_str = oilsFMGetString( userObj, "barred" );
+		barred = oilsUtilsIsDBTrue( barred_str );
+		free( barred_str );
+
+		deleted_str = oilsFMGetString( userObj, "deleted" );
+		deleted = oilsUtilsIsDBTrue( deleted_str );
+		free( deleted_str );
+	}
+
+	if(!userObj || barred || deleted) {
+		response = oilsNewEvent( __FILE__, harmless_line_number, OILS_EVENT_AUTH_FAILED );
 		osrfLogInfo(OSRF_LOG_MARK,  "failed login: username=%s, barcode=%s, workstation=%s",
 				uname, (barcode ? barcode : "(none)"), ws );
 		osrfAppRespondComplete( ctx, oilsEventToJSON(response) );
@@ -651,7 +670,8 @@ int oilsAuthComplete( osrfMethodContext* ctx ) {
 		return 0;           // No such user
 	}
 
-	// Such a user exists.  Now see if he or she has the right credentials.
+	// Such a user exists and isn't barred or deleted.
+	// Now see if he or she has the right credentials.
 	int passOK = -1;
 	if(uname)
 		passOK = oilsAuthVerifyPassword( ctx, userObj, uname, password );
@@ -669,7 +689,7 @@ int oilsAuthComplete( osrfMethodContext* ctx ) {
 		if( passOK )
 			response = oilsNewEvent( OSRF_LOG_MARK, "PATRON_INACTIVE" );
 		else
-			response = oilsNewEvent( OSRF_LOG_MARK, OILS_EVENT_AUTH_FAILED );
+			response = oilsNewEvent( __FILE__, harmless_line_number, OILS_EVENT_AUTH_FAILED );
 
 		osrfAppRespondComplete( ctx, oilsEventToJSON(response) );
 		oilsEventFree(response);
@@ -739,7 +759,7 @@ int oilsAuthComplete( osrfMethodContext* ctx ) {
 		);
 
 	} else {
-		response = oilsNewEvent( OSRF_LOG_MARK, OILS_EVENT_AUTH_FAILED );
+		response = oilsNewEvent( __FILE__, harmless_line_number, OILS_EVENT_AUTH_FAILED );
 		osrfLogInfo(OSRF_LOG_MARK,  "failed login: username=%s, barcode=%s, workstation=%s",
 				uname, (barcode ? barcode : "(none)"), ws );
 	}

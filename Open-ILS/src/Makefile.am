@@ -14,7 +14,6 @@
 ## Process this file with automake to generate Makefile.in
 
 
-export INCDIR = "$(INCLUDEDIR)/openils/"
 export STAFF_CLIENT_BUILD_ID = `/bin/cat @top_srcdir@/Open-ILS/xul/staff_client/build/BUILD_ID`
 export DEF_LDFLAGS = -L. -L$(TMP) -L$(OPENSRF_LIBS)
 export DEF_CFLAGS = -D_LARGEFILE64_SOURCE -pipe -g -Wall -O2 -fPIC -I@top_srcdir@/include -I$(LIBXML2_HEADERS) -I$(APACHE2_HEADERS) -I$(APR_HEADERS)  -I$(LIBXML2_HEADERS)/libxml  -I$(TMP) -I$(OPENSRF_HEADERS)
@@ -46,6 +45,7 @@ sysconf_DATA = $(examples)/action_trigger_filters.json.example \
 	       $(examples)/oils_sip.xml.example \
 	       $(examples)/lib_ips.txt.example \
 	       $(examples)/oils_yaz.xml.example \
+	       $(examples)/kpac.xml.example \
 	       $(examples)/oils_z3950.xml.example 
 
 #----------------------------
@@ -72,6 +72,7 @@ core_scripts =   $(examples)/oils_ctl.sh \
 		 $(supportscr)/thaw_expired_frozen_holds.srfsh \
 		 $(supportscr)/long-overdue-status-update.pl \
 		 $(supportscr)/action_trigger_runner.pl \
+		 $(srcdir)/extras/eg_config \
 		 $(srcdir)/extras/openurl_map.pl \
 		 $(srcdir)/extras/import/marc_add_ids
 
@@ -139,7 +140,13 @@ gen_scripts = \
 	@srcdir@/extras/import/marc2sre.pl \
 	@srcdir@/extras/import/parallel_pg_loader.pl \
 	$(supportscr)/authority_control_fields.pl \
+	$(supportscr)/eg_db_config \
 	$(supportscr)/marc_export
+
+gen_docs = \
+	$(examples)/apache/eg.conf \
+	$(examples)/apache/eg_vhost.conf \
+	$(examples)/apache/eg_startup
 
 bin_SCRIPTS = $(core_scripts) $(gen_scripts) $(reporter_scripts) $(installautojs)
 
@@ -147,15 +154,19 @@ CLEANFILES = $(gen_scripts)
 
 data_DATA = $(core_data) $(reporter_data)
 
+doc_DATA = $(gen_docs)
+
 # Take care of which subdirectories to build, and which extra files to include in a distribution.
 
 SUBDIRS = $(OILSCORE_DIRS) $(OILSWEB_DIR) $(OILSPYTHON_DIR) $(OILSJAVA_DIR)
 
 EXTRA_DIST = @srcdir@/perlmods \
+	@srcdir@/data \
 	@srcdir@/templates \
 	@top_srcdir@/Open-ILS/xsl \
 	@srcdir@/cgi-bin \
 	$(gen_scripts) \
+	$(gen_docs) \
 	@srcdir@/extras/eg_config
 
 do_subst = $(SED) \
@@ -165,6 +176,7 @@ do_subst = $(SED) \
 	-e 's,[@]exec_prefix[@],$(exec_prefix),g' \
 	-e 's,[@]includedir[@],$(includedir),g' \
 	-e 's,[@]libdir[@],$(libdir),g' \
+	-e 's,[@]localstatedir[@],$(localstatedir),g' \
 	-e 's,[@]prefix[@],$(prefix),g' \
 	-e 's,[@]sysconfdir[@],$(sysconfdir),g'
 
@@ -207,9 +219,22 @@ $(supportscr)/authority_control_fields.pl: Makefile $(supportscr)/authority_cont
 	$(do_subst) $(supportscr)/authority_control_fields.pl.in > "$@"
 	chmod 755 "$@"
 
+$(supportscr)/eg_db_config: Makefile $(supportscr)/eg_db_config.in
+	$(do_subst) $(supportscr)/eg_db_config.in > "$@"
+	chmod 755 "$@"
+
 $(supportscr)/marc_export: Makefile $(supportscr)/marc_export.in
 	$(do_subst) $(supportscr)/marc_export.in > "$@"
 	chmod 755 "$@"
+
+$(examples)/apache/eg.conf: Makefile $(examples)/apache/eg.conf.in
+	$(do_subst) $(examples)/apache/eg.conf.in > "$@"
+
+$(examples)/apache/eg_vhost.conf: Makefile $(examples)/apache/eg_vhost.conf.in
+	$(do_subst) $(examples)/apache/eg_vhost.conf.in > "$@"
+
+$(examples)/apache/eg_startup: Makefile $(examples)/apache/eg_startup.in
+	$(do_subst) $(examples)/apache/eg_startup.in > "$@"
 
 #perl-install and string-templates-install	
 ilscore-install:
@@ -217,6 +242,11 @@ ilscore-install:
 	$(MKDIR_P) $(DESTDIR)$(TEMPLATEDIR)
 	@echo "Installing templates to $(DESTDIR)$(TEMPLATEDIR)"
 	cp -r @srcdir@/templates/* $(DESTDIR)$(TEMPLATEDIR)
+	-@if test -d @srcdir@/data/locale; then \
+		$(MKDIR_P) $(DESTDIR)$(datadir)/locale/ && \
+		echo "Installing template data files to $(datadir)/locale/" && \
+		cp @srcdir@/data/locale/* $(datadir)/locale/ ;\
+	fi;
 	$(MKDIR_P) $(DESTDIR)$(datadir)/overdue/
 	sed -i 's|LOCALSTATEDIR|@localstatedir@|g' '$(DESTDIR)@sysconfdir@/oils_sip.xml.example'
 	sed -i 's|SYSCONFDIR|@sysconfdir@|g' '$(DESTDIR)@sysconfdir@/oils_sip.xml.example'
@@ -244,4 +274,5 @@ reporter-install:
 	sed -i 's|SYSCONFDIR|@sysconfdir@|g' '$(DESTDIR)@bindir@/clark-kent.pl'
 	sed -i 's|SYSCONFDIR|@sysconfdir@|g' '$(DESTDIR)@bindir@/find_orphaned_reports.pl'
 
-
+docs-install: gen_docs
+	$(MKDIR_P) $(DESTDIR)$(docdir)
