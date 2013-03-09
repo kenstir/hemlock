@@ -66,6 +66,13 @@ public class ConfigureApplicationActivity extends Activity {
         username = (EditText) findViewById(R.id.username);
         password = (EditText) findViewById(R.id.password);
 
+        
+        SharedPreferences preferences = PreferenceManager
+                .getDefaultSharedPreferences(context);
+        username.setText(preferences.getString("username", ""));
+        server_http.setText(preferences.getString("library_url", ""));  
+        password.setText(preferences.getString("password", ""));
+        
         Button connect = (Button) findViewById(R.id.connect_button);
 
         connect.setOnClickListener(new OnClickListener() {
@@ -89,7 +96,7 @@ public class ConfigureApplicationActivity extends Activity {
                         }
 
                         if (server_address == true) {
-
+                            
                             SharedPreferences preferences = PreferenceManager
                                     .getDefaultSharedPreferences(context);
                             SharedPreferences.Editor editor = preferences
@@ -97,7 +104,7 @@ public class ConfigureApplicationActivity extends Activity {
                             // store into preference
                             editor.putString("library_url", server_http
                                     .getText().toString());
-
+                            
                             editor.putString("username", username.getText()
                                     .toString());
                             editor.putString("password", password.getText()
