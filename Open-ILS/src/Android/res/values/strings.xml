@@ -69,6 +69,7 @@
     <string name="title_book_bags">Book bags</string>
     <string name="search_result_text"> Search result :</string>
     <string name="renew_button">renew</string>
+    <string name="record_of">Record %1$d of %2$d</string>
     
     <!-- Search Details View -->
     <string name="show_more_text">Show More...</string>

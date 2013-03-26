@@ -282,7 +282,7 @@ public class BasicDetailsFragment extends Fragment {
             }
         });
 
-        record_header.setText("Record " + position + "of " + total);
+        record_header.setText(String.format(getString(R.string.record_of), position, total));
 
         titleTextView.setText(record.title);
         authorTextView.setText(record.author);
