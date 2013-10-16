@@ -25,38 +25,28 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
-import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.Map;
 
 import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.params.BasicHttpParams;
-import org.apache.http.params.HttpConnectionParams;
-import org.apache.http.params.HttpParams;
 import org.evergreen.android.accountAccess.SessionNotFoundException;
 import org.opensrf.Method;
 import org.opensrf.net.http.GatewayRequest;
 import org.opensrf.net.http.HttpConnection;
 import org.opensrf.net.http.HttpRequest;
 
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.util.Log;
 import android.widget.ImageView;
 
 public class Utils {
-
-    private static String TAG = "Utils";
 
     /**
      * Gets the net page content.
@@ -113,7 +103,6 @@ public class Utils {
         } catch (Exception e) {
             System.out.println("Exception to GET page " + url);
         }
-        StringBuilder str = null;
 
         try {
             in = response.getEntity().getContent();
@@ -132,15 +121,12 @@ public class Utils {
      * 
      * @throws NoNetworkAccessException
      *             if neither data connection or wifi are enabled
-     *             NoAccessToHttpAddress if the library remote server can't be
+     *             NoAccessToServer if the library remote server can't be
      *             reached
      * 
      */
     public static boolean checkNetworkStatus(ConnectivityManager cm)
             throws NoNetworkAccessException, NoAccessToServer {
-
-        boolean HaveConnectedWifi = false;
-        boolean HaveConnectedMobile = false;
 
         boolean networkAccessEnabled = false;
         boolean httpAddressAccessReachable = false;
@@ -149,12 +135,10 @@ public class Utils {
         if (ni != null) {
             if (ni.getType() == ConnectivityManager.TYPE_WIFI)
                 if (ni.isConnected()) {
-                    HaveConnectedWifi = true;
                     networkAccessEnabled = true;
                 }
             if (ni.getType() == ConnectivityManager.TYPE_MOBILE)
                 if (ni.isConnected()) {
-                    HaveConnectedMobile = true;
                     networkAccessEnabled = true;
                 }
         }
@@ -165,9 +149,6 @@ public class Utils {
             throw new NoNetworkAccessException();
         
         if (networkAccessEnabled) {
-            // check to see if httpAddress is avaialble using the network
-            // connection
-            // 2 seconds timeout
             httpAddressAccessReachable = checkIfNetAddressIsReachable(GlobalConfigs.httpAddress);
             if (httpAddressAccessReachable == false)
                 throw new NoAccessToServer();
@@ -179,34 +160,9 @@ public class Utils {
     public static boolean checkIfNetAddressIsReachable(String url)
             throws NoAccessToServer {
 
-        boolean result = false;
-        try {
-            
-            System.out.println("Check url " + url);
-            HttpGet request = new HttpGet(url);
-
-            HttpParams httpParameters = new BasicHttpParams();
-
-            // timeout to 1 seconds
-            HttpConnectionParams.setConnectionTimeout(httpParameters, 3000);
-            HttpClient httpClient = new DefaultHttpClient(httpParameters);
-            HttpResponse response = httpClient.execute(request);
-
-            // System.out.println("Check network response" + response);
-            int status = response.getStatusLine().getStatusCode();
-
-            if (status == HttpStatus.SC_OK) {
-                result = true;
-            }
-
-        } catch (SocketTimeoutException e) {
-            result = false; // this is somewhat expected
-            throw new NoAccessToServer();
-        } catch (Exception e) {
-            Log.d(TAG, "Exception in is reachable " + e.getMessage());
-        }
-
-        return result;
+    	// kcxxx: old method of fetching the URL to see if the net is "reachable" was not good.
+    	// For now just check if the url is empty.
+    	return (url.length() > 0);
     }
 
     public static void bookCoverImage(ImageView picture, String imageID,
