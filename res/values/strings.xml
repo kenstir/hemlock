@@ -13,7 +13,7 @@
     <string name="options_button_text">Options</string>
     
     <string name="search_details_title">search details</string>
-    <string name="checkout_items_title">checkout items</string>
+    <string name="checkout_items_title">Checked Out</string>
     <string name="hold_items_title">holds</string>
     <string name="hold_place_title">place hold</string>
     <string name="hold_details_title">hold details</string>
@@ -30,7 +30,7 @@
     <!-- first config activity -->
     
     <string name="first_config_message">Please enter the Evergreen server url, username and password of your account.</string>
-    <string name="server_name">EG server:</string>
+    <string name="server_name">Library Catalog URL:</string>
     <string name="username">Username: </string>
     <string name="password">Password: </string>
     
@@ -45,8 +45,8 @@
     
     <string name="loading_dialog_text"></string>
     <string name="dialog_please_wait">Please wait</string>
-    <string name="dialog_fetching_data_message">Fetching data</string>
-    <string name="dialog_load_more_message">Load more data</string>
+    <string name="dialog_fetching_data_message">Fetching data...</string>
+    <string name="dialog_load_more_message">Fetching more results...</string>
     
     <string name="advanced_search_hint">Enter text here</string>
     <string name="advanced_search_add_filter_button">Add filter</string>
@@ -63,7 +63,7 @@
     <string name="title_search">Search</string>
     <string name="title_my_account">My Account</string>
     <string name="title_application_settings">App. Settings </string>
-    <string name="title_check_out">Check out items</string>
+    <string name="title_check_out">Items Checked Out</string>
     <string name="title_holds">Holds</string>
     <string name="title_fines">Fines</string>
     <string name="title_book_bags">Book bags</string>
