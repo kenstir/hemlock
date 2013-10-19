@@ -95,7 +95,7 @@ public class ItemsCheckOutListView extends Activity {
 
         thisActivity = this;
         setContentView(R.layout.checkout_list);
-        setTitle("Checkout items");
+        setTitle(R.string.checkout_items_title);
 
         currentDate = new Date(System.currentTimeMillis());
 
