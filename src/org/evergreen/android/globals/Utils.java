@@ -297,13 +297,11 @@ public class Utils {
 
         Method method = new Method(methodName);
 
-        System.out.println("Method :" + methodName + " param:");
+        System.out.println("Method :" + methodName + ":");
         for (int i = 0; i < params.length; i++) {
             method.addParam(params[i]);
-            System.out.print("Param " + i + ":" + params[i]);
+            System.out.println("Param " + i + ": " + params[i]);
         }
-        // need space
-        System.out.println();
 
         // sync request
         HttpRequest req = new GatewayRequest(conn, service, method).send();
@@ -325,13 +323,11 @@ public class Utils {
     public static Object doRequestSimple(HttpConnection conn, String service,
             String methodName, Object[] params) {
         Method method = new Method(methodName);
-        System.out.println("Method :" + methodName + " param:");
+        System.out.println("Method :" + methodName);
         for (int i = 0; i < params.length; i++) {
             method.addParam(params[i]);
-            System.out.print("Param " + i + ":" + params[i]);
+            System.out.println("Param " + i + ":" + params[i]);
         }
-        // need space
-        System.out.println();
 
         // sync request
         HttpRequest req = new GatewayRequest(conn, service, method).send();

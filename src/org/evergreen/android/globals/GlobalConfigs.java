@@ -142,11 +142,13 @@ public class GlobalConfigs {
     public void loadIDLFile() {
 
         try {
-            Log.d("debug", "Read fm");
+            Log.d("debug", "loadIDLFile start");
             InputStream in_IDL = Utils.getNetInputStream(httpAddress
                     + IDL_FILE_FROM_ROOT);
             IDLParser parser = new IDLParser(in_IDL);
+            Log.d("debug", "loadIDLFile parse");
             parser.parse();
+            Log.d("debug", "loadIDLFile done");
         } catch (Exception e) {
             System.err.println("Error in parsing IDL file "
                     + IDL_FILE_FROM_ROOT + " " + e.getMessage());

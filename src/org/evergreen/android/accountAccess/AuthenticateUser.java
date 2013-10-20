@@ -72,6 +72,7 @@ public class AuthenticateUser {
      */
     public AuthenticateUser(String httpAddress) {
 
+        System.out.println("AuthenticateUser ctor: "+httpAddress);
         this.httpAddress = httpAddress;
 
         try {
@@ -141,6 +142,7 @@ public class AuthenticateUser {
      * @return seed for phase 2 of login
      */
     private String authenticateInit() {
+        System.out.println("AuthenticateUser.authenticateInit " + httpAddress);
 
         Method method = new Method(METHOD_AUTH_INIT);
 
@@ -170,6 +172,7 @@ public class AuthenticateUser {
      *            the seed
      */
     private void authenticateComplete(String seed) {
+        System.out.println("AuthenticateUser.authenticationComplete " + seed);
 
         // calculate hash to pass to server for authentication process phase 2
         // seed = "b18a9063e0c6f49dfe7a854cc6ab5775";
@@ -184,7 +187,6 @@ public class AuthenticateUser {
         complexParam.put("password", hash + "'");
 
         method.addParam(complexParam);
-        System.out.println("Compelx param " + complexParam);
 
         // sync test
         HttpRequest req = new GatewayRequest(conn, SERVICE, method).send();

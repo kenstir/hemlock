@@ -174,7 +174,7 @@ public class AccountAccess {
     private String httpAddress = "http://ulysses.calvin.edu";
 
     /** The TAG. */
-    public String TAG = "AuthenticareUser";
+    public String TAG = "AccountAccess";
 
     /**
      * The auth token. Sent with every request that needs authentication
@@ -207,6 +207,7 @@ public class AccountAccess {
      */
     private AccountAccess(String httpAddress, ConnectivityManager cm) {
 
+        System.out.println("AccountAccess ctor: "+httpAddress);
         this.httpAddress = httpAddress;
         this.cm = cm;
 
@@ -396,7 +397,7 @@ public class AccountAccess {
 
         String seed = null;
 
-        System.out.println("Send request to " + httpAddress);
+        System.out.println("AccountAccess.authenticateInit " + httpAddress);
         Object resp = (Object) Utils.doRequest(conn, SERVICE_AUTH,
                 METHOD_AUTH_INIT, cm, new Object[] { userName });
         if (resp != null)
@@ -408,7 +409,7 @@ public class AccountAccess {
     }
 
     /**
-     * Authenticate complete. Phase 2 of login process Application send's
+     * Authenticate complete. Phase 2 of login process Application sends
      * username and hash to confirm login
      *
      * @param seed the seed
@@ -419,30 +420,27 @@ public class AccountAccess {
      */
     private boolean authenticateComplete(String seed) throws NoAccessToServer,
             NoNetworkAccessException {
+        System.out.println("AccountAccess.authenticateComplete seed=" + seed);
 
         // calculate hash to pass to server for authentication process phase 2
         // seed = "b18a9063e0c6f49dfe7a854cc6ab5775";
         String hash = md5(seed + md5(password));
-        System.out.println("Hash " + hash);
 
         HashMap<String, String> complexParam = new HashMap<String, String>();
         // TODO parameter for user login
         complexParam.put("type", "opac");
-
         complexParam.put("username", userName);
         complexParam.put("password", hash);
 
-        System.out.println("Password " + password);
-        System.out.println("Compelx param " + complexParam);
-
         Object resp = Utils.doRequest(conn, SERVICE_AUTH, METHOD_AUTH_COMPLETE,
                 cm, new Object[] { complexParam });
-        if (resp == null)
+        if (resp == null) {
+            System.out.println("Result: null");
             return false;
+        }
 
         String queryResult = ((Map<String, String>) resp).get("textcode");
-
-        System.out.println("Result " + queryResult);
+        System.out.println("Result: " + queryResult);
 
         if (queryResult.equals("SUCCESS")) {
             Object payload = ((Map<String, String>) resp).get("payload");
@@ -464,6 +462,7 @@ public class AccountAccess {
             } catch (Exception e) {
                 Log.d(TAG,
                         "Error in retrieving account info, this is normal if it is before IDL load");
+                System.err.println("Error in retrieving account info "+e.getMessage()+" cause: "+e.getCause());
             }
 
             return true;
