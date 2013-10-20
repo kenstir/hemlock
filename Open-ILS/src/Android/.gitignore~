@@ -1,8 +1,0 @@
-#ignore class objects
-*.class
-*.dex
-bin/
-gen/
-
-.classpath
-.project
