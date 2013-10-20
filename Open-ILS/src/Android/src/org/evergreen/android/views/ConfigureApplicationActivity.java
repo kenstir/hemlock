@@ -70,7 +70,7 @@ public class ConfigureApplicationActivity extends Activity {
         SharedPreferences preferences = PreferenceManager
                 .getDefaultSharedPreferences(context);
         username.setText(preferences.getString("username", ""));
-        server_http.setText(preferences.getString("library_url", ""));  
+        server_http.setText(preferences.getString("library_url", "https://bark.cwmars.org"));  
         password.setText(preferences.getString("password", ""));
         
         Button connect = (Button) findViewById(R.id.connect_button);
