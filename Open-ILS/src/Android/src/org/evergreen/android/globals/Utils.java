@@ -185,7 +185,7 @@ public class Utils {
             InputStream is = conn.getInputStream(); // get the image from the
                                                     // URLConnection conn using
                                                     // InputStream is
-            BufferedInputStream bis = new BufferedInputStream(is); // create a
+            BufferedInputStream bis = new BufferedInputStream(is, 8*1024); // create a
                                                                    // BufferedInputStream
                                                                    // called bis
                                                                    // from is
