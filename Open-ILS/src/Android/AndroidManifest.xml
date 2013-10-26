@@ -2,9 +2,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="org.evergreen.android"
     android:versionCode="1"
-    android:versionName="1.0" >
+    android:versionName="1.0" 
+    android:installLocation="auto">
 
-    <uses-sdk android:minSdkVersion="3" android:targetSdkVersion="18" />
+    <uses-sdk android:minSdkVersion="8" android:targetSdkVersion="18" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
 	<uses-permission android:name="android.permission.INTERNET" /> 
 	
@@ -21,6 +22,7 @@
         android:icon="@drawable/evergreen_launcher_icon"
         android:label="@string/app_name" 
         android:theme="@style/EvergreenTheme"
+        android:allowBackup="true"
         >
         
         <!-- Notification receiver -->
