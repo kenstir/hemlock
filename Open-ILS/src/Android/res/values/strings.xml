@@ -12,15 +12,15 @@
     <string name="my_account_button_text">My Account</string>
     <string name="options_button_text">Options</string>
     
-    <string name="search_details_title">search details</string>
+    <string name="search_details_title">Search Details</string>
     <string name="checkout_items_title">Checked Out</string>
     <string name="hold_items_title">Holds</string>
-    <string name="hold_place_title">place hold</string>
-    <string name="hold_details_title">hold details</string>
-    <string name="bookbag_items_title">bookbags</string>
-    <string name="bookbag_details_title">bookbag details</string>
-    <string name="fines_title">fines</string>
-    <string name="copy_information_title">copy information</string>
+    <string name="hold_place_title">Place Hold</string>
+    <string name="hold_details_title">Hold Details</string>
+    <string name="bookbag_items_title">Bookbags</string>
+    <string name="bookbag_details_title">Bookbag details</string>
+    <string name="fines_title">Fines</string>
+    <string name="copy_information_title">Copy Information</string>
     
     <string name="button_place_hold">Place Hold</string>
     <string name="button_add_to_bookbag">Add to Bookbag</string>
@@ -31,8 +31,8 @@
     
     <string name="first_config_message">Please enter the Evergreen server url, username and password of your account.</string>
     <string name="server_name">Library Catalog URL:</string>
-    <string name="username">Username: </string>
-    <string name="password">Password: </string>
+    <string name="username">Username:</string>
+    <string name="password">Password:</string>
     
     
     <string name="cancel_button">Cancel</string>
@@ -66,7 +66,7 @@
     <string name="title_check_out">Items Checked Out</string>
     <string name="title_holds">Holds</string>
     <string name="title_fines">Fines</string>
-    <string name="title_book_bags">Book bags</string>
+    <string name="title_book_bags">Bookbags</string>
     <string name="search_result_text"> Search result :</string>
     <string name="renew_button">renew</string>
     <string name="record_of">Record %1$d of %2$d</string>
