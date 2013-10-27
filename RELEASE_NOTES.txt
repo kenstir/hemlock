@@ -1,0 +1,19 @@
+Evergreen Android App Release Notes
+===================================
+
+2013-10-27 Development APK
+--------------------------
+Major Fixes:
+* Hold status.  Previously status was reported incorrectly.  Instead of
+  "Waiting for copy" the app displayed "Transit".  Now hold details view
+  is correct, and also indicates the number of total holds, number of
+  total copies, and queue position.
+* Hold update.  Removed email checkbox and phone number text box.  On C/W
+  MARS site you can't update phone/email on holds, and it makes less sense
+  on an app with limited screen real estate.
+
+Minor Fixes:
+* Enable moving the app to the SD card.  Requires minSdkVersion="8"
+  (Android 2.2) but that reaches 95% of the market.
+* Titles are consistently Title Case.
+* Don't leak password to android log.
