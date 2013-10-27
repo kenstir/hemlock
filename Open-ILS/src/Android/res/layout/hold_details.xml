@@ -142,61 +142,19 @@
 	        android:layout_width="fill_parent"
 	        android:layout_height="wrap_content"
 	        android:orientation="horizontal"
-	        >
-		        <TextView 
-		            android:layout_width="0dip"
-		            android:layout_height="wrap_content"
-		            android:layout_weight="2"
-		            android:text="@string/contact_telephone"
-		            />
-		        
-		        <EditText
-		            android:id="@+id/hold_contact_telephone"
-		            android:layout_width="0dip"
-		            android:layout_height="wrap_content"
-		            android:layout_weight="4"
-		            android:gravity="center"
-		            />    
+	        >    
 	    </LinearLayout>
 	    	        <LinearLayout 
 	        android:layout_width="fill_parent"
 	        android:layout_height="wrap_content"
 	        android:orientation="horizontal"
-	        >
-		        <TextView 
-		            android:layout_width="0dip"
-		            android:layout_height="wrap_content"
-		            android:layout_weight="2"
-		            android:text="@string/enable_phone_notification"
-		            />
-		        
-		        <CheckBox
-		            android:id="@+id/hold_enable_phone_notification"
-		            android:layout_width="0dip"
-		            android:layout_height="wrap_content"
-		            android:layout_weight="4"
-		            android:gravity="center"
-		            />    
+	        >    
 	    </LinearLayout>
 	    	        <LinearLayout 
 	        android:layout_width="fill_parent"
 	        android:layout_height="wrap_content"
 	        android:orientation="horizontal"
-	        >
-		        <TextView 
-		            android:layout_width="0dip"
-		            android:layout_height="wrap_content"
-		            android:layout_weight="2"
-		            android:text="@string/enable_email_notification"
-		            />
-		        
-		        <CheckBox
-		            android:id="@+id/hold_enable_email_notification"
-		            android:layout_width="0dip"
-		            android:layout_height="wrap_content"
-		            android:layout_weight="4"
-		            android:gravity="center"
-		            />    
+	        >    
 	    </LinearLayout>
 	    	        <LinearLayout 
 	        android:layout_width="fill_parent"

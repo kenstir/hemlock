@@ -957,25 +957,27 @@ public class AccountAccess {
      *
      * @param hold the hold
      * @param holdObj the hold obj
-     * @return the object
      * @throws SessionNotFoundException the session not found exception
      * @throws NoNetworkAccessException the no network access exception
      * @throws NoAccessToServer the no access to server
      */
-    public Object fetchHoldStatus(OSRFObject hold, HoldRecord holdObj)
+    public void fetchHoldStatus(OSRFObject hold, HoldRecord holdObj)
             throws SessionNotFoundException, NoNetworkAccessException,
             NoAccessToServer {
 
         Integer hold_id = hold.getInt("id");
         // MAP : potential_copies, status, total_holds, queue_position,
         // estimated_wait
-        Object hold_status = Utils.doRequest(conn, SERVICE_CIRC,
+        Object resp = Utils.doRequest(conn, SERVICE_CIRC,
                 METHOD_FETCH_HOLD_STATUS, authToken, cm, new Object[] {
                         authToken, hold_id });
 
-        // get status
-        holdObj.status = ((Map<String, Integer>) hold_status).get("status");
-        return hold_status;
+        Map<String, Integer> map = (Map<String, Integer>)resp;
+        holdObj.status = map.get("status");
+        holdObj.potentialCopies = map.get("potential_copies");
+        holdObj.estimatedWaitInSeconds = map.get("estimated_wait");
+        holdObj.queuePosition = map.get("queue_position");
+        holdObj.totalHolds = map.get("total_holds");
     }
 
     /**
@@ -1009,9 +1011,6 @@ public class AccountAccess {
      *
      * @param ahr the ahr
      * @param pickup_lib the pickup_lib
-     * @param email_notify the email_notify
-     * @param phone_notify the phone_notify
-     * @param phone the phone
      * @param suspendHold the suspend hold
      * @param expire_time the expire_time
      * @param thaw_date the thaw_date
@@ -1021,15 +1020,12 @@ public class AccountAccess {
      * @throws NoAccessToServer the no access to server
      */
     public Object updateHold(OSRFObject ahr, Integer pickup_lib,
-            boolean email_notify, boolean phone_notify, String phone,
             boolean suspendHold, String expire_time, String thaw_date)
             throws SessionNotFoundException, NoNetworkAccessException,
             NoAccessToServer {
         // TODO verify that object is correct passed to the server
 
-        ahr.put("pickup_lib", pickup_lib); // pick-up lib
-        ahr.put("phone_notify", phone);
-        ahr.put("email_notify", email_notify);
+        ahr.put("pickup_lib", pickup_lib);
         ahr.put("expire_time", expire_time);
         // frozen set, what this means ?
         ahr.put("frozen", suspendHold);

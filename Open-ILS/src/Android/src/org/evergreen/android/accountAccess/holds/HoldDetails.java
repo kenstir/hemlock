@@ -88,12 +88,6 @@ public class HoldDetails extends Activity {
 
     private Button back;
 
-    private EditText phone_number;
-
-    private CheckBox phone_notification;
-
-    private CheckBox email_notification;
-
     private DatePickerDialog datePicker = null;
 
     private CheckBox suspendHold;
@@ -167,12 +161,7 @@ public class HoldDetails extends Activity {
         cancelHold = (Button) findViewById(R.id.cancel_hold_button);
         updateHold = (Button) findViewById(R.id.update_hold_button);
         back = (Button) findViewById(R.id.back_button);
-
-        phone_number = (EditText) findViewById(R.id.hold_contact_telephone);
-        phone_notification = (CheckBox) findViewById(R.id.hold_enable_phone_notification);
-        email_notification = (CheckBox) findViewById(R.id.hold_enable_email_notification);
         suspendHold = (CheckBox) findViewById(R.id.hold_suspend_hold);
-
         orgSelector = (Spinner) findViewById(R.id.hold_pickup_location);
         expiration_date = (EditText) findViewById(R.id.hold_expiration_date);
         thaw_date_edittext = (EditText) findViewById(R.id.hold_thaw_date);
@@ -185,8 +174,6 @@ public class HoldDetails extends Activity {
                     .setText(record.recordInfo.physical_description);
 
         // set record info
-        phone_notification.setChecked(record.phone_notification);
-        email_notification.setChecked(record.email_notification);
         suspendHold.setChecked(record.suspended);
 
         if (record.thaw_date != null) {
@@ -203,9 +190,6 @@ public class HoldDetails extends Activity {
         // hide edit text
         if (record.thaw_date == null)
             disableView(thaw_date_edittext);
-
-        if (!record.phone_notification)
-            disableView(phone_number);
 
         System.out.println(record.title + " " + record.author);
 
@@ -301,9 +285,7 @@ public class HoldDetails extends Activity {
 
                 try {
                     accountAccess.updateHold(record.ahr, selectedOrgPos,
-                            email_notification.isChecked(), phone_notification
-                                    .isChecked(), phone_number.getText()
-                                    .toString(), suspendHold.isChecked(),
+                            suspendHold.isChecked(),
                             expire_date_s, thaw_date_s);
                 } catch (NoNetworkAccessException e) {
                     Utils.showNetworkNotAvailableDialog(context);
@@ -316,9 +298,6 @@ public class HoldDetails extends Activity {
                         if (accountAccess.authenticate())
                             accountAccess.updateHold(record.ahr,
                                     selectedOrgPos,
-                                    email_notification.isChecked(),
-                                    phone_notification.isChecked(),
-                                    phone_number.getText().toString(),
                                     suspendHold.isChecked(), expire_date_s,
                                     thaw_date_s);
                     } catch (Exception eauth) {
@@ -348,20 +327,6 @@ public class HoldDetails extends Activity {
                 updateHoldThread.start();
             }
         });
-
-        phone_notification
-                .setOnCheckedChangeListener(new OnCheckedChangeListener() {
-
-                    @Override
-                    public void onCheckedChanged(CompoundButton buttonView,
-                            boolean isChecked) {
-
-                        if (isChecked) {
-                            enableView(phone_number);
-                        } else
-                            disableView(phone_number);
-                    }
-                });
 
         suspendHold.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 

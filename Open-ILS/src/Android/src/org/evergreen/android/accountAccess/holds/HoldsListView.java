@@ -133,6 +133,7 @@ public class HoldsListView extends Activity {
                 try {
                     holdRecords = accountAccess.getHolds();
                 } catch (SessionNotFoundException e) {
+                    System.out.println("no session!");
                     // TODO other way?
                     try {
                         if (accountAccess.authenticate())
@@ -297,13 +298,10 @@ public class HoldsListView extends Activity {
 
             imageDownloader.download(imageResourceHref, hold_icon);
 
-            System.out.println("Image " + imageResourceHref + " Row "
-                    + record.title + " " + record.author + " "
-                    + record.getHoldStatus());
             // set raw information
             holdTitle.setText(record.title);
             holdAuthor.setText(record.author);
-            status.setText(record.getHoldStatus());
+            status.setText(record.getHoldStatus(getResources()));
 
             return row;
         }
