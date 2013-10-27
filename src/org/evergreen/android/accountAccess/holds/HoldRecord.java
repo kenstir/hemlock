@@ -21,32 +21,22 @@ package org.evergreen.android.accountAccess.holds;
 
 import java.io.Serializable;
 import java.util.Date;
-import java.util.List;
 
+import org.evergreen.android.R;
 import org.evergreen.android.globals.GlobalConfigs;
 import org.evergreen.android.searchCatalog.RecordInfo;
 import org.opensrf.util.OSRFObject;
+import org.simpleframework.xml.stream.Position;
+
+import android.content.res.Resources;
 
 public class HoldRecord implements Serializable {
-
-    // metarecord
-    public static final int M = 0;
-    // record
-    public static final int T = 1;
-    // volume
-    public static final int V = 2;
-    // issuance
-    public static final int I = 3;
-    // copy
-    public static final int C = 4;
-    // part
-    public static final int P = 5;
 
     private Integer requestLibID = null;
 
     private Integer pickupLibID = null;
 
-    public Integer holdType = null;
+    public String holdType = null;
     // id for target object
     public Integer target = null;
     public Date expire_time = null;
@@ -56,11 +46,6 @@ public class HoldRecord implements Serializable {
     public String author = null;
 
     public String types_of_resource;
-
-    /*
-     * Hold status holdStatus == 4 => AVAILABLE holdStatus == 3 => WAITING
-     * holdStatus <= 3 => TRANSIT
-     */
 
     // only for P types
     public String part_label = null;
@@ -76,7 +61,7 @@ public class HoldRecord implements Serializable {
 
     public boolean email_notification = false;
 
-    public boolean phone_notification = false;
+    public String phone_notification = null;
 
     public boolean suspended = false;
 
@@ -84,63 +69,58 @@ public class HoldRecord implements Serializable {
 
     public int pickup_lib;
 
+    public Integer potentialCopies;
+
+    public Integer estimatedWaitInSeconds;
+
+    public Integer queuePosition;
+
+    public Integer totalHolds;
+
     public HoldRecord(OSRFObject ahr) {
 
         this.target = ahr.getInt("target");
-        String type = ahr.getString("hold_type");
+        this.holdType = ahr.getString("hold_type");
 
         this.ahr = ahr;
 
-        if (type.equals("M")) {
-            holdType = M;
-        } else if (type.equals("T")) {
-            holdType = T;
-        } else if (type.equals("V")) {
-            holdType = V;
-        } else if (type.equals("I")) {
-            holdType = I;
-        } else if (type.equals("C")) {
-            holdType = C;
-        } else if (type.equals("P"))
-            holdType = P;
-
-        this.expire_time = GlobalConfigs
-                .parseDate(ahr.getString("expire_time"));
-
+        this.expire_time = GlobalConfigs.parseDate(ahr.getString("expire_time"));
         this.thaw_date = GlobalConfigs.parseDate(ahr.getString("thaw_date"));
-        String res = ahr.getString("email_notify");
-
-        if (res.equals("t"))
-            this.email_notification = true;
-        res = ahr.getString("phone_notify");
-
-        if (res != null)
-            if (res.equals("t"))
-                this.phone_notification = true;
-
-        res = ahr.getString("frozen");
-        if (res != null)
-            if (res.equals("t"))
-                this.suspended = true;
+        this.email_notification = GlobalConfigs.parseBoolean(ahr.getString("email_notify"));
+        this.phone_notification = ahr.getString("phone_notify");
+        this.suspended = GlobalConfigs.parseBoolean(ahr.getString("frozen"));
         pickup_lib = ahr.getInt("pickup_lib");
 
     }
 
-    // based on status integer field retreive hold status in text
-    public String getHoldStatus() {
-
-        String holdStatus = "";
-
-        if (holdType == 7)
-            return "Suspended";
-        if (holdType == 4)
+    // Retreive hold status in text
+    public String getHoldStatus(Resources res) {
+        // Constants from Holds.pm and logic from hold_status.tt2
+        // -1 on error (for now),
+        //  1 for 'waiting for copy to become available',
+        //  2 for 'waiting for copy capture',
+        //  3 for 'in transit',
+        //  4 for 'arrived',
+        //  5 for 'hold-shelf-delay'
+        //  6 for 'canceled'
+        //  7 for 'suspended'
+        //  8 for 'captured, on wrong hold shelf'
+        if (status == 4) {
             return "Available";
-        if (holdType == 3)
-            return "Waiting";
-        if (holdType < 3)
-            return "Transit";
-
-        return holdStatus;
+        } else if (estimatedWaitInSeconds > 0) {
+            int days = (int)Math.ceil((double)estimatedWaitInSeconds / 86400.0);
+            return "Estimated wait "+days+" day wait";
+        } else if (status == 3 || status == 8) {
+            return "In Transit";
+        } else if (status < 3) {
+            return "Waiting for copy\n"
+                    + res.getQuantityString(R.plurals.number_of_holds, totalHolds, totalHolds) + " on "
+                    + res.getQuantityString(R.plurals.number_of_copies, potentialCopies, potentialCopies)
+                    + "\n"
+                    + "Queue position: " + queuePosition;
+        } else {
+            return "";
+        }
     }
 
 }

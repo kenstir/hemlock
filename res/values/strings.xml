@@ -159,4 +159,17 @@
      
      <string name="preference_notifications_title">Notification settings</string>
      
+     <plurals name="number_of_copies">
+        <item quantity="one">one copy</item>
+        <item quantity="other">%d copies</item>
+     </plurals>
+     <plurals name="number_of_holds">
+        <item quantity="one">One hold</item>
+        <item quantity="other">%d holds</item>
+     </plurals>
+          <plurals name="number_of_items">
+        <item quantity="one">one item</item>
+        <item quantity="other">%d items</item>
+     </plurals>
+     
 </resources>

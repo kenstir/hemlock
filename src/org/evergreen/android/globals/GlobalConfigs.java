@@ -376,6 +376,11 @@ public class GlobalConfigs {
 
         return date;
     }
+    
+    // parse from opac methods query result to boolean
+    public static boolean parseBoolean(String boolString) {
+        return (boolString != null && boolString.equals("t"));
+    }
 
     public String getOrganizationName(int id) {
 
