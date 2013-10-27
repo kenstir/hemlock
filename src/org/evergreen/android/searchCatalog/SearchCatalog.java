@@ -207,6 +207,8 @@ public class SearchCatalog {
         ArrayList<String> ids = new ArrayList<String>();
 
         System.out.println("Sync Response: " + resp);
+        if (resp == null)
+            return resultsRecordInfo; // search failed or server crashed
 
         Map<String, ?> response = (Map<String, ?>) resp;
 
