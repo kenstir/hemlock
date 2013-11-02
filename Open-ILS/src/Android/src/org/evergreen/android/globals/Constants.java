@@ -2,7 +2,7 @@
  * Copyright (C) 2013 Evergreen Open-ILS
  * @author kenstir
  */
-package org.evergreen.android;
+package org.evergreen.android.globals;
 
 /**
  * Conversion of constants from Const.pm
