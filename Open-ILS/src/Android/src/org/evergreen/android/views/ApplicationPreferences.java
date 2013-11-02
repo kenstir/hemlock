@@ -241,7 +241,7 @@ public class ApplicationPreferences extends PreferenceActivity implements
                 public void run() {
                     System.out.println("FM idl download");
                     GlobalConfigs sg = GlobalConfigs.getGlobalConfigs(context);
-                    sg.loadIDLFile();
+                    sg.loadIDLFile(context);
                     sg.getOrganisations();
                     sg.getCopyStatusesAvailable((ConnectivityManager) context
                             .getSystemService(Context.CONNECTIVITY_SERVICE));
