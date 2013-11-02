@@ -42,7 +42,8 @@ import android.util.Log;
 
 public class GlobalConfigs {
 
-    public static String IDL_FILE_FROM_ROOT = "/reports/fm_IDL.xml";
+    public static String IDL_FILE_FROM_ASSETS = "fm_IDL.xml";
+    public static String IDL_FILE_FROM_WEB_ROOT = "/reports/fm_IDL.xml";
 
     public static String httpAddress = "";
 
@@ -119,7 +120,7 @@ public class GlobalConfigs {
 
             }
             if (!noNetworkAccess) {
-                loadIDLFile();
+                loadIDLFile(context);
                 getOrganisations();
 
                 getCopyStatusesAvailable((ConnectivityManager) context
@@ -139,16 +140,18 @@ public class GlobalConfigs {
         return false;
     }
 
-    public void loadIDLFile() {
+    public void loadIDLFile(Context context) {
 
         try {
             Log.d("debug", "loadIDLFile start");
-            InputStream in_IDL = Utils.getNetInputStream(httpAddress
-                    + IDL_FILE_FROM_ROOT);
+            InputStream in_IDL = context.getAssets().open(IDL_FILE_FROM_ASSETS);
             IDLParser parser = new IDLParser(in_IDL);
+            parser.setKeepIDLObjects(false);
             Log.d("debug", "loadIDLFile parse");
+            long start = System.currentTimeMillis();
             parser.parse();
-            Log.d("debug", "loadIDLFile done");
+            long duration_ms = System.currentTimeMillis() - start;
+            Log.d("debug", "loadIDLFile finished in "+duration_ms+"ms");
         } catch (Exception e) {
             System.err.println("Error in parsing IDL file "
                     + IDL_FILE_FROM_ROOT + " " + e.getMessage());
@@ -209,7 +212,7 @@ public class GlobalConfigs {
                 int start = arrayContent.indexOf("[", index) + 1;
                 int stop = arrayContent.indexOf("]", index);
 
-                Log.d(TAG, " start stop length index" + start + " " + stop
+                Log.d(TAG, "start stop length index " + start + " " + stop
                         + " " + arrayContent.length() + " " + index);
                 if (start == -1 || stop == -1)
                     break;
@@ -217,8 +220,7 @@ public class GlobalConfigs {
                 index = stop + 1;
 
                 String content = arrayContent.substring(start, stop);
-
-                System.out.println("Content " + content);
+                //System.out.println("Content " + content);
 
                 StringTokenizer tokenizer = new StringTokenizer(content, ",");
 
@@ -226,7 +228,7 @@ public class GlobalConfigs {
 
                 // first is ID
                 String element = (String) tokenizer.nextElement();
-                System.out.println("Id  " + element);
+                //System.out.println("Id  " + element);
                 try {
                     org.id = Integer.parseInt(element);
                 } catch (Exception e) {
@@ -235,7 +237,7 @@ public class GlobalConfigs {
 
                 // level
                 element = (String) tokenizer.nextElement();
-                System.out.println("Level   " + element);
+                //System.out.println("Level   " + element);
                 try {
                     org.level = Integer.parseInt(element);
                 } catch (Exception e) {
@@ -244,7 +246,7 @@ public class GlobalConfigs {
 
                 // parent
                 element = (String) tokenizer.nextElement();
-                System.out.println("parent  " + element);
+                //System.out.println("parent  " + element);
                 try {
                     org.parent = Integer.parseInt(element);
                 } catch (Exception e) {
@@ -253,12 +255,12 @@ public class GlobalConfigs {
 
                 // name
                 element = (String) tokenizer.nextToken("\",");
-                System.out.println("Element  " + element);
+                //System.out.println("Element  " + element);
                 org.name = element;
 
                 // can_have_volume_boo.
                 element = (String) tokenizer.nextElement();
-                System.out.println("Element  " + element);
+                //System.out.println("Element  " + element);
                 try {
                     org.canHaveVolumesBool = Integer.parseInt(element);
                 } catch (Exception e) {
@@ -267,7 +269,7 @@ public class GlobalConfigs {
 
                 // short name
                 element = (String) tokenizer.nextToken("\",");
-                System.out.println("Element  " + element);
+                //System.out.println("Element  " + element);
                 org.shortName = element;
 
                 organisations.add(org);
@@ -369,7 +371,7 @@ public class GlobalConfigs {
 
         try {
             date = sdf.parse(dateString);
-            System.out.println(date);
+            //System.out.println(date);
         } catch (ParseException e) {
             e.printStackTrace();
         }
@@ -385,12 +387,12 @@ public class GlobalConfigs {
     public String getOrganizationName(int id) {
 
         for (int i = 0; i < organisations.size(); i++) {
-            System.out.println("Id " + organisations.get(i).id + " " + i);
+            //System.out.println("Id " + organisations.get(i).id + " " + i);
             if (organisations.get(i).id == id)
                 return organisations.get(i).name;
         }
 
-        System.out.println("out here");
+        //System.out.println("out here");
         return null;
     }
 }
