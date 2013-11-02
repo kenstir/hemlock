@@ -160,8 +160,8 @@ public class Utils {
     public static boolean checkIfNetAddressIsReachable(String url)
             throws NoAccessToServer {
 
-    	// kcxxx: old method of fetching the URL to see if the net is "reachable" was not good.
-    	// For now just check if the url is empty.
+    	// The old method of fetching the URL to see if the net is "reachable" was not good;
+        // it wasted bandwidth and time.  For now just check if the url is empty.
     	return (url.length() > 0);
     }
 
@@ -246,13 +246,11 @@ public class Utils {
         // TODO check params and throw errors
         Method method = new Method(methodName);
 
-        System.out.println("Method :" + methodName + " param:");
+        System.out.println("doRequest Method :" + methodName + ": token :"+authToken+":");
         for (int i = 0; i < params.length; i++) {
             method.addParam(params[i]);
-            System.out.print("Param " + i + ":" + params[i]);
+            System.out.println("Param " + i + ":" + params[i]);
         }
-        // need space
-        System.out.println();
 
         // sync request
         HttpRequest req = new GatewayRequest(conn, service, method).send();
@@ -266,12 +264,12 @@ public class Utils {
             try {
                 textcode = ((Map<String, String>) response).get("textcode");
             } catch (Exception e) {
-                System.err.println("Exception in retreive" + e.getMessage());
+                //System.err.println(e.getMessage());
             }
 
             if (textcode != null) {
                 if (textcode.equals("NO_SESSION")) {
-                    // System.out.println("REQUIRE NEW SESSION");
+                    System.out.println(textcode);
                     throw new SessionNotFoundException();
                 }
 
@@ -297,7 +295,7 @@ public class Utils {
 
         Method method = new Method(methodName);
 
-        System.out.println("Method :" + methodName + ":");
+        System.out.println("doRequest Method :" + methodName + ":");
         for (int i = 0; i < params.length; i++) {
             method.addParam(params[i]);
             System.out.println("Param " + i + ": " + params[i]);
@@ -323,7 +321,7 @@ public class Utils {
     public static Object doRequestSimple(HttpConnection conn, String service,
             String methodName, Object[] params) {
         Method method = new Method(methodName);
-        System.out.println("Method :" + methodName);
+        System.out.println("doRequestSimple Method :" + methodName);
         for (int i = 0; i < params.length; i++) {
             method.addParam(params[i]);
             System.out.println("Param " + i + ":" + params[i]);
