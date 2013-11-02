@@ -164,6 +164,7 @@ public class HoldsListView extends Activity {
             }
         };
 
+        // 1 NPE
         if (accountAccess.isAuthenticated()) {
             progressDialog = new ProgressDialog(context);
             progressDialog.setMessage("Loading holds");

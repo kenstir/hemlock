@@ -741,6 +741,10 @@ public class AccountAccess {
 
         Object resp = Utils.doRequest(conn, SERVICE_CIRC, METHOD_FETCH_HOLDS,
                 authToken, cm, new Object[] { authToken, userID });
+        if (resp == null) {
+            System.out.println("Result: null");
+            return holds;
+        }
 
         listHoldsAhr = (List<OSRFObject>) resp;
 
