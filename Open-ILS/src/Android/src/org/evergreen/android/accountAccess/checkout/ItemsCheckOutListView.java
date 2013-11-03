@@ -183,7 +183,7 @@ public class ItemsCheckOutListView extends Activity {
                         progressDialog.dismiss();
 
                         if (circRecords.size() == 0)
-                            Toast.makeText(context, "No circ records",
+                            Toast.makeText(context, "No records",
                                     Toast.LENGTH_LONG);
 
                         listAdapter.notifyDataSetChanged();
@@ -194,7 +194,7 @@ public class ItemsCheckOutListView extends Activity {
 
         if (accountAccess.isAuthenticated()) {
             progressDialog = new ProgressDialog(context);
-            progressDialog.setMessage("Retrieving circulation data...");
+            progressDialog.setMessage("Retrieving circulation data");
             progressDialog.show();
             getCirc.start();
 
