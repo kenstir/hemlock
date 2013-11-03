@@ -42,9 +42,8 @@ import android.util.Log;
 
 public class GlobalConfigs {
 
-    public static String IDL_FILE_FROM_ASSETS = "fm_IDL.xml";
-    public static String IDL_FILE_FROM_WEB_ROOT = "/reports/fm_IDL.xml";
-
+    public static String IDL_FILE_FROM_ROOT = "/reports/fm_IDL.xml";
+    public static String IDL_FILE_FROM_ASSETS = "fm_IDL.xml";///reports/fm_IDL.xml?class=acn&class=acp&class=au&class=ccs&class=circ&class=mbt&class=mbts&class=mus&class=mvr
     public static String httpAddress = "";
 
     private boolean init = false;
@@ -143,18 +142,18 @@ public class GlobalConfigs {
     public void loadIDLFile(Context context) {
 
         try {
-            Log.d("debug", "loadIDLFile start");
+            Log.d("init", "loadIDLFile start");
+            //@TODO maybe switch back to IDL_FILE_FROM_ROOT?class=circ&class=au&class=mvr&class=acp
             InputStream in_IDL = context.getAssets().open(IDL_FILE_FROM_ASSETS);
             IDLParser parser = new IDLParser(in_IDL);
             parser.setKeepIDLObjects(false);
-            Log.d("debug", "loadIDLFile parse");
-            long start = System.currentTimeMillis();
+            Log.d("init", "loadIDLFile parse");
+            long start_ms = System.currentTimeMillis();
             parser.parse();
-            long duration_ms = System.currentTimeMillis() - start;
-            Log.d("debug", "loadIDLFile finished in "+duration_ms+"ms");
+            long duration_ms = System.currentTimeMillis() - start_ms;
+            Log.d("init", "loadIDLFile parse took "+duration_ms+"ms");
         } catch (Exception e) {
-            System.err.println("Error in parsing IDL file "
-                    + IDL_FILE_FROM_ROOT + " " + e.getMessage());
+            Log.e("init", "Error in parsing IDL file", e);
         }
         ;
 
@@ -183,6 +182,8 @@ public class GlobalConfigs {
         ;
 
         if (orgFile != null) {
+            long start_ms = System.currentTimeMillis();
+            Log.d("init", "Loading organisations");
             organisations = new ArrayList<Organisation>();
 
             System.out.println("Page content " + orgFile);
@@ -316,6 +317,8 @@ public class GlobalConfigs {
             }
             organisations = orgs;
 
+            long duration_ms = System.currentTimeMillis() - start_ms;
+            Log.d("init", "Loading organisations took "+duration_ms+"ms");
             loadedOrgTree = true;
         }
     }
