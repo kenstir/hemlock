@@ -26,8 +26,6 @@ import org.evergreen.android.R;
 import org.evergreen.android.globals.GlobalConfigs;
 import org.evergreen.android.searchCatalog.RecordInfo;
 import org.opensrf.util.OSRFObject;
-import org.simpleframework.xml.stream.Position;
-
 import android.content.res.Resources;
 
 public class HoldRecord implements Serializable {
