@@ -272,7 +272,6 @@ public class Utils {
                     System.out.println(textcode);
                     throw new SessionNotFoundException();
                 }
-
             }
 
             return response;

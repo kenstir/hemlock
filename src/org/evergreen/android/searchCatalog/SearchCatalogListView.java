@@ -678,7 +678,7 @@ public class SearchCatalogListView extends Activity {
                             }
                         });
                         progressDialog = ProgressDialog.show(context,
-                                "Please wait", "Add to bookbag");
+                                "Please wait", "Adding to bookbag");
                         addtoBookbag.start();
 
                     }

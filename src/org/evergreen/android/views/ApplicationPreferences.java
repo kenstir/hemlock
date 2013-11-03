@@ -312,7 +312,7 @@ public class ApplicationPreferences extends PreferenceActivity implements
                 && checkConnection == true) {
             progressDialog = ProgressDialog
                     .show(this, "Account login",
-                            "Please wait while we test the new user account information");
+                            "Signing in with new credentials");
 
             connectionThread.start();
         }

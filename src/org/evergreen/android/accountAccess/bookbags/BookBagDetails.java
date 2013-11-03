@@ -251,7 +251,7 @@ public class BookBagDetails extends Activity {
         Thread getBookBags = new Thread(getBookBagsItemsRunnable);
 
         progressDialog = ProgressDialog.show(context, "Please wait",
-                "retrieving bookbag data");
+                "Retrieving bookbag data");
         getBookBags.start();
 
     }
@@ -359,7 +359,7 @@ public class BookBagDetails extends Activity {
                                     bookBag.items.remove(record);
                                     progressDialog = ProgressDialog.show(
                                             context, "Please wait",
-                                            "retrieving bookbag data");
+                                            "Retrieving bookbag data");
                                     getBookBags.start();
 
                                 }

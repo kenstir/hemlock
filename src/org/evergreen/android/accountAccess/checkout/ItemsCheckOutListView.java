@@ -194,13 +194,13 @@ public class ItemsCheckOutListView extends Activity {
 
         if (accountAccess.isAuthenticated()) {
             progressDialog = new ProgressDialog(context);
-            progressDialog.setMessage("Please wait while retrieving circ data");
+            progressDialog.setMessage("Retrieving circulation data...");
             progressDialog.show();
             getCirc.start();
 
         } else
             Toast.makeText(context,
-                    "You must be authenticated to retrieve circ records",
+                    "You must be authenticated to retrieve circulation records",
                     Toast.LENGTH_LONG);
 
     }
@@ -298,7 +298,7 @@ public class ItemsCheckOutListView extends Activity {
                                         progressDialog = new ProgressDialog(
                                                 context);
                                         progressDialog
-                                                .setMessage("Renew item please wait.");
+                                                .setMessage("Renewing item");
                                         progressDialog.show();
                                     }
                                 });
