@@ -691,7 +691,7 @@ public class AccountAccess {
 
         Map<String, String> resp = (Map<String, String>) a_lot;
 
-        if (resp.get("textcode") != null) {
+        if (resp.get("textcode") != null && !resp.get("textcode").equals("SUCCESS")) {
             if (resp.get("textcode").equals("MAX_RENEWALS_REACHED"))
                 throw new MaxRenewalsException();
             throw new ServerErrorMessage(resp.get("desc").toString());
