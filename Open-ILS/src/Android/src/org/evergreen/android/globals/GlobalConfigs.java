@@ -43,7 +43,7 @@ import android.util.Log;
 public class GlobalConfigs {
 
     public static String IDL_FILE_FROM_ROOT = "/reports/fm_IDL.xml";
-    public static String IDL_FILE_FROM_ASSETS = "fm_IDL.xml";///reports/fm_IDL.xml?class=acn&class=acp&class=au&class=ccs&class=circ&class=mbt&class=mbts&class=mus&class=mvr
+    public static String IDL_FILE_FROM_ASSETS = "fm_IDL.xml";///reports/fm_IDL.xml?class=x&class=y&...
     public static String httpAddress = "";
 
     private boolean init = false;

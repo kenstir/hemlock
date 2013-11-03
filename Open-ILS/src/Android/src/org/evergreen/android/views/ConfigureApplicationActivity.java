@@ -171,7 +171,7 @@ public class ConfigureApplicationActivity extends Activity {
                 });
 
                 progressDialog = ProgressDialog.show(context, "Please wait",
-                        "Checking server and credentials");
+                        "Checking user credentials");
                 checkConn.start();
             }
 

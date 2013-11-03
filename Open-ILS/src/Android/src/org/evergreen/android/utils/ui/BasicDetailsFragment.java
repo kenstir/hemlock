@@ -245,7 +245,7 @@ public class BasicDetailsFragment extends Fragment {
                     }
                 });
                 progressDialog = ProgressDialog.show(getActivity(),
-                        "Please wait", "Add to bookbag");
+                        "Please wait", "Adding to bookbag");
                 addtoBookbag.start();
 
             }
