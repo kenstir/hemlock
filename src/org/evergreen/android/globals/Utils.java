@@ -44,9 +44,11 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.util.Log;
 import android.widget.ImageView;
 
 public class Utils {
+    private static final String TAG = "osrf";
 
     /**
      * Gets the net page content.
@@ -246,18 +248,29 @@ public class Utils {
         // TODO check params and throw errors
         Method method = new Method(methodName);
 
-        System.out.println("doRequest Method :" + methodName + ": token :"+authToken+":");
+        Log.d(TAG, "doRequest Method :" + methodName + ": token :"+authToken+":");
         for (int i = 0; i < params.length; i++) {
             method.addParam(params[i]);
-            System.out.println("Param " + i + ":" + params[i]);
+            Log.d(TAG, "Param " + i + ":" + params[i]);
         }
 
         // sync request
         HttpRequest req = new GatewayRequest(conn, service, method).send();
-        Object resp;
+        Object resp = null;
 
-        while ((resp = req.recv()) != null) {
-            System.out.println("Sync Response: " + resp);
+        try {
+            resp = req.recv();
+        } catch (NullPointerException e) {
+            // I know it's bad form to catch NPE.  But until I implement some kind of on-demand IDL parsing,
+            // this is what happens when the JSONReader tries to parse a response of an unregistered class.
+            // Crash if debugMode, fail if not.
+            Log.d(TAG, "NPE...unregistered type?", e);
+            if (GlobalConfigs.isDebugMode()) {
+                throw(e);
+            }
+        }
+        if (resp != null) {
+            Log.d(TAG, "Sync Response: " + resp);
             Object response = (Object) resp;
 
             String textcode = null;
@@ -269,7 +282,7 @@ public class Utils {
 
             if (textcode != null) {
                 if (textcode.equals("NO_SESSION")) {
-                    System.out.println(textcode);
+                    Log.d(TAG, textcode);
                     throw new SessionNotFoundException();
                 }
             }

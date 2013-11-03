@@ -49,6 +49,8 @@ public class GlobalConfigs {
     private boolean init = false;
 
     private static String TAG = "GlobalConfigs";
+    
+    private static boolean debugMode = true;//KCXXX make a developer preference
 
     public static boolean loadedIDL = false;
 
@@ -137,6 +139,14 @@ public class GlobalConfigs {
             return false;
         }
         return false;
+    }
+
+    public static boolean isDebugMode() {
+        return debugMode;
+    }
+
+    public static void setDebugMode(boolean debugMode) {
+        GlobalConfigs.debugMode = debugMode;
     }
 
     public void loadIDLFile(Context context) {
