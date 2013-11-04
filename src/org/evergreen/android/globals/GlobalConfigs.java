@@ -23,7 +23,11 @@ import java.io.InputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
+import java.util.List;
 import java.util.StringTokenizer;
 
 import org.evergreen.android.accountAccess.AccountAccess;
@@ -32,6 +36,8 @@ import org.evergreen.android.searchCatalog.Organisation;
 import org.evergreen.android.searchCatalog.SearchCatalog;
 import org.evergreen.android.views.ApplicationPreferences;
 import org.open_ils.idl.IDLParser;
+import org.opensrf.util.JSONException;
+import org.opensrf.util.JSONReader;
 
 import android.content.Context;
 import android.content.Intent;
@@ -152,18 +158,18 @@ public class GlobalConfigs {
     public void loadIDLFile(Context context) {
 
         try {
-            Log.d("init", "loadIDLFile start");
+            Log.d(TAG, "loadIDLFile start");
             //@TODO maybe switch back to IDL_FILE_FROM_ROOT?class=circ&class=au&class=mvr&class=acp
             InputStream in_IDL = context.getAssets().open(IDL_FILE_FROM_ASSETS);
             IDLParser parser = new IDLParser(in_IDL);
             parser.setKeepIDLObjects(false);
-            Log.d("init", "loadIDLFile parse");
+            Log.d(TAG, "loadIDLFile parse");
             long start_ms = System.currentTimeMillis();
             parser.parse();
             long duration_ms = System.currentTimeMillis() - start_ms;
-            Log.d("init", "loadIDLFile parse took "+duration_ms+"ms");
+            Log.d(TAG, "loadIDLFile parse took "+duration_ms+"ms");
         } catch (Exception e) {
-            Log.e("init", "Error in parsing IDL file", e);
+            Log.e(TAG, "Error in parsing IDL file", e);
         }
         ;
 
@@ -171,10 +177,7 @@ public class GlobalConfigs {
     }
 
     /**
-     * Gets the organisations get's OrgTree.js from server, parses the input and
-     * recovers the organisations
-     * 
-     * @return the organisations
+     * Fetch the OrgTree.js file, and from it parse the list of organisations.
      */
     public void getOrganisations() {
 
@@ -183,149 +186,78 @@ public class GlobalConfigs {
         organisations = new ArrayList<Organisation>();
 
         try {
-            // using https: address
+            Log.d(TAG, "getOrg fetching "+httpAddress + collectionsRequest);
             orgFile = Utils.getNetPageContent(httpAddress + collectionsRequest);
-            System.out.println("Request org " + httpAddress
-                    + collectionsRequest);
         } catch (Exception e) {
         }
-        ;
 
         if (orgFile != null) {
             long start_ms = System.currentTimeMillis();
-            Log.d("init", "Loading organisations");
+            Log.d(TAG, "getOrg loading");
             organisations = new ArrayList<Organisation>();
 
-            System.out.println("Page content " + orgFile);
             // in case of wrong file
             if (orgFile.indexOf("=") == -1)
                 return;
-
             String orgArray = orgFile.substring(orgFile.indexOf("=") + 1,
                     orgFile.indexOf(";"));
+            Log.d(TAG, "getOrg array=" + orgArray.substring(0, orgArray.length()>50 ? 50 : -1));
 
-            String arrayContent = orgArray.substring(orgArray.indexOf("[") + 1,
-                    orgArray.lastIndexOf("]"));
+            // Parse javascript list
+            // Format: [[id, ou_type, parent_ou, name, opac_visible, shortname],...]
+            // Sample: [[149,3,146,"Agawam",0,"AGAWAM_MA"],
+            //          [150,4,149,"Agawam Public Library",1,"AGAWAM"],...]
+            // ou_type can be treated as hierarchical nesting level
+            List orgList;
+            try {
+                orgList = new JSONReader(orgArray).readArray();
+            } catch (JSONException e) {
+                Log.d(TAG, "getOrg failed parsing array", e);
+                return;
+            }
 
-            Log.d(TAG, "Array to pe parsed " + arrayContent);
-
-            // parser for list
-
-            // format [104,2,1,"Curriculum Center",1,"CURRICULUM"] :
-            // [id,level,parent,name,can_have_volumes_bool,short_name]
-
-            int index = 0;
-            while (true) {
-
-                if (index >= arrayContent.length())
-                    break;
-
-                int start = arrayContent.indexOf("[", index) + 1;
-                int stop = arrayContent.indexOf("]", index);
-
-                Log.d(TAG, "start stop length index " + start + " " + stop
-                        + " " + arrayContent.length() + " " + index);
-                if (start == -1 || stop == -1)
-                    break;
-
-                index = stop + 1;
-
-                String content = arrayContent.substring(start, stop);
-                //System.out.println("Content " + content);
-
-                StringTokenizer tokenizer = new StringTokenizer(content, ",");
-
+            // Convert json list into array of Organisation
+            for (int i=0; i<orgList.size(); ++i) {
                 Organisation org = new Organisation();
-
-                // first is ID
-                String element = (String) tokenizer.nextElement();
-                //System.out.println("Id  " + element);
-                try {
-                    org.id = Integer.parseInt(element);
-                } catch (Exception e) {
+                List orgItem = (List) orgList.get(i);
+                org.id= (Integer)orgItem.get(0);
+                org.level = (Integer)orgItem.get(1);
+                org.parent = (Integer)orgItem.get(2);
+                org.name = (String)orgItem.get(3);
+                org.isVisible = (Integer)orgItem.get(4);
+                org.shortName = (String)orgItem.get(5);
+                if (org.isVisible == 0) {
+                    continue;
                 }
-                ;
 
-                // level
-                element = (String) tokenizer.nextElement();
-                //System.out.println("Level   " + element);
-                try {
-                    org.level = Integer.parseInt(element);
-                } catch (Exception e) {
-                }
-                ;
-
-                // parent
-                element = (String) tokenizer.nextElement();
-                //System.out.println("parent  " + element);
-                try {
-                    org.parent = Integer.parseInt(element);
-                } catch (Exception e) {
-                }
-                ;
-
-                // name
-                element = (String) tokenizer.nextToken("\",");
-                //System.out.println("Element  " + element);
-                org.name = element;
-
-                // can_have_volume_boo.
-                element = (String) tokenizer.nextElement();
-                //System.out.println("Element  " + element);
-                try {
-                    org.canHaveVolumesBool = Integer.parseInt(element);
-                } catch (Exception e) {
-                }
-                ;
-
-                // short name
-                element = (String) tokenizer.nextToken("\",");
-                //System.out.println("Element  " + element);
-                org.shortName = element;
-
+                /*
+                StringBuilder padding = new StringBuilder();
+                for (int j = 0; j < org.level - 1; j++)
+                    padding.append("   ");
+                org.padding = padding.toString();
+                */
+                
                 organisations.add(org);
             }
-
-            ArrayList<Organisation> orgs = new ArrayList<Organisation>();
-
-            for (int i = 0; i < organisations.size(); i++) {
-
-                StringBuilder padding = new StringBuilder();
-                for (int j = 0; j < organisations.get(i).level - 1; j++)
-                    padding.append("   ");
-
-                organisations.get(i).padding = padding.toString();
+            
+            /*
+            for (int i=0; i<organisations.size(); ++i) {
+                Log.d(TAG, "getOrg presort org["+i+"]= id:"+organisations.get(i).id+" parent:"+organisations.get(i).parent+" name:"+organisations.get(i).name);
             }
-
-            int size = organisations.size();
-            int level = 0;
-            while (orgs.size() < size) {
-
-                for (int i = 0; i < organisations.size(); i++) {
-                    Organisation org = organisations.get(i);
-                    if (level == org.level) {
-                        boolean add = false;
-                        for (int j = 0; j < orgs.size(); j++) {
-
-                            if (orgs.get(j).id == org.parent) {
-                                orgs.add(j + 1, org);
-                                add = true;
-                                Log.d(TAG, "Added " + org.name + " "
-                                        + org.level);
-                                break;
-                            }
-                        }
-
-                        if (add == false) {
-                            orgs.add(org);
-                            Log.d(TAG, "Added " + org.name + " " + org.level);
-                        }
-                    }
-
+            */
+            Collections.sort(organisations, new Comparator<Organisation>() {
+                @Override
+                public int compare(Organisation a, Organisation b) {
+                    if (a.parent == null)
+                        return -1; // root is always first
+                    return a.name.compareTo(b.name);
                 }
-                level++;
+            });
+            /*
+            for (int i=0; i<organisations.size(); ++i) {
+                Log.d(TAG, "getOrg postsort org["+i+"]= id:"+organisations.get(i).id+" parent:"+organisations.get(i).parent+" name:"+organisations.get(i).name);
             }
-            organisations = orgs;
+            */
 
             long duration_ms = System.currentTimeMillis() - start_ms;
             Log.d("init", "Loading organisations took "+duration_ms+"ms");

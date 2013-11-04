@@ -179,6 +179,7 @@ public class AccountAccess {
     /**
      * The auth token. Sent with every request that needs authentication
      * */
+    //kcxxx: refactor into Account obj
     public String authToken = null;
 
     /** The cm. */
@@ -188,8 +189,12 @@ public class AccountAccess {
     private Integer authTime = null;
 
     /** The user id. */
+    //kcxxx: refactor into Account obj
     private Integer userID = null;
-    // for demo purpose
+    
+    //kcxxx: refactor into Account obj
+    private Integer homeLibraryID = null;
+
     /** The user name. */
     public static String userName = "daniel";
 
@@ -271,6 +276,14 @@ public class AccountAccess {
         }
 
         return null;
+    }
+
+    public Integer getHomeLibraryID() {
+        return homeLibraryID;
+    }
+
+    public void setHomeLibraryID(Integer homeLibraryID) {
+        this.homeLibraryID = homeLibraryID;
     }
 
     /*
@@ -378,6 +391,10 @@ public class AccountAccess {
             System.out.println("Sync Response: " + resp);
             OSRFObject au = (OSRFObject) resp;
             userID = au.getInt("id");
+            homeLibraryID = au.getInt("home_ou");
+            String s = au.getString("usrname");
+            //may be interesting: usrname=coxken, email=kenstir@gmail.com
+
             System.out.println("User Id " + userID);
 
             return au;

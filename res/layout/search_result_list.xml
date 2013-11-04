@@ -72,10 +72,11 @@
         <Spinner
             android:id="@+id/chose_organisation"
             android:layout_width="0dp"
-            android:layout_weight="1"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-		/>
+            android:layout_gravity="left"
+            android:layout_weight="1"
+            android:gravity="center|left"
+            android:spinnerMode="dialog" />
 
         <ImageButton
             android:id="@+id/searchButton"

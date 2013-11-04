@@ -45,8 +45,8 @@
     
     <string name="loading_dialog_text"></string>
     <string name="dialog_please_wait">Please wait</string>
-    <string name="dialog_fetching_data_message">Fetching data...</string>
-    <string name="dialog_load_more_message">Fetching more results...</string>
+    <string name="dialog_fetching_data_message">Fetching data</string>
+    <string name="dialog_load_more_message">Fetching more results</string>
     
     <string name="advanced_search_hint">Enter text here</string>
     <string name="advanced_search_add_filter_button">Add filter</string>
@@ -72,7 +72,7 @@
     <string name="record_of">Record %1$d of %2$d</string>
     
     <!-- Search Details View -->
-    <string name="show_more_text">Show More...</string>
+    <string name="show_more_text">Show More</string>
     
     <!-- Place Hold Activity View -->
     
