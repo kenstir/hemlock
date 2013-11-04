@@ -302,6 +302,30 @@
 				<retrieve permission='VIEW_CIRCULATIONS' context_field='circ_lib'></retrieve>
 			</actions>
 		</permacrud>
+	</class><class id='cbreb' controller='open-ils.cstore' oils_obj:fieldmapper='container::biblio_record_entry_bucket' oils_persist:tablename='container.biblio_record_entry_bucket' reporter:label='Bibliographic Record Entry Bucket'>
+		<fields oils_persist:primary='id' oils_persist:sequence='container.biblio_record_entry_bucket_id_seq'>
+			<field name='items' oils_persist:virtual='true' reporter:datatype='link'></field>
+			<field name='btype' reporter:datatype='text'></field>
+			<field name='id' reporter:datatype='id'></field>
+			<field name='name' reporter:datatype='text'></field>
+			<field name='description' reporter:datatype='text'></field>
+			<field name='owner' reporter:datatype='link'></field>
+			<field name='pub' reporter:datatype='bool'></field>
+			<field name='create_time' reporter:datatype='timestamp'></field>
+		</fields>
+		<links>
+			<link field='owner' reltype='has_a' key='id' map='' class='au'></link>
+			<link field='items' reltype='has_many' key='bucket' map='' class='cbrebi'></link>
+		</links>
+	</class><class id='cbrebn' controller='open-ils.cstore' oils_obj:fieldmapper='container::biblio_record_entry_bucket_note' oils_persist:tablename='container.biblio_record_entry_bucket_note' reporter:label='Bibliographic Record Entry Bucket Note'>
+		<fields oils_persist:primary='id' oils_persist:sequence='container.biblio_record_entry_bucket_note_id_seq'>
+			<field name='id' reporter:datatype='id'></field>
+			<field name='bucket' reporter:datatype='link'></field>
+			<field name='note' reporter:datatype='text'></field>
+		</fields>
+		<links>
+			<link field='bucket' reltype='has_a' key='id' map='' class='cbreb'></link>
+		</links>
 	</class><class id='ahr' controller='open-ils.cstore open-ils.pcrud' oils_obj:fieldmapper='action::hold_request' oils_persist:tablename='action.hold_request' reporter:core='true' reporter:label='Hold Request'>
 		<fields oils_persist:primary='id' oils_persist:sequence='action.hold_request_id_seq'>
 			<field reporter:label='Status' name='status' oils_persist:virtual='true'></field>
@@ -485,4 +509,27 @@
                 </delete>
             </actions>
         </permacrud>
+	</class><class id='cbrebi' controller='open-ils.cstore' oils_obj:fieldmapper='container::biblio_record_entry_bucket_item' oils_persist:tablename='container.biblio_record_entry_bucket_item' reporter:label='Biblio Record Entry Bucket Item'>
+		<fields oils_persist:primary='id' oils_persist:sequence='container.biblio_record_entry_bucket_item_id_seq'>
+			<field name='bucket' reporter:datatype='link'></field>
+			<field name='id' reporter:datatype='id'></field>
+			<field name='target_biblio_record_entry' reporter:datatype='link'></field>
+			<field name='create_time' reporter:datatype='timestamp'></field>
+			<field name='pos' reporter:datatype='int'></field>
+			<field name='notes' oils_persist:virtual='true' reporter:datatype='link'></field>
+		</fields>
+		<links>
+			<link field='target_biblio_record_entry' reltype='has_a' key='id' map='' class='bre'></link>
+			<link field='bucket' reltype='has_a' key='id' map='' class='cbreb'></link>
+            <link field='notes' reltype='has_many' map='' key='item' class='cbrebin'></link>
+		</links>
+	</class><class id='cbrebin' controller='open-ils.cstore' oils_obj:fieldmapper='container::biblio_record_entry_bucket_item_note' oils_persist:tablename='container.biblio_record_entry_bucket_item_note' reporter:label='Biblio Record Entry Bucket Item Note'>
+		<fields oils_persist:primary='id' oils_persist:sequence='container.biblio_record_entry_bucket_item_note_id_seq'>
+			<field name='id' reporter:datatype='id'></field>
+			<field name='item' reporter:datatype='link'></field>
+			<field name='note' reporter:datatype='text'></field>
+		</fields>
+		<links>
+			<link field='item' reltype='has_a' key='id' map='' class='cbrebi'></link>
+		</links>
 	</class></IDL>
