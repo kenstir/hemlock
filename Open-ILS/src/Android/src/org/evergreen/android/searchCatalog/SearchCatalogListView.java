@@ -159,7 +159,7 @@ public class SearchCatalogListView extends Activity {
             }
         });
         // end header portion actions
-
+        
         advancedSearchButton = (Button) findViewById(R.id.menu_advanced_search_button);
 
         advancedSearchButton.setOnClickListener(new OnClickListener() {
@@ -515,10 +515,8 @@ public class SearchCatalogListView extends Activity {
             }
         });
 
-        choseOrganisation = (Spinner) findViewById(R.id.chose_organisation);
 
         searchButton = (ImageButton) findViewById(R.id.searchButton);
-
         searchButton.setOnClickListener(new OnClickListener() {
 
             @Override
@@ -529,22 +527,26 @@ public class SearchCatalogListView extends Activity {
         });
 
         int selectedPos = 0;
+        int homeLibrary = 0;
+        if (AccountAccess.getAccountAccess() != null) {
+            homeLibrary = AccountAccess.getAccountAccess().getHomeLibraryID();
+        }
         ArrayList<String> list = new ArrayList<String>();
+        Log.d("kcxxx", "Org scanning ...");
         if (globalConfigs.organisations != null) {
             for (int i = 0; i < globalConfigs.organisations.size(); i++) {
-                list.add(globalConfigs.organisations.get(i).padding
-                        + globalConfigs.organisations.get(i).name);
-
-                if (globalConfigs.organisations.get(i).level - 1 == 0)
+                Organisation org = globalConfigs.organisations.get(i);
+                list.add(org.padding + org.name);
+                if (org.id == homeLibrary)
                     selectedPos = i;
             }
         }
+        Log.d("kcxxx", "Org scanning ...done");
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
                 layout.spinner_layout, list);
+        choseOrganisation = (Spinner) findViewById(R.id.chose_organisation);
         choseOrganisation.setAdapter(adapter);
-
         choseOrganisation.setSelection(selectedPos);
-
         choseOrganisation
                 .setOnItemSelectedListener(new OnItemSelectedListener() {
                     @Override

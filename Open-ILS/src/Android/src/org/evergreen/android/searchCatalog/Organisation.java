@@ -31,7 +31,7 @@ public class Organisation {
 
     public Integer parent = null;
 
-    public Integer canHaveVolumesBool = null;
+    public Integer isVisible = null;
 
     public Integer hiddenDepth = null;
 
