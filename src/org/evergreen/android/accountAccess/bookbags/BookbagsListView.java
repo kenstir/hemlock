@@ -197,7 +197,7 @@ public class BookbagsListView extends Activity {
                     @Override
                     public void run() {
                         progressDialog = ProgressDialog.show(context,
-                                "Plese wait", "retrieving Bookbag data");
+                                "Please wait", "Retrieving Bookbag data");
                     }
                 });
 
