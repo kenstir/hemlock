@@ -333,3 +333,6 @@ Open-ILS/examples/apache/eg.conf
 Open-ILS/examples/apache/eg_startup
 Open-ILS/examples/apache/eg_vhost.conf
 Open-ILS/src/support-scripts/eg_db_config
+Open-ILS/src/Android/.settings/org.eclipse.jdt.core.prefs
+Open-ILS/src/Android/local.properties
+Open-ILS/src/Android/proguard-project.txt
