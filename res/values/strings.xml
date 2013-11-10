@@ -45,7 +45,7 @@
     
     <string name="loading_dialog_text"></string>
     <string name="dialog_please_wait">Please wait</string>
-    <string name="dialog_fetching_data_message">Fetching data</string>
+    <string name="dialog_fetching_data_message">Searching catalog</string>
     <string name="dialog_load_more_message">Fetching more results</string>
     
     <string name="advanced_search_hint">Enter text here</string>

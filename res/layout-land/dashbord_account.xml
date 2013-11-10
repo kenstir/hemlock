@@ -25,7 +25,7 @@
             android:paddingLeft="5dip"
             android:text="@string/library_text_logo"
             android:textColor="@color/white"
-            android:textSize="16dp"
+            android:textSize="16sp"
             android:textStyle="bold"
             android:typeface="monospace" />
 
@@ -48,56 +48,43 @@
 
         <LinearLayout
             android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:gravity="center"
-            android:orientation="vertical"
-            
-             >
+            android:orientation="horizontal" >
 
-            <LinearLayout
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
+            <Button
+                android:id="@+id/account_btn_check_out"
+                style="@style/HomeButton"
                 android:layout_weight="1"
-                android:gravity="center"
-                android:orientation="horizontal" >
+                android:drawableTop="@drawable/check_out"
+                android:onClick="onClickFeature"
+                android:text="@string/title_check_out" />
 
-                <Button
-                    android:id="@+id/account_btn_check_out"
-                    style="@style/HomeButton"
-                    android:drawableTop="@drawable/check_out"
-                    android:onClick="onClickFeature"
-                    android:text="@string/title_check_out" />
-
-                <Button
-                    android:id="@+id/account_btn_holds"
-                    style="@style/HomeButton"
-                    android:drawableTop="@drawable/holds"
-                    android:onClick="onClickFeature"
-                    android:text="@string/title_holds" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
+            <Button
+                android:id="@+id/account_btn_holds"
+                style="@style/HomeButton"
                 android:layout_weight="1"
-                android:gravity="center"
-                android:orientation="horizontal" >
+                android:drawableTop="@drawable/holds"
+                android:onClick="onClickFeature"
+                android:text="@string/title_holds" />
 
-                <Button
-                    android:id="@+id/account_btn_fines"
-                    style="@style/HomeButton"
-                    android:drawableTop="@drawable/fines"
-                    android:onClick="onClickFeature"
-                    android:text="@string/title_fines" />
+            <Button
+                android:id="@+id/account_btn_fines"
+                style="@style/HomeButton"
+                android:layout_weight="1"
+                android:drawableTop="@drawable/fines"
+                android:onClick="onClickFeature"
+                android:text="@string/title_fines" />
 
-                <Button
-                    android:id="@+id/account_btn_book_bags"
-                    style="@style/HomeButton"
-                    android:drawableTop="@drawable/book_bag"
-                    android:onClick="onClickFeature"
-                    android:text="@string/title_book_bags" />
-            </LinearLayout>
+            <Button
+                android:id="@+id/account_btn_book_bags"
+                style="@style/HomeButton"
+                android:layout_weight="1"
+                android:drawableTop="@drawable/book_bag"
+                android:onClick="onClickFeature"
+                android:text="@string/title_book_bags" />
         </LinearLayout>
+
     </ScrollView>
 
 </LinearLayout>
