@@ -89,7 +89,7 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity {
             @Override
             protected Intent doInBackground(String... params) {
 
-                Log.d("udinic", TAG + "> Started authenticating");
+                Log.d(TAG, "Started authenticating");
 
                 String authtoken = null;
                 Bundle data = new Bundle();
@@ -124,7 +124,7 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity {
     }
 
     private void finishLogin(Intent intent) {
-        Log.d(TAG, "> finishLogin");
+        Log.d(TAG, "finishLogin");
 
         String accountName = intent
                 .getStringExtra(AccountManager.KEY_ACCOUNT_NAME);
@@ -133,7 +133,7 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity {
                 intent.getStringExtra(AccountManager.KEY_ACCOUNT_TYPE));
 
         if (getIntent().getBooleanExtra(ARG_IS_ADDING_NEW_ACCOUNT, false)) {
-            Log.d("udinic", TAG + "> finishLogin > addAccountExplicitly");
+            Log.d(TAG, "finishLogin > addAccountExplicitly");
             String authtoken = intent
                     .getStringExtra(AccountManager.KEY_AUTHTOKEN);
             String authtokenType = authTokenType;
