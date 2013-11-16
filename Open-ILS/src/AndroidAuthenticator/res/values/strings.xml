@@ -1,0 +1,11 @@
+<resources>
+
+    <string name="app_name">EvergreenAuthenticator</string>
+    <string name="app_label">Evergreen</string>
+    <string name="gateway_url">http://bark.cwmars.org/osrf-gateway-v1</string>
+    <string name="action_sign_in">Sign in</string>
+    <string name="title_sign_in">Sign in</string>
+    <string name="prompt_password">Password</string>
+    <string name="prompt_username">Username</string>
+    
+</resources>
