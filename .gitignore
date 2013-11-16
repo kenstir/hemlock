@@ -3,4 +3,6 @@
 *.dex
 bin/
 gen/
-
+.settings
+local.properties
+proguard-project.txt
