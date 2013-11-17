@@ -137,9 +137,6 @@ public class GlobalConfigs {
                         preferences.getString("username", ""),
                         preferences.getString("password", ""));
 
-                // TODO getorg hidding levels
-                // getOrgHiddentDepth();
-
                 return true;
             }
             return false;
