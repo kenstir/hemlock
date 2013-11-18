@@ -3,4 +3,4 @@
                        android:accountType="org.evergreen_ils.opac"
                        android:icon="@drawable/evergreen_launcher_icon"
                        android:smallIcon="@drawable/evergreen_launcher_icon"
-                       android:label="@string/ou_app_label"/>
+                       android:label="@string/ou_account_label"/>

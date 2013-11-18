@@ -3,6 +3,8 @@
 <resources>
     <!--  TODO: make this HTTPS -->
     <string name="ou_gateway_url">http://bark.cwmars.org/osrf-gateway-v1</string>
-    <string name="ou_app_name">C/W Mars Rover</string>
-    <string name="ou_app_label">C/W Mars Rover</string>
+    <string name="ou_app_name">C/W Mars Library Rover</string>
+    <string name="ou_app_label">C/W Mars</string>
+    <string name="ou_account_label">C/W Mars Library</string>
+    <string name="ou_account_sign_in_message">Sign in to your\nC/W Mars Library Account</string>
 </resources>
