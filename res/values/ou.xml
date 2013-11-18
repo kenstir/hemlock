@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- ou_cwmars.xml - C/W MARS organizational unit -->
+<resources>
+    <!--  TODO: make this HTTPS -->
+    <string name="ou_gateway_url">http://bark.cwmars.org/osrf-gateway-v1</string>
+    <string name="ou_app_name">C/W Mars Rover</string>
+    <string name="ou_app_label">C/W Mars Rover</string>
+</resources>
