@@ -1,11 +1,11 @@
 package org.evergreen_ils.auth;
 
+import java.net.MalformedURLException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.evergreen.android.R;
 import org.opensrf.Method;
 import org.opensrf.net.http.GatewayRequest;
 import org.opensrf.net.http.HttpConnection;
@@ -14,8 +14,9 @@ import org.opensrf.net.http.HttpRequest;
 import android.content.Context;
 import android.text.TextUtils;
 import android.util.Log;
+import org.evergreen.android.R;
 
-public class EvergreenAuthenticate {
+public class EvergreenAuthenticator {
     private final static String TAG = "eg.auth";
     public final static String SERVICE_AUTH = "open-ils.auth";
     public final static String METHOD_AUTH_INIT = "open-ils.auth.authenticate.init";
@@ -47,13 +48,13 @@ public class EvergreenAuthenticate {
         return "";
     }
 
-    public static Object doRequest(HttpConnection conn, String service, String methodName, Object[] params) throws Exception {
+    public static Object doRequest(HttpConnection conn, String service, String methodName, Object[] params) {
         Method method = new Method(methodName);
 
-        Log.d(TAG, "doRequest Method :" + methodName + ":");
+        Log.d(TAG, "doRequest> Method :" + methodName + ":");
         for (int i = 0; i < params.length; i++) {
             method.addParam(params[i]);
-            Log.d(TAG, "Param " + i + ": " + params[i]);
+            Log.d(TAG, "doRequest> Param " + i + ": " + params[i]);
         }
 
         // sync request
@@ -61,7 +62,7 @@ public class EvergreenAuthenticate {
         Object resp;
 
         while ((resp = req.recv()) != null) {
-            Log.d(TAG, "Sync Response: " + resp);
+            Log.d(TAG, "doRequest> Sync Response: " + resp);
             Object response = (Object) resp;
             return response;
         }
@@ -69,15 +70,20 @@ public class EvergreenAuthenticate {
     }
     
     @SuppressWarnings("unchecked")
-    public static String signIn(Context context, String username, String password) throws Exception {
-        Log.d(TAG, "signIn "+username);
+    public static String signIn(Context context, String username, String password) throws AuthenticationException {
+        Log.d(TAG, "signIn> "+username);
 
-        HttpConnection conn = new HttpConnection(context.getString(R.string.ou_gateway_url));
+        HttpConnection conn;
+        try {
+            conn = new HttpConnection(context.getString(R.string.ou_gateway_url));
+        } catch (MalformedURLException e) {
+            throw new AuthenticationException(e);
+        }
 
         // step 1: get seed
         Object resp = doRequest(conn, SERVICE_AUTH, METHOD_AUTH_INIT, new Object[] { username });
         if (resp == null)
-            throw new Exception("Unable to contact login service");
+            throw new AuthenticationException("Unable to contact login service");
         String seed = resp.toString();
 
         // step 2: complete auth with seed + password
@@ -87,7 +93,7 @@ public class EvergreenAuthenticate {
         complexParam.put("password", md5(seed + md5(password)));
         resp = doRequest(conn, SERVICE_AUTH, METHOD_AUTH_COMPLETE, new Object[] { complexParam });
         if (resp == null)
-            throw new Exception("Unable to complete login");
+            throw new AuthenticationException("Unable to complete login");
         
         // parse response
         String textcode = ((Map<String, String>) resp).get("textcode");
@@ -104,10 +110,10 @@ public class EvergreenAuthenticate {
             String desc = ((Map<String, String>) resp).get("desc");
             System.out.println("desc: "+desc);
             if (!TextUtils.isEmpty(desc)) {
-                throw new Exception(desc);
+                throw new AuthenticationException(desc);
             }
         }
         
-        throw new Exception("Login failed");
+        throw new AuthenticationException("Login failed");
     }
 }

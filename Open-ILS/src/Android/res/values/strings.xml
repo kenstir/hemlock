@@ -32,8 +32,12 @@
     <string name="first_config_message">Please enter the Evergreen server url, username and password of your account.</string>
     <string name="server_name">Library Catalog URL:</string>
     <string name="username">Username:</string>
+    <string name="hint_username">Library Card Number or Username</string>
     <string name="password">Password:</string>
-    
+    <string name="hint_password">Password or PIN</string>
+    <string name="action_sign_in">Sign in</string>
+    <string name="login_progress_signing_in">Signing in&#8230;</string>
+    <string name="action_forgot_password">Forgot password</string>
     
     <string name="cancel_button">Cancel</string>
     <string name="connect_button">Connect</string>
@@ -58,8 +62,9 @@
     
     <string name="copy_information"> Availability of the book :</string>
     <string name="hello">Hello World, EvergreenAppActivity!</string>
-    <string name="app_name">EvergreenApp</string>
+    <string name="generic_app_name">Evergreen</string>
 
+    <string name="title_activity_startup">Welcome to Evergreen</string>
     <string name="title_search">Search</string>
     <string name="title_my_account">My Account</string>
     <string name="title_application_settings">App. Settings </string>

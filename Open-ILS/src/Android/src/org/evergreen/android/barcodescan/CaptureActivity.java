@@ -151,7 +151,7 @@ public class CaptureActivity extends Activity implements SurfaceHolder.Callback 
 
 	private void displayFrameworkBugMessageAndExit(String info) {
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		builder.setTitle(getString(R.string.app_name));
+		builder.setTitle(getString(R.string.ou_app_name));
 		builder.setMessage("[" + info + "] "
 				+ getString(R.string.msg_camera_framework_bug));
 		builder.setPositiveButton(R.string.button_ok, new FinishListener(this));
