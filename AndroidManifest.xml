@@ -22,10 +22,10 @@
     <uses-permission android:name="android.permission.READ_CALENDAR" />
     <uses-permission android:name="android.permission.WRITE_CALENDAR" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
-    <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS"/>
-    <uses-permission android:name="android.permission.USE_CREDENTIALS"/>
-    <uses-permission android:name="android.permission.GET_ACCOUNTS"/>
-    <uses-permission android:name="android.permission.MANAGE_ACCOUNTS"/>
+    <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS" />
+    <uses-permission android:name="android.permission.USE_CREDENTIALS" />
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+    <uses-permission android:name="android.permission.MANAGE_ACCOUNTS" />
 
     <application
         android:allowBackup="true"
@@ -57,11 +57,14 @@
             android:name="org.evergreen.android.views.splashscreen.SplashActivity"
             android:label="@string/ou_app_label"
             android:theme="@android:style/Theme.Light.NoTitleBar" >
+
+            <!--
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+            </intent-filter>
+            -->
         </activity>
         <activity
             android:name="org.evergreen.android.views.MainScreenDashboard"
@@ -124,24 +127,36 @@
         </activity>
         <activity
             android:name="org.evergreen.android.views.StartupActivity"
-            android:label="@string/title_activity_startup"
+            android:label="@string/ou_app_label"
             android:windowSoftInputMode="adjustResize|stateVisible" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
         <activity
             android:name="org.evergreen_ils.auth.AuthenticatorActivity"
             android:label="@string/ou_account_label"
-            android:theme="@android:style/Theme.Light">
+            android:theme="@android:style/Theme.Light" >
         </activity>
-        <service 
+
+        <service
             android:name="org.evergreen_ils.auth.AuthenticatorService"
-            android:exported="false">
+            android:exported="false" >
             <intent-filter>
                 <action android:name="android.accounts.AccountAuthenticator" />
             </intent-filter>
-            <meta-data android:name="android.accounts.AccountAuthenticator"
-                       android:resource="@xml/authenticator" />
+
+            <meta-data
+                android:name="android.accounts.AccountAuthenticator"
+                android:resource="@xml/authenticator" />
         </service>
 
+        <activity
+            android:name="org.evergreen.android.JunkActivity"
+            android:label="@string/title_activity_junk" >
+        </activity>
     </application>
 
 </manifest>
