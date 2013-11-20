@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<account-authenticator xmlns:android="http://schemas.android.com/apk/res/android"
-                       android:accountType="org.evergreen_ils.opac"
-                       android:icon="@drawable/evergreen_launcher_icon"
-                       android:smallIcon="@drawable/evergreen_launcher_icon"
-                       android:label="@string/app_label"/>
