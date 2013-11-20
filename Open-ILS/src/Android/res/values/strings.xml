@@ -6,12 +6,11 @@
     <string name="menu_preferences">settings</string>
     <string name="menu_library_hours">library hours</string>
     <string name="menu_barcode_scan">barcode scan</string>
-    
-    <!-- Header portion  -->
+
+    <!-- Header portion -->
     <string name="library_text_logo"> Evergreen </string>
     <string name="my_account_button_text">My Account</string>
     <string name="options_button_text">Options</string>
-    
     <string name="search_details_title">Search Details</string>
     <string name="checkout_items_title">Checked Out</string>
     <string name="hold_items_title">Holds</string>
@@ -21,14 +20,12 @@
     <string name="bookbag_details_title">Bookbag details</string>
     <string name="fines_title">Fines</string>
     <string name="copy_information_title">Copy Information</string>
-    
     <string name="button_place_hold">Place Hold</string>
     <string name="button_add_to_bookbag">Add to Bookbag</string>
-    
     <string name="bookbag_choose_text">Choose a bookbag from the list.</string>
-    
+
     <!-- first config activity -->
-    
+
     <string name="first_config_message">Please enter the Evergreen server url, username and password of your account.</string>
     <string name="server_name">Library Catalog URL:</string>
     <string name="username">Username:</string>
@@ -38,32 +35,26 @@
     <string name="action_sign_in">Sign in</string>
     <string name="login_progress_signing_in">Signing in&#8230;</string>
     <string name="action_forgot_password">Forgot password</string>
-    
     <string name="cancel_button">Cancel</string>
     <string name="connect_button">Connect</string>
-    
+
     <!-- Search -->
-    
+
     <string name="search_hint">What are you looking for?</string>
     <string name="advanced_search">Search</string>
-    
     <string name="loading_dialog_text"></string>
     <string name="dialog_please_wait">Please wait</string>
     <string name="dialog_fetching_data_message">Searching catalog</string>
     <string name="dialog_load_more_message">Fetching more results</string>
-    
     <string name="advanced_search_hint">Enter text here</string>
     <string name="advanced_search_add_filter_button">Add filter</string>
     <string name="advanced_search_filter_text">Added filters:</string>
-    
     <string name="menu_button_advanced_search">Advanced search</string>
     <string name="menu_button_library_hours">Library hours</string>
     <string name="menu_button_application_preferences">Preferences</string>
-    
     <string name="copy_information"> Availability of the book :</string>
     <string name="hello">Hello World, EvergreenAppActivity!</string>
     <string name="generic_app_name">Evergreen</string>
-
     <string name="title_activity_startup">Welcome to Evergreen</string>
     <string name="title_search">Search</string>
     <string name="title_my_account">My Account</string>
@@ -75,12 +66,12 @@
     <string name="search_result_text"> Search result :</string>
     <string name="renew_button">renew</string>
     <string name="record_of">Record %1$d of %2$d</string>
-    
+
     <!-- Search Details View -->
     <string name="show_more_text">Show More</string>
-    
+
     <!-- Place Hold Activity View -->
-    
+
     <string name="recipient">Recipient</string>
     <string name="title">Title</string>
     <string name="author">Author</string>
@@ -102,19 +93,18 @@
     <string name="hold_phone_hint">Contact phone number</string>
     <string name="hold_expire_time_hint">Hold expire time</string>
     <string name="hold_thaw_date_hint">Date when the hold is frozen</string>
-    
     <string name="hold_items">Items on hold: </string>
-    
+
     <!-- Checkout items -->
     <string name="checkout_item_txt">Total items out: </string>
     <string name="checkout_overdue_items">/ Overdue items: </string>
-    
+
     <!-- Fines Activity -->
     <string name="total_owned">Total Owned </string>
     <string name="total_paid">Total Paid</string>
     <string name="balance_owed">Balance Owed</string>
     <string name="overdue_materials">Overdue Materials</string>
-    
+
     <!-- Bookbag Activities -->
     <string name="delete_button">delete</string>
     <string name="bags_name">name</string>
@@ -127,54 +117,48 @@
     <string name="create">create</string>
     <string name="bookbag_name">Bookbag name: </string>
     <string name="add_button">add</string>
-    
-    
-     <!--  Camera -->
-     <string name="msg_camera_framework_bug">Sorry, the Android camera encountered a problem. You may need to restart the device.</string>
-     <string name="button_ok">OK</string>
-     
-     <!-- Preference Activity -->
-     <string name="preference_login_information">Login information</string>
-     <string name="preference_login_informantion_summary">Username and password information</string>
-     
-     <string name="preference_username">Username</string>
-     <string name="preference_username_summary">Please enter your login username</string>
-     
-     <string name="preference_password">Password</string>
-     <string name="preference_password_summary">Enter your account password</string>
-     
-     <string name="preference_server_information_title">Server settings</string>
-     <string name="preference_server_information_summary">Library server settings</string>
-     
-     <string name="preference_library_url_address">Library url address</string>
-     <string name="preference_library_url_address_summary">Please enter the library url in format http://</string>
-     
-     <string name="preference_notification_preference_screen_title">Notification settings</string>
-     <string name="preference_notification_preference_screen_summary">Configure notifications and reminders for checkout items</string>
-     
-     <string name="preference_enable_notifications">Enable notifications</string>
-     <string name="preference_enable_notifications_summary_on">Uncheck this option to remove notifications when checkout items are about to expire</string>
-     <string name="preference_enable_notifications_summary_off">Check this option to enable notifications each time a checkout item will expire</string>
-     
-     <string name="preference_notifications_days_before">Days before expiration</string>
-     <string name="preference_notifications_days_before_summary">Chose how many days before the actual expiration date to set the reminder</string>
-     
-     <string name="preference_notifications_each_day">Each day notifications</string>
-     <string name="preference_notifications_each_day_summary">Give a notification in every day before the actual start notification period and due date</string>
-     
-     <string name="preference_notifications_title">Notification settings</string>
-     
-     <plurals name="number_of_copies">
+
+    <!-- Camera -->
+    <string name="msg_camera_framework_bug">Sorry, the Android camera encountered a problem. You may need to restart the device.</string>
+    <string name="button_ok">OK</string>
+
+    <!-- Preference Activity -->
+    <string name="preference_login_information">Login information</string>
+    <string name="preference_login_informantion_summary">Username and password information</string>
+    <string name="preference_username">Username</string>
+    <string name="preference_username_summary">Please enter your login username</string>
+    <string name="preference_password">Password</string>
+    <string name="preference_password_summary">Enter your account password</string>
+    <string name="preference_server_information_title">Server settings</string>
+    <string name="preference_server_information_summary">Library server settings</string>
+    <string name="preference_library_url_address">Library url address</string>
+    <string name="preference_library_url_address_summary">Please enter the library url in format http://</string>
+    <string name="preference_notification_preference_screen_title">Notification settings</string>
+    <string name="preference_notification_preference_screen_summary">Configure notifications and reminders for checkout items</string>
+    <string name="preference_enable_notifications">Enable notifications</string>
+    <string name="preference_enable_notifications_summary_on">Uncheck this option to remove notifications when checkout items are about to expire</string>
+    <string name="preference_enable_notifications_summary_off">Check this option to enable notifications each time a checkout item will expire</string>
+    <string name="preference_notifications_days_before">Days before expiration</string>
+    <string name="preference_notifications_days_before_summary">Chose how many days before the actual expiration date to set the reminder</string>
+    <string name="preference_notifications_each_day">Each day notifications</string>
+    <string name="preference_notifications_each_day_summary">Give a notification in every day before the actual start notification period and due date</string>
+    <string name="preference_notifications_title">Notification settings</string>
+
+    <plurals name="number_of_copies">
         <item quantity="one">one copy</item>
         <item quantity="other">%d copies</item>
-     </plurals>
-     <plurals name="number_of_holds">
+    </plurals>
+    <plurals name="number_of_holds">
         <item quantity="one">One hold</item>
         <item quantity="other">%d holds</item>
-     </plurals>
-          <plurals name="number_of_items">
+    </plurals>
+    <plurals name="number_of_items">
         <item quantity="one">one item</item>
         <item quantity="other">%d items</item>
-     </plurals>
-     
+    </plurals>
+
+    <string name="title_activity_junk">JunkActivity</string>
+    <string name="action_settings">Settings</string>
+    <string name="hello_world">Hello world!</string>
+
 </resources>
