@@ -127,7 +127,7 @@
         </activity>
         <activity
             android:name="org.evergreen.android.views.StartupActivity"
-            android:label="@string/ou_app_label"
+            android:label="@string/ou_app_name"
             android:windowSoftInputMode="adjustResize|stateVisible" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
