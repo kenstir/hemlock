@@ -100,46 +100,14 @@ public class GlobalConfigs {
      * Initialize function that retrieves IDL file and Orgs file
      */
     private boolean initialize(Context context) {
-
         if (init == false) {
-
+            // TODO do this in AsyncTask
+            loadIDLFile(context);
+            getOrganisations();
+            getCopyStatusesAvailable((ConnectivityManager) context
+                        .getSystemService(Context.CONNECTIVITY_SERVICE));
             init = true;
-            SharedPreferences preferences = PreferenceManager
-                    .getDefaultSharedPreferences(context);
-            GlobalConfigs.httpAddress = preferences
-                    .getString("library_url", "");
-            boolean noNetworkAccess = false;
-            System.out.println("Check for network conenctivity");
-            try {
-                Utils.checkNetworkStatus((ConnectivityManager) context
-                        .getSystemService(Context.CONNECTIVITY_SERVICE));
-
-            } catch (NoNetworkAccessException e) {
-                noNetworkAccess = true;
-            } catch (NoAccessToServer e) {
-
-                System.out.println("No access to network");
-                Intent preferencesAnctivity = new Intent(context,
-                        ApplicationPreferences.class);
-                context.startActivity(preferencesAnctivity);
-
-                noNetworkAccess = true;
-
-            }
-            if (!noNetworkAccess) {
-                loadIDLFile(context);
-                getOrganisations();
-
-                getCopyStatusesAvailable((ConnectivityManager) context
-                        .getSystemService(Context.CONNECTIVITY_SERVICE));
-
-                AccountAccess.setAccountInfo(
-                        preferences.getString("username", ""),
-                        preferences.getString("password", ""));
-
-                return true;
-            }
-            return false;
+            return true;
         }
         return false;
     }

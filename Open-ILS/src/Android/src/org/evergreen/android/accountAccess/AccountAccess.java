@@ -49,9 +49,6 @@ import android.util.Log;
  */
 public class AccountAccess {
 
-    // Used for authentication purpose
-
-    /** The SERVICE. */
     public static String SERVICE_AUTH = "open-ils.auth";
 
     /** The METHOD Auth init. */
@@ -63,21 +60,10 @@ public class AccountAccess {
     /** The METHOD Auth session retrieve. */
     public static String METHOD_AUTH_SESSION_RETRV = "open-ils.auth.session.retrieve";
 
-    // Used for the Checked out Items Tab
-
-    /** The SERVIC e_ actor. */
     public static String SERVICE_ACTOR = "open-ils.actor";
-
-    /** The SERVIC e_ circ. */
     public static String SERVICE_CIRC = "open-ils.circ";
-
-    /** The SERVIC e_ search. */
     public static String SERVICE_SEARCH = "open-ils.search";
-
-    /** The SERVIC e_ serial. */
     public static String SERVICE_SERIAL = "open-ils.serial";
-
-    /** The SERVIC e_ fielder. */
     public static String SERVICE_FIELDER = "open-ils.fielder";
 
     /** The METHOD_FETCH_CHECKED_OUT_SUM description : for a given user returns a a structure of circulation objects sorted by out, overdue, lost, claims_returned, long_overdue; A list of ID's returned for each type : "out":[id1,id2,...] @returns: { "out":[id 's],"claims_returned":[],"long_overdue":[],"overdue":[],"lost":[] } */

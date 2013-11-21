@@ -328,7 +328,6 @@ public class SearchCatalog {
             for (int i = 0; i < ccs_list.size(); i++) {
                 OSRFObject ccs_obj = ccs_list.get(i);
                 if (ccs_obj.getString("opac_visible").equals("t")) {
-
                     CopyInformation.availableOrgStatuses.put(
                             ccs_obj.getInt("id") + "",
                             ccs_obj.getString("name"));
