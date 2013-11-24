@@ -105,20 +105,18 @@ public class BasicDetailsFragment extends Fragment {
 
     public static BasicDetailsFragment newInstance(RecordInfo record,
             Integer position, Integer total) {
-        BasicDetailsFragment fragment = new BasicDetailsFragment(record,
-                position, total);
+        BasicDetailsFragment fragment = new BasicDetailsFragment();
+        fragment.setDetails(record, position, total);
 
         return fragment;
     }
 
-    public BasicDetailsFragment(RecordInfo record, Integer position,
+    private void setDetails(RecordInfo record, Integer position,
             Integer total) {
 
         this.record = record;
         this.position = position;
         this.total = total;
-
-        search = SearchCatalog.getInstance();
     }
 
     public BasicDetailsFragment() {
@@ -194,7 +192,7 @@ public class BasicDetailsFragment extends Fragment {
 
         AccountAccess ac = AccountAccess.getAccountAccess();
 
-        bookBags = ac.bookBags;
+        bookBags = ac.getBookbags();
         String array_spinner[] = new String[bookBags.size()];
 
         for (int i = 0; i < array_spinner.length; i++)
@@ -222,7 +220,7 @@ public class BasicDetailsFragment extends Fragment {
                         AccountAccess ac = AccountAccess.getAccountAccess();
                         try {
                             ac.addRecordToBookBag(record.doc_id,
-                                    ac.bookBags.get(bookbag_selected).id);
+                                    ac.getBookbags().get(bookbag_selected).id);
                         } catch (SessionNotFoundException e) {
                             // TODO Auto-generated catch block
                             e.printStackTrace();

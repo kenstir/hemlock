@@ -8,7 +8,7 @@
     <string name="menu_barcode_scan">barcode scan</string>
 
     <!-- Header portion -->
-    <string name="library_text_logo"> Evergreen </string>
+    <string name="library_text_logo">Evergreen</string>
     <string name="my_account_button_text">My Account</string>
     <string name="options_button_text">Options</string>
     <string name="search_details_title">Search Details</string>

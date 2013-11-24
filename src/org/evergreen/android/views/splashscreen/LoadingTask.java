@@ -24,123 +24,92 @@ import org.evergreen.android.accountAccess.SessionNotFoundException;
 import org.evergreen.android.globals.GlobalConfigs;
 import org.evergreen.android.globals.NoAccessToServer;
 import org.evergreen.android.globals.NoNetworkAccessException;
+import org.evergreen_ils.auth.Const;
 
+import android.accounts.AccountManager;
+import android.accounts.AccountManagerCallback;
+import android.accounts.AccountManagerFuture;
 import android.app.Activity;
-import android.content.Context;
 import android.net.ConnectivityManager;
 import android.os.AsyncTask;
+import android.os.Bundle;
 import android.util.Log;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-public class LoadingTask extends AsyncTask<String, Integer, Integer> {
+public class LoadingTask extends AsyncTask<String, String, String> {
+    private String TAG = "LoadingTask";
+    
+    public static final String TASK_OK = "OK";
 
-    public interface LoadingTaskFinishedListener {
-        void onTaskFinished(); // If you want to pass something back to the
-                               // listener add a param to this method
+    public interface LoadingTaskListener {
+        void onPreExecute();
+        void onProgressUpdate(String value);
+        void onPostExecute(String result);
     }
 
-    // This is the progress bar you want to update while the task is in progress
-    private final ProgressBar progressBar;
     // This is the listener that will be told when this task is finished
-    private final LoadingTaskFinishedListener finishedListener;
+    private final LoadingTaskListener mListener;
+    private Activity mCallingActivity;
+    private AccountManager mAccountManager;
 
-    private Context context;
-
-    private TextView progressText;
-
-    private Activity callingActivity;
-
-    private String text;
-
-    /**
-     * A Loading task that will load some resources that are necessary for the
-     * app to start
-     * 
-     * @param progressBar
-     *            - the progress bar you want to update while the task is in
-     *            progress
-     * @param finishedListener
-     *            - the listener that will be told when this task is finished
-     */
-    public LoadingTask(ProgressBar progressBar,
-            LoadingTaskFinishedListener finishedListener, Context context,
-            TextView progressText, Activity callingActivity) {
-        this.progressBar = progressBar;
-        this.finishedListener = finishedListener;
-        this.context = context;
-        this.progressText = progressText;
-        this.callingActivity = callingActivity;
+    public LoadingTask(LoadingTaskListener listener, Activity callingActivity) {
+        this.mListener = listener;
+        this.mCallingActivity = callingActivity;
+        mAccountManager = AccountManager.get(callingActivity);
+    }
+    
+    @Override
+    protected void onPreExecute() {
+        super.onPreExecute();
+        mListener.onPreExecute();
     }
 
     @Override
-    protected Integer doInBackground(String... params) {
-        Log.i("Start download", "Starting task with url: " + params[0]);
-        if (resourcesDontAlreadyExist()) {
-            downloadResources();
-        }
-        // Perhaps you want to return something to your post execute
-        return 1234;
-    }
-
-    private boolean resourcesDontAlreadyExist() {
-        // Here you would query your app's internal state to see if this
-        // download had been performed before
-        // Perhaps once checked save this in a shared preference for speed of
-        // access next time
-        return true; // returning true so we show the splash every time
-    }
-
-    private void downloadResources() {
-        // We are just imitating some process thats takes a bit of time (loading
-        // of resources / downloading)
-        int count = 10;
-        text = "download files";
-        publishProgress(50);
-
-        GlobalConfigs gl = GlobalConfigs.getGlobalConfigs(context);
-        text = "authenticate user";
-        publishProgress(70);
-
-        AccountAccess ac = AccountAccess.getAccountAccess(
-                GlobalConfigs.httpAddress, (ConnectivityManager) context
-                        .getSystemService(Context.CONNECTIVITY_SERVICE));
+    protected String doInBackground(String... params) {
         try {
-            ac.authenticate();
+            Log.d(TAG, "Loading resources");
+            publishProgress("Loading resources");
+            GlobalConfigs gl = GlobalConfigs.getGlobalConfigs(mCallingActivity);
+
+            Log.d(TAG, "Signing in");
+            publishProgress("Signing in");
+            final AccountManagerFuture<Bundle> future = mAccountManager.getAuthTokenByFeatures(Const.ACCOUNT_TYPE, Const.AUTHTOKEN_TYPE, null, mCallingActivity, null, null, null, null);
+            Bundle bnd = future.getResult();
+            Log.d(TAG, "bnd="+bnd);
+            final String authtoken = bnd.getString(AccountManager.KEY_AUTHTOKEN);
+            final String account_name = bnd.getString(AccountManager.KEY_ACCOUNT_NAME);
+            Log.d(TAG, "account_name="+account_name+" token="+authtoken);
+            //onSuccessfulLogin(account_name, authtoken);
+            if (account_name == null)
+                return "no account";
+
+            Log.d(TAG, "Starting session");
+            publishProgress("Starting session");
+            AccountAccess ac = AccountAccess.getAccountAccess(GlobalConfigs.httpAddress);
+            if (!ac.initSession())
+                return "no session";
+
+            Log.d(TAG, "Retrieving bookbags");
+            publishProgress("Retrieving bookbags");
+            ac.retrieveBookbags();
+
+            return TASK_OK;
         } catch (Exception e) {
+            Log.d(TAG, "Caught exception", e);
+            return e.getMessage();
         }
-        text = "get user bookbags";
-        publishProgress(90);
-
-        try {
-            ac.bookBags = ac.getBookbags();
-        } catch (SessionNotFoundException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (NoNetworkAccessException e) {
-            e.printStackTrace();
-        } catch (NoAccessToServer e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        text = "loading application";
-        publishProgress(100);
-
     }
 
     @Override
-    protected void onProgressUpdate(Integer... values) {
+    protected void onProgressUpdate(String... values) {
         super.onProgressUpdate(values);
-        progressBar.setProgress(values[0]); // This is ran on the UI thread so
-                                            // it is ok to update our progress
-                                            // bar ( a UI view ) here
-        progressText.setText(text);
+        mListener.onProgressUpdate(values[0]);
     }
 
     @Override
-    protected void onPostExecute(Integer result) {
+    protected void onPostExecute(String result) {
         super.onPostExecute(result);
-        finishedListener.onTaskFinished(); // Tell whoever was listening we have
-                                           // finished
+        mListener.onPostExecute(result);
     }
 }

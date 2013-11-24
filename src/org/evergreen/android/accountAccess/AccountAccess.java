@@ -151,7 +151,7 @@ public class AccountAccess {
     public static String METHOD_CONTAINER_FULL_DELETE = "open-ils.actor.container.full_delete";
 
     /** The book bags. */
-    public ArrayList<BookBag> bookBags = null;
+    private ArrayList<BookBag> bookBags = new ArrayList<BookBag>();
 
     /** The conn. */
     public HttpConnection conn;
@@ -165,27 +165,26 @@ public class AccountAccess {
     /**
      * The auth token. Sent with every request that needs authentication
      * */
-    //kcxxx: refactor into Account obj
     public String authToken = null;
 
     /** The cm. */
-    private ConnectivityManager cm;
+    private ConnectivityManager cm = null;
 
     /** The auth time. */
     private Integer authTime = null;
 
     /** The user id. */
-    //kcxxx: refactor into Account obj
     private Integer userID = null;
     
-    //kcxxx: refactor into Account obj
+    /** home library ID. */
     private Integer homeLibraryID = null;
 
-    /** The user name. */
-    public static String userName = "daniel";
+    private boolean haveSession;
 
-    /** The password. */
-    public static String password = "demo123";
+    /** The user name. */
+    public static String userName = null;
+    
+    /** Whether we have ever established a session  **/
 
     /** The account access. */
     private static AccountAccess accountAccess = null;
@@ -196,11 +195,10 @@ public class AccountAccess {
      * @param httpAddress the http address
      * @param cm the cm
      */
-    private AccountAccess(String httpAddress, ConnectivityManager cm) {
+    private AccountAccess(String httpAddress) {
 
         System.out.println("AccountAccess ctor: "+httpAddress);
         this.httpAddress = httpAddress;
-        this.cm = cm;
 
         try {
             // configure the connection
@@ -235,11 +233,10 @@ public class AccountAccess {
      * @param cm the cm
      * @return the account access
      */
-    public static AccountAccess getAccountAccess(String httpAddress,
-            ConnectivityManager cm) {
+    public static AccountAccess getAccountAccess(String httpAddress) {
 
         if (accountAccess == null) {
-            accountAccess = new AccountAccess(httpAddress, cm);
+            accountAccess = new AccountAccess(httpAddress);
         }
         System.out.println(" Addresses " + httpAddress + " "
                 + accountAccess.httpAddress);
@@ -256,12 +253,11 @@ public class AccountAccess {
      * @return the account access
      */
     public static AccountAccess getAccountAccess() {
+        return accountAccess;
+    }
 
-        if (accountAccess != null) {
-            return accountAccess;
-        }
-
-        return null;
+    public static void setAccountName(String username) {
+        userName = username;
     }
 
     public Integer getHomeLibraryID() {
@@ -331,19 +327,6 @@ public class AccountAccess {
     }
 
     /**
-     * Sets the account info.
-     *
-     * @param username the username
-     * @param password the password
-     */
-    public static void setAccountInfo(String username, String password) {
-
-        AccountAccess.userName = username;
-        AccountAccess.password = password;
-
-    }
-
-    /**
      * Authenticate.
      *
      * @return true, if successful
@@ -353,17 +336,17 @@ public class AccountAccess {
     public boolean authenticate() throws NoNetworkAccessException,
             NoAccessToServer {
 
-        String seed = authenticateInit();
-
-        return authenticateComplete(seed);
+        //TODO this is a giant hack
+        return true;
     }
 
     /**
-     * Gets the account summary.
-     * 
-     * @return the account summary
+     * Retrieve session.
      */
-    public OSRFObject getAccountSummary() {
+    public boolean initSession() {
+        
+        if (this.haveSession)
+            return true;
 
         Method method = new Method(METHOD_AUTH_SESSION_RETRV);
 
@@ -383,96 +366,9 @@ public class AccountAccess {
 
             System.out.println("User Id " + userID);
 
-            return au;
+            this.haveSession = true;
         }
-        return null;
-    }
-
-    /**
-     * Authenticate init.
-     *
-     * @return seed for phase 2 of login
-     * @throws NoAccessToServer the no access to server
-     * @throws NoNetworkAccessException the no network access exception
-     */
-    private String authenticateInit() throws NoAccessToServer,
-            NoNetworkAccessException {
-
-        String seed = null;
-
-        System.out.println("AccountAccess.authenticateInit " + httpAddress);
-        Object resp = (Object) Utils.doRequest(conn, SERVICE_AUTH,
-                METHOD_AUTH_INIT, cm, new Object[] { userName });
-        if (resp != null)
-            seed = resp.toString();
-
-        System.out.println("Seed " + seed);
-
-        return seed;
-    }
-
-    /**
-     * Authenticate complete. Phase 2 of login process Application sends
-     * username and hash to confirm login
-     *
-     * @param seed the seed
-     * @return true, if successful
-     * @throws NoAccessToServer the no access to server
-     * @throws NoNetworkAccessException the no network access exception
-     * @returns bollean if auth was ok
-     */
-    private boolean authenticateComplete(String seed) throws NoAccessToServer,
-            NoNetworkAccessException {
-        System.out.println("AccountAccess.authenticateComplete seed=" + seed);
-
-        // calculate hash to pass to server for authentication process phase 2
-        // seed = "b18a9063e0c6f49dfe7a854cc6ab5775";
-        String hash = md5(seed + md5(password));
-
-        HashMap<String, String> complexParam = new HashMap<String, String>();
-        // TODO parameter for user login
-        complexParam.put("type", "opac");
-        complexParam.put("username", userName);
-        complexParam.put("password", hash);
-
-        Object resp = Utils.doRequest(conn, SERVICE_AUTH, METHOD_AUTH_COMPLETE,
-                cm, new Object[] { complexParam });
-        if (resp == null) {
-            System.out.println("Result: null");
-            return false;
-        }
-
-        String queryResult = ((Map<String, String>) resp).get("textcode");
-        System.out.println("Result: " + queryResult);
-
-        if (queryResult.equals("SUCCESS")) {
-            Object payload = ((Map<String, String>) resp).get("payload");
-            accountAccess.authToken = ((Map<String, String>) payload)
-                    .get("authtoken");
-            try {
-                System.out.println(authToken);
-                accountAccess.authTime = ((Map<String, Integer>) payload)
-                        .get("authtime");
-
-            } catch (Exception e) {
-                System.err.println("Error in parsing authtime "
-                        + e.getMessage());
-            }
-
-            // get user ID
-            try {
-                accountAccess.getAccountSummary();
-            } catch (Exception e) {
-                Log.d(TAG,
-                        "Error in retrieving account info, this is normal if it is before IDL load");
-                System.err.println("Error in retrieving account info "+e.getMessage()+" cause: "+e.getCause());
-            }
-
-            return true;
-        }
-
-        return false;
-
+        return this.haveSession;
     }
 
     // ------------------------Checked Out Items Section
@@ -1263,14 +1159,14 @@ public class AccountAccess {
     // bags-----------------------------------//
 
     /**
-     * Gets the bookbags.
+     * Retrieve bookbags from the server.
      *
      * @return the bookbags
      * @throws SessionNotFoundException the session not found exception
      * @throws NoNetworkAccessException the no network access exception
      * @throws NoAccessToServer the no access to server
      */
-    public ArrayList<BookBag> getBookbags() throws SessionNotFoundException,
+    public boolean retrieveBookbags() throws SessionNotFoundException,
             NoNetworkAccessException, NoAccessToServer {
 
         Object response = Utils.doRequest(conn, SERVICE_ACTOR,
@@ -1284,7 +1180,7 @@ public class AccountAccess {
         this.bookBags = bookBagObj;
 
         if (bookbags == null)
-            return bookBagObj;
+            return true;
 
         for (int i = 0; i < bookbags.size(); i++) {
 
@@ -1293,7 +1189,11 @@ public class AccountAccess {
 
             bookBagObj.add(bag);
         }
-        return bookBagObj;
+        return true;
+    }
+    
+    public ArrayList<BookBag> getBookbags() {
+        return this.bookBags;
     }
 
     /**
@@ -1440,5 +1340,4 @@ public class AccountAccess {
                 METHOD_CONTAINER_CREATE, authToken, cm, new Object[] {
                         authToken, container, parameter });
     }
-
 }

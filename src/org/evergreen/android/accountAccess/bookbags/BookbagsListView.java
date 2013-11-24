@@ -202,6 +202,7 @@ public class BookbagsListView extends Activity {
                 });
 
                 try {
+                    accountAccess.retrieveBookbags();
                     bookBags = accountAccess.getBookbags();
 
                 } catch (NoNetworkAccessException e) {

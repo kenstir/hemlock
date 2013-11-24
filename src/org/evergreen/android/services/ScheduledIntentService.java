@@ -93,9 +93,7 @@ public class ScheduledIntentService extends IntentService {
         ;
 
         // login with the user credentials
-        AccountAccess accountAccess = AccountAccess.getAccountAccess(
-                GlobalConfigs.httpAddress,
-                (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE));
+        AccountAccess accountAccess = AccountAccess.getAccountAccess(GlobalConfigs.httpAddress);
         boolean auth = true;
         try {
             accountAccess.authenticate();

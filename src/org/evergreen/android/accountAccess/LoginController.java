@@ -90,13 +90,11 @@ public class LoginController {
     
     private void getTokenForLastActiveAccount() {
         final String username = mAppPrefs.getLastAccountName();
-        Log.d(TAG, "getToken> username="+username);
+        Log.d(TAG, "getTokenForLastActiveAccount> username="+username);
         
         // first try to get an auth token for the last account used
-        if (!TextUtils.isEmpty(username)) {
-            if (reuseExistingAccountAuthToken(username)) {
-                Log.d(TAG, "getToken> reuseExisting returned true");
-            }
+        if (!TextUtils.isEmpty(username) && reuseExistingAccountAuthToken(username)) {
+            Log.d(TAG, "getTokenForLastActiveAccount> reuseExisting returned true");
         } else {
             getTokenForAccountCreateIfNeeded();
         }
@@ -202,8 +200,13 @@ public class LoginController {
         mAuthToken = null;
         showMessage(msg);
     }
+    
+    protected void onInvalidateAuthToken() {
+        mAuthToken = null;
+    }
 
     private boolean reuseExistingAccountAuthToken(final String account_name) {
+        Log.d(TAG, "reuseExistingAccountAuthToken> looking for "+account_name);
         final Account availableAccounts[] = mAccountManager.getAccountsByType(Const.ACCOUNT_TYPE);
         for (int i = 0; i < availableAccounts.length; i++) {
             Log.d(TAG, "reuseExistingAccountAuthToken> looking for "+account_name+", found "+availableAccounts[i].name);
@@ -217,30 +220,13 @@ public class LoginController {
     }
     
     /**
-     * Invalidates the auth token for the account
-     * @param account
-     * @param authTokenType
+     * Invalidates the current auth token for the account
      */
-    private void invalidateAuthToken(final Account account) {
-        final AccountManagerFuture<Bundle> future = mAccountManager.getAuthToken(account, Const.AUTHTOKEN_TYPE, null, mActivity, null, null);
-
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    Bundle bnd = future.getResult();
-
-                    final String authtoken = bnd.getString(AccountManager.KEY_AUTHTOKEN);
-                    mAccountManager.invalidateAuthToken(account.type, authtoken);
-                    showMessage(account.name + " invalidated");
-                    mAppPrefs.putLastAccountName(null);
-                } catch (Exception e) {
-                    mAppPrefs.putLastAccountName(null);
-                    e.printStackTrace();
-                    showMessage(e.getMessage());
-                }
-            }
-        }).start();
+    public void invalidateAuthToken() {
+        if (mAuthToken != null) {
+            mAccountManager.invalidateAuthToken(Const.ACCOUNT_TYPE, mAuthToken);
+            onInvalidateAuthToken();
+        }
     }
 
     /**

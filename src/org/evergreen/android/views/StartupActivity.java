@@ -39,7 +39,7 @@ public class StartupActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_startup);
         
-        mLoginStatusMessageView = (TextView) findViewById(R.id.login_status_message);
+        mLoginStatusMessageView = (TextView) findViewById(R.id.login_progress_message);
         
         LoginController.getInstance(this).loginForActivity(JunkActivity.class);
     }

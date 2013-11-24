@@ -55,17 +55,13 @@
 
         <activity
             android:name="org.evergreen.android.views.splashscreen.SplashActivity"
-            android:label="@string/ou_app_label"
-            android:theme="@android:style/Theme.Light.NoTitleBar" >
-
-            <!--
+            android:label="@string/ou_app_label">
+            <!--  android:theme="@android:style/Theme.Light.NoTitleBar"  -->
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-            -->
-        </activity>
+            </intent-filter>        </activity>
         <activity
             android:name="org.evergreen.android.views.MainScreenDashboard"
             android:label="@string/ou_app_label"
@@ -129,11 +125,6 @@
             android:name="org.evergreen.android.views.StartupActivity"
             android:label="@string/ou_app_name"
             android:windowSoftInputMode="adjustResize|stateVisible" >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
         <activity
             android:name="org.evergreen_ils.auth.AuthenticatorActivity"
