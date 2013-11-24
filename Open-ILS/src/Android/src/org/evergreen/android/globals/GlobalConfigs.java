@@ -49,7 +49,7 @@ import android.util.Log;
 public class GlobalConfigs {
 
     public static String IDL_FILE_FROM_ROOT = "/reports/fm_IDL.xml";
-    public static String IDL_FILE_FROM_ASSETS = "fm_IDL.xml";///reports/fm_IDL.xml?class=x&class=y&...
+    public static String IDL_FILE_FROM_ASSETS = "fm_IDL.xml";
     public static String httpAddress = "";
 
     private boolean init = false;
@@ -101,7 +101,6 @@ public class GlobalConfigs {
      */
     private boolean initialize(Context context) {
         if (init == false) {
-            // TODO do this in AsyncTask
             loadIDLFile(context);
             getOrganisations();
             getCopyStatusesAvailable((ConnectivityManager) context

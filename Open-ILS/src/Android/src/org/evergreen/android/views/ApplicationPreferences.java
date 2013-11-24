@@ -116,53 +116,7 @@ public class ApplicationPreferences extends PreferenceActivity implements
             public void run() {
 
                 boolean routeToAddress = true;
-                AccountAccess account = AccountAccess
-                        .getAccountAccess(
-                                GlobalConfigs.httpAddress,
-                                (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE));
-                try {
-                    Utils.checkNetworkStatus((ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE));
-                } catch (NoNetworkAccessException e) {
-                    routeToAddress = false;
-
-                    Log.d(TAG, " No network access");
-
-                    runOnUiThread(new Runnable() {
-
-                        @Override
-                        public void run() {
-                            if (reference != null) {
-                                progressDialog.dismiss();
-                                AlertDialog.Builder builder = new AlertDialog.Builder(
-                                        context);
-                                builder.setMessage(
-                                        "There seams to be no network connectivity! Do you want to start network settings?")
-                                        .setPositiveButton("Yes",
-                                                dialogClickListener)
-                                        .setNegativeButton("No",
-                                                dialogClickListener).show();
-                            }
-                        }
-                    });
-
-                } catch (NoAccessToServer e) {
-
-                    Log.d(TAG, " no route to hoast");
-                    routeToAddress = false;
-                    runOnUiThread(new Runnable() {
-
-                        @Override
-                        public void run() {
-                            if (reference != null)
-                                Toast.makeText(
-                                        getApplicationContext(),
-                                        "There is no route to host :"
-                                                + GlobalConfigs.httpAddress,
-                                        Toast.LENGTH_LONG).show();
-                        }
-
-                    });
-                }
+                AccountAccess account = AccountAccess.getAccountAccess(GlobalConfigs.httpAddress);
 
                 if (routeToAddress) {
 
@@ -219,10 +173,6 @@ public class ApplicationPreferences extends PreferenceActivity implements
         if (key.equals("username")) {
             AccountAccess.userName = sharedPreferences
                     .getString("username", "");
-            checkConnection = true;
-        } else if (key.equals("password")) {
-            AccountAccess.password = sharedPreferences
-                    .getString("password", "");
             checkConnection = true;
         } else if (key.equals("library_url")) {
             checkConnection = true;

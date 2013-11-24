@@ -118,47 +118,6 @@ public class Utils {
         return in;
     }
 
-    /**
-     * Checks to see if network access is enabled
-     * 
-     * @throws NoNetworkAccessException
-     *             if neither data connection or wifi are enabled
-     *             NoAccessToServer if the library remote server can't be
-     *             reached
-     * 
-     */
-    public static boolean checkNetworkStatus(ConnectivityManager cm)
-            throws NoNetworkAccessException, NoAccessToServer {
-
-        boolean networkAccessEnabled = false;
-        boolean httpAddressAccessReachable = false;
-
-        NetworkInfo ni = cm.getActiveNetworkInfo();
-        if (ni != null) {
-            if (ni.getType() == ConnectivityManager.TYPE_WIFI)
-                if (ni.isConnected()) {
-                    networkAccessEnabled = true;
-                }
-            if (ni.getType() == ConnectivityManager.TYPE_MOBILE)
-                if (ni.isConnected()) {
-                    networkAccessEnabled = true;
-                }
-        }
-
-        System.out.println("Network access " + networkAccessEnabled);
-
-        if (!networkAccessEnabled)
-            throw new NoNetworkAccessException();
-        
-        if (networkAccessEnabled) {
-            httpAddressAccessReachable = checkIfNetAddressIsReachable(GlobalConfigs.httpAddress);
-            if (httpAddressAccessReachable == false)
-                throw new NoAccessToServer();
-        }
-        return networkAccessEnabled;
-
-    }
-
     public static boolean checkIfNetAddressIsReachable(String url)
             throws NoAccessToServer {
 
@@ -239,9 +198,6 @@ public class Utils {
             Object[] params) throws SessionNotFoundException,
             NoNetworkAccessException, NoAccessToServer {
 
-        // check for network connectivity
-        checkNetworkStatus(cm);
-
         // check to see if EG http server is reachable
         checkIfNetAddressIsReachable(GlobalConfigs.httpAddress);
 
@@ -298,9 +254,6 @@ public class Utils {
     public static Object doRequest(HttpConnection conn, String service,
             String methodName, ConnectivityManager cm, Object[] params)
             throws NoNetworkAccessException, NoAccessToServer {
-
-        // check for network connectivity
-        checkNetworkStatus(cm);
 
         // check to see if EG http server is reachable
         checkIfNetAddressIsReachable(GlobalConfigs.httpAddress);

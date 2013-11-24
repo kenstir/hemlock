@@ -113,14 +113,7 @@ public class ConfigureApplicationActivity extends Activity {
                             editor.commit();
                             GlobalConfigs.httpAddress = server_http.getText()
                                     .toString();
-                            AccountAccess accountAccess = AccountAccess
-                                    .getAccountAccess(
-                                            GlobalConfigs.httpAddress,
-                                            (ConnectivityManager) getSystemService(Service.CONNECTIVITY_SERVICE));
-
-                            AccountAccess.setAccountInfo(username.getText()
-                                    .toString(), password.getText().toString());
-
+                            AccountAccess accountAccess = AccountAccess.getAccountAccess(GlobalConfigs.httpAddress);
                             try {
                                 auth = accountAccess.authenticate();
                                 Log.d(TAG, "Auth " + auth);

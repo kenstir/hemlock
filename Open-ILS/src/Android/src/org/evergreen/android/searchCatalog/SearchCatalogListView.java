@@ -172,8 +172,7 @@ public class SearchCatalogListView extends Activity {
             }
         });
         // get bookbags
-        AccountAccess ac = AccountAccess.getAccountAccess();
-        bookBags = ac.bookBags;
+        bookBags = AccountAccess.getAccountAccess().getBookbags();
 
         libraryHoursButton = (Button) findViewById(R.id.library_hours_button);
         libraryHoursButton.setOnClickListener(new OnClickListener() {
