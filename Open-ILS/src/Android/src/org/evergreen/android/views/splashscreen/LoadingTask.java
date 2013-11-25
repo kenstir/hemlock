@@ -19,6 +19,8 @@
  */
 package org.evergreen.android.views.splashscreen;
 
+import java.security.PublicKey;
+
 import org.evergreen.android.accountAccess.AccountAccess;
 import org.evergreen.android.accountAccess.SessionNotFoundException;
 import org.evergreen.android.globals.GlobalConfigs;
@@ -26,6 +28,7 @@ import org.evergreen.android.globals.NoAccessToServer;
 import org.evergreen.android.globals.NoNetworkAccessException;
 import org.evergreen_ils.auth.Const;
 
+import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.accounts.AccountManagerCallback;
 import android.accounts.AccountManagerFuture;
@@ -37,7 +40,14 @@ import android.util.Log;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-public class LoadingTask extends AsyncTask<String, String, String> {
+/** This is basically the same as an AsyncTask<String,String,String>, except that it uses
+ * a Thread.  Starting with HONEYCOMB, tasks are executed on a single thread and the 2nd
+ * AsyncTask doesn't start until the first finishes.
+ * 
+ * @author kenstir
+ *
+ */
+public class LoadingTask {
     private String TAG = "LoadingTask";
     
     public static final String TASK_OK = "OK";
@@ -58,58 +68,107 @@ public class LoadingTask extends AsyncTask<String, String, String> {
         this.mCallingActivity = callingActivity;
         mAccountManager = AccountManager.get(callingActivity);
     }
-    
-    @Override
-    protected void onPreExecute() {
-        super.onPreExecute();
-        mListener.onPreExecute();
+
+    public void execute() {
+        Log.d(TAG, "execute>");
+        final Thread t = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                final String result = doInBackground();
+                mCallingActivity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        onPostExecute(result);
+                    }
+                });
+            }
+        }, TAG);
+        onPreExecute();
+        t.start();
     }
 
-    @Override
-    protected String doInBackground(String... params) {
-        try {
-            Log.d(TAG, "Loading resources");
-            publishProgress("Loading resources");
-            GlobalConfigs gl = GlobalConfigs.getGlobalConfigs(mCallingActivity);
+    protected void publishProgress(final String progress) {
+        mCallingActivity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                onProgressUpdate(progress);
+            }
+        });
+    }
 
-            Log.d(TAG, "Signing in");
+    protected String doInBackground() {
+        final String tag ="doInBackground> "; 
+        Log.d(TAG, tag);
+        try {
+            Log.d(TAG, tag+"Loading resources");
+            publishProgress("Loading resources");
+            GlobalConfigs.getGlobalConfigs(mCallingActivity); // loads IDL
+
+            Log.d(TAG, tag+"Signing in");
             publishProgress("Signing in");
-            final AccountManagerFuture<Bundle> future = mAccountManager.getAuthTokenByFeatures(Const.ACCOUNT_TYPE, Const.AUTHTOKEN_TYPE, null, mCallingActivity, null, null, null, null);
+            AccountManagerFuture<Bundle> future = mAccountManager.getAuthTokenByFeatures(Const.ACCOUNT_TYPE, Const.AUTHTOKEN_TYPE, null, mCallingActivity, null, null, null, null);
             Bundle bnd = future.getResult();
-            Log.d(TAG, "bnd="+bnd);
-            final String authtoken = bnd.getString(AccountManager.KEY_AUTHTOKEN);
-            final String account_name = bnd.getString(AccountManager.KEY_ACCOUNT_NAME);
-            Log.d(TAG, "account_name="+account_name+" token="+authtoken);
-            //onSuccessfulLogin(account_name, authtoken);
+            Log.d(TAG, tag+"bnd="+bnd);
+            String auth_token = bnd.getString(AccountManager.KEY_AUTHTOKEN);
+            String account_name = bnd.getString(AccountManager.KEY_ACCOUNT_NAME);
+            Log.d(TAG, tag+"account_name="+account_name+" token="+auth_token);
             if (account_name == null)
                 return "no account";
 
-            Log.d(TAG, "Starting session");
+            Log.d(TAG, tag+"Starting session");
             publishProgress("Starting session");
             AccountAccess ac = AccountAccess.getAccountAccess(GlobalConfigs.httpAddress);
-            if (!ac.initSession())
+
+            // auth token zen: try once and if it fails, invalidate the token and try again
+            boolean haveSession = false;
+            boolean retry = false;
+            try {
+                haveSession = ac.initSession(auth_token);
+            } catch (SessionNotFoundException e) {
+                mAccountManager.invalidateAuthToken(Const.ACCOUNT_TYPE, auth_token);
+                retry = true;
+            }
+            if (retry) {
+                final Account account = new Account(account_name, Const.ACCOUNT_TYPE);
+                future = mAccountManager.getAuthToken(account, Const.AUTHTOKEN_TYPE, null, mCallingActivity, null, null);
+                bnd = future.getResult();
+                Log.d(TAG, tag+"bnd="+bnd);
+                auth_token = bnd.getString(AccountManager.KEY_AUTHTOKEN);
+                account_name = bnd.getString(AccountManager.KEY_ACCOUNT_NAME);
+                Log.d(TAG, tag+"account_name="+account_name+" token="+auth_token);
+                if (account_name == null)
+                    return "no account";
+                haveSession = ac.initSession(auth_token);
+            }
+            if (!haveSession)
                 return "no session";
 
-            Log.d(TAG, "Retrieving bookbags");
+            Log.d(TAG, tag+"Retrieving bookbags");
             publishProgress("Retrieving bookbags");
             ac.retrieveBookbags();
 
             return TASK_OK;
         } catch (Exception e) {
-            Log.d(TAG, "Caught exception", e);
-            return e.getMessage();
+            Log.d(TAG, tag+"Caught exception", e);
+            String s = e.getMessage();
+            if (s == null) s = "Cancelled";
+            Log.d(TAG, tag+"returning "+s);
+            return s;
         }
     }
 
-    @Override
-    protected void onProgressUpdate(String... values) {
-        super.onProgressUpdate(values);
-        mListener.onProgressUpdate(values[0]);
+    protected void onPreExecute() {
+        Log.d(TAG, "onPreExecute> ");
+        mListener.onPreExecute();
     }
 
-    @Override
+    protected void onProgressUpdate(String s) {
+        Log.d(TAG, "onProgressUpdate> "+s);
+        mListener.onProgressUpdate(s);
+    }
+    
     protected void onPostExecute(String result) {
-        super.onPostExecute(result);
+        Log.d(TAG, "onPostExecute> "+result);
         mListener.onPostExecute(result);
     }
 }

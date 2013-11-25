@@ -235,7 +235,6 @@ public class Utils {
             } catch (Exception e) {
                 //System.err.println(e.getMessage());
             }
-
             if (textcode != null) {
                 if (textcode.equals("NO_SESSION")) {
                     Log.d(TAG, textcode);
