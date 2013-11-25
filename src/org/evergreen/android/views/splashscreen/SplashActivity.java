@@ -35,44 +35,59 @@ import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
 public class SplashActivity extends Activity implements LoadingTaskListener {
 
-    private TextView progressText;
-    private Context context;
-    private ProgressBar progressBar;
+    private TextView mProgressText;
+    private Context mContext;
+    private ProgressBar mProgressBar;
     private String TAG = "SplashActivity";
-    private AlertDialog alertDialog;
-    private SharedPreferences prefs;
-    private LoadingTask task;
+    private AlertDialog mAlertDialog;
+    private Button mRetryButton;
+    //private SharedPreferences prefs;
+    private LoadingTask mTask;
     
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
 
-        this.context = this;
+        this.mContext = this;
 
-        progressText = (TextView) findViewById(R.id.action_in_progress);
-        progressBar = (ProgressBar) findViewById(R.id.activity_splash_progress_bar);
+        mProgressText = (TextView) findViewById(R.id.action_in_progress);
+        mProgressBar = (ProgressBar) findViewById(R.id.activity_splash_progress_bar);
+        mRetryButton = (Button) findViewById(R.id.activity_splash_retry_button);
+        Log.d(TAG, "onCreate>");
+        mRetryButton.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startTask();
+            }
+        });
 
-        prefs= PreferenceManager.getDefaultSharedPreferences(context);
-        GlobalConfigs.httpAddress = context.getString(R.string.ou_library_url);
-        String username = prefs.getString("username", "");
-        AccountAccess.setAccountName(username);
-        
-        task = new LoadingTask(this, this);
-        task.execute(new String());
+        GlobalConfigs.httpAddress = mContext.getString(R.string.ou_library_url);
+        //prefs= PreferenceManager.getDefaultSharedPreferences(context);
+        //String username = prefs.getString("username", "");
+        startTask();
+    }
+    
+    protected void startTask() {
+        Log.d(TAG, "startTask> task="+mTask);
+        if (mTask != null)
+            return;
+        mTask = new LoadingTask(this, this);
+        mTask.execute();
     }
     
     @Override
     protected void onStop() {
-        // TODO Auto-generated method stub
         super.onStop();
-        if(alertDialog != null) {
-            alertDialog.dismiss();
+        if(mAlertDialog != null) {
+            mAlertDialog.dismiss();
         }
     }
     
@@ -89,25 +104,35 @@ public class SplashActivity extends Activity implements LoadingTaskListener {
 
     @Override
     public void onPreExecute() {
-        progressBar.setVisibility(View.VISIBLE);
+        mRetryButton.setVisibility(View.GONE);
+        mProgressBar.setVisibility(View.VISIBLE);
     }
 
     @Override
     public void onProgressUpdate(String value) {
-        progressText.setText(value);
+        Log.d(TAG, "onProgressUpdate> "+value);
+        mProgressText.setText(value);
     }
 
     @Override
     public void onPostExecute(String result) {
         Log.d(TAG, "onPostExecute> "+result);
-        progressBar.setVisibility(View.GONE);
-        if (result.equals(LoadingTask.TASK_OK)) {
+        mTask = null;
+        Log.d(TAG, "progressbar...gone");
+        mProgressBar.setVisibility(View.GONE);
+        if (TextUtils.equals(result, LoadingTask.TASK_OK)) {
+            Log.d(TAG, "startApp");
             startApp();
         } else {
-            String extra_text = "...Failed";
-            if (!TextUtils.isEmpty(result)) extra_text = extra_text + ": " + result;
-            progressText.setText(progressText.getText() + extra_text);
-            //retryButton.setVisibility(View.VISIBLE);
+            String extra_text;
+            if (!TextUtils.isEmpty(result))
+                extra_text = "...Failed:\n" + result;
+            else
+                extra_text = "...Cancelled";
+            Log.d(TAG, "progresstext += "+extra_text);
+            mProgressText.setText(mProgressText.getText() + extra_text);
+            Log.d(TAG, "retrybutton...visible");
+            mRetryButton.setVisibility(View.VISIBLE);
         }
     }
 }

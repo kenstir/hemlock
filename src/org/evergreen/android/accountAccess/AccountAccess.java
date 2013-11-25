@@ -160,12 +160,12 @@ public class AccountAccess {
     private String httpAddress = "http://ulysses.calvin.edu";
 
     /** The TAG. */
-    public String TAG = "AccountAccess";
+    private String TAG = "AccountAccess";
 
     /**
      * The auth token. Sent with every request that needs authentication
      * */
-    public String authToken = null;
+    private String authToken = null;
 
     /** The cm. */
     private ConnectivityManager cm = null;
@@ -256,10 +256,6 @@ public class AccountAccess {
         return accountAccess;
     }
 
-    public static void setAccountName(String username) {
-        userName = username;
-    }
-
     public Integer getHomeLibraryID() {
         return homeLibraryID;
     }
@@ -342,12 +338,28 @@ public class AccountAccess {
 
     /**
      * Retrieve session.
+     * @throws NoAccessToServer 
+     * @throws NoNetworkAccessException 
+     * @throws SessionNotFoundException 
      */
-    public boolean initSession() {
-        
-        if (this.haveSession)
-            return true;
+    public boolean initSession(String auth_token) throws NoNetworkAccessException, NoAccessToServer, SessionNotFoundException {
 
+        if (this.haveSession && this.authToken.equals(auth_token))
+            return true;
+        this.haveSession = false;
+        this.authToken = auth_token;
+        
+        Object resp = Utils.doRequest(conn, SERVICE_AUTH, METHOD_AUTH_SESSION_RETRV, authToken, null, new Object[] {authToken});
+        if (resp != null) {
+            OSRFObject au = (OSRFObject) resp;
+            userID = au.getInt("id");
+            homeLibraryID = au.getInt("home_ou");
+            userName = au.getString("usrname");
+            //email = au.getString("email");
+            this.haveSession = true;
+        }
+        return this.haveSession;
+        /*
         Method method = new Method(METHOD_AUTH_SESSION_RETRV);
 
         method.addParam(authToken);
@@ -362,13 +374,13 @@ public class AccountAccess {
             userID = au.getInt("id");
             homeLibraryID = au.getInt("home_ou");
             String s = au.getString("usrname");
-            //may be interesting: usrname=coxken, email=kenstir@gmail.com
 
             System.out.println("User Id " + userID);
 
             this.haveSession = true;
         }
         return this.haveSession;
+        */
     }
 
     // ------------------------Checked Out Items Section

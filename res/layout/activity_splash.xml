@@ -33,4 +33,15 @@
             android:layout_below="@+id/logo"
             android:paddingTop="40dip" />
 
+        <Button
+            android:id="@+id/activity_splash_retry_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/activity_splash_progress_bar"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="60dp"
+            android:text="@string/retry_label"
+            android:visibility="gone"
+            />
+
 </RelativeLayout>

@@ -75,7 +75,7 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity {
          * startActivityForResult(signup, REQ_SIGNUP); } });
          */
         if (savedInstanceState != null) {
-            Log.d(TAG, "onCreate> should I create a dialog here? alertDialog="+alertDialog+" alertMessage="+alertMessage);
+            Log.d(TAG, "onCreate> savedInstanceState="+savedInstanceState);
             if (savedInstanceState.getString(STATE_ALERT_MESSAGE) != null) {
                 showAlert(savedInstanceState.getString(STATE_ALERT_MESSAGE));
             }
@@ -105,6 +105,7 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity {
     }
 
     public void submit() {
+        Log.d(TAG, "submit>");
 
         final String username = ((TextView) findViewById(R.id.accountName)).getText().toString();
         final String password = ((TextView) findViewById(R.id.accountPassword)).getText().toString();
@@ -146,11 +147,12 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity {
             @Override
             protected void onPostExecute(Intent intent) {
                 task = null;
+                Log.d(TAG, "task.onPostExecute> intent="+intent);
                 if (intent.hasExtra(KEY_ERROR_MESSAGE)) {
                     Log.d(TAG, "task.onPostExecute> error msg: "+intent.getStringExtra(KEY_ERROR_MESSAGE));
                     onAuthFailure(intent.getStringExtra(KEY_ERROR_MESSAGE));
                 } else {
-                    Log.d(TAG, "task.onPostExecute> no error msg, finishing");
+                    Log.d(TAG, "task.onPostExecute> no error msg");
                     onAuthSuccess(intent);
                 }
             }
@@ -182,21 +184,22 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity {
         String accountType = intent.getStringExtra(AccountManager.KEY_ACCOUNT_TYPE);
         String accountPassword = intent.getStringExtra(PARAM_USER_PASS);
         final Account account = new Account(accountName, accountType);
-        Log.d(TAG, "finishLogin> accountName="+accountName);
+        Log.d(TAG, "onAuthSuccess> accountName="+accountName);
 
         //if (getIntent().getBooleanExtra(ARG_IS_ADDING_NEW_ACCOUNT, false))
-        Log.d(TAG, "finishLogin > addAccountExplicitly "+accountName);
+        Log.d(TAG, "onAuthSuccess> addAccountExplicitly "+accountName);
         String authtoken = intent.getStringExtra(AccountManager.KEY_AUTHTOKEN);
         String authtokenType = authTokenType;
 
         // Create the account on the device
         if (accountManager.addAccountExplicitly(account, accountPassword, null)) {
+            Log.d(TAG, "onAuthSuccess> true, setAuthToken "+authtoken);
             // Not setting the auth token will cause another call to the server
             // to authenticate the user
             accountManager.setAuthToken(account, authtokenType, authtoken);
         } else {
             // Probably the account already existed, in which case update the password
-            Log.d(TAG, "finishLogin > setPassword");
+            Log.d(TAG, "onAuthSuccess> false, setPassword");
             accountManager.setPassword(account, accountPassword);
         }
 
