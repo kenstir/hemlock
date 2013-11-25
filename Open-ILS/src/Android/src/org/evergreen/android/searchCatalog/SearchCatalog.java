@@ -214,9 +214,10 @@ public class SearchCatalog {
 
         System.out.println(" ids : " + response.get("ids") + " ");
 
-        List<List<String>> result_ids = (List) response.get("ids");
-
-        visible = Integer.parseInt((String) response.get("count"));
+        List<List<String>> result_ids;
+        result_ids = (List<List<String>>) response.get("ids");
+        System.out.println("length:"+result_ids.size());
+        visible = Integer.parseInt(response.get("count").toString());
 
         for (int i = 0; i < result_ids.size(); i++) {
             ids.add(result_ids.get(i).get(0));
