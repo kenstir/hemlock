@@ -30,6 +30,7 @@ import org.evergreen.android.globals.NoNetworkAccessException;
 import org.evergreen.android.globals.Utils;
 import org.evergreen.android.searchCatalog.SearchCatalogListView;
 import org.evergreen.android.views.AccountScreenDashboard;
+import org.evergreen.android.views.splashscreen.SplashActivity;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
@@ -82,8 +83,11 @@ public class BookbagsListView extends Activity {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        // TODO Auto-generated method stub
         super.onCreate(savedInstanceState);
+        if (!SplashActivity.isAppInitialized()) {
+            SplashActivity.restartApp(this);
+            return;
+        }
 
         setContentView(R.layout.bookbag_list);
 
@@ -241,14 +245,7 @@ public class BookbagsListView extends Activity {
             }
         };
 
-        Thread getBookBags = new Thread(getBookbagsRunnable);
-
-        if (accountAccess.isAuthenticated()) {
-            getBookBags.start();
-        } else
-            Toast.makeText(context,
-                    "You must be authenticated to retrieve circ records",
-                    Toast.LENGTH_LONG);
+        new Thread(getBookbagsRunnable).start();
     }
 
     @Override
