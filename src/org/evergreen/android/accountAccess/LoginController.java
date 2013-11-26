@@ -1,9 +1,7 @@
 package org.evergreen.android.accountAccess;
 
-import org.evergreen.android.JunkActivity;
 import org.evergreen.android.R;
 import org.evergreen.android.globals.AppPreferences;
-import org.evergreen.android.views.StartupActivity;
 import org.evergreen_ils.auth.Const;
 
 import android.accounts.Account;
@@ -12,7 +10,6 @@ import android.accounts.AccountManagerCallback;
 import android.accounts.AccountManagerFuture;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;

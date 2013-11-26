@@ -42,15 +42,44 @@ import android.widget.TextView;
 
 public class SplashActivity extends Activity implements LoadingTaskListener {
 
+    private static String TAG = "SplashActivity";
     private TextView mProgressText;
     private Context mContext;
     private ProgressBar mProgressBar;
-    private String TAG = "SplashActivity";
     private AlertDialog mAlertDialog;
     private Button mRetryButton;
     //private SharedPreferences prefs;
     private LoadingTask mTask;
-    
+    private static boolean mInitialized;
+
+    public static boolean isAppInitialized()
+    {
+        return mInitialized;
+    }
+
+    /** android may choose to initialize the app at a non-MAIN activity if the
+     * app crashed or for other reasons.  In these cases we want to force sane
+     * initialization via the SplashActivity.
+     * 
+     * used in all activity class's onCreate() like so:
+     * <code>
+     * if (!SplashActivity.isInitialized) {
+     *     SplashActivity.restartApp(this);
+     *     return;
+     * }
+     * </code>
+     * 
+     * @param a
+     */
+	public static void restartApp(Activity a)
+    {
+		Log.d(TAG, "restartApp> Restarting SplashActivity");
+		final Intent i = new Intent(a, SplashActivity.class);
+		i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+		a.startActivity(i);
+		a.finish();
+	}
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -97,6 +126,7 @@ public class SplashActivity extends Activity implements LoadingTaskListener {
     }
 
     private void startApp() {
+        mInitialized = true;
         Intent intent = new Intent(SplashActivity.this, SearchCatalogListView.class);
         startActivity(intent);
         finish();

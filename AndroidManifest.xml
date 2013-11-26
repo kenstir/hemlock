@@ -121,11 +121,7 @@
         </activity>
         <activity android:name="org.evergreen.android.accountAccess.bookbags.BookBagDetails" >
         </activity>
-        <activity
-            android:name="org.evergreen.android.views.StartupActivity"
-            android:label="@string/ou_app_name"
-            android:windowSoftInputMode="adjustResize|stateVisible" >
-        </activity>
+
         <activity
             android:name="org.evergreen_ils.auth.AuthenticatorActivity"
             android:label="@string/ou_account_label"
@@ -143,11 +139,6 @@
                 android:name="android.accounts.AccountAuthenticator"
                 android:resource="@xml/authenticator" />
         </service>
-
-        <activity
-            android:name="org.evergreen.android.JunkActivity"
-            android:label="@string/title_activity_junk" >
-        </activity>
     </application>
 
 </manifest>

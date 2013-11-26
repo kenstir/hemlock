@@ -35,6 +35,7 @@ import org.evergreen.android.globals.NoNetworkAccessException;
 import org.evergreen.android.globals.Utils;
 import org.evergreen.android.views.AccountScreenDashboard;
 import org.evergreen.android.views.ApplicationPreferences;
+import org.evergreen.android.views.splashscreen.SplashActivity;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -135,6 +136,11 @@ public class SearchCatalogListView extends Activity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (!SplashActivity.isAppInitialized()) {
+            SplashActivity.restartApp(this);
+            return;
+        }
+
         setContentView(R.layout.search_result_list);
         setTitle("Browse catalog");
 
