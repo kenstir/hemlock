@@ -1,6 +1,18 @@
 Evergreen Android App Release Notes
 ===================================
 
+2013-11-26 Development APK
+--------------------------
+Major Fixes:
+* Fixed a major sources of crashes: non-main activities being created by
+  Android when the app was not initialized.  This can happen for many
+  reasons, and the cleanest fix I know is to restart at the
+  SplashActivity.
+* Switched from username/password stored in the preferences XML to
+  accounts stored with the Android account manager.  This simplifies the
+  handling of multiple accounts, account credentials, and auth tokens.
+  The UI needs work but the mechanics appear sound.
+
 2013-10-27 Development APK
 --------------------------
 Major Fixes:
