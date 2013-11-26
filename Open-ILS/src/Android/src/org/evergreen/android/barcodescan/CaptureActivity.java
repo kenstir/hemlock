@@ -5,6 +5,7 @@ import java.util.Vector;
 
 import org.evergreen.android.R;
 import org.evergreen.android.barcodescan.camera.CameraManager;
+import org.evergreen.android.views.splashscreen.SplashActivity;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -43,6 +44,10 @@ public class CaptureActivity extends Activity implements SurfaceHolder.Callback 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+        if (!SplashActivity.isAppInitialized()) {
+            SplashActivity.restartApp(this);
+            return;
+        }
 
 		// Remove title bar
 		this.requestWindowFeature(Window.FEATURE_NO_TITLE);

@@ -33,6 +33,7 @@ import org.evergreen.android.globals.Utils;
 import org.evergreen.android.searchCatalog.RecordInfo;
 import org.evergreen.android.searchCatalog.SearchCatalogListView;
 import org.evergreen.android.views.AccountScreenDashboard;
+import org.evergreen.android.views.splashscreen.SplashActivity;
 
 import android.app.Activity;
 import android.app.DatePickerDialog;
@@ -117,6 +118,10 @@ public class PlaceHold extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (!SplashActivity.isAppInitialized()) {
+            SplashActivity.restartApp(this);
+            return;
+        }
 
         setContentView(R.layout.place_hold);
         globalConfigs = GlobalConfigs.getGlobalConfigs(this);

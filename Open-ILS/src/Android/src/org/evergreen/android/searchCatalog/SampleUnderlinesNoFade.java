@@ -31,6 +31,7 @@ import org.evergreen.android.utils.ui.BasicDetailsFragment;
 import org.evergreen.android.utils.ui.TestFragmentAdapter;
 import org.evergreen.android.utils.ui.UnderlinePageIndicator;
 import org.evergreen.android.views.AccountScreenDashboard;
+import org.evergreen.android.views.splashscreen.SplashActivity;
 
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -71,6 +72,11 @@ public class SampleUnderlinesNoFade extends BaseSampleActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (!SplashActivity.isAppInitialized()) {
+            SplashActivity.restartApp(this);
+            return;
+        }
+
         setContentView(R.layout.simple_underlines);
 
         search = SearchCatalog.getInstance((ConnectivityManager)getSystemService(CONNECTIVITY_SERVICE));
