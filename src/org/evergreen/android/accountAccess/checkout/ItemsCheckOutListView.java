@@ -36,6 +36,7 @@ import org.evergreen.android.globals.NoNetworkAccessException;
 import org.evergreen.android.globals.Utils;
 import org.evergreen.android.searchCatalog.SearchCatalogListView;
 import org.evergreen.android.views.AccountScreenDashboard;
+import org.evergreen.android.views.splashscreen.SplashActivity;
 
 import android.app.Activity;
 import android.app.AlarmManager;
@@ -90,8 +91,11 @@ public class ItemsCheckOutListView extends Activity {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        // TODO Auto-generated method stub
         super.onCreate(savedInstanceState);
+        if (!SplashActivity.isAppInitialized()) {
+            SplashActivity.restartApp(this);
+            return;
+        }
 
         thisActivity = this;
         setContentView(R.layout.checkout_list);

@@ -25,6 +25,7 @@ import org.evergreen.android.accountAccess.checkout.ItemsCheckOutListView;
 import org.evergreen.android.accountAccess.fines.FinesActivity;
 import org.evergreen.android.accountAccess.holds.HoldsListView;
 import org.evergreen.android.searchCatalog.SearchCatalogListView;
+import org.evergreen.android.views.splashscreen.SplashActivity;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -54,9 +55,14 @@ public class AccountScreenDashboard extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.dashbord_account);
-        myAccountButton = (Button) findViewById(R.id.my_account_button);
+        if (!SplashActivity.isAppInitialized()) {
+            SplashActivity.restartApp(this);
+            return;
+        }
 
+        setContentView(R.layout.dashbord_account);
+
+        myAccountButton = (Button) findViewById(R.id.my_account_button);
         myAccountButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -65,7 +71,6 @@ public class AccountScreenDashboard extends Activity {
         });
 
         homeButton = (Button) findViewById(R.id.library_logo);
-
         homeButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {

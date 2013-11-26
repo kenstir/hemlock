@@ -24,6 +24,7 @@ import java.util.StringTokenizer;
 import org.evergreen.android.R;
 import org.evergreen.android.accountAccess.AccountAccess;
 import org.evergreen.android.views.AccountScreenDashboard;
+import org.evergreen.android.views.splashscreen.SplashActivity;
 
 import android.app.Activity;
 import android.content.Context;
@@ -60,6 +61,10 @@ public class AdvancedSearchActivity extends Activity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (!SplashActivity.isAppInitialized()) {
+            SplashActivity.restartApp(this);
+            return;
+        }
 
         setContentView(R.layout.advanced_search);
 

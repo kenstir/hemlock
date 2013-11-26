@@ -31,6 +31,7 @@ import org.evergreen.android.searchCatalog.RecordInfo;
 import org.evergreen.android.searchCatalog.SearchCatalog;
 import org.evergreen.android.searchCatalog.SearchCatalogListView;
 import org.evergreen.android.views.AccountScreenDashboard;
+import org.evergreen.android.views.splashscreen.SplashActivity;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -92,8 +93,11 @@ public class BookBagDetails extends Activity {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        // TODO Auto-generated method stub
         super.onCreate(savedInstanceState);
+        if (!SplashActivity.isAppInitialized()) {
+            SplashActivity.restartApp(this);
+            return;
+        }
 
         setContentView(R.layout.bookbagitem_list);
         // header portion actions
