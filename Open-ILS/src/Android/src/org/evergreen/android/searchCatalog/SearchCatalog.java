@@ -48,7 +48,7 @@ public class SearchCatalog {
     public static String SERVICE = "open-ils.search";
 
     /** The METHO d_ multicas s_ search. */
-    public static String METHOD_MULTICASS_SEARCH = "open-ils.search.biblio.multiclass.query";
+    public static String METHOD_MULTICLASS_QUERY = "open-ils.search.biblio.multiclass.query";
 
     /** The METHO d_ sli m_ retrive. */
     public static String METHOD_SLIM_RETRIVE = "open-ils.search.biblio.record.mods_slim.retrieve";
@@ -174,11 +174,12 @@ public class SearchCatalog {
         
         ArrayList<RecordInfo> resultsRecordInfo = new ArrayList<RecordInfo>();
 
-        Method method = new Method(METHOD_MULTICASS_SEARCH);
+        Method method = new Method(METHOD_MULTICLASS_QUERY);
 
         HashMap complexParm = new HashMap<String, Integer>();
 
         try {
+            //KCXXX I'm not too sure about this depth option
             if (this.selectedOrganization != null) {
                 if (this.selectedOrganization.id != null)
                     complexParm.put("org_unit", this.selectedOrganization.id);
@@ -201,7 +202,7 @@ public class SearchCatalog {
         }
 
         // do request and check for connectivity
-        Object resp = Utils.doRequest(conn, SERVICE, METHOD_MULTICASS_SEARCH,
+        Object resp = Utils.doRequest(conn, SERVICE, METHOD_MULTICLASS_QUERY,
                 cm, new Object[] { complexParm, searchWords, 1 });
 
         ArrayList<String> ids = new ArrayList<String>();
@@ -217,6 +218,8 @@ public class SearchCatalog {
         List<List<String>> result_ids;
         result_ids = (List<List<String>>) response.get("ids");
         System.out.println("length:"+result_ids.size());
+        
+        // sometimes count is an int ("count":0) and sometimes string ("count":"1103")
         visible = Integer.parseInt(response.get("count").toString());
 
         for (int i = 0; i < result_ids.size(); i++) {
@@ -332,9 +335,7 @@ public class SearchCatalog {
                     CopyInformation.availableOrgStatuses.put(
                             ccs_obj.getInt("id") + "",
                             ccs_obj.getString("name"));
-                    System.out.println("Add status "
-                            + ccs_obj.getString("name"));
-
+                    //System.out.println("Add status "+ccs_obj.getString("name"));
                 }
             }
         }
