@@ -24,15 +24,6 @@
             android:gravity="center"
             android:paddingTop="10dip" />
 
-        <ProgressBar
-            android:id="@+id/activity_splash_progress_bar"
-            style="@android:style/Widget.ProgressBar.Large"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_below="@+id/logo"
-            android:paddingTop="40dip" />
-
         <Button
             android:id="@+id/activity_splash_retry_button"
             android:layout_width="wrap_content"
@@ -43,5 +34,14 @@
             android:text="@string/retry_label"
             android:visibility="gone"
             />
+
+        <ProgressBar
+            android:id="@+id/activity_splash_progress_bar"
+            style="@android:style/Widget.ProgressBar.Large"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/action_in_progress"
+            android:layout_centerHorizontal="true"
+            android:paddingTop="40dip" />
 
 </RelativeLayout>
