@@ -155,7 +155,7 @@ public class AdvancedSearchActivity extends Activity {
                 }
 
                 TextView text = new TextView(context);
-                text.setLayoutParams(new LayoutParams(LayoutParams.FILL_PARENT,
+                text.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT,
                         LayoutParams.WRAP_CONTENT));
                 text.setText(searchText);
                 layout.addView(text);

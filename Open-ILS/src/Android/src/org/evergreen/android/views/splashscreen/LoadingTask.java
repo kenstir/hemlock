@@ -19,26 +19,17 @@
  */
 package org.evergreen.android.views.splashscreen;
 
-import java.security.PublicKey;
-
 import org.evergreen.android.accountAccess.AccountAccess;
 import org.evergreen.android.accountAccess.SessionNotFoundException;
 import org.evergreen.android.globals.GlobalConfigs;
-import org.evergreen.android.globals.NoAccessToServer;
-import org.evergreen.android.globals.NoNetworkAccessException;
 import org.evergreen_ils.auth.Const;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
-import android.accounts.AccountManagerCallback;
 import android.accounts.AccountManagerFuture;
 import android.app.Activity;
-import android.net.ConnectivityManager;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.ProgressBar;
-import android.widget.TextView;
 
 /** This is basically the same as an AsyncTask<String,String,String>, except that it uses
  * a Thread.  Starting with HONEYCOMB, tasks are executed on a single thread and the 2nd
@@ -123,7 +114,7 @@ public class LoadingTask {
             boolean haveSession = false;
             boolean retry = false;
             try {
-                haveSession = ac.initSession(auth_token);
+                haveSession = ac.retrieveSession(auth_token);
             } catch (SessionNotFoundException e) {
                 mAccountManager.invalidateAuthToken(Const.ACCOUNT_TYPE, auth_token);
                 retry = true;
@@ -138,7 +129,7 @@ public class LoadingTask {
                 Log.d(TAG, tag+"account_name="+account_name+" token="+auth_token);
                 if (account_name == null)
                     return "no account";
-                haveSession = ac.initSession(auth_token);
+                haveSession = ac.retrieveSession(auth_token);
             }
             if (!haveSession)
                 return "no session";

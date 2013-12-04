@@ -20,11 +20,8 @@
 package org.evergreen.android.searchCatalog;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import org.evergreen.android.R;
-import org.evergreen.android.globals.NoAccessToServer;
-import org.evergreen.android.globals.NoNetworkAccessException;
 import org.evergreen.android.globals.Utils;
 import org.evergreen.android.utils.ui.BaseSampleActivity;
 import org.evergreen.android.utils.ui.BasicDetailsFragment;
@@ -144,7 +141,7 @@ public class SampleUnderlinesNoFade extends BaseSampleActivity {
                             records.size());
                 } catch (NoNetworkAccessException e) {
                     runOnUiThread(Utils
-                            .showNetworkNotAvailableDialog(context));
+                            .showSessionNotAvailableDialog(context));
                 } catch (NoAccessToServer e) {
                     runOnUiThread(Utils
                             .showServerNotAvailableDialog(context));

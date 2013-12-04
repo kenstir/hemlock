@@ -22,15 +22,12 @@ package org.evergreen.android.views;
 import org.evergreen.android.R;
 import org.evergreen.android.accountAccess.AccountAccess;
 import org.evergreen.android.globals.GlobalConfigs;
-import org.evergreen.android.globals.NoAccessToServer;
 import org.evergreen.android.globals.Utils;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
-import android.app.Service;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -87,13 +84,9 @@ public class ConfigureApplicationActivity extends Activity {
                         boolean server_address = false;
                         boolean auth = false;
 
-                        try {
-                            server_address = Utils
-                                    .checkIfNetAddressIsReachable(server_http
-                                            .getText().toString());
-                        } catch (NoAccessToServer e) {
-                            server_address = false;
-                        }
+                        server_address = Utils
+                                .checkIfNetAddressIsReachable(server_http
+                                        .getText().toString());
 
                         if (server_address == true) {
                             

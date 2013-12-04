@@ -20,27 +20,20 @@
 package org.evergreen.android.accountAccess.checkout;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-import org.androwrapee.db.DefaultDAO;
 import org.evergreen.android.R;
 import org.evergreen.android.accountAccess.AccountAccess;
 import org.evergreen.android.accountAccess.MaxRenewalsException;
 import org.evergreen.android.accountAccess.ServerErrorMessage;
 import org.evergreen.android.accountAccess.SessionNotFoundException;
-import org.evergreen.android.database.DatabaseManager;
-import org.evergreen.android.globals.NoAccessToServer;
-import org.evergreen.android.globals.NoNetworkAccessException;
 import org.evergreen.android.globals.Utils;
 import org.evergreen.android.searchCatalog.SearchCatalogListView;
 import org.evergreen.android.views.AccountScreenDashboard;
 import org.evergreen.android.views.splashscreen.SplashActivity;
 
 import android.app.Activity;
-import android.app.AlarmManager;
-import android.app.PendingIntent;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -146,7 +139,7 @@ public class ItemsCheckOutListView extends Activity {
                 try {
                     circRecords = accountAccess.getItemsCheckedOut();
                 } catch (NoNetworkAccessException e) {
-                    Utils.showNetworkNotAvailableDialog(context);
+                    Utils.showSessionNotAvailableDialog(context);
                 } catch (NoAccessToServer e) {
                     Utils.showServerNotAvailableDialog(context);
 
@@ -344,7 +337,7 @@ public class ItemsCheckOutListView extends Activity {
                                                 .println("Exception in reAuth");
                                     }
                                 } catch (NoNetworkAccessException e1) {
-                                    Utils.showNetworkNotAvailableDialog(context);
+                                    Utils.showSessionNotAvailableDialog(context);
                                 } catch (NoAccessToServer e1) {
                                     Utils.showServerNotAvailableDialog(context);
                                 }
@@ -355,7 +348,7 @@ public class ItemsCheckOutListView extends Activity {
                                         circRecords = accountAccess
                                                 .getItemsCheckedOut();
                                     } catch (NoNetworkAccessException e) {
-                                        Utils.showNetworkNotAvailableDialog(context);
+                                        Utils.showSessionNotAvailableDialog(context);
                                     } catch (NoAccessToServer e) {
                                         Utils.showServerNotAvailableDialog(context);
 

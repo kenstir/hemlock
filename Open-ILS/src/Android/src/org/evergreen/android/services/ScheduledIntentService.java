@@ -31,8 +31,6 @@ import org.evergreen.android.accountAccess.SessionNotFoundException;
 import org.evergreen.android.accountAccess.checkout.CircRecord;
 import org.evergreen.android.database.DatabaseManager;
 import org.evergreen.android.globals.GlobalConfigs;
-import org.evergreen.android.globals.NoAccessToServer;
-import org.evergreen.android.globals.NoNetworkAccessException;
 import org.evergreen.android.globals.Utils;
 import org.open_ils.idl.IDLParser;
 
@@ -41,7 +39,6 @@ import android.app.IntentService;
 import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.net.ConnectivityManager;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
@@ -97,10 +94,7 @@ public class ScheduledIntentService extends IntentService {
         boolean auth = true;
         try {
             accountAccess.authenticate();
-        } catch (NoNetworkAccessException e) {
-            auth = false;
-            e.printStackTrace();
-        } catch (NoAccessToServer e) {
+        } catch (Exception e) {
             auth = false;
             e.printStackTrace();
         }
@@ -120,10 +114,6 @@ public class ScheduledIntentService extends IntentService {
             // get the circ records
             try {
                 circRecords = accountAccess.getItemsCheckedOut();
-            } catch (NoNetworkAccessException e) {
-                // not suppose to happen
-            } catch (NoAccessToServer e) {
-                // not suppose to happen
             } catch (SessionNotFoundException e) {
                 // auth just earlier realized, not supose to happen
             }
