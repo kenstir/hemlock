@@ -27,8 +27,6 @@ import org.evergreen.android.R;
 import org.evergreen.android.accountAccess.AccountAccess;
 import org.evergreen.android.accountAccess.SessionNotFoundException;
 import org.evergreen.android.globals.GlobalConfigs;
-import org.evergreen.android.globals.NoAccessToServer;
-import org.evergreen.android.globals.NoNetworkAccessException;
 import org.evergreen.android.globals.Utils;
 import org.evergreen.android.searchCatalog.SearchCatalogListView;
 import org.evergreen.android.views.AccountScreenDashboard;
@@ -56,7 +54,6 @@ import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.DatePicker;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -239,16 +236,9 @@ public class HoldDetails extends Activity {
                                                 try {
                                                     accountAccess
                                                             .cancelHold(record.ahr);
-                                                } catch (NoNetworkAccessException e) {
-                                                    Utils.showNetworkNotAvailableDialog(context);
-                                                } catch (NoAccessToServer e) {
-                                                    Utils.showServerNotAvailableDialog(context);
-
                                                 } catch (SessionNotFoundException e) {
-                                                    // TODO other way?
                                                     try {
-                                                        if (accountAccess
-                                                                .authenticate())
+                                                        if (accountAccess.reauthenticate(HoldDetails.this))
                                                             accountAccess
                                                                     .cancelHold(record.ahr);
                                                     } catch (Exception eauth) {
@@ -293,15 +283,9 @@ public class HoldDetails extends Activity {
                     accountAccess.updateHold(record.ahr, selectedOrgPos,
                             suspendHold.isChecked(),
                             expire_date_s, thaw_date_s);
-                } catch (NoNetworkAccessException e) {
-                    Utils.showNetworkNotAvailableDialog(context);
-                } catch (NoAccessToServer e) {
-                    Utils.showServerNotAvailableDialog(context);
-
                 } catch (SessionNotFoundException e) {
-                    // TODO other way?
                     try {
-                        if (accountAccess.authenticate())
+                        if (accountAccess.reauthenticate(HoldDetails.this))
                             accountAccess.updateHold(record.ahr,
                                     selectedOrgPos,
                                     suspendHold.isChecked(), expire_date_s,

@@ -27,8 +27,6 @@ import org.evergreen.android.R;
 import org.evergreen.android.accountAccess.AccountAccess;
 import org.evergreen.android.accountAccess.SessionNotFoundException;
 import org.evergreen.android.globals.GlobalConfigs;
-import org.evergreen.android.globals.NoAccessToServer;
-import org.evergreen.android.globals.NoNetworkAccessException;
 import org.evergreen.android.globals.Utils;
 import org.evergreen.android.searchCatalog.RecordInfo;
 import org.evergreen.android.searchCatalog.SearchCatalogListView;
@@ -54,7 +52,6 @@ import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.DatePicker;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -228,9 +225,8 @@ public class PlaceHold extends Activity {
                                     .getText().toString(), suspendHold
                                     .isChecked(), expire_date_s, thaw_date_s);
                 } catch (SessionNotFoundException e) {
-
                     try {
-                        if (accountAccess.authenticate())
+                        if (accountAccess.reauthenticate(PlaceHold.this))
                             stringResponse = accountAccess.createHold(
                                     record_id, selectedOrgID,
                                     email_notification.isChecked(),
@@ -240,11 +236,6 @@ public class PlaceHold extends Activity {
                                     thaw_date_s);
                     } catch (Exception e1) {
                     }
-
-                } catch (NoNetworkAccessException e) {
-                    Utils.showNetworkNotAvailableDialog(context);
-                } catch (NoAccessToServer e) {
-                    Utils.showServerNotAvailableDialog(context);
                 }
 
                 final String[] holdPlaced = stringResponse;

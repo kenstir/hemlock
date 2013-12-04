@@ -19,7 +19,6 @@
  */
 package org.evergreen.android.accountAccess.holds;
 
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,8 +26,6 @@ import org.evergreen.android.R;
 import org.evergreen.android.accountAccess.AccountAccess;
 import org.evergreen.android.accountAccess.SessionNotFoundException;
 import org.evergreen.android.globals.GlobalConfigs;
-import org.evergreen.android.globals.NoAccessToServer;
-import org.evergreen.android.globals.NoNetworkAccessException;
 import org.evergreen.android.globals.Utils;
 import org.evergreen.android.searchCatalog.ImageDownloader;
 import org.evergreen.android.searchCatalog.SearchCatalogListView;
@@ -49,7 +46,6 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -138,16 +134,14 @@ public class HoldsListView extends Activity {
                 try {
                     holdRecords = accountAccess.getHolds();
                 } catch (SessionNotFoundException e) {
-                    System.out.println("no session!");
-                    // TODO other way?
                     try {
-                        if (accountAccess.authenticate())
+                        if (accountAccess.reauthenticate(HoldsListView.this))
                             holdRecords = accountAccess.getHolds();
                     } catch (Exception eauth) {
-                        System.out.println("Exception in reAuth");
+                        System.out.println("Exception in reauth");
                     }
                 } catch (NoNetworkAccessException e) {
-                    Utils.showNetworkNotAvailableDialog(context);
+                    Utils.showSessionNotAvailableDialog(context);
                 } catch (NoAccessToServer e) {
                     Utils.showServerNotAvailableDialog(context);
                 }

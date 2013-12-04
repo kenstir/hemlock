@@ -30,8 +30,6 @@ import org.evergreen.android.accountAccess.SessionNotFoundException;
 import org.evergreen.android.accountAccess.bookbags.BookBag;
 import org.evergreen.android.accountAccess.holds.PlaceHold;
 import org.evergreen.android.globals.GlobalConfigs;
-import org.evergreen.android.globals.NoAccessToServer;
-import org.evergreen.android.globals.NoNetworkAccessException;
 import org.evergreen.android.searchCatalog.CopyInformation;
 import org.evergreen.android.searchCatalog.ImageDownloader;
 import org.evergreen.android.searchCatalog.MoreCopyInformation;
@@ -40,9 +38,7 @@ import org.evergreen.android.searchCatalog.SearchCatalog;
 
 import android.app.Dialog;
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -224,12 +220,6 @@ public class BasicDetailsFragment extends Fragment {
                         } catch (SessionNotFoundException e) {
                             // TODO Auto-generated catch block
                             e.printStackTrace();
-                        } catch (NoAccessToServer e) {
-                            // TODO Auto-generated catch block
-                            e.printStackTrace();
-                        } catch (NoNetworkAccessException e) {
-                            // TODO Auto-generated catch block
-                            e.printStackTrace();
                         }
 
                         getActivity().runOnUiThread(new Runnable() {
@@ -370,7 +360,7 @@ public class BasicDetailsFragment extends Fragment {
 
             // insert into main view
             insertPoint.addView(copy_info_view, new ViewGroup.LayoutParams(
-                    ViewGroup.LayoutParams.FILL_PARENT,
+                    LayoutParams.MATCH_PARENT,
                     ViewGroup.LayoutParams.WRAP_CONTENT));
 
             LinearLayout copy_statuses = (LinearLayout) copy_info_view

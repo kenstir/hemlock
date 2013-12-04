@@ -250,9 +250,7 @@ public class GlobalConfigs {
             try {
                 Object obj = ac.fetchOrgSettings(organisations.get(i).id,
                         "opac.org_unit_hiding.depth");
-            } catch (NoNetworkAccessException e) {
-            } catch (NoAccessToServer e) {
-            } catch (SessionNotFoundException e) {// not used here
+            } catch (SessionNotFoundException e) {
             }
 
         }

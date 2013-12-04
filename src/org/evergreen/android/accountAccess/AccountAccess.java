@@ -19,6 +19,7 @@
  */
 package org.evergreen.android.accountAccess;
 
+import java.io.IOException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
@@ -26,23 +27,23 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import android.accounts.*;
+import android.app.Activity;
+import android.os.Bundle;
+import android.os.Looper;
+import android.text.TextUtils;
 import org.evergreen.android.accountAccess.bookbags.BookBag;
 import org.evergreen.android.accountAccess.bookbags.BookBagItem;
 import org.evergreen.android.accountAccess.checkout.CircRecord;
 import org.evergreen.android.accountAccess.fines.FinesRecord;
 import org.evergreen.android.accountAccess.holds.HoldRecord;
-import org.evergreen.android.globals.NoAccessToServer;
-import org.evergreen.android.globals.NoNetworkAccessException;
 import org.evergreen.android.globals.Utils;
 import org.evergreen.android.searchCatalog.RecordInfo;
-import org.opensrf.Method;
-import org.opensrf.net.http.GatewayRequest;
+import org.evergreen_ils.auth.Const;
 import org.opensrf.net.http.HttpConnection;
-import org.opensrf.net.http.HttpRequest;
 import org.opensrf.util.OSRFObject;
 
 import android.net.ConnectivityManager;
-import android.util.Log;
 
 /**
  * The Class AuthenticateUser. Singleton class
@@ -193,7 +194,6 @@ public class AccountAccess {
      * Instantiates a new authenticate user.
      *
      * @param httpAddress the http address
-     * @param cm the cm
      */
     private AccountAccess(String httpAddress) {
 
@@ -230,7 +230,6 @@ public class AccountAccess {
      * Gets the account access.
      *
      * @param httpAddress the http address
-     * @param cm the cm
      * @return the account access
      */
     public static AccountAccess getAccountAccess(String httpAddress) {
@@ -323,33 +322,17 @@ public class AccountAccess {
     }
 
     /**
-     * Authenticate.
-     *
-     * @return true, if successful
-     * @throws NoNetworkAccessException the no network access exception
-     * @throws NoAccessToServer the no access to server
-     */
-    public boolean authenticate() throws NoNetworkAccessException,
-            NoAccessToServer {
-
-        //TODO this is a giant hack
-        return true;
-    }
-
-    /**
      * Retrieve session.
-     * @throws NoAccessToServer 
-     * @throws NoNetworkAccessException 
-     * @throws SessionNotFoundException 
+     * @throws SessionNotFoundException
      */
-    public boolean initSession(String auth_token) throws NoNetworkAccessException, NoAccessToServer, SessionNotFoundException {
+    public boolean retrieveSession(String auth_token) throws SessionNotFoundException {
 
         if (this.haveSession && this.authToken.equals(auth_token))
             return true;
         this.haveSession = false;
         this.authToken = auth_token;
         
-        Object resp = Utils.doRequest(conn, SERVICE_AUTH, METHOD_AUTH_SESSION_RETRV, authToken, null, new Object[] {authToken});
+        Object resp = Utils.doRequest(conn, SERVICE_AUTH, METHOD_AUTH_SESSION_RETRV, authToken, new Object[] {authToken});
         if (resp != null) {
             OSRFObject au = (OSRFObject) resp;
             userID = au.getInt("id");
@@ -359,28 +342,31 @@ public class AccountAccess {
             this.haveSession = true;
         }
         return this.haveSession;
-        /*
-        Method method = new Method(METHOD_AUTH_SESSION_RETRV);
+    }
 
-        method.addParam(authToken);
+    public static boolean runningOnUIThread() {
+        return (Looper.myLooper() == Looper.getMainLooper());
+    }
 
-        // sync request
-        HttpRequest req = new GatewayRequest(conn, SERVICE_AUTH, method).send();
-        Object resp;
-
-        while ((resp = req.recv()) != null) {
-            System.out.println("Sync Response: " + resp);
-            OSRFObject au = (OSRFObject) resp;
-            userID = au.getInt("id");
-            homeLibraryID = au.getInt("home_ou");
-            String s = au.getString("usrname");
-
-            System.out.println("User Id " + userID);
-
-            this.haveSession = true;
-        }
-        return this.haveSession;
-        */
+    /** invalidate current auth token and get a new one
+     *
+     * @param activity
+     * @return true if auth successful
+     */
+    public boolean reauthenticate(Activity activity) throws SessionNotFoundException, AuthenticatorException, OperationCanceledException, IOException {
+        boolean ok = false;
+        final AccountManager am = AccountManager.get(activity);
+        final Account account = new Account(userName, Const.ACCOUNT_TYPE);
+        am.invalidateAuthToken(Const.ACCOUNT_TYPE, authToken);
+        haveSession = false;
+        authToken = null;
+        if (runningOnUIThread())
+            return false;
+        Bundle b = am.getAuthToken(account, Const.AUTHTOKEN_TYPE, null, activity, null, null).getResult();
+        final String new_authToken = b.getString(AccountManager.KEY_AUTHTOKEN);
+        if (TextUtils.isEmpty(new_authToken))
+            return false;
+        return retrieveSession(new_authToken);
     }
 
     // ------------------------Checked Out Items Section
@@ -395,8 +381,7 @@ public class AccountAccess {
      * @throws NoAccessToServer the no access to server
      */
     public ArrayList<CircRecord> getItemsCheckedOut()
-            throws SessionNotFoundException, NoNetworkAccessException,
-            NoAccessToServer {
+            throws SessionNotFoundException {
 
         ArrayList<CircRecord> circRecords = new ArrayList<CircRecord>();
         /*
@@ -415,7 +400,7 @@ public class AccountAccess {
         List<String> out_id;
 
         Object resp = Utils.doRequest(conn, SERVICE_ACTOR,
-                METHOD_FETCH_CHECKED_OUT_SUM, authToken, cm, new Object[] {
+                METHOD_FETCH_CHECKED_OUT_SUM, authToken, new Object[] {
                         authToken, userID });
 
         long_overdue_id = (List<String>) ((Map<String, ?>) resp)
@@ -481,15 +466,12 @@ public class AccountAccess {
      * @param id the id
      * @return the oSRF object
      * @throws SessionNotFoundException the session not found exception
-     * @throws NoNetworkAccessException the no network access exception
-     * @throws NoAccessToServer the no access to server
      */
     private OSRFObject retrieveCircRecord(String id)
-            throws SessionNotFoundException, NoNetworkAccessException,
-            NoAccessToServer {
+            throws SessionNotFoundException {
 
         OSRFObject circ = (OSRFObject) Utils.doRequest(conn, SERVICE_CIRC,
-                METHOD_FETCH_CIRC_BY_ID, authToken, cm, new Object[] {
+                METHOD_FETCH_CIRC_BY_ID, authToken, new Object[] {
                         authToken, id });
         return circ;
     }
@@ -506,12 +488,9 @@ public class AccountAccess {
      * @param target_copy the target_copy
      * @param circRecord the circ record
      * @return the oSRF object
-     * @throws NoNetworkAccessException the no network access exception
-     * @throws NoAccessToServer the no access to server
      */
     private OSRFObject fetchInfoForCheckedOutItem(Integer target_copy,
-            CircRecord circRecord) throws NoNetworkAccessException,
-            NoAccessToServer {
+            CircRecord circRecord) {
 
         if (target_copy == null)
             return null;
@@ -543,11 +522,8 @@ public class AccountAccess {
      *
      * @param target_copy the target_copy
      * @return the oSRF object
-     * @throws NoNetworkAccessException the no network access exception
-     * @throws NoAccessToServer the no access to server
      */
-    private OSRFObject fetchModsFromCopy(Integer target_copy)
-            throws NoNetworkAccessException, NoAccessToServer {
+    private OSRFObject fetchModsFromCopy(Integer target_copy) {
 
         // sync request
         OSRFObject mvr = (OSRFObject) Utils.doRequest(conn, SERVICE_SEARCH,
@@ -561,11 +537,8 @@ public class AccountAccess {
      *
      * @param target_copy the target_copy
      * @return the oSRF object
-     * @throws NoNetworkAccessException the no network access exception
-     * @throws NoAccessToServer the no access to server
      */
-    private OSRFObject fetchAssetCopy(Integer target_copy)
-            throws NoNetworkAccessException, NoAccessToServer {
+    private OSRFObject fetchAssetCopy(Integer target_copy) {
 
         OSRFObject acp = (OSRFObject) Utils.doRequest(conn, SERVICE_SEARCH,
                 METHOD_FETCH_COPY, cm, new Object[] { target_copy });
@@ -584,12 +557,9 @@ public class AccountAccess {
      * @throws MaxRenewalsException the max renewals exception
      * @throws ServerErrorMessage the server error message
      * @throws SessionNotFoundException the session not found exception
-     * @throws NoNetworkAccessException the no network access exception
-     * @throws NoAccessToServer the no access to server
      */
     public void renewCirc(Integer target_copy) throws MaxRenewalsException,
-            ServerErrorMessage, SessionNotFoundException,
-            NoNetworkAccessException, NoAccessToServer {
+            ServerErrorMessage, SessionNotFoundException {
 
         HashMap<String, Integer> complexParam = new HashMap<String, Integer>();
         complexParam.put("patron", this.userID);
@@ -597,7 +567,7 @@ public class AccountAccess {
         complexParam.put("opac_renewal", 1);
 
         Object a_lot = (Object) Utils.doRequest(conn, SERVICE_CIRC,
-                METHOD_RENEW_CIRC, authToken, cm, new Object[] { authToken,
+                METHOD_RENEW_CIRC, authToken, new Object[] { authToken,
                         complexParam });
 
         Map<String, String> resp = (Map<String, String>) a_lot;
@@ -620,12 +590,9 @@ public class AccountAccess {
      * @param setting the setting
      * @return the object
      * @throws SessionNotFoundException the session not found exception
-     * @throws NoNetworkAccessException the no network access exception
-     * @throws NoAccessToServer the no access to server
      */
     public Object fetchOrgSettings(Integer org_id, String setting)
-            throws SessionNotFoundException, NoNetworkAccessException,
-            NoAccessToServer {
+            throws SessionNotFoundException {
 
         OSRFObject response = (OSRFObject) Utils
                 .doRequest(conn, SERVICE_ACTOR, METHOD_FETCH_ORG_SETTINGS, cm,
@@ -639,11 +606,8 @@ public class AccountAccess {
      *
      * @return the holds
      * @throws SessionNotFoundException the session not found exception
-     * @throws NoNetworkAccessException the no network access exception
-     * @throws NoAccessToServer the no access to server
      */
-    public List<HoldRecord> getHolds() throws SessionNotFoundException,
-            NoNetworkAccessException, NoAccessToServer {
+    public List<HoldRecord> getHolds() throws SessionNotFoundException {
 
         ArrayList<HoldRecord> holds = new ArrayList<HoldRecord>();
 
@@ -651,7 +615,7 @@ public class AccountAccess {
         List<OSRFObject> listHoldsAhr = null;
 
         Object resp = Utils.doRequest(conn, SERVICE_CIRC, METHOD_FETCH_HOLDS,
-                authToken, cm, new Object[] { authToken, userID });
+                authToken, new Object[] { authToken, userID });
         if (resp == null) {
             System.out.println("Result: null");
             return holds;
@@ -684,11 +648,8 @@ public class AccountAccess {
      * @param holdArhObject the hold arh object
      * @param hold the hold
      * @return the object
-     * @throws NoNetworkAccessException the no network access exception
-     * @throws NoAccessToServer the no access to server
      */
-    private Object fetchHoldTitleInfo(OSRFObject holdArhObject, HoldRecord hold)
-            throws NoNetworkAccessException, NoAccessToServer {
+    private Object fetchHoldTitleInfo(OSRFObject holdArhObject, HoldRecord hold) {
 
         String holdType = (String) holdArhObject.get("hold_type");
 
@@ -732,11 +693,8 @@ public class AccountAccess {
      * @param hold the hold
      * @param holdObj the hold obj
      * @return the oSRF object
-     * @throws NoNetworkAccessException the no network access exception
-     * @throws NoAccessToServer the no access to server
      */
-    private OSRFObject holdFetchObjects(OSRFObject hold, HoldRecord holdObj)
-            throws NoNetworkAccessException, NoAccessToServer {
+    private OSRFObject holdFetchObjects(OSRFObject hold, HoldRecord holdObj) {
 
         String type = (String) hold.get("hold_type");
 
@@ -779,7 +737,6 @@ public class AccountAccess {
                     System.err.println("Can't get types of resurce type"
                             + e.getMessage());
                 }
-                ;
             }
 
             return copyObject;
@@ -813,7 +770,6 @@ public class AccountAccess {
                 System.err.println("Can't get types of resurce type"
                         + e.getMessage());
             }
-            ;
         } else if (type.equals("I")) {
             OSRFObject issuance = (OSRFObject) Utils.doRequest(conn,
                     SERVICE_SERIAL, METHOD_FETCH_ISSUANCE, cm,
@@ -861,7 +817,6 @@ public class AccountAccess {
                 System.err.println("Can't get types of resurce type"
                         + e.getMessage());
             }
-            ;
         }
 
         return null;
@@ -873,18 +828,15 @@ public class AccountAccess {
      * @param hold the hold
      * @param holdObj the hold obj
      * @throws SessionNotFoundException the session not found exception
-     * @throws NoNetworkAccessException the no network access exception
-     * @throws NoAccessToServer the no access to server
      */
     public void fetchHoldStatus(OSRFObject hold, HoldRecord holdObj)
-            throws SessionNotFoundException, NoNetworkAccessException,
-            NoAccessToServer {
+            throws SessionNotFoundException {
 
         Integer hold_id = hold.getInt("id");
         // MAP : potential_copies, status, total_holds, queue_position,
         // estimated_wait
         Object resp = Utils.doRequest(conn, SERVICE_CIRC,
-                METHOD_FETCH_HOLD_STATUS, authToken, cm, new Object[] {
+                METHOD_FETCH_HOLD_STATUS, authToken, new Object[] {
                         authToken, hold_id });
 
         Map<String, Integer> map = (Map<String, Integer>)resp;
@@ -901,16 +853,13 @@ public class AccountAccess {
      * @param hold the hold
      * @return true, if successful
      * @throws SessionNotFoundException the session not found exception
-     * @throws NoNetworkAccessException the no network access exception
-     * @throws NoAccessToServer the no access to server
      */
-    public boolean cancelHold(OSRFObject hold) throws SessionNotFoundException,
-            NoNetworkAccessException, NoAccessToServer {
+    public boolean cancelHold(OSRFObject hold) throws SessionNotFoundException {
 
         Integer hold_id = hold.getInt("id");
 
         Object response = Utils.doRequest(conn, SERVICE_CIRC,
-                METHOD_CANCEL_HOLD, authToken, cm, new Object[] { authToken,
+                METHOD_CANCEL_HOLD, authToken, new Object[] { authToken,
                         hold_id });
 
         // delete successful
@@ -931,13 +880,10 @@ public class AccountAccess {
      * @param thaw_date the thaw_date
      * @return the object
      * @throws SessionNotFoundException the session not found exception
-     * @throws NoNetworkAccessException the no network access exception
-     * @throws NoAccessToServer the no access to server
      */
     public Object updateHold(OSRFObject ahr, Integer pickup_lib,
             boolean suspendHold, String expire_time, String thaw_date)
-            throws SessionNotFoundException, NoNetworkAccessException,
-            NoAccessToServer {
+            throws SessionNotFoundException {
         // TODO verify that object is correct passed to the server
 
         ahr.put("pickup_lib", pickup_lib);
@@ -948,7 +894,7 @@ public class AccountAccess {
         ahr.put("thaw_date", thaw_date);
 
         Object response = Utils.doRequest(conn, SERVICE_CIRC,
-                METHOD_UPDATE_HOLD, authToken, cm, new Object[] { authToken,
+                METHOD_UPDATE_HOLD, authToken, new Object[] { authToken,
                         ahr });
 
         return response;
@@ -967,14 +913,11 @@ public class AccountAccess {
      * @param thaw_date the thaw_date
      * @return the string[]
      * @throws SessionNotFoundException the session not found exception
-     * @throws NoNetworkAccessException the no network access exception
-     * @throws NoAccessToServer the no access to server
      */
     public String[] createHold(Integer recordID, Integer pickup_lib,
             boolean email_notify, boolean phone_notify, String phone,
             boolean suspendHold, String expire_time, String thaw_date)
-            throws SessionNotFoundException, NoNetworkAccessException,
-            NoAccessToServer {
+            throws SessionNotFoundException {
 
         OSRFObject ahr = new OSRFObject("ahr");
         ahr.put("target", recordID);
@@ -996,7 +939,7 @@ public class AccountAccess {
         // extra parameters (not mandatory for hold creation)
 
         Object response = Utils.doRequest(conn, SERVICE_CIRC,
-                METHOD_CREATE_HOLD, authToken, cm, new Object[] { authToken,
+                METHOD_CREATE_HOLD, authToken, new Object[] { authToken,
                         ahr });
 
         String[] resp = new String[3];
@@ -1017,7 +960,6 @@ public class AccountAccess {
             resp[1] = ((Map<String, String>) map).get("textcode");
             resp[2] = ((Map<String, String>) map).get("desc");
         }
-        ;
 
         System.out.println("Result " + resp[1] + " " + resp[2]);
 
@@ -1033,12 +975,9 @@ public class AccountAccess {
      * @param recordID the record id
      * @return the object
      * @throws SessionNotFoundException the session not found exception
-     * @throws NoNetworkAccessException the no network access exception
-     * @throws NoAccessToServer the no access to server
      */
     public Object isHoldPossible(Integer pickup_lib, Integer recordID)
-            throws SessionNotFoundException, NoNetworkAccessException,
-            NoAccessToServer {
+            throws SessionNotFoundException {
 
         HashMap<String, Integer> mapAsk = getHoldPreCreateInfo(recordID,
                 pickup_lib);
@@ -1055,7 +994,7 @@ public class AccountAccess {
         // "patronid":2,"depth":0,"pickup_lib":"8","partid":null}
 
         Object response = Utils.doRequest(conn, SERVICE_CIRC,
-                METHOD_VERIFY_HOLD_POSSIBLE, authToken, cm, new Object[] {
+                METHOD_VERIFY_HOLD_POSSIBLE, authToken, new Object[] {
                         authToken, mapAsk });
 
         return response;
@@ -1068,12 +1007,9 @@ public class AccountAccess {
      * @param recordID the record id
      * @param pickup_lib the pickup_lib
      * @return the hold pre create info
-     * @throws NoNetworkAccessException the no network access exception
-     * @throws NoAccessToServer the no access to server
      */
     public HashMap<String, Integer> getHoldPreCreateInfo(Integer recordID,
-            Integer pickup_lib) throws NoNetworkAccessException,
-            NoAccessToServer {
+            Integer pickup_lib) {
 
         HashMap<String, Integer> param = new HashMap<String, Integer>();
 
@@ -1110,15 +1046,12 @@ public class AccountAccess {
      *
      * @return the fines summary
      * @throws SessionNotFoundException the session not found exception
-     * @throws NoNetworkAccessException the no network access exception
-     * @throws NoAccessToServer the no access to server
      */
-    public float[] getFinesSummary() throws SessionNotFoundException,
-            NoNetworkAccessException, NoAccessToServer {
+    public float[] getFinesSummary() throws SessionNotFoundException {
 
         // mous object
         OSRFObject finesSummary = (OSRFObject) Utils.doRequest(conn,
-                SERVICE_ACTOR, METHOD_FETCH_FINES_SUMMARY, authToken, cm,
+                SERVICE_ACTOR, METHOD_FETCH_FINES_SUMMARY, authToken,
                 new Object[] { authToken, userID });
 
         float fines[] = new float[3];
@@ -1138,17 +1071,14 @@ public class AccountAccess {
      *
      * @return the transactions
      * @throws SessionNotFoundException the session not found exception
-     * @throws NoNetworkAccessException the no network access exception
-     * @throws NoAccessToServer the no access to server
      */
     public ArrayList<FinesRecord> getTransactions()
-            throws SessionNotFoundException, NoNetworkAccessException,
-            NoAccessToServer {
+            throws SessionNotFoundException {
 
         ArrayList<FinesRecord> finesRecords = new ArrayList<FinesRecord>();
 
         Object transactions = Utils.doRequest(conn, SERVICE_ACTOR,
-                METHOD_FETCH_TRANSACTIONS, authToken, cm, new Object[] {
+                METHOD_FETCH_TRANSACTIONS, authToken, new Object[] {
                         authToken, userID });
 
         // get Array
@@ -1175,14 +1105,11 @@ public class AccountAccess {
      *
      * @return the bookbags
      * @throws SessionNotFoundException the session not found exception
-     * @throws NoNetworkAccessException the no network access exception
-     * @throws NoAccessToServer the no access to server
      */
-    public boolean retrieveBookbags() throws SessionNotFoundException,
-            NoNetworkAccessException, NoAccessToServer {
+    public boolean retrieveBookbags() throws SessionNotFoundException {
 
         Object response = Utils.doRequest(conn, SERVICE_ACTOR,
-                METHOD_FLESH_CONTAINERS, authToken, cm, new Object[] {
+                METHOD_FLESH_CONTAINERS, authToken, new Object[] {
                         authToken, userID, "biblio", "bookbag" });
 
         List<OSRFObject> bookbags = (List<OSRFObject>) response;
@@ -1215,15 +1142,12 @@ public class AccountAccess {
      * @param bookbagID the bookbag id
      * @return the bookbag content
      * @throws SessionNotFoundException the session not found exception
-     * @throws NoNetworkAccessException the no network access exception
-     * @throws NoAccessToServer the no access to server
      */
     private Object getBookbagContent(BookBag bag, Integer bookbagID)
-            throws SessionNotFoundException, NoNetworkAccessException,
-            NoAccessToServer {
+            throws SessionNotFoundException {
 
         Map<String, ?> map = (Map<String, ?>) Utils.doRequest(conn,
-                SERVICE_ACTOR, METHOD_FLESH_PUBLIC_CONTAINER, authToken, cm,
+                SERVICE_ACTOR, METHOD_FLESH_PUBLIC_CONTAINER, authToken,
                 new Object[] { authToken, "biblio", bookbagID });
         
         List<OSRFObject> items  = new ArrayList<OSRFObject>();
@@ -1248,11 +1172,8 @@ public class AccountAccess {
      *
      * @param id the id
      * @throws SessionNotFoundException the session not found exception
-     * @throws NoNetworkAccessException the no network access exception
-     * @throws NoAccessToServer the no access to server
      */
-    public void removeBookbagItem(Integer id) throws SessionNotFoundException,
-            NoNetworkAccessException, NoAccessToServer {
+    public void removeBookbagItem(Integer id) throws SessionNotFoundException {
 
         removeContainer("biblio", id);
 
@@ -1263,11 +1184,8 @@ public class AccountAccess {
      *
      * @param name the name
      * @throws SessionNotFoundException the session not found exception
-     * @throws NoNetworkAccessException the no network access exception
-     * @throws NoAccessToServer the no access to server
      */
-    public void createBookbag(String name) throws SessionNotFoundException,
-            NoNetworkAccessException, NoAccessToServer {
+    public void createBookbag(String name) throws SessionNotFoundException {
 
         OSRFObject cbreb = new OSRFObject("cbreb");
         cbreb.put("btype", "bookbag");
@@ -1283,14 +1201,11 @@ public class AccountAccess {
      *
      * @param id the id
      * @throws SessionNotFoundException the session not found exception
-     * @throws NoNetworkAccessException the no network access exception
-     * @throws NoAccessToServer the no access to server
      */
-    public void deleteBookBag(Integer id) throws SessionNotFoundException,
-            NoNetworkAccessException, NoAccessToServer {
+    public void deleteBookBag(Integer id) throws SessionNotFoundException {
 
         Object response = Utils.doRequest(conn, SERVICE_ACTOR,
-                METHOD_CONTAINER_FULL_DELETE, authToken, cm, new Object[] {
+                METHOD_CONTAINER_FULL_DELETE, authToken, new Object[] {
                         authToken, "biblio", id });
     }
 
@@ -1300,12 +1215,9 @@ public class AccountAccess {
      * @param record_id the record_id
      * @param bookbag_id the bookbag_id
      * @throws SessionNotFoundException the session not found exception
-     * @throws NoAccessToServer the no access to server
-     * @throws NoNetworkAccessException the no network access exception
      */
     public void addRecordToBookBag(Integer record_id, Integer bookbag_id)
-            throws SessionNotFoundException, NoAccessToServer,
-            NoNetworkAccessException {
+            throws SessionNotFoundException {
 
         OSRFObject cbrebi = new OSRFObject("cbrebi");
         cbrebi.put("bucket", bookbag_id);
@@ -1313,7 +1225,7 @@ public class AccountAccess {
         cbrebi.put("id", null);
 
         Object response = Utils.doRequest(conn, SERVICE_ACTOR,
-                METHOD_CONTAINER_ITEM_CREATE, authToken, cm, new Object[] {
+                METHOD_CONTAINER_ITEM_CREATE, authToken, new Object[] {
                         authToken, "biblio", cbrebi });
     }
 
@@ -1323,15 +1235,12 @@ public class AccountAccess {
      * @param container the container
      * @param id the id
      * @throws SessionNotFoundException the session not found exception
-     * @throws NoNetworkAccessException the no network access exception
-     * @throws NoAccessToServer the no access to server
      */
     private void removeContainer(String container, Integer id)
-            throws SessionNotFoundException, NoNetworkAccessException,
-            NoAccessToServer {
+            throws SessionNotFoundException {
 
         Object response = Utils.doRequest(conn, SERVICE_ACTOR,
-                METHOD_CONTAINER_DELETE, authToken, cm, new Object[] {
+                METHOD_CONTAINER_DELETE, authToken, new Object[] {
                         authToken, container, id });
     }
 
@@ -1341,15 +1250,12 @@ public class AccountAccess {
      * @param container the container
      * @param parameter the parameter
      * @throws SessionNotFoundException the session not found exception
-     * @throws NoNetworkAccessException the no network access exception
-     * @throws NoAccessToServer the no access to server
      */
     private void createContainer(String container, Object parameter)
-            throws SessionNotFoundException, NoNetworkAccessException,
-            NoAccessToServer {
+            throws SessionNotFoundException {
 
         Object response = Utils.doRequest(conn, SERVICE_ACTOR,
-                METHOD_CONTAINER_CREATE, authToken, cm, new Object[] {
+                METHOD_CONTAINER_CREATE, authToken, new Object[] {
                         authToken, container, parameter });
     }
 }

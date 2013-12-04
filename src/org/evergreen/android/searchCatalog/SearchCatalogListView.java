@@ -30,8 +30,6 @@ import org.evergreen.android.accountAccess.bookbags.BookBag;
 import org.evergreen.android.accountAccess.holds.PlaceHold;
 import org.evergreen.android.barcodescan.CaptureActivity;
 import org.evergreen.android.globals.GlobalConfigs;
-import org.evergreen.android.globals.NoAccessToServer;
-import org.evergreen.android.globals.NoNetworkAccessException;
 import org.evergreen.android.globals.Utils;
 import org.evergreen.android.views.AccountScreenDashboard;
 import org.evergreen.android.views.ApplicationPreferences;
@@ -267,17 +265,7 @@ public class SearchCatalogListView extends Activity {
                     }
                 });
 
-                try {
-                    searchResults = search.getSearchResults(text, 0);
-                } catch (NoNetworkAccessException e) {
-                    System.out.println("no network access in search");
-                    SearchCatalogListView.this.runOnUiThread(Utils
-                            .showNetworkNotAvailableDialog(context));
-
-                } catch (NoAccessToServer e) {
-                    SearchCatalogListView.this.runOnUiThread(Utils
-                            .showServerNotAvailableDialog(context));
-                }
+                searchResults = search.getSearchResults(text, 0);
 
                 runOnUiThread(new Runnable() {
 
@@ -334,16 +322,8 @@ public class SearchCatalogListView extends Activity {
 
                             searchResults.clear();
 
-                            try {
-                                searchResults = search.getSearchResults(text,
-                                        recordList.size());
-                            } catch (NoNetworkAccessException e) {
-                                runOnUiThread(Utils
-                                        .showNetworkNotAvailableDialog(context));
-                            } catch (NoAccessToServer e) {
-                                runOnUiThread(Utils
-                                        .showServerNotAvailableDialog(context));
-                            }
+                            searchResults = search.getSearchResults(text,
+                                    recordList.size());
 
                             runOnUiThread(new Runnable() {
 
@@ -447,17 +427,9 @@ public class SearchCatalogListView extends Activity {
                                                 .toString();
                                         searchResults.clear();
 
-                                        try {
-                                            searchResults = search
-                                                    .getSearchResults(text,
-                                                            adapter.getCount());
-                                        } catch (NoNetworkAccessException e) {
-                                            runOnUiThread(Utils
-                                                    .showNetworkNotAvailableDialog(context));
-                                        } catch (NoAccessToServer e) {
-                                            runOnUiThread(Utils
-                                                    .showServerNotAvailableDialog(context));
-                                        }
+                                        searchResults = search
+                                                .getSearchResults(text,
+                                                        adapter.getCount());
 
                                         runOnUiThread(new Runnable() {
 
@@ -664,12 +636,6 @@ public class SearchCatalogListView extends Activity {
                                     ac.addRecordToBookBag(info.doc_id,
                                             bookBags.get(bookbag_selected).id);
                                 } catch (SessionNotFoundException e) {
-                                    // TODO Auto-generated catch block
-                                    e.printStackTrace();
-                                } catch (NoAccessToServer e) {
-                                    // TODO Auto-generated catch block
-                                    e.printStackTrace();
-                                } catch (NoNetworkAccessException e) {
                                     // TODO Auto-generated catch block
                                     e.printStackTrace();
                                 }

@@ -29,6 +29,8 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.Map;
 
+import android.os.Looper;
+import android.text.TextUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
@@ -43,7 +45,6 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.util.Log;
 import android.widget.ImageView;
 
@@ -118,8 +119,7 @@ public class Utils {
         return in;
     }
 
-    public static boolean checkIfNetAddressIsReachable(String url)
-            throws NoAccessToServer {
+    public static boolean checkIfNetAddressIsReachable(String url) {
 
     	// The old method of fetching the URL to see if the net is "reachable" was not good;
         // it wasted bandwidth and time.  For now just check if the url is empty.
@@ -193,15 +193,19 @@ public class Utils {
 
     }
 
+    public static String getResponseTextcode(Object response) {
+        String textcode = null;
+        try {
+            textcode = ((Map<String, String>) response).get("textcode");
+        } catch (Exception e) {
+        }
+        return textcode;
+    }
+
     public static Object doRequest(HttpConnection conn, String service,
-            String methodName, String authToken, ConnectivityManager cm,
-            Object[] params) throws SessionNotFoundException,
-            NoNetworkAccessException, NoAccessToServer {
+                                   String methodName, String authToken,
+                                   Object[] params) throws SessionNotFoundException {
 
-        // check to see if EG http server is reachable
-        checkIfNetAddressIsReachable(GlobalConfigs.httpAddress);
-
-        // TODO check params and throw errors
         Method method = new Method(methodName);
 
         Log.d(TAG, "doRequest Method :" + methodName + ": token :"+authToken+":");
@@ -229,21 +233,13 @@ public class Utils {
             Log.d(TAG, "Sync Response: " + resp);
             Object response = (Object) resp;
 
-            String textcode = null;
-            try {
-                textcode = ((Map<String, String>) response).get("textcode");
-            } catch (Exception e) {
-                //System.err.println(e.getMessage());
-            }
-            if (textcode != null) {
-                if (textcode.equals("NO_SESSION")) {
-                    Log.d(TAG, textcode);
-                    throw new SessionNotFoundException();
-                }
+            String textcode = getResponseTextcode(resp);
+            if (TextUtils.equals(textcode, "NO_SESSION")) {
+                Log.d(TAG, textcode);
+                throw new SessionNotFoundException();
             }
 
             return response;
-
         }
         return null;
 
@@ -251,11 +247,7 @@ public class Utils {
 
     // does not require authToken
     public static Object doRequest(HttpConnection conn, String service,
-            String methodName, ConnectivityManager cm, Object[] params)
-            throws NoNetworkAccessException, NoAccessToServer {
-
-        // check to see if EG http server is reachable
-        checkIfNetAddressIsReachable(GlobalConfigs.httpAddress);
+            String methodName, ConnectivityManager cm, Object[] params) {
 
         Method method = new Method(methodName);
 
@@ -284,6 +276,12 @@ public class Utils {
     // is fast than with checks for multiple method invocations like in search
     public static Object doRequestSimple(HttpConnection conn, String service,
             String methodName, Object[] params) {
+
+        if (Looper.myLooper() == Looper.getMainLooper()) {
+            // running on UI thread!
+            throw new NullPointerException();
+        }
+
         Method method = new Method(methodName);
         System.out.println("doRequestSimple Method :" + methodName);
         for (int i = 0; i < params.length; i++) {
@@ -305,16 +303,10 @@ public class Utils {
         return null;
     }
 
-    public static ShowServerNotAvailableRunnable showServerNotAvailableDialog(
+    public static ShowSessionNotAvailableRunnable showSessionNotAvailableDialog(
             Context context) {
 
-        return new ShowServerNotAvailableRunnable(context);
-    }
-
-    public static ShowNetworkNotAvailableRunnable showNetworkNotAvailableDialog(
-            Context context) {
-
-        return new ShowNetworkNotAvailableRunnable(context);
+        return new ShowSessionNotAvailableRunnable(context);
     }
 
 }

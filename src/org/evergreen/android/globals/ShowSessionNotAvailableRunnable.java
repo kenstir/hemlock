@@ -19,11 +19,32 @@
  */
 package org.evergreen.android.globals;
 
-public class NoAccessToServer extends Exception {
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 
-    /**
-	 * 
-	 */
-    private static final long serialVersionUID = 1L;
+class ShowSessionNotAvailableRunnable implements Runnable {
+
+    public Context context;
+
+    public ShowSessionNotAvailableRunnable(Context context) {
+        this.context = context;
+    }
+
+    @Override
+    public void run() {
+        AlertDialog alertDialog = new AlertDialog.Builder(context).create();
+        alertDialog.setTitle("Error");
+        alertDialog.setMessage("No session");
+        alertDialog.setButton("OK", new DialogInterface.OnClickListener() {
+
+            @Override
+            public void onClick(DialogInterface dialog, int id) {
+                dialog.dismiss();
+            }
+        });
+
+        alertDialog.show();
+    }
 
 }

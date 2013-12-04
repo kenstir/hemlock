@@ -25,8 +25,6 @@ import java.util.List;
 import org.evergreen.android.R;
 import org.evergreen.android.accountAccess.AccountAccess;
 import org.evergreen.android.accountAccess.SessionNotFoundException;
-import org.evergreen.android.globals.NoAccessToServer;
-import org.evergreen.android.globals.NoNetworkAccessException;
 import org.evergreen.android.globals.Utils;
 import org.evergreen.android.searchCatalog.SearchCatalogListView;
 import org.evergreen.android.views.AccountScreenDashboard;
@@ -48,7 +46,6 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -210,7 +207,7 @@ public class BookbagsListView extends Activity {
                     bookBags = accountAccess.getBookbags();
 
                 } catch (NoNetworkAccessException e) {
-                    Utils.showNetworkNotAvailableDialog(context);
+                    Utils.showSessionNotAvailableDialog(context);
                 } catch (NoAccessToServer e) {
                     Utils.showServerNotAvailableDialog(context);
 

@@ -24,16 +24,11 @@ import java.util.Calendar;
 import org.evergreen.android.R;
 import org.evergreen.android.accountAccess.AccountAccess;
 import org.evergreen.android.globals.GlobalConfigs;
-import org.evergreen.android.globals.NoAccessToServer;
-import org.evergreen.android.globals.NoNetworkAccessException;
-import org.evergreen.android.globals.Utils;
 import org.evergreen.android.services.NotificationAlert;
-import org.evergreen.android.services.NotificationReceiver;
 import org.evergreen.android.services.PeriodicServiceBroadcastReceiver;
 import org.evergreen.android.services.ScheduledIntentService;
 
 import android.app.AlarmManager;
-import android.app.AlertDialog;
 import android.app.PendingIntent;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -46,7 +41,6 @@ import android.os.Bundle;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
-import android.util.Log;
 import android.widget.Toast;
 
 public class ApplicationPreferences extends PreferenceActivity implements
@@ -119,7 +113,6 @@ public class ApplicationPreferences extends PreferenceActivity implements
                 AccountAccess account = AccountAccess.getAccountAccess(GlobalConfigs.httpAddress);
 
                 if (routeToAddress) {
-
                     try {
                         if (account.authenticate()) {
 

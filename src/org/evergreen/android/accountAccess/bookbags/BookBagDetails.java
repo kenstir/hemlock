@@ -25,8 +25,6 @@ import java.util.List;
 import org.evergreen.android.R;
 import org.evergreen.android.accountAccess.AccountAccess;
 import org.evergreen.android.accountAccess.SessionNotFoundException;
-import org.evergreen.android.globals.NoAccessToServer;
-import org.evergreen.android.globals.NoNetworkAccessException;
 import org.evergreen.android.searchCatalog.RecordInfo;
 import org.evergreen.android.searchCatalog.SearchCatalog;
 import org.evergreen.android.searchCatalog.SearchCatalogListView;
@@ -52,7 +50,6 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -146,13 +143,6 @@ public class BookBagDetails extends Activity {
                         try {
                             accountAccess.deleteBookBag(bookBag.id);
                         } catch (SessionNotFoundException e) {
-                            // TODO Auto-generated catch block
-                            e.printStackTrace();
-                        } catch (NoNetworkAccessException e) {
-                            // TODO Auto-generated catch block
-                            e.printStackTrace();
-                        } catch (NoAccessToServer e) {
-                            // TODO Auto-generated catch block
                             e.printStackTrace();
                         }
                         runOnUiThread(new Runnable() {
@@ -333,22 +323,11 @@ public class BookBagDetails extends Activity {
                             try {
                                 accountAccess.removeBookbagItem(record.id);
                             } catch (SessionNotFoundException e) {
-
                                 try {
-                                    if (accountAccess.authenticate())
-                                        accountAccess
-                                                .removeBookbagItem(record.id);
+                                    if (accountAccess.reauthenticate(BookBagDetails.this))
+                                        accountAccess.removeBookbagItem(record.id);
                                 } catch (Exception e1) {
                                 }
-                                ;
-
-                                e.printStackTrace();
-                            } catch (NoNetworkAccessException e) {
-                                // TODO Auto-generated catch block
-                                e.printStackTrace();
-                            } catch (NoAccessToServer e) {
-                                // TODO Auto-generated catch block
-                                e.printStackTrace();
                             }
 
                             runOnUiThread(new Runnable() {

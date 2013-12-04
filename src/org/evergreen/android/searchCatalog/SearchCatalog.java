@@ -26,8 +26,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.evergreen.android.globals.GlobalConfigs;
-import org.evergreen.android.globals.NoAccessToServer;
-import org.evergreen.android.globals.NoNetworkAccessException;
 import org.evergreen.android.globals.Utils;
 import org.opensrf.Method;
 import org.opensrf.net.http.GatewayRequest;
@@ -135,11 +133,6 @@ public class SearchCatalog {
 
     /**
      * Instantiates a new search catalog.
-     * 
-     * @param httpAddress
-     *            the http address
-     * @param locale
-     *            the locale
      */
     private SearchCatalog(ConnectivityManager cm) {
         super();
@@ -168,7 +161,7 @@ public class SearchCatalog {
      * @return the search results
      */
     public ArrayList<RecordInfo> getSearchResults(String searchWords,
-            Integer offset) throws NoNetworkAccessException, NoAccessToServer {
+            Integer offset) {
 
         searchText = searchWords;
         
@@ -290,8 +283,7 @@ public class SearchCatalog {
      *            the search words
      * @return the object
      */
-    public Object searchCatalog(String searchWords)
-            throws NoNetworkAccessException, NoAccessToServer {
+    public Object searchCatalog(String searchWords) {
 
         Object response = Utils.doRequest(conn, SERVICE, METHOD_SLIM_RETRIVE,
                 cm, new Object[] { "keyword", searchWords });
