@@ -87,6 +87,7 @@ public class LoadingTask {
         });
     }
 
+    //TODO: share some of this code with ScheduledIntentService.onHandleIntent
     protected String doInBackground() {
         final String tag ="doInBackground> "; 
         Log.d(TAG, tag);

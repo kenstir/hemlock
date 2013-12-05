@@ -145,48 +145,44 @@ public class BookbagsListView extends Activity {
             @Override
             public void onClick(View v) {
 
-                final String name = bookbag_name.getText().toString();
+            final String name = bookbag_name.getText().toString();
 
-                Thread createBookbag = new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-
-                        if (name.length() > 1) {
+            Thread createBookbag = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    if (name.length() > 1) {
+                        try {
+                            accountAccess.createBookbag(name);
+                        } catch (SessionNotFoundException e) {
                             try {
-                                accountAccess.createBookbag(name);
-                            } catch (SessionNotFoundException e) {
-                                // TODO Auto-generated catch block
-                                e.printStackTrace();
-                            } catch (NoNetworkAccessException e) {
-                                // TODO Auto-generated catch block
-                                e.printStackTrace();
-                            } catch (NoAccessToServer e) {
-                                // TODO Auto-generated catch block
-                                e.printStackTrace();
+                                if (accountAccess.reauthenticate(BookbagsListView.this))
+                                    accountAccess.createBookbag(name);
+                            } catch (Exception eauth) {
+                                System.out.println("Exception in reAuth");
                             }
-
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    progressDialog.dismiss();
-                                }
-                            });
-
-                            Thread getBookBags = new Thread(getBookbagsRunnable);
-                            getBookBags.start();
                         }
 
-                    }
-                });
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                progressDialog.dismiss();
+                            }
+                        });
 
-                if (name.length() > 1) {
-                    progressDialog = ProgressDialog.show(context,
-                            "Please wait", "Creating Bookbag");
-                    createBookbag.start();
-                } else
-                    Toast.makeText(context,
-                            "Bookbag name must be at least 2 characters long",
-                            Toast.LENGTH_SHORT).show();
+                        Thread getBookBags = new Thread(getBookbagsRunnable);
+                        getBookBags.start();
+                    }
+                }
+            });
+
+            if (name.length() > 1) {
+                progressDialog = ProgressDialog.show(context,
+                        "Please wait", "Creating Bookbag");
+                createBookbag.start();
+            } else
+                Toast.makeText(context,
+                        "Bookbag name must be at least 2 characters long",
+                        Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -204,22 +200,15 @@ public class BookbagsListView extends Activity {
 
                 try {
                     accountAccess.retrieveBookbags();
-                    bookBags = accountAccess.getBookbags();
-
-                } catch (NoNetworkAccessException e) {
-                    Utils.showSessionNotAvailableDialog(context);
-                } catch (NoAccessToServer e) {
-                    Utils.showServerNotAvailableDialog(context);
-
                 } catch (SessionNotFoundException e) {
-                    // TODO other way?
                     try {
-                        if (accountAccess.authenticate())
-                            accountAccess.getBookbags();
+                        if (accountAccess.reauthenticate(BookbagsListView.this))
+                            accountAccess.retrieveBookbags();
                     } catch (Exception eauth) {
                         System.out.println("Exception in reAuth");
                     }
                 }
+                bookBags = accountAccess.getBookbags();
 
                 runOnUiThread(new Runnable() {
 

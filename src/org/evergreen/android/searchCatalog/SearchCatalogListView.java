@@ -378,9 +378,7 @@ public class SearchCatalogListView extends Activity {
                     // serialize object and pass it to next activity
                     intent.putExtra("recordInfo", info);
                     intent.putExtra("orgID", search.selectedOrganization.id);
-                    intent.putExtra("depth",
-                            (search.selectedOrganization.level - 1));
-
+                    intent.putExtra("depth", (search.selectedOrganization.level - 1));
                     intent.putExtra("recordList", recordList);
                     intent.putExtra("recordPosition", position);
                     startActivityForResult(intent, 10);
@@ -403,9 +401,11 @@ public class SearchCatalogListView extends Activity {
 
                 if (!loadingElements) {
 
+                    /*
                     Log.d(TAG, " Scroll adapter " + totalItemCount + " "
                             + visibleItemCount + " " + firstVisibleItem + " "
                             + adapter.getCount() + " " + search.visible);
+                            */
                     if (totalItemCount > 0
                             && (((totalItemCount - visibleItemCount) <= (firstVisibleItem)) && adapter
                                     .getCount() < search.visible)) {

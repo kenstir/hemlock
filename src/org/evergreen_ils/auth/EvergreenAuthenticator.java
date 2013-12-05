@@ -75,7 +75,7 @@ public class EvergreenAuthenticator {
 
         HttpConnection conn;
         try {
-            conn = new HttpConnection(context.getString(R.string.ou_gateway_url));
+            conn = new HttpConnection(context.getString(R.string.ou_library_url) + "/osrf-gateway-v1");
         } catch (MalformedURLException e) {
             throw new AuthenticationException(e);
         }

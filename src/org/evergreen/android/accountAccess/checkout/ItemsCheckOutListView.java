@@ -54,7 +54,7 @@ import android.widget.Toast;
 
 public class ItemsCheckOutListView extends Activity {
 
-    private String TAG = "ItemsCheckOutListView";
+    private String TAG = ItemsCheckOutListView.class.getName();
 
     private AccountAccess accountAccess = null;
 
@@ -138,21 +138,12 @@ public class ItemsCheckOutListView extends Activity {
 
                 try {
                     circRecords = accountAccess.getItemsCheckedOut();
-                } catch (NoNetworkAccessException e) {
-                    Utils.showSessionNotAvailableDialog(context);
-                } catch (NoAccessToServer e) {
-                    Utils.showServerNotAvailableDialog(context);
-
                 } catch (SessionNotFoundException e) {
-                    // TODO other way?
                     try {
-
-                        Log.d(TAG, "REAUTH " + "in process");
-
-                        if (accountAccess.authenticate())
+                        if (accountAccess.reauthenticate(ItemsCheckOutListView.this))
                             circRecords = accountAccess.getItemsCheckedOut();
                     } catch (Exception eauth) {
-                        System.out.println("Exception in reAuth");
+                        Log.d(TAG, "Exception in reauth", eauth);
                     }
                 }
 
@@ -247,153 +238,132 @@ public class ItemsCheckOutListView extends Activity {
             // Get item
             final CircRecord record = getItem(position);
 
-                // if it is the right type of view
-                if (row == null) {
+            // if it is the right type of view
+            if (row == null) {
 
-                    Log.d(tag, "Starting XML Row Inflation ... ");
-                    LayoutInflater inflater = (LayoutInflater) this
-                            .getContext().getSystemService(
-                                    Context.LAYOUT_INFLATER_SERVICE);
-                    row = inflater.inflate(R.layout.checkout_list_item, parent,
-                            false);
-                    Log.d(tag, "Successfully completed XML Row Inflation!");
+                Log.d(tag, "Starting XML Row Inflation ... ");
+                LayoutInflater inflater = (LayoutInflater) this
+                        .getContext().getSystemService(
+                                Context.LAYOUT_INFLATER_SERVICE);
+                row = inflater.inflate(R.layout.checkout_list_item, parent,
+                        false);
+                Log.d(tag, "Successfully completed XML Row Inflation!");
 
-                }
+            }
 
-                // Get reference to TextView - title
-                recordTitle = (TextView) row
-                        .findViewById(R.id.checkout_record_title);
+            // Get reference to TextView - title
+            recordTitle = (TextView) row
+                    .findViewById(R.id.checkout_record_title);
 
-                // Get reference to TextView - author
-                recordAuthor = (TextView) row
-                        .findViewById(R.id.checkout_record_author);
+            // Get reference to TextView - author
+            recordAuthor = (TextView) row
+                    .findViewById(R.id.checkout_record_author);
 
-                // Get reference to TextView - record Publisher date+publisher
-                recordDueDate = (TextView) row
-                        .findViewById(R.id.checkout_due_date);
+            // Get reference to TextView - record Publisher date+publisher
+            recordDueDate = (TextView) row
+                    .findViewById(R.id.checkout_due_date);
 
-                renewButton = (TextView) row.findViewById(R.id.renew_button);
+            renewButton = (TextView) row.findViewById(R.id.renew_button);
 
-                renewButton.setText("renew : " + record.getRenewals());
+            renewButton.setText("renew : " + record.getRenewals());
 
-                renewButton.setOnClickListener(new OnClickListener() {
+            renewButton.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Thread renew = new Thread(new Runnable() {
 
-                    @Override
-                    public void onClick(View v) {
+                        @Override
+                        public void run() {
+                            boolean refresh = true;
+                            AccountAccess ac = AccountAccess
+                                    .getAccountAccess();
 
-                        Thread renew = new Thread(new Runnable() {
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    progressDialog = new ProgressDialog(
+                                            context);
+                                    progressDialog
+                                            .setMessage("Renewing item");
+                                    progressDialog.show();
+                                }
+                            });
 
-                            @Override
-                            public void run() {
-                                boolean refresh = true;
-                                AccountAccess ac = AccountAccess
-                                        .getAccountAccess();
+                            try {
+                                ac.renewCirc(record.getTargetCopy());
+                            } catch (MaxRenewalsException e1) {
+                                runOnUiThread(new Runnable() {
+
+                                    @Override
+                                    public void run() {
+                                        progressDialog.dismiss();
+                                        Toast.makeText(context,
+                                                "Max renewals reached",
+                                                Toast.LENGTH_LONG).show();
+                                    }
+                                });
+
+                                refresh = false;
+                            } catch (ServerErrorMessage error) {
+                                final String errorMessage = error.message;
+                                runOnUiThread(new Runnable() {
+
+                                    @Override
+                                    public void run() {
+                                        progressDialog.dismiss();
+                                        Toast.makeText(context,
+                                                errorMessage,
+                                                Toast.LENGTH_LONG).show();
+                                    }
+                                });
+                            } catch (SessionNotFoundException e1) {
+                                try {
+                                    if (accountAccess.reauthenticate(ItemsCheckOutListView.this))
+                                        ac.renewCirc(record.getTargetCopy());
+                                } catch (Exception eauth) {
+                                    Log.d(TAG, "Exception in reauth", eauth);
+                                }
+                            }
+
+                            if (refresh) {
+                                try {
+                                    circRecords = accountAccess.getItemsCheckedOut();
+                                } catch (SessionNotFoundException e) {
+                                    try {
+                                        if (accountAccess.reauthenticate(ItemsCheckOutListView.this))
+                                            circRecords = accountAccess.getItemsCheckedOut();
+                                    } catch (Exception eauth) {
+                                        Log.d(TAG, "Exception in reauth", eauth);
+                                    }
+                                }
 
                                 runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
-                                        progressDialog = new ProgressDialog(
-                                                context);
-                                        progressDialog
-                                                .setMessage("Renewing item");
-                                        progressDialog.show();
+                                        listAdapter.clear();
+                                        for (int i = 0; i < circRecords.size(); i++) {
+                                            listAdapter.add(circRecords.get(i));
+                                        }
+                                        progressDialog.dismiss();
+                                        listAdapter.notifyDataSetChanged();
                                     }
                                 });
-
-                                try {
-                                    ac.renewCirc(record.getTargetCopy());
-                                } catch (MaxRenewalsException e1) {
-                                    runOnUiThread(new Runnable() {
-
-                                        @Override
-                                        public void run() {
-                                            progressDialog.dismiss();
-                                            Toast.makeText(context,
-                                                    "Max renewals reached",
-                                                    Toast.LENGTH_LONG).show();
-                                        }
-                                    });
-
-                                    refresh = false;
-                                } catch (ServerErrorMessage error) {
-
-                                    final String errorMessage = error.message;
-                                    runOnUiThread(new Runnable() {
-
-                                        @Override
-                                        public void run() {
-                                            progressDialog.dismiss();
-                                            Toast.makeText(context,
-                                                    errorMessage,
-                                                    Toast.LENGTH_LONG).show();
-                                        }
-                                    });
-                                } catch (SessionNotFoundException e1) {
-                                    try {
-                                        if (accountAccess.authenticate())
-                                            ac.renewCirc(record.getTargetCopy());
-                                    } catch (Exception eauth) {
-                                        System.out
-                                                .println("Exception in reAuth");
-                                    }
-                                } catch (NoNetworkAccessException e1) {
-                                    Utils.showSessionNotAvailableDialog(context);
-                                } catch (NoAccessToServer e1) {
-                                    Utils.showServerNotAvailableDialog(context);
-                                }
-
-                                if (refresh) {
-
-                                    try {
-                                        circRecords = accountAccess
-                                                .getItemsCheckedOut();
-                                    } catch (NoNetworkAccessException e) {
-                                        Utils.showSessionNotAvailableDialog(context);
-                                    } catch (NoAccessToServer e) {
-                                        Utils.showServerNotAvailableDialog(context);
-
-                                    } catch (SessionNotFoundException e) {
-                                        // TODO other way?
-                                        try {
-                                            if (accountAccess.authenticate())
-                                                circRecords = accountAccess
-                                                        .getItemsCheckedOut();
-                                        } catch (Exception eauth) {
-                                            System.out
-                                                    .println("Exception in reAuth");
-                                        }
-                                    }
-
-                                    runOnUiThread(new Runnable() {
-
-                                        @Override
-                                        public void run() {
-                                            listAdapter.clear();
-                                            for (int i = 0; i < circRecords
-                                                    .size(); i++) {
-                                                listAdapter.add(circRecords
-                                                        .get(i));
-                                            }
-
-                                            progressDialog.dismiss();
-                                            listAdapter.notifyDataSetChanged();
-                                        }
-                                    });
-                                }
                             }
-                        });
+                        }
+                    });
 
-                        renew.start();
-                    }
-                });
+                    renew.start();
+                }
+            });
 
-                // set text
-                System.out.println("Row" + record.getTitle() + " "
-                        + record.getAuthor() + " " + record.getDueDate() + " "
-                        + record.getRenewals());
-                recordTitle.setText(record.getTitle());
-                recordAuthor.setText(record.getAuthor());
-                recordDueDate.setText(record.getDueDate());
+            // set text
+            recordTitle.setText(record.getTitle());
+            recordAuthor.setText(record.getAuthor());
+            recordDueDate.setText(record.getDueDate());
+            Log.d(TAG, "title:  " + record.getTitle());
+            Log.d(TAG, "author: " + record.getAuthor());
+            Log.d(TAG, "due:    " + record.getDueDate());
+            Log.d(TAG, "renew:  " + record.getRenewals());
 
             return row;
         }

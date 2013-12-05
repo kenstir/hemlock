@@ -133,9 +133,8 @@ public class GlobalConfigs {
             long duration_ms = System.currentTimeMillis() - start_ms;
             Log.d(TAG, "loadIDLFile parse took "+duration_ms+"ms");
         } catch (Exception e) {
-            Log.e(TAG, "Error in parsing IDL file", e);
+            Log.w(TAG, "Error in parsing IDL file", e);
         }
-        ;
 
         loadedIDL = true;
     }
