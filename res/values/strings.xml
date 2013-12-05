@@ -131,17 +131,15 @@
     <string name="preference_password_summary">Enter your account password</string>
     <string name="preference_server_information_title">Server settings</string>
     <string name="preference_server_information_summary">Library server settings</string>
-    <string name="preference_library_url_address">Library url address</string>
-    <string name="preference_library_url_address_summary">Please enter the library url in format http://</string>
+    <string name="preference_library_url_address">Library URL</string>
+    <string name="preference_library_url_address_summary">Please enter the URL in format http://</string>
     <string name="preference_notification_preference_screen_title">Notification settings</string>
     <string name="preference_notification_preference_screen_summary">Configure notifications and reminders for checkout items</string>
     <string name="preference_enable_notifications">Enable notifications</string>
-    <string name="preference_enable_notifications_summary_on">Uncheck this option to remove notifications when checkout items are about to expire</string>
-    <string name="preference_enable_notifications_summary_off">Check this option to enable notifications each time a checkout item will expire</string>
+    <string name="preference_enable_notifications_summary_on">Uncheck this option to disable notifications when items are due</string>
+    <string name="preference_enable_notifications_summary_off">Check this option to enable notifications when items are due</string>
     <string name="preference_notifications_days_before">Days before expiration</string>
-    <string name="preference_notifications_days_before_summary">Chose how many days before the actual expiration date to set the reminder</string>
-    <string name="preference_notifications_each_day">Each day notifications</string>
-    <string name="preference_notifications_each_day_summary">Give a notification in every day before the actual start notification period and due date</string>
+    <string name="preference_notifications_days_before_summary">Chose how many days before the due date to start reminding</string>
     <string name="preference_notifications_title">Notification settings</string>
 
     <plurals name="number_of_copies">

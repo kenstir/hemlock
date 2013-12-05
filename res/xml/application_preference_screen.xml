@@ -13,33 +13,20 @@
   
 	<PreferenceCategory
 	   android:title="@string/preference_notifications_title" >
-	 	 
-	  <PreferenceScreen
-                android:key="NotificationsPrefScreen"
-                android:title="@string/preference_notification_preference_screen_title"
-                android:summary="@string/preference_notification_preference_screen_summary">
-				
-				<CheckBoxPreference 
-				    android:title="@string/preference_enable_notifications"
-				    android:key="notifications_enabled"
-				    android:summaryOn="@string/preference_enable_notifications_summary_on"
-				    android:summaryOff="@string/preference_enable_notifications_summary_off"
-				    />	
-	      
-				<ListPreference
-				    android:title="@string/preference_notifications_days_before"
-				    android:key="notifications_days_before_expiration"
-				    android:summary="@string/preference_notifications_days_before_summary"
-				    android:entries="@array/notification_preferences_list_entries"
-				    android:entryValues="@array/notification_preferences_list_values"
-				    android:defaultValue="@integer/notification_preferences_list_default_value"
-				    />
-				
-				<CheckBoxPreference 
-				    android:title="@string/preference_notifications_each_day"
-				    android:key="notifications_each_day_before_expiration"
-				    android:summary="@string/preference_notifications_each_day_summary"
-				    />
-        </PreferenceScreen>
-        </PreferenceCategory>
+        <CheckBoxPreference
+            android:title="@string/preference_enable_notifications"
+            android:key="notifications_enabled"
+            android:summaryOn="@string/preference_enable_notifications_summary_on"
+            android:summaryOff="@string/preference_enable_notifications_summary_off"
+            />
+
+        <ListPreference
+            android:title="@string/preference_notifications_days_before"
+            android:key="notifications_days_before_expiration"
+            android:summary="@string/preference_notifications_days_before_summary"
+            android:entries="@array/notification_preferences_list_entries"
+            android:entryValues="@array/notification_preferences_list_values"
+            android:defaultValue="3"
+            />
+    </PreferenceCategory>
 </PreferenceScreen> 
