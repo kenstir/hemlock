@@ -25,6 +25,9 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import android.accounts.AccountManager;
+import android.accounts.AccountManagerFuture;
+import android.os.Bundle;
 import org.androwrapee.db.DefaultDAO;
 import org.evergreen.android.accountAccess.AccountAccess;
 import org.evergreen.android.accountAccess.SessionNotFoundException;
@@ -32,6 +35,7 @@ import org.evergreen.android.accountAccess.checkout.CircRecord;
 import org.evergreen.android.database.DatabaseManager;
 import org.evergreen.android.globals.GlobalConfigs;
 import org.evergreen.android.globals.Utils;
+import org.evergreen_ils.auth.Const;
 import org.open_ils.idl.IDLParser;
 
 import android.app.AlarmManager;
@@ -46,9 +50,9 @@ public class ScheduledIntentService extends IntentService {
 
     public static Date lastUpdateServiceDate;
 
-    public static String TAG = "ScheduledIntentService";
+    public static String TAG = ScheduledIntentService.class.getName();
 
-    public static String ACTION = "org.evergreen.updateservice";
+    public static String ACTION = "org.evergreen_ils.updateservice";
 
     // fire up once a day
     public static int SCHEDULE_TIME_INTERVAL = 1;
@@ -64,6 +68,9 @@ public class ScheduledIntentService extends IntentService {
         return super.onStartCommand(intent, flags, startId);
     }
 
+    //TODO: share some of this code with LoadingTask.doInBackground
+    //TODO: this code needs major work.  I never saw it work so I don't
+    // feel bad about disabling it for now.
     @Override
     protected void onHandleIntent(Intent intent) {
 
@@ -78,28 +85,32 @@ public class ScheduledIntentService extends IntentService {
         String idlFile = GlobalConfigs.IDL_FILE_FROM_ROOT
                 + "?class=circ&class=au&class=mvr&class=acp";
         try {
-            Log.d("debug", "Read fm");
-            InputStream in_IDL = Utils
-                    .getNetInputStream(GlobalConfigs.httpAddress + idlFile);
+            Log.d(TAG, "Load IDL start");
+            InputStream in_IDL = Utils.getNetInputStream(GlobalConfigs.httpAddress + idlFile);
             IDLParser parser = new IDLParser(in_IDL);
+            parser.setKeepIDLObjects(false);
             parser.parse();
         } catch (Exception e) {
-            System.err.println("Error in parsing IDL file " + idlFile + " "
-                    + e.getMessage());
+            Log.w("Error in parsing IDL", e);
         }
-        ;
 
-        // login with the user credentials
+        /*
         AccountAccess accountAccess = AccountAccess.getAccountAccess(GlobalConfigs.httpAddress);
-        boolean auth = true;
-        try {
-            accountAccess.authenticate();
-        } catch (Exception e) {
-            auth = false;
-            e.printStackTrace();
-        }
+        Log.d(TAG, tag+"Signing in");
+        AccountManager accountManager = AccountManager.get(this);
 
-        // if we managed to authenticate we start
+        // what needs to be done is
+        // 1. get last used account name
+        // 2. see if the account still exists
+        // 3. get an auth token for it
+        // 4. start an evergreen session
+        AccountManagerFuture<Bundle> future = accountManager.getAuthTokenByFeatures(Const.ACCOUNT_TYPE, Const.AUTHTOKEN_TYPE, null, mCallingActivity, null, null, null, null);
+        Bundle bnd = future.getResult();
+        String auth_token = bnd.getString(AccountManager.KEY_AUTHTOKEN);
+        String account_name = bnd.getString(AccountManager.KEY_ACCOUNT_NAME);
+        Log.d(TAG, tag+"account_name="+account_name+" token="+auth_token);
+
+        boolean auth = false;
         if (auth) {
 
             SharedPreferences sharedPreferences = PreferenceManager
@@ -210,7 +221,6 @@ public class ScheduledIntentService extends IntentService {
 
             Log.d(TAG, "set last service update date " + lastUpdateServiceDate);
         }
-
+        */
     }
-
 }

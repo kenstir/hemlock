@@ -22,6 +22,7 @@ package org.evergreen.android.searchCatalog;
 import java.util.ArrayList;
 
 import org.evergreen.android.R;
+import org.evergreen.android.accountAccess.SessionNotFoundException;
 import org.evergreen.android.globals.Utils;
 import org.evergreen.android.utils.ui.BaseSampleActivity;
 import org.evergreen.android.utils.ui.BasicDetailsFragment;
@@ -136,22 +137,12 @@ public class SampleUnderlinesNoFade extends BaseSampleActivity {
                     }
                 });
                 
-                try {
-                    searchRecords = search.getSearchResults(search.searchText,
-                            records.size());
-                } catch (NoNetworkAccessException e) {
-                    runOnUiThread(Utils
-                            .showSessionNotAvailableDialog(context));
-                } catch (NoAccessToServer e) {
-                    runOnUiThread(Utils
-                            .showServerNotAvailableDialog(context));
-                }
+                searchRecords = search.getSearchResults(search.searchText, records.size());
 
                 runOnUiThread(new Runnable() {
 
                     @Override
                     public void run() {
-
                         // don't clear record list
                         // recordList.clear();
                         if (searchRecords.size() > 0) {

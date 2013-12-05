@@ -55,21 +55,14 @@ public class ConfigureApplicationActivity extends Activity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        // TODO Auto-generated method stub
         super.onCreate(savedInstanceState);
         setContentView(R.layout.configure_application);
         context = this;
         server_http = (EditText) findViewById(R.id.server_http_adress);
-        username = (EditText) findViewById(R.id.username);
-        password = (EditText) findViewById(R.id.password);
 
-        
-        SharedPreferences preferences = PreferenceManager
-                .getDefaultSharedPreferences(context);
-        username.setText(preferences.getString("username", ""));
-        server_http.setText(preferences.getString("library_url", "https://bark.cwmars.org"));  
-        password.setText(preferences.getString("password", ""));
-        
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        server_http.setText(preferences.getString("library_url", "https://bark.cwmars.org"));
+
         Button connect = (Button) findViewById(R.id.connect_button);
 
         connect.setOnClickListener(new OnClickListener() {
@@ -89,34 +82,19 @@ public class ConfigureApplicationActivity extends Activity {
                                         .getText().toString());
 
                         if (server_address == true) {
-                            
-                            SharedPreferences preferences = PreferenceManager
-                                    .getDefaultSharedPreferences(context);
-                            SharedPreferences.Editor editor = preferences
-                                    .edit();
-                            // store into preference
-                            editor.putString("library_url", server_http
-                                    .getText().toString());
-                            
-                            editor.putString("username", username.getText()
-                                    .toString());
-                            editor.putString("password", password.getText()
-                                    .toString());
-
+                            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+                            SharedPreferences.Editor editor = preferences.edit();
+                            editor.putString("library_url", server_http.getText().toString());
                             editor.commit();
-                            GlobalConfigs.httpAddress = server_http.getText()
-                                    .toString();
+                            GlobalConfigs.httpAddress = server_http.getText().toString();
                             AccountAccess accountAccess = AccountAccess.getAccountAccess(GlobalConfigs.httpAddress);
                             try {
-                                auth = accountAccess.authenticate();
-                                Log.d(TAG, "Auth " + auth);
+                                auth = accountAccess.reauthenticate(ConfigureApplicationActivity.this);
                             } catch (Exception e) {
-                                System.out.println("Exception "
-                                        + e.getMessage());
+                                Log.w(TAG, "caught", e);
                             }
 
                             if (auth == true) {
-
                                 runOnUiThread(new Runnable() {
 
                                     @Override
@@ -124,7 +102,6 @@ public class ConfigureApplicationActivity extends Activity {
                                         progressDialog.dismiss();
                                         setResult(RESULT_CONFIGURE_SUCCESS);
                                         finish();
-
                                     }
                                 });
 
@@ -150,9 +127,7 @@ public class ConfigureApplicationActivity extends Activity {
                                             Toast.LENGTH_LONG).show();
                                 }
                             });
-
                         }
-
                     }
                 });
 
@@ -162,7 +137,5 @@ public class ConfigureApplicationActivity extends Activity {
             }
 
         });
-
     }
-
 }

@@ -108,66 +108,12 @@ public class ApplicationPreferences extends PreferenceActivity implements
 
             @Override
             public void run() {
-
-                boolean routeToAddress = true;
-                AccountAccess account = AccountAccess.getAccountAccess(GlobalConfigs.httpAddress);
-
-                if (routeToAddress) {
-                    try {
-                        if (account.authenticate()) {
-
-                            runOnUiThread(new Runnable() {
-
-                                @Override
-                                public void run() {
-                                    if (reference != null) {
-                                        progressDialog.dismiss();
-                                        Toast.makeText(
-                                                context,
-                                                "Autenthication successfully established :"
-                                                        + GlobalConfigs.httpAddress,
-                                                Toast.LENGTH_LONG).show();
-                                    }
-                                }
-                            });
-                        } else {
-                            runOnUiThread(new Runnable() {
-
-                                @Override
-                                public void run() {
-                                    if (reference != null) {
-                                        progressDialog.dismiss();
-                                        Toast.makeText(
-                                                context,
-                                                "Please check username and password ",
-                                                Toast.LENGTH_LONG).show();
-                                    }
-                                }
-                            });
-                        }
-
-                    } catch (Exception e) {
-                    }
-
-                } else
-                    runOnUiThread(new Runnable() {
-
-                        @Override
-                        public void run() {
-                            if (reference != null)
-                                progressDialog.dismiss();
-                        }
-                    });
             }
         });
 
         boolean checkConnection = false;
 
-        if (key.equals("username")) {
-            AccountAccess.userName = sharedPreferences
-                    .getString("username", "");
-            checkConnection = true;
-        } else if (key.equals("library_url")) {
+        if (key.equals("library_url")) {
             checkConnection = true;
             GlobalConfigs.httpAddress = sharedPreferences.getString(
                     "library_url", "");
@@ -246,18 +192,6 @@ public class ApplicationPreferences extends PreferenceActivity implements
                 // cancel the service
                 am.cancel(sender);
             }
-            // register the
-
-        }
-
-        // test connection
-        if (!isFinishing() && httpAddressChange == false
-                && checkConnection == true) {
-            progressDialog = ProgressDialog
-                    .show(this, "Account login",
-                            "Signing in with new credentials");
-
-            connectionThread.start();
         }
     }
 

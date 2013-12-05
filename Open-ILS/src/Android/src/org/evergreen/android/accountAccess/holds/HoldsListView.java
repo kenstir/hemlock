@@ -140,10 +140,6 @@ public class HoldsListView extends Activity {
                     } catch (Exception eauth) {
                         System.out.println("Exception in reauth");
                     }
-                } catch (NoNetworkAccessException e) {
-                    Utils.showSessionNotAvailableDialog(context);
-                } catch (NoAccessToServer e) {
-                    Utils.showServerNotAvailableDialog(context);
                 }
 
                 runOnUiThread(new Runnable() {
@@ -157,26 +153,18 @@ public class HoldsListView extends Activity {
                         holdsNoText.setText(" " + listAdapter.getCount());
                         progressDialog.dismiss();
                         listAdapter.notifyDataSetChanged();
-
                     }
                 });
             }
         };
 
-        // 1 NPE
-        if (accountAccess.isAuthenticated()) {
-            progressDialog = new ProgressDialog(context);
-            progressDialog.setMessage("Loading holds");
-            progressDialog.show();
+        progressDialog = new ProgressDialog(context);
+        progressDialog.setMessage("Loading holds");
+        progressDialog.show();
 
-            // thread to retrieve holds
-            Thread getHoldsThread = new Thread(getHoldsRunnable);
-            getHoldsThread.start();
-
-        } else
-            Toast.makeText(context,
-                    "You must be authenticated to retrieve circ records",
-                    Toast.LENGTH_LONG);
+        // thread to retrieve holds
+        Thread getHoldsThread = new Thread(getHoldsRunnable);
+        getHoldsThread.start();
 
         lv.setOnItemClickListener(new OnItemClickListener() {
 
@@ -203,13 +191,13 @@ public class HoldsListView extends Activity {
 
         switch (resultCode) {
 
-        case HoldDetails.RESULT_CODE_CANCEL: {
+        case HoldDetails.RESULT_CODE_CANCEL:
             // nothing
             Log.d(TAG, "Do nothing");
-        }
             break;
 
-        case HoldDetails.RESULT_CODE_DELETE_HOLD: {
+        case HoldDetails.RESULT_CODE_DELETE_HOLD:
+        case HoldDetails.RESULT_CODE_UPDATE_HOLD:
             // refresh ui
             progressDialog = new ProgressDialog(context);
             progressDialog.setMessage("Loading holds");
@@ -217,22 +205,8 @@ public class HoldsListView extends Activity {
             // thread to retrieve holds
             Thread getHoldsThread = new Thread(getHoldsRunnable);
             getHoldsThread.start();
-            Log.d(TAG, "Update on delete hold");
-        }
+            Log.d(TAG, "Update on result "+resultCode);
             break;
-
-        case HoldDetails.RESULT_CODE_UPDATE_HOLD: {
-            // refresh ui
-            progressDialog = new ProgressDialog(context);
-            progressDialog.setMessage("Loading holds");
-            progressDialog.show();
-            // thread to retrieve holds
-            Thread getHoldsThread = new Thread(getHoldsRunnable);
-            getHoldsThread.start();
-            Log.d(TAG, "Update on update hold");
-        }
-            break;
-
         }
     }
 
