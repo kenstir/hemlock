@@ -19,8 +19,10 @@
     <uses-feature android:name="android.hardware.camera" />
     <uses-feature android:name="android.hardware.camera.autofocus" />
 
+    <!--
     <uses-permission android:name="android.permission.READ_CALENDAR" />
     <uses-permission android:name="android.permission.WRITE_CALENDAR" />
+    -->
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS" />
     <uses-permission android:name="android.permission.USE_CREDENTIALS" />
@@ -61,11 +63,7 @@
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>        </activity>
-        <activity
-            android:name="org.evergreen.android.views.MainScreenDashboard"
-            android:label="@string/ou_app_label"
-            android:theme="@android:style/Theme.Light.NoTitleBar" >
+            </intent-filter>
         </activity>
         <activity
             android:name="org.evergreen.android.views.AccountScreenDashboard"
