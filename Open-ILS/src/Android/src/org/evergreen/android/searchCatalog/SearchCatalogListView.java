@@ -397,7 +397,6 @@ public class SearchCatalogListView extends Activity {
             @Override
             public void onScroll(AbsListView view, int firstVisibleItem,
                     int visibleItemCount, int totalItemCount) {
-                // TODO Auto-generated method stub
 
                 if (!loadingElements) {
 
