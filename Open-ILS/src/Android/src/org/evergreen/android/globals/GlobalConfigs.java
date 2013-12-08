@@ -19,32 +19,21 @@
  */
 package org.evergreen.android.globals;
 
-import java.io.InputStream;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.List;
-import java.util.StringTokenizer;
-
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.util.Log;
 import org.evergreen.android.accountAccess.AccountAccess;
 import org.evergreen.android.accountAccess.SessionNotFoundException;
 import org.evergreen.android.searchCatalog.Organisation;
 import org.evergreen.android.searchCatalog.SearchCatalog;
-import org.evergreen.android.views.ApplicationPreferences;
 import org.open_ils.idl.IDLParser;
 import org.opensrf.util.JSONException;
 import org.opensrf.util.JSONReader;
 
-import android.content.Context;
-import android.content.Intent;
-import android.content.SharedPreferences;
-import android.net.ConnectivityManager;
-import android.preference.PreferenceManager;
-import android.util.Log;
+import java.io.InputStream;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 public class GlobalConfigs {
 
@@ -100,7 +89,7 @@ public class GlobalConfigs {
      * Initialize function that retrieves IDL file and Orgs file
      */
     private boolean initialize(Context context) {
-        if (init == false) {
+        if (!init) {
             loadIDLFile(context);
             getOrganisations();
             getCopyStatusesAvailable((ConnectivityManager) context
@@ -193,13 +182,6 @@ public class GlobalConfigs {
                     continue;
                 }
 
-                /*
-                StringBuilder padding = new StringBuilder();
-                for (int j = 0; j < org.level - 1; j++)
-                    padding.append("   ");
-                org.padding = padding.toString();
-                */
-                
                 organisations.add(org);
             }
             
@@ -298,7 +280,6 @@ public class GlobalConfigs {
                 return organisations.get(i).name;
         }
 
-        //System.out.println("out here");
         return null;
     }
 }
