@@ -72,8 +72,6 @@
         <activity android:name="org.evergreen.android.views.ApplicationPreferences" >
         </activity>
 
-        <!-- First launch configuration activity -->
-
         <!-- Search -->
 
         <activity
