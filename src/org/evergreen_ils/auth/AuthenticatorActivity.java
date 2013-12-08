@@ -1,6 +1,8 @@
 package org.evergreen_ils.auth;
 
+import android.preference.PreferenceManager;
 import org.evergreen.android.R;
+import org.evergreen_ils.auth.Const;
 
 import android.accounts.Account;
 import android.accounts.AccountAuthenticatorActivity;
@@ -43,6 +45,10 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
+        // make sure default values are set up for preferences, esp. library_url
+        PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
+
         accountManager = AccountManager.get(getBaseContext());
 
         String accountName = getIntent().getStringExtra(ARG_ACCOUNT_NAME);

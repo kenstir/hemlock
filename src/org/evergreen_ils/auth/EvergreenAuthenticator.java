@@ -6,6 +6,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.Map;
 
+import android.preference.PreferenceManager;
 import org.opensrf.Method;
 import org.opensrf.net.http.GatewayRequest;
 import org.opensrf.net.http.HttpConnection;
@@ -73,9 +74,10 @@ public class EvergreenAuthenticator {
     public static String signIn(Context context, String username, String password) throws AuthenticationException {
         Log.d(TAG, "signIn> "+username);
 
+        final String library_url = PreferenceManager.getDefaultSharedPreferences(context).getString(Const.KEY_LIBRARY_URL,"");
         HttpConnection conn;
         try {
-            conn = new HttpConnection(context.getString(R.string.ou_library_url) + "/osrf-gateway-v1");
+            conn = new HttpConnection(library_url + "/osrf-gateway-v1");
         } catch (MalformedURLException e) {
             throw new AuthenticationException(e);
         }

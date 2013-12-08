@@ -18,6 +18,7 @@
             android:key="notifications_enabled"
             android:summaryOn="@string/preference_enable_notifications_summary_on"
             android:summaryOff="@string/preference_enable_notifications_summary_off"
+            android:defaultValue="false"
             />
 
         <ListPreference

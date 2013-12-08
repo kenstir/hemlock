@@ -20,16 +20,15 @@
 package org.evergreen.android.views.splashscreen;
 
 import org.evergreen.android.R;
-import org.evergreen.android.accountAccess.AccountAccess;
 import org.evergreen.android.globals.GlobalConfigs;
 import org.evergreen.android.searchCatalog.SearchCatalogListView;
+import org.evergreen.android.views.ApplicationPreferences;
 import org.evergreen.android.views.splashscreen.LoadingTask.LoadingTaskListener;
 
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
@@ -39,6 +38,7 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import org.evergreen_ils.auth.Const;
 
 public class SplashActivity extends Activity implements LoadingTaskListener {
 
@@ -87,6 +87,9 @@ public class SplashActivity extends Activity implements LoadingTaskListener {
 
         this.mContext = this;
 
+        // make sure default values are set up for preferences, esp. library_url
+        PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
+
         mProgressText = (TextView) findViewById(R.id.action_in_progress);
         mProgressBar = (ProgressBar) findViewById(R.id.activity_splash_progress_bar);
         mRetryButton = (Button) findViewById(R.id.activity_splash_retry_button);
@@ -98,9 +101,7 @@ public class SplashActivity extends Activity implements LoadingTaskListener {
             }
         });
 
-        GlobalConfigs.httpAddress = mContext.getString(R.string.ou_library_url);
-        //prefs= PreferenceManager.getDefaultSharedPreferences(context);
-        //String username = prefs.getString("username", "");
+        GlobalConfigs.httpAddress = PreferenceManager.getDefaultSharedPreferences(this).getString(Const.KEY_LIBRARY_URL, "");
         startTask();
     }
     

@@ -22,11 +22,11 @@ package org.evergreen.android.views;
 import java.util.Calendar;
 
 import org.evergreen.android.R;
-import org.evergreen.android.accountAccess.AccountAccess;
 import org.evergreen.android.globals.GlobalConfigs;
 import org.evergreen.android.services.NotificationAlert;
 import org.evergreen.android.services.PeriodicServiceBroadcastReceiver;
 import org.evergreen.android.services.ScheduledIntentService;
+import org.evergreen_ils.auth.Const;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
@@ -46,13 +46,13 @@ import android.widget.Toast;
 public class ApplicationPreferences extends PreferenceActivity implements
         OnSharedPreferenceChangeListener {
 
+    private String TAG = ApplicationPreferences.class.getSimpleName();
+
     private ProgressDialog progressDialog;
 
     private ApplicationPreferences reference;
 
     private Context context;
-
-    private String TAG = "ApplicationPreferences";
 
     private Thread connectionThread = null;
 
@@ -63,12 +63,11 @@ public class ApplicationPreferences extends PreferenceActivity implements
 
         super.onCreate(savedInstanceState);
 
-        addPreferencesFromResource(R.xml.application_preference_screen);
+        addPreferencesFromResource(R.xml.preferences);
 
         context = this;
         reference = this;
-        SharedPreferences prefs = PreferenceManager
-                .getDefaultSharedPreferences(context);
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         // register preference listener
         prefs.registerOnSharedPreferenceChangeListener(this);
 
@@ -113,10 +112,9 @@ public class ApplicationPreferences extends PreferenceActivity implements
 
         boolean checkConnection = false;
 
-        if (key.equals("library_url")) {
+        if (key.equals(Const.KEY_LIBRARY_URL)) {
             checkConnection = true;
-            GlobalConfigs.httpAddress = sharedPreferences.getString(
-                    "library_url", "");
+            GlobalConfigs.httpAddress = sharedPreferences.getString(Const.KEY_LIBRARY_URL, "");
 
             httpAddressChange = true;
             System.out.println("Show dialog");
