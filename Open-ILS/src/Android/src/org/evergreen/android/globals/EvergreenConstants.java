@@ -7,7 +7,7 @@ package org.evergreen.android.globals;
 /**
  * Conversion of constants from Const.pm
  */
-class Constants {
+class EvergreenConstants {
 
     // Copy Statuses
     public static final int COPY_STATUS_AVAILABLE     = 0;
