@@ -16,6 +16,7 @@
   <component name="FacetManager">
     <facet type="android" name="Android">
       <configuration>
+        <option name="LIBRARY_PROJECT" value="true" />
         <option name="UPDATE_PROPERTY_FILES" value="true" />
       </configuration>
     </facet>
@@ -28,7 +29,7 @@
       <sourceFolder url="file://$MODULE_DIR$/gen" isTestSource="false" generated="true" />
     </content>
     <orderEntry type="jdk" jdkName="Android 4.4 Platform" jdkType="Android SDK" />
-    <orderEntry type="module-library">
+    <orderEntry type="module-library" exported="">
       <library name="android-support-v4.jar">
         <CLASSES>
           <root url="jar://$MODULE_DIR$/libs/android-support-v4.jar!/" />
@@ -39,7 +40,7 @@
         <SOURCES />
       </library>
     </orderEntry>
-    <orderEntry type="module-library">
+    <orderEntry type="module-library" exported="">
       <library name="org.opensrf2_serialized_reg.jar">
         <CLASSES>
           <root url="jar://$MODULE_DIR$/libs/org.opensrf2_serialized_reg.jar!/" />
@@ -48,7 +49,7 @@
         <SOURCES />
       </library>
     </orderEntry>
-    <orderEntry type="module-library">
+    <orderEntry type="module-library" exported="">
       <library name="zxing_barcode.jar">
         <CLASSES>
           <root url="jar://$MODULE_DIR$/libs/zxing_barcode.jar!/" />
@@ -57,7 +58,7 @@
         <SOURCES />
       </library>
     </orderEntry>
-    <orderEntry type="module-library">
+    <orderEntry type="module-library" exported="">
       <library name="androwrapee-1.1.0.jar">
         <CLASSES>
           <root url="jar://$MODULE_DIR$/libs/androwrapee-1.1.0.jar!/" />

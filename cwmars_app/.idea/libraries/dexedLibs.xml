@@ -1,0 +1,12 @@
+<component name="libraryTable">
+  <library name="dexedLibs">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/../core/bin/dexedLibs/androwrapee-1.1.0-e1a06f0b15feb57f60fc050388c60c69.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../core/bin/dexedLibs/org.opensrf2_serialized_reg-5dba35be916c7a72e45ee4bb4a6478a8.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../core/bin/dexedLibs/android-support-v4-feb471f0a1a2b5a42f64c700a1551d08.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../core/bin/dexedLibs/zxing_barcode-7de1bcf4a56bfb1068e055d26c0a58d6.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/EvergreenApp.iml" filepath="$PROJECT_DIR$/EvergreenApp.iml" />
+      <module fileurl="file://$PROJECT_DIR$/EvergreenCore.iml" filepath="$PROJECT_DIR$/EvergreenCore.iml" />
     </modules>
   </component>
 </project>

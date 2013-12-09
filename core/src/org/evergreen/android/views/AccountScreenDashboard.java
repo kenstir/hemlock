@@ -158,26 +158,21 @@ public class AccountScreenDashboard extends Activity {
 
     public void onClickFeature(View v) {
         int id = v.getId();
-        switch (id) {
-
-        case R.id.account_btn_check_out:
+        if (id == R.id.account_btn_check_out) {
             startActivity(new Intent(getApplicationContext(),
                     ItemsCheckOutListView.class));
-            break;
-        case R.id.account_btn_holds:
+
+        } else if (id == R.id.account_btn_holds) {
             startActivity(new Intent(getApplicationContext(),
                     HoldsListView.class));
-            break;
-        case R.id.account_btn_fines:
+
+        } else if (id == R.id.account_btn_fines) {
             startActivity(new Intent(getApplicationContext(),
                     FinesActivity.class));
-            break;
-        case R.id.account_btn_book_bags:
+
+        } else if (id == R.id.account_btn_book_bags) {
             startActivity(new Intent(getApplicationContext(),
                     BookbagsListView.class));
-            break;
-        default:
-            break;
 
         }
 
