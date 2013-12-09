@@ -63,16 +63,14 @@ final class DecodeHandler extends Handler {
       return;
       //if thread is not running do nothing
     }
-    switch (message.what) {
-      case R.id.decode:
-        decode((byte[]) message.obj, message.arg1, message.arg2);
-        break;
-      case R.id.quit:
-    	//quit, set running false  
-        running = false;
-        Looper.myLooper().quit();
-        break;
-    }
+      if (message.what == R.id.decode) {
+          decode((byte[]) message.obj, message.arg1, message.arg2);
+
+      } else if (message.what == R.id.quit) {//quit, set running false
+          running = false;
+          Looper.myLooper().quit();
+
+      }
   }
 
   

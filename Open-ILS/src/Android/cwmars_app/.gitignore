@@ -1,0 +1,9 @@
+*.class
+*.dex
+.idea/workspace.xml
+.idea/tasks.xml
+bin/
+gen/
+.settings
+local.properties
+proguard-project.txt

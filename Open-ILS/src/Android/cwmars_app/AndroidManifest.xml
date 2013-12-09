@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+          package="org.cwmars"
+          android:installLocation="auto"
+          android:versionCode="1"
+          android:versionName="1.0">
+
+    <uses-sdk
+        android:minSdkVersion="8"
+        android:targetSdkVersion="18" />
+
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.FLASHLIGHT" />
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.MANAGE_ACCOUNTS" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.USE_CREDENTIALS" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+
+    <uses-feature android:name="android.hardware.camera" />
+    <uses-feature android:name="android.hardware.camera.autofocus" />
+
+    <application
+        android:allowBackup="true"
+        android:icon="@drawable/evergreen_launcher_icon"
+        android:label="@string/ou_app_name"
+        android:theme="@style/EvergreenTheme" >
+
+        <!-- Notification receiver -->
+        <receiver
+            android:name="org.evergreen.android.services.NotificationReceiver"
+            android:process=":remote" >
+        </receiver>
+        <!-- Receiver to reinit notifications on reboot -->
+        <receiver android:name="org.evergreen.android.services.RebootReceiver" >
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
+        <receiver android:name="org.evergreen.android.services.PeriodicServiceBroadcastReceiver" >
+            <intent-filter>
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
+            </intent-filter>
+        </receiver>
+
+        <service android:name="org.evergreen.android.services.ScheduledIntentService" >
+        </service>
+
+        <activity
+            android:name="org.evergreen.android.views.splashscreen.SplashActivity"
+            android:label="@string/ou_app_label">
+            <!--  android:theme="@android:style/Theme.Light.NoTitleBar"  -->
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="org.evergreen.android.views.AccountScreenDashboard"
+            android:theme="@android:style/Theme.Light.NoTitleBar" >
+        </activity>
+        <activity android:name="org.evergreen.android.views.ApplicationPreferences" >
+        </activity>
+
+        <!-- Search -->
+
+        <activity
+            android:name="org.evergreen.android.searchCatalog.SampleUnderlinesNoFade"
+            android:label="Underlines/No Fade" >
+        </activity>
+        <activity android:name="org.evergreen.android.searchCatalog.MoreCopyInformation" >
+        </activity>
+        <activity
+            android:name="org.evergreen.android.searchCatalog.SearchCatalogListView"
+            android:label="@string/ou_app_label" >
+        </activity>
+        <activity android:name="org.evergreen.android.searchCatalog.AdvancedSearchActivity" >
+        </activity>
+        <activity
+            android:name="org.evergreen.android.barcodescan.CaptureActivity"
+            android:label="@string/ou_app_label"
+            android:screenOrientation="landscape"
+            android:theme="@android:style/Theme.NoTitleBar"
+            android:windowSoftInputMode="stateAlwaysHidden" >
+        </activity>
+
+        <!-- Checkout Activities -->
+        <activity android:name="org.evergreen.android.accountAccess.checkout.ItemsCheckOutListView" >
+        </activity>
+
+        <!-- Holds Activities -->
+        <activity android:name="org.evergreen.android.accountAccess.holds.HoldsListView" >
+        </activity>
+        <activity android:name="org.evergreen.android.accountAccess.holds.PlaceHold" >
+        </activity>
+        <activity android:name="org.evergreen.android.accountAccess.holds.HoldDetails" >
+        </activity>
+
+        <!-- Fines Activities -->
+        <activity android:name="org.evergreen.android.accountAccess.fines.FinesActivity" >
+        </activity>
+
+        <!-- Bookbags -->
+        <activity android:name="org.evergreen.android.accountAccess.bookbags.BookbagsListView" >
+        </activity>
+        <activity android:name="org.evergreen.android.accountAccess.bookbags.BookBagDetails" >
+        </activity>
+
+        <activity
+            android:name="org.evergreen_ils.auth.AuthenticatorActivity"
+            android:label="@string/ou_account_label"
+            android:theme="@android:style/Theme.Light" >
+        </activity>
+
+        <service
+            android:name="org.evergreen_ils.auth.AuthenticatorService"
+            android:exported="false" >
+            <intent-filter>
+                <action android:name="android.accounts.AccountAuthenticator" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.accounts.AccountAuthenticator"
+                android:resource="@xml/authenticator" />
+        </service>
+    </application>
+</manifest>
