@@ -87,7 +87,7 @@ public class SplashActivity extends Activity implements LoadingTaskListener {
 
         this.mContext = this;
 
-        // make sure default values are set up for preferences, esp. library_url
+        // make sure default values are set up for preferences
         PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
 
         mProgressText = (TextView) findViewById(R.id.action_in_progress);
@@ -101,7 +101,7 @@ public class SplashActivity extends Activity implements LoadingTaskListener {
             }
         });
 
-        GlobalConfigs.httpAddress = PreferenceManager.getDefaultSharedPreferences(this).getString(Const.KEY_LIBRARY_URL, "");
+        GlobalConfigs.httpAddress = getString(R.string.ou_library_url);
         startTask();
     }
     

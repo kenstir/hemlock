@@ -19,6 +19,7 @@
  */
 package org.evergreen.android.views.splashscreen;
 
+import org.evergreen.android.R;
 import org.evergreen.android.accountAccess.AccountAccess;
 import org.evergreen.android.accountAccess.SessionNotFoundException;
 import org.evergreen.android.globals.GlobalConfigs;
@@ -89,7 +90,8 @@ public class LoadingTask {
 
     //TODO: share some of this code with ScheduledIntentService.onHandleIntent
     protected String doInBackground() {
-        final String tag ="doInBackground> "; 
+        final String tag ="doInBackground> ";
+        final String accountType = mCallingActivity.getString(R.string.ou_account_type);
         Log.d(TAG, tag);
         try {
             Log.d(TAG, tag+"Loading resources");
@@ -98,7 +100,8 @@ public class LoadingTask {
 
             Log.d(TAG, tag+"Signing in");
             publishProgress("Signing in");
-            AccountManagerFuture<Bundle> future = mAccountManager.getAuthTokenByFeatures(Const.ACCOUNT_TYPE, Const.AUTHTOKEN_TYPE, null, mCallingActivity, null, null, null, null);
+
+            AccountManagerFuture<Bundle> future = mAccountManager.getAuthTokenByFeatures(accountType, Const.AUTHTOKEN_TYPE, null, mCallingActivity, null, null, null, null);
             Bundle bnd = future.getResult();
             Log.d(TAG, tag+"bnd="+bnd);
             String auth_token = bnd.getString(AccountManager.KEY_AUTHTOKEN);
@@ -117,11 +120,11 @@ public class LoadingTask {
             try {
                 haveSession = ac.retrieveSession(auth_token);
             } catch (SessionNotFoundException e) {
-                mAccountManager.invalidateAuthToken(Const.ACCOUNT_TYPE, auth_token);
+                mAccountManager.invalidateAuthToken(accountType, auth_token);
                 retry = true;
             }
             if (retry) {
-                final Account account = new Account(account_name, Const.ACCOUNT_TYPE);
+                final Account account = new Account(account_name, accountType);
                 future = mAccountManager.getAuthToken(account, Const.AUTHTOKEN_TYPE, null, mCallingActivity, null, null);
                 bnd = future.getResult();
                 Log.d(TAG, tag+"bnd="+bnd);

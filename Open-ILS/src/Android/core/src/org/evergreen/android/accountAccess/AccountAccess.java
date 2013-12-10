@@ -32,6 +32,7 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.os.Looper;
 import android.text.TextUtils;
+import org.evergreen.android.R;
 import org.evergreen.android.accountAccess.bookbags.BookBag;
 import org.evergreen.android.accountAccess.bookbags.BookBagItem;
 import org.evergreen.android.accountAccess.checkout.CircRecord;
@@ -356,8 +357,9 @@ public class AccountAccess {
     public boolean reauthenticate(Activity activity) throws SessionNotFoundException, AuthenticatorException, OperationCanceledException, IOException {
         boolean ok = false;
         final AccountManager am = AccountManager.get(activity);
-        final Account account = new Account(userName, Const.ACCOUNT_TYPE);
-        am.invalidateAuthToken(Const.ACCOUNT_TYPE, authToken);
+        final String accountType = activity.getString(R.string.ou_account_type);
+        final Account account = new Account(userName, accountType);
+        am.invalidateAuthToken(accountType, authToken);
         haveSession = false;
         authToken = null;
         if (runningOnUIThread())
