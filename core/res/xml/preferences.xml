@@ -2,15 +2,6 @@
 <PreferenceScreen
         xmlns:android="http://schemas.android.com/apk/res/android">
 
- 	 <PreferenceCategory
-	   android:title="@string/preference_server_information_title" >
-	  	<EditTextPreference
-	     android:key="library_url"
-	     android:summary="@string/preference_library_url_address_summary"
-	     android:title="@string/preference_library_url_address"
-         android:defaultValue="@string/ou_library_url"/>
-	 </PreferenceCategory>
-  
 	<PreferenceCategory
 	   android:title="@string/preference_notifications_title" >
         <CheckBoxPreference

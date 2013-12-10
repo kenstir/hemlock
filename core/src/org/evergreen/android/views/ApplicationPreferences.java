@@ -54,8 +54,6 @@ public class ApplicationPreferences extends PreferenceActivity implements
 
     private Context context;
 
-    private Thread connectionThread = null;
-
     private Thread coreFilesDownload = null;
 
     @Override
@@ -68,9 +66,7 @@ public class ApplicationPreferences extends PreferenceActivity implements
         context = this;
         reference = this;
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        // register preference listener
         prefs.registerOnSharedPreferenceChangeListener(this);
-
     }
 
     @Override
@@ -103,50 +99,8 @@ public class ApplicationPreferences extends PreferenceActivity implements
 
         boolean httpAddressChange = false;
 
-        connectionThread = new Thread(new Runnable() {
-
-            @Override
-            public void run() {
-            }
-        });
-
         boolean checkConnection = false;
 
-        if (key.equals(Const.KEY_LIBRARY_URL)) {
-            checkConnection = true;
-            GlobalConfigs.httpAddress = sharedPreferences.getString(Const.KEY_LIBRARY_URL, "");
-
-            httpAddressChange = true;
-            System.out.println("Show dialog");
-
-            progressDialog = ProgressDialog.show(context, "Core files",
-                    "Downloading FM_IDL and OrgTree");
-
-            coreFilesDownload = new Thread(new Runnable() {
-
-                @Override
-                public void run() {
-                    System.out.println("FM idl download");
-                    GlobalConfigs sg = GlobalConfigs.getGlobalConfigs(context);
-                    sg.loadIDLFile(context);
-                    sg.getOrganisations();
-                    sg.getCopyStatusesAvailable((ConnectivityManager) context
-                            .getSystemService(Context.CONNECTIVITY_SERVICE));
-                    runOnUiThread(new Runnable() {
-                        public void run() {
-                            progressDialog.dismiss();
-                        }
-                    });
-
-                    connectionThread.start();
-                }
-            });
-
-            coreFilesDownload.start();
-
-            // wait for execution
-
-        }
         if (key.equals("notifications_enabled")) {
 
             if (sharedPreferences.getBoolean("notifications_enabled", false)) {
@@ -192,27 +146,5 @@ public class ApplicationPreferences extends PreferenceActivity implements
             }
         }
     }
-
-    /*
-     * Dialog interface for starting the network settings
-     */
-    DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
-        @Override
-        public void onClick(DialogInterface dialog, int which) {
-            switch (which) {
-            case DialogInterface.BUTTON_POSITIVE:
-                // Yes button clicked
-
-                context.startActivity(new Intent(Settings.ACTION_WIFI_SETTINGS));
-
-                break;
-
-            case DialogInterface.BUTTON_NEGATIVE:
-                // No button clicked
-
-                break;
-            }
-        }
-    };
 
 }
