@@ -20,8 +20,7 @@
 
 package org.evergreen.android.utils.ui;
 
-import static android.view.ViewGroup.LayoutParams.FILL_PARENT;
-import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
+import static android.view.ViewGroup.LayoutParams;
 
 import org.evergreen.android.R;
 
@@ -90,8 +89,7 @@ public class TabPageIndicator extends HorizontalScrollView implements
         setHorizontalScrollBarEnabled(false);
 
         mTabLayout = new LinearLayout(getContext());
-        addView(mTabLayout, new ViewGroup.LayoutParams(WRAP_CONTENT,
-                FILL_PARENT));
+        addView(mTabLayout, new ViewGroup.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT));
     }
 
     public void setOnTabReselectedListener(OnTabReselectedListener listener) {
@@ -167,7 +165,7 @@ public class TabPageIndicator extends HorizontalScrollView implements
         tabView.setText(text);
 
         mTabLayout.addView(tabView, new LinearLayout.LayoutParams(0,
-                FILL_PARENT, 1));
+                LayoutParams.MATCH_PARENT, 1));
     }
 
     @Override
