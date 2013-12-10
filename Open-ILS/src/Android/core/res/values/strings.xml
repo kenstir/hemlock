@@ -130,9 +130,6 @@
     <string name="preference_password">Password</string>
     <string name="preference_password_summary">Enter your account password</string>
     <string name="preference_server_information_title">Server settings</string>
-    <string name="preference_server_information_summary">Library server settings</string>
-    <string name="preference_library_url_address">Library URL</string>
-    <string name="preference_library_url_address_summary">Please enter the URL in format http://</string>
     <string name="preference_notification_preference_screen_title">Notification settings</string>
     <string name="preference_notification_preference_screen_summary">Configure notifications and reminders for checkout items</string>
     <string name="preference_enable_notifications">Enable notifications</string>
