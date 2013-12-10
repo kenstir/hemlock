@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
     android:orientation="vertical" 
     android:background="@drawable/background_grey_image"
     >
@@ -11,7 +11,7 @@
         layout="@layout/simple_actionbar" />
 
     <LinearLayout
-        android:layout_width="fill_parent"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dip"
         android:orientation="horizontal"
@@ -32,7 +32,7 @@
 
     <LinearLayout
         android:id="@+id/advanced_search_filter_container"
-        android:layout_width="fill_parent"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal" >
 
@@ -54,16 +54,16 @@
 
     <ScrollView
         android:id="@+id/advanced_search_scrollview"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:layout_weight="1" 
         android:padding="5dip"
         >
 
         <LinearLayout
             android:id="@+id/advanced_search_filters"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:orientation="vertical" >
 
             <TextView
@@ -74,7 +74,7 @@
     </ScrollView>
 
     <LinearLayout
-        android:layout_width="fill_parent"
+        android:layout_width="match_parent"
         android:layout_height="60dip"
         android:background="@drawable/bottom_rounded_menu_background"
         android:gravity="center_horizontal"
