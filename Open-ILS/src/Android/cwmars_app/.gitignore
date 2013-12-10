@@ -4,6 +4,7 @@
 .idea/tasks.xml
 bin/
 gen/
+out/
 .settings
 local.properties
 proguard-project.txt
