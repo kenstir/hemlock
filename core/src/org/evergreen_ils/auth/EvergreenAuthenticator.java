@@ -74,7 +74,7 @@ public class EvergreenAuthenticator {
     public static String signIn(Context context, String username, String password) throws AuthenticationException {
         Log.d(TAG, "signIn> "+username);
 
-        final String library_url = PreferenceManager.getDefaultSharedPreferences(context).getString(Const.KEY_LIBRARY_URL,"");
+        final String library_url = context.getString(R.string.ou_library_url);
         HttpConnection conn;
         try {
             conn = new HttpConnection(library_url + "/osrf-gateway-v1");

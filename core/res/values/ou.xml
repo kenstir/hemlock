@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- ou_cwmars.xml - C/W MARS organizational unit -->
 <resources>
+    <string name="ou_account_type">org.evergreen_ils</string>
     <!--  TODO: make URLs HTTPS -->
     <string name="ou_library_url">http://bark.cwmars.org</string>
     <string name="ou_app_name">C/W Mars Library</string>

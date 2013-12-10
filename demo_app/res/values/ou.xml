@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- ou_cwmars.xml - C/W MARS organizational unit -->
+<!-- ou.xml - organizational unit app customization -->
 <resources>
-    <string name="ou_library_url">https://demo.evergreencatalog.com</string>
+    <string name="ou_account_type">com.evergreencatalog.demo</string>
+    <string name="ou_library_url">http://demo.evergreencatalog.com</string>
     <string name="ou_app_name">Evergreen Demo Library</string>
     <string name="ou_app_label">Evergreen Demo</string>
     <string name="ou_app_welcome_label">Welcome</string>

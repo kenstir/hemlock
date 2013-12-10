@@ -46,7 +46,7 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        // make sure default values are set up for preferences, esp. library_url
+        // make sure default values are set up for preferences
         PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
 
         accountManager = AccountManager.get(getBaseContext());
@@ -126,13 +126,14 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity {
 
                 String authtoken = null;
                 String errorMessage = "Login failed";
+                final String accountType = AuthenticatorActivity.this.getString(R.string.ou_account_type);
                 Bundle data = new Bundle();
                 try {
                     authtoken = EvergreenAuthenticator.signIn(AuthenticatorActivity.this, username, password);
                     Log.d(TAG, "task> signIn returned "+authtoken);
 
                     data.putString(AccountManager.KEY_ACCOUNT_NAME, username);
-                    data.putString(AccountManager.KEY_ACCOUNT_TYPE, Const.ACCOUNT_TYPE);
+                    data.putString(AccountManager.KEY_ACCOUNT_TYPE, accountType);
                     data.putString(AccountManager.KEY_AUTHTOKEN, authtoken);
                     data.putString(PARAM_USER_PASS, password);
                 } catch (AuthenticationException e) {
