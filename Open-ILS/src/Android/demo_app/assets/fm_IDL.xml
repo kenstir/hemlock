@@ -1,4 +1,4 @@
-<IDL xmlns='http://opensrf.org/spec/IDL/base/v1' xmlns:idl='http://opensrf.org/spec/IDL/base/v1' xmlns:oils_persist='http://open-ils.org/spec/opensrf/IDL/persistence/v1' xmlns:oils_obj='http://open-ils.org/spec/opensrf/IDL/objects/v1' xmlns:reporter='http://open-ils.org/spec/opensrf/IDL/reporter/v1' xmlns:permacrud='http://open-ils.org/spec/opensrf/IDL/permacrud/v1'><class id='mvr' controller='open-ils.cstore' oils_obj:fieldmapper='metabib::virtual_record' oils_persist:virtual='true' reporter:label='Virtual Record'>
+<IDL xmlns:idl='http://opensrf.org/spec/IDL/base/v1' xmlns='http://opensrf.org/spec/IDL/base/v1' xmlns:permacrud='http://open-ils.org/spec/opensrf/IDL/permacrud/v1' xmlns:reporter='http://open-ils.org/spec/opensrf/IDL/reporter/v1' xmlns:oils_obj='http://open-ils.org/spec/opensrf/IDL/objects/v1' xmlns:oils_persist='http://open-ils.org/spec/opensrf/IDL/persistence/v1'><class oils_obj:fieldmapper='metabib::virtual_record' reporter:label='Virtual Record' controller='open-ils.cstore' id='mvr' oils_persist:virtual='true'>
 		<fields>
 			<field name='title' oils_persist:virtual='true'></field>
 			<field name='author' oils_persist:virtual='true'></field>
@@ -21,18 +21,18 @@
 			<field name='serials' oils_persist:virtual='true'></field>
 			<field name='foreign_copy_maps' oils_persist:virtual='true'></field>
 		</fields>
-	</class><class id='ex' controller='open-ils.cstore' oils_obj:fieldmapper='ex' oils_persist:virtual='true'>
+	</class><class oils_obj:fieldmapper='ex' controller='open-ils.cstore' id='ex' oils_persist:virtual='true'>
 		<fields>
 			<field name='err_msg' oils_persist:virtual='true'></field>
 			<field name='type' oils_persist:virtual='true'></field>
 		</fields>
-	</class><class id='perm_ex' controller='open-ils.cstore' oils_obj:fieldmapper='perm_ex' oils_persist:virtual='true'>
+	</class><class oils_obj:fieldmapper='perm_ex' controller='open-ils.cstore' id='perm_ex' oils_persist:virtual='true'>
 		<fields>
 			<field name='err_msg' oils_persist:virtual='true'></field>
 			<field name='type' oils_persist:virtual='true'></field>
 		</fields>
-	</class><class id='mbts' controller='open-ils.cstore' oils_obj:fieldmapper='money::billable_transaction_summary' oils_persist:tablename='money.materialized_billable_xact_summary' reporter:label='Billable Transaction Summary' oils_persist:readonly='true'>
-		<fields oils_persist:primary='id' oils_persist:sequence=''>
+	</class><class reporter:label='Billable Transaction Summary' oils_persist:tablename='money.materialized_billable_xact_summary' oils_obj:fieldmapper='money::billable_transaction_summary' controller='open-ils.cstore' id='mbts' oils_persist:readonly='true'>
+		<fields oils_persist:sequence='' oils_persist:primary='id'>
 			<field reporter:label='Balance Owed' name='balance_owed' reporter:datatype='money'></field>
 			<field reporter:label='Transaction ID' name='id' reporter:datatype='id'></field>
 			<field reporter:label='Last Billing Note' name='last_billing_note' reporter:datatype='text'></field>
@@ -49,11 +49,11 @@
 			<field reporter:label='Transaction Type' name='xact_type' reporter:datatype='text'></field>
 		</fields>
 		<links>
-			<link field='usr' reltype='has_a' key='id' map='' class='au'></link>
+			<link field='usr' reltype='has_a' class='au' key='id' map=''></link>
 		</links>
-	</class><class id='acn' controller='open-ils.cstore open-ils.pcrud' oils_obj:fieldmapper='asset::call_number' oils_persist:tablename='asset.call_number' reporter:label='Call Number/Volume'>
-		<fields oils_persist:primary='id' oils_persist:sequence='asset.call_number_id_seq'>
-			<field reporter:label='Copies' name='copies' oils_persist:virtual='true' reporter:datatype='link'></field>
+	</class><class oils_obj:fieldmapper='asset::call_number' reporter:label='Call Number/Volume' controller='open-ils.cstore open-ils.pcrud' oils_persist:tablename='asset.call_number' id='acn'>
+		<fields oils_persist:sequence='asset.call_number_id_seq' oils_persist:primary='id'>
+			<field reporter:label='Copies' name='copies' reporter:datatype='link' oils_persist:virtual='true'></field>
 			<field reporter:label='Create Date/Time' name='create_date' reporter:datatype='timestamp'></field>
 			<field reporter:label='Creating User' name='creator' reporter:datatype='link'></field>
 			<field reporter:label='Is Deleted' name='deleted' reporter:datatype='bool'></field>
@@ -63,65 +63,65 @@
 			<field reporter:label='Call Number Label' name='label' reporter:datatype='text'></field>
 			<field reporter:label='Owning Library' name='owning_lib' reporter:datatype='org_unit'></field>
 			<field reporter:label='Bib Record' name='record' reporter:datatype='link'></field>
-			<field reporter:label='Notes' name='notes' oils_persist:virtual='true' reporter:datatype='link'></field>
-			<field reporter:label='URI Maps' name='uri_maps' oils_persist:virtual='true' reporter:datatype='link'></field>
-			<field reporter:label='URIs' name='uris' oils_persist:virtual='true' reporter:datatype='link'></field>
+			<field reporter:label='Notes' name='notes' reporter:datatype='link' oils_persist:virtual='true'></field>
+			<field reporter:label='URI Maps' name='uri_maps' reporter:datatype='link' oils_persist:virtual='true'></field>
+			<field reporter:label='URIs' name='uris' reporter:datatype='link' oils_persist:virtual='true'></field>
 			<field reporter:label='Call Number Sort Key' name='label_sortkey' reporter:datatype='text'></field>
 			<field reporter:label='Classification Scheme' name='label_class' reporter:datatype='link'></field>
 			<field reporter:label='Prefix' name='prefix' reporter:datatype='link'></field>
 			<field reporter:label='Suffix' name='suffix' reporter:datatype='link'></field>
 		</fields>
 		<links>
-			<link field='editor' reltype='has_a' key='id' map='' class='au'></link>
-			<link field='creator' reltype='has_a' key='id' map='' class='au'></link>
-			<link field='record' reltype='has_a' key='id' map='' class='bre'></link>
-			<link field='owning_lib' reltype='has_a' key='id' map='' class='aou'></link>
-			<link field='notes' reltype='has_many' key='call_number' map='' class='acnn'></link>
-			<link field='copies' reltype='has_many' key='call_number' map='' class='acp'></link>
-			<link field='uris' reltype='has_many' key='call_number' map='uri' class='auricnm'></link>
-			<link field='uri_maps' reltype='has_many' key='call_number' map='' class='auricnm'></link>
-			<link field='label_class' reltype='has_a' key='id' map='' class='acnc'></link>
-			<link field='prefix' reltype='has_a' key='id' map='' class='acnp'></link>
-			<link field='suffix' reltype='has_a' key='id' map='' class='acns'></link>
+			<link field='editor' reltype='has_a' class='au' key='id' map=''></link>
+			<link field='creator' reltype='has_a' class='au' key='id' map=''></link>
+			<link field='record' reltype='has_a' class='bre' key='id' map=''></link>
+			<link field='owning_lib' reltype='has_a' class='aou' key='id' map=''></link>
+			<link field='notes' reltype='has_many' class='acnn' key='call_number' map=''></link>
+			<link field='copies' reltype='has_many' class='acp' key='call_number' map=''></link>
+			<link field='uris' reltype='has_many' class='auricnm' key='call_number' map='uri'></link>
+			<link field='uri_maps' reltype='has_many' class='auricnm' key='call_number' map=''></link>
+			<link field='label_class' reltype='has_a' class='acnc' key='id' map=''></link>
+			<link field='prefix' reltype='has_a' class='acnp' key='id' map=''></link>
+			<link field='suffix' reltype='has_a' class='acns' key='id' map=''></link>
 		</links>
         <permacrud xmlns='http://open-ils.org/spec/opensrf/IDL/permacrud/v1'>
             <actions>
-                <create permission='CREATE_VOLUME' context_field='owning_lib'></create>
+                <create context_field='owning_lib' permission='CREATE_VOLUME'></create>
                 <retrieve></retrieve>
-                <update permission='UPDATE_VOLUME' context_field='owning_lib'></update>
-                <delete permission='DELETE_VOLUME' context_field='owning_lib'></delete>
+                <update context_field='owning_lib' permission='UPDATE_VOLUME'></update>
+                <delete context_field='owning_lib' permission='DELETE_VOLUME'></delete>
             </actions>
         </permacrud>
-	</class><class id='mous' controller='open-ils.cstore open-ils.pcrud' oils_obj:fieldmapper='money::open_user_summary' oils_persist:tablename='money.open_usr_summary' reporter:label='Open User Summary'>
-		<fields oils_persist:primary='usr' oils_persist:sequence=''>
+	</class><class oils_obj:fieldmapper='money::open_user_summary' reporter:label='Open User Summary' controller='open-ils.cstore open-ils.pcrud' oils_persist:tablename='money.open_usr_summary' id='mous'>
+		<fields oils_persist:sequence='' oils_persist:primary='usr'>
 			<field name='balance_owed' reporter:datatype='money'></field>
 			<field name='total_owed' reporter:datatype='money'></field>
 			<field name='total_paid' reporter:datatype='money'></field>
 			<field name='usr' reporter:datatype='link'></field>
 		</fields>
 		<links>
-			<link field='usr' reltype='has_a' key='id' map='' class='au'></link>
+			<link field='usr' reltype='has_a' class='au' key='id' map=''></link>
         </links>
         <permacrud xmlns='http://open-ils.org/spec/opensrf/IDL/permacrud/v1'>
             <actions>
                 <retrieve permission='VIEW_USER'>
-                    <context link='usr' field='home_ou'></context>
+                    <context field='home_ou' link='usr'></context>
                 </retrieve>
             </actions>
         </permacrud>
-	</class><class id='au' controller='open-ils.cstore open-ils.pcrud' oils_obj:fieldmapper='actor::user' oils_persist:tablename='actor.usr' reporter:core='true' reporter:label='ILS User'>
-		<fields oils_persist:primary='id' oils_persist:sequence='actor.usr_id_seq'>
-			<field reporter:label='All Addresses' name='addresses' oils_persist:virtual='true' reporter:datatype='link'></field>
-			<field reporter:label='All Library Cards' name='cards' oils_persist:virtual='true' reporter:datatype='link'></field>
-			<field reporter:label='All Circulations' name='checkouts' oils_persist:virtual='true' reporter:datatype='link'></field>
-			<field reporter:label='All Hold Requests' name='hold_requests' oils_persist:virtual='true' reporter:datatype='link'></field>
-			<field reporter:label='All Permissions' name='permissions' oils_persist:virtual='true' reporter:datatype='link'></field>
-			<field reporter:label='All User Settings' name='settings' oils_persist:virtual='true' reporter:datatype='link'></field>
-			<field reporter:label='Standing Penalties' name='standing_penalties' oils_persist:virtual='true' reporter:datatype='link'></field>
-			<field reporter:label='Statistical Category Entries' name='stat_cat_entries' oils_persist:virtual='true' reporter:datatype='link'></field>
-			<field reporter:label='Survey Responses' name='survey_responses' oils_persist:virtual='true' reporter:datatype='link'></field>
-			<field reporter:label='Workstation Org Unit' name='ws_ou' oils_persist:virtual='true' reporter:datatype='link'></field>
-			<field reporter:label='Workstation ID' name='wsid' oils_persist:virtual='true' reporter:datatype='link'></field>
+	</class><class reporter:label='ILS User' oils_persist:tablename='actor.usr' reporter:core='true' oils_obj:fieldmapper='actor::user' controller='open-ils.cstore open-ils.pcrud' id='au'>
+		<fields oils_persist:sequence='actor.usr_id_seq' oils_persist:primary='id'>
+			<field reporter:label='All Addresses' name='addresses' reporter:datatype='link' oils_persist:virtual='true'></field>
+			<field reporter:label='All Library Cards' name='cards' reporter:datatype='link' oils_persist:virtual='true'></field>
+			<field reporter:label='All Circulations' name='checkouts' reporter:datatype='link' oils_persist:virtual='true'></field>
+			<field reporter:label='All Hold Requests' name='hold_requests' reporter:datatype='link' oils_persist:virtual='true'></field>
+			<field reporter:label='All Permissions' name='permissions' reporter:datatype='link' oils_persist:virtual='true'></field>
+			<field reporter:label='All User Settings' name='settings' reporter:datatype='link' oils_persist:virtual='true'></field>
+			<field reporter:label='Standing Penalties' name='standing_penalties' reporter:datatype='link' oils_persist:virtual='true'></field>
+			<field reporter:label='Statistical Category Entries' name='stat_cat_entries' reporter:datatype='link' oils_persist:virtual='true'></field>
+			<field reporter:label='Survey Responses' name='survey_responses' reporter:datatype='link' oils_persist:virtual='true'></field>
+			<field reporter:label='Workstation Org Unit' name='ws_ou' reporter:datatype='link' oils_persist:virtual='true'></field>
+			<field reporter:label='Workstation ID' name='wsid' reporter:datatype='link' oils_persist:virtual='true'></field>
 			<field reporter:label='Active' name='active' reporter:datatype='bool'></field>
 			<field reporter:label='Alert Message' name='alert_message' reporter:datatype='text'></field>
 			<field reporter:label='Barred' name='barred' reporter:datatype='bool'></field>
@@ -149,7 +149,7 @@
 			<field reporter:label='Is Group Lead Account' name='master_account' reporter:datatype='bool'></field>
 			<field reporter:label='Internet Access Level' name='net_access_level' reporter:datatype='link'></field>
 			<field reporter:label='Other Phone' name='other_phone' reporter:datatype='text'></field>
-			<field reporter:label='Password' name='passwd' suppress_controller='open-ils.pcrud open-ils.reporter-store' reporter:datatype='text'></field>
+			<field reporter:label='Password' name='passwd' reporter:datatype='text' suppress_controller='open-ils.pcrud open-ils.reporter-store'></field>
 			<field reporter:label='Photo URL' name='photo_url' reporter:datatype='text'></field>
 			<field reporter:label='Prefix/Title' name='prefix' reporter:datatype='text'></field>
 			<field reporter:label='Main (Profile) Permission Group' name='profile' reporter:datatype='link'></field>
@@ -162,60 +162,60 @@
 			<field reporter:label='OPAC/Staff Client Holds Alias' name='alias' reporter:datatype='text'></field>
 			<field reporter:label='Juvenile' name='juvenile' reporter:datatype='bool'></field>
 			<field reporter:label='Record Last Update Time' name='last_update_time' reporter:datatype='timestamp'></field>
-			<field reporter:label='Additional Permission Groups' name='groups' oils_persist:virtual='true' reporter:datatype='link'></field>
+			<field reporter:label='Additional Permission Groups' name='groups' reporter:datatype='link' oils_persist:virtual='true'></field>
 			<field reporter:label='Is Deleted' name='deleted' reporter:datatype='bool'></field>
-			<field reporter:label='User Notes' name='notes' oils_persist:virtual='true' reporter:datatype='link'></field>
-			<field reporter:label='Demographic Info' name='demographic' oils_persist:virtual='true' reporter:datatype='link'></field>
-			<field reporter:label='Billable Transactions' name='billable_transactions' oils_persist:virtual='true' reporter:datatype='link'></field>
-			<field reporter:label='Money Summary' name='money_summary' oils_persist:virtual='true' reporter:datatype='link'></field>
-			<field reporter:label='Open Billable Transactions' name='open_billable_transactions_summary' oils_persist:virtual='true' reporter:datatype='link'></field>
-			<field reporter:label='Checkins' name='checkins' oils_persist:virtual='true' reporter:datatype='link'></field>
-			<field reporter:label='Circulations Performed as Staff' name='performed_circulations' oils_persist:virtual='true' reporter:datatype='link'></field>
-			<field reporter:label='Fund Allocation Percentages' name='fund_alloc_pcts' oils_persist:virtual='true' reporter:datatype='link'></field>
-			<field reporter:label='Reservations' name='reservations' oils_persist:virtual='true' reporter:datatype='link'></field>
-			<field reporter:label='User Activity Entries' name='usr_activity' oils_persist:virtual='true' reporter:datatype='link'></field>
+			<field reporter:label='User Notes' name='notes' reporter:datatype='link' oils_persist:virtual='true'></field>
+			<field reporter:label='Demographic Info' name='demographic' reporter:datatype='link' oils_persist:virtual='true'></field>
+			<field reporter:label='Billable Transactions' name='billable_transactions' reporter:datatype='link' oils_persist:virtual='true'></field>
+			<field reporter:label='Money Summary' name='money_summary' reporter:datatype='link' oils_persist:virtual='true'></field>
+			<field reporter:label='Open Billable Transactions' name='open_billable_transactions_summary' reporter:datatype='link' oils_persist:virtual='true'></field>
+			<field reporter:label='Checkins' name='checkins' reporter:datatype='link' oils_persist:virtual='true'></field>
+			<field reporter:label='Circulations Performed as Staff' name='performed_circulations' reporter:datatype='link' oils_persist:virtual='true'></field>
+			<field reporter:label='Fund Allocation Percentages' name='fund_alloc_pcts' reporter:datatype='link' oils_persist:virtual='true'></field>
+			<field reporter:label='Reservations' name='reservations' reporter:datatype='link' oils_persist:virtual='true'></field>
+			<field reporter:label='User Activity Entries' name='usr_activity' reporter:datatype='link' oils_persist:virtual='true'></field>
 		</fields>
 		<links>
-			<link field='demographic' reltype='might_have' key='id' map='' class='rud'></link>
-			<link field='net_access_level' reltype='has_a' key='id' map='' class='cnal'></link>
-			<link field='profile' reltype='has_a' key='id' map='' class='pgt'></link>
-			<link field='ident_type' reltype='has_a' key='id' map='' class='cit'></link>
-			<link field='billing_address' reltype='has_a' key='id' map='' class='aua'></link>
-			<link field='mailing_address' reltype='has_a' key='id' map='' class='aua'></link>
-			<link field='home_ou' reltype='has_a' key='id' map='' class='aou'></link>
-			<link field='standing' reltype='has_a' key='id' map='' class='cst'></link>
-			<link field='card' reltype='has_a' key='id' map='' class='ac'></link>
-			<link field='ident_type2' reltype='has_a' key='id' map='' class='cit'></link>
-			<link field='stat_cat_entries' reltype='has_many' key='target_usr' map='' class='actscecm'></link>
-			<link field='groups' reltype='has_many' key='usr' map='grp' class='pugm'></link>
-			<link field='usrgroup' reltype='has_many' key='usrgroup' map='' class='au'></link>
-			<link field='checkouts' reltype='has_many' key='usr' map='' class='circ'></link>
-			<link field='hold_requests' reltype='has_many' key='usr' map='' class='ahr'></link>
-			<link field='permissions' reltype='has_many' key='usr' map='perm' class='pupm'></link>
-			<link field='settings' reltype='has_many' key='usr' map='' class='aus'></link>
-			<link field='billable_transactions' reltype='has_many' key='usr' map='' class='mbt'></link>
-			<link field='open_billable_transactions_summary' reltype='has_many' key='usr' map='' class='mobts'></link>
-			<link field='money_summary' reltype='might_have' key='usr' map='' class='mus'></link>
-			<link field='standing_penalties' reltype='has_many' key='usr' map='' class='ausp'></link>
-			<link field='addresses' reltype='has_many' key='usr' map='' class='aua'></link>
-			<link field='survey_responses' reltype='has_many' key='usr' map='' class='asvr'></link>
-			<link field='notes' reltype='has_many' key='usr' map='' class='aun'></link>
-			<link field='checkins' reltype='has_many' key='checkin_staff' map='' class='circ'></link>
-			<link field='cards' reltype='has_many' key='usr' map='' class='ac'></link>
-			<link field='performed_circulations' reltype='has_many' key='circ_staff' map='' class='circ'></link>
-			<link field='fund_alloc_pcts' reltype='has_many' key='allocator' map='' class='acqfap'></link>
-			<link field='reservations' reltype='has_many' key='usr' map='' class='bresv'></link>
-			<link field='usr_activity' reltype='has_many' key='usr' map='' class='auact'></link>
+			<link field='demographic' reltype='might_have' class='rud' key='id' map=''></link>
+			<link field='net_access_level' reltype='has_a' class='cnal' key='id' map=''></link>
+			<link field='profile' reltype='has_a' class='pgt' key='id' map=''></link>
+			<link field='ident_type' reltype='has_a' class='cit' key='id' map=''></link>
+			<link field='billing_address' reltype='has_a' class='aua' key='id' map=''></link>
+			<link field='mailing_address' reltype='has_a' class='aua' key='id' map=''></link>
+			<link field='home_ou' reltype='has_a' class='aou' key='id' map=''></link>
+			<link field='standing' reltype='has_a' class='cst' key='id' map=''></link>
+			<link field='card' reltype='has_a' class='ac' key='id' map=''></link>
+			<link field='ident_type2' reltype='has_a' class='cit' key='id' map=''></link>
+			<link field='stat_cat_entries' reltype='has_many' class='actscecm' key='target_usr' map=''></link>
+			<link field='groups' reltype='has_many' class='pugm' key='usr' map='grp'></link>
+			<link field='usrgroup' reltype='has_many' class='au' key='usrgroup' map=''></link>
+			<link field='checkouts' reltype='has_many' class='circ' key='usr' map=''></link>
+			<link field='hold_requests' reltype='has_many' class='ahr' key='usr' map=''></link>
+			<link field='permissions' reltype='has_many' class='pupm' key='usr' map='perm'></link>
+			<link field='settings' reltype='has_many' class='aus' key='usr' map=''></link>
+			<link field='billable_transactions' reltype='has_many' class='mbt' key='usr' map=''></link>
+			<link field='open_billable_transactions_summary' reltype='has_many' class='mobts' key='usr' map=''></link>
+			<link field='money_summary' reltype='might_have' class='mus' key='usr' map=''></link>
+			<link field='standing_penalties' reltype='has_many' class='ausp' key='usr' map=''></link>
+			<link field='addresses' reltype='has_many' class='aua' key='usr' map=''></link>
+			<link field='survey_responses' reltype='has_many' class='asvr' key='usr' map=''></link>
+			<link field='notes' reltype='has_many' class='aun' key='usr' map=''></link>
+			<link field='checkins' reltype='has_many' class='circ' key='checkin_staff' map=''></link>
+			<link field='cards' reltype='has_many' class='ac' key='usr' map=''></link>
+			<link field='performed_circulations' reltype='has_many' class='circ' key='circ_staff' map=''></link>
+			<link field='fund_alloc_pcts' reltype='has_many' class='acqfap' key='allocator' map=''></link>
+			<link field='reservations' reltype='has_many' class='bresv' key='usr' map=''></link>
+			<link field='usr_activity' reltype='has_many' class='auact' key='usr' map=''></link>
 		</links>
 		<permacrud xmlns='http://open-ils.org/spec/opensrf/IDL/permacrud/v1'>
 			<actions>
-				<retrieve permission='VIEW_USER' context_field='home_ou'></retrieve>
+				<retrieve context_field='home_ou' permission='VIEW_USER'></retrieve>
 			</actions>
 		</permacrud>
-	</class><class id='ccs' controller='open-ils.cstore open-ils.pcrud' oils_obj:fieldmapper='config::copy_status' oils_persist:tablename='config.copy_status' oils_persist:restrict_primary='100' reporter:label='Copy Status' oils_persist:field_safe='true'>
-		<fields oils_persist:primary='id' oils_persist:sequence='config.copy_status_id_seq'>
+	</class><class reporter:label='Copy Status' oils_persist:tablename='config.copy_status' oils_obj:fieldmapper='config::copy_status' controller='open-ils.cstore open-ils.pcrud' oils_persist:field_safe='true' id='ccs' oils_persist:restrict_primary='100'>
+		<fields oils_persist:sequence='config.copy_status_id_seq' oils_persist:primary='id'>
 			<field name='holdable' reporter:datatype='bool'></field>
-			<field name='id' reporter:selector='name' reporter:datatype='id'></field>
+			<field name='id' reporter:datatype='id' reporter:selector='name'></field>
 			<field name='name' reporter:datatype='text' oils_persist:i18n='true'></field>
 			<field name='opac_visible' reporter:datatype='bool'></field>
             <field name='copy_active' reporter:datatype='bool'></field>
@@ -224,14 +224,14 @@
 		<links></links>
         <permacrud xmlns='http://open-ils.org/spec/opensrf/IDL/permacrud/v1'>
             <actions>
-                <create permission='CREATE_COPY_STATUS' global_required='true'></create>
+                <create global_required='true' permission='CREATE_COPY_STATUS'></create>
                 <retrieve></retrieve>
-                <update permission='UPDATE_COPY_STATUS' global_required='true'></update>
-                <delete permission='DELETE_COPY_STATUS' global_required='true'></delete>
+                <update global_required='true' permission='UPDATE_COPY_STATUS'></update>
+                <delete global_required='true' permission='DELETE_COPY_STATUS'></delete>
             </actions>
         </permacrud>
-	</class><class id='circ' controller='open-ils.cstore open-ils.pcrud' oils_obj:fieldmapper='action::circulation' oils_persist:tablename='action.circulation' reporter:core='false' reporter:label='Circulation'>
-		<fields oils_persist:primary='id' oils_persist:sequence='money.billable_xact_id_seq'>
+	</class><class reporter:label='Circulation' oils_persist:tablename='action.circulation' reporter:core='true' oils_obj:fieldmapper='action::circulation' controller='open-ils.cstore open-ils.pcrud' id='circ'>
+		<fields oils_persist:sequence='money.billable_xact_id_seq' oils_persist:primary='id'>
 			<field reporter:label='Check In Library' name='checkin_lib' reporter:datatype='org_unit'></field>
 			<field reporter:label='Check In Staff' name='checkin_staff' reporter:datatype='link'></field>
 			<field reporter:label='Check In Date/Time' name='checkin_time' reporter:datatype='timestamp'></field>
@@ -262,49 +262,49 @@
 			<field reporter:label='Checkin Workstation' name='checkin_workstation' reporter:datatype='link'></field>
 			<field reporter:label='Checkin Scan Date/Time' name='checkin_scan_time' reporter:datatype='timestamp'></field>
 			<field reporter:label='Parent Circulation' name='parent_circ' reporter:datatype='link'></field>
-			<field reporter:label='Transaction Billings' name='billings' oils_persist:virtual='true' reporter:datatype='link'></field>
-			<field reporter:label='Transaction Payments' name='payments' oils_persist:virtual='true' reporter:datatype='link'></field>
-			<field reporter:label='Base Transaction' name='billable_transaction' oils_persist:virtual='true' reporter:datatype='link'></field>
-			<field reporter:label='Circulation Type' name='circ_type' oils_persist:virtual='true' reporter:datatype='text'></field>
-			<field reporter:label='Billing Totals' name='billing_total' oils_persist:virtual='true' reporter:datatype='money'></field>
-			<field reporter:label='Payment Totals' name='payment_total' oils_persist:virtual='true' reporter:datatype='money'></field>
+			<field reporter:label='Transaction Billings' name='billings' reporter:datatype='link' oils_persist:virtual='true'></field>
+			<field reporter:label='Transaction Payments' name='payments' reporter:datatype='link' oils_persist:virtual='true'></field>
+			<field reporter:label='Base Transaction' name='billable_transaction' reporter:datatype='link' oils_persist:virtual='true'></field>
+			<field reporter:label='Circulation Type' name='circ_type' reporter:datatype='text' oils_persist:virtual='true'></field>
+			<field reporter:label='Billing Totals' name='billing_total' reporter:datatype='money' oils_persist:virtual='true'></field>
+			<field reporter:label='Payment Totals' name='payment_total' reporter:datatype='money' oils_persist:virtual='true'></field>
 			<field reporter:label='Unrecovered Debt' name='unrecovered' reporter:datatype='bool'></field>
 			<field reporter:label='Shelving Location' name='copy_location' reporter:datatype='link'></field>
-			<field reporter:label='Archived Patron Stat-Cat Entries' name='aaactsc_entries' oils_persist:virtual='true' reporter:datatype='link'></field>
-			<field reporter:label='Archived Copy Stat-Cat Entries' name='aaasc_entries' oils_persist:virtual='true' reporter:datatype='link'></field>
+			<field reporter:label='Archived Patron Stat-Cat Entries' name='aaactsc_entries' reporter:datatype='link' oils_persist:virtual='true'></field>
+			<field reporter:label='Archived Copy Stat-Cat Entries' name='aaasc_entries' reporter:datatype='link' oils_persist:virtual='true'></field>
 		</fields>
 		<links>
-			<link field='billable_transaction' reltype='might_have' key='id' map='' class='mbt'></link>
-			<link field='circ_staff' reltype='has_a' key='id' map='' class='au'></link>
-			<link field='checkin_lib' reltype='has_a' key='id' map='' class='aou'></link>
-			<link field='target_copy' reltype='has_a' key='id' map='' class='acp'></link>
-			<link field='checkin_staff' reltype='has_a' key='id' map='' class='au'></link>
-			<link field='usr' reltype='has_a' key='id' map='' class='au'></link>
-			<link field='circ_lib' reltype='has_a' key='id' map='' class='aou'></link>
-			<link field='payments' reltype='has_many' key='xact' map='' class='mp'></link>
-			<link field='billings' reltype='has_many' key='xact' map='' class='mb'></link>
-			<link field='duration_rule' reltype='has_a' key='name' map='' class='crcd'></link>
-			<link field='max_fine_rule' reltype='has_a' key='name' map='' class='crmf'></link>
-			<link field='recurring_fine_rule' reltype='has_a' key='name' map='' class='crrf'></link>
-			<link field='circ_type' reltype='might_have' key='id' map='' class='rcirct'></link>
-			<link field='billing_total' reltype='might_have' key='xact' map='' class='rxbt'></link>
-			<link field='payment_total' reltype='might_have' key='xact' map='' class='rxpt'></link>
-			<link field='workstation' reltype='has_a' key='id' map='' class='aws'></link>
-			<link field='checkin_workstation' reltype='has_a' key='id' map='' class='aws'></link>
-			<link field='parent_circ' reltype='has_a' key='id' map='' class='circ'></link>
-			<link field='renewals' reltype='has_many' key='parent_circ' map='' class='circ'></link>
-			<link field='copy_location' reltype='has_a' key='id' map='' class='acpl'></link>
-			<link field='aaactsc_entries' reltype='has_many' key='xact' map='' class='aaactsc'></link>
-			<link field='aaasc_entries' reltype='has_many' key='xact' map='' class='aaasc'></link>
+			<link field='billable_transaction' reltype='might_have' class='mbt' key='id' map=''></link>
+			<link field='circ_staff' reltype='has_a' class='au' key='id' map=''></link>
+			<link field='checkin_lib' reltype='has_a' class='aou' key='id' map=''></link>
+			<link field='target_copy' reltype='has_a' class='acp' key='id' map=''></link>
+			<link field='checkin_staff' reltype='has_a' class='au' key='id' map=''></link>
+			<link field='usr' reltype='has_a' class='au' key='id' map=''></link>
+			<link field='circ_lib' reltype='has_a' class='aou' key='id' map=''></link>
+			<link field='payments' reltype='has_many' class='mp' key='xact' map=''></link>
+			<link field='billings' reltype='has_many' class='mb' key='xact' map=''></link>
+			<link field='duration_rule' reltype='has_a' class='crcd' key='name' map=''></link>
+			<link field='max_fine_rule' reltype='has_a' class='crmf' key='name' map=''></link>
+			<link field='recurring_fine_rule' reltype='has_a' class='crrf' key='name' map=''></link>
+			<link field='circ_type' reltype='might_have' class='rcirct' key='id' map=''></link>
+			<link field='billing_total' reltype='might_have' class='rxbt' key='xact' map=''></link>
+			<link field='payment_total' reltype='might_have' class='rxpt' key='xact' map=''></link>
+			<link field='workstation' reltype='has_a' class='aws' key='id' map=''></link>
+			<link field='checkin_workstation' reltype='has_a' class='aws' key='id' map=''></link>
+			<link field='parent_circ' reltype='has_a' class='circ' key='id' map=''></link>
+			<link field='renewals' reltype='has_many' class='circ' key='parent_circ' map=''></link>
+			<link field='copy_location' reltype='has_a' class='acpl' key='id' map=''></link>
+			<link field='aaactsc_entries' reltype='has_many' class='aaactsc' key='xact' map=''></link>
+			<link field='aaasc_entries' reltype='has_many' class='aaasc' key='xact' map=''></link>
 		</links>
 		<permacrud xmlns='http://open-ils.org/spec/opensrf/IDL/permacrud/v1'>
 			<actions>
-				<retrieve permission='VIEW_CIRCULATIONS' context_field='circ_lib'></retrieve>
+				<retrieve context_field='circ_lib' permission='VIEW_CIRCULATIONS'></retrieve>
 			</actions>
 		</permacrud>
-	</class><class id='cbreb' controller='open-ils.cstore' oils_obj:fieldmapper='container::biblio_record_entry_bucket' oils_persist:tablename='container.biblio_record_entry_bucket' reporter:label='Bibliographic Record Entry Bucket'>
-		<fields oils_persist:primary='id' oils_persist:sequence='container.biblio_record_entry_bucket_id_seq'>
-			<field name='items' oils_persist:virtual='true' reporter:datatype='link'></field>
+	</class><class oils_obj:fieldmapper='container::biblio_record_entry_bucket' reporter:label='Bibliographic Record Entry Bucket' controller='open-ils.cstore' oils_persist:tablename='container.biblio_record_entry_bucket' id='cbreb'>
+		<fields oils_persist:sequence='container.biblio_record_entry_bucket_id_seq' oils_persist:primary='id'>
+			<field name='items' reporter:datatype='link' oils_persist:virtual='true'></field>
 			<field name='btype' reporter:datatype='text'></field>
 			<field name='id' reporter:datatype='id'></field>
 			<field name='name' reporter:datatype='text'></field>
@@ -314,20 +314,20 @@
 			<field name='create_time' reporter:datatype='timestamp'></field>
 		</fields>
 		<links>
-			<link field='owner' reltype='has_a' key='id' map='' class='au'></link>
-			<link field='items' reltype='has_many' key='bucket' map='' class='cbrebi'></link>
+			<link field='owner' reltype='has_a' class='au' key='id' map=''></link>
+			<link field='items' reltype='has_many' class='cbrebi' key='bucket' map=''></link>
 		</links>
-	</class><class id='cbrebn' controller='open-ils.cstore' oils_obj:fieldmapper='container::biblio_record_entry_bucket_note' oils_persist:tablename='container.biblio_record_entry_bucket_note' reporter:label='Bibliographic Record Entry Bucket Note'>
-		<fields oils_persist:primary='id' oils_persist:sequence='container.biblio_record_entry_bucket_note_id_seq'>
+	</class><class oils_obj:fieldmapper='container::biblio_record_entry_bucket_note' reporter:label='Bibliographic Record Entry Bucket Note' controller='open-ils.cstore' oils_persist:tablename='container.biblio_record_entry_bucket_note' id='cbrebn'>
+		<fields oils_persist:sequence='container.biblio_record_entry_bucket_note_id_seq' oils_persist:primary='id'>
 			<field name='id' reporter:datatype='id'></field>
 			<field name='bucket' reporter:datatype='link'></field>
 			<field name='note' reporter:datatype='text'></field>
 		</fields>
 		<links>
-			<link field='bucket' reltype='has_a' key='id' map='' class='cbreb'></link>
+			<link field='bucket' reltype='has_a' class='cbreb' key='id' map=''></link>
 		</links>
-	</class><class id='ahr' controller='open-ils.cstore open-ils.pcrud' oils_obj:fieldmapper='action::hold_request' oils_persist:tablename='action.hold_request' reporter:core='true' reporter:label='Hold Request'>
-		<fields oils_persist:primary='id' oils_persist:sequence='action.hold_request_id_seq'>
+	</class><class reporter:label='Hold Request' oils_persist:tablename='action.hold_request' reporter:core='true' oils_obj:fieldmapper='action::hold_request' controller='open-ils.cstore open-ils.pcrud' id='ahr'>
+		<fields oils_persist:sequence='action.hold_request_id_seq' oils_persist:primary='id'>
 			<field reporter:label='Status' name='status' oils_persist:virtual='true'></field>
 			<field reporter:label='Transit' name='transit' oils_persist:virtual='true'></field>
 			<field reporter:label='Capture Date/Time' name='capture_time' reporter:datatype='timestamp'></field>
@@ -353,11 +353,11 @@
 			<field reporter:label='Target Object ID' name='target' reporter:datatype='link'></field>
 			<field reporter:label='Hold User' name='usr' reporter:datatype='link'></field>
 			<field reporter:label='Hold Cancel Date/Time' name='cancel_time' reporter:datatype='timestamp'></field>
-			<field reporter:label='Notify Time' name='notify_time' oils_persist:virtual='true' reporter:datatype='timestamp'></field>
-			<field reporter:label='Notify Count' name='notify_count' oils_persist:virtual='true' reporter:datatype='int'></field>
-			<field reporter:label='Notifications' name='notifications' oils_persist:virtual='true' reporter:datatype='link'></field>
-			<field reporter:label='Bib Record link' name='bib_rec' oils_persist:virtual='true' reporter:datatype='link'></field>
-			<field reporter:label='Eligible Copies' name='eligible_copies' oils_persist:virtual='true' reporter:datatype='link'></field>
+			<field reporter:label='Notify Time' name='notify_time' reporter:datatype='timestamp' oils_persist:virtual='true'></field>
+			<field reporter:label='Notify Count' name='notify_count' reporter:datatype='int' oils_persist:virtual='true'></field>
+			<field reporter:label='Notifications' name='notifications' reporter:datatype='link' oils_persist:virtual='true'></field>
+			<field reporter:label='Bib Record link' name='bib_rec' reporter:datatype='link' oils_persist:virtual='true'></field>
+			<field reporter:label='Eligible Copies' name='eligible_copies' reporter:datatype='link' oils_persist:virtual='true'></field>
 			<field reporter:label='Currently Frozen' name='frozen' reporter:datatype='bool'></field>
 			<field reporter:label='Thaw Date (if frozen)' name='thaw_date' reporter:datatype='timestamp'></field>
 			<field reporter:label='Shelf Time' name='shelf_time' reporter:datatype='timestamp'></field>
@@ -368,67 +368,68 @@
 			<field reporter:label='Shelf Expire Time' name='shelf_expire_time' reporter:datatype='timestamp'></field>
 			<field reporter:label='Notes' name='notes' reporter:datatype='link' oils_persist:virtual='true'></field>
 			<field reporter:label='Current Shelf Lib' name='current_shelf_lib' reporter:datatype='org_unit'></field>
+			<field reporter:label='Behind Desk' name='behind_desk' reporter:datatype='bool'></field>
 		</fields>
 		<links>
-			<link field='fulfillment_lib' reltype='has_a' key='id' map='' class='aou'></link>
-			<link field='fulfillment_staff' reltype='has_a' key='id' map='' class='au'></link>
-			<link field='pickup_lib' reltype='has_a' key='id' map='' class='aou'></link>
-			<link field='selection_ou' reltype='has_a' key='id' map='' class='aou'></link>
-			<link field='requestor' reltype='has_a' key='id' map='' class='au'></link>
-			<link field='current_copy' reltype='has_a' key='id' map='' class='acp'></link>
-			<link field='usr' reltype='has_a' key='id' map='' class='au'></link>
-			<link field='request_lib' reltype='has_a' key='id' map='' class='aou'></link>
-			<link field='transit' reltype='might_have' key='hold' map='' class='ahtc'></link>
-			<link field='notifications' reltype='has_many' key='hold' map='' class='ahn'></link>
-			<link field='eligible_copies' reltype='has_many' key='hold' map='target_copy' class='ahcm'></link>
-			<link field='bib_rec' reltype='might_have' key='id' map='' class='rhrr'></link>
-			<link field='cancel_cause' reltype='might_have' key='id' map='' class='ahrcc'></link>
-			<link field='notes' reltype='has_many' key='hold' map='' class='ahrn'></link>
-			<link field='current_shelf_lib' reltype='has_a' key='id' map='' class='aou'></link>
-			<link field='sms_carrier' reltype='has_a' key='id' map='' class='csc'></link>
+			<link field='fulfillment_lib' reltype='has_a' class='aou' key='id' map=''></link>
+			<link field='fulfillment_staff' reltype='has_a' class='au' key='id' map=''></link>
+			<link field='pickup_lib' reltype='has_a' class='aou' key='id' map=''></link>
+			<link field='selection_ou' reltype='has_a' class='aou' key='id' map=''></link>
+			<link field='requestor' reltype='has_a' class='au' key='id' map=''></link>
+			<link field='current_copy' reltype='has_a' class='acp' key='id' map=''></link>
+			<link field='usr' reltype='has_a' class='au' key='id' map=''></link>
+			<link field='request_lib' reltype='has_a' class='aou' key='id' map=''></link>
+			<link field='transit' reltype='might_have' class='ahtc' key='hold' map=''></link>
+			<link field='notifications' reltype='has_many' class='ahn' key='hold' map=''></link>
+			<link field='eligible_copies' reltype='has_many' class='ahcm' key='hold' map='target_copy'></link>
+			<link field='bib_rec' reltype='might_have' class='rhrr' key='id' map=''></link>
+			<link field='cancel_cause' reltype='might_have' class='ahrcc' key='id' map=''></link>
+			<link field='notes' reltype='has_many' class='ahrn' key='hold' map=''></link>
+			<link field='current_shelf_lib' reltype='has_a' class='aou' key='id' map=''></link>
+			<link field='sms_carrier' reltype='has_a' class='csc' key='id' map=''></link>
 		</links>
 		<permacrud xmlns='http://open-ils.org/spec/opensrf/IDL/permacrud/v1'>
 			<actions>
-				<retrieve permission='VIEW_HOLD' context_field='pickup_lib'></retrieve>
+				<retrieve context_field='pickup_lib' permission='VIEW_HOLD'></retrieve>
 			</actions>
 		</permacrud>
-	</class><class id='mbt' controller='open-ils.cstore' oils_obj:fieldmapper='money::billable_transaction' oils_persist:tablename='money.billable_xact' reporter:label='Billable Transaction'>
-		<fields oils_persist:primary='id' oils_persist:sequence='money.billable_xact_id_seq'>
+	</class><class oils_obj:fieldmapper='money::billable_transaction' reporter:label='Billable Transaction' controller='open-ils.cstore' oils_persist:tablename='money.billable_xact' id='mbt'>
+		<fields oils_persist:sequence='money.billable_xact_id_seq' oils_persist:primary='id'>
 			<field reporter:label='Transaction ID' name='id' reporter:datatype='id'></field>
 			<field reporter:label='User' name='usr' reporter:datatype='link'></field>
 			<field reporter:label='Transaction Finish Date/Time' name='xact_finish' reporter:datatype='timestamp'></field>
 			<field reporter:label='Transaction Start Date/Time' name='xact_start' reporter:datatype='timestamp'></field>
 			<field reporter:label='Unrecovered Debt' name='unrecovered' reporter:datatype='bool'></field>
-			<field reporter:label='Grocery Billing link' name='grocery' oils_persist:virtual='true' reporter:datatype='link'></field>
-			<field reporter:label='Circulation Billing link' name='circulation' oils_persist:virtual='true' reporter:datatype='link'></field>
-			<field reporter:label='Billing Line Items' name='billings' oils_persist:virtual='true' reporter:datatype='link'></field>
-			<field reporter:label='Payment Line Items' name='payments' oils_persist:virtual='true' reporter:datatype='link'></field>
-			<field reporter:label='Billing Totals' name='billing_total' oils_persist:virtual='true' reporter:datatype='money'></field>
-			<field reporter:label='Payment Totals' name='payment_total' oils_persist:virtual='true' reporter:datatype='money'></field>
-			<field reporter:label='Payment Summary' name='summary' oils_persist:virtual='true' reporter:datatype='link'></field>
+			<field reporter:label='Grocery Billing link' name='grocery' reporter:datatype='link' oils_persist:virtual='true'></field>
+			<field reporter:label='Circulation Billing link' name='circulation' reporter:datatype='link' oils_persist:virtual='true'></field>
+			<field reporter:label='Billing Line Items' name='billings' reporter:datatype='link' oils_persist:virtual='true'></field>
+			<field reporter:label='Payment Line Items' name='payments' reporter:datatype='link' oils_persist:virtual='true'></field>
+			<field reporter:label='Billing Totals' name='billing_total' reporter:datatype='money' oils_persist:virtual='true'></field>
+			<field reporter:label='Payment Totals' name='payment_total' reporter:datatype='money' oils_persist:virtual='true'></field>
+			<field reporter:label='Payment Summary' name='summary' reporter:datatype='link' oils_persist:virtual='true'></field>
 		</fields>
 		<links>
-			<link field='grocery' reltype='might_have' key='id' map='' class='mg'></link>
-			<link field='circulation' reltype='might_have' key='id' map='' class='circ'></link>
-			<link field='usr' reltype='has_a' key='id' map='' class='au'></link>
-			<link field='payments' reltype='has_many' key='xact' map='' class='mp'></link>
-			<link field='billings' reltype='has_many' key='xact' map='' class='mb'></link>
-			<link field='billing_total' reltype='might_have' key='xact' map='' class='rxbt'></link>
-			<link field='payment_total' reltype='might_have' key='xact' map='' class='rxpt'></link>
-			<link field='summary' reltype='might_have' key='id' map='' class='mbts'></link>
+			<link field='grocery' reltype='might_have' class='mg' key='id' map=''></link>
+			<link field='circulation' reltype='might_have' class='circ' key='id' map=''></link>
+			<link field='usr' reltype='has_a' class='au' key='id' map=''></link>
+			<link field='payments' reltype='has_many' class='mp' key='xact' map=''></link>
+			<link field='billings' reltype='has_many' class='mb' key='xact' map=''></link>
+			<link field='billing_total' reltype='might_have' class='rxbt' key='xact' map=''></link>
+			<link field='payment_total' reltype='might_have' class='rxpt' key='xact' map=''></link>
+			<link field='summary' reltype='might_have' class='mbts' key='id' map=''></link>
 		</links>
-	</class><class id='mus' controller='open-ils.cstore' oils_obj:fieldmapper='money::user_summary' oils_persist:tablename='money.usr_summary' reporter:label='User Summary'>
-		<fields oils_persist:primary='usr' oils_persist:sequence=''>
+	</class><class oils_obj:fieldmapper='money::user_summary' reporter:label='User Summary' controller='open-ils.cstore' oils_persist:tablename='money.usr_summary' id='mus'>
+		<fields oils_persist:sequence='' oils_persist:primary='usr'>
 			<field name='balance_owed' reporter:datatype='money'></field>
 			<field name='total_owed' reporter:datatype='money'></field>
 			<field name='total_paid' reporter:datatype='money'></field>
 			<field name='usr' reporter:datatype='link'></field>
 		</fields>
 		<links>
-			<link field='usr' reltype='has_a' key='id' map='' class='au'></link>
+			<link field='usr' reltype='has_a' class='au' key='id' map=''></link>
 		</links>
-	</class><class id='acp' controller='open-ils.cstore open-ils.pcrud' oils_obj:fieldmapper='asset::copy' oils_persist:tablename='asset.copy' reporter:core='true' reporter:label='Item'>
-		<fields oils_persist:primary='id' oils_persist:sequence='asset.copy_id_seq'>
+	</class><class reporter:label='Item' oils_persist:tablename='asset.copy' reporter:core='true' oils_obj:fieldmapper='asset::copy' controller='open-ils.cstore open-ils.pcrud' id='acp'>
+		<fields oils_persist:sequence='asset.copy_id_seq' oils_persist:primary='id'>
 			<field reporter:label='Age Hold Protection' name='age_protect' reporter:datatype='link'></field>
 			<field reporter:label='Alert Message' name='alert_message' reporter:datatype='text'></field>
 			<field reporter:label='Barcode' name='barcode' reporter:datatype='text'></field>
@@ -460,80 +461,81 @@
 			<field reporter:label='Copy Status' name='status' reporter:datatype='link'></field>
 			<field reporter:label='Copy Status Changed Time' name='status_changed_time' reporter:datatype='timestamp'></field>
 			<field reporter:label='Is Mint Condition' name='mint_condition' reporter:datatype='bool'></field>
-			<field reporter:label='Is Floating' name='floating' reporter:datatype='bool'></field>
+			<field reporter:label='Floating Group' name='floating' reporter:datatype='link'></field>
 			<field reporter:label='Cost' name='cost' reporter:datatype='money'></field>
-			<field reporter:label='Copy Notes' name='notes' oils_persist:virtual='true' reporter:datatype='link'></field>
-			<field reporter:label='Stat-Cat entry maps' name='stat_cat_entry_copy_maps' oils_persist:virtual='true' reporter:datatype='link'></field>
-			<field reporter:label='Circulations' name='circulations' oils_persist:virtual='true' reporter:datatype='link'></field>
-			<field reporter:label='Total Circulations' name='total_circ_count' oils_persist:virtual='true' reporter:datatype='link'></field>
-			<field reporter:label='Last Circulation Date' name='last_circ' oils_persist:virtual='true' reporter:datatype='link'></field>
-			<field reporter:label='Holds' name='holds' oils_persist:virtual='true' reporter:datatype='link'></field>
-			<field reporter:label='Statistical Category Entries' name='stat_cat_entries' oils_persist:virtual='true' reporter:datatype='link'></field>
-			<field reporter:label='Monograph Parts' name='parts' oils_persist:virtual='true' reporter:datatype='link'></field>
-			<field reporter:label='Peer Record Maps' name='peer_record_maps' oils_persist:virtual='true' reporter:datatype='link'></field>
-			<field reporter:label='Peer Records' name='peer_records' oils_persist:virtual='true' reporter:datatype='link'></field>
-			<field reporter:label='Last Captured Hold' name='last_captured_hold' oils_persist:virtual='true' reporter:datatype='link'></field>
+			<field reporter:label='Copy Notes' name='notes' reporter:datatype='link' oils_persist:virtual='true'></field>
+			<field reporter:label='Stat-Cat entry maps' name='stat_cat_entry_copy_maps' reporter:datatype='link' oils_persist:virtual='true'></field>
+			<field reporter:label='Circulations' name='circulations' reporter:datatype='link' oils_persist:virtual='true'></field>
+			<field reporter:label='Total Circulations' name='total_circ_count' reporter:datatype='link' oils_persist:virtual='true'></field>
+			<field reporter:label='Last Circulation Date' name='last_circ' reporter:datatype='link' oils_persist:virtual='true'></field>
+			<field reporter:label='Holds' name='holds' reporter:datatype='link' oils_persist:virtual='true'></field>
+			<field reporter:label='Statistical Category Entries' name='stat_cat_entries' reporter:datatype='link' oils_persist:virtual='true'></field>
+			<field reporter:label='Monograph Parts' name='parts' reporter:datatype='link' oils_persist:virtual='true'></field>
+			<field reporter:label='Peer Record Maps' name='peer_record_maps' reporter:datatype='link' oils_persist:virtual='true'></field>
+			<field reporter:label='Peer Records' name='peer_records' reporter:datatype='link' oils_persist:virtual='true'></field>
+			<field reporter:label='Last Captured Hold' name='last_captured_hold' reporter:datatype='link' oils_persist:virtual='true'></field>
 		</fields>
 		<links>
-			<link field='age_protect' reltype='has_a' key='id' map='' class='crahp'></link>
-			<link field='call_number' reltype='has_a' key='id' map='' class='acn'></link>
-			<link field='location' reltype='has_a' key='id' map='' class='acpl'></link>
-			<link field='editor' reltype='has_a' key='id' map='' class='au'></link>
-			<link field='creator' reltype='has_a' key='id' map='' class='au'></link>
-			<link field='status' reltype='has_a' key='id' map='' class='ccs'></link>
-			<link field='circ_lib' reltype='has_a' key='id' map='' class='aou'></link>
-			<link field='holds' reltype='has_many' key='target_copy' map='hold' class='ahcm'></link>
-			<link field='stat_cat_entry_copy_maps' reltype='has_many' key='owning_copy' map='' class='ascecm'></link>
-			<link field='notes' reltype='has_many' key='owning_copy' map='' class='acpn'></link>
-			<link field='stat_cat_entries' reltype='has_many' key='owning_copy' map='stat_cat_entry' class='ascecm'></link>
-			<link field='circulations' reltype='has_many' key='target_copy' map='' class='circ'></link>
-			<link field='total_circ_count' reltype='might_have' key='id' map='' class='erfcc'></link>
-			<link field='last_circ' reltype='might_have' key='id' map='' class='rlc'></link>
-			<link field='circ_modifier' reltype='has_a' key='code' map='' class='ccm'></link>
-			<link field='parts' reltype='has_many' key='target_copy' map='part' class='acpm'></link>
-			<link field='peer_record_maps' reltype='has_many' key='target_copy' map='' class='bpbcm'></link>
-			<link field='peer_records' reltype='has_many' key='target_copy' map='peer_record' class='bpbcm'></link>
-			<link field='last_captured_hold' reltype='has_a' key='current_copy' map='' class='alhr'></link>
+			<link field='age_protect' reltype='has_a' class='crahp' key='id' map=''></link>
+			<link field='call_number' reltype='has_a' class='acn' key='id' map=''></link>
+			<link field='location' reltype='has_a' class='acpl' key='id' map=''></link>
+			<link field='editor' reltype='has_a' class='au' key='id' map=''></link>
+			<link field='creator' reltype='has_a' class='au' key='id' map=''></link>
+			<link field='status' reltype='has_a' class='ccs' key='id' map=''></link>
+			<link field='circ_lib' reltype='has_a' class='aou' key='id' map=''></link>
+			<link field='holds' reltype='has_many' class='ahcm' key='target_copy' map='hold'></link>
+			<link field='stat_cat_entry_copy_maps' reltype='has_many' class='ascecm' key='owning_copy' map=''></link>
+			<link field='notes' reltype='has_many' class='acpn' key='owning_copy' map=''></link>
+			<link field='stat_cat_entries' reltype='has_many' class='ascecm' key='owning_copy' map='stat_cat_entry'></link>
+			<link field='circulations' reltype='has_many' class='circ' key='target_copy' map=''></link>
+			<link field='total_circ_count' reltype='might_have' class='erfcc' key='id' map=''></link>
+			<link field='last_circ' reltype='might_have' class='rlc' key='id' map=''></link>
+			<link field='circ_modifier' reltype='has_a' class='ccm' key='code' map=''></link>
+			<link field='parts' reltype='has_many' class='acpm' key='target_copy' map='part'></link>
+			<link field='peer_record_maps' reltype='has_many' class='bpbcm' key='target_copy' map=''></link>
+			<link field='peer_records' reltype='has_many' class='bpbcm' key='target_copy' map='peer_record'></link>
+			<link field='last_captured_hold' reltype='has_a' class='alhr' key='current_copy' map=''></link>
+			<link field='floating' reltype='has_a' class='cfg' key='id' map=''></link>
 		</links>
         <permacrud xmlns='http://open-ils.org/spec/opensrf/IDL/permacrud/v1'>
             <actions>
                 <create permission='CREATE_COPY'>
-                    <context link='call_number' field='owning_lib'></context>
+                    <context field='owning_lib' link='call_number'></context>
                 </create>
                 <retrieve></retrieve>
                 <update permission='UPDATE_COPY'>
-                    <context link='call_number' field='owning_lib'></context>
+                    <context field='owning_lib' link='call_number'></context>
                 </update>
                 <delete permission='DELETE_COPY'>
-                    <context link='call_number' field='owning_lib'></context>
+                    <context field='owning_lib' link='call_number'></context>
                 </delete>
             </actions>
         </permacrud>
-	</class><class id='cbrebi' controller='open-ils.cstore' oils_obj:fieldmapper='container::biblio_record_entry_bucket_item' oils_persist:tablename='container.biblio_record_entry_bucket_item' reporter:label='Biblio Record Entry Bucket Item'>
-		<fields oils_persist:primary='id' oils_persist:sequence='container.biblio_record_entry_bucket_item_id_seq'>
+	</class><class oils_obj:fieldmapper='container::biblio_record_entry_bucket_item' reporter:label='Biblio Record Entry Bucket Item' controller='open-ils.cstore' oils_persist:tablename='container.biblio_record_entry_bucket_item' id='cbrebi'>
+		<fields oils_persist:sequence='container.biblio_record_entry_bucket_item_id_seq' oils_persist:primary='id'>
 			<field name='bucket' reporter:datatype='link'></field>
 			<field name='id' reporter:datatype='id'></field>
 			<field name='target_biblio_record_entry' reporter:datatype='link'></field>
 			<field name='create_time' reporter:datatype='timestamp'></field>
 			<field name='pos' reporter:datatype='int'></field>
-			<field name='notes' oils_persist:virtual='true' reporter:datatype='link'></field>
+			<field name='notes' reporter:datatype='link' oils_persist:virtual='true'></field>
 		</fields>
 		<links>
-			<link field='target_biblio_record_entry' reltype='has_a' key='id' map='' class='bre'></link>
-			<link field='bucket' reltype='has_a' key='id' map='' class='cbreb'></link>
-            <link field='notes' reltype='has_many' map='' key='item' class='cbrebin'></link>
+			<link field='target_biblio_record_entry' reltype='has_a' class='bre' key='id' map=''></link>
+			<link field='bucket' reltype='has_a' class='cbreb' key='id' map=''></link>
+            <link field='notes' reltype='has_many' class='cbrebin' key='item' map=''></link>
 		</links>
-	</class><class id='cbrebin' controller='open-ils.cstore' oils_obj:fieldmapper='container::biblio_record_entry_bucket_item_note' oils_persist:tablename='container.biblio_record_entry_bucket_item_note' reporter:label='Biblio Record Entry Bucket Item Note'>
-		<fields oils_persist:primary='id' oils_persist:sequence='container.biblio_record_entry_bucket_item_note_id_seq'>
+	</class><class oils_obj:fieldmapper='container::biblio_record_entry_bucket_item_note' reporter:label='Biblio Record Entry Bucket Item Note' controller='open-ils.cstore' oils_persist:tablename='container.biblio_record_entry_bucket_item_note' id='cbrebin'>
+		<fields oils_persist:sequence='container.biblio_record_entry_bucket_item_note_id_seq' oils_persist:primary='id'>
 			<field name='id' reporter:datatype='id'></field>
 			<field name='item' reporter:datatype='link'></field>
 			<field name='note' reporter:datatype='text'></field>
 		</fields>
 		<links>
-			<link field='item' reltype='has_a' key='id' map='' class='cbrebi'></link>
+			<link field='item' reltype='has_a' class='cbrebi' key='id' map=''></link>
 		</links>
-	</class><class id='ahtc' controller='open-ils.cstore open-ils.pcrud' oils_obj:fieldmapper='action::hold_transit_copy' oils_persist:tablename='action.hold_transit_copy' reporter:core='true' reporter:label='Hold Transit'>
-		<fields oils_persist:primary='id' oils_persist:sequence='action.transit_copy_id_seq'>
+	</class><class reporter:label='Hold Transit' oils_persist:tablename='action.hold_transit_copy' reporter:core='true' oils_obj:fieldmapper='action::hold_transit_copy' controller='open-ils.cstore open-ils.pcrud' id='ahtc'>
+		<fields oils_persist:sequence='action.transit_copy_id_seq' oils_persist:primary='id'>
 			<field reporter:label='Copy Status at Transit' name='copy_status' reporter:datatype='link'></field>
 			<field reporter:label='Destination Library' name='dest' reporter:datatype='org_unit'></field>
 			<field reporter:label='Receive Date/Time' name='dest_recv_time' reporter:datatype='timestamp'></field>
@@ -544,26 +546,26 @@
 			<field reporter:label='Sending Library' name='source' reporter:datatype='org_unit'></field>
 			<field reporter:label='Send Date/Time' name='source_send_time' reporter:datatype='timestamp'></field>
 			<field reporter:label='Transited Copy' name='target_copy' reporter:datatype='link'></field>
-			<field reporter:label='Base Transit' name='transit_copy' oils_persist:virtual='true' reporter:datatype='link'></field>
+			<field reporter:label='Base Transit' name='transit_copy' reporter:datatype='link' oils_persist:virtual='true'></field>
 			<field reporter:label='Prev Destination Library' name='prev_dest' reporter:datatype='org_unit'></field>
 		</fields>
 		<links>
-			<link field='transit_copy' reltype='might_have' key='id' map='' class='atc'></link>
-			<link field='target_copy' reltype='has_a' key='id' map='' class='acp'></link>
-			<link field='source' reltype='has_a' key='id' map='' class='aou'></link>
-			<link field='copy_status' reltype='has_a' key='id' map='' class='ccs'></link>
-			<link field='dest' reltype='has_a' key='id' map='' class='aou'></link>
-			<link field='prev_dest' reltype='has_a' key='id' map='' class='aou'></link>
-			<link field='hold' reltype='has_a' key='id' map='' class='ahr'></link>
+			<link field='transit_copy' reltype='might_have' class='atc' key='id' map=''></link>
+			<link field='target_copy' reltype='has_a' class='acp' key='id' map=''></link>
+			<link field='source' reltype='has_a' class='aou' key='id' map=''></link>
+			<link field='copy_status' reltype='has_a' class='ccs' key='id' map=''></link>
+			<link field='dest' reltype='has_a' class='aou' key='id' map=''></link>
+			<link field='prev_dest' reltype='has_a' class='aou' key='id' map=''></link>
+			<link field='hold' reltype='has_a' class='ahr' key='id' map=''></link>
 		</links>
         <permacrud xmlns='http://open-ils.org/spec/opensrf/IDL/permacrud/v1'>
             <actions>
-                <create permission='TRANSIT_COPY' context_field='owner'>
-                    <context link='target_copy' field='circ_lib'></context>
+                <create context_field='owner' permission='TRANSIT_COPY'>
+                    <context field='circ_lib' link='target_copy'></context>
                 </create>
                 <retrieve></retrieve>
-                <update permission='UPDATE_TRANSIT' context_field='dest source'></update>
-                <delete permission='DELETE_TRANSIT' context_field='dest source'></delete>
+                <update context_field='dest source' permission='UPDATE_TRANSIT'></update>
+                <delete context_field='dest source' permission='DELETE_TRANSIT'></delete>
             </actions>
         </permacrud>
 	</class></IDL>
