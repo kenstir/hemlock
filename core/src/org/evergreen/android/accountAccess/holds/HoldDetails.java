@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
+import android.util.Log;
 import org.evergreen.android.R;
 import org.evergreen.android.accountAccess.AccountAccess;
 import org.evergreen.android.accountAccess.SessionNotFoundException;
@@ -59,6 +60,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 public class HoldDetails extends Activity {
+
+    private final String TAG = HoldDetails.class.getName();
 
     public static final int RESULT_CODE_DELETE_HOLD = 5;
 
@@ -152,7 +155,7 @@ public class HoldDetails extends Activity {
         final HoldRecord record = (HoldRecord) getIntent()
                 .getSerializableExtra("holdRecord");
 
-        System.out.println("Record " + record + " " + record.title + " "
+        Log.d(TAG, "Record " + record + " " + record.title + " "
                 + record.ahr);
 
         accountAccess = AccountAccess.getAccountAccess();
@@ -194,7 +197,7 @@ public class HoldDetails extends Activity {
         if (record.thaw_date == null)
             disableView(thaw_date_edittext);
 
-        System.out.println(record.title + " " + record.author);
+        Log.d(TAG, record.title + " " + record.author);
 
         back.setOnClickListener(new OnClickListener() {
             @Override
@@ -222,7 +225,7 @@ public class HoldDetails extends Activity {
                             public void onClick(DialogInterface dialog,
                                     int which) {
 
-                                System.out.println("Remove hold with id"
+                                Log.d(TAG, "Remove hold with id"
                                         + record.ahr.getInt("id"));
 
                                 progressDialog = ProgressDialog.show(context,
@@ -242,8 +245,7 @@ public class HoldDetails extends Activity {
                                                             accountAccess
                                                                     .cancelHold(record.ahr);
                                                     } catch (Exception eauth) {
-                                                        System.out
-                                                                .println("Exception in reAuth");
+                                                        Log.d(TAG, "Exception in reAuth");
                                                     }
                                                 }
 
@@ -291,7 +293,7 @@ public class HoldDetails extends Activity {
                                     suspendHold.isChecked(), expire_date_s,
                                     thaw_date_s);
                     } catch (Exception eauth) {
-                        System.out.println("Exception in reAuth");
+                        Log.d(TAG, "Exception in reAuth");
                     }
                 }
 

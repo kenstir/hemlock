@@ -32,7 +32,7 @@ import android.util.Log;
 
 public class NotificationReceiver extends BroadcastReceiver {
 
-    private String TAG = "NotificationManager";
+    private final String TAG = NotificationReceiver.class.getName();
     public static final int NOTIFICATION_ID = 1;
 
     @Override

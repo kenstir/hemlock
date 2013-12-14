@@ -99,18 +99,18 @@ public class EvergreenAuthenticator {
         
         // parse response
         String textcode = ((Map<String, String>) resp).get("textcode");
-        System.out.println("textcode: " + textcode);
+        Log.d(TAG, "textcode: " + textcode);
         if (textcode.equals("SUCCESS")) {
             Object payload = ((Map<String, String>) resp).get("payload");
-            System.out.println("payload: " + payload);
+            Log.d(TAG, "payload: " + payload);
             String authtoken = ((Map<String, String>) payload).get("authtoken");
-            System.out.println("authtoken: " + authtoken);
+            Log.d(TAG, "authtoken: " + authtoken);
             Integer authtime = ((Map<String, Integer>) payload).get("authtime");
-            System.out.println("authtime: " + authtime);
+            Log.d(TAG, "authtime: " + authtime);
             return authtoken;
         } else if (textcode.equals("LOGIN_FAILED")) {
             String desc = ((Map<String, String>) resp).get("desc");
-            System.out.println("desc: "+desc);
+            Log.d(TAG, "desc: "+desc);
             if (!TextUtils.isEmpty(desc)) {
                 throw new AuthenticationException(desc);
             }

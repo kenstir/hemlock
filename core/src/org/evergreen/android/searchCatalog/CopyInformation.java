@@ -19,6 +19,8 @@
  */
 package org.evergreen.android.searchCatalog;
 
+import android.util.Log;
+
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -29,10 +31,9 @@ import java.util.Set;
 
 public class CopyInformation implements Serializable {
 
-    /**
-	 * 
-	 */
     private static final long serialVersionUID = -7269334218707079463L;
+
+    private final String TAG = CopyInformation.class.getName();
 
     public Integer org_id = -1;
 
@@ -71,7 +72,7 @@ public class CopyInformation implements Serializable {
             if (hashValCopy.containsKey(entry.getKey())) {
                 statusInformation.put(entry.getValue(),
                         hashValCopy.get(entry.getKey()) + "");
-                System.out.println("Added " + entry.getKey() + " "
+                Log.d(TAG, "Added " + entry.getKey() + " "
                         + entry.getValue() + " "
                         + hashValCopy.get(entry.getKey()));
             }

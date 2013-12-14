@@ -72,7 +72,7 @@ import android.widget.Toast;
 
 public class SearchCatalogListView extends Activity {
 
-    private String TAG = "SearchCatalogListView";
+    private final String TAG = SearchCatalogListView.class.getName();
 
     private ArrayList<RecordInfo> recordList;
 
@@ -437,7 +437,7 @@ public class SearchCatalogListView extends Activity {
 
                                                 // don't clear record list
                                                 // recordList.clear();
-                                                System.out.println("Returned "
+                                                Log.d(TAG, "Returned "
                                                         + searchResults.size()
                                                         + " elements from search");
                                                 if (searchResults.size() > 0) {
@@ -508,7 +508,7 @@ public class SearchCatalogListView extends Activity {
             homeLibrary = AccountAccess.getAccountAccess().getHomeLibraryID();
         }
         ArrayList<String> list = new ArrayList<String>();
-        Log.d("kcxxx", "Org scanning ...");
+        Log.d(TAG, "Org scanning ...");
         if (globalConfigs.organisations != null) {
             for (int i = 0; i < globalConfigs.organisations.size(); i++) {
                 Organisation org = globalConfigs.organisations.get(i);
@@ -517,7 +517,7 @@ public class SearchCatalogListView extends Activity {
                     selectedPos = i;
             }
         }
-        Log.d("kcxxx", "Org scanning ...done");
+        Log.d(TAG, "Org scanning ...done");
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
                 layout.spinner_layout, list);
         choseOrganisation = (Spinner) findViewById(R.id.chose_organisation);

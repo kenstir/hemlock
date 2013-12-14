@@ -178,9 +178,6 @@ public class IDLParser {
             HashMap fields = current.getFields();
             String fieldNames[] = new String[fields.size()];
 
-            if (current.getIDLClass().equals("payments_combined_detail") || current.getIDLClass().equals("ahr")) {
-                System.out.println("kcxxx");
-            }
             for(Iterator itr = fields.keySet().iterator(); itr.hasNext(); ) {
                 String key = (String) itr.next();
                 IDLField field = (IDLField) fields.get(key);

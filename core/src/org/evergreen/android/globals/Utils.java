@@ -69,7 +69,7 @@ public class Utils {
             HttpGet request = new HttpGet(url);
             response = client.execute(request);
         } catch (Exception e) {
-            System.out.println("Exception to GET page " + url);
+            Log.d(TAG, "Exception to GET page " + url);
         }
         StringBuilder str = null;
 
@@ -104,7 +104,7 @@ public class Utils {
             HttpGet request = new HttpGet(url);
             response = client.execute(request);
         } catch (Exception e) {
-            System.out.println("Exception to GET page " + url);
+            Log.d(TAG, "Exception to GET page " + url);
         }
 
         try {
@@ -251,10 +251,10 @@ public class Utils {
 
         Method method = new Method(methodName);
 
-        System.out.println("doRequest Method :" + methodName + ":");
+        Log.d(TAG, "doRequest Method :" + methodName + ":");
         for (int i = 0; i < params.length; i++) {
             method.addParam(params[i]);
-            System.out.println("Param " + i + ": " + params[i]);
+            Log.d(TAG, "Param " + i + ": " + params[i]);
         }
 
         // sync request
@@ -262,7 +262,7 @@ public class Utils {
         Object resp;
 
         while ((resp = req.recv()) != null) {
-            System.out.println("Sync Response: " + resp);
+            Log.d(TAG, "Sync Response: " + resp);
             Object response = (Object) resp;
 
             return response;
@@ -283,10 +283,10 @@ public class Utils {
         }
 
         Method method = new Method(methodName);
-        System.out.println("doRequestSimple Method :" + methodName);
+        Log.d(TAG, "doRequestSimple Method :" + methodName);
         for (int i = 0; i < params.length; i++) {
             method.addParam(params[i]);
-            System.out.println("Param " + i + ":" + params[i]);
+            Log.d(TAG, "Param " + i + ":" + params[i]);
         }
 
         // sync request
@@ -294,7 +294,7 @@ public class Utils {
         Object resp;
 
         while ((resp = req.recv()) != null) {
-            System.out.println("Sync Response: " + resp);
+            Log.d(TAG, "Sync Response: " + resp);
             Object response = (Object) resp;
 
             return response;

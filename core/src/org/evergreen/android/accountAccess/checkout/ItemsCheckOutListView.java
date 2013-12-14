@@ -54,7 +54,7 @@ import android.widget.Toast;
 
 public class ItemsCheckOutListView extends Activity {
 
-    private String TAG = ItemsCheckOutListView.class.getName();
+    private final String TAG = ItemsCheckOutListView.class.getName();
 
     private AccountAccess accountAccess = null;
 

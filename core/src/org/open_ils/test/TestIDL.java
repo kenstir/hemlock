@@ -8,7 +8,6 @@ public class TestIDL {
         String idlFile = "fm_IDL.xml";
         IDLParser parser = new IDLParser(idlFile);
         parser.parse();
-        //System.out.print(parser.toXML());
 
         OSRFObject bre = new OSRFObject("bre");
         bre.put("id", new Integer(1));
