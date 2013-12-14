@@ -35,7 +35,6 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -68,13 +67,10 @@ public class AdvancedSearchActivity extends Activity {
 
         setContentView(R.layout.advanced_search);
 
-        // header portion actions
-        homeButton = (Button) findViewById(R.id.library_logo);
-        myAccountButton = (Button) findViewById(R.id.my_account_button);
-        headerTitle = (TextView) findViewById(R.id.header_title);
-        headerTitle.setText(R.string.advanced_search);
-
         advancedSearchFormattedText = new StringBuilder();
+
+        // header portion actions
+        myAccountButton = (Button) findViewById(R.id.my_account_button);
 
         myAccountButton.setOnClickListener(new OnClickListener() {
             @Override
@@ -85,6 +81,8 @@ public class AdvancedSearchActivity extends Activity {
             }
         });
 
+        homeButton = (Button) findViewById(R.id.action_bar_home_button);
+        homeButton.setText(R.string.advanced_search);
         homeButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {

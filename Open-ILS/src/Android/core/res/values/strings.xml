@@ -8,7 +8,6 @@
     <string name="menu_barcode_scan">barcode scan</string>
 
     <!-- Header portion -->
-    <string name="library_text_logo">Evergreen</string>
     <string name="my_account_button_text">My Account</string>
     <string name="options_button_text">Options</string>
     <string name="search_details_title">Search Details</string>
@@ -26,8 +25,6 @@
 
     <!-- first config activity -->
 
-    <string name="first_config_message">Please enter the Evergreen server url, username and password of your account.</string>
-    <string name="server_name">Library Catalog URL:</string>
     <string name="username">Username:</string>
     <string name="hint_username">Card Number or Username</string>
     <string name="password">Password:</string>
@@ -40,10 +37,11 @@
 
     <!-- Search -->
 
-    <string name="search_hint">What are you looking for?</string>
-    <string name="advanced_search">Search</string>
+    <string name="browse_catalog">Browse catalog</string>
+    <string name="search_hint">Search keywords</string>
+    <string name="advanced_search">Advanced Search</string>
     <string name="loading_dialog_text"></string>
-    <string name="dialog_please_wait">Please wait</string>
+    <string name="dialog_please_wait"></string>
     <string name="dialog_fetching_data_message">Searching catalog</string>
     <string name="dialog_load_more_message">Fetching more results</string>
     <string name="advanced_search_hint">Enter text here</string>
@@ -53,17 +51,13 @@
     <string name="menu_button_library_hours">Library hours</string>
     <string name="menu_button_application_preferences">Preferences</string>
     <string name="copy_information"> Availability of the book :</string>
-    <string name="hello">Hello World, EvergreenAppActivity!</string>
-    <string name="generic_app_name">Evergreen</string>
     <string name="title_activity_startup">Welcome to Evergreen</string>
     <string name="title_search">Search</string>
     <string name="title_my_account">My Account</string>
-    <string name="title_application_settings">App. Settings </string>
     <string name="title_check_out">Items Checked Out</string>
     <string name="title_holds">Holds</string>
     <string name="title_fines">Fines</string>
     <string name="title_book_bags">Bookbags</string>
-    <string name="search_result_text"> Search result :</string>
     <string name="renew_button">renew</string>
     <string name="record_of">Record %1$d of %2$d</string>
 

@@ -98,10 +98,8 @@ public class BookBagDetails extends Activity {
 
         setContentView(R.layout.bookbagitem_list);
         // header portion actions
-        homeButton = (Button) findViewById(R.id.library_logo);
+        homeButton = (Button) findViewById(R.id.action_bar_home_button);
         myAccountButton = (Button) findViewById(R.id.my_account_button);
-        headerTitle = (TextView) findViewById(R.id.header_title);
-        headerTitle.setText(R.string.bookbag_details_title);
 
         myAccountButton.setOnClickListener(new OnClickListener() {
             @Override
@@ -112,6 +110,7 @@ public class BookBagDetails extends Activity {
             }
         });
 
+        homeButton.setText(R.string.bookbag_details_title);
         homeButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {

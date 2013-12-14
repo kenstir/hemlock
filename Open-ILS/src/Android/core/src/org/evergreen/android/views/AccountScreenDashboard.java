@@ -62,15 +62,16 @@ public class AccountScreenDashboard extends Activity {
 
         setContentView(R.layout.dashbord_account);
 
-        myAccountButton = (Button) findViewById(R.id.my_account_button);
-        myAccountButton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
+//        myAccountButton = (Button) findViewById(R.id.my_account_button);
+//        myAccountButton.setEnabled(false);
+//        myAccountButton.setOnClickListener(new OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//            }
+//        });
 
-            }
-        });
-
-        homeButton = (Button) findViewById(R.id.library_logo);
+        homeButton = (Button) findViewById(R.id.action_bar_home_button);
+        homeButton.setText(R.string.my_account_button_text);
         homeButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {

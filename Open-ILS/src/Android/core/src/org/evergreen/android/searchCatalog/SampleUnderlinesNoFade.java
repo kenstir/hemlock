@@ -22,8 +22,6 @@ package org.evergreen.android.searchCatalog;
 import java.util.ArrayList;
 
 import org.evergreen.android.R;
-import org.evergreen.android.accountAccess.SessionNotFoundException;
-import org.evergreen.android.globals.Utils;
 import org.evergreen.android.utils.ui.BaseSampleActivity;
 import org.evergreen.android.utils.ui.BasicDetailsFragment;
 import org.evergreen.android.utils.ui.TestFragmentAdapter;
@@ -88,10 +86,8 @@ public class SampleUnderlinesNoFade extends BaseSampleActivity {
         context = this;
         
         // header portion actions
-        homeButton = (Button) findViewById(R.id.library_logo);
+        homeButton = (Button) findViewById(R.id.action_bar_home_button);
         myAccountButton = (Button) findViewById(R.id.my_account_button);
-        headerTitle = (TextView) findViewById(R.id.header_title);
-        headerTitle.setText(R.string.search_details_title);
 
         myAccountButton.setOnClickListener(new OnClickListener() {
             @Override
@@ -102,6 +98,7 @@ public class SampleUnderlinesNoFade extends BaseSampleActivity {
             }
         });
 
+        homeButton.setText(R.string.search_details_title);
         homeButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {

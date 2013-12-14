@@ -15,18 +15,16 @@
         >
         
                 <Button
-            android:id="@+id/library_logo"
+            android:id="@+id/action_bar_home_button"
             style="@style/LibraryLogoText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
             android:layout_marginLeft="5dip"
             android:drawableLeft="@drawable/evergreen_launcher_icon_48"
-            android:text="@string/library_text_logo" 
+            android:text="@string/ou_action_bar_text"
             android:textColor="@color/white"
             android:textSize="16sp"
-            android:typeface="monospace"
-            android:textStyle="bold"
             android:paddingLeft="5dip"
             />
 
@@ -35,11 +33,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/my_account_button_text"
-            android:layout_alignParentRight="true"
             android:padding="10dip"
-            android:layout_marginTop="5dip"
             style="@style/HeaderButton"
-            />
+            android:layout_alignTop="@+id/action_bar_home_button" android:layout_alignParentRight="true"
+            android:layout_centerVertical="true" android:gravity="center_vertical" android:layout_marginTop="10dip"/>
 
 
         <LinearLayout
@@ -50,7 +47,7 @@
             android:id="@+id/search_text_container"
             android:focusable="true" 
     		android:focusableInTouchMode="true"
-            android:layout_below="@id/library_logo">
+            android:layout_below="@id/action_bar_home_button">
 
             <EditText
                     android:id="@+id/searchText"

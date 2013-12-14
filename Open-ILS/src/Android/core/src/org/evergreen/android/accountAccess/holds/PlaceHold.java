@@ -28,7 +28,6 @@ import org.evergreen.android.R;
 import org.evergreen.android.accountAccess.AccountAccess;
 import org.evergreen.android.accountAccess.SessionNotFoundException;
 import org.evergreen.android.globals.GlobalConfigs;
-import org.evergreen.android.globals.Utils;
 import org.evergreen.android.searchCatalog.RecordInfo;
 import org.evergreen.android.searchCatalog.SearchCatalogListView;
 import org.evergreen.android.views.AccountScreenDashboard;
@@ -128,11 +127,7 @@ public class PlaceHold extends Activity {
         RecordInfo record = (RecordInfo) getIntent().getSerializableExtra(
                 "recordInfo");
 
-        homeButton = (Button) findViewById(R.id.library_logo);
         myAccountButton = (Button) findViewById(R.id.my_account_button);
-        headerTitle = (TextView) findViewById(R.id.header_title);
-        headerTitle.setText(R.string.hold_place_title);
-
         myAccountButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -142,6 +137,8 @@ public class PlaceHold extends Activity {
             }
         });
 
+        homeButton = (Button) findViewById(R.id.action_bar_home_button);
+        homeButton.setText(R.string.hold_place_title);
         homeButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -159,7 +156,6 @@ public class PlaceHold extends Activity {
         title = (TextView) findViewById(R.id.hold_title);
         author = (TextView) findViewById(R.id.hold_author);
         physical_description = (TextView) findViewById(R.id.hold_physical_description);
-        screen_title = (TextView) findViewById(R.id.header_title);
         cancel = (Button) findViewById(R.id.cancel_hold);
         placeHold = (Button) findViewById(R.id.place_hold);
         expiration_date = (EditText) findViewById(R.id.hold_expiration_date);
@@ -169,7 +165,6 @@ public class PlaceHold extends Activity {
         suspendHold = (CheckBox) findViewById(R.id.hold_suspend_hold);
         orgSelector = (Spinner) findViewById(R.id.hold_pickup_location);
         thaw_date_edittext = (EditText) findViewById(R.id.hold_thaw_date);
-        screen_title.setText("Place Hold");
 
         recipient.setText(accountAccess.userName);
         title.setText(record.title);

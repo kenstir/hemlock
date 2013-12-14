@@ -30,7 +30,6 @@ import org.evergreen.android.accountAccess.bookbags.BookBag;
 import org.evergreen.android.accountAccess.holds.PlaceHold;
 import org.evergreen.android.barcodescan.CaptureActivity;
 import org.evergreen.android.globals.GlobalConfigs;
-import org.evergreen.android.globals.Utils;
 import org.evergreen.android.views.AccountScreenDashboard;
 import org.evergreen.android.views.ApplicationPreferences;
 import org.evergreen.android.views.splashscreen.SplashActivity;
@@ -140,10 +139,9 @@ public class SearchCatalogListView extends Activity {
         }
 
         setContentView(R.layout.search_result_list);
-        setTitle("Browse catalog");
+        setTitle(R.string.browse_catalog);
 
         myAccountButton = (Button) findViewById(R.id.my_account_button);
-
         myAccountButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -153,8 +151,8 @@ public class SearchCatalogListView extends Activity {
             }
         });
 
-        homeButton = (Button) findViewById(R.id.library_logo);
-
+        homeButton = (Button) findViewById(R.id.action_bar_home_button);
+        homeButton.setText(R.string.browse_catalog);
         homeButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
