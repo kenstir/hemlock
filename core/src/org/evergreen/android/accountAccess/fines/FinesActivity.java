@@ -26,7 +26,6 @@ import java.util.List;
 import org.evergreen.android.R;
 import org.evergreen.android.accountAccess.AccountAccess;
 import org.evergreen.android.accountAccess.SessionNotFoundException;
-import org.evergreen.android.globals.Utils;
 import org.evergreen.android.searchCatalog.SearchCatalogListView;
 import org.evergreen.android.views.AccountScreenDashboard;
 import org.evergreen.android.views.splashscreen.SplashActivity;
@@ -86,11 +85,7 @@ public class FinesActivity extends Activity {
         setContentView(R.layout.fines);
 
         // header portion actions
-        homeButton = (Button) findViewById(R.id.library_logo);
         myAccountButton = (Button) findViewById(R.id.my_account_button);
-        headerTitle = (TextView) findViewById(R.id.header_title);
-        headerTitle.setText(R.string.fines_title);
-
         myAccountButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -100,6 +95,8 @@ public class FinesActivity extends Activity {
             }
         });
 
+        homeButton = (Button) findViewById(R.id.action_bar_home_button);
+        homeButton.setText(R.string.fines_title);
         homeButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {

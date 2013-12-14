@@ -17,18 +17,16 @@
          >
 
         <Button
-            android:id="@+id/library_logo"
+            android:id="@+id/action_bar_home_button"
             style="@style/LibraryLogoText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
             android:layout_marginLeft="5dip"
             android:drawableLeft="@drawable/evergreen_launcher_icon_48"
-            android:text="@string/library_text_logo" 
+            android:text="@string/ou_action_bar_text"
             android:textColor="@color/white"
             android:textSize="16sp"
-            android:typeface="monospace"
-            android:textStyle="bold"
             android:paddingLeft="5dip"
             />
         
@@ -36,22 +34,10 @@
             android:id="@+id/my_account_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_marginTop="5dip"
             android:padding="10dip"
             android:text="@string/my_account_button_text"
             style="@style/HeaderButton"
-             />
+            android:layout_centerVertical="true" android:layout_alignParentRight="true"/>
     </RelativeLayout>
-    
-        <TextView 
-            android:id="@+id/header_title"
-            android:layout_width="150dip"
-            android:layout_height="wrap_content"
-            android:singleLine="true"
-            android:layout_below="@id/header"
-            android:layout_alignParentLeft="true"
-            style="@style/HeaderTitle"
-            />
-        
+
 </RelativeLayout>

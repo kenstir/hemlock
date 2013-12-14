@@ -28,7 +28,6 @@ import org.evergreen.android.accountAccess.AccountAccess;
 import org.evergreen.android.accountAccess.MaxRenewalsException;
 import org.evergreen.android.accountAccess.ServerErrorMessage;
 import org.evergreen.android.accountAccess.SessionNotFoundException;
-import org.evergreen.android.globals.Utils;
 import org.evergreen.android.searchCatalog.SearchCatalogListView;
 import org.evergreen.android.views.AccountScreenDashboard;
 import org.evergreen.android.views.splashscreen.SplashActivity;
@@ -97,11 +96,7 @@ public class ItemsCheckOutListView extends Activity {
         currentDate = new Date(System.currentTimeMillis());
 
         // header portion actions
-        homeButton = (Button) findViewById(R.id.library_logo);
         myAccountButton = (Button) findViewById(R.id.my_account_button);
-        headerTitle = (TextView) findViewById(R.id.header_title);
-        headerTitle.setText(R.string.checkout_items_title);
-
         myAccountButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -111,6 +106,8 @@ public class ItemsCheckOutListView extends Activity {
             }
         });
 
+        homeButton = (Button) findViewById(R.id.action_bar_home_button);
+        homeButton.setText(R.string.checkout_items_title);
         homeButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {

@@ -14,7 +14,7 @@
             android:layout_centerHorizontal="true"
             android:layout_marginTop="106dp"
             android:src="@drawable/evergreen_logo_sm072"
-            android:contentDescription="@string/library_text_logo" />
+            android:contentDescription="@string/ou_action_bar_text" />
     
         <TextView
             android:id="@+id/action_in_progress"
