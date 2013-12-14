@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
+import android.util.Log;
 import org.evergreen.android.R;
 import org.evergreen.android.accountAccess.AccountAccess;
 import org.evergreen.android.accountAccess.SessionNotFoundException;
@@ -57,6 +58,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 public class PlaceHold extends Activity {
+
+    private final String TAG = PlaceHold.class.getName();
 
     private TextView recipient;
 
@@ -210,7 +213,7 @@ public class PlaceHold extends Activity {
                 if (thaw_date != null)
                     thaw_date_s = GlobalConfigs.getStringDate(thaw_date);
 
-                System.out.println("date expire: " + expire_date_s + " "
+                Log.d(TAG, "date expire: " + expire_date_s + " "
                         + expire_date);
                 int selectedOrgID = -1;
                 if (globalConfigs.organisations.size() > selectedOrgPos)

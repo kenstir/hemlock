@@ -46,7 +46,7 @@ import android.widget.Toast;
 public class ApplicationPreferences extends PreferenceActivity implements
         OnSharedPreferenceChangeListener {
 
-    private String TAG = ApplicationPreferences.class.getSimpleName();
+    private final String TAG = ApplicationPreferences.class.getName();
 
     private ProgressDialog progressDialog;
 

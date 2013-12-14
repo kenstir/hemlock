@@ -138,7 +138,6 @@ public class ScheduledIntentService extends IntentService {
             List<NotificationAlert> alarms = daoNotifications.fetchAll("");
 
             for (int i = 0; i < alarms.size(); i++) {
-                System.out.println("notification " + alarms.get(i));
                 Log.d(TAG, "Notification " + alarms.get(i));
             }
             for (int i = 0; i < circRecords.size(); i++) {

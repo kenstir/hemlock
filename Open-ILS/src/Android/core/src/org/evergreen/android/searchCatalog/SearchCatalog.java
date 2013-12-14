@@ -191,7 +191,7 @@ public class SearchCatalog {
              */
 
         } catch (Exception e) {
-            System.out.println("Exception in JSON " + e.getMessage());
+            Log.d(TAG, "Exception in JSON " + e.getMessage());
         }
 
         // do request and check for connectivity
@@ -200,17 +200,17 @@ public class SearchCatalog {
 
         ArrayList<String> ids = new ArrayList<String>();
 
-        System.out.println("Sync Response: " + resp);
+        Log.d(TAG, "Sync Response: " + resp);
         if (resp == null)
             return resultsRecordInfo; // search failed or server crashed
 
         Map<String, ?> response = (Map<String, ?>) resp;
 
-        System.out.println(" ids : " + response.get("ids") + " ");
+        Log.d(TAG, " ids : " + response.get("ids") + " ");
 
         List<List<String>> result_ids;
         result_ids = (List<List<String>>) response.get("ids");
-        System.out.println("length:"+result_ids.size());
+        Log.d(TAG, "length:"+result_ids.size());
         
         // sometimes count is an int ("count":0) and sometimes string ("count":"1103")
         visible = Integer.parseInt(response.get("count").toString());
@@ -219,7 +219,7 @@ public class SearchCatalog {
             ids.add(result_ids.get(i).get(0));
         }
 
-        System.out.println("Ids " + ids);
+        Log.d(TAG, "Ids " + ids);
 
         // request other info based on ids
 
@@ -245,7 +245,7 @@ public class SearchCatalog {
                     record.copyInformationList.add(copyInfo);
                 }
 
-            System.out.println("Title " + record.title + " Author "
+            Log.d(TAG, "Title " + record.title + " Author "
                     + record.author + " Pub date" + record.pubdate
                     + " Publisher" + record.publisher);
         }
@@ -269,7 +269,7 @@ public class SearchCatalog {
         HttpRequest req = new GatewayRequest(conn, SERVICE, method).send();
         Object resp;
         while ((resp = req.recv()) != null) {
-            System.out.println("Sync Response: " + resp);
+            Log.d(TAG, "Sync Response: " + resp);
             return (OSRFObject) resp;
         }
 
@@ -327,7 +327,7 @@ public class SearchCatalog {
                     CopyInformation.availableOrgStatuses.put(
                             ccs_obj.getInt("id") + "",
                             ccs_obj.getString("name"));
-                    //System.out.println("Add status "+ccs_obj.getString("name"));
+                    //Log.d(TAG, "Add status "+ccs_obj.getString("name"));
                 }
             }
         }

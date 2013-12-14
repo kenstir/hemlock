@@ -42,7 +42,7 @@ import android.widget.TextView;
 
 public class AdvancedSearchActivity extends Activity {
 
-    private String TAG = "AdvancedSearchActivity";
+    private final String TAG = AdvancedSearchActivity.class.getName();
 
     private AccountAccess accountAccess = null;
 

@@ -32,6 +32,7 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.os.Looper;
 import android.text.TextUtils;
+import android.util.Log;
 import org.evergreen.android.R;
 import org.evergreen.android.accountAccess.bookbags.BookBag;
 import org.evergreen.android.accountAccess.bookbags.BookBagItem;
@@ -162,7 +163,7 @@ public class AccountAccess {
     private String httpAddress = "http://ulysses.calvin.edu";
 
     /** The TAG. */
-    private String TAG = "AccountAccess";
+    private final String TAG = AccountAccess.class.getName();
 
     /**
      * The auth token. Sent with every request that needs authentication
@@ -198,18 +199,16 @@ public class AccountAccess {
      */
     private AccountAccess(String httpAddress) {
 
-        System.out.println("AccountAccess ctor: "+httpAddress);
+        Log.d(TAG, "AccountAccess ctor: " + httpAddress);
         this.httpAddress = httpAddress;
 
         try {
             // configure the connection
-
-            System.out.println("Connection with " + httpAddress);
+            Log.d(TAG, "Connection with " + httpAddress);
             conn = new HttpConnection(httpAddress + "/osrf-gateway-v1");
 
         } catch (Exception e) {
-            System.err.println("Exception in establishing connection "
-                    + e.getMessage());
+            Log.d(TAG, "Exception in establishing connection", e);
         }
 
     }
@@ -238,8 +237,6 @@ public class AccountAccess {
         if (accountAccess == null) {
             accountAccess = new AccountAccess(httpAddress);
         }
-        System.out.println(" Addresses " + httpAddress + " "
-                + accountAccess.httpAddress);
         if (!httpAddress.equals(accountAccess.httpAddress))
             accountAccess.updateHttpAddress(httpAddress);
 
@@ -273,12 +270,12 @@ public class AccountAccess {
      * @param httpAddress the http address
      */
     public void updateHttpAddress(String httpAddress) {
-        System.out.println("update http address of account access to "
+        Log.d(TAG, "update http address of account access to "
                 + httpAddress);
         try {
             // configure the connection
             this.httpAddress = httpAddress;
-            System.out.println("Connection with " + httpAddress);
+            Log.d(TAG, "Connection with " + httpAddress);
             conn = new HttpConnection(httpAddress + "/osrf-gateway-v1");
 
         } catch (Exception e) {
@@ -425,7 +422,7 @@ public class AccountAccess {
                         circRecord);
                 circRecords.add(circRecord);
 
-                // System.out.println(out.get(i).get("target_copy"));
+                // Log.d(TAG, out.get(i).get("target_copy"));
                 // fetchInfoForCheckedOutItem(out.get(i).get("target_copy")+"");
             }
 
@@ -443,12 +440,12 @@ public class AccountAccess {
             }
         // TODO are we using this too? In the opac they are not used
         /*
-         * for(int i=0;i<lost_id.size();i++){ //System.out.println(out.get(i));
+         * for(int i=0;i<lost_id.size();i++){ //Log.d(TAG, out.get(i));
          * lost.add(retrieveCircRecord(lost_id.get(i))); } for(int
-         * i=0;i<claims_returned.size();i++){ //System.out.println(out.get(i));
+         * i=0;i<claims_returned.size();i++){ //Log.d(TAG, out.get(i));
          * claims_returned.add(retrieveCircRecord(claims_returned_id.get(i))); }
          * for(int i=0;i<long_overdue_id.size();i++){
-         * //System.out.println(out.get(i));
+         * //Log.d(TAG, out.get(i));
          * long_overdue.add(retrieveCircRecord(long_overdue_id.get(i))); }
          */
 
@@ -498,7 +495,7 @@ public class AccountAccess {
             return null;
 
         OSRFObject result;
-        System.out.println("Mods from copy");
+        Log.d(TAG, "Mods from copy");
         OSRFObject info_mvr = fetchModsFromCopy(target_copy);
         // if title or author not inserted, request acp with copy_target
         result = info_mvr;
@@ -507,7 +504,7 @@ public class AccountAccess {
         // the logic to establish mvr or acp is copied from the opac
         if (info_mvr.getString("title") == null
                 || info_mvr.getString("author") == null) {
-            System.out.println("Asset");
+            Log.d(TAG, "Asset");
             info_acp = fetchAssetCopy(target_copy);
             result = info_acp;
             circRecord.acp = info_acp;
@@ -619,7 +616,7 @@ public class AccountAccess {
         Object resp = Utils.doRequest(conn, SERVICE_CIRC, METHOD_FETCH_HOLDS,
                 authToken, new Object[] { authToken, userID });
         if (resp == null) {
-            System.out.println("Result: null");
+            Log.d(TAG, "Result: null");
             return holds;
         }
 
@@ -665,11 +662,10 @@ public class AccountAccess {
                 method = METHOD_FETCH_MRMODS;
             if (holdType.equals("T"))
                 method = METHOD_FETCH_RMODS;
-            System.out.println();
             holdInfo = (OSRFObject) Utils.doRequest(conn, SERVICE_SEARCH,
                     method, cm, new Object[] { holdArhObject.get("target") });
 
-            // System.out.println("Hold here " + holdInfo);
+            // Log.d(TAG, "Hold here " + holdInfo);
             hold.title = ((OSRFObject) holdInfo).getString("title");
             hold.author = ((OSRFObject) holdInfo).getString("author");
             hold.recordInfo = new RecordInfo((OSRFObject) holdInfo);
@@ -700,7 +696,7 @@ public class AccountAccess {
 
         String type = (String) hold.get("hold_type");
 
-        System.out.println("Hold Type " + type);
+        Log.d(TAG, "Hold Type " + type);
         if (type.equals("C")) {
 
             /*
@@ -724,7 +720,7 @@ public class AccountAccess {
                 // part label
                 holdObj.part_label = volume.getString("label");
 
-                System.out.println("Record " + record);
+                Log.d(TAG, "Record " + record);
                 OSRFObject holdInfo = (OSRFObject) Utils.doRequest(conn,
                         SERVICE_SEARCH, METHOD_FETCH_RMODS, cm,
                         new Object[] { record });
@@ -757,7 +753,7 @@ public class AccountAccess {
             // part label
             holdObj.part_label = volume.getString("label");
 
-            System.out.println("Record " + record);
+            Log.d(TAG, "Record " + record);
             OSRFObject holdInfo = (OSRFObject) Utils.doRequest(conn,
                     SERVICE_SEARCH, METHOD_FETCH_RMODS, cm,
                     new Object[] { record });
@@ -963,7 +959,7 @@ public class AccountAccess {
             resp[2] = ((Map<String, String>) map).get("desc");
         }
 
-        System.out.println("Result " + resp[1] + " " + resp[2]);
+        Log.d(TAG, "Result " + resp[1] + " " + resp[2]);
 
         // else we return false
         return resp;
@@ -1024,7 +1020,7 @@ public class AccountAccess {
                 new Object[] { param });
 
         Object obj = response.get("metarecord");
-        System.out.println(obj);
+        Log.d(TAG, "metarecord="+obj);
         Integer metarecordID = Integer.parseInt(obj.toString());
 
         HashMap<String, Integer> map = new HashMap<String, Integer>();

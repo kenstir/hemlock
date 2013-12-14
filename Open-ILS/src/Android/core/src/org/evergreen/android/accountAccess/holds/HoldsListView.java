@@ -53,7 +53,7 @@ import android.widget.Toast;
 
 public class HoldsListView extends Activity {
 
-    private String TAG = "HoldsListView";
+    private final String TAG = HoldsListView.class.getName();
 
     private AccountAccess accountAccess = null;
 
@@ -138,7 +138,7 @@ public class HoldsListView extends Activity {
                         if (accountAccess.reauthenticate(HoldsListView.this))
                             holdRecords = accountAccess.getHolds();
                     } catch (Exception eauth) {
-                        System.out.println("Exception in reauth");
+                        Log.d(TAG, "Exception in reauth");
                     }
                 }
 

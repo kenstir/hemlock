@@ -19,14 +19,14 @@
  */
 package org.evergreen.android.searchCatalog;
 
+import android.util.Log;
+
 import java.io.Serializable;
 import java.util.Map;
 
 public class CopyCountInformation implements Serializable {
 
-    /**
-	 * 
-	 */
+    private final String TAG = CopyCountInformation.class.getName();
     private static final long serialVersionUID = 12343248767867L;
     public Integer org_id;
     public Integer count;
@@ -42,7 +42,7 @@ public class CopyCountInformation implements Serializable {
         this.depth = ((Map<String, Integer>) map).get("depth");
         this.unshadow = ((Map<String, Integer>) map).get("unshadow");
 
-        System.out.println(org_id + " " + available + " " + count);
+        Log.d(TAG, org_id + " " + available + " " + count);
     }
 
 }

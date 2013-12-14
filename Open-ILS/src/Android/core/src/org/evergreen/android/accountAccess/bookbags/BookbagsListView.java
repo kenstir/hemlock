@@ -52,7 +52,7 @@ import android.widget.Toast;
 
 public class BookbagsListView extends Activity {
 
-    private String TAG = "BookBags";
+    private final String TAG = BookbagsListView.class.getName();
 
     private AccountAccess accountAccess = null;
 
@@ -158,7 +158,7 @@ public class BookbagsListView extends Activity {
                                 if (accountAccess.reauthenticate(BookbagsListView.this))
                                     accountAccess.createBookbag(name);
                             } catch (Exception eauth) {
-                                System.out.println("Exception in reAuth");
+                                Log.d(TAG, "Exception in reAuth");
                             }
                         }
 
@@ -205,7 +205,7 @@ public class BookbagsListView extends Activity {
                         if (accountAccess.reauthenticate(BookbagsListView.this))
                             accountAccess.retrieveBookbags();
                     } catch (Exception eauth) {
-                        System.out.println("Exception in reAuth");
+                        Log.d(TAG, "Exception in reAuth");
                     }
                 }
                 bookBags = accountAccess.getBookbags();

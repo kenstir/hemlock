@@ -25,16 +25,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import android.util.Log;
 import org.opensrf.util.OSRFObject;
 
 public class RecordInfo implements Serializable {
 
     // {"title","author","doc_id","doc_type","pubdate","isbn","publisher","tcn","subject","type_of_resources","call_numbers","edition","online_loc","synopsis","physical_description","toc","copy_count","series","serials","foreign_copy_maps"});
 
-    /**
-	 * 
-	 */
     private static final long serialVersionUID = 10123L;
+
+    private final String TAG = RecordInfo.class.getName();
 
     public String title = null;
 
@@ -91,14 +91,14 @@ public class RecordInfo implements Serializable {
             this.image = info.getString("tcn");
             this.doc_type = info.getString("doc_type");
         } catch (Exception e) {
-            System.out.println("Exception basic info " + e.getMessage());
+            Log.d(TAG, "Exception basic info " + e.getMessage());
         }
         ;
 
         try {
             this.isbn = (String) info.get("isbn");
         } catch (Exception e) {
-            System.out.println("Exception isbn " + e.getMessage());
+            Log.d(TAG, "Exception isbn " + e.getMessage());
         }
         ;
 
@@ -119,7 +119,7 @@ public class RecordInfo implements Serializable {
             }
 
         } catch (Exception e) {
-            System.out.println("Exception subject " + e.getMessage());
+            Log.d(TAG, "Exception subject " + e.getMessage());
         }
         ;
         try {
@@ -127,14 +127,14 @@ public class RecordInfo implements Serializable {
             this.online_loc = ((List) info.get("online_loc")).get(0).toString();
 
         } catch (Exception e) {
-            System.out.println("Exception online_loc " + e.getMessage());
+            Log.d(TAG, "Exception online_loc " + e.getMessage());
         }
         ;
         try {
             this.physical_description = (String) info
                     .get("physical_description");
         } catch (Exception e) {
-            System.out.println("Exception physical_description "
+            Log.d(TAG, "Exception physical_description "
                     + e.getMessage());
         }
         ;
@@ -147,7 +147,7 @@ public class RecordInfo implements Serializable {
                 else
                     this.series += seriesList.get(i);
         } catch (Exception e) {
-            System.out.println("Exception series " + e.getMessage());
+            Log.d(TAG, "Exception series " + e.getMessage());
         }
         ;
 

@@ -56,7 +56,7 @@ import android.widget.Toast;
 
 public class BookBagDetails extends Activity {
 
-    private String TAG = "BookBags";
+    private final String TAG = BookBagDetails.class.getName();
 
     public static final int RESULT_CODE_UPDATE = 1;
 

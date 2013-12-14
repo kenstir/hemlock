@@ -259,7 +259,6 @@ public class GlobalConfigs {
 
         try {
             date = sdf.parse(dateString);
-            //System.out.println(date);
         } catch (ParseException e) {
             e.printStackTrace();
         }
@@ -275,7 +274,6 @@ public class GlobalConfigs {
     public String getOrganizationName(int id) {
 
         for (int i = 0; i < organisations.size(); i++) {
-            //System.out.println("Id " + organisations.get(i).id + " " + i);
             if (organisations.get(i).id == id)
                 return organisations.get(i).name;
         }

@@ -76,16 +76,14 @@ public class CircRecord {
 
         this.circ_type = circ_type;
         this.circ_id = circ_id;
-        // parse due date
-        parseDate(circ);
+        this.circ_due_date = GlobalConfigs.parseDate(circ.getString("due_date"));
     }
 
     public CircRecord(OSRFObject circ, int circ_type, int circ_id) {
         this.circ = circ;
         this.circ_type = circ_type;
         this.circ_id = circ_id;
-        // parse due date
-        parseDate(circ);
+        this.circ_due_date = GlobalConfigs.parseDate(circ.getString("due_date"));
     }
 
     public String getAuthor() {
@@ -134,14 +132,6 @@ public class CircRecord {
             return circ.getInt("target_copy");
 
         return null;
-    }
-
-    private void parseDate(OSRFObject circ) {
-
-        this.circ_due_date = GlobalConfigs
-                .parseDate(circ.getString("due_date"));
-        System.out.println(this.circ_due_date);
-
     }
 
 }

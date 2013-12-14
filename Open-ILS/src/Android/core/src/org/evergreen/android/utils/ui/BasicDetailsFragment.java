@@ -24,6 +24,7 @@ import java.util.Iterator;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import android.util.Log;
 import org.evergreen.android.R;
 import org.evergreen.android.accountAccess.AccountAccess;
 import org.evergreen.android.accountAccess.SessionNotFoundException;
@@ -57,6 +58,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 public class BasicDetailsFragment extends Fragment {
+
+    private final String TAG = BasicDetailsFragment.class.getName();
 
     private RecordInfo record;
     private Integer position;
@@ -286,10 +289,10 @@ public class BasicDetailsFragment extends Fragment {
         if (search != null)
             current_org = search.selectedOrganization.id;
 
-        System.out.println("Size " + record.copyCountListInfo.size());
+        Log.d(TAG, "Size " + record.copyCountListInfo.size());
 
         for (int i = 0; i < record.copyCountListInfo.size(); i++) {
-            System.out.println(current_org + " "
+            Log.d(TAG, current_org + " "
                     + record.copyCountListInfo.get(i).org_id + " "
                     + record.copyCountListInfo.get(i).count);
             if (record.copyCountListInfo.get(i).org_id == current_org) {
