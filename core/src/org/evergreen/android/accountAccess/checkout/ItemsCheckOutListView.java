@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import android.opengl.Visibility;
 import org.evergreen.android.R;
 import org.evergreen.android.accountAccess.AccountAccess;
 import org.evergreen.android.accountAccess.MaxRenewalsException;
@@ -249,24 +250,23 @@ public class ItemsCheckOutListView extends Activity {
             }
 
             // Get reference to TextView - title
-            recordTitle = (TextView) row
-                    .findViewById(R.id.checkout_record_title);
+            recordTitle = (TextView) row.findViewById(R.id.checkout_record_title);
 
             // Get reference to TextView - author
-            recordAuthor = (TextView) row
-                    .findViewById(R.id.checkout_record_author);
+            recordAuthor = (TextView) row.findViewById(R.id.checkout_record_author);
 
             // Get reference to TextView - record Publisher date+publisher
-            recordDueDate = (TextView) row
-                    .findViewById(R.id.checkout_due_date);
+            recordDueDate = (TextView) row.findViewById(R.id.checkout_due_date);
 
             renewButton = (TextView) row.findViewById(R.id.renew_button);
-
-            renewButton.setText("renew : " + record.getRenewals());
-
+            final boolean renewable = record.getRenewals() > 0;
+            renewButton.setVisibility(renewable ? View.VISIBLE : View.GONE);
+            renewButton.setEnabled(renewable);
             renewButton.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    if (!renewable)
+                        return;
                     Thread renew = new Thread(new Runnable() {
 
                         @Override
@@ -321,6 +321,12 @@ public class ItemsCheckOutListView extends Activity {
                                     Log.d(TAG, "Exception in reauth", eauth);
                                 }
                             }
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Toast.makeText(context, getString(R.string.item_renewed), Toast.LENGTH_SHORT).show();
+                                }
+                            });
 
                             if (refresh) {
                                 try {
@@ -356,7 +362,7 @@ public class ItemsCheckOutListView extends Activity {
             // set text
             recordTitle.setText(record.getTitle());
             recordAuthor.setText(record.getAuthor());
-            recordDueDate.setText(record.getDueDate());
+            recordDueDate.setText(getString(R.string.due) + ": " + record.getDueDate());
             Log.d(TAG, "title:  " + record.getTitle());
             Log.d(TAG, "author: " + record.getAuthor());
             Log.d(TAG, "due:    " + record.getDueDate());

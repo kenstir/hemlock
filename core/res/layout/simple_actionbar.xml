@@ -10,7 +10,7 @@
         android:id="@+id/header"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/one_header_rounded_corner"
+        android:background="@drawable/header_rounded_corners"
         android:orientation="horizontal"
         android:paddingTop="3dip"
         android:paddingBottom="2dip"

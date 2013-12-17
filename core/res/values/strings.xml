@@ -58,7 +58,8 @@
     <string name="title_holds">Holds</string>
     <string name="title_fines">Fines</string>
     <string name="title_book_bags">Bookbags</string>
-    <string name="renew_button">renew</string>
+    <string name="renew_button">Renew</string>
+    <string name="item_renewed">Item renewed</string>
     <string name="record_of">Record %1$d of %2$d</string>
 
     <!-- Search Details View -->
@@ -90,8 +91,9 @@
     <string name="hold_items">Items on hold: </string>
 
     <!-- Checkout items -->
-    <string name="checkout_item_txt">Total items out: </string>
-    <string name="checkout_overdue_items">/ Overdue items: </string>
+    <string name="checkout_item_txt">Total items checked out:</string>
+    <string name="checkout_overdue_items">Overdue:</string>
+    <string name="due">due</string>
 
     <!-- Fines Activity -->
     <string name="total_owned">Total Owned </string>
@@ -146,9 +148,7 @@
         <item quantity="other">%d items</item>
     </plurals>
 
-    <string name="title_activity_junk">JunkActivity</string>
     <string name="action_settings">Settings</string>
-    <string name="hello_world">Hello world!</string>
     <string name="retry_label">Retry</string>
 
 </resources>

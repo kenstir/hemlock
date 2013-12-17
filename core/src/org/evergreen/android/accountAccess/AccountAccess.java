@@ -408,8 +408,7 @@ public class AccountAccess {
             }
         }
 
-        // TODO are we using this too? In the opac they are not used
-        /*
+        /* Other fields returned by the request; apparently not used in OPAC
         resp_map.get("claims_returned");
         resp_map.get("long_overdue")
         resp_map.get("lost");
@@ -421,6 +420,7 @@ public class AccountAccess {
                 return lhs.getDueDate().compareTo(rhs.getDueDate());
             }
         });
+
         return circRecords;
     }
 
