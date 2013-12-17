@@ -71,7 +71,6 @@ public class AdvancedSearchActivity extends Activity {
 
         // header portion actions
         myAccountButton = (Button) findViewById(R.id.my_account_button);
-
         myAccountButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {

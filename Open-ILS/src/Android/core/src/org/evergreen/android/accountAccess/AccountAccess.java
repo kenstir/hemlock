@@ -22,10 +22,7 @@ package org.evergreen.android.accountAccess;
 import java.io.IOException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import android.accounts.*;
 import android.app.Activity;
@@ -323,9 +320,9 @@ public class AccountAccess {
      * Retrieve session.
      * @throws SessionNotFoundException
      */
-    public boolean retrieveSession(String auth_token) throws SessionNotFoundException {
+    public boolean retrieveSession(String auth_token, boolean force) throws SessionNotFoundException {
 
-        if (this.haveSession && this.authToken.equals(auth_token))
+        if (!force && this.haveSession && this.authToken.equals(auth_token))
             return true;
         this.haveSession = false;
         this.authToken = auth_token;
@@ -365,7 +362,7 @@ public class AccountAccess {
         final String new_authToken = b.getString(AccountManager.KEY_AUTHTOKEN);
         if (TextUtils.isEmpty(new_authToken))
             return false;
-        return retrieveSession(new_authToken);
+        return retrieveSession(new_authToken, true);
     }
 
     // ------------------------Checked Out Items Section
@@ -376,79 +373,54 @@ public class AccountAccess {
      *
      * @return the items checked out
      * @throws SessionNotFoundException the session not found exception
-     * @throws NoNetworkAccessException the no network access exception
-     * @throws NoAccessToServer the no access to server
      */
     public ArrayList<CircRecord> getItemsCheckedOut()
             throws SessionNotFoundException {
 
         ArrayList<CircRecord> circRecords = new ArrayList<CircRecord>();
-        /*
-         * ArrayList<OSRFObject> long_overdue = new ArrayList<OSRFObject>();
-         * ArrayList<OSRFObject> claims_returned = new ArrayList<OSRFObject>();
-         * ArrayList<OSRFObject> lost = new ArrayList<OSRFObject>();
-         * ArrayList<OSRFObject> out = new ArrayList<OSRFObject>();
-         * ArrayList<OSRFObject> overdue = new ArrayList<OSRFObject>();
-         */
-
-        // fetch ids
-        List<String> long_overdue_id;
-        List<String> overdue_id;
-        List<String> claims_returned_id;
-        List<String> lost_id;
-        List<String> out_id;
 
         Object resp = Utils.doRequest(conn, SERVICE_ACTOR,
                 METHOD_FETCH_CHECKED_OUT_SUM, authToken, new Object[] {
                         authToken, userID });
+        if (resp == null)
+            return circRecords;
+        Map<String, ?> resp_map = ((Map<String, ?>) resp);
 
-        long_overdue_id = (List<String>) ((Map<String, ?>) resp)
-                .get("long_overdue");
-        claims_returned_id = (List<String>) ((Map<String, ?>) resp)
-                .get("claims_returned");
-        lost_id = (List<String>) ((Map<String, ?>) resp).get("lost");
-        out_id = (List<String>) ((Map<String, ?>) resp).get("out");
-        overdue_id = (List<String>) ((Map<String, ?>) resp).get("overdue");
-
-        // get all the record circ info
-        if (out_id != null)
+        if (resp_map.get("out") != null) {
+            List<String> out_id = (List<String>) resp_map.get("out");
             for (int i = 0; i < out_id.size(); i++) {
-                // get circ
                 OSRFObject circ = retrieveCircRecord(out_id.get(i));
                 CircRecord circRecord = new CircRecord(circ, CircRecord.OUT,
                         Integer.parseInt(out_id.get(i)));
-                // get info
-                fetchInfoForCheckedOutItem(circ.getInt("target_copy"),
-                        circRecord);
+                fetchInfoForCheckedOutItem(circ.getInt("target_copy"), circRecord);
                 circRecords.add(circRecord);
-
-                // Log.d(TAG, out.get(i).get("target_copy"));
-                // fetchInfoForCheckedOutItem(out.get(i).get("target_copy")+"");
             }
+        }
 
-        if (overdue_id != null)
+        if (resp_map.get("overdue") != null) {
+            List<String> overdue_id = (List<String>) resp_map.get("overdue");
             for (int i = 0; i < overdue_id.size(); i++) {
-                // get circ
                 OSRFObject circ = retrieveCircRecord(overdue_id.get(i));
-                CircRecord circRecord = new CircRecord(circ,
-                        CircRecord.OVERDUE, Integer.parseInt(overdue_id.get(i)));
-                // fetch info
-                fetchInfoForCheckedOutItem(circ.getInt("target_copy"),
-                        circRecord);
+                CircRecord circRecord = new CircRecord(circ, CircRecord.OVERDUE,
+                        Integer.parseInt(overdue_id.get(i)));
+                fetchInfoForCheckedOutItem(circ.getInt("target_copy"), circRecord);
                 circRecords.add(circRecord);
-
             }
+        }
+
         // TODO are we using this too? In the opac they are not used
         /*
-         * for(int i=0;i<lost_id.size();i++){ //Log.d(TAG, out.get(i));
-         * lost.add(retrieveCircRecord(lost_id.get(i))); } for(int
-         * i=0;i<claims_returned.size();i++){ //Log.d(TAG, out.get(i));
-         * claims_returned.add(retrieveCircRecord(claims_returned_id.get(i))); }
-         * for(int i=0;i<long_overdue_id.size();i++){
-         * //Log.d(TAG, out.get(i));
-         * long_overdue.add(retrieveCircRecord(long_overdue_id.get(i))); }
-         */
+        resp_map.get("claims_returned");
+        resp_map.get("long_overdue")
+        resp_map.get("lost");
+        */
 
+        Collections.sort(circRecords, new Comparator<CircRecord>() {
+            @Override
+            public int compare(CircRecord lhs, CircRecord rhs) {
+                return lhs.getDueDate().compareTo(rhs.getDueDate());
+            }
+        });
         return circRecords;
     }
 
