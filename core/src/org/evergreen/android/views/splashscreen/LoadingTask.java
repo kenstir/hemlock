@@ -118,7 +118,7 @@ public class LoadingTask {
             boolean haveSession = false;
             boolean retry = false;
             try {
-                haveSession = ac.retrieveSession(auth_token);
+                haveSession = ac.retrieveSession(auth_token, true);
             } catch (SessionNotFoundException e) {
                 mAccountManager.invalidateAuthToken(accountType, auth_token);
                 retry = true;
@@ -133,7 +133,7 @@ public class LoadingTask {
                 Log.d(TAG, tag+"account_name="+account_name+" token="+auth_token);
                 if (account_name == null)
                     return "no account";
-                haveSession = ac.retrieveSession(auth_token);
+                haveSession = ac.retrieveSession(auth_token, true);
             }
             if (!haveSession)
                 return "no session";

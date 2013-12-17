@@ -163,7 +163,6 @@ public class SearchCatalogListView extends Activity {
         // end header portion actions
         
         advancedSearchButton = (Button) findViewById(R.id.menu_advanced_search_button);
-
         advancedSearchButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -239,7 +238,6 @@ public class SearchCatalogListView extends Activity {
             public void run() {
 
                 final String text = searchText.getText().toString();
-
                 if (text.length() < 1)
                     return;
 
