@@ -109,6 +109,24 @@
                 </retrieve>
             </actions>
         </permacrud>
+	</class><class id='bmp' controller='open-ils.cstore open-ils.pcrud' oils_obj:fieldmapper='biblio::monograph_part' oils_persist:tablename='biblio.monograph_part' reporter:label='Monograph Parts' oils_persist:field_safe='true'>
+		<fields oils_persist:primary='id' oils_persist:sequence='biblio.monograph_part_id_seq'>
+			<field name='id' reporter:datatype='id'></field>
+			<field name='record' reporter:datatype='link'></field>
+			<field name='label' reporter:datatype='text'></field>
+			<field name='label_sortkey' reporter:datatype='text'></field>
+		</fields>
+		<links>
+			<link field='record' reltype='has_a' key='id' map='' class='bre'></link>
+		</links>
+        <permacrud xmlns='http://open-ils.org/spec/opensrf/IDL/permacrud/v1'>
+            <actions>
+                <create permission='CREATE_MONOGRAPH_PART' global_required='true'></create>
+                <retrieve></retrieve>
+                <update permission='UPDATE_MONOGRAPH_PART' global_required='true'></update>
+                <delete permission='DELETE_MONOGRAPH_PART' global_required='true'></delete>
+            </actions>
+        </permacrud>
 	</class><class id='au' controller='open-ils.cstore open-ils.pcrud' oils_obj:fieldmapper='actor::user' oils_persist:tablename='actor.usr' reporter:core='true' reporter:label='ILS User'>
 		<fields oils_persist:primary='id' oils_persist:sequence='actor.usr_id_seq'>
 			<field reporter:label='All Addresses' name='addresses' oils_persist:virtual='true' reporter:datatype='link'></field>

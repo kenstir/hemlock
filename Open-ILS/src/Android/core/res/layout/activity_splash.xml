@@ -32,7 +32,9 @@
             android:layout_centerHorizontal="true"
             android:layout_marginTop="60dp"
             android:text="@string/retry_label"
-            android:visibility="gone"
+            android:paddingLeft="25sp"
+            android:paddingRight="25sp"
+            android:visibility="visible"
             />
 
         <ProgressBar
