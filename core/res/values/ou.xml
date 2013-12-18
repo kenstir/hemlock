@@ -1,15 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- ou_cwmars.xml - C/W MARS organizational unit -->
 <resources>
+    <string name="ou_account_label">Evergreen Library</string>
+    <string name="ou_account_sign_in_message">Sign in to your\nEvergreen Library Account</string>
     <!-- Each evergreen-derived app should have its own ou_account_type. This will enable
          a user to have multiple evergreen-derived apps working simultaneously. -->
     <string name="ou_account_type">org.evergreen_ils</string>
-    <!--  TODO: make URLs HTTPS -->
-    <string name="ou_library_url">http://bark.cwmars.org</string>
-    <string name="ou_app_name">C/W Mars Library</string>
-    <string name="ou_app_label">C/W Mars Library</string>
-    <string name="ou_app_welcome_label">Welcome</string>
-    <string name="ou_account_label">C/W Mars Library</string>
-    <string name="ou_account_sign_in_message">Sign in to your\nC/W Mars Library Account</string>
-    <string name="ou_action_bar_text">C/W Mars</string>
+    <string name="ou_app_label">Evergreen Library</string>
+    <string name="ou_app_name">Evergreen Library</string>
+    <string name="ou_library_url">https://demo.evergreencatalog.com</string>
 </resources>

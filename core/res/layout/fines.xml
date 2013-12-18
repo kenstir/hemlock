@@ -7,81 +7,80 @@
      >
 
    	<include android:id="@+id/header_actionbar" layout="@layout/simple_actionbar"/>
-    
-         <TableLayout 
-             android:layout_width="fill_parent"
-             android:layout_height="wrap_content"
-             android:padding="5dip"
-             >
-            <TableRow 
+
+    <TableLayout
+         android:layout_width="fill_parent"
+         android:layout_height="wrap_content"
+         android:padding="5dip"
+         >
+        <TableRow
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            >
+
+            <TextView
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                >
-                
-                <TextView 
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="@string/total_owned"
-                    />
-                <TextView 
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="@string/total_paid"
-                    />
-                
-                <TextView 
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="@string/balance_owed"
-                    />
-                
-            </TableRow>
-             <TableRow 
+                android:layout_weight="1"
+                android:text="@string/total_owned"
+                />
+            <TextView
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                >
-                <TextView 
-                    android:id="@+id/fines_total_owned"
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    />
-                <TextView 
-                    android:id="@+id/fines_total_paid"
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    />
-                <TextView 
-                    android:id="@+id/fined_balance_owed"
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    />
-            </TableRow>
+                android:layout_weight="1"
+                android:text="@string/total_paid"
+                />
 
-         </TableLayout>
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/balance_owed"
+                />
 
-        
-         <TextView 
-             android:layout_width="fill_parent"
-             android:layout_height="wrap_content"
-             android:text="@string/overdue_materials"
-             android:textSize="18sp"
-             android:paddingTop="10dip"
-             android:paddingBottom="5dip"
-             android:layout_marginLeft="10dip"
-             />
+        </TableRow>
+        <TableRow
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            >
+            <TextView
+                android:id="@+id/fines_total_owned"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                />
+            <TextView
+                android:id="@+id/fines_total_paid"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                />
+            <TextView
+                android:id="@+id/fined_balance_owed"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                />
+        </TableRow>
+
+     </TableLayout>
+
+
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/overdue_materials"
+        android:textSize="18sp"
+        android:paddingTop="10dip"
+        android:paddingBottom="5dip"
+        android:layout_marginLeft="5dip"
+        />
 
 	<ListView 
-	  android:id="@+id/fines_overdue_materials_list"
-	  android:layout_width="fill_parent"
-	  android:layout_height="wrap_content"
-	  android:divider="@drawable/list_view_separator"
-      android:dividerHeight="1dp"  
-	></ListView>
+        android:id="@+id/fines_overdue_materials_list"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:dividerHeight="1dp"
+        />
 
 </LinearLayout>

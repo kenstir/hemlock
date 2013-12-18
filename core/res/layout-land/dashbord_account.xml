@@ -23,7 +23,7 @@
             android:layout_marginLeft="5dip"
             android:drawableLeft="@drawable/evergreen_launcher_icon_48"
             android:paddingLeft="5dip"
-            android:text="@string/ou_action_bar_text"
+            android:text="@string/ou_app_label"
             android:textColor="@color/white"
             android:textSize="16sp"
             />
