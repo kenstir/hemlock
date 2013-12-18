@@ -13,8 +13,9 @@
                 />
 
             <corners
-                android:bottomLeftRadius="8dp"
-                android:bottomRightRadius="8dp" />
+                    android:radius="0px"
+                android:bottomLeftRadius="8px"
+                android:bottomRightRadius="8px" />
         </shape>
     </item>
     <item>
@@ -30,8 +31,9 @@
                 />
 
             <corners
-                android:bottomLeftRadius="8dp"
-                android:bottomRightRadius="8dp" />
+                    android:radius="0px"
+                android:bottomLeftRadius="8px"
+                android:bottomRightRadius="8px" />
         </shape>
     </item>
 

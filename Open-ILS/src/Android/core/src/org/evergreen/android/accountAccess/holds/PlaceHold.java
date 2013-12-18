@@ -193,7 +193,8 @@ public class PlaceHold extends Activity {
                     @Override
                     public void run() {
                         progressDialog = ProgressDialog.show(context,
-                                "Please wait", "Placing hold");
+                                getResources().getText(R.string.dialog_please_wait),
+                                "Placing hold");
                     }
                 });
                 // TODO verify hold possible

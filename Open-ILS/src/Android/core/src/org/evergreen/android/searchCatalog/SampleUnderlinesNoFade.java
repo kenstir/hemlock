@@ -130,7 +130,7 @@ public class SampleUnderlinesNoFade extends BaseSampleActivity {
                     
                     @Override
                     public void run() {
-                        progressDialog = ProgressDialog.show(context,null ,getResources().getText(R.string.dialog_load_more_message));
+                        progressDialog = ProgressDialog.show(context, null,getResources().getText(R.string.dialog_load_more_message));
                     }
                 });
                 
