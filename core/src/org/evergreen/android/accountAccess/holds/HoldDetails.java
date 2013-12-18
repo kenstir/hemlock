@@ -228,7 +228,8 @@ public class HoldDetails extends Activity {
                                         + record.ahr.getInt("id"));
 
                                 progressDialog = ProgressDialog.show(context,
-                                        "Please wait", "Canceling hold");
+                                        getResources().getText(R.string.dialog_please_wait),
+                                        "Canceling hold");
                                 Thread cancelHoldThread = new Thread(
                                         new Runnable() {
 
@@ -312,7 +313,8 @@ public class HoldDetails extends Activity {
         updateHold.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                progressDialog = ProgressDialog.show(context, "Please wait",
+                progressDialog = ProgressDialog.show(context,
+                        getResources().getText(R.string.dialog_please_wait),
                         "Updating hold");
                 Thread updateHoldThread = new Thread(updateHoldRunnable);
                 updateHoldThread.start();

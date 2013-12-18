@@ -122,7 +122,9 @@ public class FinesActivity extends Activity {
                 R.layout.fines_list_item, finesRecords);
         lv.setAdapter(listAdapter);
 
-        progressDialog = ProgressDialog.show(this, null, "Retrieving fines");
+        progressDialog = ProgressDialog.show(this,
+                getResources().getText(R.string.dialog_please_wait),
+                "Retrieving fines");
 
         getFinesInfo = new Runnable() {
             @Override

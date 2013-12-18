@@ -169,7 +169,8 @@ public class BookBagDetails extends Activity {
                                     int which) {
 
                                 progressDialog = ProgressDialog.show(context,
-                                        "Please wait", "Deleting Bookbag");
+                                        getResources().getText(R.string.dialog_please_wait),
+                                        "Deleting Bookbag");
                                 deleteBookbag.start();
                             }
                         });
@@ -243,7 +244,8 @@ public class BookBagDetails extends Activity {
 
         Thread getBookBags = new Thread(getBookBagsItemsRunnable);
 
-        progressDialog = ProgressDialog.show(context, "Please wait",
+        progressDialog = ProgressDialog.show(context,
+                getResources().getText(R.string.dialog_please_wait),
                 "Retrieving bookbag data");
         getBookBags.start();
 
@@ -313,8 +315,8 @@ public class BookBagDetails extends Activity {
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    progressDialog = ProgressDialog.show(
-                                            context, "Please wait",
+                                    progressDialog = ProgressDialog.show(context,
+                                            getResources().getText(R.string.dialog_please_wait),
                                             "Removing item");
                                 }
                             });
@@ -339,8 +341,8 @@ public class BookBagDetails extends Activity {
                                     setResult(RESULT_CODE_UPDATE);
 
                                     bookBag.items.remove(record);
-                                    progressDialog = ProgressDialog.show(
-                                            context, "Please wait",
+                                    progressDialog = ProgressDialog.show(context,
+                                            getResources().getText(R.string.dialog_please_wait),
                                             "Retrieving bookbag data");
                                     getBookBags.start();
 

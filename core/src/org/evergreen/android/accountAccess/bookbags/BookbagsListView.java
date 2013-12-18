@@ -174,7 +174,8 @@ public class BookbagsListView extends Activity {
 
             if (name.length() > 1) {
                 progressDialog = ProgressDialog.show(context,
-                        "Please wait", "Creating Bookbag");
+                        getResources().getText(R.string.dialog_please_wait),
+                        "Creating Bookbag");
                 createBookbag.start();
             } else
                 Toast.makeText(context,
@@ -191,7 +192,8 @@ public class BookbagsListView extends Activity {
                     @Override
                     public void run() {
                         progressDialog = ProgressDialog.show(context,
-                                "Please wait", "Retrieving Bookbag data");
+                                getResources().getText(R.string.dialog_please_wait),
+                                "Retrieving Bookbag data");
                     }
                 });
 

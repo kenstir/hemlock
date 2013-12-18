@@ -254,8 +254,7 @@ public class SearchCatalogListView extends Activity {
 
                         progressDialog = ProgressDialog.show(
                                 context,
-                                getResources().getText(
-                                        R.string.dialog_please_wait),
+                                getResources().getText(R.string.dialog_please_wait),
                                 getResources().getText(
                                         R.string.dialog_fetching_data_message));
                     }
@@ -646,7 +645,8 @@ public class SearchCatalogListView extends Activity {
                             }
                         });
                         progressDialog = ProgressDialog.show(context,
-                                "Please wait", "Adding to bookbag");
+                                getResources().getText(R.string.dialog_please_wait),
+                                "Adding to bookbag");
                         addtoBookbag.start();
 
                     }
