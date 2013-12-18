@@ -235,11 +235,6 @@ public class FinesActivity extends Activity {
             // status.setText(record.getHoldStatus());
             fineStatus.setText(record.getStatus());
 
-            if (record.getStatus().equals("returned")) {
-                fineStatus.setTextColor(Color.argb(255, 0, 255, 0));
-            } else
-                fineStatus.setTextColor(Color.argb(255, 255, 0, 0));
-
             return row;
         }
     }

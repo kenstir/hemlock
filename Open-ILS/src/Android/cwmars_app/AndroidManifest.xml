@@ -27,7 +27,7 @@
     <application
         android:allowBackup="true"
         android:icon="@drawable/evergreen_launcher_icon"
-        android:label="@string/ou_app_name"
+        android:label="@string/ou_app_label"
         android:theme="@style/EvergreenTheme" >
 
         <!-- Notification receiver -->
@@ -50,9 +50,7 @@
         <service android:name="org.evergreen.android.services.ScheduledIntentService" >
         </service>
 
-        <activity
-            android:name="org.evergreen.android.views.splashscreen.SplashActivity"
-            android:label="@string/ou_app_label">
+        <activity android:name="org.evergreen.android.views.splashscreen.SplashActivity">
             <!--  android:theme="@android:style/Theme.Light.NoTitleBar"  -->
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -75,15 +73,12 @@
         </activity>
         <activity android:name="org.evergreen.android.searchCatalog.MoreCopyInformation" >
         </activity>
-        <activity
-            android:name="org.evergreen.android.searchCatalog.SearchCatalogListView"
-            android:label="@string/ou_app_label" >
+        <activity android:name="org.evergreen.android.searchCatalog.SearchCatalogListView">
         </activity>
         <activity android:name="org.evergreen.android.searchCatalog.AdvancedSearchActivity" >
         </activity>
         <activity
             android:name="org.evergreen.android.barcodescan.CaptureActivity"
-            android:label="@string/ou_app_label"
             android:screenOrientation="landscape"
             android:theme="@android:style/Theme.NoTitleBar"
             android:windowSoftInputMode="stateAlwaysHidden" >
