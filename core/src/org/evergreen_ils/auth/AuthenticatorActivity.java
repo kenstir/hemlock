@@ -1,7 +1,7 @@
 package org.evergreen_ils.auth;
 
 import android.preference.PreferenceManager;
-import org.evergreen.android.R;
+import org.evergreen_ils.R;
 import org.evergreen_ils.auth.Const;
 
 import android.accounts.Account;
