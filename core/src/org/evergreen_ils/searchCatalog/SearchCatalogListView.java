@@ -22,6 +22,8 @@ package org.evergreen_ils.searchCatalog;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarActivity;
 import org.evergreen_ils.R;
 import org.evergreen_ils.R.layout;
 import org.evergreen_ils.accountAccess.AccountAccess;
@@ -69,7 +71,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class SearchCatalogListView extends Activity {
+public class SearchCatalogListView extends ActionBarActivity {
 
     private final String TAG = SearchCatalogListView.class.getName();
 
@@ -121,10 +123,6 @@ public class SearchCatalogListView extends Activity {
 
     private Button barcodeScanButton = null;
 
-    private Button homeButton = null;
-
-    private Button myAccountButton = null;
-
     private String advancedSearchString = null;
 
     // marks when the fetching record thread is started
@@ -138,30 +136,12 @@ public class SearchCatalogListView extends Activity {
             return;
         }
 
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setSubtitle(AccountAccess.userName);
+
         setContentView(R.layout.search_result_list);
         setTitle(R.string.browse_catalog);
 
-        myAccountButton = (Button) findViewById(R.id.my_account_button);
-        myAccountButton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(),
-                        AccountScreenDashboard.class);
-                startActivity(intent);
-            }
-        });
-
-        homeButton = (Button) findViewById(R.id.action_bar_home_button);
-        homeButton.setText(R.string.browse_catalog);
-        homeButton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                searchOptionsMenu.setVisibility(View.VISIBLE);
-                searchResultsNumber.setVisibility(View.INVISIBLE);
-            }
-        });
-        // end header portion actions
-        
         advancedSearchButton = (Button) findViewById(R.id.menu_advanced_search_button);
         advancedSearchButton.setOnClickListener(new OnClickListener() {
             @Override

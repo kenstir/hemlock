@@ -32,8 +32,7 @@
     <application
         android:allowBackup="true"
         android:icon="@drawable/evergreen_launcher_icon"
-        android:label="@string/ou_app_label"
-        android:theme="@style/EvergreenTheme" >
+        android:label="@string/ou_app_label" >
 
         <!-- Notification receiver -->
         <receiver
