@@ -154,16 +154,13 @@ public class ItemsCheckOutListView extends Activity {
 
                         itemsNo.setText(" " + circRecords.size() + " ");
 
-                        int overdueNo = 0;
                         // find overdue items
-
+                        int overdueNo = 0;
                         for (int i = 0; i < circRecords.size(); i++) {
                             CircRecord circ = circRecords.get(i);
-
                             if (circ.getDueDateObject().compareTo(currentDate) < 0)
                                 overdueNo++;
                         }
-
                         overdueItems.setText(" " + overdueNo);
 
                         progressDialog.dismiss();
@@ -178,17 +175,15 @@ public class ItemsCheckOutListView extends Activity {
             }
         });
 
-        if (accountAccess.isAuthenticated()) {
-            progressDialog = new ProgressDialog(context);
-            progressDialog.setMessage("Retrieving circulation data");
-            progressDialog.show();
-            getCirc.start();
+        progressDialog = new ProgressDialog(context);
+        progressDialog.setMessage("Retrieving circulation data");
+        progressDialog.show();
+        getCirc.start();
+    }
 
-        } else
-            Toast.makeText(context,
-                    "You must be authenticated to retrieve circulation records",
-                    Toast.LENGTH_LONG);
-
+    private void dismissProgress() {
+        if (progressDialog != null && progressDialog.isShowing())
+            progressDialog.dismiss();
     }
 
     @Override
@@ -278,10 +273,8 @@ public class ItemsCheckOutListView extends Activity {
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    progressDialog = new ProgressDialog(
-                                            context);
-                                    progressDialog
-                                            .setMessage("Renewing item");
+                                    progressDialog = new ProgressDialog(context);
+                                    progressDialog.setMessage("Renewing item");
                                     progressDialog.show();
                                 }
                             });
