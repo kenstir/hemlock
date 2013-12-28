@@ -211,19 +211,6 @@ public class AccountAccess {
     }
 
     /**
-     * Checks if is authenticated.
-     *
-     * @return true, if is authenticated
-     */
-    public boolean isAuthenticated() {
-
-        if (authToken != null)
-            return true;
-
-        return false;
-    }
-
-    /**
      * Gets the account access.
      *
      * @param httpAddress the http address
