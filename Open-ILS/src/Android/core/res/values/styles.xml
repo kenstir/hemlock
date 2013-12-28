@@ -34,9 +34,10 @@
         <item name="android:layout_height">14dip</item>
     </style>
 
-    <style name="EvergreenTheme" parent="android:Theme.Black.NoTitleBar">
-        <item name="android:windowNoTitle">true</item>
+    <!--
+    <style name="EvergreenTheme" parent="@style/Theme.AppCompat.Light.">
     </style>
+    -->
 
     <style name="HomeButton">
         <item name="android:layout_gravity">center_vertical</item>
