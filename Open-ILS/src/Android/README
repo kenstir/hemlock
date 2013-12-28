@@ -19,9 +19,9 @@ Project relies on the following libraries :
 2.Project structure :
 ===================================================================
 
-Packages are under the root package org.evergreen.android :
+Packages are under the root package org.evergreen_ils :
    
-    - org.evergreen.android.accountAccess:
+    - org.evergreen_ils.accountAccess:
             accountAccess.holds
             accountAccess.fines
             accountAccess.bookbags
@@ -29,31 +29,31 @@ Packages are under the root package org.evergreen.android :
 
 	This package handles the my account administration panel. In every subpackage the classes for the specific category are placed inside it.
 
-	- org.evergreen.android.barcodescan:
+	- org.evergreen_ils.barcodescan:
 
 	This package represents the barcode scan part of the project. It has a camera AR view class which helps scan the barcode. The class is limited for scanning 1D barcodes like UPC and EAN type barcodes.
 
-	- org.evergreen.android.database
+	- org.evergreen_ils.database
 
 	This package contains the Database Manager class that is used to persist classes into SQLite memory.
 
-	- org.evergreen.android.globals
+	- org.evergreen_ils.globals
 
 	This package contains global configuration classes and utils methods and functions used within the project
 
-	- org.evergreen.android.searchCatalog
+	- org.evergreen_ils.searchCatalog
 
 	This package is used for the search option of the application.
 
-	- org.evergreen.android.services
+	- org.evergreen_ils.services
 
 	This package contains background services and broadcast receivers used for settings notifications on items checkout expiration.
 
-	- org.evergreen.android.utils.ui
+	- org.evergreen_ils.utils.ui
 
 	Classes for fragment uses. Some of them are not used in the project but can become useful.
 
-	- org.evergreen.android.views
+	- org.evergreen_ils.views
 
 	Some global application views like the Splashscreen, ApplicationSettings, MyAccountDashboard or the ConfigureApplication view.
 

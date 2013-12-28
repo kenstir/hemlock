@@ -15,7 +15,7 @@ import org.opensrf.net.http.HttpRequest;
 import android.content.Context;
 import android.text.TextUtils;
 import android.util.Log;
-import org.evergreen.android.R;
+import org.evergreen_ils.R;
 
 public class EvergreenAuthenticator {
     private final static String TAG = "eg.auth";

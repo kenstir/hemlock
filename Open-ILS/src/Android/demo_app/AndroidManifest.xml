@@ -32,25 +32,25 @@
 
         <!-- Notification receiver -->
         <receiver
-                android:name="org.evergreen.android.services.NotificationReceiver"
+                android:name="org.evergreen_ils.services.NotificationReceiver"
                 android:process=":remote">
         </receiver>
         <!-- Receiver to reinit notifications on reboot -->
-        <receiver android:name="org.evergreen.android.services.RebootReceiver">
+        <receiver android:name="org.evergreen_ils.services.RebootReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED"/>
             </intent-filter>
         </receiver>
-        <receiver android:name="org.evergreen.android.services.PeriodicServiceBroadcastReceiver">
+        <receiver android:name="org.evergreen_ils.services.PeriodicServiceBroadcastReceiver">
             <intent-filter>
                 <action android:name="android.net.conn.CONNECTIVITY_CHANGE"/>
             </intent-filter>
         </receiver>
 
-        <service android:name="org.evergreen.android.services.ScheduledIntentService">
+        <service android:name="org.evergreen_ils.services.ScheduledIntentService">
         </service>
 
-        <activity android:name="org.evergreen.android.views.splashscreen.SplashActivity">
+        <activity android:name="org.evergreen_ils.views.splashscreen.SplashActivity">
             <!--  android:theme="@android:style/Theme.Light.NoTitleBar"  -->
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
@@ -59,51 +59,51 @@
             </intent-filter>
         </activity>
         <activity
-                android:name="org.evergreen.android.views.AccountScreenDashboard"
+                android:name="org.evergreen_ils.views.AccountScreenDashboard"
                 android:theme="@android:style/Theme.Light.NoTitleBar">
         </activity>
-        <activity android:name="org.evergreen.android.views.ApplicationPreferences">
+        <activity android:name="org.evergreen_ils.views.ApplicationPreferences">
         </activity>
 
         <!-- Search -->
 
         <activity
-                android:name="org.evergreen.android.searchCatalog.SampleUnderlinesNoFade"
+                android:name="org.evergreen_ils.searchCatalog.SampleUnderlinesNoFade"
                 android:label="Underlines/No Fade">
         </activity>
-        <activity android:name="org.evergreen.android.searchCatalog.MoreCopyInformation">
+        <activity android:name="org.evergreen_ils.searchCatalog.MoreCopyInformation">
         </activity>
-        <activity android:name="org.evergreen.android.searchCatalog.SearchCatalogListView">
+        <activity android:name="org.evergreen_ils.searchCatalog.SearchCatalogListView">
         </activity>
-        <activity android:name="org.evergreen.android.searchCatalog.AdvancedSearchActivity">
+        <activity android:name="org.evergreen_ils.searchCatalog.AdvancedSearchActivity">
         </activity>
         <activity
-                android:name="org.evergreen.android.barcodescan.CaptureActivity"
+                android:name="org.evergreen_ils.barcodescan.CaptureActivity"
                 android:screenOrientation="landscape"
                 android:theme="@android:style/Theme.NoTitleBar"
                 android:windowSoftInputMode="stateAlwaysHidden">
         </activity>
 
         <!-- Checkout Activities -->
-        <activity android:name="org.evergreen.android.accountAccess.checkout.ItemsCheckOutListView">
+        <activity android:name="org.evergreen_ils.accountAccess.checkout.ItemsCheckOutListView">
         </activity>
 
         <!-- Holds Activities -->
-        <activity android:name="org.evergreen.android.accountAccess.holds.HoldsListView">
+        <activity android:name="org.evergreen_ils.accountAccess.holds.HoldsListView">
         </activity>
-        <activity android:name="org.evergreen.android.accountAccess.holds.PlaceHold">
+        <activity android:name="org.evergreen_ils.accountAccess.holds.PlaceHold">
         </activity>
-        <activity android:name="org.evergreen.android.accountAccess.holds.HoldDetails">
+        <activity android:name="org.evergreen_ils.accountAccess.holds.HoldDetails">
         </activity>
 
         <!-- Fines Activities -->
-        <activity android:name="org.evergreen.android.accountAccess.fines.FinesActivity">
+        <activity android:name="org.evergreen_ils.accountAccess.fines.FinesActivity">
         </activity>
 
         <!-- Bookbags -->
-        <activity android:name="org.evergreen.android.accountAccess.bookbags.BookbagsListView">
+        <activity android:name="org.evergreen_ils.accountAccess.bookbags.BookbagsListView">
         </activity>
-        <activity android:name="org.evergreen.android.accountAccess.bookbags.BookBagDetails">
+        <activity android:name="org.evergreen_ils.accountAccess.bookbags.BookBagDetails">
         </activity>
 
         <activity

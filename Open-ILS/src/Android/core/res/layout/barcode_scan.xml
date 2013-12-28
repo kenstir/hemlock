@@ -12,7 +12,7 @@
 	               android:layout_height="fill_parent"
 	               android:layout_centerInParent="true"/>
 	               
-	  <org.evergreen.android.barcodescan.ViewfinderView
+	  <org.evergreen_ils.barcodescan.ViewfinderView
 	      android:id="@+id/viewfinder_view"
 	      android:layout_width="fill_parent"
 	      android:layout_height="fill_parent"/>
