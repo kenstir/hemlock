@@ -6,8 +6,6 @@
     android:background="@color/background"
      >
 
-   	<include android:id="@+id/header_actionbar" layout="@layout/simple_actionbar"/>
-
     <TableLayout
          android:layout_width="fill_parent"
          android:layout_height="wrap_content"

@@ -90,12 +90,18 @@
                 android:label="@string/checkout_items_title"
                 android:parentActivityName="org.evergreen_ils.views.MainActivity">
             <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="org.evergreen_ils.views.MainActivity"/>
+                    android:name="android.support.PARENT_ACTIVITY"
+                    android:value="org.evergreen_ils.views.MainActivity"/>
         </activity>
 
         <!-- Holds Activities -->
-        <activity android:name="org.evergreen_ils.accountAccess.holds.HoldsListView" >
+        <activity
+                android:name="org.evergreen_ils.accountAccess.holds.HoldsListView"
+                android:label="@string/hold_items_title"
+                android:parentActivityName="org.evergreen_ils.views.MainActivity">
+            <meta-data
+                    android:name="android.support.PARENT_ACTIVITY"
+                    android:value="org.evergreen_ils.views.MainActivity"/>
         </activity>
         <activity android:name="org.evergreen_ils.accountAccess.holds.PlaceHold" >
         </activity>
@@ -103,7 +109,13 @@
         </activity>
 
         <!-- Fines Activities -->
-        <activity android:name="org.evergreen_ils.accountAccess.fines.FinesActivity" >
+        <activity
+                android:name="org.evergreen_ils.accountAccess.fines.FinesActivity"
+                android:label="@string/title_fines"
+                android:parentActivityName="org.evergreen_ils.views.MainActivity">
+            <meta-data
+                    android:name="android.support.PARENT_ACTIVITY"
+                    android:value="org.evergreen_ils.views.MainActivity"/>
         </activity>
 
         <!-- Bookbags -->

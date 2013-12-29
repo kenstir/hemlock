@@ -18,7 +18,7 @@
             android:text="@string/title_check_out"
             android:id="@+id/account_btn_check_out"
             android:onClick="onButtonClick"
-            android:drawableStart="@drawable/check_out"/>
+            android:drawableStart="@drawable/items_checked_out"/>
 
     <Button
             android:layout_width="match_parent"
