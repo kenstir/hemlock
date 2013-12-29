@@ -17,7 +17,7 @@
     <string name="hold_details_title">Hold Details</string>
     <string name="bookbag_items_title">Bookbags</string>
     <string name="bookbag_details_title">Bookbag details</string>
-    <string name="fines_title">Fines</string>
+    <string name="title_fines">Fines</string>
     <string name="copy_information_title">Copy Information</string>
     <string name="button_place_hold">Place Hold</string>
     <string name="button_add_to_bookbag">Add to Bookbag</string>
@@ -56,7 +56,6 @@
     <string name="title_my_account">My Account</string>
     <string name="title_check_out">Items Checked Out</string>
     <string name="title_holds">Holds</string>
-    <string name="title_fines">Fines</string>
     <string name="title_book_bags">Bookbags</string>
     <string name="renew_button">Renew</string>
     <string name="item_renewed">Item renewed</string>

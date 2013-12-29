@@ -23,6 +23,8 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarActivity;
 import org.evergreen_ils.R;
 import org.evergreen_ils.accountAccess.AccountAccess;
 import org.evergreen_ils.accountAccess.SessionNotFoundException;
@@ -46,7 +48,7 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
-public class FinesActivity extends Activity {
+public class FinesActivity extends ActionBarActivity {
 
     private TextView total_owned;
 
@@ -64,10 +66,6 @@ public class FinesActivity extends Activity {
 
     private OverdueMaterialsArrayAdapter listAdapter;
 
-    private Button homeButton;
-
-    private Button myAccountButton;
-
     private TextView headerTitle;
 
     private Context context;
@@ -84,28 +82,10 @@ public class FinesActivity extends Activity {
 
         setContentView(R.layout.fines);
 
-        // header portion actions
-        myAccountButton = (Button) findViewById(R.id.my_account_button);
-        myAccountButton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(),
-                        AccountScreenDashboard.class);
-                startActivity(intent);
-            }
-        });
-
-        homeButton = (Button) findViewById(R.id.action_bar_home_button);
-        homeButton.setText(R.string.fines_title);
-        homeButton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(),
-                        SearchCatalogListView.class);
-                startActivity(intent);
-            }
-        });
-        // end header portion actions
+        // set up action bar
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setSubtitle(AccountAccess.userName);
+        actionBar.setDisplayHomeAsUpEnabled(true);
 
         decimalFormater = new DecimalFormat("#0.00");
         lv = (ListView) findViewById(R.id.fines_overdue_materials_list);

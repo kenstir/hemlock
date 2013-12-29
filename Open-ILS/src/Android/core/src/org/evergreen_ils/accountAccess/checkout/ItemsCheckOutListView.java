@@ -86,6 +86,7 @@ public class ItemsCheckOutListView extends ActionBarActivity {
 
         setContentView(R.layout.checkout_list);
 
+        // set up action bar
         ActionBar actionBar = getSupportActionBar();
         actionBar.setSubtitle(AccountAccess.userName);
         actionBar.setDisplayHomeAsUpEnabled(true);

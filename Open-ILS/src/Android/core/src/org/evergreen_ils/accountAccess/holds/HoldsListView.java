@@ -22,6 +22,8 @@ package org.evergreen_ils.accountAccess.holds;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarActivity;
 import org.evergreen_ils.R;
 import org.evergreen_ils.accountAccess.AccountAccess;
 import org.evergreen_ils.accountAccess.SessionNotFoundException;
@@ -50,7 +52,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import org.evergreen_ils.accountAccess.holds.HoldRecord;
 
-public class HoldsListView extends Activity {
+public class HoldsListView extends ActionBarActivity {
 
     private final String TAG = HoldsListView.class.getName();
 
@@ -88,28 +90,10 @@ public class HoldsListView extends Activity {
 
         setContentView(R.layout.holds_list);
 
-        // header portion actions
-        myAccountButton = (Button) findViewById(R.id.my_account_button);
-        myAccountButton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(),
-                        AccountScreenDashboard.class);
-                startActivity(intent);
-            }
-        });
-
-        homeButton = (Button) findViewById(R.id.action_bar_home_button);
-        homeButton.setText(R.string.hold_items_title);
-        homeButton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(),
-                        SearchCatalogListView.class);
-                startActivity(intent);
-            }
-        });
-        // end header portion actions
+        // set up action bar
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setSubtitle(AccountAccess.userName);
+        actionBar.setDisplayHomeAsUpEnabled(true);
 
         holdsNoText = (TextView) findViewById(R.id.holds_number);
 
