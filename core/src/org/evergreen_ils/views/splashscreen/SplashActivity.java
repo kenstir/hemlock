@@ -23,6 +23,7 @@ import org.evergreen_ils.R;
 import org.evergreen_ils.globals.GlobalConfigs;
 import org.evergreen_ils.searchCatalog.SearchCatalogListView;
 import org.evergreen_ils.views.ApplicationPreferences;
+import org.evergreen_ils.views.MainActivity;
 import org.evergreen_ils.views.splashscreen.LoadingTask.LoadingTaskListener;
 
 import android.app.Activity;
@@ -128,7 +129,7 @@ public class SplashActivity extends Activity implements LoadingTaskListener {
 
     private void startApp() {
         mInitialized = true;
-        Intent intent = new Intent(SplashActivity.this, SearchCatalogListView.class);
+        Intent intent = new Intent(SplashActivity.this, MainActivity.class);
         startActivity(intent);
         finish();
     }

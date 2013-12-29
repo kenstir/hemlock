@@ -24,6 +24,8 @@ import java.util.Date;
 import java.util.List;
 
 import android.opengl.Visibility;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarActivity;
 import org.evergreen_ils.R;
 import org.evergreen_ils.accountAccess.AccountAccess;
 import org.evergreen_ils.accountAccess.MaxRenewalsException;
@@ -52,7 +54,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class ItemsCheckOutListView extends Activity {
+public class ItemsCheckOutListView extends ActionBarActivity {
 
     private final String TAG = ItemsCheckOutListView.class.getName();
 
@@ -68,15 +70,7 @@ public class ItemsCheckOutListView extends Activity {
 
     private ProgressDialog progressDialog;
 
-    private Button homeButton;
-
-    private Button myAccountButton;
-
-    private TextView headerTitle;
-
     private TextView itemsNo;
-
-    private Activity thisActivity;
 
     private TextView overdueItems;
 
@@ -90,34 +84,13 @@ public class ItemsCheckOutListView extends Activity {
             return;
         }
 
-        thisActivity = this;
         setContentView(R.layout.checkout_list);
-        setTitle(R.string.checkout_items_title);
+
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setSubtitle(AccountAccess.userName);
+        actionBar.setDisplayHomeAsUpEnabled(true);
 
         currentDate = new Date(System.currentTimeMillis());
-
-        // header portion actions
-        myAccountButton = (Button) findViewById(R.id.my_account_button);
-        myAccountButton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(),
-                        AccountScreenDashboard.class);
-                startActivity(intent);
-            }
-        });
-
-        homeButton = (Button) findViewById(R.id.action_bar_home_button);
-        homeButton.setText(R.string.checkout_items_title);
-        homeButton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(),
-                        SearchCatalogListView.class);
-                startActivity(intent);
-            }
-        });
-        // end header portion actions
 
         context = this;
         itemsNo = (TextView) findViewById(R.id.checkout_items_number);

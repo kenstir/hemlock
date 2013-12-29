@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:background="@drawable/background_grey_image">
+
+    <TextView
+            android:layout_width="20px"
+            android:layout_height="18dp"
+            />
+
+    <Button
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            style="@style/BigActionButton"
+            android:text="@string/title_check_out"
+            android:id="@+id/account_btn_check_out"
+            android:onClick="onButtonClick"
+            android:drawableStart="@drawable/check_out"/>
+
+    <Button
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            style="@style/BigActionButton"
+            android:text="@string/title_holds"
+            android:id="@+id/account_btn_holds"
+            android:onClick="onButtonClick"
+            android:drawableStart="@drawable/holds"/>
+
+    <Button
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            style="@style/BigActionButton"
+            android:text="@string/title_fines"
+            android:id="@+id/account_btn_fines"
+            android:onClick="onButtonClick"
+            android:drawableStart="@drawable/fines"/>
+
+    <TextView
+            android:layout_width="20px"
+            android:layout_height="12dp"
+            />
+
+</LinearLayout>
