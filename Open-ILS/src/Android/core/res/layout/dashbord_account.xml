@@ -41,12 +41,12 @@
         >
         <Button android:id="@+id/account_btn_check_out"
             style="@style/HomeButton"
-            android:onClick="onClickFeature"
+            android:onClick="onButtonClick"
             android:text="@string/title_check_out"
             android:drawableTop="@drawable/check_out"/>
         <Button android:id="@+id/account_btn_holds"
             style="@style/HomeButton"
-            android:onClick="onClickFeature"
+            android:onClick="onButtonClick"
             android:text="@string/title_holds"
             android:drawableTop="@drawable/holds"/>
     </LinearLayout>
@@ -59,12 +59,12 @@
         android:layout_weight="1">
         <Button android:id="@+id/account_btn_fines"
             style="@style/HomeButton"
-            android:onClick="onClickFeature"
+            android:onClick="onButtonClick"
             android:text="@string/title_fines"
             android:drawableTop="@drawable/fines"/>
         <Button android:id="@+id/account_btn_book_bags"
             style="@style/HomeButton"
-            android:onClick="onClickFeature"
+            android:onClick="onButtonClick"
             android:text="@string/title_book_bags"
             android:drawableTop="@drawable/book_bag"/>
     </LinearLayout>

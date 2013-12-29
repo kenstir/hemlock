@@ -157,7 +157,7 @@ public class AccountScreenDashboard extends Activity {
         super.onStop();
     }
 
-    public void onClickFeature(View v) {
+    public void onButtonClick(View v) {
         int id = v.getId();
         if (id == R.id.account_btn_check_out) {
             startActivity(new Intent(getApplicationContext(),

@@ -47,7 +47,7 @@
                 style="@style/HomeButton"
                 android:layout_weight="1"
                 android:drawableTop="@drawable/check_out"
-                android:onClick="onClickFeature"
+                android:onClick="onButtonClick"
                 android:text="@string/title_check_out" />
 
             <Button
@@ -55,7 +55,7 @@
                 style="@style/HomeButton"
                 android:layout_weight="1"
                 android:drawableTop="@drawable/holds"
-                android:onClick="onClickFeature"
+                android:onClick="onButtonClick"
                 android:text="@string/title_holds" />
 
             <Button
@@ -63,7 +63,7 @@
                 style="@style/HomeButton"
                 android:layout_weight="1"
                 android:drawableTop="@drawable/fines"
-                android:onClick="onClickFeature"
+                android:onClick="onButtonClick"
                 android:text="@string/title_fines" />
 
             <Button
@@ -71,7 +71,7 @@
                 style="@style/HomeButton"
                 android:layout_weight="1"
                 android:drawableTop="@drawable/book_bag"
-                android:onClick="onClickFeature"
+                android:onClick="onButtonClick"
                 android:text="@string/title_book_bags" />
         </LinearLayout>
 
