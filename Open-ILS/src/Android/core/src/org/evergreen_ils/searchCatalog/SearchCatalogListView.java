@@ -115,16 +115,6 @@ public class SearchCatalogListView extends ActionBarActivity {
 
     private View searchOptionsMenu = null;
 
-    private Button advancedSearchButton = null;
-
-    private Button libraryHoursButton = null;
-
-    private Button preferenceButton = null;
-
-    private Button barcodeScanButton = null;
-
-    private String advancedSearchString = null;
-
     // marks when the fetching record thread is started
     private boolean loadingElements = false;
 
@@ -136,59 +126,33 @@ public class SearchCatalogListView extends ActionBarActivity {
             return;
         }
 
+        setContentView(R.layout.search_result_list);
+
+        // set up action bar
         ActionBar actionBar = getSupportActionBar();
         actionBar.setSubtitle(AccountAccess.userName);
+        actionBar.setDisplayHomeAsUpEnabled(true);
 
-        setContentView(R.layout.search_result_list);
-        setTitle(R.string.browse_catalog);
-
+        /*
         advancedSearchButton = (Button) findViewById(R.id.menu_advanced_search_button);
         advancedSearchButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
                 // show advanced view dialog
-                Intent advancedSearch = new Intent(context,
-                        AdvancedSearchActivity.class);
+                Intent advancedSearch = new Intent(context, AdvancedSearchActivity.class);
                 startActivityForResult(advancedSearch, 2);
             }
         });
+        */
+
         // get bookbags
         bookBags = AccountAccess.getAccountAccess().getBookbags();
 
-        libraryHoursButton = (Button) findViewById(R.id.library_hours_button);
-        libraryHoursButton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // TODO Auto-generated method stub
-            }
-        });
-
-        preferenceButton = (Button) findViewById(R.id.preference_button);
-        preferenceButton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(),
-                        ApplicationPreferences.class);
-                startActivity(intent);
-            }
-        });
-
-        barcodeScanButton = (Button) findViewById(R.id.barcode_scan_button);
-        barcodeScanButton.setOnClickListener(new OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                Intent barcodeScan = new Intent(getApplicationContext(),
-                        CaptureActivity.class);
-                startActivityForResult(barcodeScan, 10);
-            }
-        });
         // singleton initialize necessary IDL and Org data
         globalConfigs = GlobalConfigs.getGlobalConfigs(this);
 
         context = this;
-        search = SearchCatalog
-                .getInstance((ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE));
+        search = SearchCatalog.getInstance((ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE));
 
         recordList = new ArrayList<RecordInfo>();
 
@@ -196,12 +160,11 @@ public class SearchCatalogListView extends ActionBarActivity {
         adapter = new SearchArrayAdapter(getApplicationContext(),
                 R.layout.search_result_item, recordList);
 
+        //searchOptionsMenu = findViewById(R.id.search_preference_options);
         searchResultsNumber = (TextView) findViewById(R.id.search_result_number);
 
         // Get reference to ListView holder
         lv = (ListView) this.findViewById(R.id.search_results_list);
-
-        searchOptionsMenu = findViewById(R.id.search_preference_options);
 
         progressDialog = new ProgressDialog(context);
 
@@ -226,17 +189,15 @@ public class SearchCatalogListView extends ActionBarActivity {
                     public void run() {
 
                         InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                        imm.hideSoftInputFromWindow(
-                                searchText.getWindowToken(), 0);
+                        imm.hideSoftInputFromWindow(searchText.getWindowToken(), 0);
 
-                        searchOptionsMenu.setVisibility(View.GONE);
+                        //searchOptionsMenu.setVisibility(View.GONE);
                         searchResultsNumber.setVisibility(View.VISIBLE);
 
                         progressDialog = ProgressDialog.show(
                                 context,
                                 getResources().getText(R.string.dialog_please_wait),
-                                getResources().getText(
-                                        R.string.dialog_fetching_data_message));
+                                getResources().getText(R.string.dialog_fetching_data_message));
                     }
                 });
 

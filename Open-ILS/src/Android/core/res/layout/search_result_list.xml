@@ -1,143 +1,77 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:background="@color/background"
-     >
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:background="@color/background"
+        >
 
     <LinearLayout
-        android:id="@+id/search_text_container"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:focusable="true"
-        android:focusableInTouchMode="true"
-        android:orientation="vertical"
-        android:padding="4dp"
-        android:background="@drawable/grey_rounded_corners"
-        android:layout_marginTop="4dip" 
-        >
+            android:id="@+id/search_text_container"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:orientation="vertical"
+            android:padding="4dp"
+            android:background="@drawable/grey_rounded_corners"
+            android:layout_marginTop="4dip"
+            >
 
         <EditText
-            android:id="@+id/searchText"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:hint="@string/search_hint"
-            android:singleLine="true"/>
-        
-        <LinearLayout
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        >
-
-        <Spinner
-            android:id="@+id/chose_organisation"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="left"
-            android:layout_weight="1"
-            android:gravity="center|left"
-            android:spinnerMode="dialog" />
-
-        <ImageButton
-            android:id="@+id/searchButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingBottom="5dp"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp"
-            android:paddingTop="5dp"
-            android:src="@drawable/action_search" />
-    </LinearLayout>
-    
-    </LinearLayout>
-
-    
-
-    <LinearLayout
-        android:id="@+id/search_preference_options"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/search_text_container"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="5dip"
-        android:gravity="center"
-        android:orientation="vertical"
-        android:background="@drawable/background_grey_image"
-        
-         >
+                android:id="@+id/searchText"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/search_hint"
+                android:singleLine="true"/>
 
         <LinearLayout
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-             >
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                >
 
-            <Button
-                android:id="@+id/menu_advanced_search_button"
-                style="@style/MenuListButton"
-                android:layout_width="96dp"
-                android:layout_height="96dp"
-                android:background="@drawable/advanced_search"
-               	android:text="@string/menu_advanced_search"
-                
-                 />
+            <Spinner
+                    android:id="@+id/chose_organisation"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="left"
+                    android:layout_weight="1"
+                    android:gravity="center|left"
+                    android:spinnerMode="dialog"/>
 
-            <Button
-                android:id="@+id/library_hours_button"
-                style="@style/MenuListButton"
-                android:layout_width="96dp"
-                android:layout_height="96dp"
-                android:background="@drawable/library_hours"
-                android:text="@string/menu_library_hours"
-                 />
+            <ImageButton
+                    android:id="@+id/searchButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingBottom="5dp"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp"
+                    android:paddingTop="5dp"
+                    android:src="@drawable/ic_action_search"/>
         </LinearLayout>
 
-        <LinearLayout
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center" >
-
-            <Button
-                android:id="@+id/preference_button"
-                style="@style/MenuListButton"
-                android:layout_width="96dp"
-                android:layout_height="96dp"
-                android:background="@drawable/preferences"
-                android:text="@string/menu_preferences"
-                />
-            
-                <Button
-                android:id="@+id/barcode_scan_button"
-                style="@style/MenuListButton"
-                android:layout_width="96dp"
-                android:layout_height="96dp"
-                android:background="@drawable/barcode_scan"
-                android:text="@string/menu_barcode_scan"
-                />
-            
-        </LinearLayout>
     </LinearLayout>
 
+
     <LinearLayout
-        android:id="@+id/search_text"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/search_preference_options" >
+            android:id="@+id/search_text"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/search_text_container">
 
         <TextView
-            android:id="@+id/search_result_number"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textStyle="bold" />
+                android:id="@+id/search_result_number"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"/>
     </LinearLayout>
 
     <ListView
-        android:id="@+id/search_results_list"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:dividerHeight="1dp"
-        android:layout_below="@id/search_text" >
+            android:id="@+id/search_results_list"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:dividerHeight="1dp"
+            android:layout_below="@id/search_text">
     </ListView>
 
 </RelativeLayout>

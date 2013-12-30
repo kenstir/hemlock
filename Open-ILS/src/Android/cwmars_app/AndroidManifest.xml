@@ -60,7 +60,7 @@
         </activity>
         <activity
             android:name="org.evergreen_ils.views.AccountScreenDashboard"
-            android:theme="@android:style/Theme.Light.NoTitleBar" >
+            android:theme="@android:style/Theme.NoTitleBar" >
         </activity>
         <activity android:name="org.evergreen_ils.views.ApplicationPreferences" >
         </activity>
@@ -73,7 +73,13 @@
         </activity>
         <activity android:name="org.evergreen_ils.searchCatalog.MoreCopyInformation" >
         </activity>
-        <activity android:name="org.evergreen_ils.searchCatalog.SearchCatalogListView">
+        <activity
+                android:name="org.evergreen_ils.searchCatalog.SearchCatalogListView"
+                android:label="@string/title_search"
+                android:parentActivityName="org.evergreen_ils.views.MainActivity">
+            <meta-data
+                    android:name="android.support.PARENT_ACTIVITY"
+                    android:value="org.evergreen_ils.views.MainActivity"/>
         </activity>
         <activity android:name="org.evergreen_ils.searchCatalog.AdvancedSearchActivity" >
         </activity>
@@ -126,8 +132,8 @@
 
         <activity
             android:name="org.evergreen_ils.auth.AuthenticatorActivity"
-            android:label="@string/ou_account_label"
-            android:theme="@android:style/Theme.Light" >
+            android:label="@string/ou_account_label">
+            <!-- android:theme="@android:style/Theme" -->
         </activity>
 
         <activity android:name="org.evergreen_ils.views.MainActivity">

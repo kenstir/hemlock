@@ -47,10 +47,10 @@
     </style>
 
     <style name="BigActionButton">
-        <item name="android:layout_marginLeft">24dp</item>
-        <item name="android:layout_marginTop">18dp</item>
         <item name="android:layout_marginRight">24dp</item>
-        <item name="android:layout_marginBottom">18dp</item>
+        <item name="android:layout_marginLeft">24dp</item>
+        <item name="android:layout_marginTop">@dimen/bigActionButton_marginVertical</item>
+        <item name="android:layout_marginBottom">@dimen/bigActionButton_marginVertical</item>
         <item name="android:textSize">@dimen/text_size_medium</item>
         <item name="android:textStyle">normal</item>
         <item name="android:textColor">@color/dark</item>
@@ -58,11 +58,13 @@
     </style>
 
     <style name="TitleSearchStyleList">
-        <item name="android:textSize">18sp</item>
+        <item name="android:textSize">16sp</item>
         <item name="android:gravity">left</item>
         <item name="android:textStyle">bold</item>
+        <!--
         <item name="android:singleLine">true</item>
         <item name="android:ellipsize">end</item>
+        -->
     </style>
 
     <style name="AuthorSearchStyleList">

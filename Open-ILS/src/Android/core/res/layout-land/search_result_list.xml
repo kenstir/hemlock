@@ -1,53 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:background="@color/background"
-    >
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:background="@color/background"
+        >
 
     <RelativeLayout
-        android:id="@+id/header"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:background="@drawable/header_rounded_corners"
-        android:paddingTop="3dip"
-        >
-        
-                <Button
-            android:id="@+id/action_bar_home_button"
-            style="@style/LibraryLogoText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_marginLeft="5dip"
-            android:drawableLeft="@drawable/evergreen_launcher_icon_48"
-            android:text="@string/ou_app_label"
-            android:textColor="@color/white"
-            android:textSize="16sp"
-            android:paddingLeft="5dip"
-            />
-
-        <Button
-            android:id="@+id/my_account_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/my_account_button_text"
-            android:padding="10dip"
-            style="@style/HeaderButton"
-            android:layout_alignTop="@+id/action_bar_home_button" android:layout_alignParentRight="true"
-            android:layout_centerVertical="true" android:gravity="center_vertical" android:layout_marginTop="10dip"/>
-
-
-        <LinearLayout
-            android:orientation="horizontal"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:padding="4dp"
-            android:id="@+id/search_text_container"
-            android:focusable="true" 
-    		android:focusableInTouchMode="true"
-            android:layout_below="@id/action_bar_home_button">
+            android:orientation="horizontal"
+            android:background="@drawable/grey_rounded_corners"
+            android:paddingTop="3dip"
+            >
+
+        <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:padding="4dp"
+                android:id="@+id/search_text_container"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:layout_below="@id/action_bar_home_button">
 
             <EditText
                     android:id="@+id/searchText"
@@ -58,108 +32,62 @@
                     android:layout_weight="1"/>
 
         </LinearLayout>
-        
-        <LinearLayout 
-            android:id="@+id/search_functions"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/search_text_container">
-            
-                <Spinner 
-	 			android:id="@+id/chose_organisation"   
-	 			android:layout_width="fill_parent"
-	 			android:layout_height="wrap_content"
-	 			android:layout_gravity="center_horizontal"
-				android:layout_weight="1"/>
-            	
-                <ImageButton
+
+        <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/search_text_container">
+
+            <Spinner
+                    android:id="@+id/chose_organisation"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_weight="1"/>
+
+            <ImageButton
                     android:id="@+id/searchButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:src="@drawable/action_search"
-
+                    android:src="@drawable/ic_action_search"
                     android:paddingLeft="10dp"
                     android:paddingRight="10dp"
                     android:paddingTop="5dp"
-                    android:paddingBottom="5dp"/> 
+                    android:paddingBottom="5dp"/>
 
         </LinearLayout>
 
     </RelativeLayout>
 
+    <LinearLayout
+            android:id="@+id/search_preference_options"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_below="@id/header"
+            android:layout_centerHorizontal="true"
+            android:background="@drawable/background_grey_image"
+            android:gravity="center"
+            >
 
-     
-     <LinearLayout 
-         android:id="@+id/search_preference_options"
-         android:layout_width="fill_parent"
-         android:layout_height="wrap_content"
-         android:orientation="horizontal"
-         android:layout_below="@id/header"
-         android:layout_centerHorizontal="true"
-         android:background="@drawable/background_grey_image"
-         android:gravity="center"
-         >
-
-             
-              <Button
-                android:id="@+id/menu_advanced_search_button"
-                style="@style/MenuListButton"
-                android:layout_width="96dp"
-                android:layout_height="96dp"
-                android:background="@drawable/advanced_search"
-               	android:text="@string/menu_advanced_search"
-                
-                 />
-
-            <Button
-                android:id="@+id/library_hours_button"
-                style="@style/MenuListButton"
-                android:layout_width="96dp"
-                android:layout_height="96dp"
-                android:background="@drawable/library_hours"
-                android:text="@string/menu_library_hours"
-                 />
-
-
-            <Button
-                android:id="@+id/preference_button"
-                style="@style/MenuListButton"
-                android:layout_width="96dp"
-                android:layout_height="96dp"
-                android:background="@drawable/preferences"
-                android:text="@string/menu_preferences"
+    </LinearLayout>
+    <LinearLayout android:layout_width="fill_parent"
+                  android:layout_height="wrap_content"
+                  android:id="@+id/search_text"
+                  android:layout_below="@id/search_preference_options"
+            >
+        <TextView
+                android:id="@+id/search_result_number"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
                 />
-            
-                <Button
-                android:id="@+id/barcode_scan_button"
-                style="@style/MenuListButton"
-                android:layout_width="96dp"
-                android:layout_height="96dp"
-                android:background="@drawable/barcode_scan"
-                android:text="@string/menu_barcode_scan"
-                />
-            
-            
-            
-     </LinearLayout>
-          <LinearLayout android:layout_width="fill_parent"
-         android:layout_height="wrap_content"
-         android:id="@+id/search_text"
-         android:layout_below="@id/search_preference_options"
-         >
-         <TextView 
-             android:id="@+id/search_result_number"
-             android:layout_width="wrap_content"
-             android:layout_height="wrap_content"
-             android:textStyle="bold"
-             />
-         
-     </LinearLayout>
-     
-	<ListView 
-	  android:id="@+id/search_results_list"
-	  android:layout_width="fill_parent"
-	  android:layout_height="fill_parent"
-	  android:layout_below="@id/search_text"  
-	  ></ListView>
+    </LinearLayout>
+
+    <ListView
+            android:id="@+id/search_results_list"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_below="@id/search_text"
+            ></ListView>
 </RelativeLayout>

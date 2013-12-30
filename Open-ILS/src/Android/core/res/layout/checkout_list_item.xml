@@ -11,23 +11,23 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-         android:layout_weight="1" 
-         >
+        android:layout_weight="1"
+        >
 
         <TextView
-            android:id="@+id/checkout_record_title"
-            style="@style/TitleSearchStyleList"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-           />
+                android:id="@+id/checkout_record_title"
+                style="@style/TitleSearchStyleList"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                />
 
-          <TextView
+        <TextView
                 android:id="@+id/checkout_record_author"
                 style="@style/AuthorSearchStyleList"
                 android:layout_width="fill_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"/>
 
-            <TextView
+        <TextView
                 android:id="@+id/checkout_due_date"
                 style="@style/PubSearchStyleList"
                 android:layout_width="fill_parent"
@@ -36,12 +36,12 @@
 
     </LinearLayout>
 
-                <Button
+    <Button
             android:id="@+id/renew_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/renew_button" 
-            android:layout_gravity="center_vertical" 
+            android:text="@string/renew_button"
+            android:layout_gravity="center_vertical"
             style="@style/ApplicationButton"
             />
 
