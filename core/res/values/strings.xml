@@ -37,7 +37,6 @@
 
     <!-- Search -->
 
-    <string name="browse_catalog">Library catalog</string>
     <string name="search_hint">Search keywords</string>
     <string name="advanced_search">Advanced Search</string>
     <string name="loading_dialog_text"></string>

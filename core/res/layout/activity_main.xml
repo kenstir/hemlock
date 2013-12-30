@@ -18,7 +18,7 @@
             android:text="@string/title_check_out"
             android:id="@+id/account_btn_check_out"
             android:onClick="onButtonClick"
-            android:drawableStart="@drawable/items_checked_out"/>
+            android:drawableLeft="@drawable/items_checked_out"/>
 
     <Button
             android:layout_width="match_parent"
@@ -27,7 +27,7 @@
             android:text="@string/title_holds"
             android:id="@+id/account_btn_holds"
             android:onClick="onButtonClick"
-            android:drawableStart="@drawable/holds"/>
+            android:drawableLeft="@drawable/holds"/>
 
     <Button
             android:layout_width="match_parent"
@@ -36,7 +36,7 @@
             android:text="@string/title_fines"
             android:id="@+id/account_btn_fines"
             android:onClick="onButtonClick"
-            android:drawableStart="@drawable/fines"/>
+            android:drawableLeft="@drawable/fines"/>
 
     <TextView
             android:layout_width="20px"
