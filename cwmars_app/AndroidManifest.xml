@@ -113,7 +113,9 @@
                 android:name="org.evergreen_ils.accountAccess.holds.PlaceHold"
                 android:label="@string/hold_place_title">
         </activity>
-        <activity android:name="org.evergreen_ils.accountAccess.holds.HoldDetails" >
+        <activity
+                android:name="org.evergreen_ils.accountAccess.holds.HoldDetails"
+                android:label="@string/hold_details_title">
         </activity>
 
         <!-- Fines Activities -->

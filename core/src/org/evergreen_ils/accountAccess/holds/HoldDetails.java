@@ -23,7 +23,10 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
+import android.view.MenuItem;
 import org.evergreen_ils.R;
 import org.evergreen_ils.accountAccess.AccountAccess;
 import org.evergreen_ils.accountAccess.SessionNotFoundException;
@@ -58,7 +61,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class HoldDetails extends Activity {
+public class HoldDetails extends ActionBarActivity {
 
     private final String TAG = HoldDetails.class.getName();
 
@@ -112,12 +115,6 @@ public class HoldDetails extends Activity {
 
     private GlobalConfigs globalConfigs;
 
-    private Button homeButton;
-
-    private Button myAccountButton;
-
-    private TextView headerTitle;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -126,30 +123,15 @@ public class HoldDetails extends Activity {
             return;
         }
 
-        context = this;
         setContentView(R.layout.hold_details);
+
+        // set up action bar
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setSubtitle(AccountAccess.userName);
+        actionBar.setDisplayHomeAsUpEnabled(true);
+
+        context = this;
         globalConfigs = GlobalConfigs.getGlobalConfigs(this);
-
-        myAccountButton = (Button) findViewById(R.id.my_account_button);
-        myAccountButton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(),
-                        AccountScreenDashboard.class);
-                startActivity(intent);
-            }
-        });
-
-        homeButton = (Button) findViewById(R.id.action_bar_home_button);
-        homeButton.setText(R.string.hold_details_title);
-        homeButton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(),
-                        SearchCatalogListView.class);
-                startActivity(intent);
-            }
-        });
 
         final HoldRecord record = (HoldRecord) getIntent()
                 .getSerializableExtra("holdRecord");
@@ -411,6 +393,17 @@ public class HoldDetails extends Activity {
             public void onNothingSelected(android.widget.AdapterView<?> arg0) {
             }
         });
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (id == android.R.id.home) {
+            // make the action bar "up" caret work like "back"
+            onBackPressed();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     public void disableView(View view) {
