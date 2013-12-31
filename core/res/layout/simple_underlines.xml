@@ -22,8 +22,6 @@
     android:background="@color/background"
     >
 
-	<include android:id="@+id/header_actionbar" layout="@layout/simple_actionbar"/>
-
     <android.support.v4.view.ViewPager
         android:id="@+id/pager"
         android:layout_width="fill_parent"
@@ -35,7 +33,7 @@
         />
     <org.evergreen_ils.utils.ui.UnderlinePageIndicator
         android:id="@+id/indicator"
-        android:layout_height="2dp"
+        android:layout_height="3dp"
         android:layout_width="fill_parent"
         />
 </LinearLayout>

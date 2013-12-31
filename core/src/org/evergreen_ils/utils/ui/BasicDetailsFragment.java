@@ -76,7 +76,7 @@ public class BasicDetailsFragment extends Fragment {
     private TextView synopsisTextView;
     private TextView isbnTextView;
 
-    private TextView copyCountTestView;
+    private TextView copyCountTextView;
 
     private Button placeHoldButton;
 
@@ -144,7 +144,7 @@ public class BasicDetailsFragment extends Fragment {
                 R.layout.record_details_basic_fragment, null);
 
         record_header = (TextView) layout.findViewById(R.id.record_header_text);
-        copyCountTestView = (TextView) layout
+        copyCountTextView = (TextView) layout
                 .findViewById(R.id.record_details_simple_copy_count);
         showMore = (LinearLayout) layout
                 .findViewById(R.id.record_details_show_more);
@@ -299,7 +299,8 @@ public class BasicDetailsFragment extends Fragment {
             if (record.copyCountListInfo.get(i).org_id == current_org) {
                 int total = record.copyCountListInfo.get(i).count;
                 int available = record.copyCountListInfo.get(i).available;
-                copyCountTestView.setText(available + " / " + total);
+                String totalCopies = getResources().getQuantityString(R.plurals.number_of_copies, total, total);
+                copyCountTextView.setText(String.format(getString(R.string.n_of_m_available), available, totalCopies));
                 break;
             }
         }

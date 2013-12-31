@@ -10,16 +10,14 @@
     <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-		style="@style/SearchDetailsInfoSeparator"
-         >
+        >
+        <!-- style="@style/SearchDetailsInfoSeparator" -->
 
         <TextView
             android:id="@+id/record_header_text"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:textColor="@color/blue"
             android:gravity="center"
-            android:textSize="@dimen/search_details_rect_text_size"
             android:textStyle="bold"
             />
         
@@ -106,9 +104,10 @@
 
             <TextView
                 android:id="@+id/record_details_simple_copy_count"
-                style="@style/SeparatorInformation"
-            	
-            />
+                android:textStyle="bold"
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent"/>
+            <!-- style="@style/SeparatorInformation" -->
 
 			<LinearLayout
 			    android:id="@+id/record_details_copy_information"
@@ -123,11 +122,10 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
-		style="@style/SearchDetailsInfoSeparator"
 		android:orientation="horizontal"
-         >
+        style="@style/SearchDetailsInfoSeparator"
+        >
 
-		    
 		<ImageView 
 		    android:layout_width="wrap_content"
 		    android:layout_height="wrap_content"
@@ -139,8 +137,8 @@
             android:layout_height="wrap_content"
             android:textColor="@color/blue"
             android:text="@string/show_more_text"
-            android:textSize="@dimen/search_details_rect_text_size"
             android:textStyle="bold"
+            android:textSize="@dimen/search_details_rect_text_size"
         />
         
     	</LinearLayout>
