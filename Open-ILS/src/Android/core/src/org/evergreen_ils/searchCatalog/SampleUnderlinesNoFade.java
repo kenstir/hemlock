@@ -43,7 +43,7 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.TextView;
 
-public class SampleUnderlinesNoFade extends ActionBarActivity {
+public class SampleUnderlinesNoFade extends BaseSampleActivity {
 
     private ArrayList<RecordInfo> records;
 
@@ -62,10 +62,6 @@ public class SampleUnderlinesNoFade extends ActionBarActivity {
     private ProgressDialog progressDialog;
     
     private Runnable searchRunnableWithOffset;
-
-    public TestFragmentAdapter mAdapter;
-    public ViewPager mPager;
-    public PageIndicator mIndicator;
 
     public static final int RETURN_DATA = 5;
     
@@ -136,6 +132,7 @@ public class SampleUnderlinesNoFade extends ActionBarActivity {
                             // option button
 
                         }
+                        mAdapter.notifyDataSetChanged();
                         progressDialog.dismiss();
                     }
                 });

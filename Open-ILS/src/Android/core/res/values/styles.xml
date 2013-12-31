@@ -134,8 +134,8 @@
     <!-- Search Details -->
     <style name="SearchDetailsInfoSeparator">
         <item name="android:background">@drawable/shadow_rect</item>
-        <item name="android:padding">5dip</item>
-        <item name="android:layout_marginTop">10dip</item>
+        <item name="android:padding">3dip</item>
+        <item name="android:layout_marginTop">3dip</item>
         <item name="android:textColor">@color/dark</item>
     </style>
 

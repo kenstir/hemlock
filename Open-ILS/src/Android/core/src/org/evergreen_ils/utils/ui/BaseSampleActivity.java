@@ -21,6 +21,7 @@ package org.evergreen_ils.utils.ui;
 
 import java.util.Random;
 
+import android.support.v7.app.ActionBarActivity;
 import org.evergreen_ils.R;
 
 import android.support.v4.app.FragmentActivity;
@@ -29,7 +30,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
-public abstract class BaseSampleActivity extends FragmentActivity {
+public abstract class BaseSampleActivity extends ActionBarActivity {
     private static final Random RANDOM = new Random();
 
     public TestFragmentAdapter mAdapter;
