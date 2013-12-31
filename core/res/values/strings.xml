@@ -78,7 +78,6 @@
     <string name="pickup_location">Pickup location</string>
     <string name="expiration_date">Expiration Date</string>
     <string name="suspend_hold">Suspend Hold</string>
-    <string name="place_hold">Place hold</string>
     <string name="cancel">Cancel</string>
     <string name="cancel_hold">Delete</string>
     <string name="back">Back</string>

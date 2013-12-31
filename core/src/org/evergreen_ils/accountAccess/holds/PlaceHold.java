@@ -23,7 +23,10 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
+import android.view.MenuItem;
 import org.evergreen_ils.R;
 import org.evergreen_ils.accountAccess.AccountAccess;
 import org.evergreen_ils.accountAccess.SessionNotFoundException;
@@ -56,7 +59,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class PlaceHold extends Activity {
+public class PlaceHold extends ActionBarActivity {
 
     private final String TAG = PlaceHold.class.getName();
 
@@ -123,30 +126,15 @@ public class PlaceHold extends Activity {
         }
 
         setContentView(R.layout.place_hold);
+
+        // set up action bar
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setSubtitle(AccountAccess.userName);
+        actionBar.setDisplayHomeAsUpEnabled(true);
+
         globalConfigs = GlobalConfigs.getGlobalConfigs(this);
         RecordInfo record = (RecordInfo) getIntent().getSerializableExtra(
                 "recordInfo");
-
-        myAccountButton = (Button) findViewById(R.id.my_account_button);
-        myAccountButton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(),
-                        AccountScreenDashboard.class);
-                startActivity(intent);
-            }
-        });
-
-        homeButton = (Button) findViewById(R.id.action_bar_home_button);
-        homeButton.setText(R.string.hold_place_title);
-        homeButton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(),
-                        SearchCatalogListView.class);
-                startActivity(intent);
-            }
-        });
 
         context = this;
 
@@ -372,6 +360,16 @@ public class PlaceHold extends Activity {
             public void onNothingSelected(android.widget.AdapterView<?> arg0) {
             }
         });
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (id == android.R.id.home) {
+            onBackPressed();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     public void disableView(View view) {

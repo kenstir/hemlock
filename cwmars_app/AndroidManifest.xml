@@ -69,11 +69,7 @@
 
         <activity
                 android:name="org.evergreen_ils.searchCatalog.SampleUnderlinesNoFade"
-                android:label="@string/search_details_title"
-                android:parentActivityName="org.evergreen_ils.searchCatalog.SearchCatalogListView">
-            <meta-data
-                    android:name="android.support.PARENT_ACTIVITY"
-                    android:value="org.evergreen_ils.searchCatalog.SearchCatalogListView"/>
+                android:label="@string/search_details_title">
         </activity>
         <activity android:name="org.evergreen_ils.searchCatalog.MoreCopyInformation" >
         </activity>
@@ -113,7 +109,9 @@
                     android:name="android.support.PARENT_ACTIVITY"
                     android:value="org.evergreen_ils.views.MainActivity"/>
         </activity>
-        <activity android:name="org.evergreen_ils.accountAccess.holds.PlaceHold" >
+        <activity
+                android:name="org.evergreen_ils.accountAccess.holds.PlaceHold"
+                android:label="@string/hold_place_title">
         </activity>
         <activity android:name="org.evergreen_ils.accountAccess.holds.HoldDetails" >
         </activity>
