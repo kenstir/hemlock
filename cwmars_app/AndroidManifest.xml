@@ -68,8 +68,12 @@
         <!-- Search -->
 
         <activity
-            android:name="org.evergreen_ils.searchCatalog.SampleUnderlinesNoFade"
-            android:label="Underlines/No Fade" >
+                android:name="org.evergreen_ils.searchCatalog.SampleUnderlinesNoFade"
+                android:label="@string/search_details_title"
+                android:parentActivityName="org.evergreen_ils.searchCatalog.SearchCatalogListView">
+            <meta-data
+                    android:name="android.support.PARENT_ACTIVITY"
+                    android:value="org.evergreen_ils.searchCatalog.SearchCatalogListView"/>
         </activity>
         <activity android:name="org.evergreen_ils.searchCatalog.MoreCopyInformation" >
         </activity>
