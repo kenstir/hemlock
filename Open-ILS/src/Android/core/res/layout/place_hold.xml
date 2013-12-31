@@ -4,11 +4,7 @@
     android:layout_height="match_parent"
     android:background="@drawable/background_grey_image"
      >
-  
-    
-	<include android:id="@+id/header_actionbar" layout="@layout/simple_actionbar"/>
-   
-        
+
     	<LinearLayout
     	    android:id="@+id/action_bar"
 	        android:layout_width="wrap_content" 
@@ -32,7 +28,7 @@
 	            android:id="@+id/place_hold"
 	            android:layout_width="100dip"
 	            android:layout_height="wrap_content"
-	            android:text="@string/place_hold"
+	            android:text="@string/button_place_hold"
 	            style="@style/ApplicationButton"
 	            android:layout_margin="5dip"
 	            />	 
@@ -43,7 +39,6 @@
         android:layout_height="wrap_content"
         android:fillViewport="true"
         android:layout_above="@id/action_bar"
-        android:layout_below="@id/header_actionbar"
         android:padding="5dip"
         >
        <LinearLayout 

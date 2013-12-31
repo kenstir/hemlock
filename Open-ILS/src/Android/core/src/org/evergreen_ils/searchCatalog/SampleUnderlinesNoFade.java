@@ -23,6 +23,7 @@ import java.util.ArrayList;
 
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
+import android.view.MenuItem;
 import org.evergreen_ils.R;
 import org.evergreen_ils.accountAccess.AccountAccess;
 import org.evergreen_ils.utils.ui.*;
@@ -155,7 +156,16 @@ public class SampleUnderlinesNoFade extends BaseSampleActivity {
         return super.onKeyDown(keyCode, event);
     }
 
-    
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (id == android.R.id.home) {
+            onBackPressed();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
     class SearchFragmentAdapter extends TestFragmentAdapter {
         public SearchFragmentAdapter(FragmentManager fm) {
             super(fm);
