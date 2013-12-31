@@ -21,11 +21,11 @@ package org.evergreen_ils.searchCatalog;
 
 import java.util.ArrayList;
 
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarActivity;
 import org.evergreen_ils.R;
-import org.evergreen_ils.utils.ui.BaseSampleActivity;
-import org.evergreen_ils.utils.ui.BasicDetailsFragment;
-import org.evergreen_ils.utils.ui.TestFragmentAdapter;
-import org.evergreen_ils.utils.ui.UnderlinePageIndicator;
+import org.evergreen_ils.accountAccess.AccountAccess;
+import org.evergreen_ils.utils.ui.*;
 import org.evergreen_ils.views.AccountScreenDashboard;
 import org.evergreen_ils.views.splashscreen.SplashActivity;
 
@@ -43,7 +43,7 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.TextView;
 
-public class SampleUnderlinesNoFade extends BaseSampleActivity {
+public class SampleUnderlinesNoFade extends ActionBarActivity {
 
     private ArrayList<RecordInfo> records;
 
@@ -62,7 +62,11 @@ public class SampleUnderlinesNoFade extends BaseSampleActivity {
     private ProgressDialog progressDialog;
     
     private Runnable searchRunnableWithOffset;
-    
+
+    public TestFragmentAdapter mAdapter;
+    public ViewPager mPager;
+    public PageIndicator mIndicator;
+
     public static final int RETURN_DATA = 5;
     
     @Override
@@ -75,40 +79,20 @@ public class SampleUnderlinesNoFade extends BaseSampleActivity {
 
         setContentView(R.layout.simple_underlines);
 
+        // set up action bar
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setSubtitle(AccountAccess.userName);
+        actionBar.setDisplayHomeAsUpEnabled(true);
+
         search = SearchCatalog.getInstance((ConnectivityManager)getSystemService(CONNECTIVITY_SERVICE));
-        
-        records = (ArrayList<RecordInfo>) getIntent().getSerializableExtra(
-                "recordList");
+
+        records = (ArrayList<RecordInfo>) getIntent().getSerializableExtra("recordList");
 
         if (records.get(records.size() - 1).dummy == true)
             records.remove(records.size() - 1);
 
         context = this;
         
-        // header portion actions
-        homeButton = (Button) findViewById(R.id.action_bar_home_button);
-        myAccountButton = (Button) findViewById(R.id.my_account_button);
-
-        myAccountButton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(),
-                        AccountScreenDashboard.class);
-                startActivity(intent);
-            }
-        });
-
-        homeButton.setText(R.string.search_details_title);
-        homeButton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(),
-                        SearchCatalogListView.class);
-                startActivity(intent);
-            }
-        });
-        // end header portion actions
-
         int record_position = getIntent().getIntExtra("recordPosition", 0);
         mAdapter = new SearchFragmentAdapter(getSupportFragmentManager());
 
