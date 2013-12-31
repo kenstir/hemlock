@@ -5,60 +5,52 @@
                 android:background="@color/background"
         >
 
-    <RelativeLayout
+    <LinearLayout
+            android:id="@+id/search_text_container"
+            android:orientation="horizontal"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:background="@drawable/grey_rounded_corners"
-            android:paddingTop="3dip"
-            >
+            android:padding="4dp"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:layout_below="@id/action_bar_home_button">
 
-        <LinearLayout
-                android:orientation="horizontal"
+        <EditText
+                android:id="@+id/searchText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/search_hint"
+                android:singleLine="true"
+                android:layout_weight="1"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+            android:id="@+id/search_spinner_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/search_text_container">
+
+        <Spinner
+                android:id="@+id/chose_organisation"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:padding="4dp"
-                android:id="@+id/search_text_container"
-                android:focusable="true"
-                android:focusableInTouchMode="true"
-                android:layout_below="@id/action_bar_home_button">
+                android:layout_gravity="center_horizontal"
+                android:layout_weight="1"/>
 
-            <EditText
-                    android:id="@+id/searchText"
-                    android:layout_width="0dip"
-                    android:layout_height="wrap_content"
-                    android:hint="@string/search_hint"
-                    android:singleLine="true"
-                    android:layout_weight="1"/>
-
-        </LinearLayout>
-
-        <LinearLayout
-                android:layout_width="fill_parent"
+        <ImageButton
+                android:id="@+id/searchButton"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/search_text_container">
+                android:src="@drawable/ic_action_search"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:paddingTop="5dp"
+                android:paddingBottom="5dp"/>
 
-            <Spinner
-                    android:id="@+id/chose_organisation"
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
-                    android:layout_weight="1"/>
+    </LinearLayout>
 
-            <ImageButton
-                    android:id="@+id/searchButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/ic_action_search"
-                    android:paddingLeft="10dp"
-                    android:paddingRight="10dp"
-                    android:paddingTop="5dp"
-                    android:paddingBottom="5dp"/>
-
-        </LinearLayout>
-
-    </RelativeLayout>
-
+    <!--
     <LinearLayout
             android:id="@+id/search_preference_options"
             android:layout_width="fill_parent"
@@ -69,12 +61,13 @@
             android:background="@drawable/background_grey_image"
             android:gravity="center"
             >
-
     </LinearLayout>
+    -->
+
     <LinearLayout android:layout_width="fill_parent"
                   android:layout_height="wrap_content"
                   android:id="@+id/search_text"
-                  android:layout_below="@id/search_preference_options"
+                  android:layout_below="@id/search_spinner_container"
             >
         <TextView
                 android:id="@+id/search_result_number"

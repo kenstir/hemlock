@@ -49,9 +49,7 @@
                     android:paddingTop="5dp"
                     android:src="@drawable/ic_action_search"/>
         </LinearLayout>
-
     </LinearLayout>
-
 
     <LinearLayout
             android:id="@+id/search_text"
