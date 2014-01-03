@@ -1,4 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="bigActionButton_marginVertical">9dp</dimen>
+    <dimen name="bigActionButton_marginVertical">6dp</dimen>
 </resources>
