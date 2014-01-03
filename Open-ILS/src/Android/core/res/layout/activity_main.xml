@@ -4,12 +4,8 @@
               android:orientation="vertical"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
+              android:paddingTop="@dimen/bigActionButton_marginVertical"
               android:background="@drawable/background_grey_image">
-
-    <TextView
-            android:layout_width="20px"
-            android:layout_height="18dp"
-            />
 
     <Button
             android:layout_width="match_parent"

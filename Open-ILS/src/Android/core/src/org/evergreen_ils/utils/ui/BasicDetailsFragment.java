@@ -355,10 +355,10 @@ public class BasicDetailsFragment extends Fragment {
             TextView copy_location = (TextView) copy_info_view
                     .findViewById(R.id.copy_information_copy_location);
 
-            library.setText(gl.getOrganizationName(record.copyInformationList
-                    .get(i).org_id) + " ");
-            call_number.setText(record.copyInformationList.get(i).call_number_sufix);
-            copy_location.setText(record.copyInformationList.get(i).copy_location);
+            CopyInformation info = record.copyInformationList.get(i);
+            library.setText(gl.getOrganizationName(info.org_id));
+            call_number.setText(info.call_number_sufix);
+            copy_location.setText(info.copy_location);
 
             // insert into main view
             insertPoint.addView(copy_info_view, new ViewGroup.LayoutParams(
@@ -367,8 +367,6 @@ public class BasicDetailsFragment extends Fragment {
 
             LinearLayout copy_statuses = (LinearLayout) copy_info_view
                     .findViewById(R.id.copy_information_statuses);
-
-            CopyInformation info = record.copyInformationList.get(i);
 
             Set<Entry<String, String>> set = info.statusInformation.entrySet();
 

@@ -19,6 +19,7 @@
  */
 package org.evergreen_ils.views.splashscreen;
 
+import android.os.Build;
 import org.evergreen_ils.R;
 import org.evergreen_ils.globals.GlobalConfigs;
 import org.evergreen_ils.searchCatalog.SearchCatalogListView;
@@ -101,6 +102,13 @@ public class SplashActivity extends Activity implements LoadingTaskListener {
                 startTask();
             }
         });
+
+        /* this didn't work, but the progress bar is weird on GB 2.2,
+           and it's lopsided in landscape mode on GB 2.3.7
+        int currentApiVersion = android.os.Build.VERSION.SDK_INT;
+        if (currentApiVersion < Build.VERSION_CODES.HONEYCOMB)
+            mProgressBar.setScrollBarStyle(android.R.attr.progressBarStyleHorizontal);
+         */
 
         GlobalConfigs.httpAddress = getString(R.string.ou_library_url);
         startTask();
