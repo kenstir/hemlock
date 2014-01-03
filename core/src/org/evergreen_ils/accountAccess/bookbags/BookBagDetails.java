@@ -167,7 +167,6 @@ public class BookBagDetails extends Activity {
                             @Override
                             public void onClick(DialogInterface dialog,
                                     int which) {
-
                                 progressDialog = ProgressDialog.show(context,
                                         getResources().getText(R.string.dialog_please_wait),
                                         "Deleting Bookbag");

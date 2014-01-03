@@ -71,7 +71,9 @@
                 android:name="org.evergreen_ils.searchCatalog.SampleUnderlinesNoFade"
                 android:label="@string/search_details_title">
         </activity>
-        <activity android:name="org.evergreen_ils.searchCatalog.MoreCopyInformation" >
+        <activity
+                android:name="org.evergreen_ils.searchCatalog.MoreCopyInformation"
+                android:label="@string/copy_information_title">
         </activity>
         <activity
                 android:name="org.evergreen_ils.searchCatalog.SearchCatalogListView"

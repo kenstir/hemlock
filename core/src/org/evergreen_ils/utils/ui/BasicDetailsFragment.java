@@ -345,8 +345,7 @@ public class BasicDetailsFragment extends Fragment {
 
         for (int i = start; i < stop; i++) {
 
-            View copy_info_view = inflater.inflate(R.layout.copy_information,
-                    null);
+            View copy_info_view = inflater.inflate(R.layout.copy_information, null);
 
             // fill in any details dynamically here
             TextView library = (TextView) copy_info_view
@@ -358,10 +357,8 @@ public class BasicDetailsFragment extends Fragment {
 
             library.setText(gl.getOrganizationName(record.copyInformationList
                     .get(i).org_id) + " ");
-            call_number
-                    .setText(record.copyInformationList.get(i).call_number_sufix);
-            copy_location
-                    .setText(record.copyInformationList.get(i).copy_location);
+            call_number.setText(record.copyInformationList.get(i).call_number_sufix);
+            copy_location.setText(record.copyInformationList.get(i).copy_location);
 
             // insert into main view
             insertPoint.addView(copy_info_view, new ViewGroup.LayoutParams(

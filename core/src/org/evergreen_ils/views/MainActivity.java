@@ -25,9 +25,6 @@ import org.evergreen_ils.views.splashscreen.SplashActivity;
  */
 public class MainActivity extends ActionBarActivity {
 
-    private Button checkedOutButton;
-    private Button holdsButton;
-    private Button finesButton;
     private GlobalConfigs globalConfigs;
 
     public void onCreate(Bundle savedInstanceState) {
@@ -77,6 +74,8 @@ public class MainActivity extends ActionBarActivity {
         } else if (id == R.id.account_btn_book_bags) {
             startActivity(new Intent(getApplicationContext(), BookbagsListView.class));
 
+        } else if (id == R.id.main_btn_search) {
+            startActivity(new Intent(getApplicationContext(), SearchCatalogListView.class));
         }
     }
 }

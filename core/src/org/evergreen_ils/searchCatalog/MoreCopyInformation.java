@@ -23,7 +23,11 @@ import java.util.Iterator;
 import java.util.Set;
 import java.util.Map.Entry;
 
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarActivity;
+import android.view.MenuItem;
 import org.evergreen_ils.R;
+import org.evergreen_ils.accountAccess.AccountAccess;
 import org.evergreen_ils.globals.GlobalConfigs;
 import org.evergreen_ils.views.AccountScreenDashboard;
 import org.evergreen_ils.views.splashscreen.SplashActivity;
@@ -41,13 +45,7 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-public class MoreCopyInformation extends Activity {
-
-    private Button homeButton;
-
-    private Button myAccountButton;
-
-    private TextView headerTitle;
+public class MoreCopyInformation extends ActionBarActivity {
 
     private Context context;
 
@@ -64,32 +62,15 @@ public class MoreCopyInformation extends Activity {
         }
 
         setContentView(R.layout.copy_information_more);
+
+        // set up action bar
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setSubtitle(AccountAccess.userName);
+        actionBar.setDisplayHomeAsUpEnabled(true);
+
         gl = GlobalConfigs.getGlobalConfigs(context);
         context = this;
         record = (RecordInfo) getIntent().getSerializableExtra("recordInfo");
-
-        // header portion actions
-        myAccountButton = (Button) findViewById(R.id.my_account_button);
-        myAccountButton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(),
-                        AccountScreenDashboard.class);
-                startActivity(intent);
-            }
-        });
-
-        homeButton = (Button) findViewById(R.id.action_bar_home_button);
-        homeButton.setText(R.string.copy_information_title);
-        homeButton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(),
-                        SearchCatalogListView.class);
-                startActivity(intent);
-            }
-        });
-        // end header portion actions
 
         LayoutInflater inf = (LayoutInflater) context
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -98,6 +79,17 @@ public class MoreCopyInformation extends Activity {
         LinearLayout insertPoint = (LinearLayout) findViewById(R.id.record_details_copy_information);
         addCopyInfo(inf, insertPoint);
 
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (id == android.R.id.home) {
+            // make the action bar "up" caret work like "back"
+            onBackPressed();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     public void addCopyInfo(LayoutInflater inflater, LinearLayout insertPoint) {
