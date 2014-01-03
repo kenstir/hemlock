@@ -24,6 +24,7 @@ import java.util.List;
 
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
+import android.view.*;
 import org.evergreen_ils.R;
 import org.evergreen_ils.R.layout;
 import org.evergreen_ils.accountAccess.AccountAccess;
@@ -44,16 +45,9 @@ import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
-import android.view.KeyEvent;
-import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnKeyListener;
-import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AbsListView;
@@ -132,18 +126,6 @@ public class SearchCatalogListView extends ActionBarActivity {
         ActionBar actionBar = getSupportActionBar();
         actionBar.setSubtitle(AccountAccess.userName);
         actionBar.setDisplayHomeAsUpEnabled(true);
-
-        /*
-        advancedSearchButton = (Button) findViewById(R.id.menu_advanced_search_button);
-        advancedSearchButton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // show advanced view dialog
-                Intent advancedSearch = new Intent(context, AdvancedSearchActivity.class);
-                startActivityForResult(advancedSearch, 2);
-            }
-        });
-        */
 
         // get bookbags
         bookBags = AccountAccess.getAccountAccess().getBookbags();
@@ -540,9 +522,7 @@ public class SearchCatalogListView extends ActionBarActivity {
                 View layout = inflater.inflate(R.layout.bookbag_spinner, null);
 
                 Spinner s = (Spinner) layout.findViewById(R.id.bookbag_spinner);
-
-                Button add = (Button) layout
-                        .findViewById(R.id.add_to_bookbag_button);
+                Button add = (Button) layout.findViewById(R.id.add_to_bookbag_button);
                 ArrayAdapter adapter = new ArrayAdapter(context,
                         android.R.layout.simple_spinner_item, array_spinner);
 
@@ -559,8 +539,7 @@ public class SearchCatalogListView extends ActionBarActivity {
                         Thread addtoBookbag = new Thread(new Runnable() {
                             @Override
                             public void run() {
-                                AccountAccess ac = AccountAccess
-                                        .getAccountAccess();
+                                AccountAccess ac = AccountAccess.getAccountAccess();
                                 try {
                                     ac.addRecordToBookBag(info.doc_id,
                                             bookBags.get(bookbag_selected).id);
@@ -612,30 +591,41 @@ public class SearchCatalogListView extends ActionBarActivity {
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_main, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (id == R.id.action_search) {
+            startActivityForResult(new Intent(getApplicationContext(), AdvancedSearchActivity.class), 2);
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
         switch (resultCode) {
 
         case SampleUnderlinesNoFade.RETURN_DATA : {
-            
             ArrayList<RecordInfo> records = (ArrayList)data.getSerializableExtra("recordList");
-        
             recordList.clear();
             for(int i=0;i<records.size();i++){
                 recordList.add(records.get(i));
             }
             adapter.notifyDataSetChanged();
-            
-            searchResultsNumber.setText(adapter
-                    .getCount()
-                    + " out of "
-                    + search.visible);
+            searchResultsNumber.setText(adapter.getCount()
+                    + " out of " + search.visible);
         }
         break;
         
         case AdvancedSearchActivity.RESULT_ADVANCED_SEARCH: {
-            Log.d(TAG,
-                    "result text" + data.getStringExtra("advancedSearchText"));
+            Log.d(TAG, "result text:" + data.getStringExtra("advancedSearchText"));
             searchText.setText(data.getStringExtra("advancedSearchText"));
             Thread searchThread = new Thread(searchForResultsRunnable);
             searchThread.start();

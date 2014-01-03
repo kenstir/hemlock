@@ -21,6 +21,8 @@ package org.evergreen_ils.searchCatalog;
 
 import java.util.StringTokenizer;
 
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarActivity;
 import org.evergreen_ils.R;
 import org.evergreen_ils.accountAccess.AccountAccess;
 import org.evergreen_ils.views.AccountScreenDashboard;
@@ -39,19 +41,11 @@ import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-public class AdvancedSearchActivity extends Activity {
+public class AdvancedSearchActivity extends ActionBarActivity {
 
     private final String TAG = AdvancedSearchActivity.class.getName();
 
-    private AccountAccess accountAccess = null;
-
     private Context context;
-
-    private Button homeButton;
-
-    private Button myAccountButton;
-
-    private TextView headerTitle;
 
     private StringBuilder advancedSearchFormattedText;
 
@@ -67,30 +61,12 @@ public class AdvancedSearchActivity extends Activity {
 
         setContentView(R.layout.advanced_search);
 
+        // set up action bar
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setSubtitle(AccountAccess.userName);
+        actionBar.setDisplayHomeAsUpEnabled(true);
+
         advancedSearchFormattedText = new StringBuilder();
-
-        // header portion actions
-        myAccountButton = (Button) findViewById(R.id.my_account_button);
-        myAccountButton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(),
-                        AccountScreenDashboard.class);
-                startActivity(intent);
-            }
-        });
-
-        homeButton = (Button) findViewById(R.id.action_bar_home_button);
-        homeButton.setText(R.string.advanced_search);
-        homeButton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(),
-                        SearchCatalogListView.class);
-                startActivity(intent);
-            }
-        });
-        // end header portion actions
 
         context = this;
 
@@ -128,10 +104,8 @@ public class AdvancedSearchActivity extends Activity {
                     break;
                 case 1: {
                     // excludes
-
                     StringTokenizer str = new StringTokenizer(
                             search_filter_text.getText().toString());
-
                     while (str.hasMoreTokens()) {
                         String token = str.nextToken(" ");
                         advancedSearchFormattedText.append(" -" + token);
