@@ -17,6 +17,7 @@ import org.evergreen_ils.accountAccess.checkout.ItemsCheckOutListView;
 import org.evergreen_ils.accountAccess.fines.FinesActivity;
 import org.evergreen_ils.accountAccess.holds.HoldsListView;
 import org.evergreen_ils.globals.GlobalConfigs;
+import org.evergreen_ils.searchCatalog.AdvancedSearchActivity;
 import org.evergreen_ils.searchCatalog.SearchCatalogListView;
 import org.evergreen_ils.views.splashscreen.SplashActivity;
 

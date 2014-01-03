@@ -83,7 +83,9 @@
                     android:name="android.support.PARENT_ACTIVITY"
                     android:value="org.evergreen_ils.views.MainActivity"/>
         </activity>
-        <activity android:name="org.evergreen_ils.searchCatalog.AdvancedSearchActivity" >
+        <activity
+                android:name="org.evergreen_ils.searchCatalog.AdvancedSearchActivity"
+                android:label="@string/advanced_search">
         </activity>
         <activity
             android:name="org.evergreen_ils.barcodescan.CaptureActivity"
