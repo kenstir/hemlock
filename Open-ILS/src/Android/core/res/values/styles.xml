@@ -70,15 +70,19 @@
     <style name="AuthorSearchStyleList">
         <item name="android:textSize">14sp</item>
         <item name="android:gravity">left</item>
-        <item name="android:textStyle">italic</item>
-        <item name="android:singleLine">true</item>
+        <item name="android:textStyle">normal</item>
+        <!--
+        <item name="android:singleLine">italic</item>
+        -->
         <item name="android:ellipsize">end</item>
     </style>
 
     <style name="PubSearchStyleList">
         <item name="android:textSize">12sp</item>
         <item name="android:gravity">right</item>
+        <!--
         <item name="android:textStyle">italic</item>
+        -->
         <item name="android:singleLine">true</item>
         <item name="android:ellipsize">end</item>
     </style>
