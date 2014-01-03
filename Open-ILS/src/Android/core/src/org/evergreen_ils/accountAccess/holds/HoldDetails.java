@@ -174,9 +174,11 @@ public class HoldDetails extends ActionBarActivity {
                     expire_date));
         }
 
-        // hide edit text
-        if (record.thaw_date == null)
+        if (suspendHold.isChecked()) {
+            enableView(thaw_date_edittext);
+        } else {
             disableView(thaw_date_edittext);
+        }
 
         Log.d(TAG, record.title + " " + record.author);
 

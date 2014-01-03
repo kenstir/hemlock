@@ -15,6 +15,15 @@
             android:layout_width="match_parent"
             android:layout_height="56dp"
             style="@style/BigActionButton"
+            android:text="@string/title_search"
+            android:id="@+id/main_btn_search"
+            android:onClick="onButtonClick"
+            android:drawableLeft="@drawable/kghostview"/>
+
+    <Button
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            style="@style/BigActionButton"
             android:text="@string/title_check_out"
             android:id="@+id/account_btn_check_out"
             android:onClick="onButtonClick"
