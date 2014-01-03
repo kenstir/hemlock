@@ -31,6 +31,7 @@ import org.evergreen_ils.R;
 import org.evergreen_ils.accountAccess.AccountAccess;
 import org.evergreen_ils.accountAccess.SessionNotFoundException;
 import org.evergreen_ils.globals.GlobalConfigs;
+import org.evergreen_ils.searchCatalog.Organisation;
 import org.evergreen_ils.searchCatalog.RecordInfo;
 import org.evergreen_ils.searchCatalog.SearchCatalogListView;
 import org.evergreen_ils.views.AccountScreenDashboard;
@@ -334,29 +335,31 @@ public class PlaceHold extends ActionBarActivity {
             }
         });
 
+        // kcxxx: factor this out
+        int homeLibrary = 0;
+        if (AccountAccess.getAccountAccess() != null) {
+            homeLibrary = AccountAccess.getAccountAccess().getHomeLibraryID();
+        }
         ArrayList<String> list = new ArrayList<String>();
         for (int i = 0; i < globalConfigs.organisations.size(); i++) {
-            list.add(globalConfigs.organisations.get(i).padding
-                    + globalConfigs.organisations.get(i).name);
-
-            if (globalConfigs.organisations.get(i).level - 1 == 0)
+            Organisation org = globalConfigs.organisations.get(i);
+            list.add(org.padding + org.name);
+            if (org.id == homeLibrary) {
                 selectedOrgPos = i;
+            }
         }
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
-                android.R.layout.simple_spinner_item, list);
+                R.layout.spinner_layout, list);
         orgSelector.setAdapter(adapter);
-
         orgSelector.setSelection(selectedOrgPos);
-
         orgSelector.setOnItemSelectedListener(new OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> arg0, View arg1, int ID,
                     long arg3) {
-
                 selectedOrgPos = ID;
-
             }
 
+            @Override
             public void onNothingSelected(android.widget.AdapterView<?> arg0) {
             }
         });

@@ -438,43 +438,37 @@ public class SearchCatalogListView extends ActionBarActivity {
             }
         });
 
-        int selectedPos = 0;
+        //kcxxx: factor this out
+        int selectedOrgPos = 0;
         int homeLibrary = 0;
         if (AccountAccess.getAccountAccess() != null) {
             homeLibrary = AccountAccess.getAccountAccess().getHomeLibraryID();
         }
         ArrayList<String> list = new ArrayList<String>();
-        Log.d(TAG, "Org scanning ...");
-        if (globalConfigs.organisations != null) {
-            for (int i = 0; i < globalConfigs.organisations.size(); i++) {
-                Organisation org = globalConfigs.organisations.get(i);
-                list.add(org.padding + org.name);
-                if (org.id == homeLibrary)
-                    selectedPos = i;
+        for (int i = 0; i < globalConfigs.organisations.size(); i++) {
+            Organisation org = globalConfigs.organisations.get(i);
+            list.add(org.padding + org.name);
+            if (org.id == homeLibrary) {
+                selectedOrgPos = i;
             }
         }
-        Log.d(TAG, "Org scanning ...done");
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
                 layout.spinner_layout, list);
         choseOrganisation = (Spinner) findViewById(R.id.chose_organisation);
         choseOrganisation.setAdapter(adapter);
-        choseOrganisation.setSelection(selectedPos);
-        choseOrganisation
-                .setOnItemSelectedListener(new OnItemSelectedListener() {
-                    @Override
-                    public void onItemSelected(AdapterView<?> arg0, View arg1,
-                            int ID, long arg3) {
-                        // select the specific organization
-                        search.selectOrganisation(globalConfigs.organisations
-                                .get(ID));
-                    }
+        choseOrganisation.setSelection(selectedOrgPos);
+        choseOrganisation.setOnItemSelectedListener(new OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> arg0, View arg1,
+                                       int ID, long arg3) {
+                search.selectOrganisation(globalConfigs.organisations.get(ID));
+            }
 
-                    @Override
-                    public void onNothingSelected(AdapterView<?> arg0) {
+            @Override
+            public void onNothingSelected(AdapterView<?> arg0) {
+            }
 
-                    }
-
-                });
+        });
 
     }
 
