@@ -1,3 +1,10 @@
-# support is a symlink (mklink /d) to and android support library, e.g.
-# mklink /d support "\tools\android_sdk\extras\android\support"
-support
+*.class
+*.dex
+*/.idea/tasks.xml
+*/.idea/workspace.xml
+.settings
+bin/
+gen/
+local.properties
+out/
+proguard-project.txt
