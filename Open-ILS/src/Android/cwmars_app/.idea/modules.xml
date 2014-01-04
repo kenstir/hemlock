@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://E:/tools/adt-bundle-windows-x86_64-20130917/sdk/extras/android/support/v7/appcompat/appcompat.iml" filepath="E:/tools/adt-bundle-windows-x86_64-20130917/sdk/extras/android/support/v7/appcompat/appcompat.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../support/v7/appcompat/appcompat.iml" filepath="$PROJECT_DIR$/../support/v7/appcompat/appcompat.iml" />
       <module fileurl="file://$PROJECT_DIR$/../core/core.iml" filepath="$PROJECT_DIR$/../core/core.iml" />
       <module fileurl="file://$PROJECT_DIR$/cwmars_app.iml" filepath="$PROJECT_DIR$/cwmars_app.iml" />
     </modules>

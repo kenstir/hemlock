@@ -1,0 +1,3 @@
+# support is a symlink (mklink /d) to and android support library, e.g.
+# mklink /d support "\tools\android_sdk\extras\android\support"
+support

@@ -4,7 +4,6 @@
       <root url="jar://$PROJECT_DIR$/../core/libs/org.opensrf2_serialized_reg.jar!/" />
       <root url="jar://$PROJECT_DIR$/../core/libs/zxing_barcode.jar!/" />
       <root url="jar://$PROJECT_DIR$/../core/libs/androwrapee-1.1.0.jar!/" />
-      <root url="jar://$PROJECT_DIR$/../core/libs/android-support-v4.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />
