@@ -33,8 +33,7 @@ import org.evergreen_ils.accountAccess.SessionNotFoundException;
 import org.evergreen_ils.globals.GlobalConfigs;
 import org.evergreen_ils.searchCatalog.Organisation;
 import org.evergreen_ils.searchCatalog.RecordInfo;
-import org.evergreen_ils.searchCatalog.SearchCatalogListView;
-import org.evergreen_ils.views.AccountScreenDashboard;
+import org.evergreen_ils.utils.ui.CompatSpinnerAdapter;
 import org.evergreen_ils.views.splashscreen.SplashActivity;
 
 import android.app.Activity;
@@ -348,8 +347,7 @@ public class PlaceHold extends ActionBarActivity {
                 selectedOrgPos = i;
             }
         }
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
-                R.layout.spinner_layout, list);
+        ArrayAdapter<String> adapter = CompatSpinnerAdapter.CreateCompatSpinnerAdapter(this, list);
         orgSelector.setAdapter(adapter);
         orgSelector.setSelection(selectedOrgPos);
         orgSelector.setOnItemSelectedListener(new OnItemSelectedListener() {

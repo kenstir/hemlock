@@ -13,7 +13,6 @@
             android:focusableInTouchMode="true"
             android:orientation="vertical"
             android:padding="4dp"
-            android:background="@drawable/grey_rounded_corners"
             android:layout_marginTop="4dip"
             >
 
@@ -47,7 +46,7 @@
                     android:paddingLeft="10dp"
                     android:paddingRight="10dp"
                     android:paddingTop="5dp"
-                    android:src="@drawable/ic_action_search"/>
+                    android:src="@drawable/abc_ic_search"/>
         </LinearLayout>
     </LinearLayout>
 

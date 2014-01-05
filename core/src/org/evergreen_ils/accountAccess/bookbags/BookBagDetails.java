@@ -22,13 +22,14 @@ package org.evergreen_ils.accountAccess.bookbags;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarActivity;
 import org.evergreen_ils.R;
 import org.evergreen_ils.accountAccess.AccountAccess;
 import org.evergreen_ils.accountAccess.SessionNotFoundException;
 import org.evergreen_ils.searchCatalog.RecordInfo;
 import org.evergreen_ils.searchCatalog.SearchCatalog;
 import org.evergreen_ils.searchCatalog.SearchCatalogListView;
-import org.evergreen_ils.views.AccountScreenDashboard;
 import org.evergreen_ils.views.splashscreen.SplashActivity;
 
 import android.app.Activity;
@@ -54,7 +55,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class BookBagDetails extends Activity {
+public class BookBagDetails extends ActionBarActivity {
 
     private final String TAG = BookBagDetails.class.getName();
 
@@ -80,12 +81,6 @@ public class BookBagDetails extends Activity {
 
     private Button delete_bookbag_button;
 
-    private Button homeButton;
-
-    private Button myAccountButton;
-
-    private TextView headerTitle;
-
     private Runnable getBookBagsItemsRunnable;
 
     @Override
@@ -97,29 +92,11 @@ public class BookBagDetails extends Activity {
         }
 
         setContentView(R.layout.bookbagitem_list);
-        // header portion actions
-        homeButton = (Button) findViewById(R.id.action_bar_home_button);
-        myAccountButton = (Button) findViewById(R.id.my_account_button);
 
-        myAccountButton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(),
-                        AccountScreenDashboard.class);
-                startActivity(intent);
-            }
-        });
-
-        homeButton.setText(R.string.bookbag_details_title);
-        homeButton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(),
-                        SearchCatalogListView.class);
-                startActivity(intent);
-            }
-        });
-        // end header portion actions
+        // set up action bar
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setSubtitle(AccountAccess.userName);
+        actionBar.setDisplayHomeAsUpEnabled(true);
 
         accountAccess = AccountAccess.getAccountAccess();
         bookBag = (BookBag) getIntent().getSerializableExtra("bookBag");

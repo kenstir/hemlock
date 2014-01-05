@@ -5,52 +5,13 @@
     android:background="@drawable/background_grey_image"
      >
 
-    	<LinearLayout
-    	    android:id="@+id/action_bar"
-	        android:layout_width="wrap_content" 
-	        android:layout_height="wrap_content"
-	        android:orientation="horizontal"
-	        android:gravity="center_horizontal"
-	        android:layout_alignParentBottom="true"
-	        android:layout_centerInParent="true"
-	        android:paddingBottom="3dip"
-	     	>
-	        <Button
-	            android:id="@+id/back_button"
-	            android:layout_width="100dip"
-	            android:layout_height="wrap_content"
-	            android:text="@string/back"
-	            style="@style/ApplicationButton"
-	            android:layout_margin="5dip"
-	            />
-	        
-	        <Button 
-	            android:id="@+id/cancel_hold_button"
-	            android:layout_width="100dip"
-	            android:layout_height="wrap_content"
-	            android:text="@string/cancel_hold"
-	            style="@style/ApplicationButton"
-	            android:layout_margin="5dip"
-	            />	 
-	            
-	         <Button 
-	            android:id="@+id/update_hold_button"
-	            android:layout_width="100dip"
-	            android:layout_height="wrap_content"
-	            android:text="@string/update_hold"
-	            style="@style/ApplicationButton"
-	            android:layout_margin="5dip"
-	            />	
-	    </LinearLayout>
-    
-    <ScrollView 
+    <ScrollView
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:fillViewport="true"
         android:layout_above="@id/action_bar"
-        android:layout_below="@id/header_actionbar"
         android:padding="5dp"
-        >
+        android:layout_alignParentTop="true">
        <LinearLayout 
            android:layout_width="fill_parent"
            android:layout_height="wrap_content"
@@ -107,8 +68,8 @@
 		            android:layout_weight="2"
 		            android:text="@string/author"
 		            />
-		        
-		        <TextView 
+
+		        <TextView
 		            android:id="@+id/hold_author"
 		            android:layout_width="0dip"
 		            android:layout_height="wrap_content"
@@ -116,27 +77,27 @@
 		            android:gravity="center"
 		            />    
 	    </LinearLayout>
-	    	        <LinearLayout 
+	    	        <LinearLayout
 	        android:layout_width="fill_parent"
 	        android:layout_height="wrap_content"
 	        android:orientation="horizontal"
 	        >
-		        <TextView 
+		        <TextView
 		            android:layout_width="0dip"
 		            android:layout_height="wrap_content"
 		            android:layout_weight="2"
 		            android:text="@string/physical_description"
 		            />
-		        
-		        <TextView 
+
+		        <TextView
 		            android:id="@+id/hold_physical_description"
 		            android:layout_width="0dip"
 		            android:layout_height="wrap_content"
 		            android:layout_weight="4"
 		            android:gravity="center"
-		            />    
+		            />
 	    </LinearLayout>
-	    	        <LinearLayout 
+	    	        <LinearLayout
 	        android:layout_width="fill_parent"
 	        android:layout_height="wrap_content"
 	        android:orientation="horizontal"
@@ -172,6 +133,7 @@
 		            android:layout_height="wrap_content"
 		            android:layout_weight="4"
 		            android:gravity="center"
+                    android:spinnerMode="dialog"
 		            />    
 	    </LinearLayout>
 	    	        <LinearLayout 
@@ -246,6 +208,45 @@
        </LinearLayout>
     
     </ScrollView>
+
+    <LinearLayout
+            android:id="@+id/action_bar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_horizontal"
+            android:layout_alignParentBottom="true"
+            android:layout_centerInParent="true"
+            android:paddingBottom="3dip"
+            >
+        <Button
+                android:id="@+id/back_button"
+                android:layout_width="100dip"
+                android:layout_height="wrap_content"
+                android:text="@string/back"
+                style="@style/ApplicationButton"
+                android:layout_margin="5dip"
+                />
+
+        <Button
+                android:id="@+id/cancel_hold_button"
+                android:layout_width="100dip"
+                android:layout_height="wrap_content"
+                android:text="@string/cancel_hold"
+                style="@style/ApplicationButton"
+                android:layout_margin="5dip"
+                />
+
+        <Button
+                android:id="@+id/update_hold_button"
+                android:layout_width="100dip"
+                android:layout_height="wrap_content"
+                android:text="@string/update_hold"
+                style="@style/ApplicationButton"
+                android:layout_margin="5dip"
+                />
+    </LinearLayout>
+
 
 
 </RelativeLayout>

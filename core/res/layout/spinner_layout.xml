@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_gravity="center"
-    android:textColor="@color/dark"
+    android:textColor="?android:textColorPrimary"
     android:padding="5dp"
     android:gravity="center"
     android:singleLine="true"

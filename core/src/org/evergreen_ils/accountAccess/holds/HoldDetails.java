@@ -31,8 +31,7 @@ import org.evergreen_ils.R;
 import org.evergreen_ils.accountAccess.AccountAccess;
 import org.evergreen_ils.accountAccess.SessionNotFoundException;
 import org.evergreen_ils.globals.GlobalConfigs;
-import org.evergreen_ils.searchCatalog.SearchCatalogListView;
-import org.evergreen_ils.views.AccountScreenDashboard;
+import org.evergreen_ils.utils.ui.CompatSpinnerAdapter;
 import org.evergreen_ils.views.splashscreen.SplashActivity;
 
 import android.app.Activity;
@@ -377,10 +376,8 @@ public class HoldDetails extends ActionBarActivity {
             if (globalConfigs.organisations.get(i).id == record.pickup_lib)
                 selectedOrgPos = i;
         }
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
-                R.layout.spinner_layout, list);
+        ArrayAdapter<String> adapter = CompatSpinnerAdapter.CreateCompatSpinnerAdapter(this, list);
         orgSelector.setAdapter(adapter);
-
         orgSelector.setSelection(selectedOrgPos);
 
         orgSelector.setOnItemSelectedListener(new OnItemSelectedListener() {

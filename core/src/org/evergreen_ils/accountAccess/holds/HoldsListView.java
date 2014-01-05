@@ -29,8 +29,6 @@ import org.evergreen_ils.accountAccess.AccountAccess;
 import org.evergreen_ils.accountAccess.SessionNotFoundException;
 import org.evergreen_ils.globals.GlobalConfigs;
 import org.evergreen_ils.searchCatalog.ImageDownloader;
-import org.evergreen_ils.searchCatalog.SearchCatalogListView;
-import org.evergreen_ils.views.AccountScreenDashboard;
 import org.evergreen_ils.views.splashscreen.SplashActivity;
 
 import android.app.Activity;

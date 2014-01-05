@@ -204,6 +204,7 @@
 		            android:layout_height="wrap_content"
 		            android:layout_weight="4"
 		            android:gravity="center"
+                    android:spinnerMode="dialog"
 		            />    
 	    </LinearLayout>
 	    	        <LinearLayout 

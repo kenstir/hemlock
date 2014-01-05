@@ -1,18 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <style name="sectionHeader" parent="android:attr/listSeparatorTextViewStyle">
-        <item name="android:layout_width">fill_parent</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:paddingTop">2dip</item>
-        <item name="android:paddingBottom">2dip</item>
-        <item name="android:paddingLeft">8dip</item>
-        <item name="android:textSize">16sp</item>
-        <item name="android:textStyle">bold</item>
-        <item name="android:background">@color/background3</item>
-        <item name="android:textColor">@color/foreground1</item>
-    </style>
-
     <style name="textSmall">
         <item name="android:textSize">14sp</item>
         <item name="android:paddingLeft">15dip</item>
@@ -32,18 +20,6 @@
     <style name="spacer">
         <item name="android:layout_width">fill_parent</item>
         <item name="android:layout_height">14dip</item>
-    </style>
-
-    <style name="HomeButton">
-        <item name="android:layout_gravity">center_vertical</item>
-        <item name="android:layout_width">130dip</item>
-        <item name="android:layout_height">130dip</item>
-        <item name="android:layout_margin">5dip</item>
-        <item name="android:gravity">center_horizontal</item>
-        <item name="android:textSize">@dimen/text_size_medium</item>
-        <item name="android:textStyle">normal</item>
-        <item name="android:textColor">@color/dark</item>
-        <item name="android:background">@drawable/menu_background_button</item>
     </style>
 
     <style name="BigActionButton">
@@ -71,25 +47,19 @@
         <item name="android:textSize">14sp</item>
         <item name="android:gravity">left</item>
         <item name="android:textStyle">normal</item>
-        <!--
-        <item name="android:singleLine">italic</item>
-        -->
         <item name="android:ellipsize">end</item>
     </style>
 
     <style name="PubSearchStyleList">
         <item name="android:textSize">12sp</item>
         <item name="android:gravity">right</item>
-        <!--
-        <item name="android:textStyle">italic</item>
-        -->
         <item name="android:singleLine">true</item>
         <item name="android:ellipsize">end</item>
     </style>
 
     <!-- Tabs -->
 
-    <style name="StyledIndicators" parent="@android:style/Theme.Light">
+    <style name="StyledIndicators" parent="@style/Theme.AppCompat">
         <item name="vpiCirclePageIndicatorStyle">@style/CustomCirclePageIndicator</item>
         <item name="vpiLinePageIndicatorStyle">@style/CustomLinePageIndicator</item>
         <item name="vpiTitlePageIndicatorStyle">@style/CustomTitlePageIndicator</item>
@@ -141,17 +111,6 @@
         <item name="android:padding">3dip</item>
         <item name="android:layout_marginTop">3dip</item>
         <item name="android:textColor">@color/dark</item>
-    </style>
-
-    <style name="SeparatorInformation">
-        <item name="android:layout_width">fill_parent</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:background">@drawable/shadow_rect</item>
-        <item name="android:padding">5dip</item>
-        <item name="android:layout_marginTop">10dip</item>
-        <item name="android:textColor">@color/dark</item>
-        <item name="android:gravity">center</item>
-        <item name="android:textStyle">bold</item>
     </style>
 
     <style name="SearchDetailsActionButton">

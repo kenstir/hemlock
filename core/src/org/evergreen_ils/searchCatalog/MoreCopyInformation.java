@@ -29,7 +29,6 @@ import android.view.MenuItem;
 import org.evergreen_ils.R;
 import org.evergreen_ils.accountAccess.AccountAccess;
 import org.evergreen_ils.globals.GlobalConfigs;
-import org.evergreen_ils.views.AccountScreenDashboard;
 import org.evergreen_ils.views.splashscreen.SplashActivity;
 
 import android.app.Activity;
