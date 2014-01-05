@@ -303,10 +303,4 @@ public class Utils {
         return null;
     }
 
-    public static ShowSessionNotAvailableRunnable showSessionNotAvailableDialog(
-            Context context) {
-
-        return new ShowSessionNotAvailableRunnable(context);
-    }
-
 }

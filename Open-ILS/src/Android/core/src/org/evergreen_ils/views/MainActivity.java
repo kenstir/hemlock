@@ -72,8 +72,10 @@ public class MainActivity extends ActionBarActivity {
         } else if (id == R.id.account_btn_fines) {
             startActivity(new Intent(getApplicationContext(), FinesActivity.class));
 
+            /*
         } else if (id == R.id.account_btn_book_bags) {
             startActivity(new Intent(getApplicationContext(), BookbagsListView.class));
+            */
 
         } else if (id == R.id.main_btn_search) {
             startActivity(new Intent(getApplicationContext(), SearchCatalogListView.class));

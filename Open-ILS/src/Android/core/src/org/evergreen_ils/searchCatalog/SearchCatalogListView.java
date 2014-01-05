@@ -26,18 +26,15 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.view.*;
 import org.evergreen_ils.R;
-import org.evergreen_ils.R.layout;
 import org.evergreen_ils.accountAccess.AccountAccess;
 import org.evergreen_ils.accountAccess.SessionNotFoundException;
 import org.evergreen_ils.accountAccess.bookbags.BookBag;
 import org.evergreen_ils.accountAccess.holds.PlaceHold;
 import org.evergreen_ils.barcodescan.CaptureActivity;
 import org.evergreen_ils.globals.GlobalConfigs;
-import org.evergreen_ils.views.AccountScreenDashboard;
-import org.evergreen_ils.views.ApplicationPreferences;
+import org.evergreen_ils.utils.ui.CompatSpinnerAdapter;
 import org.evergreen_ils.views.splashscreen.SplashActivity;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -434,8 +431,7 @@ public class SearchCatalogListView extends ActionBarActivity {
                 selectedOrgPos = i;
             }
         }
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
-                layout.spinner_layout, list);
+        ArrayAdapter<String> adapter = CompatSpinnerAdapter.CreateCompatSpinnerAdapter(this, list);
         choseOrganisation = (Spinner) findViewById(R.id.chose_organisation);
         choseOrganisation.setAdapter(adapter);
         choseOrganisation.setSelection(selectedOrgPos);
