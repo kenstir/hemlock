@@ -114,7 +114,7 @@ public class SampleUnderlinesNoFade extends BaseSampleActivity {
                     }
                 });
                 
-                searchRecords = search.getSearchResults(search.searchText, records.size());
+                searchRecords = search.getSearchResults(search.searchText, search.searchClass, records.size());
 
                 runOnUiThread(new Runnable() {
 
