@@ -58,10 +58,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name="org.evergreen_ils.views.AccountScreenDashboard"
-            android:theme="@android:style/Theme.NoTitleBar" >
-        </activity>
         <activity android:name="org.evergreen_ils.views.ApplicationPreferences" >
         </activity>
 
