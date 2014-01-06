@@ -17,7 +17,7 @@
 	     	>
 	        <Button
 	            android:id="@+id/cancel_hold"
-	            android:layout_width="100dip"
+	            android:layout_width="120dip"
 	            android:layout_height="wrap_content"
 	            android:text="@string/cancel"
 	            style="@style/ApplicationButton"
@@ -26,7 +26,7 @@
 	        
 	        <Button 
 	            android:id="@+id/place_hold"
-	            android:layout_width="100dip"
+	            android:layout_width="120dip"
 	            android:layout_height="wrap_content"
 	            android:text="@string/button_place_hold"
 	            style="@style/ApplicationButton"

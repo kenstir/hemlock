@@ -6,29 +6,29 @@
           android:versionName="1.0">
 
     <uses-sdk
-            android:minSdkVersion="8"
-            android:targetSdkVersion="18"/>
+        android:minSdkVersion="8"
+        android:targetSdkVersion="18" />
 
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
-    <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS"/>
-    <uses-permission android:name="android.permission.CAMERA"/>
-    <uses-permission android:name="android.permission.FLASHLIGHT"/>
-    <uses-permission android:name="android.permission.GET_ACCOUNTS"/>
-    <uses-permission android:name="android.permission.INTERNET"/>
-    <uses-permission android:name="android.permission.MANAGE_ACCOUNTS"/>
-    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
-    <uses-permission android:name="android.permission.USE_CREDENTIALS"/>
-    <uses-permission android:name="android.permission.VIBRATE"/>
-    <uses-permission android:name="android.permission.WAKE_LOCK"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.FLASHLIGHT" />
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.MANAGE_ACCOUNTS" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.USE_CREDENTIALS" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
 
-    <uses-feature android:name="android.hardware.camera"/>
-    <uses-feature android:name="android.hardware.camera.autofocus"/>
+    <uses-feature android:name="android.hardware.camera" />
+    <uses-feature android:name="android.hardware.camera.autofocus" />
 
     <application
         android:allowBackup="true"
         android:icon="@drawable/evergreen_launcher_icon"
         android:label="@string/ou_app_label"
-        android:theme="@style/EvergreenTheme" >
+        android:theme="@style/Theme.AppCompat" >
 
         <!-- Notification receiver -->
         <receiver
@@ -50,78 +50,108 @@
         <service android:name="org.evergreen_ils.services.ScheduledIntentService">
         </service>
 
-        <activity android:name="org.evergreen_ils.views.splashscreen.SplashActivity">
-            <!--  android:theme="@android:style/Theme.Light.NoTitleBar"  -->
+        <activity
+                android:name="org.evergreen_ils.views.splashscreen.SplashActivity"
+                android:theme="@android:style/Theme.NoTitleBar">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
-
-                <category android:name="android.intent.category.LAUNCHER"/>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-                android:name="org.evergreen_ils.views.AccountScreenDashboard"
-                android:theme="@android:style/Theme.Light.NoTitleBar">
-        </activity>
-        <activity android:name="org.evergreen_ils.views.ApplicationPreferences">
+        <activity android:name="org.evergreen_ils.views.ApplicationPreferences" >
         </activity>
 
         <!-- Search -->
 
         <activity
                 android:name="org.evergreen_ils.searchCatalog.SampleUnderlinesNoFade"
-                android:label="Underlines/No Fade">
-        </activity>
-        <activity android:name="org.evergreen_ils.searchCatalog.MoreCopyInformation">
-        </activity>
-        <activity android:name="org.evergreen_ils.searchCatalog.SearchCatalogListView">
-        </activity>
-        <activity android:name="org.evergreen_ils.searchCatalog.AdvancedSearchActivity">
+                android:label="@string/search_details_title">
         </activity>
         <activity
-                android:name="org.evergreen_ils.barcodescan.CaptureActivity"
-                android:screenOrientation="landscape"
-                android:theme="@android:style/Theme.NoTitleBar"
-                android:windowSoftInputMode="stateAlwaysHidden">
+                android:name="org.evergreen_ils.searchCatalog.MoreCopyInformation"
+                android:label="@string/copy_information_title">
+        </activity>
+        <activity
+                android:name="org.evergreen_ils.searchCatalog.SearchCatalogListView"
+                android:label="@string/title_search"
+                android:parentActivityName="org.evergreen_ils.views.MainActivity">
+            <meta-data
+                    android:name="android.support.PARENT_ACTIVITY"
+                    android:value="org.evergreen_ils.views.MainActivity"/>
+        </activity>
+        <activity
+                android:name="org.evergreen_ils.searchCatalog.AdvancedSearchActivity"
+                android:label="@string/advanced_search">
+        </activity>
+        <activity
+            android:name="org.evergreen_ils.barcodescan.CaptureActivity"
+            android:screenOrientation="landscape"
+            android:theme="@android:style/Theme.NoTitleBar"
+            android:windowSoftInputMode="stateAlwaysHidden" >
         </activity>
 
         <!-- Checkout Activities -->
-        <activity android:name="org.evergreen_ils.accountAccess.checkout.ItemsCheckOutListView">
+        <activity
+                android:name="org.evergreen_ils.accountAccess.checkout.ItemsCheckOutListView"
+                android:label="@string/checkout_items_title"
+                android:parentActivityName="org.evergreen_ils.views.MainActivity">
+            <meta-data
+                    android:name="android.support.PARENT_ACTIVITY"
+                    android:value="org.evergreen_ils.views.MainActivity"/>
         </activity>
 
         <!-- Holds Activities -->
-        <activity android:name="org.evergreen_ils.accountAccess.holds.HoldsListView">
+        <activity
+                android:name="org.evergreen_ils.accountAccess.holds.HoldsListView"
+                android:label="@string/hold_items_title"
+                android:parentActivityName="org.evergreen_ils.views.MainActivity">
+            <meta-data
+                    android:name="android.support.PARENT_ACTIVITY"
+                    android:value="org.evergreen_ils.views.MainActivity"/>
         </activity>
-        <activity android:name="org.evergreen_ils.accountAccess.holds.PlaceHold">
+        <activity
+                android:name="org.evergreen_ils.accountAccess.holds.PlaceHold"
+                android:label="@string/hold_place_title">
         </activity>
-        <activity android:name="org.evergreen_ils.accountAccess.holds.HoldDetails">
+        <activity
+                android:name="org.evergreen_ils.accountAccess.holds.HoldDetails"
+                android:label="@string/hold_details_title">
         </activity>
 
         <!-- Fines Activities -->
-        <activity android:name="org.evergreen_ils.accountAccess.fines.FinesActivity">
+        <activity
+                android:name="org.evergreen_ils.accountAccess.fines.FinesActivity"
+                android:label="@string/title_fines"
+                android:parentActivityName="org.evergreen_ils.views.MainActivity">
+            <meta-data
+                    android:name="android.support.PARENT_ACTIVITY"
+                    android:value="org.evergreen_ils.views.MainActivity"/>
         </activity>
 
         <!-- Bookbags -->
-        <activity android:name="org.evergreen_ils.accountAccess.bookbags.BookbagsListView">
+        <activity android:name="org.evergreen_ils.accountAccess.bookbags.BookbagsListView" >
         </activity>
-        <activity android:name="org.evergreen_ils.accountAccess.bookbags.BookBagDetails">
+        <activity android:name="org.evergreen_ils.accountAccess.bookbags.BookBagDetails" >
         </activity>
 
         <activity
-                android:name="org.evergreen_ils.auth.AuthenticatorActivity"
-                android:label="@string/ou_account_label"
-                android:theme="@android:style/Theme.Light">
+            android:name="org.evergreen_ils.auth.AuthenticatorActivity"
+            android:label="@string/ou_account_label">
+        </activity>
+
+        <activity android:name="org.evergreen_ils.views.MainActivity">
         </activity>
 
         <service
-                android:name="org.evergreen_ils.auth.AuthenticatorService"
-                android:exported="false">
+            android:name="org.evergreen_ils.auth.AuthenticatorService"
+            android:exported="false" >
             <intent-filter>
-                <action android:name="android.accounts.AccountAuthenticator"/>
+                <action android:name="android.accounts.AccountAuthenticator" />
             </intent-filter>
 
             <meta-data
-                    android:name="android.accounts.AccountAuthenticator"
-                    android:resource="@xml/authenticator"/>
+                android:name="android.accounts.AccountAuthenticator"
+                android:resource="@xml/authenticator" />
         </service>
     </application>
 </manifest>
