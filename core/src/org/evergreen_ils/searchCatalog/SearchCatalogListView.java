@@ -105,9 +105,18 @@ public class SearchCatalogListView extends ActionBarActivity {
     private Runnable searchForResultsRunnable = null;
 
     private View searchOptionsMenu = null;
+    private Spinner searchClassSpinner;
 
     // marks when the fetching record thread is started
     private boolean loadingElements = false;
+
+    private String getSearchText() {
+        return searchText.getText().toString();
+    }
+
+    private String getSearchClass() {
+        return searchClassSpinner.getSelectedItem().toString().toLowerCase();
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -140,6 +149,8 @@ public class SearchCatalogListView extends ActionBarActivity {
                 R.layout.search_result_item, recordList);
 
         //searchOptionsMenu = findViewById(R.id.search_preference_options);
+        //final Spinner searchFormatSpinner = (Spinner) findViewById(R.id.search_format_spinner);
+        searchClassSpinner = (Spinner) findViewById(R.id.search_class_spinner);
         searchResultsNumber = (TextView) findViewById(R.id.search_result_number);
 
         // Get reference to ListView holder
@@ -159,9 +170,11 @@ public class SearchCatalogListView extends ActionBarActivity {
             @Override
             public void run() {
 
-                final String text = searchText.getText().toString();
+                final String text = getSearchText();
                 if (text.length() < 1)
                     return;
+                int searchQueryType = searchClassSpinner.getSelectedItemPosition();
+                Log.d(TAG, "type="+searchQueryType+" class="+getSearchClass());
 
                 runOnUiThread(new Runnable() {
                     @Override
@@ -180,7 +193,7 @@ public class SearchCatalogListView extends ActionBarActivity {
                     }
                 });
 
-                searchResults = search.getSearchResults(text, 0);
+                searchResults = search.getSearchResults(text, getSearchClass(), 0);
 
                 runOnUiThread(new Runnable() {
 
@@ -237,8 +250,7 @@ public class SearchCatalogListView extends ActionBarActivity {
 
                             searchResults.clear();
 
-                            searchResults = search.getSearchResults(text,
-                                    recordList.size());
+                            searchResults = search.getSearchResults(text, getSearchClass(), recordList.size());
 
                             runOnUiThread(new Runnable() {
 
@@ -337,13 +349,10 @@ public class SearchCatalogListView extends ActionBarActivity {
                                     @Override
                                     public void run() {
 
-                                        String text = searchText.getText()
-                                                .toString();
+                                        String text = getSearchText();
                                         searchResults.clear();
-
-                                        searchResults = search
-                                                .getSearchResults(text,
-                                                        adapter.getCount());
+                                        searchResults = search.getSearchResults(text, getSearchClass(),
+                                                adapter.getCount());
 
                                         runOnUiThread(new Runnable() {
 
@@ -355,14 +364,8 @@ public class SearchCatalogListView extends ActionBarActivity {
                                                 Log.d(TAG, "Returned "
                                                         + searchResults.size()
                                                         + " elements from search");
-                                                if (searchResults.size() > 0) {
-
-                                                    for (int j = 0; j < searchResults
-                                                            .size(); j++)
-                                                        recordList
-                                                                .add(searchResults
-                                                                        .get(j));
-
+                                                for (int j = 0; j < searchResults.size(); j++) {
+                                                    recordList.add(searchResults.get(j));
                                                 }
 
                                                 searchResultsNumber.setText(adapter
@@ -596,7 +599,7 @@ public class SearchCatalogListView extends ActionBarActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-        if (id == R.id.action_search) {
+        if (id == R.id.action_advanced_search) {
             startActivityForResult(new Intent(getApplicationContext(), AdvancedSearchActivity.class), 2);
             return true;
         }

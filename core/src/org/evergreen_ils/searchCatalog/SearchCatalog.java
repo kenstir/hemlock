@@ -114,6 +114,7 @@ public class SearchCatalog {
     public Integer searchLimit = 10;
     
     public String searchText = null;
+    public String searchClass = null;
 
     private ConnectivityManager cm;
 
@@ -160,10 +161,10 @@ public class SearchCatalog {
      *            the search words
      * @return the search results
      */
-    public ArrayList<RecordInfo> getSearchResults(String searchWords,
-            Integer offset) {
+    public ArrayList<RecordInfo> getSearchResults(String searchWords, String searchClass, Integer offset) {
 
         searchText = searchWords;
+        this.searchClass = searchClass;
         
         ArrayList<RecordInfo> resultsRecordInfo = new ArrayList<RecordInfo>();
 
@@ -180,14 +181,12 @@ public class SearchCatalog {
                     complexParm.put("depth",
                             this.selectedOrganization.level - 1);
             }
-            // TODO change here, multiple result per page
             complexParm.put("limit", searchLimit);
-
             complexParm.put("offset", offset);
-
+            if (searchClass != null) complexParm.put("default_class", searchClass);
             /*
-             * complexParm.put("offset",0); complexParm.put("visibility_limit",
-             * 3000); complexParm.put("default_class","keyword");
+             * complexParm.put("offset",0);
+             * complexParm.put("visibility_limit", 3000);
              */
 
         } catch (Exception e) {

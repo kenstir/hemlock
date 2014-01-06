@@ -22,13 +22,12 @@
                 android:singleLine="true"
                 android:layout_weight="1"/>
 
-    </LinearLayout>
-
-    <LinearLayout
-            android:id="@+id/search_spinner_container"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/search_text_container">
+        <Spinner
+                android:id="@+id/search_class_spinner"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right"
+                android:entries="@array/advanced_search_index"/>
 
         <Spinner
                 android:id="@+id/chose_organisation"
@@ -50,24 +49,10 @@
 
     </LinearLayout>
 
-    <!--
-    <LinearLayout
-            android:id="@+id/search_preference_options"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_below="@id/header"
-            android:layout_centerHorizontal="true"
-            android:background="@drawable/background_grey_image"
-            android:gravity="center"
-            >
-    </LinearLayout>
-    -->
-
     <LinearLayout android:layout_width="fill_parent"
                   android:layout_height="wrap_content"
                   android:id="@+id/search_text"
-                  android:layout_below="@id/search_spinner_container"
+                  android:layout_below="@id/search_text_container"
             >
         <TextView
                 android:id="@+id/search_result_number"
