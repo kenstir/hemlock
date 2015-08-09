@@ -82,8 +82,7 @@ public class ScheduledIntentService extends IntentService {
          * Download the necessary IDL files for checkout items operations like
          * au (for auth), circ, mvr and acp
          */
-        String idlFile = GlobalConfigs.IDL_FILE_FROM_ROOT
-                + "?class=circ&class=au&class=mvr&class=acp";
+        String idlFile = GlobalConfigs.IDL_FILE_FROM_ROOT;
         try {
             Log.d(TAG, "Load IDL start");
             InputStream in_IDL = Utils.getNetInputStream(GlobalConfigs.httpAddress + idlFile);
