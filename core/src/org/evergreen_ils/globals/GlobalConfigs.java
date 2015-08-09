@@ -37,7 +37,7 @@ import java.util.*;
 
 public class GlobalConfigs {
 
-    public static String IDL_FILE_FROM_ROOT = "/reports/fm_IDL.xml";
+    public static String IDL_FILE_FROM_ROOT = "/reports/fm_IDL.xml?class=acn&class=acp&class=ahr&class=ahtc&class=au&class=bmp&class=cbreb&class=cbrebi&class=cbrebin&class=cbrebn&class=ccs&class=circ&class=ex&class=mbt&class=mbts&class=mous&class=mus&class=mvr&class=perm_ex";
     public static String IDL_FILE_FROM_ASSETS = "fm_IDL.xml";
     public static String httpAddress = "";
 
@@ -112,12 +112,19 @@ public class GlobalConfigs {
 
         try {
             Log.d(TAG, "loadIDLFile start");
-            //@TODO maybe switch back to IDL_FILE_FROM_ROOT?class=circ&class=au&class=mvr&class=acp
-            InputStream in_IDL = context.getAssets().open(IDL_FILE_FROM_ASSETS);
+            long start_ms = System.currentTimeMillis();
+            InputStream in_IDL;
+            if (false) {
+                // Use IDL file from assets.  Much faster than downloading it, but it risks an NPE
+                // if the asset version is out of sync with the site version.
+                in_IDL = context.getAssets().open(IDL_FILE_FROM_ASSETS);
+            } else {
+                // Download IDL file from server.  Safest and slowest.
+                in_IDL = Utils.getNetInputStream(GlobalConfigs.httpAddress + IDL_FILE_FROM_ROOT);
+            }
             IDLParser parser = new IDLParser(in_IDL);
             parser.setKeepIDLObjects(false);
             Log.d(TAG, "loadIDLFile parse");
-            long start_ms = System.currentTimeMillis();
             parser.parse();
             long duration_ms = System.currentTimeMillis() - start_ms;
             Log.d(TAG, "loadIDLFile parse took "+duration_ms+"ms");
