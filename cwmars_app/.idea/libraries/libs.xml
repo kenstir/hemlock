@@ -1,9 +1,9 @@
 <component name="libraryTable">
   <library name="libs">
     <CLASSES>
-      <root url="jar://$PROJECT_DIR$/../core/libs/org.opensrf2_serialized_reg.jar!/" />
       <root url="jar://$PROJECT_DIR$/../core/libs/zxing_barcode.jar!/" />
       <root url="jar://$PROJECT_DIR$/../core/libs/androwrapee-1.1.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../core/libs/opensrf2_android.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />
