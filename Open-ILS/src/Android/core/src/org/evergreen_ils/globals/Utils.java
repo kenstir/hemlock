@@ -84,8 +84,7 @@ public class Utils {
             }
             in.close();
         } catch (Exception e) {
-            System.err
-                    .println("Error in retrieving response " + e.getMessage());
+            System.err.println("Error in retrieving response " + e.getMessage());
         }
 
         result = str.toString();
@@ -112,8 +111,7 @@ public class Utils {
 
             return in;
         } catch (Exception e) {
-            System.err
-                    .println("Error in retrieving response " + e.getMessage());
+            System.err.println("Error in retrieving response " + e.getMessage());
         }
 
         return in;
@@ -129,8 +127,8 @@ public class Utils {
     public static void bookCoverImage(ImageView picture, String imageID,
             int size) {
 
-        String urlS = (GlobalConfigs.httpAddress
-                + "/opac/extras/ac/jacket/small/" + imageID);
+        String urlS = (GlobalConfigs.httpAddress + "/opac/extras/ac/jacket/small/" + imageID);
+        Log.d(TAG, "cover image: " + urlS);
 
         Bitmap bmp = null; // create a new Bitmap variable called bmp, and
                            // initialize it to null

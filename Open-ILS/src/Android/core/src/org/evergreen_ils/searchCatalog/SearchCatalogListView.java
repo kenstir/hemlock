@@ -673,46 +673,39 @@ public class SearchCatalogListView extends ActionBarActivity {
             // Get item
             RecordInfo record = getItem(position);
 
-                // if it is the right type of view
-                if (row == null
-                        || row.findViewById(R.id.search_record_title) == null) {
+            // if it is the right type of view
+            if (row == null
+                || row.findViewById(R.id.search_record_title) == null) {
 
-                    Log.d(tag, "Starting XML Row Inflation ... ");
-                    LayoutInflater inflater = (LayoutInflater) this
-                            .getContext().getSystemService(
-                                    Context.LAYOUT_INFLATER_SERVICE);
-                    row = inflater.inflate(R.layout.search_result_item, parent,
-                            false);
-                    Log.d(tag, "Successfully completed XML Row Inflation!");
+                Log.d(tag, "Starting XML Row Inflation ... ");
+                LayoutInflater inflater = (LayoutInflater) this
+                        .getContext().getSystemService(
+                                Context.LAYOUT_INFLATER_SERVICE);
+                row = inflater.inflate(R.layout.search_result_item, parent,
+                        false);
+                Log.d(tag, "Successfully completed XML Row Inflation!");
 
-                }
+            }
 
-                Log.d(TAG, "reord image value " + recordImage);
-                // Get reference to ImageView
-                recordImage = (ImageView) row
-                        .findViewById(R.id.search_record_img);
-                String imageHref = GlobalConfigs.httpAddress
-                        + "/opac/extras/ac/jacket/small/" + record.isbn;
-                // start async download of image
-                imageDownloader.download(imageHref, recordImage);
-                // Get reference to TextView - title
-                recordTitle = (TextView) row
-                        .findViewById(R.id.search_record_title);
+            // Get reference to ImageView
+            recordImage = (ImageView) row.findViewById(R.id.search_record_img);
+            //String imageHref = GlobalConfigs.httpAddress  + "/opac/extras/ac/jacket/small/" + record.isbn;
+            String imageHref = GlobalConfigs.httpAddress  + "/opac/extras/ac/jacket/small/r/" + record.image;
+            Log.d(TAG, "image url " + imageHref);
 
-                // Get reference to TextView - author
-                recordAuthor = (TextView) row
-                        .findViewById(R.id.search_record_author);
+            // start async download of image
+            imageDownloader.download(imageHref, recordImage);
 
-                // Get referance to TextView - record Publisher date+publisher
-                recordPublisher = (TextView) row
-                        .findViewById(R.id.search_record_publishing);
+            recordTitle = (TextView) row.findViewById(R.id.search_record_title);
+            recordAuthor = (TextView) row.findViewById(R.id.search_record_author);
+            recordPublisher = (TextView) row.findViewById(R.id.search_record_publishing);
 
-                // set text
-                recordTitle.setText(record.title);
-                recordAuthor.setText(record.author);
-                recordPublisher
-                        .setText(record.pubdate + " " + record.publisher);
-            
+            // set text
+            recordTitle.setText(record.title);
+            recordAuthor.setText(record.author);
+            recordPublisher
+                    .setText(record.pubdate + " " + record.publisher);
+
             return row;
         }
     }
