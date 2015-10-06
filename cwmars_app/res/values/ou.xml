@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- ou_cwmars.xml - C/W MARS organizational unit -->
+<!-- ou.xml - C/W MARS organizational unit -->
 <resources>
-    <string name="ou_account_label">C/W Mars Library</string>
-    <string name="ou_account_sign_in_message">Sign in to your\nC/W Mars Library Account</string>
+    <string name="ou_account_label">C/W MARS Library</string>
+    <string name="ou_account_sign_in_message">Sign in to your\nC/W MARS Library Account</string>
     <string name="ou_account_type">org.cwmars</string>
-    <string name="ou_app_label">C/W Mars</string>
-    <string name="ou_app_name">C/W Mars Library Free</string>
-    <string name="ou_library_url">http://bark.cwmars.org</string> <!--  TODO: make HTTPS -->
+    <string name="ou_app_label">C/W MARS</string>
+    <string name="ou_app_name">C/W MARS</string>
+    <string name="ou_library_url">https://bark.cwmars.org</string>
 </resources>
