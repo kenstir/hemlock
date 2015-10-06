@@ -158,20 +158,6 @@ public class ItemsCheckOutListView extends ActionBarActivity {
             progressDialog.dismiss();
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater menuInflater = getMenuInflater();
-        menuInflater.inflate(R.menu.checkout_menu, menu);
-        return super.onCreateOptionsMenu(menu);
-
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-
-        return super.onOptionsItemSelected(item);
-    }
-
     class CheckOutArrayAdapter extends ArrayAdapter<CircRecord> {
         private static final String tag = "CheckoutArrayAdapter";
 

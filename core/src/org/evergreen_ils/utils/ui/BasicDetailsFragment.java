@@ -183,8 +183,8 @@ public class BasicDetailsFragment extends Fragment {
             }
         });
 
-        String imageHref = GlobalConfigs.httpAddress
-                + "/opac/extras/ac/jacket/large/" + record.isbn;
+        //String imageHref = GlobalConfigs.httpAddress + "/opac/extras/ac/jacket/large/" + record.isbn;
+        String imageHref = GlobalConfigs.httpAddress + "/opac/extras/ac/jacket/large/r/" + record.image;
 
         // start async download of image
         imageDownloader.download(imageHref, recordImage);

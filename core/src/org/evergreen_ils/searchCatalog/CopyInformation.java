@@ -72,9 +72,9 @@ public class CopyInformation implements Serializable {
             if (hashValCopy.containsKey(entry.getKey())) {
                 statusInformation.put(entry.getValue(),
                         hashValCopy.get(entry.getKey()) + "");
-                Log.d(TAG, "Added " + entry.getKey() + " "
-                        + entry.getValue() + " "
-                        + hashValCopy.get(entry.getKey()));
+//                Log.d(TAG, "Added " + entry.getKey() + " "
+//                        + entry.getValue() + " "
+//                        + hashValCopy.get(entry.getKey()));
             }
         }
     }
