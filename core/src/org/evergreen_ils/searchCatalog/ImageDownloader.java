@@ -72,6 +72,7 @@ public class ImageDownloader {
     private int bitmap_width;
     private int bitmap_height;
     private boolean scale;
+    private Bitmap image_not_found_sentinel = Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888);
 
     public ImageDownloader(int min_img_height) {
 
@@ -205,6 +206,7 @@ public class ImageDownloader {
         final HttpClient client = (mode == Mode.NO_ASYNC_TASK) ? new DefaultHttpClient()
                 : AndroidHttpClient.newInstance("Android");
 
+        Log.d(LOG_TAG, "GETURL " + url);
         HttpGet getRequest = null;
         try {
             getRequest = new HttpGet(url);
@@ -219,8 +221,7 @@ public class ImageDownloader {
             HttpResponse response = client.execute(getRequest);
             final int statusCode = response.getStatusLine().getStatusCode();
             if (statusCode != HttpStatus.SC_OK) {
-                Log.w("ImageDownloader", "Error " + statusCode
-                        + " while retrieving bitmap from " + url);
+                Log.w(LOG_TAG, "Error " + statusCode + " while retrieving bitmap from " + url);
                 return null;
             }
 
@@ -314,7 +315,7 @@ public class ImageDownloader {
                 bitmap = null;
             }
 
-            addBitmapToCache(url, bitmap);
+            Bitmap cachedBitmap = addBitmapToCache(url, bitmap);
 
             if (imageViewReference != null) {
                 ImageView imageView = imageViewReference.get();
@@ -334,10 +335,10 @@ public class ImageDownloader {
                     }
                 }
 
-                if (bitmap == null) {
-                    if (imageView != null)
-                        imageView.setImageResource(R.drawable.no_image);
-                }
+//                if (cachedBitmap == image_not_found_sentinel) {
+//                    if (imageView != null)
+//                        imageView.setImageResource(R.drawable.no_image);
+//                }
             }
 
         }
@@ -386,7 +387,7 @@ public class ImageDownloader {
 
     // Hard cache, with a fixed maximum capacity and a life duration
     private final HashMap<String, Bitmap> sHardBitmapCache = new LinkedHashMap<String, Bitmap>(
-            HARD_CACHE_CAPACITY / 2, 0.75f, true) {
+            HARD_CACHE_CAPACITY, 0.75f, true) {
         @Override
         protected boolean removeEldestEntry(
                 LinkedHashMap.Entry<String, Bitmap> eldest) {
@@ -395,6 +396,7 @@ public class ImageDownloader {
                 // soft reference cache
                 sSoftBitmapCache.put(eldest.getKey(),
                         new SoftReference<Bitmap>(eldest.getValue()));
+                Log.d(LOG_TAG, "size is "+size()+", removing eldest");
                 return true;
             } else
                 return false;
@@ -405,13 +407,13 @@ public class ImageDownloader {
     private final static ConcurrentHashMap<String, SoftReference<Bitmap>> sSoftBitmapCache = new ConcurrentHashMap<String, SoftReference<Bitmap>>(
             HARD_CACHE_CAPACITY / 2);
 
-    private final Handler purgeHandler = new Handler();
-
-    private final Runnable purger = new Runnable() {
-        public void run() {
-            clearCache();
-        }
-    };
+//    private final Handler purgeHandler = new Handler();
+//
+//    private final Runnable purger = new Runnable() {
+//        public void run() {
+//            clearCache();
+//        }
+//    };
 
     /**
      * Adds this bitmap to the cache.
@@ -419,12 +421,14 @@ public class ImageDownloader {
      * @param bitmap
      *            The newly downloaded bitmap.
      */
-    private void addBitmapToCache(String url, Bitmap bitmap) {
-        if (bitmap != null) {
-            synchronized (sHardBitmapCache) {
-                sHardBitmapCache.put(url, bitmap);
-            }
+    private Bitmap addBitmapToCache(String url, Bitmap bitmap) {
+        Log.d(LOG_TAG, url + " addBitmapToCache ");
+        if (bitmap == null)
+            bitmap = image_not_found_sentinel;
+        synchronized (sHardBitmapCache) {
+            sHardBitmapCache.put(url, bitmap);
         }
+        return bitmap;
     }
 
     /**
@@ -434,13 +438,15 @@ public class ImageDownloader {
      */
     private Bitmap getBitmapFromCache(String url) {
         // First try the hard reference cache
+        Log.d(LOG_TAG, url + " getBitmapFromCache");
         synchronized (sHardBitmapCache) {
-            final Bitmap bitmap = sHardBitmapCache.get(url);
+            Bitmap bitmap = sHardBitmapCache.get(url);
             if (bitmap != null) {
                 // Bitmap found in hard cache
                 // Move element to first position, so that it is removed last
                 sHardBitmapCache.remove(url);
                 sHardBitmapCache.put(url, bitmap);
+                Log.d(LOG_TAG, url + " found in hardcache");
                 return bitmap;
             }
         }
@@ -448,9 +454,10 @@ public class ImageDownloader {
         // Then try the soft reference cache
         SoftReference<Bitmap> bitmapReference = sSoftBitmapCache.get(url);
         if (bitmapReference != null) {
-            final Bitmap bitmap = bitmapReference.get();
+            Bitmap bitmap = bitmapReference.get();
             if (bitmap != null) {
                 // Bitmap found in soft cache
+                Log.d(LOG_TAG, url + " found in softcache");
                 return bitmap;
             } else {
                 // Soft reference has been Garbage Collected
@@ -458,6 +465,7 @@ public class ImageDownloader {
             }
         }
 
+        Log.d(LOG_TAG, url + " not found");
         return null;
     }
 
@@ -475,7 +483,7 @@ public class ImageDownloader {
      * Allow a new delay before the automatic cache clear is done.
      */
     private void resetPurgeTimer() {
-        purgeHandler.removeCallbacks(purger);
-        purgeHandler.postDelayed(purger, DELAY_BEFORE_PURGE);
+//        purgeHandler.removeCallbacks(purger);
+//        purgeHandler.postDelayed(purger, DELAY_BEFORE_PURGE);
     }
 }
