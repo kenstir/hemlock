@@ -50,14 +50,8 @@ import android.net.ConnectivityManager;
 public class AccountAccess {
 
     public static String SERVICE_AUTH = "open-ils.auth";
-
-    /** The METHOD Auth init. */
     public static String METHOD_AUTH_INIT = "open-ils.auth.authenticate.init";
-
-    /** The METHOD Auth complete. */
     public static String METHOD_AUTH_COMPLETE = "open-ils.auth.authenticate.complete";
-
-    /** The METHOD Auth session retrieve. */
     public static String METHOD_AUTH_SESSION_RETRV = "open-ils.auth.session.retrieve";
 
     public static String SERVICE_ACTOR = "open-ils.actor";
