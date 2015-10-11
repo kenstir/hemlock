@@ -206,7 +206,7 @@ public class ImageDownloader {
         final HttpClient client = (mode == Mode.NO_ASYNC_TASK) ? new DefaultHttpClient()
                 : AndroidHttpClient.newInstance("Android");
 
-        Log.d(LOG_TAG, "GETURL " + url);
+        Log.d(LOG_TAG, url + " GET");
         HttpGet getRequest = null;
         try {
             getRequest = new HttpGet(url);
