@@ -195,7 +195,7 @@ public class SearchCatalog {
 
         // do request and check for connectivity
         Object resp = Utils.doRequest(conn, SERVICE, METHOD_MULTICLASS_QUERY,
-                cm, new Object[] { complexParm, searchWords, 1 });
+                new Object[] { complexParm, searchWords, 1 });
 
         ArrayList<String> ids = new ArrayList<String>();
 
@@ -285,7 +285,7 @@ public class SearchCatalog {
     public Object searchCatalog(String searchWords) {
 
         Object response = Utils.doRequest(conn, SERVICE, METHOD_SLIM_RETRIVE,
-                cm, new Object[] { "keyword", searchWords });
+                new Object[] { "keyword", searchWords });
 
         return response;
 
