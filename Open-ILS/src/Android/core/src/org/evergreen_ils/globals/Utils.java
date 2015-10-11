@@ -132,10 +132,10 @@ public class Utils {
 
         Method method = new Method(methodName);
 
-        Log.d(TAG, "doRequest Method :" + methodName + ": token :"+authToken+":");
+        Log.d(TAG, "doRequest Method " + methodName);
         for (int i = 0; i < params.length; i++) {
             method.addParam(params[i]);
-            Log.d(TAG, "Param " + i + ":" + params[i]);
+            Log.d(TAG, " param " + i + ":" + params[i]);
         }
 
         // sync request
@@ -169,16 +169,18 @@ public class Utils {
 
     }
 
-    // does not require authToken
+    // alternate version of doRequest
+    // kcxxx: not sure why this one loops calling req.recv and the other doesn't
     public static Object doRequest(HttpConnection conn, String service,
-            String methodName, ConnectivityManager cm, Object[] params) {
+                                   String methodName,
+                                   Object[] params) {
 
         Method method = new Method(methodName);
 
-        Log.d(TAG, "doRequest Method :" + methodName + ":");
+        Log.d(TAG, "doRequest Method " + methodName);
         for (int i = 0; i < params.length; i++) {
             method.addParam(params[i]);
-            Log.d(TAG, "Param " + i + ": " + params[i]);
+            Log.d(TAG, " param " + i + ": " + params[i]);
         }
 
         // sync request
