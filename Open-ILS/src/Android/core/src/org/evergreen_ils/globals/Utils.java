@@ -135,7 +135,7 @@ public class Utils {
         Log.d(TAG, "doRequest Method " + methodName);
         for (int i = 0; i < params.length; i++) {
             method.addParam(params[i]);
-            Log.d(TAG, " param " + i + ":" + params[i]);
+            Log.d(TAG, " param " + i + ": " + params[i]);
         }
 
         // sync request
@@ -172,8 +172,7 @@ public class Utils {
     // alternate version of doRequest
     // kcxxx: not sure why this one loops calling req.recv and the other doesn't
     public static Object doRequest(HttpConnection conn, String service,
-                                   String methodName,
-                                   Object[] params) {
+                                   String methodName, Object[] params) {
 
         Method method = new Method(methodName);
 
@@ -195,38 +194,18 @@ public class Utils {
 
         }
         return null;
-
     }
 
     // does not throw exception
     // is fast than with checks for multiple method invocations like in search
     public static Object doRequestSimple(HttpConnection conn, String service,
-            String methodName, Object[] params) {
+            String method, Object[] params) {
 
         if (Looper.myLooper() == Looper.getMainLooper()) {
             // running on UI thread!
             throw new NullPointerException();
         }
-
-        Method method = new Method(methodName);
-        Log.d(TAG, "doRequestSimple Method :" + methodName);
-        for (int i = 0; i < params.length; i++) {
-            method.addParam(params[i]);
-            Log.d(TAG, "Param " + i + ":" + params[i]);
-        }
-
-        // sync request
-        HttpRequest req = new GatewayRequest(conn, service, method).send();
-        Object resp;
-
-        while ((resp = req.recv()) != null) {
-            Log.d(TAG, "Sync Response: " + resp);
-            Object response = (Object) resp;
-
-            return response;
-
-        }
-        return null;
+        return doRequest(conn, service, method, params);
     }
 
 }
