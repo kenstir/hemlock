@@ -116,8 +116,6 @@ public class SearchCatalog {
     public String searchText = null;
     public String searchClass = null;
 
-    private ConnectivityManager cm;
-
     public static SearchCatalog getInstance(ConnectivityManager cm) {
 
         if (searchCatalogSingleton == null) {
@@ -137,8 +135,6 @@ public class SearchCatalog {
      */
     private SearchCatalog(ConnectivityManager cm) {
         super();
-
-        this.cm = cm;
 
         try {
             // configure the connection
@@ -167,9 +163,6 @@ public class SearchCatalog {
         this.searchClass = searchClass;
         
         ArrayList<RecordInfo> resultsRecordInfo = new ArrayList<RecordInfo>();
-
-        Method method = new Method(METHOD_MULTICLASS_QUERY);
-
         HashMap complexParm = new HashMap<String, Integer>();
 
         try {
@@ -178,8 +171,7 @@ public class SearchCatalog {
                 if (this.selectedOrganization.id != null)
                     complexParm.put("org_unit", this.selectedOrganization.id);
                 if (this.selectedOrganization.level != null)
-                    complexParm.put("depth",
-                            this.selectedOrganization.level - 1);
+                    complexParm.put("depth", this.selectedOrganization.level - 1);
             }
             complexParm.put("limit", searchLimit);
             complexParm.put("offset", offset);
@@ -188,10 +180,12 @@ public class SearchCatalog {
              * complexParm.put("offset",0);
              * complexParm.put("visibility_limit", 3000);
              */
-
         } catch (Exception e) {
             Log.d(TAG, "Exception in JSON " + e.getMessage());
         }
+
+        //kcxxx: for searching by format
+        //searchWords = searchWords + " search_format(vhs)";
 
         // do request and check for connectivity
         Object resp = Utils.doRequest(conn, SERVICE, METHOD_MULTICLASS_QUERY,
@@ -314,8 +308,8 @@ public class SearchCatalog {
 
     public Object getCopyStatuses() {
 
-        List<OSRFObject> ccs_list = (List<OSRFObject>) Utils.doRequestSimple(
-                conn, SERVICE, METHOD_COPY_STATUS_ALL, new Object[] {});
+        List<OSRFObject> ccs_list = (List<OSRFObject>) Utils.doRequestSimple(conn, SERVICE,
+                METHOD_COPY_STATUS_ALL, new Object[] {});
 
         CopyInformation.availableOrgStatuses = new LinkedHashMap<String, String>();
 
@@ -337,8 +331,8 @@ public class SearchCatalog {
             Integer orgDepth) {
 
         List<?> list = (List<?>) Utils.doRequestSimple(conn, SERVICE,
-                METHOD_COPY_LOCATION_COUNTS, new Object[] { recordID, orgID,
-                        orgDepth });
+                METHOD_COPY_LOCATION_COUNTS, new Object[] {
+                        recordID, orgID, orgDepth });
         return list;
 
     }
