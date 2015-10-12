@@ -33,6 +33,12 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="right"
                     android:entries="@array/advanced_search_index"/>
+            <Spinner
+                    android:id="@+id/search_format_spinner"
+                    android:layout_width="120dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="right"
+                    android:entries="@array/search_format_options"/>
         </LinearLayout>
 
         <LinearLayout
@@ -52,12 +58,9 @@
 
             <ImageButton
                     android:id="@+id/searchButton"
-                    android:layout_width="wrap_content"
+                    android:layout_width="120dp"
                     android:layout_height="wrap_content"
-                    android:paddingBottom="5dp"
-                    android:paddingLeft="10dp"
-                    android:paddingRight="10dp"
-                    android:paddingTop="5dp"
+                    android:layout_margin="0dp"
                     android:src="@drawable/abc_ic_search"/>
         </LinearLayout>
     </LinearLayout>
