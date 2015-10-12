@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import android.text.TextUtils;
 import android.util.Log;
 import org.opensrf.util.OSRFObject;
 
@@ -79,17 +80,29 @@ public class RecordInfo implements Serializable {
         this.dummy = true;
     }
 
+    private String safeGetString(OSRFObject info, String field) {
+        String s = info.getString(field);
+        if (s == null)
+            return "";
+        return s;
+    }
+
+    private String safeString(String s) {
+        if (s == null)
+            return "";
+        return s;
+    }
+
     public RecordInfo(OSRFObject info) {
         copyInformationList = new ArrayList<CopyInformation>();
         try {
-
-            this.title = info.getString("title");
-            this.author = info.getString("author");
-            this.pubdate = info.getString("pubdate");
-            this.publisher = info.getString("publisher");
+            this.title = safeString(info.getString("title"));
+            this.author = safeString(info.getString("author"));
+            this.pubdate = safeString(info.getString("pubdate"));
+            this.publisher = safeString(info.getString("publisher"));
             this.doc_id = info.getInt("doc_id");
-            this.image = info.getString("tcn");
-            this.doc_type = info.getString("doc_type");
+            this.image = safeString(info.getString("tcn"));
+            this.doc_type = safeString(info.getString("doc_type"));
         } catch (Exception e) {
             Log.d(TAG, "Exception basic info " + e.getMessage());
         }
@@ -103,7 +116,6 @@ public class RecordInfo implements Serializable {
         ;
 
         try {
-
             Map<String, ?> subjectMap = (Map<String, ?>) info.get("subject");
 
             this.subject = "";
@@ -123,29 +135,21 @@ public class RecordInfo implements Serializable {
         }
         ;
         try {
-
             this.online_loc = ((List) info.get("online_loc")).get(0).toString();
-
         } catch (Exception e) {
-            Log.d(TAG, "Exception online_loc " + e.getMessage());
+            //Log.d(TAG, "Exception online_loc " + e.getMessage());
         }
         ;
         try {
-            this.physical_description = (String) info
-                    .get("physical_description");
+            this.physical_description = (String) info.get("physical_description");
         } catch (Exception e) {
-            Log.d(TAG, "Exception physical_description "
-                    + e.getMessage());
+            Log.d(TAG, "Exception physical_description " + e.getMessage());
         }
         ;
         try {
             this.series = "";
             List<String> seriesList = (List) info.get("series");
-            for (int i = 0; i < seriesList.size(); i++)
-                if (i < seriesList.size() - 1)
-                    this.series += seriesList.get(i) + ", ";
-                else
-                    this.series += seriesList.get(i);
+            this.series = TextUtils.join(", ", seriesList);
         } catch (Exception e) {
             Log.d(TAG, "Exception series " + e.getMessage());
         }
