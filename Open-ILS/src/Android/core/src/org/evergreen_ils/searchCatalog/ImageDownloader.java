@@ -206,7 +206,7 @@ public class ImageDownloader {
         final HttpClient client = (mode == Mode.NO_ASYNC_TASK) ? new DefaultHttpClient()
                 : AndroidHttpClient.newInstance("Android");
 
-        Log.d(LOG_TAG, url + " GET");
+        //Log.d(LOG_TAG, url + " GET");
         HttpGet getRequest = null;
         try {
             getRequest = new HttpGet(url);
@@ -396,7 +396,7 @@ public class ImageDownloader {
                 // soft reference cache
                 sSoftBitmapCache.put(eldest.getKey(),
                         new SoftReference<Bitmap>(eldest.getValue()));
-                Log.d(LOG_TAG, "size is "+size()+", removing eldest");
+                //Log.d(LOG_TAG, "size is "+size()+", removing eldest");
                 return true;
             } else
                 return false;
@@ -422,7 +422,7 @@ public class ImageDownloader {
      *            The newly downloaded bitmap.
      */
     private Bitmap addBitmapToCache(String url, Bitmap bitmap) {
-        Log.d(LOG_TAG, url + " addBitmapToCache ");
+        //Log.d(LOG_TAG, url + " addBitmapToCache ");
         if (bitmap == null)
             bitmap = image_not_found_sentinel;
         synchronized (sHardBitmapCache) {
@@ -438,7 +438,7 @@ public class ImageDownloader {
      */
     private Bitmap getBitmapFromCache(String url) {
         // First try the hard reference cache
-        Log.d(LOG_TAG, url + " getBitmapFromCache");
+        //Log.d(LOG_TAG, url + " getBitmapFromCache");
         synchronized (sHardBitmapCache) {
             Bitmap bitmap = sHardBitmapCache.get(url);
             if (bitmap != null) {
@@ -446,7 +446,7 @@ public class ImageDownloader {
                 // Move element to first position, so that it is removed last
                 sHardBitmapCache.remove(url);
                 sHardBitmapCache.put(url, bitmap);
-                Log.d(LOG_TAG, url + " found in hardcache");
+                //Log.d(LOG_TAG, url + " found in hardcache");
                 return bitmap;
             }
         }
@@ -457,7 +457,7 @@ public class ImageDownloader {
             Bitmap bitmap = bitmapReference.get();
             if (bitmap != null) {
                 // Bitmap found in soft cache
-                Log.d(LOG_TAG, url + " found in softcache");
+                //Log.d(LOG_TAG, url + " found in softcache");
                 return bitmap;
             } else {
                 // Soft reference has been Garbage Collected
@@ -465,7 +465,7 @@ public class ImageDownloader {
             }
         }
 
-        Log.d(LOG_TAG, url + " not found");
+        //Log.d(LOG_TAG, url + " not found");
         return null;
     }
 
