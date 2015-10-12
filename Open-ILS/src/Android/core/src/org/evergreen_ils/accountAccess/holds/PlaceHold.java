@@ -158,6 +158,7 @@ public class PlaceHold extends ActionBarActivity {
         title.setText(record.title);
         author.setText(record.author);
         physical_description.setText(record.physical_description);
+        email_notification.setChecked(true);
 
         // hide edit text
         disableView(thaw_date_edittext);
