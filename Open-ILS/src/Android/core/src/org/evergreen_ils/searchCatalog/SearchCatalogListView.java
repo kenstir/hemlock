@@ -119,7 +119,10 @@ public class SearchCatalogListView extends ActionBarActivity {
         return searchClassSpinner.getSelectedItem().toString().toLowerCase();
     }
 
-    // todo: find a way to get these programmatically.  C/W MARS has an extended set of search formats.
+    // Sadly there is currently no way to get these programmatically.
+    // todo: instead of raw strings in the search_format_options string-array,
+    // store an array of search_key:printable_strings, e.g. "book:All Books",
+    // and dynamically construct the spinner.
     private String getSearchFormat() {
         String value = "";
         String s = searchFormatSpinner.getSelectedItem().toString();
