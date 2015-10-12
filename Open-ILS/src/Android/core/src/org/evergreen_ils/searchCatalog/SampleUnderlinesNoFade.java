@@ -22,7 +22,6 @@ package org.evergreen_ils.searchCatalog;
 import java.util.ArrayList;
 
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarActivity;
 import android.view.MenuItem;
 import org.evergreen_ils.R;
 import org.evergreen_ils.accountAccess.AccountAccess;
@@ -38,8 +37,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
 import android.view.KeyEvent;
-import android.view.View;
-import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -114,7 +111,7 @@ public class SampleUnderlinesNoFade extends BaseSampleActivity {
                     }
                 });
                 
-                searchRecords = search.getSearchResults(search.searchText, search.searchClass, records.size());
+                searchRecords = search.getSearchResults(search.searchText, search.searchClass, search.searchFormat, records.size());
 
                 runOnUiThread(new Runnable() {
 
@@ -124,8 +121,7 @@ public class SampleUnderlinesNoFade extends BaseSampleActivity {
                         // recordList.clear();
                         if (searchRecords.size() > 0) {
 
-                            for (int j = 0; j < searchRecords
-                                    .size(); j++)
+                            for (int j = 0; j < searchRecords.size(); j++)
                                 records.add(searchRecords.get(j));
 
                             // add extra record to display more

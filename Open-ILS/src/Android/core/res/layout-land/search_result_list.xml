@@ -28,7 +28,12 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="right"
                 android:entries="@array/advanced_search_index"/>
-
+        <Spinner
+                android:id="@+id/search_format_spinner"
+                android:layout_width="120dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right"
+                android:entries="@array/search_format_options"/>
         <Spinner
                 android:id="@+id/chose_organisation"
                 android:layout_width="fill_parent"

@@ -106,6 +106,7 @@ public class SearchCatalogListView extends ActionBarActivity {
 
     private View searchOptionsMenu = null;
     private Spinner searchClassSpinner;
+    private Spinner searchFormatSpinner;
 
     // marks when the fetching record thread is started
     private boolean loadingElements = false;
@@ -116,6 +117,39 @@ public class SearchCatalogListView extends ActionBarActivity {
 
     private String getSearchClass() {
         return searchClassSpinner.getSelectedItem().toString().toLowerCase();
+    }
+
+    // todo: find a way to get these programmatically.  C/W MARS has an extended set of search formats.
+    private String getSearchFormat() {
+        String value = "";
+        String s = searchFormatSpinner.getSelectedItem().toString();
+        if (!s.isEmpty()) value=s;
+        if (s.equalsIgnoreCase("All Formats"))                             value="";
+        else if (s.equalsIgnoreCase("All Books"))                          value="book";
+        else if (s.equalsIgnoreCase("All Music"))                          value="music";
+        else if (s.equalsIgnoreCase("Audiocassette music recording"))      value="casmusic";
+        else if (s.equalsIgnoreCase("Blu-ray"))                            value="blu-ray";
+        else if (s.equalsIgnoreCase("Braille"))                            value="braille";
+        else if (s.equalsIgnoreCase("Cassette audiobook"))                 value="casaudiobook";
+        else if (s.equalsIgnoreCase("CD Audiobook"))                       value="cdaudiobook";
+        else if (s.equalsIgnoreCase("CD Music recording"))                 value="cdmusic";
+        else if (s.equalsIgnoreCase("DVD"))                                value="dvd";
+        else if (s.equalsIgnoreCase("E-audio"))                            value="eaudio";
+        else if (s.equalsIgnoreCase("E-book"))                             value="ebook";
+        else if (s.equalsIgnoreCase("E-video"))                            value="evideo";
+        else if (s.equalsIgnoreCase("Equipment, games, toys"))             value="equip";
+        else if (s.equalsIgnoreCase("Kit"))                                value="kit";
+        else if (s.equalsIgnoreCase("Large Print Book"))                   value="lpbook";
+        else if (s.equalsIgnoreCase("Map"))                                value="map";
+        else if (s.equalsIgnoreCase("Microform"))                          value="microform";
+        else if (s.equalsIgnoreCase("Music Score"))                        value="score";
+        else if (s.equalsIgnoreCase("Phonograph music recording"))         value="phonomusic";
+        else if (s.equalsIgnoreCase("Phonograph spoken recording"))        value="phonospoken";
+        else if (s.equalsIgnoreCase("Picture"))                            value="picture";
+        else if (s.equalsIgnoreCase("Serials and magazines"))              value="serial";
+        else if (s.equalsIgnoreCase("Software and video games"))           value="software";
+        else if (s.equalsIgnoreCase("VHS"))                                value="vhs";
+        return value;
     }
 
     @Override
@@ -149,8 +183,8 @@ public class SearchCatalogListView extends ActionBarActivity {
                 R.layout.search_result_item, recordList);
 
         //searchOptionsMenu = findViewById(R.id.search_preference_options);
-        //final Spinner searchFormatSpinner = (Spinner) findViewById(R.id.search_format_spinner);
         searchClassSpinner = (Spinner) findViewById(R.id.search_class_spinner);
+        searchFormatSpinner = (Spinner) findViewById(R.id.search_format_spinner);
         searchResultsNumber = (TextView) findViewById(R.id.search_result_number);
 
         // Get reference to ListView holder
@@ -174,7 +208,7 @@ public class SearchCatalogListView extends ActionBarActivity {
                 if (text.length() < 1)
                     return;
                 int searchQueryType = searchClassSpinner.getSelectedItemPosition();
-                Log.d(TAG, "type="+searchQueryType+" class="+getSearchClass());
+                Log.d(TAG, "type="+searchQueryType+" class="+getSearchClass()+" format="+getSearchFormat());
 
                 runOnUiThread(new Runnable() {
                     @Override
@@ -193,7 +227,7 @@ public class SearchCatalogListView extends ActionBarActivity {
                     }
                 });
 
-                searchResults = search.getSearchResults(text, getSearchClass(), 0);
+                searchResults = search.getSearchResults(text, getSearchClass(), getSearchFormat(), 0);
 
                 runOnUiThread(new Runnable() {
 
@@ -250,7 +284,7 @@ public class SearchCatalogListView extends ActionBarActivity {
 
                             searchResults.clear();
 
-                            searchResults = search.getSearchResults(text, getSearchClass(), recordList.size());
+                            searchResults = search.getSearchResults(text, getSearchClass(), getSearchFormat(), recordList.size());
 
                             runOnUiThread(new Runnable() {
 
@@ -352,6 +386,7 @@ public class SearchCatalogListView extends ActionBarActivity {
                                         String text = getSearchText();
                                         searchResults.clear();
                                         searchResults = search.getSearchResults(text, getSearchClass(),
+                                                getSearchFormat(),
                                                 adapter.getCount());
 
                                         runOnUiThread(new Runnable() {

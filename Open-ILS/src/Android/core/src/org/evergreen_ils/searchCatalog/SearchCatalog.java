@@ -115,6 +115,7 @@ public class SearchCatalog {
     
     public String searchText = null;
     public String searchClass = null;
+    public String searchFormat = null;
 
     public static SearchCatalog getInstance(ConnectivityManager cm) {
 
@@ -153,14 +154,15 @@ public class SearchCatalog {
     /**
      * Gets the search results
      * 
-     * @param searchWords
+     * @param searchText
      *            the search words
      * @return the search results
      */
-    public ArrayList<RecordInfo> getSearchResults(String searchWords, String searchClass, Integer offset) {
+    public ArrayList<RecordInfo> getSearchResults(String searchText, String searchClass, String searchFormat, Integer offset) {
 
-        searchText = searchWords;
+        this.searchText = searchText;
         this.searchClass = searchClass;
+        this.searchFormat = searchFormat;
         
         ArrayList<RecordInfo> resultsRecordInfo = new ArrayList<RecordInfo>();
         HashMap complexParm = new HashMap<String, Integer>();
@@ -172,6 +174,8 @@ public class SearchCatalog {
                     complexParm.put("org_unit", this.selectedOrganization.id);
                 if (this.selectedOrganization.level != null)
                     complexParm.put("depth", this.selectedOrganization.level - 1);
+//                if (!this.searchFormat.isEmpty())
+//                    complexParm.put("format", this.searchFormat);
             }
             complexParm.put("limit", searchLimit);
             complexParm.put("offset", offset);
@@ -184,12 +188,13 @@ public class SearchCatalog {
             Log.d(TAG, "Exception in JSON " + e.getMessage());
         }
 
-        //kcxxx: for searching by format
-        //searchWords = searchWords + " search_format(vhs)";
+        String queryString = searchText;
+        if (!searchFormat.isEmpty())
+            queryString += " search_format(" + searchFormat + ")";
 
         // do request and check for connectivity
         Object resp = Utils.doRequest(conn, SERVICE, METHOD_MULTICLASS_QUERY,
-                new Object[] { complexParm, searchWords, 1 });
+                new Object[] { complexParm, queryString, 1 });
 
         ArrayList<String> ids = new ArrayList<String>();
 
