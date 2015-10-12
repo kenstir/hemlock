@@ -223,29 +223,24 @@ public class SearchCatalog {
 
         for (int i = 0; i < ids.size(); i++) {
 
-            RecordInfo record = new RecordInfo(
-                    getItemShortInfo(Integer.parseInt(ids.get(i))));
-            // get copy information
+            RecordInfo record = new RecordInfo(getItemShortInfo(Integer.parseInt(ids.get(i))));
             resultsRecordInfo.add(record);
 
             record.copyCountListInfo = getCopyCount(
                     Integer.parseInt(ids.get(i)), this.selectedOrganization.id);
-
-            // get copy count
             List<List<Object>> list = (List<List<Object>>) getLocationCount(
                     Integer.parseInt(ids.get(i)), this.selectedOrganization.id,
                     this.selectedOrganization.level - 1);
-
             if (list != null)
                 for (int j = 0; j < list.size(); j++) {
                     CopyInformation copyInfo = new CopyInformation(list.get(j));
-
                     record.copyInformationList.add(copyInfo);
                 }
 
-            Log.d(TAG, "Title " + record.title + " Author "
-                    + record.author + " Pub date" + record.pubdate
-                    + " Publisher" + record.publisher);
+            Log.d(TAG, "Title:" + record.title
+                    + " Author:" + record.author
+                    + " Pubdate:" + record.pubdate
+                    + " Publisher:" + record.publisher);
         }
 
         return resultsRecordInfo;
