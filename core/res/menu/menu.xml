@@ -2,6 +2,6 @@
 
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:id="@+id/random" android:title="Random" />
-    <item android:id="@+id/add_page" android:title="Add Page" />
-    <item android:id="@+id/remove_page" android:title="Remove Page" />
+    <!--<item android:id="@+id/add_page" android:title="Add Page" />-->
+    <!--<item android:id="@+id/remove_page" android:title="Remove Page" />-->
 </menu>
