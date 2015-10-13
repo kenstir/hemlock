@@ -51,16 +51,6 @@ public abstract class BaseSampleActivity extends ActionBarActivity {
             Toast.makeText(this, "Changing to page " + page, Toast.LENGTH_SHORT);
             mPager.setCurrentItem(page);
             return true;
-        } else if (i == R.id.add_page) {
-            if (mAdapter.getCount() < 10) {
-                mIndicator.notifyDataSetChanged();
-            }
-            return true;
-        } else if (i == R.id.remove_page) {
-            if (mAdapter.getCount() > 1) {
-                mIndicator.notifyDataSetChanged();
-            }
-            return true;
         }
         return super.onOptionsItemSelected(item);
     }
