@@ -12,9 +12,15 @@ use JSON;
 my $logcat = `adb logcat -d`;
 my @lines = split(/\n/, $logcat);
 foreach my $line (@lines) {
-    if ($line =~ /org.opensrf.net.http.GatewayRequest.*service:(\S+) method:(\S+) result:(.*)/) {
-        my($svc,$method,$json) = ($1,$2,$3);
-        my $obj = decode_json($json);
-        print "$method $svc -> ", Dumper($obj);
+    chomp($line);
+    $line =~ s/\015$//;
+    if ($line =~ /org.opensrf.net.http.GatewayRequest\(\d+\): ([^:]+):(.+)/) {
+        my($key,$val) = ($1,$2);
+        if ($key eq 'result') {
+            my $obj = decode_json($val);
+            print "$key -> ", Dumper($obj);
+        } else {
+            print "${key}:${val}\n";
+        }
     }
 }
