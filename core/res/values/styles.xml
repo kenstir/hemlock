@@ -34,7 +34,7 @@
     </style>
 
     <style name="TitleSearchStyleList">
-        <item name="android:textSize">16sp</item>
+        <item name="android:textSize">14sp</item>
         <item name="android:gravity">left</item>
         <item name="android:textStyle">bold</item>
         <!--

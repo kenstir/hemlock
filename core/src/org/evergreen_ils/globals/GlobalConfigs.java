@@ -37,7 +37,7 @@ import java.util.*;
 
 public class GlobalConfigs {
 
-    public static String IDL_FILE_FROM_ROOT = "/reports/fm_IDL.xml?class=acn&class=acp&class=ahr&class=ahtc&class=au&class=bmp&class=cbreb&class=cbrebi&class=cbrebin&class=cbrebn&class=ccs&class=circ&class=ex&class=mbt&class=mbts&class=mous&class=mus&class=mvr&class=perm_ex";
+    public static String IDL_FILE_FROM_ROOT = "/reports/fm_IDL.xml?class=acn&class=acp&class=ahr&class=ahtc&class=au&class=bmp&class=cbreb&class=cbrebi&class=cbrebin&class=cbrebn&class=ccs&class=circ&class=ex&class=mbt&class=mbts&class=mous&class=mra&class=mus&class=mvr&class=perm_ex";
     public static String IDL_FILE_FROM_ASSETS = "fm_IDL.xml";
     public static String httpAddress = "";
 

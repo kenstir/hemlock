@@ -686,6 +686,7 @@ public class SearchCatalogListView extends ActionBarActivity {
         private ImageView recordImage;
         private TextView recordTitle;
         private TextView recordAuthor;
+        private TextView recordFormat;
         private TextView recordPublisher;
 
         private List<RecordInfo> records = new ArrayList<RecordInfo>();
@@ -735,11 +736,13 @@ public class SearchCatalogListView extends ActionBarActivity {
 
             recordTitle = (TextView) row.findViewById(R.id.search_record_title);
             recordAuthor = (TextView) row.findViewById(R.id.search_record_author);
+            recordFormat = (TextView) row.findViewById(R.id.search_record_format);
             recordPublisher = (TextView) row.findViewById(R.id.search_record_publishing);
 
             // set text
             recordTitle.setText(record.title);
             recordAuthor.setText(record.author);
+            recordFormat.setText(record.search_format);
             recordPublisher.setText(record.pubdate + " " + record.publisher);
 
             return row;
