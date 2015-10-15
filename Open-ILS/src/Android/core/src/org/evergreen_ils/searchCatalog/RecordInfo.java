@@ -31,8 +31,6 @@ import org.opensrf.util.OSRFObject;
 
 public class RecordInfo implements Serializable {
 
-    // {"title","author","doc_id","doc_type","pubdate","isbn","publisher","tcn","subject","type_of_resources","call_numbers","edition","online_loc","synopsis","physical_description","toc","copy_count","series","serials","foreign_copy_maps"});
-
     private static final long serialVersionUID = 10123L;
 
     private final String TAG = RecordInfo.class.getName();
@@ -69,6 +67,7 @@ public class RecordInfo implements Serializable {
     public ArrayList<CopyCountInformation> copyCountListInfo = null;
 
     public List<CopyInformation> copyInformationList = null;
+    public String search_format = null;
 
     public RecordInfo() {
         this.title = "Test title";

@@ -18,14 +18,12 @@
 		android:src="@drawable/address_book"
 		android:padding="4dip"
 		/>
-	
-	
-	
+
 	<LinearLayout 
 	android:layout_width="wrap_content"
     android:layout_height="fill_parent"
     android:orientation="vertical"
-    android:gravity="center_vertical" 
+    android:gravity="top"
 	android:paddingLeft="4dip"
 	>
 		<TextView
@@ -33,17 +31,22 @@
 		style="@style/TitleSearchStyleList"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
-		
-		 />   
-	    
-		<TextView
-		android:id="@+id/search_record_author"
-		style="@style/AuthorSearchStyleList"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
+		 />
 
-		/>
-		    
+		<TextView
+				android:id="@+id/search_record_format"
+				style="@style/AuthorSearchStyleList"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				/>
+
+		<TextView
+				android:id="@+id/search_record_author"
+				style="@style/AuthorSearchStyleList"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				/>
+
 		<TextView
 		android:id="@+id/search_record_publishing"
 		style="@style/PubSearchStyleList"

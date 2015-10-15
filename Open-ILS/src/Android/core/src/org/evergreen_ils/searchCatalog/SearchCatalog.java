@@ -25,6 +25,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import android.text.TextUtils;
 import org.evergreen_ils.globals.GlobalConfigs;
 import org.evergreen_ils.globals.Utils;
 import org.opensrf.Method;
@@ -42,13 +43,10 @@ import android.util.Log;
  */
 public class SearchCatalog {
 
-    /** The SERVICE. */
     public static String SERVICE = "open-ils.search";
-
-    /** The METHO d_ multicas s_ search. */
+    public static String PCRUD_SERVICE = "open-ils.pcrud";
+    public static String PCRUD_METHOD_RETRIEVE_MRA = "open-ils.pcrud.retrieve.mra";
     public static String METHOD_MULTICLASS_QUERY = "open-ils.search.biblio.multiclass.query";
-
-    /** The METHO d_ sli m_ retrive. */
     public static String METHOD_SLIM_RETRIVE = "open-ils.search.biblio.record.mods_slim.retrieve";
 
     /**
@@ -57,7 +55,6 @@ public class SearchCatalog {
      * @param : no parameters
      * @returns : returns array of ccs objects
      */
-
     public static String METHOD_COPY_STATUS_ALL = "open-ils.search.config.copy_status.retrieve.all";
 
     /**
@@ -94,13 +91,9 @@ public class SearchCatalog {
     public static String METHOD_GET_COPY_COUNT = "open-ils.search.biblio.record.copy_count";
 
     public static SearchCatalog searchCatalogSingleton = null;
-    /** The conn. */
+
     public HttpConnection conn;
 
-    // TODO get statuses on load
-    // open-ils.search.config.copy_status.retrieve.all
-
-    /** The TAG. */
     public String TAG = "SearchCatalog";
 
     // the org on witch the searches will be made
@@ -222,14 +215,16 @@ public class SearchCatalog {
         // request other info based on ids
 
         for (int i = 0; i < ids.size(); i++) {
+            Integer record_id = Integer.parseInt(ids.get(i));
 
-            RecordInfo record = new RecordInfo(getItemShortInfo(Integer.parseInt(ids.get(i))));
+            RecordInfo record = new RecordInfo(getItemShortInfo(record_id));
             resultsRecordInfo.add(record);
 
-            record.copyCountListInfo = getCopyCount(
-                    Integer.parseInt(ids.get(i)), this.selectedOrganization.id);
+            record.search_format = getFormat(record_id);
+
+            record.copyCountListInfo = getCopyCount(record_id, this.selectedOrganization.id);
             List<List<Object>> list = (List<List<Object>>) getLocationCount(
-                    Integer.parseInt(ids.get(i)), this.selectedOrganization.id,
+                    record_id, this.selectedOrganization.id,
                     this.selectedOrganization.level - 1);
             if (list != null)
                 for (int j = 0; j < list.size(); j++) {
@@ -254,56 +249,30 @@ public class SearchCatalog {
      * @return the item short info
      */
     private OSRFObject getItemShortInfo(Integer id) {
-
-        Method method = new Method(METHOD_SLIM_RETRIVE);
-
-        method.addParam(id);
-
-        HttpRequest req = new GatewayRequest(conn, SERVICE, method).send();
-        Object resp;
-        while ((resp = req.recv()) != null) {
-            Log.d(TAG, "Sync Response: " + resp);
-            return (OSRFObject) resp;
-        }
-
-        return null;
-    }
-
-    /**
-     * Search catalog.
-     * 
-     * @param searchWords
-     *            the search words
-     * @return the object
-     */
-    public Object searchCatalog(String searchWords) {
-
-        Object response = Utils.doRequest(conn, SERVICE, METHOD_SLIM_RETRIVE,
-                new Object[] { "keyword", searchWords });
-
+        OSRFObject response = (OSRFObject) Utils.doRequestSimple(conn, SERVICE,
+                METHOD_SLIM_RETRIVE, new Object[] {
+                        id });
         return response;
-
     }
 
-    /**
-     * Search catalog.
-     * 
-     * @param searchWords
-     *            the search words
-     * @param requestHandler
-     *            the request handler
-     */
-    public void searchCatalog(String searchWords,
-            HttpRequestHandler requestHandler) {
+    private String getFormat(Integer id) {
+        OSRFObject resp = (OSRFObject) Utils.doRequestSimple(conn, PCRUD_SERVICE,
+                PCRUD_METHOD_RETRIEVE_MRA, new Object[] { "ANONYMOUS", id });
 
-        Method method = new Method(METHOD_SLIM_RETRIVE);
-
-        method.addParam(searchWords);
-
-        // sync test
-        HttpRequest req = new GatewayRequest(conn, SERVICE, method).send();
-        req.sendAsync(requestHandler);
-
+        // This is not beautiful.  This MRA record comes back with an 'attrs' field that
+        // appears to have been serialized by perl Data::Dumper, e.g.
+        // '"biog"=>"b", "conf"=>"0", "search_format"=>"ebook"'.
+        String attrs = resp.getString("attrs");
+        Log.d(TAG, "attrs="+attrs);
+        String[] attr_arr = TextUtils.split(attrs, ", ");
+        for (int i=0; i<attr_arr.length; ++i) {
+            String[] kv = TextUtils.split(attr_arr[i], "=>");
+            String key = kv[0].replace("\"", "");
+            if (key.equalsIgnoreCase("search_format")) {
+                return kv[1].replace("\"", "");
+            }
+        }
+        return "";
     }
 
     public Object getCopyStatuses() {
