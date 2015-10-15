@@ -102,8 +102,7 @@ public class BookBagDetails extends ActionBarActivity {
         bookBag = (BookBag) getIntent().getSerializableExtra("bookBag");
 
         context = this;
-        search = SearchCatalog
-                .getInstance((ConnectivityManager) getSystemService(Service.CONNECTIVITY_SERVICE));
+        search = SearchCatalog.getInstance((ConnectivityManager) getSystemService(Service.CONNECTIVITY_SERVICE));
         bookbag_name = (TextView) findViewById(R.id.bookbag_name);
         delete_bookbag_button = (Button) findViewById(R.id.remove_bookbag);
         bookbag_name.setText(bookBag.name);
