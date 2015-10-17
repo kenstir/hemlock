@@ -265,14 +265,22 @@ public class SearchCatalog {
         String attrs = resp.getString("attrs");
         Log.d(TAG, "attrs="+attrs);
         String[] attr_arr = TextUtils.split(attrs, ", ");
+        String icon_format = "";
+        String search_format = "";
         for (int i=0; i<attr_arr.length; ++i) {
             String[] kv = TextUtils.split(attr_arr[i], "=>");
             String key = kv[0].replace("\"", "");
-            if (key.equalsIgnoreCase("search_format")) {
-                return kv[1].replace("\"", "");
+            if (key.equalsIgnoreCase("icon_format")) {
+                icon_format = kv[1].replace("\"", "");
+            } else if (key.equalsIgnoreCase("search_format")) {
+                search_format = kv[1].replace("\"", "");
             }
         }
-        return "";
+        if (!icon_format.isEmpty()) {
+            return icon_format;
+        } else {
+            return search_format;
+        }
     }
 
     public Object getCopyStatuses() {
