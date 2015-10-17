@@ -6,6 +6,7 @@ import android.widget.ArrayAdapter;
 import org.evergreen_ils.R;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by kenstir on 1/5/14.
@@ -17,7 +18,7 @@ public class CompatSpinnerAdapter {
      * The fix is to use two different spinner layouts, one for GB with textColor="@color/dark"
      * and one for newer versions with textColor="?android:textColorPrimary".
      */
-    public static ArrayAdapter<String> CreateCompatSpinnerAdapter(Context context, ArrayList<String> list) {
+    public static ArrayAdapter<String> CreateCompatSpinnerAdapter(Context context, List<String> list) {
         int spinner_layout = (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB)
                 ? R.layout.spinner_gb_layout :
                 R.layout.spinner_layout;

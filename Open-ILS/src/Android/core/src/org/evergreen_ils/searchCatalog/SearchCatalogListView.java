@@ -480,6 +480,8 @@ public class SearchCatalogListView extends ActionBarActivity {
         String formats_json = loadJSONFromResource(R.raw.search_formats);
         SearchFormat.initFromJSON(formats_json);
         List<String> labels = SearchFormat.getSpinnerLabels();
+        //ArrayAdapter<String> adapter = CompatSpinnerAdapter.CreateCompatSpinnerAdapter(this, labels);
+        //ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, labels);
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, labels);
         searchFormatSpinner.setAdapter(adapter);
     }
