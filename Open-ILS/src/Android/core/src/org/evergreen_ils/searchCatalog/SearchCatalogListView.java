@@ -19,8 +19,8 @@
  */
 package org.evergreen_ils.searchCatalog;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.io.*;
+import java.util.*;
 
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
@@ -64,7 +64,7 @@ import android.widget.Toast;
 
 public class SearchCatalogListView extends ActionBarActivity {
 
-    private final String TAG = SearchCatalogListView.class.getName();
+    private final String TAG = SearchCatalogListView.class.getSimpleName();
 
     private ArrayList<RecordInfo> recordList;
 
@@ -119,40 +119,8 @@ public class SearchCatalogListView extends ActionBarActivity {
         return searchClassSpinner.getSelectedItem().toString().toLowerCase();
     }
 
-    // Sadly there is currently no way to get these programmatically.
-    // todo: instead of raw strings in the search_format_options string-array,
-    // store an array of search_key:printable_strings, e.g. "book:All Books",
-    // and dynamically construct the spinner.
     private String getSearchFormat() {
-        String value = "";
-        String s = searchFormatSpinner.getSelectedItem().toString();
-        if (!s.isEmpty()) value=s;
-        if (s.equalsIgnoreCase("All Formats"))                             value="";
-        else if (s.equalsIgnoreCase("All Books"))                          value="book";
-        else if (s.equalsIgnoreCase("All Music"))                          value="music";
-        else if (s.equalsIgnoreCase("Audiocassette music recording"))      value="casmusic";
-        else if (s.equalsIgnoreCase("Blu-ray"))                            value="blu-ray";
-        else if (s.equalsIgnoreCase("Braille"))                            value="braille";
-        else if (s.equalsIgnoreCase("Cassette audiobook"))                 value="casaudiobook";
-        else if (s.equalsIgnoreCase("CD Audiobook"))                       value="cdaudiobook";
-        else if (s.equalsIgnoreCase("CD Music recording"))                 value="cdmusic";
-        else if (s.equalsIgnoreCase("DVD"))                                value="dvd";
-        else if (s.equalsIgnoreCase("E-audio"))                            value="eaudio";
-        else if (s.equalsIgnoreCase("E-book"))                             value="ebook";
-        else if (s.equalsIgnoreCase("E-video"))                            value="evideo";
-        else if (s.equalsIgnoreCase("Equipment, games, toys"))             value="equip";
-        else if (s.equalsIgnoreCase("Kit"))                                value="kit";
-        else if (s.equalsIgnoreCase("Large Print Book"))                   value="lpbook";
-        else if (s.equalsIgnoreCase("Map"))                                value="map";
-        else if (s.equalsIgnoreCase("Microform"))                          value="microform";
-        else if (s.equalsIgnoreCase("Music Score"))                        value="score";
-        else if (s.equalsIgnoreCase("Phonograph music recording"))         value="phonomusic";
-        else if (s.equalsIgnoreCase("Phonograph spoken recording"))        value="phonospoken";
-        else if (s.equalsIgnoreCase("Picture"))                            value="picture";
-        else if (s.equalsIgnoreCase("Serials and magazines"))              value="serial";
-        else if (s.equalsIgnoreCase("Software and video games"))           value="software";
-        else if (s.equalsIgnoreCase("VHS"))                                value="vhs";
-        return value;
+        return SearchFormat.getSearchFormatFromSpinnerLabel(searchFormatSpinner.getSelectedItem().toString());
     }
 
     @Override
@@ -189,6 +157,7 @@ public class SearchCatalogListView extends ActionBarActivity {
         searchClassSpinner = (Spinner) findViewById(R.id.search_class_spinner);
         searchFormatSpinner = (Spinner) findViewById(R.id.search_format_spinner);
         searchResultsNumber = (TextView) findViewById(R.id.search_result_number);
+        initSearchFormatSpinner();
 
         // Get reference to ListView holder
         lv = (ListView) this.findViewById(R.id.search_results_list);
@@ -337,8 +306,7 @@ public class SearchCatalogListView extends ActionBarActivity {
                 } else {
                     // start activity with book details
 
-                    Intent intent = new Intent(getBaseContext(),
-                            SampleUnderlinesNoFade.class);
+                    Intent intent = new Intent(getBaseContext(), SampleUnderlinesNoFade.class);
                     // serialize object and pass it to next activity
                     intent.putExtra("recordInfo", info);
                     intent.putExtra("orgID", search.selectedOrganization.id);
@@ -489,6 +457,31 @@ public class SearchCatalogListView extends ActionBarActivity {
 
         });
 
+    }
+
+    private String loadJSONFromResource(int r) {
+        String json = "";
+        InputStream is = getResources().openRawResource(R.raw.search_formats);
+        int size = 0;
+        try {
+            size = is.available();
+            byte[] buf = new byte[size];
+            is.read(buf);
+            is.close();
+            json = new String(buf, "UTF-8");
+        } catch (IOException e) {
+            Log.d(TAG, "caught", e);
+        }
+        return json;
+    }
+
+    // unpack the json map to populate our spinner, and allow translation from search_format keyword <=> label
+    private void initSearchFormatSpinner() {
+        String formats_json = loadJSONFromResource(R.raw.search_formats);
+        SearchFormat.initFromJSON(formats_json);
+        List<String> labels = SearchFormat.getSpinnerLabels();
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, labels);
+        searchFormatSpinner.setAdapter(adapter);
     }
 
     @Override
@@ -742,7 +735,7 @@ public class SearchCatalogListView extends ActionBarActivity {
             // set text
             recordTitle.setText(record.title);
             recordAuthor.setText(record.author);
-            recordFormat.setText(record.search_format);
+            recordFormat.setText(SearchFormat.getLabelFromSearchFormat(record.search_format));
             recordPublisher.setText(record.pubdate + " " + record.publisher);
 
             return row;
