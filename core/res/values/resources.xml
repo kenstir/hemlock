@@ -14,34 +14,6 @@
 		<item>Matches exactly</item>
     </string-array>
 
-    <string-array name="search_format_options">
-        <item>All Formats</item>
-        <item>All Books</item>
-        <item>All Music</item>
-        <!--<item>Audiocassette music recording</item>-->
-        <item>Blu-ray</item>
-        <!--<item>Braille</item>-->
-        <!--<item>Cassette audiobook</item>-->
-        <item>CD Audiobook</item>
-        <item>CD Music recording</item>
-        <item>DVD</item>
-        <item>E-audio</item>
-        <item>E-book</item>
-        <item>E-video</item>
-        <!--<item>Equipment, games, toys</item>-->
-        <!--<item>Kit</item>-->
-        <item>Large Print Book</item>
-        <!--<item>Map</item>-->
-        <!--<item>Microform</item>-->
-        <!--<item>Music Score</item>-->
-        <!--<item>Phonograph music recording</item>-->
-        <!--<item>Phonograph spoken recording</item>-->
-        <item>Picture</item>
-        <item>Serials and magazines</item>
-        <item>Software and video games</item>
-        <!--<item>VHS</item>-->
-    </string-array>
-    
     <string-array name="notification_preferences_list_values">
         <item>1</item>
         <item>2</item>

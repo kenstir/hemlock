@@ -31,11 +31,7 @@ import org.evergreen_ils.accountAccess.SessionNotFoundException;
 import org.evergreen_ils.accountAccess.bookbags.BookBag;
 import org.evergreen_ils.accountAccess.holds.PlaceHold;
 import org.evergreen_ils.globals.GlobalConfigs;
-import org.evergreen_ils.searchCatalog.CopyInformation;
-import org.evergreen_ils.searchCatalog.ImageDownloader;
-import org.evergreen_ils.searchCatalog.MoreCopyInformation;
-import org.evergreen_ils.searchCatalog.RecordInfo;
-import org.evergreen_ils.searchCatalog.SearchCatalog;
+import org.evergreen_ils.searchCatalog.*;
 
 import android.app.Dialog;
 import android.app.ProgressDialog;
@@ -68,6 +64,7 @@ public class BasicDetailsFragment extends Fragment {
     private TextView record_header;
 
     private TextView titleTextView;
+    private TextView formatTextView;
     private TextView authorTextView;
     private TextView publisherTextView;
 
@@ -144,33 +141,22 @@ public class BasicDetailsFragment extends Fragment {
                 R.layout.record_details_basic_fragment, null);
 
         record_header = (TextView) layout.findViewById(R.id.record_header_text);
-        copyCountTextView = (TextView) layout
-                .findViewById(R.id.record_details_simple_copy_count);
-        showMore = (LinearLayout) layout
-                .findViewById(R.id.record_details_show_more);
-        titleTextView = (TextView) layout
-                .findViewById(R.id.record_details_simple_title);
-        authorTextView = (TextView) layout
-                .findViewById(R.id.record_details_simple_author);
-        publisherTextView = (TextView) layout
-                .findViewById(R.id.record_details_simple_publisher);
+        copyCountTextView = (TextView) layout.findViewById(R.id.record_details_simple_copy_count);
+        showMore = (LinearLayout) layout.findViewById(R.id.record_details_show_more);
+        titleTextView = (TextView) layout.findViewById(R.id.record_details_simple_title);
+        formatTextView = (TextView) layout.findViewById(R.id.record_details_format);
+        authorTextView = (TextView) layout.findViewById(R.id.record_details_simple_author);
+        publisherTextView = (TextView) layout.findViewById(R.id.record_details_simple_publisher);
 
-        seriesTextView = (TextView) layout
-                .findViewById(R.id.record_details_simple_series);
-        subjectTextView = (TextView) layout
-                .findViewById(R.id.record_details_simple_subject);
-        synopsisTextView = (TextView) layout
-                .findViewById(R.id.record_details_simple_synopsis);
-        isbnTextView = (TextView) layout
-                .findViewById(R.id.record_details_simple_isbn);
+        seriesTextView = (TextView) layout.findViewById(R.id.record_details_simple_series);
+        subjectTextView = (TextView) layout.findViewById(R.id.record_details_simple_subject);
+        synopsisTextView = (TextView) layout.findViewById(R.id.record_details_simple_synopsis);
+        isbnTextView = (TextView) layout.findViewById(R.id.record_details_simple_isbn);
 
-        recordImage = (ImageView) layout
-                .findViewById(R.id.record_details_simple_image);
+        recordImage = (ImageView) layout.findViewById(R.id.record_details_simple_image);
 
-        placeHoldButton = (Button) layout
-                .findViewById(R.id.simple_place_hold_button);
-        addToBookbagButton = (Button) layout
-                .findViewById(R.id.simple_add_to_bookbag_button);
+        placeHoldButton = (Button) layout.findViewById(R.id.simple_place_hold_button);
+        addToBookbagButton = (Button) layout.findViewById(R.id.simple_add_to_bookbag_button);
 
         placeHoldButton.setOnClickListener(new OnClickListener() {
 
@@ -276,6 +262,7 @@ public class BasicDetailsFragment extends Fragment {
         record_header.setText(String.format(getString(R.string.record_of), position, total));
 
         titleTextView.setText(record.title);
+        formatTextView.setText(SearchFormat.getLabelFromSearchFormat(record.search_format));
         authorTextView.setText(record.author);
         publisherTextView.setText(record.pubdate + " " + record.publisher);
 
