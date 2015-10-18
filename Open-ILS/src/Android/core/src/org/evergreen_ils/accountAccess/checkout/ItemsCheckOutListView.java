@@ -89,8 +89,6 @@ public class ItemsCheckOutListView extends ActionBarActivity {
         actionBar.setSubtitle(AccountAccess.userName);
         actionBar.setDisplayHomeAsUpEnabled(true);
 
-        currentDate = new Date(System.currentTimeMillis());
-
         context = this;
         itemsNo = (TextView) findViewById(R.id.checkout_items_number);
         overdueItems = (TextView) findViewById(R.id.checkout_items_overdue);
@@ -121,8 +119,10 @@ public class ItemsCheckOutListView extends ActionBarActivity {
 
                     @Override
                     public void run() {
-                        for (int i = 0; i < circRecords.size(); i++)
-                            listAdapter.add(circRecords.get(i));
+                        for (int i = 0; i < circRecords.size(); i++) {
+                            CircRecord circ = circRecords.get(i);
+                            listAdapter.add(circ);
+                        }
 
                         itemsNo.setText(" " + circRecords.size() + " ");
 
@@ -130,8 +130,9 @@ public class ItemsCheckOutListView extends ActionBarActivity {
                         int overdueNo = 0;
                         for (int i = 0; i < circRecords.size(); i++) {
                             CircRecord circ = circRecords.get(i);
-                            if (circ.getDueDateObject().compareTo(currentDate) < 0)
+                            if (circ.isOverdue()) {
                                 overdueNo++;
+                            }
                         }
                         overdueItems.setText(" " + overdueNo);
 
@@ -164,7 +165,6 @@ public class ItemsCheckOutListView extends ActionBarActivity {
         private TextView recordTitle;
         private TextView recordAuthor;
         private TextView recordDueDate;
-        private TextView recordRenewals;
         private TextView renewButton;
 
         private List<CircRecord> records = new ArrayList<CircRecord>();
@@ -191,15 +191,11 @@ public class ItemsCheckOutListView extends ActionBarActivity {
 
             // if it is the right type of view
             if (row == null) {
-
-                Log.d(tag, "Starting XML Row Inflation ... ");
                 LayoutInflater inflater = (LayoutInflater) this
                         .getContext().getSystemService(
                                 Context.LAYOUT_INFLATER_SERVICE);
                 row = inflater.inflate(R.layout.checkout_list_item, parent,
                         false);
-                Log.d(tag, "Successfully completed XML Row Inflation!");
-
             }
 
             // Get reference to TextView - title
@@ -314,6 +310,9 @@ public class ItemsCheckOutListView extends ActionBarActivity {
             recordTitle.setText(record.getTitle());
             recordAuthor.setText(record.getAuthor());
             recordDueDate.setText(getString(R.string.due) + ": " + record.getDueDate());
+            if (record.isOverdue()) {
+                recordDueDate.setTextAppearance(getApplicationContext(), R.style.alert);
+            }
             Log.d(TAG, "title:  " + record.getTitle());
             Log.d(TAG, "author: " + record.getAuthor());
             Log.d(TAG, "due:    " + record.getDueDate());

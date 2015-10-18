@@ -134,4 +134,8 @@ public class CircRecord {
         return null;
     }
 
+    public boolean isOverdue() {
+        Date currentDate = new Date(System.currentTimeMillis());
+        return getDueDateObject().compareTo(currentDate) < 0;
+    }
 }
