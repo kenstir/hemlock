@@ -54,6 +54,9 @@ public class AccountAccess {
     public static String METHOD_AUTH_COMPLETE = "open-ils.auth.authenticate.complete";
     public static String METHOD_AUTH_SESSION_RETRV = "open-ils.auth.session.retrieve";
 
+    public static String PCRUD_SERVICE = "open-ils.pcrud";
+    public static String PCRUD_METHOD_RETRIEVE_MRA = "open-ils.pcrud.retrieve.mra";
+
     public static String SERVICE_ACTOR = "open-ils.actor";
     public static String SERVICE_CIRC = "open-ils.circ";
     public static String SERVICE_SEARCH = "open-ils.search";
@@ -436,8 +439,7 @@ public class AccountAccess {
      * @param circRecord the circ record
      * @return the oSRF object
      */
-    private OSRFObject fetchInfoForCheckedOutItem(Integer target_copy,
-            CircRecord circRecord) {
+    private OSRFObject fetchInfoForCheckedOutItem(Integer target_copy, CircRecord circRecord) {
 
         if (target_copy == null)
             return null;
@@ -448,6 +450,8 @@ public class AccountAccess {
         // if title or author not inserted, request acp with copy_target
         result = info_mvr;
         OSRFObject info_acp = null;
+
+        circRecord.format = fetchFormat(info_mvr.getInt("doc_id"));
 
         // the logic to establish mvr or acp is copied from the opac
         if (info_mvr.getString("title") == null
@@ -471,12 +475,42 @@ public class AccountAccess {
      * @return the oSRF object
      */
     private OSRFObject fetchModsFromCopy(Integer target_copy) {
-
-        // sync request
         OSRFObject mvr = (OSRFObject) Utils.doRequest(conn, SERVICE_SEARCH,
                 METHOD_FETCH_MODS_FROM_COPY, new Object[] { target_copy });
 
         return mvr;
+    }
+
+    public String fetchFormat(int id) {
+        return fetchFormat(Integer.valueOf(id).toString());
+    }
+
+    public String fetchFormat(String id) {
+        OSRFObject resp = (OSRFObject) Utils.doRequestSimple(conn, PCRUD_SERVICE,
+                PCRUD_METHOD_RETRIEVE_MRA, new Object[] { "ANONYMOUS", id });
+
+        // This is not beautiful.  This MRA record comes back with an 'attrs' field that
+        // appears to have been serialized by perl Data::Dumper, e.g.
+        // '"biog"=>"b", "conf"=>"0", "search_format"=>"ebook"'.
+        String attrs = resp.getString("attrs");
+        Log.d(TAG, "attrs="+attrs);
+        String[] attr_arr = TextUtils.split(attrs, ", ");
+        String icon_format = "";
+        String search_format = "";
+        for (int i=0; i<attr_arr.length; ++i) {
+            String[] kv = TextUtils.split(attr_arr[i], "=>");
+            String key = kv[0].replace("\"", "");
+            if (key.equalsIgnoreCase("icon_format")) {
+                icon_format = kv[1].replace("\"", "");
+            } else if (key.equalsIgnoreCase("search_format")) {
+                search_format = kv[1].replace("\"", "");
+            }
+        }
+        if (!icon_format.isEmpty()) {
+            return icon_format;
+        } else {
+            return search_format;
+        }
     }
 
     /**
@@ -486,7 +520,6 @@ public class AccountAccess {
      * @return the oSRF object
      */
     private OSRFObject fetchAssetCopy(Integer target_copy) {
-
         OSRFObject acp = (OSRFObject) Utils.doRequest(conn, SERVICE_SEARCH,
                 METHOD_FETCH_COPY, new Object[] { target_copy });
 
@@ -802,7 +835,6 @@ public class AccountAccess {
      * @throws SessionNotFoundException the session not found exception
      */
     public boolean cancelHold(OSRFObject hold) throws SessionNotFoundException {
-
         Integer hold_id = hold.getInt("id");
 
         Object response = Utils.doRequest(conn, SERVICE_CIRC,
@@ -814,7 +846,6 @@ public class AccountAccess {
             return true;
 
         return false;
-
     }
 
     /**

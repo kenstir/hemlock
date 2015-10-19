@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Map;
 
 import android.text.TextUtils;
+import org.evergreen_ils.accountAccess.AccountAccess;
 import org.evergreen_ils.globals.GlobalConfigs;
 import org.evergreen_ils.globals.Utils;
 import org.opensrf.Method;
@@ -44,8 +45,6 @@ import android.util.Log;
 public class SearchCatalog {
 
     public static String SERVICE = "open-ils.search";
-    public static String PCRUD_SERVICE = "open-ils.pcrud";
-    public static String PCRUD_METHOD_RETRIEVE_MRA = "open-ils.pcrud.retrieve.mra";
     public static String METHOD_MULTICLASS_QUERY = "open-ils.search.biblio.multiclass.query";
     public static String METHOD_SLIM_RETRIVE = "open-ils.search.biblio.record.mods_slim.retrieve";
 
@@ -220,7 +219,8 @@ public class SearchCatalog {
             RecordInfo record = new RecordInfo(getItemShortInfo(record_id));
             resultsRecordInfo.add(record);
 
-            record.search_format = getFormat(record_id);
+            AccountAccess ac = AccountAccess.getAccountAccess();
+            record.search_format = ac.fetchFormat(record_id.toString());
 
             record.copyCountListInfo = getCopyCount(record_id, this.selectedOrganization.id);
             List<List<Object>> list = (List<List<Object>>) getLocationCount(
@@ -253,34 +253,6 @@ public class SearchCatalog {
                 METHOD_SLIM_RETRIVE, new Object[] {
                         id });
         return response;
-    }
-
-    private String getFormat(Integer id) {
-        OSRFObject resp = (OSRFObject) Utils.doRequestSimple(conn, PCRUD_SERVICE,
-                PCRUD_METHOD_RETRIEVE_MRA, new Object[] { "ANONYMOUS", id });
-
-        // This is not beautiful.  This MRA record comes back with an 'attrs' field that
-        // appears to have been serialized by perl Data::Dumper, e.g.
-        // '"biog"=>"b", "conf"=>"0", "search_format"=>"ebook"'.
-        String attrs = resp.getString("attrs");
-        Log.d(TAG, "attrs="+attrs);
-        String[] attr_arr = TextUtils.split(attrs, ", ");
-        String icon_format = "";
-        String search_format = "";
-        for (int i=0; i<attr_arr.length; ++i) {
-            String[] kv = TextUtils.split(attr_arr[i], "=>");
-            String key = kv[0].replace("\"", "");
-            if (key.equalsIgnoreCase("icon_format")) {
-                icon_format = kv[1].replace("\"", "");
-            } else if (key.equalsIgnoreCase("search_format")) {
-                search_format = kv[1].replace("\"", "");
-            }
-        }
-        if (!icon_format.isEmpty()) {
-            return icon_format;
-        } else {
-            return search_format;
-        }
     }
 
     public Object getCopyStatuses() {

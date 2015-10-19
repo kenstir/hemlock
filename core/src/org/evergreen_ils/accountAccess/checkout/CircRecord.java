@@ -24,6 +24,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import org.evergreen_ils.globals.GlobalConfigs;
+import org.evergreen_ils.searchCatalog.SearchFormat;
 import org.opensrf.util.OSRFObject;
 
 /**
@@ -39,10 +40,9 @@ public class CircRecord {
     public static final int UNDEF_OBJ_TYPE = 0;
 
     public OSRFObject mvr = null;
-
     public OSRFObject acp = null;
-
     public OSRFObject circ = null;
+    public String format = null;
 
     public int circ_info_type = UNDEF_OBJ_TYPE;
 
@@ -137,5 +137,12 @@ public class CircRecord {
     public boolean isOverdue() {
         Date currentDate = new Date(System.currentTimeMillis());
         return getDueDateObject().compareTo(currentDate) < 0;
+    }
+
+    public String getFormatLabel() {
+        if (format != null) {
+            return SearchFormat.getLabelFromSearchFormat(format);
+        }
+        return "";
     }
 }

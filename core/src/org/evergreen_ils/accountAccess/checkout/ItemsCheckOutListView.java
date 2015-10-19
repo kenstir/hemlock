@@ -30,6 +30,7 @@ import org.evergreen_ils.accountAccess.AccountAccess;
 import org.evergreen_ils.accountAccess.MaxRenewalsException;
 import org.evergreen_ils.accountAccess.ServerErrorMessage;
 import org.evergreen_ils.accountAccess.SessionNotFoundException;
+import org.evergreen_ils.searchCatalog.SearchFormat;
 import org.evergreen_ils.views.splashscreen.SplashActivity;
 
 import android.app.ProgressDialog;
@@ -44,6 +45,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+import org.w3c.dom.Text;
 
 public class ItemsCheckOutListView extends ActionBarActivity {
 
@@ -74,6 +76,7 @@ public class ItemsCheckOutListView extends ActionBarActivity {
             SplashActivity.restartApp(this);
             return;
         }
+        SearchFormat.init(this);
 
         setContentView(R.layout.checkout_list);
 
@@ -157,6 +160,7 @@ public class ItemsCheckOutListView extends ActionBarActivity {
 
         private TextView recordTitle;
         private TextView recordAuthor;
+        private TextView recordFormat;
         private TextView recordDueDate;
         private TextView recordIsOverdue;
         private TextView renewButton;
@@ -194,6 +198,7 @@ public class ItemsCheckOutListView extends ActionBarActivity {
             // Get references to views
             recordTitle = (TextView) row.findViewById(R.id.checkout_record_title);
             recordAuthor = (TextView) row.findViewById(R.id.checkout_record_author);
+            recordFormat = (TextView) row.findViewById(R.id.checkout_record_format);
             recordDueDate = (TextView) row.findViewById(R.id.checkout_record_due_date);
             recordIsOverdue = (TextView) row.findViewById(R.id.checkout_record_overdue);
             renewButton = (TextView) row.findViewById(R.id.renew_button);
@@ -298,6 +303,7 @@ public class ItemsCheckOutListView extends ActionBarActivity {
             // set text
             recordTitle.setText(record.getTitle());
             recordAuthor.setText(record.getAuthor());
+            recordFormat.setText(record.getFormatLabel());
             recordDueDate.setText(getString(R.string.due) + " " + record.getDueDate());
             recordIsOverdue.setText(record.isOverdue() ? getString(R.string.overdue) : "");
             Log.d(TAG, "title: \"" + record.getTitle() + "\""
