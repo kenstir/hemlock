@@ -57,7 +57,6 @@
 
     <style name="PubSearchStyleList">
         <item name="android:textSize">12sp</item>
-        <item name="android:gravity">right</item>
         <item name="android:singleLine">true</item>
         <item name="android:ellipsize">end</item>
     </style>
