@@ -93,6 +93,7 @@
     <string name="checkout_item_txt">Total items checked out:</string>
     <string name="checkout_overdue_items">Overdue:</string>
     <string name="due">due</string>
+    <string name="overdue">overdue</string>
 
     <!-- Fines Activity -->
     <string name="total_owned">Total Owned </string>

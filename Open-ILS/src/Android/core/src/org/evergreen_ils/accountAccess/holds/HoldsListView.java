@@ -220,13 +220,9 @@ public class HoldsListView extends ActionBarActivity {
             final HoldRecord record = getItem(position);
 
             if (row == null) {
-
-                Log.d(tag, "Starting XML view more infaltion ... ");
                 LayoutInflater inflater = (LayoutInflater) this.getContext()
                         .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                 row = inflater.inflate(R.layout.holds_list_item, parent, false);
-                Log.d(tag, "Successfully completed XML view more Inflation!");
-
             }
 
             hold_icon = (ImageView) row.findViewById(R.id.hold_resource_icon);
