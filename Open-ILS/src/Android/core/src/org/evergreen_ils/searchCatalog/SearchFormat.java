@@ -1,14 +1,21 @@
 package org.evergreen_ils.searchCatalog;
 
+import android.content.Context;
 import android.util.Log;
+import org.evergreen_ils.R;
 import org.opensrf.util.JSONException;
 import org.opensrf.util.JSONReader;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 /**
+ * Support translation between search_format strings ("book"), display labels as seen in the search format spinner
+ * ("All Books"), and display labels as shown on an item detail page ("Book").
+ *
  * Created by kenstir on 10/17/2015.
  */
 public class SearchFormat {
@@ -22,7 +29,30 @@ public class SearchFormat {
 
     private final static String TAG = SearchFormat.class.getSimpleName();
 
+    static boolean initialized = false;
     static List<SearchFormatItem> searchFormats = new ArrayList<SearchFormatItem>();
+
+    public static void init(Context context) {
+        if (initialized) return;
+        String formats_json = loadJSONFromResource(context, R.raw.search_formats);
+        SearchFormat.initFromJSON(formats_json);
+    }
+
+    private static String loadJSONFromResource(Context context, int r) {
+        String json = "";
+        InputStream is = context.getResources().openRawResource(r);
+        int size = 0;
+        try {
+            size = is.available();
+            byte[] buf = new byte[size];
+            is.read(buf);
+            is.close();
+            json = new String(buf, "UTF-8");
+        } catch (IOException e) {
+            Log.d(TAG, "caught", e);
+        }
+        return json;
+    }
 
     public static void initFromJSON(String formats_json) {
         searchFormats.clear();

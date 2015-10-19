@@ -130,6 +130,7 @@ public class SearchCatalogListView extends ActionBarActivity {
             SplashActivity.restartApp(this);
             return;
         }
+        SearchFormat.init(this);
 
         setContentView(R.layout.search_result_list);
 
@@ -459,26 +460,8 @@ public class SearchCatalogListView extends ActionBarActivity {
 
     }
 
-    private String loadJSONFromResource(int r) {
-        String json = "";
-        InputStream is = getResources().openRawResource(R.raw.search_formats);
-        int size = 0;
-        try {
-            size = is.available();
-            byte[] buf = new byte[size];
-            is.read(buf);
-            is.close();
-            json = new String(buf, "UTF-8");
-        } catch (IOException e) {
-            Log.d(TAG, "caught", e);
-        }
-        return json;
-    }
-
     // unpack the json map to populate our spinner, and allow translation from search_format keyword <=> label
     private void initSearchFormatSpinner() {
-        String formats_json = loadJSONFromResource(R.raw.search_formats);
-        SearchFormat.initFromJSON(formats_json);
         List<String> labels = SearchFormat.getSpinnerLabels();
         //ArrayAdapter<String> adapter = CompatSpinnerAdapter.CreateCompatSpinnerAdapter(this, labels);
         //ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, labels);
@@ -613,8 +596,7 @@ public class SearchCatalogListView extends ActionBarActivity {
 
                 });
             } else
-                Toast.makeText(context, "No bookbags", Toast.LENGTH_SHORT)
-                        .show();
+                Toast.makeText(context, "No bookbags", Toast.LENGTH_SHORT).show();
         }
             break;
         }
@@ -708,17 +690,12 @@ public class SearchCatalogListView extends ActionBarActivity {
             RecordInfo record = getItem(position);
 
             // if it is the right type of view
-            if (row == null
-                || row.findViewById(R.id.search_record_title) == null) {
-
-                Log.d(tag, "Starting XML Row Inflation ... ");
+            if (row == null || row.findViewById(R.id.search_record_title) == null) {
                 LayoutInflater inflater = (LayoutInflater) this
                         .getContext().getSystemService(
                                 Context.LAYOUT_INFLATER_SERVICE);
                 row = inflater.inflate(R.layout.search_result_item, parent,
                         false);
-                Log.d(tag, "Successfully completed XML Row Inflation!");
-
             }
 
             // Get reference to ImageView
