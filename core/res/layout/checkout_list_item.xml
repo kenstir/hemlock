@@ -10,8 +10,8 @@
     <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
         android:layout_weight="1"
+        android:orientation="vertical"
         >
 
         <TextView
@@ -29,7 +29,8 @@
 
         <TextView
                 android:id="@+id/checkout_record_format"
-                style="@style/AuthorSearchStyleList"
+                style="@style/PubSearchStyleList"
+                android:gravity="left"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"/>
 
@@ -41,16 +42,19 @@
             <TextView
                     android:id="@+id/checkout_record_due_date"
                     style="@style/PubSearchStyleList"
-                    android:layout_width="wrap_content"
                     android:gravity="left"
-                    android:layout_height="wrap_content" android:text="due Oct 31, 2015" android:layout_weight="1"/>
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="due Oct 31, 2015" />
 
             <TextView
                     android:id="@+id/checkout_record_overdue"
                     style="@style/overdue"
-                    android:layout_width="wrap_content"
                     android:gravity="right"
-                    android:layout_height="wrap_content" android:text="overdue"/>
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="overdue"/>
         </LinearLayout>
 
     </LinearLayout>
@@ -59,8 +63,8 @@
             android:id="@+id/renew_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/renew_button"
             android:layout_gravity="center_vertical"
+            android:text="@string/renew_button"
             style="@style/ApplicationButton"
             />
 

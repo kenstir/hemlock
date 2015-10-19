@@ -27,18 +27,11 @@
 	android:paddingLeft="4dip"
 	>
 		<TextView
-		android:id="@+id/search_record_title"
-		style="@style/TitleSearchStyleList"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		 />
-
-		<TextView
-				android:id="@+id/search_record_format"
-				style="@style/AuthorSearchStyleList"
+				android:id="@+id/search_record_title"
+				style="@style/TitleSearchStyleList"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
-				/>
+		 />
 
 		<TextView
 				android:id="@+id/search_record_author"
@@ -48,10 +41,18 @@
 				/>
 
 		<TextView
-		android:id="@+id/search_record_publishing"
-		style="@style/PubSearchStyleList"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content" />
+				android:id="@+id/search_record_format"
+				style="@style/PubSearchStyleList"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				/>
+
+		<TextView
+				android:id="@+id/search_record_publishing"
+				style="@style/PubSearchStyleList"
+				android:gravity="left"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content" />
 
 	</LinearLayout>
 </LinearLayout>
