@@ -23,7 +23,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import android.opengl.Visibility;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import org.evergreen_ils.R;
@@ -33,21 +32,15 @@ import org.evergreen_ils.accountAccess.ServerErrorMessage;
 import org.evergreen_ils.accountAccess.SessionNotFoundException;
 import org.evergreen_ils.views.splashscreen.SplashActivity;
 
-import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -165,6 +158,7 @@ public class ItemsCheckOutListView extends ActionBarActivity {
         private TextView recordTitle;
         private TextView recordAuthor;
         private TextView recordDueDate;
+        private TextView recordIsOverdue;
         private TextView renewButton;
 
         private List<CircRecord> records = new ArrayList<CircRecord>();
@@ -194,19 +188,14 @@ public class ItemsCheckOutListView extends ActionBarActivity {
                 LayoutInflater inflater = (LayoutInflater) this
                         .getContext().getSystemService(
                                 Context.LAYOUT_INFLATER_SERVICE);
-                row = inflater.inflate(R.layout.checkout_list_item, parent,
-                        false);
+                row = inflater.inflate(R.layout.checkout_list_item, parent, false);
             }
 
-            // Get reference to TextView - title
+            // Get references to views
             recordTitle = (TextView) row.findViewById(R.id.checkout_record_title);
-
-            // Get reference to TextView - author
             recordAuthor = (TextView) row.findViewById(R.id.checkout_record_author);
-
-            // Get reference to TextView - record Publisher date+publisher
-            recordDueDate = (TextView) row.findViewById(R.id.checkout_due_date);
-
+            recordDueDate = (TextView) row.findViewById(R.id.checkout_record_due_date);
+            recordIsOverdue = (TextView) row.findViewById(R.id.checkout_record_overdue);
             renewButton = (TextView) row.findViewById(R.id.renew_button);
             final boolean renewable = record.getRenewals() > 0;
             renewButton.setVisibility(renewable ? View.VISIBLE : View.GONE);
@@ -309,14 +298,11 @@ public class ItemsCheckOutListView extends ActionBarActivity {
             // set text
             recordTitle.setText(record.getTitle());
             recordAuthor.setText(record.getAuthor());
-            recordDueDate.setText(getString(R.string.due) + ": " + record.getDueDate());
-            if (record.isOverdue()) {
-                recordDueDate.setTextAppearance(getApplicationContext(), R.style.alert);
-            }
-            Log.d(TAG, "title:  " + record.getTitle());
-            Log.d(TAG, "author: " + record.getAuthor());
-            Log.d(TAG, "due:    " + record.getDueDate());
-            Log.d(TAG, "renew:  " + record.getRenewals());
+            recordDueDate.setText(getString(R.string.due) + " " + record.getDueDate());
+            recordIsOverdue.setText(record.isOverdue() ? getString(R.string.overdue) : "");
+            Log.d(TAG, "title: \"" + record.getTitle() + "\""
+                    + "due: " + record.getDueDate()
+                    + "renewals:  " + record.getRenewals());
 
             return row;
         }

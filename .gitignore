@@ -5,6 +5,7 @@
 .settings
 bin/
 gen/
-local.properties
+kc/
 out/
+local.properties
 proguard-project.txt
