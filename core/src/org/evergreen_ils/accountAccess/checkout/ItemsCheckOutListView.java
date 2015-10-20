@@ -115,21 +115,15 @@ public class ItemsCheckOutListView extends ActionBarActivity {
 
                     @Override
                     public void run() {
-                        for (int i = 0; i < circRecords.size(); i++) {
-                            CircRecord circ = circRecords.get(i);
-                            listAdapter.add(circ);
-                        }
-
-                        itemsNo.setText(" " + circRecords.size() + " ");
-
-                        // find overdue items
                         int overdueNo = 0;
                         for (int i = 0; i < circRecords.size(); i++) {
                             CircRecord circ = circRecords.get(i);
+                            listAdapter.add(circ);
                             if (circ.isOverdue()) {
                                 overdueNo++;
                             }
                         }
+                        itemsNo.setText(" " + circRecords.size() + " ");
                         overdueItems.setText(" " + overdueNo);
 
                         progressDialog.dismiss();
