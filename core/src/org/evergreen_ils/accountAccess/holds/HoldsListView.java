@@ -19,40 +19,31 @@
  */
 package org.evergreen_ils.accountAccess.holds;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarActivity;
-import org.evergreen_ils.R;
-import org.evergreen_ils.accountAccess.AccountAccess;
-import org.evergreen_ils.accountAccess.SessionNotFoundException;
-import org.evergreen_ils.globals.GlobalConfigs;
-import org.evergreen_ils.searchCatalog.ImageDownloader;
-import org.evergreen_ils.views.splashscreen.SplashActivity;
-
-import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
+import android.widget.*;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.ListView;
-import android.widget.TextView;
-import org.evergreen_ils.accountAccess.holds.HoldRecord;
+import org.evergreen_ils.R;
+import org.evergreen_ils.accountAccess.AccountAccess;
+import org.evergreen_ils.accountAccess.SessionNotFoundException;
+import org.evergreen_ils.searchCatalog.ImageDownloader;
+import org.evergreen_ils.searchCatalog.SearchFormat;
+import org.evergreen_ils.views.splashscreen.SplashActivity;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class HoldsListView extends ActionBarActivity {
 
-    private final String TAG = HoldsListView.class.getName();
+    private final String TAG = HoldsListView.class.getSimpleName();
 
     private AccountAccess accountAccess = null;
 
@@ -85,6 +76,7 @@ public class HoldsListView extends ActionBarActivity {
             SplashActivity.restartApp(this);
             return;
         }
+        SearchFormat.init(this);
 
         setContentView(R.layout.holds_list);
 
@@ -165,13 +157,11 @@ public class HoldsListView extends ActionBarActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        // TODO Auto-generated method stub
         super.onActivityResult(requestCode, resultCode, data);
 
         switch (resultCode) {
 
         case HoldDetails.RESULT_CODE_CANCEL:
-            // nothing
             Log.d(TAG, "Do nothing");
             break;
 
@@ -194,8 +184,8 @@ public class HoldsListView extends ActionBarActivity {
 
         private TextView holdTitle;
         private TextView holdAuthor;
+        private TextView holdFormat;
         private TextView status;
-        private ImageView hold_icon;
 
         private List<HoldRecord> records = new ArrayList<HoldRecord>();
 
@@ -216,7 +206,6 @@ public class HoldsListView extends ActionBarActivity {
         public View getView(int position, View convertView, ViewGroup parent) {
             View row = convertView;
 
-            // Get item
             final HoldRecord record = getItem(position);
 
             if (row == null) {
@@ -225,31 +214,14 @@ public class HoldsListView extends ActionBarActivity {
                 row = inflater.inflate(R.layout.holds_list_item, parent, false);
             }
 
-            hold_icon = (ImageView) row.findViewById(R.id.hold_resource_icon);
-
-            // Get reference to TextView - title
             holdTitle = (TextView) row.findViewById(R.id.hold_title);
-
-            // Get reference to TextView author
             holdAuthor = (TextView) row.findViewById(R.id.hold_author);
-
-            // Get hold status
+            holdFormat = (TextView) row.findViewById(R.id.hold_format);
             status = (TextView) row.findViewById(R.id.hold_status);
 
-            // set text
-            String imageResourceHref = GlobalConfigs.httpAddress
-                    + GlobalConfigs.hold_icon_address
-                    + record.types_of_resource + ".jpg";
-
-            if (imageResourceHref.contains(" ")) {
-                imageResourceHref = imageResourceHref.replace(" ", "%20");
-            }
-
-            imageDownloader.download(imageResourceHref, hold_icon);
-
-            // set raw information
             holdTitle.setText(record.title);
             holdAuthor.setText(record.author);
+            holdFormat.setText(SearchFormat.getLabelFromSearchFormat(record.format));
             status.setText(record.getHoldStatus(getResources()));
 
             return row;

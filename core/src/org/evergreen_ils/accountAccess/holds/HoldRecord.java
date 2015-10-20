@@ -43,7 +43,7 @@ public class HoldRecord implements Serializable {
 
     public String author = null;
 
-    public String types_of_resource;
+    public String format = "";
 
     // only for P types
     public String part_label = null;
