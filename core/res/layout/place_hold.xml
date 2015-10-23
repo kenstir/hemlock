@@ -50,8 +50,8 @@
                         android:layout_width="0dip"
                         android:layout_height="wrap_content"
                         android:layout_weight="4"
-                        android:gravity="center"
-                        />
+                        android:gravity="left|center"
+                        android:text="Trashed : a graphic novel"/>
             </TableRow>
             <TableRow>
                 <TextView
@@ -66,8 +66,8 @@
                         android:layout_width="0dip"
                         android:layout_height="wrap_content"
                         android:layout_weight="4"
-                        android:gravity="center"
-                        />
+                        android:gravity="left|center"
+                        android:text="Derf"/>
             </TableRow>
             <TableRow>
                 <TextView
@@ -82,8 +82,8 @@
                         android:layout_width="0dip"
                         android:layout_height="wrap_content"
                         android:layout_weight="4"
-                        android:gravity="center"
-                        />
+                        android:gravity="left|center"
+                        android:text="print 256 p."/>
             </TableRow>
             <TableRow
                     >
@@ -99,7 +99,7 @@
                         android:layout_width="0dip"
                         android:layout_height="wrap_content"
                         android:layout_weight="4"
-                        android:gravity="center"
+                        android:gravity="left|center"
                         />
             </TableRow>
             <TableRow
@@ -116,7 +116,7 @@
                         android:layout_width="0dip"
                         android:layout_height="wrap_content"
                         android:layout_weight="4"
-                        android:gravity="center"
+                        android:gravity="left|center"
                         />
             </TableRow>
             <TableRow
@@ -133,8 +133,8 @@
                         android:layout_width="0dip"
                         android:layout_height="wrap_content"
                         android:layout_weight="4"
-                        android:gravity="center"
-                        />
+                        android:gravity="left|center"
+                        android:enabled="true" android:checked="true"/>
             </TableRow>
             <TableRow
                     >
@@ -150,7 +150,7 @@
                         android:layout_width="0dip"
                         android:layout_height="wrap_content"
                         android:layout_weight="4"
-                        android:gravity="center"
+                        android:gravity="left|center"
                         android:spinnerMode="dialog"
                         />
             </TableRow>
@@ -168,7 +168,7 @@
                         android:layout_width="0dip"
                         android:layout_height="wrap_content"
                         android:layout_weight="4"
-                        android:gravity="center"
+                        android:gravity="left|center"
                         />
 
 
@@ -181,7 +181,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="2"
                         android:text="@string/suspend_hold"
-                        />
+                        android:gravity="left|center"/>
 
                 <CheckBox
                         android:id="@+id/hold_suspend_hold"
@@ -205,7 +205,7 @@
                         android:layout_width="0dip"
                         android:layout_height="wrap_content"
                         android:layout_weight="4"
-                        android:gravity="center"
+                        android:gravity="left|center"
                         />
 
 
