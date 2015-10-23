@@ -19,8 +19,6 @@
  */
 package org.evergreen_ils.accountAccess.checkout;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import org.evergreen_ils.globals.GlobalConfigs;
@@ -141,7 +139,7 @@ public class CircRecord {
 
     public String getFormatLabel() {
         if (format != null) {
-            return SearchFormat.getLabelFromSearchFormat(format);
+            return SearchFormat.getItemLabelFromSearchFormat(format);
         }
         return "";
     }

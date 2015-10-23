@@ -486,6 +486,10 @@ public class AccountAccess {
     }
 
     public String fetchFormat(String id) {
+        // This can happen when looking up checked out item borrowed from another system.
+        if (id.equals("-1"))
+            return "";
+
         OSRFObject resp = (OSRFObject) Utils.doRequestSimple(conn, PCRUD_SERVICE,
                 PCRUD_METHOD_RETRIEVE_MRA, new Object[] { "ANONYMOUS", id });
 
