@@ -221,7 +221,7 @@ public class HoldsListView extends ActionBarActivity {
 
             holdTitle.setText(record.title);
             holdAuthor.setText(record.author);
-            holdFormat.setText(SearchFormat.getLabelFromSearchFormat(record.format));
+            holdFormat.setText(SearchFormat.getItemLabelFromSearchFormat(record.format));
             status.setText(record.getHoldStatus(getResources()));
 
             return row;

@@ -262,7 +262,7 @@ public class BasicDetailsFragment extends Fragment {
         record_header.setText(String.format(getString(R.string.record_of), position, total));
 
         titleTextView.setText(record.title);
-        formatTextView.setText(SearchFormat.getLabelFromSearchFormat(record.search_format));
+        formatTextView.setText(SearchFormat.getItemLabelFromSearchFormat(record.search_format));
         authorTextView.setText(record.author);
         publisherTextView.setText(record.pubdate + " " + record.publisher);
 

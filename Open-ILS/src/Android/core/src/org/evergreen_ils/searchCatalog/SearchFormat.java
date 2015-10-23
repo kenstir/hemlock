@@ -99,7 +99,9 @@ public class SearchFormat {
     }
 
     /// get label "CD Music recording" from search format "cdmusic"
-    public static String getLabelFromSearchFormat(String search_format) {
+    public static String getItemLabelFromSearchFormat(String search_format) {
+        if (search_format.equalsIgnoreCase(""))
+            return "";
         for (SearchFormatItem i : searchFormats) {
             if (i.searchFormat.equalsIgnoreCase(search_format)) {
                 return (i.displayLabel != null) ? i.displayLabel : i.spinnerLabel;

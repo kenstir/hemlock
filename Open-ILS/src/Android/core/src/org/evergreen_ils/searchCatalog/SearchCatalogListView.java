@@ -19,7 +19,6 @@
  */
 package org.evergreen_ils.searchCatalog;
 
-import java.io.*;
 import java.util.*;
 
 import android.support.v7.app.ActionBar;
@@ -714,7 +713,7 @@ public class SearchCatalogListView extends ActionBarActivity {
             // set text
             recordTitle.setText(record.title);
             recordAuthor.setText(record.author);
-            recordFormat.setText(SearchFormat.getLabelFromSearchFormat(record.search_format));
+            recordFormat.setText(SearchFormat.getItemLabelFromSearchFormat(record.search_format));
             recordPublisher.setText(record.pubdate + " " + record.publisher);
 
             return row;
