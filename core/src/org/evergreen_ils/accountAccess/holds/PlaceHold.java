@@ -61,17 +61,13 @@ import android.widget.Toast;
 
 public class PlaceHold extends ActionBarActivity {
 
-    private final String TAG = PlaceHold.class.getName();
-
-    private TextView recipient;
+    private final String TAG = PlaceHold.class.getSimpleName();
 
     private TextView title;
 
     private TextView author;
 
     private TextView physical_description;
-
-    private TextView screen_title;
 
     private AccountAccess accountAccess;
 
@@ -140,7 +136,6 @@ public class PlaceHold extends ActionBarActivity {
 
         accountAccess = AccountAccess.getAccountAccess();
 
-        recipient = (TextView) findViewById(R.id.hold_recipient);
         title = (TextView) findViewById(R.id.hold_title);
         author = (TextView) findViewById(R.id.hold_author);
         physical_description = (TextView) findViewById(R.id.hold_physical_description);
@@ -154,7 +149,6 @@ public class PlaceHold extends ActionBarActivity {
         orgSelector = (Spinner) findViewById(R.id.hold_pickup_location);
         thaw_date_edittext = (EditText) findViewById(R.id.hold_thaw_date);
 
-        recipient.setText(accountAccess.userName);
         title.setText(record.title);
         author.setText(record.author);
         physical_description.setText(record.physical_description);
