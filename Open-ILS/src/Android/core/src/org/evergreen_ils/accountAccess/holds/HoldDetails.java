@@ -62,7 +62,7 @@ import android.widget.Toast;
 
 public class HoldDetails extends ActionBarActivity {
 
-    private final String TAG = HoldDetails.class.getName();
+    private final String TAG = HoldDetails.class.getSimpleName();
 
     public static final int RESULT_CODE_DELETE_HOLD = 5;
 
@@ -70,15 +70,11 @@ public class HoldDetails extends ActionBarActivity {
 
     public static final int RESULT_CODE_CANCEL = 7;
 
-    private TextView recipient;
-
     private TextView title;
 
     private TextView author;
 
     private TextView physical_description;
-
-    private TextView screen_title;
 
     private AccountAccess accountAccess;
 
@@ -140,7 +136,6 @@ public class HoldDetails extends ActionBarActivity {
 
         accountAccess = AccountAccess.getAccountAccess();
 
-        recipient = (TextView) findViewById(R.id.hold_recipient);
         title = (TextView) findViewById(R.id.hold_title);
         author = (TextView) findViewById(R.id.hold_author);
         physical_description = (TextView) findViewById(R.id.hold_physical_description);
@@ -152,7 +147,6 @@ public class HoldDetails extends ActionBarActivity {
         expiration_date = (EditText) findViewById(R.id.hold_expiration_date);
         thaw_date_edittext = (EditText) findViewById(R.id.hold_thaw_date);
 
-        recipient.setText(accountAccess.userName);
         title.setText(record.title);
         author.setText(record.author);
         if (record.recordInfo != null)
