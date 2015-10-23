@@ -33,6 +33,6 @@
             android:layout_height="wrap_content"
             android:id="@+id/hold_status"
             android:textColor="@color/blue"
-            android:text="Waiting on copy"/>
+            android:text="Waiting for copy\n1 hold on 0 copies\nQueue position: 1"/>
 
 </LinearLayout>

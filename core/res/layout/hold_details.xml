@@ -1,222 +1,171 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@drawable/background_grey_image"
-     >
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="fill_parent"
+              android:layout_height="fill_parent"
+              android:orientation="vertical"
+              android:background="@drawable/background_grey_image"
+              android:focusable="true"
+              android:focusableInTouchMode="true"
+        >
 
     <ScrollView
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:fillViewport="true"
-        android:layout_above="@id/action_bar"
-        android:padding="5dp"
-        android:layout_alignParentTop="true">
-       <LinearLayout 
-           android:layout_width="fill_parent"
-           android:layout_height="wrap_content"
-           android:orientation="vertical"
-           >
-            <LinearLayout 
-	        android:layout_width="fill_parent"
-	        android:layout_height="wrap_content"
-	        android:orientation="horizontal"
-	        >
-		        <TextView 
-		            android:layout_width="0dip"
-		            android:layout_height="wrap_content"
-		            android:layout_weight="2"
-		            android:text="@string/recipient"
-		            />
-		        
-		        <TextView 
-		            android:id="@+id/hold_recipient"
-		            android:layout_width="0dip"
-		            android:layout_height="wrap_content"
-		            android:layout_weight="4"
-		            android:gravity="center"
-		            />    
-	    </LinearLayout>
-	    	        <LinearLayout 
-	        android:layout_width="fill_parent"
-	        android:layout_height="wrap_content"
-	        android:orientation="horizontal"
-	        >
-		        <TextView 
-		            android:layout_width="0dip"
-		            android:layout_height="wrap_content"
-		            android:layout_weight="2"
-		            android:text="@string/title"
-		            />
-		        
-		        <TextView 
-		            android:id="@+id/hold_title"
-		            android:layout_width="0dip"
-		            android:layout_height="wrap_content"
-		            android:layout_weight="4"
-		            android:gravity="center"
-		            />    
-	    </LinearLayout>
-	    	        <LinearLayout 
-	        android:layout_width="fill_parent"
-	        android:layout_height="wrap_content"
-	        android:orientation="horizontal"
-	        >
-		        <TextView 
-		            android:layout_width="0dip"
-		            android:layout_height="wrap_content"
-		            android:layout_weight="2"
-		            android:text="@string/author"
-		            />
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:fillViewport="true"
+            android:padding="5dp"
+            android:layout_alignParentTop="true">
 
-		        <TextView
-		            android:id="@+id/hold_author"
-		            android:layout_width="0dip"
-		            android:layout_height="wrap_content"
-		            android:layout_weight="4"
-		            android:gravity="center"
-		            />    
-	    </LinearLayout>
-	    	        <LinearLayout
-	        android:layout_width="fill_parent"
-	        android:layout_height="wrap_content"
-	        android:orientation="horizontal"
-	        >
-		        <TextView
-		            android:layout_width="0dip"
-		            android:layout_height="wrap_content"
-		            android:layout_weight="2"
-		            android:text="@string/physical_description"
-		            />
+        <TableLayout
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                >
 
-		        <TextView
-		            android:id="@+id/hold_physical_description"
-		            android:layout_width="0dip"
-		            android:layout_height="wrap_content"
-		            android:layout_weight="4"
-		            android:gravity="center"
-		            />
-	    </LinearLayout>
-	    	        <LinearLayout
-	        android:layout_width="fill_parent"
-	        android:layout_height="wrap_content"
-	        android:orientation="horizontal"
-	        >    
-	    </LinearLayout>
-	    	        <LinearLayout 
-	        android:layout_width="fill_parent"
-	        android:layout_height="wrap_content"
-	        android:orientation="horizontal"
-	        >    
-	    </LinearLayout>
-	    	        <LinearLayout 
-	        android:layout_width="fill_parent"
-	        android:layout_height="wrap_content"
-	        android:orientation="horizontal"
-	        >    
-	    </LinearLayout>
-	    	        <LinearLayout 
-	        android:layout_width="fill_parent"
-	        android:layout_height="wrap_content"
-	        android:orientation="horizontal"
-	        >
-		        <TextView 
-		            android:layout_width="0dip"
-		            android:layout_height="wrap_content"
-		            android:layout_weight="2"
-		            android:text="@string/pickup_location"
-		            />
-		        
-		        <Spinner
-		            android:id="@+id/hold_pickup_location"
-		            android:layout_width="0dip"
-		            android:layout_height="wrap_content"
-		            android:layout_weight="4"
-		            android:gravity="center"
-                    android:spinnerMode="dialog"
-		            />    
-	    </LinearLayout>
-	    	        <LinearLayout 
-	        android:layout_width="fill_parent"
-	        android:layout_height="wrap_content"
-	        android:orientation="horizontal"
-	        >
-		        <TextView 
-		            android:layout_width="0dip"
-		            android:layout_height="wrap_content"
-		            android:layout_weight="2"
-		            android:text="@string/expiration_date"
-		            />
-		        
-		        <EditText 
-		            android:id="@+id/hold_expiration_date"
-		            android:layout_width="0dip"
-		            android:layout_height="wrap_content"
-		            android:layout_weight="4"
-		            android:gravity="center"
-		            android:hint="@string/hold_expire_time_hint"
-		            />
-		        
-		        
-	    </LinearLayout>
-	    
-	    	     <LinearLayout 
-	        android:layout_width="fill_parent"
-	        android:layout_height="wrap_content"
-	        android:orientation="horizontal"
-	        >
-		        <TextView 
-		            android:layout_width="0dip"
-		            android:layout_height="wrap_content"
-		            android:layout_weight="2"
-		            android:text="@string/suspend_hold"
-		            />
-		        
-		        <CheckBox
-		            android:id="@+id/hold_suspend_hold"
-		            android:layout_width="0dip"
-		            android:layout_height="wrap_content"
-		            android:layout_weight="4"
-		            android:gravity="center"
-		            />    
-	    </LinearLayout>
+            <TableRow>
+                <TextView
+                        android:layout_width="0dip"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="2"
+                        android:text="@string/recipient"
+                        />
 
- 	         <LinearLayout 
-	        android:layout_width="fill_parent"
-	        android:layout_height="wrap_content"
-	        android:orientation="horizontal"
-	        >
-		        <TextView 
-		            android:layout_width="0dip"
-		            android:layout_height="wrap_content"
-		            android:layout_weight="2"
-		            android:text="@string/thaw_date"
-		            />
-		        
-		        <EditText 
-		            android:id="@+id/hold_thaw_date"
-		            android:layout_width="0dip"
-		            android:layout_height="wrap_content"
-		            android:layout_weight="4"
-		            android:gravity="center"
-		            android:hint="@string/hold_thaw_date_hint"
-		            />
-		        
-		        
-	    </LinearLayout>
- 	     
-       </LinearLayout>
-    
+                <TextView
+                        android:id="@+id/hold_recipient"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="4"
+                        android:gravity="left"
+                        android:text="yomomma"
+                        android:layout_gravity="left"/>
+            </TableRow>
+            <TableRow>
+                <TextView
+                        android:layout_width="0dip"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="2"
+                        android:text="@string/title"
+                        />
+
+                <TextView
+                        android:id="@+id/hold_title"
+                        android:layout_width="0dip"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="4"
+                        android:gravity="left"
+                        android:text="Trashed : a graphic novel" android:layout_gravity="left"/>
+            </TableRow>
+            <TableRow>
+                <TextView
+                        android:layout_width="0dip"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="2"
+                        android:text="@string/author"
+                        />
+
+                <TextView
+                        android:id="@+id/hold_author"
+                        android:layout_width="0dip"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="4"
+                        android:gravity="left"
+                        android:text="Derf" android:layout_gravity="left"/>
+            </TableRow>
+            <TableRow>
+                <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="2"
+                        android:text="@string/physical_description"
+                        />
+
+                <TextView
+                        android:id="@+id/hold_physical_description"
+                        android:layout_width="0dip"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="4"
+                        android:gravity="left"
+                        android:text="print 256 p. blah blah blah blah"
+                        android:layout_gravity="left"/>
+            </TableRow>
+            <TableRow>
+                <TextView
+                        android:layout_width="0dip"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="2"
+                        android:text="@string/pickup_location"
+                        />
+
+                <Spinner
+                        android:id="@+id/hold_pickup_location"
+                        android:layout_width="0dip"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="4"
+                        android:gravity="left"
+                        android:spinnerMode="dialog"
+                        android:layout_gravity="left"/>
+            </TableRow>
+            <TableRow>
+                <TextView
+                        android:layout_width="0dip"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="2"
+                        android:text="@string/expiration_date"
+                        />
+
+                <EditText
+                        android:id="@+id/hold_expiration_date"
+                        android:layout_width="0dip"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="4"
+                        android:gravity="left"
+                        android:hint="@string/hold_expire_time_hint"
+                        android:layout_gravity="left"/>
+            </TableRow>
+
+            <TableRow>
+                <TextView
+                        android:layout_width="0dip"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="2"
+                        android:text="@string/suspend_hold"
+                        />
+
+                <CheckBox
+                        android:id="@+id/hold_suspend_hold"
+                        android:layout_width="0dip"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="4"
+                        android:gravity="left"
+                        android:layout_gravity="left"/>
+            </TableRow>
+            <TableRow>
+                <TextView
+                        android:layout_width="0dip"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="2"
+                        android:text="@string/thaw_date"
+                        />
+
+                <EditText
+                        android:id="@+id/hold_thaw_date"
+                        android:layout_width="0dip"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="4"
+                        android:gravity="left"
+                        android:hint="@string/hold_thaw_date_hint"
+                        android:layout_gravity="left"/>
+
+
+            </TableRow>
+
+        </TableLayout>
     </ScrollView>
 
     <LinearLayout
             android:id="@+id/action_bar"
-            android:layout_width="wrap_content"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:gravity="center_horizontal"
-            android:layout_alignParentBottom="true"
-            android:layout_centerInParent="true"
             android:paddingBottom="3dip"
             >
         <Button
@@ -247,6 +196,4 @@
                 />
     </LinearLayout>
 
-
-
-</RelativeLayout>
+</LinearLayout>
