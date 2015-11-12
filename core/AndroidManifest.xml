@@ -9,6 +9,7 @@
             android:minSdkVersion="10"
             android:targetSdkVersion="19" />
 
+    <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS"/>
     <application>
     </application>
 </manifest>
