@@ -40,7 +40,6 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import org.evergreen_ils.auth.Const;
 
 public class SplashActivity extends Activity implements LoadingTaskListener {
 
@@ -50,7 +49,6 @@ public class SplashActivity extends Activity implements LoadingTaskListener {
     private ProgressBar mProgressBar;
     private AlertDialog mAlertDialog;
     private Button mRetryButton;
-    //private SharedPreferences prefs;
     private LoadingTask mTask;
     private static boolean mInitialized;
 
