@@ -13,7 +13,7 @@ import android.util.Log;
 
 public class AccountAuthenticator extends AbstractAccountAuthenticator {
     
-    private final String TAG = AccountAuthenticator.class.getName();
+    private final String TAG = AccountAuthenticator.class.getSimpleName();
     private Context context;
 
     public AccountAuthenticator(Context context) {
