@@ -2,8 +2,10 @@
 <resources>
     <!-- the label shown in the android account manager -->
     <string name="ou_account_label">Example Library</string>
-    <!-- $1 in ou_account_sign_in_message will be replaced with the value of ou_account_label -->
-    <string name="ou_account_sign_in_message">Sign in to your\n%1$s account</string>
+    <!-- title shown on sign in activity -->
+    <string name="ou_account_sign_in_message">Sign in to your\nXYZZY account</string>
+    <!-- label above choose library spinner, leave empty for library-specific app -->
+    <string name="ou_choose_library_label"></string>
     <!-- android account manager internal type.
          Each evergreen-derived app must have its own unique ou_account_type. -->
     <string name="ou_account_type">org.evergreen_ils.example</string>

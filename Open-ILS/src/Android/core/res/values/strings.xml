@@ -152,5 +152,6 @@
     <string name="retry_label">Retry</string>
     <string name="choose_library_message">Select your Library</string>
     <string name="action_choose_library">Select</string>
+    <string name="evergreen_libraries_url">http://evergreen-ils.org/testing/libraries.json</string>
 
 </resources>

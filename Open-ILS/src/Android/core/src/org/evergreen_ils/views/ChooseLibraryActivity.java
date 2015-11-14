@@ -31,6 +31,10 @@ import java.util.*;
  */
 public class ChooseLibraryActivity extends ActionBarActivity {
 
+    /*
+    todo: DELETE ME DELETE ME DELETE ME DELETE ME DELETE ME DELETE ME DELETE ME DELETE ME DELETE ME
+    DELETE ME DELETE ME DELETE ME DELETE ME DELETE ME DELETE ME DELETE ME DELETE ME DELETE ME
+    DELETE ME DELETE ME DELETE ME DELETE ME DELETE ME DELETE ME DELETE ME DELETE ME DELETE ME
     public final static int CHOOSE_LIBRARY_REQUEST = 0;
     private final String TAG = ChooseLibraryActivity.class.getSimpleName();
     public static String librariesJSONUrl = "http://evergreen-ils.org/testing/libraries.json";
@@ -39,31 +43,6 @@ public class ChooseLibraryActivity extends ActionBarActivity {
     Library selected_library = null;
     List<Library> libraries = new ArrayList<Library>();
     private boolean restarted = false;
-
-    private class FetchConsortiumsTask extends AsyncTask<String, Integer, String> {
-        protected String doInBackground(String... params) {
-            String url = params[0];
-            String result = null;
-            try {
-                Log.d(TAG, "fetching "+url);
-                result = Utils.getNetPageContent(url);
-            } catch (Exception e) {
-                Log.d(TAG, "error fetching", e);
-            }
-            return result;
-        }
-
-        protected void onPostExecute(String result) {
-            Log.d(TAG, "results available: "+result);
-            parseLibrariesJSON(result);
-            ArrayList<String> l = new ArrayList<String>(libraries.size());
-            for (Library library : libraries) {
-                l.add(library.directory_name);
-            }
-            ArrayAdapter<String> adapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_dropdown_item, l);
-            consortiumSpinner.setAdapter(adapter);
-        }
-    }
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -166,5 +145,5 @@ public class ChooseLibraryActivity extends ActionBarActivity {
             }
         }
     }
-
+*/
 }

@@ -9,19 +9,27 @@
         >
 
     <TextView
-        android:id="@+id/account_sign_in_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/ou_account_sign_in_message"
-        android:textAppearance="?android:attr/textAppearanceLarge" />
-    
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dip"
-        android:background="#000000"
-        android:layout_marginTop="5dp"
-        android:layout_marginBottom="5dp"
-        />
+            android:id="@+id/account_sign_in_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/ou_account_sign_in_message"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:layout_marginBottom="32dp"/>
+
+    <TextView
+            android:id="@+id/choose_library_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/ou_choose_library_label"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    <Spinner
+            android:id="@+id/choose_library_spinner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="0dp"
+            android:layout_marginBottom="32dp"
+    />
 
     <EditText android:id="@+id/accountName"
               android:layout_width="match_parent"

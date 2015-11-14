@@ -1,6 +1,11 @@
 package org.evergreen_ils.auth;
 
+import android.content.Context;
 import android.preference.PreferenceManager;
+import android.text.TextUtils;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
 import org.evergreen_ils.R;
 import org.evergreen_ils.auth.Const;
 
@@ -19,25 +24,63 @@ import android.view.ContextThemeWrapper;
 import android.view.View;
 import android.widget.TextView;
 import org.evergreen_ils.globals.AppPrefs;
+import org.evergreen_ils.globals.GlobalConfigs;
+import org.evergreen_ils.globals.Utils;
+import org.evergreen_ils.searchCatalog.Library;
+import org.opensrf.util.JSONException;
+import org.opensrf.util.JSONReader;
+
+import java.util.*;
 
 public class AuthenticatorActivity extends AccountAuthenticatorActivity {
 
-    private final String TAG = AuthenticatorActivity.class.getName();
+    private final String TAG = AuthenticatorActivity.class.getSimpleName();
 
     public final static String ARG_ACCOUNT_TYPE = "ACCOUNT_TYPE";
     public final static String ARG_AUTH_TYPE = "AUTH_TYPE";
     public final static String ARG_ACCOUNT_NAME = "ACCOUNT_NAME";
     //public final static String ARG_IS_ADDING_NEW_ACCOUNT = "IS_ADDING_ACCOUNT";
     public static final String KEY_ERROR_MESSAGE = "ERR_MSG";
+    public static final String KEY_LIBRARY_URL = "library_url";
     public final static String PARAM_USER_PASS = "USER_PASS";
     private final int REQ_SIGNUP = 1;
     private static final String STATE_ALERT_MESSAGE = "state_dialog";
 
     private AccountManager accountManager;
+    private Context context;
+    private Spinner librarySpinner;
     private String authTokenType;
     private AsyncTask task = null;
     private AlertDialog alertDialog = null;
     private String alertMessage = null;
+    Library selected_library = null;
+    List<Library> libraries = new ArrayList<Library>();
+    public String libraries_directory_json_url;
+
+    private class FetchConsortiumsTask extends AsyncTask<String, Integer, String> {
+        protected String doInBackground(String... params) {
+            String url = params[0];
+            String result = null;
+            try {
+                Log.d(TAG, "fetching "+url);
+                result = Utils.getNetPageContent(url);
+            } catch (Exception e) {
+                Log.d(TAG, "error fetching", e);
+            }
+            return result;
+        }
+
+        protected void onPostExecute(String result) {
+            Log.d(TAG, "results available: "+result);
+            parseLibrariesJSON(result);
+            ArrayList<String> l = new ArrayList<String>(libraries.size());
+            for (Library library : libraries) {
+                l.add(library.directory_name);
+            }
+            ArrayAdapter<String> adapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_dropdown_item, l);
+            librarySpinner.setAdapter(adapter);
+        }
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -47,6 +90,8 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity {
         AppPrefs.init(this);
 
         accountManager = AccountManager.get(getBaseContext());
+        context = getApplicationContext();
+        libraries_directory_json_url = getString(R.string.evergreen_libraries_url);
 
         String accountName = getIntent().getStringExtra(ARG_ACCOUNT_NAME);
         Log.d(TAG, "onCreate> accountName="+accountName);
@@ -54,6 +99,19 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity {
         if (authTokenType == null)
             authTokenType = Const.AUTHTOKEN_TYPE;
         Log.d(TAG, "onCreate> authTokenType="+authTokenType);
+
+        librarySpinner = (Spinner) findViewById(R.id.choose_library_spinner);
+        librarySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                selected_library = libraries.get(position);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                selected_library = null;
+            }
+        });
 
         TextView signInText = (TextView) findViewById(R.id.account_sign_in_text);
         signInText.setText(String.format(getString(R.string.ou_account_sign_in_message),
@@ -77,7 +135,20 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity {
             }
         }
     }
-    
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Log.d(TAG, "onstart");
+        startTask();
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        Log.d(TAG, "onrestart");
+    }
+
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
@@ -189,7 +260,12 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity {
         String authtokenType = authTokenType;
 
         // Create the account on the device
-        if (accountManager.addAccountExplicitly(account, accountPassword, null)) {
+        Bundle userdata = null;
+        if (selected_library != null) {
+            userdata = new Bundle();
+            userdata.putString(KEY_LIBRARY_URL, selected_library.url);
+        }
+        if (accountManager.addAccountExplicitly(account, accountPassword, userdata)) {
             Log.d(TAG, "onAuthSuccess> true, setAuthToken "+authtoken);
             // Not setting the auth token will cause another call to the server
             // to authenticate the user
@@ -203,5 +279,41 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity {
         setAccountAuthenticatorResult(intent.getExtras());
         setResult(RESULT_OK, intent);
         finish();
+    }
+
+    private void startTask() {
+        new FetchConsortiumsTask().execute(libraries_directory_json_url);
+    }
+
+    private void parseLibrariesJSON(String json) {
+        libraries.clear();
+
+        if (json != null) {
+            List<Map<String,?>> l;
+            try {
+                l = (List<Map<String,?>>) new JSONReader(json).readArray();
+            } catch (JSONException e) {
+                Log.d(TAG, "failed parsing libraries array", e);
+                return;
+            }
+            for (Map<String, ?> map : l) {
+                String url = (String) map.get("url");
+                String directory_name = (String) map.get("directory_name");
+                String short_name = (String) map.get("short_name");
+                Library library = new Library(url, short_name, directory_name);
+                libraries.add(library);
+            }
+
+            Collections.sort(libraries, new Comparator<Library>() {
+                @Override
+                public int compare(Library a, Library b) {
+                    return a.directory_name.compareTo(b.directory_name);
+                }
+            });
+
+            for (int i = 0; i< libraries.size(); ++i) {
+                Log.d(TAG, "c["+i+"]: "+ libraries.get(i).directory_name);
+            }
+        }
     }
 }
