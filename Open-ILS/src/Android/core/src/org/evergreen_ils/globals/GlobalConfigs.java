@@ -205,11 +205,6 @@ public class GlobalConfigs {
                     return a.name.compareTo(b.name);
                 }
             });
-            /*
-            for (int i=0; i<organisations.size(); ++i) {
-                Log.d(TAG, "getOrg postsort org["+i+"]= id:"+organisations.get(i).id+" parent:"+organisations.get(i).parent+" name:"+organisations.get(i).name);
-            }
-            */
 
             long duration_ms = System.currentTimeMillis() - start_ms;
             Log.d("init", "Loading organisations took "+duration_ms+"ms");

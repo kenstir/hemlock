@@ -150,7 +150,7 @@ public class AccountAccess {
     private String httpAddress = "http://ulysses.calvin.edu";
 
     /** The TAG. */
-    private final String TAG = AccountAccess.class.getName();
+    private final String TAG = AccountAccess.class.getSimpleName();
 
     /**
      * The auth token. Sent with every request that needs authentication

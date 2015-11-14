@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- ou.xml - app customization -->
+<resources>
+    <!-- see ../core/res/values/ou.xml for a description -->
+    <string name="ou_account_label">Evergreen Library</string>
+    <string name="ou_account_sign_in_message">Sign in to your\n%1$s account</string>
+    <string name="ou_account_type">org.evergreen-ils.eg_app</string>
+    <string name="ou_app_label">Evergreen</string>
+    <string name="ou_library_name"></string>
+    <string name="ou_library_url"></string>
+</resources>

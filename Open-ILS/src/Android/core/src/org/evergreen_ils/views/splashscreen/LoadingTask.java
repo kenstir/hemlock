@@ -40,7 +40,7 @@ import android.util.Log;
  *
  */
 public class LoadingTask {
-    private final String TAG = LoadingTask.class.getName();
+    private final String TAG = LoadingTask.class.getSimpleName();
     
     public static final String TASK_OK = "OK";
 

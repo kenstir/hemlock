@@ -27,6 +27,7 @@ import java.util.Map;
 
 import android.text.TextUtils;
 import org.evergreen_ils.accountAccess.AccountAccess;
+import org.evergreen_ils.globals.AppPrefs;
 import org.evergreen_ils.globals.GlobalConfigs;
 import org.evergreen_ils.globals.Utils;
 import org.opensrf.Method;
@@ -131,16 +132,11 @@ public class SearchCatalog {
 
         try {
             // configure the connection
-            conn = new HttpConnection(GlobalConfigs.httpAddress
-                    + "/osrf-gateway-v1");
+            conn = new HttpConnection(AppPrefs.getString(AppPrefs.LIBRARY_URL) + "/osrf-gateway-v1");
 
         } catch (Exception e) {
-            System.err.println("Exception in establishing connection "
-                    + e.getMessage());
+            Log.d(TAG, "error", e);
         }
-        // registering classes so no longer necessary to register object classes
-        // manually
-
     }
 
     /**
