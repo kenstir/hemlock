@@ -150,5 +150,7 @@
 
     <string name="action_settings">Settings</string>
     <string name="retry_label">Retry</string>
+    <string name="choose_library_message">Select your Library</string>
+    <string name="action_choose_library">Select</string>
 
 </resources>

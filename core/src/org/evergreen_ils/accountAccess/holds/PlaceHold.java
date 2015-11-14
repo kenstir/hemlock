@@ -328,7 +328,7 @@ public class PlaceHold extends ActionBarActivity {
             }
         });
 
-        // kcxxx: factor this out
+        // kenstir todo: factor this out
         int homeLibrary = 0;
         if (AccountAccess.getAccountAccess() != null) {
             homeLibrary = AccountAccess.getAccountAccess().getHomeLibraryID();

@@ -22,35 +22,30 @@ package org.evergreen_ils.views;
 import java.util.Calendar;
 
 import org.evergreen_ils.R;
-import org.evergreen_ils.globals.GlobalConfigs;
 import org.evergreen_ils.services.NotificationAlert;
 import org.evergreen_ils.services.PeriodicServiceBroadcastReceiver;
 import org.evergreen_ils.services.ScheduledIntentService;
-import org.evergreen_ils.auth.Const;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
-import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
-import android.provider.Settings;
 import android.widget.Toast;
 
-public class ApplicationPreferences extends PreferenceActivity implements
+public class UnusedPreferenceActivity extends PreferenceActivity implements
         OnSharedPreferenceChangeListener {
 
-    private final String TAG = ApplicationPreferences.class.getName();
+    private final String TAG = UnusedPreferenceActivity.class.getSimpleName();
 
     private ProgressDialog progressDialog;
 
-    private ApplicationPreferences reference;
+    private UnusedPreferenceActivity reference;
 
     private Context context;
 

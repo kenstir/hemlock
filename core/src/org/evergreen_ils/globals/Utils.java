@@ -170,7 +170,7 @@ public class Utils {
     }
 
     // alternate version of doRequest
-    // kcxxx: not sure why this one loops calling req.recv and the other doesn't
+    // kenstir todo: not sure why this one loops calling req.recv and the other doesn't
     public static Object doRequest(HttpConnection conn, String service,
                                    String methodName, Object[] params) {
 

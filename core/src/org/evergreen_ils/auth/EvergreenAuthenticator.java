@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import android.preference.PreferenceManager;
+import org.evergreen_ils.globals.AppPrefs;
 import org.opensrf.Method;
 import org.opensrf.net.http.GatewayRequest;
 import org.opensrf.net.http.HttpConnection;
@@ -74,10 +75,9 @@ public class EvergreenAuthenticator {
     public static String signIn(Context context, String username, String password) throws AuthenticationException {
         Log.d(TAG, "signIn> "+username);
 
-        final String library_url = context.getString(R.string.ou_library_url);
         HttpConnection conn;
         try {
-            conn = new HttpConnection(library_url + "/osrf-gateway-v1");
+            conn = new HttpConnection(AppPrefs.getString(AppPrefs.LIBRARY_URL) + "/osrf-gateway-v1");
         } catch (MalformedURLException e) {
             throw new AuthenticationException(e);
         }
@@ -107,6 +107,7 @@ public class EvergreenAuthenticator {
             Log.d(TAG, "authtoken: " + authtoken);
             Integer authtime = ((Map<String, Integer>) payload).get("authtime");
             Log.d(TAG, "authtime: " + authtime);
+            AppPrefs.setBoolean(AppPrefs.EVER_LOGGED_IN, true);
             return authtoken;
         } else if (textcode.equals("LOGIN_FAILED")) {
             String desc = ((Map<String, String>) resp).get("desc");

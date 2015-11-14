@@ -1,11 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="ou_account_label">Evergreen Library</string>
-    <string name="ou_account_sign_in_message">Sign in to your\nEvergreen Library Account</string>
-    <!-- Each evergreen-derived app should have its own ou_account_type. This will enable
-         a user to have multiple evergreen-derived apps working simultaneously. -->
-    <string name="ou_account_type">org.evergreen_ils</string>
-    <string name="ou_app_label">Evergreen Library</string>
-    <string name="ou_app_name">Evergreen Library</string>
+    <!-- the label shown in the android account manager -->
+    <string name="ou_account_label">Example Library</string>
+    <!-- $1 in ou_account_sign_in_message will be replaced with the value of ou_account_label -->
+    <string name="ou_account_sign_in_message">Sign in to your\n%1$s account</string>
+    <!-- android account manager internal type.
+         Each evergreen-derived app must have its own unique ou_account_type. -->
+    <string name="ou_account_type">org.evergreen_ils.example</string>
+    <!-- app name used to launch app -->
+    <string name="ou_app_label">Evergreen</string>
+    <!-- library name displayed in the app bar -->
+    <string name="ou_library_name">EXAMPLE</string>
+    <!-- OPAC URL -->
     <string name="ou_library_url">https://demo.evergreencatalog.com</string>
 </resources>

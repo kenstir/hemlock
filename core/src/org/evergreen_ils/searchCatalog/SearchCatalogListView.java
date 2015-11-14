@@ -426,7 +426,7 @@ public class SearchCatalogListView extends ActionBarActivity {
             }
         });
 
-        //kcxxx: factor this out
+        //kenstir todo: factor this out
         int selectedOrgPos = 0;
         int homeLibrary = 0;
         if (AccountAccess.getAccountAccess() != null) {

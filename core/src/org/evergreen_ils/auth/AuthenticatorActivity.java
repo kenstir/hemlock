@@ -18,6 +18,7 @@ import android.util.Log;
 import android.view.ContextThemeWrapper;
 import android.view.View;
 import android.widget.TextView;
+import org.evergreen_ils.globals.AppPrefs;
 
 public class AuthenticatorActivity extends AccountAuthenticatorActivity {
 
@@ -46,8 +47,7 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        // make sure default values are set up for preferences
-        PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
+        AppPrefs.init(this);
 
         accountManager = AccountManager.get(getBaseContext());
 
@@ -58,6 +58,9 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity {
             authTokenType = Const.AUTHTOKEN_TYPE;
         Log.d(TAG, "onCreate> authTokenType="+authTokenType);
 
+        TextView signInText = (TextView) findViewById(R.id.account_sign_in_text);
+        signInText.setText(String.format(getString(R.string.ou_account_sign_in_message),
+                AppPrefs.getString(AppPrefs.LIBRARY_NAME)));
         if (accountName != null) {
             ((TextView) findViewById(R.id.accountName)).setText(accountName);
         }
@@ -69,17 +72,7 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity {
                         submit();
                     }
                 });
-        /*
-         * findViewById(R.id.signUp).setOnClickListener(new
-         * View.OnClickListener() {
-         * 
-         * @Override public void onClick(View v) { // Since there can only be
-         * one AuthenticatorActivity, we call the sign up activity, get his
-         * results, // and return them in setAccountAuthenticatorResult(). See
-         * finishLogin(). Intent signup = new Intent(getBaseContext(),
-         * SignUpActivity.class); signup.putExtras(getIntent().getExtras());
-         * startActivityForResult(signup, REQ_SIGNUP); } });
-         */
+
         if (savedInstanceState != null) {
             Log.d(TAG, "onCreate> savedInstanceState="+savedInstanceState);
             if (savedInstanceState.getString(STATE_ALERT_MESSAGE) != null) {

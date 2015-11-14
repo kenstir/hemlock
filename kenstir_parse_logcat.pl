@@ -13,11 +13,11 @@ use JSON;
 my $debug = 0;
 GetOptions("-d=i" => \$debug) or die;
 
-my $logcat = `adb logcat -d`;
+my $logcat = `adb logcat -d -v printable`;
 my @lines = split(/\r\n/, $logcat);
 foreach my $line (@lines) {
     print "line: $line\n" if $debug;
-    if ($line =~ /org.opensrf.net.http.GatewayRequest\( *\d+\): ?([^:]+):(.+)/) {
+    if ($line =~ /org.opensrf.net.http.GatewayRequest: ([^:]+):(.+)/) {
         my($key,$val) = ($1,$2);
         if ($key eq 'result') {
             my $obj = decode_json($val);

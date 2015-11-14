@@ -19,11 +19,10 @@
  */
 package org.evergreen_ils.views.splashscreen;
 
-import android.os.Build;
+import android.content.SharedPreferences;
 import org.evergreen_ils.R;
 import org.evergreen_ils.globals.GlobalConfigs;
-import org.evergreen_ils.searchCatalog.SearchCatalogListView;
-import org.evergreen_ils.views.ApplicationPreferences;
+import org.evergreen_ils.globals.AppPrefs;
 import org.evergreen_ils.views.MainActivity;
 import org.evergreen_ils.views.splashscreen.LoadingTask.LoadingTaskListener;
 
@@ -32,7 +31,6 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -43,7 +41,8 @@ import android.widget.TextView;
 
 public class SplashActivity extends Activity implements LoadingTaskListener {
 
-    private static String TAG = "SplashActivity";
+    public final static int REQUEST_SELECT_LIBRARY = 0;
+    private static String TAG = SplashActivity.class.getSimpleName();
     private TextView mProgressText;
     private Context mContext;
     private ProgressBar mProgressBar;
@@ -51,86 +50,100 @@ public class SplashActivity extends Activity implements LoadingTaskListener {
     private Button mRetryButton;
     private LoadingTask mTask;
     private static boolean mInitialized;
+    private boolean restarted = false;
 
-    public static boolean isAppInitialized()
-    {
+    public static boolean isAppInitialized() {
         return mInitialized;
     }
 
-    /** android may choose to initialize the app at a non-MAIN activity if the
+    /**
+     * android may choose to initialize the app at a non-MAIN activity if the
      * app crashed or for other reasons.  In these cases we want to force sane
      * initialization via the SplashActivity.
-     * 
+     * <p/>
      * used in all activity class's onCreate() like so:
      * <code>
      * if (!SplashActivity.isInitialized) {
-     *     SplashActivity.restartApp(this);
-     *     return;
+     * SplashActivity.restartApp(this);
+     * return;
      * }
      * </code>
-     * 
+     *
      * @param a
      */
-	public static void restartApp(Activity a)
-    {
-		Log.d(TAG, "restartApp> Restarting SplashActivity");
-		final Intent i = new Intent(a, SplashActivity.class);
-		i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-		a.startActivity(i);
-		a.finish();
-	}
+    public static void restartApp(Activity a) {
+        Log.d(TAG, "restartApp> Restarting SplashActivity");
+        Intent i = new Intent(a, SplashActivity.class);
+        i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        a.startActivity(i);
+        a.finish();
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        Log.d(TAG, "kcxxx: oncreate");
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_splash);
 
         this.mContext = this;
+        setContentView(R.layout.activity_splash);
 
-        // make sure default values are set up for preferences
-        PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
+        AppPrefs.init(getApplicationContext());
 
         mProgressText = (TextView) findViewById(R.id.action_in_progress);
         mProgressBar = (ProgressBar) findViewById(R.id.activity_splash_progress_bar);
         mRetryButton = (Button) findViewById(R.id.activity_splash_retry_button);
-        Log.d(TAG, "onCreate>");
         mRetryButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
                 startTask();
             }
         });
-
-        /* this didn't work, but the progress bar is weird on GB 2.2,
-           and it's lopsided in landscape mode on GB 2.3.7
-        int currentApiVersion = android.os.Build.VERSION.SDK_INT;
-        if (currentApiVersion < Build.VERSION_CODES.HONEYCOMB)
-            mProgressBar.setScrollBarStyle(android.R.attr.progressBarStyleHorizontal);
-         */
-
-        GlobalConfigs.httpAddress = getString(R.string.ou_library_url);
-        startTask();
     }
-    
+
     protected void startTask() {
-        Log.d(TAG, "startTask> task="+mTask);
+        Log.d(TAG, "startTask> task=" + mTask);
         if (mTask != null)
             return;
         mTask = new LoadingTask(this, this);
         mTask.execute();
     }
-    
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        GlobalConfigs.httpAddress = AppPrefs.getString(AppPrefs.LIBRARY_URL);// kenstir todo: replace all refs to GlobalConfigs.httpAddress
+        boolean ever_logged_in = AppPrefs.getBoolean(AppPrefs.EVER_LOGGED_IN);
+        Log.d(TAG, "kcxxx: onstart: url=" + GlobalConfigs.httpAddress + " ever_logged_in=" + ever_logged_in);
+        if (!TextUtils.isEmpty(GlobalConfigs.httpAddress) && ever_logged_in && !restarted) {
+            startTask();
+        }
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        restarted = true;
+        Log.d(TAG, "kcxxx: onrestart");
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Log.d(TAG, "kcxxx: onresume");
+    }
+
     @Override
     protected void onStop() {
         super.onStop();
-        if(mAlertDialog != null) {
+        Log.d(TAG, "kcxxx: onstop");
+        if (mAlertDialog != null) {
             mAlertDialog.dismiss();
         }
     }
-    
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Log.d(TAG, "onActivityResult> "+requestCode+" "+resultCode);
+        Log.d(TAG, "kcxxx: onactivityresult: " + requestCode + " " + resultCode);
     }
 
     private void startApp() {
@@ -148,13 +161,13 @@ public class SplashActivity extends Activity implements LoadingTaskListener {
 
     @Override
     public void onProgressUpdate(String value) {
-        Log.d(TAG, "onProgressUpdate> "+value);
+        Log.d(TAG, "onProgressUpdate> " + value);
         mProgressText.setText(value);
     }
 
     @Override
     public void onPostExecute(String result) {
-        Log.d(TAG, "onPostExecute> "+result);
+        Log.d(TAG, "onPostExecute> " + result);
         mTask = null;
         Log.d(TAG, "progressbar...gone");
         mProgressBar.setVisibility(View.GONE);
@@ -167,7 +180,7 @@ public class SplashActivity extends Activity implements LoadingTaskListener {
                 extra_text = "...Failed:\n" + result;
             else
                 extra_text = "...Cancelled";
-            Log.d(TAG, "progresstext += "+extra_text);
+            Log.d(TAG, "progresstext += " + extra_text);
             mProgressText.setText(mProgressText.getText() + extra_text);
             Log.d(TAG, "retrybutton...visible");
             mRetryButton.setVisibility(View.VISIBLE);
