@@ -114,7 +114,7 @@ public class SplashActivity extends Activity implements LoadingTaskListener {
         GlobalConfigs.httpAddress = AppPrefs.getString(AppPrefs.LIBRARY_URL);// kenstir todo: replace all refs to GlobalConfigs.httpAddress
         boolean ever_logged_in = AppPrefs.getBoolean(AppPrefs.EVER_LOGGED_IN);
         Log.d(TAG, "kcxxx: onstart: url=" + GlobalConfigs.httpAddress + " ever_logged_in=" + ever_logged_in);
-        if (!TextUtils.isEmpty(GlobalConfigs.httpAddress) && ever_logged_in && !restarted) {
+        if (!restarted) {
             startTask();
         }
     }
