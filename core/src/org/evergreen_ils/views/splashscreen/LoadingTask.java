@@ -94,10 +94,6 @@ public class LoadingTask {
         final String accountType = mCallingActivity.getString(R.string.ou_account_type);
         Log.d(TAG, tag);
         try {
-            Log.d(TAG, tag+"Loading resources");
-            publishProgress("Loading resources");
-            GlobalConfigs.getGlobalConfigs(mCallingActivity); // loads IDL
-
             Log.d(TAG, tag+"Signing in");
             publishProgress("Signing in");
 
@@ -109,6 +105,10 @@ public class LoadingTask {
             Log.d(TAG, tag+"account_name="+account_name+" token="+auth_token);
             if (account_name == null)
                 return "no account";
+
+            Log.d(TAG, tag+"Loading resources");
+            publishProgress("Loading resources");
+            GlobalConfigs.getGlobalConfigs(mCallingActivity); // loads IDL
 
             Log.d(TAG, tag+"Starting session");
             publishProgress("Starting session");
