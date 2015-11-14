@@ -39,9 +39,6 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity {
     private AlertDialog alertDialog = null;
     private String alertMessage = null;
 
-    /**
-     * Called when the activity is first created.
-     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
