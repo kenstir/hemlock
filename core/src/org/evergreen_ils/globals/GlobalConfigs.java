@@ -21,6 +21,7 @@ package org.evergreen_ils.globals;
 
 import android.content.Context;
 import android.net.ConnectivityManager;
+import android.provider.Settings;
 import android.text.TextUtils;
 import android.util.Log;
 import org.evergreen_ils.searchCatalog.Organisation;
@@ -40,20 +41,18 @@ public class GlobalConfigs {
 
     public static String IDL_FILE_FROM_ROOT = "/reports/fm_IDL.xml?class=acn&class=acp&class=ahr&class=ahtc&class=au&class=bmp&class=cbreb&class=cbrebi&class=cbrebin&class=cbrebn&class=ccs&class=circ&class=ex&class=mbt&class=mbts&class=mous&class=mra&class=mus&class=mvr&class=perm_ex";
     public static String IDL_FILE_FROM_ASSETS = "fm_IDL.xml";
-    public static String httpAddress = "";
-    private static HttpConnection conn;
-
-    private boolean init = false;
+    private static String httpAddress = "";
+    private static HttpConnection conn = null;
 
     private static String TAG = "GlobalConfigs";
     
     private static boolean debugMode = true;//todo get from boolean isDebuggable =  ( 0 != ( getApplicationInfo().flags &= ApplicationInfo.FLAG_DEBUGGABLE ) );
 
-    public static boolean loadedIDL = false;
+    private static boolean loadedIDL = false;
 
-    public static boolean loadedOrgTree = false;
+    private static boolean loadedOrgTree = false;
 
-    public static String hold_icon_address = "/opac/images/tor/";
+    private static String hold_icon_address = "/opac/images/tor/";
 
     // two days notification before checkout expires, this can be modified from
     // preferences
@@ -66,6 +65,7 @@ public class GlobalConfigs {
     public String locale = "en-US";
 
     private static GlobalConfigs globalConfigSingleton = null;
+
     /** The organisations. */
     public ArrayList<Organisation> organisations;
 
@@ -73,29 +73,42 @@ public class GlobalConfigs {
     private String collectionsRequest = "/opac/common/js/" + locale
             + "/OrgTree.js";
 
-    private GlobalConfigs(Context context) {
-
-        initialize(context);
+    private GlobalConfigs() {
     }
 
     public static GlobalConfigs getGlobalConfigs(Context context) {
-
-        if (globalConfigSingleton == null) {
-            globalConfigSingleton = new GlobalConfigs(context);
-        }
-
+        Log.d(TAG, "getGlobalConfigs (url="+httpAddress+")");
+        if (globalConfigSingleton == null)
+            globalConfigSingleton = new GlobalConfigs();
         return globalConfigSingleton;
+    }
+
+    public static GlobalConfigs getGlobalConfigs(Context context, String library_url) {
+        Log.d(TAG, "getGlobalConfigs library_url="+library_url);
+        GlobalConfigs globalConfigs = getGlobalConfigs(context);
+        globalConfigs.initialize(library_url);
+        return globalConfigs;
+    }
+
+    public static String getUrl() {
+        GlobalConfigs globalConfigs = getGlobalConfigs(null);
+        return globalConfigs.httpAddress;
+    }
+
+    public static String getUrl(String relativeUrl) {
+        GlobalConfigs globalConfigs = getGlobalConfigs(null);
+        return globalConfigs.httpAddress + relativeUrl;
     }
 
     /*
      * Initialize function that retrieves IDL file and Orgs file
      */
-    private boolean initialize(Context context) {
-        if (!init) {
-            loadIDLFile(context);
+    private boolean initialize(String library_url) {
+        if (!TextUtils.equals(library_url, httpAddress)) {
+            httpAddress = library_url;
+            loadIDL();
             loadOrganizations();
             loadCopyStatusesAvailable();
-            init = true;
             return true;
         }
         return false;
@@ -116,28 +129,20 @@ public class GlobalConfigs {
         return conn;
     }
 
-    public void loadIDLFile(Context context) {
+    public void loadIDL() {
 
         try {
-            Log.d(TAG, "loadIDLFile start");
+            Log.d(TAG, "loadIDL fetching " + httpAddress + IDL_FILE_FROM_ROOT);
             long start_ms = System.currentTimeMillis();
-            InputStream in_IDL;
-            if (false) {
-                // Use IDL file from assets.  Much faster than downloading it, but it risks an NPE
-                // if the asset version is out of sync with the site version.
-                in_IDL = context.getAssets().open(IDL_FILE_FROM_ASSETS);
-            } else {
-                // Download IDL file from server.  Safest and slowest.
-                in_IDL = Utils.getNetInputStream(GlobalConfigs.httpAddress + IDL_FILE_FROM_ROOT);
-            }
+            InputStream in_IDL = Utils.getNetInputStream(GlobalConfigs.httpAddress + IDL_FILE_FROM_ROOT);
             IDLParser parser = new IDLParser(in_IDL);
             parser.setKeepIDLObjects(false);
-            Log.d(TAG, "loadIDLFile parse");
+            Log.d(TAG, "loadIDL parse");
             parser.parse();
             long duration_ms = System.currentTimeMillis() - start_ms;
-            Log.d(TAG, "loadIDLFile parse took "+duration_ms+"ms");
+            Log.d(TAG, "loadIDL parse took "+duration_ms+"ms");
         } catch (Exception e) {
-            Log.w(TAG, "Error in parsing IDL file", e);
+            Log.w(TAG, "loadIDL parse error", e);
         }
 
         loadedIDL = true;
@@ -215,7 +220,7 @@ public class GlobalConfigs {
             });
 
             long duration_ms = System.currentTimeMillis() - start_ms;
-            Log.d("init", "Loading organisations took "+duration_ms+"ms");
+            Log.d("init", "getOrg took "+duration_ms+"ms");
             loadedOrgTree = true;
         }
     }

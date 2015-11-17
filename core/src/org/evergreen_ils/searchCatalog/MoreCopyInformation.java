@@ -31,16 +31,12 @@ import org.evergreen_ils.accountAccess.AccountAccess;
 import org.evergreen_ils.globals.GlobalConfigs;
 import org.evergreen_ils.views.splashscreen.SplashActivity;
 
-import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup.LayoutParams;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -50,7 +46,7 @@ public class MoreCopyInformation extends ActionBarActivity {
 
     private RecordInfo record;
 
-    private GlobalConfigs gl;
+    private GlobalConfigs globalConfigs;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,7 +63,7 @@ public class MoreCopyInformation extends ActionBarActivity {
         actionBar.setSubtitle(AccountAccess.userName);
         actionBar.setDisplayHomeAsUpEnabled(true);
 
-        gl = GlobalConfigs.getGlobalConfigs(context);
+        globalConfigs = GlobalConfigs.getGlobalConfigs(context);
         context = this;
         record = (RecordInfo) getIntent().getSerializableExtra("recordInfo");
 
@@ -106,7 +102,7 @@ public class MoreCopyInformation extends ActionBarActivity {
             TextView copy_location = (TextView) copy_info_view
                     .findViewById(R.id.copy_information_copy_location);
 
-            library.setText(gl.getOrganizationName(record.copyInformationList
+            library.setText(globalConfigs.getOrganizationName(record.copyInformationList
                     .get(i).org_id) + " ");
             call_number
                     .setText(record.copyInformationList.get(i).call_number_sufix);

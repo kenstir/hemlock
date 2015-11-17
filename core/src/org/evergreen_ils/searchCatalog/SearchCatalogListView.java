@@ -699,7 +699,7 @@ public class SearchCatalogListView extends ActionBarActivity {
 
             // Get reference to ImageView
             recordImage = (ImageView) row.findViewById(R.id.search_record_img);
-            String imageHref = GlobalConfigs.httpAddress  + "/opac/extras/ac/jacket/small/r/" + record.image;
+            String imageHref = GlobalConfigs.getUrl("/opac/extras/ac/jacket/small/r/" + record.image);
             //Log.d(TAG, "image url " + imageHref);
 
             // start async download of image

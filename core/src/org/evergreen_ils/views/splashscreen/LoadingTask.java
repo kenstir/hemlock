@@ -109,11 +109,10 @@ public class LoadingTask {
 
             String library_url = AccountAccess.getLibraryUrl(mCallingActivity, account_name, accountType);
             AppPrefs.setString(AppPrefs.LIBRARY_URL, library_url);
-            GlobalConfigs.httpAddress = library_url;
 
-            Log.d(TAG, tag+"Loading resources");
+            Log.d(TAG, tag+"Loading resources from "+library_url);
             publishProgress("Loading resources");
-            GlobalConfigs.getGlobalConfigs(mCallingActivity);
+            GlobalConfigs.getGlobalConfigs(mCallingActivity, library_url);
 
             Log.d(TAG, tag+"Starting session");
             publishProgress("Starting session");
@@ -130,6 +129,12 @@ public class LoadingTask {
             }
             if (retry) {
                 // todo: replace with AccountAccess.reauthenticate?
+                try {
+                    haveSession = ac.reauthenticate(mCallingActivity);
+                } catch (Exception e) {
+                    Log.d(TAG, tag+"failed a 2nd time", e);
+                }
+                /*
                 final Account account = new Account(account_name, accountType);
                 future = mAccountManager.getAuthToken(account, Const.AUTHTOKEN_TYPE, null, mCallingActivity, null, null);
                 bnd = future.getResult();
@@ -144,6 +149,7 @@ public class LoadingTask {
                 } catch (SessionNotFoundException e) {
                     Log.d(TAG, tag+"failed a 2nd time", e);
                 }
+                */
             }
             if (!haveSession)
                 return "no session";

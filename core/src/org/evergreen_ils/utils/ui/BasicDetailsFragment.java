@@ -83,7 +83,7 @@ public class BasicDetailsFragment extends Fragment {
 
     private SearchCatalog search = null;
 
-    private GlobalConfigs gl;
+    private GlobalConfigs globalConfigs;
 
     private ProgressDialog progressDialog;
 
@@ -135,7 +135,7 @@ public class BasicDetailsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
 
-        gl = GlobalConfigs.getGlobalConfigs(getActivity());
+        globalConfigs = GlobalConfigs.getGlobalConfigs(getActivity());
 
         LinearLayout layout = (LinearLayout) inflater.inflate(
                 R.layout.record_details_basic_fragment, null);
@@ -169,7 +169,7 @@ public class BasicDetailsFragment extends Fragment {
             }
         });
 
-        String imageHref = GlobalConfigs.httpAddress + "/opac/extras/ac/jacket/large/r/" + record.image;
+        String imageHref = GlobalConfigs.getUrl("/opac/extras/ac/jacket/large/r/" + record.image);
 
         // start async download of image
         imageDownloader.download(imageHref, recordImage);
@@ -342,7 +342,7 @@ public class BasicDetailsFragment extends Fragment {
                     .findViewById(R.id.copy_information_copy_location);
 
             CopyInformation info = record.copyInformationList.get(i);
-            library.setText(gl.getOrganizationName(info.org_id));
+            library.setText(globalConfigs.getOrganizationName(info.org_id));
             call_number.setText(info.call_number_sufix);
             copy_location.setText(info.copy_location);
 
