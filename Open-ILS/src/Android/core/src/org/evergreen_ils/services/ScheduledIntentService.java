@@ -85,7 +85,7 @@ public class ScheduledIntentService extends IntentService {
         String idlFile = GlobalConfigs.IDL_FILE_FROM_ROOT;
         try {
             Log.d(TAG, "Load IDL start");
-            InputStream in_IDL = Utils.getNetInputStream(GlobalConfigs.httpAddress + idlFile);
+            InputStream in_IDL = Utils.getNetInputStream(GlobalConfigs.getUrl(idlFile));
             IDLParser parser = new IDLParser(in_IDL);
             parser.setKeepIDLObjects(false);
             parser.parse();
