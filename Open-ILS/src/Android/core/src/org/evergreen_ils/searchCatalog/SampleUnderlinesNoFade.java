@@ -77,7 +77,7 @@ public class SampleUnderlinesNoFade extends BaseSampleActivity {
         actionBar.setSubtitle(AccountAccess.userName);
         actionBar.setDisplayHomeAsUpEnabled(true);
 
-        search = SearchCatalog.getInstance((ConnectivityManager)getSystemService(CONNECTIVITY_SERVICE));
+        search = SearchCatalog.getInstance();
 
         records = (ArrayList<RecordInfo>) getIntent().getSerializableExtra("recordList");
 

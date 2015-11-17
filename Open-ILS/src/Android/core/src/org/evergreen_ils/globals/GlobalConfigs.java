@@ -21,16 +21,17 @@ package org.evergreen_ils.globals;
 
 import android.content.Context;
 import android.net.ConnectivityManager;
+import android.text.TextUtils;
 import android.util.Log;
-import org.evergreen_ils.accountAccess.AccountAccess;
-import org.evergreen_ils.accountAccess.SessionNotFoundException;
 import org.evergreen_ils.searchCatalog.Organisation;
 import org.evergreen_ils.searchCatalog.SearchCatalog;
 import org.open_ils.idl.IDLParser;
+import org.opensrf.net.http.HttpConnection;
 import org.opensrf.util.JSONException;
 import org.opensrf.util.JSONReader;
 
 import java.io.InputStream;
+import java.net.MalformedURLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -40,12 +41,13 @@ public class GlobalConfigs {
     public static String IDL_FILE_FROM_ROOT = "/reports/fm_IDL.xml?class=acn&class=acp&class=ahr&class=ahtc&class=au&class=bmp&class=cbreb&class=cbrebi&class=cbrebin&class=cbrebn&class=ccs&class=circ&class=ex&class=mbt&class=mbts&class=mous&class=mra&class=mus&class=mvr&class=perm_ex";
     public static String IDL_FILE_FROM_ASSETS = "fm_IDL.xml";
     public static String httpAddress = "";
+    private static HttpConnection conn;
 
     private boolean init = false;
 
     private static String TAG = "GlobalConfigs";
     
-    private static boolean debugMode = true;//KCXXX make a developer preference
+    private static boolean debugMode = true;//todo get from boolean isDebuggable =  ( 0 != ( getApplicationInfo().flags &= ApplicationInfo.FLAG_DEBUGGABLE ) );
 
     public static boolean loadedIDL = false;
 
@@ -91,9 +93,8 @@ public class GlobalConfigs {
     private boolean initialize(Context context) {
         if (!init) {
             loadIDLFile(context);
-            getOrganisations();
-            getCopyStatusesAvailable((ConnectivityManager) context
-                        .getSystemService(Context.CONNECTIVITY_SERVICE));
+            loadOrganizations();
+            loadCopyStatusesAvailable();
             init = true;
             return true;
         }
@@ -104,8 +105,15 @@ public class GlobalConfigs {
         return debugMode;
     }
 
-    public static void setDebugMode(boolean debugMode) {
-        GlobalConfigs.debugMode = debugMode;
+    public static HttpConnection gatewayConnection() {
+        if (conn == null && !TextUtils.isEmpty(httpAddress)) {
+            try {
+                conn = new HttpConnection(httpAddress + "/osrf-gateway-v1");
+            } catch (MalformedURLException e) {
+                Log.d(TAG, "unable to open connection", e);
+            }
+        }
+        return conn;
     }
 
     public void loadIDLFile(Context context) {
@@ -138,7 +146,7 @@ public class GlobalConfigs {
     /**
      * Fetch the OrgTree.js file, and from it parse the list of organisations.
      */
-    public void getOrganisations() {
+    public void loadOrganizations() {
 
         String orgFile = null;
 
@@ -212,9 +220,9 @@ public class GlobalConfigs {
         }
     }
 
-    public void getCopyStatusesAvailable(ConnectivityManager cm) {
+    public void loadCopyStatusesAvailable() {
 
-        SearchCatalog search = SearchCatalog.getInstance(cm);
+        SearchCatalog search = SearchCatalog.getInstance();
 
         try {
             search.getCopyStatuses();
@@ -222,22 +230,6 @@ public class GlobalConfigs {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-    }
-
-    public void getOrgHiddentDepth() {
-
-        // logic can be found in the opac_utils.js file in web/opac/common/js
-
-        for (int i = 0; i < organisations.size(); i++) {
-            AccountAccess ac = AccountAccess.getAccountAccess();
-            try {
-                Object obj = ac.fetchOrgSettings(organisations.get(i).id,
-                        "opac.org_unit_hiding.depth");
-            } catch (SessionNotFoundException e) {
-            }
-
-        }
-
     }
 
     public static String getStringDate(Date date) {

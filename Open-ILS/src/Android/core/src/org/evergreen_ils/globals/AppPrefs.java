@@ -11,7 +11,6 @@ import org.evergreen_ils.accountAccess.bookbags.BookBag;
  * Created by kenstir on 11/8/2015.
  */
 public class AppPrefs {
-    public static final String EVER_LOGGED_IN = "ever_logged_in";
     public static final String LIBRARY_URL = "library_url";
     public static final String LIBRARY_NAME = "library_name";
     private static final String VERSION = "version";
@@ -35,7 +34,6 @@ public class AppPrefs {
             SharedPreferences.Editor editor = prefs.edit();
             version = PREFS_VERSION;
             editor.putInt(VERSION, PREFS_VERSION);
-            editor.putBoolean(EVER_LOGGED_IN, false);
             editor.putString(LIBRARY_URL, context.getString(R.string.ou_library_url));
             editor.putString(LIBRARY_NAME, context.getString(R.string.ou_library_name));
             editor.commit();
