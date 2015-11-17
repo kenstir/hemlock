@@ -19,9 +19,11 @@
  */
 package org.evergreen_ils.views.splashscreen;
 
+import android.text.TextUtils;
 import org.evergreen_ils.R;
 import org.evergreen_ils.accountAccess.AccountAccess;
 import org.evergreen_ils.accountAccess.SessionNotFoundException;
+import org.evergreen_ils.globals.AppPrefs;
 import org.evergreen_ils.globals.GlobalConfigs;
 import org.evergreen_ils.auth.Const;
 
@@ -31,6 +33,7 @@ import android.accounts.AccountManagerFuture;
 import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
+import org.w3c.dom.Text;
 
 /** This is basically the same as an AsyncTask<String,String,String>, except that it uses
  * a Thread.  Starting with HONEYCOMB, tasks are executed on a single thread and the 2nd
@@ -99,20 +102,22 @@ public class LoadingTask {
 
             AccountManagerFuture<Bundle> future = mAccountManager.getAuthTokenByFeatures(accountType, Const.AUTHTOKEN_TYPE, null, mCallingActivity, null, null, null, null);
             Bundle bnd = future.getResult();
-            Log.d(TAG, tag+"bnd="+bnd);
             String auth_token = bnd.getString(AccountManager.KEY_AUTHTOKEN);
             String account_name = bnd.getString(AccountManager.KEY_ACCOUNT_NAME);
-            Log.d(TAG, tag+"account_name="+account_name+" token="+auth_token);
             if (account_name == null)
                 return "no account";
 
+            String library_url = AccountAccess.getLibraryUrl(mCallingActivity, account_name, accountType);
+            AppPrefs.setString(AppPrefs.LIBRARY_URL, library_url);
+            GlobalConfigs.httpAddress = library_url;
+
             Log.d(TAG, tag+"Loading resources");
             publishProgress("Loading resources");
-            GlobalConfigs.getGlobalConfigs(mCallingActivity); // loads IDL
+            GlobalConfigs.getGlobalConfigs(mCallingActivity);
 
             Log.d(TAG, tag+"Starting session");
             publishProgress("Starting session");
-            AccountAccess ac = AccountAccess.getAccountAccess(GlobalConfigs.httpAddress);
+            AccountAccess ac = AccountAccess.getAccountAccess();
 
             // auth token zen: try once and if it fails, invalidate the token and try again
             boolean haveSession = false;
@@ -124,6 +129,7 @@ public class LoadingTask {
                 retry = true;
             }
             if (retry) {
+                // todo: replace with AccountAccess.reauthenticate?
                 final Account account = new Account(account_name, accountType);
                 future = mAccountManager.getAuthToken(account, Const.AUTHTOKEN_TYPE, null, mCallingActivity, null, null);
                 bnd = future.getResult();
@@ -133,7 +139,11 @@ public class LoadingTask {
                 Log.d(TAG, tag+"account_name="+account_name+" token="+auth_token);
                 if (account_name == null)
                     return "no account";
-                haveSession = ac.retrieveSession(auth_token, true);
+                try {
+                    haveSession = ac.retrieveSession(auth_token, true);
+                } catch (SessionNotFoundException e) {
+                    Log.d(TAG, tag+"failed a 2nd time", e);
+                }
             }
             if (!haveSession)
                 return "no session";

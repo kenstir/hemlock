@@ -145,7 +145,7 @@ public class SearchCatalogListView extends ActionBarActivity {
         globalConfigs = GlobalConfigs.getGlobalConfigs(this);
 
         context = this;
-        search = SearchCatalog.getInstance((ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE));
+        search = SearchCatalog.getInstance();
 
         recordList = new ArrayList<RecordInfo>();
 

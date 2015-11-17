@@ -36,13 +36,12 @@ import org.evergreen_ils.accountAccess.bookbags.BookBagItem;
 import org.evergreen_ils.accountAccess.checkout.CircRecord;
 import org.evergreen_ils.accountAccess.fines.FinesRecord;
 import org.evergreen_ils.accountAccess.holds.HoldRecord;
+import org.evergreen_ils.globals.GlobalConfigs;
 import org.evergreen_ils.globals.Utils;
 import org.evergreen_ils.searchCatalog.RecordInfo;
 import org.evergreen_ils.auth.Const;
 import org.opensrf.net.http.HttpConnection;
 import org.opensrf.util.OSRFObject;
-
-import android.net.ConnectivityManager;
 
 /**
  * The Class AuthenticateUser. Singleton class
@@ -143,12 +142,6 @@ public class AccountAccess {
     /** The book bags. */
     private ArrayList<BookBag> bookBags = new ArrayList<BookBag>();
 
-    /** The conn. */
-    public HttpConnection conn;
-
-    /** The http address. */
-    private String httpAddress = "http://ulysses.calvin.edu";
-
     /** The TAG. */
     private final String TAG = AccountAccess.class.getSimpleName();
 
@@ -156,12 +149,6 @@ public class AccountAccess {
      * The auth token. Sent with every request that needs authentication
      * */
     private String authToken = null;
-
-    /** The cm. */
-    private ConnectivityManager cm = null;
-
-    /** The auth time. */
-    private Integer authTime = null;
 
     /** The user id. */
     private Integer userID = null;
@@ -181,49 +168,20 @@ public class AccountAccess {
 
     /**
      * Instantiates a new authenticate user.
-     *
-     * @param httpAddress the http address
      */
-    private AccountAccess(String httpAddress) {
-
-        Log.d(TAG, "AccountAccess ctor: " + httpAddress);
-        this.httpAddress = httpAddress;
-
-        try {
-            // configure the connection
-            Log.d(TAG, "Connection with " + httpAddress);
-            conn = new HttpConnection(httpAddress + "/osrf-gateway-v1");
-
-        } catch (Exception e) {
-            Log.d(TAG, "Exception in establishing connection", e);
-        }
-
+    private AccountAccess() {
     }
 
-    /**
-     * Gets the account access.
-     *
-     * @param httpAddress the http address
-     * @return the account access
-     */
-    public static AccountAccess getAccountAccess(String httpAddress) {
-
-        if (accountAccess == null) {
-            accountAccess = new AccountAccess(httpAddress);
-        }
-        if (!httpAddress.equals(accountAccess.httpAddress))
-            accountAccess.updateHttpAddress(httpAddress);
-
-        return accountAccess;
-    }
-
-    // the object must be initialized before
     /**
      * Gets the account access.
      *
      * @return the account access
      */
     public static AccountAccess getAccountAccess() {
+
+        if (accountAccess == null) {
+            accountAccess = new AccountAccess();
+        }
         return accountAccess;
     }
 
@@ -233,29 +191,6 @@ public class AccountAccess {
 
     public void setHomeLibraryID(Integer homeLibraryID) {
         this.homeLibraryID = homeLibraryID;
-    }
-
-    /*
-     * Change the Http conn to a new library address
-     */
-    /**
-     * Update http address.
-     *
-     * @param httpAddress the http address
-     */
-    public void updateHttpAddress(String httpAddress) {
-        Log.d(TAG, "update http address of account access to "
-                + httpAddress);
-        try {
-            // configure the connection
-            this.httpAddress = httpAddress;
-            Log.d(TAG, "Connection with " + httpAddress);
-            conn = new HttpConnection(httpAddress + "/osrf-gateway-v1");
-
-        } catch (Exception e) {
-            System.err.println("Exception in establishing connection "
-                    + e.getMessage());
-        }
     }
 
     /**
@@ -293,6 +228,10 @@ public class AccountAccess {
         return "";
     }
 
+    private HttpConnection conn() {
+        return GlobalConfigs.gatewayConnection();
+    }
+
     /**
      * Retrieve session.
      * @throws SessionNotFoundException
@@ -304,7 +243,7 @@ public class AccountAccess {
         this.haveSession = false;
         this.authToken = auth_token;
         
-        Object resp = Utils.doRequest(conn, SERVICE_AUTH,
+        Object resp = Utils.doRequest(conn(), SERVICE_AUTH,
                 METHOD_AUTH_SESSION_RETRV, authToken, new Object[] {
                         authToken});
         if (resp != null) {
@@ -344,6 +283,39 @@ public class AccountAccess {
         return retrieveSession(new_authToken, true);
     }
 
+    public static String getLibraryUrl(Activity activity, String account_name, String account_type) {
+        final AccountManager am = AccountManager.get(activity);
+        Account account = new Account(account_name, account_type);
+        String library_url = am.getUserData(account, Const.KEY_LIBRARY_URL);
+
+        // compatibility with specific apps like cwmars_app.  If no library_url exists as userdata on the account,
+        // get it from the resources.
+        if (TextUtils.isEmpty(library_url)) {
+            library_url = activity.getString(R.string.ou_library_url);
+            if (!TextUtils.isEmpty(library_url)) {
+                am.setUserData(account, Const.KEY_LIBRARY_URL, library_url);
+            }
+        }
+
+        return library_url;
+    }
+
+//    public void getOrgHiddentDepth() {
+//
+//        // logic can be found in the opac_utils.js file in web/opac/common/js
+//
+//        for (int i = 0; i < organisations.size(); i++) {
+//            AccountAccess ac = AccountAccess.getAccountAccess();
+//            try {
+//                Object obj = ac.fetchOrgSettings(organisations.get(i).id,
+//                        "opac.org_unit_hiding.depth");
+//            } catch (SessionNotFoundException e) {
+//            }
+//
+//        }
+//
+//    }
+
     // ------------------------Checked Out Items Section
     // -------------------------//
 
@@ -358,7 +330,7 @@ public class AccountAccess {
 
         ArrayList<CircRecord> circRecords = new ArrayList<CircRecord>();
 
-        Object resp = Utils.doRequest(conn, SERVICE_ACTOR,
+        Object resp = Utils.doRequest(conn(), SERVICE_ACTOR,
                 METHOD_FETCH_CHECKED_OUT_SUM, authToken, new Object[] {
                         authToken, userID });
         if (resp == null)
@@ -420,7 +392,7 @@ public class AccountAccess {
     private OSRFObject retrieveCircRecord(String id)
             throws SessionNotFoundException {
 
-        OSRFObject circ = (OSRFObject) Utils.doRequest(conn, SERVICE_CIRC,
+        OSRFObject circ = (OSRFObject) Utils.doRequest(conn(), SERVICE_CIRC,
                 METHOD_FETCH_CIRC_BY_ID, authToken, new Object[] {
                         authToken, id });
         return circ;
@@ -475,7 +447,7 @@ public class AccountAccess {
      * @return the oSRF object
      */
     private OSRFObject fetchModsFromCopy(Integer target_copy) {
-        OSRFObject mvr = (OSRFObject) Utils.doRequest(conn, SERVICE_SEARCH,
+        OSRFObject mvr = (OSRFObject) Utils.doRequest(conn(), SERVICE_SEARCH,
                 METHOD_FETCH_MODS_FROM_COPY, new Object[] { target_copy });
 
         return mvr;
@@ -490,7 +462,7 @@ public class AccountAccess {
         if (id.equals("-1"))
             return "";
 
-        OSRFObject resp = (OSRFObject) Utils.doRequestSimple(conn, PCRUD_SERVICE,
+        OSRFObject resp = (OSRFObject) Utils.doRequestSimple(conn(), PCRUD_SERVICE,
                 PCRUD_METHOD_RETRIEVE_MRA, new Object[] { "ANONYMOUS", id });
 
         // This is not beautiful.  This MRA record comes back with an 'attrs' field that
@@ -524,7 +496,7 @@ public class AccountAccess {
      * @return the oSRF object
      */
     private OSRFObject fetchAssetCopy(Integer target_copy) {
-        OSRFObject acp = (OSRFObject) Utils.doRequest(conn, SERVICE_SEARCH,
+        OSRFObject acp = (OSRFObject) Utils.doRequest(conn(), SERVICE_SEARCH,
                 METHOD_FETCH_COPY, new Object[] { target_copy });
 
         return acp;
@@ -550,7 +522,7 @@ public class AccountAccess {
         complexParam.put("copyid", target_copy);
         complexParam.put("opac_renewal", 1);
 
-        Object a_lot = (Object) Utils.doRequest(conn, SERVICE_CIRC,
+        Object a_lot = (Object) Utils.doRequest(conn(), SERVICE_CIRC,
                 METHOD_RENEW_CIRC, authToken, new Object[] {
                         authToken, complexParam });
 
@@ -578,9 +550,9 @@ public class AccountAccess {
     public Object fetchOrgSettings(Integer org_id, String setting)
             throws SessionNotFoundException {
 
-        OSRFObject response = (OSRFObject) Utils
-                .doRequest(conn, SERVICE_ACTOR, METHOD_FETCH_ORG_SETTINGS,
-                        new Object[] { org_id, setting });
+        OSRFObject response = (OSRFObject) Utils.doRequest(conn(), SERVICE_ACTOR,
+                METHOD_FETCH_ORG_SETTINGS, new Object[] {
+                        org_id, setting });
         return response;
 
     }
@@ -598,7 +570,7 @@ public class AccountAccess {
         // fields of interest : expire_time
         List<OSRFObject> listHoldsAhr = null;
 
-        Object resp = Utils.doRequest(conn, SERVICE_CIRC,
+        Object resp = Utils.doRequest(conn(), SERVICE_CIRC,
                 METHOD_FETCH_HOLDS, authToken, new Object[] {
                         authToken, userID });
         if (resp == null) {
@@ -643,7 +615,7 @@ public class AccountAccess {
                 method = METHOD_FETCH_MRMODS;
             else //(holdType.equals("T"))
                 method = METHOD_FETCH_RMODS;
-            holdInfo = (OSRFObject) Utils.doRequest(conn, SERVICE_SEARCH,
+            holdInfo = (OSRFObject) Utils.doRequest(conn(), SERVICE_SEARCH,
                     method, new Object[] {
                             target });
 
@@ -684,7 +656,7 @@ public class AccountAccess {
 
             if (call_number != null) {
 
-                OSRFObject volume = (OSRFObject) Utils.doRequest(conn, SERVICE_SEARCH,
+                OSRFObject volume = (OSRFObject) Utils.doRequest(conn(), SERVICE_SEARCH,
                         METHOD_FETCH_VOLUME, new Object[] {
                                 copyObject.getInt("call_number") });
                 // in volume object : record
@@ -694,7 +666,7 @@ public class AccountAccess {
                 holdObj.part_label = volume.getString("label");
 
                 Log.d(TAG, "Record " + record);
-                OSRFObject holdInfo = (OSRFObject) Utils.doRequest(conn,
+                OSRFObject holdInfo = (OSRFObject) Utils.doRequest(conn(),
                         SERVICE_SEARCH, METHOD_FETCH_RMODS,
                         new Object[] { record });
 
@@ -708,7 +680,7 @@ public class AccountAccess {
             // must test
 
             // fetch_volume
-            OSRFObject volume = (OSRFObject) Utils.doRequest(conn,
+            OSRFObject volume = (OSRFObject) Utils.doRequest(conn(),
                     SERVICE_SEARCH, METHOD_FETCH_VOLUME,
                     new Object[] { hold.getInt("target") });
             // in volume object : record
@@ -720,7 +692,7 @@ public class AccountAccess {
             holdObj.part_label = volume.getString("label");
 
             Log.d(TAG, "Record " + record);
-            OSRFObject holdInfo = (OSRFObject) Utils.doRequest(conn,
+            OSRFObject holdInfo = (OSRFObject) Utils.doRequest(conn(),
                     SERVICE_SEARCH, METHOD_FETCH_RMODS,
                     new Object[] { record });
 
@@ -728,7 +700,7 @@ public class AccountAccess {
             holdObj.author = holdInfo.getString("author");
             holdObj.recordInfo = new RecordInfo((OSRFObject) holdInfo);
         } else if (type.equals("I")) {
-            OSRFObject issuance = (OSRFObject) Utils.doRequest(conn,
+            OSRFObject issuance = (OSRFObject) Utils.doRequest(conn(),
                     SERVICE_SERIAL, METHOD_FETCH_ISSUANCE,
                     new Object[] { hold.getInt("target") });
             // TODO
@@ -750,7 +722,7 @@ public class AccountAccess {
 
             // returns [{record:id, label=part label}]
 
-            List<Object> part = (List<Object>) Utils.doRequest(conn,
+            List<Object> part = (List<Object>) Utils.doRequest(conn(),
                     SERVICE_FIELDER, "open-ils.fielder.bmp.atomic",
                     new Object[] { param });
 
@@ -759,7 +731,7 @@ public class AccountAccess {
             Integer recordID = (Integer) partObj.get("record");
             String part_label = (String) partObj.get("label");
 
-            OSRFObject holdInfo = (OSRFObject) Utils.doRequest(conn,
+            OSRFObject holdInfo = (OSRFObject) Utils.doRequest(conn(),
                     SERVICE_SEARCH, METHOD_FETCH_RMODS,
                     new Object[] { recordID });
 
@@ -785,7 +757,7 @@ public class AccountAccess {
         Integer hold_id = hold.getInt("id");
         // MAP : potential_copies, status, total_holds, queue_position,
         // estimated_wait
-        Object resp = Utils.doRequest(conn, SERVICE_CIRC,
+        Object resp = Utils.doRequest(conn(), SERVICE_CIRC,
                 METHOD_FETCH_HOLD_STATUS, authToken, new Object[] {
                         authToken, hold_id });
 
@@ -807,7 +779,7 @@ public class AccountAccess {
     public boolean cancelHold(OSRFObject hold) throws SessionNotFoundException {
         Integer hold_id = hold.getInt("id");
 
-        Object response = Utils.doRequest(conn, SERVICE_CIRC,
+        Object response = Utils.doRequest(conn(), SERVICE_CIRC,
                 METHOD_CANCEL_HOLD, authToken, new Object[] {
                         authToken, hold_id });
 
@@ -841,7 +813,7 @@ public class AccountAccess {
         // only if it is frozen
         ahr.put("thaw_date", thaw_date);
 
-        Object response = Utils.doRequest(conn, SERVICE_CIRC,
+        Object response = Utils.doRequest(conn(), SERVICE_CIRC,
                 METHOD_UPDATE_HOLD, authToken, new Object[] {
                         authToken, ahr });
 
@@ -886,7 +858,7 @@ public class AccountAccess {
 
         // extra parameters (not mandatory for hold creation)
 
-        Object response = Utils.doRequest(conn, SERVICE_CIRC,
+        Object response = Utils.doRequest(conn(), SERVICE_CIRC,
                 METHOD_CREATE_HOLD, authToken, new Object[] {
                         authToken, ahr });
 
@@ -941,7 +913,7 @@ public class AccountAccess {
         // {"titleid":63,"mrid":60,"volume_id":null,"issuanceid":null,"copy_id":null,"hold_type":"T","holdable_formats":null,
         // "patronid":2,"depth":0,"pickup_lib":"8","partid":null}
 
-        Object response = Utils.doRequest(conn, SERVICE_CIRC,
+        Object response = Utils.doRequest(conn(), SERVICE_CIRC,
                 METHOD_VERIFY_HOLD_POSSIBLE, authToken, new Object[] {
                         authToken, mapAsk });
 
@@ -964,7 +936,7 @@ public class AccountAccess {
         param.put("pickup_lib", pickup_lib);
         param.put("record", recordID);
 
-        Map<String, ?> response = (Map<String, ?>) Utils.doRequest(conn,
+        Map<String, ?> response = (Map<String, ?>) Utils.doRequest(conn(),
                 SERVICE_SEARCH,
                 "open-ils.search.metabib.record_to_descriptors",
                 new Object[] { param });
@@ -998,7 +970,7 @@ public class AccountAccess {
     public float[] getFinesSummary() throws SessionNotFoundException {
 
         // mous object
-        OSRFObject finesSummary = (OSRFObject) Utils.doRequest(conn, SERVICE_ACTOR,
+        OSRFObject finesSummary = (OSRFObject) Utils.doRequest(conn(), SERVICE_ACTOR,
                 METHOD_FETCH_FINES_SUMMARY, authToken, new Object[] {
                         authToken, userID });
 
@@ -1025,7 +997,7 @@ public class AccountAccess {
 
         ArrayList<FinesRecord> finesRecords = new ArrayList<FinesRecord>();
 
-        Object transactions = Utils.doRequest(conn, SERVICE_ACTOR,
+        Object transactions = Utils.doRequest(conn(), SERVICE_ACTOR,
                 METHOD_FETCH_TRANSACTIONS, authToken, new Object[] {
                         authToken, userID });
 
@@ -1056,7 +1028,7 @@ public class AccountAccess {
      */
     public boolean retrieveBookbags() throws SessionNotFoundException {
 
-        Object response = Utils.doRequest(conn, SERVICE_ACTOR,
+        Object response = Utils.doRequest(conn(), SERVICE_ACTOR,
                 METHOD_FLESH_CONTAINERS, authToken, new Object[] {
                         authToken, userID, "biblio", "bookbag" });
 
@@ -1094,7 +1066,7 @@ public class AccountAccess {
     private Object getBookbagContent(BookBag bag, Integer bookbagID)
             throws SessionNotFoundException {
 
-        Map<String, ?> map = (Map<String, ?>) Utils.doRequest(conn, SERVICE_ACTOR,
+        Map<String, ?> map = (Map<String, ?>) Utils.doRequest(conn(), SERVICE_ACTOR,
                 METHOD_FLESH_PUBLIC_CONTAINER, authToken, new Object[] {
                         authToken, "biblio", bookbagID });
         
@@ -1152,7 +1124,7 @@ public class AccountAccess {
      */
     public void deleteBookBag(Integer id) throws SessionNotFoundException {
 
-        Object response = Utils.doRequest(conn, SERVICE_ACTOR,
+        Object response = Utils.doRequest(conn(), SERVICE_ACTOR,
                 METHOD_CONTAINER_FULL_DELETE, authToken, new Object[] {
                         authToken, "biblio", id });
     }
@@ -1172,7 +1144,7 @@ public class AccountAccess {
         cbrebi.put("target_biblio_record_entry", record_id);
         cbrebi.put("id", null);
 
-        Object response = Utils.doRequest(conn, SERVICE_ACTOR,
+        Object response = Utils.doRequest(conn(), SERVICE_ACTOR,
                 METHOD_CONTAINER_ITEM_CREATE, authToken, new Object[] {
                         authToken, "biblio", cbrebi });
     }
@@ -1187,7 +1159,7 @@ public class AccountAccess {
     private void removeContainer(String container, Integer id)
             throws SessionNotFoundException {
 
-        Object response = Utils.doRequest(conn, SERVICE_ACTOR,
+        Object response = Utils.doRequest(conn(), SERVICE_ACTOR,
                 METHOD_CONTAINER_DELETE, authToken, new Object[] {
                         authToken, container, id });
     }
@@ -1202,7 +1174,7 @@ public class AccountAccess {
     private void createContainer(String container, Object parameter)
             throws SessionNotFoundException {
 
-        Object response = Utils.doRequest(conn, SERVICE_ACTOR,
+        Object response = Utils.doRequest(conn(), SERVICE_ACTOR,
                 METHOD_CONTAINER_CREATE, authToken, new Object[] {
                         authToken, container, parameter });
     }

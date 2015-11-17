@@ -92,9 +92,7 @@ public class SearchCatalog {
 
     public static SearchCatalog searchCatalogSingleton = null;
 
-    public HttpConnection conn;
-
-    public String TAG = "SearchCatalog";
+    public String TAG = SearchCatalog.class.getSimpleName();
 
     // the org on witch the searches will be made
     /** The selected organization. */
@@ -110,33 +108,21 @@ public class SearchCatalog {
     public String searchClass = null;
     public String searchFormat = null;
 
-    public static SearchCatalog getInstance(ConnectivityManager cm) {
-
-        if (searchCatalogSingleton == null) {
-            searchCatalogSingleton = new SearchCatalog(cm);
-        }
-
-        return searchCatalogSingleton;
-    }
-
     public static SearchCatalog getInstance() {
-
+        if (searchCatalogSingleton == null) {
+            searchCatalogSingleton = new SearchCatalog();
+        }
         return searchCatalogSingleton;
     }
 
     /**
      * Instantiates a new search catalog.
      */
-    private SearchCatalog(ConnectivityManager cm) {
-        super();
+    private SearchCatalog() {
+    }
 
-        try {
-            // configure the connection
-            conn = new HttpConnection(AppPrefs.getString(AppPrefs.LIBRARY_URL) + "/osrf-gateway-v1");
-
-        } catch (Exception e) {
-            Log.d(TAG, "error", e);
-        }
+    private HttpConnection conn() {
+        return GlobalConfigs.gatewayConnection();
     }
 
     /**
@@ -181,7 +167,7 @@ public class SearchCatalog {
             queryString += " search_format(" + searchFormat + ")";
 
         // do request and check for connectivity
-        Object resp = Utils.doRequest(conn, SERVICE, METHOD_MULTICLASS_QUERY,
+        Object resp = Utils.doRequest(conn(), SERVICE, METHOD_MULTICLASS_QUERY,
                 new Object[] { complexParm, queryString, 1 });
 
         ArrayList<String> ids = new ArrayList<String>();
@@ -245,7 +231,7 @@ public class SearchCatalog {
      * @return the item short info
      */
     private OSRFObject getItemShortInfo(Integer id) {
-        OSRFObject response = (OSRFObject) Utils.doRequestSimple(conn, SERVICE,
+        OSRFObject response = (OSRFObject) Utils.doRequestSimple(conn(), SERVICE,
                 METHOD_SLIM_RETRIVE, new Object[] {
                         id });
         return response;
@@ -253,7 +239,7 @@ public class SearchCatalog {
 
     public Object getCopyStatuses() {
 
-        List<OSRFObject> ccs_list = (List<OSRFObject>) Utils.doRequestSimple(conn, SERVICE,
+        List<OSRFObject> ccs_list = (List<OSRFObject>) Utils.doRequestSimple(conn(), SERVICE,
                 METHOD_COPY_STATUS_ALL, new Object[] {});
 
         CopyInformation.availableOrgStatuses = new LinkedHashMap<String, String>();
@@ -275,7 +261,7 @@ public class SearchCatalog {
     public Object getLocationCount(Integer recordID, Integer orgID,
             Integer orgDepth) {
 
-        List<?> list = (List<?>) Utils.doRequestSimple(conn, SERVICE,
+        List<?> list = (List<?>) Utils.doRequestSimple(conn(), SERVICE,
                 METHOD_COPY_LOCATION_COUNTS, new Object[] {
                         recordID, orgID, orgDepth });
         return list;
@@ -311,7 +297,7 @@ public class SearchCatalog {
     public ArrayList<CopyCountInformation> getCopyCount(Integer recordID,
             Integer orgID) {
 
-        List<?> list = (List<?>) Utils.doRequestSimple(conn, SERVICE,
+        List<?> list = (List<?>) Utils.doRequestSimple(conn(), SERVICE,
                 METHOD_GET_COPY_COUNT, new Object[] { orgID, recordID, "" });
 
         ArrayList<CopyCountInformation> copyInfoList = new ArrayList<CopyCountInformation>();

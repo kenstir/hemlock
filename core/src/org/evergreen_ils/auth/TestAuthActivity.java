@@ -146,6 +146,8 @@ public class TestAuthActivity extends Activity {
             String name[] = new String[availableAccounts.length];
             for (int i = 0; i < availableAccounts.length; i++) {
                 name[i] = availableAccounts[i].name;
+                String library_url = mAccountManager.getUserData(availableAccounts[i], Const.KEY_LIBRARY_URL);
+                Log.d(TAG, "name:"+name[i]+" url:"+library_url);
             }
 
             // Account picker
@@ -190,7 +192,7 @@ public class TestAuthActivity extends Activity {
                     Log.d("kcxxx","getExistingAccountAuthToken account.name "+account.name+" account_name "+account_name+" token "+authtoken);
                     showMessage((authtoken != null) ? "SUCCESS with "+account_name+"\ntoken: " + authtoken : "FAIL");
                     Log.d(TAG, "GetToken Bundle is " + bnd);
-                    mLastTextView.setText(account.name);
+                    //mLastTextView.setText(account.name);//todo: wrong thread here
                 } catch (Exception e) {
                     e.printStackTrace();
                     showMessage(e.getMessage());
@@ -254,7 +256,8 @@ public class TestAuthActivity extends Activity {
                             bnd = future.getResult();
                             final String authtoken = bnd.getString(AccountManager.KEY_AUTHTOKEN);
                             final String account_name = bnd.getString(AccountManager.KEY_ACCOUNT_NAME);
-                            showMessage((authtoken != null) ? "SUCCESS with "+account_name+"\ntoken: " + authtoken : "FAIL");
+                            final String library_url = bnd.getString(Const.KEY_LIBRARY_URL);
+                            showMessage((authtoken != null) ? "SUCCESS with "+account_name+"\nlibrary_url: " + library_url: "FAIL");
                             Log.d(TAG, "GetTokenForAccount Bundle is " + bnd);
                             mLastTextView.setText(account_name);
                         } catch (Exception e) {

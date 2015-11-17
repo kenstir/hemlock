@@ -1,13 +1,12 @@
 package org.evergreen_ils.auth;
 
 import android.content.Context;
-import android.preference.PreferenceManager;
+import android.content.pm.ApplicationInfo;
 import android.text.TextUtils;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import org.evergreen_ils.R;
-import org.evergreen_ils.auth.Const;
 
 import android.accounts.Account;
 import android.accounts.AccountAuthenticatorActivity;
@@ -17,14 +16,11 @@ import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.ContextThemeWrapper;
 import android.view.View;
 import android.widget.TextView;
 import org.evergreen_ils.globals.AppPrefs;
-import org.evergreen_ils.globals.GlobalConfigs;
 import org.evergreen_ils.globals.Utils;
 import org.evergreen_ils.searchCatalog.Library;
 import org.opensrf.util.JSONException;
@@ -41,7 +37,6 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity {
     public final static String ARG_ACCOUNT_NAME = "ACCOUNT_NAME";
     //public final static String ARG_IS_ADDING_NEW_ACCOUNT = "IS_ADDING_ACCOUNT";
     public static final String KEY_ERROR_MESSAGE = "ERR_MSG";
-    public static final String KEY_LIBRARY_URL = "library_url";
     public final static String PARAM_USER_PASS = "USER_PASS";
     private final int REQ_SIGNUP = 1;
     private static final String STATE_ALERT_MESSAGE = "state_dialog";
@@ -190,13 +185,14 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity {
                 final String accountType = AuthenticatorActivity.this.getString(R.string.ou_account_type);
                 Bundle data = new Bundle();
                 try {
-                    authtoken = EvergreenAuthenticator.signIn(AuthenticatorActivity.this, username, password);
+                    authtoken = EvergreenAuthenticator.signIn(selected_library.url, username, password);
                     Log.d(TAG, "task> signIn returned "+authtoken);
 
                     data.putString(AccountManager.KEY_ACCOUNT_NAME, username);
                     data.putString(AccountManager.KEY_ACCOUNT_TYPE, accountType);
                     data.putString(AccountManager.KEY_AUTHTOKEN, authtoken);
                     data.putString(PARAM_USER_PASS, password);
+                    data.putString(Const.KEY_LIBRARY_URL, selected_library.url);
                 } catch (AuthenticationException e) {
                     if (e != null) errorMessage = e.getMessage();
                     Log.d(TAG, "task> signIn caught auth exception "+errorMessage);
@@ -251,6 +247,7 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity {
         String accountName = intent.getStringExtra(AccountManager.KEY_ACCOUNT_NAME);
         String accountType = intent.getStringExtra(AccountManager.KEY_ACCOUNT_TYPE);
         String accountPassword = intent.getStringExtra(PARAM_USER_PASS);
+        String library_url = intent.getStringExtra(Const.KEY_LIBRARY_URL);
         final Account account = new Account(accountName, accountType);
         Log.d(TAG, "onAuthSuccess> accountName="+accountName);
 
@@ -261,9 +258,9 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity {
 
         // Create the account on the device
         Bundle userdata = null;
-        if (selected_library != null) {
+        if (!TextUtils.isEmpty(library_url)) {
             userdata = new Bundle();
-            userdata.putString(KEY_LIBRARY_URL, selected_library.url);
+            userdata.putString(Const.KEY_LIBRARY_URL, library_url);
         }
         if (accountManager.addAccountExplicitly(account, accountPassword, userdata)) {
             Log.d(TAG, "onAuthSuccess> true, setAuthToken "+authtoken);
@@ -287,6 +284,12 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity {
 
     private void parseLibrariesJSON(String json) {
         libraries.clear();
+
+        boolean isDebuggable =  ( 0 != ( getApplicationInfo().flags &= ApplicationInfo.FLAG_DEBUGGABLE ) );
+        if (isDebuggable) {
+            Library library = new Library("https://demo.evergreencatalog.com", "Example Consortium", "00 (Example Consortium)");
+            libraries.add(library);
+        }
 
         if (json != null) {
             List<Map<String,?>> l;

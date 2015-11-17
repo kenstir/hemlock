@@ -72,12 +72,12 @@ public class EvergreenAuthenticator {
     }
     
     @SuppressWarnings("unchecked")
-    public static String signIn(Context context, String username, String password) throws AuthenticationException {
+    public static String signIn(String library_url, String username, String password) throws AuthenticationException {
         Log.d(TAG, "signIn> "+username);
 
         HttpConnection conn;
         try {
-            conn = new HttpConnection(AppPrefs.getString(AppPrefs.LIBRARY_URL) + "/osrf-gateway-v1");
+            conn = new HttpConnection(library_url + "/osrf-gateway-v1");
         } catch (MalformedURLException e) {
             throw new AuthenticationException(e);
         }
@@ -107,7 +107,6 @@ public class EvergreenAuthenticator {
             Log.d(TAG, "authtoken: " + authtoken);
             Integer authtime = ((Map<String, Integer>) payload).get("authtime");
             Log.d(TAG, "authtime: " + authtime);
-            AppPrefs.setBoolean(AppPrefs.EVER_LOGGED_IN, true);
             return authtoken;
         } else if (textcode.equals("LOGIN_FAILED")) {
             String desc = ((Map<String, String>) resp).get("desc");

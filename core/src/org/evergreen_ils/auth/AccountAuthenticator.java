@@ -10,6 +10,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
+import org.evergreen_ils.searchCatalog.Library;
+import org.w3c.dom.Text;
 
 public class AccountAuthenticator extends AbstractAccountAuthenticator {
     
@@ -48,6 +50,11 @@ public class AccountAuthenticator extends AbstractAccountAuthenticator {
         }
 
         final AccountManager am = AccountManager.get(context);
+        String library_url = am.getUserData(account, Const.KEY_LIBRARY_URL);
+        Log.d(TAG, "getAuthToken> library_url=" + library_url);
+//        if (TextUtils.isEmpty(library_url)) {
+//        }
+
         String authToken = am.peekAuthToken(account, authTokenType);
         Log.d(TAG, "getAuthToken> peekAuthToken returned " + authToken);
         if (TextUtils.isEmpty(authToken)) {
@@ -55,16 +62,15 @@ public class AccountAuthenticator extends AbstractAccountAuthenticator {
             if (password != null) {
                 try {
                     Log.d(TAG, "getAuthToken> attempting to sign in with existing password");
-                    authToken = EvergreenAuthenticator.signIn(context, account.name, password);
+                    authToken = EvergreenAuthenticator.signIn(library_url, account.name, password);
                     Log.d(TAG, "getAuthToken> signIn returned token "+authToken);
                 } catch (AuthenticationException e) {
-                    Log.d(TAG, "getAuthToken> caught exception", e);
-                    Log.d(TAG, "getAuthToken> caught exception "+e.getMessage());
+                    Log.d(TAG, "getAuthToken> caught auth exception", e);
                     final Bundle result = new Bundle();
                     result.putString(AccountManager.KEY_ERROR_MESSAGE, e.getMessage());
                     return result;
                 } catch (Exception e2) {
-                    Log.d(TAG, "getAuthToken> caught other Exception");
+                    Log.d(TAG, "getAuthToken> caught exception", e2);
                     final Bundle result = new Bundle();
                     result.putString(AccountManager.KEY_ERROR_MESSAGE, "Sign in failed");
                     return result;
@@ -79,6 +85,7 @@ public class AccountAuthenticator extends AbstractAccountAuthenticator {
             result.putString(AccountManager.KEY_ACCOUNT_NAME, account.name);
             result.putString(AccountManager.KEY_ACCOUNT_TYPE, account.type);
             result.putString(AccountManager.KEY_AUTHTOKEN, authToken);
+            result.putString(Const.KEY_LIBRARY_URL, library_url);
             return result;
         }
 
