@@ -87,9 +87,7 @@ public class GatewayRequest extends HttpRequest {
                 return null;
             }
             //System.out.println("osrf: Converted object " + result);
-            Log.d(TAG, "service:" + this.service
-                    + " method:" + this.method.getName()
-                    + " result:" + new JSONObject(result).toString());
+            logRequest(this, result);
             String status = result.get("status").toString();
             if (!"200".equals(status)) {
                 failed = true;
@@ -107,6 +105,17 @@ public class GatewayRequest extends HttpRequest {
 
         readComplete = true;
         return nextResponse();
+    }
+
+    private void logRequest(GatewayRequest gatewayRequest, Map<String, ?> result) {
+        Log.d(TAG, "service:" + this.service);
+        Log.d(TAG, "method:" + this.method.getName());
+        List params = method.getParams();
+        Iterator itr = params.iterator();
+        while (itr.hasNext()) {
+            Log.d(TAG, "param:" + itr.next().toString());
+        }
+        Log.d(TAG, "result:" + new JSONObject(result).toString());
     }
 
     private String compilePostData(String service, Method method) {
