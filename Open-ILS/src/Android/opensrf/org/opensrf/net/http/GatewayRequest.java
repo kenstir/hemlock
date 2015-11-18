@@ -1,5 +1,7 @@
 package org.opensrf.net.http;
 
+import android.util.Log;
+import org.json.JSONObject;
 import org.opensrf.*;
 import org.opensrf.util.*;
 
@@ -22,6 +24,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 public class GatewayRequest extends HttpRequest {
 
     private boolean readComplete;
+    private String TAG = GatewayRequest.class.getName();
 
     public GatewayRequest(HttpConnection conn, String service, Method method) {
         super(conn, service, method);
@@ -75,15 +78,19 @@ public class GatewayRequest extends HttpRequest {
 
             Map<String,?> result = null;
 
-            System.out.println("Received " +  readBuf.toString());
+            //System.out.println("osrf: Received " +  readBuf.toString());
+            //Log.d(TAG, "received:" +  readBuf.toString());
             try {
                 result = (Map<String, ?>) new JSONReader(readBuf.toString()).readObject();
             } catch (org.opensrf.util.JSONException ex) {
                 ex.printStackTrace();
                 return null;
             }
-          System.out.println("Converted object " + result); 
-            String status = result.get("status").toString(); 
+            //System.out.println("osrf: Converted object " + result);
+            Log.d(TAG, "service:" + this.service
+                    + " method:" + this.method.getName()
+                    + " result:" + new JSONObject(result).toString());
+            String status = result.get("status").toString();
             if (!"200".equals(status)) {
                 failed = true;
                 // failure = <some new exception>
