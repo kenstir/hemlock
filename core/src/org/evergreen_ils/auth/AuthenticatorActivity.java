@@ -285,9 +285,9 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity {
     private void parseLibrariesJSON(String json) {
         libraries.clear();
 
-        boolean isDebuggable =  ( 0 != ( getApplicationInfo().flags &= ApplicationInfo.FLAG_DEBUGGABLE ) );
-        if (isDebuggable) {
-            Library library = new Library("https://demo.evergreencatalog.com", "Example Consortium", "00 (Example Consortium)");
+        if (isDebuggable()) {
+            //Library library = new Library("https://demo.evergreencatalog.com", "Example Consortium", "00 (evergreencatalog.com Example Consortium)");
+            Library library = new Library("https://mlnc4.mvlcstaff.org", "MVLC Demo", "00 (MVLC Demo)");
             libraries.add(library);
         }
 
@@ -318,5 +318,9 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity {
                 Log.d(TAG, "c["+i+"]: "+ libraries.get(i).directory_name);
             }
         }
+    }
+
+    public boolean isDebuggable() {
+        return ( 0 != ( getApplicationInfo().flags &= ApplicationInfo.FLAG_DEBUGGABLE ) );
     }
 }
