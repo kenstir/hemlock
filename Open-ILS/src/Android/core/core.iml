@@ -13,6 +13,10 @@
       <sourceFolder url="file://$MODULE_DIR$/gen" isTestSource="false" generated="true" />
       <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
     </content>
+    <content url="file://$MODULE_DIR$/../opensrf">
+      <sourceFolder url="file://$MODULE_DIR$/../opensrf/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/../opensrf/src/org/opensrf/test" isTestSource="true" />
+    </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="appcompat" exported="" />
@@ -31,15 +35,6 @@
       <library>
         <CLASSES>
           <root url="jar://$MODULE_DIR$/libs/json-20090211.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library" exported="">
-      <library>
-        <CLASSES>
-          <root url="jar://$MODULE_DIR$/libs/opensrf2_android.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
