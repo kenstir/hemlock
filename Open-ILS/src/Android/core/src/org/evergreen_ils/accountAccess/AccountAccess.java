@@ -19,29 +19,24 @@
  */
 package org.evergreen_ils.accountAccess;
 
-import java.io.IOException;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.util.*;
-
-import android.accounts.*;
 import android.app.Activity;
-import android.os.Bundle;
-import android.os.Looper;
 import android.text.TextUtils;
 import android.util.Log;
-import org.evergreen_ils.R;
 import org.evergreen_ils.accountAccess.bookbags.BookBag;
 import org.evergreen_ils.accountAccess.bookbags.BookBagItem;
 import org.evergreen_ils.accountAccess.checkout.CircRecord;
 import org.evergreen_ils.accountAccess.fines.FinesRecord;
 import org.evergreen_ils.accountAccess.holds.HoldRecord;
+import org.evergreen_ils.auth.Const;
 import org.evergreen_ils.globals.GlobalConfigs;
 import org.evergreen_ils.globals.Utils;
 import org.evergreen_ils.searchCatalog.RecordInfo;
-import org.evergreen_ils.auth.Const;
 import org.opensrf.net.http.HttpConnection;
 import org.opensrf.util.OSRFObject;
+
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.*;
 
 /**
  * The Class AuthenticateUser. Singleton class
@@ -156,8 +151,6 @@ public class AccountAccess {
     /** home library ID. */
     private Integer homeLibraryID = null;
 
-    private boolean haveSession;
-
     /** The user name. */
     public static String userName = null;
     
@@ -236,29 +229,35 @@ public class AccountAccess {
      * Retrieve session.
      * @throws SessionNotFoundException
      */
-    public boolean retrieveSession(String auth_token, boolean force) throws SessionNotFoundException {
-
-        if (!force && this.haveSession && this.authToken.equals(auth_token))
-            return true;
-        this.haveSession = false;
+    public boolean retrieveSession(String auth_token) throws SessionNotFoundException {
+        Log.d(Const.AUTH_TAG, "retrieveSession " + auth_token);
+        clearSession();
         this.authToken = auth_token;
-        
+
         Object resp = Utils.doRequest(conn(), SERVICE_AUTH,
-                METHOD_AUTH_SESSION_RETRV, authToken, new Object[] {
-                        authToken});
+                METHOD_AUTH_SESSION_RETRV, auth_token, new Object[]{
+                        auth_token});
         if (resp != null) {
             OSRFObject au = (OSRFObject) resp;
             userID = au.getInt("id");
             homeLibraryID = au.getInt("home_ou");
             userName = au.getString("usrname");
             //email = au.getString("email");
-            this.haveSession = true;
+
+            return true;
         }
-        return this.haveSession;
+        throw new SessionNotFoundException();
     }
 
-    public static boolean runningOnUIThread() {
-        return (Looper.myLooper() == Looper.getMainLooper());
+    private void clearSession() {
+        userID = null;
+        homeLibraryID = null;
+        userName = null;
+        authToken = null;
+    }
+
+    public boolean reauthenticate(Activity activity) throws SessionNotFoundException {
+        return reauthenticate(activity, userName);
     }
 
     /** invalidate current auth token and get a new one
@@ -266,38 +265,20 @@ public class AccountAccess {
      * @param activity
      * @return true if auth successful
      */
-    public boolean reauthenticate(Activity activity) throws SessionNotFoundException, AuthenticatorException, OperationCanceledException, IOException {
-        boolean ok = false;
-        final AccountManager am = AccountManager.get(activity);
-        final String accountType = activity.getString(R.string.ou_account_type);
-        final Account account = new Account(userName, accountType);
-        am.invalidateAuthToken(accountType, authToken);
-        haveSession = false;
-        authToken = null;
-        if (runningOnUIThread())
-            return false;
-        Bundle b = am.getAuthToken(account, Const.AUTHTOKEN_TYPE, null, activity, null, null).getResult();
-        final String new_authToken = b.getString(AccountManager.KEY_AUTHTOKEN);
-        if (TextUtils.isEmpty(new_authToken))
-            return false;
-        return retrieveSession(new_authToken, true);
-    }
+    public boolean reauthenticate(Activity activity, String user_name) throws SessionNotFoundException {
+        Log.d(Const.AUTH_TAG, "reauthenticate " + user_name);
+        AccountUtils.invalidateAuthToken(activity, authToken);
+        clearSession();
 
-    public static String getLibraryUrl(Activity activity, String account_name, String account_type) {
-        final AccountManager am = AccountManager.get(activity);
-        Account account = new Account(account_name, account_type);
-        String library_url = am.getUserData(account, Const.KEY_LIBRARY_URL);
-
-        // compatibility with specific apps like cwmars_app.  If no library_url exists as userdata on the account,
-        // get it from the resources.
-        if (TextUtils.isEmpty(library_url)) {
-            library_url = activity.getString(R.string.ou_library_url);
-            if (!TextUtils.isEmpty(library_url)) {
-                am.setUserData(account, Const.KEY_LIBRARY_URL, library_url);
-            }
+        try {
+            String auth_token = AccountUtils.getAuthTokenForAccount(activity, user_name);
+            if (TextUtils.isEmpty(auth_token))
+                return false;
+            return retrieveSession(auth_token);
+        } catch (Exception e) {
+            Log.i(Const.AUTH_TAG, "reauth exception", e);
+            return false;
         }
-
-        return library_url;
     }
 
 //    public void getOrgHiddentDepth() {

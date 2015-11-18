@@ -81,7 +81,6 @@ public class SplashActivity extends Activity implements LoadingTaskListener {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        Log.d(TAG, "kcxxx: oncreate");
         super.onCreate(savedInstanceState);
 
         this.mContext = this;
@@ -111,7 +110,7 @@ public class SplashActivity extends Activity implements LoadingTaskListener {
     @Override
     protected void onStart() {
         super.onStart();
-        Log.d(TAG, "kcxxx: onstart");
+        Log.d(TAG, "onstart");
         if (!restarted) {
             startTask();
         }
@@ -121,19 +120,19 @@ public class SplashActivity extends Activity implements LoadingTaskListener {
     protected void onRestart() {
         super.onRestart();
         restarted = true;
-        Log.d(TAG, "kcxxx: onrestart");
+        Log.d(TAG, "onrestart");
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        Log.d(TAG, "kcxxx: onresume");
+        Log.d(TAG, "onresume");
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        Log.d(TAG, "kcxxx: onstop");
+        Log.d(TAG, "onstop");
         if (mAlertDialog != null) {
             mAlertDialog.dismiss();
         }
@@ -141,7 +140,7 @@ public class SplashActivity extends Activity implements LoadingTaskListener {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Log.d(TAG, "kcxxx: onactivityresult: " + requestCode + " " + resultCode);
+        Log.d(TAG, "onactivityresult: " + requestCode + " " + resultCode);
     }
 
     private void startApp() {
@@ -159,7 +158,6 @@ public class SplashActivity extends Activity implements LoadingTaskListener {
 
     @Override
     public void onProgressUpdate(String value) {
-        Log.d(TAG, "onProgressUpdate> " + value);
         mProgressText.setText(value);
     }
 
@@ -167,10 +165,8 @@ public class SplashActivity extends Activity implements LoadingTaskListener {
     public void onPostExecute(String result) {
         Log.d(TAG, "onPostExecute> " + result);
         mTask = null;
-        Log.d(TAG, "progressbar...gone");
         mProgressBar.setVisibility(View.GONE);
         if (TextUtils.equals(result, LoadingTask.TASK_OK)) {
-            Log.d(TAG, "startApp");
             startApp();
         } else {
             String extra_text;
@@ -180,7 +176,6 @@ public class SplashActivity extends Activity implements LoadingTaskListener {
                 extra_text = "...Cancelled";
             Log.d(TAG, "progresstext += " + extra_text);
             mProgressText.setText(mProgressText.getText() + extra_text);
-            Log.d(TAG, "retrybutton...visible");
             mRetryButton.setVisibility(View.VISIBLE);
         }
     }

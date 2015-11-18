@@ -220,7 +220,7 @@ public class GlobalConfigs {
             });
 
             long duration_ms = System.currentTimeMillis() - start_ms;
-            Log.d("init", "getOrg took "+duration_ms+"ms");
+            Log.d(TAG, "getOrg took "+duration_ms+"ms");
             loadedOrgTree = true;
         }
     }

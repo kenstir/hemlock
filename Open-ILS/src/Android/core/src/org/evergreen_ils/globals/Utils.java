@@ -36,6 +36,7 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.evergreen_ils.accountAccess.SessionNotFoundException;
+import org.evergreen_ils.auth.Const;
 import org.opensrf.Method;
 import org.opensrf.net.http.GatewayRequest;
 import org.opensrf.net.http.HttpConnection;
@@ -159,7 +160,7 @@ public class Utils {
 
             String textcode = getResponseTextcode(resp);
             if (TextUtils.equals(textcode, "NO_SESSION")) {
-                Log.d(TAG, textcode);
+                Log.d(Const.AUTH_TAG, textcode);
                 throw new SessionNotFoundException();
             }
 
