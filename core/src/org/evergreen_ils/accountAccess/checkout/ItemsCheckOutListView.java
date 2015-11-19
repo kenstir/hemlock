@@ -49,7 +49,7 @@ import org.w3c.dom.Text;
 
 public class ItemsCheckOutListView extends ActionBarActivity {
 
-    private final String TAG = ItemsCheckOutListView.class.getName();
+    private final String TAG = ItemsCheckOutListView.class.getSimpleName();
 
     private AccountAccess accountAccess = null;
 
@@ -209,8 +209,7 @@ public class ItemsCheckOutListView extends ActionBarActivity {
                         @Override
                         public void run() {
                             boolean refresh = true;
-                            AccountAccess ac = AccountAccess
-                                    .getAccountAccess();
+                            AccountAccess ac = AccountAccess.getAccountAccess();
 
                             runOnUiThread(new Runnable() {
                                 @Override
@@ -223,6 +222,13 @@ public class ItemsCheckOutListView extends ActionBarActivity {
 
                             try {
                                 ac.renewCirc(record.getTargetCopy());
+                            } catch (SessionNotFoundException e1) {
+                                try {
+                                    if (accountAccess.reauthenticate(ItemsCheckOutListView.this))
+                                        ac.renewCirc(record.getTargetCopy());
+                                } catch (Exception eauth) {
+                                    Log.d(TAG, "Exception in reauth", eauth);
+                                }
                             } catch (MaxRenewalsException e1) {
                                 runOnUiThread(new Runnable() {
 
@@ -248,13 +254,6 @@ public class ItemsCheckOutListView extends ActionBarActivity {
                                                 Toast.LENGTH_LONG).show();
                                     }
                                 });
-                            } catch (SessionNotFoundException e1) {
-                                try {
-                                    if (accountAccess.reauthenticate(ItemsCheckOutListView.this))
-                                        ac.renewCirc(record.getTargetCopy());
-                                } catch (Exception eauth) {
-                                    Log.d(TAG, "Exception in reauth", eauth);
-                                }
                             }
                             runOnUiThread(new Runnable() {
                                 @Override
@@ -301,8 +300,8 @@ public class ItemsCheckOutListView extends ActionBarActivity {
             recordDueDate.setText(getString(R.string.due) + " " + record.getDueDate());
             recordIsOverdue.setText(record.isOverdue() ? getString(R.string.overdue) : "");
             Log.d(TAG, "title: \"" + record.getTitle() + "\""
-                    + "due: " + record.getDueDate()
-                    + "renewals:  " + record.getRenewals());
+                    + " due: " + record.getDueDate()
+                    + " renewals:  " + record.getRenewals());
 
             return row;
         }

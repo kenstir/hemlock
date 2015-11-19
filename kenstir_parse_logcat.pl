@@ -17,7 +17,7 @@ my $logcat = `adb logcat -d -v printable`;
 my @lines = split(/\r\n/, $logcat);
 foreach my $line (@lines) {
     print "line: $line\n" if $debug;
-    if ($line =~ /org.opensrf.net.http.GatewayRequest: ([^:]+):(.+)/) {
+    if ($line =~ /GatewayRequest: ([^:]+):(.+)/) {
         my($key,$val) = ($1,$2);
         if ($key eq 'result') {
             my $obj = decode_json($val);

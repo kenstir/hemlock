@@ -5,6 +5,7 @@
     <string name="ou_account_label">Evergreen Library</string>
     <string name="ou_account_sign_in_message">Sign in to your library account</string>
     <string name="ou_choose_library_label">Location:</string>
+    <string name="ou_sign_in_label">Login:</string>
     <string name="ou_account_type">org.evergreen-ils.eg_app</string>
     <string name="ou_app_label">Evergreen</string>
     <string name="ou_library_name"></string>

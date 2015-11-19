@@ -24,6 +24,7 @@ import android.net.ConnectivityManager;
 import android.provider.Settings;
 import android.text.TextUtils;
 import android.util.Log;
+import org.evergreen_ils.auth.Const;
 import org.evergreen_ils.searchCatalog.Organisation;
 import org.evergreen_ils.searchCatalog.SearchCatalog;
 import org.open_ils.idl.IDLParser;
@@ -106,6 +107,7 @@ public class GlobalConfigs {
     private boolean initialize(String library_url) {
         if (!TextUtils.equals(library_url, httpAddress)) {
             httpAddress = library_url;
+            conn = null; // must come before loadXXX()
             loadIDL();
             loadOrganizations();
             loadCopyStatusesAvailable();
