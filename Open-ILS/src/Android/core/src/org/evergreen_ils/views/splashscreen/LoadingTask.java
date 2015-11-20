@@ -26,13 +26,12 @@ import org.evergreen_ils.accountAccess.AccountUtils;
 import org.evergreen_ils.accountAccess.SessionNotFoundException;
 import org.evergreen_ils.globals.AppPrefs;
 import org.evergreen_ils.globals.GlobalConfigs;
-import org.evergreen_ils.auth.Const;
 
 import android.accounts.AccountManager;
-import android.accounts.AccountManagerFuture;
 import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
+import org.evergreen_ils.searchCatalog.Library;
 
 /** This is basically the same as an AsyncTask<String,String,String>, except that it uses
  * a Thread.  Starting with HONEYCOMB, tasks are executed on a single thread and the 2nd
@@ -52,7 +51,6 @@ public class LoadingTask {
         void onPostExecute(String result);
     }
 
-    // This is the listener that will be told when this task is finished
     private final LoadingTaskListener mListener;
     private Activity mCallingActivity;
 
@@ -102,12 +100,13 @@ public class LoadingTask {
             if (TextUtils.isEmpty(auth_token) || TextUtils.isEmpty(account_name))
                 return "no account";
 
-            String library_url = AccountUtils.getLibraryUrl(mCallingActivity, account_name, accountType);
-            AppPrefs.setString(AppPrefs.LIBRARY_URL, library_url);
+            Library library = AccountUtils.getLibrary(mCallingActivity, account_name, accountType);
+            AppPrefs.setString(AppPrefs.LIBRARY_NAME, library.short_name);
+            AppPrefs.setString(AppPrefs.LIBRARY_URL, library.url);
 
-            Log.d(TAG, tag+"Loading resources from "+library_url);
+            Log.d(TAG, tag+"Loading resources from "+library.url);
             publishProgress("Loading resources");
-            GlobalConfigs.getGlobalConfigs(mCallingActivity, library_url);
+            GlobalConfigs.getGlobalConfigs(mCallingActivity, library.url);
 
             Log.d(TAG, tag+"Starting session");
             publishProgress("Starting session");

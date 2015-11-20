@@ -50,6 +50,7 @@ public class AccountAuthenticator extends AbstractAccountAuthenticator {
         }
 
         final AccountManager am = AccountManager.get(context);
+        String library_name = am.getUserData(account, Const.KEY_LIBRARY_NAME);
         String library_url = am.getUserData(account, Const.KEY_LIBRARY_URL);
         Log.d(TAG, "getAuthToken> library_url=" + library_url);
 
@@ -83,6 +84,7 @@ public class AccountAuthenticator extends AbstractAccountAuthenticator {
             result.putString(AccountManager.KEY_ACCOUNT_NAME, account.name);
             result.putString(AccountManager.KEY_ACCOUNT_TYPE, account.type);
             result.putString(AccountManager.KEY_AUTHTOKEN, authToken);
+            result.putString(Const.KEY_LIBRARY_NAME, library_name);
             result.putString(Const.KEY_LIBRARY_URL, library_url);
             return result;
         }
