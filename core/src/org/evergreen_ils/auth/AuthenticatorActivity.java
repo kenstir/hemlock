@@ -205,6 +205,7 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity {
                     data.putString(AccountManager.KEY_ACCOUNT_TYPE, accountType);
                     data.putString(AccountManager.KEY_AUTHTOKEN, authtoken);
                     data.putString(PARAM_USER_PASS, password);
+                    data.putString(Const.KEY_LIBRARY_NAME, selected_library.short_name);
                     data.putString(Const.KEY_LIBRARY_URL, selected_library.url);
                 } catch (AuthenticationException e) {
                     if (e != null) errorMessage = e.getMessage();
@@ -260,6 +261,7 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity {
         String accountName = intent.getStringExtra(AccountManager.KEY_ACCOUNT_NAME);
         String accountType = intent.getStringExtra(AccountManager.KEY_ACCOUNT_TYPE);
         String accountPassword = intent.getStringExtra(PARAM_USER_PASS);
+        String library_name = intent.getStringExtra(Const.KEY_LIBRARY_NAME);
         String library_url = intent.getStringExtra(Const.KEY_LIBRARY_URL);
         final Account account = new Account(accountName, accountType);
         Log.d(TAG, "onAuthSuccess> accountName="+accountName);
@@ -273,6 +275,7 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity {
         Bundle userdata = null;
         if (!TextUtils.isEmpty(library_url)) {
             userdata = new Bundle();
+            userdata.putString(Const.KEY_LIBRARY_NAME, library_name);
             userdata.putString(Const.KEY_LIBRARY_URL, library_url);
         }
         if (accountManager.addAccountExplicitly(account, accountPassword, userdata)) {

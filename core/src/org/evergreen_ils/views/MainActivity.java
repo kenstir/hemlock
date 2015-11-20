@@ -16,6 +16,7 @@ import org.evergreen_ils.accountAccess.bookbags.BookbagsListView;
 import org.evergreen_ils.accountAccess.checkout.ItemsCheckOutListView;
 import org.evergreen_ils.accountAccess.fines.FinesActivity;
 import org.evergreen_ils.accountAccess.holds.HoldsListView;
+import org.evergreen_ils.globals.AppPrefs;
 import org.evergreen_ils.globals.GlobalConfigs;
 import org.evergreen_ils.searchCatalog.AdvancedSearchActivity;
 import org.evergreen_ils.searchCatalog.SearchCatalogListView;
@@ -38,6 +39,7 @@ public class MainActivity extends ActionBarActivity {
         setContentView(R.layout.activity_main);
 
         ActionBar actionBar = getSupportActionBar();
+        actionBar.setTitle(AppPrefs.getString(AppPrefs.LIBRARY_NAME));
         actionBar.setSubtitle(AccountAccess.userName);
 
         // singleton initialize necessary IDL and Org data

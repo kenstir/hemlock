@@ -8,6 +8,7 @@ import android.text.TextUtils;
 import android.util.Log;
 import org.evergreen_ils.R;
 import org.evergreen_ils.auth.Const;
+import org.evergreen_ils.searchCatalog.Library;
 import org.w3c.dom.Text;
 
 import java.io.IOException;
@@ -17,10 +18,11 @@ import java.io.IOException;
  */
 public class AccountUtils {
 
-    public static String getLibraryUrl(Activity activity, String account_name, String account_type) {
+    public static Library getLibrary(Activity activity, String account_name, String account_type) {
         final AccountManager am = AccountManager.get(activity);
         Account account = new Account(account_name, account_type);
         String library_url = am.getUserData(account, Const.KEY_LIBRARY_URL);
+        String library_name = am.getUserData(account, Const.KEY_LIBRARY_NAME);
 
         // compatibility with specific apps like cwmars_app.  If no library_url exists as userdata on the account,
         // get it from the resources.
@@ -30,8 +32,11 @@ public class AccountUtils {
                 am.setUserData(account, Const.KEY_LIBRARY_URL, library_url);
             }
         }
+        if (TextUtils.isEmpty(library_name)) {
+            library_name = activity.getString(R.string.ou_library_name);
+        }
 
-        return library_url;
+        return new Library(library_url, library_name, null);
     }
 
     public static void invalidateAuthToken(Activity activity, String auth_token) {

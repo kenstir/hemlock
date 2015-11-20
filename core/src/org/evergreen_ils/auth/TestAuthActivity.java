@@ -146,8 +146,9 @@ public class TestAuthActivity extends Activity {
             String name[] = new String[availableAccounts.length];
             for (int i = 0; i < availableAccounts.length; i++) {
                 name[i] = availableAccounts[i].name;
+                String library_name = mAccountManager.getUserData(availableAccounts[i], Const.KEY_LIBRARY_NAME);
                 String library_url = mAccountManager.getUserData(availableAccounts[i], Const.KEY_LIBRARY_URL);
-                Log.d(TAG, "name:"+name[i]+" url:"+library_url);
+                Log.d(TAG, "name:"+name[i]+" library_name:"+library_name+" url:"+library_url);
             }
 
             // Account picker
@@ -256,6 +257,7 @@ public class TestAuthActivity extends Activity {
                             bnd = future.getResult();
                             final String authtoken = bnd.getString(AccountManager.KEY_AUTHTOKEN);
                             final String account_name = bnd.getString(AccountManager.KEY_ACCOUNT_NAME);
+                            final String library_name = bnd.getString(Const.KEY_LIBRARY_NAME);
                             final String library_url = bnd.getString(Const.KEY_LIBRARY_URL);
                             showMessage((authtoken != null) ? "SUCCESS with "+account_name+"\nlibrary_url: " + library_url: "FAIL");
                             Log.d(TAG, "GetTokenForAccount Bundle is " + bnd);
