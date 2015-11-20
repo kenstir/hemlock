@@ -13,8 +13,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/ou_account_sign_in_message"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:layout_marginBottom="32dp"/>
+            android:textAppearance="?android:attr/textAppearanceLarge" />
 
     <TextView
             android:id="@+id/choose_library_label"
