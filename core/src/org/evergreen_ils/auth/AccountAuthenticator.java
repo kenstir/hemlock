@@ -52,8 +52,6 @@ public class AccountAuthenticator extends AbstractAccountAuthenticator {
         final AccountManager am = AccountManager.get(context);
         String library_url = am.getUserData(account, Const.KEY_LIBRARY_URL);
         Log.d(TAG, "getAuthToken> library_url=" + library_url);
-//        if (TextUtils.isEmpty(library_url)) {
-//        }
 
         String authToken = am.peekAuthToken(account, authTokenType);
         Log.d(TAG, "getAuthToken> peekAuthToken returned " + authToken);
