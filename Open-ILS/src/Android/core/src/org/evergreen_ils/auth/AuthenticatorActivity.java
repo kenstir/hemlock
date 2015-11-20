@@ -77,6 +77,12 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity {
         }
     }
 
+    // returns true if this is the generic app, which needs a library spinner etc.
+    private boolean isGenericApp() {
+        String library_url = getString(R.string.ou_library_url);
+        return TextUtils.isEmpty(library_url);
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -95,18 +101,23 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity {
             authTokenType = Const.AUTHTOKEN_TYPE;
         Log.d(TAG, "onCreate> authTokenType="+authTokenType);
 
-        librarySpinner = (Spinner) findViewById(R.id.choose_library_spinner);
-        librarySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                selected_library = libraries.get(position);
-            }
+        if (isGenericApp()) {
+            librarySpinner = (Spinner) findViewById(R.id.choose_library_spinner);
+            librarySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                    selected_library = libraries.get(position);
+                }
 
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-                selected_library = null;
-            }
-        });
+                @Override
+                public void onNothingSelected(AdapterView<?> parent) {
+                    selected_library = null;
+                }
+            });
+        } else {
+            selected_library = new Library(getString(R.string.ou_library_url),
+                    getString(R.string.ou_library_name), null);
+        }
 
         TextView signInText = (TextView) findViewById(R.id.account_sign_in_text);
         signInText.setText(String.format(getString(R.string.ou_account_sign_in_message),
@@ -135,7 +146,9 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity {
     protected void onStart() {
         super.onStart();
         Log.d(TAG, "onstart");
-        startTask();
+        if (isGenericApp()) {
+            startTask();
+        }
     }
 
     @Override

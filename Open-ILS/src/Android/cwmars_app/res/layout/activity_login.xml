@@ -16,26 +16,6 @@
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:layout_marginBottom="32dp"/>
 
-    <TextView
-            android:id="@+id/choose_library_label"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/ou_choose_library_label"
-            android:textAppearance="?android:attr/textAppearanceMedium" />
-
-    <Spinner
-            android:id="@+id/choose_library_spinner"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="0dp"
-            android:layout_marginBottom="32dp" />
-
-    <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/ou_sign_in_label"
-            android:textAppearance="?android:attr/textAppearanceMedium" />
-
     <EditText android:id="@+id/accountName"
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
