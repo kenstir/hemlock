@@ -4,7 +4,20 @@
     <option name="DEFAULT_COMPILER" value="Javac" />
     <excludeFromCompile>
       <file url="file://$PROJECT_DIR$/../opensrf/src/org/opensrf/util/Cache.java" />
-      <file url="file://$PROJECT_DIR$/../opensrf/src/org/opensrf/test/TestCache.java" />
+      <directory url="file://$PROJECT_DIR$/../opensrf/src/org/opensrf/net/xmpp" includeSubdirectories="true" />
+      <file url="file://$PROJECT_DIR$/../opensrf/src/org/opensrf/Stack.java" />
+      <file url="file://$PROJECT_DIR$/../opensrf/src/org/opensrf/Session.java" />
+      <file url="file://$PROJECT_DIR$/../opensrf/src/org/opensrf/Sys.java" />
+      <file url="file://$PROJECT_DIR$/../opensrf/src/org/opensrf/Request.java" />
+      <file url="file://$PROJECT_DIR$/../opensrf/src/org/opensrf/ClientSession.java" />
+      <file url="file://$PROJECT_DIR$/../opensrf/src/org/opensrf/MultiSession.java" />
+      <file url="file://$PROJECT_DIR$/../opensrf/src/org/opensrf/ServerSession.java" />
+      <file url="file://$PROJECT_DIR$/../opensrf/src/org/opensrf/util/SettingsClient.java" />
+      <file url="file://$PROJECT_DIR$/../core/src/org/open_ils/test/TestLogin.java" />
+      <file url="file://$PROJECT_DIR$/../core/src/org/open_ils/util/Utils.java" />
+      <file url="file://$PROJECT_DIR$/../core/src/org/open_ils/Sys.java" />
+      <directory url="file://$PROJECT_DIR$/../opensrf/src/org/opensrf/test" includeSubdirectories="true" />
+      <file url="file://$PROJECT_DIR$/../opensrf/src/org/opensrf/util/XMLFlattener.java" />
     </excludeFromCompile>
     <resourceExtensions />
     <wildcardResourcePatterns>
