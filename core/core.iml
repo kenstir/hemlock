@@ -12,10 +12,12 @@
     <content url="file://$MODULE_DIR$">
       <sourceFolder url="file://$MODULE_DIR$/gen" isTestSource="false" generated="true" />
       <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
+      <excludeFolder url="file://$MODULE_DIR$/src/org/open_ils/test" />
     </content>
     <content url="file://$MODULE_DIR$/../opensrf">
       <sourceFolder url="file://$MODULE_DIR$/../opensrf/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/../opensrf/src/org/opensrf/test" isTestSource="true" />
+      <excludeFolder url="file://$MODULE_DIR$/../opensrf/src/org/opensrf/test" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

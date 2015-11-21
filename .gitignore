@@ -7,5 +7,6 @@ bin/
 gen/
 kc/
 out/
+proguard_logs/
 local.properties
 proguard-project.txt
