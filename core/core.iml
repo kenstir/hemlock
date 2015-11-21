@@ -17,6 +17,7 @@
     <content url="file://$MODULE_DIR$/../opensrf">
       <sourceFolder url="file://$MODULE_DIR$/../opensrf/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/../opensrf/src/org/opensrf/test" isTestSource="true" />
+      <excludeFolder url="file://$MODULE_DIR$/../opensrf/src/org/opensrf/net/xmpp" />
       <excludeFolder url="file://$MODULE_DIR$/../opensrf/src/org/opensrf/test" />
     </content>
     <orderEntry type="inheritedJdk" />
