@@ -31,6 +31,7 @@ import org.evergreen_ils.accountAccess.MaxRenewalsException;
 import org.evergreen_ils.accountAccess.ServerErrorMessage;
 import org.evergreen_ils.accountAccess.SessionNotFoundException;
 import org.evergreen_ils.searchCatalog.SearchFormat;
+import org.evergreen_ils.utils.ui.ActionBarUtils;
 import org.evergreen_ils.views.splashscreen.SplashActivity;
 
 import android.app.ProgressDialog;
@@ -79,11 +80,7 @@ public class ItemsCheckOutListView extends ActionBarActivity {
         SearchFormat.init(this);
 
         setContentView(R.layout.checkout_list);
-
-        // set up action bar
-        ActionBar actionBar = getSupportActionBar();
-        actionBar.setSubtitle(AccountAccess.userName);
-        actionBar.setDisplayHomeAsUpEnabled(true);
+        ActionBarUtils.initActionBarForActivity(this);
 
         context = this;
         itemsNo = (TextView) findViewById(R.id.checkout_items_number);

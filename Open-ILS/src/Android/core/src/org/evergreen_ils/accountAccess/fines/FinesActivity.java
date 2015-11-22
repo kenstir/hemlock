@@ -28,6 +28,7 @@ import android.support.v7.app.ActionBarActivity;
 import org.evergreen_ils.R;
 import org.evergreen_ils.accountAccess.AccountAccess;
 import org.evergreen_ils.accountAccess.SessionNotFoundException;
+import org.evergreen_ils.utils.ui.ActionBarUtils;
 import org.evergreen_ils.views.splashscreen.SplashActivity;
 
 import android.app.Activity;
@@ -79,11 +80,7 @@ public class FinesActivity extends ActionBarActivity {
         }
 
         setContentView(R.layout.fines);
-
-        // set up action bar
-        ActionBar actionBar = getSupportActionBar();
-        actionBar.setSubtitle(AccountAccess.userName);
-        actionBar.setDisplayHomeAsUpEnabled(true);
+        ActionBarUtils.initActionBarForActivity(this);
 
         decimalFormater = new DecimalFormat("#0.00");
         lv = (ListView) findViewById(R.id.fines_overdue_materials_list);

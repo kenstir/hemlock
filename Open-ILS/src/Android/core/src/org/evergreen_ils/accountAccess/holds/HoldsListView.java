@@ -36,6 +36,7 @@ import org.evergreen_ils.accountAccess.AccountAccess;
 import org.evergreen_ils.accountAccess.SessionNotFoundException;
 import org.evergreen_ils.searchCatalog.ImageDownloader;
 import org.evergreen_ils.searchCatalog.SearchFormat;
+import org.evergreen_ils.utils.ui.ActionBarUtils;
 import org.evergreen_ils.views.splashscreen.SplashActivity;
 
 import java.util.ArrayList;
@@ -79,11 +80,7 @@ public class HoldsListView extends ActionBarActivity {
         SearchFormat.init(this);
 
         setContentView(R.layout.holds_list);
-
-        // set up action bar
-        ActionBar actionBar = getSupportActionBar();
-        actionBar.setSubtitle(AccountAccess.userName);
-        actionBar.setDisplayHomeAsUpEnabled(true);
+        ActionBarUtils.initActionBarForActivity(this);
 
         holdsNoText = (TextView) findViewById(R.id.holds_number);
 

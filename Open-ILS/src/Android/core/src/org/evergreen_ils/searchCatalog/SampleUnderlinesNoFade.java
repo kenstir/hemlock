@@ -71,11 +71,7 @@ public class SampleUnderlinesNoFade extends BaseSampleActivity {
         }
 
         setContentView(R.layout.simple_underlines);
-
-        // set up action bar
-        ActionBar actionBar = getSupportActionBar();
-        actionBar.setSubtitle(AccountAccess.userName);
-        actionBar.setDisplayHomeAsUpEnabled(true);
+        ActionBarUtils.initActionBarForActivity(this);
 
         search = SearchCatalog.getInstance();
 

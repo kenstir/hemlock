@@ -20,6 +20,7 @@ import org.evergreen_ils.globals.AppPrefs;
 import org.evergreen_ils.globals.GlobalConfigs;
 import org.evergreen_ils.searchCatalog.AdvancedSearchActivity;
 import org.evergreen_ils.searchCatalog.SearchCatalogListView;
+import org.evergreen_ils.utils.ui.ActionBarUtils;
 import org.evergreen_ils.views.splashscreen.SplashActivity;
 
 /**
@@ -37,10 +38,7 @@ public class MainActivity extends ActionBarActivity {
         }
 
         setContentView(R.layout.activity_main);
-
-        ActionBar actionBar = getSupportActionBar();
-        actionBar.setTitle(AppPrefs.getString(AppPrefs.LIBRARY_NAME));
-        actionBar.setSubtitle(AccountAccess.userName);
+        ActionBarUtils.initActionBarForActivity(this, true);
 
         // singleton initialize necessary IDL and Org data
         globalConfigs = GlobalConfigs.getGlobalConfigs(this);

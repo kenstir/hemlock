@@ -30,6 +30,7 @@ import org.evergreen_ils.accountAccess.SessionNotFoundException;
 import org.evergreen_ils.searchCatalog.RecordInfo;
 import org.evergreen_ils.searchCatalog.SearchCatalog;
 import org.evergreen_ils.searchCatalog.SearchCatalogListView;
+import org.evergreen_ils.utils.ui.ActionBarUtils;
 import org.evergreen_ils.views.splashscreen.SplashActivity;
 
 import android.app.Activity;
@@ -92,11 +93,7 @@ public class BookBagDetails extends ActionBarActivity {
         }
 
         setContentView(R.layout.bookbagitem_list);
-
-        // set up action bar
-        ActionBar actionBar = getSupportActionBar();
-        actionBar.setSubtitle(AccountAccess.userName);
-        actionBar.setDisplayHomeAsUpEnabled(true);
+        ActionBarUtils.initActionBarForActivity(this);
 
         accountAccess = AccountAccess.getAccountAccess();
         bookBag = (BookBag) getIntent().getSerializableExtra("bookBag");

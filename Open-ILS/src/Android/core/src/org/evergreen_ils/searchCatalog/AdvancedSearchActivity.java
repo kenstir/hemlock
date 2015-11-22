@@ -26,6 +26,7 @@ import android.support.v7.app.ActionBarActivity;
 import android.view.MenuItem;
 import org.evergreen_ils.R;
 import org.evergreen_ils.accountAccess.AccountAccess;
+import org.evergreen_ils.utils.ui.ActionBarUtils;
 import org.evergreen_ils.views.splashscreen.SplashActivity;
 
 import android.app.Activity;
@@ -60,11 +61,7 @@ public class AdvancedSearchActivity extends ActionBarActivity {
         }
 
         setContentView(R.layout.advanced_search);
-
-        // set up action bar
-        ActionBar actionBar = getSupportActionBar();
-        actionBar.setSubtitle(AccountAccess.userName);
-        actionBar.setDisplayHomeAsUpEnabled(true);
+        ActionBarUtils.initActionBarForActivity(this);
 
         advancedSearchFormattedText = new StringBuilder();
 
