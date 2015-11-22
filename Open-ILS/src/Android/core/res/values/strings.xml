@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <!-- Main menu button text -->
+    <!-- Main menu text -->
     <string name="menu_advanced_search">advanced search</string>
     <string name="menu_preferences">settings</string>
     <string name="menu_library_hours">library hours</string>
     <string name="menu_barcode_scan">barcode scan</string>
+    <string name="menu_switch_account">Switch account</string>
+    <string name="menu_add_account">Add account</string>
 
     <!-- Header portion -->
     <string name="my_account_button_text">My Account</string>
