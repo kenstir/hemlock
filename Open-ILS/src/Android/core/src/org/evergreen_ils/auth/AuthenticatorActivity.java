@@ -302,8 +302,8 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity {
         libraries.clear();
 
         if (isDebuggable()) {
-            //Library library = new Library("https://demo.evergreencatalog.com", "Evergreencatalog.com Demo", "0ut There, US  (evergreencatalog.com Example Consortium)");
-            Library library = new Library("http://mlnc4.mvlcstaff.org", "MVLC Demo", "0ut There, US (MVLC Example Consortium)");// SSL not working
+            Library library = new Library("https://demo.evergreencatalog.com", "evergreencatalog.com Demo", "0ut There, US  (evergreencatalog.com Demo)");
+            //Library library = new Library("http://mlnc4.mvlcstaff.org", "MVLC Demo", "0ut There, US (MVLC Demo)");// SSL not working
             libraries.add(library);
         }
 
