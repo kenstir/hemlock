@@ -73,6 +73,25 @@ public class AccountUtils {
         return bnd;
     }
 
+    public static void addAccount(final Activity activity, final Runnable runnable) {
+        Log.i(Const.AUTH_TAG, "addAccount");
+        final AccountManager am = AccountManager.get(activity);
+        final String accountType = activity.getString(R.string.ou_account_type);
+        am.addAccount(accountType, Const.AUTHTOKEN_TYPE, null, null, activity, new AccountManagerCallback<Bundle>() {
+            @Override
+            public void run(AccountManagerFuture<Bundle> future) {
+                try {
+                    Bundle bnd = future.getResult();
+                    final String account_name = bnd.getString(AccountManager.KEY_ACCOUNT_NAME);
+                    Log.i(Const.AUTH_TAG, "added account bnd=" + bnd);
+                    activity.runOnUiThread(runnable);
+                } catch (Exception e) {
+                    Log.i(Const.AUTH_TAG, "failed to add account", e);
+                }
+            }
+        }, null);
+    }
+
     public static boolean runningOnUIThread() {
         return (Looper.myLooper() == Looper.getMainLooper());
     }
