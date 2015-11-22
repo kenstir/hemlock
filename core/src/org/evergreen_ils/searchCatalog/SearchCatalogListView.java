@@ -31,6 +31,7 @@ import org.evergreen_ils.accountAccess.bookbags.BookBag;
 import org.evergreen_ils.accountAccess.holds.PlaceHold;
 import org.evergreen_ils.barcodescan.CaptureActivity;
 import org.evergreen_ils.globals.GlobalConfigs;
+import org.evergreen_ils.utils.ui.ActionBarUtils;
 import org.evergreen_ils.utils.ui.CompatSpinnerAdapter;
 import org.evergreen_ils.views.splashscreen.SplashActivity;
 
@@ -132,11 +133,7 @@ public class SearchCatalogListView extends ActionBarActivity {
         SearchFormat.init(this);
 
         setContentView(R.layout.search_result_list);
-
-        // set up action bar
-        ActionBar actionBar = getSupportActionBar();
-        actionBar.setSubtitle(AccountAccess.userName);
-        actionBar.setDisplayHomeAsUpEnabled(true);
+        ActionBarUtils.initActionBarForActivity(this);
 
         // get bookbags
         bookBags = AccountAccess.getAccountAccess().getBookbags();
