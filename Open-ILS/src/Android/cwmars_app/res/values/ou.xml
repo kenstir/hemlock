@@ -9,5 +9,6 @@
     <string name="ou_account_type">org.cwmars</string>
     <string name="ou_app_label">C/W MARS</string>
     <string name="ou_library_name">C/W MARS</string>
+    <string name="ou_activity_subtitle">%2$s</string>
     <string name="ou_library_url">https://bark.cwmars.org</string>
 </resources>

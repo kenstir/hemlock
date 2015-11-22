@@ -15,6 +15,8 @@
     <string name="ou_app_label">Evergreen</string>
     <!-- library name displayed in the app bar -->
     <string name="ou_library_name">EXAMPLE</string>
+    <!-- subtitle displayed in the app bar -->
+    <string name="ou_activity_subtitle">%1$s - %2$s</string>
     <!-- OPAC URL -->
     <string name="ou_library_url">https://demo.evergreencatalog.com</string>
 </resources>
