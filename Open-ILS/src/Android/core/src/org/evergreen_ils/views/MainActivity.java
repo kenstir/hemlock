@@ -31,6 +31,7 @@ import org.evergreen_ils.views.splashscreen.SplashActivity;
  */
 public class MainActivity extends ActionBarActivity {
 
+    private static String TAG = MainActivity.class.getSimpleName();
     private GlobalConfigs globalConfigs;
 
     public void onCreate(Bundle savedInstanceState) {
@@ -52,6 +53,13 @@ public class MainActivity extends ActionBarActivity {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_main, menu);
         return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu (Menu menu) {
+        Log.d(TAG, "onPrepareOptionsMenu");
+        menu.getItem(0).setEnabled(AccountUtils.haveMoreThanOneAccount(this));
+        return true;
     }
 
     @Override
