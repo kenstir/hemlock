@@ -73,6 +73,18 @@ public class AccountUtils {
         return bnd;
     }
 
+    public static Account[] getAccountsByType(Activity activity) {
+        final AccountManager am = AccountManager.get(activity);
+        final String accountType = activity.getString(R.string.ou_account_type);
+        final Account availableAccounts[] = am.getAccountsByType(accountType);
+        return availableAccounts;
+    }
+
+    public static boolean haveMoreThanOneAccount(Activity activity) {
+        Account availableAccounts[] = getAccountsByType(activity);
+        return availableAccounts.length > 1;
+    }
+
     public static void addAccount(final Activity activity, final Runnable runnable) {
         Log.i(Const.AUTH_TAG, "addAccount");
         final AccountManager am = AccountManager.get(activity);
