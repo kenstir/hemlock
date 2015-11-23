@@ -97,6 +97,8 @@ public class SplashActivity extends Activity implements LoadingTaskListener {
                 startTask();
             }
         });
+
+        startTask();
     }
 
     protected void startTask() {
@@ -107,6 +109,7 @@ public class SplashActivity extends Activity implements LoadingTaskListener {
         mTask.execute();
     }
 
+    /*
     @Override
     protected void onStart() {
         super.onStart();
@@ -115,19 +118,24 @@ public class SplashActivity extends Activity implements LoadingTaskListener {
             startTask();
         }
     }
+    */
 
+    /*
     @Override
     protected void onRestart() {
         super.onRestart();
         restarted = true;
         Log.d(TAG, "onrestart");
     }
+    */
 
+    /*
     @Override
     protected void onResume() {
         super.onResume();
         Log.d(TAG, "onresume");
     }
+    */
 
     @Override
     protected void onStop() {
