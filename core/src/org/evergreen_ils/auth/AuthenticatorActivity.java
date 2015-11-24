@@ -2,6 +2,8 @@ package org.evergreen_ils.auth;
 
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
+import android.location.Location;
+import android.location.LocationManager;
 import android.text.TextUtils;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -20,6 +22,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
+import org.evergreen_ils.accountAccess.AccountUtils;
 import org.evergreen_ils.globals.AppPrefs;
 import org.evergreen_ils.globals.Utils;
 import org.evergreen_ils.searchCatalog.Library;
@@ -57,8 +60,9 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity {
             String url = params[0];
             String result = null;
             try {
-                Log.d(TAG, "fetching "+url);
+                Log.d(TAG, "fetching " + url);
                 result = Utils.getNetPageContent(url);
+                //todo move json parsing to doInBackground
             } catch (Exception e) {
                 Log.d(TAG, "error fetching", e);
             }
@@ -66,14 +70,48 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity {
         }
 
         protected void onPostExecute(String result) {
-            Log.d(TAG, "results available: "+result);
+            Log.d(TAG, "results available: " + result);
+
+            // parse the response
             parseLibrariesJSON(result);
+
+            // if the user has any existing accounts, then we can select a reasonable default library
+            Library default_library = null;
+            Location last_location = null;
+            Account[] existing_accounts = AccountUtils.getAccountsByType(AuthenticatorActivity.this);
+            Log.d(Const.AUTH_TAG, "there are " + existing_accounts.length + " existing accounts");
+            if (existing_accounts.length > 0) {
+                default_library = AccountUtils.getLibraryForAccount(AuthenticatorActivity.this, existing_accounts[0]);
+                Log.d(Const.AUTH_TAG, "default_library=" + default_library);
+            } else {
+                LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+                if (lm != null) last_location = lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+            }
+
+            // Build a List<String> for use in the spinner adapter
+            // While we're at it choose a default library; first by prior account, second by proximity
+            Integer default_library_index = null;
+            float min_distance = Float.MAX_VALUE;
             ArrayList<String> l = new ArrayList<String>(libraries.size());
             for (Library library : libraries) {
+                if (default_library != null && TextUtils.equals(default_library.url, library.url)) {
+                    default_library_index = l.size();
+                } else if (last_location != null && library.location != null) {
+                    float distance = last_location.distanceTo(library.location);
+                    if (distance < min_distance) {
+                        default_library_index = l.size();
+                        min_distance = distance;
+                    }
+                }
                 l.add(library.directory_name);
             }
             ArrayAdapter<String> adapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_dropdown_item, l);
             librarySpinner.setAdapter(adapter);
+            if (default_library_index != null) {
+                librarySpinner.setSelection(default_library_index);
+            } else {
+                librarySpinner.setSelected(false);
+            }
         }
     }
 
@@ -95,11 +133,11 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity {
         libraries_directory_json_url = getString(R.string.evergreen_libraries_url);
 
         String accountName = getIntent().getStringExtra(ARG_ACCOUNT_NAME);
-        Log.d(TAG, "onCreate> accountName="+accountName);
+        Log.d(TAG, "onCreate> accountName=" + accountName);
         authTokenType = getIntent().getStringExtra(ARG_AUTH_TYPE);
         if (authTokenType == null)
             authTokenType = Const.AUTHTOKEN_TYPE;
-        Log.d(TAG, "onCreate> authTokenType="+authTokenType);
+        Log.d(TAG, "onCreate> authTokenType=" + authTokenType);
 
         if (isGenericApp()) {
             librarySpinner = (Spinner) findViewById(R.id.choose_library_spinner);
@@ -115,8 +153,7 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity {
                 }
             });
         } else {
-            selected_library = new Library(getString(R.string.ou_library_url),
-                    getString(R.string.ou_library_name), null);
+            selected_library = new Library(getString(R.string.ou_library_url), getString(R.string.ou_library_name));
         }
 
         TextView signInText = (TextView) findViewById(R.id.account_sign_in_text);
@@ -135,7 +172,7 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity {
                 });
 
         if (savedInstanceState != null) {
-            Log.d(TAG, "onCreate> savedInstanceState="+savedInstanceState);
+            Log.d(TAG, "onCreate> savedInstanceState=" + savedInstanceState);
             if (savedInstanceState.getString(STATE_ALERT_MESSAGE) != null) {
                 showAlert(savedInstanceState.getString(STATE_ALERT_MESSAGE));
             }
@@ -170,7 +207,7 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Log.d(TAG, "onActivityResult> requestCode="+requestCode+" resultCode="+resultCode);
+        Log.d(TAG, "onActivityResult> requestCode=" + requestCode + " resultCode=" + resultCode);
         // The sign up activity returned that the user has successfully created
         // an account
         if (requestCode == REQ_SIGNUP && resultCode == RESULT_OK) {
@@ -199,20 +236,20 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity {
                 Bundle data = new Bundle();
                 try {
                     authtoken = EvergreenAuthenticator.signIn(selected_library.url, username, password);
-                    Log.d(TAG, "task> signIn returned "+authtoken);
+                    Log.d(TAG, "task> signIn returned " + authtoken);
 
                     data.putString(AccountManager.KEY_ACCOUNT_NAME, username);
                     data.putString(AccountManager.KEY_ACCOUNT_TYPE, accountType);
                     data.putString(AccountManager.KEY_AUTHTOKEN, authtoken);
                     data.putString(PARAM_USER_PASS, password);
-                    data.putString(Const.KEY_LIBRARY_NAME, selected_library.short_name);
+                    data.putString(Const.KEY_LIBRARY_NAME, selected_library.name);
                     data.putString(Const.KEY_LIBRARY_URL, selected_library.url);
                 } catch (AuthenticationException e) {
                     if (e != null) errorMessage = e.getMessage();
-                    Log.d(TAG, "task> signIn caught auth exception "+errorMessage);
+                    Log.d(TAG, "task> signIn caught auth exception " + errorMessage);
                 } catch (Exception e2) {
                     if (e2 != null) errorMessage = e2.getMessage();
-                    Log.d(TAG, "task> signIn caught other exception "+errorMessage);
+                    Log.d(TAG, "task> signIn caught other exception " + errorMessage);
                 }
                 if (authtoken == null)
                     data.putString(KEY_ERROR_MESSAGE, errorMessage);
@@ -225,9 +262,9 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity {
             @Override
             protected void onPostExecute(Intent intent) {
                 task = null;
-                Log.d(TAG, "task.onPostExecute> intent="+intent);
+                Log.d(TAG, "task.onPostExecute> intent=" + intent);
                 if (intent.hasExtra(KEY_ERROR_MESSAGE)) {
-                    Log.d(TAG, "task.onPostExecute> error msg: "+intent.getStringExtra(KEY_ERROR_MESSAGE));
+                    Log.d(TAG, "task.onPostExecute> error msg: " + intent.getStringExtra(KEY_ERROR_MESSAGE));
                     onAuthFailure(intent.getStringExtra(KEY_ERROR_MESSAGE));
                 } else {
                     Log.d(TAG, "task.onPostExecute> no error msg");
@@ -240,7 +277,7 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity {
     protected void onAuthFailure(String errorMessage) {
         showAlert(errorMessage);
     }
-    
+
     protected void showAlert(String errorMessage) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         alertMessage = errorMessage;
@@ -264,10 +301,10 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity {
         String library_name = intent.getStringExtra(Const.KEY_LIBRARY_NAME);
         String library_url = intent.getStringExtra(Const.KEY_LIBRARY_URL);
         final Account account = new Account(accountName, accountType);
-        Log.d(TAG, "onAuthSuccess> accountName="+accountName);
+        Log.d(TAG, "onAuthSuccess> accountName=" + accountName);
 
         //if (getIntent().getBooleanExtra(ARG_IS_ADDING_NEW_ACCOUNT, false))
-        Log.d(TAG, "onAuthSuccess> addAccountExplicitly "+accountName);
+        Log.d(TAG, "onAuthSuccess> addAccountExplicitly " + accountName);
         String authtoken = intent.getStringExtra(AccountManager.KEY_AUTHTOKEN);
         String authtokenType = authTokenType;
 
@@ -279,7 +316,7 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity {
             userdata.putString(Const.KEY_LIBRARY_URL, library_url);
         }
         if (accountManager.addAccountExplicitly(account, accountPassword, userdata)) {
-            Log.d(TAG, "onAuthSuccess> true, setAuthToken "+authtoken);
+            Log.d(TAG, "onAuthSuccess> true, setAuthToken " + authtoken);
             // Not setting the auth token will cause another call to the server
             // to authenticate the user
             accountManager.setAuthToken(account, authtokenType, authtoken);
@@ -302,15 +339,15 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity {
         libraries.clear();
 
         if (isDebuggable()) {
-            Library library = new Library("https://demo.evergreencatalog.com", "evergreencatalog.com Demo", "0ut There, US  (evergreencatalog.com Demo)");
-            //Library library = new Library("http://mlnc4.mvlcstaff.org", "MVLC Demo", "0ut There, US (MVLC Demo)");// SSL not working
+            Library library = new Library("https://demo.evergreencatalog.com", "evergreencatalog.com Demo", "0ut There, US  (evergreencatalog.com Demo)", null);
+            //Library library = new Library("http://mlnc4.mvlcstaff.org", "MVLC Demo", "0ut There, US (MVLC Demo)", null);// SSL not working
             libraries.add(library);
         }
 
         if (json != null) {
-            List<Map<String,?>> l;
+            List<Map<String, ?>> l;
             try {
-                l = (List<Map<String,?>>) new JSONReader(json).readArray();
+                l = (List<Map<String, ?>>) new JSONReader(json).readArray();
             } catch (JSONException e) {
                 Log.d(TAG, "failed parsing libraries array", e);
                 return;
@@ -319,7 +356,12 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity {
                 String url = (String) map.get("url");
                 String directory_name = (String) map.get("directory_name");
                 String short_name = (String) map.get("short_name");
-                Library library = new Library(url, short_name, directory_name);
+                Double latitude = (Double) map.get("latitude");
+                Double longitude= (Double) map.get("longitude");
+                Location location = new Location("");
+                location.setLatitude(latitude);
+                location.setLongitude(longitude);
+                Library library = new Library(url, short_name, directory_name, location);
                 libraries.add(library);
             }
 
@@ -330,13 +372,13 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity {
                 }
             });
 
-            for (int i = 0; i< libraries.size(); ++i) {
-                Log.d(TAG, "c["+i+"]: "+ libraries.get(i).directory_name);
+            for (int i = 0; i < libraries.size(); ++i) {
+                Log.d(TAG, "c[" + i + "]: " + libraries.get(i).directory_name);
             }
         }
     }
 
     public boolean isDebuggable() {
-        return ( 0 != ( getApplicationInfo().flags &= ApplicationInfo.FLAG_DEBUGGABLE ) );
+        return (0 != (getApplicationInfo().flags &= ApplicationInfo.FLAG_DEBUGGABLE));
     }
 }

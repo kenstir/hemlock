@@ -1,5 +1,6 @@
 package org.evergreen_ils.searchCatalog;
 
+import android.location.Location;
 import android.text.TextUtils;
 
 /** value class
@@ -7,11 +8,16 @@ import android.text.TextUtils;
  */
 public class Library {
     public String url;            // e.g. "https://catalog.cwmars.org"
-    public String short_name;     // e.g. "C/W MARS"
+    public String name;           // e.g. "C/W MARS"
     public String directory_name; // e.g. "Massachusetts, US (C/W MARS)"
-    public Library(String url, String short_name, String directory_name) {
+    public Location location;
+    public Library(String url, String name, String directory_name, Location location) {
         this.url = url;
-        this.short_name = short_name;
+        this.name = name;
         this.directory_name = directory_name;
+        this.location = location;
+    }
+    public Library(String url, String name) {
+        this(url, name, null, null);
     }
 }

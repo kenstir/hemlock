@@ -69,6 +69,7 @@ public class MainActivity extends ActionBarActivity {
             SplashActivity.restartApp(this);
             return true;
         } else if (id == R.id.action_add_account) {
+            invalidateOptionsMenu();
             AccountUtils.addAccount(this, new Runnable() {
                 @Override
                 public void run() {
