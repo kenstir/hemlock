@@ -2,13 +2,14 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           package="net.kenstir.apps.hemlock"
           android:installLocation="auto"
-          android:versionCode="3"
+          android:versionCode="4"
           android:versionName="1.0">
 
     <uses-sdk
         android:minSdkVersion="15"
         android:targetSdkVersion="19" />
 
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS" />
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />

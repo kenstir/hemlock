@@ -100,8 +100,8 @@ public class LoadingTask {
             if (TextUtils.isEmpty(auth_token) || TextUtils.isEmpty(account_name))
                 return "no account";
 
-            Library library = AccountUtils.getLibrary(mCallingActivity, account_name, accountType);
-            AppPrefs.setString(AppPrefs.LIBRARY_NAME, library.short_name);
+            Library library = AccountUtils.getLibraryForAccount(mCallingActivity, account_name, accountType);
+            AppPrefs.setString(AppPrefs.LIBRARY_NAME, library.name);
             AppPrefs.setString(AppPrefs.LIBRARY_URL, library.url);
 
             Log.d(TAG, tag+"Loading resources from "+library.url);

@@ -18,7 +18,7 @@ import java.io.IOException;
  */
 public class AccountUtils {
 
-    public static Library getLibrary(Activity activity, String account_name, String account_type) {
+    public static Library getLibraryForAccount(Activity activity, String account_name, String account_type) {
         final AccountManager am = AccountManager.get(activity);
         Account account = new Account(account_name, account_type);
         String library_url = am.getUserData(account, Const.KEY_LIBRARY_URL);
@@ -36,7 +36,11 @@ public class AccountUtils {
             library_name = activity.getString(R.string.ou_library_name);
         }
 
-        return new Library(library_url, library_name, null);
+        return new Library(library_url, library_name);
+    }
+
+    public static Library getLibraryForAccount(Activity activity, Account account) {
+        return getLibraryForAccount(activity, account.name, account.type);
     }
 
     public static void invalidateAuthToken(Activity activity, String auth_token) {
