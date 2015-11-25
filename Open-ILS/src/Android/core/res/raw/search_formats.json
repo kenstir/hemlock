@@ -1,7 +1,7 @@
 [
   {"l":"All Formats", "f":""},
   {"l":"All Books", "f":"book", "L":"Book"},
-  {"l":"All Music", "f":"music"},
+  {"l":"All Music", "f":"music", "L":"Music"},
   {"l":"Audiocassette music recording", "f":"casmusic", "h":1},
   {"l":"Blu-ray", "f":"blu-ray"},
   {"l":"Braille", "f":"braille", "h":1},
