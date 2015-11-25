@@ -51,6 +51,7 @@ public class GatewayRequest extends HttpRequest {
         } catch (java.io.IOException ex) {
             failed = true;
             failure = ex;
+            Log.d(TAG, "caught exception", ex);
         }
 
         return this;
@@ -101,6 +102,7 @@ public class GatewayRequest extends HttpRequest {
         } catch (java.io.IOException ex) { 
             failed = true;
             failure = ex;
+            Log.d(TAG, "caught exception", ex);
         }
 
         readComplete = true;
@@ -139,7 +141,7 @@ public class GatewayRequest extends HttpRequest {
             // not using URLEncoder because it replaces ' ' with '+'.
             uri = new URI("http", "", null, postData.toString(), null);
         } catch (java.net.URISyntaxException ex) {
-            ex.printStackTrace(); 
+            Log.d(TAG, "caught exception", ex);
         }
 
         return uri.getRawQuery();

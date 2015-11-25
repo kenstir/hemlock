@@ -69,7 +69,7 @@ public class EvergreenAuthenticator {
     
     @SuppressWarnings("unchecked")
     public static String signIn(String library_url, String username, String password) throws AuthenticationException {
-        Log.d(TAG, "signIn> "+username);
+        Log.d(TAG, "signIn> "+username+" "+library_url);
 
         HttpConnection conn;
         try {
