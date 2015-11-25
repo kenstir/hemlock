@@ -340,8 +340,8 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity {
         libraries.clear();
 
         if (isDebuggable()) {
-            //Library library = new Library("https://demo.evergreencatalog.com", "evergreencatalog.com Demo", "0ut There, US  (evergreencatalog.com Demo)", null);
-            Library library = new Library(cleartextHack("https://mlnc4.mvlcstaff.org"), "MVLC Demo", "0ut There, US (MVLC Demo)", null);// SSL not working
+            Library library = new Library("https://demo.evergreencatalog.com", "evergreencatalog.com Demo", "0ut There, US  (evergreencatalog.com Demo)", null);
+            //Library library = new Library("http://mlnc4.mvlcstaff.org"), "MVLC Demo", "0ut There, US (MVLC Demo)", null);// Android does not like this cert
             libraries.add(library);
         }
 
@@ -355,7 +355,6 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity {
             }
             for (Map<String, ?> map : l) {
                 String url = (String) map.get("url");
-                url = cleartextHack(url);
                 String directory_name = (String) map.get("directory_name");
                 String short_name = (String) map.get("short_name");
                 Double latitude = (Double) map.get("latitude");
@@ -378,21 +377,6 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity {
                 Log.d(TAG, "c[" + i + "]: " + libraries.get(i).directory_name);
             }
         }
-    }
-
-    private String cleartextHack(String url) {
-        // fixes SSL issue with gapines and other sites
-        if (TextUtils.equals(url, "https://gapines.org")
-            || TextUtils.equals(url, "https://mlnc4.mvlcstaff.org"))
-        {
-            try {
-                String new_url = url.replaceFirst("^https:", "http:");
-                return new_url;
-            } catch (Exception e) {
-                Log.d(TAG, "caught", e);
-            }
-        }
-        return url;
     }
 
     public boolean isDebuggable() {
