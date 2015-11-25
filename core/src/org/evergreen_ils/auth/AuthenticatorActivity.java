@@ -110,8 +110,6 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity {
             librarySpinner.setAdapter(adapter);
             if (default_library_index != null) {
                 librarySpinner.setSelection(default_library_index);
-            } else {
-                librarySpinner.setSelected(false);
             }
         }
     }
