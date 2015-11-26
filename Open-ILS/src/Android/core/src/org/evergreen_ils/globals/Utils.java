@@ -127,6 +127,16 @@ public class Utils {
         return textcode;
     }
 
+    private static void handleNPE(NullPointerException e, String service, String methodName) {
+        // I know it's bad form to catch NPE.  But until I implement some kind of on-demand IDL parsing,
+        // this is what happens when the JSONReader tries to parse a response of an unregistered class.
+        // Crash if debugMode, fail if not.
+        Log.d(TAG, "NPE...unregistered type from service "+service+" method "+methodName, e);
+        if (GlobalConfigs.isDebugMode()) {
+            throw(e);
+        }
+    }
+
     public static Object doRequest(HttpConnection conn, String service,
                                    String methodName, String authToken,
                                    Object[] params) throws SessionNotFoundException {
@@ -146,13 +156,7 @@ public class Utils {
         try {
             resp = req.recv();
         } catch (NullPointerException e) {
-            // I know it's bad form to catch NPE.  But until I implement some kind of on-demand IDL parsing,
-            // this is what happens when the JSONReader tries to parse a response of an unregistered class.
-            // Crash if debugMode, fail if not.
-            Log.d(TAG, "NPE...unregistered type?", e);
-            if (GlobalConfigs.isDebugMode()) {
-                throw(e);
-            }
+            handleNPE(e, service, methodName);
         }
         if (resp != null) {
             Log.d(TAG, "Sync Response: " + resp);
@@ -187,12 +191,15 @@ public class Utils {
         HttpRequest req = new GatewayRequest(conn, service, method).send();
         Object resp;
 
-        while ((resp = req.recv()) != null) {
-            Log.d(TAG, "Sync Response: " + resp);
-            Object response = (Object) resp;
+        try {
+            while ((resp = req.recv()) != null) {
+                Log.d(TAG, "Sync Response: " + resp);
+                Object response = (Object) resp;
 
-            return response;
-
+                return response;
+            }
+        } catch (NullPointerException e) {
+            handleNPE(e, service, methodName);
         }
         return null;
     }

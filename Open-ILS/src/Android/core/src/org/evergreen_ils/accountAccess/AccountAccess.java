@@ -69,6 +69,8 @@ public class AccountAccess {
     /** The METHOD_FETCH_MODS_FROM_COPY description : used to return info. @returns : mvr class OSRF Object. Fields of interest : title, author */
     public static String METHOD_FETCH_MODS_FROM_COPY = "open-ils.search.biblio.mods_from_copy";
 
+    public static String METHOD_ORG_TREE_RETRIEVE = "open-ils.actor.org_tree.retrieve";
+
     /** The METHOD_FETCH_COPY description : used to return info for a PRE_CATALOGED object. @returns : acp class OSRF Object. Fields of interest : dummy_title, dummy_author */
     public static String METHOD_FETCH_COPY = "open-ils.search.asset.copy.retrieve";
     
@@ -281,22 +283,6 @@ public class AccountAccess {
         }
     }
 
-//    public void getOrgHiddentDepth() {
-//
-//        // logic can be found in the opac_utils.js file in web/opac/common/js
-//
-//        for (int i = 0; i < organisations.size(); i++) {
-//            AccountAccess ac = AccountAccess.getAccountAccess();
-//            try {
-//                Object obj = ac.fetchOrgSettings(organisations.get(i).id,
-//                        "opac.org_unit_hiding.depth");
-//            } catch (SessionNotFoundException e) {
-//            }
-//
-//        }
-//
-//    }
-
     // ------------------------Checked Out Items Section
     // -------------------------//
 
@@ -443,8 +429,14 @@ public class AccountAccess {
         if (id.equals("-1"))
             return "";
 
-        OSRFObject resp = (OSRFObject) Utils.doRequestSimple(conn(), PCRUD_SERVICE,
-                PCRUD_METHOD_RETRIEVE_MRA, new Object[] { "ANONYMOUS", id });
+        OSRFObject resp;
+        try {
+            resp = (OSRFObject) Utils.doRequest(conn(), PCRUD_SERVICE,
+                    PCRUD_METHOD_RETRIEVE_MRA, authToken, new Object[]{
+                            authToken, id});
+        } catch (SessionNotFoundException e) {
+            return "";
+        }
 
         // This is not beautiful.  This MRA record comes back with an 'attrs' field that
         // appears to have been serialized by perl Data::Dumper, e.g.
@@ -517,8 +509,20 @@ public class AccountAccess {
 
     }
 
-    // ------------------------Holds Section
+    // ------------------------orgs Section
     // --------------------------------------//
+
+    public OSRFObject fetchOrgs() {
+        OSRFObject response = (OSRFObject) Utils.doRequest(conn(), SERVICE_ACTOR,
+                METHOD_ORG_TREE_RETRIEVE, new Object[]{});
+        try {
+            //List<OSRFObject> l = (List<OSRFObject>) response;
+            Log.d(TAG, "response="+response);
+        } catch (Exception e) {
+            Log.d(TAG, "caught exception", e);
+        }
+        return response;
+    }
 
     /**
      * Fetch org settings.
@@ -528,15 +532,33 @@ public class AccountAccess {
      * @return the object
      * @throws SessionNotFoundException the session not found exception
      */
-    public Object fetchOrgSettings(Integer org_id, String setting)
-            throws SessionNotFoundException {
+//    public OSRFObject fetchOrgSettings(Integer org_id, String setting)
+//            throws SessionNotFoundException {
+//
+//        OSRFObject response = (OSRFObject) Utils.doRequest(conn(), SERVICE_ACTOR,
+//                METHOD_FETCH_ORG_SETTINGS, new Object[]{
+//                        org_id, setting});
+//        return response;
+//    }
 
-        OSRFObject response = (OSRFObject) Utils.doRequest(conn(), SERVICE_ACTOR,
-                METHOD_FETCH_ORG_SETTINGS, new Object[] {
-                        org_id, setting });
-        return response;
+//    public void getOrgHiddentDepth() {
+//
+//        // logic can be found in the opac_utils.js file in web/opac/common/js
+//
+//        for (int i = 0; i < organisations.size(); i++) {
+//            AccountAccess ac = AccountAccess.getAccountAccess();
+//            try {
+//                Object obj = ac.fetchOrgSettings(organisations.get(i).id,
+//                        "opac.org_unit_hiding.depth");
+//            } catch (SessionNotFoundException e) {
+//            }
+//
+//        }
+//
+//    }
 
-    }
+    // ------------------------Holds Section
+    // --------------------------------------//
 
     /**
      * Gets the holds.
