@@ -80,11 +80,11 @@ public class GatewayRequest extends HttpRequest {
             Map<String,?> result = null;
 
             //System.out.println("osrf: Received " +  readBuf.toString());
-            //Log.d(TAG, "received:" +  readBuf.toString());
+            Log.d(TAG, "received:" +  readBuf.toString());
             try {
                 result = (Map<String, ?>) new JSONReader(readBuf.toString()).readObject();
             } catch (org.opensrf.util.JSONException ex) {
-                ex.printStackTrace();
+                Log.d(TAG, "caught", ex);
                 return null;
             }
             //System.out.println("osrf: Converted object " + result);
@@ -99,6 +99,7 @@ public class GatewayRequest extends HttpRequest {
              responseList = (List) result.get("payload"); 
 
             // System.out.println("Response list : " + responseList);
+            Log.d(TAG, "responseList:"+responseList);
         } catch (java.io.IOException ex) { 
             failed = true;
             failure = ex;
