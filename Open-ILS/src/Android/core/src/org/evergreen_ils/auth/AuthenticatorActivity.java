@@ -337,7 +337,7 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity {
     private void parseLibrariesJSON(String json) {
         libraries.clear();
 
-        if (isDebuggable()) {
+        if (isDebuggable(this)) {
             Library library = new Library("https://demo.evergreencatalog.com", "evergreencatalog.com Demo", "0ut There, US  (evergreencatalog.com Demo)", null);
             //Library library = new Library("http://mlnc4.mvlcstaff.org"), "MVLC Demo", "0ut There, US (MVLC Demo)", null);// Android does not like this cert
             libraries.add(library);
@@ -377,7 +377,7 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity {
         }
     }
 
-    public boolean isDebuggable() {
-        return (0 != (getApplicationInfo().flags &= ApplicationInfo.FLAG_DEBUGGABLE));
+    public static boolean isDebuggable(Context context) {
+        return (0 != (context.getApplicationInfo().flags &= ApplicationInfo.FLAG_DEBUGGABLE));
     }
 }
