@@ -50,14 +50,6 @@ public class SearchCatalog {
     public static String METHOD_SLIM_RETRIVE = "open-ils.search.biblio.record.mods_slim.retrieve";
 
     /**
-     * Method
-     * 
-     * @param : no parameters
-     * @returns : returns array of ccs objects
-     */
-    public static String METHOD_COPY_STATUS_ALL = "open-ils.search.config.copy_status.retrieve.all";
-
-    /**
      * Method that returns library where record with id is
      * 
      * @param : record ID to get all libraries, or just book ID, Current Library
@@ -74,7 +66,7 @@ public class SearchCatalog {
      * Get copy statuses like Available, Checked_out , in_progress and others,
      * ccs OSRFObjects
      */
-    public static String METHOD_GET_COPY_STATUSES = "open-ils.search.config.copy_status.retrieve.all";
+    public static String METHOD_COPY_STATUS_ALL = "open-ils.search.config.copy_status.retrieve.all";
 
     /**
      * Get copy count information
