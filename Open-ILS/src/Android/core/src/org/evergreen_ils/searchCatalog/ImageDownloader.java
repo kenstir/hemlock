@@ -206,7 +206,7 @@ public class ImageDownloader {
         final HttpClient client = (mode == Mode.NO_ASYNC_TASK) ? new DefaultHttpClient()
                 : AndroidHttpClient.newInstance("Android");
 
-        //Log.d(LOG_TAG, url + " GET");
+        Log.d(LOG_TAG, "GET " + url);
         HttpGet getRequest = null;
         try {
             getRequest = new HttpGet(url);
@@ -221,7 +221,7 @@ public class ImageDownloader {
             HttpResponse response = client.execute(getRequest);
             final int statusCode = response.getStatusLine().getStatusCode();
             if (statusCode != HttpStatus.SC_OK) {
-                Log.w(LOG_TAG, "Error " + statusCode + " while retrieving bitmap from " + url);
+                Log.w(LOG_TAG, "Error " + statusCode + " retrieving " + url);
                 return null;
             }
 
