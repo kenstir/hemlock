@@ -101,6 +101,7 @@ public class RecordInfo implements Serializable {
             this.publisher = safeString(info.getString("publisher"));
             this.doc_id = info.getInt("doc_id");
             this.image = safeString(info.getString("tcn"));
+            Log.d(TAG, "image=" + image);
             this.doc_type = safeString(info.getString("doc_type"));
         } catch (Exception e) {
             Log.d(TAG, "Exception basic info " + e.getMessage());
