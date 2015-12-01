@@ -7,7 +7,7 @@ package org.evergreen_ils.globals;
 /**
  * Conversion of constants from Const.pm
  */
-class EvergreenConstants {
+public class EvergreenConstants {
 
     // Copy Statuses
     public static final int COPY_STATUS_AVAILABLE     = 0;

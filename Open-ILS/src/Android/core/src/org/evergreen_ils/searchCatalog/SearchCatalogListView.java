@@ -304,7 +304,7 @@ public class SearchCatalogListView extends ActionBarActivity {
                     // serialize object and pass it to next activity
                     intent.putExtra("recordInfo", info);
                     intent.putExtra("orgID", search.selectedOrganization.id);
-                    intent.putExtra("depth", (search.selectedOrganization.level - 1));
+                    intent.putExtra("depth", search.selectedOrganization.level);
                     intent.putExtra("recordList", recordList);
                     intent.putExtra("recordPosition", position);
                     startActivityForResult(intent, 10);
@@ -441,15 +441,13 @@ public class SearchCatalogListView extends ActionBarActivity {
         choseOrganisation.setSelection(selectedOrgPos);
         choseOrganisation.setOnItemSelectedListener(new OnItemSelectedListener() {
             @Override
-            public void onItemSelected(AdapterView<?> arg0, View arg1,
-                                       int ID, long arg3) {
+            public void onItemSelected(AdapterView<?> arg0, View arg1, int ID, long arg3) {
                 search.selectOrganisation(globalConfigs.organisations.get(ID));
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> arg0) {
             }
-
         });
 
     }
@@ -499,7 +497,7 @@ public class SearchCatalogListView extends ActionBarActivity {
             // serialize object and pass it to next activity
             intent.putExtra("recordInfo", info);
             intent.putExtra("orgID", search.selectedOrganization.id);
-            intent.putExtra("depth", (search.selectedOrganization.level - 1));
+            intent.putExtra("depth", search.selectedOrganization.level);
 
             intent.putExtra("recordList", recordList);
             // TODO put total number
@@ -694,7 +692,7 @@ public class SearchCatalogListView extends ActionBarActivity {
 
             // Get reference to ImageView
             recordImage = (ImageView) row.findViewById(R.id.search_record_img);
-            String imageHref = GlobalConfigs.getUrl("/opac/extras/ac/jacket/small/r/" + record.image);
+            String imageHref = GlobalConfigs.getUrl("/opac/extras/ac/jacket/small/r/" + record.doc_id);
             //Log.d(TAG, "image url " + imageHref);
 
             // start async download of image

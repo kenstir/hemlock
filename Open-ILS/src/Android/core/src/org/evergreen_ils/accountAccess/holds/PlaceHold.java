@@ -29,6 +29,7 @@ import android.view.MenuItem;
 import org.evergreen_ils.R;
 import org.evergreen_ils.accountAccess.AccountAccess;
 import org.evergreen_ils.accountAccess.SessionNotFoundException;
+import org.evergreen_ils.globals.EvergreenConstants;
 import org.evergreen_ils.globals.GlobalConfigs;
 import org.evergreen_ils.searchCatalog.Organisation;
 import org.evergreen_ils.searchCatalog.RecordInfo;
@@ -189,8 +190,7 @@ public class PlaceHold extends ActionBarActivity {
                         + expire_date);
                 int selectedOrgID = -1;
                 if (globalConfigs.organisations.size() > selectedOrgPos)
-                    selectedOrgID = globalConfigs.organisations
-                            .get(selectedOrgPos).id;
+                    selectedOrgID = globalConfigs.organisations.get(selectedOrgPos).id;
 
                 String[] stringResponse = new String[] { "false" };
                 try {
@@ -335,13 +335,19 @@ public class PlaceHold extends ActionBarActivity {
                 selectedOrgPos = i;
             }
         }
-        ArrayAdapter<String> adapter = CompatSpinnerAdapter.CreateCompatSpinnerAdapter(this, list);
+        //ArrayAdapter<String> adapter = CompatSpinnerAdapter.CreateCompatSpinnerAdapter(this, list);
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, R.layout.org_item_layout, list) {
+            @Override
+            public boolean isEnabled(int pos) {
+                Organisation org = globalConfigs.organisations.get(pos);
+                return org.orgType >= EvergreenConstants.ORG_TYPE_BRANCH;
+            }
+        };
         orgSelector.setAdapter(adapter);
         orgSelector.setSelection(selectedOrgPos);
         orgSelector.setOnItemSelectedListener(new OnItemSelectedListener() {
             @Override
-            public void onItemSelected(AdapterView<?> arg0, View arg1, int ID,
-                    long arg3) {
+            public void onItemSelected(AdapterView<?> arg0, View arg1, int ID, long arg3) {
                 selectedOrgPos = ID;
             }
 

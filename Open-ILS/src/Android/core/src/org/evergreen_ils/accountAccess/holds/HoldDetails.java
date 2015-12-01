@@ -364,17 +364,15 @@ public class HoldDetails extends ActionBarActivity {
             if (globalConfigs.organisations.get(i).id == record.pickup_lib)
                 selectedOrgPos = i;
         }
-        ArrayAdapter<String> adapter = CompatSpinnerAdapter.CreateCompatSpinnerAdapter(this, list);
+        //ArrayAdapter<String> adapter = CompatSpinnerAdapter.CreateCompatSpinnerAdapter(this, list);
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, R.layout.org_item_layout, list);
         orgSelector.setAdapter(adapter);
         orgSelector.setSelection(selectedOrgPos);
 
         orgSelector.setOnItemSelectedListener(new OnItemSelectedListener() {
             @Override
-            public void onItemSelected(AdapterView<?> arg0, View arg1, int ID,
-                    long arg3) {
-
+            public void onItemSelected(AdapterView<?> arg0, View arg1, int ID, long arg3) {
                 selectedOrgPos = ID;
-
             }
 
             public void onNothingSelected(android.widget.AdapterView<?> arg0) {
