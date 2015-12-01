@@ -23,7 +23,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.MenuItem;
@@ -37,11 +36,9 @@ import org.evergreen_ils.utils.ui.ActionBarUtils;
 import org.evergreen_ils.utils.ui.CompatSpinnerAdapter;
 import org.evergreen_ils.views.splashscreen.SplashActivity;
 
-import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.text.format.DateFormat;
@@ -333,7 +330,7 @@ public class PlaceHold extends ActionBarActivity {
         ArrayList<String> list = new ArrayList<String>();
         for (int i = 0; i < globalConfigs.organisations.size(); i++) {
             Organisation org = globalConfigs.organisations.get(i);
-            list.add(org.padding + org.name);
+            list.add(org.displayName + org.name);
             if (org.id == homeLibrary) {
                 selectedOrgPos = i;
             }

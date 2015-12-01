@@ -94,4 +94,11 @@ class EvergreenConstants {
     public static final int PENALTY_INVALID_PATRON_ADDRESS = 29;
 
     public static final int BILLING_TYPE_NOTIFICATION_FEE = 9;
+
+    // todo: fetch from service=open-ils.actor&method=open-ils.actor.org_types.retrieve
+    public static final int ORG_TYPE_CONSORTIUM = 1;
+    public static final int ORG_TYPE_SYSTEM = 2;
+    public static final int ORG_TYPE_BRANCH = 3;
+    public static final int ORG_TYPE_SUB_LIBRARY = 4;
+    public static final int ORG_TYPE_BOOKMOBILE = 5;
 }

@@ -33,35 +33,20 @@ public class RecordInfo implements Serializable {
 
     private static final long serialVersionUID = 10123L;
 
-    private final String TAG = RecordInfo.class.getName();
+    private static final String TAG = RecordInfo.class.getSimpleName();
 
     public String title = null;
-
     public String author = null;
-
     public String pubdate = null;
-
     public String isbn = null;
-
     public Integer doc_id = null;
-
     public String publisher = null;
-
     public String subject = null;
-
     public String doc_type = null;
-
     public String online_loc = null;
-
     public String synopsis = null;
-
     public String physical_description = null;
-
     public String series = null;
-
-    // tcn field
-    public String image = null;
-
     public boolean dummy = false;
 
     public ArrayList<CopyCountInformation> copyCountListInfo = null;
@@ -100,8 +85,6 @@ public class RecordInfo implements Serializable {
             this.pubdate = safeString(info.getString("pubdate"));
             this.publisher = safeString(info.getString("publisher"));
             this.doc_id = info.getInt("doc_id");
-            this.image = safeString(info.getString("tcn"));
-            Log.d(TAG, "image=" + image);
             this.doc_type = safeString(info.getString("doc_type"));
         } catch (Exception e) {
             Log.d(TAG, "Exception basic info " + e.getMessage());
