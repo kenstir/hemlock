@@ -86,8 +86,7 @@ public class SearchCatalog {
 
     public String TAG = SearchCatalog.class.getSimpleName();
 
-    // the org on witch the searches will be made
-    /** The selected organization. */
+    // the org on which the searches will be made
     public Organisation selectedOrganization = null;
 
     public Integer offset;
@@ -140,16 +139,12 @@ public class SearchCatalog {
                     complexParm.put("org_unit", this.selectedOrganization.id);
                 if (this.selectedOrganization.level != null)
                     complexParm.put("depth", this.selectedOrganization.level - 1);
-//                if (!this.searchFormat.isEmpty())
-//                    complexParm.put("format", this.searchFormat);
             }
             complexParm.put("limit", searchLimit);
             complexParm.put("offset", offset);
             if (searchClass != null) complexParm.put("default_class", searchClass);
-            /*
-             * complexParm.put("offset",0);
-             * complexParm.put("visibility_limit", 3000);
-             */
+//            complexParm.put("offset",0);
+//            complexParm.put("visibility_limit", 3000);
         } catch (Exception e) {
             Log.d(TAG, "Exception in JSON " + e.getMessage());
         }
@@ -182,11 +177,9 @@ public class SearchCatalog {
         for (int i = 0; i < result_ids.size(); i++) {
             ids.add(result_ids.get(i).get(0));
         }
-
         Log.d(TAG, "Ids " + ids);
 
         // request other info based on ids
-
         for (int i = 0; i < ids.size(); i++) {
             Integer record_id = Integer.parseInt(ids.get(i));
 

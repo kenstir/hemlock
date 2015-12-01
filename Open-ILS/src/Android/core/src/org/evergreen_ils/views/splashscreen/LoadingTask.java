@@ -34,6 +34,8 @@ import android.util.Log;
 import org.evergreen_ils.searchCatalog.Library;
 import org.opensrf.util.OSRFObject;
 
+import java.util.Map;
+
 /** This is basically the same as an AsyncTask<String,String,String>, except that it uses
  * a Thread.  Starting with HONEYCOMB, tasks are executed on a single thread and the 2nd
  * AsyncTask doesn't start until the first finishes.
@@ -107,17 +109,11 @@ public class LoadingTask {
 
             Log.d(TAG, tag+"Loading resources from "+library.url);
             publishProgress("Loading resources");
-            GlobalConfigs.getGlobalConfigs(mCallingActivity, library.url);
-
             AccountAccess ac = AccountAccess.getAccountAccess();
+            GlobalConfigs gc = GlobalConfigs.getGlobalConfigs(mCallingActivity, library.url);
 
-            /* way to fetch org tree using OSRF rather than parsing JS
-            try {
-                OSRFObject o = ac.fetchOrgs();
-            } catch (Exception e) {
-                Log.d(TAG, tag+"caught exception", e);
-            }
-            */
+            /* fetch org tree using OSRF rather than parsing JS */
+            gc.loadOrganizations(ac.fetchOrgTree());
 
             // auth token zen: try once and if it fails, invalidate the token and try again
             Log.d(TAG, tag+"Starting session");

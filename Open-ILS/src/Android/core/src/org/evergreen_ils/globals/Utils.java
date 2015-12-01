@@ -19,14 +19,9 @@
  */
 package org.evergreen_ils.globals;
 
-import java.io.BufferedInputStream;
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLConnection;
 import java.util.Map;
 
 import android.os.Looper;
@@ -42,12 +37,7 @@ import org.opensrf.net.http.GatewayRequest;
 import org.opensrf.net.http.HttpConnection;
 import org.opensrf.net.http.HttpRequest;
 
-import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.net.ConnectivityManager;
 import android.util.Log;
-import android.widget.ImageView;
 
 public class Utils {
     private static final String TAG = "osrf";
@@ -132,7 +122,7 @@ public class Utils {
         // this is what happens when the JSONReader tries to parse a response of an unregistered class.
         // Crash if debugMode, fail if not.
         Log.d(TAG, "NPE...unregistered type from service "+service+" method "+methodName, e);
-        if (GlobalConfigs.isDebugMode()) {
+        if (GlobalConfigs.isDebuggable()) {
             throw(e);
         }
     }

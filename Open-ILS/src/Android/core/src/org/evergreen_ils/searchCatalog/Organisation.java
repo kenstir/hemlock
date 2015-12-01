@@ -19,26 +19,19 @@
  */
 package org.evergreen_ils.searchCatalog;
 
+import org.evergreen_ils.barcodescan.Intents;
+
 public class Organisation {
 
-    public String name = null;
-
-    public String shortName = null;
-
-    public Integer id = null;
-
     public Integer level = null;
+    public Integer id = null;
+    public String name = null;
+    public String shortname = null;
+    public Integer orgType = null;
+    public String displayName = "";
 
-    public Integer parent = null;
-
-    public Integer isVisible = null;
-
-    public Integer hiddenDepth = null;
-
-    // used for indent display
-    public String padding = "";
+    public Boolean opac_visible = null;
 
     public Organisation() {
-
     }
 }

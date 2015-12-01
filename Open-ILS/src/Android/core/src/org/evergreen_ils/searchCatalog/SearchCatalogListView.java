@@ -21,7 +21,6 @@ package org.evergreen_ils.searchCatalog;
 
 import java.util.*;
 
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.view.*;
 import org.evergreen_ils.R;
@@ -39,7 +38,6 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.ContextMenu.ContextMenuInfo;
@@ -199,7 +197,6 @@ public class SearchCatalogListView extends ActionBarActivity {
                 searchResults = search.getSearchResults(text, getSearchClass(), getSearchFormat(), 0);
 
                 runOnUiThread(new Runnable() {
-
                     @Override
                     public void run() {
 
@@ -432,12 +429,13 @@ public class SearchCatalogListView extends ActionBarActivity {
         ArrayList<String> list = new ArrayList<String>();
         for (int i = 0; i < globalConfigs.organisations.size(); i++) {
             Organisation org = globalConfigs.organisations.get(i);
-            list.add(org.padding + org.name);
+            list.add(org.displayName + org.name);
             if (org.id == homeLibrary) {
                 selectedOrgPos = i;
             }
         }
-        ArrayAdapter<String> adapter = CompatSpinnerAdapter.CreateCompatSpinnerAdapter(this, list);
+        //ArrayAdapter<String> adapter = CompatSpinnerAdapter.CreateCompatSpinnerAdapter(this, list);
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, R.layout.org_item_layout, list);
         choseOrganisation = (Spinner) findViewById(R.id.chose_organisation);
         choseOrganisation.setAdapter(adapter);
         choseOrganisation.setSelection(selectedOrgPos);

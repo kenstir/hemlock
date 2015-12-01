@@ -140,7 +140,7 @@ public class AccountAccess {
     private ArrayList<BookBag> bookBags = new ArrayList<BookBag>();
 
     /** The TAG. */
-    private final String TAG = AccountAccess.class.getSimpleName();
+    private final static String TAG = AccountAccess.class.getSimpleName();
 
     /**
      * The auth token. Sent with every request that needs authentication
@@ -512,16 +512,12 @@ public class AccountAccess {
     // ------------------------orgs Section
     // --------------------------------------//
 
-    public OSRFObject fetchOrgs() {
-        OSRFObject response = (OSRFObject) Utils.doRequest(conn(), SERVICE_ACTOR,
+    // todo: call service=open-ils.actor&method=open-ils.actor.org_types.retrieve
+
+    public OSRFObject fetchOrgTree() {
+        Object response = Utils.doRequest(conn(), SERVICE_ACTOR,
                 METHOD_ORG_TREE_RETRIEVE, new Object[]{});
-        try {
-            //List<OSRFObject> l = (List<OSRFObject>) response;
-            Log.d(TAG, "response="+response);
-        } catch (Exception e) {
-            Log.d(TAG, "caught exception", e);
-        }
-        return response;
+        return (OSRFObject) response;
     }
 
     /**

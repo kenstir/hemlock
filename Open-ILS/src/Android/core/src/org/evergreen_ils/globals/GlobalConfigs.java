@@ -20,17 +20,14 @@
 package org.evergreen_ils.globals;
 
 import android.content.Context;
-import android.net.ConnectivityManager;
-import android.provider.Settings;
+import android.content.pm.ApplicationInfo;
 import android.text.TextUtils;
 import android.util.Log;
-import org.evergreen_ils.auth.Const;
 import org.evergreen_ils.searchCatalog.Organisation;
 import org.evergreen_ils.searchCatalog.SearchCatalog;
 import org.open_ils.idl.IDLParser;
 import org.opensrf.net.http.HttpConnection;
-import org.opensrf.util.JSONException;
-import org.opensrf.util.JSONReader;
+import org.opensrf.util.OSRFObject;
 
 import java.io.InputStream;
 import java.net.MalformedURLException;
@@ -47,7 +44,7 @@ public class GlobalConfigs {
 
     private static String TAG = "GlobalConfigs";
     
-    private static boolean debugMode = true;//todo get from boolean isDebuggable =  ( 0 != ( getApplicationInfo().flags &= ApplicationInfo.FLAG_DEBUGGABLE ) );
+    private static Boolean isDebuggable = null;
 
     private static boolean loadedIDL = false;
 
@@ -65,7 +62,7 @@ public class GlobalConfigs {
     /** The locale. */
     public String locale = "en-US";
 
-    private static GlobalConfigs globalConfigSingleton = null;
+    private static GlobalConfigs instance = null;
 
     /** The organisations. */
     public ArrayList<Organisation> organisations;
@@ -79,9 +76,11 @@ public class GlobalConfigs {
 
     public static GlobalConfigs getGlobalConfigs(Context context) {
         Log.d(TAG, "getGlobalConfigs (url="+httpAddress+")");
-        if (globalConfigSingleton == null)
-            globalConfigSingleton = new GlobalConfigs();
-        return globalConfigSingleton;
+        if (instance == null)
+            instance = new GlobalConfigs();
+        if (context != null && isDebuggable == null)
+            isDebuggable = (0 != (context.getApplicationInfo().flags &= ApplicationInfo.FLAG_DEBUGGABLE));
+        return instance;
     }
 
     public static GlobalConfigs getGlobalConfigs(Context context, String library_url) {
@@ -109,15 +108,16 @@ public class GlobalConfigs {
             httpAddress = library_url;
             conn = null; // must come before loadXXX()
             loadIDL();
-            loadOrganizations();
             loadCopyStatusesAvailable();
             return true;
         }
         return false;
     }
 
-    public static boolean isDebugMode() {
-        return debugMode;
+    public static boolean isDebuggable() {
+        if (isDebuggable == null)
+            return false;
+        return isDebuggable;
     }
 
     public static HttpConnection gatewayConnection() {
@@ -150,81 +150,31 @@ public class GlobalConfigs {
         loadedIDL = true;
     }
 
-    /**
-     * Fetch the OrgTree.js file, and from it parse the list of organisations.
-     */
-    public void loadOrganizations() {
+    public void addOrganization(OSRFObject obj, int level) {
+        Organisation org = new Organisation();
+        org.level = level;
+        org.id = obj.getInt("id");
+        org.name = obj.getString("name");
+        org.shortname = obj.getString("shortname");
+        org.orgType = obj.getInt("ou_type");
+        //if (org.orgType < EvergreenConstants.ORG_TYPE_BRANCH) return;
+        org.displayName = new String(new char[level]).replace("\0", "  ");
+        organisations.add(org);
 
-        String orgFile = null;
-
-        organisations = new ArrayList<Organisation>();
-
+        List<OSRFObject> children = null;
         try {
-            Log.d(TAG, "getOrg fetching "+httpAddress + collectionsRequest);
-            orgFile = Utils.getNetPageContent(httpAddress + collectionsRequest);
+            children = (List<OSRFObject>) obj.get("children");
+            for (OSRFObject child : children) {
+                addOrganization(child, level + 1);
+            }
         } catch (Exception e) {
+            Log.d(TAG, "addOrganization caught exception decoding children of "+org.name, e);
         }
+    }
 
-        if (orgFile != null) {
-            long start_ms = System.currentTimeMillis();
-            Log.d(TAG, "getOrg loading");
-            organisations = new ArrayList<Organisation>();
-
-            // in case of wrong file
-            if (orgFile.indexOf("=") == -1)
-                return;
-            String orgArray = orgFile.substring(orgFile.indexOf("=") + 1,
-                    orgFile.indexOf(";"));
-            Log.d(TAG, "getOrg array=" + orgArray.substring(0, orgArray.length()>50 ? 50 : -1));
-
-            // Parse javascript list
-            // Format: [[id, ou_type, parent_ou, name, opac_visible, shortname],...]
-            // Sample: [[149,3,146,"Agawam",0,"AGAWAM_MA"],
-            //          [150,4,149,"Agawam Public Library",1,"AGAWAM"],...]
-            // ou_type can be treated as hierarchical nesting level
-            List orgList;
-            try {
-                orgList = new JSONReader(orgArray).readArray();
-            } catch (JSONException e) {
-                Log.d(TAG, "getOrg failed parsing array", e);
-                return;
-            }
-
-            // Convert json list into array of Organisation
-            for (int i=0; i<orgList.size(); ++i) {
-                Organisation org = new Organisation();
-                List orgItem = (List) orgList.get(i);
-                org.id= (Integer)orgItem.get(0);
-                org.level = (Integer)orgItem.get(1);
-                org.parent = (Integer)orgItem.get(2);
-                org.name = (String)orgItem.get(3);
-                org.isVisible = (Integer)orgItem.get(4);
-                org.shortName = (String)orgItem.get(5);
-                if (org.isVisible == 0) {
-                    continue;
-                }
-
-                organisations.add(org);
-            }
-            
-            /*
-            for (int i=0; i<organisations.size(); ++i) {
-                Log.d(TAG, "getOrg presort org["+i+"]= id:"+organisations.get(i).id+" parent:"+organisations.get(i).parent+" name:"+organisations.get(i).name);
-            }
-            */
-            Collections.sort(organisations, new Comparator<Organisation>() {
-                @Override
-                public int compare(Organisation a, Organisation b) {
-                    if (a.parent == null)
-                        return -1; // root is always first
-                    return a.name.compareTo(b.name);
-                }
-            });
-
-            long duration_ms = System.currentTimeMillis() - start_ms;
-            Log.d(TAG, "getOrg took "+duration_ms+"ms");
-            loadedOrgTree = true;
-        }
+    public void loadOrganizations(OSRFObject orgTree) {
+        organisations = new ArrayList<Organisation>();
+        addOrganization(orgTree, 0);
     }
 
     public void loadCopyStatusesAvailable() {
