@@ -138,7 +138,7 @@ public class SearchCatalog {
                 if (this.selectedOrganization.id != null)
                     complexParm.put("org_unit", this.selectedOrganization.id);
                 if (this.selectedOrganization.level != null)
-                    complexParm.put("depth", this.selectedOrganization.level - 1);
+                    complexParm.put("depth", this.selectedOrganization.level);
             }
             complexParm.put("limit", searchLimit);
             complexParm.put("offset", offset);
@@ -192,7 +192,7 @@ public class SearchCatalog {
             record.copyCountListInfo = getCopyCount(record_id, this.selectedOrganization.id);
             List<List<Object>> list = (List<List<Object>>) getLocationCount(
                     record_id, this.selectedOrganization.id,
-                    this.selectedOrganization.level - 1);
+                    this.selectedOrganization.level);
             if (list != null)
                 for (int j = 0; j < list.size(); j++) {
                     CopyInformation copyInfo = new CopyInformation(list.get(j));
@@ -273,8 +273,7 @@ public class SearchCatalog {
      */
     public void selectOrganisation(Organisation org) {
 
-        Log.d(TAG, "Select search organisation " + (org.level - 1) + " "
-                + org.id);
+        Log.d(TAG, "selectOrganisation id=" + org.id);
         this.selectedOrganization = org;
 
     }

@@ -169,7 +169,8 @@ public class BasicDetailsFragment extends Fragment {
             }
         });
 
-        String imageHref = GlobalConfigs.getUrl("/opac/extras/ac/jacket/large/r/" + record.image);
+        //String imageHref = GlobalConfigs.getUrl("/opac/extras/ac/jacket/large/r/" + record.doc_id);
+        String imageHref = GlobalConfigs.getUrl("/opac/extras/ac/jacket/medium/r/" + record.doc_id);
 
         // start async download of image
         imageDownloader.download(imageHref, recordImage);

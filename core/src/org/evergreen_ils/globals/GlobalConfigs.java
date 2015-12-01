@@ -159,6 +159,7 @@ public class GlobalConfigs {
         org.orgType = obj.getInt("ou_type");
         //if (org.orgType < EvergreenConstants.ORG_TYPE_BRANCH) return;
         org.displayName = new String(new char[level]).replace("\0", "  ");
+        Log.d(TAG, "kcxxx: id="+org.id+" level="+org.level+" name="+org.name);
         organisations.add(org);
 
         List<OSRFObject> children = null;
