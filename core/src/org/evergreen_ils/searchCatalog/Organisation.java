@@ -28,7 +28,7 @@ public class Organisation {
     public String name = null;
     public String shortname = null;
     public Integer orgType = null;
-    public String displayName = "";
+    public String indentedDisplayPrefix = "";
 
     public Boolean opac_visible = null;
 

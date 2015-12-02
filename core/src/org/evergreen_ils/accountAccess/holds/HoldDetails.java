@@ -31,7 +31,6 @@ import org.evergreen_ils.accountAccess.AccountAccess;
 import org.evergreen_ils.accountAccess.SessionNotFoundException;
 import org.evergreen_ils.globals.GlobalConfigs;
 import org.evergreen_ils.utils.ui.ActionBarUtils;
-import org.evergreen_ils.utils.ui.CompatSpinnerAdapter;
 import org.evergreen_ils.views.splashscreen.SplashActivity;
 
 import android.app.AlertDialog;
@@ -358,7 +357,7 @@ public class HoldDetails extends ActionBarActivity {
 
         ArrayList<String> list = new ArrayList<String>();
         for (int i = 0; i < globalConfigs.organisations.size(); i++) {
-            list.add(globalConfigs.organisations.get(i).displayName
+            list.add(globalConfigs.organisations.get(i).indentedDisplayPrefix
                     + globalConfigs.organisations.get(i).name);
 
             if (globalConfigs.organisations.get(i).id == record.pickup_lib)

@@ -31,7 +31,6 @@ import org.evergreen_ils.accountAccess.holds.PlaceHold;
 import org.evergreen_ils.barcodescan.CaptureActivity;
 import org.evergreen_ils.globals.GlobalConfigs;
 import org.evergreen_ils.utils.ui.ActionBarUtils;
-import org.evergreen_ils.utils.ui.CompatSpinnerAdapter;
 import org.evergreen_ils.views.splashscreen.SplashActivity;
 
 import android.app.AlertDialog;
@@ -429,7 +428,7 @@ public class SearchCatalogListView extends ActionBarActivity {
         ArrayList<String> list = new ArrayList<String>();
         for (int i = 0; i < globalConfigs.organisations.size(); i++) {
             Organisation org = globalConfigs.organisations.get(i);
-            list.add(org.displayName + org.name);
+            list.add(org.indentedDisplayPrefix + org.name);
             if (org.id == homeLibrary) {
                 selectedOrgPos = i;
             }

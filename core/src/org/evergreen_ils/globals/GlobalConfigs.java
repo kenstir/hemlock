@@ -161,8 +161,8 @@ public class GlobalConfigs {
         String opac_visible = obj.getString("opac_visible");
         org.opac_visible = TextUtils.equals(opac_visible, "t");
 
-        org.displayName = new String(new char[level]).replace("\0", "  ");
-        Log.d(TAG, "kcxxx: id="+org.id+" level="+org.level+" name="+org.name+" vis="+(org.opac_visible ? "1" : "0"));
+        org.indentedDisplayPrefix = new String(new char[level]).replace("\0", "  ");
+        //Log.d(TAG, "kcxxx: id="+org.id+" level="+org.level+" name="+org.name+" vis="+(org.opac_visible ? "1" : "0"));
         if (org.opac_visible)
             organisations.add(org);
 
@@ -180,6 +180,23 @@ public class GlobalConfigs {
     public void loadOrganizations(OSRFObject orgTree) {
         organisations = new ArrayList<Organisation>();
         addOrganization(orgTree, 0);
+
+        // If the org tree is too big, then an indented list is unwieldy.
+        // Convert it into a flat list sorted by org.name.
+        if (organisations.size() > 25) {
+            Collections.sort(organisations, new Comparator<Organisation>() {
+                @Override
+                public int compare(Organisation a, Organisation b) {
+                    // top-level OU appears first
+                    if (a.level == 0) return -1;
+                    if (b.level == 0) return 1;
+                    return a.name.compareTo(b.name);
+                }
+            });
+            for (Organisation o : organisations) {
+                o.indentedDisplayPrefix = "";
+            }
+        }
     }
 
     public void loadCopyStatusesAvailable() {
