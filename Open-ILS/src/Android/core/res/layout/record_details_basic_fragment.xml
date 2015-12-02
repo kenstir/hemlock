@@ -11,7 +11,6 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         >
-        <!-- style="@style/SearchDetailsInfoSeparator" -->
 
         <TextView
             android:id="@+id/record_header_text"
@@ -79,7 +78,6 @@
                     android:layout_height="180dip"
                     android:src="@drawable/no_image"
                     android:padding="5dip"
-                    android:background="@color/white"
                     android:layout_margin="10dip"
                     />
                 
