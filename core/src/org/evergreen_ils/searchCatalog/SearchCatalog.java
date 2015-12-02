@@ -219,6 +219,11 @@ public class SearchCatalog {
         OSRFObject response = (OSRFObject) Utils.doRequestSimple(conn(), SERVICE,
                 METHOD_SLIM_RETRIVE, new Object[] {
                         id });
+        // todo remove this check once I can trust this assumption.
+        // Elsewhere we look up record images based on doc_id.
+        if (response.getInt("doc_id") != id) {
+            throw(new AssertionError(id));
+        }
         return response;
     }
 
