@@ -157,10 +157,14 @@ public class GlobalConfigs {
         org.name = obj.getString("name");
         org.shortname = obj.getString("shortname");
         org.orgType = obj.getInt("ou_type");
-        //if (org.orgType < EvergreenConstants.ORG_TYPE_BRANCH) return;
+
+        String opac_visible = obj.getString("opac_visible");
+        org.opac_visible = TextUtils.equals(opac_visible, "t");
+
         org.displayName = new String(new char[level]).replace("\0", "  ");
-        Log.d(TAG, "kcxxx: id="+org.id+" level="+org.level+" name="+org.name);
-        organisations.add(org);
+        Log.d(TAG, "kcxxx: id="+org.id+" level="+org.level+" name="+org.name+" vis="+(org.opac_visible ? "1" : "0"));
+        if (org.opac_visible)
+            organisations.add(org);
 
         List<OSRFObject> children = null;
         try {
