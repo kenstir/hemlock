@@ -190,7 +190,6 @@ public class TestAuthActivity extends Activity {
 
                     final String authtoken = bnd.getString(AccountManager.KEY_AUTHTOKEN);
                     final String account_name = bnd.getString(AccountManager.KEY_ACCOUNT_NAME);
-                    Log.d("kcxxx","getExistingAccountAuthToken account.name "+account.name+" account_name "+account_name+" token "+authtoken);
                     showMessage((authtoken != null) ? "SUCCESS with "+account_name+"\ntoken: " + authtoken : "FAIL");
                     Log.d(TAG, "GetToken Bundle is " + bnd);
                     //mLastTextView.setText(account.name);//todo: wrong thread here
