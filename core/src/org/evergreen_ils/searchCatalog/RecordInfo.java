@@ -41,12 +41,12 @@ public class RecordInfo implements Serializable {
     public String isbn = null;
     public Integer doc_id = null;
     public String publisher = null;
-    public String subject = null;
+    public String subject = "";
     public String doc_type = null;
     public String online_loc = null;
     public String synopsis = null;
     public String physical_description = null;
-    public String series = null;
+    public String series = "";
     public boolean dummy = false;
 
     public ArrayList<CopyCountInformation> copyCountListInfo = null;
@@ -87,56 +87,39 @@ public class RecordInfo implements Serializable {
             this.doc_id = info.getInt("doc_id");
             this.doc_type = safeString(info.getString("doc_type"));
         } catch (Exception e) {
-            Log.d(TAG, "Exception basic info " + e.getMessage());
+            Log.d(TAG, "Exception retrieving basic info", e);
         }
-        ;
 
         try {
             this.isbn = (String) info.get("isbn");
         } catch (Exception e) {
-            Log.d(TAG, "Exception isbn " + e.getMessage());
+            Log.d(TAG, "Exception retrieving isbn", e);
         }
-        ;
 
         try {
             Map<String, ?> subjectMap = (Map<String, ?>) info.get("subject");
-
-            this.subject = "";
-
-            int no = subjectMap.entrySet().size();
-            int i = 0;
-            for (Entry<String, ?> entry : subjectMap.entrySet()) {
-                i++;
-                if (i < no)
-                    this.subject += entry.getKey() + " \n";
-                else
-                    this.subject += entry.getKey();
-            }
-
+            this.subject = TextUtils.join("\n", subjectMap.keySet());
         } catch (Exception e) {
-            Log.d(TAG, "Exception subject " + e.getMessage());
+            Log.d(TAG, "Exception retrieving subject", e);
         }
-        ;
+
         try {
             this.online_loc = ((List) info.get("online_loc")).get(0).toString();
         } catch (Exception e) {
-            //Log.d(TAG, "Exception online_loc " + e.getMessage());
+            // common
         }
-        ;
+
         try {
             this.physical_description = (String) info.get("physical_description");
         } catch (Exception e) {
-            Log.d(TAG, "Exception physical_description " + e.getMessage());
+            Log.d(TAG, "Exception retrieving physical_description", e);
         }
-        ;
+
         try {
-            this.series = "";
-            List<String> seriesList = (List) info.get("series");
+            List<String> seriesList = (List<String>) info.get("series");
             this.series = TextUtils.join(", ", seriesList);
         } catch (Exception e) {
-            Log.d(TAG, "Exception series " + e.getMessage());
+            Log.d(TAG, "Exception retrieving series", e);
         }
-        ;
-
     }
 }
