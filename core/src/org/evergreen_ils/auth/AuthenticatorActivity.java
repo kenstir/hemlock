@@ -104,51 +104,25 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity {
         }
     }
 
-    private class FetchConsortiumsTask extends AsyncTask<String, Integer, String> {
-        protected String doInBackground(String... params) {
-            String url = params[0];
-            String result = null;
-            try {
-                Log.d(TAG, "fetching " + url);
-                result = Utils.fetchUrl(url);
-                //todo move json parsing to doInBackground
-            } catch (Exception e) {
-                Log.d(TAG, "error fetching", e);
-            }
-            return result;
-        }
-
-        protected void onPostExecute(String result) {
-            long duration_ms = System.currentTimeMillis() - start_ms;
-            Log.d(TAG, "task fetch took " + duration_ms + "ms");
-            handleLibrariesJSON(result);
-        }
-    }
-
     private void startTask() {
         start_ms = System.currentTimeMillis();
-        boolean use_volley = true;
-        if (use_volley) {
-            RequestQueue q = VolleyWrangler.getInstance(this).getRequestQueue();
-            StringRequest stringRequest = new StringRequest(Request.Method.GET, libraries_directory_json_url,
-                    new Response.Listener<String>() {
-                        @Override
-                        public void onResponse(String response) {
-                            long duration_ms = System.currentTimeMillis() - start_ms;
-                            Log.d(TAG, "volley fetch took " + duration_ms + "ms");
-                            handleLibrariesJSON(response);
-                        }
-                    },
-                    new Response.ErrorListener() {
-                        @Override
-                        public void onErrorResponse(VolleyError error) {
-                            showAlert(error.getMessage());
-                        }
-                    });
-            q.add(stringRequest);
-        } else {
-            new FetchConsortiumsTask().execute(libraries_directory_json_url);
-        }
+        RequestQueue q = VolleyWrangler.getInstance(this).getRequestQueue();
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, libraries_directory_json_url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        long duration_ms = System.currentTimeMillis() - start_ms;
+                        Log.d(TAG, "volley fetch took " + duration_ms + "ms");
+                        handleLibrariesJSON(response);
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        showAlert(error.getMessage());
+                    }
+                });
+        q.add(stringRequest);
     }
 
     // returns true if this is the generic app, which needs a library spinner etc.

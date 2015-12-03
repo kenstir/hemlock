@@ -23,12 +23,20 @@ import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.text.TextUtils;
 import android.util.Log;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.toolbox.StringRequest;
+import org.evergreen_ils.net.VolleyWrangler;
 import org.evergreen_ils.searchCatalog.Organisation;
 import org.evergreen_ils.searchCatalog.SearchCatalog;
+import org.open_ils.idl.IDLException;
 import org.open_ils.idl.IDLParser;
 import org.opensrf.net.http.HttpConnection;
 import org.opensrf.util.OSRFObject;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.text.ParseException;
@@ -71,6 +79,9 @@ public class GlobalConfigs {
     private String collectionsRequest = "/opac/common/js/" + locale
             + "/OrgTree.js";
 
+    private Context context = null;
+    private long start_ms;
+
     private GlobalConfigs() {
     }
 
@@ -78,6 +89,8 @@ public class GlobalConfigs {
         Log.d(TAG, "getGlobalConfigs (url="+httpAddress+")");
         if (instance == null)
             instance = new GlobalConfigs();
+        if (context != null)
+            instance.context = context;
         if (context != null && isDebuggable == null)
             isDebuggable = (0 != (context.getApplicationInfo().flags &= ApplicationInfo.FLAG_DEBUGGABLE));
         return instance;
@@ -132,22 +145,29 @@ public class GlobalConfigs {
     }
 
     public void loadIDL() {
-
-        try {
-            Log.d(TAG, "loadIDL fetching " + httpAddress + IDL_FILE_FROM_ROOT);
-            long start_ms = System.currentTimeMillis();
-            InputStream in_IDL = Utils.getNetInputStream(GlobalConfigs.httpAddress + IDL_FILE_FROM_ROOT);
-            IDLParser parser = new IDLParser(in_IDL);
-            parser.setKeepIDLObjects(false);
-            Log.d(TAG, "loadIDL parse");
-            parser.parse();
-            long duration_ms = System.currentTimeMillis() - start_ms;
-            Log.d(TAG, "loadIDL parse took "+duration_ms+"ms");
-        } catch (Exception e) {
-            Log.w(TAG, "loadIDL parse error", e);
-        }
-
-        loadedIDL = true;
+        start_ms = System.currentTimeMillis();
+        RequestQueue q = VolleyWrangler.getInstance(context).getRequestQueue();
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, httpAddress + IDL_FILE_FROM_ROOT,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        long duration_ms = System.currentTimeMillis() - start_ms;
+                        Log.d(TAG, "volley fetch took " + duration_ms + "ms");
+                        InputStream in = new ByteArrayInputStream(response.getBytes());
+                        IDLParser parser = new IDLParser(in);
+                        parser.setKeepIDLObjects(false);
+                        Log.d(TAG, "loadIDL parse");
+                        try {
+                            parser.parse();
+                        } catch (Exception e) {
+                            Log.d(TAG, "loadIDL failed", e);
+                        }
+                        duration_ms = System.currentTimeMillis() - start_ms;
+                        Log.d(TAG, "loadIDL parse took "+duration_ms+"ms");
+                    }
+                },
+                null);
+        q.add(stringRequest);
     }
 
     public void addOrganization(OSRFObject obj, int level) {
