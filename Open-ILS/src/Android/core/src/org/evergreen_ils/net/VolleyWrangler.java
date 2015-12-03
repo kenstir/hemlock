@@ -13,7 +13,7 @@ import com.android.volley.toolbox.Volley;
  * Created by kenstir on 12/2/2015.
  */
 // code from http://developer.android.com/training/volley/
-// or SallyPort or VolleyWrapper
+// or SallyPort or VolleyPort or VolleyWrapper
 public class VolleyWrangler {
     private static VolleyWrangler mInstance;
     private RequestQueue mRequestQueue;
