@@ -49,7 +49,7 @@ public class Utils {
      *            the url of the page to be retrieved
      * @return the net page content
      */
-    public static String getNetPageContent(String url) {
+    public static String fetchUrl(String url) {
 
         String result = "";
 
