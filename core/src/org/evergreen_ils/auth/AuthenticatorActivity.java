@@ -1,5 +1,6 @@
 package org.evergreen_ils.auth;
 
+import android.app.DownloadManager;
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.location.Location;
@@ -8,6 +9,11 @@ import android.text.TextUtils;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
 import org.evergreen_ils.R;
 
 import android.accounts.Account;
@@ -25,10 +31,10 @@ import android.widget.TextView;
 import org.evergreen_ils.accountAccess.AccountUtils;
 import org.evergreen_ils.globals.AppPrefs;
 import org.evergreen_ils.globals.Utils;
+import org.evergreen_ils.net.VolleyWrangler;
 import org.evergreen_ils.searchCatalog.Library;
 import org.opensrf.util.JSONException;
 import org.opensrf.util.JSONReader;
-import org.w3c.dom.Text;
 
 import java.util.*;
 
@@ -55,6 +61,48 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity {
     Library selected_library = null;
     List<Library> libraries = new ArrayList<Library>();
     public String libraries_directory_json_url;
+    private long start_ms;
+
+    private void handleLibrariesJSON(String result) {
+        // parse the response
+        parseLibrariesJSON(result);
+
+        // if the user has any existing accounts, then we can select a reasonable default library
+        Library default_library = null;
+        Location last_location = null;
+        Account[] existing_accounts = AccountUtils.getAccountsByType(AuthenticatorActivity.this);
+        Log.d(Const.AUTH_TAG, "there are " + existing_accounts.length + " existing accounts");
+        if (existing_accounts.length > 0) {
+            default_library = AccountUtils.getLibraryForAccount(AuthenticatorActivity.this, existing_accounts[0]);
+            Log.d(Const.AUTH_TAG, "default_library=" + default_library);
+        } else {
+            LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+            if (lm != null) last_location = lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+        }
+
+        // Build a List<String> for use in the spinner adapter
+        // While we're at it choose a default library; first by prior account, second by proximity
+        Integer default_library_index = null;
+        float min_distance = Float.MAX_VALUE;
+        ArrayList<String> l = new ArrayList<String>(libraries.size());
+        for (Library library : libraries) {
+            if (default_library != null && TextUtils.equals(default_library.url, library.url)) {
+                default_library_index = l.size();
+            } else if (last_location != null && library.location != null) {
+                float distance = last_location.distanceTo(library.location);
+                if (distance < min_distance) {
+                    default_library_index = l.size();
+                    min_distance = distance;
+                }
+            }
+            l.add(library.directory_name);
+        }
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_dropdown_item, l);
+        librarySpinner.setAdapter(adapter);
+        if (default_library_index != null) {
+            librarySpinner.setSelection(default_library_index);
+        }
+    }
 
     private class FetchConsortiumsTask extends AsyncTask<String, Integer, String> {
         protected String doInBackground(String... params) {
@@ -62,7 +110,7 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity {
             String result = null;
             try {
                 Log.d(TAG, "fetching " + url);
-                result = Utils.getNetPageContent(url);
+                result = Utils.fetchUrl(url);
                 //todo move json parsing to doInBackground
             } catch (Exception e) {
                 Log.d(TAG, "error fetching", e);
@@ -71,46 +119,35 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity {
         }
 
         protected void onPostExecute(String result) {
-            Log.d(TAG, "results available: " + result);
+            long duration_ms = System.currentTimeMillis() - start_ms;
+            Log.d(TAG, "task fetch took " + duration_ms + "ms");
+            handleLibrariesJSON(result);
+        }
+    }
 
-            // parse the response
-            parseLibrariesJSON(result);
-
-            // if the user has any existing accounts, then we can select a reasonable default library
-            Library default_library = null;
-            Location last_location = null;
-            Account[] existing_accounts = AccountUtils.getAccountsByType(AuthenticatorActivity.this);
-            Log.d(Const.AUTH_TAG, "there are " + existing_accounts.length + " existing accounts");
-            if (existing_accounts.length > 0) {
-                default_library = AccountUtils.getLibraryForAccount(AuthenticatorActivity.this, existing_accounts[0]);
-                Log.d(Const.AUTH_TAG, "default_library=" + default_library);
-            } else {
-                LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-                if (lm != null) last_location = lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-            }
-
-            // Build a List<String> for use in the spinner adapter
-            // While we're at it choose a default library; first by prior account, second by proximity
-            Integer default_library_index = null;
-            float min_distance = Float.MAX_VALUE;
-            ArrayList<String> l = new ArrayList<String>(libraries.size());
-            for (Library library : libraries) {
-                if (default_library != null && TextUtils.equals(default_library.url, library.url)) {
-                    default_library_index = l.size();
-                } else if (last_location != null && library.location != null) {
-                    float distance = last_location.distanceTo(library.location);
-                    if (distance < min_distance) {
-                        default_library_index = l.size();
-                        min_distance = distance;
-                    }
-                }
-                l.add(library.directory_name);
-            }
-            ArrayAdapter<String> adapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_dropdown_item, l);
-            librarySpinner.setAdapter(adapter);
-            if (default_library_index != null) {
-                librarySpinner.setSelection(default_library_index);
-            }
+    private void startTask() {
+        start_ms = System.currentTimeMillis();
+        boolean use_volley = true;
+        if (use_volley) {
+            RequestQueue q = VolleyWrangler.getInstance(this).getRequestQueue();
+            StringRequest stringRequest = new StringRequest(Request.Method.GET, libraries_directory_json_url,
+                    new Response.Listener<String>() {
+                        @Override
+                        public void onResponse(String response) {
+                            long duration_ms = System.currentTimeMillis() - start_ms;
+                            Log.d(TAG, "volley fetch took " + duration_ms + "ms");
+                            handleLibrariesJSON(response);
+                        }
+                    },
+                    new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            showAlert(error.getMessage());
+                        }
+                    });
+            q.add(stringRequest);
+        } else {
+            new FetchConsortiumsTask().execute(libraries_directory_json_url);
         }
     }
 
@@ -328,10 +365,6 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity {
         setAccountAuthenticatorResult(intent.getExtras());
         setResult(RESULT_OK, intent);
         finish();
-    }
-
-    private void startTask() {
-        new FetchConsortiumsTask().execute(libraries_directory_json_url);
     }
 
     private void parseLibrariesJSON(String json) {
