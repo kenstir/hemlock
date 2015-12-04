@@ -23,6 +23,8 @@ import java.util.*;
 
 import android.support.v7.app.ActionBarActivity;
 import android.view.*;
+import com.android.volley.toolbox.ImageLoader;
+import com.android.volley.toolbox.NetworkImageView;
 import org.evergreen_ils.R;
 import org.evergreen_ils.accountAccess.AccountAccess;
 import org.evergreen_ils.accountAccess.SessionNotFoundException;
@@ -30,6 +32,7 @@ import org.evergreen_ils.accountAccess.bookbags.BookBag;
 import org.evergreen_ils.accountAccess.holds.PlaceHold;
 import org.evergreen_ils.barcodescan.CaptureActivity;
 import org.evergreen_ils.globals.GlobalConfigs;
+import org.evergreen_ils.net.VolleyWrangler;
 import org.evergreen_ils.utils.ui.ActionBarUtils;
 import org.evergreen_ils.views.splashscreen.SplashActivity;
 
@@ -651,7 +654,7 @@ public class SearchCatalogListView extends ActionBarActivity {
 
         private static final String tag = "SearchArrayAdapter";
         private Context context;
-        private ImageView recordImage;
+        private NetworkImageView recordImage;
         private TextView recordTitle;
         private TextView recordAuthor;
         private TextView recordFormat;
@@ -689,13 +692,11 @@ public class SearchCatalogListView extends ActionBarActivity {
                         false);
             }
 
-            // Get reference to ImageView
-            recordImage = (ImageView) row.findViewById(R.id.search_record_img);
-            String imageHref = GlobalConfigs.getUrl("/opac/extras/ac/jacket/small/r/" + record.doc_id);
-            //Log.d(TAG, "image url " + imageHref);
-
-            // start async download of image
-            imageDownloader.download(imageHref, recordImage);
+            // Start async image load
+            recordImage = (NetworkImageView) row.findViewById(R.id.search_record_img);
+            final String imageHref = GlobalConfigs.getUrl("/opac/extras/ac/jacket/small/r/" + record.doc_id);
+            ImageLoader imageLoader = VolleyWrangler.getInstance(context).getImageLoader();
+            recordImage.setImageUrl(imageHref, imageLoader);
 
             recordTitle = (TextView) row.findViewById(R.id.search_record_title);
             recordAuthor = (TextView) row.findViewById(R.id.search_record_author);

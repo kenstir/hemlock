@@ -25,12 +25,15 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import android.util.Log;
+import com.android.volley.toolbox.ImageLoader;
+import com.android.volley.toolbox.NetworkImageView;
 import org.evergreen_ils.R;
 import org.evergreen_ils.accountAccess.AccountAccess;
 import org.evergreen_ils.accountAccess.SessionNotFoundException;
 import org.evergreen_ils.accountAccess.bookbags.BookBag;
 import org.evergreen_ils.accountAccess.holds.PlaceHold;
 import org.evergreen_ils.globals.GlobalConfigs;
+import org.evergreen_ils.net.VolleyWrangler;
 import org.evergreen_ils.searchCatalog.*;
 
 import android.app.Dialog;
@@ -95,7 +98,7 @@ public class BasicDetailsFragment extends Fragment {
 
     private final ImageDownloader imageDownloader = new ImageDownloader();
 
-    private ImageView recordImage;
+    private NetworkImageView recordImage;
     // max display info
     private int list_size = 3;
 
@@ -153,7 +156,7 @@ public class BasicDetailsFragment extends Fragment {
         synopsisTextView = (TextView) layout.findViewById(R.id.record_details_simple_synopsis);
         isbnTextView = (TextView) layout.findViewById(R.id.record_details_simple_isbn);
 
-        recordImage = (ImageView) layout.findViewById(R.id.record_details_simple_image);
+        recordImage = (NetworkImageView) layout.findViewById(R.id.record_details_simple_image);
 
         placeHoldButton = (Button) layout.findViewById(R.id.simple_place_hold_button);
         addToBookbagButton = (Button) layout.findViewById(R.id.simple_add_to_bookbag_button);
@@ -169,14 +172,13 @@ public class BasicDetailsFragment extends Fragment {
             }
         });
 
-        //String imageHref = GlobalConfigs.getUrl("/opac/extras/ac/jacket/large/r/" + record.doc_id);
-        String imageHref = GlobalConfigs.getUrl("/opac/extras/ac/jacket/medium/r/" + record.doc_id);
-
-        // start async download of image
-        imageDownloader.download(imageHref, recordImage);
+        // Start async image load
+        //final String imageHref = GlobalConfigs.getUrl("/opac/extras/ac/jacket/large/r/" + record.doc_id);
+        final String imageHref = GlobalConfigs.getUrl("/opac/extras/ac/jacket/medium/r/" + record.doc_id);
+        ImageLoader imageLoader = VolleyWrangler.getInstance(getActivity()).getImageLoader();
+        recordImage.setImageUrl(imageHref, imageLoader);
 
         AccountAccess ac = AccountAccess.getAccountAccess();
-
         bookBags = ac.getBookbags();
         String array_spinner[] = new String[bookBags.size()];
 

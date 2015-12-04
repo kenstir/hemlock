@@ -167,6 +167,7 @@ public class GlobalConfigs {
                     }
                 },
                 null);
+        Log.d(TAG, "volley queuing request");
         q.add(stringRequest);
     }
 

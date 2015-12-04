@@ -10,8 +10,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
-import org.evergreen_ils.searchCatalog.Library;
-import org.w3c.dom.Text;
 
 public class AccountAuthenticator extends AbstractAccountAuthenticator {
     

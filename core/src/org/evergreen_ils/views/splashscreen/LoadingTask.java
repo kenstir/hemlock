@@ -31,10 +31,7 @@ import android.accounts.AccountManager;
 import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
-import org.evergreen_ils.searchCatalog.Library;
-import org.opensrf.util.OSRFObject;
-
-import java.util.Map;
+import org.evergreen_ils.globals.Library;
 
 /** This is basically the same as an AsyncTask<String,String,String>, except that it uses
  * a Thread.  Starting with HONEYCOMB, tasks are executed on a single thread and the 2nd
