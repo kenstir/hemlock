@@ -19,18 +19,16 @@
  */
 package org.evergreen_ils.searchCatalog;
 
+import java.util.ArrayList;
 import java.util.StringTokenizer;
 
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
+import android.text.TextUtils;
 import android.view.MenuItem;
 import org.evergreen_ils.R;
-import org.evergreen_ils.accountAccess.AccountAccess;
 import org.evergreen_ils.utils.ui.ActionBarUtils;
 import org.evergreen_ils.views.splashscreen.SplashActivity;
 
-import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -46,9 +44,8 @@ public class AdvancedSearchActivity extends ActionBarActivity {
 
     private final String TAG = AdvancedSearchActivity.class.getName();
 
-    private Context context;
-
-    private StringBuilder advancedSearchFormattedText;
+    private ArrayList<String> searchTerms;
+    private String advancedSearchFormattedText;
 
     public static final int RESULT_ADVANCED_SEARCH = 10;
 
@@ -63,76 +60,52 @@ public class AdvancedSearchActivity extends ActionBarActivity {
         setContentView(R.layout.advanced_search);
         ActionBarUtils.initActionBarForActivity(this);
 
-        advancedSearchFormattedText = new StringBuilder();
-
-        context = this;
+        searchTerms = new ArrayList<String>();
+        advancedSearchFormattedText = new String();
 
         final LinearLayout layout = (LinearLayout) findViewById(R.id.advanced_search_filters);
-
         Button addFilter = (Button) findViewById(R.id.advanced_search_add_filter_button);
-
-        final Spinner search_index = (Spinner) findViewById(R.id.advanced_spinner_index);
-        final Spinner search_option = (Spinner) findViewById(R.id.advanced_spinner_option);
+        final Spinner search_qtype_spinner = (Spinner) findViewById(R.id.advanced_search_qtype_spinner);
+        final Spinner search_contains_spinner = (Spinner) findViewById(R.id.advanced_search_contains_spinner);
         final EditText search_filter_text = (EditText) findViewById(R.id.advanced_search_text);
 
         addFilter.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                int searchOptionVal = search_option.getSelectedItemPosition();
+                int contains_pos = search_contains_spinner.getSelectedItemPosition();
+                String query = "";
+                String qtype = search_qtype_spinner.getSelectedItem().toString().toLowerCase();
+                String filter = search_filter_text.getText().toString();
 
-                String searchText = search_index.getSelectedItem().toString()
-                        .toLowerCase()
-                        + ": ";
-
-                advancedSearchFormattedText.append(search_index
-                        .getSelectedItem().toString().toLowerCase()
-                        + ": ");
-
-                switch (searchOptionVal) {
-
-                case 0: {
+                switch (contains_pos) {
+                case 0:
                     // contains
-                    advancedSearchFormattedText.append(search_filter_text
-                            .getText().toString());
-                    searchText = searchText
-                            + search_filter_text.getText().toString();
-                }
+                    query = qtype + ": " + filter;
                     break;
-                case 1: {
+                case 1:
                     // excludes
-                    StringTokenizer str = new StringTokenizer(
-                            search_filter_text.getText().toString());
+                    query = qtype + ":";
+                    StringTokenizer str = new StringTokenizer(filter);
                     while (str.hasMoreTokens()) {
                         String token = str.nextToken(" ");
-                        advancedSearchFormattedText.append(" -" + token);
-                        searchText = searchText + " -" + token;
+                        query = query + " -" + token;
                     }
-
-                }
                     break;
-                case 2: {
+                case 2:
                     // matches exactly
-                    advancedSearchFormattedText.append(" \""
-                            + search_filter_text.getText().toString() + "\"");
-                    searchText = searchText + " \""
-                            + search_filter_text.getText().toString() + "\"";
-                }
+                    query = qtype + " \"" + filter + "\"";
                     break;
-
                 }
-
-                TextView text = new TextView(context);
-                text.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT,
-                        LayoutParams.WRAP_CONTENT));
-                text.setText(searchText);
+                searchTerms.add(query);
+                TextView text = new TextView(AdvancedSearchActivity.this);
+                text.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
+                text.setText(query);
                 layout.addView(text);
-
             }
         });
 
         Button cancel = (Button) findViewById(R.id.advanced_search_cancel);
-
         cancel.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -141,14 +114,11 @@ public class AdvancedSearchActivity extends ActionBarActivity {
         });
 
         Button search = (Button) findViewById(R.id.advanced_search_button);
-
         search.setOnClickListener(new OnClickListener() {
-
             @Override
             public void onClick(View v) {
                 Intent returnIntent = new Intent();
-                returnIntent.putExtra("advancedSearchText",
-                        advancedSearchFormattedText.toString());
+                returnIntent.putExtra("advancedSearchText", TextUtils.join(" ", searchTerms));
                 setResult(RESULT_ADVANCED_SEARCH, returnIntent);
                 finish();
             }

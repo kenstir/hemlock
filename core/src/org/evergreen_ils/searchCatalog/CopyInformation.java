@@ -48,9 +48,9 @@ public class CopyInformation implements Serializable {
 
     // global, it is initialized when orgTree and fm_ild is downloaded
 
-    public static LinkedHashMap<String, String> availableOrgStatuses;
+    public static LinkedHashMap<String, String> availableOrgStatuses = new LinkedHashMap<String, String>();
 
-    public LinkedHashMap<String, String> statusInformation = null;
+    public LinkedHashMap<String, String> statusInformation = new LinkedHashMap<String, String>();
 
     public CopyInformation(List<Object> list) {
 
