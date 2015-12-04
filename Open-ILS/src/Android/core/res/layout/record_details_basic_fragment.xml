@@ -72,11 +72,10 @@
 	                />
                 </LinearLayout>
                 
-                <ImageView 
+                <com.android.volley.toolbox.NetworkImageView
                     android:id="@+id/record_details_simple_image"
                     android:layout_width="140dip"
                     android:layout_height="180dip"
-                    android:src="@drawable/no_image"
                     android:padding="5dip"
                     android:layout_margin="10dip"
                     />

@@ -8,8 +8,7 @@ import android.text.TextUtils;
 import android.util.Log;
 import org.evergreen_ils.R;
 import org.evergreen_ils.auth.Const;
-import org.evergreen_ils.searchCatalog.Library;
-import org.w3c.dom.Text;
+import org.evergreen_ils.globals.Library;
 
 import java.io.IOException;
 

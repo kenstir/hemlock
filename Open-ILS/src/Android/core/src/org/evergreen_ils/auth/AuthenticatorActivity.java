@@ -1,6 +1,5 @@
 package org.evergreen_ils.auth;
 
-import android.app.DownloadManager;
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.location.Location;
@@ -30,9 +29,8 @@ import android.view.View;
 import android.widget.TextView;
 import org.evergreen_ils.accountAccess.AccountUtils;
 import org.evergreen_ils.globals.AppPrefs;
-import org.evergreen_ils.globals.Utils;
 import org.evergreen_ils.net.VolleyWrangler;
-import org.evergreen_ils.searchCatalog.Library;
+import org.evergreen_ils.globals.Library;
 import org.opensrf.util.JSONException;
 import org.opensrf.util.JSONReader;
 
