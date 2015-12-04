@@ -14,16 +14,16 @@
         android:padding="5dip" >
 
         <Spinner
-            android:id="@+id/advanced_spinner_index"
+            android:id="@+id/advanced_search_qtype_spinner"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:entries="@array/advanced_search_index" />
+            android:entries="@array/search_qtype" />
 
         <Spinner
-            android:id="@+id/advanced_spinner_option"
+            android:id="@+id/advanced_search_contains_spinner"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:entries="@array/advanced_search_options"/>
+            android:entries="@array/advanced_search_contains"/>
     </LinearLayout>
 
     <LinearLayout
@@ -75,9 +75,6 @@
         android:gravity="center_horizontal"
         android:orientation="horizontal"
         android:padding="5dip" >
-        <!--
-                android:background="@drawable/bottom_rounded_menu_background"
-        -->
 
         <Button
             android:id="@+id/advanced_search_cancel"

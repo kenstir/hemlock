@@ -232,6 +232,7 @@ public class SearchCatalog {
         List<OSRFObject> ccs_list = (List<OSRFObject>) Utils.doRequestSimple(conn(), SERVICE,
                 METHOD_COPY_STATUS_ALL, new Object[] {});
 
+        // todo wtf, why is SearchCatalog loading up a member var of CopyInformation???
         CopyInformation.availableOrgStatuses = new LinkedHashMap<String, String>();
 
         if (ccs_list != null) {

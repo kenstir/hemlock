@@ -56,7 +56,6 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -151,7 +150,7 @@ public class SearchCatalogListView extends ActionBarActivity {
                 R.layout.search_result_item, recordList);
 
         //searchOptionsMenu = findViewById(R.id.search_preference_options);
-        searchClassSpinner = (Spinner) findViewById(R.id.search_class_spinner);
+        searchClassSpinner = (Spinner) findViewById(R.id.search_qtype_spinner);
         searchFormatSpinner = (Spinner) findViewById(R.id.search_format_spinner);
         searchResultsNumber = (TextView) findViewById(R.id.search_result_number);
         initSearchFormatSpinner();
@@ -412,7 +411,7 @@ public class SearchCatalogListView extends ActionBarActivity {
         });
 
 
-        searchButton = (ImageButton) findViewById(R.id.searchButton);
+        searchButton = (ImageButton) findViewById(R.id.search_button);
         searchButton.setOnClickListener(new OnClickListener() {
 
             @Override
@@ -438,7 +437,7 @@ public class SearchCatalogListView extends ActionBarActivity {
         }
         //ArrayAdapter<String> adapter = CompatSpinnerAdapter.CreateCompatSpinnerAdapter(this, list);
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, R.layout.org_item_layout, list);
-        choseOrganisation = (Spinner) findViewById(R.id.chose_organisation);
+        choseOrganisation = (Spinner) findViewById(R.id.search_org_spinner);
         choseOrganisation.setAdapter(adapter);
         choseOrganisation.setSelection(selectedOrgPos);
         choseOrganisation.setOnItemSelectedListener(new OnItemSelectedListener() {

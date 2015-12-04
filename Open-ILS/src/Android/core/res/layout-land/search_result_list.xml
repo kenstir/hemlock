@@ -23,18 +23,18 @@
                 android:layout_weight="1"/>
 
         <Spinner
-                android:id="@+id/search_class_spinner"
+                android:id="@+id/search_qtype_spinner"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="right"
-                android:entries="@array/advanced_search_index"/>
+                android:entries="@array/search_qtype"/>
         <Spinner
                 android:id="@+id/search_format_spinner"
                 android:layout_width="120dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="right"/>
         <Spinner
-                android:id="@+id/chose_organisation"
+                android:id="@+id/search_org_spinner"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
@@ -42,7 +42,7 @@
                 android:spinnerMode="dialog"/>
 
         <ImageButton
-                android:id="@+id/searchButton"
+                android:id="@+id/search_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/abc_ic_search"
