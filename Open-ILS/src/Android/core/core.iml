@@ -18,10 +18,9 @@
       <sourceFolder url="file://$MODULE_DIR$/../opensrf/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/../opensrf/src/org/opensrf/test" isTestSource="true" />
       <excludeFolder url="file://$MODULE_DIR$/../opensrf/src/org/opensrf/net/xmpp" />
-      <excludeFolder url="file://$MODULE_DIR$/../opensrf/src/org/opensrf/test" />
     </content>
-    <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="inheritedJdk" />
     <orderEntry type="module" module-name="appcompat" exported="" />
     <orderEntry type="module-library" exported="">
       <library>
