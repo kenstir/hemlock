@@ -24,7 +24,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 public class GatewayRequest extends HttpRequest {
 
     private boolean readComplete;
-    private String TAG = GatewayRequest.class.getSimpleName();
+    private String TAG = GatewayRequest.class.getName();
 
     public GatewayRequest(HttpConnection conn, String service, Method method) {
         super(conn, service, method);
