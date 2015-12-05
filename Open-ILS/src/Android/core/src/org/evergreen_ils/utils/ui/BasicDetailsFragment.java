@@ -261,13 +261,13 @@ public class BasicDetailsFragment extends Fragment {
         // todo loading copy count on demand is not working because we are on the main thread
         //SearchCatalog.ensureCopyCount(record, orgId);
 
-        Log.d(TAG, "xxx copyCountListInfo.size=" + record.copyCountListInfo.size() + " title:" + record.title);
+        //Log.d(TAG, "xxx copyCountListInfo.size=" + record.copyCountListInfo.size() + " title:" + record.title);
         int total = 0;
         int available = 0;
         for (int i = 0; i < record.copyCountListInfo.size(); i++) {
-            Log.d(TAG, "xxx orgId=" + orgId
-                    + " rec.org_id=" + record.copyCountListInfo.get(i).org_id
-                    + " rec.count=" + record.copyCountListInfo.get(i).count);
+//            Log.d(TAG, "xxx orgId=" + orgId
+//                    + " rec.org_id=" + record.copyCountListInfo.get(i).org_id
+//                    + " rec.count=" + record.copyCountListInfo.get(i).count);
             if (record.copyCountListInfo.get(i).org_id.equals(orgId)) {
                 total = record.copyCountListInfo.get(i).count;
                 available = record.copyCountListInfo.get(i).available;
