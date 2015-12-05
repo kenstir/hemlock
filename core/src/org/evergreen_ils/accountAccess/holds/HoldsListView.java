@@ -44,7 +44,7 @@ import java.util.List;
 
 public class HoldsListView extends ActionBarActivity {
 
-    private final String TAG = HoldsListView.class.getSimpleName();
+    private final static String TAG = HoldsListView.class.getName();
 
     private AccountAccess accountAccess = null;
 
@@ -177,7 +177,7 @@ public class HoldsListView extends ActionBarActivity {
     }
 
     class HoldsArrayAdapter extends ArrayAdapter<HoldRecord> {
-        private static final String tag = "CheckoutArrayAdapter";
+        private final String tag = HoldsArrayAdapter.class.getName();
 
         private TextView holdTitle;
         private TextView holdAuthor;

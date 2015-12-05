@@ -88,50 +88,34 @@ public class MoreCopyInformation extends ActionBarActivity {
 
         for (int i = 0; i < record.copyInformationList.size(); i++) {
 
-            View copy_info_view = inflater.inflate(R.layout.copy_information,
-                    null);
+            View copy_info_view = inflater.inflate(R.layout.copy_information, null);
 
             // fill in any details dynamically here
-            TextView library = (TextView) copy_info_view
-                    .findViewById(R.id.copy_information_library);
-            TextView call_number = (TextView) copy_info_view
-                    .findViewById(R.id.copy_information_call_number);
-            TextView copy_location = (TextView) copy_info_view
-                    .findViewById(R.id.copy_information_copy_location);
+            TextView library = (TextView) copy_info_view.findViewById(R.id.copy_information_library);
+            TextView call_number = (TextView) copy_info_view.findViewById(R.id.copy_information_call_number);
+            TextView copy_location = (TextView) copy_info_view.findViewById(R.id.copy_information_copy_location);
 
-            library.setText(globalConfigs.getOrganizationName(record.copyInformationList
-                    .get(i).org_id) + " ");
-            call_number
-                    .setText(record.copyInformationList.get(i).call_number_sufix);
-            copy_location
-                    .setText(record.copyInformationList.get(i).copy_location);
+            library.setText(globalConfigs.getOrganizationName(record.copyInformationList.get(i).org_id));
+            call_number.setText(record.copyInformationList.get(i).call_number_sufix);
+            copy_location.setText(record.copyInformationList.get(i).copy_location);
 
             // insert into main view
             insertPoint.addView(copy_info_view, new ViewGroup.LayoutParams(
                     LayoutParams.MATCH_PARENT,
                     ViewGroup.LayoutParams.WRAP_CONTENT));
 
-            LinearLayout copy_statuses = (LinearLayout) copy_info_view
-                    .findViewById(R.id.copy_information_statuses);
+            LinearLayout copy_statuses = (LinearLayout) copy_info_view.findViewById(R.id.copy_information_statuses);
 
             CopyInformation info = record.copyInformationList.get(i);
-
             Set<Entry<String, String>> set = info.statusInformation.entrySet();
-
             Iterator<Entry<String, String>> it = set.iterator();
-
             while (it.hasNext()) {
-
                 Entry<String, String> ent = it.next();
                 TextView statusName = new TextView(context);
-                statusName.setText(ent.getKey() + " : " + ent.getValue());
-
+                statusName.setText(ent.getKey() + ": " + ent.getValue());
                 copy_statuses.addView(statusName, new LayoutParams(
                         LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
-
             }
-
         }
-
     }
 }

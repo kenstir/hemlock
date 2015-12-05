@@ -59,7 +59,7 @@ import android.widget.Toast;
 
 public class HoldDetails extends ActionBarActivity {
 
-    private final String TAG = HoldDetails.class.getSimpleName();
+    private final static String TAG = HoldDetails.class.getName();
 
     public static final int RESULT_CODE_DELETE_HOLD = 5;
 

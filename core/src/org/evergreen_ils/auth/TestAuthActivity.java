@@ -43,7 +43,7 @@ public class TestAuthActivity extends Activity {
 	
 	private static final String STATE_DIALOG = "state_dialog";
 	private static final String STATE_INVALIDATE = "state_invalidate";
-    private static final String TAG = TestAuthActivity.class.getSimpleName();
+    private static final String TAG = TestAuthActivity.class.getName();
 
     private AccountManager mAccountManager;
     private String mAccountType;

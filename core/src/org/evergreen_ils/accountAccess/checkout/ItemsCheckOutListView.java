@@ -50,7 +50,7 @@ import org.w3c.dom.Text;
 
 public class ItemsCheckOutListView extends ActionBarActivity {
 
-    private final String TAG = ItemsCheckOutListView.class.getSimpleName();
+    private final static String TAG = ItemsCheckOutListView.class.getName();
 
     private AccountAccess accountAccess = null;
 
@@ -147,8 +147,6 @@ public class ItemsCheckOutListView extends ActionBarActivity {
     }
 
     class CheckOutArrayAdapter extends ArrayAdapter<CircRecord> {
-        private static final String tag = "CheckoutArrayAdapter";
-
         private TextView recordTitle;
         private TextView recordAuthor;
         private TextView recordFormat;

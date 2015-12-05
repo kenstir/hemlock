@@ -41,7 +41,7 @@ import org.evergreen_ils.globals.Library;
  *
  */
 public class LoadingTask {
-    private final String TAG = LoadingTask.class.getSimpleName();
+    private final static String TAG = LoadingTask.class.getName();
 
     public static final String TASK_OK = "OK";
 

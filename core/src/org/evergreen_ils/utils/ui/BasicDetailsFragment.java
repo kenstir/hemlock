@@ -58,7 +58,7 @@ import android.widget.Toast;
 
 public class BasicDetailsFragment extends Fragment {
 
-    private final String TAG = BasicDetailsFragment.class.getName();
+    private final static String TAG = BasicDetailsFragment.class.getName();
 
     private RecordInfo record;
     private Integer orgId;
@@ -80,25 +80,19 @@ public class BasicDetailsFragment extends Fragment {
     private TextView copyCountTextView;
 
     private Button placeHoldButton;
-    private Button addToBookbagButton;
-
-    private LinearLayout showMore;
 
     private GlobalConfigs globalConfigs;
 
+    /*
+    private Button addToBookbagButton;
     private ProgressDialog progressDialog;
-
     private Integer bookbag_selected;
-
     private Dialog dialog;
-
     private ArrayList<BookBag> bookBags;
-
-    private final ImageDownloader imageDownloader = new ImageDownloader();
+    private int list_size = 3;
+    */
 
     private NetworkImageView recordImage;
-    // max display info
-    private int list_size = 3;
 
     public static BasicDetailsFragment newInstance(RecordInfo record,
             Integer position, Integer total, Integer orgID) {
@@ -136,7 +130,7 @@ public class BasicDetailsFragment extends Fragment {
 
         record_header = (TextView) layout.findViewById(R.id.record_header_text);
         copyCountTextView = (TextView) layout.findViewById(R.id.record_details_simple_copy_count);
-        showMore = (LinearLayout) layout.findViewById(R.id.record_details_show_more);
+//        showMore = (LinearLayout) layout.findViewById(R.id.record_details_show_more);
         titleTextView = (TextView) layout.findViewById(R.id.record_details_simple_title);
         formatTextView = (TextView) layout.findViewById(R.id.record_details_format);
         authorTextView = (TextView) layout.findViewById(R.id.record_details_simple_author);
@@ -150,8 +144,7 @@ public class BasicDetailsFragment extends Fragment {
         recordImage = (NetworkImageView) layout.findViewById(R.id.record_details_simple_image);
 
         placeHoldButton = (Button) layout.findViewById(R.id.simple_place_hold_button);
-        addToBookbagButton = (Button) layout.findViewById(R.id.simple_add_to_bookbag_button);
-
+//        addToBookbagButton = (Button) layout.findViewById(R.id.simple_add_to_bookbag_button);
         placeHoldButton.setOnClickListener(new OnClickListener() {
 
             @Override
@@ -169,6 +162,8 @@ public class BasicDetailsFragment extends Fragment {
         recordImage.setImageUrl(imageHref, imageLoader);
 
         AccountAccess ac = AccountAccess.getAccountAccess();
+
+        /*
         bookBags = ac.getBookbags();
         String array_spinner[] = new String[bookBags.size()];
 
@@ -179,7 +174,6 @@ public class BasicDetailsFragment extends Fragment {
         dialog.setContentView(R.layout.bookbag_spinner);
         dialog.setTitle("Choose bookbag");
         Spinner s = (Spinner) dialog.findViewById(R.id.bookbag_spinner);
-
         Button add = (Button) dialog.findViewById(R.id.add_to_bookbag_button);
         ArrayAdapter adapter = new ArrayAdapter(getActivity()
                 .getApplicationContext(), android.R.layout.simple_spinner_item,
@@ -221,10 +215,8 @@ public class BasicDetailsFragment extends Fragment {
             }
         });
         s.setOnItemSelectedListener(new OnItemSelectedListener() {
-
             @Override
-            public void onItemSelected(AdapterView<?> arg0, View arg1,
-                    int position, long arg3) {
+            public void onItemSelected(AdapterView<?> arg0, View arg1, int position, long arg3) {
                 bookbag_selected = position;
             }
 
@@ -251,6 +243,7 @@ public class BasicDetailsFragment extends Fragment {
                 });
             }
         });
+        */
 
         record_header.setText(String.format(getString(R.string.record_of), position, total));
 
@@ -265,46 +258,35 @@ public class BasicDetailsFragment extends Fragment {
 
         isbnTextView.setText(record.isbn);
 
-        // todo this is not working because we are on the main thread
+        // todo loading copy count on demand is not working because we are on the main thread
         //SearchCatalog.ensureCopyCount(record, orgId);
 
-        Log.d(TAG, "Size " + record.copyCountListInfo.size());
+        Log.d(TAG, "xxx copyCountListInfo.size=" + record.copyCountListInfo.size() + " title:" + record.title);
+        int total = 0;
+        int available = 0;
         for (int i = 0; i < record.copyCountListInfo.size(); i++) {
-//            Log.d(TAG, orgId + " "
-//                    + record.copyCountListInfo.get(i).org_id + " "
-//                    + record.copyCountListInfo.get(i).count);
-            if (record.copyCountListInfo.get(i).org_id == orgId) {
-                int total = record.copyCountListInfo.get(i).count;
-                int available = record.copyCountListInfo.get(i).available;
-                String totalCopies = getResources().getQuantityString(R.plurals.number_of_copies, total, total);
-                copyCountTextView.setText(String.format(getString(R.string.n_of_m_available), available, totalCopies));
+            Log.d(TAG, "xxx orgId=" + orgId
+                    + " rec.org_id=" + record.copyCountListInfo.get(i).org_id
+                    + " rec.count=" + record.copyCountListInfo.get(i).count);
+            if (record.copyCountListInfo.get(i).org_id.equals(orgId)) {
+                total = record.copyCountListInfo.get(i).count;
+                available = record.copyCountListInfo.get(i).available;
                 break;
             }
         }
+        String totalCopies = getResources().getQuantityString(R.plurals.number_of_copies, total, total);
+        copyCountTextView.setText(String.format(getString(R.string.n_of_m_available),
+                available, totalCopies, globalConfigs.getOrganizationName(orgId)));
 
-        final LayoutInflater inf = inflater;
-        final LinearLayout lay = layout;
-
-        // add more details
-        showMore.setOnClickListener(new OnClickListener() {
-
+        ((Button)layout.findViewById(R.id.show_copy_information_button)).setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                // show more details
                 Intent intent = new Intent(getActivity().getApplicationContext(), MoreCopyInformation.class);
                 intent.putExtra("recordInfo", record);
                 intent.putExtra("orgId", orgId);
                 startActivity(intent);
             }
         });
-
-        if (list_size > record.copyInformationList.size())
-            list_size = record.copyInformationList.size();
-
-        // insert into main view
-        LinearLayout insertPoint = (LinearLayout) layout
-                .findViewById(R.id.record_details_copy_information);
-        addCopyInfo(0, list_size, inflater, insertPoint);
 
         return layout;
     }
@@ -316,52 +298,5 @@ public class BasicDetailsFragment extends Fragment {
         outState.putInt("position", this.position);
         outState.putInt("total", this.total);
         super.onSaveInstanceState(outState);
-    }
-
-    public void addCopyInfo(int start, int stop, LayoutInflater inflater,
-            LinearLayout insertPoint) {
-
-        for (int i = start; i < stop; i++) {
-
-            View copy_info_view = inflater.inflate(R.layout.copy_information, null);
-
-            // fill in any details dynamically here
-            TextView library = (TextView) copy_info_view
-                    .findViewById(R.id.copy_information_library);
-            TextView call_number = (TextView) copy_info_view
-                    .findViewById(R.id.copy_information_call_number);
-            TextView copy_location = (TextView) copy_info_view
-                    .findViewById(R.id.copy_information_copy_location);
-
-            CopyInformation info = record.copyInformationList.get(i);
-            library.setText(globalConfigs.getOrganizationName(info.org_id));
-            call_number.setText(info.call_number_sufix);
-            copy_location.setText(info.copy_location);
-
-            // insert into main view
-            insertPoint.addView(copy_info_view, new ViewGroup.LayoutParams(
-                    LayoutParams.MATCH_PARENT,
-                    ViewGroup.LayoutParams.WRAP_CONTENT));
-
-            LinearLayout copy_statuses = (LinearLayout) copy_info_view
-                    .findViewById(R.id.copy_information_statuses);
-
-            Set<Entry<String, String>> set = info.statusInformation.entrySet();
-
-            Iterator<Entry<String, String>> it = set.iterator();
-
-            while (it.hasNext()) {
-
-                Entry<String, String> ent = it.next();
-                TextView statusName = new TextView(getActivity());
-                statusName.setText(ent.getKey() + " : " + ent.getValue());
-
-                copy_statuses.addView(statusName, new LayoutParams(
-                        LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
-
-            }
-
-        }
-
     }
 }

@@ -23,7 +23,7 @@ import android.util.Log;
 
 final class AutoFocusCallback implements Camera.AutoFocusCallback {
 
-  private static final String TAG = AutoFocusCallback.class.getSimpleName();
+  private final static String TAG = AutoFocusCallback.class.getSimpleName();
 
   private static final long AUTOFOCUS_INTERVAL_MS = 1500L;
 
