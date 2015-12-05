@@ -178,14 +178,12 @@ public class BookBagDetails extends ActionBarActivity {
 
             @Override
             public void run() {
-
-                ArrayList<RecordInfo> records = new ArrayList<RecordInfo>();
                 ArrayList<Integer> ids = new ArrayList<Integer>();
 
                 for (int i = 0; i < bookBag.items.size(); i++) {
                     ids.add(bookBag.items.get(i).target_copy);
                 }
-                records = search.getRecordsInfo(ids);
+                ArrayList<RecordInfo> records = search.getRecordsInfo(ids);
 
                 for (int i = 0; i < bookBag.items.size(); i++) {
                     bookBag.items.get(i).recordInfo = records.get(i);

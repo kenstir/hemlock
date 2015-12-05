@@ -36,11 +36,8 @@ public class CopyInformation implements Serializable {
     private final String TAG = CopyInformation.class.getName();
 
     public Integer org_id = -1;
-
     public String call_number_sufix;
-
     public String copy_location;
-
     public HashMap<String, String> statuses;
 
     // the hash from the request method
@@ -63,20 +60,19 @@ public class CopyInformation implements Serializable {
         statusInformation = new LinkedHashMap<String, String>();
 
         Set<Entry<String, String>> set = availableOrgStatuses.entrySet();
-
         Iterator<Entry<String, String>> it = set.iterator();
-
         while (it.hasNext()) {
             Entry<String, String> entry = it.next();
 
             if (hashValCopy.containsKey(entry.getKey())) {
                 statusInformation.put(entry.getValue(),
                         hashValCopy.get(entry.getKey()) + "");
-//                Log.d(TAG, "Added " + entry.getKey() + " "
-//                        + entry.getValue() + " "
-//                        + hashValCopy.get(entry.getKey()));
+//                Log.d(TAG, "Added " + entry.getKey() + " -> "
+//                        + entry.getValue() + " ("
+//                        + hashValCopy.get(entry.getKey()) + ")");
             }
         }
+        Log.d(TAG, "done");
     }
 
 }

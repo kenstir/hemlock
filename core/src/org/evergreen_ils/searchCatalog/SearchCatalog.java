@@ -84,7 +84,7 @@ public class SearchCatalog {
 
     public static SearchCatalog searchCatalogSingleton = null;
 
-    public String TAG = SearchCatalog.class.getSimpleName();
+    public String TAG = SearchCatalog.class.getName();
 
     // the org on which the searches will be made
     public Organisation selectedOrganization = null;
@@ -112,7 +112,7 @@ public class SearchCatalog {
     private SearchCatalog() {
     }
 
-    private HttpConnection conn() {
+    private static HttpConnection conn() {
         return GlobalConfigs.gatewayConnection();
     }
 
@@ -130,42 +130,35 @@ public class SearchCatalog {
         this.searchFormat = searchFormat;
         
         ArrayList<RecordInfo> resultsRecordInfo = new ArrayList<RecordInfo>();
-        HashMap complexParm = new HashMap<String, Integer>();
 
-        try {
-            //KCXXX I'm not too sure about this depth option
-            if (this.selectedOrganization != null) {
-                if (this.selectedOrganization.id != null)
-                    complexParm.put("org_unit", this.selectedOrganization.id);
-                if (this.selectedOrganization.level != null)
-                    complexParm.put("depth", this.selectedOrganization.level);
-            }
-            complexParm.put("limit", searchLimit);
-            complexParm.put("offset", offset);
-            if (searchClass != null) complexParm.put("default_class", searchClass);
-//            complexParm.put("offset",0);
-//            complexParm.put("visibility_limit", 3000);
-        } catch (Exception e) {
-            Log.d(TAG, "Exception in JSON " + e.getMessage());
+        HashMap complexParm = new HashMap<String, Integer>();
+        if (this.selectedOrganization != null) {
+            if (this.selectedOrganization.id != null)
+                complexParm.put("org_unit", this.selectedOrganization.id);
+            // I'm not too sure about this depth option
+            if (this.selectedOrganization.level != null)
+                complexParm.put("depth", this.selectedOrganization.level);
         }
+        complexParm.put("limit", searchLimit);
+        complexParm.put("offset", offset);
+        if (searchClass != null) complexParm.put("default_class", searchClass);
 
         String queryString = searchText;
         if (!searchFormat.isEmpty())
             queryString += " search_format(" + searchFormat + ")";
 
-        // do request and check for connectivity
+        long start_ms = System.currentTimeMillis();
+        long now_ms = start_ms;
+
+        // do request
         Object resp = Utils.doRequest(conn(), SERVICE, METHOD_MULTICLASS_QUERY,
                 new Object[] { complexParm, queryString, 1 });
-
-        ArrayList<String> ids = new ArrayList<String>();
-
         Log.d(TAG, "Sync Response: " + resp);
+        now_ms = logElapsedTime(TAG, now_ms, "search");
         if (resp == null)
             return resultsRecordInfo; // search failed or server crashed
 
         Map<String, ?> response = (Map<String, ?>) resp;
-
-        Log.d(TAG, " ids : " + response.get("ids") + " ");
 
         List<List<String>> result_ids;
         result_ids = (List<List<String>>) response.get("ids");
@@ -174,6 +167,7 @@ public class SearchCatalog {
         // sometimes count is an int ("count":0) and sometimes string ("count":"1103")
         visible = Integer.parseInt(response.get("count").toString());
 
+        ArrayList<String> ids = new ArrayList<String>();
         for (int i = 0; i < result_ids.size(); i++) {
             ids.add(result_ids.get(i).get(0));
         }
@@ -184,15 +178,21 @@ public class SearchCatalog {
             Integer record_id = Integer.parseInt(ids.get(i));
 
             RecordInfo record = new RecordInfo(getItemShortInfo(record_id));
+            now_ms = logElapsedTime(TAG, now_ms, "search.getItemShortInfo");
             resultsRecordInfo.add(record);
 
             AccountAccess ac = AccountAccess.getAccountAccess();
             record.search_format = ac.fetchFormat(record_id.toString());
+            now_ms = logElapsedTime(TAG, now_ms, "search.fetchFormat");
 
+            // todo This takes 30% of the total search time but is not required for SearchCatalogListView
+            // it is needed only for BasicDetailsFragment, but that would cause it to be run on the main thread
+            // and that fails, so continue to do it here for now
             record.copyCountListInfo = getCopyCount(record_id, this.selectedOrganization.id);
             List<List<Object>> list = (List<List<Object>>) getLocationCount(
                     record_id, this.selectedOrganization.id,
                     this.selectedOrganization.level);
+            now_ms = logElapsedTime(TAG, now_ms, "search.getLocationCount");
             if (list != null)
                 for (int j = 0; j < list.size(); j++) {
                     CopyInformation copyInfo = new CopyInformation(list.get(j));
@@ -204,8 +204,15 @@ public class SearchCatalog {
                     + " Pubdate:" + record.pubdate
                     + " Publisher:" + record.publisher);
         }
+        logElapsedTime(TAG, start_ms, "search.total");
 
         return resultsRecordInfo;
+    }
+
+    public long logElapsedTime(String tag, long start_ms, String s) {
+        long now_ms = System.currentTimeMillis();
+        Log.d(tag, s + ": " + (now_ms - start_ms) + "ms");
+        return now_ms;
     }
 
     /**
@@ -256,7 +263,6 @@ public class SearchCatalog {
                 METHOD_COPY_LOCATION_COUNTS, new Object[] {
                         recordID, orgID, orgDepth });
         return list;
-
     }
 
     public ArrayList<RecordInfo> getRecordsInfo(ArrayList<Integer> ids) {
@@ -283,7 +289,7 @@ public class SearchCatalog {
         this.selectedOrganization = org;
     }
 
-    public ArrayList<CopyCountInformation> getCopyCount(Integer recordID,
+    public static ArrayList<CopyCountInformation> getCopyCount(Integer recordID,
             Integer orgID) {
 
         List<?> list = (List<?>) Utils.doRequestSimple(conn(), SERVICE,
@@ -300,5 +306,12 @@ public class SearchCatalog {
         }
 
         return copyInfoList;
+    }
+
+    // should be punted to volley
+    public static void ensureCopyCount(RecordInfo record, Integer org_id) {
+        if (record.copyCountListInfo == null) {
+            record.copyCountListInfo = getCopyCount(record.doc_id, org_id);
+        }
     }
 }

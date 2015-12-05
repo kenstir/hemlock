@@ -39,7 +39,7 @@ public class RecordInfo implements Serializable {
     public String author = null;
     public String pubdate = null;
     public String isbn = null;
-    public Integer doc_id = null;
+    public Integer doc_id = -1;
     public String publisher = null;
     public String subject = "";
     public String doc_type = null;
@@ -50,15 +50,13 @@ public class RecordInfo implements Serializable {
     public boolean dummy = false;
 
     public ArrayList<CopyCountInformation> copyCountListInfo = null;
-
-    public List<CopyInformation> copyInformationList = null;
+    public List<CopyInformation> copyInformationList = new ArrayList<CopyInformation>();
     public String search_format = null;
 
     public RecordInfo() {
         this.title = "Test title";
         this.author = "Test author";
         this.pubdate = "Publication date";
-        copyInformationList = new ArrayList<CopyInformation>();
 
         // marks the fact that this is a record made from no info
         this.dummy = true;
@@ -78,7 +76,6 @@ public class RecordInfo implements Serializable {
     }
 
     public RecordInfo(OSRFObject info) {
-        copyInformationList = new ArrayList<CopyInformation>();
         try {
             this.title = safeString(info.getString("title"));
             this.author = safeString(info.getString("author"));

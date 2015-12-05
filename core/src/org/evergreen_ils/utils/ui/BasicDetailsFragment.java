@@ -61,6 +61,7 @@ public class BasicDetailsFragment extends Fragment {
     private final String TAG = BasicDetailsFragment.class.getName();
 
     private RecordInfo record;
+    private Integer orgId;
     private Integer position;
     private Integer total;
 
@@ -79,12 +80,9 @@ public class BasicDetailsFragment extends Fragment {
     private TextView copyCountTextView;
 
     private Button placeHoldButton;
-
     private Button addToBookbagButton;
 
     private LinearLayout showMore;
-
-    private SearchCatalog search = null;
 
     private GlobalConfigs globalConfigs;
 
@@ -103,32 +101,25 @@ public class BasicDetailsFragment extends Fragment {
     private int list_size = 3;
 
     public static BasicDetailsFragment newInstance(RecordInfo record,
-            Integer position, Integer total) {
+            Integer position, Integer total, Integer orgID) {
         BasicDetailsFragment fragment = new BasicDetailsFragment();
-        fragment.setDetails(record, position, total);
+        fragment.orgId = orgID;
+        fragment.record = record;
+        fragment.position = position;
+        fragment.total = total;
 
         return fragment;
     }
 
-    private void setDetails(RecordInfo record, Integer position,
-            Integer total) {
-
-        this.record = record;
-        this.position = position;
-        this.total = total;
-    }
-
     public BasicDetailsFragment() {
-
-        search = SearchCatalog.getInstance();
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (savedInstanceState != null) {
-            record = (RecordInfo) savedInstanceState
-                    .getSerializable("recordInfo");
+            record = (RecordInfo) savedInstanceState.getSerializable("recordInfo");
+            orgId = savedInstanceState.getInt("orgId");
             this.position = savedInstanceState.getInt("position");
             this.total = savedInstanceState.getInt("total");
         }
@@ -165,8 +156,7 @@ public class BasicDetailsFragment extends Fragment {
 
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getActivity()
-                        .getApplicationContext(), PlaceHold.class);
+                Intent intent = new Intent(getActivity().getApplicationContext(), PlaceHold.class);
                 intent.putExtra("recordInfo", record);
                 startActivity(intent);
             }
@@ -275,17 +265,15 @@ public class BasicDetailsFragment extends Fragment {
 
         isbnTextView.setText(record.isbn);
 
-        int current_org = 0;
-        if (search != null)
-            current_org = search.selectedOrganization.id;
+        // todo this is not working because we are on the main thread
+        //SearchCatalog.ensureCopyCount(record, orgId);
 
         Log.d(TAG, "Size " + record.copyCountListInfo.size());
-
         for (int i = 0; i < record.copyCountListInfo.size(); i++) {
-            Log.d(TAG, current_org + " "
-                    + record.copyCountListInfo.get(i).org_id + " "
-                    + record.copyCountListInfo.get(i).count);
-            if (record.copyCountListInfo.get(i).org_id == current_org) {
+//            Log.d(TAG, orgId + " "
+//                    + record.copyCountListInfo.get(i).org_id + " "
+//                    + record.copyCountListInfo.get(i).count);
+            if (record.copyCountListInfo.get(i).org_id == orgId) {
                 int total = record.copyCountListInfo.get(i).count;
                 int available = record.copyCountListInfo.get(i).available;
                 String totalCopies = getResources().getQuantityString(R.plurals.number_of_copies, total, total);
@@ -303,9 +291,9 @@ public class BasicDetailsFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 // show more details
-                Intent intent = new Intent(getActivity()
-                        .getApplicationContext(), MoreCopyInformation.class);
+                Intent intent = new Intent(getActivity().getApplicationContext(), MoreCopyInformation.class);
                 intent.putExtra("recordInfo", record);
+                intent.putExtra("orgId", orgId);
                 startActivity(intent);
             }
         });
@@ -324,6 +312,7 @@ public class BasicDetailsFragment extends Fragment {
     @Override
     public void onSaveInstanceState(Bundle outState) {
         outState.putSerializable("recordInfo", record);
+        outState.putInt("orgId", this.orgId);
         outState.putInt("position", this.position);
         outState.putInt("total", this.total);
         super.onSaveInstanceState(outState);
