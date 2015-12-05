@@ -26,7 +26,7 @@ import java.util.Map;
 
 public class CopyCountInformation implements Serializable {
 
-    private final String TAG = CopyCountInformation.class.getName();
+    private final static String TAG = CopyCountInformation.class.getName();
     private static final long serialVersionUID = 12343248767867L;
     public Integer org_id;
     public Integer count;

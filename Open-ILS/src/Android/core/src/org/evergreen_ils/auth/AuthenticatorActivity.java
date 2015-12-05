@@ -38,7 +38,7 @@ import java.util.*;
 
 public class AuthenticatorActivity extends AccountAuthenticatorActivity {
 
-    private final String TAG = AuthenticatorActivity.class.getSimpleName();
+    private final static String TAG = AuthenticatorActivity.class.getSimpleName();
 
     public final static String ARG_ACCOUNT_TYPE = "ACCOUNT_TYPE";
     public final static String ARG_AUTH_TYPE = "AUTH_TYPE";

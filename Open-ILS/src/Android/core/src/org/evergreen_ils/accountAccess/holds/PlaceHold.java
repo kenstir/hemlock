@@ -59,7 +59,7 @@ import android.widget.Toast;
 
 public class PlaceHold extends ActionBarActivity {
 
-    private final String TAG = PlaceHold.class.getSimpleName();
+    private static final String TAG = PlaceHold.class.getName();
 
     private TextView title;
 

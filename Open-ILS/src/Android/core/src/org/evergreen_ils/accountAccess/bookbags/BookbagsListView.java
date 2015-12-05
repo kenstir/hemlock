@@ -53,7 +53,7 @@ import android.widget.Toast;
 
 public class BookbagsListView extends ActionBarActivity {
 
-    private final String TAG = BookbagsListView.class.getName();
+    private final static String TAG = BookbagsListView.class.getName();
 
     private AccountAccess accountAccess = null;
 
@@ -107,8 +107,6 @@ public class BookbagsListView extends ActionBarActivity {
 
             @Override
             public void onNothingSelected(AdapterView<?> arg0) {
-                // TODO Auto-generated method stub
-
             }
 
         });
@@ -209,17 +207,13 @@ public class BookbagsListView extends ActionBarActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        // TODO Auto-generated method stub
         super.onActivityResult(requestCode, resultCode, data);
 
         switch (resultCode) {
-
-        case BookBagDetails.RESULT_CODE_UPDATE: {
+        case BookBagDetails.RESULT_CODE_UPDATE:
             Thread getBookBags = new Thread(getBookbagsRunnable);
             getBookBags.start();
-        }
             break;
-
         }
     }
 

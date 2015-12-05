@@ -58,7 +58,7 @@ import android.widget.Toast;
 
 public class BookBagDetails extends ActionBarActivity {
 
-    private final String TAG = BookBagDetails.class.getName();
+    private final static String TAG = BookBagDetails.class.getName();
 
     public static final int RESULT_CODE_UPDATE = 1;
 
@@ -163,13 +163,10 @@ public class BookBagDetails extends ActionBarActivity {
             @Override
             public void onItemSelected(AdapterView<?> arg0, View arg1,
                     int arg2, long arg3) {
-
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> arg0) {
-                // TODO Auto-generated method stub
-
             }
 
         });

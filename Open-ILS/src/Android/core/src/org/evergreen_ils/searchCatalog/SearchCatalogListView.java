@@ -63,7 +63,7 @@ import android.widget.Toast;
 
 public class SearchCatalogListView extends ActionBarActivity {
 
-    private final String TAG = SearchCatalogListView.class.getSimpleName();
+    private static final String TAG = SearchCatalogListView.class.getName();
 
     private ArrayList<RecordInfo> recordList;
 
@@ -317,8 +317,6 @@ public class SearchCatalogListView extends ActionBarActivity {
 
             @Override
             public void onScrollStateChanged(AbsListView view, int scrollState) {
-                // TODO Auto-generated method stub
-
             }
 
             @Override
@@ -543,7 +541,6 @@ public class SearchCatalogListView extends ActionBarActivity {
 
                     @Override
                     public void onClick(View v) {
-                        // TODO Auto-generated method stub
                         Thread addtoBookbag = new Thread(new Runnable() {
                             @Override
                             public void run() {
@@ -552,8 +549,7 @@ public class SearchCatalogListView extends ActionBarActivity {
                                     ac.addRecordToBookBag(info.doc_id,
                                             bookBags.get(bookbag_selected).id);
                                 } catch (SessionNotFoundException e) {
-                                    // TODO Auto-generated catch block
-                                    e.printStackTrace();
+                                    Log.d(TAG, "session not found", e);
                                 }
 
                                 runOnUiThread(new Runnable() {
@@ -651,7 +647,7 @@ public class SearchCatalogListView extends ActionBarActivity {
 
     class SearchArrayAdapter extends ArrayAdapter<RecordInfo> {
 
-        private static final String tag = "SearchArrayAdapter";
+        private final String tag = SearchArrayAdapter.class.getName();
         private Context context;
         private NetworkImageView recordImage;
         private TextView recordTitle;

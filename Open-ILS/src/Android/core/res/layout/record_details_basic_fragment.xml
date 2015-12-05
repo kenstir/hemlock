@@ -47,29 +47,29 @@
                     android:layout_weight="1"
                     android:orientation="vertical"
                 >
-                
-	                <TextView
-	                android:id="@+id/record_details_simple_title"
-	                style="@style/textLarge" 
-	                />
+
+                    <TextView
+                            android:id="@+id/record_details_simple_title"
+                            style="@style/textLarge"
+                    />
 
                     <TextView
                             android:id="@+id/record_details_format"
                             style="@style/textSmall"
-                            android:layout_marginTop="5dip"
+                            android:layout_marginTop="3dip"
                             />
 
                     <TextView
                             android:id="@+id/record_details_simple_author"
                             style="@style/textSmall"
-                            android:layout_marginTop="5dip"
+                            android:layout_marginTop="3dip"
                             />
 
-	                <TextView
-	                android:id="@+id/record_details_simple_publisher"
-	                style="@style/textSmall" 
-	                android:layout_marginTop="3dip"
-	                />
+                    <TextView
+                            android:id="@+id/record_details_simple_publisher"
+                            style="@style/textSmall"
+                            android:layout_marginTop="3dip"
+                    />
                 </LinearLayout>
                 
                 <com.android.volley.toolbox.NetworkImageView
@@ -94,14 +94,14 @@
                     android:layout_alignParentLeft="true"
                     android:text="@string/button_place_hold"    
                     />
-                
+
                 <Button
-                    android:id="@+id/simple_add_to_bookbag_button"
+                    android:id="@+id/show_copy_information_button"
                     style="@style/SearchDetailsActionButton"
                     android:layout_height="wrap_content"
                     android:layout_width="150dip"
                     android:layout_alignParentRight="true"
-					android:text="@string/button_add_to_bookbag"
+                    android:text="@string/show_more_text"
                     />
             </RelativeLayout>
 
@@ -111,44 +111,43 @@
                 android:layout_height="wrap_content"
                 android:layout_width="match_parent"
                 />
-
+            <!--
 			<LinearLayout
 			    android:id="@+id/record_details_copy_information"
 			    android:layout_width="fill_parent"
 			    android:layout_height="wrap_content"
 			    android:orientation="vertical"
-			    >    
+			    >
 			</LinearLayout>
-        
-		<LinearLayout
-		android:id="@+id/record_details_show_more"    
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-		android:orientation="horizontal"
-        style="@style/SearchDetailsInfoSeparator"
-        >
+            <LinearLayout
+                    android:id="@+id/record_details_show_more"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:orientation="horizontal"
+                    style="@style/SearchDetailsInfoSeparator"
+            >
 
-		<ImageView 
-		    android:layout_width="wrap_content"
-		    android:layout_height="wrap_content"
-		    android:src="@drawable/navigation_expand"
-		    />    
-		    
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="@color/blue"
-            android:text="@string/show_more_text"
-            android:textStyle="bold"
-            android:textSize="@dimen/search_details_rect_text_size"
-        />
-        
-    	</LinearLayout>
-			
-			<TextView
+                <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/navigation_expand"
+                />
+
+                <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/show_more_text"
+                       android:textSize="@dimen/search_details_rect_text_size"
+                />
+
+            </LinearLayout>
+			-->
+
+
+            <TextView
                 style="@style/textLarge"
-                android:text="SUBJECT" />
+                android:text="Subject" />
 		
             <TextView
                 android:id="@+id/record_details_simple_subject"
@@ -156,7 +155,7 @@
 
             <TextView
                 style="@style/textLarge"
-                android:text="SERIES" />
+                android:text="Series" />
 
             <TextView
                 android:id="@+id/record_details_simple_series"
@@ -164,7 +163,7 @@
 
             <TextView
                 style="@style/textLarge"
-                android:text="SYNOPSIS" />
+                android:text="Synopsis" />
 
             <TextView
                 android:id="@+id/record_details_simple_synopsis"

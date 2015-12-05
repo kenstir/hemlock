@@ -51,7 +51,7 @@
     <string name="menu_button_advanced_search">Advanced search</string>
     <string name="menu_button_library_hours">Library hours</string>
     <string name="menu_button_application_preferences">Preferences</string>
-    <string name="copy_information"> Availability of the book :</string>
+    <string name="copy_information">Availability:</string>
     <string name="title_activity_startup">Welcome to Evergreen</string>
     <string name="title_search">Search</string>
     <string name="title_my_account">My Account</string>
@@ -62,10 +62,10 @@
     <string name="item_renewed">Item renewed</string>
     <string name="record_of">record %1$d of %2$d</string>
     <string name="displaying_n_of_m_results">displaying %1$d of %2$d results</string>
-    <string name="n_of_m_available">%1$d of %2$s available</string>
+    <string name="n_of_m_available">%1$d of %2$s available at %3$s</string>
 
     <!-- Search Details View -->
-    <string name="show_more_text">Show More</string>
+    <string name="show_more_text">Show Copies</string>
 
     <!-- Place Hold Activity View -->
 

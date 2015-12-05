@@ -40,7 +40,7 @@ import org.opensrf.net.http.HttpRequest;
 import android.util.Log;
 
 public class Utils {
-    private static final String TAG = "osrf";
+    private static final String TAG = Utils.class.getName();
 
     /**
      * Gets the net page content.

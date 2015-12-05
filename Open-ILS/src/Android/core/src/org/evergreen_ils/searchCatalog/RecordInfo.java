@@ -33,7 +33,7 @@ public class RecordInfo implements Serializable {
 
     private static final long serialVersionUID = 10123L;
 
-    private static final String TAG = RecordInfo.class.getSimpleName();
+    private static final String TAG = RecordInfo.class.getName();
 
     public String title = null;
     public String author = null;

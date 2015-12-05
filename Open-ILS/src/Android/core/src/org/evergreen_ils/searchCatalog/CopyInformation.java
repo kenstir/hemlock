@@ -33,7 +33,7 @@ public class CopyInformation implements Serializable {
 
     private static final long serialVersionUID = -7269334218707079463L;
 
-    private final String TAG = CopyInformation.class.getName();
+    private final static String TAG = CopyInformation.class.getName();
 
     public Integer org_id = -1;
     public String call_number_sufix;

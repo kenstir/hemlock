@@ -112,9 +112,9 @@
     <!-- Search Details -->
     <style name="SearchDetailsInfoSeparator">
         <item name="android:background">@drawable/shadow_rect</item>
-        <item name="android:padding">3dip</item>
-        <item name="android:layout_marginTop">3dip</item>
-        <item name="android:textColor">@color/dark</item>
+        <item name="android:textColor">@color/header_title</item>
+        <item name="android:padding">1dip</item>
+        <item name="android:layout_marginTop">1dip</item>
     </style>
 
     <style name="SearchDetailsActionButton">
