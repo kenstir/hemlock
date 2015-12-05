@@ -117,14 +117,12 @@ public class Utils {
         return textcode;
     }
 
-    private static void handleNPE(NullPointerException e, String service, String methodName) {
+    private static void logNPE(NullPointerException e, String service, String methodName) {
         // I know it's bad form to catch NPE.  But until I implement some kind of on-demand IDL parsing,
         // this is what happens when the JSONReader tries to parse a response of an unregistered class.
         // Crash if debugMode, fail if not.
         Log.d(TAG, "NPE...unregistered type from service "+service+" method "+methodName, e);
-        if (GlobalConfigs.isDebuggable()) {
-            throw(e);
-        }
+        throw(e);
     }
 
     public static Object doRequest(HttpConnection conn, String service,
@@ -146,7 +144,7 @@ public class Utils {
         try {
             resp = req.recv();
         } catch (NullPointerException e) {
-            handleNPE(e, service, methodName);
+            logNPE(e, service, methodName);
         }
         if (resp != null) {
             Log.d(TAG, "Sync Response: " + resp);
@@ -189,7 +187,7 @@ public class Utils {
                 return response;
             }
         } catch (NullPointerException e) {
-            handleNPE(e, service, methodName);
+            logNPE(e, service, methodName);
         }
         return null;
     }
