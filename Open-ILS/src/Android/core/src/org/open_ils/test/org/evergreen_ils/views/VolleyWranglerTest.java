@@ -7,9 +7,16 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import org.evergreen_ils.net.VolleyWrangler;
+import org.json.JSONArray;
+import org.json.JSONObject;
+import org.opensrf.util.JSONException;
+import org.opensrf.util.JSONReader;
 
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
@@ -26,7 +33,9 @@ public class VolleyWranglerTest
     private VolleyWrangler mVolley;
     private Response.ErrorListener mVolleyErrorListener;
     private Response.Listener<String> mVolleyStringResponseListener;
+    private Response.Listener<JSONObject> mVolleyJsonResponseListener;
     private String mStringResponse = null;
+    private JSONObject mJsonResponse = null;
     private String mError = null;
     private Exception mException = null;
     private long mStartTime;
@@ -42,11 +51,8 @@ public class VolleyWranglerTest
 
     @Override
     protected void setUp() throws Exception {
-        Log.d(TAG, "setUp:start");
         super.setUp();
-        Log.d(TAG, "setUp:getActivity");
         mActivity = getActivity();
-        Log.d(TAG, "setUp:volley stuff");
         mVolley = VolleyWrangler.getInstance(mActivity);
         mVolleyErrorListener = new Response.ErrorListener() {
             @Override
@@ -67,8 +73,17 @@ public class VolleyWranglerTest
                 finishRequest();
             }
         };
+        mVolleyJsonResponseListener = new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                long duration_ms = System.currentTimeMillis() - mStartTime;
+                Log.d(TAG, "fetch took " + duration_ms + "ms");
+                mJsonResponse = response;
+                Log.d(TAG, "response: " + response);
+                finishRequest();
+            }
+        };
         mStartTime = System.currentTimeMillis();
-        Log.d(TAG, "setUp:end");
     }
 
     private void startRequest(Request<?> request) {
@@ -106,21 +121,81 @@ public class VolleyWranglerTest
         String url = "https://evergreen-ils.org/directory/libraries.json";
         StringRequest request = new StringRequest(Request.Method.GET, url,
                 mVolleyStringResponseListener, mVolleyErrorListener);
-        startRequest(request);
 
+        // volley and wait
+        startRequest(request);
         waitForAllResponses();
-        assertTrue(mStringResponse != null);
+
+        // assertions
+
+        assertNotNull(mStringResponse);
     }
 
     public void testVolley_json() throws Exception {
-        Log.d(TAG, "testVolley_json:start");
         String url = "http://bark.cwmars.org/osrf-gateway-v1?service=open-ils.actor&method=opensrf.open-ils.system.ils_version";
-        RequestQueue q = VolleyWrangler.getInstance(mActivity).getRequestQueue();
+        JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null,
+                mVolleyJsonResponseListener, mVolleyErrorListener);
+
+        // volley and wait
+        startRequest(request);
+        waitForAllResponses();
+
+        // assertions
+
+        assertNotNull(mJsonResponse);
+
+        int status = mJsonResponse.getInt("status");
+        Log.d(TAG, "status => " + status);
+        assertEquals(200, status);
+
+        JSONArray payload = mJsonResponse.getJSONArray("payload");
+        Log.d(TAG, "payload => " + payload);
+        assertEquals(1, payload.length());
+        String version = payload.getString(0);
+        assertNotNull(version);
+    }
+
+    public class OSRFResponse {
+        List<Object> responseList = null;
+        public Map<String, ?> map = null;
+        public Exception ex = null;
+        private OSRFResponse() {
+        }
+        public void parse(String json) {
+            try {
+                map = (Map<String, ?>) new JSONReader(json).readObject();
+                responseList = (List<Object>) map.get("payload");
+            } catch (JSONException e) {
+                ex = e;
+            }
+        }
+    }
+
+    public void testVolley_osrf() throws Exception {
+        String url = "http://bark.cwmars.org/osrf-gateway-v1?service=open-ils.actor&method=opensrf.open-ils.system.ils_version";
         StringRequest request = new StringRequest(Request.Method.GET, url,
                 mVolleyStringResponseListener, mVolleyErrorListener);
-        startRequest(request);
 
+        // volley and wait
+        startRequest(request);
         waitForAllResponses();
-        assertTrue(mStringResponse != null);
+
+        // assertions
+
+        assertNotNull(mStringResponse);
+
+        OSRFResponse response = new OSRFResponse();
+        response.parse(mStringResponse);
+        assertNull(response.ex);
+
+        assertNotNull(response.map);
+        String status = response.map.get("status").toString();
+        assertEquals("200", status);
+
+        assertNotNull(response.responseList);
+        Log.d(TAG, "responseList:" + response.responseList);
+        String version = (String)response.responseList.remove(0);
+        Log.d(TAG, "version:" + version);
+        assertEquals(0, response.responseList.size());
     }
 }

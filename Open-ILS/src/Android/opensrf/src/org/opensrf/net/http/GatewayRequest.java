@@ -78,26 +78,27 @@ public class GatewayRequest extends HttpRequest {
             netStream.close();
             urlConn = null;
 
+            long start_ms = System.currentTimeMillis();
             Map<String,?> result = null;
 
             //System.out.println("osrf: Received " +  readBuf.toString());
-            Log.d(TAG, "received:" +  readBuf.toString());
             try {
+                Log.d(TAG, "received:" +  readBuf.toString());
                 result = (Map<String, ?>) new JSONReader(readBuf.toString()).readObject();
             } catch (org.opensrf.util.JSONException ex) {
                 Log.d(TAG, "caught", ex);
                 return null;
             }
             //System.out.println("osrf: Converted object " + result);
-            logRequest(this, result);
+            logRequest(this, result, start_ms);
             String status = result.get("status").toString();
             if (!"200".equals(status)) {
                 failed = true;
                 // failure = <some new exception>
             }
 
-             // gateway always returns a wrapper array with the full results set
-             responseList = (List) result.get("payload"); 
+            // gateway always returns a wrapper array with the full results set
+            responseList = (List) result.get("payload");
 
             // System.out.println("Response list : " + responseList);
             Log.d(TAG, "responseList:"+responseList);
@@ -111,15 +112,16 @@ public class GatewayRequest extends HttpRequest {
         return nextResponse();
     }
 
-    private void logRequest(GatewayRequest gatewayRequest, Map<String, ?> result) {
-        Log.d(TAG, "service:" + this.service);
-        Log.d(TAG, "method:" + this.method.getName());
+    private void logRequest(GatewayRequest gatewayRequest, Map<String, ?> result, long start_ms) {
+        Log.d(TAG, "service=" + this.service);
+        Log.d(TAG, "method=" + this.method.getName());
         List params = method.getParams();
         Iterator itr = params.iterator();
         while (itr.hasNext()) {
-            Log.d(TAG, "param:" + itr.next().toString());
+            Log.d(TAG, "param=" + itr.next().toString());
         }
-        Log.d(TAG, "result:" + new JSONObject(result).toString());
+        Log.d(TAG, "result=" + new JSONObject(result).toString());
+        Log.d(TAG, "parse_duration=" + (System.currentTimeMillis() - start_ms));
     }
 
     private String compilePostData(String service, Method method) {
