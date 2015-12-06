@@ -149,7 +149,6 @@ public class SearchCatalogListView extends ActionBarActivity {
         adapter = new SearchArrayAdapter(getApplicationContext(),
                 R.layout.search_result_item, recordList);
 
-        //searchOptionsMenu = findViewById(R.id.search_preference_options);
         searchClassSpinner = (Spinner) findViewById(R.id.search_qtype_spinner);
         searchFormatSpinner = (Spinner) findViewById(R.id.search_format_spinner);
         searchResultsNumber = (TextView) findViewById(R.id.search_result_number);
@@ -185,7 +184,6 @@ public class SearchCatalogListView extends ActionBarActivity {
                         InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                         imm.hideSoftInputFromWindow(searchText.getWindowToken(), 0);
 
-                        //searchOptionsMenu.setVisibility(View.GONE);
                         searchResultsNumber.setVisibility(View.VISIBLE);
 
                         progressDialog = ProgressDialog.show(
@@ -299,10 +297,7 @@ public class SearchCatalogListView extends ActionBarActivity {
 
                     searchThreadwithOffset.start();
                 } else {
-                    // start activity with book details
-
                     Intent intent = new Intent(getBaseContext(), SampleUnderlinesNoFade.class);
-                    // serialize object and pass it to next activity
                     intent.putExtra("recordInfo", info);
                     intent.putExtra("orgID", search.selectedOrganization.id);
                     intent.putExtra("depth", search.selectedOrganization.level);
@@ -324,12 +319,6 @@ public class SearchCatalogListView extends ActionBarActivity {
                     int visibleItemCount, int totalItemCount) {
 
                 if (!loadingElements) {
-
-                    /*
-                    Log.d(TAG, " Scroll adapter " + totalItemCount + " "
-                            + visibleItemCount + " " + firstVisibleItem + " "
-                            + adapter.getCount() + " " + search.visible);
-                            */
                     if (totalItemCount > 0
                             && (((totalItemCount - visibleItemCount) <= (firstVisibleItem)) && adapter
                                     .getCount() < search.visible)) {

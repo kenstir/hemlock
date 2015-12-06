@@ -12,11 +12,8 @@ import com.android.volley.toolbox.StringRequest;
 import org.evergreen_ils.net.VolleyWrangler;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.opensrf.util.JSONException;
-import org.opensrf.util.JSONReader;
+import org.opensrf.util.GatewayResponse;
 
-import java.util.List;
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
@@ -155,22 +152,6 @@ public class VolleyWranglerTest
         assertNotNull(version);
     }
 
-    public class OSRFResponse {
-        List<Object> responseList = null;
-        public Map<String, ?> map = null;
-        public Exception ex = null;
-        private OSRFResponse() {
-        }
-        public void parse(String json) {
-            try {
-                map = (Map<String, ?>) new JSONReader(json).readObject();
-                responseList = (List<Object>) map.get("payload");
-            } catch (JSONException e) {
-                ex = e;
-            }
-        }
-    }
-
     public void testVolley_osrf() throws Exception {
         String url = "http://bark.cwmars.org/osrf-gateway-v1?service=open-ils.actor&method=opensrf.open-ils.system.ils_version";
         StringRequest request = new StringRequest(Request.Method.GET, url,
@@ -184,8 +165,8 @@ public class VolleyWranglerTest
 
         assertNotNull(mStringResponse);
 
-        OSRFResponse response = new OSRFResponse();
-        response.parse(mStringResponse);
+        GatewayResponse response = GatewayResponse.create(mStringResponse);
+
         assertNull(response.ex);
 
         assertNotNull(response.map);
