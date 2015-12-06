@@ -5,6 +5,7 @@
       <module fileurl="file://$PROJECT_DIR$/../support/v7/appcompat/appcompat.iml" filepath="$PROJECT_DIR$/../support/v7/appcompat/appcompat.iml" />
       <module fileurl="file://$PROJECT_DIR$/../core/core.iml" filepath="$PROJECT_DIR$/../core/core.iml" />
       <module fileurl="file://$PROJECT_DIR$/cwmars_app.iml" filepath="$PROJECT_DIR$/cwmars_app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/tests/tests.iml" filepath="$PROJECT_DIR$/tests/tests.iml" />
     </modules>
   </component>
 </project>
