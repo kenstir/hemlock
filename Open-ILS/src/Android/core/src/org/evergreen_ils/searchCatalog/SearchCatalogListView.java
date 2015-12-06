@@ -180,7 +180,6 @@ public class SearchCatalogListView extends ActionBarActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-
                         InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                         imm.hideSoftInputFromWindow(searchText.getWindowToken(), 0);
 
@@ -198,21 +197,11 @@ public class SearchCatalogListView extends ActionBarActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-
                         recordList.clear();
 
                         if (searchResults.size() > 0) {
-
                             for (int j = 0; j < searchResults.size(); j++)
                                 recordList.add(searchResults.get(j));
-
-                            // add extra record to display more option button
-                            /*
-                             * if (search.visible > recordList.size()) {
-                             * recordList.add(new RecordInfo());
-                             * searchResultsNumber.setText(+recordList.size() -
-                             * 1 + " out of " + search.visible); } else
-                             */
                         }
                         searchResultsNumber.setText(+recordList.size()
                                 + " out of " + search.visible);

@@ -1,27 +1,20 @@
 package org.evergreen_ils.views;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import org.evergreen_ils.R;
-import org.evergreen_ils.accountAccess.AccountAccess;
 import org.evergreen_ils.accountAccess.AccountUtils;
-import org.evergreen_ils.accountAccess.bookbags.BookbagsListView;
 import org.evergreen_ils.accountAccess.checkout.ItemsCheckOutListView;
 import org.evergreen_ils.accountAccess.fines.FinesActivity;
 import org.evergreen_ils.accountAccess.holds.HoldsListView;
 import org.evergreen_ils.auth.Const;
-import org.evergreen_ils.globals.AppPrefs;
 import org.evergreen_ils.globals.GlobalConfigs;
-import org.evergreen_ils.searchCatalog.AdvancedSearchActivity;
 import org.evergreen_ils.searchCatalog.SearchCatalogListView;
 import org.evergreen_ils.utils.ui.ActionBarUtils;
 import org.evergreen_ils.views.splashscreen.SplashActivity;
