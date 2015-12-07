@@ -58,7 +58,7 @@ public class GlobalConfigs {
 
     private static boolean loadedOrgTree = false;
 
-    private static String hold_icon_address = "/opac/images/tor/";
+    //private static String hold_icon_address = "/opac/images/tor/";
 
     // two days notification before checkout expires, this can be modified from
     // preferences
@@ -80,7 +80,6 @@ public class GlobalConfigs {
             + "/OrgTree.js";
 
     private Context context = null;
-    private long start_ms;
 
     private GlobalConfigs() {
     }
@@ -145,30 +144,21 @@ public class GlobalConfigs {
     }
 
     public void loadIDL() {
-        start_ms = System.currentTimeMillis();
-        RequestQueue q = VolleyWrangler.getInstance(context).getRequestQueue();
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, httpAddress + IDL_FILE_FROM_ROOT,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        long duration_ms = System.currentTimeMillis() - start_ms;
-                        Log.d(TAG, "volley fetch took " + duration_ms + "ms");
-                        InputStream in = new ByteArrayInputStream(response.getBytes());
-                        IDLParser parser = new IDLParser(in);
-                        parser.setKeepIDLObjects(false);
-                        Log.d(TAG, "loadIDL parse");
-                        try {
-                            parser.parse();
-                        } catch (Exception e) {
-                            Log.d(TAG, "loadIDL failed", e);
-                        }
-                        duration_ms = System.currentTimeMillis() - start_ms;
-                        Log.d(TAG, "loadIDL parse took "+duration_ms+"ms");
-                    }
-                },
-                null);
-        Log.d(TAG, "volley queuing request");
-        q.add(stringRequest);
+        try {
+            Log.d(TAG, "loadIDLFile start");
+            long start_ms = System.currentTimeMillis();
+            InputStream in_IDL = Utils.getNetInputStream(GlobalConfigs.httpAddress + IDL_FILE_FROM_ROOT);
+            IDLParser parser = new IDLParser(in_IDL);
+            parser.setKeepIDLObjects(false);
+            Log.d(TAG, "loadIDLFile parse");
+            parser.parse();
+            long duration_ms = System.currentTimeMillis() - start_ms;
+            Log.d(TAG, "loadIDLFile parse took "+duration_ms+"ms");
+        } catch (Exception e) {
+            Log.w(TAG, "Error in parsing IDL file", e);
+        }
+
+        loadedIDL = true;
     }
 
     public void addOrganization(OSRFObject obj, int level) {
@@ -220,6 +210,8 @@ public class GlobalConfigs {
         }
     }
 
+    // todo candidate for on-demand loading.  These copy statuses are not used at all it seems.
+    // They should be.
     public void loadCopyStatusesAvailable() {
 
         SearchCatalog search = SearchCatalog.getInstance();
