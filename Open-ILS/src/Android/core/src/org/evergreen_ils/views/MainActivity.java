@@ -1,6 +1,7 @@
 package org.evergreen_ils.views;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
@@ -70,6 +71,10 @@ public class MainActivity extends ActionBarActivity {
                 }
             });
             Log.i(Const.AUTH_TAG, "after addAccount");
+            return true;
+        } else if (id == R.id.action_feedback) {
+            Intent i = new Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.ou_feedback_url)));
+            startActivity(i);
             return true;
         }
         return super.onOptionsItemSelected(item);
