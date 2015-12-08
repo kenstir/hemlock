@@ -179,9 +179,9 @@ public class SplashActivity extends Activity implements LoadingTaskListener {
         } else {
             String extra_text;
             if (!TextUtils.isEmpty(result))
-                extra_text = "...failed:\n" + result;
+                extra_text = " failed:\n" + result;
             else
-                extra_text = "...cancelled";
+                extra_text = " cancelled";
             Log.d(TAG, "progresstext += " + extra_text);
             mProgressText.setText(mProgressText.getText() + extra_text);
             mRetryButton.setVisibility(View.VISIBLE);
