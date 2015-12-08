@@ -19,4 +19,6 @@
     <string name="ou_activity_subtitle">%1$s - %2$s</string>
     <!-- OPAC URL -->
     <string name="ou_library_url">https://demo.evergreencatalog.com</string>
+    <!-- URL of feedback form -->
+    <string name="ou_feedback_url"></string>
 </resources>

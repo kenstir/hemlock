@@ -43,9 +43,4 @@
             android:onClick="onButtonClick"
             android:drawableLeft="@drawable/fines"/>
 
-    <TextView
-            android:layout_width="20px"
-            android:layout_height="12dp"
-            />
-
 </LinearLayout>
