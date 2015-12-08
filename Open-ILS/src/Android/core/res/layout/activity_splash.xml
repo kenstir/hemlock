@@ -17,12 +17,14 @@
             android:contentDescription="@string/ou_library_name" />
     
         <TextView
-            android:id="@+id/action_in_progress"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/logo"
-            android:gravity="center"
-            android:paddingTop="10dip" />
+                android:id="@+id/action_in_progress"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/logo"
+                android:layout_marginTop="15dip"
+                android:gravity="center"
+                style="@style/textLarge"
+                android:paddingTop="10dip" android:text="Signing in"/>
 
         <Button
             android:id="@+id/activity_splash_retry_button"
@@ -44,6 +46,6 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/action_in_progress"
             android:layout_centerHorizontal="true"
-            android:paddingTop="40dip" />
+            android:padding="20dip" />
 
 </RelativeLayout>

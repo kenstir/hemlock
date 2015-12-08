@@ -15,7 +15,7 @@ import android.text.TextUtils;
 import android.util.Log;
 
 public class EvergreenAuthenticator {
-    private final static String TAG = EvergreenAuthenticator.class.getSimpleName();
+    private final static String TAG = EvergreenAuthenticator.class.getName();
     public final static String SERVICE_AUTH = "open-ils.auth";
     public final static String METHOD_AUTH_INIT = "open-ils.auth.authenticate.init";
     public final static String METHOD_AUTH_COMPLETE = "open-ils.auth.authenticate.complete";
@@ -67,7 +67,6 @@ public class EvergreenAuthenticator {
         return null;
     }
     
-    @SuppressWarnings("unchecked")
     public static String signIn(String library_url, String username, String password) throws AuthenticationException {
         Log.d(TAG, "signIn> "+username+" "+library_url);
 
@@ -106,12 +105,11 @@ public class EvergreenAuthenticator {
             return authtoken;
         } else if (textcode.equals("LOGIN_FAILED")) {
             String desc = ((Map<String, String>) resp).get("desc");
-            Log.d(TAG, "desc: "+desc);
+            Log.d(TAG, "desc: " + desc);
             if (!TextUtils.isEmpty(desc)) {
                 throw new AuthenticationException(desc);
             }
         }
-        
         throw new AuthenticationException("Login failed");
     }
 }

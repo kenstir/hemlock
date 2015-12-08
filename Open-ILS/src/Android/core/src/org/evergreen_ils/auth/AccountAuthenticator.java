@@ -13,7 +13,7 @@ import android.util.Log;
 
 public class AccountAuthenticator extends AbstractAccountAuthenticator {
     
-    private final static String TAG = AccountAuthenticator.class.getSimpleName();
+    private final static String TAG = AccountAuthenticator.class.getName();
     private Context context;
 
     public AccountAuthenticator(Context context) {
@@ -63,11 +63,13 @@ public class AccountAuthenticator extends AbstractAccountAuthenticator {
                     Log.d(TAG, "getAuthToken> signIn returned token "+authToken);
                 } catch (AuthenticationException e) {
                     Log.d(TAG, "getAuthToken> caught auth exception", e);
+                    am.clearPassword(account);
                     final Bundle result = new Bundle();
                     result.putString(AccountManager.KEY_ERROR_MESSAGE, e.getMessage());
                     return result;
                 } catch (Exception e2) {
                     Log.d(TAG, "getAuthToken> caught exception", e2);
+                    am.clearPassword(account);
                     final Bundle result = new Bundle();
                     result.putString(AccountManager.KEY_ERROR_MESSAGE, "Sign in failed");
                     return result;

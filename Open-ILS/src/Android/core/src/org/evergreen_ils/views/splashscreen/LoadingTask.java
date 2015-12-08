@@ -24,6 +24,7 @@ import org.evergreen_ils.R;
 import org.evergreen_ils.accountAccess.AccountAccess;
 import org.evergreen_ils.accountAccess.AccountUtils;
 import org.evergreen_ils.accountAccess.SessionNotFoundException;
+import org.evergreen_ils.auth.Const;
 import org.evergreen_ils.globals.AppPrefs;
 import org.evergreen_ils.globals.GlobalConfigs;
 
@@ -97,8 +98,11 @@ public class LoadingTask {
             Bundle bnd = AccountUtils.getAuthToken(mCallingActivity);
             String auth_token = bnd.getString(AccountManager.KEY_AUTHTOKEN);
             String account_name = bnd.getString(AccountManager.KEY_ACCOUNT_NAME);
-            if (TextUtils.isEmpty(auth_token) || TextUtils.isEmpty(account_name))
-                return "no account";
+            String error_msg = bnd.getString(AccountManager.KEY_ERROR_MESSAGE);
+            if (TextUtils.isEmpty(auth_token) || TextUtils.isEmpty(account_name)) {
+                if (TextUtils.isEmpty(error_msg)) error_msg = "Login failed";
+                return error_msg;
+            }
 
             Library library = AccountUtils.getLibraryForAccount(mCallingActivity, account_name, accountType);
             AppPrefs.setString(AppPrefs.LIBRARY_NAME, library.name);
