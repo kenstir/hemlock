@@ -32,6 +32,7 @@ import org.evergreen_ils.accountAccess.bookbags.BookBag;
 import org.evergreen_ils.accountAccess.holds.PlaceHold;
 import org.evergreen_ils.barcodescan.CaptureActivity;
 import org.evergreen_ils.globals.GlobalConfigs;
+import org.evergreen_ils.globals.Log;
 import org.evergreen_ils.net.VolleyWrangler;
 import org.evergreen_ils.utils.ui.ActionBarUtils;
 import org.evergreen_ils.views.splashscreen.SplashActivity;
@@ -41,7 +42,6 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.View.OnClickListener;
 import android.view.View.OnKeyListener;
@@ -63,7 +63,7 @@ import android.widget.Toast;
 
 public class SearchCatalogListView extends ActionBarActivity {
 
-    private static final String TAG = SearchCatalogListView.class.getName();
+    private static final String TAG = SearchCatalogListView.class.getSimpleName();
 
     private ArrayList<RecordInfo> recordList;
 
@@ -625,7 +625,7 @@ public class SearchCatalogListView extends ActionBarActivity {
 
     class SearchArrayAdapter extends ArrayAdapter<RecordInfo> {
 
-        private final String tag = SearchArrayAdapter.class.getName();
+        private final String tag = SearchArrayAdapter.class.getSimpleName();
         private Context context;
         private NetworkImageView recordImage;
         private TextView recordTitle;

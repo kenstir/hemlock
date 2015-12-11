@@ -24,11 +24,11 @@ import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 import org.evergreen_ils.accountAccess.AccountUtils;
 import org.evergreen_ils.globals.AppPrefs;
+import org.evergreen_ils.globals.Log;
 import org.evergreen_ils.net.VolleyWrangler;
 import org.evergreen_ils.globals.Library;
 import org.opensrf.util.JSONException;
@@ -38,7 +38,7 @@ import java.util.*;
 
 public class AuthenticatorActivity extends AccountAuthenticatorActivity {
 
-    private final static String TAG = AuthenticatorActivity.class.getName();
+    private final static String TAG = AuthenticatorActivity.class.getSimpleName();
 
     public final static String ARG_ACCOUNT_TYPE = "ACCOUNT_TYPE";
     public final static String ARG_AUTH_TYPE = "AUTH_TYPE";

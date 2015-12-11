@@ -37,7 +37,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -184,32 +183,19 @@ public class FinesActivity extends ActionBarActivity {
             final FinesRecord record = getItem(position);
 
             if (row == null) {
-
-                Log.d(tag, "Starting XML view more infaltion ... ");
                 LayoutInflater inflater = (LayoutInflater) this.getContext()
                         .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                 row = inflater.inflate(R.layout.fines_list_item, parent, false);
-                Log.d(tag, "Successfully completed XML view more Inflation!");
-
             }
-            // Get reference to TextView - title
+
             fineTitle = (TextView) row.findViewById(R.id.fines_title);
-
-            // Get reference to TextView author
             fineAuthor = (TextView) row.findViewById(R.id.fines_author);
-
-            // Get hold status
-            fineBalanceOwed = (TextView) row
-                    .findViewById(R.id.fines_balance_owed);
-
+            fineBalanceOwed = (TextView) row.findViewById(R.id.fines_balance_owed);
             fineStatus = (TextView) row.findViewById(R.id.fines_status);
-            // set text
 
-            // set raw information
             fineTitle.setText(record.title);
             fineAuthor.setText(record.author);
             fineBalanceOwed.setText(decimalFormater.format(record.balance_owed));
-            // status.setText(record.getHoldStatus());
             fineStatus.setText(record.getStatus());
 
             return row;

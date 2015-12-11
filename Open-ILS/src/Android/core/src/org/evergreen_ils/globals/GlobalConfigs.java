@@ -22,7 +22,6 @@ package org.evergreen_ils.globals;
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.text.TextUtils;
-import android.util.Log;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -219,8 +218,7 @@ public class GlobalConfigs {
         try {
             search.getCopyStatuses();
         } catch (Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            Log.d(TAG, "caught exception", e);
         }
     }
 

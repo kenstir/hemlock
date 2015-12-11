@@ -17,7 +17,7 @@
 package org.evergreen_ils.barcodescan.camera;
 
 import android.os.IBinder;
-import android.util.Log;
+import org.evergreen_ils.globals.Log;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;

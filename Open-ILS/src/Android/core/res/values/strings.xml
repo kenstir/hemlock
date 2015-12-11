@@ -156,5 +156,6 @@
     <string name="choose_library_message">Select your Library</string>
     <string name="action_choose_library">Select</string>
     <string name="evergreen_libraries_url">https://evergreen-ils.org/directory/libraries.json</string>
+    <string name="button_send_log">Share log</string>
 
 </resources>

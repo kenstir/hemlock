@@ -27,11 +27,11 @@ import android.content.DialogInterface;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.ContextThemeWrapper;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
+import org.evergreen_ils.globals.Log;
 
 /**
  * Created with IntelliJ IDEA.
@@ -43,7 +43,7 @@ public class TestAuthActivity extends Activity {
 	
 	private static final String STATE_DIALOG = "state_dialog";
 	private static final String STATE_INVALIDATE = "state_invalidate";
-    private static final String TAG = TestAuthActivity.class.getName();
+    private static final String TAG = TestAuthActivity.class.getSimpleName();
 
     private AccountManager mAccountManager;
     private String mAccountType;

@@ -48,4 +48,15 @@
             android:layout_centerHorizontal="true"
             android:padding="20dip" />
 
+    <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/activity_splash_share_button"
+            android:src="@android:drawable/ic_menu_share"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:layout_margin="12dip"
+            android:visibility="visible"/>
+
 </RelativeLayout>

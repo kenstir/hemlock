@@ -26,10 +26,10 @@ import org.androwrapee.db.DefaultDAO;
 import org.androwrapee.db.DefaultDatabaseHelper;
 import org.androwrapee.db.IllegalClassStructureException;
 import org.androwrapee.db.ReflectionManager;
+import org.evergreen_ils.globals.Log;
 import org.evergreen_ils.services.NotificationAlert;
 
 import android.content.Context;
-import android.util.Log;
 
 /**
  * The Class DatabaseDefaults.

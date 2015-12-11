@@ -19,10 +19,10 @@
  */
 package org.evergreen_ils.views.splashscreen;
 
-import android.content.SharedPreferences;
+import android.widget.ImageButton;
 import org.evergreen_ils.R;
-import org.evergreen_ils.globals.GlobalConfigs;
 import org.evergreen_ils.globals.AppPrefs;
+import org.evergreen_ils.globals.Log;
 import org.evergreen_ils.views.MainActivity;
 import org.evergreen_ils.views.splashscreen.LoadingTask.LoadingTaskListener;
 
@@ -32,7 +32,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -48,6 +47,7 @@ public class SplashActivity extends Activity implements LoadingTaskListener {
     private ProgressBar mProgressBar;
     private AlertDialog mAlertDialog;
     private Button mRetryButton;
+    private ImageButton mShareLogButton;
     private LoadingTask mTask;
     private static boolean mInitialized;
     private boolean restarted = false;
@@ -95,6 +95,17 @@ public class SplashActivity extends Activity implements LoadingTaskListener {
             @Override
             public void onClick(View v) {
                 startTask();
+            }
+        });
+        mShareLogButton = (ImageButton) findViewById(R.id.activity_splash_share_button);
+        mShareLogButton.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent();
+                i.setAction(Intent.ACTION_SEND);
+                i.putExtra(Intent.EXTRA_TEXT, Log.getString());
+                i.setType("text/plain");
+                startActivity(i);
             }
         });
 
@@ -161,6 +172,7 @@ public class SplashActivity extends Activity implements LoadingTaskListener {
     @Override
     public void onPreExecute() {
         mRetryButton.setVisibility(View.GONE);
+        mShareLogButton.setVisibility(View.GONE);
         mProgressBar.setVisibility(View.VISIBLE);
     }
 
@@ -178,13 +190,14 @@ public class SplashActivity extends Activity implements LoadingTaskListener {
             startApp();
         } else {
             String extra_text;
-            if (!TextUtils.isEmpty(result))
+            if (!TextUtils.isEmpty(result)) {
                 extra_text = " failed:\n" + result;
-            else
+            } else {
                 extra_text = " cancelled";
-            Log.d(TAG, "progresstext += " + extra_text);
+            }
             mProgressText.setText(mProgressText.getText() + extra_text);
             mRetryButton.setVisibility(View.VISIBLE);
+            mShareLogButton.setVisibility(View.VISIBLE);
         }
     }
 }

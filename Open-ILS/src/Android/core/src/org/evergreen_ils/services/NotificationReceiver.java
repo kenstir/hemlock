@@ -19,6 +19,7 @@
  */
 package org.evergreen_ils.services;
 
+import org.evergreen_ils.globals.Log;
 import org.evergreen_ils.views.splashscreen.SplashActivity;
 
 import android.app.Notification;
@@ -28,11 +29,10 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 
 public class NotificationReceiver extends BroadcastReceiver {
 
-    private static final String TAG = NotificationReceiver.class.getName();
+    private static final String TAG = NotificationReceiver.class.getSimpleName();
     public static final int NOTIFICATION_ID = 1;
 
     @Override

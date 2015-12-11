@@ -1,8 +1,8 @@
 package org.evergreen_ils.searchCatalog;
 
 import android.content.Context;
-import android.util.Log;
 import org.evergreen_ils.R;
+import org.evergreen_ils.globals.Log;
 import org.opensrf.util.JSONException;
 import org.opensrf.util.JSONReader;
 

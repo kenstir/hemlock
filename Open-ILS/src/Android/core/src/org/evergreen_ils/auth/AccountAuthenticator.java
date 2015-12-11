@@ -9,11 +9,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
+import org.evergreen_ils.globals.Log;
 
 public class AccountAuthenticator extends AbstractAccountAuthenticator {
     
-    private final static String TAG = AccountAuthenticator.class.getName();
+    private final static String TAG = AccountAuthenticator.class.getSimpleName();
     private Context context;
 
     public AccountAuthenticator(Context context) {

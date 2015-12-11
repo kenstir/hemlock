@@ -1,11 +1,11 @@
 package org.evergreen_ils.auth;
 
-import android.util.Log;
 import org.evergreen_ils.auth.AccountAuthenticator;
 
 import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
+import org.evergreen_ils.globals.Log;
 
 public class AuthenticatorService extends Service {
     @Override

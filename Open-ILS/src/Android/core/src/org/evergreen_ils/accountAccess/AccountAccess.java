@@ -21,7 +21,6 @@ package org.evergreen_ils.accountAccess;
 
 import android.app.Activity;
 import android.text.TextUtils;
-import android.util.Log;
 import org.evergreen_ils.accountAccess.bookbags.BookBag;
 import org.evergreen_ils.accountAccess.bookbags.BookBagItem;
 import org.evergreen_ils.accountAccess.checkout.CircRecord;
@@ -29,6 +28,7 @@ import org.evergreen_ils.accountAccess.fines.FinesRecord;
 import org.evergreen_ils.accountAccess.holds.HoldRecord;
 import org.evergreen_ils.auth.Const;
 import org.evergreen_ils.globals.GlobalConfigs;
+import org.evergreen_ils.globals.Log;
 import org.evergreen_ils.globals.Utils;
 import org.evergreen_ils.searchCatalog.RecordInfo;
 import org.opensrf.net.http.HttpConnection;
@@ -278,7 +278,7 @@ public class AccountAccess {
                 return false;
             return retrieveSession(auth_token);
         } catch (Exception e) {
-            Log.i(Const.AUTH_TAG, "reauth exception", e);
+            Log.d(Const.AUTH_TAG, "reauth exception", e);
             return false;
         }
     }

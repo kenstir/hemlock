@@ -30,6 +30,7 @@ import org.evergreen_ils.accountAccess.AccountAccess;
 import org.evergreen_ils.accountAccess.MaxRenewalsException;
 import org.evergreen_ils.accountAccess.ServerErrorMessage;
 import org.evergreen_ils.accountAccess.SessionNotFoundException;
+import org.evergreen_ils.globals.Log;
 import org.evergreen_ils.searchCatalog.SearchFormat;
 import org.evergreen_ils.utils.ui.ActionBarUtils;
 import org.evergreen_ils.views.splashscreen.SplashActivity;
@@ -37,7 +38,6 @@ import org.evergreen_ils.views.splashscreen.SplashActivity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -50,7 +50,7 @@ import org.w3c.dom.Text;
 
 public class ItemsCheckOutListView extends ActionBarActivity {
 
-    private final static String TAG = ItemsCheckOutListView.class.getName();
+    private final static String TAG = ItemsCheckOutListView.class.getSimpleName();
 
     private AccountAccess accountAccess = null;
 
