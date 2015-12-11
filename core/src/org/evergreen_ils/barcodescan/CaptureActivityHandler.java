@@ -13,10 +13,10 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
 
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.Result;
+import org.evergreen_ils.globals.Log;
 
 /**
  * This class handles all the messaging which comprises the state machine for capture.

@@ -26,14 +26,14 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import android.text.TextUtils;
-import android.util.Log;
+import org.evergreen_ils.globals.Log;
 import org.opensrf.util.OSRFObject;
 
 public class RecordInfo implements Serializable {
 
     private static final long serialVersionUID = 10123L;
 
-    private static final String TAG = RecordInfo.class.getName();
+    private static final String TAG = RecordInfo.class.getSimpleName();
 
     public String title = null;
     public String author = null;

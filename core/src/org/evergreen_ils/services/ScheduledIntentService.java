@@ -34,6 +34,7 @@ import org.evergreen_ils.accountAccess.SessionNotFoundException;
 import org.evergreen_ils.accountAccess.checkout.CircRecord;
 import org.evergreen_ils.database.DatabaseManager;
 import org.evergreen_ils.globals.GlobalConfigs;
+import org.evergreen_ils.globals.Log;
 import org.evergreen_ils.globals.Utils;
 import org.evergreen_ils.auth.Const;
 import org.open_ils.idl.IDLParser;
@@ -44,13 +45,12 @@ import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
-import android.util.Log;
 
 public class ScheduledIntentService extends IntentService {
 
     public static Date lastUpdateServiceDate;
 
-    public static String TAG = ScheduledIntentService.class.getName();
+    public static String TAG = ScheduledIntentService.class.getSimpleName();
 
     public static String ACTION = "org.evergreen_ils.updateservice";
 

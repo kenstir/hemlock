@@ -29,6 +29,7 @@ import android.text.TextUtils;
 import org.evergreen_ils.accountAccess.AccountAccess;
 import org.evergreen_ils.globals.AppPrefs;
 import org.evergreen_ils.globals.GlobalConfigs;
+import org.evergreen_ils.globals.Log;
 import org.evergreen_ils.globals.Utils;
 import org.opensrf.Method;
 import org.opensrf.net.http.GatewayRequest;
@@ -38,7 +39,6 @@ import org.opensrf.net.http.HttpRequestHandler;
 import org.opensrf.util.OSRFObject;
 
 import android.net.ConnectivityManager;
-import android.util.Log;
 
 /**
  * The Class SearchCatalog.
@@ -84,7 +84,7 @@ public class SearchCatalog {
 
     public static SearchCatalog searchCatalogSingleton = null;
 
-    public String TAG = SearchCatalog.class.getName();
+    public String TAG = SearchCatalog.class.getSimpleName();
 
     // the org on which the searches will be made
     public Organisation selectedOrganization = null;

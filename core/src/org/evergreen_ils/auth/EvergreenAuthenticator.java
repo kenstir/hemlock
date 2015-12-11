@@ -6,16 +6,16 @@ import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.evergreen_ils.globals.Log;
 import org.opensrf.Method;
 import org.opensrf.net.http.GatewayRequest;
 import org.opensrf.net.http.HttpConnection;
 import org.opensrf.net.http.HttpRequest;
 
 import android.text.TextUtils;
-import android.util.Log;
 
 public class EvergreenAuthenticator {
-    private final static String TAG = EvergreenAuthenticator.class.getName();
+    private final static String TAG = EvergreenAuthenticator.class.getSimpleName();
     public final static String SERVICE_AUTH = "open-ils.auth";
     public final static String METHOD_AUTH_INIT = "open-ils.auth.authenticate.init";
     public final static String METHOD_AUTH_COMPLETE = "open-ils.auth.authenticate.complete";

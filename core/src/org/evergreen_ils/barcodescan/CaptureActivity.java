@@ -5,6 +5,7 @@ import java.util.Vector;
 
 import org.evergreen_ils.R;
 import org.evergreen_ils.barcodescan.camera.CameraManager;
+import org.evergreen_ils.globals.Log;
 import org.evergreen_ils.views.splashscreen.SplashActivity;
 
 import android.app.Activity;
@@ -14,7 +15,6 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 import android.view.Menu;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;

@@ -19,7 +19,8 @@
  */
 package org.evergreen_ils.searchCatalog;
 
-import android.util.Log;
+
+import org.evergreen_ils.globals.Log;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -33,7 +34,7 @@ public class CopyInformation implements Serializable {
 
     private static final long serialVersionUID = -7269334218707079463L;
 
-    private final static String TAG = CopyInformation.class.getName();
+    private final static String TAG = CopyInformation.class.getSimpleName();
 
     public Integer org_id = -1;
     public String call_number_sufix;

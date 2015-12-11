@@ -2,13 +2,13 @@ package org.evergreen_ils.views;
 
 import android.app.Activity;
 import android.test.ActivityInstrumentationTestCase2;
-import android.util.Log;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
+import org.evergreen_ils.globals.Log;
 import org.evergreen_ils.net.VolleyWrangler;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -25,7 +25,7 @@ import java.util.concurrent.locks.ReentrantLock;
 public class VolleyWranglerTest
         extends ActivityInstrumentationTestCase2<SimpleTestableActivity> {
 
-    private static final String TAG = VolleyWranglerTest.class.getName();
+    private static final String TAG = VolleyWranglerTest.class.getSimpleName();
     private Activity mActivity;
     private VolleyWrangler mVolley;
     private Response.ErrorListener mVolleyErrorListener;

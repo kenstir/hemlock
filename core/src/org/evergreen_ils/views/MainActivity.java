@@ -4,7 +4,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
-import android.util.Log;
+import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -16,6 +16,7 @@ import org.evergreen_ils.accountAccess.fines.FinesActivity;
 import org.evergreen_ils.accountAccess.holds.HoldsListView;
 import org.evergreen_ils.auth.Const;
 import org.evergreen_ils.globals.GlobalConfigs;
+import org.evergreen_ils.globals.Log;
 import org.evergreen_ils.searchCatalog.SearchCatalogListView;
 import org.evergreen_ils.utils.ui.ActionBarUtils;
 import org.evergreen_ils.views.splashscreen.SplashActivity;
@@ -46,6 +47,9 @@ public class MainActivity extends ActionBarActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_main, menu);
+        String url = getString(R.string.ou_feedback_url);
+        if (TextUtils.isEmpty(url))
+            menu.removeItem(R.id.action_feedback);
         return super.onCreateOptionsMenu(menu);
     }
 

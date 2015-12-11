@@ -24,12 +24,12 @@ import java.util.Calendar;
 import java.util.Date;
 
 import android.support.v7.app.ActionBarActivity;
-import android.util.Log;
 import android.view.MenuItem;
 import org.evergreen_ils.R;
 import org.evergreen_ils.accountAccess.AccountAccess;
 import org.evergreen_ils.accountAccess.SessionNotFoundException;
 import org.evergreen_ils.globals.GlobalConfigs;
+import org.evergreen_ils.globals.Log;
 import org.evergreen_ils.utils.ui.ActionBarUtils;
 import org.evergreen_ils.views.splashscreen.SplashActivity;
 
@@ -59,7 +59,7 @@ import android.widget.Toast;
 
 public class HoldDetails extends ActionBarActivity {
 
-    private final static String TAG = HoldDetails.class.getName();
+    private final static String TAG = HoldDetails.class.getSimpleName();
 
     public static final int RESULT_CODE_DELETE_HOLD = 5;
 

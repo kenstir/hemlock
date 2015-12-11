@@ -3,7 +3,6 @@ package org.evergreen_ils.globals;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
-import android.util.Log;
 import org.evergreen_ils.R;
 import org.evergreen_ils.accountAccess.bookbags.BookBag;
 

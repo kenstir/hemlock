@@ -41,8 +41,8 @@ import android.graphics.drawable.Drawable;
 import android.net.http.AndroidHttpClient;
 import android.os.AsyncTask;
 import android.os.Handler;
-import android.util.Log;
 import android.widget.ImageView;
+import org.evergreen_ils.globals.Log;
 
 /**
  * This helper class download images from the Internet and binds those with the

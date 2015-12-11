@@ -1,6 +1,6 @@
 package org.opensrf.net.http;
 
-import android.util.Log;
+import org.evergreen_ils.globals.Log;
 import org.json.JSONObject;
 import org.opensrf.*;
 import org.opensrf.util.*;
@@ -24,7 +24,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 public class GatewayRequest extends HttpRequest {
 
     private boolean readComplete;
-    private String TAG = GatewayRequest.class.getName();
+    private String TAG = GatewayRequest.class.getSimpleName();
 
     public GatewayRequest(HttpConnection conn, String service, Method method) {
         super(conn, service, method);

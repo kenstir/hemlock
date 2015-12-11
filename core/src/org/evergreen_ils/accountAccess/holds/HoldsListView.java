@@ -25,7 +25,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,6 +33,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import org.evergreen_ils.R;
 import org.evergreen_ils.accountAccess.AccountAccess;
 import org.evergreen_ils.accountAccess.SessionNotFoundException;
+import org.evergreen_ils.globals.Log;
 import org.evergreen_ils.searchCatalog.ImageDownloader;
 import org.evergreen_ils.searchCatalog.SearchFormat;
 import org.evergreen_ils.utils.ui.ActionBarUtils;
@@ -44,7 +44,7 @@ import java.util.List;
 
 public class HoldsListView extends ActionBarActivity {
 
-    private final static String TAG = HoldsListView.class.getName();
+    private final static String TAG = HoldsListView.class.getSimpleName();
 
     private AccountAccess accountAccess = null;
 
@@ -177,7 +177,7 @@ public class HoldsListView extends ActionBarActivity {
     }
 
     class HoldsArrayAdapter extends ArrayAdapter<HoldRecord> {
-        private final String tag = HoldsArrayAdapter.class.getName();
+        private final String tag = HoldsArrayAdapter.class.getSimpleName();
 
         private TextView holdTitle;
         private TextView holdAuthor;

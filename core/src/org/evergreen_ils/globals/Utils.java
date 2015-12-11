@@ -37,10 +37,8 @@ import org.opensrf.net.http.GatewayRequest;
 import org.opensrf.net.http.HttpConnection;
 import org.opensrf.net.http.HttpRequest;
 
-import android.util.Log;
-
 public class Utils {
-    private static final String TAG = Utils.class.getName();
+    private static final String TAG = Utils.class.getSimpleName();
 
     /**
      * Gets the net page content.

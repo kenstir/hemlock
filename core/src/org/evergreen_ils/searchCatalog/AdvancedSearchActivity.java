@@ -42,7 +42,7 @@ import android.widget.TextView;
 
 public class AdvancedSearchActivity extends ActionBarActivity {
 
-    private final static String TAG = AdvancedSearchActivity.class.getName();
+    private final static String TAG = AdvancedSearchActivity.class.getSimpleName();
 
     private ArrayList<String> searchTerms;
     private String advancedSearchFormattedText;

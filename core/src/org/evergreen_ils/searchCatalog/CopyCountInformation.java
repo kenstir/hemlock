@@ -19,14 +19,15 @@
  */
 package org.evergreen_ils.searchCatalog;
 
-import android.util.Log;
+
+import org.evergreen_ils.globals.Log;
 
 import java.io.Serializable;
 import java.util.Map;
 
 public class CopyCountInformation implements Serializable {
 
-    private final static String TAG = CopyCountInformation.class.getName();
+    private final static String TAG = CopyCountInformation.class.getSimpleName();
     private static final long serialVersionUID = 12343248767867L;
     public Integer org_id;
     public Integer count;

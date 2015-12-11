@@ -24,7 +24,6 @@ import java.util.Iterator;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import android.util.Log;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
 import org.evergreen_ils.R;
@@ -58,7 +57,7 @@ import android.widget.Toast;
 
 public class BasicDetailsFragment extends Fragment {
 
-    private final static String TAG = BasicDetailsFragment.class.getName();
+    private final static String TAG = BasicDetailsFragment.class.getSimpleName();
 
     private RecordInfo record;
     private Integer orgId;

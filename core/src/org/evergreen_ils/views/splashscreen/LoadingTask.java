@@ -31,8 +31,8 @@ import org.evergreen_ils.globals.GlobalConfigs;
 import android.accounts.AccountManager;
 import android.app.Activity;
 import android.os.Bundle;
-import android.util.Log;
 import org.evergreen_ils.globals.Library;
+import org.evergreen_ils.globals.Log;
 
 /** This is basically the same as an AsyncTask<String,String,String>, except that it uses
  * a Thread.  Starting with HONEYCOMB, tasks are executed on a single thread and the 2nd
@@ -42,7 +42,7 @@ import org.evergreen_ils.globals.Library;
  *
  */
 public class LoadingTask {
-    private final static String TAG = LoadingTask.class.getName();
+    private final static String TAG = LoadingTask.class.getSimpleName();
 
     public static final String TASK_OK = "OK";
 

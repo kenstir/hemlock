@@ -24,13 +24,13 @@ import java.util.Calendar;
 import java.util.Date;
 
 import android.support.v7.app.ActionBarActivity;
-import android.util.Log;
 import android.view.MenuItem;
 import org.evergreen_ils.R;
 import org.evergreen_ils.accountAccess.AccountAccess;
 import org.evergreen_ils.accountAccess.SessionNotFoundException;
 import org.evergreen_ils.globals.EvergreenConstants;
 import org.evergreen_ils.globals.GlobalConfigs;
+import org.evergreen_ils.globals.Log;
 import org.evergreen_ils.searchCatalog.Organisation;
 import org.evergreen_ils.searchCatalog.RecordInfo;
 import org.evergreen_ils.utils.ui.ActionBarUtils;
@@ -59,7 +59,7 @@ import android.widget.Toast;
 
 public class PlaceHold extends ActionBarActivity {
 
-    private static final String TAG = PlaceHold.class.getName();
+    private static final String TAG = PlaceHold.class.getSimpleName();
 
     private TextView title;
 

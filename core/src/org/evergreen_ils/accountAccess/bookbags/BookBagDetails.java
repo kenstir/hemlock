@@ -27,6 +27,7 @@ import android.support.v7.app.ActionBarActivity;
 import org.evergreen_ils.R;
 import org.evergreen_ils.accountAccess.AccountAccess;
 import org.evergreen_ils.accountAccess.SessionNotFoundException;
+import org.evergreen_ils.globals.Log;
 import org.evergreen_ils.searchCatalog.RecordInfo;
 import org.evergreen_ils.searchCatalog.SearchCatalog;
 import org.evergreen_ils.searchCatalog.SearchCatalogListView;
@@ -43,7 +44,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -58,7 +58,7 @@ import android.widget.Toast;
 
 public class BookBagDetails extends ActionBarActivity {
 
-    private final static String TAG = BookBagDetails.class.getName();
+    private final static String TAG = BookBagDetails.class.getSimpleName();
 
     public static final int RESULT_CODE_UPDATE = 1;
 

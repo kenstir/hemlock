@@ -19,6 +19,7 @@ package org.evergreen_ils.barcodescan.camera;
 
 import java.io.IOException;
 
+import android.util.Log;
 import org.evergreen_ils.barcodescan.PlanarYUVLuminanceSource;
 import org.evergreen_ils.barcodescan.PreferencesActivity;
 
@@ -29,7 +30,6 @@ import android.graphics.Rect;
 import android.hardware.Camera;
 import android.os.Handler;
 import android.preference.PreferenceManager;
-import android.util.Log;
 import android.view.SurfaceHolder;
 
 /**

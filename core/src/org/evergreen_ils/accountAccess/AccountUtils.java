@@ -5,10 +5,10 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.os.Looper;
 import android.text.TextUtils;
-import android.util.Log;
 import org.evergreen_ils.R;
 import org.evergreen_ils.auth.Const;
 import org.evergreen_ils.globals.Library;
+import org.evergreen_ils.globals.Log;
 
 import java.io.IOException;
 
@@ -89,7 +89,7 @@ public class AccountUtils {
     }
 
     public static void addAccount(final Activity activity, final Runnable runnable) {
-        Log.i(Const.AUTH_TAG, "addAccount");
+        Log.d(Const.AUTH_TAG, "addAccount");
         final AccountManager am = AccountManager.get(activity);
         final String accountType = activity.getString(R.string.ou_account_type);
         am.addAccount(accountType, Const.AUTHTOKEN_TYPE, null, null, activity, new AccountManagerCallback<Bundle>() {
@@ -98,10 +98,10 @@ public class AccountUtils {
                 try {
                     Bundle bnd = future.getResult();
                     final String account_name = bnd.getString(AccountManager.KEY_ACCOUNT_NAME);
-                    Log.i(Const.AUTH_TAG, "added account bnd=" + bnd);
+                    Log.d(Const.AUTH_TAG, "added account bnd=" + bnd);
                     activity.runOnUiThread(runnable);
                 } catch (Exception e) {
-                    Log.i(Const.AUTH_TAG, "failed to add account", e);
+                    Log.d(Const.AUTH_TAG, "failed to add account", e);
                 }
             }
         }, null);
