@@ -352,6 +352,7 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity {
             List<Map<String, ?>> l;
             try {
                 l = (List<Map<String, ?>>) new JSONReader(json).readArray();
+                Log.d(TAG, "fetched " + l.size() + " library listings");
             } catch (JSONException e) {
                 Log.d(TAG, "failed parsing libraries array", e);
                 return;
@@ -375,10 +376,6 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity {
                     return a.directory_name.compareTo(b.directory_name);
                 }
             });
-
-            for (int i = 0; i < libraries.size(); ++i) {
-                Log.d(TAG, "c[" + i + "]: " + libraries.get(i).directory_name);
-            }
         }
     }
 
