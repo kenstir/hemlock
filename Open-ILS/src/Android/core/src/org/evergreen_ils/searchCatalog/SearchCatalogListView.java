@@ -99,8 +99,6 @@ public class SearchCatalogListView extends ActionBarActivity {
 
     private Integer bookbag_selected = -1;
 
-    private final ImageDownloader imageDownloader = new ImageDownloader();
-
     private Runnable searchForResultsRunnable = null;
 
     private View searchOptionsMenu = null;
