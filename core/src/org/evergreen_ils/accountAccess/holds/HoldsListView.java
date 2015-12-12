@@ -23,7 +23,6 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -34,7 +33,6 @@ import org.evergreen_ils.R;
 import org.evergreen_ils.accountAccess.AccountAccess;
 import org.evergreen_ils.accountAccess.SessionNotFoundException;
 import org.evergreen_ils.globals.Log;
-import org.evergreen_ils.searchCatalog.ImageDownloader;
 import org.evergreen_ils.searchCatalog.SearchFormat;
 import org.evergreen_ils.utils.ui.ActionBarUtils;
 import org.evergreen_ils.views.splashscreen.SplashActivity;
@@ -68,8 +66,6 @@ public class HoldsListView extends ActionBarActivity {
 
     private ProgressDialog progressDialog;
 
-    private ImageDownloader imageDownloader;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -83,9 +79,6 @@ public class HoldsListView extends ActionBarActivity {
         ActionBarUtils.initActionBarForActivity(this);
 
         holdsNoText = (TextView) findViewById(R.id.holds_number);
-
-        imageDownloader = new ImageDownloader(40, 40, false);
-
         lv = (ListView) findViewById(R.id.holds_item_list);
         context = this;
         accountAccess = AccountAccess.getAccountAccess();
