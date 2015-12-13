@@ -21,8 +21,9 @@ package org.evergreen_ils.searchCatalog;
 
 import java.util.*;
 
+import android.net.Uri;
 import android.support.v7.app.ActionBarActivity;
-import android.text.Layout;
+import android.text.TextUtils;
 import android.view.*;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
@@ -592,6 +593,9 @@ public class SearchCatalogListView extends ActionBarActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_search, menu);
+        String url = getString(R.string.ou_feedback_url);
+        if (TextUtils.isEmpty(url))
+            menu.removeItem(R.id.action_feedback);
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -600,6 +604,10 @@ public class SearchCatalogListView extends ActionBarActivity {
         int id = item.getItemId();
         if (id == R.id.action_advanced_search) {
             startActivityForResult(new Intent(getApplicationContext(), AdvancedSearchActivity.class), 2);
+            return true;
+        } else if (id == R.id.action_feedback) {
+            Intent i = new Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.ou_feedback_url)));
+            startActivity(i);
             return true;
         }
         return super.onOptionsItemSelected(item);
