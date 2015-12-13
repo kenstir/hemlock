@@ -119,7 +119,7 @@ public class HoldDetails extends ActionBarActivity {
         ActionBarUtils.initActionBarForActivity(this);
 
         context = this;
-        globalConfigs = GlobalConfigs.getGlobalConfigs(this);
+        globalConfigs = GlobalConfigs.getInstance(this);
 
         final HoldRecord record = (HoldRecord) getIntent()
                 .getSerializableExtra("holdRecord");
@@ -127,7 +127,7 @@ public class HoldDetails extends ActionBarActivity {
         Log.d(TAG, "Record " + record + " " + record.title + " "
                 + record.ahr);
 
-        accountAccess = AccountAccess.getAccountAccess();
+        accountAccess = AccountAccess.getInstance();
 
         title = (TextView) findViewById(R.id.hold_title);
         author = (TextView) findViewById(R.id.hold_author);

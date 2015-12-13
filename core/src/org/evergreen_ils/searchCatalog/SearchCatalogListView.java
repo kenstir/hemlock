@@ -65,45 +65,28 @@ public class SearchCatalogListView extends ActionBarActivity {
 
     private static final String TAG = SearchCatalogListView.class.getSimpleName();
 
-    private ArrayList<RecordInfo> recordList;
-
-    private EditText searchText;
-
-    private ImageButton searchButton;
-
-    private SearchCatalog search;
-
-    private ListView lv;
-
-    private SearchArrayAdapter adapter;
-
-    private Context context;
-
-    private ProgressDialog progressDialog;
-
-    private ArrayList<RecordInfo> searchResults;
-
-    private Spinner choseOrganisation;
-
-    private GlobalConfigs globalConfigs;
-
     private static final int PLACE_HOLD = 0;
-
     private static final int DETAILS = 1;
-
     private static final int BOOK_BAG = 2;
 
-    private TextView searchResultsNumber;
-
-    private ArrayList<BookBag> bookBags;
-
-    private Integer bookbag_selected = -1;
-
-    private Runnable searchForResultsRunnable = null;
-
-    private View searchOptionsMenu = null;
+    private EditText searchText;
+    private ImageButton searchButton;
+    private Spinner searchOrgSpinner;
     private Spinner searchClassSpinner;
     private Spinner searchFormatSpinner;
+    private TextView searchResultsNumber;
+    private ListView lv;
+
+    private SearchCatalog search;
+    private ArrayList<RecordInfo> recordList;
+    private SearchArrayAdapter adapter;
+    private Context context;
+    private ProgressDialog progressDialog;
+    private ArrayList<RecordInfo> searchResults;
+    private GlobalConfigs globalConfigs;
+    private ArrayList<BookBag> bookBags;
+    private Integer bookbag_selected = -1;
+    private Runnable searchForResultsRunnable = null;
 
     // marks when the fetching record thread is started
     private boolean loadingElements = false;
@@ -129,90 +112,80 @@ public class SearchCatalogListView extends ActionBarActivity {
         }
         SearchFormat.init(this);
 
-        setContentView(R.layout.search_result_list);
+        setContentView(R.layout.search_layout3);
         ActionBarUtils.initActionBarForActivity(this);
 
-        // get bookbags
-        bookBags = AccountAccess.getAccountAccess().getBookbags();
-
-        // singleton initialize necessary IDL and Org data
-        globalConfigs = GlobalConfigs.getGlobalConfigs(this);
-
         context = this;
+        globalConfigs = GlobalConfigs.getInstance(this);
         search = SearchCatalog.getInstance();
-
+        bookBags = AccountAccess.getInstance().getBookbags();
         recordList = new ArrayList<RecordInfo>();
-
-        // Create a customized ArrayAdapter
-        adapter = new SearchArrayAdapter(getApplicationContext(),
-                R.layout.search_result_item, recordList);
-
-        searchClassSpinner = (Spinner) findViewById(R.id.search_qtype_spinner);
-        searchFormatSpinner = (Spinner) findViewById(R.id.search_format_spinner);
-        searchResultsNumber = (TextView) findViewById(R.id.search_result_number);
-        initSearchFormatSpinner();
-
-        // Get reference to ListView holder
-        lv = (ListView) this.findViewById(R.id.search_results_list);
-
+        searchResults = new ArrayList<RecordInfo>();
         progressDialog = new ProgressDialog(context);
 
-        // Set the ListView adapter
-        lv.setAdapter(adapter);
+        searchText = (EditText) findViewById(R.id.searchText);
+        searchClassSpinner = (Spinner) findViewById(R.id.search_qtype_spinner);
+        searchFormatSpinner = (Spinner) findViewById(R.id.search_format_spinner);
+        searchOrgSpinner = (Spinner) findViewById(R.id.search_org_spinner);
+        searchResultsNumber = (TextView) findViewById(R.id.search_result_number);
+        lv = (ListView) this.findViewById(R.id.search_results_list);
 
-        searchResults = new ArrayList<RecordInfo>();
+        initSearchFormatSpinner();
+        initSearchOrgSpinner();
+        initSearchListView();
+        initSearchText();
+        initSearchRunnable();
+        initSearchOptionsButton();
+        initSearchButton();
+    }
 
-        registerForContextMenu(lv);
-
-        searchForResultsRunnable = new Runnable() {
-
+    private void initSearchButton() {
+        searchButton = (ImageButton) findViewById(R.id.search_button);
+        searchButton.setOnClickListener(new OnClickListener() {
             @Override
-            public void run() {
-
-                final String text = getSearchText();
-                if (text.length() < 1)
-                    return;
-                int searchQueryType = searchClassSpinner.getSelectedItemPosition();
-                Log.d(TAG, "type="+searchQueryType+" class="+getSearchClass()+" format="+getSearchFormat());
-
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                        imm.hideSoftInputFromWindow(searchText.getWindowToken(), 0);
-
-                        searchResultsNumber.setVisibility(View.VISIBLE);
-
-                        progressDialog = ProgressDialog.show(
-                                context,
-                                getResources().getText(R.string.dialog_please_wait),
-                                getResources().getText(R.string.dialog_fetching_data_message));
-                    }
-                });
-
-                searchResults = search.getSearchResults(text, getSearchClass(), getSearchFormat(), 0);
-
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        recordList.clear();
-
-                        if (searchResults.size() > 0) {
-                            for (int j = 0; j < searchResults.size(); j++)
-                                recordList.add(searchResults.get(j));
-                        }
-                        searchResultsNumber.setText(+recordList.size()
-                                + " out of " + search.visible);
-
-                        adapter.notifyDataSetChanged();
-                        progressDialog.dismiss();
-
-                    }
-                });
-
+            public void onClick(View v) {
+                Thread searchThread = new Thread(searchForResultsRunnable);
+                searchThread.start();
             }
-        };
+        });
+    }
 
+    private void initSearchOptionsButton() {
+        ((ImageButton)findViewById(R.id.search_options_button)).setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                View options = findViewById(R.id.search_row_options);
+                options.setVisibility((options.getVisibility()==View.VISIBLE) ? View.GONE : View.VISIBLE);
+            }
+        });
+    }
+
+    private void initSearchText() {
+        // enter key now is labeled "Search" on virtual keyboard
+        searchText.setImeActionLabel("Search", EditorInfo.IME_ACTION_SEARCH);
+        searchText.setImeOptions(EditorInfo.IME_ACTION_SEARCH);
+
+        // enter key on virtual keyboard starts the search
+        searchText.setOnKeyListener(new OnKeyListener() {
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                // If the event is a key-down event on the "enter" button
+                if ((event.getAction() == KeyEvent.ACTION_DOWN)
+                        && ((keyCode == KeyEvent.KEYCODE_ENTER) || keyCode == EditorInfo.IME_ACTION_SEARCH)) {
+                    // Perform action on key press
+                    Thread searchThread = new Thread(searchForResultsRunnable);
+                    searchThread.start();
+                    return true;
+                }
+                return false;
+            }
+        });
+    }
+
+    private void initSearchListView() {
+        adapter = new SearchArrayAdapter(getApplicationContext(),
+                R.layout.search_result_item, recordList);
+        lv.setAdapter(adapter);
+        registerForContextMenu(lv);
         lv.setOnItemClickListener(new OnItemClickListener() {
 
             @Override
@@ -362,44 +335,64 @@ public class SearchCatalogListView extends ActionBarActivity {
                 }
             }
         });
+    }
 
-        searchText = (EditText) findViewById(R.id.searchText);
-
-        // enter key now is labeled "Search" on virtual keyboard
-        searchText.setImeActionLabel("Search", EditorInfo.IME_ACTION_SEARCH);
-        searchText.setImeOptions(EditorInfo.IME_ACTION_SEARCH);
-
-        // enter key on virtual keyboard starts the search
-        searchText.setOnKeyListener(new OnKeyListener() {
-            public boolean onKey(View v, int keyCode, KeyEvent event) {
-                // If the event is a key-down event on the "enter" button
-                if ((event.getAction() == KeyEvent.ACTION_DOWN)
-                        && ((keyCode == KeyEvent.KEYCODE_ENTER) || keyCode == EditorInfo.IME_ACTION_SEARCH)) {
-                    // Perform action on key press
-                    Thread searchThread = new Thread(searchForResultsRunnable);
-                    searchThread.start();
-                    return true;
-                }
-                return false;
-            }
-        });
-
-
-        searchButton = (ImageButton) findViewById(R.id.search_button);
-        searchButton.setOnClickListener(new OnClickListener() {
+    private void initSearchRunnable() {
+        searchForResultsRunnable = new Runnable() {
 
             @Override
-            public void onClick(View v) {
-                Thread searchThread = new Thread(searchForResultsRunnable);
-                searchThread.start();
-            }
-        });
+            public void run() {
 
-        //kenstir todo: factor this out
+                final String text = getSearchText();
+                if (text.length() < 1)
+                    return;
+                int searchQueryType = searchClassSpinner.getSelectedItemPosition();
+                Log.d(TAG, "type="+searchQueryType+" class="+getSearchClass()+" format="+getSearchFormat());
+
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                        imm.hideSoftInputFromWindow(searchText.getWindowToken(), 0);
+
+                        searchResultsNumber.setVisibility(View.VISIBLE);
+
+                        progressDialog = ProgressDialog.show(
+                                context,
+                                getResources().getText(R.string.dialog_please_wait),
+                                getResources().getText(R.string.dialog_fetching_data_message));
+                    }
+                });
+
+                searchResults = search.getSearchResults(text, getSearchClass(), getSearchFormat(), 0);
+
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        recordList.clear();
+
+                        if (searchResults.size() > 0) {
+                            for (int j = 0; j < searchResults.size(); j++)
+                                recordList.add(searchResults.get(j));
+                        }
+                        searchResultsNumber.setText(+recordList.size()
+                                + " out of " + search.visible);
+
+                        adapter.notifyDataSetChanged();
+                        progressDialog.dismiss();
+
+                    }
+                });
+
+            }
+        };
+    }
+
+    private void initSearchOrgSpinner() {
         int selectedOrgPos = 0;
         int homeLibrary = 0;
-        if (AccountAccess.getAccountAccess() != null) {
-            homeLibrary = AccountAccess.getAccountAccess().getHomeLibraryID();
+        if (AccountAccess.getInstance() != null) {
+            homeLibrary = AccountAccess.getInstance().getHomeLibraryID();
         }
         ArrayList<String> list = new ArrayList<String>();
         for (int i = 0; i < globalConfigs.organisations.size(); i++) {
@@ -409,12 +402,10 @@ public class SearchCatalogListView extends ActionBarActivity {
                 selectedOrgPos = i;
             }
         }
-        //ArrayAdapter<String> adapter = CompatSpinnerAdapter.CreateCompatSpinnerAdapter(this, list);
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, R.layout.org_item_layout, list);
-        choseOrganisation = (Spinner) findViewById(R.id.search_org_spinner);
-        choseOrganisation.setAdapter(adapter);
-        choseOrganisation.setSelection(selectedOrgPos);
-        choseOrganisation.setOnItemSelectedListener(new OnItemSelectedListener() {
+        searchOrgSpinner.setAdapter(adapter);
+        searchOrgSpinner.setSelection(selectedOrgPos);
+        searchOrgSpinner.setOnItemSelectedListener(new OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> arg0, View arg1, int ID, long arg3) {
                 search.selectOrganisation(globalConfigs.organisations.get(ID));
@@ -424,7 +415,6 @@ public class SearchCatalogListView extends ActionBarActivity {
             public void onNothingSelected(AdapterView<?> arg0) {
             }
         });
-
     }
 
     // unpack the json map to populate our spinner, and allow translation from search_format keyword <=> label
@@ -520,7 +510,7 @@ public class SearchCatalogListView extends ActionBarActivity {
                         Thread addtoBookbag = new Thread(new Runnable() {
                             @Override
                             public void run() {
-                                AccountAccess ac = AccountAccess.getAccountAccess();
+                                AccountAccess ac = AccountAccess.getInstance();
                                 try {
                                     ac.addRecordToBookBag(info.doc_id,
                                             bookBags.get(bookbag_selected).id);

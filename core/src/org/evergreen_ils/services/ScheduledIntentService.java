@@ -94,7 +94,7 @@ public class ScheduledIntentService extends IntentService {
         }
 
         /*
-        AccountAccess accountAccess = AccountAccess.getAccountAccess(GlobalConfigs.httpAddress);
+        AccountAccess accountAccess = AccountAccess.getInstance(GlobalConfigs.httpAddress);
         Log.d(TAG, tag+"Signing in");
         AccountManager accountManager = AccountManager.get(this);
 

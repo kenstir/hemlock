@@ -81,11 +81,10 @@ public class HoldsListView extends ActionBarActivity {
         holdsNoText = (TextView) findViewById(R.id.holds_number);
         lv = (ListView) findViewById(R.id.holds_item_list);
         context = this;
-        accountAccess = AccountAccess.getAccountAccess();
+        accountAccess = AccountAccess.getInstance();
 
         holdRecords = new ArrayList<HoldRecord>();
-        listAdapter = new HoldsArrayAdapter(context, R.layout.holds_list_item,
-                holdRecords);
+        listAdapter = new HoldsArrayAdapter(context, R.layout.holds_list_item, holdRecords);
         lv.setAdapter(listAdapter);
 
         getHoldsRunnable = new Runnable() {

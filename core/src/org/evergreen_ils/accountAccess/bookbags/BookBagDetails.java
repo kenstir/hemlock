@@ -22,7 +22,6 @@ package org.evergreen_ils.accountAccess.bookbags;
 import java.util.ArrayList;
 import java.util.List;
 
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import org.evergreen_ils.R;
 import org.evergreen_ils.accountAccess.AccountAccess;
@@ -30,19 +29,14 @@ import org.evergreen_ils.accountAccess.SessionNotFoundException;
 import org.evergreen_ils.globals.Log;
 import org.evergreen_ils.searchCatalog.RecordInfo;
 import org.evergreen_ils.searchCatalog.SearchCatalog;
-import org.evergreen_ils.searchCatalog.SearchCatalogListView;
 import org.evergreen_ils.utils.ui.ActionBarUtils;
 import org.evergreen_ils.views.splashscreen.SplashActivity;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
 import android.app.ProgressDialog;
-import android.app.Service;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
-import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -95,7 +89,7 @@ public class BookBagDetails extends ActionBarActivity {
         setContentView(R.layout.bookbagitem_list);
         ActionBarUtils.initActionBarForActivity(this);
 
-        accountAccess = AccountAccess.getAccountAccess();
+        accountAccess = AccountAccess.getInstance();
         bookBag = (BookBag) getIntent().getSerializableExtra("bookBag");
 
         context = this;

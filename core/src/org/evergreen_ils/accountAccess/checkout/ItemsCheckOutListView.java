@@ -23,7 +23,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import org.evergreen_ils.R;
 import org.evergreen_ils.accountAccess.AccountAccess;
@@ -46,7 +45,6 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
-import org.w3c.dom.Text;
 
 public class ItemsCheckOutListView extends ActionBarActivity {
 
@@ -85,7 +83,7 @@ public class ItemsCheckOutListView extends ActionBarActivity {
         context = this;
         itemsNo = (TextView) findViewById(R.id.checkout_items_number);
         overdueItems = (TextView) findViewById(R.id.checkout_items_overdue);
-        accountAccess = AccountAccess.getAccountAccess();
+        accountAccess = AccountAccess.getInstance();
         lv = (ListView) findViewById(R.id.checkout_items_list);
         circRecords = new ArrayList<CircRecord>();
         listAdapter = new CheckOutArrayAdapter(context,
@@ -204,7 +202,7 @@ public class ItemsCheckOutListView extends ActionBarActivity {
                         @Override
                         public void run() {
                             boolean refresh = true;
-                            AccountAccess ac = AccountAccess.getAccountAccess();
+                            AccountAccess ac = AccountAccess.getInstance();
 
                             runOnUiThread(new Runnable() {
                                 @Override

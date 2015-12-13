@@ -41,6 +41,9 @@
     <!-- Search -->
 
     <string name="search_hint">Search words</string>
+    <string name="search_button">Search</string>
+    <string name="search_button_alt">search button</string>
+    <string name="search_options_button_alt">search options</string>
     <string name="advanced_search">Advanced Search</string>
     <string name="loading_dialog_text"></string>
     <string name="dialog_please_wait"></string>

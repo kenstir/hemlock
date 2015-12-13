@@ -25,20 +25,12 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import android.text.TextUtils;
 import org.evergreen_ils.accountAccess.AccountAccess;
-import org.evergreen_ils.globals.AppPrefs;
 import org.evergreen_ils.globals.GlobalConfigs;
 import org.evergreen_ils.globals.Log;
 import org.evergreen_ils.globals.Utils;
-import org.opensrf.Method;
-import org.opensrf.net.http.GatewayRequest;
 import org.opensrf.net.http.HttpConnection;
-import org.opensrf.net.http.HttpRequest;
-import org.opensrf.net.http.HttpRequestHandler;
 import org.opensrf.util.OSRFObject;
-
-import android.net.ConnectivityManager;
 
 /**
  * The Class SearchCatalog.
@@ -181,7 +173,7 @@ public class SearchCatalog {
             now_ms = logElapsedTime(TAG, now_ms, "search.getItemShortInfo");
             resultsRecordInfo.add(record);
 
-            AccountAccess ac = AccountAccess.getAccountAccess();
+            AccountAccess ac = AccountAccess.getInstance();
             record.search_format = ac.fetchFormat(record_id.toString());
             now_ms = logElapsedTime(TAG, now_ms, "search.fetchFormat");
 

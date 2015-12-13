@@ -23,11 +23,9 @@ import java.util.Iterator;
 import java.util.Set;
 import java.util.Map.Entry;
 
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.view.MenuItem;
 import org.evergreen_ils.R;
-import org.evergreen_ils.accountAccess.AccountAccess;
 import org.evergreen_ils.globals.GlobalConfigs;
 import org.evergreen_ils.utils.ui.ActionBarUtils;
 import org.evergreen_ils.views.splashscreen.SplashActivity;
@@ -60,7 +58,7 @@ public class MoreCopyInformation extends ActionBarActivity {
         setContentView(R.layout.copy_information_more);
         ActionBarUtils.initActionBarForActivity(this);
 
-        globalConfigs = GlobalConfigs.getGlobalConfigs(context);
+        globalConfigs = GlobalConfigs.getInstance(context);
         context = this;
         record = (RecordInfo) getIntent().getSerializableExtra("recordInfo");
 

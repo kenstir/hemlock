@@ -24,7 +24,6 @@ import org.evergreen_ils.R;
 import org.evergreen_ils.accountAccess.AccountAccess;
 import org.evergreen_ils.accountAccess.AccountUtils;
 import org.evergreen_ils.accountAccess.SessionNotFoundException;
-import org.evergreen_ils.auth.Const;
 import org.evergreen_ils.globals.AppPrefs;
 import org.evergreen_ils.globals.GlobalConfigs;
 
@@ -110,8 +109,8 @@ public class LoadingTask {
 
             Log.d(TAG, tag+"Loading resources from "+library.url);
             publishProgress("Loading resources");
-            AccountAccess ac = AccountAccess.getAccountAccess();
-            GlobalConfigs gc = GlobalConfigs.getGlobalConfigs(mCallingActivity, library.url);
+            AccountAccess ac = AccountAccess.getInstance();
+            GlobalConfigs gc = GlobalConfigs.initializeGlobalConfigs(mCallingActivity, library.url);
 
             /* fetch org tree using OSRF rather than parsing JS */
             gc.loadOrganizations(ac.fetchOrgTree());
