@@ -5,4 +5,5 @@
     <item android:id="@+id/action_advanced_search"
           android:icon="@drawable/abc_ic_search"
           android:title="@string/advanced_search"/>
+    <item android:id="@+id/action_feedback" android:title="@string/menu_feedback"/>
 </menu>
