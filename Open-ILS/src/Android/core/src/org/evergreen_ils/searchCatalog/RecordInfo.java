@@ -50,7 +50,7 @@ public class RecordInfo implements Serializable {
     public boolean dummy = false;
 
     public ArrayList<CopyCountInformation> copyCountListInfo = null;
-    public List<CopyInformation> copyInformationList = new ArrayList<CopyInformation>();
+    public List<CopyInformation> copyInformationList = null;
     public String search_format = null;
 
     public RecordInfo() {

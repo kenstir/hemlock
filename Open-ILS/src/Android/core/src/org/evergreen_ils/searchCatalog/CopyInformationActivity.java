@@ -39,7 +39,7 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-public class MoreCopyInformation extends ActionBarActivity {
+public class CopyInformationActivity extends ActionBarActivity {
 
     private Context context;
 

@@ -85,7 +85,8 @@ public class SearchCatalog {
 
     public Integer visible;
 
-    public Integer searchLimit = 10;
+    //public final Integer searchLimit = 10;
+    public final Integer searchLimit = 50;
     
     public String searchText = null;
     public String searchClass = null;
@@ -181,15 +182,8 @@ public class SearchCatalog {
             // it is needed only for BasicDetailsFragment, but that would cause it to be run on the main thread
             // and that fails, so continue to do it here for now
             record.copyCountListInfo = getCopyCount(record_id, this.selectedOrganization.id);
-            List<List<Object>> list = (List<List<Object>>) getLocationCount(
-                    record_id, this.selectedOrganization.id,
-                    this.selectedOrganization.level);
-            now_ms = logElapsedTime(TAG, now_ms, "search.getLocationCount");
-            if (list != null)
-                for (int j = 0; j < list.size(); j++) {
-                    CopyInformation copyInfo = new CopyInformation(list.get(j));
-                    record.copyInformationList.add(copyInfo);
-                }
+            record.copyInformationList = getCopyLocationCounts(record_id, this.selectedOrganization.id, this.selectedOrganization.level);
+            now_ms = logElapsedTime(TAG, now_ms, "search.getCopyXXX");
 
             Log.d(TAG, "Title:" + record.title
                     + " Author:" + record.author
@@ -248,13 +242,24 @@ public class SearchCatalog {
         return ccs_list;
     }
 
-    public Object getLocationCount(Integer recordID, Integer orgID,
-            Integer orgDepth) {
+    public ArrayList<CopyInformation> getCopyLocationCounts(Integer recordID, Integer orgID, Integer orgDepth) {
 
-        List<?> list = (List<?>) Utils.doRequestSimple(conn(), SERVICE,
+        Object response = Utils.doRequestSimple(conn(), SERVICE,
                 METHOD_COPY_LOCATION_COUNTS, new Object[] {
                         recordID, orgID, orgDepth });
-        return list;
+
+        ArrayList<CopyInformation> ret = new ArrayList<CopyInformation>();
+        try {
+            List<List<Object>> list = (List<List<Object>>) response;
+            for (List<Object> elem : list) {
+                CopyInformation copyInfo = new CopyInformation(elem);
+                ret.add(copyInfo);
+            }
+        } catch (Exception e) {
+            Log.d(TAG, "exception in getCopyLocationCounts", e);
+        }
+
+        return ret;
     }
 
     public ArrayList<RecordInfo> getRecordsInfo(ArrayList<Integer> ids) {

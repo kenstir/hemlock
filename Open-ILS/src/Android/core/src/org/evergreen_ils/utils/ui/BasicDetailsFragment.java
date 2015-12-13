@@ -234,17 +234,14 @@ public class BasicDetailsFragment extends Fragment {
         formatTextView.setText(SearchFormat.getItemLabelFromSearchFormat(record.search_format));
         authorTextView.setText(record.author);
         publisherTextView.setText(record.pubdate + " " + record.publisher);
-
         seriesTextView.setText(record.series);
         subjectTextView.setText(record.subject);
         synopsisTextView.setText(record.synopsis);
-
         isbnTextView.setText(record.isbn);
 
         // todo loading copy count on demand is not working because we are on the main thread
         //SearchCatalog.ensureCopyCount(record, orgId);
 
-        //Log.d(TAG, "xxx copyCountListInfo.size=" + record.copyCountListInfo.size() + " title:" + record.title);
         int total = 0;
         int available = 0;
         for (int i = 0; i < record.copyCountListInfo.size(); i++) {
@@ -264,7 +261,7 @@ public class BasicDetailsFragment extends Fragment {
         ((Button)layout.findViewById(R.id.show_copy_information_button)).setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getActivity().getApplicationContext(), MoreCopyInformation.class);
+                Intent intent = new Intent(getActivity().getApplicationContext(), CopyInformationActivity.class);
                 intent.putExtra("recordInfo", record);
                 intent.putExtra("orgId", orgId);
                 startActivity(intent);
