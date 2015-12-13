@@ -86,7 +86,7 @@ public class SplashActivity extends Activity implements LoadingTaskListener {
         this.mContext = this;
         setContentView(R.layout.activity_splash);
 
-        AppPrefs.init(getApplicationContext());
+        AppPrefs.init(this);
 
         mProgressText = (TextView) findViewById(R.id.action_in_progress);
         mProgressBar = (ProgressBar) findViewById(R.id.activity_splash_progress_bar);

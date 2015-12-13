@@ -22,6 +22,7 @@ package org.evergreen_ils.searchCatalog;
 import java.util.*;
 
 import android.support.v7.app.ActionBarActivity;
+import android.text.Layout;
 import android.view.*;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
@@ -31,6 +32,7 @@ import org.evergreen_ils.accountAccess.SessionNotFoundException;
 import org.evergreen_ils.accountAccess.bookbags.BookBag;
 import org.evergreen_ils.accountAccess.holds.PlaceHold;
 import org.evergreen_ils.barcodescan.CaptureActivity;
+import org.evergreen_ils.globals.AppPrefs;
 import org.evergreen_ils.globals.GlobalConfigs;
 import org.evergreen_ils.globals.Log;
 import org.evergreen_ils.net.VolleyWrangler;
@@ -68,8 +70,11 @@ public class SearchCatalogListView extends ActionBarActivity {
     private static final int PLACE_HOLD = 0;
     private static final int DETAILS = 1;
     private static final int BOOK_BAG = 2;
+    public static final String SEARCH_OPTIONS_VISIBLE = "search_options_visible";
 
     private EditText searchText;
+    private ImageButton searchOptionsButton;
+    private View searchOptionsLayout;
     private ImageButton searchButton;
     private Spinner searchOrgSpinner;
     private Spinner searchClassSpinner;
@@ -88,8 +93,8 @@ public class SearchCatalogListView extends ActionBarActivity {
     private Integer bookbag_selected = -1;
     private Runnable searchForResultsRunnable = null;
 
-    // marks when the fetching record thread is started
     private boolean loadingElements = false;
+    private boolean searchOptionsVisible = false;
 
     private String getSearchText() {
         return searchText.getText().toString();
@@ -111,6 +116,7 @@ public class SearchCatalogListView extends ActionBarActivity {
             return;
         }
         SearchFormat.init(this);
+        AppPrefs.init(this);
 
         setContentView(R.layout.search_layout3);
         ActionBarUtils.initActionBarForActivity(this);
@@ -124,23 +130,26 @@ public class SearchCatalogListView extends ActionBarActivity {
         progressDialog = new ProgressDialog(context);
 
         searchText = (EditText) findViewById(R.id.searchText);
+        searchOptionsButton = (ImageButton) findViewById(R.id.search_options_button);
+        searchOptionsLayout = findViewById(R.id.search_options_layout);
+        searchButton = (ImageButton) findViewById(R.id.search_button);
         searchClassSpinner = (Spinner) findViewById(R.id.search_qtype_spinner);
         searchFormatSpinner = (Spinner) findViewById(R.id.search_format_spinner);
         searchOrgSpinner = (Spinner) findViewById(R.id.search_org_spinner);
         searchResultsNumber = (TextView) findViewById(R.id.search_result_number);
         lv = (ListView) this.findViewById(R.id.search_results_list);
 
+        initSearchOptionsVisibility();
+        initSearchText();
+        initSearchOptionsButton();
+        initSearchButton();
         initSearchFormatSpinner();
         initSearchOrgSpinner();
         initSearchListView();
-        initSearchText();
         initSearchRunnable();
-        initSearchOptionsButton();
-        initSearchButton();
     }
 
     private void initSearchButton() {
-        searchButton = (ImageButton) findViewById(R.id.search_button);
         searchButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -150,12 +159,32 @@ public class SearchCatalogListView extends ActionBarActivity {
         });
     }
 
+    private void initSearchOptionsVisibility() {
+        boolean last_state = AppPrefs.getBoolean(SEARCH_OPTIONS_VISIBLE);
+        setSearchOptionsVisibility(last_state);
+    }
+
+    private void setSearchOptionsVisibility(boolean visible) {
+        if (visible) {
+            searchOptionsLayout.setVisibility(View.VISIBLE);
+            searchOptionsButton.setImageResource(R.drawable.expander_ic_maximized);
+        } else {
+            searchOptionsLayout.setVisibility(View.GONE);
+            searchOptionsButton.setImageResource(R.drawable.expander_ic_minimized);
+        }
+        searchOptionsVisible = visible;
+        AppPrefs.setBoolean(SEARCH_OPTIONS_VISIBLE, visible);
+    }
+
+    private void toggleSearchOptions() {
+        setSearchOptionsVisibility(!searchOptionsVisible);
+    }
+
     private void initSearchOptionsButton() {
-        ((ImageButton)findViewById(R.id.search_options_button)).setOnClickListener(new OnClickListener() {
+        searchOptionsButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                View options = findViewById(R.id.search_row_options);
-                options.setVisibility((options.getVisibility()==View.VISIBLE) ? View.GONE : View.VISIBLE);
+                toggleSearchOptions();
             }
         });
     }

@@ -24,7 +24,7 @@
                 android:src="@drawable/expander_ic_minimized"/>
     </LinearLayout>
     <LinearLayout
-            android:id="@+id/search_row_options"
+            android:id="@+id/search_options_layout"
             android:orientation="horizontal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
