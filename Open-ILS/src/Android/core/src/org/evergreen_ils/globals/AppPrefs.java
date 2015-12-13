@@ -19,11 +19,11 @@ public class AppPrefs {
     private static Context context;
     private static boolean initialized;
 
-    public static void init(Context app_context) {
+    public static void init(Context callingContext) {
         if (initialized)
             return;
 
-        context = app_context;
+        context = callingContext.getApplicationContext();
         initialized = true;
 
         // set default values unless already set
