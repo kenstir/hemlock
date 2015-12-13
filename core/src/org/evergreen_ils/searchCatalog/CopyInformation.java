@@ -39,24 +39,17 @@ public class CopyInformation implements Serializable {
     public Integer org_id = -1;
     public String call_number_sufix;
     public String copy_location;
-    public HashMap<String, String> statuses;
-
-    // the hash from the request method
-    private HashMap<Integer, Integer> hashValCopy;
+    public LinkedHashMap<String, String> statusInformation;
 
     // global, it is initialized when orgTree and fm_ild is downloaded
-
     public static LinkedHashMap<String, String> availableOrgStatuses = new LinkedHashMap<String, String>();
-
-    public LinkedHashMap<String, String> statusInformation = new LinkedHashMap<String, String>();
 
     public CopyInformation(List<Object> list) {
 
         org_id = Integer.parseInt((String) list.get(0));
         call_number_sufix = (String) list.get(2);
         copy_location = (String) list.get(4);
-
-        hashValCopy = (HashMap<Integer, Integer>) list.get(5);
+        HashMap<Integer, Integer> status_map = (HashMap<Integer, Integer>) list.get(5);
 
         statusInformation = new LinkedHashMap<String, String>();
 
@@ -64,13 +57,9 @@ public class CopyInformation implements Serializable {
         Iterator<Entry<String, String>> it = set.iterator();
         while (it.hasNext()) {
             Entry<String, String> entry = it.next();
-
-            if (hashValCopy.containsKey(entry.getKey())) {
+            if (status_map.containsKey(entry.getKey())) {
                 statusInformation.put(entry.getValue(),
-                        hashValCopy.get(entry.getKey()) + "");
-//                Log.d(TAG, "Added " + entry.getKey() + " -> "
-//                        + entry.getValue() + " ("
-//                        + hashValCopy.get(entry.getKey()) + ")");
+                        status_map.get(entry.getKey()) + "");
             }
         }
         Log.d(TAG, "done");

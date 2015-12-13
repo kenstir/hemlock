@@ -47,7 +47,7 @@
                 android:label="@string/search_details_title">
         </activity>
         <activity
-                android:name="org.evergreen_ils.searchCatalog.MoreCopyInformation"
+                android:name="org.evergreen_ils.searchCatalog.CopyInformationActivity"
                 android:label="@string/copy_information_title">
         </activity>
         <activity
