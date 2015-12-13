@@ -76,7 +76,6 @@ public class GlobalConfigs {
     }
 
     public static GlobalConfigs getInstance(Context context) {
-        Log.d(TAG, "getInstance (url="+httpAddress+")");
         if (instance == null)
             instance = new GlobalConfigs();
         if (context != null)
