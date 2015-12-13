@@ -23,7 +23,6 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import org.evergreen_ils.R;
 import org.evergreen_ils.accountAccess.AccountAccess;
@@ -31,18 +30,13 @@ import org.evergreen_ils.accountAccess.SessionNotFoundException;
 import org.evergreen_ils.utils.ui.ActionBarUtils;
 import org.evergreen_ils.views.splashscreen.SplashActivity;
 
-import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -89,7 +83,7 @@ public class FinesActivity extends ActionBarActivity {
         balance_owed = (TextView) findViewById(R.id.fined_balance_owed);
         context = this;
 
-        ac = AccountAccess.getAccountAccess();
+        ac = AccountAccess.getInstance();
 
         ArrayList<FinesRecord> finesRecords = new ArrayList<FinesRecord>();
         listAdapter = new OverdueMaterialsArrayAdapter(context,

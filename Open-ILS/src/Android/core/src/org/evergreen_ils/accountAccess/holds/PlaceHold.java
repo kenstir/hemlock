@@ -122,13 +122,13 @@ public class PlaceHold extends ActionBarActivity {
         setContentView(R.layout.place_hold);
         ActionBarUtils.initActionBarForActivity(this);
 
-        globalConfigs = GlobalConfigs.getGlobalConfigs(this);
+        globalConfigs = GlobalConfigs.getInstance(this);
         RecordInfo record = (RecordInfo) getIntent().getSerializableExtra(
                 "recordInfo");
 
         context = this;
 
-        accountAccess = AccountAccess.getAccountAccess();
+        accountAccess = AccountAccess.getInstance();
 
         title = (TextView) findViewById(R.id.hold_title);
         author = (TextView) findViewById(R.id.hold_author);
@@ -323,8 +323,8 @@ public class PlaceHold extends ActionBarActivity {
 
         // kenstir todo: factor this out
         int homeLibrary = 0;
-        if (AccountAccess.getAccountAccess() != null) {
-            homeLibrary = AccountAccess.getAccountAccess().getHomeLibraryID();
+        if (AccountAccess.getInstance() != null) {
+            homeLibrary = AccountAccess.getInstance().getHomeLibraryID();
         }
         ArrayList<String> list = new ArrayList<String>();
         for (int i = 0; i < globalConfigs.organisations.size(); i++) {

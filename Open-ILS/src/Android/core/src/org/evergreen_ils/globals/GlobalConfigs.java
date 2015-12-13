@@ -22,20 +22,12 @@ package org.evergreen_ils.globals;
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.text.TextUtils;
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.toolbox.StringRequest;
-import org.evergreen_ils.net.VolleyWrangler;
 import org.evergreen_ils.searchCatalog.Organisation;
 import org.evergreen_ils.searchCatalog.SearchCatalog;
-import org.open_ils.idl.IDLException;
 import org.open_ils.idl.IDLParser;
 import org.opensrf.net.http.HttpConnection;
 import org.opensrf.util.OSRFObject;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.text.ParseException;
@@ -83,8 +75,8 @@ public class GlobalConfigs {
     private GlobalConfigs() {
     }
 
-    public static GlobalConfigs getGlobalConfigs(Context context) {
-        Log.d(TAG, "getGlobalConfigs (url="+httpAddress+")");
+    public static GlobalConfigs getInstance(Context context) {
+        Log.d(TAG, "getInstance (url="+httpAddress+")");
         if (instance == null)
             instance = new GlobalConfigs();
         if (context != null)
@@ -94,20 +86,20 @@ public class GlobalConfigs {
         return instance;
     }
 
-    public static GlobalConfigs getGlobalConfigs(Context context, String library_url) {
-        Log.d(TAG, "getGlobalConfigs library_url="+library_url);
-        GlobalConfigs globalConfigs = getGlobalConfigs(context);
+    public static GlobalConfigs initializeGlobalConfigs(Context context, String library_url) {
+        Log.d(TAG, "getInstance library_url="+library_url);
+        GlobalConfigs globalConfigs = getInstance(context);
         globalConfigs.initialize(library_url);
         return globalConfigs;
     }
 
     public static String getUrl() {
-        GlobalConfigs globalConfigs = getGlobalConfigs(null);
+        GlobalConfigs globalConfigs = getInstance(null);
         return globalConfigs.httpAddress;
     }
 
     public static String getUrl(String relativeUrl) {
-        GlobalConfigs globalConfigs = getGlobalConfigs(null);
+        GlobalConfigs globalConfigs = getInstance(null);
         return globalConfigs.httpAddress + relativeUrl;
     }
 

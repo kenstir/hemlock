@@ -40,7 +40,7 @@ public class MainActivity extends ActionBarActivity {
         ActionBarUtils.initActionBarForActivity(this, true);
 
         // singleton initialize necessary IDL and Org data
-        globalConfigs = GlobalConfigs.getGlobalConfigs(this);
+        globalConfigs = GlobalConfigs.getInstance(this);
     }
 
     @Override

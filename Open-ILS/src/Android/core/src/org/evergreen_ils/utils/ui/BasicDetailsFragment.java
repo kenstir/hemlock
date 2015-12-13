@@ -19,24 +19,15 @@
  */
 package org.evergreen_ils.utils.ui;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.Map.Entry;
-import java.util.Set;
-
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
 import org.evergreen_ils.R;
 import org.evergreen_ils.accountAccess.AccountAccess;
-import org.evergreen_ils.accountAccess.SessionNotFoundException;
-import org.evergreen_ils.accountAccess.bookbags.BookBag;
 import org.evergreen_ils.accountAccess.holds.PlaceHold;
 import org.evergreen_ils.globals.GlobalConfigs;
 import org.evergreen_ils.net.VolleyWrangler;
 import org.evergreen_ils.searchCatalog.*;
 
-import android.app.Dialog;
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -44,16 +35,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.view.ViewGroup.LayoutParams;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemSelectedListener;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 public class BasicDetailsFragment extends Fragment {
 
@@ -122,7 +106,7 @@ public class BasicDetailsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
 
-        globalConfigs = GlobalConfigs.getGlobalConfigs(getActivity());
+        globalConfigs = GlobalConfigs.getInstance(getActivity());
 
         LinearLayout layout = (LinearLayout) inflater.inflate(
                 R.layout.record_details_basic_fragment, null);
@@ -160,7 +144,7 @@ public class BasicDetailsFragment extends Fragment {
         ImageLoader imageLoader = VolleyWrangler.getInstance(getActivity()).getImageLoader();
         recordImage.setImageUrl(imageHref, imageLoader);
 
-        AccountAccess ac = AccountAccess.getAccountAccess();
+        AccountAccess ac = AccountAccess.getInstance();
 
         /*
         bookBags = ac.getBookbags();
@@ -187,7 +171,7 @@ public class BasicDetailsFragment extends Fragment {
                 Thread addtoBookbag = new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        AccountAccess ac = AccountAccess.getAccountAccess();
+                        AccountAccess ac = AccountAccess.getInstance();
                         try {
                             ac.addRecordToBookBag(record.doc_id,
                                     ac.getBookbags().get(bookbag_selected).id);

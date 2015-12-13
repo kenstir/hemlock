@@ -172,7 +172,7 @@ public class AccountAccess {
      *
      * @return the account access
      */
-    public static AccountAccess getAccountAccess() {
+    public static AccountAccess getInstance() {
 
         if (accountAccess == null) {
             accountAccess = new AccountAccess();
@@ -542,7 +542,7 @@ public class AccountAccess {
 //        // logic can be found in the opac_utils.js file in web/opac/common/js
 //
 //        for (int i = 0; i < organisations.size(); i++) {
-//            AccountAccess ac = AccountAccess.getAccountAccess();
+//            AccountAccess ac = AccountAccess.getInstance();
 //            try {
 //                Object obj = ac.fetchOrgSettings(organisations.get(i).id,
 //                        "opac.org_unit_hiding.depth");
