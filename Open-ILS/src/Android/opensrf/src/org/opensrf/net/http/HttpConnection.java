@@ -62,7 +62,7 @@ public class HttpConnection {
 
         activeThreads++;
 
-         //Send the request receive the response, fire off the next 
+         //Send the request receive the response, fire off the next
          //thread if necessary, then pass the result to the handler
         Runnable r = new Runnable() {
             public void run() {

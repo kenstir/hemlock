@@ -8,8 +8,11 @@ import java.util.Map;
  */
 public class GatewayResponse {
     public List<Object> responseList = null;
+    public Object payload = null;
+    public String status = null;
     public Map<String, ?> map = null;
     public Exception ex = null;
+    public boolean failed = false;
 
     private GatewayResponse() {
     }
@@ -18,9 +21,14 @@ public class GatewayResponse {
         GatewayResponse resp = new GatewayResponse();
         try {
             resp.map = (Map<String, ?>) new JSONReader(json).readObject();
+            resp.status = resp.map.get("status").toString();
+            if (!resp.status.equals("200"))
+                resp.failed = true;
             resp.responseList = (List<Object>) resp.map.get("payload");
+            resp.payload = resp.responseList.remove(0);
         } catch (JSONException e) {
             resp.ex = e;
+            resp.failed = true;
         }
         return resp;
     }
