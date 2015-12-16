@@ -70,29 +70,13 @@ public class IDLParser {
             xpp.setInput(this.inStream, "utf-8");
             int eventType = xpp.getEventType();
 
-            /** disable as many unused features as possible to speed up the parsing */
-            /*
-            factory.setProperty(XMLInputFactory.IS_REPLACING_ENTITY_REFERENCES, Boolean.FALSE);
-            factory.setProperty(XMLInputFactory.IS_SUPPORTING_EXTERNAL_ENTITIES, Boolean.FALSE);
-            factory.setProperty(XMLInputFactory.IS_NAMESPACE_AWARE, Boolean.TRUE);
-            factory.setProperty(XMLInputFactory.IS_COALESCING, Boolean.FALSE);
-            factory.setProperty(XMLInputFactory.SUPPORT_DTD, Boolean.FALSE);
-             */
-    
-        /** create the stream reader */
-    
+            /** cycle through the XML events */
             while(eventType != XmlPullParser.END_DOCUMENT) {
-                /** cycle through the XML events */
-    
-               // eventType = reader.next();
-    
                 switch(eventType) {
-    
                     case XmlPullParser.START_TAG:
                         handleStartElement(xpp);
                         break;
-    
-                    case XmlPullParser.END_TAG: 
+                    case XmlPullParser.END_TAG:
                         handleEndElement(xpp);
                         break;
                 }
