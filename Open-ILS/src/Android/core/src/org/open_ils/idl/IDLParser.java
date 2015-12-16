@@ -36,7 +36,7 @@ public class IDLParser {
 
     public IDLParser() {
         IDLObjects = new HashMap<String, IDLObject>();
-        this.keepIDLObjects = true;
+        keepIDLObjects = true;
         parsedObjectCount = 0;
         fieldIndex = 0;
     }
@@ -64,13 +64,10 @@ public class IDLParser {
     public void parse() throws IOException, IDLException {
     
         try {
-            //XMLInputFactory factory = XMLInputFactory.newInstance();
-            
             XmlPullParserFactory factory = XmlPullParserFactory.newInstance();
             factory.setNamespaceAware(true);
             XmlPullParser xpp = factory.newPullParser();
-
-            xpp.setInput(this.inStream,null );
+            xpp.setInput(this.inStream, "utf-8");
             int eventType = xpp.getEventType();
 
             /** disable as many unused features as possible to speed up the parsing */
