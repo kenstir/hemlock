@@ -360,7 +360,6 @@ public class PlaceHold extends ActionBarActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == android.R.id.home) {
-            // make the action bar "up" caret work like "back"
             onBackPressed();
             return true;
         }
