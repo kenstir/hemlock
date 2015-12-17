@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Set;
 
+import org.evergreen_ils.globals.Log;
 import org.opensrf.util.OSRFRegistry;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
@@ -67,7 +68,7 @@ public class IDLParser {
             XmlPullParserFactory factory = XmlPullParserFactory.newInstance();
             factory.setNamespaceAware(true);
             XmlPullParser xpp = factory.newPullParser();
-            xpp.setInput(this.inStream, "utf-8");
+            xpp.setInput(this.inStream, null);
             int eventType = xpp.getEventType();
 
             /** cycle through the XML events */
@@ -82,7 +83,6 @@ public class IDLParser {
                 }
                 eventType = xpp.next();
             }
-
         } catch(XmlPullParserException se) {
             throw new IDLException("Error parsing IDL XML", se);
         }

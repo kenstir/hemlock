@@ -1,5 +1,9 @@
 package org.evergreen_ils.globals;
 
+import android.content.Context;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -38,8 +42,22 @@ public class Log {
         }
     }
 
-    public static synchronized String getString() {
+    public static String getAppInfo(Context context) {
+        PackageInfo pInfo = null;
+        try {
+            pInfo = context.getPackageManager().getPackageInfo(context.getPackageName(), 0);
+        } catch (PackageManager.NameNotFoundException e) {
+            Log.d("Log", "caught", e);
+        }
+        String versionName = pInfo.versionName;
+        int verCode = pInfo.versionCode;
+        String version = "" + verCode + " (" + versionName + ")\n";
+        return version;
+    }
+
+    public static synchronized String getString(Context context) {
         StringBuilder sb = new StringBuilder(mQueueSize * 120);
+        sb.append(getAppInfo(context));
         Iterator<String> it = mEntries.descendingIterator();
         while (it.hasNext()) {
             sb.append(it.next()).append('\n');

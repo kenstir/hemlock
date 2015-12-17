@@ -137,7 +137,7 @@ public class GlobalConfigs {
         try {
             Log.d(TAG, "loadIDLFile start");
             long start_ms = System.currentTimeMillis();
-            InputStream in_IDL = Utils.getNetInputStream(GlobalConfigs.httpAddress + IDL_FILE_FROM_ROOT);
+            InputStream in_IDL = Utils.getNetInputStream(getUrl(IDL_FILE_FROM_ROOT));
             IDLParser parser = new IDLParser(in_IDL);
             parser.setKeepIDLObjects(false);
             Log.d(TAG, "loadIDLFile parse");
@@ -145,7 +145,7 @@ public class GlobalConfigs {
             long duration_ms = System.currentTimeMillis() - start_ms;
             Log.d(TAG, "loadIDLFile parse took "+duration_ms+"ms");
         } catch (Exception e) {
-            Log.w(TAG, "Error in parsing IDL file", e);
+            Log.w(TAG, "Error parsing IDL file", e);
         }
 
         loadedIDL = true;

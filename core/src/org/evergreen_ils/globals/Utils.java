@@ -20,6 +20,7 @@
 package org.evergreen_ils.globals;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Map;
@@ -81,29 +82,15 @@ public class Utils {
         return result;
     }
 
-    public static InputStream getNetInputStream(String url) {
+    public static InputStream getNetInputStream(String url) throws IOException {
 
         InputStream in = null;
 
         HttpResponse response = null;
-
-        try {
-            HttpClient client = new DefaultHttpClient();
-            HttpGet request = new HttpGet(url);
-            response = client.execute(request);
-        } catch (Exception e) {
-            Log.d(TAG, "Exception to GET page " + url);
-        }
-
-        try {
-            in = response.getEntity().getContent();
-
-            return in;
-        } catch (Exception e) {
-            System.err.println("Error in retrieving response " + e.getMessage());
-        }
-
-        return in;
+        HttpClient client = new DefaultHttpClient();
+        HttpGet request = new HttpGet(url);
+        response = client.execute(request);
+        return response.getEntity().getContent();
     }
 
     public static String getResponseTextcode(Object response) {
