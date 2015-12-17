@@ -103,7 +103,7 @@ public class SplashActivity extends Activity implements LoadingTaskListener {
             public void onClick(View v) {
                 Intent i = new Intent();
                 i.setAction(Intent.ACTION_SEND);
-                i.putExtra(Intent.EXTRA_TEXT, Log.getString());
+                i.putExtra(Intent.EXTRA_TEXT, Log.getString(mContext));
                 i.setType("text/plain");
                 startActivity(i);
             }
