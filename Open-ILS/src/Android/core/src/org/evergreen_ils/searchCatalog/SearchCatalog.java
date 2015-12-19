@@ -184,7 +184,7 @@ public class SearchCatalog {
             List<List<Object>> list = (List<List<Object>>) getLocationCount(
                     record_id, this.selectedOrganization.id,
                     this.selectedOrganization.level);
-            now_ms = logElapsedTime(TAG, now_ms, "search.getLocationCount");
+            now_ms = Log.logElapsedTime(TAG, now_ms, "search.getLocationCount");
             if (list != null)
                 for (int j = 0; j < list.size(); j++) {
                     CopyInformation copyInfo = new CopyInformation(list.get(j));
