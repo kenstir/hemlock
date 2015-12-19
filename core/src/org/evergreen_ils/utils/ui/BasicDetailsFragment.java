@@ -181,7 +181,7 @@ public class BasicDetailsFragment extends Fragment {
     }
 
     private void initCopyCount() {
-        Log.d(TAG, "kcx.updateCopyCount, id="+record.doc_id+" info="+record.copyCountListInfo);
+        Log.d(TAG, "kcx.initCopyCount, id="+record.doc_id+" info="+record.copyCountListInfo);
         if (record.copyCountListInfo == null) {
             final long start_ms = System.currentTimeMillis();
             RequestQueue q = VolleyWrangler.getInstance(getActivity()).getRequestQueue();

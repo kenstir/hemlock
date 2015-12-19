@@ -119,7 +119,7 @@ public class CopyInformationActivity extends ActionBarActivity {
     }
 
     private void initCopyInfo() {
-        //todo: use volley a la BasicDetailsFragment
+        Log.d(TAG, "kcx.initCopyInfo, id="+record.doc_id+" info="+record.copyCountListInfo);
         SearchCatalog search = SearchCatalog.getInstance();
         if (record.copyInformationList == null) {
             final long start_ms = System.currentTimeMillis();
@@ -142,11 +142,10 @@ public class CopyInformationActivity extends ActionBarActivity {
                         @Override
                         public void onErrorResponse(VolleyError error) {
                             Log.d(TAG, "kcx.initCopyInfo caught", error);
-                            SearchCatalog.setCopyCountListInfo(record, null);
+                            SearchCatalog.setCopyLocationCounts(record, null);
                         }
                     });
             q.add(r);
         }
-    */
     }
 }

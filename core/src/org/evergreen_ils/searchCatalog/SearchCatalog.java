@@ -262,8 +262,6 @@ public class SearchCatalog {
         return ret;
     }
 
-    public void setMethodCopyLocationCounts(R)
-
     public ArrayList<RecordInfo> getRecordsInfo(ArrayList<Integer> ids) {
 
         ArrayList<RecordInfo> recordInfoArray = new ArrayList<RecordInfo>();
@@ -319,5 +317,21 @@ public class SearchCatalog {
         }
 
         return copyInfoList;
+    }
+
+    public static void setCopyLocationCounts(RecordInfo record, GatewayResponse response) {
+        Log.d(TAG, "record.doc_id"+record.doc_id);
+        record.copyInformationList = new ArrayList<CopyInformation>();
+        if (response.failed)
+            return;
+        try {
+            List<List<Object>> list = (List<List<Object>>) response.payload;
+            for (List<Object> elem : list) {
+                CopyInformation copyInfo = new CopyInformation(elem);
+                record.copyInformationList.add(copyInfo);
+            }
+        } catch (Exception e) {
+            Log.d(TAG, "caught", e);
+        }
     }
 }
