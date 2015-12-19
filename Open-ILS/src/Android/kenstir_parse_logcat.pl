@@ -13,12 +13,13 @@ use JSON;
 my $debug = 0;
 GetOptions("-d=i" => \$debug) or die;
 
-my $logcat = `adb logcat -d -v printable`;
+my $logcat = `adb logcat -d -v threadtime`;
 my @lines = split(/\r\n/, $logcat);
 foreach my $line (@lines) {
     print "line: $line\n" if $debug;
-    if ($line =~ /GatewayRequest: ([^:]+):(.+)/) {
+    if ($line =~ /GatewayRequest: ([^:]+): (.+)/) {
         my($key,$val) = ($1,$2);
+        print "kcxxx: key={$key}=\n";
         if ($key eq 'result') {
             my $obj;
             eval '$obj = decode_json($val);';

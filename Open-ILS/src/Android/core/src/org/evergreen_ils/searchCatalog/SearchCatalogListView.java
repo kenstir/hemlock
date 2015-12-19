@@ -161,7 +161,7 @@ public class SearchCatalogListView extends ActionBarActivity {
     }
 
     private void initSearchOptionsVisibility() {
-        boolean last_state = AppPrefs.getBoolean(SEARCH_OPTIONS_VISIBLE);
+        boolean last_state = AppPrefs.getBoolean(SEARCH_OPTIONS_VISIBLE, true);
         setSearchOptionsVisibility(last_state);
     }
 
@@ -435,6 +435,7 @@ public class SearchCatalogListView extends ActionBarActivity {
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, R.layout.org_item_layout, list);
         searchOrgSpinner.setAdapter(adapter);
         searchOrgSpinner.setSelection(selectedOrgPos);
+        search.selectOrganisation(globalConfigs.organisations.get(selectedOrgPos));
         searchOrgSpinner.setOnItemSelectedListener(new OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> arg0, View arg1, int ID, long arg3) {

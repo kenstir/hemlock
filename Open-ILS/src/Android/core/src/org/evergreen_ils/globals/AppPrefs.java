@@ -52,6 +52,11 @@ public class AppPrefs {
         return prefs.getBoolean(key, false);
     }
 
+    public static boolean getBoolean(String key, boolean dflt) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        return prefs.getBoolean(key, dflt);
+    }
+
     public static void setString(String key, String value) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
