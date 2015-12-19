@@ -23,6 +23,9 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.URI;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import android.os.Looper;
@@ -37,6 +40,7 @@ import org.opensrf.Method;
 import org.opensrf.net.http.GatewayRequest;
 import org.opensrf.net.http.HttpConnection;
 import org.opensrf.net.http.HttpRequest;
+import org.opensrf.util.JSONWriter;
 
 public class Utils {
     private static final String TAG = Utils.class.getSimpleName();
@@ -189,4 +193,29 @@ public class Utils {
         return doRequest(conn, service, method, params);
     }
 
+    public static String buildGatewayUrl(String service, String method, Object[] objects) {
+        StringBuilder sb = new StringBuilder(128);
+        sb.append("/osrf-gateway-v1?service=").append(service);
+        sb.append("&method=").append(method);
+        Log.d(TAG, "kcx.sb=" + sb.toString());
+        URI uri = null;
+
+        for (Object param : objects) {
+            sb.append("&param=");
+            sb.append(new JSONWriter(param).write());
+        }
+
+        try {
+            // not using URLEncoder because it replaces ' ' with '+'.
+            uri = new URI("http", "", null, sb.toString(), null);
+            Log.d(TAG, "kcx.uri ok");
+        } catch (java.net.URISyntaxException ex) {
+            Log.d(TAG, "kcx.caught exception", ex);
+        }
+
+        Log.d(TAG, "kcx.returning");
+        Log.d(TAG, "kcx.returning.uri="+uri);
+        Log.d(TAG, "kcx.returning.q="+uri.getRawQuery());
+        return uri.getRawQuery();
+    }
 }

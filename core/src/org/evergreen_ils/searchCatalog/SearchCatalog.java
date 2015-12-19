@@ -30,6 +30,7 @@ import org.evergreen_ils.globals.GlobalConfigs;
 import org.evergreen_ils.globals.Log;
 import org.evergreen_ils.globals.Utils;
 import org.opensrf.net.http.HttpConnection;
+import org.opensrf.util.GatewayResponse;
 import org.opensrf.util.OSRFObject;
 
 /**
@@ -74,9 +75,9 @@ public class SearchCatalog {
      */
     public static String METHOD_GET_COPY_COUNT = "open-ils.search.biblio.record.copy_count";
 
-    public static SearchCatalog searchCatalogSingleton = null;
+    private static SearchCatalog instance = null;
 
-    public String TAG = SearchCatalog.class.getSimpleName();
+    private static final String TAG = SearchCatalog.class.getSimpleName();
 
     // the org on which the searches will be made
     public Organisation selectedOrganization = null;
@@ -85,17 +86,17 @@ public class SearchCatalog {
 
     public Integer visible;
 
-    public Integer searchLimit = 10;
+    public final Integer searchLimit = 20;
     
     public String searchText = null;
     public String searchClass = null;
     public String searchFormat = null;
 
     public static SearchCatalog getInstance() {
-        if (searchCatalogSingleton == null) {
-            searchCatalogSingleton = new SearchCatalog();
+        if (instance == null) {
+            instance = new SearchCatalog();
         }
-        return searchCatalogSingleton;
+        return instance;
     }
 
     /**
@@ -180,16 +181,9 @@ public class SearchCatalog {
             // todo This takes 30% of the total search time but is not required for SearchCatalogListView
             // it is needed only for BasicDetailsFragment, but that would cause it to be run on the main thread
             // and that fails, so continue to do it here for now
-            record.copyCountListInfo = getCopyCount(record_id, this.selectedOrganization.id);
-            List<List<Object>> list = (List<List<Object>>) getLocationCount(
-                    record_id, this.selectedOrganization.id,
-                    this.selectedOrganization.level);
-            now_ms = Log.logElapsedTime(TAG, now_ms, "search.getLocationCount");
-            if (list != null)
-                for (int j = 0; j < list.size(); j++) {
-                    CopyInformation copyInfo = new CopyInformation(list.get(j));
-                    record.copyInformationList.add(copyInfo);
-                }
+            //record.copyCountListInfo = getCopyCount(record_id, this.selectedOrganization.id);
+            //record.copyInformationList = getCopyLocationCounts(record_id, this.selectedOrganization.id, this.selectedOrganization.level);
+            //now_ms = logElapsedTime(TAG, now_ms, "search.getCopyXXX");
 
             Log.d(TAG, "Title:" + record.title
                     + " Author:" + record.author
@@ -242,13 +236,24 @@ public class SearchCatalog {
         return ccs_list;
     }
 
-    public Object getLocationCount(Integer recordID, Integer orgID,
-            Integer orgDepth) {
+    public ArrayList<CopyInformation> getCopyLocationCounts(Integer recordID, Integer orgID, Integer orgDepth) {
 
-        List<?> list = (List<?>) Utils.doRequestSimple(conn(), SERVICE,
+        Object response = Utils.doRequestSimple(conn(), SERVICE,
                 METHOD_COPY_LOCATION_COUNTS, new Object[] {
                         recordID, orgID, orgDepth });
-        return list;
+
+        ArrayList<CopyInformation> ret = new ArrayList<CopyInformation>();
+        try {
+            List<List<Object>> list = (List<List<Object>>) response;
+            for (List<Object> elem : list) {
+                CopyInformation copyInfo = new CopyInformation(elem);
+                ret.add(copyInfo);
+            }
+        } catch (Exception e) {
+            Log.d(TAG, "exception in getCopyLocationCounts", e);
+        }
+
+        return ret;
     }
 
     public ArrayList<RecordInfo> getRecordsInfo(ArrayList<Integer> ids) {
@@ -275,8 +280,22 @@ public class SearchCatalog {
         this.selectedOrganization = org;
     }
 
-    public static ArrayList<CopyCountInformation> getCopyCount(Integer recordID,
-            Integer orgID) {
+    public static void setCopyCountListInfo(RecordInfo record, GatewayResponse response) {
+        record.copyCountListInfo = new ArrayList<CopyCountInformation>();
+        if (response.failed)
+            return;
+        try {
+            List<?> list = (List<?>) response.payload;
+            for (Object obj : list) {
+                CopyCountInformation info = new CopyCountInformation(obj);
+                record.copyCountListInfo.add(info);
+            }
+        } catch (Exception e) {
+            Log.d(TAG, "caught", e);
+        }
+    }
+
+    public static ArrayList<CopyCountInformation> getCopyCount(Integer recordID, Integer orgID) {
 
         List<?> list = (List<?>) Utils.doRequestSimple(conn(), SERVICE,
                 METHOD_GET_COPY_COUNT, new Object[] { orgID, recordID });
@@ -294,10 +313,19 @@ public class SearchCatalog {
         return copyInfoList;
     }
 
-    // should be punted to volley
-    public static void ensureCopyCount(RecordInfo record, Integer org_id) {
-        if (record.copyCountListInfo == null) {
-            record.copyCountListInfo = getCopyCount(record.doc_id, org_id);
+    public static void setCopyLocationCounts(RecordInfo record, GatewayResponse response) {
+        Log.d(TAG, "record.doc_id"+record.doc_id);
+        record.copyInformationList = new ArrayList<CopyInformation>();
+        if (response.failed)
+            return;
+        try {
+            List<List<Object>> list = (List<List<Object>>) response.payload;
+            for (List<Object> elem : list) {
+                CopyInformation copyInfo = new CopyInformation(elem);
+                record.copyInformationList.add(copyInfo);
+            }
+        } catch (Exception e) {
+            Log.d(TAG, "caught", e);
         }
     }
 }
