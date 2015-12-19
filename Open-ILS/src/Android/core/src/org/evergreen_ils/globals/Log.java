@@ -92,4 +92,10 @@ public class Log {
     public static void w(String TAG, String msg, Throwable tr) {
         push(TAG, msg, tr);
     }
+
+    public static long logElapsedTime(String TAG, long start_ms, String s) {
+        long now_ms = System.currentTimeMillis();
+        Log.d(TAG, "elapsed: " + s + ": " + (now_ms - start_ms) + "ms");
+        return now_ms;
+    }
 }
