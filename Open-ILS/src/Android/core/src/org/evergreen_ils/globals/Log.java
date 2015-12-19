@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -12,14 +11,28 @@ import java.util.*;
  * Created by kenstir on 12/9/2015.
  */
 public class Log {
+
+    private static void println(int priority, String TAG, String msg, Throwable tr) {
+        if (tr != null) {
+            msg = msg + '\n' + android.util.Log.getStackTraceString(tr);
+        }
+        android.util.Log.println(priority, TAG, msg);
+    }
+
+    public static synchronized String getString(Context context) {
+        return null;
+    }
+
+    /*
     private static final int mQueueSize = 200;
     private static ArrayDeque<String> mEntries = new ArrayDeque<String>(mQueueSize);
     private static SimpleDateFormat mTimeFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS", Locale.US);
 
-    // caller is synchronized
-    public static synchronized void push(String TAG, String msg, Throwable tr) {
-        android.util.Log.d(TAG, msg, tr);
-
+    private static synchronized void println(int priority, String TAG, String msg, Throwable tr) {
+        if (tr != null) {
+            msg = msg + '\n' + android.util.Log.getStackTraceString(tr);
+        }
+        android.util.Log.println(priority, TAG, msg);
         StringBuilder sb = new StringBuilder();
         String date = mTimeFormat.format(System.currentTimeMillis());
         sb.append(date).append('\t').append(TAG);
@@ -64,33 +77,34 @@ public class Log {
         }
         return sb.toString();
     }
+    */
 
     public static void d(String TAG, String msg) {
-        push(TAG, msg, null);
+        println(android.util.Log.DEBUG, TAG, msg, null);
     }
 
     public static void d(String TAG, String msg, Throwable tr) {
-        push(TAG, msg, tr);
+        println(android.util.Log.DEBUG, TAG, msg, tr);
     }
 
     public static void i(String TAG, String msg) {
-        push(TAG, msg, null);
+        println(android.util.Log.INFO, TAG, msg, null);
     }
 
     public static void v(String TAG, String msg) {
-        push(TAG, msg, null);
+        println(android.util.Log.VERBOSE, TAG, msg, null);
     }
 
     public static void w(String TAG, String msg) {
-        push(TAG, msg, null);
+        println(android.util.Log.WARN, TAG, msg, null);
     }
 
     public static void w(String TAG, Throwable tr) {
-        push(TAG, null, tr);
+        println(android.util.Log.WARN, TAG, null, tr);
     }
 
     public static void w(String TAG, String msg, Throwable tr) {
-        push(TAG, msg, tr);
+        println(android.util.Log.WARN, TAG, msg, tr);
     }
 
     public static long logElapsedTime(String TAG, long start_ms, String s) {
