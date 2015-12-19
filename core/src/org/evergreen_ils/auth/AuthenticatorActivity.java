@@ -254,10 +254,10 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity {
                     data.putString(Const.KEY_LIBRARY_URL, selected_library.url);
                 } catch (AuthenticationException e) {
                     if (e != null) errorMessage = e.getMessage();
-                    Log.d(TAG, "task> signIn caught auth exception " + errorMessage);
+                    Log.d(TAG, "task> signIn caught", e);
                 } catch (Exception e2) {
                     if (e2 != null) errorMessage = e2.getMessage();
-                    Log.d(TAG, "task> signIn caught other exception " + errorMessage);
+                    Log.d(TAG, "task> signIn caught", e2);
                 }
                 if (authtoken == null)
                     data.putString(KEY_ERROR_MESSAGE, errorMessage);
