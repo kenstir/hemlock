@@ -126,7 +126,7 @@ public class GatewayRequest extends HttpRequest {
 
     private String compilePostData(String service, Method method) {
         URI uri = null;
-        StringBuffer postData = new StringBuffer();
+        StringBuilder postData = new StringBuilder();
 
         postData.append("service=");
         postData.append(service);

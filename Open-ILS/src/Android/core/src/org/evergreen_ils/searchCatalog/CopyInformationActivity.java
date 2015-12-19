@@ -25,8 +25,15 @@ import java.util.Map.Entry;
 
 import android.support.v7.app.ActionBarActivity;
 import android.view.MenuItem;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
 import org.evergreen_ils.R;
 import org.evergreen_ils.globals.GlobalConfigs;
+import org.evergreen_ils.globals.Log;
+import org.evergreen_ils.globals.Utils;
+import org.evergreen_ils.net.GatewayJsonObjectRequest;
+import org.evergreen_ils.net.VolleyWrangler;
 import org.evergreen_ils.utils.ui.ActionBarUtils;
 import org.evergreen_ils.views.splashscreen.SplashActivity;
 
@@ -35,16 +42,15 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup.LayoutParams;
-import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import org.opensrf.util.GatewayResponse;
 
-public class MoreCopyInformation extends ActionBarActivity {
+public class CopyInformationActivity extends ActionBarActivity {
 
+    private static final String TAG = CopyInformationActivity.class.getSimpleName();
     private Context context;
-
     private RecordInfo record;
-
     private GlobalConfigs globalConfigs;
 
     @Override
@@ -62,31 +68,26 @@ public class MoreCopyInformation extends ActionBarActivity {
         context = this;
         record = (RecordInfo) getIntent().getSerializableExtra("recordInfo");
 
-        LayoutInflater inf = (LayoutInflater) context
-                .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-
-        // insert into main view
-        LinearLayout insertPoint = (LinearLayout) findViewById(R.id.record_details_copy_information);
-        addCopyInfo(inf, insertPoint);
-
+        initCopyInfo();
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == android.R.id.home) {
-            // make the action bar "up" caret work like "back"
             onBackPressed();
             return true;
         }
         return super.onOptionsItemSelected(item);
     }
 
-    public void addCopyInfo(LayoutInflater inflater, LinearLayout insertPoint) {
-
+    public void updateCopyInfo() {
+        LayoutInflater inf = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        LinearLayout insertPoint = (LinearLayout) findViewById(R.id.record_details_copy_information);
+        if (record.copyInformationList == null)
+            return;
         for (int i = 0; i < record.copyInformationList.size(); i++) {
-
-            View copy_info_view = inflater.inflate(R.layout.copy_information, null);
+            View copy_info_view = inf.inflate(R.layout.copy_information, null);
 
             // fill in any details dynamically here
             TextView library = (TextView) copy_info_view.findViewById(R.id.copy_information_library);
@@ -98,9 +99,9 @@ public class MoreCopyInformation extends ActionBarActivity {
             copy_location.setText(record.copyInformationList.get(i).copy_location);
 
             // insert into main view
-            insertPoint.addView(copy_info_view, new ViewGroup.LayoutParams(
+            insertPoint.addView(copy_info_view, new LayoutParams(
                     LayoutParams.MATCH_PARENT,
-                    ViewGroup.LayoutParams.WRAP_CONTENT));
+                    LayoutParams.WRAP_CONTENT));
 
             LinearLayout copy_statuses = (LinearLayout) copy_info_view.findViewById(R.id.copy_information_statuses);
 
@@ -114,6 +115,37 @@ public class MoreCopyInformation extends ActionBarActivity {
                 copy_statuses.addView(statusName, new LayoutParams(
                         LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
             }
+        }
+    }
+
+    private void initCopyInfo() {
+        Log.d(TAG, "kcx.initCopyInfo, id="+record.doc_id+" info="+record.copyCountListInfo);
+        SearchCatalog search = SearchCatalog.getInstance();
+        if (record.copyInformationList == null) {
+            final long start_ms = System.currentTimeMillis();
+            RequestQueue q = VolleyWrangler.getInstance(this).getRequestQueue();
+            String url = GlobalConfigs.getUrl(Utils.buildGatewayUrl(
+                    SearchCatalog.SERVICE, SearchCatalog.METHOD_COPY_LOCATION_COUNTS,
+                    new Object[]{record.doc_id, search.selectedOrganization.id, search.selectedOrganization.level}));
+            GatewayJsonObjectRequest r = new GatewayJsonObjectRequest(
+                    url,
+                    new Response.Listener<GatewayResponse>() {
+                        @Override
+                        public void onResponse(GatewayResponse response) {
+                            long duration_ms = System.currentTimeMillis() - start_ms;
+                            Log.d(TAG, "kcx.fetch "+record.doc_id+" took " + duration_ms + "ms");
+                            SearchCatalog.setCopyLocationCounts(record, response);
+                            updateCopyInfo();
+                        }
+                    },
+                    new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            Log.d(TAG, "kcx.initCopyInfo caught", error);
+                            SearchCatalog.setCopyLocationCounts(record, null);
+                        }
+                    });
+            q.add(r);
         }
     }
 }

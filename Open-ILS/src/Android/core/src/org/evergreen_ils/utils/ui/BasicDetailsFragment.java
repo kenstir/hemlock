@@ -19,12 +19,18 @@
  */
 package org.evergreen_ils.utils.ui;
 
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
 import org.evergreen_ils.R;
 import org.evergreen_ils.accountAccess.AccountAccess;
 import org.evergreen_ils.accountAccess.holds.PlaceHold;
 import org.evergreen_ils.globals.GlobalConfigs;
+import org.evergreen_ils.globals.Log;
+import org.evergreen_ils.globals.Utils;
+import org.evergreen_ils.net.GatewayJsonObjectRequest;
 import org.evergreen_ils.net.VolleyWrangler;
 import org.evergreen_ils.searchCatalog.*;
 
@@ -38,6 +44,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import org.opensrf.util.GatewayResponse;
 
 public class BasicDetailsFragment extends Fragment {
 
@@ -144,9 +151,92 @@ public class BasicDetailsFragment extends Fragment {
         ImageLoader imageLoader = VolleyWrangler.getInstance(getActivity()).getImageLoader();
         recordImage.setImageUrl(imageHref, imageLoader);
 
-        AccountAccess ac = AccountAccess.getInstance();
+        initBookbagStuff();
 
+        record_header.setText(String.format(getString(R.string.record_of), position, total));
+
+        titleTextView.setText(record.title);
+        formatTextView.setText(SearchFormat.getItemLabelFromSearchFormat(record.search_format));
+        authorTextView.setText(record.author);
+        publisherTextView.setText(record.pubdate + " " + record.publisher);
+        seriesTextView.setText(record.series);
+        subjectTextView.setText(record.subject);
+        synopsisTextView.setText(record.synopsis);
+        isbnTextView.setText(record.isbn);
+
+        updateCopyCount();
+        initCopyCount();
+
+        ((Button)layout.findViewById(R.id.show_copy_information_button)).setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity().getApplicationContext(), CopyInformationActivity.class);
+                intent.putExtra("recordInfo", record);
+                intent.putExtra("orgId", orgId);
+                startActivity(intent);
+            }
+        });
+
+        return layout;
+    }
+
+    private void initCopyCount() {
+        Log.d(TAG, "kcx.initCopyCount, id="+record.doc_id+" info="+record.copyCountListInfo);
+        if (record.copyCountListInfo == null) {
+            final long start_ms = System.currentTimeMillis();
+            RequestQueue q = VolleyWrangler.getInstance(getActivity()).getRequestQueue();
+            String url = GlobalConfigs.getUrl(Utils.buildGatewayUrl(
+                    SearchCatalog.SERVICE, SearchCatalog.METHOD_GET_COPY_COUNT,
+                    new Object[]{orgId, record.doc_id}));
+            Log.d(TAG, "kcx.updateCopyCount, id="+record.doc_id+" url="+url);
+            GatewayJsonObjectRequest r = new GatewayJsonObjectRequest(
+                    url,
+                    new Response.Listener<GatewayResponse>() {
+                        @Override
+                        public void onResponse(GatewayResponse response) {
+                            long duration_ms = System.currentTimeMillis() - start_ms;
+                            Log.d(TAG, "kcx.volley fetch "+record.doc_id+" took " + duration_ms + "ms");
+                            SearchCatalog.setCopyCountListInfo(record, response);
+                            updateCopyCount();
+                        }
+                    },
+                    new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            Log.d(TAG, "kcx.initCopyCount caught", error);
+                            SearchCatalog.setCopyCountListInfo(record, null);
+                        }
+                    });
+            q.add(r);
+        }
+    }
+
+    private void updateCopyCount() {
+        int total = 0;
+        int available = 0;
+        Log.d(TAG, "kcx.updateCopyCount, info="+record.copyCountListInfo);
+        if (record.copyCountListInfo == null) {
+            copyCountTextView.setText("");
+        } else {
+            for (int i = 0; i < record.copyCountListInfo.size(); i++) {
+//            Log.d(TAG, "xxx orgId=" + orgId
+//                    + " rec.org_id=" + record.copyCountListInfo.get(i).org_id
+//                    + " rec.count=" + record.copyCountListInfo.get(i).count);
+                if (record.copyCountListInfo.get(i).org_id.equals(orgId)) {
+                    total = record.copyCountListInfo.get(i).count;
+                    available = record.copyCountListInfo.get(i).available;
+                    break;
+                }
+            }
+            String totalCopies = getResources().getQuantityString(R.plurals.number_of_copies, total, total);
+            copyCountTextView.setText(String.format(getString(R.string.n_of_m_available),
+                    available, totalCopies, globalConfigs.getOrganizationName(orgId)));
+        }
+    }
+
+    private void initBookbagStuff() {
         /*
+        AccountAccess ac = AccountAccess.getInstance();
         bookBags = ac.getBookbags();
         String array_spinner[] = new String[bookBags.size()];
 
@@ -227,51 +317,6 @@ public class BasicDetailsFragment extends Fragment {
             }
         });
         */
-
-        record_header.setText(String.format(getString(R.string.record_of), position, total));
-
-        titleTextView.setText(record.title);
-        formatTextView.setText(SearchFormat.getItemLabelFromSearchFormat(record.search_format));
-        authorTextView.setText(record.author);
-        publisherTextView.setText(record.pubdate + " " + record.publisher);
-
-        seriesTextView.setText(record.series);
-        subjectTextView.setText(record.subject);
-        synopsisTextView.setText(record.synopsis);
-
-        isbnTextView.setText(record.isbn);
-
-        // todo loading copy count on demand is not working because we are on the main thread
-        //SearchCatalog.ensureCopyCount(record, orgId);
-
-        //Log.d(TAG, "xxx copyCountListInfo.size=" + record.copyCountListInfo.size() + " title:" + record.title);
-        int total = 0;
-        int available = 0;
-        for (int i = 0; i < record.copyCountListInfo.size(); i++) {
-//            Log.d(TAG, "xxx orgId=" + orgId
-//                    + " rec.org_id=" + record.copyCountListInfo.get(i).org_id
-//                    + " rec.count=" + record.copyCountListInfo.get(i).count);
-            if (record.copyCountListInfo.get(i).org_id.equals(orgId)) {
-                total = record.copyCountListInfo.get(i).count;
-                available = record.copyCountListInfo.get(i).available;
-                break;
-            }
-        }
-        String totalCopies = getResources().getQuantityString(R.plurals.number_of_copies, total, total);
-        copyCountTextView.setText(String.format(getString(R.string.n_of_m_available),
-                available, totalCopies, globalConfigs.getOrganizationName(orgId)));
-
-        ((Button)layout.findViewById(R.id.show_copy_information_button)).setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getActivity().getApplicationContext(), MoreCopyInformation.class);
-                intent.putExtra("recordInfo", record);
-                intent.putExtra("orgId", orgId);
-                startActivity(intent);
-            }
-        });
-
-        return layout;
     }
 
     @Override

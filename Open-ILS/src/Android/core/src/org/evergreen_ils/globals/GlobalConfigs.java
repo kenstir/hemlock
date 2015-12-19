@@ -200,8 +200,7 @@ public class GlobalConfigs {
         }
     }
 
-    // todo candidate for on-demand loading.  These copy statuses are not used at all it seems.
-    // They should be.
+    // todo candidate for on-demand loading
     public void loadCopyStatusesAvailable() {
 
         SearchCatalog search = SearchCatalog.getInstance();
