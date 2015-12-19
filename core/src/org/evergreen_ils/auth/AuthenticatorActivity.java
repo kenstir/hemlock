@@ -347,6 +347,8 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity {
             //Library library = new Library("http://mlnc4.mvlcstaff.org"), "MVLC Demo", "0ut There, US (MVLC Demo)", null);// Android does not like this cert
             libraries.add(library);
         }
+        Library library2 = new Library("https://owwl.sequoia.evergreencatalog.com", "OWWL2", "New York, US (TEST)", null);
+        libraries.add(library2);
 
         if (json != null) {
             List<Map<String, ?>> l;
