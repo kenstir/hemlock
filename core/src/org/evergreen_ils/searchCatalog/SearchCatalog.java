@@ -147,7 +147,7 @@ public class SearchCatalog {
         Object resp = Utils.doRequest(conn(), SERVICE, METHOD_MULTICLASS_QUERY,
                 new Object[] { complexParm, queryString, 1 });
         Log.d(TAG, "Sync Response: " + resp);
-        now_ms = logElapsedTime(TAG, now_ms, "search");
+        now_ms = Log.logElapsedTime(TAG, now_ms, "search");
         if (resp == null)
             return resultsRecordInfo; // search failed or server crashed
 
@@ -171,12 +171,12 @@ public class SearchCatalog {
             Integer record_id = Integer.parseInt(ids.get(i));
 
             RecordInfo record = new RecordInfo(getItemShortInfo(record_id));
-            now_ms = logElapsedTime(TAG, now_ms, "search.getItemShortInfo");
+            now_ms = Log.logElapsedTime(TAG, now_ms, "search.getItemShortInfo");
             resultsRecordInfo.add(record);
 
             AccountAccess ac = AccountAccess.getInstance();
             record.search_format = ac.fetchFormat(record_id.toString());
-            now_ms = logElapsedTime(TAG, now_ms, "search.fetchFormat");
+            now_ms = Log.logElapsedTime(TAG, now_ms, "search.fetchFormat");
 
             // todo This takes 30% of the total search time but is not required for SearchCatalogListView
             // it is needed only for BasicDetailsFragment, but that would cause it to be run on the main thread
@@ -190,15 +190,9 @@ public class SearchCatalog {
                     + " Pubdate:" + record.pubdate
                     + " Publisher:" + record.publisher);
         }
-        logElapsedTime(TAG, start_ms, "search.total");
+        Log.logElapsedTime(TAG, start_ms, "search.total");
 
         return resultsRecordInfo;
-    }
-
-    public long logElapsedTime(String tag, long start_ms, String s) {
-        long now_ms = System.currentTimeMillis();
-        Log.d(tag, s + ": " + (now_ms - start_ms) + "ms");
-        return now_ms;
     }
 
     /**
