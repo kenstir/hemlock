@@ -197,7 +197,7 @@ public class SplashActivity extends Activity implements LoadingTaskListener {
             }
             mProgressText.setText(mProgressText.getText() + extra_text);
             mRetryButton.setVisibility(View.VISIBLE);
-            mShareLogButton.setVisibility(View.VISIBLE);
+            //mShareLogButton.setVisibility(View.VISIBLE);
         }
     }
 }
