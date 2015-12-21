@@ -21,6 +21,7 @@ package org.evergreen_ils.searchCatalog;
 
 import java.util.ArrayList;
 
+import android.support.v4.app.FragmentPagerAdapter;
 import android.view.MenuItem;
 import org.evergreen_ils.R;
 import org.evergreen_ils.utils.ui.*;
@@ -133,7 +134,7 @@ public class SampleUnderlinesNoFade extends BaseSampleActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    class SearchFragmentAdapter extends TestFragmentAdapter {
+    class SearchFragmentAdapter extends FragmentPagerAdapter {
         public SearchFragmentAdapter(FragmentManager fm) {
             super(fm);
         }
