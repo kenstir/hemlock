@@ -21,6 +21,7 @@ package org.evergreen_ils.utils.ui;
 
 import java.util.Random;
 
+import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v7.app.ActionBarActivity;
 import org.evergreen_ils.R;
 
@@ -33,7 +34,7 @@ import android.widget.Toast;
 public abstract class BaseSampleActivity extends ActionBarActivity {
     private static final Random RANDOM = new Random();
 
-    public TestFragmentAdapter mAdapter;
+    public FragmentPagerAdapter mAdapter;
     public ViewPager mPager;
     public PageIndicator mIndicator;
 
