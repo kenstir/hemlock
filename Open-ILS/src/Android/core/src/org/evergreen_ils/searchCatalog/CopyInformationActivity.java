@@ -95,7 +95,7 @@ public class CopyInformationActivity extends ActionBarActivity {
             TextView copy_location = (TextView) copy_info_view.findViewById(R.id.copy_information_copy_location);
 
             library.setText(globalConfigs.getOrganizationName(record.copyInformationList.get(i).org_id));
-            call_number.setText(record.copyInformationList.get(i).call_number_sufix);
+            call_number.setText(record.copyInformationList.get(i).getCallNumber());
             copy_location.setText(record.copyInformationList.get(i).copy_location);
 
             // insert into main view

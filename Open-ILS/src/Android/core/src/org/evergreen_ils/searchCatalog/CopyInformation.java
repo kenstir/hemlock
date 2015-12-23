@@ -20,6 +20,7 @@
 package org.evergreen_ils.searchCatalog;
 
 
+import android.text.TextUtils;
 import org.evergreen_ils.globals.Log;
 
 import java.io.Serializable;
@@ -37,7 +38,9 @@ public class CopyInformation implements Serializable {
     private final static String TAG = CopyInformation.class.getSimpleName();
 
     public Integer org_id = -1;
-    public String call_number_sufix;
+    public String call_number_prefix;
+    public String call_number_label;
+    public String call_number_suffix;
     public String copy_location;
     public LinkedHashMap<String, String> statusInformation;
 
@@ -47,7 +50,9 @@ public class CopyInformation implements Serializable {
     public CopyInformation(List<Object> list) {
 
         org_id = Integer.parseInt((String) list.get(0));
-        call_number_sufix = (String) list.get(2);
+        call_number_prefix = (String) list.get(1);
+        call_number_label = (String) list.get(2);
+        call_number_suffix = (String) list.get(3);
         copy_location = (String) list.get(4);
         HashMap<Integer, Integer> status_map = (HashMap<Integer, Integer>) list.get(5);
 
@@ -62,7 +67,11 @@ public class CopyInformation implements Serializable {
                         status_map.get(entry.getKey()) + "");
             }
         }
-        Log.d(TAG, "done");
+    }
+
+    public String getCallNumber() {
+        String s = TextUtils.join(" ", new Object[] {call_number_prefix, call_number_label, call_number_suffix});
+        return s.trim();
     }
 
 }
