@@ -39,6 +39,7 @@
             android:visibility="visible"
             />
 
+    <!--
         <ProgressBar
             android:id="@+id/activity_splash_progress_bar"
             style="@android:style/Widget.ProgressBar.Large"
@@ -47,6 +48,16 @@
             android:layout_below="@+id/action_in_progress"
             android:layout_centerHorizontal="true"
             android:padding="20dip" />
+            -->
+
+    <ImageView
+            android:id="@+id/activity_splash_progress_bar"
+
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/action_in_progress"
+            android:layout_centerHorizontal="true"
+            android:padding="20dip" android:src="@drawable/christmas_tree"/>
 
     <ImageButton
             android:layout_width="wrap_content"
