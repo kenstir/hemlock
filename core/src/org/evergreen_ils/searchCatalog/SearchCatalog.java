@@ -47,11 +47,9 @@ public class SearchCatalog {
      * 
      * @param : record ID to get all libraries, or just book ID, Current Library
      *        ID, User ID
-     * @returns :
-     *          [[["4","","CONCERTO 27","","Stacks",{"0":5}],["4","","PERFORM 27"
-     *          ,"","Stacks",{"0":2}]]] "0":% is the available books [org_id,
-     *          call_number_sufix, copy_location, status1:count, status2:count
-     *          ..]
+     * @returns : array of [org_id, callnumber_prefix, callnumber_label, callnumber_suffix, copy_location,
+     *                      <status1_count>, <status2_count>,...]
+     *            where statusx is a copy status name.  The statuses are sorted by ID.
      */
     public static String METHOD_COPY_LOCATION_COUNTS = "open-ils.search.biblio.copy_location_counts.summary.retrieve";
 
