@@ -44,7 +44,7 @@ public class SplashActivity extends Activity implements LoadingTaskListener {
     private static String TAG = SplashActivity.class.getSimpleName();
     private TextView mProgressText;
     private Context mContext;
-    private ProgressBar mProgressBar;
+    private View mProgressBar;
     private AlertDialog mAlertDialog;
     private Button mRetryButton;
     private ImageButton mShareLogButton;
@@ -89,7 +89,7 @@ public class SplashActivity extends Activity implements LoadingTaskListener {
         AppPrefs.init(this);
 
         mProgressText = (TextView) findViewById(R.id.action_in_progress);
-        mProgressBar = (ProgressBar) findViewById(R.id.activity_splash_progress_bar);
+        mProgressBar = findViewById(R.id.activity_splash_progress_bar);
         mRetryButton = (Button) findViewById(R.id.activity_splash_retry_button);
         mRetryButton.setOnClickListener(new OnClickListener() {
             @Override
