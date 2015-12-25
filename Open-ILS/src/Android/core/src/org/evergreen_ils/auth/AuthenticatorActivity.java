@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.location.Location;
 import android.location.LocationManager;
+import android.text.InputType;
 import android.text.TextUtils;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -167,8 +168,13 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity {
         TextView signInText = (TextView) findViewById(R.id.account_sign_in_text);
         signInText.setText(String.format(getString(R.string.ou_account_sign_in_message),
                 AppPrefs.getString(AppPrefs.LIBRARY_NAME)));
+
+        // Turn off suggestions for the accountName field.  Turning them off with setInputType worked on my phone
+        // whereas using android:inputType="text|textNoSuggestions" in xml did not.
+        TextView accountNameText = (TextView) findViewById(R.id.accountName);
+        accountNameText.setInputType(InputType.TYPE_CLASS_TEXT|InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
         if (accountName != null) {
-            ((TextView) findViewById(R.id.accountName)).setText(accountName);
+            accountNameText.setText(accountName);
         }
 
         findViewById(R.id.submit).setOnClickListener(
@@ -345,8 +351,6 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity {
         if (isDebuggable(this)) {
             Library library = new Library("https://demo.evergreencatalog.com", "evergreencatalog.com Demo", "0ut There, US  (evergreencatalog.com Demo)", null);
             //Library library = new Library("http://mlnc4.mvlcstaff.org"), "MVLC Demo", "0ut There, US (MVLC Demo)", null);// Android does not like this cert
-            libraries.add(library);
-            library = new Library("https://owwl.sequoia.evergreencatalog.com", "OWWL2", "New York, US (TEST)", null);
             libraries.add(library);
         }
 
