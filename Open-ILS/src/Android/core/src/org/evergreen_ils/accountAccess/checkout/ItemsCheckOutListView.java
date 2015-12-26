@@ -20,7 +20,6 @@
 package org.evergreen_ils.accountAccess.checkout;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import android.support.v7.app.ActionBarActivity;
@@ -49,24 +48,14 @@ import android.widget.Toast;
 public class ItemsCheckOutListView extends ActionBarActivity {
 
     private final static String TAG = ItemsCheckOutListView.class.getSimpleName();
-
     private AccountAccess accountAccess = null;
-
     private ListView lv;
-
     private CheckOutArrayAdapter listAdapter = null;
-
     private ArrayList<CircRecord> circRecords = null;
-
     private Context context;
-
     private ProgressDialog progressDialog;
-
     private TextView itemsNo;
-
     private TextView overdueItems;
-
-    private Date currentDate;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -90,53 +79,56 @@ public class ItemsCheckOutListView extends ActionBarActivity {
                 R.layout.checkout_list_item, circRecords);
         lv.setAdapter(listAdapter);
 
-        Thread getCirc = new Thread(new Runnable() {
-
-            @Override
-            public void run() {
-
-                try {
-                    circRecords = accountAccess.getItemsCheckedOut();
-                } catch (SessionNotFoundException e) {
-                    try {
-                        if (accountAccess.reauthenticate(ItemsCheckOutListView.this))
-                            circRecords = accountAccess.getItemsCheckedOut();
-                    } catch (Exception eauth) {
-                        Log.d(TAG, "Exception in reauth", eauth);
-                    }
-                }
-
-                runOnUiThread(new Runnable() {
-
-                    @Override
-                    public void run() {
-                        int overdueNo = 0;
-                        for (int i = 0; i < circRecords.size(); i++) {
-                            CircRecord circ = circRecords.get(i);
-                            listAdapter.add(circ);
-                            if (circ.isOverdue()) {
-                                overdueNo++;
-                            }
-                        }
-                        itemsNo.setText(" " + circRecords.size() + " ");
-                        overdueItems.setText(" " + overdueNo);
-
-                        progressDialog.dismiss();
-
-                        if (circRecords.size() == 0)
-                            Toast.makeText(context, "No records",
-                                    Toast.LENGTH_LONG);
-
-                        listAdapter.notifyDataSetChanged();
-                    }
-                });
-            }
-        });
+        Thread getCirc = initGetCircThread();
 
         progressDialog = new ProgressDialog(context);
         progressDialog.setMessage("Retrieving circulation data");
         progressDialog.show();
         getCirc.start();
+    }
+
+    private Thread initGetCircThread() {
+        return new Thread(new Runnable() {
+
+                @Override
+                public void run() {
+
+                    try {
+                        circRecords = accountAccess.getItemsCheckedOut();
+                    } catch (SessionNotFoundException e) {
+                        try {
+                            if (accountAccess.reauthenticate(ItemsCheckOutListView.this))
+                                circRecords = accountAccess.getItemsCheckedOut();
+                        } catch (Exception eauth) {
+                            Log.d(TAG, "Exception in reauth", eauth);
+                        }
+                    }
+
+                    runOnUiThread(new Runnable() {
+
+                        @Override
+                        public void run() {
+                            int overdueNo = 0;
+                            for (int i = 0; i < circRecords.size(); i++) {
+                                CircRecord circ = circRecords.get(i);
+                                listAdapter.add(circ);
+                                if (circ.isOverdue()) {
+                                    overdueNo++;
+                                }
+                            }
+                            itemsNo.setText(" " + circRecords.size() + " ");
+                            overdueItems.setText(" " + overdueNo);
+
+                            progressDialog.dismiss();
+
+                            if (circRecords.size() == 0)
+                                Toast.makeText(context, "No records", Toast.LENGTH_LONG);
+
+                            listAdapter.notifyDataSetChanged();
+                        }
+                    });
+                }
+            });
     }
 
     private void dismissProgress() {
@@ -189,8 +181,23 @@ public class ItemsCheckOutListView extends ActionBarActivity {
             recordDueDate = (TextView) row.findViewById(R.id.checkout_record_due_date);
             recordIsOverdue = (TextView) row.findViewById(R.id.checkout_record_overdue);
             renewButton = (TextView) row.findViewById(R.id.renew_button);
+            initRenewButton(record);
+
+            // set text
+            recordTitle.setText(record.getTitle());
+            recordAuthor.setText(record.getAuthor());
+            recordFormat.setText(record.getFormatLabel());
+            recordDueDate.setText(getString(R.string.due) + " " + record.getDueDate());
+            recordIsOverdue.setText(record.isOverdue() ? getString(R.string.overdue) : "");
+            Log.d(TAG, "title: \"" + record.getTitle() + "\""
+                    + " due: " + record.getDueDate()
+                    + " renewals:  " + record.getRenewals());
+
+            return row;
+        }
+
+        private void initRenewButton(final CircRecord record) {
             final boolean renewable = record.getRenewals() > 0;
-            renewButton.setVisibility(renewable ? View.VISIBLE : View.GONE);
             renewButton.setEnabled(renewable);
             renewButton.setOnClickListener(new OnClickListener() {
                 @Override
@@ -285,18 +292,6 @@ public class ItemsCheckOutListView extends ActionBarActivity {
                     renew.start();
                 }
             });
-
-            // set text
-            recordTitle.setText(record.getTitle());
-            recordAuthor.setText(record.getAuthor());
-            recordFormat.setText(record.getFormatLabel());
-            recordDueDate.setText(getString(R.string.due) + " " + record.getDueDate());
-            recordIsOverdue.setText(record.isOverdue() ? getString(R.string.overdue) : "");
-            Log.d(TAG, "title: \"" + record.getTitle() + "\""
-                    + " due: " + record.getDueDate()
-                    + " renewals:  " + record.getRenewals());
-
-            return row;
         }
     }
 }

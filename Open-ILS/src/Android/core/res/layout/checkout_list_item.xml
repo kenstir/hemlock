@@ -65,8 +65,6 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:text="@string/renew_button"
-            style="@style/ApplicationButton"
             />
-
 
 </LinearLayout>
