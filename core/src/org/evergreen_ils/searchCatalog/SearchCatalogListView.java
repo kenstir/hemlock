@@ -238,7 +238,6 @@ public class SearchCatalogListView extends ActionBarActivity {
                         public void run() {
 
                             searchResults.clear();
-
                             searchResults = search.getSearchResults(text, getSearchClass(), getSearchFormat(), recordList.size());
 
                             runOnUiThread(new Runnable() {
@@ -384,9 +383,7 @@ public class SearchCatalogListView extends ActionBarActivity {
                     public void run() {
                         InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                         imm.hideSoftInputFromWindow(searchText.getWindowToken(), 0);
-
                         searchResultsNumber.setVisibility(View.VISIBLE);
-
                         progressDialog = ProgressDialog.show(
                                 context,
                                 getResources().getText(R.string.dialog_please_wait),
@@ -405,6 +402,7 @@ public class SearchCatalogListView extends ActionBarActivity {
                             for (int j = 0; j < searchResults.size(); j++)
                                 recordList.add(searchResults.get(j));
                         }
+
                         searchResultsNumber.setText(+recordList.size()
                                 + " out of " + search.visible);
 
@@ -661,8 +659,7 @@ public class SearchCatalogListView extends ActionBarActivity {
 
         private List<RecordInfo> records = new ArrayList<RecordInfo>();
 
-        public SearchArrayAdapter(Context context, int textViewResourceId,
-                List<RecordInfo> objects) {
+        public SearchArrayAdapter(Context context, int textViewResourceId, List<RecordInfo> objects) {
             super(context, textViewResourceId, objects);
             this.context = context;
             this.records = objects;
@@ -684,11 +681,9 @@ public class SearchCatalogListView extends ActionBarActivity {
 
             // if it is the right type of view
             if (row == null || row.findViewById(R.id.search_record_title) == null) {
-                LayoutInflater inflater = (LayoutInflater) this
-                        .getContext().getSystemService(
-                                Context.LAYOUT_INFLATER_SERVICE);
-                row = inflater.inflate(R.layout.search_result_item, parent,
-                        false);
+                LayoutInflater inflater = (LayoutInflater) this.getContext().getSystemService(
+                        Context.LAYOUT_INFLATER_SERVICE);
+                row = inflater.inflate(R.layout.search_result_item, parent, false);
             }
 
             // Start async image load
