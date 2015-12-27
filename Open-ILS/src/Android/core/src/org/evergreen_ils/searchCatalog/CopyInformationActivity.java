@@ -123,7 +123,6 @@ public class CopyInformationActivity extends ActionBarActivity {
         SearchCatalog search = SearchCatalog.getInstance();
         if (record.copyInformationList == null) {
             final long start_ms = System.currentTimeMillis();
-            RequestQueue q = VolleyWrangler.getInstance(this).getRequestQueue();
             String url = GlobalConfigs.getUrl(Utils.buildGatewayUrl(
                     SearchCatalog.SERVICE, SearchCatalog.METHOD_COPY_LOCATION_COUNTS,
                     new Object[]{record.doc_id, search.selectedOrganization.id, search.selectedOrganization.level}));
@@ -145,7 +144,7 @@ public class CopyInformationActivity extends ActionBarActivity {
                             SearchCatalog.setCopyLocationCounts(record, null);
                         }
                     });
-            q.add(r);
+            VolleyWrangler.getInstance(this).addToRequestQueue(r);
         }
     }
 }

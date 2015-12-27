@@ -105,8 +105,7 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity {
 
     private void startTask() {
         start_ms = System.currentTimeMillis();
-        RequestQueue q = VolleyWrangler.getInstance(this).getRequestQueue();
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, libraries_directory_json_url,
+        StringRequest r = new StringRequest(Request.Method.GET, libraries_directory_json_url,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
@@ -121,7 +120,7 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity {
                         showAlert(error.getMessage());
                     }
                 });
-        q.add(stringRequest);
+        VolleyWrangler.getInstance(this).addToRequestQueue(r);
     }
 
     // returns true if this is the generic app, which needs a library spinner etc.
