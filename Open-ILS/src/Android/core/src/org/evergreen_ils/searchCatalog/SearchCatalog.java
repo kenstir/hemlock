@@ -110,8 +110,7 @@ public class SearchCatalog {
     /**
      * Gets the search results
      * 
-     * @param searchText
-     *            the search words
+     * @param searchText the search words
      * @return the search results
      */
     public ArrayList<RecordInfo> getSearchResults(String searchText, String searchClass, String searchFormat, Integer offset) {
@@ -124,11 +123,9 @@ public class SearchCatalog {
 
         HashMap complexParm = new HashMap<String, Integer>();
         if (this.selectedOrganization != null) {
-            if (this.selectedOrganization.id != null)
-                complexParm.put("org_unit", this.selectedOrganization.id);
+            if (this.selectedOrganization.id != null) complexParm.put("org_unit", this.selectedOrganization.id);
             // I'm not too sure about this depth option
-            if (this.selectedOrganization.level != null)
-                complexParm.put("depth", this.selectedOrganization.level);
+            if (this.selectedOrganization.level != null) complexParm.put("depth", this.selectedOrganization.level);
         }
         complexParm.put("limit", searchLimit);
         complexParm.put("offset", offset);
