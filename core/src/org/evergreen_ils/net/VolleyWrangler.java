@@ -6,6 +6,7 @@ import android.util.LruCache;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
+import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.Volley;
 
@@ -44,6 +45,8 @@ public class VolleyWrangler {
     public static synchronized VolleyWrangler getInstance(Context context) {
         if (mInstance == null) {
             mInstance = new VolleyWrangler(context);
+            //VolleyLog.setTag("kcxxx");
+            //VolleyLog.DEBUG = true;
         }
         return mInstance;
     }
