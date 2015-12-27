@@ -146,7 +146,6 @@ public class BasicDetailsFragment extends Fragment {
         });
 
         // Start async image load
-        //final String imageHref = GlobalConfigs.getUrl("/opac/extras/ac/jacket/large/r/" + record.doc_id);
         final String imageHref = GlobalConfigs.getUrl("/opac/extras/ac/jacket/medium/r/" + record.doc_id);
         ImageLoader imageLoader = VolleyWrangler.getInstance(getActivity()).getImageLoader();
         recordImage.setImageUrl(imageHref, imageLoader);
