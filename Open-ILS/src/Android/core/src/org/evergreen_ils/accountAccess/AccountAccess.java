@@ -429,7 +429,7 @@ public class AccountAccess {
         if (id.equals("-1"))
             return "";
 
-        OSRFObject resp;
+        OSRFObject resp = null;
         try {
             resp = (OSRFObject) Utils.doRequest(conn(), PCRUD_SERVICE,
                     PCRUD_METHOD_RETRIEVE_MRA, authToken, new Object[]{
@@ -437,6 +437,8 @@ public class AccountAccess {
         } catch (SessionNotFoundException e) {
             return "";
         }
+        if (resp == null)
+            return ""; // todo record this
 
         // This is not beautiful.  This MRA record comes back with an 'attrs' field that
         // appears to have been serialized by perl Data::Dumper, e.g.
