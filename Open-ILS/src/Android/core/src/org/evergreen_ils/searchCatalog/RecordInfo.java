@@ -23,10 +23,10 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import android.text.TextUtils;
 import org.evergreen_ils.globals.Log;
+import org.evergreen_ils.globals.Utils;
 import org.opensrf.util.OSRFObject;
 
 public class RecordInfo implements Serializable {
@@ -54,69 +54,74 @@ public class RecordInfo implements Serializable {
     public String search_format = null;
 
     public RecordInfo() {
-        this.title = "Test title";
-        this.author = "Test author";
-        this.pubdate = "Publication date";
-
         // marks the fact that this is a record made from no info
         this.dummy = true;
     }
 
-    private String safeGetString(OSRFObject info, String field) {
-        String s = info.getString(field);
-        if (s == null)
-            return "";
-        return s;
-    }
-
-    private String safeString(String s) {
-        if (s == null)
-            return "";
-        return s;
+    public RecordInfo(int doc_id) {
+        this.doc_id = doc_id;
     }
 
     public RecordInfo(OSRFObject info) {
+        updateFromMODSResponse(this, info);
+    }
+
+    public static void updateFromMODSResponse(RecordInfo record, Object mods_slim_response) {
+        OSRFObject info;
         try {
-            this.title = safeString(info.getString("title"));
-            this.author = safeString(info.getString("author"));
-            this.pubdate = safeString(info.getString("pubdate"));
-            this.publisher = safeString(info.getString("publisher"));
-            this.doc_id = info.getInt("doc_id");
-            this.doc_type = safeString(info.getString("doc_type"));
+            info = (OSRFObject) mods_slim_response;
+        } catch (ClassCastException e) {
+            Log.d(TAG, "caught", e);
+            return;
+        }
+
+        record.title = Utils.safeString(info.getString("title"));
+        record.author = Utils.safeString(info.getString("author"));
+        record.pubdate = Utils.safeString(info.getString("pubdate"));
+        record.publisher = Utils.safeString(info.getString("publisher"));
+        record.doc_type = Utils.safeString(info.getString("doc_type"));
+        try {
+            if (record.doc_id == -1)
+                record.doc_id = info.getInt("doc_id");
         } catch (Exception e) {
-            Log.d(TAG, "Exception retrieving basic info", e);
+            Log.d(TAG, "caught", e);
         }
 
         try {
-            this.isbn = (String) info.get("isbn");
+            record.isbn = (String) info.get("isbn");
         } catch (Exception e) {
-            Log.d(TAG, "Exception retrieving isbn", e);
+            Log.d(TAG, "caught", e);
         }
 
         try {
             Map<String, ?> subjectMap = (Map<String, ?>) info.get("subject");
-            this.subject = TextUtils.join("\n", subjectMap.keySet());
+            record.subject = TextUtils.join("\n", subjectMap.keySet());
         } catch (Exception e) {
-            Log.d(TAG, "Exception retrieving subject", e);
+            Log.d(TAG, "caught", e);
         }
 
         try {
-            this.online_loc = ((List) info.get("online_loc")).get(0).toString();
+            record.online_loc = ((List) info.get("online_loc")).get(0).toString();
         } catch (Exception e) {
             // common
         }
 
         try {
-            this.physical_description = (String) info.get("physical_description");
+            record.physical_description = (String) info.get("physical_description");
         } catch (Exception e) {
-            Log.d(TAG, "Exception retrieving physical_description", e);
+            Log.d(TAG, "caught", e);
         }
 
         try {
             List<String> seriesList = (List<String>) info.get("series");
-            this.series = TextUtils.join(", ", seriesList);
+            record.series = TextUtils.join(", ", seriesList);
         } catch (Exception e) {
-            Log.d(TAG, "Exception retrieving series", e);
+            Log.d(TAG, "caught", e);
         }
+    }
+
+    public String getPublishingInfo() {
+        String s = TextUtils.join(" ", new Object[] {pubdate, publisher});
+        return s.trim();
     }
 }

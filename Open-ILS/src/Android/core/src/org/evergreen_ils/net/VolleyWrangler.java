@@ -4,11 +4,10 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.util.LruCache;
 
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.VolleyLog;
+import com.android.volley.*;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.Volley;
+import org.evergreen_ils.globals.Log;
 
 /**
  * Created by kenstir on 12/2/2015.
@@ -66,5 +65,14 @@ public class VolleyWrangler {
 
     public ImageLoader getImageLoader() {
         return mImageLoader;
+    }
+
+    public static Response.ErrorListener logErrorListener(final String TAG) {
+        return new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError volleyError) {
+                Log.d(TAG, volleyError.getMessage());
+            }
+        };
     }
 }

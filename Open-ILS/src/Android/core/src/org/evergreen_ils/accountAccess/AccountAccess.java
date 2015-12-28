@@ -431,12 +431,17 @@ public class AccountAccess {
 
         OSRFObject resp = null;
         try {
+            // todo newer EG supports "ANONYMOUS" PCRUD which should be faster w/o authToken
             resp = (OSRFObject) Utils.doRequest(conn(), PCRUD_SERVICE,
                     PCRUD_METHOD_RETRIEVE_MRA, authToken, new Object[]{
                             authToken, id});
         } catch (SessionNotFoundException e) {
             return "";
         }
+        return getSearchFormatFromMRAResponse(resp);
+    }
+
+    public static String getSearchFormatFromMRAResponse(OSRFObject resp) {
         if (resp == null)
             return ""; // todo record this
 
@@ -609,7 +614,6 @@ public class AccountAccess {
         Integer target = holdArhObject.getInt("target");
         String method = null;
 
-        Object response;
         OSRFObject holdInfo = null;
         if (holdType.equals("T") || holdType.equals("M")) {
             if (holdType.equals("M"))
@@ -621,9 +625,9 @@ public class AccountAccess {
                             target });
 
             // Log.d(TAG, "Hold here " + holdInfo);
-            hold.title = ((OSRFObject) holdInfo).getString("title");
-            hold.author = ((OSRFObject) holdInfo).getString("author");
-            hold.recordInfo = new RecordInfo((OSRFObject) holdInfo);
+            hold.title = holdInfo.getString("title");
+            hold.author = holdInfo.getString("author");
+            hold.recordInfo = new RecordInfo(holdInfo);
         } else {
             // multiple objects per hold ????
             holdInfo = holdFetchObjects(holdArhObject, hold);
@@ -673,7 +677,7 @@ public class AccountAccess {
 
                 holdObj.title = holdInfo.getString("title");
                 holdObj.author = holdInfo.getString("author");
-                holdObj.recordInfo = new RecordInfo((OSRFObject) holdInfo);
+                holdObj.recordInfo = new RecordInfo(holdInfo);
             }
 
             return copyObject;
@@ -699,7 +703,7 @@ public class AccountAccess {
 
             holdObj.title = holdInfo.getString("title");
             holdObj.author = holdInfo.getString("author");
-            holdObj.recordInfo = new RecordInfo((OSRFObject) holdInfo);
+            holdObj.recordInfo = new RecordInfo(holdInfo);
         } else if (type.equals("I")) {
             OSRFObject issuance = (OSRFObject) Utils.doRequest(conn(),
                     SERVICE_SERIAL, METHOD_FETCH_ISSUANCE,
@@ -739,7 +743,7 @@ public class AccountAccess {
             holdObj.part_label = part_label;
             holdObj.title = holdInfo.getString("title");
             holdObj.author = holdInfo.getString("author");
-            holdObj.recordInfo = new RecordInfo((OSRFObject) holdInfo);
+            holdObj.recordInfo = new RecordInfo(holdInfo);
         }
 
         return null;
@@ -756,8 +760,6 @@ public class AccountAccess {
             throws SessionNotFoundException {
 
         Integer hold_id = hold.getInt("id");
-        // MAP : potential_copies, status, total_holds, queue_position,
-        // estimated_wait
         Object resp = Utils.doRequest(conn(), SERVICE_CIRC,
                 METHOD_FETCH_HOLD_STATUS, authToken, new Object[] {
                         authToken, hold_id });
@@ -809,9 +811,7 @@ public class AccountAccess {
 
         ahr.put("pickup_lib", pickup_lib);
         ahr.put("expire_time", expire_time);
-        // frozen set, what this means ?
         ahr.put("frozen", suspendHold);
-        // only if it is frozen
         ahr.put("thaw_date", thaw_date);
 
         Object response = Utils.doRequest(conn(), SERVICE_CIRC,
@@ -848,16 +848,12 @@ public class AccountAccess {
         // TODO
         // only gold type 'T' for now
         ahr.put("hold_type", "T");
-        ahr.put("pickup_lib", pickup_lib); // pick-up lib
+        ahr.put("pickup_lib", pickup_lib);
         ahr.put("phone_notify", phone);
         ahr.put("email_notify", email_notify);
         ahr.put("expire_time", expire_time);
-        // frozen set, what this means ?
         ahr.put("frozen", suspendHold);
-        // only if it is frozen
         ahr.put("thaw_date", thaw_date);
-
-        // extra parameters (not mandatory for hold creation)
 
         Object response = Utils.doRequest(conn(), SERVICE_CIRC,
                 METHOD_CREATE_HOLD, authToken, new Object[] {
@@ -1178,5 +1174,9 @@ public class AccountAccess {
         Object response = Utils.doRequest(conn(), SERVICE_ACTOR,
                 METHOD_CONTAINER_CREATE, authToken, new Object[] {
                         authToken, container, parameter });
+    }
+
+    public String getAuthToken() {
+        return authToken;
     }
 }

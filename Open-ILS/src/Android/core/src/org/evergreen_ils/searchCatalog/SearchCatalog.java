@@ -25,7 +25,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.evergreen_ils.accountAccess.AccountAccess;
+import android.text.TextUtils;
 import org.evergreen_ils.globals.GlobalConfigs;
 import org.evergreen_ils.globals.Log;
 import org.evergreen_ils.globals.Utils;
@@ -38,9 +38,11 @@ import org.opensrf.util.OSRFObject;
  */
 public class SearchCatalog {
 
+    private static final String TAG = SearchCatalog.class.getSimpleName();
+
     public static String SERVICE = "open-ils.search";
     public static String METHOD_MULTICLASS_QUERY = "open-ils.search.biblio.multiclass.query";
-    public static String METHOD_SLIM_RETRIVE = "open-ils.search.biblio.record.mods_slim.retrieve";
+    public static String METHOD_SLIM_RETRIEVE = "open-ils.search.biblio.record.mods_slim.retrieve";
 
     /**
      * Method that returns library where record with id is
@@ -64,18 +66,13 @@ public class SearchCatalog {
      * 
      * @param : org_unit_id, record_id
      * @returns: objects
-     *           [{"transcendant":null,"count":35,"org_unit":1,"depth":0,
-     *           "unshadow":35,"available":35},
-     *           {"transcendant":null,"count":14,"org_unit"
-     *           :2,"depth":1,"unshadow"
-     *           :14,"available":14},{"transcendant":null,
-     *           "count":7,"org_unit":4,"depth":2,"unshadow":7,"available":7}]
+     *           [{"transcendant":null,"count":35,"org_unit":1,"depth":0,"unshadow":35,"available":35},
+     *           {"transcendant":null,"count":14,"org_unit":2,"depth":1,"unshadow":14,"available":14},
+     *           {"transcendant":null,"count":7,"org_unit":4,"depth":2,"unshadow":7,"available":7}]
      */
     public static String METHOD_GET_COPY_COUNT = "open-ils.search.biblio.record.copy_count";
 
     private static SearchCatalog instance = null;
-
-    private static final String TAG = SearchCatalog.class.getSimpleName();
 
     // the org on which the searches will be made
     public Organisation selectedOrganization = null;
@@ -147,7 +144,6 @@ public class SearchCatalog {
             return resultsRecordInfo; // search failed or server crashed
 
         Map<String, ?> response = (Map<String, ?>) resp;
-
         List<List<String>> result_ids;
         result_ids = (List<List<String>>) response.get("ids");
         Log.d(TAG, "length:"+result_ids.size());
@@ -159,12 +155,13 @@ public class SearchCatalog {
         for (int i = 0; i < result_ids.size(); i++) {
             ids.add(result_ids.get(i).get(0));
         }
-        Log.d(TAG, "Ids " + ids);
+        Log.d(TAG, "ids " + ids);
 
-        // request other info based on ids
+        // construct result list
         for (int i = 0; i < ids.size(); i++) {
             Integer record_id = Integer.parseInt(ids.get(i));
-
+            resultsRecordInfo.add(new RecordInfo(record_id));
+            /*
             RecordInfo record = new RecordInfo(getItemShortInfo(record_id));
             now_ms = Log.logElapsedTime(TAG, now_ms, "search.getItemShortInfo");
             resultsRecordInfo.add(record);
@@ -184,6 +181,7 @@ public class SearchCatalog {
                     + " Author:" + record.author
                     + " Pubdate:" + record.pubdate
                     + " Publisher:" + record.publisher);
+                    */
         }
         Log.logElapsedTime(TAG, start_ms, "search.total");
 
@@ -199,13 +197,8 @@ public class SearchCatalog {
      */
     private OSRFObject getItemShortInfo(Integer id) {
         OSRFObject response = (OSRFObject) Utils.doRequestSimple(conn(), SERVICE,
-                METHOD_SLIM_RETRIVE, new Object[] {
+                METHOD_SLIM_RETRIEVE, new Object[] {
                         id });
-        // todo remove this check once I can trust this assumption.
-        // Elsewhere we look up record images based on doc_id.
-        if (response.getInt("doc_id") != id) {
-            throw(new AssertionError(id));
-        }
         return response;
     }
 
@@ -270,7 +263,6 @@ public class SearchCatalog {
      *            the organization on witch the searches will be made
      */
     public void selectOrganisation(Organisation org) {
-
         Log.d(TAG, "selectOrganisation id=" + org.id);
         this.selectedOrganization = org;
     }

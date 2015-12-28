@@ -384,8 +384,7 @@ public class SearchCatalogListView extends ActionBarActivity {
                         InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                         imm.hideSoftInputFromWindow(searchText.getWindowToken(), 0);
                         searchResultsNumber.setVisibility(View.VISIBLE);
-                        progressDialog = ProgressDialog.show(
-                                context,
+                        progressDialog = ProgressDialog.show(context,
                                 getResources().getText(R.string.dialog_please_wait),
                                 getResources().getText(R.string.dialog_fetching_data_message));
                     }
@@ -397,18 +396,14 @@ public class SearchCatalogListView extends ActionBarActivity {
                     @Override
                     public void run() {
                         recordList.clear();
-
                         if (searchResults.size() > 0) {
                             for (int j = 0; j < searchResults.size(); j++)
                                 recordList.add(searchResults.get(j));
                         }
 
-                        searchResultsNumber.setText(+recordList.size()
-                                + " out of " + search.visible);
-
+                        searchResultsNumber.setText(+recordList.size() + " out of " + search.visible);
                         adapter.notifyDataSetChanged();
                         progressDialog.dismiss();
-
                     }
                 });
 
@@ -649,14 +644,7 @@ public class SearchCatalogListView extends ActionBarActivity {
 
     class SearchArrayAdapter extends ArrayAdapter<RecordInfo> {
 
-        private final String tag = SearchArrayAdapter.class.getSimpleName();
         private Context context;
-        private NetworkImageView recordImage;
-        private TextView recordTitle;
-        private TextView recordAuthor;
-        private TextView recordFormat;
-        private TextView recordPublisher;
-
         private List<RecordInfo> records = new ArrayList<RecordInfo>();
 
         public SearchArrayAdapter(Context context, int textViewResourceId, List<RecordInfo> objects) {
@@ -676,9 +664,6 @@ public class SearchCatalogListView extends ActionBarActivity {
         public View getView(int position, View convertView, ViewGroup parent) {
             View row = convertView;
 
-            // Get item
-            RecordInfo record = getItem(position);
-
             // if it is the right type of view
             if (row == null || row.findViewById(R.id.search_record_title) == null) {
                 LayoutInflater inflater = (LayoutInflater) this.getContext().getSystemService(
@@ -686,24 +671,44 @@ public class SearchCatalogListView extends ActionBarActivity {
                 row = inflater.inflate(R.layout.search_result_item, parent, false);
             }
 
+            // Get item
+            RecordInfo record = getItem(position);
+
             // Start async image load
-            recordImage = (NetworkImageView) row.findViewById(R.id.search_record_img);
+            NetworkImageView recordImage = (NetworkImageView) row.findViewById(R.id.search_record_img);
             final String imageHref = GlobalConfigs.getUrl("/opac/extras/ac/jacket/small/r/" + record.doc_id);
             ImageLoader imageLoader = VolleyWrangler.getInstance(context).getImageLoader();
             recordImage.setImageUrl(imageHref, imageLoader);
 
-            recordTitle = (TextView) row.findViewById(R.id.search_record_title);
-            recordAuthor = (TextView) row.findViewById(R.id.search_record_author);
-            recordFormat = (TextView) row.findViewById(R.id.search_record_format);
-            recordPublisher = (TextView) row.findViewById(R.id.search_record_publishing);
-
-            // set text
-            recordTitle.setText(record.title);
-            recordAuthor.setText(record.author);
-            recordFormat.setText(SearchFormat.getItemLabelFromSearchFormat(record.search_format));
-            recordPublisher.setText(record.pubdate + " " + record.publisher);
+            // Start async record load
+            fetchRecordInfo(row, record);
 
             return row;
+        }
+
+        private void updateBasicMetadataViews(View row, RecordInfo record) {
+            ((TextView) row.findViewById(R.id.search_record_title)).setText(record.title);
+            ((TextView) row.findViewById(R.id.search_record_author)).setText(record.author);
+            ((TextView) row.findViewById(R.id.search_record_publishing)).setText(record.getPublishingInfo());
+        }
+
+        private void updateSearchFormatView(View row, RecordInfo record) {
+            ((TextView) row.findViewById(R.id.search_record_format)).setText(
+                    SearchFormat.getItemLabelFromSearchFormat(record.search_format));
+        }
+
+        private void fetchRecordInfo(final View row, final RecordInfo record) {
+            RecordLoader.fetch(record, row.getContext(),
+                    new RecordLoader.ResponseListener() {
+                        @Override
+                        public void onMetadataLoaded() {
+                            updateBasicMetadataViews(row, record);
+                        }
+                        @Override
+                        public void onSearchFormatLoaded() {
+                            updateSearchFormatView(row, record);
+                        }
+                    });
         }
     }
 }

@@ -41,6 +41,7 @@ import org.opensrf.net.http.GatewayRequest;
 import org.opensrf.net.http.HttpConnection;
 import org.opensrf.net.http.HttpRequest;
 import org.opensrf.util.JSONWriter;
+import org.opensrf.util.OSRFObject;
 
 public class Utils {
     private static final String TAG = Utils.class.getSimpleName();
@@ -197,7 +198,6 @@ public class Utils {
         StringBuilder sb = new StringBuilder(128);
         sb.append("/osrf-gateway-v1?service=").append(service);
         sb.append("&method=").append(method);
-        Log.d(TAG, "kcx.sb=" + sb.toString());
         URI uri = null;
 
         for (Object param : objects) {
@@ -208,14 +208,16 @@ public class Utils {
         try {
             // not using URLEncoder because it replaces ' ' with '+'.
             uri = new URI("http", "", null, sb.toString(), null);
-            Log.d(TAG, "kcx.uri ok");
         } catch (java.net.URISyntaxException ex) {
-            Log.d(TAG, "kcx.caught exception", ex);
+            Log.d(TAG, "caught", ex);
         }
 
-        Log.d(TAG, "kcx.returning");
-        Log.d(TAG, "kcx.returning.uri="+uri);
-        Log.d(TAG, "kcx.returning.q="+uri.getRawQuery());
         return uri.getRawQuery();
+    }
+
+    public static String safeString(String s) {
+        if (s == null)
+            return "";
+        return s;
     }
 }
