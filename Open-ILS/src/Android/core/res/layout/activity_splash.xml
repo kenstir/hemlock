@@ -6,7 +6,7 @@
     android:gravity="center_horizontal"
     android:orientation="vertical" >
 
-        <ImageView
+    <ImageView
             android:id="@+id/logo"
             android:layout_width="280dip"
             android:layout_height="wrap_content"
@@ -15,18 +15,18 @@
             android:layout_marginTop="106dp"
             android:src="@drawable/evergreen_logo_sm072"
             android:contentDescription="@string/ou_library_name" />
-    
-        <TextView
-                android:id="@+id/action_in_progress"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/logo"
-                android:layout_marginTop="15dip"
-                android:gravity="center"
-                style="@style/textLarge"
-                android:paddingTop="10dip" android:text="Signing in"/>
 
-        <Button
+    <TextView
+            android:id="@+id/action_in_progress"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/logo"
+            android:layout_marginTop="15dip"
+            android:gravity="center"
+            style="@style/textLarge"
+            android:paddingTop="10dip" android:text="Signing in"/>
+
+    <Button
             android:id="@+id/activity_splash_retry_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -37,10 +37,9 @@
             android:paddingLeft="25sp"
             android:paddingRight="25sp"
             android:visibility="visible"
-            />
+    />
 
-    <!--
-        <ProgressBar
+    <ProgressBar
             android:id="@+id/activity_splash_progress_bar"
             style="@android:style/Widget.ProgressBar.Large"
             android:layout_width="wrap_content"
@@ -48,26 +47,5 @@
             android:layout_below="@+id/action_in_progress"
             android:layout_centerHorizontal="true"
             android:padding="20dip" />
-            -->
-
-    <ImageView
-            android:id="@+id/activity_splash_progress_bar"
-
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/action_in_progress"
-            android:layout_centerHorizontal="true"
-            android:padding="20dip" android:src="@drawable/christmas_tree"/>
-
-    <ImageButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/activity_splash_share_button"
-            android:src="@android:drawable/ic_menu_share"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentEnd="true"
-            android:layout_margin="12dip"
-            android:visibility="visible"/>
 
 </RelativeLayout>
