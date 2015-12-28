@@ -47,7 +47,6 @@ public class SplashActivity extends Activity implements LoadingTaskListener {
     private View mProgressBar;
     private AlertDialog mAlertDialog;
     private Button mRetryButton;
-    private ImageButton mShareLogButton;
     private LoadingTask mTask;
     private static boolean mInitialized;
     private boolean restarted = false;
@@ -95,17 +94,6 @@ public class SplashActivity extends Activity implements LoadingTaskListener {
             @Override
             public void onClick(View v) {
                 startTask();
-            }
-        });
-        mShareLogButton = (ImageButton) findViewById(R.id.activity_splash_share_button);
-        mShareLogButton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent i = new Intent();
-                i.setAction(Intent.ACTION_SEND);
-                i.putExtra(Intent.EXTRA_TEXT, Log.getString(mContext));
-                i.setType("text/plain");
-                startActivity(i);
             }
         });
 
@@ -172,7 +160,6 @@ public class SplashActivity extends Activity implements LoadingTaskListener {
     @Override
     public void onPreExecute() {
         mRetryButton.setVisibility(View.GONE);
-        mShareLogButton.setVisibility(View.GONE);
         mProgressBar.setVisibility(View.VISIBLE);
     }
 
@@ -197,7 +184,6 @@ public class SplashActivity extends Activity implements LoadingTaskListener {
             }
             mProgressText.setText(mProgressText.getText() + extra_text);
             mRetryButton.setVisibility(View.VISIBLE);
-            //mShareLogButton.setVisibility(View.VISIBLE);
         }
     }
 }
