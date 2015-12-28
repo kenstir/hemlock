@@ -1,10 +1,12 @@
 package org.evergreen_ils.searchCatalog;
 
 import android.content.Context;
+import android.text.TextUtils;
 import org.evergreen_ils.R;
 import org.evergreen_ils.globals.Log;
 import org.opensrf.util.JSONException;
 import org.opensrf.util.JSONReader;
+import org.w3c.dom.Text;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -100,7 +102,7 @@ public class SearchFormat {
 
     /// get label "CD Music recording" from search format "cdmusic"
     public static String getItemLabelFromSearchFormat(String search_format) {
-        if (search_format.equalsIgnoreCase(""))
+        if (TextUtils.isEmpty(search_format))
             return "";
         for (SearchFormatItem i : searchFormats) {
             if (i.searchFormat.equalsIgnoreCase(search_format)) {

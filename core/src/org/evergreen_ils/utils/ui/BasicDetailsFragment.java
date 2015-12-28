@@ -69,8 +69,6 @@ public class BasicDetailsFragment extends Fragment {
 
     private TextView copyCountTextView;
 
-    private Button placeHoldButton;
-
     private GlobalConfigs globalConfigs;
 
     /*
@@ -133,10 +131,7 @@ public class BasicDetailsFragment extends Fragment {
 
         recordImage = (NetworkImageView) layout.findViewById(R.id.record_details_simple_image);
 
-        placeHoldButton = (Button) layout.findViewById(R.id.simple_place_hold_button);
-//        addToBookbagButton = (Button) layout.findViewById(R.id.simple_add_to_bookbag_button);
-        placeHoldButton.setOnClickListener(new OnClickListener() {
-
+        ((Button) layout.findViewById(R.id.simple_place_hold_button)).setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getActivity().getApplicationContext(), PlaceHold.class);
@@ -150,18 +145,12 @@ public class BasicDetailsFragment extends Fragment {
         ImageLoader imageLoader = VolleyWrangler.getInstance(getActivity()).getImageLoader();
         recordImage.setImageUrl(imageHref, imageLoader);
 
+        // Start async record load
+        fetchRecordInfo(record);
+
         initBookbagStuff();
 
         record_header.setText(String.format(getString(R.string.record_of), position, total));
-
-        titleTextView.setText(record.title);
-        formatTextView.setText(SearchFormat.getItemLabelFromSearchFormat(record.search_format));
-        authorTextView.setText(record.author);
-        publisherTextView.setText(record.pubdate + " " + record.publisher);
-        seriesTextView.setText(record.series);
-        subjectTextView.setText(record.subject);
-        synopsisTextView.setText(record.synopsis);
-        isbnTextView.setText(record.isbn);
 
         updateCopyCount();
         initCopyCount();
@@ -179,14 +168,40 @@ public class BasicDetailsFragment extends Fragment {
         return layout;
     }
 
+    private void updateSearchFormatView() {
+        formatTextView.setText(SearchFormat.getItemLabelFromSearchFormat(record.search_format));
+    }
+
+    private void updateBasicMetadataViews() {
+        titleTextView.setText(record.title);
+        authorTextView.setText(record.author);
+        publisherTextView.setText(record.getPublishingInfo());
+        seriesTextView.setText(record.series);
+        subjectTextView.setText(record.subject);
+        synopsisTextView.setText(record.synopsis);
+        isbnTextView.setText(record.isbn);
+    }
+
+    private void fetchRecordInfo(final RecordInfo record) {
+        RecordLoader.fetch(record, getActivity(),
+                new RecordLoader.ResponseListener() {
+                    @Override
+                    public void onMetadataLoaded() {
+                        updateBasicMetadataViews();
+                    }
+                    @Override
+                    public void onSearchFormatLoaded() {
+                        updateSearchFormatView();
+                    }
+                });
+    }
+
     private void initCopyCount() {
-        Log.d(TAG, "kcx.initCopyCount, id="+record.doc_id+" info="+record.copyCountListInfo);
         if (record.copyCountListInfo == null) {
             final long start_ms = System.currentTimeMillis();
             String url = GlobalConfigs.getUrl(Utils.buildGatewayUrl(
                     SearchCatalog.SERVICE, SearchCatalog.METHOD_GET_COPY_COUNT,
                     new Object[]{orgId, record.doc_id}));
-            Log.d(TAG, "kcx.updateCopyCount, id="+record.doc_id+" url="+url);
             GatewayJsonObjectRequest r = new GatewayJsonObjectRequest(
                     url,
                     new Response.Listener<GatewayResponse>() {
@@ -212,7 +227,6 @@ public class BasicDetailsFragment extends Fragment {
     private void updateCopyCount() {
         int total = 0;
         int available = 0;
-        Log.d(TAG, "kcx.updateCopyCount, info="+record.copyCountListInfo);
         if (record.copyCountListInfo == null) {
             copyCountTextView.setText("");
         } else {
