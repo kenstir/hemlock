@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#ffffff"
+    android:background="@drawable/background_color_image"
     android:gravity="center_horizontal"
     android:orientation="vertical" >
 
@@ -12,40 +12,39 @@
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="106dp"
-            android:src="@drawable/evergreen_logo_sm072"
+            android:layout_marginTop="12dip"
+            android:src="@drawable/evergreen_logo_trans"
             android:contentDescription="@string/ou_library_name" />
 
     <TextView
             android:id="@+id/action_in_progress"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/logo"
-            android:layout_marginTop="15dip"
+            android:layout_below="@+id/activity_splash_progress_bar"
             android:gravity="center"
             style="@style/textLarge"
-            android:paddingTop="10dip" android:text="Signing in"/>
+            android:text="Signing in" android:padding="6dip"/>
 
     <Button
             android:id="@+id/activity_splash_retry_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/activity_splash_progress_bar"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="60dp"
+            android:layout_marginTop="60dip"
             android:text="@string/retry_label"
-            android:paddingLeft="25sp"
-            android:paddingRight="25sp"
+            android:paddingLeft="25dip"
+            android:paddingRight="25dip"
             android:visibility="visible"
-    />
+            android:layout_alignParentBottom="true" android:layout_marginBottom="60dip"/>
 
     <ProgressBar
             android:id="@+id/activity_splash_progress_bar"
-            style="@android:style/Widget.ProgressBar.Large"
-            android:layout_width="wrap_content"
+            style="@android:style/Widget.Holo.ProgressBar.Horizontal"
+            android:indeterminate="true"
+            android:layout_width="200dip"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/action_in_progress"
-            android:layout_centerHorizontal="true"
-            android:padding="20dip" />
+            android:padding="6dip"
+            android:layout_below="@+id/logo"
+            android:layout_centerHorizontal="true"/>
 
 </RelativeLayout>
