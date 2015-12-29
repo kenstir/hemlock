@@ -172,7 +172,6 @@ public class SplashActivity extends Activity implements LoadingTaskListener {
     public void onPostExecute(String result) {
         Log.d(TAG, "onPostExecute> " + result);
         mTask = null;
-        mProgressBar.setVisibility(View.GONE);
         if (TextUtils.equals(result, LoadingTask.TASK_OK)) {
             startApp();
         } else {
@@ -184,6 +183,7 @@ public class SplashActivity extends Activity implements LoadingTaskListener {
             }
             mProgressText.setText(mProgressText.getText() + extra_text);
             mRetryButton.setVisibility(View.VISIBLE);
+            mProgressBar.setVisibility(View.GONE);
         }
     }
 }
