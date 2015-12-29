@@ -15,8 +15,39 @@ treechildren::-moz-tree-cell(circulating) {
     background-color: red;
 }
 
+treechildren::-moz-tree-cell(longoverdue) {
+    background-color: orange;
+}
+
+treechildren::-moz-tree-cell(lost) {
+    background-color: maroon;
+}
+
 treechildren::-moz-tree-cell-text(circulating) {
     color: white;
+}
+
+treechildren::-moz-tree-cell-text(lost) {
+    color: white;
+}
+
+treechildren::-moz-tree-cell-text(longoverdue) {
+    color: black;
+}
+
+#circulating_hint {
+    background-color: red;
+    color: white;
+}
+
+#lost_hint {
+    background-color: maroon;
+    color: white;
+}
+
+#longoverdue_hint {
+    background-color: orange;
+    color: black;
 }
 
 treechildren::-moz-tree-row(backdate_failed) {
@@ -59,6 +90,7 @@ treechildren::-moz-tree-row(backdate_failed,selected) {
 #checkin_auto_retarget_indicator { background-color: -moz-dialog; color: -moz-dialog-text; font-size: large; font-weight: bold; }
 #checkin_auto_retarget_all_indicator { background-color: -moz-dialog; color: -moz-dialog-text; font-size: large; font-weight: bold; }
 #checkin_local_hold_as_transit_indicator { background-color: -moz-dialog; color: -moz-dialog-text; font-size: large; font-weight: bold; }
+#checkin_manual_float_indicator { background-color: -moz-dialog; color: -moz-dialog-text; font-size: large; font-weight: bold; }
 
 .big_emphasis1 { font-weight: bold; font-size: x-large; }
 .big_emphasis2 { font-weight: bold; font-size: large; }

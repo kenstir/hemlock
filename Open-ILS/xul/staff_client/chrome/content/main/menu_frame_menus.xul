@@ -258,6 +258,9 @@
              perm="ADMIN_Z3950_SOURCE"
              />
     <command id="cmd_server_admin_org_unit_proximity_adjustment" />
+    <command id="cmd_server_admin_z39_index_field_map" 
+             perm="ADMIN_Z3950_SOURCE"
+             />
     <command id="cmd_server_admin_circ_mod" 
              perm="CREATE_CIRC_MOD DELETE_CIRC_MOD UPDATE_CIRC_MOD ADMIN_CIRC_MOD"
              />
@@ -325,6 +328,15 @@
     <command id="cmd_server_admin_config_best_hold_order"
              perm="ADMIN_HOLD_CAPTURE_SORT"
              />
+    <command id="cmd_server_admin_conify_remote_account"
+             perm="ADMIN_CONFIG_REMOTE_ACCOUNT VIEW_CONFIG_REMOTE_ACCOUNT"
+            />
+    <command id="cmd_server_admin_vandelay_import_bib_trash_group"
+             perm="CREATE_IMPORT_TRASH_FIELD UPDATE_IMPORT_TRASH_FIELD DELETE_IMPORT_TRASH_FIELD"
+             />
+    <command id="cmd_server_admin_floating_groups"
+             perm="ADMIN_FLOAT_GROUPS"
+             />
 
     <command id="cmd_hotkeys_toggle" />
     <command id="cmd_hotkeys_set" />
@@ -351,6 +363,9 @@
              />
     <command id="cmd_copy_editor_copy_location_first_toggle" />
     <command id="cmd_search_prefs" />
+    <command id="cmd_server_addon_ws_configure"
+             perm="ADMIN_SERVER_ADDON_FOR_WORKSTATION"
+            />
 </commandset>
 
 <!-- The File menu on the main menu -->
@@ -508,7 +523,7 @@
 <menu id="main.menu.admin" label="&staff.main.menu.admin.label;" accesskey="&staff.main.menu.admin.accesskey;">
     <menupopup id="main.menu.admin.popup">
         <menuitem id="oc_menuitem" label="&staff.main.menu.admin.change_session.label;" label_orig="&staff.main.menu.admin.change_session.label;" 
-            accesskey="O" command="cmd_change_session" forceFirst="true"/>
+            accesskey="&staff.main.menu.admin.change_session.accesskey;" command="cmd_change_session" forceFirst="true"/>
         <menuitem label="&staff.main.menu.admin.offline_xacts.label;" accesskey="&staff.main.menu.admin.offline_xacts.accesskey;" command="cmd_manage_offline_xacts"/>
         <menuitem label="&staff.main.menu.admin.download_patrons.label;" accesskey="&staff.main.menu.admin.download_patrons.accesskey;" command="cmd_download_patrons"/>
         <menuseparator />
@@ -520,6 +535,7 @@
                 <menuitem label="&staff.main.menu.admin.template_edit.label;" accesskey="&staff.main.menu.admin.template_edit.accesskey;" command="cmd_print_list_template_edit"/>
                 <menuitem label="&staff.server.admin.index.fonts_and_sounds;" command="cmd_local_admin_fonts_and_sounds"/>
                 <menuitem label="&staff.main.menu.admin.client.search_prefs.label;" command="cmd_search_prefs"/>
+                <menuitem label="&staff.main.menu.admin.client.server_addon_ws_configure.label;" command="cmd_server_addon_ws_configure"/>
                 <menuitem type="checkbox" label="&staff.main.menu.admin.client.copy_editor.copy_location.label;" command="cmd_copy_editor_copy_location_first_toggle"/>
                 <menu id="main.menu.admin.client.hotkeys" label="&staff.main.menu.admin.client.hotkeys;">
                     <menupopup id="main.menu.admin.client.hotkeys.popup">
@@ -618,8 +634,10 @@
                 <menuitem label="&staff.main.menu.admin.server_admin.conify.billing_type.label;" command="cmd_server_admin_billing_type"/>
                 <menuitem label="&staff.main.menu.admin.server_admin.conify.sms_carrier.label;" command="cmd_server_admin_sms_carrier"/>
                 <menuitem label="&staff.main.menu.admin.server_admin.conify.z3950_source.label;" command="cmd_server_admin_z39_source"/>
+                <menuitem label="&staff.main.menu.admin.server_admin.conify.z3950_index_field_map.label;" command="cmd_server_admin_z39_index_field_map"/>
                 <menuitem label="&staff.main.menu.admin.server_admin.conify.circulation_modifier.label;" command="cmd_server_admin_circ_mod"/>
                 <menuitem label="&staff.main.menu.admin.server_admin.conify.circulation_limit_group.label;" command="cmd_server_admin_circ_limit_group"/>
+                <menuitem label="&staff.main.menu.admin.server_admin.conify.floating_groups.label;" command="cmd_server_admin_floating_groups"/>
                 <menuitem label="&staff.main.menu.admin.server_admin.conify.global_flag.label;" command="cmd_server_admin_global_flag"/>
                 <menuitem label="&staff.main.menu.admin.server_admin.conify.import_match_set;" command="cmd_server_admin_import_match_set"/>
                 <menuitem label="&staff.main.menu.admin.server_admin.conify.org_unit_setting_type;" command="cmd_server_admin_org_unit_setting_type"/>
@@ -636,7 +654,9 @@
                 <menuitem label="&staff.main.menu.admin.server_admin.conify.config_asset_sip_fields;" command="cmd_server_admin_config_asset_sip_fields"/>
                 <menuitem label="&staff.main.menu.admin.server_admin.conify.config_usr_activity_type;" command="cmd_server_admin_config_usr_activity_type"/>
                 <menuitem label="&staff.main.menu.admin.server_admin.conify.config_best_hold_order;" command="cmd_server_admin_config_best_hold_order"/>
+                <menuitem label="&staff.main.menu.admin.server_admin.conify.vandelay_import_bib_trash_group;" command="cmd_server_admin_vandelay_import_bib_trash_group"/>
                 <menuitem label="&staff.main.menu.admin.server_admin.conify.actor.org_unit_custom_tree;" command="cmd_server_admin_actor_org_unit_custom_tree"/>
+                <menuitem label="&staff.main.menu.admin.server_admin.conify.config.remote_account;" command="cmd_server_admin_conify_remote_account"/>
                 <menu id="main.menu.admin.server.acq" label="&staff.main.menu.admin.server_admin.acq.label;" accesskey="&staff.main.menu.admin.server_admin.acq.accesskey;">
                     <menupopup id="main.menu.admin.server.acq.popup">
                         <menuitem label="&staff.main.menu.admin.server_admin.acq.fund.label;" accesskey="&staff.main.menu.admin.server_admin.acq.fund.accesskey;" command="cmd_server_admin_acq_fund" />

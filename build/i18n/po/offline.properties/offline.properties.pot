@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-02-21 11:20-0400\n"
+"POT-Creation-Date: 2013-09-26 18:17-0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1107,6 +1107,10 @@ msgstr ""
 msgid "Reservation Return"
 msgstr ""
 
+#: menu.cmd_server_admin_conify_remote_account.tab
+msgid "Remote Accounts"
+msgstr ""
+
 #: menu.cmd_booking_pull_list.tab
 msgid "Booking Pull List"
 msgstr ""
@@ -1436,4 +1440,8 @@ msgstr ""
 
 #: util.hide_elements.missing_permission
 msgid "Missing permission %1$s"
+msgstr ""
+
+#: menu.cmd_server_admin_floating_groups.tab
+msgid "Floating Groups"
 msgstr ""

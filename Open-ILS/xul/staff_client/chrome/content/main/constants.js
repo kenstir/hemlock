@@ -25,13 +25,6 @@ if (!LOCALE) {
     LOCALE = 'en-US';
 }
 
-var use_tpac = false;
-try {
-    use_tpac = pref.getBoolPref('oils.use_tpac');
-} catch (E) {
-    dump("Failed to get TPac preference: " + E + "\n");
-}
-
 const MODE_RDONLY   = 0x01;
 const MODE_WRONLY   = 0x02;
 const MODE_CREATE   = 0x08;
@@ -147,7 +140,7 @@ var api = {
     'HTML_HOLD_PULL_LIST' : { 'app' : 'open-ils.circ', 'method' : 'open-ils.circ.hold_pull_list.print' },
     'FM_AHR_ONSHELF_RETRIEVE' : { 'app' : 'open-ils.circ', 'method' : 'open-ils.circ.captured_holds.on_shelf.retrieve' },
     'FM_AHR_ID_LIST_ONSHELF_RETRIEVE' : { 'app' : 'open-ils.circ', 'method' : 'open-ils.circ.captured_holds.id_list.on_shelf.retrieve.authoritative', 'secure' : false },
-    'FM_AHR_ID_LIST_EXPIRED_ONSHELF_RETRIEVE' : { 'app' : 'open-ils.circ', 'method' : 'open-ils.circ.captured_holds.id_list.expired_on_shelf.retrieve.authoritative', 'secure' : false },
+    'FM_AHR_ID_LIST_EXPIRED_ONSHELF_RETRIEVE' : { 'app' : 'open-ils.circ', 'method' : 'open-ils.circ.captured_holds.id_list.expired_on_shelf_or_wrong_shelf.retrieve', 'secure' : false },
     'FM_AHR_COUNT_FOR_BRE' : { 'app' : 'open-ils.circ', 'method' : 'open-ils.circ.bre.holds.count', 'secure' : false },
     'FM_AHR_COUNT_RETRIEVE' : { 'app' : 'open-ils.actor', 'method' : 'open-ils.actor.user.hold_requests.count', 'cacheable' : true, 'ttl' : 60000  },
     'FM_AHR_COUNT_RETRIEVE.authoritative' : { 'app' : 'open-ils.actor', 'method' : 'open-ils.actor.user.hold_requests.count.authoritative', 'cacheable' : true, 'ttl' : 60000  },
@@ -230,6 +223,7 @@ var api = {
     'FM_BRE_DELETE' : { 'app' : 'open-ils.cat', 'method' : 'open-ils.cat.biblio.record_entry.delete', 'secure' : false },
     'FM_BRE_UNDELETE' : { 'app' : 'open-ils.cat', 'method' : 'open-ils.cat.biblio.record_entry.undelete', 'secure' : false },
     'FM_BRN_FROM_MARCXML' : { 'app' : 'open-ils.search', 'method' : 'open-ils.search.z3950.marcxml_to_brn', 'secure' : false },
+    'FM_CBC_PCRUD_SEARCH' : { 'app' : 'open-ils.pcrud', 'method' : 'open-ils.pcrud.search.cbc.atomic', 'secure' : false },
     'FM_CBS_RETRIEVE_VIA_PCRUD' : { 'app' : 'open-ils.pcrud', 'method' : 'open-ils.pcrud.retrieve.cbs' },
     'FM_CBT_RETRIEVE' : { 'app' : 'open-ils.circ', 'method' : 'open-ils.circ.billing_type.ranged.retrieve.all', 'secure' : false },
     'FM_CCS_RETRIEVE' : { 'app' : 'open-ils.search', 'method' : 'open-ils.search.config.copy_status.retrieve.all', 'secure' : false },
@@ -260,6 +254,7 @@ var api = {
     'FM_CNAL_RETRIEVE' : { 'app' : 'open-ils.actor', 'method' : 'open-ils.actor.net_access_level.retrieve.all', 'secure' : false },
     'FM_CNCT_RETRIEVE' : { 'app' : 'open-ils.circ', 'method' : 'open-ils.circ.non_cat_types.retrieve.all', 'secure' : false },
     'FM_CRAHP_RETRIEVE' : { 'app' : 'open-ils.circ', 'method' : 'open-ils.circ.config.rules.age_hold_protect.retrieve.all', 'secure' : false },
+    'FM_CFG_RETRIEVE_VIA_PCRUD' : { 'app' : 'open-ils.pcrud', 'method' : 'open-ils.pcrud.search.cfg.atomic', 'secure' : false },
     'FM_CSC_RETRIEVE_VIA_PCRUD' : { 'app' : 'open-ils.pcrud', 'method' : 'open-ils.pcrud.search.csc.atomic' },
     'FM_CSP_PCRUD_SEARCH' : { 'app' : 'open-ils.pcrud', 'method' : 'open-ils.pcrud.search.csp.atomic', 'secure' : false },
     'FM_CST_RETRIEVE' : { 'app' : 'open-ils.actor', 'method' : 'open-ils.actor.standings.retrieve', 'secure' : false },
@@ -379,12 +374,12 @@ var api = {
 
 var urls = {
 
-    'opac' : 'oils://remote/opac/' + LOCALE + '/skin/default/xml/advanced.xml?nps=1',
-    'opac_rdetail' : 'oils://remote/opac/' + LOCALE + '/skin/default/xml/rdetail.xml?r=',
-    'opac_rresult' : 'oils://remote/opac/' + LOCALE + '/skin/default/xml/rresult.xml',
-    'opac_rresult_metarecord' : 'oils://remote/opac/' + LOCALE + '/skin/default/xml/rresult.xml?m=',
+    'opac' : 'oils://remote/eg/opac/advanced',
+    'opac_rdetail' : 'oils://remote/eg/opac/record/',
+    'opac_rresult' : 'oils://remote/eg/opac/results',
+    'opac_rresult_metarecord' : 'oils://remote/eg/opac/results?metarecord=',
     'org_tree' : '/opac/common/js/' + LOCALE + '/OrgTree.js',
-    'browser' : 'oils://remote/opac/' + LOCALE + '/skin/default/xml/advanced.xml?nps=1',
+    'browser' : 'oils://remote/eg/opac/advanced',
     'fieldmapper' : '/opac/common/js/fmall.js',
     'xsl_marc2html' : '/opac/extras/xsl/oilsMARC21slim2HTML.xsl',
     'ac_jacket_small' : '/opac/extras/ac/jacket/small/',
@@ -523,14 +518,6 @@ var urls = {
     'SERIAL_PRINT_ROUTING_LIST_USERS' : 'oils://remote/eg/serial/print_routing_list_users',
     'XUL_SERIAL_BATCH_RECEIVE': 'oils://remote/xul/server/serial/batch_receive.xul',
     'EG_TRIGGER_EVENTS' : 'oils://remote/eg/actor/user/event_log',
-    'XUL_SEARCH_PREFS' : 'chrome://open_ils_staff_client/content/main/search_prefs.xul'
-}
-
-if(use_tpac) {
-    urls['opac'] = 'oils://remote/eg/opac/advanced';
-    urls['opac_rdetail'] = 'oils://remote/eg/opac/record/';
-    urls['opac_rresult'] = 'oils://remote/eg/opac/results';
-    urls['opac_rresult_metarecord'] = 'oils://remote/eg/opac/results?metarecord=';
-    urls['browser'] = urls.opac;
-    pref.setBoolPref('oils.secure_opac',true);
+    'XUL_SEARCH_PREFS' : 'chrome://open_ils_staff_client/content/main/search_prefs.xul',
+    'XUL_SERVER_ADDONS' : 'oils://remote/xul/server/addon/addons.xul'
 }

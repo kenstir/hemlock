@@ -53,6 +53,7 @@ CREATE TABLE serial.subscription_note (
 	                    DEFERRABLE INITIALLY DEFERRED,
 	create_date  TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
 	pub          BOOL   NOT NULL DEFAULT FALSE,
+	alert        BOOL   NOT NULL DEFAULT FALSE,
 	title        TEXT   NOT NULL,
 	value        TEXT   NOT NULL
 );
@@ -133,6 +134,7 @@ CREATE TABLE serial.distribution_note (
 	                    DEFERRABLE INITIALLY DEFERRED,
 	create_date  TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
 	pub          BOOL   NOT NULL DEFAULT FALSE,
+	alert        BOOL   NOT NULL DEFAULT FALSE,
 	title        TEXT   NOT NULL,
 	value        TEXT   NOT NULL
 );
@@ -193,7 +195,9 @@ CREATE TABLE serial.issuance (
 	date_published  TIMESTAMP WITH TIME ZONE,
 	caption_and_pattern INT   REFERENCES serial.caption_and_pattern (id)
 	                          DEFERRABLE INITIALLY DEFERRED,
-	holding_code    TEXT,
+	holding_code    TEXT      CONSTRAINT issuance_holding_code_check CHECK (
+	                            holding_code IS NULL OR could_be_serial_holding_code(holding_code)
+	                          ),
 	holding_type    TEXT      CONSTRAINT valid_holding_type CHECK
 	                          (
 	                              holding_type IS NULL
@@ -288,6 +292,7 @@ CREATE TABLE serial.item_note (
 	                    DEFERRABLE INITIALLY DEFERRED,
 	create_date TIMESTAMP WITH TIME ZONE    DEFAULT NOW(),
 	pub         BOOL    NOT NULL    DEFAULT FALSE,
+	alert       BOOL    NOT NULL    DEFAULT FALSE,
 	title       TEXT    NOT NULL,
 	value       TEXT    NOT NULL
 );

@@ -98,6 +98,12 @@ $_TT_helpers = {
         return $U->get_copy_price(new_editor(xact=>1), $copy_id);
     },
 
+    get_org_unit => sub {
+        my $org_id = shift;
+        return $org_id if ref $org_id;
+        return new_editor()->retrieve_actor_org_unit($org_id);
+    },
+
     # given a copy, returns the title and author in a hash
     get_copy_bib_basics => sub {
         my $copy_id = shift;
@@ -165,6 +171,14 @@ $_TT_helpers = {
         return $U->ou_ancestor_setting_value($org_id, $setting);
     },
 
+    get_user_setting => sub {
+        my ($user_id, $setting) = @_;
+        my $val = new_editor()->search_actor_user_setting(
+            {usr => $user_id, name => $setting})->[0];
+        return undef unless $val; 
+        return OpenSRF::Utils::JSON->JSON2perl($val->value);  
+    },
+
     # This basically greps/maps out ths isbn string values, but also promotes the first isbn-13 to the
     # front of the line (so that the EDI translator takes it as primary) if there is one.
     get_li_isbns => sub {
@@ -183,6 +197,36 @@ $_TT_helpers = {
         $primary and unshift @isbns, $primary;
         $logger->debug("get_li_isbns returning isbns: " . join(', ', @isbns));
         return @isbns;
+    },
+
+    get_li_order_ident => sub {
+        my $attrs = shift;
+
+        # preferred identifier
+        my ($attr) =  grep { $U->is_true($_->order_ident) } @$attrs;
+        return $attr if $attr;
+
+        # note we're not using get_li_attr, since we need the 
+        # attr object and not just the attr value
+
+        # isbn-13
+        ($attr) = grep { 
+            $_->attr_name eq 'isbn' and 
+            $_->attr_type eq 'lineitem_marc_attr_definition' and
+            length($_->attr_value) == 13
+        } @$attrs;
+        return $attr if $attr;
+
+        for my $name (qw/isbn issn upc/) {
+            ($attr) = grep { 
+                $_->attr_name eq $name and 
+                $_->attr_type eq 'lineitem_marc_attr_definition'
+            } @$attrs;
+            return $attr if $attr;
+        }
+
+        # any 'identifier' attr
+        return ( grep { $_->attr_name eq 'identifier' } @$attrs)[0];
     },
 
     # helpers.get_li_attr('isbn_13', li.attributes)
@@ -372,6 +416,13 @@ $_TT_helpers = {
         my $unapi = new_editor()->json_query($query);
         return undef unless @$unapi;
         return $_TT_helpers->{xml_doc}->($unapi->[0]->{'unapi.bre'});
+    },
+
+    # escapes quotes in csv string values
+    escape_csv => sub {
+        my $string = shift;
+        $string =~ s/"/""/og;
+        return $string;
     }
 };
 
@@ -408,7 +459,7 @@ sub run_TT {
         my $key = ($error) ? 'error_output' : 'template_output';
         $env->{EventProcessor}->update_state( $state, { $key => $t_o->id } );
     }
-	
+    
     return $output;
 }
 

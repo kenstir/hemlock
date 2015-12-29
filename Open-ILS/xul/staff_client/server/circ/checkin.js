@@ -79,6 +79,7 @@ circ.checkin.prototype = {
                             obj.controller.view.sel_edit.setAttribute('disabled','true');
                             obj.controller.view.sel_backdate.setAttribute('disabled','true');
                             obj.controller.view.sel_opac.setAttribute('disabled','true');
+                            obj.controller.view.sel_opac_holds.setAttribute('disabled','true');
                             obj.controller.view.sel_patron.setAttribute('disabled','true');
                             obj.controller.view.sel_last_patron.setAttribute('disabled','true');
                             obj.controller.view.sel_copy_details.setAttribute('disabled','true');
@@ -92,6 +93,7 @@ circ.checkin.prototype = {
                             obj.controller.view.sel_edit.setAttribute('disabled','false');
                             obj.controller.view.sel_backdate.setAttribute('disabled','false');
                             obj.controller.view.sel_opac.setAttribute('disabled','false');
+                            obj.controller.view.sel_opac_holds.setAttribute('disabled','false');
                             obj.controller.view.sel_patron.setAttribute('disabled','false');
                             obj.controller.view.sel_last_patron.setAttribute('disabled','false');
                             obj.controller.view.sel_copy_details.setAttribute('disabled','false');
@@ -158,6 +160,13 @@ circ.checkin.prototype = {
                         function() {
                             JSAN.use('cat.util');
                             cat.util.show_in_opac(obj.selection_list);
+                        }
+                    ],
+                    'sel_opac_holds' : [
+                        ['command'],
+                        function() {
+                            JSAN.use('cat.util');
+                            cat.util.show_in_opac(obj.selection_list,{default_view:'hold_browser'});
                         }
                     ],
                     'sel_transit_abort' : [
@@ -460,6 +469,18 @@ circ.checkin.prototype = {
                         document.getElementById('checkin_barcode_entry_textbox').focus();
                         return true;
 
+                    } ],
+                    'cmd_checkin_manual_float' : [ ['command'], function(ev) {
+                        dump('in cmd_checkin_manual_float\n');
+                        var bg = document.getElementById('background');
+                        var cb = document.getElementById('checkin_manual_float');
+                        var ind = document.getElementById('checkin_manual_float_indicator');
+                        var cn = 'checkin_screen_checkin_manual_float';
+                        if (cb.getAttribute('checked') == 'true') { addCSSClass(bg,cn); } else { removeCSSClass(bg,cn); }
+                        ind.hidden = cb.getAttribute('checked') != 'true'; 
+                        document.getElementById('checkin_barcode_entry_textbox').focus();
+                        return true;
+
                     } ]
                 }
             }
@@ -562,16 +583,18 @@ circ.checkin.prototype = {
             var async_checkbox = document.getElementById('async_checkin');
             if (async_checkbox) { async = async_checkbox.getAttribute('checked') == 'true'; }
             var barcode = textbox.value;
-            // Auto-complete the barcode, items only
-            var barcode_object = xulG.get_barcode(window, 'asset', barcode);
             if (async) {
                 textbox.value = ''; textbox.focus();
             }
-            // user_false means the user selected "None of the above", abort before other prompts/errors
-            if(barcode_object == "user_false") return;
-            // Got a barcode without an error? Use it. Otherwise fall through.
-            if(barcode_object && typeof barcode_object.ilsevent == 'undefined')
-                barcode = barcode_object.barcode;
+            if (obj.data.list.cbc.length > 0) { // skip barcode completion lookups if none configured
+                // Auto-complete the barcode, items only
+                var barcode_object = xulG.get_barcode(window, 'asset', barcode);
+                // user_false means the user selected "None of the above", abort before other prompts/errors
+                if(barcode_object == "user_false") return;
+                // Got a barcode without an error? Use it. Otherwise fall through.
+                if(barcode_object && typeof barcode_object.ilsevent == 'undefined')
+                    barcode = barcode_object.barcode;
+            }
             if ( obj.test_barcode(barcode) ) { /* good */ } else { /* bad */ return; }
             var placeholder_item = new acp();
             placeholder_item.barcode( barcode );
@@ -635,6 +658,9 @@ circ.checkin.prototype = {
             var hold_as_transit = document.getElementById('checkin_local_hold_as_transit');
             if (hold_as_transit) hold_as_transit = hold_as_transit.getAttribute('checked') == 'true';
             if (hold_as_transit) params.hold_as_transit = 1;
+            var manual_float = document.getElementById('checkin_manual_float');
+            if (manual_float) manual_float = manual_float.getAttribute('checked') == 'true';
+            if (manual_float) params.manual_float = 1;
             circ.util.checkin_via_barcode(
                 ses(), 
                 params,
@@ -671,6 +697,7 @@ circ.checkin.prototype = {
                 || checkin.ilsevent == 1203 /* COPY_BAD_STATUS */
                 || checkin.ilsevent == 7009 /* CIRC_CLAIMS_RETURNED */ 
                 || checkin.ilsevent == 7011 /* COPY_STATUS_LOST */ 
+                || checkin.ilsevent == 7025 /* COPY_STATUS_LONG_OVERDUE */ 
                 || checkin.ilsevent == 7012 /* COPY_STATUS_MISSING */) {
                 obj.list.refresh_row( row_params ); 
                 return obj.on_failure();

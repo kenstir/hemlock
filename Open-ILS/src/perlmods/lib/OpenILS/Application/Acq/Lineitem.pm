@@ -12,6 +12,7 @@ use OpenILS::Application::AppUtils;
 use OpenILS::Application::Acq::Financials;
 use OpenILS::Application::Cat::BibCommon;
 use OpenILS::Application::Cat::AssetCommon;
+use OpenILS::Application::Acq::Lineitem::BatchUpdate;
 my $U = 'OpenILS::Application::AppUtils';
 
 
@@ -49,9 +50,12 @@ sub create_lineitem {
         $e->update_acq_picklist($picklist) or return $e->die_event;
     }
 
+    my $po;
     if($li->purchase_order) {
-        my $po = $e->retrieve_acq_purchase_order($li->purchase_order)
-            or return $e->die_event;
+        $po = $e->retrieve_acq_purchase_order([
+            $li->purchase_order,
+            {flesh => 1, flesh_fields => {acqpo => ['provider']}}
+            ]) or return $e->die_event;
         return $e->die_event unless 
             $e->allowed('MANAGE_PROVIDER', $po->ordering_agency, $po);
 
@@ -59,7 +63,17 @@ sub create_lineitem {
     }
 
     $li->selector($e->requestor->id);
-    $e->create_acq_lineitem($li) or return $e->die_event;
+    $li = $e->create_acq_lineitem($li) or return $e->die_event;
+
+    if ($po) {
+        # apply the default number of copies for this provider
+        for (1 .. $po->provider->default_copy_count) {
+            my $lid = Fieldmapper::acq::lineitem_detail->new;
+            $lid->lineitem($li->id);
+            $lid->owning_lib($e->requestor->ws_ou);
+            $e->create_acq_lineitem_detail($lid) or return $e->die_event;
+        }
+    }
 
     $e->commit;
     return $li->id;
@@ -305,10 +319,10 @@ sub update_lineitem_impl {
 }
 
 __PACKAGE__->register_method(
-	method => 'lineitem_search',
-	api_name => 'open-ils.acq.lineitem.search',
+    method => 'lineitem_search',
+    api_name => 'open-ils.acq.lineitem.search',
     stream => 1,
-	signature => {
+    signature => {
         desc => 'Searches lineitems',
         params => [
             {desc => 'Authentication token',       type => 'string'},
@@ -561,10 +575,10 @@ sub lineitem_search_by_attributes {
 
 
 __PACKAGE__->register_method(
-	method    => 'lineitem_search_ident',
-	api_name  => 'open-ils.acq.lineitem.search.ident',
+    method    => 'lineitem_search_ident',
+    api_name  => 'open-ils.acq.lineitem.search.ident',
     stream    => 1,
-	signature => {
+    signature => {
         desc => 'Performs a search against lineitem_attrs where ident is true',
         params => [
             {desc => 'Authentication token', type => 'string'},

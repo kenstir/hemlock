@@ -23,8 +23,9 @@
                                 for (i = 0; i < inputs.length; i++) { 
                                     if (inputs[i].name == 'record' && !inputs[i].disabled) inputs[i].checked = this.checked;}"/>
                         </td>
-                        <td width="49%" class="opac-auto-108"><a href="[% mkurl('', {anonsort=>(CGI.param('anonsort') == 'titlesort' ? 'titlesort.descending' : 'titlesort')}) %]">[% l('Title') %]</a></td>
-                        <td width="49%" class="opac-auto-108"><a href="[% mkurl('', {anonsort=>(CGI.param('anonsort') == 'authorsort' ? 'authorsort.descending' : 'authorsort')}) %]">[% l('Author(s)') %]</a% l('Author(s)') %]</td>
+                        <td width="40%" class="opac-auto-108"><a href="[% mkurl('', {anonsort=>(CGI.param('anonsort') == 'titlesort' ? 'titlesort.descending' : 'titlesort')}) %]">[% l('Title') %]</a></td>
+                        <td width="40%" class="opac-auto-108"><a href="[% mkurl('', {anonsort=>(CGI.param('anonsort') == 'authorsort' ? 'authorsort.descending' : 'authorsort')}) %]">[% l('Author(s)') %]</a% l('Author(s)') %]</td>
+                        <td width='18%'>[% l('Local Call Number') %]</td>
                         <td width="1%" class="nowrap">
                             <select name="action">
                                 <option>[% l('-- Actions for these items --') %]</option>
@@ -60,6 +61,22 @@
                                 ['page', 'id', 'edit_notes']
                             )
                         -%]">[% attrs.author | html %]</a></td>
+                        <td class="item_list_padding" style="padding-left: 5px;">
+                        [% 
+                            copy = attrs.holdings.0;
+                            IF copy;
+                                copy_org = ctx.get_aou_by_shortname(copy.owner);
+                                FOR ctx_org IN [ctx.pref_ou, ctx.search_ou, ctx.home_ou, ctx.physical_loc];
+                                    NEXT UNLESS ctx_org;
+                                    ctx_org = ctx.get_aou(ctx_org);
+                                    IF ctx.org_within_scope(ctx_org, copy_org, ctx_org.ou_type.depth);
+                                        l('[_1] ([_2])', copy.label, copy_org.name) | html;
+                                        LAST;
+                                    END;
+                                END;
+                            END;
+                        %]
+                        </td>
                     </tr>
                     [% END %]
                 </tbody>

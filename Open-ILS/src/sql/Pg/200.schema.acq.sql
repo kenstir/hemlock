@@ -28,11 +28,6 @@ CREATE TABLE acq.currency_type (
 	label	TEXT
 );
 
--- Use the ISO 4217 abbreviations for currency codes
-INSERT INTO acq.currency_type (code, label) VALUES ('USD','US Dollars');
-INSERT INTO acq.currency_type (code, label) VALUES ('CAN','Canadian Dollars');
-INSERT INTO acq.currency_type (code, label) VALUES ('EUR','Euros');
-
 CREATE TABLE acq.exchange_rate (
     id              SERIAL  PRIMARY KEY,
     from_currency   TEXT    NOT NULL REFERENCES acq.currency_type (code) DEFERRABLE INITIALLY DEFERRED,
@@ -40,9 +35,6 @@ CREATE TABLE acq.exchange_rate (
     ratio           NUMERIC NOT NULL,
     CONSTRAINT exchange_rate_from_to_once UNIQUE (from_currency,to_currency)
 );
-
-INSERT INTO acq.exchange_rate (from_currency,to_currency,ratio) VALUES ('USD','CAN',1.2);
-INSERT INTO acq.exchange_rate (from_currency,to_currency,ratio) VALUES ('USD','EUR',0.5);
 
 CREATE TABLE acq.claim_policy (
 	id              SERIAL       PRIMARY KEY,
@@ -89,6 +81,7 @@ CREATE TABLE acq.provider (
     email               TEXT,
     phone               TEXT,
     fax_phone           TEXT,
+    default_copy_count  INT     NOT NULL DEFAULT 0,
 	default_claim_policy INT    REFERENCES acq.claim_policy
 	                            DEFERRABLE INITIALLY DEFERRED,
     CONSTRAINT provider_name_once_per_owner UNIQUE (name,owner),
@@ -583,7 +576,8 @@ CREATE TABLE acq.lineitem_attr (
 	lineitem	BIGINT		NOT NULL REFERENCES acq.lineitem (id) ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED,
 	attr_type	TEXT		NOT NULL,
 	attr_name	TEXT		NOT NULL,
-	attr_value	TEXT		NOT NULL
+	attr_value	TEXT		NOT NULL,
+	order_ident	BOOLEAN		NOT NULL DEFAULT FALSE
 );
 
 CREATE INDEX li_attr_li_idx ON acq.lineitem_attr (lineitem);
@@ -629,6 +623,9 @@ CREATE TABLE acq.distribution_formula_entry (
 	owning_lib	INTEGER REFERENCES actor.org_unit(id)
 				DEFERRABLE INITIALLY DEFERRED,
 	location	INTEGER REFERENCES asset.copy_location(id),
+	fund		INTEGER REFERENCES acq.fund (id),
+	circ_modifier	TEXT REFERENCES config.circ_modifier (code),
+	collection_code TEXT,
 	CONSTRAINT acqdfe_lib_once_per_formula UNIQUE( formula, position ),
 	CONSTRAINT acqdfe_must_be_somewhere
 				CHECK( owning_lib IS NOT NULL OR location IS NOT NULL ) 
@@ -780,6 +777,8 @@ CREATE TABLE acq.edi_message (
 									     'OSTRPT'
 									 ))
 );
+CREATE INDEX edi_message_account_status_idx ON acq.edi_message (account,status);
+CREATE INDEX edi_message_po_idx ON acq.edi_message (purchase_order);
 
 -- Note below that the primary key is NOT a SERIAL type.  We will periodically truncate and rebuild
 -- the table, assigning ids programmatically instead of using a sequence.
@@ -903,14 +902,6 @@ CREATE TABLE acq.user_request_type (
     label   TEXT    NOT NULL UNIQUE -- i18n-ize
 );
 
-INSERT INTO acq.user_request_type (id,label) VALUES (1, oils_i18n_gettext('1', 'Books', 'aurt', 'label'));
-INSERT INTO acq.user_request_type (id,label) VALUES (2, oils_i18n_gettext('2', 'Journal/Magazine & Newspaper Articles', 'aurt', 'label'));
-INSERT INTO acq.user_request_type (id,label) VALUES (3, oils_i18n_gettext('3', 'Audiobooks', 'aurt', 'label'));
-INSERT INTO acq.user_request_type (id,label) VALUES (4, oils_i18n_gettext('4', 'Music', 'aurt', 'label'));
-INSERT INTO acq.user_request_type (id,label) VALUES (5, oils_i18n_gettext('5', 'DVDs', 'aurt', 'label'));
-
-SELECT SETVAL('acq.user_request_type_id_seq'::TEXT, 6);
-
 CREATE TABLE acq.user_request (
     id                  SERIAL  PRIMARY KEY,
     usr                 INT     NOT NULL REFERENCES actor.usr (id), -- requesting user
@@ -1018,6 +1009,11 @@ CREATE OR REPLACE FUNCTION public.extract_acq_marc_field ( BIGINT, TEXT, TEXT) R
 	SELECT extract_marc_field('acq.lineitem', $1, $2, $3);
 $$ LANGUAGE SQL;
 
+CREATE OR REPLACE FUNCTION public.extract_acq_marc_field_set ( BIGINT, TEXT, TEXT) RETURNS SETOF TEXT AS $$
+	SELECT extract_marc_field_set('acq.lineitem', $1, $2, $3);
+$$ LANGUAGE SQL;
+
+
 /*
 CREATE OR REPLACE FUNCTION public.extract_bib_marc_field ( BIGINT, TEXT ) RETURNS TEXT AS $$
 	SELECT public.extract_marc_field('biblio.record_entry', $1, $2);
@@ -1079,19 +1075,26 @@ BEGIN
                 END IF;
             ELSE
                 pos := 1;
-
                 LOOP
-    			    SELECT extract_acq_marc_field(id, xpath_string || '[' || pos || ']', adef.remove) INTO value FROM acq.lineitem WHERE id = NEW.id;
+                    -- each application of the regex may produce multiple values
+                    FOR value IN
+                        SELECT * FROM extract_acq_marc_field_set(
+                            NEW.id, xpath_string || '[' || pos || ']', adef.remove)
+                        LOOP
 
-    			    IF (value IS NOT NULL AND value <> '') THEN
-	    			    INSERT INTO acq.lineitem_attr (lineitem, definition, attr_type, attr_name, attr_value)
-		    			    VALUES (NEW.id, adef.id, atype, adef.code, value);
-                    ELSE
+                        IF (value IS NOT NULL AND value <> '') THEN
+                            INSERT INTO acq.lineitem_attr
+                                (lineitem, definition, attr_type, attr_name, attr_value)
+                                VALUES (NEW.id, adef.id, atype, adef.code, value);
+                        ELSE
+                            EXIT;
+                        END IF;
+                    END LOOP;
+                    IF NOT FOUND THEN
                         EXIT;
-			        END IF;
-
+                    END IF;
                     pos := pos + 1;
-                END LOOP;
+               END LOOP;
             END IF;
 
 		END IF;
@@ -2015,7 +2018,6 @@ CREATE OR REPLACE FUNCTION acq.propagate_funds_by_org_unit( old_year INTEGER, us
     SELECT acq.propagate_funds_by_org_tree( $1, $2, $3, FALSE );
 $$ LANGUAGE SQL;
 
-
 CREATE OR REPLACE FUNCTION acq.rollover_funds_by_org_tree(
 	old_year INTEGER,
 	user_id INTEGER,
@@ -2033,6 +2035,7 @@ xfer_amount NUMERIC := 0;
 roll_fund   RECORD;
 deb         RECORD;
 detail      RECORD;
+roll_distrib_forms BOOL;
 --
 BEGIN
 	--
@@ -2195,6 +2198,19 @@ BEGIN
 				fund = roll_fund.old_fund
 				AND encumbrance;
 		END IF;
+
+		-- Rollover distribution formulae funds
+		SELECT INTO roll_distrib_forms value::BOOL FROM
+			actor.org_unit_ancestor_setting(
+				'acq.fund.rollover_distrib_forms', org_unit_id
+			);
+
+		IF roll_distrib_forms THEN
+			UPDATE acq.distribution_formula_entry 
+				SET fund = roll_fund.new_fund_id
+				WHERE fund = roll_fund.old_fund;
+		END IF;
+
 		--
 		-- Mark old fund as inactive, now that we've closed it
 		--
@@ -2204,6 +2220,8 @@ BEGIN
 	END LOOP;
 END;
 $$ LANGUAGE plpgsql;
+
+
 
 CREATE OR REPLACE FUNCTION acq.rollover_funds_by_org_unit( old_year INTEGER, user_id INTEGER, org_unit_id INTEGER, encumb_only BOOL DEFAULT FALSE ) RETURNS VOID AS $$
     SELECT acq.rollover_funds_by_org_tree( $1, $2, $3, $4, FALSE );

@@ -113,7 +113,7 @@ circ.checkout.prototype = {
                         ['keypress'],
                         function(ev) {
                             if (ev.keyCode && ev.keyCode == 13) {
-                                obj.checkout( { barcode: ev.target.value } );
+                                obj.checkout( { barcode: ev.target.value.trim() } );
                             }
                         }
                     ],
@@ -143,7 +143,7 @@ circ.checkout.prototype = {
 
                             if (obj.controller.view.checkout_menu.value == 'barcode' ||
                                 obj.controller.view.checkout_menu.value === '') {
-                                params.barcode = obj.controller.view.checkout_barcode_entry_textbox.value;
+                                params.barcode = obj.controller.view.checkout_barcode_entry_textbox.value.trim();
                             } else {
                                 params.noncat = 1;
                                 params.noncat_type = obj.controller.view.checkout_menu.value;
@@ -501,6 +501,7 @@ circ.checkout.prototype = {
                             case 1232 /* ITEM_DEPOSIT_REQUIRED */ : 
                             case 1233 /* ITEM_RENTAL_FEE_REQUIRED */ : 
                             case 1234 /* ITEM_DEPOSIT_PAID */ : 
+                            case 1236 /* PATRON_EXCEEDS_LOST_COUNT */ :
                             case 1500 /* ACTION_CIRCULATION_NOT_FOUND */ : 
                             case 7002 /* PATRON_EXCEEDS_CHECKOUT_COUNT */ : 
                             case 7003 /* COPY_CIRC_NOT_ALLOWED */ : 
@@ -610,26 +611,32 @@ circ.checkout.prototype = {
         if (! (params.barcode||params.noncat)) { return; }
 
         if (params.barcode) {
-            // Default is "just items"
-            var barcode_context = 'asset';
-            // Add actor (can be any string that includes 'actor') if looking up patrons at checkout
-            if(String( obj.data.hash.aous['circ.staff_client.actor_on_checkout'] ) == 'true')
-                barcode_context += '-actor';
-            // Auto-complete the barcode
-            var in_barcode = xulG.get_barcode(window, barcode_context, params.barcode);
-            // user_false is "None of the above selected", don't error out/fall through as they already said no
-            if(in_barcode == "user_false") return;
-            // We have a barcode and there was no error?
-            if(in_barcode && typeof in_barcode.ilsevent == 'undefined') {
-                // Check if it was an actor barcode (will never happen unless actor was added above)
-                if(in_barcode.type == 'actor') {
-                    // Go to new patron (do not pass go, do not collect $200, do not prompt user)
-                    var horizontal_interface = String( obj.data.hash.aous['ui.circ.patron_summary.horizontal'] ) == 'true';
-                    var loc = xulG.url_prefix( horizontal_interface ? 'XUL_PATRON_HORIZ_DISPLAY' : 'XUL_PATRON_DISPLAY' );
-                    xulG.set_tab( loc, {}, { 'barcode' : in_barcode.barcode } );
-                    return;
+            var actor_on_checkout = String(
+                obj.data.hash.aous['circ.staff_client.actor_on_checkout']
+            ) == 'true';
+            // skip barcode completion lookups if we can
+            if (actor_on_checkout || obj.data.list.cbc.length > 0) {
+                // Default is "just items"
+                var barcode_context = 'asset';
+                // Add actor (can be any string that includes 'actor') if looking up patrons at checkout
+                if(actor_on_checkout)
+                    barcode_context += '-actor';
+                // Auto-complete the barcode
+                var in_barcode = xulG.get_barcode(window, barcode_context, params.barcode);
+                // user_false is "None of the above selected", don't error out/fall through as they already said no
+                if(in_barcode == "user_false") return;
+                // We have a barcode and there was no error?
+                if(in_barcode && typeof in_barcode.ilsevent == 'undefined') {
+                    // Check if it was an actor barcode (will never happen unless actor was added above)
+                    if(in_barcode.type == 'actor') {
+                        // Go to new patron (do not pass go, do not collect $200, do not prompt user)
+                        var horizontal_interface = String( obj.data.hash.aous['ui.circ.patron_summary.horizontal'] ) == 'true';
+                        var loc = xulG.url_prefix( horizontal_interface ? 'XUL_PATRON_HORIZ_DISPLAY' : 'XUL_PATRON_DISPLAY' );
+                        xulG.set_tab( loc, {}, { 'barcode' : in_barcode.barcode } );
+                        return;
+                    }
+                    params.barcode = in_barcode.barcode;
                 }
-                params.barcode = in_barcode.barcode;
             }
 
             if ( obj.test_barcode(params.barcode) ) { /* good */ } else { /* bad */ return; }
@@ -667,6 +674,7 @@ circ.checkout.prototype = {
                         1215 /* CIRC_EXCEEDS_COPY_RANGE */,
                         1232 /* ITEM_DEPOSIT_REQUIRED */,
                         1233 /* ITEM_RENTAL_FEE_REQUIRED */,
+                        1236 /* PATRON_EXCEEDS_LOST_COUNT */,
                         7002 /* PATRON_EXCEEDS_CHECKOUT_COUNT */,
                         7003 /* COPY_CIRC_NOT_ALLOWED */,
                         7004 /* COPY_NOT_AVAILABLE */, 
@@ -678,6 +686,7 @@ circ.checkout.prototype = {
                     'report_override_on_events' : [ /* Allow auto-override of Patron overrides only */
                         1212 /* PATRON_EXCEEDS_OVERDUE_COUNT */,
                         1213 /* PATRON_BARRED */,
+                        1236 /* PATRON_EXCEEDS_LOST_COUNT */,
                         7002 /* PATRON_EXCEEDS_CHECKOUT_COUNT */,
                         7013 /* PATRON_EXCEEDS_FINES */
                     ],
@@ -695,6 +704,9 @@ circ.checkout.prototype = {
                         '1233' : function(r) {
                             return document.getElementById('circStrings').getString('staff.circ.checkout.override.item_rental_fee_required.warning');
                         },
+                        '1236' : function(r) {
+                            return document.getElementById('circStrings').getString('staff.circ.checkout.override.will_auto');
+                        },
                         '7002' : function(r) {
                             return document.getElementById('circStrings').getString('staff.circ.checkout.override.will_auto');
                         },
@@ -703,7 +715,7 @@ circ.checkout.prototype = {
                                 status_name = obj.data.hash.ccs[ r.payload.status() ].name();
                                 return status_name;
                             } catch (E) {
-                                return "Could not retrieve the name of the current status for the copy";  // XXX
+                                return document.getElementById('circStrings').getString('staff.circ.checkout.error_retrieving_copy_status');
                             }
                         },
                         '7010' : function(r) {
@@ -855,6 +867,9 @@ circ.checkout.prototype = {
                         break;
                         case 1232 /* ITEM_DEPOSIT_REQUIRED */ :
                         case 1233 /* ITEM_RENTAL_FEE_REQUIRED */ :
+                        case 1236 /* PATRON_EXCEEDS_LOST_COUNT */ :
+                            found_handled = true;
+                        break;
                         case 7013 /* PATRON_EXCEEDS_FINES */ :
                             found_handled = true;
                         break;

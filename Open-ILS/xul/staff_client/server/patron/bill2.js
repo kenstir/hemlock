@@ -41,6 +41,12 @@ function my_init() {
             $('credit_forward').setAttribute('value',util.money.sanitize( g.patron.credit_forward_balance() ));
         }
 
+        if (g.data.hash.aous['circ.disable_patron_credit']) {
+            var nodes = document.getElementsByClassName('hide_patron_credit');
+            for (var i = 0; i < nodes.length; i++) 
+                nodes[i].setAttribute('hidden', true);
+        }
+
         if (g.data.hash.aous['ui.circ.billing.uncheck_bills_and_unfocus_payment_box']) {
             g.funcs.push(
                 function() {
@@ -564,9 +570,24 @@ function init_lists() {
                             util.widgets.addProperty(params.treeitem_node.firstChild.childNodes[ g.payment_pending_column_idx ],'refundable');
                         }
                         if ( row && row.my && row.my.circ && ! row.my.circ.checkin_time() ) {
-                            $('circulating_hint').hidden = false;
-                            util.widgets.addProperty(params.treeitem_node.firstChild,'circulating');
-                            util.widgets.addProperty(params.treeitem_node.firstChild.childNodes[ g.title_column_idx ],'circulating');
+                            var style_type = 'circulating';
+                            var stop_fines = row.my.circ.stop_fines() || '';
+
+                            // we have custom syling for these stop-fines reasons
+                            if (stop_fines.match(/LOST|LONGOVERDUE/)) 
+                                style_type = stop_fines.toLowerCase();
+
+                            $(style_type + '_hint').hidden = false;
+
+                            // style every cell in the row
+                            for (var n in params.treeitem_node.firstChild.childNodes) {
+                                try {
+                                    util.widgets.addProperty(
+                                        params.treeitem_node.firstChild.childNodes[n], 
+                                        style_type
+                                    );
+                                } catch(E) {}
+                            }
                         }
                     } catch(E) {
                         g.error.sdump('D_WARN','Error setting list properties in bill2.js: ' + E);
@@ -968,6 +989,13 @@ function pay(payment_blob) {
                 case 'INVALID_USER_XACT_ID' :
                     refresh(); default_focus();
                     alert($("patronStrings").getFormattedString('staff.patron.bills.pay.invalid_user_xact_id', [robj.desc])); return false; break;
+                case 'PATRON_CREDIT_DISABLED' :
+                    refresh(); 
+                    default_focus();
+                    alert(robj.desc);
+                    return false;
+                    break;
+
                 default: throw(robj); break;
             }
         }

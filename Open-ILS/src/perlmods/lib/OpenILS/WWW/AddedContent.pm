@@ -15,9 +15,13 @@ use OpenSRF::EX qw(:try);
 use OpenSRF::Utils::Cache;
 use OpenSRF::System;
 use OpenSRF::Utils::Logger qw/$logger/;
+use OpenILS::Utils::CStoreEditor;
 
 use LWP::UserAgent;
 use MIME::Base64;
+
+use Business::ISBN;
+use Business::ISSN;
 
 my $AC = __PACKAGE__;
 
@@ -76,49 +80,152 @@ sub child_init {
 sub handler {
 
     my $r   = shift;
+
+    # If the URL requested matches a file on the filesystem, have Apache serve that file
+    # this allows for local content (most typically images) to be used for some requests
     return Apache2::Const::DECLINED if (-e $r->filename);
 
     my $cgi = CGI->new;
     my @path_parts = split( /\//, $r->unparsed_uri );
-    my $type = $path_parts[-3];
-    my $format = $path_parts[-2];
-    my $key = $path_parts[-1];
+
+    # Intended URL formats
+    # /opac/extras/ac/jacket/medium/ISBN_VALUE      -- classic keyed-off-isbn
+    # /opac/extras/ac/-3/-2/-1
+    # /opac/extras/ac/jacket/medium/r/RECORD_ID     -- provide record id (bre.id)
+    # /opac/extras/ac/-4/-3/-2/-1
+    # /opac/extras/ac/jacket/medium/m/RECORD_ID     -- XXX: future use for metarecord id
+
+    my $keytype_in_url = $path_parts[-2];  # if not in one of m, r, this will be the $format
+
+    my $type;
+    my $format;
+    my $keytype;
+    my $keyvalue;
+
+    if ($keytype_in_url =~ m/^(r|m)$/) {
+        $type = $path_parts[-4];
+        $format = $path_parts[-3];
+        $keyvalue = $path_parts[-1]; # a record/metarecord id
+        $keytype = 'record';
+    } else {
+        $type = $path_parts[-3];
+        $format = $path_parts[-2];
+        $keyvalue = $path_parts[-1]; # an isbn
+        $keytype = 'isbn';
+    }
+
     my $res;
+    my $keyhash;
+    my $cachekey;
+
+    $cachekey = ($keytype eq "isbn") ? $keyvalue : $keytype . '_' . $keyvalue;
 
     child_init() unless $handler;
 
-    return Apache2::Const::NOT_FOUND unless $handler and $type and $format and $key;
+    return Apache2::Const::NOT_FOUND unless $handler and $type and $format and $cachekey;
 
     my $err;
     my $data;
     my $method = "${type}_${format}";
 
     return Apache2::Const::NOT_FOUND unless $handler->can($method);
-    return $res if defined($res = $AC->serve_from_cache($type, $format, $key));
+    return $res if defined($res = $AC->serve_from_cache($type, $format, $cachekey));
     return Apache2::Const::NOT_FOUND unless $AC->lookups_enabled;
 
+    if ($keytype eq "isbn") { # if this request uses isbn for the key
+        # craft a hash with the single isbn, because that's all we will have
+        $keyhash = {};
+        $keyhash->{"isbn"} = [$keyvalue];
+    } else {
+        my $key_data = get_rec_keys($keyvalue);
+        my @isbns = grep {$_->{tag} eq '020'} @$key_data;
+        my @issns = grep {$_->{tag} eq '022'} @$key_data;
+        my @upcs  = grep {$_->{tag} eq '024'} @$key_data;
+
+        map {
+            my $isbn_obj = Business::ISBN->new($_->{value});
+            my $isbn_str;
+            $isbn_str = $isbn_obj->as_string([]) if defined($isbn_obj);
+            $_->{value} = $isbn_str;
+            undef $_ if !defined($_->{value});
+        } @isbns;
+
+        map {
+            my $issn_obj = Business::ISSN->new($_->{value});
+            my $issn_str;
+            $issn_str = $issn_obj->as_string() if defined($issn_obj && $issn_obj->is_valid);
+            $_->{value} = $issn_str;
+            undef $_ if !defined($_->{value});
+        } @issns;
+
+        $keyhash = {
+            isbn => [map {$_->{value}} @isbns],
+            issn => [map {$_->{value}} @issns],
+            upc  => [map {$_->{value}} @upcs]
+        };
+    }
+
+    return Apache2::Const::NOT_FOUND unless @{$keyhash->{isbn}} || @{$keyhash->{issn}} || @{$keyhash->{upc}};
+
     try {
-        $data = $handler->$method($key);
-    } catch Error with { 
-        $err = shift; 
+        if ($handler->can('expects_keyhash') && $handler->expects_keyhash() eq 1) {
+            # Handler expects a keyhash
+            $data = $handler->$method($keyhash);
+        } else {
+            # Pass single ISBN as a scalar to the handler
+            $data = $handler->$method($keyhash->{isbn}[0]);
+        }
+    } catch Error with {
+        $err = shift;
         decr_error_countdown();
-        $logger->debug("added content handler failed: $method($key) => $err");
+        $logger->debug("added content handler failed: $method($keytype/$keyvalue) => $err"); # XXX: logs unhelpful hashref
     };
 
     return Apache2::Const::NOT_FOUND if $err;
 
     if(!$data) {
         # if the AC lookup found no corresponding data, cache that information
-        $logger->debug("added content handler returned no results $method($key)") unless $data;
-        $AC->cache_result($type, $format, $key, {nocontent=>1});
+        $logger->debug("added content handler returned no results $method($keytype/$keyvalue)") unless $data;
+        $AC->cache_result($type, $format, $cachekey, {nocontent=>1});
         return Apache2::Const::NOT_FOUND;
     }
     
     $AC->print_content($data);
-    $AC->cache_result($type, $format, $key, $data);
+    $AC->cache_result($type, $format, $cachekey, $data);
 
     reset_error_countdown();
     return Apache2::Const::OK;
+}
+
+# returns [{tag => $tag, value => $value}, {tag => $tag2, value => $value2}]
+sub get_rec_keys {
+    my $id = shift;
+    return OpenILS::Utils::CStoreEditor->new->json_query({
+        select => {mfr => ['tag', 'value']},
+        from => 'mfr',
+        where => {
+            record => $id,
+            '-or' => [
+                {
+                    '-and' => [
+                        {tag => '020'},
+                        {subfield => 'a'}
+                    ]
+                }, {
+                    '-and' => [
+                        {tag => '022'},
+                        {subfield => 'a'}
+                    ]
+                }, {
+                    '-and' => [
+                        {tag => '024'},
+                        {subfield => 'a'},
+                        {ind1 => 1}
+                    ]
+                }
+            ]
+        }
+    });
 }
 
 sub print_content {

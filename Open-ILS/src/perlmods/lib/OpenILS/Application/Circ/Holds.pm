@@ -36,6 +36,7 @@ use DateTime::Format::ISO8601;
 use OpenSRF::Utils qw/:datetime/;
 use Digest::MD5 qw(md5_hex);
 use OpenSRF::Utils::Cache;
+use OpenSRF::Utils::JSON;
 my $apputils = "OpenILS::Application::AppUtils";
 my $U = $apputils;
 
@@ -338,6 +339,31 @@ sub create_hold {
         $hold->expire_time(calculate_expire_time($recipient->home_ou));
     }
 
+
+    # if behind-the-desk pickup is supported at the hold pickup lib,
+    # set the value to the patron default, unless a value has already
+    # been applied.  If it's not supported, force the value to false.
+
+    my $bdous = $U->ou_ancestor_setting_value(
+        $hold->pickup_lib, 
+        'circ.holds.behind_desk_pickup_supported', $e);
+
+    if ($bdous) {
+        if (!defined $hold->behind_desk) {
+
+            my $set = $e->search_actor_user_setting({
+                usr => $hold->usr, 
+                name => 'circ.holds_behind_desk'
+            })->[0];
+        
+            $hold->behind_desk('t') if $set and 
+                OpenSRF::Utils::JSON->JSON2perl($set->value);
+        }
+    } else {
+        # behind the desk not supported, force it to false
+        $hold->behind_desk('f');
+    }
+
     $hold->requestor($e->requestor->id);
     $hold->request_lib($e->requestor->ws_ou);
     $hold->selection_ou($hold->pickup_lib) unless $hold->selection_ou;
@@ -570,7 +596,7 @@ sub retrieve_holds {
         if($available) {
             $holds_query->{where}->{shelf_time} = {'!=' => undef};
             # Maybe?
-            $holds_query->{where}->{pickup_lib} = {'=' => 'current_shelf_lib'};
+            $holds_query->{where}->{pickup_lib} = {'=' => {'+ahr' => 'current_shelf_lib'}};
         }
     }
 
@@ -1378,7 +1404,13 @@ sub retrieve_hold_queue_status_impl {
             ],
             where    => {
                 hold_type => $hold->hold_type,
-                target    => $hold->target
+                target    => $hold->target,
+                capture_time => undef,
+                cancel_time => undef,
+                '-or' => [
+                    {expire_time => undef },
+                    {expire_time => {'>' => 'now'}}
+                ]
            }
         });
     }
@@ -2050,6 +2082,30 @@ __PACKAGE__->register_method(
     /
 );
 
+__PACKAGE__->register_method(
+    method    => 'fetch_captured_holds',
+    api_name  => 
+      'open-ils.circ.captured_holds.expired_on_shelf_or_wrong_shelf.retrieve',
+    stream    => 1,
+    authoritative => 1,
+    signature => q/
+        Returns list of shelf-expired un-fulfilled holds OR wrong shelf holds
+        for a given shelf lib
+    /
+);
+
+__PACKAGE__->register_method(
+    method    => 'fetch_captured_holds',
+    api_name  => 
+      'open-ils.circ.captured_holds.id_list.expired_on_shelf_or_wrong_shelf.retrieve',
+    stream    => 1,
+    authoritative => 1,
+    signature => q/
+        Returns list of shelf-expired un-fulfilled holds OR wrong shelf holds
+        for a given shelf lib
+    /
+);
+
 
 sub fetch_captured_holds {
     my( $self, $conn, $auth, $org, $match_copy ) = @_;
@@ -2074,7 +2130,7 @@ sub fetch_captured_holds {
             }
         },
         where => {
-            '+acp' => { status => OILS_COPY_STATUS_ON_HOLDS_SHELF },
+            '+acp' => { status => OILS_COPY_STATUS_ON_HOLDS_SHELF, deleted => 'f' },
             '+alhr' => {
                 capture_time      => { "!=" => undef },
                 current_copy      => $current_copy,
@@ -2090,6 +2146,17 @@ sub fetch_captured_holds {
         };
     }
     my $hold_ids = $e->json_query( $query );
+
+    if ($self->api_name =~ /wrong_shelf/) {
+        # fetch holds whose current_shelf_lib is $org, but whose pickup 
+        # lib is some other org unit.  Ignore already-retrieved holds.
+        my $wrong_shelf =
+            pickup_lib_changed_on_shelf_holds(
+                $e, $org, [map {$_->{id}} @$hold_ids]);
+        # match the layout of other items in $hold_ids
+        push (@$hold_ids, {id => $_}) for @$wrong_shelf;
+    }
+
 
     for my $hold_id (@$hold_ids) {
         if($self->api_name =~ /id_list/) {
@@ -3001,10 +3068,14 @@ sub find_nearest_permitted_hold {
 
     my $fifo = $U->ou_ancestor_setting_value($user->ws_ou, 'circ.holds_fifo');
 
-	# search for what should be the best holds for this copy to fulfill
-	my $best_holds = $U->storagereq(
+    # the nearest_hold API call now needs this
+    $copy->call_number($editor->retrieve_asset_call_number($copy->call_number))
+        unless ref $copy->call_number;
+
+    # search for what should be the best holds for this copy to fulfill
+    my $best_holds = $U->storagereq(
         "open-ils.storage.action.hold_request.nearest_hold.atomic", 
-		$user->ws_ou, $copy, 100, $hold_stall_interval, $fifo );
+        $user->ws_ou, $copy, 100, $hold_stall_interval, $fifo );
 
     # Add any pre-targeted holds to the list too? Unless they are already there, anyway.
     if ($old_holds) {
@@ -3031,6 +3102,11 @@ sub find_nearest_permitted_hold {
         $logger->info("circulator: checking if hold $holdid is permitted for copy $bc");
 
         my $hold = $editor->retrieve_action_hold_request($holdid) or next;
+        # Force and recall holds bypass all rules
+        if ($hold->hold_type eq 'R' || $hold->hold_type eq 'F') {
+            $best_hold = $hold;
+            last;
+        }
         my $reqr = $reqr_cache{$hold->requestor} || $editor->retrieve_actor_user($hold->requestor);
         my $rlib = $org_cache{$hold->request_lib} || $editor->retrieve_actor_org_unit($hold->request_lib);
 
@@ -3252,16 +3328,16 @@ sub uber_hold_impl {
     ) or return $e->event;
 
     if($hold->usr->id ne $e->requestor->id) {
-        # A user is allowed to see his/her own holds
+        # caller is asking for someone else's hold
         $e->allowed('VIEW_HOLD') or return $e->event;
-        $hold->notes( # filter out any non-staff ("private") notes
-            [ grep { !$U->is_true($_->staff) } @{$hold->notes} ] );
+        $hold->notes( # filter out any non-staff ("private") notes (unless marked as public)
+            [ grep { $U->is_true($_->staff) or $U->is_true($_->pub) } @{$hold->notes} ] );
 
     } else {
         # caller is asking for own hold, but may not have permission to view staff notes
         unless($e->allowed('VIEW_HOLD')) {
-            $hold->notes( # filter out any staff notes
-                [ grep { $U->is_true($_->staff) } @{$hold->notes} ] );
+            $hold->notes( # filter out any staff notes (unless marked as public)
+                [ grep { !$U->is_true($_->staff) or $U->is_true($_->pub) } @{$hold->notes} ] );
         }
     }
 
@@ -3531,7 +3607,8 @@ sub clear_shelf_process {
         my %cache_data = (
             hold => [],
             transit => [],
-            shelf => []
+            shelf => [],
+            pl_changed => pickup_lib_changed_on_shelf_holds($e, $org_id, \@hold_ids)
         );
 
         for my $hold (@holds) {
@@ -3578,6 +3655,42 @@ sub clear_shelf_process {
         # tell the client we're done
         $client->respond_complete;
     }
+}
+
+# returns IDs for holds that are on the holds shelf but 
+# have had their pickup_libs change while on the shelf.
+sub pickup_lib_changed_on_shelf_holds {
+    my $e = shift;
+    my $org_id = shift;
+    my $ignore_holds = shift;
+    $ignore_holds = [$ignore_holds] if !ref($ignore_holds);
+
+    my $query = {
+        select => { alhr => ['id'] },
+        from   => {
+            alhr => {
+                acp => {
+                    field => 'id',
+                    fkey  => 'current_copy'
+                },
+            }
+        },
+        where => {
+            '+acp' => { status => OILS_COPY_STATUS_ON_HOLDS_SHELF },
+            '+alhr' => {
+                capture_time     => { "!=" => undef },
+                fulfillment_time => undef,
+                current_shelf_lib => $org_id,
+                pickup_lib => {'!='  => {'+alhr' => 'current_shelf_lib'}}
+            }
+        }
+    };
+
+    $query->{where}->{'+alhr'}->{id} =
+        {'not in' => $ignore_holds} if @$ignore_holds;
+
+    my $hold_ids = $e->json_query($query);
+    return [ map { $_->{id} } @$hold_ids ];
 }
 
 __PACKAGE__->register_method(
@@ -4046,6 +4159,11 @@ sub rec_hold_count {
 
 
     if (my $pld = $args->{pickup_lib_descendant}) {
+
+        my $top_ou = new_editor()->search_actor_org_unit(
+            {parent_ou => undef}
+        )->[0]; # XXX Assumes single root node. Not alone in this...
+
         $query->{where}->{'+ahr'}->{pickup_lib} = {
             in => {
                 select  => {aou => [{ 
@@ -4056,7 +4174,7 @@ sub rec_hold_count {
                 from    => 'aou',
                 where   => {id => $pld}
             }
-        };
+        } if ($pld != $top_ou->id);
     }
 
 

@@ -3,15 +3,15 @@
     PROCESS get_library;
 %]
 <form action="[% ctx.opac_root %]/results" method="get">
-<table id='adv_global_search' class='data_grid data_grid_center' width='100%'>
-    <tr style='border-bottom: none;'>
+<div id='adv_global_search' class='data_grid data_grid_center'>
+    <div id='adv_search_rows'>
         <!-- Contains the user-addable(?) rows to define search class, containment and text -->
-        <td valign='top' class='adv_global_input_container'>
-            <table width='100%' id='adv_global_input_table'>
+        <div valign='top' class='adv_global_input_container'>
+            <table id='adv_global_input_table'>
                 <thead>
                     <tr>
                         <td>
-                            <div style="width:100%;" class="header_middle">
+                            <div class="header_middle" id="adv_search_input">
                                 [% l("Search Input") %]
                             </div>
                         </td>
@@ -21,41 +21,55 @@
                     [% INCLUDE "opac/parts/advanced/global_row.tt2" %]
                     <!-- add a new row -->
                     <tr id='adv_global_addrow'>
-                        <td align='left' style="padding-top:7px;">
+                        <td align='left'>
                             <a href="javascript:;" id="myopac_new_global_row" onclick='addSearchRow();'>[% l('Add Search Row') %]</a>
                         </td>
                     </tr>
                 </tbody>
             </table>
-        </td>
-    </tr>
-    <tr>
-        <td align='top'>
-          <div style="width:100%;" class="header_middle">[% l('Search Filters') %]</div>
-          <table cellpadding='10' cellspacing='0' border='0'>
+        </div>
+    </div>
+
+    <div id='adv_search_submit'>
+        <input type="hidden" name="_adv" value="1" />
+        <span>
+            <input id='search-submit-go' type="submit" value="[% l('Search') %]" alt="[% l('Search') %]" class="opac-button"
+                onclick='setTimeout(function(){$("search-submit-spinner").className=""; $("search-submit-go").className="hidden"}, 2000)'/>
+            <img id='search-submit-spinner' src='/opac/images/progressbar_green.gif' class='hidden' alt=''/>
+        </span>
+
+        <a href="[% mkurl(ctx.opac_root _ '/advanced', {$loc_name => loc_value}, 1) %]"
+            class="opac-button">[% l('Clear Form') %]</a>
+    </div>
+
+    <div id='adv_search_filters'>
+        <div class="header_middle">[% l('Search Filters') %]</div>
+
 [%
     in_row = 0;
     FOR adv_chunk IN search.adv_config;
         NEXT IF adv_chunk.adv_hide;
         IF in_row == 0;
             in_row = 1; %]
-            <tr>
+            <div id='adv_filter_block'>
 [%
         END; %]
-            <td valign='top'>
+            <div id='adv_filter_block_item'>
+            <div valign='top'[% IF adv_chunk.js_only %]
+                id='adv_chunk_[% adv_chunk.adv_special %]'
+                class='hidden'[% END %]>
                 <strong>[% adv_chunk.adv_label %]</strong><br />
 [%
         IF adv_chunk.adv_special;
             SWITCH adv_chunk.adv_special;
                 CASE "lib_selector";
                     PROCESS "opac/parts/org_selector.tt2";
-                        INCLUDE build_org_selector show_loc_groups=1; %]
-                            <div style="position:relative;top:7px;">
+                        INCLUDE build_org_selector show_loc_groups=1 id="adv_org_selector" %]
+                            <div class="adv_search_available">
                                 <input type='checkbox' name="modifier"
                                     value="available"[% CGI.param('modifier').grep('available').size ? ' checked="checked"' : '' %]
                                     id='opac.result.limit2avail' />
-                                <label style="position:relative;top:-2px;"
-                                    for='opac.result.limit2avail'>
+                                <label for='opac.result.limit2avail'>
                                     [% l("Limit to Available") %]</label>
                             </div>
 [%
@@ -73,7 +87,8 @@
                                         <option value="[% opt.code %]"[% CGI.param('pubdate') == opt.code ? ' selected="selected"' : '' %]>[% opt.label | html %]</option>
                                     [%  END %]
                             </select>    
-                            <div style='margin-top:5px;'>
+                            <br/>
+                            <div id='adv_special_block'>
                                 <input name='date1' type='text' size='4' maxlength='4' value="[% CGI.param('date1') | html %]" />
                                 <span id='adv_global_pub_date_2_span' class='[% CGI.param("pubdate") == "between" ? "" : "hide_me" %]'>
                                    [% l("and") %] <input name='date2' type='text' size='4' maxlength='4' value="[% CGI.param('date2') | html %]" />
@@ -83,33 +98,33 @@
                 CASE "sort_selector";
                     INCLUDE "opac/parts/filtersort.tt2"
                         value=CGI.param('sort') class='results_header_sel';
+
+                CASE "copy_location" %]
+                    <select id="adv_copy_location_selector" 
+                        aria-label="[% l('Select Shelving Location') %]"
+                        name="fi:locations" size="3" multiple="multiple">
+                    </select>
+                [% 
             END;
         ELSIF adv_chunk.adv_attr;
             INCLUDE "opac/parts/coded_value_selector.tt2"
-                attr=adv_chunk.adv_attr multiple="multiple" size="4";
+                attr=adv_chunk.adv_attr multiple="multiple" size=adv_chunk.adv_size || search.default_adv_select_height || "4";
         ELSIF adv_chunk.adv_filter;
             INCLUDE "opac/parts/filter_group_selector.tt2"
-                filter_group=adv_chunk.adv_filter multiple="multiple" size="4";
+                filter_group=adv_chunk.adv_filter multiple="multiple" size=adv_chunk.adv_size || search.default_adv_select_height || "4";
         END; %]
-            </td>
+            </div>
+        </div>
 [%
         IF adv_chunk.adv_break;
             in_row = 0; %]
-            </tr>
+            </div>
 [%
         END;
     END; %]
-            </table>
-        </td>
-    </tr>
-</table>
-<input type="hidden" name="_adv" value="1" />
-           <span>
-            <input id='search-submit-go' type="submit" value="[% l('Search') %]" alt="[% l('Search') %]" class="opac-button"
-                onclick='setTimeout(function(){$("search-submit-spinner").className=""; $("search-submit-go").className="hidden"}, 2000)'/>
-            <img id='search-submit-spinner' src='/opac/images/progressbar_green.gif' style='height:16px;width:16px;' class='hidden' alt=''/>
-          </span>
 
-<a href="[% mkurl(ctx.opac_root _ '/advanced', {$loc_name => loc_value}, 1) %]"
-    class="pointer opac-button">[% l('Clear Form') %]</a>
+            </div>
+        </div>
+    </div>
+</div>
 </form>

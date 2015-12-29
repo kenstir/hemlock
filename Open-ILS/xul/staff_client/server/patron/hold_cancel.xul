@@ -49,6 +49,7 @@
     <textbox id="note_tb" multiline="true" />
     <hbox>
         <spacer flex="1"/>
+        <label value="&staff.hold_list.cancel_hold_dialog.confirmation;" />
         <button id="cancel_btn" label="&staff.hold_list.cancel_hold_dialog.cancel_btn.label;" accesskey="&staff.hold_list.cancel_hold_dialog.cancel_btn.accesskey;" />
         <button id="apply_btn" label="&staff.hold_list.cancel_hold_dialog.apply_btn.label;" accesskey="&staff.hold_list.cancel_hold_dialog.apply_btn.accesskey;" />
     </hbox>

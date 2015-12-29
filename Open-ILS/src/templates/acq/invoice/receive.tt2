@@ -39,10 +39,10 @@
                             /><label for="select_all">[% l(' Select All') %]</label>
                     </th>
                     <th>[% l('Owning Branch') %]</th>
-                    <th>[% l('Shelving Location') %]</th>
+                    <th>[% l('Copy Location') %]</th>
                     <th>[% l('Collection Code') %]</th>
-                    <th>[% l('Fund') %]</th>
                     <th>[% l('Circ Modifier') %]</th>
+                    <th>[% l('Fund') %]</th>
                     <th>[% l('Callnumber') %]</th>
                     <th>[% l('Barcode') %]</th>
                 </tr>

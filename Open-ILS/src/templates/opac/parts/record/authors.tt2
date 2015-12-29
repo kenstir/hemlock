@@ -2,6 +2,7 @@
 
 PROCESS "opac/parts/relators.tt2";
 
+author_cnt = 0;
 authors = [
     {
         type => 'author', 
@@ -24,11 +25,16 @@ authors = [
 
 BLOCK build_author_links;
     FOR node IN ctx.marc_xml.findnodes(xpath);
+        author_cnt = author_cnt + 1;
+        contrib_ref = '#schemacontrib' _ author_cnt;
+        iprop = '';
         term = '';
         qterm = '';
-        iprop = '';
         tlabel = '';
+        birthdate = '';
+        deathdate = '';
         graphics = [];
+        tag = node.getAttribute('tag');
         FOR subfield IN node.childNodes;
             NEXT UNLESS subfield.nodeName == "subfield";
             code = subfield.getAttribute('code');
@@ -37,16 +43,26 @@ BLOCK build_author_links;
                 tlabel = relators.$relcode || label;
             END;
             IF code == '6';
+               target_field = tag;
                linked_fields = [subfield.textContent()];
-               target_field = node.getAttribute('tag');
                get_linked_880s;
             END;
             NEXT UNLESS code.match('[a-z]');
             sf = subfield.textContent | html;
-            term = term _ ' ' _ sf;
             IF code.match('[acdq]');
                 sf_raw = subfield.textContent.replace('[#"^$\+\-,\.:;&|\[\]()]', ' ');
                 qterm = qterm _ ' ' _ sf_raw;
+            END;
+            # Only Persons have birth/death dates in schema.org
+            IF code.match('d') && tag.substr(1,2) == '00';
+                IF subfield.textContent.match('^\s*\d{4}');
+                    birthdate = subfield.textContent.replace('^\s*(\d{4}).*$', '$1');
+                END;
+                IF subfield.textContent.match('-\d{4}.*$');
+                    deathdate = subfield.textContent.replace('^\s*.{4}\-(\d{4}).*$', '$1');
+                END;
+            ELSE;
+                term = term _ ' ' _ sf;
             END;
         END;
         url = mkurl(ctx.opac_root _ '/results', {query => qterm, qtype => 'author'}, ['page', 'expand']);
@@ -54,11 +70,31 @@ BLOCK build_author_links;
         
         # schema.org changes
         IF type == 'author';
-            iprop = ' itemprop="accountablePerson"';
+            IF tag.substr(1,2) == '10' && args.schema.itemtype && args.schema.itemtype.match('MusicAlbum');
+                iprop = ' typeof="MusicGroup" property="byArtist"';
+            ELSIF tag.substr(1,2) == '00';
+                iprop = ' typeof="Person" property="author"';
+            ELSE;
+                iprop = ' typeof="Organization" property="author"';
+            END;
         ELSIF type == 'added';
-            iprop = ' itemprop="contributor"';
+            IF tag.substr(1,2) == '00';
+                iprop = ' typeOf="Person" property="contributor"';
+            ELSE;
+                iprop = ' typeOf="Organization" property="contributor"';
+            END;
         END;
-        '<a href="' _ url _ '"' _ iprop _ '>' _ term.replace('^\s+', '') _ '</a>';
+        '<span' _ iprop _ ' resource="' _ contrib_ref _ '"><a href="' _ url _ '">';
+        IF iprop; '<span property="name" about="' _ contrib_ref _ '">'; END;
+        term.replace('^\s+', '');
+        IF iprop; '</span>'; END;
+        IF birthdate;
+            ' <span property="birthDate" about="' _ contrib_ref _ '">' _ birthdate _ '</span>-';
+        END;
+        IF deathdate;
+            '<span property="deathDate" about="' _ contrib_ref _ '">' _ deathdate _ '</span>';
+        END;
+        '</a>'; # End search link
         FOREACH link880 IN graphics;
             diratt = '';
             IF link880.dir;
@@ -68,7 +104,8 @@ BLOCK build_author_links;
             link880.value | html;
             '</span>';
         END;
-        ' (' _ author_type _ '). ';
+        ' (<span property="description" about="' _ contrib_ref _ '">' _ author_type _ '</span>). ';
+        '</span>'; # End author span
     END;
 END;
 %]

@@ -2,31 +2,38 @@
 <div class="results_header_nav1">
     <span class="h1">[% ctx.bookbag ? l('List Contents') : l('Search Results') %]</span>
     <span nowrap="nowrap" class="result_number">
-                [% |l(ctx.result_start, ctx.result_stop, ctx.hit_count) %]
-                Results <strong>[_1]</strong> - <strong>[_2]</strong> of <strong>[_3]</strong>
-                [% END %]
+                [%~ |l('<span class="result_count_number">' _ ctx.result_start _'</span>',
+                '<span class="result_count_number">' _ ctx.result_stop _ '</span>',
+                '<span class="result_count_number">' _ ctx.hit_count _ '</span>')  ~%]
+                Results [_1] - [_2] of about [_3]
+                [%~ END %]
                 <span style='padding-left: 6px;'>
-                    [% |l(page + 1, page_count) %](page <strong>[_1]</strong> of <strong>[_2]</strong>)[% END %]
+                    [%~ |l('<span class="result_count_number">' _ (page + 1) _ '</span>',
+                    '<span class="result_count_number">' _ page_count _ '</span>') ~%]
+                    (page [_1] of [_2])
+                    [%~ END %]
                 </span>
     </span>
     [%- INCLUDE "opac/parts/pref_lib_display.tt2" %]
     <span>
                 <span class='start_end_links_span'>
 
-                    [%  class = 'search_page_nav_link';
+                    [%- class = 'search_page_nav_link';
                         href = '#';
                         IF page > 0;
                             href = mkurl('', {page => page - 1});
-                        ELSE; class = class _ ' invisible'; END;
-                    %]
+                    -%]
                     <a class='[% class %]' href='[% href %]' 
                         title='[% l("Previous page") %]'><span class="nav_arrow_fix">&#9668;</span> [% l('Previous') %] </a>
+                    [%- END;
 
-                    <span style='padding-left: 11px; padding-right:11px;'>
-                        [%  # show links to 4 previous pages, the current page, and 3 more pages.
-                            added = 0;
-                            pageitr = page - 5; 
-                            IF page_count > 1; # no need to paginate 1 page
+                        # show links to 4 previous pages, the current page, and 3 more pages.
+                        added = 0;
+                        pageitr = page - 5; 
+                        IF page_count > 1; # no need to paginate 1 page
+                    -%]
+                    <span class='results-paginator-list'>
+                    [%-
                                 WHILE (pageitr = pageitr + 1) < page_count;
                                     IF pageitr < 0; NEXT; END;
                                     IF pageitr == page; %]
@@ -37,18 +44,18 @@
                                     added = added + 1;
                                     IF added == 8; LAST; END;
                                 END;
-                            END;
-                        %]
+                    -%]
                     </span>
+                    [%- END;
 
-                    [%  class = 'search_page_nav_link';
+                        class = 'search_page_nav_link';
                         href = '#';
                         IF (page + 1) < page_count;
                             href = mkurl('', {page => page + 1});
-                        ELSE; class = class _ ' invisible'; END;
-                    %]
+                    -%]
                     <a class='[% class %]' href='[% href %]' 
                         title='[% l("Next page") %]'> [% l('Next') %] <span class="nav_arrow_fix">&#9658;</span></a>
+                    [%- END; -%]
                 </span>
     </span>
 </div>

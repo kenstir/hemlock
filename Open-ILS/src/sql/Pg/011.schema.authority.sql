@@ -35,8 +35,11 @@ CREATE TABLE authority.control_set_authority_field (
     tag         CHAR(3) NOT NULL,
     nfi         CHAR(1),          -- non-filing indicator
     sf_list     TEXT    NOT NULL,
+    display_sf_list     TEXT NOT NULL,
     name        TEXT    NOT NULL, -- i18n
-    description TEXT              -- i18n
+    description TEXT,             -- i18n
+    joiner      TEXT,
+    linking_subfield CHAR(1)
 );
 
 CREATE TABLE authority.control_set_bib_field (
@@ -44,6 +47,57 @@ CREATE TABLE authority.control_set_bib_field (
     authority_field INT     NOT NULL REFERENCES authority.control_set_authority_field (id) ON UPDATE CASCADE ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED,
     tag             CHAR(3) NOT NULL
 );
+
+-- Seed data will be generated from class <-> axis mapping
+CREATE TABLE authority.control_set_bib_field_metabib_field_map (
+    id              SERIAL  PRIMARY KEY,
+    bib_field       INT     NOT NULL REFERENCES authority.control_set_bib_field (id) ON UPDATE CASCADE ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED,
+    metabib_field   INT     NOT NULL REFERENCES config.metabib_field (id) ON UPDATE CASCADE ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED,
+    CONSTRAINT a_bf_mf_map_once UNIQUE (bib_field, metabib_field)
+);
+
+CREATE VIEW authority.control_set_auth_field_metabib_field_map_main AS
+    SELECT  DISTINCT b.authority_field, m.metabib_field
+      FROM  authority.control_set_bib_field_metabib_field_map m JOIN authority.control_set_bib_field b ON (b.id = m.bib_field);
+COMMENT ON VIEW authority.control_set_auth_field_metabib_field_map_main IS $$metabib fields for main entry auth fields$$;
+
+CREATE VIEW authority.control_set_auth_field_metabib_field_map_refs_only AS
+    SELECT  DISTINCT a.id AS authority_field, m.metabib_field
+      FROM  authority.control_set_authority_field a
+            JOIN authority.control_set_authority_field ame ON (a.main_entry = ame.id)
+            JOIN authority.control_set_bib_field b ON (b.authority_field = ame.id)
+            JOIN authority.control_set_bib_field_metabib_field_map mf ON (mf.bib_field = b.id)
+            JOIN authority.control_set_auth_field_metabib_field_map_main m ON (ame.id = m.authority_field);
+COMMENT ON VIEW authority.control_set_auth_field_metabib_field_map_refs_only IS $$metabib fields for NON-main entry auth fields$$;
+
+CREATE VIEW authority.control_set_auth_field_metabib_field_map_refs AS
+    SELECT * FROM authority.control_set_auth_field_metabib_field_map_main
+        UNION
+    SELECT * FROM authority.control_set_auth_field_metabib_field_map_refs_only;
+COMMENT ON VIEW authority.control_set_auth_field_metabib_field_map_refs IS $$metabib fields for all auth fields$$;
+
+
+-- blind refs only is probably what we want for lookup in bib/auth browse
+CREATE VIEW authority.control_set_auth_field_metabib_field_map_blind_refs_only AS
+    SELECT  r.*
+      FROM  authority.control_set_auth_field_metabib_field_map_refs_only r
+            JOIN authority.control_set_authority_field a ON (r.authority_field = a.id)
+      WHERE linking_subfield IS NULL;
+COMMENT ON VIEW authority.control_set_auth_field_metabib_field_map_blind_refs_only IS $$metabib fields for NON-main entry auth fields that can't be linked to other records$$; -- '
+
+CREATE VIEW authority.control_set_auth_field_metabib_field_map_blind_refs AS
+    SELECT  r.*
+      FROM  authority.control_set_auth_field_metabib_field_map_refs r
+            JOIN authority.control_set_authority_field a ON (r.authority_field = a.id)
+      WHERE linking_subfield IS NULL;
+COMMENT ON VIEW authority.control_set_auth_field_metabib_field_map_blind_refs IS $$metabib fields for all auth fields that can't be linked to other records$$; -- '
+
+CREATE VIEW authority.control_set_auth_field_metabib_field_map_blind_main AS
+    SELECT  r.*
+      FROM  authority.control_set_auth_field_metabib_field_map_main r
+            JOIN authority.control_set_authority_field a ON (r.authority_field = a.id)
+      WHERE linking_subfield IS NULL;
+COMMENT ON VIEW authority.control_set_auth_field_metabib_field_map_blind_main IS $$metabib fields for main entry auth fields that can't be linked to other records$$; -- '
 
 CREATE TABLE authority.thesaurus (
     code        TEXT    PRIMARY KEY,     -- MARC21 thesaurus code
@@ -85,6 +139,13 @@ CREATE INDEX authority_record_deleted_idx ON authority.record_entry(deleted) WHE
 CREATE TRIGGER a_marcxml_is_well_formed BEFORE INSERT OR UPDATE ON authority.record_entry FOR EACH ROW EXECUTE PROCEDURE biblio.check_marcxml_well_formed();
 CREATE TRIGGER b_maintain_901 BEFORE INSERT OR UPDATE ON authority.record_entry FOR EACH ROW EXECUTE PROCEDURE evergreen.maintain_901();
 CREATE TRIGGER c_maintain_control_numbers BEFORE INSERT OR UPDATE ON authority.record_entry FOR EACH ROW EXECUTE PROCEDURE maintain_control_numbers();
+
+CREATE TABLE authority.authority_linking (
+    id      BIGSERIAL PRIMARY KEY,
+    source  BIGINT REFERENCES authority.record_entry (id) NOT NULL,
+    target  BIGINT REFERENCES authority.record_entry (id) NOT NULL,
+    field   INT REFERENCES authority.control_set_authority_field (id) NOT NULL
+);
 
 CREATE TABLE authority.bib_linking (
     id          BIGSERIAL   PRIMARY KEY,
@@ -152,12 +213,14 @@ DECLARE
     tag_used        TEXT;
     nfi_used        TEXT;
     sf              TEXT;
+    sf_node         TEXT;
+    tag_node        TEXT;
     thes_code       TEXT;
     cset            INT;
     heading_text    TEXT;
     tmp_text        TEXT;
     first_sf        BOOL;
-    auth_id         INT DEFAULT oils_xpath_string('//*[@tag="901"]/*[local-name()="subfield" and @code="c"]', marcxml)::INT;
+    auth_id         INT DEFAULT COALESCE(NULLIF(oils_xpath_string('//*[@tag="901"]/*[local-name()="subfield" and @code="c"]', marcxml), ''), '0')::INT; 
 BEGIN
     SELECT control_set INTO cset FROM authority.record_entry WHERE id = auth_id;
 
@@ -180,35 +243,43 @@ BEGIN
         tag_used := acsaf.tag;
         nfi_used := acsaf.nfi;
         first_sf := TRUE;
-        FOR sf IN SELECT * FROM regexp_split_to_table(acsaf.sf_list,'') LOOP
-            tmp_text := oils_xpath_string('//*[@tag="'||tag_used||'"]/*[@code="'||sf||'"]', marcxml);
 
-            IF first_sf AND tmp_text IS NOT NULL AND nfi_used IS NOT NULL THEN
+        FOR tag_node IN SELECT unnest(oils_xpath('//*[@tag="'||tag_used||'"]',marcxml)) LOOP
+            FOR sf_node IN SELECT unnest(oils_xpath('./*[contains("'||acsaf.sf_list||'",@code)]',tag_node)) LOOP
 
-                tmp_text := SUBSTRING(
-                    tmp_text FROM
-                    COALESCE(
-                        NULLIF(
-                            REGEXP_REPLACE(
-                                oils_xpath_string('//*[@tag="'||tag_used||'"]/@ind'||nfi_used, marcxml),
-                                $$\D+$$,
-                                '',
-                                'g'
-                            ),
-                            ''
-                        )::INT,
-                        0
-                    ) + 1
-                );
+                tmp_text := oils_xpath_string('.', sf_node);
+                sf := oils_xpath_string('./@code', sf_node);
 
-            END IF;
+                IF first_sf AND tmp_text IS NOT NULL AND nfi_used IS NOT NULL THEN
 
-            first_sf := FALSE;
+                    tmp_text := SUBSTRING(
+                        tmp_text FROM
+                        COALESCE(
+                            NULLIF(
+                                REGEXP_REPLACE(
+                                    oils_xpath_string('./@ind'||nfi_used, tag_node),
+                                    $$\D+$$,
+                                    '',
+                                    'g'
+                                ),
+                                ''
+                            )::INT,
+                            0
+                        ) + 1
+                    );
 
-            IF tmp_text IS NOT NULL AND tmp_text <> '' THEN
-                heading_text := heading_text || E'\u2021' || sf || ' ' || tmp_text;
-            END IF;
+                END IF;
+
+                first_sf := FALSE;
+
+                IF tmp_text IS NOT NULL AND tmp_text <> '' THEN
+                    heading_text := heading_text || E'\u2021' || sf || ' ' || tmp_text;
+                END IF;
+            END LOOP;
+
+            EXIT WHEN heading_text <> '';
         END LOOP;
+
         EXIT WHEN heading_text <> '';
     END LOOP;
 
@@ -251,35 +322,39 @@ DECLARE
     sf              TEXT;
     cset            INT;
     heading_text    TEXT;
+    joiner_text     TEXT;
     sort_text       TEXT;
     tmp_text        TEXT;
     tmp_xml         TEXT;
     first_sf        BOOL;
-    auth_id         INT DEFAULT oils_xpath_string('//*[@tag="901"]/*[local-name()="subfield" and @code="c"]', marcxml)::INT;
+    auth_id         INT DEFAULT COALESCE(NULLIF(oils_xpath_string('//*[@tag="901"]/*[local-name()="subfield" and @code="c"]', marcxml), ''), '0')::INT; 
 BEGIN
 
-    res.record := auth_id;
+    SELECT control_set INTO cset FROM authority.record_entry WHERE id = auth_id;
 
-    SELECT  control_set INTO cset
-      FROM  authority.control_set_authority_field
-      WHERE tag IN ( SELECT UNNEST(XPATH('//*[starts-with(@tag,"1")]/@tag',marcxml::XML)::TEXT[]) )
-      LIMIT 1;
+    IF cset IS NULL THEN
+        SELECT  control_set INTO cset
+          FROM  authority.control_set_authority_field
+          WHERE tag IN ( SELECT  UNNEST(XPATH('//*[starts-with(@tag,"1")]/@tag',marcxml::XML)::TEXT[]))
+          LIMIT 1;
+    END IF;
+
+    res.record := auth_id;
 
     FOR acsaf IN SELECT * FROM authority.control_set_authority_field WHERE control_set = cset LOOP
 
         res.atag := acsaf.id;
         tag_used := acsaf.tag;
         nfi_used := acsaf.nfi;
+        joiner_text := COALESCE(acsaf.joiner, ' ');
 
         FOR tmp_xml IN SELECT UNNEST(XPATH('//*[@tag="'||tag_used||'"]', marcxml::XML)) LOOP
-            heading_text := '';
 
-            FOR sf IN SELECT * FROM regexp_split_to_table(acsaf.sf_list,'') LOOP
-                heading_text := heading_text || COALESCE( ' ' || oils_xpath_string('//*[@code="'||sf||'"]',tmp_xml::TEXT), '');
-            END LOOP;
+            heading_text := COALESCE(
+                oils_xpath_string('./*[contains("'||acsaf.display_sf_list||'",@code)]', tmp_xml::TEXT, joiner_text),
+                ''
+            );
 
-            heading_text := public.naco_normalize(heading_text);
-            
             IF nfi_used IS NOT NULL THEN
 
                 sort_text := SUBSTRING(
@@ -287,7 +362,7 @@ BEGIN
                     COALESCE(
                         NULLIF(
                             REGEXP_REPLACE(
-                                oils_xpath_string('//*[@tag="'||tag_used||'"]/@ind'||nfi_used, marcxml),
+                                oils_xpath_string('./@ind'||nfi_used, tmp_xml::TEXT),
                                 $$\D+$$,
                                 '',
                                 'g'
@@ -304,7 +379,8 @@ BEGIN
 
             IF heading_text IS NOT NULL AND heading_text <> '' THEN
                 res.value := heading_text;
-                res.sort_value := sort_text;
+                res.sort_value := public.naco_normalize(sort_text);
+                res.index_vector = to_tsvector('keyword'::regconfig, res.sort_value);
                 RETURN NEXT res;
             END IF;
 
@@ -608,30 +684,32 @@ CREATE OR REPLACE FUNCTION authority.axis_authority_tags(a TEXT) RETURNS INT[] A
     SELECT ARRAY_ACCUM(field) FROM authority.browse_axis_authority_field_map WHERE axis = $1;
 $$ LANGUAGE SQL;
 
-CREATE OR REPLACE FUNCTION authority.axis_authority_tags_refs(a TEXT) RETURNS INT[] AS $$
-    SELECT  ARRAY_CAT(
-                ARRAY[a.field],
-                (SELECT ARRAY_ACCUM(x.id) FROM authority.control_set_authority_field x WHERE x.main_entry = a.field)
-            )
-      FROM  authority.browse_axis_authority_field_map a
-      WHERE axis = $1
-$$ LANGUAGE SQL;
 
+CREATE OR REPLACE FUNCTION authority.axis_authority_tags_refs(a TEXT) RETURNS INT[] AS $$
+    SELECT ARRAY_AGG(y) from (
+       SELECT  unnest(ARRAY_CAT(
+                 ARRAY[a.field],
+                 (SELECT ARRAY_ACCUM(x.id) FROM authority.control_set_authority_field x WHERE x.main_entry = a.field)
+             )) y
+       FROM  authority.browse_axis_authority_field_map a
+       WHERE axis = $1) x
+$$ LANGUAGE SQL;
 
 
 CREATE OR REPLACE FUNCTION authority.btag_authority_tags(btag TEXT) RETURNS INT[] AS $$
     SELECT ARRAY_ACCUM(authority_field) FROM authority.control_set_bib_field WHERE tag = $1
 $$ LANGUAGE SQL;
 
-CREATE OR REPLACE FUNCTION authority.btag_authority_tags_refs(btag TEXT) RETURNS INT[] AS $$
-    SELECT  ARRAY_CAT(
-                ARRAY[a.authority_field],
-                (SELECT ARRAY_ACCUM(x.id) FROM authority.control_set_authority_field x WHERE x.main_entry = a.authority_field)
-            )
-      FROM  authority.control_set_bib_field a
-      WHERE a.tag = $1
-$$ LANGUAGE SQL;
 
+CREATE OR REPLACE FUNCTION authority.btag_authority_tags_refs(btag TEXT) RETURNS INT[] AS $$
+    SELECT ARRAY_AGG(y) from (
+        SELECT  unnest(ARRAY_CAT(
+                    ARRAY[a.authority_field],
+                    (SELECT ARRAY_ACCUM(x.id) FROM authority.control_set_authority_field x WHERE x.main_entry = a.authority_field)
+                )) y
+      FROM  authority.control_set_bib_field a
+      WHERE a.tag = $1) x
+$$ LANGUAGE SQL;
 
 
 CREATE OR REPLACE FUNCTION authority.atag_authority_tags(atag TEXT) RETURNS INT[] AS $$
@@ -639,14 +717,14 @@ CREATE OR REPLACE FUNCTION authority.atag_authority_tags(atag TEXT) RETURNS INT[
 $$ LANGUAGE SQL;
 
 CREATE OR REPLACE FUNCTION authority.atag_authority_tags_refs(atag TEXT) RETURNS INT[] AS $$
-    SELECT  ARRAY_CAT(
-                ARRAY[a.id],
-                (SELECT ARRAY_ACCUM(x.id) FROM authority.control_set_authority_field x WHERE x.main_entry = a.id)
-            )
+    SELECT ARRAY_AGG(y) from (
+        SELECT  unnest(ARRAY_CAT(
+                    ARRAY[a.id],
+                    (SELECT ARRAY_ACCUM(x.id) FROM authority.control_set_authority_field x WHERE x.main_entry = a.id)
+                )) y
       FROM  authority.control_set_authority_field a
-      WHERE a.tag = $1
+      WHERE a.tag = $1) x
 $$ LANGUAGE SQL;
-
 
 
 CREATE OR REPLACE FUNCTION authority.axis_browse_center( a TEXT, q TEXT, page INT DEFAULT 0, pagesize INT DEFAULT 9 ) RETURNS SETOF BIGINT AS $$

@@ -644,6 +644,9 @@ sub scoped_bib_holdings_summary {
     my %statement_blob;
     for my $type ( keys %type_blob ) {
         my ($mfhd,$list) = _summarize_contents(new_editor(), $type_blob{$type});
+
+        return {} if $U->event_code($mfhd); # _summarize_contents() failed, bad data?
+
         $statement_blob{$type} = $list;
     }
 
@@ -780,18 +783,18 @@ sub _update_sunit {
 }
 
 __PACKAGE__->register_method(
-	method	=> "retrieve_unit_list",
+    method  => "retrieve_unit_list",
     authoritative => 1,
-	api_name	=> "open-ils.serial.unit_list.retrieve"
+    api_name    => "open-ils.serial.unit_list.retrieve"
 );
 
 sub retrieve_unit_list {
 
-	my( $self, $client, @sdist_ids ) = @_;
+    my( $self, $client, @sdist_ids ) = @_;
 
-	if(ref($sdist_ids[0])) { @sdist_ids = @{$sdist_ids[0]}; }
+    if(ref($sdist_ids[0])) { @sdist_ids = @{$sdist_ids[0]}; }
 
-	my $e = new_editor();
+    my $e = new_editor();
 
     my $query = {
         'select' => 
@@ -1496,6 +1499,7 @@ sub _prepare_unit {
     }
 
     my ($mfhd, $formatted_parts) = _summarize_contents($e, $issuances);
+    return $mfhd if $U->event_code($mfhd);
 
     # special case for single formatted_part (may have summarized version)
     if (@$formatted_parts == 1) {
@@ -1527,6 +1531,7 @@ sub _prepare_summaries {
     my ($e, $issuances, $sdist, $type) = @_;
 
     my ($mfhd, $formatted_parts) = _summarize_contents($e, $issuances, $sdist);
+    return $mfhd if $U->event_code($mfhd);
 
     my $search_method = "search_serial_${type}_summary";
     my $summary = $e->$search_method([{"distribution" => $sdist->id}]);
@@ -1812,7 +1817,6 @@ sub _build_unit {
     return $unit;
 }
 
-
 sub _summarize_contents {
     my $editor = shift;
     my $issuances = shift;
@@ -1891,11 +1895,24 @@ sub _summarize_contents {
 
     my @formatted_parts;
     my @scap_fields_ordered = $mfhd->field('85[345]');
+
     foreach my $scap_field (@scap_fields_ordered) { #TODO: use generic MFHD "summarize" method, once available
-       my @updated_holdings = $mfhd->get_compressed_holdings($scap_field);
-       foreach my $holding (@updated_holdings) {
-           push(@formatted_parts, $holding->format);
-       }
+        my @updated_holdings;
+        eval {
+            @updated_holdings = $mfhd->get_combined_holdings($scap_field);
+        };
+        if ($@) {
+            my $msg = "get_combined_holdings(): $@ ; using sdist ID #" .
+                ($sdist ? $sdist->id : "<NONE>") . " and " .
+                scalar(@$issuances) . " issuances, of which one has ID #" .
+                $issuances->[0]->id;
+
+            $msg =~ s/\n//gm;
+            $logger->error($msg);
+            return new OpenILS::Event("BAD_PARAMS", note => $msg);
+        }
+
+        push @formatted_parts, map { $_->format } @updated_holdings;
     }
 
     return ($mfhd, \@formatted_parts);
@@ -2254,89 +2271,89 @@ sub fleshed_serial_subscription_retrieve_batch {
 }
 
 __PACKAGE__->register_method(
-	method	=> "retrieve_sub_tree",
+    method  => "retrieve_sub_tree",
     authoritative => 1,
-	api_name	=> "open-ils.serial.subscription_tree.retrieve"
+    api_name    => "open-ils.serial.subscription_tree.retrieve"
 );
 
 __PACKAGE__->register_method(
-	method	=> "retrieve_sub_tree",
-	api_name	=> "open-ils.serial.subscription_tree.global.retrieve"
+    method  => "retrieve_sub_tree",
+    api_name    => "open-ils.serial.subscription_tree.global.retrieve"
 );
 
 sub retrieve_sub_tree {
 
-	my( $self, $client, $user_session, $docid, @org_ids ) = @_;
+    my( $self, $client, $user_session, $docid, @org_ids ) = @_;
 
-	if(ref($org_ids[0])) { @org_ids = @{$org_ids[0]}; }
+    if(ref($org_ids[0])) { @org_ids = @{$org_ids[0]}; }
 
-	$docid = "$docid";
+    $docid = "$docid";
 
-	# TODO: permission support
-	if(!@org_ids and $user_session) {
-		my $user_obj = 
-			OpenILS::Application::AppUtils->check_user_session( $user_session ); #throws EX on error
-			@org_ids = ($user_obj->home_ou);
-	}
+    # TODO: permission support
+    if(!@org_ids and $user_session) {
+        my $user_obj = 
+            OpenILS::Application::AppUtils->check_user_session( $user_session ); #throws EX on error
+            @org_ids = ($user_obj->home_ou);
+    }
 
-	if( $self->api_name =~ /global/ ) {
-		return _build_subs_list( { record_entry => $docid } ); # TODO: filter for !deleted, or active?
+    if( $self->api_name =~ /global/ ) {
+        return _build_subs_list( { record_entry => $docid } ); # TODO: filter for !deleted, or active?
 
-	} else {
+    } else {
 
-		my @all_subs;
-		for my $orgid (@org_ids) {
-			my $subs = _build_subs_list( 
-					{ record_entry => $docid, owning_lib => $orgid } );# TODO: filter for !deleted, or active?
-			push( @all_subs, @$subs );
-		}
-		
-		return \@all_subs;
-	}
+        my @all_subs;
+        for my $orgid (@org_ids) {
+            my $subs = _build_subs_list( 
+                    { record_entry => $docid, owning_lib => $orgid } );# TODO: filter for !deleted, or active?
+            push( @all_subs, @$subs );
+        }
+        
+        return \@all_subs;
+    }
 
-	return undef;
+    return undef;
 }
 
 sub _build_subs_list {
-	my $search_hash = shift;
+    my $search_hash = shift;
 
-	#$search_hash->{deleted} = 'f';
-	my $e = new_editor();
+    #$search_hash->{deleted} = 'f';
+    my $e = new_editor();
 
-	my $subs = $e->search_serial_subscription([$search_hash, { 'order_by' => {'ssub' => 'id'} }]);
+    my $subs = $e->search_serial_subscription([$search_hash, { 'order_by' => {'ssub' => 'id'} }]);
 
-	my @built_subs;
+    my @built_subs;
 
-	for my $sub (@$subs) {
+    for my $sub (@$subs) {
 
         # TODO: filter on !deleted?
-		my $dists = $e->search_serial_distribution(
+        my $dists = $e->search_serial_distribution(
             [{ subscription => $sub->id }, { 'order_by' => {'sdist' => 'label'} }]
             );
 
-		#$dists = [ sort { $a->label cmp $b->label } @$dists  ];
+        #$dists = [ sort { $a->label cmp $b->label } @$dists  ];
 
-		$sub->distributions($dists);
+        $sub->distributions($dists);
         
         # TODO: filter on !deleted?
-		my $issuances = $e->search_serial_issuance(
-			[{ subscription => $sub->id }, { 'order_by' => {'siss' => 'label'} }]
+        my $issuances = $e->search_serial_issuance(
+            [{ subscription => $sub->id }, { 'order_by' => {'siss' => 'label'} }]
             );
 
-		#$issuances = [ sort { $a->label cmp $b->label } @$issuances  ];
-		$sub->issuances($issuances);
+        #$issuances = [ sort { $a->label cmp $b->label } @$issuances  ];
+        $sub->issuances($issuances);
 
         # TODO: filter on !deleted?
-		my $scaps = $e->search_serial_caption_and_pattern(
-			[{ subscription => $sub->id }, { 'order_by' => {'scap' => 'id'} }]
+        my $scaps = $e->search_serial_caption_and_pattern(
+            [{ subscription => $sub->id }, { 'order_by' => {'scap' => 'id'} }]
             );
 
-		#$scaps = [ sort { $a->id cmp $b->id } @$scaps  ];
-		$sub->scaps($scaps);
-		push( @built_subs, $sub );
-	}
+        #$scaps = [ sort { $a->id cmp $b->id } @$scaps  ];
+        $sub->scaps($scaps);
+        push( @built_subs, $sub );
+    }
 
-	return \@built_subs;
+    return \@built_subs;
 
 }
 
@@ -3252,7 +3269,7 @@ sub get_routing_list_users {
             "flesh" => 2,
             "flesh_fields" => {
                 "srlu" => [qw/reader stream/],
-                "au" => [qw/card home_ou/],
+                "au" => [qw/card home_ou mailing_address billing_address/],
                 "sstr" => ["distribution"]
             }
         }
@@ -3641,6 +3658,37 @@ sub clone_subscription {
 
     $e->commit or return $e->die_event;
     return $result;
+}
+
+__PACKAGE__->register_method(
+    "method" => "summary_test",
+    "api_name" => "open-ils.serial.summary_test",
+    "stream" => 1,
+    "api_level" => 1,
+    "argc" => 3
+);
+
+# This crummy little test method allows quicker reproduction of certain
+# failures (e.g. at item receive time) of the holdings summarization code.
+# Pass it an authtoken, an array of issuance IDs, and a single sdist ID
+sub summary_test {
+    my ($self, $conn, $authtoken, $iss_id_list, $sdist_id) = @_;
+
+    my $e = new_editor(authtoken => $authtoken, xact => 1);
+    return $e->die_event unless $e->checkauth;
+    return $e->die_event unless $e->allowed("RECEIVE_SERIAL");
+
+    my @issuances;
+    foreach my $id (@$iss_id_list) {
+        my $iss = $e->retrieve_serial_issuance($id) or return $e->die_event;
+        push @issuances, $iss;
+    }
+
+    my $dist = $e->retrieve_serial_distribution($sdist_id) or return $e->die_event;
+
+    $conn->respond(_summarize_contents($e, \@issuances, $dist));
+    $e->rollback;
+    return;
 }
 
 1;

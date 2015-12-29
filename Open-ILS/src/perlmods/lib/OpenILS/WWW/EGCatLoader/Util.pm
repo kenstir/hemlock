@@ -2,11 +2,14 @@ package OpenILS::WWW::EGCatLoader;
 use strict; use warnings;
 use Apache2::Const -compile => qw(OK DECLINED FORBIDDEN HTTP_INTERNAL_SERVER_ERROR REDIRECT HTTP_BAD_REQUEST);
 use File::Spec;
+use Time::HiRes qw/time sleep/;
+use OpenSRF::Utils::Cache;
 use OpenSRF::Utils::Logger qw/$logger/;
 use OpenILS::Utils::CStoreEditor qw/:funcs/;
 use OpenILS::Utils::Fieldmapper;
 use OpenILS::Application::AppUtils;
 use OpenSRF::MultiSession;
+
 my $U = 'OpenILS::Application::AppUtils';
 
 my $ro_object_subs; # cached subs
@@ -18,7 +21,8 @@ our %cache = ( # cached data
     search_filter_groups => {en_us => {}},
     aou_tree => {en_us => undef},
     aouct_tree => {},
-    eg_cache_hash => undef
+    eg_cache_hash => undef,
+    authority_fields => {en_us => {}}
 );
 
 sub init_ro_object_cache {
@@ -98,12 +102,12 @@ sub init_ro_object_cache {
         # fetch the org unit tree
         unless($cache{aou_tree}{$ctx->{locale}}) {
             my $tree = $e->search_actor_org_unit([
-			    {   parent_ou => undef},
-			    {   flesh            => -1,
-				    flesh_fields    => {aou =>  ['children']},
-				    order_by        => {aou => 'name'}
-			    }
-		    ])->[0];
+                {   parent_ou => undef},
+                {   flesh            => -1,
+                    flesh_fields    => {aou =>  ['children']},
+                    order_by        => {aou => 'name'}
+                }
+            ])->[0];
 
             # flesh the org unit type for each org unit
             # and simultaneously set the id => aou map cache
@@ -135,6 +139,13 @@ sub init_ro_object_cache {
     $ro_object_subs->{aou_list} = sub {
         $ro_object_subs->{aou_tree}->(); # force the org tree to load
         return [ values %{$cache{map}{$ctx->{locale}}{aou}} ];
+    };
+
+    # returns the org unit object by shortname
+    $ro_object_subs->{get_aou_by_shortname} = sub {
+        my $sn = shift or return undef;
+        my $list = $ro_object_subs->{aou_list}->();
+        return (grep {$_->shortname eq $sn} @$list)[0];
     };
 
     $ro_object_subs->{aouct_tree} = sub {
@@ -220,6 +231,21 @@ sub init_ro_object_cache {
         return $cache{org_settings}{$ctx->{locale}}{$org_id}{$setting};
     };
 
+    # retrieve and cache acsaf values
+    $ro_object_subs->{get_authority_fields} = sub {
+        my ($control_set) = @_;
+
+        if (not exists $cache{authority_fields}{$ctx->{locale}}{$control_set}) {
+            my $acs = $e->search_authority_control_set_authority_field(
+                {control_set => $control_set}
+            ) or return;
+            $cache{authority_fields}{$ctx->{locale}}{$control_set} =
+                +{ map { $_->id => $_ } @$acs };
+        }
+
+        return $cache{authority_fields}{$ctx->{locale}}{$control_set};
+    };
+
     $ctx->{$_} = $ro_object_subs->{$_} for keys %$ro_object_subs;
 }
 
@@ -241,6 +267,7 @@ sub generic_redirect {
     return Apache2::Const::REDIRECT;
 }
 
+my $unapi_cache;
 sub get_records_and_facets {
     my ($self, $rec_ids, $facet_key, $unapi_args) = @_;
 
@@ -249,7 +276,16 @@ sub get_records_and_facets {
     $unapi_args->{depth} ||= $self->ctx->{aou_tree}->()->ou_type->depth;
     $unapi_args->{flesh_depth} ||= 5;
 
-    my @data;
+    $unapi_cache ||= OpenSRF::Utils::Cache->new('global');
+    my $unapi_cache_key_suffix = join(
+        '_',
+        $unapi_args->{site},
+        $unapi_args->{depth},
+        $unapi_args->{flesh_depth},
+        ($unapi_args->{pref_lib} || '')
+    );
+
+    my %tmp_data;
     my $outer_self = $self;
     $self->timelog("get_records_and_facets(): about to call multisession");
     my $ses = OpenSRF::MultiSession->new(
@@ -275,24 +311,67 @@ sub get_records_and_facets {
             } else {
                 $logger->warn("Missing 901 subfield 'c' in " . $xml->toString());
             }
-            push(@data, {id => $bre_id, marc_xml => $xml});
+            $tmp_data{$bre_id} = {id => $bre_id, marc_xml => $xml};
+
+            if ($bre_id) {
+                # Let other backends grab our data now that we're done.
+                my $key = 'TPAC_unapi_cache_'.$bre_id.'_'.$unapi_cache_key_suffix;
+                my $cache_data = $unapi_cache->get_cache($key);
+                if ($$cache_data{running}) {
+                    $unapi_cache->put_cache($key, { id => $bre_id, marc_xml => $data->{'unapi.bre'} }, 10);
+                }
+            }
+
+
             $outer_self->timelog("get_records_and_facets(): end of success handler");
         }
     );
 
     $self->timelog("get_records_and_facets(): about to call unapi.bre via json_query (rec_ids has " . scalar(@$rec_ids));
 
-    $ses->request(
-        'open-ils.cstore.json_query',
-         {from => [
-            'unapi.bre', $_, 'marcxml','record', 
-            $unapi_args->{flesh}, 
-            $unapi_args->{site}, 
-            $unapi_args->{depth}, 
-            'acn=>' . $unapi_args->{flesh_depth} . ',acp=>' . $unapi_args->{flesh_depth}, 
-            undef, undef, $unapi_args->{pref_lib}
-        ]}
-    ) for @$rec_ids;
+    my @loop_recs = @$rec_ids;
+    my %rec_timeout;
+
+    while (my $bid = shift @loop_recs) {
+
+        sleep(0.1) if $rec_timeout{$bid};
+
+        my $unapi_cache_key = 'TPAC_unapi_cache_'.$bid.'_'.$unapi_cache_key_suffix;
+        my $unapi_data = $unapi_cache->get_cache($unapi_cache_key) || {};
+
+        if ($unapi_data->{running}) { #cache entry from ongoing, concurrent retrieval
+            if (!$rec_timeout{$bid}) {
+                $rec_timeout{$bid} = time() + 10;
+            }
+
+            if ( time() > $rec_timeout{$bid} ) { # we've waited too long. just do it
+                $unapi_data = {};
+                delete $rec_timeout{$bid};
+            } else { # we'll pause next time around to let this one try again
+                push(@loop_recs, $bid);
+                next;
+            }
+        }
+
+        if ($unapi_data->{marc_xml}) { # we got data from the cache
+            $unapi_data->{marc_xml} = XML::LibXML->new->parse_string($unapi_data->{marc_xml})->documentElement;
+            $tmp_data{$unapi_data->{id}} = $unapi_data;
+        } else { # we're the first or we timed out. success_handler will populate the real value
+            $unapi_cache->put_cache($unapi_cache_key, { running => $$ }, 10);
+            $ses->request(
+                'open-ils.cstore.json_query',
+                 {from => [
+                    'unapi.bre', $bid, 'marcxml','record', 
+                    $unapi_args->{flesh}, 
+                    $unapi_args->{site}, 
+                    $unapi_args->{depth}, 
+                    'acn=>' . $unapi_args->{flesh_depth} . ',acp=>' . $unapi_args->{flesh_depth}, 
+                    undef, undef, $unapi_args->{pref_lib}
+                ]}
+            );
+        }
+
+    }
 
 
     $self->timelog("get_records_and_facets():almost ready to fetch facets");
@@ -337,37 +416,31 @@ sub get_records_and_facets {
 
     $search->kill_me;
 
-    return ($facets, @data);
+    return ($facets, map { $tmp_data{$_} } @$rec_ids);
 }
 
-# TODO: blend this code w/ ^-- get_records_and_facets
-sub fetch_marc_xml_by_id {
-    my ($self, $id_list) = @_;
-    $id_list = [$id_list] unless ref($id_list);
+sub _resolve_org_id_or_shortname {
+    my ($self, $str) = @_;
 
-    {
-        no warnings qw/numeric/;
-        $id_list = [map { int $_ } @$id_list];
-        $id_list = [grep { $_ > 0} @$id_list];
-    };
-
-    return {} if scalar(@$id_list) < 1;
-
-    # I'm just sure there needs to be some more efficient way to get all of
-    # this.
-    my $results = $self->editor->json_query({
-        "select" => {"bre" => ["id", "marc"]},
-        "from" => {"bre" => {}},
-        "where" => {"id" => $id_list}
-    }, {substream => 1}) or return $self->editor->die_event;
-
-    my $marc_xml = {};
-    for my $r (@$results) {
-        $marc_xml->{$r->{"id"}} =
-            (new XML::LibXML)->parse_string($r->{"marc"});
+    if (length $str) {
+        # Match on shortname case insensitively, but only if there's exactly
+        # one match.  We wouldn't want the system to arbitrarily interpret
+        # 'foo' as either the org unit with shortname 'FOO' or 'Foo' and fail
+        # to make it clear to the user which one was chosen and why.
+        my $res = $self->editor->search_actor_org_unit({
+            shortname => {
+                '=' => {
+                    transform => 'evergreen.lowercase',
+                    value => lc($str)
+                }
+            }
+        });
+        return $res->[0]->id if $res and @$res == 1;
     }
 
-    return $marc_xml;
+    # Note that we don't validate IDs; we only try a shortname lookup and then
+    # assume anything else must be an ID.
+    return int($str); # Wrapping in int() prevents 500 on unmatched string.
 }
 
 sub _get_search_lib {
@@ -381,6 +454,14 @@ sub _get_search_lib {
     return $loc if $loc;
 
     # loc param takes precedence
+    # XXX ^-- over what exactly? We could use clarification here. To me it looks
+    # like locg takes precedence over loc which in turn takes precedence over
+    # request headers which take precedence over pref_lib (which can be
+    # specified a lot of different ways and eventually falls back to
+    # physical_loc) and it all finally defaults to top of the org tree.
+    # To say nothing of all the code that doesn't look to this function at all
+    # but rather accesses some subset of these inputs directly.
+
     $loc = $self->cgi->param('loc');
     return $loc if $loc;
 
@@ -415,7 +496,8 @@ sub _get_pref_lib {
         return OpenSRF::Utils::JSON->JSON2perl($lset->value) if $lset;
 
         # Otherwise return the user's home library
-        return $ctx->{user}->home_ou;
+        my $ou = $ctx->{user}->home_ou;
+        return ref($ou) ? $ou->id : $ou;
     }
 
     if ($ctx->{physical_loc}) {
@@ -467,7 +549,8 @@ sub extract_copy_location_group_info {
     my $ctx = $self->ctx;
     if (my $clump = $self->cgi->param('locg')) {
         my ($org, $grp) = split(/:/, $clump);
-        $ctx->{copy_location_group_org} = $org;
+        $ctx->{copy_location_group_org} =
+            $self->_resolve_org_id_or_shortname($org);
         $ctx->{copy_location_group} = $grp if $grp;
     }
 }
@@ -670,7 +753,24 @@ sub load_org_util_funcs {
 
 }
 
+# returns the list of org unit IDs for which the 
+# selected org unit setting returned a true value
+sub setting_is_true_for_orgs {
+    my ($self, $setting) = @_;
+    my $ctx = $self->ctx;
+    my @valid_orgs;
 
+    my $test_org;
+    $test_org = sub {
+        my $org = shift;
+        push (@valid_orgs, $org->id) if
+            $ctx->{get_org_setting}->($org->id, $setting);
+        $test_org->($_) for @{$org->children};
+    };
+
+    $test_org->($ctx->{aou_tree}->());
+    return \@valid_orgs;
+}
     
 
 

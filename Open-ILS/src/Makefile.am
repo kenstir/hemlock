@@ -72,6 +72,8 @@ core_scripts =   $(examples)/oils_ctl.sh \
 		 $(supportscr)/thaw_expired_frozen_holds.srfsh \
 		 $(supportscr)/long-overdue-status-update.pl \
 		 $(supportscr)/action_trigger_runner.pl \
+		 $(supportscr)/purge_holds.srfsh \
+		 $(supportscr)/purge_circulations.srfsh \
 		 $(srcdir)/extras/eg_config \
 		 $(srcdir)/extras/openurl_map.pl \
 		 $(srcdir)/extras/import/marc_add_ids
@@ -140,13 +142,16 @@ gen_scripts = \
 	@srcdir@/extras/import/marc2sre.pl \
 	@srcdir@/extras/import/parallel_pg_loader.pl \
 	$(supportscr)/authority_control_fields.pl \
+	$(supportscr)/authority_authority_linker.pl \
 	$(supportscr)/eg_db_config \
 	$(supportscr)/marc_export
 
 gen_docs = \
 	$(examples)/apache/eg.conf \
 	$(examples)/apache/eg_vhost.conf \
-	$(examples)/apache/eg_startup
+	$(examples)/apache/eg_startup \
+	$(examples)/apache_24/eg_24.conf \
+	$(examples)/apache_24/eg_vhost_24.conf
 
 bin_SCRIPTS = $(core_scripts) $(gen_scripts) $(reporter_scripts) $(installautojs)
 
@@ -215,6 +220,10 @@ uninstall-hook:
 	$(do_subst) @srcdir@/extras/import/parallel_pg_loader.pl.in > "$@"
 	chmod 755 "$@"
 
+$(supportscr)/authority_authority_linker.pl: Makefile $(supportscr)/authority_authority_linker.pl.in
+	$(do_subst) $(supportscr)/authority_authority_linker.pl.in > "$@"
+	chmod 755 "$@"
+
 $(supportscr)/authority_control_fields.pl: Makefile $(supportscr)/authority_control_fields.pl.in
 	$(do_subst) $(supportscr)/authority_control_fields.pl.in > "$@"
 	chmod 755 "$@"
@@ -235,6 +244,12 @@ $(examples)/apache/eg_vhost.conf: Makefile $(examples)/apache/eg_vhost.conf.in
 
 $(examples)/apache/eg_startup: Makefile $(examples)/apache/eg_startup.in
 	$(do_subst) $(examples)/apache/eg_startup.in > "$@"
+
+$(examples)/apache_24/eg_24.conf: Makefile $(examples)/apache_24/eg.conf.in
+	$(do_subst) $(examples)/apache_24/eg.conf.in > "$@"
+
+$(examples)/apache_24/eg_vhost_24.conf: Makefile $(examples)/apache_24/eg_vhost.conf.in
+	$(do_subst) $(examples)/apache_24/eg_vhost.conf.in > "$@"
 
 #perl-install and string-templates-install	
 ilscore-install:

@@ -15,6 +15,11 @@ DROP FUNCTION IF EXISTS biblio.flatten_marc(text);
 -- These views depend on metabib.full_rec as well. Bye-bye!
 DROP VIEW IF EXISTS reporter.old_super_simple_record;
 DROP VIEW IF EXISTS reporter.simple_record;
+DROP VIEW IF EXISTS reporter.classic_item_list;
+
+\echo WARNING: The reporter.classic_item_list view was dropped if it existed.
+\echo If you use that view, please run the example.reporter-extension.sql script
+\echo to recreate it after rest of the schema upgrade is complete.
 
 -- Now we can drop metabib.full_rec.
 DROP VIEW IF EXISTS metabib.full_rec;
@@ -39,6 +44,9 @@ ALTER TABLE metabib.series_field_entry ALTER COLUMN index_vector TYPE pg_catalog
 ALTER TABLE metabib.subject_field_entry ALTER COLUMN index_vector TYPE pg_catalog.tsvector;
 ALTER TABLE metabib.title_field_entry ALTER COLUMN index_vector TYPE pg_catalog.tsvector;
 
+-- Make sure that tsearch2 exists as an extension (for a sufficiently
+-- old Evergreen database, it might still be an unpackaged contrib).
+CREATE EXTENSION IF NOT EXISTS tsearch2 SCHEMA public FROM unpackaged;
 -- Halfway there! Goodbye tsearch2 extension!
 DROP EXTENSION tsearch2;
 

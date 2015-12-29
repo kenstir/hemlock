@@ -27,6 +27,8 @@ INSERT INTO config.standing_penalty (id,name,label,block_list,staff_alert)
 	VALUES (3,'PATRON_EXCEEDS_CHECKOUT_COUNT',oils_i18n_gettext(3, 'Patron exceeds max checked out item threshold', 'csp', 'label'),'CIRC|FULFILL', TRUE);
 INSERT INTO config.standing_penalty (id,name,label,block_list,staff_alert)
 	VALUES (4,'PATRON_EXCEEDS_COLLECTIONS_WARNING',oils_i18n_gettext(4, 'Patron exceeds pre-collections warning fine threshold', 'csp', 'label'),'CIRC|FULFILL|HOLD|CAPTURE|RENEW', TRUE);
+INSERT INTO config.standing_penalty (id,name,label,block_list,staff_alert)
+	VALUES (5,'PATRON_EXCEEDS_LOST_COUNT',oils_i18n_gettext(5, 'Patron exceeds max lost item threshold', 'csp', 'label'),'CIRC|FULFILL|HOLD|CAPTURE|RENEW', TRUE);
 
 INSERT INTO config.standing_penalty (id,name,label,staff_alert) VALUES (20,'ALERT_NOTE',oils_i18n_gettext(20, 'Alerting Note, no blocks', 'csp', 'label'),TRUE);
 INSERT INTO config.standing_penalty (id,name,label) VALUES (21,'SILENT_NOTE',oils_i18n_gettext(21, 'Note, no blocks', 'csp', 'label'));
@@ -108,37 +110,37 @@ INSERT INTO config.xml_transform VALUES ( 'mods33', 'http://www.loc.gov/mods/v3'
 INSERT INTO config.xml_transform VALUES ( 'marc21expand880', 'http://www.loc.gov/MARC21/slim', 'marc', '' );
 
 -- Index Definitions
-INSERT INTO config.metabib_field ( id, field_class, name, label, format, xpath, facet_field ) VALUES 
-    (1, 'series', 'seriestitle', oils_i18n_gettext(1, 'Series Title', 'cmf', 'label'), 'mods32', $$//mods32:mods/mods32:relatedItem[@type="series"]/mods32:titleInfo$$, TRUE );
+INSERT INTO config.metabib_field ( id, field_class, name, label, format, xpath, facet_field, authority_xpath, browse_sort_xpath ) VALUES 
+    (1, 'series', 'seriestitle', oils_i18n_gettext(1, 'Series Title', 'cmf', 'label'), 'mods32', $$//mods32:mods/mods32:relatedItem[@type="series"]/mods32:titleInfo[@type="nfi"]$$, TRUE, '//@xlink:href', $$*[local-name() != "nonSort"]$$ );
 
-INSERT INTO config.metabib_field ( id, field_class, name, label, format, xpath ) VALUES 
-    (2, 'title', 'abbreviated', oils_i18n_gettext(2, 'Abbreviated Title', 'cmf', 'label'), 'mods32', $$//mods32:mods/mods32:titleInfo[mods32:title and (@type='abbreviated')]$$ );
-INSERT INTO config.metabib_field ( id, field_class, name, label, format, xpath ) VALUES 
-    (3, 'title', 'translated', oils_i18n_gettext(3, 'Translated Title', 'cmf', 'label'), 'mods32', $$//mods32:mods/mods32:titleInfo[mods32:title and (@type='translated')]$$ );
-INSERT INTO config.metabib_field ( id, field_class, name, label, format, xpath ) VALUES 
-    (4, 'title', 'alternative', oils_i18n_gettext(4, 'Alternate Title', 'cmf', 'label'), 'mods32', $$//mods32:mods/mods32:titleInfo[mods32:title and (@type='alternative')]$$ );
-INSERT INTO config.metabib_field ( id, field_class, name, label, format, xpath ) VALUES 
-    (5, 'title', 'uniform', oils_i18n_gettext(5, 'Uniform Title', 'cmf', 'label'), 'mods32', $$//mods32:mods/mods32:titleInfo[mods32:title and (@type='uniform')]$$ );
-INSERT INTO config.metabib_field ( id, field_class, name, label, format, xpath ) VALUES 
-    (6, 'title', 'proper', oils_i18n_gettext(6, 'Title Proper', 'cmf', 'label'), 'mods32', $$//mods32:mods/mods32:titleNonfiling[mods32:title and not (@type)]$$ );
+INSERT INTO config.metabib_field ( id, field_class, name, label, format, xpath, authority_xpath ) VALUES 
+    (2, 'title', 'abbreviated', oils_i18n_gettext(2, 'Abbreviated Title', 'cmf', 'label'), 'mods32', $$//mods32:mods/mods32:titleInfo[mods32:title and (@type='abbreviated')]$$, '//@xlink:href' );
+INSERT INTO config.metabib_field ( id, field_class, name, label, format, xpath, authority_xpath, browse_sort_xpath ) VALUES 
+    (3, 'title', 'translated', oils_i18n_gettext(3, 'Translated Title', 'cmf', 'label'), 'mods32', $$//mods32:mods/mods32:titleInfo[mods32:title and (@type='translated-nfi')]$$, '//@xlink:href', $$*[local-name() != "nonSort"]$$ );
+INSERT INTO config.metabib_field ( id, field_class, name, label, format, xpath, authority_xpath, browse_sort_xpath ) VALUES 
+    (4, 'title', 'alternative', oils_i18n_gettext(4, 'Alternate Title', 'cmf', 'label'), 'mods32', $$//mods32:mods/mods32:titleInfo[mods32:title and starts-with(@type,'alternative')]$$, '//@xlink:href', $$*[local-name() != "nonSort"]$$ );
+INSERT INTO config.metabib_field ( id, field_class, name, label, format, xpath, authority_xpath, browse_sort_xpath ) VALUES 
+    (5, 'title', 'uniform', oils_i18n_gettext(5, 'Uniform Title', 'cmf', 'label'), 'mods32', $$//mods32:mods/mods32:titleInfo[mods32:title and (@type='uniform-nfi')]$$, '//@xlink:href', $$*[local-name() != "nonSort"]$$ );
+INSERT INTO config.metabib_field ( id, field_class, name, label, format, xpath, authority_xpath, browse_field ) VALUES
+    (6, 'title', 'proper', oils_i18n_gettext(6, 'Title Proper', 'cmf', 'label'), 'mods32', $$//mods32:mods/mods32:titleNonfiling[mods32:title and not (@type)]$$, '//@xlink:href', FALSE );
 
-INSERT INTO config.metabib_field ( id, field_class, name, label, format, xpath, facet_xpath, facet_field ) VALUES 
-    (7, 'author', 'corporate', oils_i18n_gettext(7, 'Corporate Author', 'cmf', 'label'), 'mods32', $$//mods32:mods/mods32:name[@type='corporate' and (mods32:role/mods32:roleTerm[text()='creator'] or mods32:role/mods32:roleTerm[text()='aut'] or mods32:role/mods32:roleTerm[text()='cre'])]$$, $$//*[local-name()='namePart']$$, TRUE ); -- /* to fool vim */;
-INSERT INTO config.metabib_field ( id, field_class, name, label, format, xpath, facet_xpath, facet_field ) VALUES 
-    (8, 'author', 'personal', oils_i18n_gettext(8, 'Personal Author', 'cmf', 'label'), 'mods32', $$//mods32:mods/mods32:name[@type='personal' and mods32:role/mods32:roleTerm[text()='creator']]$$, $$//*[local-name()='namePart']$$, TRUE ); -- /* to fool vim */;
-INSERT INTO config.metabib_field ( id, field_class, name, label, format, xpath, facet_xpath, facet_field ) VALUES 
-    (9, 'author', 'conference', oils_i18n_gettext(9, 'Conference Author', 'cmf', 'label'), 'mods32', $$//mods32:mods/mods32:name[@type='conference' and mods32:role/mods32:roleTerm[text()='creator']]$$, $$//*[local-name()='namePart']$$, TRUE ); -- /* to fool vim */;
-INSERT INTO config.metabib_field ( id, field_class, name, label, format, xpath, facet_xpath, facet_field ) VALUES 
-    (10, 'author', 'other', oils_i18n_gettext(10, 'Other Author', 'cmf', 'label'), 'mods32', $$//mods32:mods/mods32:name[@type='personal' and not(mods32:role/mods32:roleTerm[text()='creator'])]$$, $$//*[local-name()='namePart']$$, TRUE ); -- /* to fool vim */;
+INSERT INTO config.metabib_field ( id, field_class, name, label, format, xpath, facet_xpath, facet_field , authority_xpath, browse_xpath) VALUES 
+    (7, 'author', 'corporate', oils_i18n_gettext(7, 'Corporate Author', 'cmf', 'label'), 'mods32', $$//mods32:mods/mods32:name[@type='corporate' and (mods32:role/mods32:roleTerm[text()='creator'] or mods32:role/mods32:roleTerm[text()='aut'] or mods32:role/mods32:roleTerm[text()='cre'])]$$, $$//*[local-name()='namePart']$$, TRUE, '//@xlink:href',$$//*[local-name()='namePart']$$ ); -- /* to fool vim */;
+INSERT INTO config.metabib_field ( id, field_class, name, label, format, xpath, facet_xpath, facet_field, authority_xpath, browse_xpath ) VALUES 
+    (8, 'author', 'personal', oils_i18n_gettext(8, 'Personal Author', 'cmf', 'label'), 'mods32', $$//mods32:mods/mods32:name[@type='personal' and mods32:role/mods32:roleTerm[text()='creator']]$$, $$//*[local-name()='namePart']$$, TRUE, '//@xlink:href',$$//*[local-name()='namePart']$$ ); -- /* to fool vim */;
+INSERT INTO config.metabib_field ( id, field_class, name, label, format, xpath, facet_xpath, facet_field, authority_xpath, browse_xpath ) VALUES 
+    (9, 'author', 'conference', oils_i18n_gettext(9, 'Conference Author', 'cmf', 'label'), 'mods32', $$//mods32:mods/mods32:name[@type='conference' and mods32:role/mods32:roleTerm[text()='creator']]$$, $$//*[local-name()='namePart']$$, TRUE, '//@xlink:href',$$//*[local-name()='namePart']$$ ); -- /* to fool vim */;
+INSERT INTO config.metabib_field ( id, field_class, name, label, format, xpath, facet_xpath, facet_field, authority_xpath, browse_xpath ) VALUES 
+    (10, 'author', 'other', oils_i18n_gettext(10, 'Other Author', 'cmf', 'label'), 'mods32', $$//mods32:mods/mods32:name[@type='personal' and not(mods32:role/mods32:roleTerm[text()='creator'])]$$, $$//*[local-name()='namePart']$$, TRUE, '//@xlink:href',$$//*[local-name()='namePart']$$ ); -- /* to fool vim */;
 
-INSERT INTO config.metabib_field ( id, field_class, name, label, format, xpath, facet_field ) VALUES 
-    (11, 'subject', 'geographic', oils_i18n_gettext(11, 'Geographic Subject', 'cmf', 'label'), 'mods32', $$//mods32:mods/mods32:subject/mods32:geographic$$, TRUE );
-INSERT INTO config.metabib_field ( id, field_class, name, label, format, xpath, facet_xpath, facet_field ) VALUES 
-    (12, 'subject', 'name', oils_i18n_gettext(12, 'Name Subject', 'cmf', 'label'), 'mods32', $$//mods32:mods/mods32:subject/mods32:name$$, $$//*[local-name()='namePart']$$, TRUE ); -- /* to fool vim */;
-INSERT INTO config.metabib_field ( id, field_class, name, label, format, xpath, facet_field ) VALUES 
-    (13, 'subject', 'temporal', oils_i18n_gettext(13, 'Temporal Subject', 'cmf', 'label'), 'mods32', $$//mods32:mods/mods32:subject/mods32:temporal$$, TRUE );
-INSERT INTO config.metabib_field ( id, field_class, name, label, format, xpath, facet_field ) VALUES 
-    (14, 'subject', 'topic', oils_i18n_gettext(14, 'Topic Subject', 'cmf', 'label'), 'mods32', $$//mods32:mods/mods32:subject/mods32:topic$$, TRUE );
+INSERT INTO config.metabib_field ( id, field_class, name, label, format, xpath, facet_field, authority_xpath ) VALUES 
+    (11, 'subject', 'geographic', oils_i18n_gettext(11, 'Geographic Subject', 'cmf', 'label'), 'mods32', $$//mods32:mods/mods32:subject/mods32:geographic$$, TRUE, '//@xlink:href' );
+INSERT INTO config.metabib_field ( id, field_class, name, label, format, xpath, facet_xpath, facet_field, authority_xpath ) VALUES 
+    (12, 'subject', 'name', oils_i18n_gettext(12, 'Name Subject', 'cmf', 'label'), 'mods32', $$//mods32:mods/mods32:subject/mods32:name$$, $$//*[local-name()='namePart']$$, TRUE, '//@xlink:href' ); -- /* to fool vim */;
+INSERT INTO config.metabib_field ( id, field_class, name, label, format, xpath, facet_field, authority_xpath ) VALUES 
+    (13, 'subject', 'temporal', oils_i18n_gettext(13, 'Temporal Subject', 'cmf', 'label'), 'mods32', $$//mods32:mods/mods32:subject/mods32:temporal$$, TRUE, '//@xlink:href' );
+INSERT INTO config.metabib_field ( id, field_class, name, label, format, xpath, facet_field, authority_xpath ) VALUES 
+    (14, 'subject', 'topic', oils_i18n_gettext(14, 'Topic Subject', 'cmf', 'label'), 'mods32', $$//mods32:mods/mods32:subject/mods32:topic$$, TRUE, '//@xlink:href' );
 --INSERT INTO config.metabib_field ( id, field_class, name, format, xpath ) VALUES 
 --  ( id, field_class, name, xpath ) VALUES ( 'subject', 'genre', 'mods32', $$//mods32:mods/mods32:genre$$ );
 INSERT INTO config.metabib_field ( id, field_class, name, label, format, xpath, browse_field ) VALUES 
@@ -174,8 +176,12 @@ INSERT INTO config.metabib_field ( id, field_class, name, label, format, xpath, 
     (29, 'identifier', 'scn', oils_i18n_gettext(29, 'System Control Number', 'cmf', 'label'), 'marcxml', $$//marc:datafield[@tag='035']/marc:subfield[@code="a"]$$, FALSE);
 INSERT INTO config.metabib_field ( id, field_class, name, label, format, xpath, browse_field) VALUES
     (30, 'identifier', 'lccn', oils_i18n_gettext(30, 'LC Control Number', 'cmf', 'label'), 'marcxml', $$//marc:datafield[@tag='010']/marc:subfield[@code="a" or @code='z']$$, FALSE);
+INSERT INTO config.metabib_field ( id, field_class, name, label, format, xpath, search_field, authority_xpath, browse_field, browse_sort_xpath ) VALUES
+    (31, 'title', 'browse', oils_i18n_gettext(31, 'Title Proper (Browse)', 'cmf', 'label'), 'mods32', $$//mods32:mods/mods32:titleBrowse$$, FALSE, '//@xlink:href', TRUE, $$*[local-name() != "nonSort"]$$ );
 
-SELECT SETVAL('config.metabib_field_id_seq'::TEXT, (SELECT MAX(id) FROM config.metabib_field), TRUE);
+UPDATE config.metabib_field SET joiner = ' -- ' WHERE field_class = 'subject' AND name NOT IN ('name', 'complete');
+
+SELECT SETVAL('config.metabib_field_id_seq', GREATEST(1000, (SELECT MAX(id) FROM config.metabib_field)));
 
 INSERT INTO config.metabib_search_alias (alias,field_class) VALUES ('kw','keyword');
 INSERT INTO config.metabib_search_alias (alias,field_class) VALUES ('eg.keyword','keyword');
@@ -310,6 +316,10 @@ INSERT INTO config.copy_status (id,name,opac_visible,copy_active) VALUES (12,oil
 INSERT INTO config.copy_status (id,name) VALUES (13,oils_i18n_gettext(13, 'Discard/Weed', 'ccs', 'name'));
 INSERT INTO config.copy_status (id,name) VALUES (14,oils_i18n_gettext(14, 'Damaged', 'ccs', 'name'));
 INSERT INTO config.copy_status (id,name,copy_active) VALUES (15,oils_i18n_gettext(15, 'On reservation shelf', 'ccs', 'name'),'t');
+INSERT INTO config.copy_status
+    (id, name, holdable, opac_visible, copy_active, restrict_copy_delete)
+    VALUES (16, oils_i18n_gettext(16, 'Long Overdue', 'ccs', 'name'), 'f', 'f', 'f', 't');
+
 
 SELECT SETVAL('config.copy_status_id_seq'::TEXT, 100);
 
@@ -486,6 +496,11 @@ INSERT INTO config.billing_type (id, name, owner) VALUES
 	( 8, oils_i18n_gettext(8, 'Damaged Item Processing Fee', 'cbt', 'name'), 1);
 INSERT INTO config.billing_type (id, name, owner) VALUES
 	( 9, oils_i18n_gettext(9, 'Notification Fee', 'cbt', 'name'), 1);
+INSERT INTO config.billing_type (id, owner, name) VALUES
+    (10, 1, oils_i18n_gettext(10, 'Long-Overdue Materials', 'cbt', 'name'));
+INSERT INTO config.billing_type (id, owner, name) VALUES
+    (11, 1, oils_i18n_gettext(11, 'Long-Overdue Materials Processing Fee', 'cbt', 'name'));
+
 
 INSERT INTO config.billing_type (id, name, owner) VALUES ( 101, oils_i18n_gettext(101, 'Misc', 'cbt', 'name'), 1);
 
@@ -816,7 +831,7 @@ INSERT INTO permission.perm_list ( id, code, description ) VALUES
  ( 160, 'CREATE_PROVIDER', oils_i18n_gettext( 160, 
     'Allow a user to create a new provider', 'ppl', 'description' )),
  ( 161, 'DELETE_PROVIDER', oils_i18n_gettext( 161, 
-    'Allow a user to delate a provider', 'ppl', 'description' )),
+    'Allow a user to delete a provider', 'ppl', 'description' )),
  ( 162, 'VIEW_PROVIDER', oils_i18n_gettext( 162, 
     'Allow a user to view a provider', 'ppl', 'description' )),
  ( 163, 'UPDATE_PROVIDER', oils_i18n_gettext( 163, 
@@ -1584,9 +1599,21 @@ INSERT INTO permission.perm_list ( id, code, description ) VALUES
  ( 545, 'SAVED_FILTER_DIALOG_FILTERS', oils_i18n_gettext( 545,
     'Allows users to save and load sets of filters for filter dialogs, available in certain staff interfaces', 'ppl', 'description')),
  ( 546, 'ADMIN_HOLD_CAPTURE_SORT', oils_i18n_gettext( 546,
-        'Allows a user to make changes to best-hold selection sort order', 'ppl', 'description'))
+        'Allows a user to make changes to best-hold selection sort order', 'ppl', 'description')),
+ ( 547, 'ACQ_ADD_LINEITEM_IDENTIFIER', oils_i18n_gettext(547,
+        'When granted, newly added lineitem identifiers will propagate to linked bib records', 'ppl', 'description')),
+ ( 548, 'ACQ_SET_LINEITEM_IDENTIFIER', oils_i18n_gettext(548,
+        'Allows staff to change the lineitem identifier', 'ppl', 'description')),
+ ( 549, 'COPY_STATUS_LONGOVERDUE.override', oils_i18n_gettext(549,
+        'Allows the user to check-in long-overdue items, prompting ' ||
+            'long-overdue check-in processing', 'ppl', 'code')), 
+ ( 550, 'SET_CIRC_LONG_OVERDUE', oils_i18n_gettext(550,
+        'Allows the user to mark a circulation as long-overdue', 'ppl', 'code')),
+ ( 551, 'ADMIN_SERVER_ADDON_FOR_WORKSTATION', oils_i18n_gettext( 551,
+        'Allows a user to specify which Server Add-ons get invoked at the current workstation', 'ppl', 'description')),
+ ( 552, 'ADMIN_FLOAT_GROUPS', oils_i18n_gettext( 552,
+    'Allows administration of floating groups', 'ppl', 'description' ))
 ;
-
 
 SELECT SETVAL('permission.perm_list_id_seq'::TEXT, 1000);
 
@@ -1633,6 +1660,8 @@ INSERT INTO permission.grp_penalty_threshold (grp,org_unit,penalty,threshold)
     VALUES (1,1,2,10.0);
 INSERT INTO permission.grp_penalty_threshold (grp,org_unit,penalty,threshold)
     VALUES (1,1,3,10.0);
+INSERT INTO permission.grp_penalty_threshold (grp,org_unit,penalty,threshold)
+    VALUES (1,1,5,10.0);
 
 SELECT SETVAL('permission.grp_penalty_threshold_id_seq'::TEXT, (SELECT MAX(id) FROM permission.grp_penalty_threshold));
 
@@ -2441,6 +2470,17 @@ INSERT INTO asset.call_number_suffix (id, owning_lib, label) VALUES (-1, 1, '');
 INSERT INTO asset.call_number_prefix (id, owning_lib, label) VALUES (-1, 1, '');
 INSERT INTO asset.call_number VALUES (-1,1,NOW(),1,NOW(),-1,1,'UNCATALOGED');
 
+--090.schema.action.sql
+INSERT INTO action.hold_request_cancel_cause (id,label) VALUES (1, oils_i18n_gettext(1, 'Untargeted expiration', 'ahrcc', 'label'));
+INSERT INTO action.hold_request_cancel_cause (id,label) VALUES (2, oils_i18n_gettext(2, 'Hold Shelf expiration', 'ahrcc', 'label'));
+INSERT INTO action.hold_request_cancel_cause (id,label) VALUES (3, oils_i18n_gettext(3, 'Patron via phone', 'ahrcc', 'label'));
+INSERT INTO action.hold_request_cancel_cause (id,label) VALUES (4, oils_i18n_gettext(4, 'Patron in person', 'ahrcc', 'label'));
+INSERT INTO action.hold_request_cancel_cause (id,label) VALUES (5, oils_i18n_gettext(5, 'Staff forced', 'ahrcc', 'label'));
+INSERT INTO action.hold_request_cancel_cause (id,label) VALUES (6, oils_i18n_gettext(6, 'Patron via OPAC', 'ahrcc', 'label'));
+INSERT INTO action.hold_request_cancel_cause (id,label) VALUES (7, oils_i18n_gettext(7, 'Patron via SIP', 'ahrcc', 'label'));
+SELECT SETVAL('action.hold_request_cancel_cause_id_seq', 100);
+
+
 -- circ matrix
 INSERT INTO config.circ_matrix_matchpoint (org_unit,grp,circulate,duration_rule,recurring_fine_rule,max_fine_rule) VALUES (1,1,true,11,1,1);
 
@@ -2465,31 +2505,96 @@ INSERT INTO config.weight_assoc(active, org_unit, circ_weights, hold_weights) VA
 
 -- User setting types
 INSERT INTO config.usr_setting_type (name,opac_visible,label,description,datatype)
-    VALUES ('opac.default_font', TRUE, 'OPAC Font Size', 'OPAC Font Size', 'string');
+    VALUES ('opac.default_font', TRUE,
+    oils_i18n_gettext('opac.default_font', 'OPAC Font Size', 'cust', 'label'),
+    oils_i18n_gettext('opac.default_font', 'OPAC Font Size', 'cust', 'description'),
+    'string');
 
 INSERT INTO config.usr_setting_type (name,opac_visible,label,description,datatype)
-    VALUES ('opac.default_search_depth', TRUE, 'OPAC Search Depth', 'OPAC Search Depth', 'integer');
+    VALUES ('opac.default_search_depth', TRUE,
+    oils_i18n_gettext('opac.default_search_depth', 'OPAC Search Depth', 'cust', 'label'),
+    oils_i18n_gettext('opac.default_search_depth', 'OPAC Search Depth', 'cust', 'description'),
+    'integer');
 
 INSERT INTO config.usr_setting_type (name,opac_visible,label,description,datatype)
-    VALUES ('opac.default_search_location', TRUE, 'OPAC Search Location', 'OPAC Search Location', 'integer');
+    VALUES ('opac.default_search_location', TRUE,
+    oils_i18n_gettext('opac.default_search_location', 'OPAC Search Location', 'cust', 'label'),
+    oils_i18n_gettext('opac.default_search_location', 'OPAC Search Location', 'cust', 'description'),
+    'integer');
 
 INSERT INTO config.usr_setting_type (name,opac_visible,label,description,datatype)
-    VALUES ('opac.hits_per_page', TRUE, 'Hits per Page', 'Hits per Page', 'string');
+    VALUES ('opac.hits_per_page', TRUE,
+    oils_i18n_gettext('opac.hits_per_page', 'Hits per Page', 'cust', 'label'),
+    oils_i18n_gettext('opac.hits_per_page', 'Hits per Page', 'cust', 'description'),
+    'string');
 
 INSERT INTO config.usr_setting_type (name,opac_visible,label,description,datatype)
-    VALUES ('opac.hold_notify', TRUE, 'Hold Notification Format', 'Hold Notification Format', 'string');
+    VALUES ('opac.hold_notify', TRUE,
+    oils_i18n_gettext('opac.hold_notify', 'Hold Notification Format', 'cust', 'label'),
+    oils_i18n_gettext('opac.hold_notify', 'Hold Notification Format', 'cust', 'description'),
+    'string');
 
 INSERT INTO config.usr_setting_type (name,opac_visible,label,description,datatype)
-    VALUES ('staff_client.catalog.record_view.default', TRUE, 'Default Record View', 'Default Record View', 'string');
+    VALUES ('staff_client.catalog.record_view.default', TRUE,
+    oils_i18n_gettext('staff_client.catalog.record_view.default', 'Default Record View', 'cust', 'label'),
+    oils_i18n_gettext('staff_client.catalog.record_view.default', 'Default Record View', 'cust', 'description'),
+    'string');
 
 INSERT INTO config.usr_setting_type (name,opac_visible,label,description,datatype)
-    VALUES ('staff_client.copy_editor.templates', TRUE, 'Copy Editor Template', 'Copy Editor Template', 'object');
+    VALUES ('staff_client.copy_editor.templates', TRUE,
+    oils_i18n_gettext('staff_client.copy_editor.templates', 'Copy Editor Template', 'cust', 'label'),
+    oils_i18n_gettext('staff_client.copy_editor.templates', 'Copy Editor Template', 'cust', 'description'),
+    'object');
 
 INSERT INTO config.usr_setting_type (name,opac_visible,label,description,datatype)
-    VALUES ('circ.holds_behind_desk', FALSE, 'Hold is behind Circ Desk', 'Hold is behind Circ Desk', 'bool');
+    VALUES ('circ.holds_behind_desk', FALSE,
+    oils_i18n_gettext('circ.holds_behind_desk', 'Hold is behind Circ Desk', 'cust', 'label'),
+    oils_i18n_gettext('circ.holds_behind_desk', 'Hold is behind Circ Desk', 'cust', 'description'),
+    'bool');
 
 INSERT INTO config.usr_setting_type (name,opac_visible,label,description,datatype)
-    VALUES ('opac.default_pickup_location', TRUE, 'Default Hold Pickup Location', 'Default location for holds pickup', 'integer');
+    VALUES ('opac.default_pickup_location', TRUE,
+    oils_i18n_gettext('opac.default_pickup_location', 'Default Hold Pickup Location', 'cust', 'label'),
+    oils_i18n_gettext('opac.default_pickup_location', 'Default location for holds pickup', 'cust', 'description'),
+    'integer');
+
+INSERT INTO config.usr_setting_type (name,opac_visible,label,description,datatype)
+    VALUES (
+        'opac.lists_per_page',
+        TRUE,
+        oils_i18n_gettext(
+            'opac.lists_per_page',
+            'Lists per Page',
+            'cust',
+            'label'
+        ),
+        oils_i18n_gettext(
+            'opac.lists_per_page',
+            'A number designating the amount of lists displayed per page.',
+            'cust',
+            'description'
+        ),
+        'string'
+    );
+
+INSERT INTO config.usr_setting_type (name,opac_visible,label,description,datatype)
+    VALUES (
+        'opac.list_items_per_page',
+        TRUE,
+        oils_i18n_gettext(
+            'opac.list_items_per_page',
+            'List Items per Page',
+            'cust',
+            'label'
+        ),
+        oils_i18n_gettext(
+            'opac.list_items_per_page',
+            'A number designating the amount of list items displayed per page of a selected list.',
+            'cust',
+            'description'
+        ),
+        'string'
+    );
 
 -- Add groups for org_unit settings
 INSERT INTO config.settings_group (name, label) VALUES
@@ -2516,6 +2621,14 @@ INSERT INTO config.settings_group (name, label) VALUES
 ('vandelay', oils_i18n_gettext('vandelay','Vandelay','coust','label'))
 ;
 
+
+INSERT INTO acq.user_request_type (id,label) VALUES (1, oils_i18n_gettext('1', 'Books', 'aurt', 'label'));
+INSERT INTO acq.user_request_type (id,label) VALUES (2, oils_i18n_gettext('2', 'Journal/Magazine & Newspaper Articles', 'aurt', 'label'));
+INSERT INTO acq.user_request_type (id,label) VALUES (3, oils_i18n_gettext('3', 'Audiobooks', 'aurt', 'label'));
+INSERT INTO acq.user_request_type (id,label) VALUES (4, oils_i18n_gettext('4', 'Music', 'aurt', 'label'));
+INSERT INTO acq.user_request_type (id,label) VALUES (5, oils_i18n_gettext('5', 'DVDs', 'aurt', 'label'));
+
+SELECT SETVAL('acq.user_request_type_id_seq'::TEXT, 6);
 
 
 -- org_unit setting types
@@ -2882,6 +2995,19 @@ INSERT into config.org_unit_setting_type
         'coust', 'description'),
     'bool', null)
 
+,('circ.tally_lost', 'circ',
+    oils_i18n_gettext(
+        'circ.tally_lost',
+        'Include Lost circulations in lump sum tallies in Patron Display.',
+        'coust',
+        'label'),
+    oils_i18n_gettext(
+        'circ.tally_lost',
+        'In the Patron Display interface, the number of total active circulations for a given patron is presented in the Summary sidebar and underneath the Items Out navigation button.  This setting will include Lost circulations as counting toward these tallies.',
+        'coust',
+        'description'),
+    'bool', null)
+
 ,( 'circ.grace.extend', 'circ',
     oils_i18n_gettext('circ.grace.extend',
         'Auto-Extend Grace Periods',
@@ -3031,7 +3157,7 @@ INSERT into config.org_unit_setting_type
         'Default hold shelf expire interval',
         'coust', 'label'),
     oils_i18n_gettext('circ.holds.default_shelf_expire_interval',
-        '',
+        'The amount of time an item will be held on the shelf before the hold expires. For example: "2 weeks" or "5 days"',
         'coust', 'description'),
     'interval', null)
 
@@ -3791,6 +3917,15 @@ INSERT into config.org_unit_setting_type
         'coust', 'description'),
     'string', null)
 
+,( 'lib.info_url', 'lib',
+    oils_i18n_gettext('lib.info_url',
+        'Library information URL (such as "http://example.com/about.html")',
+        'coust', 'label'),
+    oils_i18n_gettext('lib.info_url',
+        'URL for information on this library, such as contact information, hours of operation, and directions. If set, the library name in the copy details section links to that URL. Use a complete URL, such as "http://example.com/hours.html".',
+        'coust', 'description'),
+    'string', null)
+
 ,( 'notice.telephony.callfile_lines', 'lib',
     oils_i18n_gettext('notice.telephony.callfile_lines',
         'Telephony: Arbitrary line(s) to include in each notice callfile',
@@ -4175,6 +4310,15 @@ INSERT into config.org_unit_setting_type
         'coust', 'description'),
     'bool', null)
 
+,( 'ui.patron.edit.ac.barcode.regex', 'gui',
+    oils_i18n_gettext('ui.patron.edit.ac.barcode.regex',
+        'Regex for barcodes on patron registration',
+        'coust', 'label'),
+    oils_i18n_gettext('ui.patron.edit.ac.barcode.regex',
+        'The Regular Expression for validation on barcodes in patron registration.',
+        'coust', 'description'),
+    'string', null)
+
 ,( 'ui.patron.edit.au.day_phone.example', 'gui',
     oils_i18n_gettext('ui.patron.edit.au.day_phone.example',
         'Example for day_phone field on patron registration',
@@ -4535,6 +4679,33 @@ INSERT into config.org_unit_setting_type
         'coust', 'description'),
     'bool', null)
 
+,( 'ui.patron.edit.aua.state.require', 'gui',
+    oils_i18n_gettext('ui.patron.edit.aua.state.require',
+        'Require State field on patron registration',
+        'coust', 'label'),
+    oils_i18n_gettext('ui.patron.edit.aua.state.require',
+        'The State field will be required on the patron registration screen.',
+        'coust', 'description'),
+    'bool', null)
+
+,( 'ui.patron.edit.aua.state.show', 'gui',
+    oils_i18n_gettext('ui.patron.edit.aua.state.show',
+        'Show State field on patron registration',
+        'coust', 'label'),
+    oils_i18n_gettext('ui.patron.edit.aua.state.show',
+        'The State field will be shown on the patron registration screen. Showing a field makes it appear with required fields even when not required. If the field is required this setting is ignored.',
+        'coust', 'description'),
+    'bool', null)
+
+,( 'ui.patron.edit.aua.state.suggest', 'gui',
+    oils_i18n_gettext('ui.patron.edit.aua.state.suggest',
+        'Suggest State field on patron registration',
+        'coust', 'label'),
+    oils_i18n_gettext('ui.patron.edit.aua.state.suggest',
+        'The State field will be suggested on the patron registration screen. Suggesting a field makes it appear when suggested fields are shown. If the field is shown or required this setting is ignored.',
+        'coust', 'description'),
+    'bool', null)
+
 ,( 'ui.patron.edit.aua.post_code.example', 'gui',
     oils_i18n_gettext('ui.patron.edit.aua.post_code.example',
         'Example for post_code field on patron registration',
@@ -4736,7 +4907,33 @@ INSERT into config.org_unit_setting_type
         'description'
     ),
     'string', null)
+,( 'opac.browse.pager_shortcuts', 'opac',
+    oils_i18n_gettext(
+        'opac.browse.pager_shortcuts',
+        'Paging shortcut links for OPAC Browse',
+        'coust',
+        'label'
+    ),
+    oils_i18n_gettext(
+        '',
+        'The characters in this string, in order, will be used as shortcut links for quick paging in the OPAC browse interface. Any sequence surrounded by asterisks will be taken as a whole label, not split into individual labels at the character level, but only the first character will serve as the basis of the search.',
+        'coust',
+        'description'
+    ),
+    'string', null)
 
+,( 'circ.patron_edit.duplicate_patron_check_depth', 'circ',
+    oils_i18n_gettext(
+        'circ.patron_edit.duplicate_patron_check_depth',
+        'Specify search depth for the duplicate patron check in the patron editor',
+        'coust',
+        'label'),
+    oils_i18n_gettext(
+        'circ.patron_edit.duplicate_patron_check_depth',
+        'When using the patron registration page, the duplicate patron check will use the configured depth to scope the search for duplicate patrons.',
+        'coust',
+        'description'),
+    'integer', null)
 ;
 
 UPDATE config.org_unit_setting_type
@@ -4819,6 +5016,7 @@ INSERT INTO vandelay.bib_attr_definition ( id, code, description, xpath ) VALUES
 INSERT INTO vandelay.bib_attr_definition ( id, code, description, xpath, remove ) VALUES (13, 'pubdate',oils_i18n_gettext(13, 'Publication Date', 'vqbrad', 'description'),'//*[@tag="260"]/*[@code="c"][1]',$r$\D$r$);
 INSERT INTO vandelay.bib_attr_definition ( id, code, description, xpath ) VALUES (14, 'edition',oils_i18n_gettext(14, 'Edition', 'vqbrad', 'description'),'//*[@tag="250"]/*[@code="a"][1]');
 INSERT INTO vandelay.bib_attr_definition ( id, code, description, xpath ) VALUES (15, 'item_barcode',oils_i18n_gettext(15, 'Item Barcode', 'vqbrad', 'description'),'//*[@tag="852"]/*[@code="p"][1]');
+INSERT INTO vandelay.bib_attr_definition ( id, code, description, xpath ) VALUES (16, 'zsource', oils_i18n_gettext(16, 'Z39.50 Source', 'vqbrad', 'description'), '//*[@tag="901"]/*[@code="z"]');
 SELECT SETVAL('vandelay.bib_attr_definition_id_seq'::TEXT, 100);
 
 INSERT INTO vandelay.import_item_attr_definition (
@@ -6004,7 +6202,7 @@ INSERT INTO config.coded_value_map (id, ctype, code, value) VALUES
     (166, 'item_lang', 'grn', oils_i18n_gettext('166', 'Guarani', 'ccvm', 'value')),
     (167, 'item_lang', '-gua', oils_i18n_gettext('167', 'Guarani', 'ccvm', 'value')),
     (168, 'item_lang', 'guj', oils_i18n_gettext('168', 'Gujarati', 'ccvm', 'value')),
-    (169, 'item_lang', 'gwi', oils_i18n_gettext('169', 'Gwich', 'ccvm', 'value''in')),
+    (169, 'item_lang', 'gwi', oils_i18n_gettext('169', 'Gwich''in', 'ccvm', 'value')),
     (170, 'item_lang', 'hai', oils_i18n_gettext('170', 'Haida', 'ccvm', 'value')),
     (171, 'item_lang', 'hat', oils_i18n_gettext('171', 'Haitian French Creole', 'ccvm', 'value')),
     (172, 'item_lang', 'hau', oils_i18n_gettext('172', 'Hausa', 'ccvm', 'value')),
@@ -6512,7 +6710,7 @@ $$
     END
 -%]
 
-<h2>Purchase Order [% target.id %]</h2>
+<h2>Purchase Order: [% target.name %] ([% target.id %])</h2>
 <br/>
 date <b>[% date.format(date.now, '%Y%m%d') %]</b>
 <br/>
@@ -6582,11 +6780,12 @@ date <b>[% date.format(date.now, '%Y%m%d') %]</b>
     [% price = li.estimated_unit_price %]
     [% litotal = (price * count) %]
     [% subtotal = subtotal + litotal %]
-    [% isbn = PROCESS get_li_attr attr_name = 'isbn' %]
-    [% ident = PROCESS get_li_attr attr_name = 'identifier' %]
-
+    [% 
+        ident_attr = helpers.get_li_order_ident(li.attributes);
+        SET ident_value = ident_attr.attr_value IF ident_attr;
+    %]
     <td>[% target.id %]</td>
-    <td>[% isbn || ident %]</td>
+    <td>[% ident_value %]</td>
     <td>[% PROCESS get_li_attr attr_name = 'title' %]</td>
     <td>[% count %]</td>
     <td>[% price %]</td>
@@ -7504,7 +7703,7 @@ INSERT INTO config.metabib_field_index_norm_map (field,norm)
       FROM  config.metabib_field m,
         config.index_normalizer i
       WHERE i.func IN ('search_normalize','split_date_range')
-            AND m.id NOT IN (18, 19);
+            AND m.id NOT IN (18, 19, 25);
 
 INSERT INTO config.metabib_field_index_norm_map (field,norm,pos)
     SELECT  m.id,
@@ -7523,6 +7722,26 @@ INSERT INTO config.metabib_field_index_norm_map (field,norm,params)
             config.index_normalizer i
       WHERE i.func IN ('replace')
             AND m.id IN (19);
+
+INSERT INTO config.metabib_field_index_norm_map (field,norm,params, pos)
+     SELECT  m.id,
+             i.id,
+             $$["]",""]$$,
+             '-1'
+       FROM  config.metabib_field m,
+             config.index_normalizer i
+       WHERE i.func IN ('replace')
+             AND m.id IN (1);
+             
+INSERT INTO config.metabib_field_index_norm_map (field,norm,params, pos)
+     SELECT  m.id,
+             i.id,
+             $$["[",""]$$,
+             '-1'
+       FROM  config.metabib_field m,
+             config.index_normalizer i
+       WHERE i.func IN ('replace')
+             AND m.id IN (1);
 
 INSERT INTO config.metabib_field_index_norm_map (field,norm,pos)
     SELECT  m.id,
@@ -7947,6 +8166,11 @@ $$
             </tr>
         </thead>
         <tbody>
+        <!-- set detail.owning_lib from fm object to org name -->
+        [% FOREACH detail IN li.lineitem_details %]
+            [% detail.owning_lib = detail.owning_lib.shortname %]
+        [% END %]
+
         [% FOREACH detail IN li.lineitem_details.sort('owning_lib') %]
             [% 
                 IF detail.eg_copy_id;
@@ -7959,7 +8183,7 @@ $$
             %]
             <tr>
                 <!-- acq.lineitem_detail.id = [%- detail.id -%] -->
-                <td style='padding:5px;'>[% detail.owning_lib.shortname %]</td>
+                <td style='padding:5px;'>[% detail.owning_lib %]</td>
                 <td style='padding:5px;'>[% IF copy.barcode   %]<span class="barcode"  >[% detail.barcode   %]</span>[% END %]</td>
                 <td style='padding:5px;'>[% IF cn_label %]<span class="cn_label" >[% cn_label  %]</span>[% END %]</td>
                 <td style='padding:5px;'>[% IF detail.fund %]<span class="fund">[% detail.fund.code %] ([% detail.fund.year %])</span>[% END %]</td>
@@ -8116,15 +8340,24 @@ $$
         [%- FOR li IN target.lineitems %]
         {
             "line_index":"[% li.id %]",
-            "identifiers":[   [%-# li.isbns = helpers.get_li_isbns(li.attributes) %]
-            [% FOR isbn IN helpers.get_li_isbns(li.attributes) -%]
-                [% IF isbn.length == 13 -%]
-                {"id-qualifier":"EN","id":"[% isbn %]"},
-                [% ELSE -%]
-                {"id-qualifier":"IB","id":"[% isbn %]"},
-                [%- END %]
-            [% END %]
-                {"id-qualifier":"IN","id":"[% li.id %]"}
+            "identifiers":[   
+            [%- 
+                idval = '';
+                idqual = 'EN'; # default ISBN/UPC/EAN-13
+                ident_attr = helpers.get_li_order_ident(li.attributes);
+                IF ident_attr;
+                    idname = ident_attr.attr_name;
+                    idval = ident_attr.attr_value;
+                    IF idname == 'isbn' AND idval.length != 13;
+                        idqual = 'IB';
+                    ELSIF idname == 'issn';
+                        idqual = 'IS';
+                    END;
+                ELSE;
+                    idqual = 'IN';
+                    idval = li.id;
+                END -%]
+                {"id-qualifier":"[% idqual %]","id":"[% idval %]"}
             ],
             "price":[% li.estimated_unit_price || '0.00' %],
             "desc":[
@@ -8782,7 +9015,7 @@ To: [%- params.recipient_email || user.email %]
 From: [%- params.sender_email || default_sender %]
 Subject: Bibliographic Records
 
-[% FOR cbreb IN target %]
+[% FOR cbreb IN target %][% title = '' %]
 [% FOR item IN cbreb.items;
     bre_id = item.target_biblio_record_entry;
 
@@ -8830,7 +9063,7 @@ $$
 <div>
     <style> li { padding: 8px; margin 5px; }</style>
     <ol>
-    [% FOR cbreb IN target %]
+    [% FOR cbreb IN target %][% title = '' %]
     [% FOR item IN cbreb.items;
         bre_id = item.target_biblio_record_entry;
 
@@ -8870,6 +9103,14 @@ INSERT INTO action_trigger.environment (
         ,( 32, 'items' )
 ;
 
+-- Use the ISO 4217 abbreviations for currency codes
+INSERT INTO acq.currency_type (code, label) VALUES ('USD', oils_i18n_gettext('USD', 'US Dollars', 'acqct', 'label'));
+INSERT INTO acq.currency_type (code, label) VALUES ('CAN', oils_i18n_gettext('CAN', 'Canadian Dollars', 'acqct', 'label'));
+INSERT INTO acq.currency_type (code, label) VALUES ('EUR', oils_i18n_gettext('EUR', 'Euros', 'acqct', 'label'));
+
+INSERT INTO acq.exchange_rate (from_currency,to_currency,ratio) VALUES ('USD','CAN',1.2);
+INSERT INTO acq.exchange_rate (from_currency,to_currency,ratio) VALUES ('USD','EUR',0.5);
+
 INSERT INTO acq.invoice_item_type (code,name) VALUES ('TAX',oils_i18n_gettext('TAX', 'Tax', 'aiit', 'name'));
 INSERT INTO acq.invoice_item_type (code,name) VALUES ('PRO',oils_i18n_gettext('PRO', 'Processing Fee', 'aiit', 'name'));
 INSERT INTO acq.invoice_item_type (code,name) VALUES ('SHP',oils_i18n_gettext('SHP', 'Shipping Charge', 'aiit', 'name'));
@@ -8881,27 +9122,38 @@ INSERT INTO acq.invoice_method (code,name) VALUES ('EDI',oils_i18n_gettext('EDI'
 INSERT INTO acq.invoice_method (code,name) VALUES ('PPR',oils_i18n_gettext('PPR', 'Paper', 'acqit', 'name'));
 
 INSERT INTO acq.cancel_reason ( id, org_unit, label, description ) VALUES (
-    1, 1, 'invalid_isbn', oils_i18n_gettext( 1, 'ISBN is unrecognizable', 'acqcr', 'label' ));
+    1, 1, oils_i18n_gettext(1,'invalid_isbn', 'acqcr', 'label'), oils_i18n_gettext( 1, 'ISBN is unrecognizable', 'acqcr', 'description' ));
 INSERT INTO acq.cancel_reason ( id, org_unit, label, description ) VALUES (
-    2, 1, 'postpone', oils_i18n_gettext( 2, 'Title has been postponed', 'acqcr', 'label' ));
+    2, 1, oils_i18n_gettext(2,'postpone', 'acqcr', 'label'), oils_i18n_gettext( 2, 'Title has been postponed', 'acqcr', 'description' ));
 INSERT INTO acq.cancel_reason ( id, org_unit, label, description, keep_debits ) VALUES (
-    3, 1, 'delivered_but_lost',
-	oils_i18n_gettext( 2, 'Delivered but not received; presumed lost', 'acqcr', 'label' ), TRUE );
+    3, 1, oils_i18n_gettext(3, 'delivered_but_lost', 'acqcr', 'label'),
+	oils_i18n_gettext( 3, 'Delivered but not received; presumed lost', 'acqcr', 'description' ), TRUE );
 
 INSERT INTO acq.cancel_reason (keep_debits, id, org_unit, label, description) VALUES 
-('f',(  2+1000), 1, 'Deleted',   'The information is to be or has been deleted.'),
-('t',(  3+1000), 1, 'Changed',   'The information is to be or has been changed.'),
-('t',(  4+1000), 1, 'No action',                  'This line item is not affected by the actual message.'),
-('t',(  5+1000), 1, 'Accepted without amendment', 'This line item is entirely accepted by the seller.'),
-('f',(  7+1000), 1, 'Not accepted',               'This line item is not accepted by the seller.'),
-('f',( 10+1000), 1, 'Not found',   'This line item is not found in the referenced message.'),
-('t',( 24+1000), 1, 'Accepted with amendment, no confirmation required', 'Accepted with changes which require no confirmation.');
+('f',(  2+1000), 1, oils_i18n_gettext(1002, 'Deleted', 'acqcr', 'label'),
+	oils_i18n_gettext(1002, 'The information is to be or has been deleted.', 'acqcr', 'description')),
+('t',(  3+1000), 1, oils_i18n_gettext(1003, 'Changed', 'acqcr', 'label'),
+	oils_i18n_gettext(1003, 'The information is to be or has been changed.', 'acqcr', 'description')),
+('t',(  4+1000), 1, oils_i18n_gettext(1004, 'No action', 'acqcr', 'label'),
+	oils_i18n_gettext(1004, 'This line item is not affected by the actual message.', 'acqcr', 'description')),
+('t',(  5+1000), 1, oils_i18n_gettext(1005, 'Accepted without amendment', 'acqcr', 'label'),
+	oils_i18n_gettext(1005, 'This line item is entirely accepted by the seller.', 'acqcr', 'description')),
+('f',(  7+1000), 1, oils_i18n_gettext(1007, 'Not accepted', 'acqcr', 'label'),
+	oils_i18n_gettext(1007, 'This line item is not accepted by the seller.', 'acqcr', 'description')),
+('f',( 10+1000), 1, oils_i18n_gettext(1010, 'Not found', 'acqcr', 'label'),
+       oils_i18n_gettext(1010, 'This line item is not found in the referenced message.', 'acqcr', 'description')),
+('t',( 24+1000), 1, oils_i18n_gettext(1024, 'Accepted with amendment, no confirmation required', 'acqcr', 'label'),
+       oils_i18n_gettext(1024, 'Accepted with changes which require no confirmation.', 'acqcr', 'description'));
 
 INSERT INTO acq.cancel_reason (org_unit, keep_debits, id, label, description) VALUES 
-(1, 't', 1211, 'Split quantity', 'Part of the whole quantity.'),
-(1, 't', 1221, 'Ordered quantity', '[6024] The quantity which has been ordered.'),
-(1, 't', 1246, 'Pieces delivered', 'Number of pieces actually received at the final destination.'),
-(1, 't', 1283, 'Backorder quantity', 'The quantity of goods that is on back-order.');
+(1, 't', 1211, oils_i18n_gettext(1211, 'Split quantity', 'acqcr', 'label'),
+    oils_i18n_gettext(1211, 'Part of the whole quantity.', 'acqcr', 'description')),
+(1, 't', 1221, oils_i18n_gettext(1221, 'Ordered quantity', 'acqcr', 'label'),
+    oils_i18n_gettext(1221, '[6024] The quantity which has been ordered.', 'acqcr', 'description')),
+(1, 't', 1246, oils_i18n_gettext(1246, 'Pieces delivered', 'acqcr', 'label'),
+    oils_i18n_gettext(1246, 'Number of pieces actually received at the final destination.', 'acqcr', 'description')),
+(1, 't', 1283, oils_i18n_gettext(1283, 'Backorder quantity', 'acqcr', 'label'),
+    oils_i18n_gettext(1283, 'The quantity of goods that is on back-order.', 'acqcr', 'description'));
 
 INSERT INTO config.global_flag (name, label, enabled)
     VALUES (
@@ -8972,6 +9224,45 @@ INSERT INTO config.global_flag (name,label,enabled)
         TRUE
     );
 
+INSERT INTO config.global_flag  (name, label, enabled)
+    VALUES (
+        'history.hold.retention_age',
+        oils_i18n_gettext('history.hold.retention_age', 'Historical Hold Retention Age', 'cgf', 'label'),
+        TRUE
+    ),(
+        'history.hold.retention_age_fulfilled',
+        oils_i18n_gettext('history.hold.retention_age_fulfilled', 'Historical Hold Retention Age - Fulfilled', 'cgf', 'label'),
+        FALSE
+    ),(
+        'history.hold.retention_age_canceled',
+        oils_i18n_gettext('history.hold.retention_age_canceled', 'Historical Hold Retention Age - Canceled (Default)', 'cgf', 'label'),
+        FALSE
+    ),(
+        'history.hold.retention_age_canceled_1',
+        oils_i18n_gettext('history.hold.retention_age_canceled_1', 'Historical Hold Retention Age - Canceled (Untarged expiration)', 'cgf', 'label'),
+        FALSE
+    ),(
+        'history.hold.retention_age_canceled_2',
+        oils_i18n_gettext('history.hold.retention_age_canceled_2', 'Historical Hold Retention Age - Canceled (Hold Shelf expiration)', 'cgf', 'label'),
+        FALSE
+    ),(
+        'history.hold.retention_age_canceled_3',
+        oils_i18n_gettext('history.hold.retention_age_canceled_3', 'Historical Hold Retention Age - Canceled (Patron via phone)', 'cgf', 'label'),
+        TRUE
+    ),(
+        'history.hold.retention_age_canceled_4',
+        oils_i18n_gettext('history.hold.retention_age_canceled_4', 'Historical Hold Retention Age - Canceled (Patron in person)', 'cgf', 'label'),
+        TRUE
+    ),(
+        'history.hold.retention_age_canceled_5',
+        oils_i18n_gettext('history.hold.retention_age_canceled_5', 'Historical Hold Retention Age - Canceled (Staff forced)', 'cgf', 'label'),
+        TRUE
+    ),(
+        'history.hold.retention_age_canceled_6',
+        oils_i18n_gettext('history.hold.retention_age_canceled_6', 'Historical Hold Retention Age - Canceled (Patron via OPAC)', 'cgf', 'label'),
+        FALSE
+    );
+
 INSERT INTO config.global_flag (name, label, enabled)
     VALUES (
         'cat.maintain_control_numbers',
@@ -8996,6 +9287,18 @@ INSERT INTO config.global_flag (name, label, enabled)
         FALSE
     );
 
+INSERT INTO config.global_flag (name, label, enabled)
+    VALUES (
+        'circ.desk_renewal.use_original_circ_lib',
+        oils_i18n_gettext(
+            'circ.desk_renewal.use_original_circ_lib',
+            'Circ: Use original circulation library on desk renewal instead of user home library',
+            'cgf',
+            'label'
+        ),
+        FALSE
+    );
+
 INSERT INTO config.global_flag (name, label, value, enabled)
     VALUES (
         'opac.use_autosuggest',
@@ -9009,6 +9312,48 @@ INSERT INTO config.global_flag (name, label, value, enabled)
         TRUE
     );
 
+INSERT INTO config.global_flag (name, label)
+    VALUES (
+        'history.circ.retention_uses_last_finished',
+        oils_i18n_gettext(
+            'history.circ.retention_uses_last_finished',
+            'Historical Circulations use most recent xact_finish date instead of last circ''s.',
+            'cgf',
+            'label'
+        )
+    ),(
+        'history.circ.retention_age_is_min',
+        oils_i18n_gettext(
+            'history.circ.retention_age_is_min',
+            'Historical Circulations are kept for global retention age at a minimum, regardless of user preferences.',
+            'cgf',
+            'label'
+        )
+    );
+
+INSERT INTO config.global_flag (name, value, enabled, label)
+VALUES (
+    'opac.browse.warnable_regexp_per_class',
+    '{"title": "^(a|the|an)\\s"}',
+    FALSE,
+    oils_i18n_gettext(
+        'opac.browse.warnable_regexp_per_class',
+        'Map of search classes to regular expressions to warn user about leading articles.',
+        'cgf',
+        'label'
+    )
+),
+(
+    'opac.browse.holdings_visibility_test_limit',
+    '100',
+    TRUE,
+    oils_i18n_gettext(
+        'opac.browse.holdings_visibility_test_limit',
+        'Don''t look for more than this number of records with holdings when displaying browse headings with visible record counts.',
+        'cgf',
+        'label'
+    )
+);
 
 INSERT INTO config.usr_setting_type (name,opac_visible,label,description,datatype)
     VALUES (
@@ -10162,65 +10507,85 @@ INSERT INTO authority.control_set (id, name, description) VALUES (
 );
 
 -- Entries that need to respect an NFI
-INSERT INTO authority.control_set_authority_field (id, control_set, main_entry, tag, sf_list, name, nfi) VALUES
-    (4, 1, NULL, '130', 'adfgklmnoprstvxyz', oils_i18n_gettext('4','Heading -- Uniform Title','acsaf','name'), '2'),
-    (24, 1, 4, '530', 'adfgiklmnoprstvwxyz4', oils_i18n_gettext('24','See Also From Tracing -- Uniform Title','acsaf','name'), '2'),
-    (44, 1, 4, '730', 'adfghklmnoprstvwxyz25', oils_i18n_gettext('44','Established Heading Linking Entry -- Uniform Title','acsaf','name'), '2'),
-    (64, 1, 4, '430', 'adfgiklmnoprstvwxyz4', oils_i18n_gettext('64','See Also Tracing -- Uniform Title','acsaf','name'), '2');
+INSERT INTO authority.control_set_authority_field (id, control_set, main_entry, tag, sf_list, display_sf_list, name, nfi) VALUES
+    (4, 1, NULL, '130', 'adfgklmnoprstvxyz', 'adfgklmnoprstvxyz', oils_i18n_gettext('4','Heading -- Uniform Title','acsaf','name'), '2'),
+    (24, 1, 4, '530', 'adfgiklmnoprstvwxyz4', 'adfgiklmnoprstvxyz', oils_i18n_gettext('24','See Also From Tracing -- Uniform Title','acsaf','name'), '2'),
+    (44, 1, 4, '730', 'adfghklmnoprstvwxyz25', 'adfghklmnoprstvxyz', oils_i18n_gettext('44','Established Heading Linking Entry -- Uniform Title','acsaf','name'), '2'),
+    (64, 1, 4, '430', 'adfgiklmnoprstvwxyz4', 'adfgiklmnoprstvxyz', oils_i18n_gettext('64','See From Tracing -- Uniform Title','acsaf','name'), '2');
 
-INSERT INTO authority.control_set_authority_field (id, control_set, main_entry, tag, sf_list, name) VALUES
+INSERT INTO authority.control_set_authority_field (id, control_set, main_entry, tag, sf_list, display_sf_list, name) VALUES
 
 -- Main entries
-    (1, 1, NULL, '100', 'abcdefklmnopqrstvxyz', oils_i18n_gettext('1','Heading -- Personal Name','acsaf','name')),
-    (2, 1, NULL, '110', 'abcdefgklmnoprstvxyz', oils_i18n_gettext('2','Heading -- Corporate Name','acsaf','name')),
-    (3, 1, NULL, '111', 'acdefgklnpqstvxyz', oils_i18n_gettext('3','Heading -- Meeting Name','acsaf','name')),
-    (5, 1, NULL, '150', 'abvxyz', oils_i18n_gettext('5','Heading -- Topical Term','acsaf','name')),
-    (6, 1, NULL, '151', 'avxyz', oils_i18n_gettext('6','Heading -- Geographic Name','acsaf','name')),
-    (7, 1, NULL, '155', 'avxyz', oils_i18n_gettext('7','Heading -- Genre/Form Term','acsaf','name')),
-    (8, 1, NULL, '180', 'vxyz', oils_i18n_gettext('8','Heading -- General Subdivision','acsaf','name')),
-    (9, 1, NULL, '181', 'vxyz', oils_i18n_gettext('9','Heading -- Geographic Subdivision','acsaf','name')),
-    (10, 1, NULL, '182', 'vxyz', oils_i18n_gettext('10','Heading -- Chronological Subdivision','acsaf','name')),
-    (11, 1, NULL, '185', 'vxyz', oils_i18n_gettext('11','Heading -- Form Subdivision','acsaf','name')),
-    (12, 1, NULL, '148', 'avxyz', oils_i18n_gettext('12','Heading -- Chronological Term','acsaf','name')),
+    (1, 1, NULL, '100', 'abcdefklmnopqrstvxyz', 'abcdefklmnopqrstvxyz',
+        oils_i18n_gettext('1','Heading -- Personal Name','acsaf','name')),
+    (2, 1, NULL, '110', 'abcdefgklmnoprstvxyz', 'abcdefgklmnoprstvxyz',
+        oils_i18n_gettext('2','Heading -- Corporate Name','acsaf','name')),
+    (3, 1, NULL, '111', 'acdefgklnpqstvxyz', 'acdefgklnpqstvxyz',
+        oils_i18n_gettext('3','Heading -- Meeting Name','acsaf','name')),
+    (5, 1, NULL, '150', 'abvxyz', 'abvxyz',
+        oils_i18n_gettext('5','Heading -- Topical Term','acsaf','name')),
+    (6, 1, NULL, '151', 'avxyz', 'avxyz',
+        oils_i18n_gettext('6','Heading -- Geographic Name','acsaf','name')),
+    (7, 1, NULL, '155', 'avxyz', 'avxyz',
+        oils_i18n_gettext('7','Heading -- Genre/Form Term','acsaf','name')),
+    (8, 1, NULL, '180', 'vxyz', 'vxyz',
+        oils_i18n_gettext('8','Heading -- General Subdivision','acsaf','name')),
+    (9, 1, NULL, '181', 'vxyz', 'vxyz',
+        oils_i18n_gettext('9','Heading -- Geographic Subdivision','acsaf','name')),
+    (10, 1, NULL, '182', 'vxyz', 'vxyz',
+        oils_i18n_gettext('10','Heading -- Chronological Subdivision','acsaf','name')),
+    (11, 1, NULL, '185', 'vxyz', 'vxyz',
+        oils_i18n_gettext('11','Heading -- Form Subdivision','acsaf','name')),
+    (12, 1, NULL, '148', 'avxyz', 'avxyz',
+        oils_i18n_gettext('12','Heading -- Chronological Term','acsaf','name')),
 
 -- See Also From tracings
-    (21, 1, 1, '500', 'abcdefiklmnopqrstvwxyz4', oils_i18n_gettext('21','See Also From Tracing -- Personal Name','acsaf','name')),
-    (22, 1, 2, '510', 'abcdefgiklmnoprstvwxyz4', oils_i18n_gettext('22','See Also From Tracing -- Corporate Name','acsaf','name')),
-    (23, 1, 3, '511', 'acdefgiklnpqstvwxyz4', oils_i18n_gettext('23','See Also From Tracing -- Meeting Name','acsaf','name')),
-    (25, 1, 5, '550', 'abivwxyz4', oils_i18n_gettext('25','See Also From Tracing -- Topical Term','acsaf','name')),
-    (26, 1, 6, '551', 'aivwxyz4', oils_i18n_gettext('26','See Also From Tracing -- Geographic Name','acsaf','name')),
-    (27, 1, 7, '555', 'aivwxyz4', oils_i18n_gettext('27','See Also From Tracing -- Genre/Form Term','acsaf','name')),
-    (28, 1, 8, '580', 'ivwxyz4', oils_i18n_gettext('28','See Also From Tracing -- General Subdivision','acsaf','name')),
-    (29, 1, 9, '581', 'ivwxyz4', oils_i18n_gettext('29','See Also From Tracing -- Geographic Subdivision','acsaf','name')),
-    (30, 1, 10, '582', 'ivwxyz4', oils_i18n_gettext('30','See Also From Tracing -- Chronological Subdivision','acsaf','name')),
-    (31, 1, 11, '585', 'ivwxyz4', oils_i18n_gettext('31','See Also From Tracing -- Form Subdivision','acsaf','name')),
-    (32, 1, 12, '548', 'aivwxyz4', oils_i18n_gettext('32','See Also From Tracing -- Chronological Term','acsaf','name')),
+    (21, 1, 1, '500', 'abcdefiklmnopqrstvwxyz4', 'abcdefiklmnopqrstvxyz', oils_i18n_gettext('21','See Also From Tracing -- Personal Name','acsaf','name')),
+    (22, 1, 2, '510', 'abcdefgiklmnoprstvwxyz4', 'abcdefgiklmnoprstvxyz', oils_i18n_gettext('22','See Also From Tracing -- Corporate Name','acsaf','name')),
+    (23, 1, 3, '511', 'acdefgiklnpqstvwxyz4', 'acdefgiklnpqstvxyz', oils_i18n_gettext('23','See Also From Tracing -- Meeting Name','acsaf','name')),
+    (25, 1, 5, '550', 'abivwxyz4', 'abivxyz', oils_i18n_gettext('25','See Also From Tracing -- Topical Term','acsaf','name')),
+    (26, 1, 6, '551', 'aivwxyz4', 'aivxyz', oils_i18n_gettext('26','See Also From Tracing -- Geographic Name','acsaf','name')),
+    (27, 1, 7, '555', 'aivwxyz4', 'aivxyz', oils_i18n_gettext('27','See Also From Tracing -- Genre/Form Term','acsaf','name')),
+    (28, 1, 8, '580', 'ivwxyz4', 'ivxyz', oils_i18n_gettext('28','See Also From Tracing -- General Subdivision','acsaf','name')),
+    (29, 1, 9, '581', 'ivwxyz4', 'ivxyz', oils_i18n_gettext('29','See Also From Tracing -- Geographic Subdivision','acsaf','name')),
+    (30, 1, 10, '582', 'ivwxyz4', 'ivxyz', oils_i18n_gettext('30','See Also From Tracing -- Chronological Subdivision','acsaf','name')),
+    (31, 1, 11, '585', 'ivwxyz4', 'ivxyz', oils_i18n_gettext('31','See Also From Tracing -- Form Subdivision','acsaf','name')),
+    (32, 1, 12, '548', 'aivwxyz4', 'aivxyz', oils_i18n_gettext('32','See Also From Tracing -- Chronological Term','acsaf','name')),
 
 -- Linking entries
-    (41, 1, 1, '700', 'abcdefghjklmnopqrstvwxyz25', oils_i18n_gettext('41','Established Heading Linking Entry -- Personal Name','acsaf','name')),
-    (42, 1, 2, '710', 'abcdefghklmnoprstvwxyz25', oils_i18n_gettext('42','Established Heading Linking Entry -- Corporate Name','acsaf','name')),
-    (43, 1, 3, '711', 'acdefghklnpqstvwxyz25', oils_i18n_gettext('43','Established Heading Linking Entry -- Meeting Name','acsaf','name')),
-    (45, 1, 5, '750', 'abvwxyz25', oils_i18n_gettext('45','Established Heading Linking Entry -- Topical Term','acsaf','name')),
-    (46, 1, 6, '751', 'avwxyz25', oils_i18n_gettext('46','Established Heading Linking Entry -- Geographic Name','acsaf','name')),
-    (47, 1, 7, '755', 'avwxyz25', oils_i18n_gettext('47','Established Heading Linking Entry -- Genre/Form Term','acsaf','name')),
-    (48, 1, 8, '780', 'vwxyz25', oils_i18n_gettext('48','Subdivision Linking Entry -- General Subdivision','acsaf','name')),
-    (49, 1, 9, '781', 'vwxyz25', oils_i18n_gettext('49','Subdivision Linking Entry -- Geographic Subdivision','acsaf','name')),
-    (50, 1, 10, '782', 'vwxyz25', oils_i18n_gettext('50','Subdivision Linking Entry -- Chronological Subdivision','acsaf','name')),
-    (51, 1, 11, '785', 'vwxyz25', oils_i18n_gettext('51','Subdivision Linking Entry -- Form Subdivision','acsaf','name')),
-    (52, 1, 12, '748', 'avwxyz25', oils_i18n_gettext('52','Established Heading Linking Entry -- Chronological Term','acsaf','name')),
+    (41, 1, 1, '700', 'abcdefghjklmnopqrstvwxyz25', 'abcdefghjklmnopqrstvxyz', oils_i18n_gettext('41','Established Heading Linking Entry -- Personal Name','acsaf','name')),
+    (42, 1, 2, '710', 'abcdefghklmnoprstvwxyz25', 'abcdefghklmnoprstvxyz', oils_i18n_gettext('42','Established Heading Linking Entry -- Corporate Name','acsaf','name')),
+    (43, 1, 3, '711', 'acdefghklnpqstvwxyz25', 'acdefghklnpqstvxyz', oils_i18n_gettext('43','Established Heading Linking Entry -- Meeting Name','acsaf','name')),
+    (45, 1, 5, '750', 'abvwxyz25', 'abvxyz', oils_i18n_gettext('45','Established Heading Linking Entry -- Topical Term','acsaf','name')),
+    (46, 1, 6, '751', 'avwxyz25', 'avxyz', oils_i18n_gettext('46','Established Heading Linking Entry -- Geographic Name','acsaf','name')),
+    (47, 1, 7, '755', 'avwxyz25', 'avxyz', oils_i18n_gettext('47','Established Heading Linking Entry -- Genre/Form Term','acsaf','name')),
+    (48, 1, 8, '780', 'vwxyz25', 'vxyz', oils_i18n_gettext('48','Subdivision Linking Entry -- General Subdivision','acsaf','name')),
+    (49, 1, 9, '781', 'vwxyz25', 'vxyz', oils_i18n_gettext('49','Subdivision Linking Entry -- Geographic Subdivision','acsaf','name')),
+    (50, 1, 10, '782', 'vwxyz25', 'vxyz', oils_i18n_gettext('50','Subdivision Linking Entry -- Chronological Subdivision','acsaf','name')),
+    (51, 1, 11, '785', 'vwxyz25', 'vxyz', oils_i18n_gettext('51','Subdivision Linking Entry -- Form Subdivision','acsaf','name')),
+    (52, 1, 12, '748', 'avwxyz25', 'avxyz', oils_i18n_gettext('52','Established Heading Linking Entry -- Chronological Term','acsaf','name')),
 
 -- See From tracings
-    (61, 1, 1, '400', 'abcdefiklmnopqrstvwxyz4', oils_i18n_gettext('61','See Also Tracing -- Personal Name','acsaf','name')),
-    (62, 1, 2, '410', 'abcdefgiklmnoprstvwxyz4', oils_i18n_gettext('62','See Also Tracing -- Corporate Name','acsaf','name')),
-    (63, 1, 3, '411', 'acdefgiklnpqstvwxyz4', oils_i18n_gettext('63','See Also Tracing -- Meeting Name','acsaf','name')),
-    (65, 1, 5, '450', 'abivwxyz4', oils_i18n_gettext('65','See Also Tracing -- Topical Term','acsaf','name')),
-    (66, 1, 6, '451', 'aivwxyz4', oils_i18n_gettext('66','See Also Tracing -- Geographic Name','acsaf','name')),
-    (67, 1, 7, '455', 'aivwxyz4', oils_i18n_gettext('67','See Also Tracing -- Genre/Form Term','acsaf','name')),
-    (68, 1, 8, '480', 'ivwxyz4', oils_i18n_gettext('68','See Also Tracing -- General Subdivision','acsaf','name')),
-    (69, 1, 9, '481', 'ivwxyz4', oils_i18n_gettext('69','See Also Tracing -- Geographic Subdivision','acsaf','name')),
-    (70, 1, 10, '482', 'ivwxyz4', oils_i18n_gettext('70','See Also Tracing -- Chronological Subdivision','acsaf','name')),
-    (71, 1, 11, '485', 'ivwxyz4', oils_i18n_gettext('71','See Also Tracing -- Form Subdivision','acsaf','name')),
-    (72, 1, 12, '448', 'aivwxyz4', oils_i18n_gettext('72','See Also Tracing -- Chronological Term','acsaf','name'));
+    (61, 1, 1, '400', 'abcdefiklmnopqrstvwxyz4', 'abcdefiklmnopqrstvxyz', oils_i18n_gettext('61','See From Tracing -- Personal Name','acsaf','name')),
+    (62, 1, 2, '410', 'abcdefgiklmnoprstvwxyz4', 'abcdefgiklmnoprstvxyz', oils_i18n_gettext('62','See From Tracing -- Corporate Name','acsaf','name')),
+    (63, 1, 3, '411', 'acdefgiklnpqstvwxyz4', 'acdefgiklnpqstvxyz', oils_i18n_gettext('63','See From Tracing -- Meeting Name','acsaf','name')),
+    (65, 1, 5, '450', 'abivwxyz4', 'abivxyz', oils_i18n_gettext('65','See From Tracing -- Topical Term','acsaf','name')),
+    (66, 1, 6, '451', 'aivwxyz4', 'aivxyz', oils_i18n_gettext('66','See From Tracing -- Geographic Name','acsaf','name')),
+    (67, 1, 7, '455', 'aivwxyz4', 'aivxyz', oils_i18n_gettext('67','See From Tracing -- Genre/Form Term','acsaf','name')),
+    (68, 1, 8, '480', 'ivwxyz4', 'ivxyz', oils_i18n_gettext('68','See From Tracing -- General Subdivision','acsaf','name')),
+    (69, 1, 9, '481', 'ivwxyz4', 'ivxyz', oils_i18n_gettext('69','See From Tracing -- Geographic Subdivision','acsaf','name')),
+    (70, 1, 10, '482', 'ivwxyz4', 'ivxyz', oils_i18n_gettext('70','See From Tracing -- Chronological Subdivision','acsaf','name')),
+    (71, 1, 11, '485', 'ivwxyz4', 'ivxyz', oils_i18n_gettext('71','See From Tracing -- Form Subdivision','acsaf','name')),
+    (72, 1, 12, '448', 'aivwxyz4', 'aivxyz', oils_i18n_gettext('72','See From Tracing -- Chronological Term','acsaf','name'));
+
+-- No linking on 4xx fields for LOC
+UPDATE authority.control_set_authority_field
+    SET linking_subfield = '0' WHERE tag LIKE ANY (ARRAY['5%','7%']);
+
+-- Set the default joiner for subject-ish authority fields
+UPDATE authority.control_set_authority_field
+    SET joiner = ' -- ' WHERE tag LIKE ANY (ARRAY['_4_','_5_','_8_']);
+
 
 INSERT INTO authority.browse_axis (code,name,description,sorter) VALUES
     ('title','Title','Title axis','titlesort'),
@@ -10288,6 +10653,55 @@ INSERT INTO authority.control_set_bib_field (tag, authority_field)
     SELECT '655', id FROM authority.control_set_authority_field WHERE tag IN ('155','180','181','182','185')
 ;
 
+-- Map between authority controlled bib fields and stock indexing metabib fields
+INSERT INTO authority.control_set_bib_field_metabib_field_map (bib_field, metabib_field)
+    SELECT  DISTINCT b.id AS bib_field, m.id AS metabib_field
+      FROM  authority.control_set_bib_field b JOIN authority.control_set_authority_field a ON (b.authority_field = a.id), config.metabib_field m
+      WHERE a.tag = '100' AND m.name = 'personal'
+
+        UNION
+
+    SELECT  DISTINCT b.id AS bib_field, m.id AS metabib_field
+      FROM  authority.control_set_bib_field b JOIN authority.control_set_authority_field a ON (b.authority_field = a.id), config.metabib_field m
+      WHERE a.tag = '110' AND m.name = 'corporate'
+
+        UNION
+
+    SELECT  DISTINCT b.id AS bib_field, m.id AS metabib_field
+      FROM  authority.control_set_bib_field b JOIN authority.control_set_authority_field a ON (b.authority_field = a.id), config.metabib_field m
+      WHERE a.tag = '111' AND m.name = 'conference'
+
+        UNION
+
+    SELECT  DISTINCT b.id AS bib_field, m.id AS metabib_field
+      FROM  authority.control_set_bib_field b JOIN authority.control_set_authority_field a ON (b.authority_field = a.id), config.metabib_field m
+      WHERE a.tag = '130' AND m.name = 'uniform'
+
+        UNION
+
+    SELECT  DISTINCT b.id AS bib_field, m.id AS metabib_field
+      FROM  authority.control_set_bib_field b JOIN authority.control_set_authority_field a ON (b.authority_field = a.id), config.metabib_field m
+      WHERE a.tag = '148' AND m.name = 'temporal'
+
+        UNION
+
+    SELECT  DISTINCT b.id AS bib_field, m.id AS metabib_field
+      FROM  authority.control_set_bib_field b JOIN authority.control_set_authority_field a ON (b.authority_field = a.id), config.metabib_field m
+      WHERE a.tag = '150' AND m.name = 'topic'
+
+        UNION
+
+    SELECT  DISTINCT b.id AS bib_field, m.id AS metabib_field
+      FROM  authority.control_set_bib_field b JOIN authority.control_set_authority_field a ON (b.authority_field = a.id), config.metabib_field m
+      WHERE a.tag = '151' AND m.name = 'geographic'
+
+        UNION
+
+    SELECT  DISTINCT b.id AS bib_field, m.id AS metabib_field
+      FROM  authority.control_set_bib_field b JOIN authority.control_set_authority_field a ON (b.authority_field = a.id), config.metabib_field m
+      WHERE a.tag = '155' AND m.name = 'genre' -- Just in case...
+;
+
 INSERT INTO authority.thesaurus (code, name, control_set) VALUES
     ('a', oils_i18n_gettext('a','Library of Congress Subject Headings','at','name'), 1),
     ('b', oils_i18n_gettext('b','LC subject headings for children''s literature','at','name'), 1), 
@@ -10299,7 +10713,8 @@ INSERT INTO authority.thesaurus (code, name, control_set) VALUES
     ('s', oils_i18n_gettext('s','Sears List of Subject Headings','at','name'), 1),
     ('v', oils_i18n_gettext('v','Repertoire de vedettes-matiere','at','name'), 1),
     ('z', oils_i18n_gettext('z','Other','at','name'), 1),
-    ('|', oils_i18n_gettext('|','No attempt to code','at','name'), NULL);
+    ('|', oils_i18n_gettext('|','No attempt to code','at','name'), NULL),
+    (' ', oils_i18n_gettext(' ','Alternate no attempt to code','at','name'), NULL);
 
 INSERT INTO action_trigger.hook ( key, core_type, description, passive ) VALUES (
     'reservation.available',
@@ -10406,6 +10821,23 @@ INSERT INTO config.usr_setting_type (name,grp,opac_visible,label,description,dat
     oils_i18n_gettext(
         'ui.grid_columns.actor.user.event_log',
         'User Event Log Saved Column Settings',
+        'cust',
+        'description'
+    ),
+    'string'
+), (
+    'ui.grid_columns.conify.config.circ_matrix_matchpoint',
+    'gui',
+    FALSE,
+    oils_i18n_gettext(
+        'ui.grid_columns.conify.config.circ_matrix_matchpoint',
+        'Circulation Policy Configuration',
+        'cust',
+        'label'
+    ),
+    oils_i18n_gettext(
+        'ui.grid_columns.conify.config.circ_matrix_matchpoint',
+        'Circulation Policy Configuration Column Settings',
         'cust',
         'description'
     ),
@@ -11810,9 +12242,9 @@ INSERT INTO action_trigger.environment (event_def, path)
         'target_copy.call_number'
     );
 
-INSERT INTO actor.toolbar(org,label,layout) VALUES
-    ( 1, 'circ', '["circ_checkout","circ_checkin","toolbarseparator.1","search_opac","copy_status","toolbarseparator.2","patron_search","patron_register","toolbarspacer.3","hotkeys_toggle"]' ),
-    ( 1, 'cat', '["circ_checkin","toolbarseparator.1","search_opac","copy_status","toolbarseparator.2","create_marc","authority_manage","retrieve_last_record","toolbarspacer.3","hotkeys_toggle"]' );
+INSERT INTO actor.toolbar(id,org,label,layout) VALUES
+    ( 1, 1, oils_i18n_gettext(1, 'circ', 'atb', 'label'), '["circ_checkout","circ_checkin","toolbarseparator.1","search_opac","copy_status","toolbarseparator.2","patron_search","patron_register","toolbarspacer.3","hotkeys_toggle"]' ),
+    ( 2, 1, oils_i18n_gettext(2, 'cat', 'atb', 'label'), '["circ_checkin","toolbarseparator.1","search_opac","copy_status","toolbarseparator.2","create_marc","authority_manage","retrieve_last_record","toolbarspacer.3","hotkeys_toggle"]' );
 
 INSERT INTO config.global_flag (name, enabled, label) 
     VALUES (
@@ -12474,15 +12906,15 @@ INSERT INTO config.org_unit_setting_type (
 
 INSERT INTO config.best_hold_order (
     name,
-    pprox, aprox, priority, cut, depth, rtime, htime, hprox
+    approx, pprox, aprox, priority, cut, depth, rtime
 ) VALUES (
     'Traditional',
-    1, 2, 3, 4, 5, 6, 7, 8
+    1, 2, 3, 4, 5, 6, 7
 );
 
 INSERT INTO config.best_hold_order (
     name,
-    hprox, pprox, aprox, priority, cut, depth, rtime, htime
+    hprox, approx, pprox, aprox, priority, cut, depth, rtime
 ) VALUES (
     'Traditional with Holds-always-go-home',
     1, 2, 3, 4, 5, 6, 7, 8
@@ -12490,7 +12922,7 @@ INSERT INTO config.best_hold_order (
 
 INSERT INTO config.best_hold_order (
     name,
-    htime, hprox, pprox, aprox, priority, cut, depth, rtime
+    htime, approx, pprox, aprox, priority, cut, depth, rtime
 ) VALUES (
     'Traditional with Holds-go-home',
     1, 2, 3, 4, 5, 6, 7, 8
@@ -12528,3 +12960,631 @@ INSERT INTO actor.org_unit_setting (
     '"6 months"'
 );
 
+INSERT INTO action_trigger.hook (
+        key,
+        core_type,
+        description,
+        passive
+    ) VALUES (
+        'au.barred',
+        'au',
+        'A user was barred by staff',
+        FALSE
+    );
+
+INSERT INTO action_trigger.hook (
+        key,
+        core_type,
+        description,
+        passive
+    ) VALUES (
+        'au.unbarred',
+        'au',
+        'A user was un-barred by staff',
+        FALSE
+    );
+
+INSERT INTO action_trigger.validator (
+        module, 
+        description
+    ) VALUES (
+        'PatronBarred',
+        'Tests if a patron is currently marked as barred'
+    );
+
+INSERT INTO action_trigger.validator (
+        module, 
+        description
+    ) VALUES (
+        'PatronNotBarred',
+        'Tests if a patron is currently not marked as barred'
+    );
+
+INSERT INTO config.org_unit_setting_type
+    (name, label, description, grp, datatype) 
+VALUES (
+    'acq.fund.rollover_distrib_forms',
+    oils_i18n_gettext(
+        'acq.fund.rollover_distrib_forms',
+        'Rollover Distribution Formulae Funds',
+        'coust',
+        'label'
+    ),
+     oils_i18n_gettext(
+        'acq.fund.rollover_distrib_forms',
+        'During fiscal rollover, update distribution formalae to use new funds',
+        'coust',
+        'description'
+    ),
+    'acq',
+    'bool'
+);
+
+INSERT INTO config.z3950_index_field_map 
+    (id, label, metabib_field, z3950_attr_type) VALUES 
+(1, oils_i18n_gettext(1, 'Title',   'czifm', 'label'), 5,  'title'),
+(2, oils_i18n_gettext(2, 'Author',  'czifm', 'label'), 8,  'author'),
+(3, oils_i18n_gettext(3, 'ISBN',    'czifm', 'label'), 18, 'isbn'),
+(4, oils_i18n_gettext(4, 'ISSN',    'czifm', 'label'), 19, 'issn'),
+(5, oils_i18n_gettext(5, 'LCCN',    'czifm', 'label'), 30, 'lccn');
+
+INSERT INTO config.z3950_index_field_map 
+    (id, label, record_attr, z3950_attr_type) VALUES 
+(6, oils_i18n_gettext(6, 'Pubdate',  'czifm', 'label'),'pubdate', 'pubdate'),
+(7, oils_i18n_gettext(7, 'Item Type', 'czifm', 'label'),'item_type', 'item_type');
+
+
+-- let's leave room for more stock mappings
+SELECT SETVAL('config.z3950_index_field_map_id_seq'::TEXT, 1000);
+
+INSERT INTO config.org_unit_setting_type
+    (name, grp, label, description, datatype)
+    VALUES (
+        'cat.z3950.batch.max_parallel',
+        'cat',
+        oils_i18n_gettext(
+            'cat.z3950.batch.max_parallel',
+            'Maximum Parallel Z39.50 Batch Searches',
+            'coust',
+            'label'
+        ),
+        oils_i18n_gettext(
+            'cat.z3950.batch.max_parallel',
+            'The maximum number of Z39.50 searches that can be in-flight at any given time when performing batch Z39.50 searches',
+            'coust',
+            'description'
+        ),
+        'integer'
+    );
+
+INSERT INTO config.org_unit_setting_type
+    (name, grp, label, description, datatype)
+    VALUES (
+        'cat.z3950.batch.max_results',
+        'cat',
+        oils_i18n_gettext(
+            'cat.z3950.batch.max_results',
+            'Maximum Z39.50 Batch Search Results',
+            'coust',
+            'label'
+        ),
+        oils_i18n_gettext(
+            'cat.z3950.batch.max_results',
+            'The maximum number of search results to retrieve and queue for each record + Z39 source during batch Z39.50 searches',
+            'coust',
+            'description'
+        ),
+        'integer'
+    );
+
+-- long overdue stuff...
+
+INSERT INTO config.org_unit_setting_type 
+    (name, grp, datatype, label, description) VALUES 
+(
+    'circ.longoverdue_immediately_available',
+    'circ', 'bool',
+    oils_i18n_gettext(
+        'circ.longoverdue_immediately_available',
+        'Long-Overdue Items Usable on Checkin',
+        'coust',
+        'label'
+    ),
+    oils_i18n_gettext(
+        'circ.longoverdue_immediately_available',
+        'Long-overdue items are usable on checkin instead of going "home" first',
+        'coust',
+        'description'
+    )
+), (
+    'circ.longoverdue_materials_processing_fee',
+    'finance', 'currency',
+    oils_i18n_gettext(
+        'circ.longoverdue_materials_processing_fee',
+        'Long-Overdue Materials Processing Fee',
+        'coust',
+        'label'
+    ),
+    oils_i18n_gettext(
+        'circ.longoverdue_materials_processing_fee',
+        'Long-Overdue Materials Processing Fee',
+        'coust',
+        'description'
+    )
+), (
+    'circ.max_accept_return_of_longoverdue',
+    'circ', 'interval',
+    oils_i18n_gettext(
+        'circ.max_accept_return_of_longoverdue',
+        'Long-Overdue Max Return Interval',
+        'coust',
+        'label'
+    ),
+    oils_i18n_gettext(
+        'circ.max_accept_return_of_longoverdue',
+        'Long-overdue check-in processing (voiding fees, re-instating ' ||
+            'overdues, etc.) will not take place for items that have been ' ||
+            'overdue for (or have last activity older than) this amount of time',
+        'coust',
+        'description'
+    )
+), (
+    'circ.restore_overdue_on_longoverdue_return',
+    'circ', 'bool',
+    oils_i18n_gettext(
+        'circ.restore_overdue_on_longoverdue_return',
+        'Restore Overdues on Long-Overdue Item Return',
+        'coust',
+        'label'
+    ),
+    oils_i18n_gettext(
+        'circ.restore_overdue_on_longoverdue_return',
+        'Restore Overdues on Long-Overdue Item Return',
+        'coust',
+        'description'
+    )
+), (
+    'circ.void_longoverdue_on_checkin',
+    'circ', 'bool',
+    oils_i18n_gettext(
+        'circ.void_longoverdue_on_checkin',
+        'Void Long-Overdue Item Billing When Returned',
+        'coust',
+        'label'
+    ),
+    oils_i18n_gettext(
+        'circ.void_longoverdue_on_checkin',
+        'Void Long-Overdue Item Billing When Returned',
+        'coust',
+        'description'
+    )
+), (
+    'circ.void_longoverdue_proc_fee_on_checkin',
+    'circ', 'bool',
+    oils_i18n_gettext(
+        'circ.void_longoverdue_proc_fee_on_checkin',
+        'Void Processing Fee on Long-Overdue Item Return',
+        'coust',
+        'label'
+    ),
+    oils_i18n_gettext(
+        'circ.void_longoverdue_proc_fee_on_checkin',
+        'Void Processing Fee on Long-Overdue Item Return',
+        'coust',
+        'description'
+    )
+), (
+    'circ.void_overdue_on_longoverdue',
+    'finance', 'bool',
+    oils_i18n_gettext(
+        'circ.void_overdue_on_longoverdue',
+        'Void Overdue Fines When Items are Marked Long-Overdue',
+        'coust',
+        'label'
+    ),
+    oils_i18n_gettext(
+        'circ.void_overdue_on_longoverdue',
+        'Void Overdue Fines When Items are Marked Long-Overdue',
+        'coust',
+        'description'
+    )
+), (
+    'circ.longoverdue.xact_open_on_zero',
+    'finance', 'bool',
+    oils_i18n_gettext(
+        'circ.longoverdue.xact_open_on_zero',
+        'Leave transaction open when long overdue balance equals zero',
+        'coust',
+        'label'
+    ),
+    oils_i18n_gettext(
+        'circ.longoverdue.xact_open_on_zero',
+        'Leave transaction open when long-overdue balance equals zero.  ' ||
+            'This leaves the lost copy on the patron record when it is paid',
+        'coust',
+        'description'
+    )
+), (
+    'circ.longoverdue.use_last_activity_date_on_return',
+    'circ', 'bool',
+    oils_i18n_gettext(
+        'circ.longoverdue.use_last_activity_date_on_return',
+        'Long-Overdue Check-In Interval Uses Last Activity Date',
+        'coust',
+        'label'
+    ),
+    oils_i18n_gettext(
+        'circ.longoverdue.use_last_activity_date_on_return',
+        'Use the long-overdue last-activity date instead of the due_date to ' ||
+            'determine whether the item has been checked out too long to ' ||
+            'perform long-overdue check-in processing.  If set, the system ' ||
+            'will first check the last payment time, followed by the last ' ||
+            'billing time, followed by the due date.  See also ' ||
+            'circ.max_accept_return_of_longoverdue',
+        'coust',
+        'description'
+    )
+);
+
+-- mark long-overdue reactor
+
+INSERT INTO action_trigger.reactor (module, description) VALUES
+(   'MarkItemLongOverdue',
+    oils_i18n_gettext(
+        'MarkItemLongOverdue',
+        'Marks a circulating item as long-overdue and applies configured ' ||
+        'penalties.  Also creates events for the longoverdue.auto hook',
+        'atreact',
+        'description'
+    )
+);
+
+INSERT INTO action_trigger.validator (module, description) VALUES (
+    'PatronNotInCollections', 
+    'Event is valid if the linked patron is not in collections processing ' ||
+        'at the context org unit'
+);
+
+INSERT INTO action_trigger.event_definition 
+    (id, active, owner, name, hook, validator, reactor, delay, delay_field) 
+VALUES (
+    49, FALSE, 1, '6 Month Overdue Mark Long-Overdue', 
+    'checkout.due', 'PatronNotInCollections', 
+    'MarkItemLongOverdue', '6 months', 'due_date'
+);
+
+INSERT INTO action_trigger.event_params (event_def, param, value) VALUES
+    (49, 'editor', '''1''');
+
+-- new longoverdue and longervdue.auto hook.
+
+INSERT INTO action_trigger.hook (key,core_type,description) VALUES (
+    'longoverdue',
+    'circ',
+    'Circulating Item marked long-overdue'
+);
+
+INSERT INTO action_trigger.hook (key,core_type,description) VALUES (
+    'longoverdue.auto',
+    'circ',
+    'Circulating Item automatically marked long-overdue'
+);
+
+-- sample longoverdue.auto notification reactor
+
+INSERT INTO action_trigger.event_definition 
+    (id, active, owner, name, hook, validator, reactor, group_field, template) 
+    VALUES (
+        50, FALSE, 1, '6 Month Long Overdue Notice', 
+        'longoverdue.auto', 'NOOP_True', 'SendEmail', 'usr',
+$$
+[%- USE date -%]
+[%- user = target.0.usr -%]
+To: [%- params.recipient_email || user.email %]
+From: [%- params.sender_email || default_sender %]
+Subject: Overdue Items Marked Long Overdue
+
+Dear [% user.family_name %], [% user.first_given_name %]
+The following items are 6 months overdue and have been marked Long Overdue.
+
+[% FOR circ IN target %]
+    [%- copy_details = helpers.get_copy_bib_basics(circ.target_copy.id) -%]
+    Title: [% copy_details.title %], by [% copy_details.author %]
+    Call Number: [% circ.target_copy.call_number.label %]
+    Shelving Location: [% circ.target_copy.location.name %]
+    Barcode: [% circ.target_copy.barcode %]
+    Due: [% date.format(helpers.format_date(circ.due_date), '%Y-%m-%d') %]
+    Item Cost: [% helpers.get_copy_price(circ.target_copy) %]
+    Total Owed For Transaction: [% circ.billable_transaction.summary.balance_owed %]
+    Library: [% circ.circ_lib.name %]
+
+[% END %]
+$$);
+
+-- ENV for above
+
+INSERT INTO action_trigger.environment (event_def, path) VALUES 
+    (50, 'target_copy.call_number'),
+    (50, 'usr'),
+    (50, 'billable_transaction.summary'),
+    (50, 'circ_lib.billing_address'),
+    (50, 'target_copy.location');
+
+-- OUS's for patron self-reg
+INSERT INTO config.org_unit_setting_type
+    (name, grp, datatype, label, description)
+VALUES (
+    'opac.allow_pending_user',
+    'opac',
+    'bool',
+    oils_i18n_gettext(
+        'opac.allow_pending_user',
+        'Allow Patron Self-Registration',
+        'coust',
+        'label'
+    ),
+    oils_i18n_gettext(
+        'opac.allow_pending_user',
+        'Allow patrons to self-register, creating pending user accounts',
+        'coust',
+        'description'
+    )
+), (
+    'opac.pending_user_expire_interval',
+    'opac',
+    'interval',
+    oils_i18n_gettext(
+        'opac.pending_user_expire_interval',
+        'Patron Self-Reg. Expire Interval',
+        'coust',
+        'label'
+    ),
+    oils_i18n_gettext(
+        'opac.pending_user_expire_interval',
+        'If set, this is the amount of time a pending user account will ' ||
+        'be allowed to sit in the database.  After this time, the pending ' ||
+        'user information will be purged',
+        'coust',
+        'description'
+    )
+), (
+    'ui.patron.edit.aua.county.show',
+    'gui',
+    'bool',
+    oils_i18n_gettext(
+        'ui.patron.edit.aua.county.require',
+        'Show county field on patron registration',
+        'coust',
+        'label'
+    ),
+    oils_i18n_gettext(
+        'ui.patron.edit.aua.county.require',
+        'The county field will be shown on the patron registration screen',
+        'coust',
+        'description'
+    )
+);
+
+-- vandelay item import defaults
+INSERT INTO config.org_unit_setting_type
+    (grp, name, label, description, datatype, fm_class)
+VALUES (
+    'vandelay',
+    'vandelay.item.barcode.auto',
+    oils_i18n_gettext(
+        'vandelay.item.barcode.auto',
+        'Vandelay Generate Default Barcodes',
+        'coust', 'label'),
+    oils_i18n_gettext(
+        'vandelay.item.barcode.auto',
+        'Auto-generate deault item barcodes when no item barcode is present',
+        'coust', 'label'),
+    'bool',
+    NULL
+), (
+    'vandelay',
+    'vandelay.item.barcode.prefix',
+    oils_i18n_gettext(
+        'vandelay.item.barcode.prefix',
+        'Vandelay Default Barcode Prefix',
+        'coust', 'label'),
+    oils_i18n_gettext(
+        'vandelay.item.barcode.prefix',
+        'Apply this prefix to any auto-generated item barcodes',
+        'coust', 'label'),
+    'string',
+    NULL
+), (
+    'vandelay',
+    'vandelay.item.call_number.auto',
+    oils_i18n_gettext(
+        'vandelay.item.call_number.auto',
+        'Vandelay Generate Default Call Numbers',
+        'coust', 'label'),
+    oils_i18n_gettext(
+        'vandelay.item.call_number.auto',
+        'Auto-generate default item call numbers when no item call number is present',
+        'coust', 'label'),
+    'bool',
+    NULL
+), (
+    'vandelay',
+    'vandelay.item.call_number.prefix',
+    oils_i18n_gettext(
+        'vandelay.item.call_number.prefix',
+        'Vandelay Default Call Number Prefix',
+        'coust', 'label'),
+    oils_i18n_gettext(
+        'vandelay.item.call_number.prefix',
+        'Apply this prefix to any auto-generated item call numbers',
+        'coust', 'label'),
+    'string',
+    NULL
+), (
+    'vandelay',
+    'vandelay.item.copy_location.default',
+    oils_i18n_gettext(
+        'vandelay.item.copy_location.default',
+        'Vandelay Default Copy Location',
+        'coust', 'label'),
+    oils_i18n_gettext(
+        'vandelay.item.copy_location.default',
+        'Default copy location value for imported items',
+        'coust', 'label'),
+    'link',
+    'acpl'
+), (
+    'vandelay',
+    'vandelay.item.circ_modifier.default',
+    oils_i18n_gettext(
+        'vandelay.item.circ_modifier.default',
+        'Vandelay Default Circulation Modifier',
+        'coust', 'label'),
+    oils_i18n_gettext(
+        'vandelay.item.circ_modifier.default',
+        'Default circulation modifier value for imported items',
+        'coust', 'label'),
+    'link',
+    'ccm'
+);
+
+
+INSERT into config.org_unit_setting_type 
+    (name, grp, label, description, datatype)
+VALUES ( 
+    'opac.holds.org_unit_not_pickup_lib', 
+    'opac',
+    oils_i18n_gettext('opac.holds.org_unit_not_pickup_lib',
+        'OPAC: Org Unit is not a hold pickup library',
+        'coust', 'label'),
+    oils_i18n_gettext('opac.holds.org_unit_not_pickup_lib',
+        'If set, this org unit will not be offered to the patron as an '||
+        'option for a hold pickup location.  This setting has no affect '||
+        'on searching or hold targeting',
+        'coust', 'description'),
+    'bool'
+);
+
+
+INSERT INTO config.standing_penalty
+    (id, name, label, block_list, staff_alert)
+VALUES (
+    35,
+    'PATRON_EXCEEDS_LONGOVERDUE_COUNT',
+    oils_i18n_gettext(
+        35,
+        'Patron Exceeds Max Long-Overdue Threshold',
+        'csp',
+        'label'
+    ),
+    'CIRC|FULFILL|HOLD|CAPTURE|RENEW',
+    TRUE
+);
+
+
+INSERT INTO config.org_unit_setting_type
+    (name, grp, datatype, label, description)
+VALUES (
+    'opac.self_register.timeout',
+    'opac',
+    'integer',
+    oils_i18n_gettext(
+        'opac.self_register.timeout',
+        'Patron Self-Reg. Display Timeout',
+        'coust',
+        'label'
+    ),
+    oils_i18n_gettext(
+        'opac.self_register.timeout',
+        'Number of seconds to wait before reloading the patron self-'||
+        'registration interface to clear sensitive data',
+        'coust',
+        'description'
+    )
+);
+
+
+INSERT INTO config.org_unit_setting_type 
+    (name, grp, datatype, label, description)
+VALUES (
+    'ui.circ.items_out.longoverdue', 'gui', 'integer',
+    oils_i18n_gettext(
+        'ui.circ.items_out.longoverdue',
+        'Items Out Long-Overdue display setting',
+        'coust',
+        'label'
+    ),
+    oils_i18n_gettext(
+        'ui.circ.items_out.longoverdue',
+'Value is a numeric code, describing which list the circulation '||
+'should appear while checked out and whether the circulation should '||
+'continue to appear in the bottom list, when checked in with '||
+'oustanding fines.  '||
+'1 = top list, bottom list.  2 = bottom list, bottom list.  ' ||
+'5 = top list, do not display.  6 = bottom list, do not display.',
+        'coust',
+        'description'
+    )
+), (
+    'ui.circ.items_out.lost', 'gui', 'integer',
+    oils_i18n_gettext(
+        'ui.circ.items_out.lost',
+        'Items Out Lost display setting',
+        'coust',
+        'label'
+    ),
+    oils_i18n_gettext(
+        'ui.circ.items_out.lost',
+'Value is a numeric code, describing which list the circulation '||
+'should appear while checked out and whether the circulation should '||
+'continue to appear in the bottom list, when checked in with '||
+'oustanding fines.  '||
+'1 = top list, bottom list.  2 = bottom list, bottom list.  ' ||
+'5 = top list, do not display.  6 = bottom list, do not display.',
+        'coust',
+        'description'
+    )
+), (
+    'ui.circ.items_out.claimsreturned', 'gui', 'integer',
+    oils_i18n_gettext(
+        'ui.circ.items_out.claimsreturned',
+        'Items Out Claims Returned display setting',
+        'coust',
+        'label'
+    ),
+    oils_i18n_gettext(
+        'ui.circ.items_out.claimsreturned',
+'Value is a numeric code, describing which list the circulation '||
+'should appear while checked out and whether the circulation should '||
+'continue to appear in the bottom list, when checked in with '||
+'oustanding fines.  '||
+'1 = top list, bottom list.  2 = bottom list, bottom list.  ' ||
+'5 = top list, do not display.  6 = bottom list, do not display.',
+        'coust',
+        'description'
+    )
+);
+
+-- YAOUS patron credit disable
+INSERT INTO config.org_unit_setting_type 
+    (grp, name, datatype, label, description) 
+VALUES (
+    'finance',
+    'circ.disable_patron_credit',
+    'bool',
+    oils_i18n_gettext(
+        'circ.disable_patron_credit',
+        'Disable Patron Credit',
+        'coust',
+        'label'
+    ),
+    oils_i18n_gettext(
+        'circ.disable_patron_credit',
+        'Do not allow patrons to accrue credit or pay fines/fees with accrued credit',
+        'coust',
+        'description'
+    )
+);
+
+INSERT INTO config.floating_group(name) VALUES ('Everywhere');
+INSERT INTO config.floating_group_member(floating_group, org_unit) VALUES (1, 1);

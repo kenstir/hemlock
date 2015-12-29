@@ -50,6 +50,7 @@ INSERT INTO config.internal_flag (name) VALUES ('ingest.skip_browse_indexing');
 INSERT INTO config.internal_flag (name) VALUES ('ingest.skip_search_indexing');
 INSERT INTO config.internal_flag (name) VALUES ('ingest.skip_facet_indexing');
 INSERT INTO config.internal_flag (name) VALUES ('serial.rematerialize_on_same_holding_code');
+INSERT INTO config.internal_flag (name) VALUES ('ingest.metarecord_mapping.preserve_on_delete');
 
 CREATE TABLE config.global_flag (
     label   TEXT    NOT NULL
@@ -90,7 +91,7 @@ CREATE TRIGGER no_overlapping_deps
     BEFORE INSERT OR UPDATE ON config.db_patch_dependencies
     FOR EACH ROW EXECUTE PROCEDURE evergreen.array_overlap_check ('deprecates');
 
-INSERT INTO config.upgrade_log (version, applied_to) VALUES ('0764', :eg_version); -- gmcharlt/berick/bshum
+INSERT INTO config.upgrade_log (version, applied_to) VALUES ('0844', :eg_version); -- dbwells/senator
 
 CREATE TABLE config.bib_source (
 	id		SERIAL	PRIMARY KEY,
@@ -173,6 +174,7 @@ CREATE TABLE config.metabib_class (
     label    TEXT    NOT NULL UNIQUE,
     buoyant  BOOL    DEFAULT FALSE NOT NULL,
     restrict BOOL    DEFAULT FALSE NOT NULL,
+    combined BOOL    DEFAULT FALSE NOT NULL,
     a_weight NUMERIC  DEFAULT 1.0 NOT NULL,
     b_weight NUMERIC  DEFAULT 0.4 NOT NULL,
     c_weight NUMERIC  DEFAULT 0.2 NOT NULL,
@@ -191,7 +193,10 @@ CREATE TABLE config.metabib_field (
 	facet_field	BOOL	NOT NULL DEFAULT FALSE,
 	browse_field	BOOL	NOT NULL DEFAULT TRUE,
 	browse_xpath   TEXT,
+	browse_sort_xpath TEXT,
 	facet_xpath	TEXT,
+	authority_xpath TEXT,
+	joiner      TEXT,
 	restrict	BOOL    DEFAULT FALSE NOT NULL
 );
 COMMENT ON TABLE config.metabib_field IS $$
@@ -234,7 +239,7 @@ $$;
 
 CREATE TABLE config.metabib_field_ts_map (
 	id				SERIAL PRIMARY KEY,
-	metabib_field	INT NOT NULL REFERENCES config.metabib_field (id),
+	metabib_field	INT NOT NULL REFERENCES config.metabib_field (id) ON UPDATE CASCADE DEFERRABLE INITIALLY DEFERRED,
 	ts_config		TEXT NOT NULL REFERENCES config.ts_config_list (id),
 	active			BOOL NOT NULL DEFAULT TRUE,
 	index_weight	CHAR(1) NOT NULL DEFAULT 'C' CHECK (index_weight IN ('A','B','C','D')),
@@ -251,7 +256,7 @@ $$;
 CREATE TABLE config.metabib_search_alias (
     alias       TEXT    PRIMARY KEY,
     field_class TEXT    NOT NULL REFERENCES config.metabib_class (name),
-    field       INT     REFERENCES config.metabib_field (id)
+    field       INT     REFERENCES config.metabib_field (id) ON UPDATE CASCADE DEFERRABLE INITIALLY DEFERRED
 );
 
 CREATE TABLE config.non_cataloged_type (
@@ -504,13 +509,22 @@ $$;
 
 CREATE TABLE config.z3950_attr (
     id          SERIAL  PRIMARY KEY,
-    source      TEXT    NOT NULL REFERENCES config.z3950_source (name) DEFERRABLE INITIALLY DEFERRED,
+    source      TEXT    NOT NULL REFERENCES config.z3950_source (name) ON UPDATE CASCADE ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED,
     name        TEXT    NOT NULL,
     label       TEXT    NOT NULL,
     code        INT     NOT NULL,
     format      INT     NOT NULL,
     truncation  INT     NOT NULL DEFAULT 0,
     CONSTRAINT z_code_format_once_per_source UNIQUE (code,format,source)
+);
+
+CREATE TABLE config.z3950_source_credentials (
+    id SERIAL PRIMARY KEY,
+    owner INTEGER NOT NULL, -- REFERENCES actor.org_unit(id),
+    source TEXT NOT NULL REFERENCES config.z3950_source(name) ON DELETE CASCADE ON UPDATE CASCADE DEFERRABLE INITIALLY DEFERRED,
+    username TEXT,
+    password TEXT,
+    CONSTRAINT czsc_source_once_per_lib UNIQUE (source, owner)
 );
 
 CREATE TABLE config.i18n_locale (
@@ -603,6 +617,7 @@ CREATE TABLE config.usr_setting_type (
     grp             TEXT    REFERENCES config.settings_group (name),
     datatype TEXT NOT NULL DEFAULT 'string',
     fm_class TEXT,
+    reg_default TEXT,
 
     --
     -- define valid datatypes
@@ -927,7 +942,7 @@ CREATE TABLE config.org_unit_setting_type_log (
     org             INT,   --REFERENCES actor.org_unit (id),
     original_value  TEXT,
     new_value       TEXT,
-    field_name      TEXT      REFERENCES config.org_unit_setting_type (name)
+    field_name      TEXT      REFERENCES config.org_unit_setting_type (name) DEFERRABLE INITIALLY DEFERRED
 );
 
 COMMENT ON TABLE config.org_unit_setting_type_log IS $$
@@ -1024,5 +1039,40 @@ ALTER TABLE config.best_hold_order ADD CHECK ((
     htime IS NOT NULL OR
     rtime IS NOT NULL
 ));
+
+CREATE OR REPLACE FUNCTION 
+    evergreen.z3950_attr_name_is_valid(TEXT) RETURNS BOOLEAN AS $func$
+    SELECT EXISTS (SELECT 1 FROM config.z3950_attr WHERE name = $1);
+$func$ LANGUAGE SQL STRICT IMMUTABLE;
+
+COMMENT ON FUNCTION evergreen.z3950_attr_name_is_valid(TEXT) IS $$
+Results in TRUE if there exists at least one config.z3950_attr
+with the provided name.  Used by config.z3950_index_field_map
+to verify z3950_attr_type maps.
+$$;
+
+-- drop these in down here since they reference config.metabib_field
+-- and config.record_attr_definition
+CREATE TABLE config.z3950_index_field_map (
+    id              SERIAL  PRIMARY KEY,
+    label           TEXT    NOT NULL, -- i18n
+    metabib_field   INTEGER REFERENCES config.metabib_field(id) ON UPDATE CASCADE DEFERRABLE INITIALLY DEFERRED,
+    record_attr     TEXT    REFERENCES config.record_attr_definition(name),
+    z3950_attr      INTEGER REFERENCES config.z3950_attr(id),
+    z3950_attr_type TEXT,-- REFERENCES config.z3950_attr(name)
+    CONSTRAINT metabib_field_or_record_attr CHECK (
+        metabib_field IS NOT NULL OR 
+        record_attr IS NOT NULL
+    ),
+    CONSTRAINT attr_or_attr_type CHECK (
+        z3950_attr IS NOT NULL OR 
+        z3950_attr_type IS NOT NULL
+    ),
+    -- ensure the selected z3950_attr_type refers to a valid attr name
+    CONSTRAINT valid_z3950_attr_type CHECK (
+        z3950_attr_type IS NULL OR 
+            evergreen.z3950_attr_name_is_valid(z3950_attr_type)
+    )
+);
 
 COMMIT;

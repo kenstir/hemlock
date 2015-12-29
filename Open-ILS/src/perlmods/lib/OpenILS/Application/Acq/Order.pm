@@ -274,6 +274,22 @@ sub promote_lineitem_holds {
             $hold->target( $li->eg_bib_id );
         }
 
+        # if behind-the-desk holds are supported at the 
+        # pickup library, apply the patron default
+        my $bdous = $U->ou_ancestor_setting_value(
+            $hold->pickup_lib, 
+            'circ.holds.behind_desk_pickup_supported', 
+            $mgr->editor
+        );
+
+        if ($bdous) {
+            my $set = $mgr->editor->search_actor_user_setting(
+                {usr => $hold->usr, name => 'circ.holds_behind_desk'})->[0];
+    
+            $hold->behind_desk('t') if $set and 
+                OpenSRF::Utils::JSON->JSON2perl($set->value);
+        }
+
         $mgr->editor->create_action_hold_request( $hold ) or return 0;
     }
 
@@ -298,6 +314,9 @@ sub delete_lineitem {
 # bib_only exits before creation of copies and callnumbers
 sub create_lineitem_list_assets {
     my($mgr, $li_ids, $vandelay, $bib_only) = @_;
+
+    # Do not create line items if none are specified
+    return {} unless (scalar(@$li_ids));
 
     if (check_import_li_marc_perms($mgr, $li_ids)) { # event on error
         $logger->error("acq-vl: user does not have permission to import acq records");
@@ -580,6 +599,10 @@ sub receive_lineitem {
     my($mgr, $li_id, $skip_complete_check) = @_;
     my $li = $mgr->editor->retrieve_acq_lineitem($li_id) or return 0;
 
+    return 0 unless $li->state eq 'on-order' or $li->state eq 'cancelled'; # sic
+
+    $li->clear_cancel_reason; # un-cancel on receive
+
     my $lid_ids = $mgr->editor->search_acq_lineitem_detail(
         {lineitem => $li_id, recv_time => undef}, {idlist => 1});
 
@@ -707,6 +730,19 @@ sub receive_lineitem_detail {
 
     return 1 if $lid->recv_time;
 
+    # if the LID is marked as canceled, remove the cancel reason,
+    # and reinstate fund debits where deleted by cancelation.
+    if ($lid->cancel_reason) {
+        my $cr = $e->retrieve_acq_cancel_reason($lid->cancel_reason);
+
+        if (!$U->is_true($cr->keep_debits)) {
+            # debits were removed during cancelation.
+            create_lineitem_detail_debit(
+                $mgr, $lid->lineitem, $lid) or return 0;
+        }
+        $lid->clear_cancel_reason;
+    }
+
     $lid->receiver($e->requestor->id);
     $lid->recv_time('now');
     $e->update_acq_lineitem_detail($lid) or return 0;
@@ -801,8 +837,9 @@ sub set_lineitem_attr {
 # Lineitem Debits
 # ----------------------------------------------------------------------------
 sub create_lineitem_debits {
-    my ($mgr, $li, $dry_run, $options) = @_; 
+    my ($mgr, $li, $options) = @_;
     $options ||= {};
+    my $dry_run = $options->{dry_run};
 
     unless($li->estimated_unit_price) {
         $mgr->editor->event(OpenILS::Event->new('ACQ_LINEITEM_NO_PRICE', payload => $li->id));
@@ -913,9 +950,9 @@ sub create_lineitem_detail_debit {
 
 
 __PACKAGE__->register_method(
-	"method" => "fund_exceeds_balance_percent_api",
-	"api_name" => "open-ils.acq.fund.check_balance_percentages",
-	"signature" => {
+    "method" => "fund_exceeds_balance_percent_api",
+    "api_name" => "open-ils.acq.fund.check_balance_percentages",
+    "signature" => {
         "desc" => q/Determine whether a given fund exceeds its defined
             "balance stop and warning percentages"/,
         "params" => [
@@ -1259,10 +1296,10 @@ sub create_copy {
 # ----------------------------------------------------------------------------
 
 __PACKAGE__->register_method(
-	method => 'zsearch',
-	api_name => 'open-ils.acq.picklist.search.z3950',
+    method => 'zsearch',
+    api_name => 'open-ils.acq.picklist.search.z3950',
     stream => 1,
-	signature => {
+    signature => {
         desc => 'Performs a z3950 federated search and creates a picklist and associated lineitems',
         params => [
             {desc => 'Authentication token', type => 'string'},
@@ -1358,7 +1395,7 @@ sub upload_records {
     my($self, $conn, $auth, $key, $args) = @_;
     $args ||= {};
 
-	my $e = new_editor(authtoken => $auth, xact => 1);
+    my $e = new_editor(authtoken => $auth, xact => 1);
     return $e->die_event unless $e->checkauth;
     my $mgr = OpenILS::Application::Acq::BatchManager->new(editor => $e, conn => $conn);
 
@@ -1416,33 +1453,33 @@ sub upload_records {
 
     $logger->info("acq processing MARC file=$filename");
 
-	my $batch = new MARC::Batch ('USMARC', $filename);
-	$batch->strict_off;
+    my $batch = new MARC::Batch ('USMARC', $filename);
+    $batch->strict_off;
 
-	my $count = 0;
+    my $count = 0;
     my @li_list;
 
-	while(1) {
+    while(1) {
 
-	    my ($err, $xml, $r);
-		$count++;
+        my ($err, $xml, $r);
+        $count++;
 
-		try {
+        try {
             $r = $batch->next;
         } catch Error with {
             $err = shift;
-			$logger->warn("Proccessing of record $count in set $key failed with error $err.  Skipping this record");
+            $logger->warn("Proccessing of record $count in set $key failed with error $err.  Skipping this record");
         };
 
         next if $err;
         last unless $r;
 
-		try {
+        try {
             $xml = clean_marc($r);
-		} catch Error with {
-			$err = shift;
-			$logger->warn("Proccessing XML of record $count in set $key failed with error $err.  Skipping this record");
-		};
+        } catch Error with {
+            $err = shift;
+            $logger->warn("Proccessing XML of record $count in set $key failed with error $err.  Skipping this record");
+        };
 
         next if $err or not $xml;
 
@@ -1468,14 +1505,14 @@ sub upload_records {
 
         push(@li_list, $li->id);
         $mgr->respond;
-	}
+    }
 
     if ($po) {
         $evt = extract_po_name($mgr, $po, \@li_list);
         return $evt if $evt;
     }
 
-	$e->commit;
+    $e->commit;
     unlink($filename);
     $cache->delete_cache('vandelay_import_spool_' . $key);
 
@@ -1684,9 +1721,9 @@ sub extract_lineitem_detail_data {
 # ----------------------------------------------------------------------------
 
 __PACKAGE__->register_method(
-	method => 'create_po_assets',
-	api_name	=> 'open-ils.acq.purchase_order.assets.create',
-	signature => {
+    method => 'create_po_assets',
+    api_name    => 'open-ils.acq.purchase_order.assets.create',
+    signature => {
         desc => q/Creates assets for each lineitem in the purchase order/,
         params => [
             {desc => 'Authentication token', type => 'string'},
@@ -1781,6 +1818,14 @@ sub create_purchase_order_api {
                 {flesh => 1, flesh_fields => {jub => ['attributes']}}
             ]) or return $e->die_event;
 
+            return $e->die_event(
+                new OpenILS::Event(
+                    "BAD_PARAMS", payload => $li,
+                        note => "acq.lineitem #" . $li->id .
+                        ": purchase_order #" . $li->purchase_order
+                )
+            ) if $li->purchase_order;
+
             $li->provider($po->provider);
             $li->purchase_order($po->id);
             $li->state('pending-order');
@@ -1789,14 +1834,71 @@ sub create_purchase_order_api {
         }
     }
 
+    # see if we have a PO name encoded in any of our lineitems
+    my $evt = extract_po_name($mgr, $po, $li_ids);
+    return $evt if $evt;
+
     # commit before starting the asset creation
     $e->xact_commit;
 
-    if($li_ids and $vandelay) {
-        create_lineitem_list_assets($mgr, $li_ids, $vandelay, !$$args{create_assets}) or return $e->die_event;
+    if($li_ids) {
+
+        if ($vandelay) {
+            create_lineitem_list_assets(
+                $mgr, $li_ids, $vandelay, !$$args{create_assets}) 
+                or return $e->die_event;
+        }
+
+        $e->xact_begin;
+        apply_default_copies($mgr, $po) or return $e->die_event;
+        $e->xact_commit;
     }
 
     return $mgr->respond_complete;
+}
+
+# !transaction must be managed by the caller
+# creates the default number of copies for each lineitem on the PO.
+# when a LI already has copies attached, no default copies are added.
+# without li_id, all lineitems are checked/applied
+# returns 1 on success, 0 on error
+sub apply_default_copies {
+    my ($mgr, $po, $li_id) = @_;
+
+    my $e = $mgr->editor;
+
+    my $provider = ref($po->provider) ? $po->provider :
+        $e->retrieve_acq_provider($po->provider);
+
+    my $copy_count = $provider->default_copy_count || return 1;
+    
+    $logger->info("Applying $copy_count default copies for PO ".$po->id);
+
+    my $li_ids = $li_id ? [$li_id] : 
+        $e->search_acq_lineitem({
+            purchase_order => $po->id,
+            cancel_reason => undef
+        }, 
+        {idlist => 1}
+    );
+    
+    for my $li_id (@$li_ids) {
+
+        my $lid_ids = $e->search_acq_lineitem_detail(
+            {lineitem => $li_id}, {idlist => 1});
+
+        # do not apply default copies when copies already exist
+        next if @$lid_ids;
+
+        for (1 .. $copy_count) {
+            create_lineitem_detail($mgr, 
+                lineitem => $li_id,
+                owning_lib => $e->requestor->ws_ou
+            ) or return 0;
+        }
+    }
+
+    return 1;
 }
 
 
@@ -1987,9 +2089,9 @@ sub receive_po_api {
 # the same way the LIs and LIDs do.
 
 __PACKAGE__->register_method(
-	method => 'receive_lineitem_detail_api',
-	api_name	=> 'open-ils.acq.lineitem_detail.receive',
-	signature => {
+    method => 'receive_lineitem_detail_api',
+    api_name    => 'open-ils.acq.lineitem_detail.receive',
+    signature => {
         desc => 'Mark a lineitem_detail as received',
         params => [
             {desc => 'Authentication token', type => 'string'},
@@ -2047,9 +2149,9 @@ sub receive_lineitem_detail_api {
 }
 
 __PACKAGE__->register_method(
-	method => 'receive_lineitem_api',
-	api_name	=> 'open-ils.acq.lineitem.receive',
-	signature => {
+    method => 'receive_lineitem_api',
+    api_name    => 'open-ils.acq.lineitem.receive',
+    signature => {
         desc => 'Mark a lineitem as received',
         params => [
             {desc => 'Authentication token', type => 'string'},
@@ -2087,6 +2189,57 @@ sub receive_lineitem_api {
     $mgr->run_post_response_hooks
 }
 
+
+__PACKAGE__->register_method(
+    method => 'receive_lineitem_batch_api',
+    api_name    => 'open-ils.acq.lineitem.receive.batch',
+    stream => 1,
+    signature => {
+        desc => 'Mark lineitems as received',
+        params => [
+            {desc => 'Authentication token', type => 'string'},
+            {desc => 'lineitem ID list', type => 'array'}
+        ],
+        return => {desc =>
+            q/On success, stream of objects describing changes to LIs and
+            possibly PO; onerror, Event.  Any event, even after lots of other
+            objects, should mean general failure of whole batch operation./
+        }
+    }
+);
+
+sub receive_lineitem_batch_api {
+    my ($self, $conn, $auth, $li_idlist) = @_;
+
+    return unless ref $li_idlist eq 'ARRAY' and @$li_idlist;
+
+    my $e = new_editor(xact => 1, authtoken => $auth);
+    return $e->die_event unless $e->checkauth;
+
+    my $mgr = new OpenILS::Application::Acq::BatchManager(
+        editor => $e, conn => $conn
+    );
+
+    for my $li_id (map { int $_ } @$li_idlist) {
+        my $li = $e->retrieve_acq_lineitem([
+            $li_id, {
+                flesh => 1,
+                flesh_fields => { jub => ['purchase_order'] }
+            }
+        ]) or return $e->die_event;
+
+        return $e->die_event unless $e->allowed(
+            'RECEIVE_PURCHASE_ORDER', $li->purchase_order->ordering_agency
+        );
+
+        receive_lineitem($mgr, $li_id) or return $e->die_event;
+        $mgr->respond;
+    }
+
+    $e->commit or return $e->die_event;
+    $mgr->respond_complete;
+    $mgr->run_post_response_hooks;
+}
 
 __PACKAGE__->register_method(
     method   => 'rollback_receive_po_api',
@@ -2222,6 +2375,66 @@ sub rollback_receive_lineitem_api {
     $result->{"po"} = describe_affected_po($e, $po);
 
     $e->commit and return $result or return $e->die_event;
+}
+
+__PACKAGE__->register_method(
+    method    => 'rollback_receive_lineitem_batch_api',
+    api_name  => 'open-ils.acq.lineitem.receive.rollback.batch',
+    stream => 1,
+    signature => {
+        desc   => 'Mark a list of lineitems as Un-received',
+        params => [
+            {desc => 'Authentication token', type => 'string'},
+            {desc => 'lineitem ID list',     type => 'array'}
+        ],
+        return => {desc =>
+            q/on success, a stream of objects describing changes to LI and
+            possibly PO; on error, Event. Any event means all previously
+            returned objects indicate changes that didn't really happen./
+        }
+    }
+);
+
+sub rollback_receive_lineitem_batch_api {
+    my ($self, $conn, $auth, $li_idlist) = @_;
+
+    return unless ref $li_idlist eq 'ARRAY' and @$li_idlist;
+
+    my $e = new_editor(xact => 1, authtoken => $auth);
+    return $e->die_event unless $e->checkauth;
+
+    my $mgr = new OpenILS::Application::Acq::BatchManager(
+        editor => $e, conn => $conn
+    );
+
+    for my $li_id (map { int $_ } @$li_idlist) {
+        my $li = $e->retrieve_acq_lineitem([
+            $li_id, {
+                "flesh" => 1,
+                "flesh_fields" => {"jub" => ["purchase_order"]}
+            }
+        ]);
+
+        my $po = $li->purchase_order;
+
+        return $e->die_event unless
+            $e->allowed('RECEIVE_PURCHASE_ORDER', $po->ordering_agency);
+
+        $li = rollback_receive_lineitem($mgr, $li_id) or return $e->die_event;
+
+        my $result = {"li" => {$li->id => {"state" => $li->state}}};
+        if ($po->state eq "received") { # should happen first time, not after
+            $po->state("on-order");
+            $po = update_purchase_order($mgr, $po) or return $e->die_event;
+        }
+        $result->{"po"} = describe_affected_po($e, $po);
+
+        $mgr->respond(%$result);
+    }
+
+    $e->commit or return $e->die_event;
+    $mgr->respond_complete;
+    $mgr->run_post_response_hooks;
 }
 
 
@@ -2421,21 +2634,24 @@ __PACKAGE__->register_method(
 sub activate_purchase_order {
     my($self, $conn, $auth, $po_id, $vandelay, $options) = @_;
     $options ||= {};
+    $$options{dry_run} = ($self->api_name =~ /\.dry_run/) ? 1 : 0;
 
-    my $dry_run = ($self->api_name =~ /\.dry_run/) ? 1 : 0;
     my $e = new_editor(authtoken=>$auth);
     return $e->die_event unless $e->checkauth;
     my $mgr = OpenILS::Application::Acq::BatchManager->new(editor => $e, conn => $conn);
-    my $die_event = activate_purchase_order_impl($mgr, $po_id, $vandelay, $dry_run, $options);
+    my $die_event = activate_purchase_order_impl($mgr, $po_id, $vandelay, $options);
     return $e->die_event if $die_event;
     $conn->respond_complete(1);
-    $mgr->run_post_response_hooks unless $dry_run;
+    $mgr->run_post_response_hooks unless $$options{dry_run};
     return undef;
 }
 
 # xacts managed within
 sub activate_purchase_order_impl {
-    my ($mgr, $po_id, $vandelay, $dry_run, $options) = @_;
+    my ($mgr, $po_id, $vandelay, $options) = @_;
+    $options ||= {};
+    my $dry_run = $$options{dry_run};
+    my $no_assets = $$options{no_assets};
 
     # read-only until lineitem asset creation
     my $e = $mgr->editor;
@@ -2458,9 +2674,11 @@ sub activate_purchase_order_impl {
 
     my $li_ids = $e->search_acq_lineitem($query, {idlist => 1});
 
-    my $vl_resp; # imported li's and the queue the managing queue
-    if (!$dry_run) {
+    my $vl_resp; # imported li's and the managing queue
+    unless ($dry_run or $no_assets) {
         $e->rollback; # read-only thus far
+
+        # list_assets manages its own transactions
         $vl_resp = create_lineitem_list_assets($mgr, $li_ids, $vandelay)
             or return OpenILS::Event->new('ACQ_LI_IMPORT_FAILED');
         $e->xact_begin;
@@ -2471,7 +2689,7 @@ sub activate_purchase_order_impl {
     for my $li_id (@$li_ids) {
         my $li = $e->retrieve_acq_lineitem($li_id);
         
-        if (!$li->eg_bib_id and !$dry_run) {
+        unless ($li->eg_bib_id or $dry_run or $no_assets) {
             # we encountered a lineitem that was not successfully imported.
             # we cannot continue.  rollback and report.
             $e->rollback;
@@ -2481,7 +2699,7 @@ sub activate_purchase_order_impl {
         $li->state('on-order');
         $li->claim_policy($provider->default_claim_policy)
             if $provider->default_claim_policy and !$li->claim_policy;
-        create_lineitem_debits($mgr, $li, $dry_run, $options) or return $e->die_event;
+        create_lineitem_debits($mgr, $li, $options) or return $e->die_event;
         update_lineitem($mgr, $li) or return $e->die_event;
         $mgr->post_process( sub { create_lineitem_status_events($mgr, $li->id, 'aur.ordered'); });
         $mgr->respond;
@@ -2612,9 +2830,9 @@ sub not_cancelable {
 }
 
 __PACKAGE__->register_method(
-	method => "cancel_purchase_order_api",
-	api_name	=> "open-ils.acq.purchase_order.cancel",
-	signature => {
+    method => "cancel_purchase_order_api",
+    api_name    => "open-ils.acq.purchase_order.cancel",
+    signature => {
         desc => q/Cancels an on-order purchase order/,
         params => [
             {desc => "Authentication token", type => "string"},
@@ -2721,9 +2939,9 @@ sub cancel_purchase_order {
 
 
 __PACKAGE__->register_method(
-	method => "cancel_lineitem_api",
-	api_name	=> "open-ils.acq.lineitem.cancel",
-	signature => {
+    method => "cancel_lineitem_api",
+    api_name    => "open-ils.acq.lineitem.cancel",
+    signature => {
         desc => q/Cancels an on-order lineitem/,
         params => [
             {desc => "Authentication token", type => "string"},
@@ -2736,9 +2954,9 @@ __PACKAGE__->register_method(
 );
 
 __PACKAGE__->register_method(
-	method => "cancel_lineitem_api",
-	api_name	=> "open-ils.acq.lineitem.cancel.batch",
-	signature => {
+    method => "cancel_lineitem_api",
+    api_name    => "open-ils.acq.lineitem.cancel.batch",
+    signature => {
         desc => q/Batched version of open-ils.acq.lineitem.cancel/,
         return => {desc => q/Object describing changed LIs and LIDs on success;
             Event on error./}
@@ -2830,16 +3048,12 @@ sub cancel_lineitem {
     # Depending on context, this may not warrant an event.
     return -1 if $li->state eq "cancelled";
 
-    # But this always does.
+    # But this always does.  Note that this used to be looser, but you can
+    # no longer cancel lineitems that lack a PO or that are in "pending-order"
+    # state (you could in the past).
     return new OpenILS::Event(
         "ACQ_NOT_CANCELABLE", "note" => "lineitem $li_id"
-    ) unless (
-        (! $li->purchase_order) or (
-            $li->purchase_order and (
-                $li->state eq "on-order" or $li->state eq "pending-order"
-            )
-        )
-    );
+    ) unless $li->purchase_order and $li->state eq "on-order";
 
     $li->state("cancelled");
     $li->cancel_reason($cancel_reason->id);
@@ -2953,9 +3167,9 @@ sub cancel_lineitem {
 
 
 __PACKAGE__->register_method(
-	method => "cancel_lineitem_detail_api",
-	api_name	=> "open-ils.acq.lineitem_detail.cancel",
-	signature => {
+    method => "cancel_lineitem_detail_api",
+    api_name    => "open-ils.acq.lineitem_detail.cancel",
+    signature => {
         desc => q/Cancels an on-order lineitem detail/,
         params => [
             {desc => "Authentication token", type => "string"},
@@ -3328,10 +3542,10 @@ sub create_user_request_events {
 
 
 __PACKAGE__->register_method(
-	method => "po_note_CUD_batch",
-	api_name => "open-ils.acq.po_note.cud.batch",
+    method => "po_note_CUD_batch",
+    api_name => "open-ils.acq.po_note.cud.batch",
     stream => 1,
-	signature => {
+    signature => {
         desc => q/Manage purchase order notes/,
         params => [
             {desc => "Authentication token", type => "string"},
@@ -3380,6 +3594,7 @@ sub po_note_CUD_batch {
 
 
 # retrieves a lineitem, fleshes its PO and PL, checks perms
+# returns ($li, $evt, $org)
 sub fetch_and_check_li {
     my $e = shift;
     my $li_id = shift;
@@ -3390,26 +3605,29 @@ sub fetch_and_check_li {
         {   flesh => 1,
             flesh_fields => {jub => ['purchase_order', 'picklist']}
         }
-    ]) or return $e->die_event;
+    ]) or return (undef, $e->die_event);
 
+    my $org;
     if(my $po = $li->purchase_order) {
+        $org = $po->ordering_agency;
         my $perms = ($perm_mode eq 'read') ? 'VIEW_PURCHASE_ORDER' : 'CREATE_PURCHASE_ORDER';
-        return ($li, $e->die_event) unless $e->allowed($perms, $po->ordering_agency);
+        return ($li, $e->die_event) unless $e->allowed($perms, $org);
 
     } elsif(my $pl = $li->picklist) {
+        $org = $pl->org_unit;
         my $perms = ($perm_mode eq 'read') ? 'VIEW_PICKLIST' : 'CREATE_PICKLIST';
-        return ($li, $e->die_event) unless $e->allowed($perms, $pl->org_unit);
+        return ($li, $e->die_event) unless $e->allowed($perms, $org);
     }
 
-    return ($li);
+    return ($li, undef, $org);
 }
 
 
 __PACKAGE__->register_method(
-	method => "clone_distrib_form",
-	api_name => "open-ils.acq.distribution_formula.clone",
+    method => "clone_distrib_form",
+    api_name => "open-ils.acq.distribution_formula.clone",
     stream => 1,
-	signature => {
+    signature => {
         desc => q/Clone a distribution formula/,
         params => [
             {desc => "Authentication token", type => "string"},
@@ -3449,14 +3667,14 @@ sub clone_distrib_form {
 }
 
 __PACKAGE__->register_method(
-	method => 'add_li_to_po',
-	api_name	=> 'open-ils.acq.purchase_order.add_lineitem',
-	signature => {
+    method => 'add_li_to_po',
+    api_name    => 'open-ils.acq.purchase_order.add_lineitem',
+    signature => {
         desc => q/Adds a lineitem to an existing purchase order/,
         params => [
             {desc => 'Authentication token', type => 'string'},
             {desc => 'The purchase order id', type => 'number'},
-            {desc => 'The lineitem ID', type => 'number'},
+            {desc => 'The lineitem ID (or an array of them)', type => 'mixed'},
         ],
         return => {desc => 'Streams a total versus completed counts object, event on error'}
     }
@@ -3473,9 +3691,6 @@ sub add_li_to_po {
     my $po = $e->retrieve_acq_purchase_order($po_id)
         or return $e->die_event;
 
-    my $li = $e->retrieve_acq_lineitem($li_id)
-        or return $e->die_event;
-
     return $e->die_event unless 
         $e->allowed('CREATE_PURCHASE_ORDER', $po->ordering_agency);
 
@@ -3484,16 +3699,34 @@ sub add_li_to_po {
         return {success => 0, po => $po, error => 'bad-po-state'};
     }
 
-    unless ($li->state =~ /new|order-ready|pending-order/) {
-        $e->rollback;
-        return {success => 0, li => $li, error => 'bad-li-state'};
+    my $lis;
+
+    if (ref $li_id eq "ARRAY") {
+        $li_id = [ map { int($_) } @$li_id ];
+        return $e->die_event(new OpenILS::Event("BAD_PARAMS")) unless @$li_id;
+
+        $lis = $e->search_acq_lineitem({id => $li_id})
+            or return $e->die_event;
+    } else {
+        my $li = $e->retrieve_acq_lineitem(int($li_id))
+            or return $e->die_event;
+        $lis = [$li];
     }
 
-    $li->provider($po->provider);
-    $li->purchase_order($po_id);
-    $li->state('pending-order');
-    update_lineitem($mgr, $li) or return $e->die_event;
-    
+    foreach my $li (@$lis) {
+        if ($li->state !~ /new|order-ready|pending-order/ or
+            $li->purchase_order) {
+            $e->rollback;
+            return {success => 0, li => $li, error => 'bad-li-state'};
+        }
+
+        $li->provider($po->provider);
+        $li->purchase_order($po_id);
+        $li->state('pending-order');
+        apply_default_copies($mgr, $po, $li->id) or return $e->die_event;
+        update_lineitem($mgr, $li) or return $e->die_event;
+    }
+
     $e->commit;
     return {success => 1};
 }
@@ -3534,6 +3767,185 @@ sub po_lineitems_no_copies {
 
     $conn->respond($_->{id}) for @$ids;
     return undef;
+}
+
+__PACKAGE__->register_method(
+    method => 'set_li_order_ident',
+    api_name => 'open-ils.acq.lineitem.order_identifier.set',
+    signature => {
+        desc => q/
+            Given an existing lineitem_attr (typically a marc_attr), this will
+            create a matching local_attr to store the name and value and mark
+            the attr as the order_ident.  Any existing local_attr marked as
+            order_ident is removed.
+        /,
+        params => [
+            {desc => 'Authentication token', type => 'string'},
+            {desc => q/Args object:
+                source_attr_id : ID of the existing lineitem_attr to use as
+                    order ident.
+                lineitem_id : lineitem id
+                attr_name : name ('isbn', etc.) of a new marc_attr to add to 
+                    the lineitem to use for the order ident
+                attr_value : value for the new marc_attr
+                no_apply_bre : if set, newly added attrs will not be applied 
+                    to the lineitems' linked bib record/,
+                type => 'object'}
+        ],
+        return => {desc => q/Returns the attribute 
+            responsible for tracking the order identifier/}
+    }
+);
+
+sub set_li_order_ident {
+    my ($self, $conn, $auth, $args) = @_;
+    $args ||= {};
+
+    my $source_attr;
+    my $source_attr_id = $args->{source_attr_id};
+
+    my $e = new_editor(authtoken => $auth, xact => 1);
+    return $e->die_event unless $e->checkauth;
+
+    # fetch attr, LI, and check update permissions
+
+    my $li_id = $args->{lineitem_id};
+
+    if ($source_attr_id) {
+        $source_attr = $e->retrieve_acq_lineitem_attr($source_attr_id)
+            or return $e->die_event;
+        $li_id = $source_attr->lineitem;
+    }
+
+    my ($li, $evt, $perm_org) = fetch_and_check_li($e, $li_id, 'write');
+    return $evt if $evt;
+
+    return $e->die_event unless 
+        $e->allowed('ACQ_SET_LINEITEM_IDENTIFIER', $perm_org);
+
+    # if needed, create a new marc attr for 
+    # the lineitem to represent the ident value
+
+    ($source_attr, $evt) = apply_new_li_ident_attr(
+        $e, $li, $perm_org, $args->{attr_name}, $args->{attr_value}) 
+        unless $source_attr;
+
+    return $evt if $evt;
+
+    # remove the existing order_ident attribute if present
+
+    my $old_attr = $e->search_acq_lineitem_attr({
+        attr_type => 'lineitem_local_attr_definition',
+        lineitem => $li->id,
+        order_ident => 't'
+    })->[0];
+
+    if ($old_attr) {
+
+        # if we already have an order_ident that matches the 
+        # source attr, there's nothing left to do.
+
+        if ($old_attr->attr_name eq $source_attr->attr_name and
+            $old_attr->attr_value eq $source_attr->attr_value) {
+
+            $e->rollback;
+            return $old_attr;
+
+        } else {
+            # remove the old order_ident attribute
+            $e->delete_acq_lineitem_attr($old_attr) or return $e->die_event;
+        }
+    }
+
+    # make sure we have a local_attr_def to match the source attr def
+
+    my $local_def = $e->search_acq_lineitem_local_attr_definition({
+        code => $source_attr->attr_name
+    })->[0];
+
+    if (!$local_def) {
+        my $source_def = 
+            $e->retrieve_acq_lineitem_attr_definition($source_attr->definition);
+        $local_def = Fieldmapper::acq::lineitem_local_attr_definition->new;
+        $local_def->code($source_def->code);
+        $local_def->description($source_def->description);
+        $local_def = $e->create_acq_lineitem_local_attr_definition($local_def)
+            or return $e->die_event;
+    }
+
+    # create the new order_ident local attr
+
+    my $new_attr = Fieldmapper::acq::lineitem_attr->new;
+    $new_attr->definition($local_def->id);
+    $new_attr->attr_type('lineitem_local_attr_definition');
+    $new_attr->lineitem($li->id);
+    $new_attr->attr_name($source_attr->attr_name);
+    $new_attr->attr_value($source_attr->attr_value);
+    $new_attr->order_ident('t');
+
+    $new_attr = $e->create_acq_lineitem_attr($new_attr) 
+        or return $e->die_event;
+    
+    $e->commit;
+    return $new_attr;
+}
+
+
+# Given an isbn, issn, or upc, add the value to the lineitem marc.
+# Upon update, the value will be auto-magically represented as
+# a lineitem marc attr.
+# If the li is linked to a bib record and the user has the correct
+# permissions, update the bib record to match.
+sub apply_new_li_ident_attr {
+    my ($e, $li, $perm_org, $attr_name, $attr_value) = @_;
+
+    my %tags = (
+        isbn => '020',
+        issn => '022',
+        upc  => '024'
+    );
+
+    my $marc_field = MARC::Field->new(
+        $tags{$attr_name}, '', '','a' => $attr_value);
+
+    my $li_rec = MARC::Record->new_from_xml($li->marc, 'UTF-8', 'USMARC');
+    $li_rec->insert_fields_ordered($marc_field);
+
+    $li->marc(clean_marc($li_rec));
+    $li->editor($e->requestor->id);
+    $li->edit_time('now');
+
+    $e->update_acq_lineitem($li) or return (undef, $e->die_event);
+
+    my $source_attr = $e->search_acq_lineitem_attr({
+        attr_name => $attr_name,
+        attr_value => $attr_value,
+        attr_type => 'lineitem_marc_attr_definition'
+    })->[0];
+
+    if (!$source_attr) {
+        $logger->error("ACQ lineitem update failed to produce a matching ".
+            " marc attribute for $attr_name => $attr_value");
+        return (undef, OpenILS::Event->new('INTERNAL_SERVER_ERROR'));
+    }
+
+    return ($source_attr) unless 
+        $li->eg_bib_id and
+        $e->allowed('ACQ_ADD_LINEITEM_IDENTIFIER', $perm_org);
+
+    # li is linked to a bib record and user has the update perms
+
+    my $bre = $e->retrieve_biblio_record_entry($li->eg_bib_id);
+    my $bre_marc = MARC::Record->new_from_xml($bre->marc, 'UTF-8', 'USMARC');
+    $bre_marc->insert_fields_ordered($marc_field);
+
+    $bre->marc(clean_marc($bre_marc));
+    $bre->editor($e->requestor->id);
+    $bre->edit_date('now');
+
+    $e->update_biblio_record_entry($bre) or return (undef, $e->die_event);
+
+    return ($source_attr);
 }
 
 

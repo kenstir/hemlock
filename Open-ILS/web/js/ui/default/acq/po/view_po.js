@@ -299,6 +299,9 @@ function prepareInvoiceFeatures() {
     openils.Util.show("acq-po-invoice-stuff", "table-cell");
 }
 
+/* renderPo() is the best place to add tests that depend on PO-state
+ * (or simple ordered-or-not? checks) to enable/disable UI elements
+ * across the whole interface. */
 function renderPo() {
     var po_state = PO.state();
     dojo.byId("acq-po-view-id").innerHTML = PO.id();
@@ -314,26 +317,46 @@ function renderPo() {
 
     if(PO.order_date()) {
         openils.Util.show('acq-po-activated-on', 'inline');
+        liTable.enableActionsDropdownOptions("ao"); /* activated */
+        liTable.initBatchUpdater(["item_count", "distribution_formula"]);
+
         dojo.byId('acq-po-activated-on').innerHTML = 
             dojo.string.substitute(
                 localeStrings.PO_ACTIVATED_ON, [
                     openils.Util.timeStamp(PO.order_date(), {formatLength:'short'})
                 ]
             );
-        if(po_state == "on-order" || po_state == "cancelled") {
-            dojo.removeAttr('receive_po', 'disabled');
-        } else if(po_state == "received") {
-            dojo.removeAttr('rollback_receive_po', 'disabled');
-        }
+        /* These are handled another way now */
+//        if (po_state == "on-order" || po_state == "cancelled") {
+//            dojo.removeAttr('receive_lineitems', 'disabled');
+//        } else if(po_state == "received") {
+//            dojo.removeAttr('rollback_receive_lineitems', 'disabled');
+//        }
+
+        /* cancel widgets only make sense for activate (ordered) POs */
+        makeCancelWidget(
+            dojo.byId("acq-po-view-cancel-reason"),
+            dojo.byId("acq-po-cancel-label")
+        );
+
+        /* likewise for invoice features */
+        openils.Util.show("acq-po-invoice-label", "table-cell");
+        prepareInvoiceFeatures();
+    } else {
+        /* These things only make sense for not-ordered-yet POs */
+
+        liTable.initBatchUpdater();
+        liTable.enableActionsDropdownOptions("po");
+
+        openils.Util.show("acq-po-zero-activate-label", "table-cell");
+        openils.Util.show("acq-po-zero-activate", "table-cell");
+
+        openils.Util.show("acq-po-item-table-controls");
     }
 
     makePrepayWidget(
         dojo.byId("acq-po-view-prepay"),
         openils.Util.isTrue(PO.prepayment_required())
-    );
-    makeCancelWidget(
-        dojo.byId("acq-po-view-cancel-reason"),
-        dojo.byId("acq-po-cancel-label")
     );
     // dojo.byId("acq-po-view-notes").innerHTML = PO.notes().length;
     poNoteTable.updatePoNotesCount();
@@ -343,7 +366,11 @@ function renderPo() {
         if (PO.lineitem_count() > 1)
             openils.Util.show("acq-po-split");
     } else {
-        dojo.byId("acq-po-activate-checking").innerHTML = localeStrings.NO;
+        if (PO.order_date()) {
+            dojo.byId("acq-po-activate-checking").innerHTML = localeStrings.PO_ALREADY_ACTIVATED;
+        } else {
+            dojo.byId("acq-po-activate-checking").innerHTML = localeStrings.NO;
+        }
     }
 
     // XXX we probably don't *always* need to do this...
@@ -380,8 +407,6 @@ function renderPo() {
             }
         );
     }
-
-    prepareInvoiceFeatures();
 }
 
 
@@ -412,10 +437,16 @@ function init() {
                 /* po item table */
                 poItemTable = new PoItemTable(PO, pcrud);
 
+                liTable.testOrderIdentPerms( PO.ordering_agency(), init2);
+
                 renderPo();
             }
         }
     );
+
+}
+
+function init2() {
 
     var totalEstimated = 0;
     var zeroLi = true;
@@ -466,7 +497,7 @@ function init() {
 
 function checkCouldActivatePo() {
     var d = dojo.byId("acq-po-activate-checking");
-    var a = dojo.byId("acq-po-activate-link");
+    var a = dojo.byId("acq-po-activate-links");  /* <span> not <a> now, but no diff */
     d.innerHTML = localeStrings.PO_CHECKING;
     var warnings = [];
     var stops = [];
@@ -503,6 +534,7 @@ function checkCouldActivatePo() {
                 if (!(warnings.length || stops.length || other.length)) {
                     d.innerHTML = localeStrings.PO_COULD_ACTIVATE;
                     openils.Util.show(a, "inline");
+                    activatePoButton.attr("disabled", false);
                 } else {
                     if (other.length) {
                         /* XXX make the textcode part a tooltip one day */
@@ -543,6 +575,7 @@ function checkCouldActivatePo() {
                                 ]
                             );
                         openils.Util.show(a, "inline");
+                        activatePoButton.attr("disabled", false);
                     }
                 }
             }
@@ -550,21 +583,33 @@ function checkCouldActivatePo() {
     );
 }
 
-function activatePo() {
+function activatePo(noAssets) {
+    activatePoButton.attr("disabled", true);
+    activatePoNoAssetsButton.attr("disabled", true);
+
     if (openils.Util.isTrue(PO.prepayment_required())) {
-        if (!confirm(localeStrings.PREPAYMENT_REQUIRED_REMINDER))
+        if (!confirm(localeStrings.PREPAYMENT_REQUIRED_REMINDER)) {
+            activatePoButton.attr("disabled", false);
             return false;
+        }
     }
 
     if (PO._warning_hack) {
-        if (!confirm(localeStrings.PO_FUND_WARNING_CONFIRM))
+        if (!confirm(localeStrings.PO_FUND_WARNING_CONFIRM)) {
+            activatePoButton.attr("disabled", false);
             return false;
+        }
     }
 
-    liTable.showAssetCreator(activatePoStage2);
+    if (noAssets) {
+        // no need for AssetCreator when assets are not desired
+        activatePoStage2(true);
+    } else {
+        liTable.showAssetCreator(activatePoStage2);
+    }
 }
 
-function activatePoStage2() {
+function activatePoStage2(noAssets) {
 
     var want_refresh = false;
     progressDialog.show(true);
@@ -575,13 +620,17 @@ function activatePoStage2() {
                 openils.User.authtoken,
                 PO.id(),
                 null,  // vandelay options
-                {zero_copy_activate : dojo.byId('acq-po-activate-zero-copies').checked}
+                {
+                    no_assets : noAssets, // no bibs/volumes/copies required
+                    zero_copy_activate : dojo.byId('acq-po-activate-zero-copies').checked
+                }
             ],
             "onresponse": function(r) {
+                progressDialog.hide();
+                activatePoButton.attr("disabled", false);
                 want_refresh = Boolean(openils.Util.readResponse(r));
             },
             "oncomplete": function() {
-                progressDialog.hide();
                 if (want_refresh)
                     location.href = location.href;
             }

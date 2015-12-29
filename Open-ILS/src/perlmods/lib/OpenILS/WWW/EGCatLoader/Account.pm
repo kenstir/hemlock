@@ -23,6 +23,10 @@ sub prepare_extended_user_info {
     my $local_xact = !$e->{xact_id}; 
     $e->xact_begin if $local_xact;
 
+    # keep the original user object so we can restore
+    # login-specific data (e.g. workstation)
+    my $usr = $self->ctx->{user};
+
     $self->ctx->{user} = $self->editor->retrieve_actor_user([
         $self->ctx->{user}->id,
         {
@@ -35,6 +39,9 @@ sub prepare_extended_user_info {
     ]);
 
     $e->rollback if $local_xact;
+
+    $self->ctx->{user}->wsid($usr->wsid);
+    $self->ctx->{user}->ws_ou($usr->ws_ou);
 
     # discard replaced (negative-id) addresses.
     $self->ctx->{user}->addresses([
@@ -399,6 +406,28 @@ sub load_myopac_prefs_settings {
     my $stat = $self->_load_user_with_prefs;
     return $stat if $stat;
 
+    # if behind-desk holds are supported and the user
+    # setting which controls the value is opac-visible,
+    # add the setting to the list of settings to manage.
+    # note: this logic may need to be changed later to
+    # check whether behind-the-desk holds are supported
+    # anywhere the patron may select as a pickup lib.
+    my $e = $self->editor;
+    my $bdous = $self->ctx->{get_org_setting}->(
+        $e->requestor->home_ou,
+        'circ.holds.behind_desk_pickup_supported');
+
+    if ($bdous) {
+        my $setting = 
+            $e->retrieve_config_usr_setting_type(
+                'circ.holds_behind_desk');
+
+        if ($U->is_true($setting->opac_visible)) {
+            push(@user_prefs, 'circ.holds_behind_desk');
+            $self->ctx->{behind_desk_supported} = 1;
+        }
+    }
+
     return Apache2::Const::OK
         unless $self->cgi->request_method eq 'POST';
 
@@ -435,6 +464,43 @@ sub load_myopac_prefs_settings {
     # re-fetch user prefs 
     $self->ctx->{updated_user_settings} = \%settings;
     return $self->_load_user_with_prefs || Apache2::Const::OK;
+}
+
+sub load_myopac_prefs_my_lists {
+    my $self = shift;
+
+    my @user_prefs = qw/
+        opac.lists_per_page
+        opac.list_items_per_page
+    /;
+
+    my $stat = $self->_load_user_with_prefs;
+    return $stat if $stat;
+
+    return Apache2::Const::OK
+        unless $self->cgi->request_method eq 'POST';
+
+    my %settings;
+    my $set_map = $self->ctx->{user_setting_map};
+
+    foreach my $key (@user_prefs) {
+        my $val = $self->cgi->param($key);
+        $settings{$key}= $val unless $$set_map{$key} eq $val;
+    }
+
+    if (keys %settings) { # we found a different setting value
+        # Send the modified settings off to be saved
+        $U->simplereq(
+            'open-ils.actor',
+            'open-ils.actor.patron.settings.update',
+            $self->editor->authtoken, undef, \%settings);
+
+        # re-fetch user prefs
+        $self->ctx->{updated_user_settings} = \%settings;
+        $stat = $self->_load_user_with_prefs;
+    }
+
+    return $stat || Apache2::Const::OK;
 }
 
 sub fetch_user_holds {
@@ -596,7 +662,7 @@ sub handle_hold_update {
         $url = $self->ctx->{proto} . '://' . $self->ctx->{hostname} . $self->ctx->{opac_root} . '/myopac/holds';
         foreach my $param (('loc', 'qtype', 'query')) {
             if ($self->cgi->param($param)) {
-                $url .= ";$param=" . uri_escape($self->cgi->param($param));
+                $url .= ";$param=" . uri_escape_utf8($self->cgi->param($param));
             }
         }
     }
@@ -1676,15 +1742,53 @@ sub _update_bookbag_metadata {
     return 0;
 }
 
+sub _get_lists_per_page {
+    my $self = shift;
+
+    if($self->editor->requestor) {
+        $self->timelog("Checking for opac.lists_per_page preference");
+        # See if the user has a lists per page preference
+        my $ipp = $self->editor->search_actor_user_setting({
+            usr => $self->editor->requestor->id,
+            name => 'opac.lists_per_page'
+        })->[0];
+        $self->timelog("Got opac.lists_per_page preference");
+        return OpenSRF::Utils::JSON->JSON2perl($ipp->value) if $ipp;
+    }
+    return 10; # default
+}
+
+sub _get_items_per_page {
+    my $self = shift;
+
+    if($self->editor->requestor) {
+        $self->timelog("Checking for opac.list_items_per_page preference");
+        # See if the user has a list items per page preference
+        my $ipp = $self->editor->search_actor_user_setting({
+            usr => $self->editor->requestor->id,
+            name => 'opac.list_items_per_page'
+        })->[0];
+        $self->timelog("Got opac.list_items_per_page preference");
+        return OpenSRF::Utils::JSON->JSON2perl($ipp->value) if $ipp;
+    }
+    return 10; # default
+}
+
 sub load_myopac_bookbags {
     my $self = shift;
     my $e = $self->editor;
     my $ctx = $self->ctx;
-    my $limit = $self->cgi->param('limit') || 10;
+    my $limit = $self->_get_lists_per_page || 10;
     my $offset = $self->cgi->param('offset') || 0;
 
     $ctx->{bookbags_limit} = $limit;
     $ctx->{bookbags_offset} = $offset;
+
+    # for list item pagination
+    my $item_limit = $self->_get_items_per_page;
+    my $item_page = $self->cgi->param('item_page') || 1;
+    my $item_offset = ($item_page - 1) * $item_limit;
+    $ctx->{bookbags_item_page} = $item_page;
 
     my ($sorter, $modifier) = $self->_get_bookbag_sort_params("sort");
     $e->xact_begin; # replication...
@@ -1724,13 +1828,33 @@ sub load_myopac_bookbags {
     $ctx->{bookbag_count} = $r->[0]->{'count'};
 
     # If the user wants a specific bookbag's items, load them.
-    # XXX add bookbag item paging support
 
     if ($self->cgi->param("bbid")) {
         my ($bookbag) =
             grep { $_->id eq $self->cgi->param("bbid") } @{$ctx->{bookbags}};
 
         if ($bookbag) {
+            my $query = $self->_prepare_bookbag_container_query(
+                $bookbag->id, $sorter, $modifier
+            );
+
+            # Calculate total count of the items in selected bookbag.
+            # This total includes record entries that have no assets available.
+            my $bb_search_results = $U->simplereq(
+                "open-ils.search", "open-ils.search.biblio.multiclass.query",
+                {"limit" => 1, "offset" => 0}, $query
+            ); # we only need the count, so do the actual search with limit=1
+
+            if ($bb_search_results) {
+                $ctx->{bb_item_count} = $bb_search_results->{count};
+            } else {
+                $logger->warn("search failed in load_myopac_bookbags()");
+                $ctx->{bb_item_count} = 0; # fallback value
+            }
+
+            #calculate page count
+            $ctx->{bb_page_count} = int ((($ctx->{bb_item_count} - 1) / $item_limit) + 1);
+
             if ( ($self->cgi->param("action") || '') eq "editmeta") {
                 if (!$self->_update_bookbag_metadata($bookbag))  {
                     $e->rollback;
@@ -1742,7 +1866,7 @@ sub load_myopac_bookbags {
 
                     foreach my $param (('loc', 'qtype', 'query', 'sort', 'offset', 'limit')) {
                         if ($self->cgi->param($param)) {
-                            $url .= ";$param=" . uri_escape($self->cgi->param($param));
+                            $url .= ";$param=" . uri_escape_utf8($self->cgi->param($param));
                         }
                     }
 
@@ -1755,25 +1879,31 @@ sub load_myopac_bookbags {
             # transaction rollback under the covers.
             $e->rollback;
 
-            my $query = $self->_prepare_bookbag_container_query(
-                $bookbag->id, $sorter, $modifier
-            );
 
-            # XXX Limiting to 1000 for now.  This way you should be able to see entire
-            # list contents.  Need to add paging here instead.
+            # For list items pagination
             my $args = {
-                "limit" => 1000,
-                "offset" => 0
+                "limit" => $item_limit,
+                "offset" => $item_offset
             };
 
             my $items = $U->bib_container_items_via_search($bookbag->id, $query, $args)
                 or return Apache2::Const::HTTP_INTERNAL_SERVER_ERROR;
 
+            # capture pref_ou for callnumber filter/display
+            $ctx->{pref_ou} = $self->_get_pref_lib() || $ctx->{search_ou};
+
+            # search for local callnumbers for display
+            my $focus_ou = $ctx->{physical_loc} || $ctx->{pref_ou};
 
             my (undef, @recs) = $self->get_records_and_facets(
                 [ map {$_->target_biblio_record_entry->id} @$items ],
                 undef, 
-                {flesh => '{mra}'}
+                {
+                    flesh => '{mra,holdings_xml,acp,exclude_invisible_acn}',
+                    flesh_depth => 1,
+                    site => $ctx->{get_aou}->($focus_ou)->shortname,
+                    pref_lib => $ctx->{pref_ou}
+                }
             );
 
             $ctx->{bookbags_marc_xml}{$_->{id}} = $_->{marc_xml} for @recs;
@@ -1833,7 +1963,7 @@ sub load_myopac_bookbag_update {
 
     foreach my $param (('loc', 'qtype', 'query', 'sort')) {
         if ($cgi->param($param)) {
-            $url .= "$param=" . uri_escape($cgi->param($param)) . ";";
+            $url .= "$param=" . uri_escape_utf8($cgi->param($param)) . ";";
         }
     }
 
@@ -1875,7 +2005,7 @@ sub load_myopac_bookbag_update {
         $url .= ';hold_target=' . $_ for @hold_recs;
         foreach my $param (('loc', 'qtype', 'query')) {
             if ($cgi->param($param)) {
-                $url .= ";$param=" . uri_escape($cgi->param($param));
+                $url .= ";$param=" . uri_escape_utf8($cgi->param($param));
             }
         }
         return $self->generic_redirect($url);
@@ -1954,7 +2084,7 @@ sub load_myopac_bookbag_update {
         }
     } elsif ($action eq 'save_notes') {
         $success = $self->update_bookbag_item_notes;
-        $url .= "&bbid=" . uri_escape($cgi->param("bbid")) if $cgi->param("bbid");
+        $url .= "&bbid=" . uri_escape_utf8($cgi->param("bbid")) if $cgi->param("bbid");
     } elsif ($action eq 'make_default') {
         $success = $U->simplereq(
             'open-ils.actor',

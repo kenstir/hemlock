@@ -7,7 +7,7 @@
         FOR node IN xml.findnodes('//*[@tag="' _ target_field _ '"]');
             raw_vals = [];
             core_val = '';
-            FOR subnode IN node.findnodes('./*[not(contains("w 0 5 6 8 9", @code))]');
+            FOR subnode IN node.findnodes('./*[not(contains("w 0 4 5 6 8 9", @code))]');
                 raw_vals.push(subnode.textContent());
             END;
             core_val = raw_vals.join(" ");
@@ -88,7 +88,19 @@
         args.schema.itemtype = {};
         schema_typemap = {};
         schema_typemap.a = 'http://schema.org/Book';
-        schema_typemap.j = 'http://schema.org/MusicRecording';
+        schema_typemap.e = 'http://schema.org/Map';
+        schema_typemap.j = 'http://schema.org/MusicAlbum';
+
+        # Hard-coded to match defaults in config.copy_status for all OPAC-visible statuses
+        schema_copy_status = {};
+        schema_copy_status.0 = '<link property="availability" href="http://schema.org/InStock" />'; # Available
+        schema_copy_status.1 = '<link property="availability" href="http://schema.org/OutOfStock" />'; # Checked out
+        schema_copy_status.5 = '<link property="availability" href="http://schema.org/PreOrder" />'; # In process
+        schema_copy_status.6 = '<link property="availability" href="http://schema.org/PreOrder" />'; # In transit
+        schema_copy_status.7 = '<link property="availability" href="http://schema.org/InStock" />'; # Reshelving
+        schema_copy_status.8 = '<link property="availability" href="http://schema.org/OutOfStock" />'; # On holds shelf
+        schema_copy_status.9 = '<link property="availability" href="http://schema.org/PreOrder" />'; # On order
+        schema_copy_status.12 = '<link property="availability" href="http://schema.org/InStoreOnly" />'; # Reserves
 
         args.isbns = [];
         FOR isbn IN xml.findnodes('//*[@tag="020"]/*[@code="a"]');
@@ -109,6 +121,8 @@
 
         graphic_880s = [];
         get_graphic_880s(target_field='100');
+        get_graphic_880s(target_field='110');
+        get_graphic_880s(target_field='111');
         args.graphic_authors = graphic_880s;
         args.authors = [];
         FOR author IN args.graphic_authors;
@@ -225,6 +239,14 @@
 
         # clean up the ISBN
         args.isbn_clean = args.isbns.0.replace('\ .*', '');
+        FOR isbn IN args.isbns;
+            clean_isbn = isbn.replace('\ .*', '');
+            clean_isbn = clean_isbn.replace('-', '');
+            IF clean_isbn.length == 13;
+                args.gtin13 = clean_isbn;
+                LAST;
+            END;
+        END;
 
         # Extract the 856 URLs that are not otherwise represented by asset.uri's
         args.online_res = [];
@@ -348,20 +370,24 @@
                     status = copy.findnodes('./*[local-name()="status"]');
                     NEXT IF status.getAttribute('opac_visible') == 'false';
 
+                    # extract the circ_lib id from the circ_lib node
+                    circ_lib = copy.findnodes('./*[local-name()="circ_lib"]');
+                    circ_lib_id = circ_lib.getAttribute('id').replace('.*/', '');
+
                     UNLESS ou_hiding_disabled;
-                        # extract the circ_lib id from the circ_lib node
-                        circ_lib = copy.findnodes('./*[local-name()="circ_lib"]');
-                        circ_lib_id = circ_lib.getAttribute('id').replace('.*/', '');
                         NEXT UNLESS ctx.org_within_hiding_scope(circ_lib_id);
                     END;
 
                     holding = {
+                        circ_lib => circ_lib_id,
                         label => vol.label,
                         part_label => part_label,
                         location => loc.textContent,
                         library => circlib.textContent,
-                        status => status.textContent
-                        barcode => copy.getAttribute('barcode')
+                        status => status.textContent,
+                        status_code => status.getAttribute('ident'),
+                        barcode => copy.getAttribute('barcode'),
+                        owner => volume.getAttribute('lib')
                     };
                     args.holdings.push(holding);
                     part_label = '';
@@ -378,9 +404,9 @@
         FOR node IN xml.findnodes(xpath);
             FOR attr IN ['count', 'available', 'unshadow', 'transcendant', 'org_unit']; 
                 depth = node.getAttribute('depth');
-                org_unit = node.getAttribute('org_unit');
+                count_org_unit = node.getAttribute('org_unit');
                 args.copy_counts.$depth.$attr = node.getAttribute(attr);
-                args.org_copy_counts.$org_unit.$attr = node.getAttribute(attr);
+                args.org_copy_counts.$count_org_unit.$attr = node.getAttribute(attr);
             END;
         END;
 
@@ -402,11 +428,17 @@
             IF node AND node.textContent;
                 type = node.textContent;
                 args.format_label = node.getAttribute('coded-value')
-                args.schema.itemtype = schema_typemap.$type;
+                args.schema.itemtype = schema_typemap.$type || 'CreativeWork';
                 args.format_icon = ctx.media_prefix _ '/images/format_icons/' _ icon_style _ '/' _ type _ '.png';
                 LAST;
             END;
         END;
+	
+        args.bibid = [];
+        FOR bibid IN xml.findnodes('//*[@tag="901"]/*[@code="c"]');
+            args.bibid.push(bibid.textContent);
+        END;
+        args.bibid = args.bibid.0; 
 
     END;
 
@@ -416,7 +448,8 @@
     # which is a superset of 'loc'.
     BLOCK get_library;
         loc_name = 'locg';
-        loc_value = CGI.param(loc_name) || CGI.param('loc') || ctx.search_ou;
+        loc_value = ctx.copy_location_group_org ||  # resolved locg
+            CGI.param(loc_name) || CGI.param('loc') || ctx.search_ou;
     END;
 
 %]

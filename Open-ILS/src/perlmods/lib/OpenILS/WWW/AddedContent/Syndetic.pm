@@ -27,24 +27,28 @@ sub userid {
     return $self->{userid};
 }
 
+sub expects_keyhash {
+    # we expect a keyhash as opposed to a simple scalar containing an ISBN
+    return 1;
+}
 
 # --------------------------------------------------------------------------
 sub jacket_small {
-    my( $self, $key ) = @_;
+    my( $self, $keys ) = @_;
     return $self->send_img(
-        $self->fetch_response('sc.gif', $key, 1));
+        $self->fetch_response('sc.gif', $keys, 1));
 }
 
 sub jacket_medium {
-    my( $self, $key ) = @_;
+    my( $self, $keys ) = @_;
     return $self->send_img(
-        $self->fetch_response('mc.gif', $key, 1));
+        $self->fetch_response('mc.gif', $keys, 1));
 
 }
 sub jacket_large {
-    my( $self, $key ) = @_;
+    my( $self, $keys ) = @_;
     return $self->send_img(
-        $self->fetch_response('lc.gif', $key, 1));
+        $self->fetch_response('lc.gif', $keys, 1));
 }
 
 # --------------------------------------------------------------------------
@@ -214,6 +218,7 @@ sub summary_json {
 
 sub data_exists {
     my( $self, $data ) = @_;
+    return 0 if $data =~ m/<title>No Data Available<\/title>/iog;
     return 0 if $data =~ m/<title>error<\/title>/iog;
     return 1;
 }
@@ -280,9 +285,19 @@ sub fetch_content {
 
 # returns the HTTP response object from the URL fetch
 sub fetch_response {
-    my( $self, $page, $key, $notype ) = @_;
+    my( $self, $page, $keys, $notype ) = @_;
     my $uname = $self->userid;
-    my $url = $self->base_url . "?isbn=$key/$page&client=$uname" . (($notype) ? '' : "&type=rw12");
+
+    # Fetch single isbn, upc, and issn
+    my $isbn = $keys->{isbn}[0];
+    my $upc  = $keys->{upc}[0];
+    my $issn = $keys->{issn}[0];
+
+    $isbn = '' if !defined($isbn);
+    $upc  = '' if !defined($upc);
+    $issn = '' if !defined($issn);
+
+    my $url = $self->base_url . "?isbn=$isbn/$page&upc=$upc&issn=$issn&client=$uname" . (($notype) ? '' : "&type=rw12");
     return $AC->get_url($url);
 }
 

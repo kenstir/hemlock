@@ -61,10 +61,18 @@ sub load_record {
     # run copy retrieval in parallel to bib retrieval
     # XXX unapi
     my $cstore = OpenSRF::AppSession->create('open-ils.cstore');
+    $cstore->session_locale($OpenILS::Utils::CStoreEditor::default_locale);
     my $copy_rec = $cstore->request(
         'open-ils.cstore.json_query.atomic', 
         $self->mk_copy_query($rec_id, $org, $copy_depth, $copy_limit, $copy_offset, $pref_ou)
     );
+
+    # find foreign copy data
+    my $peer_rec = $U->simplereq(
+        'open-ils.search',
+        'open-ils.search.peer_bibs', $rec_id );
+
+    $ctx->{foreign_copies} = $peer_rec;
 
     my (undef, @rec_data) = $self->get_records_and_facets([$rec_id], undef, {
         flesh => '{holdings_xml,bmp,mra,acp,acnp,acns}',
@@ -78,6 +86,41 @@ sub load_record {
     $ctx->{marc_xml} = $rec_data[0]->{marc_xml};
 
     $ctx->{copies} = $copy_rec->gather(1);
+
+    # Add public copy notes to each copy - and while we're in there, grab peer bib records
+    my %cached_bibs = ();
+    foreach my $copy (@{$ctx->{copies}}) {
+        $copy->{notes} = $U->simplereq(
+            'open-ils.circ',
+            'open-ils.circ.copy_note.retrieve.all',
+            {itemid => $copy->{id}, pub => 1 }
+        );
+        $self->timelog("past copy note retrieval call");
+        $copy->{peer_bibs} = $U->simplereq(
+            'open-ils.search',
+            'open-ils.search.multi_home.bib_ids.by_barcode',
+            $copy->{barcode}
+        );
+        $self->timelog("past peer bib id retrieval");
+        my @peer_marc;
+        foreach my $bib (@{$copy->{peer_bibs}}) {
+            next if $bib eq $ctx->{bre_id};
+            next if $cached_bibs{$bib};
+            my (undef, @peer_data) = $self->get_records_and_facets(
+                [$bib], undef, {
+                    flesh => '{}',
+                    site => $org_name,
+                    depth => $depth,
+                    pref_lib => $pref_ou
+            });
+            $cached_bibs{$bib} = 1;
+            #$copy->{peer_bib_marc} = $peer_data[0]->{marc_xml};
+            push @peer_marc, $peer_data[0]->{marc_xml};
+            $self->timelog("fetched peer bib record $bib");
+        }
+        $copy->{peer_bib_marc} = \@peer_marc;
+    }
+
     $self->timelog("past store copy retrieval call");
     $ctx->{copy_limit} = $copy_limit;
     $ctx->{copy_offset} = $copy_offset;
@@ -381,8 +424,12 @@ sub get_hold_copy_summary {
     my $ctx = $self->ctx;
     
     my $search = OpenSRF::AppSession->create('open-ils.search');
-    my $req1 = $search->request(
-        'open-ils.search.biblio.record.copy_count', $org, $rec_id); 
+    my $copy_count_meth = 'open-ils.search.biblio.record.copy_count';
+    # We want to include OPAC-invisible copies in a staff context
+    if ($ctx->{is_staff}) {
+        $copy_count_meth .= '.staff';
+    }
+    my $req1 = $search->request($copy_count_meth, $org, $rec_id); 
 
     # if org unit hiding applies, limit the hold count to holds
     # whose pickup library is within our depth-scoped tree
@@ -521,6 +568,8 @@ sub added_content_stage2 {
                 }
             }
         }
+        # To avoid a lot of hanging connections.
+        $content->{request}->shutdown(2) if ($content->{request});
     }
 }
 

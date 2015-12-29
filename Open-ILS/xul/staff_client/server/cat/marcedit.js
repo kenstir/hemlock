@@ -237,9 +237,9 @@ function my_init() {
         // then fall back to the default locale if preferred locale is not necessary;
         // however, for now we have a simplistic check:
         //
-        // we currently have translations for only two locales; in the absence of a
+        // we currently have translations for only three locales; in the absence of a
         // valid locale, default to the almighty en-US
-        if (locale != 'en-US' && locale != 'fr-CA') {
+        if (locale != 'en-US' && locale != 'fr-CA' && locale != 'fi-FI') {
             locale = 'en-US';
         }
 
@@ -489,11 +489,53 @@ function setFocusToNextTag (row, direction) {
     return true;
 }
 
+function set_lock_on_keypress(ev) {
+    try {
+        //dump('keypress: isChar = ' + ev.isChar + ' char = ' + ev.char + ' charCode = ' + ev.charCode + ' key = ' + ev.key + ' keyCode = ' + ev.keyCode + '\n');
+        if (! /* NOT */(
+                ev.altKey
+                || ev.ctrlKey
+                || ev.metaKey
+                || ev.keyCode == ev.DOM_VK_F1
+                || ev.keyCode == ev.DOM_VK_F2
+                || ev.keyCode == ev.DOM_VK_F3
+                || ev.keyCode == ev.DOM_VK_F4
+                || ev.keyCode == ev.DOM_VK_F5
+                || ev.keyCode == ev.DOM_VK_F6
+                || ev.keyCode == ev.DOM_VK_F7
+                || ev.keyCode == ev.DOM_VK_F8
+                || ev.keyCode == ev.DOM_VK_F9
+                || ev.keyCode == ev.DOM_VK_F10
+                || ev.keyCode == ev.DOM_VK_F11
+                || ev.keyCode == ev.DOM_VK_F12
+                || ev.keyCode == ev.DOM_VK_F13
+                || ev.keyCode == ev.DOM_VK_F14
+                || ev.keyCode == ev.DOM_VK_F15
+                || ev.keyCode == ev.DOM_VK_F16
+                || ev.keyCode == ev.DOM_VK_F17
+                || ev.keyCode == ev.DOM_VK_F18
+                || ev.keyCode == ev.DOM_VK_F19
+                || ev.keyCode == ev.DOM_VK_F20
+                || ev.keyCode == ev.DOM_VK_F21
+                || ev.keyCode == ev.DOM_VK_F22
+                || ev.keyCode == ev.DOM_VK_F23
+                || ev.keyCode == ev.DOM_VK_F24
+        )) {
+            oils_lock_page();
+        }
+    } catch(E) {
+        alert(E);
+    }
+}
 
 function createMARCTextbox (element,attrs) {
 
     var box = createComplexXULElement('textbox', attrs, Array.prototype.slice.apply(arguments, [2]) );
-    box.addEventListener('keypress',function(ev) { if (!(ev.altKey || ev.ctrlKey || ev.metaKey)) { oils_lock_page(); } },false);
+    box.addEventListener(
+        'keypress',
+        set_lock_on_keypress,
+        false
+    );
     box.onkeypress = function (event) {
         var root_node;
         var node = element;
@@ -685,12 +727,15 @@ function createMARCTextbox (element,attrs) {
                     return false;
                 }
             } else if (event.keyCode == 117 && event.ctrlKey) { // ctrl + F6
+                box = null;
                 createControlField('006','                                        ');
                 loadRecord();
             } else if (event.keyCode == 118 && event.ctrlKey) { // ctrl + F7
+                box = null;
                 createControlField('007','                                        ');
                 loadRecord();
             } else if (event.keyCode == 119 && event.ctrlKey) { // ctrl + F8
+                box = null;
                 createControlField('008','                                        ');
                 loadRecord();
             }
@@ -828,6 +873,8 @@ function updateFixedFields (element) {
     xml_record = new XML( xml_string );
     if (xml_record..record[0]) xml_record = xml_record..record[0];
     loadRecord();
+    // Put the cursor back to the current fixed field
+    element.select();
 
     return true;
 }
@@ -1591,7 +1638,7 @@ function validateAuthority (button) {
         var row = rows[i];
         var tag = row.firstChild;
 
-	var done = false;
+        var done = false;
         dojo.forEach(acs.controlSetList(), function (acs_id) {
             if (done) return;
             var control_map = acs.controlSet(acs_id).control_map;
@@ -1606,8 +1653,7 @@ function validateAuthority (button) {
             var sf_list = [];
             for (var j = 0; j < subfields.length; j++) {
                 var sf = subfields[j];
-                sf_list.push( sf.childNodes[1].value );
-                sf_list.push( sf.childNodes[2].value );
+                sf_list.push( [ sf.childNodes[1].value, sf.childNodes[2].value ] );
             }
 
             var matches = acs.findMatchingAuthorities(
@@ -1616,11 +1662,28 @@ function validateAuthority (button) {
                     'subfields' : sf_list
                 })
             );
+
+            // matches = [ { "$csetId" : [ ... ] } ]
+
+            var found = false;
+            if (matches[0]) { // probably set
+                for (var cset in matches[0]) {
+                    var arr = matches[0][cset];
+                    if (arr.length) {
+                        // protect against errant empty string values
+                        if (arr.length == 1 && arr[0] == '')
+                            continue;
+                        found = true;
+                        break;
+                    }
+                }
+            }
+
     
             // XXX If adt, etc should be validated separately from vxz, etc then move this up into the above for loop
             for (var j = 0; j < subfields.length; j++) {
                 var sf = subfields[j];
-                if (!matches.length) {
+                if (!found) {
                     dojo.removeClass(sf.childNodes[2], 'marcValidated');
                     dojo.addClass(sf.childNodes[2], 'marcUnvalidated');
                 } else {
@@ -1629,7 +1692,7 @@ function validateAuthority (button) {
                 }
             }
 
-            if (matches.length) done = true;
+            if (found) done = true;
         });
     }
 
@@ -1698,10 +1761,17 @@ function browseAuthority (sf_popup, menu_id, target, sf, limit, page) {
         page = 0;
     }
 
+    var sf_string = '';
+    var sf_list = sf.parent().subfield;
+    for ( var i in sf_list) {
+        sf_string += sf_list[i].toString() + ' ';
+        if (sf_list[i] === sf) break;
+    }
+
     var url = '/opac/extras/browse/marcxml/'
         + type + '.refs'
         + '/1' // OU - currently unscoped
-        + '/' + sf.toString()
+        + '/' + sf_string
         + '/' + page
         + '/' + limit
     ;

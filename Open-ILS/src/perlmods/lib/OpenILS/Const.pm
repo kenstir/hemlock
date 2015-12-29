@@ -35,13 +35,14 @@ econst OILS_COPY_STATUS_IN_PROCESS    => 5;
 econst OILS_COPY_STATUS_IN_TRANSIT    => 6;
 econst OILS_COPY_STATUS_RESHELVING    => 7;
 econst OILS_COPY_STATUS_ON_HOLDS_SHELF=> 8;
-econst OILS_COPY_STATUS_ON_ORDER	     => 9;
+econst OILS_COPY_STATUS_ON_ORDER         => 9;
 econst OILS_COPY_STATUS_ILL           => 10;
 econst OILS_COPY_STATUS_CATALOGING    => 11;
 econst OILS_COPY_STATUS_RESERVES      => 12;
 econst OILS_COPY_STATUS_DISCARD       => 13;
 econst OILS_COPY_STATUS_DAMAGED       => 14;
 econst OILS_COPY_STATUS_ON_RESV_SHELF => 15;
+econst OILS_COPY_STATUS_LONG_OVERDUE  => 16;
 
 
 # ---------------------------------------------------------------------
@@ -50,7 +51,7 @@ econst OILS_COPY_STATUS_ON_RESV_SHELF => 15;
 econst OILS_PRECAT_COPY_FINE_LEVEL    => 2;
 econst OILS_PRECAT_COPY_LOAN_DURATION => 2;
 econst OILS_PRECAT_CALL_NUMBER        => -1;
-econst OILS_PRECAT_RECORD			     => -1;
+econst OILS_PRECAT_RECORD                => -1;
 
 
 # ---------------------------------------------------------------------

@@ -96,7 +96,7 @@ CREATE TABLE asset.copy (
 	alert_message	TEXT,
 	opac_visible	BOOL				NOT NULL DEFAULT TRUE,
 	deleted		BOOL				NOT NULL DEFAULT FALSE,
-	floating		BOOL				NOT NULL DEFAULT FALSE,
+	floating        INT,
 	dummy_isbn      TEXT,
 	status_changed_time TIMESTAMP WITH TIME ZONE,
 	active_date TIMESTAMP WITH TIME ZONE,
@@ -109,6 +109,7 @@ CREATE INDEX cp_avail_cn_idx ON asset.copy (call_number);
 CREATE INDEX cp_creator_idx  ON asset.copy ( creator );
 CREATE INDEX cp_editor_idx   ON asset.copy ( editor );
 CREATE INDEX cp_create_date  ON asset.copy (create_date);
+CREATE INDEX cp_available_by_circ_lib_idx ON asset.copy (circ_lib) WHERE status IN (0,7);
 CREATE RULE protect_copy_delete AS ON DELETE TO asset.copy DO INSTEAD UPDATE asset.copy SET deleted = TRUE WHERE OLD.id = asset.copy.id;
 
 CREATE TABLE asset.copy_part_map (
@@ -126,7 +127,7 @@ CREATE TABLE asset.opac_visible_copies (
 );
 COMMENT ON TABLE asset.opac_visible_copies IS $$
 Materialized view of copies that are visible in the OPAC, used by
-staged search to speed up OPAC visibility checks on large
+search.query_parser_fts() to speed up OPAC visibility checks on large
 databases.  Contents are maintained by a set of triggers.
 $$;
 CREATE INDEX opac_visible_copies_idx1 on asset.opac_visible_copies (record, circ_lib);
@@ -339,9 +340,13 @@ CREATE OR REPLACE FUNCTION asset.label_normalizer_dewey(TEXT) RETURNS TEXT AS $f
     $init =~ s/^([\p{IsAlpha}]+)/$1 /;
     my @tokens = split /\.|\s+/, $init;
     my $digit_group_count = 0;
+    my $first_digit_group_idx;
     for (my $i = 0; $i <= $#tokens; $i++) {
         if ($tokens[$i] =~ /^\d+$/) {
             $digit_group_count++;
+            if ($digit_group_count == 1) {
+                $first_digit_group_idx = $i;
+            }
             if (2 == $digit_group_count) {
                 $tokens[$i] = sprintf("%-15.15s", $tokens[$i]);
                 $tokens[$i] =~ tr/ /0/;
@@ -350,7 +355,7 @@ CREATE OR REPLACE FUNCTION asset.label_normalizer_dewey(TEXT) RETURNS TEXT AS $f
     }
     # Pad the first digit_group if there was only one
     if (1 == $digit_group_count) {
-        $tokens[0] .= '_000000000000000'
+        $tokens[$first_digit_group_idx] .= '_000000000000000'
     }
     my $key = join("_", @tokens);
     $key =~ s/[^\p{IsAlnum}_]//g;
@@ -358,6 +363,7 @@ CREATE OR REPLACE FUNCTION asset.label_normalizer_dewey(TEXT) RETURNS TEXT AS $f
     return $key;
 
 $func$ LANGUAGE PLPERLU;
+
 
 CREATE OR REPLACE FUNCTION asset.label_normalizer_lc(TEXT) RETURNS TEXT AS $func$
     use strict;
@@ -500,7 +506,7 @@ CREATE TABLE asset.copy_template (
 	circ_as_type   TEXT,
 	alert_message  TEXT,
 	opac_visible   BOOL,
-	floating       BOOL,
+	floating       INT,
 	mint_condition BOOL
 );
 

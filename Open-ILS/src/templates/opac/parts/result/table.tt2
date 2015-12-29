@@ -13,7 +13,6 @@
 [% PROCESS "opac/parts/result/paginate.tt2" %] 
 [% ctx.results_count_header = PROCESS results_count_header;
     ctx.results_count_header %]
-
 [% IF ctx.bookbag %]
 <div id="result-bookbag-heading">
     <div class="result-bookbag-name">[% ctx.bookbag.name | html %]</div>
@@ -21,11 +20,11 @@
 </div>
 [% END %]
 <div id="result_table_div">
-            <div class="facet_sidebar">
-                [% INCLUDE "opac/parts/staff_saved_searches.tt2" %]
-                [% INCLUDE 'opac/parts/result/facets.tt2' %]
-            </div>
-            <div class="result_block">
+    <div class="facet_sidebar_hidden" id="facet_sidebar">
+    [% INCLUDE "opac/parts/staff_saved_searches.tt2" %]
+    [% INCLUDE 'opac/parts/result/facets.tt2' %]
+    </div>
+            <div id="result_block" class="result_block_visible">
                 <table cellpadding="0" cellspacing="0"
                     border="0" style="margin-top:10px;">
                     <tbody id="result_table">
@@ -41,19 +40,17 @@
                                                     result_count; result_count = result_count + 1
                                                 %].</td>
                                             <td class='result_table_pic_header'>
-                                                [% ident = attrs.isbn_clean || attrs.upc; IF ident; %]
                                                 <a href="[% mkurl(ctx.opac_root _ '/record/' _ rec.id) %]"><img alt="[% l('Image of item') %]"
                                                         name='item_jacket' class='result_table_pic' width="55"
-                                                        src='[% ctx.media_prefix %]/opac/extras/ac/jacket/small/[% ident | uri %]' /></a><br />
-                                                [% END %]
+                                                        src='[% ctx.media_prefix %]/opac/extras/ac/jacket/small/r/[% rec.id | uri %]' /></a><br />
                                             </td>
                                             <td class='result_table_title_cell' name='result_table_title_cell'>
-                                                <div class="bold">
-                                                    <a name='record_[% rec.id %]' name='item_title'
+                                               <div class="result_metadata">
+                                                    <abbr class="unapi-id" title='tag:[% ctx.hostname %],[% date.format(date.now, '%Y') %]:biblio-record_entry/[% rec.id %]'></abbr>
+                                                    <a class='record_title' name='record_[% rec.id %]' name='item_title'
                                                         href="[% mkurl(ctx.opac_root _ '/record/' _ rec.id) %]"
                                                         [% HTML.attributes(title => l('Display record details for "[_1]"', attrs.title)) %]
                                                         class='search_link'>[% attrs.title | html %]</a>
-                                                </div>
 [%-
 FOR entry IN attrs.graphic_titles;
     FOR alt IN entry.graphic;
@@ -69,19 +66,14 @@ FOR entry IN attrs.graphic_titles;
     END;
 END;
 -%]
-                                                <div>
+ 
                                                     <div>
-                                                        <em><a title="[% l("Perform an Author Search") %]"
-                                                                name='item_author'
+                                                        <a title="[% l("Perform an Author Search") %]"
+                                                                class="record_author" name='item_author'
                                                                 href="[%- 
-                                                                    authorquery = attrs.author | replace('[#"^$\+\-,\.:;&|\[\]()]', '');
+                                                                    authorquery = attrs.author | replace('[#"^$\+\-,\.:;&|\[\]()]', ' ');
                                                                     mkurl(ctx.opac_root _ '/results', {qtype => 'author', query => authorquery}, ['page'])
-                                                                    -%]">[% attrs.author | html %]</a></em>
-                                                                    [%- UNLESS CGI.param('detail_record_view')
-                                                                        OR (show_more_details.default == 'true'
-                                                                        OR show_more_details.default == 'hide')
-                                                                    %] [% attrs.pubdate | html %]
-                                                                    [%- END -%]
+                                                                    -%]">[% attrs.author | html %]</a>
 [%-
 FOR entry IN attrs.graphic_authors;
     FOR alt IN entry.graphic;
@@ -99,6 +91,25 @@ END;
 -%]
 
                                                     </div>
+                                                    <div id='bib_format' class='result_table_title_cell'>
+                                                    [%- IF attrs.format_label; %]
+                                                        <img title="[% attrs.format_label | html %]" alt="[% attrs.format_label | html %]" src="[% attrs.format_icon %]" /> [% attrs.format_label; %]
+                                                    [%- END %]
+                                                    [%- UNLESS CGI.param('detail_record_view')
+                                                            OR (show_more_details.default == 'true'
+                                                            OR show_more_details.default == 'hide');
+                                                            IF attrs.pubdate;
+                                                                pubdate_clean = attrs.pubdate | html;
+                                                                l(" ([_1])", pubdate_clean);
+                                                            END;
+                                                        END
+                                                    -%]
+                                                    </div>
+                                                    <span name="googleBooksLink" class="hide_me">
+                                                        <a style='padding-left: 8px;'
+                                                            class='classic_link hide_me'
+                                                            name="googleBooks-link">[% l("Browse in Google Books Search") %]</a>
+                                                    </span>
                                                     <table cellpadding="0" cellspacing="0" border="0"
                                                         class="results_info_table">
                                                         [% IF args.holdings.size > 0 %]
@@ -235,7 +246,14 @@ END;
                                                                         <tbody>
                                                                 [% FOR copy IN args.holdings %]
                                                                         <tr>
-                                                                            <td>[% copy.library | html %]</td>
+                                                                            <td>
+[%-
+    lib_url = ctx.get_org_setting(copy.circ_lib, 'lib.info_url');
+    IF lib_url; '<a href="'; lib_url | url; '">'; END;
+    copy.library | html;
+    IF lib_url; '</a>'; END;
+-%]
+                                                                            </td>
                                                                             <td>[% copy.location | html %]</td>
                                                                             <td>[% copy.label | html %]</td>
                                                                             [%- IF has_parts == 'true'; %]
@@ -269,25 +287,6 @@ END;
                                                         [% END %]
                                                     [% END %]
                                                 </div>
-                                            </td>
-
-                                            <td name='result_table_format_cell' class='result_table_format_cell' width="1">
-
-                                                [% IF attrs.format_icon %]
-                                                <img title="[% attrs.format_label | html %]" alt="[% attrs.format_label | html %]" src="[% attrs.format_icon %]" />
-                                                [% END %]
-
-                                                <!-- unAPI link -->
-                                                <abbr class="unapi-id" title='tag:[% ctx.hostname %],[% date.format(date.now, '%Y') %]:biblio-record_entry/[% rec.id %]'></abbr>
-
-                                                <!-- Empty span used for creating Google Book Search-->
-                                                <span name="googleBooksLink" class="hide_me">
-                                                    <a style='padding-left: 8px;'
-                                                        class='classic_link hide_me'
-                                                        name="googleBooks-link">[% l("Browse in Google Books Search") %]</a>
-                                                </span>
-                                            </td>
-                                            <td nowrap='nowrap' width="1" align="right">
                                                 <div class="result_table_utils_cont">
                                                     <div class="result_table_utils">
 [%- search_ou = ctx.search_ou;
@@ -322,6 +321,7 @@ END;
                                                             [% END %]
                                                         </div>
                                                         [% IF ENV.OILS_CONTENT_CAFE_USER %]
+                                                        [% ident = attrs.isbn_clean || attrs.upc %]
                                                         <div class="results_aux_utils result_util">
                                                             <a title="[% l('Reviews and More') %]" target='_blank' 
                                                                 href="[% ctx.ext_proto %]://contentcafe2.btol.com/ContentCafeClient/ContentCafe.aspx?UserID=[%- 
@@ -334,7 +334,9 @@ END;
                                                         [% END %]
                                                     </div>
                                                 </div>
+
                                             </td>
+
                                         </tr>
                                         [%- IF ENV.OILS_CHILIFRESH_ACCOUNT %]
                                         <tr>
@@ -355,6 +357,26 @@ END;
                 </table>
             </div>
 </div>
-<div>
+<div class="result_footer_nav1">
     [% ctx.results_count_header %]
 </div>
+<script>
+resultBlock = document.querySelector('#result_block');
+resultButton = document.querySelector('#return_to_hits');
+facetSidebar = document.querySelector('#facet_sidebar');
+facetButton =  document.querySelector('#refine_hits');
+function getFacety() {
+    resultBlock.setAttribute('class', 'result_block_hidden');
+    resultButton.setAttribute('class', 'results_header_btns result_block_visible');
+    facetSidebar.setAttribute('class', 'facet_sidebar_visible');
+    facetButton.setAttribute('class', 'result_block_hidden');
+    window.location.hash = 'return_to_hits';
+}
+function getResulty() {
+    resultBlock.setAttribute('class', 'result_block_visible');
+    resultButton.setAttribute('class', 'result_block_hidden');
+    facetSidebar.setAttribute('class', 'facet_sidebar_hidden');
+    facetButton.setAttribute('class', 'results_header_btns result_block_visible');
+    window.location.hash = 'refine_hits';
+}
+</script>

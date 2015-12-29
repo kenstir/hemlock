@@ -11,6 +11,7 @@ use OpenSRF::Utils::Logger qw(:logger);
 use OpenSRF::Utils::JSON;
 
 use OpenILS::Application::Acq::Lineitem;
+use OpenILS::Application::Acq::Invoice;
 use OpenILS::Utils::RemoteAccount;
 use OpenILS::Utils::CStoreEditor q/new_editor/;
 use OpenILS::Utils::Fieldmapper;
@@ -57,10 +58,10 @@ my $VENDOR_KLUDGE_MAP = {
 
 
 __PACKAGE__->register_method(
-	method    => 'retrieve',
-	api_name  => 'open-ils.acq.edi.retrieve',
+    method    => 'retrieve',
+    api_name  => 'open-ils.acq.edi.retrieve',
     authoritative => 1,
-	signature => {
+    signature => {
         desc   => 'Fetch incoming message(s) from EDI accounts.  ' .
                   'Optional arguments to restrict to one vendor and/or a max number of messages.  ' .
                   'Note that messages are not parsed or processed here, just fetched and translated.',
@@ -113,7 +114,7 @@ sub retrieve_core {
 
         my @files    = ($server->ls({remote_file => ($account->in_dir || './')}));
         my @ok_files = grep {$_ !~ /\/\.?\.$/ and $_ ne '0'} @files;
-        $logger->info(sprintf "%s of %s files at %s/%s", scalar(@ok_files), scalar(@files), $account->host, $account->in_dir);   
+        $logger->info(sprintf "%s of %s files at %s/%s", scalar(@ok_files), scalar(@files), $account->host, $account->in_dir || "");   
 
         foreach my $remote_file (@ok_files) {
             my $description = sprintf "%s/%s", $account->host, $remote_file;
@@ -134,7 +135,7 @@ sub retrieve_core {
                             password => $account->password,
                             in_dir => $account->in_dir
                         },
-                        remote_file => $remote_file,
+                        remote_file => {ilike => $remote_file},
                         status      => {'in' => [qw/ processed /]},
                     },
                     { join => {"acqedi" => {}}, limit => 1 }
@@ -217,11 +218,24 @@ sub process_retrieval {
         $incoming->translate_time('NOW');
 
         if ($msg_hash->{purchase_order}) {
-            $logger->info("EDI: processing message for PO " . $msg_hash->{purchase_order});
-            $incoming->purchase_order($msg_hash->{purchase_order});
-            unless ($e->retrieve_acq_purchase_order($incoming->purchase_order)) {
-                $logger->warn("EDI: received order response for nonexistent PO.  Skipping...");
-                next;
+            # Some vendors just put their name where there ought to be a number,
+            # and others put alphanumeric strings that mean nothing to us, so
+            # we sure won't match a PO in the system this way. We can pick
+            # up PO number later from the lineitems themselves if necessary.
+
+            if ($msg_hash->{purchase_order} !~ /^\d+$/) {
+                $logger->warn("EDI: PO identifier is non-numeric. Blanking and continuing.");
+                undef $msg_hash->{purchase_order};
+            } else {
+                $logger->info("EDI: processing message for PO " .
+                    $msg_hash->{purchase_order});
+                $incoming->purchase_order($msg_hash->{purchase_order});
+                unless ($e->retrieve_acq_purchase_order(
+                        $incoming->purchase_order)) {
+                    $logger->warn("EDI: received order response for " .
+                        "nonexistent PO.  Skipping...");
+                    next;
+                }
             }
         }
 
@@ -243,6 +257,7 @@ sub process_retrieval {
         if ($@) {
             $logger->error($@);
             $incoming->status('proc_error');
+            $incoming->error_time('now');
             $incoming->error($@);
         } else {
             $incoming->status('processed');
@@ -848,6 +863,89 @@ sub get_kludges {
     return map { $_ => 1 } @kludges;
 }
 
+sub invoice_lineitem_to_invoice_entry {
+    my ($li, $quantity, $price) = @_;
+
+    my $eg_inv_entry = Fieldmapper::acq::invoice_entry->new;
+    $eg_inv_entry->isnew(1);
+    $eg_inv_entry->inv_item_count($quantity);
+
+    # amount staff agree to pay for
+    $eg_inv_entry->phys_item_count($quantity);
+
+    # XXX Validate by making sure the LI is on-order and belongs to
+    # the right provider and ordering agency and all that.
+    $eg_inv_entry->lineitem($li->id);
+
+    # XXX Do we actually need to link to PO directly here?
+    $eg_inv_entry->purchase_order($li->purchase_order);
+
+    # This is the total price for all units billed, not per-unit.
+    $eg_inv_entry->cost_billed($price);
+
+    # amount staff agree to pay
+    $eg_inv_entry->amount_paid($price);
+
+    # The EDIReader class does detect certain per-lineitem
+    # taxes, but we'll ignore them for now, as the only sample
+    # invoices I've yet seen containing them also had a final
+    # cumulative tax at the end.
+
+    return $eg_inv_entry;
+}
+
+# Return an arrayref containing acqie objects, an another of unknown lineitem
+# references from the electronic invoice.
+# @param    $message            An acqedim object
+# @param    $invoice_lineitems  An arrayref from part of EDIReader output
+# NOTE: This sub can have side-effects on $message.
+sub process_invoice_lineitems {
+    my ($e, $msg_kludges, $log_prefix, $message, $invoice_lineitems) = @_;
+
+    my (@entries, @unknowns);
+
+    foreach my $lineitem (@$invoice_lineitems) {
+        if (!$lineitem->{id}) {
+            $logger->warn($log_prefix . "no lineitem ID");
+            next;
+        }
+
+        my ($quant) = grep {$_->{code} eq '47'} @{$lineitem->{quantities}};
+        my $quantity = ($quant) ? $quant->{quantity} : 0;
+
+        if (!$quantity) {
+            $logger->warn($log_prefix . "no invoice quantity " .
+                "specified for invoice LI $lineitem->{id}");
+            next;
+        }
+
+        # NOTE: if needed, we also have $lineitem->{net_unit_price}
+        # and $lineitem->{gross_unit_price}
+        my $price = $lineitem->{amount_billed};
+
+        # XXX Should we set acqie.billed_per_item=t in this case
+        # instead? Not sure whether that actually works everywhere
+        # it needs to. LFW
+        $price *= $quantity if $msg_kludges->{amount_billed_is_per_unit};
+
+        my $li = $e->retrieve_acq_lineitem($lineitem->{id});
+
+        if ($li) {
+            # If the top-level PO value is unset, get it from the first LI
+            $message->purchase_order($li->purchase_order)
+                unless $message->purchase_order;
+
+            push @entries, invoice_lineitem_to_invoice_entry(
+                $li, $quantity, $price
+            );
+        } else {
+            push @unknowns, $lineitem->{id};
+        }
+    }
+
+    return \@entries, \@unknowns;
+}
+
 # create_acq_invoice_from_edi() does what it sounds like it does for INVOIC
 # messages.  For similar operation on ORDRSP messages, see the guts of
 # process_jedi().
@@ -871,6 +969,7 @@ sub create_acq_invoice_from_edi {
     }
 
     my $eg_inv = Fieldmapper::acq::invoice->new;
+    $eg_inv->isnew(1);
 
     # Some troubleshooting aids.  Yeah we should have made appropriate links
     # for this in the schema, but this is better than nothing.  Probably
@@ -910,74 +1009,29 @@ sub create_acq_invoice_from_edi {
         die($log_prefix . "no invoice ID # in INVOIC message; " . shift);
     }
 
-    my @eg_inv_entries;
-    my @eg_inv_cancel_lis;
-
     $message->purchase_order($msg_data->{purchase_order});
 
-    for my $lineitem (@{$msg_data->{lineitems}}) {
-        my $li_id = $lineitem->{id};
+    # Invoice lineitems should generally link to Evergreen lineitems
+    # (with acq.invoice_entry rows), except when they don't refer to any
+    # Evergreen lineitems by their known number. In that case, they're
+    # probably things ordered not through the ILS. We don't have an
+    # appropriate table for storing that kind of information right now,
+    # so we skip those. No, we don't have enough information to create
+    # Evergreen lineitems on the fly and create acqie rows linking to
+    # those.
+    my ($eg_inv_entries, $unknowns) = process_invoice_lineitems(
+        $e, \%msg_kludges, $log_prefix, $message, $msg_data->{lineitems}
+    );
 
-        if (!$li_id) {
-            $logger->warn($log_prefix . "no lineitem ID");
-            next;
-        }
-
-        my $li = $e->retrieve_acq_lineitem($li_id);
-
-        if (!$li) {
-            die($log_prefix . "no LI found with ID: $li_id : " . $e->event);
-        }
-
-        my ($quant) = grep {$_->{code} eq '47'} @{$lineitem->{quantities}};
-        my $quantity = ($quant) ? $quant->{quantity} : 0;
-        
-        if (!$quantity) {
-            $logger->warn($log_prefix . 
-                "no invoice quantity specified for LI $li_id");
-            next;
-        }
-
-        # NOTE: if needed, we also have $lineitem->{net_unit_price}
-        # and $lineitem->{gross_unit_price}
-        my $lineitem_price = $lineitem->{amount_billed};
-
-        $lineitem_price *= $quantity if $msg_kludges{amount_billed_is_per_unit};
-
-        # if the top-level PO value is unset, get it from the first LI
-        $message->purchase_order($li->purchase_order)
-            unless $message->purchase_order;
-
-        my $eg_inv_entry = Fieldmapper::acq::invoice_entry->new;
-        $eg_inv_entry->inv_item_count($quantity);
-
-        # amount staff agree to pay for
-        $eg_inv_entry->phys_item_count($quantity);
-
-        # XXX Validate by making sure the LI is on-order and belongs to
-        # the right provider and ordering agency and all that.
-        $eg_inv_entry->lineitem($li_id);
-
-        # XXX Do we actually need to link to PO directly here?
-        $eg_inv_entry->purchase_order($li->purchase_order);
-
-        # This is the total price for all units billed, not per-unit.
-        $eg_inv_entry->cost_billed($lineitem_price);
-
-        # amount staff agree to pay
-        $eg_inv_entry->amount_paid($lineitem_price);
-
-        push @eg_inv_entries, $eg_inv_entry;
-        push @eg_inv_cancel_lis, 
-            {lineitem => $li, quantity => $quantity} 
-            if $li->cancel_reason;
-
-        # The EDIReader class does detect certain per-lineitem taxes, but
-        # we'll ignore them for now, as the only sample invoices I've yet seen
-        # containing them also had a final cumulative tax at the end.
+    if (@$unknowns) {
+        $logger->warn(
+            $log_prefix . sprintf(
+                "skipped %d unknown lineitem reference(s) from EDI invoice: %s",
+                scalar(@$unknowns),
+                join("; ", map { "'$_'" } @$unknowns)
+            )
+        );
     }
-
-    my @eg_inv_items;
 
     my %charge_type_map = (
         'TX' => ['TAX', 'Tax from electronic invoice'],
@@ -986,8 +1040,11 @@ sub create_acq_invoice_from_edi {
         'GST' => ['TAX', 'Goods and services tax']
     ); # XXX i18n, somehow
 
+    my $eg_inv_items = [];
+
     for my $charge (@{$msg_data->{misc_charges}}, @{$msg_data->{taxes}}) {
         my $eg_inv_item = Fieldmapper::acq::invoice_item->new;
+        $eg_inv_item->isnew(1);
 
         my $amount = $charge->{amount};
 
@@ -999,10 +1056,8 @@ sub create_acq_invoice_from_edi {
         my $map = $charge_type_map{$charge->{type}};
 
         if (!$map) {
-            $map = [
-                'PRO',
-                'Unknown charge type ' .  $charge->{type}
-            ];
+            $map = ['PRO', 'Misc / unspecified'];
+            $eg_inv_item->note($charge->{type});
         }
 
         $eg_inv_item->inv_item_type($$map[0]);
@@ -1010,12 +1065,12 @@ sub create_acq_invoice_from_edi {
         $eg_inv_item->cost_billed($amount);
         $eg_inv_item->amount_paid($amount);
 
-        push @eg_inv_items, $eg_inv_item;
+        push @$eg_inv_items, $eg_inv_item;
     }
 
     $logger->info($log_prefix . 
         sprintf("creating invoice with %d entries and %d items.",
-            scalar(@eg_inv_entries), scalar(@eg_inv_items)));
+            scalar(@$eg_inv_entries), scalar(@$eg_inv_items)));
 
     $e->xact_begin;
 
@@ -1024,91 +1079,13 @@ sub create_acq_invoice_from_edi {
         die($log_prefix . "couldn't update edi_message " . $message->id);
     }
 
-    # create EG invoice
-    if (not $e->create_acq_invoice($eg_inv)) {
-        die($log_prefix . "couldn't create invoice: " . $e->event);
+    my $result = OpenILS::Application::Acq::Invoice::build_invoice_impl(
+        $e, $eg_inv, $eg_inv_entries, $eg_inv_items, 0   # don't commit yet
+    );
+
+    if ($U->event_code($result)) {
+        die($log_prefix. "build_invoice_impl() failed: " . $result->{textcode});
     }
-
-    # Now we have a pkey for our EG invoice, so set the invoice field on all
-    # our entries according and create those too.
-    my $eg_inv_id = $e->data->id;
-    foreach (@eg_inv_entries) {
-        $_->invoice($eg_inv_id);
-        if (not $e->create_acq_invoice_entry($_)) {
-            die(
-                $log_prefix . "couldn't create entry against lineitem " .
-                $_->lineitem . ": " . $e->event
-            );
-        }
-    }
-
-    # Create any invoice items (taxes)
-    foreach (@eg_inv_items) {
-        $_->invoice($eg_inv_id);
-        if (not $e->create_acq_invoice_item($_)) {
-            die($log_prefix . "couldn't create inv item: " . $e->event);
-        }
-    }
-
-    # if an invoiced lineitem is marked as cancelled 
-    # (e.g. back-order), invoicing the lineitem implies 
-    # we need to un-cancel it
-    for my $li_chunk (@eg_inv_cancel_lis) {
-        my $li = $li_chunk->{lineitem};
-        my $quantity = $li_chunk->{quantity};
-
-        $logger->info($log_prefix . 
-            "un-cancelling invoiced lineitem ". $li->id);
-         
-        # collect the LIDs, starting with those that are
-        # not cancelled (should not happen), followed by
-        # those that have keep-debits cancel_reasons, 
-        # followed by non-keep-debit cancel reasons.
-
-        my $lid_ids = $e->json_query({
-            select => {acqlid => ['id']},
-            from => {
-                acqlid => {
-                    acqcr => {type => 'left'},
-                    acqfdeb => {type => 'left'}
-                }
-            },
-            where => {
-                '+acqlid' => {lineitem => $li->id},
-                # not-yet invoiced copies
-                '+acqfdeb' => {encumbrance => 't'}
-            },
-            order_by => [{
-                class => 'acqcr',
-                field => 'keep_debits',
-                direction => 'desc'
-            }],
-            limit => $quantity
-        });
-
-        for my $lid_id (map {$_->{id}} @$lid_ids) {
-            my $lid = $e->retrieve_acq_lineitem_detail($lid_id);
-            next unless $lid->cancel_reason;
-
-            $lid->clear_cancel_reason;
-            unless ($e->update_acq_lineitem_detail($lid)) {
-                die($log_prefix .
-                    "couldn't clear lid cancel reason: ". $e->die_event
-                );
-            }
-        }
-
-        $li->clear_cancel_reason;
-        $li->state("on-order");
-        $li->edit_time('now'); 
-
-        unless ($e->update_acq_lineitem($li)) {
-            die($log_prefix .
-                "couldn't clear li cancel reason: ". $e->die_event
-            );
-        }
-    }
-
 
     $e->xact_commit;
     return 1;

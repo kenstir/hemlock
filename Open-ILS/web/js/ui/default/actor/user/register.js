@@ -132,6 +132,7 @@ function load() {
         'ui.patron.edit.au.prefix.require',
         'ui.patron.edit.au.prefix.show',
         'ui.patron.edit.au.prefix.suggest',
+        'ui.patron.edit.ac.barcode.regex',
         'ui.patron.edit.au.second_given_name.show',
         'ui.patron.edit.au.second_given_name.suggest',
         'ui.patron.edit.au.suffix.show',
@@ -189,7 +190,10 @@ function load() {
         'ui.patron.edit.default_suggested',
         'opac.barcode_regex',
         'opac.username_regex',
-        'sms.enable'
+        'sms.enable',
+        'ui.patron.edit.aua.state.require',
+        'ui.patron.edit.aua.state.suggest',
+        'ui.patron.edit.aua.state.show'
     ]);
 
     for(k in orgSettings)
@@ -296,6 +300,17 @@ function load() {
     }
         
     uUpdateContactInvalidators();
+
+    // Cancel mouse scroll events from propagating to table rows which are
+    // using the dijit.form.NumberSpinner widget, because the mouse scroll
+    // would be applied too early by the widget, before the user has
+    // intentionally focussed on the input field.
+    dojo.query('tr[wclass="dijit.form.NumberSpinner"]').forEach(function (tr) {
+        tr.addEventListener('DOMMouseScroll', function (ev) {
+            ev.stopPropagation();
+        }, true);
+    });
+
     lock_ready = true;
 }
 
@@ -494,6 +509,40 @@ function uEditLoadStageUser(stageUname) {
     if(!stageUser) 
         return patron;
 
+    /* if we know who requested this pending account, show the requestor's
+     * name and create a link to open the requestor in a new tab */
+    if (stageUser.requesting_usr()) {
+        fieldmapper.standardRequest(
+            ['open-ils.actor', 'open-ils.actor.user.retrieve.parts'],
+            {   params : [
+                    openils.User.authtoken, 
+                    stageUser.requesting_usr(), 
+                    ['first_given_name', 'family_name']
+                ],
+                oncomplete : function(r) {
+                    var res = openils.Util.readResponse(r);
+                    if (!res) return;
+
+                    var link = dojo.byId('uedit-requesting-user');
+                    link.innerHTML = dojo.string.substitute(
+                        localeStrings.REQUESTING_USER, res);
+                    openils.Util.show(link.parentNode);
+
+                    link.onclick = function() {
+                        window.xulG.new_patron_tab(                
+                            {   'tab_name' : '' }, // tab name is set on draw
+                            {   'id' : stageUser.requesting_usr(),
+                                'url_prefix' : xulG.url_prefix,    
+                                'new_tab' : xulG.new_tab,          
+                                'set_tab' : xulG.set_tab           
+                            }                                      
+                        ); 
+                    };
+                }
+            }
+        );
+    }
+
     // copy the data into our new user object
     for(var key in fieldmapper.IDL.fmclasses.stgu.field_map) {
         if(fieldmapper.IDL.fmclasses.au.field_map[key] && !fieldmapper.IDL.fmclasses.stgu.field_map[key].virtual) {
@@ -657,6 +706,14 @@ function uEditFetchUserSettings(userId) {
         userSettings = fieldmapper.standardRequest(
             ['open-ils.actor', 'open-ils.actor.patron.settings.retrieve.authoritative'],
             {params : [openils.User.authtoken, userId, names]});
+    } else {
+        // Defaults!
+        userSettingTypes.forEach(function(setting, index, array) {
+            if(setting.reg_default() != undefined) {
+                userSettings[setting.name()] = setting.reg_default();
+                userSettingsToUpdate[setting.name()] = setting.reg_default();
+            }
+        });
     }
 }
 
@@ -1236,6 +1293,24 @@ function attachWidgetEvents(fmcls, fmfield, widget) {
 
     if(fmcls == 'ac') {
         if(fmfield == 'barcode') {
+            widget.widget.isValid = function() {
+                if(this.attr('disabled') || this.attr('readOnly')) {
+                    return true;
+                }
+                if(orgSettings['ui.patron.edit.ac.barcode.regex']) { // This serves as a master "on" for these checks
+                    // No spaces
+                    if(this.attr("value").match(/\s/)) {
+                        return false;
+                    }
+                    var test_regexp = new RegExp(orgSettings['ui.patron.edit.ac.barcode.regex']);
+                    if(test_regexp.test(this.attr("value"))) {
+                        return true;
+                    }
+                    return false;
+                }
+
+                return true;
+            }
             dojo.connect(widget.widget, 'onChange',
                 function() {
                     var barcode = this.attr('value');
@@ -1973,14 +2048,14 @@ function uEditNewAddr(evt, id, mkLinks) {
                         var replaced =  patron.addresses().filter(
                             function(i) { return (i.id() == addr.replaces()) })[0];
 
-                        div.innerHTML = dojo.string.substitute(localeStrings.REPLACED_ADDRESS, [
-                            replaced.address_type() || '',
+                        div.innerHTML = '<div>' + dojo.string.substitute(localeStrings.REPLACED_ADDRESS, [
+                            '<b>' + replaced.address_type() + '</b>' || '',
                             replaced.street1() || '',
                             replaced.street2() || '',
                             replaced.city() || '',
                             replaced.state() || '',
                             replaced.post_code() || ''
-                        ]);
+                        ]) + '</div>';
 
                     } else {
                         openils.Util.hide(dojo.query('[name=replaced-addr-div]', row)[0]);

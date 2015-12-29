@@ -161,8 +161,11 @@ patron.display.prototype = {
                             removeCSSClass(document.documentElement,'PATRON_HAS_BILLS');
                             removeCSSClass(document.documentElement,'PATRON_HAS_OVERDUES');
                             removeCSSClass(document.documentElement,'PATRON_HAS_NOTES');
+                            removeCSSClass(document.documentElement,'PATRON_HAS_LOST');
+                            removeCSSClass(document.documentElement,'PATRON_HAS_LOST_AND_COUNTED');
                             removeCSSClass(document.documentElement,'PATRON_EXCEEDS_CHECKOUT_COUNT');
                             removeCSSClass(document.documentElement,'PATRON_EXCEEDS_OVERDUE_COUNT');
+                            removeCSSClass(document.documentElement,'PATRON_EXCEEDS_LOST_COUNT');
                             removeCSSClass(document.documentElement,'PATRON_EXCEEDS_FINES');
                             removeCSSClass(document.documentElement,'NO_PENALTIES');
                             removeCSSClass(document.documentElement,'ONE_PENALTY');
@@ -410,9 +413,9 @@ patron.display.prototype = {
                         ['command'],
                         function(ev) {
                             if (obj.msg_url) {
-                                obj.right_deck.set_iframe('data:text/html,'+obj.msg_url,{},{});
+                                obj.right_deck.set_iframe('data:text/html;charset=UTF-8,'+obj.msg_url,{},{});
                             } else {
-                                obj.right_deck.set_iframe('data:text/html,<h1>' + $("patronStrings").getString('staff.patron.display.no_alerts_or_messages') + '</h1>',{},{});
+                                obj.right_deck.set_iframe('data:text/html;charset=UTF-8,<h1>' + $("patronStrings").getString('staff.patron.display.no_alerts_or_messages') + '</h1>',{},{});
                             }
                         }
                     ],
@@ -896,7 +899,8 @@ patron.display.prototype = {
                     },
                     'get_barcode' : xulG.get_barcode,
                     'get_barcode_and_settings' : xulG.get_barcode_and_settings,
-                    'url_prefix' : xulG.url_prefix
+                    'url_prefix' : xulG.url_prefix,
+                    'set_statusbar' : xulG.set_statusbar
                 }
             );
             obj.checkout_window = get_contentWindow(frame);
@@ -969,23 +973,23 @@ patron.display.prototype = {
                 obj._already_defaulted_once = true;
                 var msg = ''; obj.stop_checkouts = false;
                 if (patron.alert_message())
-                    msg += $("patronStrings").getFormattedString('staff.patron.display.init.network_request.alert_message', [patron.alert_message()]);
+                    msg += $("patronStrings").getFormattedString('staff.patron.display.init.network_request.alert_message', [patron.alert_message()]) + '<br/><br/>';
                 //alert('obj.barcode = ' + obj.barcode);
                 if (obj.barcode) {
                     if (patron.cards()) for (var i = 0; i < patron.cards().length; i++) {
                         //alert('card #'+i+' == ' + js2JSON(patron.cards()[i]));
                         if ( (patron.cards()[i].barcode()==obj.barcode) && ( ! get_bool(patron.cards()[i].active()) ) ) {
-                            msg += $("patronStrings").getString('staff.patron.display.init.network_request.inactive_card');
+                            msg += $("patronStrings").getString('staff.patron.display.init.network_request.inactive_card') + '<br/><br/>';
                             obj.stop_checkouts = true;
                         }
                     }
                 }
                 if (get_bool(patron.barred())) {
-                    msg += $("patronStrings").getString('staff.patron.display.init.network_request.account_barred');
+                    msg += $("patronStrings").getString('staff.patron.display.init.network_request.account_barred') + '<br/><br/>';
                     obj.stop_checkouts = true;
                 }
                 if (!get_bool(patron.active())) {
-                    msg += $("patronStrings").getString('staff.patron.display.init.network_request.account_inactive');
+                    msg += $("patronStrings").getString('staff.patron.display.init.network_request.account_inactive') + '<br/><br/>';
                     obj.stop_checkouts = true;
                 }
                 if (patron.expire_date()) {
@@ -1013,10 +1017,10 @@ patron.display.prototype = {
                     preexpire = preexpire.getTime()/1000;
 
                     if (expire < now) {
-                        msg += $("patronStrings").getString('staff.patron.display.init.network_request.account_expired');
+                        msg += $("patronStrings").getString('staff.patron.display.init.network_request.account_expired') + '<br/><br/>';
                         obj.stop_checkouts = true;
                     } else if (expire < preexpire && preexpire_setting) {
-                        msg += $("patronStrings").getString('staff.patron.display.init.network_request.account_expire_soon');
+                        msg += $("patronStrings").getString('staff.patron.display.init.network_request.account_expire_soon') + '<br/><br/>';
                     }
                 }
                 var penalties = patron.standing_penalties();
@@ -1044,10 +1048,10 @@ patron.display.prototype = {
                     if (msg != obj.old_msg) {
                         //obj.error.yns_alert(msg,'Alert Message','OK',null,null,'Check here to confirm this message.');
                         document.documentElement.firstChild.focus();
-                        var data_url = window.escape("<img src='" + xulG.url_prefix('/xul/server/skin/media/images/stop_sign.png') + "'/>" + '<h1>'
+                        var data_url = window.encodeURIComponent("<img src='" + xulG.url_prefix('/xul/server/skin/media/images/stop_sign.png') + "'/>" + '<h1>'
                             + $("patronStrings").getString('staff.patron.display.init.network_request.window_title') + '</h1><blockquote><p>' + msg + '</p>\r\n\r\n<pre>'
                             + $("patronStrings").getString('staff.patron.display.init.network_request.window_message') + '</pre></blockquote>');
-                        obj.right_deck.set_iframe('data:text/html,'+data_url,{},{});
+                        obj.right_deck.set_iframe('data:text/html;charset=UTF-8,'+data_url,{},{});
                         obj.old_msg = msg;
                         obj.msg_url = data_url;
                     } else {

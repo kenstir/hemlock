@@ -133,39 +133,46 @@ Added Log Comment
 			<!-- A form of title that ignores non-filing characters; useful
 				 for not converting "L'Oreal" into "L' Oreal" at index time -->
 			<titleNonfiling>
-				<xsl:variable name="title">
-					<xsl:choose>
-						<xsl:when test="marc:subfield[@code='b']">
-							<xsl:call-template name="specialSubfieldSelect">
-								<xsl:with-param name="axis">b</xsl:with-param>
-								<xsl:with-param name="beforeCodes">afgk</xsl:with-param>
-							</xsl:call-template>
-						</xsl:when>
-						<xsl:otherwise>
+				<title>
+					<xsl:call-template name="chopPunctuation">
+						<xsl:with-param name="chopString">
 							<xsl:call-template name="subfieldSelect">
 								<xsl:with-param name="codes">abfgk</xsl:with-param>
 							</xsl:call-template>
-						</xsl:otherwise>
-					</xsl:choose>
-				</xsl:variable>
-				<title>
-					<xsl:value-of select="$title"/>
+						</xsl:with-param>
+					</xsl:call-template>
 				</title>
-				<xsl:if test="marc:subfield[@code='b']">
-					<subTitle>
-						<xsl:call-template name="chopPunctuation">
-							<xsl:with-param name="chopString">
-								<xsl:call-template name="specialSubfieldSelect">
-									<xsl:with-param name="axis">b</xsl:with-param>
-									<xsl:with-param name="anyCodes">b</xsl:with-param>
-									<xsl:with-param name="afterCodes">afgk</xsl:with-param>
-								</xsl:call-template>
-							</xsl:with-param>
-						</xsl:call-template>
-					</subTitle>
-				</xsl:if>
 				<xsl:call-template name="part"></xsl:call-template>
 			</titleNonfiling>
+			<!-- hybrid of titleInfo and titleNonfiling which will give us a preformatted string (for punctuation)
+				 but also keep the nonSort stuff in a separate field (for sorting) -->
+			<titleBrowse>
+				<xsl:variable name="titleBrowseChop">
+					<xsl:call-template name="chopPunctuation">
+						<xsl:with-param name="chopString">
+							<xsl:call-template name="subfieldSelect">
+								<xsl:with-param name="codes">abfgk</xsl:with-param>
+							</xsl:call-template>
+						</xsl:with-param>
+					</xsl:call-template>
+				</xsl:variable>
+				<xsl:choose>
+					<xsl:when test="@ind2>0">
+						<nonSort>
+							<xsl:value-of select="substring($titleBrowseChop,1,@ind2)"/>
+						</nonSort>
+						<title>
+							<xsl:value-of select="substring($titleBrowseChop,@ind2+1)"/>
+						</title>
+					</xsl:when>
+					<xsl:otherwise>
+						<title>
+							<xsl:value-of select="$titleBrowseChop"/>
+						</title>
+					</xsl:otherwise>
+				</xsl:choose>
+				<xsl:call-template name="part"></xsl:call-template>
+			</titleBrowse>
 		</xsl:for-each>
 		<xsl:for-each select="marc:datafield[@tag='210']">
 			<titleInfo type="abbreviated">
@@ -182,6 +189,16 @@ Added Log Comment
 			</titleInfo>
 		</xsl:for-each>
 		<xsl:for-each select="marc:datafield[@tag='242']">
+			<xsl:variable name="titleChop">
+				<xsl:call-template name="chopPunctuation">
+					<xsl:with-param name="chopString">
+						<xsl:call-template name="subfieldSelect">
+							<!-- 1/04 removed $h, b -->
+							<xsl:with-param name="codes">a</xsl:with-param>
+						</xsl:call-template>
+					</xsl:with-param>
+				</xsl:call-template>
+			</xsl:variable>
 			<titleInfo type="translated">
 				<!--09/01/04 Added subfield $y-->
 				<xsl:for-each select="marc:subfield[@code='y']">
@@ -190,16 +207,33 @@ Added Log Comment
 					</xsl:attribute>
 				</xsl:for-each>
 				<title>
-					<xsl:call-template name="chopPunctuation">
-						<xsl:with-param name="chopString">
-							<xsl:call-template name="subfieldSelect">
-								<!-- 1/04 removed $h, b -->
-								<xsl:with-param name="codes">a</xsl:with-param>
-							</xsl:call-template>
-						</xsl:with-param>
-					</xsl:call-template>
+					<xsl:value-of select="$titleChop" />
 				</title>
 				<!-- 1/04 fix -->
+				<xsl:call-template name="subtitle"/>
+				<xsl:call-template name="part"/>
+			</titleInfo>
+			<titleInfo type="translated-nfi">
+				<xsl:for-each select="marc:subfield[@code='y']">
+					<xsl:attribute name="lang">
+						<xsl:value-of select="text()"/>
+					</xsl:attribute>
+				</xsl:for-each>
+				<xsl:choose>
+					<xsl:when test="@ind2>0">
+						<nonSort>
+							<xsl:value-of select="substring($titleChop,1,@ind2)"/>
+						</nonSort>
+						<title>
+							<xsl:value-of select="substring($titleChop,@ind2+1)"/>
+						</title>
+					</xsl:when>
+					<xsl:otherwise>
+						<title>
+							<xsl:value-of select="$titleChop" />
+						</title>
+					</xsl:otherwise>
+				</xsl:choose>
 				<xsl:call-template name="subtitle"/>
 				<xsl:call-template name="part"/>
 			</titleInfo>
@@ -226,41 +260,95 @@ Added Log Comment
 			</titleInfo>
 		</xsl:for-each>
 		<xsl:for-each select="marc:datafield[@tag='130']|marc:datafield[@tag='240']|marc:datafield[@tag='730'][@ind2!='2']">
+			<xsl:variable name="nfi">
+				<xsl:choose>
+					<xsl:when test="@tag='240'">
+						<xsl:value-of select="@ind2"/>
+					</xsl:when>
+					<xsl:otherwise>
+						<xsl:value-of select="@ind1"/>
+					</xsl:otherwise>
+				</xsl:choose>
+			</xsl:variable>
+			<xsl:variable name="titleChop">
+				<xsl:call-template name="uri" />
+				<xsl:variable name="str">
+					<xsl:for-each select="marc:subfield">
+						<xsl:if test="(contains('adfklmor',@code) and (not(../marc:subfield[@code='n' or @code='p']) or (following-sibling::marc:subfield[@code='n' or @code='p'])))">
+							<xsl:value-of select="text()"/>
+							<xsl:text> </xsl:text>
+						</xsl:if>
+					</xsl:for-each>
+				</xsl:variable>
+				<xsl:call-template name="chopPunctuation">
+					<xsl:with-param name="chopString">
+						<xsl:value-of select="substring($str,1,string-length($str)-1)"/>
+					</xsl:with-param>
+				</xsl:call-template>
+			</xsl:variable>
 			<titleInfo type="uniform">
 				<title>
-					<xsl:variable name="str">
-						<xsl:for-each select="marc:subfield">
-							<xsl:if test="(contains('adfklmor',@code) and (not(../marc:subfield[@code='n' or @code='p']) or (following-sibling::marc:subfield[@code='n' or @code='p'])))">
-								<xsl:value-of select="text()"/>
-								<xsl:text> </xsl:text>
-							</xsl:if>
-						</xsl:for-each>
-					</xsl:variable>
-					<xsl:call-template name="chopPunctuation">
-						<xsl:with-param name="chopString">
-							<xsl:value-of select="substring($str,1,string-length($str)-1)"/>
-						</xsl:with-param>
-					</xsl:call-template>
+					<xsl:value-of select="$titleChop"/>
 				</title>
+				<xsl:call-template name="part"/>
+			</titleInfo>
+			<titleInfo type="uniform-nfi">
+				<xsl:choose>
+					<xsl:when test="$nfi>0">
+						<nonSort>
+							<xsl:value-of select="substring($titleChop,1,$nfi)"/>
+						</nonSort>
+						<title>
+							<xsl:value-of select="substring($titleChop,$nfi+1)"/>
+						</title>
+					</xsl:when>
+					<xsl:otherwise>
+						<title>
+							<xsl:value-of select="$titleChop"/>
+						</title>
+					</xsl:otherwise>
+				</xsl:choose>
 				<xsl:call-template name="part"/>
 			</titleInfo>
 		</xsl:for-each>
 		<xsl:for-each select="marc:datafield[@tag='740'][@ind2!='2']">
+			<xsl:variable name="titleChop">
+				<xsl:call-template name="chopPunctuation">
+					<xsl:with-param name="chopString">
+						<xsl:call-template name="subfieldSelect">
+							<xsl:with-param name="codes">ah</xsl:with-param>
+						</xsl:call-template>
+					</xsl:with-param>
+				</xsl:call-template>
+			</xsl:variable>
 			<titleInfo type="alternative">
 				<title>
-					<xsl:call-template name="chopPunctuation">
-						<xsl:with-param name="chopString">
-							<xsl:call-template name="subfieldSelect">
-								<xsl:with-param name="codes">ah</xsl:with-param>
-							</xsl:call-template>
-						</xsl:with-param>
-					</xsl:call-template>
+					<xsl:value-of select="$titleChop" />
 				</title>
+				<xsl:call-template name="part"/>
+			</titleInfo>
+			<titleInfo type="alternative-nfi">
+				<xsl:choose>
+					<xsl:when test="@ind1>0">
+						<nonSort>
+							<xsl:value-of select="substring($titleChop,1,@ind1)"/>
+						</nonSort>
+						<title>
+							<xsl:value-of select="substring($titleChop,@ind1+1)"/>
+						</title>
+					</xsl:when>
+					<xsl:otherwise>
+						<title>
+							<xsl:value-of select="$titleChop" />
+						</title>
+					</xsl:otherwise>
+				</xsl:choose>
 				<xsl:call-template name="part"/>
 			</titleInfo>
 		</xsl:for-each>
 		<xsl:for-each select="marc:datafield[@tag='100']">
 			<name type="personal">
+				<xsl:call-template name="uri" />
 				<xsl:call-template name="nameABCDQ"/>
 				<xsl:call-template name="affiliation"/>
 				<role>
@@ -271,6 +359,7 @@ Added Log Comment
 		</xsl:for-each>
 		<xsl:for-each select="marc:datafield[@tag='110']">
 			<name type="corporate">
+				<xsl:call-template name="uri" />
 				<xsl:call-template name="nameABCDN"/>
 				<role>
 					<roleTerm authority="marcrelator" type="text">creator</roleTerm>
@@ -280,6 +369,7 @@ Added Log Comment
 		</xsl:for-each>
 		<xsl:for-each select="marc:datafield[@tag='111']">
 			<name type="conference">
+				<xsl:call-template name="uri" />
 				<xsl:call-template name="nameACDEQ"/>
 				<role>
 					<roleTerm authority="marcrelator" type="text">creator</roleTerm>
@@ -289,6 +379,7 @@ Added Log Comment
 		</xsl:for-each>
 		<xsl:for-each select="marc:datafield[@tag='700'][not(marc:subfield[@code='t'])]">
 			<name type="personal">
+				<xsl:call-template name="uri" />
 				<xsl:call-template name="nameABCDQ"/>
 				<xsl:call-template name="affiliation"/>
 				<xsl:call-template name="role"/>
@@ -296,12 +387,14 @@ Added Log Comment
 		</xsl:for-each>
 		<xsl:for-each select="marc:datafield[@tag='710'][not(marc:subfield[@code='t'])]">
 			<name type="corporate">
+				<xsl:call-template name="uri" />
 				<xsl:call-template name="nameABCDN"/>
 				<xsl:call-template name="role"/>
 			</name>
 		</xsl:for-each>
 		<xsl:for-each select="marc:datafield[@tag='711'][not(marc:subfield[@code='t'])]">
 			<name type="conference">
+				<xsl:call-template name="uri" />
 				<xsl:call-template name="nameACDEQ"/>
 				<xsl:call-template name="role"/>
 			</name>
@@ -1584,16 +1677,38 @@ Added Log Comment
 		</xsl:for-each>
 		<xsl:for-each select="marc:datafield[@tag=440]">
 			<relatedItem type="series">
+				<xsl:variable name="titleChop">
+					<xsl:call-template name="chopPunctuation">
+						<xsl:with-param name="chopString">
+							<xsl:call-template name="subfieldSelect">
+								<xsl:with-param name="codes">av</xsl:with-param>
+							</xsl:call-template>
+						</xsl:with-param>
+					</xsl:call-template>
+				</xsl:variable>
 				<titleInfo>
 					<title>
-						<xsl:call-template name="chopPunctuation">
-							<xsl:with-param name="chopString">
-								<xsl:call-template name="subfieldSelect">
-									<xsl:with-param name="codes">av</xsl:with-param>
-								</xsl:call-template>
-							</xsl:with-param>
-						</xsl:call-template>
+						<xsl:value-of select="$titleChop" />
 					</title>
+					<xsl:call-template name="part"></xsl:call-template>
+				</titleInfo>
+				<titleInfo type="nfi">
+					<xsl:choose>
+						<xsl:when test="@ind2>0">
+							<nonSort>
+								<xsl:value-of select="substring($titleChop,1,@ind2)"/>
+							</nonSort>
+							<title>
+								<xsl:value-of select="substring($titleChop,@ind2+1)"/>
+							</title>
+							<xsl:call-template name="part"/>
+						</xsl:when>
+						<xsl:otherwise>
+							<title>
+								<xsl:value-of select="$titleChop" />
+							</title>
+						</xsl:otherwise>
+					</xsl:choose>
 					<xsl:call-template name="part"></xsl:call-template>
 				</titleInfo>
 			</relatedItem>
@@ -1781,14 +1896,35 @@ Added Log Comment
 		<xsl:for-each select="marc:datafield[@tag=740][@ind2=2]">
 			<relatedItem>
 				<xsl:call-template name="constituentOrRelatedType"></xsl:call-template>
+				<xsl:variable name="titleChop">
+					<xsl:call-template name="chopPunctuation">
+						<xsl:with-param name="chopString">
+							<xsl:value-of select="marc:subfield[@code='a']"></xsl:value-of>
+						</xsl:with-param>
+					</xsl:call-template>
+				</xsl:variable>
 				<titleInfo>
 					<title>
-						<xsl:call-template name="chopPunctuation">
-							<xsl:with-param name="chopString">
-								<xsl:value-of select="marc:subfield[@code='a']"></xsl:value-of>
-							</xsl:with-param>
-						</xsl:call-template>
+						<xsl:value-of select="$titleChop" />
 					</title>
+					<xsl:call-template name="part"></xsl:call-template>
+				</titleInfo>
+				<titleInfo type="nfi">
+					<xsl:choose>
+						<xsl:when test="@ind1>0">
+							<nonSort>
+								<xsl:value-of select="substring($titleChop,1,@ind1)"/>
+							</nonSort>
+							<title>
+								<xsl:value-of select="substring($titleChop,@ind1+1)"/>
+							</title>
+						</xsl:when>
+						<xsl:otherwise>
+							<title>
+								<xsl:value-of select="$titleChop" />
+							</title>
+						</xsl:otherwise>
+					</xsl:choose>
 					<xsl:call-template name="part"></xsl:call-template>
 				</titleInfo>
 				<xsl:call-template name="relatedForm"></xsl:call-template>
@@ -1944,16 +2080,37 @@ Added Log Comment
 		</xsl:for-each>
 		<xsl:for-each select="marc:datafield[@tag='830']">
 			<relatedItem type="series">
+				<xsl:variable name="titleChop">
+					<xsl:call-template name="chopPunctuation">
+						<xsl:with-param name="chopString">
+							<xsl:call-template name="subfieldSelect">
+								<xsl:with-param name="codes">adfgklmorsv</xsl:with-param>
+							</xsl:call-template>
+						</xsl:with-param>
+					</xsl:call-template>
+				</xsl:variable>
 				<titleInfo>
 					<title>
-						<xsl:call-template name="chopPunctuation">
-							<xsl:with-param name="chopString">
-								<xsl:call-template name="subfieldSelect">
-									<xsl:with-param name="codes">adfgklmorsv</xsl:with-param>
-								</xsl:call-template>
-							</xsl:with-param>
-						</xsl:call-template>
+						<xsl:value-of select="$titleChop" />
 					</title>
+					<xsl:call-template name="part"/>
+				</titleInfo>
+				<titleInfo type="nfi">
+					<xsl:choose>
+						<xsl:when test="@ind2>0">
+							<nonSort>
+								<xsl:value-of select="substring($titleChop,1,@ind2)"/>
+							</nonSort>
+							<title>
+								<xsl:value-of select="substring($titleChop,@ind2+1)"/>
+							</title>
+						</xsl:when>
+						<xsl:otherwise>
+							<title>
+								<xsl:value-of select="$titleChop" />
+							</title>
+						</xsl:otherwise>
+					</xsl:choose>
 					<xsl:call-template name="part"/>
 				</titleInfo>
 				<xsl:call-template name="relatedForm"/>
@@ -2194,6 +2351,20 @@ Added Log Comment
 			<xsl:attribute name="xlink:href">
 				<xsl:value-of select="."></xsl:value-of>
 			</xsl:attribute>
+		</xsl:for-each>
+		<xsl:for-each select="marc:subfield[@code='0']">
+			<xsl:choose>
+				<xsl:when test="contains(text(), ')')">
+					<xsl:attribute name="xlink:href">
+						<xsl:value-of select="substring-after(text(), ')')"></xsl:value-of>
+					</xsl:attribute>
+				</xsl:when>
+				<xsl:otherwise>
+					<xsl:attribute name="xlink:href">
+						<xsl:value-of select="."></xsl:value-of>
+					</xsl:attribute>
+				</xsl:otherwise>
+			</xsl:choose>
 		</xsl:for-each>
 	</xsl:template>
 	<xsl:template name="role">
@@ -2608,7 +2779,7 @@ Added Log Comment
 		<subject>
 			<xsl:call-template name="subjectAuthority"></xsl:call-template>
 			<name type="personal">
-				<xsl:call-template name="termsOfAddress"></xsl:call-template>
+				<xsl:call-template name="uri" />
 				<namePart>
 					<xsl:call-template name="chopPunctuation">
 						<xsl:with-param name="chopString">
@@ -2618,6 +2789,7 @@ Added Log Comment
 						</xsl:with-param>
 					</xsl:call-template>
 				</namePart>
+				<xsl:call-template name="termsOfAddress"></xsl:call-template>
 				<xsl:call-template name="nameDate"></xsl:call-template>
 				<xsl:call-template name="affiliation"></xsl:call-template>
 				<xsl:call-template name="role"></xsl:call-template>
@@ -2629,6 +2801,7 @@ Added Log Comment
 		<subject>
 			<xsl:call-template name="subjectAuthority"></xsl:call-template>
 			<name type="corporate">
+				<xsl:call-template name="uri" />
 				<xsl:for-each select="marc:subfield[@code='a']">
 					<namePart>
 						<xsl:value-of select="."></xsl:value-of>
@@ -2655,6 +2828,7 @@ Added Log Comment
 		<subject>
 			<xsl:call-template name="subjectAuthority"></xsl:call-template>
 			<name type="conference">
+				<xsl:call-template name="uri" />
 				<namePart>
 					<xsl:call-template name="subfieldSelect">
 						<xsl:with-param name="codes">abcdeqnp</xsl:with-param>
@@ -2674,17 +2848,39 @@ Added Log Comment
 	<xsl:template match="marc:datafield[@tag=630]">
 		<subject>
 			<xsl:call-template name="subjectAuthority"></xsl:call-template>
+			<xsl:variable name="titleChop">
+				<xsl:call-template name="chopPunctuation">
+					<xsl:with-param name="chopString">
+						<xsl:call-template name="subfieldSelect">
+							<xsl:with-param name="codes">adfhklor</xsl:with-param>
+						</xsl:call-template>
+					</xsl:with-param>
+				</xsl:call-template>
+			</xsl:variable>
 			<titleInfo>
 				<title>
-					<xsl:call-template name="chopPunctuation">
-						<xsl:with-param name="chopString">
-							<xsl:call-template name="subfieldSelect">
-								<xsl:with-param name="codes">adfhklor</xsl:with-param>
-							</xsl:call-template>
-						</xsl:with-param>
-					</xsl:call-template>
-					<xsl:call-template name="part"></xsl:call-template>
+					<xsl:value-of select="$titleChop" />
 				</title>
+				<xsl:call-template name="part"></xsl:call-template>
+			</titleInfo>
+			<titleInfo type="nfi">
+				<xsl:choose>
+					<xsl:when test="@ind1>0">
+						<nonSort>
+							<xsl:value-of select="substring($titleChop,1,@ind1)"/>
+						</nonSort>
+						<title>
+							<xsl:value-of select="substring($titleChop,@ind1+1)"/>
+						</title>
+						<xsl:call-template name="part"/>
+					</xsl:when>
+					<xsl:otherwise>
+						<title>
+							<xsl:value-of select="$titleChop" />
+						</title>
+					</xsl:otherwise>
+				</xsl:choose>
+				<xsl:call-template name="part"></xsl:call-template>
 			</titleInfo>
 			<xsl:call-template name="subjectAnyOrder"></xsl:call-template>
 		</subject>
@@ -2693,6 +2889,7 @@ Added Log Comment
 		<subject>
 			<xsl:call-template name="subjectAuthority"></xsl:call-template>
 			<topic>
+				<xsl:call-template name="uri" />
 				<xsl:call-template name="chopPunctuation">
 					<xsl:with-param name="chopString">
 						<xsl:call-template name="subfieldSelect">
@@ -2709,6 +2906,7 @@ Added Log Comment
 			<xsl:call-template name="subjectAuthority"></xsl:call-template>
 			<xsl:for-each select="marc:subfield[@code='a']">
 				<geographic>
+					<xsl:call-template name="uri" />
 					<xsl:call-template name="chopPunctuation">
 						<xsl:with-param name="chopString" select="."></xsl:with-param>
 					</xsl:call-template>
@@ -2721,6 +2919,7 @@ Added Log Comment
 		<subject>
 			<xsl:for-each select="marc:subfield[@code='a']">
 				<topic>
+					<xsl:call-template name="uri" />
 					<xsl:value-of select="."></xsl:value-of>
 				</topic>
 			</xsl:for-each>
@@ -2734,6 +2933,7 @@ Added Log Comment
 				</xsl:attribute>
 			</xsl:if>
 			<occupation>
+				<xsl:call-template name="uri" />
 				<xsl:call-template name="chopPunctuation">
 					<xsl:with-param name="chopString">
 						<xsl:value-of select="marc:subfield[@code='a']"></xsl:value-of>

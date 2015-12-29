@@ -4,6 +4,7 @@ use warnings;
 package OpenILS::Application::Storage::Driver::Pg::QueryParser;
 use OpenILS::Application::Storage::QueryParser;
 use base 'QueryParser';
+use OpenSRF::Utils qw/:datetime/;
 use OpenSRF::Utils::JSON;
 use OpenILS::Application::AppUtils;
 use OpenILS::Utils::CStoreEditor;
@@ -39,24 +40,6 @@ sub filter_group_entry_callback {
                 OpenILS::Utils::CStoreEditor
                     ->new
                     ->search_actor_search_filter_group_entry({ id => $params })
-            }
-        )
-    );
-}
-
-sub location_groups_callback {
-    my ($invocant, $self, $struct, $filter, $params, $negate) = @_;
-
-    return sprintf(' %slocations(%s)',
-        $negate ? '-' : '',
-        join(
-            ',',
-            map {
-                $_->location
-            } @{
-                OpenILS::Utils::CStoreEditor
-                    ->new
-                    ->search_asset_copy_location_group_map({ lgroup => $params })
             }
         )
     );
@@ -234,6 +217,7 @@ sub add_search_field_id_map {
     my $field = shift;
     my $id = shift;
     my $weight = shift;
+    my $combined = shift;
 
     $self->add_search_field( $class => $field );
     $self->search_field_id_map->{by_id}{$id} = { classname => $class, field => $field, weight => $weight };
@@ -315,6 +299,18 @@ sub search_class_weights {
     $self->custom_data->{class_weights}->{$class} ||= [0.1, 0.2, 0.4, 1.0];
     $self->custom_data->{class_weights}->{$class} = [$d_weight, $c_weight, $b_weight, $a_weight] if $a_weight;
     return $self->custom_data->{class_weights}->{$class};
+}
+
+sub search_class_combined {
+    my $self = shift;
+    my $class = shift;
+    my $c = shift;
+
+    $self->custom_data->{class_combined} ||= {};
+    # Note: This reverses the A-D order, putting D first, because that is how the call actually works in PG
+    $self->custom_data->{class_combined}->{$class} ||= 0;
+    $self->custom_data->{class_combined}->{$class} = 1 if $c && $c =~ /^(?:t|y|1)/i;
+    return $self->custom_data->{class_combined}->{$class};
 }
 
 sub class_ts_config {
@@ -419,6 +415,7 @@ sub initialize_query_normalizers {
 
     for my $cmfinm ( @$tree ) {
         my $field_info = $self->search_field_class_by_id( $cmfinm->field );
+        next unless $field_info;
         __PACKAGE__->add_query_normalizer( $field_info->{classname}, $field_info->{field}, $cmfinm->norm->func, OpenSRF::Utils::JSON->JSON2perl($cmfinm->params) );
     }
 }
@@ -442,12 +439,13 @@ sub initialize_filter_normalizers {
     }
 }
 
-sub initialize_class_weights {
+sub initialize_search_class_weights {
     my $self = shift;
     my $classes = shift;
 
     for my $search_class (@$classes) {
         __PACKAGE__->search_class_weights( $search_class->name, $search_class->a_weight, $search_class->b_weight, $search_class->c_weight, $search_class->d_weight );
+        __PACKAGE__->search_class_combined( $search_class->name, $search_class->combined );
     }
 }
 
@@ -638,9 +636,11 @@ __PACKAGE__->add_search_filter( 'between' );
 __PACKAGE__->add_search_filter( 'during' );
 
 # various filters for limiting in various ways
+__PACKAGE__->add_search_filter( 'edit_date' );
+__PACKAGE__->add_search_filter( 'create_date' );
 __PACKAGE__->add_search_filter( 'statuses' );
 __PACKAGE__->add_search_filter( 'locations' );
-__PACKAGE__->add_search_filter( 'location_groups', sub { return __PACKAGE__->location_groups_callback(@_) } );
+__PACKAGE__->add_search_filter( 'location_groups' );
 __PACKAGE__->add_search_filter( 'bib_source' );
 __PACKAGE__->add_search_filter( 'site' );
 __PACKAGE__->add_search_filter( 'pref_ou' );
@@ -657,6 +657,7 @@ __PACKAGE__->add_search_filter( 'superpage_size' );
 __PACKAGE__->add_search_filter( 'estimation_strategy' );
 __PACKAGE__->add_search_modifier( 'available' );
 __PACKAGE__->add_search_modifier( 'staff' );
+__PACKAGE__->add_search_modifier( 'deleted' );
 __PACKAGE__->add_search_modifier( 'lucky' );
 
 # Start from container data (bre, acn, acp): container(bre,bookbag,123,deadb33fdeadb33fdeadb33fdeadb33f)
@@ -664,6 +665,8 @@ __PACKAGE__->add_search_filter( 'container' );
 
 # Start from a list of record ids, either bre or metarecords, depending on the #metabib modifier
 __PACKAGE__->add_search_filter( 'record_list' );
+
+__PACKAGE__->add_search_filter( 'has_browse_entry' );
 
 # used internally, but generally not user-settable
 __PACKAGE__->add_search_filter( 'preferred_language' );
@@ -687,11 +690,11 @@ __PACKAGE__->add_search_modifier( 'metabib' );
 package OpenILS::Application::Storage::Driver::Pg::QueryParser::query_plan;
 use base 'QueryParser::query_plan';
 use OpenSRF::Utils::Logger qw($logger);
+use OpenSRF::Utils qw/:datetime/;
 use Data::Dumper;
 use OpenILS::Application::AppUtils;
-use OpenILS::Utils::CStoreEditor;
 my $apputils = "OpenILS::Application::AppUtils";
-my $editor = OpenILS::Utils::CStoreEditor->new;
+
 
 sub toSQL {
     my $self = shift;
@@ -706,7 +709,6 @@ sub toSQL {
             $filters{$col} = $filter->args->[0];
         }
     }
-    $self->new_filter( statuses => [0,7,12] ) if ($self->find_modifier('available'));
 
     $self->QueryParser->superpage($filters{superpage}) if ($filters{superpage});
     $self->QueryParser->superpage_size($filters{superpage_size}) if ($filters{superpage_size});
@@ -741,6 +743,17 @@ sub toSQL {
     }
     $rel = "1.0/($rel)::NUMERIC";
 
+    my $mra_join = 'INNER JOIN metabib.record_attr mrd ON m.source = mrd.id';
+
+    my $bre_join = '';
+    if ($self->find_modifier('deleted')) {
+        $bre_join = 'INNER JOIN biblio.record_entry bre ON m.source = bre.id AND bre.deleted';
+        # The above suffices for filters too when the #deleted modifier
+        # is in use.
+    } elsif ($$flat_plan{uses_bre}) {
+        $bre_join = 'INNER JOIN biblio.record_entry bre ON m.source = bre.id';
+    }
+    
     my $rank = $rel;
 
     my $desc = 'ASC';
@@ -770,206 +783,30 @@ sub toSQL {
     if ($flat_where ne '') {
         $flat_where = "AND (\n" . ${spc} x 5 . $flat_where . "\n" . ${spc} x 4 . ")";
     }
+    my $with = $$flat_plan{with};
+    $with= "\nWITH $with" if $with;
 
-    my $site = $self->find_filter('site');
-    if ($site && $site->args) {
-        $site = $site->args->[0];
-        if ($site && $site !~ /^(-)?\d+$/) {
-            my $search = $editor->search_actor_org_unit({ shortname => $site });
-            $site = @$search[0]->id if($search && @$search);
-            $site = undef unless ($search);
-        }
-    } else {
-        $site = undef;
-    }
-    my $lasso = $self->find_filter('lasso');
-    if ($lasso && $lasso->args) {
-        $lasso = $lasso->args->[0];
-        if ($lasso && $lasso !~ /^\d+$/) {
-            my $search = $editor->search_actor_org_lasso({ name => $lasso });
-            $lasso = @$search[0]->id if($search && @$search);
-            $lasso = undef unless ($search);
-        }
-    } else {
-        $lasso = undef;
-    }
-    my $depth = $self->find_filter('depth');
-    if ($depth && $depth->args) {
-        $depth = $depth->args->[0];
-        if ($depth && $depth !~ /^\d+$/) {
-            # This *is* what metabib.pm has been doing....but it makes no sense to me. :/
-            # Should this be looking up the depth of the OU type on the OU in question?
-            my $search = $editor->search_actor_org_unit([{ name => $depth },{ opac_label => $depth }]);
-            $depth = @$search[0]->id if($search && @$search);
-            $depth = undef unless($search);
-        }
-    } else {
-        $depth = undef;
-    }
-    my $pref_ou = $self->find_filter('pref_ou');
-    if ($pref_ou && $pref_ou->args) {
-        $pref_ou = $pref_ou->args->[0];
-        if ($pref_ou && $pref_ou !~ /^(-)?\d+$/) {
-            my $search = $editor->search_actor_org_unit({ shortname => $pref_ou });
-            $pref_ou = @$search[0]->id if($search && @$search);
-            $pref_ou = undef unless ($search);
-        }
-    } else {
-        $pref_ou = undef;
-    }
-
-    # Supposedly at some point a site of 0 and a depth will equal user lasso id.
-    # We need OU buckets before that happens. 'my_lasso' is, I believe, the target filter for it.
-
-    $site = -$lasso if ($lasso);
-
-    # Default to the top of the org tree if we have nothing else. This would need tweaking for the user lasso bit.
-    if (!$site) {
-        my $search = $editor->search_actor_org_unit({ parent_ou => undef });
-        $site = @$search[0]->id if ($search);
-    }
-
-    my $depth_check = '';
-    $depth_check = ", $depth" if ($depth);
-
-    my $with = '';
-    $with .= "     search_org_list AS (\n";
-    if ($site < 0) {
-        # Lasso!
-        $lasso = -$site;
-        $with .= "       SELECT DISTINCT org_unit from actor.org_lasso_map WHERE lasso = $lasso\n";
-    } elsif ($site > 0) {
-        $with .= "       SELECT DISTINCT id FROM actor.org_unit_descendants($site$depth_check)\n";
-    } else {
-        # Placeholder for user lasso stuff.
-    }
-    $with .= "     ),\n";
-    $with .= "     luri_org_list AS (\n";
-    if ($site < 0) {
-        # We can re-use the lasso var, we already updated it above.
-        $with .= "       SELECT DISTINCT (actor.org_unit_ancestors(org_unit)).id from actor.org_lasso_map WHERE lasso = $lasso\n";
-    } elsif ($site > 0) {
-        $with .= "       SELECT DISTINCT id FROM actor.org_unit_ancestors($site)\n";
-    } else {
-        # Placeholder for user lasso stuff.
-    }
-    if ($pref_ou) {
-        $with .= "       UNION\n";
-        $with .= "       SELECT DISTINCT id FROM actor.org_unit_ancestors($pref_ou)\n";
-    }
-    $with .= "     )";
-    $with .= ",\n     " . $$flat_plan{with} if ($$flat_plan{with});
-
-    # Limit stuff
-    my $limit_where = <<"    SQL";
--- Filter records based on visibility
-        AND (
-            cbs.transcendant IS TRUE
-            OR
-    SQL
-    if ($self->find_modifier('staff')) {
-        $limit_where .= <<"        SQL";
-            EXISTS(
-                SELECT 1 FROM asset.call_number cn
-                    JOIN asset.copy cp ON (cp.call_number = cn.id)
-                WHERE NOT cn.deleted
-                    AND NOT cp.deleted
-                    AND cp.circ_lib IN ( SELECT * FROM search_org_list )
-                    AND cn.record = m.source
-                LIMIT 1
-            )
-            OR
-            EXISTS(
-                SELECT 1 FROM biblio.peer_bib_copy_map pr
-                    JOIN asset.copy cp ON (cp.id = pr.target_copy)
-                WHERE NOT cp.deleted
-                    AND cp.circ_lib IN ( SELECT * FROM search_org_list )
-                    AND pr.peer_record = m.source
-                LIMIT 1
-            )
-            OR (
-                NOT EXISTS(
-                    SELECT 1 FROM asset.call_number cn
-                        JOIN asset.copy cp ON (cp.call_number = cn.id)
-                    WHERE cn.record = m.source
-                        AND NOT cp.deleted
-                    LIMIT 1
-                )
-                AND
-                NOT EXISTS(
-                    SELECT 1 FROM biblio.peer_bib_copy_map pr
-                        JOIN asset.copy cp ON (cp.id = pr.target_copy)
-                    WHERE NOT cp.deleted
-                        AND pr.peer_record = m.source
-                    LIMIT 1
-                )
-                AND
-                NOT EXISTS(
-                    SELECT 1 FROM asset.call_number acn
-                        JOIN asset.uri_call_number_map aucnm ON acn.id = aucnm.call_number
-                        JOIN asset.uri uri ON aucnm.uri = uri.id
-                    WHERE NOT acn.deleted
-                        AND uri.active
-                        AND acn.record = m.source
-                    LIMIT 1
-                )
-            )
-        SQL
-    } else {
-        $limit_where .= <<"        SQL";
-            EXISTS(
-                SELECT 1 FROM asset.opac_visible_copies
-                WHERE circ_lib IN ( SELECT * FROM search_org_list )
-                    AND record = m.source
-                LIMIT 1
-            )
-            OR
-            EXISTS(
-                SELECT 1 FROM biblio.peer_bib_copy_map pr
-                    JOIN asset.opac_visible_copies cp ON (cp.copy_id = pr.target_copy)
-                WHERE cp.circ_lib IN ( SELECT * FROM search_org_list )
-                    AND pr.peer_record = m.source
-                LIMIT 1
-            )
-        SQL
-    }
-    $limit_where .= <<"    SQL";
-            OR
-            EXISTS(
-                SELECT 1 FROM asset.call_number acn
-                    JOIN asset.uri_call_number_map aucnm ON acn.id = aucnm.call_number
-                    JOIN asset.uri uri ON aucnm.uri = uri.id
-                WHERE NOT acn.deleted AND uri.active AND acn.record = m.source AND acn.owning_lib IN (
-                    SELECT * FROM luri_org_list
-                )
-                LIMIT 1
-            )
-        )
-    SQL
-
-    # For single records we want the record id
-    # For metarecords we want NULL or the only record ID.
-    my $agg_record = 'm.source AS record';
+    # Need an array for query parser db function; this gives a better plan
+    # than the ARRAY_AGG(DISTINCT m.source) option as of PostgreSQL 9.1
+    my $agg_records = 'ARRAY[m.source] AS records';
     if ($key =~ /metarecord/) {
-        $agg_record = 'CASE WHEN COUNT(DISTINCT m.source) = 1 THEN FIRST(m.source) ELSE NULL END AS record';
+        # metarecord searches still require the ARRAY_AGG approach
+        $agg_records = 'ARRAY_AGG(DISTINCT m.source) AS records';
     }
 
     my $sql = <<SQL;
-WITH
 $with
 SELECT  $key AS id,
-        $agg_record,
+        $agg_records,
         $rel AS rel,
         $rank AS rank, 
         FIRST(mrd.attrs->'date1') AS tie_break
   FROM  metabib.metarecord_source_map m
         $$flat_plan{from}
-        INNER JOIN metabib.record_attr mrd ON m.source = mrd.id
-        INNER JOIN biblio.record_entry bre ON m.source = bre.id
-        LEFT JOIN config.bib_source cbs ON bre.source = cbs.id
+        $mra_join
+        $bre_join
   WHERE 1=1
         $flat_where
-        $limit_where
   GROUP BY 1
   ORDER BY 4 $desc $nullpos, 5 DESC $nullpos, 3 DESC
   LIMIT $core_limit
@@ -986,6 +823,7 @@ sub flatten {
     my $from = shift || '';
     my $where = shift || '';
     my $with = '';
+    my $uses_bre = 0;
 
     my @rank_list;
     for my $node ( @{$self->query_nodes} ) {
@@ -1029,13 +867,17 @@ sub flatten {
                 if ($node->dummy_count < @{$node->only_atoms} ) {
                     $with .= ",\n     " if $with;
                     $with .= "${talias}_xq AS (SELECT ". $node->tsquery ." AS tsq,". $node->tsquery_rank ." AS tsq_rank )";
-                    $from .= "\n" . ${spc} x 6 . "JOIN $ctable AS com ON (com.record = fe.source";
-                    if (@field_ids) {
-                        $from .= " AND com.metabib_field IN (" . join(',',@field_ids) . "))";
+                    if ($node->combined_search) {
+                        $from .= "\n" . ${spc} x 6 . "JOIN $ctable AS com ON (com.record = fe.source";
+                        if (@field_ids) {
+                            $from .= " AND com.metabib_field IN (" . join(',',@field_ids) . "))";
+                        } else {
+                            $from .= " AND com.metabib_field IS NULL)";
+                        }
+                        $from .= "\n" . ${spc} x 6 . "JOIN ${talias}_xq ON (com.index_vector @@ ${talias}_xq.tsq)";
                     } else {
-                        $from .= " AND com.metabib_field IS NULL)";
+                        $from .= "\n" . ${spc} x 6 . "JOIN ${talias}_xq ON (fe.index_vector @@ ${talias}_xq.tsq)";
                     }
-                    $from .= "\n" . ${spc} x 6 . "JOIN ${talias}_xq ON (com.index_vector @@ ${talias}_xq.tsq)";
                 } else {
                     $from .= "\n" . ${spc} x 6 . ", (SELECT NULL::tsquery AS tsq, NULL:tsquery AS tsq_rank ) AS ${talias}_xq";
                 }
@@ -1065,9 +907,9 @@ sub flatten {
 
                 if(scalar @bumps > 0 && scalar @{$node->only_positive_atoms} > 0) {
                     # Note: Previous rank function used search_normalize outright. Duplicating that here.
-                    $node_rank .= "\n" . ${spc} x 5 . "* evergreen.rel_bump(('{' || search_normalize(";
-                    $node_rank .= join(") || ',' || search_normalize(",map { $self->QueryParser->quote_phrase_value($_->content) } @{$node->only_positive_atoms});
-                    $node_rank .= ") || '}')::TEXT[], " . $node->table_alias . ".value, '{" . join(",",@bumps) . "}'::TEXT[], '{" . join(",",@bumpmults) . "}'::NUMERIC[])";
+                    $node_rank .= "\n" . ${spc} x 5 . "* evergreen.rel_bump(('{' || quote_literal(search_normalize(";
+                    $node_rank .= join(")) || ',' || quote_literal(search_normalize(",map { $self->QueryParser->quote_phrase_value($_->content) } @{$node->only_positive_atoms});
+                    $node_rank .= ")) || '}')::TEXT[], " . $node->table_alias . ".value, '{" . join(",",@bumps) . "}'::TEXT[], '{" . join(",",@bumpmults) . "}'::NUMERIC[])";
                 }
 
                 my $NOT = '';
@@ -1140,6 +982,8 @@ sub flatten {
                     $with .= ",\n     " if $with;
                     $with .= $$subnode{with};
                 }
+
+                $uses_bre = $$subnode{uses_bre};
             }
         } else {
 
@@ -1252,12 +1096,13 @@ sub flatten {
                         }
                         $with .= "     )";
 
-                        $from .= "\n" . ${spc} x 3 . "LEFT JOIN container_${filter_alias} ON container_${filter_alias}.record = m.source";
+                        my $optimize_join = 1 if $self->top_plan and !$NOT;
+                        $from .= "\n" . ${spc} x 3 . ( $optimize_join ? 'INNER' : 'LEFT') . " JOIN container_${filter_alias} ON container_${filter_alias}.record = m.source";
 
-                        my $spcdepth = $self->plan_level + 5;
-
-                        $where .= $joiner if $where ne '';
-                        $where .= "${NOT}(container_${filter_alias} IS NOT NULL)";
+                        if (!$optimize_join) {
+                            $where .= $joiner if $where ne '';
+                            $where .= "(container_${filter_alias} IS " . ( $NOT ? 'NULL)' : 'NOT NULL)');
+                        }
                     }
                 }
             } elsif ($filter->name eq 'record_list') {
@@ -1267,61 +1112,53 @@ sub flatten {
                     $where .= $joiner if $where ne '';
                     $where .= "$key ${NOT}IN (" . join(',', map { $self->QueryParser->quote_value($_) } @{$filter->args}) . ')';
                 }
-            } elsif ($filter->name eq 'locations') {
-                if (@{$filter->args} > 0) {
-                    my $spcdepth = $self->plan_level + 5;
-                    $where .= $joiner if $where ne '';
-                    $where .= "(\n"
-                           . ${spc} x ($spcdepth + 1) . "${NOT}EXISTS(\n"
-                           . ${spc} x ($spcdepth + 2) . "SELECT 1 FROM asset.call_number acn\n"
-                           . ${spc} x ($spcdepth + 5) . "JOIN asset.copy acp ON acn.id = acp.call_number\n"
-                           . ${spc} x ($spcdepth + 2) . "WHERE m.source = acn.record\n"
-                           . ${spc} x ($spcdepth + 5) . "AND acp.circ_lib IN (SELECT * FROM search_org_list)\n"
-                           . ${spc} x ($spcdepth + 5) . "AND NOT acn.deleted\n"
-                           . ${spc} x ($spcdepth + 5) . "AND NOT acp.deleted\n"
-                           . ${spc} x ($spcdepth + 5) . "AND acp.location IN (" . join(',', map { $self->QueryParser->quote_value($_) } @{ $filter->args }) . ")\n"
-                           . ${spc} x ($spcdepth + 2) . "LIMIT 1\n"
-                           . ${spc} x ($spcdepth + 1) . ")\n"
-                           . ${spc} x ($spcdepth + 1) . ($filter->negate ? 'AND' : 'OR') . "\n"
-                           . ${spc} x ($spcdepth + 1) . "${NOT}EXISTS(\n"
-                           . ${spc} x ($spcdepth + 2) . "SELECT 1 FROM biblio.peer_bib_copy_map pr\n"
-                           . ${spc} x ($spcdepth + 5) . "JOIN asset.copy acp ON pr.target_copy = acp.id\n"
-                           . ${spc} x ($spcdepth + 2) . "WHERE m.source = pr.peer_record\n"
-                           . ${spc} x ($spcdepth + 5) . "AND acp.circ_lib IN (SELECT * FROM search_org_list)\n"
-                           . ${spc} x ($spcdepth + 5) . "AND NOT acp.deleted\n"
-                           . ${spc} x ($spcdepth + 5) . "AND acp.location IN (" . join(',', map { $self->QueryParser->quote_value($_) } @{ $filter->args }) . ")\n"
-                           . ${spc} x ($spcdepth + 2) . "LIMIT 1\n"
-                           . ${spc} x ($spcdepth + 1) . ")\n"
-                           . ${spc} x $spcdepth . ")";
+
+            } elsif ($filter->name eq 'has_browse_entry') {
+                if (@{$filter->args} >= 2) {
+                    my $entry = int(shift @{$filter->args});
+                    my $fields = join(",", map(int, @{$filter->args}));
+                    $from .= "\n" . $spc x 3 . sprintf("INNER JOIN metabib.browse_entry_def_map mbedm ON (mbedm.source = m.source AND mbedm.entry = %d AND mbedm.def IN (%s))", $entry, $fields);
                 }
-            } elsif ($filter->name eq 'statuses') {
-                if (@{$filter->args} > 0) {
-                    my $spcdepth = $self->plan_level + 5;
-                    $where .= $joiner if $where ne '';
-                    $where .= "(\n"
-                           . ${spc} x ($spcdepth + 1) . "${NOT}EXISTS(\n"
-                           . ${spc} x ($spcdepth + 2) . "SELECT 1 FROM asset.call_number acn\n"
-                           . ${spc} x ($spcdepth + 5) . "JOIN asset.copy acp ON acn.id = acp.call_number\n"
-                           . ${spc} x ($spcdepth + 2) . "WHERE m.source = acn.record\n"
-                           . ${spc} x ($spcdepth + 5) . "AND acp.circ_lib IN (SELECT * FROM search_org_list)\n"
-                           . ${spc} x ($spcdepth + 5) . "AND NOT acn.deleted\n"
-                           . ${spc} x ($spcdepth + 5) . "AND NOT acp.deleted\n"
-                           . ${spc} x ($spcdepth + 5) . "AND acp.status IN (" . join(',', map { $self->QueryParser->quote_value($_) } @{ $filter->args }) . ")\n"
-                           . ${spc} x ($spcdepth + 2) . "LIMIT 1\n"
-                           . ${spc} x ($spcdepth + 1) . ")\n"
-                           . ${spc} x ($spcdepth + 1) . ($filter->negate ? 'AND' : 'OR') . "\n"
-                           . ${spc} x ($spcdepth + 1) . "${NOT}EXISTS(\n"
-                           . ${spc} x ($spcdepth + 2) . "SELECT 1 FROM biblio.peer_bib_copy_map pr\n"
-                           . ${spc} x ($spcdepth + 5) . "JOIN asset.copy acp ON pr.target_copy = acp.id\n"
-                           . ${spc} x ($spcdepth + 2) . "WHERE m.source = pr.peer_record\n"
-                           . ${spc} x ($spcdepth + 5) . "AND acp.circ_lib IN (SELECT * FROM search_org_list)\n"
-                           . ${spc} x ($spcdepth + 5) . "AND NOT acp.deleted\n"
-                           . ${spc} x ($spcdepth + 5) . "AND acp.status IN (" . join(',', map { $self->QueryParser->quote_value($_) } @{ $filter->args }) . ")\n"
-                           . ${spc} x ($spcdepth + 2) . "LIMIT 1\n"
-                           . ${spc} x ($spcdepth + 1) . ")\n"
-                           . ${spc} x $spcdepth . ")";
+            } elsif ($filter->name eq 'edit_date' or $filter->name eq 'create_date') {
+                # bre.create_date and bre.edit_date filtering
+                my $datefilter = $filter->name;
+
+                $uses_bre = 1;
+
+                if ($filter && $filter->args && scalar(@{$filter->args}) > 0 && scalar(@{$filter->args}) < 3) {
+                    my ($cstart, $cend) = @{$filter->args};
+        
+                    if (!$cstart and !$cend) {
+                        # useless use of filter
+                    } elsif (!$cstart or $cstart eq '-infinity') { # no start supplied
+                        if ($cend eq 'infinity') {
+                            # useless use of filter
+                        } else {
+                            # "before $cend"
+                            $cend = cleanse_ISO8601($cend);
+                            $where .= $joiner if $where ne '';
+                            $where .= "bre.$datefilter <= \$_$$\$$cend\$_$$\$";
+                        }
+            
+                    } elsif (!$cend or $cend eq 'infinity') { # no end supplied
+                        if ($cstart eq '-infinity') {
+                            # useless use of filter
+                        } else { # "after $cstart"
+                            $cstart = cleanse_ISO8601($cstart);
+                            $where .= $joiner if $where ne '';
+                            $where .= "bre.$datefilter >= \$_$$\$$cstart\$_$$\$";
+                        }
+                    } else { # both supplied
+                        # "between $cstart and $cend"
+                        $cstart = cleanse_ISO8601($cstart);
+                        $cend = cleanse_ISO8601($cend);
+                        $where .= $joiner if $where ne '';
+                        $where .= "bre.$datefilter BETWEEN \$_$$\$$cstart\$_$$\$ AND \$_$$\$$cend\$_$$\$";
+                    }
                 }
             } elsif ($filter->name eq 'bib_source') {
+                $uses_bre = 1;
+
                 if (@{$filter->args} > 0) {
                     $where .= $joiner if $where ne '';
                     $where .= "${NOT}COALESCE(bre.source IN ("
@@ -1333,7 +1170,7 @@ sub flatten {
     }
     warn "flatten(): full filter where => $where\n" if $self->QueryParser->debug;
 
-    return { rank_list => \@rank_list, from => $from, where => $where,  with => $with };
+    return { rank_list => \@rank_list, from => $from, where => $where,  with => $with, uses_bre => $uses_bre };
 }
 
 
@@ -1530,6 +1367,11 @@ sub combined_table {
     $self->{ctable} = $ctable if ($ctable);
     return $self->{ctable} if $self->{ctable};
     return $self->combined_table( 'metabib.combined_' . $self->classname . '_field_entry' );
+}
+
+sub combined_search {
+    my $self = shift;
+    return $self->plan->QueryParser->search_class_combined($self->classname);
 }
 
 sub table_alias {

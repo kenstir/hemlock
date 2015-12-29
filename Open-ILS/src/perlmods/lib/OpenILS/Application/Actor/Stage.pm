@@ -9,18 +9,18 @@ my $U = "OpenILS::Application::AppUtils";
 
 
 __PACKAGE__->register_method (
-	method		=> 'create_user_stage',
-	api_name    => 'open-ils.actor.user.stage.create',
+    method      => 'create_user_stage',
+    api_name    => 'open-ils.actor.user.stage.create',
     signature => {
         desc => q/
             Creates a new pending user account including addresses and statcats.
             Users are added to staging tables pending staff review.
         /,
         params => [
-		    {desc => 'user', type => 'object', class => 'stgu'},
-		    {desc => 'Mailing address.  Optional', type => 'object', class => 'stgma'},
-		    {desc => 'Billing address.  Optional', type => 'object', class => 'stgba'},
-		    {desc => 'Statcats.  Optional.  This is an array of "stgsc" objects', type => 'array'},
+            {desc => 'user', type => 'object', class => 'stgu'},
+            {desc => 'Mailing address.  Optional', type => 'object', class => 'stgma'},
+            {desc => 'Billing address.  Optional', type => 'object', class => 'stgba'},
+            {desc => 'Statcats.  Optional.  This is an array of "stgsc" objects', type => 'array'},
         ],
         return => {
             desc => 'username on success, Event on error',
@@ -33,13 +33,17 @@ __PACKAGE__->register_method (
 sub create_user_stage {
     my($self, $conn, $user, $mail_addr, $bill_addr, $statcats) = @_; # more?
 
-    return 0 unless $U->ou_ancestor_setting_value('opac.allow_pending_user');
     return OpenILS::Event->new('BAD_PARAMS') unless $user;
+    return 0 unless $U->ou_ancestor_setting_value($user->home_ou, 'opac.allow_pending_user');
 
     my $e = new_editor(xact => 1);
 
-    my $uname = $U->create_uuid_string;
+    my $uname = $user->usrname || $U->create_uuid_string;
     $user->usrname($uname);
+
+    # see if this username is already taken
+    return OpenILS::Event->new('USERNAME_EXISTS') if
+        $e->search_staging_user_stage({usrname => $uname})->[0];
 
     $e->create_staging_user_stage($user) or return $e->die_event;
 
@@ -68,8 +72,8 @@ sub create_user_stage {
 }
 
 __PACKAGE__->register_method (
-	method		=> 'user_stage_by_org',
-	api_name    => 'open-ils.actor.user.stage.retrieve.by_org',
+    method      => 'user_stage_by_org',
+    api_name    => 'open-ils.actor.user.stage.retrieve.by_org',
     stream      => 1
 );
 
@@ -113,8 +117,8 @@ sub flesh_user_stage {
 
 
 __PACKAGE__->register_method (
-	method		=> 'user_stage_by_uname',
-	api_name    => 'open-ils.actor.user.stage.retrieve.by_username',
+    method      => 'user_stage_by_uname',
+    api_name    => 'open-ils.actor.user.stage.retrieve.by_username',
 );
 
 sub user_stage_by_uname {
@@ -136,8 +140,8 @@ sub user_stage_by_uname {
 
 
 __PACKAGE__->register_method (
-	method		=> 'delete_user_stage', 
-	api_name    => 'open-ils.actor.user.stage.delete',
+    method      => 'delete_user_stage', 
+    api_name    => 'open-ils.actor.user.stage.delete',
 );
 
 sub delete_user_stage {

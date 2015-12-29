@@ -106,7 +106,7 @@ __PACKAGE__->register_method(
 );
 
 sub create_record_xml {
-    my( $self, $client, $login, $xml, $source, $oargs ) = @_;
+    my( $self, $client, $login, $xml, $source, $oargs, $strip_grps ) = @_;
 
     my $override = 1 if $self->api_name =~ /override/;
     $oargs = { all => 1 } unless defined $oargs;
@@ -121,7 +121,7 @@ sub create_record_xml {
     $meth = $self->method_lookup(
         "open-ils.cat.biblio.record.xml.import.override") if $override;
 
-    my ($s) = $meth->run($login, $xml, $source, $oargs);
+    my ($s) = $meth->run($login, $xml, $source, $oargs, $strip_grps);
     return $s;
 }
 
@@ -156,7 +156,7 @@ __PACKAGE__->register_method(
 );
 
 sub biblio_record_replace_marc  {
-    my( $self, $conn, $auth, $recid, $newxml, $source, $oargs ) = @_;
+    my( $self, $conn, $auth, $recid, $newxml, $source, $oargs, $strip_grps ) = @_;
     my $e = new_editor(authtoken=>$auth, xact=>1);
     return $e->die_event unless $e->checkauth;
     return $e->die_event unless $e->allowed('UPDATE_MARC', $e->requestor->ws_ou);
@@ -169,7 +169,7 @@ sub biblio_record_replace_marc  {
     }
 
     my $res = OpenILS::Application::Cat::BibCommon->biblio_record_replace_marc(
-        $e, $recid, $newxml, $source, $fix_tcn, $oargs);
+        $e, $recid, $newxml, $source, $fix_tcn, $oargs, $strip_grps);
 
     $e->commit unless $U->event_code($res);
 
@@ -409,7 +409,7 @@ __PACKAGE__->register_method(
 
 
 sub biblio_record_xml_import {
-    my( $self, $client, $authtoken, $xml, $source, $auto_tcn, $oargs) = @_;
+    my( $self, $client, $authtoken, $xml, $source, $auto_tcn, $oargs, $strip_grps) = @_;
     my $e = new_editor(xact=>1, authtoken=>$authtoken);
     return $e->die_event unless $e->checkauth;
     return $e->die_event unless $e->allowed('IMPORT_MARC', $e->requestor->ws_ou);
@@ -420,7 +420,7 @@ sub biblio_record_xml_import {
         $oargs = {};
     }
     my $record = OpenILS::Application::Cat::BibCommon->biblio_record_xml_import(
-        $e, $xml, $source, $auto_tcn, $oargs);
+        $e, $xml, $source, $auto_tcn, $oargs, $strip_grps);
 
     return $record if $U->event_code($record);
 

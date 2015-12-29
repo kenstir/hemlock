@@ -14,7 +14,9 @@ use OpenILS::SIP::Transaction;
 use OpenILS::SIP::Transaction::Checkout;
 use OpenILS::SIP::Transaction::Checkin;
 use OpenILS::SIP::Transaction::Renew;
+use OpenILS::SIP::Transaction::RenewAll;
 use OpenILS::SIP::Transaction::FeePayment;
+use OpenILS::SIP::Transaction::Hold;
 
 use OpenSRF::System;
 use OpenSRF::AppSession;
@@ -244,9 +246,11 @@ sub login {
     my $key = $response->{payload}->{authtoken};
     syslog('LOG_INFO', "OILS: Login succeeded for $username : authkey = $key");
 
+    $self->{authtoken} = $key;
+
     $self->fetch_session; # to cache the login
 
-    return $self->{authtoken} = $key;
+    return $key;
 }
 
 #
@@ -550,63 +554,59 @@ sub pay_fee {
 #    return $trans;
 #}
 #
-#sub cancel_hold {
-#    my ($self, $patron_id, $patron_pwd, $item_id, $title_id) = @_;
-#    my ($patron, $item, $hold);
-#    my $trans;
-#
-#    $trans = new ILS::Transaction::Hold;
-#
-#    # BEGIN TRANSACTION
-#    $patron = new ILS::Patron $patron_id;
-#    if (!$patron) {
-#    $trans->screen_msg("Invalid patron barcode.");
-#
-#    return $trans;
-#    } elsif (defined($patron_pwd) && !$patron->check_password($patron_pwd)) {
-#    $trans->screen_msg('Invalid patron password.');
-#
-#    return $trans;
-#    }
-#
-#    $item = new ILS::Item ($item_id || $title_id);
-#    if (!$item) {
-#    $trans->screen_msg("No such item.");
-#
-#    # END TRANSACTION (conditionally)
-#    return $trans;
-#    }
-#
-#    # Remove the hold from the patron's record first
-#    $trans->ok($patron->drop_hold($item_id));
-#
-#    if (!$trans->ok) {
-#    # We didn't find it on the patron record
-#    $trans->screen_msg("No such hold on patron record.");
-#
-#    # END TRANSACTION (conditionally)
-#    return $trans;
-#    }
-#
-#    # Now, remove it from the item record.  If it was on the patron
-#    # record but not on the item record, we'll treat that as success.
-#    foreach my $i (0 .. scalar @{$item->hold_queue}) {
-#    $hold = $item->hold_queue->[$i];
-#
-#    if ($hold->{patron_id} eq $patron->id) {
-#        # found it: delete it.
-#        splice @{$item->hold_queue}, $i, 1;
-#        last;
-#    }
-#    }
-#
-#    $trans->screen_msg("Hold Cancelled.");
-#    $trans->patron($patron);
-#    $trans->item($item);
-#
-#    return $trans;
-#}
-#
+
+# Note: item_id in this context is the hold id
+sub cancel_hold {
+    my ($self, $patron_id, $patron_pwd, $item_id, $title_id) = @_;
+
+    my $trans = OpenILS::SIP::Transaction::Hold->new(authtoken => $self->{authtoken});
+    my $patron = $self->find_patron($patron_id);
+
+    if (!$patron) {
+        $trans->screen_msg("Invalid patron barcode.");
+        $trans->ok(0);
+        return $trans;
+    }
+
+    if (defined($patron_pwd) && !$patron->check_password($patron_pwd)) {
+        $trans->screen_msg('Invalid patron password.');
+        $trans->ok(0);
+        return $trans;
+    }
+
+    $trans->patron($patron);
+    my $hold = $patron->find_hold_from_copy($item_id);
+
+    if (!$hold) {
+        syslog('LOG_WARNING', "OILS: No hold found from copy $item_id");
+        $trans->screen_msg("No such hold.");
+        $trans->ok(0);
+        return $trans;
+    }
+
+    if ($hold->usr ne $patron->{user}->id) {
+        $trans->screen_msg("No such hold on patron record.");
+        $trans->ok(0);
+        return $trans;
+    }
+
+    $trans->hold($hold);
+    $trans->do_hold_cancel($self);
+
+    if ($trans->cancel_ok) {
+        $trans->screen_msg("Hold Cancelled.");
+    } else {
+        $trans->screen_msg("Hold was not cancelled.");
+    }
+
+    # if the hold had no current_copy, use the representative
+    # item as the item for the hold.  Without this, the SIP 
+    # server gets angry.
+    $trans->item($self->find_item($item_id)) unless $trans->item;
+
+    return $trans;
+}
+
 #
 ## The patron and item id's can't be altered, but the
 ## date, location, and type can.
@@ -707,7 +707,29 @@ sub renew {
 }
 
 
+sub renew_all {
+    my ($self, $patron_id, $patron_pwd, $fee_ack) = @_;
 
+    $self->verify_session;
+
+    my $trans = OpenILS::SIP::Transaction::RenewAll->new(authtoken => $self->{authtoken});
+    $trans->patron($self->find_patron($patron_id));
+
+    if(!$trans->patron) {
+        $trans->screen_msg("Invalid patron barcode.");
+        $trans->ok(0);
+        return $trans;
+    }
+
+    if(!$trans->patron->renew_ok) {
+        $trans->screen_msg("Renewals not allowed.");
+        $trans->ok(0);
+        return $trans;
+    }
+
+    $trans->do_renew_all($self);
+    return $trans;
+}
 
 
 #

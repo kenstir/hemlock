@@ -14,6 +14,8 @@ var liTable;
 function load() {
     liTable = new AcqLiTable();
     liTable.isPL = plId;
+    liTable.enableActionsDropdownOptions("pl");
+
     fieldmapper.standardRequest(
         ['open-ils.acq', 'open-ils.acq.picklist.retrieve.authoritative'],
         {   async: true,
@@ -21,7 +23,10 @@ function load() {
                 {flesh_lineitem_count:true, flesh_owner:true}],
             oncomplete: function(r) {
                 plist = openils.Util.readResponse(r);
-                drawPl(plist);
+                liTable.testOrderIdentPerms(
+                    plist.org_unit(),
+                    function() { drawPl(plist) }
+                );
             }
         }
     );
@@ -49,7 +54,7 @@ function load() {
 }
 
 function drawPl() {
-
+    
     dojo.byId("oils-acq-picklist-name").innerHTML = plist.name();
     dojo.byId("oils-acq-picklist-attr-owner").innerHTML = plist.owner().usrname();
     dojo.byId("oils-acq-picklist-attr-count").innerHTML = plist.entry_count();

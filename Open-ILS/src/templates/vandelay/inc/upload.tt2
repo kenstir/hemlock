@@ -30,6 +30,11 @@
                 <input jsId='vlUploadQueueMatchSet'
                     dojoType='dijit.form.FilteringSelect' labelAttr='name' searchAttr='name'/>
             </td>
+            <td>[% l('Limit matches to bucket') %]</td>
+            <td>
+                <input jsId='vlUploadQueueMatchBucket'
+                    dojoType='dijit.form.FilteringSelect' labelAttr='name' searchAttr='name'/>
+            </td>
         </tr>
         <tr>
             <td>[% l('Holdings Import Profile') %]</td>
@@ -88,6 +93,22 @@
             <td colspan='4'>
                 <div jsId='vlUploadFtMergeProfile' dojoType='dijit.form.FilteringSelect' required='false' labelAttr='name' searchAttr='name'></div>
             </td>
+        </tr>
+        <tr id='vl-trash-groups-row'>
+            <td>[% l('Remove MARC Field Groups') %]</td>
+            <td colspan='4'>
+                <select style='overflow-y:auto; height:6em; width:12em' multiple='true' 
+                    jsId="vlUploadTrashGroups" 
+                    dojoType="dojox.form.CheckedMultiSelect">
+                </select>
+            </td>
+        </tr>
+        <tr><td colspan='2' style='margin-top:10px;border-bottom:1px solid #888;border-top:2px solid #888'>
+            <b>[% l('Copy Import Actions') %]</b>
+        </td></tr>
+        <tr>
+            <td>[% l('Auto-overlay In-process Acquisitions Copies') %]</td>
+            <td colspan='4'><input jsId='vlUploadQueueAutoOverlayInprocessAcqCopies' dojoType='dijit.form.CheckBox'/></td>
         </tr>
 
         <tr><td colspan='2' style='border-bottom:2px solid #888;'></td></tr>

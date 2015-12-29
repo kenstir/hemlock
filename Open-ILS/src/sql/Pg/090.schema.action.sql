@@ -360,13 +360,6 @@ CREATE TABLE action.hold_request_cancel_cause (
     id      SERIAL  PRIMARY KEY,
     label   TEXT    UNIQUE
 );
-INSERT INTO action.hold_request_cancel_cause (id,label) VALUES (1,'Untargeted expiration');
-INSERT INTO action.hold_request_cancel_cause (id,label) VALUES (2,'Hold Shelf expiration');
-INSERT INTO action.hold_request_cancel_cause (id,label) VALUES (3,'Patron via phone');
-INSERT INTO action.hold_request_cancel_cause (id,label) VALUES (4,'Patron in person');
-INSERT INTO action.hold_request_cancel_cause (id,label) VALUES (5,'Staff forced');
-INSERT INTO action.hold_request_cancel_cause (id,label) VALUES (6,'Patron via OPAC');
-SELECT SETVAL('action.hold_request_cancel_cause_id_seq', 100);
 
 CREATE TABLE action.hold_request (
 	id			SERIAL				PRIMARY KEY,
@@ -402,7 +395,8 @@ CREATE TABLE action.hold_request (
     cut_in_line     BOOL,
 	mint_condition  BOOL NOT NULL DEFAULT TRUE,
 	shelf_expire_time TIMESTAMPTZ,
-	current_shelf_lib INT REFERENCES actor.org_unit DEFERRABLE INITIALLY DEFERRED
+	current_shelf_lib INT REFERENCES actor.org_unit DEFERRABLE INITIALLY DEFERRED,
+    behind_desk BOOLEAN NOT NULL DEFAULT FALSE
 );
 ALTER TABLE action.hold_request ADD CONSTRAINT sms_check CHECK (
     sms_notify IS NULL
@@ -417,6 +411,8 @@ CREATE INDEX hold_request_current_copy_idx ON action.hold_request (current_copy)
 CREATE INDEX hold_request_prev_check_time_idx ON action.hold_request (prev_check_time);
 CREATE INDEX hold_request_fulfillment_staff_idx ON action.hold_request ( fulfillment_staff );
 CREATE INDEX hold_request_requestor_idx         ON action.hold_request ( requestor );
+CREATE INDEX hold_request_open_idx ON action.hold_request (id) WHERE cancel_time IS NULL AND fulfillment_time IS NULL;
+CREATE INDEX hold_request_current_copy_before_cap_idx ON action.hold_request (current_copy) WHERE capture_time IS NULL AND cancel_time IS NULL;
 
 
 CREATE TABLE action.hold_request_note (
@@ -483,6 +479,7 @@ ALTER TABLE action.hold_transit_copy ADD PRIMARY KEY (id);
 CREATE INDEX active_hold_transit_dest_idx ON "action".hold_transit_copy (dest);
 CREATE INDEX active_hold_transit_source_idx ON "action".hold_transit_copy (source);
 CREATE INDEX active_hold_transit_cp_idx ON "action".hold_transit_copy (target_copy);
+CREATE INDEX hold_transit_copy_hold_idx on action.hold_transit_copy (hold);
 
 
 CREATE TABLE action.unfulfilled_hold_list (
@@ -520,6 +517,210 @@ CREATE VIEW action.unfulfilled_hold_max_loop AS
       FROM  action.unfulfilled_hold_loops
       GROUP BY 1;
 
+
+CREATE TABLE action.aged_hold_request (
+    usr_post_code		TEXT,
+    usr_home_ou		INT	NOT NULL,
+    usr_profile		INT	NOT NULL,
+    usr_birth_year		INT,
+    staff_placed        BOOLEAN NOT NULL,
+    LIKE action.hold_request
+);
+ALTER TABLE action.aged_hold_request
+      ADD PRIMARY KEY (id),
+      DROP COLUMN usr,
+      DROP COLUMN requestor,
+      DROP COLUMN sms_carrier,
+      ALTER COLUMN phone_notify TYPE BOOLEAN
+            USING CASE WHEN phone_notify IS NULL OR phone_notify = '' THEN FALSE ELSE TRUE END,
+      ALTER COLUMN sms_notify TYPE BOOLEAN
+            USING CASE WHEN sms_notify IS NULL OR sms_notify = '' THEN FALSE ELSE TRUE END,
+      ALTER COLUMN phone_notify SET NOT NULL,
+      ALTER COLUMN sms_notify SET NOT NULL;
+CREATE INDEX aged_hold_request_target_idx ON action.aged_hold_request (target);
+CREATE INDEX aged_hold_request_pickup_lib_idx ON action.aged_hold_request (pickup_lib);
+CREATE INDEX aged_hold_request_current_copy_idx ON action.aged_hold_request (current_copy);
+CREATE INDEX aged_hold_request_fulfillment_staff_idx ON action.aged_hold_request ( fulfillment_staff );
+
+CREATE OR REPLACE VIEW action.all_hold_request AS
+    SELECT DISTINCT
+           COALESCE(a.post_code, b.post_code) AS usr_post_code,
+           p.home_ou AS usr_home_ou,
+           p.profile AS usr_profile,
+           EXTRACT(YEAR FROM p.dob)::INT AS usr_birth_year,
+           CAST(ahr.requestor <> ahr.usr AS BOOLEAN) AS staff_placed,
+           ahr.id,
+           ahr.request_time,
+           ahr.capture_time,
+           ahr.fulfillment_time,
+           ahr.checkin_time,
+           ahr.return_time,
+           ahr.prev_check_time,
+           ahr.expire_time,
+           ahr.cancel_time,
+           ahr.cancel_cause,
+           ahr.cancel_note,
+           ahr.target,
+           ahr.current_copy,
+           ahr.fulfillment_staff,
+           ahr.fulfillment_lib,
+           ahr.request_lib,
+           ahr.selection_ou,
+           ahr.selection_depth,
+           ahr.pickup_lib,
+           ahr.hold_type,
+           ahr.holdable_formats,
+           CASE
+           WHEN ahr.phone_notify IS NULL THEN FALSE
+           WHEN ahr.phone_notify = '' THEN FALSE
+           ELSE TRUE
+           END AS phone_notify,
+           ahr.email_notify,
+           CASE
+           WHEN ahr.sms_notify IS NULL THEN FALSE
+           WHEN ahr.sms_notify = '' THEN FALSE
+           ELSE TRUE
+           END AS sms_notify,
+           ahr.frozen,
+           ahr.thaw_date,
+           ahr.shelf_time,
+           ahr.cut_in_line,
+           ahr.mint_condition,
+           ahr.shelf_expire_time,
+           ahr.current_shelf_lib
+    FROM action.hold_request ahr
+         JOIN actor.usr p ON (ahr.usr = p.id)
+         LEFT JOIN actor.usr_address a ON (p.mailing_address = a.id)
+         LEFT JOIN actor.usr_address b ON (p.billing_address = b.id)
+    UNION ALL
+    SELECT 
+           usr_post_code,
+           usr_home_ou,
+           usr_profile,
+           usr_birth_year,
+           staff_placed,
+           id,
+           request_time,
+           capture_time,
+           fulfillment_time,
+           checkin_time,
+           return_time,
+           prev_check_time,
+           expire_time,
+           cancel_time,
+           cancel_cause,
+           cancel_note,
+           target,
+           current_copy,
+           fulfillment_staff,
+           fulfillment_lib,
+           request_lib,
+           selection_ou,
+           selection_depth,
+           pickup_lib,
+           hold_type,
+           holdable_formats,
+           phone_notify,
+           email_notify,
+           sms_notify,
+           frozen,
+           thaw_date,
+           shelf_time,
+           cut_in_line,
+           mint_condition,
+           shelf_expire_time,
+           current_shelf_lib
+    FROM action.aged_hold_request;
+
+CREATE OR REPLACE FUNCTION action.age_hold_on_delete () RETURNS TRIGGER AS $$
+DECLARE
+BEGIN
+    -- Archive a copy of the old row to action.aged_hold_request
+
+    INSERT INTO action.aged_hold_request
+           (usr_post_code,
+            usr_home_ou,
+            usr_profile,
+            usr_birth_year,
+            staff_placed,
+            id,
+            request_time,
+            capture_time,
+            fulfillment_time,
+            checkin_time,
+            return_time,
+            prev_check_time,
+            expire_time,
+            cancel_time,
+            cancel_cause,
+            cancel_note,
+            target,
+            current_copy,
+            fulfillment_staff,
+            fulfillment_lib,
+            request_lib,
+            selection_ou,
+            selection_depth,
+            pickup_lib,
+            hold_type,
+            holdable_formats,
+            phone_notify,
+            email_notify,
+            sms_notify,
+            frozen,
+            thaw_date,
+            shelf_time,
+            cut_in_line,
+            mint_condition,
+            shelf_expire_time,
+            current_shelf_lib)
+      SELECT 
+           usr_post_code,
+           usr_home_ou,
+           usr_profile,
+           usr_birth_year,
+           staff_placed,
+           id,
+           request_time,
+           capture_time,
+           fulfillment_time,
+           checkin_time,
+           return_time,
+           prev_check_time,
+           expire_time,
+           cancel_time,
+           cancel_cause,
+           cancel_note,
+           target,
+           current_copy,
+           fulfillment_staff,
+           fulfillment_lib,
+           request_lib,
+           selection_ou,
+           selection_depth,
+           pickup_lib,
+           hold_type,
+           holdable_formats,
+           phone_notify,
+           email_notify,
+           sms_notify,
+           frozen,
+           thaw_date,
+           shelf_time,
+           cut_in_line,
+           mint_condition,
+           shelf_expire_time,
+           current_shelf_lib
+        FROM action.all_hold_request WHERE id = OLD.id;
+
+    RETURN OLD;
+END;
+$$ LANGUAGE 'plpgsql';
+
+CREATE TRIGGER action_hold_request_aging_tgr
+	BEFORE DELETE ON action.hold_request
+	FOR EACH ROW
+	EXECUTE PROCEDURE action.age_hold_on_delete ();
 
 CREATE TABLE action.fieldset (
     id              SERIAL          PRIMARY KEY,
@@ -577,7 +778,7 @@ CREATE TYPE action.circ_chain_summary AS (
 );
 
 
-CREATE OR REPLACE FUNCTION action.circ_chain ( ctx_circ_id INTEGER ) RETURNS SETOF action.circulation AS $$
+CREATE OR REPLACE FUNCTION action.circ_chain ( ctx_circ_id BIGINT ) RETURNS SETOF action.circulation AS $$
 DECLARE
     tmp_circ action.circulation%ROWTYPE;
     circ_0 action.circulation%ROWTYPE;
@@ -612,7 +813,7 @@ BEGIN
 END;
 $$ LANGUAGE 'plpgsql';
 
-CREATE OR REPLACE FUNCTION action.summarize_circ_chain ( ctx_circ_id INTEGER ) RETURNS action.circ_chain_summary AS $$
+CREATE OR REPLACE FUNCTION action.summarize_circ_chain ( ctx_circ_id BIGINT ) RETURNS action.circ_chain_summary AS $$
 
 DECLARE
 
@@ -754,8 +955,8 @@ BEGIN
           FROM  action.hold_request
           WHERE usr = usr_id
                 AND ( fulfillment_time IS NOT NULL OR cancel_time IS NOT NULL )
-                AND request_time > NOW() - view_age
-          ORDER BY request_time DESC
+                AND COALESCE(fulfillment_time, cancel_time) > NOW() - view_age
+          ORDER BY COALESCE(fulfillment_time, cancel_time) DESC
           LIMIT view_count
     LOOP
         RETURN NEXT h;
@@ -770,6 +971,8 @@ DECLARE
     usr_keep_age    actor.usr_setting%ROWTYPE;
     usr_keep_start  actor.usr_setting%ROWTYPE;
     org_keep_age    INTERVAL;
+    org_use_last    BOOL = false;
+    org_age_is_min  BOOL = false;
     org_keep_count  INT;
 
     keep_age        INTERVAL;
@@ -778,8 +981,10 @@ DECLARE
     circ_chain_head action.circulation%ROWTYPE;
     circ_chain_tail action.circulation%ROWTYPE;
 
-    purge_position  INT;
     count_purged    INT;
+    num_incomplete  INT;
+
+    last_finished   TIMESTAMP WITH TIME ZONE;
 BEGIN
 
     count_purged := 0;
@@ -791,6 +996,9 @@ BEGIN
         RETURN count_purged; -- Gimme a count to keep, or I keep them all, forever
     END IF;
 
+    SELECT enabled INTO org_use_last FROM config.global_flag WHERE name = 'history.circ.retention_uses_last_finished';
+    SELECT enabled INTO org_age_is_min FROM config.global_flag WHERE name = 'history.circ.retention_age_is_min';
+
     -- First, find copies with more than keep_count non-renewal circs
     FOR target_acp IN
         SELECT  target_copy,
@@ -801,21 +1009,27 @@ BEGIN
           GROUP BY target_copy
           HAVING COUNT(*) > org_keep_count
     LOOP
-        purge_position := 0;
         -- And, for those, select circs that are finished and older than keep_age
         FOR circ_chain_head IN
-            SELECT  *
-              FROM  action.circulation
-              WHERE target_copy = target_acp.target_copy
-                    AND parent_circ IS NULL
-              ORDER BY xact_start
+            -- For reference, the subquery uses a window function to order the circs newest to oldest and number them
+            -- The outer query then uses that information to skip the most recent set the library wants to keep
+            -- End result is we don't care what order they come out in, as they are all potentials for deletion.
+            SELECT ac.* FROM action.circulation ac JOIN (
+              SELECT  rank() OVER (ORDER BY xact_start DESC), ac.id
+                FROM  action.circulation ac
+                WHERE ac.target_copy = target_acp.target_copy
+                  AND ac.parent_circ IS NULL
+                ORDER BY ac.xact_start ) ranked USING (id)
+                WHERE ranked.rank > org_keep_count
         LOOP
 
-            -- Stop once we've purged enough circs to hit org_keep_count
-            EXIT WHEN target_acp.total_real_circs - purge_position <= org_keep_count;
-
             SELECT * INTO circ_chain_tail FROM action.circ_chain(circ_chain_head.id) ORDER BY xact_start DESC LIMIT 1;
-            EXIT WHEN circ_chain_tail.xact_finish IS NULL;
+            SELECT COUNT(CASE WHEN xact_finish IS NULL THEN 1 ELSE NULL END), MAX(xact_finish) INTO num_incomplete, last_finished FROM action.circ_chain(circ_chain_head.id);
+            CONTINUE WHEN circ_chain_tail.xact_finish IS NULL OR num_incomplete > 0;
+
+            IF NOT org_use_last THEN
+                last_finished := circ_chain_tail.xact_finish;
+            END IF;
 
             -- Now get the user settings, if any, to block purging if the user wants to keep more circs
             usr_keep_age.value := NULL;
@@ -833,26 +1047,87 @@ BEGIN
             ELSIF usr_keep_start.value IS NOT NULL THEN
                 keep_age := AGE(NOW(), oils_json_to_text(usr_keep_start.value)::TIMESTAMPTZ);
             ELSE
-                keep_age := COALESCE( org_keep_age::INTERVAL, '2000 years'::INTERVAL );
+                keep_age := COALESCE( org_keep_age, '2000 years'::INTERVAL );
             END IF;
 
-            EXIT WHEN AGE(NOW(), circ_chain_tail.xact_finish) < keep_age;
+            IF org_age_is_min THEN
+                keep_age := GREATEST( keep_age, org_keep_age );
+            END IF;
+
+            CONTINUE WHEN AGE(NOW(), last_finished) < keep_age;
 
             -- We've passed the purging tests, purge the circ chain starting at the end
+            -- A trigger should auto-purge the rest of the chain.
             DELETE FROM action.circulation WHERE id = circ_chain_tail.id;
-            WHILE circ_chain_tail.parent_circ IS NOT NULL LOOP
-                SELECT * INTO circ_chain_tail FROM action.circulation WHERE id = circ_chain_tail.parent_circ;
-                DELETE FROM action.circulation WHERE id = circ_chain_tail.id;
-            END LOOP;
 
             count_purged := count_purged + 1;
-            purge_position := purge_position + 1;
 
         END LOOP;
     END LOOP;
+
+    return count_purged;
 END;
 $func$ LANGUAGE PLPGSQL;
 
+CREATE OR REPLACE FUNCTION action.purge_holds() RETURNS INT AS $func$
+DECLARE
+  current_hold RECORD;
+  purged_holds INT;
+  cgf_d INTERVAL;
+  cgf_f INTERVAL;
+  cgf_c INTERVAL;
+  prev_usr INT;
+  user_start TIMESTAMPTZ;
+  user_age INTERVAL;
+  user_count INT;
+BEGIN
+  purged_holds := 0;
+  SELECT INTO cgf_d value::INTERVAL FROM config.global_flag WHERE name = 'history.hold.retention_age' AND enabled;
+  SELECT INTO cgf_f value::INTERVAL FROM config.global_flag WHERE name = 'history.hold.retention_age_fulfilled' AND enabled;
+  SELECT INTO cgf_c value::INTERVAL FROM config.global_flag WHERE name = 'history.hold.retention_age_canceled' AND enabled;
+  FOR current_hold IN
+    SELECT
+      rank() OVER (PARTITION BY usr ORDER BY COALESCE(fulfillment_time, cancel_time) DESC),
+      cgf_cs.value::INTERVAL as cgf_cs,
+      ahr.*
+    FROM
+      action.hold_request ahr
+      LEFT JOIN config.global_flag cgf_cs ON (ahr.cancel_cause IS NOT NULL AND cgf_cs.name = 'history.hold.retention_age_canceled_' || ahr.cancel_cause AND cgf_cs.enabled)
+    WHERE
+      (fulfillment_time IS NOT NULL OR cancel_time IS NOT NULL)
+  LOOP
+    IF prev_usr IS NULL OR prev_usr != current_hold.usr THEN
+      prev_usr := current_hold.usr;
+      SELECT INTO user_start oils_json_to_text(value)::TIMESTAMPTZ FROM actor.usr_setting WHERE usr = prev_usr AND name = 'history.hold.retention_start';
+      SELECT INTO user_age oils_json_to_text(value)::INTERVAL FROM actor.usr_setting WHERE usr = prev_usr AND name = 'history.hold.retention_age';
+      SELECT INTO user_count oils_json_to_text(value)::INT FROM actor.usr_setting WHERE usr = prev_usr AND name = 'history.hold.retention_count';
+      IF user_start IS NOT NULL THEN
+        user_age := LEAST(user_age, AGE(NOW(), user_start));
+      END IF;
+      IF user_count IS NULL THEN
+        user_count := 1000; -- Assumption based on the user visible holds routine
+      END IF;
+    END IF;
+    -- Library keep age trumps user keep anything, for purposes of being able to hold on to things when staff canceled and such.
+    IF current_hold.fulfillment_time IS NOT NULL AND current_hold.fulfillment_time > NOW() - COALESCE(cgf_f, cgf_d) THEN
+      CONTINUE;
+    END IF;
+    IF current_hold.cancel_time IS NOT NULL AND current_hold.cancel_time > NOW() - COALESCE(current_hold.cgf_cs, cgf_c, cgf_d) THEN
+      CONTINUE;
+    END IF;
+
+    -- User keep age needs combining with count. If too old AND within the count, keep!
+    IF user_start IS NOT NULL AND COALESCE(current_hold.fulfillment_time, current_hold.cancel_time) > NOW() - user_age AND current_hold.rank <= user_count THEN
+      CONTINUE;
+    END IF;
+
+    -- All checks should have passed, delete!
+    DELETE FROM action.hold_request WHERE id = current_hold.id;
+    purged_holds := purged_holds + 1;
+  END LOOP;
+  RETURN purged_holds;
+END;
+$func$ LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION action.apply_fieldset(
 	fieldset_id IN INT,        -- id from action.fieldset

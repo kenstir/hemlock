@@ -32,7 +32,7 @@ if(!dojo._hasResource['openils.widget.AutoGrid']) {
             displayOffset : 0,
             requiredFields : null,
             hidePaginator : false,
-            showLoadFilter : false,
+            showLoadFilter : true,
             onItemReceived : null,
             suppressLinkedFields : null, // list of fields whose linked display data should not be fetched from the server
 
@@ -108,7 +108,7 @@ if(!dojo._hasResource['openils.widget.AutoGrid']) {
                                             {fmClass:self.fmClass, suppressFilterFields:self.suppressFilterFields})
 
                                         self.filterDialog.onApply = function(filter) {
-                                            self.cachedQuerySearch = dojo.mixin( filter, self.preFilterSearch );
+                                            self.cachedQuerySearch = filter;
                                             self.resetStore();
                                             self.loadAll(
                                                 dojo.mixin( { offset : 0 }, self.cachedQueryOpts ),

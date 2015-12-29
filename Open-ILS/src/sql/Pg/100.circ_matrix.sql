@@ -365,7 +365,7 @@ CREATE TYPE action.hold_stats AS (
     available_copy_ratio    FLOAT
 );
 
-CREATE OR REPLACE FUNCTION action.copy_related_hold_stats (copy_id INT) RETURNS action.hold_stats AS $func$
+CREATE OR REPLACE FUNCTION action.copy_related_hold_stats (copy_id BIGINT) RETURNS action.hold_stats AS $func$
 DECLARE
     output          action.hold_stats%ROWTYPE;
     hold_count      INT := 0;
@@ -638,7 +638,6 @@ CREATE OR REPLACE FUNCTION action.item_user_renew_test( INT, BIGINT, INT ) RETUR
     SELECT * FROM action.item_user_circ_test( $1, $2, $3, TRUE );
 $func$ LANGUAGE SQL;
 
-
 CREATE OR REPLACE FUNCTION actor.calculate_system_penalties( match_user INT, context_org INT ) RETURNS SETOF actor.usr_standing_penalty AS $func$
 DECLARE
     user_object         actor.usr%ROWTYPE;
@@ -648,9 +647,13 @@ DECLARE
     max_fines           permission.grp_penalty_threshold%ROWTYPE;
     max_overdue         permission.grp_penalty_threshold%ROWTYPE;
     max_items_out       permission.grp_penalty_threshold%ROWTYPE;
+    max_lost            permission.grp_penalty_threshold%ROWTYPE;
+    max_longoverdue     permission.grp_penalty_threshold%ROWTYPE;
     tmp_grp             INT;
     items_overdue       INT;
     items_out           INT;
+    items_lost          INT;
+    items_longoverdue   INT;
     context_org_list    INT[];
     current_fines        NUMERIC(8,2) := 0.0;
     tmp_fines            NUMERIC(8,2);
@@ -831,7 +834,30 @@ BEGIN
                 JOIN  actor.org_unit_full_path( max_items_out.org_unit ) fp ON (circ.circ_lib = fp.id)
           WHERE circ.usr = match_user
                 AND circ.checkin_time IS NULL
-                AND (circ.stop_fines IN ('MAXFINES','LONGOVERDUE') OR circ.stop_fines IS NULL);
+                AND (circ.stop_fines IN (
+                    SELECT 'MAXFINES'::TEXT
+                    UNION ALL
+                    SELECT 'LONGOVERDUE'::TEXT
+                    UNION ALL
+                    SELECT 'LOST'::TEXT
+                    WHERE 'true' ILIKE
+                    (
+                        SELECT CASE
+                            WHEN (SELECT value FROM actor.org_unit_ancestor_setting('circ.tally_lost', circ.circ_lib)) ILIKE 'true' THEN 'true'
+                            ELSE 'false'
+                        END
+                    )
+                    UNION ALL
+                    SELECT 'CLAIMSRETURNED'::TEXT
+                    WHERE 'false' ILIKE
+                    (
+                        SELECT CASE
+                            WHEN (SELECT value FROM actor.org_unit_ancestor_setting('circ.do_not_tally_claims_returned', circ.circ_lib)) ILIKE 'true' THEN 'true'
+                            ELSE 'false'
+                        END
+                    )
+                    ) OR circ.stop_fines IS NULL)
+                AND xact_finish IS NULL;
 
            IF items_out >= max_items_out.threshold::INT THEN
             new_sp_row.usr := match_user;
@@ -840,6 +866,125 @@ BEGIN
             RETURN NEXT new_sp_row;
            END IF;
     END IF;
+
+    -- Start over for max lost
+    SELECT INTO tmp_org * FROM actor.org_unit WHERE id = context_org;
+
+    -- Fail if the user has too many lost items
+    LOOP
+        tmp_grp := user_object.profile;
+        LOOP
+
+            SELECT * INTO max_lost FROM permission.grp_penalty_threshold WHERE grp = tmp_grp AND penalty = 5 AND org_unit = tmp_org.id;
+
+            IF max_lost.threshold IS NULL THEN
+                SELECT parent INTO tmp_grp FROM permission.grp_tree WHERE id = tmp_grp;
+            ELSE
+                EXIT;
+            END IF;
+
+            IF tmp_grp IS NULL THEN
+                EXIT;
+            END IF;
+        END LOOP;
+
+        IF max_lost.threshold IS NOT NULL OR tmp_org.parent_ou IS NULL THEN
+            EXIT;
+        END IF;
+
+        SELECT INTO tmp_org * FROM actor.org_unit WHERE id = tmp_org.parent_ou;
+
+    END LOOP;
+
+    IF max_lost.threshold IS NOT NULL THEN
+
+        RETURN QUERY
+            SELECT  *
+            FROM  actor.usr_standing_penalty
+            WHERE usr = match_user
+                AND org_unit = max_lost.org_unit
+                AND (stop_date IS NULL or stop_date > NOW())
+                AND standing_penalty = 5;
+
+        SELECT  INTO items_lost COUNT(*)
+        FROM  action.circulation circ
+            JOIN  actor.org_unit_full_path( max_lost.org_unit ) fp ON (circ.circ_lib = fp.id)
+        WHERE circ.usr = match_user
+            AND circ.checkin_time IS NULL
+            AND (circ.stop_fines = 'LOST')
+            AND xact_finish IS NULL;
+
+        IF items_lost >= max_lost.threshold::INT AND 0 < max_lost.threshold::INT THEN
+            new_sp_row.usr := match_user;
+            new_sp_row.org_unit := max_lost.org_unit;
+            new_sp_row.standing_penalty := 5;
+            RETURN NEXT new_sp_row;
+        END IF;
+    END IF;
+
+    -- Start over for max longoverdue
+    SELECT INTO tmp_org * FROM actor.org_unit WHERE id = context_org;
+
+    -- Fail if the user has too many longoverdue items
+    LOOP
+        tmp_grp := user_object.profile;
+        LOOP
+
+            SELECT * INTO max_longoverdue 
+                FROM permission.grp_penalty_threshold 
+                WHERE grp = tmp_grp AND 
+                    penalty = 35 AND 
+                    org_unit = tmp_org.id;
+
+            IF max_longoverdue.threshold IS NULL THEN
+                SELECT parent INTO tmp_grp 
+                    FROM permission.grp_tree WHERE id = tmp_grp;
+            ELSE
+                EXIT;
+            END IF;
+
+            IF tmp_grp IS NULL THEN
+                EXIT;
+            END IF;
+        END LOOP;
+
+        IF max_longoverdue.threshold IS NOT NULL 
+                OR tmp_org.parent_ou IS NULL THEN
+            EXIT;
+        END IF;
+
+        SELECT INTO tmp_org * FROM actor.org_unit WHERE id = tmp_org.parent_ou;
+
+    END LOOP;
+
+    IF max_longoverdue.threshold IS NOT NULL THEN
+
+        RETURN QUERY
+            SELECT  *
+            FROM  actor.usr_standing_penalty
+            WHERE usr = match_user
+                AND org_unit = max_longoverdue.org_unit
+                AND (stop_date IS NULL or stop_date > NOW())
+                AND standing_penalty = 35;
+
+        SELECT INTO items_longoverdue COUNT(*)
+        FROM action.circulation circ
+            JOIN actor.org_unit_full_path( max_longoverdue.org_unit ) fp 
+                ON (circ.circ_lib = fp.id)
+        WHERE circ.usr = match_user
+            AND circ.checkin_time IS NULL
+            AND (circ.stop_fines = 'LONGOVERDUE')
+            AND xact_finish IS NULL;
+
+        IF items_longoverdue >= max_longoverdue.threshold::INT 
+                AND 0 < max_longoverdue.threshold::INT THEN
+            new_sp_row.usr := match_user;
+            new_sp_row.org_unit := max_longoverdue.org_unit;
+            new_sp_row.standing_penalty := 35;
+            RETURN NEXT new_sp_row;
+        END IF;
+    END IF;
+
 
     -- Start over for collections warning
     SELECT INTO tmp_org * FROM actor.org_unit WHERE id = context_org;
@@ -1017,6 +1162,8 @@ BEGIN
     RETURN;
 END;
 $func$ LANGUAGE plpgsql;
+
+
 
 COMMIT;
 

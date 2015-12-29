@@ -16,11 +16,13 @@ use MARC::File::XML ( BinaryEncoding => 'UTF-8' );
 use Time::HiRes qw(time);
 use OpenSRF::Utils::Logger qw/$logger/;
 use MIME::Base64;
+use XML::LibXML;
 use OpenILS::Const qw/:const/;
 use OpenILS::Application::AppUtils;
 use OpenILS::Application::Cat::BibCommon;
 use OpenILS::Application::Cat::AuthCommon;
 use OpenILS::Application::Cat::AssetCommon;
+use OpenILS::Application::Cat::Merge;
 my $U = 'OpenILS::Application::AppUtils';
 
 # A list of LDR/06 values from http://loc.gov/marc
@@ -62,6 +64,7 @@ sub create_bib_queue {
     my $type = shift;
     my $match_set = shift;
     my $import_def = shift;
+    my $match_bucket = shift;
 
     my $e = new_editor(authtoken => $auth, xact => 1);
 
@@ -80,6 +83,7 @@ sub create_bib_queue {
     $queue->queue_type( $type ) if ($type);
     $queue->item_attr_def( $import_def ) if ($import_def);
     $queue->match_set($match_set) if $match_set;
+    $queue->match_bucket($match_bucket) if $match_bucket;
 
     my $new_q = $e->create_vandelay_bib_queue( $queue );
     return $e->die_event unless ($new_q);
@@ -466,12 +470,19 @@ sub retrieve_queued_records {
     return $evt if ($evt);
 
     my $class = ($type eq 'bib') ? 'vqbr' : 'vqar';
+    my $mclass = $type eq 'bib' ? 'vbm' : 'vam';
     my $query = {
-        select => {$class => ['id']},
+        select => {
+            $class => ['id'],
+            $mclass => [{
+                column => 'eg_record', 
+                transform => 'min',
+                aggregate => 1
+            }]
+        },
         from => $class,
         where => {queue => $queue_id},
         distinct => 1,
-        order_by => {$class => ['id']}, 
         limit => $limit,
         offset => $offset,
     };
@@ -504,9 +515,17 @@ sub retrieve_queued_records {
 
     if($self->api_name =~ /matches/) {
         # find only records that have matches
-        my $mclass = $type eq 'bib' ? 'vbm' : 'vam';
         $query->{from} = {$class => {$mclass => {type => 'right'}}};
-    } 
+    } else {
+        # join to mclass for sorting (see below)
+        $query->{from} = {$class => {$mclass => {type => 'left'}}};
+    }
+
+    # order by the matched bib records to group like queued records
+    $query->{order_by} = [
+        {class => $mclass, field => 'eg_record', transform => 'min'},
+        {class => $class, field => 'id'} 
+    ];
 
     my $record_ids = $e->json_query($query);
 
@@ -860,12 +879,18 @@ sub queued_records_with_matches {
 }
 
 
+# cache of import item org unit settings.  
+# used in apply_import_item_defaults() below, 
+# but reset on each call to import_record_list_impl()
+my %item_defaults_cache;
+
 sub import_record_list_impl {
     my($self, $conn, $rec_ids, $requestor, $args) = @_;
 
     my $overlay_map = $args->{overlay_map} || {};
     my $type = $self->{record_type};
     my %queues;
+    %item_defaults_cache = ();
 
     my $report_args = {
         progress => 1,
@@ -885,6 +910,7 @@ sub import_record_list_impl {
     my $ft_merge_profile = $$args{fall_through_merge_profile};
     my $bib_source = $$args{bib_source};
     my $import_no_match = $$args{import_no_match};
+    my $strip_grps = $$args{strip_field_groups}; # bib-only
 
     my $overlay_func = 'vandelay.overlay_bib_record';
     my $auto_overlay_func = 'vandelay.auto_overlay_bib_record';
@@ -957,6 +983,19 @@ sub import_record_list_impl {
         my $record;
         my $imported = 0;
 
+        if ($type eq 'bib') {
+            # strip configured / selected MARC tags from inbound records
+
+            my $marcdoc = XML::LibXML->new->parse_string($rec->marc);
+            $rec->marc($U->strip_marc_fields($e, $marcdoc, $strip_grps));
+
+            unless ($e->$update_func($rec)) {
+                $$report_args{evt} = $e->die_event;
+                finish_rec_import_attempt($report_args);
+                next;
+            }
+        }
+
         if(defined $overlay_target) {
             # Caller chose an explicit overlay target
 
@@ -977,6 +1016,7 @@ sub import_record_list_impl {
                     $logger->info("vl: $type direct overlay succeeded for queued rec ".
                         "$rec_id and overlay target $overlay_target");
                     $imported = 1;
+                    $rec->imported_as($overlay_target);
                 }
 
             } else {
@@ -1152,7 +1192,7 @@ sub import_record_list_impl {
     # see if we need to mark any queues as complete
     for my $q_id (keys %queues) {
 
-    	my $e = new_editor(xact => 1);
+        my $e = new_editor(xact => 1);
         my $remaining = $e->$search_func(
             [{queue => $q_id, import_time => undef}, {limit =>1}], {idlist => 1});
 
@@ -1165,11 +1205,11 @@ sub import_record_list_impl {
                 next;
             }
         } 
-    	$e->rollback;
+        $e->rollback;
     }
 
     # import the copies
-    import_record_asset_list_impl($conn, \@success_rec_ids, $requestor) if @success_rec_ids;
+    import_record_asset_list_impl($conn, \@success_rec_ids, $requestor, $args) if @success_rec_ids;
 
     $conn->respond({total => $$report_args{total}, progress => $$report_args{progress}});
     return undef;
@@ -1539,7 +1579,7 @@ sub retrieve_queue_summary {
 # Given a list of queued record IDs, imports all items attached to those records
 # --------------------------------------------------------------------------------
 sub import_record_asset_list_impl {
-    my($conn, $rec_ids, $requestor) = @_;
+    my($conn, $rec_ids, $requestor, $args) = @_;
 
     my $roe = new_editor(xact=> 1, requestor => $requestor);
 
@@ -1571,15 +1611,22 @@ sub import_record_asset_list_impl {
             {idlist=>1}
         );
 
+        # if any items have no call_number label and a value should be
+        # applied automatically (via org settings), we want to use the same
+        # call number label for every copy per org per record.
+        my $auto_callnumber = {};
+
+        my $opp_acq_copy_overlay = $args->{opp_acq_copy_overlay};
+        my @overlaid_copy_ids;
         for my $item_id (@$item_ids) {
             my $e = new_editor(requestor => $requestor, xact => 1);
             my $item = $e->retrieve_vandelay_import_item($item_id);
             my ($copy, $vol, $evt);
 
-            $$report_args{import_item} = $item;
             $$report_args{e} = $e;
-            $$report_args{import_error} = undef;
             $$report_args{evt} = undef;
+            $$report_args{import_item} = $item;
+            $$report_args{import_error} = undef;
 
             if (my $copy_id = $item->internal_id) { # assignment
                 # copy matches an existing copy.  Overlay instead of create.
@@ -1630,6 +1677,38 @@ sub import_record_asset_list_impl {
                     respond_with_status($report_args);
                     next;
                 }
+            } elsif ($opp_acq_copy_overlay) { # we are going to "opportunistically" overlay received, in-process acq copies
+                # recv_time should never be null if the copy status is
+                # "In Process", so that is just a double-check
+                my $query = [
+                    {
+                        "recv_time" => {"!=" => undef},
+                        "owning_lib" => $item->owning_lib,
+                        "+acn" => {"record" => $rec->imported_as},
+                        "+acp" => {"status" => OILS_COPY_STATUS_IN_PROCESS}
+                    },
+                    {
+                        "join" => {
+                            "acp" => {
+                                "join" => "acn"
+                            }
+                        },
+                        "flesh" => 2,
+                        "flesh_fields" => {
+                            "acqlid" => ["eg_copy_id"],
+                            "acp" => ["call_number"]
+                        }
+                    }
+                ];
+                # don't overlay the same copy twice
+                $query->[0]{"+acp"}{"id"} = {"not in" => \@overlaid_copy_ids} if @overlaid_copy_ids;
+                if (my $acqlid = $e->search_acq_lineitem_detail($query)->[0]) {
+                    $copy = $acqlid->eg_copy_id;
+                    push(@overlaid_copy_ids, $copy->id);
+                }
+            }
+
+            if ($copy) { # we found a copy to overlay
 
                 # overlaying copies requires an extra permission
                 if (!$e->allowed("IMPORT_OVERLAY_COPY", $copy->call_number->owning_lib)) {
@@ -1656,16 +1735,54 @@ sub import_record_asset_list_impl {
                     })->[0]->{count};
 
                     if ($count == 1) {
-                        # if this is the only copy attached to this 
-                        # callnumber, just update the callnumber
 
-                        $logger->info("vl: updating callnumber label in copy overlay");
+                        my $evol = $e->search_asset_call_number({
+                            id => {'<>' => $copy->call_number->id},
+                            label => $item->call_number,
+                            owning_lib => $copy->call_number->owning_lib,
+                            record => $copy->call_number->record,
+                            prefix => $copy->call_number->prefix,
+                            suffix => $copy->call_number->suffix,
+                            deleted => 'f'
+                        })->[0];
 
-                        $copy->call_number->label($item->call_number);
-                        if (!$e->update_asset_call_number($copy->call_number)) {
-                            $$report_args{evt} = $e->die_event;
-                            respond_with_status($report_args);
-                            next;
+                        if ($evol) {
+                            # call number for overlayed copy changed to a
+                            # label already in use by another call number.
+                            # merge the old CN into the new CN
+                            
+                            $logger->info(
+                                "vl: moving copy to new call number ".
+                                $item->call_number);
+
+                            my ($mvol, $err) = 
+                                OpenILS::Application::Cat::Merge::merge_volumes(
+                                    $e, [$copy->call_number], $evol);
+
+                            if (!$mvol) {
+                                $$report_args{evt} = $err;
+                                respond_with_status($report_args);
+                                next;
+                            }
+
+                            # update our copy *cough* of the copy to pick up
+                            # any changes made my merge_volumes
+                            $copy = $e->retrieve_asset_copy([
+                                $copy->id,
+                                {flesh => 1, flesh_fields => {acp => ['call_number']}}
+                            ]);
+
+                        } else {
+                            $logger->info(
+                                "vl: updating copy call number label".
+                                $item->call_number);
+
+                            $copy->call_number->label($item->call_number);
+                            if (!$e->update_asset_call_number($copy->call_number)) {
+                                $$report_args{evt} = $e->die_event;
+                                respond_with_status($report_args);
+                                next;
+                            }
                         }
 
                     } else {
@@ -1700,7 +1817,7 @@ sub import_record_asset_list_impl {
                     price circ_as_type alert_message opac_visible circ_modifier/) {
 
                     my $val = $item->$_();
-                    $copy->$_($val) if $val and $val ne '';
+                    $copy->$_($val) if defined $val and $val ne '';
                 }
 
                 # de-flesh for update
@@ -1720,6 +1837,10 @@ sub import_record_asset_list_impl {
 
                 # Creating a new copy
                 $logger->info("vl: creating new copy in import");
+
+                # appply defaults values from org settings as needed
+                # if $auto_callnumber is unset, it will be set within
+                apply_import_item_defaults($e, $item, $auto_callnumber);
 
                 # --------------------------------------------------------------------------------
                 # Find or create the volume
@@ -1810,6 +1931,58 @@ sub import_record_asset_list_impl {
 
     $roe->rollback;
     return undef;
+}
+
+sub apply_import_item_defaults {
+    my ($e, $item, $auto_cn) = @_;
+    my $org = $item->owning_lib || $item->circ_lib;
+    my %c = %item_defaults_cache;  
+
+    # fetch and cache the org unit setting value (unless 
+    # it's already cached) and return the value to the caller
+    my $set = sub {
+        my $name = shift;
+        return $c{$org}{$name} if defined $c{$org}{$name};
+        my $sname = "vandelay.item.$name";
+        $c{$org}{$name} = $U->ou_ancestor_setting_value($org, $sname, $e);
+        $c{$org}{$name} = '' unless defined $c{$org}{$name};
+        return $c{$org}{$name};
+    };
+
+    if (!$item->barcode) {
+
+        if ($set->('barcode.auto')) {
+
+            my $pfx = $set->('barcode.prefix') || 'VAN';
+            my $barcode = $pfx . $item->record . $item->id;
+
+            $logger->info("vl: using auto barcode $barcode for ".$item->id);
+            $item->barcode($barcode);
+
+        } else {
+            $logger->error("vl: no barcode (or defualt) for item ".$item->id);
+        }
+    }
+
+    if (!$item->call_number) {
+
+        if ($set->('call_number.auto')) {
+
+            if (!$auto_cn->{$org}) {
+                my $pfx = $set->('call_number.prefix') || 'VAN';
+
+                # use the ID of the first item to differentiate this 
+                # call number from others linked to the same record
+                $auto_cn->{$org} = $pfx . $item->record . $item->id;
+            }
+
+            $logger->info("vl: using auto call number ".$auto_cn->{$org});
+            $item->call_number($auto_cn->{$org});
+
+        } else {
+            $logger->error("vl: no call number or default for item ".$item->id);
+        }
+    }
 }
 
 

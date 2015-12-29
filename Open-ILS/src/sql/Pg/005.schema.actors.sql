@@ -83,6 +83,7 @@ CREATE INDEX actor_usr_first_given_name_idx ON actor.usr (evergreen.lowercase(fi
 CREATE INDEX actor_usr_second_given_name_idx ON actor.usr (evergreen.lowercase(second_given_name));
 CREATE INDEX actor_usr_family_name_idx ON actor.usr (evergreen.lowercase(family_name));
 
+CREATE INDEX actor_usr_usrname_idx ON actor.usr (evergreen.lowercase(usrname));
 CREATE INDEX actor_usr_email_idx ON actor.usr (evergreen.lowercase(email));
 
 CREATE INDEX actor_usr_day_phone_idx ON actor.usr (evergreen.lowercase(day_phone));
@@ -393,7 +394,15 @@ CREATE TABLE actor.org_unit_proximity_adjustment (
     circ_mod            TEXT,       -- REFERENCES config.circ_modifier (code),
     CONSTRAINT prox_adj_criterium CHECK (COALESCE(item_circ_lib::TEXT,item_owning_lib::TEXT,copy_location::TEXT,hold_pickup_lib::TEXT,hold_request_lib::TEXT,circ_mod) IS NOT NULL)
 );
-CREATE UNIQUE INDEX prox_adj_once_idx ON actor.org_unit_proximity_adjustment (item_circ_lib,item_owning_lib,copy_location,hold_pickup_lib,hold_request_lib,circ_mod);
+CREATE UNIQUE INDEX prox_adj_once_idx ON actor.org_unit_proximity_adjustment (
+    COALESCE(item_circ_lib, -1),
+    COALESCE(item_owning_lib, -1),
+    COALESCE(copy_location, -1),
+    COALESCE(hold_pickup_lib, -1),
+    COALESCE(hold_request_lib, -1),
+    COALESCE(circ_mod, ''),
+    pos
+);
 CREATE INDEX prox_adj_circ_lib_idx ON actor.org_unit_proximity_adjustment (item_circ_lib);
 CREATE INDEX prox_adj_owning_lib_idx ON actor.org_unit_proximity_adjustment (item_owning_lib);
 CREATE INDEX prox_adj_copy_location_idx ON actor.org_unit_proximity_adjustment (copy_location);
@@ -556,7 +565,7 @@ CREATE TABLE actor.usr_address (
 	street2			TEXT,
 	city			TEXT	NOT NULL,
 	county			TEXT,
-	state			TEXT	NOT NULL,
+	state			TEXT,
 	country			TEXT	NOT NULL,
 	post_code		TEXT	NOT NULL,
     pending         BOOL    NOT NULL DEFAULT FALSE,
@@ -596,7 +605,7 @@ CREATE TABLE actor.org_address (
 	street2		TEXT,
 	city		TEXT	NOT NULL,
 	county		TEXT,
-	state		TEXT	NOT NULL,
+	state		TEXT,
 	country		TEXT	NOT NULL,
 	post_code	TEXT	NOT NULL,
     san         TEXT
@@ -667,6 +676,7 @@ CREATE TABLE actor.usr_activity (
     etype       INT         NOT NULL REFERENCES config.usr_activity_type (id),
     event_time  TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
+CREATE INDEX usr_activity_usr_idx ON actor.usr_activity (usr);
 
 CREATE TABLE actor.toolbar (
     id          BIGSERIAL   PRIMARY KEY,

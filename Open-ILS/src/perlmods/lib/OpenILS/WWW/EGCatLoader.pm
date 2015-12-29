@@ -19,10 +19,12 @@ use Time::HiRes;
 # EGCatLoader sub-modules 
 use OpenILS::WWW::EGCatLoader::Util;
 use OpenILS::WWW::EGCatLoader::Account;
+use OpenILS::WWW::EGCatLoader::Browse;
 use OpenILS::WWW::EGCatLoader::Search;
 use OpenILS::WWW::EGCatLoader::Record;
 use OpenILS::WWW::EGCatLoader::Container;
 use OpenILS::WWW::EGCatLoader::SMS;
+use OpenILS::WWW::EGCatLoader::Register;
 
 my $U = 'OpenILS::Application::AppUtils';
 
@@ -123,6 +125,7 @@ sub load {
     return $self->load_print_record if $path =~ m|opac/record/print|;
     return $self->load_record if $path =~ m|opac/record/\d|;
     return $self->load_cnbrowse if $path =~ m|opac/cnbrowse|;
+    return $self->load_browse if $path =~ m|opac/browse|;
 
     return $self->load_mylist_add if $path =~ m|opac/mylist/add|;
     return $self->load_mylist_delete if $path =~ m|opac/mylist/delete|;
@@ -138,6 +141,7 @@ sub load {
     return $self->redirect_ssl unless $self->cgi->https;
     return $self->load_password_reset if $path =~ m|opac/password_reset|;
     return $self->load_logout if $path =~ m|opac/logout|;
+    return $self->load_patron_reg if $path =~ m|opac/register|;
 
     if($path =~ m|opac/login|) {
         return $self->load_login unless $self->editor->requestor; # already logged in?
@@ -191,6 +195,7 @@ sub load {
     return $self->load_myopac_hold_history if $path =~ m|opac/myopac/hold_history|;
     return $self->load_myopac_prefs_notify if $path =~ m|opac/myopac/prefs_notify|;
     return $self->load_myopac_prefs_settings if $path =~ m|opac/myopac/prefs_settings|;
+    return $self->load_myopac_prefs_my_lists if $path =~ m|opac/myopac/prefs_my_lists|;
     return $self->load_myopac_prefs if $path =~ m|opac/myopac/prefs|;
     return $self->load_sms_cn if $path =~ m|opac/sms_cn|;
 
@@ -214,7 +219,7 @@ sub redirect_ssl {
 sub redirect_auth {
     my $self = shift;
     my $login_page = sprintf('%s://%s%s/login',($self->ctx->{is_staff} ? 'oils' : 'https'), $self->ctx->{hostname}, $self->ctx->{opac_root});
-    my $redirect_to = uri_escape($self->apache->unparsed_uri);
+    my $redirect_to = uri_escape_utf8($self->apache->unparsed_uri);
     return $self->generic_redirect("$login_page?redirect_to=$redirect_to");
 }
 

@@ -2,37 +2,30 @@
     <div class="header_middle">[% l("Numeric Search") %]</div>
     <input type="hidden" name="contains" value="contains" />
     <input type="hidden" name="_special" value="1" />
-    <table>
-        <tr>
-            <td><label><strong>[% l("Field:") %]</strong>
-                <select name="qtype">
+    <div id='adv_numeric_block'>
+            <label for="numeric_qtype"><strong>[% l("Field:") %]</strong></label>
+                <select id="numeric_qtype" name="qtype">
                     <!-- TODO: Pull labels from config.metabib_field.label -->
                     <option value="identifier|isbn">[% l('ISBN') %]</option>
                     <option value="identifier|issn">[% l('ISSN') %]</option>
-                    <option value="identifier|bib_cn">[% l('Bib Call Number') %]</option>
+                    <option value="identifier|bibcn">[% l('Bib Call Number') %]</option>
                     <option value="cnbrowse">[% l('Call Number (Shelf Browse)') %]</option>
                     <option value="identifier|lccn">[% l('LCCN') %]</option>
                     <option value="identifier|tcn">[% l('TCN') %]</option>
                     <option value="item_barcode">[% l('Item Barcode') %]</option>
                 </select>
                 </label>
-            </td>
-            <td>
-                <input type="text" name="query" size="16" autofocus />
-            </td>
-        </tr>
-        <tr>
-            <td colspan="2"><label><strong>[% l("Search Library:") %]</strong>
+	
+                <input type="text" name="query" size="16" autofocus placeholder='[% l("Identifier") %]' />
+	    <br/>
+            [%- lib_select_id="numeric_search_library" -%]
+            <label for="[% lib_select_id %]"><strong>[% l("Search Library:") %]</strong>
                   [% PROCESS "opac/parts/org_selector.tt2";
-                     INCLUDE build_org_selector show_loc_groups=1
+                     INCLUDE build_org_selector id=lib_select_id show_loc_groups=1
                   %]
-                </label>
-            </td>
-        </tr>
-        <tr>
-            <td colspan="2" align="right">
+            </label>
+	    <br/>
                 <input type="submit" alt="[% l('Search') %]"
                     value="[% l('Search') %]" class="opac-button" />
-            </td>
-    </table>
+    </div>
 </form>

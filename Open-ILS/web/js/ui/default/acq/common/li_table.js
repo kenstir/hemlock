@@ -6,6 +6,7 @@ dojo.require('dijit.form.FilteringSelect');
 dojo.require('dijit.form.Textarea');
 dojo.require('dijit.Tooltip');
 dojo.require('dijit.ProgressBar');
+dojo.require('dojox.timing.doLater');
 dojo.require('openils.acq.Lineitem');
 dojo.require('openils.acq.PO');
 dojo.require('openils.acq.Picklist');
@@ -14,6 +15,7 @@ dojo.require('dojo.data.ItemFileReadStore');
 dojo.require('openils.widget.ProgressDialog');
 dojo.require('openils.PermaCrud');
 dojo.require("openils.widget.PCrudAutocompleteBox");
+dojo.require('dijit.form.ComboBox');
 dojo.require('openils.CGI');
 
 if (!localeStrings) {   /* we can do this because javascript doesn't have block scope */
@@ -41,6 +43,18 @@ var fundStyles = {
     "stop": "color: #c00; font-weight: bold;",
     "warning": "color: #c93;"
 };
+
+/**
+ * We're not using 'approved' today, but there is API support for it.
+ * I believe it's been replaced by "order-ready".
+ * LIs go new => selector-ready => order-ready/approved => pending-order => 
+ * on-order => received.  'cancelled' can pop up anywhere.
+ * Is this all of 'em?
+ */
+var li_pre_po_states = ["new", "selector-ready", "order-ready", "approved"];
+var li_post_po_states = ["pending-order", "on-order", "received"];
+// i.e. not-canceled ("cancelled") lineitems
+var li_active_states = li_pre_po_states.concat(li_post_po_states);
 
 function AcqLiTable() {
 
@@ -72,7 +86,7 @@ function AcqLiTable() {
     this.liNotesRow = this.liNotesTbody.removeChild(dojo.byId('acq-lit-notes-row'));
     this.realCopiesTbody = dojo.byId('acq-lit-real-copies-tbody');
     this.realCopiesRow = this.realCopiesTbody.removeChild(dojo.byId('acq-lit-real-copies-row'));
-    this._copy_fields_for_acqdf = ['owning_lib', 'location'];
+    this._copy_fields_for_acqdf = ['owning_lib', 'location', 'fund', 'circ_modifier', 'collection_code'];
     this.skipInitialEligibilityCheck = false;
     this.claimDialog = new ClaimDialogManager(
         liClaimDialog, finalClaimDialog, this.claimEligibleLidByLi,
@@ -82,7 +96,26 @@ function AcqLiTable() {
     );
     this.vlAgent = new VLAgent();
 
+    if (dojo.byId('acq-lit-apply-idents')) {
+        dojo.byId('acq-lit-apply-idents').onclick = function() {
+            self.applyOrderIdentValues();
+        };
+    }
+
     this.focusLineitem = new openils.CGI().param('focus_li');
+
+    // capture the inline copy display wrapper and row template
+    this.inlineCopyContainer = 
+        this.tbody.removeChild(dojo.byId('acq-inline-copies-row'));
+    var tb = dojo.query(
+        '[name=acq-li-inline-copies-tbody]', this.inlineCopyContainer)[0];
+    this.inlineCopyTemplate = tb.removeChild(
+        dojo.query('[name=acq-li-inline-copies-template]', tb)[0]);
+    this.inlineNoCopies = tb.removeChild(
+        dojo.query('[name=acq-li-inline-copies-none]', tb)[0]);
+
+    // list of LI IDs that should be refreshed at next display time
+    this.inlineCopiesNeedingRefresh = []; 
 
     dojo.byId("acq-lit-li-actions-selector").onchange = function() { 
         self.applySelectedLiAction(this.options[this.selectedIndex].value);
@@ -112,15 +145,184 @@ function AcqLiTable() {
     }
     acqLitSaveLiStateButton.onClick = function() {
         acqLitChangeLiStateDialog.hide();
-        self._updateLiState(acqLitChangeLiStateDialog.getValues(), acqLitChangeLiStateDialog.attr('state'));
+        var state = acqLitChangeLiStateDialog.attr('state');
+        var state_filter = ['new'];
+        if (state == 'order-ready')
+            state_filter.push('selector-ready');
+        self._updateLiState(
+            acqLitChangeLiStateDialog.getValues(), state, state_filter);
     }
 
 
     dojo.byId('acq-lit-select-toggle').onclick = function(){self.toggleSelect()};
+    dojo.byId('acq-inline-copies-toggle').onclick = function(){self.toggleInlineCopies()};
     dojo.byId('acq-lit-info-back-button').onclick = function(){self.show('list')};
     dojo.byId('acq-lit-copies-back-button').onclick = function(){self.show('list')};
     dojo.byId('acq-lit-notes-back-button').onclick = function(){self.show('list')};
     dojo.byId('acq-lit-real-copies-back-button').onclick = function(){self.show('list')};
+
+    this.afwCopyFieldArgs = function(field, perms) {
+        return {
+                "fmField" : field,
+                "fmClass": 'acqlid',
+                "labelFormat": (field == 'fund') ? fundLabelFormat : null,
+                "searchFormat": (field == 'fund') ? fundSearchFormat : null,
+                "searchFilter": (field == 'fund') ? {"active": "t"} : null,
+                "orgLimitPerms": [perms],
+                "dijitArgs": {
+                    "required": false,
+                    "labelType": (field == "fund") ? "html" : null
+                },
+                "noCache": (field == "fund"),
+                "forceSync": true
+            };
+    };
+
+    /* This is the "new" batch updater that sits atop all lineitems. It does
+     * use this.afwCopyFieldArgs() to borrow a little common code  from the
+     * "old" batch updater atop the copy details view. */
+    this.initBatchUpdater = function(disabled_fields) {
+        openils.Util.show("acq-batch-update", "table");
+
+        if (!dojo.isArray(disabled_fields)) disabled_fields = [];
+
+        /* Note that this will directly contain dijits, not the AutoWidget
+         * wrapper object. */
+        this.batchUpdateWidgets = {};
+
+        this.batchUpdateWidgets.item_count = new dijit.form.TextBox(
+            {
+                "style": {"width": "3em"},
+                "disabled": Boolean(
+                    dojo.indexOf(disabled_fields, "item_count") != -1
+                )
+            },
+            "acq-bu-item_count"
+        );
+
+        (new openils.widget.AutoFieldWidget({
+            "fmClass": "acqdf",
+            "selfReference": true,
+            "dijitArgs": { "required": false },
+            "forceSync": true,
+            "parentNode": "acq-bu-distribution_formula"
+        })).build(
+            function(w) {
+                dojo.style(w.domNode, {"width": "12em"});
+                /* dijitArgs to AutoFieldWidget won't work for 'disabled' */
+                w.attr(
+                    "disabled",
+                    dojo.indexOf(disabled_fields, "distribution_formula") != -1
+                );
+                self.batchUpdateWidgets.distribution_formula = w;
+            }
+        );
+
+        dojo.forEach(
+            ["owning_lib","location","collection_code","circ_modifier","fund"],
+            function(field) {
+                var args = self.afwCopyFieldArgs(field,"CREATE_PURCHASE_ORDER");
+                args.parentNode = dojo.byId("acq-bu-" + field);
+
+                (new openils.widget.AutoFieldWidget(args)).build(
+                    function(w, aw) {
+                        if (field == "fund") {
+                            dojo.connect(
+                                w, "onChange", function(val) {
+                                    self._updateFundSelectorStyle(aw, val);
+                                }
+                            );
+                            if (w.store)
+                                self._ensureCSSFundClasses(w.store);
+                        }
+
+                        dojo.style(w.domNode, {"width": "10em"});
+                        w.attr(
+                            "disabled",
+                            dojo.indexOf(disabled_fields, field) != -1
+                        );
+                        self.batchUpdateWidgets[field] = w;
+                    }
+                );
+            }
+        );
+
+        acqBatchUpdateApply.onClick = function() {
+            var li_id_list = self.getSelected(false, null, true /* id list */);
+            if (!li_id_list.length) {
+                alert(localeStrings.NO_LI_TO_UPDATE);
+                return;
+            }
+
+            progressDialog.show(true);
+            progressDialog.attr("title", localeStrings.LI_BATCH_UPDATE);
+            progressDialog.update({"maximum": li_id_list.length,"progress": 0});
+
+            var count = 0;
+
+            var params = [ self.authtoken, {"lineitems": li_id_list},
+                        self.batchUpdateChanges(), self.batchUpdateFormula() ];
+            console.log("batch update params: " + dojo.toJson(params));
+
+            fieldmapper.standardRequest(
+                ["open-ils.acq", "open-ils.acq.lineitem.batch_update"], {
+                    "async": true,
+                    "params": params,
+                    "onresponse": function(r) {
+                        if ((r = openils.Util.readResponse(r))) { // assignment
+                            progressDialog.update({"progress": ++count});
+                        } else {
+                            progressDialog.hide();
+                            progressDialog.attr("title", "");
+                        }
+                    },
+                    "oncomplete": function() {
+                        /* XXX Is the last call to onresponse guaranteed to
+                         * finish before oncomplete is fired? */
+                        if (count != li_id_list.length) {
+                            console.error("lineitem batch update operation failed");
+                            progressDialog.hide();
+                            progressDialog.attr("title", "");
+                        } else {
+                            location.href = location.href;
+                        }
+                    }
+                }
+            );
+        };
+    };
+
+    this.batchUpdateChanges = function() {
+        var o = {};
+
+        dojo.forEach(
+            openils.Util.objectProperties(this.batchUpdateWidgets),
+            function(k) {
+                if (k == "distribution_formula") return; /* handled elsewhere */
+                if (self.batchUpdateWidgets[k].attr("disabled")) return;
+
+                /* It's important that a value of "" should mean that a field
+                 * doesn't get used in the arguments to the batch updater API,
+                 * but 0 should mean an actual 0. */
+                var value = self.batchUpdateWidgets[k].attr("value");
+                if (value !== "")
+                    o[k] = value;
+            }
+        );
+
+        return o;
+    };
+
+    this.batchUpdateFormula = function() {
+        if (this.batchUpdateWidgets.distribution_formula.attr("disabled")) {
+            return null;
+        } else {
+            return (
+                this.batchUpdateWidgets.distribution_formula.attr("value") ||
+                null
+            );
+        }
+    };
 
     this.reset = function(keep_selectors) {
         while(self.tbody.childNodes[0])
@@ -150,6 +352,28 @@ function AcqLiTable() {
         } else {
             dojo.style(link, 'visibility', 'hidden');
         }
+    };
+
+    this.enableActionsDropdownOptions = function(mask) {
+        /* 'mask' is probably a misnomer the way I'm using it, but it needs to
+         * be one of pl,po,ao,gs,vp, or fs. */
+        dojo.query("option", "acq-lit-li-actions-selector").forEach(
+            function(option) {
+                var opt_mask = dojo.attr(option, "mask");
+
+                /* For each <option> element, an empty or non-existent mask
+                 * attribute, a mask attribute of "*", or a mask attribute that
+                 * matches this method's argument should result in that
+                 * option's being enabled. */
+                dojo.attr(
+                    option, "disabled", !(
+                        !opt_mask ||
+                        opt_mask == "*" ||
+                        opt_mask.search(mask) != -1
+                    )
+                );
+            }
+        );
     };
 
     /*
@@ -194,6 +418,7 @@ function AcqLiTable() {
             case 'list':
                 openils.Util.show('acq-lit-table-div');
                 this.focusLi();
+                this.refreshInlineCopies();
                 break;
             case 'info':
                 openils.Util.show('acq-lit-info-div');
@@ -229,12 +454,15 @@ function AcqLiTable() {
     };
 
 
-    this.getAll = function(callback, id_only) {
+    this.getAll = function(callback, id_only, state) {
         /* For some uses of the li table, we may not really know about "all"
          * the lineitems that the user thinks we know about. If we're a paged
          * picklist, for example, we only know about the lineitems we've
          * displayed, but not necessarily all the lineitems on the picklist.
          * So we reach out to pcrud to inform us.
+         * state: string/array.  only lineitems in one of these states are
+         * included in the final result set.  Not currently supported for
+         * paging mode.
          */
 
         var oncomplete = function(r) {
@@ -246,8 +474,10 @@ function AcqLiTable() {
         };
 
         if (this.isPL) {
+            var search = {"picklist": this.isPL};
+            if (state) search.state = state;
             this.pcrud.search(
-                "jub", {"picklist": this.isPL}, {
+                "jub", search, {
                     "id_list": true,    /* sic, even if id_only */
                     "async": true,
                     "oncomplete": oncomplete
@@ -255,8 +485,10 @@ function AcqLiTable() {
             );
             return;
         } else if (this.isPO) {
+            var search = {"purchase_order": this.isPO};
+            if (state) search.state = state;
             this.pcrud.search(
-                "jub", {"purchase_order": this.isPO}, {
+                "jub", search, {
                     "id_list": true,
                     "async": true,
                     "oncomplete": oncomplete
@@ -272,7 +504,7 @@ function AcqLiTable() {
          * any special tricks to find out the "real" list of "all" lineitems
          * in this context, so we fall back to the old method.
          */
-        callback(this.getSelected(true, null, id_only));
+        callback(this.getSelected(true, null, id_only, state));
     };
 
     /** @param all If true, assume all are selected */
@@ -281,10 +513,12 @@ function AcqLiTable() {
         callback /* If you want a "good" idea of "all" lineitems, you must
         provide a callback that accepts an array parameter, rather than
         relying on the return value of this method itself. */,
-        id_only
+        id_only,
+        state 
     ) {
+        console.log("getSelected states = " + state);
         if (all && callback)
-            return this.getAll(callback, id_only);
+            return this.getAll(callback, id_only, filter);
 
         var indices = {};   /* use to uniqify. needed in paging situations. */
         dojo.forEach(this.selectors,
@@ -295,6 +529,19 @@ function AcqLiTable() {
         );
 
         var result = openils.Util.objectProperties(indices);
+
+        // caller provided a lineitem state filter.  remove IDs for lineitems 
+        // not in the selected state.
+        if (state) {
+            var trimmed = [];
+            if (!dojo.isArray(state)) state = [state];
+            dojo.forEach(result, function(liId) {
+                console.log('filter LI state ' + self.liCache[liId].state());
+                if (state.indexOf(self.liCache[liId].state()) >= 0)
+                    trimmed.push(liId);
+            });
+            result = trimmed;
+        };
 
         if (!id_only)
             result = result.map(function(liId) { return self.liCache[liId]; });
@@ -311,38 +558,50 @@ function AcqLiTable() {
     };
 
     this.setClaimPolicyControl = function(li, row) {
-        if (!self.claimPolicyPicker) {
-            self.claimPolicyPicker = true; /* prevents a race condition */
+        if (!self._claimPolicyPickerLoading) {
+            self._claimPolicyPickerLoading = true;
+
             new openils.widget.AutoFieldWidget({
                 "parentNode": "acq-lit-li-claim-policy",
                 "fmClass": "acqclp",
                 "selfReference": true,
                 "dijitArgs": {"required": true}
-            }).build(function(w) { self.claimPolicyPicker = w; });
+            }).build(
+                function(w) { self.claimPolicyPicker = w; }
+            );
         }
 
-        if (!row) row = this._findLiRow(li);
+        /* dojox.timing.doLater() is the best thing ever. Resource not yet
+         * ready? Just repeat my whole method when it is. */
+        if (dojox.timing.doLater(self.claimPolicyPicker)) {
+            return;
+        } else {
+            if (!row)
+                row = self._findLiRow(li);
 
-        var actViewPolicy = nodeByName("action_view_claim_policy", row);
-        if (li.claim_policy())
-            actViewPolicy.innerHTML = localeStrings.CHANGE_CLAIM_POLICY;
+            if (li.claim_policy()) {
+                /* This Dojo data dance is necessary to get a whole fieldmapper
+                 * object based on a claim policy ID, since we alreay have the
+                 * widget thing loaded with all that data, and can thereby
+                 * avoid another request to the server. */
+                self.claimPolicyPicker.store.fetchItemByIdentity({
+                    "identity": li.claim_policy(),
+                    "onItem": function(a) {
+                        var policy = (new acqclp()).fromStoreItem(a);
+                        var span = nodeByName("claim_policy", row);
+                        var inner = nodeByName("claim_policy_name", row);
 
-        if (!actViewPolicy.onclick) {
-            actViewPolicy.onclick = function() {
-                if (li.claim_policy())
-                    self.claimPolicyPicker.attr("value", li.claim_policy());
-                liClaimPolicyDialog.show();
-                liClaimPolicySave.onClick = function() {
-                    self.changeClaimPolicy(
-                        [li], self.claimPolicyPicker.attr("value"),
-                        function() {
-                            self.setClaimPolicyControl(li, row);
-                            self.reconsiderClaimControl(li, row);
-                            liClaimPolicyDialog.hide();
-                        }
-                    );
-                }
-            };
+                        openils.Util.show(span, "inline");
+                        inner.innerHTML = policy.name();
+                    },
+                    "onError": function(e) {
+                        console.error(e);
+                    }
+                });
+            } else {
+                openils.Util.hide(nodeByName("claim_policy", row));
+                nodeByName("claim_policy_name", row).innerHTML = "";
+            }
         }
     };
 
@@ -355,11 +614,30 @@ function AcqLiTable() {
         );
     }
 
+    // fetch an updated copy of the lineitem 
+    // and add it back to the lineitem table
+    this.refreshLineitem = function(li, focus) {
+        var self = this;
+        this._fetchLineitem(li.id(), 
+            function(newLi) {
+                if (focus) {
+                    self.focusLineitem = li.id();
+                } else {
+                    self.focusLineitem = null;
+                }
+                var row = dojo.query('[li='+li.id()+']', self.tbody)[0];
+                var nextSibling = row.nextSibling;
+                self.tbody.removeChild(row);
+                self.addLineitem(newLi, false, nextSibling);
+            }, true
+        );
+    }
+
     /**
      * Inserts a single lineitem into the growing table of lineitems
      * @param {Object} li The lineitem object to insert
      */
-    this.addLineitem = function(li, skip_final_placement) {
+    this.addLineitem = function(li, skip_final_placement, nextSibling) {
         this.liCache[li.id()] = li;
 
         // insert the row right away so that final order isn't
@@ -367,8 +645,15 @@ function AcqLiTable() {
         // for a given line item
         var row = self.rowTemplate.cloneNode(true);
         if (!skip_final_placement) {
-            self.tbody.appendChild(row);
+            if (!nextSibling) {
+                // either no nextSibling was provided or it was null
+                // meaning the row was already at the end of the table
+                self.tbody.appendChild(row);
+            } else {
+                self.tbody.insertBefore(row, nextSibling);
+            }
         }
+
         self.selectors.push(dojo.query('[name=selectbox]', row)[0]);
 
         // sort the lineitem notes on edit_time
@@ -379,6 +664,11 @@ function AcqLiTable() {
         var tds = dojo.query('[attr]', row);
         dojo.forEach(tds, function(td) {self.setRowAttr(td, liWrapper, td.getAttribute('attr'), td.getAttribute('attr_type'));});
         dojo.query('[name=source_label]', row)[0].appendChild(document.createTextNode(li.source_label()));
+
+        if (li.cancel_reason() && typeof li.cancel_reason() == 'object') {
+            dojo.query('[name=cancel_reason]', row)[0].appendChild(
+                document.createTextNode(li.cancel_reason().label()));
+        }
 
         // so we can scroll to it later
         dojo.query('[name=bib-info-cell]', row)[0].id = 'li-title-ref-' + li.id();
@@ -433,6 +723,10 @@ function AcqLiTable() {
         dojo.query('[attr=title]', row)[0].onclick = function() {self.drawInfo(li.id())};
         dojo.query('[name=copieslink]', row)[0].onclick = function() {self.drawCopies(li.id())};
         dojo.query('[name=noteslink]', row)[0].onclick = function() {self.drawLiNotes(li)};
+        dojo.query('[name=expand_inline_copies]', row)[0].onclick = 
+            function() {self.drawInlineCopies(li.id())};
+
+        this.drawOrderIdentSelector(li, row);
 
         if (!this.skipInitialEligibilityCheck)
             this.fetchClaimInfo(
@@ -571,6 +865,228 @@ function AcqLiTable() {
         }
     };
 
+    this.applyOrderIdentValues = function() {
+        this._identValuesInFlight = 
+            openils.Util.objectProperties(this.liCache).length;
+        for (var liId in this.liCache) {
+            this._applyOrderIdentValue(this.liCache[liId]);
+        }
+    };
+
+    // returns true if request was sent
+    this._applyOrderIdentValue = function(li, oncomplete) {
+        var self = this;
+
+        console.log('applying ident value for lineitem ' + li.id());
+
+        // main row
+        var row = dojo.query('[li=' + li.id() + ']')[0];
+
+        // find the selected ident value
+        var typeSel = dojo.query('[name=order_ident_type]', row)[0];
+        var valueSel = dojo.query('[name=order_ident_value]', row)[0];
+        var name = typeSel.options[typeSel.selectedIndex].value;
+        var val = typeSel._cbox.attr('value');
+
+        console.log("selected ident is " + val);
+
+        // it differs from the existing ident value, update it
+        var oldIdent = self.getLiOrderIdent(li);
+        if (oldIdent && 
+            oldIdent.attr_name() == name &&
+            oldIdent.attr_value() == val) {
+                console.log('selected ident attr matches existing attr');
+                if (--this._identValuesInFlight == 0) {
+                    if (oncomplete) oncomplete(li);
+                    else location.href = location.href;
+                }
+                return false;
+        }
+
+        // see if the selected ident value is represented
+        // by an existing lineitem attr
+
+        var args = {};
+        typeSel._cbox.store.fetch({
+            query : {attr_value : val},
+            onItem : function(item) {                                                       
+                console.log('found existing attr for ident value');
+                args.source_attr_id = li.attributes().filter(
+                    function(attr) { return attr.id() == item.id[0] }
+                )[0];
+            }                                                                      
+        }); 
+
+
+        if (!args.source_attr_id) {
+            // user entered new text in the combobox
+            // so we need to create a new attr
+            console.log('creating new ident attr');
+            args.lineitem_id = li.id();
+            args.attr_name = name;
+            args.attr_value = val;
+        }
+
+        fieldmapper.standardRequest(
+            ['open-ils.acq', 'open-ils.acq.lineitem.order_identifier.set'],
+            {   async : true,
+                params : [openils.User.authtoken, args],
+                oncomplete : function() {
+                    console.log('order_ident oncomplete');
+                    if (--self._identValuesInFlight == 0) {
+                        if (oncomplete) oncomplete(li);
+                        else location.href = location.href;
+                    }
+                    console.log(self._identValuesInFlight + ' still in flight');
+                }
+            }
+        );
+
+        return true;
+    };
+
+    this.getLiOrderIdent = function(li) {
+        var attrs = li.attributes();
+        if (!attrs) return null;
+        return attrs.filter(
+            function(attr) {
+                return (
+                    attr.attr_type() == 'lineitem_local_attr_definition' &&
+                    openils.Util.isTrue(attr.order_ident())
+                );
+            }
+        )[0];
+    };
+
+    this.drawOrderIdentSelector = function(li, row) {
+        var self = this;
+        var typeSel = dojo.query('[name=order_ident_type]', row)[0];
+        var valueSel = dojo.query('[name=order_ident_value]', row)[0];
+
+        var attrs = li.attributes();
+
+        // limit to MARC attr defs
+        attrs = attrs.filter(
+            function(attr) {
+                return (attr.attr_type() == 'lineitem_marc_attr_definition');
+            }
+        );
+
+        var identAttr = this.getLiOrderIdent(li);
+
+
+        // collect the values for each type of identifier
+        // find a reasonable default identifier type to render
+        
+        var values = {};
+        var typeSet = null;
+        dojo.forEach(['isbn', 'upc', 'issn'],
+            function(name) {
+
+                // collect the values for this attr name
+                values[name] =  attrs.filter(
+                    function(attr) {
+                        return (attr.attr_name() == name)
+                    }
+                );
+
+                // select a reasonable default name in the type-selector
+                if (!typeSet) {
+                    var useMe = false;
+                    if (identAttr) {
+                        if (identAttr.attr_name() == name)
+                            useMe = true;
+                    } else if (values[name].length) {
+                        useMe = true;
+                    }
+
+                    if (useMe) {
+                        dojo.forEach(typeSel.options, function(opt) {
+                            if (opt.value == name) {
+                                opt.selected = true;
+                                typeSet = name;
+                            }
+                        });
+                    }
+                }
+            }
+        );
+
+        function updateOrderIdent(val) {
+            self._identValuesInFlight = 1;
+            self._applyOrderIdentValue(
+                this._lineitem,
+                function(li) {
+                    self.refreshLineitem(li);
+                }
+            );
+        }
+
+        // replace the ident combobox with a new 
+        // one for the selected ident type 
+        function changeComboBox(sel) {
+            var name = sel.options[sel.selectedIndex].value;
+
+            var td = dojo.query('[name=order_ident_value]', row)[0];
+            if (td.childNodes[0]) 
+                dojo.destroy(td.childNodes[0]);
+
+            var store = new dojo.data.ItemFileWriteStore({
+                data : acqlia.toStoreData(values[name])
+            });
+
+            var cbox = new dijit.form.ComboBox(
+                {   store : store,
+                    labelAttr : 'attr_value',
+                    searchAttr : 'attr_value'
+                }, 
+                dojo.create('div', {}, td)
+            );
+
+            cbox.startup();
+
+            // set the value for the cbox
+            if (values[name].length) {
+                var orderIdent = self.getLiOrderIdent(li);
+
+                if (orderIdent && orderIdent.attr_name() == name) {
+                    cbox.attr('value', orderIdent.attr_value());
+                } else  {
+                    cbox.attr('value', values[name][0].attr_value());
+                }
+            }
+
+            if (!self.orderIdentAllowed) 
+                cbox.attr('disabled', true);
+
+            sel._cbox = cbox;
+            cbox._lineitem = li;
+            dojo.connect(cbox, 'onChange', updateOrderIdent);
+        }
+
+        changeComboBox(typeSel); // force the initial draw
+        typeSel.onchange = function() {changeComboBox(typeSel)};
+    };
+
+    this.testOrderIdentPerms = function(org, callback) {
+        var self = this;
+        new openils.User().getPermOrgList(
+            'ACQ_SET_LINEITEM_IDENTIFIER',
+            function(orgs) { 
+                console.log('found orgs = ' + orgs);
+                for (var i = 0; i < orgs.length; i++) {
+                    if (Number(orgs[i]) == Number(org)) {
+                        self.orderIdentAllowed = true;
+                        if (callback) callback();
+                        return;
+                    }
+                }
+                if (callback) callback();
+            }, 
+            true, true
+        );
+    };
+
     this.checkClaimEligibility = function(li, callback, row) {
         /* Assume always eligible, i.e. from this interface we don't care about
          * claim eligibility any more. this is where the user would force a
@@ -627,13 +1143,8 @@ function AcqLiTable() {
     this.updateLiState = function(li, row) {
         if (!row) row = this._findLiRow(li);
 
-        var actReceive = nodeByName("action_mark_recv", row);
-        var actUnRecv = nodeByName("action_mark_unrecv", row);
         var actUpdateBarcodes = nodeByName("action_update_barcodes", row);
         var actHoldingsMaint = nodeByName("action_holdings_maint", row);
-        var actNewInvoice = nodeByName('action_new_invoice', row);
-        var actLinkInvoice = nodeByName('action_link_invoice', row);
-        var actViewInvoice = nodeByName('action_view_invoice', row);
 
         // always allow access to LI history
         nodeByName('action_view_history', row).onclick = 
@@ -644,33 +1155,15 @@ function AcqLiTable() {
         openils.Util.addCSSClass(row, "oils-acq-li-state-" + li.state());
 
         // Expose invoice actions for any lineitem that is linked to a PO 
-        if( li.purchase_order() ) {
-
-            actNewInvoice.disabled = false;
-            actLinkInvoice.disabled = false;
-            actViewInvoice.disabled = false;
-
-            actNewInvoice.onclick = function() {
-                location.href = oilsBasePath + '/acq/invoice/view?create=1&attach_li=' + li.id();
-                nodeByName("action_none", row).selected = true;
-            };
-
-            actLinkInvoice.onclick = function() {
-                if (!self.invoiceLinkDialogManager) {
-                    self.invoiceLinkDialogManager =
-                        new InvoiceLinkDialogManager("li");
-                }
-                self.invoiceLinkDialogManager.target = li;
-                acqLitLinkInvoiceDialog.show();
-                nodeByName("action_none", row).selected = true;
-            };
-
-            actViewInvoice.onclick = function() {
-                location.href = oilsBasePath +
-                    "/acq/search/unified?so=" +
-                    base64Encode({"jub":[{"id": li.id()}]}) +
-                    "&rt=invoice";
-                nodeByName("action_none", row).selected = true;
+        if (li.purchase_order()) {
+            openils.Util.show(nodeByName("invoices_span", row), "inline");
+            var link = nodeByName("invoices_link", row);
+            link.onclick = function() {
+                openils.XUL.newTabEasy(
+                    oilsBasePath + "/acq/search/unified?so=" +
+                    base64Encode({"jub":[{"id": li.id()}]}) + "&rt=invoice"
+                );
+                return false;
             };
         }
                 
@@ -713,25 +1206,18 @@ function AcqLiTable() {
                             "connectId": [holds_state]
                         }, dojo.create("span", null, state_cell, "last")
                     );
+
+                    if (li.cancel_reason().keep_debits() == 't') {
+                        openils.Util.removeCSSClass(row, /^oils-acq-li-state-/);
+                        openils.Util.addCSSClass(row, "oils-acq-li-state-delayed");
+                    }
                 }
                 return; // all done
 
             case "on-order":
-                actReceive.disabled = false;
-                actReceive.onclick = function() {
-                    if (self.checkLiAlerts(li.id()))
-                        self.issueReceive(li);
-                    nodeByName("action_none", row).selected = true;
-                };
                 break;
 
             case "received":
-                actUnRecv.disabled = false;
-                actUnRecv.onclick = function() {
-                    if (confirm(localeStrings.UNRECEIVE_LI))
-                        self.issueReceive(li, /* rollback */ true);
-                    nodeByName("action_none", row).selected = true;
-                };
                 break;
         }
 
@@ -999,6 +1485,139 @@ function AcqLiTable() {
         );
     };
 
+    this.toggleInlineCopies = function() {
+        // if any inline copies are not displayed, 
+        // display them all otherwise, hide them all.
+
+        var displayAll = false;
+
+        for (var liId in this.liCache) {
+            if (!this.inlineCopiesVisible(liId)) {
+                displayAll = true;
+                break;
+            }
+        }
+
+        for (var liId in this.liCache) {
+            var row = dojo.byId('acq-inline-copies-row-' + liId);
+            if (displayAll) {
+                if (!row || row._hidden) {
+                    this.drawInlineCopies(liId);
+                }
+            } else { // hide all
+                if (row) {
+                    // drawInlineCopies() on a visible row will hide it.
+                    this.drawInlineCopies(liId);
+                }
+            }
+        }
+
+    };
+
+    this.inlineCopiesVisible = function(liId) {
+        var row = dojo.byId('acq-inline-copies-row-' + liId); 
+        return (row && !row._hidden);
+    }
+
+    this.refreshInlineCopies = function(all, reFetch) {
+        var self = this;
+        var liIds = this.inlineCopiesNeedingRefresh;
+        if (all) liIds = openils.Util.objectProperties(liCache);
+        liIds.forEach(function(liId) {
+            if (self.inlineCopiesVisible(liId)) {
+                self.drawInlineCopies(liId, reFetch); // hide
+                self.drawInlineCopies(liId, reFetch); // re-draw
+            }
+        });
+    };
+
+    // draw inline copy table.  if the table is 
+    // already visible, hide the table as-is
+    // reFetch forces a retrieval of the lineitem and 
+    // copies from the server.  otherwise the locally
+    // cached version of each is used.
+    this.drawInlineCopies = function(liId, reFetch) {
+        var self = this;
+            
+        // find or create the row where the inline copies table will live
+        var containerRow = dojo.byId('acq-inline-copies-row-' + liId);
+        var liRow = dojo.query('[li=' + liId + ']')[0];
+
+        if (!containerRow) {
+
+            // build the inline copies container row and add it to 
+            // the DOM directly after the primary lineitem row
+
+            containerRow = self.inlineCopyContainer.cloneNode(true);
+            containerRow.id = 'acq-inline-copies-row-' + liId;
+
+            if (liRow.nextSibling) {
+                self.tbody.insertBefore(containerRow, liRow.nextSibling);
+            } else {
+                self.tbody.appendChild(containerRow);
+            }
+
+        } else {
+
+            // toggle the visible state
+            containerRow._hidden = !containerRow._hidden;
+            openils.Util.toggle(containerRow, 'table-row');
+
+            if (containerRow._hidden) return; // hide only
+        }
+
+        var handler = function(li) {
+
+            var tbody = dojo.query(
+                '[name=acq-li-inline-copies-tbody]', 
+                containerRow)[0];
+
+            // reset the table before adding copy rows
+            while (tbody.childNodes[0])
+                tbody.removeChild(tbody.childNodes[0]);
+
+            if(li.lineitem_details().length == 0) {
+                tbody.appendChild(
+                    self.inlineNoCopies.cloneNode(true));
+                return; // no copies to show
+            }
+
+            // add a row to the inline copy table for each copy
+            dojo.forEach(li.lineitem_details(),
+                function(copy) {
+                    var row = self.inlineCopyTemplate.cloneNode(true);
+                    tbody.appendChild(row);
+                    self.addInlineCopy(li, copy, row);
+                }
+            );
+        };
+
+        this._fetchLineitem(liId, handler, reFetch);
+    };
+
+    /** Draw read-only copy widgets for inline copies */
+    this.addInlineCopy = function(li, copy, row) {
+
+        var self = this;
+        dojo.forEach(liDetailFields,
+            function(field) {
+
+                var widget = new openils.widget.AutoFieldWidget({
+                    fmObject : copy,
+                    fmField : field,
+                    labelFormat : (field == 'fund') ? fundLabelFormat : null,
+                    searchFormat : (field == 'fund') ? fundSearchFormat : null,
+                    dijitArgs: {"labelType": (field == 'fund') ? "html" : null},
+                    fmClass : 'acqlid',
+                    parentNode : dojo.query('[name=' + field + ']', row)[0],
+                    readOnly : true,
+                });
+
+                widget.build();
+            }
+        );
+    };
+
     /* For a given list of lineitem ids, build a list of full lineitems
      * re-using the fetching logic that is otherwise typical to use in this
      * module.
@@ -1163,6 +1782,12 @@ function AcqLiTable() {
         acqLitSaveCopies.onClick = function() { self.saveCopyChanges(liId) };
         acqLitBatchUpdateCopies.onClick = function() { self.batchCopyUpdate() };
         acqLitCopyCountInput.attr('value', '0');
+
+        if (this.isPO && PO && PO.order_date()) {
+            // prevent adding copies to activated POs
+            acqLitCopyCountInput.attr('disabled', true);
+            acqLitAddCopyCount.attr('disabled', true);
+        }
 
         while(this.copyTbody.childNodes[0])
             this.copyTbody.removeChild(this.copyTbody.childNodes[0]);
@@ -1554,21 +2179,10 @@ function AcqLiTable() {
                 if(self.copyBatchRowDrawn) {
                     self.copyBatchWidgets[field].attr('value', null);
                 } else {
-                    var widget = new openils.widget.AutoFieldWidget({
-                        fmField : field,
-                        fmClass : 'acqlid',
-                        labelFormat : (field == 'fund') ? fundLabelFormat : null,
-                        searchFormat : (field == 'fund') ? fundSearchFormat : null,
-                        searchFilter : (field == 'fund') ? {"active": "t"} : null,
-                        parentNode : dojo.query('[name='+field+']', row)[0],
-                        orgLimitPerms : ['CREATE_PICKLIST'],
-                        dijitArgs : {
-                            "required": false,
-                            "labelType": (field == "fund") ? "html" : null
-                        },
-                        noCache: (field == "fund"),
-                        forceSync : true
-                    });
+                    var args = self.afwCopyFieldArgs(field, "CREATE_PICKLIST");
+                    args.parentNode = dojo.query('[name='+field+']', row)[0];
+
+                    var widget = new openils.widget.AutoFieldWidget(args);
                     widget.build(
                         function(w, ww) {
                             if (field == "fund" && w.store)
@@ -2084,7 +2698,10 @@ function AcqLiTable() {
             );
             this.virtDfaCounts = {};
         }
-    }
+
+        if (this.inlineCopiesNeedingRefresh.indexOf(liId) < 0)
+            this.inlineCopiesNeedingRefresh.push(liId);
+    };
 
     this._updateCreatePoPrepayCheckbox = function(prepay) {
         var prepay = openils.Util.isTrue(prepay);
@@ -2111,6 +2728,21 @@ function AcqLiTable() {
 
             case 'delete_selected':
                 this._deleteLiList(self.getSelected());
+                break;
+
+            case 'add_to_order':
+                addToPoDialog._get_li = dojo.hitch(
+                    this,
+                    function() { 
+                        return this.getSelected(
+                            false, null, true, li_pre_po_states);
+                    }
+                );
+                if (addToPoDialog._get_li().length == 0) {
+                    alert(localeStrings.NO_LI_GENERAL);
+                    return;
+                }
+                addToPoDialog.show();
                 break;
 
             case 'create_order':
@@ -2144,12 +2776,12 @@ function AcqLiTable() {
                 this.batchLinkInvoice();
                 break;
 
-            case 'receive_po':
-                this.receivePO();
+            case 'receive_lineitems':
+                this.receiveSelectedLineitems();
                 break;
 
-            case 'rollback_receive_po':
-                this.rollbackPoReceive();
+            case 'rollback_receive_lineitems':
+                this.rollbackReceiveLineitems();
                 break;
 
             case 'create_assets':
@@ -2173,10 +2805,11 @@ function AcqLiTable() {
                 break;
 
             case "cancel_lineitems":
+                console.log('HERE');
                 this.maybeCancelLineitems();
                 break;
 
-            case "change_claim_policy":
+            case "apply_claim_policy":
                 var li_list = this.getSelected();
                 this.claimPolicyPicker.attr("value", null);
                 liClaimPolicyDialog.show();
@@ -2286,7 +2919,12 @@ function AcqLiTable() {
     };
 
     this._cancelLineitems = function(reason) {
-        var id_list = this.getSelected().map(function(o) { return o.id(); });
+        var id_list = this.getSelected(
+            null, null, true, li_active_states);
+        if (!id_list.length) {
+            alert(localeStrings.NO_LI_GENERAL);
+            return;
+        }
         fieldmapper.standardRequest(
             ["open-ils.acq", "open-ils.acq.lineitem.cancel.batch"], {
                 "params": [openils.User.authtoken, id_list, reason],
@@ -2394,16 +3032,27 @@ function AcqLiTable() {
     };
 
     this.batchCreateInvoice = function() {
-        var liIds = this.getSelected(false, null, true /* id_list */)
-        if (!liIds.length) return;
+        var liIds = this.getSelected(
+            false, null, true /* id_list */, li_active_states)
+        if (!liIds.length) {
+            alert(localeStrings.NO_LI_GENERAL);
+            return;
+        }
         var path = oilsBasePath + '/acq/invoice/view?create=1';
         dojo.forEach(liIds, function(li, idx) { path += '&attach_li=' + li });
-        location.href = path;
+        if (openils.XUL.isXUL())
+            openils.XUL.newTabEasy(path, localeStrings.NEW_INVOICE, null, true);
+        else
+            location.href = path;
     };
 
     this.batchLinkInvoice = function(create) {
-        var liIds = this.getSelected(false, null, true /* id_list */)
-        if (!liIds.length) return;
+        var liIds = this.getSelected(
+            false, null, true /* id_list */, li_active_states)
+        if (!liIds.length) {
+            alert(localeStrings.NO_LI_GENERAL);
+            return;
+        }
         if (!self.invoiceLinkDialogManager) {
             self.invoiceLinkDialogManager =
                 new InvoiceLinkDialogManager("li");
@@ -2412,29 +3061,40 @@ function AcqLiTable() {
         acqLitLinkInvoiceDialog.show();
     };
 
-    this.receivePO = function() {
-        if (!this.isPO) return;
+    this.receiveSelectedLineitems = function() {
+        var states = li_post_po_states.filter(
+            function(s) { return s != 'received' });
+        var li_list = this.getSelected(null, null, null, states);
 
-        for (var id in this.liCache) {
-            /* assumption: liCache reflects exactly the
-             * set of LIs that belong to our PO */
-            if (this.liCache[id].state() != "received" &&
-                !this.checkLiAlerts(id)) return;
+        if (!li_list.length) {
+            alert(localeStrings.NO_LI_GENERAL);
+            return;
+        }
+
+        for (var i = 0; i < li_list.length; i++) {
+            var li = li_list[i];
+
+            if (li.state() != "received" &&
+                !this.checkLiAlerts(li.id())) return;
         }
 
         this.show('acq-lit-progress-numbers');
+
         var self = this;
         fieldmapper.standardRequest(
-            ['open-ils.acq', 'open-ils.acq.purchase_order.receive'],
+            ['open-ils.acq', 'open-ils.acq.lineitem.receive.batch'],
             {   async: true,
-                params: [this.authtoken, this.isPO],
+                params: [
+                    this.authtoken,
+                    li_list.map(function(li) { return li.id(); })
+                ],
                 onresponse : function(r) {
                     var resp = openils.Util.readResponse(r);
                     self._updateProgressNumbers(resp, true);
                 },
             }
         );
-    }
+    };
 
     this.issueReceive = function(obj, rollback) {
         var part =
@@ -2487,22 +3147,29 @@ function AcqLiTable() {
         }
     };
 
-    this.rollbackPoReceive = function() {
-        if(!this.isPO) return;
-        if(!confirm(localeStrings.ROLLBACK_PO_RECEIVE_CONFIRM)) return;
+    this.rollbackReceiveLineitems = function() {
+        var li_id_list = this.getSelected(false, null, true);
+        if (!li_id_list.length) {
+            alert(localeStrings.NO_LI_GENERAL);
+            return;
+        }
+
+        if (!confirm(localeStrings.ROLLBACK_LI_RECEIVE_CONFIRM)) return;
+
         this.show('acq-lit-progress-numbers');
         var self = this;
+
         fieldmapper.standardRequest(
-            ['open-ils.acq', 'open-ils.acq.purchase_order.receive.rollback'],
+            ['open-ils.acq', 'open-ils.acq.lineitem.receive.rollback.batch'],
             {   async: true,
-                params: [this.authtoken, this.isPO],
+                params: [this.authtoken, li_id_list],
                 onresponse : function(r) {
                     var resp = openils.Util.readResponse(r);
                     self._updateProgressNumbers(resp, true);
                 },
             }
         );
-    }
+    };
 
     this._updateProgressNumbers = function(resp, reloadOnComplete, onComplete) {
         this.vlAgent.handleResponse(resp,
@@ -2530,15 +3197,21 @@ function AcqLiTable() {
             this.getSelected(
                 true, function(list) {
                     self._createPOFromLineitems(fields, list);
-                }, /* id_list */ true
+                }, /* id_list */ true, li_pre_po_states
             );
         } else {
-            this._createPOFromLineitems(fields, this.getSelected(false, null, true /* id_list */));
+            this._createPOFromLineitems(
+                fields, this.getSelected(
+                    false, null, true /* id_list */, li_pre_po_states)
+            );
         }
     };
 
     this._createPOFromLineitems = function(fields, selected) {
-        if (selected.length == 0) return;
+        if (selected.length == 0) {
+            alert(localeStrings.NO_LI_GENERAL);
+            return;
+        }
         var self = this;
 
         var po = new fieldmapper.acqpo();
@@ -2742,18 +3415,22 @@ function AcqLiTable() {
         }
     };
 
-    this._updateLiState = function(values, state) {
+    this._updateLiState = function(values, state, state_filter) {
         progressDialog.show(true);
         this.getSelected(
             (values.which == 'all'),
             function(list) {
                 self._updateLiStateFromLineitems(values, state, list);
-            }
+            }, false /* id_list */, state_filter
         );
     };
 
     this._updateLiStateFromLineitems = function(values, state, selected) {
-        if(!selected.length) return;
+        if(!selected.length) {
+            try { progressDialog.hide() } catch(E) {};
+            alert(localeStrings.NO_LI_GENERAL);
+            return;
+        }
         dojo.forEach(selected, function(li) {li.state(state);});
         self._updateLiList(null, selected, 0,
             // TODO consider inline updates for efficiency

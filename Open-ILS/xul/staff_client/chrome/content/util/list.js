@@ -11,6 +11,8 @@ util.list = function (id) {
 
     this.sub_sorts = [];
 
+    this.count_for_display = 1;
+
     if (!this.node) throw('Could not find element ' + id);
     switch(this.node.nodeName) {
         case 'listbox' : 
@@ -1227,13 +1229,27 @@ util.list.prototype = {
                 }
     
                 if (typeof params.map_row_to_column == 'function')  {
+		    if (this.columns[i].id == 'lineno'){
+
+		      label = this.count_for_display.toString();
+		      this.count_for_display++;
+
+		    } else {
     
-                    label = params.map_row_to_column(params.row,this.columns[i],this.scratch_data);
-    
+		      label = params.map_row_to_column(params.row,this.columns[i],this.scratch_data);
+
+		    }
                 } else if (typeof this.map_row_to_column == 'function') {
+		    if (this.columns[i].id == 'lineno'){
+
+		      label = this.count_for_display.toString();
+		      this.count_for_display++;
+
+		    } else {
+
+		      label = this.map_row_to_column(params.row,this.columns[i],this.scratch_data);
     
-                    label = this.map_row_to_column(params.row,this.columns[i],this.scratch_data);
-    
+		    }
                 }
                 if (this.columns[i].type == 'checkbox') { treecell.setAttribute('value',label); } else { treecell.setAttribute('label',label ? label : ''); }
                 s += ('treecell = ' + treecell + ' with label = ' + label + '\n');
@@ -1768,6 +1784,14 @@ util.list.prototype = {
                                 if (a.sort_value) {
                                     a = a.sort_value;
                                     b = b.sort_value;
+
+                                    // ensure that numeric values have not
+                                    // morphed into strings along the way.
+                                    if (obj.columns[p].sort_type == 'money' ||
+                                        obj.columns[p].sort_type == 'number') {
+                                        a = Number(a);
+                                        b = Number(b);
+                                    }
                                 } else {
                                     a = a.value;
                                     b = b.value;

@@ -13,11 +13,13 @@
     name = name || "fi:" _ attr_class;
     id = id || attr_class _ "_selector";
     values = values || CGI.param(name); 
+    IF size AND size < 1; size = all_values.size; END;
 -%]
 
 <select id='[% id %]' name='[% name %]'[%
     multiple ? ' multiple="multiple"' : '';
-    size ? (' size="' _ size _ '"') : ''; %]>
+    size ? (' size="' _ size _ '"') : '';
+%] aria-label="[% l('Select item type:') %]">
 [% IF none_ok %]
     <option value=''>[% none_label ? none_label : l('-- Any --') %]</option>
 [% END;

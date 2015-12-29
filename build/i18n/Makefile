@@ -16,7 +16,10 @@ DOJO_CIRC_SRC=../../Open-ILS/web/js/dojo/openils/circ/nls
 DOJO_CON_SRC=../../Open-ILS/web/js/dojo/openils/conify/nls
 DOJO_OPAC_SRC=../../Open-ILS/web/js/dojo/openils/opac/nls
 DOJO_RPT_SRC=../../Open-ILS/web/js/dojo/openils/reports/nls
+DOJO_SERIAL_SRC=../../Open-ILS/web/js/dojo/openils/serial/nls
+DOJO_URLVERIFY_SRC=../../Open-ILS/web/js/dojo/openils/URLVerify/nls
 DOJO_USER_SRC=../../Open-ILS/web/js/dojo/openils/User/nls
+DOJO_VANDELAY_SRC=../../Open-ILS/web/js/dojo/openils/vandelay/nls
 DOJO_WIDGET_SRC=../../Open-ILS/web/js/dojo/openils/widget/nls
 FMIDLSRC=../../Open-ILS/examples/fm_IDL.xml
 FMIDLOUT=fm_IDL.dtd.pot
@@ -97,10 +100,16 @@ newpo:
 	@pot2po $(PROGRESS) -i po/serial.properties/serial.properties.pot -o $(PO)/serial.properties/$(LOCALE).po 
 	@pot2po $(PROGRESS) -i po/tpac/tpac.pot -o $(PO)/tpac/$(LOCALE).po 
 	@pot2po $(PROGRESS) -i po/AutoFieldWidget.js/AutoFieldWidget.js.pot -o $(PO)/AutoFieldWidget.js/$(LOCALE).po 
+	@pot2po $(PROGRESS) -i po/FlattenerGrid.js/FlattenerGrid.js.pot -o $(PO)/FlattenerGrid.js/$(LOCALE).po 
+	@pot2po $(PROGRESS) -i po/PCrudFilterPane.js/PCrudFilterPane.js.pot -o $(PO)/PCrudFilterPane.js/$(LOCALE).po 
 	@pot2po $(PROGRESS) -i po/Searcher.js/Searcher.js.pot -o $(PO)/Searcher.js/$(LOCALE).po 
 	@pot2po $(PROGRESS) -i po/TranslatorPopup.js/TranslatorPopup.js.pot -o $(PO)/TranslatorPopup.js/$(LOCALE).po 
 	@pot2po $(PROGRESS) -i po/XULTermLoader.js/XULTermLoader.js.pot -o $(PO)/XULTermLoader.js/$(LOCALE).po 
 	@pot2po $(PROGRESS) -i po/User.js/User.js.pot -o $(PO)/User.js/$(LOCALE).po 
+	@pot2po $(PROGRESS) -i po/serial.js/serial.js.pot -o $(PO)/serial.js/$(LOCALE).po 
+	@pot2po $(PROGRESS) -i po/URLVerify.js/URLVerify.js.pot -o $(PO)/URLVerify.js/$(LOCALE).po 
+	@pot2po $(PROGRESS) -i po/match_set.js/match_set.js.pot -o $(PO)/match_set.js/$(LOCALE).po 
+	@pot2po $(PROGRESS) -i po/vandelay.js/vandelay.js.pot -o $(PO)/vandelay.js/$(LOCALE).po 
 	@echo "Generated new PO files for locale $(LOCALE)"
 
 # Generate a new set of POT files and entityized fieldmapper IDL
@@ -143,10 +152,16 @@ updatepo: prep_output
 	@pot2po $(PROGRESS) -i po/serial.properties/serial.properties.pot -o $(PO)/serial.properties/$(LOCALE).po  -t $(PO)/serial.properties/$(LOCALE).po 
 	@pot2po $(PROGRESS) -i po/tpac/tpac.pot -o $(PO)/tpac/$(LOCALE).po -t $(PO)/tpac/$(LOCALE).po 
 	@pot2po $(PROGRESS) -i po/AutoFieldWidget.js/AutoFieldWidget.js.pot -o $(PO)/AutoFieldWidget.js/$(LOCALE).po  -t $(PO)/AutoFieldWidget.js/$(LOCALE).po 
+	@pot2po $(PROGRESS) -i po/FlattenerGrid.js/FlattenerGrid.js.pot -o $(PO)/FlattenerGrid.js/$(LOCALE).po  -t $(PO)/FlattenerGrid.js/$(LOCALE).po 
+	@pot2po $(PROGRESS) -i po/PCrudFilterPane.js/PCrudFilterPane.js.pot -o $(PO)/PCrudFilterPane.js/$(LOCALE).po  -t $(PO)/PCrudFilterPane.js/$(LOCALE).po 
 	@pot2po $(PROGRESS) -i po/Searcher.js/Searcher.js.pot -o $(PO)/Searcher.js/$(LOCALE).po  -t $(PO)/Searcher.js/$(LOCALE).po 
 	@pot2po $(PROGRESS) -i po/TranslatorPopup.js/TranslatorPopup.js.pot -o $(PO)/TranslatorPopup.js/$(LOCALE).po  -t $(PO)/TranslatorPopup.js/$(LOCALE).po 
 	@pot2po $(PROGRESS) -i po/User.js/User.js.pot -o $(PO)/User.js/$(LOCALE).po  -t $(PO)/User.js/$(LOCALE).po 
 	@pot2po $(PROGRESS) -i po/XULTermLoader.js/XULTermLoader.js.pot -o $(PO)/XULTermLoader.js/$(LOCALE).po  -t $(PO)/XULTermLoader.js/$(LOCALE).po 
+	@pot2po $(PROGRESS) -i po/serial.js/serial.js.pot -o $(PO)/serial.js/$(LOCALE).po  -t $(PO)/serial.js/$(LOCALE).po 
+	@pot2po $(PROGRESS) -i po/URLVerify.js/URLVerify.js.pot -o $(PO)/URLVerify.js/$(LOCALE).po  -t $(PO)/URLVerify.js/$(LOCALE).po 
+	@pot2po $(PROGRESS) -i po/match_set.js/match_set.js.pot -o $(PO)/match_set.js/$(LOCALE).po  -t $(PO)/match_set.js/$(LOCALE).po 
+	@pot2po $(PROGRESS) -i po/vandelay.js/vandelay.js.pot -o $(PO)/vandelay.js/$(LOCALE).po  -t $(PO)/vandelay.js/$(LOCALE).po 
 	@echo "Updated PO files for locale $(LOCALE)"
 
 dtds2pot:
@@ -167,8 +182,14 @@ dojo2pot:
 	@scripts/dojo_resource.py --pot $(DOJO_CON_SRC)/conify.js --output $(PO)/conify.js/conify.js.pot
 	@scripts/dojo_resource.py --pot $(DOJO_OPAC_SRC)/opac.js --output $(PO)/opac.js/opac.js.pot
 	@scripts/dojo_resource.py --pot $(DOJO_RPT_SRC)/reports.js --output $(PO)/reports.js/reports.js.pot
+	@scripts/dojo_resource.py --pot $(DOJO_SERIAL_SRC)/serial.js --output $(PO)/serial.js/serial.js.pot
+	@scripts/dojo_resource.py --pot $(DOJO_URLVERIFY_SRC)/URLVerify.js --output $(PO)/URLVerify.js/URLVerify.js.pot
 	@scripts/dojo_resource.py --pot $(DOJO_USER_SRC)/User.js --output $(PO)/User.js/User.js.pot
+	@scripts/dojo_resource.py --pot $(DOJO_VANDELAY_SRC)/match_set.js --output $(PO)/match_set.js/match_set.js.pot
+	@scripts/dojo_resource.py --pot $(DOJO_VANDELAY_SRC)/vandelay.js --output $(PO)/vandelay.js/vandelay.js.pot
 	@scripts/dojo_resource.py --pot $(DOJO_WIDGET_SRC)/AutoFieldWidget.js --output $(PO)/AutoFieldWidget.js/AutoFieldWidget.js.pot
+	@scripts/dojo_resource.py --pot $(DOJO_WIDGET_SRC)/FlattenerGrid.js --output $(PO)/FlattenerGrid.js/FlattenerGrid.js.pot
+	@scripts/dojo_resource.py --pot $(DOJO_WIDGET_SRC)/PCrudFilterPane.js --output $(PO)/PCrudFilterPane.js/PCrudFilterPane.js.pot
 	@scripts/dojo_resource.py --pot $(DOJO_WIDGET_SRC)/Searcher.js --output $(PO)/Searcher.js/Searcher.js.pot
 	@scripts/dojo_resource.py --pot $(DOJO_WIDGET_SRC)/TranslatorPopup.js --output $(PO)/TranslatorPopup.js/TranslatorPopup.js.pot
 	@scripts/dojo_resource.py --pot $(DOJO_WIDGET_SRC)/XULTermLoader.js --output $(PO)/XULTermLoader.js/XULTermLoader.js.pot
@@ -186,10 +207,16 @@ po2dojo: mklocale
 	@scripts/dojo_resource.py --create $(PO)/reports.js/$(LOCALE).po --output $(PROJECT)/$(LOCALE)/reports.js
 	@scripts/dojo_resource.py --create $(PO)/selfcheck.js/$(LOCALE).po --output $(PROJECT)/$(LOCALE)/selfcheck.js
 	@scripts/dojo_resource.py --create $(PO)/AutoFieldWidget.js/$(LOCALE).po --output $(PROJECT)/$(LOCALE)/AutoFieldWidget.js
+	@scripts/dojo_resource.py --create $(PO)/FlattenerGrid.js/$(LOCALE).po --output $(PROJECT)/$(LOCALE)/FlattenerGrid.js
+	@scripts/dojo_resource.py --create $(PO)/PCrudFilterPane.js/$(LOCALE).po --output $(PROJECT)/$(LOCALE)/PCrudFilterPane.js
 	@scripts/dojo_resource.py --create $(PO)/Searcher.js/$(LOCALE).po --output $(PROJECT)/$(LOCALE)/Searcher.js
 	@scripts/dojo_resource.py --create $(PO)/TranslatorPopup.js/$(LOCALE).po --output $(PROJECT)/$(LOCALE)/TranslatorPopup.js
 	@scripts/dojo_resource.py --create $(PO)/User.js/$(LOCALE).po --output $(PROJECT)/$(LOCALE)/User.js
 	@scripts/dojo_resource.py --create $(PO)/XULTermLoader.js/$(LOCALE).po --output $(PROJECT)/$(LOCALE)/XULTermLoader.js
+	@scripts/dojo_resource.py --create $(PO)/serial.js/$(LOCALE).po --output $(PROJECT)/$(LOCALE)/serial.js
+	@scripts/dojo_resource.py --create $(PO)/URLVerify.js/$(LOCALE).po --output $(PROJECT)/$(LOCALE)/URLVerify.js
+	@scripts/dojo_resource.py --create $(PO)/match_set.js/$(LOCALE).po --output $(PROJECT)/$(LOCALE)/match_set.js
+	@scripts/dojo_resource.py --create $(PO)/vandelay.js/$(LOCALE).po --output $(PROJECT)/$(LOCALE)/vandelay.js
 
 ils2pot:
 	@scripts/ils_events.py --pot $(EVTSRC) --output $(PO)/ils_events.xml/$(EVTOUT)
@@ -313,8 +340,17 @@ install: updatepo project fmidl2fmidlent fmidlpo2entity-en
 	cp $(PROJECT)/$(LOCALE)/reports.js $(DOJO_RPT_SRC)/$(DOJO_LOCALE)/reports.js
 	mkdir -p $(DOJO_USER_SRC)/$(DOJO_LOCALE)
 	cp $(PROJECT)/$(LOCALE)/User.js $(DOJO_USER_SRC)/$(DOJO_LOCALE)/User.js
+	mkdir -p $(DOJO_SERIAL_SRC)/$(DOJO_LOCALE)
+	cp $(PROJECT)/$(LOCALE)/serial.js $(DOJO_SERIAL_SRC)/$(DOJO_LOCALE)/serial.js
+	mkdir -p $(DOJO_URLVERIFY_SRC)/$(DOJO_LOCALE)
+	cp $(PROJECT)/$(LOCALE)/URLVerify.js $(DOJO_URLVERIFY_SRC)/$(DOJO_LOCALE)/URLVerify.js
+	mkdir -p $(DOJO_VANDELAY_SRC)/$(DOJO_LOCALE)
+	cp $(PROJECT)/$(LOCALE)/match_set.js $(DOJO_VANDELAY_SRC)/$(DOJO_LOCALE)/match_set.js
+	cp $(PROJECT)/$(LOCALE)/vandelay.js $(DOJO_VANDELAY_SRC)/$(DOJO_LOCALE)/vandelay.js
 	mkdir -p $(DOJO_WIDGET_SRC)/$(DOJO_LOCALE)
 	cp $(PROJECT)/$(LOCALE)/AutoFieldWidget.js $(DOJO_WIDGET_SRC)/$(DOJO_LOCALE)/AutoFieldWidget.js
+	cp $(PROJECT)/$(LOCALE)/FlattenerGrid.js $(DOJO_WIDGET_SRC)/$(DOJO_LOCALE)/FlattenerGrid.js
+	cp $(PROJECT)/$(LOCALE)/PCrudFilterPane.js $(DOJO_WIDGET_SRC)/$(DOJO_LOCALE)/PCrudFilterPane.js
 	cp $(PROJECT)/$(LOCALE)/Searcher.js $(DOJO_WIDGET_SRC)/$(DOJO_LOCALE)/Searcher.js
 	cp $(PROJECT)/$(LOCALE)/TranslatorPopup.js $(DOJO_WIDGET_SRC)/$(DOJO_LOCALE)/TranslatorPopup.js
 	cp $(PROJECT)/$(LOCALE)/XULTermLoader.js $(DOJO_WIDGET_SRC)/$(DOJO_LOCALE)/XULTermLoader.js

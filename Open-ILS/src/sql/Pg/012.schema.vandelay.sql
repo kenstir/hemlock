@@ -118,6 +118,7 @@ CREATE TYPE vandelay.bib_queue_queue_type AS ENUM ('bib', 'acq');
 CREATE TABLE vandelay.bib_queue (
 	queue_type	    vandelay.bib_queue_queue_type	NOT NULL DEFAULT 'bib',
 	item_attr_def	BIGINT REFERENCES vandelay.import_item_attr_definition (id) ON DELETE SET NULL DEFERRABLE INITIALLY DEFERRED,
+    match_bucket    INTEGER, -- REFERENCES container.biblio_record_entry_bucket(id);
 	CONSTRAINT vand_bib_queue_name_once_per_owner_const UNIQUE (owner,name,queue_type)
 ) INHERITS (vandelay.queue);
 ALTER TABLE vandelay.bib_queue ADD PRIMARY KEY (id);
@@ -177,12 +178,20 @@ CREATE TABLE vandelay.import_item (
     opac_visible    BOOL,
     internal_id     BIGINT -- queue_type == 'acq' ? acq.lineitem_detail.id : asset.copy.id
 );
+
+CREATE TABLE vandelay.import_bib_trash_group(
+    id           SERIAL  PRIMARY KEY,
+    owner        INTEGER NOT NULL REFERENCES actor.org_unit(id),
+    label        TEXT    NOT NULL, --i18n
+    always_apply BOOLEAN NOT NULL DEFAULT FALSE,
+	CONSTRAINT vand_import_bib_trash_grp_owner_label UNIQUE (owner, label)
+);
  
 CREATE TABLE vandelay.import_bib_trash_fields (
-    id              BIGSERIAL   PRIMARY KEY,
-    owner           INT         NOT NULL REFERENCES actor.org_unit (id) ON UPDATE CASCADE ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED,
-    field           TEXT        NOT NULL,
-	CONSTRAINT vand_import_bib_trash_fields_idx UNIQUE (owner,field)
+    id         BIGSERIAL PRIMARY KEY,
+    grp        INTEGER   NOT NULL REFERENCES vandelay.import_bib_trash_group,
+    field      TEXT      NOT NULL,
+    CONSTRAINT vand_import_bib_trash_fields_once_per UNIQUE (grp, field)
 );
 
 CREATE TABLE vandelay.merge_profile (
@@ -460,7 +469,7 @@ BEGIN
               WHERE attr = attr_def.name
               ORDER BY m.pos LOOP
                 EXECUTE 'SELECT ' || normalizer.func || '(' ||
-                    quote_literal( attr_value ) ||
+                    quote_nullable( attr_value ) ||
                     CASE
                         WHEN normalizer.param_count > 0
                             THEN ',' || REPLACE(REPLACE(BTRIM(normalizer.params,'[]'),E'\'',E'\\\''),E'"',E'\'')
@@ -488,7 +497,7 @@ $_$ LANGUAGE SQL;
 CREATE TYPE vandelay.match_set_test_result AS (record BIGINT, quality INTEGER);
 
 CREATE OR REPLACE FUNCTION vandelay.match_set_test_marcxml(
-    match_set_id INTEGER, record_xml TEXT
+    match_set_id INTEGER, record_xml TEXT, bucket_id INTEGER 
 ) RETURNS SETOF vandelay.match_set_test_result AS $$
 DECLARE
     tags_rstore HSTORE;
@@ -526,7 +535,16 @@ BEGIN
         FROM _vandelay_tmp_jrows;
 
     -- add those joins and the where clause to our query.
-    query_ := query_ || joins || E'\n' || 'JOIN biblio.record_entry bre ON (bre.id = record) ' || 'WHERE ' || wq || ' AND not bre.deleted';
+    query_ := query_ || joins || E'\n';
+
+    -- join the record bucket
+    IF bucket_id IS NOT NULL THEN
+        query_ := query_ || 'JOIN container.biblio_record_entry_bucket_item ' ||
+            'brebi ON (brebi.target_biblio_record_entry = record ' ||
+            'AND brebi.bucket = ' || bucket_id || E')\n';
+    END IF;
+
+    query_ := query_ || 'JOIN biblio.record_entry bre ON (bre.id = record) ' || 'WHERE ' || wq || ' AND not bre.deleted';
 
     -- this will return rows of record,quality
     FOR rec IN EXECUTE query_ USING tags_rstore, svf_rstore LOOP
@@ -537,8 +555,8 @@ BEGIN
     DROP TABLE _vandelay_tmp_jrows;
     RETURN;
 END;
-
 $$ LANGUAGE PLPGSQL;
+
 
 CREATE OR REPLACE FUNCTION vandelay.flatten_marc_hstore(
     record_xml TEXT
@@ -766,6 +784,7 @@ DECLARE
     test_result             vandelay.match_set_test_result%ROWTYPE;
     tmp_rec                 BIGINT;
     match_set               INT;
+    match_bucket            INT;
 BEGIN
     IF TG_OP IN ('INSERT','UPDATE') AND NEW.imported_as IS NOT NULL THEN
         RETURN NEW;
@@ -802,8 +821,10 @@ BEGIN
         RETURN NEW;
     END IF;
 
+    SELECT q.match_bucket INTO match_bucket FROM vandelay.bib_queue q WHERE q.id = NEW.queue;
+
     FOR test_result IN SELECT * FROM
-        vandelay.match_set_test_marcxml(match_set, NEW.marc) LOOP
+        vandelay.match_set_test_marcxml(match_set, NEW.marc, match_bucket) LOOP
 
         INSERT INTO vandelay.bib_match ( queued_record, eg_record, match_score, quality )
             SELECT  

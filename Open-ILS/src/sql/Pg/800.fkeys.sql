@@ -19,7 +19,12 @@
 
 BEGIN;
 
-CREATE RULE protect_bib_rec_delete AS ON DELETE TO biblio.record_entry DO INSTEAD (UPDATE biblio.record_entry SET deleted = TRUE WHERE OLD.id = biblio.record_entry.id; DELETE FROM metabib.metarecord_source_map WHERE source = OLD.id);
+CREATE RULE protect_bib_rec_delete AS
+    ON DELETE TO biblio.record_entry DO INSTEAD (
+        UPDATE biblio.record_entry
+            SET deleted = TRUE
+            WHERE OLD.id = biblio.record_entry.id
+    );
 
 ALTER TABLE actor.usr ADD CONSTRAINT actor_usr_mailing_address_fkey FOREIGN KEY (mailing_address) REFERENCES actor.usr_address (id) DEFERRABLE INITIALLY DEFERRED;
 ALTER TABLE actor.usr ADD CONSTRAINT actor_usr_billing_address_fkey FOREIGN KEY (billing_address) REFERENCES actor.usr_address (id) DEFERRABLE INITIALLY DEFERRED;
@@ -86,6 +91,7 @@ ALTER TABLE serial.unit ADD CONSTRAINT serial_unit_creator_fkey FOREIGN KEY (cre
 ALTER TABLE serial.unit ADD CONSTRAINT serial_unit_editor_fkey FOREIGN KEY (editor) REFERENCES actor.usr (id) ON DELETE SET NULL DEFERRABLE INITIALLY DEFERRED;
 
 ALTER TABLE vandelay.import_item ADD CONSTRAINT imported_as_fkey FOREIGN KEY (imported_as) REFERENCES asset.copy (id) DEFERRABLE INITIALLY DEFERRED;
+ALTER TABLE vandelay.bib_queue ADD CONSTRAINT match_bucket_fkey FOREIGN KEY (match_bucket) REFERENCES container.biblio_record_entry_bucket(id) ON DELETE SET NULL DEFERRABLE INITIALLY DEFERRED;
 
 ALTER TABLE asset.copy_note ADD CONSTRAINT asset_copy_note_copy_fkey FOREIGN KEY (owning_copy) REFERENCES asset.copy (id) DEFERRABLE INITIALLY DEFERRED;
 ALTER TABLE asset.copy_note ADD CONSTRAINT asset_copy_note_creator_fkey FOREIGN KEY (creator) REFERENCES actor.usr (id) ON DELETE SET NULL DEFERRABLE INITIALLY DEFERRED;
@@ -127,6 +133,8 @@ CREATE INDEX by_heading ON authority.record_entry (authority.simple_normalize_he
 
 ALTER TABLE config.z3950_source ADD CONSTRAINT use_perm_fkey FOREIGN KEY (use_perm) REFERENCES permission.perm_list (id) ON UPDATE CASCADE ON DELETE RESTRICT DEFERRABLE INITIALLY DEFERRED;
 
+ALTER TABLE config.z3950_source_credentials ADD CONSTRAINT z3950_source_creds_owner_fkey FOREIGN KEY (owner) REFERENCES actor.org_unit (id) ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED;
+
 ALTER TABLE config.org_unit_setting_type_log ADD CONSTRAINT config_org_unit_setting_type_log_fkey FOREIGN KEY (org) REFERENCES actor.org_unit (id) ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED;
 
 ALTER TABLE config.filter_dialog_filter_set
@@ -142,4 +150,8 @@ ALTER TABLE config.filter_dialog_filter_set
 ALTER TABLE config.filter_dialog_filter_set
     ADD CONSTRAINT config_filter_dialog_filter_set_filters_check
     CHECK (evergreen.is_json(filters));
+
+ALTER TABLE asset.copy ADD CONSTRAINT asset_copy_floating_fkey FOREIGN KEY (floating) REFERENCES config.floating_group (id) DEFERRABLE INITIALLY DEFERRED;
+ALTER TABLE asset.copy_template ADD CONSTRAINT asset_copy_template_floating_fkey FOREIGN KEY (floating) REFERENCES config.floating_group (id) DEFERRABLE INITIALLY DEFERRED;
+
 COMMIT;

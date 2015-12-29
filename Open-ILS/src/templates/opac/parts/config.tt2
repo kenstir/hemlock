@@ -56,6 +56,22 @@ google_analytics.code = 'UA-9999999-99';
 reset_password = 'true';
 
 ##############################################################################
+# Hide various options from user preferences that you might not want to expose
+# if you rely on centralized authentication via open-ils.auth_proxy, like LDAP
+#
+# Username changes can be disabled by the opac.lock_usernames OU setting.
+##############################################################################
+disable_password_change = 'false';
+disable_email_change = 'false';
+
+##############################################################################
+# Some libraries do not do notifications by phone; if not true, then this
+# hides the user preference for phone notifications as well as the phone
+# notification portion of the hold dialogue
+##############################################################################
+allow_phone_notifications = 'true';
+
+##############################################################################
 # Misc. UI Settings
 ##############################################################################
 
@@ -81,10 +97,13 @@ facet.default_display_count = 5;
 
 ##############################################################################
 # Define the advanced search limiters and labels.
+# Each entry is put into a table cell.
 # adv_label is the (translated) label for the limiter
 # adv_attr is an array of possible limiters, the first one that has any
 #   values will be used
 # adv_filter is the same as adv_attr, but for search filter groups
+# adv_size lets you set the height of the adv_attr or adv_filter select box.
+# if adv_size < 1, the box height is set to the number of options in it.
 # adv_break will end the current row. If specified with a label/attr it
 #   will do so *after* that limiter.
 # adv_special will drop in a special entry:
@@ -99,11 +118,15 @@ search.adv_config = [
     {adv_label => l("Audience"),  adv_attr => ["audience_group", "audience"], adv_break => 1},
     {adv_label => l("Video Format"), adv_attr => "vr_format"},
     {adv_label => l("Bib Level"), adv_attr => "bib_level"},
-    {adv_label => l("Literary Form"), adv_attr => "lit_form", adv_break => 1},
+    {adv_label => l("Literary Form"), adv_attr => "lit_form"},
+    {adv_label => l("Shelving Location"), adv_special => "copy_location", js_only => 1, adv_break => 1},
     {adv_label => l("Search Library"), adv_special => "lib_selector"},
     {adv_label => l("Publication Year"), adv_special => "pub_year"},
     {adv_label => l("Sort Results"), adv_special => "sort_selector"},
 ];
+
+# Set the default height of the select boxes. Defaults to 4.
+#search.default_adv_select_height = 4;
 
 ##############################################################################
 # For each search box the default "query type" value can be specified here
@@ -132,5 +155,11 @@ search.basic_config = {
 # Show Google Book Previews
 # Set to 1 or 'true' to enable
 ctx.google_books_preview = 0;
+
+##############################################################################
+
+# Set a maintenance message to display in the catalogue
+#
+# ctx.maintenance_message = "The system will not be available February 29, 2104.";
 
 %]

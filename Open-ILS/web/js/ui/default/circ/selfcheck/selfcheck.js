@@ -287,7 +287,7 @@ SelfCheckManager.prototype.drawLoginPage = function() {
             
             // password is required.  wire up the scan box to read it
             self.updateScanBox({
-                msg : 'Please enter your password', // TODO i18n 
+                msg : localeStrings.ENTER_PASSWORD,
                 handler : function(pw) { self.loginPatron(barcode_or_usrname, pw); },
                 password : true
             });
@@ -299,7 +299,7 @@ SelfCheckManager.prototype.drawLoginPage = function() {
     };
 
     this.updateScanBox({
-        msg : 'Please log in with your username or library barcode.', // TODO
+        msg : localeStrings.PLEASE_LOGIN,
         handler : bcHandler
     });
 }
@@ -479,7 +479,7 @@ SelfCheckManager.prototype.drawCircPage = function() {
 
     var self = this;
     this.updateScanBox({
-        msg : 'Please enter an item barcode', // TODO i18n
+        msg : localeStrings.ENTER_BARCODE,
         handler : function(barcode) { self.checkout(barcode); }
     });
 
@@ -518,7 +518,7 @@ SelfCheckManager.prototype.updateFinesSummary = function() {
                 dojo.byId('oils-selfck-fines-total').innerHTML = 
                     dojo.string.substitute(
                         localeStrings.TOTAL_FINES_ACCOUNT, 
-                        [summary.balance_owed()]
+                        ['<b>' + summary.balance_owed() + '</b>']
                     );
 
                 self.creditPayableBalance = summary.balance_owed();
@@ -640,13 +640,13 @@ SelfCheckManager.prototype.updateHoldsSummary = function() {
     dojo.byId('oils-selfck-holds-total').innerHTML = 
         dojo.string.substitute(
             localeStrings.TOTAL_HOLDS, 
-            [this.holdsSummary.total]
+            ['<b>' + this.holdsSummary.total + '</b>']
         );
 
     dojo.byId('oils-selfck-holds-ready').innerHTML = 
         dojo.string.substitute(
             localeStrings.HOLDS_READY_FOR_PICKUP, 
-            [this.holdsSummary.ready]
+            ['<b>' + this.holdsSummary.ready + '</b>']
         );
 }
 
@@ -676,13 +676,13 @@ SelfCheckManager.prototype.updateCircSummary = function(increment) {
     dojo.byId('oils-selfck-circ-account-total').innerHTML = 
         dojo.string.substitute(
             localeStrings.TOTAL_ITEMS_ACCOUNT, 
-            [this.circSummary.total]
+            ['<b>' + this.circSummary.total + '</b>']
         );
 
     dojo.byId('oils-selfck-circ-session-total').innerHTML = 
         dojo.string.substitute(
             localeStrings.TOTAL_ITEMS_SESSION, 
-            [this.circSummary.session]
+            ['<b>' + this.circSummary.session + '</b>']
         );
 }
 
@@ -735,7 +735,7 @@ SelfCheckManager.prototype.insertHold = function(data) {
     var row = this.holdTemplate.cloneNode(true);
 
     if(data.mvr.isbn()) {
-        this.byName(row, 'jacket').setAttribute('src', '/opac/extras/ac/jacket/small/' + data.mvr.isbn());
+        this.byName(row, 'jacket').setAttribute('src', '/opac/extras/ac/jacket/small/r/' + data.mvr.doc_id());
     }
 
     this.byName(row, 'title').innerHTML = data.mvr.title();
@@ -835,7 +835,7 @@ SelfCheckManager.prototype.drawFinesPage = function() {
                 self.byName(row, 'details').innerHTML = data.record.title();
 
             } else if(type == 'grocery') {
-                self.byName(row, 'type').innerHTML = 'Miscellaneous'; // Go ahead and head off any confusion around "grocery".  TODO i18n
+                self.byName(row, 'type').innerHTML = localeStrings.MISCELLANEOUS; // Go ahead and head off any confusion around "grocery".
                 self.byName(row, 'details').innerHTML = data.transaction.last_billing_type();
             }
 
@@ -1186,8 +1186,8 @@ SelfCheckManager.prototype.displayCheckout = function(evt, type, itemsOut) {
     var circ = evt.payload.circ;
     var row = this.circTemplate.cloneNode(true);
 
-    if(record.isbn()) {
-        this.byName(row, 'jacket').setAttribute('src', '/opac/extras/ac/jacket/small/' + record.isbn());
+    if(record.id()) {
+        this.byName(row, 'jacket').setAttribute('src', '/opac/extras/ac/jacket/small/r/' + record.doc_id());
     }
 
     this.byName(row, 'barcode').innerHTML = copy.barcode();

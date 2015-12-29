@@ -4,6 +4,7 @@
     myopac_page = "lists"  
     limit = ctx.bookbags_limit;
     offset = ctx.bookbags_offset;
+    item_page = ctx.bookbags_item_page;
 %]
 <div id='myopac_bookbag_div' style="padding:5px;">
 
@@ -67,12 +68,43 @@
         <span class='float-left' style='padding-left: 10px;'>
             [%- IF offset > 0 -%]
                 <a href='[% mkurl(ctx.opac_root _ '/myopac/lists', {
-                    limit => limit, offset => (offset - limit)
+                    offset => (offset - limit)
                 }) %]'><span class="nav_arrow_fix">&#9668;</span>[% l('Previous') %]</a>
+            [%- END; -%]
+            [%- IF (offset - (limit * 3)) >= 0 -%]
+                <a href='[% mkurl(ctx.opac_root _ '/myopac/lists', {
+                    offset => (offset - (limit * 3))
+                }) %]'>[% ((offset - (limit * 3)) / limit) + 1 %]</a>
+            [%- END; -%]
+            [%- IF (offset - (limit * 2)) >= 0 -%]
+                <a href='[% mkurl(ctx.opac_root _ '/myopac/lists', {
+                    offset => (offset - (limit * 2))
+                }) %]'>[% ((offset - (limit * 2)) / limit) + 1 %]</a>
+            [%- END; -%]
+            [%- IF (offset - limit) >= 0 -%]
+                <a href='[% mkurl(ctx.opac_root _ '/myopac/lists', {
+                    offset => (offset - limit)
+                }) %]'>[% ((offset - limit) / limit) + 1 %]</a>
+            [%- END; -%]
+            <span class="bookbag-paginator-selected" >[% (offset / limit) + 1 %]</span>
+            [%- IF (offset + limit) < ctx.bookbag_count -%]
+                <a href='[% mkurl(ctx.opac_root _ '/myopac/lists', {
+                    offset => (offset + limit)
+                }) %]'>[% ((offset + limit) / limit) + 1 %]</a>
+            [%- END; -%]
+            [%- IF (offset + (limit * 2)) < ctx.bookbag_count -%]
+                <a href='[% mkurl(ctx.opac_root _ '/myopac/lists', {
+                    offset => (offset + (limit * 2))
+                }) %]'>[% ((offset + (limit * 2)) / limit) + 1 %]</a>
+            [%- END; -%]
+            [%- IF (offset + (limit * 3)) < ctx.bookbag_count -%]
+                <a href='[% mkurl(ctx.opac_root _ '/myopac/lists', {
+                    offset => (offset + (limit * 3))
+                }) %]'>[% ((offset + (limit * 3)) / limit) + 1 %]</a>
             [%- END; -%]
             [%- IF (ctx.bookbag_count - offset) > limit; -%] 
                 <a href='[% mkurl(ctx.opac_root _ '/myopac/lists', {
-                    limit => limit, offset => (offset + limit)
+                    offset => (offset + limit)
                 }) %]'>[% l('Next') %]<span class="nav_arrow_fix">&#9658;</span></a>
             </span>
             [%- END; -%]
@@ -86,7 +118,7 @@
             <div class="bookbag-controls most">
                 [% baseurl = ctx.opac_root _ '/myopac/lists';
                 IF bbag.id != CGI.param("bbid");
-                    url = mkurl(baseurl,{bbid => bbag.id},['edit_notes','sort']);
+                    url = mkurl(baseurl,{bbid => bbag.id, item_page => 1},['edit_notes','sort']);
                     ltitle = l("Show items in list");
                 ELSE;
                     url = mkurl(baseurl, {}, ['bbid', 'edit_notes', 'sort']);
@@ -121,7 +153,7 @@
                     [% END %]
                 </div>
             </form>
-            <form action="[% mkurl(ctx.opac_root _ '/myopac/list/update') %]" method="post">
+            <form action="[% mkurl(ctx.opac_root _ '/myopac/list/update') %]" method="post" onsubmit="return confirm('[% l('Do you really want to delete this list?') %]')">
                 <div class="bookbag-controls">
                     <input type="hidden" name="list" value="[% bbag.id %]" />
                     <input type="hidden" name="action" value="delete" />
@@ -151,6 +183,27 @@
                     [% END %]
                 </div>
             </form>
+            [% IF ctx.is_staff %]
+            <div class="bookbag-controls">
+                <input 
+                    type="submit" 
+                    onclick='
+                       var path = 
+                          "oils://remote/xul/server/cat/bucketz39_dialog.xul";
+                        window.openDialog(
+                            xulG.url_prefix(path),
+                            "bucketz39_dialog",
+                            "width=800,height=500",
+                            "[% ctx.user.id %]",
+                            "[% ctx.authtoken %]",
+                            "[% ctx.user.ws_ou %]",
+                            "[% bbag.id %]",
+                            xulG
+                        )'
+                    value="[% l('Locate Z39.50 Matches') %]" 
+                />
+            </div>
+            [% END %]
             <div class="bookbag-controls">
                 [% IF bbag.pub == 't'; %]
                 <a target='_blank' href='/opac/extras/feed/bookbag/rss2-full/[% bbag.id %]'><img
@@ -238,6 +291,9 @@
                     <td class="list_entry">
                         <a href="[% mkurl(ctx.opac_root _ '/myopac/lists', {sort=>(CGI.param('sort') == 'authorsort' ? 'authorsort.descending' : 'authorsort')}) %]">[% l('Author(s)') %]</a>
                     </td>
+                    <td class='list_entry'>
+                        [% l('Local Call Number') %]
+                    </td>
                     <td class="list_entry">
                         <a href="[% mkurl(ctx.opac_root _ '/myopac/lists', {sort=>(CGI.param('sort') == 'pubdate' ? 'pubdate.descending' : 'pubdate')}) %]">[% l('Publication Date') %]</a>
                     </td>
@@ -285,6 +341,23 @@
                             -%]">[% attrs.author | html %]</a>
                     </td>
                     <td class="list_entry">
+                        [% 
+                            copy = attrs.holdings.0;
+                            IF copy;
+                                # only show a relevant call number
+                                copy_org = ctx.get_aou_by_shortname(copy.owner);
+                                FOR ctx_org IN [ctx.pref_ou, ctx.search_ou, ctx.home_ou, ctx.physical_loc];
+                                    NEXT UNLESS ctx_org;
+                                    ctx_org = ctx.get_aou(ctx_org);
+                                    IF ctx.org_within_scope(ctx_org, copy_org, ctx_org.ou_type.depth);
+                                        l('[_1] ([_2])', copy.label, copy_org.name) | html;
+                                        LAST;
+                                    END;
+                                END;
+                            END;
+                        %]
+                    </td>
+                    <td class="list_entry">
                           [% attrs.pubdate | html %]
                     </td>
                     <td class="list_entry">
@@ -318,6 +391,60 @@
                 [% END %]
             </tbody>
         </table>
+
+        [% IF ctx.bb_page_count > 1; %]
+            <div class="header_middle" style="padding-top:7px;">
+                <span class="float-left" style="padding-left:34px;">[% l('Navigate Selected List ') %]</span>
+                <span class='float-left' style='padding-left: 10px;'>
+                    [%- IF item_page > 1 -%]
+                        <a href='[% mkurl(ctx.opac_root _ '/myopac/lists', {
+                            item_page => item_page - 1
+                        }) %]'><span class="nav_arrow_fix">&#9668;</span>[% l('Previous') %]</a>
+                    [%- END; -%]
+
+                    [%- IF (item_page - 3) >= 1 -%]
+                        <a href='[% mkurl(ctx.opac_root _ '/myopac/lists', {
+                            item_page => item_page - 3
+                        }) %]'>[% item_page - 3 %]</a>
+                    [%- END; -%]
+                    [%- IF (item_page - 2) >= 1 -%]
+                        <a href='[% mkurl(ctx.opac_root _ '/myopac/lists', {
+                            item_page => item_page - 2
+                        }) %]'>[% item_page - 2 %]</a>
+                    [%- END; -%]
+                    [%- IF (item_page - 1) >= 1 -%]
+                        <a href='[% mkurl(ctx.opac_root _ '/myopac/lists', {
+                            item_page => item_page - 1
+                        }) %]'>[% item_page - 1%]</a>
+                    [%- END; -%]
+                    <span class="bookbag-paginator-selected" >[% item_page %]</span>
+                    [%- IF (item_page + 1) <= ctx.bb_page_count -%]
+                        <a href='[% mkurl(ctx.opac_root _ '/myopac/lists', {
+                            item_page => item_page + 1
+                        }) %]'>[% item_page + 1 %]</a>
+                    [%- END; -%]
+                    [%- IF (item_page + 2) <= ctx.bb_page_count -%]
+                        <a href='[% mkurl(ctx.opac_root _ '/myopac/lists', {
+                            item_page => item_page + 2
+                        }) %]'>[% item_page + 2 %]</a>
+                    [%- END; -%]
+                    [%- IF (item_page + 3) <= ctx.bb_page_count -%]
+                        <a href='[% mkurl(ctx.opac_root _ '/myopac/lists', {
+                            item_page => item_page + 3
+                        }) %]'>[% item_page + 3 %]</a>
+                    [%- END; -%]
+
+                    [%- IF (item_page + 1) <= ctx.bb_page_count; -%]
+                        <a href='[% mkurl(ctx.opac_root _ '/myopac/lists', {
+                            item_page => item_page + 1
+                        }) %]'>[% l('Next') %]<span class="nav_arrow_fix">&#9658;</span></a>
+                    [%- END; -%]
+                 </span>
+            </div>
+            <div class="clear-both"></div>
+        [% END %]
+        <br/>
+
         </form>
         [% END %]
         [% END %]
@@ -325,10 +452,10 @@
     [% END %]
 
     <span id='bb_publish_text' class='hide_me'>
-[% |l %]Sharing a Bookbag means that the contents 
-of the Bookbag will be visible to others.  
-To see the public view of a shared Bookbag, 
-click on the Bookbag's name in the Bookbag list.[% END %]
+[% l("Sharing a Bookbag means that the contents " _
+"of the Bookbag will be visible to others. " _
+"To see the public view of a shared Bookbag, " _
+"click on the Bookbag's name in the Bookbag list.") %]
     </span>
 </div>
 [% END %]

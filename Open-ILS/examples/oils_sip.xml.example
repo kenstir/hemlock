@@ -87,7 +87,7 @@
 					<item name='patron enable' value='false'/>
 					<item name='hold' value='false'/>
 					<item name='renew' value='true'/>
-					<item name='renew all' value='false'/>
+					<item name='renew all' value='true'/>
 				</supports>
 				<options>
 					<!-- msg64, the patron information request can be
@@ -99,6 +99,17 @@
 					  default behaviour in previous versions of Evergreen.
 					-->
 					<option name='msg64_summary_datatype' value='barcode' />
+
+
+                    <!--
+                        When set, holds will be returned to the SIP client as copy
+                        barcodes instead of title strings.  This is useful, in 
+                        particular, for making subsequent calls for hold cancellation.  
+                    -->
+                    <!--
+                    <option name='msg64_hold_datatype' value='barcode' />
+                    -->
+
 					<!--
 						If enabled, the PC field in patron-info requests will return the non-translated profile name
 					<option name='patron_type_uses_code' value='true' />
@@ -111,6 +122,13 @@
                         use the SIP date format.
                     <option name='use_sip_date_format' value='true' />
                     -->
+
+					<!--
+						If enabled, return the calculated value for the recall
+						flag instead of always returning not-OK
+					<option name='patron_calculate_recal_ok' value='true' />
+					-->
+
 				</options>
 
                 <checkin_override>

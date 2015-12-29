@@ -1,5 +1,14 @@
+[% USE CGI; %]
 [% WRAPPER "base.tt2" %]
 <script>
+    [%- IF CGI.param('context') == 'scv' %]
+    xulG = parent.xulG;
+    [%- END %]
+    [%- IF CGI.param('id') != 'new' %]
+    sub_id = [% CGI.param('id') %];
+    [%- ELSE %]
+    sub_id = -1;
+    [%- END %]
     var cap_editor;
     var cap_importer;
 </script>
@@ -7,10 +16,18 @@
 </script>
 <script src="[% ctx.media_prefix %]/js/ui/default/serial/subscription.js">
 </script>
+<script src="[% ctx.media_prefix %]/js/ui/default/serial/subscription/distribution.js"></script>
 <script src="[% ctx.media_prefix %]/js/ui/default/serial/subscription/caption_and_pattern.js">
 </script>
 <script src="[% ctx.media_prefix %]/js/ui/default/serial/subscription/issuance.js">
 </script>
+[% IF CGI.param('context') == 'scv' -%]
+<!-- links in the frame have no style at all, let's give them one -->
+<style type="text/css">
+    a { color: #1155CC; text-decoration: underline }
+    a:hover { text-decoration: none }
+</style>
+[%- END %]
 
 <div dojoType="dijit.layout.ContentPane" layout="top" class="oils-header-panel">
     <div>[% l('Subscription Details') %]</div>
@@ -28,6 +45,42 @@
     class="oils-serial-tab-container">
 
     <!-- Subscription Summary -->
+    [%- IF CGI.param('context') == 'scv' -%]
+    <div dojoType="dijit.layout.ContentPane" title="[% l('View/Edit') %]" selected="true">
+        <div dojoType="dijit.layout.ContentPane" layout="top"
+            class="oils-header-panel lesser">
+            <div>[% l('Subscriptions') %]</div>
+            <div style="margin-right: 16px;">
+                <span dojoType="dijit.form.Button"
+                    onClick="open_notes('sub', ssub_grid);">[% l('View/Edit Notes') %]</span>
+            </div>
+        </div>
+
+        <script type="dojo/connect" event="onShow">
+            if(ssub_grid.store && !ssub_grid._fresh) { // onShow fires twice on initial page load; we only want to run the second time (and subsequent times)
+                ssub_grid.resetStore();
+                if (sub_id) {
+                    ssub_grid.loadAll(
+                        {"order_by": {"ssub": "start_date DESC"}},
+                        {"id": sub_id}
+                    );
+                }
+                ssub_grid._fresh = true;
+            }
+        </script>
+        <table jsId="ssub_grid"
+            dojoType="openils.widget.AutoGrid"
+            query="{id: '*'}"
+            fieldOrder="['id','owning_lib','start_date','end_date']"
+            suppressFields="['record_entry']"
+            fmClass="ssub"
+            showPaginator="true"
+            onPostSubmit="attempt_reload_opac"
+            showSequenceFields="true"
+            editOnEnter="true">
+        </table>
+    </div>
+    [%- ELSE -%]
     <div dojoType="dijit.layout.ContentPane" title="[% l('Summary') %]" selected="true">
         <script type="dojo/connect" event="onShow">
             load_sub_grid(sub_id);
@@ -56,6 +109,7 @@
             </thead>
         </table>
     </div>
+    [%- END -%]
 
     <!-- Distributions -->
     <div dojoType="dijit.layout.ContentPane" jsId="distributions_tab"
@@ -76,6 +130,11 @@
                         "disabled": true, "value": sub_id
                     });
 
+                [%- IF CGI.param('context') == 'scv' %]
+                // attach the holding_lib selector to the record_entry selector
+                dist_grid.overrideWidgetArgs.holding_lib = {'dijitArgs' : {'onChange' : function(value) { populate_sre_selector(dist_grid, value); } }};
+
+                [%- END %]
                 var _display_grouping_store = new dojo.data.ItemFileReadStore({
                     "data": {
                         "identifier": "display_grouping",
@@ -109,6 +168,35 @@
                     dist_grid.overrideEditWidgets.display_grouping.shove = {
                         "create": default_display_grouping
                     };
+
+                var _summary_method_store = new dojo.data.ItemFileReadStore({
+                    "data": {
+                        "identifier": "summary_method",
+                        "label": "label",
+                        "items": [
+                            {"summary_method": "add_to_sre",
+                                "label": "[% l('Add to record entry') %]"},
+                            {"summary_method": "merge_with_sre",
+                                "label": "[% l('Merge with record entry') %]"},
+                            {"summary_method": "use_sre_only",
+                                "label": "[% l('Use record entry only') %]"},
+                            {"summary_method": "use_sdist_only",
+                                "label": "[% l('Do not use record entry') %]"}
+                        ]
+                    }
+                });
+
+                dist_grid.overrideEditWidgets.summary_method =
+                    new dijit.form.FilteringSelect({
+                        "store": _summary_method_store,
+                        "searchAttr": "label",
+                        "name": "summary_method"
+                    });
+                    // TODO: add setting for default selection?
+                    dist_grid.overrideEditWidgets.summary_method.shove = {
+                        "create": "add_to_sre"
+                    };
+
             }
         </script>
         [% INCLUDE "serial/subscription/distribution.tt2" %]
@@ -173,16 +261,15 @@
     <div dojoType="dijit.Dialog" jsId="clone_dialog" title="[% l('Clone Subscription') %]"
         style="width: 460px;" execute="clone_subscription(arguments[0]);">
         <div style="margin-bottom: 0.5em;">
-            [% |l %]This feature will clone a subscription and all of its subscription
-            notes, distributions, distribution notes, captions and patterns,
-            streams, and routing list users.[% END %]</div>
+            [% l('This feature will clone a subscription and all of its subscription ' _
+            'notes, distributions, distribution notes, captions and patterns, ' _
+            'streams, and routing list users.') %]</div>
         <div style="margin-bottom: 0.5em;">
-            [% |l %]Holdings-related objects, like issuances, items, units, and
-            summaries will <em>not</em> be cloned.[% END %]
+            [% l('Holdings-related objects, like issuances, items, units, and ' _
+            'summaries will <em>not</em> be cloned.') %]
         </div>
         <div style="margin-bottom: 0.5em;">
-            [% |l %]To what bibliographic record should the new subscription be
-            attached?[% END %]
+            [% l('To what bibliographic record should the new subscription be attached?') %]
         </div>
         <table width="100%">
             <tr>

@@ -1520,8 +1520,68 @@ BEGIN
 END;
 $func$ LANGUAGE PLPGSQL;
 
+-- Given an authority record's ID, control set ID (if known), and marc::XML,
+-- return all links to other authority records in the form of rows that
+-- can be inserted into authority.authority_linking.
+CREATE OR REPLACE FUNCTION authority.calculate_authority_linking(
+    rec_id BIGINT, rec_control_set INT, rec_marc_xml XML
+) RETURNS SETOF authority.authority_linking AS $func$
+DECLARE
+    acsaf       authority.control_set_authority_field%ROWTYPE;
+    link        TEXT;
+    aal         authority.authority_linking%ROWTYPE;
+BEGIN
+    IF rec_control_set IS NULL THEN
+        -- No control_set on record?  Guess at one
+        SELECT control_set INTO rec_control_set
+            FROM authority.control_set_authority_field
+            WHERE tag IN (
+                SELECT UNNEST(
+                    XPATH('//*[starts-with(@tag,"1")]/@tag',rec_marc_xml)::TEXT[]
+                )
+            ) LIMIT 1;
+
+        IF NOT FOUND THEN
+            RAISE WARNING 'Could not even guess at control set for authority record %', rec_id;
+            RETURN;
+        END IF;
+    END IF;
+
+    aal.source := rec_id;
+
+    FOR acsaf IN
+        SELECT * FROM authority.control_set_authority_field
+        WHERE control_set = rec_control_set
+            AND linking_subfield IS NOT NULL
+            AND main_entry IS NOT NULL
+    LOOP
+        link := SUBSTRING(
+            (XPATH('//*[@tag="' || acsaf.tag || '"]/*[@code="' ||
+                acsaf.linking_subfield || '"]/text()', rec_marc_xml))[1]::TEXT,
+            '\d+$'
+        );
+
+        -- Ignore links that are null, malformed, circular, or point to
+        -- non-existent authority records.
+        IF link IS NOT NULL AND link::BIGINT <> rec_id THEN
+            PERFORM * FROM authority.record_entry WHERE id = link::BIGINT;
+            IF FOUND THEN
+                aal.target := link::BIGINT;
+                aal.field := acsaf.id;
+                RETURN NEXT aal;
+            END IF;
+        END IF;
+    END LOOP;
+END;
+$func$ LANGUAGE PLPGSQL;
+
 -- AFTER UPDATE OR INSERT trigger for authority.record_entry
 CREATE OR REPLACE FUNCTION authority.indexing_ingest_or_delete () RETURNS TRIGGER AS $func$
+DECLARE
+    ashs    authority.simple_heading%ROWTYPE;
+    mbe_row metabib.browse_entry%ROWTYPE;
+    mbe_id  BIGINT;
+    ash_id  BIGINT;
 BEGIN
 
     IF NEW.deleted IS TRUE THEN -- If this authority is deleted
@@ -1529,6 +1589,12 @@ BEGIN
         DELETE FROM authority.full_rec WHERE record = NEW.id; -- Avoid validating fields against deleted authority records
         DELETE FROM authority.simple_heading WHERE record = NEW.id;
           -- Should remove matching $0 from controlled fields at the same time?
+
+        -- XXX What do we about the actual linking subfields present in
+        -- authority records that target this one when this happens?
+        DELETE FROM authority.authority_linking
+            WHERE source = NEW.id OR target = NEW.id;
+
         RETURN NEW; -- and we're done
     END IF;
 
@@ -1543,10 +1609,36 @@ BEGIN
         PERFORM authority.propagate_changes(NEW.id) FROM authority.record_entry WHERE id = NEW.id;
 
         DELETE FROM authority.simple_heading WHERE record = NEW.id;
+        DELETE FROM authority.authority_linking WHERE source = NEW.id;
     END IF;
 
-    INSERT INTO authority.simple_heading (record,atag,value,sort_value)
-        SELECT record, atag, value, sort_value FROM authority.simple_heading_set(NEW.marc);
+    INSERT INTO authority.authority_linking (source, target, field)
+        SELECT source, target, field FROM authority.calculate_authority_linking(
+            NEW.id, NEW.control_set, NEW.marc::XML
+        );
+
+    FOR ashs IN SELECT * FROM authority.simple_heading_set(NEW.marc) LOOP
+
+        INSERT INTO authority.simple_heading (record,atag,value,sort_value)
+            VALUES (ashs.record, ashs.atag, ashs.value, ashs.sort_value);
+            ash_id := CURRVAL('authority.simple_heading_id_seq'::REGCLASS);
+
+        SELECT INTO mbe_row * FROM metabib.browse_entry
+            WHERE value = ashs.value AND sort_value = ashs.sort_value;
+
+        IF FOUND THEN
+            mbe_id := mbe_row.id;
+        ELSE
+            INSERT INTO metabib.browse_entry
+                ( value, sort_value ) VALUES
+                ( ashs.value, ashs.sort_value );
+
+            mbe_id := CURRVAL('metabib.browse_entry_id_seq'::REGCLASS);
+        END IF;
+
+        INSERT INTO metabib.browse_entry_simple_heading_map (entry,simple_heading) VALUES (mbe_id,ash_id);
+
+    END LOOP;
 
     -- Flatten and insert the afr data
     PERFORM * FROM config.internal_flag WHERE name = 'ingest.disable_authority_full_rec' AND enabled;
@@ -1803,6 +1895,10 @@ BEGIN
             attr_set.deposit_amount := NULL;
             attr_set.copy_number := NULL;
             attr_set.price := NULL;
+            attr_set.circ_modifier := NULL;
+            attr_set.location := NULL;
+            attr_set.barcode := NULL;
+            attr_set.call_number := NULL;
 
             IF tmp_attr_set.pr != '' THEN
                 tmp_str = REGEXP_REPLACE(tmp_attr_set.pr, E'[^0-9\\.]', '', 'g');
@@ -1861,7 +1957,25 @@ BEGIN
                 END IF;
             END IF;
 
-            IF tmp_attr_set.circ_mod != '' THEN
+            IF COALESCE(tmp_attr_set.circ_mod, '') = '' THEN
+
+                -- no circ mod defined, see if we should apply a default
+                SELECT INTO attr_set.circ_modifier TRIM(BOTH '"' FROM value) 
+                    FROM actor.org_unit_ancestor_setting(
+                        'vandelay.item.circ_modifier.default', 
+                        attr_set.owning_lib
+                    );
+
+                -- make sure the value from the org setting is still valid
+                PERFORM 1 FROM config.circ_modifier WHERE code = attr_set.circ_modifier;
+                IF NOT FOUND THEN
+                    attr_set.import_error := 'import.item.invalid.circ_modifier';
+                    attr_set.error_detail := tmp_attr_set.circ_mod;
+                    RETURN NEXT attr_set; CONTINUE; 
+                END IF;
+
+            ELSE 
+
                 SELECT code INTO attr_set.circ_modifier FROM config.circ_modifier WHERE code = tmp_attr_set.circ_mod;
                 IF NOT FOUND THEN
                     attr_set.import_error := 'import.item.invalid.circ_modifier';
@@ -1879,7 +1993,23 @@ BEGIN
                 END IF;
             END IF;
 
-            IF tmp_attr_set.cl != '' THEN
+            IF COALESCE(tmp_attr_set.cl, '') = '' THEN
+                -- no location specified, see if we should apply a default
+
+                SELECT INTO attr_set.location TRIM(BOTH '"' FROM value) 
+                    FROM actor.org_unit_ancestor_setting(
+                        'vandelay.item.copy_location.default', 
+                        attr_set.owning_lib
+                    );
+
+                -- make sure the value from the org setting is still valid
+                PERFORM 1 FROM asset.copy_location WHERE id = attr_set.location;
+                IF NOT FOUND THEN
+                    attr_set.import_error := 'import.item.invalid.location';
+                    attr_set.error_detail := tmp_attr_set.cs;
+                    RETURN NEXT attr_set; CONTINUE; 
+                END IF;
+            ELSE
 
                 -- search up the org unit tree for a matching copy location
                 WITH RECURSIVE anscestor_depth AS (
@@ -1948,6 +2078,9 @@ BEGIN
 
 END;
 $$ LANGUAGE PLPGSQL;
+
+
+
 
 CREATE OR REPLACE FUNCTION vandelay.ingest_bib_items ( ) RETURNS TRIGGER AS $func$
 DECLARE
@@ -2188,3 +2321,51 @@ return $retval;
 $BODY$ LANGUAGE plperlu IMMUTABLE STRICT COST 100;
 
 -- user activity functions --
+
+
+-- find the most relevant set of credentials for the Z source and org
+CREATE OR REPLACE FUNCTION config.z3950_source_credentials_lookup
+        (source TEXT, owner INTEGER) 
+        RETURNS config.z3950_source_credentials AS $$
+
+    SELECT creds.* 
+    FROM config.z3950_source_credentials creds
+        JOIN actor.org_unit aou ON (aou.id = creds.owner)
+        JOIN actor.org_unit_type aout ON (aout.id = aou.ou_type)
+    WHERE creds.source = $1 AND creds.owner IN ( 
+        SELECT id FROM actor.org_unit_ancestors($2) 
+    )
+    ORDER BY aout.depth DESC LIMIT 1;
+
+$$ LANGUAGE SQL STABLE;
+
+-- since we are not exposing config.z3950_source_credentials
+-- via the IDL, providing a stored proc gives us a way to
+-- set values in the table via cstore
+CREATE OR REPLACE FUNCTION config.z3950_source_credentials_apply
+        (src TEXT, org INTEGER, uname TEXT, passwd TEXT) 
+        RETURNS VOID AS $$
+BEGIN
+    PERFORM 1 FROM config.z3950_source_credentials
+        WHERE owner = org AND source = src;
+
+    IF FOUND THEN
+        IF COALESCE(uname, '') = '' AND COALESCE(passwd, '') = '' THEN
+            DELETE FROM config.z3950_source_credentials 
+                WHERE owner = org AND source = src;
+        ELSE 
+            UPDATE config.z3950_source_credentials 
+                SET username = uname, password = passwd
+                WHERE owner = org AND source = src;
+        END IF;
+    ELSE
+        IF COALESCE(uname, '') <> '' OR COALESCE(passwd, '') <> '' THEN
+            INSERT INTO config.z3950_source_credentials
+                (source, owner, username, password) 
+                VALUES (src, org, uname, passwd);
+        END IF;
+    END IF;
+END;
+$$ LANGUAGE PLPGSQL;
+
+

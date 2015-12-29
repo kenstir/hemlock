@@ -15,7 +15,11 @@
   <script type="text/javascript">
 // <![CDATA[
 
-  // FIXME - some I18N love still needed in this file.  See @alt on img tags, and javascript for tab names
+  function get_i18n_str(id) {
+     var e = document.getElementById(id);
+     if (e) return e.textContent;
+     return "Error: i18n string not present: " + id;
+  }
 
   function SearchOnBlur() {
         var textbox = document.getElementById("quicksearch");
@@ -41,11 +45,11 @@
         var search_depth = 0; // 0 = consortium, 1 = system, 2 = library, 3 = sub-library, etc.
         
         if(textbox && textbox.value != "") {
-                var opac_url =  xulG.url_prefix('opac_rresult') + "?rt=keyword&tp=keyword&l=" + home_ou_id + "&d=" + search_depth +"&f=&t=" + escape(textbox.value);
+                var opac_url =  xulG.url_prefix('opac_rresult') + "?rt=keyword&tp=keyword&l=" + home_ou_id + "&d=" + search_depth +"&f=&t=" + encodeURIComponent(textbox.value);
                 if (urls.opac_rresult.match(/\/eg\/opac\/results/)) {
-                    opac_url =  xulG.url_prefix('opac_rresult') + "?query=" + escape(textbox.value);
+                    opac_url =  xulG.url_prefix('opac_rresult') + "?query=" + encodeURIComponent(textbox.value);
                 }
-                var params = {'tab_name':'Catalog'};
+                var params = {'tab_name': get_i18n_str('staff.client.portal.catalog.tab_name') };
                 var content_params = { 'session' : ses(), 'authtime' : ses('authtime'), 'opac_url' : opac_url };
                 xulG.set_tab(urls.XUL_OPAC_WRAPPER, params, content_params);
         }
@@ -90,7 +94,7 @@
                         data.stash_retrieve(); 
                         document.getElementById('staffname').innerHTML = ", " + data.list.au[0].first_given_name(); 
                         home_ou_id = data.list.au[0].ws_ou();
-                        xulG.set_tab_name('Portal');
+                        xulG.set_tab_name(get_i18n_str('staff.client.portal.tab_name'));
                 }
                 function jb_open_eg_web_page(path, label) {
                         var loc = urls.XUL_BROWSER + '?url=' + window.escape(xulG.url_prefix('EG_WEB_BASE') + '/' + path);
@@ -120,7 +124,7 @@
                 //http://208.119.72.68/evergreen/evergreenmap.html
                 function address_map(newtab) {
                         loc = "http://maps.google.com";
-                        var params = {'tab_name':'Locate Address In Map'};
+                        var params = {'tab_name':get_i18n_str('staff.client.portal.address_map.tab_name')};
                         
                         if(newtab)
                                 xulG.new_tab(loc, params, {}); 
@@ -129,7 +133,7 @@
                 }
                 function local_admin(newtab) {
                         var loc = urls.XUL_REMOTE_BROWSER + '?url=' + window.escape(urls.XUL_LOCAL_ADMIN + '?ses=' + window.escape(ses()) + '&session=' + window.escape(ses())); 
-                        var params = {'tab_name':'Local Administration', 'browser' : true };
+                        var params = {'tab_name': get_i18n_str('staff.client.portal.local_admin.tab_name') , 'browser' : true };
                         var content_params = { 'no_xulG' : false, 'show_nav_buttons' : true, 'show_print_button' : true };
                         
                         if(newtab)
@@ -145,7 +149,7 @@
                 }
                 function hold_pull_list(newtab) {
                         var loc = urls.XUL_REMOTE_BROWSER + '?url=' + window.escape(urls.XUL_HOLD_PULL_LIST + '?ses=' + window.escape(ses()));
-                        var params = {'tab_name':'On Shelf Pull List'};
+                        var params = {'tab_name': get_i18n_str('staff.client.portal.on_shelf_pull_list.tab_name') };
                         
                         if(newtab)
                                 xulG.new_tab(loc, params);
@@ -159,7 +163,7 @@
                                 xulG.set_tab(urls.XUL_PATRON_BARCODE_ENTRY,{},{});
                 }
                 function catalog(newtab) {
-                        var params = {'tab_name':'Catalog'};
+                        var params = {'tab_name': get_i18n_str('staff.client.portal.catalog.tab_name') };
                         var content_params = { 'session' : ses(), 'authtime' : ses('authtime') };
                         
                         if(newtab)
@@ -174,14 +178,14 @@
                                 xulG.set_tab(urls.XUL_Z3950_IMPORT,{},{});
                 }
                 function copy_buckets(newtab) {
-                        params = {'tab_name':'Copy Buckets'};
+                        params = {'tab_name': get_i18n_str('staff.client.portal.copybuckets.tab_name') };
                         if(newtab)
                                 xulG.new_tab(urls.XUL_COPY_BUCKETS, params, {});
                         else
                                 xulG.set_tab(urls.XUL_COPY_BUCKETS, params, {});
                 }
                 function record_buckets(newtab) {
-                        params = {'tab_name':'Record Buckets'};
+                        params = {'tab_name': get_i18n_str('staff.client.portal.recordbuckets.tab_name') };
                         if(newtab)
                                 xulG.new_tab(urls.XUL_RECORD_BUCKETS, params, {});
                         else
@@ -200,14 +204,15 @@
                                 xulG.set_tab(urls.XUL_CHECKIN,{},{});
                 }
                 function MARC_batch_import(newtab) {
+                	var tabstr = get_i18n_str('staff.client.portal.marcutil.tab_name');
                         if(newtab)
-                                jb_open_eg_web_page_newtab('vandelay/vandelay', 'Server Settings');
+                                jb_open_eg_web_page_newtab('vandelay/vandelay', tabstr );
                         else
-                                jb_open_eg_web_page('vandelay/vandelay', 'Server Settings');
+                                jb_open_eg_web_page('vandelay/vandelay', tabstr );
                 }
                 function local_admin_reports(newtab) {
                         var loc = urls.XUL_BROWSER + '?url=' + window.escape( xulG.url_prefix('XUL_REPORTS') + '?ses=' + ses());
-                        params = {'tab_name' : 'Reports', 'browser' : false }
+                        params = {'tab_name' : get_i18n_str('staff.client.portal.reports.tab_name') , 'browser' : false }
                         content_params = {'no_xulG' : false, 'show_print_button' : false, show_nav_buttons : true }
                         if(newtab)
                                 xulG.new_tab(loc, params, content_params);
@@ -233,13 +238,13 @@
                                         url += i + '=' + window.escape(p[i]);
                                 }
                                 var loc = urls.XUL_REMOTE_BROWSER + '?url=' + window.escape( url );
-                                xulG.new_tab(loc, {}, { 'show_print_button' : true , 'tab_name' : 'Editing Related Patron' , 'passthru_content_params' : {'spawn_search' : function(s) { spawn_search(s); }, 'spawn_editor' : spawn_editor }});
+                                xulG.new_tab(loc, {}, { 'show_print_button' : true , 'tab_name' : get_i18n_str('staff.client.portal.patronreg_edit.tab_name') , 'passthru_content_params' : {'spawn_search' : function(s) { spawn_search(s); }, 'spawn_editor' : spawn_editor }});
                         }
                         
                         var loc = urls.XUL_REMOTE_BROWSER  + '?url=' + window.escape( urls.XUL_PATRON_EDIT + '?ses=' + window.escape( ses() ) );
                         var content_params = { 
                                                      'show_print_button' : true , 
-                                                     'tab_name' : 'Register Patron' ,
+                                                     'tab_name' : get_i18n_str('staff.client.portal.patronreg.tab_name') ,
                                                      'passthru_content_params' : { 'spawn_search' : function(s) { spawn_search(s); },
                                                                                     'spawn_editor' : spawn_editor }
                                                  }
@@ -247,23 +252,6 @@
                                 xulG.new_tab(loc, {}, content_params);
                         else
                                 xulG.set_tab(loc, {}, content_params);
-                }
-                function toggle_tpac(mode) {
-                    var use_tpac = false;
-                    var prefs = Components.classes['@mozilla.org/preferences-service;1'].getService(Components.interfaces['nsIPrefBranch']);
-                    try {
-                        use_tpac = prefs.getBoolPref('oils.use_tpac');
-                    } catch (E) {
-                        dump('Failed to get current use_tpac setting - Assuming false: ' + E);
-                    }
-                    use_tpac = !use_tpac;
-                    prefs.setBoolPref('oils.use_tpac', use_tpac);
-                    var message = document.getElementById('tpac_toggled_on');
-                    if(!use_tpac) {
-                        message = document.getElementById('tpac_toggled_off');
-                    }
-                    message = message.textContent;
-                    alert(message);
                 }
                 // ]]>
   </script>
@@ -279,13 +267,6 @@
   width: 180px;
   }
 
-  a {
-  font-size: 85%;
-  font-weight: bold;
-  color: black;
-  text-decoration: none;
-  }
-
   #alignment {
         border-collapse: collapse;
         border-style: none;
@@ -294,18 +275,31 @@
 
   #alignment td {
         vertical-align: top;
+        font-size: 85%;
+	font-weight: bold;
+	color: black;
+	text-decoration: none;
   }
 
   .functionlist {
         border-style: none;
         margin-left: auto;
         margin-right: auto;
+        border-collapse:collapse;
+  }
+
+  .functionlist tr.clickable {
+        cursor:pointer;
+  }
+
+  .functionlist tr.clickable:hover {
+        background-color:#e0e0e0;
   }
 
   .functionlist td {
   text-align: left;
         margin: 2px;
-        padding: 2px;
+        padding: 3px;
   }
 
   .functionalgroup {
@@ -328,6 +322,10 @@
   .newtabimg {
         float: right;
         padding-left:4px;
+  }
+
+  .newtabimg:hover {
+        background-color: lightgreen;
   }
 
   .funcimg {
@@ -362,69 +360,58 @@
           <hr />
 
           <table class="functionlist">
-            <tr>
+            <tr class="clickable" onclick="try { checkout(false); } catch(E) { alert(E); }">
               <td height="50"><img src="skin/media/images/portal/forward.png" height="48" width="48"
-              onclick="try { checkout(false); } catch(E) { alert(E); }" alt=
-              "&staff.client.portal.checkout.description;" /></td>
+              alt="&staff.client.portal.checkout.description;" /></td>
 
               <td><img class="newtabimg" src="skin/media/images/portal/newtab2.PNG" alt="&staff.client.portal.open_new_tab.description;"
-              onclick="try { checkout(true); } catch(E) { alert(E); }" /><a href="#"
-              onclick=
-              "try { checkout(false); } catch(E) { alert(E); }; return false;">&staff.client.portal.checkout;</a><br />
-              <a href="#" onclick=
-              "try { checkout(false); } catch(E) { alert(E); }; return false;"><span class="c2">
-              &staff.client.portal.retrievebc;</span></a></td>
+              title="&staff.client.portal.open_new_tab.description;"
+              onclick="try { checkout(true); } catch(E) { alert(E); }" /> &staff.client.portal.checkout;<br />
+              <span class="c2">&staff.client.portal.retrievebc;</span></td>
             </tr>
 
-            <tr>
-              <td height="50"><img src="skin/media/images/portal/back.png" height="48" width="48" onclick=
-              "try { checkin(false); } catch(E) { alert(E); }" alt=
-              "&staff.client.portal.checkin.description;" /></td>
+            <tr class="clickable" onclick="try { checkin(false); } catch(E) { alert(E); }">
+              <td height="50"><img src="skin/media/images/portal/back.png" height="48" width="48"
+	      alt="&staff.client.portal.checkin.description;" /></td>
 
               <td><img class="newtabimg" src="skin/media/images/portal/newtab2.PNG" alt="&staff.client.portal.open_new_tab.description;"
-              onclick="try { checkin(true); } catch(E) { alert(E); }" /> <a href="#"
-              onclick=
-              "try { checkin(false); } catch(E) { alert(E); }; return false;">&staff.client.portal.checkin;</a><br /></td>
+              title="&staff.client.portal.open_new_tab.description;"
+              onclick="try { checkin(true); } catch(E) { alert(E); }" />&staff.client.portal.checkin;<br /></td>
             </tr>
 
-            <tr>
+            <tr class="clickable" onclick="try { register_patron(false); } catch(E) { alert(E); }">
               <td height="50"><img src="skin/media/images/portal/registerpatron.png" height="48" width="48"
-              onclick="try { register_patron(false); } catch(E) { alert(E); }" alt=
-              "&staff.client.portal.patronreg.description;" /></td>
+              alt="&staff.client.portal.patronreg.description;" /></td>
 
               <td><img class="newtabimg" src="skin/media/images/portal/newtab2.PNG" alt="&staff.client.portal.open_new_tab.description;"
-              onclick="try { register_patron(true); } catch(E) { alert(E); }" /> <a href=
-              "#" onclick=
-              "try { register_patron(false); } catch(E) { alert(E); }; return false;">&staff.client.portal.patronreg;</a></td>
+              title="&staff.client.portal.open_new_tab.description;"
+              onclick="try { register_patron(true); } catch(E) { alert(E); }" /> &staff.client.portal.patronreg;</td>
             </tr>
 
-            <tr>
+            <tr class="clickable" onclick="try { find_patron(false); } catch(E) { alert(E); }">
               <td height="50"><img src="skin/media/images/portal/retreivepatron.png" height="48" width="48"
-              onclick="try { find_patron(false); } catch(E) { alert(E); }" alt=
-              "&staff.client.portal.patronsearch.description;" /></td>
+              alt="&staff.client.portal.patronsearch.description;" /></td>
 
               <td><img class="newtabimg" src="skin/media/images/portal/newtab2.PNG" alt="&staff.client.portal.open_new_tab.description;"
-              onclick="try { find_patron(true); } catch(E) { alert(E); }" /> <a href="#"
-              onclick=
-              "try { find_patron(false); } catch(E) { alert(E); }; return false;">&staff.client.portal.patronsearch;</a></td>
+              title="&staff.client.portal.open_new_tab.description;"
+              onclick="try { find_patron(true); } catch(E) { alert(E); }" /> &staff.client.portal.patronsearch;</td>
             </tr>
 
-            <tr>
-              <td height="50"><img class="funcimg" src="skin/media/images/portal/holds.png" height="48"
-              width="48" onclick="try { hold_pull_list(false); } catch(E) { alert(E); }"
+            <tr class="clickable" onclick="try { hold_pull_list(false); } catch(E) { alert(E); }">
+              <td height="50"><img class="funcimg" src="skin/media/images/portal/holds.png" height="48" width="48"
               alt="&staff.client.portal.holdlist.description;" /></td>
 
               <td><img class="newtabimg" src="skin/media/images/portal/newtab2.PNG" alt="&staff.client.portal.open_new_tab.description;"
-              onclick="try { hold_pull_list(true); } catch(E) { alert(E); }" /> <a href=
-              "#" onclick=
-              "try { hold_pull_list(false); } catch(E) { alert(E); }; return false;">&staff.client.portal.holdlist;</a></td>
+              title="&staff.client.portal.open_new_tab.description;"
+              onclick="try { hold_pull_list(true); } catch(E) { alert(E); }" /> &staff.client.portal.holdlist;</td>
             </tr>
 <!--
-            <tr>
+            <tr class="clickable" onclick="try { address_map(false); } catch(E) { alert(E); }">
               <td height="50"><img src="skin/media/images/portal/map.PNG" alt="Locate Address In Map"
               onclick="try { address_map(false); } catch(E) { alert(E); }" /></td>
 
               <td><img class="newtabimg" src="skin/media/images/portal/newtab2.PNG" alt="&staff.client.portal.open_new_tab.description;"
+              title="&staff.client.portal.open_new_tab.description;"
               onclick="try { address_map(true); } catch(E) { alert(E); }" /> <a href="#"
               onclick=
               "try { address_map(false); } catch(E) { alert(E); }; return false;">&staff.client.portal.addrmap;</a></td>
@@ -449,69 +436,58 @@
               </td>
             </tr>
 
-            <tr>
-              <td height="50"><img src="skin/media/images/portal/book.png" height="48" width="48" onclick=
-              "try { catalog(false); } catch(E) { alert(E); }" alt=
-              "&staff.client.portal.advsearch.description;" /></td>
+            <tr class="clickable" onclick="try { catalog(false); } catch(E) { alert(E); }">
+              <td height="50"><img src="skin/media/images/portal/book.png" height="48" width="48"
+	      alt="&staff.client.portal.advsearch.description;" /></td>
 
               <td><img class="newtabimg" src="skin/media/images/portal/newtab2.PNG" alt="&staff.client.portal.open_new_tab.description;"
-              onclick="try { catalog(true); } catch(E) { alert(E); }" /> <a href="#"
-              onclick=
-              "try { catalog(false); } catch(E) { alert(E); }; return false;">&staff.client.portal.advsearch;</a></td>
+              title="&staff.client.portal.open_new_tab.description;"
+              onclick="try { catalog(true); } catch(E) { alert(E); }" /> &staff.client.portal.advsearch;</td>
             </tr>
 
-            <tr>
-              <td height="50"><img src="skin/media/images/portal/book.png" height="48" width="48" onclick=
-              "try { copy_status(false); } catch(E) { alert(E); }" alt=
-              "&staff.client.portal.itemstatus.description;" /></td>
+            <tr class="clickable" onclick="try { copy_status(false); } catch(E) { alert(E); }">
+              <td height="50"><img src="skin/media/images/portal/book.png" height="48" width="48" 
+	      alt="&staff.client.portal.itemstatus.description;" /></td>
 
               <td><img class="newtabimg" src="skin/media/images/portal/newtab2.PNG" alt="&staff.client.portal.open_new_tab.description;"
-              onclick="try { copy_status(true); } catch(E) { alert(E); }" /> <a href="#"
-              onclick=
-              "try { copy_status(false); } catch(E) { alert(E); }; return false;">&staff.client.portal.itemstatus;</a></td>
+              title="&staff.client.portal.open_new_tab.description;"
+              onclick="try { copy_status(true); } catch(E) { alert(E); }" /> &staff.client.portal.itemstatus;</td>
             </tr>
 
-            <tr>
+            <tr class="clickable" onclick="try { MARC_batch_import(false); } catch(E) { alert(E); }">
               <td height="50"><img src="skin/media/images/portal/batchimport.png" height="48" width="48"
-              onclick="try { MARC_batch_import(false); } catch(E) { alert(E); }" alt=
-              "&staff.client.portal.marcutil.description;" /></td>
+              alt="&staff.client.portal.marcutil.description;" /></td>
 
               <td><img class="newtabimg" src="skin/media/images/portal/newtab2.PNG" alt="&staff.client.portal.open_new_tab.description;"
-              onclick="try { MARC_batch_import(true); } catch(E) { alert(E); }" />
-              <a href="#" onclick=
-              "try { MARC_batch_import(false); } catch(E) { alert(E); }; return false;">&staff.client.portal.marcutil;</a></td>
+              title="&staff.client.portal.open_new_tab.description;"
+              onclick="try { MARC_batch_import(true); } catch(E) { alert(E); }" /> &staff.client.portal.marcutil;</td>
             </tr>
 
-            <tr>
-              <td height="50"><img src="skin/media/images/portal/z3950.png" height="48" width="48" onclick=
-              "try { z39_50(false); } catch(E) { alert(E); }" alt="&staff.client.portal.z3950.description;" /></td>
+            <tr class="clickable" onclick="try { z39_50(false); } catch(E) { alert(E); }">
+              <td height="50"><img src="skin/media/images/portal/z3950.png" height="48" width="48"
+	      alt="&staff.client.portal.z3950.description;" /></td>
 
               <td><img class="newtabimg" src="skin/media/images/portal/newtab2.PNG" alt="&staff.client.portal.open_new_tab.description;"
-              onclick="try { z39_50(true); } catch(E) { alert(E); }" /> <a href="#"
-              onclick=
-              "try { z39_50(false); } catch(E) { alert(E); }; return false;">&staff.client.portal.z3950;</a></td>
+              title="&staff.client.portal.open_new_tab.description;"
+              onclick="try { z39_50(true); } catch(E) { alert(E); }" /> &staff.client.portal.z3950;</td>
             </tr>
 
-            <tr>
-              <td height="50"><img src="skin/media/images/portal/bucket.png" height="48" width="48" onclick=
-              "try { copy_buckets(false); } catch(E) { alert(E); }" alt=
-              "&staff.client.portal.copybuckets.description;" /></td>
+            <tr class="clickable" onclick="try { copy_buckets(false); } catch(E) { alert(E); }">
+              <td height="50"><img src="skin/media/images/portal/bucket.png" height="48" width="48" 
+	      alt="&staff.client.portal.copybuckets.description;" /></td>
 
               <td><img class="newtabimg" src="skin/media/images/portal/newtab2.PNG" alt="&staff.client.portal.open_new_tab.description;"
-              onclick="try { copy_buckets(true); } catch(E) { alert(E); }" /> <a href="#"
-              onclick=
-              "try { copy_buckets(false); } catch(E) { alert(E); }; return false;">&staff.client.portal.copybuckets;</a></td>
+              title="&staff.client.portal.open_new_tab.description;"
+              onclick="try { copy_buckets(true); } catch(E) { alert(E); }" /> &staff.client.portal.copybuckets;</td>
             </tr>
 
-            <tr>
-              <td height="50"><img src="skin/media/images/portal/bucket.png" height="48" width="48" onclick=
-              "try { record_buckets(false); } catch(E) { alert(E); }" alt=
-              "&staff.client.portal.recordbuckets.description;" /></td>
+            <tr class="clickable" onclick="try { record_buckets(false); } catch(E) { alert(E); }">
+              <td height="50"><img src="skin/media/images/portal/bucket.png" height="48" width="48"
+	      alt="&staff.client.portal.recordbuckets.description;" /></td>
 
               <td><img class="newtabimg" src="skin/media/images/portal/newtab2.PNG" alt="&staff.client.portal.open_new_tab.description;"
-              onclick="try { record_buckets(true); } catch(E) { alert(E); }" /> <a href=
-              "index.html#" onclick=
-              "try { record_buckets(false); } catch(E) { alert(E); }; return false;">&staff.client.portal.recordbuckets;</a></td>
+              title="&staff.client.portal.open_new_tab.description;"
+              onclick="try { record_buckets(true); } catch(E) { alert(E); }" /> &staff.client.portal.recordbuckets;</td>
             </tr>
           </table><br />
         </div>
@@ -523,55 +499,53 @@
           <hr />
 
           <table class="functionlist">
-            <tr>
+            <tr class="clickable" onclick="try { helpdesk(false); } catch(E) { alert(E); }">
               <td height="50"><img src="skin/media/images/portal/helpdesk.png" height="48" width="48"
-              onclick="try { helpdesk(false); } catch(E) { alert(E); }" alt=
-              "&staff.client.portal.helpdesk.description;" /></td>
+              alt="&staff.client.portal.helpdesk.description;" /></td>
 
-              <td><a href="#"
-              onclick="try { helpdesk(false); } catch(E) { alert(E); }">&staff.client.portal.helpdesk;</a></td>
+              <td>&staff.client.portal.helpdesk;</td>
             </tr>
 
-            <tr>
+            <tr class="clickable" onclick="try { local_admin_reports(false); } catch(E) { alert(E); }">
               <td height="50"><img src="skin/media/images/portal/reports.png" height="48" width="48"
-              onclick="try { local_admin_reports(false); } catch(E) { alert(E); }" alt=
-              "&staff.client.portal.reports.description;" /></td>
+              alt="&staff.client.portal.reports.description;" /></td>
 
               <td><img class="newtabimg" src="skin/media/images/portal/newtab2.PNG" alt="&staff.client.portal.open_new_tab.description;"
-              onclick="try { local_admin_reports(true); } catch(E) { alert(E); }" />
-              <a href="#" onclick=
-              "try { local_admin_reports(false); } catch(E) { alert(E); }; return false;">
-              &staff.client.portal.reports;</a></td>
+              title="&staff.client.portal.open_new_tab.description;"
+              onclick="try { local_admin_reports(true); } catch(E) { alert(E); }" /> &staff.client.portal.reports;</td>
             </tr>
 
-            <tr>
+            <tr class="clickable" onclick="try { receipt_editor(false); } catch(E) { alert(E); }">
               <td height="50"><img src="skin/media/images/portal/receipt_editor.png" height="48" width="48"
-              onclick="try { receipt_editor(false); } catch(E) { alert(E); }" alt=
-              "&staff.client.portal.receipts.description;" /></td>
+	      alt="&staff.client.portal.receipts.description;" /></td>
 
               <td><img class="newtabimg" src="skin/media/images/portal/newtab2.PNG" alt="&staff.client.portal.open_new_tab.description;"
-              onclick="try { receipt_editor(true); } catch(E) { alert(E); }" /> <a href=
-              "#" onclick=
-              "try { receipt_editor(false); } catch(E) { alert(E); }; return false;">&staff.client.portal.receipts;</a></td>
-            </tr>
-
-            <tr>
-              <td height="50"><img src="skin/media/images/portal/book.png" height="48" width="48"
-              onclick="try { toggle_tpac(); } catch(E) { alert(E) }; return false;" alt="&staff.client.portal.toggle_tpac;" /></td>
-
-              <td><a href="#"
-              onclick="try { toggle_tpac(); } catch(E) { alert(E); }; return false;">&staff.client.portal.toggle_tpac;</a></td>
+              title="&staff.client.portal.open_new_tab.description;"
+              onclick="try { receipt_editor(true); } catch(E) { alert(E); }" /> &staff.client.portal.receipts;</td>
             </tr>
           </table>
         </div>
-        <span style="display:none" id="tpac_toggled_on">&staff.client.portal.toggle_tpac.message_on;</span>
-        <span style="display:none" id="tpac_toggled_off">&staff.client.portal.toggle_tpac.message_off;</span>
       </td>
     </tr>
   </table>
 
   <div class="attribution c1">&staff.client.portal.copyright;<br />
   &staff.client.portal.poweredby; <img src="skin/media/images/portal/eg_tiny_logo.jpg" alt="Evergreen logo" /></div>
+
+<div style="display:none">
+  <span id="staff.client.portal.catalog.tab_name">&staff.client.portal.catalog.tab_name;</span>
+  <span id="staff.client.portal.tab_name">&staff.client.portal.tab_name;</span>
+  <span id="staff.client.portal.address_map.tab_name">&staff.client.portal.address_map.tab_name;</span>
+  <span id="staff.client.portal.local_admin.tab_name">&staff.client.portal.local_admin.tab_name;</span>
+  <span id="staff.client.portal.on_shelf_pull_list.tab_name">&staff.client.portal.on_shelf_pull_list.tab_name;</span>
+  <span id="staff.client.portal.catalog.tab_name">&staff.client.portal.catalog.tab_name;</span>
+  <span id="staff.client.portal.copybuckets.tab_name">&staff.client.portal.copybuckets.tab_name;</span>
+  <span id="staff.client.portal.recordbuckets.tab_name">&staff.client.portal.recordbuckets.tab_name;</span>
+  <span id="staff.client.portal.marcutil.tab_name">&staff.client.portal.marcutil.tab_name;</span>
+  <span id="staff.client.portal.reports.tab_name">&staff.client.portal.reports.tab_name;</span>
+  <span id="staff.client.portal.patronreg_edit.tab_name">&staff.client.portal.patronreg_edit.tab_name;</span>
+  <span id="staff.client.portal.patronreg.tab_name">&staff.client.portal.patronreg.tab_name;</span>
+</div>
 </body>
 </html>
 

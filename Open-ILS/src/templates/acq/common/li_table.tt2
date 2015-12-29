@@ -5,67 +5,124 @@
 <div id='acq-lit-table-container'>
     <div id='acq-lit-table-div' class='hidden'>
 
-        <!-- Lineitem (bib record) list -->
+        <!-- Line Item (bib record) list -->
+        <div style="float: left;">
+            <span>
+                <select id="acq-lit-li-actions-selector">
+            <!-- mask meanings:
+                pl: selection list
+                po: pending purchase order
+                ao: activated purchase order
+                gs: general search
+                vp: view/place orders
+                fs: MARC federated search
+
+                * for all, otherwise combine with |
+            -->
+                    <option mask='*'  value='_'>[% l('--Actions--') %]</option>
+                    <option mask='pl|gs|vp|fs' value='save_picklist'>[% l('Save Items To Selection List') %]</option>
+                    <option mask='pl|gs|vp' value='selector_ready'>[% l('Mark Ready for Selector') %]</option>
+                    <option mask='pl|gs|vp' value='order_ready'>[% l('Mark Ready for Order') %]</option>
+                    <option mask='pl|po|gs|vp'  value='delete_selected'>[% l('Delete Selected Items') %]</option>
+                    <option mask='pl|po'  value='add_brief_record'>[% l('Add Brief Record') %]</option>
+                    <option mask='pl|po|ao|gs'  value='export_attr_list'>[% l('Export Single Attribute List') %]</option>
+                    <option mask='*' value='' disabled='disabled'>[% l('----PO----') %]</option>
+                    <option mask='pl|gs|vp|fs' value='create_order'>[% l('Create Purchase Order') %]</option>
+                    <option mask='pl|gs|vp|fs' value='add_to_order'>[% l('Add to Purchase Order') %]</option>
+                    <option mask='po|ao' value='print_po'>[% l('Print Purchase Order') %]</option>
+                    <option mask='po|ao' value='po_history'>[% l('View PO History') %]</option>
+                    <option mask='po' value='create_assets'>[% l('Load Bibs and Items') %]</option>
+                    <option mask='ao|gs|vp' value='cancel_lineitems'>[% l('Cancel Selected Line Items') %]</option>
+                    <option mask='po|ao|gs|vp' value='apply_claim_policy'>[% l('Apply Claim Policy to Selected Line Items') %]</option><!-- can the functionality desired here be covered by the next thing? -->
+                    <option mask='ao|gs|vp' value='receive_lineitems' id='receive_lineitems' disabled='disabled'>[% l('Mark Selected Line Items as Received') %]</option>
+                    <option mask='ao|gs|vp' value='rollback_receive_lineitems' id='rollback_receive_lineitems' disabled='disabled'>[% l('Un-Receive Selected Line Items') %]</option>
+                    <option mask='ao|gs|vp' value='batch_create_invoice'>[% l('Create Invoice From Selected Line Items') %]</option>
+                    <option mask='ao|gs|vp' value='batch_link_invoice'>[% l('Link Selected Line Items to Invoice') %]</option>
+                </select>
+                <span id="acq-lit-export-attr-holder" class="hidden">
+                    <input dojoType="dijit.form.FilteringSelect" id="acq-lit-export-attr" jsId="acqLitExportAttrSelector" labelAttr="description" searchAttr="description" />
+                    <span dojoType="dijit.form.Button" jsId="acqLitExportAttrButton">[% l('Export List') %]</span>
+                </span>
+                <span id="acq-lit-cancel-reason" class="hidden">
+                    <span id="acq-lit-cancel-reason-selector"></span>
+                    <span dojoType="dijit.form.Button" jsId="acqLitCancelLineitemsButton">[% l('Cancel Line Items') %]</span>
+                </span>
+            </span>
+            <span id='acq-lit-generic-progress' class='hidden'>
+                <span dojoType="dijit.ProgressBar" style="width:300px" jsId="litGenericProgress"></span>
+            </span>
+        </div>
+        <div style="float: right;">
+            <div style='width:100%;text-align:right;'>
+                <span style='padding-right:15px;'>
+                    <a href='javascript:void(0);' id='acq-lit-prev' style='visibility:hidden'>[% l('&#171; Previous') %]</a>
+                    <a href='javascript:void(0);' id='acq-lit-next' style='visibility:hidden'>[% l('Next &#187;') %]</a>
+                </span>
+            </div>
+        </div>
+        <div style="clear: both;">&nbsp;</div><!-- XXX better way to end effects of float: left/right ? -->
+
+        <table id="acq-batch-update" class="hidden"><!-- XXX freeze in place w/ CSS? -->
+            <tr>
+                <th>
+                    <label for="acq-bu-item_count">[% l("Copies") %]</label>
+                </th>
+                <th>
+                    <label for="acq-bu-owning_lib">[% l("Owning Branch") %]</label>
+                </th>
+                <th>
+                    <label for="acq-bu-location">[% l("Copy Location") %]</label>
+                </th>
+                <th>
+                    <label for="acq-bu-collection_code">[% l("Collection Code") %]</label>
+                </th>
+                <th>
+                    <label for="acq-bu-fund">[% l("Fund") %]</label>
+                </th>
+                <th>
+                    <label for="acq-bu-circ_modifier">[% l("Circ Modifier") %]</label>
+                </th>
+                <th>
+                    <label for="acq-bu-distribution_formula">[% l("Distribution Formula") %]</label>
+                </th>
+            </tr>
+            <tr>
+                <td>
+                    <span id="acq-bu-item_count"></span>
+                </td>
+                <td>
+                    <span id="acq-bu-owning_lib"></span>
+                </td>
+                <td>
+                    <span id="acq-bu-location"></span>
+                </td>
+                <td>
+                    <span id="acq-bu-collection_code"></span>
+                </td>
+                <td>
+                    <span id="acq-bu-fund"></span>
+                </td>
+                <td>
+                    <span id="acq-bu-circ_modifier"></span> OR
+                </td>
+                <td>
+                    <span id="acq-bu-distribution_formula"></span>
+                    <span dojoType="dijit.form.Button" jsId="acqBatchUpdateApply">[% l("Apply to Selected") %]</span>
+                </td>
+            </tr>
+        </table>
         <table id='acq-lit-table' class='oils-generic-table'>
-            <thead>
-                <tr>
-                    <th colspan='0'>
-                        <table style='width:100%;'>
-                            <tr>
-                                <td>
-                                    <span>
-                                        <select id="acq-lit-li-actions-selector">
-                                            <option mask='*'  value='_'>[% l('--Actions--') %]</option>
-                                            <option mask='sr' value='save_picklist'>[% l('Save Items To Selection List') %]</option>
-                                            <option mask='pl' value='selector_ready'>[% l('Mark Ready for Selector') %]</option>
-                                            <option mask='pl' value='order_ready'>[% l('Mark Ready for Order') %]</option>
-                                            <option mask='*'  value='delete_selected'>[% l('Delete Selected Items') %]</option>
-                                            <option mask='*'  value='add_brief_record'>[% l('Add Brief Record') %]</option>
-                                            <option mask='*'  value='export_attr_list'>[% l('Export Single Attribute List') %]</option>
-                                            <option mask='*'  value='batch_apply_funds'>[% l('Apply Funds to Selected Items') %]</option>
-                                            <option mask='po' value='' disabled='disabled'>[% l('----PO----') %]</option>
-                                            <option mask='sr|pl' value='create_order'>[% l('Create Purchase Order') %]</option>
-                                            <option mask='po' value='create_assets'>[% l('Load Bibs and Items') %]</option>
-                                            <option mask='po' value='cancel_lineitems'>[% l('Cancel Selected Lineitems') %]</option>
-                                            <option mask='po' value='change_claim_policy'>[% l('Change Claim Policy') %]</option>
-                                            <option mask='po' value='receive_po' id='receive_po' disabled='disabled'>[% l('Mark Purchase Order as Received') %]</option>
-                                            <option mask='po' value='rollback_receive_po' id='rollback_receive_po' disabled='disabled'>[% l('Un-Receive Purchase Order') %]</option>
-                                            <option mask='po' value='print_po'>[% l('Print Purchase Order') %]</option>
-                                            <option mask='po' value='po_history'>[% l('View PO History') %]</option>
-                                            <option mask='po' value='batch_create_invoice'>[% l('Create Invoice From Selected Lineitems') %]</option>
-                                            <option mask='po' value='batch_link_invoice'>[% l('Link To Invoice for Selected Lineitems') %]</option>
-                                        </select>
-                                        <span id="acq-lit-export-attr-holder" class="hidden">
-                                            <input dojoType="dijit.form.FilteringSelect" id="acq-lit-export-attr" jsId="acqLitExportAttrSelector" labelAttr="description" searchAttr="description" />
-                                            <span dojoType="dijit.form.Button" jsId="acqLitExportAttrButton">[% l('Export List') %]</span>
-                                        </span>
-                                        <span id="acq-lit-cancel-reason" class="hidden">
-                                            <span id="acq-lit-cancel-reason-selector"></span>
-                                            <span dojoType="dijit.form.Button" jsId="acqLitCancelLineitemsButton">[% l('Cancel Line Items') %]</span>
-                                        </span>
-                                    </span>
-                                    <span id='acq-lit-generic-progress' class='hidden'>
-                                        <span dojoType="dijit.ProgressBar" style="width:300px" jsId="litGenericProgress"></span>
-                                    </span>
-                                </td>
-                                <td>
-                                    <div style='width:100%;text-align:right;'>
-                                        <span style='padding-right:15px;'>
-                                            <a href='javascript:void(0);' id='acq-lit-prev' style='visibility:hidden'>[% l('&#171; Previous') %]</a>
-                                            <a href='javascript:void(0);' id='acq-lit-next' style='visibility:hidden'>[% l('Next &#187;') %]</a>
-                                        </span>
-                                    </div>
-                                </td>
-                            </tr>
-                        </table>
-                    </th>
-                </tr>
-            </thead>
-            <tbody><tr><td colspan='0' style='height:20px;'/></tr></tbody>
+            <tbody><tr><td colspan='0' style='height:20px;'></td></tr></tbody>
             <tbody style='font-weight:bold;border:1px solid #aaa;'>
                 <tr>
                     <td><span><a id='acq-lit-select-toggle' href='javascript:void(0);'>&#x2713</a></span></td>
-                    <td>[% l('Line Items') %]</td>
+                    <td>
+                        [% l('Line Items') %]
+                    </td>
+                    <td style='white-space:nowrap;'>
+                        <a id='acq-inline-copies-toggle' 
+                            href='javascript:;'>[% l('Expand All') %]</a>
+                    </td>
                     <td>[% l('Items') %]</td>
                     <td>[% l('Notes') %]</td>
                     <td>[% l('Actions') %]</td>
@@ -98,6 +155,22 @@
                                         <span attr='pubdate'></span>
                                         <span attr='publisher'></span>
                                         <span name='source_label'></span>
+                                        <span name='cancel_reason'></span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan='0'>
+                                        <table><tr>
+                                            <td>[% l('Order Identifier') %]</td>
+                                            <td>
+                                                <select name='order_ident_type'>
+                                                    <option value='isbn' selected='selected'>[% l('ISBN') %]</option>
+                                                    <option value='upc' >[% l('UPC') %]</option>
+                                                    <option value='issn'>[% l('ISSN') %]</option>
+                                                </select>
+                                            </td>
+                                            <td name='order_ident_value'></td>
+                                        </tr></table>
                                     </td>
                                 </tr>
                                 <tr>
@@ -109,12 +182,18 @@
                                         <span name='pl' class='hidden'> | <a title='[% l('Select List') %]' name='pl_link' href='javascript:void(0);'>&#x2756; </a></span>
                                         <span name='po' class='hidden'> | <a title='[% l('Purchase Order') %]' name='po_link' href='javascript:void(0);'>&#x2318; </a></span>
                                         <span name="show_requests"> | <a title='[% l('Patron Requests') %]' name="show_requests_link" href="javascript:void(0);">[% l('requests') %]</a></span> 
+                                        <span name="invoices_span" class="hidden"> | <a href="javascript:void(0);" name="invoices_link">[% l("view invoice(s)") %] </a></span>
+                                        <span name="claim_policy" class="hidden"> | [% l("claim policy:") %] <span name="claim_policy_name"></span></span>
                                         <span name='pro' class='hidden'> | <a title='[% l('Provider') %]' name='pro_link' href='javascript:void(0);'>&#x235F; </a></span>
                                         <span name='queue' class='hidden'> | <a title='[% l('Import Queue') %]' name='queue_link' href='javascript:void(0);'>[% l('&#x27AC; queue') %]</a></span>
                                     </td>
                                 </tr>
                             </tbody>
                         </table>
+                    </td>
+                    <td>
+                        <a name='expand_inline_copies' 
+                            href='javascript:;'>[% l('Expand') %]</a>
                     </td>
                     <td><a title='FOOOBAR' name='copieslink' href='javascript:void(0);'>[% l('Copies([_1])', '<span name="count">0</span>') %]</a></td>
                     <td>
@@ -123,14 +202,8 @@
                     <td>
                         <select name='actions'>
                             <option name='action_none'>[% l('-- Actions --') %]</option>
-                            <option name='action_mark_recv' disabled='disabled'>[% l('Mark Received') %]</option>
-                            <option name='action_mark_unrecv' disabled='disabled'>[% l('Un-Receive') %]</option>
                             <option name='action_update_barcodes'>[% l('Update Barcodes') %]</option>
                             <option name='action_holdings_maint'>[% l('Holdings Maint.') %]</option>
-                            <option name='action_new_invoice' disabled='disabled'>[% l('New Invoice') %]</option>
-                            <option name='action_link_invoice' disabled='disabled'>[% l('Link to Invoice') %]</option>
-                            <option name='action_view_invoice' disabled='disabled'>[% l('View Invoice(s)') %]</option>
-                            <option name='action_view_claim_policy'>[% l('Apply Claim Policy') %]</option>
                             <option name='action_manage_claims'>[% l('Claims') %]</option>
                             <option name='action_view_history'>[% l('View History') %]</option>
                         </select>
@@ -138,14 +211,47 @@
                     <td><span name='li_state'></span></td>
                     <td><input type='text' size='8' name='price'/></td>
                 </tr>
+                <tr id='acq-inline-copies-row' class='acq-inline-copies-row'>
+                    <td colspan='0'>
+                        <table class='acq-li-inline-copies-table'>
+                            <thead>
+                                <tr>
+                                    <th>[% l('Branch') %]</th>
+                                    <th>[% l('Barcode') %]</th>
+                                    <th>[% l('Call Number') %]</th>
+                                    <th>[% l('Fund') %]</th>
+                                    <th>[% l('Copy Location') %]</th>
+                                    <th>[% l('Circ Modifier') %]</th>
+                                    <th>[% l('Collection Code') %]</th>
+                                    <th>[% l('Note') %]</th>
+                                </tr>
+                            </thead>
+                            <tbody name='acq-li-inline-copies-tbody'>
+                                <tr name='acq-li-inline-copies-template'>
+                                    <td><div name='owning_lib'></div></td>
+                                    <td><div name='barcode'></div></td>
+                                    <td><div name='cn_label'></div></td>
+                                    <td><div name='fund'></div></td>
+                                    <td><div name='location'></div></td>
+                                    <td><div name='circ_modifier'></div></td>
+                                    <td><div name='collection_code'></div></td>
+                                    <td><div name='note'></div></td>
+                                </tr>
+                                <tr name='acq-li-inline-copies-none'>
+                                    <td colspan='0'>[% l('No Copies') %]</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </td>
+                </tr>
             </tbody>
         </table>
     </div>
 
-    <!-- Bib record / Lineitem info table -->
+    <!-- Bib record / Line Item info table -->
     [% INCLUDE "acq/common/info.tt2" which = "Lit" %]
 
-    <!-- Lineitem notes table -->
+    <!-- Line Item notes table -->
     [% INCLUDE "acq/common/notes.tt2" which = "Lit" %]
 
     <!-- Copies table -->
@@ -212,7 +318,7 @@
             <tbody style='font-weight:bold;'>
                 <tr>
                     <td style='margin-top:30px;'>[% l('Owning Branch') %]</td>
-                    <td>[% l('Shelving Location') %]</td>
+                    <td>[% l('Copy Location') %]</td>
                     <td>[% l('Collection Code') %]</td>
                     <td>[% l('Fund') %]</td>
                     <td>[% l('Circ Modifier') %]</td>
@@ -239,7 +345,7 @@
             <tbody style='font-weight:bold;'>
                 <tr>
                     <td style='margin-top:30px;'>[% l('Owning Branch') %]</td>
-                    <td>[% l('Shelving Location') %]</td>
+                    <td>[% l('Copy Location') %]</td>
                     <td>[% l('Collection Code') %]</td>
                     <td>[% l('Fund') %]</td>
                     <td>[% l('Circ Modifier') %]</td>
@@ -292,7 +398,7 @@
             <tbody style='font-weight:bold;'>
                 <tr>
                     <td style='margin-top:30px;'>[% l('Owning Branch') %]</td>
-                    <td>[% l('Shelving Location') %]</td>
+                    <td>[% l('Copy Location') %]</td>
                     <td>[% l('Circ Modifier') %]</td>
                     <td>[% l('Callnumber') %]</td>
                     <td>[% l('Barcode') %]</td>
@@ -315,6 +421,7 @@
         <div jsId="acqLitLinkInvoiceDialog" dojoType="dijit.Dialog">
             [% INCLUDE "acq/common/inv_dialog.tt2" which = "li" %]
         </div>
+        [% INCLUDE "acq/common/add_to_po.tt2" %]
     </div>
 
 
@@ -354,11 +461,11 @@
                     <td><input id="acq-lit-po-prepay" name="prepayment_required" dojoType="dijit.form.CheckBox"/></td>
                 </tr>
                 <tr>
-                    <td>[% l('All Lineitems') %]</td>
+                    <td>[% l('All Line Items') %]</td>
                     <td><input checked='checked' name='create_from' value='all' dojoType='dijit.form.RadioButton'/></td>
                 </tr>
                 <tr>
-                    <td>[% l('Selected Lineitems') %]</td>
+                    <td>[% l('Selected Line Items') %]</td>
                     <td><input name='create_from' value='selected' dojoType='dijit.form.RadioButton'/></td>
                 </tr>
                 <tr>
@@ -424,8 +531,8 @@
         </div>
         <div dojoType="dijit.Dialog" jsId="batchFundUpdateDialog" title="[% l('Batch Update Funds') %]">
             <div>
-                [% |l %]This will update the fund for all copies attached to these lineitems.<br/>
-                This will also update any existing encumbered or spent debits.[% END %]
+                [% l('This will update the fund for all copies attached to these lineitems.') %]<br/>
+                [% l('This will also update any existing encumbered or spent debits.') %]
             </div>
             <br/>
             <table class='oils-generic-table'>

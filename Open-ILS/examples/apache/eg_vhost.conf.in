@@ -6,7 +6,7 @@
 # ----------------------------------------------------------------------------------
 # Point / to the opac - if you have a custom skin or locale, point at it here
 # ----------------------------------------------------------------------------------
-RedirectMatch 301 ^/$ /opac/en-US/skin/default/xml/index.xml
+RedirectMatch 301 ^/$ /eg/opac/home
 
 # ----------------------------------------------------------------------------------
 # Point / to the IP address redirector
@@ -74,6 +74,10 @@ RewriteEngine ON
 RewriteRule ^/opac/extras/ac/jacket/(small|medium|large)/$ \
     /opac/images/blank.png [P,L]
 
+<Location /opac/extras/ac/jacket>
+        ErrorDocument 404 /opac/images/blank.png
+</Location>
+
 # ----------------------------------------------------------------------------------
 # Add the row ID (RID) and date so we can make unAPI happy
 # ----------------------------------------------------------------------------------
@@ -85,6 +89,50 @@ RewriteRule . - [E=OILS_OPAC_RID:%2,E=OILS_TIME_YEAR:%{TIME_YEAR}]
 # ----------------------------------------------------------------------------------
 RewriteCond %{REQUEST_URI} ^/opac/(.*?)/
 RewriteRule . - [E=locale:%1]
+
+# ----------------------------------------------------------------------------------
+# Rewrite JSPac->TPac with redirects
+# ----------------------------------------------------------------------------------
+
+# First things first, extract useful data
+# And we are going to start with a "this is the JSPac" check on each of these:
+# RewriteCond %{REQUEST_URI} ^/?opac/
+
+# Basic (overall) search type, if present
+# I am cheating and grabbing RT or TP because I dunno the difference between them.
+RewriteCond %{REQUEST_URI} ^/opac/
+RewriteCond %{QUERY_STRING} (^|[^0-9a-zA-Z])(rt|tp)=([^;&]*)
+RewriteRule . - [E=OILS_JSPAC_SEARCH_TYPE:qtype=%3;]
+
+# Basic (overall) search term(s), if present - NOTE: Not doing advanced search.
+RewriteCond %{REQUEST_URI} ^/opac/
+RewriteCond %{QUERY_STRING} (^|[^0-9a-zA-Z])t=([^;&]*)
+RewriteRule . - [E=OILS_JSPAC_SEARCH_TERMS:query=%2;]
+
+# Search Location, if present
+RewriteCond %{REQUEST_URI} ^/opac/
+RewriteCond %{QUERY_STRING} (^|[^0-9a-zA-Z])l=([^;&]*)
+RewriteRule . - [E=OILS_JSPAC_SEARCH_LOCATION:locg=%2;]
+
+# My Account
+RewriteRule /opac/[^/]*/skin/default/xml/myopac.xml /eg/opac/myopac/main?%{ENV:OILS_JSPAC_SEARCH_TYPE}%{ENV:OILS_JSPAC_SEARCH_TERMS}%{ENV:OILS_JSPAC_SEARCH_LOCATION} [NE,R,L]
+
+# Record Pages
+# /opac/en-US/skin/default/xml/rdetail.xml?r=32 -> /eg/opac/record/32
+RewriteCond %{QUERY_STRING} (^|[^0-9a-zA-Z])r=([^;&]*)
+RewriteRule /opac/.*/rdetail.xml /eg/opac/record/%2?%{ENV:OILS_JSPAC_SEARCH_TYPE}%{ENV:OILS_JSPAC_SEARCH_TERMS}%{ENV:OILS_JSPAC_SEARCH_LOCATION} [NE,R,L]
+
+# Bookbag Pages
+# /opac/extras/feed/bookbag/html-full/1 -> /eg/opac/results?bookbag=1;page=0;locg=1;depth=0
+RewriteRule /opac/extras/feed/bookbag/html-full/(\d*) /eg/opac/results?bookbag=$1;%{ENV:OILS_JSPAC_SEARCH_TYPE}%{ENV:OILS_JSPAC_SEARCH_TERMS}%{ENV:OILS_JSPAC_SEARCH_LOCATION} [NE,R,L]
+
+# Search Results Pages
+RewriteRule /opac/[^/]*/skin/[^/]*/xml/rresult.xml /eg/opac/results?%{ENV:OILS_JSPAC_SEARCH_TYPE}%{ENV:OILS_JSPAC_SEARCH_TERMS}%{ENV:OILS_JSPAC_SEARCH_LOCATION} [NE,R,L]
+
+# Basic Search (STILL not doing advanced)
+# Fallback! But only for things that end in xml, htm, or html
+# Images, CSS, etc can stick around.
+RewriteRule /opac/[^/]*/skin/.*(xml|htm|html|/)$ /eg/opac/home?%{ENV:OILS_JSPAC_SEARCH_TYPE}%{ENV:OILS_JSPAC_SEARCH_TERMS}%{ENV:OILS_JSPAC_SEARCH_LOCATION} [NE,R,L]
 
 # ----------------------------------------------------------------------------------
 # For sanity reasons, default indexes to Off
@@ -249,21 +297,6 @@ RewriteRule .? - [E=locale:%{HTTP:Accept-Language}]
     SetEnv no-gzip
     allow from all
 </LocationMatch>
-
-# ----------------------------------------------------------------------------------
-# Self-serve password interface
-# ----------------------------------------------------------------------------------
-<Location /opac/password>
-    SetHandler perl-script
-    PerlHandler OpenILS::WWW::PasswordReset::password_reset
-    Options +ExecCGI
-    PerlSendHeader On
-    allow from all
-
-    # Force clients to use HTTPS
-    RewriteCond %{HTTPS} !=on [NC]
-    RewriteRule ^ https://%{SERVER_NAME}%{REQUEST_URI} [R,L]
-</Location>
 
 # ----------------------------------------------------------------------------------
 # Supercat feeds
@@ -443,6 +476,20 @@ RewriteRule .? - [E=locale:%{HTTP:Accept-Language}]
     allow from all
 </Location>
 
+# ----------------------------------------------------------------------------------
+# Protect Standalone/Offline mode files from public view
+# ----------------------------------------------------------------------------------
+<Location /standalone/>
+    AuthType Basic
+    AuthName "Standalone Mode Login"
+    PerlOptions +GlobalRequest
+    PerlSetVar OILSProxyPermissions "STAFF_LOGIN"
+    PerlAuthenHandler OpenILS::WWW::Proxy::Authen
+    require valid-user
+    PerlSendHeader On
+    allow from all
+    SSLRequireSSL
+</Location>
 
 # ----------------------------------------------------------------------------------
 # Reporting output lives here
@@ -483,6 +530,11 @@ RewriteRule .? - [E=locale:%{HTTP:Accept-Language}]
     AddOutputFilter INCLUDES;XMLENT .xhtml
 </LocationMatch>
 
+# capture locale CGI param for /reports/fm_IDL.xml
+RewriteCond %{REQUEST_URI} ^/reports/fm_IDL.xml
+RewriteCond %{QUERY_STRING} locale=([^&;]*)
+RewriteRule . - [E=locale:%1]
+
 <LocationMatch /reports/fm_IDL.xml>
     IDLChunkStripPI "yes"
     IDLChunkEscapeScript "no"
@@ -512,6 +564,9 @@ RewriteRule .? - [E=locale:%{HTTP:Accept-Language}]
     Options +ExecCGI
     PerlSendHeader On
     allow from all
+    <IfModule mod_headers.c>
+        Header onsuccess set Cache-Control no-cache
+    </IfModule>
 </Location>
 
 # ----------------------------------------------------------------------------------
@@ -537,6 +592,25 @@ RewriteRule ^/conify/([a-z]{2}-[A-Z]{2})/global/(.*)$ /conify/global/$2 [E=local
     allow from all
 </Location>
 
+# ----------------------------------------------------------------------------------
+# The PhoneList lives here
+# ----------------------------------------------------------------------------------
+<Location /phonelist>
+    SetHandler perl-script
+    AuthType Basic
+    AuthName "PhoneList Login"
+    require valid-user
+    PerlOptions +GlobalRequest
+    PerlSetVar OILSProxyPermissions "STAFF_LOGIN"
+    PerlHandler OpenILS::WWW::PhoneList
+    PerlAuthenHandler OpenILS::WWW::Proxy::Authen
+    Options +ExecCGI
+    PerlSendHeader On
+    allow from all
+    <IfModule mod_headers.c>
+        Header onsuccess set Cache-Control no-cache
+    </IfModule>
+</Location>
 <Location /vandelay-upload>
     SetHandler perl-script
     PerlHandler OpenILS::WWW::Vandelay::spool_marc

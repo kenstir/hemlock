@@ -142,6 +142,7 @@ sub make_payments {
     my $this_ou = $e->requestor->ws_ou || $e->requestor->home_ou;
     my %orgs;
 
+
     # unless/until determined by payment processor API
     my ($approval_code, $cc_processor, $cc_type, $cc_order_number) = (undef,undef,undef, undef);
 
@@ -184,7 +185,18 @@ sub make_payments {
 
         $total_paid += $amount;
 
-        $orgs{$U->xact_org($transid, $e)} = 1;
+        my $org_id = $U->xact_org($transid, $e);
+
+        if (!$orgs{$org_id}) {
+            $orgs{$org_id} = 1;
+
+            # patron credit has to be allowed at all orgs receiving payment
+            if ($type eq 'credit_payment' and $U->ou_ancestor_setting_value(
+                    $org_id, 'circ.disable_patron_credit', $e)) {
+                $e->rollback;
+                return OpenILS::Event->new('PATRON_CREDIT_DISABLED');
+            }
+        }
 
         # A negative payment is a refund.  
         if( $amount < 0 ) {
@@ -599,7 +611,7 @@ sub create_grocery_bill {
     $apputils->commit_db_session($session);
 
     my $e = new_editor(xact=>1);
-    $evt = _check_open_xact($e, $transid);
+    $evt = $U->check_open_xact($e, $transid);
     return $evt if $evt;
     $e->commit;
 
@@ -706,7 +718,7 @@ sub billing_items_create {
     my $evt = OpenILS::Utils::Penalty->calculate_penalties($e, $xact->usr, $U->xact_org($xact->id,$e));
     return $evt if $evt;
 
-    $evt = _check_open_xact($e, $xact->id, $xact);
+    $evt = $U->check_open_xact($e, $xact->id, $xact);
     return $evt if $evt;
 
     $e->commit;
@@ -755,7 +767,7 @@ sub void_bill {
         $bill->void_time('now');
     
         $e->update_money_billing($bill) or return $e->die_event;
-        my $evt = _check_open_xact($e, $bill->xact, $xact);
+        my $evt = $U->check_open_xact($e, $bill->xact, $xact);
         return $evt if $evt;
     }
 
@@ -834,45 +846,6 @@ sub edit_payment_note {
 
     $e->commit;
     return 1;
-}
-
-sub _check_open_xact {
-    my( $editor, $xactid, $xact ) = @_;
-
-    # Grab the transaction
-    $xact ||= $editor->retrieve_money_billable_transaction($xactid);
-    return $editor->event unless $xact;
-    $xactid ||= $xact->id;
-
-    # grab the summary and see how much is owed on this transaction
-    my ($summary) = $U->fetch_mbts($xactid, $editor);
-
-    # grab the circulation if it is a circ;
-    my $circ = $editor->retrieve_action_circulation($xactid);
-
-    # If nothing is owed on the transaction but it is still open
-    # and this transaction is not an open circulation, close it
-    if( 
-        ( $summary->balance_owed == 0 and ! $xact->xact_finish ) and
-        ( !$circ or $circ->stop_fines )) {
-
-        $logger->info("closing transaction ".$xact->id. ' becauase balance_owed == 0');
-        $xact->xact_finish('now');
-        $editor->update_money_billable_transaction($xact)
-            or return $editor->event;
-        return undef;
-    }
-
-    # If money is owed or a refund is due on the xact and xact_finish
-    # is set, clear it (to reopen the xact) and update
-    if( $summary->balance_owed != 0 and $xact->xact_finish ) {
-        $logger->info("re-opening transaction ".$xact->id. ' becauase balance_owed != 0');
-        $xact->clear_xact_finish;
-        $editor->update_money_billable_transaction($xact)
-            or return $editor->event;
-        return undef;
-    }
-    return undef;
 }
 
 

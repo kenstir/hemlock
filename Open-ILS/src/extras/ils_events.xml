@@ -170,10 +170,9 @@
 	<event code='1235' textcode='INVALID_USER_XACT_ID'>
         <desc xml:lang="en-US">While you were trying to make payments, this account's transaction history changed.  Please go back and try again.</desc>
 	</event>
-
-
-
-
+    <event code='1236' textcode='PATRON_EXCEEDS_LOST_COUNT'>
+        <desc xml:lang="en-US">The patron has too many lost items.</desc>
+    </event>
 	<event code='1500' textcode='ACTION_CIRCULATION_NOT_FOUND'>
 		<desc xml:lang="en-US">
 			Someone attempted to retrieve a circulation object from the system and 
@@ -652,7 +651,7 @@
 		<desc xml:lang='en-US'>The requested acq.funding_source_balance was not found</desc>
 	</event>
 	<event code='1858' textcode='ACQ_LINEITEM_NOT_FOUND'>
-		<desc xml:lang='en-US'>The requested acq.po_lineitem was not found</desc>
+		<desc xml:lang='en-US'>The requested acq.lineitem was not found</desc>
 	</event>
 	<event code='1859' textcode='ACQ_PURCHASE_ORDER_NOT_FOUND'>
 		<desc xml:lang='en-US'>The requested acq.purchase_order was not found</desc>
@@ -804,7 +803,7 @@
 	</event>
 	<event code='4040' textcode='CREDIT_PROCESSOR_SUCCESS_WO_RECORD'>
         <desc xml:lang="en-US">A *TERRIBLE* problem has occurred: a credit
-            card transaction was processed successfuly, but the patron's
+            card transaction was processed successfully, but the patron's
             payment could not be recorded within Evergreen.  Please seek
             assistance.</desc>
 	</event>
@@ -913,7 +912,9 @@
 	<event code="7024" textcode="HOLD_RESERVATION_CONFLICT">
 		<desc xml:lang="en-US">Both a hold and a reservation exist for this item; staff intervention is required to resolve the conflict.</desc>
 	</event>
-
+	<event code='7025' textcode='COPY_STATUS_LONG_OVERDUE'>
+		<desc xml:lang="en-US">Copy is marked as long-overdue</desc>
+	</event>
 
 
 	<!-- ================================================================ -->
@@ -1018,6 +1019,12 @@
     </event>
 
 	<!-- ================================================================ -->
+
+    <event code='11105' textcode='PATRON_CREDIT_DISABLED'>
+        <desc xml:lang="en-US">Payments by patron credit are not allowed 
+            for the selected transaction</desc>
+    </event>
+
 
 </ils_events>
 

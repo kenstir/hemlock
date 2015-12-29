@@ -166,6 +166,10 @@ label[for="attr_search_type_scalar"] { vertical-align: top; }
 span[name="worksheet"] { padding: 0 6px; }
 #acq-lit-li-claim-dia-lid-list-init { margin-left: 8px; }
 
+#acq-batch-update { padding: 20px 0; }
+#acq-batch-update th { font-weight: bold; }
+#acq-batch-update td { white-space: nowrap; padding-right: 0.5em; }
+
 #acq-worksheet-contents thead th { font-weight: bold; background-color: #ccc; text-align: center; border-bottom: 1px #000 solid; border-right: 1px #000 solid; padding: 0 6px; }
 #acq-worksheet-contents tbody td { text-align: left; vertical-align: top; border: 1px #999 inset; padding: 0 2px; }
 
@@ -216,6 +220,8 @@ span[name="notes_alert_flag"] {color: #c00;font-weight: bold;font-size: 110%;mar
 .acq-invoice-paid-col {background : #E0E0E0; text-align: center;}
 .acq-invoice-center-col { text-align: center; }
 .acq-invoice-money { width: 7em; }
+#acq-invoice-entry-thead th { white-space: nowrap; }
+#acq-invoice-item-thead th { white-space: nowrap; }
 
 .acq-lineitem-summary { font-weight: bold; }
 .acq-lineitem-summary-extra { padding-left: 10px; }
@@ -258,3 +264,18 @@ span[name="bib_origin"] img { vertical-align: middle; }
     margin-bottom: 15px;
     padding: 4px;
 }
+
+.acq-li-inline-copies-table { 
+    border-collapse: collapse; 
+    margin-left: 10px;
+    margin-bottom: 10px;
+}
+.acq-inline-copies-row td {
+    background-color: #FEF;
+    border: 2px solid #333;
+}
+.acq-li-inline-copies-table td { 
+    border: 1px solid #464; 
+}
+
+span[name="cancel_reason"] { text-decoration: underline; font-weight: bold; }

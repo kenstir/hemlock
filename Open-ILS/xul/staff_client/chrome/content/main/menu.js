@@ -796,6 +796,10 @@ main.menu.prototype = {
                 ['oncommand'],
                 function(event) { open_eg_web_page('conify/global/config/best_hold_order', null, event); }
             ],
+			'cmd_server_admin_vandelay_import_bib_trash_group' : [
+                ['oncommand'],
+                function(event) { open_eg_web_page('conify/global/vandelay/import_bib_trash_group', null, event); }
+            ],
             'cmd_server_admin_config_usr_activity_type' : [
                 ['oncommand'],
                 function(event) { open_eg_web_page('conify/global/config/usr_activity_type', null, event); }
@@ -803,6 +807,10 @@ main.menu.prototype = {
             'cmd_server_admin_actor_org_unit_custom_tree' : [
                 ['oncommand'],
                 function(event) { open_eg_web_page('conify/global/actor/org_unit_custom_tree', null, event); }
+            ],
+            'cmd_server_admin_floating_groups' : [
+                ['oncommand'],
+                function(event) { open_eg_web_page('conify/global/config/floating_groups', 'menu.cmd_server_admin_floating_groups.tab', event); }
             ],
             'cmd_local_admin_external_text_editor' : [
                 ['oncommand'],
@@ -1028,6 +1036,10 @@ main.menu.prototype = {
             'cmd_server_admin_org_unit_proximity_adjustment' : [
                 ['oncommand'],
                 function(event) { open_eg_web_page('conify/global/config/org_unit_proximity_adjustment', null, event); }
+			],
+            'cmd_server_admin_z39_index_field_map' : [
+                ['oncommand'],
+                function(event) { open_eg_web_page('conify/global/config/z3950_index_field_map', null, event); }
             ],
             'cmd_server_admin_circ_mod' : [
                 ['oncommand'],
@@ -1187,6 +1199,16 @@ main.menu.prototype = {
                     open_eg_web_page(
                         "/eg/booking/return",
                         "menu.cmd_booking_reservation_return.tab",
+                        event
+                    );
+                }
+            ],
+            'cmd_server_admin_conify_remote_account' : [
+                ['oncommand'],
+                function(event) {
+                    open_eg_web_page(
+                        "/eg/conify/global/config/remote_account",
+                        "menu.cmd_server_admin_conify_remote_account.tab",
                         event
                     );
                 }
@@ -1369,7 +1391,7 @@ main.menu.prototype = {
                 function() {
                     try {
                         var x = new XMLHttpRequest();
-                        var url = 'http://' + XML_HTTP_SERVER + '/standalone/list.txt';
+                        var url = 'https://' + XML_HTTP_SERVER + '/standalone/list.txt';
                         x.open("GET",url,false);
                         x.send(null);
                         if (x.status == 200) {
@@ -1729,6 +1751,16 @@ main.menu.prototype = {
                     }
                 }
             ],
+            'cmd_server_addon_ws_configure' : [
+                ['oncommand'],
+                function() {
+                    try {
+                        obj.set_tab(obj.url_prefix('XUL_SERVER_ADDONS'),{'browser' : false});
+                    } catch(E) {
+                        alert(E);
+                    }
+                }
+            ]
         };
 
         JSAN.use('util.controller');
@@ -2025,6 +2057,10 @@ main.menu.prototype = {
                         if (typeof cw.default_focus == 'function') {
                             cw.default_focus();
                         }
+                        // an alternative to the practice above
+                        var evt = cw.document.createEvent("Events");
+                        evt.initEvent( 'tab_focus', true, true );
+                        cw.window.dispatchEvent(evt);
                     }
                 } catch(E) {
                     obj.error.sdump('D_ERROR','init_tab_focus_handler: ' + js2JSON(E));
@@ -2484,9 +2520,14 @@ commands:
                                         'src' : ''
                                     };
                                     obj.set_help_context(help_params);
-                                } else if (typeof cw.default_focus == 'function') {
+                                }
+                                if (typeof cw.default_focus == 'function') {
                                     cw.default_focus();
                                 }
+                                // an alternative to the practice above
+                                var evt = cw.document.createEvent("Events");
+                                evt.initEvent( 'tab_focus', true, true );
+                                cw.window.dispatchEvent(evt);
                             } catch(E) {
                                 obj.error.sdump('D_ERROR', 'main.menu, set_tab, onload: ' + E);
                             }
@@ -2660,7 +2701,7 @@ commands:
                 if(context != valid_r[i].type && offlineStrings.testString('barcode_choice.' + valid_r[i].type + '_label'))
                     button_label = offlineStrings.getFormattedString('barcode_choice.' + valid_r[i].type + '_label', [button_label]);
 
-                xml += '<button label="' + button_label + '" name="fancy_submit" value="' + i + '"/>';
+                xml += '<button label="' + button_label.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;') + '" name="fancy_submit" value="' + i + '"/>';
             }
         }
         xml += '<button label="' + offlineStrings.getString('barcode_choice.none') + '" name="fancy_cancel"/>';

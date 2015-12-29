@@ -226,7 +226,6 @@ sub key_check {
 
 
 # TOP LEVEL methods
-# TODO: delete for both FTP and SSH2
 
 sub get {
     my $self   = shift;
@@ -321,6 +320,31 @@ sub ls {
         return $self->ls_ssh2(\%keys, @targets);
     }
 }
+
+sub delete {
+    my $self   = shift;
+    my $params = shift;
+
+    $params = {remote_file => $params} unless ref $params;
+    $self->init($params); # secondary init
+
+    my $file = $params->{remote_file};
+
+    if (!$file) {
+        $logger->warn("No file specified for deletion");
+        return undef;
+    }
+
+    $logger->info("Deleting remote file '$file'");
+
+    if ($self->type eq "FTP") {
+        return $self->delete_ftp($file);
+    } else {
+        my %keys = $self->key_check($params);
+        return $self->delete_ssh2(\%keys, $file);
+    }
+}
+
 
 # Checks if the filename part of a pathname has one or more glob characters
 # We split out the filename portion of the path
@@ -499,6 +523,14 @@ sub ls_ssh2_full {
 
 }
 
+sub delete_ssh2 {
+    my $self = shift;
+    my $keys = shift;
+    my $file = shift;
+    my $sftp = $self->_ssh2($keys)->sftp;
+    return $sftp->unlink($file);
+}
+
 sub _slash_path {
     my $self = shift;
     my $dir  = shift || '.';
@@ -634,8 +666,10 @@ sub ls_ftp {   # returns full path like: dir/path/file.ext
     return @list;
 }
 
-sub delete_ftp { # XXX not yet used
-    $_[0]->_ftp->delete($_[1]);
+sub delete_ftp { 
+    my $self = shift;
+    my $file = shift;
+    return $self->_ftp->delete($file);
 }
 
 sub _pkg {      # Not OO
@@ -678,35 +712,35 @@ sub new {
     my ($class, %args) = @_;
     my $self = { _permitted => \%fields, %fields };
 
-	bless $self, $class;
+    bless $self, $class;
 
     $self->init(\%args); # or croak "Initialization error caused by bad args";
     return $self;
 }
 
 sub DESTROY { 
-	# in order to create, we must first ...
-	my $self  = shift;
+    # in order to create, we must first ...
+    my $self  = shift;
     $self->{ssh2} and $self->{ssh2}->disconnect();  # let the other end know we're done.
     $self->{ftp} and $self->{ftp}->quit();  # let the other end know we're done.
 }
 
 sub AUTOLOAD {
-	my $self  = shift;
-	my $class = ref($self) or croak "AUTOLOAD error: $self is not an object";
-	my $name  = $AUTOLOAD;
+    my $self  = shift;
+    my $class = ref($self) or croak "AUTOLOAD error: $self is not an object";
+    my $name  = $AUTOLOAD;
 
-	$name =~ s/.*://;   #   strip leading package stuff
+    $name =~ s/.*://;   #   strip leading package stuff
 
-	unless (exists $self->{_permitted}->{$name}) {
-		croak "AUTOLOAD error: Cannot access '$name' field of class '$class'";
-	}
+    unless (exists $self->{_permitted}->{$name}) {
+        croak "AUTOLOAD error: Cannot access '$name' field of class '$class'";
+    }
 
-	if (@_) {
-		return $self->{$name} = shift;
-	} else {
-		return $self->{$name};
-	}
+    if (@_) {
+        return $self->{$name} = shift;
+    } else {
+        return $self->{$name};
+    }
 }
 
 1;

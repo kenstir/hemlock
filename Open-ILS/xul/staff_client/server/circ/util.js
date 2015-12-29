@@ -1,5 +1,4 @@
 dump('entering circ/util.js\n');
-// vim:noet:sw=4:ts=4:
 
 if (typeof circ == 'undefined') { var circ = {}; }
 circ.util = {};
@@ -35,10 +34,10 @@ circ.util.abort_transits = function(selection_list) {
                 if (typeof robj.ilsevent != 'undefined') {
                     switch(Number(robj.ilsevent)) {
                         case 1225 /* TRANSIT_ABORT_NOT_ALLOWED */ :
-                            alert(document.getElementById('circString').getFormattedString('staff.circ.utils.abort_transits.not_allowed', [copy_id]) + '\n' + robj.desc);
+                            alert(document.getElementById('circStrings').getFormattedString('staff.circ.utils.abort_transits.not_allowed', [copy_id]) + '\n' + robj.desc);
                         break;
                         case 1504 /* ACTION_TRANSIT_COPY_NOT_FOUND */ :
-                            alert(document.getElementById('circString').getString('staff.circ.utils.abort_transits.not_found'));
+                            alert(document.getElementById('circStrings').getString('staff.circ.utils.abort_transits.not_found'));
                         break;
                         case 5000 /* PERM_FAILURE */ :
                         break;
@@ -49,7 +48,7 @@ circ.util.abort_transits = function(selection_list) {
                 }
             }
         } catch(E) {
-            obj.error.standard_unexpected_error_alert(document.getElementById('circString').getString('staff.circ.utils.abort_transits.unexpected_error'),E);
+            obj.error.standard_unexpected_error_alert(document.getElementById('circStrings').getString('staff.circ.utils.abort_transits.unexpected_error'),E);
         }
     }
 };
@@ -548,7 +547,7 @@ circ.util.columns = function(modify,params) {
         {
             'persist' : 'hidden width ordinal',
             'id' : 'service',
-            'label' : 'Service',
+            'label' : document.getElementById('commonStrings').getString('staff.checkout_column_label_service'),
             'flex' : 1,
             'primary' : false,
             'hidden' : true,
@@ -971,10 +970,14 @@ circ.util.columns = function(modify,params) {
             'primary' : false,
             'hidden' : true,
             'editable' : false, 'render' : function(my) {
-                if (get_bool( my.acp.floating() )) {
-                    return document.getElementById('circStrings').getString('staff.circ.utils.yes');
+                if (my.acp.floating() && typeof my.acp.floating() == 'object') {
+                    return my.acp.floating().name();
                 } else {
-                    return document.getElementById('circStrings').getString('staff.circ.utils.no');
+                    if (get_bool( my.acp.floating() )) {
+                        return document.getElementById('circStrings').getString('staff.circ.utils.yes');
+                    } else {
+                        return document.getElementById('circStrings').getString('staff.circ.utils.no');
+                    }
                 }
             },
             'persist' : 'hidden width ordinal'
@@ -1827,6 +1830,24 @@ circ.util.transit_columns = function(modify,params) {
             'hidden' : true,
             'editable' : false, 'render' : function(my) { return my.atc.target_copy(); }
         },
+        {
+            // status of the copy on the transit, not "in-transit".
+            // putting this here allows 'transit_copy_status' to
+            // appear as a MACRO for the 'transit_slip' receipt.
+            // Note that the actual value (for checkin) is 
+            // collected below in circ.util.checkin_via_barcode2().
+            'persist' : 'hidden width ordinal',
+            'id' : 'transit_copy_status',
+            'label' : document.getElementById('circStrings').
+                getString('staff.circ.utils.transit_copy_status'),
+            'flex' : 1,
+            'primary' : false,
+            'hidden' : true,
+            'editable' : false,
+            'render' : function(my) {
+                return data.hash.ccs[ my.atc.copy_status() ].name();
+            }
+        },
     ];
     for (var i = 0; i < c.length; i++) {
         if (modify[ c[i].id ]) {
@@ -2158,6 +2179,37 @@ circ.util.hold_columns = function(modify,params) {
                 }
             }
         },
+        {
+            'persist' : 'hidden width ordinal',
+            'id' : 'current_shelf_lib',
+            'label' : document.getElementById('circStrings').getString('staff.circ.utils.current_shelf_lib'),
+            'flex' : 1,
+            'primary' : false,
+            'hidden' : true,
+            'editable' : false, 'render' : function(my) {
+                if (Number(my.ahr.current_shelf_lib())>=0) {
+                    return data.hash.aou[ my.ahr.current_shelf_lib() ].name();
+                } else {
+                    return my.ahr.current_shelf_lib().name();
+                }
+            }
+        },
+        {
+            'persist' : 'hidden width ordinal',
+            'id' : 'current_shelf_lib_shortname',
+            'label' : document.getElementById('commonStrings').getString('staff.ahr_current_shelf_lib_label'),
+            'flex' : 0,
+            'primary' : false,
+            'hidden' : true,
+            'editable' : false, 'render' : function(my) {
+                if (Number(my.ahr.current_shelf_lib())>=0) {
+                    return data.hash.aou[ my.ahr.current_shelf_lib() ].shortname();
+                } else {
+                    return my.ahr.current_shelf_lib().shortname();
+                }
+            }
+        },
+
         {
             'persist' : 'hidden width ordinal',
             'id' : 'current_copy',
@@ -2714,7 +2766,24 @@ circ.util.hold_columns = function(modify,params) {
                     return document.getElementById('circStrings').getString('staff.circ.utils.no');
                 }
             }
+        },
+        {
+            'persist' : 'hidden width ordinal',
+            'id' : 'behind_desk',
+            'label' : document.getElementById('circStrings').getString('staff.circ.utils.hold.behind_desk'),
+            'flex' : 1,
+            'primary' : false,
+            'hidden' : true,
+            'editable' : false, 
+            'render' : function(my) {
+                if (isTrue(my.ahr.behind_desk())) {
+                    return document.getElementById('circStrings').getString('staff.circ.utils.yes');
+                } else {
+                    return document.getElementById('circStrings').getString('staff.circ.utils.no');
+                }
+            }
         }
+
     ];
     for (var i = 0; i < c.length; i++) {
         if (modify[ c[i].id ]) {
@@ -2825,6 +2894,7 @@ circ.util.checkin_via_barcode = function(session,params,backdate,auto_print,asyn
                     7009 /* CIRC_CLAIMS_RETURNED */,
                     7010 /* COPY_ALERT_MESSAGE */,
                     7011 /* COPY_STATUS_LOST */,
+                    7025 /* COPY_STATUS_LONG_OVERDUE */, 
                     7012 /* COPY_STATUS_MISSING */,
                     7013 /* PATRON_EXCEEDS_FINES */
                 ] : [],
@@ -2838,6 +2908,7 @@ circ.util.checkin_via_barcode = function(session,params,backdate,auto_print,asyn
                     7009 /* CIRC_CLAIMS_RETURNED */,
                     7010 /* COPY_ALERT_MESSAGE */,
                     7011 /* COPY_STATUS_LOST */,
+                    7025 /* COPY_STATUS_LONG_OVERDUE */, 
                     7012 /* COPY_STATUS_MISSING */,
                     7013 /* PATRON_EXCEEDS_FINES */,
                     11103 /* TRANSIT_CHECKIN_INTERVAL_BLOCK */ 
@@ -2945,7 +3016,8 @@ circ.util.checkin_via_barcode2 = function(session,params,backdate,auto_print,che
             'slip_date' : '',
             'slip_date_msg' : '',
             'user' : '',
-            'user_stat_cat_entries' : ''
+            'user_stat_cat_entries' : '',
+            'transit_copy_status' : ''
         };
 
         if (check.payload && check.payload.cancelled_hold_transit) {
@@ -3024,26 +3096,20 @@ circ.util.checkin_via_barcode2 = function(session,params,backdate,auto_print,che
                         } else {
                             print_data.route_to_msg = document.getElementById('circStrings').getFormattedString('staff.circ.utils.route_to.msg', [check.route_to]);
                             print_data.route_to = check.route_to;
-                            var behind_the_desk_support = String( data.hash.aous['circ.holds.behind_desk_pickup_supported'] ) == 'true';
-                            if (behind_the_desk_support) {
-                               var usr_settings = network.simple_request('FM_AUS_RETRIEVE',[ses(),check.payload.hold.usr()]); 
-                                if (typeof usr_settings['circ.holds_behind_desk'] != 'undefined') {
-                                    if (usr_settings['circ.holds_behind_desk']) {
-                                        print_data.prefer_behind_holds_desk = true;
-                                        check.route_to = document.getElementById('circStrings').getString('staff.circ.route_to.private_hold_shelf');
-                                        print_data.route_to_msg = document.getElementById('circStrings').getFormattedString('staff.circ.utils.route_to.msg', [check.route_to]);
-                                        print_data.route_to = check.route_to;
-                                    } else {
-                                        check.route_to = document.getElementById('circStrings').getString('staff.circ.route_to.public_hold_shelf');
-                                        print_data.route_to_msg = document.getElementById('circStrings').getFormattedString('staff.circ.utils.route_to.msg', [check.route_to]);
-                                        print_data.route_to = check.route_to;
-                                    }
-                                } else {
-                                    check.route_to = document.getElementById('circStrings').getString('staff.circ.route_to.public_hold_shelf');
-                                    print_data.route_to_msg = document.getElementById('circStrings').getFormattedString('staff.circ.utils.route_to.msg', [check.route_to]);
-                                    print_data.route_to = check.route_to;
-                                }
+
+                            // If the hold is marked as behind-shelf, report it as such 
+                            // in the receipt, regardless of any org or user settings.  
+                            if (isTrue(check.payload.hold.behind_desk())) {
+                                print_data.prefer_behind_holds_desk = true;
+                                check.route_to = document.getElementById('circStrings').getString('staff.circ.route_to.private_hold_shelf');
+                                print_data.route_to_msg = document.getElementById('circStrings').getFormattedString('staff.circ.utils.route_to.msg', [check.route_to]);
+                                print_data.route_to = check.route_to;
+                            } else {
+                                check.route_to = document.getElementById('circStrings').getString('staff.circ.route_to.public_hold_shelf');
+                                print_data.route_to_msg = document.getElementById('circStrings').getFormattedString('staff.circ.utils.route_to.msg', [check.route_to]);
+                                print_data.route_to = check.route_to;
                             }
+
                             print_data.destination_shelf_msg = print_data.route_to_msg;
                             print_data.destination_shelf = print_data.route_to;
                             msg += print_data.route_to_msg;
@@ -3450,6 +3516,13 @@ circ.util.checkin_via_barcode2 = function(session,params,backdate,auto_print,che
             print_data.item_author = payload_author;
             msg += print_data.item_author_msg;
             msg += '\n';
+            if (check.payload.transit) {
+                // by adding this here, we make the data available to the
+                // receipt printing engine, but since we are not appending it
+                // to the 'msg', it will not display in the pre-print dialog.
+                print_data.transit_copy_status = 
+                    data.hash.ccs[check.payload.transit.copy_status()].name();
+            }
             JSAN.use('util.date');
             if (check.payload.hold) {
                 check.what_happened = 'transit_for_hold';
@@ -3713,6 +3786,7 @@ circ.util.checkin_via_barcode2 = function(session,params,backdate,auto_print,che
                 case 7009 /* CIRC_CLAIMS_RETURNED */ :
                 case 7010 /* COPY_ALERT_MESSAGE */ :
                 case 7011 /* COPY_STATUS_LOST */ :
+                case 7025 /* COPY_STATUS_LONG_OVERDUE */ :
                 case 7012 /* COPY_STATUS_MISSING */ :
                 case 7013 /* PATRON_EXCEEDS_FINES */ :
                     return null; /* handled */
@@ -3755,6 +3829,7 @@ circ.util.renew_via_barcode = function ( params, async ) {
                         case 1232 /* ITEM_DEPOSIT_REQUIRED */ : break;
                         case 1233 /* ITEM_RENTAL_FEE_REQUIRED */ : break;
                         case 1234 /* ITEM_DEPOSIT_PAID */ : break;
+                        case 1236 /* PATRON_EXCEEDS_LOST_COUNT */ : break;
                         case 1500 /* ACTION_CIRCULATION_NOT_FOUND */ : break;
                         case 1502 /* ASSET_COPY_NOT_FOUND */ : 
                             var mis_scan_msg = document.getElementById('circStrings').getFormattedString('staff.circ.copy_status.status.copy_not_found', [params.barcode]);
@@ -3856,6 +3931,7 @@ circ.util.renew_via_barcode = function ( params, async ) {
                     1232 /* ITEM_DEPOSIT_REQUIRED */,
                     1233 /* ITEM_RENTAL_FEE_REQUIRED */,
                     1234 /* ITEM_DEPOSIT_PAID */,
+                    1236 /* PATRON_EXCEEDS_LOST_COUNT */,
                     7002 /* PATRON_EXCEEDS_CHECKOUT_COUNT */,
                     7003 /* COPY_CIRC_NOT_ALLOWED */,
                     7004 /* COPY_NOT_AVAILABLE */,
@@ -3879,6 +3955,7 @@ circ.util.renew_via_barcode = function ( params, async ) {
                     '1234' : function(r) {
                         return document.getElementById('circStrings').getFormattedString('staff.circ.utils.checkin.override.item_deposit_paid.warning');
                     },
+                    '1236' : function(r) { return document.getElementById('circStrings').getFormattedString('staff.circ.renew.barcode', [params.barcode]); },
                     '7002' : function(r) { return document.getElementById('circStrings').getFormattedString('staff.circ.renew.barcode', [params.barcode]); },
                     '7003' : function(r) { return document.getElementById('circStrings').getFormattedString('staff.circ.renew.barcode', [params.barcode]); },
                     '7004' : function(r) {
