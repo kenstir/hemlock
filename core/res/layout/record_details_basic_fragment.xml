@@ -117,13 +117,13 @@
                 android:textStyle="bold"
                 android:layout_height="wrap_content"
                 android:layout_width="match_parent"
-                android:text="0 of 0 copies available at Marlborough Public Library" android:layout_marginLeft="10dip"/>
+                android:text="0 of 0 copies available at Marlborough Public Library"
+                android:layout_marginLeft="10dip"/>
 
         <TableLayout
-                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-        >
-            <TableRow android:layout_height="0dp" android:layout_weight="1">
+                android:layout_width="match_parent">
+            <TableRow >
                 <TextView
                         android:text="@string/record_subject" android:textSize="18dip"
                         android:layout_marginLeft="10dip"/>
@@ -131,33 +131,35 @@
                 <TextView
                         android:id="@+id/record_details_simple_subject"
                         android:text="Gangs\nFund raising\nPeer pressure\nHigh schools\nPreparatory school students"
-                        android:layout_marginLeft="10dip"/>
+                        android:layout_marginLeft="10dip" android:layout_marginBottom="3dip"/>
             </TableRow>
-            <TableRow android:layout_height="0dp" android:layout_weight="1">
+            <TableRow >
                 <TextView
                         android:text="@string/record_series" android:textSize="18dip"
                         android:layout_marginLeft="10dip"/>
 
                 <TextView
                         android:id="@+id/record_details_simple_series"
-                        android:text="Chocolate war series" android:layout_marginLeft="10dip"/>
+                        android:text="Chocolate war series" android:layout_marginLeft="10dip"
+                        android:layout_marginBottom="3dip"/>
             </TableRow>
-            <TableRow android:layout_height="0dp" android:layout_weight="1">
+            <TableRow >
                 <TextView
                         android:text="@string/record_synopsis" android:textSize="18dip"
                         android:layout_marginLeft="10dip"/>
 
                 <TextView
                         android:id="@+id/record_details_simple_synopsis"
-                        android:layout_marginLeft="10dip"/>
+                        android:layout_marginLeft="10dip" android:layout_marginBottom="3dip"/>
             </TableRow>
-            <TableRow android:layout_height="0dp" android:layout_weight="1">
+            <TableRow >
                 <TextView
                         android:text="@string/record_isbn" android:textSize="18dip" android:layout_marginLeft="10dip"/>
 
                 <TextView
                         android:id="@+id/record_details_simple_isbn"
-                        android:text="ISBN: 9780307834294 (electronic bk.)" android:layout_marginLeft="10dip"/>
+                        android:text="ISBN: 9780307834294 (electronic bk.)" android:layout_marginLeft="10dip"
+                        android:layout_marginBottom="3dip"/>
             </TableRow>
         </TableLayout>
     </LinearLayout>
