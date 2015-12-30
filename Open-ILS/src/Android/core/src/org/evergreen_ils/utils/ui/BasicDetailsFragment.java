@@ -19,14 +19,12 @@
  */
 package org.evergreen_ils.utils.ui;
 
-import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
 import org.evergreen_ils.R;
-import org.evergreen_ils.accountAccess.AccountAccess;
-import org.evergreen_ils.accountAccess.holds.PlaceHold;
+import org.evergreen_ils.accountAccess.holds.PlaceHoldActivity;
 import org.evergreen_ils.globals.GlobalConfigs;
 import org.evergreen_ils.globals.Log;
 import org.evergreen_ils.globals.Utils;
@@ -134,7 +132,7 @@ public class BasicDetailsFragment extends Fragment {
         ((Button) layout.findViewById(R.id.simple_place_hold_button)).setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getActivity().getApplicationContext(), PlaceHold.class);
+                Intent intent = new Intent(getActivity().getApplicationContext(), PlaceHoldActivity.class);
                 intent.putExtra("recordInfo", record);
                 startActivity(intent);
             }

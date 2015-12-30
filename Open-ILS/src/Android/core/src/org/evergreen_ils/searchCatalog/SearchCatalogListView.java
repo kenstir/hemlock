@@ -31,7 +31,7 @@ import org.evergreen_ils.R;
 import org.evergreen_ils.accountAccess.AccountAccess;
 import org.evergreen_ils.accountAccess.SessionNotFoundException;
 import org.evergreen_ils.accountAccess.bookbags.BookBag;
-import org.evergreen_ils.accountAccess.holds.PlaceHold;
+import org.evergreen_ils.accountAccess.holds.PlaceHoldActivity;
 import org.evergreen_ils.barcodescan.CaptureActivity;
 import org.evergreen_ils.globals.AppPrefs;
 import org.evergreen_ils.globals.GlobalConfigs;
@@ -496,7 +496,7 @@ public class SearchCatalogListView extends ActionBarActivity {
             break;
         case PLACE_HOLD: {
 
-            Intent intent = new Intent(getBaseContext(), PlaceHold.class);
+            Intent intent = new Intent(getBaseContext(), PlaceHoldActivity.class);
 
             intent.putExtra("recordInfo", info);
 
