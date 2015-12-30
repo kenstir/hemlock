@@ -57,9 +57,9 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class PlaceHold extends ActionBarActivity {
+public class PlaceHoldActivity extends ActionBarActivity {
 
-    private static final String TAG = PlaceHold.class.getSimpleName();
+    private static final String TAG = PlaceHoldActivity.class.getSimpleName();
 
     private TextView title;
 
@@ -200,7 +200,7 @@ public class PlaceHold extends ActionBarActivity {
                                     .isChecked(), expire_date_s, thaw_date_s);
                 } catch (SessionNotFoundException e) {
                     try {
-                        if (accountAccess.reauthenticate(PlaceHold.this))
+                        if (accountAccess.reauthenticate(PlaceHoldActivity.this))
                             stringResponse = accountAccess.createHold(
                                     record_id, selectedOrgID,
                                     email_notification.isChecked(),

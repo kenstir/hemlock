@@ -89,7 +89,7 @@
                     android:value="org.evergreen_ils.views.MainActivity"/>
         </activity>
         <activity
-                android:name="org.evergreen_ils.accountAccess.holds.PlaceHold"
+                android:name="org.evergreen_ils.accountAccess.holds.PlaceHoldActivity"
                 android:label="@string/hold_place_title">
         </activity>
         <activity
