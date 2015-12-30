@@ -68,8 +68,7 @@
                         android:gravity="left|center"
                         android:text="print 256 p."/>
             </TableRow>
-            <TableRow
-                    >
+            <TableRow>
                 <TextView
                         android:layout_width="0dip"
                         android:layout_height="wrap_content"
@@ -85,8 +84,7 @@
                         android:gravity="left|center"
                         />
             </TableRow>
-            <TableRow
-                    >
+            <TableRow>
                 <TextView
                         android:layout_width="0dip"
                         android:layout_height="wrap_content"
@@ -102,8 +100,7 @@
                         android:gravity="left|center"
                         />
             </TableRow>
-            <TableRow
-                    >
+            <TableRow>
                 <TextView
                         android:layout_width="0dip"
                         android:layout_height="wrap_content"
@@ -119,8 +116,7 @@
                         android:gravity="left|center"
                         android:enabled="true" android:checked="true"/>
             </TableRow>
-            <TableRow
-                    >
+            <TableRow>
                 <TextView
                         android:layout_width="0dip"
                         android:layout_height="wrap_content"
@@ -137,8 +133,7 @@
                         android:spinnerMode="dialog"
                         />
             </TableRow>
-            <TableRow
-                    >
+            <TableRow>
                 <TextView
                         android:layout_width="0dip"
                         android:layout_height="wrap_content"
@@ -157,8 +152,7 @@
 
             </TableRow>
 
-            <TableRow
-                    >
+            <TableRow>
                 <TextView
                         android:layout_width="0dip"
                         android:layout_height="wrap_content"
@@ -174,8 +168,7 @@
                         android:gravity="center"
                         />
             </TableRow>
-            <TableRow
-                    >
+            <TableRow>
                 <TextView
                         android:layout_width="0dip"
                         android:layout_height="wrap_content"
@@ -202,23 +195,23 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:gravity="center_horizontal"
+            android:gravity="left"
             android:paddingBottom="3dip"
-            >
-        <Button
-                android:id="@+id/cancel_hold"
-                android:layout_width="120dip"
-                android:layout_height="wrap_content"
-                android:text="@string/cancel"
-                style="@style/ApplicationButton"
-                android:layout_margin="5dip"
-                />
+    >
 
         <Button
                 android:id="@+id/place_hold"
                 android:layout_width="120dip"
                 android:layout_height="wrap_content"
                 android:text="@string/button_place_hold"
+                style="@style/ApplicationButton"
+                android:layout_margin="5dip"
+                />
+        <Button
+                android:id="@+id/cancel_hold"
+                android:layout_width="120dip"
+                android:layout_height="wrap_content"
+                android:text="@string/cancel"
                 style="@style/ApplicationButton"
                 android:layout_margin="5dip"
                 />

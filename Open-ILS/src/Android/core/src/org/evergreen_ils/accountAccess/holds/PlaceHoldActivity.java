@@ -60,55 +60,27 @@ import android.widget.Toast;
 public class PlaceHoldActivity extends ActionBarActivity {
 
     private static final String TAG = PlaceHoldActivity.class.getSimpleName();
-
     private TextView title;
-
     private TextView author;
-
     private TextView physical_description;
-
     private AccountAccess accountAccess;
-
     private EditText expiration_date;
-
     private EditText phone_number;
-
     private CheckBox phone_notification;
-
     private CheckBox email_notification;
-
     private Button placeHold;
-
     private Button cancel;
-
     private CheckBox suspendHold;
-
     private Spinner orgSelector;
-
     private DatePickerDialog datePicker = null;
-
     private DatePickerDialog thaw_datePicker = null;
-
     private EditText thaw_date_edittext;
-
     private Date expire_date = null;
-
     private Date thaw_date = null;
-
     private Runnable placeHoldRunnable;
-
     private GlobalConfigs globalConfigs = null;
-
     private int selectedOrgPos = 0;
-
-    private Button homeButton;
-
-    private Button myAccountButton;
-
-    private TextView headerTitle;
-
     private ProgressDialog progressDialog;
-
     private Context context;
 
     @Override

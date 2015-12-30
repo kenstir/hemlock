@@ -75,7 +75,6 @@ public class BasicDetailsFragment extends Fragment {
     private Integer bookbag_selected;
     private Dialog dialog;
     private ArrayList<BookBag> bookBags;
-    private int list_size = 3;
     */
 
     private NetworkImageView recordImage;
@@ -83,8 +82,8 @@ public class BasicDetailsFragment extends Fragment {
     public static BasicDetailsFragment newInstance(RecordInfo record,
             Integer position, Integer total, Integer orgID) {
         BasicDetailsFragment fragment = new BasicDetailsFragment();
-        fragment.orgId = orgID;
         fragment.record = record;
+        fragment.orgId = orgID;
         fragment.position = position;
         fragment.total = total;
 
@@ -106,8 +105,7 @@ public class BasicDetailsFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-            Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         globalConfigs = GlobalConfigs.getInstance(getActivity());
 
@@ -116,7 +114,6 @@ public class BasicDetailsFragment extends Fragment {
 
         record_header = (TextView) layout.findViewById(R.id.record_header_text);
         copyCountTextView = (TextView) layout.findViewById(R.id.record_details_simple_copy_count);
-//        showMore = (LinearLayout) layout.findViewById(R.id.record_details_show_more);
         titleTextView = (TextView) layout.findViewById(R.id.record_details_simple_title);
         formatTextView = (TextView) layout.findViewById(R.id.record_details_format);
         authorTextView = (TextView) layout.findViewById(R.id.record_details_simple_author);
