@@ -114,7 +114,7 @@ public class RecordInfo implements Serializable {
 
         try {
             List<String> seriesList = (List<String>) info.get("series");
-            record.series = TextUtils.join(", ", seriesList);
+            record.series = TextUtils.join("\n", seriesList);
         } catch (Exception e) {
             Log.d(TAG, "caught", e);
         }
