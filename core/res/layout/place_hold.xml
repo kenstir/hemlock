@@ -206,7 +206,7 @@
                 android:text="@string/button_place_hold"
                 style="@style/ApplicationButton"
                 android:layout_margin="5dip"
-                />
+        />
         <Button
                 android:id="@+id/cancel_hold"
                 android:layout_width="120dip"
@@ -214,8 +214,7 @@
                 android:text="@string/cancel"
                 style="@style/ApplicationButton"
                 android:layout_margin="5dip"
-                />
+        />
     </LinearLayout>
-
 
 </LinearLayout>

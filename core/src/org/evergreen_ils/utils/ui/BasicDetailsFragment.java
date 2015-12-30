@@ -105,6 +105,15 @@ public class BasicDetailsFragment extends Fragment {
     }
 
     @Override
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putSerializable("recordInfo", record);
+        outState.putInt("orgId", this.orgId);
+        outState.putInt("position", this.position);
+        outState.putInt("total", this.total);
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         globalConfigs = GlobalConfigs.getInstance(getActivity());
@@ -324,14 +333,5 @@ public class BasicDetailsFragment extends Fragment {
             }
         });
         */
-    }
-
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        outState.putSerializable("recordInfo", record);
-        outState.putInt("orgId", this.orgId);
-        outState.putInt("position", this.position);
-        outState.putInt("total", this.total);
-        super.onSaveInstanceState(outState);
     }
 }
