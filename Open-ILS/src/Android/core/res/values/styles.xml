@@ -3,7 +3,7 @@
 
     <style name="textSmall">
         <item name="android:textSize">14sp</item>
-        <item name="android:paddingLeft">15dip</item>
+        <item name="android:paddingLeft">10dip</item>
         <item name="android:paddingTop">4dip</item>
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
