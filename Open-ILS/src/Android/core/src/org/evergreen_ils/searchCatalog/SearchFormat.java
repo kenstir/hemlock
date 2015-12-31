@@ -86,7 +86,7 @@ public class SearchFormat {
         }
         for (int i=0; i<formatsList.size(); ++i) {
             Map<String, ?> m = formatsList.get(i);
-            Log.d(TAG, "item:"+m);
+            //Log.d(TAG, "item:"+m);
             SearchFormatItem item = new SearchFormatItem();
             item.spinnerLabel = (String)m.get("l");
             item.displayLabel = (String)m.get("L");

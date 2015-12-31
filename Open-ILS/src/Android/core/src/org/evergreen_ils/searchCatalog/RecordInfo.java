@@ -35,12 +35,12 @@ public class RecordInfo implements Serializable {
 
     private static final String TAG = RecordInfo.class.getSimpleName();
 
+    public Integer doc_id = -1;
     public String title = null;
     public String author = null;
     public String pubdate = null;
-    public String isbn = null;
-    public Integer doc_id = -1;
     public String publisher = null;
+    public String isbn = null;
     public String subject = "";
     public String doc_type = null;
     public String online_loc = null;
@@ -75,17 +75,19 @@ public class RecordInfo implements Serializable {
             return;
         }
 
-        record.title = Utils.safeString(info.getString("title"));
-        record.author = Utils.safeString(info.getString("author"));
-        record.pubdate = Utils.safeString(info.getString("pubdate"));
-        record.publisher = Utils.safeString(info.getString("publisher"));
-        record.doc_type = Utils.safeString(info.getString("doc_type"));
         try {
             if (record.doc_id == -1)
                 record.doc_id = info.getInt("doc_id");
         } catch (Exception e) {
             Log.d(TAG, "caught", e);
         }
+
+        record.title = Utils.safeString(info.getString("title"));
+        record.author = Utils.safeString(info.getString("author"));
+        record.pubdate = Utils.safeString(info.getString("pubdate"));
+        record.publisher = Utils.safeString(info.getString("publisher"));
+        record.doc_type = Utils.safeString(info.getString("doc_type"));
+        record.synopsis = Utils.safeString(info.getString("synopsis"));
 
         try {
             record.isbn = (String) info.get("isbn");
@@ -123,5 +125,14 @@ public class RecordInfo implements Serializable {
     public String getPublishingInfo() {
         String s = TextUtils.join(" ", new Object[] {pubdate, publisher});
         return s.trim();
+    }
+
+    /** some records have a non-null online_loc but are books nevertheless, e.g.
+     * https://bark.cwmars.org/eg/opac/record/3306629
+     */
+    public boolean isOnlineResource() {
+        return (!TextUtils.isEmpty(online_loc)
+                && (SearchFormat.getItemLabelFromSearchFormat(search_format).startsWith("E-")
+                    || search_format.equals("picture")));
     }
 }

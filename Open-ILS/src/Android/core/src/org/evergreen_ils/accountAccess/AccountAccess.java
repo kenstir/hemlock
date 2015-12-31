@@ -449,7 +449,7 @@ public class AccountAccess {
         // appears to have been serialized by perl Data::Dumper, e.g.
         // '"biog"=>"b", "conf"=>"0", "search_format"=>"ebook"'.
         String attrs = resp.getString("attrs");
-        Log.d(TAG, "attrs="+attrs);
+        //Log.d(TAG, "attrs="+attrs);
         String[] attr_arr = TextUtils.split(attrs, ", ");
         String icon_format = "";
         String search_format = "";

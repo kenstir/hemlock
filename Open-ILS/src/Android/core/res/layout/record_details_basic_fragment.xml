@@ -94,27 +94,32 @@
             android:paddingBottom="3dip"
             android:layout_marginLeft="5dip">
             <Button
-                android:id="@+id/simple_place_hold_button"
-                style="@style/ApplicationButton"
-                android:layout_height="wrap_content"
-                android:layout_width="120dip"
-                android:layout_margin="5dip"
-                android:text="@string/button_place_hold"
-                />
-
+                    android:id="@+id/simple_place_hold_button"
+                    style="@style/ApplicationButton"
+                    android:layout_height="wrap_content"
+                    android:layout_width="120dip"
+                    android:layout_margin="5dip"
+                    android:text="@string/button_place_hold"
+            />
             <Button
-                android:id="@+id/show_copy_information_button"
-                style="@style/ApplicationButton"
-                android:layout_height="wrap_content"
-                android:layout_width="120dip"
-                android:layout_margin="5dip"
-                android:text="@string/show_more_text"
-                />
+                    android:id="@+id/show_copy_information_button"
+                    style="@style/ApplicationButton"
+                    android:layout_height="wrap_content"
+                    android:layout_width="120dip"
+                    android:layout_margin="5dip"
+                    android:text="@string/show_copies"
+            />
+            <Button
+                    android:id="@+id/record_details_online_access"
+                    style="@style/ApplicationButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/record_online_access"
+                    android:layout_margin="5dip"/>
         </LinearLayout>
 
         <TextView
                 android:id="@+id/record_details_simple_copy_count"
-                android:textStyle="bold"
                 android:layout_height="wrap_content"
                 android:layout_width="match_parent"
                 android:text="0 of 0 copies available at Marlborough Public Library"
@@ -122,16 +127,22 @@
 
         <TableLayout
                 android:layout_height="wrap_content"
-                android:layout_width="match_parent">
+                android:layout_width="match_parent"
+                android:shrinkColumns="1">
             <TableRow >
                 <TextView
-                        android:text="@string/record_subject" android:textSize="18dip"
+                        android:text="@string/record_synopsis" android:textSize="18dip"
                         android:layout_marginLeft="10dip"/>
 
                 <TextView
-                        android:id="@+id/record_details_simple_subject"
-                        android:text="Gangs\nFund raising\nPeer pressure\nHigh schools\nPreparatory school students"
-                        android:layout_marginLeft="10dip" android:layout_marginBottom="3dip"/>
+                        android:id="@+id/record_details_simple_synopsis"
+                        android:layout_marginLeft="10dip"
+                        android:layout_marginBottom="3dip"/>
+
+                <!--android:layout_height="wrap_content"-->
+                <!--android:ellipsize="none"-->
+                <!--android:scrollHorizontally="false"-->
+                <!--android:maxLines="4"-->
             </TableRow>
             <TableRow >
                 <TextView
@@ -145,11 +156,12 @@
             </TableRow>
             <TableRow >
                 <TextView
-                        android:text="@string/record_synopsis" android:textSize="18dip"
+                        android:text="@string/record_subject" android:textSize="18dip"
                         android:layout_marginLeft="10dip"/>
 
                 <TextView
-                        android:id="@+id/record_details_simple_synopsis"
+                        android:id="@+id/record_details_simple_subject"
+                        android:text="Gangs\nFund raising\nPeer pressure\nHigh schools\nPreparatory school students"
                         android:layout_marginLeft="10dip" android:layout_marginBottom="3dip"/>
             </TableRow>
             <TableRow >
