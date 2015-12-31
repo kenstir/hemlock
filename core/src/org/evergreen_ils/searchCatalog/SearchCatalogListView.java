@@ -221,79 +221,15 @@ public class SearchCatalogListView extends ActionBarActivity {
             @Override
             public void onItemClick(AdapterView<?> arg0, View arg1,
                     int position, long arg3) {
-
                 RecordInfo info = (RecordInfo) lv.getItemAtPosition(position);
-
-                if (info.dummy == true) {
-                    // this is the more view item button
-                    progressDialog = new ProgressDialog(context);
-
-                    progressDialog.setMessage("Fetching data");
-                    progressDialog.show();
-                    final String text = searchText.getText().toString();
-
-                    Thread searchThreadwithOffset = new Thread(new Runnable() {
-
-                        @Override
-                        public void run() {
-
-                            searchResults.clear();
-                            searchResults = search.getSearchResults(text, getSearchClass(), getSearchFormat(), recordList.size());
-
-                            runOnUiThread(new Runnable() {
-
-                                @Override
-                                public void run() {
-
-                                    // don't clear record list
-                                    // recordList.clear();
-                                    if (searchResults.size() > 0) {
-
-                                        // remove previous more button
-                                        recordList.remove(recordList.size() - 1);
-
-                                        for (int j = 0; j < searchResults
-                                                .size(); j++)
-                                            recordList.add(searchResults.get(j));
-
-                                        // add extra record to display more
-                                        // option button
-                                        if (search.visible > recordList.size()) {
-                                            recordList.add(new RecordInfo());
-                                            searchResultsNumber.setText(adapter
-                                                    .getCount()
-                                                    - 1
-                                                    + " out of "
-                                                    + search.visible);
-                                        } else
-                                            searchResultsNumber.setText(adapter
-                                                    .getCount()
-                                                    + " out of "
-                                                    + search.visible);
-                                    } else {
-                                        searchResultsNumber.setText(adapter
-                                                .getCount()
-                                                + " out of "
-                                                + search.visible);
-                                    }
-                                    adapter.notifyDataSetChanged();
-                                    progressDialog.dismiss();
-                                }
-                            });
-
-                        }
-                    });
-
-                    searchThreadwithOffset.start();
-                } else {
-                    Intent intent = new Intent(getBaseContext(), SampleUnderlinesNoFade.class);
-                    intent.putExtra("recordInfo", info);
-                    intent.putExtra("orgID", search.selectedOrganization.id);
-                    intent.putExtra("depth", search.selectedOrganization.level);
-                    intent.putExtra("recordList", recordList);
-                    intent.putExtra("recordPosition", position);
-                    startActivityForResult(intent, 10);
-                }
+                Intent intent = new Intent(getBaseContext(), SampleUnderlinesNoFade.class);
+                //todo add package prefix to names in putExtra
+                intent.putExtra("recordInfo", info);
+                intent.putExtra("orgID", search.selectedOrganization.id);
+                intent.putExtra("depth", search.selectedOrganization.level);
+                intent.putExtra("recordList", recordList);
+                intent.putExtra("recordPosition", position);
+                startActivityForResult(intent, 10);
             }
         });
 
