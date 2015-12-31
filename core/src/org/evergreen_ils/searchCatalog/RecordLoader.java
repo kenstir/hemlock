@@ -21,15 +21,18 @@ package org.evergreen_ils.searchCatalog;
 import android.content.Context;
 import android.text.TextUtils;
 import com.android.volley.Response;
+import com.android.volley.VolleyError;
 import org.evergreen_ils.accountAccess.AccountAccess;
 import org.evergreen_ils.globals.GlobalConfigs;
+import org.evergreen_ils.globals.Log;
 import org.evergreen_ils.globals.Utils;
 import org.evergreen_ils.net.GatewayJsonObjectRequest;
 import org.evergreen_ils.net.VolleyWrangler;
 import org.opensrf.util.GatewayResponse;
 import org.opensrf.util.OSRFObject;
 
-/**
+/** Async interface for loading RecordInfo metadata
+ *
  * Created by kenstir on 12/27/2015.
  */
 public class RecordLoader {
@@ -39,13 +42,16 @@ public class RecordLoader {
         public void onMetadataLoaded();
         public void onSearchFormatLoaded();
     }
+    public interface Listener {
+        public void onDataAvailable();
+    }
 
     public static void fetch(final RecordInfo record, final Context context, final ResponseListener responseListener) {
         fetchBasicMetadata(record, context, responseListener);
         fetchSearchFormat(record, context, responseListener);
     }
 
-    private static void fetchBasicMetadata(final RecordInfo record, Context context, final ResponseListener responseListener) {
+    public static void fetchBasicMetadata(final RecordInfo record, Context context, final ResponseListener responseListener) {
         if (!TextUtils.isEmpty(record.title)) {
             responseListener.onMetadataLoaded();
         } else {
@@ -66,7 +72,7 @@ public class RecordLoader {
         }
     }
 
-    private static void fetchSearchFormat(final RecordInfo record, Context context, final ResponseListener responseListener) {
+    public static void fetchSearchFormat(final RecordInfo record, Context context, final ResponseListener responseListener) {
         if (!TextUtils.isEmpty(record.search_format)) {
             responseListener.onSearchFormatLoaded();
         } else {
@@ -84,6 +90,33 @@ public class RecordLoader {
                         }
                     },
                     VolleyWrangler.logErrorListener(TAG));
+            VolleyWrangler.getInstance(context).addToRequestQueue(r);
+        }
+    }
+
+    public static void fetchCopyCount(final RecordInfo record, final int orgId, Context context, final Listener listener) {
+        if (record.copyCountListInfo != null) {
+            listener.onDataAvailable();
+        } else {
+            String url = GlobalConfigs.getUrl(Utils.buildGatewayUrl(
+                    SearchCatalog.SERVICE, SearchCatalog.METHOD_GET_COPY_COUNT,
+                    new Object[]{orgId, record.doc_id}));
+            GatewayJsonObjectRequest r = new GatewayJsonObjectRequest(
+                    url,
+                    new Response.Listener<GatewayResponse>() {
+                        @Override
+                        public void onResponse(GatewayResponse response) {
+                            SearchCatalog.setCopyCountListInfo(record, response);
+                            listener.onDataAvailable();
+                        }
+                    },
+                    new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            Log.d(TAG, "caught", error);
+                            SearchCatalog.setCopyCountListInfo(record, null);
+                        }
+                    });
             VolleyWrangler.getInstance(context).addToRequestQueue(r);
         }
     }

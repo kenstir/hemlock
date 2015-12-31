@@ -19,6 +19,8 @@
  */
 package org.evergreen_ils.utils.ui;
 
+import android.net.Uri;
+import android.text.TextUtils;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageLoader;
@@ -54,18 +56,18 @@ public class BasicDetailsFragment extends Fragment {
     private Integer total;
 
     private TextView record_header;
-
     private TextView titleTextView;
     private TextView formatTextView;
     private TextView authorTextView;
     private TextView publisherTextView;
-
     private TextView seriesTextView;
     private TextView subjectTextView;
     private TextView synopsisTextView;
     private TextView isbnTextView;
-
     private TextView copyCountTextView;
+    private Button placeHoldButton;
+    private Button showCopiesButton;
+    private Button onlineAccessButton;
 
     private GlobalConfigs globalConfigs;
 
@@ -122,27 +124,23 @@ public class BasicDetailsFragment extends Fragment {
                 R.layout.record_details_basic_fragment, null);
 
         record_header = (TextView) layout.findViewById(R.id.record_header_text);
-        copyCountTextView = (TextView) layout.findViewById(R.id.record_details_simple_copy_count);
         titleTextView = (TextView) layout.findViewById(R.id.record_details_simple_title);
         formatTextView = (TextView) layout.findViewById(R.id.record_details_format);
         authorTextView = (TextView) layout.findViewById(R.id.record_details_simple_author);
         publisherTextView = (TextView) layout.findViewById(R.id.record_details_simple_publisher);
-
         seriesTextView = (TextView) layout.findViewById(R.id.record_details_simple_series);
         subjectTextView = (TextView) layout.findViewById(R.id.record_details_simple_subject);
         synopsisTextView = (TextView) layout.findViewById(R.id.record_details_simple_synopsis);
         isbnTextView = (TextView) layout.findViewById(R.id.record_details_simple_isbn);
-
         recordImage = (NetworkImageView) layout.findViewById(R.id.record_details_simple_image);
+        copyCountTextView = (TextView) layout.findViewById(R.id.record_details_simple_copy_count);
+        placeHoldButton = (Button) layout.findViewById(R.id.simple_place_hold_button);
+        showCopiesButton = (Button) layout.findViewById(R.id.show_copy_information_button);
+        onlineAccessButton = (Button) layout.findViewById(R.id.record_details_online_access);
 
-        ((Button) layout.findViewById(R.id.simple_place_hold_button)).setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getActivity().getApplicationContext(), PlaceHoldActivity.class);
-                intent.putExtra("recordInfo", record);
-                startActivity(intent);
-            }
-        });
+        record_header.setText(String.format(getString(R.string.record_of), position, total));
+
+        initButtons();
 
         // Start async image load
         final String imageHref = GlobalConfigs.getUrl("/opac/extras/ac/jacket/medium/r/" + record.doc_id);
@@ -151,15 +149,23 @@ public class BasicDetailsFragment extends Fragment {
 
         // Start async record load
         fetchRecordInfo(record);
-
         initBookbagStuff();
 
-        record_header.setText(String.format(getString(R.string.record_of), position, total));
+        return layout;
+    }
 
-        updateCopyCount();
-        initCopyCount();
+    private void initButtons() {
+        updateButtonViews();
 
-        ((Button)layout.findViewById(R.id.show_copy_information_button)).setOnClickListener(new OnClickListener() {
+        placeHoldButton.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity().getApplicationContext(), PlaceHoldActivity.class);
+                intent.putExtra("recordInfo", record);
+                startActivity(intent);
+            }
+        });
+        showCopiesButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getActivity().getApplicationContext(), CopyInformationActivity.class);
@@ -168,12 +174,28 @@ public class BasicDetailsFragment extends Fragment {
                 startActivity(intent);
             }
         });
+        onlineAccessButton.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (TextUtils.isEmpty(record.online_loc))
+                    return;
+                Intent i = new Intent(Intent.ACTION_VIEW, Uri.parse(record.online_loc));
+                startActivity(i);
+            }
+        });
+    }
 
-        return layout;
+    private void updateButtonViews() {
+        boolean is_online_resource = record.isOnlineResource();
+        onlineAccessButton.setVisibility(is_online_resource ? View.VISIBLE : View.GONE);
+        placeHoldButton.setVisibility(is_online_resource ? View.GONE : View.VISIBLE);
+        showCopiesButton.setVisibility(is_online_resource ? View.GONE : View.VISIBLE);
+        copyCountTextView.setVisibility(is_online_resource ? View.GONE : View.VISIBLE);
     }
 
     private void updateSearchFormatView() {
         formatTextView.setText(SearchFormat.getItemLabelFromSearchFormat(record.search_format));
+        updateButtonViews();
     }
 
     private void updateBasicMetadataViews() {
@@ -184,6 +206,7 @@ public class BasicDetailsFragment extends Fragment {
         subjectTextView.setText(record.subject);
         synopsisTextView.setText(record.synopsis);
         isbnTextView.setText(record.isbn);
+        updateButtonViews();
     }
 
     private void fetchRecordInfo(final RecordInfo record) {
@@ -198,37 +221,15 @@ public class BasicDetailsFragment extends Fragment {
                         updateSearchFormatView();
                     }
                 });
+        RecordLoader.fetchCopyCount(record, orgId, getActivity(), new RecordLoader.Listener() {
+            @Override
+            public void onDataAvailable() {
+                updateCopyCountView();
+            }
+        });
     }
 
-    private void initCopyCount() {
-        if (record.copyCountListInfo == null) {
-            final long start_ms = System.currentTimeMillis();
-            String url = GlobalConfigs.getUrl(Utils.buildGatewayUrl(
-                    SearchCatalog.SERVICE, SearchCatalog.METHOD_GET_COPY_COUNT,
-                    new Object[]{orgId, record.doc_id}));
-            GatewayJsonObjectRequest r = new GatewayJsonObjectRequest(
-                    url,
-                    new Response.Listener<GatewayResponse>() {
-                        @Override
-                        public void onResponse(GatewayResponse response) {
-                            long duration_ms = System.currentTimeMillis() - start_ms;
-                            Log.d(TAG, "kcx.volley fetch "+record.doc_id+" took " + duration_ms + "ms");
-                            SearchCatalog.setCopyCountListInfo(record, response);
-                            updateCopyCount();
-                        }
-                    },
-                    new Response.ErrorListener() {
-                        @Override
-                        public void onErrorResponse(VolleyError error) {
-                            Log.d(TAG, "kcx.initCopyCount caught", error);
-                            SearchCatalog.setCopyCountListInfo(record, null);
-                        }
-                    });
-            VolleyWrangler.getInstance(getActivity()).addToRequestQueue(r);
-        }
-    }
-
-    private void updateCopyCount() {
+    private void updateCopyCountView() {
         int total = 0;
         int available = 0;
         if (record.copyCountListInfo == null) {
