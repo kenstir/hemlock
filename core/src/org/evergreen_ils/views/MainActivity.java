@@ -33,11 +33,14 @@ import org.evergreen_ils.accountAccess.checkout.ItemsCheckOutListView;
 import org.evergreen_ils.accountAccess.fines.FinesActivity;
 import org.evergreen_ils.accountAccess.holds.HoldsListView;
 import org.evergreen_ils.auth.Const;
+import org.evergreen_ils.billing.*;
 import org.evergreen_ils.globals.GlobalConfigs;
 import org.evergreen_ils.globals.Log;
 import org.evergreen_ils.searchCatalog.SearchCatalogListView;
 import org.evergreen_ils.utils.ui.ActionBarUtils;
 import org.evergreen_ils.views.splashscreen.SplashActivity;
+
+import java.util.List;
 
 /**
  * Created by kenstir on 12/28/13.
@@ -45,7 +48,11 @@ import org.evergreen_ils.views.splashscreen.SplashActivity;
 public class MainActivity extends ActionBarActivity {
 
     private static String TAG = MainActivity.class.getSimpleName();
-    private GlobalConfigs globalConfigs;
+    IabHelper mHelper;
+    private static String SKU_BRONZE = "bronze";
+    private static String SKU_SILVER = "silver";
+    private static String SKU_GOLD = "gold";
+    private static String SKU_KARMA = "karma";
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -58,8 +65,75 @@ public class MainActivity extends ActionBarActivity {
         ActionBarUtils.initActionBarForActivity(this, true);
 
         // singleton initialize necessary IDL and Org data
-        globalConfigs = GlobalConfigs.getInstance(this);
+//        globalConfigs = GlobalConfigs.getInstance(this);
+
+        initBilling();
     }
+
+    private void initBilling() {
+        // todo obfuscate the public key
+        BillingDataProvider provider = BillingDataProvider.create(getString(R.string.ou_billing_data_provider));
+        String base64EncodedPublicKey = (provider != null) ? provider.getPublicKey() : null;
+        if (TextUtils.isEmpty(base64EncodedPublicKey)) {
+            findViewById(R.id.main_donate_button).setVisibility(View.GONE);
+            return;
+        }
+
+        mHelper = new IabHelper(this, base64EncodedPublicKey);
+        if (GlobalConfigs.isDebuggable())
+            mHelper.enableDebugLogging(true);
+
+        mHelper.startSetup(new IabHelper.OnIabSetupFinishedListener() {
+            @Override
+            public void onIabSetupFinished(IabResult result) {
+                Log.d(TAG, "setup finished, result="+result);
+                if (result.isFailure()) {
+                    // report this
+                    return;
+                }
+                // Have we been disposed of in the meantime? If so, quit.
+                if (mHelper == null)
+                    return;
+                Log.d(TAG, "querying inventory");
+                mHelper.queryInventoryAsync(mGotInventoryListener);
+            }
+        });
+    }
+
+    // Listener that's called when we finish querying the items and subscriptions we own
+    IabHelper.QueryInventoryFinishedListener mGotInventoryListener = new IabHelper.QueryInventoryFinishedListener() {
+        @Override
+        public void onQueryInventoryFinished(IabResult result, Inventory inventory) {
+            Log.d(TAG, "Query inventory finished, result="+result);
+
+            // Have we been disposed of in the meantime? If so, quit.
+            if (mHelper == null) return;
+
+            // Is it a failure?
+            if (result.isFailure()) {
+                // todo report this
+                return;
+            }
+
+            Log.d(TAG, "Query inventory was successful.");
+
+            /*
+             * Check for items we own. Notice that for each purchase, we check
+             * the developer payload to see if it's correct! See
+             * verifyDeveloperPayload().
+             */
+            List<String> skus = inventory.getAllOwnedSkus();
+            Log.d(TAG, "skus="+TextUtils.join(",", skus));
+
+            // if we own karma, consume it
+            Purchase karmaPurchase = inventory.getPurchase(SKU_KARMA);
+            if (karmaPurchase != null) {
+                Log.d(TAG, "We have karma. Consuming it.");
+                mHelper.consumeAsync(inventory.getPurchase(SKU_KARMA), null);
+                return;
+            }
+        }
+    };
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -105,21 +179,19 @@ public class MainActivity extends ActionBarActivity {
     public void onButtonClick(View v) {
         int id = v.getId();
         if (id == R.id.account_btn_check_out) {
-            startActivity(new Intent(getApplicationContext(), ItemsCheckOutListView.class));
-
+            startActivity(new Intent(this, ItemsCheckOutListView.class));
         } else if (id == R.id.account_btn_holds) {
-            startActivity(new Intent(getApplicationContext(), HoldsListView.class));
-
+            startActivity(new Intent(this, HoldsListView.class));
         } else if (id == R.id.account_btn_fines) {
-            startActivity(new Intent(getApplicationContext(), FinesActivity.class));
-
+            startActivity(new Intent(this, FinesActivity.class));
             /*
         } else if (id == R.id.account_btn_book_bags) {
-            startActivity(new Intent(getApplicationContext(), BookbagsListView.class));
+            startActivity(new Intent(this, BookbagsListView.class));
             */
-
         } else if (id == R.id.main_btn_search) {
-            startActivity(new Intent(getApplicationContext(), SearchCatalogListView.class));
+            startActivity(new Intent(this, SearchCatalogListView.class));
+        } else if (id == R.id.main_donate_button) {
+            startActivity(new Intent(this, DonateActivity.class));
         }
     }
 }

@@ -22,18 +22,18 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import org.evergreen_ils.R;
-import org.evergreen_ils.accountAccess.bookbags.BookBag;
 
-/**
+/** App State that is persistent across invocations; stored as preferences.
+ *
  * Created by kenstir on 11/8/2015.
  */
-public class AppPrefs {
+public class AppState {
     public static final String LIBRARY_URL = "library_url";
     public static final String LIBRARY_NAME = "library_name";
     private static final String VERSION = "version";
     // increment PREFS_VERSION every time you make a change to the persistent pref storage
     private static final int PREFS_VERSION = 2;
-    private static final String TAG = AppPrefs.class.getSimpleName();
+    private static final String TAG = AppState.class.getSimpleName();
     private static Context context;
     private static boolean initialized;
 

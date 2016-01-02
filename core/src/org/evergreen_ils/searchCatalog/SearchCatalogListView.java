@@ -33,7 +33,7 @@ import org.evergreen_ils.accountAccess.SessionNotFoundException;
 import org.evergreen_ils.accountAccess.bookbags.BookBag;
 import org.evergreen_ils.accountAccess.holds.PlaceHoldActivity;
 import org.evergreen_ils.barcodescan.CaptureActivity;
-import org.evergreen_ils.globals.AppPrefs;
+import org.evergreen_ils.globals.AppState;
 import org.evergreen_ils.globals.GlobalConfigs;
 import org.evergreen_ils.globals.Log;
 import org.evergreen_ils.net.VolleyWrangler;
@@ -117,7 +117,7 @@ public class SearchCatalogListView extends ActionBarActivity {
             return;
         }
         SearchFormat.init(this);
-        AppPrefs.init(this);
+        AppState.init(this);
 
         setContentView(R.layout.search_layout3);
         ActionBarUtils.initActionBarForActivity(this);
@@ -161,7 +161,7 @@ public class SearchCatalogListView extends ActionBarActivity {
     }
 
     private void initSearchOptionsVisibility() {
-        boolean last_state = AppPrefs.getBoolean(SEARCH_OPTIONS_VISIBLE, true);
+        boolean last_state = AppState.getBoolean(SEARCH_OPTIONS_VISIBLE, true);
         setSearchOptionsVisibility(last_state);
     }
 
@@ -174,7 +174,7 @@ public class SearchCatalogListView extends ActionBarActivity {
             searchOptionsButton.setImageResource(R.drawable.expander_ic_minimized);
         }
         searchOptionsVisible = visible;
-        AppPrefs.setBoolean(SEARCH_OPTIONS_VISIBLE, visible);
+        AppState.setBoolean(SEARCH_OPTIONS_VISIBLE, visible);
     }
 
     private void toggleSearchOptions() {

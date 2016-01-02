@@ -21,6 +21,7 @@
     <string name="bookbag_items_title">Bookbags</string>
     <string name="bookbag_details_title">Bookbag details</string>
     <string name="title_fines">Fines</string>
+    <string name="title_donate">Donate</string>
     <string name="copy_information_title">Copy Information</string>
     <string name="button_place_hold">Place Hold</string>
     <string name="button_add_to_bookbag">Add to Bookbag</string>

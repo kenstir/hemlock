@@ -43,4 +43,13 @@
             android:onClick="onButtonClick"
             android:drawableLeft="@drawable/fines"/>
 
+    <Button
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            style="@style/BigActionButton"
+            android:text="@string/title_donate"
+            android:id="@+id/main_donate_button"
+            android:onClick="onButtonClick"
+            android:drawableLeft="@drawable/kteatime"/>
+
 </LinearLayout>
