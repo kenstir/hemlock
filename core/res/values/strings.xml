@@ -166,5 +166,6 @@
     <string name="record_synopsis">Synopsis</string>
     <string name="record_isbn">ISBN</string>
     <string name="record_online_access">Online Access</string>
+    <string name="msg_retrieving_fines">Retrieving fines</string>
 
 </resources>

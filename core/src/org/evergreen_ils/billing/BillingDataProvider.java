@@ -20,7 +20,8 @@ package org.evergreen_ils.billing;
 
 import org.evergreen_ils.globals.Log;
 
-/** Place to get the keys necessary to perform billing
+/** Interface to get the keys necessary to perform billing.  Concrete implementation is provided by the app
+ * and the name of that class is specified in R.string.ou_billing_data_provider .
  *
  * Created by kenstir on 1/1/2016.
  */

@@ -44,23 +44,23 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Starbucks coffee - $4"
-            android:id="@+id/donate_4_button"
+            android:id="@+id/donate_gold_button"
             style="@style/BigActionButton"
-            android:layout_marginBottom="12dip"/>
+            android:layout_marginBottom="12dip" android:onClick="onButtonClick"/>
 
     <Button
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Dunkins coffee - $2"
-            android:id="@+id/donate_2_button"
+            android:id="@+id/donate_silver_button"
             style="@style/BigActionButton"
-            android:layout_marginBottom="12dip"/>
+            android:layout_marginBottom="12dip" android:onClick="onButtonClick"/>
 
     <Button
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Good karma - $1"
-            android:id="@+id/donate_1_button"
+            android:id="@+id/donate_karma_button"
             style="@style/BigActionButton"
-            android:layout_marginBottom="12dip"/>
+            android:layout_marginBottom="12dip" android:onClick="onButtonClick"/>
 </LinearLayout>
