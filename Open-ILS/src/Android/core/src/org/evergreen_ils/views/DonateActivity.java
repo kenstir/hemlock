@@ -18,9 +18,14 @@
 
 package org.evergreen_ils.views;
 
+import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.view.View;
 import org.evergreen_ils.R;
+import org.evergreen_ils.billing.BillingHelper;
+import org.evergreen_ils.billing.IabResult;
+import org.evergreen_ils.globals.Log;
 import org.evergreen_ils.utils.ui.ActionBarUtils;
 import org.evergreen_ils.views.splashscreen.SplashActivity;
 
@@ -29,6 +34,7 @@ import org.evergreen_ils.views.splashscreen.SplashActivity;
  */
 public class DonateActivity extends ActionBarActivity {
     private final static String TAG = DonateActivity.class.getSimpleName();
+    private ProgressDialog progressDialog;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -40,5 +46,37 @@ public class DonateActivity extends ActionBarActivity {
 
         setContentView(R.layout.activity_donate);
         ActionBarUtils.initActionBarForActivity(this);
+    }
+
+    void setBusy(boolean set) {
+        if (set) {
+            progressDialog = ProgressDialog.show(this, "", "Launching billing flow");
+        } else if (progressDialog != null) {
+            progressDialog.dismiss();
+            progressDialog = null;
+        }
+    }
+
+    void launchPurchaseFlow(String sku) {
+        setBusy(true);
+        Log.d(TAG, "Launching purchase flow for " + sku);
+
+        BillingHelper.launchPurchaseFlow(this, sku, new BillingHelper.OnPurchaseFinishedListener() {
+            @Override
+            public void onPurchaseFinished(IabResult result) {
+                setBusy(false);
+            }
+        });
+    }
+
+    public void onButtonClick(View v) {
+        int id = v.getId();
+        if (id == R.id.donate_karma_button) {
+            launchPurchaseFlow(BillingHelper.SKU_KARMA);
+        } else if (id == R.id.donate_silver_button) {
+            launchPurchaseFlow(BillingHelper.SKU_SILVER);
+        } else if (id == R.id.donate_gold_button) {
+            launchPurchaseFlow(BillingHelper.SKU_GOLD);
+        }
     }
 }

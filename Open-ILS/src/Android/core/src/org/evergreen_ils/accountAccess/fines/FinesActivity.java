@@ -92,7 +92,7 @@ public class FinesActivity extends ActionBarActivity {
 
         progressDialog = ProgressDialog.show(this,
                 getResources().getText(R.string.dialog_please_wait),
-                "Retrieving fines");
+                getString(R.string.msg_retrieving_fines));
 
         getFinesInfo = new Runnable() {
             @Override

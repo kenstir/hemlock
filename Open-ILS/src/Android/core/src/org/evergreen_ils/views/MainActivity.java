@@ -34,7 +34,6 @@ import org.evergreen_ils.accountAccess.fines.FinesActivity;
 import org.evergreen_ils.accountAccess.holds.HoldsListView;
 import org.evergreen_ils.auth.Const;
 import org.evergreen_ils.billing.*;
-import org.evergreen_ils.globals.GlobalConfigs;
 import org.evergreen_ils.globals.Log;
 import org.evergreen_ils.searchCatalog.SearchCatalogListView;
 import org.evergreen_ils.utils.ui.ActionBarUtils;
@@ -48,11 +47,6 @@ import java.util.List;
 public class MainActivity extends ActionBarActivity {
 
     private static String TAG = MainActivity.class.getSimpleName();
-    IabHelper mHelper;
-    private static String SKU_BRONZE = "bronze";
-    private static String SKU_SILVER = "silver";
-    private static String SKU_GOLD = "gold";
-    private static String SKU_KARMA = "karma";
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -70,7 +64,15 @@ public class MainActivity extends ActionBarActivity {
         initBilling();
     }
 
-    private void initBilling() {
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+
+        // very important:
+        BillingHelper.disposeIabHelper();
+    }
+
+    void initBilling() {
         // todo obfuscate the public key
         BillingDataProvider provider = BillingDataProvider.create(getString(R.string.ou_billing_data_provider));
         String base64EncodedPublicKey = (provider != null) ? provider.getPublicKey() : null;
@@ -79,61 +81,19 @@ public class MainActivity extends ActionBarActivity {
             return;
         }
 
-        mHelper = new IabHelper(this, base64EncodedPublicKey);
-        if (GlobalConfigs.isDebuggable())
-            mHelper.enableDebugLogging(true);
-
-        mHelper.startSetup(new IabHelper.OnIabSetupFinishedListener() {
+        BillingHelper.startSetup(this, base64EncodedPublicKey, new BillingHelper.OnSetupFinishedListener() {
             @Override
-            public void onIabSetupFinished(IabResult result) {
-                Log.d(TAG, "setup finished, result="+result);
-                if (result.isFailure()) {
-                    // report this
-                    return;
+            public void onSetupFinished(IabResult result) {
+                if (result.isSuccess()) {
+                    updateUi();
                 }
-                // Have we been disposed of in the meantime? If so, quit.
-                if (mHelper == null)
-                    return;
-                Log.d(TAG, "querying inventory");
-                mHelper.queryInventoryAsync(mGotInventoryListener);
             }
         });
     }
 
-    // Listener that's called when we finish querying the items and subscriptions we own
-    IabHelper.QueryInventoryFinishedListener mGotInventoryListener = new IabHelper.QueryInventoryFinishedListener() {
-        @Override
-        public void onQueryInventoryFinished(IabResult result, Inventory inventory) {
-            Log.d(TAG, "Query inventory finished, result="+result);
-
-            // Have we been disposed of in the meantime? If so, quit.
-            if (mHelper == null) return;
-
-            // Is it a failure?
-            if (result.isFailure()) {
-                // todo report this
-                return;
-            }
-
-            Log.d(TAG, "Query inventory was successful.");
-
-            /*
-             * Check for items we own. Notice that for each purchase, we check
-             * the developer payload to see if it's correct! See
-             * verifyDeveloperPayload().
-             */
-            List<String> skus = inventory.getAllOwnedSkus();
-            Log.d(TAG, "skus="+TextUtils.join(",", skus));
-
-            // If we have any karma, consume it.  This allows for multiple karma.
-            Purchase karmaPurchase = inventory.getPurchase(SKU_KARMA);
-            if (karmaPurchase != null) {
-                Log.d(TAG, "We have karma. Consuming it.");
-                mHelper.consumeAsync(inventory.getPurchase(SKU_KARMA), null);
-                return;
-            }
-        }
-    };
+    void updateUi() {
+        findViewById(R.id.main_donate_button).setVisibility(BillingHelper.showDonateButton() ? View.VISIBLE : View.GONE);
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
