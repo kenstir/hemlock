@@ -10,7 +10,6 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import com.android.volley.Request;
-import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
@@ -28,7 +27,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
 import org.evergreen_ils.accountAccess.AccountUtils;
-import org.evergreen_ils.globals.AppPrefs;
+import org.evergreen_ils.globals.AppState;
 import org.evergreen_ils.globals.Log;
 import org.evergreen_ils.net.VolleyWrangler;
 import org.evergreen_ils.globals.Library;
@@ -134,7 +133,7 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        AppPrefs.init(this);
+        AppState.init(this);
 
         accountManager = AccountManager.get(getBaseContext());
         context = getApplicationContext();
@@ -166,7 +165,7 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity {
 
         TextView signInText = (TextView) findViewById(R.id.account_sign_in_text);
         signInText.setText(String.format(getString(R.string.ou_account_sign_in_message),
-                AppPrefs.getString(AppPrefs.LIBRARY_NAME)));
+                AppState.getString(AppState.LIBRARY_NAME)));
 
         // Turn off suggestions for the accountName field.  Turning them off with setInputType worked on my phone
         // whereas using android:inputType="text|textNoSuggestions" in xml did not.

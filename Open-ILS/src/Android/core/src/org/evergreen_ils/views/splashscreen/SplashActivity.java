@@ -19,9 +19,8 @@
  */
 package org.evergreen_ils.views.splashscreen;
 
-import android.widget.ImageButton;
 import org.evergreen_ils.R;
-import org.evergreen_ils.globals.AppPrefs;
+import org.evergreen_ils.globals.AppState;
 import org.evergreen_ils.globals.Log;
 import org.evergreen_ils.views.MainActivity;
 import org.evergreen_ils.views.splashscreen.LoadingTask.LoadingTaskListener;
@@ -35,7 +34,6 @@ import android.text.TextUtils;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
 public class SplashActivity extends Activity implements LoadingTaskListener {
@@ -85,7 +83,7 @@ public class SplashActivity extends Activity implements LoadingTaskListener {
         this.mContext = this;
         setContentView(R.layout.activity_splash);
 
-        AppPrefs.init(this);
+        AppState.init(this);
 
         mProgressText = (TextView) findViewById(R.id.action_in_progress);
         mProgressBar = findViewById(R.id.activity_splash_progress_bar);

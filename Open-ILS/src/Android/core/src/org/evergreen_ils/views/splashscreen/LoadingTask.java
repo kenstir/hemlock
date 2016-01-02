@@ -24,7 +24,7 @@ import org.evergreen_ils.R;
 import org.evergreen_ils.accountAccess.AccountAccess;
 import org.evergreen_ils.accountAccess.AccountUtils;
 import org.evergreen_ils.accountAccess.SessionNotFoundException;
-import org.evergreen_ils.globals.AppPrefs;
+import org.evergreen_ils.globals.AppState;
 import org.evergreen_ils.globals.GlobalConfigs;
 
 import android.accounts.AccountManager;
@@ -104,8 +104,8 @@ public class LoadingTask {
             }
 
             Library library = AccountUtils.getLibraryForAccount(mCallingActivity, account_name, accountType);
-            AppPrefs.setString(AppPrefs.LIBRARY_NAME, library.name);
-            AppPrefs.setString(AppPrefs.LIBRARY_URL, library.url);
+            AppState.setString(AppState.LIBRARY_NAME, library.name);
+            AppState.setString(AppState.LIBRARY_URL, library.url);
 
             Log.d(TAG, tag+"Loading resources from "+library.url);
             publishProgress("Loading resources");
