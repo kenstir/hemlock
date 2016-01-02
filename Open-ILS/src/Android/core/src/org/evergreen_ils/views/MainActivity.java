@@ -125,7 +125,7 @@ public class MainActivity extends ActionBarActivity {
             List<String> skus = inventory.getAllOwnedSkus();
             Log.d(TAG, "skus="+TextUtils.join(",", skus));
 
-            // if we own karma, consume it
+            // If we have any karma, consume it.  This allows for multiple karma.
             Purchase karmaPurchase = inventory.getPurchase(SKU_KARMA);
             if (karmaPurchase != null) {
                 Log.d(TAG, "We have karma. Consuming it.");
