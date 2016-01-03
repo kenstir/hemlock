@@ -34,6 +34,7 @@ import org.evergreen_ils.accountAccess.fines.FinesActivity;
 import org.evergreen_ils.accountAccess.holds.HoldsListView;
 import org.evergreen_ils.auth.Const;
 import org.evergreen_ils.billing.*;
+import org.evergreen_ils.globals.AppState;
 import org.evergreen_ils.globals.Log;
 import org.evergreen_ils.searchCatalog.SearchCatalogListView;
 import org.evergreen_ils.utils.ui.ActionBarUtils;
@@ -47,6 +48,7 @@ import java.util.List;
 public class MainActivity extends ActionBarActivity {
 
     private static String TAG = MainActivity.class.getSimpleName();
+    private boolean showDonateButton;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -72,12 +74,26 @@ public class MainActivity extends ActionBarActivity {
         BillingHelper.disposeIabHelper();
     }
 
+    void updateLaunchCount() {
+        int launch_count = AppState.getInt(AppState.LAUNCH_COUNT);
+        AppState.setInt(AppState.LAUNCH_COUNT, launch_count + 1);
+    }
+
     void initBilling() {
+        // update launch count before checking if we should show the donate button
+        updateLaunchCount();
+        showDonateButton = BillingHelper.showDonateButton();
+        if (!showDonateButton) {
+            updateUi();
+            return;
+        }
+
         // todo obfuscate the public key
         BillingDataProvider provider = BillingDataProvider.create(getString(R.string.ou_billing_data_provider));
         String base64EncodedPublicKey = (provider != null) ? provider.getPublicKey() : null;
         if (TextUtils.isEmpty(base64EncodedPublicKey)) {
-            findViewById(R.id.main_donate_button).setVisibility(View.GONE);
+            showDonateButton = false;
+            updateUi();
             return;
         }
 
@@ -85,6 +101,7 @@ public class MainActivity extends ActionBarActivity {
             @Override
             public void onSetupFinished(IabResult result) {
                 if (result.isSuccess()) {
+                    showDonateButton = BillingHelper.showDonateButton();
                     updateUi();
                 }
             }
@@ -92,7 +109,15 @@ public class MainActivity extends ActionBarActivity {
     }
 
     void updateUi() {
-        findViewById(R.id.main_donate_button).setVisibility(BillingHelper.showDonateButton() ? View.VISIBLE : View.GONE);
+        findViewById(R.id.main_donate_button).setVisibility(showDonateButton ? View.VISIBLE : View.GONE);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode == BillingHelper.RESULT_PURCHASED) {
+            showDonateButton = BillingHelper.showDonateButton();
+            updateUi();
+        }
     }
 
     @Override

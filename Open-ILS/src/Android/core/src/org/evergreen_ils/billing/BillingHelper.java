@@ -21,7 +21,9 @@ package org.evergreen_ils.billing;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.provider.Settings;
 import android.text.TextUtils;
+import org.evergreen_ils.globals.AppState;
 import org.evergreen_ils.globals.GlobalConfigs;
 import org.evergreen_ils.globals.Log;
 
@@ -38,7 +40,9 @@ public class BillingHelper {
     public static final String SKU_BRONZE = "bronze";
     public static final String SKU_KARMA = "karma";
     // (arbitrary) request code for the purchase flow
-    public static final int RC_REQUEST = 10001;
+    public static final int REQUEST_PURCHASE = 10001;
+    public static final int RESULT_PURCHASED = 1;
+    public static final int RESULT_OTHER = 2;
 
     public interface OnSetupFinishedListener {
         void onSetupFinished(IabResult result);
@@ -50,7 +54,7 @@ public class BillingHelper {
     static long mStartTime;
     static IabHelper mHelper;
     static OnSetupFinishedListener mSetupFinishedListener;
-    static Inventory mInventory;
+    static Inventory mInventory = new Inventory();
 
     public static void startSetup(Context context, String base64EncodedPublicKey, final OnSetupFinishedListener listener) {
         mStartTime = System.currentTimeMillis();
@@ -92,7 +96,7 @@ public class BillingHelper {
         String payload = "random";
 
         Log.d(TAG, "launchPurchaseFlow");
-        BillingHelper.getIabHelper().launchPurchaseFlow(activity, sku, BillingHelper.RC_REQUEST, new IabHelper.OnIabPurchaseFinishedListener() {
+        BillingHelper.getIabHelper().launchPurchaseFlow(activity, sku, REQUEST_PURCHASE, new IabHelper.OnIabPurchaseFinishedListener() {
             @Override
             public void onIabPurchaseFinished(IabResult result, Purchase purchase) {
                 Log.d(TAG, "purchase finished with result " + result);
@@ -115,7 +119,6 @@ public class BillingHelper {
     private static void onInventoryAvailable(Inventory inv) {
         Log.d(TAG, "inv=" + inv);
         if (inv == null || mHelper == null) {
-            mInventory = new Inventory();
             return;
         }
         mInventory = inv;
@@ -156,8 +159,28 @@ public class BillingHelper {
         }
     }
 
+    public static boolean hasPurchasedPermanentItem() {
+        return (mInventory.hasPurchase(SKU_GOLD)
+                || mInventory.hasPurchase(SKU_SILVER)
+                || mInventory.hasPurchase(SKU_BRONZE));
+    }
+
     public static boolean showDonateButton() {
-        // todo better logic here
+        // if user has purchased a permanent item, we do not
+        if (hasPurchasedPermanentItem()) {
+            Log.d(TAG, "showDonate returning false because user has a permanent item");
+            return false;
+        }
+
+        // if user has 3 or fewer launches or installed 3 or fewer days ago, we do not
+        long millis_installed = System.currentTimeMillis() - AppState.getFirstInstallTime();
+        long days_installed = (millis_installed/1000 + 86400 - 1)/86400;
+        int app_launches = AppState.getInt(AppState.LAUNCH_COUNT);
+        if (app_launches <= 3 || days_installed <= 3) {
+            Log.d(TAG, "showDonate returning false because app_launches="+app_launches+", days_installed="+days_installed);
+            return false;
+        }
+
         return true;
     }
 }
