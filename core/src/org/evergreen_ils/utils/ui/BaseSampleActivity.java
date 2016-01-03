@@ -49,7 +49,6 @@ public abstract class BaseSampleActivity extends ActionBarActivity {
         int i = item.getItemId();
         if (i == R.id.random) {
             final int page = RANDOM.nextInt(mAdapter.getCount());
-            Toast.makeText(this, "Changing to page " + page, Toast.LENGTH_SHORT);
             mPager.setCurrentItem(page);
             return true;
         }

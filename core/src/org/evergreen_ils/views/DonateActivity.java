@@ -23,6 +23,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.View;
+import android.widget.Toast;
 import org.evergreen_ils.R;
 import org.evergreen_ils.billing.BillingHelper;
 import org.evergreen_ils.billing.IabResult;
@@ -66,6 +67,11 @@ public class DonateActivity extends ActionBarActivity {
             @Override
             public void onPurchaseFinished(IabResult result) {
                 setBusy(false);
+                if (result.isSuccess()) {
+                    Toast.makeText(DonateActivity.this, "thanks very much!", Toast.LENGTH_LONG).show();
+                } else {
+                    Toast.makeText(DonateActivity.this, result.getMessage(), Toast.LENGTH_LONG).show();
+                }
             }
         });
         Log.d(TAG, "launchPurchaseFlow exiting");
