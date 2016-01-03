@@ -322,12 +322,10 @@ public class BasicDetailsFragment extends Fragment {
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-
                         if (bookBags.size() > 0)
                             dialog.show();
                         else
-                            Toast.makeText(getActivity(), "No bookbags",
-                                    Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getActivity(), "No bookbags", Toast.LENGTH_SHORT).show();
                     }
 
                 });

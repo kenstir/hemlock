@@ -193,8 +193,7 @@ public class BookBagDetails extends ActionBarActivity {
                         progressDialog.dismiss();
 
                         if (bookBagItems.size() == 0)
-                            Toast.makeText(context, "No circ records",
-                                    Toast.LENGTH_LONG);
+                            Toast.makeText(context, "No bookbags", Toast.LENGTH_LONG).show();
 
                         listAdapter.notifyDataSetChanged();
                     }

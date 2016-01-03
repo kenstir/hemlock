@@ -97,9 +97,6 @@ public class BookbagsListView extends ActionBarActivity {
             @Override
             public void onItemSelected(AdapterView<?> arg0, View arg1,
                     int position, long arg3) {
-
-                Toast.makeText(getApplicationContext(), "Text",
-                        Toast.LENGTH_LONG).show();
             }
 
             @Override
@@ -189,8 +186,7 @@ public class BookbagsListView extends ActionBarActivity {
                         progressDialog.dismiss();
 
                         if (bookBags.size() == 0)
-                            Toast.makeText(context, "No data",
-                                    Toast.LENGTH_LONG);
+                            Toast.makeText(context, "No bookbags", Toast.LENGTH_LONG).show();
 
                         listAdapter.notifyDataSetChanged();
                     }
