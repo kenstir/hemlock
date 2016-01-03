@@ -20,6 +20,7 @@ package org.evergreen_ils.billing;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.text.TextUtils;
 import org.evergreen_ils.globals.GlobalConfigs;
 import org.evergreen_ils.globals.Log;
@@ -31,7 +32,7 @@ import java.util.List;
  * Created by kenstir on 1/2/2016.
  */
 public class BillingHelper {
-    public static final String TAG = BillingHelper.class.getSimpleName();
+    public static final String TAG = "Billing";
     public static final String SKU_GOLD = "gold";
     public static final String SKU_SILVER = "silver";
     public static final String SKU_BRONZE = "bronze";
@@ -88,20 +89,27 @@ public class BillingHelper {
         /* TODO: for security, generate your payload here for verification. See the comments on
          *        verifyDeveloperPayload() for more info. Since this is a SAMPLE, we just use
          *        an empty string, but on a production app you should carefully generate this. */
-        String payload = "";
+        String payload = "random";
 
         Log.d(TAG, "launchPurchaseFlow");
         BillingHelper.getIabHelper().launchPurchaseFlow(activity, sku, BillingHelper.RC_REQUEST, new IabHelper.OnIabPurchaseFinishedListener() {
             @Override
-            public void onIabPurchaseFinished(IabResult result, Purchase info) {
+            public void onIabPurchaseFinished(IabResult result, Purchase purchase) {
                 Log.d(TAG, "purchase finished with result " + result);
                 if (result.isSuccess()) {
-                    mInventory.addPurchase(info);
+                    mInventory.addPurchase(purchase);
                     consumeKarma();
                 }
                 listener.onPurchaseFinished(result);
             }
-        });
+        }, payload);
+    }
+
+    public static boolean handleActivityResult(int requestCode, int resultCode, Intent data) {
+        // Pass on the activity result to the helper for handling
+        if (mHelper == null)
+            return false;
+        return mHelper.handleActivityResult(requestCode, resultCode, data);
     }
 
     private static void onInventoryAvailable(Inventory inv) {

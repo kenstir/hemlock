@@ -20,20 +20,25 @@ package org.evergreen_ils.globals;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.preference.PreferenceManager;
 import org.evergreen_ils.R;
+
+import java.io.File;
+import java.util.Date;
 
 /** App State that is persistent across invocations; stored as preferences.
  *
  * Created by kenstir on 11/8/2015.
  */
 public class AppState {
+    private static final String TAG = AppState.class.getSimpleName();
     public static final String LIBRARY_URL = "library_url";
     public static final String LIBRARY_NAME = "library_name";
-    private static final String VERSION = "version";
+
     // increment PREFS_VERSION every time you make a change to the persistent pref storage
     private static final int PREFS_VERSION = 2;
-    private static final String TAG = AppState.class.getSimpleName();
+    private static final String VERSION = "version";
     private static Context context;
     private static boolean initialized;
 
@@ -58,6 +63,18 @@ public class AppState {
         Log.d(TAG, "version=" + version);
         Log.d(TAG, "library_url=" + getString(LIBRARY_URL));
         Log.d(TAG, "library_name=" + getString(LIBRARY_NAME));
+    }
+
+    public static long getFirstInstallTime() {
+        try {
+            String packageName = context.getPackageName();
+            long time = context.getPackageManager().getPackageInfo(packageName, 0).firstInstallTime;
+            Log.d(TAG, "firstInstallTime " + new Date(time).toLocaleString());
+            return time;
+        } catch (PackageManager.NameNotFoundException e) {
+            Log.d(TAG, "caught", e);
+            return 0;
+        }
     }
 
     public static String getString(String key) {

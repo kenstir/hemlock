@@ -19,6 +19,7 @@
 package org.evergreen_ils.views;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.View;
@@ -33,7 +34,7 @@ import org.evergreen_ils.views.splashscreen.SplashActivity;
  * Created by kenstir on 1/1/2016.
  */
 public class DonateActivity extends ActionBarActivity {
-    private final static String TAG = DonateActivity.class.getSimpleName();
+    private final static String TAG = BillingHelper.TAG;
     private ProgressDialog progressDialog;
 
     @Override
@@ -50,7 +51,7 @@ public class DonateActivity extends ActionBarActivity {
 
     void setBusy(boolean set) {
         if (set) {
-            progressDialog = ProgressDialog.show(this, "", "Launching billing flow");
+            progressDialog = ProgressDialog.show(this, "", "One sec...");
         } else if (progressDialog != null) {
             progressDialog.dismiss();
             progressDialog = null;
@@ -67,6 +68,19 @@ public class DonateActivity extends ActionBarActivity {
                 setBusy(false);
             }
         });
+        Log.d(TAG, "launchPurchaseFlow exiting");
+    }
+
+    // called when purchase flow finishes
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        Log.d(TAG, "onActivityResult(" + requestCode + "," + resultCode + "," + data);
+        if (!BillingHelper.handleActivityResult(requestCode, resultCode, data)) {
+            super.onActivityResult(requestCode, resultCode, data);
+        }
+
+        // unnecessary but being safe here
+        setBusy(false);
     }
 
     public void onButtonClick(View v) {
