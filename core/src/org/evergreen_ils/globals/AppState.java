@@ -33,6 +33,7 @@ import java.util.Date;
  */
 public class AppState {
     private static final String TAG = AppState.class.getSimpleName();
+    public static final String LAUNCH_COUNT = "launch_count";
     public static final String LIBRARY_URL = "library_url";
     public static final String LIBRARY_NAME = "library_name";
 
@@ -69,6 +70,7 @@ public class AppState {
         try {
             String packageName = context.getPackageName();
             long time = context.getPackageManager().getPackageInfo(packageName, 0).firstInstallTime;
+            Log.d(TAG, "firstInstallTime=" + time);
             Log.d(TAG, "firstInstallTime " + new Date(time).toLocaleString());
             return time;
         } catch (PackageManager.NameNotFoundException e) {
@@ -83,13 +85,17 @@ public class AppState {
     }
 
     public static boolean getBoolean(String key) {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        return prefs.getBoolean(key, false);
+        return getBoolean(key, false);
     }
 
     public static boolean getBoolean(String key, boolean dflt) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         return prefs.getBoolean(key, dflt);
+    }
+
+    public static int getInt(String key) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        return prefs.getInt(key, 0);
     }
 
     public static void setString(String key, String value) {
@@ -103,6 +109,13 @@ public class AppState {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putBoolean(key, value);
+        editor.commit();
+    }
+
+    public static void setInt(String key, int value) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putInt(key, value);
         editor.commit();
     }
 }

@@ -69,6 +69,8 @@ public class DonateActivity extends ActionBarActivity {
                 setBusy(false);
                 if (result.isSuccess()) {
                     Toast.makeText(DonateActivity.this, "thanks very much!", Toast.LENGTH_LONG).show();
+                    setResult(BillingHelper.RESULT_PURCHASED);
+                    finish();
                 } else {
                     Toast.makeText(DonateActivity.this, result.getMessage(), Toast.LENGTH_LONG).show();
                 }

@@ -41,7 +41,7 @@ public class AccountUtils {
         String library_url = am.getUserData(account, Const.KEY_LIBRARY_URL);
         String library_name = am.getUserData(account, Const.KEY_LIBRARY_NAME);
 
-        // compatibility with custom apps like cwmars_app.  If no library_url exists as userdata on the account,
+        // Compatibility with old versions of cwmars_app.  If no library_url exists as userdata on the account,
         // get it from the resources.
         if (TextUtils.isEmpty(library_url)) {
             library_url = activity.getString(R.string.ou_library_url);
