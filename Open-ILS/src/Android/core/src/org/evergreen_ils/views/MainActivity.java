@@ -27,6 +27,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 import org.evergreen_ils.R;
 import org.evergreen_ils.accountAccess.AccountUtils;
 import org.evergreen_ils.accountAccess.checkout.ItemsCheckOutListView;
@@ -74,21 +75,21 @@ public class MainActivity extends ActionBarActivity {
         BillingHelper.disposeIabHelper();
     }
 
-    void updateLaunchCount() {
-        int launch_count = AppState.getInt(AppState.LAUNCH_COUNT);
-        AppState.setInt(AppState.LAUNCH_COUNT, launch_count + 1);
-    }
-
     void initBilling() {
-        // update launch count before checking if we should show the donate button
-        updateLaunchCount();
+        //kcxxx
+        int app_launches = BillingHelper.getAppLaunches();
+        long days_installed = BillingHelper.getDaysInstalled();
+        ((TextView)findViewById(R.id.textView)).setText("app launches: " + app_launches);
+        ((TextView)findViewById(R.id.textView2)).setText("days installed: " + days_installed);
+
+        // show or hide donate button
         showDonateButton = BillingHelper.showDonateButton();
         if (!showDonateButton) {
             updateUi();
             return;
         }
 
-        // todo obfuscate the public key
+        // get the public key
         BillingDataProvider provider = BillingDataProvider.create(getString(R.string.ou_billing_data_provider));
         String base64EncodedPublicKey = (provider != null) ? provider.getPublicKey() : null;
         if (TextUtils.isEmpty(base64EncodedPublicKey)) {

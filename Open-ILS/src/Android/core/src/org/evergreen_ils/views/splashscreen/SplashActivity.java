@@ -150,9 +150,15 @@ public class SplashActivity extends Activity implements LoadingTaskListener {
 
     private void startApp() {
         mInitialized = true;
+        updateLaunchCount();
         Intent intent = new Intent(SplashActivity.this, MainActivity.class);
         startActivity(intent);
         finish();
+    }
+
+    void updateLaunchCount() {
+        int launch_count = AppState.getInt(AppState.LAUNCH_COUNT);
+        AppState.setInt(AppState.LAUNCH_COUNT, launch_count + 1);
     }
 
     @Override

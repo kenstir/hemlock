@@ -173,14 +173,22 @@ public class BillingHelper {
         }
 
         // if user has 3 or fewer launches or installed 3 or fewer days ago, we do not
-        long millis_installed = System.currentTimeMillis() - AppState.getFirstInstallTime();
-        long days_installed = (millis_installed/1000 + 86400 - 1)/86400;
-        int app_launches = AppState.getInt(AppState.LAUNCH_COUNT);
+        long days_installed = getDaysInstalled();
+        int app_launches = getAppLaunches();
         if (app_launches <= 3 || days_installed <= 3) {
             Log.d(TAG, "showDonate returning false because app_launches="+app_launches+", days_installed="+days_installed);
             return false;
         }
 
         return true;
+    }
+
+    public static int getAppLaunches() {
+        return AppState.getInt(AppState.LAUNCH_COUNT);
+    }
+
+    public static long getDaysInstalled() {
+        long millis_installed = System.currentTimeMillis() - AppState.getFirstInstallTime();
+        return (millis_installed/1000 + 86400 - 1)/86400;
     }
 }
