@@ -167,5 +167,13 @@
     <string name="record_isbn">ISBN</string>
     <string name="record_online_access">Online Access</string>
     <string name="msg_retrieving_fines">Retrieving fines</string>
+    <string name="donate_gold_label_take1">Starbucks coffee - $4</string>
+    <string name="donate_silver_label_take1">Dunkins coffee - $2</string>
+    <string name="donate_karma_label_take1">Good karma - $1</string>
+    <string name="donate_call_to_action_title">Enjoy this app?</string>
+    <string name="donate_call_to_action_subtitle">Buy me some coffee to keep me awake and working on it!</string>
+    <string name="donate_postscript_take1">Note! Good karma lasts for two weeks. Buy me a coffee and I\'ll remember you
+        forever.
+    </string>
 
 </resources>
