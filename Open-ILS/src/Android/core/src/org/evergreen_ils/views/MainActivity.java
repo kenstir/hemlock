@@ -78,7 +78,7 @@ public class MainActivity extends ActionBarActivity {
     void initBilling() {
         //kcxxx
         int app_launches = BillingHelper.getAppLaunches();
-        long days_installed = BillingHelper.getDaysInstalled();
+        float days_installed = BillingHelper.getDaysInstalled();
         ((TextView)findViewById(R.id.textView)).setText("app launches: " + app_launches);
         ((TextView)findViewById(R.id.textView2)).setText("days installed: " + days_installed);
 

@@ -128,10 +128,12 @@ public class BillingHelper {
         consumeKarma();
     }
 
-    // If we have any karma, consume it.  This allows for multiple indulgences.
+    // If we have any expired karma, consume it.  This allows for multiple indulgences.
     private static void consumeKarma() {
         Purchase karmaPurchase = mInventory.getPurchase(BillingHelper.SKU_KARMA);
-        if (karmaPurchase != null && mHelper != null) {
+        //todo make the expire time more than 7 days
+        //if (karmaPurchase != null && mHelper != null && daysSince(karmaPurchase.mPurchaseTime) > 7.0) {
+        if (karmaPurchase != null && mHelper != null && daysSince(karmaPurchase.mPurchaseTime) > 1.0) {
             Log.d(TAG, "We have karma. Consuming purchase " + karmaPurchase.getOrderId());
             mHelper.consumeAsync(karmaPurchase, new IabHelper.OnConsumeFinishedListener() {
                 @Override
@@ -165,17 +167,25 @@ public class BillingHelper {
                 || mInventory.hasPurchase(SKU_BRONZE));
     }
 
+    private static boolean hasKarma() {
+        return mInventory.hasPurchase(SKU_KARMA);
+    }
+
+    private static boolean hasAnyPurchases() {
+        return !mInventory.getAllOwnedSkus().isEmpty();
+    }
+
     public static boolean showDonateButton() {
-        // if user has purchased a permanent item, we do not
+        // if user has made any purchases, we do not show it
         if (hasPurchasedPermanentItem()) {
-            Log.d(TAG, "showDonate returning false because user has a permanent item");
+            Log.d(TAG, "showDonate returning false because user has a purchase");
             return false;
         }
 
-        // if user has 3 or fewer launches or installed 3 or fewer days ago, we do not
-        long days_installed = getDaysInstalled();
+        // if user has few launches or installed just a few days ago, we do not show it
+        float days_installed = getDaysInstalled();
         int app_launches = getAppLaunches();
-        if (app_launches <= 3 || days_installed <= 3) {
+        if (app_launches <= 3 || days_installed < 3.0f) {
             Log.d(TAG, "showDonate returning false because app_launches="+app_launches+", days_installed="+days_installed);
             return false;
         }
@@ -187,8 +197,12 @@ public class BillingHelper {
         return AppState.getInt(AppState.LAUNCH_COUNT);
     }
 
-    public static long getDaysInstalled() {
-        long millis_installed = System.currentTimeMillis() - AppState.getFirstInstallTime();
-        return (millis_installed/1000 + 86400 - 1)/86400;
+    public static float getDaysInstalled() {
+        return daysSince(AppState.getFirstInstallTime());
+    }
+
+    private static float daysSince(long time) {
+        long millis = System.currentTimeMillis() - time;
+        return millis/1000.0f/86400.0f;
     }
 }
