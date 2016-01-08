@@ -19,7 +19,10 @@
 package org.evergreen_ils.views;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.media.AudioManager;
+import android.media.SoundPool;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.View;
@@ -31,12 +34,29 @@ import org.evergreen_ils.globals.Log;
 import org.evergreen_ils.utils.ui.ActionBarUtils;
 import org.evergreen_ils.views.splashscreen.SplashActivity;
 
+import java.util.HashMap;
+
 /**
  * Created by kenstir on 1/1/2016.
  */
 public class DonateActivity extends ActionBarActivity {
     private final static String TAG = BillingHelper.TAG;
     private ProgressDialog progressDialog;
+    private SoundPool soundPool;
+    private HashMap<String,Integer> soundPoolMap;
+    private HashMap<String,String> attributionMap;
+
+    private void initSounds(Context context) {
+        soundPool = new SoundPool(2, AudioManager.STREAM_MUSIC, 100);
+        soundPoolMap = new HashMap<String, Integer>(3);
+        soundPoolMap.put(BillingHelper.SKU_KARMA, soundPool.load(context, R.raw.metal_gong, 1));
+        soundPoolMap.put(BillingHelper.SKU_SILVER, soundPool.load(context, R.raw.small_crowd_applause, 1));
+        soundPoolMap.put(BillingHelper.SKU_GOLD, soundPool.load(context, R.raw.ten_second_applause, 1));
+        attributionMap = new HashMap<String, String>(3);
+        attributionMap.put(BillingHelper.SKU_KARMA, "Metal Gong 1 by Dianakc, soundbible.com, CC BY 3.0");
+        attributionMap.put(BillingHelper.SKU_SILVER, "Small Crowd Applause by Yannick Lemieux, soundbible.com, CC BY 3.0");
+        attributionMap.put(BillingHelper.SKU_GOLD, "10 Second Applause by Mike Koenig, soundbible.com, CC BY 3.0");
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -48,6 +68,14 @@ public class DonateActivity extends ActionBarActivity {
 
         setContentView(R.layout.activity_donate);
         ActionBarUtils.initActionBarForActivity(this);
+        initSounds(this);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        soundPool.release();
+        soundPool = null;
     }
 
     void setBusy(boolean set) {
@@ -59,7 +87,7 @@ public class DonateActivity extends ActionBarActivity {
         }
     }
 
-    void launchPurchaseFlow(String sku) {
+    void launchPurchaseFlow(final String sku) {
         setBusy(true);
         Log.d(TAG, "Launching purchase flow for " + sku);
 
@@ -68,7 +96,7 @@ public class DonateActivity extends ActionBarActivity {
             public void onPurchaseFinished(IabResult result) {
                 setBusy(false);
                 if (result.isSuccess()) {
-                    Toast.makeText(DonateActivity.this, "thanks very much!", Toast.LENGTH_LONG).show();
+                    showThanks(sku);
                     setResult(BillingHelper.RESULT_PURCHASED);
                     finish();
                 } else {
@@ -77,6 +105,13 @@ public class DonateActivity extends ActionBarActivity {
             }
         });
         Log.d(TAG, "launchPurchaseFlow exiting");
+    }
+
+    public void showThanks(final String sku) {
+        float volume = 1f;
+        soundPool.play(soundPoolMap.get(sku), volume, volume, 1, 0, 1f);
+        String attribution = attributionMap.get(sku);
+        Toast.makeText(this, "Thanks!\n" + attribution, Toast.LENGTH_LONG).show();
     }
 
     // called when purchase flow finishes
