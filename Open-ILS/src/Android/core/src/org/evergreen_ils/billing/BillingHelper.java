@@ -176,6 +176,8 @@ public class BillingHelper {
     }
 
     public static boolean showDonateButton() {
+        return true;
+        /*todo
         // if user has made any purchases, we do not show it
         if (hasPurchasedPermanentItem()) {
             Log.d(TAG, "showDonate returning false because user has a purchase");
@@ -191,6 +193,7 @@ public class BillingHelper {
         }
 
         return true;
+        */
     }
 
     public static int getAppLaunches() {
