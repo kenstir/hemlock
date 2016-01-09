@@ -3,9 +3,9 @@
     <!-- the label shown in the android account manager -->
     <string name="ou_account_label">Example Library</string>
     <!-- title shown on sign in activity -->
-    <string name="ou_account_sign_in_message">Sign in to your\nXYZZY account</string>
+    <string name="ou_account_sign_in_message">Sign in to your library account</string>
     <!-- label above choose library spinner, leave empty for library-specific app -->
-    <string name="ou_choose_library_label"></string>
+    <string name="ou_choose_library_label">Location:</string>
     <!-- label above sign_in fields -->
     <string name="ou_sign_in_label">Login:</string>
     <!-- android account manager internal type.

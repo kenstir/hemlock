@@ -123,8 +123,12 @@
         </activity>
 
         <activity
-            android:name="org.evergreen_ils.auth.AuthenticatorActivity"
-            android:label="@string/ou_account_label">
+                android:name="org.evergreen_ils.auth.AuthenticatorActivity"
+                android:label="@string/ou_account_label">
+        </activity>
+        <activity
+                android:name="org.evergreen_ils.auth.GenericAuthenticatorActivity"
+                android:label="@string/ou_account_label">
         </activity>
 
         <activity android:name="org.evergreen_ils.views.MainActivity">

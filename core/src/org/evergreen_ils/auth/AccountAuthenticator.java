@@ -9,22 +9,33 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+import org.evergreen_ils.R;
 import org.evergreen_ils.globals.Log;
+import org.w3c.dom.Text;
 
 public class AccountAuthenticator extends AbstractAccountAuthenticator {
     
     private final static String TAG = AccountAuthenticator.class.getSimpleName();
     private Context context;
+    private Class authenticatorActivity;
 
     public AccountAuthenticator(Context context) {
         super(context);
         this.context = context;
+
+        // Choose the right AuthenticatorActivity.  A custom app does not require the library spinner.
+        String library_url = context.getString(R.string.ou_library_url);
+        if (TextUtils.isEmpty(library_url)) {
+            this.authenticatorActivity = GenericAuthenticatorActivity.class;
+        } else {
+            this.authenticatorActivity = AuthenticatorActivity.class;
+        }
     }
 
     @Override
     public Bundle addAccount(AccountAuthenticatorResponse response, String accountType, String authTokenType, String[] requiredFeatures, Bundle options) throws NetworkErrorException {
         Log.d(TAG, "addaccount "+accountType+" "+authTokenType);
-        final Intent intent = new Intent(context, AuthenticatorActivity.class);
+        final Intent intent = new Intent(context, authenticatorActivity);
         // setting ARG_IS_ADDING_NEW_ACCOUNT here does not work, because this is not the
         // same Intent as the one in AuthenticatorActivity.finishLogin
         //intent.putExtra(AuthenticatorActivity.ARG_IS_ADDING_NEW_ACCOUNT, true);
@@ -93,7 +104,7 @@ public class AccountAuthenticator extends AbstractAccountAuthenticator {
         // need to re-prompt them for their credentials. We do that by creating
         // an intent to display our AuthenticatorActivity.
         Log.d(TAG, "getAuthToken> creating intent to display AuthenticatorActivity");
-        final Intent intent = new Intent(context, AuthenticatorActivity.class);
+        final Intent intent = new Intent(context, authenticatorActivity);
         intent.putExtra(AccountManager.KEY_ACCOUNT_AUTHENTICATOR_RESPONSE, response);
         intent.putExtra(AuthenticatorActivity.ARG_ACCOUNT_TYPE, account.type);
         intent.putExtra(AuthenticatorActivity.ARG_AUTH_TYPE, authTokenType);
