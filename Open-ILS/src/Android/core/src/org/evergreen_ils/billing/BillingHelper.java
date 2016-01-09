@@ -39,6 +39,7 @@ public class BillingHelper {
     public static final String SKU_SILVER = "silver";
     public static final String SKU_BRONZE = "bronze";
     public static final String SKU_KARMA = "karma";
+    public static final float KARMA_DURATION_DAYS = 0.125f;//TODO
     // (arbitrary) request code for the purchase flow
     public static final int REQUEST_PURCHASE = 10001;
     public static final int RESULT_PURCHASED = 1;
@@ -131,9 +132,7 @@ public class BillingHelper {
     // If we have any expired karma, consume it.  This allows for multiple indulgences.
     private static void consumeKarma() {
         Purchase karmaPurchase = mInventory.getPurchase(BillingHelper.SKU_KARMA);
-        //todo make the expire time more than 7 days
-        //if (karmaPurchase != null && mHelper != null && daysSince(karmaPurchase.mPurchaseTime) > 7.0) {
-        if (karmaPurchase != null && mHelper != null && daysSince(karmaPurchase.mPurchaseTime) > 1.0) {
+        if (karmaPurchase != null && mHelper != null && daysSince(karmaPurchase.mPurchaseTime) > KARMA_DURATION_DAYS) {
             Log.d(TAG, "We have karma. Consuming purchase " + karmaPurchase.getOrderId());
             mHelper.consumeAsync(karmaPurchase, new IabHelper.OnConsumeFinishedListener() {
                 @Override

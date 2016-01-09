@@ -40,7 +40,7 @@ import java.util.HashMap;
  * Created by kenstir on 1/1/2016.
  */
 public class DonateActivity extends ActionBarActivity {
-    private final static String TAG = BillingHelper.TAG;
+    private final static String TAG = DonateActivity.class.getSimpleName();
     private ProgressDialog progressDialog;
     private SoundPool soundPool;
     private HashMap<String,Integer> soundPoolMap;
@@ -48,6 +48,7 @@ public class DonateActivity extends ActionBarActivity {
 
     private void initSounds(Context context) {
         soundPool = new SoundPool(1, AudioManager.STREAM_MUSIC, 0);
+        Log.d(TAG, "initSounds soundPool="+soundPool);
         if (soundPool == null)
             return;
         soundPoolMap = new HashMap<String, Integer>(3);
@@ -58,6 +59,7 @@ public class DonateActivity extends ActionBarActivity {
         attributionMap.put(BillingHelper.SKU_KARMA, "Metal Gong 1 by Dianakc, soundbible.com, CC BY 3.0");
         attributionMap.put(BillingHelper.SKU_SILVER, "Small Crowd Applause by Yannick Lemieux, soundbible.com, CC BY 3.0");
         attributionMap.put(BillingHelper.SKU_GOLD, "10 Second Applause by Mike Koenig, soundbible.com, CC BY 3.0");
+        Log.d(TAG, "initSounds done)");
     }
 
     @Override
@@ -70,11 +72,16 @@ public class DonateActivity extends ActionBarActivity {
 
         setContentView(R.layout.activity_donate);
         ActionBarUtils.initActionBarForActivity(this);
+    }
+
+    @Override
+    protected void onResume() {
         initSounds(this);
     }
 
     @Override
     protected void onPause() {
+        Log.d(TAG, "onPause");
         super.onPause();
         if (soundPool != null) {
             soundPool.release();
@@ -83,6 +90,7 @@ public class DonateActivity extends ActionBarActivity {
     }
 
     void setBusy(boolean set) {
+        Log.d(TAG, "setBusy "+set);
         if (set) {
             progressDialog = ProgressDialog.show(this, "", "One sec...");
         } else if (progressDialog != null) {
@@ -98,11 +106,12 @@ public class DonateActivity extends ActionBarActivity {
         BillingHelper.launchPurchaseFlow(this, sku, new BillingHelper.OnPurchaseFinishedListener() {
             @Override
             public void onPurchaseFinished(IabResult result) {
+                Log.d(TAG, "onPurchaseFinished result="+result);
                 setBusy(false);
                 if (result.isSuccess()) {
                     showThanks(sku);
                     setResult(BillingHelper.RESULT_PURCHASED);
-                    finish();
+                    //finish();
                 } else {
                     Toast.makeText(DonateActivity.this, result.getMessage(), Toast.LENGTH_LONG).show();
                 }
@@ -112,12 +121,15 @@ public class DonateActivity extends ActionBarActivity {
     }
 
     public void showThanks(final String sku) {
+        Log.d(TAG, "showThanks sku=" + sku + " soundPool=" + soundPool);
         String attribution = "";
         if (soundPool != null) {
             float volume = 1f;
-            soundPool.play(soundPoolMap.get(sku), volume, volume, 1, 0, 1f);
+            int ret = soundPool.play(soundPoolMap.get(sku), volume, volume, 1, 0, 1f);
+            Log.d(TAG, "showThanks play returned "+ret);
             attribution += "\n" + attributionMap.get(sku);
         }
+        Log.d(TAG, "showThanks attrib="+attribution);
         Toast.makeText(this, "Thanks!" + attribution, Toast.LENGTH_LONG).show();
     }
 
@@ -126,8 +138,10 @@ public class DonateActivity extends ActionBarActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         Log.d(TAG, "onActivityResult(" + requestCode + "," + resultCode + "," + data);
         if (!BillingHelper.handleActivityResult(requestCode, resultCode, data)) {
+            Log.d(TAG, "onActivityResult not handled, going super");
             super.onActivityResult(requestCode, resultCode, data);
         }
+        Log.d(TAG, "onActivityResult out of block");
 
         // unnecessary but being safe here
         setBusy(false);
