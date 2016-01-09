@@ -47,7 +47,9 @@ public class DonateActivity extends ActionBarActivity {
     private HashMap<String,String> attributionMap;
 
     private void initSounds(Context context) {
-        soundPool = new SoundPool(2, AudioManager.STREAM_MUSIC, 100);
+        soundPool = new SoundPool(1, AudioManager.STREAM_MUSIC, 0);
+        if (soundPool == null)
+            return;
         soundPoolMap = new HashMap<String, Integer>(3);
         soundPoolMap.put(BillingHelper.SKU_KARMA, soundPool.load(context, R.raw.metal_gong, 1));
         soundPoolMap.put(BillingHelper.SKU_SILVER, soundPool.load(context, R.raw.small_crowd_applause, 1));
@@ -74,8 +76,10 @@ public class DonateActivity extends ActionBarActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        soundPool.release();
-        soundPool = null;
+        if (soundPool != null) {
+            soundPool.release();
+            soundPool = null;
+        }
     }
 
     void setBusy(boolean set) {
@@ -108,10 +112,13 @@ public class DonateActivity extends ActionBarActivity {
     }
 
     public void showThanks(final String sku) {
-        float volume = 1f;
-        soundPool.play(soundPoolMap.get(sku), volume, volume, 1, 0, 1f);
-        String attribution = attributionMap.get(sku);
-        Toast.makeText(this, "Thanks!\n" + attribution, Toast.LENGTH_LONG).show();
+        String attribution = "";
+        if (soundPool != null) {
+            float volume = 1f;
+            soundPool.play(soundPoolMap.get(sku), volume, volume, 1, 0, 1f);
+            attribution += "\n" + attributionMap.get(sku);
+        }
+        Toast.makeText(this, "Thanks!" + attribution, Toast.LENGTH_LONG).show();
     }
 
     // called when purchase flow finishes
