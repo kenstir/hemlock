@@ -3,7 +3,7 @@
 <resources>
     <!-- see ../core/res/values/ou.xml for a description -->
     <string name="ou_account_label">Hemlock</string>
-    <string name="ou_account_sign_in_message">Sign in to your\nEvergreen library account</string>
+    <string name="ou_account_sign_in_message">Sign in to your library account</string>
     <string name="ou_choose_library_label">Location:</string>
     <string name="ou_sign_in_label">Login:</string>
     <string name="ou_account_type">net.kenstir.apps.hemlock</string>
