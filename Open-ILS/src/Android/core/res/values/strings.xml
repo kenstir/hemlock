@@ -64,7 +64,7 @@
     <string name="title_holds">Holds</string>
     <string name="title_book_bags">Bookbags</string>
     <string name="renew_button">Renew</string>
-    <string name="item_renewed">Item renewed</string>
+    <string name="toast_item_renewed">Item renewed</string>
     <string name="record_of">record %1$d of %2$d</string>
     <string name="displaying_n_of_m_results">displaying %1$d of %2$d results</string>
     <string name="n_of_m_available">%1$d of %2$s available at %3$s</string>
@@ -175,5 +175,7 @@
     <string name="donate_postscript_take1">Good karma lasts for two weeks. Buy me a coffee and I\'ll remember you
         forever.
     </string>
+    <string name="toast_max_renewals_reached">Max renewals reached</string>
+    <string name="toast_thanks">Thanks!</string>
 
 </resources>
