@@ -21,8 +21,7 @@ package org.evergreen_ils.views;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.media.AudioManager;
-import android.media.SoundPool;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.View;
@@ -30,6 +29,7 @@ import android.widget.Toast;
 import org.evergreen_ils.R;
 import org.evergreen_ils.billing.BillingHelper;
 import org.evergreen_ils.billing.IabResult;
+import org.evergreen_ils.globals.GlobalConfigs;
 import org.evergreen_ils.globals.Log;
 import org.evergreen_ils.utils.ui.ActionBarUtils;
 import org.evergreen_ils.views.splashscreen.SplashActivity;
@@ -42,24 +42,20 @@ import java.util.HashMap;
 public class DonateActivity extends ActionBarActivity {
     private final static String TAG = DonateActivity.class.getSimpleName();
     private ProgressDialog progressDialog;
-    private SoundPool soundPool;
-    private HashMap<String,Integer> soundPoolMap;
+    private HashMap<String,Integer> mediaResourceIdMap;
     private HashMap<String,String> attributionMap;
 
     private void initSounds(Context context) {
-        soundPool = new SoundPool(1, AudioManager.STREAM_MUSIC, 0);
-        Log.d(TAG, "initSounds soundPool="+soundPool);
-        if (soundPool == null)
-            return;
-        soundPoolMap = new HashMap<String, Integer>(3);
-        soundPoolMap.put(BillingHelper.SKU_KARMA, soundPool.load(context, R.raw.metal_gong, 1));
-        soundPoolMap.put(BillingHelper.SKU_SILVER, soundPool.load(context, R.raw.small_crowd_applause, 1));
-        soundPoolMap.put(BillingHelper.SKU_GOLD, soundPool.load(context, R.raw.ten_second_applause, 1));
+        Log.d(TAG, "initSounds start");
+        mediaResourceIdMap = new HashMap<String, Integer>(3);
+        mediaResourceIdMap.put(BillingHelper.SKU_KARMA, R.raw.metal_gong);
+        mediaResourceIdMap.put(BillingHelper.SKU_SILVER, R.raw.small_crowd_applause);
+        mediaResourceIdMap.put(BillingHelper.SKU_GOLD, R.raw.ten_second_applause);
         attributionMap = new HashMap<String, String>(3);
         attributionMap.put(BillingHelper.SKU_KARMA, "Metal Gong 1 by Dianakc, soundbible.com, CC BY 3.0");
         attributionMap.put(BillingHelper.SKU_SILVER, "Small Crowd Applause by Yannick Lemieux, soundbible.com, CC BY 3.0");
         attributionMap.put(BillingHelper.SKU_GOLD, "10 Second Applause by Mike Koenig, soundbible.com, CC BY 3.0");
-        Log.d(TAG, "initSounds done)");
+        Log.d(TAG, "initSounds done");
     }
 
     @Override
@@ -75,18 +71,9 @@ public class DonateActivity extends ActionBarActivity {
     }
 
     @Override
-    protected void onResume() {
+    protected void onStart() {
+        super.onStart();
         initSounds(this);
-    }
-
-    @Override
-    protected void onPause() {
-        Log.d(TAG, "onPause");
-        super.onPause();
-        if (soundPool != null) {
-            soundPool.release();
-            soundPool = null;
-        }
     }
 
     void setBusy(boolean set) {
@@ -108,10 +95,11 @@ public class DonateActivity extends ActionBarActivity {
             public void onPurchaseFinished(IabResult result) {
                 Log.d(TAG, "onPurchaseFinished result="+result);
                 setBusy(false);
-                if (result.isSuccess()) {
-                    showThanks(sku);
-                    setResult(BillingHelper.RESULT_PURCHASED);
-                    //finish();
+
+                // debug apps cannot make purchases, just pretend
+                boolean isSuccess = GlobalConfigs.isDebuggable() ? true : result.isSuccess();
+                if (isSuccess) {
+                    giveThanks(sku);
                 } else {
                     Toast.makeText(DonateActivity.this, result.getMessage(), Toast.LENGTH_LONG).show();
                 }
@@ -120,17 +108,28 @@ public class DonateActivity extends ActionBarActivity {
         Log.d(TAG, "launchPurchaseFlow exiting");
     }
 
-    public void showThanks(final String sku) {
-        Log.d(TAG, "showThanks sku=" + sku + " soundPool=" + soundPool);
+    public void postPurchaseFinishActivity() {
+        setResult(BillingHelper.RESULT_PURCHASED);
+        finish();
+    }
+
+    public void giveThanks(final String sku) {
+        Log.d(TAG, "giveThanks sku=" + sku);
         String attribution = "";
-        if (soundPool != null) {
-            float volume = 1f;
-            int ret = soundPool.play(soundPoolMap.get(sku), volume, volume, 1, 0, 1f);
-            Log.d(TAG, "showThanks play returned "+ret);
-            attribution += "\n" + attributionMap.get(sku);
+        Integer res = mediaResourceIdMap.get(sku);
+        if (res != null) {
+            MediaPlayer mp = MediaPlayer.create(this, res);
+            // looks like I don't need this...the media will continue playing even in the parent activity
+//            mp.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+//                @Override
+//                public void onCompletion(MediaPlayer mp) {
+//                    postPurchaseFinishActivity();
+//                }
+//            });
+            mp.start();
         }
-        Log.d(TAG, "showThanks attrib="+attribution);
-        Toast.makeText(this, "Thanks!" + attribution, Toast.LENGTH_LONG).show();
+        postPurchaseFinishActivity();
+        Toast.makeText(this, getString(R.string.toast_thanks) + attribution, Toast.LENGTH_LONG).show();
     }
 
     // called when purchase flow finishes

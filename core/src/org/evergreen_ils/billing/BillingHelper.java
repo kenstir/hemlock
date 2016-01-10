@@ -39,11 +39,12 @@ public class BillingHelper {
     public static final String SKU_SILVER = "silver";
     public static final String SKU_BRONZE = "bronze";
     public static final String SKU_KARMA = "karma";
-    public static final float KARMA_DURATION_DAYS = 0.125f;//TODO
+    public static final float KARMA_DURATION_DAYS = 14;
+    public static final double SHOW_DONATE_PROBABILITY = 0.33f;
     // (arbitrary) request code for the purchase flow
     public static final int REQUEST_PURCHASE = 10001;
-    public static final int RESULT_PURCHASED = 1;
-    public static final int RESULT_OTHER = 2;
+    public static final int RESULT_PURCHASED = 10002;
+    public static final int RESULT_OTHER = 10003;
 
     public interface OnSetupFinishedListener {
         void onSetupFinished(IabResult result);
@@ -175,24 +176,22 @@ public class BillingHelper {
     }
 
     public static boolean showDonateButton() {
-        return true;
-        /*todo
-        // if user has made any purchases, we do not show it
+        // if user has any permanent items, we do not show it
         if (hasPurchasedPermanentItem()) {
-            Log.d(TAG, "showDonate returning false because user has a purchase");
+            Log.d(TAG, "showDonate returning false because user has a permanent item");
             return false;
         }
 
         // if user has few launches or installed just a few days ago, we do not show it
         float days_installed = getDaysInstalled();
         int app_launches = getAppLaunches();
-        if (app_launches <= 3 || days_installed < 3.0f) {
+        if (app_launches <= 5 || days_installed < 3.0f) {
             Log.d(TAG, "showDonate returning false because app_launches="+app_launches+", days_installed="+days_installed);
             return false;
         }
 
-        return true;
-        */
+        // leave it to random chance
+        return (Math.random() < SHOW_DONATE_PROBABILITY);
     }
 
     public static int getAppLaunches() {

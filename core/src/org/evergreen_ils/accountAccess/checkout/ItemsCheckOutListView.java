@@ -28,6 +28,7 @@ import org.evergreen_ils.accountAccess.AccountAccess;
 import org.evergreen_ils.accountAccess.MaxRenewalsException;
 import org.evergreen_ils.accountAccess.ServerErrorMessage;
 import org.evergreen_ils.accountAccess.SessionNotFoundException;
+import org.evergreen_ils.globals.GlobalConfigs;
 import org.evergreen_ils.globals.Log;
 import org.evergreen_ils.searchCatalog.SearchFormat;
 import org.evergreen_ils.utils.ui.ActionBarUtils;
@@ -122,7 +123,7 @@ public class ItemsCheckOutListView extends ActionBarActivity {
                             progressDialog.dismiss();
 
                             if (circRecords.size() == 0)
-                                Toast.makeText(context, "No records", Toast.LENGTH_LONG);
+                                Toast.makeText(context, "No records", Toast.LENGTH_LONG).show();
 
                             listAdapter.notifyDataSetChanged();
                         }
@@ -197,7 +198,7 @@ public class ItemsCheckOutListView extends ActionBarActivity {
         }
 
         private void initRenewButton(final CircRecord record) {
-            final boolean renewable = record.getRenewals() > 0;
+            final boolean renewable = record.getRenewals() > 0 || GlobalConfigs.isDebuggable();
             renewButton.setEnabled(renewable);
             renewButton.setOnClickListener(new OnClickListener() {
                 @Override
@@ -235,30 +236,25 @@ public class ItemsCheckOutListView extends ActionBarActivity {
                                     @Override
                                     public void run() {
                                         progressDialog.dismiss();
-                                        Toast.makeText(context,
-                                                "Max renewals reached",
-                                                Toast.LENGTH_LONG).show();
+                                        Toast.makeText(context, R.string.toast_max_renewals_reached, Toast.LENGTH_LONG).show();
                                     }
                                 });
 
                                 refresh = false;
-                            } catch (ServerErrorMessage error) {
-                                final String errorMessage = error.message;
+                            } catch (final ServerErrorMessage error) {
                                 runOnUiThread(new Runnable() {
 
                                     @Override
                                     public void run() {
                                         progressDialog.dismiss();
-                                        Toast.makeText(context,
-                                                errorMessage,
-                                                Toast.LENGTH_LONG).show();
+                                        Toast.makeText(context, error.message, Toast.LENGTH_LONG).show();
                                     }
                                 });
                             }
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    Toast.makeText(context, getString(R.string.item_renewed), Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(context, getString(R.string.toast_item_renewed), Toast.LENGTH_SHORT).show();
                                 }
                             });
 
