@@ -122,6 +122,8 @@
                     android:value="org.evergreen_ils.views.MainActivity"/>
         </activity>
 
+        <activity android:name="org.evergreen_ils.auth.TestAuthActivity">
+        </activity>
         <activity
                 android:name="org.evergreen_ils.auth.AuthenticatorActivity"
                 android:label="@string/ou_account_label">

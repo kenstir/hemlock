@@ -18,6 +18,7 @@
 
 package org.evergreen_ils.billing;
 
+import android.text.TextUtils;
 import org.evergreen_ils.globals.Log;
 
 /** Interface to get the keys necessary to perform billing.  Concrete implementation is provided by the app
@@ -29,11 +30,14 @@ public abstract class BillingDataProvider {
     private static String TAG = BillingDataProvider.class.getSimpleName();
 
     static public BillingDataProvider create(String clazzName) {
+        if (TextUtils.isEmpty(clazzName)) {
+            return null;
+        }
         try {
             Class clazz = Class.forName(clazzName);
             return (BillingDataProvider) clazz.newInstance();
         } catch (Exception e) {
-            Log.d(TAG, "caught", e);
+            Log.d(TAG, "error instantiating BillingDataProvider", e);
             return null;
         }
     }

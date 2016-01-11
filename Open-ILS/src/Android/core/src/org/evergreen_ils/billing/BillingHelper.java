@@ -176,8 +176,10 @@ public class BillingHelper {
     }
 
     public static boolean showDonateButton() {
+        boolean isReleaseBuild = !GlobalConfigs.isDebuggable();
+
         // if user has any permanent items, we do not show it
-        if (hasPurchasedPermanentItem()) {
+        if (isReleaseBuild && hasPurchasedPermanentItem()) {
             Log.d(TAG, "showDonate returning false because user has a permanent item");
             return false;
         }
@@ -185,13 +187,20 @@ public class BillingHelper {
         // if user has few launches or installed just a few days ago, we do not show it
         float days_installed = getDaysInstalled();
         int app_launches = getAppLaunches();
-        if (app_launches <= 5 || days_installed < 3.0f) {
+        if (isReleaseBuild && (app_launches <= 5 || days_installed < 3.0f)) {
             Log.d(TAG, "showDonate returning false because app_launches="+app_launches+", days_installed="+days_installed);
             return false;
         }
 
-        // leave it to random chance
-        return (Math.random() < SHOW_DONATE_PROBABILITY);
+        /* this is acting strange
+        // do not show it if RNG says so
+        double rng = Math.random();
+        if (rng >= SHOW_DONATE_PROBABILITY) {
+            Log.d(TAG, "showDonate returning false because rng="+rng);
+            return false;
+        }*/
+
+        return true;
     }
 
     public static int getAppLaunches() {

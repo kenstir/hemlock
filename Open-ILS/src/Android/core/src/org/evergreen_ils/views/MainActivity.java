@@ -36,6 +36,7 @@ import org.evergreen_ils.accountAccess.holds.HoldsListView;
 import org.evergreen_ils.auth.Const;
 import org.evergreen_ils.billing.*;
 import org.evergreen_ils.globals.AppState;
+import org.evergreen_ils.globals.GlobalConfigs;
 import org.evergreen_ils.globals.Log;
 import org.evergreen_ils.searchCatalog.SearchCatalogListView;
 import org.evergreen_ils.utils.ui.ActionBarUtils;
@@ -76,7 +77,7 @@ public class MainActivity extends ActionBarActivity {
     }
 
     void initBilling() {
-        //kcxxx
+        //todo remove these views
         int app_launches = BillingHelper.getAppLaunches();
         float days_installed = BillingHelper.getDaysInstalled();
         ((TextView)findViewById(R.id.textView)).setText("app launches: " + app_launches);
@@ -111,6 +112,7 @@ public class MainActivity extends ActionBarActivity {
 
     void updateUi() {
         findViewById(R.id.main_donate_button).setVisibility(showDonateButton ? View.VISIBLE : View.GONE);
+        findViewById(R.id.main_stats_layout).setVisibility(GlobalConfigs.isDebuggable() ? View.VISIBLE : View.GONE);
     }
 
     @Override

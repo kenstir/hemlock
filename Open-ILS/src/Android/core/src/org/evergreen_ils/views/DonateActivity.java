@@ -45,19 +45,6 @@ public class DonateActivity extends ActionBarActivity {
     private HashMap<String,Integer> mediaResourceIdMap;
     private HashMap<String,String> attributionMap;
 
-    private void initSounds(Context context) {
-        Log.d(TAG, "initSounds start");
-        mediaResourceIdMap = new HashMap<String, Integer>(3);
-        mediaResourceIdMap.put(BillingHelper.SKU_KARMA, R.raw.metal_gong);
-        mediaResourceIdMap.put(BillingHelper.SKU_SILVER, R.raw.small_crowd_applause);
-        mediaResourceIdMap.put(BillingHelper.SKU_GOLD, R.raw.ten_second_applause);
-        attributionMap = new HashMap<String, String>(3);
-        attributionMap.put(BillingHelper.SKU_KARMA, "Metal Gong 1 by Dianakc, soundbible.com, CC BY 3.0");
-        attributionMap.put(BillingHelper.SKU_SILVER, "Small Crowd Applause by Yannick Lemieux, soundbible.com, CC BY 3.0");
-        attributionMap.put(BillingHelper.SKU_GOLD, "10 Second Applause by Mike Koenig, soundbible.com, CC BY 3.0");
-        Log.d(TAG, "initSounds done");
-    }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -74,6 +61,19 @@ public class DonateActivity extends ActionBarActivity {
     protected void onStart() {
         super.onStart();
         initSounds(this);
+    }
+
+    private void initSounds(Context context) {
+        Log.d(TAG, "initSounds start");
+        mediaResourceIdMap = new HashMap<String, Integer>(3);
+        mediaResourceIdMap.put(BillingHelper.SKU_KARMA, R.raw.metal_gong);
+        mediaResourceIdMap.put(BillingHelper.SKU_SILVER, R.raw.small_crowd_applause);
+        mediaResourceIdMap.put(BillingHelper.SKU_GOLD, R.raw.ten_second_applause);
+        attributionMap = new HashMap<String, String>(3);
+        attributionMap.put(BillingHelper.SKU_KARMA, "Metal Gong 1 by Dianakc, soundbible.com, CC BY 3.0");
+        attributionMap.put(BillingHelper.SKU_SILVER, "Small Crowd Applause by Yannick Lemieux, soundbible.com, CC BY 3.0");
+        attributionMap.put(BillingHelper.SKU_GOLD, "10 Second Applause by Mike Koenig, soundbible.com, CC BY 3.0");
+        Log.d(TAG, "initSounds done");
     }
 
     void setBusy(boolean set) {
