@@ -117,7 +117,7 @@
                     android:value="org.evergreen_ils.views.MainActivity"/>
         </activity>
         <activity
-                android:name="org.evergreen_ils.accountAccess.holds.PlaceHold"
+                android:name="org.evergreen_ils.accountAccess.holds.PlaceHoldActivity"
                 android:label="@string/hold_place_title">
         </activity>
         <activity
@@ -141,7 +141,13 @@
         <activity android:name="org.evergreen_ils.accountAccess.bookbags.BookBagDetails" >
         </activity>
 
-        <activity android:name="org.evergreen_ils.views.MainActivity">
+        <activity
+                android:name="org.evergreen_ils.views.DonateActivity"
+                android:label="@string/title_donate"
+                android:parentActivityName="org.evergreen_ils.views.MainActivity">
+            <meta-data
+                    android:name="android.support.PARENT_ACTIVITY"
+                    android:value="org.evergreen_ils.views.MainActivity"/>
         </activity>
 
         <activity android:name="org.evergreen_ils.auth.TestAuthActivity">
@@ -150,6 +156,19 @@
         <activity
             android:name="org.evergreen_ils.auth.AuthenticatorActivity"
             android:label="@string/ou_account_label">
+        </activity>
+        <activity
+                android:name="org.evergreen_ils.auth.GenericAuthenticatorActivity"
+                android:label="@string/ou_account_label">
+        </activity>
+
+        <activity android:name="org.evergreen_ils.views.MainActivity">
+        </activity>
+
+        <activity android:name="org.evergreen_ils.auth.TestAuthActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+            </intent-filter>
         </activity>
 
         <service
