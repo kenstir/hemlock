@@ -49,7 +49,9 @@
             android:text="@string/title_donate"
             android:id="@+id/main_donate_button"
             android:onClick="onButtonClick"
-            android:drawableLeft="@drawable/kteatime" android:visibility="visible"/>
+            android:drawableLeft="@drawable/kteatime"
+            android:visibility="invisible"/>
+
     <LinearLayout
             android:orientation="horizontal"
             android:layout_width="match_parent"

@@ -5,7 +5,8 @@
               android:layout_width="match_parent"
               android:layout_height="match_parent"
               android:paddingTop="@dimen/bigActionButton_marginVertical"
-              android:background="@drawable/background_grey_image">
+              android:background="@drawable/background_grey_image"
+              android:animateLayoutChanges="true">
 
     <Button
             android:layout_width="match_parent"
@@ -50,7 +51,9 @@
             android:text="@string/title_donate"
             android:id="@+id/main_donate_button"
             android:onClick="onButtonClick"
-            android:drawableLeft="@drawable/kteatime"/>
+            android:drawableLeft="@drawable/kteatime"
+            android:visibility="invisible"/>
+
     <LinearLayout
             android:orientation="vertical"
             android:layout_width="match_parent"

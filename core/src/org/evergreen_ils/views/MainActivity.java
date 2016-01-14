@@ -18,6 +18,8 @@
 
 package org.evergreen_ils.views;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -27,6 +29,8 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.AlphaAnimation;
+import android.widget.Button;
 import android.widget.TextView;
 import org.evergreen_ils.R;
 import org.evergreen_ils.accountAccess.AccountUtils;
@@ -35,14 +39,11 @@ import org.evergreen_ils.accountAccess.fines.FinesActivity;
 import org.evergreen_ils.accountAccess.holds.HoldsListView;
 import org.evergreen_ils.auth.Const;
 import org.evergreen_ils.billing.*;
-import org.evergreen_ils.globals.AppState;
 import org.evergreen_ils.globals.GlobalConfigs;
 import org.evergreen_ils.globals.Log;
 import org.evergreen_ils.searchCatalog.SearchCatalogListView;
 import org.evergreen_ils.utils.ui.ActionBarUtils;
 import org.evergreen_ils.views.splashscreen.SplashActivity;
-
-import java.util.List;
 
 /**
  * Created by kenstir on 12/28/13.
@@ -51,6 +52,9 @@ public class MainActivity extends ActionBarActivity {
 
     private static String TAG = MainActivity.class.getSimpleName();
     private boolean showDonateButton;
+    private boolean donateButtonShowing;
+    private Button donateButton;
+    private int mAnimationDuration;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -64,6 +68,13 @@ public class MainActivity extends ActionBarActivity {
 
         // singleton initialize necessary IDL and Org data
 //        globalConfigs = GlobalConfigs.getInstance(this);
+
+        // hide the donate button until we know what the deal is
+        donateButton = (Button) findViewById(R.id.main_donate_button);
+        donateButton.setVisibility(View.INVISIBLE);
+        donateButtonShowing = false;
+        //mAnimationDuration = getResources().getInteger(android.R.integer.config_shortAnimTime);
+        mAnimationDuration = 3000;
 
         initBilling();
     }
@@ -83,27 +94,23 @@ public class MainActivity extends ActionBarActivity {
         ((TextView)findViewById(R.id.textView)).setText("app launches: " + app_launches);
         ((TextView)findViewById(R.id.textView2)).setText("days installed: " + days_installed);
 
-        // show or hide donate button
-        showDonateButton = BillingHelper.showDonateButton();
-        if (!showDonateButton) {
-            updateUi();
-            return;
-        }
-
         // get the public key
         BillingDataProvider provider = BillingDataProvider.create(getString(R.string.ou_billing_data_provider));
         String base64EncodedPublicKey = (provider != null) ? provider.getPublicKey() : null;
         if (TextUtils.isEmpty(base64EncodedPublicKey)) {
             showDonateButton = false;
-            updateUi();
-            return;
+        } else {
+            showDonateButton = BillingHelper.showDonateButton();
         }
+        Log.d(TAG, "kcxxx: initBilling showDonate="+showDonateButton);
+        updateUi();
 
         BillingHelper.startSetup(this, base64EncodedPublicKey, new BillingHelper.OnSetupFinishedListener() {
             @Override
             public void onSetupFinished(IabResult result) {
                 if (result.isSuccess()) {
                     showDonateButton = BillingHelper.showDonateButton();
+                    Log.d(TAG, "kcxxx: onSetupFinished showDonate="+showDonateButton);
                     updateUi();
                 }
             }
@@ -111,8 +118,27 @@ public class MainActivity extends ActionBarActivity {
     }
 
     void updateUi() {
-        findViewById(R.id.main_donate_button).setVisibility(showDonateButton ? View.VISIBLE : View.GONE);
         findViewById(R.id.main_stats_layout).setVisibility(GlobalConfigs.isDebuggable() ? View.VISIBLE : View.GONE);
+
+        float oldOpacity = donateButtonShowing ? 1f : 0f;
+        float newOpacity = showDonateButton ? 1f : 0f;
+        Log.d(TAG, "kcxxx: updateUi old="+oldOpacity+" new="+newOpacity);
+        donateButtonShowing = showDonateButton;
+        if (oldOpacity == newOpacity) {
+            return;
+        }
+
+        /*
+        AlphaAnimation anim = new AlphaAnimation(oldOpacity, newOpacity);
+        anim.setDuration(mAnimationDuration);
+        donateButton.startAnimation(anim);
+        */
+
+        donateButton.setAlpha(oldOpacity);
+        donateButton.setVisibility(View.VISIBLE);
+        donateButton.animate()
+                .alpha(newOpacity)
+                .setDuration(mAnimationDuration);
     }
 
     @Override
