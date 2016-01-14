@@ -39,7 +39,8 @@ public class BillingHelper {
     public static final String SKU_SILVER = "silver";
     public static final String SKU_BRONZE = "bronze";
     public static final String SKU_KARMA = "karma";
-    public static final float KARMA_DURATION_DAYS = 14;
+    //public static final float KARMA_DURATION_DAYS = 14;
+    public static final float KARMA_DURATION_DAYS = 1/72; //todo
     public static final double SHOW_DONATE_PROBABILITY = 0.33f;
     // (arbitrary) request code for the purchase flow
     public static final int REQUEST_PURCHASE = 10001;
