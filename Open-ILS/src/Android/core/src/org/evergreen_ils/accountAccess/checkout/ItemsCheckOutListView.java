@@ -198,7 +198,7 @@ public class ItemsCheckOutListView extends ActionBarActivity {
         }
 
         private void initRenewButton(final CircRecord record) {
-            final boolean renewable = record.getRenewals() > 0 || GlobalConfigs.isDebuggable();
+            final boolean renewable = record.getRenewals() > 0;// || GlobalConfigs.isDebuggable();
             renewButton.setEnabled(renewable);
             renewButton.setOnClickListener(new OnClickListener() {
                 @Override
@@ -209,7 +209,7 @@ public class ItemsCheckOutListView extends ActionBarActivity {
 
                         @Override
                         public void run() {
-                            boolean refresh = true;
+                            boolean success = false;
                             AccountAccess ac = AccountAccess.getInstance();
 
                             runOnUiThread(new Runnable() {
@@ -223,10 +223,13 @@ public class ItemsCheckOutListView extends ActionBarActivity {
 
                             try {
                                 ac.renewCirc(record.getTargetCopy());
+                                success = true;
                             } catch (SessionNotFoundException e1) {
                                 try {
-                                    if (accountAccess.reauthenticate(ItemsCheckOutListView.this))
+                                    if (accountAccess.reauthenticate(ItemsCheckOutListView.this)) {
                                         ac.renewCirc(record.getTargetCopy());
+                                        success = true;
+                                    }
                                 } catch (Exception eauth) {
                                     Log.d(TAG, "Exception in reauth", eauth);
                                 }
@@ -239,8 +242,6 @@ public class ItemsCheckOutListView extends ActionBarActivity {
                                         Toast.makeText(context, R.string.toast_max_renewals_reached, Toast.LENGTH_LONG).show();
                                     }
                                 });
-
-                                refresh = false;
                             } catch (final ServerErrorMessage error) {
                                 runOnUiThread(new Runnable() {
 
@@ -251,14 +252,13 @@ public class ItemsCheckOutListView extends ActionBarActivity {
                                     }
                                 });
                             }
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    Toast.makeText(context, getString(R.string.toast_item_renewed), Toast.LENGTH_SHORT).show();
-                                }
-                            });
-
-                            if (refresh) {
+                            if (success) {
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        Toast.makeText(context, getString(R.string.toast_item_renewed), Toast.LENGTH_LONG).show();
+                                    }
+                                });
                                 try {
                                     circRecords = accountAccess.getItemsCheckedOut();
                                 } catch (SessionNotFoundException e) {
