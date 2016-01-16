@@ -52,22 +52,4 @@
             android:drawableLeft="@drawable/kteatime"
             android:visibility="invisible"/>
 
-    <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" android:layout_marginLeft="24dp"
-            android:gravity="center_horizontal" android:id="@+id/main_stats_layout">
-        <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="app launches:"
-                android:id="@+id/textView" android:gravity="center" android:paddingLeft="24dip"
-                android:paddingRight="24dip"/>
-        <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="days installed:"
-                android:id="@+id/textView2" android:paddingLeft="24dip" android:paddingRight="24dip"/>
-    </LinearLayout>
-
 </LinearLayout>
