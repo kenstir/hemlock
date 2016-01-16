@@ -18,8 +18,6 @@
 
 package org.evergreen_ils.views;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -29,10 +27,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.animation.AlphaAnimation;
 import android.widget.Button;
-import android.widget.TextView;
-import android.widget.Toast;
 import org.evergreen_ils.R;
 import org.evergreen_ils.accountAccess.AccountUtils;
 import org.evergreen_ils.accountAccess.checkout.ItemsCheckOutListView;
@@ -40,7 +35,6 @@ import org.evergreen_ils.accountAccess.fines.FinesActivity;
 import org.evergreen_ils.accountAccess.holds.HoldsListView;
 import org.evergreen_ils.auth.Const;
 import org.evergreen_ils.billing.*;
-import org.evergreen_ils.globals.GlobalConfigs;
 import org.evergreen_ils.globals.Log;
 import org.evergreen_ils.searchCatalog.SearchCatalogListView;
 import org.evergreen_ils.utils.ui.ActionBarUtils;
@@ -55,7 +49,6 @@ public class MainActivity extends ActionBarActivity {
     private boolean showDonateButton;
     private boolean donateButtonShowing;
     private Button donateButton;
-    private int mAnimationDuration;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -74,10 +67,6 @@ public class MainActivity extends ActionBarActivity {
         donateButton.setAlpha(0f);
         donateButtonShowing = false;
         showDonateButton = false;
-        //mAnimationDuration = getResources().getInteger(android.R.integer.config_longAnimTime);
-        mAnimationDuration = 3000;
-        Log.d(TAG, "kcxxx.oncreate.show="+showDonateButton+" showing="+donateButtonShowing+" vis="+donateButton.getVisibility());
-//        statusText.setText("[1]: "+showDonateButton+"/"+donateButtonShowing+" a=?/"+donateButton.getAlpha());
 
         initBilling();
     }
@@ -91,12 +80,6 @@ public class MainActivity extends ActionBarActivity {
     }
 
     void initBilling() {
-        //todo remove these views
-        int app_launches = BillingHelper.getAppLaunches();
-        float days_installed = BillingHelper.getDaysInstalled();
-        //((TextView)findViewById(R.id.textView)).setText("app launches: " + app_launches);
-        //((TextView)findViewById(R.id.textView2)).setText("days installed: " + days_installed);
-
         // get the public key
         BillingDataProvider provider = BillingDataProvider.create(getString(R.string.ou_billing_data_provider));
         String base64EncodedPublicKey = (provider != null) ? provider.getPublicKey() : null;
@@ -116,33 +99,30 @@ public class MainActivity extends ActionBarActivity {
         });
     }
 
+    // fade in or out the Donate button
     void updateUi() {
-        Log.d(TAG, "kcxxx.updateui.show="+showDonateButton+" showing="+donateButtonShowing+" vis="+donateButton.getVisibility());
+        Log.d(TAG, "updateui show="+showDonateButton+" showing="+donateButtonShowing);
 
         float oldOpacity = donateButtonShowing ? 1f : 0f;
         float newOpacity = showDonateButton ? 1f : 0f;
-//        statusText.setText(curr + " [2]: "+showDonateButton+"/"+donateButtonShowing+" a="+oldOpacity+".."+newOpacity+"/"+donateButton.getAlpha());
-        Log.d(TAG, "updateUi old="+oldOpacity+" new="+newOpacity);
         donateButtonShowing = showDonateButton;
-        Log.d(TAG, "kcxxx.updateui set show="+showDonateButton+" showing="+donateButtonShowing+" vis="+donateButton.getVisibility());
         if (oldOpacity == newOpacity) {
-            Log.d(TAG, "kcxxx.updateui returning!");
+            Log.d(TAG, "updateui returning!");
             return;
         }
 
         donateButton.setAlpha(oldOpacity);
         donateButton.setVisibility(View.VISIBLE);
         donateButton.animate()
-                .setDuration(mAnimationDuration)
+                .setDuration(2000) // slow mo
                 .alpha(newOpacity);
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        Log.d(TAG, "onActivityResult req="+requestCode+" result="+resultCode);
         if (resultCode == BillingHelper.RESULT_PURCHASED) {
-            showDonateButton = BillingHelper.showDonateButton();
-            Log.d(TAG, "onActivityResult showDonate="+showDonateButton);
-            Toast.makeText(MainActivity.this, "onActivityResult showDonate="+showDonateButton, Toast.LENGTH_SHORT).show();
+            showDonateButton = false; // hide button on any purchase
             updateUi();
         }
     }
@@ -159,7 +139,6 @@ public class MainActivity extends ActionBarActivity {
 
     @Override
     public boolean onPrepareOptionsMenu (Menu menu) {
-        Log.d(TAG, "onPrepareOptionsMenu");
         menu.getItem(0).setEnabled(AccountUtils.haveMoreThanOneAccount(this));
         return true;
     }
@@ -203,7 +182,7 @@ public class MainActivity extends ActionBarActivity {
         } else if (id == R.id.main_btn_search) {
             startActivity(new Intent(this, SearchCatalogListView.class));
         } else if (id == R.id.main_donate_button) {
-            startActivity(new Intent(this, DonateActivity.class));
+            startActivityForResult(new Intent(this, DonateActivity.class), BillingHelper.REQUEST_PURCHASE);
         }
     }
 }
