@@ -41,13 +41,10 @@ public class SplashActivity extends Activity implements LoadingTaskListener {
     public final static int REQUEST_SELECT_LIBRARY = 0;
     private static String TAG = SplashActivity.class.getSimpleName();
     private TextView mProgressText;
-    private Context mContext;
     private View mProgressBar;
-    private AlertDialog mAlertDialog;
     private Button mRetryButton;
     private LoadingTask mTask;
     private static boolean mInitialized;
-    private boolean restarted = false;
 
     public static boolean isAppInitialized() {
         return mInitialized;
@@ -80,7 +77,6 @@ public class SplashActivity extends Activity implements LoadingTaskListener {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        this.mContext = this;
         setContentView(R.layout.activity_splash);
 
         AppState.init(this);
@@ -104,43 +100,6 @@ public class SplashActivity extends Activity implements LoadingTaskListener {
             return;
         mTask = new LoadingTask(this, this);
         mTask.execute();
-    }
-
-    /*
-    @Override
-    protected void onStart() {
-        super.onStart();
-        Log.d(TAG, "onstart");
-        if (!restarted) {
-            startTask();
-        }
-    }
-    */
-
-    /*
-    @Override
-    protected void onRestart() {
-        super.onRestart();
-        restarted = true;
-        Log.d(TAG, "onrestart");
-    }
-    */
-
-    /*
-    @Override
-    protected void onResume() {
-        super.onResume();
-        Log.d(TAG, "onresume");
-    }
-    */
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        Log.d(TAG, "onstop");
-        if (mAlertDialog != null) {
-            mAlertDialog.dismiss();
-        }
     }
 
     @Override

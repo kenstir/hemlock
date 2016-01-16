@@ -32,6 +32,7 @@ import android.view.View;
 import android.view.animation.AlphaAnimation;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 import org.evergreen_ils.R;
 import org.evergreen_ils.accountAccess.AccountUtils;
 import org.evergreen_ils.accountAccess.checkout.ItemsCheckOutListView;
@@ -56,6 +57,7 @@ public class MainActivity extends ActionBarActivity {
     private Button donateButton;
     private int mAnimationDuration;
 
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (!SplashActivity.isAppInitialized()) {
@@ -66,15 +68,16 @@ public class MainActivity extends ActionBarActivity {
         setContentView(R.layout.activity_main);
         ActionBarUtils.initActionBarForActivity(this, true);
 
-        // singleton initialize necessary IDL and Org data
-//        globalConfigs = GlobalConfigs.getInstance(this);
-
         // hide the donate button until we know what the deal is
         donateButton = (Button) findViewById(R.id.main_donate_button);
         donateButton.setVisibility(View.INVISIBLE);
+        donateButton.setAlpha(0f);
         donateButtonShowing = false;
-        //mAnimationDuration = getResources().getInteger(android.R.integer.config_shortAnimTime);
+        showDonateButton = false;
+        //mAnimationDuration = getResources().getInteger(android.R.integer.config_longAnimTime);
         mAnimationDuration = 3000;
+        Log.d(TAG, "kcxxx.oncreate.show="+showDonateButton+" showing="+donateButtonShowing+" vis="+donateButton.getVisibility());
+//        statusText.setText("[1]: "+showDonateButton+"/"+donateButtonShowing+" a=?/"+donateButton.getAlpha());
 
         initBilling();
     }
@@ -83,7 +86,7 @@ public class MainActivity extends ActionBarActivity {
     public void onDestroy() {
         super.onDestroy();
 
-        // very important:
+        // very important to dispose of the helper
         BillingHelper.disposeIabHelper();
     }
 
@@ -91,26 +94,22 @@ public class MainActivity extends ActionBarActivity {
         //todo remove these views
         int app_launches = BillingHelper.getAppLaunches();
         float days_installed = BillingHelper.getDaysInstalled();
-        ((TextView)findViewById(R.id.textView)).setText("app launches: " + app_launches);
-        ((TextView)findViewById(R.id.textView2)).setText("days installed: " + days_installed);
+        //((TextView)findViewById(R.id.textView)).setText("app launches: " + app_launches);
+        //((TextView)findViewById(R.id.textView2)).setText("days installed: " + days_installed);
 
         // get the public key
         BillingDataProvider provider = BillingDataProvider.create(getString(R.string.ou_billing_data_provider));
         String base64EncodedPublicKey = (provider != null) ? provider.getPublicKey() : null;
-        if (TextUtils.isEmpty(base64EncodedPublicKey)) {
-            showDonateButton = false;
-        } else {
-            showDonateButton = BillingHelper.showDonateButton();
-        }
-        Log.d(TAG, "kcxxx: initBilling showDonate="+showDonateButton);
-        updateUi();
+        if (TextUtils.isEmpty(base64EncodedPublicKey))
+            return;
 
+        // talk to the store
         BillingHelper.startSetup(this, base64EncodedPublicKey, new BillingHelper.OnSetupFinishedListener() {
             @Override
             public void onSetupFinished(IabResult result) {
                 if (result.isSuccess()) {
                     showDonateButton = BillingHelper.showDonateButton();
-                    Log.d(TAG, "kcxxx: onSetupFinished showDonate="+showDonateButton);
+                    Log.d(TAG, "onSetupFinished showDonate="+showDonateButton);
                     updateUi();
                 }
             }
@@ -118,33 +117,32 @@ public class MainActivity extends ActionBarActivity {
     }
 
     void updateUi() {
-        findViewById(R.id.main_stats_layout).setVisibility(GlobalConfigs.isDebuggable() ? View.VISIBLE : View.GONE);
+        Log.d(TAG, "kcxxx.updateui.show="+showDonateButton+" showing="+donateButtonShowing+" vis="+donateButton.getVisibility());
 
         float oldOpacity = donateButtonShowing ? 1f : 0f;
         float newOpacity = showDonateButton ? 1f : 0f;
-        Log.d(TAG, "kcxxx: updateUi old="+oldOpacity+" new="+newOpacity);
+//        statusText.setText(curr + " [2]: "+showDonateButton+"/"+donateButtonShowing+" a="+oldOpacity+".."+newOpacity+"/"+donateButton.getAlpha());
+        Log.d(TAG, "updateUi old="+oldOpacity+" new="+newOpacity);
         donateButtonShowing = showDonateButton;
+        Log.d(TAG, "kcxxx.updateui set show="+showDonateButton+" showing="+donateButtonShowing+" vis="+donateButton.getVisibility());
         if (oldOpacity == newOpacity) {
+            Log.d(TAG, "kcxxx.updateui returning!");
             return;
         }
-
-        /*
-        AlphaAnimation anim = new AlphaAnimation(oldOpacity, newOpacity);
-        anim.setDuration(mAnimationDuration);
-        donateButton.startAnimation(anim);
-        */
 
         donateButton.setAlpha(oldOpacity);
         donateButton.setVisibility(View.VISIBLE);
         donateButton.animate()
-                .alpha(newOpacity)
-                .setDuration(mAnimationDuration);
+                .setDuration(mAnimationDuration)
+                .alpha(newOpacity);
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == BillingHelper.RESULT_PURCHASED) {
             showDonateButton = BillingHelper.showDonateButton();
+            Log.d(TAG, "onActivityResult showDonate="+showDonateButton);
+            Toast.makeText(MainActivity.this, "onActivityResult showDonate="+showDonateButton, Toast.LENGTH_SHORT).show();
             updateUi();
         }
     }
