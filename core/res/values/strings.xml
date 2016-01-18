@@ -172,7 +172,7 @@
     <string name="donate_karma_label_take1">Good karma - $1</string>
     <string name="donate_call_to_action_title">Enjoy this app?</string>
     <string name="donate_call_to_action_subtitle">Buy me some coffee to keep me awake and working on it!</string>
-    <string name="donate_postscript_take1">Good karma lasts for two weeks. Buy me a coffee and I\'ll remember you
+    <string name="donate_postscript_take1">Good karma lasts for a month. Buy me a coffee and I\'ll remember you
         forever.
     </string>
     <string name="toast_max_renewals_reached">Max renewals reached</string>
