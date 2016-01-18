@@ -19,6 +19,7 @@
  */
 package org.evergreen_ils.utils.ui;
 
+import android.app.SearchManager;
 import android.net.Uri;
 import android.text.TextUtils;
 import com.android.volley.Response;
@@ -177,13 +178,55 @@ public class BasicDetailsFragment extends Fragment {
         onlineAccessButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (TextUtils.isEmpty(record.online_loc))
-                    return;
-                Intent i = new Intent(Intent.ACTION_VIEW, Uri.parse(record.online_loc));
-                startActivity(i);
+                launchOnlineAccess();
             }
         });
     }
+
+    private void launchOnlineAccess() {
+        if (TextUtils.isEmpty(record.online_loc))
+            return;
+        Uri uri = Uri.parse(record.online_loc);
+        Intent i = new Intent(Intent.ACTION_VIEW, uri);
+    }
+
+    // This is a record of a few approaches I tried to get Baker-Taylor e-books from CW/MARS links; nothing worked.
+    // Only approach left might be an interstitial activity that does this:
+    // 1. Copies the title to the clipboard
+    // 2. Launches the axis360 app using getLaunchIntentForPackage("com.bt.mdd")
+//    private void launchOnlineAccess() {
+//        if (TextUtils.isEmpty(record.online_loc))
+//            return;
+//        if (record.online_loc.contains("axis360.baker-taylor.com")) {
+//            /* try 1: crashes axis360 */
+//            Intent i = new Intent(Intent.ACTION_SEARCH);
+//            i.putExtra(SearchManager.QUERY, record.title);
+//            /* try 2: landing page seems abandoned */
+//            Uri uri = Uri.parse("blioapp://blioapp/Title?itemid=0014619811");
+//            Intent i = new Intent(Intent.ACTION_VIEW, uri);
+//            /* try 3: lands on some mit license page */
+//            Uri orig = Uri.parse(record.online_loc);
+//            Uri uri = Uri.parse("com.bt.mdd://" + orig.getHost() + orig.getPath() + "?" + orig.getQuery());
+//            Intent i = new Intent(Intent.ACTION_VIEW, uri);
+//            /* try 4: library-specific url works no better than cwmars-generic url; that is, lousy */
+//            Uri orig = Uri.parse(record.online_loc);
+//            Uri uri = Uri.parse("http://" + "marl.axis360.baker-taylor.com" + orig.getPath() + "?" + orig.getQuery());
+//            Intent i = new Intent(Intent.ACTION_VIEW, uri);
+//            startActivity(i);
+//            /* try 5: this starts the app directly, at its home screen.  Works but you lose the book. */
+//            Intent i = getActivity().getPackageManager().getLaunchIntentForPackage("com.bt.mdd");
+//            try {
+//                startActivity(i);
+//            } catch (Exception e) {
+//                Log.d(TAG, "caught", e);
+//            }
+//                } else {
+//                    Uri uri = Uri.parse(record.online_loc);
+//                    Intent i = new Intent(Intent.ACTION_VIEW, uri);
+//                }
+//            }
+//        });
+//    }
 
     private void updateButtonViews() {
         boolean is_online_resource = record.isOnlineResource();
