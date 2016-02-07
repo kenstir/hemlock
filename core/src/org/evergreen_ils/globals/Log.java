@@ -30,6 +30,7 @@ import java.util.*;
  */
 public class Log {
 
+    /*
     private static void println(int priority, String TAG, String msg, Throwable tr) {
         if (tr != null) {
             msg = msg + '\n' + android.util.Log.getStackTraceString(tr);
@@ -40,7 +41,7 @@ public class Log {
     public static synchronized String getString(Context context) {
         return null;
     }
-
+    */
     /*
     private static final int mQueueSize = 200;
     private static ArrayDeque<String> mEntries = new ArrayDeque<String>(mQueueSize);
@@ -98,31 +99,25 @@ public class Log {
     */
 
     public static void d(String TAG, String msg) {
-        println(android.util.Log.DEBUG, TAG, msg, null);
+        android.util.Log.d(TAG, msg);
     }
-
     public static void d(String TAG, String msg, Throwable tr) {
-        println(android.util.Log.DEBUG, TAG, msg, tr);
+        android.util.Log.d(TAG, msg, tr);
     }
-
     public static void i(String TAG, String msg) {
-        println(android.util.Log.INFO, TAG, msg, null);
+        android.util.Log.i(TAG, msg);
     }
-
     public static void v(String TAG, String msg) {
-        println(android.util.Log.VERBOSE, TAG, msg, null);
+        android.util.Log.v(TAG, msg);
     }
-
     public static void w(String TAG, String msg) {
-        println(android.util.Log.WARN, TAG, msg, null);
+        android.util.Log.w(TAG, msg);
     }
-
     public static void w(String TAG, Throwable tr) {
-        println(android.util.Log.WARN, TAG, null, tr);
+        android.util.Log.w(TAG, null, tr);
     }
-
     public static void w(String TAG, String msg, Throwable tr) {
-        println(android.util.Log.WARN, TAG, msg, tr);
+        android.util.Log.w(TAG, msg, tr);
     }
 
     public static long logElapsedTime(String TAG, long start_ms, String s) {

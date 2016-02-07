@@ -52,6 +52,7 @@ public class RecordLoader {
     }
 
     public static void fetchBasicMetadata(final RecordInfo record, Context context, final ResponseListener responseListener) {
+        Log.d(TAG, "fetchBasicMetadata id="+record.doc_id+ " title="+record.title);
         if (!TextUtils.isEmpty(record.title)) {
             responseListener.onMetadataLoaded();
         } else {
@@ -73,6 +74,7 @@ public class RecordLoader {
     }
 
     public static void fetchSearchFormat(final RecordInfo record, Context context, final ResponseListener responseListener) {
+        Log.d(TAG, "fetchSearchFormat id="+record.doc_id+ " format="+record.search_format);
         if (!TextUtils.isEmpty(record.search_format)) {
             responseListener.onSearchFormatLoaded();
         } else {

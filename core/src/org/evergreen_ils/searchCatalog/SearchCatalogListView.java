@@ -598,10 +598,17 @@ public class SearchCatalogListView extends ActionBarActivity {
         }
 
         public View getView(int position, View convertView, ViewGroup parent) {
-            View row = convertView;
+            View row = null;
 
-            // if it is the right type of view
-            if (row == null || row.findViewById(R.id.search_record_title) == null) {
+            // inflate view if we can't reuse it
+            try {
+                if (convertView != null && convertView.findViewById(R.id.search_record_img) != null) {
+                    row = convertView;
+                }
+            } catch(Exception e) {
+                Log.d(TAG, "caught", e);
+            }
+            if (row == null) {
                 LayoutInflater inflater = (LayoutInflater) this.getContext().getSystemService(
                         Context.LAYOUT_INFLATER_SERVICE);
                 row = inflater.inflate(R.layout.search_result_item, parent, false);
@@ -610,14 +617,14 @@ public class SearchCatalogListView extends ActionBarActivity {
             // Get item
             RecordInfo record = getItem(position);
 
+            // Start async record load
+            fetchRecordInfo(row, record);
+
             // Start async image load
             NetworkImageView recordImage = (NetworkImageView) row.findViewById(R.id.search_record_img);
             final String imageHref = GlobalConfigs.getUrl("/opac/extras/ac/jacket/small/r/" + record.doc_id);
             ImageLoader imageLoader = VolleyWrangler.getInstance(context).getImageLoader();
             recordImage.setImageUrl(imageHref, imageLoader);
-
-            // Start async record load
-            fetchRecordInfo(row, record);
 
             return row;
         }
