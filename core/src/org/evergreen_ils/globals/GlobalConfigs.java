@@ -36,8 +36,9 @@ import java.util.*;
 
 public class GlobalConfigs {
 
-    public static String IDL_FILE_FROM_ROOT = "/reports/fm_IDL.xml?class=acn&class=acp&class=ahr&class=ahtc&class=aou&class=au&class=bmp&class=cbreb&class=cbrebi&class=cbrebin&class=cbrebn&class=ccs&class=circ&class=ex&class=mbt&class=mbts&class=mous&class=mra&class=mus&class=mvr&class=perm_ex";
-    public static String IDL_FILE_FROM_ASSETS = "fm_IDL.xml";
+    public static String IDL_CLASSES_USED = "acn,acp,ahr,ahtc,aou,au,bmp,cbreb,cbrebi,cbrebin,cbrebn,ccs,circ,ex,mbt,mbts,mous,mra,mus,mvr,perm_ex";
+    // extra classes needed for open-ils.actor.user.fleshed.retrieve: ac,au,aua,auact,cuat
+    //public static String IDL_FILE_FROM_ASSETS = "fm_IDL.xml";
     private static String httpAddress = "";
     private static HttpConnection conn = null;
 
@@ -102,6 +103,17 @@ public class GlobalConfigs {
         return globalConfigs.httpAddress + relativeUrl;
     }
 
+    public static String getIDLUrl() {
+        ArrayList<String> params = new ArrayList<String>(32);
+        for (String className : TextUtils.split(IDL_CLASSES_USED, ",")) {
+            params.add("class=" + className);
+        }
+        StringBuilder sb = new StringBuilder(512);
+        sb.append(httpAddress).append("/reports/fm_IDL.xml?");
+        sb.append(TextUtils.join("&", params));
+        return sb.toString();
+    }
+
     /*
      * Initialize function that retrieves IDL file and Orgs file
      */
@@ -137,7 +149,7 @@ public class GlobalConfigs {
         try {
             Log.d(TAG, "loadIDLFile start");
             long start_ms = System.currentTimeMillis();
-            InputStream in_IDL = Utils.getNetInputStream(getUrl(IDL_FILE_FROM_ROOT));
+            InputStream in_IDL = Utils.getNetInputStream(getIDLUrl());
             IDLParser parser = new IDLParser(in_IDL);
             parser.setKeepIDLObjects(false);
             Log.d(TAG, "loadIDLFile parse");

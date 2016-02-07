@@ -60,6 +60,8 @@ public class AccountAccess {
     /** The METHOD_FETCH_CHECKED_OUT_SUM description : for a given user returns a a structure of circulation objects sorted by out, overdue, lost, claims_returned, long_overdue; A list of ID's returned for each type : "out":[id1,id2,...] @returns: { "out":[id 's],"claims_returned":[],"long_overdue":[],"overdue":[],"lost":[] } */
     public static String METHOD_FETCH_CHECKED_OUT_SUM = "open-ils.actor.user.checked_out";
 
+    public static String METHOD_ACTOR_USER_FLESHED_RETRIEVE = "open-ils.actor.user.fleshed.retrieve";
+
     /** The METHOD_FETCH_NON_CAT_CIRCS description : for a given user, returns an id-list of non-cataloged circulations that are considered open for now. A circ is open if circ time + circ duration (based on type) is > than now @returns: Array of non-catalogen circ IDs, event or error */
     public static String METHOD_FETCH_NON_CAT_CIRCS = "open-ils.circ.open_non_cataloged_circulation.user";
 
@@ -155,7 +157,7 @@ public class AccountAccess {
 
     /** The user name. */
     public static String userName = null;
-    
+
     /** Whether we have ever established a session  **/
 
     /** The account access. */
@@ -245,6 +247,20 @@ public class AccountAccess {
             homeLibraryID = au.getInt("home_ou");
             userName = au.getString("usrname");
             //email = au.getString("email");
+            //cardId = au.getInt("card");
+
+            // How to get a patron's library card number (barcode):
+            //
+            // * open-ils.actor open-ils.actor.user.fleshed.retrieve(auth_token, userId)
+//            resp = Utils.doRequest(conn(), SERVICE_ACTOR,
+//                    METHOD_ACTOR_USER_FLESHED_RETRIEVE, new Object[]{
+//                            auth_token, userID});
+            //
+            // Things that didn't work:
+            // * open-ils.pcrud open-ils.pcrud.search.ac auth_token, {id: cardId}
+            // * open-ils.pcrud open-ils.pcrud.search.ac auth_token, {usr: userId}
+            // * open-ils.pcrud open-ils.pcrud.retrieve.ac auth_token, cardId
+            //   (patrons don't have permission to see their own records)
 
             return true;
         }
