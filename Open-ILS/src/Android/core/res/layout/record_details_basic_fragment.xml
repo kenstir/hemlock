@@ -110,11 +110,17 @@
                     android:text="@string/show_copies"
             />
             <Button
-                    android:id="@+id/record_details_online_access"
+                    android:id="@+id/record_details_online_button"
                     style="@style/ApplicationButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/record_online_access"
+                    android:layout_margin="5dip"/>
+            <TextView
+                    android:id="@+id/record_details_online_provider"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="digitalbooks.cwmars.com"
                     android:layout_margin="5dip"/>
         </LinearLayout>
 

@@ -19,19 +19,13 @@
  */
 package org.evergreen_ils.utils.ui;
 
-import android.app.SearchManager;
 import android.net.Uri;
 import android.text.TextUtils;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
 import org.evergreen_ils.R;
 import org.evergreen_ils.accountAccess.holds.PlaceHoldActivity;
 import org.evergreen_ils.globals.GlobalConfigs;
-import org.evergreen_ils.globals.Log;
-import org.evergreen_ils.globals.Utils;
-import org.evergreen_ils.net.GatewayJsonObjectRequest;
 import org.evergreen_ils.net.VolleyWrangler;
 import org.evergreen_ils.searchCatalog.*;
 
@@ -45,7 +39,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import org.opensrf.util.GatewayResponse;
+import org.w3c.dom.Text;
 
 public class BasicDetailsFragment extends Fragment {
 
@@ -69,6 +63,7 @@ public class BasicDetailsFragment extends Fragment {
     private Button placeHoldButton;
     private Button showCopiesButton;
     private Button onlineAccessButton;
+    private TextView onlineProviderTextView;
 
     private GlobalConfigs globalConfigs;
 
@@ -137,7 +132,8 @@ public class BasicDetailsFragment extends Fragment {
         copyCountTextView = (TextView) layout.findViewById(R.id.record_details_simple_copy_count);
         placeHoldButton = (Button) layout.findViewById(R.id.simple_place_hold_button);
         showCopiesButton = (Button) layout.findViewById(R.id.show_copy_information_button);
-        onlineAccessButton = (Button) layout.findViewById(R.id.record_details_online_access);
+        onlineAccessButton = (Button) layout.findViewById(R.id.record_details_online_button);
+        onlineProviderTextView = (TextView) layout.findViewById(R.id.record_details_online_provider);
 
         record_header.setText(String.format(getString(R.string.record_of), position, total));
 
@@ -188,6 +184,7 @@ public class BasicDetailsFragment extends Fragment {
             return;
         Uri uri = Uri.parse(record.online_loc);
         Intent i = new Intent(Intent.ACTION_VIEW, uri);
+        startActivity(i);
     }
 
     // This is a record of a few approaches I tried to get Baker-Taylor e-books from CW/MARS links; nothing worked.
@@ -231,6 +228,7 @@ public class BasicDetailsFragment extends Fragment {
     private void updateButtonViews() {
         boolean is_online_resource = record.isOnlineResource();
         onlineAccessButton.setVisibility(is_online_resource ? View.VISIBLE : View.GONE);
+        onlineProviderTextView.setVisibility(is_online_resource ? View.VISIBLE : View.GONE);
         placeHoldButton.setVisibility(is_online_resource ? View.GONE : View.VISIBLE);
         showCopiesButton.setVisibility(is_online_resource ? View.GONE : View.VISIBLE);
         copyCountTextView.setVisibility(is_online_resource ? View.GONE : View.VISIBLE);
@@ -249,6 +247,14 @@ public class BasicDetailsFragment extends Fragment {
         subjectTextView.setText(record.subject);
         synopsisTextView.setText(record.synopsis);
         isbnTextView.setText(record.isbn);
+
+        if (record.isOnlineResource()) {
+            Uri uri = Uri.parse(record.online_loc);
+            onlineProviderTextView.setText(uri.getHost());
+        } else {
+            onlineProviderTextView.setText("");
+        }
+
         updateButtonViews();
     }
 
