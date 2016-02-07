@@ -22,22 +22,16 @@ package org.evergreen_ils.accountAccess.fines;
 import java.util.Date;
 
 import org.evergreen_ils.globals.GlobalConfigs;
+import org.evergreen_ils.globals.Log;
 import org.opensrf.util.OSRFObject;
 
 public class FinesRecord {
 
+    public static String TAG = FinesRecord.class.getSimpleName();
     public String title;
-
     public String author;
-
-    public Date checkoutDate;
-
-    public Date dueDate;
-
-    public Date dateReturned;
-
     public Double balance_owed;
-
+    public Double max_fine;
     private Date checkin_time;
 
     // types are grocery and circulation
@@ -55,32 +49,31 @@ public class FinesRecord {
             author = mvr_record.getString("author");
 
             if (circ.get("checkin_time") != null) {
-                checkin_time = GlobalConfigs.parseDate(circ
-                        .getString("checkin_time"));
-            } else
+                checkin_time = GlobalConfigs.parseDate(circ.getString("checkin_time"));
+            } else {
                 checkin_time = null;
-
+            }
         } else {
             // grocery
             title = "Grocery billing";
             author = mbts_transaction.getString("last_billing_note");
-
         }
 
-        try{
-            balance_owed =Double.parseDouble(mbts_transaction.getString("total_owed"));
-        }catch(Exception e){
-            System.err.println("Error in total owed string to double conversion " + e.getMessage());
+        try {
+            balance_owed = Double.parseDouble(mbts_transaction.getString("total_owed"));
+            max_fine = Double.parseDouble(circ.getString("max_fine"));
+        } catch(NumberFormatException e) {
+            Log.d(TAG, "error converting double", e);
         }
     }
 
-    // if returned or fines still acumulating
+    // Returns status of fine: e.g. returned or fines accruing
     public String getStatus() {
 
         if (checkin_time != null)
             return "returned";
-
+        if (balance_owed != null && max_fine != null && balance_owed >= max_fine)
+            return "maximum fine";
         return "fines accruing";
-
     }
 }

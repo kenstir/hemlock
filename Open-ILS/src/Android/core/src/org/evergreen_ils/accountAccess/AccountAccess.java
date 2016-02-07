@@ -993,7 +993,7 @@ public class AccountAccess {
             fines[1] = Float.parseFloat(finesSummary.getString("total_paid"));
             fines[2] = Float.parseFloat(finesSummary.getString("balance_owed"));
         } catch (Exception e) {
-            System.err.println("Exception in parsing fines " + e.getMessage());
+            Log.d(TAG, "Error parsing fines", e);
         }
 
         return fines;

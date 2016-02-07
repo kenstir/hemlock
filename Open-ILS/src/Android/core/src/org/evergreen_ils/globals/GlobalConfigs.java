@@ -225,12 +225,8 @@ public class GlobalConfigs {
     }
 
     public static String getStringDate(Date date) {
-
-        final SimpleDateFormat sdf = new SimpleDateFormat(
-                GlobalConfigs.datePattern);
-
+        final SimpleDateFormat sdf = new SimpleDateFormat(GlobalConfigs.datePattern);
         return sdf.format(date);
-
     }
 
     // parse from opac methods query results to Java date
@@ -240,13 +236,12 @@ public class GlobalConfigs {
             return null;
 
         Date date = null;
-        final SimpleDateFormat sdf = new SimpleDateFormat(
-                GlobalConfigs.datePattern);
+        final SimpleDateFormat sdf = new SimpleDateFormat(GlobalConfigs.datePattern);
 
         try {
             date = sdf.parse(dateString);
         } catch (ParseException e) {
-            e.printStackTrace();
+            Log.d(TAG, "error parsing date \""+dateString+"\"", e);
         }
 
         return date;
