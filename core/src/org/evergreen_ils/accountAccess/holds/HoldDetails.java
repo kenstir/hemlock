@@ -81,8 +81,6 @@ public class HoldDetails extends ActionBarActivity {
 
     private Button cancelHold;
 
-    private Button back;
-
     private DatePickerDialog datePicker = null;
 
     private CheckBox suspendHold;
@@ -134,7 +132,6 @@ public class HoldDetails extends ActionBarActivity {
         physical_description = (TextView) findViewById(R.id.hold_physical_description);
         cancelHold = (Button) findViewById(R.id.cancel_hold_button);
         updateHold = (Button) findViewById(R.id.update_hold_button);
-        back = (Button) findViewById(R.id.back_button);
         suspendHold = (CheckBox) findViewById(R.id.hold_suspend_hold);
         orgSelector = (Spinner) findViewById(R.id.hold_pickup_location);
         expiration_date = (EditText) findViewById(R.id.hold_expiration_date);
@@ -167,13 +164,6 @@ public class HoldDetails extends ActionBarActivity {
         }
 
         Log.d(TAG, record.title + " " + record.author);
-
-        back.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
 
         cancelHold.setOnClickListener(new OnClickListener() {
 
