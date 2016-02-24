@@ -145,10 +145,6 @@ public class PlaceHoldActivity extends ActionBarActivity {
                                 "Placing hold");
                     }
                 });
-                // TODO verify hold possible
-
-                // accountAccess.getHoldPreCreateInfo(record_id, 4);
-                // accountAccess.isHoldPossible(4, record_id);
 
                 String expire_date_s = null;
                 String thaw_date_s = null;
@@ -157,47 +153,43 @@ public class PlaceHoldActivity extends ActionBarActivity {
                 if (thaw_date != null)
                     thaw_date_s = GlobalConfigs.getStringDate(thaw_date);
 
-                Log.d(TAG, "date expire: " + expire_date_s + " "
-                        + expire_date);
                 int selectedOrgID = -1;
                 if (globalConfigs.organisations.size() > selectedOrgPos)
                     selectedOrgID = globalConfigs.organisations.get(selectedOrgPos).id;
 
                 String[] stringResponse = new String[] { "false" };
                 try {
-                    stringResponse = accountAccess.createHold(record_id,
-                            selectedOrgID, email_notification.isChecked(),
-                            phone_notification.isChecked(), phone_number
-                                    .getText().toString(), suspendHold
-                                    .isChecked(), expire_date_s, thaw_date_s);
+                    stringResponse = accountAccess.testAndCreateHold(record_id, selectedOrgID,
+                            email_notification.isChecked(),
+                            phone_notification.isChecked(),
+                            phone_number.getText().toString(),
+                            suspendHold.isChecked(), expire_date_s, thaw_date_s);
                 } catch (SessionNotFoundException e) {
                     try {
                         if (accountAccess.reauthenticate(PlaceHoldActivity.this))
-                            stringResponse = accountAccess.createHold(
+                            stringResponse = accountAccess.testAndCreateHold(
                                     record_id, selectedOrgID,
                                     email_notification.isChecked(),
                                     phone_notification.isChecked(),
                                     phone_number.getText().toString(),
-                                    suspendHold.isChecked(), expire_date_s,
-                                    thaw_date_s);
+                                    suspendHold.isChecked(), expire_date_s, thaw_date_s);
                     } catch (Exception e1) {
                     }
                 }
 
                 final String[] holdPlaced = stringResponse;
-
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         progressDialog.dismiss();
 
                         if (holdPlaced[0].equals("true")) {
-                            Toast.makeText(context, "Hold Succesfully placed",
+                            Toast.makeText(context, "Hold successfully placed",
                                     Toast.LENGTH_LONG).show();
                             finish();
                         } else
                             Toast.makeText(context,
-                                    "Error in placing hold : " + holdPlaced[2],
+                                    "Error placing hold: " + holdPlaced[2],
                                     Toast.LENGTH_LONG).show();
 
                     }

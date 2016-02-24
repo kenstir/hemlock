@@ -113,7 +113,9 @@ public class AccountAccess {
     public static String METHOD_VERIFY_HOLD_POSSIBLE = "open-ils.circ.title_hold.is_possible";
 
     /** The METHOD_CREATE_HOLD description :. @returns : hash with messages : "success" : 1 field or */
+    //bug#1506207
     public static String METHOD_CREATE_HOLD = "open-ils.circ.holds.create";
+    public static String METHOD_TEST_AND_CREATE_HOLD = "open-ils.circ.holds.test_and_create.batch";
 
     // Used for Fines
 
@@ -860,9 +862,6 @@ public class AccountAccess {
         ahr.put("target", recordID);
         ahr.put("usr", userID);
         ahr.put("requestor", userID);
-
-        // TODO
-        // only gold type 'T' for now
         ahr.put("hold_type", "T");
         ahr.put("pickup_lib", pickup_lib);
         ahr.put("phone_notify", phone);
@@ -875,7 +874,7 @@ public class AccountAccess {
                 METHOD_CREATE_HOLD, authToken, new Object[] {
                         authToken, ahr });
 
-        String[] resp = new String[3];
+        String[] resp = new String[] {"false",null,null};
         // if we can get hold ID then we return true
         try {
 
@@ -889,14 +888,73 @@ public class AccountAccess {
 
             Object map = respErrorMessage.get(0);
             resp[0] = "false";
-
             resp[1] = ((Map<String, String>) map).get("textcode");
             resp[2] = ((Map<String, String>) map).get("desc");
         }
 
         Log.d(TAG, "Result " + resp[1] + " " + resp[2]);
+        return resp;
+    }
 
-        // else we return false
+    public String[] testAndCreateHold(Integer recordID, Integer pickup_lib,
+                                      boolean email_notify, boolean phone_notify, String phone,
+                                      boolean suspendHold, String expire_time, String thaw_date)
+            throws SessionNotFoundException {
+        /*
+        The named fields in the hash are:
+
+        patronid     - ID of the hold recipient  (required)
+        depth        - hold range depth          (default 0)
+        pickup_lib   - destination for hold, fallback value for selection_ou
+        selection_ou - ID of org_unit establishing hard and soft hold boundary settings
+        issuanceid   - ID of the issuance to be held, required for Issuance level hold
+        partid       - ID of the monograph part to be held, required for monograph part level hold
+        titleid      - ID (BRN) of the title to be held, required for Title level hold
+        volume_id    - required for Volume level hold
+        copy_id      - required for Copy level hold
+        mrid         - required for Meta-record level hold
+        hold_type    - T, C (or R or F), I, V or M for Title, Copy, Issuance, Volume or Meta-record  (default "T")
+         */
+        HashMap<String, Object> map = new HashMap<String, Object>();
+        map.put("patronid", userID);
+        map.put("pickup_lib", pickup_lib);
+        map.put("titleid", recordID);
+        map.put("hold_type", "T");
+        map.put("phone_notify", phone);
+        map.put("email_notify", email_notify);
+        ArrayList<Integer> ids = new ArrayList<Integer>(1);
+        ids.add(recordID);
+        Object response = Utils.doRequest(conn(), SERVICE_CIRC,
+                METHOD_TEST_AND_CREATE_HOLD, authToken, new Object[] {
+                        authToken, map, ids });
+
+        String[] resp = new String[] {"false",null,null};
+        Map<String, ?> resp_map = ((Map<String, ?>) response);
+        try {
+            Object result = resp_map.get("result");
+            if (result instanceof List) {
+                // List of error events
+                List<?> l = (List<?>) result;
+                Map<String, ?> event0 = (Map<String, ?>) l.get(0);
+                resp[0] = "false";
+                resp[1] = (String) event0.get("textcode");
+                resp[2] = (String) event0.get("desc");
+            } else if (result instanceof Integer) {
+                Integer hold_id = (Integer) result;
+                if (hold_id > -1) {
+                    resp[0] = "true";
+                }
+            } else {
+                Log.d(TAG, "unknown response from test_and_create: "+result);
+            }
+
+        } catch (Exception e) {
+            resp[0] = "false";
+            resp[1] = "";
+            resp[2] = "Unknown error";
+        }
+
+        Log.d(TAG, "Result " + resp[1] + " " + resp[2]);
         return resp;
     }
 
@@ -912,23 +970,22 @@ public class AccountAccess {
     public Object isHoldPossible(Integer pickup_lib, Integer recordID)
             throws SessionNotFoundException {
 
-        HashMap<String, Integer> mapAsk = getHoldPreCreateInfo(recordID,
-                pickup_lib);
-        mapAsk.put("pickup_lib", pickup_lib);
-        mapAsk.put("hold_type", null);
-        mapAsk.put("patronid", userID);
-        mapAsk.put("volume_id", null);
-        mapAsk.put("issuanceid", null);
-        mapAsk.put("copy_id", null);
-        mapAsk.put("depth", 0);
-        mapAsk.put("part_id", null);
-        mapAsk.put("holdable_formats", null);
+        HashMap<String, Integer> map = getHoldPreCreateInfo(recordID, pickup_lib);
+        map.put("pickup_lib", pickup_lib);
+        map.put("hold_type", null);
+        map.put("patronid", userID);
+        map.put("volume_id", null);
+        map.put("issuanceid", null);
+        map.put("copy_id", null);
+        map.put("depth", 0);
+        map.put("part_id", null);
+        map.put("holdable_formats", null);
         // {"titleid":63,"mrid":60,"volume_id":null,"issuanceid":null,"copy_id":null,"hold_type":"T","holdable_formats":null,
         // "patronid":2,"depth":0,"pickup_lib":"8","partid":null}
 
         Object response = Utils.doRequest(conn(), SERVICE_CIRC,
                 METHOD_VERIFY_HOLD_POSSIBLE, authToken, new Object[] {
-                        authToken, mapAsk });
+                        authToken, map });
 
         return response;
     }
@@ -941,8 +998,7 @@ public class AccountAccess {
      * @param pickup_lib the pickup_lib
      * @return the hold pre create info
      */
-    public HashMap<String, Integer> getHoldPreCreateInfo(Integer recordID,
-            Integer pickup_lib) {
+    public HashMap<String, Integer> getHoldPreCreateInfo(Integer recordID, Integer pickup_lib) {
 
         HashMap<String, Integer> param = new HashMap<String, Integer>();
 
