@@ -2,6 +2,7 @@ package org.evergreen_ils.net;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.text.TextUtils;
 import android.util.LruCache;
 
 import com.android.volley.*;
@@ -71,7 +72,10 @@ public class VolleyWrangler {
         return new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError volleyError) {
-                Log.d(TAG, volleyError.getMessage());
+                String msg = volleyError.getMessage();
+                if (!TextUtils.isEmpty(msg)) {
+                    Log.d(TAG, msg);
+                }
             }
         };
     }
