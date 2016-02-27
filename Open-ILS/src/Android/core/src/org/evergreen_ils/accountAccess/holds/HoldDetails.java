@@ -140,21 +140,18 @@ public class HoldDetails extends ActionBarActivity {
         title.setText(record.title);
         author.setText(record.author);
         if (record.recordInfo != null)
-            physical_description
-                    .setText(record.recordInfo.physical_description);
+            physical_description.setText(record.recordInfo.physical_description);
 
         // set record info
         suspendHold.setChecked(record.suspended);
 
         if (record.thaw_date != null) {
             thaw_date = record.thaw_date;
-            thaw_date_edittext.setText(DateFormat.format("MMMM dd, yyyy",
-                    thaw_date));
+            thaw_date_edittext.setText(DateFormat.format("MMMM dd, yyyy", thaw_date));
         }
         if (record.expire_time != null) {
             expire_date = record.expire_time;
-            expiration_date.setText(DateFormat.format("MMMM dd, yyyy",
-                    expire_date));
+            expiration_date.setText(DateFormat.format("MMMM dd, yyyy", expire_date));
         }
 
         if (suspendHold.isChecked()) {
@@ -170,23 +167,15 @@ public class HoldDetails extends ActionBarActivity {
             @Override
             public void onClick(View v) {
 
-                Builder confirmationDialogBuilder = new AlertDialog.Builder(
-                        context);
-                confirmationDialogBuilder
-                        .setMessage(R.string.cancel_hold_dialog_message);
-
-                confirmationDialogBuilder.setNegativeButton(
-                        android.R.string.no, null);
+                Builder confirmationDialogBuilder = new AlertDialog.Builder(context);
+                confirmationDialogBuilder.setMessage(R.string.cancel_hold_dialog_message);
+                confirmationDialogBuilder.setNegativeButton(android.R.string.no, null);
                 confirmationDialogBuilder.setPositiveButton(
                         android.R.string.yes,
                         new DialogInterface.OnClickListener() {
                             @Override
-                            public void onClick(DialogInterface dialog,
-                                    int which) {
-
-                                Log.d(TAG, "Remove hold with id"
-                                        + record.ahr.getInt("id"));
-
+                            public void onClick(DialogInterface dialog, int which) {
+                                Log.d(TAG, "Remove hold with id" + record.ahr.getInt("id"));
                                 progressDialog = ProgressDialog.show(context,
                                         getResources().getText(R.string.dialog_please_wait),
                                         "Canceling hold");
@@ -195,15 +184,12 @@ public class HoldDetails extends ActionBarActivity {
 
                                             @Override
                                             public void run() {
-
                                                 try {
-                                                    accountAccess
-                                                            .cancelHold(record.ahr);
+                                                    accountAccess.cancelHold(record.ahr);
                                                 } catch (SessionNotFoundException e) {
                                                     try {
                                                         if (accountAccess.reauthenticate(HoldDetails.this))
-                                                            accountAccess
-                                                                    .cancelHold(record.ahr);
+                                                            accountAccess.cancelHold(record.ahr);
                                                     } catch (Exception eauth) {
                                                         Log.d(TAG, "Exception in reAuth");
                                                     }
@@ -212,17 +198,14 @@ public class HoldDetails extends ActionBarActivity {
                                                 runOnUiThread(new Runnable() {
                                                     @Override
                                                     public void run() {
-                                                        progressDialog
-                                                                .dismiss();
+                                                        progressDialog.dismiss();
                                                         setResult(RESULT_CODE_DELETE_HOLD);
-
                                                         finish();
                                                     }
                                                 });
                                             }
                                         });
                                 cancelHoldThread.start();
-
                             }
                         });
                 confirmationDialogBuilder.create().show();

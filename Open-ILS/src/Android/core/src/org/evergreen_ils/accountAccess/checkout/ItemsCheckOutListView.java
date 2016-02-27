@@ -22,6 +22,8 @@ package org.evergreen_ils.accountAccess.checkout;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.support.v7.app.ActionBarActivity;
 import org.evergreen_ils.R;
 import org.evergreen_ils.accountAccess.AccountAccess;
@@ -205,89 +207,101 @@ public class ItemsCheckOutListView extends ActionBarActivity {
                 public void onClick(View v) {
                     if (!renewable)
                         return;
-                    Thread renew = new Thread(new Runnable() {
-
+                    AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                    builder.setMessage(R.string.renew_dialog_message);
+                    builder.setNegativeButton(android.R.string.no, null);
+                    builder.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                         @Override
-                        public void run() {
-                            boolean success = false;
-                            AccountAccess ac = AccountAccess.getInstance();
-
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    progressDialog = new ProgressDialog(context);
-                                    progressDialog.setMessage("Renewing item");
-                                    progressDialog.show();
-                                }
-                            });
-
-                            try {
-                                ac.renewCirc(record.getTargetCopy());
-                                success = true;
-                            } catch (SessionNotFoundException e1) {
-                                try {
-                                    if (accountAccess.reauthenticate(ItemsCheckOutListView.this)) {
-                                        ac.renewCirc(record.getTargetCopy());
-                                        success = true;
-                                    }
-                                } catch (Exception eauth) {
-                                    Log.d(TAG, "Exception in reauth", eauth);
-                                }
-                            } catch (MaxRenewalsException e1) {
-                                runOnUiThread(new Runnable() {
-
-                                    @Override
-                                    public void run() {
-                                        progressDialog.dismiss();
-                                        Toast.makeText(context, R.string.toast_max_renewals_reached, Toast.LENGTH_LONG).show();
-                                    }
-                                });
-                            } catch (final ServerErrorMessage error) {
-                                runOnUiThread(new Runnable() {
-
-                                    @Override
-                                    public void run() {
-                                        progressDialog.dismiss();
-                                        Toast.makeText(context, error.message, Toast.LENGTH_LONG).show();
-                                    }
-                                });
-                            }
-                            if (success) {
-                                runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        Toast.makeText(context, getString(R.string.toast_item_renewed), Toast.LENGTH_LONG).show();
-                                    }
-                                });
-                                try {
-                                    circRecords = accountAccess.getItemsCheckedOut();
-                                } catch (SessionNotFoundException e) {
-                                    try {
-                                        if (accountAccess.reauthenticate(ItemsCheckOutListView.this))
-                                            circRecords = accountAccess.getItemsCheckedOut();
-                                    } catch (Exception eauth) {
-                                        Log.d(TAG, "Exception in reauth", eauth);
-                                    }
-                                }
-
-                                runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        listAdapter.clear();
-                                        for (int i = 0; i < circRecords.size(); i++) {
-                                            listAdapter.add(circRecords.get(i));
-                                        }
-                                        progressDialog.dismiss();
-                                        listAdapter.notifyDataSetChanged();
-                                    }
-                                });
-                            }
+                        public void onClick(DialogInterface dialog, int which) {
+                            renewItem(record);
                         }
                     });
-
-                    renew.start();
+                    builder.create().show();
                 }
             });
         }
+    }
+
+    private void renewItem(final CircRecord record) {
+        Thread renew = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                boolean success = false;
+                AccountAccess ac = AccountAccess.getInstance();
+
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        progressDialog = new ProgressDialog(context);
+                        progressDialog.setMessage("Renewing item");
+                        progressDialog.show();
+                    }
+                });
+
+                try {
+                    ac.renewCirc(record.getTargetCopy());
+                    success = true;
+                } catch (SessionNotFoundException e1) {
+                    try {
+                        if (accountAccess.reauthenticate(ItemsCheckOutListView.this)) {
+                            ac.renewCirc(record.getTargetCopy());
+                            success = true;
+                        }
+                    } catch (Exception eauth) {
+                        Log.d(TAG, "Exception in reauth", eauth);
+                    }
+                } catch (MaxRenewalsException e1) {
+                    runOnUiThread(new Runnable() {
+
+                        @Override
+                        public void run() {
+                            progressDialog.dismiss();
+                            Toast.makeText(context, R.string.toast_max_renewals_reached, Toast.LENGTH_LONG).show();
+                        }
+                    });
+                } catch (final ServerErrorMessage error) {
+                    runOnUiThread(new Runnable() {
+
+                        @Override
+                        public void run() {
+                            progressDialog.dismiss();
+                            Toast.makeText(context, error.message, Toast.LENGTH_LONG).show();
+                        }
+                    });
+                }
+                if (success) {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(context, getString(R.string.toast_item_renewed), Toast.LENGTH_LONG).show();
+                        }
+                    });
+                    try {
+                        circRecords = accountAccess.getItemsCheckedOut();
+                    } catch (SessionNotFoundException e) {
+                        try {
+                            if (accountAccess.reauthenticate(ItemsCheckOutListView.this))
+                                circRecords = accountAccess.getItemsCheckedOut();
+                        } catch (Exception eauth) {
+                            Log.d(TAG, "Exception in reauth", eauth);
+                        }
+                    }
+
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            listAdapter.clear();
+                            for (int i = 0; i < circRecords.size(); i++) {
+                                listAdapter.add(circRecords.get(i));
+                            }
+                            progressDialog.dismiss();
+                            listAdapter.notifyDataSetChanged();
+                        }
+                    });
+                }
+            }
+        });
+
+        renew.start();
     }
 }

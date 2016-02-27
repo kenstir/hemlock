@@ -64,6 +64,7 @@
     <string name="title_holds">Holds</string>
     <string name="title_book_bags">Bookbags</string>
     <string name="renew_button">Renew</string>
+    <string name="renew_dialog_message">Are you sure you want to renew this item?</string>
     <string name="toast_item_renewed">Item renewed</string>
     <string name="record_of">record %1$d of %2$d</string>
     <string name="displaying_n_of_m_results">displaying %1$d of %2$d results</string>
