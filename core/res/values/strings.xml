@@ -87,9 +87,9 @@
     <string name="expiration_date">Expiration Date</string>
     <string name="suspend_hold">Suspend Hold</string>
     <string name="cancel">Cancel</string>
-    <string name="cancel_hold">Cancel</string>
+    <string name="cancel_hold">Cancel Hold</string>
     <string name="back">Back</string>
-    <string name="update_hold">Update</string>
+    <string name="update_hold">Update Hold</string>
     <string name="cancel_hold_dialog_message">Are you sure you want to cancel this hold?</string>
     <string name="thaw_date">Activate hold on</string>
     <string name="hold_phone_hint">Contact phone number</string>
