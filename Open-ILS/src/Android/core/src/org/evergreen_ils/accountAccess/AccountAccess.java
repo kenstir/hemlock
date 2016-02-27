@@ -353,7 +353,7 @@ public class AccountAccess {
         Collections.sort(circRecords, new Comparator<CircRecord>() {
             @Override
             public int compare(CircRecord lhs, CircRecord rhs) {
-                return rhs.getDueDate().compareTo(lhs.getDueDate());
+                return lhs.getDueDateObject().compareTo(rhs.getDueDateObject());
             }
         });
 
