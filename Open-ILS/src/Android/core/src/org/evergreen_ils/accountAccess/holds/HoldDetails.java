@@ -34,7 +34,6 @@ import org.evergreen_ils.utils.ui.ActionBarUtils;
 import org.evergreen_ils.views.splashscreen.SplashActivity;
 
 import android.app.AlertDialog;
-import android.app.AlertDialog.Builder;
 import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -154,113 +153,30 @@ public class HoldDetails extends ActionBarActivity {
             expiration_date.setText(DateFormat.format("MMMM dd, yyyy", expire_date));
         }
 
-        if (suspendHold.isChecked()) {
-            enableView(thaw_date_edittext);
-        } else {
-            disableView(thaw_date_edittext);
-        }
+        setViewEnabled(thaw_date_edittext, suspendHold.isChecked());
 
         Log.d(TAG, record.title + " " + record.author);
 
         cancelHold.setOnClickListener(new OnClickListener() {
-
             @Override
             public void onClick(View v) {
-
-                Builder confirmationDialogBuilder = new AlertDialog.Builder(context);
-                confirmationDialogBuilder.setMessage(R.string.cancel_hold_dialog_message);
-                confirmationDialogBuilder.setNegativeButton(android.R.string.no, null);
-                confirmationDialogBuilder.setPositiveButton(
-                        android.R.string.yes,
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                Log.d(TAG, "Remove hold with id" + record.ahr.getInt("id"));
-                                progressDialog = ProgressDialog.show(context,
-                                        getResources().getText(R.string.dialog_please_wait),
-                                        "Canceling hold");
-                                Thread cancelHoldThread = new Thread(
-                                        new Runnable() {
-
-                                            @Override
-                                            public void run() {
-                                                try {
-                                                    accountAccess.cancelHold(record.ahr);
-                                                } catch (SessionNotFoundException e) {
-                                                    try {
-                                                        if (accountAccess.reauthenticate(HoldDetails.this))
-                                                            accountAccess.cancelHold(record.ahr);
-                                                    } catch (Exception eauth) {
-                                                        Log.d(TAG, "Exception in reAuth");
-                                                    }
-                                                }
-
-                                                runOnUiThread(new Runnable() {
-                                                    @Override
-                                                    public void run() {
-                                                        progressDialog.dismiss();
-                                                        setResult(RESULT_CODE_DELETE_HOLD);
-                                                        finish();
-                                                    }
-                                                });
-                                            }
-                                        });
-                                cancelHoldThread.start();
-                            }
-                        });
-                confirmationDialogBuilder.create().show();
-
-            }
-        });
-
-        updateHoldRunnable = new Runnable() {
-            @Override
-            public void run() {
-                // update new values
-                String expire_date_s = null;
-                String thaw_date_s = null;
-                if (expire_date != null)
-                    expire_date_s = GlobalConfigs.getStringDate(expire_date);
-                if (thaw_date != null)
-                    thaw_date_s = GlobalConfigs.getStringDate(thaw_date);
-
-                try {
-                    accountAccess.updateHold(record.ahr, selectedOrgPos,
-                            suspendHold.isChecked(),
-                            expire_date_s, thaw_date_s);
-                } catch (SessionNotFoundException e) {
-                    try {
-                        if (accountAccess.reauthenticate(HoldDetails.this))
-                            accountAccess.updateHold(record.ahr,
-                                    selectedOrgPos,
-                                    suspendHold.isChecked(), expire_date_s,
-                                    thaw_date_s);
-                    } catch (Exception eauth) {
-                        Log.d(TAG, "Exception in reAuth");
-                    }
-                }
-
-                runOnUiThread(new Runnable() {
+                AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                builder.setMessage(R.string.cancel_hold_dialog_message);
+                builder.setNegativeButton(android.R.string.no, null);
+                builder.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                     @Override
-                    public void run() {
-                        progressDialog.dismiss();
-                        Toast.makeText(context, "Hold updated",
-                                Toast.LENGTH_SHORT);
-                        setResult(RESULT_CODE_UPDATE_HOLD);
-                        finish();
+                    public void onClick(DialogInterface dialog, int which) {
+                        cancelHold(record);
                     }
                 });
+                builder.create().show();
             }
-        };
+        });
 
         updateHold.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                progressDialog = ProgressDialog.show(context,
-                        getResources().getText(R.string.dialog_please_wait),
-                        "Updating hold");
-                Thread updateHoldThread = new Thread(updateHoldRunnable);
-                updateHoldThread.start();
+                updateHold(record);
             }
         });
 
@@ -269,12 +185,7 @@ public class HoldDetails extends ActionBarActivity {
             @Override
             public void onCheckedChanged(CompoundButton buttonView,
                     boolean isChecked) {
-
-                if (isChecked) {
-                    enableView(thaw_date_edittext);
-                } else {
-                    disableView(thaw_date_edittext);
-                }
+                setViewEnabled(thaw_date_edittext, isChecked);
             }
         });
         Calendar cal = Calendar.getInstance();
@@ -352,6 +263,87 @@ public class HoldDetails extends ActionBarActivity {
         });
     }
 
+    private void cancelHold(final HoldRecord record) {
+        Log.d(TAG, "Remove hold with id" + record.ahr.getInt("id"));
+        progressDialog = ProgressDialog.show(context,
+                getResources().getText(R.string.dialog_please_wait),
+                "Canceling hold");
+        Thread cancelHoldThread = new Thread(
+                new Runnable() {
+
+                    @Override
+                    public void run() {
+                        try {
+                            accountAccess.cancelHold(record.ahr);
+                        } catch (SessionNotFoundException e) {
+                            try {
+                                if (accountAccess.reauthenticate(HoldDetails.this))
+                                    accountAccess.cancelHold(record.ahr);
+                            } catch (Exception eauth) {
+                                Log.d(TAG, "Exception in reAuth");
+                            }
+                        }
+
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                progressDialog.dismiss();
+                                setResult(RESULT_CODE_DELETE_HOLD);
+                                finish();
+                            }
+                        });
+                    }
+                });
+        cancelHoldThread.start();
+    }
+
+    private void updateHold(final HoldRecord record) {
+        updateHoldRunnable = new Runnable() {
+            @Override
+            public void run() {
+                // update new values
+                String expire_date_s = null;
+                String thaw_date_s = null;
+                if (expire_date != null)
+                    expire_date_s = GlobalConfigs.getStringDate(expire_date);
+                if (thaw_date != null)
+                    thaw_date_s = GlobalConfigs.getStringDate(thaw_date);
+
+                try {
+                    accountAccess.updateHold(record.ahr, selectedOrgPos,
+                            suspendHold.isChecked(),
+                            expire_date_s, thaw_date_s);
+                } catch (SessionNotFoundException e) {
+                    try {
+                        if (accountAccess.reauthenticate(HoldDetails.this))
+                            accountAccess.updateHold(record.ahr,
+                                    selectedOrgPos,
+                                    suspendHold.isChecked(), expire_date_s,
+                                    thaw_date_s);
+                    } catch (Exception eauth) {
+                        Log.d(TAG, "Exception in reAuth");
+                    }
+                }
+
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        progressDialog.dismiss();
+                        Toast.makeText(context, "Hold updated",
+                                Toast.LENGTH_SHORT);
+                        setResult(RESULT_CODE_UPDATE_HOLD);
+                        finish();
+                    }
+                });
+            }
+        };
+        progressDialog = ProgressDialog.show(context,
+                getResources().getText(R.string.dialog_please_wait),
+                "Updating hold");
+        Thread updateHoldThread = new Thread(updateHoldRunnable);
+        updateHoldThread.start();
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
@@ -363,20 +355,23 @@ public class HoldDetails extends ActionBarActivity {
     }
 
     public void disableView(View view) {
-
         // view.setFocusable(false);
         view.setFocusable(false);
-
         view.setBackgroundColor(Color.argb(255, 100, 100, 100));
         // view.setVisibility(View.INVISIBLE);
     }
 
     public void enableView(View view) {
         // view.setVisibility(View.VISIBLE);
-
         view.setFocusableInTouchMode(true);
-
         view.setBackgroundColor(Color.argb(255, 255, 255, 255));
     }
 
+    public void setViewEnabled(View view, boolean enabled) {
+        if (enabled) {
+            enableView(view);
+        } else {
+            disableView(view);
+        }
+    }
 }
