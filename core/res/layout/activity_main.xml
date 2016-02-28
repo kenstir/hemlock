@@ -47,10 +47,9 @@
             android:layout_width="match_parent"
             android:layout_height="56dp"
             style="@style/BigActionButton"
-            android:text="@string/title_donate"
-            android:id="@+id/main_donate_button"
+            android:text="@string/title_my_lists"
+            android:id="@+id/main_my_lists_button"
             android:onClick="onButtonClick"
-            android:drawableLeft="@drawable/kteatime"
-            android:visibility="invisible"/>
+            android:drawableLeft="@drawable/clipboard"/>
 
 </LinearLayout>

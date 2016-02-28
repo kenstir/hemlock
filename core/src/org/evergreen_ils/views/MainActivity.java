@@ -30,6 +30,7 @@ import android.view.View;
 import android.widget.Button;
 import org.evergreen_ils.R;
 import org.evergreen_ils.accountAccess.AccountUtils;
+import org.evergreen_ils.accountAccess.bookbags.BookbagsListView;
 import org.evergreen_ils.accountAccess.checkout.ItemsCheckOutListView;
 import org.evergreen_ils.accountAccess.fines.FinesActivity;
 import org.evergreen_ils.accountAccess.holds.HoldsListView;
@@ -62,11 +63,13 @@ public class MainActivity extends ActionBarActivity {
         ActionBarUtils.initActionBarForActivity(this, true);
 
         // hide the donate button until we know what the deal is
+        /*
         donateButton = (Button) findViewById(R.id.main_donate_button);
         donateButton.setVisibility(View.INVISIBLE);
         donateButton.setAlpha(0f);
         donateButtonShowing = false;
         showDonateButton = false;
+        */
 
         initBilling();
     }
@@ -175,14 +178,12 @@ public class MainActivity extends ActionBarActivity {
             startActivity(new Intent(this, HoldsListView.class));
         } else if (id == R.id.account_btn_fines) {
             startActivity(new Intent(this, FinesActivity.class));
-            /*
-        } else if (id == R.id.account_btn_book_bags) {
+        } else if (id == R.id.main_my_lists_button) {
             startActivity(new Intent(this, BookbagsListView.class));
-            */
         } else if (id == R.id.main_btn_search) {
             startActivity(new Intent(this, SearchCatalogListView.class));
-        } else if (id == R.id.main_donate_button) {
-            startActivityForResult(new Intent(this, DonateActivity.class), BillingHelper.REQUEST_PURCHASE);
+//        } else if (id == R.id.main_donate_button) {
+//            startActivityForResult(new Intent(this, DonateActivity.class), BillingHelper.REQUEST_PURCHASE);
         }
     }
 }

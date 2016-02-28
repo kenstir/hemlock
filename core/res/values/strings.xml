@@ -18,12 +18,12 @@
     <string name="hold_items_title">Holds</string>
     <string name="hold_place_title">Place Hold</string>
     <string name="hold_details_title">Hold Details</string>
-    <string name="bookbag_items_title">Bookbags</string>
-    <string name="bookbag_details_title">Bookbag details</string>
     <string name="title_fines">Fines</string>
     <string name="title_donate">Donate</string>
     <string name="copy_information_title">Copy Information</string>
     <string name="button_place_hold">Place Hold</string>
+    <string name="title_my_lists">My Lists</string>
+    <string name="bookbag_details_title">Bookbag details</string>
     <string name="button_add_to_bookbag">Add to Bookbag</string>
     <string name="bookbag_choose_text">Choose a bookbag from the list.</string>
 
