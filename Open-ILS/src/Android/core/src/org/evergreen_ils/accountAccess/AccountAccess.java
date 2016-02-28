@@ -131,6 +131,8 @@ public class AccountAccess {
     // Used for book bags
     /** The METHOD_FLESH_CONTAINERS description : Retrieves all un-fleshed buckets by class assigned to a given user VIEW_CONTAINER permissions is requestID != owner ID. @returns : array of "cbreb" OSRFObjects */
     public static String METHOD_FLESH_CONTAINERS = "open-ils.actor.container.retrieve_by_class.authoritative";
+    public static String CONTAINER_CLASS_BIBLIO = "biblio";
+    public static String CONTAINER_BUCKET_TYPE_BOOKBAG = "bookbag";
 
     /** The METHOD_FLESH_PUBLIC_CONTAINER description : array of contaoners correspondig to a id. @returns : array of "crebi" OSRF objects (content of bookbag, id's of elements to get more info) */
     public static String METHOD_FLESH_PUBLIC_CONTAINER = "open-ils.actor.container.flesh";
@@ -1099,7 +1101,7 @@ public class AccountAccess {
 
         Object response = Utils.doRequest(conn(), SERVICE_ACTOR,
                 METHOD_FLESH_CONTAINERS, authToken, new Object[] {
-                        authToken, userID, "biblio", "bookbag" });
+                        authToken, userID, CONTAINER_CLASS_BIBLIO, CONTAINER_BUCKET_TYPE_BOOKBAG });
 
         List<OSRFObject> bookbags = (List<OSRFObject>) response;
 
@@ -1137,7 +1139,7 @@ public class AccountAccess {
 
         Map<String, ?> map = (Map<String, ?>) Utils.doRequest(conn(), SERVICE_ACTOR,
                 METHOD_FLESH_PUBLIC_CONTAINER, authToken, new Object[] {
-                        authToken, "biblio", bookbagID });
+                        authToken, CONTAINER_CLASS_BIBLIO, bookbagID });
         
         List<OSRFObject> items  = new ArrayList<OSRFObject>();
         
@@ -1164,7 +1166,7 @@ public class AccountAccess {
      */
     public void removeBookbagItem(Integer id) throws SessionNotFoundException {
 
-        removeContainer("biblio", id);
+        removeContainer(CONTAINER_CLASS_BIBLIO, id);
 
     }
 
@@ -1177,12 +1179,12 @@ public class AccountAccess {
     public void createBookbag(String name) throws SessionNotFoundException {
 
         OSRFObject cbreb = new OSRFObject("cbreb");
-        cbreb.put("btype", "bookbag");
+        cbreb.put("btype", CONTAINER_BUCKET_TYPE_BOOKBAG);
         cbreb.put("name", name);
         cbreb.put("pub", false);
         cbreb.put("owner", userID);
 
-        createContainer("biblio", cbreb);
+        createContainer(CONTAINER_CLASS_BIBLIO, cbreb);
     }
 
     /**
@@ -1195,7 +1197,7 @@ public class AccountAccess {
 
         Object response = Utils.doRequest(conn(), SERVICE_ACTOR,
                 METHOD_CONTAINER_FULL_DELETE, authToken, new Object[] {
-                        authToken, "biblio", id });
+                        authToken, CONTAINER_CLASS_BIBLIO, id });
     }
 
     /**
@@ -1215,7 +1217,7 @@ public class AccountAccess {
 
         Object response = Utils.doRequest(conn(), SERVICE_ACTOR,
                 METHOD_CONTAINER_ITEM_CREATE, authToken, new Object[] {
-                        authToken, "biblio", cbrebi });
+                        authToken, CONTAINER_CLASS_BIBLIO, cbrebi });
     }
 
     /**

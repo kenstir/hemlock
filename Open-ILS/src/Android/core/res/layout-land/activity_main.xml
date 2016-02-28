@@ -8,7 +8,7 @@
 
     <Button
             android:layout_width="match_parent"
-            android:layout_height="48dp"
+            android:layout_height="46dp"
             style="@style/BigActionButton"
             android:text="@string/title_search"
             android:id="@+id/main_btn_search"
@@ -17,7 +17,7 @@
 
     <Button
             android:layout_width="match_parent"
-            android:layout_height="48dp"
+            android:layout_height="46dp"
             style="@style/BigActionButton"
             android:text="@string/title_check_out"
             android:id="@+id/account_btn_check_out"
@@ -26,7 +26,7 @@
 
     <Button
             android:layout_width="match_parent"
-            android:layout_height="48dp"
+            android:layout_height="46dp"
             style="@style/BigActionButton"
             android:text="@string/title_holds"
             android:id="@+id/account_btn_holds"
@@ -35,7 +35,7 @@
 
     <Button
             android:layout_width="match_parent"
-            android:layout_height="48dp"
+            android:layout_height="46dp"
             style="@style/BigActionButton"
             android:text="@string/title_fines"
             android:id="@+id/account_btn_fines"
@@ -44,12 +44,11 @@
 
     <Button
             android:layout_width="match_parent"
-            android:layout_height="48dp"
+            android:layout_height="46dp"
             style="@style/BigActionButton"
-            android:text="@string/title_donate"
-            android:id="@+id/main_donate_button"
+            android:text="@string/title_my_lists"
+            android:id="@+id/main_my_lists_button"
             android:onClick="onButtonClick"
-            android:drawableLeft="@drawable/kteatime"
-            android:visibility="invisible"/>
+            android:drawableLeft="@drawable/clipboard"/>
 
 </LinearLayout>
