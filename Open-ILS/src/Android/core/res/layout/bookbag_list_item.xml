@@ -41,7 +41,7 @@
 		 android:id="@+id/details_button"
 		 android:layout_width="wrap_content"
 		 android:layout_height="wrap_content"
-		 android:text="@string/details" 
+		 android:text="@string/list_details_button"
 		 android:layout_gravity="right"
 		 android:layout_marginRight="5dip"
 		 style="@style/ApplicationButton"

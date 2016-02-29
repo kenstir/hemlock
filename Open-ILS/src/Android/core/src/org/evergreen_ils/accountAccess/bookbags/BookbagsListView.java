@@ -159,7 +159,7 @@ public class BookbagsListView extends ActionBarActivity {
                     public void run() {
                         progressDialog = ProgressDialog.show(context,
                                 getResources().getText(R.string.dialog_please_wait),
-                                "Retrieving Bookbag data");
+                                getString(R.string.msg_retrieving_lists));
                     }
                 });
 
@@ -186,7 +186,7 @@ public class BookbagsListView extends ActionBarActivity {
                         progressDialog.dismiss();
 
                         if (bookBags.size() == 0)
-                            Toast.makeText(context, "No bookbags", Toast.LENGTH_LONG).show();
+                            Toast.makeText(context, getText(R.string.msg_no_lists), Toast.LENGTH_LONG).show();
 
                         listAdapter.notifyDataSetChanged();
                     }

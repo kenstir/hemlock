@@ -136,9 +136,21 @@
         </activity>
 
         <!-- Bookbags -->
-        <activity android:name="org.evergreen_ils.accountAccess.bookbags.BookbagsListView" >
+        <activity
+                android:name="org.evergreen_ils.accountAccess.bookbags.BookbagsListView"
+                android:label="@string/title_my_lists"
+                android:parentActivityName="org.evergreen_ils.views.MainActivity">
+            <meta-data
+                    android:name="android.support.PARENT_ACTIVITY"
+                    android:value="org.evergreen_ils.views.MainActivity"/>
         </activity>
-        <activity android:name="org.evergreen_ils.accountAccess.bookbags.BookBagDetails" >
+        <activity
+                android:name="org.evergreen_ils.accountAccess.bookbags.BookBagDetails"
+                android:label="@string/title_list_details"
+                android:parentActivityName="org.evergreen_ils.accountAccess.bookbags.BookbagsListView">
+            <meta-data
+                    android:name="android.support.PARENT_ACTIVITY"
+                    android:value="org.evergreen_ils.accountAccess.bookbags.BookbagsListView"/>
         </activity>
 
         <activity

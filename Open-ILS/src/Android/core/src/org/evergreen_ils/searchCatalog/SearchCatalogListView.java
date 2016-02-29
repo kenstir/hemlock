@@ -21,6 +21,8 @@ package org.evergreen_ils.searchCatalog;
 
 import java.util.*;
 
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.net.Uri;
 import android.support.v7.app.ActionBarActivity;
 import android.text.TextUtils;
@@ -33,11 +35,13 @@ import org.evergreen_ils.accountAccess.SessionNotFoundException;
 import org.evergreen_ils.accountAccess.bookbags.BookBag;
 import org.evergreen_ils.accountAccess.holds.PlaceHoldActivity;
 import org.evergreen_ils.barcodescan.CaptureActivity;
+import org.evergreen_ils.billing.BillingHelper;
 import org.evergreen_ils.globals.AppState;
 import org.evergreen_ils.globals.GlobalConfigs;
 import org.evergreen_ils.globals.Log;
 import org.evergreen_ils.net.VolleyWrangler;
 import org.evergreen_ils.utils.ui.ActionBarUtils;
+import org.evergreen_ils.views.DonateActivity;
 import org.evergreen_ils.views.splashscreen.SplashActivity;
 
 import android.app.AlertDialog;
@@ -392,131 +396,86 @@ public class SearchCatalogListView extends ActionBarActivity {
 
         Log.d(TAG, "context menu");
         if (v.getId() == R.id.search_results_list) {
-
             AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
             menu.setHeaderTitle("Options");
-
-            menu.add(Menu.NONE, DETAILS, 0, "Details");
-            menu.add(Menu.NONE, PLACE_HOLD, 1, "Place Hold");
-            menu.add(Menu.NONE, BOOK_BAG, 2, "Add to bookbag");
-
+            menu.add(Menu.NONE, DETAILS, 0, getString(R.string.show_details_message));
+            menu.add(Menu.NONE, PLACE_HOLD, 1, getString(R.string.hold_place_title));
+            menu.add(Menu.NONE, BOOK_BAG, 2, getString(R.string.add_to_my_list_message));
         }
     }
 
     @Override
     public boolean onContextItemSelected(MenuItem item) {
-        AdapterView.AdapterContextMenuInfo menuArrayItem = (AdapterView.AdapterContextMenuInfo) item
-                .getMenuInfo();
-        int menuItemIndex = item.getItemId();
-
-        final RecordInfo info = (RecordInfo) lv
-                .getItemAtPosition(menuArrayItem.position);
-        // start activity with book details
+        AdapterView.AdapterContextMenuInfo menuArrayItem =
+                (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+        final RecordInfo info = (RecordInfo) lv.getItemAtPosition(menuArrayItem.position);
 
         switch (item.getItemId()) {
-
-        case DETAILS: {
-
-            Intent intent = new Intent(getBaseContext(),
-                    SampleUnderlinesNoFade.class);
-            // serialize object and pass it to next activity
+        case DETAILS:
+            Intent intent = new Intent(getBaseContext(), SampleUnderlinesNoFade.class);
             intent.putExtra("recordInfo", info);
             intent.putExtra("orgID", search.selectedOrganization.id);
             intent.putExtra("depth", search.selectedOrganization.level);
-
             intent.putExtra("recordList", recordList);
-            // TODO put total number
             intent.putExtra("recordPosition", menuArrayItem.position);
             startActivity(intent);
-        }
             break;
-        case PLACE_HOLD: {
-
-            Intent intent = new Intent(getBaseContext(), PlaceHoldActivity.class);
-
-            intent.putExtra("recordInfo", info);
-
-            startActivity(intent);
-        }
+        case PLACE_HOLD:
+            Intent hold_intent = new Intent(getBaseContext(), PlaceHoldActivity.class);
+            hold_intent.putExtra("recordInfo", info);
+            startActivity(hold_intent);
             break;
-        case BOOK_BAG: {
-
+        case BOOK_BAG:
             if (bookBags.size() > 0) {
-                String array_spinner[] = new String[bookBags.size()];
-
-                for (int i = 0; i < array_spinner.length; i++)
-                    array_spinner[i] = bookBags.get(i).name;
-
-                AlertDialog.Builder builder;
-
-                LayoutInflater inflater = (LayoutInflater) context
-                        .getSystemService(LAYOUT_INFLATER_SERVICE);
-                View layout = inflater.inflate(R.layout.bookbag_spinner, null);
-
-                Spinner s = (Spinner) layout.findViewById(R.id.bookbag_spinner);
-                Button add = (Button) layout.findViewById(R.id.add_to_bookbag_button);
-                ArrayAdapter adapter = new ArrayAdapter(context,
-                        android.R.layout.simple_spinner_item, array_spinner);
-
-                s.setAdapter(adapter);
-                builder = new AlertDialog.Builder(context);
-                builder.setView(layout);
-                final AlertDialog alertDialog = builder.create();
-
-                add.setOnClickListener(new OnClickListener() {
-
-                    @Override
-                    public void onClick(View v) {
-                        Thread addtoBookbag = new Thread(new Runnable() {
-                            @Override
-                            public void run() {
-                                AccountAccess ac = AccountAccess.getInstance();
-                                try {
-                                    ac.addRecordToBookBag(info.doc_id,
-                                            bookBags.get(bookbag_selected).id);
-                                } catch (SessionNotFoundException e) {
-                                    Log.d(TAG, "session not found", e);
-                                }
-
-                                runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        progressDialog.dismiss();
-                                        alertDialog.dismiss();
-                                    }
-                                });
-
-                            }
-                        });
-                        progressDialog = ProgressDialog.show(context,
-                                getResources().getText(R.string.dialog_please_wait),
-                                "Adding to bookbag");
-                        addtoBookbag.start();
-
-                    }
-                });
-                alertDialog.show();
-
-                s.setOnItemSelectedListener(new OnItemSelectedListener() {
-
-                    @Override
-                    public void onItemSelected(AdapterView<?> arg0, View arg1,
-                            int position, long arg3) {
-                        bookbag_selected = position;
-                    }
-
-                    @Override
-                    public void onNothingSelected(AdapterView<?> arg0) {
-                    }
-
-                });
-            } else
-                Toast.makeText(context, "No bookbags", Toast.LENGTH_SHORT).show();
-        }
+                showAddToListDialog(info);
+            } else {
+                Toast.makeText(context, getText(R.string.msg_no_lists), Toast.LENGTH_SHORT).show();
+            }
             break;
         }
 
         return super.onContextItemSelected(item);
+    }
+
+    private void showAddToListDialog(final RecordInfo info) {
+        final String list_names[] = new String[bookBags.size()];
+        for (int i = 0; i < list_names.length; i++)
+            list_names[i] = bookBags.get(i).name;
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(R.string.choose_list_message);
+        builder.setItems(list_names, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                addRecordToList(bookBags.get(which), info);
+            }
+        });
+        builder.create().show();
+    }
+
+    private void addRecordToList(final BookBag bookbag, final RecordInfo info) {
+        progressDialog = ProgressDialog.show(context,
+                getString(R.string.dialog_please_wait),
+                getString(R.string.adding_to_list_message));
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                AccountAccess ac = AccountAccess.getInstance();
+                try {
+                    ac.addRecordToBookBag(info.doc_id, bookbag.id);
+                } catch (SessionNotFoundException e) {
+                    Log.d(TAG, "caught", e);
+                }
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        progressDialog.dismiss();
+                    }
+                });
+
+            }
+        });
+        thread.start();
     }
 
     @Override
@@ -539,6 +498,8 @@ public class SearchCatalogListView extends ActionBarActivity {
             Intent i = new Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.ou_feedback_url)));
             startActivity(i);
             return true;
+        } else if (id == R.id.action_donate) {
+            startActivityForResult(new Intent(this, DonateActivity.class), BillingHelper.REQUEST_PURCHASE);
         }
         return super.onOptionsItemSelected(item);
     }

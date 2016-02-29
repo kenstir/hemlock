@@ -9,9 +9,9 @@
     <string name="menu_switch_account">Switch account</string>
     <string name="menu_add_account">Add account</string>
     <string name="menu_feedback">Send feedback</string>
+    <string name="menu_donate">Donate</string>
 
     <!-- Header portion -->
-    <string name="my_account_button_text">My Account</string>
     <string name="options_button_text">Options</string>
     <string name="search_details_title">Search Details</string>
     <string name="checkout_items_title">Checked Out</string>
@@ -23,9 +23,11 @@
     <string name="copy_information_title">Copy Information</string>
     <string name="button_place_hold">Place Hold</string>
     <string name="title_my_lists">My Lists</string>
-    <string name="bookbag_details_title">Bookbag details</string>
-    <string name="button_add_to_bookbag">Add to Bookbag</string>
-    <string name="bookbag_choose_text">Choose a bookbag from the list.</string>
+    <string name="title_list_details">List Details</string>
+    <string name="add_to_my_list_message">Add to my list</string>
+    <string name="adding_to_list_message">Adding item to list</string>
+    <string name="show_details_message">Show details</string>
+    <string name="choose_list_message">Select a list</string>
 
     <!-- first config activity -->
 
@@ -36,8 +38,6 @@
     <string name="action_sign_in">Sign in</string>
     <string name="login_progress_signing_in">Signing in&#8230;</string>
     <string name="action_forgot_password">Forgot password</string>
-    <string name="cancel_button">Cancel</string>
-    <string name="connect_button">Connect</string>
 
     <!-- Search -->
 
@@ -110,16 +110,11 @@
     <string name="overdue_materials">Overdue Materials</string>
 
     <!-- Bookbag Activities -->
-    <string name="delete_button">delete</string>
-    <string name="bags_name">name</string>
-    <string name="bags_items">items</string>
-    <string name="bags_shared">shared</string>
-    <string name="bags_action">action</string>
-    <string name="details">details</string>
+    <string name="list_delete_button">Delete List</string>
+    <string name="list_details_button">Details</string>
     <string name="bookbagitem_remove">remove</string>
-    <string name="create_bookbag">New : </string>
-    <string name="create">create</string>
-    <string name="bookbag_name">Bookbag name: </string>
+    <string name="create_list_button">Create List</string>
+    <string name="list_name_hint">List name</string>
     <string name="add_button">add</string>
 
     <!-- Camera -->
@@ -178,5 +173,13 @@
     </string>
     <string name="toast_max_renewals_reached">Max renewals reached</string>
     <string name="toast_thanks">Thanks!</string>
+    <string name="msg_retrieving_list_contents">Getting list data</string>
+    <string name="msg_removing_list_item">Removing item</string>
+    <string name="msg_retrieving_lists">Getting lists</string>
+    <string name="msg_list_empty">List is empty</string>
+    <string name="msg_no_lists">No lists</string>
+    <string name="msg_deleting_list">Deleting list</string>
+    <string name="msg_confirm_delete_list">Are you sure you want to delete this list?</string>
+    <string name="msg_retrieving_data">Retrieving data</string>
 
 </resources>

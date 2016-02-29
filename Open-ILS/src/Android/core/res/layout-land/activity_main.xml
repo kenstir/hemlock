@@ -49,6 +49,6 @@
             android:text="@string/title_my_lists"
             android:id="@+id/main_my_lists_button"
             android:onClick="onButtonClick"
-            android:drawableLeft="@drawable/clipboard"/>
+            android:drawableLeft="@drawable/beos_write"/>
 
 </LinearLayout>
