@@ -85,7 +85,7 @@ public class ItemsCheckOutListView extends ActionBarActivity {
         Thread getCirc = initGetCircThread();
 
         progressDialog = new ProgressDialog(context);
-        progressDialog.setMessage("Retrieving circulation data");
+        progressDialog.setMessage(getString(R.string.msg_retrieving_data));
         progressDialog.show();
         getCirc.start();
     }

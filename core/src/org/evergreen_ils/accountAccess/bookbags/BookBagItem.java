@@ -26,16 +26,12 @@ import org.opensrf.util.OSRFObject;
 
 public class BookBagItem implements Serializable {
 
-    public int target_copy;
-
     public int id;
-
+    public int target_copy;
     public RecordInfo recordInfo;
 
     public BookBagItem(OSRFObject cbrebi) {
-
         this.target_copy = cbrebi.getInt("target_biblio_record_entry");
         this.id = cbrebi.getInt("id");
-
     }
 }

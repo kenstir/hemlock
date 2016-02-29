@@ -130,8 +130,6 @@ public class LoadingTask {
             if (!haveSession)
                 return "no session";
 
-            Log.d(TAG, tag+"Retrieving bookbags");
-            publishProgress("Retrieving bookbags");
             ac.retrieveBookbags();
 
             return TASK_OK;

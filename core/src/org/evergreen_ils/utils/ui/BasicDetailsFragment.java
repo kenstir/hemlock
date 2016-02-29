@@ -374,7 +374,7 @@ public class BasicDetailsFragment extends Fragment {
                         if (bookBags.size() > 0)
                             dialog.show();
                         else
-                            Toast.makeText(getActivity(), "No bookbags", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getActivity(), "No lists", Toast.LENGTH_SHORT).show();
                     }
 
                 });

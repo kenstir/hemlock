@@ -163,9 +163,10 @@ public class MainActivity extends ActionBarActivity {
             Log.i(Const.AUTH_TAG, "after addAccount");
             return true;
         } else if (id == R.id.action_feedback) {
-            Intent i = new Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.ou_feedback_url)));
-            startActivity(i);
+            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.ou_feedback_url))));
             return true;
+        } else if (id == R.id.action_donate) {
+            startActivityForResult(new Intent(this, DonateActivity.class), BillingHelper.REQUEST_PURCHASE);
         }
         return super.onOptionsItemSelected(item);
     }

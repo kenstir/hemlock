@@ -100,49 +100,18 @@ public class BookBagDetails extends ActionBarActivity {
         delete_bookbag_button.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                final Thread deleteBookbag = new Thread(new Runnable() {
-
-                    @Override
-                    public void run() {
-
-                        try {
-                            accountAccess.deleteBookBag(bookBag.id);
-                        } catch (SessionNotFoundException e) {
-                            e.printStackTrace();
-                        }
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                progressDialog.dismiss();
-                                setResult(RESULT_CODE_UPDATE);
-                                finish();
-                            }
-                        });
-                    }
-                });
-
-                Builder confirmationDialogBuilder = new AlertDialog.Builder(
-                        context);
-                confirmationDialogBuilder.setMessage("Delete bookbag?");
-
-                confirmationDialogBuilder.setNegativeButton(
-                        android.R.string.no, null);
-                confirmationDialogBuilder.setPositiveButton(
-                        android.R.string.yes,
+                AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                builder.setMessage(R.string.msg_confirm_delete_list);
+                builder.setNegativeButton(android.R.string.no, null);
+                builder.setPositiveButton(android.R.string.yes,
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog,
                                     int which) {
-                                progressDialog = ProgressDialog.show(context,
-                                        getResources().getText(R.string.dialog_please_wait),
-                                        "Deleting Bookbag");
-                                deleteBookbag.start();
+                                deleteList();
                             }
                         });
-
-                confirmationDialogBuilder.create().show();
-
+                builder.create().show();
             }
         });
 
@@ -193,7 +162,7 @@ public class BookBagDetails extends ActionBarActivity {
                         progressDialog.dismiss();
 
                         if (bookBagItems.size() == 0)
-                            Toast.makeText(context, "No bookbags", Toast.LENGTH_LONG).show();
+                            Toast.makeText(context, R.string.msg_list_empty, Toast.LENGTH_LONG).show();
 
                         listAdapter.notifyDataSetChanged();
                     }
@@ -206,14 +175,38 @@ public class BookBagDetails extends ActionBarActivity {
 
         progressDialog = ProgressDialog.show(context,
                 getResources().getText(R.string.dialog_please_wait),
-                "Retrieving bookbag data");
+                getString(R.string.msg_retrieving_list_contents));
         getBookBags.start();
 
     }
 
-    class BookBagItemsArrayAdapter extends ArrayAdapter<BookBagItem> {
-        private static final String tag = "BookbagArrayAdapter";
+    private void deleteList() {
+        progressDialog = ProgressDialog.show(context,
+                getResources().getText(R.string.dialog_please_wait),
+                getString(R.string.msg_deleting_list));
+        final Thread thread = new Thread(new Runnable() {
 
+            @Override
+            public void run() {
+                try {
+                    accountAccess.deleteBookBag(bookBag.id);
+                } catch (SessionNotFoundException e) {
+                    Log.d(TAG, "caught", e);
+                }
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        progressDialog.dismiss();
+                        setResult(RESULT_CODE_UPDATE);
+                        finish();
+                    }
+                });
+            }
+        });
+        thread.start();
+    }
+
+    class BookBagItemsArrayAdapter extends ArrayAdapter<BookBagItem> {
         private TextView title;
         private TextView author;
         private Button remove;
@@ -242,14 +235,10 @@ public class BookBagDetails extends ActionBarActivity {
 
             // if it is the right type of view
             if (row == null) {
-
-                Log.d(tag, "Starting XML Row Inflation ... ");
                 LayoutInflater inflater = (LayoutInflater) this.getContext()
                         .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                 row = inflater.inflate(R.layout.bookbagitem_list_item, parent,
                         false);
-                Log.d(tag, "Successfully completed XML Row Inflation!");
-
             }
 
             title = (TextView) row.findViewById(R.id.bookbagitem_title);
@@ -277,7 +266,7 @@ public class BookBagDetails extends ActionBarActivity {
                                 public void run() {
                                     progressDialog = ProgressDialog.show(context,
                                             getResources().getText(R.string.dialog_please_wait),
-                                            "Removing item");
+                                            getString(R.string.msg_removing_list_item));
                                 }
                             });
 
@@ -303,7 +292,7 @@ public class BookBagDetails extends ActionBarActivity {
                                     bookBag.items.remove(record);
                                     progressDialog = ProgressDialog.show(context,
                                             getResources().getText(R.string.dialog_please_wait),
-                                            "Retrieving bookbag data");
+                                            getString(R.string.msg_retrieving_list_contents));
                                     getBookBags.start();
 
                                 }
