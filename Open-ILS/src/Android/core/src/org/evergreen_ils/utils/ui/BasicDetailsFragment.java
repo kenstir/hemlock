@@ -39,7 +39,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import org.w3c.dom.Text;
 
 public class BasicDetailsFragment extends Fragment {
 
@@ -59,11 +58,10 @@ public class BasicDetailsFragment extends Fragment {
     private TextView subjectTextView;
     private TextView synopsisTextView;
     private TextView isbnTextView;
-    private TextView copyCountTextView;
+    private TextView descriptionTextView;
     private Button placeHoldButton;
     private Button showCopiesButton;
     private Button onlineAccessButton;
-    private TextView onlineProviderTextView;
 
     private GlobalConfigs globalConfigs;
 
@@ -129,13 +127,13 @@ public class BasicDetailsFragment extends Fragment {
         synopsisTextView = (TextView) layout.findViewById(R.id.record_details_simple_synopsis);
         isbnTextView = (TextView) layout.findViewById(R.id.record_details_simple_isbn);
         recordImage = (NetworkImageView) layout.findViewById(R.id.record_details_simple_image);
-        copyCountTextView = (TextView) layout.findViewById(R.id.record_details_simple_copy_count);
+        descriptionTextView = (TextView) layout.findViewById(R.id.record_details_brief_description);
         placeHoldButton = (Button) layout.findViewById(R.id.simple_place_hold_button);
         showCopiesButton = (Button) layout.findViewById(R.id.show_copy_information_button);
         onlineAccessButton = (Button) layout.findViewById(R.id.record_details_online_button);
-        onlineProviderTextView = (TextView) layout.findViewById(R.id.record_details_online_provider);
 
         record_header.setText(String.format(getString(R.string.record_of), position, total));
+        descriptionTextView.setText("");
 
         initButtons();
 
@@ -228,10 +226,8 @@ public class BasicDetailsFragment extends Fragment {
     private void updateButtonViews() {
         boolean is_online_resource = record.isOnlineResource();
         onlineAccessButton.setVisibility(is_online_resource ? View.VISIBLE : View.GONE);
-        onlineProviderTextView.setVisibility(is_online_resource ? View.VISIBLE : View.GONE);
         placeHoldButton.setVisibility(is_online_resource ? View.GONE : View.VISIBLE);
         showCopiesButton.setVisibility(is_online_resource ? View.GONE : View.VISIBLE);
-        copyCountTextView.setVisibility(is_online_resource ? View.GONE : View.VISIBLE);
     }
 
     private void updateSearchFormatView() {
@@ -250,9 +246,7 @@ public class BasicDetailsFragment extends Fragment {
 
         if (record.isOnlineResource()) {
             Uri uri = Uri.parse(record.online_loc);
-            onlineProviderTextView.setText(uri.getHost());
-        } else {
-            onlineProviderTextView.setText("");
+            descriptionTextView.setText(uri.getHost());
         }
 
         updateButtonViews();
@@ -270,19 +264,21 @@ public class BasicDetailsFragment extends Fragment {
                         updateSearchFormatView();
                     }
                 });
-        RecordLoader.fetchCopyCount(record, orgId, getActivity(), new RecordLoader.Listener() {
-            @Override
-            public void onDataAvailable() {
-                updateCopyCountView();
-            }
-        });
+        if (!record.isOnlineResource()) {
+            RecordLoader.fetchCopyCount(record, orgId, getActivity(), new RecordLoader.Listener() {
+                @Override
+                public void onDataAvailable() {
+                    updateCopyCountView();
+                }
+            });
+        }
     }
 
     private void updateCopyCountView() {
         int total = 0;
         int available = 0;
         if (record.copyCountListInfo == null) {
-            copyCountTextView.setText("");
+            descriptionTextView.setText("");
         } else {
             for (int i = 0; i < record.copyCountListInfo.size(); i++) {
 //            Log.d(TAG, "xxx orgId=" + orgId
@@ -295,7 +291,7 @@ public class BasicDetailsFragment extends Fragment {
                 }
             }
             String totalCopies = getResources().getQuantityString(R.plurals.number_of_copies, total, total);
-            copyCountTextView.setText(String.format(getString(R.string.n_of_m_available),
+            descriptionTextView.setText(String.format(getString(R.string.n_of_m_available),
                     available, totalCopies, globalConfigs.getOrganizationName(orgId)));
         }
     }

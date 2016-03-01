@@ -23,10 +23,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.support.v7.app.ActionBarActivity;
+import android.view.WindowManager;
 import org.evergreen_ils.R;
 import org.evergreen_ils.accountAccess.AccountAccess;
 import org.evergreen_ils.accountAccess.SessionNotFoundException;
 import org.evergreen_ils.globals.Log;
+import org.evergreen_ils.globals.Utils;
 import org.evergreen_ils.utils.ui.ActionBarUtils;
 import org.evergreen_ils.views.splashscreen.SplashActivity;
 
@@ -39,18 +41,16 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class BookbagsListView extends ActionBarActivity {
+public class BookBagListView extends ActionBarActivity {
 
-    private final static String TAG = BookbagsListView.class.getSimpleName();
+    private final static String TAG = BookBagListView.class.getSimpleName();
 
     private AccountAccess accountAccess = null;
 
@@ -81,77 +81,42 @@ public class BookbagsListView extends ActionBarActivity {
         setContentView(R.layout.bookbag_list);
         ActionBarUtils.initActionBarForActivity(this);
 
+        // prevent soft keyboard from popping up when the activity starts
+        this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+
         context = this;
         accountAccess = AccountAccess.getInstance();
 
         bookbag_name = (EditText) findViewById(R.id.bookbag_create_name);
         create_bookbag = (Button) findViewById(R.id.bookbag_create_button);
-        lv = (ListView) findViewById(R.id.bookbag_list);
-        bookBags = new ArrayList<BookBag>();
-        listAdapter = new BookBagsArrayAdapter(context,
-                R.layout.bookbag_list_item, bookBags);
-        lv.setAdapter(listAdapter);
-
-        lv.setOnItemSelectedListener(new OnItemSelectedListener() {
-
-            @Override
-            public void onItemSelected(AdapterView<?> arg0, View arg1,
-                    int position, long arg3) {
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> arg0) {
-            }
-
-        });
         create_bookbag.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-
-            final String name = bookbag_name.getText().toString();
-
-            Thread createBookbag = new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    if (name.length() > 1) {
-                        try {
-                            accountAccess.createBookbag(name);
-                        } catch (SessionNotFoundException e) {
-                            try {
-                                if (accountAccess.reauthenticate(BookbagsListView.this))
-                                    accountAccess.createBookbag(name);
-                            } catch (Exception eauth) {
-                                Log.d(TAG, "Exception in reAuth");
-                            }
-                        }
-
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                progressDialog.dismiss();
-                            }
-                        });
-
-                        Thread getBookBags = new Thread(getBookbagsRunnable);
-                        getBookBags.start();
-                    }
-                }
-            });
-
-            if (name.length() > 1) {
-                progressDialog = ProgressDialog.show(context,
-                        getResources().getText(R.string.dialog_please_wait),
-                        "Creating Bookbag");
-                createBookbag.start();
-            } else
-                Toast.makeText(context,
-                        "Bookbag name must be at least 2 characters long",
-                        Toast.LENGTH_SHORT).show();
+                createBookbag(bookbag_name.getText().toString());
             }
         });
 
-        getBookbagsRunnable = new Runnable() {
+        lv = (ListView) findViewById(R.id.bookbag_list);
+        bookBags = new ArrayList<BookBag>();
+        listAdapter = new BookBagsArrayAdapter(context, R.layout.bookbag_list_item, bookBags);
+        lv.setAdapter(listAdapter);
+        lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                BookBag item = (BookBag) lv.getItemAtPosition(position);
+                Intent intent = new Intent(context, BookBagDetails.class);
+                intent.putExtra("bookBag", item);
+                startActivityForResult(intent, 0);
+            }
+        });
 
+        initGetBookbagsRunnable();
+
+        new Thread(getBookbagsRunnable).start();
+    }
+
+    private void initGetBookbagsRunnable() {
+        getBookbagsRunnable = new Runnable() {
             @Override
             public void run() {
                 runOnUiThread(new Runnable() {
@@ -167,16 +132,15 @@ public class BookbagsListView extends ActionBarActivity {
                     accountAccess.retrieveBookbags();
                 } catch (SessionNotFoundException e) {
                     try {
-                        if (accountAccess.reauthenticate(BookbagsListView.this))
+                        if (accountAccess.reauthenticate(BookBagListView.this))
                             accountAccess.retrieveBookbags();
-                    } catch (Exception eauth) {
-                        Log.d(TAG, "Exception in reAuth");
+                    } catch (Exception e2) {
+                        Log.d(TAG, "caught", e2);
                     }
                 }
                 bookBags = accountAccess.getBookbags();
 
                 runOnUiThread(new Runnable() {
-
                     @Override
                     public void run() {
                         listAdapter.clear();
@@ -194,8 +158,6 @@ public class BookbagsListView extends ActionBarActivity {
 
             }
         };
-
-        new Thread(getBookbagsRunnable).start();
     }
 
     @Override
@@ -204,24 +166,54 @@ public class BookbagsListView extends ActionBarActivity {
 
         switch (resultCode) {
         case BookBagDetails.RESULT_CODE_UPDATE:
-            Thread getBookBags = new Thread(getBookbagsRunnable);
-            getBookBags.start();
+            new Thread(getBookbagsRunnable).start();
             break;
         }
     }
 
+    private void createBookbag(final String name) {
+        if (name.length() < 2) {
+            Toast.makeText(context,
+                    R.string.msg_list_name_too_short,
+                    Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    accountAccess.createBookbag(name);
+                } catch (SessionNotFoundException e) {
+                    try {
+                        if (accountAccess.reauthenticate(BookBagListView.this))
+                            accountAccess.createBookbag(name);
+                    } catch (Exception eauth) {
+                        Log.d(TAG, "caught", eauth);
+                    }
+                }
+
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        progressDialog.dismiss();
+                    }
+                });
+
+                new Thread(getBookbagsRunnable).start();
+            }
+        });
+
+        progressDialog = ProgressDialog.show(context,
+                getResources().getText(R.string.dialog_please_wait),
+                "Creating Bookbag");
+        thread.start();
+    }
+
     class BookBagsArrayAdapter extends ArrayAdapter<BookBag> {
-        private static final String tag = "BookbagArrayAdapter";
-
-        private TextView name;
-        private TextView items;
-        private CheckBox shared;
-        private Button detailsButton;
-
         private List<BookBag> records = new ArrayList<BookBag>();
 
-        public BookBagsArrayAdapter(Context context, int textViewResourceId,
-                List<BookBag> objects) {
+        public BookBagsArrayAdapter(Context context, int textViewResourceId, List<BookBag> objects) {
             super(context, textViewResourceId, objects);
             this.records = objects;
         }
@@ -242,40 +234,29 @@ public class BookbagsListView extends ActionBarActivity {
 
             // if it is the right type of view
             if (row == null) {
-
-                Log.d(tag, "Starting XML Row Inflation ... ");
                 LayoutInflater inflater = (LayoutInflater) this.getContext()
                         .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                row = inflater.inflate(R.layout.bookbag_list_item, parent,
-                        false);
-                Log.d(tag, "Successfully completed XML Row Inflation!");
-
+                row = inflater.inflate(R.layout.bookbag_list_item, parent, false);
             }
 
-            name = (TextView) row.findViewById(R.id.bookbag_name);
+            TextView nameText = (TextView) row.findViewById(R.id.bookbag_name);
+            nameText.setText(Utils.safeString(record.name));
+            TextView descText = (TextView) row.findViewById(R.id.bookbag_description);
+            descText.setText(Utils.safeString(record.description));
+            TextView itemsText = (TextView) row.findViewById(R.id.bookbag_items);
+            itemsText.setText(getResources().getQuantityString(R.plurals.number_of_items,
+                    record.items.size(), record.items.size()));
+//            shared.setChecked(record.shared);
 
-            items = (TextView) row.findViewById(R.id.bookbag_items);
-
-            shared = (CheckBox) row.findViewById(R.id.bookbag_shared);
-
-            detailsButton = (Button) row.findViewById(R.id.details_button);
-
-            name.setText(record.name + "");
-
-            items.setText(record.items.size() + "");
-
-            shared.setChecked(record.shared);
-
-            detailsButton.setOnClickListener(new OnClickListener() {
-
-                @Override
-                public void onClick(View v) {
-                    Intent intent = new Intent(context, BookBagDetails.class);
-                    intent.putExtra("bookBag", record);
-                    startActivityForResult(intent, 0);
-
-                }
-            });
+//            detailsButton.setOnClickListener(new OnClickListener() {
+//
+//                @Override
+//                public void onClick(View v) {
+//                    Intent intent = new Intent(context, BookBagDetails.class);
+//                    intent.putExtra("bookBag", record);
+//                    startActivityForResult(intent, 0);
+//                }
+//            });
 
             return row;
         }

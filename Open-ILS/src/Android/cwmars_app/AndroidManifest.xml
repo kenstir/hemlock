@@ -137,7 +137,7 @@
 
         <!-- Bookbags -->
         <activity
-                android:name="org.evergreen_ils.accountAccess.bookbags.BookbagsListView"
+                android:name="org.evergreen_ils.accountAccess.bookbags.BookBagListView"
                 android:label="@string/title_my_lists"
                 android:parentActivityName="org.evergreen_ils.views.MainActivity">
             <meta-data
@@ -147,10 +147,10 @@
         <activity
                 android:name="org.evergreen_ils.accountAccess.bookbags.BookBagDetails"
                 android:label="@string/title_list_details"
-                android:parentActivityName="org.evergreen_ils.accountAccess.bookbags.BookbagsListView">
+                android:parentActivityName="org.evergreen_ils.accountAccess.bookbags.BookBagListView">
             <meta-data
                     android:name="android.support.PARENT_ACTIVITY"
-                    android:value="org.evergreen_ils.accountAccess.bookbags.BookbagsListView"/>
+                    android:value="org.evergreen_ils.accountAccess.bookbags.BookBagListView"/>
         </activity>
 
         <activity
