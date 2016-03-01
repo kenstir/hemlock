@@ -1119,6 +1119,14 @@ public class AccountAccess {
 
             bookBagObj.add(bag);
         }
+
+        Collections.sort(this.bookBags, new Comparator<BookBag>() {
+            @Override
+            public int compare(BookBag lhs, BookBag rhs) {
+                return lhs.name.compareTo(rhs.name);
+            }
+        });
+
         return true;
     }
     

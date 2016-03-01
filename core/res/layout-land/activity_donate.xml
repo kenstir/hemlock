@@ -37,7 +37,7 @@
             android:layout_height="wrap_content"
             android:text="@string/donate_call_to_action_subtitle"
             android:id="@+id/donate_more_text"
-            android:textSize="18dip"
+            style="@style/textLargeNoPadding"
             android:layout_marginBottom="12dip" android:layout_marginLeft="24dip"/>
 
     <Button

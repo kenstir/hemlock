@@ -38,7 +38,7 @@
 			android:id="@+id/bookbagitem_remove_button"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:text="@string/bookbagitem_remove"
+			android:text="@string/list_item_remove_button"
 			android:layout_gravity="right"
 			android:layout_weight="0"
 			style="@style/ApplicationButton"

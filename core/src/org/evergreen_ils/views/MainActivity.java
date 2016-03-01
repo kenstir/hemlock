@@ -30,7 +30,7 @@ import android.view.View;
 import android.widget.Button;
 import org.evergreen_ils.R;
 import org.evergreen_ils.accountAccess.AccountUtils;
-import org.evergreen_ils.accountAccess.bookbags.BookbagsListView;
+import org.evergreen_ils.accountAccess.bookbags.BookBagListView;
 import org.evergreen_ils.accountAccess.checkout.ItemsCheckOutListView;
 import org.evergreen_ils.accountAccess.fines.FinesActivity;
 import org.evergreen_ils.accountAccess.holds.HoldsListView;
@@ -180,7 +180,7 @@ public class MainActivity extends ActionBarActivity {
         } else if (id == R.id.account_btn_fines) {
             startActivity(new Intent(this, FinesActivity.class));
         } else if (id == R.id.main_my_lists_button) {
-            startActivity(new Intent(this, BookbagsListView.class));
+            startActivity(new Intent(this, BookBagListView.class));
         } else if (id == R.id.main_btn_search) {
             startActivity(new Intent(this, SearchCatalogListView.class));
 //        } else if (id == R.id.main_donate_button) {

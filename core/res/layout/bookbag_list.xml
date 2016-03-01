@@ -30,12 +30,12 @@
         
     </LinearLayout>
 
-	<ListView
-	  android:id="@+id/bookbag_list"
-	  android:layout_width="fill_parent"
-	  android:layout_height="wrap_content"  
-	  android:paddingTop="10dip"
-      android:dividerHeight="1dp"
-	  ></ListView>
+    <ListView
+            android:id="@+id/bookbag_list"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="10dip"
+            android:dividerHeight="1dp"
+    />
 
 </LinearLayout>

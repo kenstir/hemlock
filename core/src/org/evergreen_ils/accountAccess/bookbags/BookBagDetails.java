@@ -27,13 +27,13 @@ import org.evergreen_ils.R;
 import org.evergreen_ils.accountAccess.AccountAccess;
 import org.evergreen_ils.accountAccess.SessionNotFoundException;
 import org.evergreen_ils.globals.Log;
+import org.evergreen_ils.globals.Utils;
 import org.evergreen_ils.searchCatalog.RecordInfo;
 import org.evergreen_ils.searchCatalog.SearchCatalog;
 import org.evergreen_ils.utils.ui.ActionBarUtils;
 import org.evergreen_ils.views.splashscreen.SplashActivity;
 
 import android.app.AlertDialog;
-import android.app.AlertDialog.Builder;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -43,7 +43,6 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
@@ -73,10 +72,11 @@ public class BookBagDetails extends ActionBarActivity {
     private BookBag bookBag;
 
     private TextView bookbag_name;
+    private TextView bookbag_desc;
 
     private Button delete_bookbag_button;
 
-    private Runnable getBookBagsItemsRunnable;
+    private Runnable getItemsRunnable;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -95,8 +95,10 @@ public class BookBagDetails extends ActionBarActivity {
         context = this;
         search = SearchCatalog.getInstance();
         bookbag_name = (TextView) findViewById(R.id.bookbag_name);
-        delete_bookbag_button = (Button) findViewById(R.id.remove_bookbag);
         bookbag_name.setText(bookBag.name);
+        bookbag_desc = (TextView) findViewById(R.id.bookbag_description);
+        bookbag_desc.setText(Utils.safeString(bookBag.description));
+        delete_bookbag_button = (Button) findViewById(R.id.remove_bookbag);
         delete_bookbag_button.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -120,21 +122,25 @@ public class BookBagDetails extends ActionBarActivity {
         listAdapter = new BookBagItemsArrayAdapter(context,
                 R.layout.bookbagitem_list_item, bookBagItems);
         lv.setAdapter(listAdapter);
-
-        lv.setOnItemSelectedListener(new OnItemSelectedListener() {
-
+        lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onItemSelected(AdapterView<?> arg0, View arg1,
-                    int arg2, long arg3) {
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> arg0) {
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Log.d(TAG, "click");
             }
 
         });
 
-        getBookBagsItemsRunnable = new Runnable() {
+        initGetItemsRunnable();
+
+        Thread getBookBags = new Thread(getItemsRunnable);
+        progressDialog = ProgressDialog.show(context,
+                getResources().getText(R.string.dialog_please_wait),
+                getString(R.string.msg_retrieving_list_contents));
+        getBookBags.start();
+    }
+
+    private void initGetItemsRunnable() {
+        getItemsRunnable = new Runnable() {
 
             @Override
             public void run() {
@@ -170,14 +176,6 @@ public class BookBagDetails extends ActionBarActivity {
 
             }
         };
-
-        Thread getBookBags = new Thread(getBookBagsItemsRunnable);
-
-        progressDialog = ProgressDialog.show(context,
-                getResources().getText(R.string.dialog_please_wait),
-                getString(R.string.msg_retrieving_list_contents));
-        getBookBags.start();
-
     }
 
     private void deleteList() {
@@ -242,13 +240,10 @@ public class BookBagDetails extends ActionBarActivity {
             }
 
             title = (TextView) row.findViewById(R.id.bookbagitem_title);
-
             author = (TextView) row.findViewById(R.id.bookbagitem_author);
-
             remove = (Button) row.findViewById(R.id.bookbagitem_remove_button);
 
             title.setText(record.recordInfo.title);
-
             author.setText(record.recordInfo.author);
 
             remove.setOnClickListener(new OnClickListener() {
@@ -260,7 +255,6 @@ public class BookBagDetails extends ActionBarActivity {
 
                         @Override
                         public void run() {
-
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
@@ -277,6 +271,7 @@ public class BookBagDetails extends ActionBarActivity {
                                     if (accountAccess.reauthenticate(BookBagDetails.this))
                                         accountAccess.removeBookbagItem(record.id);
                                 } catch (Exception e1) {
+                                    Log.d(TAG, "caught", e1);
                                 }
                             }
 
@@ -285,8 +280,7 @@ public class BookBagDetails extends ActionBarActivity {
                                 public void run() {
                                     progressDialog.dismiss();
 
-                                    Thread getBookBags = new Thread(
-                                            getBookBagsItemsRunnable);
+                                    Thread getBookBags = new Thread(getItemsRunnable);
                                     setResult(RESULT_CODE_UPDATE);
 
                                     bookBag.items.remove(record);

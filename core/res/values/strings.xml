@@ -21,10 +21,11 @@
     <string name="title_fines">Fines</string>
     <string name="title_donate">Donate</string>
     <string name="copy_information_title">Copy Information</string>
-    <string name="button_place_hold">Place Hold</string>
+    <string name="button_place_hold">Place hold</string>
     <string name="title_my_lists">My Lists</string>
     <string name="title_list_details">List Details</string>
     <string name="add_to_my_list_message">Add to my list</string>
+    <string name="add_to_my_list_button">Add to list</string>
     <string name="adding_to_list_message">Adding item to list</string>
     <string name="show_details_message">Show details</string>
     <string name="choose_list_message">Select a list</string>
@@ -62,7 +63,6 @@
     <string name="title_my_account">My Account</string>
     <string name="title_check_out">Items Checked Out</string>
     <string name="title_holds">Holds</string>
-    <string name="title_book_bags">Bookbags</string>
     <string name="renew_button">Renew</string>
     <string name="renew_dialog_message">Are you sure you want to renew this item?</string>
     <string name="toast_item_renewed">Item renewed</string>
@@ -71,7 +71,7 @@
     <string name="n_of_m_available">%1$d of %2$s available at %3$s</string>
 
     <!-- Search Details View -->
-    <string name="show_copies">Show Copies</string>
+    <string name="show_copies">Copy info</string>
 
     <!-- Place Hold Activity View -->
 
@@ -112,10 +112,9 @@
     <!-- Bookbag Activities -->
     <string name="list_delete_button">Delete List</string>
     <string name="list_details_button">Details</string>
-    <string name="bookbagitem_remove">remove</string>
+    <string name="list_item_remove_button">Remove</string>
     <string name="create_list_button">Create List</string>
     <string name="list_name_hint">List name</string>
-    <string name="add_button">add</string>
 
     <!-- Camera -->
     <string name="msg_camera_framework_bug">Sorry, the Android camera encountered a problem. You may need to restart the device.</string>
@@ -181,5 +180,6 @@
     <string name="msg_deleting_list">Deleting list</string>
     <string name="msg_confirm_delete_list">Are you sure you want to delete this list?</string>
     <string name="msg_retrieving_data">Retrieving data</string>
+    <string name="msg_list_name_too_short">List name must be at least 2 characters long</string>
 
 </resources>

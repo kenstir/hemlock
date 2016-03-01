@@ -8,13 +8,18 @@
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
     </style>
-
+    <style name="textMediumNoPadding">
+        <item name="android:textSize">16sp</item>
+    </style>
     <style name="textLarge">
         <item name="android:textSize">18sp</item>
         <item name="android:paddingLeft">10dip</item>
         <item name="android:paddingTop">5dip</item>
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
+    </style>
+    <style name="textLargeNoPadding">
+        <item name="android:textSize">18sp</item>
     </style>
 
     <style name="overdue">
