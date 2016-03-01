@@ -19,11 +19,15 @@
  */
 package org.evergreen_ils.utils.ui;
 
+import android.app.Activity;
 import android.net.Uri;
 import android.text.TextUtils;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
 import org.evergreen_ils.R;
+import org.evergreen_ils.accountAccess.AccountAccess;
+import org.evergreen_ils.accountAccess.bookbags.BookBag;
+import org.evergreen_ils.accountAccess.bookbags.BookBagUtils;
 import org.evergreen_ils.accountAccess.holds.PlaceHoldActivity;
 import org.evergreen_ils.globals.GlobalConfigs;
 import org.evergreen_ils.net.VolleyWrangler;
@@ -40,10 +44,13 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+
 public class BasicDetailsFragment extends Fragment {
 
     private final static String TAG = BasicDetailsFragment.class.getSimpleName();
 
+    private Activity activity;
     private RecordInfo record;
     private Integer orgId;
     private Integer position;
@@ -65,13 +72,8 @@ public class BasicDetailsFragment extends Fragment {
 
     private GlobalConfigs globalConfigs;
 
-    /*
     private Button addToBookbagButton;
-    private ProgressDialog progressDialog;
-    private Integer bookbag_selected;
-    private Dialog dialog;
     private ArrayList<BookBag> bookBags;
-    */
 
     private NetworkImageView recordImage;
 
@@ -112,7 +114,8 @@ public class BasicDetailsFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        globalConfigs = GlobalConfigs.getInstance(getActivity());
+        activity = getActivity();
+        globalConfigs = GlobalConfigs.getInstance(activity);
 
         LinearLayout layout = (LinearLayout) inflater.inflate(
                 R.layout.record_details_basic_fragment, null);
@@ -131,6 +134,7 @@ public class BasicDetailsFragment extends Fragment {
         placeHoldButton = (Button) layout.findViewById(R.id.simple_place_hold_button);
         showCopiesButton = (Button) layout.findViewById(R.id.show_copy_information_button);
         onlineAccessButton = (Button) layout.findViewById(R.id.record_details_online_button);
+        addToBookbagButton = (Button) layout.findViewById(R.id.add_to_bookbag_button);
 
         record_header.setText(String.format(getString(R.string.record_of), position, total));
         descriptionTextView.setText("");
@@ -173,6 +177,12 @@ public class BasicDetailsFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 launchOnlineAccess();
+            }
+        });
+        addToBookbagButton.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                BookBagUtils.showAddToListDialog(activity, bookBags, record);
             }
         });
     }
@@ -297,85 +307,7 @@ public class BasicDetailsFragment extends Fragment {
     }
 
     private void initBookbagStuff() {
-        /*
         AccountAccess ac = AccountAccess.getInstance();
         bookBags = ac.getBookbags();
-        String array_spinner[] = new String[bookBags.size()];
-
-        for (int i = 0; i < array_spinner.length; i++)
-            array_spinner[i] = bookBags.get(i).name;
-
-        dialog = new Dialog(getActivity());
-        dialog.setContentView(R.layout.bookbag_spinner);
-        dialog.setTitle("Choose bookbag");
-        Spinner s = (Spinner) dialog.findViewById(R.id.bookbag_spinner);
-        Button add = (Button) dialog.findViewById(R.id.add_to_bookbag_button);
-        ArrayAdapter adapter = new ArrayAdapter(getActivity()
-                .getApplicationContext(), android.R.layout.simple_spinner_item,
-                array_spinner);
-        s.setAdapter(adapter);
-
-        add.setOnClickListener(new OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                // TODO Auto-generated method stub
-                Thread addtoBookbag = new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        AccountAccess ac = AccountAccess.getInstance();
-                        try {
-                            ac.addRecordToBookBag(record.doc_id,
-                                    ac.getBookbags().get(bookbag_selected).id);
-                        } catch (SessionNotFoundException e) {
-                            // TODO Auto-generated catch block
-                            e.printStackTrace();
-                        }
-
-                        getActivity().runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                progressDialog.dismiss();
-                                dialog.dismiss();
-                            }
-                        });
-
-                    }
-                });
-                progressDialog = ProgressDialog.show(getActivity(),
-                        getResources().getText(R.string.dialog_please_wait),
-                        "Adding to bookbag");
-                addtoBookbag.start();
-
-            }
-        });
-        s.setOnItemSelectedListener(new OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> arg0, View arg1, int position, long arg3) {
-                bookbag_selected = position;
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> arg0) {
-            }
-
-        });
-
-        addToBookbagButton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (bookBags.size() > 0)
-                            dialog.show();
-                        else
-                            Toast.makeText(getActivity(), "No lists", Toast.LENGTH_SHORT).show();
-                    }
-
-                });
-            }
-        });
-        */
     }
 }

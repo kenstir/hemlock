@@ -21,8 +21,6 @@ package org.evergreen_ils.searchCatalog;
 
 import java.util.*;
 
-import android.app.Dialog;
-import android.content.DialogInterface;
 import android.net.Uri;
 import android.support.v7.app.ActionBarActivity;
 import android.text.TextUtils;
@@ -31,8 +29,8 @@ import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
 import org.evergreen_ils.R;
 import org.evergreen_ils.accountAccess.AccountAccess;
-import org.evergreen_ils.accountAccess.SessionNotFoundException;
 import org.evergreen_ils.accountAccess.bookbags.BookBag;
+import org.evergreen_ils.accountAccess.bookbags.BookBagUtils;
 import org.evergreen_ils.accountAccess.holds.PlaceHoldActivity;
 import org.evergreen_ils.barcodescan.CaptureActivity;
 import org.evergreen_ils.billing.BillingHelper;
@@ -44,7 +42,6 @@ import org.evergreen_ils.utils.ui.ActionBarUtils;
 import org.evergreen_ils.views.DonateActivity;
 import org.evergreen_ils.views.splashscreen.SplashActivity;
 
-import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -60,7 +57,6 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
@@ -427,7 +423,7 @@ public class SearchCatalogListView extends ActionBarActivity {
             break;
         case BOOK_BAG:
             if (bookBags.size() > 0) {
-                showAddToListDialog(info);
+                BookBagUtils.showAddToListDialog(this, bookBags, info);
             } else {
                 Toast.makeText(context, getText(R.string.msg_no_lists), Toast.LENGTH_SHORT).show();
             }
@@ -435,47 +431,6 @@ public class SearchCatalogListView extends ActionBarActivity {
         }
 
         return super.onContextItemSelected(item);
-    }
-
-    private void showAddToListDialog(final RecordInfo info) {
-        final String list_names[] = new String[bookBags.size()];
-        for (int i = 0; i < list_names.length; i++)
-            list_names[i] = bookBags.get(i).name;
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle(R.string.choose_list_message);
-        builder.setItems(list_names, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                addRecordToList(bookBags.get(which), info);
-            }
-        });
-        builder.create().show();
-    }
-
-    private void addRecordToList(final BookBag bookbag, final RecordInfo info) {
-        progressDialog = ProgressDialog.show(context,
-                getString(R.string.dialog_please_wait),
-                getString(R.string.adding_to_list_message));
-        Thread thread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                AccountAccess ac = AccountAccess.getInstance();
-                try {
-                    ac.addRecordToBookBag(info.doc_id, bookbag.id);
-                } catch (SessionNotFoundException e) {
-                    Log.d(TAG, "caught", e);
-                }
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        progressDialog.dismiss();
-                    }
-                });
-
-            }
-        });
-        thread.start();
     }
 
     @Override

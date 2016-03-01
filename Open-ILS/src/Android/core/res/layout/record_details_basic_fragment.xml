@@ -113,7 +113,7 @@
                     android:id="@+id/record_details_online_button"
                     style="@style/ApplicationButton"
                     android:layout_height="wrap_content"
-                    android:layout_width="100dip"
+                    android:layout_width="wrap_content"
                     android:layout_margin="3dip"
                     android:text="@string/record_online_access"
                     android:visibility="gone"
