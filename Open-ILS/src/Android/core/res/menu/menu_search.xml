@@ -6,4 +6,5 @@
           android:icon="@drawable/abc_ic_search"
           android:title="@string/advanced_search"/>
     <item android:id="@+id/action_feedback" android:title="@string/menu_feedback"/>
+    <item android:id="@+id/action_donate" android:title="@string/title_donate"/>
 </menu>

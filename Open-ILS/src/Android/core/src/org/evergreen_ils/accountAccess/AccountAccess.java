@@ -346,12 +346,6 @@ public class AccountAccess {
             }
         }
 
-        /* Other fields returned by the request; apparently not used in OPAC
-        resp_map.get("claims_returned");
-        resp_map.get("long_overdue")
-        resp_map.get("lost");
-        */
-
         Collections.sort(circRecords, new Comparator<CircRecord>() {
             @Override
             public int compare(CircRecord lhs, CircRecord rhs) {

@@ -27,7 +27,6 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import org.evergreen_ils.R;
 import org.evergreen_ils.accountAccess.AccountUtils;
 import org.evergreen_ils.accountAccess.bookbags.BookBagListView;
@@ -36,6 +35,7 @@ import org.evergreen_ils.accountAccess.fines.FinesActivity;
 import org.evergreen_ils.accountAccess.holds.HoldsListView;
 import org.evergreen_ils.auth.Const;
 import org.evergreen_ils.billing.*;
+import org.evergreen_ils.globals.AppState;
 import org.evergreen_ils.globals.Log;
 import org.evergreen_ils.searchCatalog.SearchCatalogListView;
 import org.evergreen_ils.utils.ui.ActionBarUtils;
@@ -47,9 +47,6 @@ import org.evergreen_ils.views.splashscreen.SplashActivity;
 public class MainActivity extends ActionBarActivity {
 
     private static String TAG = MainActivity.class.getSimpleName();
-    private boolean showDonateButton;
-    private boolean donateButtonShowing;
-    private Button donateButton;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -86,47 +83,29 @@ public class MainActivity extends ActionBarActivity {
         // get the public key
         BillingDataProvider provider = BillingDataProvider.create(getString(R.string.ou_billing_data_provider));
         String base64EncodedPublicKey = (provider != null) ? provider.getPublicKey() : null;
-        if (TextUtils.isEmpty(base64EncodedPublicKey))
+        if (TextUtils.isEmpty(base64EncodedPublicKey)) {
+            AppState.setBoolean(AppState.SHOW_DONATE, false);
             return;
+        }
 
         // talk to the store
         BillingHelper.startSetup(this, base64EncodedPublicKey, new BillingHelper.OnSetupFinishedListener() {
             @Override
             public void onSetupFinished(IabResult result) {
                 if (result.isSuccess()) {
-                    showDonateButton = BillingHelper.showDonateButton();
+                    boolean showDonateButton = BillingHelper.showDonateButton();
                     Log.d(TAG, "onSetupFinished showDonate="+showDonateButton);
-                    updateUi();
+                    AppState.setBoolean(AppState.SHOW_DONATE, showDonateButton);
                 }
             }
         });
-    }
-
-    // fade in or out the Donate button
-    void updateUi() {
-        Log.d(TAG, "updateui show="+showDonateButton+" showing="+donateButtonShowing);
-
-        float oldOpacity = donateButtonShowing ? 1f : 0f;
-        float newOpacity = showDonateButton ? 1f : 0f;
-        donateButtonShowing = showDonateButton;
-        if (oldOpacity == newOpacity) {
-            Log.d(TAG, "updateui returning!");
-            return;
-        }
-
-        donateButton.setAlpha(oldOpacity);
-        donateButton.setVisibility(View.VISIBLE);
-        donateButton.animate()
-                .setDuration(2000) // slow mo
-                .alpha(newOpacity);
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         Log.d(TAG, "onActivityResult req="+requestCode+" result="+resultCode);
         if (resultCode == BillingHelper.RESULT_PURCHASED) {
-            showDonateButton = false; // hide button on any purchase
-            updateUi();
+            AppState.setBoolean(AppState.SHOW_DONATE, false); // hide button on any purchase
         }
     }
 
@@ -137,6 +116,9 @@ public class MainActivity extends ActionBarActivity {
         String url = getString(R.string.ou_feedback_url);
         if (TextUtils.isEmpty(url))
             menu.removeItem(R.id.action_feedback);
+        boolean showDonate = AppState.getBoolean(AppState.SHOW_DONATE, false);
+        if (!showDonate)
+            menu.removeItem(R.id.action_donate);
         return super.onCreateOptionsMenu(menu);
     }
 

@@ -12,4 +12,5 @@
     <string name="ou_activity_subtitle">%2$s</string>
     <string name="ou_library_url">https://catalog.cwmars.org</string>
     <string name="ou_feedback_url">https://docs.google.com/forms/d/1jWSmy-pwXbRkv9qmhDK1toatXahCGGatwCZLLzmy1Gg/viewform</string>
+    <string name="ou_billing_data_provider">org.cwmars.ConcreteBillingDataProvider</string>
 </resources>
