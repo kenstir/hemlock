@@ -36,6 +36,7 @@ public class AppState {
     public static final String LAUNCH_COUNT = "launch_count";
     public static final String LIBRARY_URL = "library_url";
     public static final String LIBRARY_NAME = "library_name";
+    public static final String SHOW_DONATE = "show_donate";
 
     // increment PREFS_VERSION every time you make a change to the persistent pref storage
     private static final int PREFS_VERSION = 2;
