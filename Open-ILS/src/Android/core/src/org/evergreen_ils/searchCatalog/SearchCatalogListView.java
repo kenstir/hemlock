@@ -226,9 +226,9 @@ public class SearchCatalogListView extends ActionBarActivity {
                 //todo add package prefix to names in putExtra
                 intent.putExtra("recordInfo", info);
                 intent.putExtra("orgID", search.selectedOrganization.id);
-                intent.putExtra("depth", search.selectedOrganization.level);
                 intent.putExtra("recordList", recordList);
                 intent.putExtra("recordPosition", position);
+                intent.putExtra("numResults", search.visible);
                 startActivityForResult(intent, 10);
             }
         });
@@ -411,9 +411,9 @@ public class SearchCatalogListView extends ActionBarActivity {
             Intent intent = new Intent(getBaseContext(), SampleUnderlinesNoFade.class);
             intent.putExtra("recordInfo", info);
             intent.putExtra("orgID", search.selectedOrganization.id);
-            intent.putExtra("depth", search.selectedOrganization.level);
             intent.putExtra("recordList", recordList);
             intent.putExtra("recordPosition", menuArrayItem.position);
+            intent.putExtra("numResults", search.visible);
             startActivity(intent);
             break;
         case PLACE_HOLD:

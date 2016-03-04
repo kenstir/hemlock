@@ -252,13 +252,21 @@ public class GlobalConfigs {
         return (boolString != null && boolString.equals("t"));
     }
 
-    public String getOrganizationName(int id) {
-
+    public Organisation getOrganization(int id) {
         for (int i = 0; i < organisations.size(); i++) {
             if (organisations.get(i).id == id)
-                return organisations.get(i).name;
+                return organisations.get(i);
         }
 
         return null;
+    }
+
+    public String getOrganizationName(int id) {
+        Organisation org = getOrganization(id);
+        if (org == null) {
+            return null;
+        } else {
+            return org.name;
+        }
     }
 }

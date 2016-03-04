@@ -155,7 +155,6 @@ public class BookBagListView extends ActionBarActivity {
                         listAdapter.notifyDataSetChanged();
                     }
                 });
-
             }
         };
     }
@@ -246,17 +245,6 @@ public class BookBagListView extends ActionBarActivity {
             TextView itemsText = (TextView) row.findViewById(R.id.bookbag_items);
             itemsText.setText(getResources().getQuantityString(R.plurals.number_of_items,
                     record.items.size(), record.items.size()));
-//            shared.setChecked(record.shared);
-
-//            detailsButton.setOnClickListener(new OnClickListener() {
-//
-//                @Override
-//                public void onClick(View v) {
-//                    Intent intent = new Intent(context, BookBagDetails.class);
-//                    intent.putExtra("bookBag", record);
-//                    startActivityForResult(intent, 0);
-//                }
-//            });
 
             return row;
         }

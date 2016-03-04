@@ -22,6 +22,7 @@ package org.evergreen_ils.accountAccess.bookbags;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import org.evergreen_ils.R;
 import org.evergreen_ils.accountAccess.AccountAccess;
@@ -29,6 +30,7 @@ import org.evergreen_ils.accountAccess.SessionNotFoundException;
 import org.evergreen_ils.globals.Log;
 import org.evergreen_ils.globals.Utils;
 import org.evergreen_ils.searchCatalog.RecordInfo;
+import org.evergreen_ils.searchCatalog.SampleUnderlinesNoFade;
 import org.evergreen_ils.searchCatalog.SearchCatalog;
 import org.evergreen_ils.utils.ui.ActionBarUtils;
 import org.evergreen_ils.views.splashscreen.SplashActivity;
@@ -54,8 +56,6 @@ public class BookBagDetails extends ActionBarActivity {
     private final static String TAG = BookBagDetails.class.getSimpleName();
 
     public static final int RESULT_CODE_UPDATE = 1;
-
-    private SearchCatalog search;
 
     private AccountAccess accountAccess;
 
@@ -93,7 +93,6 @@ public class BookBagDetails extends ActionBarActivity {
         bookBag = (BookBag) getIntent().getSerializableExtra("bookBag");
 
         context = this;
-        search = SearchCatalog.getInstance();
         bookbag_name = (TextView) findViewById(R.id.bookbag_name);
         bookbag_name.setText(bookBag.name);
         bookbag_desc = (TextView) findViewById(R.id.bookbag_description);
@@ -119,24 +118,30 @@ public class BookBagDetails extends ActionBarActivity {
 
         lv = (ListView) findViewById(R.id.bookbagitem_list);
         bookBagItems = new ArrayList<BookBagItem>();
-        listAdapter = new BookBagItemsArrayAdapter(context,
-                R.layout.bookbagitem_list_item, bookBagItems);
+        listAdapter = new BookBagItemsArrayAdapter(context, R.layout.bookbagitem_list_item, bookBagItems);
         lv.setAdapter(listAdapter);
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Log.d(TAG, "click");
+                BookBagItem item = bookBagItems.get(position);
+                ArrayList<RecordInfo> recordList = new ArrayList<RecordInfo>(1);
+                RecordInfo info = item.recordInfo;
+                recordList.add(info);
+                Intent intent = new Intent(getBaseContext(), SampleUnderlinesNoFade.class);
+                intent.putExtra("recordInfo", info);
+                intent.putExtra("recordList", recordList);
+                startActivity(intent);
             }
 
         });
 
         initGetItemsRunnable();
 
-        Thread getBookBags = new Thread(getItemsRunnable);
+        Thread thread = new Thread(getItemsRunnable);
         progressDialog = ProgressDialog.show(context,
                 getResources().getText(R.string.dialog_please_wait),
                 getString(R.string.msg_retrieving_list_contents));
-        getBookBags.start();
+        thread.start();
     }
 
     private void initGetItemsRunnable() {
@@ -149,7 +154,7 @@ public class BookBagDetails extends ActionBarActivity {
                 for (int i = 0; i < bookBag.items.size(); i++) {
                     ids.add(bookBag.items.get(i).target_copy);
                 }
-                ArrayList<RecordInfo> records = search.getRecordsInfo(ids);
+                ArrayList<RecordInfo> records = SearchCatalog.getInstance().getRecordsInfo(ids);
 
                 for (int i = 0; i < bookBag.items.size(); i++) {
                     bookBag.items.get(i).recordInfo = records.get(i);
@@ -159,9 +164,7 @@ public class BookBagDetails extends ActionBarActivity {
 
                     @Override
                     public void run() {
-
                         listAdapter.clear();
-
                         for (int i = 0; i < bookBag.items.size(); i++)
                             listAdapter.add(bookBag.items.get(i));
 
@@ -173,7 +176,6 @@ public class BookBagDetails extends ActionBarActivity {
                         listAdapter.notifyDataSetChanged();
                     }
                 });
-
             }
         };
     }
@@ -211,8 +213,7 @@ public class BookBagDetails extends ActionBarActivity {
 
         private List<BookBagItem> records = new ArrayList<BookBagItem>();
 
-        public BookBagItemsArrayAdapter(Context context,
-                int textViewResourceId, List<BookBagItem> objects) {
+        public BookBagItemsArrayAdapter(Context context, int textViewResourceId, List<BookBagItem> objects) {
             super(context, textViewResourceId, objects);
             this.records = objects;
         }
@@ -235,8 +236,7 @@ public class BookBagDetails extends ActionBarActivity {
             if (row == null) {
                 LayoutInflater inflater = (LayoutInflater) this.getContext()
                         .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                row = inflater.inflate(R.layout.bookbagitem_list_item, parent,
-                        false);
+                row = inflater.inflate(R.layout.bookbagitem_list_item, parent, false);
             }
 
             title = (TextView) row.findViewById(R.id.bookbagitem_title);

@@ -96,13 +96,13 @@ public class RecordLoader {
         }
     }
 
-    public static void fetchCopyCount(final RecordInfo record, final int orgId, Context context, final Listener listener) {
+    public static void fetchCopyCount(final RecordInfo record, final int orgID, Context context, final Listener listener) {
         if (record.copyCountListInfo != null) {
             listener.onDataAvailable();
         } else {
             String url = GlobalConfigs.getUrl(Utils.buildGatewayUrl(
                     SearchCatalog.SERVICE, SearchCatalog.METHOD_GET_COPY_COUNT,
-                    new Object[]{orgId, record.doc_id}));
+                    new Object[]{orgID, record.doc_id}));
             GatewayJsonObjectRequest r = new GatewayJsonObjectRequest(
                     url,
                     new Response.Listener<GatewayResponse>() {
