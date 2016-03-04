@@ -132,7 +132,6 @@ public class RecordInfo implements Serializable {
      */
     public boolean isOnlineResource() {
         return (!TextUtils.isEmpty(online_loc)
-                && (SearchFormat.getItemLabelFromSearchFormat(search_format).startsWith("E-")
-                    || search_format.equals("picture")));
+                && SearchFormat.isOnlineResource(search_format));
     }
 }

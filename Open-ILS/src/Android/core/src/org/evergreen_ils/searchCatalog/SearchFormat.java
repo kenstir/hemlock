@@ -130,4 +130,14 @@ public class SearchFormat {
         Log.w(TAG, "search format not found: "+search_format);
         return "";
     }
+
+    /// return true if the search format represents an online resource
+    public static boolean isOnlineResource(String search_format) {
+        if (TextUtils.isEmpty(search_format))
+            return false;
+        if (search_format.equals("picture"))
+            return true;
+        String label = getItemLabelFromSearchFormat(search_format);
+        return label.startsWith("E-"); // E-book, E-audio
+    }
 }
