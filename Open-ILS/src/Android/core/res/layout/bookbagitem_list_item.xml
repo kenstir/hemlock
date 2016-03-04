@@ -43,7 +43,7 @@
 			android:layout_weight="0"
 			style="@style/ApplicationButton"
 			android:layout_marginRight="5dip"
-
+			android:focusable="false"
 	/>
 
 </LinearLayout>
