@@ -69,7 +69,6 @@ public class PlaceHoldActivity extends ActionBarActivity {
     private CheckBox phone_notification;
     private CheckBox email_notification;
     private Button placeHold;
-    private Button cancel;
     private CheckBox suspendHold;
     private Spinner orgSelector;
     private DatePickerDialog datePicker = null;
@@ -95,8 +94,7 @@ public class PlaceHoldActivity extends ActionBarActivity {
         ActionBarUtils.initActionBarForActivity(this);
 
         globalConfigs = GlobalConfigs.getInstance(this);
-        RecordInfo record = (RecordInfo) getIntent().getSerializableExtra(
-                "recordInfo");
+        RecordInfo record = (RecordInfo) getIntent().getSerializableExtra("recordInfo");
 
         context = this;
 
@@ -105,7 +103,6 @@ public class PlaceHoldActivity extends ActionBarActivity {
         title = (TextView) findViewById(R.id.hold_title);
         author = (TextView) findViewById(R.id.hold_author);
         physical_description = (TextView) findViewById(R.id.hold_physical_description);
-        cancel = (Button) findViewById(R.id.cancel_hold);
         placeHold = (Button) findViewById(R.id.place_hold);
         expiration_date = (EditText) findViewById(R.id.hold_expiration_date);
         phone_notification = (CheckBox) findViewById(R.id.hold_enable_phone_notification);
@@ -122,13 +119,6 @@ public class PlaceHoldActivity extends ActionBarActivity {
         // hide edit text
         disableView(thaw_date_edittext);
         disableView(phone_number);
-
-        cancel.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
 
         final Integer record_id = record.doc_id;
 
