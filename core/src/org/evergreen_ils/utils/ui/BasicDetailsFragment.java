@@ -31,7 +31,6 @@ import org.evergreen_ils.accountAccess.bookbags.BookBagUtils;
 import org.evergreen_ils.accountAccess.holds.PlaceHoldActivity;
 import org.evergreen_ils.globals.GlobalConfigs;
 import org.evergreen_ils.net.VolleyWrangler;
-import org.evergreen_ils.searchCatalog.*;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -43,6 +42,10 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import org.evergreen_ils.searchCatalog.CopyInformationActivity;
+import org.evergreen_ils.searchCatalog.RecordInfo;
+import org.evergreen_ils.searchCatalog.RecordLoader;
+import org.evergreen_ils.searchCatalog.SearchFormat;
 
 import java.util.ArrayList;
 
@@ -52,7 +55,7 @@ public class BasicDetailsFragment extends Fragment {
 
     private Activity activity;
     private RecordInfo record;
-    private Integer orgId;
+    private Integer orgID;
     private Integer position;
     private Integer total;
 
@@ -77,14 +80,12 @@ public class BasicDetailsFragment extends Fragment {
 
     private NetworkImageView recordImage;
 
-    public static BasicDetailsFragment newInstance(RecordInfo record,
-            Integer position, Integer total, Integer orgID) {
+    public static BasicDetailsFragment newInstance(RecordInfo record, Integer position, Integer total, Integer orgID) {
         BasicDetailsFragment fragment = new BasicDetailsFragment();
         fragment.record = record;
-        fragment.orgId = orgID;
+        fragment.orgID = orgID;
         fragment.position = position;
         fragment.total = total;
-
         return fragment;
     }
 
@@ -96,18 +97,18 @@ public class BasicDetailsFragment extends Fragment {
         super.onCreate(savedInstanceState);
         if (savedInstanceState != null) {
             record = (RecordInfo) savedInstanceState.getSerializable("recordInfo");
-            orgId = savedInstanceState.getInt("orgId");
-            this.position = savedInstanceState.getInt("position");
-            this.total = savedInstanceState.getInt("total");
+            orgID = savedInstanceState.getInt("orgID");
+            position = savedInstanceState.getInt("position");
+            total = savedInstanceState.getInt("total");
         }
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
         outState.putSerializable("recordInfo", record);
-        outState.putInt("orgId", this.orgId);
-        outState.putInt("position", this.position);
-        outState.putInt("total", this.total);
+        outState.putInt("orgID", orgID);
+        outState.putInt("position", position);
+        outState.putInt("total", total);
         super.onSaveInstanceState(outState);
     }
 
@@ -136,7 +137,7 @@ public class BasicDetailsFragment extends Fragment {
         onlineAccessButton = (Button) layout.findViewById(R.id.record_details_online_button);
         addToBookbagButton = (Button) layout.findViewById(R.id.add_to_bookbag_button);
 
-        record_header.setText(String.format(getString(R.string.record_of), position, total));
+        record_header.setText(String.format(getString(R.string.record_of), position+1, total));
         descriptionTextView.setText("");
 
         initButtons();
@@ -169,7 +170,7 @@ public class BasicDetailsFragment extends Fragment {
             public void onClick(View v) {
                 Intent intent = new Intent(getActivity().getApplicationContext(), CopyInformationActivity.class);
                 intent.putExtra("recordInfo", record);
-                intent.putExtra("orgId", orgId);
+                intent.putExtra("orgID", orgID);
                 startActivity(intent);
             }
         });
@@ -275,7 +276,7 @@ public class BasicDetailsFragment extends Fragment {
                     }
                 });
         if (!record.isOnlineResource()) {
-            RecordLoader.fetchCopyCount(record, orgId, getActivity(), new RecordLoader.Listener() {
+            RecordLoader.fetchCopyCount(record, orgID, getActivity(), new RecordLoader.Listener() {
                 @Override
                 public void onDataAvailable() {
                     updateCopyCountView();
@@ -291,10 +292,10 @@ public class BasicDetailsFragment extends Fragment {
             descriptionTextView.setText("");
         } else {
             for (int i = 0; i < record.copyCountListInfo.size(); i++) {
-//            Log.d(TAG, "xxx orgId=" + orgId
+//            Log.d(TAG, "xxx orgID=" + orgID
 //                    + " rec.org_id=" + record.copyCountListInfo.get(i).org_id
 //                    + " rec.count=" + record.copyCountListInfo.get(i).count);
-                if (record.copyCountListInfo.get(i).org_id.equals(orgId)) {
+                if (record.copyCountListInfo.get(i).org_id.equals(orgID)) {
                     total = record.copyCountListInfo.get(i).count;
                     available = record.copyCountListInfo.get(i).available;
                     break;
@@ -302,7 +303,7 @@ public class BasicDetailsFragment extends Fragment {
             }
             String totalCopies = getResources().getQuantityString(R.plurals.number_of_copies, total, total);
             descriptionTextView.setText(String.format(getString(R.string.n_of_m_available),
-                    available, totalCopies, globalConfigs.getOrganizationName(orgId)));
+                    available, totalCopies, globalConfigs.getOrganizationName(orgID)));
         }
     }
 

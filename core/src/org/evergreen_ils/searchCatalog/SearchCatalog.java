@@ -195,6 +195,7 @@ public class SearchCatalog {
      *            the id
      * @return the item short info
      */
+    //todo replace callers of this method with RecordLoader.fetchBasicMetadata
     private OSRFObject getItemShortInfo(Integer id) {
         OSRFObject response = (OSRFObject) Utils.doRequestSimple(conn(), SERVICE,
                 METHOD_SLIM_RETRIEVE, new Object[] {
@@ -244,6 +245,7 @@ public class SearchCatalog {
         return ret;
     }
 
+    // todo replace callers with RecordLoader
     public ArrayList<RecordInfo> getRecordsInfo(ArrayList<Integer> ids) {
 
         ArrayList<RecordInfo> recordInfoArray = new ArrayList<RecordInfo>();

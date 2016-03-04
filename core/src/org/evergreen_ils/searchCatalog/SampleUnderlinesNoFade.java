@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software 
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
- * 
+ *
  */
 package org.evergreen_ils.searchCatalog;
 
@@ -46,7 +46,8 @@ public class SampleUnderlinesNoFade extends BaseSampleActivity {
     private Runnable searchRunnableWithOffset;
 
     public static final int RETURN_DATA = 5;
-    private Integer orgID = -1;
+    private Integer orgID = 1;
+    private Integer numResults = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,15 +62,16 @@ public class SampleUnderlinesNoFade extends BaseSampleActivity {
 
         search = SearchCatalog.getInstance();
 
-        orgID = getIntent().getIntExtra("orgID", -1);
+        orgID = getIntent().getIntExtra("orgID", 1);
         records = (ArrayList<RecordInfo>) getIntent().getSerializableExtra("recordList");
+        int record_position = getIntent().getIntExtra("recordPosition", 0);
+        numResults = getIntent().getIntExtra("numResults", records.size());
 
         if (records.get(records.size() - 1).dummy == true)
             records.remove(records.size() - 1);
 
         context = this;
         
-        int record_position = getIntent().getIntExtra("recordPosition", 0);
         mAdapter = new SearchFragmentAdapter(getSupportFragmentManager());
         mPager = (ViewPager) findViewById(R.id.pager);
         mPager.setAdapter(mAdapter);
@@ -141,14 +143,11 @@ public class SampleUnderlinesNoFade extends BaseSampleActivity {
 
         @Override
         public Fragment getItem(int position) {
-            // position +1 for 1 - size values
-            
-            if(position == records.size() - 1 && records.size() < search.visible){
-                    Thread getSearchResults = new Thread(searchRunnableWithOffset);
-                    getSearchResults.start();
+            if (records.size() > 1 && position == records.size() - 1 && records.size() < numResults) {
+                Thread getSearchResults = new Thread(searchRunnableWithOffset);
+                getSearchResults.start();
             }
-            return BasicDetailsFragment.newInstance(records.get(position),
-                    position + 1, search.visible, orgID);
+            return BasicDetailsFragment.newInstance(records.get(position), position, numResults, orgID);
         }
 
         @Override

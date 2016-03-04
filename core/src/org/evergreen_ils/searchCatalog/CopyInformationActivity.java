@@ -51,6 +51,7 @@ public class CopyInformationActivity extends ActionBarActivity {
     private static final String TAG = CopyInformationActivity.class.getSimpleName();
     private Context context;
     private RecordInfo record;
+    private Integer orgID;
     private GlobalConfigs globalConfigs;
 
     @Override
@@ -67,6 +68,7 @@ public class CopyInformationActivity extends ActionBarActivity {
         globalConfigs = GlobalConfigs.getInstance(context);
         context = this;
         record = (RecordInfo) getIntent().getSerializableExtra("recordInfo");
+        orgID = getIntent().getIntExtra("orgID", 1);
 
         initCopyInfo();
     }
@@ -123,9 +125,10 @@ public class CopyInformationActivity extends ActionBarActivity {
         SearchCatalog search = SearchCatalog.getInstance();
         if (record.copyInformationList == null) {
             final long start_ms = System.currentTimeMillis();
+            Organisation org = globalConfigs.getOrganization(orgID);
             String url = GlobalConfigs.getUrl(Utils.buildGatewayUrl(
                     SearchCatalog.SERVICE, SearchCatalog.METHOD_COPY_LOCATION_COUNTS,
-                    new Object[]{record.doc_id, search.selectedOrganization.id, search.selectedOrganization.level}));
+                    new Object[]{record.doc_id, org.id, org.level}));
             GatewayJsonObjectRequest r = new GatewayJsonObjectRequest(
                     url,
                     new Response.Listener<GatewayResponse>() {

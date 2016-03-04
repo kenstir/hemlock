@@ -21,7 +21,9 @@ package org.evergreen_ils.searchCatalog;
 
 import org.evergreen_ils.barcodescan.Intents;
 
-public class Organisation {
+import java.io.Serializable;
+
+public class Organisation implements Serializable {
 
     public Integer level = null;
     public Integer id = null;
