@@ -194,7 +194,7 @@ public class ItemsCheckOutListView extends ActionBarActivity {
             // set text
             recordTitle.setText(record.getTitle());
             recordAuthor.setText(record.getAuthor());
-            recordFormat.setText(record.getFormatLabel());
+            recordFormat.setText(RecordInfo.getFormatLabel(record.recordInfo));
             recordDueDate.setText(getString(R.string.due) + " " + record.getDueDate());
             recordIsOverdue.setText(record.isOverdue() ? getString(R.string.overdue) : "");
             Log.d(TAG, "title: \"" + record.getTitle() + "\""
