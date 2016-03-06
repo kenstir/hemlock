@@ -31,19 +31,12 @@ import android.content.res.Resources;
 public class HoldRecord implements Serializable {
 
     private Integer requestLibID = null;
-
     private Integer pickupLibID = null;
-
     public String holdType = null;
-    // id for target object
     public Integer target = null;
     public Date expire_time = null;
-
     public String title = null;
-
     public String author = null;
-
-    public String format = "";
 
     // only for P types
     public String part_label = null;

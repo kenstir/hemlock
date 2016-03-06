@@ -122,6 +122,12 @@ public class RecordInfo implements Serializable {
         }
     }
 
+    public static String getFormatLabel(RecordInfo record) {
+        if (record == null)
+            return "";
+        return SearchFormat.getItemLabelFromSearchFormat(record.search_format);
+    }
+
     public String getPublishingInfo() {
         String s = TextUtils.join(" ", new Object[] {pubdate, publisher});
         return s.trim();

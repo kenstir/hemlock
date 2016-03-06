@@ -615,7 +615,7 @@ public class AccountAccess {
             HoldRecord hold = new HoldRecord(listHoldsAhr.get(i));
             fetchHoldTitleInfo(listHoldsAhr.get(i), hold);
             fetchHoldStatus(listHoldsAhr.get(i), hold);
-            hold.format = fetchFormat(hold.target);
+            hold.recordInfo.search_format = fetchFormat(hold.target);
             holds.add(hold);
         }
         return holds;

@@ -130,10 +130,4 @@ public class CircRecord {
         Date currentDate = new Date(System.currentTimeMillis());
         return getDueDateObject().compareTo(currentDate) < 0;
     }
-
-    public String getFormatLabel() {
-        if (recordInfo == null)
-            return "";
-        return SearchFormat.getItemLabelFromSearchFormat(recordInfo.search_format);
-    }
 }

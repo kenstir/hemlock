@@ -33,6 +33,7 @@ import org.evergreen_ils.R;
 import org.evergreen_ils.accountAccess.AccountAccess;
 import org.evergreen_ils.accountAccess.SessionNotFoundException;
 import org.evergreen_ils.globals.Log;
+import org.evergreen_ils.searchCatalog.RecordInfo;
 import org.evergreen_ils.searchCatalog.SearchFormat;
 import org.evergreen_ils.utils.ui.ActionBarUtils;
 import org.evergreen_ils.views.splashscreen.SplashActivity;
@@ -210,7 +211,7 @@ public class HoldsListView extends ActionBarActivity {
 
             holdTitle.setText(record.title);
             holdAuthor.setText(record.author);
-            holdFormat.setText(SearchFormat.getItemLabelFromSearchFormat(record.format));
+            holdFormat.setText(RecordInfo.getFormatLabel(record.recordInfo));
             status.setText(record.getHoldStatus(getResources()));
 
             return row;
