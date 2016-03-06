@@ -25,13 +25,15 @@ import java.util.List;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.support.v7.app.ActionBarActivity;
+import android.widget.*;
 import org.evergreen_ils.R;
 import org.evergreen_ils.accountAccess.AccountAccess;
 import org.evergreen_ils.accountAccess.MaxRenewalsException;
 import org.evergreen_ils.accountAccess.ServerErrorMessage;
 import org.evergreen_ils.accountAccess.SessionNotFoundException;
-import org.evergreen_ils.globals.GlobalConfigs;
 import org.evergreen_ils.globals.Log;
+import org.evergreen_ils.searchCatalog.RecordDetails;
+import org.evergreen_ils.searchCatalog.RecordInfo;
 import org.evergreen_ils.searchCatalog.SearchFormat;
 import org.evergreen_ils.utils.ui.ActionBarUtils;
 import org.evergreen_ils.views.splashscreen.SplashActivity;
@@ -43,10 +45,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
-import android.widget.TextView;
-import android.widget.Toast;
 
 public class ItemsCheckOutListView extends ActionBarActivity {
 
@@ -81,6 +79,13 @@ public class ItemsCheckOutListView extends ActionBarActivity {
         listAdapter = new CheckOutArrayAdapter(context,
                 R.layout.checkout_list_item, circRecords);
         lv.setAdapter(listAdapter);
+        lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                RecordInfo info = circRecords.get(position).recordInfo;
+                RecordDetails.launchDetailsFlow(ItemsCheckOutListView.this, info);
+            }
+        });
 
         Thread getCirc = initGetCircThread();
 

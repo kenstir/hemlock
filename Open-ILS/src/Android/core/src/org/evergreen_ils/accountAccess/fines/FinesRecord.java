@@ -23,11 +23,13 @@ import java.util.Date;
 
 import org.evergreen_ils.globals.GlobalConfigs;
 import org.evergreen_ils.globals.Log;
+import org.evergreen_ils.searchCatalog.RecordInfo;
 import org.opensrf.util.OSRFObject;
 
 public class FinesRecord {
 
     public static String TAG = FinesRecord.class.getSimpleName();
+    public RecordInfo recordInfo;
     public String title;
     public String author;
     public Double balance_owed;
@@ -40,19 +42,19 @@ public class FinesRecord {
     public static int FINE_GROCERY_TYPE = 1;
     public static int FINE_CIRCULATION = 2;
 
-    public FinesRecord(OSRFObject circ, OSRFObject mvr_record,
-            OSRFObject mbts_transaction) {
+    public FinesRecord(OSRFObject circ, OSRFObject mvr_record, OSRFObject mbts_transaction) {
 
         if (mbts_transaction.get("xact_type").toString().equals("circulation")) {
-
             title = mvr_record.getString("title");
             author = mvr_record.getString("author");
-
-            if (circ.get("checkin_time") != null) {
-                checkin_time = GlobalConfigs.parseDate(circ.getString("checkin_time"));
-            } else {
-                checkin_time = null;
+            checkin_time = GlobalConfigs.parseDate(circ.getString("checkin_time"));
+            try {
+                // do I want this off the mvr_record or the circ record?
+                recordInfo = new RecordInfo(mvr_record);
+            } catch (Exception e) {
+                Log.d(TAG, "caught", e);
             }
+
         } else {
             // grocery
             title = "Grocery billing";

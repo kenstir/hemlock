@@ -22,6 +22,7 @@ package org.evergreen_ils.accountAccess.checkout;
 import java.util.Date;
 
 import org.evergreen_ils.globals.GlobalConfigs;
+import org.evergreen_ils.searchCatalog.RecordInfo;
 import org.evergreen_ils.searchCatalog.SearchFormat;
 import org.opensrf.util.OSRFObject;
 
@@ -36,28 +37,22 @@ public class CircRecord {
     public static final int MVR_OBJ_TYPE = 1;
     public static final int ACP_OBJ_TYPE = 2;
     public static final int UNDEF_OBJ_TYPE = 0;
+    public enum CircType { OUT, OVERDUE, LONG_OVERDUE, LOST, CLAIMS_RETURNED };
 
     public OSRFObject mvr = null;
     public OSRFObject acp = null;
     public OSRFObject circ = null;
-    public String format = null;
+    public RecordInfo recordInfo = null;
 
     public int circ_info_type = UNDEF_OBJ_TYPE;
 
-    public int circ_type;
-
-    public static final int OUT = 0;
-    public static final int CLAIMS_RETURNED = 1;
-    public static final int LONG_OVERDUE = 2;
-    public static final int OVERDUE = 3;
-    public static final int LOST = 4;
+    public CircType circ_type;
 
     public int circ_id = -1;
 
     private Date circ_due_date = null;
 
-    public CircRecord(OSRFObject circ, OSRFObject mvr, OSRFObject acp,
-            int circ_type, int circ_id) {
+    public CircRecord(OSRFObject circ, OSRFObject mvr, OSRFObject acp, CircType circ_type, int circ_id) {
 
         this.circ = circ;
 
@@ -77,7 +72,7 @@ public class CircRecord {
         this.circ_due_date = GlobalConfigs.parseDate(circ.getString("due_date"));
     }
 
-    public CircRecord(OSRFObject circ, int circ_type, int circ_id) {
+    public CircRecord(OSRFObject circ, CircType circ_type, int circ_id) {
         this.circ = circ;
         this.circ_type = circ_type;
         this.circ_id = circ_id;
@@ -118,7 +113,6 @@ public class CircRecord {
     }
 
     public Integer getRenewals() {
-
         if (circ != null)
             return circ.getInt("renewal_remaining");
 
@@ -138,9 +132,8 @@ public class CircRecord {
     }
 
     public String getFormatLabel() {
-        if (format != null) {
-            return SearchFormat.getItemLabelFromSearchFormat(format);
-        }
-        return "";
+        if (recordInfo == null)
+            return "";
+        return SearchFormat.getItemLabelFromSearchFormat(recordInfo.search_format);
     }
 }

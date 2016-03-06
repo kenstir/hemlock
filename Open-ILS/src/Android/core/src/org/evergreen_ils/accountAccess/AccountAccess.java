@@ -325,26 +325,31 @@ public class AccountAccess {
         Map<String, ?> resp_map = ((Map<String, ?>) resp);
 
         if (resp_map.get("out") != null) {
-            List<String> out_id = (List<String>) resp_map.get("out");
-            for (int i = 0; i < out_id.size(); i++) {
-                OSRFObject circ = retrieveCircRecord(out_id.get(i));
-                CircRecord circRecord = new CircRecord(circ, CircRecord.OUT,
-                        Integer.parseInt(out_id.get(i)));
+            List<String> id = (List<String>) resp_map.get("out");
+            for (int i = 0; i < id.size(); i++) {
+                OSRFObject circ = retrieveCircRecord(id.get(i));
+                CircRecord circRecord = new CircRecord(circ, CircRecord.CircType.OUT,
+                        Integer.parseInt(id.get(i)));
                 fetchInfoForCheckedOutItem(circ.getInt("target_copy"), circRecord);
                 circRecords.add(circRecord);
             }
         }
 
         if (resp_map.get("overdue") != null) {
-            List<String> overdue_id = (List<String>) resp_map.get("overdue");
-            for (int i = 0; i < overdue_id.size(); i++) {
-                OSRFObject circ = retrieveCircRecord(overdue_id.get(i));
-                CircRecord circRecord = new CircRecord(circ, CircRecord.OVERDUE,
-                        Integer.parseInt(overdue_id.get(i)));
+            List<String> id = (List<String>) resp_map.get("overdue");
+            for (int i = 0; i < id.size(); i++) {
+                OSRFObject circ = retrieveCircRecord(id.get(i));
+                CircRecord circRecord = new CircRecord(circ, CircRecord.CircType.OVERDUE,
+                        Integer.parseInt(id.get(i)));
                 fetchInfoForCheckedOutItem(circ.getInt("target_copy"), circRecord);
                 circRecords.add(circRecord);
             }
         }
+
+        // todo handle other circ types LONG_OVERDUE, LOST, CLAIMS_RETURNED ?
+        // resp_map.get("long_overdue")
+        // resp_map.get("lost")
+        // resp_map.get("claims_returned")
 
         Collections.sort(circRecords, new Comparator<CircRecord>() {
             @Override
@@ -400,11 +405,17 @@ public class AccountAccess {
         OSRFObject result;
         Log.d(TAG, "Mods from copy");
         OSRFObject info_mvr = fetchModsFromCopy(target_copy);
+
+        try {
+            circRecord.recordInfo = new RecordInfo(info_mvr);
+            circRecord.recordInfo.search_format = fetchFormat(info_mvr.getInt("doc_id"));
+        } catch (Exception e) {
+            Log.d(TAG, "caught", e);
+        }
+
         // if title or author not inserted, request acp with copy_target
         result = info_mvr;
         OSRFObject info_acp = null;
-
-        circRecord.format = fetchFormat(info_mvr.getInt("doc_id"));
 
         // the logic to establish mvr or acp is copied from the opac
         if (info_mvr.getString("title") == null
@@ -1073,9 +1084,7 @@ public class AccountAccess {
         for (int i = 0; i < list.size(); i++) {
 
             Map<String, OSRFObject> item = list.get(i);
-
-            FinesRecord record = new FinesRecord(item.get("circ"),
-                    item.get("record"), item.get("transaction"));
+            FinesRecord record = new FinesRecord(item.get("circ"), item.get("record"), item.get("transaction"));
             finesRecords.add(record);
         }
 

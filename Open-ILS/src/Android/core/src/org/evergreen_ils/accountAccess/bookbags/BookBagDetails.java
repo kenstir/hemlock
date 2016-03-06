@@ -29,8 +29,8 @@ import org.evergreen_ils.accountAccess.AccountAccess;
 import org.evergreen_ils.accountAccess.SessionNotFoundException;
 import org.evergreen_ils.globals.Log;
 import org.evergreen_ils.globals.Utils;
+import org.evergreen_ils.searchCatalog.RecordDetails;
 import org.evergreen_ils.searchCatalog.RecordInfo;
-import org.evergreen_ils.searchCatalog.SampleUnderlinesNoFade;
 import org.evergreen_ils.searchCatalog.SearchCatalog;
 import org.evergreen_ils.utils.ui.ActionBarUtils;
 import org.evergreen_ils.views.splashscreen.SplashActivity;
@@ -107,8 +107,7 @@ public class BookBagDetails extends ActionBarActivity {
                 builder.setPositiveButton(android.R.string.yes,
                         new DialogInterface.OnClickListener() {
                             @Override
-                            public void onClick(DialogInterface dialog,
-                                    int which) {
+                            public void onClick(DialogInterface dialog, int which) {
                                 deleteList();
                             }
                         });
@@ -123,16 +122,9 @@ public class BookBagDetails extends ActionBarActivity {
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                BookBagItem item = bookBagItems.get(position);
-                ArrayList<RecordInfo> recordList = new ArrayList<RecordInfo>(1);
-                RecordInfo info = item.recordInfo;
-                recordList.add(info);
-                Intent intent = new Intent(getBaseContext(), SampleUnderlinesNoFade.class);
-                intent.putExtra("recordInfo", info);
-                intent.putExtra("recordList", recordList);
-                startActivity(intent);
+                RecordInfo info = bookBagItems.get(position).recordInfo;
+                RecordDetails.launchDetailsFlow(BookBagDetails.this, info);
             }
-
         });
 
         initGetItemsRunnable();
