@@ -24,9 +24,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.support.v7.app.ActionBarActivity;
+import android.widget.*;
 import org.evergreen_ils.R;
 import org.evergreen_ils.accountAccess.AccountAccess;
 import org.evergreen_ils.accountAccess.SessionNotFoundException;
+import org.evergreen_ils.searchCatalog.RecordDetails;
+import org.evergreen_ils.searchCatalog.RecordInfo;
 import org.evergreen_ils.utils.ui.ActionBarUtils;
 import org.evergreen_ils.views.splashscreen.SplashActivity;
 
@@ -36,9 +39,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
-import android.widget.TextView;
 
 public class FinesActivity extends ActionBarActivity {
 
@@ -85,10 +85,17 @@ public class FinesActivity extends ActionBarActivity {
 
         ac = AccountAccess.getInstance();
 
-        ArrayList<FinesRecord> finesRecords = new ArrayList<FinesRecord>();
+        final ArrayList<FinesRecord> finesRecords = new ArrayList<FinesRecord>();
         listAdapter = new OverdueMaterialsArrayAdapter(context,
                 R.layout.fines_list_item, finesRecords);
         lv.setAdapter(listAdapter);
+        lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                RecordInfo info = finesRecords.get(position).recordInfo;
+                RecordDetails.launchDetailsFlow(FinesActivity.this, info);
+            }
+        });
 
         progressDialog = ProgressDialog.show(this,
                 getResources().getText(R.string.dialog_please_wait),

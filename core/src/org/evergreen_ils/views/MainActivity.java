@@ -38,6 +38,7 @@ import org.evergreen_ils.billing.*;
 import org.evergreen_ils.globals.AppState;
 import org.evergreen_ils.globals.Log;
 import org.evergreen_ils.searchCatalog.SearchCatalogListView;
+import org.evergreen_ils.searchCatalog.SearchFormat;
 import org.evergreen_ils.utils.ui.ActionBarUtils;
 import org.evergreen_ils.views.splashscreen.SplashActivity;
 
@@ -55,6 +56,7 @@ public class MainActivity extends ActionBarActivity {
             SplashActivity.restartApp(this);
             return;
         }
+        SearchFormat.init(this);
 
         setContentView(R.layout.activity_main);
         ActionBarUtils.initActionBarForActivity(this, true);

@@ -20,8 +20,6 @@ package org.evergreen_ils.searchCatalog;
 
 import android.content.Context;
 import android.content.Intent;
-import org.evergreen_ils.searchCatalog.RecordInfo;
-import org.evergreen_ils.searchCatalog.SampleUnderlinesNoFade;
 
 import java.util.ArrayList;
 
