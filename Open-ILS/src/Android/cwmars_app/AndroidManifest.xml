@@ -2,8 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           package="org.cwmars"
           android:installLocation="auto"
-          android:versionCode="30"
-          android:versionName="3.0.2">
+          android:versionCode="31"
+          android:versionName="3.0.3">
 
     <uses-sdk
         android:minSdkVersion="15"
