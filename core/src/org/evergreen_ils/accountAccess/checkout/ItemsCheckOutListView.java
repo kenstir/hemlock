@@ -176,9 +176,8 @@ public class ItemsCheckOutListView extends ActionBarActivity {
 
             // if it is the right type of view
             if (row == null) {
-                LayoutInflater inflater = (LayoutInflater) this
-                        .getContext().getSystemService(
-                                Context.LAYOUT_INFLATER_SERVICE);
+                LayoutInflater inflater = (LayoutInflater) this.getContext().getSystemService(
+                        Context.LAYOUT_INFLATER_SERVICE);
                 row = inflater.inflate(R.layout.checkout_list_item, parent, false);
             }
 
@@ -196,7 +195,7 @@ public class ItemsCheckOutListView extends ActionBarActivity {
             recordAuthor.setText(record.getAuthor());
             recordFormat.setText(RecordInfo.getFormatLabel(record.recordInfo));
             recordDueDate.setText(getString(R.string.due) + " " + record.getDueDate());
-            recordIsOverdue.setText(record.isOverdue() ? getString(R.string.overdue) : "");
+            recordIsOverdue.setVisibility(record.isOverdue() ? View.VISIBLE : View.GONE);
             Log.d(TAG, "title: \"" + record.getTitle() + "\""
                     + " due: " + record.getDueDate()
                     + " renewals:  " + record.getRenewals());
