@@ -3,7 +3,7 @@
           package="net.kenstir.apps.hemlock"
           android:installLocation="auto"
           android:versionCode="41"
-          android:versionName="3.0.7">
+          android:versionName="4.0.0">
 
     <uses-sdk
         android:minSdkVersion="15"
