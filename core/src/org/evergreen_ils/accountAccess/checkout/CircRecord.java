@@ -101,15 +101,14 @@ public class CircRecord {
     }
 
     public String getTitle() {
-
-        String title = null;
-
+        if (this.recordInfo.title != null)
+            return this.recordInfo.title;
+        // 2016-07-06: not sure if these are ever needed
         if (this.circ_info_type == MVR_OBJ_TYPE)
-            title = mvr.getString("title");
+            return mvr.getString("title");
         if (this.circ_info_type == ACP_OBJ_TYPE)
-            title = acp.getString("dummy_title");
-
-        return title;
+            return acp.getString("dummy_title");
+        return null;
     }
 
     public Integer getRenewals() {
