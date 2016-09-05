@@ -2,6 +2,7 @@
 *.dex
 */.idea/tasks.xml
 */.idea/workspace.xml
+ConcreteBillingDataProvider.java
 .settings
 bin/
 gen/
