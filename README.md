@@ -16,4 +16,8 @@ Quick start for end users
 Quick start for developers
 --------------------------
 1. This app is built with [IntelliJ IDEA](https://www.jetbrains.com/idea/).  Open the project under hemlock_app.
-2. It might be nice to allow Hemlock to be built with Gradle or Android Studio.  If you want to do it, let me know and submit a pull request.
+2. Want to build Hemlock with Gradle or Android Studio?  If you want to do it, let me know and submit a pull request.
+
+History of this app
+-------------------
+Large portions of this app were originally implemented by [Daniel Rizea](https://github.com/danielrizea) as a Google Summer of Code project.  It was never released through the Play Store.  For a long while the code sat in a [forgotten corner of the Evergreen Git repo](http://git.evergreen-ils.org/?p=working/Evergreen.git;a=shortlog;h=refs/heads/collab/drizea/android), where it remained powerful but inactive, until one day it infected a hapless bystander, who worked on it [in the shadows](http://git.evergreen-ils.org/?p=working/Evergreen.git;a=shortlog;h=refs/heads/user/kenstir/android-master) before releasing it to the world on this very site.
