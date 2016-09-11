@@ -62,9 +62,21 @@ public class AccountUtils {
 
     public static void invalidateAuthToken(Activity activity, String auth_token) {
         Log.i(Const.AUTH_TAG, "invalidateAuthToken "+auth_token);
+        if (TextUtils.isEmpty(auth_token))
+            return;
         final AccountManager am = AccountManager.get(activity);
         final String accountType = activity.getString(R.string.ou_account_type);
         am.invalidateAuthToken(accountType, auth_token);
+    }
+
+    public static void clearPassword(Activity activity, String account_name) {
+        Log.i(Const.AUTH_TAG, "clearPassword "+account_name);
+        if (TextUtils.isEmpty(account_name))
+            return;
+        final AccountManager am = AccountManager.get(activity);
+        final String accountType = activity.getString(R.string.ou_account_type);
+        final Account account = new Account(account_name, accountType);
+        am.clearPassword(account);
     }
 
     public static String getAuthTokenForAccount(Activity activity, String account_name) throws AuthenticatorException, OperationCanceledException, IOException {
