@@ -62,7 +62,14 @@ public class FinesRecord {
 
         try {
             balance_owed = Double.parseDouble(mbts_transaction.getString("total_owed"));
-            max_fine = Double.parseDouble(circ.getString("max_fine"));
+        } catch(NumberFormatException e) {
+            Log.d(TAG, "error converting double", e);
+        }
+
+        try {
+            if (circ != null) {
+                max_fine = Double.parseDouble(circ.getString("max_fine"));
+            }
         } catch(NumberFormatException e) {
             Log.d(TAG, "error converting double", e);
         }
