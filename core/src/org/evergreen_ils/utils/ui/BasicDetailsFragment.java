@@ -279,7 +279,8 @@ public class BasicDetailsFragment extends Fragment {
             RecordLoader.fetchCopyCount(record, orgID, getActivity(), new RecordLoader.Listener() {
                 @Override
                 public void onDataAvailable() {
-                    updateCopyCountView();
+                    if (isAdded())
+                        updateCopyCountView();
                 }
             });
         }
