@@ -271,7 +271,7 @@ public class SearchCatalog {
 
     public static void setCopyCountListInfo(RecordInfo record, GatewayResponse response) {
         record.copyCountListInfo = new ArrayList<CopyCountInformation>();
-        if (response.failed)
+        if (response == null || response.failed)
             return;
         try {
             List<?> list = (List<?>) response.payload;
