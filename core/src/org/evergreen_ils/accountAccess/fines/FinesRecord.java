@@ -49,7 +49,6 @@ public class FinesRecord {
             author = mvr_record.getString("author");
             checkin_time = GlobalConfigs.parseDate(circ.getString("checkin_time"));
             try {
-                // do I want this off the mvr_record or the circ record?
                 recordInfo = new RecordInfo(mvr_record);
             } catch (Exception e) {
                 Log.d(TAG, "caught", e);
