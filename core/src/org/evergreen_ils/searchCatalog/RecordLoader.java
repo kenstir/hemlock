@@ -20,6 +20,7 @@ package org.evergreen_ils.searchCatalog;
 
 import android.content.Context;
 import android.text.TextUtils;
+import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import org.evergreen_ils.accountAccess.AccountAccess;
@@ -61,6 +62,7 @@ public class RecordLoader {
                     new Object[]{record.doc_id}));
             GatewayJsonObjectRequest r = new GatewayJsonObjectRequest(
                     url,
+                    Request.Priority.HIGH,
                     new Response.Listener<GatewayResponse>() {
                         @Override
                         public void onResponse(GatewayResponse response) {
@@ -84,6 +86,7 @@ public class RecordLoader {
                     new Object[]{AccountAccess.getInstance().getAuthToken(), record.doc_id}));
             GatewayJsonObjectRequest r = new GatewayJsonObjectRequest(
                     url,
+                    Request.Priority.NORMAL,
                     new Response.Listener<GatewayResponse>() {
                         @Override
                         public void onResponse(GatewayResponse response) {
@@ -105,6 +108,7 @@ public class RecordLoader {
                     new Object[]{orgID, record.doc_id}));
             GatewayJsonObjectRequest r = new GatewayJsonObjectRequest(
                     url,
+                    Request.Priority.LOW,
                     new Response.Listener<GatewayResponse>() {
                         @Override
                         public void onResponse(GatewayResponse response) {
