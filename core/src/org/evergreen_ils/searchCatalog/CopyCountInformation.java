@@ -43,7 +43,7 @@ public class CopyCountInformation implements Serializable {
         this.depth = ((Map<String, Integer>) map).get("depth");
         this.unshadow = ((Map<String, Integer>) map).get("unshadow");
 
-        Log.d(TAG, org_id + " " + available + " " + count);
+        //Log.d(TAG, org_id + " " + available + " " + count);
     }
 
 }
