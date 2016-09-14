@@ -43,7 +43,7 @@ public class GatewayResponse {
             if (!resp.status.equals("200"))
                 resp.failed = true;
             resp.responseList = (List<Object>) resp.map.get("payload");
-            resp.payload = resp.responseList.remove(0);
+            resp.payload = (resp.responseList.size() > 0) ? resp.responseList.remove(0) : null;
         } catch (JSONException e) {
             resp.ex = e;
             resp.failed = true;
