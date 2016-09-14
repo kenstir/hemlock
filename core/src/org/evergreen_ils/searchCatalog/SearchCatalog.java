@@ -303,7 +303,7 @@ public class SearchCatalog {
     }
 
     public static void setCopyLocationCounts(RecordInfo record, GatewayResponse response) {
-        Log.d(TAG, "record.doc_id"+record.doc_id);
+        Log.d(TAG, "record.doc_id "+record.doc_id);
         record.copyInformationList = new ArrayList<CopyInformation>();
         if (response.failed)
             return;
