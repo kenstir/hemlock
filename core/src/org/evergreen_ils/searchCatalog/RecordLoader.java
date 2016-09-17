@@ -54,7 +54,7 @@ public class RecordLoader {
 
     public static void fetchBasicMetadata(final RecordInfo record, Context context, final ResponseListener responseListener) {
         Log.d(TAG, "fetchBasicMetadata id="+record.doc_id+ " title="+record.title);
-        if (!TextUtils.isEmpty(record.title)) {
+        if (record.basic_metadata_loaded) {
             responseListener.onMetadataLoaded();
         } else {
             String url = GlobalConfigs.getUrl(Utils.buildGatewayUrl(
@@ -77,7 +77,7 @@ public class RecordLoader {
 
     public static void fetchSearchFormat(final RecordInfo record, Context context, final ResponseListener responseListener) {
         Log.d(TAG, "fetchSearchFormat id="+record.doc_id+ " format="+record.search_format);
-        if (!TextUtils.isEmpty(record.search_format)) {
+        if (record.search_format_loaded) {
             responseListener.onSearchFormatLoaded();
         } else {
             // todo newer EG supports "ANONYMOUS" PCRUD which should be faster w/o authToken
@@ -90,7 +90,8 @@ public class RecordLoader {
                     new Response.Listener<GatewayResponse>() {
                         @Override
                         public void onResponse(GatewayResponse response) {
-                            record.search_format = AccountAccess.getSearchFormatFromMRAResponse((OSRFObject) response.payload);
+                            // todo: move this to record.setSearchFormat()
+                            record.setSearchFormat(AccountAccess.getSearchFormatFromMRAResponse((OSRFObject) response.payload));
                             responseListener.onSearchFormatLoaded();
                         }
                     },
@@ -100,7 +101,9 @@ public class RecordLoader {
     }
 
     public static void fetchCopyCount(final RecordInfo record, final int orgID, Context context, final Listener listener) {
-        if (record.copyCountListInfo != null) {
+        Log.d(TAG, "fetchCopyCount id="+record.doc_id
+                +" list=" + ((record.copyCountInformationList == null) ? "null" : "non-null"));
+        if (record.copy_info_loaded) {
             listener.onDataAvailable();
         } else {
             String url = GlobalConfigs.getUrl(Utils.buildGatewayUrl(
@@ -112,7 +115,7 @@ public class RecordLoader {
                     new Response.Listener<GatewayResponse>() {
                         @Override
                         public void onResponse(GatewayResponse response) {
-                            SearchCatalog.setCopyCountListInfo(record, response);
+                            RecordInfo.setCopyCountInfo(record, response);
                             listener.onDataAvailable();
                         }
                     },
@@ -120,7 +123,7 @@ public class RecordLoader {
                         @Override
                         public void onErrorResponse(VolleyError error) {
                             Log.d(TAG, "caught", error);
-                            SearchCatalog.setCopyCountListInfo(record, null);
+                            RecordInfo.setCopyCountInfo(record, null);
                         }
                     });
             VolleyWrangler.getInstance(context).addToRequestQueue(r);

@@ -33,6 +33,7 @@ import java.io.UnsupportedEncodingException;
 public class GatewayJsonObjectRequest extends Request<GatewayResponse> {
     private final Response.Listener<GatewayResponse> mListener;
     private final Priority mPriority;
+    private String TAG = GatewayJsonObjectRequest.class.getSimpleName();
 
     public GatewayJsonObjectRequest(String url, Priority priority, Response.Listener<GatewayResponse> listener, Response.ErrorListener errorListener) {
         super(Request.Method.GET, url, errorListener);

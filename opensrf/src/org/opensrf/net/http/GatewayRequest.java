@@ -35,7 +35,7 @@ public class GatewayRequest extends HttpRequest {
         try {
 
             String postData = compilePostData(service, method);
-            Log.d(TAG, "POST "+httpConn.url.toString()+"?"+postData);
+            Log.d(TAG, "[net] POST "+httpConn.url.toString()+"?"+postData);
 
             urlConn = (HttpURLConnection) httpConn.url.openConnection();
             urlConn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded"); 
