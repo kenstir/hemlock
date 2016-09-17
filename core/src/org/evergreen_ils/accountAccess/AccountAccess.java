@@ -408,7 +408,7 @@ public class AccountAccess {
 
         try {
             circRecord.recordInfo = new RecordInfo(info_mvr);
-            circRecord.recordInfo.search_format = fetchFormat(info_mvr.getInt("doc_id"));
+            circRecord.recordInfo.setSearchFormat(fetchFormat(info_mvr.getInt("doc_id")));
         } catch (Exception e) {
             Log.d(TAG, "caught", e);
         }
@@ -456,7 +456,8 @@ public class AccountAccess {
 
         OSRFObject resp = null;
         try {
-            // todo newer EG supports "ANONYMOUS" PCRUD which should be faster w/o authToken
+            // todo newer EG supports use of "ANONYMOUS" as the auth_token in the PCRUD request,
+            // but there are some older EG installs out there that do not.
             resp = (OSRFObject) Utils.doRequest(conn(), PCRUD_SERVICE,
                     PCRUD_METHOD_RETRIEVE_MRA, authToken, new Object[]{
                             authToken, id});
@@ -615,7 +616,7 @@ public class AccountAccess {
             HoldRecord hold = new HoldRecord(listHoldsAhr.get(i));
             fetchHoldTitleInfo(listHoldsAhr.get(i), hold);
             fetchHoldStatus(listHoldsAhr.get(i), hold);
-            hold.recordInfo.search_format = fetchFormat(hold.target);
+            hold.recordInfo.setSearchFormat(fetchFormat(hold.target));
             holds.add(hold);
         }
         return holds;

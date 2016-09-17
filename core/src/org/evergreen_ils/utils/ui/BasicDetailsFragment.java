@@ -30,6 +30,7 @@ import org.evergreen_ils.accountAccess.bookbags.BookBag;
 import org.evergreen_ils.accountAccess.bookbags.BookBagUtils;
 import org.evergreen_ils.accountAccess.holds.PlaceHoldActivity;
 import org.evergreen_ils.globals.GlobalConfigs;
+import org.evergreen_ils.globals.Log;
 import org.evergreen_ils.net.VolleyWrangler;
 
 import android.content.Intent;
@@ -242,11 +243,13 @@ public class BasicDetailsFragment extends Fragment {
     }
 
     private void updateSearchFormatView() {
+        if (!isAdded()) return; // discard late results
         formatTextView.setText(SearchFormat.getItemLabelFromSearchFormat(record.search_format));
         updateButtonViews();
     }
 
     private void updateBasicMetadataViews() {
+        if (!isAdded()) return; // discard late results
         titleTextView.setText(record.title);
         authorTextView.setText(record.author);
         publisherTextView.setText(record.getPublishingInfo());
@@ -269,36 +272,54 @@ public class BasicDetailsFragment extends Fragment {
                     @Override
                     public void onMetadataLoaded() {
                         updateBasicMetadataViews();
+                        fetchCopyCountInfo(record);
                     }
                     @Override
                     public void onSearchFormatLoaded() {
                         updateSearchFormatView();
+                        fetchCopyCountInfo(record);
                     }
                 });
-        if (!record.isOnlineResource()) {
+    }
+
+    private void fetchCopyCountInfo(RecordInfo record) {
+        // Check for copy counts only after we know it is not an e-book.
+        // The problem is we do not really know yet whether it is an e-book
+        // until both online_loc and search_format are loaded.
+        // See RecordInfo.isOnlineResource().
+        Log.d(TAG, "fetchCopyCountInfo id=" + record.doc_id
+              + " basic_metadata_loaded=" + record.basic_metadata_loaded
+              + " search_format_loaded=" + record.search_format_loaded
+              + " isOnlineResource=" + record.isOnlineResource());
+        if (record.basic_metadata_loaded
+            && record.search_format_loaded
+            && !record.isOnlineResource())
+        {
             RecordLoader.fetchCopyCount(record, orgID, getActivity(), new RecordLoader.Listener() {
                 @Override
                 public void onDataAvailable() {
-                    if (isAdded())
-                        updateCopyCountView();
+                    updateCopyCountView();
                 }
             });
         }
     }
 
     private void updateCopyCountView() {
+        if (!isAdded()) return; // discard late results
+        if (record.copyCountInformationList == null) {
+            Log.d(TAG, "updateCopyCountView " + record.doc_id + " list=null");
+        } else {
+            Log.d(TAG, "updateCopyCountView " + record.doc_id + " list=" + record.copyCountInformationList.size() + " items");
+        }
         int total = 0;
         int available = 0;
-        if (record.copyCountListInfo == null) {
+        if (record.copyCountInformationList == null) {
             descriptionTextView.setText("");
         } else {
-            for (int i = 0; i < record.copyCountListInfo.size(); i++) {
-//            Log.d(TAG, "xxx orgID=" + orgID
-//                    + " rec.org_id=" + record.copyCountListInfo.get(i).org_id
-//                    + " rec.count=" + record.copyCountListInfo.get(i).count);
-                if (record.copyCountListInfo.get(i).org_id.equals(orgID)) {
-                    total = record.copyCountListInfo.get(i).count;
-                    available = record.copyCountListInfo.get(i).available;
+            for (int i = 0; i < record.copyCountInformationList.size(); i++) {
+                if (record.copyCountInformationList.get(i).org_id.equals(orgID)) {
+                    total = record.copyCountInformationList.get(i).count;
+                    available = record.copyCountInformationList.get(i).available;
                     break;
                 }
             }

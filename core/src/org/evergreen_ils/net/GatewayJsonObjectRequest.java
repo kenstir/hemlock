@@ -32,14 +32,22 @@ import java.io.UnsupportedEncodingException;
  */
 public class GatewayJsonObjectRequest extends Request<GatewayResponse> {
     private final Response.Listener<GatewayResponse> mListener;
+    private final Priority mPriority;
+    private String TAG = GatewayJsonObjectRequest.class.getSimpleName();
 
-    public GatewayJsonObjectRequest(String url, Response.Listener<GatewayResponse> listener, Response.ErrorListener errorListener) {
+    public GatewayJsonObjectRequest(String url, Priority priority, Response.Listener<GatewayResponse> listener, Response.ErrorListener errorListener) {
         super(Request.Method.GET, url, errorListener);
+        this.mPriority = priority;
         this.mListener = listener;
     }
 
     protected void deliverResponse(GatewayResponse response) {
         this.mListener.onResponse(response);
+    }
+
+    @Override
+    public Priority getPriority() {
+        return mPriority;
     }
 
     protected Response<GatewayResponse> parseNetworkResponse(NetworkResponse response) {

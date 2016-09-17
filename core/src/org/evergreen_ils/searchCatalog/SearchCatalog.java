@@ -25,7 +25,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import android.text.TextUtils;
 import org.evergreen_ils.globals.GlobalConfigs;
 import org.evergreen_ils.globals.Log;
 import org.evergreen_ils.globals.Utils;
@@ -162,26 +161,11 @@ public class SearchCatalog {
             Integer record_id = Integer.parseInt(ids.get(i));
             resultsRecordInfo.add(new RecordInfo(record_id));
             /*
+            Original impl: load basic metadata synchronously
             RecordInfo record = new RecordInfo(getItemShortInfo(record_id));
             now_ms = Log.logElapsedTime(TAG, now_ms, "search.getItemShortInfo");
             resultsRecordInfo.add(record);
-
-            AccountAccess ac = AccountAccess.getInstance();
-            record.search_format = ac.fetchFormat(record_id.toString());
-            now_ms = Log.logElapsedTime(TAG, now_ms, "search.fetchFormat");
-
-            // todo This takes 30% of the total search time but is not required for SearchCatalogListView
-            // it is needed only for BasicDetailsFragment, but that would cause it to be run on the main thread
-            // and that fails, so continue to do it here for now
-            //record.copyCountListInfo = getCopyCount(record_id, this.selectedOrganization.id);
-            //record.copyInformationList = getCopyLocationCounts(record_id, this.selectedOrganization.id, this.selectedOrganization.level);
-            //now_ms = logElapsedTime(TAG, now_ms, "search.getCopyXXX");
-
-            Log.d(TAG, "Title:" + record.title
-                    + " Author:" + record.author
-                    + " Pubdate:" + record.pubdate
-                    + " Publisher:" + record.publisher);
-                    */
+            */
         }
         Log.logElapsedTime(TAG, start_ms, "search.total");
 
@@ -267,21 +251,6 @@ public class SearchCatalog {
     public void selectOrganisation(Organisation org) {
         Log.d(TAG, "selectOrganisation id=" + org.id);
         this.selectedOrganization = org;
-    }
-
-    public static void setCopyCountListInfo(RecordInfo record, GatewayResponse response) {
-        record.copyCountListInfo = new ArrayList<CopyCountInformation>();
-        if (response == null || response.failed)
-            return;
-        try {
-            List<?> list = (List<?>) response.payload;
-            for (Object obj : list) {
-                CopyCountInformation info = new CopyCountInformation(obj);
-                record.copyCountListInfo.add(info);
-            }
-        } catch (Exception e) {
-            Log.d(TAG, "caught", e);
-        }
     }
 
     public static ArrayList<CopyCountInformation> getCopyCount(Integer recordID, Integer orgID) {

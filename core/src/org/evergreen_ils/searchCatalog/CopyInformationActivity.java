@@ -25,7 +25,7 @@ import java.util.Map.Entry;
 
 import android.support.v7.app.ActionBarActivity;
 import android.view.MenuItem;
-import com.android.volley.RequestQueue;
+import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import org.evergreen_ils.R;
@@ -121,7 +121,7 @@ public class CopyInformationActivity extends ActionBarActivity {
     }
 
     private void initCopyInfo() {
-        Log.d(TAG, "kcx.initCopyInfo, id="+record.doc_id+" info="+record.copyCountListInfo);
+        Log.d(TAG, "kcx.initCopyInfo, id="+record.doc_id+" info="+record.copyCountInformationList);
         SearchCatalog search = SearchCatalog.getInstance();
         if (record.copyInformationList == null) {
             final long start_ms = System.currentTimeMillis();
@@ -131,6 +131,7 @@ public class CopyInformationActivity extends ActionBarActivity {
                     new Object[]{record.doc_id, org.id, org.level}));
             GatewayJsonObjectRequest r = new GatewayJsonObjectRequest(
                     url,
+                    Request.Priority.NORMAL,
                     new Response.Listener<GatewayResponse>() {
                         @Override
                         public void onResponse(GatewayResponse response) {

@@ -27,6 +27,7 @@ import java.util.Map;
 import android.text.TextUtils;
 import org.evergreen_ils.globals.Log;
 import org.evergreen_ils.globals.Utils;
+import org.opensrf.util.GatewayResponse;
 import org.opensrf.util.OSRFObject;
 
 public class RecordInfo implements Serializable {
@@ -49,7 +50,13 @@ public class RecordInfo implements Serializable {
     public String series = "";
     public boolean dummy = false;
 
-    public ArrayList<CopyCountInformation> copyCountListInfo = null;
+    // todo: put the knowledge of whether this record has been loaded here in RecordInfo
+    // and not scattered e.g. in RecordLoader and BasicDetailsFragment
+    public boolean basic_metadata_loaded = false;
+    public boolean search_format_loaded = false;
+    public boolean copy_info_loaded = false;
+
+    public ArrayList<CopyCountInformation> copyCountInformationList = null;
     public List<CopyInformation> copyInformationList = null;
     public String search_format = null;
 
@@ -120,6 +127,29 @@ public class RecordInfo implements Serializable {
         } catch (Exception e) {
             Log.d(TAG, "caught", e);
         }
+
+        record.basic_metadata_loaded = true;
+    }
+
+    public static void setCopyCountInfo(RecordInfo record, GatewayResponse response) {
+        record.copyCountInformationList = new ArrayList<CopyCountInformation>();
+        if (response == null || response.failed)
+            return;
+        try {
+            List<?> list = (List<?>) response.payload;
+            for (Object obj : list) {
+                CopyCountInformation info = new CopyCountInformation(obj);
+                record.copyCountInformationList.add(info);
+            }
+        } catch (Exception e) {
+            Log.d(TAG, "caught", e);
+        }
+        record.copy_info_loaded = true;
+    }
+
+    public void setSearchFormat(String format) {
+        search_format = format;
+        search_format_loaded = true;
     }
 
     public static String getFormatLabel(RecordInfo record) {
