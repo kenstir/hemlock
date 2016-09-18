@@ -60,7 +60,7 @@
                     android:layout_width="120dp"
                     android:layout_height="wrap_content"
                     android:layout_margin="0dp"
-                    android:src="@drawable/abc_ic_search"/>
+                    android:src="@drawable/abc_ic_search_api_mtrl_alpha"/>
         </LinearLayout>
     </LinearLayout>
 

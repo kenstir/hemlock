@@ -27,7 +27,7 @@
                 android:layout_width="40dp"
                 android:layout_height="wrap_content"
                 android:layout_margin="0dp"
-                android:src="@drawable/abc_ic_search"
+                android:src="@drawable/abc_ic_search_api_mtrl_alpha"
                 android:layout_weight="1"
                 android:contentDescription="@string/search_button_alt"/>
     </LinearLayout>
