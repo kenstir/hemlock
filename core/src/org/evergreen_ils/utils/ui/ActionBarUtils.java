@@ -37,7 +37,7 @@ public class ActionBarUtils {
             return;
 //        actionBar.setLogo(R.drawable.evergreen_launcher_icon_48);
 //        actionBar.setDisplayUseLogoEnabled(true);
-        actionBar.setIcon(R.drawable.evergreen_launcher_icon_48);
+        actionBar.setIcon(R.drawable.evergreen_launcher_icon);
 
         actionBar.setSubtitle(String.format(activity.getString(R.string.ou_activity_subtitle),
                 AppState.getString(AppState.LIBRARY_NAME),
