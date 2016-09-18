@@ -19,8 +19,8 @@
 package org.evergreen_ils.utils.ui;
 
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import org.evergreen_ils.R;
 import org.evergreen_ils.accountAccess.AccountAccess;
 import org.evergreen_ils.globals.AppState;
@@ -30,7 +30,15 @@ import org.evergreen_ils.globals.AppState;
  */
 public class ActionBarUtils {
     public static void initActionBarForActivity(AppCompatActivity activity, boolean isMainActivity) {
+        Toolbar toolbar = (Toolbar)activity.findViewById(R.id.my_toolbar);
+        activity.setSupportActionBar(toolbar);
         ActionBar actionBar = activity.getSupportActionBar();
+        if (actionBar == null)
+            return;
+//        actionBar.setLogo(R.drawable.evergreen_launcher_icon_48);
+//        actionBar.setDisplayUseLogoEnabled(true);
+        actionBar.setIcon(R.drawable.evergreen_launcher_icon_48);
+
         actionBar.setSubtitle(String.format(activity.getString(R.string.ou_activity_subtitle),
                 AppState.getString(AppState.LIBRARY_NAME),
                 AccountAccess.userName));
