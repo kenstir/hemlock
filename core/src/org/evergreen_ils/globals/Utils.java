@@ -19,21 +19,16 @@
  */
 package org.evergreen_ils.globals;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
+import java.net.HttpURLConnection;
 import java.net.URI;
+import java.net.URL;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import android.os.Looper;
 import android.text.TextUtils;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
 import org.evergreen_ils.accountAccess.SessionNotFoundException;
 import org.evergreen_ils.auth.Const;
 import org.opensrf.Method;
@@ -41,10 +36,10 @@ import org.opensrf.net.http.GatewayRequest;
 import org.opensrf.net.http.HttpConnection;
 import org.opensrf.net.http.HttpRequest;
 import org.opensrf.util.JSONWriter;
-import org.opensrf.util.OSRFObject;
 
 public class Utils {
     private static final String TAG = Utils.class.getSimpleName();
+    private static HttpURLConnection mConn = null;
 
     /**
      * Gets the net page content.
@@ -55,47 +50,48 @@ public class Utils {
      */
     public static String fetchUrl(String url) {
 
-        String result = "";
-
-        HttpResponse response = null;
-
-        try {
-            HttpClient client = new DefaultHttpClient();
-            HttpGet request = new HttpGet(url);
-            response = client.execute(request);
-        } catch (Exception e) {
-            Log.d(TAG, "Exception to GET page " + url);
-        }
-        StringBuilder str = null;
+        StringBuilder str = new StringBuilder();
+        String line;
+        if (mConn != null) mConn.disconnect();
 
         try {
-            InputStream in = response.getEntity().getContent();
-            BufferedReader reader = new BufferedReader(
-                    new InputStreamReader(in));
-            str = new StringBuilder();
-            String line = null;
-            while ((line = reader.readLine()) != null) {
+            URL url2 = new URL(url);
+            mConn = (HttpURLConnection) url2.openConnection();
+            BufferedReader in = new BufferedReader(new InputStreamReader(mConn.getInputStream()));
+            while ((line = in.readLine()) != null) {
                 str.append(line);
             }
             in.close();
-        } catch (Exception e) {
-            System.err.println("Error in retrieving response " + e.getMessage());
+
+        } catch(Exception e) {
+            Log.d(TAG, "Exception fetching " + url, e);
+        } finally {
+            if (mConn != null) mConn.disconnect();
         }
 
-        result = str.toString();
-
-        return result;
+        return str.toString();
     }
 
     public static InputStream getNetInputStream(String url) throws IOException {
 
-        InputStream in = null;
+        if (mConn != null) mConn.disconnect();
 
-        HttpResponse response = null;
-        HttpClient client = new DefaultHttpClient();
-        HttpGet request = new HttpGet(url);
-        response = client.execute(request);
-        return response.getEntity().getContent();
+        try {
+            URL url2 = new URL(url);
+            mConn = (HttpURLConnection) url2.openConnection();
+            return mConn.getInputStream();
+        } catch(Exception e) {
+            Log.d(TAG, "Exception fetching " + url, e);
+        }
+
+        return null;
+    }
+
+    public static void closeNetInputStream() {
+        if (mConn != null) {
+            mConn.disconnect();
+            mConn = null;
+        }
     }
 
     public static String getResponseTextcode(Object response) {

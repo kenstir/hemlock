@@ -64,8 +64,8 @@ public class NotificationReceiver extends BroadcastReceiver {
         PendingIntent contentIntent = PendingIntent.getActivity(context, 0,
                 notificationIntent, 0);
 
-        notification.setLatestEventInfo(context, contentTitle, contentText,
-                contentIntent);
+        // todo this got removed in v23
+//        notification.setLatestEventInfo(context, contentTitle, contentText, contentIntent);
 
         mNotificationManager.notify(NOTIFICATION_ID, notification);
 

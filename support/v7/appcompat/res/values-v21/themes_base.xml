@@ -27,6 +27,9 @@
         <item name="android:windowNoTitle">true</item>
         <item name="android:windowActionBar">false</item>
 
+        <item name="android:textColorLink">?android:attr/colorAccent</item>
+        <item name="android:textColorLinkInverse">?android:attr/colorAccent</item>
+
         <item name="android:buttonBarStyle">?attr/buttonBarStyle</item>
         <item name="android:buttonBarButtonStyle">?attr/buttonBarButtonStyle</item>
     </style>
@@ -34,6 +37,9 @@
     <style name="Platform.AppCompat.Light" parent="android:Theme.Material.Light">
         <item name="android:windowNoTitle">true</item>
         <item name="android:windowActionBar">false</item>
+
+        <item name="android:textColorLink">?android:attr/colorAccent</item>
+        <item name="android:textColorLinkInverse">?android:attr/colorAccent</item>
 
         <item name="android:buttonBarStyle">?attr/buttonBarStyle</item>
         <item name="android:buttonBarButtonStyle">?attr/buttonBarButtonStyle</item>
@@ -64,7 +70,7 @@
         <item name="borderlessButtonStyle">?android:borderlessButtonStyle</item>
         <item name="dividerHorizontal">?android:attr/dividerHorizontal</item>
         <item name="dividerVertical">?android:attr/dividerVertical</item>
-        <item name="editTextBackground">?android:attr/editTextBackground</item>
+        <item name="editTextBackground">@drawable/abc_edit_text_material</item>
         <item name="editTextColor">?android:attr/editTextColor</item>
         <item name="listChoiceBackgroundIndicator">?android:attr/listChoiceBackgroundIndicator</item>
 
@@ -109,7 +115,7 @@
         <item name="borderlessButtonStyle">?android:borderlessButtonStyle</item>
         <item name="dividerHorizontal">?android:attr/dividerHorizontal</item>
         <item name="dividerVertical">?android:attr/dividerVertical</item>
-        <item name="editTextBackground">?android:attr/editTextBackground</item>
+        <item name="editTextBackground">@drawable/abc_edit_text_material</item>
         <item name="editTextColor">?android:attr/editTextColor</item>
         <item name="listChoiceBackgroundIndicator">?android:attr/listChoiceBackgroundIndicator</item>
 

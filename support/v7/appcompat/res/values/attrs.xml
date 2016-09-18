@@ -31,7 +31,7 @@
     <attr name="isLightTheme" format="boolean" />
 
     <!-- These are the standard attributes that make up a complete theme. -->
-    <declare-styleable name="Theme">
+    <declare-styleable name="AppCompatTheme">
 
         <!-- ============= -->
         <!-- Window styles -->
@@ -374,6 +374,10 @@
         <attr name="radioButtonStyle" format="reference" />
         <!-- Default RatingBar style. -->
         <attr name="ratingBarStyle" format="reference" />
+        <!-- Indicator RatingBar style. -->
+        <attr name="ratingBarStyleIndicator" format="reference" />
+        <!-- Small indicator RatingBar style. -->
+        <attr name="ratingBarStyleSmall" format="reference" />
         <!-- Default SeekBar style. -->
         <attr name="seekBarStyle" format="reference" />
         <!-- Default Spinner style. -->
@@ -686,6 +690,8 @@
         <attr name="android:popupBackground" />
         <!-- Width of the dropdown in spinnerMode="dropdown". -->
         <attr name="android:dropDownWidth" />
+        <!-- Reference to an array resource that will populate the Spinner. -->
+        <attr name="android:entries" />
     </declare-styleable>
 
     <declare-styleable name="SearchView">
@@ -957,6 +963,12 @@
         <!-- Whether to automatically stack the buttons when there is not
              enough space to lay them out side-by-side. -->
         <attr name="allowStacking" format="boolean" />
+    </declare-styleable>
+
+    <declare-styleable name="AppCompatImageView">
+        <attr name="android:src"/>
+        <!-- TODO -->
+        <attr name="srcCompat" format="reference" />
     </declare-styleable>
 
 </resources>
