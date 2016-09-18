@@ -20,6 +20,7 @@ package org.evergreen_ils.utils.ui;
 
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import org.evergreen_ils.R;
 import org.evergreen_ils.accountAccess.AccountAccess;
 import org.evergreen_ils.globals.AppState;
@@ -28,7 +29,7 @@ import org.evergreen_ils.globals.AppState;
  * Created by kenstir on 11/21/2015.
  */
 public class ActionBarUtils {
-    public static void initActionBarForActivity(ActionBarActivity activity, boolean isMainActivity) {
+    public static void initActionBarForActivity(AppCompatActivity activity, boolean isMainActivity) {
         ActionBar actionBar = activity.getSupportActionBar();
         actionBar.setSubtitle(String.format(activity.getString(R.string.ou_activity_subtitle),
                 AppState.getString(AppState.LIBRARY_NAME),
@@ -38,7 +39,7 @@ public class ActionBarUtils {
         }
     }
 
-    public static void initActionBarForActivity(ActionBarActivity activity) {
+    public static void initActionBarForActivity(AppCompatActivity activity) {
         initActionBarForActivity(activity, false);
     }
 }
