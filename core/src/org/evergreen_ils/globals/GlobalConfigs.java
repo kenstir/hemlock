@@ -36,7 +36,8 @@ import java.util.*;
 
 public class GlobalConfigs {
 
-    public static String IDL_CLASSES_USED = "acn,acp,ahr,ahtc,aou,au,bmp,cbreb,cbrebi,cbrebin,cbrebn,ccs,circ,ex,mbt,mbts,mous,mra,mus,mvr,perm_ex";
+    public static String IDL_CLASSES_USED = "acn,acp,ahr,ahtc,aou,au,bmp,cbreb,cbrebi,cbrebin,cbrebn,ccs,circ,ex,mbt,mbts,mous,mra,mraf,mus,mvr,perm_ex";
+    //todo: unused mra?
     // extra classes needed for open-ils.actor.user.fleshed.retrieve: ac,au,aua,auact,cuat
     //public static String IDL_FILE_FROM_ASSETS = "fm_IDL.xml";
     private static String httpAddress = "";

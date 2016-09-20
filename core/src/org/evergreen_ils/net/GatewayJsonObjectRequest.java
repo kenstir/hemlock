@@ -23,6 +23,7 @@ import com.android.volley.ParseError;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.toolbox.HttpHeaderParser;
+import org.evergreen_ils.globals.Log;
 import org.opensrf.util.GatewayResponse;
 
 import java.io.UnsupportedEncodingException;
@@ -58,9 +59,11 @@ public class GatewayJsonObjectRequest extends Request<GatewayResponse> {
             if (parsed.failed == false) {
                 return Response.success(parsed, HttpHeaderParser.parseCacheHeaders(response));
             } else {
+                Log.d(TAG, "parse failed", parsed.ex);
                 return Response.error(new ParseError(parsed.ex));
             }
         } catch (UnsupportedEncodingException ex) {
+            Log.d(TAG, "caught", ex);
             return Response.error(new ParseError(ex));
         }
     }

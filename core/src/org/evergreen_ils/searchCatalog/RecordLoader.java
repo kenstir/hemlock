@@ -32,6 +32,10 @@ import org.evergreen_ils.net.VolleyWrangler;
 import org.opensrf.util.GatewayResponse;
 import org.opensrf.util.OSRFObject;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.HashMap;
+
 /** Async interface for loading RecordInfo metadata
  *
  * Created by kenstir on 12/27/2015.
@@ -80,18 +84,23 @@ public class RecordLoader {
         if (record.search_format_loaded) {
             responseListener.onSearchFormatLoaded();
         } else {
-            // todo newer EG supports "ANONYMOUS" PCRUD which should be faster w/o authToken
+            // todo newer EG supports using "ANONYMOUS" as the auth_token in PCRUD requests.
+            // Older EG does not, and requires a valid auth_token.
+            ArrayList<Integer> l = new ArrayList<Integer>();
+            l.add(record.doc_id);
+            HashMap<String, Object> m = new HashMap<String, Object>();
+            m.put("id", l);
             String url = GlobalConfigs.getUrl(Utils.buildGatewayUrl(
-                    AccountAccess.PCRUD_SERVICE, AccountAccess.PCRUD_METHOD_RETRIEVE_MRA,
-                    new Object[]{AccountAccess.getInstance().getAuthToken(), record.doc_id}));
+                    AccountAccess.PCRUD_SERVICE, AccountAccess.PCRUD_METHOD_SEARCH_MRAF,
+                    new Object[]{AccountAccess.getInstance().getAuthToken(), m}));
+                            //record.doc_id
             GatewayJsonObjectRequest r = new GatewayJsonObjectRequest(
                     url,
                     Request.Priority.NORMAL,
                     new Response.Listener<GatewayResponse>() {
                         @Override
                         public void onResponse(GatewayResponse response) {
-                            // todo: move this to record.setSearchFormat()
-                            record.setSearchFormat(AccountAccess.getSearchFormatFromMRAResponse((OSRFObject) response.payload));
+                            record.setSearchFormat(AccountAccess.getSearchFormatFromMRAList(response.payload));
                             responseListener.onSearchFormatLoaded();
                         }
                     },
