@@ -469,9 +469,17 @@ public class AccountAccess {
         return getSearchFormatFromMRAResponse(resp);
     }
 
-    public static String getSearchFormatFromMRAResponse(OSRFObject resp) {
-        if (resp == null)
+    public static String getSearchFormatFromMRAResponse(Object response) {
+        if (response == null)
             return ""; // todo log this
+
+        OSRFObject resp = null;
+        try {
+            resp = (OSRFObject) response;
+        } catch (ClassCastException ex) {
+            Log.d(TAG, "caught", ex);
+            return ""; // todo log this
+        }
 
         // This is not beautiful.  This MRA record comes back with an 'attrs' field that
         // appears to have been serialized by perl Data::Dumper, e.g.
@@ -515,6 +523,46 @@ public class AccountAccess {
         // This is not beautiful.  An MRA record comes back with an 'attrs' field that
         // appears to have been serialized by perl Data::Dumper, e.g.
         //     "biog"=>"b", "conf"=>"0", "search_format"=>"ebook"
+        String attrs = resp.getString("attrs");
+        //Log.d(TAG, "attrs="+attrs);
+        String[] attr_arr = TextUtils.split(attrs, ", ");
+        String icon_format = "";
+        String search_format = "";
+        for (int i=0; i<attr_arr.length; ++i) {
+            String[] kv = TextUtils.split(attr_arr[i], "=>");
+            String key = kv[0].replace("\"", "");
+            if (key.equalsIgnoreCase("icon_format")) {
+                icon_format = kv[1].replace("\"", "");
+            } else if (key.equalsIgnoreCase("search_format")) {
+                search_format = kv[1].replace("\"", "");
+            }
+        }
+        if (!icon_format.isEmpty()) {
+            return icon_format;
+        } else {
+            return search_format;
+        }
+    }
+
+    // experiment to handle parsing batch/atomic methods
+    public static String getSearchFormatFromMRAFList(Object response) {
+        if (response == null)
+            return ""; // todo log this
+
+        ArrayList<OSRFObject> resp_list = null;
+        try {
+            resp_list = (ArrayList<OSRFObject>)response;
+        } catch (ClassCastException ex) {
+            Log.d(TAG, "caught", ex);
+            return "";
+        }
+        if (resp_list == null)
+            return ""; // todo log this
+
+        // This is not beautiful.  An MRA record comes back with an 'attrs' field that
+        // appears to have been serialized by perl Data::Dumper, e.g.
+        //     "biog"=>"b", "conf"=>"0", "search_format"=>"ebook"
+        OSRFObject resp = null; //bomb, this method was not fixed
         String attrs = resp.getString("attrs");
         //Log.d(TAG, "attrs="+attrs);
         String[] attr_arr = TextUtils.split(attrs, ", ");

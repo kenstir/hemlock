@@ -25,6 +25,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.evergreen_ils.accountAccess.AccountAccess;
 import org.evergreen_ils.globals.GlobalConfigs;
 import org.evergreen_ils.globals.Log;
 import org.evergreen_ils.globals.Utils;
@@ -39,9 +40,13 @@ public class SearchCatalog {
 
     private static final String TAG = SearchCatalog.class.getSimpleName();
 
+    public static final boolean LOAD_BASIC_METADATA_SYNCHRONOUSLY = false;
+    public static final boolean LOAD_SEARCH_FORMAT_SYNCHRONOUSLY = true;
+
     public static String SERVICE = "open-ils.search";
     public static String METHOD_MULTICLASS_QUERY = "open-ils.search.biblio.multiclass.query";
     public static String METHOD_SLIM_RETRIEVE = "open-ils.search.biblio.record.mods_slim.retrieve";
+    public static String METHOD_SLIM_BATCH = "open-ils.search.biblio.record.mods_slim.batch.retrieve.atomic";
 
     /**
      * Method that returns library where record with id is
@@ -115,7 +120,7 @@ public class SearchCatalog {
         this.searchClass = searchClass;
         this.searchFormat = searchFormat;
         
-        ArrayList<RecordInfo> resultsRecordInfo = new ArrayList<RecordInfo>();
+        ArrayList<RecordInfo> results = new ArrayList<RecordInfo>();
 
         HashMap complexParm = new HashMap<String, Integer>();
         if (this.selectedOrganization != null) {
@@ -138,16 +143,16 @@ public class SearchCatalog {
         Object resp = Utils.doRequest(conn(), SERVICE, METHOD_MULTICLASS_QUERY,
                 new Object[] { complexParm, queryString, 1 });
         Log.d(TAG, "Sync Response: " + resp);
-        now_ms = Log.logElapsedTime(TAG, now_ms, "search");
+        now_ms = Log.logElapsedTime(TAG, now_ms, "search.query");
         if (resp == null)
-            return resultsRecordInfo; // search failed or server crashed
+            return results; // search failed or server crashed
 
         Map<String, ?> response = (Map<String, ?>) resp;
         List<List<String>> result_ids;
         result_ids = (List<List<String>>) response.get("ids");
         Log.d(TAG, "length:"+result_ids.size());
         
-        // sometimes count is an int ("count":0) and sometimes string ("count":"1103")
+        // sometimes count is an int ("count":0) and sometimes string ("count":"1103"), handle it either way
         visible = Integer.parseInt(response.get("count").toString());
 
         ArrayList<String> ids = new ArrayList<String>();
@@ -159,17 +164,27 @@ public class SearchCatalog {
         // construct result list
         for (int i = 0; i < ids.size(); i++) {
             Integer record_id = Integer.parseInt(ids.get(i));
-            resultsRecordInfo.add(new RecordInfo(record_id));
+            results.add(new RecordInfo(record_id));
             /*
             Original impl: load basic metadata synchronously
             RecordInfo record = new RecordInfo(getItemShortInfo(record_id));
             now_ms = Log.logElapsedTime(TAG, now_ms, "search.getItemShortInfo");
-            resultsRecordInfo.add(record);
+            results.add(record);
             */
         }
+
+        if (LOAD_BASIC_METADATA_SYNCHRONOUSLY) {
+            fetchBasicMetadataBatch(results);
+            now_ms = Log.logElapsedTime(TAG, now_ms, "search.fetchBasicMetadataBatch");
+        }
+        if (LOAD_SEARCH_FORMAT_SYNCHRONOUSLY) {
+            fetchSearchFormatBatch(results);
+            now_ms = Log.logElapsedTime(TAG, now_ms, "search.fetchSearchFormatBatch");
+        }
+
         Log.logElapsedTime(TAG, start_ms, "search.total");
 
-        return resultsRecordInfo;
+        return results;
     }
 
     /**
@@ -185,6 +200,57 @@ public class SearchCatalog {
                 METHOD_SLIM_RETRIEVE, new Object[] {
                         id });
         return response;
+    }
+
+    private void fetchBasicMetadataBatch(ArrayList<RecordInfo> records) {
+        ArrayList<Integer> ids = new ArrayList<Integer>();
+        for (RecordInfo record : records) {
+            ids.add(record.doc_id);
+        }
+        Object response = Utils.doRequestSimple(conn(), SERVICE,
+                METHOD_SLIM_BATCH, new Object[] {
+                        ids });
+        try {
+            ArrayList<OSRFObject> responses = (ArrayList<OSRFObject>) response;
+            for (int i = 0; i < records.size(); ++i) {
+                RecordInfo.updateFromMODSResponse(records.get(i), responses.get(i));
+            }
+        } catch (ClassCastException ex) {
+            Log.d(TAG, "caught", ex);
+        }
+    }
+
+    public static void fetchSearchFormatBatch(ArrayList<RecordInfo> records) {
+        // todo newer EG supports using "ANONYMOUS" as the auth_token in PCRUD requests.
+        // Older EG does not, and requires a valid auth_token.
+        ArrayList<Integer> ids = new ArrayList<Integer>(records.size());
+        HashMap<Integer, RecordInfo> records_by_id = new HashMap<Integer, RecordInfo>(records.size());
+        for (RecordInfo record : records) {
+            ids.add(record.doc_id);
+            records_by_id.put(record.doc_id, record);
+        }
+        HashMap<String, Object> args = new HashMap<String, Object>();
+        args.put("id", ids);
+        Object response = Utils.doRequestSimple(conn(), AccountAccess.PCRUD_SERVICE,
+                AccountAccess.PCRUD_METHOD_SEARCH_MRAF, new Object[] {
+                AccountAccess.getInstance().getAuthToken(),
+                args });
+        try {
+            ArrayList<OSRFObject> responses = (ArrayList<OSRFObject>) response;
+            for (OSRFObject attr_obj : responses) {
+                String attr = attr_obj.getString("attr");
+                if (!attr.equals("search_format"))
+                    continue;
+                String value = attr_obj.getString("value");
+                Integer id = attr_obj.getInt("id");
+                RecordInfo record = records_by_id.get(id);
+                if (record == null)
+                    continue;
+                record.setSearchFormat(value);
+            }
+        } catch (ClassCastException ex) {
+            Log.d(TAG, "caught", ex);
+        }
     }
 
     public Object getCopyStatuses() {

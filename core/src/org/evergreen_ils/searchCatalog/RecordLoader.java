@@ -35,6 +35,7 @@ import org.opensrf.util.OSRFObject;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 /** Async interface for loading RecordInfo metadata
  *
@@ -58,6 +59,7 @@ public class RecordLoader {
 
     public static void fetchBasicMetadata(final RecordInfo record, Context context, final ResponseListener responseListener) {
         Log.d(TAG, "fetchBasicMetadata id="+record.doc_id+ " title="+record.title);
+        final long start_ms = System.currentTimeMillis();
         if (record.basic_metadata_loaded) {
             responseListener.onMetadataLoaded();
         } else {
@@ -71,6 +73,7 @@ public class RecordLoader {
                         @Override
                         public void onResponse(GatewayResponse response) {
                             RecordInfo.updateFromMODSResponse(record, response.payload);
+                            Log.logElapsedTime(TAG, start_ms, "fetch.basic");
                             responseListener.onMetadataLoaded();
                         }
                     },
@@ -81,26 +84,23 @@ public class RecordLoader {
 
     public static void fetchSearchFormat(final RecordInfo record, Context context, final ResponseListener responseListener) {
         Log.d(TAG, "fetchSearchFormat id="+record.doc_id+ " format="+record.search_format);
+        final long start_ms = System.currentTimeMillis();
         if (record.search_format_loaded) {
             responseListener.onSearchFormatLoaded();
         } else {
             // todo newer EG supports using "ANONYMOUS" as the auth_token in PCRUD requests.
             // Older EG does not, and requires a valid auth_token.
-            ArrayList<Integer> l = new ArrayList<Integer>();
-            l.add(record.doc_id);
-            HashMap<String, Object> m = new HashMap<String, Object>();
-            m.put("id", l);
             String url = GlobalConfigs.getUrl(Utils.buildGatewayUrl(
-                    AccountAccess.PCRUD_SERVICE, AccountAccess.PCRUD_METHOD_SEARCH_MRAF,
-                    new Object[]{AccountAccess.getInstance().getAuthToken(), m}));
-                            //record.doc_id
+                    AccountAccess.PCRUD_SERVICE, AccountAccess.PCRUD_METHOD_RETRIEVE_MRA,
+                    new Object[]{AccountAccess.getInstance().getAuthToken(), record.doc_id}));
             GatewayJsonObjectRequest r = new GatewayJsonObjectRequest(
                     url,
                     Request.Priority.NORMAL,
                     new Response.Listener<GatewayResponse>() {
                         @Override
                         public void onResponse(GatewayResponse response) {
-                            record.setSearchFormat(AccountAccess.getSearchFormatFromMRAList(response.payload));
+                            record.setSearchFormat(AccountAccess.getSearchFormatFromMRAResponse(response.payload));
+                            Log.logElapsedTime(TAG, start_ms, "fetch.searchFormat");
                             responseListener.onSearchFormatLoaded();
                         }
                     },
