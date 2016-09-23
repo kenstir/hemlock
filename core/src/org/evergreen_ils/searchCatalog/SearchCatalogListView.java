@@ -515,11 +515,13 @@ public class SearchCatalogListView extends ActionBarActivity {
 
         public View getView(int position, View convertView, ViewGroup parent) {
             View row = null;
+            boolean recycled = false;
 
             // inflate view if we can't reuse it
             try {
                 if (convertView != null && convertView.findViewById(R.id.search_record_img) != null) {
                     row = convertView;
+                    recycled = true;
                 }
             } catch(Exception e) {
                 Log.d(TAG, "caught", e);
@@ -532,6 +534,13 @@ public class SearchCatalogListView extends ActionBarActivity {
 
             // Get item
             RecordInfo record = getItem(position);
+
+            // If we recycled the view, it will still have the old title etc.  This clears it so it does not
+            // flash briefly on the screen with the wrong title.
+            if (recycled) {
+                updateBasicMetadataViews(row, record);
+                updateSearchFormatView(row, record);
+            }
 
             // Start async record load
             fetchRecordInfo(row, record);
