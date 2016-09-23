@@ -159,7 +159,10 @@ public class RecordInfo implements Serializable {
     }
 
     public String getPublishingInfo() {
-        String s = TextUtils.join(" ", new Object[] {pubdate, publisher});
+        String s = TextUtils.join(" ", new Object[] {
+                (pubdate == null) ? "" : pubdate,
+                (publisher == null) ? "" : publisher,
+        });
         return s.trim();
     }
 
