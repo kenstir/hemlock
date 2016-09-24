@@ -46,7 +46,7 @@ import org.evergreen_ils.views.splashscreen.SplashActivity;
 /**
  * Created by kenstir on 12/28/13.
  */
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends ActionBarActivity {
 
     private static String TAG = MainActivity.class.getSimpleName();
 
