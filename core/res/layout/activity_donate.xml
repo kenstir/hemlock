@@ -29,15 +29,15 @@
             android:layout_height="wrap_content"
             android:text="@string/donate_call_to_action_title"
             android:id="@+id/donate_title_text"
-            android:textSize="34dip"
-            android:layout_margin="24dp"/>
+            android:textSize="34sp"
+            android:layout_margin="24dp" style="@style/Base.TextAppearance.AppCompat.Headline"/>
 
     <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/donate_call_to_action_subtitle"
             android:id="@+id/donate_more_text"
-            style="@style/textLargeNoPadding"
+            style="@style/Base.TextAppearance.AppCompat.Subhead"
             android:layout_marginBottom="24dip" android:layout_marginLeft="24dip"/>
 
     <Button

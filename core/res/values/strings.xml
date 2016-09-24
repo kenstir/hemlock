@@ -14,7 +14,7 @@
     <!-- Header portion -->
     <string name="options_button_text">Options</string>
     <string name="search_details_title">Search Details</string>
-    <string name="checkout_items_title">Checked Out</string>
+    <string name="checkout_items_title">Items Checked Out</string>
     <string name="hold_items_title">Holds</string>
     <string name="hold_place_title">Place Hold</string>
     <string name="hold_details_title">Hold Details</string>
