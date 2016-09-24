@@ -152,14 +152,7 @@ public class TestAuthActivity extends Activity {
             }
 
             // Account picker
-            AlertDialog.Builder builder;
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-                builder = new AlertDialog.Builder(this);
-            } else {
-                // Without this hack, Gingerbread shows white-on-white text
-                ContextThemeWrapper wrapper = new ContextThemeWrapper(this, R.style.Theme_Base_AppCompat_Light);
-                builder = new AlertDialog.Builder(wrapper);
-            }
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
             mAlertDialog = builder.setTitle("Pick Account").setItems(name, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {

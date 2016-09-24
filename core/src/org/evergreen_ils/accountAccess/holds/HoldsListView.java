@@ -24,6 +24,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -41,7 +42,7 @@ import org.evergreen_ils.views.splashscreen.SplashActivity;
 import java.util.ArrayList;
 import java.util.List;
 
-public class HoldsListView extends ActionBarActivity {
+public class HoldsListView extends AppCompatActivity {
 
     private final static String TAG = HoldsListView.class.getSimpleName();
 

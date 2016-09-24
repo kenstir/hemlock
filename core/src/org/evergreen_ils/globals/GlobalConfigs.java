@@ -159,6 +159,8 @@ public class GlobalConfigs {
             Log.d(TAG, "loadIDLFile parse took "+duration_ms+"ms");
         } catch (Exception e) {
             Log.w(TAG, "Error parsing IDL file", e);
+        } finally {
+            Utils.closeNetInputStream();
         }
 
         loadedIDL = true;
