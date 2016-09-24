@@ -18,20 +18,19 @@
                 android:hint="@string/search_hint"
                 android:singleLine="true"
                 android:gravity="bottom"/>
-        <ImageButton
+        <android.support.v7.widget.SwitchCompat
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/search_options_button"
-                android:src="@drawable/expander_ic_minimized"
-                android:contentDescription="@string/search_options_button_alt"/>
-        <ImageButton
+                android:contentDescription="@string/search_options_button_alt"
+                android:checked="true"/>
+        <Button
                 android:id="@+id/search_button"
                 android:layout_width="40dp"
                 android:layout_height="wrap_content"
                 android:layout_margin="0dp"
-                android:src="@drawable/abc_ic_search_api_mtrl_alpha"
                 android:layout_weight="1"
-                android:contentDescription="@string/search_button_alt"/>
+                android:contentDescription="@string/search_button_alt" android:text="@string/search_button"/>
     </LinearLayout>
     <LinearLayout
             android:orientation="vertical"
