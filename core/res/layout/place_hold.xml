@@ -191,7 +191,6 @@
     </ScrollView>
 
     <LinearLayout
-            android:id="@+id/action_bar"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
