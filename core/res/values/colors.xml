@@ -15,29 +15,10 @@
     limitations under the License.
 -->
 <resources>
-    <color name="title_background">#ff355689</color>
-    <color name="title_text">#ffffffff</color>
-    <color name="title_text_alt">#ff000000</color>
-    <color name="foreground1">#ff355689</color>
-    <color name="foreground2">#ff7081a3</color>
-    <color name="background1">#ffffffff</color>
-    <color name="background2">#ffd5ddeb</color>
-    <color name="background3">#ffe3e8f1</color>
-    <color name="title_separator">#40ffffff</color>
-	
-    
-    <!--  Defined colors for Evergreen Theme -->
-	<color name="green">#99cc00 </color>
-	
-	<color name="emphasis">#31b6e7</color>
-    <color name="bg_gray">#cecbce</color>
-	
-    <color name="white">#ffffff</color>
+
+	<color name="white">#ffffff</color>
     <color name="blue">#1e90ff</color>
-    <color name="red">#ff0000</color>
-    
-    
-    
+
     <!-- Menu Buttons -->
     <color name="pres1">#2AD652</color>
     <color name="pres2">#44EA81</color>
@@ -49,25 +30,14 @@
     <color name="norm2">#88E2DF</color>
     
 	<!-- Header portion -->
-    <color name="header_gradient_start">#238962</color>
     <color name="grey">#ECECEC</color>
     
     <color name="header_gradient_stop">#1E7152</color>
     <color name="library_logo_text_coor">#000</color>
-    
-    
-    
-    <color name="dark_green">#387962</color>
-    <color name="light_green">#E0F6E0</color>
-    <color name="normal_green">#A7EA9D</color>
-    
-    <color name="header_title">#ffffff</color>
-    
-    <color name="button_stroke">#aaa</color>
-    
-    
+
     <color name="background">#333</color>
-    
+    <color name="dark">#333</color>
+
     <color name="application_button_start">#444</color>
     <color name="application_button_stop">#444</color>
     
@@ -81,10 +51,7 @@
     
     <color name="menu_bottom_start">#636363</color>
     <color name="menu_bottom_stop">#636363</color>
-    
-    <!-- Search Details -->
-    <color name="dark">#000</color>
-    
+
     
     
     <!-- Barcode -->
