@@ -7,7 +7,7 @@
 
     <uses-sdk
         android:minSdkVersion="16"
-        android:targetSdkVersion="23" />
+        android:targetSdkVersion="22" />
 
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -30,7 +30,7 @@
         android:fullBackupContent="true"
         android:icon="@drawable/evergreen_launcher_icon"
         android:label="@string/ou_app_label"
-        android:theme="@style/Theme.AppCompat.NoActionBar" >
+        android:theme="@style/Theme.AppCompat" >
 
         <activity
                 android:name="org.evergreen_ils.views.splashscreen.SplashActivity"

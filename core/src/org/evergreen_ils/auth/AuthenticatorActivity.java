@@ -1,8 +1,5 @@
 package org.evergreen_ils.auth;
 
-import android.content.Context;
-import android.content.pm.ApplicationInfo;
-import android.location.Location;
 import android.text.InputType;
 import android.text.TextUtils;
 import org.evergreen_ils.R;
@@ -21,10 +18,6 @@ import android.widget.TextView;
 import org.evergreen_ils.globals.AppState;
 import org.evergreen_ils.globals.Log;
 import org.evergreen_ils.globals.Library;
-import org.opensrf.util.JSONException;
-import org.opensrf.util.JSONReader;
-
-import java.util.*;
 
 public class AuthenticatorActivity extends AccountAuthenticatorActivity {
 
@@ -95,14 +88,14 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity {
         }
     }
 
-    protected void initDefaultSelectedLibrary() {
+    protected void initSelectedLibrary() {
         selected_library = new Library(getString(R.string.ou_library_url), getString(R.string.ou_library_name));
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        initDefaultSelectedLibrary();
+        initSelectedLibrary();
     }
 
     @Override
