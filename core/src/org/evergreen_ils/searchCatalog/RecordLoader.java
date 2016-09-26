@@ -59,13 +59,14 @@ public class RecordLoader {
 
     public static void fetchBasicMetadata(final RecordInfo record, Context context, final ResponseListener responseListener) {
         Log.d(TAG, "fetchBasicMetadata id="+record.doc_id+ " title="+record.title);
-        final long start_ms = System.currentTimeMillis();
         if (record.basic_metadata_loaded) {
             responseListener.onMetadataLoaded();
         } else {
+            final long start_ms = System.currentTimeMillis();
             String url = GlobalConfigs.getUrl(Utils.buildGatewayUrl(
                     SearchCatalog.SERVICE, SearchCatalog.METHOD_SLIM_RETRIEVE,
                     new Object[]{record.doc_id}));
+            Log.d(TAG, "fetch.basic "+url);
             GatewayJsonObjectRequest r = new GatewayJsonObjectRequest(
                     url,
                     Request.Priority.HIGH,
@@ -84,15 +85,16 @@ public class RecordLoader {
 
     public static void fetchSearchFormat(final RecordInfo record, Context context, final ResponseListener responseListener) {
         Log.d(TAG, "fetchSearchFormat id="+record.doc_id+ " format="+record.search_format);
-        final long start_ms = System.currentTimeMillis();
         if (record.search_format_loaded) {
             responseListener.onSearchFormatLoaded();
         } else {
             // todo newer EG supports using "ANONYMOUS" as the auth_token in PCRUD requests.
             // Older EG does not, and requires a valid auth_token.
+            final long start_ms = System.currentTimeMillis();
             String url = GlobalConfigs.getUrl(Utils.buildGatewayUrl(
                     AccountAccess.PCRUD_SERVICE, AccountAccess.PCRUD_METHOD_RETRIEVE_MRA,
                     new Object[]{AccountAccess.getInstance().getAuthToken(), record.doc_id}));
+            Log.d(TAG, "fetch.searchFormat "+url);
             GatewayJsonObjectRequest r = new GatewayJsonObjectRequest(
                     url,
                     Request.Priority.NORMAL,
