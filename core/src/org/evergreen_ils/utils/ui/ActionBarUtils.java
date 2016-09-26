@@ -28,8 +28,11 @@ import org.evergreen_ils.globals.AppState;
  * Created by kenstir on 11/21/2015.
  */
 public class ActionBarUtils {
+
     public static void initActionBarForActivity(ActionBarActivity activity, boolean isMainActivity) {
         ActionBar actionBar = activity.getSupportActionBar();
+        if (actionBar == null)
+            return;
         actionBar.setSubtitle(String.format(activity.getString(R.string.ou_activity_subtitle),
                 AppState.getString(AppState.LIBRARY_NAME),
                 AccountAccess.userName));
@@ -37,6 +40,25 @@ public class ActionBarUtils {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
     }
+    /* this is how I reworked it to try the Toolbar.  I don't like it yet.
+    public static void initActionBarForActivity(AppCompatActivity activity, boolean isMainActivity) {
+        Toolbar toolbar = (Toolbar)activity.findViewById(R.id.my_toolbar);
+        activity.setSupportActionBar(toolbar);
+        ActionBar actionBar = activity.getSupportActionBar();
+        if (actionBar == null)
+            return;
+//        actionBar.setLogo(R.drawable.evergreen_launcher_icon_48);
+//        actionBar.setDisplayUseLogoEnabled(true);
+        actionBar.setIcon(R.drawable.evergreen_launcher_icon);
+
+        actionBar.setSubtitle(String.format(activity.getString(R.string.ou_activity_subtitle),
+                AppState.getString(AppState.LIBRARY_NAME),
+                AccountAccess.userName));
+        if (!isMainActivity) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
+    }
+    */
 
     public static void initActionBarForActivity(ActionBarActivity activity) {
         initActionBarForActivity(activity, false);

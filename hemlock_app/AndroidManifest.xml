@@ -2,12 +2,12 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           package="net.kenstir.apps.hemlock"
           android:installLocation="auto"
-          android:versionCode="44"
-          android:versionName="4.0.3">
+          android:versionCode="45"
+          android:versionName="4.1.0">
 
     <uses-sdk
-        android:minSdkVersion="15"
-        android:targetSdkVersion="19" />
+        android:minSdkVersion="16"
+        android:targetSdkVersion="23" />
 
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -27,6 +27,7 @@
 
     <application
         android:allowBackup="true"
+        android:fullBackupContent="true"
         android:icon="@drawable/evergreen_launcher_icon"
         android:label="@string/ou_app_label"
         android:theme="@style/Theme.AppCompat" >
@@ -54,9 +55,6 @@
                 android:name="org.evergreen_ils.searchCatalog.SearchCatalogListView"
                 android:label="@string/title_search"
                 android:parentActivityName="org.evergreen_ils.views.MainActivity">
-            <meta-data
-                    android:name="android.support.PARENT_ACTIVITY"
-                    android:value="org.evergreen_ils.views.MainActivity"/>
         </activity>
         <activity
                 android:name="org.evergreen_ils.searchCatalog.AdvancedSearchActivity"
@@ -74,9 +72,6 @@
                 android:name="org.evergreen_ils.accountAccess.checkout.ItemsCheckOutListView"
                 android:label="@string/checkout_items_title"
                 android:parentActivityName="org.evergreen_ils.views.MainActivity">
-            <meta-data
-                    android:name="android.support.PARENT_ACTIVITY"
-                    android:value="org.evergreen_ils.views.MainActivity"/>
         </activity>
 
         <!-- Holds Activities -->
@@ -84,9 +79,6 @@
                 android:name="org.evergreen_ils.accountAccess.holds.HoldsListView"
                 android:label="@string/hold_items_title"
                 android:parentActivityName="org.evergreen_ils.views.MainActivity">
-            <meta-data
-                    android:name="android.support.PARENT_ACTIVITY"
-                    android:value="org.evergreen_ils.views.MainActivity"/>
         </activity>
         <activity
                 android:name="org.evergreen_ils.accountAccess.holds.PlaceHoldActivity"
@@ -102,9 +94,6 @@
                 android:name="org.evergreen_ils.accountAccess.fines.FinesActivity"
                 android:label="@string/title_fines"
                 android:parentActivityName="org.evergreen_ils.views.MainActivity">
-            <meta-data
-                    android:name="android.support.PARENT_ACTIVITY"
-                    android:value="org.evergreen_ils.views.MainActivity"/>
         </activity>
 
         <!-- Bookbags -->
@@ -112,29 +101,17 @@
                 android:name="org.evergreen_ils.accountAccess.bookbags.BookBagListView"
                 android:label="@string/title_my_lists"
                 android:parentActivityName="org.evergreen_ils.views.MainActivity">
-            <meta-data
-                    android:name="android.support.PARENT_ACTIVITY"
-                    android:value="org.evergreen_ils.views.MainActivity"/>
         </activity>
         <activity
                 android:name="org.evergreen_ils.accountAccess.bookbags.BookBagDetails"
                 android:label="@string/title_list_details"
                 android:parentActivityName="org.evergreen_ils.accountAccess.bookbags.BookBagListView">
-            <meta-data
-                    android:name="android.support.PARENT_ACTIVITY"
-                    android:value="org.evergreen_ils.accountAccess.bookbags.BookBagListView"/>
         </activity>
 
         <activity
                 android:name="org.evergreen_ils.views.DonateActivity"
                 android:label="@string/title_donate"
                 android:parentActivityName="org.evergreen_ils.views.MainActivity">
-            <meta-data
-                    android:name="android.support.PARENT_ACTIVITY"
-                    android:value="org.evergreen_ils.views.MainActivity"/>
-        </activity>
-
-        <activity android:name="org.evergreen_ils.auth.TestAuthActivity">
         </activity>
 
         <activity

@@ -23,8 +23,10 @@ import java.util.*;
 
 import android.net.Uri;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.SwitchCompat;
 import android.text.TextUtils;
 import android.view.*;
+import android.widget.*;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
 import org.evergreen_ils.R;
@@ -51,18 +53,9 @@ import android.view.View.OnClickListener;
 import android.view.View.OnKeyListener;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
-import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemSelectedListener;
-import android.widget.ArrayAdapter;
-import android.widget.EditText;
-import android.widget.ImageButton;
-import android.widget.ListView;
-import android.widget.Spinner;
-import android.widget.TextView;
-import android.widget.Toast;
 
 public class SearchCatalogListView extends ActionBarActivity {
 
@@ -74,9 +67,9 @@ public class SearchCatalogListView extends ActionBarActivity {
     public static final String SEARCH_OPTIONS_VISIBLE = "search_options_visible";
 
     private EditText searchText;
-    private ImageButton searchOptionsButton;
+    private SwitchCompat searchOptionsButton;
     private View searchOptionsLayout;
-    private ImageButton searchButton;
+    private Button searchButton;
     private Spinner searchOrgSpinner;
     private Spinner searchClassSpinner;
     private Spinner searchFormatSpinner;
@@ -95,7 +88,7 @@ public class SearchCatalogListView extends ActionBarActivity {
     private Runnable searchForResultsRunnable = null;
 
     private boolean loadingElements = false;
-    private boolean searchOptionsVisible = false;
+    private boolean searchOptionsVisible = true;
 
     private String getSearchText() {
         return searchText.getText().toString();
@@ -131,9 +124,9 @@ public class SearchCatalogListView extends ActionBarActivity {
         progressDialog = new ProgressDialog(context);
 
         searchText = (EditText) findViewById(R.id.searchText);
-        searchOptionsButton = (ImageButton) findViewById(R.id.search_options_button);
+        searchOptionsButton = (SwitchCompat) findViewById(R.id.search_options_button);
         searchOptionsLayout = findViewById(R.id.search_options_layout);
-        searchButton = (ImageButton) findViewById(R.id.search_button);
+        searchButton = (Button) findViewById(R.id.search_button);
         searchClassSpinner = (Spinner) findViewById(R.id.search_qtype_spinner);
         searchFormatSpinner = (Spinner) findViewById(R.id.search_format_spinner);
         searchOrgSpinner = (Spinner) findViewById(R.id.search_org_spinner);
@@ -166,13 +159,7 @@ public class SearchCatalogListView extends ActionBarActivity {
     }
 
     private void setSearchOptionsVisibility(boolean visible) {
-        if (visible) {
-            searchOptionsLayout.setVisibility(View.VISIBLE);
-            searchOptionsButton.setImageResource(R.drawable.expander_ic_maximized);
-        } else {
-            searchOptionsLayout.setVisibility(View.GONE);
-            searchOptionsButton.setImageResource(R.drawable.expander_ic_minimized);
-        }
+        searchOptionsLayout.setVisibility(visible ? View.VISIBLE : View.GONE);
         searchOptionsVisible = visible;
         AppState.setBoolean(SEARCH_OPTIONS_VISIBLE, visible);
     }
