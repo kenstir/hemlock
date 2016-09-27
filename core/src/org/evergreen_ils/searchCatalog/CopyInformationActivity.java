@@ -28,6 +28,7 @@ import android.view.MenuItem;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import org.evergreen_ils.Api;
 import org.evergreen_ils.R;
 import org.evergreen_ils.globals.GlobalConfigs;
 import org.evergreen_ils.globals.Log;
@@ -127,7 +128,7 @@ public class CopyInformationActivity extends ActionBarActivity {
             final long start_ms = System.currentTimeMillis();
             Organisation org = globalConfigs.getOrganization(orgID);
             String url = GlobalConfigs.getUrl(Utils.buildGatewayUrl(
-                    SearchCatalog.SERVICE, SearchCatalog.METHOD_COPY_LOCATION_COUNTS,
+                    Api.SEARCH, Api.COPY_LOCATION_COUNTS,
                     new Object[]{record.doc_id, org.id, org.level}));
             GatewayJsonObjectRequest r = new GatewayJsonObjectRequest(
                     url,

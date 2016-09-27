@@ -25,6 +25,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.evergreen_ils.Api;
 import org.evergreen_ils.accountAccess.AccountAccess;
 import org.evergreen_ils.globals.GlobalConfigs;
 import org.evergreen_ils.globals.Log;
@@ -42,39 +43,6 @@ public class SearchCatalog {
 
     public static final boolean LOAD_BASIC_METADATA_SYNCHRONOUSLY = false;
     public static final boolean LOAD_SEARCH_FORMAT_SYNCHRONOUSLY = true;
-
-    public static String SERVICE = "open-ils.search";
-    public static String METHOD_MULTICLASS_QUERY = "open-ils.search.biblio.multiclass.query";
-    public static String METHOD_SLIM_RETRIEVE = "open-ils.search.biblio.record.mods_slim.retrieve";
-    public static String METHOD_SLIM_BATCH = "open-ils.search.biblio.record.mods_slim.batch.retrieve.atomic";
-
-    /**
-     * Method that returns library where record with id is
-     * 
-     * @param : record ID to get all libraries, or just book ID, Current Library
-     *        ID, User ID
-     * @returns : array of [org_id, callnumber_prefix, callnumber_label, callnumber_suffix, copy_location,
-     *                      <status1_count>, <status2_count>,...]
-     *            where statusx is a copy status name.  The statuses are sorted by ID.
-     */
-    public static String METHOD_COPY_LOCATION_COUNTS = "open-ils.search.biblio.copy_location_counts.summary.retrieve";
-
-    /**
-     * Get copy statuses like Available, Checked_out , in_progress and others,
-     * ccs OSRFObjects
-     */
-    public static String METHOD_COPY_STATUS_ALL = "open-ils.search.config.copy_status.retrieve.all";
-
-    /**
-     * Get copy count information
-     * 
-     * @param : org_unit_id, record_id
-     * @returns: objects
-     *           [{"transcendant":null,"count":35,"org_unit":1,"depth":0,"unshadow":35,"available":35},
-     *           {"transcendant":null,"count":14,"org_unit":2,"depth":1,"unshadow":14,"available":14},
-     *           {"transcendant":null,"count":7,"org_unit":4,"depth":2,"unshadow":7,"available":7}]
-     */
-    public static String METHOD_GET_COPY_COUNT = "open-ils.search.biblio.record.copy_count";
 
     private static SearchCatalog instance = null;
 
@@ -140,7 +108,7 @@ public class SearchCatalog {
         long now_ms = start_ms;
 
         // do request
-        Object resp = Utils.doRequest(conn(), SERVICE, METHOD_MULTICLASS_QUERY,
+        Object resp = Utils.doRequest(conn(), Api.SEARCH, Api.SEARCH_MULTICLASS_QUERY,
                 new Object[] { complexParm, queryString, 1 });
         Log.d(TAG, "Sync Response: " + resp);
         now_ms = Log.logElapsedTime(TAG, now_ms, "search.query");
@@ -196,19 +164,21 @@ public class SearchCatalog {
      */
     //todo replace callers of this method with RecordLoader.fetchBasicMetadata
     private OSRFObject getItemShortInfo(Integer id) {
-        OSRFObject response = (OSRFObject) Utils.doRequestSimple(conn(), SERVICE,
-                METHOD_SLIM_RETRIEVE, new Object[] {
+        OSRFObject response = (OSRFObject) Utils.doRequestSimple(conn(), Api.SEARCH,
+                Api.MODS_SLIM_RETRIEVE, new Object[] {
                         id });
         return response;
     }
 
     private void fetchBasicMetadataBatch(ArrayList<RecordInfo> records) {
+        if (records.size() == 0)
+            return;
         ArrayList<Integer> ids = new ArrayList<Integer>();
         for (RecordInfo record : records) {
             ids.add(record.doc_id);
         }
-        Object response = Utils.doRequestSimple(conn(), SERVICE,
-                METHOD_SLIM_BATCH, new Object[] {
+        Object response = Utils.doRequestSimple(conn(), Api.SEARCH,
+                Api.MODS_SLIM_BATCH, new Object[] {
                         ids });
         try {
             ArrayList<OSRFObject> responses = (ArrayList<OSRFObject>) response;
@@ -221,6 +191,8 @@ public class SearchCatalog {
     }
 
     public static void fetchSearchFormatBatch(ArrayList<RecordInfo> records) {
+        if (records.size() == 0)
+            return;
         // todo newer EG supports using "ANONYMOUS" as the auth_token in PCRUD requests.
         // Older EG does not, and requires a valid auth_token.
         ArrayList<Integer> ids = new ArrayList<Integer>(records.size());
@@ -231,8 +203,8 @@ public class SearchCatalog {
         }
         HashMap<String, Object> args = new HashMap<String, Object>();
         args.put("id", ids);
-        Object response = Utils.doRequestSimple(conn(), AccountAccess.PCRUD_SERVICE,
-                AccountAccess.PCRUD_METHOD_SEARCH_MRAF, new Object[] {
+        Object response = Utils.doRequestSimple(conn(), Api.PCRUD_SERVICE,
+                Api.SEARCH_MRAF, new Object[] {
                 AccountAccess.getInstance().getAuthToken(),
                 args });
         try {
@@ -255,8 +227,8 @@ public class SearchCatalog {
 
     public Object getCopyStatuses() {
 
-        List<OSRFObject> ccs_list = (List<OSRFObject>) Utils.doRequestSimple(conn(), SERVICE,
-                METHOD_COPY_STATUS_ALL, new Object[] {});
+        List<OSRFObject> ccs_list = (List<OSRFObject>) Utils.doRequestSimple(conn(), Api.SEARCH,
+                Api.COPY_STATUS_ALL, new Object[] {});
 
         // todo wtf, why is SearchCatalog loading up a member var of CopyInformation???
         CopyInformation.availableOrgStatuses = new LinkedHashMap<String, String>();
@@ -277,8 +249,8 @@ public class SearchCatalog {
 
     public ArrayList<CopyInformation> getCopyLocationCounts(Integer recordID, Integer orgID, Integer orgDepth) {
 
-        Object response = Utils.doRequestSimple(conn(), SERVICE,
-                METHOD_COPY_LOCATION_COUNTS, new Object[] {
+        Object response = Utils.doRequestSimple(conn(), Api.SEARCH,
+                Api.COPY_LOCATION_COUNTS, new Object[] {
                         recordID, orgID, orgDepth });
 
         ArrayList<CopyInformation> ret = new ArrayList<CopyInformation>();
@@ -321,8 +293,8 @@ public class SearchCatalog {
 
     public static ArrayList<CopyCountInformation> getCopyCount(Integer recordID, Integer orgID) {
 
-        List<?> list = (List<?>) Utils.doRequestSimple(conn(), SERVICE,
-                METHOD_GET_COPY_COUNT, new Object[] { orgID, recordID });
+        List<?> list = (List<?>) Utils.doRequestSimple(conn(), Api.SEARCH,
+                Api.GET_COPY_COUNT, new Object[] { orgID, recordID });
 
         ArrayList<CopyCountInformation> copyInfoList = new ArrayList<CopyCountInformation>();
 

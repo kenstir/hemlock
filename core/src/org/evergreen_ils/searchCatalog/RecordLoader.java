@@ -19,10 +19,10 @@
 package org.evergreen_ils.searchCatalog;
 
 import android.content.Context;
-import android.text.TextUtils;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import org.evergreen_ils.Api;
 import org.evergreen_ils.accountAccess.AccountAccess;
 import org.evergreen_ils.globals.GlobalConfigs;
 import org.evergreen_ils.globals.Log;
@@ -30,12 +30,6 @@ import org.evergreen_ils.globals.Utils;
 import org.evergreen_ils.net.GatewayJsonObjectRequest;
 import org.evergreen_ils.net.VolleyWrangler;
 import org.opensrf.util.GatewayResponse;
-import org.opensrf.util.OSRFObject;
-
-import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 
 /** Async interface for loading RecordInfo metadata
  *
@@ -64,7 +58,7 @@ public class RecordLoader {
         } else {
             final long start_ms = System.currentTimeMillis();
             String url = GlobalConfigs.getUrl(Utils.buildGatewayUrl(
-                    SearchCatalog.SERVICE, SearchCatalog.METHOD_SLIM_RETRIEVE,
+                    Api.SEARCH, Api.MODS_SLIM_RETRIEVE,
                     new Object[]{record.doc_id}));
             Log.d(TAG, "fetch.basic "+url);
             GatewayJsonObjectRequest r = new GatewayJsonObjectRequest(
@@ -92,7 +86,7 @@ public class RecordLoader {
             // Older EG does not, and requires a valid auth_token.
             final long start_ms = System.currentTimeMillis();
             String url = GlobalConfigs.getUrl(Utils.buildGatewayUrl(
-                    AccountAccess.PCRUD_SERVICE, AccountAccess.PCRUD_METHOD_RETRIEVE_MRA,
+                    Api.PCRUD_SERVICE, Api.RETRIEVE_MRA,
                     new Object[]{AccountAccess.getInstance().getAuthToken(), record.doc_id}));
             Log.d(TAG, "fetch.searchFormat "+url);
             GatewayJsonObjectRequest r = new GatewayJsonObjectRequest(
@@ -118,7 +112,7 @@ public class RecordLoader {
             listener.onDataAvailable();
         } else {
             String url = GlobalConfigs.getUrl(Utils.buildGatewayUrl(
-                    SearchCatalog.SERVICE, SearchCatalog.METHOD_GET_COPY_COUNT,
+                    Api.SEARCH, Api.GET_COPY_COUNT,
                     new Object[]{orgID, record.doc_id}));
             GatewayJsonObjectRequest r = new GatewayJsonObjectRequest(
                     url,

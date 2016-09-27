@@ -6,6 +6,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.evergreen_ils.Api;
 import org.evergreen_ils.globals.Log;
 import org.opensrf.Method;
 import org.opensrf.net.http.GatewayRequest;
@@ -16,9 +17,6 @@ import android.text.TextUtils;
 
 public class EvergreenAuthenticator {
     private final static String TAG = EvergreenAuthenticator.class.getSimpleName();
-    public final static String SERVICE_AUTH = "open-ils.auth";
-    public final static String METHOD_AUTH_INIT = "open-ils.auth.authenticate.init";
-    public final static String METHOD_AUTH_COMPLETE = "open-ils.auth.authenticate.complete";
 
     private static String md5(String s) {
         try {
@@ -78,7 +76,7 @@ public class EvergreenAuthenticator {
         }
 
         // step 1: get seed
-        Object resp = doRequest(conn, SERVICE_AUTH, METHOD_AUTH_INIT, new Object[] { username });
+        Object resp = doRequest(conn, Api.AUTH, Api.AUTH_INIT, new Object[] { username });
         if (resp == null)
             throw new AuthenticationException("Unable to contact login service");
         String seed = resp.toString();
@@ -88,7 +86,7 @@ public class EvergreenAuthenticator {
         complexParam.put("type", "opac");
         complexParam.put("username", username);
         complexParam.put("password", md5(seed + md5(password)));
-        resp = doRequest(conn, SERVICE_AUTH, METHOD_AUTH_COMPLETE, new Object[] { complexParam });
+        resp = doRequest(conn, Api.AUTH, Api.AUTH_COMPLETE, new Object[] { complexParam });
         if (resp == null)
             throw new AuthenticationException("Unable to complete login");
         
