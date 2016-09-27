@@ -11,7 +11,6 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import org.evergreen_ils.R;
 import org.evergreen_ils.globals.Log;
-import org.w3c.dom.Text;
 
 public class AccountAuthenticator extends AbstractAccountAuthenticator {
     
