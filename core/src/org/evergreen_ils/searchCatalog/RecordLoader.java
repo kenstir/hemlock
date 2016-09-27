@@ -112,7 +112,7 @@ public class RecordLoader {
             listener.onDataAvailable();
         } else {
             String url = GlobalConfigs.getUrl(Utils.buildGatewayUrl(
-                    Api.SEARCH, Api.GET_COPY_COUNT,
+                    Api.SEARCH, Api.COPY_COUNT,
                     new Object[]{orgID, record.doc_id}));
             GatewayJsonObjectRequest r = new GatewayJsonObjectRequest(
                     url,

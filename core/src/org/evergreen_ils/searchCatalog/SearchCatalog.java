@@ -108,7 +108,7 @@ public class SearchCatalog {
         long now_ms = start_ms;
 
         // do request
-        Object resp = Utils.doRequest(conn(), Api.SEARCH, Api.SEARCH_MULTICLASS_QUERY,
+        Object resp = Utils.doRequest(conn(), Api.SEARCH, Api.MULTICLASS_QUERY,
                 new Object[] { complexParm, queryString, 1 });
         Log.d(TAG, "Sync Response: " + resp);
         now_ms = Log.logElapsedTime(TAG, now_ms, "search.query");
@@ -294,7 +294,7 @@ public class SearchCatalog {
     public static ArrayList<CopyCountInformation> getCopyCount(Integer recordID, Integer orgID) {
 
         List<?> list = (List<?>) Utils.doRequestSimple(conn(), Api.SEARCH,
-                Api.GET_COPY_COUNT, new Object[] { orgID, recordID });
+                Api.COPY_COUNT, new Object[] { orgID, recordID });
 
         ArrayList<CopyCountInformation> copyInfoList = new ArrayList<CopyCountInformation>();
 
