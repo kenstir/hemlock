@@ -64,11 +64,9 @@
                 android:layout_height="wrap_content"
                 android:textStyle="bold"/>
     </LinearLayout>
-    <ListView
+    <FrameLayout
             android:id="@+id/search_results_list"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:dividerHeight="1dp">
-    </ListView>
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
 
 </LinearLayout>

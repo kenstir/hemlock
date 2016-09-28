@@ -20,6 +20,7 @@
     </content>
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="appcompat" exported="" />
+    <orderEntry type="module" module-name="recyclerview" exported="" />
     <orderEntry type="module-library" exported="">
       <library>
         <CLASSES>

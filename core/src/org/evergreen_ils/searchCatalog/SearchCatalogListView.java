@@ -22,6 +22,7 @@ package org.evergreen_ils.searchCatalog;
 import java.util.*;
 
 import android.net.Uri;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.SwitchCompat;
 import android.text.TextUtils;
@@ -114,6 +115,13 @@ public class SearchCatalogListView extends ActionBarActivity {
 
         setContentView(R.layout.search_layout3);
         ActionBarUtils.initActionBarForActivity(this);
+
+        if (savedInstanceState == null) {
+            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+            RecyclerViewFragment fragment = new RecyclerViewFragment();
+            transaction.replace(R.id.search_results_list, fragment);
+            transaction.commit();
+        }
 
         context = this;
         globalConfigs = GlobalConfigs.getInstance(this);
