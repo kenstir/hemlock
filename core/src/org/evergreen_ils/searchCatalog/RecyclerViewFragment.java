@@ -25,7 +25,9 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.ViewGroup;
 import org.evergreen_ils.R;
+import org.evergreen_ils.globals.Log;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public class RecyclerViewFragment extends Fragment {
@@ -40,7 +42,6 @@ public class RecyclerViewFragment extends Fragment {
     }
 
     protected LayoutManagerType mCurrentLayoutManagerType;
-
     protected RecyclerView mRecyclerView;
     protected CustomAdapter mAdapter;
     protected RecyclerView.LayoutManager mLayoutManager;
@@ -49,10 +50,8 @@ public class RecyclerViewFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        // Initialize dataset, this data would usually come from a local content provider or
-        // remote server.
-        initDataset();
+        Bundle args = this.getArguments();
+        mDataset = (ArrayList<RecordInfo>) args.getSerializable("recordList");
     }
 
     @Override
@@ -61,7 +60,7 @@ public class RecyclerViewFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.recycler_view_frag, container, false);
         rootView.setTag(TAG);
 
-        mRecyclerView = (RecyclerView) rootView.findViewById(R.id.recyclerView);
+        mRecyclerView = (RecyclerView) rootView.findViewById(R.id.recycler_view);
 
         mLayoutManager = new LinearLayoutManager(getActivity());
 
@@ -74,6 +73,7 @@ public class RecyclerViewFragment extends Fragment {
 
         mAdapter = new CustomAdapter(mDataset);
         mRecyclerView.setAdapter(mAdapter);
+        mRecyclerView.addItemDecoration(new DividerItemDecoration(container.getContext(), DividerItemDecoration.VERTICAL_LIST));
 
         return rootView;
     }
@@ -111,6 +111,10 @@ public class RecyclerViewFragment extends Fragment {
         // Save currently selected layout manager.
         savedInstanceState.putSerializable(KEY_LAYOUT_MANAGER, mCurrentLayoutManagerType);
         super.onSaveInstanceState(savedInstanceState);
+    }
+
+    public void notifyDatasetChanged() {
+        mAdapter.notifyDataSetChanged();
     }
 
     /**

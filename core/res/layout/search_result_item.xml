@@ -1,57 +1,55 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:gravity="left|center"
-   	android:paddingBottom="3px"
-	android:paddingTop="3px" 
-	android:paddingLeft="3px" 
-    android:orientation="horizontal"
-    android:background="@color/background"
-     >
-
-	<com.android.volley.toolbox.NetworkImageView
-		android:id="@+id/search_record_img"
-		android:layout_width="64dip"
-        android:layout_height="96dip"
-        android:layout_marginRight="6dip"
-		android:padding="4dip"
-		/>
+			  android:layout_width="match_parent"
+			  android:layout_height="wrap_content"
+			  android:gravity="left|center"
+			  android:paddingBottom="1dp"
+			  android:paddingTop="1dp"
+			  android:paddingLeft="1dp"
+			  android:paddingRight="1dp"
+			  android:orientation="horizontal"
+			  android:background="@color/background"
+>
 
 	<LinearLayout
-			android:layout_width="wrap_content"
+			android:layout_width="0dp"
 			android:layout_height="match_parent"
 			android:orientation="vertical"
 			android:gravity="top"
 			android:paddingLeft="4dip"
-	>
+			android:layout_weight="1">
 		<TextView
 				android:id="@+id/search_record_title"
-				style="@style/TitleSearchStyleList"
-				android:layout_width="wrap_content"
+				style="@style/Base.TextAppearance.AppCompat.SearchResult.Title"
+				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
 		/>
 
 		<TextView
 				android:id="@+id/search_record_author"
-				style="@style/AuthorSearchStyleList"
+				style="@style/Base.TextAppearance.AppCompat.SearchResult.Subtitle"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
 				/>
 
 		<TextView
 				android:id="@+id/search_record_format"
-				style="@style/PubSearchStyleList"
+				style="@style/Base.TextAppearance.AppCompat.SearchResult"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
 				/>
 
 		<TextView
 				android:id="@+id/search_record_publishing"
-				style="@style/PubSearchStyleList"
-				android:gravity="left"
+				style="@style/Base.TextAppearance.AppCompat.SearchResult"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content" />
 
 	</LinearLayout>
+	<com.android.volley.toolbox.NetworkImageView
+			android:id="@+id/search_record_img"
+			android:layout_width="64dip"
+			android:layout_height="96dip"
+			android:padding="4dip"
+			android:layout_marginLeft="6dp" android:layout_gravity="right"/>
 </LinearLayout>

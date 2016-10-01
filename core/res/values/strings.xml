@@ -181,5 +181,6 @@
     <string name="msg_confirm_delete_list">Are you sure you want to delete this list?</string>
     <string name="msg_retrieving_data">Retrieving data</string>
     <string name="msg_list_name_too_short">List name must be at least 2 characters long</string>
+    <string name="title_busy_ellipsis">busy...</string>
 
 </resources>

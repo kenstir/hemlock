@@ -28,19 +28,15 @@ import android.support.v7.widget.SwitchCompat;
 import android.text.TextUtils;
 import android.view.*;
 import android.widget.*;
-import com.android.volley.toolbox.ImageLoader;
-import com.android.volley.toolbox.NetworkImageView;
 import org.evergreen_ils.R;
 import org.evergreen_ils.accountAccess.AccountAccess;
 import org.evergreen_ils.accountAccess.bookbags.BookBag;
 import org.evergreen_ils.accountAccess.bookbags.BookBagUtils;
 import org.evergreen_ils.accountAccess.holds.PlaceHoldActivity;
-import org.evergreen_ils.barcodescan.CaptureActivity;
 import org.evergreen_ils.billing.BillingHelper;
 import org.evergreen_ils.globals.AppState;
 import org.evergreen_ils.globals.GlobalConfigs;
 import org.evergreen_ils.globals.Log;
-import org.evergreen_ils.net.VolleyWrangler;
 import org.evergreen_ils.utils.ui.ActionBarUtils;
 import org.evergreen_ils.views.DonateActivity;
 import org.evergreen_ils.views.splashscreen.SplashActivity;
@@ -54,8 +50,6 @@ import android.view.View.OnClickListener;
 import android.view.View.OnKeyListener;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.AbsListView.OnScrollListener;
-import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemSelectedListener;
 
 public class SearchCatalogListView extends ActionBarActivity {
@@ -75,11 +69,10 @@ public class SearchCatalogListView extends ActionBarActivity {
     private Spinner searchClassSpinner;
     private Spinner searchFormatSpinner;
     private TextView searchResultsNumber;
-    private ListView lv;
+    private RecyclerViewFragment recyclerViewFragment;
 
     private SearchCatalog search;
     private ArrayList<RecordInfo> recordList;
-    private SearchArrayAdapter adapter;
     private Context context;
     private ProgressDialog progressDialog;
     private ArrayList<RecordInfo> searchResults;
@@ -116,13 +109,6 @@ public class SearchCatalogListView extends ActionBarActivity {
         setContentView(R.layout.search_layout3);
         ActionBarUtils.initActionBarForActivity(this);
 
-        if (savedInstanceState == null) {
-            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-            RecyclerViewFragment fragment = new RecyclerViewFragment();
-            transaction.replace(R.id.search_results_list, fragment);
-            transaction.commit();
-        }
-
         context = this;
         globalConfigs = GlobalConfigs.getInstance(this);
         search = SearchCatalog.getInstance();
@@ -130,6 +116,16 @@ public class SearchCatalogListView extends ActionBarActivity {
         recordList = new ArrayList<RecordInfo>();
         searchResults = new ArrayList<RecordInfo>();
         progressDialog = new ProgressDialog(context);
+
+        if (savedInstanceState == null) {
+            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+            recyclerViewFragment = new RecyclerViewFragment();
+            Bundle args = new Bundle();
+            args.putSerializable("recordList", recordList);
+            recyclerViewFragment.setArguments(args);
+            transaction.replace(R.id.search_results_list, recyclerViewFragment);
+            transaction.commit();
+        }
 
         searchText = (EditText) findViewById(R.id.searchText);
         searchOptionsButton = (SwitchCompat) findViewById(R.id.search_options_button);
@@ -139,7 +135,6 @@ public class SearchCatalogListView extends ActionBarActivity {
         searchFormatSpinner = (Spinner) findViewById(R.id.search_format_spinner);
         searchOrgSpinner = (Spinner) findViewById(R.id.search_org_spinner);
         searchResultsNumber = (TextView) findViewById(R.id.search_result_number);
-        lv = (ListView) this.findViewById(R.id.search_results_list);
 
         initSearchOptionsVisibility();
         initSearchText();
@@ -147,7 +142,6 @@ public class SearchCatalogListView extends ActionBarActivity {
         initSearchButton();
         initSearchFormatSpinner();
         initSearchOrgSpinner();
-        initSearchListView();
         initSearchRunnable();
     }
 
@@ -206,10 +200,10 @@ public class SearchCatalogListView extends ActionBarActivity {
         });
     }
 
+    /*
     private void initSearchListView() {
         adapter = new SearchArrayAdapter(getApplicationContext(),
                 R.layout.search_result_item, recordList);
-        lv.setAdapter(adapter);
         registerForContextMenu(lv);
         lv.setOnItemClickListener(new OnItemClickListener() {
 
@@ -296,6 +290,7 @@ public class SearchCatalogListView extends ActionBarActivity {
             }
         });
     }
+    */
 
     private void initSearchRunnable() {
         searchForResultsRunnable = new Runnable() {
@@ -333,7 +328,7 @@ public class SearchCatalogListView extends ActionBarActivity {
                         }
 
                         searchResultsNumber.setText(+recordList.size() + " out of " + search.visible);
-                        adapter.notifyDataSetChanged();
+                        recyclerViewFragment.notifyDatasetChanged();
                         progressDialog.dismiss();
                     }
                 });
@@ -399,6 +394,7 @@ public class SearchCatalogListView extends ActionBarActivity {
     public boolean onContextItemSelected(MenuItem item) {
         AdapterView.AdapterContextMenuInfo menuArrayItem =
                 (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+        /* todo needs work!
         final RecordInfo info = (RecordInfo) lv.getItemAtPosition(menuArrayItem.position);
 
         switch (item.getItemId()) {
@@ -424,6 +420,7 @@ public class SearchCatalogListView extends ActionBarActivity {
             }
             break;
         }
+        */
 
         return super.onContextItemSelected(item);
     }
@@ -457,6 +454,7 @@ public class SearchCatalogListView extends ActionBarActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
+        /* todo
         switch (resultCode) {
 
         case SampleUnderlinesNoFade.RETURN_DATA : {
@@ -487,91 +485,6 @@ public class SearchCatalogListView extends ActionBarActivity {
         }
 
         }
-    }
-
-    class SearchArrayAdapter extends ArrayAdapter<RecordInfo> {
-
-        private Context context;
-        private List<RecordInfo> records = new ArrayList<RecordInfo>();
-
-        public SearchArrayAdapter(Context context, int textViewResourceId, List<RecordInfo> objects) {
-            super(context, textViewResourceId, objects);
-            this.context = context;
-            this.records = objects;
-        }
-
-        public int getCount() {
-            return this.records.size();
-        }
-
-        public RecordInfo getItem(int index) {
-            return this.records.get(index);
-        }
-
-        public View getView(int position, View convertView, ViewGroup parent) {
-            View row = null;
-            boolean recycled = false;
-
-            // inflate view if we can't reuse it
-            try {
-                if (convertView != null && convertView.findViewById(R.id.search_record_img) != null) {
-                    row = convertView;
-                    recycled = true;
-                }
-            } catch(Exception e) {
-                Log.d(TAG, "caught", e);
-            }
-            if (row == null) {
-                LayoutInflater inflater = (LayoutInflater) this.getContext().getSystemService(
-                        Context.LAYOUT_INFLATER_SERVICE);
-                row = inflater.inflate(R.layout.search_result_item, parent, false);
-            }
-
-            // Get item
-            RecordInfo record = getItem(position);
-
-            // If we recycled the view, it will still have the old title etc.  This clears it so it does not
-            // flash briefly on the screen with the wrong title.
-            if (recycled) {
-                updateBasicMetadataViews(row, record);
-                updateSearchFormatView(row, record);
-            }
-
-            // Start async record load
-            fetchRecordInfo(row, record);
-
-            // Start async image load
-            NetworkImageView recordImage = (NetworkImageView) row.findViewById(R.id.search_record_img);
-            final String imageHref = GlobalConfigs.getUrl("/opac/extras/ac/jacket/small/r/" + record.doc_id);
-            ImageLoader imageLoader = VolleyWrangler.getInstance(context).getImageLoader();
-            recordImage.setImageUrl(imageHref, imageLoader);
-
-            return row;
-        }
-
-        private void updateBasicMetadataViews(View row, RecordInfo record) {
-            ((TextView) row.findViewById(R.id.search_record_title)).setText(record.title);
-            ((TextView) row.findViewById(R.id.search_record_author)).setText(record.author);
-            ((TextView) row.findViewById(R.id.search_record_publishing)).setText(record.getPublishingInfo());
-        }
-
-        private void updateSearchFormatView(View row, RecordInfo record) {
-            ((TextView) row.findViewById(R.id.search_record_format)).setText(
-                    SearchFormat.getItemLabelFromSearchFormat(record.search_format));
-        }
-
-        private void fetchRecordInfo(final View row, final RecordInfo record) {
-            RecordLoader.fetch(record, row.getContext(),
-                    new RecordLoader.ResponseListener() {
-                        @Override
-                        public void onMetadataLoaded() {
-                            updateBasicMetadataViews(row, record);
-                        }
-                        @Override
-                        public void onSearchFormatLoaded() {
-                            updateSearchFormatView(row, record);
-                        }
-                    });
-        }
+        */
     }
 }

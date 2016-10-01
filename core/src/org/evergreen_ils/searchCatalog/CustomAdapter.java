@@ -24,11 +24,9 @@ import android.widget.TextView;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.NetworkImageView;
 import com.android.volley.toolbox.StringRequest;
 import org.evergreen_ils.net.VolleyWrangler;
-import org.json.JSONObject;
 import org.evergreen_ils.R;
 import org.evergreen_ils.globals.Log;
 
@@ -37,7 +35,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Provide views to RecyclerView with data from mDataSet.
+ * Provide views to RecyclerView with data from records.
  */
 public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder> {
     private static final String TAG = CustomAdapter.class.getSimpleName();
@@ -46,7 +44,7 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
     private static final int BOOK_BAG = 2;
     private static final String CATALOG_URL = "http://bark.cwmars.org";
 
-    private List<RecordInfo> mDataSet;
+    private List<RecordInfo> records;
 
     /**
      * Provide a reference to the type of views that you are using (custom ViewHolder)
@@ -132,11 +130,12 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
 
         public void bindView(RecordInfo record) {
             Log.d(TAG, record.doc_id + ": bindView");
+            final Context context = imageView.getContext();
             final String url = CATALOG_URL + "/opac/extras/ac/jacket/small/r/" + record.doc_id;
-            imageView.setImageUrl(url, VolleyWrangler.getInstance(imageView.getContext()).getImageLoader());
-            titleText.setText((record.title != null) ? record.title : "(loading)");
+            imageView.setImageUrl(url, VolleyWrangler.getInstance(context).getImageLoader());
+            titleText.setText((record.title != null) ? record.title : context.getString(R.string.title_busy_ellipsis));
             authorText.setText(record.doc_id.toString());
-            fetchBasicMetadata(record, imageView.getContext());
+            fetchBasicMetadata(record, context);
         }
     }
 
@@ -147,7 +146,7 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
      * @param dataSet String[] containing the data to populate views to be used by RecyclerView.
      */
     public CustomAdapter(List<RecordInfo> dataSet) {
-        mDataSet = dataSet;
+        records = dataSet;
     }
 
 
@@ -170,13 +169,13 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
 
         // Get element from your dataset at this position and replace the contents of the view
         // with that element
-        viewHolder.bindView(mDataSet.get(position));
+        viewHolder.bindView(records.get(position));
     }
 
 
     // Return the size of your dataset (invoked by the layout manager)
     @Override
     public int getItemCount() {
-        return mDataSet.size();
+        return records.size();
     }
 }
