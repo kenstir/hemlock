@@ -18,7 +18,7 @@
 
 package org.evergreen_ils;
 
-/** API constants
+/** OSRF API constants
  *
  * See also https://webby.evergreencatalog.com/opac/extras/docgen.xsl
  * for online service/method documentation.
