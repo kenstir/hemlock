@@ -65,7 +65,7 @@ public class SearchCatalogListView extends ActionBarActivity {
     private Spinner searchClassSpinner;
     private Spinner searchFormatSpinner;
     private TextView searchResultsNumber;
-    private RecyclerViewFragment recyclerViewFragment;
+    private SearchResultsFragment searchResultsFragment;
 
     private SearchCatalog search;
     private ArrayList<RecordInfo> recordList;
@@ -115,11 +115,11 @@ public class SearchCatalogListView extends ActionBarActivity {
 
         if (savedInstanceState == null) {
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-            recyclerViewFragment = new RecyclerViewFragment();
+            searchResultsFragment = new SearchResultsFragment();
             Bundle args = new Bundle();
             args.putSerializable("recordList", recordList);
-            recyclerViewFragment.setArguments(args);
-            transaction.replace(R.id.search_results_list, recyclerViewFragment);
+            searchResultsFragment.setArguments(args);
+            transaction.replace(R.id.search_results_list, searchResultsFragment);
             transaction.commit();
         } else {
             Log.d(TAG, "what happens here?");
@@ -200,7 +200,7 @@ public class SearchCatalogListView extends ActionBarActivity {
     }
 
     private void initRecordClickListener() {
-        recyclerViewFragment.setOnRecordClickListener(new RecordInfo.OnRecordClickListener() {
+        searchResultsFragment.setOnRecordClickListener(new RecordInfo.OnRecordClickListener() {
             @Override
             public void onClick(RecordInfo record, int position) {
                 Intent intent = new Intent(getBaseContext(), SampleUnderlinesNoFade.class);
@@ -251,7 +251,7 @@ public class SearchCatalogListView extends ActionBarActivity {
                         }
 
                         searchResultsNumber.setText(+recordList.size() + " out of " + search.visible);
-                        recyclerViewFragment.notifyDatasetChanged();
+                        searchResultsFragment.notifyDatasetChanged();
                         initRecordClickListener();
                         progressDialog.dismiss();
                     }

@@ -29,9 +29,9 @@ import org.evergreen_ils.globals.Log;
 
 import java.util.ArrayList;
 
-public class RecyclerViewFragment extends Fragment {
+public class SearchResultsFragment extends Fragment {
 
-    private static final String TAG = RecyclerViewFragment.class.getSimpleName();
+    private static final String TAG = SearchResultsFragment.class.getSimpleName();
     private static final String KEY_LAYOUT_MANAGER = "layoutManager";
     private static final int SPAN_COUNT = 2;
 
