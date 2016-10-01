@@ -56,7 +56,7 @@
     </style>
 
     <style name="TitleSearchStyleList">
-        <item name="android:textSize">14sp</item>
+        <item name="android:textSize">16sp</item>
         <item name="android:gravity">left</item>
         <item name="android:textStyle">bold</item>
         <!--
@@ -76,6 +76,7 @@
         <item name="android:textSize">12sp</item>
         <item name="android:singleLine">true</item>
         <item name="android:ellipsize">end</item>
+        <item name="android:textColor">?android:textColorSecondary</item>
     </style>
 
     <!-- Tabs -->

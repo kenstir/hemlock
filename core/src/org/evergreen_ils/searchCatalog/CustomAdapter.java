@@ -53,6 +53,8 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
         private final NetworkImageView imageView;
         private final TextView titleText;
         private final TextView authorText;
+        private final TextView searchFormatText;
+        private final TextView publisherText;
 
         public ViewHolder(View v) {
             super(v);
@@ -80,6 +82,8 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
             imageView = (NetworkImageView) v.findViewById(R.id.search_record_img);
             titleText = (TextView) v.findViewById(R.id.search_record_title);
             authorText = (TextView) v.findViewById(R.id.search_record_author);
+            searchFormatText = (TextView) v.findViewById(R.id.search_record_format);
+            publisherText = (TextView) v.findViewById(R.id.search_record_publishing);
         }
 
         public void fetchBasicMetadata(final RecordInfo record, Context context) {
@@ -111,31 +115,28 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
                     Log.d(TAG, "error=" + volleyError.getMessage());
                 }
             });
-            /*
-            GatewayJsonObjectRequest r = new GatewayJsonObjectRequest(
-                    url,
-                    Request.Priority.HIGH,
-                    new Response.Listener<GatewayResponse>() {
-                        @Override
-                        public void onResponse(GatewayResponse response) {
-                            RecordInfo.updateFromMODSResponse(record, response.payload);
-                            Log.logElapsedTime(TAG, start_ms, "fetch.basic");
-                            responseListener.onMetadataLoaded();
-                        }
-                    },
-                    VolleyWrangler.logErrorListener(TAG));
-                    */
             VolleyWrangler.getInstance(context).addToRequestQueue(r);
         }
 
-        public void bindView(RecordInfo record) {
+        public void bindView(final RecordInfo record) {
             Log.d(TAG, record.doc_id + ": bindView");
             final Context context = imageView.getContext();
             final String url = CATALOG_URL + "/opac/extras/ac/jacket/small/r/" + record.doc_id;
             imageView.setImageUrl(url, VolleyWrangler.getInstance(context).getImageLoader());
             titleText.setText((record.title != null) ? record.title : context.getString(R.string.title_busy_ellipsis));
-            authorText.setText(record.doc_id.toString());
-            fetchBasicMetadata(record, context);
+            RecordLoader.fetch(record, context, new RecordLoader.ResponseListener() {
+                @Override
+                public void onMetadataLoaded() {
+                    titleText.setText(record.title);
+                    authorText.setText(record.author);
+                    publisherText.setText(record.getPublishingInfo());
+                }
+
+                @Override
+                public void onSearchFormatLoaded() {
+                    searchFormatText.setText(record.search_format);
+                }
+            });
         }
     }
 
