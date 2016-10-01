@@ -19,15 +19,14 @@ package org.evergreen_ils.searchCatalog;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
-import android.view.LayoutInflater;
-import android.view.View;
+import android.view.*;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.view.ViewGroup;
+import android.widget.AdapterView;
+import org.evergreen_ils.App;
 import org.evergreen_ils.R;
 import org.evergreen_ils.globals.Log;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public class RecyclerViewFragment extends Fragment {
@@ -43,15 +42,16 @@ public class RecyclerViewFragment extends Fragment {
 
     protected LayoutManagerType mCurrentLayoutManagerType;
     protected RecyclerView mRecyclerView;
-    protected CustomAdapter mAdapter;
     protected RecyclerView.LayoutManager mLayoutManager;
     protected ArrayList<RecordInfo> mDataset;
+    protected RecordViewAdapter mAdapter;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Bundle args = this.getArguments();
         mDataset = (ArrayList<RecordInfo>) args.getSerializable("recordList");
+        mAdapter = new RecordViewAdapter(mDataset);
     }
 
     @Override
@@ -71,11 +71,60 @@ public class RecyclerViewFragment extends Fragment {
         }
         setRecyclerViewLayoutManager(mCurrentLayoutManagerType);
 
-        mAdapter = new CustomAdapter(mDataset);
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.addItemDecoration(new DividerItemDecoration(container.getContext(), DividerItemDecoration.VERTICAL_LIST));
+        registerForContextMenu(mRecyclerView);
 
         return rootView;
+    }
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        Log.d(TAG, "context menu");
+        int pos = ((RecyclerView.LayoutParams) v.getLayoutParams()).getViewLayoutPosition();
+        Log.d(TAG, "Context: pos=" + pos);
+        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
+        //menu.setHeaderTitle("Options");
+        menu.add(Menu.NONE, App.ITEM_SHOW_DETAILS, 0, getString(R.string.show_details_message));
+        menu.add(Menu.NONE, App.ITEM_PLACE_HOLD, 1, getString(R.string.hold_place_title));
+        menu.add(Menu.NONE, App.ITEM_ADD_TO_LIST, 2, getString(R.string.add_to_my_list_message));
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        AdapterView.AdapterContextMenuInfo menuArrayItem = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+        int pos = menuArrayItem.position;
+        Log.d(TAG, "here, pos=" + pos + " item_id=" + item.getItemId());
+        long id = mRecyclerView.getAdapter().getItemId(pos);;
+        Log.d(TAG, "here, id="+id);
+        /* todo needs work!
+
+        switch (item.getItemId()) {
+        case ITEM_SHOW_DETAILS:
+            Intent intent = new Intent(getBaseContext(), SampleUnderlinesNoFade.class);
+            intent.putExtra("recordInfo", info);
+            intent.putExtra("orgID", search.selectedOrganization.id);
+            intent.putExtra("recordList", recordList);
+            intent.putExtra("recordPosition", menuArrayItem.position);
+            intent.putExtra("numResults", search.visible);
+            startActivity(intent);
+            break;
+        case ITEM_PLACE_HOLD:
+            Intent hold_intent = new Intent(getBaseContext(), PlaceHoldActivity.class);
+            hold_intent.putExtra("recordInfo", info);
+            startActivity(hold_intent);
+            break;
+        case ITEM_ADD_TO_LIST:
+            if (bookBags.size() > 0) {
+                BookBagUtils.showAddToListDialog(this, bookBags, info);
+            } else {
+                Toast.makeText(context, getText(R.string.msg_no_lists), Toast.LENGTH_SHORT).show();
+            }
+            break;
+        }
+        */
+
+        return super.onContextItemSelected(item);
     }
 
     /**
@@ -117,26 +166,7 @@ public class RecyclerViewFragment extends Fragment {
         mAdapter.notifyDataSetChanged();
     }
 
-    /**
-     * Generates Strings for RecyclerView's adapter. This data would usually come
-     * from a local content provider or remote server.
-     */
-    private void initDataset() {
-        mDataset = new ArrayList<RecordInfo>();
-        int arr[] = {
-                1148741, 2074201, 921433, 2048622, 921589, 1977911, 1131207, 1131208, 1253823, 2530902,
-                753144, 1209447, 688518, 3409469, 585527, 3409424, 688516, 2142786, 3616947, 3409397,
-                2066147, 954178, 538942, 524282, 533012, 2025727, 545257, 3409405, 3409422, 789334,
-                842868, 881022, 849723, 3409385, 2433317, 2357939, 3289045, 3409377, 2193152, 2884634,
-                2490329, 964754, 2295137, 624589, 549298, 672863, 2483802, 2470282, 2417890, 2442346,
-                2068649, 2133616, 2133619, 1240712, 2214529, 3179490, 2018485, 3078816, 2131452, 1261379,
-                2693404, 2207738, 2315631, 3693871, 809601, 3077944, 936137, 3553545, 1052032, 2725778,
-                1204893, 629440, 813947, 2117419, 1002503, 2278909, 2461019, 561747, 3625737, 724812,
-                1015231, 1109387, 2733108, 3117345, 3115435, 1005846, 2792015, 2927802, 3655923, 3621683,
-                3176697, 3188451, 3724937, 1119632, 2939731, 2929510, 2790557, 3441806, 3434897, 2399985,
-                3357189, 3488696, 1215277, 972242, 373887};
-        for (int id : arr) {
-            mDataset.add(new RecordInfo(id));
-        }
+    public void setOnRecordClickListener(RecordInfo.OnRecordClickListener listener) {
+        mAdapter.setOnRecordClickListener(listener);
     }
 }

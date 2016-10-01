@@ -28,11 +28,10 @@ import android.support.v7.widget.SwitchCompat;
 import android.text.TextUtils;
 import android.view.*;
 import android.widget.*;
+import org.evergreen_ils.App;
 import org.evergreen_ils.R;
 import org.evergreen_ils.accountAccess.AccountAccess;
 import org.evergreen_ils.accountAccess.bookbags.BookBag;
-import org.evergreen_ils.accountAccess.bookbags.BookBagUtils;
-import org.evergreen_ils.accountAccess.holds.PlaceHoldActivity;
 import org.evergreen_ils.billing.BillingHelper;
 import org.evergreen_ils.globals.AppState;
 import org.evergreen_ils.globals.GlobalConfigs;
@@ -56,9 +55,6 @@ public class SearchCatalogListView extends ActionBarActivity {
 
     private static final String TAG = SearchCatalogListView.class.getSimpleName();
 
-    private static final int PLACE_HOLD = 0;
-    private static final int DETAILS = 1;
-    private static final int BOOK_BAG = 2;
     public static final String SEARCH_OPTIONS_VISIBLE = "search_options_visible";
 
     private EditText searchText;
@@ -125,6 +121,8 @@ public class SearchCatalogListView extends ActionBarActivity {
             recyclerViewFragment.setArguments(args);
             transaction.replace(R.id.search_results_list, recyclerViewFragment);
             transaction.commit();
+        } else {
+            Log.d(TAG, "what happens here?");
         }
 
         searchText = (EditText) findViewById(R.id.searchText);
@@ -157,6 +155,7 @@ public class SearchCatalogListView extends ActionBarActivity {
 
     private void initSearchOptionsVisibility() {
         boolean last_state = AppState.getBoolean(SEARCH_OPTIONS_VISIBLE, true);
+        searchOptionsButton.setChecked(last_state);
         setSearchOptionsVisibility(last_state);
     }
 
@@ -200,20 +199,13 @@ public class SearchCatalogListView extends ActionBarActivity {
         });
     }
 
-    /*
-    private void initSearchListView() {
-        adapter = new SearchArrayAdapter(getApplicationContext(),
-                R.layout.search_result_item, recordList);
-        registerForContextMenu(lv);
-        lv.setOnItemClickListener(new OnItemClickListener() {
-
+    private void initRecordClickListener() {
+        recyclerViewFragment.setOnRecordClickListener(new RecordInfo.OnRecordClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> arg0, View arg1,
-                    int position, long arg3) {
-                RecordInfo info = (RecordInfo) lv.getItemAtPosition(position);
+            public void onClick(RecordInfo record, int position) {
                 Intent intent = new Intent(getBaseContext(), SampleUnderlinesNoFade.class);
                 //todo add package prefix to names in putExtra
-                intent.putExtra("recordInfo", info);
+                intent.putExtra("recordInfo", record);
                 intent.putExtra("orgID", search.selectedOrganization.id);
                 intent.putExtra("recordList", recordList);
                 intent.putExtra("recordPosition", position);
@@ -221,76 +213,7 @@ public class SearchCatalogListView extends ActionBarActivity {
                 startActivityForResult(intent, 10);
             }
         });
-
-        lv.setOnScrollListener(new OnScrollListener() {
-
-            @Override
-            public void onScrollStateChanged(AbsListView view, int scrollState) {
-            }
-
-            @Override
-            public void onScroll(AbsListView view, int firstVisibleItem,
-                    int visibleItemCount, int totalItemCount) {
-
-                if (!loadingElements) {
-                    if (totalItemCount > 0
-                            && (((totalItemCount - visibleItemCount) <= (firstVisibleItem)) && adapter
-                                    .getCount() < search.visible)) {
-                        loadingElements = true;
-                        Log.d(TAG, "Load more data");
-                        progressDialog = new ProgressDialog(context);
-
-                        progressDialog.setMessage(getResources().getText(
-                                R.string.dialog_load_more_message));
-                        progressDialog.show();
-
-                        Thread searchThreadwithOffset = new Thread(
-                                new Runnable() {
-
-                                    @Override
-                                    public void run() {
-
-                                        String text = getSearchText();
-                                        searchResults.clear();
-                                        searchResults = search.getSearchResults(text, getSearchClass(),
-                                                getSearchFormat(),
-                                                adapter.getCount());
-
-                                        runOnUiThread(new Runnable() {
-
-                                            @Override
-                                            public void run() {
-
-                                                // don't clear record list
-                                                // recordList.clear();
-                                                Log.d(TAG, "Returned "
-                                                        + searchResults.size()
-                                                        + " elements from search");
-                                                for (int j = 0; j < searchResults.size(); j++) {
-                                                    recordList.add(searchResults.get(j));
-                                                }
-
-                                                searchResultsNumber.setText(adapter
-                                                        .getCount()
-                                                        + " out of "
-                                                        + search.visible);
-
-                                                adapter.notifyDataSetChanged();
-                                                progressDialog.dismiss();
-                                                loadingElements = false;
-                                            }
-                                        });
-
-                                    }
-                                });
-
-                        searchThreadwithOffset.start();
-                    }
-                }
-            }
-        });
     }
-    */
 
     private void initSearchRunnable() {
         searchForResultsRunnable = new Runnable() {
@@ -329,6 +252,7 @@ public class SearchCatalogListView extends ActionBarActivity {
 
                         searchResultsNumber.setText(+recordList.size() + " out of " + search.visible);
                         recyclerViewFragment.notifyDatasetChanged();
+                        initRecordClickListener();
                         progressDialog.dismiss();
                     }
                 });
@@ -377,28 +301,26 @@ public class SearchCatalogListView extends ActionBarActivity {
     }
 
     @Override
-    public void onCreateContextMenu(ContextMenu menu, View v,
-            ContextMenuInfo menuInfo) {
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
 
         Log.d(TAG, "context menu");
         if (v.getId() == R.id.search_results_list) {
             AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
             menu.setHeaderTitle("Options");
-            menu.add(Menu.NONE, DETAILS, 0, getString(R.string.show_details_message));
-            menu.add(Menu.NONE, PLACE_HOLD, 1, getString(R.string.hold_place_title));
-            menu.add(Menu.NONE, BOOK_BAG, 2, getString(R.string.add_to_my_list_message));
+            menu.add(Menu.NONE, App.ITEM_SHOW_DETAILS, 0, getString(R.string.show_details_message));
+            menu.add(Menu.NONE, App.ITEM_PLACE_HOLD, 1, getString(R.string.hold_place_title));
+            menu.add(Menu.NONE, App.ITEM_ADD_TO_LIST, 2, getString(R.string.add_to_my_list_message));
         }
     }
 
     @Override
     public boolean onContextItemSelected(MenuItem item) {
-        AdapterView.AdapterContextMenuInfo menuArrayItem =
-                (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+        AdapterView.AdapterContextMenuInfo menuArrayItem = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
         /* todo needs work!
         final RecordInfo info = (RecordInfo) lv.getItemAtPosition(menuArrayItem.position);
 
         switch (item.getItemId()) {
-        case DETAILS:
+        case ITEM_SHOW_DETAILS:
             Intent intent = new Intent(getBaseContext(), SampleUnderlinesNoFade.class);
             intent.putExtra("recordInfo", info);
             intent.putExtra("orgID", search.selectedOrganization.id);
@@ -407,12 +329,12 @@ public class SearchCatalogListView extends ActionBarActivity {
             intent.putExtra("numResults", search.visible);
             startActivity(intent);
             break;
-        case PLACE_HOLD:
+        case ITEM_PLACE_HOLD:
             Intent hold_intent = new Intent(getBaseContext(), PlaceHoldActivity.class);
             hold_intent.putExtra("recordInfo", info);
             startActivity(hold_intent);
             break;
-        case BOOK_BAG:
+        case ITEM_ADD_TO_LIST:
             if (bookBags.size() > 0) {
                 BookBagUtils.showAddToListDialog(this, bookBags, info);
             } else {
@@ -442,9 +364,11 @@ public class SearchCatalogListView extends ActionBarActivity {
             startActivityForResult(new Intent(getApplicationContext(), AdvancedSearchActivity.class), 2);
             return true;
         } else if (id == R.id.action_feedback) {
-            Intent i = new Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.ou_feedback_url)));
-            startActivity(i);
-            return true;
+            String url = getString(R.string.ou_feedback_url);
+            if (!TextUtils.isEmpty(url)) {
+                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
+                return true;
+            }
         } else if (id == R.id.action_donate) {
             startActivityForResult(new Intent(this, DonateActivity.class), BillingHelper.REQUEST_PURCHASE);
         }

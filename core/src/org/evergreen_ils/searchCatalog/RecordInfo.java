@@ -36,6 +36,10 @@ public class RecordInfo implements Serializable {
 
     private static final String TAG = RecordInfo.class.getSimpleName();
 
+    public interface OnRecordClickListener {
+        abstract void onClick(RecordInfo record, int position);
+    }
+
     public Integer doc_id = -1;
     public String title = null;
     public String author = null;

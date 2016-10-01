@@ -53,7 +53,7 @@ public class SearchCatalog {
 
     public Integer visible;
 
-    public final Integer searchLimit = 20;
+    public final Integer searchLimit = 100;
     
     public String searchText = null;
     public String searchClass = null;
