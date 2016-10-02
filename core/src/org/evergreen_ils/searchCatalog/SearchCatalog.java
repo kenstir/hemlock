@@ -42,7 +42,7 @@ public class SearchCatalog {
     private static final String TAG = SearchCatalog.class.getSimpleName();
 
     public static final boolean LOAD_BASIC_METADATA_SYNCHRONOUSLY = false;
-    public static final boolean LOAD_SEARCH_FORMAT_SYNCHRONOUSLY = true;
+    public static final boolean LOAD_SEARCH_FORMAT_SYNCHRONOUSLY = false;
 
     private static SearchCatalog instance = null;
 
@@ -53,7 +53,7 @@ public class SearchCatalog {
 
     public Integer visible;
 
-    public final Integer searchLimit = 100;
+    public final Integer searchLimit = 500;
     
     public String searchText = null;
     public String searchClass = null;
