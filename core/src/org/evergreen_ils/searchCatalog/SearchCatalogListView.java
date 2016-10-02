@@ -244,7 +244,7 @@ public class SearchCatalogListView extends ActionBarActivity {
                                 recordList.add(searchResults.get(j));
                         }
 
-                        searchResultsNumber.setText(String.format(getString(R.string.n_of_m_results), recordList.size(), search.visible)));
+                        searchResultsNumber.setText(String.format(getString(R.string.n_of_m_results), recordList.size(), search.visible));
                         if (searchResultsFragment != null) {
                             searchResultsFragment.notifyDatasetChanged();
                             initRecordClickListener();
@@ -327,8 +327,6 @@ public class SearchCatalogListView extends ActionBarActivity {
 
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
-        Log.d(TAG, "context menu");
-        int id = v.getId();
         if (v.getId() == R.id.search_results_list) {
             AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
             menu.setHeaderTitle("Options");
@@ -407,8 +405,7 @@ public class SearchCatalogListView extends ActionBarActivity {
                 recordList.add(record);
             }
             searchResultsFragment.notifyDatasetChanged();
-            searchResultsNumber.setText(recordList.size()
-                    + " out of " + search.visible);
+            searchResultsNumber.setText(String.format(getString(R.string.n_of_m_results), recordList.size(), search.visible));
         }
     }
 
