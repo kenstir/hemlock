@@ -92,6 +92,11 @@ public class SearchCatalogListView extends ActionBarActivity {
         return SearchFormat.getSearchFormatFromSpinnerLabel(searchFormatSpinner.getSelectedItem().toString());
     }
 
+    private class ContextMenuRecordInfo implements ContextMenuInfo {
+        public RecordInfo record;
+        public int position;
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -200,17 +205,25 @@ public class SearchCatalogListView extends ActionBarActivity {
     }
 
     private void initRecordClickListener() {
+        registerForContextMenu(findViewById(R.id.search_results_list));
         searchResultsFragment.setOnRecordClickListener(new RecordInfo.OnRecordClickListener() {
             @Override
             public void onClick(RecordInfo record, int position) {
                 Intent intent = new Intent(getBaseContext(), SampleUnderlinesNoFade.class);
                 //todo add package prefix to names in putExtra
                 intent.putExtra("recordInfo", record);
-                intent.putExtra("orgID", search.selectedOrganization.id);
                 intent.putExtra("recordList", recordList);
                 intent.putExtra("recordPosition", position);
                 intent.putExtra("numResults", search.visible);
+                intent.putExtra("orgID", search.selectedOrganization.id);
                 startActivityForResult(intent, 10);
+            }
+        });
+        searchResultsFragment.setOnRecordLongClickListener(new RecordInfo.OnRecordLongClickListener() {
+            @Override
+            public void onLongClick(RecordInfo record, int position) {
+                Log.d(TAG, "long click");
+                openContextMenu(findViewById(R.id.search_results_list));
             }
         });
     }
@@ -304,6 +317,7 @@ public class SearchCatalogListView extends ActionBarActivity {
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
 
         Log.d(TAG, "context menu");
+        int id = v.getId();
         if (v.getId() == R.id.search_results_list) {
             AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
             menu.setHeaderTitle("Options");
@@ -316,6 +330,8 @@ public class SearchCatalogListView extends ActionBarActivity {
     @Override
     public boolean onContextItemSelected(MenuItem item) {
         AdapterView.AdapterContextMenuInfo menuArrayItem = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+        Log.d(TAG, "menuArrayItem.position="+menuArrayItem.position);
+        Log.d(TAG, "menuArrayItem.id="+menuArrayItem.id);
         /* todo needs work!
         final RecordInfo info = (RecordInfo) lv.getItemAtPosition(menuArrayItem.position);
 
@@ -378,6 +394,7 @@ public class SearchCatalogListView extends ActionBarActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
+        Log.d(TAG, "onactivityresult request="+requestCode+" result="+resultCode);
         /* todo
         switch (resultCode) {
 

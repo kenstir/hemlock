@@ -35,7 +35,6 @@ public class RecordViewAdapter extends RecyclerView.Adapter<RecordViewAdapter.Vi
     private static final String TAG = RecordViewAdapter.class.getSimpleName();
 
     private List<RecordInfo> records;
-    private RecordInfo.OnRecordClickListener mRecordClickListener;
 
     /**
      * Provide a reference to the type of views that you are using (custom ViewHolder)
@@ -50,28 +49,6 @@ public class RecordViewAdapter extends RecyclerView.Adapter<RecordViewAdapter.Vi
 
         public ViewHolder(View v) {
             super(v);
-            /*
-            v.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    //int pos = getPosition();
-                    int pos = ((RecyclerView.LayoutParams) v.getLayoutParams()).getViewLayoutPosition();
-                    Log.d(TAG, "Click: pos="+pos);
-                }
-            });
-            */
-//            v.setOnCreateContextMenuListener(new View.OnCreateContextMenuListener() {
-//                @Override
-//                public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
-//                    int pos = ((RecyclerView.LayoutParams) v.getLayoutParams()).getViewLayoutPosition();
-//                    Log.d(TAG, "Context: pos="+pos);
-//                    AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
-//                    menu.setHeaderTitle("Options");
-//                    menu.add(Menu.NONE, App.ITEM_SHOW_DETAILS, 0, "Show Details");
-//                    menu.add(Menu.NONE, App.ITEM_PLACE_HOLD, 1, "Place Hold");
-//                    menu.add(Menu.NONE, App.ITEM_ADD_TO_LIST, 2, "Add to List");
-//                }
-//            });
             imageView = (NetworkImageView) v.findViewById(R.id.search_record_img);
             titleText = (TextView) v.findViewById(R.id.search_record_title);
             authorText = (TextView) v.findViewById(R.id.search_record_author);
@@ -126,24 +103,11 @@ public class RecordViewAdapter extends RecyclerView.Adapter<RecordViewAdapter.Vi
     public void onBindViewHolder(final ViewHolder viewHolder, final int position) {
         final RecordInfo record = records.get(position);
         viewHolder.bindView(record);
-        if (mRecordClickListener != null) {
-            viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    mRecordClickListener.onClick(record, viewHolder.getAdapterPosition());
-
-                }
-            });
-        }
     }
 
     // Return the size of your dataset (invoked by the layout manager)
     @Override
     public int getItemCount() {
         return records.size();
-    }
-
-    public void setOnRecordClickListener(RecordInfo.OnRecordClickListener listener) {
-        mRecordClickListener = listener;
     }
 }

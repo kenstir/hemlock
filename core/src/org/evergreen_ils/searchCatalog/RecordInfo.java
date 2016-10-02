@@ -39,6 +39,9 @@ public class RecordInfo implements Serializable {
     public interface OnRecordClickListener {
         abstract void onClick(RecordInfo record, int position);
     }
+    public interface OnRecordLongClickListener {
+        abstract void onLongClick(RecordInfo record, int position);
+    }
 
     public Integer doc_id = -1;
     public String title = null;

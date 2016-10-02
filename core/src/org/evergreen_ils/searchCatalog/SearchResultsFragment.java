@@ -26,6 +26,7 @@ import android.widget.AdapterView;
 import org.evergreen_ils.App;
 import org.evergreen_ils.R;
 import org.evergreen_ils.globals.Log;
+import org.evergreen_ils.utils.ui.ItemClickSupport;
 
 import java.util.ArrayList;
 
@@ -45,6 +46,8 @@ public class SearchResultsFragment extends Fragment {
     protected RecyclerView.LayoutManager mLayoutManager;
     protected ArrayList<RecordInfo> mDataset;
     protected RecordViewAdapter mAdapter;
+    protected RecordInfo.OnRecordClickListener mOnRecordClickListener;
+    protected RecordInfo.OnRecordLongClickListener mOnRecordLongClickListener;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -73,58 +76,30 @@ public class SearchResultsFragment extends Fragment {
 
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.addItemDecoration(new DividerItemDecoration(container.getContext(), DividerItemDecoration.VERTICAL_LIST));
-        registerForContextMenu(mRecyclerView);
+
+        ItemClickSupport cs = ItemClickSupport.addTo(mRecyclerView);
+        cs.setOnItemClickListener(new ItemClickSupport.OnItemClickListener() {
+            @Override
+            public void onItemClicked(RecyclerView recyclerView, int position, View v) {
+                if (mOnRecordClickListener != null) {
+                    RecordInfo record = mDataset.get(position);
+                    mOnRecordClickListener.onClick(record, position);
+                }
+            }
+        });
+        cs.setOnItemLongClickListener(new ItemClickSupport.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClicked(RecyclerView recyclerView, int position, View v) {
+                if (mOnRecordLongClickListener != null) {
+                    RecordInfo record = mDataset.get(position);
+                    mOnRecordLongClickListener.onLongClick(record, position);
+                    return true;
+                }
+                return false;
+            }
+        });
 
         return rootView;
-    }
-
-    @Override
-    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
-        Log.d(TAG, "context menu");
-        int pos = ((RecyclerView.LayoutParams) v.getLayoutParams()).getViewLayoutPosition();
-        Log.d(TAG, "Context: pos=" + pos);
-        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
-        //menu.setHeaderTitle("Options");
-        menu.add(Menu.NONE, App.ITEM_SHOW_DETAILS, 0, getString(R.string.show_details_message));
-        menu.add(Menu.NONE, App.ITEM_PLACE_HOLD, 1, getString(R.string.hold_place_title));
-        menu.add(Menu.NONE, App.ITEM_ADD_TO_LIST, 2, getString(R.string.add_to_my_list_message));
-    }
-
-    @Override
-    public boolean onContextItemSelected(MenuItem item) {
-        AdapterView.AdapterContextMenuInfo menuArrayItem = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
-        int pos = menuArrayItem.position;
-        Log.d(TAG, "here, pos=" + pos + " item_id=" + item.getItemId());
-        long id = mRecyclerView.getAdapter().getItemId(pos);;
-        Log.d(TAG, "here, id="+id);
-        /* todo needs work!
-
-        switch (item.getItemId()) {
-        case ITEM_SHOW_DETAILS:
-            Intent intent = new Intent(getBaseContext(), SampleUnderlinesNoFade.class);
-            intent.putExtra("recordInfo", info);
-            intent.putExtra("orgID", search.selectedOrganization.id);
-            intent.putExtra("recordList", recordList);
-            intent.putExtra("recordPosition", menuArrayItem.position);
-            intent.putExtra("numResults", search.visible);
-            startActivity(intent);
-            break;
-        case ITEM_PLACE_HOLD:
-            Intent hold_intent = new Intent(getBaseContext(), PlaceHoldActivity.class);
-            hold_intent.putExtra("recordInfo", info);
-            startActivity(hold_intent);
-            break;
-        case ITEM_ADD_TO_LIST:
-            if (bookBags.size() > 0) {
-                BookBagUtils.showAddToListDialog(this, bookBags, info);
-            } else {
-                Toast.makeText(context, getText(R.string.msg_no_lists), Toast.LENGTH_SHORT).show();
-            }
-            break;
-        }
-        */
-
-        return super.onContextItemSelected(item);
     }
 
     /**
@@ -163,10 +138,15 @@ public class SearchResultsFragment extends Fragment {
     }
 
     public void notifyDatasetChanged() {
+        mRecyclerView.scrollToPosition(0);
         mAdapter.notifyDataSetChanged();
     }
 
     public void setOnRecordClickListener(RecordInfo.OnRecordClickListener listener) {
-        mAdapter.setOnRecordClickListener(listener);
+        mOnRecordClickListener = listener;
+    }
+
+    public void setOnRecordLongClickListener(RecordInfo.OnRecordLongClickListener listener) {
+        mOnRecordLongClickListener = listener;
     }
 }
