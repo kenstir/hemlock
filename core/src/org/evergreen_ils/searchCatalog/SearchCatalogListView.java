@@ -19,6 +19,7 @@
  */
 package org.evergreen_ils.searchCatalog;
 
+import java.io.Serializable;
 import java.util.*;
 
 import android.net.Uri;
@@ -32,6 +33,9 @@ import org.evergreen_ils.App;
 import org.evergreen_ils.R;
 import org.evergreen_ils.accountAccess.AccountAccess;
 import org.evergreen_ils.accountAccess.bookbags.BookBag;
+import org.evergreen_ils.accountAccess.bookbags.BookBagUtils;
+import org.evergreen_ils.accountAccess.holds.PlaceHoldActivity;
+import org.evergreen_ils.barcodescan.CaptureActivity;
 import org.evergreen_ils.billing.BillingHelper;
 import org.evergreen_ils.globals.AppState;
 import org.evergreen_ils.globals.GlobalConfigs;
@@ -50,6 +54,8 @@ import android.view.View.OnKeyListener;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView.OnItemSelectedListener;
+
+import static org.evergreen_ils.App.ITEM_SHOW_DETAILS;
 
 public class SearchCatalogListView extends ActionBarActivity {
 
@@ -79,6 +85,7 @@ public class SearchCatalogListView extends ActionBarActivity {
 
     private boolean loadingElements = false;
     private boolean searchOptionsVisible = true;
+    private ContextMenuRecordInfo contextMenuRecordInfo;
 
     private String getSearchText() {
         return searchText.getText().toString();
@@ -204,30 +211,6 @@ public class SearchCatalogListView extends ActionBarActivity {
         });
     }
 
-    private void initRecordClickListener() {
-        registerForContextMenu(findViewById(R.id.search_results_list));
-        searchResultsFragment.setOnRecordClickListener(new RecordInfo.OnRecordClickListener() {
-            @Override
-            public void onClick(RecordInfo record, int position) {
-                Intent intent = new Intent(getBaseContext(), SampleUnderlinesNoFade.class);
-                //todo add package prefix to names in putExtra
-                intent.putExtra("recordInfo", record);
-                intent.putExtra("recordList", recordList);
-                intent.putExtra("recordPosition", position);
-                intent.putExtra("numResults", search.visible);
-                intent.putExtra("orgID", search.selectedOrganization.id);
-                startActivityForResult(intent, 10);
-            }
-        });
-        searchResultsFragment.setOnRecordLongClickListener(new RecordInfo.OnRecordLongClickListener() {
-            @Override
-            public void onLongClick(RecordInfo record, int position) {
-                Log.d(TAG, "long click");
-                openContextMenu(findViewById(R.id.search_results_list));
-            }
-        });
-    }
-
     private void initSearchRunnable() {
         searchForResultsRunnable = new Runnable() {
 
@@ -313,9 +296,37 @@ public class SearchCatalogListView extends ActionBarActivity {
         searchFormatSpinner.setAdapter(adapter);
     }
 
+    private void initRecordClickListener() {
+        registerForContextMenu(findViewById(R.id.search_results_list));
+        searchResultsFragment.setOnRecordClickListener(new RecordInfo.OnRecordClickListener() {
+            @Override
+            public void onClick(RecordInfo record, int position) {
+                Intent intent = new Intent(getBaseContext(), SampleUnderlinesNoFade.class);
+                //todo add package prefix to names in putExtra
+                intent.putExtra("recordInfo", record);
+                intent.putExtra("recordList", recordList);
+                intent.putExtra("recordPosition", position);
+                intent.putExtra("numResults", search.visible);
+                intent.putExtra("orgID", search.selectedOrganization.id);
+                startActivityForResult(intent, 10);
+            }
+        });
+        searchResultsFragment.setOnRecordLongClickListener(new RecordInfo.OnRecordLongClickListener() {
+            @Override
+            public void onLongClick(RecordInfo record, int position) {
+                Log.d(TAG, "long click");
+                // Don't know how to do this the Right Way so this will do for now.
+                // Guess I could implement a custom View and override getContextMenuInfo().
+                contextMenuRecordInfo = new ContextMenuRecordInfo();
+                contextMenuRecordInfo.record = record;
+                contextMenuRecordInfo.position = position;
+                openContextMenu(findViewById(R.id.search_results_list));
+            }
+        });
+    }
+
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
-
         Log.d(TAG, "context menu");
         int id = v.getId();
         if (v.getId() == R.id.search_results_list) {
@@ -329,36 +340,34 @@ public class SearchCatalogListView extends ActionBarActivity {
 
     @Override
     public boolean onContextItemSelected(MenuItem item) {
-        AdapterView.AdapterContextMenuInfo menuArrayItem = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
-        Log.d(TAG, "menuArrayItem.position="+menuArrayItem.position);
-        Log.d(TAG, "menuArrayItem.id="+menuArrayItem.id);
-        /* todo needs work!
-        final RecordInfo info = (RecordInfo) lv.getItemAtPosition(menuArrayItem.position);
+        //ContextMenuRecordInfo info = (ContextMenuRecordInfo)item.getMenuInfo();
+        ContextMenuRecordInfo info = contextMenuRecordInfo;
+        if (info == null)
+            return false;
 
         switch (item.getItemId()) {
-        case ITEM_SHOW_DETAILS:
+        case App.ITEM_SHOW_DETAILS:
             Intent intent = new Intent(getBaseContext(), SampleUnderlinesNoFade.class);
-            intent.putExtra("recordInfo", info);
+            intent.putExtra("recordInfo", info.record);
             intent.putExtra("orgID", search.selectedOrganization.id);
             intent.putExtra("recordList", recordList);
-            intent.putExtra("recordPosition", menuArrayItem.position);
+            intent.putExtra("recordPosition", info.position);
             intent.putExtra("numResults", search.visible);
             startActivity(intent);
-            break;
-        case ITEM_PLACE_HOLD:
+            return true;
+        case App.ITEM_PLACE_HOLD:
             Intent hold_intent = new Intent(getBaseContext(), PlaceHoldActivity.class);
-            hold_intent.putExtra("recordInfo", info);
+            hold_intent.putExtra("recordInfo", info.record);
             startActivity(hold_intent);
-            break;
-        case ITEM_ADD_TO_LIST:
+            return true;
+        case App.ITEM_ADD_TO_LIST:
             if (bookBags.size() > 0) {
-                BookBagUtils.showAddToListDialog(this, bookBags, info);
+                BookBagUtils.showAddToListDialog(this, bookBags, info.record);
             } else {
                 Toast.makeText(context, getText(R.string.msg_no_lists), Toast.LENGTH_SHORT).show();
             }
-            break;
+            return true;
         }
-        */
 
         return super.onContextItemSelected(item);
     }
@@ -391,22 +400,31 @@ public class SearchCatalogListView extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    protected void replaceRecordList(ArrayList<RecordInfo> newRecords) {
+        if (newRecords != null) {
+            recordList.clear();
+            for (RecordInfo record : newRecords) {
+                recordList.add(record);
+            }
+            searchResultsFragment.notifyDatasetChanged();
+            searchResultsNumber.setText(recordList.size()
+                    + " out of " + search.visible);
+        }
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
-        Log.d(TAG, "onactivityresult request="+requestCode+" result="+resultCode);
-        /* todo
+        // todo we should not switch on resultCode here, we should switch on requestCode
         switch (resultCode) {
-
         case SampleUnderlinesNoFade.RETURN_DATA : {
-            ArrayList<RecordInfo> records = (ArrayList)data.getSerializableExtra("recordList");
-            recordList.clear();
-            for(int i=0;i<records.size();i++){
-                recordList.add(records.get(i));
+            /* because SampleUnderlinesNoFade and this activity share the same ArrayList by reference,
+               I don't think we actually need to capture the recordList from the result Intent */
+            Serializable extra = null;
+            if (data != null) extra = data.getSerializableExtra("recordList");
+            if (extra != null) {
+                replaceRecordList((ArrayList)extra);
             }
-            adapter.notifyDataSetChanged();
-            searchResultsNumber.setText(adapter.getCount()
-                    + " out of " + search.visible);
         }
         break;
         
@@ -424,8 +442,6 @@ public class SearchCatalogListView extends ActionBarActivity {
             Thread searchThread = new Thread(searchForResultsRunnable);
             searchThread.start();
         }
-
         }
-        */
     }
 }
