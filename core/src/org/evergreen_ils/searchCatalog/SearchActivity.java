@@ -55,9 +55,9 @@ import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView.OnItemSelectedListener;
 
-public class SearchCatalogListView extends ActionBarActivity {
+public class SearchActivity extends ActionBarActivity {
 
-    private static final String TAG = SearchCatalogListView.class.getSimpleName();
+    private static final String TAG = SearchActivity.class.getSimpleName();
 
     public static final String SEARCH_OPTIONS_VISIBLE = "search_options_visible";
 

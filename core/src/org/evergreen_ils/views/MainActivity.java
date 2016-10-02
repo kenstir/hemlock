@@ -22,7 +22,6 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
-import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -38,7 +37,7 @@ import org.evergreen_ils.auth.Const;
 import org.evergreen_ils.billing.*;
 import org.evergreen_ils.globals.AppState;
 import org.evergreen_ils.globals.Log;
-import org.evergreen_ils.searchCatalog.SearchCatalogListView;
+import org.evergreen_ils.searchCatalog.SearchActivity;
 import org.evergreen_ils.searchCatalog.SearchFormat;
 import org.evergreen_ils.utils.ui.ActionBarUtils;
 import org.evergreen_ils.views.splashscreen.SplashActivity;
@@ -167,7 +166,7 @@ public class MainActivity extends ActionBarActivity {
         } else if (id == R.id.main_my_lists_button) {
             startActivity(new Intent(this, BookBagListView.class));
         } else if (id == R.id.main_btn_search) {
-            startActivity(new Intent(this, SearchCatalogListView.class));
+            startActivity(new Intent(this, SearchActivity.class));
 //        } else if (id == R.id.main_donate_button) {
 //            startActivityForResult(new Intent(this, DonateActivity.class), BillingHelper.REQUEST_PURCHASE);
         }
