@@ -247,8 +247,10 @@ public class SearchCatalogListView extends ActionBarActivity {
                         }
 
                         searchResultsNumber.setText(+recordList.size() + " out of " + search.visible);
-                        searchResultsFragment.notifyDatasetChanged();
-                        initRecordClickListener();
+                        if (searchResultsFragment != null) {
+                            searchResultsFragment.notifyDatasetChanged();
+                            initRecordClickListener();
+                        }
                         progressDialog.dismiss();
                     }
                 });
