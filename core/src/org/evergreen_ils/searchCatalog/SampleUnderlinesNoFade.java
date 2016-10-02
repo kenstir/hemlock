@@ -113,14 +113,17 @@ public class SampleUnderlinesNoFade extends BaseSampleActivity {
 
     }
 
+    private void finishWithIntent() {
+        Intent intent = new Intent();
+        intent.putExtra("recordList", records);
+        setResult(RETURN_DATA, intent);
+        finish();
+    }
+
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
-            Intent intent = new Intent();
-            intent.putExtra("recordList", records);
-            setResult(RETURN_DATA, intent);
-            finish();
-            
+            finishWithIntent();
             return true;
         }
         return super.onKeyDown(keyCode, event);
@@ -130,7 +133,8 @@ public class SampleUnderlinesNoFade extends BaseSampleActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == android.R.id.home) {
-            onBackPressed();
+            //onBackPressed();
+            finishWithIntent();
             return true;
         }
         return super.onOptionsItemSelected(item);
