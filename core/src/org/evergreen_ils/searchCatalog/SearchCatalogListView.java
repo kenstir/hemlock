@@ -131,8 +131,6 @@ public class SearchCatalogListView extends ActionBarActivity {
             searchResultsFragment.setArguments(args);
             transaction.replace(R.id.search_results_list, searchResultsFragment);
             transaction.commit();
-        } else {
-            Log.d(TAG, "what happens here?");
         }
 
         searchText = (EditText) findViewById(R.id.searchText);
@@ -415,8 +413,6 @@ public class SearchCatalogListView extends ActionBarActivity {
         // todo we should not switch on resultCode here, we should switch on requestCode
         switch (resultCode) {
         case SampleUnderlinesNoFade.RETURN_DATA : {
-            /* because SampleUnderlinesNoFade and this activity share the same ArrayList by reference,
-               I don't think we actually need to capture the recordList from the result Intent */
             Serializable extra = null;
             if (data != null) extra = data.getSerializableExtra("recordList");
             if (extra != null) {
