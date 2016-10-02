@@ -68,7 +68,7 @@ public class SearchCatalogListView extends ActionBarActivity {
     private Spinner searchOrgSpinner;
     private Spinner searchClassSpinner;
     private Spinner searchFormatSpinner;
-    private TextView searchResultsNumber;
+    private TextView searchResultsSummary;
     private SearchResultsFragment searchResultsFragment;
 
     private SearchCatalog search;
@@ -140,7 +140,7 @@ public class SearchCatalogListView extends ActionBarActivity {
         searchClassSpinner = (Spinner) findViewById(R.id.search_qtype_spinner);
         searchFormatSpinner = (Spinner) findViewById(R.id.search_format_spinner);
         searchOrgSpinner = (Spinner) findViewById(R.id.search_org_spinner);
-        searchResultsNumber = (TextView) findViewById(R.id.search_result_number);
+        searchResultsSummary = (TextView) findViewById(R.id.search_result_number);
 
         initSearchOptionsVisibility();
         initSearchText();
@@ -224,7 +224,7 @@ public class SearchCatalogListView extends ActionBarActivity {
                     public void run() {
                         InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                         imm.hideSoftInputFromWindow(searchText.getWindowToken(), 0);
-                        searchResultsNumber.setVisibility(View.VISIBLE);
+                        searchResultsSummary.setVisibility(View.VISIBLE);
                         progressDialog = ProgressDialog.show(context,
                                 getResources().getText(R.string.dialog_please_wait),
                                 getResources().getText(R.string.dialog_fetching_data_message));
@@ -242,7 +242,7 @@ public class SearchCatalogListView extends ActionBarActivity {
                                 recordList.add(searchResults.get(j));
                         }
 
-                        searchResultsNumber.setText(String.format(getString(R.string.n_of_m_results), recordList.size(), search.visible));
+                        searchResultsSummary.setText(String.format(getString(R.string.n_of_m_results), recordList.size(), search.visible));
                         if (searchResultsFragment != null) {
                             searchResultsFragment.notifyDatasetChanged();
                             initRecordClickListener();
@@ -403,7 +403,7 @@ public class SearchCatalogListView extends ActionBarActivity {
                 recordList.add(record);
             }
             searchResultsFragment.notifyDatasetChanged();
-            searchResultsNumber.setText(String.format(getString(R.string.n_of_m_results), recordList.size(), search.visible));
+            searchResultsSummary.setText(String.format(getString(R.string.n_of_m_results), recordList.size(), search.visible));
         }
     }
 
