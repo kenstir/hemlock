@@ -55,8 +55,6 @@ import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView.OnItemSelectedListener;
 
-import static org.evergreen_ils.App.ITEM_SHOW_DETAILS;
-
 public class SearchCatalogListView extends ActionBarActivity {
 
     private static final String TAG = SearchCatalogListView.class.getSimpleName();
@@ -246,7 +244,7 @@ public class SearchCatalogListView extends ActionBarActivity {
                                 recordList.add(searchResults.get(j));
                         }
 
-                        searchResultsNumber.setText(+recordList.size() + " out of " + search.visible);
+                        searchResultsNumber.setText(String.format(getString(R.string.n_of_m_results), recordList.size(), search.visible)));
                         if (searchResultsFragment != null) {
                             searchResultsFragment.notifyDatasetChanged();
                             initRecordClickListener();

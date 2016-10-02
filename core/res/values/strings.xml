@@ -66,8 +66,8 @@
     <string name="renew_button">Renew</string>
     <string name="renew_dialog_message">Are you sure you want to renew this item?</string>
     <string name="toast_item_renewed">Item renewed</string>
-    <string name="record_of">record %1$d of %2$d</string>
-    <string name="displaying_n_of_m_results">displaying %1$d of %2$d results</string>
+    <string name="record_of">Item %1$d of %2$d</string>
+    <string name="n_of_m_results">Showing %1$d of %2$d results</string>
     <string name="n_of_m_available">%1$d of %2$s available at %3$s</string>
 
     <!-- Search Details View -->
