@@ -19,7 +19,6 @@
  */
 package org.evergreen_ils.searchCatalog;
 
-import java.io.Serializable;
 import java.util.*;
 
 import android.net.Uri;
@@ -395,8 +394,8 @@ public class SearchActivity extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    protected void replaceRecordList(ArrayList<RecordInfo> newRecords) {
-        if (newRecords != null) {
+    protected void replaceRecordListIfLarger(ArrayList<RecordInfo> newRecords) {
+        if (newRecords != null && newRecords.size() > recordList.size()) {
             recordList.clear();
             for (RecordInfo record : newRecords) {
                 recordList.add(record);
@@ -412,10 +411,11 @@ public class SearchActivity extends ActionBarActivity {
         // todo we should not switch on resultCode here, we should switch on requestCode
         switch (resultCode) {
         case SampleUnderlinesNoFade.RETURN_DATA : {
-            Serializable extra = null;
-            if (data != null) extra = data.getSerializableExtra("recordList");
-            if (extra != null) {
-                replaceRecordList((ArrayList)extra);
+            try {
+                ArrayList<RecordInfo> resultRecords = (ArrayList<RecordInfo>) data.getSerializableExtra("recordList");
+                replaceRecordListIfLarger((ArrayList)resultRecords);
+            } catch (Exception e) {
+                Log.d(TAG, "caught", e);
             }
         }
         break;
