@@ -131,6 +131,8 @@ public class SearchActivity extends ActionBarActivity {
             searchResultsFragment.setArguments(args);
             transaction.replace(R.id.search_results_list, searchResultsFragment);
             transaction.commit();
+        } else {
+            searchResultsFragment = (SearchResultsFragment) getSupportFragmentManager().findFragmentById(R.id.search_results_list);
         }
 
         searchText = (EditText) findViewById(R.id.searchText);
@@ -237,16 +239,13 @@ public class SearchActivity extends ActionBarActivity {
                     @Override
                     public void run() {
                         recordList.clear();
-                        if (searchResults.size() > 0) {
-                            for (int j = 0; j < searchResults.size(); j++)
-                                recordList.add(searchResults.get(j));
+                        for (RecordInfo record : searchResults) {
+                            recordList.add(record);
                         }
 
                         searchResultsSummary.setText(String.format(getString(R.string.n_of_m_results), recordList.size(), search.visible));
-                        if (searchResultsFragment != null) {
-                            searchResultsFragment.notifyDatasetChanged();
-                            initRecordClickListener();
-                        }
+                        searchResultsFragment.notifyDatasetChanged();
+                        initRecordClickListener();
                         progressDialog.dismiss();
                     }
                 });
