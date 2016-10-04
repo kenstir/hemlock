@@ -19,6 +19,7 @@
  */
 package org.evergreen_ils.searchCatalog;
 
+import java.lang.reflect.Array;
 import java.util.*;
 
 import android.net.Uri;
@@ -102,6 +103,12 @@ public class SearchActivity extends ActionBarActivity {
     }
 
     @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putSerializable("recordList", recordList);
+    }
+
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (!SplashActivity.isAppInitialized()) {
@@ -118,10 +125,16 @@ public class SearchActivity extends ActionBarActivity {
         globalConfigs = GlobalConfigs.getInstance(this);
         search = SearchCatalog.getInstance();
         bookBags = AccountAccess.getInstance().getBookbags();
-        recordList = new ArrayList<RecordInfo>();
         searchResults = new ArrayList<RecordInfo>();
         progressDialog = new ProgressDialog(context);
 
+        if (savedInstanceState == null) {
+            recordList = new ArrayList<RecordInfo>();
+        } else {
+            recordList = (ArrayList<RecordInfo>) savedInstanceState.getSerializable("recordList");
+        }
+
+        // create search results fragment
         if (savedInstanceState == null) {
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
             searchResultsFragment = new SearchResultsFragment();
@@ -150,6 +163,7 @@ public class SearchActivity extends ActionBarActivity {
         initSearchFormatSpinner();
         initSearchOrgSpinner();
         initSearchRunnable();
+        initRecordClickListener();
     }
 
     private void initSearchButton() {
@@ -244,7 +258,6 @@ public class SearchActivity extends ActionBarActivity {
 
                         searchResultsSummary.setText(String.format(getString(R.string.n_of_m_results), recordList.size(), search.visible));
                         searchResultsFragment.notifyDatasetChanged();
-                        initRecordClickListener();
                         progressDialog.dismiss();
                     }
                 });
