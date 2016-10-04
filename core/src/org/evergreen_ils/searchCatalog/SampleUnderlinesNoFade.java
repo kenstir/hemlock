@@ -67,9 +67,6 @@ public class SampleUnderlinesNoFade extends BaseSampleActivity {
         int record_position = getIntent().getIntExtra("recordPosition", 0);
         numResults = getIntent().getIntExtra("numResults", records.size());
 
-        if (records.get(records.size() - 1).dummy == true)
-            records.remove(records.size() - 1);
-
         context = this;
         
         mAdapter = new SearchFragmentAdapter(getSupportFragmentManager());
