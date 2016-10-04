@@ -25,6 +25,7 @@ import java.util.Date;
 
 import android.support.v7.app.ActionBarActivity;
 import android.view.MenuItem;
+import android.widget.*;
 import org.evergreen_ils.R;
 import org.evergreen_ils.accountAccess.AccountAccess;
 import org.evergreen_ils.accountAccess.SessionNotFoundException;
@@ -43,18 +44,8 @@ import android.os.Bundle;
 import android.text.format.DateFormat;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
-import android.widget.DatePicker;
-import android.widget.EditText;
-import android.widget.Spinner;
-import android.widget.TextView;
-import android.widget.Toast;
 
 public class HoldDetails extends ActionBarActivity {
 
@@ -67,9 +58,8 @@ public class HoldDetails extends ActionBarActivity {
     public static final int RESULT_CODE_CANCEL = 7;
 
     private TextView title;
-
     private TextView author;
-
+    private TextView format;
     private TextView physical_description;
 
     private AccountAccess accountAccess;
@@ -82,10 +72,12 @@ public class HoldDetails extends ActionBarActivity {
 
     private DatePickerDialog datePicker = null;
 
+    //private TableRow suspendHoldRow;
     private CheckBox suspendHold;
 
     private Spinner orgSelector;
 
+    //private TableRow thawDateRow;
     private DatePickerDialog thaw_datePicker = null;
 
     private EditText thaw_date_edittext;
@@ -118,44 +110,44 @@ public class HoldDetails extends ActionBarActivity {
         context = this;
         globalConfigs = GlobalConfigs.getInstance(this);
 
-        final HoldRecord record = (HoldRecord) getIntent()
-                .getSerializableExtra("holdRecord");
-
-        Log.d(TAG, "Record " + record + " " + record.title + " "
-                + record.ahr);
+        final HoldRecord record = (HoldRecord) getIntent().getSerializableExtra("holdRecord");
 
         accountAccess = AccountAccess.getInstance();
 
         title = (TextView) findViewById(R.id.hold_title);
         author = (TextView) findViewById(R.id.hold_author);
+        format = (TextView) findViewById(R.id.hold_format);
         physical_description = (TextView) findViewById(R.id.hold_physical_description);
         cancelHold = (Button) findViewById(R.id.cancel_hold_button);
         updateHold = (Button) findViewById(R.id.update_hold_button);
+        //suspendHoldRow = (TableRow) findViewById(R.id.hold_suspend_hold_row);
         suspendHold = (CheckBox) findViewById(R.id.hold_suspend_hold);
         orgSelector = (Spinner) findViewById(R.id.hold_pickup_location);
         expiration_date = (EditText) findViewById(R.id.hold_expiration_date);
+        //thawDateRow = (TableRow) findViewById(R.id.hold_thaw_date_row);
         thaw_date_edittext = (EditText) findViewById(R.id.hold_thaw_date);
 
         title.setText(record.title);
         author.setText(record.author);
-        if (record.recordInfo != null)
+        if (record.recordInfo != null) {
+            format.setText(record.recordInfo.search_format);
             physical_description.setText(record.recordInfo.physical_description);
-
-        // set record info
-        suspendHold.setChecked(record.suspended);
-
-        if (record.thaw_date != null) {
-            thaw_date = record.thaw_date;
-            thaw_date_edittext.setText(DateFormat.format("MMMM dd, yyyy", thaw_date));
         }
+
+        suspendHold.setChecked(record.suspended);
+        if (record.suspended) {
+            if (record.thaw_date != null) {
+                thaw_date = record.thaw_date;
+                thaw_date_edittext.setText(DateFormat.format("MMMM dd, yyyy", thaw_date));
+            }
+        }
+
         if (record.expire_time != null) {
             expire_date = record.expire_time;
             expiration_date.setText(DateFormat.format("MMMM dd, yyyy", expire_date));
         }
 
         setViewEnabled(thaw_date_edittext, suspendHold.isChecked());
-
-        Log.d(TAG, record.title + " " + record.author);
 
         cancelHold.setOnClickListener(new OnClickListener() {
             @Override
@@ -193,19 +185,13 @@ public class HoldDetails extends ActionBarActivity {
         datePicker = new DatePickerDialog(this,
                 new DatePickerDialog.OnDateSetListener() {
 
-                    public void onDateSet(DatePicker view, int year,
-                            int monthOfYear, int dayOfMonth) {
-
-                        Date chosenDate = new Date(year - 1900, monthOfYear,
-                                dayOfMonth);
+                    public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+                        Date chosenDate = new Date(year - 1900, monthOfYear, dayOfMonth);
                         expire_date = chosenDate;
-                        CharSequence strDate = DateFormat.format(
-                                "MMMM dd, yyyy", chosenDate);
+                        CharSequence strDate = DateFormat.format("MMMM dd, yyyy", chosenDate);
                         expiration_date.setText(strDate);
-                        // set current date
                     }
-                }, cal.get(Calendar.YEAR), cal.get(Calendar.MONTH),
-                cal.get(Calendar.DAY_OF_MONTH));
+                }, cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH));
 
         expiration_date.setOnClickListener(new OnClickListener() {
             @Override
@@ -217,19 +203,13 @@ public class HoldDetails extends ActionBarActivity {
         thaw_datePicker = new DatePickerDialog(this,
                 new DatePickerDialog.OnDateSetListener() {
 
-                    public void onDateSet(DatePicker view, int year,
-                            int monthOfYear, int dayOfMonth) {
-
-                        Date chosenDate = new Date(year - 1900, monthOfYear,
-                                dayOfMonth);
+                    public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+                        Date chosenDate = new Date(year - 1900, monthOfYear, dayOfMonth);
                         thaw_date = chosenDate;
-                        CharSequence strDate = DateFormat.format(
-                                "MMMM dd, yyyy", chosenDate);
+                        CharSequence strDate = DateFormat.format("MMMM dd, yyyy", chosenDate);
                         thaw_date_edittext.setText(strDate);
-                        // set current date
                     }
-                }, cal.get(Calendar.YEAR), cal.get(Calendar.MONTH),
-                cal.get(Calendar.DAY_OF_MONTH));
+                }, cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH));
 
         thaw_date_edittext.setOnClickListener(new OnClickListener() {
 
@@ -368,10 +348,11 @@ public class HoldDetails extends ActionBarActivity {
     }
 
     public void setViewEnabled(View view, boolean enabled) {
-        if (enabled) {
-            enableView(view);
-        } else {
-            disableView(view);
-        }
+        view.setEnabled(enabled);
+//        if (enabled) {
+//            enableView(view);
+//        } else {
+//            disableView(view);
+//        }
     }
 }

@@ -834,7 +834,6 @@ public class AccountAccess {
     public Object updateHold(OSRFObject ahr, Integer pickup_lib,
             boolean suspendHold, String expire_time, String thaw_date)
             throws SessionNotFoundException {
-        // TODO verify that object is correct passed to the server
 
         ahr.put("pickup_lib", pickup_lib);
         ahr.put("expire_time", expire_time);
