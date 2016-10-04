@@ -10,6 +10,7 @@
          android:layout_width="fill_parent"
          android:layout_height="wrap_content"
          android:padding="5dip"
+         style="@style/SecondaryToolbar"
          >
         <TableRow
             android:layout_width="fill_parent"
@@ -63,18 +64,7 @@
 
      </TableLayout>
 
-
-    <TextView
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/overdue_materials"
-        style="@style/textLargeNoPadding"
-        android:paddingTop="10dip"
-        android:paddingBottom="5dip"
-        android:layout_marginLeft="5dip"
-        />
-
-	<ListView 
+	<ListView
         android:id="@+id/fines_overdue_materials_list"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"

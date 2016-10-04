@@ -12,7 +12,8 @@
             android:orientation="horizontal"
             android:paddingLeft="5dip"
             android:paddingRight="5dip"
-            android:stretchColumns="2">
+            android:stretchColumns="2"
+            style="@style/SecondaryToolbar">
         <TableRow
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

@@ -107,7 +107,6 @@
     <string name="total_owned">Total Owned </string>
     <string name="total_paid">Total Paid</string>
     <string name="balance_owed">Balance Owed</string>
-    <string name="overdue_materials">Overdue Materials</string>
 
     <!-- Bookbag Activities -->
     <string name="list_delete_button">Delete List</string>
