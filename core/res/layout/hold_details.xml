@@ -114,6 +114,7 @@
 
                 <EditText
                         android:id="@+id/hold_expiration_date"
+                        android:focusable="false"
                         android:layout_width="0dip"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
@@ -145,6 +146,7 @@
                 />
                 <EditText
                         android:id="@+id/hold_thaw_date"
+                        android:focusable="false"
                         android:layout_width="0dip"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
