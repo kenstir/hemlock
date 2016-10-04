@@ -147,7 +147,7 @@ public class HoldDetails extends ActionBarActivity {
             expiration_date.setText(DateFormat.format("MMMM dd, yyyy", expire_date));
         }
 
-        setViewEnabled(thaw_date_edittext, suspendHold.isChecked());
+        thaw_date_edittext.setEnabled(suspendHold.isChecked());
 
         cancelHold.setOnClickListener(new OnClickListener() {
             @Override
@@ -177,7 +177,7 @@ public class HoldDetails extends ActionBarActivity {
             @Override
             public void onCheckedChanged(CompoundButton buttonView,
                     boolean isChecked) {
-                setViewEnabled(thaw_date_edittext, isChecked);
+                thaw_date_edittext.setEnabled(isChecked);
             }
         });
         Calendar cal = Calendar.getInstance();
@@ -332,27 +332,5 @@ public class HoldDetails extends ActionBarActivity {
             return true;
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    public void disableView(View view) {
-        // view.setFocusable(false);
-        view.setFocusable(false);
-        view.setBackgroundColor(Color.argb(255, 100, 100, 100));
-        // view.setVisibility(View.INVISIBLE);
-    }
-
-    public void enableView(View view) {
-        // view.setVisibility(View.VISIBLE);
-        view.setFocusableInTouchMode(true);
-        view.setBackgroundColor(Color.argb(255, 255, 255, 255));
-    }
-
-    public void setViewEnabled(View view, boolean enabled) {
-        view.setEnabled(enabled);
-//        if (enabled) {
-//            enableView(view);
-//        } else {
-//            disableView(view);
-//        }
     }
 }
