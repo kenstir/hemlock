@@ -7,51 +7,59 @@
     >
 
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dip"
-        android:orientation="horizontal"
-        android:padding="5dip" >
-
-        <Spinner
-            android:id="@+id/advanced_search_qtype_spinner"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:entries="@array/search_qtype" />
+            android:orientation="vertical"
+            style="@style/SecondaryToolbar">
 
-        <Spinner
-            android:id="@+id/advanced_search_contains_spinner"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:entries="@array/advanced_search_contains"/>
-    </LinearLayout>
+        <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dip"
+                android:orientation="horizontal"
+                android:padding="5dip" >
 
-    <LinearLayout
-        android:id="@+id/advanced_search_filter_container"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal" >
+            <Spinner
+                    android:id="@+id/advanced_search_qtype_spinner"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:entries="@array/search_qtype" />
 
-        <EditText
-            android:id="@+id/advanced_search_text"
-            android:layout_width="0dip"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:hint="@string/advanced_search_hint"
-            android:singleLine="true" />
+            <Spinner
+                    android:id="@+id/advanced_search_contains_spinner"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:entries="@array/advanced_search_contains"/>
+        </LinearLayout>
 
-        <Button
-            android:id="@+id/advanced_search_add_filter_button"
-            style="@style/ApplicationButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/advanced_search_add_filter_button" />
+        <LinearLayout
+                android:id="@+id/advanced_search_filter_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal" >
+
+            <EditText
+                    android:id="@+id/advanced_search_text"
+                    android:layout_width="0dip"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:hint="@string/advanced_search_hint"
+                    android:singleLine="true" />
+
+            <Button
+                    android:id="@+id/advanced_search_add_filter_button"
+                    style="@style/ApplicationButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/advanced_search_add_filter_button" />
+        </LinearLayout>
+
     </LinearLayout>
 
     <ScrollView
         android:id="@+id/advanced_search_scrollview"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="0dip"
         android:layout_weight="1" 
         android:padding="5dip"
         >
@@ -61,11 +69,6 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical" >
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/advanced_search_filter_text" />
         </LinearLayout>
     </ScrollView>
 
