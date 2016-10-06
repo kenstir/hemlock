@@ -22,172 +22,184 @@
 
             <TableRow>
                 <TextView
-                        android:layout_width="0dip"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_weight="2"
                         android:text="@string/title"
+                        android:paddingRight="6dp"
                         />
 
                 <TextView
                         android:id="@+id/hold_title"
+                        style="@style/TitleSearchStyleList"
                         android:layout_width="0dip"
                         android:layout_height="wrap_content"
-                        android:layout_weight="4"
-                        android:gravity="left|center"
+                        android:layout_weight="1"
+                        android:layout_gravity="left"
                         android:text="Trashed : a graphic novel"/>
             </TableRow>
             <TableRow>
                 <TextView
-                        android:layout_width="0dip"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_weight="2"
                         android:text="@string/author"
+                        android:paddingRight="6dp"
                         />
 
                 <TextView
                         android:id="@+id/hold_author"
                         android:layout_width="0dip"
                         android:layout_height="wrap_content"
-                        android:layout_weight="4"
+                        android:layout_weight="1"
                         android:gravity="left|center"
                         android:text="Derf"/>
             </TableRow>
             <TableRow>
                 <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/format"
+                        android:paddingRight="6dp"
+                />
+                <TextView
+                        android:id="@+id/hold_format"
+                        style="@style/PubSearchStyleList"
                         android:layout_width="0dip"
                         android:layout_height="wrap_content"
-                        android:layout_weight="2"
+                        android:layout_weight="1"
+                        android:gravity="left"
+                        android:text="book"
+                        android:layout_gravity="left"/>
+            </TableRow>
+            <TableRow android:visibility="gone">
+                <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
                         android:text="@string/physical_description"
+                        android:paddingRight="6dp"
                         />
 
                 <TextView
                         android:id="@+id/hold_physical_description"
                         android:layout_width="0dip"
                         android:layout_height="wrap_content"
-                        android:layout_weight="4"
+                        android:layout_weight="1"
                         android:gravity="left|center"
                         android:text="print 256 p."/>
             </TableRow>
             <TableRow>
                 <TextView
-                        android:layout_width="0dip"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_weight="2"
-                        android:text="@string/contact_telephone"
-                        />
+                        android:text="@string/pickup_location"
+                />
 
-                <EditText
-                        android:id="@+id/hold_contact_telephone"
+                <Spinner
+                        android:id="@+id/hold_pickup_location"
                         android:layout_width="0dip"
                         android:layout_height="wrap_content"
-                        android:layout_weight="4"
+                        android:layout_weight="1"
                         android:gravity="left|center"
-                        />
+                        android:spinnerMode="dialog"
+                />
             </TableRow>
-            <TableRow>
+            <TableRow android:visibility="gone">
                 <TextView
-                        android:layout_width="0dip"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_weight="2"
                         android:text="@string/enable_phone_notification"
+                        android:paddingRight="6dp"
                         />
 
                 <CheckBox
                         android:id="@+id/hold_enable_phone_notification"
                         android:layout_width="0dip"
                         android:layout_height="wrap_content"
-                        android:layout_weight="4"
+                        android:layout_weight="1"
                         android:gravity="left|center"
                         />
             </TableRow>
-            <TableRow>
+            <TableRow android:visibility="gone">
                 <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/contact_telephone"
+                />
+
+                <EditText
+                        android:id="@+id/hold_contact_telephone"
                         android:layout_width="0dip"
                         android:layout_height="wrap_content"
-                        android:layout_weight="2"
+                        android:layout_weight="1"
+                        android:gravity="left|center"
+                />
+            </TableRow>
+            <TableRow>
+                <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
                         android:text="@string/enable_email_notification"
+                        android:paddingRight="6dp"
                         />
 
                 <CheckBox
                         android:id="@+id/hold_enable_email_notification"
                         android:layout_width="0dip"
                         android:layout_height="wrap_content"
-                        android:layout_weight="4"
+                        android:layout_weight="1"
                         android:gravity="left|center"
-                        android:enabled="true" android:checked="true"/>
+                        android:enabled="true"
+                        android:checked="true"/>
             </TableRow>
             <TableRow>
                 <TextView
-                        android:layout_width="0dip"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_weight="2"
-                        android:text="@string/pickup_location"
-                        />
-
-                <Spinner
-                        android:id="@+id/hold_pickup_location"
-                        android:layout_width="0dip"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="4"
-                        android:gravity="left|center"
-                        android:spinnerMode="dialog"
-                        />
-            </TableRow>
-            <TableRow>
-                <TextView
-                        android:layout_width="0dip"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="2"
                         android:text="@string/expiration_date"
+                        android:paddingRight="6dp"
                         />
 
                 <EditText
                         android:id="@+id/hold_expiration_date"
+                        android:focusable="false"
                         android:layout_width="0dip"
                         android:layout_height="wrap_content"
-                        android:layout_weight="4"
+                        android:layout_weight="1"
                         android:gravity="left|center"
                         />
-
-
             </TableRow>
-
             <TableRow>
                 <TextView
-                        android:layout_width="0dip"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_weight="2"
                         android:text="@string/suspend_hold"
-                        android:gravity="left|center"/>
+                        android:paddingRight="6dp"/>
 
                 <CheckBox
                         android:id="@+id/hold_suspend_hold"
                         android:layout_width="0dip"
                         android:layout_height="wrap_content"
-                        android:layout_weight="4"
+                        android:layout_weight="1"
                         android:gravity="center"
                         />
             </TableRow>
             <TableRow>
                 <TextView
-                        android:layout_width="0dip"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_weight="2"
                         android:text="@string/thaw_date"
+                        android:paddingRight="6dp"
                         />
-
                 <EditText
                         android:id="@+id/hold_thaw_date"
+                        android:focusable="false"
+                        android:enabled="false"
                         android:layout_width="0dip"
                         android:layout_height="wrap_content"
-                        android:layout_weight="4"
+                        android:layout_weight="1"
                         android:gravity="left|center"
                         />
-
-
             </TableRow>
         </TableLayout>
-
     </ScrollView>
 
     <LinearLayout
@@ -197,7 +209,6 @@
             android:gravity="left"
             android:paddingBottom="3dip"
     >
-
         <Button
                 android:id="@+id/place_hold"
                 android:layout_width="120dip"

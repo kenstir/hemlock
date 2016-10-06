@@ -62,6 +62,7 @@ public class PlaceHoldActivity extends ActionBarActivity {
     private static final String TAG = PlaceHoldActivity.class.getSimpleName();
     private TextView title;
     private TextView author;
+    private TextView format;
     private TextView physical_description;
     private AccountAccess accountAccess;
     private EditText expiration_date;
@@ -102,6 +103,7 @@ public class PlaceHoldActivity extends ActionBarActivity {
 
         title = (TextView) findViewById(R.id.hold_title);
         author = (TextView) findViewById(R.id.hold_author);
+        format = (TextView) findViewById(R.id.hold_format);
         physical_description = (TextView) findViewById(R.id.hold_physical_description);
         placeHold = (Button) findViewById(R.id.place_hold);
         expiration_date = (EditText) findViewById(R.id.hold_expiration_date);
@@ -114,11 +116,8 @@ public class PlaceHoldActivity extends ActionBarActivity {
 
         title.setText(record.title);
         author.setText(record.author);
+        format.setText(record.search_format);
         physical_description.setText(record.physical_description);
-
-        // hide edit text
-        disableView(thaw_date_edittext);
-        disableView(phone_number);
 
         final Integer record_id = record.doc_id;
 
@@ -196,31 +195,26 @@ public class PlaceHoldActivity extends ActionBarActivity {
             }
         });
 
-        phone_notification
-                .setOnCheckedChangeListener(new OnCheckedChangeListener() {
-
-                    @Override
-                    public void onCheckedChanged(CompoundButton buttonView,
-                            boolean isChecked) {
-
-                        if (isChecked) {
-                            enableView(phone_number);
-                        } else
-                            disableView(phone_number);
-                    }
-                });
+//        phone_notification
+//                .setOnCheckedChangeListener(new OnCheckedChangeListener() {
+//
+//                    @Override
+//                    public void onCheckedChanged(CompoundButton buttonView,
+//                            boolean isChecked) {
+//
+//                        if (isChecked) {
+//                            enableView(phone_number);
+//                        } else
+//                            disableView(phone_number);
+//                    }
+//                });
 
         suspendHold.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 
             @Override
             public void onCheckedChanged(CompoundButton buttonView,
                     boolean isChecked) {
-
-                if (isChecked) {
-                    enableView(thaw_date_edittext);
-                } else {
-                    disableView(thaw_date_edittext);
-                }
+                thaw_date_edittext.setEnabled(isChecked);
             }
         });
 
@@ -319,22 +313,4 @@ public class PlaceHoldActivity extends ActionBarActivity {
         }
         return super.onOptionsItemSelected(item);
     }
-
-    public void disableView(View view) {
-
-        // view.setFocusable(false);
-        view.setFocusable(false);
-
-        view.setBackgroundColor(Color.argb(255, 100, 100, 100));
-        // view.setVisibility(View.INVISIBLE);
-    }
-
-    public void enableView(View view) {
-        // view.setVisibility(View.VISIBLE);
-
-        view.setFocusableInTouchMode(true);
-
-        view.setBackgroundColor(Color.argb(255, 255, 255, 255));
-    }
-
 }

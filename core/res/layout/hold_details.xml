@@ -73,7 +73,7 @@
                         android:text="book"
                         android:layout_gravity="left"/>
             </TableRow>
-            <TableRow>
+            <TableRow android:visibility="gone">
                 <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -118,9 +118,8 @@
                         android:layout_width="0dip"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:gravity="left"
-                        android:hint="@string/hold_expire_time_hint"
-                        android:layout_gravity="left"/>
+                        android:gravity="left|center"
+                        />
             </TableRow>
             <TableRow android:id="@+id/hold_suspend_hold_row">
                 <TextView
@@ -135,7 +134,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:gravity="left|center"
-                        android:layout_gravity="left"/>
+                        android:layout_gravity="left" android:checked="true"/>
             </TableRow>
             <TableRow android:id="@+id/hold_thaw_date_row">
                 <TextView
@@ -151,7 +150,6 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:gravity="left"
-                        android:hint="@string/hold_thaw_date_hint"
                         android:layout_gravity="left"/>
 
 

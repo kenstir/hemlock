@@ -30,7 +30,7 @@
         android:fullBackupContent="true"
         android:icon="@drawable/evergreen_launcher_icon"
         android:label="@string/ou_app_label"
-        android:theme="@style/Theme.AppCompat" >
+        android:theme="@style/HemlockHalloween" >
 
         <activity
                 android:name="org.evergreen_ils.views.splashscreen.SplashActivity"
