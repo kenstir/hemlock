@@ -11,9 +11,10 @@
             android:layout_height="64dip"
             android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="12dip"
+            android:layout_marginTop="24dip"
             android:src="@drawable/evergreen_logo_300w_20pct"
-            android:contentDescription="@string/ou_library_name" android:padding="4dip"/>
+            android:contentDescription="@string/ou_library_name" android:padding="4dip"
+            android:tint="@color/hemlock_accent_halloween"/>
 
     <TextView
             android:id="@+id/action_in_progress"
@@ -45,5 +46,10 @@
             android:padding="6dip"
             android:layout_below="@+id/logo"
             android:layout_centerHorizontal="true"/>
+    <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/imageView" android:layout_centerVertical="true" android:layout_centerHorizontal="true"
+            android:src="@drawable/pumpkin_icon"/>
 
 </RelativeLayout>
