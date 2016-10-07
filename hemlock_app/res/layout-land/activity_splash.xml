@@ -44,10 +44,10 @@
             android:src="@drawable/hemlock_logo"
             android:contentDescription="@string/ou_library_name" android:padding="5dip"
             android:layout_alignParentEnd="false" android:layout_centerHorizontal="true"
-            android:layout_marginTop="64dip"/>
+            android:layout_marginTop="64dip" android:tint="@color/hemlock_accent_halloween"/>
     <ProgressBar
             android:id="@+id/activity_splash_progress_bar"
-            style="@android:style/Widget.Holo.ProgressBar.Horizontal"
+            style="@style/HemlockProgressBar"
             android:indeterminate="true"
             android:layout_width="200dip"
             android:layout_height="wrap_content"

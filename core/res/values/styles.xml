@@ -150,7 +150,7 @@
     <color name="material_grey_700">#616161</color>
 
     <color name="hemlock_accent_material">@color/accent_material_dark</color>
-    <color name="hemlock_accent_halloween">#FF9100</color>
+    <color name="hemlock_accent_halloween">#ff9100</color>
 
     <!--<color name="primary">@color/primary_material_dark</color>-->
     <!--<color name="primary_dark">@color/primary_dark_material_dark</color>-->
@@ -158,7 +158,7 @@
     <color name="primary">@color/primary_material_dark</color>
     <color name="primary_dark">@color/primary_dark_material_dark</color>
     <color name="accent">#76ff03</color>
-    <style name="Hemlock" parent="Theme.AppCompat">
+    <style name="HemlockDark" parent="Theme.AppCompat">
         <item name="colorPrimary">@color/primary</item>
         <item name="colorPrimaryDark">@color/primary_dark</item>
         <item name="colorAccent">@color/accent</item>
@@ -168,6 +168,10 @@
         <item name="colorPrimary">@color/primary</item>
         <item name="colorPrimaryDark">@color/primary_dark</item>
         <item name="colorAccent">@color/hemlock_accent_halloween</item>
+    </style>
+
+    <style name="HemlockProgressBar" parent="Widget.AppCompat.ProgressBar.Horizontal">
+        <item name="colorPrimary">@color/hemlock_accent_halloween</item>
     </style>
 
 </resources>
