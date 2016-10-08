@@ -221,11 +221,10 @@ public class HoldDetails extends ActionBarActivity {
 
         ArrayList<String> list = new ArrayList<String>();
         for (int i = 0; i < globalConfigs.organisations.size(); i++) {
-            list.add(globalConfigs.organisations.get(i).indentedDisplayPrefix
-                    + globalConfigs.organisations.get(i).name);
-
-            if (globalConfigs.organisations.get(i).id == record.pickup_lib)
+            list.add(globalConfigs.organisations.get(i).indentedDisplayPrefix + globalConfigs.organisations.get(i).name);
+            if (globalConfigs.organisations.get(i).id == record.pickup_lib) {
                 selectedOrgPos = i;
+            }
         }
         //ArrayAdapter<String> adapter = CompatSpinnerAdapter.CreateCompatSpinnerAdapter(this, list);
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, R.layout.org_item_layout, list);
@@ -290,16 +289,14 @@ public class HoldDetails extends ActionBarActivity {
                     thaw_date_s = GlobalConfigs.getStringDate(thaw_date);
 
                 try {
-                    accountAccess.updateHold(record.ahr, selectedOrgPos,
-                            suspendHold.isChecked(),
-                            expire_date_s, thaw_date_s);
+                    accountAccess.updateHold(record.ahr, globalConfigs.organisations.get(selectedOrgPos).id,
+                            suspendHold.isChecked(), expire_date_s, thaw_date_s);
                 } catch (SessionNotFoundException e) {
                     try {
                         if (accountAccess.reauthenticate(HoldDetails.this))
                             accountAccess.updateHold(record.ahr,
-                                    selectedOrgPos,
-                                    suspendHold.isChecked(), expire_date_s,
-                                    thaw_date_s);
+                                    globalConfigs.organisations.get(selectedOrgPos).id,
+                                    suspendHold.isChecked(), expire_date_s, thaw_date_s);
                     } catch (Exception eauth) {
                         Log.d(TAG, "Exception in reAuth");
                     }

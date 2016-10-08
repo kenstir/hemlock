@@ -623,10 +623,7 @@ public class AccountAccess {
         return holds;
     }
 
-    /*
-     * hold target type : M - metarecord T - record V - volume I - issuance C -
-     * copy P - pat
-     */
+    // hold_type    - T, C (or R or F), I, V or M for Title, Copy, Issuance, Volume or Meta-record  (default "T")
 
     /**
      * Fetch hold title info.
@@ -928,8 +925,12 @@ public class AccountAccess {
         map.put("pickup_lib", pickup_lib);
         map.put("titleid", recordID);
         map.put("hold_type", "T");
-        map.put("phone_notify", phone);
         map.put("email_notify", email_notify);
+        map.put("expire_time", expire_time);
+        if (suspendHold && thaw_date != null) {
+            map.put("frozen", suspendHold);
+            map.put("thaw_date", thaw_date);
+        }
         ArrayList<Integer> ids = new ArrayList<Integer>(1);
         ids.add(recordID);
         Object response = Utils.doRequest(conn(), Api.SERVICE_CIRC,
