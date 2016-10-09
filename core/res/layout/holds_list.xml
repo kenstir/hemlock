@@ -9,8 +9,8 @@
     <LinearLayout android:layout_width="fill_parent"
                   android:layout_height="wrap_content"
                   android:orientation="horizontal"
-                  android:padding="5dp"
-                  style="@style/SecondaryToolbar">
+                  style="@style/SecondaryToolbar" android:paddingLeft="5dp" android:paddingRight="5dp"
+                  android:paddingTop="7dp" android:paddingBottom="7dp">
          <TextView 
              android:layout_width="wrap_content"
              android:layout_height="wrap_content"

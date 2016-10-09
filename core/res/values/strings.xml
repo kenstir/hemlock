@@ -96,7 +96,7 @@
     <string name="hold_items">Items on hold: </string>
 
     <!-- Checkout items -->
-    <string name="checkout_item_txt">Total items checked out:</string>
+    <string name="checkout_items">Items checked out:</string>
     <string name="checkout_overdue_items">Overdue:</string>
     <string name="due">due</string>
     <string name="overdue">overdue</string>
