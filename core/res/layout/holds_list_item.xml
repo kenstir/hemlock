@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools"
               android:layout_width="fill_parent"
               android:layout_height="fill_parent"
               android:orientation="vertical"
@@ -12,21 +12,21 @@
             android:layout_height="wrap_content"
             android:id="@+id/hold_title"
             style="@style/TitleSearchStyleList"
-            android:text="La Dolce Vita"/>
+            tools:text="La Dolce Vita"/>
 
     <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/hold_author"
             style="@style/AuthorSearchStyleList"
-            android:text="Fellini, Federico"/>
+            tools:text="Fellini, Federico"/>
 
     <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/hold_format"
             style="@style/AuthorSearchStyleList"
-            android:text="DVD"/>
+            tools:text="dvd"/>
 
     <TextView
             android:layout_width="wrap_content"

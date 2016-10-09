@@ -107,21 +107,18 @@ public class HoldsListView extends ActionBarActivity {
                     @Override
                     public void run() {
                         listAdapter.clear();
-
                         for (int i = 0; i < holdRecords.size(); i++)
                             listAdapter.add(holdRecords.get(i));
 
-                        holdsNoText.setText(" " + listAdapter.getCount());
-                        progressDialog.dismiss();
+                        holdsNoText.setText(String.format("%d", listAdapter.getCount()));
+                        dismissProgressDialog();
                         listAdapter.notifyDataSetChanged();
                     }
                 });
             }
         };
 
-        progressDialog = new ProgressDialog(context);
-        progressDialog.setMessage("Loading holds");
-        progressDialog.show();
+        showProgressDialog(getString(R.string.msg_loading_holds));
 
         // thread to retrieve holds
         Thread getHoldsThread = new Thread(getHoldsRunnable);
@@ -134,15 +131,34 @@ public class HoldsListView extends ActionBarActivity {
                     int position, long arg3) {
                 HoldRecord record = (HoldRecord) lv.getItemAtPosition(position);
 
-                Intent intent = new Intent(getApplicationContext(),
-                        HoldDetails.class);
-
+                Intent intent = new Intent(getApplicationContext(), HoldDetails.class);
                 intent.putExtra("holdRecord", record);
 
-                // doae not matter request code, only result code
+                // request code does not matter, but we use the result code
                 startActivityForResult(intent, 0);
             }
         });
+    }
+
+    private void showProgressDialog(CharSequence msg) {
+        if (progressDialog == null) {
+            progressDialog = new ProgressDialog(context);
+            progressDialog.setMessage(msg);
+        }
+        progressDialog.show();
+    }
+
+    private void dismissProgressDialog() {
+        if (progressDialog != null && progressDialog.isShowing()) {
+            progressDialog.dismiss();
+            progressDialog = null;
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        dismissProgressDialog();
+        super.onDestroy();
     }
 
     @Override
@@ -157,10 +173,7 @@ public class HoldsListView extends ActionBarActivity {
 
         case HoldDetails.RESULT_CODE_DELETE_HOLD:
         case HoldDetails.RESULT_CODE_UPDATE_HOLD:
-            // refresh ui
-            progressDialog = new ProgressDialog(context);
-            progressDialog.setMessage("Loading holds");
-            progressDialog.show();
+            showProgressDialog(getString(R.string.msg_loading_holds));
             // thread to retrieve holds
             Thread getHoldsThread = new Thread(getHoldsRunnable);
             getHoldsThread.start();
