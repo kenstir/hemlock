@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:tools="http://schemas.android.com/tools"
               android:layout_width="fill_parent"
               android:layout_height="fill_parent"
               android:orientation="vertical"
@@ -35,7 +36,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:layout_gravity="left"
-                        android:text="Trashed : a graphic novel"/>
+                        tools:text="Trashed : a graphic novel"/>
             </TableRow>
             <TableRow>
                 <TextView
@@ -51,7 +52,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:gravity="left|center"
-                        android:text="Derf"/>
+                        tools:text="Derf"/>
             </TableRow>
             <TableRow>
                 <TextView
@@ -67,7 +68,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:gravity="left"
-                        android:text="book"
+                        tools:text="Book"
                         android:layout_gravity="left"/>
             </TableRow>
             <TableRow android:visibility="gone">
@@ -84,7 +85,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:gravity="left|center"
-                        android:text="print 256 p."/>
+                        tools:text="print 256 p."/>
             </TableRow>
             <TableRow>
                 <TextView

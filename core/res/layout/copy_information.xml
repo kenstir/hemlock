@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical" >
@@ -15,7 +16,7 @@
             android:id="@+id/copy_information_library"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:text="Athol Public Library"
+            tools:text="Athol Public Library"
             />
 
         <LinearLayout
@@ -29,7 +30,7 @@
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:ellipsize="end"
-                    android:text="j 793.01 Martin PBK"
+                    tools:text="j 793.01 Martin PBK"
                     android:layout_weight="1" android:singleLine="true"/>
 
             <TextView
@@ -37,7 +38,7 @@
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:ellipsize="end"
-                    android:text="First Floor Juvenile"
+                    tools:text="First Floor Juvenile"
                     android:layout_weight="1" android:singleLine="true"/>
         </LinearLayout>
 

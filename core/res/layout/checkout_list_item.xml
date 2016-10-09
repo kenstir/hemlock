@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
@@ -19,20 +20,23 @@
                 style="@style/TitleSearchStyleList"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                />
+                tools:text="Suicide squad"
+        />
 
         <TextView
                 android:id="@+id/checkout_record_author"
                 style="@style/AuthorSearchStyleList"
                 android:layout_width="fill_parent"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content"
+                tools:text="Ostrander, John."/>
 
         <TextView
                 android:id="@+id/checkout_record_format"
                 style="@style/PubSearchStyleList"
                 android:gravity="left"
                 android:layout_width="fill_parent"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content"
+                tools:text="Book"/>
 
         <TextView
                 android:id="@+id/checkout_record_due_date"
@@ -41,14 +45,14 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="due Oct 31, 2015" />
+                tools:text="due Oct 31, 2015" />
         <TextView
                 android:id="@+id/checkout_record_overdue"
                 style="@style/alertText"
                 android:gravity="right"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/overdue"/>
+                tools:text="@string/overdue"/>
 
     </LinearLayout>
 

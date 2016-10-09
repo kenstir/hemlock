@@ -26,13 +26,13 @@
             android:layout_height="wrap_content"
             android:id="@+id/hold_format"
             style="@style/AuthorSearchStyleList"
-            tools:text="dvd"/>
+            tools:text="DVD"/>
 
     <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/hold_status"
             style="@style/alertText"
-            android:text="Waiting for copy\n1 hold on 0 copies\nQueue position: 1"/>
+            tools:text="Waiting for copy\n1 hold on 0 copies\nQueue position: 1"/>
 
 </LinearLayout>
