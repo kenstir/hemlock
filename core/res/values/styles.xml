@@ -170,8 +170,17 @@
         <item name="colorAccent">@color/hemlock_accent_halloween</item>
     </style>
 
+    <style name="HemlockHalloweenNoActionBar" parent="Theme.AppCompat.NoActionBar">
+        <item name="colorPrimary">@color/primary</item>
+        <item name="colorPrimaryDark">@color/primary_dark</item>
+        <item name="colorAccent">@color/hemlock_accent_halloween</item>
+    </style>
+
+    <!-- I wanted to make the accent color of the progressbar green, but this does not do it -->
     <style name="HemlockProgressBar" parent="Widget.AppCompat.ProgressBar.Horizontal">
-        <item name="colorPrimary">@color/hemlock_accent_halloween</item>
+        <item name="colorPrimaryDark">@color/accent</item>
+        <item name="colorPrimary">@color/accent</item>
+        <item name="colorAccent">@color/accent</item>
     </style>
 
 </resources>

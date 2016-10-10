@@ -53,6 +53,7 @@ public class LoadingTask {
 
     private final LoadingTaskListener mListener;
     private Activity mCallingActivity;
+    private Exception mException;
 
     public LoadingTask(LoadingTaskListener listener, Activity callingActivity) {
         this.mListener = listener;
@@ -135,6 +136,7 @@ public class LoadingTask {
             return TASK_OK;
         } catch (Exception e) {
             Log.d(TAG, tag+"Caught exception", e);
+            mException = e;
             String s = e.getMessage();
             if (s == null) s = "Cancelled";
             Log.d(TAG, tag+"returning "+s);

@@ -19,6 +19,7 @@
  */
 package org.evergreen_ils.views.splashscreen;
 
+import android.support.v7.app.AppCompatActivity;
 import org.evergreen_ils.R;
 import org.evergreen_ils.globals.AppState;
 import org.evergreen_ils.globals.Log;
@@ -36,7 +37,7 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.TextView;
 
-public class SplashActivity extends Activity implements LoadingTaskListener {
+public class SplashActivity extends AppCompatActivity implements LoadingTaskListener {
 
     public final static int REQUEST_SELECT_LIBRARY = 0;
     private static String TAG = SplashActivity.class.getSimpleName();

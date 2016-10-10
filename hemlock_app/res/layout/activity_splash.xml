@@ -11,7 +11,7 @@
             android:layout_height="64dip"
             android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="24dip"
+            android:layout_marginTop="48dp"
             android:src="@drawable/hemlock_logo"
             android:contentDescription="@string/ou_library_name" android:padding="5dip"
             android:tint="@color/hemlock_accent_halloween" tools:targetApi="lollipop"/>

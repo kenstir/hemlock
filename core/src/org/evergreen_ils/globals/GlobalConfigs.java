@@ -24,10 +24,12 @@ import android.content.pm.ApplicationInfo;
 import android.text.TextUtils;
 import org.evergreen_ils.searchCatalog.Organisation;
 import org.evergreen_ils.searchCatalog.SearchCatalog;
+import org.open_ils.idl.IDLException;
 import org.open_ils.idl.IDLParser;
 import org.opensrf.net.http.HttpConnection;
 import org.opensrf.util.OSRFObject;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.text.ParseException;
@@ -87,7 +89,7 @@ public class GlobalConfigs {
         return instance;
     }
 
-    public static GlobalConfigs initializeGlobalConfigs(Context context, String library_url) {
+    public static GlobalConfigs initializeGlobalConfigs(Context context, String library_url) throws IOException, IDLException {
         Log.d(TAG, "getInstance library_url="+library_url);
         GlobalConfigs globalConfigs = getInstance(context);
         globalConfigs.initialize(library_url);
@@ -118,10 +120,11 @@ public class GlobalConfigs {
     /*
      * Initialize function that retrieves IDL file and Orgs file
      */
-    private boolean initialize(String library_url) {
+    private boolean initialize(String library_url) throws IOException, IDLException {
         if (!TextUtils.equals(library_url, httpAddress)) {
             httpAddress = library_url;
             conn = null; // must come before loadXXX()
+            loadedIDL = false;
             loadIDL();
             loadCopyStatusesAvailable();
             return true;
@@ -146,7 +149,7 @@ public class GlobalConfigs {
         return conn;
     }
 
-    public void loadIDL() {
+    public void loadIDL() throws IOException, IDLException {
         try {
             Log.d(TAG, "loadIDLFile start");
             long start_ms = System.currentTimeMillis();
@@ -156,9 +159,7 @@ public class GlobalConfigs {
             Log.d(TAG, "loadIDLFile parse");
             parser.parse();
             long duration_ms = System.currentTimeMillis() - start_ms;
-            Log.d(TAG, "loadIDLFile parse took "+duration_ms+"ms");
-        } catch (Exception e) {
-            Log.w(TAG, "Error parsing IDL file", e);
+            Log.d(TAG, "loadIDLFile parse took " + duration_ms + "ms");
         } finally {
             Utils.closeNetInputStream();
         }

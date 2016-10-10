@@ -48,7 +48,7 @@ public class Utils {
      *            the url of the page to be retrieved
      * @return the net page content
      */
-    public static String fetchUrl(String url) {
+    public static String fetchUrl(String url) throws IOException {
 
         StringBuilder str = new StringBuilder();
         String line;
@@ -62,9 +62,6 @@ public class Utils {
                 str.append(line);
             }
             in.close();
-
-        } catch(Exception e) {
-            Log.d(TAG, "Exception fetching " + url, e);
         } finally {
             if (mConn != null) mConn.disconnect();
         }
@@ -76,15 +73,9 @@ public class Utils {
 
         if (mConn != null) mConn.disconnect();
 
-        try {
-            URL url2 = new URL(url);
-            mConn = (HttpURLConnection) url2.openConnection();
-            return mConn.getInputStream();
-        } catch(Exception e) {
-            Log.d(TAG, "Exception fetching " + url, e);
-        }
-
-        return null;
+        URL url2 = new URL(url);
+        mConn = (HttpURLConnection) url2.openConnection();
+        return mConn.getInputStream();
     }
 
     public static void closeNetInputStream() {
