@@ -57,7 +57,7 @@
 
         <activity
                 android:name="org.evergreen_ils.views.splashscreen.SplashActivity"
-                android:theme="@android:style/Theme.NoTitleBar">
+                android:theme="@style/HemlockHalloweenNoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
