@@ -115,6 +115,27 @@ public class BookBagListView extends ActionBarActivity {
         new Thread(getBookbagsRunnable).start();
     }
 
+    private void showProgressDialog(CharSequence msg) {
+        if (progressDialog == null) {
+            progressDialog = new ProgressDialog(context);
+            progressDialog.setMessage(msg);
+        }
+        progressDialog.show();
+    }
+
+    private void dismissProgressDialog() {
+        if (progressDialog != null && progressDialog.isShowing()) {
+            progressDialog.dismiss();
+            progressDialog = null;
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        dismissProgressDialog();
+        super.onDestroy();
+    }
+
     private void initGetBookbagsRunnable() {
         getBookbagsRunnable = new Runnable() {
             @Override
@@ -122,9 +143,7 @@ public class BookBagListView extends ActionBarActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        progressDialog = ProgressDialog.show(context,
-                                getResources().getText(R.string.dialog_please_wait),
-                                getString(R.string.msg_retrieving_lists));
+                        showProgressDialog(getString(R.string.msg_retrieving_lists));
                     }
                 });
 
@@ -147,7 +166,7 @@ public class BookBagListView extends ActionBarActivity {
                         for (int i = 0; i < bookBags.size(); i++)
                             listAdapter.add(bookBags.get(i));
 
-                        progressDialog.dismiss();
+                        dismissProgressDialog();
 
                         if (bookBags.size() == 0)
                             Toast.makeText(context, getText(R.string.msg_no_lists), Toast.LENGTH_LONG).show();
@@ -195,7 +214,7 @@ public class BookBagListView extends ActionBarActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        progressDialog.dismiss();
+                        dismissProgressDialog();
                     }
                 });
 
@@ -203,9 +222,7 @@ public class BookBagListView extends ActionBarActivity {
             }
         });
 
-        progressDialog = ProgressDialog.show(context,
-                getResources().getText(R.string.dialog_please_wait),
-                "Creating Bookbag");
+        showProgressDialog(getString(R.string.msg_creating_list));
         thread.start();
     }
 
