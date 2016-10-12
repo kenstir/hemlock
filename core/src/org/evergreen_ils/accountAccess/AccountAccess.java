@@ -44,14 +44,6 @@ import java.util.*;
  */
 public class AccountAccess {
 
-    // Used for Holds Tab
-
-    // if holdtype == T return mvr OSRFObject
-    // if hold type V
-    // if hold type I
-
-    // Used for Fines
-
     // Used for book bags
     public static String CONTAINER_CLASS_BIBLIO = "biblio";
     public static String CONTAINER_BUCKET_TYPE_BOOKBAG = "bookbag";
@@ -76,22 +68,12 @@ public class AccountAccess {
     /** The user name. */
     public static String userName = null;
 
-    /** Whether we have ever established a session  **/
-
     /** The account access. */
     private static AccountAccess accountAccess = null;
 
-    /**
-     * Instantiates a new authenticate user.
-     */
     private AccountAccess() {
     }
 
-    /**
-     * Gets the account access.
-     *
-     * @return the account access
-     */
     public static AccountAccess getInstance() {
 
         if (accountAccess == null) {
@@ -106,41 +88,6 @@ public class AccountAccess {
 
     public void setHomeLibraryID(Integer homeLibraryID) {
         this.homeLibraryID = homeLibraryID;
-    }
-
-    /**
-     * Md5.
-     * 
-     * @param s
-     *            the s
-     * @return the string
-     */
-    private String md5(String s) {
-        try {
-            // Create MD5 Hash
-            MessageDigest digest = java.security.MessageDigest
-                    .getInstance("MD5");
-            digest.update(s.getBytes());
-            byte messageDigest[] = digest.digest();
-
-            // Create Hex String
-            StringBuffer hexString = new StringBuffer();
-            for (int i = 0; i < messageDigest.length; i++) {
-                String hex = Integer.toHexString(0xFF & messageDigest[i]);
-                if (hex.length() == 1) {
-                    // could use a for loop, but we're only dealing with a
-                    // single byte
-                    hexString.append('0');
-                }
-                hexString.append(hex);
-            }
-            return hexString.toString();
-
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        }
-
-        return "";
     }
 
     private HttpConnection conn() {
@@ -617,7 +564,8 @@ public class AccountAccess {
             HoldRecord hold = new HoldRecord(listHoldsAhr.get(i));
             fetchHoldTitleInfo(listHoldsAhr.get(i), hold);
             fetchHoldStatus(listHoldsAhr.get(i), hold);
-            hold.recordInfo.setSearchFormat(fetchFormat(hold.target));
+            if (hold.recordInfo != null)
+                hold.recordInfo.setSearchFormat(fetchFormat(hold.target));
             holds.add(hold);
         }
         return holds;
