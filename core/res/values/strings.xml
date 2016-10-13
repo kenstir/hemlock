@@ -94,6 +94,7 @@
     <string name="thaw_date">Activate hold on</string>
     <string name="hold_phone_hint">Contact phone number</string>
     <string name="hold_items">Items on hold: </string>
+    <string name="hold_status_in_transit">In Transit from %1$s\nSince %2$s</string>
 
     <!-- Checkout items -->
     <string name="checkout_items">Items checked out:</string>
@@ -145,6 +146,10 @@
     <plurals name="number_of_items">
         <item quantity="one">1 item</item>
         <item quantity="other">%d items</item>
+    </plurals>
+    <plurals name="number_of_days">
+        <item quantity="one">1 day</item>
+        <item quantity="other">%d days</item>
     </plurals>
 
     <string name="action_settings">Settings</string>

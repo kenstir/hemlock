@@ -26,11 +26,13 @@ import java.util.Date;
 import android.support.v7.app.ActionBarActivity;
 import android.view.MenuItem;
 import android.widget.*;
+import org.evergreen_ils.Api;
 import org.evergreen_ils.R;
 import org.evergreen_ils.accountAccess.AccountAccess;
 import org.evergreen_ils.accountAccess.SessionNotFoundException;
 import org.evergreen_ils.globals.GlobalConfigs;
 import org.evergreen_ils.globals.Log;
+import org.evergreen_ils.searchCatalog.SearchFormat;
 import org.evergreen_ils.utils.ui.ActionBarUtils;
 import org.evergreen_ils.views.splashscreen.SplashActivity;
 
@@ -39,7 +41,6 @@ import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.text.format.DateFormat;
 import android.view.View;
@@ -130,7 +131,7 @@ public class HoldDetails extends ActionBarActivity {
         title.setText(record.title);
         author.setText(record.author);
         if (record.recordInfo != null) {
-            format.setText(record.recordInfo.search_format);
+            format.setText(SearchFormat.getItemLabelFromSearchFormat(record.recordInfo.search_format));
             physical_description.setText(record.recordInfo.physical_description);
         }
 
@@ -284,9 +285,9 @@ public class HoldDetails extends ActionBarActivity {
                 String expire_date_s = null;
                 String thaw_date_s = null;
                 if (expire_date != null)
-                    expire_date_s = GlobalConfigs.getStringDate(expire_date);
+                    expire_date_s = Api.formatDate(expire_date);
                 if (thaw_date != null)
-                    thaw_date_s = GlobalConfigs.getStringDate(thaw_date);
+                    thaw_date_s = Api.formatDate(thaw_date);
 
                 try {
                     accountAccess.updateHold(record.ahr, globalConfigs.organisations.get(selectedOrgPos).id,

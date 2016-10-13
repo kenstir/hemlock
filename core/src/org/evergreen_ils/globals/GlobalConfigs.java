@@ -22,6 +22,7 @@ package org.evergreen_ils.globals;
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.text.TextUtils;
+import org.evergreen_ils.Api;
 import org.evergreen_ils.searchCatalog.Organisation;
 import org.evergreen_ils.searchCatalog.SearchCatalog;
 import org.open_ils.idl.IDLException;
@@ -32,6 +33,7 @@ import org.opensrf.util.OSRFObject;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -58,9 +60,6 @@ public class GlobalConfigs {
     // two days notification before checkout expires, this can be modified from
     // preferences
     public static int NOTIFICATION_BEFORE_CHECKOUT_EXPIRATION = 2;
-
-    // to parse date from requests
-    public static final String datePattern = "yyyy-MM-dd'T'hh:mm:ssZ";
 
     /** The locale. */
     public String locale = "en-US";
@@ -228,32 +227,9 @@ public class GlobalConfigs {
         }
     }
 
-    public static String getStringDate(Date date) {
-        final SimpleDateFormat sdf = new SimpleDateFormat(GlobalConfigs.datePattern);
-        return sdf.format(date);
-    }
-
-    // parse from opac methods query results to Java date
-    public static Date parseDate(String dateString) {
-
-        if (dateString == null)
-            return null;
-
-        Date date = null;
-        final SimpleDateFormat sdf = new SimpleDateFormat(GlobalConfigs.datePattern);
-
-        try {
-            date = sdf.parse(dateString);
-        } catch (ParseException e) {
-            Log.d(TAG, "error parsing date \""+dateString+"\"", e);
-        }
-
-        return date;
-    }
-    
-    // parse from opac methods query result to boolean
-    public static boolean parseBoolean(String boolString) {
-        return (boolString != null && boolString.equals("t"));
+    // format a Date object for display in the interface
+    public static String formatDate(Date date) {
+        return DateFormat.getDateInstance().format(date);
     }
 
     public Organisation getOrganization(int id) {

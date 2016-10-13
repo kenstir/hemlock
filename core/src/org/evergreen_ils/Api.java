@@ -18,6 +18,13 @@
 
 package org.evergreen_ils;
 
+import org.evergreen_ils.globals.GlobalConfigs;
+import org.evergreen_ils.globals.Log;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 /** OSRF API constants
  *
  * See also https://webby.evergreencatalog.com/opac/extras/docgen.xsl
@@ -98,4 +105,37 @@ public class Api {
     public static final String SERVICE_SERIAL = "open-ils.serial";
     public static final String METHOD_FETCH_ISSUANCE = "open-ils.serial.issuance.pub_fleshed.batch.retrieve";
 
+    /// general
+
+    public static final String DATE_PATTERN = "yyyy-MM-dd'T'hh:mm:ssZ";
+
+    // get date string to pass to API methods
+    public static String formatDate(Date date) {
+        final SimpleDateFormat sdf = new SimpleDateFormat(DATE_PATTERN);
+        return sdf.format(date);
+    }
+
+    // parse date string returned from API methods to Java Date
+    public static Date parseDate(String dateString) {
+
+        if (dateString == null)
+            return null;
+
+        Date date = null;
+        final SimpleDateFormat sdf = new SimpleDateFormat(DATE_PATTERN);
+
+        try {
+            date = sdf.parse(dateString);
+        } catch (ParseException e) {
+            Log.d("Api", "error parsing date \""+dateString+"\"", e);
+            date = new Date();
+        }
+
+        return date;
+    }
+
+    // parse from opac methods query result to boolean
+    public static boolean parseBoolean(String boolString) {
+        return (boolString != null && boolString.equals("t"));
+    }
 }

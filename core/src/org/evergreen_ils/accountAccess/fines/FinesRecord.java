@@ -21,7 +21,7 @@ package org.evergreen_ils.accountAccess.fines;
 
 import java.util.Date;
 
-import org.evergreen_ils.globals.GlobalConfigs;
+import org.evergreen_ils.Api;
 import org.evergreen_ils.globals.Log;
 import org.evergreen_ils.searchCatalog.RecordInfo;
 import org.opensrf.util.OSRFObject;
@@ -47,7 +47,7 @@ public class FinesRecord {
         if (mbts_transaction.get("xact_type").toString().equals("circulation")) {
             title = mvr_record.getString("title");
             author = mvr_record.getString("author");
-            checkin_time = GlobalConfigs.parseDate(circ.getString("checkin_time"));
+            checkin_time = Api.parseDate(circ.getString("checkin_time"));
             try {
                 recordInfo = new RecordInfo(mvr_record);
             } catch (Exception e) {

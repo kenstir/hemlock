@@ -76,7 +76,7 @@ public class RecordViewAdapter extends RecyclerView.Adapter<RecordViewAdapter.Vi
 
                 @Override
                 public void onSearchFormatLoaded() {
-                    searchFormatText.setText(record.search_format);
+                    searchFormatText.setText(SearchFormat.getItemLabelFromSearchFormat(record.search_format));
                 }
             });
         }

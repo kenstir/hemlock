@@ -19,11 +19,12 @@
  */
 package org.evergreen_ils.accountAccess.checkout;
 
+import java.text.DateFormat;
 import java.util.Date;
 
+import org.evergreen_ils.Api;
 import org.evergreen_ils.globals.GlobalConfigs;
 import org.evergreen_ils.searchCatalog.RecordInfo;
-import org.evergreen_ils.searchCatalog.SearchFormat;
 import org.opensrf.util.OSRFObject;
 
 /**
@@ -69,14 +70,14 @@ public class CircRecord {
 
         this.circ_type = circ_type;
         this.circ_id = circ_id;
-        this.circ_due_date = GlobalConfigs.parseDate(circ.getString("due_date"));
+        this.circ_due_date = Api.parseDate(circ.getString("due_date"));
     }
 
     public CircRecord(OSRFObject circ, CircType circ_type, int circ_id) {
         this.circ = circ;
         this.circ_type = circ_type;
         this.circ_id = circ_id;
-        this.circ_due_date = GlobalConfigs.parseDate(circ.getString("due_date"));
+        this.circ_due_date = Api.parseDate(circ.getString("due_date"));
     }
 
     public String getAuthor() {
@@ -92,8 +93,8 @@ public class CircRecord {
     }
 
     public String getDueDate() {
-
-        return circ_due_date.toLocaleString();
+        //return circ_due_date.toLocaleString();
+        return DateFormat.getDateInstance().format(circ_due_date);
     }
 
     public Date getDueDateObject() {

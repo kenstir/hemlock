@@ -20,15 +20,21 @@
 package org.evergreen_ils.accountAccess.holds;
 
 import java.io.Serializable;
+import java.text.DateFormat;
 import java.util.Date;
 
+import org.evergreen_ils.Api;
 import org.evergreen_ils.R;
 import org.evergreen_ils.globals.GlobalConfigs;
+import org.evergreen_ils.globals.Log;
+import org.evergreen_ils.globals.Utils;
 import org.evergreen_ils.searchCatalog.RecordInfo;
 import org.opensrf.util.OSRFObject;
 import android.content.res.Resources;
 
 public class HoldRecord implements Serializable {
+
+    private static String TAG = HoldRecord.class.getSimpleName();
 
     private Integer requestLibID = null;
     private Integer pickupLibID = null;
@@ -75,13 +81,48 @@ public class HoldRecord implements Serializable {
 
         this.ahr = ahr;
 
-        this.expire_time = GlobalConfigs.parseDate(ahr.getString("expire_time"));
-        this.thaw_date = GlobalConfigs.parseDate(ahr.getString("thaw_date"));
-        this.email_notification = GlobalConfigs.parseBoolean(ahr.getString("email_notify"));
+        this.expire_time = Api.parseDate(ahr.getString("expire_time"));
+        this.thaw_date = Api.parseDate(ahr.getString("thaw_date"));
+        this.email_notification = Api.parseBoolean(ahr.getString("email_notify"));
         this.phone_notification = ahr.getString("phone_notify");
-        this.suspended = GlobalConfigs.parseBoolean(ahr.getString("frozen"));
+        this.suspended = Api.parseBoolean(ahr.getString("frozen"));
         pickup_lib = ahr.getInt("pickup_lib");
+    }
 
+    private String formatDateTime(Date date) {
+        return DateFormat.getDateTimeInstance().format(date);
+    }
+
+    /*
+     * Notes about transits:
+     * - transit "prev_dest" could be the string "null"
+     * - or prev_dest could be an org ID that is not OPAC visible like 68 Paxton
+     */
+
+    private String getTransitFrom() {
+        try {
+            OSRFObject transit = (OSRFObject) ahr.get("transit");
+            if (transit == null) return null;
+            GlobalConfigs gc = GlobalConfigs.getInstance(null);
+            Integer source = transit.getInt("source");
+            if (source == null) return null;
+            return gc.getOrganizationName(source);
+        } catch (Exception ex) {
+            Log.d(TAG, "caught", ex);
+            return null;
+        }
+    }
+    private String getTransitSince() {
+        try {
+            OSRFObject transit = (OSRFObject) ahr.get("transit");
+            if (transit == null) return null;
+            String sent = transit.getString("source_send_time");
+            Date date = Api.parseDate(sent);
+            return formatDateTime(date);
+        } catch (Exception ex) {
+            Log.d(TAG, "caught", ex);
+            return null;
+        }
     }
 
     // Retreive hold status in text
@@ -100,9 +141,10 @@ public class HoldRecord implements Serializable {
             return "Available";
         } else if (estimatedWaitInSeconds > 0) {
             int days = (int)Math.ceil((double)estimatedWaitInSeconds / 86400.0);
-            return "Estimated wait "+days+" day wait";
+            return "Estimated wait: "
+                    + res.getQuantityString(R.plurals.number_of_days, days, days);
         } else if (status == 3 || status == 8) {
-            return "In Transit";
+            return res.getString(R.string.hold_status_in_transit, getTransitFrom(), getTransitSince());
         } else if (status < 3) {
             return "Waiting for copy\n"
                     + res.getQuantityString(R.plurals.number_of_holds, totalHolds, totalHolds) + " on "
