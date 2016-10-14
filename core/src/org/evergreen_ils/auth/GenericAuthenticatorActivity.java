@@ -216,6 +216,7 @@ public class GenericAuthenticatorActivity extends AuthenticatorActivity {
             }
             for (Map<String, ?> map : l) {
                 String url = (String) map.get("url");
+//                if (isDebuggable(this)) url = url.replace("https:", "http:");
                 String directory_name = (String) map.get("directory_name");
                 String short_name = (String) map.get("short_name");
                 Double latitude = (Double) map.get("latitude");
