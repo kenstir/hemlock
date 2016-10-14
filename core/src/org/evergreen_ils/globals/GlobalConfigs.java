@@ -22,7 +22,6 @@ package org.evergreen_ils.globals;
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.text.TextUtils;
-import org.evergreen_ils.Api;
 import org.evergreen_ils.searchCatalog.Organisation;
 import org.evergreen_ils.searchCatalog.SearchCatalog;
 import org.open_ils.idl.IDLException;
@@ -30,12 +29,10 @@ import org.open_ils.idl.IDLParser;
 import org.opensrf.net.http.HttpConnection;
 import org.opensrf.util.OSRFObject;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class GlobalConfigs {
@@ -81,8 +78,10 @@ public class GlobalConfigs {
     public static GlobalConfigs getInstance(Context context) {
         if (instance == null)
             instance = new GlobalConfigs();
-        if (context != null)
+        if (context != null) {
             instance.context = context;
+            enableHttpResponseCache(context);
+        }
         if (context != null && isDebuggable == null)
             isDebuggable = (0 != (context.getApplicationInfo().flags &= ApplicationInfo.FLAG_DEBUGGABLE));
         return instance;
@@ -148,17 +147,28 @@ public class GlobalConfigs {
         return conn;
     }
 
+    private static void enableHttpResponseCache(Context context) {
+        try {
+            long httpCacheSize = 10 * 1024 * 1024; // 10 MiB
+            File httpCacheDir = new File(context.getCacheDir(), "volley");//try to reuse same cache dir as volley
+            Class.forName("android.net.http.HttpResponseCache")
+                    .getMethod("install", File.class, long.class)
+                    .invoke(null, httpCacheDir, httpCacheSize);
+        } catch (Exception httpResponseCacheNotAvailable) {
+            Log.d(TAG, "HTTP response cache is unavailable.");
+        }
+    }
+
     public void loadIDL() throws IOException, IDLException {
         try {
-            Log.d(TAG, "loadIDLFile start");
-            long start_ms = System.currentTimeMillis();
+            Log.d(TAG, "loadIDLFile.start");
+            long now_ms = System.currentTimeMillis();
             InputStream in_IDL = Utils.getNetInputStream(getIDLUrl());
             IDLParser parser = new IDLParser(in_IDL);
             parser.setKeepIDLObjects(false);
-            Log.d(TAG, "loadIDLFile parse");
+            now_ms = Log.logElapsedTime(TAG, now_ms, "loadIDL.init");
             parser.parse();
-            long duration_ms = System.currentTimeMillis() - start_ms;
-            Log.d(TAG, "loadIDLFile parse took " + duration_ms + "ms");
+            now_ms = Log.logElapsedTime(TAG, now_ms, "loadIDL.total");
         } finally {
             Utils.closeNetInputStream();
         }
@@ -225,11 +235,6 @@ public class GlobalConfigs {
         } catch (Exception e) {
             Log.d(TAG, "caught exception", e);
         }
-    }
-
-    // format a Date object for display in the interface
-    public static String formatDate(Date date) {
-        return DateFormat.getDateInstance().format(date);
     }
 
     public Organisation getOrganization(int id) {
