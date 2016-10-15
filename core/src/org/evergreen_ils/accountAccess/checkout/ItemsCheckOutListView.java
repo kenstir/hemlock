@@ -113,6 +113,14 @@ public class ItemsCheckOutListView extends ActionBarActivity {
         super.onDestroy();
     }
 
+    private Integer countOverdues() {
+        int overdues = 0;
+        for (CircRecord circ : circRecords)
+            if (circ.isOverdue())
+                overdues++;
+        return overdues;
+    }
+
     private Thread initGetCircThread() {
         return new Thread(new Runnable() {
 
@@ -134,22 +142,12 @@ public class ItemsCheckOutListView extends ActionBarActivity {
 
                         @Override
                         public void run() {
-                            int overdueNo = 0;
-                            for (int i = 0; i < circRecords.size(); i++) {
-                                CircRecord circ = circRecords.get(i);
+                            for (CircRecord circ : circRecords)
                                 listAdapter.add(circ);
-                                if (circ.isOverdue()) {
-                                    overdueNo++;
-                                }
-                            }
                             itemsNo.setText(String.format("%d", circRecords.size()));
-                            overdueItems.setText(String.format("%d", overdueNo));
+                            overdueItems.setText(String.format("%d", countOverdues()));
 
                             dismissProgressDialog();
-
-                            if (circRecords.size() == 0)
-                                Toast.makeText(context, "No records", Toast.LENGTH_LONG).show();
-
                             listAdapter.notifyDataSetChanged();
                         }
                     });
