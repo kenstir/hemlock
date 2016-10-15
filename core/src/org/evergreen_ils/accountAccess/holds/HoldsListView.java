@@ -120,7 +120,6 @@ public class HoldsListView extends ActionBarActivity {
 
         showProgressDialog(getString(R.string.msg_loading_holds));
 
-        // thread to retrieve holds
         Thread getHoldsThread = new Thread(getHoldsRunnable);
         getHoldsThread.start();
 
@@ -151,7 +150,6 @@ public class HoldsListView extends ActionBarActivity {
     private void dismissProgressDialog() {
         if (progressDialog != null && progressDialog.isShowing()) {
             progressDialog.dismiss();
-            progressDialog = null;
         }
     }
 

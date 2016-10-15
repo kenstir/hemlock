@@ -87,12 +87,30 @@ public class ItemsCheckOutListView extends ActionBarActivity {
             }
         });
 
-        Thread getCirc = initGetCircThread();
+        showProgressDialog(getString(R.string.msg_retrieving_data));
 
-        progressDialog = new ProgressDialog(context);
-        progressDialog.setMessage(getString(R.string.msg_retrieving_data));
-        progressDialog.show();
+        Thread getCirc = initGetCircThread();
         getCirc.start();
+    }
+
+    private void showProgressDialog(CharSequence msg) {
+        if (progressDialog == null) {
+            progressDialog = new ProgressDialog(context);
+            progressDialog.setMessage(msg);
+        }
+        progressDialog.show();
+    }
+
+    private void dismissProgressDialog() {
+        if (progressDialog != null && progressDialog.isShowing()) {
+            progressDialog.dismiss();
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        dismissProgressDialog();
+        super.onDestroy();
     }
 
     private Thread initGetCircThread() {
@@ -124,10 +142,12 @@ public class ItemsCheckOutListView extends ActionBarActivity {
                                     overdueNo++;
                                 }
                             }
+                            //// FIXME: 10/14/2016
                             itemsNo.setText(" " + circRecords.size() + " ");
+                            //// FIXME: 10/14/2016
                             overdueItems.setText(" " + overdueNo);
 
-                            progressDialog.dismiss();
+                            dismissProgressDialog();
 
                             if (circRecords.size() == 0)
                                 Toast.makeText(context, "No records", Toast.LENGTH_LONG).show();
@@ -137,11 +157,6 @@ public class ItemsCheckOutListView extends ActionBarActivity {
                     });
                 }
             });
-    }
-
-    private void dismissProgress() {
-        if (progressDialog != null && progressDialog.isShowing())
-            progressDialog.dismiss();
     }
 
     class CheckOutArrayAdapter extends ArrayAdapter<CircRecord> {
@@ -236,9 +251,7 @@ public class ItemsCheckOutListView extends ActionBarActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        progressDialog = new ProgressDialog(context);
-                        progressDialog.setMessage("Renewing item");
-                        progressDialog.show();
+                        showProgressDialog(getString(R.string.msg_renewing_item));
                     }
                 });
 
@@ -259,7 +272,7 @@ public class ItemsCheckOutListView extends ActionBarActivity {
 
                         @Override
                         public void run() {
-                            progressDialog.dismiss();
+                            dismissProgressDialog();
                             Toast.makeText(context, R.string.toast_max_renewals_reached, Toast.LENGTH_LONG).show();
                         }
                     });
@@ -268,7 +281,7 @@ public class ItemsCheckOutListView extends ActionBarActivity {
 
                         @Override
                         public void run() {
-                            progressDialog.dismiss();
+                            dismissProgressDialog();
                             Toast.makeText(context, error.message, Toast.LENGTH_LONG).show();
                         }
                     });
@@ -298,7 +311,7 @@ public class ItemsCheckOutListView extends ActionBarActivity {
                             for (int i = 0; i < circRecords.size(); i++) {
                                 listAdapter.add(circRecords.get(i));
                             }
-                            progressDialog.dismiss();
+                            dismissProgressDialog();
                             listAdapter.notifyDataSetChanged();
                         }
                     });

@@ -126,7 +126,6 @@ public class BookBagListView extends ActionBarActivity {
     private void dismissProgressDialog() {
         if (progressDialog != null && progressDialog.isShowing()) {
             progressDialog.dismiss();
-            progressDialog = null;
         }
     }
 
