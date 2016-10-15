@@ -9,8 +9,11 @@
     <LinearLayout android:layout_width="fill_parent"
                   android:layout_height="wrap_content"
                   android:orientation="horizontal"
-                  style="@style/SecondaryToolbar" android:paddingLeft="5dp" android:paddingRight="5dp"
-                  android:paddingTop="7dp" android:paddingBottom="7dp">
+                  style="@style/SecondaryToolbar"
+                  android:paddingLeft="5dp"
+                  android:paddingRight="5dp"
+                  android:paddingTop="7dp"
+                  android:paddingBottom="7dp">
          <TextView 
              android:layout_width="wrap_content"
              android:layout_height="wrap_content"
@@ -22,7 +25,7 @@
              android:layout_width="wrap_content"
              android:layout_height="wrap_content"
              android:textStyle="bold"
-             android:textSize="14sp"
+             android:textSize="16sp"
              tools:text="2"
              android:paddingLeft="5dip"/>
          

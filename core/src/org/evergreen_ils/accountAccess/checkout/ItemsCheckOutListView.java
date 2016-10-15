@@ -142,10 +142,8 @@ public class ItemsCheckOutListView extends ActionBarActivity {
                                     overdueNo++;
                                 }
                             }
-                            //// FIXME: 10/14/2016
-                            itemsNo.setText(" " + circRecords.size() + " ");
-                            //// FIXME: 10/14/2016
-                            overdueItems.setText(" " + overdueNo);
+                            itemsNo.setText(String.format("%d", circRecords.size()));
+                            overdueItems.setText(String.format("%d", overdueNo));
 
                             dismissProgressDialog();
 
