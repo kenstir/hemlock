@@ -2,8 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           package="net.kenstir.apps.hemlock"
           android:installLocation="auto"
-          android:versionCode="51"
-          android:versionName="4.1.5">
+          android:versionCode="52"
+          android:versionName="4.1.6">
 
     <uses-sdk
         android:minSdkVersion="15"
