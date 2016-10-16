@@ -31,9 +31,9 @@ import org.evergreen_ils.accountAccess.SessionNotFoundException;
 import org.evergreen_ils.searchCatalog.RecordDetails;
 import org.evergreen_ils.searchCatalog.RecordInfo;
 import org.evergreen_ils.utils.ui.ActionBarUtils;
+import org.evergreen_ils.utils.ui.ProgressBarSupport;
 import org.evergreen_ils.views.splashscreen.SplashActivity;
 
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -54,7 +54,7 @@ public class FinesActivity extends ActionBarActivity {
 
     private AccountAccess ac;
 
-    private ProgressDialog progressDialog;
+    private ProgressBarSupport progress;
 
     private OverdueMaterialsArrayAdapter listAdapter;
 
@@ -81,9 +81,10 @@ public class FinesActivity extends ActionBarActivity {
         total_owned = (TextView) findViewById(R.id.fines_total_owned);
         total_paid = (TextView) findViewById(R.id.fines_total_paid);
         balance_owed = (TextView) findViewById(R.id.fined_balance_owed);
-        context = this;
 
+        context = this;
         ac = AccountAccess.getInstance();
+        progress = new ProgressBarSupport();
 
         final ArrayList<FinesRecord> finesRecords = new ArrayList<FinesRecord>();
         listAdapter = new OverdueMaterialsArrayAdapter(context,
@@ -97,9 +98,7 @@ public class FinesActivity extends ActionBarActivity {
             }
         });
 
-        progressDialog = ProgressDialog.show(this,
-                getResources().getText(R.string.dialog_please_wait),
-                getString(R.string.msg_retrieving_fines));
+        progress.show(context, getString(R.string.msg_retrieving_fines));
 
         getFinesInfo = new Runnable() {
             @Override
@@ -132,9 +131,7 @@ public class FinesActivity extends ActionBarActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-
                         listAdapter.clear();
-
                         for (int i = 0; i < finesRecords.size(); i++)
                             listAdapter.add(finesRecords.get(i));
 
@@ -143,7 +140,7 @@ public class FinesActivity extends ActionBarActivity {
                         total_owned.setText(decimalFormater.format(fines[0]));
                         total_paid.setText(decimalFormater.format(fines[1]));
                         balance_owed.setText(decimalFormater.format(fines[2]));
-                        progressDialog.dismiss();
+                        progress.dismiss();
                     }
                 });
             }

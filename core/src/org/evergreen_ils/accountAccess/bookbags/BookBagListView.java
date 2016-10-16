@@ -30,9 +30,9 @@ import org.evergreen_ils.accountAccess.SessionNotFoundException;
 import org.evergreen_ils.globals.Log;
 import org.evergreen_ils.globals.Utils;
 import org.evergreen_ils.utils.ui.ActionBarUtils;
+import org.evergreen_ils.utils.ui.ProgressBarSupport;
 import org.evergreen_ils.views.splashscreen.SplashActivity;
 
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -62,7 +62,7 @@ public class BookBagListView extends ActionBarActivity {
 
     private Context context;
 
-    private ProgressDialog progressDialog;
+    private ProgressBarSupport progress;
 
     private EditText bookbag_name;
 
@@ -86,6 +86,7 @@ public class BookBagListView extends ActionBarActivity {
 
         context = this;
         accountAccess = AccountAccess.getInstance();
+        progress = new ProgressBarSupport();
 
         bookbag_name = (EditText) findViewById(R.id.bookbag_create_name);
         create_bookbag = (Button) findViewById(R.id.bookbag_create_button);
@@ -115,23 +116,9 @@ public class BookBagListView extends ActionBarActivity {
         new Thread(getBookbagsRunnable).start();
     }
 
-    private void showProgressDialog(CharSequence msg) {
-        if (progressDialog == null) {
-            progressDialog = new ProgressDialog(context);
-            progressDialog.setMessage(msg);
-        }
-        progressDialog.show();
-    }
-
-    private void dismissProgressDialog() {
-        if (progressDialog != null && progressDialog.isShowing()) {
-            progressDialog.dismiss();
-        }
-    }
-
     @Override
     protected void onDestroy() {
-        dismissProgressDialog();
+        progress.dismiss();
         super.onDestroy();
     }
 
@@ -142,7 +129,7 @@ public class BookBagListView extends ActionBarActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        showProgressDialog(getString(R.string.msg_retrieving_lists));
+                        progress.show(context, getString(R.string.msg_retrieving_lists));
                     }
                 });
 
@@ -165,7 +152,7 @@ public class BookBagListView extends ActionBarActivity {
                         for (int i = 0; i < bookBags.size(); i++)
                             listAdapter.add(bookBags.get(i));
 
-                        dismissProgressDialog();
+                        progress.dismiss();
 
                         if (bookBags.size() == 0)
                             Toast.makeText(context, getText(R.string.msg_no_lists), Toast.LENGTH_LONG).show();
@@ -213,7 +200,7 @@ public class BookBagListView extends ActionBarActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        dismissProgressDialog();
+                        progress.dismiss();
                     }
                 });
 
@@ -221,7 +208,7 @@ public class BookBagListView extends ActionBarActivity {
             }
         });
 
-        showProgressDialog(getString(R.string.msg_creating_list));
+        progress.show(context, getString(R.string.msg_creating_list));
         thread.start();
     }
 

@@ -33,6 +33,7 @@ import org.evergreen_ils.searchCatalog.RecordDetails;
 import org.evergreen_ils.searchCatalog.RecordInfo;
 import org.evergreen_ils.searchCatalog.SearchCatalog;
 import org.evergreen_ils.utils.ui.ActionBarUtils;
+import org.evergreen_ils.utils.ui.ProgressBarSupport;
 import org.evergreen_ils.views.splashscreen.SplashActivity;
 
 import android.app.AlertDialog;
@@ -67,7 +68,7 @@ public class BookBagDetails extends ActionBarActivity {
 
     private Context context;
 
-    private ProgressDialog progressDialog;
+    private ProgressBarSupport progress;
 
     private BookBag bookBag;
 
@@ -90,9 +91,11 @@ public class BookBagDetails extends ActionBarActivity {
         ActionBarUtils.initActionBarForActivity(this);
 
         accountAccess = AccountAccess.getInstance();
+        context = this;
+        progress = new ProgressBarSupport();
+
         bookBag = (BookBag) getIntent().getSerializableExtra("bookBag");
 
-        context = this;
         bookbag_name = (TextView) findViewById(R.id.bookbag_name);
         bookbag_name.setText(bookBag.name);
         bookbag_desc = (TextView) findViewById(R.id.bookbag_description);
@@ -129,11 +132,13 @@ public class BookBagDetails extends ActionBarActivity {
 
         initGetItemsRunnable();
 
-        Thread thread = new Thread(getItemsRunnable);
-        progressDialog = ProgressDialog.show(context,
-                getResources().getText(R.string.dialog_please_wait),
-                getString(R.string.msg_retrieving_list_contents));
-        thread.start();
+        new Thread(getItemsRunnable).start();
+    }
+
+    @Override
+    protected void onDestroy() {
+        progress.dismiss();
+        super.onDestroy();
     }
 
     private void initGetItemsRunnable() {
@@ -141,8 +146,14 @@ public class BookBagDetails extends ActionBarActivity {
 
             @Override
             public void run() {
-                ArrayList<Integer> ids = new ArrayList<Integer>();
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        progress.show(context, getString(R.string.msg_retrieving_list_contents));
+                    }
+                });
 
+                ArrayList<Integer> ids = new ArrayList<Integer>();
                 for (int i = 0; i < bookBag.items.size(); i++) {
                     ids.add(bookBag.items.get(i).target_copy);
                 }
@@ -160,7 +171,7 @@ public class BookBagDetails extends ActionBarActivity {
                         for (int i = 0; i < bookBag.items.size(); i++)
                             listAdapter.add(bookBag.items.get(i));
 
-                        progressDialog.dismiss();
+                        progress.dismiss();
 
                         if (bookBagItems.size() == 0)
                             Toast.makeText(context, R.string.msg_list_empty, Toast.LENGTH_LONG).show();
@@ -173,9 +184,7 @@ public class BookBagDetails extends ActionBarActivity {
     }
 
     private void deleteList() {
-        progressDialog = ProgressDialog.show(context,
-                getResources().getText(R.string.dialog_please_wait),
-                getString(R.string.msg_deleting_list));
+        progress.show(context, getString(R.string.msg_deleting_list));
         final Thread thread = new Thread(new Runnable() {
 
             @Override
@@ -188,7 +197,7 @@ public class BookBagDetails extends ActionBarActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        progressDialog.dismiss();
+                        progress.dismiss();
                         setResult(RESULT_CODE_UPDATE);
                         finish();
                     }
@@ -250,9 +259,7 @@ public class BookBagDetails extends ActionBarActivity {
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    progressDialog = ProgressDialog.show(context,
-                                            getResources().getText(R.string.dialog_please_wait),
-                                            getString(R.string.msg_removing_list_item));
+                                    progress.show(context, getString(R.string.msg_removing_list_item));
                                 }
                             });
 
@@ -270,17 +277,11 @@ public class BookBagDetails extends ActionBarActivity {
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    progressDialog.dismiss();
+                                    progress.dismiss();
 
-                                    Thread getBookBags = new Thread(getItemsRunnable);
                                     setResult(RESULT_CODE_UPDATE);
-
                                     bookBag.items.remove(record);
-                                    progressDialog = ProgressDialog.show(context,
-                                            getResources().getText(R.string.dialog_please_wait),
-                                            getString(R.string.msg_retrieving_list_contents));
-                                    getBookBags.start();
-
+                                    new Thread(getItemsRunnable).start();
                                 }
                             });
                         }

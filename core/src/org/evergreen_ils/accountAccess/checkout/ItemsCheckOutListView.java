@@ -36,9 +36,9 @@ import org.evergreen_ils.searchCatalog.RecordDetails;
 import org.evergreen_ils.searchCatalog.RecordInfo;
 import org.evergreen_ils.searchCatalog.SearchFormat;
 import org.evergreen_ils.utils.ui.ActionBarUtils;
+import org.evergreen_ils.utils.ui.ProgressBarSupport;
 import org.evergreen_ils.views.splashscreen.SplashActivity;
 
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -54,7 +54,7 @@ public class ItemsCheckOutListView extends ActionBarActivity {
     private CheckOutArrayAdapter listAdapter = null;
     private ArrayList<CircRecord> circRecords = null;
     private Context context;
-    private ProgressDialog progressDialog;
+    private ProgressBarSupport progress;
     private TextView itemsNo;
     private TextView overdueItems;
 
@@ -74,6 +74,8 @@ public class ItemsCheckOutListView extends ActionBarActivity {
         itemsNo = (TextView) findViewById(R.id.checkout_items_number);
         overdueItems = (TextView) findViewById(R.id.checkout_items_overdue);
         accountAccess = AccountAccess.getInstance();
+        progress = new ProgressBarSupport();
+
         lv = (ListView) findViewById(R.id.checkout_items_list);
         circRecords = new ArrayList<CircRecord>();
         listAdapter = new CheckOutArrayAdapter(context,
@@ -87,29 +89,15 @@ public class ItemsCheckOutListView extends ActionBarActivity {
             }
         });
 
-        showProgressDialog(getString(R.string.msg_retrieving_data));
+        progress.show(context, getString(R.string.msg_retrieving_data));
 
         Thread getCirc = initGetCircThread();
         getCirc.start();
     }
 
-    private void showProgressDialog(CharSequence msg) {
-        if (progressDialog == null) {
-            progressDialog = new ProgressDialog(context);
-            progressDialog.setMessage(msg);
-        }
-        progressDialog.show();
-    }
-
-    private void dismissProgressDialog() {
-        if (progressDialog != null && progressDialog.isShowing()) {
-            progressDialog.dismiss();
-        }
-    }
-
     @Override
     protected void onDestroy() {
-        dismissProgressDialog();
+        progress.dismiss();
         super.onDestroy();
     }
 
@@ -147,7 +135,7 @@ public class ItemsCheckOutListView extends ActionBarActivity {
                             itemsNo.setText(String.format("%d", circRecords.size()));
                             overdueItems.setText(String.format("%d", countOverdues()));
 
-                            dismissProgressDialog();
+                            progress.dismiss();
                             listAdapter.notifyDataSetChanged();
                         }
                     });
@@ -247,7 +235,7 @@ public class ItemsCheckOutListView extends ActionBarActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        showProgressDialog(getString(R.string.msg_renewing_item));
+                        progress.show(context, getString(R.string.msg_renewing_item));
                     }
                 });
 
@@ -268,7 +256,7 @@ public class ItemsCheckOutListView extends ActionBarActivity {
 
                         @Override
                         public void run() {
-                            dismissProgressDialog();
+                            progress.dismiss();
                             Toast.makeText(context, R.string.toast_max_renewals_reached, Toast.LENGTH_LONG).show();
                         }
                     });
@@ -277,7 +265,7 @@ public class ItemsCheckOutListView extends ActionBarActivity {
 
                         @Override
                         public void run() {
-                            dismissProgressDialog();
+                            progress.dismiss();
                             Toast.makeText(context, error.message, Toast.LENGTH_LONG).show();
                         }
                     });
@@ -307,7 +295,7 @@ public class ItemsCheckOutListView extends ActionBarActivity {
                             for (int i = 0; i < circRecords.size(); i++) {
                                 listAdapter.add(circRecords.get(i));
                             }
-                            dismissProgressDialog();
+                            progress.dismiss();
                             listAdapter.notifyDataSetChanged();
                         }
                     });

@@ -41,10 +41,10 @@ import org.evergreen_ils.globals.AppState;
 import org.evergreen_ils.globals.GlobalConfigs;
 import org.evergreen_ils.globals.Log;
 import org.evergreen_ils.utils.ui.ActionBarUtils;
+import org.evergreen_ils.utils.ui.ProgressBarSupport;
 import org.evergreen_ils.views.DonateActivity;
 import org.evergreen_ils.views.splashscreen.SplashActivity;
 
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -74,7 +74,7 @@ public class SearchActivity extends ActionBarActivity {
     private SearchCatalog search;
     private ArrayList<RecordInfo> recordList;
     private Context context;
-    private ProgressDialog progressDialog;
+    private ProgressBarSupport progress;
     private ArrayList<RecordInfo> searchResults;
     private GlobalConfigs globalConfigs;
     private ArrayList<BookBag> bookBags;
@@ -126,6 +126,7 @@ public class SearchActivity extends ActionBarActivity {
         search = SearchCatalog.getInstance();
         bookBags = AccountAccess.getInstance().getBookbags();
         searchResults = new ArrayList<RecordInfo>();
+        progress = new ProgressBarSupport();
 
         if (savedInstanceState == null) {
             recordList = new ArrayList<RecordInfo>();
@@ -165,23 +166,9 @@ public class SearchActivity extends ActionBarActivity {
         initRecordClickListener();
     }
 
-    private void showProgressDialog(CharSequence msg) {
-        if (progressDialog == null) {
-            progressDialog = new ProgressDialog(context);
-            progressDialog.setMessage(msg);
-        }
-        progressDialog.show();
-    }
-
-    private void dismissProgressDialog() {
-        if (progressDialog != null && progressDialog.isShowing()) {
-            progressDialog.dismiss();
-        }
-    }
-
     @Override
     protected void onDestroy() {
-        dismissProgressDialog();
+        progress.dismiss();
         super.onDestroy();
     }
 
@@ -259,7 +246,7 @@ public class SearchActivity extends ActionBarActivity {
                         InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                         imm.hideSoftInputFromWindow(searchText.getWindowToken(), 0);
                         searchResultsSummary.setVisibility(View.VISIBLE);
-                        showProgressDialog(getString(R.string.dialog_fetching_data_message));
+                        progress.show(context, getString(R.string.dialog_fetching_data_message));
                     }
                 });
 
@@ -275,7 +262,7 @@ public class SearchActivity extends ActionBarActivity {
 
                         searchResultsSummary.setText(String.format(getString(R.string.n_of_m_results), recordList.size(), search.visible));
                         searchResultsFragment.notifyDatasetChanged();
-                        dismissProgressDialog();
+                        progress.dismiss();
                     }
                 });
             }

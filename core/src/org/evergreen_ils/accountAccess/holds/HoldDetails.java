@@ -34,6 +34,7 @@ import org.evergreen_ils.globals.GlobalConfigs;
 import org.evergreen_ils.globals.Log;
 import org.evergreen_ils.searchCatalog.SearchFormat;
 import org.evergreen_ils.utils.ui.ActionBarUtils;
+import org.evergreen_ils.utils.ui.ProgressBarSupport;
 import org.evergreen_ils.views.splashscreen.SplashActivity;
 
 import android.app.AlertDialog;
@@ -93,7 +94,7 @@ public class HoldDetails extends ActionBarActivity {
 
     public Runnable updateHoldRunnable;
 
-    private ProgressDialog progressDialog;
+    private ProgressBarSupport progress;
 
     private GlobalConfigs globalConfigs;
 
@@ -110,10 +111,10 @@ public class HoldDetails extends ActionBarActivity {
 
         context = this;
         globalConfigs = GlobalConfigs.getInstance(this);
+        accountAccess = AccountAccess.getInstance();
+        progress = new ProgressBarSupport();
 
         final HoldRecord record = (HoldRecord) getIntent().getSerializableExtra("holdRecord");
-
-        accountAccess = AccountAccess.getInstance();
 
         title = (TextView) findViewById(R.id.hold_title);
         author = (TextView) findViewById(R.id.hold_author);
@@ -243,11 +244,15 @@ public class HoldDetails extends ActionBarActivity {
         });
     }
 
+    @Override
+    protected void onDestroy() {
+        progress.dismiss();
+        super.onDestroy();
+    }
+
     private void cancelHold(final HoldRecord record) {
         Log.d(TAG, "Remove hold with id" + record.ahr.getInt("id"));
-        progressDialog = ProgressDialog.show(context,
-                getResources().getText(R.string.dialog_please_wait),
-                "Canceling hold");
+        progress.show(context, "Canceling hold");
         Thread cancelHoldThread = new Thread(
                 new Runnable() {
 
@@ -267,7 +272,7 @@ public class HoldDetails extends ActionBarActivity {
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                progressDialog.dismiss();
+                                progress.dismiss();
                                 setResult(RESULT_CODE_DELETE_HOLD);
                                 finish();
                             }
@@ -281,7 +286,13 @@ public class HoldDetails extends ActionBarActivity {
         updateHoldRunnable = new Runnable() {
             @Override
             public void run() {
-                // update new values
+                runOnUiThread(new Runnable() {
+                                  @Override
+                                  public void run() {
+                                      progress.show(context, "Updating hold");
+                                  }
+                              });
+
                 String expire_date_s = null;
                 String thaw_date_s = null;
                 if (expire_date != null)
@@ -306,7 +317,7 @@ public class HoldDetails extends ActionBarActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        progressDialog.dismiss();
+                        progress.dismiss();
                         Toast.makeText(context, "Hold updated",
                                 Toast.LENGTH_SHORT);
                         setResult(RESULT_CODE_UPDATE_HOLD);
@@ -315,9 +326,7 @@ public class HoldDetails extends ActionBarActivity {
                 });
             }
         };
-        progressDialog = ProgressDialog.show(context,
-                getResources().getText(R.string.dialog_please_wait),
-                "Updating hold");
+
         Thread updateHoldThread = new Thread(updateHoldRunnable);
         updateHoldThread.start();
     }

@@ -19,7 +19,6 @@
  */
 package org.evergreen_ils.accountAccess.holds;
 
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -36,6 +35,7 @@ import org.evergreen_ils.globals.Log;
 import org.evergreen_ils.searchCatalog.RecordInfo;
 import org.evergreen_ils.searchCatalog.SearchFormat;
 import org.evergreen_ils.utils.ui.ActionBarUtils;
+import org.evergreen_ils.utils.ui.ProgressBarSupport;
 import org.evergreen_ils.views.splashscreen.SplashActivity;
 
 import java.util.ArrayList;
@@ -46,26 +46,16 @@ public class HoldsListView extends ActionBarActivity {
     private final static String TAG = HoldsListView.class.getSimpleName();
 
     private AccountAccess accountAccess = null;
-
     private ListView lv;
-
     private HoldsArrayAdapter listAdapter = null;
-
     private List<HoldRecord> holdRecords = null;
-
     private Context context;
-
-    Runnable getHoldsRunnable = null;
-
+    private Runnable getHoldsRunnable = null;
     private Button homeButton;
-
     private Button myAccountButton;
-
     private TextView headerTitle;
-
     private TextView holdsNoText;
-
-    private ProgressDialog progressDialog;
+    private ProgressBarSupport progress;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,6 +73,7 @@ public class HoldsListView extends ActionBarActivity {
         lv = (ListView) findViewById(R.id.holds_item_list);
         context = this;
         accountAccess = AccountAccess.getInstance();
+        progress = new ProgressBarSupport();
 
         holdRecords = new ArrayList<HoldRecord>();
         listAdapter = new HoldsArrayAdapter(context, R.layout.holds_list_item, holdRecords);
@@ -111,14 +102,14 @@ public class HoldsListView extends ActionBarActivity {
                             listAdapter.add(holdRecords.get(i));
 
                         holdsNoText.setText(String.format("%d", listAdapter.getCount()));
-                        dismissProgressDialog();
+                        progress.dismiss();
                         listAdapter.notifyDataSetChanged();
                     }
                 });
             }
         };
 
-        showProgressDialog(getString(R.string.msg_loading_holds));
+        progress.show(context, getString(R.string.msg_loading_holds));
 
         Thread getHoldsThread = new Thread(getHoldsRunnable);
         getHoldsThread.start();
@@ -139,23 +130,9 @@ public class HoldsListView extends ActionBarActivity {
         });
     }
 
-    private void showProgressDialog(CharSequence msg) {
-        if (progressDialog == null) {
-            progressDialog = new ProgressDialog(context);
-            progressDialog.setMessage(msg);
-        }
-        progressDialog.show();
-    }
-
-    private void dismissProgressDialog() {
-        if (progressDialog != null && progressDialog.isShowing()) {
-            progressDialog.dismiss();
-        }
-    }
-
     @Override
     protected void onDestroy() {
-        dismissProgressDialog();
+        progress.dismiss();
         super.onDestroy();
     }
 
@@ -171,7 +148,7 @@ public class HoldsListView extends ActionBarActivity {
 
         case HoldDetails.RESULT_CODE_DELETE_HOLD:
         case HoldDetails.RESULT_CODE_UPDATE_HOLD:
-            showProgressDialog(getString(R.string.msg_loading_holds));
+            progress.show(context, getString(R.string.msg_loading_holds));
             // thread to retrieve holds
             Thread getHoldsThread = new Thread(getHoldsRunnable);
             getHoldsThread.start();

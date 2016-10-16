@@ -34,10 +34,10 @@ import org.evergreen_ils.globals.GlobalConfigs;
 import org.evergreen_ils.searchCatalog.Organisation;
 import org.evergreen_ils.searchCatalog.RecordInfo;
 import org.evergreen_ils.utils.ui.ActionBarUtils;
+import org.evergreen_ils.utils.ui.ProgressBarSupport;
 import org.evergreen_ils.views.splashscreen.SplashActivity;
 
 import android.app.DatePickerDialog;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.text.format.DateFormat;
@@ -79,7 +79,7 @@ public class PlaceHoldActivity extends ActionBarActivity {
     private Runnable placeHoldRunnable;
     private GlobalConfigs globalConfigs = null;
     private int selectedOrgPos = 0;
-    private ProgressDialog progressDialog;
+    private ProgressBarSupport progress;
     private Context context;
 
     @Override
@@ -97,8 +97,8 @@ public class PlaceHoldActivity extends ActionBarActivity {
         RecordInfo record = (RecordInfo) getIntent().getSerializableExtra("recordInfo");
 
         context = this;
-
         accountAccess = AccountAccess.getInstance();
+        progress = new ProgressBarSupport();
 
         title = (TextView) findViewById(R.id.hold_title);
         author = (TextView) findViewById(R.id.hold_author);
@@ -128,9 +128,7 @@ public class PlaceHoldActivity extends ActionBarActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        progressDialog = ProgressDialog.show(context,
-                                getResources().getText(R.string.dialog_please_wait),
-                                "Placing hold");
+                        progress.show(context, "Placing hold");
                     }
                 });
 
@@ -169,7 +167,7 @@ public class PlaceHoldActivity extends ActionBarActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        progressDialog.dismiss();
+                        progress.dismiss();
 
                         if (holdPlaced[0].equals("true")) {
                             Toast.makeText(context, "Hold successfully placed",
