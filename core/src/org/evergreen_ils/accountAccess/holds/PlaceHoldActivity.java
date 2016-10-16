@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
+import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.view.MenuItem;
 import org.evergreen_ils.Api;
@@ -172,6 +173,7 @@ public class PlaceHoldActivity extends ActionBarActivity {
                         if (holdPlaced[0].equals("true")) {
                             Toast.makeText(context, "Hold successfully placed",
                                     Toast.LENGTH_LONG).show();
+                            startActivity(new Intent(context, HoldsListView.class));
                             finish();
                         } else
                             Toast.makeText(context,
