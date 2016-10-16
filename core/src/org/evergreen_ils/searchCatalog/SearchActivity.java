@@ -126,7 +126,6 @@ public class SearchActivity extends ActionBarActivity {
         search = SearchCatalog.getInstance();
         bookBags = AccountAccess.getInstance().getBookbags();
         searchResults = new ArrayList<RecordInfo>();
-        progressDialog = new ProgressDialog(context);
 
         if (savedInstanceState == null) {
             recordList = new ArrayList<RecordInfo>();
@@ -164,6 +163,26 @@ public class SearchActivity extends ActionBarActivity {
         initSearchOrgSpinner();
         initSearchRunnable();
         initRecordClickListener();
+    }
+
+    private void showProgressDialog(CharSequence msg) {
+        if (progressDialog == null) {
+            progressDialog = new ProgressDialog(context);
+            progressDialog.setMessage(msg);
+        }
+        progressDialog.show();
+    }
+
+    private void dismissProgressDialog() {
+        if (progressDialog != null && progressDialog.isShowing()) {
+            progressDialog.dismiss();
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        dismissProgressDialog();
+        super.onDestroy();
     }
 
     private void initSearchButton() {
@@ -240,9 +259,7 @@ public class SearchActivity extends ActionBarActivity {
                         InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                         imm.hideSoftInputFromWindow(searchText.getWindowToken(), 0);
                         searchResultsSummary.setVisibility(View.VISIBLE);
-                        progressDialog = ProgressDialog.show(context,
-                                getResources().getText(R.string.dialog_please_wait),
-                                getResources().getText(R.string.dialog_fetching_data_message));
+                        showProgressDialog(getString(R.string.dialog_fetching_data_message));
                     }
                 });
 
@@ -258,10 +275,9 @@ public class SearchActivity extends ActionBarActivity {
 
                         searchResultsSummary.setText(String.format(getString(R.string.n_of_m_results), recordList.size(), search.visible));
                         searchResultsFragment.notifyDatasetChanged();
-                        progressDialog.dismiss();
+                        dismissProgressDialog();
                     }
                 });
-
             }
         };
     }
