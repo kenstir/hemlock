@@ -35,7 +35,7 @@ import org.evergreen_ils.globals.Log;
 import org.evergreen_ils.searchCatalog.RecordInfo;
 import org.evergreen_ils.searchCatalog.SearchFormat;
 import org.evergreen_ils.utils.ui.ActionBarUtils;
-import org.evergreen_ils.utils.ui.ProgressBarSupport;
+import org.evergreen_ils.utils.ui.ProgressDialogSupport;
 import org.evergreen_ils.views.splashscreen.SplashActivity;
 
 import java.util.ArrayList;
@@ -55,7 +55,7 @@ public class HoldsListView extends ActionBarActivity {
     private Button myAccountButton;
     private TextView headerTitle;
     private TextView holdsNoText;
-    private ProgressBarSupport progress;
+    private ProgressDialogSupport progress;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,7 +73,7 @@ public class HoldsListView extends ActionBarActivity {
         lv = (ListView) findViewById(R.id.holds_item_list);
         context = this;
         accountAccess = AccountAccess.getInstance();
-        progress = new ProgressBarSupport();
+        progress = new ProgressDialogSupport();
 
         holdRecords = new ArrayList<HoldRecord>();
         listAdapter = new HoldsArrayAdapter(context, R.layout.holds_list_item, holdRecords);

@@ -36,7 +36,7 @@ import org.evergreen_ils.searchCatalog.RecordDetails;
 import org.evergreen_ils.searchCatalog.RecordInfo;
 import org.evergreen_ils.searchCatalog.SearchFormat;
 import org.evergreen_ils.utils.ui.ActionBarUtils;
-import org.evergreen_ils.utils.ui.ProgressBarSupport;
+import org.evergreen_ils.utils.ui.ProgressDialogSupport;
 import org.evergreen_ils.views.splashscreen.SplashActivity;
 
 import android.content.Context;
@@ -54,7 +54,7 @@ public class ItemsCheckOutListView extends ActionBarActivity {
     private CheckOutArrayAdapter listAdapter = null;
     private ArrayList<CircRecord> circRecords = null;
     private Context context;
-    private ProgressBarSupport progress;
+    private ProgressDialogSupport progress;
     private TextView itemsNo;
     private TextView overdueItems;
 
@@ -74,7 +74,7 @@ public class ItemsCheckOutListView extends ActionBarActivity {
         itemsNo = (TextView) findViewById(R.id.checkout_items_number);
         overdueItems = (TextView) findViewById(R.id.checkout_items_overdue);
         accountAccess = AccountAccess.getInstance();
-        progress = new ProgressBarSupport();
+        progress = new ProgressDialogSupport();
 
         lv = (ListView) findViewById(R.id.checkout_items_list);
         circRecords = new ArrayList<CircRecord>();

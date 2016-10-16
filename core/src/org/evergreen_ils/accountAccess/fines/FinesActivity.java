@@ -31,7 +31,7 @@ import org.evergreen_ils.accountAccess.SessionNotFoundException;
 import org.evergreen_ils.searchCatalog.RecordDetails;
 import org.evergreen_ils.searchCatalog.RecordInfo;
 import org.evergreen_ils.utils.ui.ActionBarUtils;
-import org.evergreen_ils.utils.ui.ProgressBarSupport;
+import org.evergreen_ils.utils.ui.ProgressDialogSupport;
 import org.evergreen_ils.views.splashscreen.SplashActivity;
 
 import android.content.Context;
@@ -54,7 +54,7 @@ public class FinesActivity extends ActionBarActivity {
 
     private AccountAccess ac;
 
-    private ProgressBarSupport progress;
+    private ProgressDialogSupport progress;
 
     private OverdueMaterialsArrayAdapter listAdapter;
 
@@ -84,7 +84,7 @@ public class FinesActivity extends ActionBarActivity {
 
         context = this;
         ac = AccountAccess.getInstance();
-        progress = new ProgressBarSupport();
+        progress = new ProgressDialogSupport();
 
         final ArrayList<FinesRecord> finesRecords = new ArrayList<FinesRecord>();
         listAdapter = new OverdueMaterialsArrayAdapter(context,

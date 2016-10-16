@@ -19,7 +19,6 @@
  */
 package org.evergreen_ils.searchCatalog;
 
-import java.lang.reflect.Array;
 import java.util.*;
 
 import android.net.Uri;
@@ -41,7 +40,7 @@ import org.evergreen_ils.globals.AppState;
 import org.evergreen_ils.globals.GlobalConfigs;
 import org.evergreen_ils.globals.Log;
 import org.evergreen_ils.utils.ui.ActionBarUtils;
-import org.evergreen_ils.utils.ui.ProgressBarSupport;
+import org.evergreen_ils.utils.ui.ProgressDialogSupport;
 import org.evergreen_ils.views.DonateActivity;
 import org.evergreen_ils.views.splashscreen.SplashActivity;
 
@@ -74,7 +73,7 @@ public class SearchActivity extends ActionBarActivity {
     private SearchCatalog search;
     private ArrayList<RecordInfo> recordList;
     private Context context;
-    private ProgressBarSupport progress;
+    private ProgressDialogSupport progress;
     private ArrayList<RecordInfo> searchResults;
     private GlobalConfigs globalConfigs;
     private ArrayList<BookBag> bookBags;
@@ -126,7 +125,7 @@ public class SearchActivity extends ActionBarActivity {
         search = SearchCatalog.getInstance();
         bookBags = AccountAccess.getInstance().getBookbags();
         searchResults = new ArrayList<RecordInfo>();
-        progress = new ProgressBarSupport();
+        progress = new ProgressDialogSupport();
 
         if (savedInstanceState == null) {
             recordList = new ArrayList<RecordInfo>();

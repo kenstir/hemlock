@@ -22,7 +22,6 @@ package org.evergreen_ils.accountAccess.bookbags;
 import java.util.ArrayList;
 import java.util.List;
 
-import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import org.evergreen_ils.R;
 import org.evergreen_ils.accountAccess.AccountAccess;
@@ -33,11 +32,10 @@ import org.evergreen_ils.searchCatalog.RecordDetails;
 import org.evergreen_ils.searchCatalog.RecordInfo;
 import org.evergreen_ils.searchCatalog.SearchCatalog;
 import org.evergreen_ils.utils.ui.ActionBarUtils;
-import org.evergreen_ils.utils.ui.ProgressBarSupport;
+import org.evergreen_ils.utils.ui.ProgressDialogSupport;
 import org.evergreen_ils.views.splashscreen.SplashActivity;
 
 import android.app.AlertDialog;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
@@ -68,7 +66,7 @@ public class BookBagDetails extends ActionBarActivity {
 
     private Context context;
 
-    private ProgressBarSupport progress;
+    private ProgressDialogSupport progress;
 
     private BookBag bookBag;
 
@@ -92,7 +90,7 @@ public class BookBagDetails extends ActionBarActivity {
 
         accountAccess = AccountAccess.getInstance();
         context = this;
-        progress = new ProgressBarSupport();
+        progress = new ProgressDialogSupport();
 
         bookBag = (BookBag) getIntent().getSerializableExtra("bookBag");
 

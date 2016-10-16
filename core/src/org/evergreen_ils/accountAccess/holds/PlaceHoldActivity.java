@@ -34,7 +34,7 @@ import org.evergreen_ils.globals.GlobalConfigs;
 import org.evergreen_ils.searchCatalog.Organisation;
 import org.evergreen_ils.searchCatalog.RecordInfo;
 import org.evergreen_ils.utils.ui.ActionBarUtils;
-import org.evergreen_ils.utils.ui.ProgressBarSupport;
+import org.evergreen_ils.utils.ui.ProgressDialogSupport;
 import org.evergreen_ils.views.splashscreen.SplashActivity;
 
 import android.app.DatePickerDialog;
@@ -79,7 +79,7 @@ public class PlaceHoldActivity extends ActionBarActivity {
     private Runnable placeHoldRunnable;
     private GlobalConfigs globalConfigs = null;
     private int selectedOrgPos = 0;
-    private ProgressBarSupport progress;
+    private ProgressDialogSupport progress;
     private Context context;
 
     @Override
@@ -98,7 +98,7 @@ public class PlaceHoldActivity extends ActionBarActivity {
 
         context = this;
         accountAccess = AccountAccess.getInstance();
-        progress = new ProgressBarSupport();
+        progress = new ProgressDialogSupport();
 
         title = (TextView) findViewById(R.id.hold_title);
         author = (TextView) findViewById(R.id.hold_author);

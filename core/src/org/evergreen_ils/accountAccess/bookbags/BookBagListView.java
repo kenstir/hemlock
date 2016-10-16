@@ -30,7 +30,7 @@ import org.evergreen_ils.accountAccess.SessionNotFoundException;
 import org.evergreen_ils.globals.Log;
 import org.evergreen_ils.globals.Utils;
 import org.evergreen_ils.utils.ui.ActionBarUtils;
-import org.evergreen_ils.utils.ui.ProgressBarSupport;
+import org.evergreen_ils.utils.ui.ProgressDialogSupport;
 import org.evergreen_ils.views.splashscreen.SplashActivity;
 
 import android.content.Context;
@@ -62,7 +62,7 @@ public class BookBagListView extends ActionBarActivity {
 
     private Context context;
 
-    private ProgressBarSupport progress;
+    private ProgressDialogSupport progress;
 
     private EditText bookbag_name;
 
@@ -86,7 +86,7 @@ public class BookBagListView extends ActionBarActivity {
 
         context = this;
         accountAccess = AccountAccess.getInstance();
-        progress = new ProgressBarSupport();
+        progress = new ProgressDialogSupport();
 
         bookbag_name = (EditText) findViewById(R.id.bookbag_create_name);
         create_bookbag = (Button) findViewById(R.id.bookbag_create_button);

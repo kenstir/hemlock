@@ -23,10 +23,10 @@ import android.content.Context;
 
 /** Methods to manage the lifecycle of a ProgressBar used to indicate async activity
  */
-public class ProgressBarSupport {
+public class ProgressDialogSupport {
     private ProgressDialog progressDialog;
 
-    public ProgressBarSupport() {
+    public ProgressDialogSupport() {
     }
 
     public void show(Context context, CharSequence msg) {

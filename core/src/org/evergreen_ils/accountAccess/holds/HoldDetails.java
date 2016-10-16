@@ -34,12 +34,11 @@ import org.evergreen_ils.globals.GlobalConfigs;
 import org.evergreen_ils.globals.Log;
 import org.evergreen_ils.searchCatalog.SearchFormat;
 import org.evergreen_ils.utils.ui.ActionBarUtils;
-import org.evergreen_ils.utils.ui.ProgressBarSupport;
+import org.evergreen_ils.utils.ui.ProgressDialogSupport;
 import org.evergreen_ils.views.splashscreen.SplashActivity;
 
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
@@ -94,7 +93,7 @@ public class HoldDetails extends ActionBarActivity {
 
     public Runnable updateHoldRunnable;
 
-    private ProgressBarSupport progress;
+    private ProgressDialogSupport progress;
 
     private GlobalConfigs globalConfigs;
 
@@ -112,7 +111,7 @@ public class HoldDetails extends ActionBarActivity {
         context = this;
         globalConfigs = GlobalConfigs.getInstance(this);
         accountAccess = AccountAccess.getInstance();
-        progress = new ProgressBarSupport();
+        progress = new ProgressDialogSupport();
 
         final HoldRecord record = (HoldRecord) getIntent().getSerializableExtra("holdRecord");
 
