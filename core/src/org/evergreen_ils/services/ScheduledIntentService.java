@@ -142,7 +142,7 @@ public class ScheduledIntentService extends IntentService {
 
                 CircRecord checkoutRecord = circRecords.get(i);
 
-                Date dueDate = checkoutRecord.getDueDateObject();
+                Date dueDate = checkoutRecord.getDueDate();
 
                 Calendar notificationDate = Calendar.getInstance();
                 notificationDate.setTime(dueDate);
@@ -175,7 +175,7 @@ public class ScheduledIntentService extends IntentService {
                                     + checkoutRecord.circ_id, cal.getTime(),
                             "Checkout " + checkoutRecord.getAuthor()
                                     + " expires on "
-                                    + checkoutRecord.getDueDate());
+                                    + checkoutRecord.getDueDateString());
 
                     if (notifications == null) {
                         daoNotifications.insert(newNotificationInf, false);
@@ -195,7 +195,7 @@ public class ScheduledIntentService extends IntentService {
                     intentNotification.putExtra("checkoutMessage",
                             "The item " + checkoutRecord.getAuthor()
                                     + " is about to expire on "
-                                    + checkoutRecord.getDueDate());
+                                    + checkoutRecord.getDueDateString());
                     // update the current intent if it exists
                     PendingIntent sender = PendingIntent.getBroadcast(this,
                             NotificationAlert.NOTIFICATION_INTENT

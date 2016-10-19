@@ -20,10 +20,10 @@
 package org.evergreen_ils.accountAccess.checkout;
 
 import java.text.DateFormat;
+import java.util.Calendar;
 import java.util.Date;
 
 import org.evergreen_ils.Api;
-import org.evergreen_ils.globals.GlobalConfigs;
 import org.evergreen_ils.searchCatalog.RecordInfo;
 import org.opensrf.util.OSRFObject;
 
@@ -92,12 +92,11 @@ public class CircRecord {
         return author;
     }
 
-    public String getDueDate() {
-        //return circ_due_date.toLocaleString();
+    public String getDueDateString() {
         return DateFormat.getDateInstance().format(circ_due_date);
     }
 
-    public Date getDueDateObject() {
+    public Date getDueDate() {
         return circ_due_date;
     }
 
@@ -127,7 +126,16 @@ public class CircRecord {
     }
 
     public boolean isOverdue() {
-        Date currentDate = new Date(System.currentTimeMillis());
-        return getDueDateObject().compareTo(currentDate) < 0;
+        Date currentDate = new Date();
+        return getDueDate().compareTo(currentDate) < 0;
+    }
+
+    public boolean isDue() {
+        Date currentDate = new Date();
+        final int ITEM_DUE_HIGHLIGHT_DAYS = 2;
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(getDueDate());
+        cal.add(Calendar.DAY_OF_MONTH, -ITEM_DUE_HIGHLIGHT_DAYS);
+        return currentDate.compareTo(cal.getTime()) > 0;
     }
 }

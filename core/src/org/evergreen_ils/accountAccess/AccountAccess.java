@@ -35,8 +35,6 @@ import org.evergreen_ils.searchCatalog.RecordInfo;
 import org.opensrf.net.http.HttpConnection;
 import org.opensrf.util.OSRFObject;
 
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.*;
 
 /**
@@ -215,7 +213,7 @@ public class AccountAccess {
         Collections.sort(circRecords, new Comparator<CircRecord>() {
             @Override
             public int compare(CircRecord lhs, CircRecord rhs) {
-                return lhs.getDueDateObject().compareTo(rhs.getDueDateObject());
+                return lhs.getDueDate().compareTo(rhs.getDueDate());
             }
         });
 
@@ -471,7 +469,7 @@ public class AccountAccess {
     public void renewCirc(Integer target_copy) throws MaxRenewalsException,
             ServerErrorMessage, SessionNotFoundException {
 
-        HashMap<String, Integer> complexParam = new HashMap<String, Integer>();
+        HashMap<String, Integer> complexParam = new HashMap<>();
         complexParam.put("patron", this.userID);
         complexParam.put("copyid", target_copy);
         complexParam.put("opac_renewal", 1);

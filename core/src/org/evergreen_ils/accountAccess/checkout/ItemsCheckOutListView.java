@@ -24,6 +24,7 @@ import java.util.List;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.os.Build;
 import android.support.v7.app.ActionBarActivity;
 import android.widget.*;
 import org.evergreen_ils.R;
@@ -193,13 +194,23 @@ public class ItemsCheckOutListView extends ActionBarActivity {
             recordTitle.setText(record.getTitle());
             recordAuthor.setText(record.getAuthor());
             recordFormat.setText(RecordInfo.getFormatLabel(record.recordInfo));
-            recordDueDate.setText(getString(R.string.due) + " " + record.getDueDate());
-            recordIsOverdue.setVisibility(record.isOverdue() ? View.VISIBLE : View.GONE);
-            Log.d(TAG, "title: \"" + record.getTitle() + "\""
-                    + " due: " + record.getDueDate()
-                    + " renewals:  " + record.getRenewals());
+            recordDueDate.setText(String.format(getString(R.string.due), record.getDueDateString()));
+            maybeHighlightDueDate(record);
+//            Log.d(TAG, "title: \"" + record.getTitle() + "\""
+//                    + " due: " + record.getDueDateString()
+//                    + " renewals:  " + record.getRenewals());
 
             return row;
+        }
+
+        private void maybeHighlightDueDate(final CircRecord record) {
+            recordIsOverdue.setVisibility(record.isOverdue() ? View.VISIBLE : View.GONE);
+            int style = (record.isDue() ? R.style.alertText : R.style.PubSearchStyleList);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                recordDueDate.setTextAppearance(style);
+            } else {
+                recordDueDate.setTextAppearance(getApplicationContext(), style);
+            }
         }
 
         private void initRenewButton(final CircRecord record) {
