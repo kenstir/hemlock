@@ -32,6 +32,7 @@ import org.evergreen_ils.accountAccess.AccountAccess;
 import org.evergreen_ils.accountAccess.SessionNotFoundException;
 import org.evergreen_ils.globals.GlobalConfigs;
 import org.evergreen_ils.globals.Log;
+import org.evergreen_ils.searchCatalog.RecordInfo;
 import org.evergreen_ils.searchCatalog.SearchFormat;
 import org.evergreen_ils.utils.ui.ActionBarUtils;
 import org.evergreen_ils.utils.ui.ProgressDialogSupport;
@@ -131,7 +132,7 @@ public class HoldDetails extends ActionBarActivity {
         title.setText(record.title);
         author.setText(record.author);
         if (record.recordInfo != null) {
-            format.setText(SearchFormat.getItemLabelFromSearchFormat(record.recordInfo.search_format));
+            format.setText(RecordInfo.getFormatLabel(record.recordInfo));
             physical_description.setText(record.recordInfo.physical_description);
         }
 

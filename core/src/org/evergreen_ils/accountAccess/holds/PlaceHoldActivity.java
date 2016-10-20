@@ -116,7 +116,7 @@ public class PlaceHoldActivity extends ActionBarActivity {
 
         title.setText(record.title);
         author.setText(record.author);
-        format.setText(record.search_format);
+        format.setText(RecordInfo.getFormatLabel(record));
         physical_description.setText(record.physical_description);
 
         final Integer record_id = record.doc_id;
