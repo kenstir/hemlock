@@ -150,6 +150,12 @@ public class FinesActivity extends ActionBarActivity {
         getFinesTh.start();
     }
 
+    @Override
+    protected void onDestroy() {
+        if (progress != null) progress.dismiss();
+        super.onDestroy();
+    }
+
     class OverdueMaterialsArrayAdapter extends ArrayAdapter<FinesRecord> {
         private static final String tag = "CheckoutArrayAdapter";
 

@@ -246,7 +246,7 @@ public class HoldDetails extends ActionBarActivity {
 
     @Override
     protected void onDestroy() {
-        progress.dismiss();
+        if (progress != null) progress.dismiss();
         super.onDestroy();
     }
 
