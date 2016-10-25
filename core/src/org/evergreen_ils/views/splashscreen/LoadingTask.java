@@ -111,7 +111,8 @@ public class LoadingTask {
             Log.d(TAG, tag+"Loading resources from "+library.url);
             publishProgress("Loading resources");
             AccountAccess ac = AccountAccess.getInstance();
-            GlobalConfigs gc = GlobalConfigs.initializeGlobalConfigs(mCallingActivity, library.url);
+            GlobalConfigs gc = GlobalConfigs.getInstance(mCallingActivity);
+            gc.initialize(library.url);
 
             /* fetch org tree using OSRF rather than parsing JS */
             gc.loadOrganizations(ac.fetchOrgTree());

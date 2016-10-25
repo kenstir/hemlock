@@ -41,18 +41,16 @@ public class GlobalConfigs {
     //todo: unused mra?
     // extra classes needed for open-ils.actor.user.fleshed.retrieve: ac,au,aua,auact,cuat
     //public static String IDL_FILE_FROM_ASSETS = "fm_IDL.xml";
-    private static String httpAddress = "";
+    private static String mLibraryUrl = "";
     private static HttpConnection conn = null;
 
     private static String TAG = "GlobalConfigs";
     
-    private static Boolean isDebuggable = null;
+    private static Boolean mIsDebuggable = null;
 
     private static boolean loadedIDL = false;
 
     private static boolean loadedOrgTree = false;
-
-    //private static String hold_icon_address = "/opac/images/tor/";
 
     // two days notification before checkout expires, this can be modified from
     // preferences
@@ -61,47 +59,38 @@ public class GlobalConfigs {
     /** The locale. */
     public String locale = "en-US";
 
-    private static GlobalConfigs instance = null;
+    private static GlobalConfigs mInstance = null;
 
     /** The organisations. */
     public ArrayList<Organisation> organisations;
 
     /** The collections request. */
-    private String collectionsRequest = "/opac/common/js/" + locale
-            + "/OrgTree.js";
+    private String collectionsRequest = "/opac/common/js/" + locale + "/OrgTree.js";
 
-    private Context context = null;
+    private Context mContext = null;
 
-    private GlobalConfigs() {
+    private GlobalConfigs(Context context) {
+        mContext = context;
     }
 
     public static GlobalConfigs getInstance(Context context) {
-        if (instance == null)
-            instance = new GlobalConfigs();
-        if (context != null) {
-            instance.context = context;
+        context = context.getApplicationContext();
+        if (mInstance == null) {
+            mInstance = new GlobalConfigs(context);
             enableHttpResponseCache(context);
+            mIsDebuggable = (0 != (context.getApplicationInfo().flags &= ApplicationInfo.FLAG_DEBUGGABLE));
         }
-        if (context != null && isDebuggable == null)
-            isDebuggable = (0 != (context.getApplicationInfo().flags &= ApplicationInfo.FLAG_DEBUGGABLE));
-        return instance;
-    }
-
-    public static GlobalConfigs initializeGlobalConfigs(Context context, String library_url) throws IOException, IDLException {
-        Log.d(TAG, "getInstance library_url="+library_url);
-        GlobalConfigs globalConfigs = getInstance(context);
-        globalConfigs.initialize(library_url);
-        return globalConfigs;
+        return mInstance;
     }
 
     public static String getUrl() {
         GlobalConfigs globalConfigs = getInstance(null);
-        return globalConfigs.httpAddress;
+        return globalConfigs.mLibraryUrl;
     }
 
     public static String getUrl(String relativeUrl) {
         GlobalConfigs globalConfigs = getInstance(null);
-        return globalConfigs.httpAddress + relativeUrl;
+        return globalConfigs.mLibraryUrl + relativeUrl;
     }
 
     public static String getIDLUrl() {
@@ -110,17 +99,14 @@ public class GlobalConfigs {
             params.add("class=" + className);
         }
         StringBuilder sb = new StringBuilder(512);
-        sb.append(httpAddress).append("/reports/fm_IDL.xml?");
+        sb.append(mLibraryUrl).append("/reports/fm_IDL.xml?");
         sb.append(TextUtils.join("&", params));
         return sb.toString();
     }
 
-    /*
-     * Initialize function that retrieves IDL file and Orgs file
-     */
-    private boolean initialize(String library_url) throws IOException, IDLException {
-        if (!TextUtils.equals(library_url, httpAddress)) {
-            httpAddress = library_url;
+    public boolean initialize(String library_url) throws IOException, IDLException {
+        if (!TextUtils.equals(library_url, mLibraryUrl) || !loadedIDL) {
+            mLibraryUrl = library_url;
             conn = null; // must come before loadXXX()
             loadedIDL = false;
             loadIDL();
@@ -131,15 +117,15 @@ public class GlobalConfigs {
     }
 
     public static boolean isDebuggable() {
-        if (isDebuggable == null)
+        if (mIsDebuggable == null)
             return false;
-        return isDebuggable;
+        return mIsDebuggable;
     }
 
     public static HttpConnection gatewayConnection() {
-        if (conn == null && !TextUtils.isEmpty(httpAddress)) {
+        if (conn == null && !TextUtils.isEmpty(mLibraryUrl)) {
             try {
-                conn = new HttpConnection(httpAddress + "/osrf-gateway-v1");
+                conn = new HttpConnection(mLibraryUrl + "/osrf-gateway-v1");
             } catch (MalformedURLException e) {
                 Log.d(TAG, "unable to open connection", e);
             }
@@ -159,7 +145,7 @@ public class GlobalConfigs {
         }
     }
 
-    public void loadIDL() throws IOException, IDLException {
+    private void loadIDL() throws IOException, IDLException {
         try {
             Log.d(TAG, "loadIDLFile.start");
             long now_ms = System.currentTimeMillis();
@@ -169,11 +155,10 @@ public class GlobalConfigs {
             now_ms = Log.logElapsedTime(TAG, now_ms, "loadIDL.init");
             parser.parse();
             now_ms = Log.logElapsedTime(TAG, now_ms, "loadIDL.total");
+            loadedIDL = true;
         } finally {
             Utils.closeNetInputStream();
         }
-
-        loadedIDL = true;
     }
 
     public void addOrganization(OSRFObject obj, int level) {
@@ -227,14 +212,8 @@ public class GlobalConfigs {
 
     // todo candidate for on-demand loading
     public void loadCopyStatusesAvailable() {
-
         SearchCatalog search = SearchCatalog.getInstance();
-
-        try {
-            search.getCopyStatuses();
-        } catch (Exception e) {
-            Log.d(TAG, "caught exception", e);
-        }
+        search.getCopyStatuses();
     }
 
     public Organisation getOrganization(int id) {
