@@ -67,29 +67,22 @@ public class GlobalConfigs {
     /** The collections request. */
     private String collectionsRequest = "/opac/common/js/" + locale + "/OrgTree.js";
 
-    private Context mContext = null;
-
-    private GlobalConfigs(Context context) {
-        mContext = context;
+    private GlobalConfigs() {
     }
 
-    public static GlobalConfigs getInstance(Context context) {
-        context = context.getApplicationContext();
-        if (mInstance == null) {
-            mInstance = new GlobalConfigs(context);
-            enableHttpResponseCache(context);
-            mIsDebuggable = (0 != (context.getApplicationInfo().flags &= ApplicationInfo.FLAG_DEBUGGABLE));
-        }
+    public static GlobalConfigs getInstance() {
+        if (mInstance == null)
+            mInstance = new GlobalConfigs();
         return mInstance;
     }
 
     public static String getUrl() {
-        GlobalConfigs globalConfigs = getInstance(null);
+        GlobalConfigs globalConfigs = getInstance();
         return globalConfigs.mLibraryUrl;
     }
 
     public static String getUrl(String relativeUrl) {
-        GlobalConfigs globalConfigs = getInstance(null);
+        GlobalConfigs globalConfigs = getInstance();
         return globalConfigs.mLibraryUrl + relativeUrl;
     }
 
@@ -104,7 +97,9 @@ public class GlobalConfigs {
         return sb.toString();
     }
 
-    public boolean initialize(String library_url) throws IOException, IDLException {
+    public boolean initialize(Context context, String library_url) throws IOException, IDLException {
+        enableHttpResponseCache(context);
+        mIsDebuggable = (0 != (context.getApplicationInfo().flags &= ApplicationInfo.FLAG_DEBUGGABLE));
         if (!TextUtils.equals(library_url, mLibraryUrl) || !loadedIDL) {
             mLibraryUrl = library_url;
             conn = null; // must come before loadXXX()

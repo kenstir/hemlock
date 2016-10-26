@@ -117,7 +117,7 @@ public class BasicDetailsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         activity = getActivity();
-        globalConfigs = GlobalConfigs.getInstance(activity);
+        globalConfigs = GlobalConfigs.getInstance();
 
         LinearLayout layout = (LinearLayout) inflater.inflate(
                 R.layout.record_details_basic_fragment, null);

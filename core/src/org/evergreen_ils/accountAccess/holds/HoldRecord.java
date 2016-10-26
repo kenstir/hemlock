@@ -103,7 +103,7 @@ public class HoldRecord implements Serializable {
         try {
             OSRFObject transit = (OSRFObject) ahr.get("transit");
             if (transit == null) return null;
-            GlobalConfigs gc = GlobalConfigs.getInstance(null);
+            GlobalConfigs gc = GlobalConfigs.getInstance();
             Integer source = transit.getInt("source");
             if (source == null) return null;
             return gc.getOrganizationName(source);

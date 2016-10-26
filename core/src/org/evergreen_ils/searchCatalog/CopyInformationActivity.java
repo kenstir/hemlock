@@ -66,7 +66,7 @@ public class CopyInformationActivity extends ActionBarActivity {
         setContentView(R.layout.copy_information_more);
         ActionBarUtils.initActionBarForActivity(this);
 
-        globalConfigs = GlobalConfigs.getInstance(context);
+        globalConfigs = GlobalConfigs.getInstance();
         context = this;
         record = (RecordInfo) getIntent().getSerializableExtra("recordInfo");
         orgID = getIntent().getIntExtra("orgID", 1);

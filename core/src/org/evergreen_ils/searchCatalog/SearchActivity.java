@@ -121,7 +121,7 @@ public class SearchActivity extends ActionBarActivity {
         ActionBarUtils.initActionBarForActivity(this);
 
         context = this;
-        globalConfigs = GlobalConfigs.getInstance(this);
+        globalConfigs = GlobalConfigs.getInstance();
         search = SearchCatalog.getInstance();
         bookBags = AccountAccess.getInstance().getBookbags();
         searchResults = new ArrayList<RecordInfo>();

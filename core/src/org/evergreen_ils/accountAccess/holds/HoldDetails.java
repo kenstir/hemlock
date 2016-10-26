@@ -110,7 +110,7 @@ public class HoldDetails extends ActionBarActivity {
         ActionBarUtils.initActionBarForActivity(this);
 
         context = this;
-        globalConfigs = GlobalConfigs.getInstance(this);
+        globalConfigs = GlobalConfigs.getInstance();
         accountAccess = AccountAccess.getInstance();
         progress = new ProgressDialogSupport();
 

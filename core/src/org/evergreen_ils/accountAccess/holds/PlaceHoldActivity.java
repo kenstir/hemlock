@@ -94,7 +94,7 @@ public class PlaceHoldActivity extends ActionBarActivity {
         setContentView(R.layout.place_hold);
         ActionBarUtils.initActionBarForActivity(this);
 
-        globalConfigs = GlobalConfigs.getInstance(this);
+        globalConfigs = GlobalConfigs.getInstance();
         RecordInfo record = (RecordInfo) getIntent().getSerializableExtra("recordInfo");
 
         context = this;
