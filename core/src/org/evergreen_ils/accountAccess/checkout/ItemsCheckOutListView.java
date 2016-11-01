@@ -19,6 +19,7 @@
  */
 package org.evergreen_ils.accountAccess.checkout;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -86,7 +87,11 @@ public class ItemsCheckOutListView extends ActionBarActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 RecordInfo info = circRecords.get(position).recordInfo;
-                RecordDetails.launchDetailsFlow(ItemsCheckOutListView.this, info);
+                ArrayList<RecordInfo> records = new ArrayList<>();
+                for (CircRecord circRecord: circRecords) {
+                    records.add(circRecord.recordInfo);
+                }
+                RecordDetails.launchDetailsFlow(ItemsCheckOutListView.this, records, position);
             }
         });
 
