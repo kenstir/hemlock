@@ -86,7 +86,6 @@ public class ItemsCheckOutListView extends ActionBarActivity {
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                RecordInfo info = circRecords.get(position).recordInfo;
                 ArrayList<RecordInfo> records = new ArrayList<>();
                 for (CircRecord circRecord: circRecords) {
                     records.add(circRecord.recordInfo);

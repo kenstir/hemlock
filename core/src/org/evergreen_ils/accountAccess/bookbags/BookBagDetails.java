@@ -123,8 +123,11 @@ public class BookBagDetails extends ActionBarActivity {
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                RecordInfo info = bookBagItems.get(position).recordInfo;
-                RecordDetails.launchDetailsFlow(BookBagDetails.this, info);
+                ArrayList<RecordInfo> records = new ArrayList<>();
+                for (BookBagItem item: bookBagItems) {
+                    records.add(item.recordInfo);
+                }
+                RecordDetails.launchDetailsFlow(BookBagDetails.this, records, position);
             }
         });
 
