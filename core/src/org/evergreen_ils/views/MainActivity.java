@@ -18,7 +18,11 @@
 
 package org.evergreen_ils.views;
 
+import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
@@ -111,12 +115,22 @@ public class MainActivity extends ActionBarActivity {
         }
     }
 
+    public static String getAppVersionCode(Context context) {
+        String version = "";
+        try {
+            PackageInfo pInfo = context.getPackageManager().getPackageInfo(context.getPackageName(), 0);
+            version = String.format("%d", pInfo.versionCode);
+        } catch (PackageManager.NameNotFoundException e) {
+            Log.d("Log", "caught", e);
+        }
+        return version;
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_main, menu);
-        String url = getString(R.string.ou_feedback_url);
-        if (TextUtils.isEmpty(url))
+        if (TextUtils.isEmpty(getFeedbackUrl()))
             menu.removeItem(R.id.action_feedback);
         boolean showDonate = AppState.getBoolean(AppState.SHOW_DONATE, false);
         if (!showDonate)
@@ -128,6 +142,14 @@ public class MainActivity extends ActionBarActivity {
     public boolean onPrepareOptionsMenu (Menu menu) {
         menu.getItem(0).setEnabled(AccountUtils.haveMoreThanOneAccount(this));
         return true;
+    }
+
+    @SuppressLint("StringFormatInvalid")
+    protected String getFeedbackUrl() {
+        String urlFormat = getString(R.string.ou_feedback_url);
+        if (urlFormat.isEmpty())
+            return urlFormat;
+        return String.format(urlFormat, getAppVersionCode(this));
     }
 
     @Override
@@ -147,7 +169,7 @@ public class MainActivity extends ActionBarActivity {
             Log.i(Const.AUTH_TAG, "after addAccount");
             return true;
         } else if (id == R.id.action_feedback) {
-            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.ou_feedback_url))));
+            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(getFeedbackUrl())));
             return true;
         } else if (id == R.id.action_donate) {
             startActivityForResult(new Intent(this, DonateActivity.class), BillingHelper.REQUEST_PURCHASE);
