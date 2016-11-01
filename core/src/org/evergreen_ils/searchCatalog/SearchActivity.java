@@ -193,15 +193,11 @@ public class SearchActivity extends ActionBarActivity {
         AppState.setBoolean(SEARCH_OPTIONS_VISIBLE, visible);
     }
 
-    private void toggleSearchOptions() {
-        setSearchOptionsVisibility(!searchOptionsVisible);
-    }
-
     private void initSearchOptionsButton() {
-        searchOptionsButton.setOnClickListener(new OnClickListener() {
+        searchOptionsButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
-            public void onClick(View v) {
-                toggleSearchOptions();
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                setSearchOptionsVisibility(isChecked);
             }
         });
     }
