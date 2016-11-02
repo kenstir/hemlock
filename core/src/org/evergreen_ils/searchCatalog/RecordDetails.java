@@ -28,14 +28,6 @@ import java.util.List;
  * Created by kenstir on 3/5/2016.
  */
 public class RecordDetails {
-    public static void launchDetailsFlow(Context context, RecordInfo info) {
-        ArrayList<RecordInfo> recordList = new ArrayList<RecordInfo>(1);
-        recordList.add(info);
-        Intent intent = new Intent(context, SampleUnderlinesNoFade.class);
-        intent.putExtra("recordList", recordList);
-        context.startActivity(intent);
-    }
-
     public static void launchDetailsFlow(Context context, ArrayList<RecordInfo> recordList, int recordPosition) {
         Intent intent = new Intent(context, SampleUnderlinesNoFade.class);
         intent.putExtra("recordList", recordList);

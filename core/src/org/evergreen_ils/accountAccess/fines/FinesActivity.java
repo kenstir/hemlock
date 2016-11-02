@@ -86,15 +86,18 @@ public class FinesActivity extends ActionBarActivity {
         ac = AccountAccess.getInstance();
         progress = new ProgressDialogSupport();
 
-        final ArrayList<FinesRecord> finesRecords = new ArrayList<FinesRecord>();
+        final ArrayList<FinesRecord> finesRecords = new ArrayList<>();
         listAdapter = new OverdueMaterialsArrayAdapter(context,
                 R.layout.fines_list_item, finesRecords);
         lv.setAdapter(listAdapter);
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                RecordInfo info = finesRecords.get(position).recordInfo;
-                RecordDetails.launchDetailsFlow(FinesActivity.this, info);
+                ArrayList<RecordInfo> records = new ArrayList<>();
+                for (FinesRecord item: finesRecords) {
+                    records.add(item.recordInfo);
+                }
+                RecordDetails.launchDetailsFlow(FinesActivity.this, records, position);
             }
         });
 
@@ -132,8 +135,8 @@ public class FinesActivity extends ActionBarActivity {
                     @Override
                     public void run() {
                         listAdapter.clear();
-                        for (int i = 0; i < finesRecords.size(); i++)
-                            listAdapter.add(finesRecords.get(i));
+                        for (FinesRecord finesRecord : finesRecords)
+                            listAdapter.add(finesRecord);
 
                         listAdapter.notifyDataSetChanged();
 
@@ -164,10 +167,10 @@ public class FinesActivity extends ActionBarActivity {
         private TextView fineBalanceOwed;
         private TextView fineStatus;
 
-        private List<FinesRecord> records = new ArrayList<FinesRecord>();
+        private List<FinesRecord> records = new ArrayList<>();
 
-        public OverdueMaterialsArrayAdapter(Context context,
-                int textViewResourceId, List<FinesRecord> objects) {
+        OverdueMaterialsArrayAdapter(Context context,
+                                     int textViewResourceId, List<FinesRecord> objects) {
             super(context, textViewResourceId, objects);
             this.records = objects;
         }
