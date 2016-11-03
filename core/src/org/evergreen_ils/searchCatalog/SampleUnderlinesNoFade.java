@@ -58,7 +58,7 @@ public class SampleUnderlinesNoFade extends BaseSampleActivity {
         }
 
         setContentView(R.layout.simple_underlines);
-        ActionBarUtils.initActionBarForActivity(this);
+        ActionBarUtils.initActionBarForActivity(this, getIntent().getStringExtra("title"));
 
         search = SearchCatalog.getInstance();
 

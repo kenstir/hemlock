@@ -20,6 +20,7 @@ package org.evergreen_ils.utils.ui;
 
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
+import android.text.TextUtils;
 import org.evergreen_ils.R;
 import org.evergreen_ils.accountAccess.AccountAccess;
 import org.evergreen_ils.globals.AppState;
@@ -29,7 +30,7 @@ import org.evergreen_ils.globals.AppState;
  */
 public class ActionBarUtils {
 
-    public static void initActionBarForActivity(ActionBarActivity activity, boolean isMainActivity) {
+    public static void initActionBarForActivity(ActionBarActivity activity, String title, boolean isMainActivity) {
         ActionBar actionBar = activity.getSupportActionBar();
         if (actionBar == null)
             return;
@@ -37,6 +38,8 @@ public class ActionBarUtils {
         //username = "janejetson";//for screenshots
         actionBar.setSubtitle(String.format(activity.getString(R.string.ou_activity_subtitle),
                 AppState.getString(AppState.LIBRARY_NAME), username));
+        if (!TextUtils.isEmpty(title))
+            actionBar.setTitle(title);
         if (!isMainActivity) {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
@@ -52,6 +55,7 @@ public class ActionBarUtils {
 //        actionBar.setDisplayUseLogoEnabled(true);
         actionBar.setIcon(R.drawable.evergreen_launcher_icon);
 
+        ...setTitle
         actionBar.setSubtitle(String.format(activity.getString(R.string.ou_activity_subtitle),
                 AppState.getString(AppState.LIBRARY_NAME),
                 AccountAccess.userName));
@@ -61,7 +65,11 @@ public class ActionBarUtils {
     }
     */
 
+    public static void initActionBarForActivity(ActionBarActivity activity, String title) {
+        initActionBarForActivity(activity, title, false);
+    }
+
     public static void initActionBarForActivity(ActionBarActivity activity) {
-        initActionBarForActivity(activity, false);
+        initActionBarForActivity(activity, null, false);
     }
 }

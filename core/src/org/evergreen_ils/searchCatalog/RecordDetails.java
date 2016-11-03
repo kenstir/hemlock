@@ -18,8 +18,12 @@
 
 package org.evergreen_ils.searchCatalog;
 
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
+import android.content.pm.PackageManager;
+import org.evergreen_ils.globals.Log;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,9 +33,18 @@ import java.util.List;
  */
 public class RecordDetails {
     public static void launchDetailsFlow(Context context, ArrayList<RecordInfo> recordList, int recordPosition) {
+        // determine name of parent activity
+        PackageManager pm = context.getPackageManager();
+        String parentActivityLabel = null;
+        try {
+            ActivityInfo info = pm.getActivityInfo(new ComponentName(context, context.getClass().getCanonicalName()), 0);
+            parentActivityLabel = context.getString(info.labelRes);
+        } catch (PackageManager.NameNotFoundException e) {
+        }
         Intent intent = new Intent(context, SampleUnderlinesNoFade.class);
         intent.putExtra("recordList", recordList);
         intent.putExtra("recordPosition", recordPosition);
+        intent.putExtra("title", parentActivityLabel);
         context.startActivity(intent);
     }
 }

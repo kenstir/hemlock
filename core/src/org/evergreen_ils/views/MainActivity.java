@@ -63,7 +63,7 @@ public class MainActivity extends ActionBarActivity {
         SearchFormat.init(this);
 
         setContentView(R.layout.activity_main);
-        ActionBarUtils.initActionBarForActivity(this, true);
+        ActionBarUtils.initActionBarForActivity(this, null, true);
 
         // hide the donate button until we know what the deal is
         /*
