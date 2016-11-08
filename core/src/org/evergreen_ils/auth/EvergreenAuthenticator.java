@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.evergreen_ils.Api;
-import org.evergreen_ils.globals.Log;
+import org.evergreen_ils.system.Log;
 import org.opensrf.Method;
 import org.opensrf.net.http.GatewayRequest;
 import org.opensrf.net.http.HttpConnection;

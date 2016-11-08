@@ -19,7 +19,7 @@
 package org.evergreen_ils.billing;
 
 import android.text.TextUtils;
-import org.evergreen_ils.globals.Log;
+import org.evergreen_ils.system.Log;
 
 /** Interface to get the keys necessary to perform billing.  Concrete implementation is provided by the app
  * and the name of that class is specified in R.string.ou_billing_data_provider .

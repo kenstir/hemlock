@@ -24,14 +24,14 @@ import org.evergreen_ils.R;
 import org.evergreen_ils.accountAccess.AccountAccess;
 import org.evergreen_ils.accountAccess.AccountUtils;
 import org.evergreen_ils.accountAccess.SessionNotFoundException;
-import org.evergreen_ils.globals.AppState;
-import org.evergreen_ils.globals.GlobalConfigs;
+import org.evergreen_ils.utils.ui.AppState;
 
 import android.accounts.AccountManager;
 import android.app.Activity;
 import android.os.Bundle;
-import org.evergreen_ils.globals.Library;
-import org.evergreen_ils.globals.Log;
+import org.evergreen_ils.system.Library;
+import org.evergreen_ils.system.Log;
+import org.evergreen_ils.system.EvergreenServer;
 
 /** This is basically the same as an AsyncTask<String,String,String>, except that it uses
  * a Thread.  Starting with HONEYCOMB, tasks are executed on a single thread and the 2nd
@@ -110,12 +110,11 @@ public class LoadingTask {
 
             Log.d(TAG, tag+"Loading resources from "+library.url);
             publishProgress("Loading resources");
+            EvergreenServer eg = EvergreenServer.getInstance();
+            eg.enableCaching(mCallingActivity);
+            eg.connect(library.url);
             AccountAccess ac = AccountAccess.getInstance();
-            GlobalConfigs gc = GlobalConfigs.getInstance();
-            gc.initialize(mCallingActivity, library.url);
-
-            /* fetch org tree using OSRF rather than parsing JS */
-            gc.loadOrganizations(ac.fetchOrgTree());
+            eg.loadOrganizations(ac.fetchOrgTree());
 
             // auth token zen: try once and if it fails, invalidate the token and try again
             Log.d(TAG, tag+"Starting session");

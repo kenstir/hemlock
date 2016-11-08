@@ -5,22 +5,19 @@ import java.util.Vector;
 
 import org.evergreen_ils.R;
 import org.evergreen_ils.barcodescan.camera.CameraManager;
-import org.evergreen_ils.globals.Log;
+import org.evergreen_ils.system.Log;
 import org.evergreen_ils.views.splashscreen.SplashActivity;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Handler;
-import android.view.Menu;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.Toast;
 
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.Result;

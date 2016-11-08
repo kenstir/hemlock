@@ -36,9 +36,10 @@ import org.evergreen_ils.accountAccess.bookbags.BookBagUtils;
 import org.evergreen_ils.accountAccess.holds.PlaceHoldActivity;
 import org.evergreen_ils.barcodescan.CaptureActivity;
 import org.evergreen_ils.billing.BillingHelper;
-import org.evergreen_ils.globals.AppState;
-import org.evergreen_ils.globals.GlobalConfigs;
-import org.evergreen_ils.globals.Log;
+import org.evergreen_ils.system.EvergreenServer;
+import org.evergreen_ils.utils.ui.AppState;
+import org.evergreen_ils.system.Log;
+import org.evergreen_ils.system.Organization;
 import org.evergreen_ils.utils.ui.ActionBarUtils;
 import org.evergreen_ils.utils.ui.ProgressDialogSupport;
 import org.evergreen_ils.views.DonateActivity;
@@ -75,7 +76,7 @@ public class SearchActivity extends ActionBarActivity {
     private Context context;
     private ProgressDialogSupport progress;
     private ArrayList<RecordInfo> searchResults;
-    private GlobalConfigs globalConfigs;
+    private EvergreenServer eg;
     private ArrayList<BookBag> bookBags;
     private Integer bookbag_selected = -1;
     private Runnable searchForResultsRunnable = null;
@@ -121,7 +122,7 @@ public class SearchActivity extends ActionBarActivity {
         ActionBarUtils.initActionBarForActivity(this);
 
         context = this;
-        globalConfigs = GlobalConfigs.getInstance();
+        eg = EvergreenServer.getInstance();
         search = SearchCatalog.getInstance();
         bookBags = AccountAccess.getInstance().getBookbags();
         searchResults = new ArrayList<RecordInfo>();
@@ -271,8 +272,8 @@ public class SearchActivity extends ActionBarActivity {
             homeLibrary = AccountAccess.getInstance().getHomeLibraryID();
         }
         ArrayList<String> list = new ArrayList<String>();
-        for (int i = 0; i < globalConfigs.organisations.size(); i++) {
-            Organisation org = globalConfigs.organisations.get(i);
+        for (int i = 0; i < eg.getInstance().getOrganizations().size(); i++) {
+            Organization org = eg.getInstance().getOrganizations().get(i);
             list.add(org.indentedDisplayPrefix + org.name);
             if (org.id == homeLibrary) {
                 selectedOrgPos = i;
@@ -281,11 +282,11 @@ public class SearchActivity extends ActionBarActivity {
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, R.layout.org_item_layout, list);
         searchOrgSpinner.setAdapter(adapter);
         searchOrgSpinner.setSelection(selectedOrgPos);
-        search.selectOrganisation(globalConfigs.organisations.get(selectedOrgPos));
+        search.selectOrganisation(eg.getInstance().getOrganizations().get(selectedOrgPos));
         searchOrgSpinner.setOnItemSelectedListener(new OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> arg0, View arg1, int ID, long arg3) {
-                search.selectOrganisation(globalConfigs.organisations.get(ID));
+                search.selectOrganisation(eg.getInstance().getOrganizations().get(ID));
             }
 
             @Override

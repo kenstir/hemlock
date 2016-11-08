@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Kenneth H. Cox
+ * Copyright (C) 2016 Kenneth H. Cox
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -16,7 +16,7 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
-package org.evergreen_ils.globals;
+package org.evergreen_ils.system;
 
 import android.location.Location;
 import android.text.TextUtils;

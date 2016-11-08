@@ -15,9 +15,9 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
-import org.evergreen_ils.globals.AppState;
-import org.evergreen_ils.globals.Log;
-import org.evergreen_ils.globals.Library;
+import org.evergreen_ils.utils.ui.AppState;
+import org.evergreen_ils.system.Log;
+import org.evergreen_ils.system.Library;
 
 public class AuthenticatorActivity extends AccountAuthenticatorActivity {
 

@@ -30,9 +30,9 @@ import org.evergreen_ils.Api;
 import org.evergreen_ils.R;
 import org.evergreen_ils.accountAccess.AccountAccess;
 import org.evergreen_ils.accountAccess.SessionNotFoundException;
-import org.evergreen_ils.globals.EvergreenConstants;
-import org.evergreen_ils.globals.GlobalConfigs;
-import org.evergreen_ils.searchCatalog.Organisation;
+import org.evergreen_ils.system.EvergreenConstants;
+import org.evergreen_ils.system.EvergreenServer;
+import org.evergreen_ils.system.Organization;
 import org.evergreen_ils.searchCatalog.RecordInfo;
 import org.evergreen_ils.utils.ui.ActionBarUtils;
 import org.evergreen_ils.utils.ui.ProgressDialogSupport;
@@ -78,7 +78,7 @@ public class PlaceHoldActivity extends ActionBarActivity {
     private Date expire_date = null;
     private Date thaw_date = null;
     private Runnable placeHoldRunnable;
-    private GlobalConfigs globalConfigs = null;
+    private EvergreenServer eg = null;
     private int selectedOrgPos = 0;
     private ProgressDialogSupport progress;
     private Context context;
@@ -94,7 +94,7 @@ public class PlaceHoldActivity extends ActionBarActivity {
         setContentView(R.layout.place_hold);
         ActionBarUtils.initActionBarForActivity(this);
 
-        globalConfigs = GlobalConfigs.getInstance();
+        eg = EvergreenServer.getInstance();
         RecordInfo record = (RecordInfo) getIntent().getSerializableExtra("recordInfo");
 
         context = this;
@@ -141,8 +141,8 @@ public class PlaceHoldActivity extends ActionBarActivity {
                     thaw_date_s = Api.formatDate(thaw_date);
 
                 int selectedOrgID = -1;
-                if (globalConfigs.organisations.size() > selectedOrgPos)
-                    selectedOrgID = globalConfigs.organisations.get(selectedOrgPos).id;
+                if (eg.getInstance().getOrganizations().size() > selectedOrgPos)
+                    selectedOrgID = eg.getInstance().getOrganizations().get(selectedOrgPos).id;
 
                 String[] stringResponse = new String[] { "false" };
                 try {
@@ -274,8 +274,8 @@ public class PlaceHoldActivity extends ActionBarActivity {
             homeLibrary = AccountAccess.getInstance().getHomeLibraryID();
         }
         ArrayList<String> list = new ArrayList<String>();
-        for (int i = 0; i < globalConfigs.organisations.size(); i++) {
-            Organisation org = globalConfigs.organisations.get(i);
+        for (int i = 0; i < eg.getInstance().getOrganizations().size(); i++) {
+            Organization org = eg.getInstance().getOrganizations().get(i);
             list.add(org.indentedDisplayPrefix + org.name);
             if (org.id == homeLibrary) {
                 selectedOrgPos = i;
@@ -285,7 +285,7 @@ public class PlaceHoldActivity extends ActionBarActivity {
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, R.layout.org_item_layout, list) {
             @Override
             public boolean isEnabled(int pos) {
-                Organisation org = globalConfigs.organisations.get(pos);
+                Organization org = eg.getInstance().getOrganizations().get(pos);
                 return org.orgType >= EvergreenConstants.ORG_TYPE_BRANCH;
             }
         };

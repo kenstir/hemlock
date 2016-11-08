@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Kenneth H. Cox
+ * Copyright (C) 2016 Kenneth H. Cox
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -16,15 +16,15 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
-package org.evergreen_ils.globals;
+package org.evergreen_ils.utils.ui;
 
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.preference.PreferenceManager;
 import org.evergreen_ils.R;
+import org.evergreen_ils.system.Log;
 
-import java.io.File;
 import java.util.Date;
 
 /** App State that is persistent across invocations; stored as preferences.

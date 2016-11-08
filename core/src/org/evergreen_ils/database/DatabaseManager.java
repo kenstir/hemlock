@@ -20,13 +20,12 @@
 package org.evergreen_ils.database;
 
 import java.util.HashMap;
-import java.util.logging.Logger;
 
 import org.androwrapee.db.DefaultDAO;
 import org.androwrapee.db.DefaultDatabaseHelper;
 import org.androwrapee.db.IllegalClassStructureException;
 import org.androwrapee.db.ReflectionManager;
-import org.evergreen_ils.globals.Log;
+import org.evergreen_ils.system.Log;
 import org.evergreen_ils.services.NotificationAlert;
 
 import android.content.Context;

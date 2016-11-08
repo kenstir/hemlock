@@ -24,9 +24,9 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import org.evergreen_ils.Api;
 import org.evergreen_ils.accountAccess.AccountAccess;
-import org.evergreen_ils.globals.GlobalConfigs;
-import org.evergreen_ils.globals.Log;
-import org.evergreen_ils.globals.Utils;
+import org.evergreen_ils.system.EvergreenServer;
+import org.evergreen_ils.system.Log;
+import org.evergreen_ils.system.Utils;
 import org.evergreen_ils.net.GatewayJsonObjectRequest;
 import org.evergreen_ils.net.VolleyWrangler;
 import org.opensrf.util.GatewayResponse;
@@ -57,7 +57,7 @@ public class RecordLoader {
             responseListener.onMetadataLoaded();
         } else {
             final long start_ms = System.currentTimeMillis();
-            String url = GlobalConfigs.getUrl(Utils.buildGatewayUrl(
+            String url = EvergreenServer.getInstance().getUrl(Utils.buildGatewayUrl(
                     Api.SEARCH, Api.MODS_SLIM_RETRIEVE,
                     new Object[]{record.doc_id}));
             Log.d(TAG, "fetch.basic "+url);
@@ -85,7 +85,7 @@ public class RecordLoader {
             // todo newer EG supports using "ANONYMOUS" as the auth_token in PCRUD requests.
             // Older EG does not, and requires a valid auth_token.
             final long start_ms = System.currentTimeMillis();
-            String url = GlobalConfigs.getUrl(Utils.buildGatewayUrl(
+            String url = EvergreenServer.getInstance().getUrl(Utils.buildGatewayUrl(
                     Api.PCRUD_SERVICE, Api.RETRIEVE_MRA,
                     new Object[]{AccountAccess.getInstance().getAuthToken(), record.doc_id}));
             Log.d(TAG, "fetch.searchFormat "+url);
@@ -111,7 +111,7 @@ public class RecordLoader {
         if (record.copy_info_loaded) {
             listener.onDataAvailable();
         } else {
-            String url = GlobalConfigs.getUrl(Utils.buildGatewayUrl(
+            String url = EvergreenServer.getInstance().getUrl(Utils.buildGatewayUrl(
                     Api.SEARCH, Api.COPY_COUNT,
                     new Object[]{orgID, record.doc_id}));
             GatewayJsonObjectRequest r = new GatewayJsonObjectRequest(

@@ -8,7 +8,7 @@ import android.util.LruCache;
 import com.android.volley.*;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.Volley;
-import org.evergreen_ils.globals.Log;
+import org.evergreen_ils.system.Log;
 
 /**
  * Created by kenstir on 12/2/2015.

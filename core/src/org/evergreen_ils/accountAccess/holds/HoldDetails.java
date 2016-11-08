@@ -30,10 +30,9 @@ import org.evergreen_ils.Api;
 import org.evergreen_ils.R;
 import org.evergreen_ils.accountAccess.AccountAccess;
 import org.evergreen_ils.accountAccess.SessionNotFoundException;
-import org.evergreen_ils.globals.GlobalConfigs;
-import org.evergreen_ils.globals.Log;
+import org.evergreen_ils.system.EvergreenServer;
+import org.evergreen_ils.system.Log;
 import org.evergreen_ils.searchCatalog.RecordInfo;
-import org.evergreen_ils.searchCatalog.SearchFormat;
 import org.evergreen_ils.utils.ui.ActionBarUtils;
 import org.evergreen_ils.utils.ui.ProgressDialogSupport;
 import org.evergreen_ils.views.splashscreen.SplashActivity;
@@ -96,7 +95,7 @@ public class HoldDetails extends ActionBarActivity {
 
     private ProgressDialogSupport progress;
 
-    private GlobalConfigs globalConfigs;
+    private EvergreenServer eg;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -110,7 +109,7 @@ public class HoldDetails extends ActionBarActivity {
         ActionBarUtils.initActionBarForActivity(this);
 
         context = this;
-        globalConfigs = GlobalConfigs.getInstance();
+        eg = EvergreenServer.getInstance();
         accountAccess = AccountAccess.getInstance();
         progress = new ProgressDialogSupport();
 
@@ -222,9 +221,9 @@ public class HoldDetails extends ActionBarActivity {
         });
 
         ArrayList<String> list = new ArrayList<String>();
-        for (int i = 0; i < globalConfigs.organisations.size(); i++) {
-            list.add(globalConfigs.organisations.get(i).indentedDisplayPrefix + globalConfigs.organisations.get(i).name);
-            if (globalConfigs.organisations.get(i).id == record.pickup_lib) {
+        for (int i = 0; i < eg.getInstance().getOrganizations().size(); i++) {
+            list.add(eg.getInstance().getOrganizations().get(i).indentedDisplayPrefix + eg.getInstance().getOrganizations().get(i).name);
+            if (eg.getInstance().getOrganizations().get(i).id == record.pickup_lib) {
                 selectedOrgPos = i;
             }
         }
@@ -301,13 +300,13 @@ public class HoldDetails extends ActionBarActivity {
                     thaw_date_s = Api.formatDate(thaw_date);
 
                 try {
-                    accountAccess.updateHold(record.ahr, globalConfigs.organisations.get(selectedOrgPos).id,
+                    accountAccess.updateHold(record.ahr, eg.getInstance().getOrganizations().get(selectedOrgPos).id,
                             suspendHold.isChecked(), expire_date_s, thaw_date_s);
                 } catch (SessionNotFoundException e) {
                     try {
                         if (accountAccess.reauthenticate(HoldDetails.this))
                             accountAccess.updateHold(record.ahr,
-                                    globalConfigs.organisations.get(selectedOrgPos).id,
+                                    eg.getInstance().getOrganizations().get(selectedOrgPos).id,
                                     suspendHold.isChecked(), expire_date_s, thaw_date_s);
                     } catch (Exception eauth) {
                         Log.d(TAG, "Exception in reAuth");

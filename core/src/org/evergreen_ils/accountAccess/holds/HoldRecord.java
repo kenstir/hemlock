@@ -25,9 +25,8 @@ import java.util.Date;
 
 import org.evergreen_ils.Api;
 import org.evergreen_ils.R;
-import org.evergreen_ils.globals.GlobalConfigs;
-import org.evergreen_ils.globals.Log;
-import org.evergreen_ils.globals.Utils;
+import org.evergreen_ils.system.EvergreenServer;
+import org.evergreen_ils.system.Log;
 import org.evergreen_ils.searchCatalog.RecordInfo;
 import org.opensrf.util.OSRFObject;
 import android.content.res.Resources;
@@ -103,10 +102,10 @@ public class HoldRecord implements Serializable {
         try {
             OSRFObject transit = (OSRFObject) ahr.get("transit");
             if (transit == null) return null;
-            GlobalConfigs gc = GlobalConfigs.getInstance();
+            EvergreenServer eg = EvergreenServer.getInstance();
             Integer source = transit.getInt("source");
             if (source == null) return null;
-            return gc.getOrganizationName(source);
+            return eg.getOrganizationName(source);
         } catch (Exception ex) {
             Log.d(TAG, "caught", ex);
             return null;

@@ -22,10 +22,7 @@ import android.support.v7.widget.GridLayoutManager;
 import android.view.*;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.widget.AdapterView;
-import org.evergreen_ils.App;
 import org.evergreen_ils.R;
-import org.evergreen_ils.globals.Log;
 import org.evergreen_ils.utils.ui.ItemClickSupport;
 
 import java.util.ArrayList;

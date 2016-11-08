@@ -35,7 +35,7 @@ import android.graphics.Point;
 import android.hardware.Camera;
 import android.os.Handler;
 import android.os.Message;
-import org.evergreen_ils.globals.Log;
+import org.evergreen_ils.system.Log;
 
 final class PreviewCallback implements Camera.PreviewCallback {
 

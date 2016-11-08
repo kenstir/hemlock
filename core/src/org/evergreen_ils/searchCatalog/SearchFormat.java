@@ -21,10 +21,9 @@ package org.evergreen_ils.searchCatalog;
 import android.content.Context;
 import android.text.TextUtils;
 import org.evergreen_ils.R;
-import org.evergreen_ils.globals.Log;
+import org.evergreen_ils.system.Log;
 import org.opensrf.util.JSONException;
 import org.opensrf.util.JSONReader;
-import org.w3c.dom.Text;
 
 import java.io.IOException;
 import java.io.InputStream;

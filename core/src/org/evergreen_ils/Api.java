@@ -18,8 +18,7 @@
 
 package org.evergreen_ils;
 
-import org.evergreen_ils.globals.GlobalConfigs;
-import org.evergreen_ils.globals.Log;
+import org.evergreen_ils.system.Log;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;

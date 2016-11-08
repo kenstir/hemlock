@@ -23,7 +23,6 @@ import android.support.v7.app.ActionBarActivity;
 import android.text.TextUtils;
 import org.evergreen_ils.R;
 import org.evergreen_ils.accountAccess.AccountAccess;
-import org.evergreen_ils.globals.AppState;
 
 /**
  * Created by kenstir on 11/21/2015.

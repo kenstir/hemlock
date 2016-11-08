@@ -27,9 +27,10 @@ import java.util.Map;
 
 import org.evergreen_ils.Api;
 import org.evergreen_ils.accountAccess.AccountAccess;
-import org.evergreen_ils.globals.GlobalConfigs;
-import org.evergreen_ils.globals.Log;
-import org.evergreen_ils.globals.Utils;
+import org.evergreen_ils.system.EvergreenServer;
+import org.evergreen_ils.system.Log;
+import org.evergreen_ils.system.Utils;
+import org.evergreen_ils.system.Organization;
 import org.opensrf.net.http.HttpConnection;
 import org.opensrf.util.GatewayResponse;
 import org.opensrf.util.OSRFObject;
@@ -47,7 +48,7 @@ public class SearchCatalog {
     private static SearchCatalog instance = null;
 
     // the org on which the searches will be made
-    public Organisation selectedOrganization = null;
+    public Organization selectedOrganization = null;
 
     public Integer offset;
 
@@ -73,7 +74,7 @@ public class SearchCatalog {
     }
 
     private static HttpConnection conn() {
-        return GlobalConfigs.gatewayConnection();
+        return EvergreenServer.getInstance().gatewayConnection();
     }
 
     /**
@@ -286,7 +287,7 @@ public class SearchCatalog {
      * @param org
      *            the organization on witch the searches will be made
      */
-    public void selectOrganisation(Organisation org) {
+    public void selectOrganisation(Organization org) {
         Log.d(TAG, "selectOrganisation id=" + org.id);
         this.selectedOrganization = org;
     }

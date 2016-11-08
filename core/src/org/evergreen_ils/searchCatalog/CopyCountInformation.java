@@ -20,8 +20,6 @@
 package org.evergreen_ils.searchCatalog;
 
 
-import org.evergreen_ils.globals.Log;
-
 import java.io.Serializable;
 import java.util.Map;
 

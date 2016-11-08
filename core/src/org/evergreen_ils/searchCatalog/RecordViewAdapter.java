@@ -21,10 +21,10 @@ import android.support.v7.widget.RecyclerView;
 import android.view.*;
 import android.widget.TextView;
 import com.android.volley.toolbox.NetworkImageView;
-import org.evergreen_ils.globals.GlobalConfigs;
 import org.evergreen_ils.net.VolleyWrangler;
 import org.evergreen_ils.R;
-import org.evergreen_ils.globals.Log;
+import org.evergreen_ils.system.EvergreenServer;
+import org.evergreen_ils.system.Log;
 
 import java.util.List;
 
@@ -62,8 +62,7 @@ public class RecordViewAdapter extends RecyclerView.Adapter<RecordViewAdapter.Vi
             final Context context = imageView.getContext();
             // todo is it better to load /jacket/medium/ here so it is cached for the details view?
             // not now, I am still comparing listview vs. recyclerview
-            //final String url = GlobalConfigs.getUrl("/opac/extras/ac/jacket/medium/r/" + record.doc_id);
-            final String url = GlobalConfigs.getUrl("/opac/extras/ac/jacket/small/r/" + record.doc_id);
+            final String url = EvergreenServer.getInstance().getUrl("/opac/extras/ac/jacket/small/r/" + record.doc_id);
             imageView.setImageUrl(url, VolleyWrangler.getInstance(context).getImageLoader());
             titleText.setText((record.title != null) ? record.title : context.getString(R.string.title_busy_ellipsis));
             RecordLoader.fetch(record, context, new RecordLoader.ResponseListener() {

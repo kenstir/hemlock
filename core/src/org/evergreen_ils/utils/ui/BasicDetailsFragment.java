@@ -29,8 +29,8 @@ import org.evergreen_ils.accountAccess.AccountAccess;
 import org.evergreen_ils.accountAccess.bookbags.BookBag;
 import org.evergreen_ils.accountAccess.bookbags.BookBagUtils;
 import org.evergreen_ils.accountAccess.holds.PlaceHoldActivity;
-import org.evergreen_ils.globals.GlobalConfigs;
-import org.evergreen_ils.globals.Log;
+import org.evergreen_ils.system.EvergreenServer;
+import org.evergreen_ils.system.Log;
 import org.evergreen_ils.net.VolleyWrangler;
 
 import android.content.Intent;
@@ -74,7 +74,7 @@ public class BasicDetailsFragment extends Fragment {
     private Button showCopiesButton;
     private Button onlineAccessButton;
 
-    private GlobalConfigs globalConfigs;
+    private EvergreenServer eg;
 
     private Button addToBookbagButton;
     private ArrayList<BookBag> bookBags;
@@ -117,7 +117,7 @@ public class BasicDetailsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         activity = getActivity();
-        globalConfigs = GlobalConfigs.getInstance();
+        eg = EvergreenServer.getInstance();
 
         LinearLayout layout = (LinearLayout) inflater.inflate(
                 R.layout.record_details_basic_fragment, null);
@@ -144,7 +144,7 @@ public class BasicDetailsFragment extends Fragment {
         initButtons();
 
         // Start async image load
-        final String imageHref = GlobalConfigs.getUrl("/opac/extras/ac/jacket/medium/r/" + record.doc_id);
+        final String imageHref = EvergreenServer.getInstance().getUrl("/opac/extras/ac/jacket/medium/r/" + record.doc_id);
         ImageLoader imageLoader = VolleyWrangler.getInstance(getActivity()).getImageLoader();
         recordImage.setImageUrl(imageHref, imageLoader);
 
@@ -325,7 +325,7 @@ public class BasicDetailsFragment extends Fragment {
             }
             String totalCopies = getResources().getQuantityString(R.plurals.number_of_copies, total, total);
             descriptionTextView.setText(String.format(getString(R.string.n_of_m_available),
-                    available, totalCopies, globalConfigs.getOrganizationName(orgID)));
+                    available, totalCopies, eg.getOrganizationName(orgID)));
         }
     }
 

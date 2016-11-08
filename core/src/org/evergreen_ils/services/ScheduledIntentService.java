@@ -19,32 +19,12 @@
  */
 package org.evergreen_ils.services;
 
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
 
-import android.accounts.AccountManager;
-import android.accounts.AccountManagerFuture;
-import android.os.Bundle;
-import org.androwrapee.db.DefaultDAO;
-import org.evergreen_ils.accountAccess.AccountAccess;
-import org.evergreen_ils.accountAccess.SessionNotFoundException;
-import org.evergreen_ils.accountAccess.checkout.CircRecord;
-import org.evergreen_ils.database.DatabaseManager;
-import org.evergreen_ils.globals.GlobalConfigs;
-import org.evergreen_ils.globals.Log;
-import org.evergreen_ils.globals.Utils;
-import org.evergreen_ils.auth.Const;
-import org.open_ils.idl.IDLParser;
+import org.evergreen_ils.system.Log;
 
-import android.app.AlarmManager;
 import android.app.IntentService;
-import android.app.PendingIntent;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
 
 public class ScheduledIntentService extends IntentService {
 
@@ -82,6 +62,7 @@ public class ScheduledIntentService extends IntentService {
          * Download the necessary IDL files for checkout items operations like
          * au (for auth), circ, mvr and acp
          */
+        /*
         try {
             Log.d(TAG, "Load IDL start");
             InputStream in_IDL = Utils.getNetInputStream(GlobalConfigs.getIDLUrl());
@@ -91,6 +72,7 @@ public class ScheduledIntentService extends IntentService {
         } catch (Exception e) {
             Log.w("Error in parsing IDL", e);
         }
+        */
 
         /*
         AccountAccess accountAccess = AccountAccess.getInstance(GlobalConfigs.httpAddress);

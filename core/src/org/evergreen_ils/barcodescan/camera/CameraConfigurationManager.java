@@ -26,7 +26,7 @@ import android.hardware.Camera;
 import android.preference.PreferenceManager;
 import android.view.Display;
 import android.view.WindowManager;
-import org.evergreen_ils.globals.Log;
+import org.evergreen_ils.system.Log;
 
 /**
  * A class which deals with reading, parsing, and setting the camera parameters which are used to

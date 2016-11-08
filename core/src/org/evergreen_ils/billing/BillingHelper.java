@@ -21,13 +21,11 @@ package org.evergreen_ils.billing;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.provider.Settings;
 import android.text.TextUtils;
-import org.evergreen_ils.globals.AppState;
-import org.evergreen_ils.globals.GlobalConfigs;
-import org.evergreen_ils.globals.Log;
+import org.evergreen_ils.system.EvergreenServer;
+import org.evergreen_ils.utils.ui.AppState;
+import org.evergreen_ils.system.Log;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -60,7 +58,7 @@ public class BillingHelper {
     public static void startSetup(Context context, String base64EncodedPublicKey, final OnSetupFinishedListener listener) {
         mStartTime = System.currentTimeMillis();
         mHelper = new IabHelper(context, base64EncodedPublicKey);
-        if (GlobalConfigs.isDebuggable())
+        if (EvergreenServer.getInstance().getIsDebuggable())
             mHelper.enableDebugLogging(true);
         mSetupFinishedListener = listener;
         mHelper.startSetup(new IabHelper.OnIabSetupFinishedListener() {
@@ -175,7 +173,7 @@ public class BillingHelper {
     }
 
     public static boolean showDonateButton() {
-        boolean isReleaseBuild = !GlobalConfigs.isDebuggable();
+        boolean isReleaseBuild = !EvergreenServer.getInstance().getIsDebuggable();
 
         // if user has any permanent items, we do not show it
         if (isReleaseBuild && hasPurchasedPermanentItem()) {

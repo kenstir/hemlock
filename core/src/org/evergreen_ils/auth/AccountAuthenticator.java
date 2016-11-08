@@ -10,7 +10,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import org.evergreen_ils.R;
-import org.evergreen_ils.globals.Log;
+import org.evergreen_ils.system.Log;
 
 public class AccountAuthenticator extends AbstractAccountAuthenticator {
     

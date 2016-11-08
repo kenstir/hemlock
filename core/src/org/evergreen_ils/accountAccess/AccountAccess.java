@@ -28,9 +28,9 @@ import org.evergreen_ils.accountAccess.checkout.CircRecord;
 import org.evergreen_ils.accountAccess.fines.FinesRecord;
 import org.evergreen_ils.accountAccess.holds.HoldRecord;
 import org.evergreen_ils.auth.Const;
-import org.evergreen_ils.globals.GlobalConfigs;
-import org.evergreen_ils.globals.Log;
-import org.evergreen_ils.globals.Utils;
+import org.evergreen_ils.system.EvergreenServer;
+import org.evergreen_ils.system.Log;
+import org.evergreen_ils.system.Utils;
 import org.evergreen_ils.searchCatalog.RecordInfo;
 import org.opensrf.net.http.HttpConnection;
 import org.opensrf.util.OSRFObject;
@@ -89,7 +89,7 @@ public class AccountAccess {
     }
 
     private HttpConnection conn() {
-        return GlobalConfigs.gatewayConnection();
+        return EvergreenServer.getInstance().gatewayConnection();
     }
 
     /**
@@ -520,10 +520,10 @@ public class AccountAccess {
 //
 //        // logic can be found in the opac_utils.js file in web/opac/common/js
 //
-//        for (int i = 0; i < organisations.size(); i++) {
+//        for (int i = 0; i < organizations.size(); i++) {
 //            AccountAccess ac = AccountAccess.getInstance();
 //            try {
-//                Object obj = ac.fetchOrgSettings(organisations.get(i).id,
+//                Object obj = ac.fetchOrgSettings(organizations.get(i).id,
 //                        "opac.org_unit_hiding.depth");
 //            } catch (SessionNotFoundException e) {
 //            }

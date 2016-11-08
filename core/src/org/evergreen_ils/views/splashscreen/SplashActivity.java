@@ -21,14 +21,12 @@ package org.evergreen_ils.views.splashscreen;
 
 import android.support.v7.app.AppCompatActivity;
 import org.evergreen_ils.R;
-import org.evergreen_ils.globals.AppState;
-import org.evergreen_ils.globals.Log;
+import org.evergreen_ils.utils.ui.AppState;
+import org.evergreen_ils.system.Log;
 import org.evergreen_ils.views.MainActivity;
 import org.evergreen_ils.views.splashscreen.LoadingTask.LoadingTaskListener;
 
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;

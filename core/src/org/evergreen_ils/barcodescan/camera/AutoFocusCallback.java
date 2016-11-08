@@ -19,7 +19,7 @@ package org.evergreen_ils.barcodescan.camera;
 import android.hardware.Camera;
 import android.os.Handler;
 import android.os.Message;
-import org.evergreen_ils.globals.Log;
+import org.evergreen_ils.system.Log;
 
 final class AutoFocusCallback implements Camera.AutoFocusCallback {
 

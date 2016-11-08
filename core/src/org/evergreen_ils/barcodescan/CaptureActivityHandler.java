@@ -16,7 +16,7 @@ import android.os.Message;
 
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.Result;
-import org.evergreen_ils.globals.Log;
+import org.evergreen_ils.system.Log;
 
 /**
  * This class handles all the messaging which comprises the state machine for capture.

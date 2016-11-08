@@ -24,14 +24,12 @@ import android.accounts.AccountManagerFuture;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
-import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.view.ContextThemeWrapper;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
-import org.evergreen_ils.globals.Log;
+import org.evergreen_ils.system.Log;
 
 /**
  * Created with IntelliJ IDEA.

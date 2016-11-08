@@ -28,7 +28,7 @@ import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.preference.PreferenceManager;
-import org.evergreen_ils.globals.Log;
+import org.evergreen_ils.system.Log;
 
 public class PeriodicServiceBroadcastReceiver extends BroadcastReceiver {
 

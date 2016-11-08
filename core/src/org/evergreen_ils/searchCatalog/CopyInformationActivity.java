@@ -30,11 +30,12 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import org.evergreen_ils.Api;
 import org.evergreen_ils.R;
-import org.evergreen_ils.globals.GlobalConfigs;
-import org.evergreen_ils.globals.Log;
-import org.evergreen_ils.globals.Utils;
+import org.evergreen_ils.system.EvergreenServer;
+import org.evergreen_ils.system.Log;
+import org.evergreen_ils.system.Utils;
 import org.evergreen_ils.net.GatewayJsonObjectRequest;
 import org.evergreen_ils.net.VolleyWrangler;
+import org.evergreen_ils.system.Organization;
 import org.evergreen_ils.utils.ui.ActionBarUtils;
 import org.evergreen_ils.views.splashscreen.SplashActivity;
 
@@ -53,7 +54,7 @@ public class CopyInformationActivity extends ActionBarActivity {
     private Context context;
     private RecordInfo record;
     private Integer orgID;
-    private GlobalConfigs globalConfigs;
+    private EvergreenServer eg;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,7 +67,7 @@ public class CopyInformationActivity extends ActionBarActivity {
         setContentView(R.layout.copy_information_more);
         ActionBarUtils.initActionBarForActivity(this);
 
-        globalConfigs = GlobalConfigs.getInstance();
+        eg = EvergreenServer.getInstance();
         context = this;
         record = (RecordInfo) getIntent().getSerializableExtra("recordInfo");
         orgID = getIntent().getIntExtra("orgID", 1);
@@ -97,7 +98,7 @@ public class CopyInformationActivity extends ActionBarActivity {
             TextView call_number = (TextView) copy_info_view.findViewById(R.id.copy_information_call_number);
             TextView copy_location = (TextView) copy_info_view.findViewById(R.id.copy_information_copy_location);
 
-            library.setText(globalConfigs.getOrganizationName(record.copyInformationList.get(i).org_id));
+            library.setText(eg.getOrganizationName(record.copyInformationList.get(i).org_id));
             call_number.setText(record.copyInformationList.get(i).getCallNumber());
             copy_location.setText(record.copyInformationList.get(i).copy_location);
 
@@ -126,8 +127,8 @@ public class CopyInformationActivity extends ActionBarActivity {
         SearchCatalog search = SearchCatalog.getInstance();
         if (record.copyInformationList == null) {
             final long start_ms = System.currentTimeMillis();
-            Organisation org = globalConfigs.getOrganization(orgID);
-            String url = GlobalConfigs.getUrl(Utils.buildGatewayUrl(
+            Organization org = eg.getOrganization(orgID);
+            String url = EvergreenServer.getInstance().getUrl(Utils.buildGatewayUrl(
                     Api.SEARCH, Api.COPY_LOCATION_COUNTS,
                     new Object[]{record.doc_id, org.id, org.level}));
             GatewayJsonObjectRequest r = new GatewayJsonObjectRequest(

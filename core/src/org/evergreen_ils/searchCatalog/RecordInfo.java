@@ -25,8 +25,8 @@ import java.util.List;
 import java.util.Map;
 
 import android.text.TextUtils;
-import org.evergreen_ils.globals.Log;
-import org.evergreen_ils.globals.Utils;
+import org.evergreen_ils.system.Log;
+import org.evergreen_ils.system.Utils;
 import org.opensrf.util.GatewayResponse;
 import org.opensrf.util.OSRFObject;
 

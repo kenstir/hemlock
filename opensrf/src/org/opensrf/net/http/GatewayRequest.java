@@ -1,25 +1,19 @@
 package org.opensrf.net.http;
 
-import org.evergreen_ils.globals.Log;
+import org.evergreen_ils.system.Log;
 import org.json.JSONObject;
 import org.opensrf.*;
 import org.opensrf.util.*;
 
-import java.io.IOException;
 import java.io.BufferedInputStream;
 import java.io.OutputStreamWriter;
 import java.io.InputStream;
-import java.io.IOException;
-import java.net.URL;
 import java.net.URI;
 import java.net.HttpURLConnection;
 import java.lang.StringBuffer;
 import java.util.List;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.HashMap;
-import java.util.Queue;
-import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class GatewayRequest extends HttpRequest {
 

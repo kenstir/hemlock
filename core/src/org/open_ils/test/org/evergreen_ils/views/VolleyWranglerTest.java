@@ -8,7 +8,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
-import org.evergreen_ils.globals.Log;
+import org.evergreen_ils.system.Log;
 import org.evergreen_ils.net.VolleyWrangler;
 import org.json.JSONArray;
 import org.json.JSONObject;

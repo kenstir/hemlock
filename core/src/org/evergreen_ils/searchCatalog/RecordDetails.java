@@ -23,10 +23,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
-import org.evergreen_ils.globals.Log;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by kenstir on 3/5/2016.
