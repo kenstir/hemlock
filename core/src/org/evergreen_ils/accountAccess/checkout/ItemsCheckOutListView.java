@@ -217,7 +217,7 @@ public class ItemsCheckOutListView extends ActionBarActivity {
         }
 
         private void initRenewButton(final CircRecord record) {
-            final boolean renewable = record.getRenewals() > 0;// || GlobalConfigs.isDebuggable();
+            final boolean renewable = record.getRenewals() > 0;
             renewButton.setEnabled(renewable);
             renewButton.setOnClickListener(new OnClickListener() {
                 @Override
