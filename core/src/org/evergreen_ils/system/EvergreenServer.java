@@ -47,7 +47,7 @@ public class EvergreenServer {
     private HttpConnection mConn = null;
     private boolean mIDLLoaded = false;
     private ArrayList<Organization> mOrganizations = null;
-    private LinkedHashMap<String, String> mCopyStatuses = new LinkedHashMap<String, String>();
+    private LinkedHashMap<String, String> mCopyStatuses = new LinkedHashMap<>();
 
     private EvergreenServer() {
     }
@@ -205,15 +205,11 @@ public class EvergreenServer {
     }
 
     public void loadCopyStatuses(List<OSRFObject> ccs_list) {
-        mCopyStatuses = new LinkedHashMap<String, String>();
-
-        if (ccs_list != null) {
-            for (int i = 0; i < ccs_list.size(); i++) {
-                OSRFObject ccs_obj = ccs_list.get(i);
-                if (ccs_obj.getString("opac_visible").equals("t")) {
-                    mCopyStatuses.put(ccs_obj.getInt("id") + "", ccs_obj.getString("name"));
-                    //Log.d(TAG, "Add status "+ccs_obj.getString("name"));
-                }
+        mCopyStatuses.clear();
+        for (OSRFObject ccs_obj: ccs_list) {
+            if (ccs_obj.getString("opac_visible").equals("t")) {
+                mCopyStatuses.put(ccs_obj.getInt("id") + "", ccs_obj.getString("name"));
+                //Log.d(TAG, "Add status "+ccs_obj.getString("name"));
             }
         }
     }
