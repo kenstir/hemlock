@@ -29,10 +29,7 @@ import org.opensrf.util.OSRFObject;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
 /** Represents the library system
  *
@@ -50,6 +47,7 @@ public class EvergreenServer {
     private HttpConnection mConn = null;
     private boolean mIDLLoaded = false;
     private ArrayList<Organization> mOrganizations = null;
+    private LinkedHashMap<String, String> mCopyStatuses = new LinkedHashMap<String, String>();
 
     private EvergreenServer() {
     }
@@ -204,5 +202,23 @@ public class EvergreenServer {
         } else {
             return org.name;
         }
+    }
+
+    public void loadCopyStatuses(List<OSRFObject> ccs_list) {
+        mCopyStatuses = new LinkedHashMap<String, String>();
+
+        if (ccs_list != null) {
+            for (int i = 0; i < ccs_list.size(); i++) {
+                OSRFObject ccs_obj = ccs_list.get(i);
+                if (ccs_obj.getString("opac_visible").equals("t")) {
+                    mCopyStatuses.put(ccs_obj.getInt("id") + "", ccs_obj.getString("name"));
+                    //Log.d(TAG, "Add status "+ccs_obj.getString("name"));
+                }
+            }
+        }
+    }
+
+    public Map<String, String> getCopyStatuses() {
+        return mCopyStatuses;
     }
 }

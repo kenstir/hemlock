@@ -21,6 +21,7 @@ package org.evergreen_ils.searchCatalog;
 
 
 import android.text.TextUtils;
+import org.evergreen_ils.system.EvergreenServer;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -43,9 +44,6 @@ public class CopyInformation implements Serializable {
     public String copy_location;
     public LinkedHashMap<String, String> statusInformation;
 
-    // global, it is initialized when orgTree and fm_ild is downloaded
-    public static LinkedHashMap<String, String> availableOrgStatuses = new LinkedHashMap<String, String>();
-
     public CopyInformation(List<Object> list) {
 
         org_id = Integer.parseInt((String) list.get(0));
@@ -57,13 +55,12 @@ public class CopyInformation implements Serializable {
 
         statusInformation = new LinkedHashMap<String, String>();
 
-        Set<Entry<String, String>> set = availableOrgStatuses.entrySet();
+        Set<Entry<String, String>> set = EvergreenServer.getInstance().getCopyStatuses().entrySet();
         Iterator<Entry<String, String>> it = set.iterator();
         while (it.hasNext()) {
             Entry<String, String> entry = it.next();
             if (status_map.containsKey(entry.getKey())) {
-                statusInformation.put(entry.getValue(),
-                        status_map.get(entry.getKey()) + "");
+                statusInformation.put(entry.getValue(), status_map.get(entry.getKey()) + "");
             }
         }
     }

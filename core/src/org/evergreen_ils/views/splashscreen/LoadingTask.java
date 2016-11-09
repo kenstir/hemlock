@@ -24,6 +24,7 @@ import org.evergreen_ils.R;
 import org.evergreen_ils.accountAccess.AccountAccess;
 import org.evergreen_ils.accountAccess.AccountUtils;
 import org.evergreen_ils.accountAccess.SessionNotFoundException;
+import org.evergreen_ils.searchCatalog.SearchCatalog;
 import org.evergreen_ils.utils.ui.AppState;
 
 import android.accounts.AccountManager;
@@ -115,6 +116,7 @@ public class LoadingTask {
             eg.connect(library.url);
             AccountAccess ac = AccountAccess.getInstance();
             eg.loadOrganizations(ac.fetchOrgTree());
+            eg.loadCopyStatuses(SearchCatalog.fetchCopyStatuses());
 
             // auth token zen: try once and if it fails, invalidate the token and try again
             Log.d(TAG, tag+"Starting session");
