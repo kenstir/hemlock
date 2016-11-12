@@ -78,7 +78,7 @@ public class ItemsCheckOutListView extends ActionBarActivity {
         progress = new ProgressDialogSupport();
 
         lv = (ListView) findViewById(R.id.checkout_items_list);
-        circRecords = new ArrayList<CircRecord>();
+        circRecords = new ArrayList<>();
         listAdapter = new CheckOutArrayAdapter(context,
                 R.layout.checkout_list_item, circRecords);
         lv.setAdapter(listAdapter);

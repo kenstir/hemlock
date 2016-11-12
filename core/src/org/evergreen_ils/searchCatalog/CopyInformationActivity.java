@@ -19,12 +19,18 @@
  */
 package org.evergreen_ils.searchCatalog;
 
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 import java.util.Map.Entry;
 
 import android.support.v7.app.ActionBarActivity;
+import android.text.TextUtils;
 import android.view.MenuItem;
+import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -47,14 +53,16 @@ import android.view.ViewGroup.LayoutParams;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import org.opensrf.util.GatewayResponse;
+import org.w3c.dom.Text;
 
 public class CopyInformationActivity extends ActionBarActivity {
 
     private static final String TAG = CopyInformationActivity.class.getSimpleName();
-    private Context context;
     private RecordInfo record;
     private Integer orgID;
-    private EvergreenServer eg;
+    private ListView lv;
+    private ArrayList<CopyInformation> copyInfoRecords;
+    private CopyInformationArrayAdapter listAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,15 +72,31 @@ public class CopyInformationActivity extends ActionBarActivity {
             return;
         }
 
-        setContentView(R.layout.copy_information_more);
+        setContentView(R.layout.copy_information_list);
         ActionBarUtils.initActionBarForActivity(this);
 
-        eg = EvergreenServer.getInstance();
-        context = this;
-        record = (RecordInfo) getIntent().getSerializableExtra("recordInfo");
-        orgID = getIntent().getIntExtra("orgID", 1);
+        if (savedInstanceState != null) {
+            record = (RecordInfo) savedInstanceState.getSerializable("recordInfo");
+            orgID = savedInstanceState.getInt("orgID");
+        } else {
+            record = (RecordInfo) getIntent().getSerializableExtra("recordInfo");
+            orgID = getIntent().getIntExtra("orgID", 1);
+        }
+
+        lv = (ListView) findViewById(R.id.copy_information_list);
+        copyInfoRecords = new ArrayList<>();
+        listAdapter = new CopyInformationArrayAdapter(this,
+                R.layout.copy_information_item, copyInfoRecords);
+        lv.setAdapter(listAdapter);
 
         initCopyInfo();
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putSerializable("recordInfo", record);
+        outState.putInt("orgID", orgID);
     }
 
     @Override
@@ -86,48 +110,34 @@ public class CopyInformationActivity extends ActionBarActivity {
     }
 
     public void updateCopyInfo() {
-        LayoutInflater inf = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        LinearLayout insertPoint = (LinearLayout) findViewById(R.id.record_details_copy_information);
         if (record.copyInformationList == null)
             return;
-        for (int i = 0; i < record.copyInformationList.size(); i++) {
-            View copy_info_view = inf.inflate(R.layout.copy_information, null);
+        copyInfoRecords.clear();
+        for (CopyInformation info : record.copyInformationList)
+            copyInfoRecords.add(info);
+        listAdapter.notifyDataSetChanged();
+    }
 
-            // fill in any details dynamically here
-            TextView library = (TextView) copy_info_view.findViewById(R.id.copy_information_library);
-            TextView call_number = (TextView) copy_info_view.findViewById(R.id.copy_information_call_number);
-            TextView copy_location = (TextView) copy_info_view.findViewById(R.id.copy_information_copy_location);
-
-            library.setText(eg.getOrganizationName(record.copyInformationList.get(i).org_id));
-            call_number.setText(record.copyInformationList.get(i).getCallNumber());
-            copy_location.setText(record.copyInformationList.get(i).copy_location);
-
-            // insert into main view
-            insertPoint.addView(copy_info_view, new LayoutParams(
-                    LayoutParams.MATCH_PARENT,
-                    LayoutParams.WRAP_CONTENT));
-
-            LinearLayout copy_statuses = (LinearLayout) copy_info_view.findViewById(R.id.copy_information_statuses);
-
+        /*
             CopyInformation info = record.copyInformationList.get(i);
             Set<Entry<String, String>> set = info.statusInformation.entrySet();
             Iterator<Entry<String, String>> it = set.iterator();
             while (it.hasNext()) {
                 Entry<String, String> ent = it.next();
-                TextView statusName = new TextView(context);
+                TextView statusName = new TextView(this);
                 statusName.setText(ent.getKey() + ": " + ent.getValue());
                 copy_statuses.addView(statusName, new LayoutParams(
                         LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
             }
-        }
-    }
+            */
 
     private void initCopyInfo() {
         Log.d(TAG, "kcx.initCopyInfo, id="+record.doc_id+" info="+record.copyCountInformationList);
-        SearchCatalog search = SearchCatalog.getInstance();
-        if (record.copyInformationList == null) {
+        if (record.copyInformationList != null) {
+            updateCopyInfo();
+        } else {
             final long start_ms = System.currentTimeMillis();
-            Organization org = eg.getOrganization(orgID);
+            Organization org = EvergreenServer.getInstance().getOrganization(orgID);
             String url = EvergreenServer.getInstance().getUrl(Utils.buildGatewayUrl(
                     Api.SEARCH, Api.COPY_LOCATION_COUNTS,
                     new Object[]{record.doc_id, org.id, org.level}));
@@ -139,7 +149,7 @@ public class CopyInformationActivity extends ActionBarActivity {
                         public void onResponse(GatewayResponse response) {
                             long duration_ms = System.currentTimeMillis() - start_ms;
                             Log.d(TAG, "kcx.fetch "+record.doc_id+" took " + duration_ms + "ms");
-                            SearchCatalog.setCopyLocationCounts(record, response);
+                            RecordInfo.setCopyLocationCounts(record, response);
                             updateCopyInfo();
                         }
                     },
@@ -147,10 +157,63 @@ public class CopyInformationActivity extends ActionBarActivity {
                         @Override
                         public void onErrorResponse(VolleyError error) {
                             Log.d(TAG, "kcx.initCopyInfo caught", error);
-                            SearchCatalog.setCopyLocationCounts(record, null);
+                            RecordInfo.setCopyLocationCounts(record, null);
                         }
                     });
             VolleyWrangler.getInstance(this).addToRequestQueue(r);
+        }
+    }
+
+    class CopyInformationArrayAdapter extends ArrayAdapter<CopyInformation> {
+        private TextView copyLibraryText;
+        private TextView copyCallNumberText;
+        private TextView copyLocationText;
+        private TextView copyStatusesText;
+        private List<CopyInformation> records;
+
+        public CopyInformationArrayAdapter(Context context, int textViewResourceId, List<CopyInformation> objects) {
+            super(context, textViewResourceId, objects);
+            records = objects;
+        }
+
+        public int getCount() {
+            return this.records.size();
+        }
+
+        public CopyInformation getItem(int index) {
+            return this.records.get(index);
+        }
+
+        public View getView(int position, View convertView, ViewGroup parent) {
+            View row = convertView;
+
+            final CopyInformation record = getItem(position);
+
+            if (row == null) {
+                LayoutInflater inflater = (LayoutInflater) this.getContext()
+                        .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                row = inflater.inflate(R.layout.copy_information_item, parent, false);
+            }
+
+            copyLibraryText = (TextView) row.findViewById(R.id.copy_information_library);
+            copyCallNumberText = (TextView) row.findViewById(R.id.copy_information_call_number);
+            copyLocationText = (TextView) row.findViewById(R.id.copy_information_copy_location);
+            copyStatusesText = (TextView) row.findViewById(R.id.copy_information_statuses);
+
+            copyLibraryText.setText(EvergreenServer.getInstance().getOrganizationName(record.org_id));
+            copyCallNumberText.setText(record.getCallNumber());
+            copyLocationText.setText(record.copy_location);
+
+            ArrayList<String> statuses = new ArrayList<>();
+            Set<Entry<String, String>> set = record.statusInformation.entrySet();
+            Iterator<Entry<String, String>> it = set.iterator();
+            while (it.hasNext()) {
+                Entry<String, String> ent = it.next();
+                statuses.add(ent.getKey() + ": " + ent.getValue());
+            }
+            copyStatusesText.setText(TextUtils.join("\n", statuses));
+
+            return row;
         }
     }
 }
