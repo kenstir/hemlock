@@ -23,6 +23,7 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import org.evergreen_ils.Api;
+import org.evergreen_ils.R;
 import org.evergreen_ils.accountAccess.AccountAccess;
 import org.evergreen_ils.system.EvergreenServer;
 import org.evergreen_ils.system.Log;
@@ -105,10 +106,9 @@ public class RecordLoader {
         }
     }
 
-    public static void fetchCopyCount(final RecordInfo record, final int orgID, Context context, final Listener listener) {
-        Log.d(TAG, "fetchCopyCount id="+record.doc_id
-                +" list=" + ((record.copySummaryList == null) ? "null" : "non-null"));
-        if (record.copy_info_loaded) {
+    public static void fetchCopySummary(final RecordInfo record, final int orgID, Context context, final Listener listener) {
+        Log.d(TAG, "fetchCopySummary id="+record.doc_id+" loaded="+record.copy_summary_loaded);
+        if (record.copy_summary_loaded) {
             listener.onDataAvailable();
         } else {
             String url = EvergreenServer.getInstance().getUrl(Utils.buildGatewayUrl(
@@ -120,7 +120,7 @@ public class RecordLoader {
                     new Response.Listener<GatewayResponse>() {
                         @Override
                         public void onResponse(GatewayResponse response) {
-                            RecordInfo.setCopyCountInfo(record, response);
+                            RecordInfo.setCopySummary(record, response);
                             listener.onDataAvailable();
                         }
                     },
@@ -128,10 +128,31 @@ public class RecordLoader {
                         @Override
                         public void onErrorResponse(VolleyError error) {
                             Log.d(TAG, "caught", error);
-                            RecordInfo.setCopyCountInfo(record, null);
+                            RecordInfo.setCopySummary(record, null);
                         }
                     });
             VolleyWrangler.getInstance(context).addToRequestQueue(r);
         }
+    }
+
+    public static String getCopySummary(final RecordInfo record, final int orgID, Context context) {
+        String copySummaryText;
+        int total = 0;
+        int available = 0;
+        if (record.copySummaryList == null) {
+            copySummaryText = "";
+        } else {
+            for (int i = 0; i < record.copySummaryList.size(); i++) {
+                if (record.copySummaryList.get(i).org_id.equals(orgID)) {
+                    total = record.copySummaryList.get(i).count;
+                    available = record.copySummaryList.get(i).available;
+                    break;
+                }
+            }
+            String totalCopies = context.getResources().getQuantityString(R.plurals.number_of_copies, total, total);
+            copySummaryText = String.format(context.getString(R.string.n_of_m_available),
+                    available, totalCopies, EvergreenServer.getInstance().getOrganizationName(orgID));
+        }
+        return copySummaryText;
     }
 }

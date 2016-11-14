@@ -83,6 +83,9 @@ public class CopyInformationActivity extends ActionBarActivity {
                 R.layout.copy_information_item, copyInfoRecords);
         lv.setAdapter(listAdapter);
 
+        TextView summaryText = (TextView) findViewById(R.id.copy_information_summary);
+        summaryText.setText(RecordLoader.getCopySummary(record, orgID, this));
+
         initCopyLocationCounts();
     }
 
@@ -120,7 +123,6 @@ public class CopyInformationActivity extends ActionBarActivity {
     }
 
     private void initCopyLocationCounts() {
-        Log.d(TAG, "kcx.initCopyLocationCounts, id="+record.doc_id+" info="+record.copySummaryList);
         if (record.copyLocationCountsList != null) {
             updateCopyInfo();
         } else {

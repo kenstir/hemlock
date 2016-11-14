@@ -61,7 +61,7 @@ public class RecordInfo implements Serializable {
     // and not scattered e.g. in RecordLoader and BasicDetailsFragment
     public boolean basic_metadata_loaded = false;
     public boolean search_format_loaded = false;
-    public boolean copy_info_loaded = false;
+    public boolean copy_summary_loaded = false;
 
     public ArrayList<CopySummary> copySummaryList = null;
     public List<CopyLocationCounts> copyLocationCountsList = null;
@@ -138,8 +138,8 @@ public class RecordInfo implements Serializable {
         record.basic_metadata_loaded = true;
     }
 
-    public static void setCopyCountInfo(RecordInfo record, GatewayResponse response) {
-        record.copySummaryList = new ArrayList<CopySummary>();
+    public static void setCopySummary(RecordInfo record, GatewayResponse response) {
+        record.copySummaryList = new ArrayList<>();
         if (response == null || response.failed)
             return;
         try {
@@ -151,11 +151,10 @@ public class RecordInfo implements Serializable {
         } catch (Exception e) {
             Log.d(TAG, "caught", e);
         }
-        record.copy_info_loaded = true;
+        record.copy_summary_loaded = true;
     }
 
     public static void setCopyLocationCounts(RecordInfo record, GatewayResponse response) {
-        Log.d(TAG, "record.doc_id "+record.doc_id);
         record.copyLocationCountsList = new ArrayList<>();
         if (response == null || response.failed)
             return;

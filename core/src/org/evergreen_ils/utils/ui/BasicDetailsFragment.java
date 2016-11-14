@@ -293,9 +293,10 @@ public class BasicDetailsFragment extends Fragment {
               + " isOnlineResource=" + record.isOnlineResource());
         if (record.basic_metadata_loaded
             && record.search_format_loaded
-            && !record.isOnlineResource())
+            && !record.isOnlineResource()
+            && !record.copy_summary_loaded)
         {
-            RecordLoader.fetchCopyCount(record, orgID, getActivity(), new RecordLoader.Listener() {
+            RecordLoader.fetchCopySummary(record, orgID, getContext(), new RecordLoader.Listener() {
                 @Override
                 public void onDataAvailable() {
                     updateCopyCountView();
@@ -306,27 +307,7 @@ public class BasicDetailsFragment extends Fragment {
 
     private void updateCopyCountView() {
         if (!isAdded()) return; // discard late results
-        if (record.copySummaryList == null) {
-            Log.d(TAG, "updateCopyCountView " + record.doc_id + " list=null");
-        } else {
-            Log.d(TAG, "updateCopyCountView " + record.doc_id + " list=" + record.copySummaryList.size() + " items");
-        }
-        int total = 0;
-        int available = 0;
-        if (record.copySummaryList == null) {
-            descriptionTextView.setText("");
-        } else {
-            for (int i = 0; i < record.copySummaryList.size(); i++) {
-                if (record.copySummaryList.get(i).org_id.equals(orgID)) {
-                    total = record.copySummaryList.get(i).count;
-                    available = record.copySummaryList.get(i).available;
-                    break;
-                }
-            }
-            String totalCopies = getResources().getQuantityString(R.plurals.number_of_copies, total, total);
-            descriptionTextView.setText(String.format(getString(R.string.n_of_m_available),
-                    available, totalCopies, eg.getOrganizationName(orgID)));
-        }
+        descriptionTextView.setText(RecordLoader.getCopySummary(record, orgID, getContext()));
     }
 
     private void initBookbagStuff() {
