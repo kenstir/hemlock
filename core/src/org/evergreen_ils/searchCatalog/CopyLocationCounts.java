@@ -27,20 +27,23 @@ import java.io.Serializable;
 import java.util.*;
 import java.util.Map.Entry;
 
-public class CopyInformation implements Serializable {
+/** Summary of copies by shelving location and status for the given org_id,
+ * e.g. Adult Fiction, FIC DOERR, 3 Available, 1 Checked out
+ *
+ * returned by open-ils.search.biblio.copy_location_counts.summary.retrieve
+ */
+public class CopyLocationCounts implements Serializable {
 
     private static final long serialVersionUID = -7269334218707079463L;
 
-    private final static String TAG = CopyInformation.class.getSimpleName();
-
-    public Integer org_id = -1;
+    public Integer org_id;
     public String call_number_prefix;
     public String call_number_label;
     public String call_number_suffix;
     public String copy_location;
-    public LinkedHashMap<String, String> statusInformation;
+    public LinkedHashMap<String, String> counts_by_status;
 
-    public CopyInformation(List<Object> list) {
+    public CopyLocationCounts(List<Object> list) {
 
         org_id = Integer.parseInt((String) list.get(0));
         call_number_prefix = (String) list.get(1);
@@ -49,16 +52,27 @@ public class CopyInformation implements Serializable {
         copy_location = (String) list.get(4);
         HashMap<Integer, Integer> status_map = (HashMap<Integer, Integer>) list.get(5);
 
-        statusInformation = new LinkedHashMap<String, String>();
+        counts_by_status = new LinkedHashMap<>();
 
         Set<Entry<String, String>> set = EvergreenServer.getInstance().getCopyStatuses().entrySet();
         Iterator<Entry<String, String>> it = set.iterator();
         while (it.hasNext()) {
             Entry<String, String> entry = it.next();
             if (status_map.containsKey(entry.getKey())) {
-                statusInformation.put(entry.getValue(), status_map.get(entry.getKey()) + "");
+                counts_by_status.put(entry.getValue(), status_map.get(entry.getKey()) + "");
             }
         }
+    }
+
+    public List<String> getCountsByStatus() {
+        ArrayList<String> statuses = new ArrayList<>();
+        Set<Entry<String, String>> set = counts_by_status.entrySet();
+        Iterator<Entry<String, String>> it = set.iterator();
+        while (it.hasNext()) {
+            Entry<String, String> ent = it.next();
+            statuses.add(ent.getValue() + " " + ent.getKey());
+        }
+        return statuses;
     }
 
     public String getCallNumber() {

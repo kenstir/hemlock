@@ -19,10 +19,7 @@
  */
 package org.evergreen_ils.searchCatalog;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.Map.Entry;
 
 import android.support.v7.app.ActionBarActivity;
@@ -49,11 +46,8 @@ import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup.LayoutParams;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import org.opensrf.util.GatewayResponse;
-import org.w3c.dom.Text;
 
 public class CopyInformationActivity extends ActionBarActivity {
 
@@ -61,7 +55,7 @@ public class CopyInformationActivity extends ActionBarActivity {
     private RecordInfo record;
     private Integer orgID;
     private ListView lv;
-    private ArrayList<CopyInformation> copyInfoRecords;
+    private ArrayList<CopyLocationCounts> copyInfoRecords;
     private CopyInformationArrayAdapter listAdapter;
 
     @Override
@@ -89,7 +83,7 @@ public class CopyInformationActivity extends ActionBarActivity {
                 R.layout.copy_information_item, copyInfoRecords);
         lv.setAdapter(listAdapter);
 
-        initCopyInfo();
+        initCopyLocationCounts();
     }
 
     @Override
@@ -110,30 +104,24 @@ public class CopyInformationActivity extends ActionBarActivity {
     }
 
     public void updateCopyInfo() {
-        if (record.copyInformationList == null)
+        if (record.copyLocationCountsList == null)
             return;
         copyInfoRecords.clear();
-        for (CopyInformation info : record.copyInformationList)
+        for (CopyLocationCounts info : record.copyLocationCountsList)
             copyInfoRecords.add(info);
+        Collections.sort(copyInfoRecords, new Comparator<CopyLocationCounts>() {
+            @Override
+            public int compare(CopyLocationCounts a, CopyLocationCounts b) {
+                EvergreenServer eg = EvergreenServer.getInstance();
+                return eg.getOrganizationName(a.org_id).compareTo(eg.getOrganizationName(b.org_id));
+            }
+        });
         listAdapter.notifyDataSetChanged();
     }
 
-        /*
-            CopyInformation info = record.copyInformationList.get(i);
-            Set<Entry<String, String>> set = info.statusInformation.entrySet();
-            Iterator<Entry<String, String>> it = set.iterator();
-            while (it.hasNext()) {
-                Entry<String, String> ent = it.next();
-                TextView statusName = new TextView(this);
-                statusName.setText(ent.getKey() + ": " + ent.getValue());
-                copy_statuses.addView(statusName, new LayoutParams(
-                        LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
-            }
-            */
-
-    private void initCopyInfo() {
-        Log.d(TAG, "kcx.initCopyInfo, id="+record.doc_id+" info="+record.copyCountInformationList);
-        if (record.copyInformationList != null) {
+    private void initCopyLocationCounts() {
+        Log.d(TAG, "kcx.initCopyLocationCounts, id="+record.doc_id+" info="+record.copySummaryList);
+        if (record.copyLocationCountsList != null) {
             updateCopyInfo();
         } else {
             final long start_ms = System.currentTimeMillis();
@@ -156,7 +144,7 @@ public class CopyInformationActivity extends ActionBarActivity {
                     new Response.ErrorListener() {
                         @Override
                         public void onErrorResponse(VolleyError error) {
-                            Log.d(TAG, "kcx.initCopyInfo caught", error);
+                            Log.d(TAG, "kcx.initCopyLocationCounts caught", error);
                             RecordInfo.setCopyLocationCounts(record, null);
                         }
                     });
@@ -164,14 +152,14 @@ public class CopyInformationActivity extends ActionBarActivity {
         }
     }
 
-    class CopyInformationArrayAdapter extends ArrayAdapter<CopyInformation> {
+    class CopyInformationArrayAdapter extends ArrayAdapter<CopyLocationCounts> {
         private TextView copyLibraryText;
         private TextView copyCallNumberText;
         private TextView copyLocationText;
         private TextView copyStatusesText;
-        private List<CopyInformation> records;
+        private List<CopyLocationCounts> records;
 
-        public CopyInformationArrayAdapter(Context context, int textViewResourceId, List<CopyInformation> objects) {
+        public CopyInformationArrayAdapter(Context context, int textViewResourceId, List<CopyLocationCounts> objects) {
             super(context, textViewResourceId, objects);
             records = objects;
         }
@@ -180,14 +168,14 @@ public class CopyInformationActivity extends ActionBarActivity {
             return this.records.size();
         }
 
-        public CopyInformation getItem(int index) {
+        public CopyLocationCounts getItem(int index) {
             return this.records.get(index);
         }
 
         public View getView(int position, View convertView, ViewGroup parent) {
             View row = convertView;
 
-            final CopyInformation record = getItem(position);
+            final CopyLocationCounts item = getItem(position);
 
             if (row == null) {
                 LayoutInflater inflater = (LayoutInflater) this.getContext()
@@ -200,17 +188,11 @@ public class CopyInformationActivity extends ActionBarActivity {
             copyLocationText = (TextView) row.findViewById(R.id.copy_information_copy_location);
             copyStatusesText = (TextView) row.findViewById(R.id.copy_information_statuses);
 
-            copyLibraryText.setText(EvergreenServer.getInstance().getOrganizationName(record.org_id));
-            copyCallNumberText.setText(record.getCallNumber());
-            copyLocationText.setText(record.copy_location);
+            copyLibraryText.setText(EvergreenServer.getInstance().getOrganizationName(item.org_id));
+            copyCallNumberText.setText(item.getCallNumber());
+            copyLocationText.setText(item.copy_location);
 
-            ArrayList<String> statuses = new ArrayList<>();
-            Set<Entry<String, String>> set = record.statusInformation.entrySet();
-            Iterator<Entry<String, String>> it = set.iterator();
-            while (it.hasNext()) {
-                Entry<String, String> ent = it.next();
-                statuses.add(ent.getKey() + ": " + ent.getValue());
-            }
+            List<String> statuses = item.getCountsByStatus();
             copyStatusesText.setText(TextUtils.join("\n", statuses));
 
             return row;

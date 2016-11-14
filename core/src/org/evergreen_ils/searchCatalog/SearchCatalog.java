@@ -21,7 +21,6 @@ package org.evergreen_ils.searchCatalog;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -32,7 +31,6 @@ import org.evergreen_ils.system.Log;
 import org.evergreen_ils.system.Utils;
 import org.evergreen_ils.system.Organization;
 import org.opensrf.net.http.HttpConnection;
-import org.opensrf.util.GatewayResponse;
 import org.opensrf.util.OSRFObject;
 
 /**
@@ -234,17 +232,17 @@ public class SearchCatalog {
         return ccs_list;
     }
 
-    public ArrayList<CopyInformation> getCopyLocationCounts(Integer recordID, Integer orgID, Integer orgDepth) {
+    public ArrayList<CopyLocationCounts> getCopyLocationCounts(Integer recordID, Integer orgID, Integer orgDepth) {
 
         Object response = Utils.doRequestSimple(conn(), Api.SEARCH,
                 Api.COPY_LOCATION_COUNTS, new Object[] {
                         recordID, orgID, orgDepth });
 
-        ArrayList<CopyInformation> ret = new ArrayList<CopyInformation>();
+        ArrayList<CopyLocationCounts> ret = new ArrayList<CopyLocationCounts>();
         try {
             List<List<Object>> list = (List<List<Object>>) response;
             for (List<Object> elem : list) {
-                CopyInformation copyInfo = new CopyInformation(elem);
+                CopyLocationCounts copyInfo = new CopyLocationCounts(elem);
                 ret.add(copyInfo);
             }
         } catch (Exception e) {
@@ -278,18 +276,18 @@ public class SearchCatalog {
         this.selectedOrganization = org;
     }
 
-    public static ArrayList<CopyCountInformation> getCopyCount(Integer recordID, Integer orgID) {
+    public static ArrayList<CopySummary> getCopyCount(Integer recordID, Integer orgID) {
 
         List<?> list = (List<?>) Utils.doRequestSimple(conn(), Api.SEARCH,
                 Api.COPY_COUNT, new Object[] { orgID, recordID });
 
-        ArrayList<CopyCountInformation> copyInfoList = new ArrayList<CopyCountInformation>();
+        ArrayList<CopySummary> copyInfoList = new ArrayList<CopySummary>();
 
         if (list == null)
             return copyInfoList;
 
         for (int i = 0; i < list.size(); i++) {
-            CopyCountInformation copyInfo = new CopyCountInformation(list.get(i));
+            CopySummary copyInfo = new CopySummary(list.get(i));
             copyInfoList.add(copyInfo);
         }
 

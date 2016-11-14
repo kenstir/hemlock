@@ -63,8 +63,8 @@ public class RecordInfo implements Serializable {
     public boolean search_format_loaded = false;
     public boolean copy_info_loaded = false;
 
-    public ArrayList<CopyCountInformation> copyCountInformationList = null;
-    public List<CopyInformation> copyInformationList = null;
+    public ArrayList<CopySummary> copySummaryList = null;
+    public List<CopyLocationCounts> copyLocationCountsList = null;
     public String search_format = null;
 
     public RecordInfo() {
@@ -139,14 +139,14 @@ public class RecordInfo implements Serializable {
     }
 
     public static void setCopyCountInfo(RecordInfo record, GatewayResponse response) {
-        record.copyCountInformationList = new ArrayList<CopyCountInformation>();
+        record.copySummaryList = new ArrayList<CopySummary>();
         if (response == null || response.failed)
             return;
         try {
             List<?> list = (List<?>) response.payload;
             for (Object obj : list) {
-                CopyCountInformation info = new CopyCountInformation(obj);
-                record.copyCountInformationList.add(info);
+                CopySummary info = new CopySummary(obj);
+                record.copySummaryList.add(info);
             }
         } catch (Exception e) {
             Log.d(TAG, "caught", e);
@@ -156,14 +156,14 @@ public class RecordInfo implements Serializable {
 
     public static void setCopyLocationCounts(RecordInfo record, GatewayResponse response) {
         Log.d(TAG, "record.doc_id "+record.doc_id);
-        record.copyInformationList = new ArrayList<CopyInformation>();
-        if (response.failed)
+        record.copyLocationCountsList = new ArrayList<>();
+        if (response == null || response.failed)
             return;
         try {
             List<List<Object>> list = (List<List<Object>>) response.payload;
             for (List<Object> elem : list) {
-                CopyInformation copyInfo = new CopyInformation(elem);
-                record.copyInformationList.add(copyInfo);
+                CopyLocationCounts copyInfo = new CopyLocationCounts(elem);
+                record.copyLocationCountsList.add(copyInfo);
             }
         } catch (Exception e) {
             Log.d(TAG, "caught", e);

@@ -1,24 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools"
-              android:orientation="horizontal"
+              android:orientation="vertical"
               android:layout_width="match_parent"
               android:layout_height="match_parent">
-
     <TextView
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             tools:text="Holden Gale Free Library"
-            android:id="@+id/copy_information_library" android:layout_weight="1"/>
-    <TextView android:layout_width="0dp"
-              android:layout_height="wrap_content"
-              tools:text="JUV DVD J HAR"
-              android:id="@+id/copy_information_call_number" android:layout_weight="1"/>
-    <TextView android:layout_width="0dp"
-              android:layout_height="wrap_content"
-              tools:text="Main Stacks"
-              android:id="@+id/copy_information_copy_location" android:layout_weight="1"/>
-    <TextView android:layout_width="wrap_content"
-              android:layout_height="wrap_content"
-              tools:text="1 Available"
-              android:id="@+id/copy_information_statuses"/>
+            style="@style/TitleSearchStyleList"
+            android:id="@+id/copy_information_library"/>
+
+    <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+        <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginLeft="16dp">
+            <TextView android:layout_width="wrap_content"
+                      android:layout_height="wrap_content"
+                      tools:text="Main Stacks"
+                      android:id="@+id/copy_information_copy_location" android:layout_weight="1"/>
+            <TextView android:layout_width="wrap_content"
+                              android:layout_height="wrap_content"
+                              tools:text="JUV DVD J HAR"
+                              android:id="@+id/copy_information_call_number" android:layout_weight="1"/>
+        </LinearLayout>
+        <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginRight="16dp">
+            <TextView android:layout_width="155dp"
+                      android:layout_height="wrap_content"
+                      tools:text="1 Available\n1 Checked out\n1 On hold\n1 On reservation shelf"
+                      android:id="@+id/copy_information_statuses" android:layout_gravity="right"/>
+        </LinearLayout>
+    </LinearLayout>
 </LinearLayout>

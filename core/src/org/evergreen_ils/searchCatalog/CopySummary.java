@@ -23,23 +23,27 @@ package org.evergreen_ils.searchCatalog;
 import java.io.Serializable;
 import java.util.Map;
 
-public class CopyCountInformation implements Serializable {
+/** Copy summary for the given org_id, e.g. 1 available of 4 copies at MPL
+ *
+ * returned by open-ils.search.biblio.record.copy_count
+ */
+public class CopySummary implements Serializable {
 
-    private final static String TAG = CopyCountInformation.class.getSimpleName();
     private static final long serialVersionUID = 12343248767867L;
+
     public Integer org_id;
     public Integer count;
     public Integer available;
     public Integer depth;
-    public Integer unshadow;
+    //public Integer unshadow;
 
-    public CopyCountInformation(Object map) {
+    public CopySummary(Object map) {
 
         this.org_id = ((Map<String, Integer>) map).get("org_unit");
         this.count = ((Map<String, Integer>) map).get("count");
         this.available = ((Map<String, Integer>) map).get("available");
         this.depth = ((Map<String, Integer>) map).get("depth");
-        this.unshadow = ((Map<String, Integer>) map).get("unshadow");
+        //this.unshadow = ((Map<String, Integer>) map).get("unshadow");
 
         //Log.d(TAG, org_id + " " + available + " " + count);
     }

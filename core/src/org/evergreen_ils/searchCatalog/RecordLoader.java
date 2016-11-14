@@ -107,7 +107,7 @@ public class RecordLoader {
 
     public static void fetchCopyCount(final RecordInfo record, final int orgID, Context context, final Listener listener) {
         Log.d(TAG, "fetchCopyCount id="+record.doc_id
-                +" list=" + ((record.copyCountInformationList == null) ? "null" : "non-null"));
+                +" list=" + ((record.copySummaryList == null) ? "null" : "non-null"));
         if (record.copy_info_loaded) {
             listener.onDataAvailable();
         } else {
