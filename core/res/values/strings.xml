@@ -100,7 +100,7 @@
     <string name="checkout_items">Items checked out:</string>
     <string name="checkout_overdue_items">Overdue:</string>
     <string name="due">Due %s</string>
-    <string name="overdue">overdue</string>
+    <string name="overdue">(overdue)</string>
 
     <!-- Fines Activity -->
     <string name="total_owned">Total Owned </string>

@@ -11,14 +11,13 @@
     <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
         android:orientation="vertical"
-        >
+        android:layout_weight="1">
 
         <TextView
                 android:id="@+id/checkout_record_title"
                 style="@style/TitleSearchStyleList"
-                android:layout_width="fill_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 tools:text="Suicide squad"
         />
@@ -26,7 +25,7 @@
         <TextView
                 android:id="@+id/checkout_record_author"
                 style="@style/AuthorSearchStyleList"
-                android:layout_width="fill_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 tools:text="Ostrander, John."/>
 
@@ -34,25 +33,29 @@
                 android:id="@+id/checkout_record_format"
                 style="@style/PubSearchStyleList"
                 android:gravity="left"
-                android:layout_width="fill_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 tools:text="Book"/>
 
-        <TextView
-                android:id="@+id/checkout_record_due_date"
-                style="@style/PubSearchStyleList"
-                android:gravity="left"
+        <LinearLayout
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                tools:text="due Oct 31, 2015" />
-        <TextView
-                android:id="@+id/checkout_record_overdue"
-                style="@style/alertText"
-                android:gravity="right"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                tools:text="@string/overdue"/>
+                android:layout_height="wrap_content">
+            <TextView
+                    android:id="@+id/checkout_record_due_date"
+                    style="@style/PubSearchStyleList"
+                    android:gravity="left"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    tools:text="Due Oct 31, 2015" />
+            <TextView
+                    android:id="@+id/checkout_record_overdue"
+                    style="@style/alertText"
+                    android:gravity="left"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/overdue"
+                    tools:text="@string/overdue" android:paddingLeft="8dp" android:paddingRight="8dp"/>
+        </LinearLayout>
 
     </LinearLayout>
 
@@ -60,9 +63,8 @@
             android:id="@+id/renew_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
             android:text="@string/renew_button"
             android:focusable="false"
-            />
+            android:layout_gravity="top"/>
 
 </LinearLayout>
