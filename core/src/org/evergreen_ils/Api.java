@@ -54,7 +54,7 @@ public class Api {
     public static final String AUTH = "open-ils.auth";
     public static final String AUTH_INIT = "open-ils.auth.authenticate.init";
     public static final String AUTH_COMPLETE = "open-ils.auth.authenticate.complete";
-    public static final String AUTH_SESSION_RETRIEVE = "open-ils.auth.session.retrieve";
+    public static final String AUTH_SESSION_RETRIEVE = "open-ils.auth.session.retrieve"; // au
 
     /// circ
 
@@ -114,7 +114,7 @@ public class Api {
         return sdf.format(date);
     }
 
-    // parse date string returned from API methods to Java Date
+    // parse date string returned from API methods
     public static Date parseDate(String dateString) {
 
         if (dateString == null)
@@ -133,7 +133,7 @@ public class Api {
         return date;
     }
 
-    // parse from opac methods query result to boolean
+    // parse bool string returned from API methods
     public static boolean parseBoolean(String boolString) {
         return (boolString != null && boolString.equals("t"));
     }

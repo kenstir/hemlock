@@ -42,50 +42,59 @@ import java.util.*;
  */
 public class AccountAccess {
 
+    private final static String TAG = AccountAccess.class.getSimpleName();
+
     // Used for book bags
     public static String CONTAINER_CLASS_BIBLIO = "biblio";
     public static String CONTAINER_BUCKET_TYPE_BOOKBAG = "bookbag";
 
-    /** The book bags. */
-    private ArrayList<BookBag> bookBags = new ArrayList<BookBag>();
+    private static AccountAccess mInstance = null;
 
-    /** The TAG. */
-    private final static String TAG = AccountAccess.class.getSimpleName();
-
-    /**
-     * The auth token. Sent with every request that needs authentication
-     * */
+    private String userName = null;
     private String authToken = null;
-
-    /** The user id. */
     private Integer userID = null;
-    
-    /** home library ID. */
+    private String barcode = null;
     private Integer homeLibraryID = null;
+    private Integer defaultPickupLibraryID = null;
+    private Integer defaultSearchLibraryID = null;
+    private ArrayList<BookBag> bookBags = new ArrayList<>();
 
-    /** The user name. */
-    public static String userName = null;
-
-    /** The account access. */
-    private static AccountAccess accountAccess = null;
+    private void clearSession() {
+        userName = null;
+        authToken = null;
+        userID = null;
+        barcode = null;
+        homeLibraryID = null;
+        defaultPickupLibraryID = null;
+        defaultSearchLibraryID = null;
+        bookBags = new ArrayList<>();
+    }
 
     private AccountAccess() {
     }
 
     public static AccountAccess getInstance() {
-
-        if (accountAccess == null) {
-            accountAccess = new AccountAccess();
-        }
-        return accountAccess;
+        if (mInstance == null)
+            mInstance = new AccountAccess();
+        return mInstance;
     }
+
+    public String getUserName() { return userName; }
 
     public Integer getHomeLibraryID() {
         return homeLibraryID;
     }
 
-    public void setHomeLibraryID(Integer homeLibraryID) {
-        this.homeLibraryID = homeLibraryID;
+    public Integer getDefaultPickupLibraryID() {
+        if (defaultPickupLibraryID != null)
+            return defaultPickupLibraryID;
+        return homeLibraryID;
+    }
+
+    public Integer getDefaultSearchLibraryID() {
+        if (defaultSearchLibraryID != null)
+            return defaultSearchLibraryID;
+        return homeLibraryID;
     }
 
     private HttpConnection conn() {
@@ -103,38 +112,58 @@ public class AccountAccess {
 
         Object resp = Utils.doRequest(conn(), Api.AUTH,
                 Api.AUTH_SESSION_RETRIEVE, auth_token, new Object[]{
-                        auth_token});
+                        authToken});
         if (resp != null) {
             OSRFObject au = (OSRFObject) resp;
             userID = au.getInt("id");
             homeLibraryID = au.getInt("home_ou");
             userName = au.getString("usrname");
             //email = au.getString("email");
-            //cardId = au.getInt("card");
+            // todo: warn when account is nearing expiration
+            //expireDate = Api.parseDate(au.getString("expire_date"));
 
-            // How to get a patron's library card number (barcode):
-            //
-            // * open-ils.actor open-ils.actor.user.fleshed.retrieve(auth_token, userId)
-//            resp = Utils.doRequest(conn(), Api.ACTOR,
-//                    Api.USER_FLESHED_RETRIEVE, new Object[]{
-//                            auth_token, userID});
-            //
-            // Things that didn't work:
-            // * open-ils.pcrud open-ils.pcrud.search.ac auth_token, {id: cardId}
-            // * open-ils.pcrud open-ils.pcrud.search.ac auth_token, {usr: userId}
-            // * open-ils.pcrud open-ils.pcrud.retrieve.ac auth_token, cardId
-            //   (patrons don't have permission to see their own records)
-
+            fleshUserSettings();
             return true;
         }
         throw new SessionNotFoundException();
     }
 
-    private void clearSession() {
-        userID = null;
-        homeLibraryID = null;
-        userName = null;
-        authToken = null;
+    // This could be done on demand, but coming in at ~75ms it is not worth it
+    public void fleshUserSettings() {
+
+        try {
+            // How to get a patron's library card barcode:
+            //
+            // * open-ils.actor open-ils.actor.user.fleshed.retrieve(auth_token, userId, [opt_array_of_fields])
+            // requires classes au,aua,ac,auact,cuat
+            // "card" has the active card object with "barcode" key
+            // "cards" has an array of cards including expired ones with active=f
+            // "settings" - array of settings objects, e.g. name=opac.hold_notify value=":email"
+            ArrayList<String> fields = new ArrayList<>();
+            fields.add("card");
+            //fields.add("cards"); // all cards including active=f
+            fields.add("settings");
+            Object resp = Utils.doRequest(conn(), Api.ACTOR,
+                    Api.USER_FLESHED_RETRIEVE, new Object[]{
+                            authToken, userID, fields});
+            if (resp != null) {
+                OSRFObject usr = (OSRFObject) resp;
+                OSRFObject card = (OSRFObject) usr.get("card");
+                barcode = card.getString("barcode");
+//                List<OSRFObject> settings = (List<OSRFObject>) usr.get("settings");
+//                for (OSRFObject setting : settings) {
+//                    Log.d(TAG, "setting="+ setting);
+//                }
+            }
+        } catch (Exception e) {
+            Log.d(TAG, "caught", e);
+        }
+
+        // Things that didn't work:
+        // * open-ils.pcrud open-ils.pcrud.search.ac auth_token, {id: cardId}
+        // * open-ils.pcrud open-ils.pcrud.search.ac auth_token, {usr: userId}
+        // * open-ils.pcrud open-ils.pcrud.retrieve.ac auth_token, cardId
+        //   (patrons don't have permission to see their own records)
     }
 
     public boolean reauthenticate(Activity activity) throws SessionNotFoundException {
@@ -318,7 +347,7 @@ public class AccountAccess {
             // todo newer EG supports use of "ANONYMOUS" as the auth_token in the PCRUD request,
             // but there are some older EG installs out there that do not.
             resp = (OSRFObject) Utils.doRequest(conn(), Api.PCRUD_SERVICE,
-                    Api.RETRIEVE_MRA, authToken, new Object[]{
+                    Api.RETRIEVE_MRA, authToken, new Object[] {
                             authToken, id});
         } catch (SessionNotFoundException e) {
             return "";
@@ -1047,6 +1076,7 @@ public class AccountAccess {
      * @return the bookbags
      * @throws SessionNotFoundException the session not found exception
      */
+    // todo: load on demand.  It takes ~750ms to load my 4 bookbags on startup.
     public boolean retrieveBookbags() throws SessionNotFoundException {
 
         Object response = Utils.doRequest(conn(), Api.ACTOR,

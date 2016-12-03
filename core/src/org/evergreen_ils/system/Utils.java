@@ -111,6 +111,7 @@ public class Utils {
         }
 
         // sync request
+        long now_ms = System.currentTimeMillis();
         HttpRequest req = new GatewayRequest(conn, service, method).send();
         Object resp = null;
 
@@ -119,6 +120,7 @@ public class Utils {
         } catch (NullPointerException e) {
             logNPE(e, service, methodName);
         }
+        Log.logElapsedTime(TAG, now_ms, "doRequest "+methodName);
         if (resp != null) {
             Log.d(TAG, "Sync Response: " + resp);
             Object response = (Object) resp;
@@ -149,6 +151,7 @@ public class Utils {
         }
 
         // sync request
+        long now_ms = System.currentTimeMillis();
         HttpRequest req = new GatewayRequest(conn, service, method).send();
         Object resp;
 
@@ -157,6 +160,7 @@ public class Utils {
                 Log.d(TAG, "Sync Response: " + resp);
                 Object response = (Object) resp;
 
+                Log.logElapsedTime(TAG, now_ms, "doRequest "+methodName);
                 return response;
             }
         } catch (NullPointerException e) {

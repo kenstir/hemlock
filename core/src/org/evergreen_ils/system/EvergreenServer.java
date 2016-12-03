@@ -37,7 +37,10 @@ import java.util.*;
  */
 public class EvergreenServer {
 
-    private static final String IDL_CLASSES_USED = "acn,acp,ahr,ahtc,aou,au,bmp,cbreb,cbrebi,cbrebin,cbrebn,ccs,circ,ex,mbt,mbts,mous,mra,mraf,mus,mvr,perm_ex";
+    //ac,au,aua,auact,cuat
+    //aus
+    //private static final String IDL_CLASSES_USED = "acn,acp,ahr,ahtc,aou,au,bmp,cbreb,cbrebi,cbrebin,cbrebn,ccs,circ,ex,mbt,mbts,mous,mra,mraf,mus,mvr,perm_ex";
+    private static final String IDL_CLASSES_USED = "ac,acn,acp,ahr,ahtc,aou,au,aua,auact,aus,bmp,cbreb,cbrebi,cbrebin,cbrebn,ccs,circ,cuat,ex,mbt,mbts,mous,mra,mraf,mus,mvr,perm_ex";
 
     private static final String TAG = EvergreenServer.class.getSimpleName();
     private static EvergreenServer mInstance = null;
