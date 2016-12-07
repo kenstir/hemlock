@@ -71,7 +71,7 @@ public class PlaceHoldActivity extends ActionBarActivity {
     private CheckBox email_notification;
     private Button placeHold;
     private CheckBox suspendHold;
-    private Spinner orgSelector;
+    private Spinner orgSpinner;
     private DatePickerDialog datePicker = null;
     private DatePickerDialog thaw_datePicker = null;
     private EditText thaw_date_edittext;
@@ -111,7 +111,7 @@ public class PlaceHoldActivity extends ActionBarActivity {
         phone_number = (EditText) findViewById(R.id.hold_contact_telephone);
         email_notification = (CheckBox) findViewById(R.id.hold_enable_email_notification);
         suspendHold = (CheckBox) findViewById(R.id.hold_suspend_hold);
-        orgSelector = (Spinner) findViewById(R.id.hold_pickup_location);
+        orgSpinner = (Spinner) findViewById(R.id.hold_pickup_location);
         thaw_date_edittext = (EditText) findViewById(R.id.hold_thaw_date);
 
         title.setText(record.title);
@@ -119,8 +119,15 @@ public class PlaceHoldActivity extends ActionBarActivity {
         format.setText(RecordInfo.getFormatLabel(record));
         physical_description.setText(record.physical_description);
 
-        final Integer record_id = record.doc_id;
+        initPlaceHoldRunnable(record);
+        initPlaceHoldButton();
+        initSuspendHoldButton();
+        initDatePickers();
+        initOrgSpinner();
+    }
 
+    private void initPlaceHoldRunnable(RecordInfo record) {
+        final Integer record_id = record.doc_id;
         placeHoldRunnable = new Runnable() {
 
             @Override
@@ -134,9 +141,9 @@ public class PlaceHoldActivity extends ActionBarActivity {
                 });
 
                 String expire_date_s = null;
-                String thaw_date_s = null;
                 if (expire_date != null)
                     expire_date_s = Api.formatDate(expire_date);
+                String thaw_date_s = null;
                 if (thaw_date != null)
                     thaw_date_s = Api.formatDate(thaw_date);
 
@@ -184,46 +191,37 @@ public class PlaceHoldActivity extends ActionBarActivity {
                 });
             }
         };
+    }
 
+    private void initPlaceHoldButton() {
         placeHold.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 Thread placeholdThread = new Thread(placeHoldRunnable);
                 placeholdThread.start();
             }
         });
+    }
 
-//        phone_notification
-//                .setOnCheckedChangeListener(new OnCheckedChangeListener() {
-//
-//                    @Override
-//                    public void onCheckedChanged(CompoundButton buttonView,
-//                            boolean isChecked) {
-//
-//                        if (isChecked) {
-//                            enableView(phone_number);
-//                        } else
-//                            disableView(phone_number);
-//                    }
-//                });
-
+    private void initSuspendHoldButton() {
         suspendHold.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 
             @Override
             public void onCheckedChanged(CompoundButton buttonView,
-                    boolean isChecked) {
+                                         boolean isChecked) {
                 thaw_date_edittext.setEnabled(isChecked);
             }
         });
+    }
 
+    private void initDatePickers() {
         Calendar cal = Calendar.getInstance();
 
         datePicker = new DatePickerDialog(this,
                 new DatePickerDialog.OnDateSetListener() {
 
                     public void onDateSet(DatePicker view, int year,
-                            int monthOfYear, int dayOfMonth) {
+                                          int monthOfYear, int dayOfMonth) {
 
                         Date chosenDate = new Date(year - 1900, monthOfYear,
                                 dayOfMonth);
@@ -247,7 +245,7 @@ public class PlaceHoldActivity extends ActionBarActivity {
                 new DatePickerDialog.OnDateSetListener() {
 
                     public void onDateSet(DatePicker view, int year,
-                            int monthOfYear, int dayOfMonth) {
+                                          int monthOfYear, int dayOfMonth) {
 
                         Date chosenDate = new Date(year - 1900, monthOfYear,
                                 dayOfMonth);
@@ -267,21 +265,18 @@ public class PlaceHoldActivity extends ActionBarActivity {
                 thaw_datePicker.show();
             }
         });
+    }
 
-        // kenstir todo: factor this out
-        int homeLibrary = 0;
-        if (AccountAccess.getInstance() != null) {
-            homeLibrary = AccountAccess.getInstance().getHomeLibraryID();
-        }
-        ArrayList<String> list = new ArrayList<String>();
+    private void initOrgSpinner() {
+        int defaultLibraryID = AccountAccess.getInstance().getDefaultPickupLibraryID();
+        ArrayList<String> list = new ArrayList<>();
         for (int i = 0; i < eg.getInstance().getOrganizations().size(); i++) {
             Organization org = eg.getInstance().getOrganizations().get(i);
             list.add(org.indentedDisplayPrefix + org.name);
-            if (org.id == homeLibrary) {
+            if (org.id == defaultLibraryID) {
                 selectedOrgPos = i;
             }
         }
-        //ArrayAdapter<String> adapter = CompatSpinnerAdapter.CreateCompatSpinnerAdapter(this, list);
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, R.layout.org_item_layout, list) {
             @Override
             public boolean isEnabled(int pos) {
@@ -289,9 +284,9 @@ public class PlaceHoldActivity extends ActionBarActivity {
                 return org.orgType >= EvergreenConstants.ORG_TYPE_BRANCH;
             }
         };
-        orgSelector.setAdapter(adapter);
-        orgSelector.setSelection(selectedOrgPos);
-        orgSelector.setOnItemSelectedListener(new OnItemSelectedListener() {
+        orgSpinner.setAdapter(adapter);
+        orgSpinner.setSelection(selectedOrgPos);
+        orgSpinner.setOnItemSelectedListener(new OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> arg0, View arg1, int ID, long arg3) {
                 selectedOrgPos = ID;

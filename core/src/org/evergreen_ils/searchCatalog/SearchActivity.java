@@ -65,7 +65,7 @@ public class SearchActivity extends ActionBarActivity {
     private SwitchCompat searchOptionsButton;
     private View searchOptionsLayout;
     private Button searchButton;
-    private Spinner searchOrgSpinner;
+    private Spinner orgSpinner;
     private Spinner searchClassSpinner;
     private Spinner searchFormatSpinner;
     private TextView searchResultsSummary;
@@ -78,11 +78,8 @@ public class SearchActivity extends ActionBarActivity {
     private ArrayList<RecordInfo> searchResults;
     private EvergreenServer eg;
     private ArrayList<BookBag> bookBags;
-    private Integer bookbag_selected = -1;
     private Runnable searchForResultsRunnable = null;
 
-    private boolean loadingElements = false;
-    private boolean searchOptionsVisible = true;
     private ContextMenuRecordInfo contextMenuRecordInfo;
 
     private String getSearchText() {
@@ -153,7 +150,7 @@ public class SearchActivity extends ActionBarActivity {
         searchButton = (Button) findViewById(R.id.search_button);
         searchClassSpinner = (Spinner) findViewById(R.id.search_qtype_spinner);
         searchFormatSpinner = (Spinner) findViewById(R.id.search_format_spinner);
-        searchOrgSpinner = (Spinner) findViewById(R.id.search_org_spinner);
+        orgSpinner = (Spinner) findViewById(R.id.search_org_spinner);
         searchResultsSummary = (TextView) findViewById(R.id.search_result_number);
 
         initSearchOptionsVisibility();
@@ -190,7 +187,6 @@ public class SearchActivity extends ActionBarActivity {
 
     private void setSearchOptionsVisibility(boolean visible) {
         searchOptionsLayout.setVisibility(visible ? View.VISIBLE : View.GONE);
-        searchOptionsVisible = visible;
         AppState.setBoolean(SEARCH_OPTIONS_VISIBLE, visible);
     }
 
@@ -267,23 +263,20 @@ public class SearchActivity extends ActionBarActivity {
 
     private void initSearchOrgSpinner() {
         int selectedOrgPos = 0;
-        int homeLibrary = 0;
-        if (AccountAccess.getInstance() != null) {
-            homeLibrary = AccountAccess.getInstance().getHomeLibraryID();
-        }
-        ArrayList<String> list = new ArrayList<String>();
+        int defaultLibraryID = AccountAccess.getInstance().getDefaultSearchLibraryID();
+        ArrayList<String> list = new ArrayList<>();
         for (int i = 0; i < eg.getInstance().getOrganizations().size(); i++) {
             Organization org = eg.getInstance().getOrganizations().get(i);
             list.add(org.indentedDisplayPrefix + org.name);
-            if (org.id == homeLibrary) {
+            if (org.id == defaultLibraryID) {
                 selectedOrgPos = i;
             }
         }
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, R.layout.org_item_layout, list);
-        searchOrgSpinner.setAdapter(adapter);
-        searchOrgSpinner.setSelection(selectedOrgPos);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, R.layout.org_item_layout, list);
+        orgSpinner.setAdapter(adapter);
+        orgSpinner.setSelection(selectedOrgPos);
         search.selectOrganisation(eg.getInstance().getOrganizations().get(selectedOrgPos));
-        searchOrgSpinner.setOnItemSelectedListener(new OnItemSelectedListener() {
+        orgSpinner.setOnItemSelectedListener(new OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> arg0, View arg1, int ID, long arg3) {
                 search.selectOrganisation(eg.getInstance().getOrganizations().get(ID));

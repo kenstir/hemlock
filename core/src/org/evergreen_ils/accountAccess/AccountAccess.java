@@ -128,21 +128,25 @@ public class AccountAccess {
         throw new SessionNotFoundException();
     }
 
+    // Fix stupid int setting that is returned with extra quotes
+    private Integer getSquirrellyIntSetting(String s) {
+        if (s.startsWith("\"")) s = s.replace("\"", ""); // setting has extra quotes
+        try {
+            return Integer.parseInt(s);
+        } catch (NumberFormatException e) {
+            Log.d(TAG, "caught", e);
+            return null;
+        }
+    }
+
     // This could be done on demand, but coming in at ~75ms it is not worth it
     public void fleshUserSettings() {
 
         try {
-            // How to get a patron's library card barcode:
-            //
-            // * open-ils.actor open-ils.actor.user.fleshed.retrieve(auth_token, userId, [opt_array_of_fields])
-            // requires classes au,aua,ac,auact,cuat
-            // "card" has the active card object with "barcode" key
-            // "cards" has an array of cards including expired ones with active=f
-            // "settings" - array of settings objects, e.g. name=opac.hold_notify value=":email"
+            // Array of fields is optional; the default does not include settings
             ArrayList<String> fields = new ArrayList<>();
-            fields.add("card");
-            //fields.add("cards"); // all cards including active=f
-            fields.add("settings");
+            fields.add("card");    // active library card
+            fields.add("settings");// array of settings objects, e.g. name=opac.hold_notify value=":email"
             Object resp = Utils.doRequest(conn(), Api.ACTOR,
                     Api.USER_FLESHED_RETRIEVE, new Object[]{
                             authToken, userID, fields});
@@ -150,10 +154,15 @@ public class AccountAccess {
                 OSRFObject usr = (OSRFObject) resp;
                 OSRFObject card = (OSRFObject) usr.get("card");
                 barcode = card.getString("barcode");
-//                List<OSRFObject> settings = (List<OSRFObject>) usr.get("settings");
-//                for (OSRFObject setting : settings) {
-//                    Log.d(TAG, "setting="+ setting);
-//                }
+                List<OSRFObject> settings = (List<OSRFObject>) usr.get("settings");
+                for (OSRFObject setting : settings) {
+                    String name = setting.getString("name");
+                    if (name.equals("opac.default_pickup_location")) {
+                        defaultPickupLibraryID = getSquirrellyIntSetting(setting.getString("value"));
+                    } else if (name.equals("opac.default_search_location")) {
+                        defaultSearchLibraryID = getSquirrellyIntSetting(setting.getString("value"));
+                    }
+                }
             }
         } catch (Exception e) {
             Log.d(TAG, "caught", e);
