@@ -1,0 +1,10 @@
+site_name: Hemlock
+docs_dir: doc
+theme: readthedocs
+#site_favicon: favicon.ico
+extra_templates: []
+extra_css: []
+extra_javascript: []
+
+pages:
+  - Home: 'README.md'
