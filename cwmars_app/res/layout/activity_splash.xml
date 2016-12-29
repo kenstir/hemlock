@@ -69,6 +69,6 @@
             android:layout_width="200dp"
             android:layout_height="wrap_content"
             android:id="@+id/imageView" android:layout_centerVertical="true" android:layout_centerHorizontal="true"
-            android:src="@drawable/christmas_tree" android:adjustViewBounds="true"/>
+            android:src="@drawable/splash_firework_courtesy_dainkaplan" android:adjustViewBounds="true"/>
 
 </RelativeLayout>
