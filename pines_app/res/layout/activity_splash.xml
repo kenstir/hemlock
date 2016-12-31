@@ -31,7 +31,7 @@
             android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="24dip"
-            android:src="@drawable/cwmars_logo_white"
+            android:src="@drawable/turkey_icon"
             android:contentDescription="@string/ou_library_name" android:padding="4dip"
             android:tint="@color/hemlock_accent_halloween"/>
 
