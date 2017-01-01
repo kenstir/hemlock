@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <account-authenticator xmlns:android="http://schemas.android.com/apk/res/android"
                        android:accountType="@string/ou_account_type"
-                       android:icon="@drawable/evergreen_launcher_icon"
-                       android:smallIcon="@drawable/evergreen_launcher_icon"
+                       android:icon="@drawable/launcher_icon"
+                       android:smallIcon="@drawable/launcher_icon"
                        android:label="@string/ou_account_label"/>
