@@ -21,6 +21,9 @@
     <style name="textLargeNoPadding">
         <item name="android:textSize">18sp</item>
     </style>
+    <style name="textSplash">
+        <item name="android:textSize">22sp</item>
+    </style>
 
     <style name="spacer">
         <item name="android:layout_width">fill_parent</item>
