@@ -15,9 +15,13 @@
     <!--<color name="primary">@color/primary_material_dark</color>-->
     <!--<color name="primary_dark">@color/primary_dark_material_dark</color>-->
     <!--<color name="accent">#76FF03</color>-->
-    <color name="primary">@color/primary_material_dark</color>
-    <color name="primary_dark">@color/primary_dark_material_dark</color>
+    <!-- accent - the logo color from http://pines.georgialibraries.org/graphics -->
     <color name="accent">#379676</color>
+    <!-- primary - a darker version c/o https://coolors.co -->
+    <!--<color name="primary">#14372b</color>-->
+    <color name="primary">#0f2921</color>
+    <!-- primary_dark - straight up material -->
+    <color name="primary_dark">@color/primary_dark_material_dark</color>
 
     <style name="PINES" parent="Theme.AppCompat">
         <item name="colorPrimary">@color/primary</item>
