@@ -32,17 +32,30 @@
             android:layout_centerHorizontal="true"
             android:layout_marginTop="24dip"
             android:src="@drawable/cwmars_logo_white"
-            android:contentDescription="@string/ou_library_name" android:padding="4dip"
-            android:tint="@color/hemlock_accent_halloween"/>
+            android:contentDescription="@string/ou_library_name"
+            android:padding="4dip"
+            android:alpha="0.9"/>
 
     <TextView
             android:id="@+id/action_in_progress"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/activity_splash_progress_bar"
+            android:layout_below="@+id/logo"
             android:gravity="center"
             style="@style/textLarge"
-            tools:text="Signing in" android:padding="4dip"/>
+            tools:text="Signing in"
+            android:padding="4dip"
+            android:src="@drawable/cwmars_logo_white"/>
+
+    <ProgressBar
+            android:id="@+id/activity_splash_progress_bar"
+            style="@style/HemlockProgressBar"
+            android:indeterminate="true"
+            android:layout_width="200dip"
+            android:layout_height="wrap_content"
+            android:padding="6dip"
+            android:layout_below="@+id/action_in_progress"
+            android:layout_centerHorizontal="true"/>
 
     <Button
             android:id="@+id/activity_splash_retry_button"
@@ -54,16 +67,7 @@
             android:paddingLeft="25dip"
             android:paddingRight="25dip"
             android:visibility="visible"
-            android:layout_alignParentBottom="true" android:layout_marginBottom="60dip"/>
-
-    <ProgressBar
-            android:id="@+id/activity_splash_progress_bar"
-            style="@style/HemlockProgressBar"
-            android:indeterminate="true"
-            android:layout_width="200dip"
-            android:layout_height="wrap_content"
-            android:padding="6dip"
-            android:layout_below="@+id/logo"
-            android:layout_centerHorizontal="true"/>
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="60dip"/>
 
 </RelativeLayout>
