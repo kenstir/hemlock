@@ -11,6 +11,6 @@
         <bitmap
             xmlns:android="http://schemas.android.com/apk/res/android"
             android:gravity="center"
-            android:src="@drawable/evergreen_1_256x256x32_grey" />
+            android:src="@drawable/background_grey_logo" />
     </item>
 </layer-list>

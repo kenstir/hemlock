@@ -29,23 +29,26 @@
                android:src="@drawable/splash_logo"
                android:padding="20dp"
                android:layout_centerVertical="true"
-               android:layout_centerHorizontal="true" android:layout_margin="48dp"/>
+               android:layout_centerHorizontal="true" android:layout_margin="48dp"
+               android:visibility="invisible"
+               android:id="@+id/imageView3"/>
     <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/imageView2"
-            android:layout_centerHorizontal="true"
-            android:layout_alignParentTop="true"
-            android:layout_marginTop="8dp"
             android:src="@drawable/splash_title"
-            android:tint="@color/hemlock_accent"/>
+            android:tint="@color/hemlock_accent"
+            android:layout_alignTop="@+id/imageView3"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"/>
     <LinearLayout
             android:orientation="vertical"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center"
             android:layout_centerVertical="true"
-            android:layout_centerHorizontal="true" android:background="#88212121" android:id="@+id/linearLayout">
+            android:layout_centerHorizontal="true"
+            android:id="@+id/linearLayout">
         <TextView
                 android:id="@+id/action_in_progress"
                 android:layout_width="wrap_content"
