@@ -15,7 +15,7 @@
             android:layout_marginTop="24dip"
             android:src="@drawable/evergreen_logo_300w_20pct"
             android:contentDescription="@string/ou_library_name" android:padding="4dip"
-            android:tint="@color/hemlock_accent_halloween"/>
+            android:tint="@color/hemlock_accent"/>
 
     <TextView
             android:id="@+id/action_in_progress"

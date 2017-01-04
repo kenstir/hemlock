@@ -21,6 +21,9 @@
     <style name="textLargeNoPadding">
         <item name="android:textSize">18sp</item>
     </style>
+    <style name="textSplash">
+        <item name="android:textSize">22sp</item>
+    </style>
 
     <style name="spacer">
         <item name="android:layout_width">fill_parent</item>
@@ -147,6 +150,8 @@
 
     <color name="hemlock_accent_material">@color/accent_material_dark</color>
     <color name="hemlock_accent_halloween">#ff9100</color>
+    <color name="hemlock_accent">#ff9100</color>
+    <color name="hemlock_text_alert">#ff9100</color>
 
     <!--<color name="primary">@color/primary_material_dark</color>-->
     <!--<color name="primary_dark">@color/primary_dark_material_dark</color>-->
@@ -163,17 +168,17 @@
     <style name="HemlockHalloween" parent="Theme.AppCompat">
         <item name="colorPrimary">@color/primary</item>
         <item name="colorPrimaryDark">@color/primary_dark</item>
-        <item name="colorAccent">@color/hemlock_accent_halloween</item>
+        <item name="colorAccent">@color/hemlock_accent</item>
     </style>
 
     <style name="HemlockHalloweenNoActionBar" parent="Theme.AppCompat.NoActionBar">
         <item name="colorPrimary">@color/primary</item>
         <item name="colorPrimaryDark">@color/primary_dark</item>
-        <item name="colorAccent">@color/hemlock_accent_halloween</item>
+        <item name="colorAccent">@color/hemlock_accent</item>
     </style>
 
     <style name="alertText">
-        <item name="android:textColor">@color/hemlock_accent_halloween</item>
+        <item name="android:textColor">@color/hemlock_text_alert</item>
     </style>
 
     <!-- I wanted to make the accent color of the progressbar green, but this does not do it -->
