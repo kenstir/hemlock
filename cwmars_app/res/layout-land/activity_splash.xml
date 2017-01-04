@@ -18,35 +18,40 @@
   -->
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:tools="http://schemas.android.com/tools"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:gravity="center_horizontal"
+    android:gravity="center_vertical|center_horizontal"
                 android:orientation="vertical">
 
+    <Button
+            android:id="@+id/activity_splash_retry_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/retry_label"
+            android:visibility="visible"
+            android:layout_alignWithParentIfMissing="false"
+            android:layout_alignParentBottom="true" android:layout_alignParentRight="false"
+            android:layout_alignParentEnd="false" android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="false" android:paddingRight="25dp" android:paddingLeft="25dp"
+            android:layout_marginLeft="48dp"/>
     <ImageView
             android:id="@+id/logo"
-            android:layout_width="240dp"
-            android:layout_height="100dp"
-            android:layout_alignParentTop="true"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="24dip"
-            android:src="@drawable/cwmars_logo_white"
-            android:contentDescription="@string/ou_library_name"
-            android:padding="4dip"
-            android:alpha="0.9"/>
-
+            android:layout_width="371dip"
+            android:layout_height="64dip"
+            android:src="@drawable/splash_title"
+            android:contentDescription="@string/ou_library_name" android:padding="5dip"
+            android:tint="@color/hemlock_accent_halloween" android:layout_centerVertical="true"
+            android:layout_centerHorizontal="true"/>
     <TextView
             android:id="@+id/action_in_progress"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/logo"
             android:gravity="center"
-            style="@style/textLarge"
-            tools:text="Signing in"
+            style="@style/textSplash"
+            android:text="Signing in"
             android:padding="4dip"
-            android:src="@drawable/cwmars_logo_white"/>
-
+            android:layout_below="@+id/logo"
+            android:layout_centerHorizontal="true"/>
     <ProgressBar
             android:id="@+id/activity_splash_progress_bar"
             style="@style/HemlockProgressBar"
@@ -54,20 +59,6 @@
             android:layout_width="200dip"
             android:layout_height="wrap_content"
             android:padding="6dip"
-            android:layout_below="@+id/action_in_progress"
-            android:layout_centerHorizontal="true"/>
-
-    <Button
-            android:id="@+id/activity_splash_retry_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="60dip"
-            android:text="@string/retry_label"
-            android:paddingLeft="25dip"
-            android:paddingRight="25dip"
-            android:visibility="visible"
-            android:layout_alignParentBottom="true"
-            android:layout_marginBottom="60dip"/>
+            android:layout_below="@+id/action_in_progress" android:layout_centerHorizontal="true"/>
 
 </RelativeLayout>
