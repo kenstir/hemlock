@@ -130,7 +130,7 @@ public class SearchCatalog {
 
         // construct result list
         for (int i = 0; i < ids.size(); i++) {
-            Integer record_id = Integer.parseInt(ids.get(i));
+            Integer record_id = Integer.parseInt(ids.get(i).toString());
             results.add(new RecordInfo(record_id));
             /*
             Original impl: load basic metadata synchronously
