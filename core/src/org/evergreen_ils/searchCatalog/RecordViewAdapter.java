@@ -61,9 +61,9 @@ public class RecordViewAdapter extends RecyclerView.Adapter<RecordViewAdapter.Vi
             Log.d(TAG, record.doc_id + ": bindView");
             final Context context = imageView.getContext();
             // todo is it better to load /jacket/medium/ here so it is cached for the details view?
-            // not now, I am still comparing listview vs. recyclerview
             final String url = EvergreenServer.getInstance().getUrl("/opac/extras/ac/jacket/small/r/" + record.doc_id);
             imageView.setImageUrl(url, VolleyWrangler.getInstance(context).getImageLoader());
+            //imageView.setDefaultImageResId(R.drawable.missing_art);//for screenshots
             titleText.setText((record.title != null) ? record.title : context.getString(R.string.title_busy_ellipsis));
             RecordLoader.fetch(record, context, new RecordLoader.ResponseListener() {
                 @Override

@@ -147,6 +147,7 @@ public class BasicDetailsFragment extends Fragment {
         final String imageHref = EvergreenServer.getInstance().getUrl("/opac/extras/ac/jacket/medium/r/" + record.doc_id);
         ImageLoader imageLoader = VolleyWrangler.getInstance(getActivity()).getImageLoader();
         recordImage.setImageUrl(imageHref, imageLoader);
+        //recordImage.setDefaultImageResId(R.drawable.missing_art);//for screenshots
 
         // Start async record load
         fetchRecordInfo(record);
