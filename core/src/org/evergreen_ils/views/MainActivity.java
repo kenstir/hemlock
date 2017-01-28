@@ -54,6 +54,8 @@ public class MainActivity extends ActionBarActivity {
 
     private static String TAG = MainActivity.class.getSimpleName();
 
+    protected MenuProvider menuProvider = null;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -66,16 +68,10 @@ public class MainActivity extends ActionBarActivity {
         setContentView(R.layout.activity_main);
         ActionBarUtils.initActionBarForActivity(this, null, true);
 
-        // hide the donate button until we know what the deal is
-        /*
-        donateButton = (Button) findViewById(R.id.main_donate_button);
-        donateButton.setVisibility(View.INVISIBLE);
-        donateButton.setAlpha(0f);
-        donateButtonShowing = false;
-        showDonateButton = false;
-        */
-
-        initBilling();
+        initBillingProvider();
+        initMenuProvider();
+        if (menuProvider != null)
+            menuProvider.onCreate(this);
     }
 
     @Override
@@ -86,7 +82,7 @@ public class MainActivity extends ActionBarActivity {
         BillingHelper.disposeIabHelper();
     }
 
-    void initBilling() {
+    void initBillingProvider() {
         // get the public key
         BillingDataProvider provider = BillingDataProvider.create(getString(R.string.ou_billing_data_provider));
         String base64EncodedPublicKey = (provider != null) ? provider.getPublicKey() : null;
@@ -106,6 +102,10 @@ public class MainActivity extends ActionBarActivity {
                 }
             }
         });
+    }
+
+    void initMenuProvider() {
+        menuProvider = MenuProvider.create(getString(R.string.ou_menu_provider));
     }
 
     @Override
@@ -178,6 +178,7 @@ public class MainActivity extends ActionBarActivity {
             return true;
         } else if (id == R.id.action_donate) {
             startActivityForResult(new Intent(this, DonateActivity.class), BillingHelper.REQUEST_PURCHASE);
+            return true;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -194,8 +195,8 @@ public class MainActivity extends ActionBarActivity {
             startActivity(new Intent(this, BookBagListView.class));
         } else if (id == R.id.main_btn_search) {
             startActivity(new Intent(this, SearchActivity.class));
-//        } else if (id == R.id.main_donate_button) {
-//            startActivityForResult(new Intent(this, DonateActivity.class), BillingHelper.REQUEST_PURCHASE);
+        } else if (menuProvider != null) {
+            menuProvider.onItemSelected(this, id);
         }
     }
 }

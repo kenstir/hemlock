@@ -1,7 +1,9 @@
 package org.evergreen_ils.auth;
 
+import android.net.Uri;
 import android.text.InputType;
 import android.text.TextUtils;
+import android.widget.Button;
 import org.evergreen_ils.R;
 
 import android.accounts.Account;
@@ -15,6 +17,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
+import org.evergreen_ils.system.EvergreenServer;
 import org.evergreen_ils.utils.ui.AppState;
 import org.evergreen_ils.system.Log;
 import org.evergreen_ils.system.Library;
@@ -38,7 +41,8 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity {
     private AsyncTask signinTask = null;
     private AlertDialog alertDialog = null;
     private String alertMessage = null;
-    Library selected_library = null;
+    protected Library selected_library = null;
+    protected Button forgotPasswordButton = null;
 
     protected void setContentViewImpl() {
         setContentView(R.layout.activity_login);
@@ -72,13 +76,23 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity {
             accountNameText.setText(accountName);
         }
 
-        findViewById(R.id.submit).setOnClickListener(
-                new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        submit();
-                    }
-                });
+        findViewById(R.id.submit).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                submit();
+            }
+        });
+
+        forgotPasswordButton = (Button)findViewById(R.id.forgot_password_button);
+        if (forgotPasswordButton != null) {
+            forgotPasswordButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    String url = getString(R.string.ou_library_url) + "/eg/opac/password_reset";
+                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
+                }
+            });
+        }
 
         if (savedInstanceState != null) {
             Log.d(TAG, "onCreate> savedInstanceState=" + savedInstanceState);

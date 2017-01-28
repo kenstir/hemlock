@@ -21,6 +21,8 @@
     <string name="ou_library_url">https://demo.evergreencatalog.com</string>
     <!-- URL of feedback form -->
     <string name="ou_feedback_url"></string>
-    <!-- class name that supplies data necessary for billing through the Play Store -->
+    <!-- name of class that supplies data necessary for billing through the Play Store -->
     <string name="ou_billing_data_provider"></string>
+    <!-- name of class that supplies menu handler for main menu extensions -->
+    <string name="ou_menu_provider"></string>
 </resources>
