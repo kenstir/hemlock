@@ -89,7 +89,8 @@
     </style>
 
     <style name="CustomTitlePageIndicator">
-        <item name="android:background">#18FF0000</item>
+        <!--<item name="android:background">#18FF0000</item>-->
+        <item name="android:background">#1800FF00</item>
         <item name="footerColor">#FFAA2222</item>
         <item name="footerLineHeight">1dp</item>
         <item name="footerIndicatorHeight">3dp</item>
@@ -121,7 +122,8 @@
 
     <style name="CustomUnderlinePageIndicator">
         <item name="selectedColor">#FFCC0000</item>
-        <item name="android:background">#FFCCCCCC</item>
+        <!--<item name="android:background">#FFCCCCCC</item>-->
+        <item name="android:background">#FFff0000</item>
         <item name="fadeLength">1000</item>
         <item name="fadeDelay">1000</item>
     </style>
@@ -159,19 +161,13 @@
     <color name="primary">@color/primary_material_dark</color>
     <color name="primary_dark">@color/primary_dark_material_dark</color>
     <color name="accent">#76ff03</color>
-    <style name="HemlockDark" parent="Theme.AppCompat">
-        <item name="colorPrimary">@color/primary</item>
-        <item name="colorPrimaryDark">@color/primary_dark</item>
-        <item name="colorAccent">@color/accent</item>
-    </style>
 
-    <style name="HemlockHalloween" parent="Theme.AppCompat">
+    <style name="HemlockDark" parent="Theme.AppCompat">
         <item name="colorPrimary">@color/primary</item>
         <item name="colorPrimaryDark">@color/primary_dark</item>
         <item name="colorAccent">@color/hemlock_accent</item>
     </style>
-
-    <style name="HemlockHalloweenNoActionBar" parent="Theme.AppCompat.NoActionBar">
+    <style name="HemlockDarkNoActionBar" parent="Theme.AppCompat.NoActionBar">
         <item name="colorPrimary">@color/primary</item>
         <item name="colorPrimaryDark">@color/primary_dark</item>
         <item name="colorAccent">@color/hemlock_accent</item>

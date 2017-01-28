@@ -29,7 +29,7 @@
         android:fullBackupContent="true"
         android:icon="@drawable/launcher_icon"
         android:label="@string/ou_app_label"
-        android:theme="@style/HemlockHalloween" >
+        android:theme="@style/HemlockDark" >
 
         <!-- Notification receiver -->
         <receiver
@@ -57,7 +57,7 @@
 
         <activity
                 android:name="org.evergreen_ils.views.splashscreen.SplashActivity"
-                android:theme="@style/HemlockHalloweenNoActionBar">
+                android:theme="@style/HemlockDarkNoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />

@@ -20,8 +20,8 @@
     <color name="header_gradient_stop">#1E7152</color>
     <color name="library_logo_text_coor">#000</color>
 
-    <color name="background">#333</color>
-    <color name="dark">#333</color>
+    <color name="background">@color/background_material_dark</color>
+    <color name="dark">@color/background_material_dark</color>
 
     <color name="application_button_start">#444</color>
     <color name="application_button_stop">#444</color>

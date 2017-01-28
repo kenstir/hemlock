@@ -23,13 +23,13 @@
     <!-- primary_dark - straight up material -->
     <color name="primary_dark">@color/primary_dark_material_dark</color>
 
-    <style name="PINES" parent="Theme.AppCompat">
+    <style name="PINESDark" parent="Theme.AppCompat">
         <item name="colorPrimary">@color/primary</item>
         <item name="colorPrimaryDark">@color/primary_dark</item>
         <item name="colorAccent">@color/accent</item>
     </style>
 
-    <style name="PINESNoActionBar" parent="Theme.AppCompat.NoActionBar">
+    <style name="PINESDarkNoActionBar" parent="Theme.AppCompat.NoActionBar">
         <item name="colorPrimary">@color/primary</item>
         <item name="colorPrimaryDark">@color/primary_dark</item>
         <item name="colorAccent">@color/accent</item>

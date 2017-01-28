@@ -29,11 +29,11 @@
         android:fullBackupContent="true"
         android:icon="@drawable/launcher_icon"
         android:label="@string/ou_app_label"
-        android:theme="@style/PINES" >
+        android:theme="@style/PINESDark" >
 
         <activity
                 android:name="org.evergreen_ils.views.splashscreen.SplashActivity"
-                android:theme="@style/PINESNoActionBar">
+                android:theme="@style/PINESDarkNoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
