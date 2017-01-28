@@ -32,6 +32,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import org.evergreen_ils.R;
+import org.evergreen_ils.accountAccess.AccountAccess;
 import org.evergreen_ils.accountAccess.AccountUtils;
 import org.evergreen_ils.accountAccess.bookbags.BookBagListView;
 import org.evergreen_ils.accountAccess.checkout.ItemsCheckOutListView;
@@ -167,6 +168,11 @@ public class MainActivity extends ActionBarActivity {
                 }
             });
             Log.i(Const.AUTH_TAG, "after addAccount");
+            return true;
+        } else if (id == R.id.action_logout) {
+            AccountAccess.getInstance().logout(this);
+            Log.i(Const.AUTH_TAG, "after logout");
+            SplashActivity.restartApp(this);
             return true;
         } else if (id == R.id.action_feedback) {
             startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(getFeedbackUrl())));

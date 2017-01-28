@@ -200,6 +200,13 @@ public class AccountAccess {
         }
     }
 
+    public void logout(Activity activity) {
+        Log.d(Const.AUTH_TAG, "logout, userName=" + userName + ", authToken=" + authToken);
+        AccountUtils.invalidateAuthToken(activity, authToken);
+        AccountUtils.clearPassword(activity, userName);
+        clearSession();
+    }
+
     // ------------------------Checked Out Items Section
     // -------------------------//
 
