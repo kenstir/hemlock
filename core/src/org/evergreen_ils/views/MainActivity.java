@@ -171,7 +171,6 @@ public class MainActivity extends ActionBarActivity {
             return true;
         } else if (id == R.id.action_logout) {
             AccountAccess.getInstance().logout(this);
-            Log.i(Const.AUTH_TAG, "after logout");
             SplashActivity.restartApp(this);
             return true;
         } else if (id == R.id.action_feedback) {

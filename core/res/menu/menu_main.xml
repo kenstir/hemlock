@@ -4,9 +4,9 @@
         xmlns:yourapp="http://schemas.android.com/apk/res-auto">
     <item android:id="@+id/action_switch_account" android:title="@string/menu_switch_account"/>
     <item android:id="@+id/action_add_account" android:title="@string/menu_add_account"/>
-    <item android:id="@+id/action_logout" android:title="@string/menu_logout"/>
     <item android:id="@+id/action_feedback" android:title="@string/menu_feedback"/>
     <item android:id="@+id/action_donate" android:title="@string/menu_donate"/>
+    <item android:id="@+id/action_logout" android:title="@string/menu_logout"/>
     <!--<item android:id="@+id/action_search"
           android:icon="@drawable/abc_ic_search"
           android:title="@string/title_search"

@@ -393,6 +393,10 @@ public class SearchActivity extends ActionBarActivity {
                 startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
                 return true;
             }
+        } else if (id == R.id.action_logout) {
+            AccountAccess.getInstance().logout(this);
+            SplashActivity.restartApp(this);
+            return true;
         } else if (id == R.id.action_donate) {
             startActivityForResult(new Intent(this, DonateActivity.class), BillingHelper.REQUEST_PURCHASE);
         }
