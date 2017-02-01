@@ -22,6 +22,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.text.TextUtils;
+import org.evergreen_ils.android.App;
 import org.evergreen_ils.system.EvergreenServer;
 import org.evergreen_ils.utils.ui.AppState;
 import org.evergreen_ils.system.Log;
@@ -58,7 +59,7 @@ public class BillingHelper {
     public static void startSetup(Context context, String base64EncodedPublicKey, final OnSetupFinishedListener listener) {
         mStartTime = System.currentTimeMillis();
         mHelper = new IabHelper(context, base64EncodedPublicKey);
-        if (EvergreenServer.getInstance().getIsDebuggable())
+        if (App.getIsDebuggable(context))
             mHelper.enableDebugLogging(true);
         mSetupFinishedListener = listener;
         mHelper.startSetup(new IabHelper.OnIabSetupFinishedListener() {
@@ -172,8 +173,8 @@ public class BillingHelper {
         return !mInventory.getAllOwnedSkus().isEmpty();
     }
 
-    public static boolean showDonateButton() {
-        boolean isReleaseBuild = !EvergreenServer.getInstance().getIsDebuggable();
+    public static boolean showDonateButton(Context context) {
+        boolean isReleaseBuild = !App.getIsDebuggable(context);
 
         // if user has any permanent items, we do not show it
         if (isReleaseBuild && hasPurchasedPermanentItem()) {

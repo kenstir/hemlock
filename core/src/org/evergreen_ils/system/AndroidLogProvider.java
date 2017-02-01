@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Kenneth H. Cox
+ * Copyright (C) 2017 Kenneth H. Cox
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -16,14 +16,34 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
-package org.evergreen_ils;
+package org.evergreen_ils.system;
 
-/** Hemlock app constants
- *
- * Created by kenstir on 10/1/2016.
+/**
+ * Created by kenstir on 1/29/2017.
  */
-public class App {
-    public static final int ITEM_PLACE_HOLD = 0;
-    public static final int ITEM_SHOW_DETAILS = 1;
-    public static final int ITEM_ADD_TO_LIST = 2;
+public class AndroidLogProvider implements LogProvider {
+    @Override
+    public void d(String TAG, String msg) {
+        android.util.Log.d(TAG, msg);
+    }
+
+    @Override
+    public void d(String TAG, String msg, Throwable tr) {
+        android.util.Log.d(TAG, msg, tr);
+    }
+
+    @Override
+    public void i(String TAG, String msg) {
+        android.util.Log.i(TAG, msg);
+    }
+
+    @Override
+    public void w(String TAG, String msg) {
+        android.util.Log.w(TAG, msg);
+    }
+
+    @Override
+    public void w(String TAG, String msg, Throwable tr) {
+        android.util.Log.w(TAG, msg, tr);
+    }
 }

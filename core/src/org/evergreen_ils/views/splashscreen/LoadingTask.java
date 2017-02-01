@@ -24,6 +24,7 @@ import org.evergreen_ils.R;
 import org.evergreen_ils.accountAccess.AccountAccess;
 import org.evergreen_ils.accountAccess.AccountUtils;
 import org.evergreen_ils.accountAccess.SessionNotFoundException;
+import org.evergreen_ils.android.App;
 import org.evergreen_ils.searchCatalog.SearchCatalog;
 import org.evergreen_ils.utils.ui.AppState;
 
@@ -111,8 +112,8 @@ public class LoadingTask {
 
             Log.d(TAG, tag+"Loading resources from "+library.url);
             publishProgress("Loading resources");
+            App.enableCaching(mCallingActivity);
             EvergreenServer eg = EvergreenServer.getInstance();
-            eg.enableCaching(mCallingActivity);
             eg.connect(library.url);
             AccountAccess ac = AccountAccess.getInstance();
             eg.loadOrganizations(ac.fetchOrgTree());

@@ -168,7 +168,7 @@ public class SearchCatalog {
      */
     //todo replace callers of this method with RecordLoader.fetchBasicMetadata
     private OSRFObject getItemShortInfo(Integer id) {
-        OSRFObject response = (OSRFObject) Utils.doRequestSimple(conn(), Api.SEARCH,
+        OSRFObject response = (OSRFObject) Utils.doRequest(conn(), Api.SEARCH,
                 Api.MODS_SLIM_RETRIEVE, new Object[] {
                         id });
         return response;
@@ -181,7 +181,7 @@ public class SearchCatalog {
         for (RecordInfo record : records) {
             ids.add(record.doc_id);
         }
-        Object response = Utils.doRequestSimple(conn(), Api.SEARCH,
+        Object response = Utils.doRequest(conn(), Api.SEARCH,
                 Api.MODS_SLIM_BATCH, new Object[] {
                         ids });
         try {
@@ -207,7 +207,7 @@ public class SearchCatalog {
         }
         HashMap<String, Object> args = new HashMap<String, Object>();
         args.put("id", ids);
-        Object response = Utils.doRequestSimple(conn(), Api.PCRUD_SERVICE,
+        Object response = Utils.doRequest(conn(), Api.PCRUD_SERVICE,
                 Api.SEARCH_MRAF, new Object[] {
                 AccountAccess.getInstance().getAuthToken(),
                 args });
@@ -232,14 +232,14 @@ public class SearchCatalog {
     // candidate for on-demand loading
     public static List<OSRFObject> fetchCopyStatuses() {
 
-        List<OSRFObject> ccs_list = (List<OSRFObject>) Utils.doRequestSimple(conn(), Api.SEARCH,
+        List<OSRFObject> ccs_list = (List<OSRFObject>) Utils.doRequest(conn(), Api.SEARCH,
                 Api.COPY_STATUS_ALL, new Object[] {});
         return ccs_list;
     }
 
     public ArrayList<CopyLocationCounts> getCopyLocationCounts(Integer recordID, Integer orgID, Integer orgDepth) {
 
-        Object response = Utils.doRequestSimple(conn(), Api.SEARCH,
+        Object response = Utils.doRequest(conn(), Api.SEARCH,
                 Api.COPY_LOCATION_COUNTS, new Object[] {
                         recordID, orgID, orgDepth });
 
@@ -283,7 +283,7 @@ public class SearchCatalog {
 
     public static ArrayList<CopySummary> getCopyCount(Integer recordID, Integer orgID) {
 
-        List<?> list = (List<?>) Utils.doRequestSimple(conn(), Api.SEARCH,
+        List<?> list = (List<?>) Utils.doRequest(conn(), Api.SEARCH,
                 Api.COPY_COUNT, new Object[] { orgID, recordID });
 
         ArrayList<CopySummary> copyInfoList = new ArrayList<CopySummary>();

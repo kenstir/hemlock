@@ -96,7 +96,7 @@ public class MainActivity extends ActionBarActivity {
             @Override
             public void onSetupFinished(IabResult result) {
                 if (result.isSuccess()) {
-                    boolean showDonateButton = BillingHelper.showDonateButton();
+                    boolean showDonateButton = BillingHelper.showDonateButton(MainActivity.this);
                     Log.d(TAG, "onSetupFinished showDonate="+showDonateButton);
                     AppState.setBoolean(AppState.SHOW_DONATE, showDonateButton);
                 }

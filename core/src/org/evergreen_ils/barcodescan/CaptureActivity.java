@@ -132,12 +132,12 @@ public class CaptureActivity extends Activity implements SurfaceHolder.Callback 
 						characterSet, cameraManager);
 			}
 		} catch (IOException ioe) {
-			Log.w(TAG, ioe);
+			Log.w(TAG, "Error initializing camera", ioe);
 			displayFrameworkBugMessageAndExit("IOException");
 		} catch (RuntimeException e) {
 			// Barcode Scanner has seen crashes in the wild of this variety:
 			// java.?lang.?RuntimeException: Fail to connect to camera service
-			Log.w(TAG, "Unexpected error initializating camera", e);
+			Log.w(TAG, "Unexpected error initializing camera", e);
 			displayFrameworkBugMessageAndExit("RuntimeException");
 		}
 	}

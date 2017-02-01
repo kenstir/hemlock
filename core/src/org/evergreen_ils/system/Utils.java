@@ -169,18 +169,6 @@ public class Utils {
         return null;
     }
 
-    // does not throw exception
-    // is fast than with checks for multiple method invocations like in search
-    public static Object doRequestSimple(HttpConnection conn, String service,
-            String method, Object[] params) {
-
-        if (Looper.myLooper() == Looper.getMainLooper()) {
-            // running on UI thread!
-            throw new NullPointerException();
-        }
-        return doRequest(conn, service, method, params);
-    }
-
     public static String buildGatewayUrl(String service, String method, Object[] objects) {
         StringBuilder sb = new StringBuilder(128);
         sb.append("/osrf-gateway-v1?service=").append(service);

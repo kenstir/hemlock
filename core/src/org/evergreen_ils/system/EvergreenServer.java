@@ -18,15 +18,12 @@
 
 package org.evergreen_ils.system;
 
-import android.content.Context;
-import android.content.pm.ApplicationInfo;
 import android.text.TextUtils;
 import org.open_ils.idl.IDLException;
 import org.open_ils.idl.IDLParser;
 import org.opensrf.net.http.HttpConnection;
 import org.opensrf.util.OSRFObject;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
@@ -45,7 +42,6 @@ public class EvergreenServer {
     private static final String TAG = EvergreenServer.class.getSimpleName();
     private static EvergreenServer mInstance = null;
 
-    private boolean mIsDebuggable = false;
     private String mUrl = null;
     private HttpConnection mConn = null;
     private boolean mIDLLoaded = false;
@@ -59,10 +55,6 @@ public class EvergreenServer {
         if (mInstance == null)
             mInstance = new EvergreenServer();
         return mInstance;
-    }
-
-    public boolean getIsDebuggable() {
-        return mIsDebuggable;
     }
 
     public String getUrl() {
@@ -82,19 +74,6 @@ public class EvergreenServer {
         sb.append(library_url).append("/reports/fm_IDL.xml?");
         sb.append(TextUtils.join("&", params));
         return sb.toString();
-    }
-
-    public void enableCaching(Context context) {
-        mIsDebuggable = (0 != (context.getApplicationInfo().flags &= ApplicationInfo.FLAG_DEBUGGABLE));
-        try {
-            long httpCacheSize = 10 * 1024 * 1024; // 10 MiB
-            File httpCacheDir = new File(context.getCacheDir(), "volley");//try to reuse same cache dir as volley
-            Class.forName("android.net.http.HttpResponseCache")
-                    .getMethod("install", File.class, long.class)
-                    .invoke(null, httpCacheDir, httpCacheSize);
-        } catch (Exception httpResponseCacheNotAvailable) {
-            Log.d(TAG, "HTTP response cache is unavailable.");
-        }
     }
 
     private void reset() {

@@ -18,10 +18,16 @@
 
 package org.evergreen_ils.system;
 
-/** private logging class that maintains a queue for potential sharing
+/** private logging class that allows substituting different behaviors,
+ * at one point maintained a queue for sharing via email
  * Created by kenstir on 12/9/2015.
  */
 public class Log {
+    public static LogProvider provider = new AndroidLogProvider();
+
+    public static void setProvider(LogProvider _provider) {
+        provider = _provider;
+    }
 
     /*
     private static void println(int priority, String TAG, String msg, Throwable tr) {
@@ -92,30 +98,24 @@ public class Log {
     */
 
     public static void d(String TAG, String msg) {
-        android.util.Log.d(TAG, msg);
+        if (provider != null) provider.d(TAG, msg);
     }
     public static void d(String TAG, String msg, Throwable tr) {
-        android.util.Log.d(TAG, msg, tr);
+        if (provider != null) provider.d(TAG, msg, tr);
     }
     public static void i(String TAG, String msg) {
-        android.util.Log.i(TAG, msg);
-    }
-    public static void v(String TAG, String msg) {
-        android.util.Log.v(TAG, msg);
+        if (provider != null) provider.i(TAG, msg);
     }
     public static void w(String TAG, String msg) {
-        android.util.Log.w(TAG, msg);
-    }
-    public static void w(String TAG, Throwable tr) {
-        android.util.Log.w(TAG, null, tr);
+        if (provider != null) provider.w(TAG, msg);
     }
     public static void w(String TAG, String msg, Throwable tr) {
-        android.util.Log.w(TAG, msg, tr);
+        if (provider != null) provider.w(TAG, msg, tr);
     }
 
     public static long logElapsedTime(String TAG, long start_ms, String s) {
         long now_ms = System.currentTimeMillis();
-        Log.d(TAG, "elapsed: " + s + ": " + (now_ms - start_ms) + "ms");
+        if (provider != null) provider.d(TAG, "elapsed: " + s + ": " + (now_ms - start_ms) + "ms");
         return now_ms;
     }
 }

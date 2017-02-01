@@ -27,6 +27,7 @@ import android.support.v7.app.ActionBarActivity;
 import android.view.View;
 import android.widget.Toast;
 import org.evergreen_ils.R;
+import org.evergreen_ils.android.App;
 import org.evergreen_ils.billing.BillingHelper;
 import org.evergreen_ils.billing.IabResult;
 import org.evergreen_ils.system.EvergreenServer;
@@ -97,7 +98,7 @@ public class DonateActivity extends ActionBarActivity {
                 setBusy(false);
 
                 // debug apps cannot make purchases, just pretend
-                boolean isSuccess = EvergreenServer.getInstance().getIsDebuggable() ? true : result.isSuccess();
+                boolean isSuccess = App.getIsDebuggable(DonateActivity.this) ? true : result.isSuccess();
                 if (isSuccess) {
                     giveThanks(sku);
                 } else {
