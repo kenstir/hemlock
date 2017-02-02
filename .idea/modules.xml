@@ -2,13 +2,9 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/support/v7/appcompat/appcompat.iml" filepath="$PROJECT_DIR$/support/v7/appcompat/appcompat.iml" />
       <module fileurl="file://$PROJECT_DIR$/core/core.iml" filepath="$PROJECT_DIR$/core/core.iml" />
-      <module fileurl="file://$PROJECT_DIR$/cwmars_app/cwmars_app.iml" filepath="$PROJECT_DIR$/cwmars_app/cwmars_app.iml" />
-      <module fileurl="file://$PROJECT_DIR$/support/v7/gridlayout/gridlayout.iml" filepath="$PROJECT_DIR$/support/v7/gridlayout/gridlayout.iml" />
       <module fileurl="file://$PROJECT_DIR$/hemlock_app/hemlock_app.iml" filepath="$PROJECT_DIR$/hemlock_app/hemlock_app.iml" />
-      <module fileurl="file://$PROJECT_DIR$/pines_app/pines_app.iml" filepath="$PROJECT_DIR$/pines_app/pines_app.iml" />
-      <module fileurl="file://$PROJECT_DIR$/support/v7/recyclerview/recyclerview.iml" filepath="$PROJECT_DIR$/support/v7/recyclerview/recyclerview.iml" />
+      <module fileurl="file://$PROJECT_DIR$/hemlock.iml" filepath="$PROJECT_DIR$/hemlock.iml" />
     </modules>
   </component>
 </project>
