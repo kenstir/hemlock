@@ -83,7 +83,10 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity {
             }
         });
 
-        forgotPasswordButton = (Button)findViewById(R.id.forgot_password_button);
+        try {
+            forgotPasswordButton = (Button) findViewById(R.id.forgot_password_button);
+        } catch (NoSuchFieldError e) {
+        }
         if (forgotPasswordButton != null) {
             forgotPasswordButton.setOnClickListener(new View.OnClickListener() {
                 @Override
