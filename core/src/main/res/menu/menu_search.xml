@@ -3,7 +3,6 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:yourapp="http://schemas.android.com/apk/res-auto">
     <item android:id="@+id/action_advanced_search"
-          android:icon="@drawable/abc_ic_search_api_mtrl_alpha"
           android:title="@string/advanced_search"/>
     <item android:id="@+id/action_feedback" android:title="@string/menu_feedback"/>
     <item android:id="@+id/action_donate" android:title="@string/title_donate"/>
