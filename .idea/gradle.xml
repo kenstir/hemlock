@@ -10,6 +10,7 @@
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/core" />
             <option value="$PROJECT_DIR$/hemlock_app" />
+            <option value="$PROJECT_DIR$/pines_app" />
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />
