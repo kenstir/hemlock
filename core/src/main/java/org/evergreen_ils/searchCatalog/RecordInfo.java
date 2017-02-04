@@ -192,6 +192,8 @@ public class RecordInfo implements Serializable {
      * https://bark.cwmars.org/eg/opac/record/3306629
      */
     public boolean isOnlineResource() {
+        Log.d(TAG, "isOnlineResource id="+doc_id+" search_format="+search_format
+                +" online_loc="+online_loc);
         return (!TextUtils.isEmpty(online_loc)
                 && SearchFormat.isOnlineResource(search_format));
     }
