@@ -98,4 +98,12 @@ public class OSRFTest {
         Log.i(TAG, "ccs_list="+ccs_list);
     }
 
+    @Test
+    public void testOrgTypesRetrieve() throws Exception {
+        assertLoggedIn();
+        mConn = EvergreenServer.getInstance().gatewayConnection();
+        List<OSRFObject> l = (List<OSRFObject>) Utils.doRequest(mConn, Api.ACTOR,
+                Api.ORG_TYPES_RETRIEVE, new Object[] {});
+        Log.i(TAG, "l="+l);
+    }
 }

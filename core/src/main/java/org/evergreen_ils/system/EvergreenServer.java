@@ -37,7 +37,7 @@ public class EvergreenServer {
     //ac,au,aua,auact,cuat
     //aus
     //private static final String IDL_CLASSES_USED = "acn,acp,ahr,ahtc,aou,au,bmp,cbreb,cbrebi,cbrebin,cbrebn,ccs,circ,ex,mbt,mbts,mous,mra,mraf,mus,mvr,perm_ex";
-    private static final String IDL_CLASSES_USED = "ac,acn,acp,ahr,ahtc,aou,au,aua,auact,aus,bmp,cbreb,cbrebi,cbrebin,cbrebn,ccs,circ,cuat,ex,mbt,mbts,mous,mra,mraf,mus,mvr,perm_ex";
+    private static final String IDL_CLASSES_USED = "ac,acn,acp,ahr,ahtc,aou,aout,au,aua,auact,aus,bmp,cbreb,cbrebi,cbrebin,cbrebn,ccs,circ,cuat,ex,mbt,mbts,mous,mra,mraf,mus,mvr,perm_ex";
 
     private static final String TAG = EvergreenServer.class.getSimpleName();
     private static EvergreenServer mInstance = null;
@@ -127,9 +127,9 @@ public class EvergreenServer {
         org.opac_visible = TextUtils.equals(opac_visible, "t");
 
         org.indentedDisplayPrefix = new String(new char[level]).replace("\0", "  ");
-        //Log.d(TAG, "kcxxx: id="+org.id+" level="+org.level+" name="+org.name+" vis="+(org.opac_visible ? "1" : "0"));
-        if (org.opac_visible)
-            mOrganizations.add(org);
+        Log.d(TAG, "kcxxx: id="+org.id+" level="+org.level+" name="+org.name+" vis="+(org.opac_visible ? "1" : "0"));
+        //if (org.opac_visible)
+        mOrganizations.add(org);
 
         List<OSRFObject> children = null;
         try {
@@ -142,13 +142,13 @@ public class EvergreenServer {
         }
     }
 
-    public void loadOrganizations(OSRFObject orgTree) {
-        mOrganizations = new ArrayList<Organization>();
+    public void loadOrganizations(OSRFObject orgTree, boolean flatten) {
+        mOrganizations = new ArrayList<>();
         addOrganization(orgTree, 0);
 
         // If the org tree is too big, then an indented list is unwieldy.
         // Convert it into a flat list sorted by org.name.
-        if (mOrganizations.size() > 25) {
+        if (flatten && mOrganizations.size() > 25) {
             Collections.sort(mOrganizations, new Comparator<Organization>() {
                 @Override
                 public int compare(Organization a, Organization b) {
@@ -167,6 +167,16 @@ public class EvergreenServer {
     public ArrayList<Organization> getOrganizations() {
         return mOrganizations;
     }
+
+//    public ArrayList<Organization> getVisibleOrganizations() {
+//        ArrayList<Organization> orgs = new ArrayList<>(mOrganizations.size());
+//        for (Organization org: mOrganizations) {
+//            if (org.opac_visible) {
+//                orgs.add(org);
+//            }
+//        }
+//        return orgs;
+//    }
 
     public Organization getOrganization(int id) {
         for (int i = 0; i < mOrganizations.size(); i++) {

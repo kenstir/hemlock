@@ -30,7 +30,6 @@ import org.evergreen_ils.Api;
 import org.evergreen_ils.R;
 import org.evergreen_ils.accountAccess.AccountAccess;
 import org.evergreen_ils.accountAccess.SessionNotFoundException;
-import org.evergreen_ils.system.EvergreenConstants;
 import org.evergreen_ils.system.EvergreenServer;
 import org.evergreen_ils.system.Organization;
 import org.evergreen_ils.searchCatalog.RecordInfo;
@@ -281,7 +280,7 @@ public class PlaceHoldActivity extends ActionBarActivity {
             @Override
             public boolean isEnabled(int pos) {
                 Organization org = eg.getInstance().getOrganizations().get(pos);
-                return org.orgType >= EvergreenConstants.ORG_TYPE_BRANCH;
+                return org.isPickupLocation();
             }
         };
         orgSpinner.setAdapter(adapter);

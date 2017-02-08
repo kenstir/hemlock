@@ -110,12 +110,15 @@ public class CopyInformationActivity extends ActionBarActivity {
         if (record.copyLocationCountsList == null)
             return;
         copyInfoRecords.clear();
-        for (CopyLocationCounts info : record.copyLocationCountsList)
+        for (CopyLocationCounts info : record.copyLocationCountsList) {
             copyInfoRecords.add(info);
+        }
+        //todo figure out how to display this like GAPINES
+        //if (getResources().getBoolean(R.bool.ou_flatten_org_tree))
+        final EvergreenServer eg = EvergreenServer.getInstance();
         Collections.sort(copyInfoRecords, new Comparator<CopyLocationCounts>() {
             @Override
             public int compare(CopyLocationCounts a, CopyLocationCounts b) {
-                EvergreenServer eg = EvergreenServer.getInstance();
                 return eg.getOrganizationName(a.org_id).compareTo(eg.getOrganizationName(b.org_id));
             }
         });

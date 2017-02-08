@@ -25,4 +25,6 @@
     <string name="ou_billing_data_provider"></string>
     <!-- name of class that supplies menu handler for main menu extensions -->
     <string name="ou_menu_provider"></string>
+    <!-- if true, flatten the list of libraries and sort by name -->
+    <bool name="ou_flatten_org_tree">true</bool>
 </resources>

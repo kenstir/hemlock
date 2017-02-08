@@ -116,7 +116,7 @@ public class LoadingTask {
             EvergreenServer eg = EvergreenServer.getInstance();
             eg.connect(library.url);
             AccountAccess ac = AccountAccess.getInstance();
-            eg.loadOrganizations(ac.fetchOrgTree());
+            eg.loadOrganizations(ac.fetchOrgTree(), mCallingActivity.getResources().getBoolean(R.bool.ou_flatten_org_tree));
             eg.loadCopyStatuses(SearchCatalog.fetchCopyStatuses());
 
             // auth token zen: try once and if it fails, invalidate the token and try again
