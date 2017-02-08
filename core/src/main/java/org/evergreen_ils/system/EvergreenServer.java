@@ -126,10 +126,11 @@ public class EvergreenServer {
         String opac_visible = obj.getString("opac_visible");
         org.opac_visible = TextUtils.equals(opac_visible, "t");
 
-        org.indentedDisplayPrefix = new String(new char[level]).replace("\0", "  ");
+        org.indentedDisplayPrefix = new String(new char[level]).replace("\0", "   ");
         Log.d(TAG, "kcxxx: id="+org.id+" level="+org.level+" name="+org.name+" vis="+(org.opac_visible ? "1" : "0"));
-        //if (org.opac_visible)
-        mOrganizations.add(org);
+
+        if (org.opac_visible)
+            mOrganizations.add(org);
 
         List<OSRFObject> children = null;
         try {

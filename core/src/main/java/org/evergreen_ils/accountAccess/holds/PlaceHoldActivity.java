@@ -271,7 +271,7 @@ public class PlaceHoldActivity extends ActionBarActivity {
         ArrayList<String> list = new ArrayList<>();
         for (int i = 0; i < eg.getInstance().getOrganizations().size(); i++) {
             Organization org = eg.getInstance().getOrganizations().get(i);
-            list.add(org.indentedDisplayPrefix + org.name);
+            list.add(org.getTreeDisplayName());
             if (org.id == defaultLibraryID) {
                 selectedOrgPos = i;
             }
