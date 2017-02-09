@@ -143,13 +143,13 @@ public class EvergreenServer {
         }
     }
 
-    public void loadOrganizations(OSRFObject orgTree, boolean flatten) {
+    public void loadOrganizations(OSRFObject orgTree, boolean hierarchical_org_tree) {
         mOrganizations = new ArrayList<>();
         addOrganization(orgTree, 0);
 
         // If the org tree is too big, then an indented list is unwieldy.
         // Convert it into a flat list sorted by org.name.
-        if (flatten && mOrganizations.size() > 25) {
+        if (!hierarchical_org_tree && mOrganizations.size() > 25) {
             Collections.sort(mOrganizations, new Comparator<Organization>() {
                 @Override
                 public int compare(Organization a, Organization b) {
@@ -168,16 +168,6 @@ public class EvergreenServer {
     public ArrayList<Organization> getOrganizations() {
         return mOrganizations;
     }
-
-//    public ArrayList<Organization> getVisibleOrganizations() {
-//        ArrayList<Organization> orgs = new ArrayList<>(mOrganizations.size());
-//        for (Organization org: mOrganizations) {
-//            if (org.opac_visible) {
-//                orgs.add(org);
-//            }
-//        }
-//        return orgs;
-//    }
 
     public Organization getOrganization(int id) {
         for (int i = 0; i < mOrganizations.size(); i++) {

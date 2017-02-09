@@ -109,13 +109,26 @@ public class CopyInformationActivity extends ActionBarActivity {
     public void updateCopyInfo() {
         if (record.copyLocationCountsList == null)
             return;
+
+        final EvergreenServer eg = EvergreenServer.getInstance();
+
         copyInfoRecords.clear();
         for (CopyLocationCounts info : record.copyLocationCountsList) {
-            copyInfoRecords.add(info);
+            Organization org = eg.getOrganization(info.org_id);
+            if (org != null && org.opac_visible) {
+                // if the branch is not opac visible, it shouldn't appear anywhere
+                copyInfoRecords.add(info);
+            }
         }
-        //todo figure out how to display this like GAPINES
-        //if (getResources().getBoolean(R.bool.ou_flatten_org_tree))
-        final EvergreenServer eg = EvergreenServer.getInstance();
+
+        if (getResources().getBoolean(R.bool.ou_group_copy_info_by_system)) {
+            // todo figure out how to do it like GAPINES
+            // See:
+            //   http://gapines.org/eg/opac/record/5700567?locg=1
+            //   http://git.evergreen-ils.org/?p=evergreen/pines.git;a=blob;f=Open-ILS/src/templates/opac/parts/record/copy_table.tt2;h=3a25df296b9c5cc92fbe250536bafbe9df62ddce;hb=refs/heads/rel_2_11_1_opac
+            //   http://git.evergreen-ils.org/?p=evergreen/pines.git;a=blob;f=Open-ILS/src/templates/opac/parts/library_name_link.tt2;h=96fadcaa61d0d58258238502bf1a93922dd3f469;hb=refs/heads/rel_2_11_1_opac
+            // until then, just fall through and sort
+        }
         Collections.sort(copyInfoRecords, new Comparator<CopyLocationCounts>() {
             @Override
             public int compare(CopyLocationCounts a, CopyLocationCounts b) {

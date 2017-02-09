@@ -12,5 +12,6 @@
     <string name="ou_activity_subtitle">%2$s</string>
     <string name="ou_library_url">https://gapines.org</string>
     <string name="ou_menu_provider">net.kenstir.apps.pines.PinesMenuProvider</string>
-    <bool name="ou_flatten_org_tree">false</bool>
+    <bool name="ou_hierarchical_library_spinners">true</bool>
+    <bool name="ou_group_copy_info_by_system">true</bool>
 </resources>
