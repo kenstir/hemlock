@@ -519,16 +519,16 @@ public class AccountAccess {
         complexParam.put("copyid", target_copy);
         complexParam.put("opac_renewal", 1);
 
-        Object a_lot = (Object) Utils.doRequest(conn(), Api.SERVICE_CIRC,
+        Object resp = Utils.doRequest(conn(), Api.SERVICE_CIRC,
                 Api.CIRC_RENEW, authToken, new Object[] {
                         authToken, complexParam });
 
-        Map<String, String> resp = (Map<String, String>) a_lot;
+        Map<String, String> resp_map = (Map<String, String>) resp;
 
-        if (resp.get("textcode") != null && !resp.get("textcode").equals("SUCCESS")) {
-            if (resp.get("textcode").equals("MAX_RENEWALS_REACHED"))
+        if (resp_map.get("textcode") != null && !resp_map.get("textcode").equals("SUCCESS")) {
+            if (resp_map.get("textcode").equals("MAX_RENEWALS_REACHED"))
                 throw new MaxRenewalsException();
-            throw new ServerErrorMessage(resp.get("desc").toString());
+            throw new ServerErrorMessage(resp_map.get("desc").toString());
         }
 
     }
@@ -539,9 +539,9 @@ public class AccountAccess {
     // todo: call service=open-ils.actor&method=open-ils.actor.org_types.retrieve
 
     public OSRFObject fetchOrgTree() {
-        Object response = Utils.doRequest(conn(), Api.ACTOR,
+        Object resp = Utils.doRequest(conn(), Api.ACTOR,
                 Api.ORG_TREE_RETRIEVE, new Object[]{});
-        return (OSRFObject) response;
+        return (OSRFObject) resp;
     }
 
     /**
