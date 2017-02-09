@@ -108,6 +108,9 @@ public class Api {
     public static final String SERVICE_SERIAL = "open-ils.serial";
     public static final String METHOD_FETCH_ISSUANCE = "open-ils.serial.issuance.pub_fleshed.batch.retrieve";
 
+    /// misc
+    public static final String ILS_VERSION = "opensrf.open-ils.system.ils_version";
+
     /// general
 
     public static final String DATE_PATTERN = "yyyy-MM-dd'T'hh:mm:ssZ";
