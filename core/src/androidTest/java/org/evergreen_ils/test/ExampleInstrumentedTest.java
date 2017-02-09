@@ -1,4 +1,4 @@
-package net.kenstir.apps.core;
+package org.evergreen_ils.test;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;
