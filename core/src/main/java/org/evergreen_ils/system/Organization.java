@@ -34,4 +34,13 @@ public class Organization implements Serializable {
 
     public Organization() {
     }
+
+    public String getTreeDisplayName() {
+        return indentedDisplayPrefix + name;
+    }
+
+    public boolean isPickupLocation() {
+        // todo review this logic
+        return orgType >= EvergreenConstants.ORG_TYPE_BRANCH;
+    }
 }

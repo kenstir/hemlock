@@ -39,6 +39,7 @@ import org.opensrf.net.http.HttpConnection;
 import org.opensrf.util.OSRFObject;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by kenstir on 1/29/2017.
@@ -91,11 +92,47 @@ public class OSRFTest {
     public void testCopyStatusAll() throws Exception {
         assertLoggedIn();
         mConn = EvergreenServer.getInstance().gatewayConnection();
-        List<OSRFObject> ccs_list = (List<OSRFObject>) Utils.doRequest(conn(), Api.SEARCH,
+        Object o = Utils.doRequest(conn(), Api.SEARCH,
                 Api.COPY_STATUS_ALL, new Object[] {});
+        List<OSRFObject> ccs_list = (List<OSRFObject>) o;
         assertNotNull(ccs_list);
         assertTrue(ccs_list.size() > 0);
         Log.i(TAG, "ccs_list="+ccs_list);
     }
 
+    @Test
+    public void testOrgTypesRetrieve() throws Exception {
+        assertLoggedIn();
+        mConn = EvergreenServer.getInstance().gatewayConnection();
+        Object resp = Utils.doRequest(mConn, Api.ACTOR,
+                Api.ORG_TYPES_RETRIEVE, new Object[] {});
+        List<OSRFObject> l = (List<OSRFObject>) resp;
+        Log.i(TAG, "l="+l);
+    }
+
+    // Api. ORG_UNIT_RETRIEVE is not useful, it returns the same info as ORG_TREE_RETRIEVE
+    /*
+    @Test
+    public void testOrgUnitRetrieve() throws Exception {
+        assertLoggedIn();
+        mConn = EvergreenServer.getInstance().gatewayConnection();
+        Object o = Utils.doRequest(mConn, Api.ACTOR,
+                Api.ORG_UNIT_RETRIEVE, new Object[] {
+                        mAuthToken, 15//optional org unit id
+                });
+        Log.i(TAG, "o="+o);
+    }
+    */
+
+    @Test
+    public void testOrgUnitRetrieve() throws Exception {
+        assertLoggedIn();
+        mConn = EvergreenServer.getInstance().gatewayConnection();
+        Object resp = Utils.doRequest(mConn, Api.ACTOR,
+                Api.ORG_UNIT_SETTINGS_RETRIEVE, new Object[]{
+                        mAuthToken, 15//169//org unit id
+                });
+        Map<String, ?> resp_map = ((Map<String, ?>) resp);
+        Log.i(TAG, "resp_map=" + resp_map);
+    }
 }

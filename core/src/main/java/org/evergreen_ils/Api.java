@@ -23,6 +23,7 @@ import org.evergreen_ils.system.Log;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.StringTokenizer;
 
 /** OSRF API constants
  *
@@ -39,6 +40,9 @@ public class Api {
     public static final String CHECKED_OUT = "open-ils.actor.user.checked_out";
     public static final String USER_FLESHED_RETRIEVE = "open-ils.actor.user.fleshed.retrieve"; // au,aua,ac,auact,cuat
     public static final String ORG_TREE_RETRIEVE = "open-ils.actor.org_tree.retrieve";
+    public static final String ORG_TYPES_RETRIEVE = "open-ils.actor.org_types.retrieve";
+    public static final String ORG_UNIT_RETRIEVE = "open-ils.actor.org_unit.retrieve";
+    public static final String ORG_UNIT_SETTINGS_RETRIEVE = "open-ils.actor.org_unit_setting.values.ranged.retrieve";
     public static final String ORG_SETTING_ANCESTOR = "open-ils.actor.ou_setting.ancestor_default";
     public static final String FINES_SUMMARY = "open-ils.actor.user.fines.summary";
     public static final String TRANSACTIONS_WITH_CHARGES = "open-ils.actor.user.transactions.have_charge.fleshed";

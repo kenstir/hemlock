@@ -33,6 +33,7 @@ import org.evergreen_ils.accountAccess.SessionNotFoundException;
 import org.evergreen_ils.system.EvergreenServer;
 import org.evergreen_ils.system.Log;
 import org.evergreen_ils.searchCatalog.RecordInfo;
+import org.evergreen_ils.system.Organization;
 import org.evergreen_ils.utils.ui.ActionBarUtils;
 import org.evergreen_ils.utils.ui.ProgressDialogSupport;
 import org.evergreen_ils.views.splashscreen.SplashActivity;
@@ -222,8 +223,9 @@ public class HoldDetails extends ActionBarActivity {
 
         ArrayList<String> list = new ArrayList<String>();
         for (int i = 0; i < eg.getInstance().getOrganizations().size(); i++) {
-            list.add(eg.getInstance().getOrganizations().get(i).indentedDisplayPrefix + eg.getInstance().getOrganizations().get(i).name);
-            if (eg.getInstance().getOrganizations().get(i).id == record.pickup_lib) {
+            Organization org = eg.getInstance().getOrganizations().get(i);
+            list.add(org.getTreeDisplayName());
+            if (org.id == record.pickup_lib) {
                 selectedOrgPos = i;
             }
         }
