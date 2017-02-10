@@ -130,7 +130,7 @@ public class OSRFTest {
         mConn = EvergreenServer.getInstance().gatewayConnection();
         Object resp = Utils.doRequest(mConn, Api.ACTOR,
                 Api.ORG_UNIT_SETTINGS_RETRIEVE, new Object[]{
-                        mAuthToken, 169//15//org unit id
+                        mAuthToken, 15//169//org unit id
                 });
         Map<String, ?> resp_map = ((Map<String, ?>) resp);
         Log.i(TAG, "resp_map=" + resp_map);

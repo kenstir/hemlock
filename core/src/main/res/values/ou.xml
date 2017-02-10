@@ -26,7 +26,7 @@
     <!-- name of class that supplies menu handler for main menu extensions -->
     <string name="ou_menu_provider"></string>
     <!-- if true, organize library spinners hierarchically -->
-    <bool name="ou_hierarchical_org_tree">true</bool>
+    <bool name="ou_hierarchical_org_tree">false</bool>
     <!-- if true, group copy information by system and branch, instead of by branch -->
     <bool name="ou_group_copy_info_by_system">false</bool>
 </resources>
