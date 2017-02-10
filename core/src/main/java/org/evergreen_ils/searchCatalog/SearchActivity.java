@@ -252,13 +252,23 @@ public class SearchActivity extends ActionBarActivity {
                             recordList.add(record);
                         }
 
-                        searchResultsSummary.setText(String.format(getString(R.string.n_of_m_results), recordList.size(), search.visible));
                         searchResultsFragment.notifyDatasetChanged();
+                        updateSearchResultsSummary();
                         progress.dismiss();
                     }
                 });
             }
         };
+    }
+
+    private void updateSearchResultsSummary() {
+        String s;
+        if (recordList.size() < search.visible) {
+            s = getString(R.string.first_n_of_m_results, recordList.size(), search.visible);
+        } else {
+            s = getString(R.string.n_results, search.visible);
+        }
+        searchResultsSummary.setText(s);
     }
 
     private void initSearchOrgSpinner() {
@@ -410,7 +420,7 @@ public class SearchActivity extends ActionBarActivity {
                 recordList.add(record);
             }
             searchResultsFragment.notifyDatasetChanged();
-            searchResultsSummary.setText(String.format(getString(R.string.n_of_m_results), recordList.size(), search.visible));
+            updateSearchResultsSummary();
         }
     }
 

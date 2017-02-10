@@ -16,11 +16,11 @@
                 android:layout_height="wrap_content">
             <EditText
                     android:id="@+id/searchText"
+                    android:hint="@string/search_hint"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:hint="@string/search_hint"
-                    android:singleLine="true"
+                    android:maxLines="1"
                     android:gravity="bottom"/>
             <android.support.v7.widget.SwitchCompat
                     android:layout_width="wrap_content"
@@ -29,11 +29,12 @@
                     android:contentDescription="@string/search_options_button_alt"
                     android:checked="true"/>
             <Button
-                    android:id="@+id/search_button"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="0dp"
-                    android:contentDescription="@string/search_button_alt" android:text="@string/search_button"/>
+                android:id="@+id/search_button"
+                android:contentDescription="@string/search_button_alt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="0dp"
+                android:text="@string/search_button"/>
         </LinearLayout>
         <LinearLayout
                 android:orientation="vertical"
@@ -45,28 +46,31 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
                 <Spinner
-                        android:id="@+id/search_qtype_spinner"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:entries="@array/search_qtype"
-                        android:layout_weight="1"/>
+                    android:id="@+id/search_qtype_spinner"
+                    android:contentDescription="@string/search_qtype_spinner_alt"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:entries="@array/search_qtype"
+                    android:layout_weight="1"/>
                 <Spinner
-                        android:id="@+id/search_format_spinner"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"/>
+                    android:id="@+id/search_format_spinner"
+                    android:contentDescription="@string/search_format_spinner_alt"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"/>
             </LinearLayout>
             <LinearLayout
                     android:orientation="horizontal"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
                 <Spinner
-                        android:id="@+id/search_org_spinner"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="left"
-                        android:layout_weight="2"
-                        android:spinnerMode="dialog"/>
+                    android:id="@+id/search_org_spinner"
+                    android:contentDescription="@string/search_org_spinner_alt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="left"
+                    android:layout_weight="2"
+                    android:spinnerMode="dialog"/>
             </LinearLayout>
         </LinearLayout>
         <LinearLayout

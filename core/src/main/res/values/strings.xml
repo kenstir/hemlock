@@ -44,8 +44,11 @@
 
     <string name="search_hint">Search words</string>
     <string name="search_button">Search</string>
-    <string name="search_button_alt">search button</string>
-    <string name="search_options_button_alt">search options</string>
+    <string name="search_button_alt">search</string>
+    <string name="search_options_button_alt">search options visible</string>
+    <string name="search_qtype_spinner_alt">query type</string>
+    <string name="search_format_spinner_alt">item type</string>
+    <string name="search_org_spinner_alt">search library</string>
     <string name="advanced_search">Advanced Search</string>
     <string name="loading_dialog_text"></string>
     <string name="dialog_please_wait"></string>
@@ -67,7 +70,8 @@
     <string name="renew_dialog_message">Are you sure you want to renew this item?</string>
     <string name="toast_item_renewed">Item renewed</string>
     <string name="record_of">Item %1$d of %2$d</string>
-    <string name="n_of_m_results">Showing %1$d of %2$d results</string>
+    <string name="n_results">%1$d results</string>
+    <string name="first_n_of_m_results">%1$d most relevant results (of %2$d total)</string>
     <string name="n_of_m_available">%1$d of %2$s available at %3$s</string>
 
     <!-- Search Details View -->
@@ -103,7 +107,7 @@
     <string name="overdue">(overdue)</string>
 
     <!-- Fines Activity -->
-    <string name="total_owned">Total Owned </string>
+    <string name="total_owed">Total Owed</string>
     <string name="total_paid">Total Paid</string>
     <string name="balance_owed">Balance Owed</string>
 

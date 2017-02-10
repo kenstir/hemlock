@@ -21,7 +21,7 @@
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="@string/total_owned"
+                android:text="@string/total_owed"
                 />
             <TextView
                 android:layout_width="fill_parent"
@@ -43,7 +43,7 @@
             android:layout_height="wrap_content"
             >
             <TextView
-                android:id="@+id/fines_total_owned"
+                android:id="@+id/fines_total_owed"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"

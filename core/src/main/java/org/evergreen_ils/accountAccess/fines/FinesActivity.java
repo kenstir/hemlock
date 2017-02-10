@@ -78,7 +78,7 @@ public class FinesActivity extends ActionBarActivity {
         decimalFormater = new DecimalFormat("#0.00");
         lv = (ListView) findViewById(R.id.fines_overdue_materials_list);
 
-        total_owned = (TextView) findViewById(R.id.fines_total_owned);
+        total_owned = (TextView) findViewById(R.id.fines_total_owed);
         total_paid = (TextView) findViewById(R.id.fines_total_paid);
         balance_owed = (TextView) findViewById(R.id.fined_balance_owed);
 
