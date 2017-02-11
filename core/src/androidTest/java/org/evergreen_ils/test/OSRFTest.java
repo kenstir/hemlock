@@ -38,6 +38,8 @@ import org.junit.runner.RunWith;
 import org.opensrf.net.http.HttpConnection;
 import org.opensrf.util.OSRFObject;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -124,15 +126,43 @@ public class OSRFTest {
     }
     */
 
+    static void printMap(Map<String, ?> map) {
+        List<String> keys = new ArrayList(map.keySet());
+        Collections.sort(keys);
+        for (String key : keys) {
+            Log.d(TAG, key + " => " + map.get(key));
+        }
+    }
+
     @Test
-    public void testOrgUnitRetrieve() throws Exception {
+    public void testOrgUnitSettingsRetrieve() throws Exception {
         assertLoggedIn();
         mConn = EvergreenServer.getInstance().gatewayConnection();
+        Integer org_id = 15;//169
         Object resp = Utils.doRequest(mConn, Api.ACTOR,
                 Api.ORG_UNIT_SETTINGS_RETRIEVE, new Object[]{
-                        mAuthToken, 15//169//org unit id
-                });
+                        mAuthToken, org_id});
         Map<String, ?> resp_map = ((Map<String, ?>) resp);
-        Log.i(TAG, "resp_map=" + resp_map);
+        printMap(resp_map);
     }
+
+    // This did not successfully read the org setting opac.holds.org_unit_not_pickup_lib
+    // for PINES org 15, it returned null when ORG_UNIT_SETTINGS_RETRIEVE returned true.
+    /*
+    @Test
+    public void testOrgUnitSettingBatch() throws Exception {
+        final String ORG_UNIT_SETTINGS_BATCH = "open-ils.actor.ou_setting.ancestor_default.batch";
+        assertLoggedIn();
+        mConn = EvergreenServer.getInstance().gatewayConnection();
+        ArrayList<String> settings = new ArrayList<>();
+        settings.add("opac.holds.org_unit_not_pickup_lib");
+        settings.add("opac.holds.org_unit_not_pickup_lib");
+        Integer org_id = 15;//169
+        Object resp = Utils.doRequest(mConn, Api.ACTOR,
+                ORG_UNIT_SETTINGS_BATCH, new Object[]{
+                        mAuthToken, settings, org_id});
+        Map<String, ?> resp_map = ((Map<String, ?>) resp);
+        printMap(resp_map);
+    }
+    */
 }
