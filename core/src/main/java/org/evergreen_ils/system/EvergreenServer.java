@@ -19,6 +19,8 @@
 package org.evergreen_ils.system;
 
 import android.text.TextUtils;
+
+import org.evergreen_ils.Api;
 import org.open_ils.idl.IDLException;
 import org.open_ils.idl.IDLParser;
 import org.opensrf.net.http.HttpConnection;
@@ -45,6 +47,7 @@ public class EvergreenServer {
     private String mUrl = null;
     private HttpConnection mConn = null;
     private boolean mIDLLoaded = false;
+    private ArrayList<OrgType> mOrgTypes = null;
     private ArrayList<Organization> mOrganizations = null;
     private LinkedHashMap<String, String> mCopyStatuses = new LinkedHashMap<>();
 
@@ -80,6 +83,7 @@ public class EvergreenServer {
         mUrl = null;
         mConn = null;
         mIDLLoaded = false;
+        mOrgTypes = null;
         mOrganizations = null;
     }
 
@@ -115,19 +119,41 @@ public class EvergreenServer {
         }
     }
 
+    public void loadOrgTypes(List<OSRFObject> orgTypes) {
+        mOrgTypes = new ArrayList<>();
+        for (OSRFObject obj: orgTypes) {
+            OrgType orgType = new OrgType();
+            orgType.name = obj.getString("name");
+            orgType.id = obj.getInt("id");
+            orgType.opac_label = obj.getString("opac_label");
+            orgType.can_have_users = Api.parseBoolean(obj.getString("can_have_users"));
+            orgType.can_have_vols = Api.parseBoolean(obj.getString("can_have_vols"));
+//            orgType.parent = obj.getInt("parent");
+//            orgType.depth = obj.getInt("depth");
+            mOrgTypes.add(orgType);
+        }
+    }
+
+    private OrgType getOrgType(int id) {
+        for (OrgType orgType: mOrgTypes) {
+            if (orgType.id == id) {
+                return orgType;
+            }
+        }
+        return null;
+    }
+
     public void addOrganization(OSRFObject obj, int level) {
         Organization org = new Organization();
         org.level = level;
         org.id = obj.getInt("id");
         org.name = obj.getString("name");
         org.shortname = obj.getString("shortname");
-        org.orgType = obj.getInt("ou_type");
-
-        String opac_visible = obj.getString("opac_visible");
-        org.opac_visible = TextUtils.equals(opac_visible, "t");
+        org.orgType = getOrgType(obj.getInt("ou_type"));
+        org.opac_visible = Api.parseBoolean(obj.getString("opac_visible"));
 
         org.indentedDisplayPrefix = new String(new char[level]).replace("\0", "   ");
-        Log.d(TAG, "kcxxx: id="+org.id+" level="+org.level+" name="+org.name+" vis="+(org.opac_visible ? "1" : "0"));
+        Log.d(TAG, "kcxxx: id="+org.id+" level="+org.level+" type="+org.orgType.id+" users="+org.orgType.can_have_users+" vols="+org.orgType.can_have_vols+" vis="+(org.opac_visible ? "1" : "0")+" name="+org.name);
 
         if (org.opac_visible)
             mOrganizations.add(org);
@@ -190,7 +216,7 @@ public class EvergreenServer {
     public void loadCopyStatuses(List<OSRFObject> ccs_list) {
         mCopyStatuses.clear();
         for (OSRFObject ccs_obj: ccs_list) {
-            if (ccs_obj.getString("opac_visible").equals("t")) {
+            if (Api.parseBoolean(ccs_obj.getString("opac_visible"))) {
                 mCopyStatuses.put(ccs_obj.getInt("id") + "", ccs_obj.getString("name"));
                 //Log.d(TAG, "Add status "+ccs_obj.getString("name"));
             }

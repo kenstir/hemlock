@@ -21,13 +21,13 @@ import org.evergreen_ils.barcodescan.Intents;
 
 import java.io.Serializable;
 
-public class Organization implements Serializable {
+public class Organization /*implements Serializable*/ {
 
     public Integer level = null;
     public Integer id = null;
     public String name = null;
     public String shortname = null;
-    public Integer orgType = null;
+    public OrgType orgType = null;
     public String indentedDisplayPrefix = "";
 
     public Boolean opac_visible = null;
@@ -40,7 +40,8 @@ public class Organization implements Serializable {
     }
 
     public boolean isPickupLocation() {
-        // todo review this logic
-        return orgType >= EvergreenConstants.ORG_TYPE_BRANCH;
+        if (orgType == null)
+            return true;//should not happen
+        return orgType.can_have_vols;
     }
 }

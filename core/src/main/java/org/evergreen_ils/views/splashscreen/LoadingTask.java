@@ -116,6 +116,7 @@ public class LoadingTask {
             EvergreenServer eg = EvergreenServer.getInstance();
             eg.connect(library.url);
             AccountAccess ac = AccountAccess.getInstance();
+            eg.loadOrgTypes(ac.fetchOrgTypes());
             eg.loadOrganizations(ac.fetchOrgTree(), mCallingActivity.getResources().getBoolean(R.bool.ou_hierarchical_org_tree));
             eg.loadCopyStatuses(SearchCatalog.fetchCopyStatuses());
 
