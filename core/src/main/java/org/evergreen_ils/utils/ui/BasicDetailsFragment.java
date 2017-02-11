@@ -303,6 +303,8 @@ public class BasicDetailsFragment extends Fragment {
                     updateCopyCountView();
                 }
             });
+        } else {
+            Log.d(TAG, "not updating copy count view for some reason, STOPHERE");
         }
     }
 

@@ -25,6 +25,7 @@ public class Organization /*implements Serializable*/ {
 
     public Integer level = null;
     public Integer id = null;
+    public Integer parent_ou = null;
     public String name = null;
     public String shortname = null;
     public OrgType orgType = null;

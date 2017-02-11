@@ -54,10 +54,12 @@ public class OSRFObject extends HashMap<String, Object> implements OSRFSerializa
     }
 
     /** Returns the int value found at the given field */
-    public int getInt(String field) {
+    public Integer getInt(String field) {
         Object o = get(field);
-        if(o instanceof String)
+        if (o == null)
+            return null;
+        else if (o instanceof String)
             return Integer.parseInt((String) o);
-        return ((Integer) get(field)).intValue();
+        return (Integer) get(field);
     }
 }

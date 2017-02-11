@@ -147,6 +147,7 @@ public class EvergreenServer {
         Organization org = new Organization();
         org.level = level;
         org.id = obj.getInt("id");
+        org.parent_ou = obj.getInt("parent_ou");
         org.name = obj.getString("name");
         org.shortname = obj.getString("shortname");
         org.orgType = getOrgType(obj.getInt("ou_type"));
@@ -207,7 +208,7 @@ public class EvergreenServer {
     public String getOrganizationName(int id) {
         Organization org = getOrganization(id);
         if (org == null) {
-            return null;
+            return "";
         } else {
             return org.name;
         }

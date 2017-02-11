@@ -20,7 +20,6 @@
 package org.evergreen_ils.searchCatalog;
 
 import java.util.*;
-import java.util.Map.Entry;
 
 import android.support.v7.app.ActionBarActivity;
 import android.text.TextUtils;
@@ -54,6 +53,7 @@ public class CopyInformationActivity extends ActionBarActivity {
     private static final String TAG = CopyInformationActivity.class.getSimpleName();
     private RecordInfo record;
     private Integer orgID;
+    private boolean groupBySystem;
     private ListView lv;
     private ArrayList<CopyLocationCounts> copyInfoRecords;
     private CopyInformationArrayAdapter listAdapter;
@@ -76,6 +76,8 @@ public class CopyInformationActivity extends ActionBarActivity {
             record = (RecordInfo) getIntent().getSerializableExtra("recordInfo");
             orgID = getIntent().getIntExtra("orgID", 1);
         }
+
+        groupBySystem = getResources().getBoolean(R.bool.ou_group_copy_info_by_system);
 
         lv = (ListView) findViewById(R.id.copy_information_list);
         copyInfoRecords = new ArrayList<>();
@@ -115,26 +117,34 @@ public class CopyInformationActivity extends ActionBarActivity {
         copyInfoRecords.clear();
         for (CopyLocationCounts info : record.copyLocationCountsList) {
             Organization org = eg.getOrganization(info.org_id);
+            // if a branch is not opac visible, its copies should not be visible
             if (org != null && org.opac_visible) {
-                // if the branch is not opac visible, it shouldn't appear anywhere
                 copyInfoRecords.add(info);
             }
         }
 
-        if (getResources().getBoolean(R.bool.ou_group_copy_info_by_system)) {
-            // todo figure out how to do it like GAPINES
-            // See:
-            //   http://gapines.org/eg/opac/record/5700567?locg=1
-            //   http://git.evergreen-ils.org/?p=evergreen/pines.git;a=blob;f=Open-ILS/src/templates/opac/parts/record/copy_table.tt2;h=3a25df296b9c5cc92fbe250536bafbe9df62ddce;hb=refs/heads/rel_2_11_1_opac
-            //   http://git.evergreen-ils.org/?p=evergreen/pines.git;a=blob;f=Open-ILS/src/templates/opac/parts/library_name_link.tt2;h=96fadcaa61d0d58258238502bf1a93922dd3f469;hb=refs/heads/rel_2_11_1_opac
-            // until then, just fall through and sort
+        if (groupBySystem) {
+            // sort by system, then by branch, like http://gapines.org/eg/opac/record/5700567?locg=1
+            Collections.sort(copyInfoRecords, new Comparator<CopyLocationCounts>() {
+                @Override
+                public int compare(CopyLocationCounts a, CopyLocationCounts b) {
+                    Organization a_org = eg.getOrganization(a.org_id);
+                    Organization b_org = eg.getOrganization(b.org_id);
+                    int system_cmp = eg.getOrganizationName(a_org.parent_ou)
+                            .compareTo(eg.getOrganizationName(b_org.parent_ou));
+                    if (system_cmp != 0)
+                        return system_cmp;
+                    return a_org.name.compareTo(b_org.name);
+                }
+            });
+        } else {
+            Collections.sort(copyInfoRecords, new Comparator<CopyLocationCounts>() {
+                @Override
+                public int compare(CopyLocationCounts a, CopyLocationCounts b) {
+                    return eg.getOrganizationName(a.org_id).compareTo(eg.getOrganizationName(b.org_id));
+                }
+            });
         }
-        Collections.sort(copyInfoRecords, new Comparator<CopyLocationCounts>() {
-            @Override
-            public int compare(CopyLocationCounts a, CopyLocationCounts b) {
-                return eg.getOrganizationName(a.org_id).compareTo(eg.getOrganizationName(b.org_id));
-            }
-        });
         listAdapter.notifyDataSetChanged();
     }
 
@@ -171,7 +181,8 @@ public class CopyInformationActivity extends ActionBarActivity {
     }
 
     class CopyInformationArrayAdapter extends ArrayAdapter<CopyLocationCounts> {
-        private TextView copyLibraryText;
+        private TextView majorLocationText;
+        private TextView minorLocationText;
         private TextView copyCallNumberText;
         private TextView copyLocationText;
         private TextView copyStatusesText;
@@ -201,12 +212,21 @@ public class CopyInformationActivity extends ActionBarActivity {
                 row = inflater.inflate(R.layout.copy_information_item, parent, false);
             }
 
-            copyLibraryText = (TextView) row.findViewById(R.id.copy_information_library);
+            majorLocationText = (TextView) row.findViewById(R.id.copy_information_major_location);
+            minorLocationText = (TextView) row.findViewById(R.id.copy_information_minor_location);
             copyCallNumberText = (TextView) row.findViewById(R.id.copy_information_call_number);
             copyLocationText = (TextView) row.findViewById(R.id.copy_information_copy_location);
             copyStatusesText = (TextView) row.findViewById(R.id.copy_information_statuses);
 
-            copyLibraryText.setText(EvergreenServer.getInstance().getOrganizationName(item.org_id));
+            final EvergreenServer eg = EvergreenServer.getInstance();
+            Organization org = eg.getOrganization(item.org_id);
+            if (groupBySystem) {
+                majorLocationText.setText(eg.getOrganizationName(org.parent_ou));
+                minorLocationText.setText(eg.getOrganizationName(item.org_id));
+            } else {
+                majorLocationText.setText(eg.getOrganizationName(item.org_id));
+                minorLocationText.setVisibility(View.GONE);
+            }
             copyCallNumberText.setText(item.getCallNumber());
             copyLocationText.setText(item.copy_location);
 

@@ -8,9 +8,15 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        tools:text="Holden Gale Free Library"
+        tools:text="Desoto Trail Regional Library"
         style="@style/TitleSearchStyleList"
-        android:id="@+id/copy_information_library"/>
+        android:id="@+id/copy_information_major_location"/>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:text="Blakely-Maddox Memorial Library"
+        style="@style/AuthorSearchStyleList"
+        android:id="@+id/copy_information_minor_location"/>
 
     <LinearLayout
         android:orientation="horizontal"
