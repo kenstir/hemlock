@@ -34,7 +34,8 @@ public class ActionBarUtils {
         if (actionBar == null)
             return;
         String username = AccountAccess.getInstance().getUserName();
-        //username = "joe_gutenberg";//for screenshots
+        if (activity.getResources().getBoolean(R.bool.admin_screenshot_mode))
+            username = "janejetson";
         actionBar.setSubtitle(String.format(activity.getString(R.string.ou_activity_subtitle),
                 AppState.getString(AppState.LIBRARY_NAME), username));
         if (!TextUtils.isEmpty(title))

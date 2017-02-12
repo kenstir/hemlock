@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- if true, I am taking screenshots for the play store and want to fake some things -->
+    <bool name="admin_screenshot_mode">false</bool>
+</resources>
