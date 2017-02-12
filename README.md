@@ -15,8 +15,9 @@ Quick start for end users
 
 Quick start for developers
 --------------------------
-1. This app is built with [IntelliJ IDEA](https://www.jetbrains.com/idea/).  Open the project under hemlock_app.
-2. Want to build Hemlock with Gradle or Android Studio?  If you want to do it, let me know and submit a pull request.
+1. Get [Android Studio](https://developer.android.com/studio/index.html).
+2. Directory `core/` contains the shared code and resources, `cwmars_app/` the code and resources needed to customize it for the C/W MARS system.
+3. Profit. C'mon, you know better. This is Open Source.
 
 History of this app
 -------------------
