@@ -108,6 +108,7 @@ public class PlaceHoldActivity extends ActionBarActivity {
     private void startFetchOrgSettings() {
         start_ms = System.currentTimeMillis();
         mOutstandingRequests = 0;
+        Log.d(TAG, "" + eg.getOrganizations().size() + " organizations");
         for (Organization org: eg.getOrganizations()) {
             final Organization the_org = org;
             String url = eg.getUrl(Utils.buildGatewayUrl(
@@ -119,12 +120,6 @@ public class PlaceHoldActivity extends ActionBarActivity {
                     new Response.Listener<GatewayResponse>() {
                         @Override
                         public void onResponse(GatewayResponse response) {
-                            try {
-                                OSRFObject obj = (OSRFObject) response.payload;
-                                Log.d(TAG, "obj ok");
-                            } catch (Exception e) {
-                                Log.d(TAG, "caught 1", e);
-                            }
                             try {
                                 Map<String, ?> resp_map = (Map<String, ?>) response.payload;
                                 Object o = resp_map.get(Api.SETTING_ORG_UNIT_NOT_PICKUP_LIB);
