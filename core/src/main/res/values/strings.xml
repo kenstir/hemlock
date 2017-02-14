@@ -67,7 +67,9 @@
     <string name="title_check_out">Items Checked Out</string>
     <string name="title_holds">Holds</string>
     <string name="renew_button">Renew</string>
-    <string name="renew_dialog_message">Are you sure you want to renew this item?</string>
+    <string name="renew_item_message">Renew item?</string>
+    <string name="renew_item_negative_button">Don\'t renew</string>
+    <string name="renew_item_positive_button">Renew item</string>
     <string name="toast_item_renewed">Item renewed</string>
     <string name="record_of">Item %1$d of %2$d</string>
     <string name="n_results">%1$d results</string>
@@ -94,7 +96,9 @@
     <string name="cancel_hold">Cancel Hold</string>
     <string name="back">Back</string>
     <string name="update_hold">Update Hold</string>
-    <string name="cancel_hold_dialog_message">Are you sure you want to cancel this hold?</string>
+    <string name="cancel_hold_dialog_message">Cancel hold?</string>
+    <string name="cancel_hold_negative_button">Keep hold</string>
+    <string name="cancel_hold_positive_button">Cancel hold</string>
     <string name="thaw_date">Activate hold on</string>
     <string name="hold_phone_hint">Contact phone number</string>
     <string name="hold_items">Items on hold: </string>
@@ -185,7 +189,9 @@
     <string name="msg_creating_list">Creating list</string>
     <string name="msg_no_lists">No lists</string>
     <string name="msg_deleting_list">Deleting list</string>
-    <string name="msg_confirm_delete_list">Are you sure you want to delete this list?</string>
+    <string name="delete_list_confirm_msg">Delete list?</string>
+    <string name="delete_list_negative_button">Keep list</string>
+    <string name="delete_list_positive_button">Delete list</string>
     <string name="msg_retrieving_data">Retrieving data</string>
     <string name="msg_list_name_too_short">List name must be at least 2 characters long</string>
     <string name="title_busy_ellipsis">busy...</string>

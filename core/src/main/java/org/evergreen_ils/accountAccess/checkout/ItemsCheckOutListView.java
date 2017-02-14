@@ -225,7 +225,7 @@ public class ItemsCheckOutListView extends ActionBarActivity {
                     if (!renewable)
                         return;
                     AlertDialog.Builder builder = new AlertDialog.Builder(context);
-                    builder.setMessage(R.string.renew_dialog_message);
+                    builder.setMessage(R.string.renew_item_message);
                     builder.setNegativeButton(android.R.string.no, null);
                     builder.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                         @Override

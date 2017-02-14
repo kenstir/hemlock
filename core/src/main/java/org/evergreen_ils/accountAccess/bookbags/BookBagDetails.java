@@ -103,9 +103,9 @@ public class BookBagDetails extends ActionBarActivity {
             @Override
             public void onClick(View v) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(context);
-                builder.setMessage(R.string.msg_confirm_delete_list);
-                builder.setNegativeButton(android.R.string.no, null);
-                builder.setPositiveButton(android.R.string.yes,
+                builder.setMessage(R.string.delete_list_confirm_msg);
+                builder.setNegativeButton(R.string.delete_list_negative_button, null);
+                builder.setPositiveButton(R.string.delete_list_positive_button,
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {

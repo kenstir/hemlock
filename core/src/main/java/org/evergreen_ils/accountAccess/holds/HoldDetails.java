@@ -156,8 +156,8 @@ public class HoldDetails extends ActionBarActivity {
             public void onClick(View v) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(context);
                 builder.setMessage(R.string.cancel_hold_dialog_message);
-                builder.setNegativeButton(android.R.string.no, null);
-                builder.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                builder.setNegativeButton(R.string.cancel_hold_negative_button, null);
+                builder.setPositiveButton(R.string.cancel_hold_positive_button, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         cancelHold(record);
