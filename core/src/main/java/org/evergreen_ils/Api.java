@@ -53,6 +53,8 @@ public class Api {
     public static final String CONTAINER_ITEM_CREATE = "open-ils.actor.container.item.create";
     public static final String CONTAINER_FULL_DELETE = "open-ils.actor.container.full_delete";
 
+    public static final String SETTING_ORG_UNIT_NOT_PICKUP_LIB = "opac.holds.org_unit_not_pickup_lib";
+
     /// auth
 
     public static final String AUTH = "open-ils.auth";
@@ -141,7 +143,15 @@ public class Api {
     }
 
     // parse bool string returned from API methods
-    public static boolean parseBoolean(String boolString) {
-        return (boolString != null && boolString.equals("t"));
+    public static Boolean parseBoolean(Object obj) {
+        if (obj instanceof Boolean) {
+            return (Boolean) obj;
+        } else if (obj instanceof String) {
+            String s = (String) obj;
+            return (s != null && s.equals("t"));
+        } else {
+            return false;
+        }
+
     }
 }

@@ -14,4 +14,5 @@
     <string name="ou_menu_provider">net.kenstir.apps.pines.PinesMenuProvider</string>
     <bool name="ou_hierarchical_org_tree">true</bool>
     <bool name="ou_group_copy_info_by_system">true</bool>
+    <bool name="ou_query_for_hold_pickup_locations">true</bool>
 </resources>

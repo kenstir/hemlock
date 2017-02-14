@@ -32,6 +32,7 @@ public class Organization /*implements Serializable*/ {
     public String indentedDisplayPrefix = "";
 
     public Boolean opac_visible = null;
+    public Boolean is_pickup_location = null; // null=not loaded
 
     public Organization() {
     }
@@ -41,6 +42,12 @@ public class Organization /*implements Serializable*/ {
     }
 
     public boolean isPickupLocation() {
+        if (is_pickup_location != null)
+            return is_pickup_location;
+        return defaultIsPickupLocation();
+    }
+
+    public boolean defaultIsPickupLocation() {
         if (orgType == null)
             return true;//should not happen
         return orgType.can_have_vols;

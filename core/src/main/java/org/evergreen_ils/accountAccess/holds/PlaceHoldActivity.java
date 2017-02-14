@@ -22,6 +22,9 @@ package org.evergreen_ils.accountAccess.holds;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Map;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
@@ -30,12 +33,18 @@ import org.evergreen_ils.Api;
 import org.evergreen_ils.R;
 import org.evergreen_ils.accountAccess.AccountAccess;
 import org.evergreen_ils.accountAccess.SessionNotFoundException;
+import org.evergreen_ils.net.GatewayJsonObjectRequest;
+import org.evergreen_ils.net.VolleyWrangler;
 import org.evergreen_ils.system.EvergreenServer;
+import org.evergreen_ils.system.Log;
 import org.evergreen_ils.system.Organization;
 import org.evergreen_ils.searchCatalog.RecordInfo;
+import org.evergreen_ils.system.Utils;
 import org.evergreen_ils.utils.ui.ActionBarUtils;
 import org.evergreen_ils.utils.ui.ProgressDialogSupport;
 import org.evergreen_ils.views.splashscreen.SplashActivity;
+import org.opensrf.util.GatewayResponse;
+import org.opensrf.util.OSRFObject;
 
 import android.app.DatePickerDialog;
 import android.content.Context;
@@ -55,6 +64,9 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.android.volley.Request;
+import com.android.volley.Response;
 
 public class PlaceHoldActivity extends ActionBarActivity {
 
@@ -81,6 +93,68 @@ public class PlaceHoldActivity extends ActionBarActivity {
     private int selectedOrgPos = 0;
     private ProgressDialogSupport progress;
     private Context context;
+
+    private long start_ms;
+    private final Lock mLock = new ReentrantLock();
+    private int mOutstandingRequests = 0;
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Log.d(TAG, "onstart");
+        startFetchOrgSettings();
+    }
+
+    private void startFetchOrgSettings() {
+        start_ms = System.currentTimeMillis();
+        mOutstandingRequests = 0;
+        for (Organization org: eg.getOrganizations()) {
+            final Organization the_org = org;
+            String url = eg.getUrl(Utils.buildGatewayUrl(
+                    Api.ACTOR, Api.ORG_UNIT_SETTINGS_RETRIEVE,
+                    new Object[]{accountAccess.getAuthToken(), org.id}));
+            GatewayJsonObjectRequest r = new GatewayJsonObjectRequest(
+                    url,
+                    Request.Priority.NORMAL,
+                    new Response.Listener<GatewayResponse>() {
+                        @Override
+                        public void onResponse(GatewayResponse response) {
+                            try {
+                                OSRFObject obj = (OSRFObject) response.payload;
+                                Log.d(TAG, "obj ok");
+                            } catch (Exception e) {
+                                Log.d(TAG, "caught 1", e);
+                            }
+                            try {
+                                Map<String, ?> resp_map = (Map<String, ?>) response.payload;
+                                Object o = resp_map.get(Api.SETTING_ORG_UNIT_NOT_PICKUP_LIB);
+                                if (o == null) {
+                                    the_org.is_pickup_location = the_org.defaultIsPickupLocation();
+                                } else {
+                                    the_org.is_pickup_location = !Api.parseBoolean(o);
+                                }
+                                Log.d(TAG, the_org.name+" id "+the_org.id+(the_org.is_pickup_location?" is ":" is not ")+"a pickup location");
+                            } catch (Exception e) {
+                                Log.d(TAG, "caught", e);
+                                the_org.is_pickup_location = true;
+                            }
+                            mLock.lock();
+                            --mOutstandingRequests;
+                            if (mOutstandingRequests == 0) {
+                                //mFinishedCondition.signal();
+                                Log.d(TAG, "all oustanding requests finished");
+                                Log.logElapsedTime(TAG, start_ms, "requests finished");
+                            }
+                            mLock.unlock();
+                        }
+                    },
+                    VolleyWrangler.logErrorListener(TAG));
+            mLock.lock();
+            ++mOutstandingRequests;
+            VolleyWrangler.getInstance(context).addToRequestQueue(r);
+            mLock.unlock();
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
