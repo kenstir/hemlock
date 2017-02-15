@@ -30,6 +30,7 @@ import org.evergreen_ils.auth.EvergreenAuthenticator;
 import org.evergreen_ils.system.EvergreenServer;
 import org.evergreen_ils.system.Log;
 import org.evergreen_ils.system.Utils;
+
 import static org.junit.Assert.*;
 
 import org.junit.BeforeClass;
@@ -55,6 +56,7 @@ public class OSRFTest {
     private static String mServer;
     private static String mUsername;
     private static String mPassword;
+    private static Integer mOrgID;
     private static String mAuthToken;
 
     private static HttpConnection conn() { return mConn; }
@@ -65,6 +67,7 @@ public class OSRFTest {
         mContext = InstrumentationRegistry.getTargetContext();
         Bundle b = InstrumentationRegistry.getArguments();
         mServer = b.getString("server", "http://catalog.cwmars.org");
+        mOrgID = Integer.parseInt(b.getString("orgid"));
         mUsername = b.getString("username");
         if (TextUtils.isEmpty(mUsername))
             return;
@@ -120,7 +123,7 @@ public class OSRFTest {
         mConn = EvergreenServer.getInstance().gatewayConnection();
         Object o = Utils.doRequest(mConn, Api.ACTOR,
                 Api.ORG_UNIT_RETRIEVE, new Object[] {
-                        mAuthToken, 15//optional org unit id
+                        mAuthToken, mOrgID
                 });
         Log.i(TAG, "o="+o);
     }
@@ -134,35 +137,59 @@ public class OSRFTest {
         }
     }
 
+    // ORG_UNIT_SETTING_RETRIEVE - retrieve all settings from one org unit
     @Test
     public void testOrgUnitSettingsRetrieve() throws Exception {
         assertLoggedIn();
         mConn = EvergreenServer.getInstance().gatewayConnection();
-        Integer org_id = 15;//169
+        Integer org_id = mOrgID;
         Object resp = Utils.doRequest(mConn, Api.ACTOR,
-                Api.ORG_UNIT_SETTINGS_RETRIEVE, new Object[]{
+                Api.ORG_UNIT_SETTING_RETRIEVE, new Object[]{
                         mAuthToken, org_id});
         Map<String, ?> resp_map = ((Map<String, ?>) resp);
         printMap(resp_map);
+        Boolean is_pickup_location = null;
+        is_pickup_location = !Api.parseBoolean(resp_map.get(Api.SETTING_ORG_UNIT_NOT_PICKUP_LIB));
+        Log.d(TAG, "is_pickup_location("+org_id+") = "+is_pickup_location);
     }
 
-    // This did not successfully read the org setting opac.holds.org_unit_not_pickup_lib
-    // for PINES org 15, it returned null when ORG_UNIT_SETTINGS_RETRIEVE returned true.
-    /*
+    // ORG_UNIT_SETTING_BATCH - retrieve a list of settings from one org unit
     @Test
     public void testOrgUnitSettingBatch() throws Exception {
-        final String ORG_UNIT_SETTINGS_BATCH = "open-ils.actor.ou_setting.ancestor_default.batch";
         assertLoggedIn();
         mConn = EvergreenServer.getInstance().gatewayConnection();
         ArrayList<String> settings = new ArrayList<>();
-        settings.add("opac.holds.org_unit_not_pickup_lib");
-        settings.add("opac.holds.org_unit_not_pickup_lib");
-        Integer org_id = 15;//169
+        settings.add(Api.SETTING_ORG_UNIT_NOT_PICKUP_LIB);
+        Integer org_id = mOrgID;
         Object resp = Utils.doRequest(mConn, Api.ACTOR,
-                ORG_UNIT_SETTINGS_BATCH, new Object[]{
-                        mAuthToken, settings, org_id});
+                Api.ORG_UNIT_SETTING_BATCH, new Object[]{
+                        org_id, settings, mAuthToken });
         Map<String, ?> resp_map = ((Map<String, ?>) resp);
         printMap(resp_map);
+        Boolean is_pickup_location = null;
+        Object o = resp_map.get(Api.SETTING_ORG_UNIT_NOT_PICKUP_LIB);
+        if (o != null) {
+            Map<String, ?> resp_org_map = (Map<String, ?>) o;
+            is_pickup_location = !Api.parseBoolean(resp_org_map.get("value"));
+        }
+        Log.d(TAG, "is_pickup_location("+org_id+") = "+is_pickup_location);
     }
-    */
+
+    // ORG_UNIT_SETTING - retrieve one setting from one org unit
+    @Test
+    public void testOrgUnitSetting() throws Exception {
+        assertLoggedIn();
+        mConn = EvergreenServer.getInstance().gatewayConnection();
+        Integer org_id = mOrgID;
+        Object resp = Utils.doRequest(mConn, Api.ACTOR,
+                Api.ORG_UNIT_SETTING, new Object[]{
+                        org_id, Api.SETTING_ORG_UNIT_NOT_PICKUP_LIB, mAuthToken });
+        Map<String, ?> resp_map = ((Map<String, ?>) resp);
+        printMap(resp_map);
+        Boolean is_pickup_location = null;
+        if (resp_map != null) {
+            is_pickup_location = !Api.parseBoolean(resp_map.get("value"));
+        }
+        Log.d(TAG, "is_pickup_location("+org_id+") = "+is_pickup_location);
+    }
 }

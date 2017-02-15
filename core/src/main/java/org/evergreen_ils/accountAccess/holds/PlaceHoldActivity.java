@@ -44,7 +44,6 @@ import org.evergreen_ils.utils.ui.ActionBarUtils;
 import org.evergreen_ils.utils.ui.ProgressDialogSupport;
 import org.evergreen_ils.views.splashscreen.SplashActivity;
 import org.opensrf.util.GatewayResponse;
-import org.opensrf.util.OSRFObject;
 
 import android.app.DatePickerDialog;
 import android.content.Context;
@@ -105,15 +104,33 @@ public class PlaceHoldActivity extends ActionBarActivity {
         startFetchOrgSettings();
     }
 
+    private void incrNumOutstanding() {
+        mLock.lock();
+        ++mOutstandingRequests;
+        mLock.unlock();
+    }
+
+    private void decrNumOutstanding() {
+        mLock.lock();
+        --mOutstandingRequests;
+        if (mOutstandingRequests == 0) {
+            //mFinishedCondition.signal();
+            Log.d(TAG, "all oustanding requests finished");
+            Log.logElapsedTime(TAG, start_ms, "all requests finished");
+        }
+        mLock.unlock();
+    }
+
     private void startFetchOrgSettings() {
         start_ms = System.currentTimeMillis();
         mOutstandingRequests = 0;
-        Log.d(TAG, "" + eg.getOrganizations().size() + " organizations");
         for (Organization org: eg.getOrganizations()) {
             final Organization the_org = org;
+            ArrayList<String> settings = new ArrayList<>();
+            settings.add(Api.SETTING_ORG_UNIT_NOT_PICKUP_LIB);
             String url = eg.getUrl(Utils.buildGatewayUrl(
-                    Api.ACTOR, Api.ORG_UNIT_SETTINGS_RETRIEVE,
-                    new Object[]{accountAccess.getAuthToken(), org.id}));
+                    Api.ACTOR, Api.ORG_UNIT_SETTING_BATCH,
+                    new Object[]{org.id, settings, accountAccess.getAuthToken()}));
             GatewayJsonObjectRequest r = new GatewayJsonObjectRequest(
                     url,
                     Request.Priority.NORMAL,
@@ -126,29 +143,23 @@ public class PlaceHoldActivity extends ActionBarActivity {
                                 if (o == null) {
                                     the_org.is_pickup_location = the_org.defaultIsPickupLocation();
                                 } else {
-                                    the_org.is_pickup_location = !Api.parseBoolean(o);
+                                    Map<String, ?> resp_org_map = (Map<String, ?>)o;
+                                    the_org.is_pickup_location = !Api.parseBoolean(resp_org_map.get("value"));
                                 }
-                                Log.d(TAG, the_org.name+" id "+the_org.id+(the_org.is_pickup_location?" is ":" is not ")+"a pickup location");
+                                Log.d(TAG, the_org.name+" id "+the_org.id+(the_org.is_pickup_location?" is ":" is NOT ")+"a pickup location");
                             } catch (Exception e) {
                                 Log.d(TAG, "caught", e);
-                                the_org.is_pickup_location = true;
+                                the_org.is_pickup_location = the_org.defaultIsPickupLocation();
                             }
-                            mLock.lock();
-                            --mOutstandingRequests;
-                            if (mOutstandingRequests == 0) {
-                                //mFinishedCondition.signal();
-                                Log.d(TAG, "all oustanding requests finished");
-                                Log.logElapsedTime(TAG, start_ms, "requests finished");
-                            }
-                            mLock.unlock();
+                            decrNumOutstanding();
                         }
                     },
                     VolleyWrangler.logErrorListener(TAG));
-            mLock.lock();
-            ++mOutstandingRequests;
+
+            incrNumOutstanding();
             VolleyWrangler.getInstance(context).addToRequestQueue(r);
-            mLock.unlock();
         }
+        Log.logElapsedTime(TAG, start_ms, "" + eg.getOrganizations().size() + " requests volleyed");
     }
 
     @Override
