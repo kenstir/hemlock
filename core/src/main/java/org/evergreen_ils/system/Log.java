@@ -115,7 +115,7 @@ public class Log {
 
     public static long logElapsedTime(String TAG, long start_ms, String s) {
         long now_ms = System.currentTimeMillis();
-        if (provider != null) provider.d(TAG, "elapsed: " + s + ": " + (now_ms - start_ms) + "ms");
+        if (provider != null) provider.d(TAG, String.format("%3dms elapsed: %s", now_ms - start_ms, s));
         return now_ms;
     }
 }

@@ -17,11 +17,15 @@
  */
 package org.evergreen_ils.system;
 
+import org.evergreen_ils.Api;
 import org.evergreen_ils.barcodescan.Intents;
+import org.opensrf.util.GatewayResponse;
 
 import java.io.Serializable;
+import java.util.Map;
 
 public class Organization /*implements Serializable*/ {
+    private static final String TAG = Organization.class.getSimpleName();
 
     public Integer level = null;
     public Integer id = null;
@@ -42,14 +46,45 @@ public class Organization /*implements Serializable*/ {
     }
 
     public boolean isPickupLocation() {
-        if (is_pickup_location != null)
+        if (is_pickup_location != null) {
             return is_pickup_location;
-        return defaultIsPickupLocation();
+        } else {
+            return defaultIsPickupLocation();
+        }
     }
 
-    public boolean defaultIsPickupLocation() {
+    private boolean defaultIsPickupLocation() {
         if (orgType == null)
             return true;//should not happen
         return orgType.can_have_vols;
+    }
+
+    public boolean pickupLocationNeedsLoading() {
+        if (is_pickup_location != null) {
+            // already loaded
+            return false;
+        } else if (defaultIsPickupLocation() == false) {
+            // pickup location can be disabled by network setting but not enabled
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    public void setIsPickupLocationFromGatewayResponse(GatewayResponse response) {
+        try {
+            Map<String, ?> resp_map = (Map<String, ?>) response.payload;
+            Object o = resp_map.get(Api.SETTING_ORG_UNIT_NOT_PICKUP_LIB);
+            if (o == null) {
+                is_pickup_location = defaultIsPickupLocation();
+            } else {
+                Map<String, ?> resp_org_map = (Map<String, ?>)o;
+                is_pickup_location = !Api.parseBoolean(resp_org_map.get("value"));
+            }
+            Log.d(TAG, name+" id "+id+" is_pickup_location="+is_pickup_location);
+        } catch (Exception e) {
+            Log.d(TAG, "caught", e);
+            is_pickup_location = defaultIsPickupLocation();
+        }
     }
 }

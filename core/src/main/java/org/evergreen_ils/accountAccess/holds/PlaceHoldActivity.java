@@ -114,8 +114,6 @@ public class PlaceHoldActivity extends ActionBarActivity {
         mLock.lock();
         --mOutstandingRequests;
         if (mOutstandingRequests == 0) {
-            //mFinishedCondition.signal();
-            Log.d(TAG, "all oustanding requests finished");
             Log.logElapsedTime(TAG, start_ms, "all requests finished");
         }
         mLock.unlock();
@@ -124,8 +122,12 @@ public class PlaceHoldActivity extends ActionBarActivity {
     private void startFetchOrgSettings() {
         start_ms = System.currentTimeMillis();
         mOutstandingRequests = 0;
-        for (Organization org: eg.getOrganizations()) {
-            final Organization the_org = org;
+        int num_skipped = 0;
+        for (final Organization org: eg.getOrganizations()) {
+            if (!org.pickupLocationNeedsLoading()) {
+                ++num_skipped;
+                continue;
+            }
             ArrayList<String> settings = new ArrayList<>();
             settings.add(Api.SETTING_ORG_UNIT_NOT_PICKUP_LIB);
             String url = eg.getUrl(Utils.buildGatewayUrl(
@@ -137,29 +139,15 @@ public class PlaceHoldActivity extends ActionBarActivity {
                     new Response.Listener<GatewayResponse>() {
                         @Override
                         public void onResponse(GatewayResponse response) {
-                            try {
-                                Map<String, ?> resp_map = (Map<String, ?>) response.payload;
-                                Object o = resp_map.get(Api.SETTING_ORG_UNIT_NOT_PICKUP_LIB);
-                                if (o == null) {
-                                    the_org.is_pickup_location = the_org.defaultIsPickupLocation();
-                                } else {
-                                    Map<String, ?> resp_org_map = (Map<String, ?>)o;
-                                    the_org.is_pickup_location = !Api.parseBoolean(resp_org_map.get("value"));
-                                }
-                                Log.d(TAG, the_org.name+" id "+the_org.id+(the_org.is_pickup_location?" is ":" is NOT ")+"a pickup location");
-                            } catch (Exception e) {
-                                Log.d(TAG, "caught", e);
-                                the_org.is_pickup_location = the_org.defaultIsPickupLocation();
-                            }
+                            org.setIsPickupLocationFromGatewayResponse(response);
                             decrNumOutstanding();
                         }
                     },
                     VolleyWrangler.logErrorListener(TAG));
-
             incrNumOutstanding();
             VolleyWrangler.getInstance(context).addToRequestQueue(r);
         }
-        Log.logElapsedTime(TAG, start_ms, "" + eg.getOrganizations().size() + " requests volleyed");
+        Log.logElapsedTime(TAG, start_ms, "" + (eg.getOrganizations().size() - num_skipped) + " requests volleyed, " + num_skipped + " skipped");
     }
 
     @Override
