@@ -110,8 +110,8 @@ public class LoadingTask {
             AppState.setString(AppState.LIBRARY_NAME, library.name);
             AppState.setString(AppState.LIBRARY_URL, library.url);
 
-            Log.d(TAG, tag+"Loading resources from "+library.url);
-            publishProgress("Loading resources");
+            Log.d(TAG, tag+"Logging in to "+library.url);
+            publishProgress("Logging in");
             App.enableCaching(mCallingActivity);
             EvergreenServer eg = EvergreenServer.getInstance();
             eg.connect(library.url);
