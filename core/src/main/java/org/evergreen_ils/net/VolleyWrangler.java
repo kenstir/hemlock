@@ -22,7 +22,7 @@ public class VolleyWrangler {
     private static Context mCtx;
 
     private VolleyWrangler(Context context) {
-        mCtx = context;
+        mCtx = context.getApplicationContext();
         mRequestQueue = getRequestQueue();
 
         mImageLoader = new ImageLoader(mRequestQueue,
