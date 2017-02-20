@@ -212,7 +212,7 @@ public class SearchCatalog {
         }
     }
 
-    // candidate for on-demand loading
+    // todo: move to lazy load
     public static List<OSRFObject> fetchCopyStatuses() {
 
         List<OSRFObject> ccs_list = (List<OSRFObject>) Utils.doRequest(conn(), Api.SEARCH,

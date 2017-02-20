@@ -31,6 +31,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+
 import org.evergreen_ils.R;
 import org.evergreen_ils.accountAccess.AccountAccess;
 import org.evergreen_ils.accountAccess.AccountUtils;
@@ -39,12 +40,15 @@ import org.evergreen_ils.accountAccess.checkout.ItemsCheckOutListView;
 import org.evergreen_ils.accountAccess.fines.FinesActivity;
 import org.evergreen_ils.accountAccess.holds.HoldsListView;
 import org.evergreen_ils.auth.Const;
-import org.evergreen_ils.billing.*;
-import org.evergreen_ils.utils.ui.AppState;
-import org.evergreen_ils.system.Log;
+import org.evergreen_ils.billing.BillingDataProvider;
+import org.evergreen_ils.billing.BillingHelper;
+import org.evergreen_ils.billing.IabResult;
 import org.evergreen_ils.searchCatalog.SearchActivity;
 import org.evergreen_ils.searchCatalog.SearchFormat;
+import org.evergreen_ils.system.EvergreenServerLoader;
+import org.evergreen_ils.system.Log;
 import org.evergreen_ils.utils.ui.ActionBarUtils;
+import org.evergreen_ils.utils.ui.AppState;
 import org.evergreen_ils.views.splashscreen.SplashActivity;
 
 /**
@@ -72,6 +76,7 @@ public class MainActivity extends ActionBarActivity {
         initMenuProvider();
         if (menuProvider != null)
             menuProvider.onCreate(this);
+        EvergreenServerLoader.fetchOrgSettings(this);
     }
 
     @Override

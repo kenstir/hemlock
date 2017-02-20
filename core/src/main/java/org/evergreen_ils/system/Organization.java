@@ -70,21 +70,4 @@ public class Organization /*implements Serializable*/ {
             return true;
         }
     }
-
-    public void setIsPickupLocationFromGatewayResponse(GatewayResponse response) {
-        try {
-            Map<String, ?> resp_map = (Map<String, ?>) response.payload;
-            Object o = resp_map.get(Api.SETTING_ORG_UNIT_NOT_PICKUP_LIB);
-            if (o == null) {
-                is_pickup_location = defaultIsPickupLocation();
-            } else {
-                Map<String, ?> resp_org_map = (Map<String, ?>)o;
-                is_pickup_location = !Api.parseBoolean(resp_org_map.get("value"));
-            }
-        } catch (Exception e) {
-            Log.d(TAG, "caught", e);
-            is_pickup_location = defaultIsPickupLocation();
-        }
-        Log.d(TAG, name+" id "+id+" is_pickup_location="+is_pickup_location);
-    }
 }

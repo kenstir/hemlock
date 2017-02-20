@@ -93,63 +93,6 @@ public class PlaceHoldActivity extends ActionBarActivity {
     private ProgressDialogSupport progress;
     private Context context;
 
-    private long start_ms;
-    private final Lock mLock = new ReentrantLock();
-    private int mOutstandingRequests = 0;
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        Log.d(TAG, "onstart");
-        startFetchOrgSettings();
-    }
-
-    private void incrNumOutstanding() {
-        mLock.lock();
-        ++mOutstandingRequests;
-        mLock.unlock();
-    }
-
-    private void decrNumOutstanding() {
-        mLock.lock();
-        --mOutstandingRequests;
-        if (mOutstandingRequests == 0) {
-            Log.logElapsedTime(TAG, start_ms, "all requests finished");
-        }
-        mLock.unlock();
-    }
-
-    private void startFetchOrgSettings() {
-        start_ms = System.currentTimeMillis();
-        mOutstandingRequests = 0;
-        int num_skipped = 0;
-        for (final Organization org: eg.getOrganizations()) {
-            if (!org.pickupLocationNeedsLoading()) {
-                ++num_skipped;
-                continue;
-            }
-            ArrayList<String> settings = new ArrayList<>();
-            settings.add(Api.SETTING_ORG_UNIT_NOT_PICKUP_LIB);
-            String url = eg.getUrl(Utils.buildGatewayUrl(
-                    Api.ACTOR, Api.ORG_UNIT_SETTING_BATCH,
-                    new Object[]{org.id, settings, accountAccess.getAuthToken()}));
-            GatewayJsonObjectRequest r = new GatewayJsonObjectRequest(
-                    url,
-                    Request.Priority.NORMAL,
-                    new Response.Listener<GatewayResponse>() {
-                        @Override
-                        public void onResponse(GatewayResponse response) {
-                            org.setIsPickupLocationFromGatewayResponse(response);
-                            decrNumOutstanding();
-                        }
-                    },
-                    VolleyWrangler.logErrorListener(TAG));
-            incrNumOutstanding();
-            VolleyWrangler.getInstance(context).addToRequestQueue(r);
-        }
-        Log.logElapsedTime(TAG, start_ms, "" + (eg.getOrganizations().size() - num_skipped) + " requests volleyed, " + num_skipped + " skipped");
-    }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

@@ -49,6 +49,7 @@ public class EvergreenServer {
     private boolean mIDLLoaded = false;
     private ArrayList<OrgType> mOrgTypes = null;
     private ArrayList<Organization> mOrganizations = null;
+    private Boolean mIsSMSEnabled = null;
     private LinkedHashMap<String, String> mCopyStatuses = new LinkedHashMap<>();
 
     private EvergreenServer() {
@@ -85,11 +86,10 @@ public class EvergreenServer {
         mIDLLoaded = false;
         mOrgTypes = null;
         mOrganizations = null;
+        mIsSMSEnabled = null;
     }
 
     public void connect(String library_url) throws IOException, IDLException {
-        //library_url = "http://catalogx.cwmars.org"; ///HACK
-
         if (!TextUtils.equals(library_url, mUrl)) {
             reset();
             loadIDL(library_url);
@@ -212,6 +212,14 @@ public class EvergreenServer {
         } else {
             return org.name;
         }
+    }
+
+    public void setSMSEnabled(Boolean value) {
+        mIsSMSEnabled = value;
+    }
+
+    public boolean getSMSEnabled() {
+        return (mIsSMSEnabled != null) ? mIsSMSEnabled : false;
     }
 
     public void loadCopyStatuses(List<OSRFObject> ccs_list) {

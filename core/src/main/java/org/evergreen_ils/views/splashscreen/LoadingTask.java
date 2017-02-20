@@ -93,6 +93,8 @@ public class LoadingTask {
     protected String doInBackground() {
         final String tag ="doInBackground> ";
         final String accountType = mCallingActivity.getString(R.string.ou_account_type);
+        final long start_ms = System.currentTimeMillis();
+        long now_ms = start_ms;
         try {
             Log.d(TAG, tag+"Signing in");
             publishProgress("Signing in");
@@ -105,20 +107,25 @@ public class LoadingTask {
                 if (TextUtils.isEmpty(error_msg)) error_msg = "Login failed";
                 return error_msg;
             }
+            now_ms = Log.logElapsedTime(TAG, now_ms, "signing in");
 
             Library library = AccountUtils.getLibraryForAccount(mCallingActivity, account_name, accountType);
             AppState.setString(AppState.LIBRARY_NAME, library.name);
             AppState.setString(AppState.LIBRARY_URL, library.url);
 
-            Log.d(TAG, tag+"Logging in to "+library.url);
-            publishProgress("Logging in");
+            Log.d(TAG, tag+"Connecting to "+library.url);
+            publishProgress("Connecting to server");
             App.enableCaching(mCallingActivity);
             EvergreenServer eg = EvergreenServer.getInstance();
             eg.connect(library.url);
             AccountAccess ac = AccountAccess.getInstance();
+            now_ms = Log.logElapsedTime(TAG, now_ms, "login");
             eg.loadOrgTypes(ac.fetchOrgTypes());
+            now_ms = Log.logElapsedTime(TAG, now_ms, "load org types");
             eg.loadOrganizations(ac.fetchOrgTree(), mCallingActivity.getResources().getBoolean(R.bool.ou_hierarchical_org_tree));
+            now_ms = Log.logElapsedTime(TAG, now_ms, "load orgs");
             eg.loadCopyStatuses(SearchCatalog.fetchCopyStatuses());
+            now_ms = Log.logElapsedTime(TAG, now_ms, "load copy status");
 
             // auth token zen: try once and if it fails, invalidate the token and try again
             Log.d(TAG, tag+"Starting session");
@@ -134,8 +141,10 @@ public class LoadingTask {
             }
             if (!haveSession)
                 return "no session";
+            now_ms = Log.logElapsedTime(TAG, now_ms, "retrieve session");
 
             ac.retrieveBookbags();
+            now_ms = Log.logElapsedTime(TAG, now_ms, "retrieve bookbags");
 
             return TASK_OK;
         } catch (Exception e) {
