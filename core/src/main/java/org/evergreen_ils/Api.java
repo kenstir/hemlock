@@ -55,6 +55,7 @@ public class Api {
     public static final String CONTAINER_FULL_DELETE = "open-ils.actor.container.full_delete";
 
     public static final String SETTING_ORG_UNIT_NOT_PICKUP_LIB = "opac.holds.org_unit_not_pickup_lib";
+    public static final String SETTING_SMS_ENABLE = "sms.enable";
 
     /// auth
 
@@ -89,6 +90,7 @@ public class Api {
     public static final String RETRIEVE_MRA = "open-ils.pcrud.retrieve.mra";
     public static final String SEARCH_MRA = "open-ils.pcrud.search.mra.atomic";
     public static final String SEARCH_MRAF = "open-ils.pcrud.search.mraf.atomic";
+    public static final String SEARCH_SMS_CARRIERS = "open-ils.pcrud.search.csc.atomic"; // [csc]
 
     /// search
 
@@ -117,6 +119,7 @@ public class Api {
     /// general
 
     public static final String DATE_PATTERN = "yyyy-MM-dd'T'hh:mm:ssZ";
+    private static final String TAG = Api.class.getSimpleName();
 
     // get date string to pass to API methods
     public static String formatDate(Date date) {
@@ -136,7 +139,7 @@ public class Api {
         try {
             date = sdf.parse(dateString);
         } catch (ParseException e) {
-            Log.d("Api", "error parsing date \""+dateString+"\"", e);
+            Log.d(TAG, "error parsing date \""+dateString+"\"", e);
             date = new Date();
         }
 
@@ -154,5 +157,22 @@ public class Api {
             return false;
         }
 
+    }
+
+    /**
+     * Return o as an Integer
+     *
+     * Sometimes search returns a count as a json number ("count":0), sometimes a string ("count":"1103").
+     * Seems to be the same for result "ids" list (See Issue #1).  Handle either form and return as an int.
+     */
+    public static Integer parseInteger(Object o) {
+        if (o instanceof Integer) {
+            return (Integer)o;
+        } else if (o instanceof String) {
+            return Integer.parseInt((String)o);
+        } else {
+            Log.d(TAG, "unexpected type: "+o);
+            return null;
+        }
     }
 }

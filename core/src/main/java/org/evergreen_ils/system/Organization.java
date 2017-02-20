@@ -81,10 +81,10 @@ public class Organization /*implements Serializable*/ {
                 Map<String, ?> resp_org_map = (Map<String, ?>)o;
                 is_pickup_location = !Api.parseBoolean(resp_org_map.get("value"));
             }
-            Log.d(TAG, name+" id "+id+" is_pickup_location="+is_pickup_location);
         } catch (Exception e) {
             Log.d(TAG, "caught", e);
             is_pickup_location = defaultIsPickupLocation();
         }
+        Log.d(TAG, name+" id "+id+" is_pickup_location="+is_pickup_location);
     }
 }

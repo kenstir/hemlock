@@ -41,6 +41,7 @@ import org.opensrf.util.OSRFObject;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -67,7 +68,7 @@ public class OSRFTest {
         mContext = InstrumentationRegistry.getTargetContext();
         Bundle b = InstrumentationRegistry.getArguments();
         mServer = b.getString("server", "http://catalog.cwmars.org");
-        mOrgID = Integer.parseInt(b.getString("orgid"));
+        mOrgID = Integer.parseInt(b.getString("orgid", "1"));
         mUsername = b.getString("username");
         if (TextUtils.isEmpty(mUsername))
             return;
@@ -158,9 +159,10 @@ public class OSRFTest {
     public void testOrgUnitSettingBatch() throws Exception {
         assertLoggedIn();
         mConn = EvergreenServer.getInstance().gatewayConnection();
+        Integer org_id = mOrgID;
         ArrayList<String> settings = new ArrayList<>();
         settings.add(Api.SETTING_ORG_UNIT_NOT_PICKUP_LIB);
-        Integer org_id = mOrgID;
+        settings.add(Api.SETTING_SMS_ENABLE);
         Object resp = Utils.doRequest(mConn, Api.ACTOR,
                 Api.ORG_UNIT_SETTING_BATCH, new Object[]{
                         org_id, settings, mAuthToken });
@@ -181,15 +183,48 @@ public class OSRFTest {
         assertLoggedIn();
         mConn = EvergreenServer.getInstance().gatewayConnection();
         Integer org_id = mOrgID;
+        String setting = Api.SETTING_ORG_UNIT_NOT_PICKUP_LIB;
+        //String setting = Api.SETTING_SMS_ENABLE;
         Object resp = Utils.doRequest(mConn, Api.ACTOR,
                 Api.ORG_UNIT_SETTING, new Object[]{
-                        org_id, Api.SETTING_ORG_UNIT_NOT_PICKUP_LIB, mAuthToken });
-        Map<String, ?> resp_map = ((Map<String, ?>) resp);
-        printMap(resp_map);
+                        org_id, setting, mAuthToken });
         Boolean is_pickup_location = null;
-        if (resp_map != null) {
+        if (resp != null) {
+            Map<String, ?> resp_map = ((Map<String, ?>) resp);
+            printMap(resp_map);
             is_pickup_location = !Api.parseBoolean(resp_map.get("value"));
         }
         Log.d(TAG, "is_pickup_location("+org_id+") = "+is_pickup_location);
+    }
+
+    @Test
+    public void testRetrieveSMSCarriers() throws Exception {
+        assertLoggedIn();
+        mConn = EvergreenServer.getInstance().gatewayConnection();
+        Integer org_id = mOrgID;
+        // take 1
+//        Object resp = Utils.doRequest(mConn, "open-ils.storage",
+//                "open-ils.storage.direct.config.copy_status.retrieve.all", new Object[]{
+//                        mAuthToken });
+        // take 2
+        /*
+        HashMap<String, Object> args = new HashMap<>();
+        args.put("active", true);
+        //var carriers = pcrud.search('csc', {active: 'true'}, {'order_by':[{'class':'csc', 'field':'name'},{'class':'csc', 'field':'region'}]});
+        Object resp = Utils.doRequest(conn(), Api.PCRUD_SERVICE,
+                "open-ils.pcrud.search.csc.atomic", new Object[] {
+                        mAuthToken, args});
+        */
+        // take 3
+        HashMap<String, Object> args = new HashMap<>();
+        args.put("active", 1);
+        Object resp = Utils.doRequest(conn(), Api.PCRUD_SERVICE,
+                Api.SEARCH_SMS_CARRIERS, new Object[] {
+                        mAuthToken, args});
+        Log.d(TAG, "did we make it?");
+        if (resp != null) {
+            ArrayList<OSRFObject> l = (ArrayList<OSRFObject>) resp;
+            Log.d(TAG, "looks like we made it");
+        }
     }
 }

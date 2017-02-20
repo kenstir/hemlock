@@ -76,23 +76,6 @@ public class SearchCatalog {
     }
 
     /**
-     * Return o as an Integer
-     *
-     * Sometimes search returns a count as a json number ("count":0), sometimes a string ("count":"1103").
-     * Seems to be the same for result "ids" list (See Issue #1).  Handle either form and return as an int.
-     */
-    public static Integer toInteger(Object o) {
-        if (o instanceof Integer) {
-            return (Integer)o;
-        } else if (o instanceof String) {
-            return Integer.parseInt((String)o);
-        } else {
-            Log.d(TAG, "unexpected type: "+o);
-            return null;
-        }
-    }
-
-    /**
      * Gets the search results
      * 
      * @param searchText the search words
@@ -132,7 +115,7 @@ public class SearchCatalog {
             return results; // search failed or server crashed
 
         Map<String, ?> response = (Map<String, ?>) resp;
-        visible = toInteger(response.get("count"));
+        visible = Api.parseInteger(response.get("count"));
 
         // result_lol is a list of lists and looks like one of:
         //   [[32673,null,"0.0"],[886843,null,"0.0"]] // integer ids+?
@@ -141,7 +124,7 @@ public class SearchCatalog {
         List<List<?>> record_ids_lol = (List<List<?>>) response.get("ids");
         Log.d(TAG, "length:"+record_ids_lol.size());
         for (int i = 0; i < record_ids_lol.size(); i++) {
-            Integer record_id = toInteger(record_ids_lol.get(i).get(0));
+            Integer record_id = Api.parseInteger(record_ids_lol.get(i).get(0));
             results.add(new RecordInfo(record_id));
         }
 
@@ -205,7 +188,7 @@ public class SearchCatalog {
             ids.add(record.doc_id);
             records_by_id.put(record.doc_id, record);
         }
-        HashMap<String, Object> args = new HashMap<String, Object>();
+        HashMap<String, Object> args = new HashMap<>();
         args.put("id", ids);
         Object response = Utils.doRequest(conn(), Api.PCRUD_SERVICE,
                 Api.SEARCH_MRAF, new Object[] {
