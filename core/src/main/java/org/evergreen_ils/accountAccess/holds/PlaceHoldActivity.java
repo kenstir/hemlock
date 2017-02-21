@@ -36,6 +36,7 @@ import org.evergreen_ils.accountAccess.SessionNotFoundException;
 import org.evergreen_ils.net.GatewayJsonObjectRequest;
 import org.evergreen_ils.net.VolleyWrangler;
 import org.evergreen_ils.system.EvergreenServer;
+import org.evergreen_ils.system.EvergreenServerLoader;
 import org.evergreen_ils.system.Log;
 import org.evergreen_ils.system.Organization;
 import org.evergreen_ils.searchCatalog.RecordInfo;
@@ -79,6 +80,8 @@ public class PlaceHoldActivity extends ActionBarActivity {
     private EditText phone_number;
     private CheckBox phone_notification;
     private CheckBox email_notification;
+    private CheckBox sms_notification;
+    private Spinner sms_spinner;
     private Button placeHold;
     private CheckBox suspendHold;
     private Spinner orgSpinner;
@@ -120,6 +123,8 @@ public class PlaceHoldActivity extends ActionBarActivity {
         phone_notification = (CheckBox) findViewById(R.id.hold_enable_phone_notification);
         phone_number = (EditText) findViewById(R.id.hold_contact_telephone);
         email_notification = (CheckBox) findViewById(R.id.hold_enable_email_notification);
+        sms_notification = (CheckBox) findViewById(R.id.hold_enable_sms_notification);
+        sms_spinner = (Spinner) findViewById(R.id.hold_sms_carrier);
         suspendHold = (CheckBox) findViewById(R.id.hold_suspend_hold);
         orgSpinner = (Spinner) findViewById(R.id.hold_pickup_location);
         thaw_date_edittext = (EditText) findViewById(R.id.hold_thaw_date);
@@ -129,6 +134,7 @@ public class PlaceHoldActivity extends ActionBarActivity {
         format.setText(RecordInfo.getFormatLabel(record));
         physical_description.setText(record.physical_description);
 
+        initSMSButton(eg.getSMSEnabled());
         initPlaceHoldRunnable(record);
         initPlaceHoldButton();
         initSuspendHoldButton();
@@ -215,13 +221,30 @@ public class PlaceHoldActivity extends ActionBarActivity {
 
     private void initSuspendHoldButton() {
         suspendHold.setOnCheckedChangeListener(new OnCheckedChangeListener() {
-
             @Override
-            public void onCheckedChanged(CompoundButton buttonView,
-                                         boolean isChecked) {
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 thaw_date_edittext.setEnabled(isChecked);
             }
         });
+    }
+
+    private void initSMSButton(boolean sms_enabled) {
+        if (sms_enabled) {
+            sms_notification.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    sms_spinner.setEnabled(isChecked);
+                    phone_number.setEnabled(isChecked);
+                }
+            });
+            boolean sms_notify = sms_notification.isChecked();
+            sms_spinner.setEnabled(sms_notify);
+            phone_number.setEnabled(sms_notify);
+        } else {
+            sms_notification.setVisibility(View.GONE);
+            sms_spinner.setVisibility(View.GONE);
+            phone_number.setVisibility(View.GONE);
+        }
     }
 
     private void initDatePickers() {
