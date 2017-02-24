@@ -77,6 +77,7 @@ public class MainActivity extends ActionBarActivity {
         if (menuProvider != null)
             menuProvider.onCreate(this);
         EvergreenServerLoader.fetchOrgSettings(this);
+        EvergreenServerLoader.fetchSMSCarriers(this);
     }
 
     @Override

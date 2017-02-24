@@ -30,8 +30,11 @@ import org.evergreen_ils.accountAccess.AccountAccess;
 import org.evergreen_ils.net.GatewayJsonObjectRequest;
 import org.evergreen_ils.net.VolleyWrangler;
 import org.opensrf.util.GatewayResponse;
+import org.opensrf.util.OSRFObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /** Responsible for lazy loading of general server settings
@@ -42,7 +45,7 @@ public class EvergreenServerLoader {
     private static final String TAG = EvergreenServerLoader.class.getSimpleName();
 
     private static int mOutstandingRequests = 0;
-    private static long start_ms;
+    private static long start_ms = 0;
 
     private static Boolean parseBoolSetting(GatewayResponse response, String setting) {
         Boolean value = null;
@@ -70,8 +73,7 @@ public class EvergreenServerLoader {
 
     // fetch settings that we need for all orgs
     public static void fetchOrgSettings(Context context) {
-        start_ms = System.currentTimeMillis();
-        mOutstandingRequests = 0;
+        startVolley();
         int num_skipped = 0;
         final EvergreenServer eg = EvergreenServer.getInstance();
         final AccountAccess ac = AccountAccess.getInstance();
@@ -101,9 +103,8 @@ public class EvergreenServerLoader {
                         @Override
                         public void onErrorResponse(VolleyError error) {
                             String msg = error.getMessage();
-                            if (!TextUtils.isEmpty(msg)) {
+                            if (!TextUtils.isEmpty(msg))
                                 Log.d("kcxxx", "id="+org.id+" error: "+msg);
-                            }
                             decrNumOutstanding();
                         }
                     });
@@ -112,7 +113,54 @@ public class EvergreenServerLoader {
         }
     }
 
+    private static void parseSMSCarriersFromGatewayResponse(GatewayResponse response) {
+        Log.d(TAG, "response="+response);
+        try {
+            List<OSRFObject> resp_list = (List<OSRFObject>) response.payload;
+            EvergreenServer.getInstance().loadSMSCarriers(resp_list);
+        } catch (Exception ex) {
+            Log.d(TAG, "caught", ex);
+        }
+    }
+
+    public static void fetchSMSCarriers(Context context) {
+        startVolley();
+        final EvergreenServer eg = EvergreenServer.getInstance();
+        final AccountAccess ac = AccountAccess.getInstance();
+        HashMap<String, Object> args = new HashMap<>();
+        args.put("active", 1);
+        String url = eg.getUrl(Utils.buildGatewayUrl(
+                Api.PCRUD_SERVICE, Api.SEARCH_SMS_CARRIERS,
+                new Object[]{ac.getAuthToken(), args}));
+        GatewayJsonObjectRequest r = new GatewayJsonObjectRequest(
+                url,
+                Request.Priority.NORMAL,
+                new Response.Listener<GatewayResponse>() {
+                    @Override
+                    public void onResponse(GatewayResponse response) {
+                        parseSMSCarriersFromGatewayResponse(response);
+                        decrNumOutstanding();
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        String msg = error.getMessage();
+                        if (!TextUtils.isEmpty(msg))
+                            Log.d("kcxxx", "error: "+msg);
+                        decrNumOutstanding();
+                    }
+                });
+        incrNumOutstanding();
+        VolleyWrangler.getInstance(context).addToRequestQueue(r);
+    }
+
     // these don't really need to be synchronized as they happen on the main thread
+    private static synchronized void startVolley() {
+        if (mOutstandingRequests == 0) {
+            start_ms = System.currentTimeMillis();
+        }
+    }
     private static synchronized void incrNumOutstanding() {
         ++mOutstandingRequests;
     }
@@ -120,6 +168,7 @@ public class EvergreenServerLoader {
         --mOutstandingRequests;
         if (mOutstandingRequests == 0) {
             Log.logElapsedTime(TAG, start_ms, "all requests finished");
+            start_ms = 0;
         }
     }
 }

@@ -187,7 +187,7 @@ public class OSRFTest {
         //String setting = Api.SETTING_SMS_ENABLE;
         Object resp = Utils.doRequest(mConn, Api.ACTOR,
                 Api.ORG_UNIT_SETTING, new Object[]{
-                        org_id, setting, mAuthToken });
+                        org_id, setting, /*mAuthToken*/"ANONYMOUS" });
         Boolean is_pickup_location = null;
         if (resp != null) {
             Map<String, ?> resp_map = ((Map<String, ?>) resp);
@@ -201,26 +201,11 @@ public class OSRFTest {
     public void testRetrieveSMSCarriers() throws Exception {
         assertLoggedIn();
         mConn = EvergreenServer.getInstance().gatewayConnection();
-        Integer org_id = mOrgID;
-        // take 1
-//        Object resp = Utils.doRequest(mConn, "open-ils.storage",
-//                "open-ils.storage.direct.config.copy_status.retrieve.all", new Object[]{
-//                        mAuthToken });
-        // take 2
-        /*
-        HashMap<String, Object> args = new HashMap<>();
-        args.put("active", true);
-        //var carriers = pcrud.search('csc', {active: 'true'}, {'order_by':[{'class':'csc', 'field':'name'},{'class':'csc', 'field':'region'}]});
-        Object resp = Utils.doRequest(conn(), Api.PCRUD_SERVICE,
-                "open-ils.pcrud.search.csc.atomic", new Object[] {
-                        mAuthToken, args});
-        */
-        // take 3
         HashMap<String, Object> args = new HashMap<>();
         args.put("active", 1);
         Object resp = Utils.doRequest(conn(), Api.PCRUD_SERVICE,
                 Api.SEARCH_SMS_CARRIERS, new Object[] {
-                        mAuthToken, args});
+                        /*mAuthToken*/"ANONYMOUS", args});
         Log.d(TAG, "did we make it?");
         if (resp != null) {
             ArrayList<OSRFObject> l = (ArrayList<OSRFObject>) resp;

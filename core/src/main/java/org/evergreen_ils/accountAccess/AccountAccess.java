@@ -57,6 +57,8 @@ public class AccountAccess {
     private Integer homeLibraryID = null;
     private Integer defaultPickupLibraryID = null;
     private Integer defaultSearchLibraryID = null;
+    private Integer defaultSMSCarrierID = null;
+    private String defaultSMSNumber = null;
     private ArrayList<BookBag> bookBags = new ArrayList<>();
 
     private void clearSession() {
@@ -67,6 +69,8 @@ public class AccountAccess {
         homeLibraryID = null;
         defaultPickupLibraryID = null;
         defaultSearchLibraryID = null;
+        defaultSMSCarrierID = null;
+        defaultSMSNumber = null;
         bookBags = new ArrayList<>();
     }
 
@@ -95,6 +99,14 @@ public class AccountAccess {
         if (defaultSearchLibraryID != null)
             return defaultSearchLibraryID;
         return homeLibraryID;
+    }
+
+    public Integer getDefaultSMSCarrierID() {
+        return defaultSMSCarrierID;
+    }
+
+    public String getDefaultSMSNumber() {
+        return defaultSMSNumber;
     }
 
     private HttpConnection conn() {
@@ -128,15 +140,10 @@ public class AccountAccess {
         throw new SessionNotFoundException();
     }
 
-    // Fix stupid int setting that is returned with extra quotes
-    private Integer getSquirrellyIntSetting(String s) {
+    // Fix stupid setting that is returned with extra quotes
+    private String removeStupidExtraQuotes(String s) {
         if (s.startsWith("\"")) s = s.replace("\"", ""); // setting has extra quotes
-        try {
-            return Integer.parseInt(s);
-        } catch (NumberFormatException e) {
-            Log.d(TAG, "caught", e);
-            return null;
-        }
+        return s;
     }
 
     // This could be done on demand, but coming in at ~75ms it is not worth it
@@ -157,16 +164,25 @@ public class AccountAccess {
                 List<OSRFObject> settings = (List<OSRFObject>) usr.get("settings");
                 for (OSRFObject setting : settings) {
                     String name = setting.getString("name");
-                    if (name.equals("opac.default_pickup_location")) {
-                        defaultPickupLibraryID = getSquirrellyIntSetting(setting.getString("value"));
-                    } else if (name.equals("opac.default_search_location")) {
-                        defaultSearchLibraryID = getSquirrellyIntSetting(setting.getString("value"));
+                    String value = removeStupidExtraQuotes(setting.getString(Api.VALUE));
+                    if (name.equals(Api.USER_SETTING_DEFAULT_PICKUP_LOCATION)) {
+                        defaultPickupLibraryID = Api.parseInteger(value);
+                    } else if (name.equals(Api.USER_SETTING_DEFAULT_SEARCH_LOCATION)) {
+                        defaultSearchLibraryID = Api.parseInteger(value);
+                    } else if (name.equals(Api.USER_SETTING_DEFAULT_SMS_CARRIER)) {
+                        defaultSMSCarrierID = Api.parseInteger(value);
+                    } else if (name.equals(Api.USER_SETTING_DEFAULT_SMS_NOTIFY)) {
+                        defaultSMSNumber = value;
+                    } else if (name.equals(Api.USER_SETTING_HOLD_NOTIFY)) {
+                        String s = setting.getString(Api.VALUE);
+                        Log.d(TAG, "s="+s);
                     }
                 }
             }
         } catch (Exception e) {
             Log.d(TAG, "caught", e);
         }
+        Log.d(TAG, "done fleshing user settings");
 
         // Things that didn't work:
         // * open-ils.pcrud open-ils.pcrud.search.ac auth_token, {id: cardId}

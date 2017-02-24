@@ -22,6 +22,7 @@ package org.evergreen_ils.accountAccess.holds;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -40,6 +41,7 @@ import org.evergreen_ils.system.EvergreenServerLoader;
 import org.evergreen_ils.system.Log;
 import org.evergreen_ils.system.Organization;
 import org.evergreen_ils.searchCatalog.RecordInfo;
+import org.evergreen_ils.system.SMSCarrier;
 import org.evergreen_ils.system.Utils;
 import org.evergreen_ils.utils.ui.ActionBarUtils;
 import org.evergreen_ils.utils.ui.ProgressDialogSupport;
@@ -68,13 +70,14 @@ import android.widget.Toast;
 import com.android.volley.Request;
 import com.android.volley.Response;
 
+import static org.evergreen_ils.system.Utils.safeString;
+
 public class PlaceHoldActivity extends ActionBarActivity {
 
     private static final String TAG = PlaceHoldActivity.class.getSimpleName();
     private TextView title;
     private TextView author;
     private TextView format;
-    private TextView physical_description;
     private AccountAccess accountAccess;
     private EditText expiration_date;
     private EditText phone_number;
@@ -93,6 +96,7 @@ public class PlaceHoldActivity extends ActionBarActivity {
     private Runnable placeHoldRunnable;
     private EvergreenServer eg = null;
     private int selectedOrgPos = 0;
+    private int selectedSMSPos = 0;
     private ProgressDialogSupport progress;
     private Context context;
 
@@ -117,7 +121,6 @@ public class PlaceHoldActivity extends ActionBarActivity {
         title = (TextView) findViewById(R.id.hold_title);
         author = (TextView) findViewById(R.id.hold_author);
         format = (TextView) findViewById(R.id.hold_format);
-        physical_description = (TextView) findViewById(R.id.hold_physical_description);
         placeHold = (Button) findViewById(R.id.place_hold);
         expiration_date = (EditText) findViewById(R.id.hold_expiration_date);
         phone_notification = (CheckBox) findViewById(R.id.hold_enable_phone_notification);
@@ -132,7 +135,6 @@ public class PlaceHoldActivity extends ActionBarActivity {
         title.setText(record.title);
         author.setText(record.author);
         format.setText(RecordInfo.getFormatLabel(record));
-        physical_description.setText(record.physical_description);
 
         initSMSButton(eg.getSMSEnabled());
         initPlaceHoldRunnable(record);
@@ -164,11 +166,15 @@ public class PlaceHoldActivity extends ActionBarActivity {
                     thaw_date_s = Api.formatDate(thaw_date);
 
                 int selectedOrgID = -1;
-                if (eg.getInstance().getOrganizations().size() > selectedOrgPos)
-                    selectedOrgID = eg.getInstance().getOrganizations().get(selectedOrgPos).id;
+                if (eg.getOrganizations().size() > selectedOrgPos)
+                    selectedOrgID = eg.getOrganizations().get(selectedOrgPos).id;
+                int selectedSMSCarrierID = -1;
+                if (eg.getSMSCarriers().size() > selectedSMSCarrierID)
+                    selectedSMSCarrierID = eg.getSMSCarriers().get(selectedSMSCarrierID).id;
 
                 String[] stringResponse = new String[] { "false" };
                 try {
+                    // todo pass selectedSMSCarrierID
                     stringResponse = accountAccess.testAndCreateHold(record_id, selectedOrgID,
                             email_notification.isChecked(),
                             phone_notification.isChecked(),
@@ -240,11 +246,39 @@ public class PlaceHoldActivity extends ActionBarActivity {
             boolean sms_notify = sms_notification.isChecked();
             sms_spinner.setEnabled(sms_notify);
             phone_number.setEnabled(sms_notify);
+            phone_number.setText(safeString(accountAccess.getDefaultSMSNumber()));
+            initSMSSpinner();
         } else {
             sms_notification.setVisibility(View.GONE);
             sms_spinner.setVisibility(View.GONE);
             phone_number.setVisibility(View.GONE);
         }
+    }
+
+    private void initSMSSpinner() {
+        Integer defaultID = accountAccess.getDefaultSMSCarrierID();
+        ArrayList<String> entries = new ArrayList<>();
+        List<SMSCarrier> carriers = eg.getSMSCarriers();
+        for (int i = 0; i < carriers.size(); i++) {
+            SMSCarrier carrier = carriers.get(i);
+            entries.add(carrier.name);
+            if (carrier.id == defaultID) {
+                selectedSMSPos = i;
+            }
+        }
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, R.layout.org_item_layout, entries);
+        sms_spinner.setAdapter(adapter);
+        sms_spinner.setSelection(selectedSMSPos);
+        sms_spinner.setOnItemSelectedListener(new OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                selectedSMSPos = position;
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
+        });
     }
 
     private void initDatePickers() {
@@ -303,8 +337,8 @@ public class PlaceHoldActivity extends ActionBarActivity {
     private void initOrgSpinner() {
         int defaultLibraryID = AccountAccess.getInstance().getDefaultPickupLibraryID();
         ArrayList<String> list = new ArrayList<>();
-        for (int i = 0; i < eg.getInstance().getOrganizations().size(); i++) {
-            Organization org = eg.getInstance().getOrganizations().get(i);
+        for (int i = 0; i < eg.getOrganizations().size(); i++) {
+            Organization org = eg.getOrganizations().get(i);
             list.add(org.getTreeDisplayName());
             if (org.id == defaultLibraryID) {
                 selectedOrgPos = i;
@@ -313,7 +347,7 @@ public class PlaceHoldActivity extends ActionBarActivity {
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, R.layout.org_item_layout, list) {
             @Override
             public boolean isEnabled(int pos) {
-                Organization org = eg.getInstance().getOrganizations().get(pos);
+                Organization org = eg.getOrganizations().get(pos);
                 return org.isPickupLocation();
             }
         };
@@ -321,8 +355,8 @@ public class PlaceHoldActivity extends ActionBarActivity {
         orgSpinner.setSelection(selectedOrgPos);
         orgSpinner.setOnItemSelectedListener(new OnItemSelectedListener() {
             @Override
-            public void onItemSelected(AdapterView<?> arg0, View arg1, int ID, long arg3) {
-                selectedOrgPos = ID;
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                selectedOrgPos = position;
             }
 
             @Override

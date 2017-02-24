@@ -49,6 +49,7 @@ public class EvergreenServer {
     private boolean mIDLLoaded = false;
     private ArrayList<OrgType> mOrgTypes = null;
     private ArrayList<Organization> mOrganizations = null;
+    private ArrayList<SMSCarrier> mSMSCarriers = null;
     private Boolean mIsSMSEnabled = null;
     private LinkedHashMap<String, String> mCopyStatuses = new LinkedHashMap<>();
 
@@ -86,6 +87,7 @@ public class EvergreenServer {
         mIDLLoaded = false;
         mOrgTypes = null;
         mOrganizations = null;
+        mSMSCarriers = null;
         mIsSMSEnabled = null;
     }
 
@@ -212,6 +214,26 @@ public class EvergreenServer {
         } else {
             return org.name;
         }
+    }
+
+    public void loadSMSCarriers(List<OSRFObject> carriers) {
+        mSMSCarriers = new ArrayList<SMSCarrier>(carriers.size());
+        for (OSRFObject obj : carriers) {
+            SMSCarrier carrier = new SMSCarrier();
+            carrier.id = obj.getInt("id");
+            carrier.name = obj.getString("name");
+            mSMSCarriers.add(carrier);
+        }
+        Collections.sort(mSMSCarriers, new Comparator<SMSCarrier>() {
+            @Override
+            public int compare(SMSCarrier a, SMSCarrier b) {
+                return a.name.compareTo(b.name);
+            }
+        });
+    }
+
+    public List<SMSCarrier> getSMSCarriers() {
+        return mSMSCarriers;
     }
 
     public void setSMSEnabled(Boolean value) {
