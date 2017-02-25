@@ -933,24 +933,22 @@ public class AccountAccess {
         mrid         - required for Meta-record level hold
         hold_type    - T, C (or R or F), I, V or M for Title, Copy, Issuance, Volume or Meta-record  (default "T")
          */
-        HashMap<String, Object> args = new HashMap<String, Object>();
+        HashMap<String, Object> args = new HashMap<>();
         args.put("patronid", userID);
         args.put("pickup_lib", pickup_lib);
         args.put("titleid", recordID);
         args.put("hold_type", "T");
-        args.put("email_notify", email_notify?"t":"f");
+        args.put("email_notify", email_notify);
+        args.put("expire_time", expire_time);
         if (sms_carrier_id != null && !TextUtils.isEmpty(sms_number)) {
-            args.put("sms_notify_checkbox", "on");
             args.put("sms_carrier", sms_carrier_id);
             args.put("sms_notify", sms_number);
         }
-        if (!TextUtils.isEmpty(expire_time))
-            args.put("expire_time", expire_time);
         if (suspendHold && thaw_date != null) {
             args.put("frozen", suspendHold);
             args.put("thaw_date", thaw_date);
         }
-        ArrayList<Integer> ids = new ArrayList<Integer>(1);
+        ArrayList<Integer> ids = new ArrayList<>(1);
         ids.add(recordID);
         Object resp = Utils.doRequest(conn(), Api.SERVICE_CIRC,
                 Api.HOLD_TEST_AND_CREATE, authToken, new Object[] {

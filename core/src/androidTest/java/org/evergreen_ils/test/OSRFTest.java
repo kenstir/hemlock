@@ -237,7 +237,6 @@ public class OSRFTest {
         args.put("email_notify", email_notify);
         args.put("expire_time", expire_time);
         if (sms_carrier_id != null && !TextUtils.isEmpty(sms_number)) {
-            args.put("sms_notify_checkbox", "on");
             args.put("sms_carrier", sms_carrier_id);
             args.put("sms_notify", sms_number);
         }
@@ -245,7 +244,7 @@ public class OSRFTest {
             args.put("frozen", suspendHold);
             args.put("thaw_date", thaw_date);
         }
-        ArrayList<Integer> ids = new ArrayList<Integer>(1);
+        ArrayList<Integer> ids = new ArrayList<>(1);
         ids.add(recordID);
         Object resp = Utils.doRequest(conn(), Api.SERVICE_CIRC,
                 Api.HOLD_IS_POSSIBLE, mAuthToken, new Object[]{
