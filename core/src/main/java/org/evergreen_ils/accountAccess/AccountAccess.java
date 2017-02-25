@@ -913,6 +913,7 @@ public class AccountAccess {
         return resp;
     }
 
+    // todo use value type for return type
     public String[] testAndCreateHold(Integer recordID, Integer pickup_lib,
                                       boolean email_notify,
                                       Integer sms_carrier_id, String sms_number,
@@ -948,23 +949,27 @@ public class AccountAccess {
             args.put("frozen", suspendHold);
             args.put("thaw_date", thaw_date);
         }
+
         ArrayList<Integer> ids = new ArrayList<>(1);
         ids.add(recordID);
+
         Object resp = Utils.doRequest(conn(), Api.SERVICE_CIRC,
                 Api.HOLD_TEST_AND_CREATE, authToken, new Object[] {
                         authToken, args, ids });
 
-        String[] ret = new String[] {"false",null,null};
+        String[] ret = new String[] {"false",null,"Unknown error"};
         try {
             Map<String, ?> resp_map = ((Map<String, ?>) resp);
             Object result = resp_map.get("result");
+            // event0 is almost but not quite an org.open_ils.Event
+            Map<String, ?> event0 = null;
             if (result instanceof List) {
                 // List of error events
                 List<?> l = (List<?>) result;
-                Map<String, ?> event0 = (Map<String, ?>) l.get(0);
-                ret[0] = "false";
-                ret[1] = (String) event0.get("textcode");
-                ret[2] = (String) event0.get("desc");
+                event0 = (Map<String, ?>) l.get(0);
+            } else if (result instanceof Map) {
+                Map<String, ?> result_map = (Map<String, ?>) result;
+                event0 = (Map<String, ?>) result_map.get("last_event");
             } else if (result instanceof Integer) {
                 Integer hold_id = (Integer) result;
                 if (hold_id > -1) {
@@ -973,11 +978,12 @@ public class AccountAccess {
             } else {
                 Log.d(TAG, "unknown response from test_and_create: "+result);
             }
-
+            if (event0 != null && event0.containsKey("desc")) {
+                ret[1] = (String) event0.get("textcode");
+                ret[2] = (String) event0.get("desc");
+            }
         } catch (Exception e) {
-            ret[0] = "false";
-            ret[1] = "";
-            ret[2] = "Unknown error";
+            Log.d(TAG, "caught", e);
         }
 
         Log.d(TAG, "Result " + ret[1] + " " + ret[2]);
@@ -992,64 +998,25 @@ public class AccountAccess {
      * @return the object
      * @throws SessionNotFoundException the session not found exception
      */
-    public Object isHoldPossible(Integer pickup_lib, Integer recordID)
+    public Object isHoldPossible(Integer recordID, Integer pickup_lib)
             throws SessionNotFoundException {
 
-        HashMap<String, Integer> map = getHoldPreCreateInfo(recordID, pickup_lib);
-        map.put("pickup_lib", pickup_lib);
-        map.put("hold_type", null);
-        map.put("patronid", userID);
-        map.put("volume_id", null);
-        map.put("issuanceid", null);
-        map.put("copy_id", null);
-        map.put("depth", 0);
-        map.put("part_id", null);
-        map.put("holdable_formats", null);
-        // {"titleid":63,"mrid":60,"volume_id":null,"issuanceid":null,"copy_id":null,"hold_type":"T","holdable_formats":null,
-        // "patronid":2,"depth":0,"pickup_lib":"8","partid":null}
+        HashMap<String, Object> args = new HashMap<>();
+        args.put("patronid", userID);
+        args.put("pickup_lib", pickup_lib);
+        args.put("titleid", recordID);
+
+        ArrayList<Integer> ids = new ArrayList<>(1);
+        ids.add(recordID);
 
         Object response = Utils.doRequest(conn(), Api.SERVICE_CIRC,
                 Api.HOLD_IS_POSSIBLE, authToken, new Object[] {
-                        authToken, map });
+                        authToken, args, ids });
+
+        // successs looks like  {local_avail:'',depth:null,success:1}
+        // failure looks like {place_unfillable:1,age_protected_copy:null,success:0,last_event:{...}
 
         return response;
-    }
-
-    // return
-    /**
-     * Gets the hold pre create info.
-     *
-     * @param recordID the record id
-     * @param pickup_lib the pickup_lib
-     * @return the hold pre create info
-     */
-    public HashMap<String, Integer> getHoldPreCreateInfo(Integer recordID, Integer pickup_lib) {
-
-        HashMap<String, Integer> param = new HashMap<String, Integer>();
-
-        param.put("pickup_lib", pickup_lib);
-        param.put("record", recordID);
-
-        Map<String, ?> response = (Map<String, ?>) Utils.doRequest(conn(),
-                Api.SEARCH,
-                Api.METABIB_RECORD_TO_DESCRIPTORS,
-                new Object[] { param });
-
-        Object obj = response.get("metarecord");
-        Log.d(TAG, "metarecord="+obj);
-        Integer metarecordID = Integer.parseInt(obj.toString());
-
-        HashMap<String, Integer> map = new HashMap<String, Integer>();
-        map.put("titleid", recordID);
-        map.put("mrid", metarecordID);
-
-        return map;
-        /*
-         * Methods to get necessary info on hold
-         * open-ils.search.metabib.record_to_descriptors
-         * 
-         * open-ils.search.biblio.record_hold_parts
-         */
     }
 
     // ----------------------------Fines

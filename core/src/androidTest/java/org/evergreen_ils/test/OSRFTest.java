@@ -217,61 +217,25 @@ public class OSRFTest {
         assertLoggedIn();
         mConn = EvergreenServer.getInstance().gatewayConnection();
         AccountAccess ac = AccountAccess.getInstance();
+        ac.retrieveSession(mAuthToken);
 
-        Integer userID = 409071;
-        Integer pickup_lib = 69;
-        Integer recordID = 2731124;//3486408;
+        Integer pickup_lib = ac.getDefaultPickupLibraryID();
+        //Integer recordID = 3486408;
+        Integer recordID = 1;
         boolean email_notify = true;
-        Integer sms_carrier_id = null;
-        String sms_number = null;
+        Integer sms_carrier_id = ac.getDefaultSMSCarrierID();
+        String sms_number = ac.getDefaultSMSNumber();
         boolean suspendHold = false;
         String expire_time = null;
         String thaw_date = null;
 
-        // move to testAndCreateHold when working
-        HashMap<String, Object> args = new HashMap<>();
-        args.put("patronid", userID);
-        args.put("pickup_lib", pickup_lib);
-        args.put("titleid", recordID);
-        args.put("hold_type", "T");
-        args.put("email_notify", email_notify);
-        args.put("expire_time", expire_time);
-        if (sms_carrier_id != null && !TextUtils.isEmpty(sms_number)) {
-            args.put("sms_carrier", sms_carrier_id);
-            args.put("sms_notify", sms_number);
-        }
-        if (suspendHold && thaw_date != null) {
-            args.put("frozen", suspendHold);
-            args.put("thaw_date", thaw_date);
-        }
-        ArrayList<Integer> ids = new ArrayList<>(1);
-        ids.add(recordID);
-        Object resp = Utils.doRequest(conn(), Api.SERVICE_CIRC,
-                Api.HOLD_IS_POSSIBLE, mAuthToken, new Object[]{
-                        mAuthToken, args, ids});
+        // this is a lousy API
+        Object hold_possible_resp = ac.isHoldPossible(recordID, pickup_lib);
+        Log.d(TAG, "resp=" + hold_possible_resp);
 
-        String[] ret = new String[]{"false", null, null};
-        try {
-            Map<String, ?> resp_map = ((Map<String, ?>) resp);
-            Object result = resp_map.get("result");
-            Log.d(TAG, "result=" + result);
-        } catch (Exception e) {
-            Log.d(TAG, "caught", e);
-            ret = new String[]{"false", "", "Unknown error"};
-        }
-        Log.d(TAG, "ret=" + ret);
-
-        resp = Utils.doRequest(conn(), Api.SERVICE_CIRC,
-                Api.HOLD_TEST_AND_CREATE, mAuthToken, new Object[] {
-                        mAuthToken, args, ids });
-        try {
-            Map<String, ?> resp_map = ((Map<String, ?>) resp);
-            Object result = resp_map.get("result");
-            Log.d(TAG, "result=" + result);
-        } catch (Exception e) {
-            Log.d(TAG, "caught", e);
-            ret = new String[]{"false", "", "Unknown error"};
-        }
-        Log.d(TAG, "ret=" + ret);
+        // this too
+        String[] stringResponse = ac.testAndCreateHold(recordID, pickup_lib, email_notify,
+                sms_carrier_id, sms_number, suspendHold, expire_time, thaw_date);
+        Log.d(TAG, "stringResponse=" + stringResponse);
     }
 }
