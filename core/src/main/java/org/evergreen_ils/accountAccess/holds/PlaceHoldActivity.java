@@ -169,16 +169,14 @@ public class PlaceHoldActivity extends ActionBarActivity {
                 if (eg.getOrganizations().size() > selectedOrgPos)
                     selectedOrgID = eg.getOrganizations().get(selectedOrgPos).id;
                 int selectedSMSCarrierID = -1;
-                if (eg.getSMSCarriers().size() > selectedSMSCarrierID)
-                    selectedSMSCarrierID = eg.getSMSCarriers().get(selectedSMSCarrierID).id;
+                if (eg.getSMSCarriers().size() > selectedSMSPos)
+                    selectedSMSCarrierID = eg.getSMSCarriers().get(selectedSMSPos).id;
 
                 String[] stringResponse = new String[] { "false" };
                 try {
-                    // todo pass selectedSMSCarrierID
                     stringResponse = accountAccess.testAndCreateHold(record_id, selectedOrgID,
                             email_notification.isChecked(),
-                            phone_notification.isChecked(),
-                            phone_number.getText().toString(),
+                            selectedSMSCarrierID, phone_number.getText().toString(),
                             suspendHold.isChecked(), expire_date_s, thaw_date_s);
                 } catch (SessionNotFoundException e) {
                     try {
@@ -186,8 +184,7 @@ public class PlaceHoldActivity extends ActionBarActivity {
                             stringResponse = accountAccess.testAndCreateHold(
                                     record_id, selectedOrgID,
                                     email_notification.isChecked(),
-                                    phone_notification.isChecked(),
-                                    phone_number.getText().toString(),
+                                    selectedSMSCarrierID, phone_number.getText().toString(),
                                     suspendHold.isChecked(), expire_date_s, thaw_date_s);
                     } catch (Exception e1) {
                     }

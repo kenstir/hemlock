@@ -152,6 +152,10 @@ public class Api {
         return date;
     }
 
+    public static Integer formatBoolean(Boolean obj) {
+        return obj ? 1 : 0;
+    }
+
     // parse bool string returned from API methods
     public static Boolean parseBoolean(Object obj) {
         if (obj instanceof Boolean) {

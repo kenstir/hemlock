@@ -87,7 +87,6 @@ public class OSRFTest {
         EvergreenServer eg = EvergreenServer.getInstance();
         eg.connect(mServer);
         Log.d(TAG, "connected to "+mServer);
-        AccountAccess ac = AccountAccess.getInstance();
     }
 
     private static void assertLoggedIn() {
@@ -211,5 +210,69 @@ public class OSRFTest {
             ArrayList<OSRFObject> l = (ArrayList<OSRFObject>) resp;
             Log.d(TAG, "looks like we made it");
         }
+    }
+
+    @Test
+    public void testIsTitleHoldPossible() throws Exception {
+        assertLoggedIn();
+        mConn = EvergreenServer.getInstance().gatewayConnection();
+        AccountAccess ac = AccountAccess.getInstance();
+
+        Integer userID = 409071;
+        Integer pickup_lib = 69;
+        Integer recordID = 2731124;//3486408;
+        boolean email_notify = true;
+        Integer sms_carrier_id = null;
+        String sms_number = null;
+        boolean suspendHold = false;
+        String expire_time = null;
+        String thaw_date = null;
+
+        // move to testAndCreateHold when working
+        HashMap<String, Object> args = new HashMap<>();
+        args.put("patronid", userID);
+        args.put("pickup_lib", pickup_lib);
+        args.put("titleid", recordID);
+        args.put("hold_type", "T");
+        args.put("email_notify", email_notify);
+        args.put("expire_time", expire_time);
+        if (sms_carrier_id != null && !TextUtils.isEmpty(sms_number)) {
+            args.put("sms_notify_checkbox", "on");
+            args.put("sms_carrier", sms_carrier_id);
+            args.put("sms_notify", sms_number);
+        }
+        if (suspendHold && thaw_date != null) {
+            args.put("frozen", suspendHold);
+            args.put("thaw_date", thaw_date);
+        }
+        ArrayList<Integer> ids = new ArrayList<Integer>(1);
+        ids.add(recordID);
+        Object resp = Utils.doRequest(conn(), Api.SERVICE_CIRC,
+                Api.HOLD_IS_POSSIBLE, mAuthToken, new Object[]{
+                        mAuthToken, args, ids});
+
+        String[] ret = new String[]{"false", null, null};
+        try {
+            Map<String, ?> resp_map = ((Map<String, ?>) resp);
+            Object result = resp_map.get("result");
+            Log.d(TAG, "result=" + result);
+        } catch (Exception e) {
+            Log.d(TAG, "caught", e);
+            ret = new String[]{"false", "", "Unknown error"};
+        }
+        Log.d(TAG, "ret=" + ret);
+
+        resp = Utils.doRequest(conn(), Api.SERVICE_CIRC,
+                Api.HOLD_TEST_AND_CREATE, mAuthToken, new Object[] {
+                        mAuthToken, args, ids });
+        try {
+            Map<String, ?> resp_map = ((Map<String, ?>) resp);
+            Object result = resp_map.get("result");
+            Log.d(TAG, "result=" + result);
+        } catch (Exception e) {
+            Log.d(TAG, "caught", e);
+            ret = new String[]{"false", "", "Unknown error"};
+        }
+        Log.d(TAG, "ret=" + ret);
     }
 }

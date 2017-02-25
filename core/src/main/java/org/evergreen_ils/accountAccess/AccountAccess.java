@@ -914,7 +914,8 @@ public class AccountAccess {
     }
 
     public String[] testAndCreateHold(Integer recordID, Integer pickup_lib,
-                                      boolean email_notify, boolean phone_notify, String phone,
+                                      boolean email_notify,
+                                      Integer sms_carrier_id, String sms_number,
                                       boolean suspendHold, String expire_time, String thaw_date)
             throws SessionNotFoundException {
         /*
@@ -932,51 +933,57 @@ public class AccountAccess {
         mrid         - required for Meta-record level hold
         hold_type    - T, C (or R or F), I, V or M for Title, Copy, Issuance, Volume or Meta-record  (default "T")
          */
-        HashMap<String, Object> map = new HashMap<String, Object>();
-        map.put("patronid", userID);
-        map.put("pickup_lib", pickup_lib);
-        map.put("titleid", recordID);
-        map.put("hold_type", "T");
-        map.put("email_notify", email_notify);
-        map.put("expire_time", expire_time);
+        HashMap<String, Object> args = new HashMap<String, Object>();
+        args.put("patronid", userID);
+        args.put("pickup_lib", pickup_lib);
+        args.put("titleid", recordID);
+        args.put("hold_type", "T");
+        args.put("email_notify", email_notify?"t":"f");
+        if (sms_carrier_id != null && !TextUtils.isEmpty(sms_number)) {
+            args.put("sms_notify_checkbox", "on");
+            args.put("sms_carrier", sms_carrier_id);
+            args.put("sms_notify", sms_number);
+        }
+        if (!TextUtils.isEmpty(expire_time))
+            args.put("expire_time", expire_time);
         if (suspendHold && thaw_date != null) {
-            map.put("frozen", suspendHold);
-            map.put("thaw_date", thaw_date);
+            args.put("frozen", suspendHold);
+            args.put("thaw_date", thaw_date);
         }
         ArrayList<Integer> ids = new ArrayList<Integer>(1);
         ids.add(recordID);
-        Object response = Utils.doRequest(conn(), Api.SERVICE_CIRC,
+        Object resp = Utils.doRequest(conn(), Api.SERVICE_CIRC,
                 Api.HOLD_TEST_AND_CREATE, authToken, new Object[] {
-                        authToken, map, ids });
+                        authToken, args, ids });
 
-        String[] resp = new String[] {"false",null,null};
-        Map<String, ?> resp_map = ((Map<String, ?>) response);
+        String[] ret = new String[] {"false",null,null};
         try {
+            Map<String, ?> resp_map = ((Map<String, ?>) resp);
             Object result = resp_map.get("result");
             if (result instanceof List) {
                 // List of error events
                 List<?> l = (List<?>) result;
                 Map<String, ?> event0 = (Map<String, ?>) l.get(0);
-                resp[0] = "false";
-                resp[1] = (String) event0.get("textcode");
-                resp[2] = (String) event0.get("desc");
+                ret[0] = "false";
+                ret[1] = (String) event0.get("textcode");
+                ret[2] = (String) event0.get("desc");
             } else if (result instanceof Integer) {
                 Integer hold_id = (Integer) result;
                 if (hold_id > -1) {
-                    resp[0] = "true";
+                    ret[0] = "true";
                 }
             } else {
                 Log.d(TAG, "unknown response from test_and_create: "+result);
             }
 
         } catch (Exception e) {
-            resp[0] = "false";
-            resp[1] = "";
-            resp[2] = "Unknown error";
+            ret[0] = "false";
+            ret[1] = "";
+            ret[2] = "Unknown error";
         }
 
-        Log.d(TAG, "Result " + resp[1] + " " + resp[2]);
-        return resp;
+        Log.d(TAG, "Result " + ret[1] + " " + ret[2]);
+        return ret;
     }
 
     /**
