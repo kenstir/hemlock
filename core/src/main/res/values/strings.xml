@@ -85,7 +85,8 @@
     <string name="title">Title</string>
     <string name="author">Author</string>
     <string name="physical_description">Physical Description</string>
-    <string name="contact_telephone">number</string>
+    <string name="phone_number">number</string>
+    <string name="phone_number_hint">10-digit number</string>
     <string name="mobile_carrier">carrier</string>
     <string name="enable_phone_notification"> Phone notification</string>
     <string name="contact_email_address">Contact email address </string>

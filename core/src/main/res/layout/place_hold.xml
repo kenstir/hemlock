@@ -152,15 +152,16 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/contact_telephone"
+                    android:text="@string/phone_number"
                     android:layout_gravity="end" />
                 <EditText
-                    android:id="@+id/hold_contact_telephone"
+                    android:id="@+id/hold_phone_number"
+                    android:hint="@string/phone_number_hint"
                     android:layout_width="0dip"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:gravity="top|start"
-                    />
+                    android:inputType="phone" />
             </TableRow>
             <TableRow>
                 <TextView

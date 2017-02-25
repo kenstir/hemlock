@@ -23,9 +23,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 
 import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
@@ -34,19 +31,13 @@ import org.evergreen_ils.Api;
 import org.evergreen_ils.R;
 import org.evergreen_ils.accountAccess.AccountAccess;
 import org.evergreen_ils.accountAccess.SessionNotFoundException;
-import org.evergreen_ils.net.GatewayJsonObjectRequest;
-import org.evergreen_ils.net.VolleyWrangler;
 import org.evergreen_ils.system.EvergreenServer;
-import org.evergreen_ils.system.EvergreenServerLoader;
-import org.evergreen_ils.system.Log;
 import org.evergreen_ils.system.Organization;
 import org.evergreen_ils.searchCatalog.RecordInfo;
 import org.evergreen_ils.system.SMSCarrier;
-import org.evergreen_ils.system.Utils;
 import org.evergreen_ils.utils.ui.ActionBarUtils;
 import org.evergreen_ils.utils.ui.ProgressDialogSupport;
 import org.evergreen_ils.views.splashscreen.SplashActivity;
-import org.opensrf.util.GatewayResponse;
 
 import android.app.DatePickerDialog;
 import android.content.Context;
@@ -66,9 +57,6 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.android.volley.Request;
-import com.android.volley.Response;
 
 import static org.evergreen_ils.system.Utils.safeString;
 
@@ -124,7 +112,7 @@ public class PlaceHoldActivity extends ActionBarActivity {
         placeHold = (Button) findViewById(R.id.place_hold);
         expiration_date = (EditText) findViewById(R.id.hold_expiration_date);
         phone_notification = (CheckBox) findViewById(R.id.hold_enable_phone_notification);
-        phone_number = (EditText) findViewById(R.id.hold_contact_telephone);
+        phone_number = (EditText) findViewById(R.id.hold_phone_number);
         email_notification = (CheckBox) findViewById(R.id.hold_enable_email_notification);
         sms_notification = (CheckBox) findViewById(R.id.hold_enable_sms_notification);
         sms_spinner = (Spinner) findViewById(R.id.hold_sms_carrier);
