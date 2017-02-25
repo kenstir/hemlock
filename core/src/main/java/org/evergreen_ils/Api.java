@@ -79,9 +79,7 @@ public class Api {
     public static final String HOLD_QUEUE_STATS = "open-ils.circ.hold.queue_stats.retrieve";
     public static final String HOLD_UPDATE = "open-ils.circ.hold.update";
     public static final String HOLD_CANCEL = "open-ils.circ.hold.cancel";
-    // bug#1506207 - do not call HOLD_CREATE w/o calling HOLD_IS_POSSIBLE; better to call HOLD_TEST_AND_CREATE
     public static final String HOLD_IS_POSSIBLE = "open-ils.circ.title_hold.is_possible";
-    public static final String HOLD_CREATE = "open-ils.circ.holds.create";
     public static final String HOLD_TEST_AND_CREATE = "open-ils.circ.holds.test_and_create.batch";
     public static final String MONEY_BILLING_RETRIEVE = "open-ils.circ.money.billing.retrieve.all";
 

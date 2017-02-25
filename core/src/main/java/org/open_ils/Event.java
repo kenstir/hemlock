@@ -22,6 +22,8 @@ public class Event extends HashMap<String, Object> {
         return null;
     }
 
+    public String getDescription() { return (String) get("desc"); }
+
     public String getTextCode() {
         return (String) get("textcode");
     }

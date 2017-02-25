@@ -29,6 +29,7 @@ import android.support.v7.app.ActionBarActivity;
 import android.view.MenuItem;
 import org.evergreen_ils.Api;
 import org.evergreen_ils.R;
+import org.evergreen_ils.Result;
 import org.evergreen_ils.accountAccess.AccountAccess;
 import org.evergreen_ils.accountAccess.SessionNotFoundException;
 import org.evergreen_ils.system.EvergreenServer;
@@ -160,16 +161,16 @@ public class PlaceHoldActivity extends ActionBarActivity {
                 if (eg.getSMSCarriers().size() > selectedSMSPos)
                     selectedSMSCarrierID = eg.getSMSCarriers().get(selectedSMSPos).id;
 
-                String[] stringResponse = new String[] { "false" };
+                Result temp_result = null;
                 try {
-                    stringResponse = accountAccess.testAndCreateHold(record_id, selectedOrgID,
+                    temp_result = accountAccess.testAndCreateHold(record_id, selectedOrgID,
                             email_notification.isChecked(),
                             selectedSMSCarrierID, phone_number.getText().toString(),
                             suspendHold.isChecked(), expire_date_s, thaw_date_s);
                 } catch (SessionNotFoundException e) {
                     try {
                         if (accountAccess.reauthenticate(PlaceHoldActivity.this))
-                            stringResponse = accountAccess.testAndCreateHold(
+                            temp_result = accountAccess.testAndCreateHold(
                                     record_id, selectedOrgID,
                                     email_notification.isChecked(),
                                     selectedSMSCarrierID, phone_number.getText().toString(),
@@ -177,21 +178,21 @@ public class PlaceHoldActivity extends ActionBarActivity {
                     } catch (Exception e1) {
                     }
                 }
+                final Result result = temp_result;
 
-                final String[] holdPlaced = stringResponse;
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         progress.dismiss();
 
-                        if (holdPlaced[0].equals("true")) {
+                        if (result.isSuccess()) {
                             Toast.makeText(context, "Hold successfully placed",
                                     Toast.LENGTH_LONG).show();
                             startActivity(new Intent(context, HoldsListView.class));
                             finish();
                         } else
                             Toast.makeText(context,
-                                    "Error placing hold: " + holdPlaced[2],
+                                    "Error placing hold: " + result.getErrorMessage(),
                                     Toast.LENGTH_LONG).show();
 
                     }

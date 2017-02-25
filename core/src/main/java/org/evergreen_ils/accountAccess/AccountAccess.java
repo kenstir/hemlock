@@ -22,6 +22,7 @@ package org.evergreen_ils.accountAccess;
 import android.app.Activity;
 import android.text.TextUtils;
 import org.evergreen_ils.Api;
+import org.evergreen_ils.Result;
 import org.evergreen_ils.accountAccess.bookbags.BookBag;
 import org.evergreen_ils.accountAccess.bookbags.BookBagItem;
 import org.evergreen_ils.accountAccess.checkout.CircRecord;
@@ -630,6 +631,7 @@ public class AccountAccess {
             fetchHoldStatus(listHoldsAhr.get(i), hold);
             if (hold.recordInfo != null)
                 hold.recordInfo.setSearchFormat(fetchFormat(hold.target));
+            Log.d("kcxxx", "hold on "+hold.title+" status="+hold.status);
             holds.add(hold);
         }
         return holds;
@@ -856,11 +858,10 @@ public class AccountAccess {
         return response;
     }
 
-    // todo use value type for return type
-    public String[] testAndCreateHold(Integer recordID, Integer pickup_lib,
-                                      boolean email_notify,
-                                      Integer sms_carrier_id, String sms_number,
-                                      boolean suspendHold, String expire_time, String thaw_date)
+    public Result testAndCreateHold(Integer recordID, Integer pickup_lib,
+                                    boolean email_notify,
+                                    Integer sms_carrier_id, String sms_number,
+                                    boolean suspendHold, String expire_time, String thaw_date)
             throws SessionNotFoundException {
         /*
         The named fields in the hash are:
@@ -880,7 +881,7 @@ public class AccountAccess {
         HashMap<String, Object> args = new HashMap<>();
         args.put("patronid", userID);
         args.put("pickup_lib", pickup_lib);
-        args.put("titleid", recordID);
+        args.put("titleid", recordID);//is this required?
         args.put("hold_type", "T");
         args.put("email_notify", email_notify);
         args.put("expire_time", expire_time);
@@ -900,37 +901,30 @@ public class AccountAccess {
                 Api.HOLD_TEST_AND_CREATE, authToken, new Object[] {
                         authToken, args, ids });
 
-        String[] ret = new String[] {"false",null,"Unknown error"};
+        Result result_obj = Result.createUnknownError();
         try {
             Map<String, ?> resp_map = ((Map<String, ?>) resp);
             Object result = resp_map.get("result");
-            // event0 is almost but not quite an org.open_ils.Event
-            Map<String, ?> event0 = null;
-            if (result instanceof List) {
-                // List of error events
-                List<?> l = (List<?>) result;
-                event0 = (Map<String, ?>) l.get(0);
-            } else if (result instanceof Map) {
-                Map<String, ?> result_map = (Map<String, ?>) result;
-                event0 = (Map<String, ?>) result_map.get("last_event");
-            } else if (result instanceof Integer) {
+            if (result instanceof Integer) {
                 Integer hold_id = (Integer) result;
                 if (hold_id > -1) {
-                    ret[0] = "true";
+                    result_obj = Result.createFromSuccess(result);
                 }
+            } else if (result instanceof List) {
+                // List of error events
+                List<?> l = (List<?>) result;
+                result_obj = Result.createFromEvent(l.get(0));
+            } else if (result instanceof Map) {
+                Map<String, ?> result_map = (Map<String, ?>) result;
+                result_obj = Result.createFromEvent(result_map.get("last_event"));
             } else {
                 Log.d(TAG, "unknown response from test_and_create: "+result);
-            }
-            if (event0 != null && event0.containsKey("desc")) {
-                ret[1] = (String) event0.get("textcode");
-                ret[2] = (String) event0.get("desc");
             }
         } catch (Exception e) {
             Log.d(TAG, "caught", e);
         }
 
-        Log.d(TAG, "Result " + ret[1] + " " + ret[2]);
-        return ret;
+        return result_obj;
     }
 
     /**

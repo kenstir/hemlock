@@ -80,7 +80,6 @@ public class OSRFTest {
         mAuthToken = EvergreenAuthenticator.signIn(mServer, mUsername, mPassword);
         if (TextUtils.isEmpty(mAuthToken))
             return;
-        //assertNotEquals("non-empty auth token", "", mAuthToken);
         Log.d(TAG, "auth_token "+mAuthToken);
 
         // init like the app does in LoadingTask
@@ -213,15 +212,20 @@ public class OSRFTest {
     }
 
     @Test
-    public void testIsTitleHoldPossible() throws Exception {
+    public void testCreateHold() throws Exception {
         assertLoggedIn();
         mConn = EvergreenServer.getInstance().gatewayConnection();
         AccountAccess ac = AccountAccess.getInstance();
         ac.retrieveSession(mAuthToken);
 
+        // Test cases
+        Integer recordID;
+        //recordID = 3486408;//cwmars: Zero Theorem
+        //recordID = 1;//cwmars: will fail
+        //recordID = 4030530;//cwmars: Arrival (ITEM_AGE_PROTECTED)
+        recordID = 3788817; //cwmars: Anomalisa (ok)
+
         Integer pickup_lib = ac.getDefaultPickupLibraryID();
-        //Integer recordID = 3486408;
-        Integer recordID = 1;
         boolean email_notify = true;
         Integer sms_carrier_id = ac.getDefaultSMSCarrierID();
         String sms_number = ac.getDefaultSMSNumber();
@@ -229,13 +233,16 @@ public class OSRFTest {
         String expire_time = null;
         String thaw_date = null;
 
-        // this is a lousy API
+        // this is a lousy API, returning an Object, and we don't use it
+        /*
         Object hold_possible_resp = ac.isHoldPossible(recordID, pickup_lib);
         Log.d(TAG, "resp=" + hold_possible_resp);
+        */
 
-        // this too
-        String[] stringResponse = ac.testAndCreateHold(recordID, pickup_lib, email_notify,
+        Result result = ac.testAndCreateHold(recordID, pickup_lib, email_notify,
                 sms_carrier_id, sms_number, suspendHold, expire_time, thaw_date);
-        Log.d(TAG, "stringResponse=" + stringResponse);
+        Log.d(TAG, "ok=" + result.isSuccess());
+        Log.d(TAG, "msg=" + result.getErrorMessage());
+        Log.d(TAG, "here");
     }
 }
