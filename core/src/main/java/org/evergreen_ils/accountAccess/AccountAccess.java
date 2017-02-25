@@ -856,63 +856,6 @@ public class AccountAccess {
         return response;
     }
 
-    /**
-     * Creates the hold.
-     *
-     * @param recordID the record id
-     * @param pickup_lib the pickup_lib
-     * @param email_notify the email_notify
-     * @param phone_notify the phone_notify
-     * @param phone the phone
-     * @param suspendHold the suspend hold
-     * @param expire_time the expire_time
-     * @param thaw_date the thaw_date
-     * @return the string[]
-     * @throws SessionNotFoundException the session not found exception
-     */
-    public String[] createHold(Integer recordID, Integer pickup_lib,
-            boolean email_notify, boolean phone_notify, String phone,
-            boolean suspendHold, String expire_time, String thaw_date)
-            throws SessionNotFoundException {
-
-        OSRFObject ahr = new OSRFObject("ahr");
-        ahr.put("target", recordID);
-        ahr.put("usr", userID);
-        ahr.put("requestor", userID);
-        ahr.put("hold_type", "T");
-        ahr.put("pickup_lib", pickup_lib);
-        ahr.put("phone_notify", phone);
-        ahr.put("email_notify", email_notify);
-        ahr.put("expire_time", expire_time);
-        ahr.put("frozen", suspendHold);
-        ahr.put("thaw_date", thaw_date);
-
-        Object response = Utils.doRequest(conn(), Api.SERVICE_CIRC,
-                Api.HOLD_CREATE, authToken, new Object[] {
-                        authToken, ahr });
-
-        String[] resp = new String[] {"false",null,null};
-        // if we can get hold ID then we return true
-        try {
-
-            Integer id = Integer.parseInt(response.toString());
-            if (id > -1)
-                resp[0] = "true";
-
-        } catch (Exception e) {
-
-            List<?> respErrorMessage = (List<?>) response;
-
-            Object map = respErrorMessage.get(0);
-            resp[0] = "false";
-            resp[1] = ((Map<String, String>) map).get("textcode");
-            resp[2] = ((Map<String, String>) map).get("desc");
-        }
-
-        Log.d(TAG, "Result " + resp[1] + " " + resp[2]);
-        return resp;
-    }
-
     // todo use value type for return type
     public String[] testAndCreateHold(Integer recordID, Integer pickup_lib,
                                       boolean email_notify,
