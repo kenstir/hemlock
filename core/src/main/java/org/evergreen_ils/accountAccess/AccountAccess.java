@@ -60,6 +60,10 @@ public class AccountAccess {
     private Integer defaultSearchLibraryID = null;
     private Integer defaultSMSCarrierID = null;
     private String defaultSMSNumber = null;
+    private String defaultPhoneNumber = null;
+    private Boolean defaultHoldNotifyEmail = null;
+    private Boolean defaultHoldNotifyPhone = null;
+    private Boolean defaultHoldNotifySMS = null;
     private ArrayList<BookBag> bookBags = new ArrayList<>();
 
     private void clearSession() {
@@ -72,6 +76,10 @@ public class AccountAccess {
         defaultSearchLibraryID = null;
         defaultSMSCarrierID = null;
         defaultSMSNumber = null;
+        defaultPhoneNumber = null;
+        defaultHoldNotifyEmail = null;
+        defaultHoldNotifyPhone = null;
+        defaultHoldNotifySMS = null;
         bookBags = new ArrayList<>();
     }
 
@@ -100,6 +108,22 @@ public class AccountAccess {
         if (defaultSearchLibraryID != null)
             return defaultSearchLibraryID;
         return homeLibraryID;
+    }
+
+    public boolean getDefaultEmailNotification() {
+        return Utils.safeBool(defaultHoldNotifyEmail);
+    }
+
+    public boolean getDefaultPhoneNotification() {
+        return Utils.safeBool(defaultHoldNotifyPhone);
+    }
+
+    public String getDefaultPhoneNumber() {
+        return defaultPhoneNumber;
+    }
+
+    public boolean getDefaultSMSNotification() {
+        return Utils.safeBool(defaultHoldNotifySMS);
     }
 
     public Integer getDefaultSMSCarrierID() {
@@ -168,6 +192,8 @@ public class AccountAccess {
                     String value = removeStupidExtraQuotes(setting.getString(Api.VALUE));
                     if (name.equals(Api.USER_SETTING_DEFAULT_PICKUP_LOCATION)) {
                         defaultPickupLibraryID = Api.parseInteger(value);
+                    } else if (name.equals(Api.USER_SETTING_DEFAULT_PHONE)) {
+                        defaultPhoneNumber = value;
                     } else if (name.equals(Api.USER_SETTING_DEFAULT_SEARCH_LOCATION)) {
                         defaultSearchLibraryID = Api.parseInteger(value);
                     } else if (name.equals(Api.USER_SETTING_DEFAULT_SMS_CARRIER)) {
@@ -175,8 +201,7 @@ public class AccountAccess {
                     } else if (name.equals(Api.USER_SETTING_DEFAULT_SMS_NOTIFY)) {
                         defaultSMSNumber = value;
                     } else if (name.equals(Api.USER_SETTING_HOLD_NOTIFY)) {
-                        String s = setting.getString(Api.VALUE);
-                        Log.d(TAG, "s="+s);
+                        parseHoldNotifyValue(value);
                     }
                 }
             }
@@ -190,6 +215,16 @@ public class AccountAccess {
         // * open-ils.pcrud open-ils.pcrud.search.ac auth_token, {usr: userId}
         // * open-ils.pcrud open-ils.pcrud.retrieve.ac auth_token, cardId
         //   (patrons don't have permission to see their own records)
+    }
+
+    private void parseHoldNotifyValue(String value) {
+        // value is something like "email|sms" or "email|phone"
+        String[] types = TextUtils.split(value, "\\|");
+        for (String type: types) {
+            if (type.equals("email")) defaultHoldNotifyEmail = true;
+            else if (type.equals("phone")) defaultHoldNotifyPhone = true;
+            else if (type.equals("sms")) defaultHoldNotifySMS = true;
+        }
     }
 
     public boolean reauthenticate(Activity activity) throws SessionNotFoundException {
@@ -631,7 +666,6 @@ public class AccountAccess {
             fetchHoldStatus(listHoldsAhr.get(i), hold);
             if (hold.recordInfo != null)
                 hold.recordInfo.setSearchFormat(fetchFormat(hold.target));
-            Log.d("kcxxx", "hold on "+hold.title+" status="+hold.status);
             holds.add(hold);
         }
         return holds;
@@ -859,7 +893,7 @@ public class AccountAccess {
     }
 
     public Result testAndCreateHold(Integer recordID, Integer pickup_lib,
-                                    boolean email_notify,
+                                    boolean email_notify, String phone_notify,
                                     Integer sms_carrier_id, String sms_number,
                                     boolean suspendHold, String expire_time, String thaw_date)
             throws SessionNotFoundException {
@@ -885,6 +919,8 @@ public class AccountAccess {
         args.put("hold_type", "T");
         args.put("email_notify", email_notify);
         args.put("expire_time", expire_time);
+        if (!TextUtils.isEmpty(phone_notify))
+            args.put("phone_notify", phone_notify);
         if (sms_carrier_id != null && !TextUtils.isEmpty(sms_number)) {
             args.put("sms_carrier", sms_carrier_id);
             args.put("sms_notify", sms_number);

@@ -145,11 +145,12 @@ public class HoldRecord implements Serializable {
         } else if (status == 3 || status == 8) {
             return res.getString(R.string.hold_status_in_transit, getTransitFrom(), getTransitSince());
         } else if (status < 3) {
-            return "Waiting for copy\n"
+            String status = "Waiting for copy\n"
                     + res.getQuantityString(R.plurals.number_of_holds, totalHolds, totalHolds) + " on "
-                    + res.getQuantityString(R.plurals.number_of_copies, potentialCopies, potentialCopies)
-                    + "\n"
-                    + "Queue position: " + queuePosition;
+                    + res.getQuantityString(R.plurals.number_of_copies, potentialCopies, potentialCopies);
+            if (res.getBoolean(R.bool.ou_enable_hold_queue_position))
+                status = status + "\n" + "Queue position: " + queuePosition;
+            return status;
         } else {
             return "";
         }

@@ -195,4 +195,10 @@ public class Utils {
             return "";
         return s;
     }
+
+    public static boolean safeBool(Boolean b) {
+        if (b == null)
+            return false;
+        return b;
+    }
 }

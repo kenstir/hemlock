@@ -57,6 +57,7 @@ public class Api {
     public static final String SETTING_ORG_UNIT_NOT_PICKUP_LIB = "opac.holds.org_unit_not_pickup_lib";
     public static final String SETTING_SMS_ENABLE = "sms.enable";
     public static final String USER_SETTING_HOLD_NOTIFY = "opac.hold_notify"; // e.g. "email|sms"
+    public static final String USER_SETTING_DEFAULT_PHONE = "opac.default_phone";
     public static final String USER_SETTING_DEFAULT_PICKUP_LOCATION = "opac.default_pickup_location";
     public static final String USER_SETTING_DEFAULT_SEARCH_LOCATION = "opac.default_search_location";
     public static final String USER_SETTING_DEFAULT_SMS_CARRIER = "opac.default_sms_carrier";

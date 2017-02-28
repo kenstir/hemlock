@@ -74,21 +74,6 @@
                     android:spinnerMode="dialog"
                     />
             </TableRow>
-            <TableRow android:visibility="gone">
-                <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/enable_phone_notification"
-                        android:paddingRight="6dp"
-                        />
-
-                <CheckBox
-                        android:id="@+id/hold_enable_phone_notification"
-                        android:layout_width="0dip"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        />
-            </TableRow>
             <TableRow>
                 <TextView
                     android:layout_width="wrap_content"
@@ -105,25 +90,66 @@
             </TableRow>
             <TableRow>
                 <TextView
+                    android:id="@+id/hold_phone_notification_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/enable_phone_notification"
+                    android:paddingRight="6dp"
+                    android:layout_gravity="left|center_vertical" />
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1">
+                    <CheckBox
+                        android:id="@+id/hold_enable_phone_notification"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+                    <EditText
+                        android:id="@+id/hold_phone_notify"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:inputType="phone" />
+                </LinearLayout>
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+                <TextView
+                    android:id="@+id/hold_sms_notification_label"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/enable_sms_notification"
-                    android:paddingRight="6dp" />
-                <CheckBox
-                    android:id="@+id/hold_enable_sms_notification"
-                    android:layout_width="0dip"
+                    android:paddingRight="6dp"
+                    android:layout_gravity="left|center_vertical" />
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:enabled="true"
-                    android:checked="true" />
+                    android:layout_weight="1">
+                    <CheckBox
+                        android:id="@+id/hold_enable_sms_notification"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+                    <EditText
+                        android:id="@+id/hold_sms_notify"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:inputType="phone" />
+                </LinearLayout>
             </TableRow>
+
             <TableRow>
                 <TextView
+                    android:id="@+id/hold_sms_spinner_label"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/mobile_carrier"
                     android:paddingRight="6dp"
-                    android:layout_gravity="right|center_vertical" />
+                    android:layout_gravity="left|center_vertical" />
                 <Spinner
                     android:id="@+id/hold_sms_carrier"
                     android:layout_width="0dip"
@@ -131,22 +157,6 @@
                     android:layout_weight="1"
                     android:spinnerMode="dialog"
                     />
-            </TableRow>
-            <TableRow android:visibility="visible">
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/phone_number"
-                    android:paddingRight="6dp"
-                    android:layout_gravity="right|center_vertical"
-                    />
-                <EditText
-                    android:id="@+id/hold_phone_number"
-                    android:hint="@string/phone_number_hint"
-                    android:layout_width="0dip"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:inputType="phone" />
             </TableRow>
             <TableRow>
                 <TextView

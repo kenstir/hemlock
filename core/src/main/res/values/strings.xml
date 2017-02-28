@@ -86,10 +86,9 @@
     <string name="author">Author</string>
     <string name="physical_description">Physical Description</string>
     <string name="phone_number">number</string>
-    <string name="phone_number_hint">10-digit number</string>
-    <string name="mobile_carrier">carrier</string>
-    <string name="enable_phone_notification"> Phone notification</string>
-    <string name="contact_email_address">Contact email address </string>
+    <string name="sms_notify_hint">10-digit number</string>
+    <string name="mobile_carrier">Mobile carrier</string>
+    <string name="enable_phone_notification">Phone notification</string>
     <string name="enable_email_notification">Email notification</string>
     <string name="enable_sms_notification">SMS notification</string>
     <string name="pickup_location">Pickup location</string>

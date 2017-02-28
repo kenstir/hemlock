@@ -69,7 +69,8 @@ public class PlaceHoldActivity extends ActionBarActivity {
     private TextView format;
     private AccountAccess accountAccess;
     private EditText expiration_date;
-    private EditText phone_number;
+    private EditText sms_notify;
+    private EditText phone_notify;
     private CheckBox phone_notification;
     private CheckBox email_notification;
     private CheckBox sms_notification;
@@ -77,6 +78,9 @@ public class PlaceHoldActivity extends ActionBarActivity {
     private Button placeHold;
     private CheckBox suspendHold;
     private Spinner orgSpinner;
+    private TextView phone_notification_label;
+    private TextView sms_notification_label;
+    private TextView sms_spinner_label;
     private DatePickerDialog datePicker = null;
     private DatePickerDialog thaw_datePicker = null;
     private EditText thaw_date_edittext;
@@ -112,9 +116,13 @@ public class PlaceHoldActivity extends ActionBarActivity {
         format = (TextView) findViewById(R.id.hold_format);
         placeHold = (Button) findViewById(R.id.place_hold);
         expiration_date = (EditText) findViewById(R.id.hold_expiration_date);
-        phone_notification = (CheckBox) findViewById(R.id.hold_enable_phone_notification);
-        phone_number = (EditText) findViewById(R.id.hold_phone_number);
         email_notification = (CheckBox) findViewById(R.id.hold_enable_email_notification);
+        phone_notification_label = (TextView) findViewById(R.id.hold_phone_notification_label);
+        sms_notification_label = (TextView) findViewById(R.id.hold_sms_notification_label);
+        sms_spinner_label = (TextView) findViewById(R.id.hold_sms_spinner_label);
+        phone_notification = (CheckBox) findViewById(R.id.hold_enable_phone_notification);
+        phone_notify = (EditText) findViewById(R.id.hold_phone_notify);
+        sms_notify = (EditText) findViewById(R.id.hold_sms_notify);
         sms_notification = (CheckBox) findViewById(R.id.hold_enable_sms_notification);
         sms_spinner = (Spinner) findViewById(R.id.hold_sms_carrier);
         suspendHold = (CheckBox) findViewById(R.id.hold_suspend_hold);
@@ -125,7 +133,9 @@ public class PlaceHoldActivity extends ActionBarActivity {
         author.setText(record.author);
         format.setText(RecordInfo.getFormatLabel(record));
 
-        initSMSButton(eg.getSMSEnabled());
+        email_notification.setChecked(accountAccess.getDefaultEmailNotification());
+        initPhoneControls(getResources().getBoolean(R.bool.ou_enable_phone_notification));
+        initSMSControls(eg.getSMSEnabled());
         initPlaceHoldRunnable(record);
         initPlaceHoldButton();
         initSuspendHoldButton();
@@ -164,16 +174,16 @@ public class PlaceHoldActivity extends ActionBarActivity {
                 Result temp_result = null;
                 try {
                     temp_result = accountAccess.testAndCreateHold(record_id, selectedOrgID,
-                            email_notification.isChecked(),
-                            selectedSMSCarrierID, phone_number.getText().toString(),
+                            email_notification.isChecked(), phone_notify.toString(),
+                            selectedSMSCarrierID, sms_notify.getText().toString(),
                             suspendHold.isChecked(), expire_date_s, thaw_date_s);
                 } catch (SessionNotFoundException e) {
                     try {
                         if (accountAccess.reauthenticate(PlaceHoldActivity.this))
                             temp_result = accountAccess.testAndCreateHold(
                                     record_id, selectedOrgID,
-                                    email_notification.isChecked(),
-                                    selectedSMSCarrierID, phone_number.getText().toString(),
+                                    email_notification.isChecked(),  phone_notify.toString(),
+                                    selectedSMSCarrierID, sms_notify.getText().toString(),
                                     suspendHold.isChecked(), expire_date_s, thaw_date_s);
                     } catch (Exception e1) {
                     }
@@ -220,35 +230,58 @@ public class PlaceHoldActivity extends ActionBarActivity {
         });
     }
 
-    private void initSMSButton(boolean sms_enabled) {
-        if (sms_enabled) {
+    private void initPhoneControls(boolean systemwide_phone_enabled) {
+        if (systemwide_phone_enabled) {
+            boolean isChecked = accountAccess.getDefaultPhoneNotification();
+            phone_notification.setChecked(isChecked);
+            phone_notification.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    phone_notify.setEnabled(isChecked);
+                }
+            });
+            phone_notify.setEnabled(isChecked);
+            phone_notify.setText(safeString(accountAccess.getDefaultPhoneNumber()));
+        } else {
+            phone_notification.setChecked(false);
+            phone_notification_label.setVisibility(View.GONE);
+            phone_notification.setVisibility(View.GONE);
+            phone_notify.setVisibility(View.GONE);
+        }
+    }
+
+    private void initSMSControls(boolean systemwide_sms_enabled) {
+        if (systemwide_sms_enabled) {
+            boolean isChecked = accountAccess.getDefaultSMSNotification();
+            sms_notification.setChecked(isChecked);
             sms_notification.setOnCheckedChangeListener(new OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                     sms_spinner.setEnabled(isChecked);
-                    phone_number.setEnabled(isChecked);
+                    sms_notify.setEnabled(isChecked);
                 }
             });
-            boolean sms_notify = sms_notification.isChecked();
-            sms_spinner.setEnabled(sms_notify);
-            phone_number.setEnabled(sms_notify);
-            phone_number.setText(safeString(accountAccess.getDefaultSMSNumber()));
-            initSMSSpinner();
+            sms_notify.setEnabled(isChecked);
+            sms_notify.setText(safeString(accountAccess.getDefaultSMSNumber()));
+            sms_spinner.setEnabled(isChecked);
+            initSMSSpinner(accountAccess.getDefaultSMSCarrierID());
         } else {
+            sms_notification.setChecked(false);
+            sms_notification_label.setVisibility(View.GONE);
+            sms_spinner_label.setVisibility(View.GONE);
             sms_notification.setVisibility(View.GONE);
             sms_spinner.setVisibility(View.GONE);
-            phone_number.setVisibility(View.GONE);
+            sms_notify.setVisibility(View.GONE);
         }
     }
 
-    private void initSMSSpinner() {
-        Integer defaultID = accountAccess.getDefaultSMSCarrierID();
+    private void initSMSSpinner(Integer defaultCarrierID) {
         ArrayList<String> entries = new ArrayList<>();
         List<SMSCarrier> carriers = eg.getSMSCarriers();
         for (int i = 0; i < carriers.size(); i++) {
             SMSCarrier carrier = carriers.get(i);
             entries.add(carrier.name);
-            if (carrier.id == defaultID) {
+            if (carrier.id == defaultCarrierID) {
                 selectedSMSPos = i;
             }
         }
