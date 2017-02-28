@@ -239,7 +239,7 @@ public class OSRFTest {
         Log.d(TAG, "resp=" + hold_possible_resp);
         */
 
-        Result result = ac.testAndCreateHold(recordID, pickup_lib, email_notify,
+        Result result = ac.testAndCreateHold(recordID, pickup_lib, email_notify, null,
                 sms_carrier_id, sms_number, suspendHold, expire_time, thaw_date);
         Log.d(TAG, "ok=" + result.isSuccess());
         Log.d(TAG, "msg=" + result.getErrorMessage());
