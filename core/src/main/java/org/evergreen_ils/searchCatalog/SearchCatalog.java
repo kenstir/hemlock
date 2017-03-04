@@ -50,7 +50,7 @@ public class SearchCatalog {
 
     public Integer offset;
 
-    public Integer visible;
+    public Integer visible = 0;
 
     public final Integer searchLimit = 500;
     
@@ -115,7 +115,7 @@ public class SearchCatalog {
             return results; // search failed or server crashed
 
         Map<String, ?> response = (Map<String, ?>) resp;
-        visible = Api.parseInteger(response.get("count"));
+        visible = Api.parseInteger(response.get("count"), 0);
 
         // result_lol is a list of lists and looks like one of:
         //   [[32673,null,"0.0"],[886843,null,"0.0"]] // integer ids+?

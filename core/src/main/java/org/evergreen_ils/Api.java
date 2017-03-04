@@ -173,7 +173,7 @@ public class Api {
      * Sometimes search returns a count as a json number ("count":0), sometimes a string ("count":"1103").
      * Seems to be the same for result "ids" list (See Issue #1).  Handle either form and return as an int.
      */
-    public static Integer parseInteger(Object o) {
+    public static Integer parseInteger(Object o, Integer dflt) {
         if (o instanceof Integer) {
             return (Integer)o;
         } else if (o instanceof String) {
@@ -185,7 +185,10 @@ public class Api {
             }
         } else {
             Log.d(TAG, "unexpected type: "+o);
-            return null;
+            return dflt;
         }
+    }
+    public static Integer parseInteger(Object o) {
+        return parseInteger(o, null);
     }
 }
