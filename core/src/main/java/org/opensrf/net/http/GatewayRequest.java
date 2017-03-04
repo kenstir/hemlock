@@ -109,13 +109,10 @@ public class GatewayRequest extends HttpRequest {
     private void logRequest(GatewayRequest gatewayRequest, Map<String, ?> result, long start_ms) {
         Log.d(TAG, "service=" + this.service);
         Log.d(TAG, "method=" + this.method.getName());
-        List params = method.getParams();
-        Iterator itr = params.iterator();
-        while (itr.hasNext()) {
-            Log.d(TAG, "param: " + itr.next());
-        }
+        for (Object param: method.getParams())
+            Log.d(TAG, "param: " + param);
         Log.d(TAG, "result: " + new JSONObject(result).toString());
-        Log.d(TAG, "parse_duration: " + (System.currentTimeMillis() - start_ms));
+//        Log.d(TAG, "parse_duration: " + (System.currentTimeMillis() - start_ms));
     }
 
     private String compilePostData(String service, Method method) {
