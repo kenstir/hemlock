@@ -12,7 +12,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/imageView2"
-            android:src="@drawable/splash"/>
+            android:src="@drawable/splash_title"/>
 
     <TextView
             android:id="@+id/account_sign_in_text"

@@ -3,11 +3,11 @@
     <!-- the label shown in the android account manager -->
     <string name="ou_account_label">Example Library</string>
     <!-- title shown on sign in activity -->
-    <string name="ou_account_sign_in_message">Sign in to your library account</string>
+    <string name="ou_account_sign_in_message"></string>
     <!-- label above choose library spinner, leave empty for library-specific app -->
-    <string name="ou_choose_library_label">Location:</string>
+    <string name="ou_choose_library_label">Choose your library system:</string>
     <!-- label above sign_in fields -->
-    <string name="ou_sign_in_label">Login:</string>
+    <string name="ou_sign_in_label">Login to your account:</string>
     <!-- android account manager internal type.
          Each evergreen-derived app must have its own unique ou_account_type. -->
     <string name="ou_account_type">org.evergreen_ils.example</string>

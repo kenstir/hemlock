@@ -27,7 +27,7 @@
                android:layout_centerHorizontal="true"
                android:layout_alignParentTop="true"
                android:layout_marginTop="60dip"
-               android:src="@drawable/splash" android:padding="20dp"/>
+               android:src="@drawable/splash_title" android:padding="20dp"/>
 
     <TextView
             android:id="@+id/action_in_progress"

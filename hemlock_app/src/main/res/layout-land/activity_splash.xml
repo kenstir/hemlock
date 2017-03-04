@@ -38,7 +38,7 @@
             android:id="@+id/logo"
             android:layout_width="371dip"
             android:layout_height="64dip"
-            android:src="@drawable/hemlock_logo"
+            android:src="@drawable/splash_title"
             android:contentDescription="@string/ou_library_name" android:padding="5dip"
             android:tint="@color/hemlock_accent_halloween" android:layout_centerVertical="true"
             android:layout_centerHorizontal="true"/>
