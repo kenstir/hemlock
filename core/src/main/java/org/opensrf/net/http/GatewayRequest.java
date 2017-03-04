@@ -112,7 +112,7 @@ public class GatewayRequest extends HttpRequest {
         List params = method.getParams();
         Iterator itr = params.iterator();
         while (itr.hasNext()) {
-            Log.d(TAG, "param: " + itr.next().toString());
+            Log.d(TAG, "param: " + itr.next());
         }
         Log.d(TAG, "result: " + new JSONObject(result).toString());
         Log.d(TAG, "parse_duration: " + (System.currentTimeMillis() - start_ms));
