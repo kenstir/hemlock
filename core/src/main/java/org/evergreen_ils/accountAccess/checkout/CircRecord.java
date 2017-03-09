@@ -132,7 +132,9 @@ public class CircRecord {
 
     public boolean isDue() {
         Date currentDate = new Date();
-        final int ITEM_DUE_HIGHLIGHT_DAYS = 2;
+        // Because the due dates in C/W MARS at least are 23:59:59, "3 days" here
+        // really behaves like 2 days, highlighting if it's due tomorrow or the next day.
+        final int ITEM_DUE_HIGHLIGHT_DAYS = 3;
         Calendar cal = Calendar.getInstance();
         cal.setTime(getDueDate());
         cal.add(Calendar.DAY_OF_MONTH, -ITEM_DUE_HIGHLIGHT_DAYS);
