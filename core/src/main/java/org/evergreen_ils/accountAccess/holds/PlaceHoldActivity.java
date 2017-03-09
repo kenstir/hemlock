@@ -174,7 +174,7 @@ public class PlaceHoldActivity extends ActionBarActivity {
                 Result temp_result = null;
                 try {
                     temp_result = accountAccess.testAndCreateHold(record_id, selectedOrgID,
-                            email_notification.isChecked(), phone_notify.toString(),
+                            email_notification.isChecked(), phone_notify.getText().toString(),
                             selectedSMSCarrierID, sms_notify.getText().toString(),
                             suspendHold.isChecked(), expire_date_s, thaw_date_s);
                 } catch (SessionNotFoundException e) {
@@ -182,7 +182,7 @@ public class PlaceHoldActivity extends ActionBarActivity {
                         if (accountAccess.reauthenticate(PlaceHoldActivity.this))
                             temp_result = accountAccess.testAndCreateHold(
                                     record_id, selectedOrgID,
-                                    email_notification.isChecked(),  phone_notify.toString(),
+                                    email_notification.isChecked(),  phone_notify.getText().toString(),
                                     selectedSMSCarrierID, sms_notify.getText().toString(),
                                     suspendHold.isChecked(), expire_date_s, thaw_date_s);
                     } catch (Exception e1) {
