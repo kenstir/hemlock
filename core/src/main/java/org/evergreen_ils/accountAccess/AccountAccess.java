@@ -647,9 +647,6 @@ public class AccountAccess {
 
         ArrayList<HoldRecord> holds = new ArrayList<HoldRecord>();
 
-        // fields of interest : expire_time
-        List<OSRFObject> listHoldsAhr = null;
-
         Object resp = Utils.doRequest(conn(), Api.SERVICE_CIRC,
                 Api.HOLDS_RETRIEVE, authToken, new Object[] {
                         authToken, userID });
@@ -658,12 +655,11 @@ public class AccountAccess {
             return holds;
         }
 
-        listHoldsAhr = (List<OSRFObject>) resp;
-
-        for (int i = 0; i < listHoldsAhr.size(); i++) {
-            HoldRecord hold = new HoldRecord(listHoldsAhr.get(i));
-            fetchHoldTitleInfo(listHoldsAhr.get(i), hold);
-            fetchHoldStatus(listHoldsAhr.get(i), hold);
+        List<OSRFObject> listHoldsAhr = (List<OSRFObject>) resp;
+        for (OSRFObject ahr_obj: listHoldsAhr) {
+            HoldRecord hold = new HoldRecord(ahr_obj);
+            fetchHoldTitleInfo(ahr_obj, hold);
+            fetchHoldStatus(ahr_obj, hold);
             if (hold.recordInfo != null)
                 hold.recordInfo.setSearchFormat(fetchFormat(hold.target));
             holds.add(hold);

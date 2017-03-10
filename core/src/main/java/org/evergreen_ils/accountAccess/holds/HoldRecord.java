@@ -138,6 +138,8 @@ public class HoldRecord implements Serializable {
         //  8 for 'captured, on wrong hold shelf'
         if (status == 4) {
             return "Available";
+        } else if (status == 7) {
+            return "Suspended";
         } else if (estimatedWaitInSeconds > 0) {
             int days = (int)Math.ceil((double)estimatedWaitInSeconds / 86400.0);
             return "Estimated wait: "
