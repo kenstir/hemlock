@@ -31,9 +31,8 @@
             android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="24dip"
-            android:src="@drawable/turkey_icon"
-            android:contentDescription="@string/ou_library_name" android:padding="4dip"
-            android:tint="@color/hemlock_accent"/>
+            android:src="@drawable/splash_title"
+            android:padding="4dip"/>
 
     <TextView
             android:id="@+id/action_in_progress"
