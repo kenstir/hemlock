@@ -26,6 +26,7 @@ import java.util.List;
 
 import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
+import android.text.TextUtils;
 import android.view.MenuItem;
 import org.evergreen_ils.Api;
 import org.evergreen_ils.R;
@@ -227,10 +228,19 @@ public class PlaceHoldActivity extends ActionBarActivity {
         placeHold.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                Thread placeholdThread = new Thread(placeHoldRunnable);
-                placeholdThread.start();
+                if (phone_notification.isChecked() && TextUtils.isEmpty(phone_notify.getText().toString()))
+                    phone_notify.setError(getString(R.string.error_phone_notify_empty));
+                else if (sms_notification.isChecked() && TextUtils.isEmpty(sms_notify.getText().toString()))
+                    sms_notify.setError(getString(R.string.error_sms_notify_empty));
+                else
+                    placeHold();
             }
         });
+    }
+
+    private void placeHold() {
+        Thread placeHoldThread = new Thread(placeHoldRunnable);
+        placeHoldThread.start();
     }
 
     private void initSuspendHoldButton() {
@@ -290,6 +300,10 @@ public class PlaceHoldActivity extends ActionBarActivity {
     private void initSMSSpinner(Integer defaultCarrierID) {
         ArrayList<String> entries = new ArrayList<>();
         List<SMSCarrier> carriers = eg.getSMSCarriers();
+        if (carriers == null) {
+            // todo Crashed here once.  It seems the async loading of SMS carriers was not done.
+            return;
+        }
         for (int i = 0; i < carriers.size(); i++) {
             SMSCarrier carrier = carriers.get(i);
             entries.add(carrier.name);
