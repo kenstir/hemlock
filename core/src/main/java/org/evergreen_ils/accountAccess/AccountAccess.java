@@ -668,6 +668,7 @@ public class AccountAccess {
             if (hold.recordInfo != null)
                 hold.recordInfo.setSearchFormat(fetchFormat(hold.target));
             holds.add(hold);
+            Log.d(TAG, "hold email="+hold.email_notify+" phone_notify="+hold.phone_notify+" sms_notify="+hold.sms_notify+" title="+hold.title);
         }
         return holds;
     }
@@ -895,8 +896,8 @@ public class AccountAccess {
 
     public Result testAndCreateHold(Integer recordID, Integer pickup_lib,
                                     boolean email_notify, String phone_notify,
-                                    Integer sms_carrier_id, String sms_number,
-                                    boolean suspendHold, String expire_time, String thaw_date)
+                                    String sms_notify, Integer sms_carrier_id,
+                                    String expire_time, boolean suspendHold, String thaw_date)
             throws SessionNotFoundException {
         /*
         The named fields in the hash are:
@@ -922,9 +923,9 @@ public class AccountAccess {
         args.put("expire_time", expire_time);
         if (!TextUtils.isEmpty(phone_notify))
             args.put("phone_notify", phone_notify);
-        if (sms_carrier_id != null && !TextUtils.isEmpty(sms_number)) {
+        if (sms_carrier_id != null && !TextUtils.isEmpty(sms_notify)) {
             args.put("sms_carrier", sms_carrier_id);
-            args.put("sms_notify", sms_number);
+            args.put("sms_notify", sms_notify);
         }
         if (suspendHold && thaw_date != null) {
             args.put("frozen", suspendHold);

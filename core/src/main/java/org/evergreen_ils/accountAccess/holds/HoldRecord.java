@@ -55,9 +55,10 @@ public class HoldRecord implements Serializable {
     // record info with more etails
     public RecordInfo recordInfo = null;
 
-    public boolean email_notification = false;
+    public boolean email_notify = false;
 
-    public String phone_notification = null;
+    public String phone_notify = null;
+    public String sms_notify = null;
 
     public boolean suspended = false;
 
@@ -82,8 +83,9 @@ public class HoldRecord implements Serializable {
 
         this.expire_time = Api.parseDate(ahr.getString("expire_time"));
         this.thaw_date = Api.parseDate(ahr.getString("thaw_date"));
-        this.email_notification = Api.parseBoolean(ahr.getString("email_notify"));
-        this.phone_notification = ahr.getString("phone_notify");
+        this.email_notify = Api.parseBoolean(ahr.getString("email_notify"));
+        this.phone_notify = ahr.getString("phone_notify");
+        this.sms_notify = ahr.getString("sms_notify");
         this.suspended = Api.parseBoolean(ahr.getString("frozen"));
         pickup_lib = ahr.getInt("pickup_lib");
     }

@@ -143,6 +143,18 @@ public class PlaceHoldActivity extends ActionBarActivity {
         initOrgSpinner();
     }
 
+    private String getPhoneNotify() {
+        return phone_notification.isChecked() ? phone_notify.getText().toString() : null;
+    }
+
+    private String getSMSNotify() {
+        return sms_notification.isChecked() ? sms_notify.getText().toString() : null;
+    }
+
+    private Integer getSMSNotifyCarrier(int id) {
+        return sms_notification.isChecked() ? id : null;
+    }
+
     private void initPlaceHoldRunnable(RecordInfo record) {
         final Integer record_id = record.doc_id;
         placeHoldRunnable = new Runnable() {
@@ -174,17 +186,17 @@ public class PlaceHoldActivity extends ActionBarActivity {
                 Result temp_result = null;
                 try {
                     temp_result = accountAccess.testAndCreateHold(record_id, selectedOrgID,
-                            email_notification.isChecked(), phone_notify.getText().toString(),
-                            selectedSMSCarrierID, sms_notify.getText().toString(),
-                            suspendHold.isChecked(), expire_date_s, thaw_date_s);
+                            email_notification.isChecked(), getPhoneNotify(),
+                            getSMSNotify(), getSMSNotifyCarrier(selectedSMSCarrierID),
+                            expire_date_s, suspendHold.isChecked(), thaw_date_s);
                 } catch (SessionNotFoundException e) {
                     try {
                         if (accountAccess.reauthenticate(PlaceHoldActivity.this))
                             temp_result = accountAccess.testAndCreateHold(
                                     record_id, selectedOrgID,
-                                    email_notification.isChecked(),  phone_notify.getText().toString(),
-                                    selectedSMSCarrierID, sms_notify.getText().toString(),
-                                    suspendHold.isChecked(), expire_date_s, thaw_date_s);
+                                    email_notification.isChecked(),  getPhoneNotify(),
+                                    getSMSNotify(), getSMSNotifyCarrier(selectedSMSCarrierID),
+                                    expire_date_s, suspendHold.isChecked(), thaw_date_s);
                     } catch (Exception e1) {
                     }
                 }
