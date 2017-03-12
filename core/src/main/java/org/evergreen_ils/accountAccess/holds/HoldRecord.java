@@ -142,6 +142,7 @@ public class HoldRecord implements Serializable {
             return "Available";
         } else if (status == 7) {
             return "Suspended";
+            //return "Suspended\nemail=" + email_notify + "\nphone=" + phone_notify + "\nsms=" + sms_notify;
         } else if (estimatedWaitInSeconds > 0) {
             int days = (int)Math.ceil((double)estimatedWaitInSeconds / 86400.0);
             return "Estimated wait: "
