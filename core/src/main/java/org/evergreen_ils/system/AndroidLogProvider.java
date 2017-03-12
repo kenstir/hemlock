@@ -18,8 +18,6 @@
 
 package org.evergreen_ils.system;
 
-import android.content.Context;
-
 /**
  * Created by kenstir on 1/29/2017.
  */

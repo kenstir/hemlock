@@ -26,6 +26,7 @@ import java.util.List;
 
 import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 import android.view.MenuItem;
 import org.evergreen_ils.Api;
@@ -213,11 +214,13 @@ public class PlaceHoldActivity extends ActionBarActivity {
                                     Toast.LENGTH_LONG).show();
                             startActivity(new Intent(context, HoldsListView.class));
                             finish();
-                        } else
-                            Toast.makeText(context,
-                                    "Error placing hold: " + result.getErrorMessage(),
-                                    Toast.LENGTH_LONG).show();
-
+                        } else {
+                            AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                            builder.setTitle("Failed to place hold")
+                                    .setMessage(result.getErrorMessage())
+                                    .setPositiveButton(android.R.string.ok, null);
+                            builder.create().show();
+                        }
                     }
                 });
             }
