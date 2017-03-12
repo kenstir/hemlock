@@ -21,6 +21,7 @@ package org.evergreen_ils.views.splashscreen;
 
 import android.support.v7.app.AppCompatActivity;
 import org.evergreen_ils.R;
+import org.evergreen_ils.android.App;
 import org.evergreen_ils.utils.ui.AppState;
 import org.evergreen_ils.system.Log;
 import org.evergreen_ils.views.MainActivity;
@@ -123,6 +124,7 @@ public class SplashActivity extends AppCompatActivity implements LoadingTaskList
 
     @Override
     public void onPreExecute() {
+        mRetryButton.setVisibility(View.GONE);
         mSendDebugLogs.setVisibility(View.GONE);
         mProgressBar.setVisibility(View.VISIBLE);
     }
@@ -146,7 +148,8 @@ public class SplashActivity extends AppCompatActivity implements LoadingTaskList
                 extra_text = " cancelled";
             }
             mProgressText.setText(mProgressText.getText() + extra_text);
-            mSendDebugLogs.setVisibility(View.VISIBLE);
+            mRetryButton.setVisibility(View.VISIBLE);
+            mSendDebugLogs.setVisibility(App.getIsDebuggable(this) ? View.VISIBLE : View.GONE);
             mProgressBar.setVisibility(View.GONE);
         }
     }
