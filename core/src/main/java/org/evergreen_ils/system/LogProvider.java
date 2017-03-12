@@ -18,6 +18,8 @@
 
 package org.evergreen_ils.system;
 
+import android.content.Context;
+
 /**
  * Created by kenstir on 1/29/2017.
  */
@@ -27,4 +29,5 @@ public interface LogProvider {
     abstract void i(String TAG, String msg);
     abstract void w(String TAG, String msg);
     abstract void w(String TAG, String msg, Throwable tr);
+    abstract String getLogBuffer();
 }

@@ -139,6 +139,7 @@ public class LoadingTask {
                 } catch (SessionNotFoundException e2) {
                 }
             }
+            haveSession = false;
             if (!haveSession)
                 return "no session";
             now_ms = Log.logElapsedTime(TAG, now_ms, "retrieve session");

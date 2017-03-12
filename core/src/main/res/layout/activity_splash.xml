@@ -26,6 +26,18 @@
             style="@style/textLarge"
             tools:text="Signing in" android:padding="6dip"/>
 
+    <!--empty for now to keep project happy-->
+    <LinearLayout
+        android:id="@+id/activity_splash_button_bar"
+        style="?android:buttonBarStyle"
+        android:orientation="horizontal"
+        android:visibility="gone">
+    </LinearLayout>
+    <Button
+        android:id="@+id/activity_splash_debug_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
     <Button
             android:id="@+id/activity_splash_retry_button"
             android:layout_width="wrap_content"

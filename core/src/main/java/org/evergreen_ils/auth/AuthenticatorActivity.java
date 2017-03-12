@@ -1,5 +1,6 @@
 package org.evergreen_ils.auth;
 
+import android.content.Context;
 import android.net.Uri;
 import android.text.InputType;
 import android.text.TextUtils;
@@ -17,10 +18,14 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import org.evergreen_ils.android.App;
 import org.evergreen_ils.system.EvergreenServer;
 import org.evergreen_ils.utils.ui.AppState;
 import org.evergreen_ils.system.Log;
 import org.evergreen_ils.system.Library;
+import org.w3c.dom.Text;
 
 public class AuthenticatorActivity extends AccountAuthenticatorActivity {
 
@@ -204,7 +209,7 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity {
     protected void showAlert(String errorMessage) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         alertMessage = errorMessage;
-        alertDialog = builder.setTitle("Login failed")
+        builder.setTitle("Login failed")
                 .setMessage(errorMessage)
                 .setPositiveButton(android.R.string.ok, new OnClickListener() {
                     @Override
@@ -212,8 +217,24 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity {
                         alertDialog = null;
                         alertMessage = null;
                     }
-                })
-                .create();
+                });
+        if (App.getIsDebuggable(this)) {
+            builder.setNeutralButton(R.string.button_send_log, new OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            Context context = AuthenticatorActivity.this;
+                            String email = context.getString(R.string.ou_developer_email);
+                            Intent intent = new Intent(Intent.ACTION_SEND);
+                            intent.setType("text/plain");
+                            intent.putExtra(Intent.EXTRA_EMAIL, new String[] {email});
+                            intent.putExtra(Intent.EXTRA_SUBJECT, App.getAppInfo(context));
+                            intent.putExtra(Intent.EXTRA_TEXT, Log.getLogBuffer());
+                            startActivity(intent);
+                        }
+                    }
+            );
+        }
+        alertDialog = builder.create();
         alertDialog.show();
     }
 

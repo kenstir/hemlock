@@ -20,6 +20,10 @@ package org.evergreen_ils.android;
 
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+
+import org.evergreen_ils.R;
 import org.evergreen_ils.system.Log;
 
 import java.io.File;
@@ -40,6 +44,20 @@ public class App {
         if (mIsDebuggable < 0)
             mIsDebuggable = (context.getApplicationInfo().flags &= ApplicationInfo.FLAG_DEBUGGABLE);
         return mIsDebuggable > 0;
+    }
+
+    public static String getAppInfo(Context context) {
+        PackageInfo pInfo = null;
+        try {
+            pInfo = context.getPackageManager().getPackageInfo(context.getPackageName(), 0);
+        } catch (PackageManager.NameNotFoundException e) {
+            Log.d("Log", "caught", e);
+        }
+        String appName = context.getString(R.string.ou_app_label);
+        String versionName = pInfo.versionName;
+        int verCode = pInfo.versionCode;
+        String version = appName + " " + verCode + " (" + versionName + ")";
+        return version;
     }
 
     public static void enableCaching(Context context) {

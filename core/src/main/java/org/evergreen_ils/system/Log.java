@@ -19,7 +19,6 @@
 package org.evergreen_ils.system;
 
 /** private logging class that allows substituting different behaviors,
- * at one point maintained a queue for sharing via email
  * Created by kenstir on 12/9/2015.
  */
 public class Log {
@@ -28,74 +27,10 @@ public class Log {
     public static void setProvider(LogProvider _provider) {
         provider = _provider;
     }
-
-    /*
-    private static void println(int priority, String TAG, String msg, Throwable tr) {
-        if (tr != null) {
-            msg = msg + '\n' + android.util.Log.getStackTraceString(tr);
-        }
-        android.util.Log.println(priority, TAG, msg);
-    }
-
-    public static synchronized String getString(Context context) {
+    public static String getLogBuffer() {
+        if (provider != null) return provider.getLogBuffer();
         return null;
     }
-    */
-    /*
-    private static final int mQueueSize = 200;
-    private static ArrayDeque<String> mEntries = new ArrayDeque<String>(mQueueSize);
-    private static SimpleDateFormat mTimeFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS", Locale.US);
-
-    private static synchronized void println(int priority, String TAG, String msg, Throwable tr) {
-        if (tr != null) {
-            msg = msg + '\n' + android.util.Log.getStackTraceString(tr);
-        }
-        android.util.Log.println(priority, TAG, msg);
-        StringBuilder sb = new StringBuilder();
-        String date = mTimeFormat.format(System.currentTimeMillis());
-        sb.append(date).append('\t').append(TAG);
-        String prefix = sb.toString();
-
-        if (msg != null) {
-            mEntries.push(prefix + '\t' + msg);
-        }
-
-        if (tr != null) {
-            mEntries.push(prefix + '\t' + tr.getMessage());
-            StackTraceElement backtrace[] = tr.getStackTrace();
-            for (StackTraceElement elem : backtrace) {
-                mEntries.push(prefix + "\t at " + elem.toString());
-            }
-        }
-
-        while (mEntries.size() > mQueueSize) {
-            mEntries.pop();
-        }
-    }
-
-    public static String getAppInfo(Context context) {
-        PackageInfo pInfo = null;
-        try {
-            pInfo = context.getPackageManager().getPackageInfo(context.getPackageName(), 0);
-        } catch (PackageManager.NameNotFoundException e) {
-            Log.d("Log", "caught", e);
-        }
-        String versionName = pInfo.versionName;
-        int verCode = pInfo.versionCode;
-        String version = "" + verCode + " (" + versionName + ")\n";
-        return version;
-    }
-
-    public static synchronized String getString(Context context) {
-        StringBuilder sb = new StringBuilder(mQueueSize * 120);
-        sb.append(getAppInfo(context));
-        Iterator<String> it = mEntries.descendingIterator();
-        while (it.hasNext()) {
-            sb.append(it.next()).append('\n');
-        }
-        return sb.toString();
-    }
-    */
 
     public static void d(String TAG, String msg) {
         if (provider != null) provider.d(TAG, msg);

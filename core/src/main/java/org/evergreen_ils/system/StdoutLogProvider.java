@@ -18,6 +18,8 @@
 
 package org.evergreen_ils.system;
 
+import android.content.Context;
+
 /**
  * Created by kenstir on 1/29/2017.
  */
@@ -47,5 +49,10 @@ public class StdoutLogProvider implements LogProvider {
     public void w(String TAG, String msg, Throwable tr) {
         System.out.println(TAG + ": " + msg);
         tr.printStackTrace(System.out);
+    }
+
+    @Override
+    public String getLogBuffer() {
+        return null;
     }
 }

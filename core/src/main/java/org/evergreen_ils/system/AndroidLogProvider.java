@@ -18,6 +18,8 @@
 
 package org.evergreen_ils.system;
 
+import android.content.Context;
+
 /**
  * Created by kenstir on 1/29/2017.
  */
@@ -45,5 +47,10 @@ public class AndroidLogProvider implements LogProvider {
     @Override
     public void w(String TAG, String msg, Throwable tr) {
         android.util.Log.w(TAG, msg, tr);
+    }
+
+    @Override
+    public String getLogBuffer() {
+        return null;
     }
 }
