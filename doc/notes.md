@@ -9,6 +9,7 @@ Interesting URLs in the OPAC
 
 Change Username - 					/eg/opac/myopac/update_username
 Search and History Preferences -	/eg/opac/myopac/prefs_settings
+Library Branch Info -               /eg/opac/library/ARL-ATH
 
 How to read patron messages
 ---------------------------
