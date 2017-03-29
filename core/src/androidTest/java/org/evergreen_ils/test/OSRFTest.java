@@ -70,6 +70,8 @@ public class OSRFTest {
         mServer = b.getString("server", "http://catalog.cwmars.org");
         mOrgID = Integer.parseInt(b.getString("orgid", "1"));
         mUsername = b.getString("username");
+        // if username and password are empty, then maybe .idea/workspace.xml got messed up again; should be
+        // <option name="EXTRA_OPTIONS" value="-e server http://gapines.org -e username USER -e password PASS" />
         if (TextUtils.isEmpty(mUsername))
             return;
         mPassword = b.getString("password");
@@ -244,5 +246,18 @@ public class OSRFTest {
         Log.d(TAG, "ok=" + result.isSuccess());
         Log.d(TAG, "msg=" + result.getErrorMessage());
         Log.d(TAG, "here");
+    }
+
+    @Test
+    public void testMessageRetrieve() throws Exception {
+        assertLoggedIn();
+        mConn = EvergreenServer.getInstance().gatewayConnection();
+        AccountAccess ac = AccountAccess.getInstance();
+        ac.retrieveSession(mAuthToken);
+
+        Object resp = Utils.doRequest(conn(), Api.ACTOR,
+                "open-ils.actor.message.retrieve", new Object[] {
+                        mAuthToken, ac.getUserID(), null });
+        Log.d(TAG, "resp ok");
     }
 }

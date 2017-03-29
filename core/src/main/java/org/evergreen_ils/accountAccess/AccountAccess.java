@@ -1225,4 +1225,8 @@ public class AccountAccess {
     public String getAuthToken() {
         return authToken;
     }
+
+    public Integer getUserID() {
+        return userID;
+    }
 }
