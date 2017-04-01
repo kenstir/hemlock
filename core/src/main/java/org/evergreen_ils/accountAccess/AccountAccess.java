@@ -33,6 +33,7 @@ import org.evergreen_ils.system.EvergreenServer;
 import org.evergreen_ils.system.Log;
 import org.evergreen_ils.system.Utils;
 import org.evergreen_ils.searchCatalog.RecordInfo;
+import org.opensrf.Message;
 import org.opensrf.net.http.HttpConnection;
 import org.opensrf.util.OSRFObject;
 
@@ -1229,4 +1230,28 @@ public class AccountAccess {
     public Integer getUserID() {
         return userID;
     }
+
+    /** return number of unread messages in patron message center
+     *
+     * We don't care about the messages themselves here, because I don't see a way to modify
+     * the messages via OSRF, and it's easier to redirect to that section of the OPAC.
+     */
+    public Integer getUnreadMessageCount() {
+        Object resp = Utils.doRequest(conn(), Api.ACTOR,
+                Api.MESSAGES_RETRIEVE, new Object[]{
+                        authToken, getUserID(), null});
+        Integer unread_count = 0;
+        if (resp != null) {
+            List<OSRFObject> list = (List<OSRFObject>) resp;
+            for (OSRFObject obj : list) {
+                String read_date = obj.getString("read_date");
+                Boolean deleted = Api.parseBoolean(obj.get("deleted"));
+                if (read_date == null && !deleted) {
+                    ++unread_count;
+                }
+            }
+        }
+        return unread_count;
+    }
+
 }
