@@ -22,7 +22,12 @@ import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.widget.Button;
+
+import org.evergreen_ils.accountAccess.AccountAccess;
+import org.evergreen_ils.accountAccess.AccountUtils;
 import org.evergreen_ils.views.MenuProvider;
+
+import java.net.URLEncoder;
 
 /**
  * Created by kenstir on 1/28/2017.
@@ -31,6 +36,15 @@ public class PinesMenuProvider extends MenuProvider {
 
     @Override
     public void onCreate(Activity activity) {
+        return;
+        /*
+        AccountAccess ac = AccountAccess.getInstance();
+        Integer unread = ac.getUnreadMessageCount();
+        if (unread > 0) {
+            Button b = (Button)activity.findViewById(R.id.patron_message_center);
+            b.setText("" + unread + " messages");
+        }
+        */
     }
 
     @Override
@@ -40,6 +54,16 @@ public class PinesMenuProvider extends MenuProvider {
             activity.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
         } else if (id == R.id.library_locator_button) {
             String url = "http://pines.georgialibraries.org/pinesLocator/locator.html";
+            activity.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
+        } else if (id == R.id.patron_message_center) {
+            AccountAccess ac = AccountAccess.getInstance();
+            String username = ac.getUserName();
+            String password = AccountUtils.getPassword(activity, username);
+            String url = activity.getString(org.evergreen_ils.R.string.ou_library_url)
+                    + "/eg/opac/login"
+                    + "?username=" + URLEncoder.encode(username)
+                    + "&password=" + URLEncoder.encode(password)
+                    + "&redirect_to=" + URLEncoder.encode("/eg/opac/myopac/messages");
             activity.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
         }
     }
