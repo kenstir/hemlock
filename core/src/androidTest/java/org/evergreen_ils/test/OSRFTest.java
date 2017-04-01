@@ -249,15 +249,14 @@ public class OSRFTest {
     }
 
     @Test
-    public void testMessageRetrieve() throws Exception {
+    public void testMessagesRetrieve() throws Exception {
         assertLoggedIn();
         mConn = EvergreenServer.getInstance().gatewayConnection();
         AccountAccess ac = AccountAccess.getInstance();
         ac.retrieveSession(mAuthToken);
 
-        Object resp = Utils.doRequest(conn(), Api.ACTOR,
-                "open-ils.actor.message.retrieve", new Object[] {
-                        mAuthToken, ac.getUserID(), null });
-        Log.d(TAG, "resp ok");
+        Integer unread_count = ac.getUnreadMessageCount();
+        assertNotNull(unread_count);
+        Log.d(TAG, "unread messages: " + unread_count);
     }
 }

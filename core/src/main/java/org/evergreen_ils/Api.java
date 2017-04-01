@@ -53,6 +53,7 @@ public class Api {
     public static final String CONTAINER_CREATE = "open-ils.actor.container.create";
     public static final String CONTAINER_ITEM_CREATE = "open-ils.actor.container.item.create";
     public static final String CONTAINER_FULL_DELETE = "open-ils.actor.container.full_delete";
+    public static final String MESSAGES_RETRIEVE = "open-ils.actor.message.retrieve"; // [aum]
 
     public static final String SETTING_ORG_UNIT_NOT_PICKUP_LIB = "opac.holds.org_unit_not_pickup_lib";
     public static final String SETTING_SMS_ENABLE = "sms.enable";
