@@ -17,4 +17,5 @@
     <bool name="ou_query_for_hold_pickup_locations">true</bool>
     <bool name="ou_enable_phone_notification">true</bool>
     <bool name="ou_enable_hold_queue_position">false</bool>
+    <bool name="ou_enable_messages">true</bool>
 </resources>

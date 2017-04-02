@@ -37,4 +37,6 @@
     <bool name="ou_enable_phone_notification">false</bool>
     <!-- if true, allow patron to see their position in hold queue -->
     <bool name="ou_enable_hold_queue_position">true</bool>
+    <!-- if true, enable messages link in app bar -->
+    <bool name="ou_enable_messages">true</bool>
 </resources>

@@ -8,6 +8,18 @@
     android:layout_height="match_parent"
     android:gravity="center_vertical">
 
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="0dp"
+        android:layout_height="56dp"
+        android:background="?attr/colorPrimary"
+        android:elevation="4dp"
+        android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Dark" />
+
     <Button
         android:id="@+id/main_btn_search"
         style="@style/ActionButton"
@@ -19,9 +31,12 @@
         app:layout_constraintBottom_toTopOf="@+id/account_btn_check_out"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
         android:layout_marginLeft="24dp"
-        android:layout_marginRight="24dp" />
+        android:layout_marginRight="24dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar" />
 
     <Button
         android:id="@+id/account_btn_check_out"
@@ -37,7 +52,9 @@
         android:layout_marginRight="24dp"
         app:layout_constraintRight_toRightOf="parent"
         android:layout_marginLeft="24dp"
-        app:layout_constraintLeft_toLeftOf="parent" />
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp" />
 
     <Button
         android:layout_width="0dp"
@@ -134,15 +151,6 @@
             android:layout_weight="1"
             android:onClick="onButtonClick"
             android:text="@string/title_library_locator" />
-
-        <Button
-            android:id="@+id/patron_message_center"
-            style="?android:buttonBarButtonStyle"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:onClick="onButtonClick"
-            android:text="@string/title_patron_message_center" />
 
     </LinearLayout>
 

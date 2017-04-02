@@ -22,7 +22,6 @@ package org.evergreen_ils.accountAccess.bookbags;
 import java.util.ArrayList;
 import java.util.List;
 
-import android.support.v7.app.ActionBarActivity;
 import org.evergreen_ils.R;
 import org.evergreen_ils.accountAccess.AccountAccess;
 import org.evergreen_ils.accountAccess.SessionNotFoundException;
@@ -39,6 +38,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -50,7 +50,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class BookBagDetails extends ActionBarActivity {
+public class BookBagDetails extends AppCompatActivity {
 
     private final static String TAG = BookBagDetails.class.getSimpleName();
 

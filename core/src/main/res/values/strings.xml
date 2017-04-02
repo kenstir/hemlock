@@ -2,15 +2,12 @@
 <resources>
 
     <!-- Main menu text -->
-    <string name="menu_advanced_search">advanced search</string>
-    <string name="menu_preferences">settings</string>
-    <string name="menu_library_hours">library hours</string>
-    <string name="menu_barcode_scan">barcode scan</string>
     <string name="menu_switch_account">Switch account</string>
     <string name="menu_add_account">Add account</string>
     <string name="menu_logout">Logout</string>
     <string name="menu_feedback">Send feedback</string>
     <string name="menu_donate">Donate</string>
+    <string name="menu_messages">Messages</string>
 
     <!-- Header portion -->
     <string name="options_button_text">Options</string>

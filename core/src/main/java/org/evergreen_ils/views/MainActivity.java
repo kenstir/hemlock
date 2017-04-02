@@ -25,7 +25,7 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -54,7 +54,7 @@ import org.evergreen_ils.views.splashscreen.SplashActivity;
 /**
  * Created by kenstir on 12/28/13.
  */
-public class MainActivity extends ActionBarActivity {
+public class MainActivity extends AppCompatActivity {
 
     private static String TAG = MainActivity.class.getSimpleName();
 
@@ -137,12 +137,21 @@ public class MainActivity extends ActionBarActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_main, menu);
+
+        // hide feedback action if we have no url
         if (TextUtils.isEmpty(getFeedbackUrl()))
             menu.removeItem(R.id.action_feedback);
+
+        // hide donate button if appropriate
         boolean showDonate = AppState.getBoolean(AppState.SHOW_DONATE, false);
         if (!showDonate)
             menu.removeItem(R.id.action_donate);
-        return super.onCreateOptionsMenu(menu);
+
+        // hide messages button if appropriate
+        if (!getResources().getBoolean(R.bool.ou_enable_messages))
+            menu.removeItem(R.id.action_messages);
+
+        return true;
     }
 
     @Override

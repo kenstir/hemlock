@@ -55,7 +55,7 @@ public class PinesMenuProvider extends MenuProvider {
         } else if (id == R.id.library_locator_button) {
             String url = "http://pines.georgialibraries.org/pinesLocator/locator.html";
             activity.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
-        } else if (id == R.id.patron_message_center) {
+        } else if (id == R.id.action_messages) {
             AccountAccess ac = AccountAccess.getInstance();
             String username = ac.getUserName();
             String password = AccountUtils.getPassword(activity, username);
