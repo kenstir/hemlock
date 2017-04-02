@@ -25,7 +25,7 @@ import java.util.List;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Build;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.widget.*;
 import org.evergreen_ils.R;
 import org.evergreen_ils.accountAccess.AccountAccess;
@@ -47,7 +47,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 
-public class ItemsCheckOutListView extends ActionBarActivity {
+public class ItemsCheckOutListView extends AppCompatActivity {
 
     private final static String TAG = ItemsCheckOutListView.class.getSimpleName();
     private AccountAccess accountAccess = null;

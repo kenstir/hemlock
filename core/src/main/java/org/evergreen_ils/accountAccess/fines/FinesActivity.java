@@ -23,7 +23,7 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.widget.*;
 import org.evergreen_ils.R;
 import org.evergreen_ils.accountAccess.AccountAccess;
@@ -40,7 +40,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-public class FinesActivity extends ActionBarActivity {
+public class FinesActivity extends AppCompatActivity {
 
     private TextView total_owned;
 

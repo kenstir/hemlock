@@ -28,7 +28,7 @@
         android:fullBackupContent="true"
         android:icon="@drawable/launcher_icon"
         android:label="@string/ou_app_label"
-        android:theme="@style/PINESDark" >
+        android:theme="@style/PINESDarkNoActionBar" >
 
         <activity
                 android:name="org.evergreen_ils.views.splashscreen.SplashActivity"

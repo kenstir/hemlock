@@ -22,7 +22,7 @@ package org.evergreen_ils.accountAccess.bookbags;
 import java.util.ArrayList;
 import java.util.List;
 
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.view.WindowManager;
 import org.evergreen_ils.R;
 import org.evergreen_ils.accountAccess.AccountAccess;
@@ -48,7 +48,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class BookBagListView extends ActionBarActivity {
+public class BookBagListView extends AppCompatActivity {
 
     private final static String TAG = BookBagListView.class.getSimpleName();
 

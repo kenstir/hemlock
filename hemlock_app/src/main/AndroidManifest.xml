@@ -30,7 +30,7 @@
         android:fullBackupContent="true"
         android:icon="@drawable/launcher_icon"
         android:label="@string/ou_app_label"
-        android:theme="@style/HemlockDark" >
+        android:theme="@style/HemlockDarkNoActionBar" >
 
         <activity
                 android:name="org.evergreen_ils.views.splashscreen.SplashActivity"
