@@ -25,7 +25,6 @@ import java.util.List;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Build;
-import android.support.v7.app.AppCompatActivity;
 import android.widget.*;
 import org.evergreen_ils.R;
 import org.evergreen_ils.accountAccess.AccountAccess;
@@ -35,10 +34,8 @@ import org.evergreen_ils.accountAccess.SessionNotFoundException;
 import org.evergreen_ils.system.Log;
 import org.evergreen_ils.searchCatalog.RecordDetails;
 import org.evergreen_ils.searchCatalog.RecordInfo;
-import org.evergreen_ils.searchCatalog.SearchFormat;
-import org.evergreen_ils.utils.ui.ActionBarUtils;
+import org.evergreen_ils.utils.ui.BaseActivity;
 import org.evergreen_ils.utils.ui.ProgressDialogSupport;
-import org.evergreen_ils.views.splashscreen.SplashActivity;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -47,7 +44,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 
-public class ItemsCheckOutListView extends AppCompatActivity {
+public class ItemsCheckOutListView extends BaseActivity {
 
     private final static String TAG = ItemsCheckOutListView.class.getSimpleName();
     private AccountAccess accountAccess = null;
@@ -62,14 +59,8 @@ public class ItemsCheckOutListView extends AppCompatActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (!SplashActivity.isAppInitialized()) {
-            SplashActivity.restartApp(this);
-            return;
-        }
-        SearchFormat.init(this);
 
-        setContentView(R.layout.checkout_list);
-        ActionBarUtils.initActionBarForActivity(this);
+        setContentView(R.layout.activity_checkouts);
 
         context = this;
         itemsNo = (TextView) findViewById(R.id.checkout_items_number);

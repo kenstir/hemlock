@@ -30,6 +30,7 @@ import org.evergreen_ils.accountAccess.SessionNotFoundException;
 import org.evergreen_ils.system.Log;
 import org.evergreen_ils.system.Utils;
 import org.evergreen_ils.utils.ui.ActionBarUtils;
+import org.evergreen_ils.utils.ui.BaseActivity;
 import org.evergreen_ils.utils.ui.ProgressDialogSupport;
 import org.evergreen_ils.views.splashscreen.SplashActivity;
 
@@ -48,7 +49,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class BookBagListView extends AppCompatActivity {
+public class BookBagListView extends BaseActivity {
 
     private final static String TAG = BookBagListView.class.getSimpleName();
 
@@ -73,13 +74,8 @@ public class BookBagListView extends AppCompatActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (!SplashActivity.isAppInitialized()) {
-            SplashActivity.restartApp(this);
-            return;
-        }
 
-        setContentView(R.layout.bookbag_list);
-        ActionBarUtils.initActionBarForActivity(this);
+        setContentView(R.layout.activity_bookbags);
 
         // prevent soft keyboard from popping up when the activity starts
         this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);

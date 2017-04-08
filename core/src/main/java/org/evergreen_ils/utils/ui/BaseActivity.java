@@ -2,16 +2,12 @@ package org.evergreen_ils.utils.ui;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
 import android.view.MenuItem;
 
 import org.evergreen_ils.R;
@@ -21,6 +17,7 @@ import org.evergreen_ils.accountAccess.fines.FinesActivity;
 import org.evergreen_ils.accountAccess.holds.HoldsListView;
 import org.evergreen_ils.searchCatalog.SearchActivity;
 import org.evergreen_ils.searchCatalog.SearchFormat;
+import org.evergreen_ils.views.MenuProvider;
 import org.evergreen_ils.views.splashscreen.SplashActivity;
 
 /* Activity base class to handle common behaviours like the navigation drawer */
@@ -28,6 +25,7 @@ public class BaseActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     protected Toolbar mToolbar;
+    protected MenuProvider mMenuItemHandler = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,6 +35,10 @@ public class BaseActivity extends AppCompatActivity
             return;
         }
         SearchFormat.init(this);
+        AppState.init(this);
+        initMenuProvider();
+        if (mMenuItemHandler != null)
+            mMenuItemHandler.onCreate(this);
     }
 
     public Toolbar getToolbar() {
@@ -52,13 +54,16 @@ public class BaseActivity extends AppCompatActivity
         getToolbar();
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, mToolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.setDrawerListener(toggle);
-        toggle.syncState();
+        if (drawer != null) {
+            ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                    this, drawer, mToolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+            drawer.setDrawerListener(toggle);
+            toggle.syncState();
+        }
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
+        if (navigationView != null)
+            navigationView.setNavigationItemSelectedListener(this);
     }
 
     @Override
@@ -69,6 +74,10 @@ public class BaseActivity extends AppCompatActivity
         } else {
             super.onBackPressed();
         }
+    }
+
+    void initMenuProvider() {
+        mMenuItemHandler = MenuProvider.create(getString(R.string.ou_menu_provider));
     }
 
     @Override
@@ -85,7 +94,7 @@ public class BaseActivity extends AppCompatActivity
 
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
-        // Handle navigation view item clicks here.
+        boolean ret = true;
         int id = item.getItemId();
         if (id == R.id.main_btn_search) {
             startActivity(new Intent(this, SearchActivity.class));
@@ -97,10 +106,14 @@ public class BaseActivity extends AppCompatActivity
             startActivity(new Intent(this, FinesActivity.class));
         } else if (id == R.id.main_my_lists_button) {
             startActivity(new Intent(this, BookBagListView.class));
+        } else if (mMenuItemHandler != null) {
+            ret = mMenuItemHandler.onItemSelected(this, id);
+        } else {
+            ret = false;
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
-        return true;
+        return ret;
     }
 }

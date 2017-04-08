@@ -23,7 +23,6 @@ import java.util.*;
 
 import android.net.Uri;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SwitchCompat;
 import android.text.TextUtils;
 import android.view.*;
@@ -40,7 +39,7 @@ import org.evergreen_ils.system.EvergreenServer;
 import org.evergreen_ils.utils.ui.AppState;
 import org.evergreen_ils.system.Log;
 import org.evergreen_ils.system.Organization;
-import org.evergreen_ils.utils.ui.ActionBarUtils;
+import org.evergreen_ils.utils.ui.BaseActivity;
 import org.evergreen_ils.utils.ui.ProgressDialogSupport;
 import org.evergreen_ils.views.DonateActivity;
 import org.evergreen_ils.views.splashscreen.SplashActivity;
@@ -55,7 +54,7 @@ import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView.OnItemSelectedListener;
 
-public class SearchActivity extends AppCompatActivity {
+public class SearchActivity extends BaseActivity {
 
     private static final String TAG = SearchActivity.class.getSimpleName();
 
@@ -73,7 +72,6 @@ public class SearchActivity extends AppCompatActivity {
 
     private SearchCatalog search;
     private ArrayList<RecordInfo> recordList;
-    private Context context;
     private ProgressDialogSupport progress;
     private ArrayList<RecordInfo> searchResults;
     private EvergreenServer eg;
@@ -108,17 +106,9 @@ public class SearchActivity extends AppCompatActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (!SplashActivity.isAppInitialized()) {
-            SplashActivity.restartApp(this);
-            return;
-        }
-        SearchFormat.init(this);
-        AppState.init(this);
 
-        setContentView(R.layout.search_layout3);
-        ActionBarUtils.initActionBarForActivity(this);
+        setContentView(R.layout.activity_search);
 
-        context = this;
         eg = EvergreenServer.getInstance();
         search = SearchCatalog.getInstance();
         bookBags = AccountAccess.getInstance().getBookbags();
@@ -238,7 +228,7 @@ public class SearchActivity extends AppCompatActivity {
                         InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                         imm.hideSoftInputFromWindow(searchText.getWindowToken(), 0);
                         searchResultsSummary.setVisibility(View.VISIBLE);
-                        progress.show(context, getString(R.string.dialog_fetching_data_message));
+                        progress.show(SearchActivity.this, getString(R.string.dialog_fetching_data_message));
                     }
                 });
 
@@ -373,7 +363,7 @@ public class SearchActivity extends AppCompatActivity {
             if (bookBags.size() > 0) {
                 BookBagUtils.showAddToListDialog(this, bookBags, info.record);
             } else {
-                Toast.makeText(context, getText(R.string.msg_no_lists), Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, getText(R.string.msg_no_lists), Toast.LENGTH_SHORT).show();
             }
             return true;
         }

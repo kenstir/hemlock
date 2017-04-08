@@ -107,8 +107,8 @@ public class ActionBarUtils {
         } else if (id == R.id.action_donate) {
             activity.startActivityForResult(new Intent(activity, DonateActivity.class), BillingHelper.REQUEST_PURCHASE);
             return true;
-//        } else if (menuProvider != null) {
-//            boolean handled = menuProvider.onItemSelected(activity, id);
+//        } else if (mMenuItemHandler != null) {
+//            boolean handled = mMenuItemHandler.onItemSelected(activity, id);
 //            if (handled) return true;
 //        }
         }
