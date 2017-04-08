@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          package="net.kenstir.apps.pines"
-          android:installLocation="auto"
-          android:versionCode="15"
-          android:versionName="1.0.5">
+    xmlns:tools="http://schemas.android.com/tools"
+    package="net.kenstir.apps.pines"
+    android:installLocation="auto"
+    android:versionCode="15"
+    android:versionName="1.0.5">
 
     <uses-sdk
         android:minSdkVersion="15"
@@ -28,7 +29,8 @@
         android:fullBackupContent="true"
         android:icon="@drawable/launcher_icon"
         android:label="@string/ou_app_label"
-        android:theme="@style/PINESDarkNoActionBar" >
+        android:theme="@style/PINESDarkNoActionBar"
+        tools:replace="android:theme">
 
         <activity
                 android:name="org.evergreen_ils.views.splashscreen.SplashActivity"
@@ -39,6 +41,9 @@
             </intent-filter>
         </activity>
 
+        <activity
+            android:name="org.evergreen_ils.utils.ui.BaseActivity"
+            android:label="@string/title_activity_nav_drawer"/>
         <activity
                 android:name="org.evergreen_ils.searchCatalog.SampleUnderlinesNoFade"
                 android:label="@string/search_details_title">

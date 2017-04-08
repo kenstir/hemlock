@@ -48,7 +48,7 @@ public class PinesMenuProvider extends MenuProvider {
     }
 
     @Override
-    public void onItemSelected(Activity activity, int id) {
+    public boolean onItemSelected(Activity activity, int id) {
         if (id == R.id.open_full_catalog_button) {
             String url = activity.getString(org.evergreen_ils.R.string.ou_library_url);
             activity.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
@@ -65,6 +65,9 @@ public class PinesMenuProvider extends MenuProvider {
                     + "&password=" + URLEncoder.encode(password)
                     + "&redirect_to=" + URLEncoder.encode("/eg/opac/myopac/messages");
             activity.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
+        } else {
+            return false;
         }
+        return true;
     }
 }

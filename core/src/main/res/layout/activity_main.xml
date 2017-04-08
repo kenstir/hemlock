@@ -1,67 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
-    android:layout_width="match_parent"
+    android:id="@+id/drawer_layout"
     android:layout_height="match_parent"
-    android:background="@drawable/background_grey_image">
+    android:layout_width="match_parent"
+    android:fitsSystemWindows="true">
 
-    <android.support.v7.widget.Toolbar
-        android:id="@+id/toolbar"
+    <include
+        layout="@layout/content_main"
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:layout_marginLeft="0dp"
-        android:layout_marginRight="0dp"
-        android:layout_marginTop="0dp"
-        android:background="?attr/colorPrimary"
-        android:elevation="4dp"
-        android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
-        app:popupTheme="@style/ThemeOverlay.AppCompat.Dark" />
+        android:layout_height="match_parent" />
 
-    <Button
-            android:layout_width="match_parent"
-            android:layout_height="56dp"
-            style="@style/BigActionButton"
-            android:text="@string/title_search"
-            android:id="@+id/main_btn_search"
-            android:onClick="onButtonClick"
-            android:drawableLeft="@drawable/kghostview"/>
+    <android.support.design.widget.NavigationView
+        android:id="@+id/nav_view"
+        android:layout_height="match_parent"
+        android:layout_width="wrap_content"
+        android:layout_gravity="start"
+        android:fitsSystemWindows="true"
+        app:headerLayout="@layout/drawer_header"
+        app:menu="@menu/drawer_menu"/>
 
-    <Button
-            android:layout_width="match_parent"
-            android:layout_height="56dp"
-            style="@style/BigActionButton"
-            android:text="@string/title_check_out"
-            android:id="@+id/account_btn_check_out"
-            android:onClick="onButtonClick"
-            android:drawableLeft="@drawable/items_checked_out"/>
-
-    <Button
-            android:layout_width="match_parent"
-            android:layout_height="56dp"
-            style="@style/BigActionButton"
-            android:text="@string/title_holds"
-            android:id="@+id/account_btn_holds"
-            android:onClick="onButtonClick"
-            android:drawableLeft="@drawable/holds"/>
-
-    <Button
-            android:layout_width="match_parent"
-            android:layout_height="56dp"
-            style="@style/BigActionButton"
-            android:text="@string/title_fines"
-            android:id="@+id/account_btn_fines"
-            android:onClick="onButtonClick"
-            android:drawableLeft="@drawable/fines"/>
-
-    <Button
-            android:layout_width="match_parent"
-            android:layout_height="56dp"
-            style="@style/BigActionButton"
-            android:text="@string/title_my_lists"
-            android:id="@+id/main_my_lists_button"
-            android:onClick="onButtonClick"
-            android:drawableLeft="@drawable/beos_write"/>
-
-</LinearLayout>
+</android.support.v4.widget.DrawerLayout>
