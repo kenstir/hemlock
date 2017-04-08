@@ -142,12 +142,13 @@ public class MainActivity extends ActionBarActivity {
         boolean showDonate = AppState.getBoolean(AppState.SHOW_DONATE, false);
         if (!showDonate)
             menu.removeItem(R.id.action_donate);
-        return super.onCreateOptionsMenu(menu);
+        return true;
+        //return super.onCreateOptionsMenu(menu);
     }
 
     @Override
     public boolean onPrepareOptionsMenu (Menu menu) {
-        menu.getItem(0).setEnabled(AccountUtils.haveMoreThanOneAccount(this));
+        menu.findItem(R.id.action_switch_account).setEnabled(AccountUtils.haveMoreThanOneAccount(this));
         return true;
     }
 
