@@ -8,6 +8,8 @@
     <string name="menu_feedback">Send feedback</string>
     <string name="menu_donate">Donate</string>
     <string name="menu_messages">Messages</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
 
     <!-- Header portion -->
     <string name="options_button_text">Options</string>
@@ -199,5 +201,6 @@
     <string name="msg_loading_holds">Loading holds</string>
     <string name="msg_renewing_item">Renewing item</string>
     <string name="forgot_password_button">Forgot Password</string>
+    <string name="title_activity_nav_drawer">NavDrawerActivity</string>
 
 </resources>

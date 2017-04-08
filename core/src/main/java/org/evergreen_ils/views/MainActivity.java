@@ -25,7 +25,12 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.design.widget.NavigationView;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -70,7 +75,14 @@ public class MainActivity extends AppCompatActivity {
         SearchFormat.init(this);
 
         setContentView(R.layout.activity_main);
-        ActionBarUtils.initActionBarForActivity(this, null, true);
+        Toolbar toolbar = ActionBarUtils.initActionBarForActivity(this, null, true);
+        ActionBarUtils.initNavigationViewForActivity(this);
+
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawer.setDrawerListener(toggle);
+        toggle.syncState();
 
         initBillingProvider();
         initMenuProvider();
@@ -138,16 +150,12 @@ public class MainActivity extends AppCompatActivity {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_main, menu);
 
-        // hide feedback action if we have no url
+        // remove items we don't need
         if (TextUtils.isEmpty(getFeedbackUrl()))
             menu.removeItem(R.id.action_feedback);
-
-        // hide donate button if appropriate
         boolean showDonate = AppState.getBoolean(AppState.SHOW_DONATE, false);
         if (!showDonate)
             menu.removeItem(R.id.action_donate);
-
-        // hide messages button if appropriate
         if (!getResources().getBoolean(R.bool.ou_enable_messages))
             menu.removeItem(R.id.action_messages);
 
@@ -171,30 +179,10 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-        if (id == R.id.action_switch_account) {
-            SplashActivity.restartApp(this);
+        if (menuProvider != null && menuProvider.onItemSelected(this, id))
             return true;
-        } else if (id == R.id.action_add_account) {
-            invalidateOptionsMenu();
-            AccountUtils.addAccount(this, new Runnable() {
-                @Override
-                public void run() {
-                    SplashActivity.restartApp(MainActivity.this);
-                }
-            });
-            Log.i(Const.AUTH_TAG, "after addAccount");
+        if (ActionBarUtils.handleNavigationAction(this, id))
             return true;
-        } else if (id == R.id.action_logout) {
-            AccountAccess.getInstance().logout(this);
-            SplashActivity.restartApp(this);
-            return true;
-        } else if (id == R.id.action_feedback) {
-            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(getFeedbackUrl())));
-            return true;
-        } else if (id == R.id.action_donate) {
-            startActivityForResult(new Intent(this, DonateActivity.class), BillingHelper.REQUEST_PURCHASE);
-            return true;
-        }
         return super.onOptionsItemSelected(item);
     }
 
