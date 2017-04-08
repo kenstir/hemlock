@@ -54,12 +54,13 @@ import org.evergreen_ils.system.EvergreenServerLoader;
 import org.evergreen_ils.system.Log;
 import org.evergreen_ils.utils.ui.ActionBarUtils;
 import org.evergreen_ils.utils.ui.AppState;
+import org.evergreen_ils.utils.ui.BaseActivity;
 import org.evergreen_ils.views.splashscreen.SplashActivity;
 
 /**
  * Created by kenstir on 12/28/13.
  */
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends BaseActivity {
 
     private static String TAG = MainActivity.class.getSimpleName();
 
@@ -68,21 +69,8 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (!SplashActivity.isAppInitialized()) {
-            SplashActivity.restartApp(this);
-            return;
-        }
-        SearchFormat.init(this);
 
         setContentView(R.layout.activity_main);
-        Toolbar toolbar = ActionBarUtils.initActionBarForActivity(this, null, true);
-        ActionBarUtils.initNavigationViewForActivity(this);
-
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.setDrawerListener(toggle);
-        toggle.syncState();
 
         initBillingProvider();
         initMenuProvider();
