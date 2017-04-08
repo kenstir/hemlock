@@ -132,7 +132,9 @@ public class MainActivity extends BaseActivity {
 
     @Override
     public boolean onPrepareOptionsMenu (Menu menu) {
-        menu.findItem(R.id.action_switch_account).setEnabled(AccountUtils.haveMoreThanOneAccount(this));
+        MenuItem item = menu.findItem(R.id.action_switch_account);
+        if (item != null)
+            item.setEnabled(AccountUtils.haveMoreThanOneAccount(this));
         return true;
     }
 
