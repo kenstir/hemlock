@@ -33,8 +33,7 @@
         tools:replace="android:theme">
 
         <activity
-                android:name="org.evergreen_ils.views.splashscreen.SplashActivity"
-                android:theme="@style/PINESDarkNoActionBar">
+                android:name="org.evergreen_ils.views.splashscreen.SplashActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -53,9 +52,9 @@
                 android:label="@string/copy_information_title">
         </activity>
         <activity
-                android:name="org.evergreen_ils.searchCatalog.SearchActivity"
-                android:label="@string/title_search"
-                android:parentActivityName="org.evergreen_ils.views.MainActivity">
+            android:name="org.evergreen_ils.searchCatalog.SearchActivity"
+            android:label="@string/title_search"
+            android:parentActivityName="org.evergreen_ils.views.MainActivity">
         </activity>
         <activity
                 android:name="org.evergreen_ils.searchCatalog.AdvancedSearchActivity"

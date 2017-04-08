@@ -23,14 +23,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.design.widget.NavigationView;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -38,24 +31,20 @@ import android.view.MenuItem;
 import android.view.View;
 
 import org.evergreen_ils.R;
-import org.evergreen_ils.accountAccess.AccountAccess;
 import org.evergreen_ils.accountAccess.AccountUtils;
 import org.evergreen_ils.accountAccess.bookbags.BookBagListView;
 import org.evergreen_ils.accountAccess.checkout.ItemsCheckOutListView;
 import org.evergreen_ils.accountAccess.fines.FinesActivity;
 import org.evergreen_ils.accountAccess.holds.HoldsListView;
-import org.evergreen_ils.auth.Const;
 import org.evergreen_ils.billing.BillingDataProvider;
 import org.evergreen_ils.billing.BillingHelper;
 import org.evergreen_ils.billing.IabResult;
 import org.evergreen_ils.searchCatalog.SearchActivity;
-import org.evergreen_ils.searchCatalog.SearchFormat;
 import org.evergreen_ils.system.EvergreenServerLoader;
 import org.evergreen_ils.system.Log;
 import org.evergreen_ils.utils.ui.ActionBarUtils;
 import org.evergreen_ils.utils.ui.AppState;
 import org.evergreen_ils.utils.ui.BaseActivity;
-import org.evergreen_ils.views.splashscreen.SplashActivity;
 
 /**
  * Created by kenstir on 12/28/13.
@@ -64,8 +53,6 @@ public class MainActivity extends BaseActivity {
 
     private static String TAG = MainActivity.class.getSimpleName();
 
-    protected MenuProvider menuProvider = null;
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -73,9 +60,6 @@ public class MainActivity extends BaseActivity {
         setContentView(R.layout.activity_main);
 
         initBillingProvider();
-        initMenuProvider();
-        if (menuProvider != null)
-            menuProvider.onCreate(this);
         EvergreenServerLoader.fetchOrgSettings(this);
         EvergreenServerLoader.fetchSMSCarriers(this);
     }
@@ -108,10 +92,6 @@ public class MainActivity extends BaseActivity {
                 }
             }
         });
-    }
-
-    void initMenuProvider() {
-        menuProvider = MenuProvider.create(getString(R.string.ou_menu_provider));
     }
 
     @Override
@@ -167,7 +147,7 @@ public class MainActivity extends BaseActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-        if (menuProvider != null && menuProvider.onItemSelected(this, id))
+        if (mMenuItemHandler != null && mMenuItemHandler.onItemSelected(this, id))
             return true;
         if (ActionBarUtils.handleNavigationAction(this, id))
             return true;
@@ -186,8 +166,8 @@ public class MainActivity extends BaseActivity {
             startActivity(new Intent(this, BookBagListView.class));
         } else if (id == R.id.main_btn_search) {
             startActivity(new Intent(this, SearchActivity.class));
-        } else if (menuProvider != null) {
-            menuProvider.onItemSelected(this, id);
+        } else if (mMenuItemHandler != null) {
+            mMenuItemHandler.onItemSelected(this, id);
         }
     }
 }
