@@ -3,8 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="net.kenstir.apps.pines"
     android:installLocation="auto"
-    android:versionCode="15"
-    android:versionName="1.0.5">
+    android:versionCode="16"
+    android:versionName="1.1.0">
 
     <uses-sdk
         android:minSdkVersion="15"
@@ -127,6 +127,8 @@
                 <action android:name="android.intent.action.MAIN" />
             </intent-filter>
         </activity>
+
+        <meta-data android:name="android.max_aspect" android:value="2.1" />
 
         <service
             android:name="org.evergreen_ils.auth.AuthenticatorService"
