@@ -55,8 +55,12 @@ public class ActionBarUtils {
                 AppState.getString(AppState.LIBRARY_NAME), username));
         if (!TextUtils.isEmpty(title))
             actionBar.setTitle(title);
-        if (!isMainActivity)
-            actionBar.setDisplayHomeAsUpEnabled(true);
+//        if (true || !isMainActivity) {
+//            actionBar.setDisplayHomeAsUpEnabled(true);
+//            //actionBar.setHomeAsUpIndicator(R.drawable.ic_arrow_back_white_24dp);
+//            actionBar.setHomeAsUpIndicator(0);
+//        }
+        toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp);
 
         return toolbar;
     }
@@ -84,7 +88,7 @@ public class ActionBarUtils {
         }
     }
 
-    public static boolean handleNavigationAction(final AppCompatActivity activity, int id) {
+    public static boolean handleMenuAction(final AppCompatActivity activity, int id) {
         if (id == R.id.action_switch_account) {
             SplashActivity.restartApp(activity);
             return true;
