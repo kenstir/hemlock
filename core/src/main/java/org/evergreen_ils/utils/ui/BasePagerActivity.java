@@ -31,13 +31,14 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
-public abstract class BaseSampleActivity extends AppCompatActivity {
+public abstract class BasePagerActivity extends BaseActivity {
     private static final Random RANDOM = new Random();
 
     public FragmentPagerAdapter mAdapter;
     public ViewPager mPager;
     public PageIndicator mIndicator;
 
+    /*
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu, menu);
@@ -54,4 +55,5 @@ public abstract class BaseSampleActivity extends AppCompatActivity {
         }
         return super.onOptionsItemSelected(item);
     }
+    */
 }

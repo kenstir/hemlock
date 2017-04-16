@@ -31,6 +31,7 @@ import org.evergreen_ils.searchCatalog.RecordDetails;
 import org.evergreen_ils.searchCatalog.RecordInfo;
 import org.evergreen_ils.searchCatalog.SearchCatalog;
 import org.evergreen_ils.utils.ui.ActionBarUtils;
+import org.evergreen_ils.utils.ui.BaseActivity;
 import org.evergreen_ils.utils.ui.ProgressDialogSupport;
 import org.evergreen_ils.views.splashscreen.SplashActivity;
 
@@ -50,7 +51,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class BookBagDetails extends AppCompatActivity {
+public class BookBagDetails extends BaseActivity {
 
     private final static String TAG = BookBagDetails.class.getSimpleName();
 

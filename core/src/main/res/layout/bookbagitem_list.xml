@@ -6,6 +6,8 @@
     android:background="@drawable/background_grey_image"
     >
 
+    <include layout="@layout/toolbar_common"/>
+
     <LinearLayout 
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
