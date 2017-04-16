@@ -31,6 +31,7 @@ import org.evergreen_ils.accountAccess.SessionNotFoundException;
 import org.evergreen_ils.searchCatalog.RecordDetails;
 import org.evergreen_ils.searchCatalog.RecordInfo;
 import org.evergreen_ils.utils.ui.ActionBarUtils;
+import org.evergreen_ils.utils.ui.BaseActivity;
 import org.evergreen_ils.utils.ui.ProgressDialogSupport;
 import org.evergreen_ils.views.splashscreen.SplashActivity;
 
@@ -40,7 +41,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-public class FinesActivity extends AppCompatActivity {
+public class FinesActivity extends BaseActivity {
 
     private TextView total_owned;
 
@@ -68,7 +69,7 @@ public class FinesActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.fines);
+        setContentView(R.layout.activity_fines);
 
         decimalFormater = new DecimalFormat("#0.00");
         lv = (ListView) findViewById(R.id.fines_overdue_materials_list);
