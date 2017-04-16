@@ -151,7 +151,7 @@ public class MainActivity extends BaseActivity {
         int id = item.getItemId();
         if (mMenuItemHandler != null && mMenuItemHandler.onItemSelected(this, id))
             return true;
-        if (ActionBarUtils.handleNavigationAction(this, id))
+        if (ActionBarUtils.handleMenuAction(this, id))
             return true;
         return super.onOptionsItemSelected(item);
     }

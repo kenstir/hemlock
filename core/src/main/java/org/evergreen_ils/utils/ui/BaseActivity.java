@@ -9,6 +9,7 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.view.View;
 
 import org.evergreen_ils.R;
 import org.evergreen_ils.accountAccess.bookbags.BookBagListView;
@@ -17,12 +18,16 @@ import org.evergreen_ils.accountAccess.fines.FinesActivity;
 import org.evergreen_ils.accountAccess.holds.HoldsListView;
 import org.evergreen_ils.searchCatalog.SearchActivity;
 import org.evergreen_ils.searchCatalog.SearchFormat;
+import org.evergreen_ils.system.Log;
+import org.evergreen_ils.views.MainActivity;
 import org.evergreen_ils.views.MenuProvider;
 import org.evergreen_ils.views.splashscreen.SplashActivity;
 
 /* Activity base class to handle common behaviours like the navigation drawer */
 public class BaseActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+
+    private static String TAG = BaseActivity.class.getSimpleName();
 
     protected Toolbar mToolbar;
     protected MenuProvider mMenuItemHandler = null;
@@ -62,8 +67,17 @@ public class BaseActivity extends AppCompatActivity
         }
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        if (navigationView != null)
+        if (navigationView != null) {
             navigationView.setNavigationItemSelectedListener(this);
+            View navHeader = navigationView.getHeaderView(0);
+            if (navHeader != null)
+                navHeader.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        onNavigationAction(v.getId());
+                    }
+                });
+        }
     }
 
     @Override
@@ -94,9 +108,15 @@ public class BaseActivity extends AppCompatActivity
 
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
-        boolean ret = true;
         int id = item.getItemId();
-        if (id == R.id.main_btn_search) {
+        return onNavigationAction(id);
+    }
+
+    protected boolean onNavigationAction(int id) {
+        boolean ret = true;
+        if (id == R.id.nav_header) {
+            startActivity(new Intent(this, MainActivity.class));
+        } else if (id == R.id.main_btn_search) {
             startActivity(new Intent(this, SearchActivity.class));
         } else if (id == R.id.account_btn_check_out) {
             startActivity(new Intent(this, ItemsCheckOutListView.class));
