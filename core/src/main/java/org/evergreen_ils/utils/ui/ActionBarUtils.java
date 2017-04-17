@@ -60,7 +60,8 @@ public class ActionBarUtils {
 //            //actionBar.setHomeAsUpIndicator(R.drawable.ic_arrow_back_white_24dp);
 //            actionBar.setHomeAsUpIndicator(0);
 //        }
-        toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp);
+//         this didn't work
+//        toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp);
 
         return toolbar;
     }
@@ -71,21 +72,6 @@ public class ActionBarUtils {
 
     public static void initActionBarForActivity(AppCompatActivity activity) {
         initActionBarForActivity(activity, null, false);
-    }
-
-    public static void initNavigationViewForActivity(final AppCompatActivity activity) {
-        try {
-            NavigationView navigationView = (NavigationView) activity.findViewById(R.id.nav_view);
-            navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
-                @Override
-                public boolean onNavigationItemSelected(MenuItem item) {
-                    return activity.onOptionsItemSelected(item);
-                }
-            });
-        } catch (NoSuchFieldError e) {
-            // nada
-            Log.d("kcxxx", "no nav_view");
-        }
     }
 
     public static boolean handleMenuAction(final AppCompatActivity activity, int id) {
