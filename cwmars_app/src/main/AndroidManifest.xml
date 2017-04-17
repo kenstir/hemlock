@@ -31,6 +31,8 @@
         android:label="@string/ou_app_label"
         android:theme="@style/HemlockDark" >
 
+        <meta-data android:name="android.max_aspect" android:value="2.1" />
+
         <!-- Notification receiver -->
         <receiver
             android:name="org.evergreen_ils.services.NotificationReceiver"
