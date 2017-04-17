@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="net.kenstir.apps.pines"
     android:installLocation="auto"
-    android:versionCode="16"
+    android:versionCode="17"
     android:versionName="1.1.0">
 
     <uses-sdk
@@ -31,6 +31,8 @@
         android:label="@string/ou_app_label"
         android:theme="@style/PINESDarkNoActionBar"
         tools:replace="android:theme">
+
+        <meta-data android:name="android.max_aspect" android:value="2.1" />
 
         <activity
                 android:name="org.evergreen_ils.views.splashscreen.SplashActivity">
@@ -127,8 +129,6 @@
                 <action android:name="android.intent.action.MAIN" />
             </intent-filter>
         </activity>
-
-        <meta-data android:name="android.max_aspect" android:value="2.1" />
 
         <service
             android:name="org.evergreen_ils.auth.AuthenticatorService"

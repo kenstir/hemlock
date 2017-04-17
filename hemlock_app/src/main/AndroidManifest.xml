@@ -2,8 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           package="net.kenstir.apps.hemlock"
           android:installLocation="auto"
-          android:versionCode="65"
-          android:versionName="4.2.2">
+          android:versionCode="66"
+          android:versionName="4.3.0">
 
     <uses-sdk
         android:minSdkVersion="15"
@@ -31,6 +31,8 @@
         android:icon="@drawable/launcher_icon"
         android:label="@string/ou_app_label"
         android:theme="@style/HemlockDarkNoActionBar" >
+
+        <meta-data android:name="android.max_aspect" android:value="2.1" />
 
         <activity
                 android:name="org.evergreen_ils.views.splashscreen.SplashActivity"
