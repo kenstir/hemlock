@@ -1,21 +1,19 @@
 /*
- * Copyright (C) 2012 Evergreen Open-ILS
- * @author Daniel-Octavian Rizea
- * 
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * or the License, or (at your option) any later version.
- * 
- * This program is distributed in the hope that it will be usefull,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software 
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
- * 
+ * Copyright (C) 2011 Jake Wharton
+ * Copyright (C) 2011 Patrik Akerfeldt
+ * Copyright (C) 2011 Francisco Figueiredo Jr.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.evergreen_ils.utils.ui;
 
@@ -45,8 +43,8 @@ import android.view.ViewConfiguration;
 /**
  * A TitlePageIndicator is a PageIndicator which displays the title of left view
  * (if exist), the title of the current select view (centered) and the title of
- * the right view (if exist). When the user scrolls the ViewPager then titles
- * are also scrolled.
+ * the right view (if exist). When the user scrolls the ViewPager then titles are
+ * also scrolled.
  */
 public class TitlePageIndicator extends View implements PageIndicator {
     /**
@@ -58,8 +56,8 @@ public class TitlePageIndicator extends View implements PageIndicator {
 
     /**
      * Percentage indicating what percentage of the screen width away from
-     * center should the selected text bold turn off. A value of 0.05 means that
-     * 10% between the center and an edge.
+     * center should the selected text bold turn off. A value of 0.05 means
+     * that 10% between the center and an edge.
      */
     private static final float BOLD_FADE_PERCENTAGE = 0.05f;
 
@@ -75,8 +73,7 @@ public class TitlePageIndicator extends View implements PageIndicator {
         /**
          * Callback when the center item has been clicked.
          * 
-         * @param position
-         *            Position of the current center item.
+         * @param position Position of the current center item.
          */
         void onCenterItemClick(int position);
     }
@@ -143,79 +140,42 @@ public class TitlePageIndicator extends View implements PageIndicator {
 
     public TitlePageIndicator(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
-        if (isInEditMode())
-            return;
+        if (isInEditMode()) return;
 
         // Load defaults from resources
         final Resources res = getResources();
-        final int defaultFooterColor = res
-                .getColor(R.color.default_title_indicator_footer_color);
-        final float defaultFooterLineHeight = res
-                .getDimension(R.dimen.default_title_indicator_footer_line_height);
-        final int defaultFooterIndicatorStyle = res
-                .getInteger(R.integer.default_title_indicator_footer_indicator_style);
-        final float defaultFooterIndicatorHeight = res
-                .getDimension(R.dimen.default_title_indicator_footer_indicator_height);
-        final float defaultFooterIndicatorUnderlinePadding = res
-                .getDimension(R.dimen.default_title_indicator_footer_indicator_underline_padding);
-        final float defaultFooterPadding = res
-                .getDimension(R.dimen.default_title_indicator_footer_padding);
-        final int defaultSelectedColor = res
-                .getColor(R.color.default_title_indicator_selected_color);
-        final boolean defaultSelectedBold = res
-                .getBoolean(R.bool.default_title_indicator_selected_bold);
-        final int defaultTextColor = res
-                .getColor(R.color.default_title_indicator_text_color);
-        final float defaultTextSize = res
-                .getDimension(R.dimen.default_title_indicator_text_size);
-        final float defaultTitlePadding = res
-                .getDimension(R.dimen.default_title_indicator_title_padding);
-        final float defaultClipPadding = res
-                .getDimension(R.dimen.default_title_indicator_clip_padding);
-        final float defaultTopPadding = res
-                .getDimension(R.dimen.default_title_indicator_top_padding);
+        final int defaultFooterColor = res.getColor(R.color.default_title_indicator_footer_color);
+        final float defaultFooterLineHeight = res.getDimension(R.dimen.default_title_indicator_footer_line_height);
+        final int defaultFooterIndicatorStyle = res.getInteger(R.integer.default_title_indicator_footer_indicator_style);
+        final float defaultFooterIndicatorHeight = res.getDimension(R.dimen.default_title_indicator_footer_indicator_height);
+        final float defaultFooterIndicatorUnderlinePadding = res.getDimension(R.dimen.default_title_indicator_footer_indicator_underline_padding);
+        final float defaultFooterPadding = res.getDimension(R.dimen.default_title_indicator_footer_padding);
+        final int defaultSelectedColor = res.getColor(R.color.default_title_indicator_selected_color);
+        final boolean defaultSelectedBold = res.getBoolean(R.bool.default_title_indicator_selected_bold);
+        final int defaultTextColor = res.getColor(R.color.default_title_indicator_text_color);
+        final float defaultTextSize = res.getDimension(R.dimen.default_title_indicator_text_size);
+        final float defaultTitlePadding = res.getDimension(R.dimen.default_title_indicator_title_padding);
+        final float defaultClipPadding = res.getDimension(R.dimen.default_title_indicator_clip_padding);
+        final float defaultTopPadding = res.getDimension(R.dimen.default_title_indicator_top_padding);
 
         // Retrieve styles attributes
-        TypedArray a = context.obtainStyledAttributes(attrs,
-                R.styleable.TitlePageIndicator, defStyle, 0);
+        TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.TitlePageIndicator, defStyle, 0);
 
         // Retrieve the colors to be used for this view and apply them.
-        mFooterLineHeight = a.getDimension(
-                R.styleable.TitlePageIndicator_footerLineHeight,
-                defaultFooterLineHeight);
-        mFooterIndicatorStyle = IndicatorStyle.fromValue(a.getInteger(
-                R.styleable.TitlePageIndicator_footerIndicatorStyle,
-                defaultFooterIndicatorStyle));
-        mFooterIndicatorHeight = a.getDimension(
-                R.styleable.TitlePageIndicator_footerIndicatorHeight,
-                defaultFooterIndicatorHeight);
-        mFooterIndicatorUnderlinePadding = a.getDimension(
-                R.styleable.TitlePageIndicator_footerIndicatorUnderlinePadding,
-                defaultFooterIndicatorUnderlinePadding);
-        mFooterPadding = a.getDimension(
-                R.styleable.TitlePageIndicator_footerPadding,
-                defaultFooterPadding);
-        mTopPadding = a.getDimension(R.styleable.TitlePageIndicator_topPadding,
-                defaultTopPadding);
-        mTitlePadding = a.getDimension(
-                R.styleable.TitlePageIndicator_titlePadding,
-                defaultTitlePadding);
-        mClipPadding = a.getDimension(
-                R.styleable.TitlePageIndicator_clipPadding, defaultClipPadding);
-        mColorSelected = a.getColor(
-                R.styleable.TitlePageIndicator_selectedColor,
-                defaultSelectedColor);
-        mColorText = a.getColor(
-                R.styleable.TitlePageIndicator_android_textColor,
-                defaultTextColor);
-        mBoldText = a.getBoolean(R.styleable.TitlePageIndicator_selectedBold,
-                defaultSelectedBold);
+        mFooterLineHeight = a.getDimension(R.styleable.TitlePageIndicator_footerLineHeight, defaultFooterLineHeight);
+        mFooterIndicatorStyle = IndicatorStyle.fromValue(a.getInteger(R.styleable.TitlePageIndicator_footerIndicatorStyle, defaultFooterIndicatorStyle));
+        mFooterIndicatorHeight = a.getDimension(R.styleable.TitlePageIndicator_footerIndicatorHeight, defaultFooterIndicatorHeight);
+        mFooterIndicatorUnderlinePadding = a.getDimension(R.styleable.TitlePageIndicator_footerIndicatorUnderlinePadding, defaultFooterIndicatorUnderlinePadding);
+        mFooterPadding = a.getDimension(R.styleable.TitlePageIndicator_footerPadding, defaultFooterPadding);
+        mTopPadding = a.getDimension(R.styleable.TitlePageIndicator_topPadding, defaultTopPadding);
+        mTitlePadding = a.getDimension(R.styleable.TitlePageIndicator_titlePadding, defaultTitlePadding);
+        mClipPadding = a.getDimension(R.styleable.TitlePageIndicator_clipPadding, defaultClipPadding);
+        mColorSelected = a.getColor(R.styleable.TitlePageIndicator_selectedColor, defaultSelectedColor);
+        mColorText = a.getColor(R.styleable.TitlePageIndicator_android_textColor, defaultTextColor);
+        mBoldText = a.getBoolean(R.styleable.TitlePageIndicator_selectedBold, defaultSelectedBold);
 
-        final float textSize = a.getDimension(
-                R.styleable.TitlePageIndicator_android_textSize,
-                defaultTextSize);
-        final int footerColor = a.getColor(
-                R.styleable.TitlePageIndicator_footerColor, defaultFooterColor);
+        final float textSize = a.getDimension(R.styleable.TitlePageIndicator_android_textSize, defaultTextSize);
+        final int footerColor = a.getColor(R.styleable.TitlePageIndicator_footerColor, defaultFooterColor);
         mPaintText.setTextSize(textSize);
         mPaintText.setAntiAlias(true);
         mPaintFooterLine.setStyle(Paint.Style.FILL_AND_STROKE);
@@ -227,8 +187,7 @@ public class TitlePageIndicator extends View implements PageIndicator {
         a.recycle();
 
         final ViewConfiguration configuration = ViewConfiguration.get(context);
-        mTouchSlop = ViewConfigurationCompat
-                .getScaledPagingTouchSlop(configuration);
+        mTouchSlop = ViewConfigurationCompat.getScaledPagingTouchSlop(configuration);
     }
 
     public int getFooterColor() {
@@ -368,10 +327,10 @@ public class TitlePageIndicator extends View implements PageIndicator {
             return;
         }
 
-        // mCurrentPage is -1 on first start and after orientation changed. If
-        // so, retrieve the correct index from viewpager.
-        if (mCurrentPage == -1 && mViewPager != null)
+        // mCurrentPage is -1 on first start and after orientation changed. If so, retrieve the correct index from viewpager.
+        if (mCurrentPage == -1 && mViewPager != null) {
             mCurrentPage = mViewPager.getCurrentItem();
+        }
 
         // Calculate views bounds
         ArrayList<Rect> bounds = calculateAllBounds(mPaintText);
@@ -402,8 +361,7 @@ public class TitlePageIndicator extends View implements PageIndicator {
         }
         final boolean currentSelected = (offsetPercent <= SELECTION_FADE_PERCENTAGE);
         final boolean currentBold = (offsetPercent <= BOLD_FADE_PERCENTAGE);
-        final float selectedPercent = (SELECTION_FADE_PERCENTAGE - offsetPercent)
-                / SELECTION_FADE_PERCENTAGE;
+        final float selectedPercent = (SELECTION_FADE_PERCENTAGE - offsetPercent) / SELECTION_FADE_PERCENTAGE;
 
         // Verify if the current view must be clipped to the screen
         Rect curPageBound = bounds.get(mCurrentPage);
@@ -462,33 +420,26 @@ public class TitlePageIndicator extends View implements PageIndicator {
             // Get the title
             Rect bound = bounds.get(i);
             // Only if one side is visible
-            if ((bound.left > left && bound.left < right)
-                    || (bound.right > left && bound.right < right)) {
+            if ((bound.left > left && bound.left < right) || (bound.right > left && bound.right < right)) {
                 final boolean currentPage = (i == page);
                 final CharSequence pageTitle = getTitle(i);
 
                 // Only set bold if we are within bounds
-                mPaintText.setFakeBoldText(currentPage && currentBold
-                        && mBoldText);
+                mPaintText.setFakeBoldText(currentPage && currentBold && mBoldText);
 
                 // Draw text as unselected
                 mPaintText.setColor(mColorText);
                 if (currentPage && currentSelected) {
-                    // Fade out/in unselected text as the selected text fades
-                    // in/out
-                    mPaintText.setAlpha(colorTextAlpha
-                            - (int) (colorTextAlpha * selectedPercent));
+                    // Fade out/in unselected text as the selected text fades in/out
+                    mPaintText.setAlpha(colorTextAlpha - (int) (colorTextAlpha * selectedPercent));
                 }
-                canvas.drawText(pageTitle, 0, pageTitle.length(), bound.left,
-                        bound.bottom + mTopPadding, mPaintText);
+                canvas.drawText(pageTitle, 0, pageTitle.length(), bound.left, bound.bottom + mTopPadding, mPaintText);
 
                 // If we are within the selected bounds draw the selected text
                 if (currentPage && currentSelected) {
                     mPaintText.setColor(mColorSelected);
-                    mPaintText
-                            .setAlpha((int) ((mColorSelected >>> 24) * selectedPercent));
-                    canvas.drawText(pageTitle, 0, pageTitle.length(),
-                            bound.left, bound.bottom + mTopPadding, mPaintText);
+                    mPaintText.setAlpha((int)((mColorSelected >>> 24) * selectedPercent));
+                    canvas.drawText(pageTitle, 0, pageTitle.length(), bound.left, bound.bottom + mTopPadding, mPaintText);
                 }
             }
         }
@@ -503,12 +454,9 @@ public class TitlePageIndicator extends View implements PageIndicator {
         switch (mFooterIndicatorStyle) {
         case Triangle:
             mPath.reset();
-            mPath.moveTo(halfWidth, height - mFooterLineHeight
-                    - mFooterIndicatorHeight);
-            mPath.lineTo(halfWidth + mFooterIndicatorHeight, height
-                    - mFooterLineHeight);
-            mPath.lineTo(halfWidth - mFooterIndicatorHeight, height
-                    - mFooterLineHeight);
+            mPath.moveTo(halfWidth, height - mFooterLineHeight - mFooterIndicatorHeight);
+            mPath.lineTo(halfWidth + mFooterIndicatorHeight, height - mFooterLineHeight);
+            mPath.lineTo(halfWidth - mFooterIndicatorHeight, height - mFooterLineHeight);
             mPath.close();
             canvas.drawPath(mPath, mPaintFooterIndicator);
             break;
@@ -520,18 +468,10 @@ public class TitlePageIndicator extends View implements PageIndicator {
 
             Rect underlineBounds = bounds.get(page);
             mPath.reset();
-            mPath.moveTo(underlineBounds.left
-                    - mFooterIndicatorUnderlinePadding, height
-                    - mFooterLineHeight);
-            mPath.lineTo(underlineBounds.right
-                    + mFooterIndicatorUnderlinePadding, height
-                    - mFooterLineHeight);
-            mPath.lineTo(underlineBounds.right
-                    + mFooterIndicatorUnderlinePadding, height
-                    - mFooterLineHeight - mFooterIndicatorHeight);
-            mPath.lineTo(underlineBounds.left
-                    - mFooterIndicatorUnderlinePadding, height
-                    - mFooterLineHeight - mFooterIndicatorHeight);
+            mPath.moveTo(underlineBounds.left - mFooterIndicatorUnderlinePadding, height - mFooterLineHeight);
+            mPath.lineTo(underlineBounds.right + mFooterIndicatorUnderlinePadding, height - mFooterLineHeight);
+            mPath.lineTo(underlineBounds.right + mFooterIndicatorUnderlinePadding, height - mFooterLineHeight - mFooterIndicatorHeight);
+            mPath.lineTo(underlineBounds.left - mFooterIndicatorUnderlinePadding, height - mFooterLineHeight - mFooterIndicatorHeight);
             mPath.close();
 
             mPaintFooterIndicator.setAlpha((int) (0xFF * selectedPercent));
@@ -558,8 +498,7 @@ public class TitlePageIndicator extends View implements PageIndicator {
             break;
 
         case MotionEvent.ACTION_MOVE: {
-            final int activePointerIndex = MotionEventCompat.findPointerIndex(
-                    ev, mActivePointerId);
+            final int activePointerIndex = MotionEventCompat.findPointerIndex(ev, mActivePointerId);
             final float x = MotionEventCompat.getX(ev, activePointerIndex);
             final float deltaX = x - mLastMotionX;
 
@@ -603,16 +542,14 @@ public class TitlePageIndicator extends View implements PageIndicator {
                 } else {
                     // Middle third
                     if (mCenterItemClickListener != null) {
-                        mCenterItemClickListener
-                                .onCenterItemClick(mCurrentPage);
+                        mCenterItemClickListener.onCenterItemClick(mCurrentPage);
                     }
                 }
             }
 
             mIsDragging = false;
             mActivePointerId = INVALID_POINTER;
-            if (mViewPager.isFakeDragging())
-                mViewPager.endFakeDrag();
+            if (mViewPager.isFakeDragging()) mViewPager.endFakeDrag();
             break;
 
         case MotionEventCompat.ACTION_POINTER_DOWN: {
@@ -625,20 +562,17 @@ public class TitlePageIndicator extends View implements PageIndicator {
 
         case MotionEventCompat.ACTION_POINTER_UP:
             final int pointerIndex = MotionEventCompat.getActionIndex(ev);
-            final int pointerId = MotionEventCompat.getPointerId(ev,
-                    pointerIndex);
+            final int pointerId = MotionEventCompat.getPointerId(ev, pointerIndex);
             if (pointerId == mActivePointerId) {
                 final int newPointerIndex = pointerIndex == 0 ? 1 : 0;
-                mActivePointerId = MotionEventCompat.getPointerId(ev,
-                        newPointerIndex);
+                mActivePointerId = MotionEventCompat.getPointerId(ev, newPointerIndex);
             }
-            mLastMotionX = MotionEventCompat.getX(ev,
-                    MotionEventCompat.findPointerIndex(ev, mActivePointerId));
+            mLastMotionX = MotionEventCompat.getX(ev, MotionEventCompat.findPointerIndex(ev, mActivePointerId));
             break;
         }
 
         return true;
-    };
+    }
 
     /**
      * Set bounds for the right textView including clip padding.
@@ -648,8 +582,7 @@ public class TitlePageIndicator extends View implements PageIndicator {
      * @param curViewWidth
      *            width of the view.
      */
-    private void clipViewOnTheRight(Rect curViewBound, float curViewWidth,
-            int right) {
+    private void clipViewOnTheRight(Rect curViewBound, float curViewWidth, int right) {
         curViewBound.right = (int) (right - mClipPadding);
         curViewBound.left = (int) (curViewBound.right - curViewWidth);
     }
@@ -662,8 +595,7 @@ public class TitlePageIndicator extends View implements PageIndicator {
      * @param curViewWidth
      *            width of the view.
      */
-    private void clipViewOnTheLeft(Rect curViewBound, float curViewWidth,
-            int left) {
+    private void clipViewOnTheLeft(Rect curViewBound, float curViewWidth, int left) {
         curViewBound.left = (int) (left + mClipPadding);
         curViewBound.right = (int) (mClipPadding + curViewWidth);
     }
@@ -720,8 +652,7 @@ public class TitlePageIndicator extends View implements PageIndicator {
         }
         mPagerAdapter = view.getAdapter();
         if (mPagerAdapter == null) {
-            throw new IllegalStateException(
-                    "ViewPager does not have adapter instance.");
+            throw new IllegalStateException("ViewPager does not have adapter instance.");
         }
         mViewPager = view;
         mViewPager.setOnPageChangeListener(this);
@@ -742,8 +673,7 @@ public class TitlePageIndicator extends View implements PageIndicator {
     /**
      * Set a callback listener for the center item click.
      * 
-     * @param listener
-     *            Callback instance.
+     * @param listener Callback instance.
      */
     public void setOnCenterItemClickListener(OnCenterItemClickListener listener) {
         mCenterItemClickListener = listener;
@@ -769,15 +699,13 @@ public class TitlePageIndicator extends View implements PageIndicator {
     }
 
     @Override
-    public void onPageScrolled(int position, float positionOffset,
-            int positionOffsetPixels) {
+    public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
         mCurrentPage = position;
         mPageOffset = positionOffset;
         invalidate();
 
         if (mListener != null) {
-            mListener.onPageScrolled(position, positionOffset,
-                    positionOffsetPixels);
+            mListener.onPageScrolled(position, positionOffset, positionOffsetPixels);
         }
     }
 
@@ -813,8 +741,7 @@ public class TitlePageIndicator extends View implements PageIndicator {
             // Calculate the text bounds
             mBounds.setEmpty();
             mBounds.bottom = (int) (mPaintText.descent() - mPaintText.ascent());
-            height = mBounds.bottom - mBounds.top + mFooterLineHeight
-                    + mFooterPadding + mTopPadding;
+            height = mBounds.bottom - mBounds.top + mFooterLineHeight + mFooterPadding + mTopPadding;
             if (mFooterIndicatorStyle != IndicatorStyle.None) {
                 height += mFooterIndicatorHeight;
             }

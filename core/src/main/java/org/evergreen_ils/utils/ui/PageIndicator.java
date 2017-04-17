@@ -1,21 +1,18 @@
 /*
- * Copyright (C) 2012 Evergreen Open-ILS
- * @author Daniel-Octavian Rizea
+ * Copyright (C) 2011 Patrik Akerfeldt
+ * Copyright (C) 2011 Jake Wharton
  * 
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * or the License, or (at your option) any later version.
- * 
- * This program is distributed in the hope that it will be usefull,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software 
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
- * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.evergreen_ils.utils.ui;
@@ -43,14 +40,10 @@ public interface PageIndicator extends ViewPager.OnPageChangeListener {
     void setViewPager(ViewPager view, int initialPosition);
 
     /**
-     * <p>
-     * Set the current page of both the ViewPager and indicator.
-     * </p>
-     * 
-     * <p>
-     * This <strong>must</strong> be used if you need to set the page before the
-     * views are drawn on screen (e.g., default start page).
-     * </p>
+     * <p>Set the current page of both the ViewPager and indicator.</p>
+     *
+     * <p>This <strong>must</strong> be used if you need to set the page before
+     * the views are drawn on screen (e.g., default start page).</p>
      * 
      * @param item
      */
