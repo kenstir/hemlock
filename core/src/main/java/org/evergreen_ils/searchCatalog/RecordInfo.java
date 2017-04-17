@@ -81,6 +81,8 @@ public class RecordInfo implements Serializable {
     }
 
     public static void updateFromMODSResponse(RecordInfo record, Object mods_slim_response) {
+        if (mods_slim_response == null)
+            return;
         OSRFObject info;
         try {
             info = (OSRFObject) mods_slim_response;
