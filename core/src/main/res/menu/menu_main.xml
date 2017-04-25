@@ -2,7 +2,16 @@
 
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-    <item android:id="@+id/action_messages" android:title="@string/menu_messages" android:icon="@drawable/ic_mail_outline_white_24dp" app:showAsAction="always"/>
+    <!--<item android:id="@+id/action_messages" android:title="@string/menu_messages" android:icon="@drawable/ic_mail_outline_white_24dp" app:showAsAction="always"/>-->
+    <item android:id="@+id/action_messages" android:title="@string/menu_messages" app:showAsAction="always" />
+    <!-- setting actionLayout did not work here, had to set it using code
+    <item android:id="@+id/action_kcxxx"
+        android:actionLayout="@layout/badge_layout"
+        app:actionLayout="@layout/badge_layout"
+        android:title="@string/menu_kcxxx"
+        app:showAsAction="always" />
+        -->
+    <item android:id="@+id/action_kcxxx" android:title="@string/menu_kcxxx" app:showAsAction="always" android:icon="@drawable/ic_mail_outline_white_24dp" />
     <item android:id="@+id/action_switch_account" android:title="@string/menu_switch_account"/>
     <item android:id="@+id/action_add_account" android:title="@string/menu_add_account"/>
     <item android:id="@+id/action_feedback" android:title="@string/menu_feedback"/>

@@ -24,11 +24,16 @@ import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.support.v4.view.MenuItemCompat;
 import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageButton;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import org.evergreen_ils.R;
 import org.evergreen_ils.accountAccess.AccountUtils;
@@ -124,8 +129,24 @@ public class MainActivity extends BaseActivity {
         boolean showDonate = AppState.getBoolean(AppState.SHOW_DONATE, false);
         if (!showDonate)
             menu.removeItem(R.id.action_donate);
-        if (!getResources().getBoolean(R.bool.ou_enable_messages))
+        if (!getResources().getBoolean(R.bool.ou_enable_messages)) {
             menu.removeItem(R.id.action_messages);
+        } else {
+            final MenuItem item = menu.findItem(R.id.action_messages);
+            MenuItemCompat.setActionView(item, R.layout.badge_layout);
+            RelativeLayout layout = (RelativeLayout) MenuItemCompat.getActionView(item);
+            if (layout != null) {
+                TextView text = (TextView) layout.findViewById(R.id.badge_text);
+                text.setText("1");
+                ImageButton button = (ImageButton) layout.findViewById(R.id.badge_icon_button);
+                button.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        onOptionsItemSelected(item);
+                    }
+                });
+            }
+        }
 
         return true;
     }
