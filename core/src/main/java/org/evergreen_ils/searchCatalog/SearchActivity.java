@@ -34,7 +34,6 @@ import org.evergreen_ils.accountAccess.bookbags.BookBagUtils;
 import org.evergreen_ils.accountAccess.holds.PlaceHoldActivity;
 import org.evergreen_ils.android.App;
 import org.evergreen_ils.barcodescan.CaptureActivity;
-import org.evergreen_ils.billing.BillingHelper;
 import org.evergreen_ils.system.EvergreenServer;
 import org.evergreen_ils.utils.ui.AppState;
 import org.evergreen_ils.system.Log;
@@ -398,7 +397,7 @@ public class SearchActivity extends BaseActivity {
             SplashActivity.restartApp(this);
             return true;
         } else if (id == R.id.action_donate) {
-            startActivityForResult(new Intent(this, DonateActivity.class), BillingHelper.REQUEST_PURCHASE);
+            startActivityForResult(new Intent(this, DonateActivity.class), App.REQUEST_PURCHASE);
         }
         return super.onOptionsItemSelected(item);
     }

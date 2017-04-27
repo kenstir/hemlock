@@ -29,6 +29,8 @@ import org.evergreen_ils.views.MenuProvider;
 
 import java.net.URLEncoder;
 
+import static org.evergreen_ils.android.App.REQUEST_LAUNCH_MESSAGE_CENTER;
+
 /**
  * Created by kenstir on 1/28/2017.
  */
@@ -64,7 +66,7 @@ public class PinesMenuProvider extends MenuProvider {
                     + "?username=" + URLEncoder.encode(username)
                     + "&password=" + URLEncoder.encode(password)
                     + "&redirect_to=" + URLEncoder.encode("/eg/opac/myopac/messages");
-            activity.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
+            activity.startActivityForResult(new Intent(Intent.ACTION_VIEW, Uri.parse(url)), REQUEST_LAUNCH_MESSAGE_CENTER);
         } else {
             return false;
         }

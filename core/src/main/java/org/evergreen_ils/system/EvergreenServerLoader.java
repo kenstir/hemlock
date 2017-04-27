@@ -42,6 +42,14 @@ import java.util.Map;
  * Created by kenstir on 2/20/2017.
  */
 public class EvergreenServerLoader {
+
+    public interface OnResponseListener<T> {
+        public void onResponse(T data);
+    }
+    public interface OnErrorListener<T> {
+        public void onError(String errorMessage);
+    }
+
     private static final String TAG = EvergreenServerLoader.class.getSimpleName();
 
     private static int mOutstandingRequests = 0;
@@ -152,6 +160,58 @@ public class EvergreenServerLoader {
                     }
                 });
         incrNumOutstanding();
+        VolleyWrangler.getInstance(context).addToRequestQueue(r);
+    }
+
+    private static Integer parseMessagesResponse(GatewayResponse response) {
+        Log.d(TAG, "response="+response);
+        Integer unread_count = 0;
+        if (response.payload != null) {
+            List<OSRFObject> list = (List<OSRFObject>) response.payload;
+            for (OSRFObject obj : list) {
+                String read_date = obj.getString("read_date");
+                Boolean deleted = Api.parseBoolean(obj.get("deleted"));
+                if (read_date == null && !deleted) {
+                    ++unread_count;
+                }
+            }
+        }
+        return unread_count;
+    }
+
+    /** fetch number of unread messages in patron message center
+     *
+     * We don't care about the messages themselves, because I don't see a way to modify
+     * the messages via OSRF, and it's easier to launch a URL to the patron message center.
+     */
+    public static void fetchUnreadMessageCount(Context context, final OnResponseListener listener) {
+        startVolley();
+        final EvergreenServer eg = EvergreenServer.getInstance();
+        final AccountAccess ac = AccountAccess.getInstance();
+        String url = eg.getUrl(Utils.buildGatewayUrl(
+                Api.ACTOR, Api.MESSAGES_RETRIEVE,
+                new Object[]{ac.getAuthToken(), ac.getUserID(), null}));
+        GatewayJsonObjectRequest r = new GatewayJsonObjectRequest(
+                url,
+                Request.Priority.NORMAL,
+                new Response.Listener<GatewayResponse>() {
+                    @Override
+                    public void onResponse(GatewayResponse response) {
+                        listener.onResponse(parseMessagesResponse(response));
+                        decrNumOutstanding();
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        String msg = error.getMessage();
+                        if (!TextUtils.isEmpty(msg))
+                            Log.d(TAG, "error: "+msg);
+                        decrNumOutstanding();
+                    }
+                });
+        incrNumOutstanding();
+        r.setShouldCache(false);
         VolleyWrangler.getInstance(context).addToRequestQueue(r);
     }
 

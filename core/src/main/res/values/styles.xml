@@ -190,4 +190,10 @@
 
     <style name="HemlockDarkNoActionBar.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
+    <style name="PrimaryFlatButton" parent="HemlockDark">
+        <item name="android:buttonStyle">@style/Widget.AppCompat.Button.Borderless.Colored</item>
+        <item name="colorControlHighlight">@color/hemlock_accent</item>
+        <item name="colorAccent">@color/primary</item>
+    </style>
+
 </resources>

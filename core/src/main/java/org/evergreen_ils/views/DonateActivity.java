@@ -30,7 +30,6 @@ import org.evergreen_ils.R;
 import org.evergreen_ils.android.App;
 import org.evergreen_ils.billing.BillingHelper;
 import org.evergreen_ils.billing.IabResult;
-import org.evergreen_ils.system.EvergreenServer;
 import org.evergreen_ils.system.Log;
 import org.evergreen_ils.utils.ui.ActionBarUtils;
 import org.evergreen_ils.views.splashscreen.SplashActivity;
@@ -110,7 +109,7 @@ public class DonateActivity extends AppCompatActivity {
     }
 
     public void postPurchaseFinishActivity() {
-        setResult(BillingHelper.RESULT_PURCHASED);
+        setResult(App.RESULT_PURCHASED);
         finish();
     }
 

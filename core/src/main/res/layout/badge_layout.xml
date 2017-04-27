@@ -28,6 +28,6 @@
         android:paddingLeft="8dp"
         android:paddingRight="8dp"
         android:textColor="#FFF"
-        android:textSize="11sp"
+        android:textSize="12sp"
         tools:text="3" />
 </RelativeLayout>

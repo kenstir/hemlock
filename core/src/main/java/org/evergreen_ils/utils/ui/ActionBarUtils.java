@@ -19,21 +19,16 @@
 package org.evergreen_ils.utils.ui;
 
 import android.content.Intent;
-import android.net.Uri;
-import android.support.design.widget.NavigationView;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
-import android.view.MenuItem;
 
 import org.evergreen_ils.R;
 import org.evergreen_ils.accountAccess.AccountAccess;
 import org.evergreen_ils.accountAccess.AccountUtils;
-import org.evergreen_ils.billing.BillingHelper;
-import org.evergreen_ils.system.Log;
+import org.evergreen_ils.android.App;
 import org.evergreen_ils.views.DonateActivity;
-import org.evergreen_ils.views.MainActivity;
 import org.evergreen_ils.views.splashscreen.SplashActivity;
 
 /**
@@ -95,7 +90,7 @@ public class ActionBarUtils {
 //            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(getFeedbackUrl())));
 //            return true;
         } else if (id == R.id.action_donate) {
-            activity.startActivityForResult(new Intent(activity, DonateActivity.class), BillingHelper.REQUEST_PURCHASE);
+            activity.startActivityForResult(new Intent(activity, DonateActivity.class), App.REQUEST_PURCHASE);
             return true;
 //        } else if (mMenuItemHandler != null) {
 //            boolean handled = mMenuItemHandler.onItemSelected(activity, id);

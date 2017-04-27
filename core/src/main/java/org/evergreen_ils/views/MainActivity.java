@@ -31,7 +31,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -41,6 +40,7 @@ import org.evergreen_ils.accountAccess.bookbags.BookBagListView;
 import org.evergreen_ils.accountAccess.checkout.ItemsCheckOutListView;
 import org.evergreen_ils.accountAccess.fines.FinesActivity;
 import org.evergreen_ils.accountAccess.holds.HoldsListView;
+import org.evergreen_ils.android.App;
 import org.evergreen_ils.billing.BillingDataProvider;
 import org.evergreen_ils.billing.BillingHelper;
 import org.evergreen_ils.billing.IabResult;
@@ -58,6 +58,10 @@ public class MainActivity extends BaseActivity {
 
     private static String TAG = MainActivity.class.getSimpleName();
 
+    private Integer mUnreadMessageCount = null; //unknown
+    private TextView mUnreadMessageText = null;
+
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -67,6 +71,7 @@ public class MainActivity extends BaseActivity {
         initBillingProvider();
         EvergreenServerLoader.fetchOrgSettings(this);
         EvergreenServerLoader.fetchSMSCarriers(this);
+        fetchUnreadMessageCount();
     }
 
     @Override
@@ -102,8 +107,10 @@ public class MainActivity extends BaseActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         Log.d(TAG, "onActivityResult req="+requestCode+" result="+resultCode);
-        if (resultCode == BillingHelper.RESULT_PURCHASED) {
+        if (requestCode == App.REQUEST_PURCHASE && resultCode == App.RESULT_PURCHASED) {
             AppState.setBoolean(AppState.SHOW_DONATE, false); // hide button on any purchase
+        } else if (requestCode == App.REQUEST_LAUNCH_MESSAGE_CENTER) {
+            fetchUnreadMessageCount();
         }
     }
 
@@ -129,23 +136,12 @@ public class MainActivity extends BaseActivity {
         boolean showDonate = AppState.getBoolean(AppState.SHOW_DONATE, false);
         if (!showDonate)
             menu.removeItem(R.id.action_donate);
+
+        // set up the messages action view, it didn't work when set in xml
         if (!getResources().getBoolean(R.bool.ou_enable_messages)) {
             menu.removeItem(R.id.action_messages);
         } else {
-            final MenuItem item = menu.findItem(R.id.action_messages);
-            MenuItemCompat.setActionView(item, R.layout.badge_layout);
-            RelativeLayout layout = (RelativeLayout) MenuItemCompat.getActionView(item);
-            if (layout != null) {
-                TextView text = (TextView) layout.findViewById(R.id.badge_text);
-                text.setText("1");
-                ImageButton button = (ImageButton) layout.findViewById(R.id.badge_icon_button);
-                button.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        onOptionsItemSelected(item);
-                    }
-                });
-            }
+            createMessagesActionView(menu);
         }
 
         return true;
@@ -156,7 +152,43 @@ public class MainActivity extends BaseActivity {
         MenuItem item = menu.findItem(R.id.action_switch_account);
         if (item != null)
             item.setEnabled(AccountUtils.haveMoreThanOneAccount(this));
+        updateUnreadMessageText();
         return true;
+    }
+
+    private void createMessagesActionView(Menu menu) {
+        final MenuItem item = menu.findItem(R.id.action_messages);
+        MenuItemCompat.setActionView(item, R.layout.badge_layout);
+        RelativeLayout layout = (RelativeLayout) MenuItemCompat.getActionView(item);
+        mUnreadMessageText = (TextView) layout.findViewById(R.id.badge_text);
+        ImageButton button = (ImageButton) layout.findViewById(R.id.badge_icon_button);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onOptionsItemSelected(item);
+            }
+        });
+    }
+
+    private void updateUnreadMessageText() {
+        if (mUnreadMessageText == null)
+            return;
+        if (mUnreadMessageCount != null) {
+            mUnreadMessageText.setVisibility((mUnreadMessageCount > 0) ? View.VISIBLE : View.GONE);
+            mUnreadMessageText.setText(String.format("%d", mUnreadMessageCount));
+        } else {
+            mUnreadMessageText.setVisibility(View.GONE);
+        }
+    }
+    
+    private void fetchUnreadMessageCount() {
+        EvergreenServerLoader.fetchUnreadMessageCount(this, new EvergreenServerLoader.OnResponseListener<Integer>() {
+            @Override
+            public void onResponse(Integer count) {
+                mUnreadMessageCount = count;
+                updateUnreadMessageText();
+            }
+        });
     }
 
     @SuppressLint("StringFormatInvalid")
