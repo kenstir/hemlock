@@ -23,7 +23,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.text.TextUtils;
 import org.evergreen_ils.android.App;
-import org.evergreen_ils.system.EvergreenServer;
 import org.evergreen_ils.utils.ui.AppState;
 import org.evergreen_ils.system.Log;
 
@@ -39,10 +38,6 @@ public class BillingHelper {
     public static final String SKU_BRONZE = "bronze";
     public static final String SKU_KARMA = "karma";
     public static final float KARMA_DURATION_DAYS = 30;
-    // (arbitrary) request code for the purchase flow
-    public static final int REQUEST_PURCHASE = 10001;
-    public static final int RESULT_PURCHASED = 10002;
-    public static final int RESULT_OTHER = 10003;
 
     public interface OnSetupFinishedListener {
         void onSetupFinished(IabResult result);
@@ -96,7 +91,7 @@ public class BillingHelper {
         String payload = "random";
 
         Log.d(TAG, "launchPurchaseFlow");
-        BillingHelper.getIabHelper().launchPurchaseFlow(activity, sku, REQUEST_PURCHASE, new IabHelper.OnIabPurchaseFinishedListener() {
+        BillingHelper.getIabHelper().launchPurchaseFlow(activity, sku, App.REQUEST_PURCHASE, new IabHelper.OnIabPurchaseFinishedListener() {
             @Override
             public void onIabPurchaseFinished(IabResult result, Purchase purchase) {
                 Log.d(TAG, "purchase finished with result " + result);
