@@ -182,6 +182,8 @@ public class MainActivity extends BaseActivity {
     }
     
     private void fetchUnreadMessageCount() {
+        if (!getResources().getBoolean(R.bool.ou_enable_messages))
+            return;
         EvergreenServerLoader.fetchUnreadMessageCount(this, new EvergreenServerLoader.OnResponseListener<Integer>() {
             @Override
             public void onResponse(Integer count) {

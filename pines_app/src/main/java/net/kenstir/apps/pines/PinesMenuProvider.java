@@ -57,16 +57,6 @@ public class PinesMenuProvider extends MenuProvider {
         } else if (id == R.id.library_locator_button) {
             String url = "http://pines.georgialibraries.org/pinesLocator/locator.html";
             activity.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
-        } else if (id == R.id.action_messages) {
-            AccountAccess ac = AccountAccess.getInstance();
-            String username = ac.getUserName();
-            String password = AccountUtils.getPassword(activity, username);
-            String url = activity.getString(org.evergreen_ils.R.string.ou_library_url)
-                    + "/eg/opac/login"
-                    + "?username=" + URLEncoder.encode(username)
-                    + "&password=" + URLEncoder.encode(password)
-                    + "&redirect_to=" + URLEncoder.encode("/eg/opac/myopac/messages");
-            activity.startActivityForResult(new Intent(Intent.ACTION_VIEW, Uri.parse(url)), REQUEST_LAUNCH_MESSAGE_CENTER);
         } else {
             return false;
         }

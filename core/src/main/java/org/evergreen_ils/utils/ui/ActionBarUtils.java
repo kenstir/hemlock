@@ -19,6 +19,7 @@
 package org.evergreen_ils.utils.ui;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -28,8 +29,13 @@ import org.evergreen_ils.R;
 import org.evergreen_ils.accountAccess.AccountAccess;
 import org.evergreen_ils.accountAccess.AccountUtils;
 import org.evergreen_ils.android.App;
+import org.evergreen_ils.system.EvergreenServer;
 import org.evergreen_ils.views.DonateActivity;
 import org.evergreen_ils.views.splashscreen.SplashActivity;
+
+import java.net.URLEncoder;
+
+import static org.evergreen_ils.android.App.REQUEST_LAUNCH_MESSAGE_CENTER;
 
 /**
  * Created by kenstir on 11/21/2015.
@@ -92,10 +98,16 @@ public class ActionBarUtils {
         } else if (id == R.id.action_donate) {
             activity.startActivityForResult(new Intent(activity, DonateActivity.class), App.REQUEST_PURCHASE);
             return true;
-//        } else if (mMenuItemHandler != null) {
-//            boolean handled = mMenuItemHandler.onItemSelected(activity, id);
-//            if (handled) return true;
-//        }
+        } else if (id == R.id.action_messages) {
+            AccountAccess ac = AccountAccess.getInstance();
+            String username = ac.getUserName();
+            String password = AccountUtils.getPassword(activity, username);
+            String url = EvergreenServer.getInstance().getUrl(
+                    "/eg/opac/login"
+                    + "?username=" + URLEncoder.encode(username)
+                    + "&password=" + URLEncoder.encode(password)
+                    + "&redirect_to=" + URLEncoder.encode("/eg/opac/myopac/messages"));
+            activity.startActivityForResult(new Intent(Intent.ACTION_VIEW, Uri.parse(url)), REQUEST_LAUNCH_MESSAGE_CENTER);
         }
         return false;
     }
