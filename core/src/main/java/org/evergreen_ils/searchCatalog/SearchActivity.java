@@ -370,6 +370,7 @@ public class SearchActivity extends BaseActivity {
         return super.onContextItemSelected(item);
     }
 
+    //// TODO: 4/30/2017 pull up
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
@@ -386,13 +387,8 @@ public class SearchActivity extends BaseActivity {
         if (id == R.id.action_advanced_search) {
             startActivityForResult(new Intent(getApplicationContext(), AdvancedSearchActivity.class), 2);
             return true;
-        } else if (id == R.id.action_feedback) {
-            String url = getString(R.string.ou_feedback_url);
-            if (!TextUtils.isEmpty(url)) {
-                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
-                return true;
-            }
         } else if (id == R.id.action_logout) {
+            //// TODO: 4/30/2017 pull up logout action
             AccountAccess.getInstance().logout(this);
             SplashActivity.restartApp(this);
             return true;

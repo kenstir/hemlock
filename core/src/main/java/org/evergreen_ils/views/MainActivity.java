@@ -47,7 +47,6 @@ import org.evergreen_ils.billing.IabResult;
 import org.evergreen_ils.searchCatalog.SearchActivity;
 import org.evergreen_ils.system.EvergreenServerLoader;
 import org.evergreen_ils.system.Log;
-import org.evergreen_ils.utils.ui.ActionBarUtils;
 import org.evergreen_ils.utils.ui.AppState;
 import org.evergreen_ils.utils.ui.BaseActivity;
 
@@ -112,17 +111,6 @@ public class MainActivity extends BaseActivity {
         } else if (requestCode == App.REQUEST_LAUNCH_MESSAGE_CENTER) {
             fetchUnreadMessageCount();
         }
-    }
-
-    public static String getAppVersionCode(Context context) {
-        String version = "";
-        try {
-            PackageInfo pInfo = context.getPackageManager().getPackageInfo(context.getPackageName(), 0);
-            version = String.format("%d", pInfo.versionCode);
-        } catch (PackageManager.NameNotFoundException e) {
-            Log.d("Log", "caught", e);
-        }
-        return version;
     }
 
     @Override
@@ -193,20 +181,12 @@ public class MainActivity extends BaseActivity {
         });
     }
 
-    @SuppressLint("StringFormatInvalid")
-    protected String getFeedbackUrl() {
-        String urlFormat = getString(R.string.ou_feedback_url);
-        if (urlFormat.isEmpty())
-            return urlFormat;
-        return String.format(urlFormat, getAppVersionCode(this));
-    }
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (mMenuItemHandler != null && mMenuItemHandler.onItemSelected(this, id))
             return true;
-        if (ActionBarUtils.handleMenuAction(this, id))
+        if (handleMenuAction(id))
             return true;
         return super.onOptionsItemSelected(item);
     }

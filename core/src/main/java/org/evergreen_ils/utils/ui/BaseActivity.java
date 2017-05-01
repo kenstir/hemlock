@@ -1,6 +1,12 @@
 package org.evergreen_ils.utils.ui;
 
+import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -8,20 +14,30 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.view.MenuItem;
 import android.view.View;
 
 import org.evergreen_ils.R;
+import org.evergreen_ils.accountAccess.AccountAccess;
+import org.evergreen_ils.accountAccess.AccountUtils;
 import org.evergreen_ils.accountAccess.bookbags.BookBagListView;
 import org.evergreen_ils.accountAccess.checkout.ItemsCheckOutListView;
 import org.evergreen_ils.accountAccess.fines.FinesActivity;
 import org.evergreen_ils.accountAccess.holds.HoldsListView;
+import org.evergreen_ils.android.App;
 import org.evergreen_ils.searchCatalog.SearchActivity;
 import org.evergreen_ils.searchCatalog.SearchFormat;
+import org.evergreen_ils.system.EvergreenServer;
 import org.evergreen_ils.system.Log;
+import org.evergreen_ils.views.DonateActivity;
 import org.evergreen_ils.views.MainActivity;
 import org.evergreen_ils.views.MenuProvider;
 import org.evergreen_ils.views.splashscreen.SplashActivity;
+
+import java.net.URLEncoder;
+
+import static org.evergreen_ils.android.App.REQUEST_LAUNCH_MESSAGE_CENTER;
 
 /* Activity base class to handle common behaviours like the navigation drawer */
 public class BaseActivity extends AppCompatActivity
@@ -31,7 +47,6 @@ public class BaseActivity extends AppCompatActivity
 
     protected Toolbar mToolbar;
     protected MenuProvider mMenuItemHandler = null;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -97,12 +112,13 @@ public class BaseActivity extends AppCompatActivity
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-        /*
-        if (id == R.id.action_settings) {
-            // handle it
-            return true;
+        if (id == R.id.action_feedback) {
+            String url = getString(R.string.ou_feedback_url);
+            if (!TextUtils.isEmpty(url)) {
+                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
+                return true;
+            }
         }
-        */
         return super.onOptionsItemSelected(item);
     }
 
@@ -135,5 +151,60 @@ public class BaseActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return ret;
+    }
+
+    public boolean handleMenuAction(int id) {
+        if (id == R.id.action_switch_account) {
+            SplashActivity.restartApp(this);
+            return true;
+        } else if (id == R.id.action_add_account) {
+            invalidateOptionsMenu();
+            AccountUtils.addAccount(this, new Runnable() {
+                @Override
+                public void run() {
+                    SplashActivity.restartApp(BaseActivity.this);
+                }
+            });
+            return true;
+        } else if (id == R.id.action_logout) {
+            AccountAccess.getInstance().logout(this);
+            SplashActivity.restartApp(this);
+            return true;
+//        } else if (id == R.id.action_feedback) {
+//            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(getFeedbackUrl())));
+//            return true;
+        } else if (id == R.id.action_donate) {
+            startActivityForResult(new Intent(this, DonateActivity.class), App.REQUEST_PURCHASE);
+            return true;
+        } else if (id == R.id.action_messages) {
+            String username = AccountAccess.getInstance().getUserName();
+            String password = AccountUtils.getPassword(this, username);
+            String url = EvergreenServer.getInstance().getUrl(
+                    "/eg/opac/login"
+                            + "?username=" + URLEncoder.encode(username)
+                            + "&password=" + URLEncoder.encode(password)
+                            + "&redirect_to=" + URLEncoder.encode("/eg/opac/myopac/messages"));
+            startActivityForResult(new Intent(Intent.ACTION_VIEW, Uri.parse(url)), REQUEST_LAUNCH_MESSAGE_CENTER);
+        }
+        return false;
+    }
+
+    @SuppressLint("StringFormatInvalid")
+    protected String getFeedbackUrl() {
+        String urlFormat = getString(R.string.ou_feedback_url);
+        if (urlFormat.isEmpty())
+            return urlFormat;
+        return String.format(urlFormat, getAppVersionCode(this));
+    }
+
+    public static String getAppVersionCode(Context context) {
+        String version = "";
+        try {
+            PackageInfo pInfo = context.getPackageManager().getPackageInfo(context.getPackageName(), 0);
+            version = String.format("%d", pInfo.versionCode);
+        } catch (PackageManager.NameNotFoundException e) {
+            Log.d("Log", "caught", e);
+        }
+        return version;
     }
 }
