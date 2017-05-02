@@ -51,15 +51,17 @@ public class FinesActivity extends BaseActivity {
 
     private ListView lv;
 
+    private OverdueMaterialsArrayAdapter listAdapter;
+
+    private ArrayList<FinesRecord> finesRecords;
+
+    private boolean haveAnyGroceryBills = false;
+
     private Runnable getFinesInfo;
 
     private AccountAccess ac;
 
     private ProgressDialogSupport progress;
-
-    private OverdueMaterialsArrayAdapter listAdapter;
-
-    private TextView headerTitle;
 
     private Context context;
     
@@ -82,7 +84,7 @@ public class FinesActivity extends BaseActivity {
         ac = AccountAccess.getInstance();
         progress = new ProgressDialogSupport();
 
-        final ArrayList<FinesRecord> finesRecords = new ArrayList<>();
+        finesRecords = new ArrayList<>();
         listAdapter = new OverdueMaterialsArrayAdapter(context,
                 R.layout.fines_list_item, finesRecords);
         lv.setAdapter(listAdapter);
@@ -90,10 +92,20 @@ public class FinesActivity extends BaseActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 ArrayList<RecordInfo> records = new ArrayList<>();
-                for (FinesRecord item: finesRecords) {
-                    records.add(item.recordInfo);
+                if (haveAnyGroceryBills) {
+                    // If any of the fines are for non-circulation items ("grocery bills"), we
+                    // start the details flow with only the one record, if a record was selected.
+                    // The details flow can't handle nulls.
+                    RecordInfo record = finesRecords.get(position).recordInfo;
+                    if (record != null) {
+                        records.add(record);
+                        RecordDetails.launchDetailsFlow(FinesActivity.this, records, 0);
+                    }
+                } else {
+                    for (FinesRecord item : finesRecords)
+                        records.add(item.recordInfo);
+                    RecordDetails.launchDetailsFlow(FinesActivity.this, records, position);
                 }
-                RecordDetails.launchDetailsFlow(FinesActivity.this, records, position);
             }
         });
 
@@ -125,14 +137,19 @@ public class FinesActivity extends BaseActivity {
                     }
                 }
 
-                final ArrayList<FinesRecord> finesRecords = frecords;
+                finesRecords = frecords;
                 final float[] fines = finesR;
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         listAdapter.clear();
-                        for (FinesRecord finesRecord : finesRecords)
+                        haveAnyGroceryBills = false;
+                        for (FinesRecord finesRecord : finesRecords) {
                             listAdapter.add(finesRecord);
+                            if (finesRecord.recordInfo == null) {
+                                haveAnyGroceryBills = true;
+                            }
+                        }
 
                         listAdapter.notifyDataSetChanged();
 
@@ -147,6 +164,9 @@ public class FinesActivity extends BaseActivity {
 
         Thread getFinesTh = new Thread(getFinesInfo);
         getFinesTh.start();
+    }
+
+    private void OnItemClick(View view, int position, long id) {
     }
 
     @Override

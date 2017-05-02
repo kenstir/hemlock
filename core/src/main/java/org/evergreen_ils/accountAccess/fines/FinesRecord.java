@@ -55,8 +55,8 @@ public class FinesRecord {
             }
 
         } else {
-            // grocery
-            title = "Grocery billing";
+            // xact_type = "grocery"
+            title = mbts_transaction.getString("last_billing_type");
             author = mbts_transaction.getString("last_billing_note");
         }
 
@@ -77,7 +77,8 @@ public class FinesRecord {
 
     // Returns status of fine: e.g. returned or fines accruing
     public String getStatus() {
-
+        if (recordInfo == null)
+            return "";
         if (checkin_time != null)
             return "returned";
         if (balance_owed != null && max_fine != null && balance_owed >= max_fine)
