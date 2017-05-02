@@ -145,15 +145,12 @@ public class BookBagListView extends BaseActivity {
                     @Override
                     public void run() {
                         listAdapter.clear();
-                        for (int i = 0; i < bookBags.size(); i++)
-                            listAdapter.add(bookBags.get(i));
-
-                        progress.dismiss();
-
-                        if (bookBags.size() == 0)
-                            Toast.makeText(context, getText(R.string.msg_no_lists), Toast.LENGTH_LONG).show();
+                        for (BookBag bookBag : bookBags)
+                            listAdapter.add(bookBag);
 
                         listAdapter.notifyDataSetChanged();
+
+                        progress.dismiss();
                     }
                 });
             }
