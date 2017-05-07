@@ -151,7 +151,7 @@ public class OSRFTest {
         printMap(resp_map);
         Boolean is_pickup_location = null;
         is_pickup_location = !Api.parseBoolean(resp_map.get(Api.SETTING_ORG_UNIT_NOT_PICKUP_LIB));
-        Log.d(TAG, "is_pickup_location("+org_id+") = "+is_pickup_location);
+        Log.d(TAG, "setting_is_pickup_location("+org_id+") = "+is_pickup_location);
     }
 
     // ORG_UNIT_SETTING_BATCH - retrieve a list of settings from one org unit
@@ -174,7 +174,7 @@ public class OSRFTest {
             Map<String, ?> resp_org_map = (Map<String, ?>) o;
             is_pickup_location = !Api.parseBoolean(resp_org_map.get("value"));
         }
-        Log.d(TAG, "is_pickup_location("+org_id+") = "+is_pickup_location);
+        Log.d(TAG, "setting_is_pickup_location("+org_id+") = "+is_pickup_location);
     }
 
     // ORG_UNIT_SETTING - retrieve one setting from one org unit
@@ -194,7 +194,7 @@ public class OSRFTest {
             printMap(resp_map);
             is_pickup_location = !Api.parseBoolean(resp_map.get("value"));
         }
-        Log.d(TAG, "is_pickup_location("+org_id+") = "+is_pickup_location);
+        Log.d(TAG, "setting_is_pickup_location("+org_id+") = "+is_pickup_location);
     }
 
     @Test

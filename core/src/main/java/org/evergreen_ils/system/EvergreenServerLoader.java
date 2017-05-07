@@ -33,6 +33,8 @@ import org.opensrf.util.GatewayResponse;
 import org.opensrf.util.OSRFObject;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -73,26 +75,43 @@ public class EvergreenServerLoader {
     private static void parseSettingsFromGatewayResponse(GatewayResponse response, final Organization org) {
         Boolean not_pickup_lib = parseBoolSetting(response, Api.SETTING_ORG_UNIT_NOT_PICKUP_LIB);
         if (not_pickup_lib != null)
-            org.is_pickup_location = !not_pickup_lib;
+            org.setting_is_pickup_location = !not_pickup_lib;
+        Boolean allow_credit_payments = parseBoolSetting(response, Api.SETTING_CREDIT_PAYMENTS_ALLOW);
+        if (allow_credit_payments != null)
+            org.setting_allow_credit_payments = allow_credit_payments;
         Boolean sms_enable = parseBoolSetting(response, Api.SETTING_SMS_ENABLE);
         if (sms_enable != null)
             EvergreenServer.getInstance().setSMSEnabled(sms_enable);
+        Log.d("kcxxx", "id="+org.id+" allow_credit_payments="+allow_credit_payments);
+        org.settings_loaded = true;
     }
 
     // fetch settings that we need for all orgs
     public static void fetchOrgSettings(Context context) {
         startVolley();
-        int num_skipped = 0;
         final EvergreenServer eg = EvergreenServer.getInstance();
         final AccountAccess ac = AccountAccess.getInstance();
-        for (final Organization org: eg.getOrganizations()) {
+        final Integer home_lib = AccountAccess.getInstance().getHomeLibraryID();
+
+        // To minimize risk of race condition, load home org first
+        ArrayList<Organization> organizations = eg.getOrganizations();
+        Collections.sort(organizations, new Comparator<Organization>() {
+            @Override
+            public int compare(Organization lhs, Organization rhs) {
+                if (lhs.id == home_lib) return -1;
+                if (rhs.id == home_lib) return 1;
+                return lhs.id.compareTo(rhs.id);
+            }
+        });
+
+        for (final Organization org : organizations) {
+            if (org.settings_loaded)
+                continue;
             ArrayList<String> settings = new ArrayList<>();
             settings.add(Api.SETTING_ORG_UNIT_NOT_PICKUP_LIB);
+            settings.add(Api.SETTING_CREDIT_PAYMENTS_ALLOW);
             if (org.parent_ou == null) {
                 settings.add((Api.SETTING_SMS_ENABLE));
-            } else if (!org.pickupLocationNeedsLoading()) {
-                ++num_skipped;
-                continue;
             }
             String url = eg.getUrl(Utils.buildGatewayUrl(
                     Api.ACTOR, Api.ORG_UNIT_SETTING_BATCH,
@@ -112,7 +131,7 @@ public class EvergreenServerLoader {
                         public void onErrorResponse(VolleyError error) {
                             String msg = error.getMessage();
                             if (!TextUtils.isEmpty(msg))
-                                Log.d("kcxxx", "id="+org.id+" error: "+msg);
+                                Log.d(TAG, "id=" + org.id + " error: " + msg);
                             decrNumOutstanding();
                         }
                     });

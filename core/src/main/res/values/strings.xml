@@ -22,6 +22,7 @@
     <string name="title_donate">Donate</string>
     <string name="copy_information_title">Copy Information</string>
     <string name="button_place_hold">Place hold</string>
+    <string name="button_pay_fines">Pay fines</string>
     <string name="title_my_lists">My Lists</string>
     <string name="title_list_details">List Details</string>
     <string name="add_to_my_list_message">Add to my list</string>
@@ -161,6 +162,7 @@
         <item quantity="one">1 day</item>
         <item quantity="other">%d days</item>
     </plurals>
+
 
     <string name="action_settings">Settings</string>
     <string name="retry_label">Retry</string>

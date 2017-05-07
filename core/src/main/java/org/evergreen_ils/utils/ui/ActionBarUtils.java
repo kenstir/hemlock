@@ -18,8 +18,6 @@
 
 package org.evergreen_ils.utils.ui;
 
-import android.content.Intent;
-import android.net.Uri;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -27,15 +25,6 @@ import android.text.TextUtils;
 
 import org.evergreen_ils.R;
 import org.evergreen_ils.accountAccess.AccountAccess;
-import org.evergreen_ils.accountAccess.AccountUtils;
-import org.evergreen_ils.android.App;
-import org.evergreen_ils.system.EvergreenServer;
-import org.evergreen_ils.views.DonateActivity;
-import org.evergreen_ils.views.splashscreen.SplashActivity;
-
-import java.net.URLEncoder;
-
-import static org.evergreen_ils.android.App.REQUEST_LAUNCH_MESSAGE_CENTER;
 
 /**
  * Created by kenstir on 11/21/2015.

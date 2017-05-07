@@ -18,11 +18,7 @@
 
 package org.evergreen_ils.views;
 
-import android.annotation.SuppressLint;
-import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.v4.view.MenuItemCompat;
 import android.text.TextUtils;
@@ -67,10 +63,10 @@ public class MainActivity extends BaseActivity {
 
         setContentView(R.layout.activity_main);
 
-        initBillingProvider();
         EvergreenServerLoader.fetchOrgSettings(this);
         EvergreenServerLoader.fetchSMSCarriers(this);
         fetchUnreadMessageCount();
+        initBillingProvider();
     }
 
     @Override
@@ -108,7 +104,7 @@ public class MainActivity extends BaseActivity {
         Log.d(TAG, "onActivityResult req="+requestCode+" result="+resultCode);
         if (requestCode == App.REQUEST_PURCHASE && resultCode == App.RESULT_PURCHASED) {
             AppState.setBoolean(AppState.SHOW_DONATE, false); // hide button on any purchase
-        } else if (requestCode == App.REQUEST_LAUNCH_MESSAGE_CENTER) {
+        } else if (requestCode == App.REQUEST_LAUNCH_OPAC_LOGIN_REDIRECT) {
             fetchUnreadMessageCount();
         }
     }

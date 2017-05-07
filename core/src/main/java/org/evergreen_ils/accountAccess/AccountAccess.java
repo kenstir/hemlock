@@ -33,7 +33,6 @@ import org.evergreen_ils.system.EvergreenServer;
 import org.evergreen_ils.system.Log;
 import org.evergreen_ils.system.Utils;
 import org.evergreen_ils.searchCatalog.RecordInfo;
-import org.opensrf.Message;
 import org.opensrf.net.http.HttpConnection;
 import org.opensrf.util.OSRFObject;
 
@@ -606,39 +605,6 @@ public class AccountAccess {
                 Api.ORG_TREE_RETRIEVE, new Object[]{});
         return (OSRFObject) resp;
     }
-
-    /**
-     * Fetch org settings.
-     *
-     * @param org_id the org_id
-     * @param setting the setting
-     * @return the object
-     * @throws SessionNotFoundException the session not found exception
-     */
-//    public OSRFObject fetchOrgSettings(Integer org_id, String setting)
-//            throws SessionNotFoundException {
-//
-//        OSRFObject response = (OSRFObject) Utils.doRequest(conn(), Api.ACTOR,
-//                Api.ORG_SETTING_ANCESTOR, new Object[]{
-//                        org_id, setting});
-//        return response;
-//    }
-
-//    public void getOrgHiddentDepth() {
-//
-//        // logic can be found in the opac_utils.js file in web/opac/common/js
-//
-//        for (int i = 0; i < organizations.size(); i++) {
-//            AccountAccess ac = AccountAccess.getInstance();
-//            try {
-//                Object obj = ac.fetchOrgSettings(organizations.get(i).id,
-//                        "opac.org_unit_hiding.depth");
-//            } catch (SessionNotFoundException e) {
-//            }
-//
-//        }
-//
-//    }
 
     // ------------------------Holds Section
     // --------------------------------------//

@@ -39,7 +39,6 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -132,7 +131,7 @@ public class BookBagDetails extends BaseActivity {
             }
         });
 
-        initGetItemsRunnable();
+        initRunnable();
 
         new Thread(getItemsRunnable).start();
     }
@@ -143,7 +142,7 @@ public class BookBagDetails extends BaseActivity {
         super.onDestroy();
     }
 
-    private void initGetItemsRunnable() {
+    private void initRunnable() {
         getItemsRunnable = new Runnable() {
 
             @Override

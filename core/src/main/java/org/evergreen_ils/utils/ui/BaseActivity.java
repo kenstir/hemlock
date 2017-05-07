@@ -1,7 +1,6 @@
 package org.evergreen_ils.utils.ui;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
@@ -37,7 +36,7 @@ import org.evergreen_ils.views.splashscreen.SplashActivity;
 
 import java.net.URLEncoder;
 
-import static org.evergreen_ils.android.App.REQUEST_LAUNCH_MESSAGE_CENTER;
+import static org.evergreen_ils.android.App.REQUEST_LAUNCH_OPAC_LOGIN_REDIRECT;
 
 /* Activity base class to handle common behaviours like the navigation drawer */
 public class BaseActivity extends AppCompatActivity
@@ -184,7 +183,7 @@ public class BaseActivity extends AppCompatActivity
                             + "?username=" + URLEncoder.encode(username)
                             + "&password=" + URLEncoder.encode(password)
                             + "&redirect_to=" + URLEncoder.encode("/eg/opac/myopac/messages"));
-            startActivityForResult(new Intent(Intent.ACTION_VIEW, Uri.parse(url)), REQUEST_LAUNCH_MESSAGE_CENTER);
+            startActivityForResult(new Intent(Intent.ACTION_VIEW, Uri.parse(url)), REQUEST_LAUNCH_OPAC_LOGIN_REDIRECT);
         }
         return false;
     }

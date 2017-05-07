@@ -40,7 +40,7 @@ public class App {
 
     // request/result codes for use with startActivityForResult
     public static final int REQUEST_PURCHASE = 10001;
-    public static final int REQUEST_LAUNCH_MESSAGE_CENTER = 10002;
+    public static final int REQUEST_LAUNCH_OPAC_LOGIN_REDIRECT = 10002;
     public static final int RESULT_PURCHASED = 20001;
 
     private static int mIsDebuggable = -1;

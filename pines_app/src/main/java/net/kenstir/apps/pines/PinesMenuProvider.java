@@ -21,15 +21,8 @@ package net.kenstir.apps.pines;
 import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
-import android.widget.Button;
 
-import org.evergreen_ils.accountAccess.AccountAccess;
-import org.evergreen_ils.accountAccess.AccountUtils;
 import org.evergreen_ils.views.MenuProvider;
-
-import java.net.URLEncoder;
-
-import static org.evergreen_ils.android.App.REQUEST_LAUNCH_MESSAGE_CENTER;
 
 /**
  * Created by kenstir on 1/28/2017.
