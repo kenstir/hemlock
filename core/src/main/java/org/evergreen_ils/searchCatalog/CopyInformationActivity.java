@@ -108,14 +108,14 @@ public class CopyInformationActivity extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void updateCopyInfo() {
-        if (record.copyLocationCountsList == null)
+    public void updateCopyInfo(List<CopyLocationCounts> copyLocationCountsList) {
+        if (copyLocationCountsList == null)
             return;
 
         final EvergreenServer eg = EvergreenServer.getInstance();
 
         copyInfoRecords.clear();
-        for (CopyLocationCounts info : record.copyLocationCountsList) {
+        for (CopyLocationCounts info : copyLocationCountsList) {
             Organization org = eg.getOrganization(info.org_id);
             // if a branch is not opac visible, its copies should not be visible
             if (org != null && org.opac_visible) {
@@ -149,35 +149,30 @@ public class CopyInformationActivity extends ActionBarActivity {
     }
 
     private void initCopyLocationCounts() {
-        if (record.copyLocationCountsList != null) {
-            updateCopyInfo();
-        } else {
-            final long start_ms = System.currentTimeMillis();
-            Organization org = EvergreenServer.getInstance().getOrganization(orgID);
-            String url = EvergreenServer.getInstance().getUrl(Utils.buildGatewayUrl(
-                    Api.SEARCH, Api.COPY_LOCATION_COUNTS,
-                    new Object[]{record.doc_id, org.id, org.level}));
-            GatewayJsonObjectRequest r = new GatewayJsonObjectRequest(
-                    url,
-                    Request.Priority.NORMAL,
-                    new Response.Listener<GatewayResponse>() {
-                        @Override
-                        public void onResponse(GatewayResponse response) {
-                            long duration_ms = System.currentTimeMillis() - start_ms;
-                            Log.d(TAG, "kcx.fetch "+record.doc_id+" took " + duration_ms + "ms");
-                            RecordInfo.setCopyLocationCounts(record, response);
-                            updateCopyInfo();
-                        }
-                    },
-                    new Response.ErrorListener() {
-                        @Override
-                        public void onErrorResponse(VolleyError error) {
-                            Log.d(TAG, "kcx.initCopyLocationCounts caught", error);
-                            RecordInfo.setCopyLocationCounts(record, null);
-                        }
-                    });
-            VolleyWrangler.getInstance(this).addToRequestQueue(r);
-        }
+        final long start_ms = System.currentTimeMillis();
+        Organization org = EvergreenServer.getInstance().getOrganization(orgID);
+        String url = EvergreenServer.getInstance().getUrl(Utils.buildGatewayUrl(
+                Api.SEARCH, Api.COPY_LOCATION_COUNTS,
+                new Object[]{record.doc_id, org.id, org.level}));
+        GatewayJsonObjectRequest r = new GatewayJsonObjectRequest(
+                url,
+                Request.Priority.NORMAL,
+                new Response.Listener<GatewayResponse>() {
+                    @Override
+                    public void onResponse(GatewayResponse response) {
+                        long duration_ms = System.currentTimeMillis() - start_ms;
+                        Log.d(TAG, "fetch "+record.doc_id+" took " + duration_ms + "ms");
+                        updateCopyInfo(RecordInfo.parseCopyLocationCounts(record, response));
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.d(TAG, "caught", error);
+                        updateCopyInfo(RecordInfo.parseCopyLocationCounts(record, null));
+                    }
+                });
+        VolleyWrangler.getInstance(this).addToRequestQueue(r);
     }
 
     class CopyInformationArrayAdapter extends ArrayAdapter<CopyLocationCounts> {

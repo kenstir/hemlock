@@ -64,11 +64,9 @@ public class RecordInfo implements Serializable {
     public boolean copy_summary_loaded = false;
 
     public ArrayList<CopySummary> copySummaryList = null;
-    public List<CopyLocationCounts> copyLocationCountsList = null;
     public String search_format = null;
 
     public RecordInfo() {
-        // marks the fact that this is a record made from no info
         this.dummy = true;
     }
 
@@ -156,19 +154,20 @@ public class RecordInfo implements Serializable {
         record.copy_summary_loaded = true;
     }
 
-    public static void setCopyLocationCounts(RecordInfo record, GatewayResponse response) {
-        record.copyLocationCountsList = new ArrayList<>();
+    public static List<CopyLocationCounts> parseCopyLocationCounts(RecordInfo record, GatewayResponse response) {
+        List<CopyLocationCounts> copyLocationCountsList = new ArrayList<>();
         if (response == null || response.failed)
-            return;
+            return copyLocationCountsList;
         try {
             List<List<Object>> list = (List<List<Object>>) response.payload;
             for (List<Object> elem : list) {
                 CopyLocationCounts copyInfo = new CopyLocationCounts(elem);
-                record.copyLocationCountsList.add(copyInfo);
+                copyLocationCountsList.add(copyInfo);
             }
         } catch (Exception e) {
             Log.d(TAG, "caught", e);
         }
+        return copyLocationCountsList;
     }
 
     public void setSearchFormat(String format) {

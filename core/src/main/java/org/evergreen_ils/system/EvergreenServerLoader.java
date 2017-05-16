@@ -62,13 +62,15 @@ public class EvergreenServerLoader {
         return value;
     }
 
-    private static void parseSettingsFromGatewayResponse(GatewayResponse response, final Organization org) {
+    private static void parseOrgSettingsFromGatewayResponse(GatewayResponse response, final Organization org) {
         Boolean not_pickup_lib = parseBoolSetting(response, Api.SETTING_ORG_UNIT_NOT_PICKUP_LIB);
         if (not_pickup_lib != null)
             org.is_pickup_location = !not_pickup_lib;
         Boolean sms_enable = parseBoolSetting(response, Api.SETTING_SMS_ENABLE);
         if (sms_enable != null)
             EvergreenServer.getInstance().setSMSEnabled(sms_enable);
+
+        org.settings_loaded = true;
     }
 
     // fetch settings that we need for all orgs
@@ -95,7 +97,7 @@ public class EvergreenServerLoader {
                     new Response.Listener<GatewayResponse>() {
                         @Override
                         public void onResponse(GatewayResponse response) {
-                            parseSettingsFromGatewayResponse(response, org);
+                            parseOrgSettingsFromGatewayResponse(response, org);
                             decrNumOutstanding();
                         }
                     },
