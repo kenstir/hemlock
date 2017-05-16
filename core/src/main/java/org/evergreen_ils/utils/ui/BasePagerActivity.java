@@ -32,7 +32,7 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 public abstract class BasePagerActivity extends BaseActivity {
-    private static final Random RANDOM = new Random();
+    //private static final Random RANDOM = new Random();
 
     public FragmentPagerAdapter mAdapter;
     public ViewPager mPager;

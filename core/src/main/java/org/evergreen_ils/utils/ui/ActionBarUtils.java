@@ -45,11 +45,11 @@ public class ActionBarUtils {
                 AppState.getString(AppState.LIBRARY_NAME), username));
         if (!TextUtils.isEmpty(title))
             actionBar.setTitle(title);
-//        if (true || !isMainActivity) {
-//            actionBar.setDisplayHomeAsUpEnabled(true);
-//            //actionBar.setHomeAsUpIndicator(R.drawable.ic_arrow_back_white_24dp);
-//            actionBar.setHomeAsUpIndicator(0);
-//        }
+        if (true || !isMainActivity) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+            //actionBar.setHomeAsUpIndicator(R.drawable.ic_arrow_back_white_24dp);
+            actionBar.setHomeAsUpIndicator(0);
+        }
 //         this didn't work
 //        toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp);
 

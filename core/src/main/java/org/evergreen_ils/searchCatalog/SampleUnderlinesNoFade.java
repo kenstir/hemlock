@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.view.MenuItem;
 import org.evergreen_ils.R;
+import org.evergreen_ils.system.Log;
 import org.evergreen_ils.utils.ui.*;
 import org.evergreen_ils.views.splashscreen.SplashActivity;
 
@@ -37,13 +38,14 @@ import android.support.v4.view.ViewPager;
 import android.view.KeyEvent;
 
 public class SampleUnderlinesNoFade extends BasePagerActivity {
+    private static final String TAG = SampleUnderlinesNoFade.class.getSimpleName();
 
     private ArrayList<RecordInfo> records;
     private SearchCatalog search;
     private ArrayList<RecordInfo> searchRecords;
     private Context context;
     private ProgressDialog progressDialog;
-    private Runnable searchRunnableWithOffset;
+    //private Runnable searchRunnableWithOffset;
 
     public static final int RETURN_DATA = 5;
     private Integer orgID = 1;
@@ -78,6 +80,7 @@ public class SampleUnderlinesNoFade extends BasePagerActivity {
         indicator.setViewPager(mPager);
         indicator.setFades(false);
         mIndicator = indicator;
+        /*
         searchRunnableWithOffset = new Runnable() {
 
             @Override
@@ -107,12 +110,13 @@ public class SampleUnderlinesNoFade extends BasePagerActivity {
                 });
             }
         };
-
+        */
     }
 
     private void finishWithIntent() {
         Intent intent = new Intent();
         intent.putExtra("recordList", records);
+        Log.d(TAG, "kcxxx about to setResult with "+records.size()+" items");
         setResult(RETURN_DATA, intent);
         finish();
     }
@@ -144,10 +148,10 @@ public class SampleUnderlinesNoFade extends BasePagerActivity {
 
         @Override
         public Fragment getItem(int position) {
-            if (records.size() > 1 && position == records.size() - 1 && records.size() < numResults) {
-                Thread getSearchResults = new Thread(searchRunnableWithOffset);
-                getSearchResults.start();
-            }
+//            if (records.size() > 1 && position == records.size() - 1 && records.size() < numResults) {
+//                Thread getSearchResults = new Thread(searchRunnableWithOffset);
+//                getSearchResults.start();
+//            }
             return BasicDetailsFragment.newInstance(records.get(position), position, numResults, orgID);
         }
 
