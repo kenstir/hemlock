@@ -2,15 +2,14 @@
 <resources>
 
     <!-- Main menu text -->
-    <string name="menu_advanced_search">advanced search</string>
-    <string name="menu_preferences">settings</string>
-    <string name="menu_library_hours">library hours</string>
-    <string name="menu_barcode_scan">barcode scan</string>
     <string name="menu_switch_account">Switch account</string>
     <string name="menu_add_account">Add account</string>
     <string name="menu_logout">Logout</string>
     <string name="menu_feedback">Send feedback</string>
     <string name="menu_donate">Donate</string>
+    <string name="menu_messages">Messages</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
 
     <!-- Header portion -->
     <string name="options_button_text">Options</string>
@@ -23,6 +22,7 @@
     <string name="title_donate">Donate</string>
     <string name="copy_information_title">Copy Information</string>
     <string name="button_place_hold">Place hold</string>
+    <string name="button_pay_fines">Pay fines</string>
     <string name="title_my_lists">My Lists</string>
     <string name="title_list_details">List Details</string>
     <string name="add_to_my_list_message">Add to my list</string>
@@ -163,6 +163,7 @@
         <item quantity="other">%d days</item>
     </plurals>
 
+
     <string name="action_settings">Settings</string>
     <string name="retry_label">Retry</string>
     <string name="choose_library_message">Select your Library</string>
@@ -202,5 +203,6 @@
     <string name="msg_loading_holds">Loading holds</string>
     <string name="msg_renewing_item">Renewing item</string>
     <string name="forgot_password_button">Forgot Password</string>
+    <string name="title_activity_nav_drawer">NavDrawerActivity</string>
 
 </resources>

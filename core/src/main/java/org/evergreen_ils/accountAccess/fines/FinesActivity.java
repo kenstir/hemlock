@@ -19,20 +19,25 @@
  */
 package org.evergreen_ils.accountAccess.fines;
 
+import java.net.URLEncoder;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-import android.support.v7.app.ActionBarActivity;
+import android.content.Intent;
+import android.net.Uri;
 import android.widget.*;
 import org.evergreen_ils.R;
 import org.evergreen_ils.accountAccess.AccountAccess;
+import org.evergreen_ils.accountAccess.AccountUtils;
 import org.evergreen_ils.accountAccess.SessionNotFoundException;
 import org.evergreen_ils.searchCatalog.RecordDetails;
 import org.evergreen_ils.searchCatalog.RecordInfo;
-import org.evergreen_ils.utils.ui.ActionBarUtils;
+import org.evergreen_ils.system.EvergreenServer;
+import org.evergreen_ils.system.Organization;
+import org.evergreen_ils.system.Utils;
+import org.evergreen_ils.utils.ui.BaseActivity;
 import org.evergreen_ils.utils.ui.ProgressDialogSupport;
-import org.evergreen_ils.views.splashscreen.SplashActivity;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -40,15 +45,27 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-public class FinesActivity extends ActionBarActivity {
+import static org.evergreen_ils.android.App.REQUEST_LAUNCH_OPAC_LOGIN_REDIRECT;
 
-    private TextView total_owned;
+public class FinesActivity extends BaseActivity {
+
+    private TextView total_owed;
 
     private TextView total_paid;
 
     private TextView balance_owed;
 
+    private Button pay_fines_button;
+
     private ListView lv;
+
+    private OverdueMaterialsArrayAdapter listAdapter;
+
+    private ArrayList<FinesRecord> finesRecords;
+
+    private boolean haveAnyGroceryBills = false;
+
+    private boolean haveAnyFines = false;
 
     private Runnable getFinesInfo;
 
@@ -56,37 +73,29 @@ public class FinesActivity extends ActionBarActivity {
 
     private ProgressDialogSupport progress;
 
-    private OverdueMaterialsArrayAdapter listAdapter;
-
-    private TextView headerTitle;
-
     private Context context;
-    
+
     private DecimalFormat decimalFormater;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (!SplashActivity.isAppInitialized()) {
-            SplashActivity.restartApp(this);
-            return;
-        }
 
-        setContentView(R.layout.fines);
-        ActionBarUtils.initActionBarForActivity(this);
+        setContentView(R.layout.activity_fines);
 
         decimalFormater = new DecimalFormat("#0.00");
         lv = (ListView) findViewById(R.id.fines_overdue_materials_list);
 
-        total_owned = (TextView) findViewById(R.id.fines_total_owed);
+        total_owed = (TextView) findViewById(R.id.fines_total_owed);
         total_paid = (TextView) findViewById(R.id.fines_total_paid);
-        balance_owed = (TextView) findViewById(R.id.fined_balance_owed);
+        balance_owed = (TextView) findViewById(R.id.fines_balance_owed);
+        pay_fines_button = (Button) findViewById(R.id.pay_fines);
 
         context = this;
         ac = AccountAccess.getInstance();
         progress = new ProgressDialogSupport();
 
-        final ArrayList<FinesRecord> finesRecords = new ArrayList<>();
+        finesRecords = new ArrayList<>();
         listAdapter = new OverdueMaterialsArrayAdapter(context,
                 R.layout.fines_list_item, finesRecords);
         lv.setAdapter(listAdapter);
@@ -94,15 +103,59 @@ public class FinesActivity extends ActionBarActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 ArrayList<RecordInfo> records = new ArrayList<>();
-                for (FinesRecord item: finesRecords) {
-                    records.add(item.recordInfo);
+                if (haveAnyGroceryBills) {
+                    // If any of the fines are for non-circulation items ("grocery bills"), we
+                    // start the details flow with only the one record, if a record was selected.
+                    // The details flow can't handle nulls.
+                    RecordInfo record = finesRecords.get(position).recordInfo;
+                    if (record != null) {
+                        records.add(record);
+                        RecordDetails.launchDetailsFlow(FinesActivity.this, records, 0);
+                    }
+                } else {
+                    for (FinesRecord item : finesRecords)
+                        records.add(item.recordInfo);
+                    RecordDetails.launchDetailsFlow(FinesActivity.this, records, position);
                 }
-                RecordDetails.launchDetailsFlow(FinesActivity.this, records, position);
             }
         });
 
-        progress.show(context, getString(R.string.msg_retrieving_fines));
+        initPayFinesButton();
+        initRunnable();
 
+        progress.show(context, getString(R.string.msg_retrieving_fines));
+        new Thread(getFinesInfo).start();
+    }
+
+    @Override
+    protected void onDestroy() {
+        if (progress != null) progress.dismiss();
+        super.onDestroy();
+    }
+
+    private void initPayFinesButton() {
+        Integer home_lib = AccountAccess.getInstance().getHomeLibraryID();
+        Organization home_org = EvergreenServer.getInstance().getOrganization(home_lib);
+        if (Utils.safeBool(home_org.setting_allow_credit_payments)) {
+            pay_fines_button.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    String username = AccountAccess.getInstance().getUserName();
+                    String password = AccountUtils.getPassword(FinesActivity.this, username);
+                    String url = EvergreenServer.getInstance().getUrl(
+                            "/eg/opac/login"
+                                    + "?username=" + URLEncoder.encode(username)
+                                    + "&password=" + URLEncoder.encode(password)
+                                    + "&redirect_to=" + URLEncoder.encode("/eg/opac/myopac/main_payment_form"));
+                    startActivityForResult(new Intent(Intent.ACTION_VIEW, Uri.parse(url)), REQUEST_LAUNCH_OPAC_LOGIN_REDIRECT);
+                }
+            });
+        } else {
+            pay_fines_button.setVisibility(View.GONE);
+        }
+    }
+
+    private void initRunnable() {
         getFinesInfo = new Runnable() {
             @Override
             public void run() {
@@ -129,18 +182,24 @@ public class FinesActivity extends ActionBarActivity {
                     }
                 }
 
-                final ArrayList<FinesRecord> finesRecords = frecords;
+                finesRecords = frecords;
                 final float[] fines = finesR;
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         listAdapter.clear();
-                        for (FinesRecord finesRecord : finesRecords)
+                        haveAnyFines = finesRecords.size() > 0;
+                        haveAnyGroceryBills = false;
+                        for (FinesRecord finesRecord : finesRecords) {
                             listAdapter.add(finesRecord);
+                            if (finesRecord.recordInfo == null) {
+                                haveAnyGroceryBills = true;
+                            }
+                        }
 
                         listAdapter.notifyDataSetChanged();
 
-                        total_owned.setText(decimalFormater.format(fines[0]));
+                        total_owed.setText(decimalFormater.format(fines[0]));
                         total_paid.setText(decimalFormater.format(fines[1]));
                         balance_owed.setText(decimalFormater.format(fines[2]));
                         progress.dismiss();
@@ -148,15 +207,6 @@ public class FinesActivity extends ActionBarActivity {
                 });
             }
         };
-
-        Thread getFinesTh = new Thread(getFinesInfo);
-        getFinesTh.start();
-    }
-
-    @Override
-    protected void onDestroy() {
-        if (progress != null) progress.dismiss();
-        super.onDestroy();
     }
 
     class OverdueMaterialsArrayAdapter extends ArrayAdapter<FinesRecord> {
@@ -206,6 +256,13 @@ public class FinesActivity extends ActionBarActivity {
             fineStatus.setText(record.getStatus());
 
             return row;
+        }
+    }
+
+    public void onButtonClick(View v) {
+        int id = v.getId();
+        if (id == R.id.pay_fines) {
+            Toast.makeText(this, "payFines", Toast.LENGTH_LONG).show();
         }
     }
 }

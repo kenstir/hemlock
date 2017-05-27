@@ -21,7 +21,7 @@ package net.kenstir.apps.pines;
 import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
-import android.widget.Button;
+
 import org.evergreen_ils.views.MenuProvider;
 
 /**
@@ -31,16 +31,28 @@ public class PinesMenuProvider extends MenuProvider {
 
     @Override
     public void onCreate(Activity activity) {
+        return;
+        /*
+        AccountAccess ac = AccountAccess.getInstance();
+        Integer unread = ac.getUnreadMessageCount();
+        if (unread > 0) {
+            Button b = (Button)activity.findViewById(R.id.patron_message_center);
+            b.setText("" + unread + " messages");
+        }
+        */
     }
 
     @Override
-    public void onItemSelected(Activity activity, int id) {
+    public boolean onItemSelected(Activity activity, int id) {
         if (id == R.id.open_full_catalog_button) {
             String url = activity.getString(org.evergreen_ils.R.string.ou_library_url);
             activity.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
         } else if (id == R.id.library_locator_button) {
             String url = "http://pines.georgialibraries.org/pinesLocator/locator.html";
             activity.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
+        } else {
+            return false;
         }
+        return true;
     }
 }

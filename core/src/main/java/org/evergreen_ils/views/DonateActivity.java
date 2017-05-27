@@ -23,14 +23,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.media.MediaPlayer;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Toast;
 import org.evergreen_ils.R;
 import org.evergreen_ils.android.App;
 import org.evergreen_ils.billing.BillingHelper;
 import org.evergreen_ils.billing.IabResult;
-import org.evergreen_ils.system.EvergreenServer;
 import org.evergreen_ils.system.Log;
 import org.evergreen_ils.utils.ui.ActionBarUtils;
 import org.evergreen_ils.views.splashscreen.SplashActivity;
@@ -40,7 +39,7 @@ import java.util.HashMap;
 /**
  * Created by kenstir on 1/1/2016.
  */
-public class DonateActivity extends ActionBarActivity {
+public class DonateActivity extends AppCompatActivity {
     private final static String TAG = DonateActivity.class.getSimpleName();
     private ProgressDialog progressDialog;
     private HashMap<String,Integer> mediaResourceIdMap;
@@ -110,7 +109,7 @@ public class DonateActivity extends ActionBarActivity {
     }
 
     public void postPurchaseFinishActivity() {
-        setResult(BillingHelper.RESULT_PURCHASED);
+        setResult(App.RESULT_PURCHASED);
         finish();
     }
 

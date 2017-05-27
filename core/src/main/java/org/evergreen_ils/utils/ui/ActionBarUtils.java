@@ -19,8 +19,10 @@
 package org.evergreen_ils.utils.ui;
 
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+
 import org.evergreen_ils.R;
 import org.evergreen_ils.accountAccess.AccountAccess;
 
@@ -29,10 +31,13 @@ import org.evergreen_ils.accountAccess.AccountAccess;
  */
 public class ActionBarUtils {
 
-    public static void initActionBarForActivity(ActionBarActivity activity, String title, boolean isMainActivity) {
+    public static Toolbar initActionBarForActivity(AppCompatActivity activity, String title, boolean isMainActivity) {
+        Toolbar toolbar = (Toolbar) activity.findViewById(R.id.toolbar);
+        activity.setSupportActionBar(toolbar);
+
         ActionBar actionBar = activity.getSupportActionBar();
         if (actionBar == null)
-            return;
+            return toolbar;
         String username = AccountAccess.getInstance().getUserName();
         if (activity.getResources().getBoolean(R.bool.admin_screenshot_mode))
             username = "janejetson";
@@ -40,36 +45,23 @@ public class ActionBarUtils {
                 AppState.getString(AppState.LIBRARY_NAME), username));
         if (!TextUtils.isEmpty(title))
             actionBar.setTitle(title);
-        if (!isMainActivity) {
+        if (true || !isMainActivity) {
             actionBar.setDisplayHomeAsUpEnabled(true);
+            //actionBar.setHomeAsUpIndicator(R.drawable.ic_arrow_back_white_24dp);
+            actionBar.setHomeAsUpIndicator(0);
         }
-    }
-    /* this is how I reworked it to try the Toolbar.  I don't like it yet.
-    public static void initActionBarForActivity(AppCompatActivity activity, boolean isMainActivity) {
-        Toolbar toolbar = (Toolbar)activity.findViewById(R.id.my_toolbar);
-        activity.setSupportActionBar(toolbar);
-        ActionBar actionBar = activity.getSupportActionBar();
-        if (actionBar == null)
-            return;
-//        actionBar.setLogo(R.drawable.evergreen_launcher_icon_48);
-//        actionBar.setDisplayUseLogoEnabled(true);
-        actionBar.setIcon(R.drawable.evergreen_launcher_icon);
+//         this didn't work
+//        toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp);
 
-        ...setTitle
-        actionBar.setSubtitle(String.format(activity.getString(R.string.ou_activity_subtitle),
-                AppState.getString(AppState.LIBRARY_NAME),
-                AccountAccess.userName));
-        if (!isMainActivity) {
-            actionBar.setDisplayHomeAsUpEnabled(true);
-        }
+        return toolbar;
     }
-    */
 
-    public static void initActionBarForActivity(ActionBarActivity activity, String title) {
+    public static void initActionBarForActivity(AppCompatActivity activity, String title) {
         initActionBarForActivity(activity, title, false);
     }
 
-    public static void initActionBarForActivity(ActionBarActivity activity) {
+    public static void initActionBarForActivity(AppCompatActivity activity) {
         initActionBarForActivity(activity, null, false);
     }
+
 }

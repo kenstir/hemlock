@@ -36,10 +36,7 @@ import java.util.*;
  */
 public class EvergreenServer {
 
-    //ac,au,aua,auact,cuat
-    //aus
-    //private static final String IDL_CLASSES_USED = "acn,acp,ahr,ahtc,aou,au,bmp,cbreb,cbrebi,cbrebin,cbrebn,ccs,circ,ex,mbt,mbts,mous,mra,mraf,mus,mvr,perm_ex";
-    private static final String IDL_CLASSES_USED = "ac,acn,acp,ahr,ahtc,aou,aout,au,aua,auact,aus,bmp,cbreb,cbrebi,cbrebin,cbrebn,ccs,circ,csc,cuat,ex,mbt,mbts,mous,mra,mraf,mus,mvr,perm_ex";
+    private static final String IDL_CLASSES_USED = "ac,acn,acp,ahr,ahtc,aou,aout,au,aua,auact,aum,aus,bmp,cbreb,cbrebi,cbrebin,cbrebn,ccs,circ,csc,cuat,ex,mbt,mbts,mous,mra,mraf,mus,mvr,perm_ex";
 
     private static final String TAG = EvergreenServer.class.getSimpleName();
     private static EvergreenServer mInstance = null;
@@ -156,7 +153,7 @@ public class EvergreenServer {
         org.opac_visible = Api.parseBoolean(obj.getString("opac_visible"));
 
         org.indentedDisplayPrefix = new String(new char[level]).replace("\0", "   ");
-        Log.d(TAG, "kcxxx: id="+org.id+" level="+org.level+" type="+org.orgType.id+" users="+org.orgType.can_have_users+" vols="+org.orgType.can_have_vols+" vis="+(org.opac_visible ? "1" : "0")+" name="+org.name);
+        Log.d(TAG, "id="+org.id+" level="+org.level+" type="+org.orgType.id+" users="+org.orgType.can_have_users+" vols="+org.orgType.can_have_vols+" vis="+(org.opac_visible ? "1" : "0")+" name="+org.name);
 
         if (org.opac_visible)
             mOrganizations.add(org);

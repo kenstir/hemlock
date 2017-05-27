@@ -79,6 +79,15 @@ public class AccountUtils {
         am.clearPassword(account);
     }
 
+    public static String getPassword(Activity activity, String account_name) {
+        if (TextUtils.isEmpty(account_name))
+            return "";
+        final AccountManager am = AccountManager.get(activity);
+        final String accountType = activity.getString(R.string.ou_account_type);
+        final Account account = new Account(account_name, accountType);
+        return am.getPassword(account);
+    }
+
     public static String getAuthTokenForAccount(Activity activity, String account_name) throws AuthenticatorException, OperationCanceledException, IOException {
         Log.i(Const.AUTH_TAG, "getAuthTokenForAccount "+account_name);
         if (runningOnUIThread() || TextUtils.isEmpty(account_name)) {

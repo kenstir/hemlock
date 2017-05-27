@@ -8,7 +8,7 @@
     android:fitsSystemWindows="true">
 
     <include
-        layout="@layout/content_main"
+        layout="@layout/simple_underlines"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 

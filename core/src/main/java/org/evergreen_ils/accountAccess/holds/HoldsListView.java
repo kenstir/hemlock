@@ -22,7 +22,7 @@ package org.evergreen_ils.accountAccess.holds;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,13 +35,14 @@ import org.evergreen_ils.system.Log;
 import org.evergreen_ils.searchCatalog.RecordInfo;
 import org.evergreen_ils.searchCatalog.SearchFormat;
 import org.evergreen_ils.utils.ui.ActionBarUtils;
+import org.evergreen_ils.utils.ui.BaseActivity;
 import org.evergreen_ils.utils.ui.ProgressDialogSupport;
 import org.evergreen_ils.views.splashscreen.SplashActivity;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class HoldsListView extends ActionBarActivity {
+public class HoldsListView extends BaseActivity {
 
     private final static String TAG = HoldsListView.class.getSimpleName();
 
@@ -51,23 +52,14 @@ public class HoldsListView extends ActionBarActivity {
     private List<HoldRecord> holdRecords = null;
     private Context context;
     private Runnable getHoldsRunnable = null;
-    private Button homeButton;
-    private Button myAccountButton;
-    private TextView headerTitle;
     private TextView holdsNoText;
     private ProgressDialogSupport progress;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (!SplashActivity.isAppInitialized()) {
-            SplashActivity.restartApp(this);
-            return;
-        }
-        SearchFormat.init(this);
 
-        setContentView(R.layout.holds_list);
-        ActionBarUtils.initActionBarForActivity(this);
+        setContentView(R.layout.activity_holds);
 
         holdsNoText = (TextView) findViewById(R.id.holds_number);
         lv = (ListView) findViewById(R.id.holds_item_list);

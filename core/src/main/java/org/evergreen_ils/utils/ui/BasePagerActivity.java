@@ -22,22 +22,23 @@ package org.evergreen_ils.utils.ui;
 import java.util.Random;
 
 import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v7.app.ActionBarActivity;
 import org.evergreen_ils.R;
 
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
-public abstract class BaseSampleActivity extends ActionBarActivity {
-    private static final Random RANDOM = new Random();
+public abstract class BasePagerActivity extends BaseActivity {
+    //private static final Random RANDOM = new Random();
 
     public FragmentPagerAdapter mAdapter;
     public ViewPager mPager;
     public PageIndicator mIndicator;
 
+    /*
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu, menu);
@@ -54,4 +55,5 @@ public abstract class BaseSampleActivity extends ActionBarActivity {
         }
         return super.onOptionsItemSelected(item);
     }
+    */
 }

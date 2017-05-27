@@ -18,66 +18,55 @@
 
 package org.evergreen_ils.views;
 
-import android.annotation.SuppressLint;
-import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
-import android.net.Uri;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v4.view.MenuItemCompat;
 import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageButton;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import org.evergreen_ils.R;
-import org.evergreen_ils.accountAccess.AccountAccess;
 import org.evergreen_ils.accountAccess.AccountUtils;
 import org.evergreen_ils.accountAccess.bookbags.BookBagListView;
 import org.evergreen_ils.accountAccess.checkout.ItemsCheckOutListView;
 import org.evergreen_ils.accountAccess.fines.FinesActivity;
 import org.evergreen_ils.accountAccess.holds.HoldsListView;
-import org.evergreen_ils.auth.Const;
+import org.evergreen_ils.android.App;
 import org.evergreen_ils.billing.BillingDataProvider;
 import org.evergreen_ils.billing.BillingHelper;
 import org.evergreen_ils.billing.IabResult;
 import org.evergreen_ils.searchCatalog.SearchActivity;
-import org.evergreen_ils.searchCatalog.SearchFormat;
 import org.evergreen_ils.system.EvergreenServerLoader;
 import org.evergreen_ils.system.Log;
-import org.evergreen_ils.utils.ui.ActionBarUtils;
 import org.evergreen_ils.utils.ui.AppState;
-import org.evergreen_ils.views.splashscreen.SplashActivity;
+import org.evergreen_ils.utils.ui.BaseActivity;
 
 /**
  * Created by kenstir on 12/28/13.
  */
-public class MainActivity extends ActionBarActivity {
+public class MainActivity extends BaseActivity {
 
     private static String TAG = MainActivity.class.getSimpleName();
 
-    protected MenuProvider menuProvider = null;
+    private Integer mUnreadMessageCount = null; //unknown
+    private TextView mUnreadMessageText = null;
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (!SplashActivity.isAppInitialized()) {
-            SplashActivity.restartApp(this);
-            return;
-        }
-        SearchFormat.init(this);
 
         setContentView(R.layout.activity_main);
-        ActionBarUtils.initActionBarForActivity(this, null, true);
 
-        initBillingProvider();
-        initMenuProvider();
-        if (menuProvider != null)
-            menuProvider.onCreate(this);
         EvergreenServerLoader.fetchOrgSettings(this);
         EvergreenServerLoader.fetchSMSCarriers(this);
+        fetchUnreadMessageCount();
+        initBillingProvider();
     }
 
     @Override
@@ -110,83 +99,91 @@ public class MainActivity extends ActionBarActivity {
         });
     }
 
-    void initMenuProvider() {
-        menuProvider = MenuProvider.create(getString(R.string.ou_menu_provider));
-    }
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         Log.d(TAG, "onActivityResult req="+requestCode+" result="+resultCode);
-        if (resultCode == BillingHelper.RESULT_PURCHASED) {
+        if (requestCode == App.REQUEST_PURCHASE && resultCode == App.RESULT_PURCHASED) {
             AppState.setBoolean(AppState.SHOW_DONATE, false); // hide button on any purchase
+        } else if (requestCode == App.REQUEST_LAUNCH_OPAC_LOGIN_REDIRECT) {
+            fetchUnreadMessageCount();
         }
-    }
-
-    public static String getAppVersionCode(Context context) {
-        String version = "";
-        try {
-            PackageInfo pInfo = context.getPackageManager().getPackageInfo(context.getPackageName(), 0);
-            version = String.format("%d", pInfo.versionCode);
-        } catch (PackageManager.NameNotFoundException e) {
-            Log.d("Log", "caught", e);
-        }
-        return version;
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_main, menu);
+
+        // remove items we don't need
         if (TextUtils.isEmpty(getFeedbackUrl()))
             menu.removeItem(R.id.action_feedback);
         boolean showDonate = AppState.getBoolean(AppState.SHOW_DONATE, false);
         if (!showDonate)
             menu.removeItem(R.id.action_donate);
+
+        // set up the messages action view, it didn't work when set in xml
+        if (!getResources().getBoolean(R.bool.ou_enable_messages)) {
+            menu.removeItem(R.id.action_messages);
+        } else {
+            createMessagesActionView(menu);
+        }
+
         return true;
-        //return super.onCreateOptionsMenu(menu);
     }
 
     @Override
     public boolean onPrepareOptionsMenu (Menu menu) {
-        menu.findItem(R.id.action_switch_account).setEnabled(AccountUtils.haveMoreThanOneAccount(this));
+        MenuItem item = menu.findItem(R.id.action_switch_account);
+        if (item != null)
+            item.setEnabled(AccountUtils.haveMoreThanOneAccount(this));
+        updateUnreadMessageText();
         return true;
     }
 
-    @SuppressLint("StringFormatInvalid")
-    protected String getFeedbackUrl() {
-        String urlFormat = getString(R.string.ou_feedback_url);
-        if (urlFormat.isEmpty())
-            return urlFormat;
-        return String.format(urlFormat, getAppVersionCode(this));
+    private void createMessagesActionView(Menu menu) {
+        final MenuItem item = menu.findItem(R.id.action_messages);
+        MenuItemCompat.setActionView(item, R.layout.badge_layout);
+        RelativeLayout layout = (RelativeLayout) MenuItemCompat.getActionView(item);
+        mUnreadMessageText = (TextView) layout.findViewById(R.id.badge_text);
+        ImageButton button = (ImageButton) layout.findViewById(R.id.badge_icon_button);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onOptionsItemSelected(item);
+            }
+        });
+    }
+
+    private void updateUnreadMessageText() {
+        if (mUnreadMessageText == null)
+            return;
+        if (mUnreadMessageCount != null) {
+            mUnreadMessageText.setVisibility((mUnreadMessageCount > 0) ? View.VISIBLE : View.GONE);
+            mUnreadMessageText.setText(String.format("%d", mUnreadMessageCount));
+        } else {
+            mUnreadMessageText.setVisibility(View.GONE);
+        }
+    }
+    
+    private void fetchUnreadMessageCount() {
+        if (!getResources().getBoolean(R.bool.ou_enable_messages))
+            return;
+        EvergreenServerLoader.fetchUnreadMessageCount(this, new EvergreenServerLoader.OnResponseListener<Integer>() {
+            @Override
+            public void onResponse(Integer count) {
+                mUnreadMessageCount = count;
+                updateUnreadMessageText();
+            }
+        });
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-        if (id == R.id.action_switch_account) {
-            SplashActivity.restartApp(this);
+        if (mMenuItemHandler != null && mMenuItemHandler.onItemSelected(this, id))
             return true;
-        } else if (id == R.id.action_add_account) {
-            invalidateOptionsMenu();
-            AccountUtils.addAccount(this, new Runnable() {
-                @Override
-                public void run() {
-                    SplashActivity.restartApp(MainActivity.this);
-                }
-            });
-            Log.i(Const.AUTH_TAG, "after addAccount");
+        if (handleMenuAction(id))
             return true;
-        } else if (id == R.id.action_logout) {
-            AccountAccess.getInstance().logout(this);
-            SplashActivity.restartApp(this);
-            return true;
-        } else if (id == R.id.action_feedback) {
-            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(getFeedbackUrl())));
-            return true;
-        } else if (id == R.id.action_donate) {
-            startActivityForResult(new Intent(this, DonateActivity.class), BillingHelper.REQUEST_PURCHASE);
-            return true;
-        }
         return super.onOptionsItemSelected(item);
     }
 
@@ -202,8 +199,8 @@ public class MainActivity extends ActionBarActivity {
             startActivity(new Intent(this, BookBagListView.class));
         } else if (id == R.id.main_btn_search) {
             startActivity(new Intent(this, SearchActivity.class));
-        } else if (menuProvider != null) {
-            menuProvider.onItemSelected(this, id);
+        } else if (mMenuItemHandler != null) {
+            mMenuItemHandler.onItemSelected(this, id);
         }
     }
 }

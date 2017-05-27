@@ -1,17 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:orientation="vertical"
     android:background="@color/background"
      >
 
+    <include layout="@layout/toolbar_common"/>
+
     <TableLayout
-         android:layout_width="fill_parent"
-         android:layout_height="wrap_content"
-         android:padding="5dip"
-         style="@style/SecondaryToolbar"
-         >
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:padding="5dip"
+        style="@style/SecondaryToolbar"
+        >
         <TableRow
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
@@ -55,7 +58,7 @@
                 android:layout_weight="1"
                 />
             <TextView
-                android:id="@+id/fined_balance_owed"
+                android:id="@+id/fines_balance_owed"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -64,11 +67,26 @@
 
      </TableLayout>
 
-	<ListView
+    <ListView
         android:id="@+id/fines_overdue_materials_list"
         android:layout_width="fill_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:dividerHeight="1dp" />
+
+    <LinearLayout
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:dividerHeight="1dp"
-        />
+        android:orientation="horizontal"
+        android:paddingBottom="3dip">
+
+        <Button
+            android:id="@+id/pay_fines"
+            style="@style/ApplicationButton"
+            android:layout_width="120dip"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dip"
+            android:text="@string/button_pay_fines" />
+    </LinearLayout>
 
 </LinearLayout>

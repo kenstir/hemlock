@@ -21,7 +21,7 @@ package org.evergreen_ils.searchCatalog;
 
 import java.util.*;
 
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.MenuItem;
 import android.view.ViewGroup;
@@ -48,7 +48,7 @@ import android.view.View;
 import android.widget.TextView;
 import org.opensrf.util.GatewayResponse;
 
-public class CopyInformationActivity extends ActionBarActivity {
+public class CopyInformationActivity extends AppCompatActivity {
 
     private static final String TAG = CopyInformationActivity.class.getSimpleName();
     private RecordInfo record;

@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          package="net.kenstir.apps.pines"
-          android:installLocation="auto"
-          android:versionCode="15"
-          android:versionName="1.0.5">
+    xmlns:tools="http://schemas.android.com/tools"
+    package="net.kenstir.apps.pines"
+    android:installLocation="auto"
+    android:versionCode="21"
+    android:versionName="1.1.4">
 
     <uses-sdk
         android:minSdkVersion="15"
@@ -28,17 +29,22 @@
         android:fullBackupContent="true"
         android:icon="@drawable/launcher_icon"
         android:label="@string/ou_app_label"
-        android:theme="@style/PINESDark" >
+        android:theme="@style/PINESDarkNoActionBar"
+        tools:replace="android:theme">
+
+        <meta-data android:name="android.max_aspect" android:value="2.1" />
 
         <activity
-                android:name="org.evergreen_ils.views.splashscreen.SplashActivity"
-                android:theme="@style/PINESDarkNoActionBar">
+                android:name="org.evergreen_ils.views.splashscreen.SplashActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
+        <activity
+            android:name="org.evergreen_ils.utils.ui.BaseActivity"
+            android:label="@string/title_activity_nav_drawer"/>
         <activity
                 android:name="org.evergreen_ils.searchCatalog.SampleUnderlinesNoFade"
                 android:label="@string/search_details_title">
@@ -48,9 +54,9 @@
                 android:label="@string/copy_information_title">
         </activity>
         <activity
-                android:name="org.evergreen_ils.searchCatalog.SearchActivity"
-                android:label="@string/title_search"
-                android:parentActivityName="org.evergreen_ils.views.MainActivity">
+            android:name="org.evergreen_ils.searchCatalog.SearchActivity"
+            android:label="@string/title_search"
+            android:parentActivityName="org.evergreen_ils.views.MainActivity">
         </activity>
         <activity
                 android:name="org.evergreen_ils.searchCatalog.AdvancedSearchActivity"

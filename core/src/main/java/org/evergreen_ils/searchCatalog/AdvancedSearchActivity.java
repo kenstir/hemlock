@@ -22,7 +22,7 @@ package org.evergreen_ils.searchCatalog;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
 
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.MenuItem;
 import org.evergreen_ils.R;
@@ -40,7 +40,7 @@ import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-public class AdvancedSearchActivity extends ActionBarActivity {
+public class AdvancedSearchActivity extends AppCompatActivity {
 
     private final static String TAG = AdvancedSearchActivity.class.getSimpleName();
 

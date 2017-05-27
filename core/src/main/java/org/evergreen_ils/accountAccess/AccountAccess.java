@@ -606,39 +606,6 @@ public class AccountAccess {
         return (OSRFObject) resp;
     }
 
-    /**
-     * Fetch org settings.
-     *
-     * @param org_id the org_id
-     * @param setting the setting
-     * @return the object
-     * @throws SessionNotFoundException the session not found exception
-     */
-//    public OSRFObject fetchOrgSettings(Integer org_id, String setting)
-//            throws SessionNotFoundException {
-//
-//        OSRFObject response = (OSRFObject) Utils.doRequest(conn(), Api.ACTOR,
-//                Api.ORG_SETTING_ANCESTOR, new Object[]{
-//                        org_id, setting});
-//        return response;
-//    }
-
-//    public void getOrgHiddentDepth() {
-//
-//        // logic can be found in the opac_utils.js file in web/opac/common/js
-//
-//        for (int i = 0; i < organizations.size(); i++) {
-//            AccountAccess ac = AccountAccess.getInstance();
-//            try {
-//                Object obj = ac.fetchOrgSettings(organizations.get(i).id,
-//                        "opac.org_unit_hiding.depth");
-//            } catch (SessionNotFoundException e) {
-//            }
-//
-//        }
-//
-//    }
-
     // ------------------------Holds Section
     // --------------------------------------//
 
@@ -1225,4 +1192,32 @@ public class AccountAccess {
     public String getAuthToken() {
         return authToken;
     }
+
+    public Integer getUserID() {
+        return userID;
+    }
+
+    /** return number of unread messages in patron message center
+     *
+     * We don't care about the messages themselves here, because I don't see a way to modify
+     * the messages via OSRF, and it's easier to redirect to that section of the OPAC.
+     */
+    public Integer getUnreadMessageCount() {
+        Object resp = Utils.doRequest(conn(), Api.ACTOR,
+                Api.MESSAGES_RETRIEVE, new Object[]{
+                        authToken, getUserID(), null});
+        Integer unread_count = 0;
+        if (resp != null) {
+            List<OSRFObject> list = (List<OSRFObject>) resp;
+            for (OSRFObject obj : list) {
+                String read_date = obj.getString("read_date");
+                Boolean deleted = Api.parseBoolean(obj.get("deleted"));
+                if (read_date == null && !deleted) {
+                    ++unread_count;
+                }
+            }
+        }
+        return unread_count;
+    }
+
 }

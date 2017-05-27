@@ -33,6 +33,8 @@ import org.opensrf.util.GatewayResponse;
 import org.opensrf.util.OSRFObject;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -42,6 +44,14 @@ import java.util.Map;
  * Created by kenstir on 2/20/2017.
  */
 public class EvergreenServerLoader {
+
+    public interface OnResponseListener<T> {
+        public void onResponse(T data);
+    }
+    public interface OnErrorListener<T> {
+        public void onError(String errorMessage);
+    }
+
     private static final String TAG = EvergreenServerLoader.class.getSimpleName();
 
     private static int mOutstandingRequests = 0;
@@ -65,7 +75,10 @@ public class EvergreenServerLoader {
     private static void parseOrgSettingsFromGatewayResponse(GatewayResponse response, final Organization org) {
         Boolean not_pickup_lib = parseBoolSetting(response, Api.SETTING_ORG_UNIT_NOT_PICKUP_LIB);
         if (not_pickup_lib != null)
-            org.is_pickup_location = !not_pickup_lib;
+            org.setting_is_pickup_location = !not_pickup_lib;
+        Boolean allow_credit_payments = parseBoolSetting(response, Api.SETTING_CREDIT_PAYMENTS_ALLOW);
+        if (allow_credit_payments != null)
+            org.setting_allow_credit_payments = allow_credit_payments;
         Boolean sms_enable = parseBoolSetting(response, Api.SETTING_SMS_ENABLE);
         if (sms_enable != null)
             EvergreenServer.getInstance().setSMSEnabled(sms_enable);
@@ -76,17 +89,29 @@ public class EvergreenServerLoader {
     // fetch settings that we need for all orgs
     public static void fetchOrgSettings(Context context) {
         startVolley();
-        int num_skipped = 0;
         final EvergreenServer eg = EvergreenServer.getInstance();
         final AccountAccess ac = AccountAccess.getInstance();
-        for (final Organization org: eg.getOrganizations()) {
+        final Integer home_lib = AccountAccess.getInstance().getHomeLibraryID();
+
+        // To minimize risk of race condition, load home org first
+        ArrayList<Organization> organizations = eg.getOrganizations();
+        Collections.sort(organizations, new Comparator<Organization>() {
+            @Override
+            public int compare(Organization lhs, Organization rhs) {
+                if (lhs.id == home_lib) return -1;
+                if (rhs.id == home_lib) return 1;
+                return lhs.id.compareTo(rhs.id);
+            }
+        });
+
+        for (final Organization org : organizations) {
+            if (org.settings_loaded)
+                continue;
             ArrayList<String> settings = new ArrayList<>();
             settings.add(Api.SETTING_ORG_UNIT_NOT_PICKUP_LIB);
+            settings.add(Api.SETTING_CREDIT_PAYMENTS_ALLOW);
             if (org.parent_ou == null) {
                 settings.add((Api.SETTING_SMS_ENABLE));
-            } else if (!org.pickupLocationNeedsLoading()) {
-                ++num_skipped;
-                continue;
             }
             String url = eg.getUrl(Utils.buildGatewayUrl(
                     Api.ACTOR, Api.ORG_UNIT_SETTING_BATCH,
@@ -106,7 +131,7 @@ public class EvergreenServerLoader {
                         public void onErrorResponse(VolleyError error) {
                             String msg = error.getMessage();
                             if (!TextUtils.isEmpty(msg))
-                                Log.d("kcxxx", "id="+org.id+" error: "+msg);
+                                Log.d(TAG, "id=" + org.id + " error: " + msg);
                             decrNumOutstanding();
                         }
                     });
@@ -154,6 +179,58 @@ public class EvergreenServerLoader {
                     }
                 });
         incrNumOutstanding();
+        VolleyWrangler.getInstance(context).addToRequestQueue(r);
+    }
+
+    private static Integer parseMessagesResponse(GatewayResponse response) {
+        Log.d(TAG, "response="+response);
+        Integer unread_count = 0;
+        if (response.payload != null) {
+            List<OSRFObject> list = (List<OSRFObject>) response.payload;
+            for (OSRFObject obj : list) {
+                String read_date = obj.getString("read_date");
+                Boolean deleted = Api.parseBoolean(obj.get("deleted"));
+                if (read_date == null && !deleted) {
+                    ++unread_count;
+                }
+            }
+        }
+        return unread_count;
+    }
+
+    /** fetch number of unread messages in patron message center
+     *
+     * We don't care about the messages themselves, because I don't see a way to modify
+     * the messages via OSRF, and it's easier to launch a URL to the patron message center.
+     */
+    public static void fetchUnreadMessageCount(Context context, final OnResponseListener listener) {
+        startVolley();
+        final EvergreenServer eg = EvergreenServer.getInstance();
+        final AccountAccess ac = AccountAccess.getInstance();
+        String url = eg.getUrl(Utils.buildGatewayUrl(
+                Api.ACTOR, Api.MESSAGES_RETRIEVE,
+                new Object[]{ac.getAuthToken(), ac.getUserID(), null}));
+        GatewayJsonObjectRequest r = new GatewayJsonObjectRequest(
+                url,
+                Request.Priority.NORMAL,
+                new Response.Listener<GatewayResponse>() {
+                    @Override
+                    public void onResponse(GatewayResponse response) {
+                        listener.onResponse(parseMessagesResponse(response));
+                        decrNumOutstanding();
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        String msg = error.getMessage();
+                        if (!TextUtils.isEmpty(msg))
+                            Log.d(TAG, "error: "+msg);
+                        decrNumOutstanding();
+                    }
+                });
+        incrNumOutstanding();
+        r.setShouldCache(false);
         VolleyWrangler.getInstance(context).addToRequestQueue(r);
     }
 

@@ -23,7 +23,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.widget.*;
 import org.evergreen_ils.Api;
@@ -49,7 +49,7 @@ import android.view.View.OnClickListener;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 
-public class HoldDetails extends ActionBarActivity {
+public class HoldDetails extends AppCompatActivity {
 
     private final static String TAG = HoldDetails.class.getSimpleName();
 

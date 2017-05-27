@@ -17,13 +17,6 @@
  */
 package org.evergreen_ils.system;
 
-import org.evergreen_ils.Api;
-import org.evergreen_ils.barcodescan.Intents;
-import org.opensrf.util.GatewayResponse;
-
-import java.io.Serializable;
-import java.util.Map;
-
 public class Organization /*implements Serializable*/ {
     private static final String TAG = Organization.class.getSimpleName();
 
@@ -36,7 +29,10 @@ public class Organization /*implements Serializable*/ {
     public String indentedDisplayPrefix = "";
 
     public Boolean opac_visible = null;
-    public Boolean is_pickup_location = null; // null=not loaded
+
+    public Boolean settings_loaded = false;
+    public Boolean setting_is_pickup_location = null; // null=not loaded
+    public Boolean setting_allow_credit_payments = null; // null=not loaded
 
     public Organization() {
     }
@@ -46,8 +42,8 @@ public class Organization /*implements Serializable*/ {
     }
 
     public boolean isPickupLocation() {
-        if (is_pickup_location != null) {
-            return is_pickup_location;
+        if (setting_is_pickup_location != null) {
+            return setting_is_pickup_location;
         } else {
             return defaultIsPickupLocation();
         }
@@ -57,17 +53,5 @@ public class Organization /*implements Serializable*/ {
         if (orgType == null)
             return true;//should not happen
         return orgType.can_have_vols;
-    }
-
-    public boolean pickupLocationNeedsLoading() {
-        if (is_pickup_location != null) {
-            // already loaded
-            return false;
-        } else if (defaultIsPickupLocation() == false) {
-            // pickup location can be disabled by network setting but not enabled
-            return false;
-        } else {
-            return true;
-        }
     }
 }

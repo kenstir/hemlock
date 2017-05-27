@@ -25,8 +25,8 @@ import java.util.Date;
 import java.util.List;
 
 import android.content.Intent;
-import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.MenuItem;
 import org.evergreen_ils.Api;
@@ -63,7 +63,7 @@ import android.widget.Toast;
 
 import static org.evergreen_ils.system.Utils.safeString;
 
-public class PlaceHoldActivity extends ActionBarActivity {
+public class PlaceHoldActivity extends AppCompatActivity {
 
     private static final String TAG = PlaceHoldActivity.class.getSimpleName();
     private TextView title;

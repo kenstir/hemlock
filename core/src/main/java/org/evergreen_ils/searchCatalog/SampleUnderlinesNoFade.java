@@ -37,7 +37,8 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
 import android.view.KeyEvent;
 
-public class SampleUnderlinesNoFade extends BaseSampleActivity {
+public class SampleUnderlinesNoFade extends BasePagerActivity {
+    private static final String TAG = SampleUnderlinesNoFade.class.getSimpleName();
 
     private ArrayList<RecordInfo> records;
     private SearchCatalog search;
@@ -115,6 +116,7 @@ public class SampleUnderlinesNoFade extends BaseSampleActivity {
     private void finishWithIntent() {
         Intent intent = new Intent();
         intent.putExtra("recordList", records);
+        Log.d(TAG, "kcxxx about to setResult with "+records.size()+" items");
         setResult(RETURN_DATA, intent);
         finish();
     }

@@ -22,6 +22,8 @@
     android:background="@color/background"
     >
 
+    <include layout="@layout/toolbar_common"/>
+
     <android.support.v4.view.ViewPager
         android:id="@+id/pager"
         android:layout_width="fill_parent"

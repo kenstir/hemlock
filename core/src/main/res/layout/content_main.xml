@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <include layout="@layout/toolbar_common"/>
+
+    <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/background_grey_image">
+
+        <Button
+            android:id="@+id/main_btn_search"
+            style="@style/ActionButton"
+            android:layout_width="0dp"
+            android:layout_height="52dp"
+            android:drawableLeft="@drawable/kghostview"
+            android:onClick="onButtonClick"
+            android:text="@string/title_search"
+            app:layout_constraintBottom_toTopOf="@+id/account_btn_check_out"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginLeft="24dp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            android:layout_marginRight="24dp"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            android:layout_marginStart="24dp"
+            android:layout_marginEnd="24dp" />
+
+        <Button
+            android:id="@+id/account_btn_check_out"
+            style="@style/ActionButton"
+            android:layout_width="0dp"
+            android:layout_height="52dp"
+            android:drawableLeft="@drawable/items_checked_out"
+            android:onClick="onButtonClick"
+            android:text="@string/title_check_out"
+            app:layout_constraintVertical_chainStyle="packed"
+            app:layout_constraintBottom_toTopOf="@+id/account_btn_holds"
+            app:layout_constraintTop_toBottomOf="@+id/main_btn_search"
+            android:layout_marginRight="24dp"
+            app:layout_constraintRight_toRightOf="parent"
+            android:layout_marginLeft="24dp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            android:layout_marginStart="24dp"
+            android:layout_marginEnd="24dp" />
+
+        <Button
+            android:id="@+id/account_btn_holds"
+            style="@style/ActionButton"
+            android:layout_width="0dp"
+            android:layout_height="52dp"
+            android:drawableLeft="@drawable/holds"
+            android:onClick="onButtonClick"
+            android:text="@string/title_holds"
+            app:layout_constraintBottom_toTopOf="@+id/account_btn_fines"
+            app:layout_constraintTop_toBottomOf="@+id/account_btn_check_out"
+            android:layout_marginLeft="24dp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            android:layout_marginRight="24dp"
+            app:layout_constraintRight_toRightOf="parent"
+            android:layout_marginStart="24dp"
+            android:layout_marginEnd="24dp" />
+
+        <Button
+            android:id="@+id/account_btn_fines"
+            style="@style/ActionButton"
+            android:layout_width="0dp"
+            android:layout_height="52dp"
+            android:drawableLeft="@drawable/fines"
+            android:onClick="onButtonClick"
+            android:text="@string/title_fines"
+            app:layout_constraintBottom_toTopOf="@+id/main_my_lists_button"
+            app:layout_constraintTop_toBottomOf="@+id/account_btn_holds"
+            android:layout_marginRight="24dp"
+            app:layout_constraintRight_toRightOf="parent"
+            android:layout_marginLeft="24dp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            android:layout_marginStart="24dp"
+            android:layout_marginEnd="24dp" />
+
+        <Button
+            android:id="@+id/main_my_lists_button"
+            style="@style/ActionButton"
+            android:layout_width="0dp"
+            android:layout_height="52dp"
+            android:layout_marginLeft="24dp"
+            android:layout_marginRight="24dp"
+            android:drawableLeft="@drawable/beos_write"
+            android:onClick="onButtonClick"
+            android:text="@string/title_my_lists"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintHorizontal_bias="0.502"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/account_btn_fines"
+            android:layout_marginStart="24dp"
+            android:layout_marginEnd="24dp" />
+
+    </android.support.constraint.ConstraintLayout>
+
+</LinearLayout>
