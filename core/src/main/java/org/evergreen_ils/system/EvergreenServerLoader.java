@@ -187,13 +187,17 @@ public class EvergreenServerLoader {
         Log.d(TAG, "response="+response);
         Integer unread_count = 0;
         if (response.payload != null) {
-            List<OSRFObject> list = (List<OSRFObject>) response.payload;
-            for (OSRFObject obj : list) {
-                String read_date = obj.getString("read_date");
-                Boolean deleted = Api.parseBoolean(obj.get("deleted"));
-                if (read_date == null && !deleted) {
-                    ++unread_count;
+            try {
+                List<OSRFObject> list = (List<OSRFObject>) response.payload;
+                for (OSRFObject obj : list) {
+                    String read_date = obj.getString("read_date");
+                    Boolean deleted = Api.parseBoolean(obj.get("deleted"));
+                    if (read_date == null && !deleted) {
+                        ++unread_count;
+                    }
                 }
+            } catch (Exception e) {
+                Log.d(TAG, "caught", e);
             }
         }
         return unread_count;
