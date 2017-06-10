@@ -93,8 +93,9 @@ public class EvergreenServerLoader {
         final AccountAccess ac = AccountAccess.getInstance();
         final Integer home_lib = AccountAccess.getInstance().getHomeLibraryID();
 
-        // To minimize risk of race condition, load home org first
-        ArrayList<Organization> organizations = eg.getOrganizations();
+        // To minimize risk of race condition, load home org first.
+        // But sort a clone; sorting the original list screws up the sorting in the search spinner.
+        ArrayList<Organization> organizations = (ArrayList<Organization>) eg.getOrganizations().clone();
         Collections.sort(organizations, new Comparator<Organization>() {
             @Override
             public int compare(Organization lhs, Organization rhs) {
