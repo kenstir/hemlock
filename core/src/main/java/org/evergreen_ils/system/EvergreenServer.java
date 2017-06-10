@@ -213,6 +213,20 @@ public class EvergreenServer {
         }
     }
 
+    public String getOrganizationLibraryInfoPageUrl(int id) {
+        Organization org = getOrganization(id);
+        if (org == null) {
+            return "";
+        } else {
+            // jump past the header stuff to the library info
+            // #content-wrapper works only sometimes
+            // ?#content-wrapper no better
+            // /?#main-content no better
+            // trying #main-content
+            return getUrl("/eg/opac/library/" + org.shortname + "#main-content");
+        }
+    }
+
     public void loadSMSCarriers(List<OSRFObject> carriers) {
         mSMSCarriers = new ArrayList<SMSCarrier>(carriers.size());
         for (OSRFObject obj : carriers) {

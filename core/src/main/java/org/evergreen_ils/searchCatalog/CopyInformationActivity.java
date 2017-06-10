@@ -21,13 +21,10 @@ package org.evergreen_ils.searchCatalog;
 
 import java.util.*;
 
-import android.content.Intent;
-import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.MenuItem;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import com.android.volley.Request;
@@ -42,6 +39,7 @@ import org.evergreen_ils.net.GatewayJsonObjectRequest;
 import org.evergreen_ils.net.VolleyWrangler;
 import org.evergreen_ils.system.Organization;
 import org.evergreen_ils.utils.ui.ActionBarUtils;
+import org.evergreen_ils.utils.ui.TextViewUtils;
 import org.evergreen_ils.views.splashscreen.SplashActivity;
 
 import android.content.Context;
@@ -87,15 +85,14 @@ public class CopyInformationActivity extends AppCompatActivity {
         listAdapter = new CopyInformationArrayAdapter(this,
                 R.layout.copy_information_item, copyInfoRecords);
         lv.setAdapter(listAdapter);
-        lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                CopyLocationCounts record = (CopyLocationCounts) lv.getItemAtPosition(position);
-                Organization org = EvergreenServer.getInstance().getOrganization(record.org_id);
-                String url = getString(R.string.ou_library_url) + "/eg/opac/library/" + org.shortname + "#content-wrapper";
-                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
-            }
-        });
+//        lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//            @Override
+//            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+//                CopyLocationCounts record = (CopyLocationCounts) lv.getItemAtPosition(position);
+//                String url = EvergreenServer.getInstance().getOrganizationLibraryInfoPageUrl(record.org_id);
+//                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
+//            }
+//        });
 
         TextView summaryText = (TextView) findViewById(R.id.copy_information_summary);
         summaryText.setText(RecordLoader.getCopySummary(record, orgID, this));
@@ -229,7 +226,9 @@ public class CopyInformationActivity extends AppCompatActivity {
             Organization org = eg.getOrganization(item.org_id);
             if (groupBySystem) {
                 majorLocationText.setText(eg.getOrganizationName(org.parent_ou));
-                minorLocationText.setText(eg.getOrganizationName(item.org_id));
+                //minorLocationText.setText(eg.getOrganizationName(item.org_id));
+                String url = eg.getOrganizationLibraryInfoPageUrl(item.org_id);
+                TextViewUtils.setTextHtml(minorLocationText, TextViewUtils.makeLinkHtml(url, org.name));
             } else {
                 majorLocationText.setText(eg.getOrganizationName(item.org_id));
                 minorLocationText.setVisibility(View.GONE);
