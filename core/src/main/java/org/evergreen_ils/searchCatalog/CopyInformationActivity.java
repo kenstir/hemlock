@@ -21,10 +21,13 @@ package org.evergreen_ils.searchCatalog;
 
 import java.util.*;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.MenuItem;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import com.android.volley.Request;
@@ -84,6 +87,15 @@ public class CopyInformationActivity extends AppCompatActivity {
         listAdapter = new CopyInformationArrayAdapter(this,
                 R.layout.copy_information_item, copyInfoRecords);
         lv.setAdapter(listAdapter);
+        lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                CopyLocationCounts record = (CopyLocationCounts) lv.getItemAtPosition(position);
+                Organization org = EvergreenServer.getInstance().getOrganization(record.org_id);
+                String url = getString(R.string.ou_library_url) + "/eg/opac/library/" + org.shortname + "#content-wrapper";
+                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
+            }
+        });
 
         TextView summaryText = (TextView) findViewById(R.id.copy_information_summary);
         summaryText.setText(RecordLoader.getCopySummary(record, orgID, this));
