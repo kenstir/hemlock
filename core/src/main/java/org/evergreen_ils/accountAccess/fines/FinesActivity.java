@@ -146,7 +146,7 @@ public class FinesActivity extends BaseActivity {
                             "/eg/opac/login"
                                     + "?username=" + URLEncoder.encode(username)
                                     + "&password=" + URLEncoder.encode(password)
-                                    + "&redirect_to=" + URLEncoder.encode("/eg/opac/myopac/main_payment_form"));
+                                    + "&redirect_to=" + URLEncoder.encode("/eg/opac/myopac/main_payment_form#pay_fines_now"));
                     startActivityForResult(new Intent(Intent.ACTION_VIEW, Uri.parse(url)), REQUEST_LAUNCH_OPAC_LOGIN_REDIRECT);
                 }
             });
