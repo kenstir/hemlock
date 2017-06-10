@@ -102,15 +102,12 @@ public class HoldsListView extends BaseActivity {
         };
 
         progress.show(context, getString(R.string.msg_loading_holds));
-
-        Thread getHoldsThread = new Thread(getHoldsRunnable);
-        getHoldsThread.start();
+        new Thread(getHoldsRunnable).start();
 
         lv.setOnItemClickListener(new OnItemClickListener() {
 
             @Override
-            public void onItemClick(AdapterView<?> arg0, View arg1,
-                    int position, long arg3) {
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 HoldRecord record = (HoldRecord) lv.getItemAtPosition(position);
 
                 Intent intent = new Intent(getApplicationContext(), HoldDetails.class);
@@ -141,9 +138,7 @@ public class HoldsListView extends BaseActivity {
         case HoldDetails.RESULT_CODE_DELETE_HOLD:
         case HoldDetails.RESULT_CODE_UPDATE_HOLD:
             progress.show(context, getString(R.string.msg_loading_holds));
-            // thread to retrieve holds
-            Thread getHoldsThread = new Thread(getHoldsRunnable);
-            getHoldsThread.start();
+            new Thread(getHoldsRunnable).start();
             Log.d(TAG, "Update on result "+resultCode);
             break;
         }
