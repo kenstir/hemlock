@@ -2,8 +2,9 @@ package org.opensrf.net.http;
 
 import org.evergreen_ils.system.Log;
 import org.json.JSONObject;
-import org.opensrf.*;
-import org.opensrf.util.*;
+import org.opensrf.Method;
+import org.opensrf.util.JSONReader;
+import org.opensrf.util.JSONWriter;
 
 import java.io.BufferedInputStream;
 import java.io.OutputStreamWriter;
