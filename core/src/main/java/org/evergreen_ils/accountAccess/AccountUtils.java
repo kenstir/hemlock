@@ -30,6 +30,8 @@ import org.evergreen_ils.system.Log;
 
 import java.io.IOException;
 
+import static org.evergreen_ils.system.Utils.safeString;
+
 /**
  * Created by kenstir on 11/17/2015.
  */
@@ -85,7 +87,7 @@ public class AccountUtils {
         final AccountManager am = AccountManager.get(activity);
         final String accountType = activity.getString(R.string.ou_account_type);
         final Account account = new Account(account_name, accountType);
-        return am.getPassword(account);
+        return safeString(am.getPassword(account));
     }
 
     public static String getAuthTokenForAccount(Activity activity, String account_name) throws AuthenticatorException, OperationCanceledException, IOException {

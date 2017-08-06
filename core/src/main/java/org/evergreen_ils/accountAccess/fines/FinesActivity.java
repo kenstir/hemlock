@@ -26,6 +26,7 @@ import java.util.List;
 
 import android.content.Intent;
 import android.net.Uri;
+import android.text.TextUtils;
 import android.widget.*;
 import org.evergreen_ils.R;
 import org.evergreen_ils.accountAccess.AccountAccess;
@@ -38,6 +39,7 @@ import org.evergreen_ils.system.Organization;
 import org.evergreen_ils.system.Utils;
 import org.evergreen_ils.utils.ui.BaseActivity;
 import org.evergreen_ils.utils.ui.ProgressDialogSupport;
+import org.w3c.dom.Text;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -142,11 +144,13 @@ public class FinesActivity extends BaseActivity {
                 public void onClick(View v) {
                     String username = AccountAccess.getInstance().getUserName();
                     String password = AccountUtils.getPassword(FinesActivity.this, username);
-                    String url = EvergreenServer.getInstance().getUrl(
-                            "/eg/opac/login"
-                                    + "?username=" + URLEncoder.encode(username)
-                                    + "&password=" + URLEncoder.encode(password)
-                                    + "&redirect_to=" + URLEncoder.encode("/eg/opac/myopac/main_payment_form#pay_fines_now"));
+                    String path =                            "/eg/opac/login"
+                            + "?redirect_to=" + URLEncoder.encode("/eg/opac/myopac/main_payment_form#pay_fines_now")
+                            + "?username=" + URLEncoder.encode(username);
+                    if (!TextUtils.isEmpty(password))
+                        path = path
+                            + "&password=" + URLEncoder.encode(password);
+                    String url = EvergreenServer.getInstance().getUrl(path);
                     startActivityForResult(new Intent(Intent.ACTION_VIEW, Uri.parse(url)), REQUEST_LAUNCH_OPAC_LOGIN_REDIRECT);
                 }
             });
