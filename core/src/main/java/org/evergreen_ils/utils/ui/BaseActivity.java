@@ -178,11 +178,12 @@ public class BaseActivity extends AppCompatActivity
         } else if (id == R.id.action_messages) {
             String username = AccountAccess.getInstance().getUserName();
             String password = AccountUtils.getPassword(this, username);
-            String url = EvergreenServer.getInstance().getUrl(
-                    "/eg/opac/login"
-                            + "?username=" + URLEncoder.encode(username)
-                            + "&password=" + URLEncoder.encode(password)
-                            + "&redirect_to=" + URLEncoder.encode("/eg/opac/myopac/messages"));
+            String path = "/eg/opac/login"
+                    + "?redirect_to=" + URLEncoder.encode("/eg/opac/myopac/messages")
+                    + "&username=" + URLEncoder.encode(username);
+            if (!TextUtils.isEmpty(password))
+                path = path + "&password=" + URLEncoder.encode(password);
+            String url = EvergreenServer.getInstance().getUrl(path);
             startActivityForResult(new Intent(Intent.ACTION_VIEW, Uri.parse(url)), REQUEST_LAUNCH_OPAC_LOGIN_REDIRECT);
         }
         return false;
