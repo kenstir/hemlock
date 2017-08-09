@@ -60,6 +60,7 @@ public class MainActivity extends BaseActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (mRestarting) return;
 
         setContentView(R.layout.activity_main);
 

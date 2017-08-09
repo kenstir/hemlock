@@ -59,6 +59,7 @@ public class ItemsCheckOutListView extends BaseActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (mRestarting) return;
 
         setContentView(R.layout.activity_checkouts);
 
@@ -77,13 +78,17 @@ public class ItemsCheckOutListView extends BaseActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 ArrayList<RecordInfo> records = new ArrayList<>();
-                for (CircRecord circRecord: circRecords) {
+                for (CircRecord circRecord : circRecords) {
                     records.add(circRecord.recordInfo);
                 }
                 RecordDetails.launchDetailsFlow(ItemsCheckOutListView.this, records, position);
             }
         });
+    }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
         progress.show(context, getString(R.string.msg_retrieving_data));
 
         Thread getCirc = initGetCircThread();

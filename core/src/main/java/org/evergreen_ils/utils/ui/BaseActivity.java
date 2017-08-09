@@ -46,13 +46,17 @@ public class BaseActivity extends AppCompatActivity
 
     protected Toolbar mToolbar;
     protected MenuProvider mMenuItemHandler = null;
+    protected boolean mRestarting = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (!SplashActivity.isAppInitialized()) {
             SplashActivity.restartApp(this);
+            mRestarting = true;
             return;
         }
+        mRestarting = false;
         SearchFormat.init(this);
         AppState.init(this);
         initMenuProvider();
