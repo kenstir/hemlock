@@ -82,6 +82,7 @@ public class FinesActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (mRestarting) return;
 
         setContentView(R.layout.activity_fines);
 

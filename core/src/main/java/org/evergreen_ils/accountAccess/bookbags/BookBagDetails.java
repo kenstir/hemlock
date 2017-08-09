@@ -80,10 +80,7 @@ public class BookBagDetails extends BaseActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (!SplashActivity.isAppInitialized()) {
-            SplashActivity.restartApp(this);
-            return;
-        }
+        if (mRestarting) return;
 
         setContentView(R.layout.bookbagitem_list);
         ActionBarUtils.initActionBarForActivity(this);
