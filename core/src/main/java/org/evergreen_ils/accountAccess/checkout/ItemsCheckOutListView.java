@@ -130,6 +130,7 @@ public class ItemsCheckOutListView extends BaseActivity {
 
                         @Override
                         public void run() {
+                            listAdapter.clear();
                             for (CircRecord circ : circRecords)
                                 listAdapter.add(circ);
                             itemsNo.setText(String.format("%d", circRecords.size()));
