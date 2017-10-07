@@ -3,8 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="net.kenstir.apps.pines"
     android:installLocation="auto"
-    android:versionCode="21"
-    android:versionName="1.1.4">
+    android:versionCode="22"
+    android:versionName="1.1.5">
 
     <uses-sdk
         android:minSdkVersion="15"

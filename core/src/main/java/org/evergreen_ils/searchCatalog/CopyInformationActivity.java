@@ -39,6 +39,7 @@ import org.evergreen_ils.net.GatewayJsonObjectRequest;
 import org.evergreen_ils.net.VolleyWrangler;
 import org.evergreen_ils.system.Organization;
 import org.evergreen_ils.utils.ui.ActionBarUtils;
+import org.evergreen_ils.utils.ui.TextViewUtils;
 import org.evergreen_ils.views.splashscreen.SplashActivity;
 
 import android.content.Context;
@@ -84,6 +85,14 @@ public class CopyInformationActivity extends AppCompatActivity {
         listAdapter = new CopyInformationArrayAdapter(this,
                 R.layout.copy_information_item, copyInfoRecords);
         lv.setAdapter(listAdapter);
+//        lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//            @Override
+//            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+//                CopyLocationCounts record = (CopyLocationCounts) lv.getItemAtPosition(position);
+//                String url = EvergreenServer.getInstance().getOrganizationLibraryInfoPageUrl(record.org_id);
+//                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
+//            }
+//        });
 
         TextView summaryText = (TextView) findViewById(R.id.copy_information_summary);
         summaryText.setText(RecordLoader.getCopySummary(record, orgID, this));
@@ -217,7 +226,9 @@ public class CopyInformationActivity extends AppCompatActivity {
             Organization org = eg.getOrganization(item.org_id);
             if (groupBySystem) {
                 majorLocationText.setText(eg.getOrganizationName(org.parent_ou));
-                minorLocationText.setText(eg.getOrganizationName(item.org_id));
+                //minorLocationText.setText(eg.getOrganizationName(item.org_id));
+                String url = eg.getOrganizationLibraryInfoPageUrl(item.org_id);
+                TextViewUtils.setTextHtml(minorLocationText, TextViewUtils.makeLinkHtml(url, org.name));
             } else {
                 majorLocationText.setText(eg.getOrganizationName(item.org_id));
                 minorLocationText.setVisibility(View.GONE);
