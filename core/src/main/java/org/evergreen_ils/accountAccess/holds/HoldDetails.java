@@ -35,6 +35,7 @@ import org.evergreen_ils.system.Log;
 import org.evergreen_ils.searchCatalog.RecordInfo;
 import org.evergreen_ils.system.Organization;
 import org.evergreen_ils.utils.ui.ActionBarUtils;
+import org.evergreen_ils.utils.ui.BaseActivity;
 import org.evergreen_ils.utils.ui.ProgressDialogSupport;
 import org.evergreen_ils.views.splashscreen.SplashActivity;
 
@@ -49,7 +50,7 @@ import android.view.View.OnClickListener;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 
-public class HoldDetails extends AppCompatActivity {
+public class HoldDetails extends BaseActivity {
 
     private final static String TAG = HoldDetails.class.getSimpleName();
 
