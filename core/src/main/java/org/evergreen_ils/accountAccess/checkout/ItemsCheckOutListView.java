@@ -134,6 +134,7 @@ public class ItemsCheckOutListView extends ActionBarActivity {
 
                         @Override
                         public void run() {
+                            listAdapter.clear();
                             for (CircRecord circ : circRecords)
                                 listAdapter.add(circ);
                             itemsNo.setText(String.format("%d", circRecords.size()));
