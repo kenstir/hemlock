@@ -303,9 +303,9 @@ public class ItemsCheckOutListView extends BaseActivity {
                         @Override
                         public void run() {
                             listAdapter.clear();
-                            for (int i = 0; i < circRecords.size(); i++) {
-                                listAdapter.add(circRecords.get(i));
-                            }
+                            for (CircRecord circ : circRecords)
+                                listAdapter.add(circ);
+
                             progress.dismiss();
                             listAdapter.notifyDataSetChanged();
                         }
