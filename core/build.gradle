@@ -1,12 +1,12 @@
 apply plugin: 'com.android.library'
 
 android {
-    compileSdkVersion 23
-    buildToolsVersion '25.0.0'
+    compileSdkVersion 27
+    buildToolsVersion '25.0.2'
 
     defaultConfig {
         minSdkVersion 15
-        targetSdkVersion 24
+        targetSdkVersion 27
         versionCode 1
         versionName "1.0"
 
@@ -32,10 +32,10 @@ dependencies {
     // androidTestCompile 'com.android.support.test:rules:0.5'
     // // Set this dependency to build and run UI Automator tests
     // androidTestCompile 'com.android.support.test.uiautomator:uiautomator-v18:2.1.2'
-    compile 'com.android.support:design:24.2.1'
-    compile 'com.android.support:appcompat-v7:24.2.1'
-    compile 'com.android.support:gridlayout-v7:24.2.1'
-    compile 'com.android.support:recyclerview-v7:24.2.1'
+    compile 'com.android.support:design:27.0.1'
+    compile 'com.android.support:appcompat-v7:27.0.1'
+    compile 'com.android.support:gridlayout-v7:27.0.1'
+    compile 'com.android.support:recyclerview-v7:27.0.1'
     compile 'com.android.volley:volley:1.0.0'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
     //compile "android.arch.lifecycle:runtime:1.0.0-alpha5"
