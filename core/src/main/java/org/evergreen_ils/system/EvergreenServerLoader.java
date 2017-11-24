@@ -69,8 +69,6 @@ public class EvergreenServerLoader {
         Boolean sms_enable = parseBoolSetting(response, Api.SETTING_SMS_ENABLE);
         if (sms_enable != null)
             EvergreenServer.getInstance().setSMSEnabled(sms_enable);
-
-        org.settings_loaded = true;
     }
 
     // fetch settings that we need for all orgs
