@@ -378,9 +378,12 @@ public class AccountAccess {
         result = info_mvr;
         OSRFObject info_acp = null;
 
-        // the logic to establish mvr or acp is copied from the opac
-        if (info_mvr.getString("title") == null
-                || info_mvr.getString("author") == null) {
+        // old comment I don't get: the logic to establish mvr or acp is copied from the opac
+        // check for null info_mvr, possible fix for Issue #7?
+        if (info_mvr == null
+            || info_mvr.getString("title") == null
+            || info_mvr.getString("author") == null)
+        {
             Log.d(TAG, "Asset");
             info_acp = fetchAssetCopy(target_copy);
             result = info_acp;
@@ -665,9 +668,14 @@ public class AccountAccess {
                     method, new Object[] {
                             target });
 
-            // Log.d(TAG, "Hold here " + holdInfo);
-            hold.title = holdInfo.getString("title");
-            hold.author = holdInfo.getString("author");
+            // lame guard against Issue #6
+            if (holdInfo == null) {
+                hold.title = "Unknown Title";
+                hold.author = "Unknown Author";
+            } else {
+                hold.title = holdInfo.getString("title");
+                hold.author = holdInfo.getString("author");
+            }
             hold.recordInfo = new RecordInfo(holdInfo);
         } else {
             // multiple objects per hold ????
