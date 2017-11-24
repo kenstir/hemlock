@@ -53,7 +53,8 @@ public class SearchCatalog {
     public Integer visible = 0;
 
     // With limit at 500, we saw some TransactionTooLargeException: data parcel size 684000 bytes
-    public final Integer searchLimit = 400;
+    // 2017-11-24, still seeing the crash with searchLimit=400
+    public final Integer searchLimit = 200;
     
     public String searchText = null;
     public String searchClass = null;
