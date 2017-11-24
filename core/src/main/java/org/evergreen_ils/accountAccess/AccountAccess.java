@@ -813,6 +813,9 @@ public class AccountAccess {
                 Api.HOLD_QUEUE_STATS, authToken, new Object[] {
                         authToken, hold_id });
 
+        if (resp == null)
+            return;
+
         Map<String, Integer> map = (Map<String, Integer>)resp;
         holdObj.status = map.get("status");
         holdObj.potentialCopies = map.get("potential_copies");
