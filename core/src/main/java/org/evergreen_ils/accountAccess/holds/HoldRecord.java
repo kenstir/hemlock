@@ -35,8 +35,6 @@ public class HoldRecord implements Serializable {
 
     private static String TAG = HoldRecord.class.getSimpleName();
 
-    private Integer requestLibID = null;
-    private Integer pickupLibID = null;
     public String holdType = null;
     public Integer target = null;
     public Date expire_time = null;
@@ -47,8 +45,6 @@ public class HoldRecord implements Serializable {
     public String part_label = null;
 
     public Integer status = null;
-
-    public Boolean active = null;
 
     // must also be serializable
     public OSRFObject ahr = null;
@@ -93,12 +89,6 @@ public class HoldRecord implements Serializable {
     private String formatDateTime(Date date) {
         return DateFormat.getDateTimeInstance().format(date);
     }
-
-    /*
-     * Notes about transits:
-     * - transit "prev_dest" could be the string "null"
-     * - or prev_dest could be an org ID that is not OPAC visible like 68 Paxton
-     */
 
     private String getTransitFrom() {
         try {
