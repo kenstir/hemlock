@@ -689,16 +689,19 @@ public class AccountAccess {
         String method = null;
 
         OSRFObject holdInfo = null;
-        if (holdType.equals("T") || holdType.equals("M")) {
-            if (holdType.equals("M"))
-                method = Api.METARECORD_MODS_SLIM_RETRIEVE;
-            else //(holdType.equals("T"))
-                method = Api.RECORD_MODS_SLIM_RETRIEVE;
+        if (holdType.equals("M")) {
+            method = Api.METARECORD_MODS_SLIM_RETRIEVE;
             holdInfo = (OSRFObject) Utils.doRequest(conn(), Api.SEARCH,
-                    method, new Object[] {
-                            target });
-
-            // Log.d(TAG, "Hold here " + holdInfo);
+                    method, new Object[]{
+                            target});
+            hold.title = holdInfo.getString("title");
+            hold.author = holdInfo.getString("author");
+            hold.recordInfo = new RecordInfo(holdInfo);
+        } else if (holdType.equals("T")) {
+            method = Api.RECORD_MODS_SLIM_RETRIEVE;
+            holdInfo = (OSRFObject) Utils.doRequest(conn(), Api.SEARCH,
+                    method, new Object[]{
+                            target});
             hold.title = holdInfo.getString("title");
             hold.author = holdInfo.getString("author");
             hold.recordInfo = new RecordInfo(holdInfo);
