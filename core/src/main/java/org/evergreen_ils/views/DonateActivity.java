@@ -26,6 +26,9 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Toast;
+
+import com.crashlytics.android.Crashlytics;
+
 import org.evergreen_ils.R;
 import org.evergreen_ils.android.App;
 import org.evergreen_ils.billing.BillingHelper;
@@ -35,6 +38,8 @@ import org.evergreen_ils.utils.ui.ActionBarUtils;
 import org.evergreen_ils.views.splashscreen.SplashActivity;
 
 import java.util.HashMap;
+
+import io.fabric.sdk.android.Fabric;
 
 /**
  * Created by kenstir on 1/1/2016.
@@ -48,6 +53,7 @@ public class DonateActivity extends AppCompatActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Fabric.with(this, new Crashlytics());
         if (!SplashActivity.isAppInitialized()) {
             SplashActivity.restartApp(this);
             return;

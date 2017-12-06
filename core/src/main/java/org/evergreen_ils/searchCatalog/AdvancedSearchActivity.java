@@ -40,6 +40,10 @@ import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.crashlytics.android.Crashlytics;
+
+import io.fabric.sdk.android.Fabric;
+
 public class AdvancedSearchActivity extends AppCompatActivity {
 
     private final static String TAG = AdvancedSearchActivity.class.getSimpleName();
@@ -52,6 +56,7 @@ public class AdvancedSearchActivity extends AppCompatActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Fabric.with(this, new Crashlytics());
         if (!SplashActivity.isAppInitialized()) {
             SplashActivity.restartApp(this);
             return;

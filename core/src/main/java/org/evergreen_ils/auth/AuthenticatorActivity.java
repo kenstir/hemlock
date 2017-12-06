@@ -20,12 +20,16 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.crashlytics.android.Crashlytics;
+
 import org.evergreen_ils.android.App;
 import org.evergreen_ils.system.EvergreenServer;
 import org.evergreen_ils.utils.ui.AppState;
 import org.evergreen_ils.system.Log;
 import org.evergreen_ils.system.Library;
 import org.w3c.dom.Text;
+
+import io.fabric.sdk.android.Fabric;
 
 public class AuthenticatorActivity extends AccountAuthenticatorActivity {
 
@@ -56,6 +60,7 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Fabric.with(this, new Crashlytics());
         setContentViewImpl();
 
         AppState.init(this);

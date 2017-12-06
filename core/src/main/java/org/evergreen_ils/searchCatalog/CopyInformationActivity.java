@@ -30,6 +30,8 @@ import android.widget.ListView;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.crashlytics.android.Crashlytics;
+
 import org.evergreen_ils.Api;
 import org.evergreen_ils.R;
 import org.evergreen_ils.system.EvergreenServer;
@@ -49,6 +51,8 @@ import android.view.View;
 import android.widget.TextView;
 import org.opensrf.util.GatewayResponse;
 
+import io.fabric.sdk.android.Fabric;
+
 public class CopyInformationActivity extends AppCompatActivity {
 
     private static final String TAG = CopyInformationActivity.class.getSimpleName();
@@ -62,6 +66,7 @@ public class CopyInformationActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Fabric.with(this, new Crashlytics());
         if (!SplashActivity.isAppInitialized()) {
             SplashActivity.restartApp(this);
             return;

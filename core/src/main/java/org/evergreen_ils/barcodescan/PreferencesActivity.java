@@ -23,8 +23,12 @@ import android.preference.CheckBoxPreference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceScreen;
 
+import com.crashlytics.android.Crashlytics;
+
 import java.util.ArrayList;
 import java.util.Collection;
+
+import io.fabric.sdk.android.Fabric;
 
 /**
  * The main settings activity.
@@ -58,6 +62,7 @@ public final class PreferencesActivity extends PreferenceActivity
   @Override
   protected void onCreate(Bundle icicle) {
     super.onCreate(icicle);
+    Fabric.with(this, new Crashlytics());
    // addPreferencesFromResource(R.xml.preferences);
 
     PreferenceScreen preferences = getPreferenceScreen();

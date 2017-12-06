@@ -19,8 +19,11 @@ import android.view.SurfaceView;
 import android.view.Window;
 import android.view.WindowManager;
 
+import com.crashlytics.android.Crashlytics;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.Result;
+
+import io.fabric.sdk.android.Fabric;
 
 public class CaptureActivity extends Activity implements SurfaceHolder.Callback {
 
@@ -41,6 +44,7 @@ public class CaptureActivity extends Activity implements SurfaceHolder.Callback 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		Fabric.with(this, new Crashlytics());
         if (!SplashActivity.isAppInitialized()) {
             SplashActivity.restartApp(this);
             return;

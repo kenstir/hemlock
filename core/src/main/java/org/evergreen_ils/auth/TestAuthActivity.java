@@ -29,7 +29,12 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.crashlytics.android.Crashlytics;
+
 import org.evergreen_ils.system.Log;
+
+import io.fabric.sdk.android.Fabric;
 
 /**
  * Created with IntelliJ IDEA.
@@ -52,6 +57,7 @@ public class TestAuthActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Fabric.with(this, new Crashlytics());
 
         setContentView(R.layout.test_auth);
         mAccountManager = AccountManager.get(this);

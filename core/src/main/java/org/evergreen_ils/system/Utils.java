@@ -23,11 +23,14 @@ import java.net.URI;
 import java.net.URL;
 import java.util.Map;
 
-import android.os.Looper;
 import android.text.TextUtils;
+
+import com.crashlytics.android.Crashlytics;
+
 import org.evergreen_ils.accountAccess.SessionNotFoundException;
 import org.evergreen_ils.auth.Const;
 import org.opensrf.Method;
+import org.opensrf.ShouldNotHappenException;
 import org.opensrf.net.http.GatewayRequest;
 import org.opensrf.net.http.HttpConnection;
 import org.opensrf.net.http.HttpRequest;
@@ -36,6 +39,7 @@ import org.opensrf.util.JSONWriter;
 public class Utils {
     private static final String TAG = Utils.class.getSimpleName();
     private static HttpURLConnection mConn = null;
+    private static final int MAX_PARAMS = 5;
 
     /**
      * Gets the net page content.
@@ -94,20 +98,40 @@ public class Utils {
         // I know it's bad form to catch NPE.  But until I implement some kind of on-demand IDL parsing,
         // this is what happens when the JSONReader tries to parse a response of an unregistered class.
         // Crash if debugMode, fail if not.
-        Log.d(TAG, "NPE...unregistered type from service "+service+" method "+methodName, e);
+        Crashlytics.log(android.util.Log.DEBUG, TAG, "NPE...unregistered type from service "+service+" method "+methodName);
+        Crashlytics.logException(e);
         throw(e);
+    }
+
+    private static void logRequest(String service, String methodName, Object[] params, String authToken) {
+        Crashlytics.log(android.util.Log.DEBUG, TAG, "req: " + methodName);
+        Crashlytics.setString("svc", service);
+        Crashlytics.setString("m", methodName);
+        if (params.length > MAX_PARAMS) {
+            Log.d(TAG, "more params than expected");
+        }
+        int i;
+        for (i = 0; i < params.length; i++) {
+            String key = "p" + i;
+            String val = "" + params[i];
+            if (val.length() > 0 && TextUtils.equals(val, authToken)) val = "***";
+            Crashlytics.log(android.util.Log.DEBUG, TAG, " " + key + ": " + val);
+            Crashlytics.setString(key, val);
+        }
+        for (; i < MAX_PARAMS; i++) {
+            String key = "p" + i;
+            Crashlytics.setString(key, null);
+        }
     }
 
     public static Object doRequest(HttpConnection conn, String service,
                                    String methodName, String authToken,
                                    Object[] params) throws SessionNotFoundException {
+        logRequest(service, methodName, params, authToken);
 
         Method method = new Method(methodName);
-
-        Log.d(TAG, "doRequest Method " + methodName);
         for (int i = 0; i < params.length; i++) {
             method.addParam(params[i]);
-            Log.d(TAG, " param " + i + ": " + params[i]);
         }
 
         // sync request
@@ -122,7 +146,7 @@ public class Utils {
         }
         Log.logElapsedTime(TAG, now_ms, "doRequest "+methodName);
         if (resp != null) {
-            Log.d(TAG, "Sync Response: " + resp);
+            Crashlytics.log(android.util.Log.INFO, TAG, "resp: " + resp);
             Object response = (Object) resp;
 
             String textcode = getResponseTextcode(resp);
@@ -133,21 +157,19 @@ public class Utils {
 
             return response;
         }
+        Crashlytics.logException(new ShouldNotHappenException(service, method));
         return null;
 
     }
 
     // alternate version of doRequest
-    // kenstir todo: not sure why this one loops calling req.recv and the other doesn't
     public static Object doRequest(HttpConnection conn, String service,
                                    String methodName, Object[] params) {
+        logRequest(service, methodName, params, "");
 
         Method method = new Method(methodName);
-
-        Log.d(TAG, "doRequest Method " + methodName);
         for (int i = 0; i < params.length; i++) {
             method.addParam(params[i]);
-            Log.d(TAG, " param " + i + ": " + params[i]);
         }
 
         // sync request
@@ -157,7 +179,7 @@ public class Utils {
 
         try {
             while ((resp = req.recv()) != null) {
-                Log.d(TAG, "Sync Response: " + resp);
+                Crashlytics.log(android.util.Log.INFO, TAG, "resp: " + resp);
                 Object response = (Object) resp;
 
                 Log.logElapsedTime(TAG, now_ms, "doRequest "+methodName);
@@ -166,6 +188,7 @@ public class Utils {
         } catch (NullPointerException e) {
             logNPE(e, service, methodName);
         }
+        Crashlytics.logException(new ShouldNotHappenException(service, method));
         return null;
     }
 

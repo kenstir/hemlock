@@ -21,6 +21,10 @@ package org.evergreen_ils.views;
 import android.app.Activity;
 import android.os.Bundle;
 
+import com.crashlytics.android.Crashlytics;
+
+import io.fabric.sdk.android.Fabric;
+
 /** Simple activity that serves to run tests based on ActivityInstrumentationTestCase2.
  * The app activities like MainActivity can't be run from there because they forward
  * to SplashActivity and prompt for auth etc.
@@ -31,5 +35,6 @@ public class SimpleTestableActivity extends Activity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Fabric.with(this, new Crashlytics());
     }
 }

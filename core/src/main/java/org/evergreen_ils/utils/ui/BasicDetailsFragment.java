@@ -24,6 +24,7 @@ import android.net.Uri;
 import android.text.TextUtils;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
+
 import org.evergreen_ils.R;
 import org.evergreen_ils.accountAccess.AccountAccess;
 import org.evergreen_ils.accountAccess.bookbags.BookBag;

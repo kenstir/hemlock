@@ -61,6 +61,10 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.crashlytics.android.Crashlytics;
+
+import io.fabric.sdk.android.Fabric;
+
 import static org.evergreen_ils.system.Utils.safeString;
 
 public class PlaceHoldActivity extends AppCompatActivity {
@@ -98,6 +102,7 @@ public class PlaceHoldActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Fabric.with(this, new Crashlytics());
         if (!SplashActivity.isAppInitialized()) {
             SplashActivity.restartApp(this);
             return;

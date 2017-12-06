@@ -36,6 +36,10 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.crashlytics.android.Crashlytics;
+
+import io.fabric.sdk.android.Fabric;
+
 public class SplashActivity extends AppCompatActivity implements LoadingTaskListener {
 
     public final static int REQUEST_SELECT_LIBRARY = 0;
@@ -77,6 +81,7 @@ public class SplashActivity extends AppCompatActivity implements LoadingTaskList
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Fabric.with(this, new Crashlytics());
 
         setContentView(R.layout.activity_splash);
 
