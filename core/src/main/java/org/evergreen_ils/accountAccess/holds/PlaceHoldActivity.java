@@ -19,33 +19,15 @@
  */
 package org.evergreen_ils.accountAccess.holds;
 
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-
+import android.app.DatePickerDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
-import android.view.MenuItem;
-import org.evergreen_ils.Api;
-import org.evergreen_ils.R;
-import org.evergreen_ils.Result;
-import org.evergreen_ils.accountAccess.AccountAccess;
-import org.evergreen_ils.accountAccess.SessionNotFoundException;
-import org.evergreen_ils.system.EvergreenServer;
-import org.evergreen_ils.system.Organization;
-import org.evergreen_ils.searchCatalog.RecordInfo;
-import org.evergreen_ils.system.SMSCarrier;
-import org.evergreen_ils.utils.ui.ActionBarUtils;
-import org.evergreen_ils.utils.ui.ProgressDialogSupport;
-import org.evergreen_ils.views.splashscreen.SplashActivity;
-
-import android.app.DatePickerDialog;
-import android.content.Context;
-import android.os.Bundle;
 import android.text.format.DateFormat;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
@@ -61,9 +43,24 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.crashlytics.android.Crashlytics;
+import org.evergreen_ils.Api;
+import org.evergreen_ils.R;
+import org.evergreen_ils.Result;
+import org.evergreen_ils.accountAccess.AccountAccess;
+import org.evergreen_ils.accountAccess.SessionNotFoundException;
+import org.evergreen_ils.searchCatalog.RecordInfo;
+import org.evergreen_ils.system.EvergreenServer;
+import org.evergreen_ils.system.Organization;
+import org.evergreen_ils.system.SMSCarrier;
+import org.evergreen_ils.utils.ui.ActionBarUtils;
+import org.evergreen_ils.utils.ui.CrashUtils;
+import org.evergreen_ils.utils.ui.ProgressDialogSupport;
+import org.evergreen_ils.views.splashscreen.SplashActivity;
 
-import io.fabric.sdk.android.Fabric;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
 
 import static org.evergreen_ils.system.Utils.safeString;
 
@@ -102,7 +99,7 @@ public class PlaceHoldActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Fabric.with(this, new Crashlytics());
+        CrashUtils.onCreate(this);
         if (!SplashActivity.isAppInitialized()) {
             SplashActivity.restartApp(this);
             return;

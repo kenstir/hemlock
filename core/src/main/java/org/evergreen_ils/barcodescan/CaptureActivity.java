@@ -6,6 +6,7 @@ import java.util.Vector;
 import org.evergreen_ils.R;
 import org.evergreen_ils.barcodescan.camera.CameraManager;
 import org.evergreen_ils.system.Log;
+import org.evergreen_ils.utils.ui.CrashUtils;
 import org.evergreen_ils.views.splashscreen.SplashActivity;
 
 import android.app.Activity;
@@ -44,8 +45,8 @@ public class CaptureActivity extends Activity implements SurfaceHolder.Callback 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		Fabric.with(this, new Crashlytics());
-        if (!SplashActivity.isAppInitialized()) {
+		CrashUtils.onCreate(this);
+		if (!SplashActivity.isAppInitialized()) {
             SplashActivity.restartApp(this);
             return;
         }

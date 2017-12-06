@@ -19,26 +19,23 @@
  */
 package org.evergreen_ils.views.splashscreen;
 
-import android.support.v7.app.AppCompatActivity;
-import org.evergreen_ils.R;
-import org.evergreen_ils.android.App;
-import org.evergreen_ils.utils.ui.AppState;
-import org.evergreen_ils.system.Log;
-import org.evergreen_ils.views.MainActivity;
-import org.evergreen_ils.views.splashscreen.LoadingTask.LoadingTaskListener;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.crashlytics.android.Crashlytics;
-
-import io.fabric.sdk.android.Fabric;
+import org.evergreen_ils.R;
+import org.evergreen_ils.android.App;
+import org.evergreen_ils.system.Log;
+import org.evergreen_ils.utils.ui.AppState;
+import org.evergreen_ils.utils.ui.CrashUtils;
+import org.evergreen_ils.views.MainActivity;
+import org.evergreen_ils.views.splashscreen.LoadingTask.LoadingTaskListener;
 
 public class SplashActivity extends AppCompatActivity implements LoadingTaskListener {
 
@@ -81,7 +78,7 @@ public class SplashActivity extends AppCompatActivity implements LoadingTaskList
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Fabric.with(this, new Crashlytics());
+        CrashUtils.onCreate(this);
 
         setContentView(R.layout.activity_splash);
 

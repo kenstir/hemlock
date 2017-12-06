@@ -19,39 +19,40 @@
  */
 package org.evergreen_ils.searchCatalog;
 
-import java.util.*;
-
+import android.content.Context;
+import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
+
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.crashlytics.android.Crashlytics;
 
 import org.evergreen_ils.Api;
 import org.evergreen_ils.R;
-import org.evergreen_ils.system.EvergreenServer;
-import org.evergreen_ils.system.Log;
-import org.evergreen_ils.system.Utils;
 import org.evergreen_ils.net.GatewayJsonObjectRequest;
 import org.evergreen_ils.net.VolleyWrangler;
+import org.evergreen_ils.system.EvergreenServer;
+import org.evergreen_ils.system.Log;
 import org.evergreen_ils.system.Organization;
+import org.evergreen_ils.system.Utils;
 import org.evergreen_ils.utils.ui.ActionBarUtils;
+import org.evergreen_ils.utils.ui.CrashUtils;
 import org.evergreen_ils.utils.ui.TextViewUtils;
 import org.evergreen_ils.views.splashscreen.SplashActivity;
-
-import android.content.Context;
-import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.widget.TextView;
 import org.opensrf.util.GatewayResponse;
 
-import io.fabric.sdk.android.Fabric;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 
 public class CopyInformationActivity extends AppCompatActivity {
 
@@ -66,7 +67,7 @@ public class CopyInformationActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Fabric.with(this, new Crashlytics());
+        CrashUtils.onCreate(this);
         if (!SplashActivity.isAppInitialized()) {
             SplashActivity.restartApp(this);
             return;

@@ -33,23 +33,26 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
+
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
-import com.crashlytics.android.Crashlytics;
 
 import org.evergreen_ils.R;
 import org.evergreen_ils.accountAccess.AccountUtils;
+import org.evergreen_ils.net.VolleyWrangler;
 import org.evergreen_ils.system.Library;
 import org.evergreen_ils.system.Log;
-import org.evergreen_ils.net.VolleyWrangler;
+import org.evergreen_ils.utils.ui.CrashUtils;
 import org.opensrf.util.JSONException;
 import org.opensrf.util.JSONReader;
 
-import java.util.*;
-
-import io.fabric.sdk.android.Fabric;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
 
 public class GenericAuthenticatorActivity extends AuthenticatorActivity {
 
@@ -69,7 +72,7 @@ public class GenericAuthenticatorActivity extends AuthenticatorActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Fabric.with(this, new Crashlytics());
+        CrashUtils.onCreate(this);
 
         libraries_directory_json_url = getString(R.string.evergreen_libraries_url);
 

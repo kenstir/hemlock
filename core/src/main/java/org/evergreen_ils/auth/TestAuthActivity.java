@@ -15,8 +15,6 @@ limitations under the License.
  */
 package org.evergreen_ils.auth;
 
-import org.evergreen_ils.R;
-
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.accounts.AccountManagerCallback;
@@ -30,11 +28,9 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.crashlytics.android.Crashlytics;
-
+import org.evergreen_ils.R;
 import org.evergreen_ils.system.Log;
-
-import io.fabric.sdk.android.Fabric;
+import org.evergreen_ils.utils.ui.CrashUtils;
 
 /**
  * Created with IntelliJ IDEA.
@@ -57,7 +53,7 @@ public class TestAuthActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Fabric.with(this, new Crashlytics());
+        CrashUtils.onCreate(this);
 
         setContentView(R.layout.test_auth);
         mAccountManager = AccountManager.get(this);

@@ -19,18 +19,11 @@
  */
 package org.evergreen_ils.searchCatalog;
 
-import java.util.ArrayList;
-import java.util.StringTokenizer;
-
+import android.content.Intent;
+import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.MenuItem;
-import org.evergreen_ils.R;
-import org.evergreen_ils.utils.ui.ActionBarUtils;
-import org.evergreen_ils.views.splashscreen.SplashActivity;
-
-import android.content.Intent;
-import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup.LayoutParams;
@@ -40,9 +33,13 @@ import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import com.crashlytics.android.Crashlytics;
+import org.evergreen_ils.R;
+import org.evergreen_ils.utils.ui.ActionBarUtils;
+import org.evergreen_ils.utils.ui.CrashUtils;
+import org.evergreen_ils.views.splashscreen.SplashActivity;
 
-import io.fabric.sdk.android.Fabric;
+import java.util.ArrayList;
+import java.util.StringTokenizer;
 
 public class AdvancedSearchActivity extends AppCompatActivity {
 
@@ -56,7 +53,7 @@ public class AdvancedSearchActivity extends AppCompatActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Fabric.with(this, new Crashlytics());
+        CrashUtils.onCreate(this);
         if (!SplashActivity.isAppInitialized()) {
             SplashActivity.restartApp(this);
             return;
