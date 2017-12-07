@@ -40,6 +40,7 @@ public class Utils {
     private static final String TAG = Utils.class.getSimpleName();
     private static HttpURLConnection mConn = null;
     private static final int MAX_PARAMS = 5;
+    private static String mLastAuthToken = null;
 
     /**
      * Gets the net page content.
@@ -103,7 +104,7 @@ public class Utils {
         throw(e);
     }
 
-    private static void logRequest(String service, String methodName, Object[] params, String authToken) {
+    private static void logRequest(String service, String methodName, Object[] params) {
         Crashlytics.log(android.util.Log.DEBUG, TAG, "req: " + methodName);
         Crashlytics.setString("svc", service);
         Crashlytics.setString("m", methodName);
@@ -114,7 +115,7 @@ public class Utils {
         for (i = 0; i < params.length; i++) {
             String key = "p" + i;
             String val = "" + params[i];
-            if (val.length() > 0 && TextUtils.equals(val, authToken)) val = "***";
+            if (val.length() > 0 && TextUtils.equals(val, mLastAuthToken)) val = "***";//private
             Crashlytics.log(android.util.Log.DEBUG, TAG, " " + key + ": " + val);
             Crashlytics.setString(key, val);
         }
@@ -127,7 +128,8 @@ public class Utils {
     public static Object doRequest(HttpConnection conn, String service,
                                    String methodName, String authToken,
                                    Object[] params) throws SessionNotFoundException {
-        logRequest(service, methodName, params, authToken);
+        mLastAuthToken = authToken;
+        logRequest(service, methodName, params);
 
         Method method = new Method(methodName);
         for (int i = 0; i < params.length; i++) {
@@ -165,7 +167,7 @@ public class Utils {
     // alternate version of doRequest
     public static Object doRequest(HttpConnection conn, String service,
                                    String methodName, Object[] params) {
-        logRequest(service, methodName, params, "");
+        logRequest(service, methodName, params);
 
         Method method = new Method(methodName);
         for (int i = 0; i < params.length; i++) {
