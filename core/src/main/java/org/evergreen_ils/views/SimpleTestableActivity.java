@@ -33,6 +33,6 @@ public class SimpleTestableActivity extends Activity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        CrashUtils.onCreate(this);
+        CrashUtils.initialize(this);
     }
 }

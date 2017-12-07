@@ -72,7 +72,7 @@ public class GenericAuthenticatorActivity extends AuthenticatorActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        CrashUtils.onCreate(this);
+        CrashUtils.initialize(this);
 
         libraries_directory_json_url = getString(R.string.evergreen_libraries_url);
 

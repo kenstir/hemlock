@@ -53,7 +53,7 @@ public class TestAuthActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        CrashUtils.onCreate(this);
+        CrashUtils.initialize(this);
 
         setContentView(R.layout.test_auth);
         mAccountManager = AccountManager.get(this);

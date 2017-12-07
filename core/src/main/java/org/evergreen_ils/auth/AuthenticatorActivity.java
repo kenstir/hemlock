@@ -53,7 +53,7 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        CrashUtils.onCreate(this);
+        CrashUtils.initialize(this);
         setContentViewImpl();
 
         AppState.init(this);
@@ -61,11 +61,11 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity {
         accountManager = AccountManager.get(getBaseContext());
 
         String accountName = getIntent().getStringExtra(ARG_ACCOUNT_NAME);
-        Log.d(TAG, "onCreate> accountName=" + accountName);
+        Log.d(TAG, "accountName=" + accountName);
         authTokenType = getIntent().getStringExtra(ARG_AUTH_TYPE);
         if (authTokenType == null)
             authTokenType = Const.AUTHTOKEN_TYPE;
-        Log.d(TAG, "onCreate> authTokenType=" + authTokenType);
+        Log.d(TAG, "authTokenType=" + authTokenType);
 
         TextView signInText = (TextView) findViewById(R.id.account_sign_in_text);
         signInText.setText(String.format(getString(R.string.ou_account_sign_in_message),
@@ -101,7 +101,7 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity {
         }
 
         if (savedInstanceState != null) {
-            Log.d(TAG, "onCreate> savedInstanceState=" + savedInstanceState);
+            Log.d(TAG, "savedInstanceState=" + savedInstanceState);
             if (savedInstanceState.getString(STATE_ALERT_MESSAGE) != null) {
                 showAlert(savedInstanceState.getString(STATE_ALERT_MESSAGE));
             }

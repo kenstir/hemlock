@@ -60,7 +60,7 @@ public final class PreferencesActivity extends PreferenceActivity
   @Override
   protected void onCreate(Bundle icicle) {
     super.onCreate(icicle);
-    CrashUtils.onCreate(this);
+    CrashUtils.initialize(this);
    // addPreferencesFromResource(R.xml.preferences);
 
     PreferenceScreen preferences = getPreferenceScreen();

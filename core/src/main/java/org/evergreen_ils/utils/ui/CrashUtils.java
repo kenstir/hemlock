@@ -11,7 +11,7 @@ import io.fabric.sdk.android.Fabric;
  */
 
 public class CrashUtils {
-    public static void onCreate(Context context) {
+    public static void initialize(Context context) {
         Fabric.with(context, new Crashlytics());
     }
 }

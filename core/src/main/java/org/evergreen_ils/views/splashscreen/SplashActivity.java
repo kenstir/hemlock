@@ -78,7 +78,7 @@ public class SplashActivity extends AppCompatActivity implements LoadingTaskList
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        CrashUtils.onCreate(this);
+        CrashUtils.initialize(this);
 
         setContentView(R.layout.activity_splash);
 
