@@ -152,7 +152,7 @@ public class AccountAccess {
         this.authToken = auth_token;
 
         Object resp = Utils.doRequest(conn(), Api.AUTH,
-                Api.AUTH_SESSION_RETRIEVE, auth_token, new Object[]{
+                Api.AUTH_SESSION_RETRIEVE, authToken, new Object[]{
                         authToken});
         if (resp != null) {
             OSRFObject au = (OSRFObject) resp;
