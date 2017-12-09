@@ -2,8 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           package="org.cwmars"
           android:installLocation="auto"
-          android:versionCode="49"
-          android:versionName="3.2.2">
+          android:versionCode="52"
+          android:versionName="3.2.5">
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS" />
