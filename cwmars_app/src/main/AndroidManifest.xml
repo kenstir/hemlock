@@ -5,10 +5,6 @@
           android:versionCode="49"
           android:versionName="3.2.2">
 
-    <uses-sdk
-        android:minSdkVersion="15"
-        android:targetSdkVersion="23" />
-
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS" />
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
@@ -29,7 +25,7 @@
         android:fullBackupContent="true"
         android:icon="@drawable/launcher_icon"
         android:label="@string/ou_app_label"
-        android:theme="@style/HemlockDark" >
+        android:theme="@style/HemlockDarkNoActionBar" >
 
         <meta-data android:name="android.max_aspect" android:value="2.1" />
 
