@@ -291,8 +291,6 @@ public class SearchActivity extends BaseActivity {
     // unpack the json map to populate our spinner, and allow translation from search_format keyword <=> label
     private void initSearchFormatSpinner() {
         List<String> labels = SearchFormat.getSpinnerLabels();
-        //ArrayAdapter<String> adapter = CompatSpinnerAdapter.CreateCompatSpinnerAdapter(this, labels);
-        //ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, labels);
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, labels);
         searchFormatSpinner.setAdapter(adapter);
     }

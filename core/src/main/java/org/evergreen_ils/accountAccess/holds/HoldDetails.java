@@ -230,7 +230,6 @@ public class HoldDetails extends BaseActivity {
                 selectedOrgPos = i;
             }
         }
-        //ArrayAdapter<String> adapter = CompatSpinnerAdapter.CreateCompatSpinnerAdapter(this, list);
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, R.layout.org_item_layout, list);
         orgSelector.setAdapter(adapter);
         orgSelector.setSelection(selectedOrgPos);
