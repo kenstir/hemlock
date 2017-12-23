@@ -1,7 +1,7 @@
 package org.opensrf.net.http;
 
 import org.evergreen_ils.system.Log;
-import org.evergreen_ils.utils.ui.Analytics;
+import org.evergreen_ils.system.Analytics;
 import org.json.JSONObject;
 import org.opensrf.Method;
 import org.opensrf.util.JSONReader;

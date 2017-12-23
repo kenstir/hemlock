@@ -44,7 +44,7 @@ import org.evergreen_ils.accountAccess.AccountUtils;
 import org.evergreen_ils.net.VolleyWrangler;
 import org.evergreen_ils.system.Library;
 import org.evergreen_ils.system.Log;
-import org.evergreen_ils.utils.ui.Analytics;
+import org.evergreen_ils.system.Analytics;
 import org.opensrf.util.JSONException;
 import org.opensrf.util.JSONReader;
 

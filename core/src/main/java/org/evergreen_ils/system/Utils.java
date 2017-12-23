@@ -27,7 +27,6 @@ import android.text.TextUtils;
 
 import org.evergreen_ils.accountAccess.SessionNotFoundException;
 import org.evergreen_ils.auth.Const;
-import org.evergreen_ils.utils.ui.Analytics;
 import org.opensrf.Method;
 import org.evergreen_ils.utils.ui.ShouldNotHappenException;
 import org.opensrf.net.http.GatewayRequest;

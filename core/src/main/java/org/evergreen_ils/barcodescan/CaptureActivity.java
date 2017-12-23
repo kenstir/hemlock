@@ -17,7 +17,7 @@ import com.google.zxing.Result;
 import org.evergreen_ils.R;
 import org.evergreen_ils.barcodescan.camera.CameraManager;
 import org.evergreen_ils.system.Log;
-import org.evergreen_ils.utils.ui.Analytics;
+import org.evergreen_ils.system.Analytics;
 import org.evergreen_ils.views.splashscreen.SplashActivity;
 
 import java.io.IOException;

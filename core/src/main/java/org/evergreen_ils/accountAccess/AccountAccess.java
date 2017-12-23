@@ -34,7 +34,7 @@ import org.evergreen_ils.system.EvergreenServer;
 import org.evergreen_ils.system.Log;
 import org.evergreen_ils.system.Utils;
 import org.evergreen_ils.searchCatalog.RecordInfo;
-import org.evergreen_ils.utils.ui.Analytics;
+import org.evergreen_ils.system.Analytics;
 import org.evergreen_ils.utils.ui.ShouldNotHappenException;
 import org.opensrf.net.http.HttpConnection;
 import org.opensrf.util.OSRFObject;

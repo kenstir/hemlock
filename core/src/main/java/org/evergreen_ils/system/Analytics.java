@@ -16,17 +16,17 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
-package org.evergreen_ils.utils.ui;
+package org.evergreen_ils.system;
 
 import android.content.Context;
 import android.text.TextUtils;
 
 import com.crashlytics.android.Crashlytics;
 
-import org.evergreen_ils.net.GatewayJsonObjectRequest;
 import org.opensrf.Method;
 import org.opensrf.util.GatewayResponse;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -60,15 +60,15 @@ public class Analytics {
     }
 
     public static void logRequest(String service, String method, List<Object> params) {
-        Crashlytics.log(android.util.Log.DEBUG, TAG, "req: " + method);
         Crashlytics.setString("svc", service);
         Crashlytics.setString("m", method);
         int i;
+        List<String> logParams = new ArrayList<String>();
         for (i = 0; i < params.size(); i++) {
             String key = "p" + i;
             String val = "" + params.get(i);
-            if (val.length() > 0 && TextUtils.equals(val, mLastAuthToken)) val = "***";//private
-            Crashlytics.log(android.util.Log.DEBUG, TAG, " " + key + ": " + val);
+            if (val.length() > 0 && TextUtils.equals(val, mLastAuthToken)) val = "***";//redacted
+            logParams.add(val);
             if (i < MAX_PARAMS)
                 Crashlytics.setString(key, val);
         }
@@ -76,10 +76,17 @@ public class Analytics {
             String key = "p" + i;
             Crashlytics.setString(key, null);
         }
+        Crashlytics.log(android.util.Log.DEBUG, TAG, method
+                + "(" + TextUtils.join(", ", logParams) + ")");
     }
 
     public static void logRequest(String service, Method method) {
         logRequest(service, method.getName(), method.getParams());
+    }
+
+    public static String buildGatewayUrl(String service, String method, Object[] params) {
+        Analytics.logVolleyRequest(service, method, params);
+        return Utils.buildGatewayUrl(service, method, params);
     }
 
     public static void logVolleyRequest(String service, String method, Object[] params) {
@@ -88,15 +95,23 @@ public class Analytics {
     }
 
     public static void logResponse(Object resp) {
-        Crashlytics.log(android.util.Log.INFO, TAG, "resp: " + resp);
+        Crashlytics.log(android.util.Log.DEBUG, TAG, "resp: " + resp);
     }
 
     public static void logResponse(GatewayResponse resp) {
-        Crashlytics.log(android.util.Log.INFO, TAG, "resp: " + resp.map);
+        Crashlytics.log(android.util.Log.DEBUG, TAG, "resp: " + resp.payload);
+    }
+
+    public static void logRedactedResponse() {
+        Crashlytics.log(android.util.Log.DEBUG, TAG, "resp: ***");
+    }
+
+    public static void logVolleyResponse(String method) {
+        Crashlytics.log(android.util.Log.DEBUG, TAG, method + " ok");
     }
 
     public static void logErrorResponse(String resp) {
-        Crashlytics.log(android.util.Log.INFO, TAG, "err_resp: " + resp);
+        Crashlytics.log(android.util.Log.WARN, TAG, "err_resp: " + resp);
     }
 
     public static void logException(Throwable e) {

@@ -22,7 +22,7 @@ import org.evergreen_ils.android.App;
 import org.evergreen_ils.system.Library;
 import org.evergreen_ils.system.Log;
 import org.evergreen_ils.utils.ui.AppState;
-import org.evergreen_ils.utils.ui.Analytics;
+import org.evergreen_ils.system.Analytics;
 
 public class AuthenticatorActivity extends AccountAuthenticatorActivity {
 

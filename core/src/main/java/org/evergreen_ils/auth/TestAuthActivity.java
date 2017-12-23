@@ -30,7 +30,7 @@ import android.widget.Toast;
 
 import org.evergreen_ils.R;
 import org.evergreen_ils.system.Log;
-import org.evergreen_ils.utils.ui.Analytics;
+import org.evergreen_ils.system.Analytics;
 
 /**
  * Created with IntelliJ IDEA.

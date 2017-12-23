@@ -27,6 +27,7 @@ import org.evergreen_ils.accountAccess.holds.HoldsListView;
 import org.evergreen_ils.android.App;
 import org.evergreen_ils.searchCatalog.SearchActivity;
 import org.evergreen_ils.searchCatalog.SearchFormat;
+import org.evergreen_ils.system.Analytics;
 import org.evergreen_ils.system.EvergreenServer;
 import org.evergreen_ils.system.Log;
 import org.evergreen_ils.views.DonateActivity;

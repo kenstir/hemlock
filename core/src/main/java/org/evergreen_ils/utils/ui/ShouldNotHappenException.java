@@ -1,5 +1,6 @@
 package org.evergreen_ils.utils.ui;
 
+import org.evergreen_ils.system.Analytics;
 import org.opensrf.Method;
 
 /**

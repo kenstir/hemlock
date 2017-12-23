@@ -33,7 +33,7 @@ import org.evergreen_ils.billing.BillingHelper;
 import org.evergreen_ils.billing.IabResult;
 import org.evergreen_ils.system.Log;
 import org.evergreen_ils.utils.ui.ActionBarUtils;
-import org.evergreen_ils.utils.ui.Analytics;
+import org.evergreen_ils.system.Analytics;
 import org.evergreen_ils.views.splashscreen.SplashActivity;
 
 import java.util.HashMap;

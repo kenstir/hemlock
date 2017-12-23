@@ -29,7 +29,6 @@ import org.evergreen_ils.Api;
 import org.evergreen_ils.accountAccess.AccountAccess;
 import org.evergreen_ils.net.GatewayJsonObjectRequest;
 import org.evergreen_ils.net.VolleyWrangler;
-import org.evergreen_ils.utils.ui.Analytics;
 import org.opensrf.util.GatewayResponse;
 import org.opensrf.util.OSRFObject;
 
@@ -115,8 +114,9 @@ public class EvergreenServerLoader {
             if (org.parent_ou == null) {
                 settings.add((Api.SETTING_SMS_ENABLE));
             }
-            String url = eg.getUrl(Utils.buildGatewayUrl(
-                    Api.ACTOR, Api.ORG_UNIT_SETTING_BATCH,
+            final String method = Api.ORG_UNIT_SETTING_BATCH;
+            String url = eg.getUrl(Analytics.buildGatewayUrl(
+                    Api.ACTOR, method,
                     new Object[]{org.id, settings, ac.getAuthToken()}));
             GatewayJsonObjectRequest r = new GatewayJsonObjectRequest(
                     url,
@@ -124,6 +124,7 @@ public class EvergreenServerLoader {
                     new Response.Listener<GatewayResponse>() {
                         @Override
                         public void onResponse(GatewayResponse response) {
+                            Analytics.logVolleyResponse(method);
                             parseOrgSettingsFromGatewayResponse(response, org);
                             decrNumOutstanding();
                         }
@@ -131,6 +132,7 @@ public class EvergreenServerLoader {
                     new Response.ErrorListener() {
                         @Override
                         public void onErrorResponse(VolleyError error) {
+                            Analytics.logErrorResponse(error.getMessage());
                             String msg = error.getMessage();
                             if (!TextUtils.isEmpty(msg))
                                 Log.d(TAG, "id=" + org.id + " error: " + msg);
@@ -143,7 +145,6 @@ public class EvergreenServerLoader {
     }
 
     private static void parseSMSCarriersFromGatewayResponse(GatewayResponse response) {
-        Log.d(TAG, "response="+response);
         try {
             List<OSRFObject> resp_list = (List<OSRFObject>) response.payload;
             EvergreenServer.getInstance().loadSMSCarriers(resp_list);
@@ -158,18 +159,17 @@ public class EvergreenServerLoader {
         final AccountAccess ac = AccountAccess.getInstance();
         HashMap<String, Object> args = new HashMap<>();
         args.put("active", 1);
-        Object[] params = new Object[]{ac.getAuthToken(), args};
-        String url = eg.getUrl(Utils.buildGatewayUrl(
-                Api.PCRUD_SERVICE, Api.SEARCH_SMS_CARRIERS,
-                params));
-        Analytics.logVolleyRequest(Api.PCRUD_SERVICE, Api.SEARCH_SMS_CARRIERS, params);
+        final String method = Api.SEARCH_SMS_CARRIERS;
+        String url = eg.getUrl(Analytics.buildGatewayUrl(
+                Api.PCRUD_SERVICE, method,
+                new Object[]{ac.getAuthToken(), args}));
         GatewayJsonObjectRequest r = new GatewayJsonObjectRequest(
                 url,
                 Request.Priority.NORMAL,
                 new Response.Listener<GatewayResponse>() {
                     @Override
                     public void onResponse(GatewayResponse response) {
-                        Analytics.logResponse(response);
+                        Analytics.logVolleyResponse(method);
                         parseSMSCarriersFromGatewayResponse(response);
                         decrNumOutstanding();
                     }
@@ -189,7 +189,6 @@ public class EvergreenServerLoader {
     }
 
     private static Integer parseMessagesResponse(GatewayResponse response) {
-        Log.d(TAG, "response="+response);
         Integer unread_count = 0;
         if (response.payload != null) {
             try {
@@ -217,8 +216,9 @@ public class EvergreenServerLoader {
         startVolley();
         final EvergreenServer eg = EvergreenServer.getInstance();
         final AccountAccess ac = AccountAccess.getInstance();
-        String url = eg.getUrl(Utils.buildGatewayUrl(
-                Api.ACTOR, Api.MESSAGES_RETRIEVE,
+        final String method = Api.MESSAGES_RETRIEVE;
+        String url = eg.getUrl(Analytics.buildGatewayUrl(
+                Api.ACTOR, method,
                 new Object[]{ac.getAuthToken(), ac.getUserID(), null}));
         GatewayJsonObjectRequest r = new GatewayJsonObjectRequest(
                 url,
@@ -226,6 +226,7 @@ public class EvergreenServerLoader {
                 new Response.Listener<GatewayResponse>() {
                     @Override
                     public void onResponse(GatewayResponse response) {
+                        Analytics.logVolleyResponse(method);
                         listener.onResponse(parseMessagesResponse(response));
                         decrNumOutstanding();
                     }
@@ -233,6 +234,7 @@ public class EvergreenServerLoader {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
+                        Analytics.logErrorResponse(error.getMessage());
                         String msg = error.getMessage();
                         if (!TextUtils.isEmpty(msg))
                             Log.d(TAG, "error: "+msg);

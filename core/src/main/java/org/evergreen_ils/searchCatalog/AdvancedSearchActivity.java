@@ -35,7 +35,7 @@ import android.widget.TextView;
 
 import org.evergreen_ils.R;
 import org.evergreen_ils.utils.ui.ActionBarUtils;
-import org.evergreen_ils.utils.ui.Analytics;
+import org.evergreen_ils.system.Analytics;
 import org.evergreen_ils.views.splashscreen.SplashActivity;
 
 import java.util.ArrayList;
