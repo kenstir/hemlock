@@ -17,7 +17,7 @@ import com.google.zxing.Result;
 import org.evergreen_ils.R;
 import org.evergreen_ils.barcodescan.camera.CameraManager;
 import org.evergreen_ils.system.Log;
-import org.evergreen_ils.utils.ui.CrashUtils;
+import org.evergreen_ils.utils.ui.Analytics;
 import org.evergreen_ils.views.splashscreen.SplashActivity;
 
 import java.io.IOException;
@@ -42,7 +42,7 @@ public class CaptureActivity extends Activity implements SurfaceHolder.Callback 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		CrashUtils.initialize(this);
+		Analytics.initialize(this);
 		if (!SplashActivity.isAppInitialized()) {
             SplashActivity.restartApp(this);
             return;

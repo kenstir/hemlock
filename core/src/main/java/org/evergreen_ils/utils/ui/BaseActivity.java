@@ -51,7 +51,7 @@ public class BaseActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        CrashUtils.initialize(this);
+        Analytics.initialize(this);
         if (!SplashActivity.isAppInitialized()) {
             SplashActivity.restartApp(this);
             mRestarting = true;

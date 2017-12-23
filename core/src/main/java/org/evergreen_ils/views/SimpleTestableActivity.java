@@ -21,7 +21,7 @@ package org.evergreen_ils.views;
 import android.app.Activity;
 import android.os.Bundle;
 
-import org.evergreen_ils.utils.ui.CrashUtils;
+import org.evergreen_ils.utils.ui.Analytics;
 
 /** Simple activity that serves to run tests based on ActivityInstrumentationTestCase2.
  * The app activities like MainActivity can't be run from there because they forward
@@ -33,6 +33,6 @@ public class SimpleTestableActivity extends Activity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        CrashUtils.initialize(this);
+        Analytics.initialize(this);
     }
 }

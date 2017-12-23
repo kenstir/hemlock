@@ -22,8 +22,6 @@ package org.evergreen_ils.accountAccess;
 import android.app.Activity;
 import android.text.TextUtils;
 
-import com.crashlytics.android.Crashlytics;
-
 import org.evergreen_ils.Api;
 import org.evergreen_ils.Result;
 import org.evergreen_ils.accountAccess.bookbags.BookBag;
@@ -36,7 +34,8 @@ import org.evergreen_ils.system.EvergreenServer;
 import org.evergreen_ils.system.Log;
 import org.evergreen_ils.system.Utils;
 import org.evergreen_ils.searchCatalog.RecordInfo;
-import org.opensrf.ShouldNotHappenException;
+import org.evergreen_ils.utils.ui.Analytics;
+import org.evergreen_ils.utils.ui.ShouldNotHappenException;
 import org.opensrf.net.http.HttpConnection;
 import org.opensrf.util.OSRFObject;
 
@@ -818,7 +817,7 @@ public class AccountAccess {
                         authToken, hold_id });
 
         if (resp == null) {
-            Crashlytics.logException(new ShouldNotHappenException("null resp from hold q stats"));
+            Analytics.logException(new ShouldNotHappenException("null resp from hold q stats"));
             return;
         }
 

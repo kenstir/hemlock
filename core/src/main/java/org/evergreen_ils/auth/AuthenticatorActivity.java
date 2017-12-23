@@ -22,7 +22,7 @@ import org.evergreen_ils.android.App;
 import org.evergreen_ils.system.Library;
 import org.evergreen_ils.system.Log;
 import org.evergreen_ils.utils.ui.AppState;
-import org.evergreen_ils.utils.ui.CrashUtils;
+import org.evergreen_ils.utils.ui.Analytics;
 
 public class AuthenticatorActivity extends AccountAuthenticatorActivity {
 
@@ -53,7 +53,7 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        CrashUtils.initialize(this);
+        Analytics.initialize(this);
         setContentViewImpl();
 
         AppState.init(this);

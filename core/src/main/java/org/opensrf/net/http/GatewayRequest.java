@@ -1,8 +1,7 @@
 package org.opensrf.net.http;
 
-import com.crashlytics.android.Crashlytics;
-
 import org.evergreen_ils.system.Log;
+import org.evergreen_ils.utils.ui.Analytics;
 import org.json.JSONObject;
 import org.opensrf.Method;
 import org.opensrf.util.JSONReader;
@@ -103,9 +102,9 @@ public class GatewayRequest extends HttpRequest {
             failed = true;
             failure = ex;
             Log.d(TAG, "caught exception", ex);
-            Crashlytics.setString("svc", service);
-            Crashlytics.setString("m", method.getName());
-            Crashlytics.logException(ex);
+            Analytics.setString("svc", service);
+            Analytics.setString("m", method.getName());
+            Analytics.logException(ex);
         }
 
         readComplete = true;

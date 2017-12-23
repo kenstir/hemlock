@@ -25,12 +25,11 @@ import java.util.Map;
 
 import android.text.TextUtils;
 
-import com.crashlytics.android.Crashlytics;
-
 import org.evergreen_ils.accountAccess.SessionNotFoundException;
 import org.evergreen_ils.auth.Const;
+import org.evergreen_ils.utils.ui.Analytics;
 import org.opensrf.Method;
-import org.opensrf.ShouldNotHappenException;
+import org.evergreen_ils.utils.ui.ShouldNotHappenException;
 import org.opensrf.net.http.GatewayRequest;
 import org.opensrf.net.http.HttpConnection;
 import org.opensrf.net.http.HttpRequest;
@@ -39,8 +38,6 @@ import org.opensrf.util.JSONWriter;
 public class Utils {
     private static final String TAG = Utils.class.getSimpleName();
     private static HttpURLConnection mConn = null;
-    private static final int MAX_PARAMS = 5;
-    private static String mLastAuthToken = null;
 
     /**
      * Gets the net page content.
@@ -99,42 +96,19 @@ public class Utils {
         // I know it's bad form to catch NPE.  But until I implement some kind of on-demand IDL parsing,
         // this is what happens when the JSONReader tries to parse a response of an unregistered class.
         // Crash if debugMode, fail if not.
-        Crashlytics.log(android.util.Log.DEBUG, TAG, "NPE...unregistered type from service "+service+" method "+methodName);
-        Crashlytics.logException(e);
+        Analytics.log("unregistered type from service "+service+" method "+methodName);
+        Analytics.logException(e);
         throw(e);
-    }
-
-    private static void logRequest(String service, String methodName, Object[] params) {
-        Crashlytics.log(android.util.Log.DEBUG, TAG, "req: " + methodName);
-        Crashlytics.setString("svc", service);
-        Crashlytics.setString("m", methodName);
-        if (params.length > MAX_PARAMS) {
-            Log.d(TAG, "more params than expected");
-        }
-        int i;
-        for (i = 0; i < params.length; i++) {
-            String key = "p" + i;
-            String val = "" + params[i];
-            if (val.length() > 0 && TextUtils.equals(val, mLastAuthToken)) val = "***";//private
-            Crashlytics.log(android.util.Log.DEBUG, TAG, " " + key + ": " + val);
-            Crashlytics.setString(key, val);
-        }
-        for (; i < MAX_PARAMS; i++) {
-            String key = "p" + i;
-            Crashlytics.setString(key, null);
-        }
     }
 
     public static Object doRequest(HttpConnection conn, String service,
                                    String methodName, String authToken,
                                    Object[] params) throws SessionNotFoundException {
-        mLastAuthToken = authToken;
-        logRequest(service, methodName, params);
-
         Method method = new Method(methodName);
         for (int i = 0; i < params.length; i++) {
             method.addParam(params[i]);
         }
+        Analytics.logRequest(service, method, authToken);
 
         // sync request
         long now_ms = System.currentTimeMillis();
@@ -143,23 +117,21 @@ public class Utils {
 
         try {
             resp = req.recv();
+            Analytics.logResponse(resp);
+            Log.logElapsedTime(TAG, now_ms, "doRequest "+methodName);
         } catch (NullPointerException e) {
             logNPE(e, service, methodName);
         }
-        Log.logElapsedTime(TAG, now_ms, "doRequest "+methodName);
         if (resp != null) {
-            Crashlytics.log(android.util.Log.INFO, TAG, "resp: " + resp);
-            Object response = (Object) resp;
-
             String textcode = getResponseTextcode(resp);
             if (TextUtils.equals(textcode, "NO_SESSION")) {
                 Log.d(Const.AUTH_TAG, textcode);
                 throw new SessionNotFoundException();
             }
 
-            return response;
+            return resp;
         }
-        Crashlytics.logException(new ShouldNotHappenException(service, method));
+        Analytics.logException(new ShouldNotHappenException(service, method));
         return null;
 
     }
@@ -167,12 +139,11 @@ public class Utils {
     // alternate version of doRequest
     public static Object doRequest(HttpConnection conn, String service,
                                    String methodName, Object[] params) {
-        logRequest(service, methodName, params);
-
         Method method = new Method(methodName);
         for (int i = 0; i < params.length; i++) {
             method.addParam(params[i]);
         }
+        Analytics.logRequest(service, method);
 
         // sync request
         long now_ms = System.currentTimeMillis();
@@ -181,16 +152,14 @@ public class Utils {
 
         try {
             while ((resp = req.recv()) != null) {
-                Crashlytics.log(android.util.Log.INFO, TAG, "resp: " + resp);
-                Object response = (Object) resp;
-
+                Analytics.logResponse(resp);
                 Log.logElapsedTime(TAG, now_ms, "doRequest "+methodName);
-                return response;
+                return resp;
             }
         } catch (NullPointerException e) {
             logNPE(e, service, methodName);
         }
-        Crashlytics.logException(new ShouldNotHappenException(service, method));
+        Analytics.logException(new ShouldNotHappenException(service, method));
         return null;
     }
 

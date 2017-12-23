@@ -44,7 +44,7 @@ import org.evergreen_ils.accountAccess.AccountUtils;
 import org.evergreen_ils.net.VolleyWrangler;
 import org.evergreen_ils.system.Library;
 import org.evergreen_ils.system.Log;
-import org.evergreen_ils.utils.ui.CrashUtils;
+import org.evergreen_ils.utils.ui.Analytics;
 import org.opensrf.util.JSONException;
 import org.opensrf.util.JSONReader;
 
@@ -72,7 +72,7 @@ public class GenericAuthenticatorActivity extends AuthenticatorActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        CrashUtils.initialize(this);
+        Analytics.initialize(this);
 
         libraries_directory_json_url = getString(R.string.evergreen_libraries_url);
 

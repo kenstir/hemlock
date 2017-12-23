@@ -44,7 +44,7 @@ import org.evergreen_ils.system.Log;
 import org.evergreen_ils.system.Organization;
 import org.evergreen_ils.system.Utils;
 import org.evergreen_ils.utils.ui.ActionBarUtils;
-import org.evergreen_ils.utils.ui.CrashUtils;
+import org.evergreen_ils.utils.ui.Analytics;
 import org.evergreen_ils.utils.ui.TextViewUtils;
 import org.evergreen_ils.views.splashscreen.SplashActivity;
 import org.opensrf.util.GatewayResponse;
@@ -67,7 +67,7 @@ public class CopyInformationActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        CrashUtils.initialize(this);
+        Analytics.initialize(this);
         if (!SplashActivity.isAppInitialized()) {
             SplashActivity.restartApp(this);
             return;

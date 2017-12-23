@@ -30,7 +30,7 @@ import android.widget.Toast;
 
 import org.evergreen_ils.R;
 import org.evergreen_ils.system.Log;
-import org.evergreen_ils.utils.ui.CrashUtils;
+import org.evergreen_ils.utils.ui.Analytics;
 
 /**
  * Created with IntelliJ IDEA.
@@ -53,7 +53,7 @@ public class TestAuthActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        CrashUtils.initialize(this);
+        Analytics.initialize(this);
 
         setContentView(R.layout.test_auth);
         mAccountManager = AccountManager.get(this);

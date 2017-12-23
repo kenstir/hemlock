@@ -1,6 +1,6 @@
-package org.opensrf;
+package org.evergreen_ils.utils.ui;
 
-import com.crashlytics.android.Crashlytics;
+import org.opensrf.Method;
 
 /**
  * Used to log unexpected events to Crashlytics.
@@ -10,9 +10,9 @@ public class ShouldNotHappenException extends Exception {
         super(message);
     }
     public ShouldNotHappenException(String service, Method method) {
-        Crashlytics.setString("svc", service);
-        Crashlytics.setString("m", method.getName());
-        Crashlytics.setString("params", "" + method.getParams());
+        Analytics.setString("svc", service);
+        Analytics.setString("m", method.getName());
+        Analytics.setString("params", "" + method.getParams());
     }
     public ShouldNotHappenException(Throwable cause) {
         super(cause);

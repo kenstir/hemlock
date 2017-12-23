@@ -35,7 +35,7 @@ import android.widget.TextView;
 
 import org.evergreen_ils.R;
 import org.evergreen_ils.utils.ui.ActionBarUtils;
-import org.evergreen_ils.utils.ui.CrashUtils;
+import org.evergreen_ils.utils.ui.Analytics;
 import org.evergreen_ils.views.splashscreen.SplashActivity;
 
 import java.util.ArrayList;
@@ -53,7 +53,7 @@ public class AdvancedSearchActivity extends AppCompatActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        CrashUtils.initialize(this);
+        Analytics.initialize(this);
         if (!SplashActivity.isAppInitialized()) {
             SplashActivity.restartApp(this);
             return;

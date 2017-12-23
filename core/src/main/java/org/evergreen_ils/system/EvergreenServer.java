@@ -83,8 +83,8 @@ public class EvergreenServer {
         mConn = null;
         mIDLLoaded = false;
         mOrgTypes = null;
-        mOrganizations = null;
-        mSMSCarriers = null;
+        mOrganizations = new ArrayList<>();;
+        mSMSCarriers = new ArrayList<>();
         mIsSMSEnabled = null;
     }
 

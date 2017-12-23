@@ -29,6 +29,7 @@ import org.evergreen_ils.Api;
 import org.evergreen_ils.accountAccess.AccountAccess;
 import org.evergreen_ils.net.GatewayJsonObjectRequest;
 import org.evergreen_ils.net.VolleyWrangler;
+import org.evergreen_ils.utils.ui.Analytics;
 import org.opensrf.util.GatewayResponse;
 import org.opensrf.util.OSRFObject;
 
@@ -157,15 +158,18 @@ public class EvergreenServerLoader {
         final AccountAccess ac = AccountAccess.getInstance();
         HashMap<String, Object> args = new HashMap<>();
         args.put("active", 1);
+        Object[] params = new Object[]{ac.getAuthToken(), args};
         String url = eg.getUrl(Utils.buildGatewayUrl(
                 Api.PCRUD_SERVICE, Api.SEARCH_SMS_CARRIERS,
-                new Object[]{ac.getAuthToken(), args}));
+                params));
+        Analytics.logVolleyRequest(Api.PCRUD_SERVICE, Api.SEARCH_SMS_CARRIERS, params);
         GatewayJsonObjectRequest r = new GatewayJsonObjectRequest(
                 url,
                 Request.Priority.NORMAL,
                 new Response.Listener<GatewayResponse>() {
                     @Override
                     public void onResponse(GatewayResponse response) {
+                        Analytics.logResponse(response);
                         parseSMSCarriersFromGatewayResponse(response);
                         decrNumOutstanding();
                     }
@@ -173,6 +177,7 @@ public class EvergreenServerLoader {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
+                        Analytics.logErrorResponse(error.getMessage());
                         String msg = error.getMessage();
                         if (!TextUtils.isEmpty(msg))
                             Log.d("kcxxx", "error: "+msg);
