@@ -676,6 +676,7 @@ public class AccountAccess {
             if (holdInfo == null) {
                 hold.title = "Unknown Title";
                 hold.author = "Unknown Author";
+                Analytics.logException(new ShouldNotHappenException(6, "null holdInfo, ahr="+holdArhObject));
             } else {
                 hold.title = holdInfo.getString("title");
                 hold.author = holdInfo.getString("author");
