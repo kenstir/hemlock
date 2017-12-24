@@ -139,15 +139,20 @@ public class SplashActivity extends AppCompatActivity implements LoadingTaskList
     @Override
     public void onPostExecute(String result) {
         Log.d(TAG, "onPostExecute> " + result);
+        // 2017-12-24: logging this event two ways to see which is more useful in the dashboard
+        Analytics.logEvent("login", "result", result);
         mTask = null;
         if (TextUtils.equals(result, LoadingTask.TASK_OK)) {
+            Analytics.loginEvent(null);
             startApp();
         } else {
             String extra_text;
             if (!TextUtils.isEmpty(result)) {
                 extra_text = " failed:\n" + result;
+                Analytics.loginEvent("failed");
             } else {
                 extra_text = " cancelled";
+                Analytics.loginEvent("cancelled");
             }
             mProgressText.setText(mProgressText.getText() + extra_text);
             mRetryButton.setVisibility(View.VISIBLE);

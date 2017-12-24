@@ -22,9 +22,13 @@ import android.content.Context;
 import android.text.TextUtils;
 
 import com.crashlytics.android.Crashlytics;
+import com.crashlytics.android.answers.Answers;
+import com.crashlytics.android.answers.CustomEvent;
+import com.crashlytics.android.answers.LoginEvent;
 
 import org.opensrf.Method;
 import org.opensrf.util.GatewayResponse;
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -116,5 +120,23 @@ public class Analytics {
 
     public static void logException(Throwable e) {
         Crashlytics.logException(e);
+    }
+
+    public static void loginEvent(String error) {
+        LoginEvent ev = new LoginEvent();
+        if (TextUtils.isEmpty(error)) {
+            ev.putSuccess(true);
+        } else {
+            ev.putSuccess(false).putCustomAttribute("error", error);
+        }
+        Answers.getInstance().logLogin(ev);
+    }
+
+    public static void logEvent(String event, String name, String val) {
+        Answers.getInstance().logCustom(new CustomEvent(event).putCustomAttribute(name, val));
+    }
+
+    public static void logEvent(String event, String name, Integer val) {
+        Answers.getInstance().logCustom(new CustomEvent(event).putCustomAttribute(name, val));
     }
 }
