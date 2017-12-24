@@ -130,7 +130,6 @@ public class Utils {
 
             return resp;
         }
-        Analytics.logException(new ShouldNotHappenException(service, method));
         return null;
 
     }
@@ -158,7 +157,6 @@ public class Utils {
         } catch (NullPointerException e) {
             logNPE(e, service, methodName);
         }
-        Analytics.logException(new ShouldNotHappenException(service, method));
         return null;
     }
 
