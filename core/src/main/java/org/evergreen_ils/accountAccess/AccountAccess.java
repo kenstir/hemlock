@@ -818,7 +818,7 @@ public class AccountAccess {
                         authToken, hold_id });
 
         if (resp == null) {
-            Analytics.logException(new ShouldNotHappenException("null resp from hold q stats"));
+            Analytics.logException(new ShouldNotHappenException(9, "null resp from hold_queue_stats"));
             return;
         }
 
