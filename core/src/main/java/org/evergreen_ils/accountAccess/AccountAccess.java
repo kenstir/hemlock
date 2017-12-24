@@ -270,6 +270,17 @@ public class AccountAccess {
     // ------------------------Checked Out Items Section
     // -------------------------//
 
+    private CircRecord fleshCircRecord(String id, CircRecord.CircType circType) throws SessionNotFoundException {
+        OSRFObject circ = retrieveCircRecord(id);
+        if (circ == null) {
+            Analytics.logException(new ShouldNotHappenException(12, "null circ object, type="+circType+", id="+id));
+            return null;
+        }
+        CircRecord circRecord = new CircRecord(circ, circType, Integer.parseInt(id));
+        fetchInfoForCheckedOutItem(circ.getInt("target_copy"), circRecord);
+        return circRecord;
+    }
+
     /**
      * Gets the items checked out.
      *
@@ -288,26 +299,16 @@ public class AccountAccess {
             return circRecords;
         Map<String, ?> resp_map = ((Map<String, ?>) resp);
 
-        if (resp_map.get("out") != null) {
-            List<String> id = (List<String>) resp_map.get("out");
-            for (int i = 0; i < id.size(); i++) {
-                OSRFObject circ = retrieveCircRecord(id.get(i));
-                CircRecord circRecord = new CircRecord(circ, CircRecord.CircType.OUT,
-                        Integer.parseInt(id.get(i)));
-                fetchInfoForCheckedOutItem(circ.getInt("target_copy"), circRecord);
+        for (String id: (List<String>) resp_map.get("out")) {
+            CircRecord circRecord = fleshCircRecord(id, CircRecord.CircType.OUT);
+            if (circRecord != null)
                 circRecords.add(circRecord);
-            }
         }
 
-        if (resp_map.get("overdue") != null) {
-            List<String> id = (List<String>) resp_map.get("overdue");
-            for (int i = 0; i < id.size(); i++) {
-                OSRFObject circ = retrieveCircRecord(id.get(i));
-                CircRecord circRecord = new CircRecord(circ, CircRecord.CircType.OVERDUE,
-                        Integer.parseInt(id.get(i)));
-                fetchInfoForCheckedOutItem(circ.getInt("target_copy"), circRecord);
+        for (String id: (List<String>) resp_map.get("overdue")) {
+            CircRecord circRecord = fleshCircRecord(id, CircRecord.CircType.OVERDUE);
+            if (circRecord != null)
                 circRecords.add(circRecord);
-            }
         }
 
         // todo handle other circ types LONG_OVERDUE, LOST, CLAIMS_RETURNED ?

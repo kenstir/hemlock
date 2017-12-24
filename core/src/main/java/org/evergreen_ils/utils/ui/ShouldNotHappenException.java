@@ -10,6 +10,9 @@ public class ShouldNotHappenException extends Exception {
     public ShouldNotHappenException(String message) {
         super(message);
     }
+    public ShouldNotHappenException(Integer githubIssueId, String message) {
+        super("Issue #"+githubIssueId+": "+message);
+    }
     public ShouldNotHappenException(String service, Method method) {
         Analytics.setString("svc", service);
         Analytics.setString("m", method.getName());
