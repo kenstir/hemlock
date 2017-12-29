@@ -34,6 +34,7 @@ import org.evergreen_ils.views.DonateActivity;
 import org.evergreen_ils.views.MainActivity;
 import org.evergreen_ils.views.MenuProvider;
 import org.evergreen_ils.views.splashscreen.SplashActivity;
+import org.w3c.dom.Text;
 
 import java.net.URLEncoder;
 
@@ -185,8 +186,9 @@ public class BaseActivity extends AppCompatActivity
             String username = AccountAccess.getInstance().getUserName();
             String password = AccountUtils.getPassword(this, username);
             String path = "/eg/opac/login"
-                    + "?redirect_to=" + URLEncoder.encode("/eg/opac/myopac/messages")
-                    + "&username=" + URLEncoder.encode(username);
+                    + "?redirect_to=" + URLEncoder.encode("/eg/opac/myopac/messages");
+            if (!TextUtils.isEmpty(username))
+                path = path + "&username=" + URLEncoder.encode(username);
             if (!TextUtils.isEmpty(password))
                 path = path + "&password=" + URLEncoder.encode(password);
             String url = EvergreenServer.getInstance().getUrl(path);
