@@ -187,7 +187,7 @@ public class PlaceHoldActivity extends AppCompatActivity {
                 if (eg.getSMSCarriers().size() > selectedSMSPos)
                     selectedSMSCarrierID = eg.getSMSCarriers().get(selectedSMSPos).id;
 
-                Result temp_result = null;
+                Result temp_result = Result.createUnknownError();
                 try {
                     temp_result = accountAccess.testAndCreateHold(record_id, selectedOrgID,
                             email_notification.isChecked(), getPhoneNotify(),
