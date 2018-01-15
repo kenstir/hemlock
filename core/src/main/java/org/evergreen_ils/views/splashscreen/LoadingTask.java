@@ -134,10 +134,7 @@ public class LoadingTask {
             try {
                 haveSession = ac.retrieveSession(auth_token);
             } catch (SessionNotFoundException e) {
-                try {
-                    haveSession = ac.reauthenticate(mCallingActivity, account_name);
-                } catch (SessionNotFoundException e2) {
-                }
+                haveSession = ac.reauthenticate(mCallingActivity, account_name);
             }
             if (!haveSession)
                 return "no session";

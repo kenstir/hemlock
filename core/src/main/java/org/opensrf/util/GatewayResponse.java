@@ -18,6 +18,12 @@
 
 package org.opensrf.util;
 
+import android.text.TextUtils;
+
+import org.open_ils.Event;
+import org.opensrf.ShouldNotHappenException;
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -31,6 +37,7 @@ public class GatewayResponse {
     public Map<String, ?> map = null;
     public Exception ex = null;
     public boolean failed = false;
+    public String description = null;
 
     private GatewayResponse() {
     }
@@ -46,6 +53,53 @@ public class GatewayResponse {
             resp.payload = (resp.responseList.size() > 0) ? resp.responseList.remove(0) : null;
         } catch (JSONException e) {
             resp.ex = e;
+            resp.description = e.getMessage();
+            resp.failed = true;
+        }
+        return resp;
+    }
+
+    // Really GatewayRequest.recv() should return this directly, but that is used everywhere and so
+    // I am refactoring incrementally.
+    //
+    // payload_obj is the returned from Utils.doRequest, and AFAIK it can be one of 3 things:
+    // 1 - a map containing the response
+    // 2 - an event (a map indicating an error)
+    // 3 - a list of events
+    public static GatewayResponse createFromObject(Object payload_obj) {
+        GatewayResponse resp = new GatewayResponse();
+        resp.payload = payload_obj;
+        try {
+            Event event = Event.parseEvent(payload_obj);
+            if (event != null) {
+                // single event
+                resp.failed = event.failed();
+                resp.description = event.getDescription();
+                if (event.containsKey("payload"))
+                    resp.map = (Map<String, ?>) event.get("payload");
+            } else if (payload_obj instanceof ArrayList) {
+                // list of events
+                ArrayList<String> msgs = new ArrayList<>();
+                for (Object obj: (ArrayList<Object>)payload_obj) {
+                    event = Event.parseEvent(obj);
+                    if (event != null) {
+                        if (event.failed())
+                            resp.failed = true;
+                        msgs.add(event.getDescription());
+                    }
+                }
+                resp.description = TextUtils.join("\n\n", msgs);
+            } else if (payload_obj instanceof Map) {
+                // response map
+                resp.map = (Map<String, ?>) payload_obj;
+            } else {
+                resp.ex = new ShouldNotHappenException("Unexpected response");
+                resp.description = resp.ex.getMessage();
+                resp.failed = true;
+            }
+        } catch (Exception e) {
+            resp.ex = e;
+            resp.description = e.getMessage();
             resp.failed = true;
         }
         return resp;

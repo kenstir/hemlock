@@ -1,4 +1,4 @@
-package org.evergreen_ils.utils.ui;
+package org.opensrf;
 
 import org.evergreen_ils.system.Analytics;
 import org.opensrf.Method;

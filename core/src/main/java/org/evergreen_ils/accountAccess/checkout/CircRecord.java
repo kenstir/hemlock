@@ -25,8 +25,6 @@ import java.util.Date;
 
 import org.evergreen_ils.Api;
 import org.evergreen_ils.searchCatalog.RecordInfo;
-import org.evergreen_ils.system.Analytics;
-import org.evergreen_ils.utils.ui.ShouldNotHappenException;
 import org.opensrf.util.OSRFObject;
 
 /**

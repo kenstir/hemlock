@@ -28,14 +28,13 @@ import android.os.Build;
 import android.widget.*;
 import org.evergreen_ils.R;
 import org.evergreen_ils.accountAccess.AccountAccess;
-import org.evergreen_ils.accountAccess.MaxRenewalsException;
-import org.evergreen_ils.accountAccess.ServerErrorMessage;
 import org.evergreen_ils.accountAccess.SessionNotFoundException;
 import org.evergreen_ils.system.Log;
 import org.evergreen_ils.searchCatalog.RecordDetails;
 import org.evergreen_ils.searchCatalog.RecordInfo;
 import org.evergreen_ils.utils.ui.BaseActivity;
 import org.evergreen_ils.utils.ui.ProgressDialogSupport;
+import org.opensrf.util.GatewayResponse;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -240,9 +239,6 @@ public class ItemsCheckOutListView extends BaseActivity {
         Thread renew = new Thread(new Runnable() {
             @Override
             public void run() {
-                boolean success = false;
-                AccountAccess ac = AccountAccess.getInstance();
-
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -250,38 +246,40 @@ public class ItemsCheckOutListView extends BaseActivity {
                     }
                 });
 
+                AccountAccess ac = AccountAccess.getInstance();
+                GatewayResponse resp = null;
+                Exception ex = null;
                 try {
-                    ac.renewCirc(record.getTargetCopy());
-                    success = true;
+                    resp = ac.renewCirc(record.getTargetCopy());
                 } catch (SessionNotFoundException e1) {
                     try {
                         if (accountAccess.reauthenticate(ItemsCheckOutListView.this)) {
-                            ac.renewCirc(record.getTargetCopy());
-                            success = true;
+                            resp = ac.renewCirc(record.getTargetCopy());
                         }
                     } catch (Exception eauth) {
-                        Log.d(TAG, "Exception in reauth", eauth);
+                        ex = eauth;
                     }
-                } catch (MaxRenewalsException e1) {
-                    runOnUiThread(new Runnable() {
-
-                        @Override
-                        public void run() {
-                            progress.dismiss();
-                            Toast.makeText(context, R.string.toast_max_renewals_reached, Toast.LENGTH_LONG).show();
-                        }
-                    });
-                } catch (final ServerErrorMessage error) {
-                    runOnUiThread(new Runnable() {
-
-                        @Override
-                        public void run() {
-                            progress.dismiss();
-                            Toast.makeText(context, error.message, Toast.LENGTH_LONG).show();
-                        }
-                    });
                 }
-                if (success) {
+                if (resp == null || resp.failed) {
+                    final String msg;
+                    if (ex != null) {
+                        msg = ex.getMessage();
+                    } else if (resp != null) {
+                        msg = resp.description;
+                    } else {
+                        msg = "Unexpected error";
+                    }
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            progress.dismiss();
+                            AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                            builder.setTitle("Failed to renew item")
+                                    .setMessage(msg)
+                                    .setPositiveButton(android.R.string.ok, null);
+                            builder.create().show();                        }
+                    });
+                } else {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {

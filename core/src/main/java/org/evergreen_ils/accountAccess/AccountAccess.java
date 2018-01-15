@@ -35,8 +35,9 @@ import org.evergreen_ils.system.Log;
 import org.evergreen_ils.system.Utils;
 import org.evergreen_ils.searchCatalog.RecordInfo;
 import org.evergreen_ils.system.Analytics;
-import org.evergreen_ils.utils.ui.ShouldNotHappenException;
+import org.opensrf.ShouldNotHappenException;
 import org.opensrf.net.http.HttpConnection;
+import org.opensrf.util.GatewayResponse;
 import org.opensrf.util.OSRFObject;
 
 import java.util.*;
@@ -235,7 +236,7 @@ public class AccountAccess {
         }
     }
 
-    public boolean reauthenticate(Activity activity) throws SessionNotFoundException {
+    public boolean reauthenticate(Activity activity) {
         return reauthenticate(activity, userName);
     }
 
@@ -244,7 +245,7 @@ public class AccountAccess {
      * @param activity
      * @return true if auth successful
      */
-    public boolean reauthenticate(Activity activity, String user_name) throws SessionNotFoundException {
+    public boolean reauthenticate(Activity activity, String user_name) {
         Log.d(Const.AUTH_TAG, "reauthenticate " + user_name);
         AccountUtils.invalidateAuthToken(activity, authToken);
         clearSession();
@@ -271,11 +272,13 @@ public class AccountAccess {
     // -------------------------//
 
     private CircRecord fleshCircRecord(String id, CircRecord.CircType circType) throws SessionNotFoundException {
-        OSRFObject circ = retrieveCircRecord(id);
-        if (circ == null) {
-            Analytics.logException(new ShouldNotHappenException(12, "null circ object, type="+circType+", id="+id));
+        GatewayResponse response = retrieveCircRecord(id);
+        if (response.failed) {
+            // PINES Crash #23
+            Analytics.logException(new ShouldNotHappenException("failed circ retrieve, type:" + circType + " desc:" + response.description));
             return null;
         }
+        OSRFObject circ = (OSRFObject) response.map;
         CircRecord circRecord = new CircRecord(circ, circType, Integer.parseInt(id));
         fetchInfoForCheckedOutItem(circ.getInt("target_copy"), circRecord);
         return circRecord;
@@ -340,13 +343,13 @@ public class AccountAccess {
      * @return the oSRF object
      * @throws SessionNotFoundException the session not found exception
      */
-    private OSRFObject retrieveCircRecord(String id)
+    private GatewayResponse retrieveCircRecord(String id)
             throws SessionNotFoundException {
 
-        OSRFObject circ = (OSRFObject) Utils.doRequest(conn(), Api.SERVICE_CIRC,
+        Object resp = Utils.doRequest(conn(), Api.SERVICE_CIRC,
                 Api.CIRC_RETRIEVE, authToken, new Object[] {
                         authToken, id });
-        return circ;
+        return GatewayResponse.createFromObject(resp);
     }
 
     /*
@@ -571,12 +574,9 @@ public class AccountAccess {
      * Renew circ.
      *
      * @param target_copy the target_copy
-     * @throws MaxRenewalsException the max renewals exception
-     * @throws ServerErrorMessage the server error message
      * @throws SessionNotFoundException the session not found exception
      */
-    public void renewCirc(Integer target_copy) throws MaxRenewalsException,
-            ServerErrorMessage, SessionNotFoundException {
+    public GatewayResponse renewCirc(Integer target_copy) throws SessionNotFoundException {
 
         HashMap<String, Integer> complexParam = new HashMap<>();
         complexParam.put("patron", this.userID);
@@ -587,14 +587,7 @@ public class AccountAccess {
                 Api.CIRC_RENEW, authToken, new Object[] {
                         authToken, complexParam });
 
-        Map<String, String> resp_map = (Map<String, String>) resp;
-
-        if (resp_map.get("textcode") != null && !resp_map.get("textcode").equals("SUCCESS")) {
-            if (resp_map.get("textcode").equals("MAX_RENEWALS_REACHED"))
-                throw new MaxRenewalsException();
-            throw new ServerErrorMessage(resp_map.get("desc").toString());
-        }
-
+        return GatewayResponse.createFromObject(resp);
     }
 
     // ------------------------orgs Section

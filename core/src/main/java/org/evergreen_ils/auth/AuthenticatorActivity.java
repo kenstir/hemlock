@@ -216,22 +216,6 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity {
                         alertMessage = null;
                     }
                 });
-        if (App.getIsDebuggable(this)) {
-            builder.setNeutralButton(R.string.button_send_log, new OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            Context context = AuthenticatorActivity.this;
-                            String email = context.getString(R.string.ou_developer_email);
-                            Intent intent = new Intent(Intent.ACTION_SEND);
-                            intent.setType("text/plain");
-                            intent.putExtra(Intent.EXTRA_EMAIL, new String[] {email});
-                            intent.putExtra(Intent.EXTRA_SUBJECT, App.getAppInfo(context));
-                            intent.putExtra(Intent.EXTRA_TEXT, Log.getLogBuffer());
-                            startActivity(intent);
-                        }
-                    }
-            );
-        }
         alertDialog = builder.create();
         alertDialog.show();
     }

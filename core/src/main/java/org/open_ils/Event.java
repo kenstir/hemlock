@@ -31,5 +31,9 @@ public class Event extends HashMap<String, Object> {
     public int getCode() {
         return Integer.parseInt((String) get("ilsevent"));
     }
+
+    public boolean failed() {
+        return !get("ilsevent").equals("0");
+    }
 }
 
