@@ -169,7 +169,6 @@
     <string name="choose_library_message">Select your Library</string>
     <string name="action_choose_library">Select</string>
     <string name="evergreen_libraries_url">https://evergreen-ils.org/directory/libraries.json</string>
-    <string name="button_send_log">Send debug log</string>
     <string name="record_subject">Subject</string>
     <string name="record_series">Series</string>
     <string name="record_synopsis">Synopsis</string>

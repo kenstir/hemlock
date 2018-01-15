@@ -43,7 +43,6 @@ public class SplashActivity extends AppCompatActivity implements LoadingTaskList
     private static String TAG = SplashActivity.class.getSimpleName();
     private TextView mProgressText;
     private View mProgressBar;
-    private View mSendDebugLogs;
     private Button mRetryButton;
     private LoadingTask mTask;
     private static boolean mInitialized;
@@ -86,7 +85,6 @@ public class SplashActivity extends AppCompatActivity implements LoadingTaskList
 
         mProgressText = (TextView) findViewById(R.id.action_in_progress);
         mProgressBar = findViewById(R.id.activity_splash_progress_bar);
-        mSendDebugLogs = findViewById(R.id.activity_splash_debug_button);
         mRetryButton = (Button) findViewById(R.id.activity_splash_retry_button);
         mRetryButton.setOnClickListener(new OnClickListener() {
             @Override
@@ -127,7 +125,6 @@ public class SplashActivity extends AppCompatActivity implements LoadingTaskList
     @Override
     public void onPreExecute() {
         mRetryButton.setVisibility(View.GONE);
-        mSendDebugLogs.setVisibility(View.GONE);
         mProgressBar.setVisibility(View.VISIBLE);
     }
 
@@ -156,7 +153,6 @@ public class SplashActivity extends AppCompatActivity implements LoadingTaskList
             }
             mProgressText.setText(mProgressText.getText() + extra_text);
             mRetryButton.setVisibility(View.VISIBLE);
-            mSendDebugLogs.setVisibility(App.getIsDebuggable(this) ? View.VISIBLE : View.GONE);
             mProgressBar.setVisibility(View.GONE);
         }
     }
