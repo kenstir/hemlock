@@ -18,7 +18,9 @@
 
 package org.evergreen_ils;
 
+import org.evergreen_ils.system.Analytics;
 import org.evergreen_ils.system.Log;
+import org.opensrf.ShouldNotHappenException;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -146,7 +148,7 @@ public class Api {
         try {
             date = sdf.parse(dateString);
         } catch (ParseException e) {
-            Log.d(TAG, "error parsing date \""+dateString+"\"", e);
+            Analytics.logException(e);
             date = new Date();
         }
 
@@ -182,15 +184,36 @@ public class Api {
             try {
                 return Integer.parseInt((String) o);
             } catch (NumberFormatException e) {
-                Log.d(TAG, "caught", e);
+                Analytics.logException(e);
                 return null;
             }
         } else {
-            Log.d(TAG, "unexpected type: "+o);
+            Analytics.logException(new ShouldNotHappenException("unexpected type: "+o));
             return dflt;
         }
     }
     public static Integer parseInteger(Object o) {
         return parseInteger(o, null);
+    }
+
+    /**
+     * Return o as a double
+     */
+    public static Double parseDouble(Object o) {
+        if (o instanceof Double) {
+            return (Double) o;
+        } else if (o instanceof Float) {
+            return (Double) o;
+        } else if (o instanceof String) {
+            try {
+                return Double.parseDouble((String) o);
+            } catch (NumberFormatException e) {
+                Analytics.logException(e);
+                return null;
+            }
+        } else {
+            Analytics.logException(new ShouldNotHappenException("unexpected type: "+o));
+            return null;
+        }
     }
 }

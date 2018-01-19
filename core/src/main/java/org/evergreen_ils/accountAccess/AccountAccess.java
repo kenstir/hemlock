@@ -981,23 +981,14 @@ public class AccountAccess {
      * @return the fines summary
      * @throws SessionNotFoundException the session not found exception
      */
-    public float[] getFinesSummary() throws SessionNotFoundException {
+    public OSRFObject getFinesSummary() throws SessionNotFoundException {
 
         // mous object
         OSRFObject finesSummary = (OSRFObject) Utils.doRequest(conn(), Api.ACTOR,
                 Api.FINES_SUMMARY, authToken, new Object[] {
                         authToken, userID });
 
-        float fines[] = new float[3];
-        try {
-            fines[0] = Float.parseFloat(finesSummary.getString("total_owed"));
-            fines[1] = Float.parseFloat(finesSummary.getString("total_paid"));
-            fines[2] = Float.parseFloat(finesSummary.getString("balance_owed"));
-        } catch (Exception e) {
-            Log.d(TAG, "Error parsing fines", e);
-        }
-
-        return fines;
+        return finesSummary;
     }
 
     /**
