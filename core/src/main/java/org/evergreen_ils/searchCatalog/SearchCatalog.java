@@ -114,11 +114,12 @@ public class SearchCatalog {
                 new Object[] { argHash, queryString, 1 });
         Log.d(TAG, "Sync Response: " + resp);
         now_ms = Log.logElapsedTime(TAG, now_ms, "search.query");
-        if (resp == null)
-            return results; // search failed or server crashed
 
+        // handle cases of no results
         Map<String, ?> response = (Map<String, ?>) resp;
-        visible = Api.parseInteger(response.get("count"), 0);
+        visible = (response != null) ? Api.parseInteger(response.get("count"), 0) : 0;
+        if (visible == 0)
+            return results;
 
         // record_ids_lol is a list of lists and looks like one of:
         //   [[32673,null,"0.0"],[886843,null,"0.0"]] // integer ids+?
