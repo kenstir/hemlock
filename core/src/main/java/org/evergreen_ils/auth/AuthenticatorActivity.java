@@ -205,6 +205,8 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity {
     }
 
     protected void showAlert(String errorMessage) {
+        if (isFinishing())
+            return;
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         alertMessage = errorMessage;
         builder.setTitle("Login failed")
