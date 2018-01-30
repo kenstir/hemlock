@@ -302,13 +302,16 @@ public class AccountAccess {
             return circRecords;
         Map<String, ?> resp_map = ((Map<String, ?>) resp);
 
-        for (String id: (List<String>) resp_map.get("out")) {
+        // out => list_of_strings_or_integers
+        List<String> ids = Api.parseIdsList(resp_map.get("out"));
+        for (String id: ids) {
             CircRecord circRecord = fleshCircRecord(id, CircRecord.CircType.OUT);
             if (circRecord != null)
                 circRecords.add(circRecord);
         }
 
-        for (String id: (List<String>) resp_map.get("overdue")) {
+        ids = Api.parseIdsList(resp_map.get("overdue"));
+        for (String id: ids) {
             CircRecord circRecord = fleshCircRecord(id, CircRecord.CircType.OVERDUE);
             if (circRecord != null)
                 circRecords.add(circRecord);

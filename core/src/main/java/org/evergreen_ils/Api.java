@@ -24,7 +24,9 @@ import org.opensrf.ShouldNotHappenException;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.StringTokenizer;
 
 /** OSRF API constants
@@ -194,6 +196,21 @@ public class Api {
     }
     public static Integer parseInteger(Object o) {
         return parseInteger(o, null);
+    }
+
+    // Some queries return at times a list of String ids and at times a list of Integer ids,
+    // see Issue #1 and PINES Crashlytics #28.
+    public static List<String> parseIdsList(Object o) {
+        ArrayList<String> ret = new ArrayList<>();
+        if (o instanceof List) {
+            for (Object elem: (List<?>) o) {
+                Integer i = parseInteger(elem);
+                if (i != null) {
+                    ret.add(i.toString());
+                }
+            }
+        }
+        return ret;
     }
 
     /**
