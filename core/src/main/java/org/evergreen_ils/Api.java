@@ -183,6 +183,9 @@ public class Api {
         if (o instanceof Integer) {
             return (Integer)o;
         } else if (o instanceof String) {
+            // I have seen settings with value=null, e.g. opac.default_search_location
+            if (o.equals("null"))
+                return null;
             try {
                 return Integer.parseInt((String) o);
             } catch (NumberFormatException e) {
