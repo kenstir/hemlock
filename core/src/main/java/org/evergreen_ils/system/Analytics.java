@@ -52,6 +52,7 @@ public class Analytics {
         // Disable Crashlytics for debug builds
         // 2018-01-28 see also
         // https://stackoverflow.com/questions/16986753/how-to-disable-crashlytics-while-developing
+        // 2018-02-07 This does not seem to work, I still get crashes from myself
         CrashlyticsCore core = new CrashlyticsCore.Builder().disabled(BuildConfig.DEBUG).build();
         Fabric.with(context, new Crashlytics.Builder().core(core).build());
     }
