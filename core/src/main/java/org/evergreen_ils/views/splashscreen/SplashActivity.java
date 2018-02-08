@@ -36,6 +36,7 @@ import org.evergreen_ils.utils.ui.AppState;
 import org.evergreen_ils.system.Analytics;
 import org.evergreen_ils.views.MainActivity;
 import org.evergreen_ils.views.splashscreen.LoadingTask.LoadingTaskListener;
+import org.opensrf.ShouldNotHappenException;
 
 public class SplashActivity extends AppCompatActivity implements LoadingTaskListener {
 
@@ -147,6 +148,7 @@ public class SplashActivity extends AppCompatActivity implements LoadingTaskList
             if (!TextUtils.isEmpty(result)) {
                 extra_text = " failed:\n" + result;
                 Analytics.loginEvent("failed");
+                Analytics.logException(new ShouldNotHappenException(extra_text));
             } else {
                 extra_text = " cancelled";
                 Analytics.loginEvent("cancelled");
