@@ -127,8 +127,8 @@ public class FinesActivity extends BaseActivity {
 
     private void initPayFinesButton() {
         Integer home_lib = AccountAccess.getInstance().getHomeLibraryID();
-        Organization home_org = EvergreenServer.getInstance().getOrganization(home_lib);
-        if (Utils.safeBool(home_org.setting_allow_credit_payments)) {
+        Organization home_org = (home_lib != null) ? EvergreenServer.getInstance().getOrganization(home_lib) : null;
+        if (home_org != null && Utils.safeBool(home_org.setting_allow_credit_payments)) {
             pay_fines_button.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
