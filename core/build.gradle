@@ -17,11 +17,6 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
-        debug {
-            // 2018-01-28 see also
-            // https://stackoverflow.com/questions/16986753/how-to-disable-crashlytics-while-developing
-            ext.enableCrashlytics = false
-        }
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_7

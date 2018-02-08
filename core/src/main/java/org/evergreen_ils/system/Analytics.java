@@ -25,9 +25,7 @@ import com.crashlytics.android.Crashlytics;
 import com.crashlytics.android.answers.Answers;
 import com.crashlytics.android.answers.CustomEvent;
 import com.crashlytics.android.answers.LoginEvent;
-import com.crashlytics.android.core.CrashlyticsCore;
 
-import org.evergreen_ils.BuildConfig;
 import org.opensrf.Method;
 import org.opensrf.util.GatewayResponse;
 import org.w3c.dom.Text;
@@ -49,12 +47,7 @@ public class Analytics {
     private static String mLastAuthToken = null;
 
     public static void initialize(Context context) {
-        // Disable Crashlytics for debug builds
-        // 2018-01-28 see also
-        // https://stackoverflow.com/questions/16986753/how-to-disable-crashlytics-while-developing
-        // 2018-02-07 This does not seem to work, I still get crashes from myself
-        CrashlyticsCore core = new CrashlyticsCore.Builder().disabled(BuildConfig.DEBUG).build();
-        Fabric.with(context, new Crashlytics.Builder().core(core).build());
+        Fabric.with(context, new Crashlytics());
     }
 
     public static void setString(String key, String val) {
