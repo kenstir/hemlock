@@ -30,7 +30,6 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import org.evergreen_ils.R;
-import org.evergreen_ils.android.App;
 import org.evergreen_ils.system.Log;
 import org.evergreen_ils.utils.ui.AppState;
 import org.evergreen_ils.system.Analytics;
@@ -68,7 +67,7 @@ public class SplashActivity extends AppCompatActivity implements LoadingTaskList
      * @param a
      */
     public static void restartApp(Activity a) {
-        Log.d(TAG, "restartApp> Restarting SplashActivity");
+        Analytics.log(TAG, "restartApp> Restarting SplashActivity");
         Intent i = new Intent(a, SplashActivity.class);
         i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         a.startActivity(i);
@@ -98,7 +97,7 @@ public class SplashActivity extends AppCompatActivity implements LoadingTaskList
     }
 
     protected void startTask() {
-        Log.d(TAG, "startTask> task=" + mTask);
+        Analytics.log(TAG, "startTask> task=" + mTask);
         if (mTask != null)
             return;
         mTask = new LoadingTask(this, this);
@@ -107,7 +106,7 @@ public class SplashActivity extends AppCompatActivity implements LoadingTaskList
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Log.d(TAG, "onactivityresult: " + requestCode + " " + resultCode);
+        Analytics.log(TAG, "onactivityresult: " + requestCode + " " + resultCode);
     }
 
     private void startApp() {
@@ -136,22 +135,18 @@ public class SplashActivity extends AppCompatActivity implements LoadingTaskList
 
     @Override
     public void onPostExecute(String result) {
-        Log.d(TAG, "onPostExecute> " + result);
-        // 2017-12-24: logging this event two ways to see which is more useful in the dashboard
+        Analytics.log(TAG, "onPostExecute> " + result);
         Analytics.logEvent("login", "result", result);
         mTask = null;
         if (TextUtils.equals(result, LoadingTask.TASK_OK)) {
-            Analytics.loginEvent(null);
             startApp();
         } else {
             String extra_text;
             if (!TextUtils.isEmpty(result)) {
                 extra_text = " failed:\n" + result;
-                Analytics.loginEvent("failed");
                 Analytics.logException(new ShouldNotHappenException(extra_text));
             } else {
                 extra_text = " cancelled";
-                Analytics.loginEvent("cancelled");
             }
             mProgressText.setText(mProgressText.getText() + extra_text);
             mRetryButton.setVisibility(View.VISIBLE);

@@ -20,6 +20,7 @@ package org.evergreen_ils.system;
 
 import android.content.Context;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.crashlytics.android.Crashlytics;
 import com.crashlytics.android.answers.Answers;
@@ -54,8 +55,15 @@ public class Analytics {
         Crashlytics.setString(key, val);
     }
 
+    public static String redactedString(String val) {
+        return (val == null) ? "null" : "***";
+    }
+
+    public static void log(String tag, String msg) {
+        Crashlytics.log(Log.DEBUG, TAG, msg);
+    }
     public static void log(String msg) {
-        Crashlytics.log(android.util.Log.DEBUG, TAG, msg);
+        log(TAG, msg);
     }
 
     public static void logRequest(String service, Method method, String authToken) {
@@ -80,7 +88,7 @@ public class Analytics {
             String key = "p" + i;
             Crashlytics.setString(key, null);
         }
-        Crashlytics.log(android.util.Log.DEBUG, TAG, method
+        Crashlytics.log(Log.DEBUG, TAG, method
                 + "(" + TextUtils.join(", ", logParams) + ")");
     }
 
@@ -99,29 +107,34 @@ public class Analytics {
     }
 
     public static void logResponse(Object resp) {
-        Crashlytics.log(android.util.Log.DEBUG, TAG, "resp: " + resp);
+        Crashlytics.log(Log.DEBUG, TAG, "resp: " + resp);
     }
 
     public static void logResponse(GatewayResponse resp) {
-        Crashlytics.log(android.util.Log.DEBUG, TAG, "resp: " + resp.payload);
+        Crashlytics.log(Log.DEBUG, TAG, "resp: " + resp.payload);
     }
 
     public static void logRedactedResponse() {
-        Crashlytics.log(android.util.Log.DEBUG, TAG, "resp: ***");
+        Crashlytics.log(Log.DEBUG, TAG, "resp: ***");
     }
 
     public static void logVolleyResponse(String method) {
-        Crashlytics.log(android.util.Log.DEBUG, TAG, method + " ok");
+        Crashlytics.log(Log.DEBUG, TAG, method + " ok");
     }
 
     public static void logErrorResponse(String resp) {
-        Crashlytics.log(android.util.Log.WARN, TAG, "err_resp: " + resp);
+        Crashlytics.log(Log.WARN, TAG, "err_resp: " + resp);
     }
 
-    public static void logException(Throwable e) {
+    public static void logException(String tag, Throwable e) {
+        Log.d(tag, "caught", e);
         Crashlytics.logException(e);
     }
+    public static void logException(Throwable e) {
+        logException(TAG, e);
+    }
 
+    /*
     public static void loginEvent(String error) {
         LoginEvent ev = new LoginEvent();
         if (TextUtils.isEmpty(error)) {
@@ -131,6 +144,7 @@ public class Analytics {
         }
         Answers.getInstance().logLogin(ev);
     }
+    */
 
     public static void logEvent(String event, String name, String val) {
         Answers.getInstance().logCustom(new CustomEvent(event).putCustomAttribute(name, val));
