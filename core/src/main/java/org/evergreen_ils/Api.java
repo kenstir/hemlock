@@ -189,8 +189,7 @@ public class Api {
             try {
                 return Integer.parseInt((String) o);
             } catch (NumberFormatException e) {
-                if (!o.equals("null"))
-                    Analytics.logException(e);
+                Analytics.logException(e);
                 return null;
             }
         } else {
