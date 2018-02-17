@@ -18,6 +18,8 @@
 
 package org.evergreen_ils;
 
+import android.text.TextUtils;
+
 import org.evergreen_ils.system.Analytics;
 import org.evergreen_ils.system.Log;
 import org.opensrf.ShouldNotHappenException;
@@ -184,7 +186,7 @@ public class Api {
             return (Integer)o;
         } else if (o instanceof String) {
             // I have seen settings with value=null, e.g. opac.default_search_location
-            if (o.equals("null"))
+            if ("null".equals(o) || TextUtils.isEmpty((String) o))
                 return null;
             try {
                 return Integer.parseInt((String) o);
