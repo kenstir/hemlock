@@ -208,10 +208,10 @@ public class GenericAuthenticatorActivity extends AuthenticatorActivity {
         libraries.clear();
 
         if (isDebuggable(this)) {
-            Library library = new Library("https://webby.evergreencatalog.com", "evergreencatalog.com Demo", "0ut There, US  (evergreencatalog.com Demo)", null);
-            //Library library = new Library("https://demo.evergreencatalog.com", "evergreencatalog.com Demo", "0ut There, US  (evergreencatalog.com Demo)", null);
-            //Library library = new Library("http://mlnc4.mvlcstaff.org"), "MVLC Demo", "0ut There, US (MVLC Demo)", null);// Android does not like this cert
-            libraries.add(library);
+            libraries.add(new Library("https://webby.evergreencatalog.com", "evergreencatalog.com Demo", "0ut There, US  (evergreencatalog.com Demo)", null));
+            //new Library("https://demo.evergreencatalog.com", "evergreencatalog.com Demo", "0ut There, US  (evergreencatalog.com Demo)", null);
+            //new Library("http://mlnc4.mvlcstaff.org"), "MVLC Demo", "0ut There, US (MVLC Demo)", null);// Android does not like this cert
+            libraries.add(new Library("http://192.168.1.6", "debug catalog", "00debug catalog", null));
         }
 
         if (json != null) {
