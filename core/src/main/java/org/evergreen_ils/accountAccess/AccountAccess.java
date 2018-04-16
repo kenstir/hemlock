@@ -42,9 +42,6 @@ import org.opensrf.util.OSRFObject;
 
 import java.util.*;
 
-/**
- * The Class AuthenticateUser. Singleton class
- */
 public class AccountAccess {
 
     private final static String TAG = AccountAccess.class.getSimpleName();
