@@ -119,9 +119,6 @@ public class IDLParser {
             fieldIndex = 0;
             current = new IDLObject();
             current.setIDLClass(reader.getAttributeValue(null, "id"));
-            current.setController(reader.getAttributeValue(null, "controller"));
-            String persist = reader.getAttributeValue(OILS_NS_PERSIST, "virtual");
-            current.setIsVirtual("persist".equals(reader.getAttributeValue(OILS_NS_PERSIST, "virtual")));
             return;
         }
     
@@ -131,17 +128,6 @@ public class IDLParser {
             field.setArrayPos(fieldIndex++);
             field.setIsVirtual("true".equals(reader.getAttributeValue(OILS_NS_PERSIST, "virtual")));
             current.addField(field);
-            //Log.d("parser","Field " + localpart + " " + field );
-        }
-
-        if( "link".equals(localpart) ) {
-            IDLLink link = new IDLLink();
-            link.setField(reader.getAttributeValue(null, "field"));
-            link.setReltype(reader.getAttributeValue(null, "reltype"));
-            link.setKey(reader.getAttributeValue(null, "key"));
-            link.setMap(reader.getAttributeValue(null, "map"));
-            link.setIDLClass(reader.getAttributeValue(null, "class"));
-            current.addLink(link);
         }
     }
 
