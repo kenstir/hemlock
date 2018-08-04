@@ -7,6 +7,7 @@ import java.util.Map;
 /** Result of making an Api call
  * Created by kenstir on 2/25/2017.
  */
+//TODO: reconcile this with GatewayResponse, model after hemlock-ios
 public class Result {
     private static final String TAG = Result.class.getSimpleName();
 

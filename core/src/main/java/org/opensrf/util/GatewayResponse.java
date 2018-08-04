@@ -30,6 +30,7 @@ import java.util.Map;
 /**
  * Created by kenstir on 12/5/2015.
  */
+//TODO: reconcile this with org.evergreen_ils.Result, model after hemlock-ios
 public class GatewayResponse {
     public List<Object> responseList = null;
     public Object payload = null;
@@ -62,7 +63,7 @@ public class GatewayResponse {
     // Really GatewayRequest.recv() should return this directly, but that is used everywhere and so
     // I am refactoring incrementally.
     //
-    // payload_obj is the returned from Utils.doRequest, and AFAIK it can be one of 3 things:
+    // payload_obj is returned from Utils.doRequest, and AFAIK it can be one of 3 things:
     // 1 - a map containing the response
     // 2 - an event (a map indicating an error)
     // 3 - a list of events
