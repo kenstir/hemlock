@@ -38,6 +38,7 @@ public class GatewayJsonObjectRequest extends Request<GatewayResponse> {
 
     public GatewayJsonObjectRequest(String url, Priority priority, Response.Listener<GatewayResponse> listener, Response.ErrorListener errorListener) {
         super(Request.Method.GET, url, errorListener);
+        Log.d(TAG, "[net] send "+url);
         this.mPriority = priority;
         this.mListener = listener;
     }
@@ -55,6 +56,7 @@ public class GatewayJsonObjectRequest extends Request<GatewayResponse> {
         GatewayResponse parsed;
         try {
             String json = new String(response.data, HttpHeaderParser.parseCharset(response.headers));
+            Log.d(TAG, "[net] recv "+response.data.length+": "+json);
             parsed = GatewayResponse.create(json);
             if (parsed.failed == false) {
                 return Response.success(parsed, HttpHeaderParser.parseCacheHeaders(response));
