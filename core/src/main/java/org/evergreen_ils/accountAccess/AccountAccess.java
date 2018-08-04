@@ -631,7 +631,7 @@ public class AccountAccess {
         for (OSRFObject ahr_obj: listHoldsAhr) {
             HoldRecord hold = new HoldRecord(ahr_obj);
             fetchHoldTitleInfo(ahr_obj, hold);
-            fetchHoldStatus(ahr_obj, hold);
+            fetchHoldQueueStats(ahr_obj, hold);
             if (hold.recordInfo != null)
                 hold.recordInfo.setSearchFormat(fetchFormat(hold.target));
             holds.add(hold);
@@ -803,7 +803,7 @@ public class AccountAccess {
      * @param holdObj the hold obj
      * @throws SessionNotFoundException the session not found exception
      */
-    public void fetchHoldStatus(OSRFObject hold, HoldRecord holdObj)
+    public void fetchHoldQueueStats(OSRFObject hold, HoldRecord holdObj)
             throws SessionNotFoundException {
 
         Integer hold_id = hold.getInt("id");
