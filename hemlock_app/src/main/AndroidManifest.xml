@@ -70,10 +70,6 @@
                 android:name="org.evergreen_ils.accountAccess.checkout.ItemsCheckOutListView"
                 android:label="@string/checkout_items_title"
                 android:parentActivityName="org.evergreen_ils.views.MainActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
 
         <!-- Holds Activities -->
