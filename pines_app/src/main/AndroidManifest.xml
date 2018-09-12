@@ -23,7 +23,7 @@
     <application
         android:allowBackup="true"
         android:fullBackupContent="true"
-        android:icon="@drawable/launcher_icon"
+        android:icon="@mipmap/launcher_icon"
         android:label="@string/ou_app_label"
         android:theme="@style/PINESDarkNoActionBar"
         tools:replace="android:theme">
