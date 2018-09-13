@@ -1000,23 +1000,20 @@ public class AccountAccess {
     public ArrayList<FinesRecord> getTransactions()
             throws SessionNotFoundException {
 
-        ArrayList<FinesRecord> finesRecords = new ArrayList<FinesRecord>();
-
         Object transactions = Utils.doRequest(conn(), Api.ACTOR,
                 Api.TRANSACTIONS_WITH_CHARGES, authToken, new Object[] {
                         authToken, userID });
 
-        // get Array
-
+        ArrayList<FinesRecord> finesRecords = new ArrayList<>();
         List<Map<String, OSRFObject>> list = (List<Map<String, OSRFObject>>) transactions;
+        if (list == null)
+            return finesRecords;
 
         for (int i = 0; i < list.size(); i++) {
-
             Map<String, OSRFObject> item = list.get(i);
             FinesRecord record = new FinesRecord(item.get("circ"), item.get("record"), item.get("transaction"));
             finesRecords.add(record);
         }
-
         return finesRecords;
     }
 
