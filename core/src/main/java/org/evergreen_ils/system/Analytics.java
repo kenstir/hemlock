@@ -134,20 +134,11 @@ public class Analytics {
         logException(TAG, e);
     }
 
-    /*
-    public static void loginEvent(String error) {
-        LoginEvent ev = new LoginEvent();
-        if (TextUtils.isEmpty(error)) {
-            ev.putSuccess(true);
-        } else {
-            ev.putSuccess(false).putCustomAttribute("error", error);
-        }
-        Answers.getInstance().logLogin(ev);
-    }
-    */
-
     public static void logEvent(String event, String name, String val) {
         Answers.getInstance().logCustom(new CustomEvent(event).putCustomAttribute(name, val));
+    }
+    public static void logEvent(String event, String name, String val, String name2, String val2) {
+        Answers.getInstance().logCustom(new CustomEvent(event).putCustomAttribute(name, val).putCustomAttribute(name2, val2));
     }
 
     public static void logEvent(String event, String name, Integer val) {

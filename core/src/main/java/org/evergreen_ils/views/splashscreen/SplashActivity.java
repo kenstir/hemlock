@@ -136,7 +136,7 @@ public class SplashActivity extends AppCompatActivity implements LoadingTaskList
     @Override
     public void onPostExecute(String result) {
         Analytics.log(TAG, "onPostExecute> " + result);
-        Analytics.logEvent("login", "result", result);
+        Analytics.logEvent("login", "result", result, "library_name", AppState.getString(AppState.LIBRARY_NAME));
         mTask = null;
         if (TextUtils.equals(result, LoadingTask.TASK_OK)) {
             startApp();
