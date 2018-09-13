@@ -385,7 +385,7 @@ public class PlaceHoldActivity extends AppCompatActivity {
     }
 
     private void initOrgSpinner() {
-        int defaultLibraryID = AccountAccess.getInstance().getDefaultPickupLibraryID();
+        Integer defaultLibraryID = AccountAccess.getInstance().getDefaultPickupLibraryID();
         ArrayList<String> list = new ArrayList<>();
         for (int i = 0; i < eg.getOrganizations().size(); i++) {
             Organization org = eg.getOrganizations().get(i);

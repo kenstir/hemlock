@@ -263,7 +263,7 @@ public class SearchActivity extends BaseActivity {
 
     private void initSearchOrgSpinner() {
         int selectedOrgPos = 0;
-        int defaultLibraryID = AccountAccess.getInstance().getDefaultSearchLibraryID();
+        Integer defaultLibraryID = AccountAccess.getInstance().getDefaultSearchLibraryID();
         ArrayList<String> list = new ArrayList<>();
         for (int i = 0; i < eg.getInstance().getOrganizations().size(); i++) {
             Organization org = eg.getInstance().getOrganizations().get(i);
