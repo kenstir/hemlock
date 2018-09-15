@@ -630,8 +630,8 @@ public class AccountAccess {
         List<OSRFObject> listHoldsAhr = (List<OSRFObject>) resp;
         for (OSRFObject ahr_obj: listHoldsAhr) {
             HoldRecord hold = new HoldRecord(ahr_obj);
-            fetchHoldTitleInfo(ahr_obj, hold);
-            fetchHoldQueueStats(ahr_obj, hold);
+            fetchHoldTitleInfo(hold);
+            fetchHoldQueueStats(hold);
             if (hold.recordInfo != null)
                 hold.recordInfo.setSearchFormat(fetchFormat(hold.target));
             holds.add(hold);
@@ -642,17 +642,10 @@ public class AccountAccess {
 
     // hold_type    - T, C (or R or F), I, V or M for Title, Copy, Issuance, Volume or Meta-record  (default "T")
 
-    /**
-     * Fetch hold title info.
-     *
-     * @param holdArhObject the hold arh object
-     * @param hold the hold
-     * @return the object
-     */
-    private Object fetchHoldTitleInfo(OSRFObject holdArhObject, HoldRecord hold) {
+    private Object fetchHoldTitleInfo(HoldRecord hold) {
 
-        String holdType = (String) holdArhObject.get("hold_type");
-        Integer target = holdArhObject.getInt("target");
+        String holdType = (String) hold.ahr.get("hold_type");
+        Integer target = hold.ahr.getInt("target");
         String method = null;
 
         OSRFObject holdInfo = null;
@@ -669,7 +662,7 @@ public class AccountAccess {
             if (holdInfo == null) {
                 hold.title = "Unknown Title";
                 hold.author = "Unknown Author";
-                Analytics.logException(new ShouldNotHappenException(6, "null holdInfo, ahr="+holdArhObject));
+                Analytics.logException(new ShouldNotHappenException(6, "null holdInfo, ahr="+hold.ahr));
             } else {
                 hold.title = holdInfo.getString("title");
                 hold.author = holdInfo.getString("author");
@@ -677,21 +670,14 @@ public class AccountAccess {
             hold.recordInfo = new RecordInfo(holdInfo);
         } else {
             // multiple objects per hold ????
-            holdInfo = holdFetchObjects(holdArhObject, hold);
+            holdInfo = holdFetchObjects(hold);
         }
         return holdInfo;
     }
 
-    /**
-     * Hold fetch objects.
-     *
-     * @param hold the hold
-     * @param holdObj the hold obj
-     * @return the oSRF object
-     */
-    private OSRFObject holdFetchObjects(OSRFObject hold, HoldRecord holdObj) {
+    private OSRFObject holdFetchObjects(HoldRecord holdObj) {
 
-        String type = (String) hold.get("hold_type");
+        String type = (String) holdObj.ahr.get("hold_type");
 
         Log.d(TAG, "Hold Type " + type);
         if (type.equals("C")) {
@@ -702,7 +688,7 @@ public class AccountAccess {
              */
 
             // fetch_copy
-            OSRFObject copyObject = fetchAssetCopy(hold.getInt("target"));
+            OSRFObject copyObject = fetchAssetCopy(holdObj.ahr.getInt("target"));
             // fetch_volume from copyObject.call_number field
             Integer call_number = copyObject.getInt("call_number");
 
@@ -734,7 +720,7 @@ public class AccountAccess {
             // fetch_volume
             OSRFObject volume = (OSRFObject) Utils.doRequest(conn(),
                     Api.SEARCH, Api.ASSET_CALL_NUMBER_RETRIEVE,
-                    new Object[] { hold.getInt("target") });
+                    new Object[] { holdObj.ahr.getInt("target") });
             // in volume object : record
 
             // in volume object : record
@@ -754,7 +740,7 @@ public class AccountAccess {
         } else if (type.equals("I")) {
             OSRFObject issuance = (OSRFObject) Utils.doRequest(conn(),
                     Api.SERVICE_SERIAL, Api.METHOD_FETCH_ISSUANCE,
-                    new Object[] { hold.getInt("target") });
+                    new Object[] { holdObj.ahr.getInt("target") });
             // TODO
 
         } else if (type.equals("P")) {
@@ -769,7 +755,7 @@ public class AccountAccess {
             param.put("fields", fieldsList);
             HashMap<String, Integer> queryParam = new HashMap<String, Integer>();
             // PART_ID use "target field in hold"
-            queryParam.put("id", hold.getInt("target"));
+            queryParam.put("id", holdObj.ahr.getInt("target"));
             param.put("query", queryParam);
 
             // returns [{record:id, label=part label}]
@@ -798,30 +784,15 @@ public class AccountAccess {
 
     /**
      * Fetch hold status.
-     *
-     * @param hold the hold
-     * @param holdObj the hold obj
-     * @throws SessionNotFoundException the session not found exception
      */
-    public void fetchHoldQueueStats(OSRFObject hold, HoldRecord holdObj)
+    public void fetchHoldQueueStats(HoldRecord hold)
             throws SessionNotFoundException {
 
-        Integer hold_id = hold.getInt("id");
+        Integer hold_id = hold.ahr.getInt("id");
         Object resp = Utils.doRequest(conn(), Api.SERVICE_CIRC,
                 Api.HOLD_QUEUE_STATS, authToken, new Object[] {
                         authToken, hold_id });
-
-        if (resp == null) {
-            Analytics.logException(new ShouldNotHappenException(9, "null resp from hold_queue_stats"));
-            return;
-        }
-
-        Map<String, Integer> map = (Map<String, Integer>)resp;
-        holdObj.status = map.get("status");
-        holdObj.potentialCopies = map.get("potential_copies");
-        holdObj.estimatedWaitInSeconds = map.get("estimated_wait");
-        holdObj.queuePosition = map.get("queue_position");
-        holdObj.totalHolds = map.get("total_holds");
+        hold.setQueueStats(resp);
     }
 
     /**
@@ -837,11 +808,8 @@ public class AccountAccess {
         Object response = Utils.doRequest(conn(), Api.SERVICE_CIRC,
                 Api.HOLD_CANCEL, authToken, new Object[] {
                         authToken, hold_id });
-
-        // delete successful
         if (response.toString().equals("1"))
             return true;
-
         return false;
     }
 

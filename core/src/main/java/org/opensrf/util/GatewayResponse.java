@@ -94,7 +94,7 @@ public class GatewayResponse {
                 // response map
                 resp.map = (Map<String, ?>) payload_obj;
             } else {
-                resp.ex = new ShouldNotHappenException("Unexpected response");
+                resp.ex = new ShouldNotHappenException((payload_obj == null) ? "null response" : "Unexpected response");
                 resp.description = resp.ex.getMessage();
                 resp.failed = true;
             }
