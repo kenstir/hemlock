@@ -123,6 +123,13 @@ public class CopyInformationActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    static int safeCompareTo(String a, String b) {
+        if (a == null && b == null) { return 0; }
+        else if (a == null) { return -1; }
+        else if (b == null) { return 1; }
+        else return a.compareTo(b);
+    }
+
     public void updateCopyInfo(List<CopyLocationCounts> copyLocationCountsList) {
         if (copyLocationCountsList == null)
             return;
@@ -130,7 +137,7 @@ public class CopyInformationActivity extends AppCompatActivity {
         final EvergreenServer eg = EvergreenServer.getInstance();
 
         copyInfoRecords.clear();
-        for (CopyLocationCounts info : copyLocationCountsList) {
+        for (CopyLocationCounts info: copyLocationCountsList) {
             Organization org = eg.getOrganization(info.org_id);
             // if a branch is not opac visible, its copies should not be visible
             if (org != null && org.opac_visible) {
@@ -145,8 +152,9 @@ public class CopyInformationActivity extends AppCompatActivity {
                 public int compare(CopyLocationCounts a, CopyLocationCounts b) {
                     Organization a_org = eg.getOrganization(a.org_id);
                     Organization b_org = eg.getOrganization(b.org_id);
-                    int system_cmp = eg.getOrganizationName(a_org.parent_ou)
-                            .compareTo(eg.getOrganizationName(b_org.parent_ou));
+                    String a_system_name = eg.getOrganizationName(a_org.parent_ou);
+                    String b_system_name = eg.getOrganizationName(b_org.parent_ou);
+                    int system_cmp = safeCompareTo(a_system_name, b_system_name);
                     if (system_cmp != 0)
                         return system_cmp;
                     return a_org.name.compareTo(b_org.name);
