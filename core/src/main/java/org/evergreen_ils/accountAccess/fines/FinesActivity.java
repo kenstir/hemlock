@@ -192,7 +192,7 @@ public class FinesActivity extends BaseActivity {
                     @Override
                     public void run() {
                         listAdapter.clear();
-                        haveAnyFines = finesRecords.size() > 0;
+                        haveAnyFines = (finesRecords != null && finesRecords.size() > 0);
                         haveAnyGroceryBills = false;
                         for (FinesRecord finesRecord : finesRecords) {
                             listAdapter.add(finesRecord);
