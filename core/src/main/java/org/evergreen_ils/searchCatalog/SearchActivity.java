@@ -268,7 +268,7 @@ public class SearchActivity extends BaseActivity {
         for (int i = 0; i < eg.getInstance().getOrganizations().size(); i++) {
             Organization org = eg.getInstance().getOrganizations().get(i);
             list.add(org.getTreeDisplayName());
-            if (org.id == defaultLibraryID) {
+            if (org.id.equals(defaultLibraryID)) {
                 selectedOrgPos = i;
             }
         }

@@ -91,21 +91,16 @@ public class EvergreenServerLoader {
         startVolley();
         final EvergreenServer eg = EvergreenServer.getInstance();
         final AccountAccess ac = AccountAccess.getInstance();
-        final Integer home_lib = AccountAccess.getInstance().getHomeLibraryID();
+        final Organization home_org = eg.getOrganization(ac.getHomeLibraryID());
+        final Organization pickup_org = eg.getOrganization(ac.getDefaultPickupLibraryID());
 
-        // To minimize risk of race condition, load home org first.
-        // But sort a clone; sorting the original list screws up the sorting in the search spinner.
-        ArrayList<Organization> organizations = (ArrayList<Organization>) eg.getOrganizations().clone();
-        Collections.sort(organizations, new Comparator<Organization>() {
-            @Override
-            public int compare(Organization lhs, Organization rhs) {
-                if (lhs.id == home_lib) return -1;
-                if (rhs.id == home_lib) return 1;
-                return lhs.id.compareTo(rhs.id);
-            }
-        });
+        // To minimize risk of race condition, load home and default pickup orgs first.
+        // Use a clone so we don't screw up the search org spinner.
+        ArrayList<Organization> orgs = (ArrayList<Organization>) eg.getOrganizations().clone();
+        if (home_org != null) orgs.add(0, home_org);
+        if (pickup_org != null) orgs.add(0, pickup_org);
 
-        for (final Organization org : organizations) {
+        for (final Organization org : orgs) {
             if (org.settings_loaded)
                 continue;
             ArrayList<String> settings = new ArrayList<>();

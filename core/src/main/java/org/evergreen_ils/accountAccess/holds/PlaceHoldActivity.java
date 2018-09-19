@@ -50,6 +50,7 @@ import org.evergreen_ils.accountAccess.AccountAccess;
 import org.evergreen_ils.accountAccess.SessionNotFoundException;
 import org.evergreen_ils.searchCatalog.RecordInfo;
 import org.evergreen_ils.system.EvergreenServer;
+import org.evergreen_ils.system.Log;
 import org.evergreen_ils.system.Organization;
 import org.evergreen_ils.system.SMSCarrier;
 import org.evergreen_ils.utils.ui.ActionBarUtils;
@@ -233,12 +234,17 @@ public class PlaceHoldActivity extends AppCompatActivity {
         placeHold.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
+                //TODO add analytics
                 if (phone_notification.isChecked() && TextUtils.isEmpty(phone_notify.getText().toString()))
                     phone_notify.setError(getString(R.string.error_phone_notify_empty));
                 else if (sms_notification.isChecked() && TextUtils.isEmpty(sms_notify.getText().toString()))
                     sms_notify.setError(getString(R.string.error_sms_notify_empty));
-                else
+                else {
+                    //TODO check preconditions, e.g. is pickup_location ok for pickup
+
+
                     placeHold();
+                }
             }
         });
     }
@@ -312,7 +318,7 @@ public class PlaceHoldActivity extends AppCompatActivity {
         for (int i = 0; i < carriers.size(); i++) {
             SMSCarrier carrier = carriers.get(i);
             entries.add(carrier.name);
-            if (carrier.id == defaultCarrierID) {
+            if (carrier.id.equals(defaultCarrierID)) {
                 selectedSMSPos = i;
             }
         }
@@ -390,7 +396,7 @@ public class PlaceHoldActivity extends AppCompatActivity {
         for (int i = 0; i < eg.getOrganizations().size(); i++) {
             Organization org = eg.getOrganizations().get(i);
             list.add(org.getTreeDisplayName());
-            if (org.id == defaultLibraryID) {
+            if (org.id.equals(defaultLibraryID)) {
                 selectedOrgPos = i;
             }
         }
