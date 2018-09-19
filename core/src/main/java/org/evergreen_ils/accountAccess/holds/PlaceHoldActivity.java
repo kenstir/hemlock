@@ -234,15 +234,23 @@ public class PlaceHoldActivity extends AppCompatActivity {
         placeHold.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                //TODO add analytics
-                if (phone_notification.isChecked() && TextUtils.isEmpty(phone_notify.getText().toString()))
+                Analytics.logEvent("placeHold",
+                        "email", email_notification.isChecked() ? "1" : "0",
+                        "phone", phone_notification.isChecked() ? "1" : "0",
+                        "sms", sms_notification.isChecked() ? "1" : "0",
+                        "expires", expire_date != null ? "1" : "0");
+                Organization selectedOrg = eg.getOrganizations().get(selectedOrgPos);
+                if (!selectedOrg.isPickupLocation()) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                    builder.setTitle("Failed to place hold")
+                            .setMessage(selectedOrg.name + " is not a valid pickup location; choose a different one.")
+                            .setPositiveButton(android.R.string.ok, null);
+                    builder.create().show();
+                } else if (phone_notification.isChecked() && TextUtils.isEmpty(phone_notify.getText().toString()))
                     phone_notify.setError(getString(R.string.error_phone_notify_empty));
                 else if (sms_notification.isChecked() && TextUtils.isEmpty(sms_notify.getText().toString()))
                     sms_notify.setError(getString(R.string.error_sms_notify_empty));
                 else {
-                    //TODO check preconditions, e.g. is pickup_location ok for pickup
-
-
                     placeHold();
                 }
             }

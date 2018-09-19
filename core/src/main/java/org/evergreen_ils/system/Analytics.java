@@ -140,6 +140,9 @@ public class Analytics {
     public static void logEvent(String event, String name, String val, String name2, String val2) {
         Answers.getInstance().logCustom(new CustomEvent(event).putCustomAttribute(name, val).putCustomAttribute(name2, val2));
     }
+    public static void logEvent(String event, String n, String v, String n2, String v2, String n3, String v3, String n4, String v4) {
+        Answers.getInstance().logCustom(new CustomEvent(event).putCustomAttribute(n, v).putCustomAttribute(n2, v2).putCustomAttribute(n3, v3).putCustomAttribute(n4,v4));
+    }
 
     public static void logEvent(String event, String name, Integer val) {
         Answers.getInstance().logCustom(new CustomEvent(event).putCustomAttribute(name, val));
