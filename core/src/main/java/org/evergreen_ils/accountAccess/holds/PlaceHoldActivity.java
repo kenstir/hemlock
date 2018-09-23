@@ -50,13 +50,13 @@ import org.evergreen_ils.accountAccess.AccountAccess;
 import org.evergreen_ils.accountAccess.SessionNotFoundException;
 import org.evergreen_ils.searchCatalog.RecordInfo;
 import org.evergreen_ils.system.EvergreenServer;
-import org.evergreen_ils.system.Log;
 import org.evergreen_ils.system.Organization;
 import org.evergreen_ils.system.SMSCarrier;
 import org.evergreen_ils.utils.ui.ActionBarUtils;
 import org.evergreen_ils.system.Analytics;
 import org.evergreen_ils.utils.ui.ProgressDialogSupport;
 import org.evergreen_ils.views.splashscreen.SplashActivity;
+import org.opensrf.ShouldNotHappenException;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -212,6 +212,7 @@ public class PlaceHoldActivity extends AppCompatActivity {
                     public void run() {
                         progress.dismiss();
 
+                        logPlaceHoldResult(result.getErrorMessage());
                         if (result.isSuccess()) {
                             Toast.makeText(context, "Hold successfully placed",
                                     Toast.LENGTH_LONG).show();
@@ -230,27 +231,40 @@ public class PlaceHoldActivity extends AppCompatActivity {
         };
     }
 
+    private void logPlaceHoldResult(String result) {
+        ArrayList<String> notify = new ArrayList<>();
+        if (email_notification.isChecked()) notify.add("email");
+        if (phone_notification.isChecked()) notify.add("phone");
+        if (sms_notification.isChecked()) notify.add("sms");
+        String notifyTypes = TextUtils.join("|", notify);
+        try {
+            Analytics.logEvent("placeHold",
+                    "result", result,
+                    "notify", notifyTypes,
+                    "expires", expire_date != null ? "1" : "0",
+                    "pickup", eg.getOrganizations().get(selectedOrgPos).shortname);
+        } catch(Exception e) {
+            Analytics.logException(new ShouldNotHappenException("failed logEvent"));
+        }
+    }
+
     private void initPlaceHoldButton() {
         placeHold.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                Analytics.logEvent("placeHold",
-                        "email", email_notification.isChecked() ? "1" : "0",
-                        "phone", phone_notification.isChecked() ? "1" : "0",
-                        "sms", sms_notification.isChecked() ? "1" : "0",
-                        "expires", expire_date != null ? "1" : "0");
                 Organization selectedOrg = eg.getOrganizations().get(selectedOrgPos);
                 if (!selectedOrg.isPickupLocation()) {
+                    logPlaceHoldResult("not_pickup_location");
                     AlertDialog.Builder builder = new AlertDialog.Builder(context);
                     builder.setTitle("Failed to place hold")
                             .setMessage(selectedOrg.name + " is not a valid pickup location; choose a different one.")
                             .setPositiveButton(android.R.string.ok, null);
                     builder.create().show();
-                } else if (phone_notification.isChecked() && TextUtils.isEmpty(phone_notify.getText().toString()))
+                } else if (phone_notification.isChecked() && TextUtils.isEmpty(phone_notify.getText().toString())) {
                     phone_notify.setError(getString(R.string.error_phone_notify_empty));
-                else if (sms_notification.isChecked() && TextUtils.isEmpty(sms_notify.getText().toString()))
+                } else if (sms_notification.isChecked() && TextUtils.isEmpty(sms_notify.getText().toString())) {
                     sms_notify.setError(getString(R.string.error_sms_notify_empty));
-                else {
+                } else {
                     placeHold();
                 }
             }

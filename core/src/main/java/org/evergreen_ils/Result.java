@@ -47,7 +47,7 @@ public class Result {
 
     public String getErrorMessage() {
         if (isSuccess()) {
-            return "no error";
+            return "OK";
         } else if (mEvent != null && mEvent.containsKey("desc")) {
             return (String) mEvent.get("desc");
         } else {
