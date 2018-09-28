@@ -18,6 +18,7 @@
 
 package org.evergreen_ils.system;
 
+import android.app.Activity;
 import android.content.Context;
 import android.text.TextUtils;
 import android.util.Log;
@@ -134,33 +135,51 @@ public class Analytics {
         logException(TAG, e);
     }
 
+    private static void logEvent(CustomEvent ev) {
+        Log.d(TAG, "logEvent "+ev.toString());
+        Answers.getInstance().logCustom(ev);
+    }
+    public static void logEvent(String event) {
+        CustomEvent ev = new CustomEvent(event);
+        logEvent(ev);
+    }
     public static void logEvent(String event, String name, String val) {
-        Answers.getInstance().logCustom(new CustomEvent(event).putCustomAttribute(name, val));
+        CustomEvent ev = new CustomEvent(event);
+        ev.putCustomAttribute(name, val);
+        logEvent(ev);
+    }
+    public static void logEvent(String event, String name, Integer val) {
+        CustomEvent ev = new CustomEvent(event);
+        ev.putCustomAttribute(name, val);
+        logEvent(ev);
     }
     public static void logEvent(String event, String name, String val, String n2, String v2) {
-        Answers.getInstance().logCustom(new CustomEvent(event)
-                .putCustomAttribute(name, val)
-                .putCustomAttribute(n2, v2));
+        CustomEvent ev = new CustomEvent(event);
+        ev.putCustomAttribute(name, val)
+                .putCustomAttribute(n2, v2);
+        logEvent(ev);
     }
     public static void logEvent(String event, String name, String val, String n2, String v2, String n3, String v3) {
-        Answers.getInstance().logCustom(new CustomEvent(event)
-                .putCustomAttribute(name, val)
+        CustomEvent ev = new CustomEvent(event);
+        ev.putCustomAttribute(name, val)
                 .putCustomAttribute(n2, v2)
-                .putCustomAttribute(n3, v3));
+                .putCustomAttribute(n3, v3);
+        logEvent(ev);
     }
     public static void logEvent(String event, String n, String v, String n2, String v2, String n3, String v3, String n4, String v4) {
-        Answers.getInstance().logCustom(new CustomEvent(event).putCustomAttribute(n, v).putCustomAttribute(n2, v2).putCustomAttribute(n3, v3).putCustomAttribute(n4,v4));
-    }
-    public static void logEvent(String event, String n, String v, String n2, String v2, String n3, String v3, String n4, String v4, String n5, String v5) {
-        Answers.getInstance().logCustom(new CustomEvent(event)
-                .putCustomAttribute(n, v)
+        CustomEvent ev = new CustomEvent(event);
+        ev.putCustomAttribute(n, v)
                 .putCustomAttribute(n2, v2)
                 .putCustomAttribute(n3, v3)
-                .putCustomAttribute(n4, v4)
-                .putCustomAttribute(n5, v5));
+                .putCustomAttribute(n4,v4);
+        logEvent(ev);
     }
-
-    public static void logEvent(String event, String name, Integer val) {
-        Answers.getInstance().logCustom(new CustomEvent(event).putCustomAttribute(name, val));
+    public static void logEvent(String event, String n, Integer v, String n2, String v2, String n3, String v3, String n4, String v4) {
+        CustomEvent ev = new CustomEvent(event);
+        ev.putCustomAttribute(n, v)
+                .putCustomAttribute(n2, v2)
+                .putCustomAttribute(n3, v3)
+                .putCustomAttribute(n4, v4);
+        logEvent(ev);
     }
 }

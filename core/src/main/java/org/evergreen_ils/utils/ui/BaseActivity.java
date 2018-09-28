@@ -119,6 +119,7 @@ public class BaseActivity extends AppCompatActivity
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.action_feedback) {
+            Analytics.logEvent("Feedback: Open");
             String url = getString(R.string.ou_feedback_url);
             if (!TextUtils.isEmpty(url)) {
                 startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
@@ -137,19 +138,25 @@ public class BaseActivity extends AppCompatActivity
     protected boolean onNavigationAction(int id) {
         boolean ret = true;
         if (id == R.id.nav_header) {
+            Analytics.logEvent("Home: Open", "via", "nav_drawer");
             startActivity(new Intent(this, MainActivity.class));
         } else if (id == R.id.main_btn_search) {
+            Analytics.logEvent("Search: Open", "via", "nav_drawer");
             startActivity(new Intent(this, SearchActivity.class));
         } else if (id == R.id.account_btn_check_out) {
+            Analytics.logEvent("Items Checked Out: Open", "via", "nav_drawer");
             startActivity(new Intent(this, ItemsCheckOutListView.class));
         } else if (id == R.id.account_btn_holds) {
+            Analytics.logEvent("Holds: Open", "via", "nav_drawer");
             startActivity(new Intent(this, HoldsListView.class));
         } else if (id == R.id.account_btn_fines) {
+            Analytics.logEvent("Fines: Open", "via", "nav_drawer");
             startActivity(new Intent(this, FinesActivity.class));
         } else if (id == R.id.main_my_lists_button) {
+            Analytics.logEvent("My Lists: Open", "via", "nav_drawer");
             startActivity(new Intent(this, BookBagListView.class));
         } else if (mMenuItemHandler != null) {
-            ret = mMenuItemHandler.onItemSelected(this, id);
+            ret = mMenuItemHandler.onItemSelected(this, id, "nav_drawer");
         } else {
             ret = false;
         }

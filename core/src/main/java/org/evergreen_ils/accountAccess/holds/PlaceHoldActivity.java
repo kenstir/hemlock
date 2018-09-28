@@ -238,11 +238,11 @@ public class PlaceHoldActivity extends AppCompatActivity {
         if (sms_notification.isChecked()) notify.add("sms");
         String notifyTypes = TextUtils.join("|", notify);
         try {
-            Analytics.logEvent("placeHold",
+            Analytics.logEvent("Place Hold: Execute",
                     "result", result,
-                    "notify", notifyTypes,
+                    "hold_notify", notifyTypes,
                     "expires", expire_date != null ? "1" : "0",
-                    "pickup", eg.getOrganizations().get(selectedOrgPos).shortname);
+                    "pickup_org", eg.getOrganizations().get(selectedOrgPos).shortname);
         } catch(Exception e) {
             Analytics.logException(new ShouldNotHappenException("failed logEvent"));
         }

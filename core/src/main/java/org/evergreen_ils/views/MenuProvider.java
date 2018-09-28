@@ -43,5 +43,5 @@ public abstract class MenuProvider {
     }
 
     abstract public void onCreate(Activity activity);
-    abstract public boolean onItemSelected(Activity activity, int id);
+    abstract public boolean onItemSelected(Activity activity, int id, String via);
 }

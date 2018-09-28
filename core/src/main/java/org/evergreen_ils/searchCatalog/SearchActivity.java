@@ -34,6 +34,7 @@ import org.evergreen_ils.accountAccess.bookbags.BookBagUtils;
 import org.evergreen_ils.accountAccess.holds.PlaceHoldActivity;
 import org.evergreen_ils.android.App;
 import org.evergreen_ils.barcodescan.CaptureActivity;
+import org.evergreen_ils.system.Analytics;
 import org.evergreen_ils.system.EvergreenServer;
 import org.evergreen_ils.utils.ui.AppState;
 import org.evergreen_ils.system.Log;
@@ -233,6 +234,15 @@ public class SearchActivity extends BaseActivity {
                 });
 
                 searchResults = search.getSearchResults(text, getSearchClass(), getSearchFormat(), 0);
+                try {
+                    Analytics.logEvent("Search: Search",
+                            "num_results", SearchCatalog.getInstance().visible,
+                            "search_org", SearchCatalog.getInstance().selectedOrganization.shortname,
+                            "search_type", getSearchClass(),
+                            "search_format", getSearchFormat());
+                } catch (Exception e) {
+                    Analytics.logException(e);
+                }
 
                 runOnUiThread(new Runnable() {
                     @Override
@@ -384,14 +394,17 @@ public class SearchActivity extends BaseActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.action_advanced_search) {
+            Analytics.logEvent("Advanced Search: Open", "via", "options_menu");
             startActivityForResult(new Intent(getApplicationContext(), AdvancedSearchActivity.class), 2);
             return true;
         } else if (id == R.id.action_logout) {
             //// TODO: 4/30/2017 pull up logout action
+            Analytics.logEvent("Logout", "via", "options_menu");
             AccountAccess.getInstance().logout(this);
             SplashActivity.restartApp(this);
             return true;
         } else if (id == R.id.action_donate) {
+            Analytics.logEvent("Donate: Open", "via", "options_menu");
             startActivityForResult(new Intent(this, DonateActivity.class), App.REQUEST_PURCHASE);
         }
         return super.onOptionsItemSelected(item);
