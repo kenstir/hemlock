@@ -30,6 +30,7 @@ import org.evergreen_ils.accountAccess.AccountAccess;
 import org.evergreen_ils.accountAccess.bookbags.BookBag;
 import org.evergreen_ils.accountAccess.bookbags.BookBagUtils;
 import org.evergreen_ils.accountAccess.holds.PlaceHoldActivity;
+import org.evergreen_ils.system.Analytics;
 import org.evergreen_ils.system.EvergreenServer;
 import org.evergreen_ils.system.Log;
 import org.evergreen_ils.net.VolleyWrangler;
@@ -163,6 +164,7 @@ public class BasicDetailsFragment extends Fragment {
         placeHoldButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
+                Analytics.logEvent("Item Details: Place Hold");
                 Intent intent = new Intent(getActivity().getApplicationContext(), PlaceHoldActivity.class);
                 intent.putExtra("recordInfo", record);
                 startActivity(intent);
@@ -171,6 +173,7 @@ public class BasicDetailsFragment extends Fragment {
         showCopiesButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
+                Analytics.logEvent("Item Details: Copy Info");
                 Intent intent = new Intent(getActivity().getApplicationContext(), CopyInformationActivity.class);
                 intent.putExtra("recordInfo", record);
                 intent.putExtra("orgID", orgID);
@@ -180,12 +183,14 @@ public class BasicDetailsFragment extends Fragment {
         onlineAccessButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
+                Analytics.logEvent("Item Details: Online Access");
                 launchOnlineAccess();
             }
         });
         addToBookbagButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
+                Analytics.logEvent("Item Details: Add to List");
                 BookBagUtils.showAddToListDialog(activity, bookBags, record);
             }
         });
