@@ -168,9 +168,11 @@ public class BaseActivity extends AppCompatActivity
 
     public boolean handleMenuAction(int id) {
         if (id == R.id.action_switch_account) {
+            Analytics.logEvent("Switch Account", "via", "options_menu");
             SplashActivity.restartApp(this);
             return true;
         } else if (id == R.id.action_add_account) {
+            Analytics.logEvent("Add Account", "via", "options_menu");
             invalidateOptionsMenu();
             AccountUtils.addAccount(this, new Runnable() {
                 @Override
@@ -180,6 +182,7 @@ public class BaseActivity extends AppCompatActivity
             });
             return true;
         } else if (id == R.id.action_logout) {
+            Analytics.logEvent("Logout", "via", "options_menu");
             AccountAccess.getInstance().logout(this);
             SplashActivity.restartApp(this);
             return true;
@@ -190,6 +193,7 @@ public class BaseActivity extends AppCompatActivity
             startActivityForResult(new Intent(this, DonateActivity.class), App.REQUEST_PURCHASE);
             return true;
         } else if (id == R.id.action_messages) {
+            Analytics.logEvent("Get Messages", "via", "options_menu");
             String username = AccountAccess.getInstance().getUserName();
             String password = AccountUtils.getPassword(this, username);
             String path = "/eg/opac/login"
