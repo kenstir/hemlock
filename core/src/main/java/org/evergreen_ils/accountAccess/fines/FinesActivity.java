@@ -94,6 +94,7 @@ public class FinesActivity extends BaseActivity {
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Analytics.logEvent("Fines: Tap List Item", "have_grocery_bills", haveAnyGroceryBills);
                 ArrayList<RecordInfo> records = new ArrayList<>();
                 if (haveAnyGroceryBills) {
                     // If any of the fines are for non-circulation items ("grocery bills"), we
@@ -132,6 +133,7 @@ public class FinesActivity extends BaseActivity {
             pay_fines_button.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    Analytics.logEvent("Fines: Pay Fines", "num_fines", finesRecords.size());
                     String username = AccountAccess.getInstance().getUserName();
                     String password = AccountUtils.getPassword(FinesActivity.this, username);
                     String path =                            "/eg/opac/login"

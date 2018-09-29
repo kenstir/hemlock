@@ -53,6 +53,7 @@ public class UnderlinePageIndicator extends View implements PageIndicator {
     private ViewPager.OnPageChangeListener mListener;
     private int mScrollState;
     private int mCurrentPage;
+    private boolean mFirstScroll = true;
     private float mPositionOffset;
 
     private int mTouchSlop;
@@ -313,9 +314,10 @@ public class UnderlinePageIndicator extends View implements PageIndicator {
 
     @Override
     public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-        if (mCurrentPage != position) {
-            Analytics.logEvent("Item Details: Swipe");
+        if (!mFirstScroll) {
+            Analytics.logEvent("Item Details: Swipe Page");
         }
+        mFirstScroll = false;
         mCurrentPage = position;
         mPositionOffset = positionOffset;
         if (mFades) {

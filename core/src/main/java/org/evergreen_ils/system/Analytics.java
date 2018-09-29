@@ -148,6 +148,11 @@ public class Analytics {
         ev.putCustomAttribute(name, val);
         logEvent(ev);
     }
+    public static void logEvent(String event, String name, boolean val) {
+        CustomEvent ev = new CustomEvent(event);
+        ev.putCustomAttribute(name, val ? "true" : "false");
+        logEvent(ev);
+    }
     public static void logEvent(String event, String name, Integer val) {
         CustomEvent ev = new CustomEvent(event);
         ev.putCustomAttribute(name, val);
