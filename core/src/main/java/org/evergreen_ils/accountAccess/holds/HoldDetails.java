@@ -162,7 +162,7 @@ public class HoldDetails extends BaseActivity {
                 builder.setPositiveButton(R.string.cancel_hold_positive_button, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        Analytics.logEvent("Hold Details: Cancel Hold");
+                        Analytics.logEvent("Holds: Cancel Hold");
                         cancelHold(record);
                     }
                 });
@@ -173,7 +173,7 @@ public class HoldDetails extends BaseActivity {
         updateHold.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                Analytics.logEvent("Hold Details: Update Hold");
+                Analytics.logEvent("Holds: Update Hold");
                 updateHold(record);
             }
         });

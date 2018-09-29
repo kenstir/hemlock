@@ -100,7 +100,7 @@ public class BookBagDetails extends BaseActivity {
         delete_bookbag_button.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                Analytics.logEvent("List Details: Delete List");
+                Analytics.logEvent("Lists: Delete List");
                 AlertDialog.Builder builder = new AlertDialog.Builder(context);
                 builder.setMessage(R.string.delete_list_confirm_msg);
                 builder.setNegativeButton(R.string.delete_list_negative_button, null);
@@ -122,7 +122,7 @@ public class BookBagDetails extends BaseActivity {
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Analytics.logEvent("List Details: Tap List Item");
+                Analytics.logEvent("Lists: Tap List Item");
                 ArrayList<RecordInfo> records = new ArrayList<>();
                 for (BookBagItem item: bookBagItems) {
                     records.add(item.recordInfo);
@@ -252,7 +252,7 @@ public class BookBagDetails extends BaseActivity {
 
                 @Override
                 public void onClick(View v) {
-                    Analytics.logEvent("My Lists: Remove");
+                    Analytics.logEvent("Lists: Remove List Item");
 
                     Thread removeItem = new Thread(new Runnable() {
 

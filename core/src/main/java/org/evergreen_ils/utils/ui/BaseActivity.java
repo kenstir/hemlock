@@ -144,7 +144,7 @@ public class BaseActivity extends AppCompatActivity
             Analytics.logEvent("Search: Open", "via", "nav_drawer");
             startActivity(new Intent(this, SearchActivity.class));
         } else if (id == R.id.account_btn_check_out) {
-            Analytics.logEvent("Items Checked Out: Open", "via", "nav_drawer");
+            Analytics.logEvent("Checkouts: Open", "via", "nav_drawer");
             startActivity(new Intent(this, ItemsCheckOutListView.class));
         } else if (id == R.id.account_btn_holds) {
             Analytics.logEvent("Holds: Open", "via", "nav_drawer");
@@ -153,7 +153,7 @@ public class BaseActivity extends AppCompatActivity
             Analytics.logEvent("Fines: Open", "via", "nav_drawer");
             startActivity(new Intent(this, FinesActivity.class));
         } else if (id == R.id.main_my_lists_button) {
-            Analytics.logEvent("My Lists: Open", "via", "nav_drawer");
+            Analytics.logEvent("Lists: Open", "via", "nav_drawer");
             startActivity(new Intent(this, BookBagListView.class));
         } else if (mMenuItemHandler != null) {
             ret = mMenuItemHandler.onItemSelected(this, id, "nav_drawer");
@@ -168,11 +168,11 @@ public class BaseActivity extends AppCompatActivity
 
     public boolean handleMenuAction(int id) {
         if (id == R.id.action_switch_account) {
-            Analytics.logEvent("Switch Account", "via", "options_menu");
+            Analytics.logEvent("Account: Switch Account", "via", "options_menu");
             SplashActivity.restartApp(this);
             return true;
         } else if (id == R.id.action_add_account) {
-            Analytics.logEvent("Add Account", "via", "options_menu");
+            Analytics.logEvent("Account: Add Account", "via", "options_menu");
             invalidateOptionsMenu();
             AccountUtils.addAccount(this, new Runnable() {
                 @Override
@@ -182,7 +182,7 @@ public class BaseActivity extends AppCompatActivity
             });
             return true;
         } else if (id == R.id.action_logout) {
-            Analytics.logEvent("Logout", "via", "options_menu");
+            Analytics.logEvent("Account: Logout", "via", "options_menu");
             AccountAccess.getInstance().logout(this);
             SplashActivity.restartApp(this);
             return true;
@@ -193,7 +193,7 @@ public class BaseActivity extends AppCompatActivity
             startActivityForResult(new Intent(this, DonateActivity.class), App.REQUEST_PURCHASE);
             return true;
         } else if (id == R.id.action_messages) {
-            Analytics.logEvent("Get Messages", "via", "options_menu");
+            Analytics.logEvent("Messages: Open", "via", "options_menu");
             String username = AccountAccess.getInstance().getUserName();
             String password = AccountUtils.getPassword(this, username);
             String path = "/eg/opac/login"

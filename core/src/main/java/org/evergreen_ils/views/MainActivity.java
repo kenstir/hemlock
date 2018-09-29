@@ -192,7 +192,7 @@ public class MainActivity extends BaseActivity {
     public void onButtonClick(View v) {
         int id = v.getId();
         if (id == R.id.account_btn_check_out) {
-            Analytics.logEvent("Items Checked Out: Open", "via", "main_button");
+            Analytics.logEvent("Checkouts: Open", "via", "main_button");
             startActivity(new Intent(this, ItemsCheckOutListView.class));
         } else if (id == R.id.account_btn_holds) {
             Analytics.logEvent("Holds: Open", "via", "main_button");
@@ -201,7 +201,7 @@ public class MainActivity extends BaseActivity {
             Analytics.logEvent("Fines: Open", "via", "main_button");
             startActivity(new Intent(this, FinesActivity.class));
         } else if (id == R.id.main_my_lists_button) {
-            Analytics.logEvent("My Lists: Open", "via", "main_button");
+            Analytics.logEvent("Lists: Open", "via", "main_button");
             startActivity(new Intent(this, BookBagListView.class));
         } else if (id == R.id.main_btn_search) {
             Analytics.logEvent("Search: Open", "via", "main_button");

@@ -235,7 +235,7 @@ public class SearchActivity extends BaseActivity {
 
                 searchResults = search.getSearchResults(text, getSearchClass(), getSearchFormat(), 0);
                 try {
-                    Analytics.logEvent("Search: Search",
+                    Analytics.logEvent("Search: Execute",
                             "num_results", SearchCatalog.getInstance().visible,
                             "search_org", SearchCatalog.getInstance().selectedOrganization.shortname,
                             "search_type", getSearchClass(),
@@ -369,6 +369,7 @@ public class SearchActivity extends BaseActivity {
             return true;
         case App.ITEM_ADD_TO_LIST:
             if (bookBags.size() > 0) {
+                Analytics.logEvent("Lists: Add to List", "via", "results_long_press");
                 BookBagUtils.showAddToListDialog(this, bookBags, info.record);
             } else {
                 Toast.makeText(this, getText(R.string.msg_no_lists), Toast.LENGTH_SHORT).show();
@@ -399,7 +400,7 @@ public class SearchActivity extends BaseActivity {
             return true;
         } else if (id == R.id.action_logout) {
             //// TODO: 4/30/2017 pull up logout action
-            Analytics.logEvent("Logout", "via", "options_menu");
+            Analytics.logEvent("Account: Logout", "via", "options_menu");
             AccountAccess.getInstance().logout(this);
             SplashActivity.restartApp(this);
             return true;

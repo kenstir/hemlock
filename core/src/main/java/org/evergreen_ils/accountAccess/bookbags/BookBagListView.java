@@ -103,7 +103,7 @@ public class BookBagListView extends BaseActivity {
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Analytics.logEvent("My Lists: Tap List Item");
+                Analytics.logEvent("Lists: Tap List");
                 BookBag item = (BookBag) lv.getItemAtPosition(position);
                 Intent intent = new Intent(context, BookBagDetails.class);
                 intent.putExtra("bookBag", item);
@@ -181,7 +181,7 @@ public class BookBagListView extends BaseActivity {
             builder.create().show();
             return;
         }
-        Analytics.logEvent("My Lists: Create List");
+        Analytics.logEvent("Lists: Create List");
 
         Thread thread = new Thread(new Runnable() {
             @Override

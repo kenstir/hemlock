@@ -135,6 +135,8 @@ public class Analytics {
         logException(TAG, e);
     }
 
+    private static String bool2str(boolean val) { return val ? "true" : "false"; }
+
     private static void logEvent(CustomEvent ev) {
         Log.d(TAG, "logEvent "+ev.toString());
         Answers.getInstance().logCustom(ev);
@@ -149,9 +151,7 @@ public class Analytics {
         logEvent(ev);
     }
     public static void logEvent(String event, String name, boolean val) {
-        CustomEvent ev = new CustomEvent(event);
-        ev.putCustomAttribute(name, val ? "true" : "false");
-        logEvent(ev);
+        logEvent(event, name, bool2str(val));
     }
     public static void logEvent(String event, String name, Integer val) {
         CustomEvent ev = new CustomEvent(event);
@@ -163,6 +163,15 @@ public class Analytics {
         ev.putCustomAttribute(name, val)
                 .putCustomAttribute(n2, v2);
         logEvent(ev);
+    }
+    public static void logEvent(String event, String name, Integer val, String n2, boolean v2) {
+        CustomEvent ev = new CustomEvent(event);
+        ev.putCustomAttribute(name, val)
+                .putCustomAttribute(n2, bool2str(v2));
+        logEvent(ev);
+    }
+    public static void logEvent(String event, String name, boolean val, String n2, boolean v2) {
+        logEvent(event, name, bool2str(val), n2, bool2str(v2));
     }
     public static void logEvent(String event, String name, String val, String n2, String v2, String n3, String v3) {
         CustomEvent ev = new CustomEvent(event);

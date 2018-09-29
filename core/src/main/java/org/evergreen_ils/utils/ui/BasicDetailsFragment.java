@@ -164,7 +164,7 @@ public class BasicDetailsFragment extends Fragment {
         placeHoldButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                Analytics.logEvent("Item Details: Place Hold");
+                Analytics.logEvent("Place Hold: Open", "via", "details_button");
                 Intent intent = new Intent(getActivity().getApplicationContext(), PlaceHoldActivity.class);
                 intent.putExtra("recordInfo", record);
                 startActivity(intent);
@@ -173,7 +173,7 @@ public class BasicDetailsFragment extends Fragment {
         showCopiesButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                Analytics.logEvent("Item Details: Copy Info");
+                Analytics.logEvent("Copy Info: Open", "via", "details_button");
                 Intent intent = new Intent(getActivity().getApplicationContext(), CopyInformationActivity.class);
                 intent.putExtra("recordInfo", record);
                 intent.putExtra("orgID", orgID);
@@ -183,14 +183,14 @@ public class BasicDetailsFragment extends Fragment {
         onlineAccessButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                Analytics.logEvent("Item Details: Online Access");
+                Analytics.logEvent("Online Access: Open", "via", "details_button");
                 launchOnlineAccess();
             }
         });
         addToBookbagButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                Analytics.logEvent("Item Details: Add to List");
+                Analytics.logEvent("Lists: Add to List", "via", "details_button");
                 BookBagUtils.showAddToListDialog(activity, bookBags, record);
             }
         });

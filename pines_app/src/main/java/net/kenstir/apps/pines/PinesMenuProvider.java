@@ -46,11 +46,11 @@ public class PinesMenuProvider extends MenuProvider {
     @Override
     public boolean onItemSelected(Activity activity, int id, String via) {
         if (id == R.id.open_full_catalog_button) {
-            Analytics.logEvent("Full Catalog: Open", "via", via);
+            Analytics.logEvent("Link: Full Catalog", "via", via);
             String url = activity.getString(org.evergreen_ils.R.string.ou_library_url);
             activity.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
         } else if (id == R.id.library_locator_button) {
-            Analytics.logEvent("Library Locator: Open", "via", via);
+            Analytics.logEvent("Link: Library Locator", "via", via);
             String url = "http://pines.georgialibraries.org/pinesLocator/locator.html";
             activity.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
         } else {

@@ -315,7 +315,7 @@ public class UnderlinePageIndicator extends View implements PageIndicator {
     @Override
     public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
         if (!mFirstScroll) {
-            Analytics.logEvent("Item Details: Swipe Page");
+            Analytics.logEvent("Details: Swipe Page");
         }
         mFirstScroll = false;
         mCurrentPage = position;

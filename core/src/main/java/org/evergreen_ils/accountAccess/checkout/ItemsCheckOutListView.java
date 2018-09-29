@@ -29,6 +29,8 @@ import android.widget.*;
 import org.evergreen_ils.R;
 import org.evergreen_ils.accountAccess.AccountAccess;
 import org.evergreen_ils.accountAccess.SessionNotFoundException;
+import org.evergreen_ils.barcodescan.PlanarYUVLuminanceSource;
+import org.evergreen_ils.system.Analytics;
 import org.evergreen_ils.system.Log;
 import org.evergreen_ils.searchCatalog.RecordDetails;
 import org.evergreen_ils.searchCatalog.RecordInfo;
@@ -195,9 +197,6 @@ public class ItemsCheckOutListView extends BaseActivity {
             recordFormat.setText(RecordInfo.getFormatLabel(record.recordInfo));
             recordDueDate.setText(String.format(getString(R.string.due), record.getDueDateString()));
             maybeHighlightDueDate(record);
-//            Log.d(TAG, "title: \"" + record.getTitle() + "\""
-//                    + " due: " + record.getDueDateString()
-//                    + " renewals:  " + record.getRenewals());
 
             return row;
         }
@@ -226,6 +225,7 @@ public class ItemsCheckOutListView extends BaseActivity {
                     builder.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
+                            Analytics.logEvent("Checkouts: Renew", "num_renewals", record.getRenewals(), "overdue", record.isOverdue());
                             renewItem(record);
                         }
                     });
