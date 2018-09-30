@@ -1,9 +1,24 @@
-# Hemlock app and CW/MARS app
+# Hemlock App for Android Privacy Policy
 
-## Privacy Policy
+This page outlines the privacy policy of Hemlock and related apps for Android ("the app"):
+* [Hemlock|https://play.google.com/store/apps/details?id=net.kenstir.apps.hemlock]
+* [C/W MARS|https://play.google.com/store/apps/details?id=org.cwmars]
+* [PINES|https://play.google.com/store/apps/details?id=net.kenstir.apps.pines]
 
-This app does not collect any of your information.  It does not read your
-contacts.  It does not transmit any of your activity anywhere except
 
-* your library system's Evergreen server
-* the Google Play server, in the event of a crash report or a donation
+## Reason for Collection
+
+The app collects general data on which features are used and how
+often.  For example, if you place a hold, an event is collected noting
+whether you chose email and/or SMS notification.  In the event of a
+crash, a stack trace is collected, along with some details about the
+hardware and software on the phone, and some logs about the network
+requests made leading up to the crash.
+
+This information allows us to improve and prioritize features, and to fix bugs.
+
+
+## Personal Data Collected
+
+* Installation UUID
+* IP addresses - once received it is geo-coded to a city and displayed on a map for 10 seconds. Retained temporarily.
