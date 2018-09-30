@@ -15,7 +15,7 @@ crash, a stack trace is collected, along with some details about the
 hardware and software on the phone, and some logs about the network
 requests made leading up to the crash.
 
-This information allows us to improve and prioritize features, and to fix bugs.
+This information allows us to fix bugs, and improve and prioritize features.
 
 
 ## Personal Data Collected
