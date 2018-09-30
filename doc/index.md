@@ -1,9 +1,9 @@
 # Hemlock App for Android Privacy Policy
 
 This page outlines the privacy policy of Hemlock and related apps for Android ("the app"):
-* [Hemlock|https://play.google.com/store/apps/details?id=net.kenstir.apps.hemlock]
-* [C/W MARS|https://play.google.com/store/apps/details?id=org.cwmars]
-* [PINES|https://play.google.com/store/apps/details?id=net.kenstir.apps.pines]
+* [Hemlock](https://play.google.com/store/apps/details?id=net.kenstir.apps.hemlock)
+* [C/W MARS](https://play.google.com/store/apps/details?id=org.cwmars)
+* [PINES (Georgia)](https://play.google.com/store/apps/details?id=net.kenstir.apps.pines)
 
 
 ## Reason for Collection
