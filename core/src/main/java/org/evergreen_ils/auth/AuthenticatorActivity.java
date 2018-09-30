@@ -1,31 +1,28 @@
 package org.evergreen_ils.auth;
 
-import android.content.Context;
-import android.net.Uri;
-import android.text.InputType;
-import android.text.TextUtils;
-import android.widget.Button;
-import org.evergreen_ils.R;
-
 import android.accounts.Account;
 import android.accounts.AccountAuthenticatorActivity;
 import android.accounts.AccountManager;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.text.InputType;
+import android.text.TextUtils;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
+import org.evergreen_ils.R;
 import org.evergreen_ils.android.App;
-import org.evergreen_ils.system.EvergreenServer;
-import org.evergreen_ils.utils.ui.AppState;
-import org.evergreen_ils.system.Log;
 import org.evergreen_ils.system.Library;
-import org.w3c.dom.Text;
+import org.evergreen_ils.system.Log;
+import org.evergreen_ils.utils.ui.AppState;
+import org.evergreen_ils.system.Analytics;
 
 public class AuthenticatorActivity extends AccountAuthenticatorActivity {
 
@@ -56,6 +53,7 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Analytics.initialize(this);
         setContentViewImpl();
 
         AppState.init(this);
@@ -63,11 +61,11 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity {
         accountManager = AccountManager.get(getBaseContext());
 
         String accountName = getIntent().getStringExtra(ARG_ACCOUNT_NAME);
-        Log.d(TAG, "onCreate> accountName=" + accountName);
+        Analytics.log(TAG, "accountName=" + accountName);
         authTokenType = getIntent().getStringExtra(ARG_AUTH_TYPE);
         if (authTokenType == null)
             authTokenType = Const.AUTHTOKEN_TYPE;
-        Log.d(TAG, "onCreate> authTokenType=" + authTokenType);
+        Analytics.log(TAG, "authTokenType=" + authTokenType);
 
         TextView signInText = (TextView) findViewById(R.id.account_sign_in_text);
         signInText.setText(String.format(getString(R.string.ou_account_sign_in_message),
@@ -103,7 +101,7 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity {
         }
 
         if (savedInstanceState != null) {
-            Log.d(TAG, "onCreate> savedInstanceState=" + savedInstanceState);
+            Analytics.log(TAG, "savedInstanceState=" + savedInstanceState);
             if (savedInstanceState.getString(STATE_ALERT_MESSAGE) != null) {
                 showAlert(savedInstanceState.getString(STATE_ALERT_MESSAGE));
             }
@@ -135,7 +133,7 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Log.d(TAG, "onActivityResult> requestCode=" + requestCode + " resultCode=" + resultCode);
+        Analytics.log(TAG, "onActivityResult> requestCode=" + requestCode + " resultCode=" + resultCode);
         // The sign up activity returned that the user has successfully created
         // an account
         if (requestCode == REQ_SIGNUP && resultCode == RESULT_OK) {
@@ -145,7 +143,7 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity {
     }
 
     public void submit() {
-        Log.d(TAG, "submit>");
+        Analytics.log(TAG, "submit>");
 
         final String username = ((TextView) findViewById(R.id.accountName)).getText().toString();
         final String password = ((TextView) findViewById(R.id.accountPassword)).getText().toString();
@@ -156,7 +154,7 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity {
             @Override
             protected Intent doInBackground(String... params) {
 
-                Log.d(TAG, "signinTask> Start authenticating");
+                Analytics.log(TAG, "signinTask> Start authenticating");
 
                 String authtoken = null;
                 String errorMessage = "Login failed";
@@ -164,7 +162,7 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity {
                 Bundle data = new Bundle();
                 try {
                     authtoken = EvergreenAuthenticator.signIn(selected_library.url, username, password);
-                    Log.d(TAG, "signinTask> signIn returned " + authtoken);
+                    Analytics.log(TAG, "signinTask> signIn returned " + Analytics.redactedString(authtoken));
 
                     data.putString(AccountManager.KEY_ACCOUNT_NAME, username);
                     data.putString(AccountManager.KEY_ACCOUNT_TYPE, accountType);
@@ -174,10 +172,10 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity {
                     data.putString(Const.KEY_LIBRARY_URL, selected_library.url);
                 } catch (AuthenticationException e) {
                     if (e != null) errorMessage = e.getMessage();
-                    Log.d(TAG, "signinTask> signIn caught", e);
+                    Analytics.logException(TAG, e);
                 } catch (Exception e2) {
                     if (e2 != null) errorMessage = e2.getMessage();
-                    Log.d(TAG, "signinTask> signIn caught", e2);
+                    Analytics.logException(TAG, e2);
                 }
                 if (authtoken == null)
                     data.putString(KEY_ERROR_MESSAGE, errorMessage);
@@ -190,12 +188,12 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity {
             @Override
             protected void onPostExecute(Intent intent) {
                 signinTask = null;
-                Log.d(TAG, "signinTask.onPostExecute> intent=" + intent);
+                Analytics.log(TAG, "signinTask.onPostExecute> intent=" + intent);
                 if (intent.hasExtra(KEY_ERROR_MESSAGE)) {
-                    Log.d(TAG, "signinTask.onPostExecute> error msg: " + intent.getStringExtra(KEY_ERROR_MESSAGE));
+                    Analytics.log(TAG, "signinTask.onPostExecute> error msg: " + intent.getStringExtra(KEY_ERROR_MESSAGE));
                     onAuthFailure(intent.getStringExtra(KEY_ERROR_MESSAGE));
                 } else {
-                    Log.d(TAG, "signinTask.onPostExecute> no error msg");
+                    Analytics.log(TAG, "signinTask.onPostExecute> no error msg");
                     onAuthSuccess(intent);
                 }
             }
@@ -207,6 +205,8 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity {
     }
 
     protected void showAlert(String errorMessage) {
+        if (isFinishing())
+            return;
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         alertMessage = errorMessage;
         builder.setTitle("Login failed")
@@ -218,22 +218,6 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity {
                         alertMessage = null;
                     }
                 });
-        if (App.getIsDebuggable(this)) {
-            builder.setNeutralButton(R.string.button_send_log, new OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            Context context = AuthenticatorActivity.this;
-                            String email = context.getString(R.string.ou_developer_email);
-                            Intent intent = new Intent(Intent.ACTION_SEND);
-                            intent.setType("text/plain");
-                            intent.putExtra(Intent.EXTRA_EMAIL, new String[] {email});
-                            intent.putExtra(Intent.EXTRA_SUBJECT, App.getAppInfo(context));
-                            intent.putExtra(Intent.EXTRA_TEXT, Log.getLogBuffer());
-                            startActivity(intent);
-                        }
-                    }
-            );
-        }
         alertDialog = builder.create();
         alertDialog.show();
     }
@@ -245,10 +229,10 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity {
         String library_name = intent.getStringExtra(Const.KEY_LIBRARY_NAME);
         String library_url = intent.getStringExtra(Const.KEY_LIBRARY_URL);
         final Account account = new Account(accountName, accountType);
-        Log.d(TAG, "onAuthSuccess> accountName=" + accountName);
+        Analytics.log(TAG, "onAuthSuccess> accountName=" + accountName);
 
         //if (getIntent().getBooleanExtra(ARG_IS_ADDING_NEW_ACCOUNT, false))
-        Log.d(TAG, "onAuthSuccess> addAccountExplicitly " + accountName);
+        Analytics.log(TAG, "onAuthSuccess> addAccountExplicitly " + accountName);
         String authtoken = intent.getStringExtra(AccountManager.KEY_AUTHTOKEN);
         String authtokenType = authTokenType;
 
@@ -260,13 +244,13 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity {
             userdata.putString(Const.KEY_LIBRARY_URL, library_url);
         }
         if (accountManager.addAccountExplicitly(account, accountPassword, userdata)) {
-            Log.d(TAG, "onAuthSuccess> true, setAuthToken " + authtoken);
+            Analytics.log(TAG, "onAuthSuccess> true, setAuthToken " + Analytics.redactedString(authtoken));
             // Not setting the auth token will cause another call to the server
             // to authenticate the user
             accountManager.setAuthToken(account, authtokenType, authtoken);
         } else {
             // Probably the account already existed, in which case update the password
-            Log.d(TAG, "onAuthSuccess> false, setPassword");
+            Analytics.log(TAG, "onAuthSuccess> false, setPassword");
             accountManager.setPassword(account, accountPassword);
         }
 

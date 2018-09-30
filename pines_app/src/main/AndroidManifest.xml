@@ -3,12 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="net.kenstir.apps.pines"
     android:installLocation="auto"
-    android:versionCode="25"
-    android:versionName="1.1.8">
-
-    <uses-sdk
-        android:minSdkVersion="15"
-        android:targetSdkVersion="27" />
+    android:versionCode="38"
+    android:versionName="1.1.20">
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS" />
@@ -27,7 +23,7 @@
     <application
         android:allowBackup="true"
         android:fullBackupContent="true"
-        android:icon="@drawable/launcher_icon"
+        android:icon="@mipmap/launcher_icon"
         android:label="@string/ou_app_label"
         android:theme="@style/PINESDarkNoActionBar"
         tools:replace="android:theme">
@@ -141,5 +137,9 @@
                 android:name="android.accounts.AccountAuthenticator"
                 android:resource="@xml/authenticator" />
         </service>
+
+        <meta-data
+            android:name="io.fabric.ApiKey"
+            android:value="13bfee3eaddbbff9639b69461f4b9aa1dbe940ad" />
     </application>
 </manifest>

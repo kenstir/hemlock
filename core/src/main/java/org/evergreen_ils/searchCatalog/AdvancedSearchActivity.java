@@ -19,18 +19,11 @@
  */
 package org.evergreen_ils.searchCatalog;
 
-import java.util.ArrayList;
-import java.util.StringTokenizer;
-
+import android.content.Intent;
+import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.MenuItem;
-import org.evergreen_ils.R;
-import org.evergreen_ils.utils.ui.ActionBarUtils;
-import org.evergreen_ils.views.splashscreen.SplashActivity;
-
-import android.content.Intent;
-import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup.LayoutParams;
@@ -40,18 +33,27 @@ import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import org.evergreen_ils.R;
+import org.evergreen_ils.utils.ui.ActionBarUtils;
+import org.evergreen_ils.system.Analytics;
+import org.evergreen_ils.views.splashscreen.SplashActivity;
+
+import java.util.ArrayList;
+import java.util.StringTokenizer;
+
 public class AdvancedSearchActivity extends AppCompatActivity {
 
     private final static String TAG = AdvancedSearchActivity.class.getSimpleName();
 
     private ArrayList<String> searchTerms;
-    private String advancedSearchFormattedText;
+    private ArrayList<String> searchTermTypes;
 
     public static final int RESULT_ADVANCED_SEARCH = 10;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Analytics.initialize(this);
         if (!SplashActivity.isAppInitialized()) {
             SplashActivity.restartApp(this);
             return;
@@ -60,8 +62,8 @@ public class AdvancedSearchActivity extends AppCompatActivity {
         setContentView(R.layout.advanced_search);
         ActionBarUtils.initActionBarForActivity(this);
 
-        searchTerms = new ArrayList<String>();
-        advancedSearchFormattedText = new String();
+        searchTerms = new ArrayList<>();
+        searchTermTypes = new ArrayList<>();
 
         final LinearLayout layout = (LinearLayout) findViewById(R.id.advanced_search_filters);
         Button addFilter = (Button) findViewById(R.id.advanced_search_add_filter_button);
@@ -76,6 +78,7 @@ public class AdvancedSearchActivity extends AppCompatActivity {
                 int contains_pos = search_contains_spinner.getSelectedItemPosition();
                 String query = "";
                 String qtype = search_qtype_spinner.getSelectedItem().toString().toLowerCase();
+                searchTermTypes.add(qtype);
                 String filter = search_filter_text.getText().toString();
 
                 switch (contains_pos) {
@@ -109,6 +112,7 @@ public class AdvancedSearchActivity extends AppCompatActivity {
         cancel.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
+                Analytics.logEvent("Advanced Search: Cancel");
                 finish();
             }
         });
@@ -117,6 +121,8 @@ public class AdvancedSearchActivity extends AppCompatActivity {
         search.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
+                String types = TextUtils.join("|", searchTermTypes);
+                Analytics.logEvent("Advanced Search: Search", "search_type", types);
                 Intent returnIntent = new Intent();
                 returnIntent.putExtra("advancedSearchText", TextUtils.join(" ", searchTerms));
                 setResult(RESULT_ADVANCED_SEARCH, returnIntent);

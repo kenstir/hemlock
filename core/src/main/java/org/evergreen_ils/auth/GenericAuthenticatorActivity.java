@@ -33,19 +33,26 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
+
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
+
 import org.evergreen_ils.R;
 import org.evergreen_ils.accountAccess.AccountUtils;
+import org.evergreen_ils.net.VolleyWrangler;
 import org.evergreen_ils.system.Library;
 import org.evergreen_ils.system.Log;
-import org.evergreen_ils.net.VolleyWrangler;
+import org.evergreen_ils.system.Analytics;
 import org.opensrf.util.JSONException;
 import org.opensrf.util.JSONReader;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
 
 public class GenericAuthenticatorActivity extends AuthenticatorActivity {
 
@@ -65,6 +72,7 @@ public class GenericAuthenticatorActivity extends AuthenticatorActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Analytics.initialize(this);
 
         libraries_directory_json_url = getString(R.string.evergreen_libraries_url);
 
@@ -200,10 +208,10 @@ public class GenericAuthenticatorActivity extends AuthenticatorActivity {
         libraries.clear();
 
         if (isDebuggable(this)) {
-            Library library = new Library("https://webby.evergreencatalog.com", "evergreencatalog.com Demo", "0ut There, US  (evergreencatalog.com Demo)", null);
-            //Library library = new Library("https://demo.evergreencatalog.com", "evergreencatalog.com Demo", "0ut There, US  (evergreencatalog.com Demo)", null);
-            //Library library = new Library("http://mlnc4.mvlcstaff.org"), "MVLC Demo", "0ut There, US (MVLC Demo)", null);// Android does not like this cert
-            libraries.add(library);
+            libraries.add(new Library("https://webby.evergreencatalog.com", "evergreencatalog.com Demo", "0ut There, US  (evergreencatalog.com Demo)", null));
+            //new Library("https://demo.evergreencatalog.com", "evergreencatalog.com Demo", "0ut There, US  (evergreencatalog.com Demo)", null);
+            //new Library("http://mlnc4.mvlcstaff.org"), "MVLC Demo", "0ut There, US (MVLC Demo)", null);// Android does not like this cert
+            libraries.add(new Library("http://192.168.1.6", "debug catalog", "00debug catalog", null));
         }
 
         if (json != null) {

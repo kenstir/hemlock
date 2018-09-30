@@ -41,6 +41,7 @@ import org.evergreen_ils.billing.BillingDataProvider;
 import org.evergreen_ils.billing.BillingHelper;
 import org.evergreen_ils.billing.IabResult;
 import org.evergreen_ils.searchCatalog.SearchActivity;
+import org.evergreen_ils.system.Analytics;
 import org.evergreen_ils.system.EvergreenServerLoader;
 import org.evergreen_ils.system.Log;
 import org.evergreen_ils.utils.ui.AppState;
@@ -181,7 +182,7 @@ public class MainActivity extends BaseActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-        if (mMenuItemHandler != null && mMenuItemHandler.onItemSelected(this, id))
+        if (mMenuItemHandler != null && mMenuItemHandler.onItemSelected(this, id, "main_option_menu"))
             return true;
         if (handleMenuAction(id))
             return true;
@@ -191,17 +192,22 @@ public class MainActivity extends BaseActivity {
     public void onButtonClick(View v) {
         int id = v.getId();
         if (id == R.id.account_btn_check_out) {
+            Analytics.logEvent("Checkouts: Open", "via", "main_button");
             startActivity(new Intent(this, ItemsCheckOutListView.class));
         } else if (id == R.id.account_btn_holds) {
+            Analytics.logEvent("Holds: Open", "via", "main_button");
             startActivity(new Intent(this, HoldsListView.class));
         } else if (id == R.id.account_btn_fines) {
+            Analytics.logEvent("Fines: Open", "via", "main_button");
             startActivity(new Intent(this, FinesActivity.class));
         } else if (id == R.id.main_my_lists_button) {
+            Analytics.logEvent("Lists: Open", "via", "main_button");
             startActivity(new Intent(this, BookBagListView.class));
         } else if (id == R.id.main_btn_search) {
+            Analytics.logEvent("Search: Open", "via", "main_button");
             startActivity(new Intent(this, SearchActivity.class));
         } else if (mMenuItemHandler != null) {
-            mMenuItemHandler.onItemSelected(this, id);
+            mMenuItemHandler.onItemSelected(this, id, "main_button");
         }
     }
 }

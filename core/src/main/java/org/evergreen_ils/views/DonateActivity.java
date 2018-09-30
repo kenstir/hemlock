@@ -26,12 +26,14 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Toast;
+
 import org.evergreen_ils.R;
 import org.evergreen_ils.android.App;
 import org.evergreen_ils.billing.BillingHelper;
 import org.evergreen_ils.billing.IabResult;
 import org.evergreen_ils.system.Log;
 import org.evergreen_ils.utils.ui.ActionBarUtils;
+import org.evergreen_ils.system.Analytics;
 import org.evergreen_ils.views.splashscreen.SplashActivity;
 
 import java.util.HashMap;
@@ -48,6 +50,7 @@ public class DonateActivity extends AppCompatActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Analytics.initialize(this);
         if (!SplashActivity.isAppInitialized()) {
             SplashActivity.restartApp(this);
             return;

@@ -31,6 +31,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import org.evergreen_ils.R;
 import org.evergreen_ils.accountAccess.AccountAccess;
 import org.evergreen_ils.accountAccess.SessionNotFoundException;
+import org.evergreen_ils.system.Analytics;
 import org.evergreen_ils.system.Log;
 import org.evergreen_ils.searchCatalog.RecordInfo;
 import org.evergreen_ils.searchCatalog.SearchFormat;
@@ -109,8 +110,8 @@ public class HoldsListView extends BaseActivity {
 
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Analytics.logEvent("Holds: Tap List Item");
                 HoldRecord record = (HoldRecord) lv.getItemAtPosition(position);
-
                 Intent intent = new Intent(getApplicationContext(), HoldDetails.class);
                 intent.putExtra("holdRecord", record);
 

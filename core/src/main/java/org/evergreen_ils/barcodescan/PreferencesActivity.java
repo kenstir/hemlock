@@ -23,6 +23,8 @@ import android.preference.CheckBoxPreference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceScreen;
 
+import org.evergreen_ils.system.Analytics;
+
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -58,6 +60,7 @@ public final class PreferencesActivity extends PreferenceActivity
   @Override
   protected void onCreate(Bundle icicle) {
     super.onCreate(icicle);
+    Analytics.initialize(this);
    // addPreferencesFromResource(R.xml.preferences);
 
     PreferenceScreen preferences = getPreferenceScreen();

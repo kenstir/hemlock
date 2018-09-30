@@ -19,35 +19,40 @@
  */
 package org.evergreen_ils.searchCatalog;
 
-import java.util.*;
-
+import android.content.Context;
+import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
+
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+
 import org.evergreen_ils.Api;
 import org.evergreen_ils.R;
-import org.evergreen_ils.system.EvergreenServer;
-import org.evergreen_ils.system.Log;
-import org.evergreen_ils.system.Utils;
 import org.evergreen_ils.net.GatewayJsonObjectRequest;
 import org.evergreen_ils.net.VolleyWrangler;
+import org.evergreen_ils.system.EvergreenServer;
+import org.evergreen_ils.system.Log;
 import org.evergreen_ils.system.Organization;
+import org.evergreen_ils.system.Utils;
 import org.evergreen_ils.utils.ui.ActionBarUtils;
+import org.evergreen_ils.system.Analytics;
 import org.evergreen_ils.utils.ui.TextViewUtils;
 import org.evergreen_ils.views.splashscreen.SplashActivity;
-
-import android.content.Context;
-import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.widget.TextView;
 import org.opensrf.util.GatewayResponse;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 
 public class CopyInformationActivity extends AppCompatActivity {
 
@@ -62,6 +67,7 @@ public class CopyInformationActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Analytics.initialize(this);
         if (!SplashActivity.isAppInitialized()) {
             SplashActivity.restartApp(this);
             return;
@@ -117,6 +123,13 @@ public class CopyInformationActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    static int safeCompareTo(String a, String b) {
+        if (a == null && b == null) { return 0; }
+        else if (a == null) { return -1; }
+        else if (b == null) { return 1; }
+        else return a.compareTo(b);
+    }
+
     public void updateCopyInfo(List<CopyLocationCounts> copyLocationCountsList) {
         if (copyLocationCountsList == null)
             return;
@@ -124,7 +137,7 @@ public class CopyInformationActivity extends AppCompatActivity {
         final EvergreenServer eg = EvergreenServer.getInstance();
 
         copyInfoRecords.clear();
-        for (CopyLocationCounts info : copyLocationCountsList) {
+        for (CopyLocationCounts info: copyLocationCountsList) {
             Organization org = eg.getOrganization(info.org_id);
             // if a branch is not opac visible, its copies should not be visible
             if (org != null && org.opac_visible) {
@@ -139,8 +152,9 @@ public class CopyInformationActivity extends AppCompatActivity {
                 public int compare(CopyLocationCounts a, CopyLocationCounts b) {
                     Organization a_org = eg.getOrganization(a.org_id);
                     Organization b_org = eg.getOrganization(b.org_id);
-                    int system_cmp = eg.getOrganizationName(a_org.parent_ou)
-                            .compareTo(eg.getOrganizationName(b_org.parent_ou));
+                    String a_system_name = eg.getOrganizationName(a_org.parent_ou);
+                    String b_system_name = eg.getOrganizationName(b_org.parent_ou);
+                    int system_cmp = safeCompareTo(a_system_name, b_system_name);
                     if (system_cmp != 0)
                         return system_cmp;
                     return a_org.name.compareTo(b_org.name);

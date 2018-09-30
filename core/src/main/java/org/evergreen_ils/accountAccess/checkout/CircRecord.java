@@ -53,6 +53,13 @@ public class CircRecord {
 
     private Date circ_due_date = null;
 
+    private Date parseDateFromField(OSRFObject obj, String field) {
+        String s = obj.getString(field);
+        if (s == null)
+            return null;
+        return Api.parseDate(s);
+    }
+
     public CircRecord(OSRFObject circ, OSRFObject mvr, OSRFObject acp, CircType circ_type, int circ_id) {
 
         this.circ = circ;
@@ -70,14 +77,14 @@ public class CircRecord {
 
         this.circ_type = circ_type;
         this.circ_id = circ_id;
-        this.circ_due_date = Api.parseDate(circ.getString("due_date"));
+        this.circ_due_date = parseDateFromField(circ, "due_date");
     }
 
     public CircRecord(OSRFObject circ, CircType circ_type, int circ_id) {
         this.circ = circ;
         this.circ_type = circ_type;
         this.circ_id = circ_id;
-        this.circ_due_date = Api.parseDate(circ.getString("due_date"));
+        this.circ_due_date = parseDateFromField(circ, "due_date");
     }
 
     public String getAuthor() {

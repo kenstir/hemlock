@@ -22,12 +22,16 @@ package org.evergreen_ils.accountAccess.holds;
 import java.io.Serializable;
 import java.text.DateFormat;
 import java.util.Date;
+import java.util.Map;
 
 import org.evergreen_ils.Api;
 import org.evergreen_ils.R;
+import org.evergreen_ils.system.Analytics;
 import org.evergreen_ils.system.EvergreenServer;
 import org.evergreen_ils.system.Log;
 import org.evergreen_ils.searchCatalog.RecordInfo;
+import org.opensrf.ShouldNotHappenException;
+import org.opensrf.util.GatewayResponse;
 import org.opensrf.util.OSRFObject;
 import android.content.res.Resources;
 
@@ -35,48 +39,31 @@ public class HoldRecord implements Serializable {
 
     private static String TAG = HoldRecord.class.getSimpleName();
 
+    public OSRFObject ahr = null;
+    public RecordInfo recordInfo = null;
+
     public String holdType = null;
     public Integer target = null;
     public Date expire_time = null;
     public String title = null;
     public String author = null;
-
-    // only for P types
-    public String part_label = null;
-
+    public String part_label = null; // only for P types
     public Integer status = null;
-
-    // must also be serializable
-    public OSRFObject ahr = null;
-    // record info with more etails
-    public RecordInfo recordInfo = null;
-
     public boolean email_notify = false;
-
     public String phone_notify = null;
     public String sms_notify = null;
-
     public boolean suspended = false;
-
     public Date thaw_date;
-
     public int pickup_lib;
-
     public Integer potentialCopies;
-
     public Integer estimatedWaitInSeconds;
-
     public Integer queuePosition;
-
     public Integer totalHolds;
 
     public HoldRecord(OSRFObject ahr) {
-
+        this.ahr = ahr;
         this.target = ahr.getInt("target");
         this.holdType = ahr.getString("hold_type");
-
-        this.ahr = ahr;
-
         this.expire_time = Api.parseDate(ahr.getString("expire_time"));
         this.thaw_date = Api.parseDate(ahr.getString("thaw_date"));
         this.email_notify = Api.parseBoolean(ahr.getString("email_notify"));
@@ -84,6 +71,23 @@ public class HoldRecord implements Serializable {
         this.sms_notify = ahr.getString("sms_notify");
         this.suspended = Api.parseBoolean(ahr.getString("frozen"));
         pickup_lib = ahr.getInt("pickup_lib");
+    }
+
+    public void setQueueStats(Object resp) {
+        if (resp == null) {
+            Analytics.logException(new ShouldNotHappenException("null obj"));
+            return;
+        }
+        try {
+            Map<String, Integer> map = (Map<String, Integer>)resp;
+            status = map.get("status");
+            potentialCopies = map.get("potential_copies");
+            estimatedWaitInSeconds = map.get("estimated_wait");
+            queuePosition = map.get("queue_position");
+            totalHolds = map.get("total_holds");
+        } catch (Exception e) {
+            Analytics.logException(e);
+        }
     }
 
     private String formatDateTime(Date date) {
@@ -103,6 +107,7 @@ public class HoldRecord implements Serializable {
             return null;
         }
     }
+
     private String getTransitSince() {
         try {
             OSRFObject transit = (OSRFObject) ahr.get("transit");
@@ -128,7 +133,9 @@ public class HoldRecord implements Serializable {
         //  6 for 'canceled'
         //  7 for 'suspended'
         //  8 for 'captured, on wrong hold shelf'
-        if (status == 4) {
+        if (status == null) {
+            return "Network error; status unavailable";
+        } else if (status == 4) {
             return "Available";
         } else if (status == 7) {
             return "Suspended";

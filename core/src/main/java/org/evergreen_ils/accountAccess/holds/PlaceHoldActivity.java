@@ -19,33 +19,15 @@
  */
 package org.evergreen_ils.accountAccess.holds;
 
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-
+import android.app.DatePickerDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
-import android.view.MenuItem;
-import org.evergreen_ils.Api;
-import org.evergreen_ils.R;
-import org.evergreen_ils.Result;
-import org.evergreen_ils.accountAccess.AccountAccess;
-import org.evergreen_ils.accountAccess.SessionNotFoundException;
-import org.evergreen_ils.system.EvergreenServer;
-import org.evergreen_ils.system.Organization;
-import org.evergreen_ils.searchCatalog.RecordInfo;
-import org.evergreen_ils.system.SMSCarrier;
-import org.evergreen_ils.utils.ui.ActionBarUtils;
-import org.evergreen_ils.utils.ui.ProgressDialogSupport;
-import org.evergreen_ils.views.splashscreen.SplashActivity;
-
-import android.app.DatePickerDialog;
-import android.content.Context;
-import android.os.Bundle;
 import android.text.format.DateFormat;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
@@ -60,6 +42,26 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import org.evergreen_ils.Api;
+import org.evergreen_ils.R;
+import org.evergreen_ils.Result;
+import org.evergreen_ils.accountAccess.AccountAccess;
+import org.evergreen_ils.accountAccess.SessionNotFoundException;
+import org.evergreen_ils.searchCatalog.RecordInfo;
+import org.evergreen_ils.system.EvergreenServer;
+import org.evergreen_ils.system.Organization;
+import org.evergreen_ils.system.SMSCarrier;
+import org.evergreen_ils.utils.ui.ActionBarUtils;
+import org.evergreen_ils.system.Analytics;
+import org.evergreen_ils.utils.ui.ProgressDialogSupport;
+import org.evergreen_ils.views.splashscreen.SplashActivity;
+import org.opensrf.ShouldNotHappenException;
+
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
 
 import static org.evergreen_ils.system.Utils.safeString;
 
@@ -98,6 +100,7 @@ public class PlaceHoldActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Analytics.initialize(this);
         if (!SplashActivity.isAppInitialized()) {
             SplashActivity.restartApp(this);
             return;
@@ -185,7 +188,7 @@ public class PlaceHoldActivity extends AppCompatActivity {
                 if (eg.getSMSCarriers().size() > selectedSMSPos)
                     selectedSMSCarrierID = eg.getSMSCarriers().get(selectedSMSPos).id;
 
-                Result temp_result = null;
+                Result temp_result = Result.createUnknownError();
                 try {
                     temp_result = accountAccess.testAndCreateHold(record_id, selectedOrgID,
                             email_notification.isChecked(), getPhoneNotify(),
@@ -209,6 +212,7 @@ public class PlaceHoldActivity extends AppCompatActivity {
                     public void run() {
                         progress.dismiss();
 
+                        logPlaceHoldResult(result.getErrorMessage());
                         if (result.isSuccess()) {
                             Toast.makeText(context, "Hold successfully placed",
                                     Toast.LENGTH_LONG).show();
@@ -227,16 +231,42 @@ public class PlaceHoldActivity extends AppCompatActivity {
         };
     }
 
+    private void logPlaceHoldResult(String result) {
+        ArrayList<String> notify = new ArrayList<>();
+        if (email_notification.isChecked()) notify.add("email");
+        if (phone_notification.isChecked()) notify.add("phone");
+        if (sms_notification.isChecked()) notify.add("sms");
+        String notifyTypes = TextUtils.join("|", notify);
+        try {
+            Analytics.logEvent("Place Hold: Execute",
+                    "result", result,
+                    "hold_notify", notifyTypes,
+                    "expires", expire_date != null ? "1" : "0",
+                    "pickup_org", eg.getOrganizations().get(selectedOrgPos).shortname);
+        } catch(Exception e) {
+            Analytics.logException(new ShouldNotHappenException("failed logEvent"));
+        }
+    }
+
     private void initPlaceHoldButton() {
         placeHold.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (phone_notification.isChecked() && TextUtils.isEmpty(phone_notify.getText().toString()))
+                Organization selectedOrg = eg.getOrganizations().get(selectedOrgPos);
+                if (!selectedOrg.isPickupLocation()) {
+                    logPlaceHoldResult("not_pickup_location");
+                    AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                    builder.setTitle("Failed to place hold")
+                            .setMessage(selectedOrg.name + " is not a valid pickup location; choose a different one.")
+                            .setPositiveButton(android.R.string.ok, null);
+                    builder.create().show();
+                } else if (phone_notification.isChecked() && TextUtils.isEmpty(phone_notify.getText().toString())) {
                     phone_notify.setError(getString(R.string.error_phone_notify_empty));
-                else if (sms_notification.isChecked() && TextUtils.isEmpty(sms_notify.getText().toString()))
+                } else if (sms_notification.isChecked() && TextUtils.isEmpty(sms_notify.getText().toString())) {
                     sms_notify.setError(getString(R.string.error_sms_notify_empty));
-                else
+                } else {
                     placeHold();
+                }
             }
         });
     }
@@ -310,7 +340,7 @@ public class PlaceHoldActivity extends AppCompatActivity {
         for (int i = 0; i < carriers.size(); i++) {
             SMSCarrier carrier = carriers.get(i);
             entries.add(carrier.name);
-            if (carrier.id == defaultCarrierID) {
+            if (carrier.id.equals(defaultCarrierID)) {
                 selectedSMSPos = i;
             }
         }
@@ -383,12 +413,12 @@ public class PlaceHoldActivity extends AppCompatActivity {
     }
 
     private void initOrgSpinner() {
-        int defaultLibraryID = AccountAccess.getInstance().getDefaultPickupLibraryID();
+        Integer defaultLibraryID = AccountAccess.getInstance().getDefaultPickupLibraryID();
         ArrayList<String> list = new ArrayList<>();
         for (int i = 0; i < eg.getOrganizations().size(); i++) {
             Organization org = eg.getOrganizations().get(i);
             list.add(org.getTreeDisplayName());
-            if (org.id == defaultLibraryID) {
+            if (org.id.equals(defaultLibraryID)) {
                 selectedOrgPos = i;
             }
         }

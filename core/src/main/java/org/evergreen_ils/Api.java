@@ -18,11 +18,17 @@
 
 package org.evergreen_ils;
 
+import android.text.TextUtils;
+
+import org.evergreen_ils.system.Analytics;
 import org.evergreen_ils.system.Log;
+import org.opensrf.ShouldNotHappenException;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.StringTokenizer;
 
 /** OSRF API constants
@@ -146,7 +152,7 @@ public class Api {
         try {
             date = sdf.parse(dateString);
         } catch (ParseException e) {
-            Log.d(TAG, "error parsing date \""+dateString+"\"", e);
+            Analytics.logException(e);
             date = new Date();
         }
 
@@ -179,18 +185,57 @@ public class Api {
         if (o instanceof Integer) {
             return (Integer)o;
         } else if (o instanceof String) {
+            // I have seen settings with value=null, e.g. opac.default_search_location
+            if ("null".equals(o) || TextUtils.isEmpty((String) o))
+                return null;
             try {
                 return Integer.parseInt((String) o);
             } catch (NumberFormatException e) {
-                Log.d(TAG, "caught", e);
+                Analytics.logException(e);
                 return null;
             }
         } else {
-            Log.d(TAG, "unexpected type: "+o);
+            Analytics.logException(new ShouldNotHappenException("unexpected type: "+o));
             return dflt;
         }
     }
     public static Integer parseInteger(Object o) {
         return parseInteger(o, null);
+    }
+
+    // Some queries return at times a list of String ids and at times a list of Integer ids,
+    // see Issue #1 and PINES Crashlytics #28.
+    public static List<String> parseIdsList(Object o) {
+        ArrayList<String> ret = new ArrayList<>();
+        if (o instanceof List) {
+            for (Object elem: (List<?>) o) {
+                Integer i = parseInteger(elem);
+                if (i != null) {
+                    ret.add(i.toString());
+                }
+            }
+        }
+        return ret;
+    }
+
+    /**
+     * Return o as a double
+     */
+    public static Double parseDouble(Object o) {
+        if (o instanceof Double) {
+            return (Double) o;
+        } else if (o instanceof Float) {
+            return (Double) o;
+        } else if (o instanceof String) {
+            try {
+                return Double.parseDouble((String) o);
+            } catch (NumberFormatException e) {
+                Analytics.logException(e);
+                return null;
+            }
+        } else {
+            Analytics.logException(new ShouldNotHappenException("unexpected type: "+o));
+            return null;
+        }
     }
 }

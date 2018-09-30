@@ -34,6 +34,7 @@ import org.evergreen_ils.accountAccess.bookbags.BookBagUtils;
 import org.evergreen_ils.accountAccess.holds.PlaceHoldActivity;
 import org.evergreen_ils.android.App;
 import org.evergreen_ils.barcodescan.CaptureActivity;
+import org.evergreen_ils.system.Analytics;
 import org.evergreen_ils.system.EvergreenServer;
 import org.evergreen_ils.utils.ui.AppState;
 import org.evergreen_ils.system.Log;
@@ -233,6 +234,15 @@ public class SearchActivity extends BaseActivity {
                 });
 
                 searchResults = search.getSearchResults(text, getSearchClass(), getSearchFormat(), 0);
+                try {
+                    Analytics.logEvent("Search: Execute",
+                            "num_results", SearchCatalog.getInstance().visible,
+                            "search_org", SearchCatalog.getInstance().selectedOrganization.shortname,
+                            "search_type", getSearchClass(),
+                            "search_format", getSearchFormat());
+                } catch (Exception e) {
+                    Analytics.logException(e);
+                }
 
                 runOnUiThread(new Runnable() {
                     @Override
@@ -263,12 +273,12 @@ public class SearchActivity extends BaseActivity {
 
     private void initSearchOrgSpinner() {
         int selectedOrgPos = 0;
-        int defaultLibraryID = AccountAccess.getInstance().getDefaultSearchLibraryID();
+        Integer defaultLibraryID = AccountAccess.getInstance().getDefaultSearchLibraryID();
         ArrayList<String> list = new ArrayList<>();
         for (int i = 0; i < eg.getInstance().getOrganizations().size(); i++) {
             Organization org = eg.getInstance().getOrganizations().get(i);
             list.add(org.getTreeDisplayName());
-            if (org.id == defaultLibraryID) {
+            if (org.id.equals(defaultLibraryID)) {
                 selectedOrgPos = i;
             }
         }
@@ -291,8 +301,6 @@ public class SearchActivity extends BaseActivity {
     // unpack the json map to populate our spinner, and allow translation from search_format keyword <=> label
     private void initSearchFormatSpinner() {
         List<String> labels = SearchFormat.getSpinnerLabels();
-        //ArrayAdapter<String> adapter = CompatSpinnerAdapter.CreateCompatSpinnerAdapter(this, labels);
-        //ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, labels);
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, labels);
         searchFormatSpinner.setAdapter(adapter);
     }
@@ -361,6 +369,7 @@ public class SearchActivity extends BaseActivity {
             return true;
         case App.ITEM_ADD_TO_LIST:
             if (bookBags.size() > 0) {
+                Analytics.logEvent("Lists: Add to List", "via", "results_long_press");
                 BookBagUtils.showAddToListDialog(this, bookBags, info.record);
             } else {
                 Toast.makeText(this, getText(R.string.msg_no_lists), Toast.LENGTH_SHORT).show();
@@ -386,14 +395,17 @@ public class SearchActivity extends BaseActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.action_advanced_search) {
+            Analytics.logEvent("Advanced Search: Open", "via", "options_menu");
             startActivityForResult(new Intent(getApplicationContext(), AdvancedSearchActivity.class), 2);
             return true;
         } else if (id == R.id.action_logout) {
             //// TODO: 4/30/2017 pull up logout action
+            Analytics.logEvent("Account: Logout", "via", "options_menu");
             AccountAccess.getInstance().logout(this);
             SplashActivity.restartApp(this);
             return true;
         } else if (id == R.id.action_donate) {
+            Analytics.logEvent("Donate: Open", "via", "options_menu");
             startActivityForResult(new Intent(this, DonateActivity.class), App.REQUEST_PURCHASE);
         }
         return super.onOptionsItemSelected(item);

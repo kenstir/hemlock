@@ -22,11 +22,13 @@ package org.evergreen_ils.accountAccess.bookbags;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.WindowManager;
 import org.evergreen_ils.R;
 import org.evergreen_ils.accountAccess.AccountAccess;
 import org.evergreen_ils.accountAccess.SessionNotFoundException;
+import org.evergreen_ils.system.Analytics;
 import org.evergreen_ils.system.Log;
 import org.evergreen_ils.system.Utils;
 import org.evergreen_ils.utils.ui.ActionBarUtils;
@@ -101,6 +103,7 @@ public class BookBagListView extends BaseActivity {
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Analytics.logEvent("Lists: Tap List");
                 BookBag item = (BookBag) lv.getItemAtPosition(position);
                 Intent intent = new Intent(context, BookBagDetails.class);
                 intent.putExtra("bookBag", item);
@@ -171,11 +174,14 @@ public class BookBagListView extends BaseActivity {
 
     private void createBookbag(final String name) {
         if (name.length() < 2) {
-            Toast.makeText(context,
-                    R.string.msg_list_name_too_short,
-                    Toast.LENGTH_SHORT).show();
+            AlertDialog.Builder builder = new AlertDialog.Builder(context);
+            builder.setTitle(R.string.msg_list_name_too_short_title)
+                    .setMessage(R.string.msg_list_name_too_short)
+                    .setPositiveButton(android.R.string.ok, null);
+            builder.create().show();
             return;
         }
+        Analytics.logEvent("Lists: Create List");
 
         Thread thread = new Thread(new Runnable() {
             @Override

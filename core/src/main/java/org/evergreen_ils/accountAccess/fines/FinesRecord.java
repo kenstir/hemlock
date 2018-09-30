@@ -61,7 +61,7 @@ public class FinesRecord {
         }
 
         try {
-            balance_owed = Double.parseDouble(mbts_transaction.getString("total_owed"));
+            balance_owed = Double.parseDouble(mbts_transaction.getString("balance_owed"));
         } catch(NumberFormatException e) {
             Log.d(TAG, "error converting double", e);
         }

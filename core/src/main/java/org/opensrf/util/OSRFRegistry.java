@@ -1,7 +1,6 @@
 package org.opensrf.util;
 
 import java.io.Serializable;
-import java.util.Map;
 import java.util.HashMap;
 
 
@@ -16,23 +15,19 @@ import java.util.HashMap;
 public class OSRFRegistry implements Serializable{
 
 
-    /**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
+
 	/**
      * Global collection of registered net objects.  
      * Maps netClass names to registries.
      */
     private static HashMap<String, OSRFRegistry> 
-        registry = new HashMap<String, OSRFRegistry>();
-
+        registry = new HashMap<>();
 
     /** Serialization types for registered objects */
     public enum WireProtocol {
         ARRAY, HASH
     };
-
 
     /** Array of field names for this registered object */
     String fields[];

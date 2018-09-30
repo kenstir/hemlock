@@ -34,11 +34,13 @@ import org.evergreen_ils.accountAccess.AccountUtils;
 import org.evergreen_ils.accountAccess.SessionNotFoundException;
 import org.evergreen_ils.searchCatalog.RecordDetails;
 import org.evergreen_ils.searchCatalog.RecordInfo;
+import org.evergreen_ils.system.Analytics;
 import org.evergreen_ils.system.EvergreenServer;
 import org.evergreen_ils.system.Organization;
 import org.evergreen_ils.system.Utils;
 import org.evergreen_ils.utils.ui.BaseActivity;
 import org.evergreen_ils.utils.ui.ProgressDialogSupport;
+import org.opensrf.util.OSRFObject;
 import org.w3c.dom.Text;
 
 import android.content.Context;
@@ -52,31 +54,18 @@ import static org.evergreen_ils.android.App.REQUEST_LAUNCH_OPAC_LOGIN_REDIRECT;
 public class FinesActivity extends BaseActivity {
 
     private TextView total_owed;
-
     private TextView total_paid;
-
     private TextView balance_owed;
-
     private Button pay_fines_button;
-
     private ListView lv;
-
     private OverdueMaterialsArrayAdapter listAdapter;
-
     private ArrayList<FinesRecord> finesRecords;
-
     private boolean haveAnyGroceryBills = false;
-
     private boolean haveAnyFines = false;
-
     private Runnable getFinesInfo;
-
     private AccountAccess ac;
-
     private ProgressDialogSupport progress;
-
     private Context context;
-
     private DecimalFormat decimalFormater;
 
     @Override
@@ -105,6 +94,7 @@ public class FinesActivity extends BaseActivity {
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Analytics.logEvent("Fines: Tap List Item", "have_grocery_bills", haveAnyGroceryBills);
                 ArrayList<RecordInfo> records = new ArrayList<>();
                 if (haveAnyGroceryBills) {
                     // If any of the fines are for non-circulation items ("grocery bills"), we
@@ -138,11 +128,12 @@ public class FinesActivity extends BaseActivity {
 
     private void initPayFinesButton() {
         Integer home_lib = AccountAccess.getInstance().getHomeLibraryID();
-        Organization home_org = EvergreenServer.getInstance().getOrganization(home_lib);
-        if (Utils.safeBool(home_org.setting_allow_credit_payments)) {
+        Organization home_org = (home_lib != null) ? EvergreenServer.getInstance().getOrganization(home_lib) : null;
+        if (home_org != null && Utils.safeBool(home_org.setting_allow_credit_payments)) {
             pay_fines_button.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    Analytics.logEvent("Fines: Pay Fines", "num_fines", finesRecords.size());
                     String username = AccountAccess.getInstance().getUserName();
                     String password = AccountUtils.getPassword(FinesActivity.this, username);
                     String path =                            "/eg/opac/login"
@@ -160,21 +151,32 @@ public class FinesActivity extends BaseActivity {
         }
     }
 
+    private float getFloat(OSRFObject o, String field) {
+        float ret = 0.0f;
+        try {
+            ret = Float.parseFloat(o.getString(field));
+        } catch (Exception e) {
+            Analytics.logException(e);
+        }
+        return ret;
+    }
+
     private void initRunnable() {
         getFinesInfo = new Runnable() {
             @Override
             public void run() {
 
-                float[] finesR = null;
+                OSRFObject summary = null;
                 try {
-                    finesR = ac.getFinesSummary();
+                    summary = ac.getFinesSummary();
                 } catch (SessionNotFoundException e) {
                     try {
                         if (ac.reauthenticate(FinesActivity.this))
-                            finesR = ac.getFinesSummary();
+                            summary = ac.getFinesSummary();
                     } catch (Exception e1) {
                     }
                 }
+                final OSRFObject finesSummary = summary;
 
                 ArrayList<FinesRecord> frecords = null;
                 try {
@@ -186,14 +188,13 @@ public class FinesActivity extends BaseActivity {
                     } catch (Exception e1) {
                     }
                 }
-
                 finesRecords = frecords;
-                final float[] fines = finesR;
+
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         listAdapter.clear();
-                        haveAnyFines = finesRecords.size() > 0;
+                        haveAnyFines = (finesRecords != null && finesRecords.size() > 0);
                         haveAnyGroceryBills = false;
                         for (FinesRecord finesRecord : finesRecords) {
                             listAdapter.add(finesRecord);
@@ -204,9 +205,9 @@ public class FinesActivity extends BaseActivity {
 
                         listAdapter.notifyDataSetChanged();
 
-                        total_owed.setText(decimalFormater.format(fines[0]));
-                        total_paid.setText(decimalFormater.format(fines[1]));
-                        balance_owed.setText(decimalFormater.format(fines[2]));
+                        total_owed.setText(decimalFormater.format(getFloat(finesSummary, "total_owed")));
+                        total_paid.setText(decimalFormater.format(getFloat(finesSummary, "total_paid")));
+                        balance_owed.setText(decimalFormater.format(getFloat(finesSummary, "balance_owed")));
                         progress.dismiss();
                     }
                 });

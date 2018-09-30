@@ -2,12 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           package="net.kenstir.apps.hemlock"
           android:installLocation="auto"
-          android:versionCode="69"
-          android:versionName="4.3.3">
-
-    <uses-sdk
-        android:minSdkVersion="15"
-        android:targetSdkVersion="27" />
+          android:versionCode="74"
+          android:versionName="4.3.8">
 
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -74,10 +70,6 @@
                 android:name="org.evergreen_ils.accountAccess.checkout.ItemsCheckOutListView"
                 android:label="@string/checkout_items_title"
                 android:parentActivityName="org.evergreen_ils.views.MainActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
 
         <!-- Holds Activities -->
@@ -149,5 +141,9 @@
                 android:name="android.accounts.AccountAuthenticator"
                 android:resource="@xml/authenticator" />
         </service>
+
+        <meta-data
+            android:name="io.fabric.ApiKey"
+            android:value="13bfee3eaddbbff9639b69461f4b9aa1dbe940ad" />
     </application>
 </manifest>

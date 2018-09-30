@@ -1,13 +1,5 @@
 package org.evergreen_ils.barcodescan;
 
-import java.io.IOException;
-import java.util.Vector;
-
-import org.evergreen_ils.R;
-import org.evergreen_ils.barcodescan.camera.CameraManager;
-import org.evergreen_ils.system.Log;
-import org.evergreen_ils.views.splashscreen.SplashActivity;
-
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Intent;
@@ -21,6 +13,15 @@ import android.view.WindowManager;
 
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.Result;
+
+import org.evergreen_ils.R;
+import org.evergreen_ils.barcodescan.camera.CameraManager;
+import org.evergreen_ils.system.Log;
+import org.evergreen_ils.system.Analytics;
+import org.evergreen_ils.views.splashscreen.SplashActivity;
+
+import java.io.IOException;
+import java.util.Vector;
 
 public class CaptureActivity extends Activity implements SurfaceHolder.Callback {
 
@@ -41,7 +42,8 @@ public class CaptureActivity extends Activity implements SurfaceHolder.Callback 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-        if (!SplashActivity.isAppInitialized()) {
+		Analytics.initialize(this);
+		if (!SplashActivity.isAppInitialized()) {
             SplashActivity.restartApp(this);
             return;
         }

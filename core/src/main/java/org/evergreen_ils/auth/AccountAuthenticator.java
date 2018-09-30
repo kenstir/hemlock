@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import org.evergreen_ils.R;
+import org.evergreen_ils.system.Analytics;
 import org.evergreen_ils.system.Log;
 
 public class AccountAuthenticator extends AbstractAccountAuthenticator {
@@ -33,7 +34,7 @@ public class AccountAuthenticator extends AbstractAccountAuthenticator {
 
     @Override
     public Bundle addAccount(AccountAuthenticatorResponse response, String accountType, String authTokenType, String[] requiredFeatures, Bundle options) throws NetworkErrorException {
-        Log.d(TAG, "addaccount "+accountType+" "+authTokenType);
+        Analytics.log(TAG, "addaccount "+accountType+" "+authTokenType);
         final Intent intent = new Intent(context, authenticatorActivity);
         // setting ARG_IS_ADDING_NEW_ACCOUNT here does not work, because this is not the
         // same Intent as the one in AuthenticatorActivity.finishLogin
@@ -47,7 +48,7 @@ public class AccountAuthenticator extends AbstractAccountAuthenticator {
 
     @Override
     public Bundle getAuthToken(AccountAuthenticatorResponse response, Account account, String authTokenType, Bundle options) throws NetworkErrorException {
-        Log.d(TAG, "getAuthToken> "+account.name);
+        Analytics.log(TAG, "getAuthToken> "+account.name);
 
         // If the caller requested an authToken type we don't support, then
         // return an error
@@ -60,25 +61,24 @@ public class AccountAuthenticator extends AbstractAccountAuthenticator {
         final AccountManager am = AccountManager.get(context);
         String library_name = am.getUserData(account, Const.KEY_LIBRARY_NAME);
         String library_url = am.getUserData(account, Const.KEY_LIBRARY_URL);
-        Log.d(TAG, "getAuthToken> library_url=" + library_url);
+        Analytics.log(TAG, "getAuthToken> library_url=" + library_url);
 
         String authToken = am.peekAuthToken(account, authTokenType);
-        Log.d(TAG, "getAuthToken> peekAuthToken returned " + authToken);
+        Analytics.log(TAG, "getAuthToken> peekAuthToken returned " + authToken);
         if (TextUtils.isEmpty(authToken)) {
             final String password = am.getPassword(account);
             if (password != null) {
                 try {
-                    Log.d(TAG, "getAuthToken> attempting to sign in with existing password");
+                    Analytics.log(TAG, "getAuthToken> attempting to sign in with existing password");
                     authToken = EvergreenAuthenticator.signIn(library_url, account.name, password);
-                    Log.d(TAG, "getAuthToken> signIn returned token "+authToken);
                 } catch (AuthenticationException e) {
-                    Log.d(TAG, "getAuthToken> caught auth exception", e);
+                    Analytics.logException(e);
                     am.clearPassword(account);
                     final Bundle result = new Bundle();
                     result.putString(AccountManager.KEY_ERROR_MESSAGE, e.getMessage());
                     return result;
                 } catch (Exception e2) {
-                    Log.d(TAG, "getAuthToken> caught exception", e2);
+                    Analytics.logException(e2);
                     am.clearPassword(account);
                     final Bundle result = new Bundle();
                     result.putString(AccountManager.KEY_ERROR_MESSAGE, "Sign in failed");
@@ -88,7 +88,7 @@ public class AccountAuthenticator extends AbstractAccountAuthenticator {
         }
 
         // If we get an authToken - we return it
-        Log.d(TAG, "getAuthToken> token "+authToken);
+        Analytics.log(TAG, "getAuthToken> token "+Analytics.redactedString(authToken));
         if (!TextUtils.isEmpty(authToken)) {
             final Bundle result = new Bundle();
             result.putString(AccountManager.KEY_ACCOUNT_NAME, account.name);
@@ -102,7 +102,7 @@ public class AccountAuthenticator extends AbstractAccountAuthenticator {
         // If we get here, then we couldn't access the user's password - so we
         // need to re-prompt them for their credentials. We do that by creating
         // an intent to display our AuthenticatorActivity.
-        Log.d(TAG, "getAuthToken> creating intent to display AuthenticatorActivity");
+        Analytics.log(TAG, "getAuthToken> creating intent to display AuthenticatorActivity");
         final Intent intent = new Intent(context, authenticatorActivity);
         intent.putExtra(AccountManager.KEY_ACCOUNT_AUTHENTICATOR_RESPONSE, response);
         intent.putExtra(AuthenticatorActivity.ARG_ACCOUNT_TYPE, account.type);
@@ -120,7 +120,7 @@ public class AccountAuthenticator extends AbstractAccountAuthenticator {
 
     @Override
     public Bundle hasFeatures(AccountAuthenticatorResponse response, Account account, String[] features) throws NetworkErrorException {
-        Log.d(TAG, "hasFeatures "+account.name+" features "+features);
+        Analytics.log(TAG, "hasFeatures "+account.name+" features "+features);
         final Bundle result = new Bundle();
         result.putBoolean(AccountManager.KEY_BOOLEAN_RESULT, false);
         return result;
@@ -128,19 +128,19 @@ public class AccountAuthenticator extends AbstractAccountAuthenticator {
 
     @Override
     public Bundle editProperties(AccountAuthenticatorResponse response, String accountType) {
-        Log.d(TAG, "editProperties "+accountType);
+        Analytics.log(TAG, "editProperties "+accountType);
         return null;
     }
 
     @Override
     public Bundle confirmCredentials(AccountAuthenticatorResponse response, Account account, Bundle options) throws NetworkErrorException {
-        Log.d(TAG, "confirmCredentials "+account.name);
+        Analytics.log(TAG, "confirmCredentials "+account.name);
         return null;
     }
 
     @Override
     public Bundle updateCredentials(AccountAuthenticatorResponse response, Account account, String authTokenType, Bundle options) throws NetworkErrorException {
-        Log.d(TAG, "updateCredentials "+account.name);
+        Analytics.log(TAG, "updateCredentials "+account.name);
         return null;
     }
 }

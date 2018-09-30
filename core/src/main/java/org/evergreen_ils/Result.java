@@ -7,6 +7,7 @@ import java.util.Map;
 /** Result of making an Api call
  * Created by kenstir on 2/25/2017.
  */
+//TODO: reconcile this with GatewayResponse, model after hemlock-ios
 public class Result {
     private static final String TAG = Result.class.getSimpleName();
 
@@ -46,7 +47,7 @@ public class Result {
 
     public String getErrorMessage() {
         if (isSuccess()) {
-            return "no error";
+            return "OK";
         } else if (mEvent != null && mEvent.containsKey("desc")) {
             return (String) mEvent.get("desc");
         } else {

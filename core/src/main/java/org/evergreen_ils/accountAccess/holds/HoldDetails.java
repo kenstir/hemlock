@@ -30,6 +30,7 @@ import org.evergreen_ils.Api;
 import org.evergreen_ils.R;
 import org.evergreen_ils.accountAccess.AccountAccess;
 import org.evergreen_ils.accountAccess.SessionNotFoundException;
+import org.evergreen_ils.system.Analytics;
 import org.evergreen_ils.system.EvergreenServer;
 import org.evergreen_ils.system.Log;
 import org.evergreen_ils.searchCatalog.RecordInfo;
@@ -161,6 +162,7 @@ public class HoldDetails extends BaseActivity {
                 builder.setPositiveButton(R.string.cancel_hold_positive_button, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+                        Analytics.logEvent("Holds: Cancel Hold");
                         cancelHold(record);
                     }
                 });
@@ -171,6 +173,7 @@ public class HoldDetails extends BaseActivity {
         updateHold.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
+                Analytics.logEvent("Holds: Update Hold");
                 updateHold(record);
             }
         });
@@ -230,7 +233,6 @@ public class HoldDetails extends BaseActivity {
                 selectedOrgPos = i;
             }
         }
-        //ArrayAdapter<String> adapter = CompatSpinnerAdapter.CreateCompatSpinnerAdapter(this, list);
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, R.layout.org_item_layout, list);
         orgSelector.setAdapter(adapter);
         orgSelector.setSelection(selectedOrgPos);

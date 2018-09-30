@@ -23,8 +23,8 @@ import java.net.URI;
 import java.net.URL;
 import java.util.Map;
 
-import android.os.Looper;
 import android.text.TextUtils;
+
 import org.evergreen_ils.accountAccess.SessionNotFoundException;
 import org.evergreen_ils.auth.Const;
 import org.opensrf.Method;
@@ -94,21 +94,19 @@ public class Utils {
         // I know it's bad form to catch NPE.  But until I implement some kind of on-demand IDL parsing,
         // this is what happens when the JSONReader tries to parse a response of an unregistered class.
         // Crash if debugMode, fail if not.
-        Log.d(TAG, "NPE...unregistered type from service "+service+" method "+methodName, e);
+        Analytics.log("unregistered type from service "+service+" method "+methodName);
+        Analytics.logException(e);
         throw(e);
     }
 
     public static Object doRequest(HttpConnection conn, String service,
                                    String methodName, String authToken,
                                    Object[] params) throws SessionNotFoundException {
-
         Method method = new Method(methodName);
-
-        Log.d(TAG, "doRequest Method " + methodName);
         for (int i = 0; i < params.length; i++) {
             method.addParam(params[i]);
-            Log.d(TAG, " param " + i + ": " + params[i]);
         }
+        Analytics.logRequest(service, method, authToken);
 
         // sync request
         long now_ms = System.currentTimeMillis();
@@ -117,38 +115,32 @@ public class Utils {
 
         try {
             resp = req.recv();
+            Analytics.logResponse(resp);
+            Log.logElapsedTime(TAG, now_ms, "doRequest "+methodName);
         } catch (NullPointerException e) {
             logNPE(e, service, methodName);
         }
-        Log.logElapsedTime(TAG, now_ms, "doRequest "+methodName);
         if (resp != null) {
-            Log.d(TAG, "Sync Response: " + resp);
-            Object response = (Object) resp;
-
             String textcode = getResponseTextcode(resp);
             if (TextUtils.equals(textcode, "NO_SESSION")) {
                 Log.d(Const.AUTH_TAG, textcode);
                 throw new SessionNotFoundException();
             }
 
-            return response;
+            return resp;
         }
         return null;
 
     }
 
     // alternate version of doRequest
-    // kenstir todo: not sure why this one loops calling req.recv and the other doesn't
     public static Object doRequest(HttpConnection conn, String service,
                                    String methodName, Object[] params) {
-
         Method method = new Method(methodName);
-
-        Log.d(TAG, "doRequest Method " + methodName);
         for (int i = 0; i < params.length; i++) {
             method.addParam(params[i]);
-            Log.d(TAG, " param " + i + ": " + params[i]);
         }
+        Analytics.logRequest(service, method);
 
         // sync request
         long now_ms = System.currentTimeMillis();
@@ -157,11 +149,9 @@ public class Utils {
 
         try {
             while ((resp = req.recv()) != null) {
-                Log.d(TAG, "Sync Response: " + resp);
-                Object response = (Object) resp;
-
+                Analytics.logResponse(resp);
                 Log.logElapsedTime(TAG, now_ms, "doRequest "+methodName);
-                return response;
+                return resp;
             }
         } catch (NullPointerException e) {
             logNPE(e, service, methodName);

@@ -27,6 +27,8 @@ import android.text.TextUtils;
 import org.evergreen_ils.*;
 import org.evergreen_ils.accountAccess.AccountAccess;
 import org.evergreen_ils.auth.EvergreenAuthenticator;
+import org.evergreen_ils.searchCatalog.RecordInfo;
+import org.evergreen_ils.system.Analytics;
 import org.evergreen_ils.system.EvergreenServer;
 import org.evergreen_ils.system.Log;
 import org.evergreen_ils.system.Utils;
@@ -34,6 +36,7 @@ import org.evergreen_ils.system.Utils;
 import static org.junit.Assert.*;
 
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.opensrf.net.http.HttpConnection;
@@ -66,6 +69,7 @@ public class OSRFTest {
     public static void getAuthToken() throws Exception {
         // read extra options: -e server SERVER -e username USER -e password PASS
         mContext = InstrumentationRegistry.getTargetContext();
+        Analytics.initialize(mContext);
         Bundle b = InstrumentationRegistry.getArguments();
         mServer = b.getString("server", "http://catalog.cwmars.org");
         mOrgID = Integer.parseInt(b.getString("orgid", "1"));
@@ -213,7 +217,7 @@ public class OSRFTest {
         }
     }
 
-    @Test
+    @Ignore("run on demand") @Test
     public void testCreateHold() throws Exception {
         assertLoggedIn();
         mConn = EvergreenServer.getInstance().gatewayConnection();
@@ -258,5 +262,52 @@ public class OSRFTest {
         Integer unread_count = ac.getUnreadMessageCount();
         assertNotNull(unread_count);
         Log.d(TAG, "unread messages: " + unread_count);
+    }
+
+    @Test
+    public void testSearchByOrgUnit() throws Exception {
+        assertLoggedIn();
+
+        mConn = EvergreenServer.getInstance().gatewayConnection();
+        AccountAccess ac = AccountAccess.getInstance();
+        ac.retrieveSession(mAuthToken);
+
+        String searchText = "harry potter chamber of secrets";
+        String searchClass = "keyword";
+        String searchFormat = "";
+        String orgShortName = "ARL-ATH";
+
+        HashMap argHash = new HashMap<String, Integer>();
+        argHash.put("limit", 200);
+        argHash.put("offset", 0);
+
+        StringBuilder sb = new StringBuilder();
+        sb.append(searchClass).append(":").append(searchText).append("");
+        if (!searchFormat.isEmpty())
+            sb.append(" search_format(").append(searchFormat).append(")");
+        if (orgShortName != null)
+            sb.append(" site(").append(orgShortName).append(")");
+        String queryString = sb.toString();
+
+        long start_ms = System.currentTimeMillis();
+        long now_ms = start_ms;
+
+        // do request
+        Object resp = Utils.doRequest(conn(), Api.SEARCH, Api.MULTICLASS_QUERY,
+                new Object[] { argHash, queryString, 1 });
+        Log.d(TAG, "Sync Response: " + resp);
+        now_ms = Log.logElapsedTime(TAG, now_ms, "search.query");
+        if (resp == null)
+            return; // search failed or server crashed
+
+        Map<String, ?> response = (Map<String, ?>) resp;
+        Integer visible = Api.parseInteger(response.get("count"), 0);
+
+        // record_ids_lol is a list of lists and looks like one of:
+        //   [[32673,null,"0.0"],[886843,null,"0.0"]] // integer ids+?
+        //   [["503610",null,"0.0"],["502717",null,"0.0"]] // string ids+?
+        //   [["1805532"],["2385399"]] // string ids only
+        List<List<?>> record_ids_lol = (List<List<?>>) response.get("ids");
+        Log.d(TAG, "length:"+record_ids_lol.size());
     }
 }

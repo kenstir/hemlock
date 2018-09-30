@@ -169,7 +169,6 @@
     <string name="choose_library_message">Select your Library</string>
     <string name="action_choose_library">Select</string>
     <string name="evergreen_libraries_url">https://evergreen-ils.org/directory/libraries.json</string>
-    <string name="button_send_log">Send debug log</string>
     <string name="record_subject">Subject</string>
     <string name="record_series">Series</string>
     <string name="record_synopsis">Synopsis</string>
@@ -197,6 +196,7 @@
     <string name="delete_list_negative_button">Keep list</string>
     <string name="delete_list_positive_button">Delete list</string>
     <string name="msg_retrieving_data">Retrieving data</string>
+    <string name="msg_list_name_too_short_title">List name too short</string>
     <string name="msg_list_name_too_short">List name must be at least 2 characters long</string>
     <string name="title_busy_ellipsis">busy...</string>
     <string name="format">Format</string>

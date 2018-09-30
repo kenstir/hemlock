@@ -24,11 +24,13 @@ import android.net.Uri;
 import android.text.TextUtils;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
+
 import org.evergreen_ils.R;
 import org.evergreen_ils.accountAccess.AccountAccess;
 import org.evergreen_ils.accountAccess.bookbags.BookBag;
 import org.evergreen_ils.accountAccess.bookbags.BookBagUtils;
 import org.evergreen_ils.accountAccess.holds.PlaceHoldActivity;
+import org.evergreen_ils.system.Analytics;
 import org.evergreen_ils.system.EvergreenServer;
 import org.evergreen_ils.system.Log;
 import org.evergreen_ils.net.VolleyWrangler;
@@ -162,6 +164,7 @@ public class BasicDetailsFragment extends Fragment {
         placeHoldButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
+                Analytics.logEvent("Place Hold: Open", "via", "details_button");
                 Intent intent = new Intent(getActivity().getApplicationContext(), PlaceHoldActivity.class);
                 intent.putExtra("recordInfo", record);
                 startActivity(intent);
@@ -170,6 +173,7 @@ public class BasicDetailsFragment extends Fragment {
         showCopiesButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
+                Analytics.logEvent("Copy Info: Open", "via", "details_button");
                 Intent intent = new Intent(getActivity().getApplicationContext(), CopyInformationActivity.class);
                 intent.putExtra("recordInfo", record);
                 intent.putExtra("orgID", orgID);
@@ -179,12 +183,14 @@ public class BasicDetailsFragment extends Fragment {
         onlineAccessButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
+                Analytics.logEvent("Online Access: Open", "via", "details_button");
                 launchOnlineAccess();
             }
         });
         addToBookbagButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
+                Analytics.logEvent("Lists: Add to List", "via", "details_button");
                 BookBagUtils.showAddToListDialog(activity, bookBags, record);
             }
         });

@@ -19,22 +19,23 @@
  */
 package org.evergreen_ils.views.splashscreen;
 
-import android.support.v7.app.AppCompatActivity;
-import org.evergreen_ils.R;
-import org.evergreen_ils.android.App;
-import org.evergreen_ils.utils.ui.AppState;
-import org.evergreen_ils.system.Log;
-import org.evergreen_ils.views.MainActivity;
-import org.evergreen_ils.views.splashscreen.LoadingTask.LoadingTaskListener;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.TextView;
+
+import org.evergreen_ils.R;
+import org.evergreen_ils.system.Log;
+import org.evergreen_ils.utils.ui.AppState;
+import org.evergreen_ils.system.Analytics;
+import org.evergreen_ils.views.MainActivity;
+import org.evergreen_ils.views.splashscreen.LoadingTask.LoadingTaskListener;
+import org.opensrf.ShouldNotHappenException;
 
 public class SplashActivity extends AppCompatActivity implements LoadingTaskListener {
 
@@ -42,7 +43,6 @@ public class SplashActivity extends AppCompatActivity implements LoadingTaskList
     private static String TAG = SplashActivity.class.getSimpleName();
     private TextView mProgressText;
     private View mProgressBar;
-    private View mSendDebugLogs;
     private Button mRetryButton;
     private LoadingTask mTask;
     private static boolean mInitialized;
@@ -67,7 +67,7 @@ public class SplashActivity extends AppCompatActivity implements LoadingTaskList
      * @param a
      */
     public static void restartApp(Activity a) {
-        Log.d(TAG, "restartApp> Restarting SplashActivity");
+        Analytics.log(TAG, "restartApp> Restarting SplashActivity");
         Intent i = new Intent(a, SplashActivity.class);
         i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         a.startActivity(i);
@@ -77,6 +77,7 @@ public class SplashActivity extends AppCompatActivity implements LoadingTaskList
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Analytics.initialize(this);
 
         setContentView(R.layout.activity_splash);
 
@@ -84,7 +85,6 @@ public class SplashActivity extends AppCompatActivity implements LoadingTaskList
 
         mProgressText = (TextView) findViewById(R.id.action_in_progress);
         mProgressBar = findViewById(R.id.activity_splash_progress_bar);
-        mSendDebugLogs = findViewById(R.id.activity_splash_debug_button);
         mRetryButton = (Button) findViewById(R.id.activity_splash_retry_button);
         mRetryButton.setOnClickListener(new OnClickListener() {
             @Override
@@ -97,7 +97,7 @@ public class SplashActivity extends AppCompatActivity implements LoadingTaskList
     }
 
     protected void startTask() {
-        Log.d(TAG, "startTask> task=" + mTask);
+        Analytics.log(TAG, "startTask> task=" + mTask);
         if (mTask != null)
             return;
         mTask = new LoadingTask(this, this);
@@ -106,7 +106,7 @@ public class SplashActivity extends AppCompatActivity implements LoadingTaskList
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Log.d(TAG, "onactivityresult: " + requestCode + " " + resultCode);
+        Analytics.log(TAG, "onactivityresult: " + requestCode + " " + resultCode);
     }
 
     private void startApp() {
@@ -125,7 +125,6 @@ public class SplashActivity extends AppCompatActivity implements LoadingTaskList
     @Override
     public void onPreExecute() {
         mRetryButton.setVisibility(View.GONE);
-        mSendDebugLogs.setVisibility(View.GONE);
         mProgressBar.setVisibility(View.VISIBLE);
     }
 
@@ -136,7 +135,8 @@ public class SplashActivity extends AppCompatActivity implements LoadingTaskList
 
     @Override
     public void onPostExecute(String result) {
-        Log.d(TAG, "onPostExecute> " + result);
+        Analytics.log(TAG, "onPostExecute> " + result);
+        Analytics.logEvent("Account: Login", "result", result, "library_name", AppState.getString(AppState.LIBRARY_NAME));
         mTask = null;
         if (TextUtils.equals(result, LoadingTask.TASK_OK)) {
             startApp();
@@ -144,12 +144,12 @@ public class SplashActivity extends AppCompatActivity implements LoadingTaskList
             String extra_text;
             if (!TextUtils.isEmpty(result)) {
                 extra_text = " failed:\n" + result;
+                Analytics.logException(new ShouldNotHappenException(extra_text));
             } else {
                 extra_text = " cancelled";
             }
             mProgressText.setText(mProgressText.getText() + extra_text);
             mRetryButton.setVisibility(View.VISIBLE);
-            mSendDebugLogs.setVisibility(App.getIsDebuggable(this) ? View.VISIBLE : View.GONE);
             mProgressBar.setVisibility(View.GONE);
         }
     }

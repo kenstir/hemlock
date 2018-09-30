@@ -1,6 +1,7 @@
 package org.opensrf.net.http;
 
 import org.evergreen_ils.system.Log;
+import org.evergreen_ils.system.Analytics;
 import org.json.JSONObject;
 import org.opensrf.Method;
 import org.opensrf.util.JSONReader;
@@ -78,7 +79,7 @@ public class GatewayRequest extends HttpRequest {
 
             //System.out.println("osrf: Received " +  readBuf.toString());
             try {
-                Log.d(TAG, "received:" +  readBuf.toString());
+                Log.d(TAG, "[net] recv " + readBuf.length() + ": " +  readBuf.toString());
                 result = (Map<String, ?>) new JSONReader(readBuf.toString()).readObject();
             } catch (org.opensrf.util.JSONException ex) {
                 Log.d(TAG, "caught", ex);
@@ -95,12 +96,14 @@ public class GatewayRequest extends HttpRequest {
             // gateway always returns a wrapper array with the full results set
             responseList = (List) result.get("payload");
 
-            // System.out.println("Response list : " + responseList);
-            Log.d(TAG, "responseList:"+responseList);
+            Log.d(TAG, "payload: "+responseList);
         } catch (java.io.IOException ex) { 
             failed = true;
             failure = ex;
             Log.d(TAG, "caught exception", ex);
+            Analytics.setString("svc", service);
+            Analytics.setString("m", method.getName());
+            Analytics.logException(ex);
         }
 
         readComplete = true;
@@ -108,12 +111,11 @@ public class GatewayRequest extends HttpRequest {
     }
 
     private void logRequest(GatewayRequest gatewayRequest, Map<String, ?> result, long start_ms) {
-        Log.d(TAG, "service=" + this.service);
-        Log.d(TAG, "method=" + this.method.getName());
+        Log.d(TAG, "service: " + this.service);
+        Log.d(TAG, "method: " + this.method.getName());
         for (Object param: method.getParams())
             Log.d(TAG, "param: " + param);
         Log.d(TAG, "result: " + new JSONObject(result).toString());
-//        Log.d(TAG, "parse_duration: " + (System.currentTimeMillis() - start_ms));
     }
 
     private String compilePostData(String service, Method method) {

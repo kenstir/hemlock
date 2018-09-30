@@ -27,12 +27,14 @@ import org.evergreen_ils.accountAccess.holds.HoldsListView;
 import org.evergreen_ils.android.App;
 import org.evergreen_ils.searchCatalog.SearchActivity;
 import org.evergreen_ils.searchCatalog.SearchFormat;
+import org.evergreen_ils.system.Analytics;
 import org.evergreen_ils.system.EvergreenServer;
 import org.evergreen_ils.system.Log;
 import org.evergreen_ils.views.DonateActivity;
 import org.evergreen_ils.views.MainActivity;
 import org.evergreen_ils.views.MenuProvider;
 import org.evergreen_ils.views.splashscreen.SplashActivity;
+import org.w3c.dom.Text;
 
 import java.net.URLEncoder;
 
@@ -51,6 +53,7 @@ public class BaseActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Analytics.initialize(this);
         if (!SplashActivity.isAppInitialized()) {
             SplashActivity.restartApp(this);
             mRestarting = true;
@@ -116,6 +119,7 @@ public class BaseActivity extends AppCompatActivity
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.action_feedback) {
+            Analytics.logEvent("Feedback: Open");
             String url = getString(R.string.ou_feedback_url);
             if (!TextUtils.isEmpty(url)) {
                 startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
@@ -134,19 +138,25 @@ public class BaseActivity extends AppCompatActivity
     protected boolean onNavigationAction(int id) {
         boolean ret = true;
         if (id == R.id.nav_header) {
+            Analytics.logEvent("Home: Open", "via", "nav_drawer");
             startActivity(new Intent(this, MainActivity.class));
         } else if (id == R.id.main_btn_search) {
+            Analytics.logEvent("Search: Open", "via", "nav_drawer");
             startActivity(new Intent(this, SearchActivity.class));
         } else if (id == R.id.account_btn_check_out) {
+            Analytics.logEvent("Checkouts: Open", "via", "nav_drawer");
             startActivity(new Intent(this, ItemsCheckOutListView.class));
         } else if (id == R.id.account_btn_holds) {
+            Analytics.logEvent("Holds: Open", "via", "nav_drawer");
             startActivity(new Intent(this, HoldsListView.class));
         } else if (id == R.id.account_btn_fines) {
+            Analytics.logEvent("Fines: Open", "via", "nav_drawer");
             startActivity(new Intent(this, FinesActivity.class));
         } else if (id == R.id.main_my_lists_button) {
+            Analytics.logEvent("Lists: Open", "via", "nav_drawer");
             startActivity(new Intent(this, BookBagListView.class));
         } else if (mMenuItemHandler != null) {
-            ret = mMenuItemHandler.onItemSelected(this, id);
+            ret = mMenuItemHandler.onItemSelected(this, id, "nav_drawer");
         } else {
             ret = false;
         }
@@ -158,9 +168,11 @@ public class BaseActivity extends AppCompatActivity
 
     public boolean handleMenuAction(int id) {
         if (id == R.id.action_switch_account) {
+            Analytics.logEvent("Account: Switch Account", "via", "options_menu");
             SplashActivity.restartApp(this);
             return true;
         } else if (id == R.id.action_add_account) {
+            Analytics.logEvent("Account: Add Account", "via", "options_menu");
             invalidateOptionsMenu();
             AccountUtils.addAccount(this, new Runnable() {
                 @Override
@@ -170,6 +182,7 @@ public class BaseActivity extends AppCompatActivity
             });
             return true;
         } else if (id == R.id.action_logout) {
+            Analytics.logEvent("Account: Logout", "via", "options_menu");
             AccountAccess.getInstance().logout(this);
             SplashActivity.restartApp(this);
             return true;
@@ -180,11 +193,13 @@ public class BaseActivity extends AppCompatActivity
             startActivityForResult(new Intent(this, DonateActivity.class), App.REQUEST_PURCHASE);
             return true;
         } else if (id == R.id.action_messages) {
+            Analytics.logEvent("Messages: Open", "via", "options_menu");
             String username = AccountAccess.getInstance().getUserName();
             String password = AccountUtils.getPassword(this, username);
             String path = "/eg/opac/login"
-                    + "?redirect_to=" + URLEncoder.encode("/eg/opac/myopac/messages")
-                    + "&username=" + URLEncoder.encode(username);
+                    + "?redirect_to=" + URLEncoder.encode("/eg/opac/myopac/messages");
+            if (!TextUtils.isEmpty(username))
+                path = path + "&username=" + URLEncoder.encode(username);
             if (!TextUtils.isEmpty(password))
                 path = path + "&password=" + URLEncoder.encode(password);
             String url = EvergreenServer.getInstance().getUrl(path);

@@ -91,35 +91,37 @@ public class SearchCatalog {
         
         ArrayList<RecordInfo> results = new ArrayList<RecordInfo>();
 
-        HashMap complexParm = new HashMap<String, Integer>();
-        if (this.selectedOrganization != null) {
-            if (this.selectedOrganization.id != null) complexParm.put("org_unit", this.selectedOrganization.id);
-            // I'm not too sure about this depth option
-            if (this.selectedOrganization.level != null) complexParm.put("depth", this.selectedOrganization.level);
-        }
-        complexParm.put("limit", searchLimit);
-        complexParm.put("offset", offset);
-        if (searchClass != null) complexParm.put("default_class", searchClass);
+        HashMap argHash = new HashMap<String, Integer>();
+        argHash.put("limit", searchLimit);
+        argHash.put("offset", offset);
 
-        String queryString = searchText;
+        // build queryString, taken with a grain of salt from
+        // https://wiki.evergreen-ils.org/doku.php?id=documentation:technical:search_grammar
+        // e.g. "title:Harry Potter chamber of secrets search_format(book) site(MARLBORO)"
+        StringBuilder sb = new StringBuilder();
+        sb.append(searchClass).append(":").append(searchText);
         if (!searchFormat.isEmpty())
-            queryString += " search_format(" + searchFormat + ")";
+            sb.append(" search_format(").append(searchFormat).append(")");
+        if (this.selectedOrganization != null)
+            sb.append(" site(").append(this.selectedOrganization.shortname).append(")");
+        String queryString = sb.toString();
 
         long start_ms = System.currentTimeMillis();
         long now_ms = start_ms;
 
         // do request
         Object resp = Utils.doRequest(conn(), Api.SEARCH, Api.MULTICLASS_QUERY,
-                new Object[] { complexParm, queryString, 1 });
+                new Object[] { argHash, queryString, 1 });
         Log.d(TAG, "Sync Response: " + resp);
         now_ms = Log.logElapsedTime(TAG, now_ms, "search.query");
-        if (resp == null)
-            return results; // search failed or server crashed
 
+        // handle cases of no results
         Map<String, ?> response = (Map<String, ?>) resp;
-        visible = Api.parseInteger(response.get("count"), 0);
+        visible = (response != null) ? Api.parseInteger(response.get("count"), 0) : 0;
+        if (visible == 0)
+            return results;
 
-        // result_lol is a list of lists and looks like one of:
+        // record_ids_lol is a list of lists and looks like one of:
         //   [[32673,null,"0.0"],[886843,null,"0.0"]] // integer ids+?
         //   [["503610",null,"0.0"],["502717",null,"0.0"]] // string ids+?
         //   [["1805532"],["2385399"]] // string ids only

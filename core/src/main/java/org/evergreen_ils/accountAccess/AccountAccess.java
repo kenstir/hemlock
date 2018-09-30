@@ -21,6 +21,7 @@ package org.evergreen_ils.accountAccess;
 
 import android.app.Activity;
 import android.text.TextUtils;
+
 import org.evergreen_ils.Api;
 import org.evergreen_ils.Result;
 import org.evergreen_ils.accountAccess.bookbags.BookBag;
@@ -33,14 +34,14 @@ import org.evergreen_ils.system.EvergreenServer;
 import org.evergreen_ils.system.Log;
 import org.evergreen_ils.system.Utils;
 import org.evergreen_ils.searchCatalog.RecordInfo;
+import org.evergreen_ils.system.Analytics;
+import org.opensrf.ShouldNotHappenException;
 import org.opensrf.net.http.HttpConnection;
+import org.opensrf.util.GatewayResponse;
 import org.opensrf.util.OSRFObject;
 
 import java.util.*;
 
-/**
- * The Class AuthenticateUser. Singleton class
- */
 public class AccountAccess {
 
     private final static String TAG = AccountAccess.class.getSimpleName();
@@ -152,7 +153,7 @@ public class AccountAccess {
         this.authToken = auth_token;
 
         Object resp = Utils.doRequest(conn(), Api.AUTH,
-                Api.AUTH_SESSION_RETRIEVE, auth_token, new Object[]{
+                Api.AUTH_SESSION_RETRIEVE, authToken, new Object[]{
                         authToken});
         if (resp != null) {
             OSRFObject au = (OSRFObject) resp;
@@ -232,7 +233,7 @@ public class AccountAccess {
         }
     }
 
-    public boolean reauthenticate(Activity activity) throws SessionNotFoundException {
+    public boolean reauthenticate(Activity activity) {
         return reauthenticate(activity, userName);
     }
 
@@ -241,7 +242,7 @@ public class AccountAccess {
      * @param activity
      * @return true if auth successful
      */
-    public boolean reauthenticate(Activity activity, String user_name) throws SessionNotFoundException {
+    public boolean reauthenticate(Activity activity, String user_name) {
         Log.d(Const.AUTH_TAG, "reauthenticate " + user_name);
         AccountUtils.invalidateAuthToken(activity, authToken);
         clearSession();
@@ -267,6 +268,19 @@ public class AccountAccess {
     // ------------------------Checked Out Items Section
     // -------------------------//
 
+    private CircRecord fleshCircRecord(String id, CircRecord.CircType circType) throws SessionNotFoundException {
+        GatewayResponse response = retrieveCircRecord(id);
+        if (response.failed) {
+            // PINES Crash #23
+            Analytics.logException(new ShouldNotHappenException("failed circ retrieve, type:" + circType + " desc:" + response.description));
+            return null;
+        }
+        OSRFObject circ = (OSRFObject) response.map;
+        CircRecord circRecord = new CircRecord(circ, circType, Integer.parseInt(id));
+        fetchInfoForCheckedOutItem(circ.getInt("target_copy"), circRecord);
+        return circRecord;
+    }
+
     /**
      * Gets the items checked out.
      *
@@ -285,26 +299,19 @@ public class AccountAccess {
             return circRecords;
         Map<String, ?> resp_map = ((Map<String, ?>) resp);
 
-        if (resp_map.get("out") != null) {
-            List<String> id = (List<String>) resp_map.get("out");
-            for (int i = 0; i < id.size(); i++) {
-                OSRFObject circ = retrieveCircRecord(id.get(i));
-                CircRecord circRecord = new CircRecord(circ, CircRecord.CircType.OUT,
-                        Integer.parseInt(id.get(i)));
-                fetchInfoForCheckedOutItem(circ.getInt("target_copy"), circRecord);
+        // out => list_of_strings_or_integers
+        List<String> ids = Api.parseIdsList(resp_map.get("out"));
+        for (String id: ids) {
+            CircRecord circRecord = fleshCircRecord(id, CircRecord.CircType.OUT);
+            if (circRecord != null)
                 circRecords.add(circRecord);
-            }
         }
 
-        if (resp_map.get("overdue") != null) {
-            List<String> id = (List<String>) resp_map.get("overdue");
-            for (int i = 0; i < id.size(); i++) {
-                OSRFObject circ = retrieveCircRecord(id.get(i));
-                CircRecord circRecord = new CircRecord(circ, CircRecord.CircType.OVERDUE,
-                        Integer.parseInt(id.get(i)));
-                fetchInfoForCheckedOutItem(circ.getInt("target_copy"), circRecord);
+        ids = Api.parseIdsList(resp_map.get("overdue"));
+        for (String id: ids) {
+            CircRecord circRecord = fleshCircRecord(id, CircRecord.CircType.OVERDUE);
+            if (circRecord != null)
                 circRecords.add(circRecord);
-            }
         }
 
         // todo handle other circ types LONG_OVERDUE, LOST, CLAIMS_RETURNED ?
@@ -336,13 +343,13 @@ public class AccountAccess {
      * @return the oSRF object
      * @throws SessionNotFoundException the session not found exception
      */
-    private OSRFObject retrieveCircRecord(String id)
+    private GatewayResponse retrieveCircRecord(String id)
             throws SessionNotFoundException {
 
-        OSRFObject circ = (OSRFObject) Utils.doRequest(conn(), Api.SERVICE_CIRC,
+        Object resp = Utils.doRequest(conn(), Api.SERVICE_CIRC,
                 Api.CIRC_RETRIEVE, authToken, new Object[] {
                         authToken, id });
-        return circ;
+        return GatewayResponse.createFromObject(resp);
     }
 
     /*
@@ -567,12 +574,9 @@ public class AccountAccess {
      * Renew circ.
      *
      * @param target_copy the target_copy
-     * @throws MaxRenewalsException the max renewals exception
-     * @throws ServerErrorMessage the server error message
      * @throws SessionNotFoundException the session not found exception
      */
-    public void renewCirc(Integer target_copy) throws MaxRenewalsException,
-            ServerErrorMessage, SessionNotFoundException {
+    public GatewayResponse renewCirc(Integer target_copy) throws SessionNotFoundException {
 
         HashMap<String, Integer> complexParam = new HashMap<>();
         complexParam.put("patron", this.userID);
@@ -583,14 +587,7 @@ public class AccountAccess {
                 Api.CIRC_RENEW, authToken, new Object[] {
                         authToken, complexParam });
 
-        Map<String, String> resp_map = (Map<String, String>) resp;
-
-        if (resp_map.get("textcode") != null && !resp_map.get("textcode").equals("SUCCESS")) {
-            if (resp_map.get("textcode").equals("MAX_RENEWALS_REACHED"))
-                throw new MaxRenewalsException();
-            throw new ServerErrorMessage(resp_map.get("desc").toString());
-        }
-
+        return GatewayResponse.createFromObject(resp);
     }
 
     // ------------------------orgs Section
@@ -633,8 +630,8 @@ public class AccountAccess {
         List<OSRFObject> listHoldsAhr = (List<OSRFObject>) resp;
         for (OSRFObject ahr_obj: listHoldsAhr) {
             HoldRecord hold = new HoldRecord(ahr_obj);
-            fetchHoldTitleInfo(ahr_obj, hold);
-            fetchHoldStatus(ahr_obj, hold);
+            fetchHoldTitleInfo(hold);
+            fetchHoldQueueStats(hold);
             if (hold.recordInfo != null)
                 hold.recordInfo.setSearchFormat(fetchFormat(hold.target));
             holds.add(hold);
@@ -645,17 +642,10 @@ public class AccountAccess {
 
     // hold_type    - T, C (or R or F), I, V or M for Title, Copy, Issuance, Volume or Meta-record  (default "T")
 
-    /**
-     * Fetch hold title info.
-     *
-     * @param holdArhObject the hold arh object
-     * @param hold the hold
-     * @return the object
-     */
-    private Object fetchHoldTitleInfo(OSRFObject holdArhObject, HoldRecord hold) {
+    private Object fetchHoldTitleInfo(HoldRecord hold) {
 
-        String holdType = (String) holdArhObject.get("hold_type");
-        Integer target = holdArhObject.getInt("target");
+        String holdType = (String) hold.ahr.get("hold_type");
+        Integer target = hold.ahr.getInt("target");
         String method = null;
 
         OSRFObject holdInfo = null;
@@ -672,6 +662,7 @@ public class AccountAccess {
             if (holdInfo == null) {
                 hold.title = "Unknown Title";
                 hold.author = "Unknown Author";
+                Analytics.logException(new ShouldNotHappenException(6, "null holdInfo, ahr="+hold.ahr));
             } else {
                 hold.title = holdInfo.getString("title");
                 hold.author = holdInfo.getString("author");
@@ -679,21 +670,14 @@ public class AccountAccess {
             hold.recordInfo = new RecordInfo(holdInfo);
         } else {
             // multiple objects per hold ????
-            holdInfo = holdFetchObjects(holdArhObject, hold);
+            holdInfo = holdFetchObjects(hold);
         }
         return holdInfo;
     }
 
-    /**
-     * Hold fetch objects.
-     *
-     * @param hold the hold
-     * @param holdObj the hold obj
-     * @return the oSRF object
-     */
-    private OSRFObject holdFetchObjects(OSRFObject hold, HoldRecord holdObj) {
+    private OSRFObject holdFetchObjects(HoldRecord holdObj) {
 
-        String type = (String) hold.get("hold_type");
+        String type = (String) holdObj.ahr.get("hold_type");
 
         Log.d(TAG, "Hold Type " + type);
         if (type.equals("C")) {
@@ -704,7 +688,7 @@ public class AccountAccess {
              */
 
             // fetch_copy
-            OSRFObject copyObject = fetchAssetCopy(hold.getInt("target"));
+            OSRFObject copyObject = fetchAssetCopy(holdObj.ahr.getInt("target"));
             // fetch_volume from copyObject.call_number field
             Integer call_number = copyObject.getInt("call_number");
 
@@ -736,7 +720,7 @@ public class AccountAccess {
             // fetch_volume
             OSRFObject volume = (OSRFObject) Utils.doRequest(conn(),
                     Api.SEARCH, Api.ASSET_CALL_NUMBER_RETRIEVE,
-                    new Object[] { hold.getInt("target") });
+                    new Object[] { holdObj.ahr.getInt("target") });
             // in volume object : record
 
             // in volume object : record
@@ -756,7 +740,7 @@ public class AccountAccess {
         } else if (type.equals("I")) {
             OSRFObject issuance = (OSRFObject) Utils.doRequest(conn(),
                     Api.SERVICE_SERIAL, Api.METHOD_FETCH_ISSUANCE,
-                    new Object[] { hold.getInt("target") });
+                    new Object[] { holdObj.ahr.getInt("target") });
             // TODO
 
         } else if (type.equals("P")) {
@@ -771,7 +755,7 @@ public class AccountAccess {
             param.put("fields", fieldsList);
             HashMap<String, Integer> queryParam = new HashMap<String, Integer>();
             // PART_ID use "target field in hold"
-            queryParam.put("id", hold.getInt("target"));
+            queryParam.put("id", holdObj.ahr.getInt("target"));
             param.put("query", queryParam);
 
             // returns [{record:id, label=part label}]
@@ -800,28 +784,15 @@ public class AccountAccess {
 
     /**
      * Fetch hold status.
-     *
-     * @param hold the hold
-     * @param holdObj the hold obj
-     * @throws SessionNotFoundException the session not found exception
      */
-    public void fetchHoldStatus(OSRFObject hold, HoldRecord holdObj)
+    public void fetchHoldQueueStats(HoldRecord hold)
             throws SessionNotFoundException {
 
-        Integer hold_id = hold.getInt("id");
+        Integer hold_id = hold.ahr.getInt("id");
         Object resp = Utils.doRequest(conn(), Api.SERVICE_CIRC,
                 Api.HOLD_QUEUE_STATS, authToken, new Object[] {
                         authToken, hold_id });
-
-        if (resp == null)
-            return;
-
-        Map<String, Integer> map = (Map<String, Integer>)resp;
-        holdObj.status = map.get("status");
-        holdObj.potentialCopies = map.get("potential_copies");
-        holdObj.estimatedWaitInSeconds = map.get("estimated_wait");
-        holdObj.queuePosition = map.get("queue_position");
-        holdObj.totalHolds = map.get("total_holds");
+        hold.setQueueStats(resp);
     }
 
     /**
@@ -837,11 +808,8 @@ public class AccountAccess {
         Object response = Utils.doRequest(conn(), Api.SERVICE_CIRC,
                 Api.HOLD_CANCEL, authToken, new Object[] {
                         authToken, hold_id });
-
-        // delete successful
         if (response.toString().equals("1"))
             return true;
-
         return false;
     }
 
@@ -981,23 +949,14 @@ public class AccountAccess {
      * @return the fines summary
      * @throws SessionNotFoundException the session not found exception
      */
-    public float[] getFinesSummary() throws SessionNotFoundException {
+    public OSRFObject getFinesSummary() throws SessionNotFoundException {
 
         // mous object
         OSRFObject finesSummary = (OSRFObject) Utils.doRequest(conn(), Api.ACTOR,
                 Api.FINES_SUMMARY, authToken, new Object[] {
                         authToken, userID });
 
-        float fines[] = new float[3];
-        try {
-            fines[0] = Float.parseFloat(finesSummary.getString("total_owed"));
-            fines[1] = Float.parseFloat(finesSummary.getString("total_paid"));
-            fines[2] = Float.parseFloat(finesSummary.getString("balance_owed"));
-        } catch (Exception e) {
-            Log.d(TAG, "Error parsing fines", e);
-        }
-
-        return fines;
+        return finesSummary;
     }
 
     /**
@@ -1009,23 +968,20 @@ public class AccountAccess {
     public ArrayList<FinesRecord> getTransactions()
             throws SessionNotFoundException {
 
-        ArrayList<FinesRecord> finesRecords = new ArrayList<FinesRecord>();
-
         Object transactions = Utils.doRequest(conn(), Api.ACTOR,
                 Api.TRANSACTIONS_WITH_CHARGES, authToken, new Object[] {
                         authToken, userID });
 
-        // get Array
-
+        ArrayList<FinesRecord> finesRecords = new ArrayList<>();
         List<Map<String, OSRFObject>> list = (List<Map<String, OSRFObject>>) transactions;
+        if (list == null)
+            return finesRecords;
 
         for (int i = 0; i < list.size(); i++) {
-
             Map<String, OSRFObject> item = list.get(i);
             FinesRecord record = new FinesRecord(item.get("circ"), item.get("record"), item.get("transaction"));
             finesRecords.add(record);
         }
-
         return finesRecords;
     }
 

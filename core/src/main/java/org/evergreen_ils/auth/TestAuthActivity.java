@@ -15,8 +15,6 @@ limitations under the License.
  */
 package org.evergreen_ils.auth;
 
-import org.evergreen_ils.R;
-
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.accounts.AccountManagerCallback;
@@ -29,7 +27,10 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import org.evergreen_ils.R;
 import org.evergreen_ils.system.Log;
+import org.evergreen_ils.system.Analytics;
 
 /**
  * Created with IntelliJ IDEA.
@@ -52,6 +53,7 @@ public class TestAuthActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Analytics.initialize(this);
 
         setContentView(R.layout.test_auth);
         mAccountManager = AccountManager.get(this);

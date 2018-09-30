@@ -1,6 +1,9 @@
 *.iml
 .gradle
+fabric.properties
 /local.properties
+/.idea/assetWizardSettings.xml
+/.idea/caches
 /.idea/workspace.xml
 /.idea/libraries
 .DS_Store
