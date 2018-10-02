@@ -32,6 +32,7 @@ import org.evergreen_ils.accountAccess.holds.HoldRecord;
 import org.evergreen_ils.auth.Const;
 import org.evergreen_ils.system.EvergreenServer;
 import org.evergreen_ils.system.Log;
+import org.evergreen_ils.system.Organization;
 import org.evergreen_ils.system.Utils;
 import org.evergreen_ils.searchCatalog.RecordInfo;
 import org.evergreen_ils.system.Analytics;
@@ -113,6 +114,13 @@ public class AccountAccess {
         return homeLibraryID;
     }
 
+    public static String safeGetOrganizationShortName(Integer orgID) {
+        if (orgID == null) return null;
+        Organization org = EvergreenServer.getInstance().getOrganization(orgID);
+        if (org == null) return "!";
+        return org.shortname;
+    }
+
     public boolean getDefaultEmailNotification() {
         return Utils.safeBool(defaultHoldNotifyEmail);
     }
@@ -180,6 +188,7 @@ public class AccountAccess {
     // This could be done on demand, but coming in at ~75ms it is not worth it
     public void fleshUserSettings() {
 
+        String holdNotifySetting = null;
         try {
             // Array of fields is optional; the default does not include settings
             ArrayList<String> fields = new ArrayList<>();
@@ -208,12 +217,18 @@ public class AccountAccess {
                         defaultSMSNumber = value;
                     } else if (name.equals(Api.USER_SETTING_HOLD_NOTIFY)) {
                         parseHoldNotifyValue(value);
+                        holdNotifySetting = value;
                     }
                 }
             }
         } catch (Exception e) {
             Log.d(TAG, "caught", e);
         }
+        Analytics.logEvent("Account: Retrieve Session",
+                "home_org", safeGetOrganizationShortName(homeLibraryID),
+                "pickup_org", safeGetOrganizationShortName(defaultPickupLibraryID),
+                "search_org", safeGetOrganizationShortName(defaultSearchLibraryID),
+                "hold_notify", holdNotifySetting);
         Log.d(TAG, "done fleshing user settings");
 
         // Things that didn't work:
