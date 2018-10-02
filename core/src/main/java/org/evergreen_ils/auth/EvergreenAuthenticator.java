@@ -78,7 +78,8 @@ public class EvergreenAuthenticator {
         // step 1: get seed
         Object resp = doRequest(conn, Api.AUTH, Api.AUTH_INIT, new Object[] { username });
         if (resp == null)
-            throw new AuthenticationException("Unable to contact login service");
+            throw new AuthenticationException("Can't reach server at "+library_url+
+                "\n\nThe server may be offline.");
         String seed = resp.toString();
 
         // step 2: complete auth with seed + password
