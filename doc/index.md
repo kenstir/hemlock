@@ -1,4 +1,4 @@
-# Hemlock App for Android Privacy Policy
+# Privacy Policy - Hemlock App for Android
 
 This page outlines the privacy policy of Hemlock and related apps for Android ("the app"):
 
