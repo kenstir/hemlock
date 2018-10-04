@@ -21,7 +21,6 @@ package org.evergreen_ils.searchCatalog;
 
 import java.util.*;
 
-import android.net.Uri;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.SwitchCompat;
 import android.text.TextUtils;
@@ -235,9 +234,13 @@ public class SearchActivity extends BaseActivity {
 
                 searchResults = search.getSearchResults(text, getSearchClass(), getSearchFormat(), 0);
                 try {
+                    Organization search_org = SearchCatalog.getInstance().selectedOrganization;
+                    Organization home_org = eg.getOrganization(AccountAccess.getInstance().getHomeLibraryID());
+                    String search_org_val = TextUtils.equals(search_org.name, home_org.name) ? "home" :
+                            ((search_org.isConsortium()) ? search_org.shortname : "other");
                     Analytics.logEvent("Search: Execute",
                             "num_results", SearchCatalog.getInstance().visible,
-                            "search_org", SearchCatalog.getInstance().selectedOrganization.shortname,
+                            "search_org", search_org_val,
                             "search_type", getSearchClass(),
                             "search_format", getSearchFormat());
                 } catch (Exception e) {

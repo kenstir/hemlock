@@ -54,4 +54,8 @@ public class Organization /*implements Serializable*/ {
             return true;//should not happen
         return orgType.can_have_vols;
     }
+
+    public boolean isConsortium() {
+        return parent_ou == null;
+    }
 }

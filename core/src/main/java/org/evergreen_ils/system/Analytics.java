@@ -188,6 +188,22 @@ public class Analytics {
                 .putCustomAttribute(n4,v4);
         logEvent(ev);
     }
+    public static void logEvent(String event, String n, String v, String n2, String v2, String n3, boolean v3, String n4, String v4) {
+        CustomEvent ev = new CustomEvent(event);
+        ev.putCustomAttribute(n, v)
+                .putCustomAttribute(n2, v2)
+                .putCustomAttribute(n3, bool2str(v3))
+                .putCustomAttribute(n4, v4);
+        logEvent(ev);
+    }
+    public static void logEvent(String event, String n, String v, String n2, String v2, String n3, boolean v3, String n4, boolean v4) {
+        CustomEvent ev = new CustomEvent(event);
+        ev.putCustomAttribute(n, v)
+                .putCustomAttribute(n2, v2)
+                .putCustomAttribute(n3, bool2str(v3))
+                .putCustomAttribute(n4, bool2str(v4));
+        logEvent(ev);
+    }
     public static void logEvent(String event, String n, Integer v, String n2, String v2, String n3, String v3, String n4, String v4) {
         CustomEvent ev = new CustomEvent(event);
         ev.putCustomAttribute(n, v)
