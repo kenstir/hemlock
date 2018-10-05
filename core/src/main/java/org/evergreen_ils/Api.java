@@ -21,7 +21,6 @@ package org.evergreen_ils;
 import android.text.TextUtils;
 
 import org.evergreen_ils.system.Analytics;
-import org.evergreen_ils.system.Log;
 import org.opensrf.ShouldNotHappenException;
 
 import java.text.ParseException;

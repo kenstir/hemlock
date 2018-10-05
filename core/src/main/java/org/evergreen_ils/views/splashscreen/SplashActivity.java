@@ -144,7 +144,6 @@ public class SplashActivity extends AppCompatActivity implements LoadingTaskList
             String extra_text;
             if (!TextUtils.isEmpty(result)) {
                 extra_text = " failed:\n" + result;
-                Analytics.logException(new ShouldNotHappenException(extra_text));
             } else {
                 extra_text = " cancelled";
             }
