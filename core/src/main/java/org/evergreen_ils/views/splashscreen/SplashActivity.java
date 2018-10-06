@@ -45,6 +45,7 @@ public class SplashActivity extends AppCompatActivity implements LoadingTaskList
     private View mProgressBar;
     private Button mRetryButton;
     private LoadingTask mTask;
+    private long mStartTimeMillis;
     private static boolean mInitialized;
 
     public static boolean isAppInitialized() {
@@ -100,6 +101,7 @@ public class SplashActivity extends AppCompatActivity implements LoadingTaskList
         Analytics.log(TAG, "startTask> task=" + mTask);
         if (mTask != null)
             return;
+        mStartTimeMillis = System.currentTimeMillis();
         mTask = new LoadingTask(this, this);
         mTask.execute();
     }
@@ -136,7 +138,9 @@ public class SplashActivity extends AppCompatActivity implements LoadingTaskList
     @Override
     public void onPostExecute(String result) {
         Analytics.log(TAG, "onPostExecute> " + result);
-        Analytics.logEvent("Account: Login", "result", result, "library_name", AppState.getString(AppState.LIBRARY_NAME));
+        Analytics.logEvent("Account: Login", "result", result,
+                "library_name", AppState.getString(AppState.LIBRARY_NAME),
+                "elapsed_ms", System.currentTimeMillis() - mStartTimeMillis);
         mTask = null;
         if (TextUtils.equals(result, LoadingTask.TASK_OK)) {
             startApp();

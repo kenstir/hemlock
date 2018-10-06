@@ -180,6 +180,13 @@ public class Analytics {
                 .putCustomAttribute(n3, v3);
         logEvent(ev);
     }
+    public static void logEvent(String event, String name, String val, String n2, String v2, String n3, long v3) {
+        CustomEvent ev = new CustomEvent(event);
+        ev.putCustomAttribute(name, val)
+                .putCustomAttribute(n2, v2)
+                .putCustomAttribute(n3, v3);
+        logEvent(ev);
+    }
     public static void logEvent(String event, String n, String v, String n2, String v2, String n3, String v3, String n4, String v4) {
         CustomEvent ev = new CustomEvent(event);
         ev.putCustomAttribute(n, v)
