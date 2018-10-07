@@ -1,4 +1,10 @@
-# Privacy Policy - Hemlock App for Android
+---
+title: Privacy Policy
+layout: default
+redirect_from:
+  - /
+---
+# Privacy Policy
 
 This page outlines the privacy policy of Hemlock and related apps for Android ("the app"):
 
@@ -10,12 +16,12 @@ This page outlines the privacy policy of Hemlock and related apps for Android ("
 ## Reason for Collection
 
 The app collects general data on which features are used and how
-often.  For example, if you place a hold, an event is collected noting
-whether you chose email and/or SMS notification.  In the event of a
-crash, a stack trace is collected, along with the make and model of the 
-device, and some logs about the network requests made leading up to the crash.
+often.  In the event of a crash, a stack trace is collected, along
+with the make and model of the device, and some logs about the network
+requests made by the app leading up to the crash.
 
-This information allows us to fix bugs, and to improve and prioritize features.
+This information is used to fix bugs, and to improve and prioritize
+features.
 
 
 ## Personal Data Collected
