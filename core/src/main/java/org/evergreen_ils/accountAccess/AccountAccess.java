@@ -239,13 +239,10 @@ public class AccountAccess {
     }
 
     private void parseHoldNotifyValue(String value) {
-        // value is something like "email|sms" or "email|phone"
-        String[] types = TextUtils.split(value, "\\|");
-        for (String type: types) {
-            if (type.equals("email")) defaultHoldNotifyEmail = true;
-            else if (type.equals("phone")) defaultHoldNotifyPhone = true;
-            else if (type.equals("sms")) defaultHoldNotifySMS = true;
-        }
+        // NB: value may be either ':' separated or '|' separated, e.g. "phone:email" or "email|sms"
+        defaultHoldNotifyEmail = value.contains("email");
+        defaultHoldNotifyPhone = value.contains("phone");
+        defaultHoldNotifySMS = value.contains("sms");
     }
 
     public boolean reauthenticate(Activity activity) {
