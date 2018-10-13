@@ -154,7 +154,7 @@ public class FinesActivity extends BaseActivity {
     private float getFloat(OSRFObject o, String field) {
         float ret = 0.0f;
         try {
-            ret = Float.parseFloat(o.getString(field));
+            if (o != null) ret = Float.parseFloat(o.getString(field));
         } catch (Exception e) {
             Analytics.logException(e);
         }
@@ -194,12 +194,15 @@ public class FinesActivity extends BaseActivity {
                     @Override
                     public void run() {
                         listAdapter.clear();
-                        haveAnyFines = (finesRecords != null && finesRecords.size() > 0);
+                        haveAnyFines = false;
                         haveAnyGroceryBills = false;
-                        for (FinesRecord finesRecord : finesRecords) {
-                            listAdapter.add(finesRecord);
-                            if (finesRecord.recordInfo == null) {
-                                haveAnyGroceryBills = true;
+                        if (finesRecords != null) {
+                            for (FinesRecord finesRecord : finesRecords) {
+                                listAdapter.add(finesRecord);
+                                haveAnyFines = true;
+                                if (finesRecord.recordInfo == null) {
+                                    haveAnyGroceryBills = true;
+                                }
                             }
                         }
 
