@@ -97,7 +97,7 @@ public class SplashActivity extends AppCompatActivity implements LoadingTaskList
         startTask();
     }
 
-    protected void startTask() {
+    protected synchronized void startTask() {
         Analytics.log(TAG, "startTask> task=" + mTask);
         if (mTask != null)
             return;
