@@ -63,7 +63,7 @@ public class Inventory {
     }
 
     /** Returns a list of all owned product IDs. */
-    public List<String> getAllOwnedSkus() {
+    List<String> getAllOwnedSkus() {
         return new ArrayList<String>(mPurchaseMap.keySet());
     }
 

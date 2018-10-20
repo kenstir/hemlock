@@ -64,14 +64,18 @@ public class BillingHelper {
                 if (result.isFailure() || mHelper == null) {
                     mSetupFinishedListener.onSetupFinished(result);
                 } else {
-                    mHelper.queryInventoryAsync(new IabHelper.QueryInventoryFinishedListener() {
-                        @Override
-                        public void onQueryInventoryFinished(IabResult result, Inventory inv) {
-                            Log.d(TAG, "[" + getElapsedMillis() + "ms] queryInventory finished with result " + result);
-                            onInventoryAvailable(inv);
-                            mSetupFinishedListener.onSetupFinished(result);
-                        }
-                    });
+                    try {
+                        mHelper.queryInventoryAsync(new IabHelper.QueryInventoryFinishedListener() {
+                            @Override
+                            public void onQueryInventoryFinished(IabResult result, Inventory inv) {
+                                Log.d(TAG, "[" + getElapsedMillis() + "ms] queryInventory finished with result " + result);
+                                onInventoryAvailable(inv);
+                                mSetupFinishedListener.onSetupFinished(result);
+                            }
+                        });
+                    } catch (IabHelper.IabAsyncInProgressException e) {
+                        Log.d(TAG, "caught", e);
+                    }
                 }
             }
         });
@@ -91,17 +95,21 @@ public class BillingHelper {
         String payload = "random";
 
         Log.d(TAG, "launchPurchaseFlow");
-        BillingHelper.getIabHelper().launchPurchaseFlow(activity, sku, App.REQUEST_PURCHASE, new IabHelper.OnIabPurchaseFinishedListener() {
-            @Override
-            public void onIabPurchaseFinished(IabResult result, Purchase purchase) {
-                Log.d(TAG, "purchase finished with result " + result);
-                if (result.isSuccess()) {
-                    mInventory.addPurchase(purchase);
-                    consumeKarma();
+        try {
+            BillingHelper.getIabHelper().launchPurchaseFlow(activity, sku, App.REQUEST_PURCHASE, new IabHelper.OnIabPurchaseFinishedListener() {
+                @Override
+                public void onIabPurchaseFinished(IabResult result, Purchase purchase) {
+                    Log.d(TAG, "purchase finished with result " + result);
+                    if (result.isSuccess()) {
+                        mInventory.addPurchase(purchase);
+                        consumeKarma();
+                    }
+                    listener.onPurchaseFinished(result);
                 }
-                listener.onPurchaseFinished(result);
-            }
-        }, payload);
+            }, payload);
+        } catch (IabHelper.IabAsyncInProgressException e) {
+            Log.d(TAG, "caught", e);
+        }
     }
 
     public static boolean handleActivityResult(int requestCode, int resultCode, Intent data) {
@@ -128,14 +136,18 @@ public class BillingHelper {
         Purchase karmaPurchase = mInventory.getPurchase(BillingHelper.SKU_KARMA);
         if (karmaPurchase != null && mHelper != null && daysSince(karmaPurchase.mPurchaseTime) > KARMA_DURATION_DAYS) {
             Log.d(TAG, "We have karma. Consuming purchase " + karmaPurchase.getOrderId());
-            mHelper.consumeAsync(karmaPurchase, new IabHelper.OnConsumeFinishedListener() {
-                @Override
-                public void onConsumeFinished(Purchase purchase, IabResult result) {
-                    if (result.isSuccess()) {
-                        mInventory.erasePurchase(BillingHelper.SKU_KARMA);
+            try {
+                mHelper.consumeAsync(karmaPurchase, new IabHelper.OnConsumeFinishedListener() {
+                    @Override
+                    public void onConsumeFinished(Purchase purchase, IabResult result) {
+                        if (result.isSuccess()) {
+                            mInventory.erasePurchase(BillingHelper.SKU_KARMA);
+                        }
                     }
-                }
-            });
+                });
+            } catch (IabHelper.IabAsyncInProgressException e) {
+                Log.d(TAG, "caught", e);
+            }
         }
     }
 
@@ -149,7 +161,7 @@ public class BillingHelper {
 
     public static void disposeIabHelper() {
         if (mHelper != null) {
-            mHelper.dispose();
+            mHelper.disposeWhenFinished();
             mHelper = null;
         }
     }
