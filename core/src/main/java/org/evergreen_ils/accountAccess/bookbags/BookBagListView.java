@@ -63,8 +63,6 @@ public class BookBagListView extends BaseActivity {
 
     private ArrayList<BookBag> bookBags = null;
 
-    private Context context;
-
     private ProgressDialogSupport progress;
 
     private EditText bookbag_name;
@@ -83,7 +81,6 @@ public class BookBagListView extends BaseActivity {
         // prevent soft keyboard from popping up when the activity starts
         this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 
-        context = this;
         accountAccess = AccountAccess.getInstance();
         progress = new ProgressDialogSupport();
 
@@ -98,14 +95,14 @@ public class BookBagListView extends BaseActivity {
 
         lv = (ListView) findViewById(R.id.bookbag_list);
         bookBags = new ArrayList<BookBag>();
-        listAdapter = new BookBagsArrayAdapter(context, R.layout.bookbag_list_item, bookBags);
+        listAdapter = new BookBagsArrayAdapter(this, R.layout.bookbag_list_item, bookBags);
         lv.setAdapter(listAdapter);
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Analytics.logEvent("Lists: Tap List");
                 BookBag item = (BookBag) lv.getItemAtPosition(position);
-                Intent intent = new Intent(context, BookBagDetails.class);
+                Intent intent = new Intent(BookBagListView.this, BookBagDetails.class);
                 intent.putExtra("bookBag", item);
                 startActivityForResult(intent, 0);
             }
@@ -129,7 +126,7 @@ public class BookBagListView extends BaseActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        progress.show(context, getString(R.string.msg_retrieving_lists));
+                        if (!isFinishing()) progress.show(BookBagListView.this, getString(R.string.msg_retrieving_lists));
                     }
                 });
 
@@ -174,7 +171,7 @@ public class BookBagListView extends BaseActivity {
 
     private void createBookbag(final String name) {
         if (name.length() < 2) {
-            AlertDialog.Builder builder = new AlertDialog.Builder(context);
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setTitle(R.string.msg_list_name_too_short_title)
                     .setMessage(R.string.msg_list_name_too_short)
                     .setPositiveButton(android.R.string.ok, null);
@@ -208,12 +205,12 @@ public class BookBagListView extends BaseActivity {
             }
         });
 
-        progress.show(context, getString(R.string.msg_creating_list));
+        progress.show(this, getString(R.string.msg_creating_list));
         thread.start();
     }
 
     class BookBagsArrayAdapter extends ArrayAdapter<BookBag> {
-        private List<BookBag> records = new ArrayList<BookBag>();
+        private List<BookBag> records;
 
         public BookBagsArrayAdapter(Context context, int textViewResourceId, List<BookBag> objects) {
             super(context, textViewResourceId, objects);
