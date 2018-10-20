@@ -95,7 +95,6 @@ public class PlaceHoldActivity extends AppCompatActivity {
     private int selectedOrgPos = 0;
     private int selectedSMSPos = 0;
     private ProgressDialogSupport progress;
-    private Context context;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -112,7 +111,6 @@ public class PlaceHoldActivity extends AppCompatActivity {
         eg = EvergreenServer.getInstance();
         RecordInfo record = (RecordInfo) getIntent().getSerializableExtra("recordInfo");
 
-        context = this;
         accountAccess = AccountAccess.getInstance();
         progress = new ProgressDialogSupport();
 
@@ -170,7 +168,7 @@ public class PlaceHoldActivity extends AppCompatActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        progress.show(context, "Placing hold");
+                        progress.show(PlaceHoldActivity.this, "Placing hold");
                     }
                 });
 
@@ -213,13 +211,14 @@ public class PlaceHoldActivity extends AppCompatActivity {
                         progress.dismiss();
 
                         logPlaceHoldResult(result.getErrorMessage());
+                        if (isFinishing()) return;
                         if (result.isSuccess()) {
-                            Toast.makeText(context, "Hold successfully placed",
+                            Toast.makeText(PlaceHoldActivity.this, "Hold successfully placed",
                                     Toast.LENGTH_LONG).show();
-                            startActivity(new Intent(context, HoldsListView.class));
+                            startActivity(new Intent(PlaceHoldActivity.this, HoldsListView.class));
                             finish();
-                        } else {
-                            AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                        } else if (!isFinishing()) {
+                            AlertDialog.Builder builder = new AlertDialog.Builder(PlaceHoldActivity.this);
                             builder.setTitle("Failed to place hold")
                                     .setMessage(result.getErrorMessage())
                                     .setPositiveButton(android.R.string.ok, null);
@@ -259,7 +258,7 @@ public class PlaceHoldActivity extends AppCompatActivity {
                 Organization selectedOrg = eg.getOrganizations().get(selectedOrgPos);
                 if (!selectedOrg.isPickupLocation()) {
                     logPlaceHoldResult("not_pickup_location");
-                    AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                    AlertDialog.Builder builder = new AlertDialog.Builder(PlaceHoldActivity.this);
                     builder.setTitle("Failed to place hold")
                             .setMessage(selectedOrg.name + " is not a valid pickup location; choose a different one.")
                             .setPositiveButton(android.R.string.ok, null);
