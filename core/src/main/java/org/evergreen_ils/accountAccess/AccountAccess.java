@@ -397,6 +397,7 @@ public class AccountAccess {
         result = info_mvr;
         OSRFObject info_acp = null;
 
+        //TODO: clean up logic here
         // old comment I don't get: the logic to establish mvr or acp is copied from the opac
         // check for null info_mvr, possible fix for Issue #7?
         if (info_mvr == null
