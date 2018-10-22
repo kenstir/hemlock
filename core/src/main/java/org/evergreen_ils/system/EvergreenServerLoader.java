@@ -94,11 +94,17 @@ public class EvergreenServerLoader {
         final Organization home_org = eg.getOrganization(ac.getHomeLibraryID());
         final Organization pickup_org = eg.getOrganization(ac.getDefaultPickupLibraryID());
 
-        // To minimize risk of race condition, load home and default pickup orgs first.
+        // To minimize risk of race condition, load home and pickup orgs first.
         // Use a clone so we don't screw up the search org spinner.
         ArrayList<Organization> orgs = (ArrayList<Organization>) eg.getOrganizations().clone();
-        if (home_org != null) orgs.add(0, home_org);
-        if (pickup_org != null) orgs.add(0, pickup_org);
+        if (home_org != null) {
+            orgs.remove(home_org);
+            orgs.add(0, home_org);
+        }
+        if (pickup_org != null) {
+            orgs.remove(pickup_org);
+            orgs.add(0, pickup_org);
+        }
 
         for (final Organization org : orgs) {
             if (org.settings_loaded)
