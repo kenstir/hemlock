@@ -19,6 +19,7 @@
  */
 package org.evergreen_ils.views.splashscreen;
 
+import android.accounts.Account;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -30,6 +31,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import org.evergreen_ils.R;
+import org.evergreen_ils.accountAccess.AccountUtils;
 import org.evergreen_ils.system.Log;
 import org.evergreen_ils.utils.ui.AppState;
 import org.evergreen_ils.system.Analytics;
@@ -138,9 +140,12 @@ public class SplashActivity extends AppCompatActivity implements LoadingTaskList
     @Override
     public void onPostExecute(String result) {
         Analytics.log(TAG, "onPostExecute> " + result);
+        Account[] accounts = AccountUtils.getAccountsByType(this);
         Analytics.logEvent("Account: Login", "result", result,
                 "library_name", AppState.getString(AppState.LIBRARY_NAME),
-                "elapsed_ms", System.currentTimeMillis() - mStartTimeMillis);
+                "elapsed_ms", System.currentTimeMillis() - mStartTimeMillis,
+                "multiple_accounts", accounts.length > 1,
+                "num_accounts", accounts.length);
         mTask = null;
         if (TextUtils.equals(result, LoadingTask.TASK_OK)) {
             startApp();
