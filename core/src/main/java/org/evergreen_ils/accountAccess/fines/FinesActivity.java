@@ -130,6 +130,7 @@ public class FinesActivity extends BaseActivity {
         Integer home_lib = AccountAccess.getInstance().getHomeLibraryID();
         Organization home_org = (home_lib != null) ? EvergreenServer.getInstance().getOrganization(home_lib) : null;
         if (home_org != null && Utils.safeBool(home_org.setting_allow_credit_payments)) {
+            pay_fines_button.setEnabled(false);
             pay_fines_button.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -210,8 +211,9 @@ public class FinesActivity extends BaseActivity {
 
                         total_owed.setText(decimalFormater.format(getFloat(finesSummary, "total_owed")));
                         total_paid.setText(decimalFormater.format(getFloat(finesSummary, "total_paid")));
-                        balance_owed.setText(decimalFormater.format(getFloat(finesSummary, "balance_owed")));
-                        pay_fines_button.setEnabled(haveAnyFines);
+                        double balance = getFloat(finesSummary, "balance_owed");
+                        balance_owed.setText(decimalFormater.format(balance));
+                        pay_fines_button.setEnabled(haveAnyFines && balance > 0);
                         progress.dismiss();
                     }
                 });
