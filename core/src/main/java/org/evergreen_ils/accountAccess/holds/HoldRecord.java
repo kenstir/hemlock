@@ -44,6 +44,7 @@ public class HoldRecord implements Serializable {
     public String holdType = null;
     public Integer target = null;
     public Date expire_time = null;
+    public Date shelf_expire_time = null;
     public String title = null;
     public String author = null;
     public String part_label = null; // only for P types
@@ -64,6 +65,7 @@ public class HoldRecord implements Serializable {
         this.target = ahr.getInt("target");
         this.holdType = ahr.getString("hold_type");
         this.expire_time = Api.parseDate(ahr.getString("expire_time"));
+        this.shelf_expire_time = Api.parseDate(ahr.getString("shelf_expire_time"));
         this.thaw_date = Api.parseDate(ahr.getString("thaw_date"));
         this.email_notify = Api.parseBoolean(ahr.getString("email_notify"));
         this.phone_notify = ahr.getString("phone_notify");
@@ -135,10 +137,11 @@ public class HoldRecord implements Serializable {
         if (status == null) {
             return "Network error; status unavailable";
         } else if (status == 4) {
-            return "Available";
+            String status = "Available";
+            if (shelf_expire_time != null) status = status + "\nExpires " + DateFormat.getDateInstance().format(shelf_expire_time);
+            return status;
         } else if (status == 7) {
             return "Suspended";
-            //return "Suspended\nemail=" + email_notify + "\nphone=" + phone_notify + "\nsms=" + sms_notify;
         } else if (estimatedWaitInSeconds > 0) {
             int days = (int)Math.ceil((double)estimatedWaitInSeconds / 86400.0);
             return "Estimated wait: "
