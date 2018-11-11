@@ -12,6 +12,7 @@
     <application
         android:allowBackup="true"
         android:label="@string/ou_app_label">
+        <activity android:name=".accountAccess.barcode.BarcodeActivity"></activity>
     </application>
 
 </manifest>

@@ -20,6 +20,7 @@ import android.view.View;
 import org.evergreen_ils.R;
 import org.evergreen_ils.accountAccess.AccountAccess;
 import org.evergreen_ils.accountAccess.AccountUtils;
+import org.evergreen_ils.accountAccess.barcode.BarcodeActivity;
 import org.evergreen_ils.accountAccess.bookbags.BookBagListView;
 import org.evergreen_ils.accountAccess.checkout.ItemsCheckOutListView;
 import org.evergreen_ils.accountAccess.fines.FinesActivity;
@@ -155,6 +156,9 @@ public class BaseActivity extends AppCompatActivity
         } else if (id == R.id.main_my_lists_button) {
             Analytics.logEvent("Lists: Open", "via", "nav_drawer");
             startActivity(new Intent(this, BookBagListView.class));
+        } else if (id == R.id.btn_barcode) {
+            //TODO Analytics.logEvent("Barcode: Open", "via", "nav_drawer");
+            startActivity(new Intent(this, BarcodeActivity.class));
         } else if (mMenuItemHandler != null) {
             ret = mMenuItemHandler.onItemSelected(this, id, "nav_drawer");
         } else {

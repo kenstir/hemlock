@@ -98,6 +98,8 @@ public class AccountAccess {
 
     public String getUserName() { return userName; }
 
+    public String getBarcode() { return barcode; }
+
     public Integer getHomeLibraryID() {
         return homeLibraryID;
     }
