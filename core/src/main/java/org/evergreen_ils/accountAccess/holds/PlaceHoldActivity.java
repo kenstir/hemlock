@@ -208,10 +208,9 @@ public class PlaceHoldActivity extends AppCompatActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        progress.dismiss();
-
                         logPlaceHoldResult(result.getErrorMessage());
                         if (isFinishing()) return;
+                        progress.dismiss();
                         if (result.isSuccess()) {
                             Toast.makeText(PlaceHoldActivity.this, "Hold successfully placed",
                                     Toast.LENGTH_LONG).show();
