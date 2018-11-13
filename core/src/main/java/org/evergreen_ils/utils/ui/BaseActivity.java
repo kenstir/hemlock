@@ -20,7 +20,7 @@ import android.view.View;
 import org.evergreen_ils.R;
 import org.evergreen_ils.accountAccess.AccountAccess;
 import org.evergreen_ils.accountAccess.AccountUtils;
-import org.evergreen_ils.accountAccess.barcode.BarcodeActivity;
+import org.evergreen_ils.views.BarcodeActivity;
 import org.evergreen_ils.accountAccess.bookbags.BookBagListView;
 import org.evergreen_ils.accountAccess.checkout.ItemsCheckOutListView;
 import org.evergreen_ils.accountAccess.fines.FinesActivity;
@@ -35,7 +35,6 @@ import org.evergreen_ils.views.DonateActivity;
 import org.evergreen_ils.views.MainActivity;
 import org.evergreen_ils.views.MenuProvider;
 import org.evergreen_ils.views.splashscreen.SplashActivity;
-import org.w3c.dom.Text;
 
 import java.net.URLEncoder;
 
@@ -157,7 +156,12 @@ public class BaseActivity extends AppCompatActivity
             Analytics.logEvent("Lists: Open", "via", "nav_drawer");
             startActivity(new Intent(this, BookBagListView.class));
         } else if (id == R.id.btn_barcode) {
-            //TODO Analytics.logEvent("Barcode: Open", "via", "nav_drawer");
+            Analytics.logEvent("Barcode: Open", "via", "nav_drawer");
+            // generating via Intent only works if zxing barcode app is installed
+//            Intent intent = new Intent("com.google.zxing.client.android.ENCODE");
+//            intent.putExtra("ENCODE_FORMAT", "CODABAR");
+//            intent.putExtra("ENCODE_DATA", "12345678901234");
+//            startActivity(intent);
             startActivity(new Intent(this, BarcodeActivity.class));
         } else if (mMenuItemHandler != null) {
             ret = mMenuItemHandler.onItemSelected(this, id, "nav_drawer");

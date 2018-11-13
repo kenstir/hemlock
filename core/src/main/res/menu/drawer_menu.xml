@@ -32,7 +32,7 @@
             android:title="@string/title_my_lists" />
         <item
             android:id="@+id/btn_barcode"
-            android:title="@string/title_barcode" />
+            android:title="@string/barcode_title" />
     </group>
 
 </menu>

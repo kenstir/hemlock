@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          package="org.cwmars"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="org.cwmars"
           android:installLocation="auto"
           android:versionCode="57"
           android:versionName="3.2.10">
@@ -25,7 +26,8 @@
         android:fullBackupContent="true"
         android:icon="@mipmap/launcher_icon"
         android:label="@string/ou_app_label"
-        android:theme="@style/HemlockDarkNoActionBar" >
+        android:theme="@style/HemlockDarkNoActionBar"
+        tools:ignore="GoogleAppIndexingWarning">
 
         <meta-data android:name="android.max_aspect" android:value="2.1" />
 
@@ -143,7 +145,7 @@
 
         <activity
             android:name="org.evergreen_ils.views.BarcodeActivity"
-            android:label="@string/title_barcode"
+            android:label="@string/barcode_title"
             android:parentActivityName="org.evergreen_ils.views.MainActivity">
         </activity>
 
