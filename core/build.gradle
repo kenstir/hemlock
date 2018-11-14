@@ -29,7 +29,7 @@ repositories {
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    implementation 'com.journeyapps:zxing-android-embedded:3.6.0'
+    api 'com.google.zxing:core:3.3.3'
     api('com.crashlytics.sdk.android:crashlytics:2.9.0@aar') {
         transitive = true;
     }

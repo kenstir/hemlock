@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="net.kenstir.apps.pines"
     android:installLocation="auto"
-    android:versionCode="41"
+    android:versionCode="42"
     android:versionName="1.1.23">
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -118,6 +118,12 @@
         </activity>
 
         <activity android:name="org.evergreen_ils.views.MainActivity">
+        </activity>
+
+        <activity
+            android:name="org.evergreen_ils.views.BarcodeActivity"
+            android:label="@string/barcode_title"
+            android:parentActivityName="org.evergreen_ils.views.MainActivity">
         </activity>
 
         <activity android:name="org.evergreen_ils.auth.TestAuthActivity">
