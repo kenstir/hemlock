@@ -23,7 +23,6 @@
             android:width="300dp"
             android:background="@color/grey"
             android:contentDescription="@string/barcode_text_description"
-            android:drawableBottom="    "
             android:gravity="center_horizontal"
             android:paddingLeft="16dp"
             android:paddingTop="16dp"
