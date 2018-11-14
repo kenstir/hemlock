@@ -206,6 +206,9 @@ public class MainActivity extends BaseActivity {
         } else if (id == R.id.main_btn_search) {
             Analytics.logEvent("Search: Open", "via", "main_button");
             startActivity(new Intent(this, SearchActivity.class));
+        } else if (id == R.id.main_barcode_button) {
+            Analytics.logEvent("Barcode: Open", "via", "main_button");
+            startActivity(new Intent(this, BarcodeActivity.class));
         } else if (mMenuItemHandler != null) {
             mMenuItemHandler.onItemSelected(this, id, "main_button");
         }
