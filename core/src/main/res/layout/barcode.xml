@@ -9,49 +9,44 @@
 
     <include layout="@layout/toolbar_common" />
 
-    <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".views.BarcodeActivity">
+        android:gravity="center"
+        android:orientation="vertical">
 
         <TextView
             android:id="@+id/barcode_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginLeft="16dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginRight="16dp"
-            android:layout_marginBottom="8dp"
-            android:background="@color/white"
-            android:contentDescription="@string/barcode_description"
+            android:layout_gravity="center"
+            android:width="300dp"
+            android:background="@color/grey"
+            android:contentDescription="@string/barcode_text_description"
+            android:drawableBottom="    "
+            android:gravity="center_horizontal"
+            android:paddingLeft="16dp"
+            android:paddingTop="16dp"
+            android:paddingRight="16dp"
             android:text=""
             android:textAppearance="@style/TextAppearance.AppCompat.Large"
-            app:layout_constraintBottom_toTopOf="@+id/barcode_image"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.503"
-            app:layout_constraintStart_toStartOf="parent"
+            android:textColor="@android:color/black"
+            android:textStyle="bold"
             tools:text="2 0000 1111 2222 3" />
 
         <ImageView
             android:id="@+id/barcode_image"
             android:layout_width="300dp"
             android:layout_height="150dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginLeft="16dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginRight="16dp"
-            android:layout_marginBottom="8dp"
+            android:layout_gravity="center_horizontal"
             android:width="300dp"
             android:height="150dp"
             android:background="@color/white"
             android:contentDescription="@string/barcode_description"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:srcCompat="@android:color/white" />
+            android:paddingLeft="16dp"
+            android:paddingTop="16dp"
+            android:paddingRight="16dp"
+            android:paddingBottom="16dp" />
+    </LinearLayout>
 
-    </android.support.constraint.ConstraintLayout>
 </LinearLayout>

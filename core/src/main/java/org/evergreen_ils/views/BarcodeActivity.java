@@ -19,9 +19,15 @@
 package org.evergreen_ils.views;
 
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.ColorFilter;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -61,8 +67,9 @@ public class BarcodeActivity extends BaseActivity {
         int image_width = 1080;
         int image_height = 384;
         Bitmap bitmap = createBarcode(barcode, image_width, image_height);
-        if (bitmap != null)
+        if (bitmap != null) {
             image_view.setImageBitmap(bitmap);
+        }
         /*
         task = new AsyncTask<String, Void, Bitmap>() {
             @Override
@@ -84,7 +91,6 @@ public class BarcodeActivity extends BaseActivity {
 
     private Bitmap createBarcode(String data, int image_width, int image_height) {
         MultiFormatWriter barcodeWriter = new MultiFormatWriter();
-
         BitMatrix bitMatrix;
         try {
             bitMatrix = barcodeWriter.encode(data, BarcodeFormat.CODABAR, image_width, image_height);
