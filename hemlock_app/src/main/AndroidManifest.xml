@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          package="net.kenstir.apps.hemlock"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="net.kenstir.apps.hemlock"
           android:installLocation="auto"
           android:versionCode="78"
           android:versionName="4.3.12">
@@ -26,7 +27,8 @@
         android:fullBackupContent="true"
         android:icon="@mipmap/launcher_icon"
         android:label="@string/ou_app_label"
-        android:theme="@style/HemlockDarkNoActionBar" >
+        android:theme="@style/HemlockDarkNoActionBar"
+        tools:ignore="GoogleAppIndexingWarning">
 
         <meta-data android:name="android.max_aspect" android:value="2.1" />
 
@@ -110,6 +112,12 @@
                 android:name="org.evergreen_ils.views.DonateActivity"
                 android:label="@string/title_donate"
                 android:parentActivityName="org.evergreen_ils.views.MainActivity">
+        </activity>
+
+        <activity
+            android:name="org.evergreen_ils.views.BarcodeActivity"
+            android:label="@string/barcode_title"
+            android:parentActivityName="org.evergreen_ils.views.MainActivity">
         </activity>
 
         <activity
