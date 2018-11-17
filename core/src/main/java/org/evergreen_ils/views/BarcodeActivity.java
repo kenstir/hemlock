@@ -70,23 +70,6 @@ public class BarcodeActivity extends BaseActivity {
         if (bitmap != null) {
             image_view.setImageBitmap(bitmap);
         }
-        /*
-        task = new AsyncTask<String, Void, Bitmap>() {
-            @Override
-            protected Bitmap doInBackground(String... params) {
-                return createBarcode(barcode, image_width, image_height);
-            }
-
-            @Override
-            protected void onPostExecute(Bitmap bitmap) {
-                task = null;
-                Log.logElapsedTime(TAG, start, "generating bitmap");
-                if (isFinishing()) return;
-                if (bitmap != null)
-                    image_view.setImageBitmap(bitmap);
-            }
-        }.execute("");
-        */
     }
 
     private Bitmap createBarcode(String data, int image_width, int image_height) {

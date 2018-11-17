@@ -17,7 +17,7 @@
 
         <TextView
             android:id="@+id/barcode_text"
-            android:layout_width="wrap_content"
+            android:layout_width="400dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:width="300dp"
@@ -35,16 +35,16 @@
 
         <ImageView
             android:id="@+id/barcode_image"
-            android:layout_width="300dp"
-            android:layout_height="150dp"
+            android:layout_width="400dp"
+            android:layout_height="200dp"
             android:layout_gravity="center_horizontal"
-            android:width="300dp"
-            android:height="150dp"
+            android:width="400dp"
+            android:height="200dp"
             android:background="@color/white"
             android:contentDescription="@string/barcode_description"
-            android:paddingLeft="16dp"
+            android:paddingLeft="32dp"
             android:paddingTop="16dp"
-            android:paddingRight="16dp"
+            android:paddingRight="32dp"
             android:paddingBottom="16dp" />
     </LinearLayout>
 
