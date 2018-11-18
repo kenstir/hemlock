@@ -19,15 +19,9 @@
 package org.evergreen_ils.views;
 
 import android.graphics.Bitmap;
-import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.ColorFilter;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+import android.util.DisplayMetrics;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -39,7 +33,6 @@ import com.google.zxing.common.BitMatrix;
 import org.evergreen_ils.R;
 import org.evergreen_ils.accountAccess.AccountAccess;
 import org.evergreen_ils.system.Analytics;
-import org.evergreen_ils.system.Log;
 import org.evergreen_ils.utils.ui.BaseActivity;
 
 public class BarcodeActivity extends BaseActivity {
@@ -48,8 +41,6 @@ public class BarcodeActivity extends BaseActivity {
 
     private TextView barcode_text = null;
     private ImageView image_view = null;
-    private AsyncTask task = null;
-    private long start = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,9 +54,10 @@ public class BarcodeActivity extends BaseActivity {
         barcode_text.setText(barcode);
 
         image_view = findViewById(R.id.barcode_image);
-        start = System.currentTimeMillis();
-        int image_width = 1080;
-        int image_height = 384;
+        DisplayMetrics metrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(metrics);
+        int image_width = Math.min(metrics.widthPixels, metrics.heightPixels) * 8 / 10;
+        int image_height = image_width * 4 / 10;
         Bitmap bitmap = createBarcode(barcode, image_width, image_height);
         if (bitmap != null) {
             image_view.setImageBitmap(bitmap);

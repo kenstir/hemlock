@@ -12,7 +12,7 @@
         android:id="@+id/main_btn_search"
         style="@style/ActionButton"
         android:layout_width="0dp"
-        android:layout_height="44dp"
+        android:layout_height="40dp"
         android:drawableLeft="@drawable/kghostview"
         android:onClick="onButtonClick"
         android:text="@string/title_search"
@@ -21,13 +21,14 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         android:layout_marginLeft="24dp"
-        android:layout_marginRight="24dp" />
+        android:layout_marginRight="24dp"
+        tools:ignore="RtlHardcoded" />
 
     <Button
         android:id="@+id/account_btn_check_out"
         style="@style/ActionButton"
         android:layout_width="0dp"
-        android:layout_height="44dp"
+        android:layout_height="40dp"
         android:drawableLeft="@drawable/items_checked_out"
         android:onClick="onButtonClick"
         android:text="@string/title_check_out"
@@ -41,7 +42,7 @@
 
     <Button
         android:layout_width="0dp"
-        android:layout_height="44dp"
+        android:layout_height="40dp"
         style="@style/ActionButton"
         android:text="@string/title_holds"
         android:id="@+id/account_btn_holds"
@@ -61,7 +62,7 @@
 
     <Button
         android:layout_width="0dp"
-        android:layout_height="44dp"
+        android:layout_height="40dp"
         style="@style/ActionButton"
         android:text="@string/title_fines"
         android:id="@+id/account_btn_fines"
@@ -83,7 +84,7 @@
         android:id="@+id/main_my_lists_button"
         style="@style/ActionButton"
         android:layout_width="0dp"
-        android:layout_height="44dp"
+        android:layout_height="40dp"
         android:drawableLeft="@drawable/beos_write"
         android:onClick="onButtonClick"
         android:text="@string/title_my_lists"
@@ -97,7 +98,25 @@
         app:layout_constraintHorizontal_bias="1.0"
         android:layout_marginStart="24dp"
         android:layout_marginEnd="24dp"
-        app:layout_constraintBottom_toTopOf="@+id/linearLayout" />
+        app:layout_constraintBottom_toTopOf="@+id/main_barcode_button" />
+
+    <Button
+        android:id="@+id/main_barcode_button"
+        style="@style/ActionButton"
+        android:layout_width="0dp"
+        android:layout_height="40dp"
+        android:layout_marginLeft="24dp"
+        android:layout_marginRight="24dp"
+        android:layout_weight="1"
+        android:drawableLeft="@drawable/barcode"
+        android:onClick="onButtonClick"
+        android:text="@string/barcode_title"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/linearLayout"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/main_my_lists_button" />
 
     <LinearLayout
         android:id="@+id/linearLayout"
