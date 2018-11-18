@@ -3,8 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="net.kenstir.apps.pines"
     android:installLocation="auto"
-    android:versionCode="42"
-    android:versionName="1.1.24">
+    android:versionCode="43"
+    android:versionName="1.1.25">
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS" />
