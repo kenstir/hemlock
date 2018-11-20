@@ -26,6 +26,7 @@ import org.evergreen_ils.accountAccess.AccountUtils;
 import org.evergreen_ils.accountAccess.SessionNotFoundException;
 import org.evergreen_ils.android.App;
 import org.evergreen_ils.searchCatalog.SearchCatalog;
+import org.evergreen_ils.system.Analytics;
 import org.evergreen_ils.utils.ui.AppState;
 
 import android.accounts.AccountManager;
@@ -91,7 +92,7 @@ public class LoadingTask {
 
     //TODO: share some of this code with ScheduledIntentService.onHandleIntent
     protected String doInBackground() {
-        final String tag ="doInBackground> ";
+        final String tag ="bg> ";
         final String accountType = mCallingActivity.getString(R.string.ou_account_type);
         final long start_ms = System.currentTimeMillis();
         long now_ms = start_ms;
@@ -105,6 +106,7 @@ public class LoadingTask {
             String error_msg = bnd.getString(AccountManager.KEY_ERROR_MESSAGE);
             if (TextUtils.isEmpty(auth_token) || TextUtils.isEmpty(account_name)) {
                 if (TextUtils.isEmpty(error_msg)) error_msg = "Login failed";
+                Analytics.log(tag, tag+"error_msg=" + error_msg);
                 return error_msg;
             }
             now_ms = Log.logElapsedTime(TAG, now_ms, "signing in");
@@ -155,17 +157,17 @@ public class LoadingTask {
     }
 
     protected void onPreExecute() {
-        Log.d(TAG, "onPreExecute> ");
+        Log.d(TAG, "pre> ");
         mListener.onPreExecute();
     }
 
     protected void onProgressUpdate(String s) {
-        Log.d(TAG, "onProgressUpdate> "+s);
+        Log.d(TAG, "prog> "+s);
         mListener.onProgressUpdate(s);
     }
     
     protected void onPostExecute(String result) {
-        Log.d(TAG, "onPostExecute> "+result);
+        Log.d(TAG, "post> "+result);
         mListener.onPostExecute(result);
     }
 }

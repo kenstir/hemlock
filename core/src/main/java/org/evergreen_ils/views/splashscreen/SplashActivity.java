@@ -139,7 +139,7 @@ public class SplashActivity extends AppCompatActivity implements LoadingTaskList
 
     @Override
     public void onPostExecute(String result) {
-        Analytics.log(TAG, "onPostExecute> " + result);
+        Analytics.log(TAG, "post> " + result);
         Account[] accounts = AccountUtils.getAccountsByType(this);
         Analytics.logEvent("Account: Login", "result", result,
                 "library_name", AppState.getString(AppState.LIBRARY_NAME),
@@ -153,6 +153,11 @@ public class SplashActivity extends AppCompatActivity implements LoadingTaskList
             String extra_text;
             if (!TextUtils.isEmpty(result)) {
                 extra_text = " failed:\n" + result;
+                if (result.contains("Malformed")) {
+                    // 2018-11-19: debugging "MalformedURLException"
+                    Analytics.log(TAG, "library_url=" + AppState.LIBRARY_URL);
+                    Analytics.logException(new ShouldNotHappenException(result));
+                }
             } else {
                 extra_text = " cancelled";
             }

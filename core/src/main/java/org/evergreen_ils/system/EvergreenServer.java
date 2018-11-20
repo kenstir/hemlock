@@ -89,6 +89,7 @@ public class EvergreenServer {
     }
 
     public void connect(String library_url) throws IOException, IDLException {
+        Analytics.log(TAG, "connect: library_url=" + library_url);
         if (!TextUtils.equals(library_url, mUrl)) {
             reset();
             loadIDL(library_url);
