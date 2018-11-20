@@ -17,6 +17,9 @@
             <EditText
                     android:id="@+id/searchText"
                     android:hint="@string/search_hint"
+                    android:inputType="textAutoComplete"
+                    android:imeActionLabel="@string/search_button"
+                    android:imeOptions="actionSearch"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"

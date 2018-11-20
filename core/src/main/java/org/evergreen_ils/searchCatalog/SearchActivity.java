@@ -163,8 +163,7 @@ public class SearchActivity extends BaseActivity {
         searchButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                Thread searchThread = new Thread(searchForResultsRunnable);
-                searchThread.start();
+                startSearchThread();
             }
         });
     }
@@ -190,19 +189,11 @@ public class SearchActivity extends BaseActivity {
     }
 
     private void initSearchText() {
-        // enter key now is labeled "Search" on virtual keyboard
-        searchText.setImeActionLabel("Search", EditorInfo.IME_ACTION_SEARCH);
-        searchText.setImeOptions(EditorInfo.IME_ACTION_SEARCH);
-
-        // enter key on virtual keyboard starts the search
-        searchText.setOnKeyListener(new OnKeyListener() {
-            public boolean onKey(View v, int keyCode, KeyEvent event) {
-                // If the event is a key-down event on the "enter" button
-                if ((event.getAction() == KeyEvent.ACTION_DOWN)
-                        && ((keyCode == KeyEvent.KEYCODE_ENTER) || keyCode == EditorInfo.IME_ACTION_SEARCH)) {
-                    // Perform action on key press
-                    Thread searchThread = new Thread(searchForResultsRunnable);
-                    searchThread.start();
+        searchText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
+                if (id == EditorInfo.IME_ACTION_SEARCH) {
+                    startSearchThread();
                     return true;
                 }
                 return false;
@@ -425,6 +416,11 @@ public class SearchActivity extends BaseActivity {
         }
     }
 
+    protected void startSearchThread() {
+        Thread searchThread = new Thread(searchForResultsRunnable);
+        searchThread.start();
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
@@ -443,16 +439,14 @@ public class SearchActivity extends BaseActivity {
         case AdvancedSearchActivity.RESULT_ADVANCED_SEARCH: {
             Log.d(TAG, "result text:" + data.getStringExtra("advancedSearchText"));
             searchText.setText(data.getStringExtra("advancedSearchText"));
-            Thread searchThread = new Thread(searchForResultsRunnable);
-            searchThread.start();
+            startSearchThread();
         }
-            break;
+        break;
 
         case CaptureActivity.BARCODE_SEARCH: {
             searchText.setText("identifier|isbn: "
                     + data.getStringExtra("barcodeValue"));
-            Thread searchThread = new Thread(searchForResultsRunnable);
-            searchThread.start();
+            startSearchThread();
         }
         }
     }
