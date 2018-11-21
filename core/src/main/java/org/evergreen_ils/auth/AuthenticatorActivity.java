@@ -25,6 +25,7 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity {
 
     private final static String TAG = AuthenticatorActivity.class.getSimpleName();
 
+    //TODO: add package prefix to these names as indicated at https://developer.android.com/reference/android/content/Intent#putExtra(java.lang.String,%20android.os.Parcelable)
     public final static String ARG_ACCOUNT_TYPE = "ACCOUNT_TYPE";
     public final static String ARG_AUTH_TYPE = "AUTH_TYPE";
     public final static String ARG_ACCOUNT_NAME = "ACCOUNT_NAME";
@@ -254,8 +255,11 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity {
             accountManager.setAuthToken(account, authtokenType, authtoken);
         } else {
             // Probably the account already existed, in which case update the password
-            Analytics.log(TAG, "onAuthSuccess> false, setPassword");
+            Analytics.log(TAG, "onAuthSuccess> false, setPassword, setUserData");
             accountManager.setPassword(account, accountPassword);
+            accountManager.setUserData(account, Const.KEY_LIBRARY_NAME, library_name);
+            accountManager.setUserData(account, Const.KEY_LIBRARY_URL, library_url);
+            Analytics.log(TAG, "onAuthSuccess> now getUserData library_url=" + accountManager.getUserData(account, Const.KEY_LIBRARY_URL));
         }
 
         setAccountAuthenticatorResult(intent.getExtras());

@@ -61,7 +61,15 @@ public class AccountAuthenticator extends AbstractAccountAuthenticator {
         final AccountManager am = AccountManager.get(context);
         String library_name = am.getUserData(account, Const.KEY_LIBRARY_NAME);
         String library_url = am.getUserData(account, Const.KEY_LIBRARY_URL);
-        Analytics.log(TAG, "getAuthToken> library_url=" + library_url);
+        Analytics.log(TAG, "getAuthToken> library_name=" + library_name + " library_url=" + library_url);
+        if (library_name == null) {
+            // workaround issue #24 - not sure how it happened
+            library_name = context.getString(R.string.ou_library_name);
+        }
+        if (library_url == null) {
+            // workaround issue #24 - not sure how it happened
+            library_url = context.getString(R.string.ou_library_url);
+        }
 
         String authToken = am.peekAuthToken(account, authTokenType);
         Analytics.log(TAG, "getAuthToken> peekAuthToken returned " + authToken);
