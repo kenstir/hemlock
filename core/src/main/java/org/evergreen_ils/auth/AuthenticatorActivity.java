@@ -107,6 +107,8 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity {
 
     protected void initSelectedLibrary() {
         selected_library = new Library(getString(R.string.ou_library_url), getString(R.string.ou_library_name));
+        Analytics.log(TAG, "initSelectedLibrary name=" + selected_library.name
+                + " url=" + selected_library.url);
     }
 
     @Override
@@ -226,7 +228,11 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity {
         String library_name = intent.getStringExtra(Const.KEY_LIBRARY_NAME);
         String library_url = intent.getStringExtra(Const.KEY_LIBRARY_URL);
         final Account account = new Account(accountName, accountType);
-        Analytics.log(TAG, "onAuthSuccess> accountName=" + accountName);
+        Analytics.log(TAG, "onAuthSuccess> accountName=" + accountName
+                        + " accountType=" + accountType
+                        + " accountPassword=" + Analytics.redactedString(accountPassword)
+                        + " library_name=" + library_name
+                        + " library_url=" + library_url);
 
         //if (getIntent().getBooleanExtra(ARG_IS_ADDING_NEW_ACCOUNT, false))
         Analytics.log(TAG, "onAuthSuccess> addAccountExplicitly " + accountName);
@@ -239,6 +245,7 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity {
             userdata = new Bundle();
             userdata.putString(Const.KEY_LIBRARY_NAME, library_name);
             userdata.putString(Const.KEY_LIBRARY_URL, library_url);
+            Analytics.log(TAG, "onAuthSuccess> userdata, name=" + library_name + " url=" + library_url);
         }
         if (accountManager.addAccountExplicitly(account, accountPassword, userdata)) {
             Analytics.log(TAG, "onAuthSuccess> true, setAuthToken " + Analytics.redactedString(authtoken));

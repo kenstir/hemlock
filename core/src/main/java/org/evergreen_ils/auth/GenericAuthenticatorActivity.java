@@ -93,6 +93,7 @@ public class GenericAuthenticatorActivity extends AuthenticatorActivity {
     @Override
     protected void initSelectedLibrary() {
         selected_library = null;
+        Analytics.log(TAG, "initSelectedLibrary null");
     }
 
     @Override

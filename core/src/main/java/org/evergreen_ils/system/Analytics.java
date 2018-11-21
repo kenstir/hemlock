@@ -57,7 +57,9 @@ public class Analytics {
     }
 
     public static String redactedString(String val) {
-        return (val == null) ? "null" : "***";
+        if (val == null) return "(null)";
+        if (val.length() == 0) return "(empty)";
+        return "***";
     }
 
     public static void log(String tag, String msg) {

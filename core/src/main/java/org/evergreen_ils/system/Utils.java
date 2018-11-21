@@ -28,6 +28,7 @@ import android.text.TextUtils;
 import org.evergreen_ils.accountAccess.SessionNotFoundException;
 import org.evergreen_ils.auth.Const;
 import org.opensrf.Method;
+import org.opensrf.ShouldNotHappenException;
 import org.opensrf.net.http.GatewayRequest;
 import org.opensrf.net.http.HttpConnection;
 import org.opensrf.net.http.HttpRequest;
@@ -174,7 +175,7 @@ public class Utils {
             // not using URLEncoder because it replaces ' ' with '+'.
             uri = new URI("http", "", null, sb.toString(), null);
         } catch (java.net.URISyntaxException ex) {
-            Log.d(TAG, "caught", ex);
+            Analytics.logException(new ShouldNotHappenException(ex));
         }
 
         return uri.getRawQuery();
