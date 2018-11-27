@@ -51,7 +51,6 @@ public class BarcodeActivity extends BaseActivity {
 
         barcode_text = findViewById(R.id.barcode_text);
         String barcode = AccountAccess.getInstance().getBarcode();
-        barcode_text.setText(barcode);
 
         image_view = findViewById(R.id.barcode_image);
         DisplayMetrics metrics = new DisplayMetrics();
@@ -60,7 +59,11 @@ public class BarcodeActivity extends BaseActivity {
         int image_height = image_width * 4 / 10;
         Bitmap bitmap = createBarcode(barcode, image_width, image_height);
         if (bitmap != null) {
+            barcode_text.setText(barcode);
             image_view.setImageBitmap(bitmap);
+        } else {
+            barcode_text.setText(getString(R.string.invalid_barcode, barcode));
+            image_view.setImageResource(R.drawable.invalid_barcode);
         }
     }
 
@@ -69,7 +72,7 @@ public class BarcodeActivity extends BaseActivity {
         BitMatrix bitMatrix;
         try {
             bitMatrix = barcodeWriter.encode(data, BarcodeFormat.CODABAR, image_width, image_height);
-        } catch (WriterException e) {
+        } catch (Exception e) {
             Analytics.logException(e);
             return null;
         }
