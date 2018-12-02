@@ -73,7 +73,9 @@ public class BarcodeActivity extends BaseActivity {
         try {
             bitMatrix = barcodeWriter.encode(data, BarcodeFormat.CODABAR, image_width, image_height);
         } catch (Exception e) {
-            Analytics.logException(e);
+            // IllegalArgumentException happens for invalid chars in barcode, don't log that
+            if (!(e instanceof IllegalArgumentException))
+                Analytics.logException(e);
             return null;
         }
         Bitmap bitmap = Bitmap.createBitmap(image_width, image_height, Bitmap.Config.ARGB_8888);
