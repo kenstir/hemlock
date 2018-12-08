@@ -229,6 +229,14 @@ public class PlaceHoldActivity extends AppCompatActivity {
         };
     }
 
+    private String pickupEventValue(Organization pickup_org, Organization home_org) {
+        if (home_org == null) { return "homeless"; }
+        else if (pickup_org == null) { return "null_pickup"; }
+        else if (TextUtils.equals(pickup_org.name, home_org.name)) { return "home"; }
+        else if (pickup_org.isConsortium()) { return pickup_org.shortname; }
+        else return "other";
+    }
+
     private void logPlaceHoldResult(String result) {
         ArrayList<String> notify = new ArrayList<>();
         if (email_notification.isChecked()) notify.add("email");
@@ -238,15 +246,14 @@ public class PlaceHoldActivity extends AppCompatActivity {
         try {
             Organization pickup_org = eg.getOrganizations().get(selectedOrgPos);
             Organization home_org = eg.getOrganization(AccountAccess.getInstance().getHomeLibraryID());
-            String pickup_val = TextUtils.equals(pickup_org.name, home_org.name) ? "home" :
-                    ((pickup_org.isConsortium()) ? pickup_org.shortname : "other");
+            String pickup_val = pickupEventValue(pickup_org, home_org);
             Analytics.logEvent("Place Hold: Execute",
                     "result", result,
                     "hold_notify", notifyTypes,
                     "expires", expire_date != null,
                     "pickup_org", pickup_val);
         } catch(Exception e) {
-            Analytics.logException(new ShouldNotHappenException("failed logEvent"));
+            Analytics.logException(e);
         }
     }
 
