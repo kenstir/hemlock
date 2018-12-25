@@ -7,35 +7,24 @@
     <color name="material_grey_500">#9E9E9E</color>
     <color name="material_grey_700">#616161</color>
 
-    <color name="hemlock_accent_material">@color/accent_material_dark</color>
-    <color name="hemlock_accent">#ff9100</color>
+    <!-- material colors courtesy of https://material.io/tools/color/#!/?view.left=0&view.right=0&primary.color=01579B -->
+    <color name="cool_primary">#01579b</color>
+    <color name="cool_light">#4f83cc</color>
+    <color name="cool_dark">#002f6c</color>
+
+    <color name="primary">@color/cool_primary</color>
+    <color name="primary_dark">@color/primary_dark_material_dark</color>
+    <color name="accent">@color/cool_light</color>
+    <color name="hemlock_accent">@color/cool_light</color>
     <color name="hemlock_text_alert">#ff9100</color>
 
-    <!-- pines - logo color from http://pines.georgialibraries.org/graphics -->
-    <color name="pines">#379676</color>
-    <color name="accent">@color/pines</color>
-
-    <!-- darker versions of the logo color c/o https://coolors.co -->
-    <color name="pines_d1">#32896C</color>
-    <color name="pines_d2">#2E7B61</color>
-    <color name="pines_d3">#296E56</color>
-    <color name="pines_d4">#23604C</color>
-    <color name="pines_d5">#1E5241</color>
-    <color name="pines_d6">#194536</color>
-    <color name="pines_d7">#14372B</color>
-    <color name="pines_d8">#0F2921</color>
-    <color name="primary">@color/pines_d4</color>
-
-    <!-- primary_dark - straight up material -->
-    <color name="primary_dark">@color/primary_dark_material_dark</color>
-
-    <style name="PINESDark" parent="Theme.AppCompat">
+    <style name="COOLDark" parent="Theme.AppCompat">
         <item name="colorPrimary">@color/primary</item>
         <item name="colorPrimaryDark">@color/primary_dark</item>
         <item name="colorAccent">@color/accent</item>
     </style>
 
-    <style name="PINESDarkNoActionBar" parent="Theme.AppCompat.NoActionBar">
+    <style name="COOLDarkNoActionBar" parent="Theme.AppCompat.NoActionBar">
         <item name="colorPrimary">@color/primary</item>
         <item name="colorPrimaryDark">@color/primary_dark</item>
         <item name="colorAccent">@color/accent</item>
