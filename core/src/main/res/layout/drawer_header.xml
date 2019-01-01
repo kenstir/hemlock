@@ -12,7 +12,8 @@
     android:paddingLeft="24dp"
     android:paddingRight="24dp"
     android:paddingTop="24dp"
-    android:theme="@style/ThemeOverlay.AppCompat.Dark">
+    android:theme="@style/ThemeOverlay.AppCompat.Dark"
+    android:focusable="true">
 
     <ImageView
         android:id="@+id/nav_image"
@@ -20,6 +21,7 @@
         android:layout_height="wrap_content"
         android:alpha="0.8"
         android:clickable="false"
+        android:contentDescription="@string/home"
         android:paddingTop="24dp"
         android:src="@drawable/splash_title" />
 

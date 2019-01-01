@@ -51,7 +51,7 @@
         android:layout_marginTop="8dp"
         android:padding="20dp"
         android:src="@drawable/splash_title"
-        android:tint="@color/material_grey_200"
+        tools:ignore="ContentDescription"
         app:layout_constraintBottom_toTopOf="@+id/activity_splash_progress_bar"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"

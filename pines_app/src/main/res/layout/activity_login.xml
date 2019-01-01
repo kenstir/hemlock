@@ -16,7 +16,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:src="@drawable/splash_title" />
+        android:src="@drawable/splash_title"
+        tools:ignore="ContentDescription" />
 
     <TextView
         android:id="@+id/account_sign_in_text"
