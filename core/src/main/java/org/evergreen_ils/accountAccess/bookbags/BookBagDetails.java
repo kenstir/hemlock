@@ -22,10 +22,12 @@ package org.evergreen_ils.accountAccess.bookbags;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.evergreen_ils.Api;
 import org.evergreen_ils.R;
 import org.evergreen_ils.accountAccess.AccountAccess;
 import org.evergreen_ils.accountAccess.SessionNotFoundException;
 import org.evergreen_ils.system.Analytics;
+import org.evergreen_ils.system.EvergreenServer;
 import org.evergreen_ils.system.Log;
 import org.evergreen_ils.system.Utils;
 import org.evergreen_ils.searchCatalog.RecordDetails;
@@ -35,6 +37,7 @@ import org.evergreen_ils.utils.ui.ActionBarUtils;
 import org.evergreen_ils.utils.ui.BaseActivity;
 import org.evergreen_ils.utils.ui.ProgressDialogSupport;
 import org.evergreen_ils.views.splashscreen.SplashActivity;
+import org.opensrf.util.OSRFObject;
 
 import android.app.AlertDialog;
 import android.content.Context;
@@ -154,11 +157,11 @@ public class BookBagDetails extends BaseActivity {
                     }
                 });
 
-                ArrayList<Integer> ids = new ArrayList<Integer>();
+                ArrayList<Integer> ids = new ArrayList<>();
                 for (int i = 0; i < bookBag.items.size(); i++) {
                     ids.add(bookBag.items.get(i).target_copy);
                 }
-                ArrayList<RecordInfo> records = SearchCatalog.getInstance().getRecordsInfo(ids);
+                ArrayList<RecordInfo> records = AccountAccess.getInstance().getRecordsInfo(ids);
 
                 for (int i = 0; i < bookBag.items.size(); i++) {
                     bookBag.items.get(i).recordInfo = records.get(i);
@@ -213,7 +216,7 @@ public class BookBagDetails extends BaseActivity {
         private TextView author;
         private Button remove;
 
-        private List<BookBagItem> records = new ArrayList<BookBagItem>();
+        private List<BookBagItem> records;
 
         public BookBagItemsArrayAdapter(Context context, int textViewResourceId, List<BookBagItem> objects) {
             super(context, textViewResourceId, objects);

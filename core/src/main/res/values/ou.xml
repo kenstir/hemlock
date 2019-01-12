@@ -41,4 +41,7 @@
     <bool name="ou_enable_messages">false</bool>
     <!-- if non-empty, the Barcode format to display for Show Card -->
     <string name="ou_barcode_format"></string>
+    <!-- max number of results to return from Search.  Do not exceed 400 or you may
+         encounter a TransactionTooLargeException -->
+    <integer name="ou_search_limit">200</integer>
 </resources>

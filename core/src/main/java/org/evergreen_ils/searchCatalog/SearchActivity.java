@@ -110,7 +110,7 @@ public class SearchActivity extends BaseActivity {
         setContentView(R.layout.activity_search);
 
         eg = EvergreenServer.getInstance();
-        search = SearchCatalog.getInstance();
+        search = SearchCatalog.getInstance(getResources().getInteger(R.integer.ou_search_limit));
         bookBags = AccountAccess.getInstance().getBookbags();
         searchResults = new ArrayList<RecordInfo>();
         progress = new ProgressDialogSupport();
@@ -225,12 +225,12 @@ public class SearchActivity extends BaseActivity {
 
                 searchResults = search.getSearchResults(text, getSearchClass(), getSearchFormat(), 0);
                 try {
-                    Organization search_org = SearchCatalog.getInstance().selectedOrganization;
+                    Organization search_org = search.selectedOrganization;
                     Organization home_org = eg.getOrganization(AccountAccess.getInstance().getHomeLibraryID());
                     String search_org_val = TextUtils.equals(search_org.name, home_org.name) ? "home" :
                             ((search_org.isConsortium()) ? search_org.shortname : "other");
                     Analytics.logEvent("Search: Execute",
-                            "num_results", SearchCatalog.getInstance().visible,
+                            "num_results", search.visible,
                             "search_org", search_org_val,
                             "search_type", getSearchClass(),
                             "search_format", getSearchFormat());

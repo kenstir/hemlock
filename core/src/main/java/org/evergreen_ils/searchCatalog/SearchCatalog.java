@@ -54,15 +54,15 @@ public class SearchCatalog {
 
     // With limit at 500, we saw some TransactionTooLargeException: data parcel size 684000 bytes
     // 2017-11-24, still seeing the crash with searchLimit=400
-    public final Integer searchLimit = 200;
+    public int searchLimit;
     
     public String searchText = null;
     public String searchClass = null;
     public String searchFormat = null;
 
-    public static SearchCatalog getInstance() {
+    public static SearchCatalog getInstance(int searchLimit) {
         if (instance == null) {
-            instance = new SearchCatalog();
+            instance = new SearchCatalog(searchLimit);
         }
         return instance;
     }
@@ -70,7 +70,8 @@ public class SearchCatalog {
     /**
      * Instantiates a new search catalog.
      */
-    private SearchCatalog() {
+    private SearchCatalog(int searchLimit) {
+        this.searchLimit = searchLimit;
     }
 
     private static HttpConnection conn() {
@@ -144,21 +145,6 @@ public class SearchCatalog {
         Log.logElapsedTime(TAG, start_ms, "search.total");
 
         return results;
-    }
-
-    /**
-     * Gets the item short info.
-     * 
-     * @param id
-     *            the id
-     * @return the item short info
-     */
-    //todo replace callers of this method with RecordLoader.fetchBasicMetadata
-    private OSRFObject getItemShortInfo(Integer id) {
-        OSRFObject response = (OSRFObject) Utils.doRequest(conn(), Api.SEARCH,
-                Api.MODS_SLIM_RETRIEVE, new Object[] {
-                        id });
-        return response;
     }
 
     private void fetchBasicMetadataBatch(ArrayList<RecordInfo> records) {
@@ -242,19 +228,6 @@ public class SearchCatalog {
         }
 
         return ret;
-    }
-
-    // todo replace callers with RecordLoader
-    public ArrayList<RecordInfo> getRecordsInfo(ArrayList<Integer> ids) {
-
-        ArrayList<RecordInfo> recordInfoArray = new ArrayList<RecordInfo>();
-
-        for (int i = 0; i < ids.size(); i++) {
-            RecordInfo recordInfo = new RecordInfo(getItemShortInfo(ids.get(i)));
-            recordInfoArray.add(recordInfo);
-        }
-
-        return recordInfoArray;
     }
 
     /**

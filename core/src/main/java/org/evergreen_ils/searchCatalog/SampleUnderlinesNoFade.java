@@ -41,7 +41,7 @@ public class SampleUnderlinesNoFade extends BasePagerActivity {
     private static final String TAG = SampleUnderlinesNoFade.class.getSimpleName();
 
     private ArrayList<RecordInfo> records;
-    private SearchCatalog search;
+    //private SearchCatalog search;
     private ArrayList<RecordInfo> searchRecords;
     private Context context;
     private ProgressDialog progressDialog;
@@ -62,7 +62,7 @@ public class SampleUnderlinesNoFade extends BasePagerActivity {
         setContentView(R.layout.simple_underlines);
         ActionBarUtils.initActionBarForActivity(this, getIntent().getStringExtra("title"));
 
-        search = SearchCatalog.getInstance();
+        //search = SearchCatalog.getInstance();
 
         orgID = getIntent().getIntExtra("orgID", 1);
         records = (ArrayList<RecordInfo>) getIntent().getSerializableExtra("recordList");

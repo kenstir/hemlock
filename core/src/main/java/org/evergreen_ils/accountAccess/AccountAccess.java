@@ -1171,6 +1171,29 @@ public class AccountAccess {
                         authToken, container, parameter });
     }
 
+    //todo replace callers of this method with RecordLoader.fetchBasicMetadata
+    private OSRFObject getItemShortInfo(Integer id) {
+        OSRFObject response = (OSRFObject) Utils.doRequest(conn(), Api.SEARCH,
+                Api.MODS_SLIM_RETRIEVE, new Object[] {
+                        id });
+        return response;
+    }
+
+    // todo replace callers with RecordLoader
+    public ArrayList<RecordInfo> getRecordsInfo(ArrayList<Integer> ids) {
+
+        ArrayList<RecordInfo> recordInfoArray = new ArrayList<RecordInfo>();
+
+        for (int i = 0; i < ids.size(); i++) {
+            RecordInfo recordInfo = new RecordInfo(getItemShortInfo(ids.get(i)));
+            recordInfoArray.add(recordInfo);
+        }
+
+        return recordInfoArray;
+    }
+
+    //------------------------------------------------------
+
     public String getAuthToken() {
         return authToken;
     }
