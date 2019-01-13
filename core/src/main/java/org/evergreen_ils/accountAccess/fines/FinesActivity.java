@@ -76,12 +76,12 @@ public class FinesActivity extends BaseActivity {
         setContentView(R.layout.activity_fines);
 
         decimalFormater = new DecimalFormat("#0.00");
-        lv = (ListView) findViewById(R.id.fines_overdue_materials_list);
+        lv = findViewById(R.id.fines_overdue_materials_list);
 
-        total_owed = (TextView) findViewById(R.id.fines_total_owed);
-        total_paid = (TextView) findViewById(R.id.fines_total_paid);
-        balance_owed = (TextView) findViewById(R.id.fines_balance_owed);
-        pay_fines_button = (Button) findViewById(R.id.pay_fines);
+        total_owed = findViewById(R.id.fines_total_owed);
+        total_paid = findViewById(R.id.fines_total_paid);
+        balance_owed = findViewById(R.id.fines_balance_owed);
+        pay_fines_button = findViewById(R.id.pay_fines);
 
         context = this;
         ac = AccountAccess.getInstance();
@@ -129,7 +129,10 @@ public class FinesActivity extends BaseActivity {
     private void initPayFinesButton() {
         Integer home_lib = AccountAccess.getInstance().getHomeLibraryID();
         Organization home_org = (home_lib != null) ? EvergreenServer.getInstance().getOrganization(home_lib) : null;
-        if (home_org != null && Utils.safeBool(home_org.setting_allow_credit_payments)) {
+        if (getResources().getBoolean(R.bool.ou_enable_pay_fines)
+                && home_org != null
+                && Utils.safeBool(home_org.setting_allow_credit_payments))
+        {
             pay_fines_button.setEnabled(false);
             pay_fines_button.setOnClickListener(new View.OnClickListener() {
                 @Override

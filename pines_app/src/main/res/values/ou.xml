@@ -18,5 +18,6 @@
     <bool name="ou_enable_phone_notification">true</bool>
     <bool name="ou_enable_hold_queue_position">false</bool>
     <bool name="ou_enable_messages">true</bool>
+    <bool name="ou_enable_pay_fines">true</bool>
     <string name="ou_barcode_format">Codabar</string>
 </resources>

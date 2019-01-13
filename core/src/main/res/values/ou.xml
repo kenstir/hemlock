@@ -39,6 +39,8 @@
     <bool name="ou_enable_hold_queue_position">true</bool>
     <!-- if true, enable messages link in app bar -->
     <bool name="ou_enable_messages">false</bool>
+    <!-- if true, enable Pay Fines button based on settings -->
+    <bool name="ou_enable_pay_fines">true</bool>
     <!-- if non-empty, the Barcode format to display for Show Card -->
     <string name="ou_barcode_format"></string>
     <!-- max number of results to return from Search.  Do not exceed 400 or you may
