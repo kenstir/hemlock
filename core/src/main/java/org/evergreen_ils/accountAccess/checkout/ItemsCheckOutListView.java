@@ -149,6 +149,7 @@ public class ItemsCheckOutListView extends BaseActivity {
         private TextView recordTitle;
         private TextView recordAuthor;
         private TextView recordFormat;
+        private TextView recordRenewals;
         private TextView recordDueDate;
         private TextView recordIsOverdue;
         private TextView renewButton;
@@ -183,18 +184,20 @@ public class ItemsCheckOutListView extends BaseActivity {
             }
 
             // Get references to views
-            recordTitle = (TextView) row.findViewById(R.id.checkout_record_title);
-            recordAuthor = (TextView) row.findViewById(R.id.checkout_record_author);
-            recordFormat = (TextView) row.findViewById(R.id.checkout_record_format);
-            recordDueDate = (TextView) row.findViewById(R.id.checkout_record_due_date);
-            recordIsOverdue = (TextView) row.findViewById(R.id.checkout_record_overdue);
-            renewButton = (TextView) row.findViewById(R.id.renew_button);
+            recordTitle = row.findViewById(R.id.checkout_record_title);
+            recordAuthor = row.findViewById(R.id.checkout_record_author);
+            recordFormat = row.findViewById(R.id.checkout_record_format);
+            recordRenewals = row.findViewById(R.id.checkout_record_renewals);
+            recordDueDate = row.findViewById(R.id.checkout_record_due_date);
+            recordIsOverdue = row.findViewById(R.id.checkout_record_overdue);
+            renewButton = row.findViewById(R.id.renew_button);
             initRenewButton(record);
 
             // set text
             recordTitle.setText(record.getTitle());
             recordAuthor.setText(record.getAuthor());
             recordFormat.setText(RecordInfo.getFormatLabel(record.recordInfo));
+            recordRenewals.setText(String.format(getString(R.string.checkout_renewals_left), record.getRenewals()));
             recordDueDate.setText(String.format(getString(R.string.due), record.getDueDateString()));
             maybeHighlightDueDate(record);
 

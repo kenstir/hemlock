@@ -113,6 +113,7 @@
     <!-- Checkout items -->
     <string name="checkout_items">Items checked out:</string>
     <string name="checkout_overdue_items">Overdue:</string>
+    <string name="checkout_renewals_left">Renewals left: %d</string>
     <string name="due">Due %s</string>
     <string name="overdue">(overdue)</string>
 

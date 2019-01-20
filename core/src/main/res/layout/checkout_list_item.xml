@@ -30,12 +30,20 @@
                 tools:text="Ostrander, John."/>
 
         <TextView
-                android:id="@+id/checkout_record_format"
-                style="@style/PubSearchStyleList"
-                android:gravity="left"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                tools:text="Book"/>
+            android:id="@+id/checkout_record_format"
+            style="@style/PubSearchStyleList"
+            android:gravity="left"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="Book"/>
+
+        <TextView
+            android:id="@+id/checkout_record_renewals"
+            style="@style/PubSearchStyleList"
+            android:gravity="left"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="Renewals left: 1"/>
 
         <LinearLayout
                 android:layout_width="wrap_content"
