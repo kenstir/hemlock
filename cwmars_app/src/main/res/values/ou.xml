@@ -11,7 +11,8 @@
     <string name="ou_library_name">C/W MARS</string>
     <string name="ou_activity_subtitle">%2$s</string>
     <string name="ou_library_url">https://catalog.cwmars.org</string>
+    <!--<string name="ou_library_url">https://kenstir.ddns.net</string>-->
     <string name="ou_feedback_url">https://docs.google.com/forms/d/e/1FAIpQLSeiz6sK73pNPL0ClkSnbtmU0wQXF1r-lNV8A2dFNrSxxp5AXA/viewform?entry.382826236=%1$s</string>
     <string name="ou_billing_data_provider">org.cwmars.ConcreteBillingDataProvider</string>
-        <string name="ou_barcode_format">Codabar</string>
+    <string name="ou_barcode_format">Codabar</string>
 </resources>
