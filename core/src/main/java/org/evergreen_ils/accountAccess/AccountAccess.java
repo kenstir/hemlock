@@ -645,7 +645,7 @@ public class AccountAccess {
         List<OSRFObject> listHoldsAhr = (List<OSRFObject>) resp;
         for (OSRFObject ahr_obj: listHoldsAhr) {
             HoldRecord hold = new HoldRecord(ahr_obj);
-            fetchHoldTitleInfo(hold);
+            fetchHoldTargetDetails(hold);
             fetchHoldQueueStats(hold);
             if (hold.recordInfo != null)
                 hold.recordInfo.setSearchFormat(fetchFormat(hold.target));
@@ -655,9 +655,7 @@ public class AccountAccess {
         return holds;
     }
 
-    // hold_type    - T, C (or R or F), I, V or M for Title, Copy, Issuance, Volume or Meta-record  (default "T")
-
-    private Object fetchHoldTitleInfo(HoldRecord hold) {
+    private void fetchHoldTargetDetails(HoldRecord hold) {
 
         String holdType = (String) hold.ahr.get("hold_type");
         Integer target = hold.ahr.getInt("target");
@@ -684,13 +682,11 @@ public class AccountAccess {
             }
             hold.recordInfo = new RecordInfo(holdInfo);
         } else {
-            // multiple objects per hold ????
-            holdInfo = holdFetchObjects(hold);
+            fetchHoldTargetDetailsOthers(hold);
         }
-        return holdInfo;
     }
 
-    private OSRFObject holdFetchObjects(HoldRecord holdObj) {
+    private void fetchHoldTargetDetailsOthers(HoldRecord holdObj) {
 
         String type = (String) holdObj.ahr.get("hold_type");
 
@@ -727,11 +723,7 @@ public class AccountAccess {
                 holdObj.author = holdInfo.getString("author");
                 holdObj.recordInfo = new RecordInfo(holdInfo);
             }
-
-            return copyObject;
         } else if (type.equals("V")) {
-            // must test
-
             // fetch_volume
             OSRFObject volume = (OSRFObject) Utils.doRequest(conn(),
                     Api.SEARCH, Api.ASSET_CALL_NUMBER_RETRIEVE,
@@ -793,8 +785,6 @@ public class AccountAccess {
             holdObj.author = holdInfo.getString("author");
             holdObj.recordInfo = new RecordInfo(holdInfo);
         }
-
-        return null;
     }
 
     /**

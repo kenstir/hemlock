@@ -41,7 +41,13 @@ public class HoldRecord implements Serializable {
     public OSRFObject ahr = null;
     public RecordInfo recordInfo = null;
 
-    public String holdType = null;
+    // hold_type:
+    //   T - title (default)
+    //   C (or R or F?) - copy (requires staff client)
+    //   I - issuance
+    //   V - volume (requires staff client)
+    //   M - meta-record
+    //public String holdType = null;
     public Integer target = null;
     public Date expire_time = null;
     public Date shelf_expire_time = null;
@@ -63,7 +69,7 @@ public class HoldRecord implements Serializable {
     public HoldRecord(OSRFObject ahr) {
         this.ahr = ahr;
         this.target = ahr.getInt("target");
-        this.holdType = ahr.getString("hold_type");
+        //this.holdType = ahr.getString("hold_type");
         this.expire_time = Api.parseDate(ahr.getString("expire_time"));
         this.shelf_expire_time = Api.parseDate(ahr.getString("shelf_expire_time"));
         this.thaw_date = Api.parseDate(ahr.getString("thaw_date"));
