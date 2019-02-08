@@ -12,9 +12,8 @@
     <ImageView
         android:id="@+id/imageView2"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="260dp"
         android:src="@drawable/splash_title"
-        android:tint="@color/hemlock_accent"
         tools:ignore="ContentDescription" />
 
     <TextView

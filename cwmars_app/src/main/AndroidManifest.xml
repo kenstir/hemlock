@@ -26,7 +26,7 @@
         android:fullBackupContent="true"
         android:icon="@mipmap/launcher_icon"
         android:label="@string/ou_app_label"
-        android:theme="@style/HemlockDarkNoActionBar"
+        android:theme="@style/CWMARSNoActionBar"
         tools:ignore="GoogleAppIndexingWarning">
 
         <meta-data android:name="android.max_aspect" android:value="2.1" />
@@ -56,8 +56,7 @@
         -->
 
         <activity
-                android:name="org.evergreen_ils.views.splashscreen.SplashActivity"
-                android:theme="@style/HemlockDarkNoActionBar">
+                android:name="org.evergreen_ils.views.splashscreen.SplashActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
