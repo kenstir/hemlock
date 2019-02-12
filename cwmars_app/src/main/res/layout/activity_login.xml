@@ -5,16 +5,28 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingTop="32dp"
-    android:paddingLeft="17dp"
-    android:paddingRight="17dp">
+    android:paddingTop="0dp"
+    android:paddingLeft="0dp"
+    android:paddingRight="0dp">
 
     <ImageView
         android:id="@+id/imageView2"
         android:layout_width="wrap_content"
-        android:layout_height="260dp"
+        android:layout_height="300dp"
+        android:background="@android:color/white"
+        android:padding="24dp"
+        android:scaleType="fitCenter"
         android:src="@drawable/splash_title"
         tools:ignore="ContentDescription" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:paddingTop="24dp"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp">
+        >
 
     <TextView
             android:id="@+id/account_sign_in_text"
@@ -66,6 +78,7 @@
             android:layout_weight="1"
             android:text="@string/action_sign_in"
             />
+    </LinearLayout>
     </LinearLayout>
 </LinearLayout>
 

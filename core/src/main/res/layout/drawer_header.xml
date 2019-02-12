@@ -2,27 +2,28 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/nav_header"
-    android:clickable="true"
     android:layout_width="match_parent"
-    android:layout_height="120dp"
-    android:background="@color/material_grey_800"
+    android:layout_height="wrap_content"
+    android:background="@color/logo_background"
+    android:clickable="true"
+    android:focusable="true"
     android:gravity="bottom"
     android:orientation="vertical"
-    android:paddingBottom="24dp"
-    android:paddingLeft="24dp"
-    android:paddingRight="24dp"
-    android:paddingTop="24dp"
-    android:theme="@style/ThemeOverlay.AppCompat.Dark"
-    android:focusable="true">
+    android:paddingLeft="8dp"
+    android:paddingTop="8dp"
+    android:paddingRight="8dp"
+    android:paddingBottom="8dp"
+    android:theme="@style/ThemeOverlay.AppCompat.Dark">
 
     <ImageView
         android:id="@+id/nav_image"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:alpha="0.8"
+        android:layout_width="match_parent"
+        android:layout_height="180dp"
         android:clickable="false"
         android:contentDescription="@string/home"
         android:paddingTop="24dp"
+        android:paddingBottom="12dp"
+        android:scaleType="fitCenter"
         android:src="@drawable/splash_title" />
 
 </LinearLayout>

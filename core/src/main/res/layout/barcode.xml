@@ -22,6 +22,8 @@
             android:layout_height="0dp"
             android:layout_gravity="center"
             android:layout_weight="1"
+            android:background="@color/logo_background"
+            android:padding="24dp"
             android:src="@drawable/splash_title"
             tools:ignore="ContentDescription" />
 

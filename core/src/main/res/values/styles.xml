@@ -156,6 +156,8 @@
     <color name="hemlock_accent">#ff9100</color>
     <color name="hemlock_text_alert">#ff9100</color>
 
+    <color name="logo_background">@color/material_grey_700</color>
+
     <!--<color name="primary">@color/primary_material_dark</color>-->
     <!--<color name="primary_dark">@color/primary_dark_material_dark</color>-->
     <!--<color name="accent">#76FF03</color>-->
