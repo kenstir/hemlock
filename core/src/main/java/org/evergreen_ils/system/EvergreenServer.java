@@ -196,16 +196,19 @@ public class EvergreenServer {
         return mOrganizations;
     }
 
-    public Organization getOrganization(int id) {
-        for (int i = 0; i < mOrganizations.size(); i++) {
-            if (mOrganizations.get(i).id == id)
-                return mOrganizations.get(i);
+    public Organization getOrganization(Integer id) {
+        // ensure that getOrganization(null) returns null
+        if (id != null) {
+            for (Organization o : mOrganizations) {
+                if (o.id.equals(id)) {
+                    return o;
+                }
+            }
         }
-
         return null;
     }
 
-    public String getOrganizationName(int id) {
+    public String getOrganizationName(Integer id) {
         Organization org = getOrganization(id);
         if (org == null) {
             return "";
@@ -214,7 +217,7 @@ public class EvergreenServer {
         }
     }
 
-    public String getOrganizationLibraryInfoPageUrl(int id) {
+    public String getOrganizationLibraryInfoPageUrl(Integer id) {
         Organization org = getOrganization(id);
         if (org == null) {
             return "";

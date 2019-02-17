@@ -21,7 +21,7 @@ public class ExampleInstrumentedTest {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getTargetContext();
 
-        //assertEquals("net.kenstir.apps.core.test", appContext.getPackageName());
+        assertEquals("org.evergreen_ils.test", appContext.getPackageName());
         assertTrue(true);
     }
 }

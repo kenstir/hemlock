@@ -74,7 +74,8 @@ public class OSRFTest {
         mServer = b.getString("server", "http://catalog.cwmars.org");
         mOrgID = Integer.parseInt(b.getString("orgid", "1"));
         mUsername = b.getString("username");
-        // if username and password are empty, then maybe .idea/workspace.xml got messed up again; should be
+        // if username and password are empty, then maybe .idea/workspace.xml got messed up again;
+        // it should contain something like:
         // <option name="EXTRA_OPTIONS" value="-e server http://gapines.org -e username USER -e password PASS" />
         if (TextUtils.isEmpty(mUsername))
             return;
