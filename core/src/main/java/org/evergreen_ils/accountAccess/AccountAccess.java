@@ -813,7 +813,7 @@ public class AccountAccess {
         Object response = Utils.doRequest(conn(), Api.SERVICE_CIRC,
                 Api.HOLD_CANCEL, authToken, new Object[] {
                         authToken, hold_id });
-        if (response.toString().equals("1"))
+        if (response != null && response.toString().equals("1"))
             return true;
         return false;
     }
