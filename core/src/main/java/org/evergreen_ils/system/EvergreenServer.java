@@ -44,9 +44,9 @@ public class EvergreenServer {
     private String mUrl = null;
     private HttpConnection mConn = null;
     private boolean mIDLLoaded = false;
-    private ArrayList<OrgType> mOrgTypes = null;
-    private ArrayList<Organization> mOrganizations = null;
-    private ArrayList<SMSCarrier> mSMSCarriers = null;
+    private ArrayList<OrgType> mOrgTypes = new ArrayList<>();
+    private ArrayList<Organization> mOrganizations = new ArrayList<>();
+    private ArrayList<SMSCarrier> mSMSCarriers = new ArrayList<>();
     private Boolean mIsSMSEnabled = null;
     private LinkedHashMap<String, String> mCopyStatuses = new LinkedHashMap<>();
 
@@ -143,7 +143,7 @@ public class EvergreenServer {
         return null;
     }
 
-    public void addOrganization(OSRFObject obj, int level) {
+    private void addOrganization(OSRFObject obj, int level) {
         Organization org = new Organization();
         org.level = level;
         org.id = obj.getInt("id");
@@ -162,8 +162,10 @@ public class EvergreenServer {
         List<OSRFObject> children = null;
         try {
             children = (List<OSRFObject>) obj.get("children");
-            for (OSRFObject child : children) {
-                addOrganization(child, level + 1);
+            if (children != null) {
+                for (OSRFObject child : children) {
+                    addOrganization(child, level + 1);
+                }
             }
         } catch (Exception e) {
             Log.d(TAG, "addOrganization caught exception decoding children of "+org.name, e);
