@@ -35,20 +35,13 @@ import org.opensrf.util.OSRFObject;
  */
 public class CircRecord {
 
-    public static final int MVR_OBJ_TYPE = 1;
-    public static final int ACP_OBJ_TYPE = 2;
-    public static final int UNDEF_OBJ_TYPE = 0;
     public enum CircType { OUT, OVERDUE, LONG_OVERDUE, LOST, CLAIMS_RETURNED };
 
     public OSRFObject mvr = null;
     public OSRFObject acp = null;
     public OSRFObject circ = null;
     public RecordInfo recordInfo = null;
-
-    public int circ_info_type = UNDEF_OBJ_TYPE;
-
     public CircType circ_type;
-
     public int circ_id = -1;
 
     private Date circ_due_date = null;

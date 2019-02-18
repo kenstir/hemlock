@@ -371,15 +371,12 @@ public class AccountAccess {
      *
      * @param target_copy the target_copy
      * @param circRecord the circ record
-     * @return the oSRF object
      */
-    private OSRFObject fetchInfoForCheckedOutItem(Integer target_copy, CircRecord circRecord) {
+    private void fetchInfoForCheckedOutItem(Integer target_copy, CircRecord circRecord) {
 
         if (target_copy == null)
-            return null;
+            return;
 
-        OSRFObject result;
-        Log.d(TAG, "Mods from copy");
         OSRFObject info_mvr = fetchModsFromCopy(target_copy);
 
         try {
@@ -390,26 +387,14 @@ public class AccountAccess {
         }
 
         // if title or author not inserted, request acp with copy_target
-        result = info_mvr;
-        OSRFObject info_acp = null;
-
-        //TODO: clean up logic here
         // old comment I don't get: the logic to establish mvr or acp is copied from the opac
-        // check for null info_mvr, possible fix for Issue #7?
+        circRecord.mvr = info_mvr;
         if (info_mvr == null
             || info_mvr.getString("title") == null
             || info_mvr.getString("author") == null)
         {
-            Log.d(TAG, "Asset");
-            info_acp = fetchAssetCopy(target_copy);
-            result = info_acp;
-            circRecord.acp = info_acp;
-            circRecord.circ_info_type = CircRecord.ACP_OBJ_TYPE;
-        } else {
-            circRecord.mvr = info_mvr;
-            circRecord.circ_info_type = CircRecord.MVR_OBJ_TYPE;
+            circRecord.acp = fetchAssetCopy(target_copy);
         }
-        return result;
     }
 
     /**
