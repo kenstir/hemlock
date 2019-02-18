@@ -366,12 +366,6 @@ public class AccountAccess {
         return GatewayResponse.createFromObject(resp);
     }
 
-    /*
-     * Fetch info for Checked Out Items It uses two methods :
-     * open-ils.search.biblio.mods_from_copy or in case of pre-cataloged records
-     * it uses open-ils.search.asset.copy.retriev Usefull info : title and
-     * author (for acp : dummy_title, dummy_author)
-     */
     /**
      * Fetch info for checked out item.
      *
