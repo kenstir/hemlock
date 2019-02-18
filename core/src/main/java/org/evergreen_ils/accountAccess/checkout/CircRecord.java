@@ -60,26 +60,6 @@ public class CircRecord {
         return Api.parseDate(s);
     }
 
-    public CircRecord(OSRFObject circ, OSRFObject mvr, OSRFObject acp, CircType circ_type, int circ_id) {
-
-        this.circ = circ;
-
-        // one of the acp or mvr will be null this will determine the circ
-        // OSRFObject type
-        this.acp = acp;
-        this.mvr = mvr;
-
-        if (this.acp != null)
-            this.circ_info_type = ACP_OBJ_TYPE;
-
-        if (this.mvr != null)
-            this.circ_info_type = MVR_OBJ_TYPE;
-
-        this.circ_type = circ_type;
-        this.circ_id = circ_id;
-        this.circ_due_date = parseDateFromField(circ, "due_date");
-    }
-
     public CircRecord(OSRFObject circ, CircType circ_type, int circ_id) {
         this.circ = circ;
         this.circ_type = circ_type;
@@ -87,16 +67,34 @@ public class CircRecord {
         this.circ_due_date = parseDateFromField(circ, "due_date");
     }
 
+    public String getTitle() {
+        if (this.recordInfo.title != null)
+            return this.recordInfo.title;
+        // 2016-07-06: not sure if these are ever needed
+        String title;
+        if (mvr != null) {
+            title = mvr.getString("title");
+            if (title != null) return title;
+        }
+        if (acp != null) {
+            title = acp.getString("dummy_title");
+            if (title != null) return title;
+        }
+        return "Unknown Title";
+    }
+
     public String getAuthor() {
-
-        String author = null;
-
-        if (this.circ_info_type == MVR_OBJ_TYPE)
+        String author;
+        if (mvr != null) {
             author = mvr.getString("author");
-        if (this.circ_info_type == ACP_OBJ_TYPE)
+            if (author != null) return author;
+        }
+        // 2019-02-19 I don't know if this code ever gets hit
+        if (acp != null) {
             author = acp.getString("dummy_author");
-
-        return author;
+            if (author != null) return author;
+        }
+        return "Unknown Author";
     }
 
     public String getDueDateString() {
@@ -105,17 +103,6 @@ public class CircRecord {
 
     public Date getDueDate() {
         return circ_due_date;
-    }
-
-    public String getTitle() {
-        if (this.recordInfo.title != null)
-            return this.recordInfo.title;
-        // 2016-07-06: not sure if these are ever needed
-        if (this.circ_info_type == MVR_OBJ_TYPE)
-            return mvr.getString("title");
-        if (this.circ_info_type == ACP_OBJ_TYPE)
-            return acp.getString("dummy_title");
-        return null;
     }
 
     public Integer getRenewals() {
