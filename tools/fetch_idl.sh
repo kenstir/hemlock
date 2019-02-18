@@ -1,8 +1,23 @@
 #!/bin/sh
-root=http://bark.cwmars.org
-# GlobalConfigs.java
-IDL_FILE_FROM_ROOT="/reports/fm_IDL.xml?class=ac&class=acn&class=acp&class=ahr&class=ahtc&class=aou&class=au&class=aua&class=auact&class=bmp&class=cbreb&class=cbrebi&class=cbrebin&class=cbrebn&class=ccs&class=circ&class=cuat&class=ex&class=mbt&class=mbts&class=mous&class=mra&class=mus&class=mvr&class=perm_ex";
-IDL_FILE=/reports/fm_IDL.xml
 
-curl -o fm_IDL_trimmed.xml "$root$IDL_FILE_FROM_ROOT"
-curl -o fm_IDL_orig.xml "$root$IDL_FILE"
+base=http://bark.cwmars.org
+
+classes="ac,acn,acp,ahr,ahtc,aou,aout,au,aua,auact,aum,aus,bmp,cbreb,cbrebi,cbrebin,cbrebn,ccs,circ,csc,cuat,ex,mbt,mbts,mous,mra,mraf,mus,mvr,perm_ex"
+
+# create array params
+IFS=, read -r -a class_array <<< "$classes"
+params=()
+for class in "${class_array[@]}"; do
+    #echo "class=$class"
+    params+=("class=$class")
+done
+#echo "params=${params[@]}"
+
+# join params with &
+function join_with { local IFS="$1"; shift; echo "$*"; }
+args="$(join_with '&' "${params[@]}")"
+echo args="$args"
+
+# fetch full IDL and IDL with only select classes
+curl -o fm_IDL_orig.xml "$base/reports/fm_IDL.xml"
+curl -o fm_IDL_select.xml "$base/reports/fm_IDL.xml?$args"
