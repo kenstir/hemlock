@@ -28,6 +28,8 @@ import org.opensrf.util.OSRFObject;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.*;
 
 /** Represents the library system
@@ -102,20 +104,28 @@ public class EvergreenServer {
         return mConn;
     }
 
+    private HttpURLConnection getURLConnection(String url) throws IOException {
+        URL url2 = new URL(url);
+        HttpURLConnection conn = (HttpURLConnection) url2.openConnection();
+        conn.setUseCaches(false);
+        return conn;
+    }
+
     private void loadIDL(String library_url) throws IOException, IDLException {
+        HttpURLConnection conn = null;
         try {
             Log.d(TAG, "loadIDL.start");
             mIDLLoaded = false;
             long now_ms = System.currentTimeMillis();
-            InputStream in_IDL = Utils.getNetInputStream(getIDLUrl(library_url));
-            IDLParser parser = new IDLParser(in_IDL);
+            conn = getURLConnection(getIDLUrl(library_url));
+            IDLParser parser = new IDLParser(conn.getInputStream());
             parser.setKeepIDLObjects(false);
             now_ms = Log.logElapsedTime(TAG, now_ms, "loadIDL.init");
             parser.parse();
             now_ms = Log.logElapsedTime(TAG, now_ms, "loadIDL.total");
             mIDLLoaded = true;
         } finally {
-            Utils.closeNetInputStream();
+            conn.disconnect();
         }
     }
 

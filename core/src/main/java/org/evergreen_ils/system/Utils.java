@@ -66,6 +66,7 @@ public class Utils {
         return str.toString();
     }
 
+    /*
     public static InputStream getNetInputStream(String url) throws IOException {
 
         if (mConn != null) mConn.disconnect();
@@ -81,6 +82,7 @@ public class Utils {
             mConn = null;
         }
     }
+    */
 
     public static String getResponseTextcode(Object response) {
         String textcode = null;
