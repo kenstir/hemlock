@@ -1,6 +1,10 @@
 #!/bin/sh
 
 base=http://bark.cwmars.org
+#base=http://kenstir.ddns.net
+if [ -n "$1" ]; then
+    base="$1"
+fi
 
 classes="ac,acn,acp,ahr,ahtc,aou,aout,au,aua,auact,aum,aus,bmp,cbreb,cbrebi,cbrebin,cbrebn,ccs,circ,csc,cuat,ex,mbt,mbts,mous,mra,mraf,mus,mvr,perm_ex"
 
@@ -19,5 +23,5 @@ args="$(join_with '&' "${params[@]}")"
 echo args="$args"
 
 # fetch full IDL and IDL with only select classes
-curl -o fm_IDL_orig.xml "$base/reports/fm_IDL.xml"
-curl -o fm_IDL_select.xml "$base/reports/fm_IDL.xml?$args"
+curl -o fm_IDL.$(basename $base).full.xml "$base/reports/fm_IDL.xml"
+curl -o fm_IDL.$(basename $base).partial.xml "$base/reports/fm_IDL.xml?$args"
