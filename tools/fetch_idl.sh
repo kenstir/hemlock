@@ -23,5 +23,6 @@ args="$(join_with '&' "${params[@]}")"
 echo args="$args"
 
 # fetch full IDL and IDL with only select classes
+set -x
 curl -o fm_IDL.$(basename $base).full.xml "$base/reports/fm_IDL.xml"
 curl -o fm_IDL.$(basename $base).partial.xml "$base/reports/fm_IDL.xml?$args"
