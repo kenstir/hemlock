@@ -7,16 +7,17 @@
     <color name="material_grey_500">#9E9E9E</color>
     <color name="material_grey_700">#616161</color>
 
-    <!-- material colors courtesy of https://material.io/tools/color/#!/?view.left=0&view.right=0&primary.color=01579B -->
     <color name="cwmars_dark">#16416F</color>
     <color name="cwmars_medium">#006098</color>
+    <color name="cwmars_secondary1">#d61d4a</color>
+    <color name="cwmars_secondary2">#ee7623</color>
+    <color name="cwmars_secondary3">#ffc629</color>
+    <color name="cwmars_secondary4">#7bc24e</color>
     <color name="logo_background">@color/white</color>
 
     <color name="primary">@color/cwmars_dark</color>
     <color name="primary_dark">@color/primary_dark_material_dark</color>
-    <color name="accent">@color/cwmars_medium</color>
-    <color name="hemlock_accent">@color/cwmars_medium</color>
-    <color name="hemlock_text_alert">#ff9100</color>
+    <color name="accent">@color/cwmars_secondary2</color>
 
     <style name="CWMARS" parent="Theme.AppCompat">
         <item name="colorPrimary">@color/primary</item>
@@ -31,10 +32,9 @@
     </style>
 
     <style name="alertText">
-        <item name="android:textColor">@color/hemlock_text_alert</item>
+        <item name="android:textColor">@color/cwmars_secondary4</item>
     </style>
 
-    <!-- I wanted to make the accent color of the progressbar green, but this does not do it -->
     <style name="HemlockProgressBar" parent="Widget.AppCompat.ProgressBar.Horizontal">
         <item name="colorPrimaryDark">@color/accent</item>
         <item name="colorPrimary">@color/accent</item>
