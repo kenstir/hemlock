@@ -26,18 +26,16 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.zxing.BarcodeFormat;
-import com.google.zxing.MultiFormatWriter;
-import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
 
 import org.evergreen_ils.R;
 import org.evergreen_ils.accountAccess.AccountAccess;
-import org.evergreen_ils.system.Analytics;
+import org.evergreen_ils.utils.BarcodeUtils;
 import org.evergreen_ils.utils.ui.BaseActivity;
 
 public class BarcodeActivity extends BaseActivity {
 
-    private final static String TAG = BaseActivity.class.getSimpleName();
+    private final static String TAG = BarcodeActivity.class.getSimpleName();
 
     private TextView barcode_text = null;
     private ImageView image_view = null;
@@ -57,7 +55,7 @@ public class BarcodeActivity extends BaseActivity {
         getWindowManager().getDefaultDisplay().getMetrics(metrics);
         int image_width = Math.min(metrics.widthPixels, metrics.heightPixels) * 8 / 10;
         int image_height = image_width * 4 / 10;
-        Bitmap bitmap = createBarcode(barcode, image_width, image_height);
+        Bitmap bitmap = createBitmap(barcode, image_width, image_height);
         if (bitmap != null) {
             barcode_text.setText(barcode);
             image_view.setImageBitmap(bitmap);
@@ -67,17 +65,17 @@ public class BarcodeActivity extends BaseActivity {
         }
     }
 
-    private Bitmap createBarcode(String data, int image_width, int image_height) {
-        MultiFormatWriter barcodeWriter = new MultiFormatWriter();
-        BitMatrix bitMatrix;
-        try {
-            bitMatrix = barcodeWriter.encode(data, BarcodeFormat.CODABAR, image_width, image_height);
-        } catch (Exception e) {
-            // IllegalArgumentException happens for invalid chars in barcode, don't log that
-            if (!(e instanceof IllegalArgumentException))
-                Analytics.logException(e);
+    private Bitmap createBitmap(String data, int image_width, int image_height) {
+        // Try formats until we successfully encode the data
+        BitMatrix bitMatrix = null;
+        if (bitMatrix == null)
+            bitMatrix = BarcodeUtils.tryEncode(data, image_width, image_height, BarcodeFormat.CODABAR);
+        if (bitMatrix == null)
+            bitMatrix = BarcodeUtils.tryEncode(data, image_width, image_height, BarcodeFormat.CODE_39);
+        if (bitMatrix == null)
             return null;
-        }
+
+        // Create a Bitmap from the BitMatrix
         Bitmap bitmap = Bitmap.createBitmap(image_width, image_height, Bitmap.Config.ARGB_8888);
         int width = bitMatrix.getWidth();
         int height = bitMatrix.getHeight();
