@@ -9,7 +9,8 @@ redirect_from:
 This page outlines the privacy policy of Hemlock and related apps for Android ("the app"):
 
 - [Hemlock](https://play.google.com/store/apps/details?id=net.kenstir.apps.hemlock)
-- [C/W MARS](https://play.google.com/store/apps/details?id=org.cwmars)
+- [COOL Libraries](https://play.google.com/store/apps/details?id=net.kenstir.apps.cool)
+- [CW MARS Libraries](https://play.google.com/store/apps/details?id=org.cwmars)
 - [PINES (Georgia)](https://play.google.com/store/apps/details?id=net.kenstir.apps.pines)
 
 
