@@ -6,6 +6,8 @@ if [ -n "$1" ]; then
     base="$1"
 fi
 
+version=$(curl -sS "$base/osrf-gateway-v1?service=open-ils.actor&method=opensrf.open-ils.system.ils_version" | /c/cygwin64/bin/jq -r '.payload[0]')
+
 classes="ac,acn,acp,ahr,ahtc,aou,aout,au,aua,auact,aum,aus,bmp,cbreb,cbrebi,cbrebin,cbrebn,ccs,circ,csc,cuat,ex,mbt,mbts,mous,mra,mraf,mus,mvr,perm_ex"
 
 # create array params
@@ -24,5 +26,5 @@ echo args="$args"
 
 # fetch full IDL and IDL with only select classes
 set -x
-curl -o fm_IDL.$(basename $base).full.xml "$base/reports/fm_IDL.xml"
-curl -o fm_IDL.$(basename $base).partial.xml "$base/reports/fm_IDL.xml?$args"
+curl -o fm_IDL.$(basename $base).$version.full.xml "$base/reports/fm_IDL.xml"
+curl -o fm_IDL.$(basename $base).$version.partial.xml "$base/reports/fm_IDL.xml?$args"
