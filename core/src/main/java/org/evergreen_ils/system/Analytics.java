@@ -30,11 +30,13 @@ import com.crashlytics.android.answers.LoginEvent;
 
 import org.opensrf.Method;
 import org.opensrf.util.GatewayResponse;
+import org.opensrf.util.OSRFObject;
 import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 import io.fabric.sdk.android.Fabric;
 
@@ -109,7 +111,27 @@ public class Analytics {
         logRequest(service, method, p);
     }
 
+    private static String redactResponse(OSRFObject o, String netClass) {
+        if (netClass.equals("au") /*user*/ || netClass.equals("aou") /*orgTree*/) {
+            return "***";
+        } else {
+            return o.toString();
+        }
+    }
+
     public static void logResponse(Object resp) {
+        try {
+            if (resp instanceof OSRFObject) {
+                OSRFObject o = (OSRFObject) resp;
+                String netClass = o.getRegistry().getNetClass();
+                String s = redactResponse(o, netClass);
+                Log.d(TAG, "resp [" + netClass + "]: " + s);
+                Crashlytics.log(Log.DEBUG, TAG, "resp [" + netClass + "]: " + s);
+                return;
+            }
+        } catch (Exception e) {
+            Crashlytics.log(Log.DEBUG, TAG, "exception parsing resp: " + e.getMessage());
+        }
         Crashlytics.log(Log.DEBUG, TAG, "resp: " + resp);
     }
 
