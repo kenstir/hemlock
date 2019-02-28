@@ -680,7 +680,8 @@ public class AccountAccess {
             // fetch_copy
             OSRFObject copyObject = fetchAssetCopy(holdObj.ahr.getInt("target"));
             // fetch_volume from copyObject.call_number field
-            Integer call_number = copyObject.getInt("call_number");
+            Integer call_number = null;
+            if (copyObject != null) call_number = copyObject.getInt("call_number");
 
             if (call_number != null) {
 
