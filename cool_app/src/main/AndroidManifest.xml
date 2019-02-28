@@ -3,8 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="net.kenstir.apps.cool"
           android:installLocation="auto"
-          android:versionCode="5"
-          android:versionName="1.0.2">
+          android:versionCode="6"
+          android:versionName="1.0.3">
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS" />
