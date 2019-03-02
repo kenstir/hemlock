@@ -181,7 +181,7 @@ public class EvergreenServerLoader {
                         Analytics.logErrorResponse(error.getMessage());
                         String msg = error.getMessage();
                         if (!TextUtils.isEmpty(msg))
-                            Log.d("kcxxx", "error: "+msg);
+                            Log.d(TAG, "error: "+msg);
                         decrNumOutstanding();
                     }
                 });
