@@ -22,23 +22,23 @@ package org.evergreen_ils.accountAccess.holds;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.*;
+import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
+import android.widget.TextView;
+
 import org.evergreen_ils.R;
 import org.evergreen_ils.accountAccess.AccountAccess;
 import org.evergreen_ils.accountAccess.SessionNotFoundException;
+import org.evergreen_ils.searchCatalog.RecordInfo;
 import org.evergreen_ils.system.Analytics;
 import org.evergreen_ils.system.Log;
-import org.evergreen_ils.searchCatalog.RecordInfo;
-import org.evergreen_ils.searchCatalog.SearchFormat;
-import org.evergreen_ils.utils.ui.ActionBarUtils;
 import org.evergreen_ils.utils.ui.BaseActivity;
 import org.evergreen_ils.utils.ui.ProgressDialogSupport;
-import org.evergreen_ils.views.splashscreen.SplashActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -63,13 +63,13 @@ public class HoldsListView extends BaseActivity {
 
         setContentView(R.layout.activity_holds);
 
-        holdsNoText = (TextView) findViewById(R.id.holds_number);
-        lv = (ListView) findViewById(R.id.holds_item_list);
+        holdsNoText = findViewById(R.id.holds_number);
+        lv = findViewById(R.id.holds_item_list);
         context = this;
         accountAccess = AccountAccess.getInstance();
         progress = new ProgressDialogSupport();
 
-        holdRecords = new ArrayList<HoldRecord>();
+        holdRecords = new ArrayList<>();
         listAdapter = new HoldsArrayAdapter(context, R.layout.holds_list_item, holdRecords);
         lv.setAdapter(listAdapter);
 
