@@ -105,6 +105,8 @@ public class SearchCatalog {
             sb.append(" search_format(").append(searchFormat).append(")");
         if (this.selectedOrganization != null)
             sb.append(" site(").append(this.selectedOrganization.shortname).append(")");
+        //if (true)
+        //    sb.append(" sort(poprel)");
         String queryString = sb.toString();
 
         long start_ms = System.currentTimeMillis();
