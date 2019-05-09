@@ -18,7 +18,7 @@
 
         <ImageView
             android:id="@+id/imageView"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_gravity="center"
             android:layout_weight="1"
@@ -33,7 +33,6 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:width="300dp"
-            android:autoText="false"
             android:background="@color/grey"
             android:contentDescription="@string/barcode_text_description"
             android:gravity="center_horizontal"
