@@ -29,7 +29,6 @@ import android.widget.*;
 import org.evergreen_ils.R;
 import org.evergreen_ils.accountAccess.AccountAccess;
 import org.evergreen_ils.accountAccess.SessionNotFoundException;
-import org.evergreen_ils.barcodescan.PlanarYUVLuminanceSource;
 import org.evergreen_ils.system.Analytics;
 import org.evergreen_ils.system.Log;
 import org.evergreen_ils.searchCatalog.RecordDetails;
@@ -45,9 +44,9 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 
-public class ItemsCheckOutListView extends BaseActivity {
+public class CheckoutsActivity extends BaseActivity {
 
-    private final static String TAG = ItemsCheckOutListView.class.getSimpleName();
+    private final static String TAG = CheckoutsActivity.class.getSimpleName();
     private AccountAccess accountAccess = null;
     private ListView lv;
     private CheckOutArrayAdapter listAdapter = null;
@@ -82,7 +81,7 @@ public class ItemsCheckOutListView extends BaseActivity {
                 for (CircRecord circRecord : circRecords) {
                     records.add(circRecord.recordInfo);
                 }
-                RecordDetails.launchDetailsFlow(ItemsCheckOutListView.this, records, position);
+                RecordDetails.launchDetailsFlow(CheckoutsActivity.this, records, position);
             }
         });
     }
@@ -120,7 +119,7 @@ public class ItemsCheckOutListView extends BaseActivity {
                         circRecords = accountAccess.getItemsCheckedOut();
                     } catch (SessionNotFoundException e) {
                         try {
-                            if (accountAccess.reauthenticate(ItemsCheckOutListView.this))
+                            if (accountAccess.reauthenticate(CheckoutsActivity.this))
                                 circRecords = accountAccess.getItemsCheckedOut();
                         } catch (Exception eauth) {
                             Log.d(TAG, "Exception in reauth", eauth);
@@ -256,7 +255,7 @@ public class ItemsCheckOutListView extends BaseActivity {
                     resp = ac.renewCirc(record.getTargetCopy());
                 } catch (SessionNotFoundException e1) {
                     try {
-                        if (accountAccess.reauthenticate(ItemsCheckOutListView.this)) {
+                        if (accountAccess.reauthenticate(CheckoutsActivity.this)) {
                             resp = ac.renewCirc(record.getTargetCopy());
                         }
                     } catch (Exception eauth) {
@@ -293,7 +292,7 @@ public class ItemsCheckOutListView extends BaseActivity {
                         circRecords = accountAccess.getItemsCheckedOut();
                     } catch (SessionNotFoundException e) {
                         try {
-                            if (accountAccess.reauthenticate(ItemsCheckOutListView.this))
+                            if (accountAccess.reauthenticate(CheckoutsActivity.this))
                                 circRecords = accountAccess.getItemsCheckedOut();
                         } catch (Exception eauth) {
                             Log.d(TAG, "Exception in reauth", eauth);

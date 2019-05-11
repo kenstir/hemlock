@@ -20,7 +20,6 @@
 package org.evergreen_ils.accountAccess.holds;
 
 import android.app.DatePickerDialog;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
@@ -56,7 +55,6 @@ import org.evergreen_ils.utils.ui.ActionBarUtils;
 import org.evergreen_ils.system.Analytics;
 import org.evergreen_ils.utils.ui.ProgressDialogSupport;
 import org.evergreen_ils.views.splashscreen.SplashActivity;
-import org.opensrf.ShouldNotHappenException;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -214,7 +212,7 @@ public class PlaceHoldActivity extends AppCompatActivity {
                         if (result.isSuccess()) {
                             Toast.makeText(PlaceHoldActivity.this, "Hold successfully placed",
                                     Toast.LENGTH_LONG).show();
-                            startActivity(new Intent(PlaceHoldActivity.this, HoldsListView.class));
+                            startActivity(new Intent(PlaceHoldActivity.this, HoldsActivity.class));
                             finish();
                         } else if (!isFinishing()) {
                             AlertDialog.Builder builder = new AlertDialog.Builder(PlaceHoldActivity.this);

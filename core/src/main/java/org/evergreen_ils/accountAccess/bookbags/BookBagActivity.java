@@ -23,7 +23,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.view.WindowManager;
 import org.evergreen_ils.R;
 import org.evergreen_ils.accountAccess.AccountAccess;
@@ -31,10 +30,8 @@ import org.evergreen_ils.accountAccess.SessionNotFoundException;
 import org.evergreen_ils.system.Analytics;
 import org.evergreen_ils.system.Log;
 import org.evergreen_ils.system.Utils;
-import org.evergreen_ils.utils.ui.ActionBarUtils;
 import org.evergreen_ils.utils.ui.BaseActivity;
 import org.evergreen_ils.utils.ui.ProgressDialogSupport;
-import org.evergreen_ils.views.splashscreen.SplashActivity;
 
 import android.content.Context;
 import android.content.Intent;
@@ -49,11 +46,10 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
-public class BookBagListView extends BaseActivity {
+public class BookBagActivity extends BaseActivity {
 
-    private final static String TAG = BookBagListView.class.getSimpleName();
+    private final static String TAG = BookBagActivity.class.getSimpleName();
 
     private AccountAccess accountAccess = null;
 
@@ -102,7 +98,7 @@ public class BookBagListView extends BaseActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Analytics.logEvent("Lists: Tap List");
                 BookBag item = (BookBag) lv.getItemAtPosition(position);
-                Intent intent = new Intent(BookBagListView.this, BookBagDetails.class);
+                Intent intent = new Intent(BookBagActivity.this, BookBagDetailsActivity.class);
                 intent.putExtra("bookBag", item);
                 startActivityForResult(intent, 0);
             }
@@ -126,7 +122,7 @@ public class BookBagListView extends BaseActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        if (!isFinishing()) progress.show(BookBagListView.this, getString(R.string.msg_retrieving_lists));
+                        if (!isFinishing()) progress.show(BookBagActivity.this, getString(R.string.msg_retrieving_lists));
                     }
                 });
 
@@ -134,7 +130,7 @@ public class BookBagListView extends BaseActivity {
                     accountAccess.retrieveBookbags();
                 } catch (SessionNotFoundException e) {
                     try {
-                        if (accountAccess.reauthenticate(BookBagListView.this))
+                        if (accountAccess.reauthenticate(BookBagActivity.this))
                             accountAccess.retrieveBookbags();
                     } catch (Exception e2) {
                         Log.d(TAG, "caught", e2);
@@ -163,7 +159,7 @@ public class BookBagListView extends BaseActivity {
         super.onActivityResult(requestCode, resultCode, data);
 
         switch (resultCode) {
-        case BookBagDetails.RESULT_CODE_UPDATE:
+        case BookBagDetailsActivity.RESULT_CODE_UPDATE:
             new Thread(getBookbagsRunnable).start();
             break;
         }
@@ -187,7 +183,7 @@ public class BookBagListView extends BaseActivity {
                     accountAccess.createBookbag(name);
                 } catch (SessionNotFoundException e) {
                     try {
-                        if (accountAccess.reauthenticate(BookBagListView.this))
+                        if (accountAccess.reauthenticate(BookBagActivity.this))
                             accountAccess.createBookbag(name);
                     } catch (Exception eauth) {
                         Log.d(TAG, "caught", eauth);

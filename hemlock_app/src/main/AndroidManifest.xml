@@ -69,14 +69,14 @@
 
         <!-- Checkout Activities -->
         <activity
-                android:name="org.evergreen_ils.accountAccess.checkout.ItemsCheckOutListView"
+                android:name="org.evergreen_ils.accountAccess.checkout.CheckoutsActivity"
                 android:label="@string/checkout_items_title"
                 android:parentActivityName="org.evergreen_ils.views.MainActivity">
         </activity>
 
         <!-- Holds Activities -->
         <activity
-                android:name="org.evergreen_ils.accountAccess.holds.HoldsListView"
+                android:name="org.evergreen_ils.accountAccess.holds.HoldsActivity"
                 android:label="@string/hold_items_title"
                 android:parentActivityName="org.evergreen_ils.views.MainActivity">
         </activity>
@@ -85,7 +85,7 @@
                 android:label="@string/hold_place_title">
         </activity>
         <activity
-                android:name="org.evergreen_ils.accountAccess.holds.HoldDetails"
+                android:name="org.evergreen_ils.accountAccess.holds.EditHoldActivity"
                 android:label="@string/hold_details_title">
         </activity>
 
@@ -98,14 +98,14 @@
 
         <!-- Bookbags -->
         <activity
-                android:name="org.evergreen_ils.accountAccess.bookbags.BookBagListView"
+                android:name="org.evergreen_ils.accountAccess.bookbags.BookBagActivity"
                 android:label="@string/title_my_lists"
                 android:parentActivityName="org.evergreen_ils.views.MainActivity">
         </activity>
         <activity
-                android:name="org.evergreen_ils.accountAccess.bookbags.BookBagDetails"
+                android:name="org.evergreen_ils.accountAccess.bookbags.BookBagDetailsActivity"
                 android:label="@string/title_list_details"
-                android:parentActivityName="org.evergreen_ils.accountAccess.bookbags.BookBagListView">
+                android:parentActivityName="org.evergreen_ils.accountAccess.bookbags.BookBagActivity">
         </activity>
 
         <activity

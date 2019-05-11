@@ -43,9 +43,9 @@ import org.evergreen_ils.utils.ui.ProgressDialogSupport;
 import java.util.ArrayList;
 import java.util.List;
 
-public class HoldsListView extends BaseActivity {
+public class HoldsActivity extends BaseActivity {
 
-    private final static String TAG = HoldsListView.class.getSimpleName();
+    private final static String TAG = HoldsActivity.class.getSimpleName();
 
     private AccountAccess accountAccess = null;
     private ListView lv;
@@ -81,7 +81,7 @@ public class HoldsListView extends BaseActivity {
                     holdRecords = accountAccess.getHolds();
                 } catch (SessionNotFoundException e) {
                     try {
-                        if (accountAccess.reauthenticate(HoldsListView.this))
+                        if (accountAccess.reauthenticate(HoldsActivity.this))
                             holdRecords = accountAccess.getHolds();
                     } catch (Exception eauth) {
                         Log.d(TAG, "Exception in reauth");
@@ -112,7 +112,7 @@ public class HoldsListView extends BaseActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Analytics.logEvent("Holds: Tap List Item");
                 HoldRecord record = (HoldRecord) lv.getItemAtPosition(position);
-                Intent intent = new Intent(getApplicationContext(), HoldDetails.class);
+                Intent intent = new Intent(getApplicationContext(), EditHoldActivity.class);
                 intent.putExtra("holdRecord", record);
 
                 // request code does not matter, but we use the result code
@@ -133,12 +133,12 @@ public class HoldsListView extends BaseActivity {
 
         switch (resultCode) {
 
-        case HoldDetails.RESULT_CODE_CANCEL:
+        case EditHoldActivity.RESULT_CODE_CANCEL:
             Log.d(TAG, "Do nothing");
             break;
 
-        case HoldDetails.RESULT_CODE_DELETE_HOLD:
-        case HoldDetails.RESULT_CODE_UPDATE_HOLD:
+        case EditHoldActivity.RESULT_CODE_DELETE_HOLD:
+        case EditHoldActivity.RESULT_CODE_UPDATE_HOLD:
             progress.show(context, getString(R.string.msg_loading_holds));
             new Thread(getHoldsRunnable).start();
             Log.d(TAG, "Update on result "+resultCode);

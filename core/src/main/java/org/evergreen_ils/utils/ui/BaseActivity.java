@@ -21,10 +21,10 @@ import org.evergreen_ils.R;
 import org.evergreen_ils.accountAccess.AccountAccess;
 import org.evergreen_ils.accountAccess.AccountUtils;
 import org.evergreen_ils.views.BarcodeActivity;
-import org.evergreen_ils.accountAccess.bookbags.BookBagListView;
-import org.evergreen_ils.accountAccess.checkout.ItemsCheckOutListView;
+import org.evergreen_ils.accountAccess.bookbags.BookBagActivity;
+import org.evergreen_ils.accountAccess.checkout.CheckoutsActivity;
 import org.evergreen_ils.accountAccess.fines.FinesActivity;
-import org.evergreen_ils.accountAccess.holds.HoldsListView;
+import org.evergreen_ils.accountAccess.holds.HoldsActivity;
 import org.evergreen_ils.android.App;
 import org.evergreen_ils.searchCatalog.SearchActivity;
 import org.evergreen_ils.searchCatalog.SearchFormat;
@@ -145,16 +145,16 @@ public class BaseActivity extends AppCompatActivity
             startActivity(new Intent(this, SearchActivity.class));
         } else if (id == R.id.account_btn_check_out) {
             Analytics.logEvent("Checkouts: Open", "via", "nav_drawer");
-            startActivity(new Intent(this, ItemsCheckOutListView.class));
+            startActivity(new Intent(this, CheckoutsActivity.class));
         } else if (id == R.id.account_btn_holds) {
             Analytics.logEvent("Holds: Open", "via", "nav_drawer");
-            startActivity(new Intent(this, HoldsListView.class));
+            startActivity(new Intent(this, HoldsActivity.class));
         } else if (id == R.id.account_btn_fines) {
             Analytics.logEvent("Fines: Open", "via", "nav_drawer");
             startActivity(new Intent(this, FinesActivity.class));
         } else if (id == R.id.main_my_lists_button) {
             Analytics.logEvent("Lists: Open", "via", "nav_drawer");
-            startActivity(new Intent(this, BookBagListView.class));
+            startActivity(new Intent(this, BookBagActivity.class));
         } else if (id == R.id.btn_barcode) {
             Analytics.logEvent("Barcode: Open", "via", "nav_drawer");
             // generating via Intent only works if zxing barcode app is installed

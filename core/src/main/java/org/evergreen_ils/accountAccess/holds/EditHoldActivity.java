@@ -23,7 +23,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
-import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.widget.*;
 import org.evergreen_ils.Api;
@@ -51,9 +50,9 @@ import android.view.View.OnClickListener;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 
-public class HoldDetails extends BaseActivity {
+public class EditHoldActivity extends BaseActivity {
 
-    private final static String TAG = HoldDetails.class.getSimpleName();
+    private final static String TAG = EditHoldActivity.class.getSimpleName();
 
     public static final int RESULT_CODE_DELETE_HOLD = 5;
 
@@ -266,7 +265,7 @@ public class HoldDetails extends BaseActivity {
                             accountAccess.cancelHold(record.ahr);
                         } catch (SessionNotFoundException e) {
                             try {
-                                if (accountAccess.reauthenticate(HoldDetails.this))
+                                if (accountAccess.reauthenticate(EditHoldActivity.this))
                                     accountAccess.cancelHold(record.ahr);
                             } catch (Exception eauth) {
                                 Log.d(TAG, "Exception in reAuth");
@@ -309,7 +308,7 @@ public class HoldDetails extends BaseActivity {
                             suspendHold.isChecked(), expire_date_s, thaw_date_s);
                 } catch (SessionNotFoundException e) {
                     try {
-                        if (accountAccess.reauthenticate(HoldDetails.this))
+                        if (accountAccess.reauthenticate(EditHoldActivity.this))
                             accountAccess.updateHold(record.ahr,
                                     eg.getInstance().getOrganizations().get(selectedOrgPos).id,
                                     suspendHold.isChecked(), expire_date_s, thaw_date_s);

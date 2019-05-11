@@ -22,22 +22,17 @@ package org.evergreen_ils.accountAccess.bookbags;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.evergreen_ils.Api;
 import org.evergreen_ils.R;
 import org.evergreen_ils.accountAccess.AccountAccess;
 import org.evergreen_ils.accountAccess.SessionNotFoundException;
 import org.evergreen_ils.system.Analytics;
-import org.evergreen_ils.system.EvergreenServer;
 import org.evergreen_ils.system.Log;
 import org.evergreen_ils.system.Utils;
 import org.evergreen_ils.searchCatalog.RecordDetails;
 import org.evergreen_ils.searchCatalog.RecordInfo;
-import org.evergreen_ils.searchCatalog.SearchCatalog;
 import org.evergreen_ils.utils.ui.ActionBarUtils;
 import org.evergreen_ils.utils.ui.BaseActivity;
 import org.evergreen_ils.utils.ui.ProgressDialogSupport;
-import org.evergreen_ils.views.splashscreen.SplashActivity;
-import org.opensrf.util.OSRFObject;
 
 import android.app.AlertDialog;
 import android.content.Context;
@@ -54,9 +49,9 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class BookBagDetails extends BaseActivity {
+public class BookBagDetailsActivity extends BaseActivity {
 
-    private final static String TAG = BookBagDetails.class.getSimpleName();
+    private final static String TAG = BookBagDetailsActivity.class.getSimpleName();
 
     public static final int RESULT_CODE_UPDATE = 1;
 
@@ -130,7 +125,7 @@ public class BookBagDetails extends BaseActivity {
                 for (BookBagItem item: bookBagItems) {
                     records.add(item.recordInfo);
                 }
-                RecordDetails.launchDetailsFlow(BookBagDetails.this, records, position);
+                RecordDetails.launchDetailsFlow(BookBagDetailsActivity.this, records, position);
             }
         });
 
@@ -272,7 +267,7 @@ public class BookBagDetails extends BaseActivity {
                                 accountAccess.removeBookbagItem(record.id);
                             } catch (SessionNotFoundException e) {
                                 try {
-                                    if (accountAccess.reauthenticate(BookBagDetails.this))
+                                    if (accountAccess.reauthenticate(BookBagDetailsActivity.this))
                                         accountAccess.removeBookbagItem(record.id);
                                 } catch (Exception e1) {
                                     Log.d(TAG, "caught", e1);
