@@ -75,12 +75,10 @@ public class EditHoldActivity extends BaseActivity {
 
     private DatePickerDialog datePicker = null;
 
-    //private TableRow suspendHoldRow;
     private CheckBox suspendHold;
 
     private Spinner orgSelector;
 
-    //private TableRow thawDateRow;
     private DatePickerDialog thaw_datePicker = null;
 
     private EditText thaw_date_edittext;
@@ -123,11 +121,9 @@ public class EditHoldActivity extends BaseActivity {
         physical_description = (TextView) findViewById(R.id.hold_physical_description);
         cancelHold = (Button) findViewById(R.id.cancel_hold_button);
         updateHold = (Button) findViewById(R.id.update_hold_button);
-        //suspendHoldRow = (TableRow) findViewById(R.id.hold_suspend_hold_row);
         suspendHold = (CheckBox) findViewById(R.id.hold_suspend_hold);
         orgSelector = (Spinner) findViewById(R.id.hold_pickup_location);
         expiration_date = (EditText) findViewById(R.id.hold_expiration_date);
-        //thawDateRow = (TableRow) findViewById(R.id.hold_thaw_date_row);
         thaw_date_edittext = (EditText) findViewById(R.id.hold_thaw_date);
 
         title.setText(record.title);
