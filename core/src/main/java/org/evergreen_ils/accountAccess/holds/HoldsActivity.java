@@ -112,7 +112,7 @@ public class HoldsActivity extends BaseActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Analytics.logEvent("Holds: Tap List Item");
                 HoldRecord record = (HoldRecord) lv.getItemAtPosition(position);
-                Intent intent = new Intent(getApplicationContext(), EditHoldActivity.class);
+                Intent intent = new Intent(getApplicationContext(), HoldDetailsActivity.class);
                 intent.putExtra("holdRecord", record);
 
                 // request code does not matter, but we use the result code
@@ -133,12 +133,12 @@ public class HoldsActivity extends BaseActivity {
 
         switch (resultCode) {
 
-        case EditHoldActivity.RESULT_CODE_CANCEL:
+        case HoldDetailsActivity.RESULT_CODE_CANCEL:
             Log.d(TAG, "Do nothing");
             break;
 
-        case EditHoldActivity.RESULT_CODE_DELETE_HOLD:
-        case EditHoldActivity.RESULT_CODE_UPDATE_HOLD:
+        case HoldDetailsActivity.RESULT_CODE_DELETE_HOLD:
+        case HoldDetailsActivity.RESULT_CODE_UPDATE_HOLD:
             progress.show(context, getString(R.string.msg_loading_holds));
             new Thread(getHoldsRunnable).start();
             Log.d(TAG, "Update on result "+resultCode);

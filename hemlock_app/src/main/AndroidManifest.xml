@@ -85,7 +85,7 @@
                 android:label="@string/hold_place_title">
         </activity>
         <activity
-                android:name="org.evergreen_ils.accountAccess.holds.EditHoldActivity"
+                android:name="org.evergreen_ils.accountAccess.holds.HoldDetailsActivity"
                 android:label="@string/hold_details_title">
         </activity>
 
