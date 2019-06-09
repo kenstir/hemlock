@@ -66,6 +66,9 @@ public class BarcodeActivity extends BaseActivity {
     }
 
     private Bitmap createBitmap(String data, int image_width, int image_height) {
+        if (image_width <= 0 || image_height <= 0)
+            return null;
+
         // Try formats until we successfully encode the data
         BitMatrix bitMatrix = null;
         if (bitMatrix == null)
