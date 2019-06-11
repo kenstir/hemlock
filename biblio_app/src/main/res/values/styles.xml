@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- Missing material colors from https://material.google.com/style/color.html#color-color-palette -->
+    <color name="material_grey_200">#EEEEEE</color>
+    <color name="material_grey_400">#BDBDBD</color>
+    <color name="material_grey_500">#9E9E9E</color>
+    <color name="material_grey_700">#616161</color>
+
+    <!-- material colors courtesy of https://material.io/tools/color/#!/?view.left=0&view.right=0&primary.color=01579B -->
+    <color name="acorn_primary">#01579b</color>
+    <color name="acorn_light">#4f83cc</color>
+    <color name="acorn_dark">#002f6c</color>
+
+    <color name="primary">@color/acorn_primary</color>
+    <color name="primary_dark">@color/primary_dark_material_dark</color>
+    <color name="accent">@color/acorn_light</color>
+    <color name="hemlock_accent">@color/acorn_light</color>
+    <color name="hemlock_text_alert">#ff9100</color>
+
+    <style name="COOLDark" parent="Theme.AppCompat">
+        <item name="colorPrimary">@color/primary</item>
+        <item name="colorPrimaryDark">@color/primary_dark</item>
+        <item name="colorAccent">@color/accent</item>
+    </style>
+
+    <style name="COOLDarkNoActionBar" parent="Theme.AppCompat.NoActionBar">
+        <item name="colorPrimary">@color/primary</item>
+        <item name="colorPrimaryDark">@color/primary_dark</item>
+        <item name="colorAccent">@color/accent</item>
+    </style>
+
+    <style name="alertText">
+        <item name="android:textColor">@color/hemlock_text_alert</item>
+    </style>
+
+    <!-- I wanted to make the accent color of the progressbar green, but this does not do it -->
+    <style name="HemlockProgressBar" parent="Widget.AppCompat.ProgressBar.Horizontal">
+        <item name="colorPrimaryDark">@color/accent</item>
+        <item name="colorPrimary">@color/accent</item>
+        <item name="colorAccent">@color/accent</item>
+    </style>
+
+</resources>
