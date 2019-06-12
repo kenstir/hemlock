@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/biblio_app/biblio_app.iml" filepath="$PROJECT_DIR$/biblio_app/biblio_app.iml" />
       <module fileurl="file://$PROJECT_DIR$/cool_app/cool_app.iml" filepath="$PROJECT_DIR$/cool_app/cool_app.iml" />
       <module fileurl="file://$PROJECT_DIR$/core/core.iml" filepath="$PROJECT_DIR$/core/core.iml" />
       <module fileurl="file://$PROJECT_DIR$/cwmars_app/cwmars_app.iml" filepath="$PROJECT_DIR$/cwmars_app/cwmars_app.iml" />
