@@ -8,7 +8,7 @@
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
-            <option value="$PROJECT_DIR$/biblio_app" />
+            <option value="$PROJECT_DIR$/acorn_app" />
             <option value="$PROJECT_DIR$/cool_app" />
             <option value="$PROJECT_DIR$/core" />
             <option value="$PROJECT_DIR$/cwmars_app" />
