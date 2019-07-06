@@ -113,9 +113,7 @@ public class Api {
     public static final String COPY_LOCATION_COUNTS = "open-ils.search.biblio.copy_location_counts.summary.retrieve";
     public static final String COPY_STATUS_ALL = "open-ils.search.config.copy_status.retrieve.all"; // [ccs]
     public static final String COPY_COUNT = "open-ils.search.biblio.record.copy_count";
-    public static final String METABIB_RECORD_TO_DESCRIPTORS = "open-ils.search.metabib.record_to_descriptors";
     public static final String ASSET_CALL_NUMBER_RETRIEVE = "open-ils.search.asset.call_number.retrieve";
-    public static final String RECORD_MODS_SLIM_RETRIEVE = "open-ils.search.biblio.record.mods_slim.retrieve";
     public static final String METARECORD_MODS_SLIM_RETRIEVE = "open-ils.search.biblio.metarecord.mods_slim.retrieve";
     public static final String ASSET_COPY_RETRIEVE = "open-ils.search.asset.copy.retrieve";
     public static final String MODS_FROM_COPY = "open-ils.search.biblio.mods_from_copy";

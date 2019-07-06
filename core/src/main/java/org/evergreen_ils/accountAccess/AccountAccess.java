@@ -645,7 +645,7 @@ public class AccountAccess {
             if (holdType.equals("M"))
                 method = Api.METARECORD_MODS_SLIM_RETRIEVE;
             else //(holdType.equals("T"))
-                method = Api.RECORD_MODS_SLIM_RETRIEVE;
+                method = Api.MODS_SLIM_RETRIEVE;
             holdInfo = (OSRFObject) Utils.doRequest(conn(), Api.SEARCH,
                     method, new Object[] {
                             target });
@@ -696,7 +696,7 @@ public class AccountAccess {
 
                 Log.d(TAG, "Record " + record);
                 OSRFObject holdInfo = (OSRFObject) Utils.doRequest(conn(),
-                        Api.SEARCH, Api.RECORD_MODS_SLIM_RETRIEVE,
+                        Api.SEARCH, Api.MODS_SLIM_RETRIEVE,
                         new Object[] { record });
 
                 holdObj.title = holdInfo.getString("title");
@@ -718,7 +718,7 @@ public class AccountAccess {
 
             Log.d(TAG, "Record " + record);
             OSRFObject holdInfo = (OSRFObject) Utils.doRequest(conn(),
-                    Api.SEARCH, Api.RECORD_MODS_SLIM_RETRIEVE,
+                    Api.SEARCH, Api.MODS_SLIM_RETRIEVE,
                     new Object[] { record });
 
             holdObj.title = holdInfo.getString("title");
@@ -757,7 +757,7 @@ public class AccountAccess {
             String part_label = (String) partObj.get("label");
 
             OSRFObject holdInfo = (OSRFObject) Utils.doRequest(conn(),
-                    Api.SEARCH, Api.RECORD_MODS_SLIM_RETRIEVE,
+                    Api.SEARCH, Api.MODS_SLIM_RETRIEVE,
                     new Object[] { recordID });
 
             holdObj.part_label = part_label;
