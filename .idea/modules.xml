@@ -8,7 +8,9 @@
       <module fileurl="file://$PROJECT_DIR$/cwmars_app/cwmars_app.iml" filepath="$PROJECT_DIR$/cwmars_app/cwmars_app.iml" />
       <module fileurl="file://$PROJECT_DIR$/hemlock.iml" filepath="$PROJECT_DIR$/hemlock.iml" />
       <module fileurl="file://$PROJECT_DIR$/hemlock_app/hemlock_app.iml" filepath="$PROJECT_DIR$/hemlock_app/hemlock_app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/noble_app/noble_app.iml" filepath="$PROJECT_DIR$/noble_app/noble_app.iml" />
       <module fileurl="file://$PROJECT_DIR$/pines_app/pines_app.iml" filepath="$PROJECT_DIR$/pines_app/pines_app.iml" />
     </modules>
   </component>
 </project>
+

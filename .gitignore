@@ -5,10 +5,12 @@ fm_IDL.*
 /local.properties
 /.idea/assetWizardSettings.xml
 /.idea/caches
+/.idea/tasks.xml
 /.idea/workspace.xml
 /.idea/libraries
 .DS_Store
 /build
+*/build
 /captures
 ConcreteBillingDataProvider.java
 version.*

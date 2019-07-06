@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="ou_account_label">NOBLE</string>
+    <string name="ou_account_sign_in_message">Sign in to your NOBLE account</string>
+    <string name="ou_choose_library_label"></string>
+    <string name="ou_sign_in_label"></string>
+    <string name="ou_account_type">net.kenstir.apps.noble</string>
+    <string name="ou_app_label">NOBLE</string>
+    <string name="ou_library_name">NOBLE</string>
+    <string name="ou_activity_subtitle">%2$s</string>
+    <string name="ou_library_url">https://evergreen.noblenet.org</string>
+    <string name="ou_barcode_format">Codabar</string>
+    <integer name="ou_search_limit">100</integer>
+</resources>
