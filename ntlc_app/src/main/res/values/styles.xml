@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- Missing material colors from https://material.google.com/style/color.html#color-color-palette -->
+    <color name="material_grey_200">#EEEEEE</color>
+    <color name="material_grey_400">#BDBDBD</color>
+    <color name="material_grey_500">#9E9E9E</color>
+    <color name="material_grey_700">#616161</color>
+
+    <!-- ntlc_dark is from the OPAC, the rest are from the logo -->
+    <color name="ntlc_dark">#27442F</color>
+    <color name="ntlc_1">#559767</color>
+    <color name="ntlc_2">#6FA278</color>
+    <color name="ntlc_3">#B8D499</color>
+    <color name="ntlc_4">#DBEEB4</color>
+
+    <color name="primary">@color/ntlc_dark</color>
+    <color name="primary_dark">@color/primary_dark_material_dark</color>
+    <color name="accent">@color/ntlc_4</color>
+    <color name="hemlock_accent">@color/ntlc_4</color>
+    <color name="hemlock_text_alert">#ff9100</color>
+
+    <style name="HemlockDark" parent="Theme.AppCompat">
+        <item name="colorPrimary">@color/primary</item>
+        <item name="colorPrimaryDark">@color/primary_dark</item>
+        <item name="colorAccent">@color/accent</item>
+    </style>
+
+    <style name="HemlockDarkNoActionBar" parent="Theme.AppCompat.NoActionBar">
+        <item name="colorPrimary">@color/primary</item>
+        <item name="colorPrimaryDark">@color/primary_dark</item>
+        <item name="colorAccent">@color/accent</item>
+    </style>
+
+    <style name="alertText">
+        <item name="android:textColor">@color/hemlock_text_alert</item>
+    </style>
+
+    <!-- I wanted to make the accent color of the progressbar green, but this does not do it -->
+    <style name="HemlockProgressBar" parent="Widget.AppCompat.ProgressBar.Horizontal">
+        <item name="colorPrimaryDark">@color/accent</item>
+        <item name="colorPrimary">@color/accent</item>
+        <item name="colorAccent">@color/accent</item>
+    </style>
+
+</resources>

@@ -1,1 +1,1 @@
-include ':core', ':hemlock_app', ':pines_app', ':cwmars_app', ':cool_app', ':acorn_app', ':noble_app'
+include ':core', ':hemlock_app', ':pines_app', ':cwmars_app', ':cool_app', ':acorn_app', ':noble_app', ':ntlc_app'
