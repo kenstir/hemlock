@@ -35,17 +35,5 @@ public class TestJSON {
         map.put("key7", obj);
         list.add(obj);
         System.out.println(new JSONWriter(map).write() + "\n");
-
-
-        Message m = new Message(1, Message.REQUEST);
-        Method method = new Method("opensrf.settings.host_config.get");
-        method.addParam("app07.dev.gapines.org");
-        m.setPayload(method);
-
-        String s = new JSONWriter(m).write();
-        System.out.println(s + "\n");
-
-        Object o = new JSONReader(s).read();
-        System.out.println("Read+Wrote: " + new JSONWriter(o).write());
     }
 }
