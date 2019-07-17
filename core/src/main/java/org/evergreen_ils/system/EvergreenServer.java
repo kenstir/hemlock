@@ -119,7 +119,6 @@ public class EvergreenServer {
             long now_ms = System.currentTimeMillis();
             conn = getURLConnection(getIDLUrl(library_url));
             IDLParser parser = new IDLParser(conn.getInputStream());
-            parser.setKeepIDLObjects(false);
             now_ms = Log.logElapsedTime(TAG, now_ms, "loadIDL.init");
             parser.parse();
             now_ms = Log.logElapsedTime(TAG, now_ms, "loadIDL.total");
