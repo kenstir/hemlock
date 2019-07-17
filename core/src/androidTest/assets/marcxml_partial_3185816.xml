@@ -1,0 +1,48 @@
+<?xml version="1.0"?>
+<collection xmlns="http://www.loc.gov/MARC21/slim" xmlns:marc="http://www.loc.gov/MARC21/slim">
+  <record xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.loc.gov/MARC21/slim http://www.loc.gov/standards/marcxml/schema/MARC21slim.xsd">
+    <leader>05887cam a2200697Ia 4500</leader>
+    <controlfield tag="001">ocn639048502</controlfield>
+    <datafield tag="035" ind1=" " ind2=" ">
+      <subfield code="a">(OCoLC)639048502</subfield>
+      <subfield code="z">(OCoLC)698212662</subfield>
+      <subfield code="z">(OCoLC)817718682</subfield>
+    </datafield>
+    <datafield tag="856" ind1="4" ind2=" ">
+      <subfield code="3">Image</subfield>
+      <subfield code="u">http://images.contentreserve.com/ImageType-100/0305-1/{8A3A1008-FD59-4846-BF90-CE4976A41A40}Img100.jpg</subfield>
+      <subfield code="9">NEWTWN</subfield>
+      <subfield code="x">newtwn</subfield>
+    </datafield>
+    <datafield tag="856" ind1="4" ind2="0">
+      <subfield code="3">Excerpt</subfield>
+      <subfield code="u">https://samples.overdrive.com/hunger-games-c540fc?.epub-sample.overdrive.com</subfield>
+      <subfield code="9">NEWTWN</subfield>
+      <subfield code="x">newtwn</subfield>
+    </datafield>
+    <datafield tag="856" ind1="4" ind2="0">
+      <subfield code="u">http://link.overdrive.com/?websiteID=197&amp;titleID=1714132</subfield>
+      <subfield code="y">Available Online from OverDrive for C.H. Booth Library patrons only. Click here to download</subfield>
+      <subfield code="9">NEWTWN</subfield>
+      <subfield code="x">newtwn</subfield>
+    </datafield>
+    <datafield tag="856" ind1="4" ind2="0">
+      <subfield code="u">http://bibliomation.lib.overdrive.com/ContentDetails.htm?ID=8A3A1008-FD59-4846-BF90-CE4976A41A40</subfield>
+      <subfield code="y">Available Online from Overdrive. Click here to download.</subfield>
+      <subfield code="9">NCANAAN</subfield>
+      <subfield code="9">NEWTWN</subfield>
+      <subfield code="9">NORFLK</subfield>
+      <subfield code="x">cons</subfield>
+    </datafield>
+    <datafield tag="856" ind1="4" ind2="0">
+      <subfield code="3">Excerpt</subfield>
+      <subfield code="u">https://samples.overdrive.com/hunger-games-c540fc?.epub-sample.overdrive.com</subfield>
+      <subfield code="y">Available Online from Overdrive. Click here to download.</subfield>
+      <subfield code="9">NCANAAN</subfield>
+      <subfield code="9">NEWTWN</subfield>
+      <subfield code="9">NORFLK</subfield>
+      <subfield code="x">cons</subfield>
+    </datafield>
+  </record>
+</collection>
+
