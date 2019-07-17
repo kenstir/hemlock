@@ -85,11 +85,11 @@ public class EvergreenAuthenticator {
         String seed = resp.toString();
 
         // step 2: complete auth with seed + password
-        HashMap<String, String> complexParam = new HashMap<String, String>();
-        complexParam.put("type", "opac");
-        complexParam.put("username", username);
-        complexParam.put("password", md5(seed + md5(password)));
-        resp = doRequest(conn, Api.AUTH, Api.AUTH_COMPLETE, new Object[] { complexParam });
+        HashMap<String, String> param = new HashMap<>();
+        param.put("type", "opac");
+        param.put("username", username);
+        param.put("password", md5(seed + md5(password)));
+        resp = doRequest(conn, Api.AUTH, Api.AUTH_COMPLETE, new Object[] { param });
         if (resp == null)
             throw new AuthenticationException("Unable to complete login");
         

@@ -46,7 +46,6 @@ public class VolleyWranglerTest {
     private String mStringResponse = null;
     private JSONObject mJsonResponse = null;
     private String mError = null;
-    private Exception mException = null;
     private long mStartTime;
 
     // this is how we block until all volley requests are finished
@@ -69,6 +68,7 @@ public class VolleyWranglerTest {
                 long duration_ms = System.currentTimeMillis() - mStartTime;
                 Log.d(TAG, "failure took " + duration_ms + "ms");
                 mError = error.getMessage();
+                Log.d(TAG, "error: " + mError);
                 finishRequest();
             }
         };
@@ -119,7 +119,7 @@ public class VolleyWranglerTest {
         mLock.lock();
         try {
             Log.d(TAG, "waitForAllResponses:await");
-            return mFinishedCondition.await(1000, TimeUnit.MILLISECONDS);
+            return mFinishedCondition.await(10000, TimeUnit.MILLISECONDS);
         } finally {
             mLock.unlock();
         }

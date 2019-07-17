@@ -572,14 +572,14 @@ public class AccountAccess {
      */
     public GatewayResponse renewCirc(Integer target_copy) throws SessionNotFoundException {
 
-        HashMap<String, Integer> complexParam = new HashMap<>();
-        complexParam.put("patron", this.userID);
-        complexParam.put("copyid", target_copy);
-        complexParam.put("opac_renewal", 1);
+        HashMap<String, Integer> param = new HashMap<>();
+        param.put("patron", this.userID);
+        param.put("copyid", target_copy);
+        param.put("opac_renewal", 1);
 
         Object resp = Utils.doRequest(conn(), Api.SERVICE_CIRC,
                 Api.CIRC_RENEW, authToken, new Object[] {
-                        authToken, complexParam });
+                        authToken, param });
 
         return GatewayResponse.createFromObject(resp);
     }
