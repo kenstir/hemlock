@@ -1,11 +1,14 @@
 package org.opensrf.util;
 
-import java.io.*;
-import java.util.*;
-
-import org.json.JSONTokener;
-import org.json.JSONObject;
 import org.json.JSONArray;
+import org.json.JSONObject;
+import org.json.JSONTokener;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 
 /**
