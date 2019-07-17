@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Set;
 
 import org.opensrf.util.OSRFRegistry;
 import org.xmlpull.v1.XmlPullParser;
@@ -25,18 +24,11 @@ public class IDLParser {
 
     /** The source for the IDL XML */
     InputStream inStream;
-    HashMap<String, IDLObject> IDLObjects;
     IDLObject current;
     private int fieldIndex;
-
-    /** If true, we retain the full set of IDL objects in memory.  This is true by default. */
-    private boolean keepIDLObjects;
-
     private int parsedObjectCount;
 
     public IDLParser() {
-        IDLObjects = new HashMap<String, IDLObject>();
-        keepIDLObjects = true;
         parsedObjectCount = 0;
         fieldIndex = 0;
     }
@@ -48,14 +40,6 @@ public class IDLParser {
     public IDLParser(InputStream inStream) {
         this();
         this.inStream = inStream;
-    }
-
-    public boolean isKeepIDLObjects() {
-        return keepIDLObjects;
-    }
-
-    public void setKeepIDLObjects(boolean keepIDLObjects) {
-        this.keepIDLObjects = keepIDLObjects;
     }
 
     /**
@@ -87,28 +71,6 @@ public class IDLParser {
         }
    }
 
-    /**
-    * Returns the IDLObject with the given IDLClass 
-    */
-    public IDLObject getObject(String IDLClass) {
-      return (IDLObject) IDLObjects.get(IDLClass);
-    }
-
-    /**
-     * Returns the full set of IDL objects as a hash from classname to object.
-     * If keepIDLObjects is false, the map will be empty.
-     */
-    public HashMap<String, IDLObject> getIDLObjects() {
-        return IDLObjects;
-    }
-
-    /**
-     * Returns the number of parsed objects, regardless of the keepIDLObjects setting.
-     */
-    public int getObjectCount() {
-        return parsedObjectCount;
-    }
-
 
     public void handleStartElement(XmlPullParser reader) {
 
@@ -137,10 +99,6 @@ public class IDLParser {
         String localpart = reader.getName();
 
         if("class".equals(localpart)) {
-
-            if(keepIDLObjects)
-                IDLObjects.put(current.getIDLClass(), current);
-
             HashMap fields = current.getFields();
             String fieldNames[] = new String[fields.size()];
 
@@ -164,25 +122,4 @@ public class IDLParser {
             current = null;
         }
     }
-
-
-    public String toXML() {
-        StringBuffer sb = new StringBuffer();
-        Set keys = IDLObjects.keySet();
-        Iterator itr = IDLObjects.keySet().iterator();
-        String IDLClass;
-        IDLObject obj;
-        while(itr.hasNext()) {
-            IDLClass = (String) itr.next();
-            obj = IDLObjects.get(IDLClass);
-            obj.toXML(sb);
-        }
-        return sb.toString();
-    }
 }
-
-
-
-
-
-
