@@ -39,6 +39,8 @@ import java.util.StringTokenizer;
  */
 public class Api {
 
+    public static final String ANONYMOUS = "ANONYMOUS";
+
     /// actor
 
     public static final String ACTOR = "open-ils.actor";
