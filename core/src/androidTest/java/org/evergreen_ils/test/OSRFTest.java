@@ -74,19 +74,17 @@ public class OSRFTest {
         mServer = b.getString("server", "http://catalog.cwmars.org");
         mOrgID = Integer.parseInt(b.getString("orgid", "1"));
         mUsername = b.getString("username");
+        mPassword = b.getString("password");
         // if username and password are empty, then maybe .idea/workspace.xml got messed up again;
         // it should contain something like:
         // <option name="EXTRA_OPTIONS" value="-e server http://gapines.org -e username USER -e password PASS" />
-        if (TextUtils.isEmpty(mUsername))
-            return;
-        mPassword = b.getString("password");
-        if (TextUtils.isEmpty(mPassword))
-            return;
-
-        // sign in
-        mAuthToken = EvergreenAuthenticator.signIn(mServer, mUsername, mPassword);
-        if (TextUtils.isEmpty(mAuthToken))
-            return;
+        // 2019-07-20: Looks like Android Studio 3.2.1 does not support EXTRA_OPTIONS any more,
+        // manually entering it causes it to get wiped.  For now will will test as ANONYMOUS.
+        if (TextUtils.isEmpty(mUsername) || TextUtils.isEmpty(mPassword)) {
+            mAuthToken = Api.ANONYMOUS;
+        } else {
+            mAuthToken = EvergreenAuthenticator.signIn(mServer, mUsername, mPassword);
+        }
         Log.d(TAG, "auth_token "+mAuthToken);
 
         // init like the app does in LoadingTask
@@ -192,7 +190,7 @@ public class OSRFTest {
         //String setting = Api.SETTING_SMS_ENABLE;
         Object resp = Utils.doRequest(mConn, Api.ACTOR,
                 Api.ORG_UNIT_SETTING, new Object[]{
-                        org_id, setting, /*mAuthToken*/"ANONYMOUS" });
+                        org_id, setting, Api.ANONYMOUS });
         Boolean is_pickup_location = null;
         if (resp != null) {
             Map<String, ?> resp_map = ((Map<String, ?>) resp);
@@ -210,7 +208,7 @@ public class OSRFTest {
         args.put("active", 1);
         Object resp = Utils.doRequest(conn(), Api.PCRUD_SERVICE,
                 Api.SEARCH_SMS_CARRIERS, new Object[] {
-                        /*mAuthToken*/"ANONYMOUS", args});
+                        Api.ANONYMOUS, args});
         Log.d(TAG, "did we make it?");
         if (resp != null) {
             ArrayList<OSRFObject> l = (ArrayList<OSRFObject>) resp;
@@ -240,12 +238,6 @@ public class OSRFTest {
         String expire_time = null;
         String thaw_date = null;
 
-        // this is a lousy API, returning an Object, and we don't use it
-        /*
-        Object hold_possible_resp = ac.isHoldPossible(recordID, pickup_lib);
-        Log.d(TAG, "resp=" + hold_possible_resp);
-        */
-
         Result result = ac.testAndCreateHold(recordID, pickup_lib, email_notify, null,
                 sms_number, sms_carrier_id, expire_time, suspendHold, thaw_date);
         Log.d(TAG, "ok=" + result.isSuccess());
@@ -253,7 +245,7 @@ public class OSRFTest {
         Log.d(TAG, "here");
     }
 
-    @Test
+    @Ignore("skip until I figure out how to pass username/password") @Test
     public void testMessagesRetrieve() throws Exception {
         assertLoggedIn();
         mConn = EvergreenServer.getInstance().gatewayConnection();
@@ -270,11 +262,11 @@ public class OSRFTest {
         assertLoggedIn();
 
         mConn = EvergreenServer.getInstance().gatewayConnection();
-        AccountAccess ac = AccountAccess.getInstance();
-        ac.retrieveSession(mAuthToken);
+        //AccountAccess ac = AccountAccess.getInstance();
+        //ac.retrieveSession(mAuthToken);
 
         String searchText = "harry potter chamber of secrets";
-        String searchClass = "keyword";
+        String searchClass = "title";
         String searchFormat = "";
         String orgShortName = "ARL-ATH";
 
@@ -283,7 +275,7 @@ public class OSRFTest {
         argHash.put("offset", 0);
 
         StringBuilder sb = new StringBuilder();
-        sb.append(searchClass).append(":").append(searchText).append("");
+        sb.append(searchClass).append(":").append(searchText);
         if (!searchFormat.isEmpty())
             sb.append(" search_format(").append(searchFormat).append(")");
         if (orgShortName != null)
