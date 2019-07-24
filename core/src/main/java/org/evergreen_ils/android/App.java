@@ -25,6 +25,7 @@ import android.content.pm.PackageManager;
 
 import org.evergreen_ils.R;
 import org.evergreen_ils.system.Log;
+import org.evergreen_ils.utils.ui.AppState;
 
 import java.io.File;
 
@@ -44,6 +45,8 @@ public class App {
     public static final int RESULT_PURCHASED = 20001;
 
     private static int mIsDebuggable = -1;
+
+    private static AppBehavior behavior = null;
 
     public static boolean getIsDebuggable(Context context) {
         if (mIsDebuggable < 0)
@@ -75,5 +78,15 @@ public class App {
         } catch (Exception httpResponseCacheNotAvailable) {
             Log.d(TAG, "HTTP response cache is unavailable.");
         }
+    }
+
+    static public void init(Context context) {
+        AppState.init(context);
+        if (behavior == null)
+            behavior = AppFactory.makeBehavior(context.getResources());
+    }
+
+    public static AppBehavior getBehavior() {
+        return behavior;
     }
 }
