@@ -20,22 +20,8 @@
 package org.evergreen_ils.utils.ui;
 
 import android.app.Activity;
-import android.net.Uri;
-import android.text.TextUtils;
-import com.android.volley.toolbox.ImageLoader;
-import com.android.volley.toolbox.NetworkImageView;
-
-import org.evergreen_ils.R;
-import org.evergreen_ils.accountAccess.AccountAccess;
-import org.evergreen_ils.accountAccess.bookbags.BookBag;
-import org.evergreen_ils.accountAccess.bookbags.BookBagUtils;
-import org.evergreen_ils.accountAccess.holds.PlaceHoldActivity;
-import org.evergreen_ils.system.Analytics;
-import org.evergreen_ils.system.EvergreenServer;
-import org.evergreen_ils.system.Log;
-import org.evergreen_ils.net.VolleyWrangler;
-
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -45,12 +31,30 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import com.android.volley.toolbox.ImageLoader;
+import com.android.volley.toolbox.NetworkImageView;
+
+import org.evergreen_ils.android.App;
+
+import org.evergreen_ils.R;
+import org.evergreen_ils.accountAccess.AccountAccess;
+import org.evergreen_ils.accountAccess.bookbags.BookBag;
+import org.evergreen_ils.accountAccess.bookbags.BookBagUtils;
+import org.evergreen_ils.accountAccess.holds.PlaceHoldActivity;
+import org.evergreen_ils.net.VolleyWrangler;
 import org.evergreen_ils.searchCatalog.CopyInformationActivity;
 import org.evergreen_ils.searchCatalog.RecordInfo;
 import org.evergreen_ils.searchCatalog.RecordLoader;
 import org.evergreen_ils.searchCatalog.SearchFormat;
+import org.evergreen_ils.system.Analytics;
+import org.evergreen_ils.system.EvergreenServer;
+import org.evergreen_ils.system.Log;
+import org.evergreen_ils.system.Organization;
+import org.evergreen_ils.utils.Link;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class BasicDetailsFragment extends Fragment {
 
@@ -197,9 +201,13 @@ public class BasicDetailsFragment extends Fragment {
     }
 
     private void launchOnlineAccess() {
-        if (TextUtils.isEmpty(record.online_loc))
+        Organization org = EvergreenServer.getInstance().getOrganization(orgID);
+        List<Link> links = App.getBehavior().getOnlineLocations(record, org.shortname);
+        if (links == null || links.size() == 0)
             return;
-        Uri uri = Uri.parse(record.online_loc);
+
+        //TODO: handle multiple
+        Uri uri = Uri.parse(links.get(0).href);
         Intent i = new Intent(Intent.ACTION_VIEW, uri);
         startActivity(i);
     }
@@ -243,7 +251,7 @@ public class BasicDetailsFragment extends Fragment {
 //    }
 
     private void updateButtonViews() {
-        boolean is_online_resource = record.isOnlineResource();
+        boolean is_online_resource = App.getBehavior().isOnlineResource(record);
         onlineAccessButton.setVisibility(is_online_resource ? View.VISIBLE : View.GONE);
         placeHoldButton.setVisibility(is_online_resource ? View.GONE : View.VISIBLE);
         showCopiesButton.setVisibility(is_online_resource ? View.GONE : View.VISIBLE);
@@ -265,9 +273,13 @@ public class BasicDetailsFragment extends Fragment {
         synopsisTextView.setText(record.synopsis);
         isbnTextView.setText(record.isbn);
 
-        if (record.isOnlineResource()) {
-            Uri uri = Uri.parse(record.online_loc);
-            descriptionTextView.setText(uri.getHost());
+        if (App.getBehavior().isOnlineResource(record)) {
+            Organization org = EvergreenServer.getInstance().getOrganization(orgID);
+            List<Link> links = App.getBehavior().getOnlineLocations(record, org.shortname);
+            if (links != null && links.size() > 0) {
+                Uri uri = Uri.parse(links.get(0).href);
+                descriptionTextView.setText(uri.getHost());
+            }
         }
 
         updateButtonViews();
@@ -296,11 +308,10 @@ public class BasicDetailsFragment extends Fragment {
         // See RecordInfo.isOnlineResource().
         Log.d(TAG, "fetchCopyCountInfo id=" + record.doc_id
               + " basic_metadata_loaded=" + record.basic_metadata_loaded
-              + " search_format_loaded=" + record.search_format_loaded
-              + " isOnlineResource=" + record.isOnlineResource());
+              + " search_format_loaded=" + record.search_format_loaded);
         if (record.basic_metadata_loaded
             && record.search_format_loaded
-            && !record.isOnlineResource()
+            && !App.getBehavior().isOnlineResource(record)
             && !record.copy_summary_loaded)
         {
             RecordLoader.fetchCopySummary(record, orgID, getContext(), new RecordLoader.Listener() {

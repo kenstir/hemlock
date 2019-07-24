@@ -20,6 +20,8 @@ package org.evergreen_ils.views;
 
 import android.app.Activity;
 import android.text.TextUtils;
+
+import org.evergreen_ils.system.Analytics;
 import org.evergreen_ils.system.Log;
 
 /** Interface to get extra buttons provided by the main main of a custom app.
@@ -37,7 +39,7 @@ public abstract class MenuProvider {
             Class clazz = Class.forName(clazzName);
             return (MenuProvider) clazz.newInstance();
         } catch (Exception e) {
-            Log.d(TAG, "error instantiating "+clazzName, e);
+            Analytics.logException(e);
             return null;
         }
     }

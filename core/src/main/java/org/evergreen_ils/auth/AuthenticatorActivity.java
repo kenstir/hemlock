@@ -16,6 +16,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import org.evergreen_ils.android.App;
+
 import org.evergreen_ils.R;
 import org.evergreen_ils.system.Analytics;
 import org.evergreen_ils.system.Library;
@@ -54,7 +56,7 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity {
         Analytics.initialize(this);
         setContentViewImpl();
 
-        AppState.init(this);
+        App.init(this);
 
         accountManager = AccountManager.get(getBaseContext());
 

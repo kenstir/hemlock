@@ -25,6 +25,8 @@
     <string name="ou_billing_data_provider"></string>
     <!-- name of class that supplies menu handler for main menu extensions -->
     <string name="ou_menu_provider"></string>
+    <!-- name of class that implements AppBehavior -->
+    <string name="ou_behavior_provider"></string>
     <!-- email address to which debug logs may be sent -->
     <string name="ou_developer_email">kenstir.apps@gmail.com</string>
     <!-- if true, organize library spinners hierarchically -->
@@ -41,6 +43,8 @@
     <bool name="ou_enable_messages">false</bool>
     <!-- if true, enable Pay Fines button based on settings -->
     <bool name="ou_enable_pay_fines">true</bool>
+    <!-- if true, we must load MARCXML records to load online locations -->
+    <bool name="ou_need_marc_record">false</bool>
     <!-- if non-empty, the Barcode format to display for Show Card -->
     <string name="ou_barcode_format"></string>
     <!-- max number of results to return from Search.  Do not exceed 400 or you may
