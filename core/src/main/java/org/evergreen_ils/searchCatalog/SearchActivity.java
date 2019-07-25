@@ -222,7 +222,7 @@ public class SearchActivity extends BaseActivity {
                     }
                 });
 
-                searchResults = search.getSearchResults(text, getSearchClass(), getSearchFormat(), 0);
+                searchResults = search.getSearchResults(text, getSearchClass(), getSearchFormat(), getString(R.string.ou_sort_by), 0);
                 try {
                     Organization search_org = search.selectedOrganization;
                     Organization home_org = eg.getOrganization(AccountAccess.getInstance().getHomeLibraryID());
