@@ -19,6 +19,8 @@
  */
 package org.evergreen_ils.searchCatalog;
 
+import android.text.TextUtils;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -84,7 +86,7 @@ public class SearchCatalog {
      * @param searchText the search words
      * @return the search results
      */
-    public ArrayList<RecordInfo> getSearchResults(String searchText, String searchClass, String searchFormat, Integer offset) {
+    public ArrayList<RecordInfo> getSearchResults(String searchText, String searchClass, String searchFormat, String sort, Integer offset) {
 
         this.searchText = searchText;
         this.searchClass = searchClass;
@@ -101,12 +103,12 @@ public class SearchCatalog {
         // e.g. "title:Harry Potter chamber of secrets search_format(book) site(MARLBORO)"
         StringBuilder sb = new StringBuilder();
         sb.append(searchClass).append(":").append(searchText);
-        if (!searchFormat.isEmpty())
+        if (!TextUtils.isEmpty(searchFormat))
             sb.append(" search_format(").append(searchFormat).append(")");
         if (this.selectedOrganization != null)
             sb.append(" site(").append(this.selectedOrganization.shortname).append(")");
-        //if (true)
-        //    sb.append(" sort(poprel)");
+        if (!TextUtils.isEmpty(sort))
+            sb.append(" sort(").append(sort).append(")");
         String queryString = sb.toString();
 
         long start_ms = System.currentTimeMillis();

@@ -29,6 +29,9 @@
     <string name="ou_behavior_provider"></string>
     <!-- email address to which debug logs may be sent -->
     <string name="ou_developer_email">kenstir.apps@gmail.com</string>
+    <!-- sort keyword to use in the open-ils.search.biblio.multiclass.query request, e.g. poprel
+         if empty the sort() clause is omitted -->
+    <string name="ou_sort_by"></string>
     <!-- if true, organize library spinners hierarchically -->
     <bool name="ou_hierarchical_org_tree">false</bool>
     <!-- if true, group copy information by system and branch, instead of by branch -->
