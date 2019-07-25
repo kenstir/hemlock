@@ -25,6 +25,7 @@ import com.android.volley.VolleyError;
 import org.evergreen_ils.Api;
 import org.evergreen_ils.R;
 import org.evergreen_ils.accountAccess.AccountAccess;
+import org.evergreen_ils.android.App;
 import org.evergreen_ils.system.EvergreenServer;
 import org.evergreen_ils.system.Log;
 import org.evergreen_ils.system.Utils;
@@ -50,6 +51,7 @@ public class RecordLoader {
     public static void fetch(final RecordInfo record, final Context context, final ResponseListener responseListener) {
         fetchBasicMetadata(record, context, responseListener);
         fetchSearchFormat(record, context, responseListener);
+        // TODO: MARCXML
     }
 
     public static void fetchBasicMetadata(final RecordInfo record, Context context, final ResponseListener responseListener) {
@@ -83,12 +85,10 @@ public class RecordLoader {
         if (record.search_format_loaded) {
             responseListener.onSearchFormatLoaded();
         } else {
-            // todo newer EG supports using "ANONYMOUS" as the auth_token in PCRUD requests.
-            // Older EG does not, and requires a valid auth_token.
             final long start_ms = System.currentTimeMillis();
             String url = EvergreenServer.getInstance().getUrl(Utils.buildGatewayUrl(
                     Api.PCRUD_SERVICE, Api.RETRIEVE_MRA,
-                    new Object[]{AccountAccess.getInstance().getAuthToken(), record.doc_id}));
+                    new Object[]{Api.ANONYMOUS, record.doc_id}));
             Log.d(TAG, "fetch.searchFormat "+url);
             GatewayJsonObjectRequest r = new GatewayJsonObjectRequest(
                     url,
