@@ -112,23 +112,23 @@ public class PlaceHoldActivity extends AppCompatActivity {
         accountAccess = AccountAccess.getInstance();
         progress = new ProgressDialogSupport();
 
-        title = (TextView) findViewById(R.id.hold_title);
-        author = (TextView) findViewById(R.id.hold_author);
-        format = (TextView) findViewById(R.id.hold_format);
-        placeHold = (Button) findViewById(R.id.place_hold);
-        expiration_date = (EditText) findViewById(R.id.hold_expiration_date);
-        email_notification = (CheckBox) findViewById(R.id.hold_enable_email_notification);
-        phone_notification_label = (TextView) findViewById(R.id.hold_phone_notification_label);
-        sms_notification_label = (TextView) findViewById(R.id.hold_sms_notification_label);
-        sms_spinner_label = (TextView) findViewById(R.id.hold_sms_spinner_label);
-        phone_notification = (CheckBox) findViewById(R.id.hold_enable_phone_notification);
-        phone_notify = (EditText) findViewById(R.id.hold_phone_notify);
-        sms_notify = (EditText) findViewById(R.id.hold_sms_notify);
-        sms_notification = (CheckBox) findViewById(R.id.hold_enable_sms_notification);
-        sms_spinner = (Spinner) findViewById(R.id.hold_sms_carrier);
-        suspendHold = (CheckBox) findViewById(R.id.hold_suspend_hold);
-        orgSpinner = (Spinner) findViewById(R.id.hold_pickup_location);
-        thaw_date_edittext = (EditText) findViewById(R.id.hold_thaw_date);
+        title = findViewById(R.id.hold_title);
+        author = findViewById(R.id.hold_author);
+        format = findViewById(R.id.hold_format);
+        placeHold = findViewById(R.id.place_hold);
+        expiration_date = findViewById(R.id.hold_expiration_date);
+        email_notification = findViewById(R.id.hold_enable_email_notification);
+        phone_notification_label = findViewById(R.id.hold_phone_notification_label);
+        sms_notification_label = findViewById(R.id.hold_sms_notification_label);
+        sms_spinner_label = findViewById(R.id.hold_sms_spinner_label);
+        phone_notification = findViewById(R.id.hold_enable_phone_notification);
+        phone_notify = findViewById(R.id.hold_phone_notify);
+        sms_notify = findViewById(R.id.hold_sms_notify);
+        sms_notification = findViewById(R.id.hold_enable_sms_notification);
+        sms_spinner = findViewById(R.id.hold_sms_carrier);
+        suspendHold = findViewById(R.id.hold_suspend_hold);
+        orgSpinner = findViewById(R.id.hold_pickup_location);
+        thaw_date_edittext = findViewById(R.id.hold_thaw_date);
 
         title.setText(record.title);
         author.setText(record.author);
@@ -293,22 +293,30 @@ public class PlaceHoldActivity extends AppCompatActivity {
     }
 
     private void initPhoneControls(boolean systemwide_phone_enabled) {
+        boolean defaultPhoneNotification = accountAccess.getDefaultPhoneNotification();
+        String defaultPhoneNumber = accountAccess.getDefaultPhoneNumber();
         if (systemwide_phone_enabled) {
-            boolean isChecked = accountAccess.getDefaultPhoneNotification();
-            phone_notification.setChecked(isChecked);
+            phone_notification.setChecked(defaultPhoneNotification);
+            phone_notify.setText(safeString(defaultPhoneNumber));
             phone_notification.setOnCheckedChangeListener(new OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                     phone_notify.setEnabled(isChecked);
                 }
             });
-            phone_notify.setEnabled(isChecked);
-            phone_notify.setText(safeString(accountAccess.getDefaultPhoneNumber()));
+            phone_notify.setEnabled(defaultPhoneNotification);
         } else {
-            phone_notification.setChecked(false);
             phone_notification_label.setVisibility(View.GONE);
             phone_notification.setVisibility(View.GONE);
             phone_notify.setVisibility(View.GONE);
+            // As a special case, we set the checkbox and text field for patrons with phone
+            // notification turned on with a phone number, even for apps where the checkbox is hidden.
+            // This causes us to set phone_notify=### on holds, which makes it print on hold slips,
+            // allowing those few remaining patrons to continue getting notifications by phone.
+            if (defaultPhoneNotification && !TextUtils.isEmpty(defaultPhoneNumber)) {
+                phone_notification.setChecked(defaultPhoneNotification);
+                phone_notify.setText(safeString(defaultPhoneNumber));
+            }
         }
     }
 
