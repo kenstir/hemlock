@@ -79,7 +79,7 @@ public class OSRFTest {
         // it should contain something like:
         // <option name="EXTRA_OPTIONS" value="-e server http://gapines.org -e username USER -e password PASS" />
         // 2019-07-20: Looks like Android Studio 3.2.1 does not support EXTRA_OPTIONS any more,
-        // manually entering it causes it to get wiped.  For now will will test as ANONYMOUS.
+        // manually entering it causes it to get wiped.  For now we will test as ANONYMOUS.
         if (TextUtils.isEmpty(mUsername) || TextUtils.isEmpty(mPassword)) {
             mAuthToken = Api.ANONYMOUS;
         } else {
