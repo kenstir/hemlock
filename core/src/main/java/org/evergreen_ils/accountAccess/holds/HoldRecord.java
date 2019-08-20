@@ -144,7 +144,8 @@ public class HoldRecord implements Serializable {
             return "Network error; status unavailable";
         } else if (status == 4) {
             String status = "Available";
-            if (shelf_expire_time != null) status = status + "\nExpires " + DateFormat.getDateInstance().format(shelf_expire_time);
+            if (res.getBoolean(R.bool.ou_enable_hold_shelf_expiration) && shelf_expire_time != null)
+                status = status + "\nExpires " + DateFormat.getDateInstance().format(shelf_expire_time);
             return status;
         } else if (status == 7) {
             return "Suspended";

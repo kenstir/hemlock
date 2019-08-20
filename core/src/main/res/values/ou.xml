@@ -31,12 +31,12 @@
     <bool name="ou_hierarchical_org_tree">false</bool>
     <!-- if true, group copy information by system and branch, instead of by branch -->
     <bool name="ou_group_copy_info_by_system">false</bool>
-    <!-- if true, use ORG_UNIT_SETTING_RETRIEVE to determine hold pickup locations (expensive) -->
-    <bool name="ou_query_for_hold_pickup_locations">false</bool>
     <!-- if true, enable phone notification controls on Place Hold screen -->
     <bool name="ou_enable_phone_notification">false</bool>
     <!-- if true, allow patron to see their position in hold queue -->
     <bool name="ou_enable_hold_queue_position">true</bool>
+    <!-- if true, show "expires DATE" for holds that are Available -->
+    <bool name="ou_enable_hold_shelf_expiration">true</bool>
     <!-- if true, enable messages link in app bar -->
     <bool name="ou_enable_messages">false</bool>
     <!-- if true, enable Pay Fines button based on settings -->

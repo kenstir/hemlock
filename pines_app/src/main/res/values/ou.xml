@@ -14,9 +14,9 @@
     <string name="ou_menu_provider">net.kenstir.apps.pines.PinesMenuProvider</string>
     <bool name="ou_hierarchical_org_tree">true</bool>
     <bool name="ou_group_copy_info_by_system">true</bool>
-    <bool name="ou_query_for_hold_pickup_locations">true</bool>
     <bool name="ou_enable_phone_notification">true</bool>
     <bool name="ou_enable_hold_queue_position">false</bool>
+    <bool name="ou_enable_hold_shelf_expiration">false</bool>
     <bool name="ou_enable_messages">true</bool>
     <bool name="ou_enable_pay_fines">true</bool>
     <string name="ou_barcode_format">Codabar</string>
