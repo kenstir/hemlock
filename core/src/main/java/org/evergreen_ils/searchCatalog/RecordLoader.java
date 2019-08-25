@@ -80,6 +80,32 @@ public class RecordLoader {
         }
     }
 
+    public static void fetchMARCXML(final RecordInfo record, Context context, final ResponseListener responseListener) {
+        Log.d(TAG, "fetchMARCXML id="+record.doc_id);
+        if (record.marcxml_loaded) {
+            responseListener.onMetadataLoaded();
+        } else {
+            final long start_ms = System.currentTimeMillis();
+            String url = EvergreenServer.getInstance().getUrl(Utils.buildGatewayUrl(
+                    Api.PCRUD_SERVICE, Api.RETRIEVE_BRE,
+                    new Object[]{Api.ANONYMOUS, record.doc_id}));
+            Log.d(TAG, "fetch.marcxml "+url);
+            GatewayJsonObjectRequest r = new GatewayJsonObjectRequest(
+                    url,
+                    Request.Priority.HIGH,
+                    new Response.Listener<GatewayResponse>() {
+                        @Override
+                        public void onResponse(GatewayResponse response) {
+                            record.updateFromBREResponse(response);
+                            Log.logElapsedTime(TAG, start_ms, "fetch.basic");
+                            responseListener.onMetadataLoaded();
+                        }
+                    },
+                    VolleyWrangler.logErrorListener(TAG));
+            VolleyWrangler.getInstance(context).addToRequestQueue(r);
+        }
+    }
+
     public static void fetchSearchFormat(final RecordInfo record, Context context, final ResponseListener responseListener) {
         Log.d(TAG, "fetchSearchFormat id="+record.doc_id+ " format="+record.search_format);
         if (record.search_format_loaded) {

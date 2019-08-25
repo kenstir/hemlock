@@ -62,6 +62,7 @@ public class RecordInfo implements Serializable {
     public boolean basic_metadata_loaded = false;
     public boolean search_format_loaded = false;
     public boolean copy_summary_loaded = false;
+    public boolean marcxml_loaded = false;
 
     public ArrayList<CopySummary> copySummaryList = null;
     public String search_format = null;
@@ -136,6 +137,10 @@ public class RecordInfo implements Serializable {
         }
 
         record.basic_metadata_loaded = true;
+    }
+
+    public void updateFromBREResponse(GatewayResponse response) {
+        Log.d(TAG, "kcxxx");
     }
 
     public static void setCopySummary(RecordInfo record, GatewayResponse response) {
