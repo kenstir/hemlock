@@ -15,7 +15,7 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:fillViewport="true"
-            android:padding="5dip"
+            android:padding="10dip"
             android:layout_alignParentTop="true">
 
         <TableLayout
@@ -23,44 +23,41 @@
                 android:layout_height="wrap_content"
                 >
             <TableRow>
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/title"
-                    android:paddingRight="6dp" />
+
                 <TextView
                     android:id="@+id/hold_title"
-                    style="@style/TitleSearchStyleList"
-                    android:layout_width="0dip"
+                    style="@style/textLarge"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_span="2"
                     android:layout_weight="1"
+                    android:paddingLeft="0dp"
+                    android:paddingTop="20dp"
                     tools:text="Trashed : a graphic novel" />
             </TableRow>
             <TableRow>
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/author"
-                    android:paddingRight="6dp" />
+
                 <TextView
                     android:id="@+id/hold_author"
-                    style="@style/AuthorSearchStyleList"
-                    android:layout_width="0dip"
+                    style="@style/textSmall"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_span="2"
                     android:layout_weight="1"
+                    android:paddingLeft="0dp"
                     tools:text="Derf" />
             </TableRow>
             <TableRow>
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/format" />
+
                 <TextView
                     android:id="@+id/hold_format"
-                    style="@style/PubSearchStyleList"
-                    android:layout_width="0dip"
+                    style="@style/textSmall"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_span="2"
                     android:layout_weight="1"
+                    android:paddingLeft="0dp"
+                    android:paddingBottom="20dp"
                     tools:text="Book" />
             </TableRow>
             <TableRow>
