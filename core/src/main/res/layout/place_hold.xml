@@ -16,7 +16,7 @@
             android:layout_height="wrap_content"
             android:fillViewport="true"
             android:padding="10dip"
-            android:layout_alignParentTop="true">
+            >
 
         <TableLayout
                 android:layout_width="fill_parent"
@@ -109,7 +109,8 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:inputType="phone" />
+                        android:inputType="phone"
+                        android:autofillHints="phone" />
                 </LinearLayout>
             </TableRow>
 
@@ -137,7 +138,8 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:inputType="phone" />
+                        android:inputType="phone"
+                        android:autofillHints="phone" />
                 </LinearLayout>
             </TableRow>
 
@@ -165,12 +167,12 @@
                         android:paddingRight="6dp"
                         />
                 <EditText
-                        android:id="@+id/hold_expiration_date"
-                        android:focusable="false"
-                        android:layout_width="0dip"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        />
+                    android:id="@+id/hold_expiration_date"
+                    android:focusable="false"
+                    android:layout_width="0dip"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:inputType="text" />
             </TableRow>
             <TableRow android:visibility="gone">
                 <TextView
@@ -194,13 +196,13 @@
                         android:paddingRight="6dp"
                         />
                 <EditText
-                        android:id="@+id/hold_thaw_date"
-                        android:focusable="false"
-                        android:enabled="false"
-                        android:layout_width="0dip"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        />
+                    android:id="@+id/hold_thaw_date"
+                    android:focusable="false"
+                    android:enabled="false"
+                    android:layout_width="0dip"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:inputType="text" />
             </TableRow>
         </TableLayout>
     </ScrollView>
