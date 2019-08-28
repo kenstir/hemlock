@@ -22,7 +22,8 @@
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 >
-            <TableRow>
+            <TableRow android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
 
                 <TextView
                     android:id="@+id/hold_title"
@@ -35,7 +36,8 @@
                     android:paddingTop="20dp"
                     tools:text="Trashed : a graphic novel" />
             </TableRow>
-            <TableRow>
+            <TableRow android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
 
                 <TextView
                     android:id="@+id/hold_author"
@@ -47,7 +49,8 @@
                     android:paddingLeft="0dp"
                     tools:text="Derf" />
             </TableRow>
-            <TableRow>
+            <TableRow android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
 
                 <TextView
                     android:id="@+id/hold_format"
@@ -60,7 +63,8 @@
                     android:paddingBottom="20dp"
                     tools:text="Book" />
             </TableRow>
-            <TableRow>
+            <TableRow android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -73,7 +77,8 @@
                     android:spinnerMode="dialog"
                     />
             </TableRow>
-            <TableRow>
+            <TableRow android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -87,7 +92,8 @@
                     android:enabled="true"
                     android:checked="true" />
             </TableRow>
-            <TableRow>
+            <TableRow android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
                 <TextView
                     android:id="@+id/hold_phone_notification_label"
                     android:layout_width="wrap_content"
@@ -113,10 +119,8 @@
                         android:autofillHints="phone" />
                 </LinearLayout>
             </TableRow>
-
-            <TableRow
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
+            <TableRow android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
                 <TextView
                     android:id="@+id/hold_sms_notification_label"
                     android:layout_width="wrap_content"
@@ -142,8 +146,8 @@
                         android:autofillHints="phone" />
                 </LinearLayout>
             </TableRow>
-
-            <TableRow>
+            <TableRow android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
                 <TextView
                     android:id="@+id/hold_sms_spinner_label"
                     android:layout_width="wrap_content"
@@ -159,7 +163,8 @@
                     android:spinnerMode="dialog"
                     />
             </TableRow>
-            <TableRow>
+            <TableRow android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
                 <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -174,7 +179,9 @@
                     android:layout_weight="1"
                     android:inputType="text" />
             </TableRow>
-            <TableRow android:visibility="gone">
+            <TableRow android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="gone">
                 <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -188,7 +195,9 @@
                         android:layout_weight="1"
                         />
             </TableRow>
-            <TableRow android:visibility="gone">
+            <TableRow android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="gone">
                 <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
