@@ -24,17 +24,14 @@ import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
 import android.text.TextUtils;
 
-import org.evergreen_ils.*;
+import org.evergreen_ils.Api;
+import org.evergreen_ils.Result;
 import org.evergreen_ils.accountAccess.AccountAccess;
 import org.evergreen_ils.auth.EvergreenAuthenticator;
-import org.evergreen_ils.searchCatalog.RecordInfo;
 import org.evergreen_ils.system.Analytics;
 import org.evergreen_ils.system.EvergreenServer;
 import org.evergreen_ils.system.Log;
 import org.evergreen_ils.system.Utils;
-
-import static org.junit.Assert.*;
-
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -47,6 +44,9 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Created by kenstir on 1/29/2017.
