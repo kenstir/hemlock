@@ -125,7 +125,6 @@ public class Analytics {
                 OSRFObject o = (OSRFObject) resp;
                 String netClass = o.getRegistry().getNetClass();
                 String s = redactResponse(o, netClass);
-                Log.d(TAG, "resp [" + netClass + "]: " + s);
                 Crashlytics.log(Log.DEBUG, TAG, "resp [" + netClass + "]: " + s);
                 return;
             }

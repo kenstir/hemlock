@@ -19,18 +19,19 @@
 package org.evergreen_ils.searchCatalog;
 
 import android.content.Context;
+
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+
 import org.evergreen_ils.Api;
 import org.evergreen_ils.R;
 import org.evergreen_ils.accountAccess.AccountAccess;
-import org.evergreen_ils.android.App;
+import org.evergreen_ils.net.GatewayJsonObjectRequest;
+import org.evergreen_ils.net.VolleyWrangler;
 import org.evergreen_ils.system.EvergreenServer;
 import org.evergreen_ils.system.Log;
 import org.evergreen_ils.system.Utils;
-import org.evergreen_ils.net.GatewayJsonObjectRequest;
-import org.evergreen_ils.net.VolleyWrangler;
 import org.opensrf.util.GatewayResponse;
 
 /** Async interface for loading RecordInfo metadata
@@ -50,8 +51,10 @@ public class RecordLoader {
 
     public static void fetch(final RecordInfo record, final Context context, final ResponseListener responseListener) {
         fetchBasicMetadata(record, context, responseListener);
-        fetchSearchFormat(record, context, responseListener);
-        // TODO: MARCXML
+        fetchRecordAttributes(record, context, responseListener);
+        if (context.getResources().getBoolean(R.bool.ou_need_marc_record)) {
+            fetchMARCXML(record, context, responseListener);
+        }
     }
 
     public static void fetchBasicMetadata(final RecordInfo record, Context context, final ResponseListener responseListener) {
@@ -97,7 +100,7 @@ public class RecordLoader {
                         @Override
                         public void onResponse(GatewayResponse response) {
                             record.updateFromBREResponse(response);
-                            Log.logElapsedTime(TAG, start_ms, "fetch.basic");
+                            Log.logElapsedTime(TAG, start_ms, "fetch.marcxml");
                             responseListener.onMetadataLoaded();
                         }
                     },
@@ -106,24 +109,24 @@ public class RecordLoader {
         }
     }
 
-    public static void fetchSearchFormat(final RecordInfo record, Context context, final ResponseListener responseListener) {
-        Log.d(TAG, "fetchSearchFormat id="+record.doc_id+ " format="+record.search_format);
-        if (record.search_format_loaded) {
+    public static void fetchRecordAttributes(final RecordInfo record, Context context, final ResponseListener responseListener) {
+        Log.d(TAG, "fetchRecordAttributes id="+record.doc_id+ " format="+record.search_format);
+        if (record.attrs_loaded) {
             responseListener.onSearchFormatLoaded();
         } else {
             final long start_ms = System.currentTimeMillis();
             String url = EvergreenServer.getInstance().getUrl(Utils.buildGatewayUrl(
                     Api.PCRUD_SERVICE, Api.RETRIEVE_MRA,
                     new Object[]{Api.ANONYMOUS, record.doc_id}));
-            Log.d(TAG, "fetch.searchFormat "+url);
+            Log.d(TAG, "fetch.attrs "+url);
             GatewayJsonObjectRequest r = new GatewayJsonObjectRequest(
                     url,
                     Request.Priority.NORMAL,
                     new Response.Listener<GatewayResponse>() {
                         @Override
                         public void onResponse(GatewayResponse response) {
-                            record.setSearchFormat(AccountAccess.getSearchFormatFromMRAResponse(response.payload));
-                            Log.logElapsedTime(TAG, start_ms, "fetch.searchFormat");
+                            record.updateFromMRAResponse(response);
+                            Log.logElapsedTime(TAG, start_ms, "fetch.attrs");
                             responseListener.onSearchFormatLoaded();
                         }
                     },

@@ -44,7 +44,9 @@ public class AppBehavior {
         return label.startsWith("E-"); // E-book, E-audio
     }
 
-    public boolean isOnlineResource(RecordInfo record) {
+    public Boolean isOnlineResource(RecordInfo record) {
+        if (!record.basic_metadata_loaded) return null;
+        if (!record.attrs_loaded) return null;
         return (!TextUtils.isEmpty(record.online_loc)
                 && isOnlineFormat(record.search_format));
     }

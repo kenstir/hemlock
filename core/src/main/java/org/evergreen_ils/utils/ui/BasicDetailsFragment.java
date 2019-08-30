@@ -204,7 +204,7 @@ public class BasicDetailsFragment extends Fragment {
         Organization org = EvergreenServer.getInstance().getOrganization(orgID);
         List<Link> links = App.getBehavior().getOnlineLocations(record, org.shortname);
         if (links == null || links.size() == 0)
-            return;
+            return; // TODO: alert
 
         //TODO: handle multiple
         Uri uri = Uri.parse(links.get(0).href);
@@ -251,7 +251,18 @@ public class BasicDetailsFragment extends Fragment {
 //    }
 
     private void updateButtonViews() {
-        boolean is_online_resource = App.getBehavior().isOnlineResource(record);
+        Boolean is_online_resource = App.getBehavior().isOnlineResource(record);
+        if (is_online_resource == null) return; // not ready yet
+
+        if (is_online_resource) {
+            Organization org = EvergreenServer.getInstance().getOrganization(orgID);
+            List<Link> links = App.getBehavior().getOnlineLocations(record, org.shortname);
+            if (links != null && links.size() > 0) {
+                Uri uri = Uri.parse(links.get(0).href);
+                descriptionTextView.setText(uri.getHost());
+            }
+        }
+
         onlineAccessButton.setVisibility(is_online_resource ? View.VISIBLE : View.GONE);
         placeHoldButton.setVisibility(is_online_resource ? View.GONE : View.VISIBLE);
         showCopiesButton.setVisibility(is_online_resource ? View.GONE : View.VISIBLE);
@@ -273,15 +284,6 @@ public class BasicDetailsFragment extends Fragment {
         synopsisTextView.setText(record.synopsis);
         isbnTextView.setText(record.isbn);
 
-        if (App.getBehavior().isOnlineResource(record)) {
-            Organization org = EvergreenServer.getInstance().getOrganization(orgID);
-            List<Link> links = App.getBehavior().getOnlineLocations(record, org.shortname);
-            if (links != null && links.size() > 0) {
-                Uri uri = Uri.parse(links.get(0).href);
-                descriptionTextView.setText(uri.getHost());
-            }
-        }
-
         updateButtonViews();
     }
 
@@ -302,16 +304,12 @@ public class BasicDetailsFragment extends Fragment {
     }
 
     private void fetchCopyCountInfo(RecordInfo record) {
-        // Check for copy counts only after we know it is not an e-book.
-        // The problem is we do not really know yet whether it is an e-book
-        // until both online_loc and search_format are loaded.
-        // See RecordInfo.isOnlineResource().
+        // Check for copy counts only after we know it is not an online_resource.
+        Boolean is_online_resource = App.getBehavior().isOnlineResource(record);
         Log.d(TAG, "fetchCopyCountInfo id=" + record.doc_id
-              + " basic_metadata_loaded=" + record.basic_metadata_loaded
-              + " search_format_loaded=" + record.search_format_loaded);
-        if (record.basic_metadata_loaded
-            && record.search_format_loaded
-            && !App.getBehavior().isOnlineResource(record)
+              + " is_online_resource=" + is_online_resource);
+        if (is_online_resource == null) return; // not ready yet
+        if (!is_online_resource
             && !record.copy_summary_loaded)
         {
             RecordLoader.fetchCopySummary(record, orgID, getContext(), new RecordLoader.Listener() {

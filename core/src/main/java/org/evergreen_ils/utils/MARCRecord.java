@@ -19,11 +19,13 @@ package org.evergreen_ils.utils;
 
 import android.text.TextUtils;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MARCRecord {
-    public static class MARCSubfield {
+// TODO: do not implement Serializable, that will make the TransactionTooLargeException issue worse
+public class MARCRecord implements Serializable {
+    public static class MARCSubfield implements Serializable {
         public String code;
         public String text = null;
         public MARCSubfield(String code) {
@@ -31,7 +33,7 @@ public class MARCRecord {
         }
     }
 
-    public static class MARCDatafield {
+    public static class MARCDatafield implements Serializable {
         public String tag;
         public String ind1;
         public String ind2;

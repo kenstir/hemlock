@@ -316,9 +316,6 @@ public class SearchActivity extends BaseActivity {
         searchResultsFragment.setOnRecordLongClickListener(new RecordInfo.OnRecordLongClickListener() {
             @Override
             public void onLongClick(RecordInfo record, int position) {
-                Log.d(TAG, "long click");
-                // Don't know how to do this the Right Way so this will do for now.
-                // Guess I could implement a custom View and override getContextMenuInfo().
                 contextMenuRecordInfo = new ContextMenuRecordInfo();
                 contextMenuRecordInfo.record = record;
                 contextMenuRecordInfo.position = position;
@@ -331,7 +328,7 @@ public class SearchActivity extends BaseActivity {
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
         if (v.getId() == R.id.search_results_list) {
             AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
-            menu.setHeaderTitle("Options");
+            //menu.setHeaderTitle("Options");
             menu.add(Menu.NONE, App.ITEM_SHOW_DETAILS, 0, getString(R.string.show_details_message));
             menu.add(Menu.NONE, App.ITEM_PLACE_HOLD, 1, getString(R.string.hold_place_title));
             menu.add(Menu.NONE, App.ITEM_ADD_TO_LIST, 2, getString(R.string.add_to_my_list_message));

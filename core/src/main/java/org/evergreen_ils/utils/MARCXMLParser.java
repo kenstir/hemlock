@@ -23,18 +23,20 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+import org.evergreen_ils.system.Log;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 import org.xmlpull.v1.XmlPullParserFactory;
 
 public class MARCXMLParser {
+    private static final String TAG = MARCXMLParser.class.getSimpleName();
 
     MARCRecord currentRecord = new MARCRecord();
     MARCRecord.MARCDatafield currentDatafield = null;
     MARCRecord.MARCSubfield currentSubfield = null;
     InputStream inStream;
 
-    public MARCXMLParser() {
+    MARCXMLParser() {
     }
 
     public MARCXMLParser(String fileName) throws IOException {
@@ -49,6 +51,7 @@ public class MARCXMLParser {
     public MARCRecord parse() throws Exception {
 
         try {
+            final long start_ms = System.currentTimeMillis();
             XmlPullParserFactory factory = XmlPullParserFactory.newInstance();
             XmlPullParser parser = factory.newPullParser();
             parser.setInput(this.inStream, null);
@@ -69,6 +72,7 @@ public class MARCXMLParser {
                 }
                 eventType = parser.next();
             }
+            Log.logElapsedTime(TAG, start_ms, "marcxml.parse");
         } catch(XmlPullParserException se) {
             throw new Exception("Error parsing MARCXML", se);
         }
@@ -79,7 +83,6 @@ public class MARCXMLParser {
     private void handleStartElement(XmlPullParser parser) throws IOException, XmlPullParserException {
         final String ns = null;
         String name = parser.getName();
-//        System.out.println("kcxxx: start="+name);
         if ("datafield".equals(name)) {
             String tag = parser.getAttributeValue(ns, "tag");
             String ind1 = parser.getAttributeValue(ns, "ind1");
@@ -102,7 +105,6 @@ public class MARCXMLParser {
 
     private void handleEndElement(XmlPullParser parser) throws Exception {
         String name = parser.getName();
-//        System.out.println("kcxxx: end="+name);
         if ("datafield".equals(name)) {
             if (currentDatafield != null) {
                 currentRecord.datafields.add(currentDatafield);
@@ -119,7 +121,6 @@ public class MARCXMLParser {
     public void handleText(XmlPullParser parser) {
         String text = parser.getText();
         if (currentSubfield != null) {
-//            System.out.println("kcxxx: text="+text);
             currentSubfield.text = text;
         }
     }

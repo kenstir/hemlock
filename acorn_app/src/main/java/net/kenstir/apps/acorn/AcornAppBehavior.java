@@ -18,25 +18,34 @@
 package net.kenstir.apps.acorn;
 
 import android.support.annotation.NonNull;
+import android.text.TextUtils;
 
 import org.evergreen_ils.android.AppBehavior;
 
 import org.evergreen_ils.searchCatalog.RecordInfo;
 import org.evergreen_ils.utils.Link;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.List;
 
 public class AcornAppBehavior extends AppBehavior {
     public AcornAppBehavior() {
+        // NB: this looks unused but it is used
     }
 
     @Override
-    public boolean isOnlineResource(RecordInfo record) {
-        return true;
+    public Boolean isOnlineResource(RecordInfo record) {
+        if (!record.basic_metadata_loaded) return null;
+        if (!record.attrs_loaded) return null;
+//        if (!record.marcxml_loaded) return null;
+        return TextUtils.equals(record.getAttr("item_form"), "o");
     }
 
     @Override @NonNull
     public List<Link> getOnlineLocations(RecordInfo record, String orgShortName) {
-        return null;
+        if (!record.marcxml_loaded || record.marc_record == null)
+            return new ArrayList<>();
+        return record.marc_record.getLinks();
     }
 }
