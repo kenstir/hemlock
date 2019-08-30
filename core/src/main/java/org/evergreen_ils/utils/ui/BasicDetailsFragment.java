@@ -226,7 +226,7 @@ public class BasicDetailsFragment extends Fragment {
             titles[i] = links.get(i).text;
 
         AlertDialog.Builder builder = new AlertDialog.Builder(activity);
-        builder.setTitle("Links");
+        builder.setTitle(R.string.record_online_access);
         builder.setItems(titles, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
