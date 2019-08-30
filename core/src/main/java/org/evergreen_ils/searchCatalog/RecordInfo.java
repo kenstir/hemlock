@@ -156,7 +156,7 @@ public class RecordInfo implements Serializable {
 
             String marcxml = info.getString("marc");
             if (!TextUtils.isEmpty(marcxml)) {
-                MARCXMLParser parser = new MARCXMLParser(new ByteArrayInputStream(marcxml.getBytes("UTF-8")));
+                MARCXMLParser parser = new MARCXMLParser(marcxml);
                 marc_record = parser.parse();
             }
         } catch (Exception e) {

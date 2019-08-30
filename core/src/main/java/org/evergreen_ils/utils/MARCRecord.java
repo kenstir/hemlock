@@ -23,7 +23,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-// TODO: do not implement Serializable, that will make the TransactionTooLargeException issue worse
+// TODO: remove Serializable, that will make the TransactionTooLargeException issue worse
 public class MARCRecord implements Serializable {
     public static class MARCSubfield implements Serializable {
         public String code;

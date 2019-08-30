@@ -20,6 +20,8 @@
 package org.evergreen_ils.utils.ui;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -200,16 +202,38 @@ public class BasicDetailsFragment extends Fragment {
         });
     }
 
+    private void launchURL(String url) {
+        Uri uri = Uri.parse(url);
+        Intent i = new Intent(Intent.ACTION_VIEW, uri);
+        startActivity(i);
+    }
+
     private void launchOnlineAccess() {
         Organization org = EvergreenServer.getInstance().getOrganization(orgID);
-        List<Link> links = App.getBehavior().getOnlineLocations(record, org.shortname);
+        final List<Link> links = App.getBehavior().getOnlineLocations(record, org.shortname);
         if (links == null || links.size() == 0)
             return; // TODO: alert
 
-        //TODO: handle multiple
-        Uri uri = Uri.parse(links.get(0).href);
-        Intent i = new Intent(Intent.ACTION_VIEW, uri);
-        startActivity(i);
+        // if there's only one link, launch it without ceremony
+        if (links.size() == 1) {
+            launchURL(links.get(0).href);
+            return;
+        }
+
+        // show an alert dialog to choose between links
+        final String titles[] = new String[links.size()];
+        for (int i = 0; i < titles.length; i++)
+            titles[i] = links.get(i).text;
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+        builder.setTitle("Links");
+        builder.setItems(titles, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                launchURL(links.get(which).href);
+            }
+        });
+        builder.create().show();
     }
 
     // This is a record of a few approaches I tried to get Baker-Taylor e-books from CW/MARS links; nothing worked.
