@@ -29,7 +29,6 @@ import org.evergreen_ils.utils.RecordAttributes;
 import org.opensrf.util.GatewayResponse;
 import org.opensrf.util.OSRFObject;
 
-import java.io.ByteArrayInputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -61,7 +60,6 @@ public class RecordInfo implements Serializable {
     public String synopsis = null;
     public String physical_description = null;
     public String series = "";
-    public String item_form = null;
     public boolean dummy = false;
 
     // todo: put the knowledge of whether this record has been loaded here in RecordInfo
@@ -112,7 +110,6 @@ public class RecordInfo implements Serializable {
         record.publisher = Utils.safeString(info.getString("publisher"));
         record.doc_type = Utils.safeString(info.getString("doc_type"));
         record.synopsis = Utils.safeString(info.getString("synopsis"));
-        record.item_form = Utils.safeString(info.getString("item_form"));
 
         try {
             record.isbn = (String) info.get("isbn");
