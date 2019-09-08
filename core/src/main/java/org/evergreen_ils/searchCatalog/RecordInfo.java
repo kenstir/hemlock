@@ -55,7 +55,6 @@ public class RecordInfo implements Serializable {
     public String publisher = null;
     public String isbn = null;
     public String subject = "";
-    public String doc_type = null;
     public String online_loc = null;
     public String synopsis = null;
     public String physical_description = null;
@@ -108,7 +107,6 @@ public class RecordInfo implements Serializable {
         record.author = Utils.safeString(info.getString("author"));
         record.pubdate = Utils.safeString(info.getString("pubdate"));
         record.publisher = Utils.safeString(info.getString("publisher"));
-        record.doc_type = Utils.safeString(info.getString("doc_type"));
         record.synopsis = Utils.safeString(info.getString("synopsis"));
 
         try {
