@@ -58,9 +58,9 @@ import org.evergreen_ils.utils.Link;
 import java.util.ArrayList;
 import java.util.List;
 
-public class BasicDetailsFragment extends Fragment {
+public class DetailsFragment extends Fragment {
 
-    private final static String TAG = BasicDetailsFragment.class.getSimpleName();
+    private final static String TAG = DetailsFragment.class.getSimpleName();
 
     private Activity activity;
     private RecordInfo record;
@@ -128,7 +128,7 @@ public class BasicDetailsFragment extends Fragment {
         eg = EvergreenServer.getInstance();
 
         LinearLayout layout = (LinearLayout) inflater.inflate(
-                R.layout.record_details_basic_fragment, null);
+                R.layout.record_details_fragment, null);
 
         record_header = (TextView) layout.findViewById(R.id.record_header_text);
         titleTextView = (TextView) layout.findViewById(R.id.record_details_simple_title);
@@ -165,6 +165,12 @@ public class BasicDetailsFragment extends Fragment {
     }
 
     private void initButtons() {
+        // disable all buttons until the record is loaded
+        placeHoldButton.setEnabled(false);
+        showCopiesButton.setEnabled(false);
+        onlineAccessButton.setEnabled(false);
+        addToBookbagButton.setEnabled(false);
+
         updateButtonViews();
 
         placeHoldButton.setOnClickListener(new OnClickListener() {
@@ -276,6 +282,7 @@ public class BasicDetailsFragment extends Fragment {
 
     private void updateButtonViews() {
         Boolean is_online_resource = App.getBehavior().isOnlineResource(record);
+        Log.d(TAG, "yyyyy: updateButtonViews: is_online_resource="+is_online_resource);
         if (is_online_resource == null) return; // not ready yet
 
         if (is_online_resource) {
@@ -316,11 +323,13 @@ public class BasicDetailsFragment extends Fragment {
                 new RecordLoader.ResponseListener() {
                     @Override
                     public void onMetadataLoaded() {
+                        Log.d(TAG, "yyyyy: onMetadataLoaded()");
                         updateBasicMetadataViews();
                         fetchCopyCountInfo(record);
                     }
                     @Override
                     public void onSearchFormatLoaded() {
+                        Log.d(TAG, "yyyyy: onSearchFormatLoaded()");
                         updateSearchFormatView();
                         fetchCopyCountInfo(record);
                     }
