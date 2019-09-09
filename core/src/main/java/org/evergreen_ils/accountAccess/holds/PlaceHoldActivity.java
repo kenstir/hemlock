@@ -22,6 +22,8 @@ package org.evergreen_ils.accountAccess.holds;
 import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
@@ -29,6 +31,7 @@ import android.text.format.DateFormat;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
@@ -442,6 +445,13 @@ public class PlaceHoldActivity extends AppCompatActivity {
             public boolean isEnabled(int pos) {
                 Organization org = eg.getOrganizations().get(pos);
                 return org.isPickupLocation();
+            }
+
+            @Override
+            public View getDropDownView(int pos, @Nullable View convertView, @NonNull ViewGroup parent) {
+                View v = super.getDropDownView(pos, convertView, parent);
+                v.setEnabled(isEnabled(pos));
+                return v;
             }
         };
         orgSpinner.setAdapter(adapter);
