@@ -108,6 +108,7 @@ public class RecordInfo implements Serializable {
         record.pubdate = Utils.safeString(info.getString("pubdate"));
         record.publisher = Utils.safeString(info.getString("publisher"));
         record.synopsis = Utils.safeString(info.getString("synopsis"));
+        record.physical_description = Utils.safeString(info.getString("physical_description"));
 
         try {
             record.isbn = (String) info.get("isbn");
@@ -126,12 +127,6 @@ public class RecordInfo implements Serializable {
             record.online_loc = ((List) info.get("online_loc")).get(0).toString();
         } catch (Exception e) {
             // common
-        }
-
-        try {
-            record.physical_description = (String) info.get("physical_description");
-        } catch (Exception e) {
-            Log.d(TAG, "caught", e);
         }
 
         try {
