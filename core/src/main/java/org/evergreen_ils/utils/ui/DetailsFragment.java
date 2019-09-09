@@ -89,8 +89,8 @@ public class DetailsFragment extends Fragment {
 
     private NetworkImageView recordImage;
 
-    public static BasicDetailsFragment newInstance(RecordInfo record, Integer position, Integer total, Integer orgID) {
-        BasicDetailsFragment fragment = new BasicDetailsFragment();
+    public static DetailsFragment newInstance(RecordInfo record, Integer position, Integer total, Integer orgID) {
+        DetailsFragment fragment = new DetailsFragment();
         fragment.record = record;
         fragment.orgID = orgID;
         fragment.position = position;
@@ -98,7 +98,7 @@ public class DetailsFragment extends Fragment {
         return fragment;
     }
 
-    public BasicDetailsFragment() {
+    public DetailsFragment() {
     }
 
     @Override
@@ -165,11 +165,10 @@ public class DetailsFragment extends Fragment {
     }
 
     private void initButtons() {
-        // disable all buttons until the record is loaded
+        // disable most buttons until the record is loaded
         placeHoldButton.setEnabled(false);
         showCopiesButton.setEnabled(false);
         onlineAccessButton.setEnabled(false);
-        addToBookbagButton.setEnabled(false);
 
         updateButtonViews();
 
@@ -285,6 +284,10 @@ public class DetailsFragment extends Fragment {
         Log.d(TAG, "yyyyy: updateButtonViews: is_online_resource="+is_online_resource);
         if (is_online_resource == null) return; // not ready yet
 
+        placeHoldButton.setEnabled(true);
+        showCopiesButton.setEnabled(true);
+        onlineAccessButton.setEnabled(true);
+
         if (is_online_resource) {
             Organization org = EvergreenServer.getInstance().getOrganization(orgID);
             List<Link> links = App.getBehavior().getOnlineLocations(record, org.shortname);
@@ -319,7 +322,7 @@ public class DetailsFragment extends Fragment {
     }
 
     private void fetchRecordInfo(final RecordInfo record) {
-        RecordLoader.fetch(record, getActivity(),
+        RecordLoader.fetchDetailsMetadata(record, getActivity(),
                 new RecordLoader.ResponseListener() {
                     @Override
                     public void onMetadataLoaded() {

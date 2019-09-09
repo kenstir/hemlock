@@ -73,6 +73,9 @@ public class VolleyWrangler {
             @Override
             public void onErrorResponse(VolleyError volleyError) {
                 String msg = volleyError.getMessage();
+                if (volleyError instanceof TimeoutError) {
+                    msg = "Timeout after " + volleyError.getNetworkTimeMs() + "ms";
+                }
                 if (!TextUtils.isEmpty(msg)) {
                     Log.d(TAG, msg);
                 }

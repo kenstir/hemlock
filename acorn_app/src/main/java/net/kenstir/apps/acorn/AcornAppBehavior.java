@@ -47,6 +47,7 @@ public class AcornAppBehavior extends AppBehavior {
 
         // NB: Checking for item_form="o" fails to identify some online resources, e.g.
         // https://acorn.biblio.org/eg/opac/record/2891957
+        // However, it's better than waiting for the marcxml to load, if the network is slow
         return TextUtils.equals(record.getAttr("item_form"), "o");
     }
 

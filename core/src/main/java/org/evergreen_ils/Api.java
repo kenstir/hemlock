@@ -40,6 +40,7 @@ import java.util.StringTokenizer;
 public class Api {
 
     public static final String ANONYMOUS = "ANONYMOUS";
+    public static final int LONG_TIMEOUT_MS = 10000;
 
     /// actor
 

@@ -1020,7 +1020,7 @@ public class AccountAccess {
                         authToken, container, parameter });
     }
 
-    //todo replace callers of this method with RecordLoader.fetchBasicMetadata
+    //todo replace callers of this method with RecordLoader.fetchRecordMODS
     private OSRFObject getItemShortInfo(Integer id) {
         OSRFObject response = (OSRFObject) Utils.doRequest(conn(), Api.SEARCH,
                 Api.MODS_SLIM_RETRIEVE, new Object[] {

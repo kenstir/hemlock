@@ -152,7 +152,7 @@ public class SampleUnderlinesNoFade extends BasePagerActivity {
 //                Thread getSearchResults = new Thread(searchRunnableWithOffset);
 //                getSearchResults.start();
 //            }
-            return BasicDetailsFragment.newInstance(records.get(position), position, numResults, orgID);
+            return DetailsFragment.newInstance(records.get(position), position, numResults, orgID);
         }
 
         @Override

@@ -20,13 +20,14 @@ package org.evergreen_ils.searchCatalog;
 
 import android.content.Context;
 
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.Response;
+import com.android.volley.RetryPolicy;
 import com.android.volley.VolleyError;
 
 import org.evergreen_ils.Api;
 import org.evergreen_ils.R;
-import org.evergreen_ils.accountAccess.AccountAccess;
 import org.evergreen_ils.net.GatewayJsonObjectRequest;
 import org.evergreen_ils.net.VolleyWrangler;
 import org.evergreen_ils.system.EvergreenServer;
@@ -49,16 +50,21 @@ public class RecordLoader {
         public void onDataAvailable();
     }
 
-    public static void fetch(final RecordInfo record, final Context context, final ResponseListener responseListener) {
-        fetchBasicMetadata(record, context, responseListener);
+    public static void fetchSummaryMetadata(final RecordInfo record, final Context context, final ResponseListener responseListener) {
+        fetchRecordMODS(record, context, responseListener);
+        fetchRecordAttributes(record, context, responseListener);
+    }
+
+    public static void fetchDetailsMetadata(final RecordInfo record, final Context context, final ResponseListener responseListener) {
+        fetchRecordMODS(record, context, responseListener);
         fetchRecordAttributes(record, context, responseListener);
         if (context.getResources().getBoolean(R.bool.ou_need_marc_record)) {
             fetchMARCXML(record, context, responseListener);
         }
     }
 
-    public static void fetchBasicMetadata(final RecordInfo record, Context context, final ResponseListener responseListener) {
-        Log.d(TAG, "fetchBasicMetadata id="+record.doc_id+ " title="+record.title);
+    public static void fetchRecordMODS(final RecordInfo record, Context context, final ResponseListener responseListener) {
+        Log.d(TAG, "fetchRecordMODS id="+record.doc_id+ " title="+record.title);
         if (record.basic_metadata_loaded) {
             responseListener.onMetadataLoaded();
         } else {
@@ -105,6 +111,10 @@ public class RecordLoader {
                         }
                     },
                     VolleyWrangler.logErrorListener(TAG));
+            r.setRetryPolicy(new DefaultRetryPolicy(
+                    Api.LONG_TIMEOUT_MS,
+                    DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                    DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
             VolleyWrangler.getInstance(context).addToRequestQueue(r);
         }
     }

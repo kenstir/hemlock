@@ -28,9 +28,6 @@ import org.opensrf.util.GatewayResponse;
 
 import java.io.UnsupportedEncodingException;
 
-/**
- * Created by kenstir on 12/13/2015.
- */
 public class GatewayJsonObjectRequest extends Request<GatewayResponse> {
     private final Response.Listener<GatewayResponse> mListener;
     private final Priority mPriority;
