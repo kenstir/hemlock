@@ -43,12 +43,15 @@ public class AcornAppBehavior extends AppBehavior {
     public Boolean isOnlineResource(RecordInfo record) {
         if (!record.basic_metadata_loaded) return null;
         if (!record.attrs_loaded) return null;
-//        if (!record.marcxml_loaded) return null;
 
         // NB: Checking for item_form="o" fails to identify some online resources, e.g.
         // https://acorn.biblio.org/eg/opac/record/2891957
         // However, it's better than waiting for the marcxml to load, if the network is slow
-        return TextUtils.equals(record.getAttr("item_form"), "o");
+        if (TextUtils.equals(record.getAttr("item_form"), "o"))
+            return true;
+
+        if (!record.marcxml_loaded) return null;
+        return (getOnlineLocations(record, null).size() > 0);
     }
 
     private String trimTrailing(String s, char c) {
@@ -69,7 +72,7 @@ public class AcornAppBehavior extends AppBehavior {
 
     private boolean isAvailableToOrg(MARCRecord.MARCDatafield df, String orgShortName) {
         for (MARCRecord.MARCSubfield sf : df.subfields) {
-            if (TextUtils.equals(sf.code, "9") && TextUtils.equals(sf.text, orgShortName)) {
+            if (TextUtils.equals(sf.code, "9") && (TextUtils.equals(sf.text, orgShortName) || orgShortName == null)) {
                 return true;
             }
         }
