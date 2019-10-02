@@ -87,6 +87,7 @@ public class HoldsActivity extends BaseActivity {
                         Log.d(TAG, "Exception in reauth");
                     }
                 }
+                Analytics.logEvent("Holds: List Holds", "num_items", holdRecords.size());
 
                 runOnUiThread(new Runnable() {
                     @Override

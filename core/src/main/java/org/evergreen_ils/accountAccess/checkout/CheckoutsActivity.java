@@ -125,6 +125,7 @@ public class CheckoutsActivity extends BaseActivity {
                             Log.d(TAG, "Exception in reauth", eauth);
                         }
                     }
+                    Analytics.logEvent("Checkouts: List Checkouts", "num_items", circRecords.size());
 
                     runOnUiThread(new Runnable() {
 
