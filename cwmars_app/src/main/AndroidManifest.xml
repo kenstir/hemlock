@@ -61,12 +61,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-                android:name="org.evergreen_ils.views.SimpleTestableActivity">
-            <!--<intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-            </intent-filter>-->
-        </activity>
 
         <!-- Search -->
 

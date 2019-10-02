@@ -15,55 +15,56 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:fillViewport="true"
-            android:padding="5dip"
-            android:layout_alignParentTop="true">
+            android:padding="10dip"
+            >
 
         <TableLayout
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 >
-            <TableRow>
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/title"
-                    android:paddingRight="6dp" />
+            <TableRow android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
                 <TextView
                     android:id="@+id/hold_title"
-                    style="@style/TitleSearchStyleList"
-                    android:layout_width="0dip"
+                    style="@style/textLarge"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_span="2"
                     android:layout_weight="1"
+                    android:paddingLeft="0dp"
+                    android:paddingTop="20dp"
                     tools:text="Trashed : a graphic novel" />
             </TableRow>
-            <TableRow>
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/author"
-                    android:paddingRight="6dp" />
+            <TableRow android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
                 <TextView
                     android:id="@+id/hold_author"
-                    style="@style/AuthorSearchStyleList"
-                    android:layout_width="0dip"
+                    style="@style/textSmall"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_span="2"
                     android:layout_weight="1"
+                    android:paddingLeft="0dp"
                     tools:text="Derf" />
             </TableRow>
-            <TableRow>
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/format" />
+            <TableRow android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
                 <TextView
                     android:id="@+id/hold_format"
-                    style="@style/PubSearchStyleList"
-                    android:layout_width="0dip"
+                    style="@style/textSmall"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_span="2"
                     android:layout_weight="1"
+                    android:paddingLeft="0dp"
+                    android:paddingBottom="20dp"
                     tools:text="Book" />
             </TableRow>
-            <TableRow>
+            <TableRow android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -76,7 +77,8 @@
                     android:spinnerMode="dialog"
                     />
             </TableRow>
-            <TableRow>
+            <TableRow android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -90,7 +92,8 @@
                     android:enabled="true"
                     android:checked="true" />
             </TableRow>
-            <TableRow>
+            <TableRow android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
                 <TextView
                     android:id="@+id/hold_phone_notification_label"
                     android:layout_width="wrap_content"
@@ -112,13 +115,12 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:inputType="phone" />
+                        android:inputType="phone"
+                        android:autofillHints="phone" />
                 </LinearLayout>
             </TableRow>
-
-            <TableRow
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
+            <TableRow android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
                 <TextView
                     android:id="@+id/hold_sms_notification_label"
                     android:layout_width="wrap_content"
@@ -140,11 +142,12 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:inputType="phone" />
+                        android:inputType="phone"
+                        android:autofillHints="phone" />
                 </LinearLayout>
             </TableRow>
-
-            <TableRow>
+            <TableRow android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
                 <TextView
                     android:id="@+id/hold_sms_spinner_label"
                     android:layout_width="wrap_content"
@@ -160,7 +163,8 @@
                     android:spinnerMode="dialog"
                     />
             </TableRow>
-            <TableRow>
+            <TableRow android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
                 <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -168,14 +172,16 @@
                         android:paddingRight="6dp"
                         />
                 <EditText
-                        android:id="@+id/hold_expiration_date"
-                        android:focusable="false"
-                        android:layout_width="0dip"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        />
+                    android:id="@+id/hold_expiration_date"
+                    android:focusable="false"
+                    android:layout_width="0dip"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:inputType="text" />
             </TableRow>
-            <TableRow android:visibility="gone">
+            <TableRow android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="gone">
                 <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -189,7 +195,9 @@
                         android:layout_weight="1"
                         />
             </TableRow>
-            <TableRow android:visibility="gone">
+            <TableRow android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="gone">
                 <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -197,13 +205,13 @@
                         android:paddingRight="6dp"
                         />
                 <EditText
-                        android:id="@+id/hold_thaw_date"
-                        android:focusable="false"
-                        android:enabled="false"
-                        android:layout_width="0dip"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        />
+                    android:id="@+id/hold_thaw_date"
+                    android:focusable="false"
+                    android:enabled="false"
+                    android:layout_width="0dip"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:inputType="text" />
             </TableRow>
         </TableLayout>
     </ScrollView>

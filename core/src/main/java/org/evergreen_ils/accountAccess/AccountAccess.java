@@ -43,6 +43,8 @@ import org.opensrf.util.OSRFObject;
 
 import java.util.*;
 
+import static org.evergreen_ils.system.Utils.safeString;
+
 public class AccountAccess {
 
     private final static String TAG = AccountAccess.class.getSimpleName();
@@ -117,7 +119,7 @@ public class AccountAccess {
     }
 
     public static String safeGetOrganizationShortName(Integer orgID) {
-        if (orgID == null) return null;
+        if (orgID == null) return "";
         Organization org = EvergreenServer.getInstance().getOrganization(orgID);
         if (org == null) return "!";
         return org.shortname;
@@ -230,14 +232,8 @@ public class AccountAccess {
                 "home_org", safeGetOrganizationShortName(homeLibraryID),
                 "pickup_org", safeGetOrganizationShortName(defaultPickupLibraryID),
                 "search_org", safeGetOrganizationShortName(defaultSearchLibraryID),
-                "hold_notify", holdNotifySetting);
+                "hold_notify", safeString(holdNotifySetting));
         Log.d(TAG, "done fleshing user settings");
-
-        // Things that didn't work:
-        // * open-ils.pcrud open-ils.pcrud.search.ac auth_token, {id: cardId}
-        // * open-ils.pcrud open-ils.pcrud.search.ac auth_token, {usr: userId}
-        // * open-ils.pcrud open-ils.pcrud.retrieve.ac auth_token, cardId
-        //   (patrons don't have permission to see their own records)
     }
 
     private void parseHoldNotifyValue(String value) {
@@ -381,7 +377,7 @@ public class AccountAccess {
 
         try {
             circRecord.recordInfo = new RecordInfo(info_mvr);
-            circRecord.recordInfo.setSearchFormat(fetchFormat(info_mvr.getInt("doc_id")));
+            circRecord.recordInfo.updateFromMRAResponse(fetchRecordAttributes(info_mvr.getInt("doc_id")));
         } catch (Exception e) {
             Log.d(TAG, "caught", e);
         }
@@ -410,141 +406,24 @@ public class AccountAccess {
         return mvr;
     }
 
-    public String fetchFormat(int id) {
-        return fetchFormat(Integer.valueOf(id).toString());
+    public OSRFObject fetchRecordAttributes(int id) {
+        return fetchRecordAttributes(Integer.valueOf(id).toString());
     }
 
-    public String fetchFormat(String id) {
+    public OSRFObject fetchRecordAttributes(String id) {
         // This can happen when looking up checked out item borrowed from another system.
         if (id.equals("-1"))
-            return "";
+            return null;
 
         OSRFObject resp = null;
         try {
-            // todo newer EG supports use of "ANONYMOUS" as the auth_token in the PCRUD request,
-            // but there are some older EG installs out there that do not.
             resp = (OSRFObject) Utils.doRequest(conn(), Api.PCRUD_SERVICE,
-                    Api.RETRIEVE_MRA, authToken, new Object[] {
+                    Api.RETRIEVE_MRA, Api.ANONYMOUS, new Object[] {
                             authToken, id});
         } catch (SessionNotFoundException e) {
-            return "";
+            return null;
         }
-        return getSearchFormatFromMRAResponse(resp);
-    }
-
-    public static String getSearchFormatFromMRAResponse(Object response) {
-        if (response == null)
-            return ""; // todo log this
-
-        OSRFObject resp = null;
-        try {
-            resp = (OSRFObject) response;
-        } catch (ClassCastException ex) {
-            Log.d(TAG, "caught", ex);
-            return ""; // todo log this
-        }
-
-        // This is not beautiful.  This MRA record comes back with an 'attrs' field that
-        // appears to have been serialized by perl Data::Dumper, e.g.
-        // '"biog"=>"b", "conf"=>"0", "search_format"=>"ebook"'.
-        String attrs = resp.getString("attrs");
-        //Log.d(TAG, "attrs="+attrs);
-        String[] attr_arr = TextUtils.split(attrs, ", ");
-        String icon_format = "";
-        String search_format = "";
-        for (int i=0; i<attr_arr.length; ++i) {
-            String[] kv = TextUtils.split(attr_arr[i], "=>");
-            String key = kv[0].replace("\"", "");
-            if (key.equalsIgnoreCase("icon_format")) {
-                icon_format = kv[1].replace("\"", "");
-            } else if (key.equalsIgnoreCase("search_format")) {
-                search_format = kv[1].replace("\"", "");
-            }
-        }
-        if (!icon_format.isEmpty()) {
-            return icon_format;
-        } else {
-            return search_format;
-        }
-    }
-
-    // experiment to handle parsing batch/atomic methods
-    public static String getSearchFormatFromMRAList(Object response) {
-        if (response == null)
-            return ""; // todo log this
-
-        OSRFObject resp = null;
-        try {
-            ArrayList<OSRFObject> resp_list = (ArrayList<OSRFObject>)response;
-            resp = resp_list.get(0);
-        } catch (ClassCastException ex) {
-            Log.d(TAG, "caught", ex);
-        }
-        if (resp == null)
-            return ""; // todo log this
-
-        // This is not beautiful.  An MRA record comes back with an 'attrs' field that
-        // appears to have been serialized by perl Data::Dumper, e.g.
-        //     "biog"=>"b", "conf"=>"0", "search_format"=>"ebook"
-        String attrs = resp.getString("attrs");
-        //Log.d(TAG, "attrs="+attrs);
-        String[] attr_arr = TextUtils.split(attrs, ", ");
-        String icon_format = "";
-        String search_format = "";
-        for (int i=0; i<attr_arr.length; ++i) {
-            String[] kv = TextUtils.split(attr_arr[i], "=>");
-            String key = kv[0].replace("\"", "");
-            if (key.equalsIgnoreCase("icon_format")) {
-                icon_format = kv[1].replace("\"", "");
-            } else if (key.equalsIgnoreCase("search_format")) {
-                search_format = kv[1].replace("\"", "");
-            }
-        }
-        if (!icon_format.isEmpty()) {
-            return icon_format;
-        } else {
-            return search_format;
-        }
-    }
-
-    // experiment to handle parsing batch/atomic methods
-    public static String getSearchFormatFromMRAFList(Object response) {
-        if (response == null)
-            return ""; // todo log this
-
-        ArrayList<OSRFObject> resp_list = null;
-        try {
-            resp_list = (ArrayList<OSRFObject>)response;
-        } catch (ClassCastException ex) {
-            Log.d(TAG, "caught", ex);
-            return "";
-        }
-        if (resp_list == null)
-            return ""; // todo log this
-
-        // This is not beautiful.  An MRA record comes back with an 'attrs' field that
-        // appears to have been serialized by perl Data::Dumper, e.g.
-        //     "biog"=>"b", "conf"=>"0", "search_format"=>"ebook"
-        OSRFObject resp = null; //bomb, this method was not fixed
-        String attrs = resp.getString("attrs");
-        //Log.d(TAG, "attrs="+attrs);
-        String[] attr_arr = TextUtils.split(attrs, ", ");
-        String icon_format = "";
-        String search_format = "";
-        for (int i=0; i<attr_arr.length; ++i) {
-            String[] kv = TextUtils.split(attr_arr[i], "=>");
-            String key = kv[0].replace("\"", "");
-            if (key.equalsIgnoreCase("icon_format")) {
-                icon_format = kv[1].replace("\"", "");
-            } else if (key.equalsIgnoreCase("search_format")) {
-                search_format = kv[1].replace("\"", "");
-            }
-        }
-        if (!icon_format.isEmpty()) {
-            return icon_format;
-        } else {
-            return search_format;
-        }
+        return resp;
     }
 
     /**
@@ -627,7 +506,7 @@ public class AccountAccess {
             fetchHoldTargetDetails(hold);
             fetchHoldQueueStats(hold);
             if (hold.recordInfo != null)
-                hold.recordInfo.setSearchFormat(fetchFormat(hold.target));
+                hold.recordInfo.updateFromMRAResponse(fetchRecordAttributes(hold.target));
             holds.add(hold);
             Log.d(TAG, "hold email="+hold.email_notify+" phone_notify="+hold.phone_notify+" sms_notify="+hold.sms_notify+" title="+hold.title);
         }
@@ -1141,7 +1020,7 @@ public class AccountAccess {
                         authToken, container, parameter });
     }
 
-    //todo replace callers of this method with RecordLoader.fetchBasicMetadata
+    //todo replace callers of this method with RecordLoader.fetchRecordMODS
     private OSRFObject getItemShortInfo(Integer id) {
         OSRFObject response = (OSRFObject) Utils.doRequest(conn(), Api.SEARCH,
                 Api.MODS_SLIM_RETRIEVE, new Object[] {

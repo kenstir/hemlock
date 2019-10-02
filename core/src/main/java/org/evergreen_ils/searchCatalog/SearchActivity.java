@@ -48,7 +48,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.View.OnClickListener;
-import android.view.View.OnKeyListener;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView.OnItemSelectedListener;
@@ -223,7 +222,7 @@ public class SearchActivity extends BaseActivity {
                     }
                 });
 
-                searchResults = search.getSearchResults(text, getSearchClass(), getSearchFormat(), 0);
+                searchResults = search.getSearchResults(text, getSearchClass(), getSearchFormat(), getString(R.string.ou_sort_by), 0);
                 try {
                     Organization search_org = search.selectedOrganization;
                     Organization home_org = eg.getOrganization(AccountAccess.getInstance().getHomeLibraryID());
@@ -317,9 +316,6 @@ public class SearchActivity extends BaseActivity {
         searchResultsFragment.setOnRecordLongClickListener(new RecordInfo.OnRecordLongClickListener() {
             @Override
             public void onLongClick(RecordInfo record, int position) {
-                Log.d(TAG, "long click");
-                // Don't know how to do this the Right Way so this will do for now.
-                // Guess I could implement a custom View and override getContextMenuInfo().
                 contextMenuRecordInfo = new ContextMenuRecordInfo();
                 contextMenuRecordInfo.record = record;
                 contextMenuRecordInfo.position = position;
@@ -332,7 +328,7 @@ public class SearchActivity extends BaseActivity {
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
         if (v.getId() == R.id.search_results_list) {
             AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
-            menu.setHeaderTitle("Options");
+            //menu.setHeaderTitle("Options");
             menu.add(Menu.NONE, App.ITEM_SHOW_DETAILS, 0, getString(R.string.show_details_message));
             menu.add(Menu.NONE, App.ITEM_PLACE_HOLD, 1, getString(R.string.hold_place_title));
             menu.add(Menu.NONE, App.ITEM_ADD_TO_LIST, 2, getString(R.string.add_to_my_list_message));

@@ -1,13 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
-        android:id="@+id/record_details_simple_view"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:orientation="vertical"
-        android:background="@drawable/background_grey_image"
-        >
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/record_details_simple_view"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical"
+    android:background="@drawable/background_grey_image">
 
     <LinearLayout
         android:layout_width="fill_parent"
@@ -50,27 +48,31 @@
             >
 
                 <TextView
-                        android:id="@+id/record_details_simple_title"
-                        style="@style/textLarge"
-                />
+                    android:id="@+id/record_details_simple_title"
+                    style="@style/textLarge"
+                    tools:text="Harry Potter and the Goblet of Fire"
+                    />
 
                 <TextView
-                        android:id="@+id/record_details_format"
-                        style="@style/textSmall"
-                        android:layout_marginTop="3dip"
-                        />
+                    android:id="@+id/record_details_simple_author"
+                    style="@style/textSmall"
+                    android:layout_marginTop="3dip"
+                    tools:text="Rowling, J. K."
+                    />
 
                 <TextView
-                        android:id="@+id/record_details_simple_author"
-                        style="@style/textSmall"
-                        android:layout_marginTop="3dip"
-                />
+                    android:id="@+id/record_details_format"
+                    style="@style/textSmall"
+                    android:layout_marginTop="3dip"
+                    tools:text="Book"
+                    />
 
                 <TextView
-                        android:id="@+id/record_details_simple_publisher"
-                        style="@style/textSmall"
-                        android:layout_marginTop="3dip"
-                />
+                    android:id="@+id/record_details_simple_publisher"
+                    style="@style/textSmall"
+                    android:layout_marginTop="3dip"
+                    tools:text="c2000 Arthur A. Levine Books"
+                    />
             </LinearLayout>
 
             <com.android.volley.toolbox.NetworkImageView

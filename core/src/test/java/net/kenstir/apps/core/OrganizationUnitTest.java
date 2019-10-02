@@ -22,7 +22,6 @@ import org.evergreen_ils.system.EvergreenServer;
 import org.evergreen_ils.system.Log;
 import org.evergreen_ils.system.Organization;
 import org.evergreen_ils.system.StdoutLogProvider;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -30,7 +29,8 @@ import org.opensrf.util.OSRFObject;
 
 import java.util.ArrayList;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 public class OrganizationUnitTest {
     EvergreenServer eg;

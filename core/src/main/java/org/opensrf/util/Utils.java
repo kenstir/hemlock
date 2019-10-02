@@ -9,23 +9,6 @@ import java.util.*;
 public class Utils {
 
     /**
-     * Returns the string representation of a given file.
-     * @param filename The file to turn into a string
-     */
-    public static String fileToString(String filename) 
-            throws FileNotFoundException, IOException {
-
-        StringBuffer sb = new StringBuffer();
-        BufferedReader in = new BufferedReader(new FileReader(filename));
-        String str;
-        while ((str = in.readLine()) != null) 
-            sb.append(str);
-        in.close();
-        return sb.toString();
-    }
-
-
-    /**
      * Escapes a string.
      */
     public static String escape(String string) {

@@ -40,6 +40,7 @@ import java.util.StringTokenizer;
 public class Api {
 
     public static final String ANONYMOUS = "ANONYMOUS";
+    public static final int LONG_TIMEOUT_MS = 10000;
 
     /// actor
 
@@ -101,6 +102,7 @@ public class Api {
     /// pcrud
 
     public static final String PCRUD_SERVICE = "open-ils.pcrud";
+    public static final String RETRIEVE_BRE = "open-ils.pcrud.retrieve.bre";
     public static final String RETRIEVE_MRA = "open-ils.pcrud.retrieve.mra";
     public static final String SEARCH_MRA = "open-ils.pcrud.search.mra.atomic";
     public static final String SEARCH_MRAF = "open-ils.pcrud.search.mraf.atomic";

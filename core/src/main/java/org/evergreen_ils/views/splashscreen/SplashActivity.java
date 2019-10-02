@@ -30,9 +30,10 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.TextView;
 
+import org.evergreen_ils.android.App;
+
 import org.evergreen_ils.R;
 import org.evergreen_ils.accountAccess.AccountUtils;
-import org.evergreen_ils.system.Log;
 import org.evergreen_ils.utils.ui.AppState;
 import org.evergreen_ils.system.Analytics;
 import org.evergreen_ils.views.MainActivity;
@@ -84,7 +85,7 @@ public class SplashActivity extends AppCompatActivity implements LoadingTaskList
 
         setContentView(R.layout.activity_splash);
 
-        AppState.init(this);
+        App.init(this);
 
         mProgressText = (TextView) findViewById(R.id.action_in_progress);
         mProgressBar = findViewById(R.id.activity_splash_progress_bar);

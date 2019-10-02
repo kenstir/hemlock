@@ -19,17 +19,20 @@
 package org.evergreen_ils.searchCatalog;
 
 import android.content.Context;
+
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.Response;
+import com.android.volley.RetryPolicy;
 import com.android.volley.VolleyError;
+
 import org.evergreen_ils.Api;
 import org.evergreen_ils.R;
-import org.evergreen_ils.accountAccess.AccountAccess;
+import org.evergreen_ils.net.GatewayJsonObjectRequest;
+import org.evergreen_ils.net.VolleyWrangler;
 import org.evergreen_ils.system.EvergreenServer;
 import org.evergreen_ils.system.Log;
 import org.evergreen_ils.system.Utils;
-import org.evergreen_ils.net.GatewayJsonObjectRequest;
-import org.evergreen_ils.net.VolleyWrangler;
 import org.opensrf.util.GatewayResponse;
 
 /** Async interface for loading RecordInfo metadata
@@ -47,13 +50,21 @@ public class RecordLoader {
         public void onDataAvailable();
     }
 
-    public static void fetch(final RecordInfo record, final Context context, final ResponseListener responseListener) {
-        fetchBasicMetadata(record, context, responseListener);
-        fetchSearchFormat(record, context, responseListener);
+    public static void fetchSummaryMetadata(final RecordInfo record, final Context context, final ResponseListener responseListener) {
+        fetchRecordMODS(record, context, responseListener);
+        fetchRecordAttributes(record, context, responseListener);
     }
 
-    public static void fetchBasicMetadata(final RecordInfo record, Context context, final ResponseListener responseListener) {
-        Log.d(TAG, "fetchBasicMetadata id="+record.doc_id+ " title="+record.title);
+    public static void fetchDetailsMetadata(final RecordInfo record, final Context context, final ResponseListener responseListener) {
+        fetchRecordMODS(record, context, responseListener);
+        fetchRecordAttributes(record, context, responseListener);
+        if (context.getResources().getBoolean(R.bool.ou_need_marc_record)) {
+            fetchMARCXML(record, context, responseListener);
+        }
+    }
+
+    public static void fetchRecordMODS(final RecordInfo record, Context context, final ResponseListener responseListener) {
+        Log.d(TAG, "fetchRecordMODS id="+record.doc_id+ " title="+record.title);
         if (record.basic_metadata_loaded) {
             responseListener.onMetadataLoaded();
         } else {
@@ -78,26 +89,54 @@ public class RecordLoader {
         }
     }
 
-    public static void fetchSearchFormat(final RecordInfo record, Context context, final ResponseListener responseListener) {
-        Log.d(TAG, "fetchSearchFormat id="+record.doc_id+ " format="+record.search_format);
-        if (record.search_format_loaded) {
+    public static void fetchMARCXML(final RecordInfo record, Context context, final ResponseListener responseListener) {
+        Log.d(TAG, "fetchMARCXML id="+record.doc_id);
+        if (record.marcxml_loaded) {
+            responseListener.onMetadataLoaded();
+        } else {
+            final long start_ms = System.currentTimeMillis();
+            String url = EvergreenServer.getInstance().getUrl(Utils.buildGatewayUrl(
+                    Api.PCRUD_SERVICE, Api.RETRIEVE_BRE,
+                    new Object[]{Api.ANONYMOUS, record.doc_id}));
+            Log.d(TAG, "fetch.marcxml "+url);
+            GatewayJsonObjectRequest r = new GatewayJsonObjectRequest(
+                    url,
+                    Request.Priority.HIGH,
+                    new Response.Listener<GatewayResponse>() {
+                        @Override
+                        public void onResponse(GatewayResponse response) {
+                            record.updateFromBREResponse(response);
+                            Log.logElapsedTime(TAG, start_ms, "fetch.marcxml");
+                            responseListener.onMetadataLoaded();
+                        }
+                    },
+                    VolleyWrangler.logErrorListener(TAG));
+            r.setRetryPolicy(new DefaultRetryPolicy(
+                    Api.LONG_TIMEOUT_MS,
+                    DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                    DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+            VolleyWrangler.getInstance(context).addToRequestQueue(r);
+        }
+    }
+
+    public static void fetchRecordAttributes(final RecordInfo record, Context context, final ResponseListener responseListener) {
+        Log.d(TAG, "fetchRecordAttributes id="+record.doc_id+ " format="+record.search_format);
+        if (record.attrs_loaded) {
             responseListener.onSearchFormatLoaded();
         } else {
-            // todo newer EG supports using "ANONYMOUS" as the auth_token in PCRUD requests.
-            // Older EG does not, and requires a valid auth_token.
             final long start_ms = System.currentTimeMillis();
             String url = EvergreenServer.getInstance().getUrl(Utils.buildGatewayUrl(
                     Api.PCRUD_SERVICE, Api.RETRIEVE_MRA,
-                    new Object[]{AccountAccess.getInstance().getAuthToken(), record.doc_id}));
-            Log.d(TAG, "fetch.searchFormat "+url);
+                    new Object[]{Api.ANONYMOUS, record.doc_id}));
+            Log.d(TAG, "fetch.attrs "+url);
             GatewayJsonObjectRequest r = new GatewayJsonObjectRequest(
                     url,
                     Request.Priority.NORMAL,
                     new Response.Listener<GatewayResponse>() {
                         @Override
                         public void onResponse(GatewayResponse response) {
-                            record.setSearchFormat(AccountAccess.getSearchFormatFromMRAResponse(response.payload));
-                            Log.logElapsedTime(TAG, start_ms, "fetch.searchFormat");
+                            record.updateFromMRAResponse(response);
+                            Log.logElapsedTime(TAG, start_ms, "fetch.attrs");
                             responseListener.onSearchFormatLoaded();
                         }
                     },

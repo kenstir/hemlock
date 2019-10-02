@@ -1,0 +1,566 @@
+<?xml version="1.0"?>
+<collection xmlns="http://www.loc.gov/MARC21/slim" xmlns:marc="http://www.loc.gov/MARC21/slim">
+  <record xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.loc.gov/MARC21/slim http://www.loc.gov/standards/marcxml/schema/MARC21slim.xsd">
+    <leader>05887cam a2200697Ia 4500</leader>
+    <controlfield tag="001">ocn639048502</controlfield>
+    <controlfield tag="003">OCoLC</controlfield>
+    <controlfield tag="005">20150805082707.0</controlfield>
+    <controlfield tag="006">m     o  d        </controlfield>
+    <controlfield tag="007">cz bn|||||||||</controlfield>
+    <controlfield tag="008">100607s2008    nyu    do     000 f eng d</controlfield>
+    <datafield tag="035" ind1=" " ind2=" ">
+      <subfield code="a">(OCoLC)639048502</subfield>
+      <subfield code="z">(OCoLC)698212662</subfield>
+      <subfield code="z">(OCoLC)817718682</subfield>
+    </datafield>
+    <datafield tag="040" ind1=" " ind2=" ">
+      <subfield code="a">ORE</subfield>
+      <subfield code="b">eng</subfield>
+      <subfield code="c">ORE</subfield>
+      <subfield code="d">OCLCA</subfield>
+      <subfield code="d">OCLCQ</subfield>
+      <subfield code="d">NOC</subfield>
+      <subfield code="d">OCLCO</subfield>
+      <subfield code="d">OCLCQ</subfield>
+      <subfield code="d">JSG</subfield>
+      <subfield code="d">OCLCA</subfield>
+      <subfield code="d">TEFOD</subfield>
+      <subfield code="d">MMI</subfield>
+      <subfield code="d">OCLCO</subfield>
+      <subfield code="d">MMI</subfield>
+      <subfield code="d">OCLCQ</subfield>
+      <subfield code="d">NRC</subfield>
+      <subfield code="d">OCLCF</subfield>
+      <subfield code="d">MMI</subfield>
+      <subfield code="d">TEFOD</subfield>
+      <subfield code="d">MMI</subfield>
+      <subfield code="d">OCLCA</subfield>
+      <subfield code="d">WAU</subfield>
+      <subfield code="d">OCLCO</subfield>
+      <subfield code="d">OCLCA</subfield>
+      <subfield code="d">BIB</subfield>
+    </datafield>
+    <datafield tag="019" ind1=" " ind2=" ">
+      <subfield code="a">698212662</subfield>
+      <subfield code="a">817718682</subfield>
+    </datafield>
+    <datafield tag="020" ind1=" " ind2=" ">
+      <subfield code="a">9780545229937</subfield>
+      <subfield code="q">electronic bk.</subfield>
+    </datafield>
+    <datafield tag="020" ind1=" " ind2=" ">
+      <subfield code="a">0545229936</subfield>
+      <subfield code="q">electronic bk.</subfield>
+    </datafield>
+    <datafield tag="020" ind1=" " ind2=" ">
+      <subfield code="a">9780545471046</subfield>
+      <subfield code="q">electronic bk.</subfield>
+    </datafield>
+    <datafield tag="020" ind1=" " ind2=" ">
+      <subfield code="a">0545471044</subfield>
+      <subfield code="q">electronic bk.</subfield>
+    </datafield>
+    <datafield tag="020" ind1=" " ind2=" ">
+      <subfield code="z">9780439023481 (alk. paper)</subfield>
+    </datafield>
+    <datafield tag="020" ind1=" " ind2=" ">
+      <subfield code="z">0439023483 (alk. paper)</subfield>
+    </datafield>
+    <datafield tag="020" ind1=" " ind2=" ">
+      <subfield code="z">9780439023528 (print)</subfield>
+    </datafield>
+    <datafield tag="037" ind1=" " ind2=" ">
+      <subfield code="a">C540FC07-07E2-4B2E-A86D-405CAD16B3C9</subfield>
+      <subfield code="b">OverDrive, Inc.</subfield>
+      <subfield code="n">http://www.overdrive.com</subfield>
+    </datafield>
+    <datafield tag="050" ind1=" " ind2="4">
+      <subfield code="a">PZ7.C6837</subfield>
+      <subfield code="b">Hun 2008eb</subfield>
+    </datafield>
+    <datafield tag="072" ind1=" " ind2="7">
+      <subfield code="a">JUV001010</subfield>
+      <subfield code="2">bisacsh</subfield>
+    </datafield>
+    <datafield tag="072" ind1=" " ind2="7">
+      <subfield code="a">JUV039140</subfield>
+      <subfield code="2">bisacsh</subfield>
+    </datafield>
+    <datafield tag="082" ind1="0" ind2="4">
+      <subfield code="a">[Fic]</subfield>
+      <subfield code="2">22</subfield>
+    </datafield>
+    <datafield tag="049" ind1=" " ind2=" ">
+      <subfield code="a">BIBA</subfield>
+    </datafield>
+    <datafield tag="100" ind1="1" ind2=" ">
+      <subfield code="a">Collins, Suzanne.</subfield>
+    </datafield>
+    <datafield tag="240" ind1="1" ind2="0">
+      <subfield code="a">Hunger Games (Novel)</subfield>
+    </datafield>
+    <datafield tag="245" ind1="1" ind2="4">
+      <subfield code="a">The Hunger Games</subfield>
+      <subfield code="h">[electronic resource] /</subfield>
+      <subfield code="c">Suzanne Collins.</subfield>
+    </datafield>
+    <datafield tag="250" ind1=" " ind2=" ">
+      <subfield code="a">1st ed.</subfield>
+    </datafield>
+    <datafield tag="260" ind1=" " ind2=" ">
+      <subfield code="a">New York :</subfield>
+      <subfield code="b">Scholastic Press,</subfield>
+      <subfield code="c">2008.</subfield>
+    </datafield>
+    <datafield tag="300" ind1=" " ind2=" ">
+      <subfield code="a">1 online resource (374 pages).</subfield>
+    </datafield>
+    <datafield tag="336" ind1=" " ind2=" ">
+      <subfield code="a">text</subfield>
+      <subfield code="b">txt</subfield>
+      <subfield code="2">rdacontent</subfield>
+    </datafield>
+    <datafield tag="337" ind1=" " ind2=" ">
+      <subfield code="a">computer</subfield>
+      <subfield code="b">c</subfield>
+      <subfield code="2">rdamedia</subfield>
+    </datafield>
+    <datafield tag="338" ind1=" " ind2=" ">
+      <subfield code="a">online resource</subfield>
+      <subfield code="b">cr</subfield>
+      <subfield code="2">rdacarrier</subfield>
+    </datafield>
+    <datafield tag="490" ind1="1" ind2=" ">
+      <subfield code="a">[Hunger Games trilogy] ;</subfield>
+      <subfield code="v">bk. 1</subfield>
+    </datafield>
+    <datafield tag="520" ind1=" " ind2=" ">
+      <subfield code="a">In a future North America, where the rulers of Panem maintain control through an annual televised survival competition pitting young people from each of the twelve districts against one another, sixteen-year-old Katniss's skills are put to the test when she voluntarily takes her younger sister's place.</subfield>
+    </datafield>
+    <datafield tag="588" ind1="0" ind2=" ">
+      <subfield code="a">Print version record.</subfield>
+    </datafield>
+    <datafield tag="588" ind1="0" ind2=" ">
+      <subfield code="a">Vendor supplied metadata.</subfield>
+    </datafield>
+    <datafield tag="650" ind1=" " ind2="0">
+      <subfield code="a">Survival</subfield>
+      <subfield code="v">Juvenile fiction.</subfield>
+    </datafield>
+    <datafield tag="650" ind1=" " ind2="0">
+      <subfield code="a">Interpersonal relations</subfield>
+      <subfield code="v">Juvenile fiction.</subfield>
+    </datafield>
+    <datafield tag="650" ind1=" " ind2="0">
+      <subfield code="a">Television programs</subfield>
+      <subfield code="v">Juvenile fiction.</subfield>
+    </datafield>
+    <datafield tag="650" ind1=" " ind2="0">
+      <subfield code="a">Contests</subfield>
+      <subfield code="v">Juvenile fiction.</subfield>
+    </datafield>
+    <datafield tag="650" ind1=" " ind2="1">
+      <subfield code="a">Survival</subfield>
+      <subfield code="v">Fiction.</subfield>
+    </datafield>
+    <datafield tag="650" ind1=" " ind2="1">
+      <subfield code="a">Television programs</subfield>
+      <subfield code="v">Fiction.</subfield>
+    </datafield>
+    <datafield tag="650" ind1=" " ind2="1">
+      <subfield code="a">Interpersonal relations</subfield>
+      <subfield code="v">Fiction.</subfield>
+    </datafield>
+    <datafield tag="650" ind1=" " ind2="1">
+      <subfield code="a">Contests</subfield>
+      <subfield code="v">Fiction.</subfield>
+    </datafield>
+    <datafield tag="650" ind1=" " ind2="1">
+      <subfield code="a">Science fiction.</subfield>
+    </datafield>
+    <datafield tag="655" ind1=" " ind2="0">
+      <subfield code="a">Young adult fiction.</subfield>
+    </datafield>
+    <datafield tag="655" ind1=" " ind2="4">
+      <subfield code="a">Electronic books.</subfield>
+    </datafield>
+    <datafield tag="776" ind1="0" ind2="8">
+      <subfield code="i">Print version:</subfield>
+      <subfield code="a">Collins, Suzanne.</subfield>
+      <subfield code="t">Hunger games.</subfield>
+      <subfield code="b">1st ed.</subfield>
+      <subfield code="d">New York : Scholastic Press, 2008</subfield>
+      <subfield code="z">9780439023481</subfield>
+      <subfield code="w">(DLC)  2007039987</subfield>
+      <subfield code="w">(OCoLC)181516677</subfield>
+    </datafield>
+    <datafield tag="800" ind1="1" ind2=" ">
+      <subfield code="a">Collins, Suzanne.</subfield>
+      <subfield code="t">Hunger Games (Series) ;</subfield>
+      <subfield code="v">1.</subfield>
+    </datafield>
+    <datafield tag="856" ind1="4" ind2=" ">
+      <subfield code="3">Image</subfield>
+      <subfield code="u">http://images.contentreserve.com/ImageType-100/0305-1/{8A3A1008-FD59-4846-BF90-CE4976A41A40}Img100.jpg</subfield>
+      <subfield code="9">NEWTWN</subfield>
+      <subfield code="x">newtwn</subfield>
+    </datafield>
+    <datafield tag="856" ind1="4" ind2=" ">
+      <subfield code="3">Image</subfield>
+      <subfield code="u">http://images.contentreserve.com/ImageType-100/0305-1/{C540FC07-07E2-4B2E-A86D-405CAD16B3C9}Img100.jpg</subfield>
+      <subfield code="9">NEWTWN</subfield>
+      <subfield code="x">newtwn</subfield>
+    </datafield>
+    <datafield tag="856" ind1="4" ind2="0">
+      <subfield code="3">Excerpt</subfield>
+      <subfield code="u">https://samples.overdrive.com/hunger-games-c540fc?.epub-sample.overdrive.com</subfield>
+      <subfield code="9">NEWTWN</subfield>
+      <subfield code="x">newtwn</subfield>
+    </datafield>
+    <datafield tag="856" ind1="4" ind2="0">
+      <subfield code="u">http://link.overdrive.com/?websiteID=197&amp;titleID=1714132</subfield>
+      <subfield code="y">Available Online from OverDrive for C.H. Booth Library patrons only. Click here to download</subfield>
+      <subfield code="9">NEWTWN</subfield>
+      <subfield code="x">newtwn</subfield>
+    </datafield>
+    <datafield tag="856" ind1="4" ind2="0">
+      <subfield code="u">http://bibliomation.lib.overdrive.com/ContentDetails.htm?ID=8A3A1008-FD59-4846-BF90-CE4976A41A40</subfield>
+      <subfield code="y">Available Online from Overdrive. Click here to download.</subfield>
+      <subfield code="9">ANSONA</subfield>
+      <subfield code="9">SPRAGUE</subfield>
+      <subfield code="9">BFALLS</subfield>
+      <subfield code="9">BETHEL</subfield>
+      <subfield code="9">BOLTON</subfield>
+      <subfield code="9">BRKFLD</subfield>
+      <subfield code="9">CHESTER</subfield>
+      <subfield code="9">CRNWAL</subfield>
+      <subfield code="9">DERBY</subfield>
+      <subfield code="9">DBNECK</subfield>
+      <subfield code="9">DMHUNT</subfield>
+      <subfield code="9">DPRVR</subfield>
+      <subfield code="9">EHAVEN</subfield>
+      <subfield code="9">EASTON</subfield>
+      <subfield code="9">ELNGTN</subfield>
+      <subfield code="9">WSHGTN</subfield>
+      <subfield code="9">HEBRON</subfield>
+      <subfield code="9">JCCL</subfield>
+      <subfield code="9">JTRUMBULL</subfield>
+      <subfield code="9">KLNGLY</subfield>
+      <subfield code="9">MILFORD</subfield>
+      <subfield code="9">RXBURY</subfield>
+      <subfield code="9">MONROE</subfield>
+      <subfield code="9">MORRIS</subfield>
+      <subfield code="9">NAUGTK</subfield>
+      <subfield code="9">NCANAAN</subfield>
+      <subfield code="9">NEWTWN</subfield>
+      <subfield code="9">NORFLK</subfield>
+      <subfield code="9">LITFLD</subfield>
+      <subfield code="9">OXFORD</subfield>
+      <subfield code="9">PUTNAM</subfield>
+      <subfield code="9">RDGFLD</subfield>
+      <subfield code="9">REDDNG</subfield>
+      <subfield code="9">ROCKVL</subfield>
+      <subfield code="9">ROWLIB</subfield>
+      <subfield code="9">SALEM</subfield>
+      <subfield code="9">SLSBRY</subfield>
+      <subfield code="9">SEYMOR</subfield>
+      <subfield code="9">SHLSYS</subfield>
+      <subfield code="9">SHLTON</subfield>
+      <subfield code="9">HUNTNG</subfield>
+      <subfield code="9">SLATER</subfield>
+      <subfield code="9">SRMAN</subfield>
+      <subfield code="9">SOMERS</subfield>
+      <subfield code="9">SBURY</subfield>
+      <subfield code="9">SFFRD</subfield>
+      <subfield code="9">SUFFLD</subfield>
+      <subfield code="9">TERYVL</subfield>
+      <subfield code="9">TLLAND</subfield>
+      <subfield code="9">TOMPSN</subfield>
+      <subfield code="9">UNION</subfield>
+      <subfield code="9">WARREN</subfield>
+      <subfield code="9">WDBURY</subfield>
+      <subfield code="9">WESTON</subfield>
+      <subfield code="9">WTRBRY</subfield>
+      <subfield code="9">BUHILL</subfield>
+      <subfield code="9">WLMNTC</subfield>
+      <subfield code="9">WOLCOT</subfield>
+      <subfield code="9">WINDFREE</subfield>
+      <subfield code="x">cons</subfield>
+    </datafield>
+    <datafield tag="856" ind1="4" ind2="0">
+      <subfield code="3">Excerpt</subfield>
+      <subfield code="u">https://samples.overdrive.com/hunger-games-c540fc?.epub-sample.overdrive.com</subfield>
+      <subfield code="y">Available Online from Overdrive. Click here to download.</subfield>
+      <subfield code="9">ANSONA</subfield>
+      <subfield code="9">SPRAGUE</subfield>
+      <subfield code="9">BFALLS</subfield>
+      <subfield code="9">BETHEL</subfield>
+      <subfield code="9">BOLTON</subfield>
+      <subfield code="9">BRKFLD</subfield>
+      <subfield code="9">CHESTER</subfield>
+      <subfield code="9">CRNWAL</subfield>
+      <subfield code="9">DERBY</subfield>
+      <subfield code="9">DBNECK</subfield>
+      <subfield code="9">DMHUNT</subfield>
+      <subfield code="9">DPRVR</subfield>
+      <subfield code="9">EHAVEN</subfield>
+      <subfield code="9">EASTON</subfield>
+      <subfield code="9">ELNGTN</subfield>
+      <subfield code="9">WSHGTN</subfield>
+      <subfield code="9">HEBRON</subfield>
+      <subfield code="9">JCCL</subfield>
+      <subfield code="9">JTRUMBULL</subfield>
+      <subfield code="9">KLNGLY</subfield>
+      <subfield code="9">MILFORD</subfield>
+      <subfield code="9">RXBURY</subfield>
+      <subfield code="9">MONROE</subfield>
+      <subfield code="9">MORRIS</subfield>
+      <subfield code="9">NAUGTK</subfield>
+      <subfield code="9">NCANAAN</subfield>
+      <subfield code="9">NEWTWN</subfield>
+      <subfield code="9">NORFLK</subfield>
+      <subfield code="9">LITFLD</subfield>
+      <subfield code="9">OXFORD</subfield>
+      <subfield code="9">PUTNAM</subfield>
+      <subfield code="9">RDGFLD</subfield>
+      <subfield code="9">REDDNG</subfield>
+      <subfield code="9">ROCKVL</subfield>
+      <subfield code="9">ROWLIB</subfield>
+      <subfield code="9">SALEM</subfield>
+      <subfield code="9">SLSBRY</subfield>
+      <subfield code="9">SEYMOR</subfield>
+      <subfield code="9">SHLSYS</subfield>
+      <subfield code="9">SHLTON</subfield>
+      <subfield code="9">HUNTNG</subfield>
+      <subfield code="9">SLATER</subfield>
+      <subfield code="9">SRMAN</subfield>
+      <subfield code="9">SOMERS</subfield>
+      <subfield code="9">SBURY</subfield>
+      <subfield code="9">SFFRD</subfield>
+      <subfield code="9">SUFFLD</subfield>
+      <subfield code="9">TERYVL</subfield>
+      <subfield code="9">TLLAND</subfield>
+      <subfield code="9">TOMPSN</subfield>
+      <subfield code="9">UNION</subfield>
+      <subfield code="9">WARREN</subfield>
+      <subfield code="9">WDBURY</subfield>
+      <subfield code="9">WESTON</subfield>
+      <subfield code="9">WTRBRY</subfield>
+      <subfield code="9">BUHILL</subfield>
+      <subfield code="9">WLMNTC</subfield>
+      <subfield code="9">WOLCOT</subfield>
+      <subfield code="9">WINDFREE</subfield>
+      <subfield code="x">cons</subfield>
+    </datafield>
+    <datafield tag="856" ind1="4" ind2="0">
+      <subfield code="3">Excerpt</subfield>
+      <subfield code="u">https://samples.overdrive.com/hunger-games-8a3a10?.epub-sample.overdrive.com</subfield>
+      <subfield code="y">Available Online from Overdrive. Click here to download.</subfield>
+      <subfield code="9">ANSONA</subfield>
+      <subfield code="9">SPRAGUE</subfield>
+      <subfield code="9">BFALLS</subfield>
+      <subfield code="9">BETHEL</subfield>
+      <subfield code="9">BOLTON</subfield>
+      <subfield code="9">BRKFLD</subfield>
+      <subfield code="9">CHESTER</subfield>
+      <subfield code="9">CRNWAL</subfield>
+      <subfield code="9">DERBY</subfield>
+      <subfield code="9">DBNECK</subfield>
+      <subfield code="9">DMHUNT</subfield>
+      <subfield code="9">DPRVR</subfield>
+      <subfield code="9">EHAVEN</subfield>
+      <subfield code="9">EASTON</subfield>
+      <subfield code="9">ELNGTN</subfield>
+      <subfield code="9">WSHGTN</subfield>
+      <subfield code="9">HEBRON</subfield>
+      <subfield code="9">JCCL</subfield>
+      <subfield code="9">JTRUMBULL</subfield>
+      <subfield code="9">KLNGLY</subfield>
+      <subfield code="9">MILFORD</subfield>
+      <subfield code="9">RXBURY</subfield>
+      <subfield code="9">MONROE</subfield>
+      <subfield code="9">MORRIS</subfield>
+      <subfield code="9">NAUGTK</subfield>
+      <subfield code="9">NCANAAN</subfield>
+      <subfield code="9">NEWTWN</subfield>
+      <subfield code="9">NORFLK</subfield>
+      <subfield code="9">LITFLD</subfield>
+      <subfield code="9">OXFORD</subfield>
+      <subfield code="9">PUTNAM</subfield>
+      <subfield code="9">RDGFLD</subfield>
+      <subfield code="9">REDDNG</subfield>
+      <subfield code="9">ROCKVL</subfield>
+      <subfield code="9">ROWLIB</subfield>
+      <subfield code="9">SALEM</subfield>
+      <subfield code="9">SLSBRY</subfield>
+      <subfield code="9">SEYMOR</subfield>
+      <subfield code="9">SHLSYS</subfield>
+      <subfield code="9">SHLTON</subfield>
+      <subfield code="9">HUNTNG</subfield>
+      <subfield code="9">SLATER</subfield>
+      <subfield code="9">SRMAN</subfield>
+      <subfield code="9">SOMERS</subfield>
+      <subfield code="9">SBURY</subfield>
+      <subfield code="9">SFFRD</subfield>
+      <subfield code="9">SUFFLD</subfield>
+      <subfield code="9">TERYVL</subfield>
+      <subfield code="9">TLLAND</subfield>
+      <subfield code="9">TOMPSN</subfield>
+      <subfield code="9">UNION</subfield>
+      <subfield code="9">WARREN</subfield>
+      <subfield code="9">WDBURY</subfield>
+      <subfield code="9">WESTON</subfield>
+      <subfield code="9">WTRBRY</subfield>
+      <subfield code="9">BUHILL</subfield>
+      <subfield code="9">WLMNTC</subfield>
+      <subfield code="9">WOLCOT</subfield>
+      <subfield code="9">WINDFREE</subfield>
+      <subfield code="x">cons</subfield>
+    </datafield>
+    <datafield tag="856" ind1="4" ind2=" ">
+      <subfield code="3">Image</subfield>
+      <subfield code="u">http://images.contentreserve.com/ImageType-100/0305-1/{C540FC07-07E2-4B2E-A86D-405CAD16B3C9}Img100.jpg</subfield>
+      <subfield code="y">Available Online from Overdrive. Click here to download.</subfield>
+      <subfield code="9">ANSONA</subfield>
+      <subfield code="9">SPRAGUE</subfield>
+      <subfield code="9">BFALLS</subfield>
+      <subfield code="9">BETHEL</subfield>
+      <subfield code="9">BOLTON</subfield>
+      <subfield code="9">BRKFLD</subfield>
+      <subfield code="9">CHESTER</subfield>
+      <subfield code="9">CRNWAL</subfield>
+      <subfield code="9">DERBY</subfield>
+      <subfield code="9">DBNECK</subfield>
+      <subfield code="9">DMHUNT</subfield>
+      <subfield code="9">DPRVR</subfield>
+      <subfield code="9">EHAVEN</subfield>
+      <subfield code="9">EASTON</subfield>
+      <subfield code="9">ELNGTN</subfield>
+      <subfield code="9">WSHGTN</subfield>
+      <subfield code="9">HEBRON</subfield>
+      <subfield code="9">JCCL</subfield>
+      <subfield code="9">JTRUMBULL</subfield>
+      <subfield code="9">KLNGLY</subfield>
+      <subfield code="9">MILFORD</subfield>
+      <subfield code="9">RXBURY</subfield>
+      <subfield code="9">MONROE</subfield>
+      <subfield code="9">MORRIS</subfield>
+      <subfield code="9">NAUGTK</subfield>
+      <subfield code="9">NCANAAN</subfield>
+      <subfield code="9">NEWTWN</subfield>
+      <subfield code="9">NORFLK</subfield>
+      <subfield code="9">LITFLD</subfield>
+      <subfield code="9">OXFORD</subfield>
+      <subfield code="9">PUTNAM</subfield>
+      <subfield code="9">RDGFLD</subfield>
+      <subfield code="9">REDDNG</subfield>
+      <subfield code="9">ROCKVL</subfield>
+      <subfield code="9">ROWLIB</subfield>
+      <subfield code="9">SALEM</subfield>
+      <subfield code="9">SLSBRY</subfield>
+      <subfield code="9">SEYMOR</subfield>
+      <subfield code="9">SHLSYS</subfield>
+      <subfield code="9">SHLTON</subfield>
+      <subfield code="9">HUNTNG</subfield>
+      <subfield code="9">SLATER</subfield>
+      <subfield code="9">SRMAN</subfield>
+      <subfield code="9">SOMERS</subfield>
+      <subfield code="9">SBURY</subfield>
+      <subfield code="9">SFFRD</subfield>
+      <subfield code="9">SUFFLD</subfield>
+      <subfield code="9">TERYVL</subfield>
+      <subfield code="9">TLLAND</subfield>
+      <subfield code="9">TOMPSN</subfield>
+      <subfield code="9">UNION</subfield>
+      <subfield code="9">WARREN</subfield>
+      <subfield code="9">WDBURY</subfield>
+      <subfield code="9">WESTON</subfield>
+      <subfield code="9">WTRBRY</subfield>
+      <subfield code="9">BUHILL</subfield>
+      <subfield code="9">WLMNTC</subfield>
+      <subfield code="9">WOLCOT</subfield>
+      <subfield code="9">WINDFREE</subfield>
+      <subfield code="x">cons</subfield>
+    </datafield>
+    <datafield tag="856" ind1="4" ind2=" ">
+      <subfield code="3">Image</subfield>
+      <subfield code="u">http://images.contentreserve.com/ImageType-100/0305-1/{8A3A1008-FD59-4846-BF90-CE4976A41A40}Img100.jpg</subfield>
+      <subfield code="y">Available Online from Overdrive. Click here to download.</subfield>
+      <subfield code="9">ANSONA</subfield>
+      <subfield code="9">SPRAGUE</subfield>
+      <subfield code="9">BFALLS</subfield>
+      <subfield code="9">BETHEL</subfield>
+      <subfield code="9">BOLTON</subfield>
+      <subfield code="9">BRKFLD</subfield>
+      <subfield code="9">CHESTER</subfield>
+      <subfield code="9">CRNWAL</subfield>
+      <subfield code="9">DERBY</subfield>
+      <subfield code="9">DBNECK</subfield>
+      <subfield code="9">DMHUNT</subfield>
+      <subfield code="9">DPRVR</subfield>
+      <subfield code="9">EHAVEN</subfield>
+      <subfield code="9">EASTON</subfield>
+      <subfield code="9">ELNGTN</subfield>
+      <subfield code="9">WSHGTN</subfield>
+      <subfield code="9">HEBRON</subfield>
+      <subfield code="9">JCCL</subfield>
+      <subfield code="9">JTRUMBULL</subfield>
+      <subfield code="9">KLNGLY</subfield>
+      <subfield code="9">MILFORD</subfield>
+      <subfield code="9">RXBURY</subfield>
+      <subfield code="9">MONROE</subfield>
+      <subfield code="9">MORRIS</subfield>
+      <subfield code="9">NAUGTK</subfield>
+      <subfield code="9">NCANAAN</subfield>
+      <subfield code="9">NEWTWN</subfield>
+      <subfield code="9">NORFLK</subfield>
+      <subfield code="9">LITFLD</subfield>
+      <subfield code="9">OXFORD</subfield>
+      <subfield code="9">PUTNAM</subfield>
+      <subfield code="9">RDGFLD</subfield>
+      <subfield code="9">REDDNG</subfield>
+      <subfield code="9">ROCKVL</subfield>
+      <subfield code="9">ROWLIB</subfield>
+      <subfield code="9">SALEM</subfield>
+      <subfield code="9">SLSBRY</subfield>
+      <subfield code="9">SEYMOR</subfield>
+      <subfield code="9">SHLSYS</subfield>
+      <subfield code="9">SHLTON</subfield>
+      <subfield code="9">HUNTNG</subfield>
+      <subfield code="9">SLATER</subfield>
+      <subfield code="9">SRMAN</subfield>
+      <subfield code="9">SOMERS</subfield>
+      <subfield code="9">SBURY</subfield>
+      <subfield code="9">SFFRD</subfield>
+      <subfield code="9">SUFFLD</subfield>
+      <subfield code="9">TERYVL</subfield>
+      <subfield code="9">TLLAND</subfield>
+      <subfield code="9">TOMPSN</subfield>
+      <subfield code="9">UNION</subfield>
+      <subfield code="9">WARREN</subfield>
+      <subfield code="9">WDBURY</subfield>
+      <subfield code="9">WESTON</subfield>
+      <subfield code="9">WTRBRY</subfield>
+      <subfield code="9">BUHILL</subfield>
+      <subfield code="9">WLMNTC</subfield>
+      <subfield code="9">WOLCOT</subfield>
+      <subfield code="9">WINDFREE</subfield>
+      <subfield code="x">cons</subfield>
+    </datafield>
+    <datafield tag="994" ind1=" " ind2=" ">
+      <subfield code="a">C0</subfield>
+      <subfield code="b">BIB</subfield>
+    </datafield>
+    <datafield tag="905" ind1=" " ind2=" ">
+      <subfield code="u">lancelot</subfield>
+    </datafield>
+    <datafield tag="901" ind1=" " ind2=" ">
+      <subfield code="a">ocn639048502</subfield>
+      <subfield code="b">OCoLC</subfield>
+      <subfield code="c">3185816</subfield>
+      <subfield code="t">biblio</subfield>
+      <subfield code="s">Overdrive</subfield>
+    </datafield>
+  </record>
+</collection>
+

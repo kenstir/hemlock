@@ -19,16 +19,21 @@
  */
 package org.evergreen_ils.searchCatalog;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
 import android.text.TextUtils;
+
 import org.evergreen_ils.system.Log;
 import org.evergreen_ils.system.Utils;
+import org.evergreen_ils.utils.MARCRecord;
+import org.evergreen_ils.utils.MARCXMLParser;
+import org.evergreen_ils.utils.RecordAttributes;
 import org.opensrf.util.GatewayResponse;
 import org.opensrf.util.OSRFObject;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class RecordInfo implements Serializable {
 
@@ -50,7 +55,6 @@ public class RecordInfo implements Serializable {
     public String publisher = null;
     public String isbn = null;
     public String subject = "";
-    public String doc_type = null;
     public String online_loc = null;
     public String synopsis = null;
     public String physical_description = null;
@@ -60,11 +64,14 @@ public class RecordInfo implements Serializable {
     // todo: put the knowledge of whether this record has been loaded here in RecordInfo
     // and not scattered e.g. in RecordLoader and BasicDetailsFragment
     public boolean basic_metadata_loaded = false;
-    public boolean search_format_loaded = false;
+    public boolean attrs_loaded = false;
     public boolean copy_summary_loaded = false;
+    public boolean marcxml_loaded = false;
 
     public ArrayList<CopySummary> copySummaryList = null;
     public String search_format = null;
+    public MARCRecord marc_record = null;
+    public HashMap<String, String> attrs = null;
 
     public RecordInfo() {
         this.dummy = true;
@@ -100,8 +107,8 @@ public class RecordInfo implements Serializable {
         record.author = Utils.safeString(info.getString("author"));
         record.pubdate = Utils.safeString(info.getString("pubdate"));
         record.publisher = Utils.safeString(info.getString("publisher"));
-        record.doc_type = Utils.safeString(info.getString("doc_type"));
         record.synopsis = Utils.safeString(info.getString("synopsis"));
+        record.physical_description = Utils.safeString(info.getString("physical_description"));
 
         try {
             record.isbn = (String) info.get("isbn");
@@ -123,12 +130,6 @@ public class RecordInfo implements Serializable {
         }
 
         try {
-            record.physical_description = (String) info.get("physical_description");
-        } catch (Exception e) {
-            Log.d(TAG, "caught", e);
-        }
-
-        try {
             List<String> seriesList = (List<String>) info.get("series");
             record.series = TextUtils.join("\n", seriesList);
         } catch (Exception e) {
@@ -136,6 +137,21 @@ public class RecordInfo implements Serializable {
         }
 
         record.basic_metadata_loaded = true;
+    }
+
+    public void updateFromBREResponse(GatewayResponse response) {
+        try {
+            OSRFObject info = (OSRFObject) response.payload;
+            marcxml_loaded = true;
+
+            String marcxml = info.getString("marc");
+            if (!TextUtils.isEmpty(marcxml)) {
+                MARCXMLParser parser = new MARCXMLParser(marcxml);
+                marc_record = parser.parse();
+            }
+        } catch (Exception e) {
+            Log.d(TAG, "caught", e);
+        }
     }
 
     public static void setCopySummary(RecordInfo record, GatewayResponse response) {
@@ -172,7 +188,30 @@ public class RecordInfo implements Serializable {
 
     public void setSearchFormat(String format) {
         search_format = format;
-        search_format_loaded = true;
+    }
+
+    public void updateFromMRAResponse(GatewayResponse response) {
+        OSRFObject mra_obj = null;
+        try {
+            mra_obj = (OSRFObject) response.payload;
+        } catch (ClassCastException e) {
+            Log.d(TAG, "caught", e);
+        }
+        updateFromMRAResponse(mra_obj);
+    }
+    public void updateFromMRAResponse(OSRFObject mra_obj) {
+        attrs = RecordAttributes.parseAttributes(mra_obj);
+
+        // the "icon_format" attr (e.g. ebook) is what we need, not
+        // the "search_format" attr (e.g. "electronic")
+        search_format = attrs.get("icon_format");
+        if (TextUtils.isEmpty(search_format))
+            search_format = attrs.get("search_format");
+        attrs_loaded = true;
+    }
+
+    public String getAttr(String attr_name) {
+        return attrs.get(attr_name);
     }
 
     public static String getFormatLabel(RecordInfo record) {
@@ -187,15 +226,5 @@ public class RecordInfo implements Serializable {
                 (publisher == null) ? "" : publisher,
         });
         return s.trim();
-    }
-
-    /** some records have a non-null online_loc but are books nevertheless, e.g.
-     * https://bark.cwmars.org/eg/opac/record/3306629
-     */
-    public boolean isOnlineResource() {
-        Log.d(TAG, "isOnlineResource id="+doc_id+" search_format="+search_format
-                +" online_loc="+online_loc);
-        return (!TextUtils.isEmpty(online_loc)
-                && SearchFormat.isOnlineResource(search_format));
     }
 }

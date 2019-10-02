@@ -65,7 +65,7 @@ public class RecordViewAdapter extends RecyclerView.Adapter<RecordViewAdapter.Vi
             imageView.setImageUrl(url, VolleyWrangler.getInstance(context).getImageLoader());
             //imageView.setDefaultImageResId(R.drawable.missing_art);//for screenshots
             titleText.setText((record.title != null) ? record.title : context.getString(R.string.title_busy_ellipsis));
-            RecordLoader.fetch(record, context, new RecordLoader.ResponseListener() {
+            RecordLoader.fetchSummaryMetadata(record, context, new RecordLoader.ResponseListener() {
                 @Override
                 public void onMetadataLoaded() {
                     titleText.setText(record.title);

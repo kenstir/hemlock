@@ -3,8 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="net.kenstir.apps.noble"
           android:installLocation="auto"
-          android:versionCode="1"
-          android:versionName="0.0.1">
+          android:versionCode="2"
+          android:versionName="0.0.2">
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS" />
@@ -61,12 +61,6 @@
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
-        <activity
-                android:name="org.evergreen_ils.views.SimpleTestableActivity">
-            <!--<intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-            </intent-filter>-->
         </activity>
 
         <!-- Search -->

@@ -79,7 +79,7 @@ public class BaseActivity extends AppCompatActivity
         }
         mRestarting = false;
         SearchFormat.init(this);
-        AppState.init(this);
+        App.init(this);
         initMenuProvider();
         if (mMenuItemHandler != null)
             mMenuItemHandler.onCreate(this);

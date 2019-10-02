@@ -41,7 +41,6 @@ import org.evergreen_ils.system.Utils;
 import org.evergreen_ils.utils.ui.BaseActivity;
 import org.evergreen_ils.utils.ui.ProgressDialogSupport;
 import org.opensrf.util.OSRFObject;
-import org.w3c.dom.Text;
 
 import android.content.Context;
 import android.os.Bundle;
