@@ -64,8 +64,7 @@ public class AcornAppBehavior extends AppBehavior {
 
     // Trim the link text for a better mobile UX
     private String trimLinkTitle(String s) {
-        String s1 = s.replaceAll("Click here to download\\.?", "")
-                .replace("Click here to access\\.?", "")
+        String s1 = s.replaceAll("Click here to (download|access)\\.?", "")
                 .trim();
         return trimTrailing(s1,'.').trim();
     }
