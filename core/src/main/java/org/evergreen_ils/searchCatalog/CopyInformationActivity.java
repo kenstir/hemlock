@@ -20,6 +20,8 @@
 package org.evergreen_ils.searchCatalog;
 
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
@@ -27,6 +29,7 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -91,14 +94,18 @@ public class CopyInformationActivity extends AppCompatActivity {
         listAdapter = new CopyInformationArrayAdapter(this,
                 R.layout.copy_information_item, copyInfoRecords);
         lv.setAdapter(listAdapter);
-//        lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-//            @Override
-//            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-//                CopyLocationCounts record = (CopyLocationCounts) lv.getItemAtPosition(position);
-//                String url = EvergreenServer.getInstance().getOrganizationLibraryInfoPageUrl(record.org_id);
-//                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
-//            }
-//        });
+        if (getResources().getBoolean(R.bool.ou_enable_copy_info_web_links)) {
+            lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    CopyLocationCounts record = (CopyLocationCounts) lv.getItemAtPosition(position);
+                    String url = EvergreenServer.getInstance().getOrganizationLibraryInfoPageUrl(record.org_id);
+                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
+                }
+            });
+        } else {
+            lv.setSelector(android.R.color.transparent);
+        }
 
         TextView summaryText = (TextView) findViewById(R.id.copy_information_summary);
         summaryText.setText(RecordLoader.getCopySummary(record, orgID, this));
