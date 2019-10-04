@@ -1,12 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools" xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <!-- Missing material colors from https://material.google.com/style/color.html#color-color-palette -->
-    <color name="material_grey_200">#EEEEEE</color>
-    <color name="material_grey_400">#BDBDBD</color>
-    <color name="material_grey_500">#9E9E9E</color>
-    <color name="material_grey_700">#616161</color>
-
     <color name="cwmars_dark">#16416F</color>
     <color name="cwmars_medium">#006098</color>
     <color name="cwmars_secondary1">#d61d4a</color>
@@ -33,12 +27,6 @@
 
     <style name="alertText">
         <item name="android:textColor">@color/cwmars_secondary4</item>
-    </style>
-
-    <style name="HemlockProgressBar" parent="Widget.AppCompat.ProgressBar.Horizontal">
-        <item name="colorPrimaryDark">@color/accent</item>
-        <item name="colorPrimary">@color/accent</item>
-        <item name="colorAccent">@color/accent</item>
     </style>
 
 </resources>
