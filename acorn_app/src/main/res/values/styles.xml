@@ -12,8 +12,4 @@
     <color name="hemlock_accent">@color/acorn_light</color>
     <color name="hemlock_text_alert">#ff9100</color>
 
-    <style name="alertText">
-        <item name="android:textColor">@color/hemlock_text_alert</item>
-    </style>
-
 </resources>
