@@ -32,7 +32,7 @@ import org.evergreen_ils.accountAccess.AccountAccess;
 public class ActionBarUtils {
 
     public static Toolbar initActionBarForActivity(AppCompatActivity activity, String title, boolean isMainActivity) {
-        Toolbar toolbar = (Toolbar) activity.findViewById(R.id.toolbar);
+        Toolbar toolbar = activity.findViewById(R.id.toolbar);
         activity.setSupportActionBar(toolbar);
 
         ActionBar actionBar = activity.getSupportActionBar();
@@ -50,8 +50,6 @@ public class ActionBarUtils {
             //actionBar.setHomeAsUpIndicator(R.drawable.ic_arrow_back_white_24dp);
             actionBar.setHomeAsUpIndicator(0);
         }
-//         this didn't work
-//        toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp);
 
         return toolbar;
     }
