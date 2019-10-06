@@ -17,7 +17,7 @@
 package org.evergreen_ils.searchCatalog;
 
 import android.content.Context;
-import android.support.v7.widget.RecyclerView;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.*;
 import android.widget.TextView;
 import com.android.volley.toolbox.NetworkImageView;

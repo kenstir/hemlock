@@ -18,7 +18,7 @@
 package org.evergreen_ils.test;
 
 import android.content.Context;
-import android.support.test.InstrumentationRegistry;
+import androidx.test.platform.app.InstrumentationRegistry;
 
 import org.evergreen_ils.system.Log;
 import org.evergreen_ils.system.StdoutLogProvider;

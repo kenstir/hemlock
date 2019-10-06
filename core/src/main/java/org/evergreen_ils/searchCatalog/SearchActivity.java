@@ -21,8 +21,8 @@ package org.evergreen_ils.searchCatalog;
 
 import java.util.*;
 
-import android.support.v4.app.FragmentTransaction;
-import android.support.v7.widget.SwitchCompat;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.appcompat.widget.SwitchCompat;
 import android.text.TextUtils;
 import android.view.*;
 import android.widget.*;

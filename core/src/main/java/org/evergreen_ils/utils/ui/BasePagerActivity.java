@@ -19,17 +19,10 @@
  */
 package org.evergreen_ils.utils.ui;
 
-import java.util.Random;
+import androidx.fragment.app.FragmentPagerAdapter;
 
-import android.support.v4.app.FragmentPagerAdapter;
-import org.evergreen_ils.R;
-
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.view.ViewPager;
-import android.support.v7.app.AppCompatActivity;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.widget.Toast;
+import androidx.viewpager.widget.ViewPager;
+import androidx.appcompat.app.AppCompatActivity;
 
 public abstract class BasePagerActivity extends BaseActivity {
     //private static final Random RANDOM = new Random();

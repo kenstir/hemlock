@@ -18,7 +18,7 @@
 
 package org.evergreen_ils.test;
 
-import android.support.test.runner.AndroidJUnit4;
+import androidx.test.ext.junit.runners.AndroidJUnit4;
 
 import org.evergreen_ils.system.Log;
 import org.evergreen_ils.system.StdoutLogProvider;

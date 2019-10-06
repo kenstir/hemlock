@@ -29,7 +29,7 @@
 
 package org.evergreen_ils.utils.ui;
 
-import android.support.v7.widget.RecyclerView;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.View;
 import org.evergreen_ils.R;
 

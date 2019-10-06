@@ -21,7 +21,7 @@ package org.evergreen_ils.searchCatalog;
 
 import java.util.ArrayList;
 
-import android.support.v4.app.FragmentPagerAdapter;
+import androidx.fragment.app.FragmentPagerAdapter;
 import android.view.MenuItem;
 import org.evergreen_ils.R;
 import org.evergreen_ils.system.Log;
@@ -32,9 +32,9 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.view.ViewPager;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.viewpager.widget.ViewPager;
 import android.view.KeyEvent;
 
 public class SampleUnderlinesNoFade extends BasePagerActivity {

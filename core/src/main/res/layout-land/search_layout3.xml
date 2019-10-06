@@ -25,7 +25,7 @@
                     android:layout_weight="1"
                     android:maxLines="1"
                     android:gravity="bottom"/>
-            <android.support.v7.widget.SwitchCompat
+            <androidx.appcompat.widget.SwitchCompat
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/search_options_button"

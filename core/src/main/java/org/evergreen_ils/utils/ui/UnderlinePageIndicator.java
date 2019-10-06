@@ -17,7 +17,6 @@ package org.evergreen_ils.utils.ui;
 
 import org.evergreen_ils.R;
 import org.evergreen_ils.system.Analytics;
-import org.evergreen_ils.system.Log;
 
 import android.content.Context;
 import android.content.res.Resources;
@@ -26,9 +25,9 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.support.v4.view.MotionEventCompat;
-import android.support.v4.view.ViewConfigurationCompat;
-import android.support.v4.view.ViewPager;
+import androidx.core.view.MotionEventCompat;
+import androidx.core.view.ViewConfigurationCompat;
+import androidx.viewpager.widget.ViewPager;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;

@@ -17,17 +17,15 @@
 
 package net.kenstir.apps.acorn;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import android.text.TextUtils;
 
 import org.evergreen_ils.android.AppBehavior;
 
 import org.evergreen_ils.searchCatalog.RecordInfo;
-import org.evergreen_ils.system.Log;
 import org.evergreen_ils.utils.Link;
 import org.evergreen_ils.utils.MARCRecord;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
