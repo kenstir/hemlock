@@ -14,11 +14,12 @@
     <color name="hemlock_accent">@color/noble_light</color>
     <color name="hemlock_text_alert">#ff9100</color>
 
-    <style name="Hemlock.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar">
-        <item name="android:textColor">@color/white</item>
-        <item name="android:titleTextColor">@color/white</item>
+    <style name="Hemlock.AppBarOverlay" parent="ThemeOverlay.AppCompat.ActionBar">
         <item name="colorControlNormal">@color/white</item>
-        <item name="android:foreground">@color/primary_dark</item>
+        <item name="colorPrimary">@color/primary</item>
+        <item name="colorPrimaryDark">@color/primary_dark</item>
+        <item name="titleTextColor">@color/white</item>
+        <item name="subtitleTextColor">@color/white</item>
     </style>
 
 </resources>

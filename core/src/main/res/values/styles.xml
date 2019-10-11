@@ -151,16 +151,10 @@
         <item name="colorAccent">@color/hemlock_accent</item>
     </style>
 
-    <style name="HemlockLight" parent="Theme.AppCompat.Light">
-<!--        <item name="colorPrimary">@color/primary</item>-->
-<!--        <item name="colorPrimaryDark">@color/primary_dark</item>-->
-<!--        <item name="colorAccent">@color/hemlock_accent</item>-->
-    </style>
-
     <style name="HemlockLightNoActionBar" parent="Theme.AppCompat.Light.NoActionBar">
-<!--        <item name="colorPrimary">@color/primary</item>-->
-<!--        <item name="colorPrimaryDark">@color/primary_dark</item>-->
-<!--        <item name="colorAccent">@color/hemlock_accent</item>-->
+        <item name="colorPrimary">@color/primary</item>
+        <item name="colorPrimaryDark">@color/primary_dark</item>
+        <item name="colorAccent">@color/hemlock_accent</item>
     </style>
 
     <style name="alertText">
@@ -173,7 +167,7 @@
         <item name="colorAccent">@color/accent</item>
     </style>
 
-    <style name="Hemlock.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+    <style name="Hemlock.AppBarOverlay" parent="ThemeOverlay.AppCompat.ActionBar" />
 
     <style name="HemlockDarkNoActionBar.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
