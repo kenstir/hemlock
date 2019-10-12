@@ -33,7 +33,7 @@
 
                 <TextView
                         android:id="@+id/hold_title"
-                        style="@style/TitleSearchStyleList"
+                        style="@style/HemlockText.ListPrimary"
                         android:layout_width="0dip"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
@@ -51,7 +51,7 @@
 
                 <TextView
                         android:id="@+id/hold_author"
-                        style="@style/AuthorSearchStyleList"
+                        style="@style/HemlockText.ListSecondary"
                         android:layout_width="0dip"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
@@ -68,7 +68,7 @@
                 />
                 <TextView
                         android:id="@+id/hold_format"
-                        style="@style/PubSearchStyleList"
+                        style="@style/HemlockText.ListTertiary"
                         android:layout_width="0dip"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"

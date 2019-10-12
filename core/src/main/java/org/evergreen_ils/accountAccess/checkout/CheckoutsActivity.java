@@ -206,7 +206,7 @@ public class CheckoutsActivity extends BaseActivity {
 
         private void maybeHighlightDueDate(final CircRecord record) {
             recordIsOverdue.setVisibility(record.isOverdue() ? View.VISIBLE : View.GONE);
-            int style = (record.isDue() ? R.style.alertText : R.style.PubSearchStyleList);
+            int style = (record.isDue() ? R.style.alertText : R.style.HemlockText_ListTertiary);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 recordDueDate.setTextAppearance(style);
             } else {

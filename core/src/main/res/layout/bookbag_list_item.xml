@@ -21,7 +21,7 @@
 
         <TextView
                 android:id="@+id/bookbag_name"
-                style="@style/TitleSearchStyleList"
+                style="@style/HemlockText.ListPrimary"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 tools:text="Stuff to Read"
@@ -29,26 +29,17 @@
 
         <TextView
                 android:id="@+id/bookbag_description"
-                style="@style/AuthorSearchStyleList"
+                style="@style/HemlockText.ListSecondary"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 tools:text="a collection of stuff to read"
         />
 
-        <!--<CheckBox-->
-                <!--android:id="@+id/bookbag_shared"-->
-                <!--android:layout_width="fill_parent"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:layout_weight="1"-->
-                <!--android:gravity="center"-->
-                <!--android:focusable="false"-->
-        <!--/>-->
-
     </LinearLayout>
 
     <TextView
             android:id="@+id/bookbag_items"
-            style="@style/TitleSearchStyleList"
+            style="@style/HemlockText.ListPrimary"
             android:layout_width="wrap_content"
             android:layout_height="fill_parent"
             android:gravity="top"

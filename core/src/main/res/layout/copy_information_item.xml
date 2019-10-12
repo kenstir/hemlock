@@ -9,13 +9,13 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         tools:text="Desoto Trail Regional Library"
-        style="@style/TitleSearchStyleList"
+        style="@style/HemlockText.ListPrimary"
         android:id="@+id/copy_information_major_location"/>
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         tools:text="Blakely-Maddox Memorial Library"
-        style="@style/AuthorSearchStyleList"
+        style="@style/HemlockText.ListSecondary"
         android:id="@+id/copy_information_minor_location"/>
 
     <LinearLayout

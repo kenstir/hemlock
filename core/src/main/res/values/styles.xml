@@ -1,33 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools">
 
-    <style name="textSmall">
-        <item name="android:textSize">14sp</item>
-        <item name="android:paddingLeft">10dip</item>
-        <item name="android:paddingTop">4dip</item>
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">wrap_content</item>
-    </style>
-
-    <style name="textMediumNoPadding">
-        <item name="android:textSize">16sp</item>
-    </style>
-
-    <style name="textLarge">
-        <item name="android:textSize">18sp</item>
-        <item name="android:paddingLeft">10dip</item>
-        <item name="android:paddingTop">5dip</item>
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">wrap_content</item>
-    </style>
-
-    <style name="textLargeNoPadding">
-        <item name="android:textSize">18sp</item>
-    </style>
-
-    <style name="textSplash">
-        <item name="android:textSize">22sp</item>
-    </style>
+    <style name="Hemlock"><!-- empty, just for naming --></style>
 
     <style name="spacer">
         <item name="android:layout_width">fill_parent</item>
@@ -55,34 +29,48 @@
         <item name="android:background">@drawable/action_button</item>
     </style>
 
-    <style name="TitleSearchStyleList">
+    <style name="HemlockText" parent="TextAppearance.AppCompat"></style>
+
+    <style name="HemlockText.ListPrimary">
         <item name="android:textSize">16sp</item>
-        <item name="android:gravity">left</item>
         <item name="android:textStyle">bold</item>
-        <!--
-        <item name="android:singleLine">true</item>
-        <item name="android:ellipsize">end</item>
-        -->
-    </style>
-
-    <style name="AuthorSearchStyleList">
-        <item name="android:textSize">14sp</item>
         <item name="android:gravity">left</item>
-        <item name="android:textStyle">normal</item>
-        <item name="android:ellipsize">end</item>
     </style>
 
-    <style name="PubSearchStyleList">
+    <style name="HemlockText.ListSecondary">
+        <item name="android:textSize">14sp</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:gravity">left</item>
+        <item name="android:ellipsize">end</item>
+        <item name="android:textColor">?android:textColorSecondary</item>
+    </style>
+
+    <style name="HemlockText.ListTertiary">
         <item name="android:textSize">12sp</item>
+        <item name="android:textStyle">normal</item>
         <item name="android:singleLine">true</item>
         <item name="android:ellipsize">end</item>
         <item name="android:textColor">?android:textColorSecondary</item>
     </style>
 
-    <!-- Tabs -->
+    <style name="HemlockText.PagePrimary">
+        <item name="android:textSize">18sp</item>
+    </style>
 
-    <style name="StyledIndicators" parent="@style/Theme.AppCompat">
-        <item name="vpiUnderlinePageIndicatorStyle">@style/CustomUnderlinePageIndicator</item>
+    <style name="HemlockText.PageSecondary">
+        <item name="android:textSize">16sp</item>
+    </style>
+
+    <style name="HemlockText.PageTertiary">
+        <item name="android:textSize">14sp</item>
+    </style>
+
+    <style name="alertText">
+        <item name="android:textColor">@color/hemlock_text_alert</item>
+    </style>
+
+    <style name="textSplash">
+        <item name="android:textSize">22sp</item>
     </style>
 
     <style name="CustomUnderlinePageIndicator">
@@ -100,10 +88,8 @@
         <item name="android:singleLine">true</item>
     </style>
 
-    <style name="Hemlock"><!-- empty, just for naming --></style>
-
     <style name="Hemlock.SecondaryToolbar" parent="">
-        <item name="android:elevation" tools:targetApi="lollipop">3dp</item>
+        <item name="android:elevation" tools:targetApi="lollipop">1dp</item>
         <item name="android:background">@color/hemlock_surface</item>
     </style>
 
@@ -167,10 +153,6 @@
         <item name="colorPrimary">@color/primary</item>
         <item name="colorPrimaryDark">@color/primary_dark</item>
         <item name="colorAccent">@color/hemlock_accent</item>
-    </style>
-
-    <style name="alertText">
-        <item name="android:textColor">@color/hemlock_text_alert</item>
     </style>
 
     <style name="HemlockProgressBar" parent="Widget.AppCompat.ProgressBar.Horizontal">

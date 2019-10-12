@@ -18,7 +18,7 @@
 	>
 		<TextView
 				android:id="@+id/bookbagitem_title"
-				style="@style/TitleSearchStyleList"
+				style="@style/HemlockText.ListPrimary"
 				android:layout_width="fill_parent"
 				android:layout_height="wrap_content"
 				android:paddingLeft="3dip"
@@ -26,7 +26,7 @@
 
 		<TextView
 				android:id="@+id/bookbagitem_author"
-				style="@style/AuthorSearchStyleList"
+				style="@style/HemlockText.ListSecondary"
 				android:layout_width="fill_parent"
 				android:layout_height="wrap_content"
 				android:paddingLeft="3dip"

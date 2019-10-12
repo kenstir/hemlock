@@ -15,23 +15,23 @@
         android:layout_weight="1">
 
         <TextView
-                android:id="@+id/checkout_record_title"
-                style="@style/TitleSearchStyleList"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                tools:text="Suicide squad"
-        />
+            android:id="@+id/checkout_record_title"
+            style="@style/HemlockText.ListPrimary"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="Suicide squad"
+            />
 
         <TextView
                 android:id="@+id/checkout_record_author"
-                style="@style/AuthorSearchStyleList"
+                style="@style/HemlockText.ListSecondary"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 tools:text="Ostrander, John."/>
 
         <TextView
             android:id="@+id/checkout_record_format"
-            style="@style/PubSearchStyleList"
+            style="@style/HemlockText.ListTertiary"
             android:gravity="left"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -39,7 +39,7 @@
 
         <TextView
             android:id="@+id/checkout_record_renewals"
-            style="@style/PubSearchStyleList"
+            style="@style/HemlockText.ListTertiary"
             android:gravity="left"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -50,7 +50,7 @@
                 android:layout_height="wrap_content">
             <TextView
                     android:id="@+id/checkout_record_due_date"
-                    style="@style/PubSearchStyleList"
+                    style="@style/HemlockText.ListTertiary"
                     android:gravity="left"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

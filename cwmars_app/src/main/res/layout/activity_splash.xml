@@ -46,8 +46,9 @@
 
     <TextView
         android:id="@+id/action_in_progress"
-        style="@style/textLarge"
+        style="@style/HemlockText.PagePrimary"
         android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
         android:layout_marginLeft="8dp"

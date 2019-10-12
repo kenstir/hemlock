@@ -79,15 +79,18 @@
                     android:spinnerMode="dialog"/>
             </LinearLayout>
         </LinearLayout>
+
         <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/background">
+
             <TextView
-                    android:id="@+id/search_result_number"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:freezesText="true"/>
+                android:id="@+id/search_result_number"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:freezesText="true"
+                android:gravity="center" />
         </LinearLayout>
     </LinearLayout>
     <FrameLayout

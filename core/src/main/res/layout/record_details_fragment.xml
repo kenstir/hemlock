@@ -19,165 +19,180 @@
             android:gravity="center"
             tools:text="Item 1 of 500"
             />
-        
+
     </LinearLayout>
 
     <ScrollView
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:layout_marginTop="5dip"
-        >
-
-    <LinearLayout
-        android:id="@+id/content_layout"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical" >
+        android:layout_height="fill_parent">
 
         <LinearLayout
+            android:id="@+id/content_layout"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            >
+            android:orientation="vertical"
+            android:paddingLeft="8dp"
+            android:paddingTop="16dp"
+            android:paddingRight="8dp"
+            android:paddingBottom="16dp">
 
             <LinearLayout
-                android:layout_width="0dip"
+                android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="vertical"
-            >
+                android:orientation="horizontal">
 
-                <TextView
-                    android:id="@+id/record_details_simple_title"
-                    style="@style/textLarge"
-                    tools:text="Harry Potter and the Goblet of Fire"
-                    />
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
 
-                <TextView
-                    android:id="@+id/record_details_simple_author"
-                    style="@style/textSmall"
-                    android:layout_marginTop="3dip"
-                    tools:text="Rowling, J. K."
-                    />
+                    <TextView
+                        android:id="@+id/record_details_simple_title"
+                        style="@style/HemlockText.PagePrimary"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        tools:text="Harry Potter and the Goblet of Fire" />
 
-                <TextView
-                    android:id="@+id/record_details_format"
-                    style="@style/textSmall"
-                    android:layout_marginTop="3dip"
-                    tools:text="Book"
-                    />
+                    <TextView
+                        android:id="@+id/record_details_simple_author"
+                        style="@style/HemlockText.PageSecondary"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="3dp"
+                        android:layout_marginBottom="3dp"
+                        tools:text="Rowling, J. K." />
 
-                <TextView
-                    android:id="@+id/record_details_simple_publisher"
-                    style="@style/textSmall"
-                    android:layout_marginTop="3dip"
-                    tools:text="c2000 Arthur A. Levine Books"
-                    />
+                    <TextView
+                        android:id="@+id/record_details_format"
+                        style="@style/HemlockText.PageSecondary"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="3dp"
+                        tools:text="Book" />
+
+                    <TextView
+                        android:id="@+id/record_details_simple_publisher"
+                        style="@style/HemlockText.PageTertiary"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="3dp"
+                        tools:text="c2000 Arthur A. Levine Books" />
+                </LinearLayout>
+
+                <com.android.volley.toolbox.NetworkImageView
+                    android:id="@+id/record_details_simple_image"
+                    android:layout_width="140dp"
+                    android:layout_height="180dp"
+                    android:padding="8dp" />
+
             </LinearLayout>
 
-            <com.android.volley.toolbox.NetworkImageView
-                android:id="@+id/record_details_simple_image"
-                android:layout_width="140dip"
-                android:layout_height="180dip"
-                android:padding="5dip"
-                android:layout_margin="10dip"
-                />
+            <TextView
+                android:id="@+id/record_details_brief_description"
+                style="@style/HemlockText.PageSecondary"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp"
+                tools:text="185 of 242 copies available at All C/W MARS Libraries" />
 
-        </LinearLayout>
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:gravity="left"
+                android:orientation="horizontal"
+                android:paddingTop="4dp"
+                android:paddingBottom="4dp"
+                tools:ignore="RtlHardcoded">
 
-        <LinearLayout
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="left"
-            android:paddingBottom="3dip"
-            android:layout_marginLeft="5dip">
-            <Button
+                <Button
                     android:id="@+id/simple_place_hold_button"
                     style="@style/ApplicationButton"
-                    android:layout_height="wrap_content"
                     android:layout_width="wrap_content"
-                    android:text="@string/button_place_hold"
-            />
-            <Button
+                    android:layout_height="wrap_content"
+                    android:text="@string/button_place_hold" />
+
+                <Button
                     android:id="@+id/show_copy_information_button"
                     style="@style/ApplicationButton"
-                    android:layout_height="wrap_content"
                     android:layout_width="wrap_content"
-                    android:text="@string/show_copies"
-            />
-            <Button
+                    android:layout_height="wrap_content"
+                    android:text="@string/show_copies" />
+
+                <Button
                     android:id="@+id/record_details_online_button"
                     style="@style/ApplicationButton"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/record_online_access"
-                    android:layout_width="wrap_content"
-                    android:visibility="gone"
-                    />
-            <Button
+                    android:visibility="gone" />
+
+                <Button
                     android:id="@+id/add_to_bookbag_button"
                     style="@style/ApplicationButton"
-                    android:layout_height="wrap_content"
                     android:layout_width="wrap_content"
-                    android:text="@string/add_to_my_list_button"
-            />
-        </LinearLayout>
+                    android:layout_height="wrap_content"
+                    android:text="@string/add_to_my_list_button" />
+            </LinearLayout>
 
-        <TextView
-                android:id="@+id/record_details_brief_description"
-                android:layout_height="wrap_content"
+            <TableLayout
                 android:layout_width="match_parent"
-                android:layout_marginLeft="10dip"/>
-        <TableLayout
                 android:layout_height="wrap_content"
-                android:layout_width="match_parent"
-                android:shrinkColumns="1">
-            <TableRow >
-                <TextView
-                        android:text="@string/record_synopsis"
-                        style="@style/textMediumNoPadding"
-                        android:layout_marginLeft="10dip"/>
+                android:shrinkColumns="1"
+                android:stretchColumns="1">
 
-                <TextView
+                <TableRow>
+
+                    <TextView
                         android:id="@+id/record_details_simple_synopsis"
-                        android:layout_marginLeft="10dip"
-                        android:layout_marginBottom="3dip"/>
-            </TableRow>
-            <TableRow >
-                <TextView
+                        android:layout_span="2"
+                        android:paddingTop="8dp"
+                        android:paddingBottom="8dp"
+                        tools:text="Fourteen-year-old Harry Potter joins the Weasleys at the Quidditch World Cup, then enters his fourth year at Hogwarts Academy where he is mysteriously entered in an unusual contest..." />
+                </TableRow>
+
+                <TableRow>
+
+                    <TextView
+                        style="@style/HemlockText.PageSecondary"
+                        android:layout_marginRight="8dp"
                         android:text="@string/record_series"
-                        style="@style/textMediumNoPadding"
-                        android:layout_marginLeft="10dip"/>
+                        tools:ignore="RtlHardcoded" />
 
-                <TextView
+                    <TextView
                         android:id="@+id/record_details_simple_series"
-                        android:layout_marginLeft="10dip"
-                        android:layout_marginBottom="3dip"/>
-            </TableRow>
-            <TableRow >
-                <TextView
+                        tools:text="Series of fantastical events" />
+                </TableRow>
+
+                <TableRow>
+
+                    <TextView
+                        style="@style/HemlockText.PageSecondary"
+                        android:layout_marginRight="8dp"
                         android:text="@string/record_subject"
-                        style="@style/textMediumNoPadding"
-                        android:layout_marginLeft="10dip"/>
+                        tools:ignore="RtlHardcoded" />
 
-                <TextView
+                    <TextView
                         android:id="@+id/record_details_simple_subject"
-                        android:layout_marginLeft="10dip"
-                        android:layout_marginBottom="3dip"/>
-            </TableRow>
-            <TableRow >
-                <TextView
-                        android:text="@string/record_isbn"
-                        style="@style/textMediumNoPadding"
-                        android:layout_marginLeft="10dip"/>
+                        tools:text="Potter, Harry (Fictitious character)\nMagic\nEngland\nWizards\nSchools" />
+                </TableRow>
 
-                <TextView
+                <TableRow>
+
+                    <TextView
+                        style="@style/HemlockText.PageSecondary"
+                        android:layout_marginRight="8dp"
+                        android:text="@string/record_isbn"
+                        tools:ignore="RtlHardcoded" />
+
+                    <TextView
                         android:id="@+id/record_details_simple_isbn"
-                        android:layout_marginLeft="10dip"
-                        android:layout_marginBottom="3dip"/>
-            </TableRow>
-        </TableLayout>
-    </LinearLayout>
+                        android:layout_marginBottom="3dp"
+                        tools:text="9780439139595"/>
+                </TableRow>
+            </TableLayout>
+        </LinearLayout>
     </ScrollView>
 
 </LinearLayout>

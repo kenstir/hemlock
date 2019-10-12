@@ -27,7 +27,7 @@
 
                 <TextView
                     android:id="@+id/hold_title"
-                    style="@style/textLarge"
+                    style="@style/HemlockText.PagePrimary"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_span="2"
@@ -41,7 +41,7 @@
 
                 <TextView
                     android:id="@+id/hold_author"
-                    style="@style/textSmall"
+                    style="@style/HemlockText.PageTertiary"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_span="2"
@@ -54,7 +54,7 @@
 
                 <TextView
                     android:id="@+id/hold_format"
-                    style="@style/textSmall"
+                    style="@style/HemlockText.PageTertiary"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_span="2"

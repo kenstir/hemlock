@@ -11,21 +11,21 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/hold_title"
-            style="@style/TitleSearchStyleList"
+            style="@style/HemlockText.ListPrimary"
             tools:text="La Dolce Vita"/>
 
     <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/hold_author"
-            style="@style/AuthorSearchStyleList"
+            style="@style/HemlockText.ListSecondary"
             tools:text="Fellini, Federico"/>
 
     <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/hold_format"
-            style="@style/AuthorSearchStyleList"
+            style="@style/HemlockText.ListSecondary"
             tools:text="DVD"/>
 
     <TextView

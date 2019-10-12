@@ -23,14 +23,14 @@
         >
             <TextView
                     android:id="@+id/bookbag_name"
-                    style="@style/textLarge"
+                    style="@style/HemlockText.PagePrimary"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     tools:text="Stuff to Read"
                     android:layout_gravity="left"/>
             <TextView
                     android:id="@+id/bookbag_description"
-                    style="@style/AuthorSearchStyleList"
+                    style="@style/HemlockText.ListSecondary"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     tools:text="a collection of stuff to read"
