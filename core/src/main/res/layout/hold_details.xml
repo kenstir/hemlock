@@ -4,7 +4,6 @@
               android:layout_width="fill_parent"
               android:layout_height="fill_parent"
               android:orientation="vertical"
-              android:background="@drawable/background_grey_image"
               android:focusable="true"
               android:focusableInTouchMode="true"
         >
