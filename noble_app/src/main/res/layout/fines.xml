@@ -25,12 +25,14 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="@string/total_owed"
+                android:visibility="gone"
                 />
             <TextView
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="@string/total_paid"
+                android:visibility="gone"
                 />
 
             <TextView
@@ -50,12 +52,14 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:visibility="gone"
                 />
             <TextView
                 android:id="@+id/fines_total_paid"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:visibility="gone"
                 />
             <TextView
                 android:id="@+id/fines_balance_owed"
