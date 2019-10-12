@@ -152,7 +152,7 @@
                         tools:text="Fourteen-year-old Harry Potter joins the Weasleys at the Quidditch World Cup, then enters his fourth year at Hogwarts Academy where he is mysteriously entered in an unusual contest..." />
                 </TableRow>
 
-                <TableRow>
+                <TableRow android:id="@+id/record_details_series_row">
 
                     <TextView
                         style="@style/HemlockText.PageSecondary"

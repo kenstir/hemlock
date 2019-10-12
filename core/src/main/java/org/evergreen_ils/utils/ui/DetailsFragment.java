@@ -26,6 +26,8 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import androidx.fragment.app.Fragment;
+
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -78,6 +80,7 @@ public class DetailsFragment extends Fragment {
     private TextView synopsisTextView;
     private TextView isbnTextView;
     private TextView descriptionTextView;
+    private View seriesTableRow;
     private Button placeHoldButton;
     private Button showCopiesButton;
     private Button onlineAccessButton;
@@ -130,21 +133,22 @@ public class DetailsFragment extends Fragment {
         LinearLayout layout = (LinearLayout) inflater.inflate(
                 R.layout.record_details_fragment, null);
 
-        record_header = (TextView) layout.findViewById(R.id.record_header_text);
-        titleTextView = (TextView) layout.findViewById(R.id.record_details_simple_title);
-        formatTextView = (TextView) layout.findViewById(R.id.record_details_format);
-        authorTextView = (TextView) layout.findViewById(R.id.record_details_simple_author);
-        publisherTextView = (TextView) layout.findViewById(R.id.record_details_simple_publisher);
-        seriesTextView = (TextView) layout.findViewById(R.id.record_details_simple_series);
-        subjectTextView = (TextView) layout.findViewById(R.id.record_details_simple_subject);
-        synopsisTextView = (TextView) layout.findViewById(R.id.record_details_simple_synopsis);
-        isbnTextView = (TextView) layout.findViewById(R.id.record_details_simple_isbn);
-        recordImage = (NetworkImageView) layout.findViewById(R.id.record_details_simple_image);
-        descriptionTextView = (TextView) layout.findViewById(R.id.record_details_brief_description);
-        placeHoldButton = (Button) layout.findViewById(R.id.simple_place_hold_button);
-        showCopiesButton = (Button) layout.findViewById(R.id.show_copy_information_button);
-        onlineAccessButton = (Button) layout.findViewById(R.id.record_details_online_button);
-        addToBookbagButton = (Button) layout.findViewById(R.id.add_to_bookbag_button);
+        record_header = layout.findViewById(R.id.record_header_text);
+        titleTextView = layout.findViewById(R.id.record_details_simple_title);
+        formatTextView = layout.findViewById(R.id.record_details_format);
+        authorTextView = layout.findViewById(R.id.record_details_simple_author);
+        publisherTextView = layout.findViewById(R.id.record_details_simple_publisher);
+        seriesTextView = layout.findViewById(R.id.record_details_simple_series);
+        subjectTextView = layout.findViewById(R.id.record_details_simple_subject);
+        synopsisTextView = layout.findViewById(R.id.record_details_simple_synopsis);
+        isbnTextView = layout.findViewById(R.id.record_details_simple_isbn);
+        recordImage = layout.findViewById(R.id.record_details_simple_image);
+        descriptionTextView = layout.findViewById(R.id.record_details_brief_description);
+        placeHoldButton = layout.findViewById(R.id.simple_place_hold_button);
+        showCopiesButton = layout.findViewById(R.id.show_copy_information_button);
+        onlineAccessButton = layout.findViewById(R.id.record_details_online_button);
+        addToBookbagButton = layout.findViewById(R.id.add_to_bookbag_button);
+        seriesTableRow = layout.findViewById(R.id.record_details_series_row);
 
         record_header.setText(String.format(getString(R.string.record_of), position+1, total));
         descriptionTextView.setText("");
@@ -314,6 +318,7 @@ public class DetailsFragment extends Fragment {
         authorTextView.setText(record.author);
         publisherTextView.setText(record.getPublishingInfo());
         seriesTextView.setText(record.series);
+        seriesTableRow.setVisibility(TextUtils.isEmpty(record.series) ? View.GONE : View.VISIBLE);
         subjectTextView.setText(record.subject);
         synopsisTextView.setText(record.synopsis);
         isbnTextView.setText(record.isbn);
