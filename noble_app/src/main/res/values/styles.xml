@@ -7,12 +7,15 @@
     <color name="noble_dark">#002f6c</color>
 
     <color name="logo_background">@color/background_material_light</color>
+    <color name="background">@color/background_material_light</color>
+    <color name="dark">@color/background_material_light</color>
 
     <color name="primary">@color/noble_primary</color>
     <color name="primary_dark">@color/noble_dark</color>
     <color name="accent">@color/noble_light</color>
     <color name="hemlock_accent">@color/noble_light</color>
     <color name="hemlock_text_alert">#ff9100</color>
+    <color name="hemlock_surface">@color/material_grey_400</color>
 
     <style name="Hemlock.AppBarOverlay" parent="ThemeOverlay.AppCompat.ActionBar">
         <item name="colorControlNormal">@color/white</item>

@@ -6,11 +6,12 @@
               android:layout_height="match_parent">
 
     <include layout="@layout/toolbar_common"/>
+
     <LinearLayout
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            style="@style/SecondaryToolbar"
+            style="@style/Hemlock.SecondaryToolbar"
             >
         <LinearLayout
                 android:orientation="horizontal"

@@ -8,7 +8,7 @@
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            style="@style/SecondaryToolbar"
+            style="@style/Hemlock.SecondaryToolbar"
             >
         <LinearLayout
                 android:orientation="horizontal"
