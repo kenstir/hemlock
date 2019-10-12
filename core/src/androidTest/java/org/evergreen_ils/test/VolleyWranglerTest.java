@@ -51,7 +51,7 @@ public class VolleyWranglerTest {
 
     @Before
     public void setUp() throws Exception {
-        Context ctx = InstrumentationRegistry.getTargetContext();
+        Context ctx = InstrumentationRegistry.getInstrumentation().getTargetContext();
 
         // read extra options: -e server SERVER
         Bundle b = InstrumentationRegistry.getArguments();

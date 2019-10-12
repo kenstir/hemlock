@@ -68,10 +68,10 @@ public class OSRFTest {
     @BeforeClass
     public static void getAuthToken() throws Exception {
         // read extra options: -e server SERVER -e username USER -e password PASS
-        mContext = InstrumentationRegistry.getTargetContext();
+        mContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
         Analytics.initialize(mContext);
         Bundle b = InstrumentationRegistry.getArguments();
-        mServer = b.getString("server", "http://catalog.cwmars.org");
+        mServer = b.getString("server", "https://catalog.cwmars.org");
         mOrgID = Integer.parseInt(b.getString("orgid", "1"));
         mUsername = b.getString("username");
         mPassword = b.getString("password");

@@ -53,7 +53,7 @@ public class MARCXMLParserTest {
 
     @Test
     public void test_marcxml_partial() throws Exception {
-        Context ctx = InstrumentationRegistry.getTargetContext();
+        Context ctx = InstrumentationRegistry.getInstrumentation().getTargetContext();
         InputStream is = ctx.getResources().getAssets().open("marcxml_partial_3185816.xml");
         MARCXMLParser parser = new MARCXMLParser(is);
         assertNotNull(parser);
