@@ -298,6 +298,8 @@ public class DetailsFragment extends Fragment {
             if (links != null && links.size() > 0) {
                 Uri uri = Uri.parse(links.get(0).href);
                 descriptionTextView.setText(uri.getHost());
+            } else {
+                onlineAccessButton.setEnabled(false);
             }
         }
 

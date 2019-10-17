@@ -23,6 +23,8 @@ import android.text.TextUtils;
 import org.evergreen_ils.android.AppBehavior;
 
 import org.evergreen_ils.searchCatalog.RecordInfo;
+import org.evergreen_ils.system.EvergreenServer;
+import org.evergreen_ils.system.Organization;
 import org.evergreen_ils.utils.Link;
 import org.evergreen_ils.utils.MARCRecord;
 
@@ -67,9 +69,15 @@ public class NobleAppBehavior extends AppBehavior {
         return trimTrailing(s1,'.').trim();
     }
 
-    private boolean isAvailableToOrg(MARCRecord.MARCDatafield df, String orgShortName) {
+    // TODO: check all org levels between orgShortName and consortium.  In practice, I think
+    // e-books are purchased at the branch level or at the consortium level, so this is Good Enough.
+    private boolean isAvailableToOrg(MARCRecord.MARCDatafield df, String orgShortName, String consortiumShortName) {
         for (MARCRecord.MARCSubfield sf : df.subfields) {
-            if (TextUtils.equals(sf.code, "9") && (TextUtils.equals(sf.text, orgShortName) || orgShortName == null)) {
+            if (TextUtils.equals(sf.code, "9")
+                    && (TextUtils.equals(sf.text, orgShortName)
+                        || TextUtils.equals(sf.text, consortiumShortName)
+                        || orgShortName == null))
+            {
                 return true;
             }
         }
@@ -82,7 +90,10 @@ public class NobleAppBehavior extends AppBehavior {
             return new ArrayList<>();
 
         // Include only links that are available to this org
+        // or the consortium.  See also Located URIs in
+        // docs/cataloging/cataloging_electronic_resources.adoc
         ArrayList<Link> links = new ArrayList<>();
+        Organization consortium = EvergreenServer.getInstance().getOrganization(Organization.consortiumOrgId);
 
         // Eliminate duplicates by href
         HashSet<String> seen = new HashSet<>();
@@ -91,7 +102,7 @@ public class NobleAppBehavior extends AppBehavior {
             if (TextUtils.equals(df.tag, "856")
                     && TextUtils.equals(df.ind1, "4")
                     && (TextUtils.equals(df.ind2, "0") || TextUtils.equals(df.ind2, "1"))
-                    && isAvailableToOrg(df, orgShortName))
+                    && isAvailableToOrg(df, orgShortName, consortium.shortname))
             {
                 String href = null;
                 String text = null;

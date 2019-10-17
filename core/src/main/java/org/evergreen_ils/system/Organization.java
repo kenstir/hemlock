@@ -20,6 +20,8 @@ package org.evergreen_ils.system;
 public class Organization /*implements Serializable*/ {
     private static final String TAG = Organization.class.getSimpleName();
 
+    public static final Integer consortiumOrgId = 1;
+
     public Integer level = null;
     public Integer id = null;
     public Integer parent_ou = null;
