@@ -48,9 +48,6 @@ import java.util.Map;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-/**
- * Created by kenstir on 1/29/2017.
- */
 @RunWith(AndroidJUnit4.class)
 public class OSRFTest {
     private static String TAG = OSRFTest.class.getSimpleName();
@@ -63,7 +60,9 @@ public class OSRFTest {
     private static Integer mOrgID;
     private static String mAuthToken;
 
-    private static HttpConnection conn() { return mConn; }
+    private static HttpConnection conn() {
+        return mConn;
+    }
 
     @BeforeClass
     public static void getAuthToken() throws Exception {
@@ -71,7 +70,8 @@ public class OSRFTest {
         mContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
         Analytics.initialize(mContext);
         Bundle b = InstrumentationRegistry.getArguments();
-        mServer = b.getString("server", "https://catalog.cwmars.org");
+        //mServer = b.getString("server", "https://catalog.cwmars.org");
+        mServer = b.getString("server", "https://evergreen.noblenet.org");
         mOrgID = Integer.parseInt(b.getString("orgid", "1"));
         mUsername = b.getString("username");
         mPassword = b.getString("password");
@@ -85,12 +85,12 @@ public class OSRFTest {
         } else {
             mAuthToken = EvergreenAuthenticator.signIn(mServer, mUsername, mPassword);
         }
-        Log.d(TAG, "auth_token "+mAuthToken);
+        Log.d(TAG, "auth_token " + mAuthToken);
 
         // init like the app does in LoadingTask
         EvergreenServer eg = EvergreenServer.getInstance();
         eg.connect(mServer);
-        Log.d(TAG, "connected to "+mServer);
+        Log.d(TAG, "connected to " + mServer);
     }
 
     private static void assertLoggedIn() {
@@ -102,11 +102,11 @@ public class OSRFTest {
         assertLoggedIn();
         mConn = EvergreenServer.getInstance().gatewayConnection();
         Object o = Utils.doRequest(conn(), Api.SEARCH,
-                Api.COPY_STATUS_ALL, new Object[] {});
+                Api.COPY_STATUS_ALL, new Object[]{});
         List<OSRFObject> ccs_list = (List<OSRFObject>) o;
         assertNotNull(ccs_list);
         assertTrue(ccs_list.size() > 0);
-        Log.i(TAG, "ccs_list="+ccs_list);
+        Log.i(TAG, "ccs_list=" + ccs_list);
     }
 
     @Test
@@ -114,9 +114,9 @@ public class OSRFTest {
         assertLoggedIn();
         mConn = EvergreenServer.getInstance().gatewayConnection();
         Object resp = Utils.doRequest(mConn, Api.ACTOR,
-                Api.ORG_TYPES_RETRIEVE, new Object[] {});
+                Api.ORG_TYPES_RETRIEVE, new Object[]{});
         List<OSRFObject> l = (List<OSRFObject>) resp;
-        Log.i(TAG, "l="+l);
+        Log.i(TAG, "l=" + l);
     }
 
     // Api. ORG_UNIT_RETRIEVE is not useful, it returns the same info as ORG_TREE_RETRIEVE
@@ -154,7 +154,7 @@ public class OSRFTest {
         printMap(resp_map);
         Boolean is_pickup_location = null;
         is_pickup_location = !Api.parseBoolean(resp_map.get(Api.SETTING_ORG_UNIT_NOT_PICKUP_LIB));
-        Log.d(TAG, "setting_is_pickup_location("+org_id+") = "+is_pickup_location);
+        Log.d(TAG, "setting_is_pickup_location(" + org_id + ") = " + is_pickup_location);
     }
 
     // ORG_UNIT_SETTING_BATCH - retrieve a list of settings from one org unit
@@ -168,7 +168,7 @@ public class OSRFTest {
         settings.add(Api.SETTING_SMS_ENABLE);
         Object resp = Utils.doRequest(mConn, Api.ACTOR,
                 Api.ORG_UNIT_SETTING_BATCH, new Object[]{
-                        org_id, settings, mAuthToken });
+                        org_id, settings, mAuthToken});
         Map<String, ?> resp_map = ((Map<String, ?>) resp);
         printMap(resp_map);
         Boolean is_pickup_location = null;
@@ -177,7 +177,7 @@ public class OSRFTest {
             Map<String, ?> resp_org_map = (Map<String, ?>) o;
             is_pickup_location = !Api.parseBoolean(resp_org_map.get("value"));
         }
-        Log.d(TAG, "setting_is_pickup_location("+org_id+") = "+is_pickup_location);
+        Log.d(TAG, "setting_is_pickup_location(" + org_id + ") = " + is_pickup_location);
     }
 
     // ORG_UNIT_SETTING - retrieve one setting from one org unit
@@ -190,14 +190,14 @@ public class OSRFTest {
         //String setting = Api.SETTING_SMS_ENABLE;
         Object resp = Utils.doRequest(mConn, Api.ACTOR,
                 Api.ORG_UNIT_SETTING, new Object[]{
-                        org_id, setting, Api.ANONYMOUS });
+                        org_id, setting, Api.ANONYMOUS});
         Boolean is_pickup_location = null;
         if (resp != null) {
             Map<String, ?> resp_map = ((Map<String, ?>) resp);
             printMap(resp_map);
             is_pickup_location = !Api.parseBoolean(resp_map.get("value"));
         }
-        Log.d(TAG, "setting_is_pickup_location("+org_id+") = "+is_pickup_location);
+        Log.d(TAG, "setting_is_pickup_location(" + org_id + ") = " + is_pickup_location);
     }
 
     @Test
@@ -207,7 +207,7 @@ public class OSRFTest {
         HashMap<String, Object> args = new HashMap<>();
         args.put("active", 1);
         Object resp = Utils.doRequest(conn(), Api.PCRUD_SERVICE,
-                Api.SEARCH_SMS_CARRIERS, new Object[] {
+                Api.SEARCH_SMS_CARRIERS, new Object[]{
                         Api.ANONYMOUS, args});
         Log.d(TAG, "did we make it?");
         if (resp != null) {
@@ -216,7 +216,8 @@ public class OSRFTest {
         }
     }
 
-    @Ignore("run on demand") @Test
+    @Ignore("run on demand")
+    @Test
     public void testCreateHold() throws Exception {
         assertLoggedIn();
         mConn = EvergreenServer.getInstance().gatewayConnection();
@@ -245,7 +246,8 @@ public class OSRFTest {
         Log.d(TAG, "here");
     }
 
-    @Ignore("skip until I figure out how to pass username/password") @Test
+    @Ignore("skip until I figure out how to pass username/password")
+    @Test
     public void testMessagesRetrieve() throws Exception {
         assertLoggedIn();
         mConn = EvergreenServer.getInstance().gatewayConnection();
@@ -287,7 +289,7 @@ public class OSRFTest {
 
         // do request
         Object resp = Utils.doRequest(conn(), Api.SEARCH, Api.MULTICLASS_QUERY,
-                new Object[] { argHash, queryString, 1 });
+                new Object[]{argHash, queryString, 1});
         Log.d(TAG, "Sync Response: " + resp);
         now_ms = Log.logElapsedTime(TAG, now_ms, "search.query");
         if (resp == null)
@@ -301,6 +303,40 @@ public class OSRFTest {
         //   [["503610",null,"0.0"],["502717",null,"0.0"]] // string ids+?
         //   [["1805532"],["2385399"]] // string ids only
         List<List<?>> record_ids_lol = (List<List<?>>) response.get("ids");
-        Log.d(TAG, "length:"+record_ids_lol.size());
+        Log.d(TAG, "length:" + record_ids_lol.size());
+    }
+
+    @Test
+    public void testSearchCodedValueMap() throws Exception {
+        assertLoggedIn();
+        mConn = EvergreenServer.getInstance().gatewayConnection();
+//        AccountAccess ac = AccountAccess.getInstance();
+//        ac.retrieveSession(mAuthToken);
+
+        long now_ms = System.currentTimeMillis();
+        HashMap<String, Object> args = new HashMap<>();
+        ArrayList<String> formats = new ArrayList<>();
+        formats.add("icon_format");
+        formats.add("search_format");
+        args.put("ctype", formats);
+        Object resp = Utils.doRequest(conn(), Api.PCRUD_SERVICE, Api.SEARCH_CCVM,
+                Api.USER_FLESHED_RETRIEVE, new Object[] {
+                    Api.ANONYMOUS, args });
+        Log.d(TAG, "Sync Response: " + resp);
+        now_ms = Log.logElapsedTime(TAG, now_ms, "search.query");
+        assertNotNull(resp);
+        if (resp == null)
+            return;
+
+        List<OSRFObject> objList = (List<OSRFObject>) resp;
+        for (OSRFObject obj: objList) {
+            String code = (String) obj.getOrDefault("code","");
+            String ctype = (String) obj.getOrDefault("ctype", "");
+            Boolean opac_visible = Api.parseBoolean(obj.get("opac_visible"));
+            String search_label = (String) obj.getOrDefault("search_label","");
+            //if (opac_visible)
+                Log.d(TAG, "vis="+opac_visible+" ctype="+ctype+" code="+code+" search_label="+search_label);
+        }
+        Log.d(TAG, "obj");
     }
 }

@@ -40,6 +40,7 @@ import java.util.StringTokenizer;
 public class Api {
 
     public static final String ANONYMOUS = "ANONYMOUS";
+    public static final String IDL_CLASSES_USED = "ac,acn,acp,ahr,ahtc,aou,aout,au,aua,auact,aum,aus,bmp,bre,cbreb,cbrebi,cbrebin,cbrebn,ccs,ccvm,cfg,circ,csc,cuat,ex,mbt,mbts,mous,mra,mraf,mus,mvr,perm_ex";
     public static final int LONG_TIMEOUT_MS = 10000;
 
     /// actor
@@ -104,6 +105,7 @@ public class Api {
     public static final String PCRUD_SERVICE = "open-ils.pcrud";
     public static final String RETRIEVE_BRE = "open-ils.pcrud.retrieve.bre";
     public static final String RETRIEVE_MRA = "open-ils.pcrud.retrieve.mra";
+    public static final String SEARCH_CCVM = "open-ils.pcrud.search.ccvm.atomic";
     public static final String SEARCH_MRA = "open-ils.pcrud.search.mra.atomic";
     public static final String SEARCH_MRAF = "open-ils.pcrud.search.mraf.atomic";
     public static final String SEARCH_SMS_CARRIERS = "open-ils.pcrud.search.csc.atomic"; // [csc]

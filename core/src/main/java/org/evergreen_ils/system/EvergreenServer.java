@@ -38,8 +38,6 @@ import java.util.*;
  */
 public class EvergreenServer {
 
-    private static final String IDL_CLASSES_USED = "ac,acn,acp,ahr,ahtc,aou,aout,au,aua,auact,aum,aus,bmp,bre,cbreb,cbrebi,cbrebin,cbrebn,ccs,cfg,circ,csc,cuat,ex,mbt,mbts,mous,mra,mraf,mus,mvr,perm_ex";
-
     private static final String TAG = EvergreenServer.class.getSimpleName();
     private static EvergreenServer mInstance = null;
 
@@ -71,7 +69,7 @@ public class EvergreenServer {
 
     public static String getIDLUrl(String library_url) {
         ArrayList<String> params = new ArrayList<String>(32);
-        for (String className : TextUtils.split(IDL_CLASSES_USED, ",")) {
+        for (String className : TextUtils.split(Api.IDL_CLASSES_USED, ",")) {
             params.add("class=" + className);
         }
         StringBuilder sb = new StringBuilder(512);
