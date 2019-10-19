@@ -532,7 +532,7 @@ public class AccountAccess {
             // lame guard against Issue #6
             if (holdInfo == null) {
                 hold.title = "Unknown Title";
-                hold.author = "Unknown Author";
+                hold.author = "";
                 Analytics.logException(new ShouldNotHappenException(6, "null holdInfo, ahr="+hold.ahr));
             } else {
                 hold.title = holdInfo.getString("title");

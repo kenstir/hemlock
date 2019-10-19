@@ -87,7 +87,7 @@ public class CircRecord {
             author = acp.getString("dummy_author");
             if (author != null) return author;
         }
-        return "Unknown Author";
+        return "";
     }
 
     public String getDueDateString() {
