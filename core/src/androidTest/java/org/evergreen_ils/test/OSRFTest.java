@@ -27,7 +27,9 @@ import android.text.TextUtils;
 import org.evergreen_ils.Api;
 import org.evergreen_ils.Result;
 import org.evergreen_ils.accountAccess.AccountAccess;
+import org.evergreen_ils.api.PCRUDService;
 import org.evergreen_ils.auth.EvergreenAuthenticator;
+import org.evergreen_ils.searchCatalog.CodedValueMap;
 import org.evergreen_ils.system.Analytics;
 import org.evergreen_ils.system.EvergreenServer;
 import org.evergreen_ils.system.Log;
@@ -71,7 +73,8 @@ public class OSRFTest {
         Analytics.initialize(mContext);
         Bundle b = InstrumentationRegistry.getArguments();
         //mServer = b.getString("server", "https://catalog.cwmars.org");
-        mServer = b.getString("server", "https://evergreen.noblenet.org");
+        //mServer = b.getString("server", "https://evergreen.noblenet.org");
+        mServer = b.getString("server", "https://gapines.org");
         mOrgID = Integer.parseInt(b.getString("orgid", "1"));
         mUsername = b.getString("username");
         mPassword = b.getString("password");
@@ -91,6 +94,7 @@ public class OSRFTest {
         EvergreenServer eg = EvergreenServer.getInstance();
         eg.connect(mServer);
         Log.d(TAG, "connected to " + mServer);
+        mConn = EvergreenServer.getInstance().gatewayConnection();
     }
 
     private static void assertLoggedIn() {
@@ -100,7 +104,7 @@ public class OSRFTest {
     @Test
     public void testCopyStatusAll() throws Exception {
         assertLoggedIn();
-        mConn = EvergreenServer.getInstance().gatewayConnection();
+//        mConn = EvergreenServer.getInstance().gatewayConnection();
         Object o = Utils.doRequest(conn(), Api.SEARCH,
                 Api.COPY_STATUS_ALL, new Object[]{});
         List<OSRFObject> ccs_list = (List<OSRFObject>) o;
@@ -112,7 +116,7 @@ public class OSRFTest {
     @Test
     public void testOrgTypesRetrieve() throws Exception {
         assertLoggedIn();
-        mConn = EvergreenServer.getInstance().gatewayConnection();
+//        mConn = EvergreenServer.getInstance().gatewayConnection();
         Object resp = Utils.doRequest(mConn, Api.ACTOR,
                 Api.ORG_TYPES_RETRIEVE, new Object[]{});
         List<OSRFObject> l = (List<OSRFObject>) resp;
@@ -124,7 +128,7 @@ public class OSRFTest {
     @Test
     public void testOrgUnitRetrieve() throws Exception {
         assertLoggedIn();
-        mConn = EvergreenServer.getInstance().gatewayConnection();
+//        mConn = EvergreenServer.getInstance().gatewayConnection();
         Object o = Utils.doRequest(mConn, Api.ACTOR,
                 Api.ORG_UNIT_RETRIEVE, new Object[] {
                         mAuthToken, mOrgID
@@ -145,7 +149,7 @@ public class OSRFTest {
     @Test
     public void testOrgUnitSettingsRetrieve() throws Exception {
         assertLoggedIn();
-        mConn = EvergreenServer.getInstance().gatewayConnection();
+//        mConn = EvergreenServer.getInstance().gatewayConnection();
         Integer org_id = mOrgID;
         Object resp = Utils.doRequest(mConn, Api.ACTOR,
                 Api.ORG_UNIT_SETTING_RETRIEVE, new Object[]{
@@ -161,7 +165,7 @@ public class OSRFTest {
     @Test
     public void testOrgUnitSettingBatch() throws Exception {
         assertLoggedIn();
-        mConn = EvergreenServer.getInstance().gatewayConnection();
+//        mConn = EvergreenServer.getInstance().gatewayConnection();
         Integer org_id = mOrgID;
         ArrayList<String> settings = new ArrayList<>();
         settings.add(Api.SETTING_ORG_UNIT_NOT_PICKUP_LIB);
@@ -184,7 +188,7 @@ public class OSRFTest {
     @Test
     public void testOrgUnitSetting() throws Exception {
         assertLoggedIn();
-        mConn = EvergreenServer.getInstance().gatewayConnection();
+//        mConn = EvergreenServer.getInstance().gatewayConnection();
         Integer org_id = mOrgID;
         String setting = Api.SETTING_ORG_UNIT_NOT_PICKUP_LIB;
         //String setting = Api.SETTING_SMS_ENABLE;
@@ -203,10 +207,10 @@ public class OSRFTest {
     @Test
     public void testRetrieveSMSCarriers() throws Exception {
         assertLoggedIn();
-        mConn = EvergreenServer.getInstance().gatewayConnection();
+//        mConn = EvergreenServer.getInstance().gatewayConnection();
         HashMap<String, Object> args = new HashMap<>();
         args.put("active", 1);
-        Object resp = Utils.doRequest(conn(), Api.PCRUD_SERVICE,
+        Object resp = Utils.doRequest(conn(), Api.PCRUD,
                 Api.SEARCH_SMS_CARRIERS, new Object[]{
                         Api.ANONYMOUS, args});
         Log.d(TAG, "did we make it?");
@@ -220,7 +224,7 @@ public class OSRFTest {
     @Test
     public void testCreateHold() throws Exception {
         assertLoggedIn();
-        mConn = EvergreenServer.getInstance().gatewayConnection();
+//        mConn = EvergreenServer.getInstance().gatewayConnection();
         AccountAccess ac = AccountAccess.getInstance();
         ac.retrieveSession(mAuthToken);
 
@@ -250,7 +254,7 @@ public class OSRFTest {
     @Test
     public void testMessagesRetrieve() throws Exception {
         assertLoggedIn();
-        mConn = EvergreenServer.getInstance().gatewayConnection();
+//        mConn = EvergreenServer.getInstance().gatewayConnection();
         AccountAccess ac = AccountAccess.getInstance();
         ac.retrieveSession(mAuthToken);
 
@@ -263,7 +267,7 @@ public class OSRFTest {
     public void testSearchByOrgUnit() throws Exception {
         assertLoggedIn();
 
-        mConn = EvergreenServer.getInstance().gatewayConnection();
+//        mConn = EvergreenServer.getInstance().gatewayConnection();
         //AccountAccess ac = AccountAccess.getInstance();
         //ac.retrieveSession(mAuthToken);
 
@@ -309,34 +313,18 @@ public class OSRFTest {
     @Test
     public void testSearchCodedValueMap() throws Exception {
         assertLoggedIn();
-        mConn = EvergreenServer.getInstance().gatewayConnection();
-//        AccountAccess ac = AccountAccess.getInstance();
-//        ac.retrieveSession(mAuthToken);
+//        mConn = EvergreenServer.getInstance().gatewayConnection();
 
-        long now_ms = System.currentTimeMillis();
-        HashMap<String, Object> args = new HashMap<>();
-        ArrayList<String> formats = new ArrayList<>();
-        formats.add("icon_format");
-        formats.add("search_format");
-        args.put("ctype", formats);
-        Object resp = Utils.doRequest(conn(), Api.PCRUD_SERVICE, Api.SEARCH_CCVM,
-                Api.USER_FLESHED_RETRIEVE, new Object[] {
-                    Api.ANONYMOUS, args });
-        Log.d(TAG, "Sync Response: " + resp);
-        now_ms = Log.logElapsedTime(TAG, now_ms, "search.query");
-        assertNotNull(resp);
-        if (resp == null)
+        List<OSRFObject> objects = PCRUDService.fetchCodedValueMaps();
+        assertNotNull(objects);
+        if (objects == null)
             return;
 
-        List<OSRFObject> objList = (List<OSRFObject>) resp;
-        for (OSRFObject obj: objList) {
-            String code = (String) obj.getOrDefault("code","");
-            String ctype = (String) obj.getOrDefault("ctype", "");
-            Boolean opac_visible = Api.parseBoolean(obj.get("opac_visible"));
-            String search_label = (String) obj.getOrDefault("search_label","");
-            //if (opac_visible)
-                Log.d(TAG, "vis="+opac_visible+" ctype="+ctype+" code="+code+" search_label="+search_label);
-        }
-        Log.d(TAG, "obj");
+        CodedValueMap.loadCodedValueMaps(objects);
+
+        String book_search_label = CodedValueMap.searchFormatLabel("book");
+        assertNotNull(book_search_label);
+        String book_icon_label = CodedValueMap.iconFormatLabel("book");
+        assertNotNull(book_icon_label);
     }
 }

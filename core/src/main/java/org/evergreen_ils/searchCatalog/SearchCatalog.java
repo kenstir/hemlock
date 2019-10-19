@@ -184,7 +184,7 @@ public class SearchCatalog {
         }
         HashMap<String, Object> args = new HashMap<>();
         args.put("id", ids);
-        Object response = Utils.doRequest(conn(), Api.PCRUD_SERVICE,
+        Object response = Utils.doRequest(conn(), Api.PCRUD,
                 Api.SEARCH_MRAF, new Object[] {
                 AccountAccess.getInstance().getAuthToken(),
                 args });

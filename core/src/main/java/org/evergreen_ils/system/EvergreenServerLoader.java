@@ -33,8 +33,6 @@ import org.opensrf.util.GatewayResponse;
 import org.opensrf.util.OSRFObject;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -162,7 +160,7 @@ public class EvergreenServerLoader {
         args.put("active", 1);
         final String method = Api.SEARCH_SMS_CARRIERS;
         String url = eg.getUrl(Analytics.buildGatewayUrl(
-                Api.PCRUD_SERVICE, method,
+                Api.PCRUD, method,
                 new Object[]{ac.getAuthToken(), args}));
         GatewayJsonObjectRequest r = new GatewayJsonObjectRequest(
                 url,

@@ -119,7 +119,7 @@ public class EvergreenServer {
             IDLParser parser = new IDLParser(conn.getInputStream());
             now_ms = Log.logElapsedTime(TAG, now_ms, "loadIDL.init");
             parser.parse();
-            now_ms = Log.logElapsedTime(TAG, now_ms, "loadIDL.total");
+            now_ms = Log.logElapsedTime(TAG, now_ms, "loadIDL.parse");
             mIDLLoaded = true;
         } finally {
             conn.disconnect();

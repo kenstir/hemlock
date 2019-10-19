@@ -417,7 +417,7 @@ public class AccountAccess {
 
         OSRFObject resp = null;
         try {
-            resp = (OSRFObject) Utils.doRequest(conn(), Api.PCRUD_SERVICE,
+            resp = (OSRFObject) Utils.doRequest(conn(), Api.PCRUD,
                     Api.RETRIEVE_MRA, Api.ANONYMOUS, new Object[] {
                             authToken, id});
         } catch (SessionNotFoundException e) {

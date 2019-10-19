@@ -23,7 +23,6 @@ import android.content.Context;
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.Response;
-import com.android.volley.RetryPolicy;
 import com.android.volley.VolleyError;
 
 import org.evergreen_ils.Api;
@@ -96,7 +95,7 @@ public class RecordLoader {
         } else {
             final long start_ms = System.currentTimeMillis();
             String url = EvergreenServer.getInstance().getUrl(Utils.buildGatewayUrl(
-                    Api.PCRUD_SERVICE, Api.RETRIEVE_BRE,
+                    Api.PCRUD, Api.RETRIEVE_BRE,
                     new Object[]{Api.ANONYMOUS, record.doc_id}));
             Log.d(TAG, "fetch.marcxml "+url);
             GatewayJsonObjectRequest r = new GatewayJsonObjectRequest(
@@ -126,7 +125,7 @@ public class RecordLoader {
         } else {
             final long start_ms = System.currentTimeMillis();
             String url = EvergreenServer.getInstance().getUrl(Utils.buildGatewayUrl(
-                    Api.PCRUD_SERVICE, Api.RETRIEVE_MRA,
+                    Api.PCRUD, Api.RETRIEVE_MRA,
                     new Object[]{Api.ANONYMOUS, record.doc_id}));
             Log.d(TAG, "fetch.attrs "+url);
             GatewayJsonObjectRequest r = new GatewayJsonObjectRequest(

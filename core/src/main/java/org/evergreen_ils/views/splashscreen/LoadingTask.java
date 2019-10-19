@@ -109,7 +109,7 @@ public class LoadingTask {
                 Analytics.log(tag, tag+"error_msg=" + error_msg);
                 return error_msg;
             }
-            now_ms = Log.logElapsedTime(TAG, now_ms, "signing in");
+            now_ms = Log.logElapsedTime(TAG, now_ms, "loading.get_auth");
 
             Library library = AccountUtils.getLibraryForAccount(mCallingActivity, account_name, accountType);
             AppState.setString(AppState.LIBRARY_NAME, library.name);
@@ -121,13 +121,13 @@ public class LoadingTask {
             EvergreenServer eg = EvergreenServer.getInstance();
             eg.connect(library.url);
             AccountAccess ac = AccountAccess.getInstance();
-            now_ms = Log.logElapsedTime(TAG, now_ms, "login");
+            now_ms = Log.logElapsedTime(TAG, now_ms, "loading.idl");
             eg.loadOrgTypes(ac.fetchOrgTypes());
-            now_ms = Log.logElapsedTime(TAG, now_ms, "load org types");
+            now_ms = Log.logElapsedTime(TAG, now_ms, "loading.org_types");
             eg.loadOrganizations(ac.fetchOrgTree(), mCallingActivity.getResources().getBoolean(R.bool.ou_hierarchical_org_tree));
-            now_ms = Log.logElapsedTime(TAG, now_ms, "load orgs");
+            now_ms = Log.logElapsedTime(TAG, now_ms, "loading.orgs");
             eg.loadCopyStatuses(SearchCatalog.fetchCopyStatuses());
-            now_ms = Log.logElapsedTime(TAG, now_ms, "load copy status");
+            now_ms = Log.logElapsedTime(TAG, now_ms, "loading.copy_status");
 
             // auth token zen: try once and if it fails, invalidate the token and try again
             Log.d(TAG, tag+"Starting session");
@@ -140,10 +140,10 @@ public class LoadingTask {
             }
             if (!haveSession)
                 return "no session";
-            now_ms = Log.logElapsedTime(TAG, now_ms, "retrieve session");
+            now_ms = Log.logElapsedTime(TAG, now_ms, "loading.session");
 
             ac.retrieveBookbags();
-            now_ms = Log.logElapsedTime(TAG, now_ms, "retrieve bookbags");
+            now_ms = Log.logElapsedTime(TAG, now_ms, "loading.bookbags");
 
             return TASK_OK;
         } catch (Exception e) {

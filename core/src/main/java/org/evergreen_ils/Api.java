@@ -102,7 +102,7 @@ public class Api {
 
     /// pcrud
 
-    public static final String PCRUD_SERVICE = "open-ils.pcrud";
+    public static final String PCRUD = "open-ils.pcrud";
     public static final String RETRIEVE_BRE = "open-ils.pcrud.retrieve.bre";
     public static final String RETRIEVE_MRA = "open-ils.pcrud.retrieve.mra";
     public static final String SEARCH_CCVM = "open-ils.pcrud.search.ccvm.atomic";

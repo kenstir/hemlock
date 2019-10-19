@@ -50,7 +50,12 @@ public class OSRFObject extends HashMap<String, Object> implements OSRFSerializa
 
     /** Returns the string value found at the given field */
     public String getString(String field) {
-        return (String) get(field);
+        return getString(field, null);
+    }
+
+    public String getString(String field, String dflt) {
+        String ret = (String) get(field);
+        return (ret != null) ? ret : dflt;
     }
 
     /** Returns the int value found at the given field */
