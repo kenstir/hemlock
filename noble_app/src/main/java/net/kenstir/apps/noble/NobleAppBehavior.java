@@ -17,11 +17,9 @@
 
 package net.kenstir.apps.noble;
 
-import androidx.annotation.NonNull;
 import android.text.TextUtils;
 
 import org.evergreen_ils.android.AppBehavior;
-
 import org.evergreen_ils.searchCatalog.RecordInfo;
 import org.evergreen_ils.system.EvergreenServer;
 import org.evergreen_ils.system.Organization;
@@ -31,6 +29,8 @@ import org.evergreen_ils.utils.MARCRecord;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+
+import androidx.annotation.NonNull;
 
 public class NobleAppBehavior extends AppBehavior {
     private static final String TAG = NobleAppBehavior.class.getSimpleName();
@@ -44,14 +44,13 @@ public class NobleAppBehavior extends AppBehavior {
         if (!record.basic_metadata_loaded) return null;
         if (!record.attrs_loaded) return null;
 
-        // NB: Checking for item_form="o" fails to identify some online resources, e.g.
-        // https://acorn.biblio.org/eg/opac/record/2891957
-        // However, it's better than waiting for the marcxml to load, if the network is slow
-        if (TextUtils.equals(record.getAttr("item_form"), "o"))
+        String item_form = record.getAttr("item_form");
+        if (TextUtils.equals(item_form, "q")
+                || TextUtils.equals(item_form, "o")
+                || TextUtils.equals(item_form, "s"))
             return true;
 
-        if (!record.marcxml_loaded) return null;
-        return (getOnlineLocations(record, null).size() > 0);
+        return false;
     }
 
     private String trimTrailing(String s, char c) {
