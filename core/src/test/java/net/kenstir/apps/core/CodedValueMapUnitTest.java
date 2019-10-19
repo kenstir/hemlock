@@ -65,10 +65,10 @@ public class CodedValueMapUnitTest {
 
     @Test
     public void test_basic() throws Exception {
-        assertNull(CodedValueMap.getValueFromCode(CodedValueMap.SEARCH_FORMAT, "missing"));
-        assertNull(CodedValueMap.getCodeFromValue(CodedValueMap.ICON_FORMAT, "Missing"));
+        assertNull(CodedValueMap.searchFormatLabel("missing"));
+        assertNull(CodedValueMap.searchFormatCode("Missing"));
 
-        assertEquals("Book (All)", CodedValueMap.getValueFromCode(CodedValueMap.SEARCH_FORMAT, "book"));
-        assertEquals("Book", CodedValueMap.getValueFromCode(CodedValueMap.ICON_FORMAT, "book"));
+        assertEquals("Book (All)", CodedValueMap.searchFormatLabel("book"));
+        assertEquals("Book", CodedValueMap.iconFormatLabel("book"));
     }
 }

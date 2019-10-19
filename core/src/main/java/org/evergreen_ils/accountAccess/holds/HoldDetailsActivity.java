@@ -129,7 +129,7 @@ public class HoldDetailsActivity extends BaseActivity {
         title.setText(record.title);
         author.setText(record.author);
         if (record.recordInfo != null) {
-            format.setText(RecordInfo.getFormatLabel(record.recordInfo));
+            format.setText(record.recordInfo.getIconFormatLabel());
             physical_description.setText(record.recordInfo.physical_description);
         }
 

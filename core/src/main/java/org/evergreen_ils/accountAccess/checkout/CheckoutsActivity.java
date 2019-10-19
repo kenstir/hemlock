@@ -196,7 +196,7 @@ public class CheckoutsActivity extends BaseActivity {
             // set text
             recordTitle.setText(record.getTitle());
             recordAuthor.setText(record.getAuthor());
-            recordFormat.setText(RecordInfo.getFormatLabel(record.recordInfo));
+            recordFormat.setText(RecordInfo.getIconFormatLabel(record.recordInfo));
             recordRenewals.setText(String.format(getString(R.string.checkout_renewals_left), record.getRenewals()));
             recordDueDate.setText(String.format(getString(R.string.due), record.getDueDateString()));
             maybeHighlightDueDate(record);

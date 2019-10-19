@@ -19,8 +19,8 @@ package org.evergreen_ils.android;
 
 import android.text.TextUtils;
 
+import org.evergreen_ils.searchCatalog.CodedValueMap;
 import org.evergreen_ils.searchCatalog.RecordInfo;
-import org.evergreen_ils.searchCatalog.SearchFormat;
 import org.evergreen_ils.utils.Link;
 
 import java.util.ArrayList;
@@ -35,12 +35,12 @@ public class AppBehavior {
     public AppBehavior() {
     }
 
-    private static boolean isOnlineFormat(String search_format) {
-        if (TextUtils.isEmpty(search_format))
+    private static boolean isOnlineFormat(String icon_format_code) {
+        if (TextUtils.isEmpty(icon_format_code))
             return false;
-        if (search_format.equals("picture"))
+        if (icon_format_code.equals("picture"))
             return true;
-        String label = SearchFormat.getItemLabelFromSearchFormat(search_format);
+        String label = CodedValueMap.iconFormatLabel(icon_format_code);
         return label.startsWith("E-"); // E-book, E-audio
     }
 
@@ -48,7 +48,7 @@ public class AppBehavior {
         if (!record.basic_metadata_loaded) return null;
         if (!record.attrs_loaded) return null;
         return (!TextUtils.isEmpty(record.online_loc)
-                && isOnlineFormat(record.search_format));
+                && isOnlineFormat(record.getIconFormatLabel()));
     }
 
     public List<Link> getOnlineLocations(RecordInfo record, String orgShortName) {

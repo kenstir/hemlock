@@ -50,7 +50,6 @@ import org.evergreen_ils.net.VolleyWrangler;
 import org.evergreen_ils.searchCatalog.CopyInformationActivity;
 import org.evergreen_ils.searchCatalog.RecordInfo;
 import org.evergreen_ils.searchCatalog.RecordLoader;
-import org.evergreen_ils.searchCatalog.SearchFormat;
 import org.evergreen_ils.system.Analytics;
 import org.evergreen_ils.system.EvergreenServer;
 import org.evergreen_ils.system.Log;
@@ -310,7 +309,7 @@ public class DetailsFragment extends Fragment {
 
     private void updateSearchFormatView() {
         if (!isAdded()) return; // discard late results
-        formatTextView.setText(SearchFormat.getItemLabelFromSearchFormat(record.search_format));
+        formatTextView.setText(RecordInfo.getIconFormatLabel(record));
         updateButtonViews();
     }
 

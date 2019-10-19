@@ -19,15 +19,19 @@
 package org.evergreen_ils.searchCatalog;
 
 import org.evergreen_ils.Api;
+import org.evergreen_ils.system.Analytics;
 import org.evergreen_ils.utils.TextUtils;
+import org.opensrf.ShouldNotHappenException;
 import org.opensrf.util.OSRFObject;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class CodedValueMap {
     public static final String SEARCH_FORMAT = "search_format";
     public static final String ICON_FORMAT = "icon_format";
+    static final String ALL_SEARCH_FORMATS = "All Formats";
 
     static class CodedValue {
         public String code;
@@ -76,6 +80,7 @@ public class CodedValueMap {
                 return cv.value;
             }
         }
+        Analytics.logException(new ShouldNotHappenException("Unknown ccvm code: "+code));
         return null;
     }
 
@@ -93,7 +98,12 @@ public class CodedValueMap {
                 return cv.code;
             }
         }
+        Analytics.logException(new ShouldNotHappenException("Unknown ccvm value: "+value));
         return null;
+    }
+
+    public static String iconFormatLabel(String code) {
+        return getValueFromCode(ICON_FORMAT, code);
     }
 
     public static String searchFormatLabel(String code) {
@@ -101,14 +111,21 @@ public class CodedValueMap {
     }
 
     public static String searchFormatCode(String label) {
+        if (TextUtils.isEmpty(label) || TextUtils.equals(label, ALL_SEARCH_FORMATS))
+            return "";
         return getCodeFromValue(SEARCH_FORMAT, label);
     }
 
-    public static String iconFormatLabel(String code) {
-        return getValueFromCode(ICON_FORMAT, code);
-    }
-
-    public static String iconFormatCode(String label) {
-        return getValueFromCode(ICON_FORMAT, label);
+    /// list of labels e.g. "All Formats", "All Books", ...
+    public static List<String> getSearchFormatSpinnerLabels() {
+        ArrayList<String> labels = new ArrayList<String>();
+        labels.add(ALL_SEARCH_FORMATS);
+        for (CodedValue cv : search_formats) {
+            if (cv.opac_visible) {
+                labels.add(cv.value);
+            }
+        }
+        Collections.sort(labels);
+        return labels;
     }
 }

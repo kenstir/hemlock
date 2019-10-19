@@ -35,6 +35,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static org.evergreen_ils.system.Utils.safeString;
+
 public class RecordInfo implements Serializable {
 
     private static final long serialVersionUID = 10123L;
@@ -69,7 +71,6 @@ public class RecordInfo implements Serializable {
     public boolean marcxml_loaded = false;
 
     public ArrayList<CopySummary> copySummaryList = null;
-    public String search_format = null;
     public MARCRecord marc_record = null;
     public HashMap<String, String> attrs = null;
 
@@ -103,12 +104,12 @@ public class RecordInfo implements Serializable {
             Log.d(TAG, "caught", e);
         }
 
-        record.title = Utils.safeString(info.getString("title"));
-        record.author = Utils.safeString(info.getString("author"));
-        record.pubdate = Utils.safeString(info.getString("pubdate"));
-        record.publisher = Utils.safeString(info.getString("publisher"));
-        record.synopsis = Utils.safeString(info.getString("synopsis"));
-        record.physical_description = Utils.safeString(info.getString("physical_description"));
+        record.title = safeString(info.getString("title"));
+        record.author = safeString(info.getString("author"));
+        record.pubdate = safeString(info.getString("pubdate"));
+        record.publisher = safeString(info.getString("publisher"));
+        record.synopsis = safeString(info.getString("synopsis"));
+        record.physical_description = safeString(info.getString("physical_description"));
 
         try {
             record.isbn = (String) info.get("isbn");
@@ -186,10 +187,6 @@ public class RecordInfo implements Serializable {
         return copyLocationCountsList;
     }
 
-    public void setSearchFormat(String format) {
-        search_format = format;
-    }
-
     public void updateFromMRAResponse(GatewayResponse response) {
         OSRFObject mra_obj = null;
         try {
@@ -199,14 +196,9 @@ public class RecordInfo implements Serializable {
         }
         updateFromMRAResponse(mra_obj);
     }
+
     public void updateFromMRAResponse(OSRFObject mra_obj) {
         attrs = RecordAttributes.parseAttributes(mra_obj);
-
-        // the "icon_format" attr (e.g. ebook) is what we need, not
-        // the "search_format" attr (e.g. "electronic")
-        search_format = attrs.get("icon_format");
-        if (TextUtils.isEmpty(search_format))
-            search_format = attrs.get("search_format");
         attrs_loaded = true;
     }
 
@@ -214,10 +206,22 @@ public class RecordInfo implements Serializable {
         return attrs.get(attr_name);
     }
 
-    public static String getFormatLabel(RecordInfo record) {
+    public String getSearchFormat() {
+        return attrs.get("search_format");
+    }
+
+    public String getIconFormat() {
+        return attrs.get("icon_format");
+    }
+
+    public String getIconFormatLabel() {
+        return safeString(CodedValueMap.iconFormatLabel(getIconFormat()));
+    }
+
+    public static String getIconFormatLabel(RecordInfo record) {
         if (record == null)
             return "";
-        return SearchFormat.getItemLabelFromSearchFormat(record.search_format);
+        return record.getIconFormatLabel();
     }
 
     public String getPublishingInfo() {

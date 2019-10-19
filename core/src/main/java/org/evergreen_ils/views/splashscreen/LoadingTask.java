@@ -25,6 +25,8 @@ import org.evergreen_ils.accountAccess.AccountAccess;
 import org.evergreen_ils.accountAccess.AccountUtils;
 import org.evergreen_ils.accountAccess.SessionNotFoundException;
 import org.evergreen_ils.android.App;
+import org.evergreen_ils.api.PCRUDService;
+import org.evergreen_ils.searchCatalog.CodedValueMap;
 import org.evergreen_ils.searchCatalog.SearchCatalog;
 import org.evergreen_ils.system.Analytics;
 import org.evergreen_ils.utils.ui.AppState;
@@ -128,6 +130,8 @@ public class LoadingTask {
             now_ms = Log.logElapsedTime(TAG, now_ms, "loading.orgs");
             eg.loadCopyStatuses(SearchCatalog.fetchCopyStatuses());
             now_ms = Log.logElapsedTime(TAG, now_ms, "loading.copy_status");
+            CodedValueMap.loadCodedValueMaps(PCRUDService.fetchCodedValueMaps());
+            now_ms = Log.logElapsedTime(TAG, now_ms, "loading.ccvm");
 
             // auth token zen: try once and if it fails, invalidate the token and try again
             Log.d(TAG, tag+"Starting session");

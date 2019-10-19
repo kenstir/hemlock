@@ -24,6 +24,11 @@ package org.evergreen_ils.system;
 public class Log {
     public static LogProvider provider = new AndroidLogProvider();
 
+    // defining these statics here allows me to unit test code that logs / calls analytics
+    // values from https://developer.android.com/reference/android/util/Log
+    public static final int DEBUG = 3;
+    public static final int WARN = 5;
+
     public static void setProvider(LogProvider _provider) {
         provider = _provider;
     }

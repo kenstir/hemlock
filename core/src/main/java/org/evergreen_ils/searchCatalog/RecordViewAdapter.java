@@ -43,7 +43,7 @@ public class RecordViewAdapter extends RecyclerView.Adapter<RecordViewAdapter.Vi
         private final NetworkImageView imageView;
         private final TextView titleText;
         private final TextView authorText;
-        private final TextView searchFormatText;
+        private final TextView iconFormatText;
         private final TextView publisherText;
         private Integer bound_record_id;
 
@@ -52,7 +52,7 @@ public class RecordViewAdapter extends RecyclerView.Adapter<RecordViewAdapter.Vi
             imageView = (NetworkImageView) v.findViewById(R.id.search_record_img);
             titleText = (TextView) v.findViewById(R.id.search_record_title);
             authorText = (TextView) v.findViewById(R.id.search_record_author);
-            searchFormatText = (TextView) v.findViewById(R.id.search_record_format);
+            iconFormatText = (TextView) v.findViewById(R.id.search_record_format);
             publisherText = (TextView) v.findViewById(R.id.search_record_publishing);
         }
 
@@ -75,7 +75,7 @@ public class RecordViewAdapter extends RecyclerView.Adapter<RecordViewAdapter.Vi
 
                 @Override
                 public void onSearchFormatLoaded() {
-                    searchFormatText.setText(SearchFormat.getItemLabelFromSearchFormat(record.search_format));
+                    iconFormatText.setText(record.getIconFormatLabel());
                 }
             });
         }

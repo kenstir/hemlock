@@ -189,7 +189,7 @@ public class HoldsActivity extends BaseActivity {
 
             holdTitle.setText(record.title);
             holdAuthor.setText(record.author);
-            holdFormat.setText(RecordInfo.getFormatLabel(record.recordInfo));
+            holdFormat.setText(RecordInfo.getIconFormatLabel(record.recordInfo));
             status.setText(record.getHoldStatus(getResources()));
 
             return row;

@@ -135,7 +135,7 @@ public class PlaceHoldActivity extends AppCompatActivity {
 
         title.setText(record.title);
         author.setText(record.author);
-        format.setText(RecordInfo.getFormatLabel(record));
+        format.setText(record.getIconFormatLabel());
 
         email_notification.setChecked(accountAccess.getDefaultEmailNotification());
         initPhoneControls(getResources().getBoolean(R.bool.ou_enable_phone_notification));

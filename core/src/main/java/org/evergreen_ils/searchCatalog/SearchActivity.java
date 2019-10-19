@@ -86,8 +86,8 @@ public class SearchActivity extends BaseActivity {
         return searchClassSpinner.getSelectedItem().toString().toLowerCase();
     }
 
-    private String getSearchFormat() {
-        return SearchFormat.getSearchFormatFromSpinnerLabel(searchFormatSpinner.getSelectedItem().toString());
+    private String getSearchFormatCode() {
+        return CodedValueMap.searchFormatCode(searchFormatSpinner.getSelectedItem().toString());
     }
 
     private class ContextMenuRecordInfo implements ContextMenuInfo {
@@ -210,7 +210,7 @@ public class SearchActivity extends BaseActivity {
                 if (text.length() < 1)
                     return;
                 int searchQueryType = searchClassSpinner.getSelectedItemPosition();
-                Log.d(TAG, "type="+searchQueryType+" class="+getSearchClass()+" format="+getSearchFormat());
+                Log.d(TAG, "type="+searchQueryType+" class="+getSearchClass()+" format="+getSearchFormatCode());
 
                 runOnUiThread(new Runnable() {
                     @Override
@@ -222,7 +222,7 @@ public class SearchActivity extends BaseActivity {
                     }
                 });
 
-                searchResults = search.getSearchResults(text, getSearchClass(), getSearchFormat(), getString(R.string.ou_sort_by), 0);
+                searchResults = search.getSearchResults(text, getSearchClass(), getSearchFormatCode(), getString(R.string.ou_sort_by), 0);
                 try {
                     Organization search_org = search.selectedOrganization;
                     Organization home_org = eg.getOrganization(AccountAccess.getInstance().getHomeLibraryID());
@@ -232,7 +232,7 @@ public class SearchActivity extends BaseActivity {
                             "num_results", search.visible,
                             "search_org", search_org_val,
                             "search_type", getSearchClass(),
-                            "search_format", getSearchFormat());
+                            "search_format", getSearchFormatCode());
                 } catch (Exception e) {
                     Analytics.logException(e);
                 }
@@ -293,7 +293,7 @@ public class SearchActivity extends BaseActivity {
 
     // unpack the json map to populate our spinner, and allow translation from search_format keyword <=> label
     private void initSearchFormatSpinner() {
-        List<String> labels = SearchFormat.getSpinnerLabels();
+        List<String> labels = CodedValueMap.getSearchFormatSpinnerLabels();
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, labels);
         searchFormatSpinner.setAdapter(adapter);
     }

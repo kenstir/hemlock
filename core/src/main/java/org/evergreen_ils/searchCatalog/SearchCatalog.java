@@ -141,10 +141,10 @@ public class SearchCatalog {
             fetchBasicMetadataBatch(results);
             now_ms = Log.logElapsedTime(TAG, now_ms, "search.fetchBasicMetadataBatch");
         }
-        if (LOAD_SEARCH_FORMAT_SYNCHRONOUSLY) {
-            fetchSearchFormatBatch(results);
-            now_ms = Log.logElapsedTime(TAG, now_ms, "search.fetchSearchFormatBatch");
-        }
+//        if (LOAD_SEARCH_FORMAT_SYNCHRONOUSLY) {
+//            fetchSearchFormatBatch(results);
+//            now_ms = Log.logElapsedTime(TAG, now_ms, "search.fetchSearchFormatBatch");
+//        }
 
         Log.logElapsedTime(TAG, start_ms, "search.total");
 
@@ -171,6 +171,7 @@ public class SearchCatalog {
         }
     }
 
+    /*
     public static void fetchSearchFormatBatch(ArrayList<RecordInfo> records) {
         if (records.size() == 0)
             return;
@@ -205,6 +206,7 @@ public class SearchCatalog {
             Log.d(TAG, "caught", ex);
         }
     }
+    */
 
     // todo: move to lazy load
     public static List<OSRFObject> fetchCopyStatuses() {

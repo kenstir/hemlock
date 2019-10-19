@@ -18,25 +18,20 @@
 
 package org.evergreen_ils.system;
 
-import android.app.Activity;
 import android.content.Context;
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.crashlytics.android.Crashlytics;
 import com.crashlytics.android.answers.Answers;
 import com.crashlytics.android.answers.CustomEvent;
-import com.crashlytics.android.answers.LoginEvent;
 
 import org.opensrf.Method;
 import org.opensrf.util.GatewayResponse;
 import org.opensrf.util.OSRFObject;
-import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
 import io.fabric.sdk.android.Fabric;
 
@@ -49,9 +44,15 @@ public class Analytics {
     private static final String TAG = Analytics.class.getSimpleName();
     private static final int MAX_PARAMS = 5;
     private static String mLastAuthToken = null;
+    private static boolean analytics = false;
 
     public static void initialize(Context context) {
         Fabric.with(context, new Crashlytics());
+        analytics = true;
+    }
+
+    public static void initializeUnitTest() {
+        analytics = false;
     }
 
     public static void setString(String key, String val) {
@@ -65,7 +66,7 @@ public class Analytics {
     }
 
     public static void log(String tag, String msg) {
-        Crashlytics.log(Log.DEBUG, TAG, msg);
+        if (analytics) Crashlytics.log(Log.DEBUG, TAG, msg);
     }
     public static void log(String msg) {
         log(TAG, msg);
@@ -77,6 +78,8 @@ public class Analytics {
     }
 
     public static void logRequest(String service, String method, List<Object> params) {
+        if (!analytics) return;
+
         Crashlytics.setString("svc", service);
         Crashlytics.setString("m", method);
         int i;
@@ -120,6 +123,8 @@ public class Analytics {
     }
 
     public static void logResponse(Object resp) {
+        if (!analytics) return;
+
         try {
             if (resp instanceof OSRFObject) {
                 OSRFObject o = (OSRFObject) resp;
@@ -135,24 +140,24 @@ public class Analytics {
     }
 
     public static void logResponse(GatewayResponse resp) {
-        Crashlytics.log(Log.DEBUG, TAG, "resp: " + resp.payload);
+        if (analytics) Crashlytics.log(Log.DEBUG, TAG, "resp: " + resp.payload);
     }
 
     public static void logRedactedResponse() {
-        Crashlytics.log(Log.DEBUG, TAG, "resp: ***");
+        if (analytics) Crashlytics.log(Log.DEBUG, TAG, "resp: ***");
     }
 
     public static void logVolleyResponse(String method) {
-        Crashlytics.log(Log.DEBUG, TAG, method + " ok");
+        if (analytics) Crashlytics.log(Log.DEBUG, TAG, method + " ok");
     }
 
     public static void logErrorResponse(String resp) {
-        Crashlytics.log(Log.WARN, TAG, "err_resp: " + resp);
+        if (analytics) Crashlytics.log(Log.WARN, TAG, "err_resp: " + resp);
     }
 
     public static void logException(String tag, Throwable e) {
         Log.d(tag, "caught", e);
-        Crashlytics.logException(e);
+        if (analytics) Crashlytics.logException(e);
     }
     public static void logException(Throwable e) {
         logException(TAG, e);
@@ -162,7 +167,7 @@ public class Analytics {
 
     private static void logEvent(CustomEvent ev) {
         Log.d(TAG, "logEvent "+ev.toString());
-        Answers.getInstance().logCustom(ev);
+        if (analytics) Answers.getInstance().logCustom(ev);
     }
     public static void logEvent(String event) {
         CustomEvent ev = new CustomEvent(event);

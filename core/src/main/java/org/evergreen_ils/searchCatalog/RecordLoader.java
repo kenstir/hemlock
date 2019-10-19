@@ -119,7 +119,7 @@ public class RecordLoader {
     }
 
     public static void fetchRecordAttributes(final RecordInfo record, Context context, final ResponseListener responseListener) {
-        Log.d(TAG, "fetchRecordAttributes id="+record.doc_id+ " format="+record.search_format);
+        Log.d(TAG, "fetchRecordAttributes id="+record.doc_id);
         if (record.attrs_loaded) {
             responseListener.onSearchFormatLoaded();
         } else {
