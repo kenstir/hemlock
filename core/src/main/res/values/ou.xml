@@ -48,6 +48,8 @@
     <bool name="ou_enable_messages">false</bool>
     <!-- if true, enable Pay Fines button based on settings -->
     <bool name="ou_enable_pay_fines">true</bool>
+    <!-- if true, display label host name in Item Details view for online items -->
+    <bool name="ou_show_online_access_hostname">true</bool>
     <!-- if true, we must load MARCXML records to load online locations -->
     <bool name="ou_need_marc_record">false</bool>
     <!-- if non-empty, the Barcode format to display for Show Card -->

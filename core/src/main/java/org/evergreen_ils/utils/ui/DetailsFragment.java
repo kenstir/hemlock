@@ -299,11 +299,11 @@ public class DetailsFragment extends Fragment {
         if (is_online_resource) {
             Organization org = EvergreenServer.getInstance().getOrganization(orgID);
             List<Link> links = App.getBehavior().getOnlineLocations(record, org.shortname);
-            if (links != null && links.size() > 0) {
+            if (links == null || links.isEmpty()) {
+                onlineAccessButton.setEnabled(false);
+            } else if (getResources().getBoolean(R.bool.ou_show_online_access_hostname)) {
                 Uri uri = Uri.parse(links.get(0).href);
                 descriptionTextView.setText(uri.getHost());
-            } else {
-                onlineAccessButton.setEnabled(false);
             }
         }
 
