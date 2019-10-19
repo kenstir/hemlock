@@ -25,8 +25,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import androidx.fragment.app.Fragment;
-
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -39,13 +37,12 @@ import android.widget.TextView;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
 
-import org.evergreen_ils.android.App;
-
 import org.evergreen_ils.R;
 import org.evergreen_ils.accountAccess.AccountAccess;
 import org.evergreen_ils.accountAccess.bookbags.BookBag;
 import org.evergreen_ils.accountAccess.bookbags.BookBagUtils;
 import org.evergreen_ils.accountAccess.holds.PlaceHoldActivity;
+import org.evergreen_ils.android.App;
 import org.evergreen_ils.net.VolleyWrangler;
 import org.evergreen_ils.searchCatalog.CopyInformationActivity;
 import org.evergreen_ils.searchCatalog.RecordInfo;
@@ -58,6 +55,8 @@ import org.evergreen_ils.utils.Link;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import androidx.fragment.app.Fragment;
 
 public class DetailsFragment extends Fragment {
 
@@ -79,7 +78,10 @@ public class DetailsFragment extends Fragment {
     private TextView synopsisTextView;
     private TextView isbnTextView;
     private TextView descriptionTextView;
-    private View seriesTableRow;
+    View synopsisTableRow;
+    View subjectTableRow;
+    View seriesTableRow;
+    View isbnTableRow;
     private Button placeHoldButton;
     private Button showCopiesButton;
     private Button onlineAccessButton;
@@ -137,17 +139,20 @@ public class DetailsFragment extends Fragment {
         formatTextView = layout.findViewById(R.id.record_details_format);
         authorTextView = layout.findViewById(R.id.record_details_simple_author);
         publisherTextView = layout.findViewById(R.id.record_details_simple_publisher);
-        seriesTextView = layout.findViewById(R.id.record_details_simple_series);
-        subjectTextView = layout.findViewById(R.id.record_details_simple_subject);
-        synopsisTextView = layout.findViewById(R.id.record_details_simple_synopsis);
-        isbnTextView = layout.findViewById(R.id.record_details_simple_isbn);
+        seriesTextView = layout.findViewById(R.id.record_details_series_text);
+        subjectTextView = layout.findViewById(R.id.record_details_subject_text);
+        synopsisTextView = layout.findViewById(R.id.record_details_synopsis_text);
+        isbnTextView = layout.findViewById(R.id.record_details_isbn_text);
         recordImage = layout.findViewById(R.id.record_details_simple_image);
         descriptionTextView = layout.findViewById(R.id.record_details_brief_description);
         placeHoldButton = layout.findViewById(R.id.simple_place_hold_button);
         showCopiesButton = layout.findViewById(R.id.show_copy_information_button);
         onlineAccessButton = layout.findViewById(R.id.record_details_online_button);
         addToBookbagButton = layout.findViewById(R.id.add_to_bookbag_button);
+        synopsisTableRow = layout.findViewById(R.id.record_details_synopsis_row);
         seriesTableRow = layout.findViewById(R.id.record_details_series_row);
+        subjectTableRow = layout.findViewById(R.id.record_details_subject_row);
+        isbnTableRow = layout.findViewById(R.id.record_details_isbn_row);
 
         record_header.setText(String.format(getString(R.string.record_of), position+1, total));
         descriptionTextView.setText("");
@@ -318,11 +323,13 @@ public class DetailsFragment extends Fragment {
         titleTextView.setText(record.title);
         authorTextView.setText(record.author);
         publisherTextView.setText(record.getPublishingInfo());
+        synopsisTextView.setText(record.synopsis);
         seriesTextView.setText(record.series);
         seriesTableRow.setVisibility(TextUtils.isEmpty(record.series) ? View.GONE : View.VISIBLE);
         subjectTextView.setText(record.subject);
-        synopsisTextView.setText(record.synopsis);
+        subjectTableRow.setVisibility(TextUtils.isEmpty(record.subject) ? View.GONE : View.VISIBLE);
         isbnTextView.setText(record.isbn);
+        isbnTableRow.setVisibility(TextUtils.isEmpty(record.isbn) ? View.GONE : View.VISIBLE);
 
         updateButtonViews();
     }

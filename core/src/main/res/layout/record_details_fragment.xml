@@ -140,10 +140,10 @@
                 android:shrinkColumns="1"
                 android:stretchColumns="1">
 
-                <TableRow>
+                <TableRow android:id="@+id/record_details_synopsis_row">
 
                     <TextView
-                        android:id="@+id/record_details_simple_synopsis"
+                        android:id="@+id/record_details_synopsis_text"
                         android:layout_span="2"
                         android:paddingTop="8dp"
                         android:paddingBottom="8dp"
@@ -159,11 +159,11 @@
                         tools:ignore="RtlHardcoded" />
 
                     <TextView
-                        android:id="@+id/record_details_simple_series"
+                        android:id="@+id/record_details_series_text"
                         tools:text="Series of fantastical events" />
                 </TableRow>
 
-                <TableRow>
+                <TableRow android:id="@+id/record_details_subject_row">
 
                     <TextView
                         style="@style/HemlockText.PageSecondary"
@@ -172,11 +172,11 @@
                         tools:ignore="RtlHardcoded" />
 
                     <TextView
-                        android:id="@+id/record_details_simple_subject"
+                        android:id="@+id/record_details_subject_text"
                         tools:text="Potter, Harry (Fictitious character)\nMagic\nEngland\nWizards\nSchools" />
                 </TableRow>
 
-                <TableRow>
+                <TableRow android:id="@+id/record_details_isbn_row">
 
                     <TextView
                         style="@style/HemlockText.PageSecondary"
@@ -185,7 +185,7 @@
                         tools:ignore="RtlHardcoded" />
 
                     <TextView
-                        android:id="@+id/record_details_simple_isbn"
+                        android:id="@+id/record_details_isbn_text"
                         android:layout_marginBottom="3dp"
                         tools:text="9780439139595" />
                 </TableRow>
