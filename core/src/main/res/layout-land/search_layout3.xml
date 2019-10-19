@@ -1,36 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              xmlns:app="http://schemas.android.com/apk/res-auto"
-              android:orientation="vertical"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
     <LinearLayout
-            android:orientation="vertical"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            style="@style/Hemlock.SecondaryToolbar"
-            >
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        style="@style/Hemlock.SecondaryToolbar"
+        >
         <LinearLayout
-                android:orientation="horizontal"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+            android:orientation="horizontal"
+            android:paddingLeft="8dp"
+            android:paddingRight="8dp"
+            android:background="@color/background"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
             <EditText
-                    android:id="@+id/searchText"
-                    android:hint="@string/search_hint"
-                    android:inputType="textAutoComplete"
-                    android:imeActionLabel="@string/search_button"
-                    android:imeOptions="actionSearch"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:maxLines="1"
-                    android:gravity="bottom"/>
+                android:id="@+id/searchText"
+                android:hint="@string/search_hint"
+                android:inputType="textAutoComplete"
+                android:autofillHints=""
+                android:imeActionLabel="@string/search_button"
+                android:imeOptions="actionSearch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:maxLines="1"
+                android:gravity="bottom"/>
             <androidx.appcompat.widget.SwitchCompat
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/search_options_button"
-                    android:contentDescription="@string/search_options_button_alt"
-                    android:checked="true"/>
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/search_options_button"
+                android:contentDescription="@string/search_options_button_alt"
+                android:checked="true"/>
             <Button
                 android:id="@+id/search_button"
                 android:contentDescription="@string/search_button_alt"
@@ -40,10 +44,10 @@
                 android:text="@string/search_button"/>
         </LinearLayout>
         <LinearLayout
-                android:orientation="horizontal"
-                android:id="@+id/search_options_layout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+            android:orientation="horizontal"
+            android:id="@+id/search_options_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
             <Spinner
                 android:id="@+id/search_qtype_spinner"
                 android:contentDescription="@string/search_qtype_spinner_alt"
@@ -66,19 +70,20 @@
                 android:spinnerMode="dialog"/>
         </LinearLayout>
         <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/background">
             <TextView
-                    android:id="@+id/search_result_number"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:freezesText="true"/>
+                android:id="@+id/search_result_number"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:freezesText="true"/>
         </LinearLayout>
     </LinearLayout>
     <FrameLayout
-            android:id="@+id/search_results_list"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+        android:id="@+id/search_results_list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
 
 </LinearLayout>

@@ -111,11 +111,11 @@ public class SearchActivity extends BaseActivity {
         eg = EvergreenServer.getInstance();
         search = SearchCatalog.getInstance(getResources().getInteger(R.integer.ou_search_limit));
         bookBags = AccountAccess.getInstance().getBookbags();
-        searchResults = new ArrayList<RecordInfo>();
+        searchResults = new ArrayList<>();
         progress = new ProgressDialogSupport();
 
         if (savedInstanceState == null) {
-            recordList = new ArrayList<RecordInfo>();
+            recordList = new ArrayList<>();
         } else {
             recordList = (ArrayList<RecordInfo>) savedInstanceState.getSerializable("recordList");
         }
@@ -133,14 +133,14 @@ public class SearchActivity extends BaseActivity {
             searchResultsFragment = (SearchResultsFragment) getSupportFragmentManager().findFragmentById(R.id.search_results_list);
         }
 
-        searchText = (EditText) findViewById(R.id.searchText);
-        searchOptionsButton = (SwitchCompat) findViewById(R.id.search_options_button);
+        searchText = findViewById(R.id.searchText);
+        searchOptionsButton = findViewById(R.id.search_options_button);
         searchOptionsLayout = findViewById(R.id.search_options_layout);
-        searchButton = (Button) findViewById(R.id.search_button);
-        searchClassSpinner = (Spinner) findViewById(R.id.search_qtype_spinner);
-        searchFormatSpinner = (Spinner) findViewById(R.id.search_format_spinner);
-        orgSpinner = (Spinner) findViewById(R.id.search_org_spinner);
-        searchResultsSummary = (TextView) findViewById(R.id.search_result_number);
+        searchButton = findViewById(R.id.search_button);
+        searchClassSpinner = findViewById(R.id.search_qtype_spinner);
+        searchFormatSpinner = findViewById(R.id.search_format_spinner);
+        orgSpinner = findViewById(R.id.search_org_spinner);
+        searchResultsSummary = findViewById(R.id.search_result_number);
 
         initSearchOptionsVisibility();
         initSearchText();
@@ -291,10 +291,9 @@ public class SearchActivity extends BaseActivity {
         });
     }
 
-    // unpack the json map to populate our spinner, and allow translation from search_format keyword <=> label
     private void initSearchFormatSpinner() {
         List<String> labels = CodedValueMap.getSearchFormatSpinnerLabels();
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, labels);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, labels);
         searchFormatSpinner.setAdapter(adapter);
     }
 
