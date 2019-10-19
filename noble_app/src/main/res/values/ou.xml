@@ -16,6 +16,7 @@
     <bool name="ou_enable_pay_fines">true</bool>
     <bool name="ou_need_marc_record">true</bool>
     <bool name="ou_show_online_access_hostname">false</bool>
+    <bool name="ou_always_popup_online_links">true</bool>
     <string name="ou_barcode_format">Codabar</string>
     <integer name="ou_search_limit">100</integer>
 </resources>

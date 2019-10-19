@@ -228,7 +228,7 @@ public class DetailsFragment extends Fragment {
             return; // TODO: alert
 
         // if there's only one link, launch it without ceremony
-        if (links.size() == 1) {
+        if (links.size() == 1 && !getResources().getBoolean(R.bool.ou_always_popup_online_links)) {
             launchURL(links.get(0).href);
             return;
         }
