@@ -31,7 +31,7 @@ import java.util.List;
 public class CodedValueMap {
     public static final String SEARCH_FORMAT = "search_format";
     public static final String ICON_FORMAT = "icon_format";
-    static final String ALL_SEARCH_FORMATS = "All Formats";
+    public static final String ALL_SEARCH_FORMATS = "All Formats";
 
     static class CodedValue {
         public String code;
@@ -119,13 +119,13 @@ public class CodedValueMap {
     /// list of labels e.g. "All Formats", "All Books", ...
     public static List<String> getSearchFormatSpinnerLabels() {
         ArrayList<String> labels = new ArrayList<String>();
-        labels.add(ALL_SEARCH_FORMATS);
         for (CodedValue cv : search_formats) {
             if (cv.opac_visible) {
                 labels.add(cv.value);
             }
         }
         Collections.sort(labels);
+        labels.add(0, ALL_SEARCH_FORMATS);
         return labels;
     }
 }

@@ -29,6 +29,7 @@ import org.junit.Test;
 import org.opensrf.util.OSRFObject;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
@@ -70,5 +71,8 @@ public class CodedValueMapUnitTest {
 
         assertEquals("Book (All)", CodedValueMap.searchFormatLabel("book"));
         assertEquals("Book", CodedValueMap.iconFormatLabel("book"));
+
+        List<String> labels = CodedValueMap.getSearchFormatSpinnerLabels();
+        assertEquals(CodedValueMap.ALL_SEARCH_FORMATS, labels.get(0));
     }
 }
