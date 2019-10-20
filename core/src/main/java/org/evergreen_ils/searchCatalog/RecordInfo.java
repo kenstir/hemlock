@@ -61,7 +61,6 @@ public class RecordInfo implements Serializable {
     public String synopsis = null;
     public String physical_description = null;
     public String series = "";
-    public boolean dummy = false;
 
     // todo: put the knowledge of whether this record has been loaded here in RecordInfo
     // and not scattered e.g. in RecordLoader and BasicDetailsFragment
@@ -73,10 +72,6 @@ public class RecordInfo implements Serializable {
     public ArrayList<CopySummary> copySummaryList = null;
     public MARCRecord marc_record = null;
     public HashMap<String, String> attrs = null;
-
-    public RecordInfo() {
-        this.dummy = true;
-    }
 
     public RecordInfo(int doc_id) {
         this.doc_id = doc_id;
