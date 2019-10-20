@@ -68,8 +68,9 @@ public class NobleAppBehavior extends AppBehavior {
         return trimTrailing(s1,'.').trim();
     }
 
-    // TODO: check all org levels between orgShortName and consortium.  In practice, I think
-    // e-books are purchased at the branch level or at the consortium level, so this is Good Enough.
+    // TODO: check all org levels between orgShortName and consortium.  In practice, it seems
+    // electronic items are available to either the branch or the consortium, so this is Good Enough.
+    // See also Located URIs in docs/cataloging/cataloging_electronic_resources.adoc
     private boolean isAvailableToOrg(MARCRecord.MARCDatafield df, String orgShortName, String consortiumShortName) {
         for (MARCRecord.MARCSubfield sf : df.subfields) {
             if (TextUtils.equals(sf.code, "9")
@@ -88,9 +89,6 @@ public class NobleAppBehavior extends AppBehavior {
         if (!record.marcxml_loaded || record.marc_record == null)
             return new ArrayList<>();
 
-        // Include only links that are available to this org
-        // or the consortium.  See also Located URIs in
-        // docs/cataloging/cataloging_electronic_resources.adoc
         ArrayList<Link> links = new ArrayList<>();
         Organization consortium = EvergreenServer.getInstance().getOrganization(Organization.consortiumOrgId);
 
