@@ -50,7 +50,7 @@ public class AppBehavior {
         if (icon_format_code.equals("picture"))
             return true;
         String label = CodedValueMap.iconFormatLabel(icon_format_code);
-        return label.startsWith("E-"); // E-book, E-audio
+        return (label != null && label.startsWith("E-")); // E-book, E-audio
     }
 
     public Boolean isOnlineResource(RecordInfo record) {
@@ -64,8 +64,6 @@ public class AppBehavior {
             return true;
 
         return false;
-//        return (!TextUtils.isEmpty(record.online_loc)
-//                && isOnlineFormat(record.getIconFormatLabel()));
     }
 
     public List<Link> getOnlineLocations(RecordInfo record, String orgShortName) {
