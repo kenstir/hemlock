@@ -201,9 +201,9 @@ public class RecordInfo implements Serializable {
         return attrs.get(attr_name);
     }
 
-    public String getSearchFormat() {
-        return attrs.get("search_format");
-    }
+//    public String getSearchFormat() {
+//        return attrs.get("search_format");
+//    }
 
     public String getIconFormat() {
         return attrs.get("icon_format");

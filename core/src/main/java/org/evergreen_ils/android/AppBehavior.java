@@ -21,6 +21,7 @@ import android.text.TextUtils;
 
 import org.evergreen_ils.searchCatalog.CodedValueMap;
 import org.evergreen_ils.searchCatalog.RecordInfo;
+import org.evergreen_ils.system.Log;
 import org.evergreen_ils.utils.Link;
 
 import java.util.ArrayList;
@@ -35,6 +36,14 @@ public class AppBehavior {
     public AppBehavior() {
     }
 
+    protected String trimTrailing(String s, char c) {
+        StringBuilder sb = new StringBuilder(s);
+        while (sb.length() > 0 && sb.charAt(sb.length() - 1) == c) {
+            sb.setLength(sb.length() - 1);
+        }
+        return sb.toString();
+    }
+
     private static boolean isOnlineFormat(String icon_format_code) {
         if (TextUtils.isEmpty(icon_format_code))
             return false;
@@ -47,8 +56,16 @@ public class AppBehavior {
     public Boolean isOnlineResource(RecordInfo record) {
         if (!record.basic_metadata_loaded) return null;
         if (!record.attrs_loaded) return null;
-        return (!TextUtils.isEmpty(record.online_loc)
-                && isOnlineFormat(record.getIconFormatLabel()));
+
+        String item_form = record.getAttr("item_form");
+        Log.d("kcxxx.os", "id:"+record.doc_id+" title:"+record.title+" item_form:"+item_form+" icon_format:"+record.getIconFormat());
+        if (TextUtils.equals(item_form, "o")
+                || TextUtils.equals(item_form, "s"))
+            return true;
+
+        return false;
+//        return (!TextUtils.isEmpty(record.online_loc)
+//                && isOnlineFormat(record.getIconFormatLabel()));
     }
 
     public List<Link> getOnlineLocations(RecordInfo record, String orgShortName) {

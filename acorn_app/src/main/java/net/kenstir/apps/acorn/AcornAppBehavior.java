@@ -52,14 +52,6 @@ public class AcornAppBehavior extends AppBehavior {
         return (getOnlineLocations(record, null).size() > 0);
     }
 
-    private String trimTrailing(String s, char c) {
-        StringBuilder sb = new StringBuilder(s);
-        while (sb.length() > 0 && sb.charAt(sb.length() - 1) == c) {
-            sb.setLength(sb.length() - 1);
-        }
-        return sb.toString();
-    }
-
     // Trim the link text for a better mobile UX
     private String trimLinkTitle(String s) {
         String s1 = s.replaceAll("Click here to (download|access)\\.?", "")

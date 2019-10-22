@@ -22,6 +22,7 @@ import android.text.TextUtils;
 import org.evergreen_ils.android.AppBehavior;
 import org.evergreen_ils.searchCatalog.RecordInfo;
 import org.evergreen_ils.system.EvergreenServer;
+import org.evergreen_ils.system.Log;
 import org.evergreen_ils.system.Organization;
 import org.evergreen_ils.utils.Link;
 import org.evergreen_ils.utils.MARCRecord;
@@ -45,20 +46,12 @@ public class NobleAppBehavior extends AppBehavior {
         if (!record.attrs_loaded) return null;
 
         String item_form = record.getAttr("item_form");
-        if (TextUtils.equals(item_form, "q")
-                || TextUtils.equals(item_form, "o")
+        Log.d("kcxxx.os", "id:"+record.doc_id+" title:"+record.title+" item_form:"+item_form+" icon_format:"+record.getIconFormat());
+        if (TextUtils.equals(item_form, "o")
                 || TextUtils.equals(item_form, "s"))
             return true;
 
         return false;
-    }
-
-    private String trimTrailing(String s, char c) {
-        StringBuilder sb = new StringBuilder(s);
-        while (sb.length() > 0 && sb.charAt(sb.length() - 1) == c) {
-            sb.setLength(sb.length() - 1);
-        }
-        return sb.toString();
     }
 
     // Trim the link text for a better mobile UX
@@ -86,10 +79,10 @@ public class NobleAppBehavior extends AppBehavior {
 
     @Override @NonNull
     public List<Link> getOnlineLocations(RecordInfo record, String orgShortName) {
-        if (!record.marcxml_loaded || record.marc_record == null)
-            return new ArrayList<>();
-
         ArrayList<Link> links = new ArrayList<>();
+        if (!record.marcxml_loaded || record.marc_record == null)
+            return links;
+
         Organization consortium = EvergreenServer.getInstance().getOrganization(Organization.consortiumOrgId);
 
         // Eliminate duplicates by href
