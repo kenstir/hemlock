@@ -58,7 +58,6 @@ public class AppBehavior {
         if (!record.attrs_loaded) return null;
 
         String item_form = record.getAttr("item_form");
-        Log.d("kcxxx.os", "id:"+record.doc_id+" title:"+record.title+" item_form:"+item_form+" icon_format:"+record.getIconFormat());
         if (TextUtils.equals(item_form, "o")
                 || TextUtils.equals(item_form, "s"))
             return true;

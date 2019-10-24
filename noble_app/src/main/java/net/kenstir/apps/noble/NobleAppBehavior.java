@@ -46,7 +46,6 @@ public class NobleAppBehavior extends AppBehavior {
         if (!record.attrs_loaded) return null;
 
         String item_form = record.getAttr("item_form");
-        Log.d("kcxxx.os", "id:"+record.doc_id+" title:"+record.title+" item_form:"+item_form+" icon_format:"+record.getIconFormat());
         if (TextUtils.equals(item_form, "o")
                 || TextUtils.equals(item_form, "s"))
             return true;
@@ -54,27 +53,18 @@ public class NobleAppBehavior extends AppBehavior {
         return false;
     }
 
-    // Trim the link text for a better mobile UX
+    // Trim the link text for a better mobile UX.
+    // NOBLE link text seems reasonable as is.
     private String trimLinkTitle(String s) {
-        String s1 = s.replaceAll("Click here to (download|access)\\.?", "")
-                .trim();
-        return trimTrailing(s1,'.').trim();
+        return s;
     }
 
-    // TODO: check all org levels between orgShortName and consortium.  In practice, it seems
-    // electronic items are available to either the branch or the consortium, so this is Good Enough.
+    // We don't need to do this filtering because the query already handled it.
+    // For a good UX we want to show all URIs located by the search and let the link text
+    // and the link itself control access.
     // See also Located URIs in docs/cataloging/cataloging_electronic_resources.adoc
     private boolean isAvailableToOrg(MARCRecord.MARCDatafield df, String orgShortName, String consortiumShortName) {
-        for (MARCRecord.MARCSubfield sf : df.subfields) {
-            if (TextUtils.equals(sf.code, "9")
-                    && (TextUtils.equals(sf.text, orgShortName)
-                        || TextUtils.equals(sf.text, consortiumShortName)
-                        || orgShortName == null))
-            {
-                return true;
-            }
-        }
-        return false;
+        return true;
     }
 
     @Override @NonNull
