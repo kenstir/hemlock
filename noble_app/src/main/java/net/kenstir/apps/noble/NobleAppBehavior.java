@@ -62,7 +62,7 @@ public class NobleAppBehavior extends AppBehavior {
     // Don't filter URIs because the query already did.  For a good UX we show all URIs
     // located by the search and let the link text and the link itself control access.
     // See also Located URIs in docs/cataloging/cataloging_electronic_resources.adoc
-    private boolean isAvailableToOrg(MARCRecord.MARCDatafield df, String orgShortName, String consortiumShortName) {
+    private boolean isAvailableToOrg(MARCRecord.MARCDatafield df, String orgShortName) {
         return true;
     }
 
@@ -72,14 +72,12 @@ public class NobleAppBehavior extends AppBehavior {
         if (!record.marcxml_loaded || record.marc_record == null)
             return links;
 
-        Organization consortium = EvergreenServer.getInstance().getOrganization(Organization.consortiumOrgId);
-
         // Eliminate duplicates by href
         HashSet<String> seen = new HashSet<>();
 
         for (MARCRecord.MARCDatafield df: record.marc_record.datafields) {
             if (df.isOnlineLocation()
-                    && isAvailableToOrg(df, orgShortName, consortium.shortname))
+                    && isAvailableToOrg(df, orgShortName))
             {
                 String href = df.getUri();
                 String text = df.getLinkText();
