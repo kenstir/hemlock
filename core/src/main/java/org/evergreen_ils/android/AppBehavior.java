@@ -44,13 +44,12 @@ public class AppBehavior {
         return sb.toString();
     }
 
-    private static boolean isOnlineFormat(String icon_format_code) {
-        if (TextUtils.isEmpty(icon_format_code))
+    private static boolean isOnlineFormat(String icon_format_label) {
+        if (TextUtils.isEmpty(icon_format_label))
             return false;
-        if (icon_format_code.equals("picture"))
+        if (icon_format_label.equals("Picture"))
             return true;
-        String label = CodedValueMap.iconFormatLabel(icon_format_code);
-        return (label != null && label.startsWith("E-")); // E-book, E-audio
+        return (icon_format_label.startsWith("E-")); // E-book, E-audio
     }
 
     public Boolean isOnlineResource(RecordInfo record) {
@@ -62,7 +61,7 @@ public class AppBehavior {
                 || TextUtils.equals(item_form, "s"))
             return true;
 
-        return false;
+        return isOnlineFormat(record.getIconFormatLabel());
     }
 
     public List<Link> getOnlineLocations(RecordInfo record, String orgShortName) {
