@@ -28,6 +28,7 @@ public class MARCRecord implements Serializable {
     public static class MARCSubfield implements Serializable {
         public String code;
         public String text = null;
+
         public MARCSubfield(String code) {
             this.code = code;
         }
@@ -38,10 +39,33 @@ public class MARCRecord implements Serializable {
         public String ind1;
         public String ind2;
         public List<MARCSubfield> subfields = new ArrayList<>();
+
         public MARCDatafield(String tag, String ind1, String ind2) {
             this.tag = tag;
             this.ind1 = ind1;
             this.ind2 = ind2;
+        }
+
+        public boolean isOnlineLocation() {
+            return (TextUtils.equals(tag, "856")
+                    && TextUtils.equals(ind1, "4")
+                    && (TextUtils.equals(ind2, "0") || TextUtils.equals(ind2, "1")));
+        }
+
+        public String getUri() {
+            for (MARCSubfield sf: subfields) {
+                if (TextUtils.equals(sf.code, "u"))
+                    return sf.text;
+            }
+            return null;
+        }
+
+        public String getLinkText() {
+            for (MARCSubfield sf: subfields) {
+                if (TextUtils.equals(sf.code, "3") || TextUtils.equals(sf.code, "y"))
+                    return sf.text;
+            }
+            return null;
         }
     }
 
@@ -53,9 +77,7 @@ public class MARCRecord implements Serializable {
     public List<Link> getLinks() {
         ArrayList<Link> links = new ArrayList<>();
         for (MARCDatafield df: datafields) {
-            if (TextUtils.equals(df.tag, "856")
-                    && TextUtils.equals(df.ind1, "4")
-                    && (TextUtils.equals(df.ind2, "0") || TextUtils.equals(df.ind2, "1"))) {
+            if (df.isOnlineLocation()) {
                 String href = null;
                 String text = null;
                 for (MARCSubfield sf: df.subfields) {

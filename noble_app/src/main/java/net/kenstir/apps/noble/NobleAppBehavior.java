@@ -54,14 +54,13 @@ public class NobleAppBehavior extends AppBehavior {
     }
 
     // Trim the link text for a better mobile UX.
-    // NOBLE link text seems reasonable as is.
     private String trimLinkTitle(String s) {
+        // NOBLE link text is pretty good.
         return s;
     }
 
-    // We don't need to do this filtering because the query already handled it.
-    // For a good UX we want to show all URIs located by the search and let the link text
-    // and the link itself control access.
+    // Don't filter URIs because the query already did.  For a good UX we show all URIs
+    // located by the search and let the link text and the link itself control access.
     // See also Located URIs in docs/cataloging/cataloging_electronic_resources.adoc
     private boolean isAvailableToOrg(MARCRecord.MARCDatafield df, String orgShortName, String consortiumShortName) {
         return true;
@@ -79,17 +78,11 @@ public class NobleAppBehavior extends AppBehavior {
         HashSet<String> seen = new HashSet<>();
 
         for (MARCRecord.MARCDatafield df: record.marc_record.datafields) {
-            if (TextUtils.equals(df.tag, "856")
-                    && TextUtils.equals(df.ind1, "4")
-                    && (TextUtils.equals(df.ind2, "0") || TextUtils.equals(df.ind2, "1"))
+            if (df.isOnlineLocation()
                     && isAvailableToOrg(df, orgShortName, consortium.shortname))
             {
-                String href = null;
-                String text = null;
-                for (MARCRecord.MARCSubfield sf: df.subfields) {
-                    if (TextUtils.equals(sf.code, "u") && href == null) href = sf.text;
-                    if ((TextUtils.equals(sf.code, "3") || TextUtils.equals(sf.code, "y")) && text == null) text = sf.text;
-                }
+                String href = df.getUri();
+                String text = df.getLinkText();
                 if (href != null && text != null && !seen.contains(href)) {
                     links.add(new Link(href, trimLinkTitle(text)));
                     seen.add(href);
