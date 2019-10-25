@@ -289,7 +289,7 @@ public class DetailsFragment extends Fragment {
 
     private void updateButtonViews() {
         Boolean is_online_resource = App.getBehavior().isOnlineResource(record);
-        Log.d(TAG, "yyyyy: updateButtonViews: is_online_resource="+is_online_resource);
+        Log.d(TAG, "yyy: updateButtonViews: title:"+record.title+" is_online_resource:"+is_online_resource);
         if (is_online_resource == null) return; // not ready yet
 
         placeHoldButton.setEnabled(true);
@@ -299,6 +299,7 @@ public class DetailsFragment extends Fragment {
         if (is_online_resource) {
             Organization org = EvergreenServer.getInstance().getOrganization(orgID);
             List<Link> links = App.getBehavior().getOnlineLocations(record, org.shortname);
+            Log.d(TAG, "yyy: updateButtonViews: title:"+record.title+" links:"+links.size());
             if (links == null || links.isEmpty()) {
                 onlineAccessButton.setEnabled(false);
             } else if (getResources().getBoolean(R.bool.ou_show_online_access_hostname)) {

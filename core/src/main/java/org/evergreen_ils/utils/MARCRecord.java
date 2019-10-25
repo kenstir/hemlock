@@ -65,7 +65,11 @@ public class MARCRecord implements Serializable {
                 if (TextUtils.equals(sf.code, "3") || TextUtils.equals(sf.code, "y"))
                     return sf.text;
             }
-            return null;
+            for (MARCSubfield sf: subfields) {
+                if (TextUtils.equals(sf.code, "z"))
+                    return sf.text;
+            }
+            return "Tap to access";
         }
     }
 
