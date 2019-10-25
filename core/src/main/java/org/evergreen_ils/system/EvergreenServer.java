@@ -230,6 +230,29 @@ public class EvergreenServer {
         }
     }
 
+    public Organization getOrganizationByShortName(String orgShortName) {
+        if (orgShortName != null) {
+            for (Organization o : mOrganizations) {
+                if (o.shortname.equals(orgShortName)) {
+                    return o;
+                }
+            }
+        }
+        return null;
+    }
+
+    // Return the short names of the org itself and every level up to the consortium.
+    // This is used to implement "located URIs".
+    public ArrayList<String> getOrganizationAncestry(String orgShortName) {
+        ArrayList<String> orgShortNames = new ArrayList<>();
+        Organization org = getOrganizationByShortName(orgShortName);
+        while (org != null) {
+            orgShortNames.add(org.shortname);
+            org = getOrganization(org.parent_ou);
+        }
+        return orgShortNames;
+    }
+
     public String getOrganizationLibraryInfoPageUrl(Integer id) {
         Organization org = getOrganization(id);
         if (org == null) {

@@ -23,10 +23,12 @@ import android.text.TextUtils;
 import org.evergreen_ils.android.AppBehavior;
 
 import org.evergreen_ils.searchCatalog.RecordInfo;
+import org.evergreen_ils.system.Log;
 import org.evergreen_ils.utils.Link;
 import org.evergreen_ils.utils.MARCRecord;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 
@@ -34,7 +36,12 @@ public class AcornAppBehavior extends AppBehavior {
     private static final String TAG = AcornAppBehavior.class.getSimpleName();
 
     public AcornAppBehavior() {
-        // NB: this looks unused but it is used
+        // loaded through class loader via ou_behavior_provider
+    }
+
+    private boolean isOnlineFormatCode(String icon_format_code) {
+        String[] onlineFormatCodes = {"ebook","eaudio","evideo","emusic"};
+        return Arrays.asList(onlineFormatCodes).contains(icon_format_code);
     }
 
     @Override
@@ -42,61 +49,32 @@ public class AcornAppBehavior extends AppBehavior {
         if (!record.basic_metadata_loaded) return null;
         if (!record.attrs_loaded) return null;
 
+        String iconFormatCode = record.getIconFormat();
+        if (TextUtils.equals(record.getAttr("item_form"), "o")) {
+            Log.d("isOnlineResource", "title:" + record.title + " item_form:o icon_format:" + iconFormatCode + "-> true");
+            return true;
+        }
+
         // NB: Checking for item_form="o" fails to identify some online resources, e.g.
         // https://acorn.biblio.org/eg/opac/record/2891957
-        // However, it's better than waiting for the marcxml to load, if the network is slow
-        if (TextUtils.equals(record.getAttr("item_form"), "o"))
-            return true;
-
-        if (!record.marcxml_loaded) return null;
-        return (getOnlineLocations(record, null).size() > 0);
+        // so we use this check as a backstop
+        return isOnlineFormatCode(record.getIconFormat());
     }
 
-    // Trim the link text for a better mobile UX
-    private String trimLinkTitle(String s) {
+    @Override
+    protected String trimLinkTitle(String s) {
         String s1 = s.replaceAll("Click here to (download|access)\\.?", "")
                 .trim();
         return trimTrailing(s1,'.').trim();
     }
 
-    private boolean isAvailableToOrg(MARCRecord.MARCDatafield df, String orgShortName) {
-        for (MARCRecord.MARCSubfield sf : df.subfields) {
-            if (TextUtils.equals(sf.code, "9") && (TextUtils.equals(sf.text, orgShortName) || orgShortName == null)) {
-                return true;
-            }
-        }
-        return false;
+    @Override
+    protected boolean isVisibleToOrg(MARCRecord.MARCDatafield df, String orgShortName) {
+        return isVisibleViaLocatedURI(df, orgShortName);
     }
 
     @Override @NonNull
     public List<Link> getOnlineLocations(RecordInfo record, String orgShortName) {
-        if (!record.marcxml_loaded || record.marc_record == null)
-            return new ArrayList<>();
-
-        // Include only links that are available to this org
-        ArrayList<Link> links = new ArrayList<>();
-
-        // Eliminate duplicates by href
-        HashSet<String> seen = new HashSet<>();
-
-        for (MARCRecord.MARCDatafield df: record.marc_record.datafields) {
-            if (TextUtils.equals(df.tag, "856")
-                    && TextUtils.equals(df.ind1, "4")
-                    && (TextUtils.equals(df.ind2, "0") || TextUtils.equals(df.ind2, "1"))
-                    && isAvailableToOrg(df, orgShortName))
-            {
-                String href = null;
-                String text = null;
-                for (MARCRecord.MARCSubfield sf: df.subfields) {
-                    if (TextUtils.equals(sf.code, "u") && href == null) href = sf.text;
-                    if ((TextUtils.equals(sf.code, "3") || TextUtils.equals(sf.code, "y")) && text == null) text = sf.text;
-                }
-                if (href != null && text != null && !seen.contains(href)) {
-                    links.add(new Link(href, trimLinkTitle(text)));
-                    seen.add(href);
-                }
-            }
-        }
-        return links;
+        return getOnlineLocationsFromMARC(record, orgShortName);
     }
 }

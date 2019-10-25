@@ -19,13 +19,17 @@ package org.evergreen_ils.android;
 
 import android.text.TextUtils;
 
-import org.evergreen_ils.searchCatalog.CodedValueMap;
 import org.evergreen_ils.searchCatalog.RecordInfo;
+import org.evergreen_ils.system.EvergreenServer;
 import org.evergreen_ils.system.Log;
 import org.evergreen_ils.utils.Link;
+import org.evergreen_ils.utils.MARCRecord;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+
+import androidx.annotation.NonNull;
 
 /** AppBehavior - custom app behaviors
  *
@@ -44,7 +48,7 @@ public class AppBehavior {
         return sb.toString();
     }
 
-    private static boolean isOnlineFormat(String icon_format_label) {
+    private boolean isOnlineFormat(String icon_format_label) {
         if (TextUtils.isEmpty(icon_format_label))
             return false;
         if (icon_format_label.equals("Picture"))
@@ -64,6 +68,52 @@ public class AppBehavior {
         return isOnlineFormat(record.getIconFormatLabel());
     }
 
+    // Trim the link text for a better mobile UX
+    protected String trimLinkTitle(String s) {
+        return s;
+    }
+
+    // Is this MARC datafield a URI visible to this org?
+    protected boolean isVisibleToOrg(MARCRecord.MARCDatafield df, String orgShortName) {
+        return true;
+    }
+
+    // Implements the above interface for catalogs that use Located URIs
+    protected boolean isVisibleViaLocatedURI(MARCRecord.MARCDatafield df, String orgShortName) {
+        ArrayList<String> ancestors = EvergreenServer.getInstance().getOrganizationAncestry(orgShortName);
+        for (MARCRecord.MARCSubfield sf : df.subfields) {
+            if (TextUtils.equals(sf.code, "9") && ancestors.contains(sf.text)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @NonNull
+    protected List<Link> getOnlineLocationsFromMARC(RecordInfo record, String orgShortName) {
+        ArrayList<Link> links = new ArrayList<>();
+        if (!record.marcxml_loaded || record.marc_record == null)
+            return links;
+
+        // Eliminate duplicates by href
+        HashSet<String> seen = new HashSet<>();
+
+        for (MARCRecord.MARCDatafield df: record.marc_record.datafields) {
+            if (df.isOnlineLocation()
+                    && isVisibleToOrg(df, orgShortName))
+            {
+                String href = df.getUri();
+                String text = df.getLinkText();
+                if (href != null && text != null && !seen.contains(href)) {
+                    links.add(new Link(href, trimLinkTitle(text)));
+                    seen.add(href);
+                }
+            }
+        }
+        return links;
+    }
+
+    @NonNull
     public List<Link> getOnlineLocations(RecordInfo record, String orgShortName) {
         ArrayList<Link> links = new ArrayList<>();
         if (TextUtils.isEmpty(record.online_loc))

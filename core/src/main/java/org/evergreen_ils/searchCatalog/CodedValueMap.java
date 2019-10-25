@@ -20,6 +20,7 @@ package org.evergreen_ils.searchCatalog;
 
 import org.evergreen_ils.Api;
 import org.evergreen_ils.system.Analytics;
+import org.evergreen_ils.system.Log;
 import org.evergreen_ils.utils.TextUtils;
 import org.opensrf.ShouldNotHappenException;
 import org.opensrf.util.OSRFObject;
@@ -29,6 +30,8 @@ import java.util.Collections;
 import java.util.List;
 
 public class CodedValueMap {
+    private static final String TAG = CodedValueMap.class.getSimpleName();
+
     public static final String SEARCH_FORMAT = "search_format";
     public static final String ICON_FORMAT = "icon_format";
     public static final String ALL_SEARCH_FORMATS = "All Formats";
@@ -58,6 +61,7 @@ public class CodedValueMap {
             String search_label = obj.getString("search_label","");
             String value = obj.getString("value", "");
             CodedValue cv = new CodedValue(code, !TextUtils.isEmpty(search_label) ? search_label : value, opac_visible);
+            Log.d(TAG, "ccvm ctype:"+ctype+" code:"+code+" label:"+cv.value);
             if (ctype.equals(SEARCH_FORMAT)) {
                 search_formats.add(cv);
             } else if (ctype.equals(ICON_FORMAT)) {
