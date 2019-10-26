@@ -230,10 +230,13 @@ public class BaseActivity extends AppCompatActivity
                 path = path + "&password=" + URLEncoder.encode(password);
             String url = EvergreenServer.getInstance().getUrl(path);
             startActivityForResult(new Intent(Intent.ACTION_VIEW, Uri.parse(url)), REQUEST_LAUNCH_OPAC_LOGIN_REDIRECT);
+            return true;
         } else if (id == R.id.action_dark_mode) {
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+            return true;
         } else if (id == R.id.action_light_mode) {
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+            return true;
         }
         return false;
     }
