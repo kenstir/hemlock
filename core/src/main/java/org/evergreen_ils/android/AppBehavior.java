@@ -103,6 +103,7 @@ public class AppBehavior {
                 String text = df.getLinkText();
                 if (href != null && text != null) {
                     Link link = new Link(href, trimLinkTitle(text));
+                    // Filter duplicate links
                     if (!links.contains(link)) {
                         links.add(link);
                     }
