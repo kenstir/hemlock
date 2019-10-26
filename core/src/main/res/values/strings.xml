@@ -8,6 +8,8 @@
     <string name="menu_feedback">Send feedback</string>
     <string name="menu_donate">Donate</string>
     <string name="menu_messages">Messages</string>
+    <string name="menu_dark_mode">Dark Mode</string>
+    <string name="menu_light_mode">Light Mode</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
 

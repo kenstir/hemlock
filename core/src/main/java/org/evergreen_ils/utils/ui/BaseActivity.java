@@ -26,6 +26,8 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import com.google.android.material.navigation.NavigationView;
+
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.appcompat.app.ActionBarDrawerToggle;
@@ -228,6 +230,10 @@ public class BaseActivity extends AppCompatActivity
                 path = path + "&password=" + URLEncoder.encode(password);
             String url = EvergreenServer.getInstance().getUrl(path);
             startActivityForResult(new Intent(Intent.ACTION_VIEW, Uri.parse(url)), REQUEST_LAUNCH_OPAC_LOGIN_REDIRECT);
+        } else if (id == R.id.action_dark_mode) {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+        } else if (id == R.id.action_light_mode) {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
         }
         return false;
     }
