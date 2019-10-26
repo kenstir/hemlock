@@ -11,7 +11,6 @@
     <color name="primary">@color/ntlc_dark</color>
     <color name="primary_dark">@color/primary_dark_material_dark</color>
     <color name="accent">@color/ntlc_4</color>
-    <color name="hemlock_accent">@color/ntlc_4</color>
     <color name="hemlock_text_alert">#ff9100</color>
 
     <style name="HemlockDark" parent="Theme.AppCompat">

@@ -13,7 +13,6 @@
     <color name="primary">@color/noble_primary</color>
     <color name="primary_dark">@color/noble_dark</color>
     <color name="accent">@color/noble_light</color>
-    <color name="hemlock_accent">@color/noble_light</color>
     <color name="hemlock_text_alert">#ff9100</color>
     <color name="hemlock_surface">@color/material_grey_400</color>
 

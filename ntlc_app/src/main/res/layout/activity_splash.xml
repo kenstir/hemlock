@@ -50,7 +50,7 @@
         android:layout_marginRight="8dp"
         android:gravity="center"
         android:padding="4dip"
-        android:textColor="@color/hemlock_accent"
+        android:textColor="@color/accent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"

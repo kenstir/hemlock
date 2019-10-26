@@ -9,7 +9,6 @@
     <color name="primary">@color/acorn_primary</color>
     <color name="primary_dark">@color/primary_dark_material_dark</color>
     <color name="accent">@color/acorn_light</color>
-    <color name="hemlock_accent">@color/acorn_light</color>
     <color name="hemlock_text_alert">#ff9100</color>
 
 </resources>

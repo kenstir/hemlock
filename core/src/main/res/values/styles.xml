@@ -120,9 +120,7 @@
     <color name="material_grey_500">#9E9E9E</color>
     <color name="material_grey_700">#616161</color>
 
-    <color name="hemlock_accent_material">@color/accent_material_dark</color>
     <color name="hemlock_accent_halloween">#ff9100</color>
-    <color name="hemlock_accent">#ff9100</color>
     <color name="hemlock_text_alert">#ff9100</color>
     <color name="hemlock_surface">@color/material_grey_800</color>
 
@@ -140,19 +138,19 @@
     <style name="HemlockDark" parent="Theme.AppCompat">
         <item name="colorPrimary">@color/primary</item>
         <item name="colorPrimaryDark">@color/primary_dark</item>
-        <item name="colorAccent">@color/hemlock_accent</item>
+        <item name="colorAccent">@color/accent</item>
     </style>
 
     <style name="HemlockDarkNoActionBar" parent="Theme.AppCompat.NoActionBar">
         <item name="colorPrimary">@color/primary</item>
         <item name="colorPrimaryDark">@color/primary_dark</item>
-        <item name="colorAccent">@color/hemlock_accent</item>
+        <item name="colorAccent">@color/accent</item>
     </style>
 
     <style name="HemlockLightNoActionBar" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="colorPrimary">@color/primary</item>
         <item name="colorPrimaryDark">@color/primary_dark</item>
-        <item name="colorAccent">@color/hemlock_accent</item>
+        <item name="colorAccent">@color/accent</item>
     </style>
 
     <style name="HemlockProgressBar" parent="Widget.AppCompat.ProgressBar.Horizontal">
@@ -167,7 +165,7 @@
 
     <style name="PrimaryFlatButton" parent="HemlockDark">
         <item name="android:buttonStyle">@style/Widget.AppCompat.Button.Borderless.Colored</item>
-        <item name="colorControlHighlight">@color/hemlock_accent</item>
+        <item name="colorControlHighlight">@color/accent</item>
         <item name="colorAccent">@color/primary</item>
     </style>
 
