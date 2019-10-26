@@ -5,6 +5,7 @@ fm_IDL.*
 /local.properties
 /.idea/assetWizardSettings.xml
 /.idea/caches
+/.idea/modules.xml
 /.idea/tasks.xml
 /.idea/workspace.xml
 /.idea/libraries
