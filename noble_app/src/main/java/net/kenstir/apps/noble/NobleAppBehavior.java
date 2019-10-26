@@ -24,8 +24,6 @@ import org.evergreen_ils.searchCatalog.RecordInfo;
 import org.evergreen_ils.utils.Link;
 import org.evergreen_ils.utils.MARCRecord;
 
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 
 import androidx.annotation.NonNull;

@@ -17,11 +17,25 @@
 
 package org.evergreen_ils.utils;
 
+import org.evergreen_ils.system.Utils;
+
+import androidx.annotation.NonNull;
+
 public class Link {
     public String href;
+    @NonNull
     public String text;
+
     public Link(String href, String text) {
         this.href = href;
-        this.text = text;
+        this.text = Utils.safeString(text);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || o.getClass() != getClass()) return false;
+        Link rhs = (Link) o;
+        return (TextUtils.equals(this.href, rhs.href) && TextUtils.equals(this.text, rhs.text));
     }
 }

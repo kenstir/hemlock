@@ -21,12 +21,12 @@ import android.text.TextUtils;
 
 import org.evergreen_ils.searchCatalog.RecordInfo;
 import org.evergreen_ils.system.EvergreenServer;
-import org.evergreen_ils.system.Log;
 import org.evergreen_ils.utils.Link;
 import org.evergreen_ils.utils.MARCRecord;
 
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import androidx.annotation.NonNull;
@@ -95,21 +95,28 @@ public class AppBehavior {
         if (!record.marcxml_loaded || record.marc_record == null)
             return links;
 
-        // Eliminate duplicates by href
-        HashSet<String> seen = new HashSet<>();
-
         for (MARCRecord.MARCDatafield df: record.marc_record.datafields) {
             if (df.isOnlineLocation()
                     && isVisibleToOrg(df, orgShortName))
             {
                 String href = df.getUri();
                 String text = df.getLinkText();
-                if (href != null && text != null && !seen.contains(href)) {
-                    links.add(new Link(href, trimLinkTitle(text)));
-                    seen.add(href);
+                if (href != null && text != null) {
+                    Link link = new Link(href, trimLinkTitle(text));
+                    if (!links.contains(link)) {
+                        links.add(link);
+                    }
                 }
             }
         }
+
+        Collections.sort(links, new Comparator<Link>() {
+            @Override
+            public int compare(Link a, Link b) {
+                return a.text.compareTo(b.text);
+            }
+        });
+
         return links;
     }
 
