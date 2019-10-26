@@ -43,7 +43,7 @@ public class RecordLoader {
 
     public interface ResponseListener {
         public void onMetadataLoaded();
-        public void onSearchFormatLoaded();
+        public void onIconFormatLoaded();
     }
     public interface Listener {
         public void onDataAvailable();
@@ -121,7 +121,7 @@ public class RecordLoader {
     public static void fetchRecordAttributes(final RecordInfo record, Context context, final ResponseListener responseListener) {
         Log.d(TAG, "fetchRecordAttributes id="+record.doc_id);
         if (record.attrs_loaded) {
-            responseListener.onSearchFormatLoaded();
+            responseListener.onIconFormatLoaded();
         } else {
             final long start_ms = System.currentTimeMillis();
             String url = EvergreenServer.getInstance().getUrl(Utils.buildGatewayUrl(
@@ -136,7 +136,7 @@ public class RecordLoader {
                         public void onResponse(GatewayResponse response) {
                             record.updateFromMRAResponse(response);
                             Log.logElapsedTime(TAG, start_ms, "fetch.attrs");
-                            responseListener.onSearchFormatLoaded();
+                            responseListener.onIconFormatLoaded();
                         }
                     },
                     VolleyWrangler.logErrorListener(TAG));

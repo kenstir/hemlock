@@ -313,7 +313,7 @@ public class DetailsFragment extends Fragment {
         showCopiesButton.setVisibility(is_online_resource ? View.GONE : View.VISIBLE);
     }
 
-    private void updateSearchFormatView() {
+    private void updateIconFormatView() {
         if (!isAdded()) return; // discard late results
         formatTextView.setText(RecordInfo.getIconFormatLabel(record));
         updateButtonViews();
@@ -345,9 +345,9 @@ public class DetailsFragment extends Fragment {
                         fetchCopyCountInfo(record);
                     }
                     @Override
-                    public void onSearchFormatLoaded() {
-                        Log.d(TAG, "yyyyy: onSearchFormatLoaded()");
-                        updateSearchFormatView();
+                    public void onIconFormatLoaded() {
+                        Log.d(TAG, "yyyyy: onIconFormatLoaded()");
+                        updateIconFormatView();
                         fetchCopyCountInfo(record);
                     }
                 });
