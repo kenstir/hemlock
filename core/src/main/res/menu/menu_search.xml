@@ -5,6 +5,5 @@
     <item android:id="@+id/action_advanced_search"
           android:title="@string/advanced_search"/>
     <item android:id="@+id/action_feedback" android:title="@string/menu_feedback"/>
-    <item android:id="@+id/action_donate" android:title="@string/title_donate"/>
     <item android:id="@+id/action_logout" android:title="@string/menu_logout"/>
 </menu>
