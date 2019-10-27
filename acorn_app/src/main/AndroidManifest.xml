@@ -131,12 +131,6 @@
         </activity>
 
         <activity
-            android:name="org.evergreen_ils.views.DonateActivity"
-            android:label="@string/title_donate"
-            android:parentActivityName="org.evergreen_ils.views.MainActivity">
-        </activity>
-
-        <activity
             android:name="org.evergreen_ils.views.BarcodeActivity"
             android:label="@string/barcode_title"
             android:parentActivityName="org.evergreen_ils.views.MainActivity">

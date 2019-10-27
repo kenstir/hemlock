@@ -50,7 +50,6 @@ import org.evergreen_ils.searchCatalog.SearchActivity;
 import org.evergreen_ils.system.Analytics;
 import org.evergreen_ils.system.EvergreenServer;
 import org.evergreen_ils.system.Log;
-import org.evergreen_ils.views.DonateActivity;
 import org.evergreen_ils.views.MainActivity;
 import org.evergreen_ils.views.MenuProvider;
 import org.evergreen_ils.views.splashscreen.SplashActivity;
@@ -215,9 +214,6 @@ public class BaseActivity extends AppCompatActivity
 //        } else if (id == R.id.action_feedback) {
 //            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(getFeedbackUrl())));
 //            return true;
-        } else if (id == R.id.action_donate) {
-            startActivityForResult(new Intent(this, DonateActivity.class), App.REQUEST_PURCHASE);
-            return true;
         } else if (id == R.id.action_messages) {
             Analytics.logEvent("Messages: Open", "via", "options_menu");
             String username = AccountAccess.getInstance().getUserName();

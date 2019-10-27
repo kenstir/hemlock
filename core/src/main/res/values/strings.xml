@@ -6,7 +6,6 @@
     <string name="menu_add_account">Add account</string>
     <string name="menu_logout">Logout</string>
     <string name="menu_feedback">Send feedback</string>
-    <string name="menu_donate">Donate</string>
     <string name="menu_messages">Messages</string>
     <string name="menu_dark_mode">Dark Mode</string>
     <string name="menu_light_mode">Light Mode</string>
@@ -21,7 +20,6 @@
     <string name="hold_place_title">Place Hold</string>
     <string name="hold_details_title">Hold Details</string>
     <string name="title_fines">Fines</string>
-    <string name="title_donate">Donate</string>
     <string name="copy_information_title">Copy Information</string>
     <string name="button_place_hold">Place hold</string>
     <string name="button_pay_fines">Pay fines</string>
@@ -182,14 +180,6 @@
     <string name="record_isbn">ISBN</string>
     <string name="record_online_access">Online Access</string>
     <string name="msg_retrieving_fines">Retrieving fines</string>
-    <string name="donate_gold_label_take1">Starbucks coffee - $4</string>
-    <string name="donate_silver_label_take1">Dunkins coffee - $2</string>
-    <string name="donate_karma_label_take1">Good karma - $1</string>
-    <string name="donate_call_to_action_title">Enjoy this app?</string>
-    <string name="donate_call_to_action_subtitle">Buy me some coffee to keep me awake and working on it!</string>
-    <string name="donate_postscript_take1">Good karma lasts for a month. Buy me a coffee and I\'ll remember you
-        forever.
-    </string>
     <string name="toast_max_renewals_reached">Max renewals reached</string>
     <string name="toast_thanks">Thanks!</string>
     <string name="msg_list_empty">List is empty</string>

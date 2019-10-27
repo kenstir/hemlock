@@ -37,9 +37,6 @@ import org.evergreen_ils.accountAccess.checkout.CheckoutsActivity;
 import org.evergreen_ils.accountAccess.fines.FinesActivity;
 import org.evergreen_ils.accountAccess.holds.HoldsActivity;
 import org.evergreen_ils.android.App;
-import org.evergreen_ils.billing.BillingDataProvider;
-import org.evergreen_ils.billing.BillingHelper;
-import org.evergreen_ils.billing.IabResult;
 import org.evergreen_ils.searchCatalog.SearchActivity;
 import org.evergreen_ils.system.Analytics;
 import org.evergreen_ils.system.EvergreenServerLoader;
@@ -68,45 +65,18 @@ public class MainActivity extends BaseActivity {
         EvergreenServerLoader.fetchOrgSettings(this);
         EvergreenServerLoader.fetchSMSCarriers(this);
         fetchUnreadMessageCount();
-        initBillingProvider();
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-
-        // very important to dispose of the helper
-        BillingHelper.disposeIabHelper();
-    }
-
-    void initBillingProvider() {
-        // get the public key
-        BillingDataProvider provider = BillingDataProvider.create(getString(R.string.ou_billing_data_provider));
-        String base64EncodedPublicKey = (provider != null) ? provider.getPublicKey() : null;
-        if (TextUtils.isEmpty(base64EncodedPublicKey)) {
-            AppState.setBoolean(AppState.SHOW_DONATE, false);
-            return;
-        }
-
-        // talk to the store
-        BillingHelper.startSetup(this, base64EncodedPublicKey, new BillingHelper.OnSetupFinishedListener() {
-            @Override
-            public void onSetupFinished(IabResult result) {
-                if (result.isSuccess()) {
-                    boolean showDonateButton = BillingHelper.showDonateButton(MainActivity.this);
-                    Log.d(TAG, "onSetupFinished showDonate="+showDonateButton);
-                    AppState.setBoolean(AppState.SHOW_DONATE, showDonateButton);
-                }
-            }
-        });
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Log.d(TAG, "onActivityResult req="+requestCode+" result="+resultCode);
-        if (requestCode == App.REQUEST_PURCHASE && resultCode == App.RESULT_PURCHASED) {
-            AppState.setBoolean(AppState.SHOW_DONATE, false); // hide button on any purchase
-        } else if (requestCode == App.REQUEST_LAUNCH_OPAC_LOGIN_REDIRECT) {
+        super.onActivityResult(requestCode, resultCode, data);
+        Log.d(TAG, "onActivityResult req=" + requestCode + " result=" + resultCode);
+        if (requestCode == App.REQUEST_LAUNCH_OPAC_LOGIN_REDIRECT) {
             fetchUnreadMessageCount();
         }
     }
@@ -119,9 +89,6 @@ public class MainActivity extends BaseActivity {
         // remove items we don't need
         if (TextUtils.isEmpty(getFeedbackUrl()))
             menu.removeItem(R.id.action_feedback);
-        boolean showDonate = AppState.getBoolean(AppState.SHOW_DONATE, false);
-        if (!showDonate)
-            menu.removeItem(R.id.action_donate);
 
         // set up the messages action view, it didn't work when set in xml
         if (!getResources().getBoolean(R.bool.ou_enable_messages)) {

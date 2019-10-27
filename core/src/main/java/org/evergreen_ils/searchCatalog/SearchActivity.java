@@ -40,7 +40,6 @@ import org.evergreen_ils.system.Log;
 import org.evergreen_ils.system.Organization;
 import org.evergreen_ils.utils.ui.BaseActivity;
 import org.evergreen_ils.utils.ui.ProgressDialogSupport;
-import org.evergreen_ils.views.DonateActivity;
 import org.evergreen_ils.views.splashscreen.SplashActivity;
 
 import android.content.Context;
@@ -392,10 +391,6 @@ public class SearchActivity extends BaseActivity {
             Analytics.logEvent("Account: Logout", "via", "options_menu");
             AccountAccess.getInstance().logout(this);
             SplashActivity.restartApp(this);
-            return true;
-        } else if (id == R.id.action_donate) {
-            Analytics.logEvent("Donate: Open", "via", "options_menu");
-            startActivityForResult(new Intent(this, DonateActivity.class), App.REQUEST_PURCHASE);
             return true;
         }
         return super.onOptionsItemSelected(item);
