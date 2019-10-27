@@ -233,10 +233,12 @@ public class BaseActivity extends AppCompatActivity
             return true;
         } else if (id == R.id.action_dark_mode) {
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
-            return true;
+            // return false or else the menu view will be leaked when the activity is restarted
+            return false;
         } else if (id == R.id.action_light_mode) {
+            // return false or else the menu view will be leaked when the activity is restarted
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
-            return true;
+            return false;
         }
         return false;
     }
