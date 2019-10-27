@@ -396,6 +396,7 @@ public class SearchActivity extends BaseActivity {
         } else if (id == R.id.action_donate) {
             Analytics.logEvent("Donate: Open", "via", "options_menu");
             startActivityForResult(new Intent(this, DonateActivity.class), App.REQUEST_PURCHASE);
+            return true;
         }
         return super.onOptionsItemSelected(item);
     }
