@@ -1,28 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools" xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <color name="hemlock_text_alert">#ff9100</color>
-
-    <!-- pines - logo color from http://pines.georgialibraries.org/graphics -->
-    <color name="pines">#379676</color>
-<!--    <color name="accent">@color/pines</color>-->
-    <color name="accent">#77C289</color>
-<!--    <color name="accent">#B3FFB5</color>-->
-
-    <!-- darker versions of the logo color c/o https://coolors.co -->
-    <color name="pines_d1">#32896C</color>
-    <color name="pines_d2">#2E7B61</color>
-    <color name="pines_d3">#296E56</color>
-    <color name="pines_d4">#23604C</color>
-    <color name="pines_d5">#1E5241</color>
-    <color name="pines_d6">#194536</color>
-    <color name="pines_d7">#14372B</color>
-    <color name="pines_d8">#0F2921</color>
-    <color name="primary">@color/pines_d4</color>
-
-    <!-- primary_dark - straight up material -->
-    <color name="primary_dark">@color/primary_dark_material_dark</color>
-
     <style name="PINESDark" parent="Theme.AppCompat.DayNight">
         <item name="colorPrimary">@color/primary</item>
         <item name="colorPrimaryDark">@color/primary_dark</item>

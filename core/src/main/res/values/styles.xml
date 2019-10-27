@@ -55,6 +55,7 @@
 
     <style name="HemlockText.PagePrimary">
         <item name="android:textSize">18sp</item>
+<!--        <item name="android:textColor">?android:attr/textColorPrimary</item>-->
     </style>
 
     <style name="HemlockText.PageSecondary">
@@ -90,7 +91,6 @@
 
     <style name="Hemlock.SecondaryToolbar" parent="">
         <item name="android:elevation" tools:targetApi="lollipop">1dp</item>
-        <item name="android:background">@color/hemlock_surface</item>
     </style>
 
     <style name="Hemlock.ActionButton" parent="Widget.AppCompat.Button">
@@ -102,38 +102,6 @@
         <item name="android:textSize">18sp</item>
         <item name="android:textAllCaps">false</item>
     </style>
-
-    <!-- misc colors used in legacy code -->
-    <color name="white">#ffffff</color>
-    <color name="blue">#1e90ff</color>
-    <color name="application_button_start">#444</color>
-    <color name="application_button_stop">#444</color>
-    <color name="possible_result_points">#c0ffff00</color>
-    <color name="result_view">#b0000000</color>
-    <color name="viewfinder_frame">#ff000000</color>
-    <color name="viewfinder_laser">#ffff0000</color>
-    <color name="viewfinder_mask">#60000000</color>
-
-    <!-- Missing material colors from https://material.google.com/style/color.html#color-color-palette -->
-    <color name="material_grey_200">#EEEEEE</color>
-    <color name="material_grey_400">#BDBDBD</color>
-    <color name="material_grey_500">#9E9E9E</color>
-    <color name="material_grey_700">#616161</color>
-
-    <color name="hemlock_accent_halloween">#ff9100</color>
-    <color name="hemlock_text_alert">#ff9100</color>
-    <color name="hemlock_surface">@color/material_grey_800</color>
-
-    <color name="logo_background">@color/background_material_dark</color>
-    <color name="background">@color/background_material_dark</color>
-    <color name="dark">@color/background_material_dark</color>
-
-    <!--<color name="primary">@color/primary_material_dark</color>-->
-    <!--<color name="primary_dark">@color/primary_dark_material_dark</color>-->
-    <!--<color name="accent">#76FF03</color>-->
-    <color name="primary">@color/primary_material_dark</color>
-    <color name="primary_dark">@color/primary_dark_material_dark</color>
-    <color name="accent">#76ff03</color>
 
     <style name="HemlockDark" parent="Theme.AppCompat.DayNight">
         <item name="colorPrimary">@color/primary</item>
@@ -159,7 +127,13 @@
         <item name="colorAccent">@color/accent</item>
     </style>
 
-    <style name="Hemlock.AppBarOverlay" parent="ThemeOverlay.AppCompat.ActionBar" />
+    <style name="Hemlock.AppBarOverlay" parent="ThemeOverlay.AppCompat.ActionBar">
+        <item name="colorControlNormal">@color/material_grey_100</item>
+        <item name="colorPrimary">@color/primary</item>
+        <item name="colorPrimaryDark">@color/primary_dark</item>
+        <item name="titleTextColor">@color/material_grey_100</item>
+        <item name="subtitleTextColor">@color/material_grey_200</item>
+    </style>
 
     <style name="HemlockDarkNoActionBar.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
