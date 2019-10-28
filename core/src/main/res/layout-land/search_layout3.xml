@@ -8,13 +8,12 @@
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        style="@style/Hemlock.SecondaryToolbar"
         >
         <LinearLayout
             android:orientation="horizontal"
             android:paddingLeft="8dp"
             android:paddingRight="8dp"
-            android:background="@color/background"
+            android:theme="@style/Hemlock.SearchBar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
             <EditText
@@ -46,6 +45,7 @@
         <LinearLayout
             android:orientation="horizontal"
             android:id="@+id/search_options_layout"
+            android:theme="@style/Hemlock.SecondaryBar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
             <Spinner
@@ -72,7 +72,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/background">
+            android:theme="@style/Hemlock.TableHeader">
             <TextView
                 android:id="@+id/search_result_number"
                 android:layout_width="match_parent"

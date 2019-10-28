@@ -7,7 +7,7 @@
     android:orientation="vertical">
 
     <LinearLayout
-        android:background="@color/deep_background"
+        android:background="@color/table_header_background"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content">
 

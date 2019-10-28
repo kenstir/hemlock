@@ -2,9 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:orientation="vertical"
-    android:background="@color/background"
-     >
+    android:orientation="vertical">
 
     <include layout="@layout/toolbar_common"/>
 
@@ -12,8 +10,7 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        style="@style/Content"
-        >
+        android:theme="@style/Hemlock.SearchBar">
 
 		<EditText
             android:id="@+id/bookbag_create_name"

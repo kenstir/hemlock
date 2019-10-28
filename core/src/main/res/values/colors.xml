@@ -23,7 +23,11 @@
 
     <color name="hemlock_text_alert">#ff9100</color>
     <color name="hemlock_surface">@color/material_grey_800</color>
-    <color name="deep_background">@color/primary_dark_material_light</color>
+    <color name="search_bar_background">@color/material_grey_100</color>
+    <color name="secondary_bar_background">@color/material_grey_400</color>
+<!--    <color name="table_header_background">#efeff4</color>-->
+    <color name="table_header_background">@color/material_grey_300</color>
+    <color name="table_header_textcolor">#c0000000</color>
 
     <color name="logo_background">@color/background_material_dark</color>
     <color name="background">@color/background_material_dark</color>
@@ -31,7 +35,7 @@
 
     <color name="primary">@color/primary_material_dark</color>
     <color name="primary_dark">@color/primary_dark_material_dark</color>
-    <color name="accent">#76ff03</color>
-    <color name="button_icon_tint">#76ff03</color>
+    <color name="accent">#FF8F00</color>
+    <color name="button_icon_tint">@color/accent</color>
 
 </resources>

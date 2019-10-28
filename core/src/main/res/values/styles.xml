@@ -55,7 +55,7 @@
 
     <style name="HemlockText.PagePrimary">
         <item name="android:textSize">18sp</item>
-<!--        <item name="android:textColor">?android:attr/textColorPrimary</item>-->
+        <item name="android:textColor">?android:attr/textColorPrimary</item>
     </style>
 
     <style name="HemlockText.PageSecondary">
@@ -89,8 +89,23 @@
         <item name="android:singleLine">true</item>
     </style>
 
-    <style name="Hemlock.SecondaryToolbar" parent="">
+    <style name="Hemlock.SecondaryBar" parent="HemlockText">
         <item name="android:elevation" tools:targetApi="lollipop">1dp</item>
+        <item name="android:background">@color/secondary_bar_background</item>
+    </style>
+
+    <style name="Hemlock.SearchBar" parent="">
+        <item name="android:background">@color/search_bar_background</item>
+    </style>
+
+    <style name="Hemlock.TableHeader" parent="">
+        <item name="android:background">@color/table_header_background</item>
+        <item name="android:textColor">@color/table_header_textcolor</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:paddingTop">16dp</item>
+        <item name="android:paddingBottom">4dp</item>
+        <item name="android:paddingLeft">8dp</item>
+        <item name="android:paddingRight">8dp</item>
     </style>
 
     <style name="Hemlock.ActionButton" parent="Widget.AppCompat.Button">

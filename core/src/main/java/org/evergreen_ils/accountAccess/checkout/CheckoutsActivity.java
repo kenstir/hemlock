@@ -51,10 +51,8 @@ public class CheckoutsActivity extends BaseActivity {
     private ListView lv;
     private CheckOutArrayAdapter listAdapter = null;
     private ArrayList<CircRecord> circRecords = null;
-    private Context context;
     private ProgressDialogSupport progress;
-    private TextView itemsNo;
-    private TextView overdueItems;
+    private TextView checkoutsSummary;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -63,15 +61,13 @@ public class CheckoutsActivity extends BaseActivity {
 
         setContentView(R.layout.activity_checkouts);
 
-        context = this;
-        itemsNo = (TextView) findViewById(R.id.checkout_items_number);
-        overdueItems = (TextView) findViewById(R.id.checkout_items_overdue);
+        checkoutsSummary = findViewById(R.id.checkout_items_summary);
         accountAccess = AccountAccess.getInstance();
         progress = new ProgressDialogSupport();
 
         lv = (ListView) findViewById(R.id.checkout_items_list);
         circRecords = new ArrayList<>();
-        listAdapter = new CheckOutArrayAdapter(context,
+        listAdapter = new CheckOutArrayAdapter(this,
                 R.layout.checkout_list_item, circRecords);
         lv.setAdapter(listAdapter);
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -89,7 +85,7 @@ public class CheckoutsActivity extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        progress.show(context, getString(R.string.msg_retrieving_data));
+        progress.show(this, getString(R.string.msg_retrieving_data));
 
         Thread getCirc = initGetCircThread();
         getCirc.start();
@@ -134,8 +130,7 @@ public class CheckoutsActivity extends BaseActivity {
                             listAdapter.clear();
                             for (CircRecord circ : circRecords)
                                 listAdapter.add(circ);
-                            itemsNo.setText(String.format("%d", circRecords.size()));
-                            overdueItems.setText(String.format("%d", countOverdues()));
+                            checkoutsSummary.setText(String.format(getString(R.string.checkout_items), circRecords.size()));
 
                             progress.dismiss();
                             listAdapter.notifyDataSetChanged();
@@ -222,7 +217,7 @@ public class CheckoutsActivity extends BaseActivity {
                 public void onClick(View v) {
                     if (!renewable)
                         return;
-                    AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                    AlertDialog.Builder builder = new AlertDialog.Builder(CheckoutsActivity.this);
                     builder.setMessage(R.string.renew_item_message);
                     builder.setNegativeButton(android.R.string.no, null);
                     builder.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
@@ -245,7 +240,7 @@ public class CheckoutsActivity extends BaseActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        progress.show(context, getString(R.string.msg_renewing_item));
+                        progress.show(CheckoutsActivity.this, getString(R.string.msg_renewing_item));
                     }
                 });
 
@@ -276,7 +271,7 @@ public class CheckoutsActivity extends BaseActivity {
                         @Override
                         public void run() {
                             progress.dismiss();
-                            AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                            AlertDialog.Builder builder = new AlertDialog.Builder(CheckoutsActivity.this);
                             builder.setTitle("Failed to renew item")
                                     .setMessage(msg)
                                     .setPositiveButton(android.R.string.ok, null);
@@ -286,7 +281,7 @@ public class CheckoutsActivity extends BaseActivity {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            Toast.makeText(context, getString(R.string.toast_item_renewed), Toast.LENGTH_LONG).show();
+                            Toast.makeText(CheckoutsActivity.this, getString(R.string.toast_item_renewed), Toast.LENGTH_LONG).show();
                         }
                     });
                     try {
