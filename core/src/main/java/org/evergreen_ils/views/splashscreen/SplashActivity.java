@@ -24,6 +24,8 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
+
 import android.text.TextUtils;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -80,6 +82,7 @@ public class SplashActivity extends AppCompatActivity implements LoadingTaskList
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);//kcxxx
         super.onCreate(savedInstanceState);
         Analytics.initialize(this);
 

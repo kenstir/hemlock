@@ -23,10 +23,9 @@
 
 
     <!-- dark/light customized colors -->
-    <color name="search_bar_background">@color/material_grey_100</color>
+    <color name="search_bar_background">@color/material_grey_300</color>
     <color name="search_bar_hint">?android:textColorSecondary</color>
     <color name="secondary_bar_background">@color/material_grey_400</color>
-<!--    <color name="table_header_background">#efeff4</color>-->
     <color name="table_header_background">@color/material_grey_300</color>
     <color name="table_header_textcolor">#c0000000</color>
     <color name="button_icon_tint">@color/accent</color>
