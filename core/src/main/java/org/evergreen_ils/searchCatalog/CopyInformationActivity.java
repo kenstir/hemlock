@@ -89,7 +89,7 @@ public class CopyInformationActivity extends AppCompatActivity {
 
         groupBySystem = getResources().getBoolean(R.bool.ou_group_copy_info_by_system);
 
-        lv = (ListView) findViewById(R.id.copy_information_list);
+        lv = findViewById(R.id.copy_information_list);
         copyInfoRecords = new ArrayList<>();
         listAdapter = new CopyInformationArrayAdapter(this,
                 R.layout.copy_information_item, copyInfoRecords);
