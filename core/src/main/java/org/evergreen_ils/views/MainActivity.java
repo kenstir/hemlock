@@ -44,9 +44,6 @@ import org.evergreen_ils.system.Log;
 import org.evergreen_ils.utils.ui.AppState;
 import org.evergreen_ils.utils.ui.BaseActivity;
 
-/**
- * Created by kenstir on 12/28/13.
- */
 public class MainActivity extends BaseActivity {
 
     private static String TAG = MainActivity.class.getSimpleName();
@@ -57,6 +54,7 @@ public class MainActivity extends BaseActivity {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         if (mRestarting) return;
 

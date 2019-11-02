@@ -79,9 +79,20 @@ public class BaseActivity extends AppCompatActivity
         }
         mRestarting = false;
         App.init(this);
+
+        initNightMode();
+
         initMenuProvider();
         if (mMenuItemHandler != null)
             mMenuItemHandler.onCreate(this);
+    }
+
+    private void initNightMode() {
+        int nightMode = AppCompatDelegate.getDefaultNightMode();
+        int desiredMode = AppState.getInt(AppState.NIGHT_MODE);
+        if (desiredMode != nightMode && desiredMode != 0) {
+            AppCompatDelegate.setDefaultNightMode(desiredMode);
+        }
     }
 
     public Toolbar getToolbar() {
@@ -228,15 +239,20 @@ public class BaseActivity extends AppCompatActivity
             startActivityForResult(new Intent(Intent.ACTION_VIEW, Uri.parse(url)), REQUEST_LAUNCH_OPAC_LOGIN_REDIRECT);
             return true;
         } else if (id == R.id.action_dark_mode) {
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+            setNightMode(AppCompatDelegate.MODE_NIGHT_YES);
             // return false or else the menu view will be leaked when the activity is restarted
             return false;
         } else if (id == R.id.action_light_mode) {
+            setNightMode(AppCompatDelegate.MODE_NIGHT_NO);
             // return false or else the menu view will be leaked when the activity is restarted
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
             return false;
         }
         return false;
+    }
+
+    protected void setNightMode(int nightMode) {
+        AppState.setInt(AppState.NIGHT_MODE, nightMode);
+        AppCompatDelegate.setDefaultNightMode(nightMode);
     }
 
     @SuppressLint("StringFormatInvalid")

@@ -82,8 +82,8 @@ public class SplashActivity extends AppCompatActivity implements LoadingTaskList
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);//kcxxx
         super.onCreate(savedInstanceState);
+        getDelegate().setLocalNightMode(AppCompatDelegate.MODE_NIGHT_YES);
         Analytics.initialize(this);
 
         setContentView(R.layout.activity_splash);
@@ -114,6 +114,7 @@ public class SplashActivity extends AppCompatActivity implements LoadingTaskList
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
         Analytics.log(TAG, "onactivityresult: " + requestCode + " " + resultCode);
     }
 
