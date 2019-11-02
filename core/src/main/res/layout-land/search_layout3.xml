@@ -13,7 +13,7 @@
             android:orientation="horizontal"
             android:paddingLeft="8dp"
             android:paddingRight="8dp"
-            android:theme="@style/Hemlock.SearchBar"
+            style="@style/Hemlock.SearchBar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
             <EditText
@@ -23,7 +23,7 @@
                 android:autofillHints=""
                 android:imeActionLabel="@string/search_button"
                 android:imeOptions="actionSearch"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:maxLines="1"
@@ -45,7 +45,7 @@
         <LinearLayout
             android:orientation="horizontal"
             android:id="@+id/search_options_layout"
-            android:theme="@style/Hemlock.SecondaryBar"
+            style="@style/Hemlock.SecondaryBar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
             <Spinner

@@ -53,8 +53,7 @@
             android:id="@+id/search_options_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            style="@style/Hemlock.SecondaryBar"
-            >
+            style="@style/Hemlock.SecondaryBar">
             <LinearLayout
                 android:orientation="horizontal"
                 android:layout_width="match_parent"
