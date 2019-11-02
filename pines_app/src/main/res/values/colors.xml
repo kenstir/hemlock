@@ -7,8 +7,8 @@
     <color name="pines">#379676</color>
     <color name="accent">@color/pines</color>
     <color name="button_icon_tint">@color/pines_d4</color>
-<!--    <color name="accent">#77C289</color>-->
-<!--    <color name="accent">#B3FFB5</color>-->
+<!--    <color name="accent2">#77C289</color>-->
+<!--    <color name="accent3">#B3FFB5</color>-->
 
     <!-- darker versions of the logo color c/o https://coolors.co -->
     <color name="pines_d1">#32896C</color>
