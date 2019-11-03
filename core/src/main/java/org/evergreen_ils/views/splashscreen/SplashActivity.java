@@ -23,24 +23,23 @@ import android.accounts.Account;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.app.AppCompatDelegate;
-
 import android.text.TextUtils;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.TextView;
 
-import org.evergreen_ils.android.App;
-
 import org.evergreen_ils.R;
 import org.evergreen_ils.accountAccess.AccountUtils;
-import org.evergreen_ils.utils.ui.AppState;
+import org.evergreen_ils.android.App;
 import org.evergreen_ils.system.Analytics;
+import org.evergreen_ils.utils.ui.AppState;
 import org.evergreen_ils.views.MainActivity;
 import org.evergreen_ils.views.splashscreen.LoadingTask.LoadingTaskListener;
 import org.opensrf.ShouldNotHappenException;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 
 public class SplashActivity extends AppCompatActivity implements LoadingTaskListener {
 
@@ -83,16 +82,16 @@ public class SplashActivity extends AppCompatActivity implements LoadingTaskList
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getDelegate().setLocalNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+
         Analytics.initialize(this);
+        App.init(this);
+        applyNightMode();
 
         setContentView(R.layout.activity_splash);
 
-        App.init(this);
-
-        mProgressText = (TextView) findViewById(R.id.action_in_progress);
+        mProgressText = findViewById(R.id.action_in_progress);
         mProgressBar = findViewById(R.id.activity_splash_progress_bar);
-        mRetryButton = (Button) findViewById(R.id.activity_splash_retry_button);
+        mRetryButton = findViewById(R.id.activity_splash_retry_button);
         mRetryButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -101,6 +100,11 @@ public class SplashActivity extends AppCompatActivity implements LoadingTaskList
         });
 
         startTask();
+    }
+
+    protected void applyNightMode() {
+        int nightMode = AppState.getInt(AppState.NIGHT_MODE, AppCompatDelegate.MODE_NIGHT_YES);
+        AppCompatDelegate.setDefaultNightMode(nightMode);
     }
 
     protected synchronized void startTask() {

@@ -99,8 +99,12 @@ public class AppState {
     }
 
     public static int getInt(String key) {
+        return getInt(key, 0);
+    }
+
+    public static int getInt(String key, int dflt) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        return prefs.getInt(key, 0);
+        return prefs.getInt(key, dflt);
     }
 
     public static void setString(String key, String value) {

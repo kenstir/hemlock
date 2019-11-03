@@ -51,10 +51,8 @@ public class MainActivity extends BaseActivity {
     private Integer mUnreadMessageCount = null; //unknown
     private TextView mUnreadMessageText = null;
 
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
         if (mRestarting) return;
 
@@ -123,6 +121,8 @@ public class MainActivity extends BaseActivity {
 
     private void updateUnreadMessageText() {
         if (mUnreadMessageText == null)
+            return;
+        if (isFinishing())
             return;
         if (mUnreadMessageCount != null) {
             mUnreadMessageText.setVisibility((mUnreadMessageCount > 0) ? View.VISIBLE : View.GONE);

@@ -71,28 +71,21 @@ public class BaseActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Analytics.initialize(this);
+
         if (!SplashActivity.isAppInitialized()) {
             SplashActivity.restartApp(this);
             mRestarting = true;
             return;
         }
         mRestarting = false;
-        App.init(this);
 
-        initNightMode();
+        Analytics.initialize(this);
+        App.init(this);
+        applyNightMode();
 
         initMenuProvider();
         if (mMenuItemHandler != null)
             mMenuItemHandler.onCreate(this);
-    }
-
-    private void initNightMode() {
-        int nightMode = AppCompatDelegate.getDefaultNightMode();
-        int desiredMode = AppState.getInt(AppState.NIGHT_MODE);
-        if (desiredMode != nightMode && desiredMode != 0) {
-            AppCompatDelegate.setDefaultNightMode(desiredMode);
-        }
     }
 
     public Toolbar getToolbar() {
@@ -239,19 +232,26 @@ public class BaseActivity extends AppCompatActivity
             startActivityForResult(new Intent(Intent.ACTION_VIEW, Uri.parse(url)), REQUEST_LAUNCH_OPAC_LOGIN_REDIRECT);
             return true;
         } else if (id == R.id.action_dark_mode) {
-            setNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+            saveAndApplyNightMode(AppCompatDelegate.MODE_NIGHT_YES);
             // return false or else the menu view will be leaked when the activity is restarted
             return false;
         } else if (id == R.id.action_light_mode) {
-            setNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+            saveAndApplyNightMode(AppCompatDelegate.MODE_NIGHT_NO);
             // return false or else the menu view will be leaked when the activity is restarted
             return false;
         }
         return false;
     }
 
-    protected void setNightMode(int nightMode) {
+    protected void saveAndApplyNightMode(int nightMode) {
         AppState.setInt(AppState.NIGHT_MODE, nightMode);
+        Log.d(TAG,"saveAndApplyNightMode:"+nightMode);
+        AppCompatDelegate.setDefaultNightMode(nightMode);
+    }
+
+    protected void applyNightMode() {
+        int nightMode = AppState.getInt(AppState.NIGHT_MODE, AppCompatDelegate.MODE_NIGHT_YES);
+        Log.d(TAG,"applyNightMode:"+nightMode);
         AppCompatDelegate.setDefaultNightMode(nightMode);
     }
 
