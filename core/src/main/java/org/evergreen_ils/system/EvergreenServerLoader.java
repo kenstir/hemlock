@@ -211,7 +211,7 @@ public class EvergreenServerLoader {
      * We don't care about the messages themselves, because I don't see a way to modify
      * the messages via OSRF, and it's easier to launch a URL to the patron message center.
      */
-    public static void fetchUnreadMessageCount(Context context, final OnResponseListener listener) {
+    public static void fetchUnreadMessageCount(Context context, final OnResponseListener<Integer> listener) {
         startVolley();
         final EvergreenServer eg = EvergreenServer.getInstance();
         final AccountAccess ac = AccountAccess.getInstance();
