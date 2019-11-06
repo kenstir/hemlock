@@ -373,7 +373,7 @@ public class SearchActivity extends BaseActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_search, menu);
-        String url = getString(R.string.ou_feedback_url);
+        String url = getFeedbackUrl();
         if (TextUtils.isEmpty(url))
             menu.removeItem(R.id.action_feedback);
         return super.onCreateOptionsMenu(menu);

@@ -135,7 +135,7 @@ public class BaseActivity extends AppCompatActivity
         int id = item.getItemId();
         if (id == R.id.action_feedback) {
             Analytics.logEvent("Feedback: Open");
-            String url = getString(R.string.ou_feedback_url);
+            String url = getFeedbackUrl();
             if (!TextUtils.isEmpty(url)) {
                 startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
                 return true;
