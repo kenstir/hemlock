@@ -24,5 +24,4 @@
     <!-- primary_dark - straight up material -->
     <color name="primary_dark">@color/primary_dark_material_dark</color>
 
-
 </resources>

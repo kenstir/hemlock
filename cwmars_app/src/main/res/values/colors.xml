@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- logo colors from brand book -->
+    <color name="cwmars_dark">#16416F</color>
+    <color name="cwmars_medium">#006098</color>
+    <color name="cwmars_secondary1">#d61d4a</color>
+    <color name="cwmars_secondary2">#ee7623</color>
+    <color name="cwmars_secondary3">#ffc629</color>
+    <color name="cwmars_secondary4">#7bc24e</color>
+
+    <color name="primary">@color/cwmars_dark</color>
+    <color name="primary_dark">@color/primary_dark_material_dark</color>
+    <color name="accent">@color/cwmars_secondary2</color>
+    <color name="hemlock_text_alert">@color/cwmars_secondary4</color>
+
+    <color name="button_icon_tint">@color/cwmars_medium</color>
+    <color name="logo_background">@color/white</color>
+</resources>

@@ -21,7 +21,6 @@
     <color name="material_grey_800">#424242</color>
     <color name="material_grey_900">#212121</color>
 
-
     <!-- dark/light customized colors -->
     <color name="logo_background">@color/material_grey_300</color>
     <color name="search_bar_background">@color/material_grey_300</color>
