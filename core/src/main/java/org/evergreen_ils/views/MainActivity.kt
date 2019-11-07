@@ -23,7 +23,6 @@ import android.os.Bundle
 import androidx.core.view.MenuItemCompat
 import android.text.TextUtils
 import android.view.Menu
-import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.widget.ImageButton
@@ -41,7 +40,6 @@ import org.evergreen_ils.searchCatalog.SearchActivity
 import org.evergreen_ils.system.Analytics
 import org.evergreen_ils.system.EvergreenServerLoader
 import org.evergreen_ils.system.Log
-import org.evergreen_ils.utils.ui.AppState
 import org.evergreen_ils.utils.ui.BaseActivity
 
 class MainActivity : BaseActivity() {
@@ -51,7 +49,7 @@ class MainActivity : BaseActivity() {
 
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        if (mRestarting) return
+        if (isRestarting) return
 
         setContentView(R.layout.activity_main)
 
@@ -131,7 +129,7 @@ class MainActivity : BaseActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         val id = item.itemId
-        if (mMenuItemHandler != null && mMenuItemHandler.onItemSelected(this, id, "main_option_menu"))
+        if (menuItemHandler?.onItemSelected(this, id, "main_option_menu") == true)
             return true
         return if (handleMenuAction(id)) true else super.onOptionsItemSelected(item)
     }
@@ -156,8 +154,8 @@ class MainActivity : BaseActivity() {
         } else if (id == R.id.main_barcode_button) {
             Analytics.logEvent("Barcode: Open", "via", "main_button")
             startActivity(Intent(this, BarcodeActivity::class.java))
-        } else if (mMenuItemHandler != null) {
-            mMenuItemHandler.onItemSelected(this, id, "main_button")
+        } else if (menuItemHandler != null) {
+            menuItemHandler?.onItemSelected(this, id, "main_button")
         }
     }
 

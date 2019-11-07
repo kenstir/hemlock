@@ -70,7 +70,7 @@ public class BookBagActivity extends BaseActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (mRestarting) return;
+        if (isRestarting()) return;
 
         setContentView(R.layout.activity_bookbags);
 
