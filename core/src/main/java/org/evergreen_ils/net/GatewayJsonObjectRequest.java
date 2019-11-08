@@ -29,9 +29,11 @@ import org.opensrf.util.GatewayResponse;
 import java.io.UnsupportedEncodingException;
 
 public class GatewayJsonObjectRequest extends Request<GatewayResponse> {
+    private String TAG = GatewayJsonObjectRequest.class.getSimpleName();
+
     private final Response.Listener<GatewayResponse> mListener;
     private final Priority mPriority;
-    private String TAG = GatewayJsonObjectRequest.class.getSimpleName();
+    protected Boolean mCacheHit;
 
     public GatewayJsonObjectRequest(String url, Priority priority, Response.Listener<GatewayResponse> listener, Response.ErrorListener errorListener) {
         super(Request.Method.GET, url, errorListener);
@@ -49,11 +51,22 @@ public class GatewayJsonObjectRequest extends Request<GatewayResponse> {
         return mPriority;
     }
 
+    @Override
+    public void addMarker(String tag) {
+        super.addMarker(tag);
+        if (tag.equals("cache-hit")){
+            mCacheHit = true;
+        } else if (tag.equals("network-http-complete")){
+            mCacheHit = false;
+        }
+    }
+
     protected Response<GatewayResponse> parseNetworkResponse(NetworkResponse response) {
         GatewayResponse parsed;
         try {
             String json = new String(response.data, HttpHeaderParser.parseCharset(response.headers));
             Log.d(TAG, "[net] recv "+response.data.length+": "+json);
+//            Log.d(TAG, "[net] cached:"+mCacheHit+" method:"+getMethod()+" url:"+getUrl());
             parsed = GatewayResponse.create(json);
             if (parsed.failed == false) {
                 return Response.success(parsed, HttpHeaderParser.parseCacheHeaders(response));
