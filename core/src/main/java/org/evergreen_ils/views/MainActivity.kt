@@ -28,6 +28,10 @@ import android.view.View
 import android.widget.ImageButton
 import android.widget.RelativeLayout
 import android.widget.TextView
+import com.android.volley.Request
+import com.android.volley.Response
+import kotlinx.coroutines.launch
+import org.evergreen_ils.Api
 
 import org.evergreen_ils.R
 import org.evergreen_ils.accountAccess.AccountUtils
@@ -36,11 +40,13 @@ import org.evergreen_ils.accountAccess.checkout.CheckoutsActivity
 import org.evergreen_ils.accountAccess.fines.FinesActivity
 import org.evergreen_ils.accountAccess.holds.HoldsActivity
 import org.evergreen_ils.android.App
+import org.evergreen_ils.net.GatewayJsonObjectRequest
+import org.evergreen_ils.net.VolleyWrangler
 import org.evergreen_ils.searchCatalog.SearchActivity
-import org.evergreen_ils.system.Analytics
-import org.evergreen_ils.system.EvergreenServerLoader
-import org.evergreen_ils.system.Log
+import org.evergreen_ils.system.*
 import org.evergreen_ils.utils.ui.BaseActivity
+import kotlin.coroutines.resumeWithException
+import kotlin.coroutines.suspendCoroutine
 
 class MainActivity : BaseActivity() {
 
@@ -51,6 +57,8 @@ class MainActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         if (isRestarting) return
 
+        Log.d(TAG, "coro: onCreate")
+
         setContentView(R.layout.activity_main)
 
         EvergreenServerLoader.fetchOrgSettings(this)
@@ -60,6 +68,43 @@ class MainActivity : BaseActivity() {
 
     public override fun onDestroy() {
         super.onDestroy()
+        Log.d(TAG, "coro: onDestroy")
+    }
+
+    public override fun onPause() {
+        super.onPause()
+        Log.d(TAG, "coro: onPause")
+    }
+
+    public override fun onResume() {
+        super.onResume()
+        Log.d(TAG, "coro: onResume")
+        Log.d(TAG, "coro: launch")
+        launch {
+            val response = getData()
+            Log.d(TAG, "coro: main? resp:$response")
+        }
+    }
+
+    private suspend fun getData() = suspendCoroutine<String> { cont ->
+        val url = EvergreenServer.getInstance().getUrl(Utils.buildGatewayUrl(
+                Api.ACTOR, Api.ILS_VERSION,
+                arrayOf()))
+        val start_ms = System.currentTimeMillis()
+        val r = GatewayJsonObjectRequest(
+                url,
+                Request.Priority.NORMAL,
+                Response.Listener { response ->
+                    val duration_ms = System.currentTimeMillis() - start_ms
+                    val ver = response.payload as String
+                    Log.d(TAG, "coro: listener, resp:$ver")
+                    cont.resumeWith(Result.success(ver))
+                },
+                Response.ErrorListener { error ->
+                    Log.d(TAG, "caught", error)
+                    cont.resumeWithException(error)
+                })
+        VolleyWrangler.getInstance(this).addToRequestQueue(r)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

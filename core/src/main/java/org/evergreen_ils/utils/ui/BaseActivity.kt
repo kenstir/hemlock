@@ -24,45 +24,61 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
-import com.google.android.material.navigation.NavigationView
-
-import androidx.appcompat.app.AppCompatDelegate
-import androidx.core.view.GravityCompat
-import androidx.drawerlayout.widget.DrawerLayout
-import androidx.appcompat.app.ActionBarDrawerToggle
-import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.Toolbar
 import android.text.TextUtils
 import android.view.MenuItem
 import android.view.View
-
+import androidx.appcompat.app.ActionBarDrawerToggle
+import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
+import androidx.appcompat.widget.Toolbar
+import androidx.core.view.GravityCompat
+import androidx.drawerlayout.widget.DrawerLayout
+import com.android.volley.*
+import com.android.volley.toolbox.StringRequest
+import com.android.volley.toolbox.Volley
+import com.google.android.material.navigation.NavigationView
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
+import org.evergreen_ils.Api
 import org.evergreen_ils.R
 import org.evergreen_ils.accountAccess.AccountAccess
 import org.evergreen_ils.accountAccess.AccountUtils
-import org.evergreen_ils.views.BarcodeActivity
 import org.evergreen_ils.accountAccess.bookbags.BookBagActivity
 import org.evergreen_ils.accountAccess.checkout.CheckoutsActivity
 import org.evergreen_ils.accountAccess.fines.FinesActivity
 import org.evergreen_ils.accountAccess.holds.HoldsActivity
 import org.evergreen_ils.android.App
+import org.evergreen_ils.android.App.REQUEST_LAUNCH_OPAC_LOGIN_REDIRECT
+import org.evergreen_ils.net.GatewayJsonObjectRequest
+import org.evergreen_ils.net.VolleyWrangler
 import org.evergreen_ils.searchCatalog.SearchActivity
 import org.evergreen_ils.system.Analytics
 import org.evergreen_ils.system.EvergreenServer
 import org.evergreen_ils.system.Log
+import org.evergreen_ils.system.Utils
+import org.evergreen_ils.views.BarcodeActivity
 import org.evergreen_ils.views.MainActivity
 import org.evergreen_ils.views.MenuProvider
 import org.evergreen_ils.views.splashscreen.SplashActivity
-
+import org.opensrf.util.GatewayResponse
 import java.net.URLEncoder
-
-import org.evergreen_ils.android.App.REQUEST_LAUNCH_OPAC_LOGIN_REDIRECT
+import kotlin.coroutines.CoroutineContext
+import kotlin.coroutines.resume
+import kotlin.coroutines.resumeWithException
+import kotlin.coroutines.suspendCoroutine
 
 /* Activity base class to handle common behaviours like the navigation drawer */
-open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
+open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener, CoroutineScope {
 
     private var _toolbar: Toolbar? = null
     protected var menuItemHandler: MenuProvider? = null
     protected var isRestarting = false
+    protected lateinit var job: Job
+
+    override val coroutineContext: CoroutineContext
+        get() = job + Dispatchers.Main
 
     protected val toolbar: Toolbar?
         get() {
@@ -93,14 +109,22 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         App.init(this)
         applyNightMode()
 
+        job = Job()
+
         initMenuProvider()
-        if (menuItemHandler != null)
-            menuItemHandler!!.onCreate(this)
+        menuItemHandler?.onCreate(this)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        Log.d(TAG, "coro: cancel")
+        job.cancel()
     }
 
     override fun setContentView(layoutResID: Int) {
         super.setContentView(layoutResID)
-        toolbar
+
+        toolbar // has side effect of creating toolbar
 
         val drawer = findViewById<DrawerLayout>(R.id.drawer_layout)
         if (drawer != null) {
