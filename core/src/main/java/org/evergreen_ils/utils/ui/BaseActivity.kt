@@ -261,6 +261,7 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         AppCompatDelegate.setDefaultNightMode(nightMode)
     }
 
+    // TODO: factor out into common ThemeManager class
     protected fun applyNightMode() {
         val nightMode = AppState.getInt(AppState.NIGHT_MODE, AppCompatDelegate.MODE_NIGHT_YES)
         Log.d(TAG, "applyNightMode:$nightMode")

@@ -102,6 +102,7 @@ public class SplashActivity extends AppCompatActivity implements LoadingTaskList
         startTask();
     }
 
+    // TODO: factor out into common ThemeManager class
     protected void applyNightMode() {
         int nightMode = AppState.getInt(AppState.NIGHT_MODE, AppCompatDelegate.MODE_NIGHT_YES);
         AppCompatDelegate.setDefaultNightMode(nightMode);
