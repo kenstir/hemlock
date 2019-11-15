@@ -229,21 +229,21 @@ public class DetailsFragment extends Fragment {
 
         // if there's only one link, launch it without ceremony
         if (links.size() == 1 && !getResources().getBoolean(R.bool.ou_always_popup_online_links)) {
-            launchURL(links.get(0).href);
+            launchURL(links.get(0).getHref());
             return;
         }
 
         // show an alert dialog to choose between links
         final String titles[] = new String[links.size()];
         for (int i = 0; i < titles.length; i++)
-            titles[i] = links.get(i).text;
+            titles[i] = links.get(i).getText();
 
         AlertDialog.Builder builder = new AlertDialog.Builder(activity);
         builder.setTitle(R.string.record_online_access);
         builder.setItems(titles, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                launchURL(links.get(which).href);
+                launchURL(links.get(which).getHref());
             }
         });
         builder.create().show();
@@ -303,7 +303,7 @@ public class DetailsFragment extends Fragment {
             if (links == null || links.isEmpty()) {
                 onlineAccessButton.setEnabled(false);
             } else if (getResources().getBoolean(R.bool.ou_show_online_access_hostname)) {
-                Uri uri = Uri.parse(links.get(0).href);
+                Uri uri = Uri.parse(links.get(0).getHref());
                 descriptionTextView.setText(uri.getHost());
             }
         }

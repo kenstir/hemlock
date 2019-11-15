@@ -15,27 +15,13 @@
 //  along with this program; if not, write to the Free Software
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-package org.evergreen_ils.utils;
+package org.evergreen_ils.utils
 
-import org.evergreen_ils.system.Utils;
-
-import androidx.annotation.NonNull;
-
-public class Link {
-    public String href;
-    @NonNull
-    public String text;
-
-    public Link(String href, String text) {
-        this.href = href;
-        this.text = Utils.safeString(text);
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || o.getClass() != getClass()) return false;
-        Link rhs = (Link) o;
-        return (TextUtils.equals(this.href, rhs.href) && TextUtils.equals(this.text, rhs.text));
+data class Link(val href: String, val text: String) {
+    override fun equals(o: Any?): Boolean {
+        if (this === o) return true
+        if (o == null || o.javaClass != javaClass) return false
+        val rhs = o as Link
+        return TextUtils.equals(href, rhs.href) && TextUtils.equals(text, rhs.text)
     }
 }

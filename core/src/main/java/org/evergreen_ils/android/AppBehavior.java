@@ -114,7 +114,7 @@ public class AppBehavior {
         Collections.sort(links, new Comparator<Link>() {
             @Override
             public int compare(Link a, Link b) {
-                return a.text.compareTo(b.text);
+                return a.getText().compareTo(b.getText());
             }
         });
 
