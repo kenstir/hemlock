@@ -137,8 +137,8 @@ public class GenericAuthenticatorActivity extends AuthenticatorActivity {
         Integer default_library_index = null;
         for (int i = 0; i < libraries.size(); ++i) {
             Library library = libraries.get(i);
-            if (location != null && library.location != null) {
-                float distance = location.distanceTo(library.location);
+            if (location != null && library.getLocation() != null) {
+                float distance = location.distanceTo(library.getLocation());
                 if (distance < min_distance) {
                     default_library_index = i;
                     min_distance = distance;
@@ -191,10 +191,10 @@ public class GenericAuthenticatorActivity extends AuthenticatorActivity {
         Integer default_library_index = null;
         ArrayList<String> l = new ArrayList<String>(libraries.size());
         for (Library library : libraries) {
-            if (default_library != null && TextUtils.equals(default_library.url, library.url)) {
+            if (default_library != null && TextUtils.equals(default_library.getUrl(), library.getUrl())) {
                 default_library_index = l.size();
             }
-            l.add(library.directory_name);
+            l.add(library.getDirectoryName());
         }
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, l);
         librarySpinner.setAdapter(adapter);
@@ -241,7 +241,7 @@ public class GenericAuthenticatorActivity extends AuthenticatorActivity {
             Collections.sort(libraries, new Comparator<Library>() {
                 @Override
                 public int compare(Library a, Library b) {
-                    return a.directory_name.compareTo(b.directory_name);
+                    return a.getDirectoryName().compareTo(b.getDirectoryName());
                 }
             });
         }

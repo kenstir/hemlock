@@ -24,6 +24,8 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 
 import org.evergreen_ils.R;
+import org.evergreen_ils.net.VolleyWrangler;
+import org.evergreen_ils.system.Library;
 import org.evergreen_ils.system.Log;
 import org.evergreen_ils.utils.ui.AppState;
 
@@ -47,6 +49,7 @@ public class App {
     private static int mIsDebuggable = -1;
 
     private static AppBehavior behavior = null;
+    private static Library library = null;
 
     public static boolean getIsDebuggable(Context context) {
         if (mIsDebuggable < 0)
@@ -84,9 +87,16 @@ public class App {
         AppState.init(context);
         if (behavior == null)
             behavior = AppFactory.makeBehavior(context.getResources());
+        VolleyWrangler.init(context);
     }
 
     public static AppBehavior getBehavior() {
         return behavior;
+    }
+
+    public static Library getLibrary() { return library; }
+
+    public static void setLibrary(Library library) {
+        App.library = library;
     }
 }

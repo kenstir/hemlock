@@ -114,14 +114,14 @@ public class LoadingTask {
             now_ms = Log.logElapsedTime(TAG, now_ms, "loading.get_auth");
 
             Library library = AccountUtils.getLibraryForAccount(mCallingActivity, account_name, accountType);
-            AppState.setString(AppState.LIBRARY_NAME, library.name);
-            AppState.setString(AppState.LIBRARY_URL, library.url);
+            AppState.setString(AppState.LIBRARY_NAME, library.getName());
+            AppState.setString(AppState.LIBRARY_URL, library.getUrl());
 
-            Log.d(TAG, tag+"Connecting to "+library.url);
+            Log.d(TAG, tag+"Connecting to "+ library.getUrl());
             publishProgress("Connecting to server");
             App.enableCaching(mCallingActivity);
             EvergreenServer eg = EvergreenServer.getInstance();
-            eg.connect(library.url);
+            eg.connect(library.getUrl());
             AccountAccess ac = AccountAccess.getInstance();
             now_ms = Log.logElapsedTime(TAG, now_ms, "loading.idl");
             eg.loadOrgTypes(ac.fetchOrgTypes());

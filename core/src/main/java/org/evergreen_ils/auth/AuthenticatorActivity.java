@@ -110,8 +110,8 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity {
 
     protected void initSelectedLibrary() {
         selected_library = new Library(getString(R.string.ou_library_url), getString(R.string.ou_library_name));
-        Analytics.log(TAG, "initSelectedLibrary name=" + selected_library.name
-                + " url=" + selected_library.url);
+        Analytics.log(TAG, "initSelectedLibrary name=" + selected_library.getName()
+                + " url=" + selected_library.getUrl());
     }
 
     @Override
@@ -163,15 +163,15 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity {
                 final String accountType = AuthenticatorActivity.this.getString(R.string.ou_account_type);
                 Bundle data = new Bundle();
                 try {
-                    authtoken = EvergreenAuthenticator.signIn(selected_library.url, username, password);
+                    authtoken = EvergreenAuthenticator.signIn(selected_library.getUrl(), username, password);
                     Analytics.log(TAG, "signinTask> signIn returned " + Analytics.redactedString(authtoken));
 
                     data.putString(AccountManager.KEY_ACCOUNT_NAME, username);
                     data.putString(AccountManager.KEY_ACCOUNT_TYPE, accountType);
                     data.putString(AccountManager.KEY_AUTHTOKEN, authtoken);
                     data.putString(PARAM_USER_PASS, password);
-                    data.putString(Const.KEY_LIBRARY_NAME, selected_library.name);
-                    data.putString(Const.KEY_LIBRARY_URL, selected_library.url);
+                    data.putString(Const.KEY_LIBRARY_NAME, selected_library.getName());
+                    data.putString(Const.KEY_LIBRARY_URL, selected_library.getUrl());
                 } catch (AuthenticationException e) {
                     if (e != null) errorMessage = e.getMessage();
                     //Analytics.logException(TAG, e);

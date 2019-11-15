@@ -22,6 +22,8 @@ public class VolleyWrangler {
     private static Context mCtx;
 
     private VolleyWrangler(Context context) {
+        // getApplicationContext() is key, it keeps you from leaking the
+        // Activity or BroadcastReceiver if someone passes one in.
         mCtx = context.getApplicationContext();
         mRequestQueue = getRequestQueue();
 
@@ -42,6 +44,14 @@ public class VolleyWrangler {
                 });
     }
 
+    public static synchronized void init(Context context) {
+        getInstance(context);
+    }
+
+    public static VolleyWrangler getInstance() {
+        return mInstance;
+    }
+
     public static synchronized VolleyWrangler getInstance(Context context) {
         if (mInstance == null) {
             mInstance = new VolleyWrangler(context);
@@ -51,10 +61,8 @@ public class VolleyWrangler {
         return mInstance;
     }
 
-    public RequestQueue getRequestQueue() {
+    protected RequestQueue getRequestQueue() {
         if (mRequestQueue == null) {
-            // getApplicationContext() is key, it keeps you from leaking the
-            // Activity or BroadcastReceiver if someone passes one in.
             mRequestQueue = Volley.newRequestQueue(mCtx.getApplicationContext());
         }
         return mRequestQueue;

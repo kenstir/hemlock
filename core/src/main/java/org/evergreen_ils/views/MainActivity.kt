@@ -205,7 +205,6 @@ class MainActivity : BaseActivity() {
     }
 
     companion object {
-
         private val TAG = MainActivity::class.java.getSimpleName()
     }
 }
