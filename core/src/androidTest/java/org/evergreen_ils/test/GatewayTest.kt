@@ -16,28 +16,42 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
-package net.kenstir.apps.core
+package org.evergreen_ils.test
 
+import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.test.platform.app.InstrumentationRegistry
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import org.evergreen_ils.Api
 import org.evergreen_ils.android.App
 import org.evergreen_ils.net.Gateway
+import org.evergreen_ils.net.VolleyWrangler
 import org.evergreen_ils.system.Library
 import org.evergreen_ils.system.Log
 import org.evergreen_ils.system.StdoutLogProvider
-import org.junit.Assert.assertNotNull
-import org.junit.Before
+import org.junit.Assert.*
 import org.junit.BeforeClass
 import org.junit.Test
+import org.junit.runner.RunWith
 
-import org.junit.Assert.assertTrue
+private const val TAG = "GatewayTest"
 
+@RunWith(AndroidJUnit4::class)
 class GatewayTest {
 
-    @Before
-    @Throws(Exception::class)
-    fun setUp() {
-        Log.d("hey", "setup");
-    }
+//    private val mainThreadSurrogate = newSingleThreadContext("UI thread")
+//
+//    @Before
+//    fun setUp() {
+//        Dispatchers.setMain(mainThreadSurrogate)
+//    }
+//
+//    @After
+//    fun tearDown() {
+//        Dispatchers.resetMain() // reset main dispatcher to the original Main dispatcher
+//        mainThreadSurrogate.close()
+//    }
 
     @Test
     fun test_basic() {
@@ -49,9 +63,16 @@ class GatewayTest {
     }
 
     @Test
-    @Throws(Exception::class)
-    fun test_suspendfun_1() {
-
+    fun test_suspend1() {
+        runBlocking {
+            launch(Dispatchers.Main) {  // Will be launched in the mainThreadSurrogate dispatcher
+                val version = Gateway.makeRequest(Api.ACTOR, Api.ILS_VERSION, arrayOf()) { response ->
+                    response.payload as String
+                }
+                Log.d(TAG, "version:$version")
+                assertTrue(version.isNotEmpty())
+            }
+        }
     }
 
     companion object {
@@ -64,6 +85,8 @@ class GatewayTest {
             Log.d("hey", "here");
 
             App.setLibrary(Library("https://kenstir.ddns.net", "test"))
+            val ctx = InstrumentationRegistry.getInstrumentation().targetContext
+            VolleyWrangler.init(ctx)
         }
     }
 }
