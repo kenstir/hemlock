@@ -74,7 +74,7 @@ public class MARCXMLParserTest {
 
         // First link is an Excerpt
         Link link = links.get(0);
-        assertEquals("Excerpt", link.text);
-        assertEquals("https://samples.overdrive.com/hunger-games-c540fc?.epub-sample.overdrive.com", link.href);
+        assertEquals("Excerpt", link.getText());
+        assertEquals("https://samples.overdrive.com/hunger-games-c540fc?.epub-sample.overdrive.com", link.getHref());
     }
 }
