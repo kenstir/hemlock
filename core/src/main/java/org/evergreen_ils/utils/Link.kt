@@ -17,11 +17,4 @@
 
 package org.evergreen_ils.utils
 
-data class Link(val href: String, val text: String) {
-    override fun equals(o: Any?): Boolean {
-        if (this === o) return true
-        if (o == null || o.javaClass != javaClass) return false
-        val rhs = o as Link
-        return TextUtils.equals(href, rhs.href) && TextUtils.equals(text, rhs.text)
-    }
-}
+data class Link(val href: String, val text: String)
