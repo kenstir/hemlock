@@ -24,17 +24,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.android.volley.Request
 import com.android.volley.Response
-import kotlinx.coroutines.Deferred
-import kotlinx.coroutines.async
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import org.evergreen_ils.Api
 import org.evergreen_ils.net.Gateway
 import org.evergreen_ils.net.GatewayJsonObjectRequest
 import org.evergreen_ils.net.VolleyWrangler
-import org.evergreen_ils.system.EvergreenServerLoader
 import org.evergreen_ils.system.Log
 import org.opensrf.util.GatewayResponse
-import org.opensrf.util.OSRFObject
 import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
 
@@ -42,36 +38,37 @@ private const val TAG = "LaunchViewModel"
 
 class LaunchViewModel : ViewModel() {
 
-    private val data: MutableLiveData<String> by lazy {
+    private val status: MutableLiveData<String> by lazy {
         MutableLiveData<String>().also {
             fetchData()
         }
     }
-
-    fun  getData(): LiveData<String> {
-        return data
+    fun getStatus(): LiveData<String> {
+        return status
     }
+
+    private val _spinner = MutableLiveData<Boolean>()
+    val spinner: LiveData<Boolean>
+        get() = _spinner
 
     private fun fetchData() {
         viewModelScope.launch {
             try {
+                _spinner.value = true
                 var now_ms = System.currentTimeMillis()
 
                 // get server version
-                Log.d(TAG, "coro: 1: start")
-                val def = async { val serverVersion = getServerVersion() }
-                Log.d(TAG, "coro: 1: started")
-                val serverVersion = def.await()
-                Log.d(TAG, "coro: 1: awaited")
-                now_ms = Log.logElapsedTime(TAG, now_ms,"coro: 1")
-                data.value = serverVersion as? String;
+//                val serverVersion = fetchServerVersion()
+//                Log.d(TAG, "coro: 1: serverVersion:$serverVersion")
+//                now_ms = Log.logElapsedTime(TAG, now_ms,"coro: 1")
+//                status.value = serverVersion as? String
 
                 // then launch a bunch of requests in parallel
                 var defs = arrayListOf<Deferred<Any>>()
                 Log.d(TAG, "coro: 2: start")
                 val settings = arrayListOf(Api.SETTING_ORG_UNIT_NOT_PICKUP_LIB,
                         Api.SETTING_CREDIT_PAYMENTS_ALLOW)
-                for (orgID in 1..340) {
+                for (orgID in 330..340) {
                     // TODO: cannot use ANONYMOUS here, it always returns null
                     val args = arrayOf<Any>(orgID, settings, Api.ANONYMOUS)
                     val def = async {
@@ -92,6 +89,9 @@ class LaunchViewModel : ViewModel() {
                 Log.logElapsedTime(TAG, now_ms,"coro: 4")
             } catch (ex: Exception) {
                 Log.d(TAG, "caught", ex)
+                status.value = ex.message
+            } finally {
+                _spinner.value = false
             }
         }
     }
@@ -108,6 +108,12 @@ class LaunchViewModel : ViewModel() {
             }
         }
         return value
+    }
+
+    suspend fun fetchServerVersion(): String = withContext(Dispatchers.IO) {
+        Gateway.makeRequest(Api.ACTOR, Api.ILS_VERSION, arrayOf()) { response ->
+            response.payload as String
+        }
     }
 
     private suspend fun getServerVersion() = suspendCoroutine<String> { cont ->

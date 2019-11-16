@@ -30,28 +30,9 @@ import kotlin.coroutines.resumeWithException
 private const val TAG = "api"
 
 class ActorService {
-    fun asdf(): String {
-        return "x"
+    public suspend fun fetchServerVersion(): String {
+        return Gateway.makeRequest(Api.ACTOR, Api.ILS_VERSION, arrayOf()) { response ->
+            response.payload as String
+        }
     }
-//    suspend fun fetchServerVersion() -> suspendCoroutine<String> { cont ->
-////        val url = Gateway.makeUrl(Api.ACTOR, Api.ILS_VERSION,
-////                arrayOf()))
-//        val url = "https://bark.cwmars.org/osrf-gateway-v1?service=open-ils.actor&method=opensrf.open-ils.system.ils_version"
-//        val start_ms = System.currentTimeMillis()
-//        val r = GatewayJsonObjectRequest(
-//                url,
-//                Request.Priority.NORMAL,
-//                Response.Listener { response ->
-//                    val duration_ms = System.currentTimeMillis() - start_ms
-//                    val ver = response.payload as String
-//                    Log.d(TAG, "coro: listener, resp:$ver")
-//                    cont.resumeWith(Result.success(ver))
-//                },
-//                Response.ErrorListener { error ->
-//                    Log.d(TAG, "caught", error)
-//                    cont.resumeWithException(error)
-//                })
-//        VolleyWrangler.getInstance(this).addToRequestQueue(r)
-//    }
-
 }

@@ -40,7 +40,6 @@ class GatewayTest {
     }
 
     @Test
-    @Throws(Exception::class)
     fun test_basic() {
         assertTrue(true)
         val s = Gateway.baseUrl
@@ -51,7 +50,8 @@ class GatewayTest {
 
     @Test
     @Throws(Exception::class)
-    fun test_suspend1() {
+    fun test_suspendfun_1() {
+
     }
 
     companion object {

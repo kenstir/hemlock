@@ -51,7 +51,7 @@ class LaunchActivity : AppCompatActivity() {
         mRetryButton = findViewById(R.id.activity_splash_retry_button)
 
         val model = ViewModelProviders.of(this)[LaunchViewModel::class.java]
-        model.getData().observe(this, Observer<String>{ s ->
+        model.getStatus().observe(this, Observer<String>{ s ->
             Log.d(TAG, "coro: s:$s")
             mProgressText?.text = s
         })
