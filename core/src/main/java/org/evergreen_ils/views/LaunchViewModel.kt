@@ -29,12 +29,12 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import org.evergreen_ils.Api
 import org.evergreen_ils.net.Gateway
-import org.evergreen_ils.net.GatewayError
 import org.evergreen_ils.net.GatewayJsonObjectRequest
 import org.evergreen_ils.net.VolleyWrangler
+import org.evergreen_ils.system.EvergreenServerLoader
 import org.evergreen_ils.system.Log
 import org.opensrf.util.GatewayResponse
-import java.lang.Exception
+import org.opensrf.util.OSRFObject
 import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
 
@@ -57,22 +57,27 @@ class LaunchViewModel : ViewModel() {
             try {
                 var now_ms = System.currentTimeMillis()
 
-                // this part is serial
+                // get server version
                 Log.d(TAG, "coro: 1: start")
-                val serverVersion = getServerVersion()
+                val def = async { val serverVersion = getServerVersion() }
+                Log.d(TAG, "coro: 1: started")
+                val serverVersion = def.await()
+                Log.d(TAG, "coro: 1: awaited")
                 now_ms = Log.logElapsedTime(TAG, now_ms,"coro: 1")
-                data.value = serverVersion;
+                data.value = serverVersion as? String;
 
-                // parallel
+                // then launch a bunch of requests in parallel
                 var defs = arrayListOf<Deferred<Any>>()
-                Log.d(TAG, "coro: 2: serverVersion:$serverVersion")
+                Log.d(TAG, "coro: 2: start")
                 val settings = arrayListOf(Api.SETTING_ORG_UNIT_NOT_PICKUP_LIB,
                         Api.SETTING_CREDIT_PAYMENTS_ALLOW)
                 for (orgID in 1..340) {
+                    // TODO: cannot use ANONYMOUS here, it always returns null
                     val args = arrayOf<Any>(orgID, settings, Api.ANONYMOUS)
                     val def = async {
-                        makeRequest<String>(Api.ACTOR, Api.ORG_UNIT_SETTING_BATCH, args) { response ->
-                            Log.d(TAG, "coro: gateway_response:$response")
+                        Gateway.makeRequest<String>(Api.ACTOR, Api.ORG_UNIT_SETTING_BATCH, args) { response ->
+                            //Log.d(TAG, "coro: gateway_response:$response")
+                            val v = parseBoolSetting(response, Api.SETTING_ORG_UNIT_NOT_PICKUP_LIB)
                             "xyzzy"
                         }
                     }
@@ -91,8 +96,22 @@ class LaunchViewModel : ViewModel() {
         }
     }
 
+    private fun parseBoolSetting(response: GatewayResponse, setting: String): Boolean? {
+        var value: Boolean? = null
+        val map = response.payload as? Map<String, Any>
+        Log.d(TAG, "map:$map")
+        if (map != null) {
+            val o = map[setting]
+            if (o != null) {
+                val setting_map = o as Map<String, *>
+                value = Api.parseBoolean(setting_map["value"])
+            }
+        }
+        return value
+    }
+
     private suspend fun getServerVersion() = suspendCoroutine<String> { cont ->
-        //val url = EvergreenServer.getInstance().getUrl(Utils.buildGatewayUrl(
+        Log.d(TAG, "coro: getServerVersion: start")
         val url = Gateway.buildUrl(
                 Api.ACTOR, Api.ILS_VERSION,
                 arrayOf())
@@ -101,6 +120,7 @@ class LaunchViewModel : ViewModel() {
                 url,
                 Request.Priority.NORMAL,
                 Response.Listener { response ->
+                    Log.d(TAG, "coro: getServerVersion: response")
                     val ver = response.payload as String
                     Log.d(TAG, "coro: listener, resp:$ver")
                     Log.logElapsedTime(TAG, start_ms, "coro: listener")
@@ -108,26 +128,6 @@ class LaunchViewModel : ViewModel() {
                 },
                 Response.ErrorListener { error ->
                     Log.d(TAG, "caught", error)
-                    cont.resumeWithException(error)
-                })
-        VolleyWrangler.getInstance().addToRequestQueue(r)
-    }
-
-    private suspend fun <T> makeRequest(service: String, method: String, args: Array<Any>, block: (GatewayResponse) -> T?) = suspendCoroutine<T> { cont ->
-        val url = Gateway.buildUrl(service, method, args)
-        //Log.d(TAG, "coro: url:$url")
-        val r = GatewayJsonObjectRequest(
-                url,
-                Request.Priority.NORMAL,
-                Response.Listener { response ->
-                    val res = block(response)
-                    if (res == null) {
-                        cont.resumeWithException(GatewayError("Unexpected response"))
-                    } else {
-                        cont.resumeWith(Result.success(res))
-                    }
-                },
-                Response.ErrorListener { error ->
                     cont.resumeWithException(error)
                 })
         VolleyWrangler.getInstance().addToRequestQueue(r)
