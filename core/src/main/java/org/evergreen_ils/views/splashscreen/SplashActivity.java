@@ -98,8 +98,13 @@ public class SplashActivity extends AppCompatActivity implements LoadingTaskList
                 startTask();
             }
         });
+    }
 
-        startTask();
+    @Override
+    public void onAttachedToWindow() {
+        super.onAttachedToWindow();
+        // Start task here in onAttachedToWindow, because setDefaultNightMode causes onCreate
+        // to be called twice (and therefore start 2 tasks causing flash).
     }
 
     protected void applyNightMode() {
