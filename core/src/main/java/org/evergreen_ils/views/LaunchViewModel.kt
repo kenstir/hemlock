@@ -18,6 +18,8 @@
 
 package org.evergreen_ils.views
 
+import android.accounts.AccountManager
+import android.text.TextUtils
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -26,9 +28,11 @@ import com.android.volley.Request
 import com.android.volley.Response
 import kotlinx.coroutines.*
 import org.evergreen_ils.Api
+import org.evergreen_ils.accountAccess.AccountUtils
 import org.evergreen_ils.net.Gateway
 import org.evergreen_ils.net.GatewayJsonObjectRequest
 import org.evergreen_ils.net.VolleyWrangler
+import org.evergreen_ils.system.Analytics
 import org.evergreen_ils.system.Log
 import org.opensrf.util.GatewayResponse
 import kotlin.coroutines.resumeWithException
@@ -38,25 +42,34 @@ private const val TAG = "LaunchViewModel"
 
 class LaunchViewModel : ViewModel() {
 
-    private val status: MutableLiveData<String> by lazy {
-        MutableLiveData<String>().also {
-            fetchData()
-        }
-    }
-    fun getStatus(): LiveData<String> {
-        return status
-    }
+    private val _status = MutableLiveData<String>()
+    val status: LiveData<String>
+        get() = _status
 
     private val _spinner = MutableLiveData<Boolean>()
     val spinner: LiveData<Boolean>
         get() = _spinner
 
-    private fun fetchData() {
+    fun fetchData(auth_token: String) {
         viewModelScope.launch {
             try {
                 _spinner.value = true
                 var now_ms = System.currentTimeMillis()
 
+                // signing in
+                _status.value = "Signing in"
+
+                val bnd = AccountUtils.getAuthToken(null)
+                val auth_token = bnd.getString(AccountManager.KEY_AUTHTOKEN)
+                val account_name = bnd.getString(AccountManager.KEY_ACCOUNT_NAME)
+                var error_msg = bnd.getString(AccountManager.KEY_ERROR_MESSAGE)
+                if (TextUtils.isEmpty(auth_token) || TextUtils.isEmpty(account_name)) {
+                    if (TextUtils.isEmpty(error_msg)) error_msg = "Login failed"
+                    Analytics.log(TAG, "error_msg:$error_msg")
+                    _status.value = error_msg
+                    //TODO return
+                }
+                now_ms = Log.logElapsedTime(TAG, now_ms, "launch.get_auth")
                 // get server version
 //                val serverVersion = fetchServerVersion()
 //                Log.d(TAG, "coro: 1: serverVersion:$serverVersion")
@@ -89,7 +102,7 @@ class LaunchViewModel : ViewModel() {
                 Log.logElapsedTime(TAG, now_ms,"coro: 4")
             } catch (ex: Exception) {
                 Log.d(TAG, "caught", ex)
-                status.value = ex.message
+                _status.value = ex.message
             } finally {
                 _spinner.value = false
             }

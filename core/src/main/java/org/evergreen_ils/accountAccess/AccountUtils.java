@@ -20,6 +20,7 @@ package org.evergreen_ils.accountAccess;
 
 import android.accounts.*;
 import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.os.Looper;
 import android.text.TextUtils;
@@ -115,6 +116,14 @@ public class AccountUtils {
         Bundle bnd = future.getResult();
         Log.i(Const.AUTH_TAG, "getAuthToken returns "+bnd);
         return bnd;
+    }
+
+    public static AccountManagerFuture<Bundle> getAuthTokenFuture(Activity activity) throws AuthenticatorException, OperationCanceledException, IOException {
+        Log.i(Const.AUTH_TAG, "getAuthTokenFuture");
+        final AccountManager am = AccountManager.get(activity);
+        final String accountType = activity.getString(R.string.ou_account_type);
+        AccountManagerFuture<Bundle> future = am.getAuthTokenByFeatures(accountType, Const.AUTHTOKEN_TYPE, null, activity, null, null, null, null);
+        return future;
     }
 
     public static Account[] getAccountsByType(Activity activity) {
