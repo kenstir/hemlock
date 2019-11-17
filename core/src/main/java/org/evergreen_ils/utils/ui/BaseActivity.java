@@ -52,7 +52,6 @@ import org.evergreen_ils.system.EvergreenServer;
 import org.evergreen_ils.system.Log;
 import org.evergreen_ils.views.MainActivity;
 import org.evergreen_ils.views.MenuProvider;
-import org.evergreen_ils.views.splashscreen.SplashActivity;
 
 import java.net.URLEncoder;
 
@@ -72,8 +71,8 @@ public class BaseActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if (!SplashActivity.isAppInitialized()) {
-            SplashActivity.restartApp(this);
+        if (!App.isStarted()) {
+            App.restartApp(this);
             mRestarting = true;
             return;
         }
@@ -198,7 +197,7 @@ public class BaseActivity extends AppCompatActivity
     public boolean handleMenuAction(int id) {
         if (id == R.id.action_switch_account) {
             Analytics.logEvent("Account: Switch Account", "via", "options_menu");
-            SplashActivity.restartApp(this);
+            App.restartApp(this);
             return true;
         } else if (id == R.id.action_add_account) {
             Analytics.logEvent("Account: Add Account", "via", "options_menu");
@@ -206,14 +205,14 @@ public class BaseActivity extends AppCompatActivity
             AccountUtils.addAccount(this, new Runnable() {
                 @Override
                 public void run() {
-                    SplashActivity.restartApp(BaseActivity.this);
+                    App.restartApp(BaseActivity.this);
                 }
             });
             return true;
         } else if (id == R.id.action_logout) {
             Analytics.logEvent("Account: Logout", "via", "options_menu");
             AccountAccess.getInstance().logout(this);
-            SplashActivity.restartApp(this);
+            App.restartApp(this);
             return true;
 //        } else if (id == R.id.action_feedback) {
 //            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(getFeedbackUrl())));

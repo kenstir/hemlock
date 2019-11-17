@@ -24,9 +24,9 @@ import java.util.ArrayList;
 import androidx.fragment.app.FragmentPagerAdapter;
 import android.view.MenuItem;
 import org.evergreen_ils.R;
+import org.evergreen_ils.android.App;
 import org.evergreen_ils.system.Log;
 import org.evergreen_ils.utils.ui.*;
-import org.evergreen_ils.views.splashscreen.SplashActivity;
 
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -54,8 +54,8 @@ public class SampleUnderlinesNoFade extends BasePagerActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (!SplashActivity.isAppInitialized()) {
-            SplashActivity.restartApp(this);
+        if (!App.isStarted()) {
+            App.restartApp(this);
             return;
         }
 

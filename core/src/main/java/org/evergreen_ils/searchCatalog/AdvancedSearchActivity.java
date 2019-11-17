@@ -34,9 +34,9 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import org.evergreen_ils.R;
+import org.evergreen_ils.android.App;
 import org.evergreen_ils.utils.ui.ActionBarUtils;
 import org.evergreen_ils.system.Analytics;
-import org.evergreen_ils.views.splashscreen.SplashActivity;
 
 import java.util.ArrayList;
 import java.util.StringTokenizer;
@@ -54,8 +54,8 @@ public class AdvancedSearchActivity extends AppCompatActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Analytics.initialize(this);
-        if (!SplashActivity.isAppInitialized()) {
-            SplashActivity.restartApp(this);
+        if (!App.isStarted()) {
+            App.restartApp(this);
             return;
         }
 

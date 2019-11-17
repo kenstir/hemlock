@@ -40,7 +40,6 @@ import org.evergreen_ils.system.Log;
 import org.evergreen_ils.system.Organization;
 import org.evergreen_ils.utils.ui.BaseActivity;
 import org.evergreen_ils.utils.ui.ProgressDialogSupport;
-import org.evergreen_ils.views.splashscreen.SplashActivity;
 
 import android.content.Context;
 import android.content.Intent;
@@ -390,7 +389,7 @@ public class SearchActivity extends BaseActivity {
             //// TODO: 4/30/2017 pull up logout action
             Analytics.logEvent("Account: Logout", "via", "options_menu");
             AccountAccess.getInstance().logout(this);
-            SplashActivity.restartApp(this);
+            App.restartApp(this);
             return true;
         }
         return super.onOptionsItemSelected(item);

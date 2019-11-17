@@ -50,6 +50,7 @@ import org.evergreen_ils.R;
 import org.evergreen_ils.Result;
 import org.evergreen_ils.accountAccess.AccountAccess;
 import org.evergreen_ils.accountAccess.SessionNotFoundException;
+import org.evergreen_ils.android.App;
 import org.evergreen_ils.searchCatalog.RecordInfo;
 import org.evergreen_ils.system.EvergreenServer;
 import org.evergreen_ils.system.Organization;
@@ -57,7 +58,6 @@ import org.evergreen_ils.system.SMSCarrier;
 import org.evergreen_ils.utils.ui.ActionBarUtils;
 import org.evergreen_ils.system.Analytics;
 import org.evergreen_ils.utils.ui.ProgressDialogSupport;
-import org.evergreen_ils.views.splashscreen.SplashActivity;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -101,8 +101,8 @@ public class PlaceHoldActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Analytics.initialize(this);
-        if (!SplashActivity.isAppInitialized()) {
-            SplashActivity.restartApp(this);
+        if (!App.isStarted()) {
+            App.restartApp(this);
             return;
         }
 
