@@ -7,6 +7,11 @@
     <color name="cwmars_secondary2">#ee7623</color>
     <color name="cwmars_secondary3">#ffc629</color>
     <color name="cwmars_secondary4">#7bc24e</color>
+    <color name="cwmars_secondary5">#16416f</color>
+    <color name="cwmars_secondary6">#63cfe3</color>
+    <color name="cwmars_secondary7">#006098</color>
+    <color name="cwmars_secondary8">#002b49</color>
+    <color name="cwmars_secondary9">#512873</color>
 
     <color name="primary">@color/cwmars_dark</color>
     <color name="primary_dark">@color/primary_dark_material_dark</color>
