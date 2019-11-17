@@ -46,7 +46,7 @@ object Gateway {
         return url
     }
 
-    // Wrap an OSRF Gateway request in a coroutine.  `block` is expected to return T or throw
+    // Make an OSRF Gateway request from inside a CoroutineScope.  `block` is expected to return T or throw
     suspend fun <T> makeRequest(service: String, method: String, args: Array<Any>, block: (GatewayResponse) -> T) = suspendCoroutine<T> { cont ->
         val url = buildUrl(service, method, args)
         val r = GatewayJsonObjectRequest(

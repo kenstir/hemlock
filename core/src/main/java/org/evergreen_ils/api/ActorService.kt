@@ -18,19 +18,13 @@
 
 package org.evergreen_ils.api
 
-import com.android.volley.Request
-import com.android.volley.Response
 import org.evergreen_ils.Api
 import org.evergreen_ils.net.Gateway
-import org.evergreen_ils.net.GatewayJsonObjectRequest
-import org.evergreen_ils.net.VolleyWrangler
-import org.evergreen_ils.system.Log
-import kotlin.coroutines.resumeWithException
 
 private const val TAG = "api"
 
-class ActorService {
-    public suspend fun fetchServerVersion(): String {
+object ActorService {
+    suspend fun fetchServerVersion(): String {
         return Gateway.makeRequest(Api.ACTOR, Api.ILS_VERSION, arrayOf()) { response ->
             response.payload as String
         }

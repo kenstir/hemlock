@@ -94,7 +94,9 @@ public class App {
         return behavior;
     }
 
-    public static Library getLibrary() { return library; }
+    public static Library getLibrary() {
+        return library;
+    }
 
     public static void setLibrary(Library library) {
         App.library = library;

@@ -55,9 +55,10 @@ class LaunchActivity : AppCompatActivity() {
             Log.d(TAG, "coro: s:$s")
             mProgressText?.text = s
         })
-    }
-
-    override fun onResume() {
-        super.onResume()
+        model.spinner.observe(this, Observer { value ->
+            value?.let { show ->
+                mProgressBar?.visibility = if (show) View.VISIBLE else View.GONE
+            }
+        })
     }
 }

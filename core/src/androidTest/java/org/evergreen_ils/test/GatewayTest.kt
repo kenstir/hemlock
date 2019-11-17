@@ -25,6 +25,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import org.evergreen_ils.Api
 import org.evergreen_ils.android.App
+import org.evergreen_ils.api.ActorService
 import org.evergreen_ils.net.Gateway
 import org.evergreen_ils.net.VolleyWrangler
 import org.evergreen_ils.system.Library
@@ -63,12 +64,23 @@ class GatewayTest {
     }
 
     @Test
-    fun test_suspend1() {
+    fun test_directSuspendFun() {
         runBlocking {
-            launch(Dispatchers.Main) {  // Will be launched in the mainThreadSurrogate dispatcher
+            launch(Dispatchers.Main) {
                 val version = Gateway.makeRequest(Api.ACTOR, Api.ILS_VERSION, arrayOf()) { response ->
                     response.payload as String
                 }
+                Log.d(TAG, "version:$version")
+                assertTrue(version.isNotEmpty())
+            }
+        }
+    }
+
+    @Test
+    fun test_fetchSuspendFun() {
+        runBlocking {
+            launch(Dispatchers.Main) {
+                val version: String = ActorService.fetchServerVersion()
                 Log.d(TAG, "version:$version")
                 assertTrue(version.isNotEmpty())
             }

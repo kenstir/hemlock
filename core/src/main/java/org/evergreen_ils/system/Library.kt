@@ -21,8 +21,8 @@ package org.evergreen_ils.system
 import android.location.Location
 import android.text.TextUtils
 
-data class Library constructor(val url: String               // e.g. "https://catalog.cwmars.org"
-                               , val name: String            // e.g. "C/W MARS"
+data class Library constructor(val url: String              // e.g. "https://catalog.cwmars.org"
+                               , val name: String           // e.g. "C/W MARS"
                                , val directoryName: String? // e.g. "Massachusetts, US (C/W MARS)"
                                , val location: Location?) {
     constructor(url: String, name: String) : this(url, name, null, null)
