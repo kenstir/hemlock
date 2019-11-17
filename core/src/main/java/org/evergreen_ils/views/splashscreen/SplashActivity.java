@@ -34,6 +34,7 @@ import org.evergreen_ils.accountAccess.AccountUtils;
 import org.evergreen_ils.android.App;
 import org.evergreen_ils.system.Analytics;
 import org.evergreen_ils.utils.ui.AppState;
+import org.evergreen_ils.utils.ui.ThemeManager;
 import org.evergreen_ils.views.MainActivity;
 import org.evergreen_ils.views.splashscreen.LoadingTask.LoadingTaskListener;
 import org.opensrf.ShouldNotHappenException;
@@ -85,7 +86,7 @@ public class SplashActivity extends AppCompatActivity implements LoadingTaskList
 
         Analytics.initialize(this);
         App.init(this);
-        applyNightMode();
+        ThemeManager.applyNightMode();
 
         setContentView(R.layout.activity_splash);
 
@@ -100,12 +101,6 @@ public class SplashActivity extends AppCompatActivity implements LoadingTaskList
         });
 
         startTask();
-    }
-
-    // TODO: factor out into common ThemeManager class
-    protected void applyNightMode() {
-        int nightMode = AppState.getInt(AppState.NIGHT_MODE, AppCompatDelegate.MODE_NIGHT_YES);
-        AppCompatDelegate.setDefaultNightMode(nightMode);
     }
 
     protected synchronized void startTask() {

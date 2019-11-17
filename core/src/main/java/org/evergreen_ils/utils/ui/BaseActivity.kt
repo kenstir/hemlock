@@ -58,6 +58,7 @@ import org.evergreen_ils.system.Analytics
 import org.evergreen_ils.system.EvergreenServer
 import org.evergreen_ils.system.Log
 import org.evergreen_ils.system.Utils
+import org.evergreen_ils.utils.ui.ThemeManager
 import org.evergreen_ils.views.BarcodeActivity
 import org.evergreen_ils.views.MainActivity
 import org.evergreen_ils.views.MenuProvider
@@ -107,7 +108,7 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
 
         Analytics.initialize(this)
         App.init(this)
-        applyNightMode()
+        ThemeManager.applyNightMode()
 
         job = Job()
 
@@ -244,28 +245,15 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
             startActivityForResult(Intent(Intent.ACTION_VIEW, Uri.parse(url)), REQUEST_LAUNCH_OPAC_LOGIN_REDIRECT)
             return true
         } else if (id == R.id.action_dark_mode) {
-            saveAndApplyNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+            ThemeManager.saveAndApplyNightMode(AppCompatDelegate.MODE_NIGHT_YES)
             // return false or else the menu view will be leaked when the activity is restarted
             return false
         } else if (id == R.id.action_light_mode) {
-            saveAndApplyNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+            ThemeManager.saveAndApplyNightMode(AppCompatDelegate.MODE_NIGHT_NO)
             // return false or else the menu view will be leaked when the activity is restarted
             return false
         }
         return false
-    }
-
-    protected fun saveAndApplyNightMode(nightMode: Int) {
-        AppState.setInt(AppState.NIGHT_MODE, nightMode)
-        Log.d(TAG, "saveAndApplyNightMode:$nightMode")
-        AppCompatDelegate.setDefaultNightMode(nightMode)
-    }
-
-    // TODO: factor out into common ThemeManager class
-    protected fun applyNightMode() {
-        val nightMode = AppState.getInt(AppState.NIGHT_MODE, AppCompatDelegate.MODE_NIGHT_YES)
-        Log.d(TAG, "applyNightMode:$nightMode")
-        AppCompatDelegate.setDefaultNightMode(nightMode)
     }
 
     companion object {

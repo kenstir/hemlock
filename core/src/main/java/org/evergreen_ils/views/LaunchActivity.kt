@@ -19,9 +19,11 @@
 package org.evergreen_ils.views
 
 import android.accounts.AccountManager
+import android.app.Fragment
 import android.content.Intent
 import android.os.Bundle
 import android.os.OperationCanceledException
+import android.os.PersistableBundle
 import android.view.View
 import android.widget.Button
 import android.widget.TextView
@@ -38,6 +40,7 @@ import org.evergreen_ils.android.App
 import org.evergreen_ils.net.VolleyWrangler
 import org.evergreen_ils.system.Analytics
 import org.evergreen_ils.system.Log
+import org.evergreen_ils.utils.ui.ThemeManager
 
 private const val TAG = "LaunchActivity"
 
@@ -48,12 +51,15 @@ class LaunchActivity : AppCompatActivity(), CoroutineScope by MainScope() {
     private var mRetryButton: Button? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        Log.d(TAG, "onCreate")
         super.onCreate(savedInstanceState)
 
         setContentView(R.layout.activity_splash)
 
+        VolleyWrangler.init(this)
+        Analytics.initialize(this)
         App.init(this)
-        VolleyWrangler.init(this);
+        ThemeManager.applyNightMode()
 
         mProgressText = findViewById(R.id.action_in_progress)
         mProgressBar = findViewById(R.id.activity_splash_progress_bar)
@@ -77,7 +83,7 @@ class LaunchActivity : AppCompatActivity(), CoroutineScope by MainScope() {
             }
         })
 
-        launchLoginFlow()
+        //launchLoginFlow()
     }
 
     fun launchLoginFlow() {
@@ -101,8 +107,38 @@ class LaunchActivity : AppCompatActivity(), CoroutineScope by MainScope() {
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        Log.d(TAG, object{}.javaClass.enclosingMethod?.name)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        Log.d(TAG, object{}.javaClass.enclosingMethod?.name)
+    }
+
+    override fun onAttachedToWindow() {
+        super.onAttachedToWindow()
+        Log.d(TAG, object{}.javaClass.enclosingMethod?.name)
+
+        // Start launching here in onAttachedToWindow, because setDefaultNightMode causes onCreate
+        // to be called twice (and therefore we would launch/cancel/launch coroutines).
+        launchLoginFlow()
+    }
+
+    override fun onPostCreate(savedInstanceState: Bundle?, persistentState: PersistableBundle?) {
+        super.onPostCreate(savedInstanceState, persistentState)
+        Log.d(TAG, object{}.javaClass.enclosingMethod?.name)
+    }
+
+    override fun onRestart() {
+        super.onRestart()
+        Log.d(TAG, object{}.javaClass.enclosingMethod?.name)
+    }
+
     override fun onDestroy() {
         super.onDestroy()
+        Log.d(TAG, object{}.javaClass.enclosingMethod?.name)
         cancel()
     }
 
