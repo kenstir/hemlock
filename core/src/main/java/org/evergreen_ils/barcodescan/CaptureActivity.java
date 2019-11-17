@@ -15,10 +15,10 @@ import com.google.zxing.BarcodeFormat;
 import com.google.zxing.Result;
 
 import org.evergreen_ils.R;
+import org.evergreen_ils.android.App;
 import org.evergreen_ils.barcodescan.camera.CameraManager;
 import org.evergreen_ils.system.Log;
 import org.evergreen_ils.system.Analytics;
-import org.evergreen_ils.views.splashscreen.SplashActivity;
 
 import java.io.IOException;
 import java.util.Vector;
@@ -43,8 +43,8 @@ public class CaptureActivity extends Activity implements SurfaceHolder.Callback 
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		Analytics.initialize(this);
-		if (!SplashActivity.isAppInitialized()) {
-            SplashActivity.restartApp(this);
+		if (!App.isStarted()) {
+            App.restartApp(this);
             return;
         }
 

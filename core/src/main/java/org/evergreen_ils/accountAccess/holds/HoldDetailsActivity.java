@@ -29,15 +29,14 @@ import org.evergreen_ils.Api;
 import org.evergreen_ils.R;
 import org.evergreen_ils.accountAccess.AccountAccess;
 import org.evergreen_ils.accountAccess.SessionNotFoundException;
+import org.evergreen_ils.android.App;
 import org.evergreen_ils.system.Analytics;
 import org.evergreen_ils.system.EvergreenServer;
 import org.evergreen_ils.system.Log;
-import org.evergreen_ils.searchCatalog.RecordInfo;
 import org.evergreen_ils.system.Organization;
 import org.evergreen_ils.utils.ui.ActionBarUtils;
 import org.evergreen_ils.utils.ui.BaseActivity;
 import org.evergreen_ils.utils.ui.ProgressDialogSupport;
-import org.evergreen_ils.views.splashscreen.SplashActivity;
 
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
@@ -100,8 +99,8 @@ public class HoldDetailsActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (!SplashActivity.isAppInitialized()) {
-            SplashActivity.restartApp(this);
+        if (!App.isStarted()) {
+            App.restartApp(this);
             return;
         }
 

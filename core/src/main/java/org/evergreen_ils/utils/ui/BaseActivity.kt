@@ -99,8 +99,8 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        if (!SplashActivity.isAppInitialized()) {
-            SplashActivity.restartApp(this)
+        if (!App.isStarted()) {
+            App.restartApp(this)
             isRestarting = true
             return
         }
@@ -216,17 +216,17 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
     fun handleMenuAction(id: Int): Boolean {
         if (id == R.id.action_switch_account) {
             Analytics.logEvent("Account: Switch Account", "via", "options_menu")
-            SplashActivity.restartApp(this)
+            App.restartApp(this)
             return true
         } else if (id == R.id.action_add_account) {
             Analytics.logEvent("Account: Add Account", "via", "options_menu")
             invalidateOptionsMenu()
-            AccountUtils.addAccount(this) { SplashActivity.restartApp(this@BaseActivity) }
+            AccountUtils.addAccount(this) { App.restartApp(this@BaseActivity) }
             return true
         } else if (id == R.id.action_logout) {
             Analytics.logEvent("Account: Logout", "via", "options_menu")
             AccountAccess.getInstance().logout(this)
-            SplashActivity.restartApp(this)
+            App.restartApp(this)
             return true
             //        } else if (id == R.id.action_feedback) {
             //            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(getFeedbackUrl())));

@@ -18,16 +18,20 @@
 
 package org.evergreen_ils.android;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 
 import org.evergreen_ils.R;
 import org.evergreen_ils.net.VolleyWrangler;
+import org.evergreen_ils.system.Analytics;
 import org.evergreen_ils.system.Library;
 import org.evergreen_ils.system.Log;
 import org.evergreen_ils.utils.ui.AppState;
+import org.evergreen_ils.views.LaunchActivity;
 
 import java.io.File;
 
@@ -47,6 +51,8 @@ public class App {
     public static final int RESULT_PURCHASED = 20001;
 
     private static int mIsDebuggable = -1;
+
+    public static boolean mStarted = false;
 
     private static AppBehavior behavior = null;
     private static Library library = null;
@@ -100,5 +106,34 @@ public class App {
 
     public static void setLibrary(Library library) {
         App.library = library;
+    }
+
+    /**
+     * android may choose to initialize the app at a non-MAIN activity if the
+     * app crashed or for other reasons.  In these cases we want to force sane
+     * initialization via the LaunchActivity.
+     * <p/>
+     * used in all activity class's onCreate() like so:
+     * <code>
+     * if (!App.isStarted()) {
+     *     App.restartApp(this);
+     *     return;
+     * }
+     * </code>
+     */
+    public static void restartApp(Activity activity) {
+        Analytics.log(TAG, "restartApp> Restarting");
+        Intent i = new Intent(activity.getApplicationContext(), LaunchActivity.class);
+        i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        activity.startActivity(i);
+        activity.finish();
+    }
+
+    public static boolean isStarted() {
+        return mStarted;
+    }
+
+    public static void setStarted(boolean flag) {
+        mStarted = flag;
     }
 }

@@ -40,6 +40,7 @@ import com.android.volley.VolleyError;
 
 import org.evergreen_ils.Api;
 import org.evergreen_ils.R;
+import org.evergreen_ils.android.App;
 import org.evergreen_ils.net.GatewayJsonObjectRequest;
 import org.evergreen_ils.net.VolleyWrangler;
 import org.evergreen_ils.system.EvergreenServer;
@@ -49,7 +50,6 @@ import org.evergreen_ils.system.Utils;
 import org.evergreen_ils.utils.ui.ActionBarUtils;
 import org.evergreen_ils.system.Analytics;
 import org.evergreen_ils.utils.ui.TextViewUtils;
-import org.evergreen_ils.views.splashscreen.SplashActivity;
 import org.opensrf.util.GatewayResponse;
 
 import java.util.ArrayList;
@@ -71,8 +71,8 @@ public class CopyInformationActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Analytics.initialize(this);
-        if (!SplashActivity.isAppInitialized()) {
-            SplashActivity.restartApp(this);
+        if (!App.isStarted()) {
+            App.restartApp(this);
             return;
         }
 

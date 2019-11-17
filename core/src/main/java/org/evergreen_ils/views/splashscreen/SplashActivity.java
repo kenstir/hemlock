@@ -51,34 +51,6 @@ public class SplashActivity extends AppCompatActivity implements LoadingTaskList
     private Button mRetryButton;
     private LoadingTask mTask;
     private long mStartTimeMillis;
-    private static boolean mInitialized;
-
-    public static boolean isAppInitialized() {
-        return mInitialized;
-    }
-
-    /**
-     * android may choose to initialize the app at a non-MAIN activity if the
-     * app crashed or for other reasons.  In these cases we want to force sane
-     * initialization via the SplashActivity.
-     * <p/>
-     * used in all activity class's onCreate() like so:
-     * <code>
-     * if (!SplashActivity.isInitialized) {
-     * SplashActivity.restartApp(this);
-     * return;
-     * }
-     * </code>
-     *
-     * @param a
-     */
-    public static void restartApp(Activity a) {
-        Analytics.log(TAG, "restartApp> Restarting SplashActivity");
-        Intent i = new Intent(a, SplashActivity.class);
-        i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        a.startActivity(i);
-        a.finish();
-    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -99,7 +71,13 @@ public class SplashActivity extends AppCompatActivity implements LoadingTaskList
                 startTask();
             }
         });
+    }
 
+    @Override
+    public void onAttachedToWindow() {
+        super.onAttachedToWindow();
+        // Start task here in onAttachedToWindow, because setDefaultNightMode causes onCreate
+        // to be called twice (and therefore start 2 tasks causing flash).
         startTask();
     }
 
@@ -119,9 +97,9 @@ public class SplashActivity extends AppCompatActivity implements LoadingTaskList
     }
 
     private void startApp() {
-        mInitialized = true;
+        App.setStarted(true);
         updateLaunchCount();
-        Intent intent = new Intent(SplashActivity.this, MainActivity.class);
+        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
         startActivity(intent);
         finish();
     }
