@@ -33,13 +33,10 @@ import java.io.IOException;
 
 import static org.evergreen_ils.system.Utils.safeString;
 
-/**
- * Created by kenstir on 11/17/2015.
- */
 public class AccountUtils {
 
-    public static Library getLibraryForAccount(Activity activity, String account_name, String account_type) {
-        final AccountManager am = AccountManager.get(activity);
+    public static Library getLibraryForAccount(Context context, String account_name, String account_type) {
+        final AccountManager am = AccountManager.get(context);
         Account account = new Account(account_name, account_type);
         String library_url = am.getUserData(account, Const.KEY_LIBRARY_URL);
         String library_name = am.getUserData(account, Const.KEY_LIBRARY_NAME);
@@ -47,46 +44,46 @@ public class AccountUtils {
         // Compatibility with old versions of cwmars_app.  If no library_url exists as userdata on the account,
         // get it from the resources.
         if (TextUtils.isEmpty(library_url)) {
-            library_url = activity.getString(R.string.ou_library_url);
+            library_url = context.getString(R.string.ou_library_url);
             if (!TextUtils.isEmpty(library_url)) {
                 am.setUserData(account, Const.KEY_LIBRARY_URL, library_url);
             }
         }
         if (TextUtils.isEmpty(library_name)) {
-            library_name = activity.getString(R.string.ou_library_name);
+            library_name = context.getString(R.string.ou_library_name);
         }
 
         return new Library(library_url, library_name);
     }
 
-    public static Library getLibraryForAccount(Activity activity, Account account) {
-        return getLibraryForAccount(activity, account.name, account.type);
+    public static Library getLibraryForAccount(Context context, Account account) {
+        return getLibraryForAccount(context, account.name, account.type);
     }
 
-    public static void invalidateAuthToken(Activity activity, String auth_token) {
+    public static void invalidateAuthToken(Context context, String auth_token) {
         Log.i(Const.AUTH_TAG, "invalidateAuthToken "+auth_token);
         if (TextUtils.isEmpty(auth_token))
             return;
-        final AccountManager am = AccountManager.get(activity);
-        final String accountType = activity.getString(R.string.ou_account_type);
+        final AccountManager am = AccountManager.get(context);
+        final String accountType = context.getString(R.string.ou_account_type);
         am.invalidateAuthToken(accountType, auth_token);
     }
 
-    public static void clearPassword(Activity activity, String account_name) {
+    public static void clearPassword(Context context, String account_name) {
         Log.i(Const.AUTH_TAG, "clearPassword "+account_name);
         if (TextUtils.isEmpty(account_name))
             return;
-        final AccountManager am = AccountManager.get(activity);
-        final String accountType = activity.getString(R.string.ou_account_type);
+        final AccountManager am = AccountManager.get(context);
+        final String accountType = context.getString(R.string.ou_account_type);
         final Account account = new Account(account_name, accountType);
         am.clearPassword(account);
     }
 
-    public static String getPassword(Activity activity, String account_name) {
+    public static String getPassword(Context context, String account_name) {
         if (TextUtils.isEmpty(account_name))
             return "";
-        final AccountManager am = AccountManager.get(activity);
-        final String accountType = activity.getString(R.string.ou_account_type);
+        final AccountManager am = AccountManager.get(context);
+        final String accountType = context.getString(R.string.ou_account_type);
         final Account account = new Account(account_name, accountType);
         return safeString(am.getPassword(account));
     }
