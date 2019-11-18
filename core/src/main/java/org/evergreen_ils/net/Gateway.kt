@@ -36,7 +36,7 @@ enum class GatewayState {
 
 object Gateway {
     val baseUrl: String?
-        get() = App.getLibrary()?.url ?: "https://kenstir.ddns.net" // total hack-o-rama
+        get() = App.getLibrary()?.url
     val scope: CoroutineScope? = null
 
     var state: GatewayState = GatewayState.UNINITIALIZED

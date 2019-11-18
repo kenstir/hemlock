@@ -32,6 +32,7 @@ import org.evergreen_ils.accountAccess.AccountUtils
 import org.evergreen_ils.net.Gateway
 import org.evergreen_ils.net.GatewayJsonObjectRequest
 import org.evergreen_ils.net.VolleyWrangler
+import org.evergreen_ils.system.Account
 import org.evergreen_ils.system.Analytics
 import org.evergreen_ils.system.Log
 import org.opensrf.util.GatewayResponse
@@ -50,44 +51,49 @@ class LaunchViewModel : ViewModel() {
     val spinner: LiveData<Boolean>
         get() = _spinner
 
-    fun fetchData(auth_token: String) {
+    private val _account = MutableLiveData<Account>()
+    val account: LiveData<Account>
+        get() = _account
+
+    fun fetchData(account: Account) {
+        if (account.authToken.isNullOrEmpty())
+            return
         viewModelScope.launch {
             try {
                 _spinner.value = true
                 var now_ms = System.currentTimeMillis()
 
-                // signing in
-                _status.value = "Signing in"
+                // FAKE NEWS
+                _status.value = "Connecting to server"
+                Log.d(TAG, "set _account 1")
+                _account.value = account
+                delay(1_500)
 
-                val bnd = AccountUtils.getAuthToken(null)
-                val auth_token = bnd.getString(AccountManager.KEY_AUTHTOKEN)
-                val account_name = bnd.getString(AccountManager.KEY_ACCOUNT_NAME)
-                var error_msg = bnd.getString(AccountManager.KEY_ERROR_MESSAGE)
-                if (TextUtils.isEmpty(auth_token) || TextUtils.isEmpty(account_name)) {
-                    if (TextUtils.isEmpty(error_msg)) error_msg = "Login failed"
-                    Analytics.log(TAG, "error_msg:$error_msg")
-                    _status.value = error_msg
-                    //TODO return
-                }
-                now_ms = Log.logElapsedTime(TAG, now_ms, "launch.get_auth")
+                // FAKE NEWS
+                _status.value = "Starting session"
+                Log.d(TAG, "set _account 2")
+                _account.value = account
+                delay(1_500)
+
+                // FAKE NEWS
+                Log.d(TAG, "set _account 3")
+                _account.value = account
+
                 // get server version
 //                val serverVersion = fetchServerVersion()
-//                Log.d(TAG, "coro: 1: serverVersion:$serverVersion")
-//                now_ms = Log.logElapsedTime(TAG, now_ms,"coro: 1")
-//                status.value = serverVersion as? String
 
                 // then launch a bunch of requests in parallel
                 var defs = arrayListOf<Deferred<Any>>()
                 Log.d(TAG, "coro: 2: start")
                 val settings = arrayListOf(Api.SETTING_ORG_UNIT_NOT_PICKUP_LIB,
                         Api.SETTING_CREDIT_PAYMENTS_ALLOW)
-                for (orgID in 330..340) {
-                    // TODO: cannot use ANONYMOUS here, it always returns null
-                    val args = arrayOf<Any>(orgID, settings, Api.ANONYMOUS)
+                for (orgID in 49..50) {
+                    val args = arrayOf<Any>(orgID, settings, account.authToken)
                     val def = async {
                         Gateway.makeRequest<String>(Api.ACTOR, Api.ORG_UNIT_SETTING_BATCH, args) { response ->
                             //Log.d(TAG, "coro: gateway_response:$response")
-                            val v = parseBoolSetting(response, Api.SETTING_ORG_UNIT_NOT_PICKUP_LIB)
+                            val x = parseBoolSetting(response, Api.SETTING_ORG_UNIT_NOT_PICKUP_LIB)
+                            val y = parseBoolSetting(response, Api.SETTING_CREDIT_PAYMENTS_ALLOW)
                             "xyzzy"
                         }
                     }
@@ -150,5 +156,10 @@ class LaunchViewModel : ViewModel() {
                     cont.resumeWithException(error)
                 })
         VolleyWrangler.getInstance().addToRequestQueue(r)
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        Log.d(TAG, object{}.javaClass.enclosingMethod?.name)
     }
 }
