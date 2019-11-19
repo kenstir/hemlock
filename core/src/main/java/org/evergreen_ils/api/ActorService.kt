@@ -29,4 +29,33 @@ object ActorService {
             response.payload as String
         }
     }
+
+    suspend fun fetchOrgTypes(): Array<Any> {
+        return Gateway.makeRequest(Api.ACTOR, Api.ORG_TYPES_RETRIEVE, arrayOf()) { response ->
+            response.payload as Array<Any>
+        }
+    }
+
+    suspend fun fetchOrgSettings(orgID: Int): Map<String, Any?> {
+        val settings = arrayListOf(Api.SETTING_ORG_UNIT_NOT_PICKUP_LIB,
+                Api.SETTING_CREDIT_PAYMENTS_ALLOW)
+        val args = arrayOf<Any>(orgID, settings, Api.ANONYMOUS)
+        return Gateway.makeRequest(Api.ACTOR, Api.ORG_UNIT_SETTING_BATCH, args) { response ->
+            response.payload as Map<String, Any?>
+        }
+    }
+
+    // map returned from `fetchOrgSettings` looks like:
+    // {credit.payments.allow={org=49, value=true}, opac.holds.org_unit_not_pickup_lib=null}
+    fun parseBoolSetting(map: Map<String, Any?>, setting: String): Boolean? {
+        var value: Boolean? = null
+        if (map != null) {
+            val o = map[setting]
+            if (o != null) {
+                val setting_map = o as Map<String, *>
+                value = Api.parseBoolean(setting_map["value"])
+            }
+        }
+        return value
+    }
 }

@@ -29,6 +29,7 @@ import com.android.volley.Response
 import kotlinx.coroutines.*
 import org.evergreen_ils.Api
 import org.evergreen_ils.accountAccess.AccountUtils
+import org.evergreen_ils.api.ActorService
 import org.evergreen_ils.net.Gateway
 import org.evergreen_ils.net.GatewayJsonObjectRequest
 import org.evergreen_ils.net.VolleyWrangler
@@ -87,15 +88,18 @@ class LaunchViewModel : ViewModel() {
                 Log.d(TAG, "coro: 2: start")
                 val settings = arrayListOf(Api.SETTING_ORG_UNIT_NOT_PICKUP_LIB,
                         Api.SETTING_CREDIT_PAYMENTS_ALLOW)
-                for (orgID in 49..50) {
-                    val args = arrayOf<Any>(orgID, settings, account.authToken)
+                for (orgID in 1..50) {
+//                    val args = arrayOf<Any>(orgID, settings, account.authToken)
+                    val args = arrayOf<Any>(orgID, settings, Api.ANONYMOUS)
                     val def = async {
-                        Gateway.makeRequest<String>(Api.ACTOR, Api.ORG_UNIT_SETTING_BATCH, args) { response ->
-                            //Log.d(TAG, "coro: gateway_response:$response")
-                            val x = parseBoolSetting(response, Api.SETTING_ORG_UNIT_NOT_PICKUP_LIB)
-                            val y = parseBoolSetting(response, Api.SETTING_CREDIT_PAYMENTS_ALLOW)
-                            "xyzzy"
+                        Log.d(TAG, "org:$orgID settings ... ")
+                        val settingsMap = ActorService.fetchOrgSettings((orgID))
+                        val x = ActorService.parseBoolSetting(settingsMap, Api.SETTING_ORG_UNIT_NOT_PICKUP_LIB)
+                        val y = ActorService.parseBoolSetting(settingsMap, Api.SETTING_CREDIT_PAYMENTS_ALLOW)
+                        Dispatchers.Main {
+                            Log.d(TAG, "org:$orgID settings ... fetched")
                         }
+                        "xyzzy"
                     }
                     defs.add(def)
                 }
@@ -115,6 +119,8 @@ class LaunchViewModel : ViewModel() {
         }
     }
 
+    // response.payload looks like:
+    // {credit.payments.allow={org=49, value=true}, opac.holds.org_unit_not_pickup_lib=null}
     private fun parseBoolSetting(response: GatewayResponse, setting: String): Boolean? {
         var value: Boolean? = null
         val map = response.payload as? Map<String, Any>
@@ -127,35 +133,6 @@ class LaunchViewModel : ViewModel() {
             }
         }
         return value
-    }
-
-    suspend fun fetchServerVersion(): String = withContext(Dispatchers.IO) {
-        Gateway.makeRequest(Api.ACTOR, Api.ILS_VERSION, arrayOf()) { response ->
-            response.payload as String
-        }
-    }
-
-    private suspend fun getServerVersion() = suspendCoroutine<String> { cont ->
-        Log.d(TAG, "coro: getServerVersion: start")
-        val url = Gateway.buildUrl(
-                Api.ACTOR, Api.ILS_VERSION,
-                arrayOf())
-        val start_ms = System.currentTimeMillis()
-        val r = GatewayJsonObjectRequest(
-                url,
-                Request.Priority.NORMAL,
-                Response.Listener { response ->
-                    Log.d(TAG, "coro: getServerVersion: response")
-                    val ver = response.payload as String
-                    Log.d(TAG, "coro: listener, resp:$ver")
-                    Log.logElapsedTime(TAG, start_ms, "coro: listener")
-                    cont.resumeWith(Result.success(ver))
-                },
-                Response.ErrorListener { error ->
-                    Log.d(TAG, "caught", error)
-                    cont.resumeWithException(error)
-                })
-        VolleyWrangler.getInstance().addToRequestQueue(r)
     }
 
     override fun onCleared() {

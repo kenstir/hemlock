@@ -77,12 +77,23 @@ class GatewayTest {
     }
 
     @Test
-    fun test_fetchSuspendFun() {
+    fun test_fetchServerVersion() {
         runBlocking {
             launch(Dispatchers.Main) {
                 val version: String = ActorService.fetchServerVersion()
                 Log.d(TAG, "version:$version")
                 assertTrue(version.isNotEmpty())
+            }
+        }
+    }
+
+    @Test
+    fun test_fetchOrgTypes() {
+        runBlocking {
+            launch(Dispatchers.Main) {
+                val arr = ActorService.fetchOrgTypes()
+                Log.d(TAG, "arr:$arr")
+                assertTrue(arr.size > 0)
             }
         }
     }

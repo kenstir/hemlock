@@ -21,6 +21,7 @@ package org.evergreen_ils.net
 import com.android.volley.Request
 import com.android.volley.Response
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.coroutineScope
 import org.evergreen_ils.android.App
 import org.evergreen_ils.system.Utils
 import org.opensrf.util.GatewayResponse
@@ -56,11 +57,6 @@ object Gateway {
                     try {
                         val res = block(response)
                         cont.resumeWith(Result.success(res))
-//                        if (res == null) {
-//                            cont.resumeWithException(GatewayError("Unexpected response"))
-//                        } else {
-//                            cont.resumeWith(Result.success(res))
-//                        }
                     } catch (ex: Exception) {
                         cont.resumeWithException(ex)
                     }

@@ -28,13 +28,18 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.launch
 import org.evergreen_ils.R
+import org.evergreen_ils.accountAccess.AccountUtils
 import org.evergreen_ils.accountAccess.AccountUtils.getAuthTokenFuture
 import org.evergreen_ils.android.App
 import org.evergreen_ils.system.Account
 import org.evergreen_ils.system.Analytics
 import org.evergreen_ils.system.Log
+import org.evergreen_ils.utils.ui.AppState
 import org.evergreen_ils.utils.ui.ThemeManager
 
 private const val TAG = "LaunchActivity"
@@ -161,6 +166,12 @@ class LaunchActivity : AppCompatActivity(), CoroutineScope by MainScope() {
             Analytics.log(TAG, "auth: error_msg:$error_msg")
             throw Exception(error_msg)
         }
+
+        val accountType: String = applicationContext.getString(R.string.ou_account_type)
+        val library = AccountUtils.getLibraryForAccount(applicationContext, account_name, accountType)
+        AppState.setString(AppState.LIBRARY_NAME, library.name)
+        AppState.setString(AppState.LIBRARY_URL, library.url)
+        App.setLibrary(library)
         return Account(account_name, auth_token)
     }
 }
