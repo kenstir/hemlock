@@ -53,6 +53,7 @@ public class App {
     private static int mIsDebuggable = -1;
 
     public static boolean mStarted = false;
+    private static boolean mCachedEnabled = false;
 
     private static AppBehavior behavior = null;
     private static Library library = null;
@@ -78,6 +79,8 @@ public class App {
     }
 
     public static void enableCaching(Context context) {
+        if (mCachedEnabled)
+            return;
         try {
             long httpCacheSize = 10 * 1024 * 1024; // 10 MiB
             File httpCacheDir = new File(context.getCacheDir(), "volley");//try to reuse same cache dir as volley
@@ -87,9 +90,11 @@ public class App {
         } catch (Exception httpResponseCacheNotAvailable) {
             Log.d(TAG, "HTTP response cache is unavailable.");
         }
+        mCachedEnabled = true;
     }
 
     static public void init(Context context) {
+        enableCaching(context);
         AppState.init(context);
         if (behavior == null)
             behavior = AppFactory.makeBehavior(context.getResources());
