@@ -153,6 +153,7 @@ class LaunchActivity : AppCompatActivity(), CoroutineScope by MainScope() {
     }
 
     suspend fun getAccount(): Account {
+        // get auth token
         Log.d(TAG, "auth: getAuthTokenFuture")
         val future = getAuthTokenFuture(this)
         Log.d(TAG, "auth: wait ...")
@@ -167,6 +168,7 @@ class LaunchActivity : AppCompatActivity(), CoroutineScope by MainScope() {
             throw Exception(error_msg)
         }
 
+        // turn that into a Library and Account
         val accountType: String = applicationContext.getString(R.string.ou_account_type)
         val library = AccountUtils.getLibraryForAccount(applicationContext, account_name, accountType)
         AppState.setString(AppState.LIBRARY_NAME, library.name)

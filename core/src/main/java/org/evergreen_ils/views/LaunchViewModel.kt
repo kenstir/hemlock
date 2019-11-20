@@ -33,10 +33,10 @@ import org.evergreen_ils.api.ActorService
 import org.evergreen_ils.net.Gateway
 import org.evergreen_ils.net.GatewayJsonObjectRequest
 import org.evergreen_ils.net.VolleyWrangler
-import org.evergreen_ils.system.Account
-import org.evergreen_ils.system.Analytics
-import org.evergreen_ils.system.Log
+import org.evergreen_ils.system.*
+import org.open_ils.idl.IDLParser
 import org.opensrf.util.GatewayResponse
+import java.net.URL
 import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
 
@@ -62,7 +62,8 @@ class LaunchViewModel : ViewModel() {
         viewModelScope.launch {
             try {
                 _spinner.value = true
-                var now_ms = System.currentTimeMillis()
+                val start_ms = System.currentTimeMillis()
+                var now_ms = start_ms
 
                 // FAKE NEWS
                 _status.value = "Connecting to server"
@@ -94,10 +95,11 @@ class LaunchViewModel : ViewModel() {
                     val def = async {
                         Log.d(TAG, "org:$orgID settings ... ")
                         val settingsMap = ActorService.fetchOrgSettings((orgID))
-                        val x = ActorService.parseBoolSetting(settingsMap, Api.SETTING_ORG_UNIT_NOT_PICKUP_LIB)
-                        val y = ActorService.parseBoolSetting(settingsMap, Api.SETTING_CREDIT_PAYMENTS_ALLOW)
+                        val isNotPickupLib = ActorService.parseBoolSetting(settingsMap, Api.SETTING_ORG_UNIT_NOT_PICKUP_LIB)
+                        val areCreditPaymentsAllowed = ActorService.parseBoolSetting(settingsMap, Api.SETTING_CREDIT_PAYMENTS_ALLOW)
                         Dispatchers.Main {
-                            Log.d(TAG, "org:$orgID settings ... fetched")
+                            Log.d(TAG, "org:$orgID settings ... fetched $isNotPickupLib $areCreditPaymentsAllowed")
+                            //TODO: Organization.set(orgID, isNotPickupLib, areCreditPaymentsAllowed)
                         }
                         "xyzzy"
                     }
@@ -105,11 +107,22 @@ class LaunchViewModel : ViewModel() {
                 }
                 now_ms = Log.logElapsedTime(TAG, now_ms,"coro: 2")
 
+                // load IDL
+                val url = EvergreenServer.getIDLUrl(Gateway.baseUrl)
+                Dispatchers.IO {
+                    Log.d(TAG, "fetch IDL from $url")
+                    URL(url).openStream().use {
+                        val parser = IDLParser(it)
+                        parser.parse()
+                        now_ms = Log.logElapsedTime(TAG, now_ms, "loadIDL.parse")
+                    }
+                }
+
                 // awaitAll
                 Log.d(TAG, "coro: 3: await ${defs.size} deferreds ...")
                 defs.map { it.await() }
                 Log.d(TAG, "coro: 4: await ${defs.size} deferreds ... done")
-                Log.logElapsedTime(TAG, now_ms,"coro: 4")
+                Log.logElapsedTime(TAG, start_ms,"coro: full monty")
             } catch (ex: Exception) {
                 Log.d(TAG, "caught", ex)
                 _status.value = ex.message
