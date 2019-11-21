@@ -18,27 +18,19 @@
 
 package org.evergreen_ils.views
 
-import android.accounts.AccountManager
-import android.text.TextUtils
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.android.volley.Request
-import com.android.volley.Response
-import kotlinx.coroutines.*
+import kotlinx.coroutines.launch
 import org.evergreen_ils.Api
-import org.evergreen_ils.accountAccess.AccountUtils
 import org.evergreen_ils.api.ActorService
 import org.evergreen_ils.net.Gateway
-import org.evergreen_ils.net.GatewayJsonObjectRequest
-import org.evergreen_ils.net.VolleyWrangler
-import org.evergreen_ils.system.*
+import org.evergreen_ils.system.Account
+import org.evergreen_ils.system.EvergreenServer
+import org.evergreen_ils.system.Log
 import org.open_ils.idl.IDLParser
 import org.opensrf.util.GatewayResponse
-import java.net.URL
-import kotlin.coroutines.resumeWithException
-import kotlin.coroutines.suspendCoroutine
 
 private const val TAG = "LaunchViewModel"
 
@@ -74,20 +66,6 @@ class LaunchViewModel : ViewModel() {
 
                 // load IDL
                 val url = EvergreenServer.getIDLUrl(Gateway.baseUrl, serverVersion)
-                /*
-                Dispatchers.IO {
-                    Log.d(TAG, "fetch IDL from $url")
-                    Log.logElapsedTime(TAG, now_ms, "loadIDL.init")
-                    URL(url).openStream().use {
-                        val parser = IDLParser(it)
-                        Log.logElapsedTime(TAG, now_ms, "loadIDL.openStream")
-                        parser.parse()
-                        now_ms = Log.logElapsedTime(TAG, now_ms, "loadIDL.total")
-                    }
-                }
-                 */
-
-                // load IDL - faster with Volley due to caching
                 Log.logElapsedTime(TAG, now_ms, "loadIDL.init")
                 Gateway.makeStringRequest(url) {
                     val parser = IDLParser(it.byteInputStream())
@@ -126,7 +104,7 @@ class LaunchViewModel : ViewModel() {
 
                 _status.value = "passcode secured"
                 _readyPlayerOne.value = true
-                Log.logElapsedTime(TAG, start_ms,"coro: full monty")
+                Log.logElapsedTime(TAG, start_ms,"total")
             } catch (ex: Exception) {
                 Log.d(TAG, "caught", ex)
                 _status.value = ex.message
@@ -152,10 +130,5 @@ class LaunchViewModel : ViewModel() {
             }
         }
         return value
-    }
-
-    override fun onCleared() {
-        super.onCleared()
-        Log.d(TAG, object{}.javaClass.enclosingMethod?.name)
     }
 }

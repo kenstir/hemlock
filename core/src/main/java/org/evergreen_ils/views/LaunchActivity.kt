@@ -140,16 +140,6 @@ class LaunchActivity : AppCompatActivity(), CoroutineScope by MainScope() {
         return Account(account_name, auth_token)
     }
 
-    override fun onResume() {
-        super.onResume()
-        Log.d(TAG, object{}.javaClass.enclosingMethod?.name)
-    }
-
-    override fun onPause() {
-        super.onPause()
-        Log.d(TAG, object{}.javaClass.enclosingMethod?.name)
-    }
-
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
         Log.d(TAG, object{}.javaClass.enclosingMethod?.name)
@@ -157,16 +147,6 @@ class LaunchActivity : AppCompatActivity(), CoroutineScope by MainScope() {
         // Start launching here in onAttachedToWindow, because setDefaultNightMode causes onCreate
         // to be called twice (and therefore we would launch/cancel/launch coroutines).
         launchLoginFlow()
-    }
-
-    override fun onPostCreate(savedInstanceState: Bundle?, persistentState: PersistableBundle?) {
-        super.onPostCreate(savedInstanceState, persistentState)
-        Log.d(TAG, object{}.javaClass.enclosingMethod?.name)
-    }
-
-    override fun onRestart() {
-        super.onRestart()
-        Log.d(TAG, object{}.javaClass.enclosingMethod?.name)
     }
 
     override fun onDestroy() {
