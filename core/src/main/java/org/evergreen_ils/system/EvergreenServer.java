@@ -71,10 +71,13 @@ public class EvergreenServer {
         return mUrl + relativeUrl;
     }
 
-    public static String getIDLUrl(String library_url) {
+    public static String getIDLUrl(String library_url, String cacheBustingArg) {
         ArrayList<String> params = new ArrayList<String>(32);
         for (String className : TextUtils.split(Api.IDL_CLASSES_USED, ",")) {
             params.add("class=" + className);
+        }
+        if (cacheBustingArg != null) {
+            params.add("xyzzy=" + cacheBustingArg);
         }
         StringBuilder sb = new StringBuilder(512);
         sb.append(library_url).append("/reports/fm_IDL.xml?");
@@ -119,7 +122,7 @@ public class EvergreenServer {
             Log.d(TAG, "loadIDL.start");
             mIDLLoaded = false;
             long now_ms = System.currentTimeMillis();
-            conn = getURLConnection(getIDLUrl(library_url));
+            conn = getURLConnection(getIDLUrl(library_url, null));
             IDLParser parser = new IDLParser(conn.getInputStream());
             now_ms = Log.logElapsedTime(TAG, now_ms, "loadIDL.init");
             parser.parse();

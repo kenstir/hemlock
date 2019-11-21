@@ -82,9 +82,12 @@ class LaunchActivity : AppCompatActivity(), CoroutineScope by MainScope() {
                 mProgressBar?.visibility = if (show) View.VISIBLE else View.GONE
             }
         })
-        mModel.account.observe(this, Observer {value ->
-            value?.let { account ->
-                Log.d(TAG, "observe: ${account.username}")
+        mModel.readyPlayerOne.observe(this, Observer {value ->
+            value?.let { ready ->
+                Log.d(TAG, "observe: ${ready}")
+                if (ready) {
+                    App.startApp(this)
+                }
             }
         })
 
@@ -99,17 +102,42 @@ class LaunchActivity : AppCompatActivity(), CoroutineScope by MainScope() {
             try {
                 val account = getAccount()
                 Log.d(TAG, "auth: ${account.username} ${account.authToken}")
+                App.setAccount(account)
                 mModel?.fetchData(account)
             } catch (ex: Exception) {
                 var msg = ex.message
                 if (msg.isNullOrEmpty()) msg = "Cancelled"
                 mProgressText?.text = msg
                 mRetryButton?.visibility = View.VISIBLE
-            } finally {
                 mProgressBar?.visibility = View.GONE
             }
-            Log.d(TAG, "1st launch end")
+            Log.d(TAG, "yadda end")
         }
+    }
+
+    suspend fun getAccount(): Account {
+        // get auth token
+        Log.d(TAG, "auth: getAuthTokenFuture")
+        val future = getAuthTokenFuture(this)
+        Log.d(TAG, "auth: wait ...")
+        val bnd: Bundle? = future.await()
+        Log.d(TAG, "auth: wait ... done")
+        val account_name = bnd?.getString(AccountManager.KEY_ACCOUNT_NAME)
+        val auth_token = bnd?.getString(AccountManager.KEY_AUTHTOKEN)
+        var error_msg = bnd?.getString(AccountManager.KEY_ERROR_MESSAGE)
+        if (auth_token.isNullOrEmpty() || account_name.isNullOrEmpty()) {
+            if (error_msg.isNullOrEmpty()) error_msg = "Login failed"
+            Analytics.log(TAG, "auth: error_msg:$error_msg")
+            throw Exception(error_msg)
+        }
+
+        // turn that into a Library and Account
+        val accountType: String = applicationContext.getString(R.string.ou_account_type)
+        val library = AccountUtils.getLibraryForAccount(applicationContext, account_name, accountType)
+        AppState.setString(AppState.LIBRARY_NAME, library.name)
+        AppState.setString(AppState.LIBRARY_URL, library.url)
+        App.setLibrary(library)
+        return Account(account_name, auth_token)
     }
 
     override fun onResume() {
@@ -150,30 +178,5 @@ class LaunchActivity : AppCompatActivity(), CoroutineScope by MainScope() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         Analytics.log(TAG, "onactivityresult: $requestCode $resultCode")
-    }
-
-    suspend fun getAccount(): Account {
-        // get auth token
-        Log.d(TAG, "auth: getAuthTokenFuture")
-        val future = getAuthTokenFuture(this)
-        Log.d(TAG, "auth: wait ...")
-        val bnd: Bundle? = future.await()
-        Log.d(TAG, "auth: wait ... done")
-        val account_name = bnd?.getString(AccountManager.KEY_ACCOUNT_NAME)
-        val auth_token = bnd?.getString(AccountManager.KEY_AUTHTOKEN)
-        var error_msg = bnd?.getString(AccountManager.KEY_ERROR_MESSAGE)
-        if (auth_token.isNullOrEmpty() || account_name.isNullOrEmpty()) {
-            if (error_msg.isNullOrEmpty()) error_msg = "Login failed"
-            Analytics.log(TAG, "auth: error_msg:$error_msg")
-            throw Exception(error_msg)
-        }
-
-        // turn that into a Library and Account
-        val accountType: String = applicationContext.getString(R.string.ou_account_type)
-        val library = AccountUtils.getLibraryForAccount(applicationContext, account_name, accountType)
-        AppState.setString(AppState.LIBRARY_NAME, library.name)
-        AppState.setString(AppState.LIBRARY_URL, library.url)
-        App.setLibrary(library)
-        return Account(account_name, auth_token)
     }
 }

@@ -96,19 +96,6 @@ public class SplashActivity extends AppCompatActivity implements LoadingTaskList
         Analytics.log(TAG, "onactivityresult: " + requestCode + " " + resultCode);
     }
 
-    private void startApp() {
-        App.setStarted(true);
-        updateLaunchCount();
-        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-        startActivity(intent);
-        finish();
-    }
-
-    void updateLaunchCount() {
-        int launch_count = AppState.getInt(AppState.LAUNCH_COUNT);
-        AppState.setInt(AppState.LAUNCH_COUNT, launch_count + 1);
-    }
-
     @Override
     public void onPreExecute() {
         mRetryButton.setVisibility(View.GONE);
@@ -131,7 +118,7 @@ public class SplashActivity extends AppCompatActivity implements LoadingTaskList
                 "num_accounts", accounts.length);
         mTask = null;
         if (TextUtils.equals(result, LoadingTask.TASK_OK)) {
-            startApp();
+            App.startApp(this);
         } else {
             String extra_text;
             if (!TextUtils.isEmpty(result)) {

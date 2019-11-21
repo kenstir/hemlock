@@ -25,10 +25,8 @@ import android.text.TextUtils;
 
 import org.evergreen_ils.R;
 import org.evergreen_ils.accountAccess.AccountAccess;
+import org.evergreen_ils.android.App;
 
-/**
- * Created by kenstir on 11/21/2015.
- */
 public class ActionBarUtils {
 
     public static Toolbar initActionBarForActivity(AppCompatActivity activity, String title, boolean isMainActivity) {
@@ -38,7 +36,8 @@ public class ActionBarUtils {
         ActionBar actionBar = activity.getSupportActionBar();
         if (actionBar == null)
             return toolbar;
-        String username = AccountAccess.getInstance().getUserName();
+        //String username = AccountAccess.getInstance().getUserName();
+        String username = App.getAccount().getUsername();
         if (activity.getResources().getBoolean(R.bool.admin_screenshot_mode))
             username = "janejetson";
         actionBar.setSubtitle(String.format(activity.getString(R.string.ou_activity_subtitle),

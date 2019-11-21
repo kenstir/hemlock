@@ -52,49 +52,60 @@ class LaunchViewModel : ViewModel() {
     val spinner: LiveData<Boolean>
         get() = _spinner
 
-    private val _account = MutableLiveData<Account>()
-    val account: LiveData<Account>
-        get() = _account
+    private val _readyPlayerOne = MutableLiveData<Boolean>()
+    val readyPlayerOne: LiveData<Boolean>
+        get() = _readyPlayerOne
 
     fun fetchData(account: Account) {
         if (account.authToken.isNullOrEmpty())
             return
         viewModelScope.launch {
             try {
+                // update the UI
                 _spinner.value = true
+                _status.value = "Connecting to server"
+
                 val start_ms = System.currentTimeMillis()
                 var now_ms = start_ms
 
-                // FAKE NEWS
-                _status.value = "Connecting to server"
-                Log.d(TAG, "set _account 1")
-                _account.value = account
-                delay(1_500)
+                // use serverVersion as cache-busting arg
+                val serverVersion = ActorService.fetchServerVersion()
+                now_ms = Log.logElapsedTime(TAG, now_ms, "fetchServerVersion")
 
-                // FAKE NEWS
-                _status.value = "Starting session"
-                Log.d(TAG, "set _account 2")
-                _account.value = account
-                delay(1_500)
+                // load IDL
+                val url = EvergreenServer.getIDLUrl(Gateway.baseUrl, serverVersion)
+                /*
+                Dispatchers.IO {
+                    Log.d(TAG, "fetch IDL from $url")
+                    Log.logElapsedTime(TAG, now_ms, "loadIDL.init")
+                    URL(url).openStream().use {
+                        val parser = IDLParser(it)
+                        Log.logElapsedTime(TAG, now_ms, "loadIDL.openStream")
+                        parser.parse()
+                        now_ms = Log.logElapsedTime(TAG, now_ms, "loadIDL.total")
+                    }
+                }
+                 */
 
-                // FAKE NEWS
-                Log.d(TAG, "set _account 3")
-                _account.value = account
+                // load IDL - faster with Volley due to caching
+                Log.logElapsedTime(TAG, now_ms, "loadIDL.init")
+                Gateway.makeStringRequest(url) {
+                    val parser = IDLParser(it.byteInputStream())
+                    Log.logElapsedTime(TAG, now_ms, "loadIDL.ctor")
+                    parser.parse()
+                    now_ms = Log.logElapsedTime(TAG, now_ms, "loadIDL.total")
+                }
 
-                // get server version
-//                val serverVersion = fetchServerVersion()
-
+                /*
                 // then launch a bunch of requests in parallel
                 var defs = arrayListOf<Deferred<Any>>()
                 Log.d(TAG, "coro: 2: start")
                 val settings = arrayListOf(Api.SETTING_ORG_UNIT_NOT_PICKUP_LIB,
                         Api.SETTING_CREDIT_PAYMENTS_ALLOW)
                 for (orgID in 1..50) {
-//                    val args = arrayOf<Any>(orgID, settings, account.authToken)
-                    val args = arrayOf<Any>(orgID, settings, Api.ANONYMOUS)
                     val def = async {
                         Log.d(TAG, "org:$orgID settings ... ")
-                        val settingsMap = ActorService.fetchOrgSettings((orgID))
+                        val settingsMap = ActorService.fetchOrgSettings(orgID)
                         val isNotPickupLib = ActorService.parseBoolSetting(settingsMap, Api.SETTING_ORG_UNIT_NOT_PICKUP_LIB)
                         val areCreditPaymentsAllowed = ActorService.parseBoolSetting(settingsMap, Api.SETTING_CREDIT_PAYMENTS_ALLOW)
                         Dispatchers.Main {
@@ -107,21 +118,14 @@ class LaunchViewModel : ViewModel() {
                 }
                 now_ms = Log.logElapsedTime(TAG, now_ms,"coro: 2")
 
-                // load IDL
-                val url = EvergreenServer.getIDLUrl(Gateway.baseUrl)
-                Dispatchers.IO {
-                    Log.d(TAG, "fetch IDL from $url")
-                    URL(url).openStream().use {
-                        val parser = IDLParser(it)
-                        parser.parse()
-                        now_ms = Log.logElapsedTime(TAG, now_ms, "loadIDL.parse")
-                    }
-                }
-
                 // awaitAll
                 Log.d(TAG, "coro: 3: await ${defs.size} deferreds ...")
                 defs.map { it.await() }
                 Log.d(TAG, "coro: 4: await ${defs.size} deferreds ... done")
+*/
+
+                _status.value = "passcode secured"
+                _readyPlayerOne.value = true
                 Log.logElapsedTime(TAG, start_ms,"coro: full monty")
             } catch (ex: Exception) {
                 Log.d(TAG, "caught", ex)
@@ -141,8 +145,10 @@ class LaunchViewModel : ViewModel() {
         if (map != null) {
             val o = map[setting]
             if (o != null) {
-                val setting_map = o as Map<String, *>
-                value = Api.parseBoolean(setting_map["value"])
+                val setting_map = o as? Map<String, *>
+                if (setting_map != null) {
+                    value = Api.parseBoolean(setting_map["value"])
+                }
             }
         }
         return value

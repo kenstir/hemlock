@@ -61,29 +61,18 @@ class MainActivity : BaseActivity() {
 
         setContentView(R.layout.activity_main)
 
-        EvergreenServerLoader.fetchOrgSettings(this)
-        EvergreenServerLoader.fetchSMSCarriers(this)
-        fetchUnreadMessageCount()
+//        EvergreenServerLoader.fetchOrgSettings(this)
+//        EvergreenServerLoader.fetchSMSCarriers(this)
+//        fetchUnreadMessageCount()
     }
 
-    public override fun onDestroy() {
-        super.onDestroy()
-        Log.d(TAG, "coro: onDestroy")
-    }
-
-    public override fun onPause() {
-        super.onPause()
-        Log.d(TAG, "coro: onPause")
-    }
-
-    public override fun onResume() {
-        super.onResume()
-        Log.d(TAG, "coro: onResume")
+    override fun onAttachedToWindow() {
+        super.onAttachedToWindow()
         Log.d(TAG, "coro: launch")
-        launch {
-            val response = getData()
-            Log.d(TAG, "coro: main? resp:$response")
-        }
+//        launch {
+//            val response = getData()
+//            Log.d(TAG, "coro: main? resp:$response")
+//        }
     }
 
     private suspend fun getData() = suspendCoroutine<String> { cont ->

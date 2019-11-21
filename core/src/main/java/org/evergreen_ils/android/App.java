@@ -27,11 +27,13 @@ import android.content.pm.PackageManager;
 
 import org.evergreen_ils.R;
 import org.evergreen_ils.net.VolleyWrangler;
+import org.evergreen_ils.system.Account;
 import org.evergreen_ils.system.Analytics;
 import org.evergreen_ils.system.Library;
 import org.evergreen_ils.system.Log;
 import org.evergreen_ils.utils.ui.AppState;
 import org.evergreen_ils.views.LaunchActivity;
+import org.evergreen_ils.views.MainActivity;
 
 import java.io.File;
 
@@ -57,6 +59,7 @@ public class App {
 
     private static AppBehavior behavior = null;
     private static Library library = null;
+    private static Account account = null;
 
     public static boolean getIsDebuggable(Context context) {
         if (mIsDebuggable < 0)
@@ -134,11 +137,32 @@ public class App {
         activity.finish();
     }
 
+    public static void startApp(Activity activity) {
+        setStarted(true);
+        updateLaunchCount();
+        Intent intent = new Intent(activity.getApplicationContext(), MainActivity.class);
+        activity.startActivity(intent);
+        activity.finish();
+    }
+
+    static void updateLaunchCount() {
+        int launch_count = AppState.getInt(AppState.LAUNCH_COUNT);
+        AppState.setInt(AppState.LAUNCH_COUNT, launch_count + 1);
+    }
+
     public static boolean isStarted() {
         return mStarted;
     }
 
-    public static void setStarted(boolean flag) {
+    private static void setStarted(boolean flag) {
         mStarted = flag;
+    }
+
+    public static Account getAccount() {
+        return account;
+    }
+
+    public static void setAccount(Account account) {
+        App.account = account;
     }
 }

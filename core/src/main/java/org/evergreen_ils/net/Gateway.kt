@@ -20,8 +20,8 @@ package org.evergreen_ils.net
 
 import com.android.volley.Request
 import com.android.volley.Response
+import com.android.volley.toolbox.StringRequest
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.coroutineScope
 import org.evergreen_ils.android.App
 import org.evergreen_ils.system.Utils
 import org.opensrf.util.GatewayResponse
@@ -38,7 +38,6 @@ enum class GatewayState {
 object Gateway {
     val baseUrl: String?
         get() = App.getLibrary()?.url
-    val scope: CoroutineScope? = null
 
     var state: GatewayState = GatewayState.UNINITIALIZED
 
@@ -53,6 +52,23 @@ object Gateway {
         val r = GatewayJsonObjectRequest(
                 url,
                 Request.Priority.NORMAL,
+                Response.Listener { response ->
+                    try {
+                        val res = block(response)
+                        cont.resumeWith(Result.success(res))
+                    } catch (ex: Exception) {
+                        cont.resumeWithException(ex)
+                    }
+                },
+                Response.ErrorListener { error ->
+                    cont.resumeWithException(error)
+                })
+        VolleyWrangler.getInstance().addToRequestQueue(r)
+    }
+
+    suspend fun <T> makeStringRequest(url: String, block: (String) -> T) = suspendCoroutine<T> { cont ->
+        val r = StringRequest(Request.Method.GET,
+                url,
                 Response.Listener { response ->
                     try {
                         val res = block(response)
