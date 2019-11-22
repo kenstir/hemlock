@@ -23,8 +23,10 @@ import com.android.volley.Response
 import com.android.volley.toolbox.StringRequest
 import kotlinx.coroutines.CoroutineScope
 import org.evergreen_ils.android.App
+import org.evergreen_ils.system.Log
 import org.evergreen_ils.system.Utils
 import org.opensrf.util.GatewayResponse
+import org.opensrf.util.OSRFObject
 import java.lang.Exception
 import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
@@ -34,6 +36,8 @@ enum class GatewayState {
     INITIALIZED,
     LOADED
 }
+
+private const val TAG = "Gateway"
 
 object Gateway {
     val baseUrl: String?
@@ -66,13 +70,52 @@ object Gateway {
         VolleyWrangler.getInstance().addToRequestQueue(r)
     }
 
-    suspend fun <T> makeStringRequest(url: String, block: (String) -> T) = suspendCoroutine<T> { cont ->
+    suspend fun makeStringRequest(service: String, method: String, args: Array<Any>) = suspendCoroutine<String> { cont ->
+        val url = buildUrl(service, method, args)
         val r = StringRequest(Request.Method.GET,
                 url,
                 Response.Listener { response ->
                     try {
-                        val res = block(response)
-                        cont.resumeWith(Result.success(res))
+                        cont.resumeWith(Result.success(response))
+                    } catch (ex: Exception) {
+                        cont.resumeWithException(ex)
+                    }
+                },
+                Response.ErrorListener { error ->
+                    cont.resumeWithException(error)
+                })
+        VolleyWrangler.getInstance().addToRequestQueue(r)
+    }
+
+    suspend fun makeStringRequest(url: String) = suspendCoroutine<String> { cont ->
+        val r = StringRequest(Request.Method.GET,
+                url,
+                Response.Listener { response ->
+                    try {
+                        cont.resumeWith(Result.success(response))
+                    } catch (ex: Exception) {
+                        cont.resumeWithException(ex)
+                    }
+                },
+                Response.ErrorListener { error ->
+                    cont.resumeWithException(error)
+                })
+        VolleyWrangler.getInstance().addToRequestQueue(r)
+    }
+
+    suspend fun makeArrayRequest(service: String, method: String, args: Array<Any>) = suspendCoroutine<ArrayList<OSRFObject>> { cont ->
+        val url = buildUrl(service, method, args)
+        val r = GatewayJsonObjectRequest(
+                url,
+                Request.Priority.NORMAL,
+                Response.Listener { response ->
+                    try {
+                        val res = response.payload as? ArrayList<OSRFObject>
+                        if (res != null) {
+                            cont.resumeWith(Result.success(res))
+                        } else {
+                            cont.resumeWithException(GatewayError("Unexpected network response, expected array"))
+                        }
                     } catch (ex: Exception) {
                         cont.resumeWithException(ex)
                     }

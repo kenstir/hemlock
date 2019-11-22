@@ -69,10 +69,10 @@ class MainActivity : BaseActivity() {
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
         Log.d(TAG, "coro: launch")
-//        launch {
+        launch {
 //            val response = getData()
 //            Log.d(TAG, "coro: main? resp:$response")
-//        }
+        }
     }
 
     private suspend fun getData() = suspendCoroutine<String> { cont ->

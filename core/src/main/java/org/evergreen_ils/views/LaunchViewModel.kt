@@ -22,6 +22,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import org.evergreen_ils.Api
 import org.evergreen_ils.api.ActorService
@@ -51,8 +53,8 @@ class LaunchViewModel : ViewModel() {
     fun fetchData(account: Account) {
         if (account.authToken.isNullOrEmpty())
             return
-        viewModelScope.launch {
-            try {
+        viewModelScope.async {
+            val def = async {
                 // update the UI
                 _spinner.value = true
                 _status.value = "Connecting to server"
@@ -66,17 +68,32 @@ class LaunchViewModel : ViewModel() {
 
                 // load IDL
                 val url = EvergreenServer.getIDLUrl(Gateway.baseUrl, serverVersion)
-                Log.logElapsedTime(TAG, now_ms, "loadIDL.init")
-                Gateway.makeStringRequest(url) {
-                    val parser = IDLParser(it.byteInputStream())
-                    Log.logElapsedTime(TAG, now_ms, "loadIDL.ctor")
-                    parser.parse()
-                    now_ms = Log.logElapsedTime(TAG, now_ms, "loadIDL.total")
+                val xml = Gateway.makeStringRequest(url)
+                val parser = IDLParser(xml.byteInputStream())
+                Log.logElapsedTime(TAG, now_ms, "loadIDL.get")
+                parser.parse()
+                now_ms = Log.logElapsedTime(TAG, now_ms, "loadIDL.total")
+
+                // ---------------------------------------------------------------
+                // We could move this init until later, as is done for iOS
+                // but this more closely models the existing Android app
+                // ---------------------------------------------------------------
+
+                var defs = arrayListOf<Deferred<Any>>()
+
+                // load Orgs
+                val orgsDeferred = async {
+
+                    val orgTypes = ActorService.fetchOrgTypes()
+                    Log.d(TAG, "orgTypes:$orgTypes")
+//                    val orgs = ActorService.fetchOrgTree()
+//                    Log.d(TAG, "orgs:$orgs")
+                    Log.d(TAG, "hmmm")
                 }
+                defs.add(orgsDeferred)
 
                 /*
                 // then launch a bunch of requests in parallel
-                var defs = arrayListOf<Deferred<Any>>()
                 Log.d(TAG, "coro: 2: start")
                 val settings = arrayListOf(Api.SETTING_ORG_UNIT_NOT_PICKUP_LIB,
                         Api.SETTING_CREDIT_PAYMENTS_ALLOW)
@@ -95,16 +112,19 @@ class LaunchViewModel : ViewModel() {
                     defs.add(def)
                 }
                 now_ms = Log.logElapsedTime(TAG, now_ms,"coro: 2")
+                */
 
                 // awaitAll
                 Log.d(TAG, "coro: 3: await ${defs.size} deferreds ...")
                 defs.map { it.await() }
                 Log.d(TAG, "coro: 4: await ${defs.size} deferreds ... done")
-*/
 
                 _status.value = "passcode secured"
                 _readyPlayerOne.value = true
                 Log.logElapsedTime(TAG, start_ms,"total")
+            }
+            try {
+                def.await()
             } catch (ex: Exception) {
                 Log.d(TAG, "caught", ex)
                 _status.value = ex.message

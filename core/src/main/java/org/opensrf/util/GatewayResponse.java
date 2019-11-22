@@ -20,6 +20,7 @@ package org.opensrf.util;
 
 import android.text.TextUtils;
 
+import org.evergreen_ils.net.GatewayError;
 import org.open_ils.Event;
 import org.opensrf.ShouldNotHappenException;
 
@@ -104,5 +105,23 @@ public class GatewayResponse {
             resp.failed = true;
         }
         return resp;
+    }
+
+    public static <T> T safeCast(Object o, Class<T> clazz) {
+        return clazz != null && clazz.isInstance(o) ? clazz.cast(o) : null;
+    }
+
+    public OSRFObject asObject() throws GatewayError {
+        OSRFObject obj = safeCast(payload, OSRFObject.class);
+        if (obj != null)
+            return obj;
+        throw new GatewayError("Unexpected network response: expected object");
+    }
+
+    public List<Object> asArray() throws GatewayError {
+        List<Object> objList = safeCast(payload, List.class);
+        if (objList != null)
+            return objList;
+        throw new GatewayError("Unexpected network response: expected array");
     }
 }

@@ -28,10 +28,7 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.MainScope
-import kotlinx.coroutines.cancel
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import org.evergreen_ils.R
 import org.evergreen_ils.accountAccess.AccountUtils
 import org.evergreen_ils.accountAccess.AccountUtils.getAuthTokenFuture
@@ -111,7 +108,6 @@ class LaunchActivity : AppCompatActivity(), CoroutineScope by MainScope() {
                 mRetryButton?.visibility = View.VISIBLE
                 mProgressBar?.visibility = View.GONE
             }
-            Log.d(TAG, "yadda end")
         }
     }
 

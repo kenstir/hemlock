@@ -62,17 +62,17 @@ public class GatewayJsonObjectRequest extends Request<GatewayResponse> {
     }
 
     protected Response<GatewayResponse> parseNetworkResponse(NetworkResponse response) {
-        GatewayResponse parsed;
+        GatewayResponse gatewayResponse;
         try {
             String json = new String(response.data, HttpHeaderParser.parseCharset(response.headers));
             Log.d(TAG, "[net] recv "+response.data.length+": "+json);
 //            Log.d(TAG, "[net] cached:"+mCacheHit+" method:"+getMethod()+" url:"+getUrl());
-            parsed = GatewayResponse.create(json);
-            if (parsed.failed == false) {
-                return Response.success(parsed, HttpHeaderParser.parseCacheHeaders(response));
+            gatewayResponse = GatewayResponse.create(json);
+            if (gatewayResponse.failed == false) {
+                return Response.success(gatewayResponse, HttpHeaderParser.parseCacheHeaders(response));
             } else {
-                Log.d(TAG, "parse failed", parsed.ex);
-                return Response.error(new ParseError(parsed.ex));
+                Log.d(TAG, "parse failed", gatewayResponse.ex);
+                return Response.error(new ParseError(gatewayResponse.ex));
             }
         } catch (UnsupportedEncodingException ex) {
             Log.d(TAG, "caught", ex);
