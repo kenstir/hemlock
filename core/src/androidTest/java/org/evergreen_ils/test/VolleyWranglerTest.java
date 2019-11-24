@@ -12,9 +12,9 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 
 import org.evergreen_ils.Api;
+import org.evergreen_ils.net.Gateway;
 import org.evergreen_ils.system.Log;
 import org.evergreen_ils.net.VolleyWrangler;
-import org.evergreen_ils.system.Utils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.Before;
@@ -56,6 +56,8 @@ public class VolleyWranglerTest {
         // read extra options: -e server SERVER
         Bundle b = InstrumentationRegistry.getArguments();
         mServer = b.getString("server", "https://catalog.cwmars.org");
+        Gateway.baseUrl = mServer;
+        Gateway.clientCacheKey = "42";
 
         mVolley = VolleyWrangler.getInstance(ctx);
         mVolleyErrorListener = new Response.ErrorListener() {
@@ -122,8 +124,7 @@ public class VolleyWranglerTest {
     }
 
     private String getUrl(String service, String method, Object[] objects) {
-        String path = Utils.buildGatewayUrl(service, method, objects);
-        return mServer + path;
+        return Gateway.INSTANCE.buildUrl(service, method, objects);
     }
 
     @Test

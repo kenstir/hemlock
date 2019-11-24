@@ -17,7 +17,12 @@
  */
 package org.evergreen_ils.system;
 
-public class Organization /*implements Serializable*/ {
+import org.jetbrains.annotations.NotNull;
+import org.opensrf.util.OSRFObject;
+
+import java.util.ArrayList;
+
+public class Organization {
     private static final String TAG = Organization.class.getSimpleName();
 
     public static final Integer consortiumOrgId = 1;
@@ -32,9 +37,9 @@ public class Organization /*implements Serializable*/ {
 
     public Boolean opac_visible = null;
 
-    public Boolean settings_loaded = false;
-    public Boolean setting_is_pickup_location = null; // null=not loaded
-    public Boolean setting_allow_credit_payments = null; // null=not loaded
+    public Boolean settingsLoaded = false;
+    public Boolean settingIsPickupLocation = null; // null=not loaded
+    public Boolean settingAllowCreditPayments = null; // null=not loaded
 
     public Organization() {
     }
@@ -44,8 +49,8 @@ public class Organization /*implements Serializable*/ {
     }
 
     public boolean isPickupLocation() {
-        if (setting_is_pickup_location != null) {
-            return setting_is_pickup_location;
+        if (settingIsPickupLocation != null) {
+            return settingIsPickupLocation;
         } else {
             return defaultIsPickupLocation();
         }
@@ -54,10 +59,14 @@ public class Organization /*implements Serializable*/ {
     private boolean defaultIsPickupLocation() {
         if (orgType == null)
             return true;//should not happen
-        return orgType.can_have_vols;
+        return orgType.getCanHaveVols();
     }
 
     public boolean isConsortium() {
         return parent_ou == null;
+    }
+
+    public static void loadOrgTypes(@NotNull ArrayList<OSRFObject> orgTypes) {
+
     }
 }

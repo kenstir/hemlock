@@ -136,12 +136,14 @@ public class JSONReader {
     /**
      * Builds an OSRFObject map registered OSRFHash object based on the JSON object data.
      * @param netClass The network class hint for this object.
-     * @param paylaod The actual object on the wire.
+     * @param payload The actual object on the wire.
      */
     private OSRFObject buildRegisteredObject(
         String netClass, Object payload) throws JSONException {
 
         OSRFRegistry registry = OSRFRegistry.getRegistry(netClass);
+        if (registry == null)
+            throw new JSONException("Unregistered class "+netClass);
         OSRFObject obj = new OSRFObject(registry);
  
         try {

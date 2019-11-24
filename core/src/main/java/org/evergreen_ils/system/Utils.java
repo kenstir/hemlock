@@ -19,7 +19,6 @@ package org.evergreen_ils.system;
 
 import java.io.*;
 import java.net.HttpURLConnection;
-import java.net.URI;
 import java.net.URL;
 import java.util.Map;
 
@@ -27,12 +26,11 @@ import android.text.TextUtils;
 
 import org.evergreen_ils.accountAccess.SessionNotFoundException;
 import org.evergreen_ils.auth.Const;
+import org.evergreen_ils.net.Gateway;
 import org.opensrf.Method;
-import org.opensrf.ShouldNotHappenException;
 import org.opensrf.net.http.GatewayRequest;
 import org.opensrf.net.http.HttpConnection;
 import org.opensrf.net.http.HttpRequest;
-import org.opensrf.util.JSONWriter;
 
 public class Utils {
     private static final String TAG = Utils.class.getSimpleName();
@@ -160,27 +158,6 @@ public class Utils {
             logNPE(e, service, methodName);
         }
         return null;
-    }
-
-    public static String buildGatewayUrl(String service, String method, Object[] objects) {
-        StringBuilder sb = new StringBuilder(128);
-        sb.append("/osrf-gateway-v1?service=").append(service);
-        sb.append("&method=").append(method);
-        URI uri = null;
-
-        for (Object param : objects) {
-            sb.append("&param=");
-            sb.append(new JSONWriter(param).write());
-        }
-
-        try {
-            // not using URLEncoder because it replaces ' ' with '+'.
-            uri = new URI("http", "", null, sb.toString(), null);
-        } catch (java.net.URISyntaxException ex) {
-            Analytics.logException(new ShouldNotHappenException(ex));
-        }
-
-        return uri.getRawQuery();
     }
 
     public static String safeString(String s) {

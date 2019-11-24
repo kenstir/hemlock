@@ -21,6 +21,7 @@ package org.evergreen_ils.system;
 import android.text.TextUtils;
 
 import org.evergreen_ils.Api;
+import org.evergreen_ils.net.Gateway;
 import org.open_ils.idl.IDLException;
 import org.open_ils.idl.IDLParser;
 import org.opensrf.net.http.HttpConnection;
@@ -36,10 +37,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-/** Represents the library system
- *
- * Created by kenstir on 11/7/2016.
- */
+import kotlin.NotImplementedError;
+
 public class EvergreenServer {
 
     private static final String TAG = EvergreenServer.class.getSimpleName();
@@ -69,20 +68,6 @@ public class EvergreenServer {
 
     public String getUrl(String relativeUrl) {
         return mUrl + relativeUrl;
-    }
-
-    public static String getIDLUrl(String library_url, String cacheBustingArg) {
-        ArrayList<String> params = new ArrayList<String>(32);
-        for (String className : TextUtils.split(Api.IDL_CLASSES_USED, ",")) {
-            params.add("class=" + className);
-        }
-        if (cacheBustingArg != null) {
-            params.add("xyzzy=" + cacheBustingArg);
-        }
-        StringBuilder sb = new StringBuilder(512);
-        sb.append(library_url).append("/reports/fm_IDL.xml?");
-        sb.append(TextUtils.join("&", params));
-        return sb.toString();
     }
 
     private void reset() {
@@ -116,13 +101,14 @@ public class EvergreenServer {
         return conn;
     }
 
+    // TODO: whack this
     private void loadIDL(String library_url) throws IOException, IDLException {
         HttpURLConnection conn = null;
         try {
             Log.d(TAG, "loadIDL.start");
             mIDLLoaded = false;
             long now_ms = System.currentTimeMillis();
-            conn = getURLConnection(getIDLUrl(library_url, null));
+            conn = getURLConnection(Gateway.INSTANCE.getIDLUrl(true));
             IDLParser parser = new IDLParser(conn.getInputStream());
             now_ms = Log.logElapsedTime(TAG, now_ms, "loadIDL.init");
             parser.parse();
@@ -134,23 +120,12 @@ public class EvergreenServer {
     }
 
     public void loadOrgTypes(List<OSRFObject> orgTypes) {
-        mOrgTypes = new ArrayList<>();
-        for (OSRFObject obj: orgTypes) {
-            OrgType orgType = new OrgType();
-            orgType.name = obj.getString("name");
-            orgType.id = obj.getInt("id");
-            orgType.opac_label = obj.getString("opac_label");
-            orgType.can_have_users = Api.parseBoolean(obj.getString("can_have_users"));
-            orgType.can_have_vols = Api.parseBoolean(obj.getString("can_have_vols"));
-//            orgType.parent = obj.getInt("parent");
-//            orgType.depth = obj.getInt("depth");
-            mOrgTypes.add(orgType);
-        }
+        throw new NotImplementedError();
     }
 
     private OrgType getOrgType(int id) {
         for (OrgType orgType: mOrgTypes) {
-            if (orgType.id == id) {
+            if (orgType.getId() == id) {
                 return orgType;
             }
         }
@@ -167,7 +142,7 @@ public class EvergreenServer {
         org.orgType = getOrgType(obj.getInt("ou_type"));
         org.opac_visible = Api.parseBoolean(obj.getString("opac_visible"));
         org.indentedDisplayPrefix = new String(new char[level]).replace("\0", "   ");
-        Log.d(TAG, "id="+org.id+" level="+org.level+" type="+org.orgType.id+" users="+org.orgType.can_have_users+" vols="+org.orgType.can_have_vols+" vis="+(org.opac_visible ? "1" : "0")+" site="+org.shortname+" name="+org.name);
+        Log.d(TAG, "id="+org.id+" level="+org.level+" type="+org.orgType.getId()+" users="+org.orgType.getCanHaveUsers()+" vols="+org.orgType.getCanHaveVols()+" vis="+(org.opac_visible ? "1" : "0")+" site="+org.shortname+" name="+org.name);
 
         if (org.opac_visible)
             mOrganizations.add(org);

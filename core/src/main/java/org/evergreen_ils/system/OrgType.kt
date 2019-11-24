@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Kenneth H. Cox
+ * Copyright (C) 2019 Kenneth H. Cox
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -15,18 +15,12 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
+package org.evergreen_ils.system
 
-package org.evergreen_ils.system;
-
-public class OrgType {
-    public String name = null;
-    public Integer id = null;
-//    public Integer parent = null;
-//    public Integer depth = null;
-    public String opac_label = null;
-    public boolean can_have_users = false;
-    public boolean can_have_vols = false;
-
-    public OrgType() {
-    }
-}
+data class OrgType (val id: Int,
+                    val name: String?,
+                    val opacLabel: String?,
+                    val canHaveUsers: Boolean,
+                    val canHaveVols: Boolean)
+//val parent: Int
+//val depth: Int

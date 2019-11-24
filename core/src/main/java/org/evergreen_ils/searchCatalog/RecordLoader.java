@@ -27,6 +27,7 @@ import com.android.volley.VolleyError;
 
 import org.evergreen_ils.Api;
 import org.evergreen_ils.R;
+import org.evergreen_ils.net.Gateway;
 import org.evergreen_ils.net.GatewayJsonObjectRequest;
 import org.evergreen_ils.net.VolleyWrangler;
 import org.evergreen_ils.system.EvergreenServer;
@@ -68,9 +69,9 @@ public class RecordLoader {
             responseListener.onMetadataLoaded();
         } else {
             final long start_ms = System.currentTimeMillis();
-            String url = EvergreenServer.getInstance().getUrl(Utils.buildGatewayUrl(
+            String url = Gateway.INSTANCE.buildUrl(
                     Api.SEARCH, Api.MODS_SLIM_RETRIEVE,
-                    new Object[]{record.doc_id}));
+                    new Object[]{record.doc_id});
             Log.d(TAG, "fetch.basic "+url);
             GatewayJsonObjectRequest r = new GatewayJsonObjectRequest(
                     url,
@@ -94,9 +95,9 @@ public class RecordLoader {
             responseListener.onMetadataLoaded();
         } else {
             final long start_ms = System.currentTimeMillis();
-            String url = EvergreenServer.getInstance().getUrl(Utils.buildGatewayUrl(
+            String url = Gateway.INSTANCE.buildUrl(
                     Api.PCRUD, Api.RETRIEVE_BRE,
-                    new Object[]{Api.ANONYMOUS, record.doc_id}));
+                    new Object[]{Api.ANONYMOUS, record.doc_id});
             Log.d(TAG, "fetch.marcxml "+url);
             GatewayJsonObjectRequest r = new GatewayJsonObjectRequest(
                     url,
@@ -124,9 +125,9 @@ public class RecordLoader {
             responseListener.onIconFormatLoaded();
         } else {
             final long start_ms = System.currentTimeMillis();
-            String url = EvergreenServer.getInstance().getUrl(Utils.buildGatewayUrl(
+            String url = Gateway.INSTANCE.buildUrl(
                     Api.PCRUD, Api.RETRIEVE_MRA,
-                    new Object[]{Api.ANONYMOUS, record.doc_id}));
+                    new Object[]{Api.ANONYMOUS, record.doc_id});
             Log.d(TAG, "fetch.attrs "+url);
             GatewayJsonObjectRequest r = new GatewayJsonObjectRequest(
                     url,
@@ -149,9 +150,9 @@ public class RecordLoader {
         if (record.copy_summary_loaded) {
             listener.onDataAvailable();
         } else {
-            String url = EvergreenServer.getInstance().getUrl(Utils.buildGatewayUrl(
+            String url = Gateway.INSTANCE.buildUrl(
                     Api.SEARCH, Api.COPY_COUNT,
-                    new Object[]{orgID, record.doc_id}));
+                    new Object[]{orgID, record.doc_id});
             GatewayJsonObjectRequest r = new GatewayJsonObjectRequest(
                     url,
                     Request.Priority.LOW,

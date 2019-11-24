@@ -73,15 +73,15 @@ public class EvergreenServerLoader {
     private static void parseOrgSettingsFromGatewayResponse(GatewayResponse response, final Organization org) {
         Boolean not_pickup_lib = parseBoolSetting(response, Api.SETTING_ORG_UNIT_NOT_PICKUP_LIB);
         if (not_pickup_lib != null)
-            org.setting_is_pickup_location = !not_pickup_lib;
+            org.settingIsPickupLocation = !not_pickup_lib;
         Boolean allow_credit_payments = parseBoolSetting(response, Api.SETTING_CREDIT_PAYMENTS_ALLOW);
         if (allow_credit_payments != null)
-            org.setting_allow_credit_payments = allow_credit_payments;
+            org.settingAllowCreditPayments = allow_credit_payments;
         Boolean sms_enable = parseBoolSetting(response, Api.SETTING_SMS_ENABLE);
         if (sms_enable != null)
             EvergreenServer.getInstance().setSMSEnabled(sms_enable);
 
-        org.settings_loaded = true;
+        org.settingsLoaded = true;
     }
 
     // fetch settings that we need for all orgs
@@ -105,7 +105,7 @@ public class EvergreenServerLoader {
         }
 
         for (final Organization org : orgs) {
-            if (org.settings_loaded)
+            if (org.settingsLoaded)
                 continue;
             ArrayList<String> settings = new ArrayList<>();
             settings.add(Api.SETTING_ORG_UNIT_NOT_PICKUP_LIB);

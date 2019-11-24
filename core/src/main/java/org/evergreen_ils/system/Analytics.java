@@ -21,10 +21,12 @@ package org.evergreen_ils.system;
 import android.content.Context;
 import android.text.TextUtils;
 
+import com.crashlytics.android.BuildConfig;
 import com.crashlytics.android.Crashlytics;
 import com.crashlytics.android.answers.Answers;
 import com.crashlytics.android.answers.CustomEvent;
 
+import org.evergreen_ils.net.Gateway;
 import org.opensrf.Method;
 import org.opensrf.util.GatewayResponse;
 import org.opensrf.util.OSRFObject;
@@ -47,8 +49,10 @@ public class Analytics {
     private static boolean analytics = false;
 
     public static void initialize(Context context) {
-        Fabric.with(context, new Crashlytics());
-        analytics = true;
+        if (!BuildConfig.DEBUG) { // only enable bug tracking in release version
+            Fabric.with(context, new Crashlytics());
+            analytics = true;
+        }
     }
 
     public static void initializeUnitTest() {
@@ -106,7 +110,7 @@ public class Analytics {
 
     public static String buildGatewayUrl(String service, String method, Object[] params) {
         Analytics.logVolleyRequest(service, method, params);
-        return Utils.buildGatewayUrl(service, method, params);
+        return Gateway.INSTANCE.buildUrl(service, method, params);
     }
 
     public static void logVolleyRequest(String service, String method, Object[] params) {

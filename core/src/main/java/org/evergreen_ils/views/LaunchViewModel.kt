@@ -27,6 +27,7 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import org.evergreen_ils.Api
 import org.evergreen_ils.api.ActorService
+import org.evergreen_ils.api.EvergreenService
 import org.evergreen_ils.net.Gateway
 import org.evergreen_ils.system.Account
 import org.evergreen_ils.system.EvergreenServer
@@ -50,6 +51,10 @@ class LaunchViewModel : ViewModel() {
     val readyPlayerOne: LiveData<Boolean>
         get() = _readyPlayerOne
 
+    // This is where global initialization happens: especially loading the IDL which is necessary
+    // for decoding most gateway responses.  Important notes:
+    // * server version and IDL are done synchronously and first
+    // * other initialization can happen async after that
     fun fetchData(account: Account) {
         if (account.authToken.isNullOrEmpty())
             return
@@ -62,17 +67,21 @@ class LaunchViewModel : ViewModel() {
                 val start_ms = System.currentTimeMillis()
                 var now_ms = start_ms
 
-                // use serverVersion as cache-busting arg
-                val serverVersion = ActorService.fetchServerVersion()
+                // sync: use serverVersion as cache-busting arg
+                Gateway.serverCacheKey = ActorService.fetchServerVersion()
                 now_ms = Log.logElapsedTime(TAG, now_ms, "fetchServerVersion")
 
-                // load IDL
+                // sync: load IDL
+                EvergreenService.loadIDL()
+                now_ms = Log.logElapsedTime(TAG, now_ms, "loadIDL")
+                /*
                 val url = EvergreenServer.getIDLUrl(Gateway.baseUrl, serverVersion)
                 val xml = Gateway.makeStringRequest(url)
                 val parser = IDLParser(xml.byteInputStream())
                 Log.logElapsedTime(TAG, now_ms, "loadIDL.get")
                 parser.parse()
                 now_ms = Log.logElapsedTime(TAG, now_ms, "loadIDL.total")
+                */
 
                 // ---------------------------------------------------------------
                 // We could move this init until later, as is done for iOS
@@ -83,12 +92,7 @@ class LaunchViewModel : ViewModel() {
 
                 // load Orgs
                 val orgsDeferred = async {
-
-                    val orgTypes = ActorService.fetchOrgTypes()
-                    Log.d(TAG, "orgTypes:$orgTypes")
-//                    val orgs = ActorService.fetchOrgTree()
-//                    Log.d(TAG, "orgs:$orgs")
-                    Log.d(TAG, "hmmm")
+                    EvergreenService.loadOrgTypes(ActorService.fetchOrgTypes())
                 }
                 defs.add(orgsDeferred)
 

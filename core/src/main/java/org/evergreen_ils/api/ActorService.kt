@@ -22,28 +22,28 @@ import org.evergreen_ils.Api
 import org.evergreen_ils.net.Gateway
 import org.opensrf.util.OSRFObject
 
-private const val TAG = "api"
+internal const val TAG = "api"
 
 object ActorService {
     suspend fun fetchServerVersion(): String {
-        return Gateway.makeStringRequest(Api.ACTOR, Api.ILS_VERSION, arrayOf())
-    }
-
-    suspend fun fetchOrgTypes(): ArrayList<OSRFObject> {
-        return Gateway.makeArrayRequest(Api.ACTOR, Api.ORG_TYPES_RETRIEVE, arrayOf())
-    }
-
-    suspend fun fetchOrgTree(): Any {
-        return Gateway.makeRequest(Api.ACTOR, Api.ORG_TREE_RETRIEVE, arrayOf()) { response ->
-            response.payload
+        return Gateway.fetchNoCache(Api.ACTOR, Api.ILS_VERSION, arrayOf()) { response ->
+            response.asString()
         }
+    }
+
+    suspend fun fetchOrgTypes(): List<OSRFObject> {
+        return Gateway.fetchObjectArray(Api.ACTOR, Api.ORG_TYPES_RETRIEVE, arrayOf())
+    }
+
+    suspend fun fetchOrgTree(): OSRFObject {
+        return Gateway.fetchObject(Api.ACTOR, Api.ORG_TREE_RETRIEVE, arrayOf())
     }
 
     suspend fun fetchOrgSettings(orgID: Int): Any {
         val settings = arrayListOf(Api.SETTING_ORG_UNIT_NOT_PICKUP_LIB,
                 Api.SETTING_CREDIT_PAYMENTS_ALLOW)
-        val args = arrayOf<Any>(orgID, settings, Api.ANONYMOUS)
-        return Gateway.makeRequest(Api.ACTOR, Api.ORG_UNIT_SETTING_BATCH, args) { response ->
+        val args = arrayOf<Any?>(orgID, settings, Api.ANONYMOUS)
+        return Gateway.fetch(Api.ACTOR, Api.ORG_UNIT_SETTING_BATCH, args) { response ->
             response.payload
         }
     }

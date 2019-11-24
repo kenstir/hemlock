@@ -1,5 +1,7 @@
 package org.opensrf.util;
 
+import androidx.annotation.Nullable;
+
 import java.util.Map;
 import java.util.HashMap;
 
@@ -34,6 +36,9 @@ public class OSRFObject extends HashMap<String, Object> implements OSRFSerializa
     }
 
 
+    public OSRFObject(Map<String, Object> map) { super(map); }
+
+
     /**
      * @return This object's registry
      */
@@ -59,6 +64,7 @@ public class OSRFObject extends HashMap<String, Object> implements OSRFSerializa
     }
 
     /** Returns the int value found at the given field */
+    @Nullable
     public Integer getInt(String field) {
         Object o = get(field);
         if (o == null)

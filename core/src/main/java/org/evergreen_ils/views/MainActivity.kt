@@ -40,6 +40,7 @@ import org.evergreen_ils.accountAccess.checkout.CheckoutsActivity
 import org.evergreen_ils.accountAccess.fines.FinesActivity
 import org.evergreen_ils.accountAccess.holds.HoldsActivity
 import org.evergreen_ils.android.App
+import org.evergreen_ils.net.Gateway
 import org.evergreen_ils.net.GatewayJsonObjectRequest
 import org.evergreen_ils.net.VolleyWrangler
 import org.evergreen_ils.searchCatalog.SearchActivity
@@ -76,9 +77,9 @@ class MainActivity : BaseActivity() {
     }
 
     private suspend fun getData() = suspendCoroutine<String> { cont ->
-        val url = EvergreenServer.getInstance().getUrl(Utils.buildGatewayUrl(
+        val url = Gateway.buildUrl(
                 Api.ACTOR, Api.ILS_VERSION,
-                arrayOf()))
+                arrayOf())
         val start_ms = System.currentTimeMillis()
         val r = GatewayJsonObjectRequest(
                 url,

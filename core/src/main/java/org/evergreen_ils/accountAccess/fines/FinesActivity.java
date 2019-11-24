@@ -130,7 +130,7 @@ public class FinesActivity extends BaseActivity {
         Organization home_org = (home_lib != null) ? EvergreenServer.getInstance().getOrganization(home_lib) : null;
         if (getResources().getBoolean(R.bool.ou_enable_pay_fines)
                 && home_org != null
-                && Utils.safeBool(home_org.setting_allow_credit_payments))
+                && Utils.safeBool(home_org.settingAllowCreditPayments))
         {
             pay_fines_button.setEnabled(false);
             pay_fines_button.setOnClickListener(new View.OnClickListener() {

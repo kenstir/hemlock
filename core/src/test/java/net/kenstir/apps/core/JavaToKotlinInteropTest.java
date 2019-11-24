@@ -20,12 +20,15 @@ package net.kenstir.apps.core;
 
 import org.evergreen_ils.utils.Link;
 import org.junit.Test;
+import org.opensrf.util.OSRFObject;
+
+import java.util.HashMap;
 
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-/// Tests for Java/Kotlin interop
-public class InteropTest {
+public class JavaToKotlinInteropTest {
     @Test
     public void test_Link_interop() {
         Link a = new Link("http://google.com", "Link to somewhere");
@@ -36,4 +39,12 @@ public class InteropTest {
         Link d = null;
         assertFalse(b.equals(d));
     }
+
+//    @Test
+//    public void test_x() {
+//        HashMap<String, Object> map = new HashMap<>();
+//        map.put("status", 200);
+//        OSRFObject obj = (OSRFObject) map;
+//        assertNotNull(obj);
+//    }
 }

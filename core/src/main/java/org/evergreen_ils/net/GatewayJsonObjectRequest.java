@@ -66,7 +66,7 @@ public class GatewayJsonObjectRequest extends Request<GatewayResponse> {
         try {
             String json = new String(response.data, HttpHeaderParser.parseCharset(response.headers));
             Log.d(TAG, "[net] recv "+response.data.length+": "+json);
-//            Log.d(TAG, "[net] cached:"+mCacheHit+" method:"+getMethod()+" url:"+getUrl());
+            Log.d(TAG, "[net] cached:"+mCacheHit+" method:"+getMethod()+" url:"+getUrl());
             gatewayResponse = GatewayResponse.create(json);
             if (gatewayResponse.failed == false) {
                 return Response.success(gatewayResponse, HttpHeaderParser.parseCacheHeaders(response));

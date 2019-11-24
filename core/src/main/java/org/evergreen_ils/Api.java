@@ -135,7 +135,7 @@ public class Api {
     /// general
 
     public static final String DATE_PATTERN = "yyyy-MM-dd'T'hh:mm:ssZ";
-    private static final String TAG = Api.class.getSimpleName();
+    public static final String TAG = Api.class.getSimpleName();
 
     // get date string to pass to API methods
     public static String formatDate(Date date) {

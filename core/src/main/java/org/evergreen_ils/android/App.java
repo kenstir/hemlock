@@ -26,6 +26,7 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 
 import org.evergreen_ils.R;
+import org.evergreen_ils.net.Gateway;
 import org.evergreen_ils.net.VolleyWrangler;
 import org.evergreen_ils.system.Account;
 import org.evergreen_ils.system.Analytics;
@@ -67,6 +68,17 @@ public class App {
         return mIsDebuggable > 0;
     }
 
+    public static int getVersionCode(Context context) {
+        PackageInfo pInfo = null;
+        try {
+            pInfo = context.getPackageManager().getPackageInfo(context.getPackageName(), 0);
+            return pInfo.versionCode;
+        } catch (PackageManager.NameNotFoundException e) {
+            Log.d("Log", "caught", e);
+            return 0;
+        }
+    }
+
     public static String getAppInfo(Context context) {
         PackageInfo pInfo = null;
         try {
@@ -102,6 +114,7 @@ public class App {
         if (behavior == null)
             behavior = AppFactory.makeBehavior(context.getResources());
         VolleyWrangler.init(context);
+        Gateway.clientCacheKey = Integer.toString(getVersionCode(context));
     }
 
     public static AppBehavior getBehavior() {
@@ -114,6 +127,7 @@ public class App {
 
     public static void setLibrary(Library library) {
         App.library = library;
+        Gateway.baseUrl = library.getUrl();
     }
 
     /**

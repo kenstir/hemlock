@@ -31,28 +31,33 @@ import org.evergreen_ils.net.VolleyWrangler
 import org.evergreen_ils.system.Library
 import org.evergreen_ils.system.Log
 import org.evergreen_ils.system.StdoutLogProvider
-import org.junit.Assert.*
+import org.evergreen_ils.utils.ui.AppState
+import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertTrue
 import org.junit.BeforeClass
 import org.junit.Test
 import org.junit.runner.RunWith
 
 private const val TAG = "GatewayTest"
 
-@RunWith(AndroidJUnit4::class)
+//@RunWith(AndroidJUnit4::class)
 class GatewayTest {
 
-//    private val mainThreadSurrogate = newSingleThreadContext("UI thread")
-//
-//    @Before
-//    fun setUp() {
-//        Dispatchers.setMain(mainThreadSurrogate)
-//    }
-//
-//    @After
-//    fun tearDown() {
-//        Dispatchers.resetMain() // reset main dispatcher to the original Main dispatcher
-//        mainThreadSurrogate.close()
-//    }
+    companion object {
+
+        @BeforeClass
+        @JvmStatic
+        @Throws(Exception::class)
+        fun setUpClass() {
+            Log.setProvider(StdoutLogProvider())
+            Log.d("hey", "here");
+
+            val ctx = InstrumentationRegistry.getInstrumentation().targetContext
+            VolleyWrangler.init(ctx)
+            Gateway.baseUrl = "https://kenstir.ddns.net"
+            Gateway.clientCacheKey = "42"
+        }
+    }
 
     @Test
     fun test_basic() {
@@ -60,15 +65,20 @@ class GatewayTest {
         val s = Gateway.baseUrl
         assertNotNull(s)
         val url = Gateway.buildUrl(Api.ACTOR, Api.ILS_VERSION, arrayOf())
+        print("url:$url")
         assertNotNull(url)
+        Gateway.serverCacheKey = "HEAD"
+        val url2 = Gateway.buildUrl(Api.ACTOR, Api.ILS_VERSION, arrayOf())
+        print("url:$url2")
+        assertNotNull(url2)
     }
 
     @Test
     fun test_directSuspendFun() {
         runBlocking {
-            launch(Dispatchers.Main) {
-                val version = Gateway.makeRequest(Api.ACTOR, Api.ILS_VERSION, arrayOf()) { response ->
-                    response.payload as String
+            launch(Dispatchers.IO) {
+                val version = Gateway.fetch(Api.ACTOR, Api.ILS_VERSION, arrayOf()) { response ->
+                    response.asString()
                 }
                 Log.d(TAG, "version:$version")
                 assertTrue(version.isNotEmpty())
@@ -84,32 +94,6 @@ class GatewayTest {
                 Log.d(TAG, "version:$version")
                 assertTrue(version.isNotEmpty())
             }
-        }
-    }
-
-    @Test
-    fun test_fetchOrgTypes() {
-        runBlocking {
-            launch(Dispatchers.Main) {
-                val arr = ActorService.fetchOrgTypes()
-                Log.d(TAG, "arr:$arr")
-                assertTrue(arr.size > 0)
-            }
-        }
-    }
-
-    companion object {
-
-        @BeforeClass
-        @JvmStatic
-        @Throws(Exception::class)
-        fun setUpClass() {
-            Log.setProvider(StdoutLogProvider())
-            Log.d("hey", "here");
-
-            App.setLibrary(Library("https://kenstir.ddns.net", "test"))
-            val ctx = InstrumentationRegistry.getInstrumentation().targetContext
-            VolleyWrangler.init(ctx)
         }
     }
 }

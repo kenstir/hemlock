@@ -41,6 +41,7 @@ import com.android.volley.VolleyError;
 import org.evergreen_ils.Api;
 import org.evergreen_ils.R;
 import org.evergreen_ils.android.App;
+import org.evergreen_ils.net.Gateway;
 import org.evergreen_ils.net.GatewayJsonObjectRequest;
 import org.evergreen_ils.net.VolleyWrangler;
 import org.evergreen_ils.system.EvergreenServer;
@@ -181,9 +182,9 @@ public class CopyInformationActivity extends AppCompatActivity {
     private void initCopyLocationCounts() {
         final long start_ms = System.currentTimeMillis();
         Organization org = EvergreenServer.getInstance().getOrganization(orgID);
-        String url = EvergreenServer.getInstance().getUrl(Utils.buildGatewayUrl(
+        String url = Gateway.INSTANCE.buildUrl(
                 Api.SEARCH, Api.COPY_LOCATION_COUNTS,
-                new Object[]{record.doc_id, org.id, org.level}));
+                new Object[]{record.doc_id, org.id, org.level});
         GatewayJsonObjectRequest r = new GatewayJsonObjectRequest(
                 url,
                 Request.Priority.NORMAL,

@@ -20,6 +20,7 @@ package org.opensrf.util;
 
 import android.text.TextUtils;
 
+import org.evergreen_ils.net.Gateway;
 import org.evergreen_ils.net.GatewayError;
 import org.open_ils.Event;
 import org.opensrf.ShouldNotHappenException;
@@ -27,6 +28,8 @@ import org.opensrf.ShouldNotHappenException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
+import androidx.annotation.NonNull;
 
 /**
  * Created by kenstir on 12/5/2015.
@@ -107,21 +110,42 @@ public class GatewayResponse {
         return resp;
     }
 
-    public static <T> T safeCast(Object o, Class<T> clazz) {
-        return clazz != null && clazz.isInstance(o) ? clazz.cast(o) : null;
+//    public static <T> T safeCast(Object o, Class<T> clazz) {
+//        return clazz != null && clazz.isInstance(o) ? clazz.cast(o) : null;
+//    }
+
+    public Map<String, Object> asMap() throws GatewayError {
+        try {
+            return (Map<String, Object>) payload;
+        } catch (Exception ex) {
+            throw new GatewayError("Unexpected network response: expected object");
+        }
     }
 
     public OSRFObject asObject() throws GatewayError {
-        OSRFObject obj = safeCast(payload, OSRFObject.class);
-        if (obj != null)
-            return obj;
-        throw new GatewayError("Unexpected network response: expected object");
+        try {
+            return (OSRFObject) payload;
+        } catch (Exception ex) {
+            throw new GatewayError("Unexpected network response: expected object");
+        }
     }
 
-    public List<Object> asArray() throws GatewayError {
-        List<Object> objList = safeCast(payload, List.class);
-        if (objList != null)
-            return objList;
-        throw new GatewayError("Unexpected network response: expected array");
+    public List<OSRFObject> asObjectArray() throws GatewayError {
+        try {
+            return (List<OSRFObject>) payload;
+        } catch (Exception ex) {
+            throw new GatewayError("Unexpected network response: expected array");
+        }
+    }
+
+    public @NonNull String asString() throws GatewayError {
+        try {
+            if (payload == null) {
+                return "";
+            }
+            return (String) payload;
+        } catch (Exception ex) {
+            throw new GatewayError("Unexpected network response: expected string");
+        }
     }
 }
