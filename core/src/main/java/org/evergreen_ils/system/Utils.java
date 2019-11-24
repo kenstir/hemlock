@@ -36,52 +36,6 @@ public class Utils {
     private static final String TAG = Utils.class.getSimpleName();
     private static HttpURLConnection mConn = null;
 
-    /**
-     * Gets the net page content.
-     * 
-     * @param url
-     *            the url of the page to be retrieved
-     * @return the net page content
-     */
-    public static String fetchUrl(String url) throws IOException {
-
-        StringBuilder str = new StringBuilder();
-        String line;
-        if (mConn != null) mConn.disconnect();
-
-        try {
-            URL url2 = new URL(url);
-            mConn = (HttpURLConnection) url2.openConnection();
-            BufferedReader in = new BufferedReader(new InputStreamReader(mConn.getInputStream()));
-            while ((line = in.readLine()) != null) {
-                str.append(line);
-            }
-            in.close();
-        } finally {
-            if (mConn != null) mConn.disconnect();
-        }
-
-        return str.toString();
-    }
-
-    /*
-    public static InputStream getNetInputStream(String url) throws IOException {
-
-        if (mConn != null) mConn.disconnect();
-
-        URL url2 = new URL(url);
-        mConn = (HttpURLConnection) url2.openConnection();
-        return mConn.getInputStream();
-    }
-
-    public static void closeNetInputStream() {
-        if (mConn != null) {
-            mConn.disconnect();
-            mConn = null;
-        }
-    }
-    */
-
     public static String getResponseTextcode(Object response) {
         String textcode = null;
         try {
@@ -89,15 +43,6 @@ public class Utils {
         } catch (Exception e) {
         }
         return textcode;
-    }
-
-    private static void logNPE(NullPointerException e, String service, String methodName) {
-        // I know it's bad form to catch NPE.  But until I implement some kind of on-demand IDL parsing,
-        // this is what happens when the JSONReader tries to parse a response of an unregistered class.
-        // Crash if debugMode, fail if not.
-        Analytics.log("unregistered type from service "+service+" method "+methodName);
-        Analytics.logException(e);
-        throw(e);
     }
 
     public static Object doRequest(HttpConnection conn, String service,
@@ -114,13 +59,10 @@ public class Utils {
         HttpRequest req = new GatewayRequest(conn, service, method).send();
         Object resp = null;
 
-        try {
-            resp = req.recv();
-            Analytics.logResponse(resp);
-            Log.logElapsedTime(TAG, now_ms, "doRequest "+methodName);
-        } catch (NullPointerException e) {
-            logNPE(e, service, methodName);
-        }
+        resp = req.recv();
+        Analytics.logResponse(resp);
+        Log.logElapsedTime(TAG, now_ms, "doRequest "+methodName);
+
         if (resp != null) {
             String textcode = getResponseTextcode(resp);
             if (TextUtils.equals(textcode, "NO_SESSION")) {
@@ -148,15 +90,12 @@ public class Utils {
         HttpRequest req = new GatewayRequest(conn, service, method).send();
         Object resp;
 
-        try {
-            while ((resp = req.recv()) != null) {
-                Analytics.logResponse(resp);
-                Log.logElapsedTime(TAG, now_ms, "doRequest "+methodName);
-                return resp;
-            }
-        } catch (NullPointerException e) {
-            logNPE(e, service, methodName);
+        while ((resp = req.recv()) != null) {
+            Analytics.logResponse(resp);
+            Log.logElapsedTime(TAG, now_ms, "doRequest "+methodName);
+            return resp;
         }
+
         return null;
     }
 

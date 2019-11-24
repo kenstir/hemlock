@@ -51,6 +51,7 @@ import org.evergreen_ils.Result;
 import org.evergreen_ils.accountAccess.AccountAccess;
 import org.evergreen_ils.accountAccess.SessionNotFoundException;
 import org.evergreen_ils.android.App;
+import org.evergreen_ils.api.EvergreenService;
 import org.evergreen_ils.searchCatalog.RecordInfo;
 import org.evergreen_ils.system.EvergreenServer;
 import org.evergreen_ils.system.Organization;
@@ -181,8 +182,8 @@ public class PlaceHoldActivity extends AppCompatActivity {
                     thaw_date_s = Api.formatDate(thaw_date);
 
                 int selectedOrgID = -1;
-                if (eg.getOrganizations().size() > selectedOrgPos)
-                    selectedOrgID = eg.getOrganizations().get(selectedOrgPos).id;
+                if (EvergreenService.Companion.getOrgs().size() > selectedOrgPos)
+                    selectedOrgID = EvergreenService.Companion.getOrgs().get(selectedOrgPos).id;
                 int selectedSMSCarrierID = -1;
                 if (eg.getSMSCarriers().size() > selectedSMSPos)
                     selectedSMSCarrierID = eg.getSMSCarriers().get(selectedSMSPos).id;
@@ -245,8 +246,8 @@ public class PlaceHoldActivity extends AppCompatActivity {
         if (sms_notification.isChecked()) notify.add("sms");
         String notifyTypes = TextUtils.join("|", notify);
         try {
-            Organization pickup_org = eg.getOrganizations().get(selectedOrgPos);
-            Organization home_org = eg.getOrganization(AccountAccess.getInstance().getHomeLibraryID());
+            Organization pickup_org = EvergreenService.Companion.getOrgs().get(selectedOrgPos);
+            Organization home_org = EvergreenService.Companion.findOrg(AccountAccess.getInstance().getHomeLibraryID());
             String pickup_val = pickupEventValue(pickup_org, home_org);
             Analytics.logEvent("Place Hold: Execute",
                     "result", result,
@@ -262,7 +263,7 @@ public class PlaceHoldActivity extends AppCompatActivity {
         placeHold.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                Organization selectedOrg = eg.getOrganizations().get(selectedOrgPos);
+                Organization selectedOrg = EvergreenService.Companion.getOrgs().get(selectedOrgPos);
                 if (!selectedOrg.isPickupLocation()) {
                     logPlaceHoldResult("not_pickup_location");
                     AlertDialog.Builder builder = new AlertDialog.Builder(PlaceHoldActivity.this);
@@ -433,8 +434,8 @@ public class PlaceHoldActivity extends AppCompatActivity {
     private void initOrgSpinner() {
         Integer defaultLibraryID = AccountAccess.getInstance().getDefaultPickupLibraryID();
         ArrayList<String> list = new ArrayList<>();
-        for (int i = 0; i < eg.getOrganizations().size(); i++) {
-            Organization org = eg.getOrganizations().get(i);
+        for (int i = 0; i < EvergreenService.Companion.getOrgs().size(); i++) {
+            Organization org = EvergreenService.Companion.getOrgs().get(i);
             list.add(org.getTreeDisplayName());
             if (org.id.equals(defaultLibraryID)) {
                 selectedOrgPos = i;
@@ -443,7 +444,7 @@ public class PlaceHoldActivity extends AppCompatActivity {
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, R.layout.org_item_layout, list) {
             @Override
             public boolean isEnabled(int pos) {
-                Organization org = eg.getOrganizations().get(pos);
+                Organization org = EvergreenService.Companion.getOrgs().get(pos);
                 return org.isPickupLocation();
             }
 

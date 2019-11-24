@@ -22,6 +22,7 @@ package org.evergreen_ils.accountAccess.holds;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 import android.view.MenuItem;
 import android.widget.*;
@@ -30,6 +31,7 @@ import org.evergreen_ils.R;
 import org.evergreen_ils.accountAccess.AccountAccess;
 import org.evergreen_ils.accountAccess.SessionNotFoundException;
 import org.evergreen_ils.android.App;
+import org.evergreen_ils.api.EvergreenService;
 import org.evergreen_ils.system.Analytics;
 import org.evergreen_ils.system.EvergreenServer;
 import org.evergreen_ils.system.Log;
@@ -220,8 +222,8 @@ public class HoldDetailsActivity extends BaseActivity {
         });
 
         ArrayList<String> list = new ArrayList<String>();
-        for (int i = 0; i < eg.getInstance().getOrganizations().size(); i++) {
-            Organization org = eg.getInstance().getOrganizations().get(i);
+        for (int i = 0; i < EvergreenService.Companion.getOrgs().size(); i++) {
+            Organization org = EvergreenService.Companion.getOrgs().get(i);
             list.add(org.getTreeDisplayName());
             if (org.id == record.pickup_lib) {
                 selectedOrgPos = i;
@@ -299,13 +301,13 @@ public class HoldDetailsActivity extends BaseActivity {
                     thaw_date_s = Api.formatDate(thaw_date);
 
                 try {
-                    accountAccess.updateHold(record.ahr, eg.getInstance().getOrganizations().get(selectedOrgPos).id,
+                    accountAccess.updateHold(record.ahr, EvergreenService.Companion.getOrgs().get(selectedOrgPos).id,
                             suspendHold.isChecked(), expire_date_s, thaw_date_s);
                 } catch (SessionNotFoundException e) {
                     try {
                         if (accountAccess.reauthenticate(HoldDetailsActivity.this))
                             accountAccess.updateHold(record.ahr,
-                                    eg.getInstance().getOrganizations().get(selectedOrgPos).id,
+                                    EvergreenService.Companion.getOrgs().get(selectedOrgPos).id,
                                     suspendHold.isChecked(), expire_date_s, thaw_date_s);
                     } catch (Exception eauth) {
                         Log.d(TAG, "Exception in reAuth");

@@ -43,6 +43,7 @@ import org.evergreen_ils.accountAccess.bookbags.BookBag;
 import org.evergreen_ils.accountAccess.bookbags.BookBagUtils;
 import org.evergreen_ils.accountAccess.holds.PlaceHoldActivity;
 import org.evergreen_ils.android.App;
+import org.evergreen_ils.api.EvergreenService;
 import org.evergreen_ils.net.VolleyWrangler;
 import org.evergreen_ils.searchCatalog.CopyInformationActivity;
 import org.evergreen_ils.searchCatalog.RecordInfo;
@@ -222,7 +223,7 @@ public class DetailsFragment extends Fragment {
     }
 
     private void launchOnlineAccess() {
-        Organization org = EvergreenServer.getInstance().getOrganization(orgID);
+        Organization org = EvergreenService.Companion.findOrg(orgID);
         final List<Link> links = App.getBehavior().getOnlineLocations(record, org.shortname);
         if (links == null || links.size() == 0)
             return; // TODO: alert
@@ -297,7 +298,7 @@ public class DetailsFragment extends Fragment {
         onlineAccessButton.setEnabled(true);
 
         if (is_online_resource) {
-            Organization org = EvergreenServer.getInstance().getOrganization(orgID);
+            Organization org = EvergreenService.Companion.findOrg(orgID);
             List<Link> links = App.getBehavior().getOnlineLocations(record, org.shortname);
             Log.d(TAG, "yyy: updateButtonViews: title:"+record.title+" links:"+links.size());
             if (links == null || links.isEmpty()) {

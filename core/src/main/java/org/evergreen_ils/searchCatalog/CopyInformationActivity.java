@@ -41,6 +41,7 @@ import com.android.volley.VolleyError;
 import org.evergreen_ils.Api;
 import org.evergreen_ils.R;
 import org.evergreen_ils.android.App;
+import org.evergreen_ils.api.EvergreenService;
 import org.evergreen_ils.net.Gateway;
 import org.evergreen_ils.net.GatewayJsonObjectRequest;
 import org.evergreen_ils.net.VolleyWrangler;
@@ -100,7 +101,7 @@ public class CopyInformationActivity extends AppCompatActivity {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                     CopyLocationCounts record = (CopyLocationCounts) lv.getItemAtPosition(position);
-                    String url = EvergreenServer.getInstance().getOrganizationLibraryInfoPageUrl(record.org_id);
+                    String url = EvergreenService.Companion.getOrgInfoPageUrl(record.org_id);
                     startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
                 }
             });
@@ -146,7 +147,7 @@ public class CopyInformationActivity extends AppCompatActivity {
 
         copyInfoRecords.clear();
         for (CopyLocationCounts info: copyLocationCountsList) {
-            Organization org = eg.getOrganization(info.org_id);
+            Organization org = EvergreenService.Companion.findOrg(info.org_id);
             // if a branch is not opac visible, its copies should not be visible
             if (org != null && org.opac_visible) {
                 copyInfoRecords.add(info);
@@ -158,10 +159,10 @@ public class CopyInformationActivity extends AppCompatActivity {
             Collections.sort(copyInfoRecords, new Comparator<CopyLocationCounts>() {
                 @Override
                 public int compare(CopyLocationCounts a, CopyLocationCounts b) {
-                    Organization a_org = eg.getOrganization(a.org_id);
-                    Organization b_org = eg.getOrganization(b.org_id);
-                    String a_system_name = eg.getOrganizationName(a_org.parent_ou);
-                    String b_system_name = eg.getOrganizationName(b_org.parent_ou);
+                    Organization a_org = EvergreenService.Companion.findOrg(a.org_id);
+                    Organization b_org = EvergreenService.Companion.findOrg(b.org_id);
+                    String a_system_name = EvergreenService.Companion.getOrgNameSafe(a_org.parent_ou);
+                    String b_system_name = EvergreenService.Companion.getOrgNameSafe(b_org.parent_ou);
                     int system_cmp = safeCompareTo(a_system_name, b_system_name);
                     if (system_cmp != 0)
                         return system_cmp;
@@ -172,7 +173,7 @@ public class CopyInformationActivity extends AppCompatActivity {
             Collections.sort(copyInfoRecords, new Comparator<CopyLocationCounts>() {
                 @Override
                 public int compare(CopyLocationCounts a, CopyLocationCounts b) {
-                    return eg.getOrganizationName(a.org_id).compareTo(eg.getOrganizationName(b.org_id));
+                    return EvergreenService.Companion.getOrgNameSafe(a.org_id).compareTo(EvergreenService.Companion.getOrgNameSafe(b.org_id));
                 }
             });
         }
@@ -181,7 +182,7 @@ public class CopyInformationActivity extends AppCompatActivity {
 
     private void initCopyLocationCounts() {
         final long start_ms = System.currentTimeMillis();
-        Organization org = EvergreenServer.getInstance().getOrganization(orgID);
+        Organization org = EvergreenService.Companion.findOrg(orgID);
         String url = Gateway.INSTANCE.buildUrl(
                 Api.SEARCH, Api.COPY_LOCATION_COUNTS,
                 new Object[]{record.doc_id, org.id, org.level});
@@ -244,15 +245,14 @@ public class CopyInformationActivity extends AppCompatActivity {
             copyLocationText = (TextView) row.findViewById(R.id.copy_information_copy_location);
             copyStatusesText = (TextView) row.findViewById(R.id.copy_information_statuses);
 
-            final EvergreenServer eg = EvergreenServer.getInstance();
-            Organization org = eg.getOrganization(item.org_id);
+            Organization org = EvergreenService.Companion.findOrg(item.org_id);
             if (groupBySystem) {
-                majorLocationText.setText(eg.getOrganizationName(org.parent_ou));
-                //minorLocationText.setText(eg.getOrganizationName(item.org_id));
-                String url = eg.getOrganizationLibraryInfoPageUrl(item.org_id);
+                majorLocationText.setText(EvergreenService.Companion.getOrgNameSafe(org.parent_ou));
+                //minorLocationText.setText(EvergreenService.Companion.getOrgNameSafe(item.org_id));
+                String url = EvergreenService.Companion.getOrgInfoPageUrl(item.org_id);
                 TextViewUtils.setTextHtml(minorLocationText, TextViewUtils.makeLinkHtml(url, org.name));
             } else {
-                majorLocationText.setText(eg.getOrganizationName(item.org_id));
+                majorLocationText.setText(EvergreenService.Companion.getOrgNameSafe(item.org_id));
                 minorLocationText.setVisibility(View.GONE);
             }
             copyCallNumberText.setText(item.getCallNumber());

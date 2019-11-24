@@ -32,6 +32,7 @@ import org.evergreen_ils.R;
 import org.evergreen_ils.accountAccess.AccountAccess;
 import org.evergreen_ils.accountAccess.AccountUtils;
 import org.evergreen_ils.accountAccess.SessionNotFoundException;
+import org.evergreen_ils.api.EvergreenService;
 import org.evergreen_ils.searchCatalog.RecordDetails;
 import org.evergreen_ils.searchCatalog.RecordInfo;
 import org.evergreen_ils.system.Analytics;
@@ -127,7 +128,7 @@ public class FinesActivity extends BaseActivity {
 
     private void initPayFinesButton() {
         Integer home_lib = AccountAccess.getInstance().getHomeLibraryID();
-        Organization home_org = (home_lib != null) ? EvergreenServer.getInstance().getOrganization(home_lib) : null;
+        Organization home_org = EvergreenService.Companion.findOrg(home_lib);
         if (getResources().getBoolean(R.bool.ou_enable_pay_fines)
                 && home_org != null
                 && Utils.safeBool(home_org.settingAllowCreditPayments))

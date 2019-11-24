@@ -21,6 +21,7 @@ package org.evergreen_ils.system;
 import android.text.TextUtils;
 
 import org.evergreen_ils.Api;
+import org.evergreen_ils.api.EvergreenService;
 import org.evergreen_ils.net.Gateway;
 import org.open_ils.idl.IDLException;
 import org.open_ils.idl.IDLParser;
@@ -44,14 +45,9 @@ public class EvergreenServer {
     private static final String TAG = EvergreenServer.class.getSimpleName();
     private static EvergreenServer mInstance = null;
 
-    private String mUrl = null;
     private HttpConnection mConn = null;
-    private boolean mIDLLoaded = false;
-    private ArrayList<OrgType> mOrgTypes = new ArrayList<>();
-    private ArrayList<Organization> mOrganizations = new ArrayList<>();
     private ArrayList<SMSCarrier> mSMSCarriers = new ArrayList<>();
     private Boolean mIsSMSEnabled = null;
-    private LinkedHashMap<String, String> mCopyStatuses = new LinkedHashMap<>();
 
     private EvergreenServer() {
     }
@@ -63,25 +59,23 @@ public class EvergreenServer {
     }
 
     public String getUrl() {
-        return mUrl;
+        return Gateway.baseUrl;
     }
 
     public String getUrl(String relativeUrl) {
-        return mUrl + relativeUrl;
+        return Gateway.baseUrl + relativeUrl;
     }
 
     private void reset() {
-        mUrl = null;
         mConn = null;
-        mIDLLoaded = false;
-        mOrgTypes = null;
-        mOrganizations = new ArrayList<>();
         mSMSCarriers = new ArrayList<>();
         mIsSMSEnabled = null;
     }
 
     public HttpConnection gatewayConnection() {
-        return mConn;
+        synchronized (this) {
+            return mConn;
+        }
     }
 
     private HttpURLConnection getURLConnection(String url) throws IOException {
@@ -89,77 +83,6 @@ public class EvergreenServer {
         HttpURLConnection conn = (HttpURLConnection) url2.openConnection();
         conn.setUseCaches(false);
         return conn;
-    }
-
-    private OrgType getOrgType(int id) {
-        for (OrgType orgType: mOrgTypes) {
-            if (orgType.getId() == id) {
-                return orgType;
-            }
-        }
-        return null;
-    }
-
-    public ArrayList<Organization> getOrganizations() {
-        return mOrganizations;
-    }
-
-    public Organization getOrganization(Integer id) {
-        // ensure that getOrganization(null) returns null
-        if (id != null) {
-            for (Organization o : mOrganizations) {
-                if (o.id.equals(id)) {
-                    return o;
-                }
-            }
-        }
-        return null;
-    }
-
-    public String getOrganizationName(Integer id) {
-        Organization org = getOrganization(id);
-        if (org == null) {
-            return "";
-        } else {
-            return org.name;
-        }
-    }
-
-    public Organization getOrganizationByShortName(String orgShortName) {
-        if (orgShortName != null) {
-            for (Organization o : mOrganizations) {
-                if (o.shortname.equals(orgShortName)) {
-                    return o;
-                }
-            }
-        }
-        return null;
-    }
-
-    // Return the short names of the org itself and every level up to the consortium.
-    // This is used to implement "located URIs".
-    public ArrayList<String> getOrganizationAncestry(String orgShortName) {
-        ArrayList<String> orgShortNames = new ArrayList<>();
-        Organization org = getOrganizationByShortName(orgShortName);
-        while (org != null) {
-            orgShortNames.add(org.shortname);
-            org = getOrganization(org.parent_ou);
-        }
-        return orgShortNames;
-    }
-
-    public String getOrganizationLibraryInfoPageUrl(Integer id) {
-        Organization org = getOrganization(id);
-        if (org == null) {
-            return "";
-        } else {
-            // jump past the header stuff to the library info
-            // #content-wrapper works only sometimes
-            // ?#content-wrapper no better
-            // /?#main-content no better
-            // trying #main-content
-            return getUrl("/eg/opac/library/" + org.shortname + "#main-content");
-        }
     }
 
     public void loadSMSCarriers(List<OSRFObject> carriers) {

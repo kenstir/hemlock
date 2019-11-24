@@ -26,6 +26,7 @@ import java.util.Map;
 
 import org.evergreen_ils.Api;
 import org.evergreen_ils.R;
+import org.evergreen_ils.api.EvergreenService;
 import org.evergreen_ils.system.Analytics;
 import org.evergreen_ils.system.EvergreenServer;
 import org.evergreen_ils.system.Log;
@@ -102,30 +103,19 @@ public class HoldRecord implements Serializable {
     }
 
     private String getTransitFrom() {
-        try {
-            OSRFObject transit = (OSRFObject) ahr.get("transit");
-            if (transit == null) return null;
-            EvergreenServer eg = EvergreenServer.getInstance();
-            Integer source = transit.getInt("source");
-            if (source == null) return null;
-            return eg.getOrganizationName(source);
-        } catch (Exception ex) {
-            Log.d(TAG, "caught", ex);
-            return null;
-        }
+        OSRFObject transit = (OSRFObject) ahr.get("transit");
+        if (transit == null) return null;
+        Integer source = transit.getInt("source");
+        if (source == null) return null;
+        return EvergreenService.Companion.getOrgNameSafe(source);
     }
 
     private String getTransitSince() {
-        try {
-            OSRFObject transit = (OSRFObject) ahr.get("transit");
-            if (transit == null) return null;
-            String sent = transit.getString("source_send_time");
-            Date date = Api.parseDate(sent);
-            return formatDateTime(date);
-        } catch (Exception ex) {
-            Log.d(TAG, "caught", ex);
-            return null;
-        }
+        OSRFObject transit = (OSRFObject) ahr.get("transit");
+        if (transit == null) return null;
+        String sent = transit.getString("source_send_time");
+        Date date = Api.parseDate(sent);
+        return formatDateTime(date);
     }
 
     // Retreive hold status in text

@@ -32,6 +32,7 @@ import org.evergreen_ils.accountAccess.bookbags.BookBag;
 import org.evergreen_ils.accountAccess.bookbags.BookBagUtils;
 import org.evergreen_ils.accountAccess.holds.PlaceHoldActivity;
 import org.evergreen_ils.android.App;
+import org.evergreen_ils.api.EvergreenService;
 import org.evergreen_ils.barcodescan.CaptureActivity;
 import org.evergreen_ils.system.Analytics;
 import org.evergreen_ils.system.EvergreenServer;
@@ -223,7 +224,7 @@ public class SearchActivity extends BaseActivity {
                 searchResults = search.getSearchResults(text, getSearchClass(), getSearchFormatCode(), getString(R.string.ou_sort_by), 0);
                 try {
                     Organization search_org = search.selectedOrganization;
-                    Organization home_org = eg.getOrganization(AccountAccess.getInstance().getHomeLibraryID());
+                    Organization home_org = EvergreenService.Companion.findOrg(AccountAccess.getInstance().getHomeLibraryID());
                     String search_org_val = TextUtils.equals(search_org.name, home_org.name) ? "home" :
                             ((search_org.isConsortium()) ? search_org.shortname : "other");
                     Analytics.logEvent("Search: Execute",
@@ -266,8 +267,8 @@ public class SearchActivity extends BaseActivity {
         int selectedOrgPos = 0;
         Integer defaultLibraryID = AccountAccess.getInstance().getDefaultSearchLibraryID();
         ArrayList<String> list = new ArrayList<>();
-        for (int i = 0; i < eg.getInstance().getOrganizations().size(); i++) {
-            Organization org = eg.getInstance().getOrganizations().get(i);
+        for (int i = 0; i < EvergreenService.Companion.getOrgs().size(); i++) {
+            Organization org = EvergreenService.Companion.getOrgs().get(i);
             list.add(org.getTreeDisplayName());
             if (org.id.equals(defaultLibraryID)) {
                 selectedOrgPos = i;
@@ -276,11 +277,11 @@ public class SearchActivity extends BaseActivity {
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, R.layout.org_item_layout, list);
         orgSpinner.setAdapter(adapter);
         orgSpinner.setSelection(selectedOrgPos);
-        search.selectOrganisation(eg.getInstance().getOrganizations().get(selectedOrgPos));
+        search.selectOrganisation(EvergreenService.Companion.getOrgs().get(selectedOrgPos));
         orgSpinner.setOnItemSelectedListener(new OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> arg0, View arg1, int ID, long arg3) {
-                search.selectOrganisation(eg.getInstance().getOrganizations().get(ID));
+                search.selectOrganisation(EvergreenService.Companion.getOrgs().get(ID));
             }
 
             @Override

@@ -27,6 +27,7 @@ import com.android.volley.VolleyError;
 
 import org.evergreen_ils.Api;
 import org.evergreen_ils.accountAccess.AccountAccess;
+import org.evergreen_ils.api.EvergreenService;
 import org.evergreen_ils.net.GatewayJsonObjectRequest;
 import org.evergreen_ils.net.VolleyWrangler;
 import org.opensrf.util.GatewayResponse;
@@ -89,12 +90,13 @@ public class EvergreenServerLoader {
         startVolley();
         final EvergreenServer eg = EvergreenServer.getInstance();
         final AccountAccess ac = AccountAccess.getInstance();
-        final Organization home_org = eg.getOrganization(ac.getHomeLibraryID());
-        final Organization pickup_org = eg.getOrganization(ac.getDefaultPickupLibraryID());
+        final Organization home_org = EvergreenService.Companion.findOrg(ac.getHomeLibraryID());
+        final Organization pickup_org = EvergreenService.Companion.findOrg(ac.getDefaultPickupLibraryID());
 
         // To minimize risk of race condition, load home and pickup orgs first.
         // Use a clone so we don't screw up the search org spinner.
-        ArrayList<Organization> orgs = (ArrayList<Organization>) eg.getOrganizations().clone();
+        // TODO: replace with coroutines
+        ArrayList<Organization> orgs = new ArrayList<>();//(ArrayList<Organization>) EvergreenService.Companion.getOrgs().clone();
         if (home_org != null) {
             orgs.remove(home_org);
             orgs.add(0, home_org);

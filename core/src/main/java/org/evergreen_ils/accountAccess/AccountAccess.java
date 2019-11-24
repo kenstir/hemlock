@@ -29,6 +29,7 @@ import org.evergreen_ils.accountAccess.bookbags.BookBagItem;
 import org.evergreen_ils.accountAccess.checkout.CircRecord;
 import org.evergreen_ils.accountAccess.fines.FinesRecord;
 import org.evergreen_ils.accountAccess.holds.HoldRecord;
+import org.evergreen_ils.api.EvergreenService;
 import org.evergreen_ils.auth.Const;
 import org.evergreen_ils.system.EvergreenServer;
 import org.evergreen_ils.system.Log;
@@ -116,13 +117,6 @@ public class AccountAccess {
         if (defaultSearchLibraryID != null)
             return defaultSearchLibraryID;
         return homeLibraryID;
-    }
-
-    public static String safeGetOrganizationShortName(Integer orgID) {
-        if (orgID == null) return "";
-        Organization org = EvergreenServer.getInstance().getOrganization(orgID);
-        if (org == null) return "!";
-        return org.shortname;
     }
 
     public boolean getDefaultEmailNotification() {
@@ -229,9 +223,9 @@ public class AccountAccess {
             Log.d(TAG, "caught", e);
         }
         Analytics.logEvent("Account: Retrieve Session",
-                "home_org", safeGetOrganizationShortName(homeLibraryID),
-                "pickup_org", safeGetOrganizationShortName(defaultPickupLibraryID),
-                "search_org", safeGetOrganizationShortName(defaultSearchLibraryID),
+                "home_org", EvergreenService.Companion.getOrgShortNameSafe(homeLibraryID),
+                "pickup_org", EvergreenService.Companion.getOrgShortNameSafe(defaultPickupLibraryID),
+                "search_org", EvergreenService.Companion.getOrgShortNameSafe(defaultSearchLibraryID),
                 "hold_notify", safeString(holdNotifySetting));
         Log.d(TAG, "done fleshing user settings");
     }

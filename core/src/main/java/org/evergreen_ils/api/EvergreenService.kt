@@ -112,6 +112,38 @@ class EvergreenService {
             Log.d(TAG, "loadOrgs: ${orgs.size} orgs")
         }
 
+        fun findOrg(id: Int): Organization? = orgs.firstOrNull { it.id == id }
+
+        fun getOrgShortNameSafe(id: Int): String = findOrg(id)?.shortname ?: "?"
+
+        fun getOrgNameSafe(id: Int): String = findOrg(id)?.name ?: "?"
+
+        fun findOrgByShortName(shortName: String): Organization? = orgs.firstOrNull { it.shortname == shortName }
+
+        // Return the short names of the org itself and every level up to the consortium.
+        // This is used to implement "located URIs".
+        fun getOrgAncestry(shortName: String): List<String> {
+            val ancestry = mutableListOf<String>()
+            var org = findOrgByShortName(shortName)
+            while (org != null) {
+                ancestry.add(org.shortname)
+                org = findOrg(org.id)
+            }
+            return ancestry
+        }
+
+        fun getOrgInfoPageUrl(id: Int): String {
+            val org = findOrg(id)
+            if (org == null)
+                return "";
+            // jump past the header stuff to the library info
+            // #content-wrapper works only sometimes
+            // ?#content-wrapper no better
+            // /?#main-content no better
+            // trying #main-content
+            return Gateway.baseUrl.plus("/eg/opac/library/${org.shortname}#main-content")
+        }
+
         fun loadCopyStatuses(ccs_list: List<OSRFObject>) {
             synchronized(this) {
                 copyStatusList.clear()
