@@ -171,51 +171,6 @@ public class SearchCatalog {
         }
     }
 
-    /*
-    public static void fetchSearchFormatBatch(ArrayList<RecordInfo> records) {
-        if (records.size() == 0)
-            return;
-        // todo newer EG supports using "ANONYMOUS" as the auth_token in PCRUD requests.
-        // Older EG does not, and requires a valid auth_token.
-        ArrayList<Integer> ids = new ArrayList<Integer>(records.size());
-        HashMap<Integer, RecordInfo> records_by_id = new HashMap<Integer, RecordInfo>(records.size());
-        for (RecordInfo record : records) {
-            ids.add(record.doc_id);
-            records_by_id.put(record.doc_id, record);
-        }
-        HashMap<String, Object> args = new HashMap<>();
-        args.put("id", ids);
-        Object response = Utils.doRequest(conn(), Api.PCRUD,
-                Api.SEARCH_MRAF, new Object[] {
-                AccountAccess.getInstance().getAuthToken(),
-                args });
-        try {
-            ArrayList<OSRFObject> responses = (ArrayList<OSRFObject>) response;
-            for (OSRFObject attr_obj : responses) {
-                String attr = attr_obj.getString("attr");
-                if (!attr.equals("search_format"))
-                    continue;
-                String value = attr_obj.getString("value");
-                Integer id = attr_obj.getInt("id");
-                RecordInfo record = records_by_id.get(id);
-                if (record == null)
-                    continue;
-                record.setSearchFormat(value);
-            }
-        } catch (ClassCastException ex) {
-            Log.d(TAG, "caught", ex);
-        }
-    }
-    */
-
-    // todo: move to lazy load
-    public static List<OSRFObject> fetchCopyStatuses() {
-
-        List<OSRFObject> ccs_list = (List<OSRFObject>) Utils.doRequest(conn(), Api.SEARCH,
-                Api.COPY_STATUS_ALL, new Object[] {});
-        return ccs_list;
-    }
-
     public ArrayList<CopyLocationCounts> getCopyLocationCounts(Integer recordID, Integer orgID, Integer orgDepth) {
 
         Object response = Utils.doRequest(conn(), Api.SEARCH,

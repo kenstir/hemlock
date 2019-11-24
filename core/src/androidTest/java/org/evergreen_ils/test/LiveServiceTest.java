@@ -50,9 +50,9 @@ import java.util.Map;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-@RunWith(AndroidJUnit4.class)
-public class OSRFTest {
-    private static String TAG = OSRFTest.class.getSimpleName();
+//@RunWith(AndroidJUnit4.class)
+public class LiveServiceTest {
+    private static String TAG = LiveServiceTest.class.getSimpleName();
 
     private static Context mContext;
     private static HttpConnection mConn;

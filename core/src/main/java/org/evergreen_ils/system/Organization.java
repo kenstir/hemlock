@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Kenneth H. Cox
+ * Copyright (C) 2019 Kenneth H. Cox
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -17,6 +17,7 @@
  */
 package org.evergreen_ils.system;
 
+import org.evergreen_ils.api.EvergreenService;
 import org.jetbrains.annotations.NotNull;
 import org.opensrf.util.OSRFObject;
 
@@ -32,7 +33,7 @@ public class Organization {
     public Integer parent_ou = null;
     public String name = null;
     public String shortname = null;
-    public OrgType orgType = null;
+    public Integer orgType = null;
     public String indentedDisplayPrefix = "";
 
     public Boolean opac_visible = null;
@@ -57,16 +58,13 @@ public class Organization {
     }
 
     private boolean defaultIsPickupLocation() {
-        if (orgType == null)
+        OrgType type = EvergreenService.Companion.findOrgType(orgType);
+        if (type == null)
             return true;//should not happen
-        return orgType.getCanHaveVols();
+        return type.getCanHaveVols();
     }
 
     public boolean isConsortium() {
         return parent_ou == null;
-    }
-
-    public static void loadOrgTypes(@NotNull ArrayList<OSRFObject> orgTypes) {
-
     }
 }

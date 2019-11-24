@@ -80,16 +80,6 @@ public class EvergreenServer {
         mIsSMSEnabled = null;
     }
 
-    public void connect(String library_url) throws IOException, IDLException {
-        Analytics.log(TAG, "connect: library_url=" + library_url);
-        if (!TextUtils.equals(library_url, mUrl)) {
-            reset();
-            loadIDL(library_url);
-            mConn = new HttpConnection(library_url + "/osrf-gateway-v1");
-            mUrl = library_url;
-        }
-    }
-
     public HttpConnection gatewayConnection() {
         return mConn;
     }
@@ -101,28 +91,6 @@ public class EvergreenServer {
         return conn;
     }
 
-    // TODO: whack this
-    private void loadIDL(String library_url) throws IOException, IDLException {
-        HttpURLConnection conn = null;
-        try {
-            Log.d(TAG, "loadIDL.start");
-            mIDLLoaded = false;
-            long now_ms = System.currentTimeMillis();
-            conn = getURLConnection(Gateway.INSTANCE.getIDLUrl(true));
-            IDLParser parser = new IDLParser(conn.getInputStream());
-            now_ms = Log.logElapsedTime(TAG, now_ms, "loadIDL.init");
-            parser.parse();
-            now_ms = Log.logElapsedTime(TAG, now_ms, "loadIDL.parse");
-            mIDLLoaded = true;
-        } finally {
-            conn.disconnect();
-        }
-    }
-
-    public void loadOrgTypes(List<OSRFObject> orgTypes) {
-        throw new NotImplementedError();
-    }
-
     private OrgType getOrgType(int id) {
         for (OrgType orgType: mOrgTypes) {
             if (orgType.getId() == id) {
@@ -130,57 +98,6 @@ public class EvergreenServer {
             }
         }
         return null;
-    }
-
-    private void addOrganization(OSRFObject obj, int level) {
-        Organization org = new Organization();
-        org.level = level;
-        org.id = obj.getInt("id");
-        org.parent_ou = obj.getInt("parent_ou");
-        org.name = obj.getString("name");
-        org.shortname = obj.getString("shortname");
-        org.orgType = getOrgType(obj.getInt("ou_type"));
-        org.opac_visible = Api.parseBoolean(obj.getString("opac_visible"));
-        org.indentedDisplayPrefix = new String(new char[level]).replace("\0", "   ");
-        Log.d(TAG, "id="+org.id+" level="+org.level+" type="+org.orgType.getId()+" users="+org.orgType.getCanHaveUsers()+" vols="+org.orgType.getCanHaveVols()+" vis="+(org.opac_visible ? "1" : "0")+" site="+org.shortname+" name="+org.name);
-
-        if (org.opac_visible)
-            mOrganizations.add(org);
-
-        List<OSRFObject> children = null;
-        try {
-            children = (List<OSRFObject>) obj.get("children");
-            if (children != null) {
-                for (OSRFObject child : children) {
-                    int child_level = org.opac_visible ? (level+1) : level;
-                    addOrganization(child, child_level);
-                }
-            }
-        } catch (Exception e) {
-            Log.d(TAG, "addOrganization caught exception decoding children of "+org.name, e);
-        }
-    }
-
-    public void loadOrganizations(OSRFObject orgTree, boolean hierarchical_org_tree) {
-        mOrganizations = new ArrayList<>();
-        addOrganization(orgTree, 0);
-
-        // If the org tree is too big, then an indented list is unwieldy.
-        // Convert it into a flat list sorted by org.name.
-        if (!hierarchical_org_tree && mOrganizations.size() > 25) {
-            Collections.sort(mOrganizations, new Comparator<Organization>() {
-                @Override
-                public int compare(Organization a, Organization b) {
-                    // top-level OU appears first
-                    if (a.level == 0) return -1;
-                    if (b.level == 0) return 1;
-                    return a.name.compareTo(b.name);
-                }
-            });
-            for (Organization o : mOrganizations) {
-                o.indentedDisplayPrefix = "";
-            }
-        }
     }
 
     public ArrayList<Organization> getOrganizations() {

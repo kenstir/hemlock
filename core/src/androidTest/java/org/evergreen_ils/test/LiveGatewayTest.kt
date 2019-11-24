@@ -41,7 +41,7 @@ import org.junit.runner.RunWith
 private const val TAG = "GatewayTest"
 
 //@RunWith(AndroidJUnit4::class)
-class GatewayTest {
+class LiveGatewayTest {
 
     companion object {
 

@@ -466,12 +466,6 @@ public class AccountAccess {
     // ------------------------orgs Section
     // --------------------------------------//
 
-    public List<OSRFObject> fetchOrgTypes() {
-        Object resp = Utils.doRequest(conn(), Api.ACTOR,
-                Api.ORG_TYPES_RETRIEVE, new Object[] {});
-        List<OSRFObject> l = (List<OSRFObject>) resp;
-        return l;
-    }
 
     public OSRFObject fetchOrgTree() {
         Object resp = Utils.doRequest(conn(), Api.ACTOR,

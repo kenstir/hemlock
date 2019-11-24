@@ -33,15 +33,10 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
-import com.android.volley.*
-import com.android.volley.toolbox.StringRequest
-import com.android.volley.toolbox.Volley
 import com.google.android.material.navigation.NavigationView
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
-import org.evergreen_ils.Api
 import org.evergreen_ils.R
 import org.evergreen_ils.accountAccess.AccountAccess
 import org.evergreen_ils.accountAccess.AccountUtils
@@ -51,24 +46,15 @@ import org.evergreen_ils.accountAccess.fines.FinesActivity
 import org.evergreen_ils.accountAccess.holds.HoldsActivity
 import org.evergreen_ils.android.App
 import org.evergreen_ils.android.App.REQUEST_LAUNCH_OPAC_LOGIN_REDIRECT
-import org.evergreen_ils.net.GatewayJsonObjectRequest
-import org.evergreen_ils.net.VolleyWrangler
 import org.evergreen_ils.searchCatalog.SearchActivity
 import org.evergreen_ils.system.Analytics
 import org.evergreen_ils.system.EvergreenServer
 import org.evergreen_ils.system.Log
-import org.evergreen_ils.system.Utils
-import org.evergreen_ils.utils.ui.ThemeManager
 import org.evergreen_ils.views.BarcodeActivity
 import org.evergreen_ils.views.MainActivity
 import org.evergreen_ils.views.MenuProvider
-import org.evergreen_ils.views.splashscreen.SplashActivity
-import org.opensrf.util.GatewayResponse
 import java.net.URLEncoder
 import kotlin.coroutines.CoroutineContext
-import kotlin.coroutines.resume
-import kotlin.coroutines.resumeWithException
-import kotlin.coroutines.suspendCoroutine
 
 /* Activity base class to handle common behaviours like the navigation drawer */
 open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener, CoroutineScope {

@@ -21,7 +21,6 @@ package org.evergreen_ils.views
 import android.accounts.AccountManager
 import android.content.Intent
 import android.os.Bundle
-import android.os.PersistableBundle
 import android.view.View
 import android.widget.Button
 import android.widget.TextView
@@ -62,7 +61,7 @@ class LaunchActivity : AppCompatActivity(), CoroutineScope by MainScope() {
         mProgressBar = findViewById(R.id.activity_splash_progress_bar)
         mRetryButton = findViewById(R.id.activity_splash_retry_button)
 
-        mProgressBar?.visibility = View.GONE
+        mProgressBar?.visibility = View.INVISIBLE
         mRetryButton?.visibility = View.GONE
 
         mRetryButton?.setOnClickListener {
@@ -76,12 +75,20 @@ class LaunchActivity : AppCompatActivity(), CoroutineScope by MainScope() {
         })
         mModel.spinner.observe(this, Observer { value ->
             value?.let { show ->
-                mProgressBar?.visibility = if (show) View.VISIBLE else View.GONE
+                mProgressBar?.visibility = if (show) View.VISIBLE else View.INVISIBLE
             }
         })
-        mModel.readyPlayerOne.observe(this, Observer {value ->
+        mModel.serviceDataReady.observe(this, Observer { value ->
             value?.let { ready ->
-                Log.d(TAG, "observe: ${ready}")
+                Log.d(TAG, "serviceDataReady: ${ready}")
+                if (ready) {
+                    loadAccountData()
+                }
+            }
+        })
+        mModel.accountDataReady.observe(this, Observer { value ->
+            value?.let { ready ->
+                Log.d(TAG, "accountDataReady: ${ready}")
                 if (ready) {
                     App.startApp(this)
                 }
@@ -94,23 +101,40 @@ class LaunchActivity : AppCompatActivity(), CoroutineScope by MainScope() {
     fun launchLoginFlow() {
         Log.d(TAG, "auth: launch")
         launch {
-            mProgressBar?.visibility = View.VISIBLE
-            mProgressText?.text = "Signing in"
+//            mProgressBar?.visibility = View.VISIBLE
+//            mProgressText?.text = "Signing in"
             try {
                 val account = getAccount()
                 Log.d(TAG, "auth: ${account.username} ${account.authToken}")
                 App.setAccount(account)
-                mModel?.fetchData(account)
+                mModel?.loadServiceData(account)
             } catch (ex: Exception) {
                 var msg = ex.message
                 if (msg.isNullOrEmpty()) msg = "Cancelled"
                 mProgressText?.text = msg
                 mRetryButton?.visibility = View.VISIBLE
-                mProgressBar?.visibility = View.GONE
+                mProgressBar?.visibility = View.INVISIBLE
             }
         }
     }
 
+    fun loadAccountData() {
+        launch {
+            try {
+                mModel?.loadAccountData(App.getAccount())
+            } catch (ex: Exception) {
+                var msg = ex.message
+                if (msg.isNullOrEmpty()) msg = "Cancelled"
+                mProgressText?.text = msg
+                mRetryButton?.visibility = View.VISIBLE
+                mProgressBar?.visibility = View.INVISIBLE
+            }
+        }
+    }
+
+    // Here we use the AccountManager to get an auth token, maybe creating or selecting an
+    // account along the way.  We have to do that here and not in a ViewModel because it
+    // needs an Activity.
     suspend fun getAccount(): Account {
         // get auth token
         Log.d(TAG, "auth: getAuthTokenFuture")

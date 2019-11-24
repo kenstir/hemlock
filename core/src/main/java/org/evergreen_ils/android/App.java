@@ -24,6 +24,7 @@ import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.content.res.Resources;
 
 import org.evergreen_ils.R;
 import org.evergreen_ils.net.Gateway;
@@ -61,6 +62,7 @@ public class App {
     private static AppBehavior behavior = null;
     private static Library library = null;
     private static Account account = null;
+    private static Context applicationContext = null;
 
     public static boolean getIsDebuggable(Context context) {
         if (mIsDebuggable < 0)
@@ -109,6 +111,7 @@ public class App {
     }
 
     static public void init(Context context) {
+        applicationContext = context.getApplicationContext();
         enableCaching(context);
         AppState.init(context);
         if (behavior == null)
@@ -178,5 +181,9 @@ public class App {
 
     public static void setAccount(Account account) {
         App.account = account;
+    }
+
+    public static Context getApplicationContext() {
+        return applicationContext;
     }
 }

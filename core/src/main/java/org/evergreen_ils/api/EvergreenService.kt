@@ -25,6 +25,7 @@ import org.evergreen_ils.system.OrgType
 import org.evergreen_ils.system.Organization
 import org.open_ils.idl.IDLParser
 import org.opensrf.util.OSRFObject
+import java.util.*
 
 // `EvergreenService` owns the state about the server: orgs, orgTypes, and IDL.
 class EvergreenService {
@@ -63,6 +64,48 @@ class EvergreenService {
 
         fun findOrgType(id: Int): OrgType? {
             return orgTypes.firstOrNull { it.id == id }
+        }
+
+        private fun addOrganization(obj: OSRFObject, level: Int) {
+            val id = obj.getInt("id")
+            val orgType = obj.getInt("ou_type")
+            if (id == null) return
+            if (orgType == null) return
+            val org = Organization()
+            org.level = level
+            org.id = id
+            org.parent_ou = obj.getInt("parent_ou")
+            org.name = obj.getString("name")
+            org.shortname = obj.getString("shortname")
+            org.orgType = orgType
+            org.opac_visible = Api.parseBoolean(obj.getString("opac_visible"))
+            org.indentedDisplayPrefix = String(CharArray(level)).replace("\u0000", "   ")
+            Log.d(TAG, "id:$id level:${org.level} vis:${org.opac_visible} shortname:${org.shortname} name:${org.name}")
+            if (org.opac_visible)
+                orgs.add(org)
+            val children = obj.get("children") as? List<OSRFObject>
+            children?.forEach { child ->
+                val child_level = if (org.opac_visible) level + 1 else level
+                addOrganization(child, child_level)
+            }
+        }
+
+        fun loadOrgs(orgTree: OSRFObject, hierarchical_org_tree: Boolean) {
+            orgs.clear()
+            addOrganization(orgTree, 0)
+            // If the org tree is too big, then an indented list is unwieldy.
+            // Convert it into a flat list sorted by org.name.
+            if (!hierarchical_org_tree && orgs.size > 25) {
+                Collections.sort(orgs, Comparator<Organization> { a, b ->
+                    // top-level OU appears first
+                    if (a.level == 0) return@Comparator -1
+                    if (b.level == 0) 1 else a.name.compareTo(b.name)
+                })
+                for (o in orgs) {
+                    o.indentedDisplayPrefix = ""
+                }
+            }
+            Log.d(TAG, "loadOrgs: ${orgs.size} orgs")
         }
     }
 }

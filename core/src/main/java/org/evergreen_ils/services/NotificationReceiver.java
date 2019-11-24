@@ -20,7 +20,7 @@
 package org.evergreen_ils.services;
 
 import org.evergreen_ils.system.Log;
-import org.evergreen_ils.views.splashscreen.SplashActivity;
+import org.evergreen_ils.views.LaunchActivity;
 
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -57,7 +57,7 @@ public class NotificationReceiver extends BroadcastReceiver {
         CharSequence contentTitle = "EG - checkout item due date";
         CharSequence contentText = checkoutMessage;
         // start evergreen
-        Intent notificationIntent = new Intent(context, SplashActivity.class);
+        Intent notificationIntent = new Intent(context, LaunchActivity.class);
         notificationIntent.putExtra("jump", "checkout_items");
 
         PendingIntent contentIntent = PendingIntent.getActivity(context, 0,
