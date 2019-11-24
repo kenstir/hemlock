@@ -27,6 +27,8 @@ import java.io.Serializable;
 import java.util.*;
 import java.util.Map.Entry;
 
+import kotlin.NotImplementedError;
+
 /** Summary of copies by shelving location and status for the given org_id,
  * e.g. Adult Fiction, FIC DOERR, 3 Available, 1 Checked out
  *
@@ -54,6 +56,8 @@ public class CopyLocationCounts implements Serializable {
 
         counts_by_status = new LinkedHashMap<>();
 
+        throw new NotImplementedError("removed getCopyStatuses");
+                /*
         Set<Entry<String, String>> set = EvergreenServer.getInstance().getCopyStatuses().entrySet();
         Iterator<Entry<String, String>> it = set.iterator();
         while (it.hasNext()) {
@@ -62,6 +66,7 @@ public class CopyLocationCounts implements Serializable {
                 counts_by_status.put(entry.getValue(), status_map.get(entry.getKey()) + "");
             }
         }
+                 */
     }
 
     public List<String> getCountsByStatus() {

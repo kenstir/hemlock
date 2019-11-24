@@ -20,6 +20,7 @@ package org.evergreen_ils.api
 
 import org.evergreen_ils.Api
 import org.evergreen_ils.net.Gateway
+import org.evergreen_ils.system.CopyStatus
 import org.evergreen_ils.system.Log
 import org.evergreen_ils.system.OrgType
 import org.evergreen_ils.system.Organization
@@ -30,6 +31,7 @@ import java.util.*
 // `EvergreenService` owns the state about the server: orgs, orgTypes, and IDL.
 class EvergreenService {
     companion object {
+        var copyStatusList = mutableListOf<CopyStatus>()
         var orgTypes = mutableListOf<OrgType>()
         var orgs = mutableListOf<Organization>()
 
@@ -91,21 +93,40 @@ class EvergreenService {
         }
 
         fun loadOrgs(orgTree: OSRFObject, hierarchical_org_tree: Boolean) {
-            orgs.clear()
-            addOrganization(orgTree, 0)
-            // If the org tree is too big, then an indented list is unwieldy.
-            // Convert it into a flat list sorted by org.name.
-            if (!hierarchical_org_tree && orgs.size > 25) {
-                Collections.sort(orgs, Comparator<Organization> { a, b ->
-                    // top-level OU appears first
-                    if (a.level == 0) return@Comparator -1
-                    if (b.level == 0) 1 else a.name.compareTo(b.name)
-                })
-                for (o in orgs) {
-                    o.indentedDisplayPrefix = ""
+            synchronized(this) {
+                orgs.clear()
+                addOrganization(orgTree, 0)
+                // If the org tree is too big, then an indented list is unwieldy.
+                // Convert it into a flat list sorted by org.name.
+                if (!hierarchical_org_tree && orgs.size > 25) {
+                    Collections.sort(orgs, Comparator<Organization> { a, b ->
+                        // top-level OU appears first
+                        if (a.level == 0) return@Comparator -1
+                        if (b.level == 0) 1 else a.name.compareTo(b.name)
+                    })
+                    for (o in orgs) {
+                        o.indentedDisplayPrefix = ""
+                    }
                 }
             }
             Log.d(TAG, "loadOrgs: ${orgs.size} orgs")
+        }
+
+        fun loadCopyStatuses(ccs_list: List<OSRFObject>) {
+            synchronized(this) {
+                copyStatusList.clear()
+                for (ccs_obj in ccs_list) {
+                    if (Api.parseBoolean(ccs_obj.getString("opac_visible"))) {
+                        val id = ccs_obj.getInt("id")
+                        val name = ccs_obj.getString("name")
+                        if (id != null && name != null) {
+                            copyStatusList.add(CopyStatus(id, name))
+                            Log.d(TAG, "loadCopyStatus id:$id name:$name")
+                        }
+                    }
+                }
+                copyStatusList.sort()
+            }
         }
     }
 }

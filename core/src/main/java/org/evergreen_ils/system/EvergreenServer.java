@@ -189,18 +189,4 @@ public class EvergreenServer {
     public boolean getSMSEnabled() {
         return (mIsSMSEnabled != null) ? mIsSMSEnabled : false;
     }
-
-    public void loadCopyStatuses(List<OSRFObject> ccs_list) {
-        mCopyStatuses.clear();
-        for (OSRFObject ccs_obj: ccs_list) {
-            if (Api.parseBoolean(ccs_obj.getString("opac_visible"))) {
-                mCopyStatuses.put(ccs_obj.getInt("id") + "", ccs_obj.getString("name"));
-                //Log.d(TAG, "Add status "+ccs_obj.getString("name"));
-            }
-        }
-    }
-
-    public Map<String, String> getCopyStatuses() {
-        return mCopyStatuses;
-    }
 }

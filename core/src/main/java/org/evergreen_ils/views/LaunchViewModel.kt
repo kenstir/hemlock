@@ -91,7 +91,7 @@ class LaunchViewModel : ViewModel() {
                 var defs = arrayListOf<Deferred<Any>>()
                 defs.add(async { EvergreenService.loadOrgTypes(ActorService.fetchOrgTypes()) })
                 defs.add(async { EvergreenService.loadOrgs(ActorService.fetchOrgTree(), App.getApplicationContext().resources.getBoolean(R.bool.ou_hierarchical_org_tree)) })
-                //unused defs.add(async { EvergreenService.loadCopyStatuses(SearchService.fetchCopyStatuses()) })
+                defs.add(async { EvergreenService.loadCopyStatuses(SearchService.fetchCopyStatuses()) })
                 defs.add(async { CodedValueMap.loadCodedValueMaps(PCRUDService.fetchCodedValueMaps()) })
 
                 // awaitAll
