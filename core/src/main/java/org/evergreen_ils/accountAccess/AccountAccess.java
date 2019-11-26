@@ -279,7 +279,7 @@ public class AccountAccess {
             Analytics.logException(new ShouldNotHappenException("failed circ retrieve, type:" + circType + " desc:" + response.description));
             return null;
         }
-        OSRFObject circ = (OSRFObject) response.map;
+        OSRFObject circ = (OSRFObject) response.payload;
         CircRecord circRecord = new CircRecord(circ, circType, Integer.parseInt(id));
         fetchInfoForCheckedOutItem(circ.getInt("target_copy"), circRecord);
         return circRecord;

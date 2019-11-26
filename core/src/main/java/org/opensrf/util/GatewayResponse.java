@@ -40,7 +40,7 @@ public class GatewayResponse {
     public List<Object> responseList = null;
     public Object payload = null;
     public String status = null;
-    public Map<String, ?> map = null;
+    private Map<String, ?> map = null;
     public Exception ex = null;
     public boolean failed = false;
     public String description = null;
