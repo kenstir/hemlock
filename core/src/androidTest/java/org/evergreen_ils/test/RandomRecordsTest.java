@@ -44,10 +44,10 @@ public class RandomRecordsTest {
         mAuthToken = Api.ANONYMOUS;
 
         // init like the app does in LoadingTask
-        EvergreenServer eg = EvergreenServer.getInstance();
-        eg.connect(mServer);
-        Log.d(TAG, "connected to " + mServer);
-        mConn = EvergreenServer.getInstance().gatewayConnection();
+//        EvergreenServer eg = EvergreenServer.getInstance();
+//        eg.connect(mServer);
+//        Log.d(TAG, "connected to " + mServer);
+//        mConn = EvergreenServer.getInstance().gatewayConnection();
     }
 
     @Before

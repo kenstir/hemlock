@@ -86,15 +86,24 @@ class GatewayResponseTest {
     }
 
     @Test
-    fun test_objNoClass() {
+    fun test_authSuccess() {
         val json = """
             {"payload":[{"ilsevent":0,"textcode":"SUCCESS","desc":"Success","pid":6939,"stacktrace":"oils_auth.c:634","payload":{"authtoken":"985cda3d943232fbfd987d85d1f1a8af","authtime":420}}],"status":200}
             """
         val response = GatewayResponse.create(json)
         assertFalse(response.failed)
-        val map = response.asMap()
-        print("obj:$map")
-        assertEquals(0, map.get("ilsevent"))
+        val obj = response.asObject()
+        assertEquals("SUCCESS", obj.getString("textcode"))
+    }
+
+    @Test
+    fun test_authFail() {
+        val json = """
+            {"payload":[{"ilsevent":1001,"textcode":"NO_SESSION","desc":"User login session has either timed out or does not exist","pid":88967,"stacktrace":"oils_auth.c:1150"}],"status":200}
+            """
+        val response = GatewayResponse.create(json)
+        assertTrue(response.failed)
+        assertEquals("User login session has either timed out or does not exist", response.ex?.localizedMessage)
     }
 
     @Test

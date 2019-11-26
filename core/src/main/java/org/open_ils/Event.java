@@ -1,5 +1,7 @@
 package org.open_ils;
 
+import org.evergreen_ils.Api;
+
 import java.util.Map;
 import java.util.HashMap;
 
@@ -28,12 +30,12 @@ public class Event extends HashMap<String, Object> {
         return (String) get("textcode");
     }
 
-    public int getCode() {
-        return Integer.parseInt((String) get("ilsevent"));
+    public Integer getCode() {
+        return Api.parseInteger(get("ilsevent"), 0);
     }
 
     public boolean failed() {
-        return !get("ilsevent").equals("0");
+        return (getCode() != 0);
     }
 }
 

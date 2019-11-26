@@ -22,6 +22,7 @@ import android.text.TextUtils;
 
 import org.evergreen_ils.net.Gateway;
 import org.evergreen_ils.net.GatewayError;
+import org.evergreen_ils.system.Log;
 import org.open_ils.Event;
 import org.opensrf.ShouldNotHappenException;
 
@@ -56,6 +57,16 @@ public class GatewayResponse {
                 resp.failed = true;
             resp.responseList = (List<Object>) resp.map.get("payload");
             resp.payload = (resp.responseList.size() > 0) ? resp.responseList.remove(0) : null;
+
+            Event event = Event.parseEvent(resp.payload);
+            if (event != null) {
+                resp.failed = event.failed();
+                resp.description = event.getDescription();
+                if (resp.failed) {
+                    resp.ex = new GatewayError(resp.description);
+                }
+            }
+            Log.d("xyzzy", "stop here");
         } catch (JSONException e) {
             resp.ex = e;
             resp.description = e.getMessage();
@@ -110,10 +121,6 @@ public class GatewayResponse {
         return resp;
     }
 
-//    public static <T> T safeCast(Object o, Class<T> clazz) {
-//        return clazz != null && clazz.isInstance(o) ? clazz.cast(o) : null;
-//    }
-
     public Map<String, Object> asMap() throws GatewayError {
         try {
             return (Map<String, Object>) payload;
@@ -124,7 +131,12 @@ public class GatewayResponse {
 
     public OSRFObject asObject() throws GatewayError {
         try {
-            return (OSRFObject) payload;
+            if (payload instanceof OSRFObject) {
+                return (OSRFObject) payload;
+            } else /*if (payload instanceof Map)*/ {
+                Map<String, Object> map = (Map<String, Object>) payload;
+                return new OSRFObject(map);
+            }
         } catch (Exception ex) {
             throw new GatewayError("Unexpected network response: expected object");
         }

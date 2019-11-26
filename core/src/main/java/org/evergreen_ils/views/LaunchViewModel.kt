@@ -29,10 +29,7 @@ import kotlinx.coroutines.async
 import org.evergreen_ils.Api
 import org.evergreen_ils.R
 import org.evergreen_ils.android.App
-import org.evergreen_ils.api.ActorService
-import org.evergreen_ils.api.EvergreenService
-import org.evergreen_ils.api.PCRUDService
-import org.evergreen_ils.api.SearchService
+import org.evergreen_ils.api.*
 import org.evergreen_ils.net.Gateway
 import org.evergreen_ils.searchCatalog.CodedValueMap
 import org.evergreen_ils.system.Account
@@ -122,10 +119,12 @@ class LaunchViewModel : ViewModel() {
                 _spinner.value = true
                 _status.value = "Retrieving user settings"
 
-                // TODO: fetch session
-                // TODO: verify that session is OK
-//                var sessionJob = async { AuthService.fetchSession() }
+                // start a session
+                val obj = AuthService.fetchSession(account.authToken)
+                Log.d(TAG,"coro: acc1: obj:$obj")
 
+                // TODO: verify that session is OK
+                // TODO: fleshUserSettings()
                 // TODO: load bookbags
                 //async { ActorService.fetchBookbags() }
 

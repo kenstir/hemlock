@@ -190,12 +190,12 @@ public class Api {
         } else if (o instanceof String) {
             // I have seen settings with value=null, e.g. opac.default_search_location
             if ("null".equals(o) || TextUtils.isEmpty((String) o))
-                return null;
+                return dflt;
             try {
                 return Integer.parseInt((String) o);
             } catch (NumberFormatException e) {
                 Analytics.logException(e);
-                return null;
+                return dflt;
             }
         } else {
             Analytics.logException(new ShouldNotHappenException("unexpected type: "+o));

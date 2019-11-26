@@ -89,12 +89,6 @@ public class LiveServiceTest {
             mAuthToken = EvergreenAuthenticator.signIn(mServer, mUsername, mPassword);
         }
         Log.d(TAG, "auth_token " + mAuthToken);
-
-        // init like the app does in LoadingTask
-        EvergreenServer eg = EvergreenServer.getInstance();
-        eg.connect(mServer);
-        Log.d(TAG, "connected to " + mServer);
-        mConn = EvergreenServer.getInstance().gatewayConnection();
     }
 
     private static void assertLoggedIn() {
@@ -310,6 +304,7 @@ public class LiveServiceTest {
         Log.d(TAG, "length:" + record_ids_lol.size());
     }
 
+    /*
     @Test
     public void testSearchCodedValueMap() throws Exception {
         assertLoggedIn();
@@ -326,4 +321,5 @@ public class LiveServiceTest {
         String book_icon_label = CodedValueMap.iconFormatLabel("book");
         assertNotNull(book_icon_label);
     }
+    */
 }
