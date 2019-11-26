@@ -97,13 +97,24 @@ class GatewayResponseTest {
     }
 
     @Test
-    fun test_authFail() {
+    fun test_failureWithSingleEvent() {
         val json = """
             {"payload":[{"ilsevent":1001,"textcode":"NO_SESSION","desc":"User login session has either timed out or does not exist","pid":88967,"stacktrace":"oils_auth.c:1150"}],"status":200}
             """
         val response = GatewayResponse.create(json)
         assertTrue(response.failed)
         assertEquals("User login session has either timed out or does not exist", response.ex?.localizedMessage)
+        assertEquals("User login session has either timed out or does not exist", response.description)
+    }
+
+    @Test
+    fun test_failureWithMultipleEvents() {
+        val json = """
+            {"payload":[[{"stacktrace":"...","payload":{"fail_part":"PATRON_EXCEEDS_FINES"},"servertime":"Mon Nov 25 20:57:11 2019","ilsevent":"7013","pid":23476,"textcode":"PATRON_EXCEEDS_FINES","desc":"The patron in question has reached the maximum fine amount"},{"stacktrace":"...","payload":{"fail_part":"PATRON_EXCEEDS_LOST_COUNT"},"servertime":"Mon Nov 25 20:57:11 2019","ilsevent":"1236","pid":23476,"textcode":"PATRON_EXCEEDS_LOST_COUNT","desc":"The patron has too many lost items."}]],"status":200}
+            """
+        val response = GatewayResponse.create(json)
+        assertTrue(response.failed)
+        assertEquals("The patron in question has reached the maximum fine amount\n\nThe patron has too many lost items.", response.description)
     }
 
     @Test
