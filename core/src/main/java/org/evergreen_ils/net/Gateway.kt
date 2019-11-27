@@ -146,17 +146,17 @@ object Gateway {
     }
 
     // fetchObject - make gateway request and expect json payload of OSRFObject
-    suspend fun fetchObject(service: String, method: String, args: Array<Any?>) = fetch<OSRFObject>(service, method, args) { response ->
+    suspend fun fetchObject(service: String, method: String, args: Array<Any?>) = fetch(service, method, args) { response ->
         response.asObject()
     }
 
     // fetchObjectArray - make gateway request and expect json payload of [OSRFObject]
-    suspend fun fetchObjectArray(service: String, method: String, args: Array<Any?>) = fetch<List<OSRFObject>>(service, method, args) { response ->
+    suspend fun fetchObjectArray(service: String, method: String, args: Array<Any?>) = fetch(service, method, args) { response ->
         response.asObjectArray()
     }
 
     // fetchStringPayload - make gateway request and expect json payload of String
-    suspend fun fetchStringPayload(service: String, method: String, args: Array<Any?>) = fetch<String>(service, method, args) { response ->
+    suspend fun fetchStringPayload(service: String, method: String, args: Array<Any?>) = fetch(service, method, args) { response ->
         response.asString()
     }
 

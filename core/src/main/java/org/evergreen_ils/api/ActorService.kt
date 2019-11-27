@@ -43,22 +43,6 @@ object ActorService {
         val settings = arrayListOf(Api.SETTING_ORG_UNIT_NOT_PICKUP_LIB,
                 Api.SETTING_CREDIT_PAYMENTS_ALLOW)
         val args = arrayOf<Any?>(orgID, settings, Api.ANONYMOUS)
-        return Gateway.fetch(Api.ACTOR, Api.ORG_UNIT_SETTING_BATCH, args) { response ->
-            response.payload
-        }
-    }
-
-    // map returned from `fetchOrgSettings` looks like:
-    // {credit.payments.allow={org=49, value=true}, opac.holds.org_unit_not_pickup_lib=null}
-    fun parseBoolSetting(map: Map<String, Any?>, setting: String): Boolean? {
-        var value: Boolean? = null
-        if (map != null) {
-            val o = map[setting]
-            if (o != null) {
-                val setting_map = o as Map<String, *>
-                value = Api.parseBoolean(setting_map["value"])
-            }
-        }
-        return value
+        return Gateway.fetchObject(Api.ACTOR, Api.ORG_UNIT_SETTING_BATCH, args)
     }
 }

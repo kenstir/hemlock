@@ -63,10 +63,10 @@ public class JSONReader {
      * Assumes that a JSON object will be read.  Returns 
      * the resulting object as a map.
      */
-    public Map<?,?> readObject() throws JSONException {
+    public Map<String,?> readObject() throws JSONException {
         Object o = read();
         try {
-            return (Map<?,?>) o;
+            return (Map<String,?>) o;
         } catch(Exception e) {
             throw new JSONException("readObject(): JSON cast exception");
         }

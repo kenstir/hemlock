@@ -103,7 +103,6 @@ class GatewayResponseTest {
             """
         val response = GatewayResponse.create(json)
         assertTrue(response.failed)
-        assertEquals("User login session has either timed out or does not exist", response.ex?.localizedMessage)
         assertEquals("User login session has either timed out or does not exist", response.description)
     }
 
@@ -125,6 +124,6 @@ class GatewayResponseTest {
         val response = GatewayResponse.create(json)
         assertFalse(response.failed)
         val arr = response.asObjectArray()
-        assertEquals(0, arr.size)
+        assertEquals(0, arr?.size)
     }
 }
