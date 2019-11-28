@@ -80,17 +80,21 @@ class LaunchActivity : AppCompatActivity(), CoroutineScope by MainScope() {
         })
         mModel.serviceDataReady.observe(this, Observer { value ->
             value?.let { ready ->
-                Log.d(TAG, "serviceDataReady: ${ready}")
+                Log.d(TAG, "serviceDataReady:$ready")
                 if (ready) {
                     loadAccountData()
+                } else {
+                    failed()
                 }
             }
         })
         mModel.accountDataReady.observe(this, Observer { value ->
             value?.let { ready ->
-                Log.d(TAG, "accountDataReady: ${ready}")
+                Log.d(TAG, "accountDataReady:$ready")
                 if (ready) {
                     App.startApp(this)
+                } else {
+                    failed()
                 }
             }
         })
@@ -109,13 +113,18 @@ class LaunchActivity : AppCompatActivity(), CoroutineScope by MainScope() {
                 App.setAccount(account)
                 mModel?.loadServiceData(account)
             } catch (ex: Exception) {
+                Log.d(TAG, "caught in launchLoginFlow", ex)
                 var msg = ex.message
                 if (msg.isNullOrEmpty()) msg = "Cancelled"
                 mProgressText?.text = msg
-                mRetryButton?.visibility = View.VISIBLE
-                mProgressBar?.visibility = View.INVISIBLE
+                failed()
             }
         }
+    }
+
+    fun failed() {
+        mRetryButton?.visibility = View.VISIBLE
+        mProgressBar?.visibility = View.INVISIBLE
     }
 
     fun loadAccountData() {
@@ -123,11 +132,11 @@ class LaunchActivity : AppCompatActivity(), CoroutineScope by MainScope() {
             try {
                 mModel?.loadAccountData(App.getAccount())
             } catch (ex: Exception) {
+                Log.d(TAG, "caught in loadAccountData", ex)
                 var msg = ex.message
                 if (msg.isNullOrEmpty()) msg = "Cancelled"
                 mProgressText?.text = msg
-                mRetryButton?.visibility = View.VISIBLE
-                mProgressBar?.visibility = View.INVISIBLE
+                failed()
             }
         }
     }

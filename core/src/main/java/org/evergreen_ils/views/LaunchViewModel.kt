@@ -103,8 +103,9 @@ class LaunchViewModel : ViewModel() {
             try {
                 outerJob.await()
             } catch (ex: Exception) {
-                Log.d(TAG, "caught", ex)
+                Log.d(TAG, "caught in loadServiceData", ex)
                 _status.value = ex.message
+                _serviceDataReady.value = false
             } finally {
                 _spinner.value = false
             }
@@ -133,8 +134,9 @@ class LaunchViewModel : ViewModel() {
             try {
                 outerJob.await()
             } catch (ex: Exception) {
-                Log.d(TAG, "caught", ex)
+                Log.d(TAG, "caught in loadAccountData", ex)
                 _status.value = ex.message
+                _accountDataReady.value = false
             } finally {
                 _spinner.value = false
             }
