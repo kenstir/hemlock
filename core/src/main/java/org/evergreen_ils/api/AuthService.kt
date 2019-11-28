@@ -24,7 +24,8 @@ import org.opensrf.util.OSRFObject
 
 object AuthService {
     suspend fun fetchSession(authToken: String): OSRFObject {
-        //TODO: should this be fetchNoCache?
-        return Gateway.fetchObject(Api.AUTH, Api.AUTH_SESSION_RETRIEVE, arrayOf(authToken))
+        return Gateway.fetchNoCache<OSRFObject>(Api.AUTH, Api.AUTH_SESSION_RETRIEVE, arrayOf(authToken)) { response ->
+            response.asObject()
+        }
     }
 }
