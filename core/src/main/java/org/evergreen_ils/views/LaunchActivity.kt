@@ -84,7 +84,7 @@ class LaunchActivity : AppCompatActivity(), CoroutineScope by MainScope() {
                 if (ready) {
                     loadAccountData()
                 } else {
-                    failed()
+                    updateOnFailure()
                 }
             }
         })
@@ -94,7 +94,7 @@ class LaunchActivity : AppCompatActivity(), CoroutineScope by MainScope() {
                 if (ready) {
                     App.startApp(this)
                 } else {
-                    failed()
+                    updateOnFailure()
                 }
             }
         })
@@ -117,12 +117,12 @@ class LaunchActivity : AppCompatActivity(), CoroutineScope by MainScope() {
                 var msg = ex.message
                 if (msg.isNullOrEmpty()) msg = "Cancelled"
                 mProgressText?.text = msg
-                failed()
+                updateOnFailure()
             }
         }
     }
 
-    fun failed() {
+    fun updateOnFailure() {
         mRetryButton?.visibility = View.VISIBLE
         mProgressBar?.visibility = View.INVISIBLE
     }
@@ -136,7 +136,7 @@ class LaunchActivity : AppCompatActivity(), CoroutineScope by MainScope() {
                 var msg = ex.message
                 if (msg.isNullOrEmpty()) msg = "Cancelled"
                 mProgressText?.text = msg
-                failed()
+                updateOnFailure()
             }
         }
     }
