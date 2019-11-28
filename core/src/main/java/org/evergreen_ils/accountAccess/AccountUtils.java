@@ -103,6 +103,17 @@ public class AccountUtils {
         return auth_token;
     }
 
+    public static AccountManagerFuture<Bundle> getAuthTokenForAccountFuture(Activity activity, String account_name) throws AuthenticatorException, OperationCanceledException, IOException {
+        Log.i(Const.AUTH_TAG, "getAuthTokenForAccountFuture "+account_name);
+        if (TextUtils.isEmpty(account_name)) {
+            return null;
+        }
+        final AccountManager am = AccountManager.get(activity);
+        final String accountType = activity.getString(R.string.ou_account_type);
+        final Account account = new Account(account_name, accountType);
+        return am.getAuthToken(account, Const.AUTHTOKEN_TYPE, null, activity, null, null);
+    }
+
     public static Bundle getAuthToken(Activity activity) throws AuthenticatorException, OperationCanceledException, IOException {
         Log.i(Const.AUTH_TAG, "getAuthToken");
         if (runningOnUIThread())
@@ -119,8 +130,7 @@ public class AccountUtils {
         Log.i(Const.AUTH_TAG, "getAuthTokenFuture");
         final AccountManager am = AccountManager.get(activity);
         final String accountType = activity.getString(R.string.ou_account_type);
-        AccountManagerFuture<Bundle> future = am.getAuthTokenByFeatures(accountType, Const.AUTHTOKEN_TYPE, null, activity, null, null, null, null);
-        return future;
+        return am.getAuthTokenByFeatures(accountType, Const.AUTHTOKEN_TYPE, null, activity, null, null, null, null);
     }
 
     public static Account[] getAccountsByType(Activity activity) {
