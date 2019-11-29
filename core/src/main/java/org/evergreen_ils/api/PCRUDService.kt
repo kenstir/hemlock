@@ -20,8 +20,6 @@ package org.evergreen_ils.api
 import org.evergreen_ils.Api
 import org.evergreen_ils.net.Gateway
 import org.evergreen_ils.searchCatalog.CodedValueMap
-import org.evergreen_ils.system.Utils
-import org.opensrf.util.GatewayResponse
 import org.opensrf.util.OSRFObject
 import java.util.*
 

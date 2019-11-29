@@ -21,22 +21,32 @@ package org.evergreen_ils.views
 import android.accounts.AccountManager
 import android.content.Intent
 import android.os.Bundle
+import android.text.TextUtils
 import android.view.View
 import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.launch
 import org.evergreen_ils.R
 import org.evergreen_ils.accountAccess.AccountUtils
 import org.evergreen_ils.accountAccess.AccountUtils.getAuthTokenFuture
 import org.evergreen_ils.android.App
-import org.evergreen_ils.system.Account
+import org.evergreen_ils.api.AuthService
+import org.evergreen_ils.auth.Const
+import org.evergreen_ils.data.Account
 import org.evergreen_ils.system.Analytics
 import org.evergreen_ils.system.Log
+import org.evergreen_ils.utils.await
+import org.evergreen_ils.utils.getAccountManagerResult
 import org.evergreen_ils.utils.ui.AppState
 import org.evergreen_ils.utils.ui.ThemeManager
+import org.opensrf.util.OSRFObject
+import java.util.concurrent.TimeoutException
 
 private const val TAG = "LaunchActivity"
 
@@ -88,29 +98,21 @@ class LaunchActivity : AppCompatActivity(), CoroutineScope by MainScope() {
                 }
             }
         })
-        mModel.accountDataReady.observe(this, Observer { value ->
-            value?.let { ready ->
-                Log.d(TAG, "accountDataReady:$ready")
-                if (ready) {
-                    App.startApp(this)
-                } else {
-                    updateOnFailure()
-                }
-            }
-        })
 
         //launchLoginFlow()
     }
 
-    fun launchLoginFlow() {
-        Log.d(TAG, "auth: launch")
+    private fun updateOnFailure() {
+        mRetryButton?.visibility = View.VISIBLE
+        mProgressBar?.visibility = View.INVISIBLE
+    }
+
+    private fun launchLoginFlow() {
+        Log.d(TAG, "[auth] launch")
         launch {
-//            mProgressBar?.visibility = View.VISIBLE
-//            mProgressText?.text = "Signing in"
             try {
                 val account = getAccount()
-                Log.d(TAG, "auth: ${account.username} ${account.authToken}")
-                App.setAccount(account)
+                Log.d(TAG, "[auth] ${account.username} ${account.authToken}")
                 mModel?.loadServiceData(account)
             } catch (ex: Exception) {
                 Log.d(TAG, "caught in launchLoginFlow", ex)
@@ -122,15 +124,12 @@ class LaunchActivity : AppCompatActivity(), CoroutineScope by MainScope() {
         }
     }
 
-    fun updateOnFailure() {
-        mRetryButton?.visibility = View.VISIBLE
-        mProgressBar?.visibility = View.INVISIBLE
-    }
-
-    fun loadAccountData() {
+    private fun loadAccountData() {
         launch {
             try {
-                mModel?.loadAccountData(App.getAccount())
+                // TODO
+//                val haveSession = getSession()
+//                Log.d(TAG, "loadAccountData: haveSession:$haveSession")
             } catch (ex: Exception) {
                 Log.d(TAG, "caught in loadAccountData", ex)
                 var msg = ex.message
@@ -144,37 +143,86 @@ class LaunchActivity : AppCompatActivity(), CoroutineScope by MainScope() {
     // Here we use the AccountManager to get an auth token, maybe creating or selecting an
     // account along the way.  We have to do that here and not in a ViewModel because it
     // needs an Activity.
-    suspend fun getAccount(): Account {
+    private suspend fun getAccount(): Account {
         // get auth token
-        Log.d(TAG, "auth: getAuthTokenFuture")
+        Log.d(TAG, "[auth] getAuthTokenFuture")
         val future = getAuthTokenFuture(this)
-        Log.d(TAG, "auth: wait ...")
+        Log.d(TAG, "[auth] getAuthTokenFuture ...")
         val bnd: Bundle? = future.await()
-        Log.d(TAG, "auth: wait ... done")
-        val account_name = bnd?.getString(AccountManager.KEY_ACCOUNT_NAME)
-        val auth_token = bnd?.getString(AccountManager.KEY_AUTHTOKEN)
-        var error_msg = bnd?.getString(AccountManager.KEY_ERROR_MESSAGE)
-        if (auth_token.isNullOrEmpty() || account_name.isNullOrEmpty()) {
-            if (error_msg.isNullOrEmpty()) error_msg = "Login failed"
-            Analytics.log(TAG, "auth: error_msg:$error_msg")
-            throw Exception(error_msg)
-        }
+        Log.d(TAG, "[auth] getAuthTokenFuture ... $bnd")
+        if (bnd == null)
+            throw TimeoutException()
+        val result = bnd.getAccountManagerResult()
+        if (result.accountName.isNullOrEmpty() || result.authToken.isNullOrEmpty())
+            throw Exception(result.failureMessage)
 
         // turn that into a Library and Account
         val accountType: String = applicationContext.getString(R.string.ou_account_type)
-        val library = AccountUtils.getLibraryForAccount(applicationContext, account_name, accountType)
+        val library = AccountUtils.getLibraryForAccount(applicationContext, result.accountName, accountType)
         AppState.setString(AppState.LIBRARY_NAME, library.name)
         AppState.setString(AppState.LIBRARY_URL, library.url)
         App.setLibrary(library)
-        return Account(account_name, auth_token)
+        val account = Account(result.accountName, result.authToken)
+
+        // auth token zen: try once and if it fails, invalidate the token and try again
+        var savedEx: Exception? = null
+        var obj = try { fetchSession(result.authToken) } catch (ex: Exception) { savedEx = ex; null }
+        if (obj == null) {
+            AccountUtils.invalidateAuthToken(this, result.authToken)
+            account.clearSession()
+            Log.d(TAG, "[auth] getAuthTokenForAccountFuture ...")
+            val future = AccountUtils.getAuthTokenForAccountFuture(this, result.accountName)
+            val bnd = future.await()
+            Log.d(TAG, "[auth] getAuthTokenForAccountFuture ... $bnd")
+            if (bnd == null)
+                throw TimeoutException()
+            val result = bnd.getAccountManagerResult()
+            if (result.accountName.isNullOrEmpty() || result.authToken.isNullOrEmpty())
+                throw Exception(result.failureMessage)
+            obj = try { fetchSession(result.authToken) } catch (ex: Exception) { savedEx = ex; null }
+        }
+        if (obj == null)
+            throw savedEx ?: Exception("Unknown login error")
+
+        App.setAccount(account)
+
+        return account
     }
+
+    private suspend fun fetchSession(authToken: String): OSRFObject {
+        Log.d(TAG, "[auth] fetchSession ...")
+        val obj = AuthService.fetchSession(authToken)
+        Log.d(TAG, "[auth] fetchSession ... $obj")
+        return obj
+    }
+//
+//    // Start or resume a session via the gateway.  We have to do this work here and
+//    // not in a ViewModel because reauthenticate() needs an Activity.
+//    private suspend fun getSession(): Boolean {
+//        // auth token zen: try once and if it fails, invalidate the token and try again
+//        var haveSession = false
+//        var authToken = "x"
+//        var accountName = "hemlock"
+//        try {
+//            Log.d(TAG, "getSession: fetch ...")
+//            val obj = AuthService.fetchSession(authToken)
+//            Log.d(TAG, "getSession: obj:$obj")
+//            haveSession = true
+//        } catch (ex: Exception) {
+//            AccountUtils.invalidateAuthToken(this, authToken)
+//            App.getAccount().clearSession()
+//
+//            haveSession = ac.reauthenticate(mCallingActivity, account_name);
+//        }
+//    }
+
 
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
         Log.d(TAG, object{}.javaClass.enclosingMethod?.name)
 
-        // Start launching here in onAttachedToWindow, because setDefaultNightMode causes onCreate
-        // to be called twice (and therefore we would launch/cancel/launch coroutines).
+        // setDefaultNightMode causes onCreate to be called twice.  Calling launchLoginFlow here
+        // saves a launch/cancel cycle.
         launchLoginFlow()
     }
 

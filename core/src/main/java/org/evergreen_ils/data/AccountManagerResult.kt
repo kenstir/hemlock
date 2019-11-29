@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Kenneth H. Cox
+ * Copyright (c) 2019 Kenneth H. Cox
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -15,12 +15,16 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
-package org.evergreen_ils.system
 
-data class OrgType (val id: Int,
-                    val name: String?,
-                    val opacLabel: String?,
-                    val canHaveUsers: Boolean,
-                    val canHaveVols: Boolean)
-//val parent: Int
-//val depth: Int
+package org.evergreen_ils.data
+
+data class AccountManagerResult (
+        val accountName: String?,
+        val authToken: String?,
+        val errorMessage: String?
+) {
+    val failed: Boolean
+        get() = accountName.isNullOrEmpty() || authToken.isNullOrEmpty()
+    val failureMessage: String
+        get() = errorMessage ?: "Login failed"
+}

@@ -25,9 +25,8 @@ import com.android.volley.toolbox.StringRequest
 import org.evergreen_ils.Api
 import org.evergreen_ils.system.Analytics
 import org.opensrf.ShouldNotHappenException
-import org.opensrf.util.GatewayResponse
+import org.opensrf.util.GatewayResult
 import org.opensrf.util.JSONWriter
-import org.opensrf.util.OSRFObject
 import java.net.URI
 import java.net.URISyntaxException
 import kotlin.coroutines.resumeWithException
@@ -104,7 +103,7 @@ object Gateway {
     }
 
     // Make an OSRF Gateway request from inside a CoroutineScope.  `block` is expected to return T or throw
-    suspend fun <T> fetch(service: String, method: String, args: Array<Any?>, block: (GatewayResponse) -> T) = suspendCoroutine<T> { cont ->
+    suspend fun <T> fetch(service: String, method: String, args: Array<Any?>, block: (GatewayResult) -> T) = suspendCoroutine<T> { cont ->
         val url = buildUrl(service, method, args)
         val r = GatewayJsonObjectRequest(
                 url,
@@ -125,7 +124,7 @@ object Gateway {
 
     // same as above without caching
     // TODO can we share most of `fetch`?
-    suspend fun <T> fetchNoCache(service: String, method: String, args: Array<Any?>, block: (GatewayResponse) -> T) = suspendCoroutine<T> { cont ->
+    suspend fun <T> fetchNoCache(service: String, method: String, args: Array<Any?>, block: (GatewayResult) -> T) = suspendCoroutine<T> { cont ->
         val url = buildUrl(service, method, args, false)
         val r = GatewayJsonObjectRequest(
                 url,

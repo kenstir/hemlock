@@ -18,8 +18,6 @@
 
 package org.evergreen_ils.views
 
-import android.app.Application
-import android.content.res.Resources
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -32,9 +30,9 @@ import org.evergreen_ils.android.App
 import org.evergreen_ils.api.*
 import org.evergreen_ils.net.Gateway
 import org.evergreen_ils.searchCatalog.CodedValueMap
-import org.evergreen_ils.system.Account
+import org.evergreen_ils.data.Account
 import org.evergreen_ils.system.Log
-import org.opensrf.util.GatewayResponse
+import org.opensrf.util.GatewayResult
 
 private const val TAG = "LaunchViewModel"
 
@@ -112,6 +110,7 @@ class LaunchViewModel : ViewModel() {
         }
     }
 
+    /*
     fun loadAccountData(account: Account) {
         if (account.authToken.isNullOrEmpty())
             return
@@ -142,6 +141,7 @@ class LaunchViewModel : ViewModel() {
             }
         }
     }
+    */
 
     /*
 val settings = arrayListOf(Api.SETTING_ORG_UNIT_NOT_PICKUP_LIB,
@@ -165,9 +165,9 @@ now_ms = Log.logElapsedTime(TAG, now_ms,"coro: 2")
 
     // response.payload looks like:
     // {credit.payments.allow={org=49, value=true}, opac.holds.org_unit_not_pickup_lib=null}
-    private fun parseBoolSetting(response: GatewayResponse, setting: String): Boolean? {
+    private fun parseBoolSetting(result: GatewayResult, setting: String): Boolean? {
         var value: Boolean? = null
-        val map = response.payload as? Map<String, Any>
+        val map = result.payload as? Map<String, Any>
         Log.d(TAG, "map:$map")
         if (map != null) {
             val o = map[setting]

@@ -28,7 +28,7 @@ import com.crashlytics.android.answers.CustomEvent;
 
 import org.evergreen_ils.net.Gateway;
 import org.opensrf.Method;
-import org.opensrf.util.GatewayResponse;
+import org.opensrf.util.GatewayResult;
 import org.opensrf.util.OSRFObject;
 
 import java.util.ArrayList;
@@ -143,7 +143,7 @@ public class Analytics {
         Crashlytics.log(Log.DEBUG, TAG, "resp: " + resp);
     }
 
-    public static void logResponse(GatewayResponse resp) {
+    public static void logResponse(GatewayResult resp) {
         if (analytics) Crashlytics.log(Log.DEBUG, TAG, "resp: " + resp.payload);
     }
 

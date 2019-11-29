@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 Kenneth H. Cox
+ * Copyright (C) 2016 Kenneth H. Cox
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -16,10 +16,14 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
-package org.evergreen_ils.system
+package org.evergreen_ils.data
 
-data class CopyStatus (val id: Int, val name: String): Comparable<CopyStatus> {
+import android.location.Location
+import android.text.TextUtils
 
-    override fun compareTo(other: CopyStatus): Int = this.id.compareTo(other.id)
-//    override fun toString(): String = name
+data class Library constructor(val url: String              // e.g. "https://catalog.cwmars.org"
+                               , val name: String           // e.g. "C/W MARS"
+                               , val directoryName: String? // e.g. "Massachusetts, US (C/W MARS)"
+                               , val location: Location?) {
+    constructor(url: String, name: String) : this(url, name, null, null)
 }

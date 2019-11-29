@@ -22,28 +22,27 @@ import com.android.volley.NetworkResponse;
 import com.android.volley.ParseError;
 import com.android.volley.Request;
 import com.android.volley.Response;
-import com.android.volley.VolleyError;
 import com.android.volley.toolbox.HttpHeaderParser;
 import org.evergreen_ils.system.Log;
-import org.opensrf.util.GatewayResponse;
+import org.opensrf.util.GatewayResult;
 
 import java.io.UnsupportedEncodingException;
 
-public class GatewayJsonObjectRequest extends Request<GatewayResponse> {
+public class GatewayJsonObjectRequest extends Request<GatewayResult> {
     private String TAG = GatewayJsonObjectRequest.class.getSimpleName();
 
-    private final Response.Listener<GatewayResponse> mListener;
+    private final Response.Listener<GatewayResult> mListener;
     private final Priority mPriority;
     protected Boolean mCacheHit;
 
-    public GatewayJsonObjectRequest(String url, Priority priority, Response.Listener<GatewayResponse> listener, Response.ErrorListener errorListener) {
+    public GatewayJsonObjectRequest(String url, Priority priority, Response.Listener<GatewayResult> listener, Response.ErrorListener errorListener) {
         super(Request.Method.GET, url, errorListener);
         Log.d(TAG, "[net] send "+url);
         this.mPriority = priority;
         this.mListener = listener;
     }
 
-    protected void deliverResponse(GatewayResponse response) {
+    protected void deliverResponse(GatewayResult response) {
         this.mListener.onResponse(response);
     }
 
@@ -62,19 +61,26 @@ public class GatewayJsonObjectRequest extends Request<GatewayResponse> {
         }
     }
 
-    protected Response<GatewayResponse> parseNetworkResponse(NetworkResponse response) {
-        GatewayResponse gatewayResponse;
+    protected Response<GatewayResult> parseNetworkResponse(NetworkResponse response) {
+        GatewayResult gatewayResult;
         try {
             String json = new String(response.data, HttpHeaderParser.parseCharset(response.headers));
             Log.d(TAG, "[net] recv "+response.data.length+": "+json);
             Log.d(TAG, "[net] cached:"+mCacheHit+" method:"+getMethod()+" url:"+getUrl());
-            gatewayResponse = GatewayResponse.create(json);
+            gatewayResult = GatewayResult.create(json);
+            if (gatewayResult.failed == false) {
+                return Response.success(gatewayResult, HttpHeaderParser.parseCacheHeaders(response));
+            } else {
+                return Response.success(gatewayResult, null);
+            }
+            /*
             if (gatewayResponse.failed == false) {
                 return Response.success(gatewayResponse, HttpHeaderParser.parseCacheHeaders(response));
             } else {
                 Log.d(TAG, "failed:" + gatewayResponse.description);
                 return Response.error(new VolleyError(gatewayResponse.description));
             }
+            */
         } catch (UnsupportedEncodingException ex) {
             Log.d(TAG, "caught", ex);
             return Response.error(new ParseError(ex));

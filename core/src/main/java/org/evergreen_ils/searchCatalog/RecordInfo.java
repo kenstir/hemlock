@@ -22,11 +22,10 @@ package org.evergreen_ils.searchCatalog;
 import android.text.TextUtils;
 
 import org.evergreen_ils.system.Log;
-import org.evergreen_ils.system.Utils;
 import org.evergreen_ils.utils.MARCRecord;
 import org.evergreen_ils.utils.MARCXMLParser;
 import org.evergreen_ils.utils.RecordAttributes;
-import org.opensrf.util.GatewayResponse;
+import org.opensrf.util.GatewayResult;
 import org.opensrf.util.OSRFObject;
 
 import java.io.Serializable;
@@ -135,7 +134,7 @@ public class RecordInfo implements Serializable {
         record.basic_metadata_loaded = true;
     }
 
-    public void updateFromBREResponse(GatewayResponse response) {
+    public void updateFromBREResponse(GatewayResult response) {
         try {
             OSRFObject info = (OSRFObject) response.payload;
             marcxml_loaded = true;
@@ -150,7 +149,7 @@ public class RecordInfo implements Serializable {
         }
     }
 
-    public static void setCopySummary(RecordInfo record, GatewayResponse response) {
+    public static void setCopySummary(RecordInfo record, GatewayResult response) {
         record.copySummaryList = new ArrayList<>();
         if (response == null || response.failed)
             return;
@@ -166,7 +165,7 @@ public class RecordInfo implements Serializable {
         record.copy_summary_loaded = true;
     }
 
-    public static List<CopyLocationCounts> parseCopyLocationCounts(RecordInfo record, GatewayResponse response) {
+    public static List<CopyLocationCounts> parseCopyLocationCounts(RecordInfo record, GatewayResult response) {
         List<CopyLocationCounts> copyLocationCountsList = new ArrayList<>();
         if (response == null || response.failed)
             return copyLocationCountsList;
@@ -182,7 +181,7 @@ public class RecordInfo implements Serializable {
         return copyLocationCountsList;
     }
 
-    public void updateFromMRAResponse(GatewayResponse response) {
+    public void updateFromMRAResponse(GatewayResult response) {
         OSRFObject mra_obj = null;
         try {
             mra_obj = (OSRFObject) response.payload;

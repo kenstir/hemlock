@@ -24,12 +24,10 @@ import org.evergreen_ils.system.StdoutLogProvider
 import org.junit.Assert.*
 import org.junit.BeforeClass
 import org.junit.Test
-import org.opensrf.util.GatewayResponse
-import org.opensrf.util.JSONException
-import org.opensrf.util.OSRFObject
+import org.opensrf.util.GatewayResult
 import org.opensrf.util.OSRFRegistry
 
-class GatewayResponseTest {
+class GatewayResultTest {
 
     companion object {
         @BeforeClass
@@ -46,9 +44,10 @@ class GatewayResponseTest {
         val json = """
             {"status":200,"payload":[{"__c":"au","__p":["f","luser",69]}]}
             """
-        val response = GatewayResponse.create(json)
-        assertFalse(response.failed)
-        val obj = response.asObject()
+        val result = GatewayResult.create(json)
+        assertFalse(result.failed)
+
+        val obj = result.asObject()
         assertNotNull(obj)
         assertEquals(false, Api.parseBoolean(obj.get("juvenile")))
         assertEquals("luser", obj.getString("usrname"))
@@ -60,18 +59,62 @@ class GatewayResponseTest {
         val json = """
             {"status":200,"payload":[{"__c":"xyzzy","__p":["f","luser",69]}]}
             """
-        val response = GatewayResponse.create(json)
-        assertTrue(response.failed)
-        assertTrue(response.ex is JSONException)
+        val result = GatewayResult.create(json)
+        assertTrue(result.failed)
+        assertEquals("Unregistered class: xyzzy", result.errorMessage)
+
+        val res = kotlin.runCatching { result.asObject() }
+        assertTrue(res.isFailure)
     }
 
     @Test
-    fun test_failedOnBadStatus() {
+    fun test_failureOnBadStatus() {
         val json = """
             {"payload":[],"status":400}
             """
-        val response = GatewayResponse.create(json)
-        assertTrue(response.failed)
+        val result = GatewayResult.create(json)
+        assertTrue(result.failed)
+
+        val objResult = kotlin.runCatching { result.asObject() }
+        assertTrue(objResult.isFailure)
+        val strResult = kotlin.runCatching { result.asString() }
+        assertTrue(strResult.isFailure)
+        val arrayResult = kotlin.runCatching { result.asObjectArray() }
+        assertTrue(arrayResult.isFailure)
+    }
+
+    // not sure if this happens IRL
+    @Test
+    fun test_emptyPayload() {
+        val json = """
+            {"payload":[],"status":200}
+            """
+        val result = GatewayResult.create(json)
+        assertFalse(result.failed)
+
+        val objResult = kotlin.runCatching { result.asObject() }
+        assertTrue(objResult.isFailure)
+        val strResult = kotlin.runCatching { result.asString() }
+        assertTrue(strResult.isFailure)
+        val arrayResult = kotlin.runCatching { result.asObjectArray() }
+        assertTrue(arrayResult.isFailure)
+    }
+
+    // not sure if this happens IRL
+    @Test
+    fun test_emptyArray() {
+        val json = """
+            {"payload":[[]],"status":200}
+            """
+        val result = GatewayResult.create(json)
+        assertFalse(result.failed)
+
+        val objResult = kotlin.runCatching { result.asObject() }
+        assertTrue(objResult.isFailure)
+        val strResult = kotlin.runCatching { result.asString() }
+        assertTrue(strResult.isFailure)
+        val arr = result.asObjectArray()
+        assertEquals(0, arr?.size)
     }
 
     @Test
@@ -79,21 +122,28 @@ class GatewayResponseTest {
         val json = """
             {"payload":["3-2-8"],"status":200}
             """
-        val response = GatewayResponse.create(json)
-        assertFalse(response.failed)
-        val str = response.asString()
+        val result = GatewayResult.create(json)
+        assertFalse(result.failed)
+
+        val str = result.asString()
         assertEquals("3-2-8", str)
     }
 
     @Test
-    fun test_authSuccess() {
+    fun test_authSuccessEvent() {
+        // open-ils.auth.authenticate.complete returns this odd looking event.
+        // For now we don't use GatewayResult to deal with its contents, but we could.
         val json = """
             {"payload":[{"ilsevent":0,"textcode":"SUCCESS","desc":"Success","pid":6939,"stacktrace":"oils_auth.c:634","payload":{"authtoken":"985cda3d943232fbfd987d85d1f1a8af","authtime":420}}],"status":200}
             """
-        val response = GatewayResponse.create(json)
-        assertFalse(response.failed)
-        val obj = response.asObject()
-        assertEquals("SUCCESS", obj.getString("textcode"))
+        val result = GatewayResult.create(json)
+        assertFalse(result.failed)
+        val map = result.payload as? Map<String, Any?>
+        assertNotNull(map)
+        assertEquals("SUCCESS", map?.get("textcode"))
+
+        val res = kotlin.runCatching { result.asObject() }
+        assertTrue(res.isFailure)
     }
 
     @Test
@@ -101,9 +151,12 @@ class GatewayResponseTest {
         val json = """
             {"payload":[{"ilsevent":1001,"textcode":"NO_SESSION","desc":"User login session has either timed out or does not exist","pid":88967,"stacktrace":"oils_auth.c:1150"}],"status":200}
             """
-        val response = GatewayResponse.create(json)
-        assertTrue(response.failed)
-        assertEquals("User login session has either timed out or does not exist", response.description)
+        val result = GatewayResult.create(json)
+        assertTrue(result.failed)
+        assertEquals("User login session has either timed out or does not exist", result.errorMessage)
+
+        val res = kotlin.runCatching { result.asObject() }
+        assertTrue(res.isFailure)
     }
 
     @Test
@@ -111,19 +164,11 @@ class GatewayResponseTest {
         val json = """
             {"payload":[[{"stacktrace":"...","payload":{"fail_part":"PATRON_EXCEEDS_FINES"},"servertime":"Mon Nov 25 20:57:11 2019","ilsevent":"7013","pid":23476,"textcode":"PATRON_EXCEEDS_FINES","desc":"The patron in question has reached the maximum fine amount"},{"stacktrace":"...","payload":{"fail_part":"PATRON_EXCEEDS_LOST_COUNT"},"servertime":"Mon Nov 25 20:57:11 2019","ilsevent":"1236","pid":23476,"textcode":"PATRON_EXCEEDS_LOST_COUNT","desc":"The patron has too many lost items."}]],"status":200}
             """
-        val response = GatewayResponse.create(json)
-        assertTrue(response.failed)
-        assertEquals("The patron in question has reached the maximum fine amount\n\nThe patron has too many lost items.", response.description)
-    }
+        val result = GatewayResult.create(json)
+        assertTrue(result.failed)
+        assertEquals("The patron in question has reached the maximum fine amount\n\nThe patron has too many lost items.", result.errorMessage)
 
-    @Test
-    fun test_emptyArray() {
-        val json = """
-            {"payload":[[]],"status":200}
-            """
-        val response = GatewayResponse.create(json)
-        assertFalse(response.failed)
-        val arr = response.asObjectArray()
-        assertEquals(0, arr?.size)
+        val res = kotlin.runCatching { result.asObject() }
+        assertTrue(res.isFailure)
     }
 }

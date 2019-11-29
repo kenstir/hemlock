@@ -35,7 +35,7 @@ import org.evergreen_ils.searchCatalog.RecordDetails;
 import org.evergreen_ils.searchCatalog.RecordInfo;
 import org.evergreen_ils.utils.ui.BaseActivity;
 import org.evergreen_ils.utils.ui.ProgressDialogSupport;
-import org.opensrf.util.GatewayResponse;
+import org.opensrf.util.GatewayResult;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -245,7 +245,7 @@ public class CheckoutsActivity extends BaseActivity {
                 });
 
                 AccountAccess ac = AccountAccess.getInstance();
-                GatewayResponse resp = null;
+                GatewayResult resp = null;
                 Exception ex = null;
                 try {
                     resp = ac.renewCirc(record.getTargetCopy());
@@ -263,7 +263,7 @@ public class CheckoutsActivity extends BaseActivity {
                     if (ex != null) {
                         msg = ex.getMessage();
                     } else if (resp != null) {
-                        msg = resp.description;
+                        msg = resp.errorMessage;
                     } else {
                         msg = "Unexpected error";
                     }

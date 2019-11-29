@@ -18,25 +18,20 @@
 
 package org.evergreen_ils.test
 
-import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import org.evergreen_ils.Api
-import org.evergreen_ils.android.App
 import org.evergreen_ils.api.ActorService
 import org.evergreen_ils.net.Gateway
 import org.evergreen_ils.net.VolleyWrangler
-import org.evergreen_ils.system.Library
 import org.evergreen_ils.system.Log
 import org.evergreen_ils.system.StdoutLogProvider
-import org.evergreen_ils.utils.ui.AppState
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
 import org.junit.BeforeClass
 import org.junit.Test
-import org.junit.runner.RunWith
 
 private const val TAG = "GatewayTest"
 

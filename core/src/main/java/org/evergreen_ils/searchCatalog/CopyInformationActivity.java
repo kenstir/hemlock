@@ -48,11 +48,10 @@ import org.evergreen_ils.net.VolleyWrangler;
 import org.evergreen_ils.system.EvergreenServer;
 import org.evergreen_ils.system.Log;
 import org.evergreen_ils.system.Organization;
-import org.evergreen_ils.system.Utils;
 import org.evergreen_ils.utils.ui.ActionBarUtils;
 import org.evergreen_ils.system.Analytics;
 import org.evergreen_ils.utils.ui.TextViewUtils;
-import org.opensrf.util.GatewayResponse;
+import org.opensrf.util.GatewayResult;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -189,9 +188,9 @@ public class CopyInformationActivity extends AppCompatActivity {
         GatewayJsonObjectRequest r = new GatewayJsonObjectRequest(
                 url,
                 Request.Priority.NORMAL,
-                new Response.Listener<GatewayResponse>() {
+                new Response.Listener<GatewayResult>() {
                     @Override
-                    public void onResponse(GatewayResponse response) {
+                    public void onResponse(GatewayResult response) {
                         long duration_ms = System.currentTimeMillis() - start_ms;
                         Log.d(TAG, "fetch "+record.doc_id+" took " + duration_ms + "ms");
                         updateCopyInfo(RecordInfo.parseCopyLocationCounts(record, response));

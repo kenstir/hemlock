@@ -33,13 +33,12 @@ import org.evergreen_ils.api.EvergreenService;
 import org.evergreen_ils.auth.Const;
 import org.evergreen_ils.system.EvergreenServer;
 import org.evergreen_ils.system.Log;
-import org.evergreen_ils.system.Organization;
 import org.evergreen_ils.system.Utils;
 import org.evergreen_ils.searchCatalog.RecordInfo;
 import org.evergreen_ils.system.Analytics;
 import org.opensrf.ShouldNotHappenException;
 import org.opensrf.net.http.HttpConnection;
-import org.opensrf.util.GatewayResponse;
+import org.opensrf.util.GatewayResult;
 import org.opensrf.util.OSRFObject;
 
 import java.util.*;
@@ -273,10 +272,10 @@ public class AccountAccess {
     // -------------------------//
 
     private CircRecord fleshCircRecord(String id, CircRecord.CircType circType) throws SessionNotFoundException {
-        GatewayResponse response = retrieveCircRecord(id);
+        GatewayResult response = retrieveCircRecord(id);
         if (response.failed) {
             // PINES Crash #23
-            Analytics.logException(new ShouldNotHappenException("failed circ retrieve, type:" + circType + " desc:" + response.description));
+            Analytics.logException(new ShouldNotHappenException("failed circ retrieve, type:" + circType + " desc:" + response.errorMessage));
             return null;
         }
         OSRFObject circ = (OSRFObject) response.payload;
@@ -347,13 +346,13 @@ public class AccountAccess {
      * @return the oSRF object
      * @throws SessionNotFoundException the session not found exception
      */
-    private GatewayResponse retrieveCircRecord(String id)
+    private GatewayResult retrieveCircRecord(String id)
             throws SessionNotFoundException {
 
         Object resp = Utils.doRequest(conn(), Api.SERVICE_CIRC,
                 Api.CIRC_RETRIEVE, authToken, new Object[] {
                         authToken, id });
-        return GatewayResponse.createFromObject(resp);
+        return GatewayResult.createFromObject(resp);
     }
 
     /**
@@ -443,7 +442,7 @@ public class AccountAccess {
      * @param target_copy the target_copy
      * @throws SessionNotFoundException the session not found exception
      */
-    public GatewayResponse renewCirc(Integer target_copy) throws SessionNotFoundException {
+    public GatewayResult renewCirc(Integer target_copy) throws SessionNotFoundException {
 
         HashMap<String, Integer> param = new HashMap<>();
         param.put("patron", this.userID);
@@ -454,7 +453,7 @@ public class AccountAccess {
                 Api.CIRC_RENEW, authToken, new Object[] {
                         authToken, param });
 
-        return GatewayResponse.createFromObject(resp);
+        return GatewayResult.createFromObject(resp);
     }
 
     // ------------------------orgs Section

@@ -31,10 +31,8 @@ import org.evergreen_ils.api.EvergreenService;
 import org.evergreen_ils.net.Gateway;
 import org.evergreen_ils.net.GatewayJsonObjectRequest;
 import org.evergreen_ils.net.VolleyWrangler;
-import org.evergreen_ils.system.EvergreenServer;
 import org.evergreen_ils.system.Log;
-import org.evergreen_ils.system.Utils;
-import org.opensrf.util.GatewayResponse;
+import org.opensrf.util.GatewayResult;
 
 /** Async interface for loading RecordInfo metadata
  *
@@ -77,9 +75,9 @@ public class RecordLoader {
             GatewayJsonObjectRequest r = new GatewayJsonObjectRequest(
                     url,
                     Request.Priority.HIGH,
-                    new Response.Listener<GatewayResponse>() {
+                    new Response.Listener<GatewayResult>() {
                         @Override
-                        public void onResponse(GatewayResponse response) {
+                        public void onResponse(GatewayResult response) {
                             RecordInfo.updateFromMODSResponse(record, response.payload);
                             Log.logElapsedTime(TAG, start_ms, "fetch.basic");
                             responseListener.onMetadataLoaded();
@@ -103,9 +101,9 @@ public class RecordLoader {
             GatewayJsonObjectRequest r = new GatewayJsonObjectRequest(
                     url,
                     Request.Priority.HIGH,
-                    new Response.Listener<GatewayResponse>() {
+                    new Response.Listener<GatewayResult>() {
                         @Override
-                        public void onResponse(GatewayResponse response) {
+                        public void onResponse(GatewayResult response) {
                             record.updateFromBREResponse(response);
                             Log.logElapsedTime(TAG, start_ms, "fetch.marcxml");
                             responseListener.onMetadataLoaded();
@@ -133,9 +131,9 @@ public class RecordLoader {
             GatewayJsonObjectRequest r = new GatewayJsonObjectRequest(
                     url,
                     Request.Priority.NORMAL,
-                    new Response.Listener<GatewayResponse>() {
+                    new Response.Listener<GatewayResult>() {
                         @Override
-                        public void onResponse(GatewayResponse response) {
+                        public void onResponse(GatewayResult response) {
                             record.updateFromMRAResponse(response);
                             Log.logElapsedTime(TAG, start_ms, "fetch.attrs");
                             responseListener.onIconFormatLoaded();
@@ -157,9 +155,9 @@ public class RecordLoader {
             GatewayJsonObjectRequest r = new GatewayJsonObjectRequest(
                     url,
                     Request.Priority.LOW,
-                    new Response.Listener<GatewayResponse>() {
+                    new Response.Listener<GatewayResult>() {
                         @Override
-                        public void onResponse(GatewayResponse response) {
+                        public void onResponse(GatewayResult response) {
                             RecordInfo.setCopySummary(record, response);
                             listener.onDataAvailable();
                         }

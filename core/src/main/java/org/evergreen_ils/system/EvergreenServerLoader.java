@@ -30,7 +30,7 @@ import org.evergreen_ils.accountAccess.AccountAccess;
 import org.evergreen_ils.api.EvergreenService;
 import org.evergreen_ils.net.GatewayJsonObjectRequest;
 import org.evergreen_ils.net.VolleyWrangler;
-import org.opensrf.util.GatewayResponse;
+import org.opensrf.util.GatewayResult;
 import org.opensrf.util.OSRFObject;
 
 import java.util.ArrayList;
@@ -56,7 +56,7 @@ public class EvergreenServerLoader {
     private static int mOutstandingRequests = 0;
     private static long start_ms = 0;
 
-    private static Boolean parseBoolSetting(GatewayResponse response, String setting) {
+    private static Boolean parseBoolSetting(GatewayResult response, String setting) {
         Boolean value = null;
         try {
             Map<String, ?> resp_map = (Map<String, ?>) response.payload;
@@ -71,7 +71,7 @@ public class EvergreenServerLoader {
         return value;
     }
 
-    private static void parseOrgSettingsFromGatewayResponse(GatewayResponse response, final Organization org) {
+    private static void parseOrgSettingsFromGatewayResponse(GatewayResult response, final Organization org) {
         Boolean not_pickup_lib = parseBoolSetting(response, Api.SETTING_ORG_UNIT_NOT_PICKUP_LIB);
         if (not_pickup_lib != null)
             org.settingIsPickupLocation = !not_pickup_lib;
@@ -122,9 +122,9 @@ public class EvergreenServerLoader {
             GatewayJsonObjectRequest r = new GatewayJsonObjectRequest(
                     url,
                     Request.Priority.NORMAL,
-                    new Response.Listener<GatewayResponse>() {
+                    new Response.Listener<GatewayResult>() {
                         @Override
-                        public void onResponse(GatewayResponse response) {
+                        public void onResponse(GatewayResult response) {
                             Analytics.logVolleyResponse(method);
                             parseOrgSettingsFromGatewayResponse(response, org);
                             decrNumOutstanding();
@@ -145,7 +145,7 @@ public class EvergreenServerLoader {
         }
     }
 
-    private static void parseSMSCarriersFromGatewayResponse(GatewayResponse response) {
+    private static void parseSMSCarriersFromGatewayResponse(GatewayResult response) {
         try {
             List<OSRFObject> resp_list = (List<OSRFObject>) response.payload;
             EvergreenServer.getInstance().loadSMSCarriers(resp_list);
@@ -167,9 +167,9 @@ public class EvergreenServerLoader {
         GatewayJsonObjectRequest r = new GatewayJsonObjectRequest(
                 url,
                 Request.Priority.NORMAL,
-                new Response.Listener<GatewayResponse>() {
+                new Response.Listener<GatewayResult>() {
                     @Override
-                    public void onResponse(GatewayResponse response) {
+                    public void onResponse(GatewayResult response) {
                         Analytics.logVolleyResponse(method);
                         parseSMSCarriersFromGatewayResponse(response);
                         decrNumOutstanding();
@@ -189,7 +189,7 @@ public class EvergreenServerLoader {
         VolleyWrangler.getInstance(context).addToRequestQueue(r);
     }
 
-    private static Integer parseMessagesResponse(GatewayResponse response) {
+    private static Integer parseMessagesResponse(GatewayResult response) {
         Integer unread_count = 0;
         if (response.payload != null) {
             try {
@@ -224,9 +224,9 @@ public class EvergreenServerLoader {
         GatewayJsonObjectRequest r = new GatewayJsonObjectRequest(
                 url,
                 Request.Priority.NORMAL,
-                new Response.Listener<GatewayResponse>() {
+                new Response.Listener<GatewayResult>() {
                     @Override
-                    public void onResponse(GatewayResponse response) {
+                    public void onResponse(GatewayResult response) {
                         Analytics.logVolleyResponse(method);
                         listener.onResponse(parseMessagesResponse(response));
                         decrNumOutstanding();

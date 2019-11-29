@@ -143,7 +143,7 @@ public class JSONReader {
 
         OSRFRegistry registry = OSRFRegistry.getRegistry(netClass);
         if (registry == null)
-            throw new JSONException("Unregistered class "+netClass);
+            throw new JSONException("Unregistered class: "+netClass);
         OSRFObject obj = new OSRFObject(registry);
  
         try {

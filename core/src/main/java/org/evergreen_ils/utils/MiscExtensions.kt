@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Kenneth H. Cox
+ * Copyright (c) 2019 Kenneth H. Cox
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -16,14 +16,14 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
-package org.evergreen_ils.system
+package org.evergreen_ils.utils
 
-import android.location.Location
-import android.text.TextUtils
+import android.accounts.AccountManager
+import android.os.Bundle
+import org.evergreen_ils.data.AccountManagerResult
 
-data class Library constructor(val url: String              // e.g. "https://catalog.cwmars.org"
-                               , val name: String           // e.g. "C/W MARS"
-                               , val directoryName: String? // e.g. "Massachusetts, US (C/W MARS)"
-                               , val location: Location?) {
-    constructor(url: String, name: String) : this(url, name, null, null)
+fun Bundle.getAccountManagerResult(): AccountManagerResult {
+    return AccountManagerResult(getString(AccountManager.KEY_ACCOUNT_NAME),
+            getString(AccountManager.KEY_AUTHTOKEN),
+            getString(AccountManager.KEY_ERROR_MESSAGE))
 }

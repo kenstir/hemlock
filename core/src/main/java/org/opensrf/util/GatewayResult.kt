@@ -18,17 +18,14 @@
 package org.opensrf.util
 
 import android.text.TextUtils
-import org.evergreen_ils.Api
 import org.evergreen_ils.net.GatewayError
 import org.evergreen_ils.utils.fromApiToIntOrNull
 import org.open_ils.Event
-import org.opensrf.ShouldNotHappenException
-import java.util.*
 import kotlin.collections.ArrayList
 
-class GatewayResponse {
-    enum class ResponseType {
-        OBJECT, ARRAY, STRING, EMPTY, UNKNOWN, ERROR
+class GatewayResult {
+    enum class ResultType {
+        OBJECT, ARRAY, STRING, EMPTY, EVENT, UNKNOWN, ERROR
     }
 
     @JvmField
@@ -36,32 +33,33 @@ class GatewayResponse {
     @JvmField
     var failed = false
     @JvmField
-    var description: String? = null
-    @JvmField
-    var ex: Exception? = null
+    var errorMessage: String? = null
+    //@JvmField
+    private var ex: Exception? = null
+    private var events: List<Event>? = null
 
-    //private var map: Map<String?, Any?>? = null
-    private var type: ResponseType = ResponseType.UNKNOWN
+    private var type: ResultType = ResultType.UNKNOWN
 
     private constructor()
     private constructor(ex: Exception) {
         this.ex = ex
         failed = true
-        description = ex.message
-        type = ResponseType.ERROR
+        errorMessage = ex.message
+        type = ResultType.ERROR
     }
 
     @Throws(GatewayError::class)
     fun asObject(): OSRFObject {
         return try {
-            if (payload is OSRFObject) {
-                payload as OSRFObject
-            } else  /*if (payload instanceof Map)*/ {
-                val map = payload as Map<String, Any>?
-                OSRFObject(map)
-            }
+            payload as OSRFObject
+//            if (payload is OSRFObject) {
+//                payload as OSRFObject
+//            } else  /*if (payload instanceof Map)*/ {
+//                val map = payload as Map<String, Any>?
+//                OSRFObject(map)
+//            }
         } catch (ex: Exception) {
-            throw GatewayError("Unexpected network response: expected object")
+            throw GatewayError("Unexpected network response: expected object, got $type")
         }
     }
 
@@ -70,37 +68,35 @@ class GatewayResponse {
         return try {
             payload as List<OSRFObject>
         } catch (ex: Exception) {
-            throw GatewayError("Unexpected network response: expected array")
+            throw GatewayError("Unexpected network response: expected array, got $type")
         }
     }
 
     @Throws(GatewayError::class)
     fun asString(): String {
         return try {
-            if (payload == null) {
-                ""
-            } else payload as String
+            payload as String
         } catch (ex: Exception) {
-            throw GatewayError("Unexpected network response: expected string")
+            throw GatewayError("Unexpected network response: expected string, got $type")
         }
     }
 
     companion object {
         @JvmStatic
-        fun create(json: String?): GatewayResponse {
+        fun create(json: String?): GatewayResult {
             return try {
                 val result = JSONReader(json).readObject()
                         ?: throw GatewayError("Unexpected network response: empty")
                 val status = result["status"]?.fromApiToIntOrNull()
                         ?: throw GatewayError("Unexpected network response: missing status")
                 if (status != 200)
-                    throw GatewayError("Network response failed (status:$status)")
+                    throw GatewayError("Network request failed (status:$status)")
                 val responseList= result["payload"] as? List<Any?>?
-                        ?: throw GatewayError("Unexpected network response: empty payload")
+                        ?: throw GatewayError("Unexpected network response: missing payload")
                 val payload = responseList.firstOrNull()
                 createFromObject(payload)
             } catch (ex: Exception) {
-                GatewayResponse(ex)
+                GatewayResult(ex)
             }
         }
 
@@ -110,51 +106,55 @@ class GatewayResponse {
         // payload is returned from Utils.doRequest, and AFAIK it can be one of 3 things:
         // 1 - an ilsevent (a map indicating an error or oddly sometimes a success)
         // 2 - a map containing an OSRFObject response
-        // 3 - a list of events
+        // 3 - a list of events or OSRFObjects
         @JvmStatic
-        fun createFromObject(payload: Any?): GatewayResponse {
+        fun createFromObject(payload: Any?): GatewayResult {
             try {
-                val resp = GatewayResponse()
+                val resp = GatewayResult()
                 resp.payload = payload
                 when (payload) {
                     null -> {
-                        resp.type = ResponseType.EMPTY
+                        resp.type = ResultType.EMPTY
                     }
                     is Map<*, *> -> {
                         // object or event
                         val event = Event.parseEvent(payload)
                         if (event != null) {
                             resp.failed = event.failed()
-                            resp.description = event.description
-                            //if (event.containsKey("payload")) resp.map = event["payload"] as Map<String, *>?
+                            if (resp.failed) resp.errorMessage = event.description
+                            resp.events = listOf(event)
+                            resp.type = ResultType.EVENT
+                        } else {
+                            if (payload !is OSRFObject) {
+                                print("STOP HERE")
+                            }
+                            resp.type = ResultType.OBJECT
                         }
-                        resp.type = ResponseType.OBJECT
                     }
                     is ArrayList<*> -> {
                         // list of objects or list of events
-                        val msgs = ArrayList<String?>()
+                        val events = mutableListOf<Event>()
                         for (obj in payload as ArrayList<Any?>) {
-                            val event = Event.parseEvent(obj)
-                            if (event != null) {
+                            Event.parseEvent(obj)?.let { event ->
                                 if (event.failed()) resp.failed = true
-                                msgs.add(event.description)
+                                events.add(event)
                             }
                         }
-                        resp.description = TextUtils.join("\n\n", msgs)
-                        resp.type = ResponseType.ARRAY
+                        if (resp.failed) resp.errorMessage = events.joinToString("\n\n") { it.description }
+                        resp.type = ResultType.ARRAY
                     }
                     is String -> {
-                        resp.type = ResponseType.STRING
+                        resp.type = ResultType.STRING
                     }
                     else -> {
-                        resp.type = ResponseType.UNKNOWN
+                        resp.type = ResultType.UNKNOWN
                         resp.failed = true
-                        resp.description = "Unexpected network response"
+                        resp.errorMessage = "Unexpected network response"
                     }
                 }
                 return resp
             } catch (ex: Exception) {
-                return GatewayResponse(ex)
+                return GatewayResult(ex)
             }
         }
     }
