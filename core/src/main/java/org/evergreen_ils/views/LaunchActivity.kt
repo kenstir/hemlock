@@ -18,10 +18,8 @@
 
 package org.evergreen_ils.views
 
-import android.accounts.AccountManager
 import android.content.Intent
 import android.os.Bundle
-import android.text.TextUtils
 import android.view.View
 import android.widget.Button
 import android.widget.TextView
@@ -37,7 +35,6 @@ import org.evergreen_ils.accountAccess.AccountUtils
 import org.evergreen_ils.accountAccess.AccountUtils.getAuthTokenFuture
 import org.evergreen_ils.android.App
 import org.evergreen_ils.api.AuthService
-import org.evergreen_ils.auth.Const
 import org.evergreen_ils.data.Account
 import org.evergreen_ils.system.Analytics
 import org.evergreen_ils.system.Log
@@ -56,6 +53,7 @@ class LaunchActivity : AppCompatActivity(), CoroutineScope by MainScope() {
     private var mProgressBar: View? = null
     private var mRetryButton: Button? = null
     private lateinit var mModel: LaunchViewModel
+    private var startTime: Long = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         Log.d(TAG, "onCreate")
@@ -83,26 +81,38 @@ class LaunchActivity : AppCompatActivity(), CoroutineScope by MainScope() {
             Log.d(TAG, "status:$s")
             mProgressText?.text = s
         })
-        mModel.spinner.observe(this, Observer { value ->
-            value?.let { show ->
-                mProgressBar?.visibility = if (show) View.VISIBLE else View.INVISIBLE
-            }
+        mModel.spinner.observe(this, Observer { show ->
+            Log.d(TAG, "spinner:$show")
+            mProgressBar?.visibility = if (show) View.VISIBLE else View.INVISIBLE
         })
-        mModel.serviceDataReady.observe(this, Observer { value ->
-            value?.let { ready ->
-                Log.d(TAG, "serviceDataReady:$ready")
-                if (ready) {
-                    loadAccountData()
-                } else {
-                    updateOnFailure()
-                }
+        mModel.serviceDataReady.observe(this, Observer { ready ->
+            Log.d(TAG, "serviceDataReady:$ready")
+            if (ready) {
+                loadAccountData()
+            } else {
+                onLaunchFailure()
             }
         })
 
         //launchLoginFlow()
     }
 
-    private fun updateOnFailure() {
+    override fun onDestroy() {
+        super.onDestroy()
+        Log.d(TAG, object{}.javaClass.enclosingMethod?.name)
+        cancel()
+    }
+
+    override fun onAttachedToWindow() {
+        super.onAttachedToWindow()
+        Log.d(TAG, object{}.javaClass.enclosingMethod?.name)
+
+        // setDefaultNightMode causes onCreate to be called twice.  Calling launchLoginFlow here
+        // saves a launch/cancel cycle.
+        launchLoginFlow()
+    }
+
+    private fun onLaunchFailure() {
         mRetryButton?.visibility = View.VISIBLE
         mProgressBar?.visibility = View.INVISIBLE
     }
@@ -113,13 +123,12 @@ class LaunchActivity : AppCompatActivity(), CoroutineScope by MainScope() {
             try {
                 val account = getAccount()
                 Log.d(TAG, "[auth] ${account.username} ${account.authToken}")
-                mModel?.loadServiceData(account)
+                mModel?.loadServiceData(resources)
             } catch (ex: Exception) {
-                Log.d(TAG, "caught in launchLoginFlow", ex)
-                var msg = ex.message
-                if (msg.isNullOrEmpty()) msg = "Cancelled"
+                Log.d(TAG, "[auth] caught in launchLoginFlow", ex)
+                var msg = ex.message ?: "Cancelled"
                 mProgressText?.text = msg
-                updateOnFailure()
+                onLaunchFailure()
             }
         }
     }
@@ -127,15 +136,12 @@ class LaunchActivity : AppCompatActivity(), CoroutineScope by MainScope() {
     private fun loadAccountData() {
         launch {
             try {
-                // TODO
-//                val haveSession = getSession()
-//                Log.d(TAG, "loadAccountData: haveSession:$haveSession")
+                val haveSession = getSession(App.getAccount())
             } catch (ex: Exception) {
                 Log.d(TAG, "caught in loadAccountData", ex)
-                var msg = ex.message
-                if (msg.isNullOrEmpty()) msg = "Cancelled"
+                var msg = ex.message ?: "Cancelled"
                 mProgressText?.text = msg
-                updateOnFailure()
+                onLaunchFailure()
             }
         }
     }
@@ -163,30 +169,33 @@ class LaunchActivity : AppCompatActivity(), CoroutineScope by MainScope() {
         AppState.setString(AppState.LIBRARY_URL, library.url)
         App.setLibrary(library)
         val account = Account(result.accountName, result.authToken)
+        App.setAccount(account)
+        return account
+    }
 
-        // auth token zen: try once and if it fails, invalidate the token and try again
-        var savedEx: Exception? = null
-        var obj = try { fetchSession(result.authToken) } catch (ex: Exception) { savedEx = ex; null }
+    // Again we have to do this here and not in a ViewModel because it needs an Activity.
+    private suspend fun getSession(account: Account): Boolean {
+        // authToken zen: try it once and if it fails, invalidate it and try again
+        var sessionResult = runCatching { fetchSession(account.authTokenOrThrow()) }
+        var obj = sessionResult.getOrNull()
         if (obj == null) {
-            AccountUtils.invalidateAuthToken(this, result.authToken)
+            AccountUtils.invalidateAuthToken(this, account.authToken)
             account.clearSession()
             Log.d(TAG, "[auth] getAuthTokenForAccountFuture ...")
-            val future = AccountUtils.getAuthTokenForAccountFuture(this, result.accountName)
+            val future = AccountUtils.getAuthTokenForAccountFuture(this, account.username)
             val bnd = future.await()
             Log.d(TAG, "[auth] getAuthTokenForAccountFuture ... $bnd")
-            if (bnd == null)
-                throw TimeoutException()
-            val result = bnd.getAccountManagerResult()
-            if (result.accountName.isNullOrEmpty() || result.authToken.isNullOrEmpty())
-                throw Exception(result.failureMessage)
-            obj = try { fetchSession(result.authToken) } catch (ex: Exception) { savedEx = ex; null }
+            val accountManagerResult = bnd.getAccountManagerResult()
+            if (accountManagerResult.accountName.isNullOrEmpty() || accountManagerResult.authToken.isNullOrEmpty())
+                throw Exception(accountManagerResult.failureMessage)
+            account.authToken = accountManagerResult.authToken
+            obj = fetchSession(account.authTokenOrThrow())
         }
-        if (obj == null)
-            throw savedEx ?: Exception("Unknown login error")
 
-        App.setAccount(account)
+        // load account attributes
+        account.loadSession(obj)
 
-        return account
+        return true
     }
 
     private suspend fun fetchSession(authToken: String): OSRFObject {
@@ -215,22 +224,6 @@ class LaunchActivity : AppCompatActivity(), CoroutineScope by MainScope() {
 //            haveSession = ac.reauthenticate(mCallingActivity, account_name);
 //        }
 //    }
-
-
-    override fun onAttachedToWindow() {
-        super.onAttachedToWindow()
-        Log.d(TAG, object{}.javaClass.enclosingMethod?.name)
-
-        // setDefaultNightMode causes onCreate to be called twice.  Calling launchLoginFlow here
-        // saves a launch/cancel cycle.
-        launchLoginFlow()
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        Log.d(TAG, object{}.javaClass.enclosingMethod?.name)
-        cancel()
-    }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)

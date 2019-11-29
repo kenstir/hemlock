@@ -62,17 +62,15 @@ public class GatewayJsonObjectRequest extends Request<GatewayResult> {
     }
 
     protected Response<GatewayResult> parseNetworkResponse(NetworkResponse response) {
-        GatewayResult gatewayResult;
         try {
             String json = new String(response.data, HttpHeaderParser.parseCharset(response.headers));
             Log.d(TAG, "[net] recv "+response.data.length+": "+json);
             Log.d(TAG, "[net] cached:"+mCacheHit+" method:"+getMethod()+" url:"+getUrl());
-            gatewayResult = GatewayResult.create(json);
-            if (gatewayResult.failed == false) {
-                return Response.success(gatewayResult, HttpHeaderParser.parseCacheHeaders(response));
-            } else {
-                return Response.success(gatewayResult, null);
-            }
+            GatewayResult gatewayResult = GatewayResult.create(json);
+
+            // treat all well-formed gatewayResults as success here, but don't cache failures
+            return Response.success(gatewayResult, gatewayResult.failed ? null : HttpHeaderParser.parseCacheHeaders(response));
+
             /*
             if (gatewayResponse.failed == false) {
                 return Response.success(gatewayResponse, HttpHeaderParser.parseCacheHeaders(response));

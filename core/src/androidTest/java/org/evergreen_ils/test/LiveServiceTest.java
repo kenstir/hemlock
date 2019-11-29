@@ -50,7 +50,6 @@ import java.util.Map;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-//@RunWith(AndroidJUnit4.class)
 public class LiveServiceTest {
     private static String TAG = LiveServiceTest.class.getSimpleName();
 
@@ -96,6 +95,7 @@ public class LiveServiceTest {
     }
 
     @Test
+    @Ignore("todo: reimpl service tests using mocks")
     public void testCopyStatusAll() throws Exception {
         assertLoggedIn();
 
@@ -108,6 +108,7 @@ public class LiveServiceTest {
     }
 
     @Test
+    @Ignore("todo: reimpl service tests using mocks")
     public void testOrgTypesRetrieve() throws Exception {
         assertLoggedIn();
 
@@ -116,20 +117,6 @@ public class LiveServiceTest {
         List<OSRFObject> l = (List<OSRFObject>) resp;
         Log.i(TAG, "l=" + l);
     }
-
-    // Api. ORG_UNIT_RETRIEVE is not useful, it returns the same info as ORG_TREE_RETRIEVE
-    /*
-    @Test
-    public void testOrgUnitRetrieve() throws Exception {
-        assertLoggedIn();
-//        mConn = EvergreenServer.getInstance().gatewayConnection();
-        Object o = Utils.doRequest(mConn, Api.ACTOR,
-                Api.ORG_UNIT_RETRIEVE, new Object[] {
-                        mAuthToken, mOrgID
-                });
-        Log.i(TAG, "o="+o);
-    }
-    */
 
     static void printMap(Map<String, ?> map) {
         List<String> keys = new ArrayList(map.keySet());
@@ -141,6 +128,7 @@ public class LiveServiceTest {
 
     // ORG_UNIT_SETTING_RETRIEVE - retrieve all settings from one org unit
     @Test
+    @Ignore("todo: reimpl service tests using mocks")
     public void testOrgUnitSettingsRetrieve() throws Exception {
         assertLoggedIn();
 
@@ -157,6 +145,7 @@ public class LiveServiceTest {
 
     // ORG_UNIT_SETTING_BATCH - retrieve a list of settings from one org unit
     @Test
+    @Ignore("todo: reimpl service tests using mocks")
     public void testOrgUnitSettingBatch() throws Exception {
         assertLoggedIn();
 
@@ -180,6 +169,7 @@ public class LiveServiceTest {
 
     // ORG_UNIT_SETTING - retrieve one setting from one org unit
     @Test
+    @Ignore("todo: reimpl service tests using mocks")
     public void testOrgUnitSetting() throws Exception {
         assertLoggedIn();
 
@@ -199,6 +189,7 @@ public class LiveServiceTest {
     }
 
     @Test
+    @Ignore("todo: reimpl service tests using mocks")
     public void testRetrieveSMSCarriers() throws Exception {
         assertLoggedIn();
 
@@ -257,6 +248,7 @@ public class LiveServiceTest {
         Log.d(TAG, "unread messages: " + unread_count);
     }
 
+    @Ignore("todo: reimpl service tests using mocks")
     @Test
     public void testSearchByOrgUnit() throws Exception {
         assertLoggedIn();
@@ -303,23 +295,4 @@ public class LiveServiceTest {
         List<List<?>> record_ids_lol = (List<List<?>>) response.get("ids");
         Log.d(TAG, "length:" + record_ids_lol.size());
     }
-
-    /*
-    @Test
-    public void testSearchCodedValueMap() throws Exception {
-        assertLoggedIn();
-
-        List<OSRFObject> objects = PCRUDService.fetchCodedValueMaps();
-        assertNotNull(objects);
-        if (objects == null)
-            return;
-
-        CodedValueMap.loadCodedValueMaps(objects);
-
-        String book_search_label = CodedValueMap.searchFormatLabel("book");
-        assertNotNull(book_search_label);
-        String book_icon_label = CodedValueMap.iconFormatLabel("book");
-        assertNotNull(book_icon_label);
-    }
-    */
 }

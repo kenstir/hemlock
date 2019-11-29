@@ -18,16 +18,44 @@
 
 package org.evergreen_ils.data
 
+import org.opensrf.util.OSRFObject
+import java.lang.Exception
+
 class Account constructor(val username: String, var authToken: String?) {
     constructor(username: String) : this(username, null)
 
+    var id: Int? = null
+    var homeOrg: Int? = null
+    var barcode: String? = null
+
+    private var settings = mutableMapOf<String, Any?>()
+    private var dayPhone: String? = null
+
     val defaultNotifyEmail: Boolean
-        get() {
-            return false
-        }
+        get() = false // TODO
+    val defaultNotifyPhone: Boolean
+        get() = false // TODO
+    val defaultNotifySMS: Boolean
+        get() = false // TODO
+    val phoneNumber: String?
+        get() = dayPhone // TODO
 
     fun clearSession() {
         // TODO: clear all session data
         authToken = null
+    }
+
+    fun authTokenOrThrow(): String {
+        authToken?.let { return it }
+        throw Exception("No authToken")
+    }
+
+    fun loadSession(obj: OSRFObject) {
+        id = obj.getInt("id")
+        homeOrg = obj.getInt("home_ou")
+        dayPhone = obj.getString("day_phone")
+    }
+
+    fun loadUserSettings() {
     }
 }

@@ -1,5 +1,8 @@
 package org.opensrf.util;
 
+import org.evergreen_ils.Api;
+
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import java.util.Map;
@@ -72,5 +75,10 @@ public class OSRFObject extends HashMap<String, Object> implements OSRFSerializa
         else if (o instanceof String)
             return Integer.parseInt((String) o);
         return (Integer) get(field);
+    }
+
+    @NonNull
+    public Boolean getBoolean(String field) {
+        return Api.parseBoolean(get(field));
     }
 }

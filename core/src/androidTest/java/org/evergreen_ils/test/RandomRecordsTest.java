@@ -10,6 +10,7 @@ import org.evergreen_ils.system.StdoutLogProvider;
 import org.evergreen_ils.system.Utils;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.opensrf.net.http.HttpConnection;
@@ -57,6 +58,7 @@ public class RandomRecordsTest {
     // Check the MRA for random record numbers until we collect 100 samples,
     // then print them by item_type.  I had hoped for a properties-based test;
     // this ain't it.
+    @Ignore("todo: reimpl service tests using mocks")
     @Test
     public void sampleItemFormRandomRecords() throws Exception {
 

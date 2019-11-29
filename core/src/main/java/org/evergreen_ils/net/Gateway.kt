@@ -103,29 +103,13 @@ object Gateway {
     }
 
     // Make an OSRF Gateway request from inside a CoroutineScope.  `block` is expected to return T or throw
-    suspend fun <T> fetch(service: String, method: String, args: Array<Any?>, block: (GatewayResult) -> T) = suspendCoroutine<T> { cont ->
-        val url = buildUrl(service, method, args)
-        val r = GatewayJsonObjectRequest(
-                url,
-                Request.Priority.NORMAL,
-                Response.Listener { response ->
-                    try {
-                        val res = block(response)
-                        cont.resumeWith(Result.success(res))
-                    } catch (ex: Exception) {
-                        cont.resumeWithException(ex)
-                    }
-                },
-                Response.ErrorListener { error ->
-                    cont.resumeWithException(error)
-                })
-        VolleyWrangler.getInstance().addToRequestQueue(r)
-    }
+    suspend fun <T> fetch(service: String, method: String, args: Array<Any?>, block: (GatewayResult) -> T) = fetchObjectImpl(service, method, args, true, block)
 
     // same as above without caching
-    // TODO can we share most of `fetch`?
-    suspend fun <T> fetchNoCache(service: String, method: String, args: Array<Any?>, block: (GatewayResult) -> T) = suspendCoroutine<T> { cont ->
-        val url = buildUrl(service, method, args, false)
+    suspend fun <T> fetchNoCache(service: String, method: String, args: Array<Any?>, block: (GatewayResult) -> T) = fetchObjectImpl(service, method, args, false, block)
+
+    private suspend fun <T> fetchObjectImpl(service: String, method: String, args: Array<Any?>, shouldCache: Boolean, block: (GatewayResult) -> T) = suspendCoroutine<T> { cont ->
+        val url = buildUrl(service, method, args, shouldCache)
         val r = GatewayJsonObjectRequest(
                 url,
                 Request.Priority.NORMAL,
@@ -140,7 +124,7 @@ object Gateway {
                 Response.ErrorListener { error ->
                     cont.resumeWithException(error)
                 })
-        r.setShouldCache(false)
+        r.setShouldCache(shouldCache)
         VolleyWrangler.getInstance().addToRequestQueue(r)
     }
 
@@ -155,7 +139,7 @@ object Gateway {
     }
 
     // fetchStringPayload - make gateway request and expect json payload of String
-    suspend fun fetchStringPayload(service: String, method: String, args: Array<Any?>) = fetch(service, method, args) { response ->
+    suspend fun fetchObjectString(service: String, method: String, args: Array<Any?>) = fetch(service, method, args) { response ->
         response.asString()
     }
 

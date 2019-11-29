@@ -18,42 +18,43 @@
 
 package net.kenstir.apps.core
 
+import org.evergreen_ils.data.Account
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.BeforeClass
 import org.junit.Test
 import org.opensrf.util.OSRFObject
 
-class OSRFObjectTest {
+class AccountTest {
 
     companion object {
+        lateinit var sessionObjMap: Map<String, Any?>
+
         @BeforeClass
         @JvmStatic
         fun setUpClass() {
+            sessionObjMap = mutableMapOf(
+                    "id" to 42,
+                    "home_ou" to 69,
+                    "day_phone" to "508-555-1212"
+            )
         }
     }
 
     @Test
     fun test_basic() {
-        val map = mutableMapOf<String, Any?>(
-                "id" to 42,
-                "home_ou" to 69,
-                "day_phone" to "508-555-1212"
-        )
-        val obj = OSRFObject(map)
-        assertEquals(42, obj.getInt("id"))
-        assertEquals("508-555-1212", obj.getString("day_phone"))
-        assertNull(obj.getString("unset"))
+        val account = Account("hemlock")
+        assertEquals("hemlock", account.username)
+        assertNull(account.authToken)
     }
 
     @Test
-    fun test_apiToPrimative() {
-        val map = mapOf<String, Any?>(
-                "juvenile" to "f",
-                "active" to "t"
-        )
-        val obj = OSRFObject(map)
-        assertEquals(true, obj.getBoolean("active"))
-        assertEquals(false, obj.getBoolean("juvenile"))
+    fun test_loadFromObj() {
+        val account = Account("hemlock", "636f7666656665")
+        assertEquals("636f7666656665", account.authTokenOrThrow())
+
+        account.loadSession(OSRFObject(sessionObjMap))
+        assertEquals(42, account.id)
+        assertEquals("508-555-1212", account.phoneNumber)
     }
 }

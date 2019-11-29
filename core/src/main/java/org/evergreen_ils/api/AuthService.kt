@@ -28,4 +28,9 @@ object AuthService {
             response.asObject()
         }
     }
+
+    suspend fun fetchSessionUnparsed(authToken: String): String {
+        val url = Gateway.buildUrl(Api.AUTH, Api.AUTH_SESSION_RETRIEVE, arrayOf(authToken), addCacheArgs = false)
+        return Gateway.fetchString(url, shouldCache = false)
+    }
 }

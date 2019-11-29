@@ -18,21 +18,21 @@
 
 package org.evergreen_ils.views
 
+import android.content.res.Resources
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
-import org.evergreen_ils.Api
 import org.evergreen_ils.R
-import org.evergreen_ils.android.App
-import org.evergreen_ils.api.*
+import org.evergreen_ils.api.ActorService
+import org.evergreen_ils.api.EvergreenService
+import org.evergreen_ils.api.PCRUDService
+import org.evergreen_ils.api.SearchService
 import org.evergreen_ils.net.Gateway
 import org.evergreen_ils.searchCatalog.CodedValueMap
-import org.evergreen_ils.data.Account
 import org.evergreen_ils.system.Log
-import org.opensrf.util.GatewayResult
 
 private const val TAG = "LaunchViewModel"
 
@@ -58,9 +58,7 @@ class LaunchViewModel : ViewModel() {
     // for decoding most gateway responses.  Important notes:
     // * server version and IDL are done synchronously and first
     // * other initialization can happen async after that
-    fun loadServiceData(account: Account) {
-        if (account.authToken.isNullOrEmpty())
-            return
+    fun loadServiceData(resources: Resources) {
         viewModelScope.async {
             val outerJob = async {
                 // update the UI
@@ -85,7 +83,7 @@ class LaunchViewModel : ViewModel() {
 
                 var defs = arrayListOf<Deferred<Any>>()
                 defs.add(async { EvergreenService.loadOrgTypes(ActorService.fetchOrgTypes()) })
-                defs.add(async { EvergreenService.loadOrgs(ActorService.fetchOrgTree(), App.getApplicationContext().resources.getBoolean(R.bool.ou_hierarchical_org_tree)) })
+                defs.add(async { EvergreenService.loadOrgs(ActorService.fetchOrgTree(), resources.getBoolean(R.bool.ou_hierarchical_org_tree)) })
                 defs.add(async { EvergreenService.loadCopyStatuses(SearchService.fetchCopyStatuses()) })
                 defs.add(async { CodedValueMap.loadCodedValueMaps(PCRUDService.fetchCodedValueMaps()) })
 
@@ -110,79 +108,8 @@ class LaunchViewModel : ViewModel() {
         }
     }
 
-    /*
-    fun loadAccountData(account: Account) {
-        if (account.authToken.isNullOrEmpty())
-            return
-        viewModelScope.async {
-            val outerJob = async {
-                _spinner.value = true
-                _status.value = "Retrieving user settings"
-
-                // start a session
-                val obj = AuthService.fetchSession(account.authToken)
-                Log.d(TAG,"coro: acc1: obj:$obj")
-
-                // TODO: verify that session is OK
-                // TODO: fleshUserSettings()
-                // TODO: load bookbags
-                //async { ActorService.fetchBookbags() }
-
-                _accountDataReady.value = true
-            }
-            try {
-                outerJob.await()
-            } catch (ex: Exception) {
-                Log.d(TAG, "caught in loadAccountData", ex)
-                _status.value = ex.message
-                _accountDataReady.value = false
-            } finally {
-                _spinner.value = false
-            }
-        }
-    }
-    */
-
-    /*
-val settings = arrayListOf(Api.SETTING_ORG_UNIT_NOT_PICKUP_LIB,
-        Api.SETTING_CREDIT_PAYMENTS_ALLOW)
-for (orgID in 1..50) {
-    val def = async {
-        Log.d(TAG, "org:$orgID settings ... ")
-        val settingsMap = ActorService.fetchOrgSettings(orgID)
-        val isNotPickupLib = ActorService.parseBoolSetting(settingsMap, Api.SETTING_ORG_UNIT_NOT_PICKUP_LIB)
-        val areCreditPaymentsAllowed = ActorService.parseBoolSetting(settingsMap, Api.SETTING_CREDIT_PAYMENTS_ALLOW)
-        Dispatchers.Main {
-            Log.d(TAG, "org:$orgID settings ... fetched $isNotPickupLib $areCreditPaymentsAllowed")
-            //TODO: Organization.set(orgID, isNotPickupLib, areCreditPaymentsAllowed)
-        }
-        "xyzzy"
-    }
-    defs.add(def)
-}
-now_ms = Log.logElapsedTime(TAG, now_ms,"coro: 2")
-*/
-
-    // response.payload looks like:
-    // {credit.payments.allow={org=49, value=true}, opac.holds.org_unit_not_pickup_lib=null}
-    private fun parseBoolSetting(result: GatewayResult, setting: String): Boolean? {
-        var value: Boolean? = null
-        val map = result.payload as? Map<String, Any>
-        Log.d(TAG, "map:$map")
-        if (map != null) {
-            val o = map[setting]
-            if (o != null) {
-                val setting_map = o as? Map<String, *>
-                if (setting_map != null) {
-                    value = Api.parseBoolean(setting_map["value"])
-                }
-            }
-        }
-        return value
-    }
-
     override fun onCleared() {
         super.onCleared()
-        Log.d(TAG, "hey lookit this")
+        Log.d(TAG, object{}.javaClass.enclosingMethod?.name)
     }
 }

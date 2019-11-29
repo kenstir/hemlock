@@ -24,7 +24,7 @@ import java.util.concurrent.Future
 import java.util.concurrent.TimeoutException
 
 @Suppress("BlockingMethodInNonBlockingContext")
-suspend fun <T> Future<T>.await(timeoutMs: Int = 30_000): T? {
+suspend fun <T> Future<T>.await(timeoutMs: Int = 30_000): T {
     val start = System.currentTimeMillis()
     while (!isDone) {
         if (System.currentTimeMillis() - start > timeoutMs)
@@ -36,7 +36,7 @@ suspend fun <T> Future<T>.await(timeoutMs: Int = 30_000): T? {
 }
 
 @Suppress("BlockingMethodInNonBlockingContext")
-suspend fun <T> AccountManagerFuture<T>.await(timeoutMs: Int = 30_000): T? {
+suspend fun <T> AccountManagerFuture<T>.await(timeoutMs: Int = 30_000): T {
     val start = System.currentTimeMillis()
     while (!isDone) {
         if (System.currentTimeMillis() - start > timeoutMs)
