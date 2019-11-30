@@ -20,6 +20,7 @@ package org.evergreen_ils.api
 
 import org.evergreen_ils.Api
 import org.evergreen_ils.net.Gateway
+import org.evergreen_ils.system.Utils
 import org.opensrf.util.OSRFObject
 
 internal const val TAG = "api"
@@ -50,5 +51,10 @@ object ActorService {
         val settings = listOf("card", "settings")
         val args = arrayOf<Any?>(authToken, userID, settings)
         return Gateway.fetchObject(Api.ACTOR, Api.USER_FLESHED_RETRIEVE, args)
+    }
+
+    suspend fun fetchMessages(authToken: String, userID: Int): List<OSRFObject> {
+        val args = arrayOf(authToken, userID, null)
+        return Gateway.fetchObjectArray(Api.ACTOR, Api.MESSAGES_RETRIEVE, args)
     }
 }

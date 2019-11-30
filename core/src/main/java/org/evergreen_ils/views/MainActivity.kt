@@ -20,7 +20,6 @@ package org.evergreen_ils.views
 
 import android.content.Intent
 import android.os.Bundle
-import androidx.core.view.MenuItemCompat
 import android.text.TextUtils
 import android.view.Menu
 import android.view.MenuItem
@@ -28,11 +27,12 @@ import android.view.View
 import android.widget.ImageButton
 import android.widget.RelativeLayout
 import android.widget.TextView
+import androidx.core.view.MenuItemCompat
 import com.android.volley.Request
 import com.android.volley.Response
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import org.evergreen_ils.Api
-
 import org.evergreen_ils.R
 import org.evergreen_ils.accountAccess.AccountUtils
 import org.evergreen_ils.accountAccess.bookbags.BookBagActivity
@@ -40,12 +40,16 @@ import org.evergreen_ils.accountAccess.checkout.CheckoutsActivity
 import org.evergreen_ils.accountAccess.fines.FinesActivity
 import org.evergreen_ils.accountAccess.holds.HoldsActivity
 import org.evergreen_ils.android.App
+import org.evergreen_ils.api.ActorService
 import org.evergreen_ils.net.Gateway
 import org.evergreen_ils.net.GatewayJsonObjectRequest
 import org.evergreen_ils.net.VolleyWrangler
 import org.evergreen_ils.searchCatalog.SearchActivity
-import org.evergreen_ils.system.*
+import org.evergreen_ils.system.Analytics
+import org.evergreen_ils.system.EvergreenServerLoader
+import org.evergreen_ils.system.Log
 import org.evergreen_ils.utils.ui.BaseActivity
+import org.opensrf.util.OSRFObject
 import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
 
@@ -69,11 +73,34 @@ class MainActivity : BaseActivity() {
 
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
-        Log.d(TAG, "coro: launch")
-        launch {
+        loadGlobalData()
+//        launch {
 //            val response = getData()
 //            Log.d(TAG, "coro: main? resp:$response")
+//        }
+    }
+
+    private fun loadGlobalData() {
+        GlobalScope.launch {
+            val authToken = App.getAccount().authToken
+            val userID = App.getAccount().id
+            if (authToken != null && userID != null) {
+                mUnreadMessageCount = unreadMessageCount(ActorService.fetchMessages(authToken, userID))
+                updateUnreadMessageText()
+            }
         }
+    }
+
+    private fun unreadMessageCount(messages: List<OSRFObject>): Int {
+        var count = 0
+        messages.forEach {
+            val readDate = it.getString("read_date")
+            val deleted = it.getBoolean("deleted")
+            if (readDate == null && !deleted) {
+                ++count
+            }
+        }
+        return count
     }
 
     private suspend fun getData() = suspendCoroutine<String> { cont ->
