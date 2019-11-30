@@ -19,16 +19,15 @@
 package org.evergreen_ils.data
 
 import org.evergreen_ils.Api
+import org.evergreen_ils.api.EvergreenService.Companion.getOrgShortNameSafe
+import org.evergreen_ils.system.Analytics
+import org.evergreen_ils.system.Utils
 import org.opensrf.util.OSRFObject
 
 private const val TAG = "Account"
 
 class Account constructor(val username: String, var authToken: String?) {
     constructor(username: String) : this(username, null)
-
-    companion object {
-        val emptyAccount = Account("defaultUserName")
-    }
 
     var id: Int? = null
     var homeOrg: Int? = null
@@ -52,18 +51,8 @@ class Account constructor(val username: String, var authToken: String?) {
     val searchOrg: Int?
         get() = defaultSearchOrg ?: homeOrg
 
-    fun clearSession() {
+    fun clearAuthToken() {
         authToken = null
-        id = null
-        homeOrg = null
-        barcode = null
-        notifyByEmail = false
-        notifyByPhone = false
-        notifyBySMS = false
-        smsCarrier = null
-        smsNumber = null
-        dayPhone = null
-        defaultPickupOrg = null
     }
 
     fun loadSession(obj: OSRFObject) {

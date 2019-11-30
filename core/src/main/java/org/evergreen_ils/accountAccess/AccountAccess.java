@@ -29,8 +29,10 @@ import org.evergreen_ils.accountAccess.bookbags.BookBagItem;
 import org.evergreen_ils.accountAccess.checkout.CircRecord;
 import org.evergreen_ils.accountAccess.fines.FinesRecord;
 import org.evergreen_ils.accountAccess.holds.HoldRecord;
+import org.evergreen_ils.android.App;
 import org.evergreen_ils.api.EvergreenService;
 import org.evergreen_ils.auth.Const;
+import org.evergreen_ils.data.Account;
 import org.evergreen_ils.system.EvergreenServer;
 import org.evergreen_ils.system.Log;
 import org.evergreen_ils.system.Utils;
@@ -55,37 +57,9 @@ public class AccountAccess {
 
     private static AccountAccess mInstance = null;
 
-    private String userName = null;
-    private String authToken = null;
-    private Integer userID = null;
-    private String daytimePhoneNumber = null;
-    private String barcode = null;
-    private Integer homeLibraryID = null;
-    private Integer defaultPickupLibraryID = null;
-    private Integer defaultSearchLibraryID = null;
-    private Integer defaultSMSCarrierID = null;
-    private String defaultSMSNumber = null;
-    private String defaultPhoneNumber = null;
-    private Boolean defaultHoldNotifyEmail = null;
-    private Boolean defaultHoldNotifyPhone = null;
-    private Boolean defaultHoldNotifySMS = null;
     private ArrayList<BookBag> bookBags = new ArrayList<>();
 
     private void clearSession() {
-        userName = null;
-        authToken = null;
-        userID = null;
-        daytimePhoneNumber = null;
-        barcode = null;
-        homeLibraryID = null;
-        defaultPickupLibraryID = null;
-        defaultSearchLibraryID = null;
-        defaultSMSCarrierID = null;
-        defaultSMSNumber = null;
-        defaultPhoneNumber = null;
-        defaultHoldNotifyEmail = null;
-        defaultHoldNotifyPhone = null;
-        defaultHoldNotifySMS = null;
         bookBags = new ArrayList<>();
     }
 
@@ -98,146 +72,8 @@ public class AccountAccess {
         return mInstance;
     }
 
-    public String getUserName() { return userName; }
-
-    public String getBarcode() { return barcode; }
-
-    public Integer getHomeLibraryID() {
-        return homeLibraryID;
-    }
-
-    public Integer getDefaultPickupLibraryID() {
-        if (defaultPickupLibraryID != null)
-            return defaultPickupLibraryID;
-        return homeLibraryID;
-    }
-
-    public Integer getDefaultSearchLibraryID() {
-        if (defaultSearchLibraryID != null)
-            return defaultSearchLibraryID;
-        return homeLibraryID;
-    }
-
-    public boolean getDefaultEmailNotification() {
-        return Utils.safeBool(defaultHoldNotifyEmail);
-    }
-
-    public boolean getDefaultPhoneNotification() {
-        return Utils.safeBool(defaultHoldNotifyPhone);
-    }
-
-    public String getDefaultPhoneNumber() {
-        if (!TextUtils.isEmpty(defaultPhoneNumber))
-            return defaultPhoneNumber;
-        return daytimePhoneNumber;
-    }
-
-    public boolean getDefaultSMSNotification() {
-        return Utils.safeBool(defaultHoldNotifySMS);
-    }
-
-    public Integer getDefaultSMSCarrierID() {
-        return defaultSMSCarrierID;
-    }
-
-    public String getDefaultSMSNumber() {
-        return defaultSMSNumber;
-    }
-
     private HttpConnection conn() {
         return EvergreenServer.getInstance().gatewayConnection();
-    }
-
-    /**
-     * Retrieve session.
-     * @throws SessionNotFoundException
-     */
-    public boolean retrieveSession(String auth_token) throws SessionNotFoundException {
-        Log.d(Const.AUTH_TAG, "retrieveSession " + auth_token);
-        clearSession();
-        this.authToken = auth_token;
-
-        Object resp = Utils.doRequest(conn(), Api.AUTH,
-                Api.AUTH_SESSION_RETRIEVE, authToken, new Object[]{
-                        authToken});
-        if (resp != null) {
-            OSRFObject au = (OSRFObject) resp;
-            userID = au.getInt("id");
-            homeLibraryID = au.getInt("home_ou");
-            userName = au.getString("usrname");
-            daytimePhoneNumber = au.getString("day_phone");
-            //email = au.getString("email");
-            // todo: warn when account is nearing expiration
-            //expireDate = Api.parseDate(au.getString("expire_date"));
-
-            fleshUserSettings();
-            return true;
-        }
-        throw new SessionNotFoundException();
-    }
-
-    // Fix stupid setting that is returned with extra quotes
-    private String removeStupidExtraQuotes(String s) {
-        if (s.startsWith("\"")) s = s.replace("\"", ""); // setting has extra quotes
-        return s;
-    }
-
-    // This could be done on demand, but coming in at ~75ms it is not worth it
-    public void fleshUserSettings() {
-
-        String holdNotifySetting = null;
-        try {
-            // Array of fields is optional; the default does not include settings
-            ArrayList<String> fields = new ArrayList<>();
-            fields.add("card");    // active library card
-            fields.add("settings");// array of settings objects, e.g. name=opac.hold_notify value=":email"
-            Object resp = Utils.doRequest(conn(), Api.ACTOR,
-                    Api.USER_FLESHED_RETRIEVE, new Object[]{
-                            authToken, userID, fields});
-            if (resp != null) {
-                OSRFObject usr = (OSRFObject) resp;
-                OSRFObject card = (OSRFObject) usr.get("card");
-                barcode = card.getString("barcode");
-                List<OSRFObject> settings = (List<OSRFObject>) usr.get("settings");
-                for (OSRFObject setting : settings) {
-                    String name = setting.getString("name");
-                    String value = removeStupidExtraQuotes(setting.getString(Api.VALUE));
-                    if (name.equals(Api.USER_SETTING_DEFAULT_PICKUP_LOCATION)) {
-                        defaultPickupLibraryID = Api.parseInt(value);
-                    } else if (name.equals(Api.USER_SETTING_DEFAULT_PHONE)) {
-                        defaultPhoneNumber = value;
-                    } else if (name.equals(Api.USER_SETTING_DEFAULT_SEARCH_LOCATION)) {
-                        defaultSearchLibraryID = Api.parseInt(value);
-                    } else if (name.equals(Api.USER_SETTING_DEFAULT_SMS_CARRIER)) {
-                        defaultSMSCarrierID = Api.parseInt(value);
-                    } else if (name.equals(Api.USER_SETTING_DEFAULT_SMS_NOTIFY)) {
-                        defaultSMSNumber = value;
-                    } else if (name.equals(Api.USER_SETTING_HOLD_NOTIFY)) {
-                        parseHoldNotifyValue(value);
-                        holdNotifySetting = value;
-                    }
-                }
-            }
-        } catch (Exception e) {
-            Log.d(TAG, "caught", e);
-        }
-        Analytics.logEvent("Account: Retrieve Session",
-                "home_org", EvergreenService.Companion.getOrgShortNameSafe(homeLibraryID),
-                "pickup_org", EvergreenService.Companion.getOrgShortNameSafe(defaultPickupLibraryID),
-                "search_org", EvergreenService.Companion.getOrgShortNameSafe(defaultSearchLibraryID),
-                "hold_notify", safeString(holdNotifySetting));
-        Log.d(TAG, "done fleshing user settings");
-    }
-
-    private void parseHoldNotifyValue(String value) {
-        // NB: value may be either ':' separated or '|' separated, e.g. "phone:email" or "email|sms"
-        defaultHoldNotifyEmail = value.contains("email");
-        defaultHoldNotifyPhone = value.contains("phone");
-        defaultHoldNotifySMS = value.contains("sms");
-    }
-
-    public boolean reauthenticate(Activity activity) {
-        return reauthenticate(activity, userName);
     }
 
     /** invalidate current auth token and get a new one
@@ -245,27 +81,30 @@ public class AccountAccess {
      * @param activity
      * @return true if auth successful
      */
-    public boolean reauthenticate(Activity activity, String user_name) {
-        Log.d(Const.AUTH_TAG, "reauthenticate " + user_name);
-        AccountUtils.invalidateAuthToken(activity, authToken);
-        clearSession();
+    public boolean reauthenticate(Activity activity) {
+        Log.d(Const.AUTH_TAG, "reauthenticate");
+        Account account = App.getAccount();
+        AccountUtils.invalidateAuthToken(activity, account.getAuthToken());
+        App.getAccount().setAuthToken(null);
 
         try {
-            String auth_token = AccountUtils.getAuthTokenForAccount(activity, user_name);
+            String auth_token = AccountUtils.getAuthTokenForAccount(activity, account.getUsername());
             if (TextUtils.isEmpty(auth_token))
                 return false;
-            return retrieveSession(auth_token);
+            account.clearAuthToken();
+            return true;
         } catch (Exception e) {
-            Log.d(Const.AUTH_TAG, "reauth exception", e);
+            Log.d(Const.AUTH_TAG, "[auth] reauthenticate exception", e);
             return false;
         }
     }
 
     public void logout(Activity activity) {
-        Log.d(Const.AUTH_TAG, "logout, userName=" + userName + ", authToken=" + authToken);
-        AccountUtils.invalidateAuthToken(activity, authToken);
-        AccountUtils.clearPassword(activity, userName);
-        clearSession();
+        Log.d(Const.AUTH_TAG, "logout");
+        Account account = App.getAccount();
+        AccountUtils.invalidateAuthToken(activity, account.getAuthToken());
+        AccountUtils.clearPassword(activity, account.getUsername());
+        account.clearAuthToken();
     }
 
     // ------------------------Checked Out Items Section
@@ -295,9 +134,10 @@ public class AccountAccess {
 
         ArrayList<CircRecord> circRecords = new ArrayList<CircRecord>();
 
+        Account account = App.getAccount();
         Object resp = Utils.doRequest(conn(), Api.ACTOR,
-                Api.CHECKED_OUT, authToken, new Object[] {
-                        authToken, userID });
+                Api.CHECKED_OUT, account.getAuthToken(), new Object[] {
+                        account.getAuthToken(), account.getId() });
         if (resp == null)
             return circRecords;
         Map<String, ?> resp_map = ((Map<String, ?>) resp);
@@ -349,9 +189,10 @@ public class AccountAccess {
     private GatewayResult retrieveCircRecord(String id)
             throws SessionNotFoundException {
 
+        Account account = App.getAccount();
         Object resp = Utils.doRequest(conn(), Api.SERVICE_CIRC,
-                Api.CIRC_RETRIEVE, authToken, new Object[] {
-                        authToken, id });
+                Api.CIRC_RETRIEVE, account.getAuthToken(), new Object[] {
+                        account.getAuthToken(), id });
         return GatewayResult.createFromObject(resp);
     }
 
@@ -408,11 +249,12 @@ public class AccountAccess {
         if (id.equals("-1"))
             return null;
 
+        Account account = App.getAccount();
         OSRFObject resp = null;
         try {
             resp = (OSRFObject) Utils.doRequest(conn(), Api.PCRUD,
                     Api.RETRIEVE_MRA, Api.ANONYMOUS, new Object[] {
-                            authToken, id});
+                            account.getAuthToken(), id});
         } catch (SessionNotFoundException e) {
             return null;
         }
@@ -444,14 +286,15 @@ public class AccountAccess {
      */
     public GatewayResult renewCirc(Integer target_copy) throws SessionNotFoundException {
 
+        Account account = App.getAccount();
         HashMap<String, Integer> param = new HashMap<>();
-        param.put("patron", this.userID);
+        param.put("patron", account.getId());
         param.put("copyid", target_copy);
         param.put("opac_renewal", 1);
 
         Object resp = Utils.doRequest(conn(), Api.SERVICE_CIRC,
-                Api.CIRC_RENEW, authToken, new Object[] {
-                        authToken, param });
+                Api.CIRC_RENEW, account.getAuthToken(), new Object[] {
+                        account.getAuthToken(), param });
 
         return GatewayResult.createFromObject(resp);
     }
@@ -478,10 +321,11 @@ public class AccountAccess {
     public List<HoldRecord> getHolds() throws SessionNotFoundException {
 
         ArrayList<HoldRecord> holds = new ArrayList<HoldRecord>();
+        Account account = App.getAccount();
 
         Object resp = Utils.doRequest(conn(), Api.SERVICE_CIRC,
-                Api.HOLDS_RETRIEVE, authToken, new Object[] {
-                        authToken, userID });
+                Api.HOLDS_RETRIEVE, account.getAuthToken(), new Object[] {
+                        account.getAuthToken(), account.getId() });
         if (resp == null) {
             Log.d(TAG, "Result: null");
             return holds;
@@ -639,10 +483,11 @@ public class AccountAccess {
     public void fetchHoldQueueStats(HoldRecord hold)
             throws SessionNotFoundException {
 
+        Account account = App.getAccount();
         Integer hold_id = hold.ahr.getInt("id");
         Object resp = Utils.doRequest(conn(), Api.SERVICE_CIRC,
-                Api.HOLD_QUEUE_STATS, authToken, new Object[] {
-                        authToken, hold_id });
+                Api.HOLD_QUEUE_STATS, account.getAuthToken(), new Object[] {
+                        account.getAuthToken(), hold_id });
         hold.setQueueStats(resp);
     }
 
@@ -655,10 +500,11 @@ public class AccountAccess {
      */
     public boolean cancelHold(OSRFObject hold) throws SessionNotFoundException {
         Integer hold_id = hold.getInt("id");
+        Account account = App.getAccount();
 
         Object response = Utils.doRequest(conn(), Api.SERVICE_CIRC,
-                Api.HOLD_CANCEL, authToken, new Object[] {
-                        authToken, hold_id });
+                Api.HOLD_CANCEL, account.getAuthToken(), new Object[] {
+                        account.getAuthToken(), hold_id });
         if (response != null && response.toString().equals("1"))
             return true;
         return false;
@@ -683,10 +529,11 @@ public class AccountAccess {
         ahr.put("expire_time", expire_time);
         ahr.put("frozen", suspendHold);
         ahr.put("thaw_date", thaw_date);
+        Account account = App.getAccount();
 
         Object response = Utils.doRequest(conn(), Api.SERVICE_CIRC,
-                Api.HOLD_UPDATE, authToken, new Object[] {
-                        authToken, ahr });
+                Api.HOLD_UPDATE, account.getAuthToken(), new Object[] {
+                        account.getAuthToken(), ahr });
 
         return response;
     }
@@ -696,6 +543,7 @@ public class AccountAccess {
                                     String sms_notify, Integer sms_carrier_id,
                                     String expire_time, boolean suspendHold, String thaw_date)
             throws SessionNotFoundException {
+        Account account = App.getAccount();
         /*
         The named fields in the hash are:
 
@@ -712,7 +560,7 @@ public class AccountAccess {
         hold_type    - T, C (or R or F), I, V or M for Title, Copy, Issuance, Volume or Meta-record  (default "T")
          */
         HashMap<String, Object> args = new HashMap<>();
-        args.put("patronid", userID);
+        args.put("patronid", account.getId());
         args.put("pickup_lib", pickup_lib);
         args.put("titleid", recordID);//is this required?
         args.put("hold_type", "T");
@@ -733,8 +581,8 @@ public class AccountAccess {
         ids.add(recordID);
 
         Object resp = Utils.doRequest(conn(), Api.SERVICE_CIRC,
-                Api.HOLD_TEST_AND_CREATE, authToken, new Object[] {
-                        authToken, args, ids });
+                Api.HOLD_TEST_AND_CREATE, account.getAuthToken(), new Object[] {
+                        account.getAuthToken(), args, ids });
 
         Result result_obj = Result.createUnknownError();
         try {
@@ -772,9 +620,10 @@ public class AccountAccess {
      */
     public Object isHoldPossible(Integer recordID, Integer pickup_lib)
             throws SessionNotFoundException {
+        Account account = App.getAccount();
 
         HashMap<String, Object> args = new HashMap<>();
-        args.put("patronid", userID);
+        args.put("patronid", account.getId());
         args.put("pickup_lib", pickup_lib);
         args.put("titleid", recordID);
 
@@ -782,8 +631,8 @@ public class AccountAccess {
         ids.add(recordID);
 
         Object response = Utils.doRequest(conn(), Api.SERVICE_CIRC,
-                Api.HOLD_IS_POSSIBLE, authToken, new Object[] {
-                        authToken, args, ids });
+                Api.HOLD_IS_POSSIBLE, account.getAuthToken(), new Object[] {
+                        account.getAuthToken(), args, ids });
 
         // successs looks like  {local_avail:'',depth:null,success:1}
         // failure looks like {place_unfillable:1,age_protected_copy:null,success:0,last_event:{...}
@@ -801,11 +650,12 @@ public class AccountAccess {
      * @throws SessionNotFoundException the session not found exception
      */
     public OSRFObject getFinesSummary() throws SessionNotFoundException {
+        Account account = App.getAccount();
 
         // mous object
         OSRFObject finesSummary = (OSRFObject) Utils.doRequest(conn(), Api.ACTOR,
-                Api.FINES_SUMMARY, authToken, new Object[] {
-                        authToken, userID });
+                Api.FINES_SUMMARY, account.getAuthToken(), new Object[] {
+                        account.getAuthToken(), account.getId() });
 
         return finesSummary;
     }
@@ -818,10 +668,11 @@ public class AccountAccess {
      */
     public ArrayList<FinesRecord> getTransactions()
             throws SessionNotFoundException {
+        Account account = App.getAccount();
 
         Object transactions = Utils.doRequest(conn(), Api.ACTOR,
-                Api.TRANSACTIONS_WITH_CHARGES, authToken, new Object[] {
-                        authToken, userID });
+                Api.TRANSACTIONS_WITH_CHARGES, account.getAuthToken(), new Object[] {
+                        account.getAuthToken(), account.getId() });
 
         ArrayList<FinesRecord> finesRecords = new ArrayList<>();
         List<Map<String, OSRFObject>> list = (List<Map<String, OSRFObject>>) transactions;
@@ -847,10 +698,11 @@ public class AccountAccess {
      */
     // todo: load on demand.  It takes ~750ms to load my 4 bookbags on startup.
     public boolean retrieveBookbags() throws SessionNotFoundException {
+        Account account = App.getAccount();
 
         Object response = Utils.doRequest(conn(), Api.ACTOR,
-                Api.CONTAINERS_BY_CLASS, authToken, new Object[] {
-                        authToken, userID, CONTAINER_CLASS_BIBLIO, CONTAINER_BUCKET_TYPE_BOOKBAG });
+                Api.CONTAINERS_BY_CLASS, account.getAuthToken(), new Object[] {
+                        account.getAuthToken(), account.getId(), CONTAINER_CLASS_BIBLIO, CONTAINER_BUCKET_TYPE_BOOKBAG });
 
         List<OSRFObject> bookbags = (List<OSRFObject>) response;
 
@@ -893,10 +745,11 @@ public class AccountAccess {
      */
     private Object getBookbagContent(BookBag bag, Integer bookbagID)
             throws SessionNotFoundException {
+        Account account = App.getAccount();
 
         Map<String, ?> map = (Map<String, ?>) Utils.doRequest(conn(), Api.ACTOR,
-                Api.CONTAINER_FLESH, authToken, new Object[] {
-                        authToken, CONTAINER_CLASS_BIBLIO, bookbagID });
+                Api.CONTAINER_FLESH, account.getAuthToken(), new Object[] {
+                        account.getAuthToken(), CONTAINER_CLASS_BIBLIO, bookbagID });
         
         List<OSRFObject> items  = new ArrayList<OSRFObject>();
         
@@ -934,12 +787,13 @@ public class AccountAccess {
      * @throws SessionNotFoundException the session not found exception
      */
     public void createBookbag(String name) throws SessionNotFoundException {
+        Account account = App.getAccount();
 
         OSRFObject cbreb = new OSRFObject("cbreb");
         cbreb.put("btype", CONTAINER_BUCKET_TYPE_BOOKBAG);
         cbreb.put("name", name);
         cbreb.put("pub", false);
-        cbreb.put("owner", userID);
+        cbreb.put("owner", account.getId());
 
         createContainer(CONTAINER_CLASS_BIBLIO, cbreb);
     }
@@ -951,10 +805,11 @@ public class AccountAccess {
      * @throws SessionNotFoundException the session not found exception
      */
     public void deleteBookBag(Integer id) throws SessionNotFoundException {
+        Account account = App.getAccount();
 
         Object response = Utils.doRequest(conn(), Api.ACTOR,
-                Api.CONTAINER_FULL_DELETE, authToken, new Object[] {
-                        authToken, CONTAINER_CLASS_BIBLIO, id });
+                Api.CONTAINER_FULL_DELETE, account.getAuthToken(), new Object[] {
+                        account.getAuthToken(), CONTAINER_CLASS_BIBLIO, id });
     }
 
     /**
@@ -966,6 +821,7 @@ public class AccountAccess {
      */
     public void addRecordToBookBag(Integer record_id, Integer bookbag_id)
             throws SessionNotFoundException {
+        Account account = App.getAccount();
 
         OSRFObject cbrebi = new OSRFObject("cbrebi");
         cbrebi.put("bucket", bookbag_id);
@@ -973,8 +829,8 @@ public class AccountAccess {
         cbrebi.put("id", null);
 
         Object response = Utils.doRequest(conn(), Api.ACTOR,
-                Api.CONTAINER_ITEM_CREATE, authToken, new Object[] {
-                        authToken, CONTAINER_CLASS_BIBLIO, cbrebi });
+                Api.CONTAINER_ITEM_CREATE, account.getAuthToken(), new Object[] {
+                        account.getAuthToken(), CONTAINER_CLASS_BIBLIO, cbrebi });
     }
 
     /**
@@ -986,10 +842,11 @@ public class AccountAccess {
      */
     private void removeContainerItem(String container, Integer id)
             throws SessionNotFoundException {
+        Account account = App.getAccount();
 
         Object response = Utils.doRequest(conn(), Api.ACTOR,
-                Api.CONTAINER_ITEM_DELETE, authToken, new Object[] {
-                        authToken, container, id });
+                Api.CONTAINER_ITEM_DELETE, account.getAuthToken(), new Object[] {
+                        account.getAuthToken(), container, id });
     }
 
     /**
@@ -1001,10 +858,11 @@ public class AccountAccess {
      */
     private void createContainer(String container, Object parameter)
             throws SessionNotFoundException {
+        Account account = App.getAccount();
 
         Object response = Utils.doRequest(conn(), Api.ACTOR,
-                Api.CONTAINER_CREATE, authToken, new Object[] {
-                        authToken, container, parameter });
+                Api.CONTAINER_CREATE, account.getAuthToken(), new Object[] {
+                        account.getAuthToken(), container, parameter });
     }
 
     //todo replace callers of this method with RecordLoader.fetchRecordMODS
@@ -1030,23 +888,16 @@ public class AccountAccess {
 
     //------------------------------------------------------
 
-    public String getAuthToken() {
-        return authToken;
-    }
-
-    public Integer getUserID() {
-        return userID;
-    }
-
     /** return number of unread messages in patron message center
      *
      * We don't care about the messages themselves here, because I don't see a way to modify
      * the messages via OSRF, and it's easier to redirect to that section of the OPAC.
      */
     public Integer getUnreadMessageCount() {
+        Account account = App.getAccount();
         Object resp = Utils.doRequest(conn(), Api.ACTOR,
                 Api.MESSAGES_RETRIEVE, new Object[]{
-                        authToken, getUserID(), null});
+                        account.getAuthToken(), account.getId(), null});
         Integer unread_count = 0;
         if (resp != null) {
             List<OSRFObject> list = (List<OSRFObject>) resp;

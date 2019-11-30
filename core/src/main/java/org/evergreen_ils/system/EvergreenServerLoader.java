@@ -27,7 +27,9 @@ import com.android.volley.VolleyError;
 
 import org.evergreen_ils.Api;
 import org.evergreen_ils.accountAccess.AccountAccess;
+import org.evergreen_ils.android.App;
 import org.evergreen_ils.api.EvergreenService;
+import org.evergreen_ils.data.Account;
 import org.evergreen_ils.net.GatewayJsonObjectRequest;
 import org.evergreen_ils.net.VolleyWrangler;
 import org.opensrf.util.GatewayResult;
@@ -87,6 +89,7 @@ public class EvergreenServerLoader {
 
     // fetch settings that we need for all orgs
     public static void fetchOrgSettings(Context context) {
+        /*
         startVolley();
         final EvergreenServer eg = EvergreenServer.getInstance();
         final AccountAccess ac = AccountAccess.getInstance();
@@ -143,6 +146,7 @@ public class EvergreenServerLoader {
             incrNumOutstanding();
             VolleyWrangler.getInstance(context).addToRequestQueue(r);
         }
+        */
     }
 
     private static void parseSMSCarriersFromGatewayResponse(GatewayResult response) {
@@ -155,6 +159,7 @@ public class EvergreenServerLoader {
     }
 
     public static void fetchSMSCarriers(Context context) {
+        /*
         startVolley();
         final EvergreenServer eg = EvergreenServer.getInstance();
         final AccountAccess ac = AccountAccess.getInstance();
@@ -187,6 +192,7 @@ public class EvergreenServerLoader {
                 });
         incrNumOutstanding();
         VolleyWrangler.getInstance(context).addToRequestQueue(r);
+        */
     }
 
     private static Integer parseMessagesResponse(GatewayResult response) {
@@ -216,11 +222,11 @@ public class EvergreenServerLoader {
     public static void fetchUnreadMessageCount(Context context, final OnResponseListener<Integer> listener) {
         startVolley();
         final EvergreenServer eg = EvergreenServer.getInstance();
-        final AccountAccess ac = AccountAccess.getInstance();
+        final Account account = App.getAccount();
         final String method = Api.MESSAGES_RETRIEVE;
         String url = eg.getUrl(Analytics.buildGatewayUrl(
                 Api.ACTOR, method,
-                new Object[]{ac.getAuthToken(), ac.getUserID(), null}));
+                new Object[]{account.getAuthToken(), account.getId(), null}));
         GatewayJsonObjectRequest r = new GatewayJsonObjectRequest(
                 url,
                 Request.Priority.NORMAL,

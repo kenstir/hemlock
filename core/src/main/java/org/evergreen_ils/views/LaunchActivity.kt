@@ -186,7 +186,7 @@ class LaunchActivity : AppCompatActivity(), CoroutineScope by MainScope() {
         var obj = sessionResult.getOrNull()
         if (obj == null) {
             AccountUtils.invalidateAuthToken(this, account.authToken)
-            account.clearSession()
+            account.authToken = null
             Log.d(TAG, "[auth] getAuthTokenForAccountFuture ...")
             val future = AccountUtils.getAuthTokenForAccountFuture(this, account.username)
             val bnd = future.await()
@@ -202,6 +202,12 @@ class LaunchActivity : AppCompatActivity(), CoroutineScope by MainScope() {
         // get user settings
         obj = ActorService.fetchFleshedUser(account.authTokenOrThrow(), account.idOrThrow())
         account.loadFleshedUserSettings(obj)
+
+//        Analytics.logEvent("Account: Retrieve Session",
+//                "home_org", EvergreenService.Companion.getOrgShortNameSafe(homeLibraryID),
+//                "pickup_org", EvergreenService.Companion.getOrgShortNameSafe(defaultPickupLibraryID),
+//                "search_org", EvergreenService.Companion.getOrgShortNameSafe(defaultSearchLibraryID),
+//                "hold_notify", safeString(holdNotifySetting));
 
         return true
     }

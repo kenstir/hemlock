@@ -30,6 +30,7 @@ import com.google.zxing.common.BitMatrix;
 
 import org.evergreen_ils.R;
 import org.evergreen_ils.accountAccess.AccountAccess;
+import org.evergreen_ils.android.App;
 import org.evergreen_ils.utils.BarcodeUtils;
 import org.evergreen_ils.utils.ui.BaseActivity;
 
@@ -48,7 +49,7 @@ public class BarcodeActivity extends BaseActivity {
         setContentView(R.layout.activity_barcode);
 
         barcode_text = findViewById(R.id.barcode_text);
-        String barcode = AccountAccess.getInstance().getBarcode();
+        String barcode = App.getAccount().getBarcode();
 
         image_view = findViewById(R.id.barcode_image);
         DisplayMetrics metrics = new DisplayMetrics();

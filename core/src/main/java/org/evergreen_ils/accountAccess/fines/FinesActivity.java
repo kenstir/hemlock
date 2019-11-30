@@ -32,6 +32,7 @@ import org.evergreen_ils.R;
 import org.evergreen_ils.accountAccess.AccountAccess;
 import org.evergreen_ils.accountAccess.AccountUtils;
 import org.evergreen_ils.accountAccess.SessionNotFoundException;
+import org.evergreen_ils.android.App;
 import org.evergreen_ils.api.EvergreenService;
 import org.evergreen_ils.searchCatalog.RecordDetails;
 import org.evergreen_ils.searchCatalog.RecordInfo;
@@ -127,7 +128,7 @@ public class FinesActivity extends BaseActivity {
     }
 
     private void initPayFinesButton() {
-        Integer home_lib = AccountAccess.getInstance().getHomeLibraryID();
+        Integer home_lib = App.getAccount().getHomeOrg();
         Organization home_org = EvergreenService.Companion.findOrg(home_lib);
         if (getResources().getBoolean(R.bool.ou_enable_pay_fines)
                 && home_org != null
@@ -138,7 +139,7 @@ public class FinesActivity extends BaseActivity {
                 @Override
                 public void onClick(View v) {
                     Analytics.logEvent("Fines: Pay Fines", "num_fines", finesRecords.size());
-                    String username = AccountAccess.getInstance().getUserName();
+                    String username = App.getAccount().getUsername();
                     String password = AccountUtils.getPassword(FinesActivity.this, username);
                     String path =                            "/eg/opac/login"
                             + "?redirect_to=" + URLEncoder.encode("/eg/opac/myopac/main_payment_form#pay_fines_now")

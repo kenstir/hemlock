@@ -52,6 +52,7 @@ import org.evergreen_ils.accountAccess.AccountAccess;
 import org.evergreen_ils.accountAccess.SessionNotFoundException;
 import org.evergreen_ils.android.App;
 import org.evergreen_ils.api.EvergreenService;
+import org.evergreen_ils.data.Account;
 import org.evergreen_ils.searchCatalog.RecordInfo;
 import org.evergreen_ils.system.EvergreenServer;
 import org.evergreen_ils.system.Organization;
@@ -73,7 +74,7 @@ public class PlaceHoldActivity extends AppCompatActivity {
     private TextView title;
     private TextView author;
     private TextView format;
-    private AccountAccess accountAccess;
+    private Account account;
     private EditText expiration_date;
     private EditText sms_notify;
     private EditText phone_notify;
@@ -113,7 +114,7 @@ public class PlaceHoldActivity extends AppCompatActivity {
         eg = EvergreenServer.getInstance();
         RecordInfo record = (RecordInfo) getIntent().getSerializableExtra("recordInfo");
 
-        accountAccess = AccountAccess.getInstance();
+        account = App.getAccount();
         progress = new ProgressDialogSupport();
 
         title = findViewById(R.id.hold_title);
@@ -138,7 +139,7 @@ public class PlaceHoldActivity extends AppCompatActivity {
         author.setText(record.author);
         format.setText(record.getIconFormatLabel());
 
-        email_notification.setChecked(accountAccess.getDefaultEmailNotification());
+        email_notification.setChecked(account.getNotifyByEmail());
         initPhoneControls(getResources().getBoolean(R.bool.ou_enable_phone_notification));
         initSMSControls(eg.getSMSEnabled());
         initPlaceHoldRunnable(record);
@@ -190,14 +191,14 @@ public class PlaceHoldActivity extends AppCompatActivity {
 
                 Result temp_result = Result.createUnknownError();
                 try {
-                    temp_result = accountAccess.testAndCreateHold(record_id, selectedOrgID,
+                    temp_result = AccountAccess.getInstance().testAndCreateHold(record_id, selectedOrgID,
                             email_notification.isChecked(), getPhoneNotify(),
                             getSMSNotify(), getSMSNotifyCarrier(selectedSMSCarrierID),
                             expire_date_s, suspendHold.isChecked(), thaw_date_s);
                 } catch (SessionNotFoundException e) {
                     try {
-                        if (accountAccess.reauthenticate(PlaceHoldActivity.this))
-                            temp_result = accountAccess.testAndCreateHold(
+                        if (AccountAccess.getInstance().reauthenticate(PlaceHoldActivity.this))
+                            temp_result = AccountAccess.getInstance().testAndCreateHold(
                                     record_id, selectedOrgID,
                                     email_notification.isChecked(),  getPhoneNotify(),
                                     getSMSNotify(), getSMSNotifyCarrier(selectedSMSCarrierID),
@@ -247,7 +248,7 @@ public class PlaceHoldActivity extends AppCompatActivity {
         String notifyTypes = TextUtils.join("|", notify);
         try {
             Organization pickup_org = EvergreenService.Companion.getOrgs().get(selectedOrgPos);
-            Organization home_org = EvergreenService.Companion.findOrg(AccountAccess.getInstance().getHomeLibraryID());
+            Organization home_org = EvergreenService.Companion.findOrg(App.getAccount().getHomeOrg());
             String pickup_val = pickupEventValue(pickup_org, home_org);
             Analytics.logEvent("Place Hold: Execute",
                     "result", result,
@@ -297,8 +298,8 @@ public class PlaceHoldActivity extends AppCompatActivity {
     }
 
     private void initPhoneControls(boolean systemwide_phone_enabled) {
-        boolean defaultPhoneNotification = accountAccess.getDefaultPhoneNotification();
-        String defaultPhoneNumber = accountAccess.getDefaultPhoneNumber();
+        boolean defaultPhoneNotification = account.getNotifyByPhone();
+        String defaultPhoneNumber = account.getPhoneNumber();
         if (systemwide_phone_enabled) {
             phone_notification.setChecked(defaultPhoneNotification);
             phone_notify.setText(safeString(defaultPhoneNumber));
@@ -326,7 +327,7 @@ public class PlaceHoldActivity extends AppCompatActivity {
 
     private void initSMSControls(boolean systemwide_sms_enabled) {
         if (systemwide_sms_enabled) {
-            boolean isChecked = accountAccess.getDefaultSMSNotification();
+            boolean isChecked = account.getNotifyBySMS();
             sms_notification.setChecked(isChecked);
             sms_notification.setOnCheckedChangeListener(new OnCheckedChangeListener() {
                 @Override
@@ -336,9 +337,9 @@ public class PlaceHoldActivity extends AppCompatActivity {
                 }
             });
             sms_notify.setEnabled(isChecked);
-            sms_notify.setText(safeString(accountAccess.getDefaultSMSNumber()));
+            sms_notify.setText(safeString(account.getSmsNumber()));
             sms_spinner.setEnabled(isChecked);
-            initSMSSpinner(accountAccess.getDefaultSMSCarrierID());
+            initSMSSpinner(account.getSmsCarrier());
         } else {
             sms_notification.setChecked(false);
             sms_notification_label.setVisibility(View.GONE);
@@ -432,7 +433,7 @@ public class PlaceHoldActivity extends AppCompatActivity {
     }
 
     private void initOrgSpinner() {
-        Integer defaultLibraryID = AccountAccess.getInstance().getDefaultPickupLibraryID();
+        Integer defaultLibraryID = account.getPickupOrg();
         ArrayList<String> list = new ArrayList<>();
         for (int i = 0; i < EvergreenService.Companion.getOrgs().size(); i++) {
             Organization org = EvergreenService.Companion.getOrgs().get(i);

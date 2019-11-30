@@ -224,7 +224,7 @@ public class SearchActivity extends BaseActivity {
                 searchResults = search.getSearchResults(text, getSearchClass(), getSearchFormatCode(), getString(R.string.ou_sort_by), 0);
                 try {
                     Organization search_org = search.selectedOrganization;
-                    Organization home_org = EvergreenService.Companion.findOrg(AccountAccess.getInstance().getHomeLibraryID());
+                    Organization home_org = EvergreenService.Companion.findOrg(App.getAccount().getHomeOrg());
                     String search_org_val = TextUtils.equals(search_org.name, home_org.name) ? "home" :
                             ((search_org.isConsortium()) ? search_org.shortname : "other");
                     Analytics.logEvent("Search: Execute",
@@ -265,7 +265,7 @@ public class SearchActivity extends BaseActivity {
 
     private void initSearchOrgSpinner() {
         int selectedOrgPos = 0;
-        Integer defaultLibraryID = AccountAccess.getInstance().getDefaultSearchLibraryID();
+        Integer defaultLibraryID = App.getAccount().getSearchOrg();
         ArrayList<String> list = new ArrayList<>();
         for (int i = 0; i < EvergreenService.Companion.getOrgs().size(); i++) {
             Organization org = EvergreenService.Companion.getOrgs().get(i);

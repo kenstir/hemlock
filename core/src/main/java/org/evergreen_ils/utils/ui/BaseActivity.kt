@@ -219,7 +219,7 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
             //            return true;
         } else if (id == R.id.action_messages) {
             Analytics.logEvent("Messages: Open", "via", "options_menu")
-            val username = AccountAccess.getInstance().userName
+            val username = App.getAccount().username
             val password = AccountUtils.getPassword(this, username)
             var path = ("/eg/opac/login"
                     + "?redirect_to=" + URLEncoder.encode("/eg/opac/myopac/messages"))
