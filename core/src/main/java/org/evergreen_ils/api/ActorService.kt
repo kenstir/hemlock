@@ -45,4 +45,10 @@ object ActorService {
         val args = arrayOf<Any?>(orgID, settings, Api.ANONYMOUS)
         return Gateway.fetchObject(Api.ACTOR, Api.ORG_UNIT_SETTING_BATCH, args)
     }
+
+    suspend fun fetchFleshedUser(authToken: String, userID: Int): OSRFObject {
+        val settings = listOf("card", "settings")
+        val args = arrayOf<Any?>(authToken, userID, settings)
+        return Gateway.fetchObject(Api.ACTOR, Api.USER_FLESHED_RETRIEVE, args)
+    }
 }

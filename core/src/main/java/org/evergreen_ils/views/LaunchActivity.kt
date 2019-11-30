@@ -34,6 +34,7 @@ import org.evergreen_ils.R
 import org.evergreen_ils.accountAccess.AccountUtils
 import org.evergreen_ils.accountAccess.AccountUtils.getAuthTokenFuture
 import org.evergreen_ils.android.App
+import org.evergreen_ils.api.ActorService
 import org.evergreen_ils.api.AuthService
 import org.evergreen_ils.data.Account
 import org.evergreen_ils.system.Analytics
@@ -117,6 +118,10 @@ class LaunchActivity : AppCompatActivity(), CoroutineScope by MainScope() {
         mProgressBar?.visibility = View.INVISIBLE
     }
 
+    private fun onLaunchSuccess() {
+        App.startApp(this)
+    }
+
     private fun launchLoginFlow() {
         Log.d(TAG, "[auth] launch")
         launch {
@@ -136,7 +141,8 @@ class LaunchActivity : AppCompatActivity(), CoroutineScope by MainScope() {
     private fun loadAccountData() {
         launch {
             try {
-                val haveSession = getSession(App.getAccount())
+                getSession(App.getAccount())
+                onLaunchSuccess()
             } catch (ex: Exception) {
                 Log.d(TAG, "caught in loadAccountData", ex)
                 var msg = ex.message ?: "Cancelled"
@@ -191,9 +197,11 @@ class LaunchActivity : AppCompatActivity(), CoroutineScope by MainScope() {
             account.authToken = accountManagerResult.authToken
             obj = fetchSession(account.authTokenOrThrow())
         }
-
-        // load account attributes
         account.loadSession(obj)
+
+        // get user settings
+        obj = ActorService.fetchFleshedUser(account.authTokenOrThrow(), account.idOrThrow())
+        account.loadUserSettings(obj)
 
         return true
     }
@@ -204,26 +212,6 @@ class LaunchActivity : AppCompatActivity(), CoroutineScope by MainScope() {
         Log.d(TAG, "[auth] fetchSession ... $obj")
         return obj
     }
-//
-//    // Start or resume a session via the gateway.  We have to do this work here and
-//    // not in a ViewModel because reauthenticate() needs an Activity.
-//    private suspend fun getSession(): Boolean {
-//        // auth token zen: try once and if it fails, invalidate the token and try again
-//        var haveSession = false
-//        var authToken = "x"
-//        var accountName = "hemlock"
-//        try {
-//            Log.d(TAG, "getSession: fetch ...")
-//            val obj = AuthService.fetchSession(authToken)
-//            Log.d(TAG, "getSession: obj:$obj")
-//            haveSession = true
-//        } catch (ex: Exception) {
-//            AccountUtils.invalidateAuthToken(this, authToken)
-//            App.getAccount().clearSession()
-//
-//            haveSession = ac.reauthenticate(mCallingActivity, account_name);
-//        }
-//    }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)

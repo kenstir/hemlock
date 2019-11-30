@@ -21,23 +21,19 @@ package org.evergreen_ils.test;
 import android.content.Context;
 import android.os.Bundle;
 import androidx.test.platform.app.InstrumentationRegistry;
-import androidx.test.ext.junit.runners.AndroidJUnit4;
+
 import android.text.TextUtils;
 
 import org.evergreen_ils.Api;
 import org.evergreen_ils.Result;
 import org.evergreen_ils.accountAccess.AccountAccess;
-import org.evergreen_ils.api.PCRUDService;
 import org.evergreen_ils.auth.EvergreenAuthenticator;
-import org.evergreen_ils.searchCatalog.CodedValueMap;
 import org.evergreen_ils.system.Analytics;
-import org.evergreen_ils.system.EvergreenServer;
 import org.evergreen_ils.system.Log;
 import org.evergreen_ils.system.Utils;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.opensrf.net.http.HttpConnection;
 import org.opensrf.util.OSRFObject;
 
@@ -286,7 +282,7 @@ public class LiveServiceTest {
             return; // search failed or server crashed
 
         Map<String, ?> response = (Map<String, ?>) resp;
-        Integer visible = Api.parseInteger(response.get("count"), 0);
+        Integer visible = Api.parseInt(response.get("count"), 0);
 
         // record_ids_lol is a list of lists and looks like one of:
         //   [[32673,null,"0.0"],[886843,null,"0.0"]] // integer ids+?

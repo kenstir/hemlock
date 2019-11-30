@@ -81,4 +81,12 @@ public class OSRFObject extends HashMap<String, Object> implements OSRFSerializa
     public Boolean getBoolean(String field) {
         return Api.parseBoolean(get(field));
     }
+
+    @Nullable
+    public OSRFObject getObject(String field) {
+        Object o = get(field);
+        if (o != null && o instanceof OSRFObject)
+            return (OSRFObject) o;
+        return null;
+    }
 }

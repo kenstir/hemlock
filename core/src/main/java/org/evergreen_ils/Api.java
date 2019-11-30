@@ -183,7 +183,7 @@ public class Api {
      * Sometimes search returns a count as a json number ("count":0), sometimes a string ("count":"1103").
      * Seems to be the same for result "ids" list (See Issue #1).  Handle either form and return as an int.
      */
-    public static Integer parseInteger(Object o, Integer dflt) {
+    public static Integer parseInt(Object o, Integer dflt) {
         if (o instanceof Integer) {
             return (Integer)o;
         } else if (o instanceof String) {
@@ -201,8 +201,8 @@ public class Api {
             return dflt;
         }
     }
-    public static Integer parseInteger(Object o) {
-        return parseInteger(o, null);
+    public static Integer parseInt(Object o) {
+        return parseInt(o, null);
     }
 
     // Some queries return at times a list of String ids and at times a list of Integer ids,
@@ -211,7 +211,7 @@ public class Api {
         ArrayList<String> ret = new ArrayList<>();
         if (o instanceof List) {
             for (Object elem: (List<?>) o) {
-                Integer i = parseInteger(elem);
+                Integer i = parseInt(elem);
                 if (i != null) {
                     ret.add(i.toString());
                 }

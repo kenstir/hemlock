@@ -203,13 +203,13 @@ public class AccountAccess {
                     String name = setting.getString("name");
                     String value = removeStupidExtraQuotes(setting.getString(Api.VALUE));
                     if (name.equals(Api.USER_SETTING_DEFAULT_PICKUP_LOCATION)) {
-                        defaultPickupLibraryID = Api.parseInteger(value);
+                        defaultPickupLibraryID = Api.parseInt(value);
                     } else if (name.equals(Api.USER_SETTING_DEFAULT_PHONE)) {
                         defaultPhoneNumber = value;
                     } else if (name.equals(Api.USER_SETTING_DEFAULT_SEARCH_LOCATION)) {
-                        defaultSearchLibraryID = Api.parseInteger(value);
+                        defaultSearchLibraryID = Api.parseInt(value);
                     } else if (name.equals(Api.USER_SETTING_DEFAULT_SMS_CARRIER)) {
-                        defaultSMSCarrierID = Api.parseInteger(value);
+                        defaultSMSCarrierID = Api.parseInt(value);
                     } else if (name.equals(Api.USER_SETTING_DEFAULT_SMS_NOTIFY)) {
                         defaultSMSNumber = value;
                     } else if (name.equals(Api.USER_SETTING_HOLD_NOTIFY)) {

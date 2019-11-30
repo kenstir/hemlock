@@ -43,11 +43,11 @@ class OSRFObjectTest {
         val obj = OSRFObject(map)
         assertEquals(42, obj.getInt("id"))
         assertEquals("508-555-1212", obj.getString("day_phone"))
-        assertNull(obj.getString("unset"))
+        assertNull(obj.getString("na"))
     }
 
     @Test
-    fun test_apiToPrimative() {
+    fun test_getBoolean() {
         val map = mapOf<String, Any?>(
                 "juvenile" to "f",
                 "active" to "t"
@@ -55,5 +55,21 @@ class OSRFObjectTest {
         val obj = OSRFObject(map)
         assertEquals(true, obj.getBoolean("active"))
         assertEquals(false, obj.getBoolean("juvenile"))
+    }
+
+    @Test
+    fun test_getInt() {
+        val obj = OSRFObject(mapOf<String, Any?>("id" to 42, "stringish_id" to "42"))
+        assertEquals(42, obj.getInt("id"))
+        assertEquals(42, obj.getInt("stringish_id"))
+    }
+
+    @Test
+    fun test_getObject() {
+        val cardObj = OSRFObject(mapOf<String, Any?>("barcode" to "1234"))
+        val fleshedUserObj = OSRFObject(mapOf<String, Any?>("card" to cardObj))
+        val obj = fleshedUserObj.getObject("card")
+        assertEquals("1234", obj?.getString("barcode"))
+        assertNull(obj?.getObject("na"))
     }
 }

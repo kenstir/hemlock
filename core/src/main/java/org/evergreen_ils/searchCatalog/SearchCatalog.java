@@ -27,7 +27,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.evergreen_ils.Api;
-import org.evergreen_ils.accountAccess.AccountAccess;
 import org.evergreen_ils.system.EvergreenServer;
 import org.evergreen_ils.system.Log;
 import org.evergreen_ils.system.Utils;
@@ -122,7 +121,7 @@ public class SearchCatalog {
 
         // handle cases of no results
         Map<String, ?> response = (Map<String, ?>) resp;
-        visible = (response != null) ? Api.parseInteger(response.get("count"), 0) : 0;
+        visible = (response != null) ? Api.parseInt(response.get("count"), 0) : 0;
         if (visible == 0)
             return results;
 
@@ -133,7 +132,7 @@ public class SearchCatalog {
         List<List<?>> record_ids_lol = (List<List<?>>) response.get("ids");
         Log.d(TAG, "length:"+record_ids_lol.size());
         for (int i = 0; i < record_ids_lol.size(); i++) {
-            Integer record_id = Api.parseInteger(record_ids_lol.get(i).get(0));
+            Integer record_id = Api.parseInt(record_ids_lol.get(i).get(0));
             results.add(new RecordInfo(record_id));
         }
 
