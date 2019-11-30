@@ -33,9 +33,9 @@ class Account constructor(val username: String, var authToken: String?) {
     var id: Int? = null
     var homeOrg: Int? = null
     var barcode: String? = null
-    var notifyByEmail: Boolean? = null
-    var notifyByPhone: Boolean? = null
-    var notifyBySMS: Boolean? = null
+    var notifyByEmail = false
+    var notifyByPhone = false
+    var notifyBySMS = false
     var smsCarrier: Int? = null
     var smsNumber: String? = null
 
@@ -57,8 +57,9 @@ class Account constructor(val username: String, var authToken: String?) {
         id = null
         homeOrg = null
         barcode = null
-        notifyByEmail = null
-        notifyBySMS = null
+        notifyByEmail = false
+        notifyByPhone = false
+        notifyBySMS = false
         smsCarrier = null
         smsNumber = null
         dayPhone = null
@@ -71,7 +72,7 @@ class Account constructor(val username: String, var authToken: String?) {
         dayPhone = obj.getString("day_phone")
     }
 
-    fun loadUserSettings(obj: OSRFObject) {
+    fun loadFleshedUserSettings(obj: OSRFObject) {
         barcode = obj.getObject("card")?.getString("barcode")
 
         // settings is a list of objects with name and value as string;
@@ -95,9 +96,9 @@ class Account constructor(val username: String, var authToken: String?) {
 
     fun parseHoldNotifyValue(value: String?) {
         // NB: value may be either ':' separated or '|' separated, e.g. "phone:email" or "email|sms"
-        this.notifyByEmail = value?.contains("email")
-        this.notifyByPhone = value?.contains("phone")
-        this.notifyBySMS = value?.contains("sms")
+        this.notifyByEmail = value?.contains("email") ?: false
+        this.notifyByPhone = value?.contains("phone") ?: false
+        this.notifyBySMS = value?.contains("sms") ?: false
     }
 
     // Fix stupid setting strings that are returned with extra quotes

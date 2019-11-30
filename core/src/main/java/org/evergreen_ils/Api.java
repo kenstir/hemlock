@@ -184,7 +184,9 @@ public class Api {
      * Seems to be the same for result "ids" list (See Issue #1).  Handle either form and return as an int.
      */
     public static Integer parseInt(Object o, Integer dflt) {
-        if (o instanceof Integer) {
+        if (o == null) {
+            return dflt;
+        } else if (o instanceof Integer) {
             return (Integer)o;
         } else if (o instanceof String) {
             // I have seen settings with value=null, e.g. opac.default_search_location

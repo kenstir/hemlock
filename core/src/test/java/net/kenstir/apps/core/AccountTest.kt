@@ -18,27 +18,24 @@
 
 package net.kenstir.apps.core
 
+import org.evergreen_ils.Api
 import org.evergreen_ils.data.Account
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertNull
-import org.junit.BeforeClass
+import org.junit.Assert.*
+import org.junit.Before
 import org.junit.Test
 import org.opensrf.util.OSRFObject
 
 class AccountTest {
 
-    companion object {
-        lateinit var sessionObjMap: Map<String, Any?>
+    var sessionObj = OSRFObject(mapOf<String, Any?>(
+            "id" to 42,
+            "home_ou" to 69,
+            "day_phone" to "508-555-1212"
+    ))
+    var cardObj = OSRFObject(mapOf<String, Any?>("barcode" to "1234"))
 
-        @BeforeClass
-        @JvmStatic
-        fun setUpClass() {
-            sessionObjMap = mutableMapOf(
-                    "id" to 42,
-                    "home_ou" to 69,
-                    "day_phone" to "508-555-1212"
-            )
-        }
+    @Before
+    fun setUp() {
     }
 
     @Test
@@ -49,12 +46,42 @@ class AccountTest {
     }
 
     @Test
-    fun test_loadFromObj() {
+    fun test_loadSession() {
         val account = Account("hemlock", "636f7666656665")
         assertEquals("636f7666656665", account.authTokenOrThrow())
 
-        account.loadSession(OSRFObject(sessionObjMap))
+        account.loadSession(sessionObj)
         assertEquals(42, account.id)
         assertEquals("508-555-1212", account.phoneNumber)
+    }
+
+    fun makeSetting(name: String, value: Any?): OSRFObject {
+        return OSRFObject(mapOf<String, Any?>("name" to name, "value" to value))
+    }
+
+    @Test
+    fun test_loadFleshedUserSettings() {
+        val account = Account("hemlock", "636f7666656665")
+        account.loadSession(sessionObj)
+
+        val settingsObj = arrayListOf(
+                makeSetting(Api.USER_SETTING_DEFAULT_PHONE, "617-555-1212"),
+                makeSetting(Api.USER_SETTING_HOLD_NOTIFY,"email|sms")
+        )
+        val fleshedUserSettingsObj = OSRFObject(mapOf<String, Any?>(
+                "card" to cardObj,
+                "settings" to settingsObj
+        ))
+        account.loadFleshedUserSettings(fleshedUserSettingsObj)
+
+        assertEquals(42, account.id)
+        assertEquals("617-555-1212", account.phoneNumber)
+        assertEquals(69, account.pickupOrg)
+        assertEquals(69, account.searchOrg)
+        assertNull(account.smsCarrier)
+        assertNull(account.smsNumber)
+        assertTrue(account.notifyByEmail)
+        assertFalse(account.notifyByPhone)
+        assertTrue(account.notifyBySMS)
     }
 }

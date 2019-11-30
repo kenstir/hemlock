@@ -201,7 +201,7 @@ class LaunchActivity : AppCompatActivity(), CoroutineScope by MainScope() {
 
         // get user settings
         obj = ActorService.fetchFleshedUser(account.authTokenOrThrow(), account.idOrThrow())
-        account.loadUserSettings(obj)
+        account.loadFleshedUserSettings(obj)
 
         return true
     }
