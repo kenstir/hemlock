@@ -62,7 +62,7 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
     private var _toolbar: Toolbar? = null
     protected var menuItemHandler: MenuProvider? = null
     protected var isRestarting = false
-    protected lateinit var job: Job
+    private lateinit var job: Job
 
     override val coroutineContext: CoroutineContext
         get() = job + Dispatchers.Main
@@ -96,6 +96,7 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         App.init(this)
         ThemeManager.applyNightMode()
 
+        Log.d(TAG, "coro: create job")
         job = Job()
 
         initMenuProvider()
@@ -104,7 +105,7 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
 
     override fun onDestroy() {
         super.onDestroy()
-        Log.d(TAG, "coro: cancel")
+        Log.d(TAG, "coro: cancel job")
         job.cancel()
     }
 
@@ -164,7 +165,7 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         var ret = true
         if (id == R.id.nav_header) {
             Analytics.logEvent("Home: Open", "via", "nav_drawer")
-            startActivity(Intent(this, MainActivity::class.java))
+            startActivity(Intent(this, MainActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
         } else if (id == R.id.main_btn_search) {
             Analytics.logEvent("Search: Open", "via", "nav_drawer")
             startActivity(Intent(this, SearchActivity::class.java))

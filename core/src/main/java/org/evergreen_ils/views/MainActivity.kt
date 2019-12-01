@@ -31,6 +31,7 @@ import androidx.core.view.MenuItemCompat
 import com.android.volley.Request
 import com.android.volley.Response
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.evergreen_ils.Api
 import org.evergreen_ils.R
@@ -62,7 +63,7 @@ class MainActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         if (isRestarting) return
 
-        Log.d(TAG, "coro: onCreate")
+        Log.d(TAG, object{}.javaClass.enclosingMethod?.name)
 
         setContentView(R.layout.activity_main)
 
@@ -71,24 +72,46 @@ class MainActivity : BaseActivity() {
 //        fetchUnreadMessageCount()
     }
 
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+        Log.d(TAG, object{}.javaClass.enclosingMethod?.name)
+    }
+
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
+
+        Log.d(TAG, object{}.javaClass.enclosingMethod?.name)
         loadGlobalData()
+        loadData()
 //        launch {
 //            val response = getData()
 //            Log.d(TAG, "coro: main? resp:$response")
 //        }
     }
 
+    // Start the async load of data whose lifetime extends past that of MainActivity.
+    // We don't want to cancel this data when starting a new Activity.
     private fun loadGlobalData() {
         GlobalScope.launch {
-            val authToken = App.getAccount().authToken
-            val userID = App.getAccount().id
-            if (authToken != null && userID != null) {
-                mUnreadMessageCount = unreadMessageCount(ActorService.fetchMessages(authToken, userID))
-                updateUnreadMessageText()
-            }
+            Log.d(TAG, "coro: global scope ...")
+            delay(8_000)
+            Log.d(TAG, "coro: global scope ... after")
         }
+    }
+
+    // Load data that is local to this Activity.
+    private fun loadData() {
+        launch {
+            Log.d(TAG, "coro: normal scope ...")
+            delay(8_000)
+            Log.d(TAG, "coro: normal scope ... after")
+        }
+//            val authToken = App.getAccount().authToken
+//            val userID = App.getAccount().id
+//            if (authToken != null && userID != null) {
+//                mUnreadMessageCount = unreadMessageCount(ActorService.fetchMessages(authToken, userID))
+//                updateUnreadMessageText()
+//            }
     }
 
     private fun unreadMessageCount(messages: List<OSRFObject>): Int {
@@ -101,27 +124,6 @@ class MainActivity : BaseActivity() {
             }
         }
         return count
-    }
-
-    private suspend fun getData() = suspendCoroutine<String> { cont ->
-        val url = Gateway.buildUrl(
-                Api.ACTOR, Api.ILS_VERSION,
-                arrayOf())
-        val start_ms = System.currentTimeMillis()
-        val r = GatewayJsonObjectRequest(
-                url,
-                Request.Priority.NORMAL,
-                Response.Listener { response ->
-                    val duration_ms = System.currentTimeMillis() - start_ms
-                    val ver = response.payload as String
-                    Log.d(TAG, "coro: listener, resp:$ver")
-                    cont.resumeWith(Result.success(ver))
-                },
-                Response.ErrorListener { error ->
-                    Log.d(TAG, "caught", error)
-                    cont.resumeWithException(error)
-                })
-        VolleyWrangler.getInstance(this).addToRequestQueue(r)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

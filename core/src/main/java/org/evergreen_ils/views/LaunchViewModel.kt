@@ -88,9 +88,9 @@ class LaunchViewModel : ViewModel() {
                 defs.add(async { CodedValueMap.loadCodedValueMaps(PCRUDService.fetchCodedValueMaps()) })
 
                 // awaitAll
-                Log.d(TAG, "coro: 3: await ${defs.size} deferreds ...")
+                Log.d(TAG, "coro: await ${defs.size} deferreds ...")
                 defs.map { it.await() }
-                Log.d(TAG, "coro: 4: await ${defs.size} deferreds ... done")
+                Log.d(TAG, "coro: await ${defs.size} deferreds ... done")
 
                 _status.value = "Connected"
                 _serviceDataReady.value = true
