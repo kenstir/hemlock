@@ -90,7 +90,7 @@ object Gateway {
     }
 
     fun getIDLUrl(shouldCache: Boolean = true): String {
-        var params = mutableListOf<String>()
+        val params = mutableListOf<String>()
         for (className in TextUtils.split(Api.IDL_CLASSES_USED, ",")) {
             params.add("class=$className")
         }
@@ -103,7 +103,7 @@ object Gateway {
     }
 
     // Make an OSRF Gateway request from inside a CoroutineScope.  `block` is expected to return T or throw
-    suspend fun <T> fetch(service: String, method: String, args: Array<Any?>, block: (GatewayResult) -> T) = fetchObjectImpl(service, method, args, true, block)
+    suspend fun <T> fetch(service: String, method: String, args: Array<Any?>, shouldCache: Boolean, block: (GatewayResult) -> T) = fetchObjectImpl(service, method, args, shouldCache, block)
 
     // same as above without caching
     suspend fun <T> fetchNoCache(service: String, method: String, args: Array<Any?>, block: (GatewayResult) -> T) = fetchObjectImpl(service, method, args, false, block)
@@ -129,17 +129,17 @@ object Gateway {
     }
 
     // fetchObject - make gateway request and expect json payload of OSRFObject
-    suspend fun fetchObject(service: String, method: String, args: Array<Any?>) = fetch(service, method, args) { response ->
+    suspend fun fetchObject(service: String, method: String, args: Array<Any?>, shouldCache: Boolean) = fetch(service, method, args, shouldCache) { response ->
         response.asObject()
     }
 
     // fetchObjectArray - make gateway request and expect json payload of [OSRFObject]
-    suspend fun fetchObjectArray(service: String, method: String, args: Array<Any?>) = fetch(service, method, args) { response ->
+    suspend fun fetchObjectArray(service: String, method: String, args: Array<Any?>, shouldCache: Boolean) = fetch(service, method, args, shouldCache) { response ->
         response.asObjectArray()
     }
 
     // fetchStringPayload - make gateway request and expect json payload of String
-    suspend fun fetchObjectString(service: String, method: String, args: Array<Any?>) = fetch(service, method, args) { response ->
+    suspend fun fetchObjectString(service: String, method: String, args: Array<Any?>, shouldCache: Boolean) = fetch(service, method, args, shouldCache) { response ->
         response.asString()
     }
 

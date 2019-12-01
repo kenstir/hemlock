@@ -24,6 +24,6 @@ import org.opensrf.util.OSRFObject
 
 object SearchService {
     suspend fun fetchCopyStatuses(): List<OSRFObject> {
-        return Gateway.fetchObjectArray(Api.SEARCH, Api.COPY_STATUS_ALL, arrayOf())
+        return Gateway.fetchObjectArray(Api.SEARCH, Api.COPY_STATUS_ALL, arrayOf(), false)
     }
 }

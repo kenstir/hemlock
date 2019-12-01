@@ -40,10 +40,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/** Responsible for lazy loading of general server settings
- *
- * Created by kenstir on 2/20/2017.
- */
 public class EvergreenServerLoader {
 
     public interface OnResponseListener<T> {
@@ -160,9 +156,6 @@ public class EvergreenServerLoader {
 
     public static void fetchSMSCarriers(Context context) {
         /*
-        startVolley();
-        final EvergreenServer eg = EvergreenServer.getInstance();
-        final AccountAccess ac = AccountAccess.getInstance();
         HashMap<String, Object> args = new HashMap<>();
         args.put("active", 1);
         final String method = Api.SEARCH_SMS_CARRIERS;
@@ -193,64 +186,6 @@ public class EvergreenServerLoader {
         incrNumOutstanding();
         VolleyWrangler.getInstance(context).addToRequestQueue(r);
         */
-    }
-
-    private static Integer parseMessagesResponse(GatewayResult response) {
-        Integer unread_count = 0;
-        if (response.payload != null) {
-            try {
-                List<OSRFObject> list = (List<OSRFObject>) response.payload;
-                for (OSRFObject obj : list) {
-                    String read_date = obj.getString("read_date");
-                    Boolean deleted = Api.parseBoolean(obj.get("deleted"));
-                    if (read_date == null && !deleted) {
-                        ++unread_count;
-                    }
-                }
-            } catch (Exception e) {
-                Log.d(TAG, "caught", e);
-            }
-        }
-        return unread_count;
-    }
-
-    /** fetch number of unread messages in patron message center
-     *
-     * We don't care about the messages themselves, because I don't see a way to modify
-     * the messages via OSRF, and it's easier to launch a URL to the patron message center.
-     */
-    public static void fetchUnreadMessageCount(Context context, final OnResponseListener<Integer> listener) {
-        startVolley();
-        final EvergreenServer eg = EvergreenServer.getInstance();
-        final Account account = App.getAccount();
-        final String method = Api.MESSAGES_RETRIEVE;
-        String url = eg.getUrl(Analytics.buildGatewayUrl(
-                Api.ACTOR, method,
-                new Object[]{account.getAuthToken(), account.getId(), null}));
-        GatewayJsonObjectRequest r = new GatewayJsonObjectRequest(
-                url,
-                Request.Priority.NORMAL,
-                new Response.Listener<GatewayResult>() {
-                    @Override
-                    public void onResponse(GatewayResult response) {
-                        Analytics.logVolleyResponse(method);
-                        listener.onResponse(parseMessagesResponse(response));
-                        decrNumOutstanding();
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Analytics.logErrorResponse(error.getMessage());
-                        String msg = error.getMessage();
-                        if (!TextUtils.isEmpty(msg))
-                            Log.d(TAG, "error: "+msg);
-                        decrNumOutstanding();
-                    }
-                });
-        incrNumOutstanding();
-        r.setShouldCache(false);
-        VolleyWrangler.getInstance(context).addToRequestQueue(r);
     }
 
     // these don't really need to be synchronized as they happen on the main thread

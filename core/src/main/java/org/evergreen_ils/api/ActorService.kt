@@ -33,28 +33,28 @@ object ActorService {
     }
 
     suspend fun fetchOrgTypes(): List<OSRFObject> {
-        return Gateway.fetchObjectArray(Api.ACTOR, Api.ORG_TYPES_RETRIEVE, arrayOf())
+        return Gateway.fetchObjectArray(Api.ACTOR, Api.ORG_TYPES_RETRIEVE, arrayOf(), true)
     }
 
     suspend fun fetchOrgTree(): OSRFObject {
-        return Gateway.fetchObject(Api.ACTOR, Api.ORG_TREE_RETRIEVE, arrayOf())
+        return Gateway.fetchObject(Api.ACTOR, Api.ORG_TREE_RETRIEVE, arrayOf(), true)
     }
 
     suspend fun fetchOrgSettings(orgID: Int): Any {
         val settings = arrayListOf(Api.SETTING_ORG_UNIT_NOT_PICKUP_LIB,
                 Api.SETTING_CREDIT_PAYMENTS_ALLOW)
         val args = arrayOf<Any?>(orgID, settings, Api.ANONYMOUS)
-        return Gateway.fetchObject(Api.ACTOR, Api.ORG_UNIT_SETTING_BATCH, args)
+        return Gateway.fetchObject(Api.ACTOR, Api.ORG_UNIT_SETTING_BATCH, args, true)
     }
 
     suspend fun fetchFleshedUser(authToken: String, userID: Int): OSRFObject {
         val settings = listOf("card", "settings")
         val args = arrayOf<Any?>(authToken, userID, settings)
-        return Gateway.fetchObject(Api.ACTOR, Api.USER_FLESHED_RETRIEVE, args)
+        return Gateway.fetchObject(Api.ACTOR, Api.USER_FLESHED_RETRIEVE, args, true)
     }
 
     suspend fun fetchMessages(authToken: String, userID: Int): List<OSRFObject> {
         val args = arrayOf(authToken, userID, null)
-        return Gateway.fetchObjectArray(Api.ACTOR, Api.MESSAGES_RETRIEVE, args)
+        return Gateway.fetchObjectArray(Api.ACTOR, Api.MESSAGES_RETRIEVE, args, false)
     }
 }

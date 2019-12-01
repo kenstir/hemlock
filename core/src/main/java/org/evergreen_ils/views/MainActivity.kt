@@ -28,12 +28,9 @@ import android.widget.ImageButton
 import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.core.view.MenuItemCompat
-import com.android.volley.Request
-import com.android.volley.Response
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import org.evergreen_ils.Api
 import org.evergreen_ils.R
 import org.evergreen_ils.accountAccess.AccountUtils
 import org.evergreen_ils.accountAccess.bookbags.BookBagActivity
@@ -42,17 +39,11 @@ import org.evergreen_ils.accountAccess.fines.FinesActivity
 import org.evergreen_ils.accountAccess.holds.HoldsActivity
 import org.evergreen_ils.android.App
 import org.evergreen_ils.api.ActorService
-import org.evergreen_ils.net.Gateway
-import org.evergreen_ils.net.GatewayJsonObjectRequest
-import org.evergreen_ils.net.VolleyWrangler
 import org.evergreen_ils.searchCatalog.SearchActivity
 import org.evergreen_ils.system.Analytics
-import org.evergreen_ils.system.EvergreenServerLoader
 import org.evergreen_ils.system.Log
 import org.evergreen_ils.utils.ui.BaseActivity
 import org.opensrf.util.OSRFObject
-import kotlin.coroutines.resumeWithException
-import kotlin.coroutines.suspendCoroutine
 
 class MainActivity : BaseActivity() {
 
@@ -82,11 +73,7 @@ class MainActivity : BaseActivity() {
 
         Log.d(TAG, object{}.javaClass.enclosingMethod?.name)
         loadGlobalData()
-        loadData()
-//        launch {
-//            val response = getData()
-//            Log.d(TAG, "coro: main? resp:$response")
-//        }
+        loadUnreadMessageCount()
     }
 
     // Start the async load of data whose lifetime extends past that of MainActivity.
@@ -100,21 +87,18 @@ class MainActivity : BaseActivity() {
     }
 
     // Load data that is local to this Activity.
-    private fun loadData() {
+    private fun loadUnreadMessageCount() {
         launch {
-            Log.d(TAG, "coro: normal scope ...")
-            delay(8_000)
-            Log.d(TAG, "coro: normal scope ... after")
+            val authToken = App.getAccount().authToken
+            val userID = App.getAccount().id
+            if (resources.getBoolean(R.bool.ou_enable_messages) && authToken != null && userID != null) {
+                mUnreadMessageCount = countUnread(ActorService.fetchMessages(authToken, userID))
+                updateUnreadMessageText()
+            }
         }
-//            val authToken = App.getAccount().authToken
-//            val userID = App.getAccount().id
-//            if (authToken != null && userID != null) {
-//                mUnreadMessageCount = unreadMessageCount(ActorService.fetchMessages(authToken, userID))
-//                updateUnreadMessageText()
-//            }
     }
 
-    private fun unreadMessageCount(messages: List<OSRFObject>): Int {
+    private fun countUnread(messages: List<OSRFObject>): Int {
         var count = 0
         messages.forEach {
             val readDate = it.getString("read_date")
@@ -130,7 +114,7 @@ class MainActivity : BaseActivity() {
         super.onActivityResult(requestCode, resultCode, data)
         Log.d(TAG, "onActivityResult req=$requestCode result=$resultCode")
         if (requestCode == App.REQUEST_LAUNCH_OPAC_LOGIN_REDIRECT) {
-            fetchUnreadMessageCount()
+            loadUnreadMessageCount()
         }
     }
 
@@ -176,18 +160,9 @@ class MainActivity : BaseActivity() {
             return
         if (mUnreadMessageCount != null) {
             mUnreadMessageText?.visibility = if (mUnreadMessageCount!! > 0) View.VISIBLE else View.GONE;
-            mUnreadMessageText!!.setText(String.format("%d", mUnreadMessageCount))
+            mUnreadMessageText?.text = String.format("%d", mUnreadMessageCount)
         } else {
             mUnreadMessageText?.visibility = View.GONE
-        }
-    }
-
-    private fun fetchUnreadMessageCount() {
-        if (!resources.getBoolean(R.bool.ou_enable_messages))
-            return
-        EvergreenServerLoader.fetchUnreadMessageCount(this) { count: Int? ->
-            mUnreadMessageCount = count
-            updateUnreadMessageText()
         }
     }
 

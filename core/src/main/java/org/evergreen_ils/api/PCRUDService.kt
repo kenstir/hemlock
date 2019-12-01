@@ -28,6 +28,6 @@ object PCRUDService {
         val args = HashMap<String, Any>()
         val formats = arrayListOf(CodedValueMap.ICON_FORMAT, CodedValueMap.SEARCH_FORMAT)
         args["ctype"] = formats
-        return Gateway.fetchObjectArray(Api.PCRUD, Api.SEARCH_CCVM, arrayOf<Any?>(Api.ANONYMOUS, args))
+        return Gateway.fetchObjectArray(Api.PCRUD, Api.SEARCH_CCVM, arrayOf<Any?>(Api.ANONYMOUS, args), true)
     }
 }
