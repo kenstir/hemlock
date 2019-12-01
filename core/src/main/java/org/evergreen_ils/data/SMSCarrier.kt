@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Kenneth H. Cox
+ * Copyright (c) 2019 Kenneth H. Cox
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -15,16 +15,9 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
-package org.evergreen_ils.system;
+package org.evergreen_ils.data
 
-/**
- * Created by kenstir on 2/22/2017.
- */
+data class SMSCarrier(val id: Int, val name: String): Comparable<SMSCarrier> {
 
-public class SMSCarrier {
-    public String name = null;
-    public Integer id = null;
-
-    public SMSCarrier() {
-    }
+    override fun compareTo(other: SMSCarrier): Int = this.name.compareTo(other.name)
 }

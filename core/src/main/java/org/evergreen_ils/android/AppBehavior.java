@@ -21,7 +21,6 @@ import android.text.TextUtils;
 
 import org.evergreen_ils.api.EvergreenService;
 import org.evergreen_ils.searchCatalog.RecordInfo;
-import org.evergreen_ils.system.EvergreenServer;
 import org.evergreen_ils.utils.Link;
 import org.evergreen_ils.utils.MARCRecord;
 

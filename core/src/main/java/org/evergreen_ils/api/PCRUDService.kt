@@ -21,13 +21,16 @@ import org.evergreen_ils.Api
 import org.evergreen_ils.net.Gateway
 import org.evergreen_ils.searchCatalog.CodedValueMap
 import org.opensrf.util.OSRFObject
-import java.util.*
 
 object PCRUDService {
     suspend fun fetchCodedValueMaps(): List<OSRFObject> {
-        val args = HashMap<String, Any>()
         val formats = arrayListOf(CodedValueMap.ICON_FORMAT, CodedValueMap.SEARCH_FORMAT)
-        args["ctype"] = formats
-        return Gateway.fetchObjectArray(Api.PCRUD, Api.SEARCH_CCVM, arrayOf<Any?>(Api.ANONYMOUS, args), true)
+        val searchParams = mapOf<String, Any?>("ctype" to formats)
+        return Gateway.fetchObjectArray(Api.PCRUD, Api.SEARCH_CCVM, arrayOf<Any?>(Api.ANONYMOUS, searchParams), true)
+    }
+
+    suspend fun fetchSMSCarriers(): List<OSRFObject> {
+        val searchParams = mapOf<String, Any?>("active" to 1)
+        return Gateway.fetchObjectArray(Api.PCRUD, Api.SEARCH_SMS_CARRIERS, arrayOf(Api.ANONYMOUS, searchParams), true)
     }
 }

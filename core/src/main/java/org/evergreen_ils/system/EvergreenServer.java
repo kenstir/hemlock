@@ -18,27 +18,12 @@
 
 package org.evergreen_ils.system;
 
-import android.text.TextUtils;
-
-import org.evergreen_ils.Api;
-import org.evergreen_ils.api.EvergreenService;
+import org.evergreen_ils.data.SMSCarrier;
 import org.evergreen_ils.net.Gateway;
-import org.open_ils.idl.IDLException;
-import org.open_ils.idl.IDLParser;
 import org.opensrf.net.http.HttpConnection;
-import org.opensrf.util.OSRFObject;
 
-import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
-
-import kotlin.NotImplementedError;
 
 public class EvergreenServer {
 
@@ -46,7 +31,7 @@ public class EvergreenServer {
     private static EvergreenServer mInstance = null;
 
     private HttpConnection mConn = null;
-    private ArrayList<SMSCarrier> mSMSCarriers = new ArrayList<>();
+    private ArrayList<SMSCarrier> smsCarriers = new ArrayList<>();
     private Boolean mIsSMSEnabled = null;
 
     private EvergreenServer() {
@@ -68,7 +53,7 @@ public class EvergreenServer {
 
     private void reset() {
         mConn = null;
-        mSMSCarriers = new ArrayList<>();
+        smsCarriers = new ArrayList<>();
         mIsSMSEnabled = null;
     }
 
@@ -78,31 +63,8 @@ public class EvergreenServer {
         }
     }
 
-    private HttpURLConnection getURLConnection(String url) throws IOException {
-        URL url2 = new URL(url);
-        HttpURLConnection conn = (HttpURLConnection) url2.openConnection();
-        conn.setUseCaches(false);
-        return conn;
-    }
-
-    public void loadSMSCarriers(List<OSRFObject> carriers) {
-        mSMSCarriers = new ArrayList<SMSCarrier>(carriers.size());
-        for (OSRFObject obj : carriers) {
-            SMSCarrier carrier = new SMSCarrier();
-            carrier.id = obj.getInt("id");
-            carrier.name = obj.getString("name");
-            mSMSCarriers.add(carrier);
-        }
-        Collections.sort(mSMSCarriers, new Comparator<SMSCarrier>() {
-            @Override
-            public int compare(SMSCarrier a, SMSCarrier b) {
-                return a.name.compareTo(b.name);
-            }
-        });
-    }
-
     public List<SMSCarrier> getSMSCarriers() {
-        return mSMSCarriers;
+        return smsCarriers;
     }
 
     public void setSMSEnabled(Boolean value) {

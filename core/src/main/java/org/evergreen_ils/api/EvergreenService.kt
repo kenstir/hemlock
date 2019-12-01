@@ -19,21 +19,24 @@
 package org.evergreen_ils.api
 
 import org.evergreen_ils.Api
-import org.evergreen_ils.net.Gateway
 import org.evergreen_ils.data.CopyStatus
-import org.evergreen_ils.system.Log
 import org.evergreen_ils.data.OrgType
+import org.evergreen_ils.net.Gateway
+import org.evergreen_ils.system.Log
 import org.evergreen_ils.system.Organization
+import org.evergreen_ils.data.SMSCarrier
 import org.open_ils.idl.IDLParser
 import org.opensrf.util.OSRFObject
 import java.util.*
 
 // `EvergreenService` owns the state about the server: orgs, orgTypes, and IDL.
+// TODO: rename EvergreenServer when that class is obviated
 class EvergreenService {
     companion object {
         var copyStatusList = mutableListOf<CopyStatus>()
         var orgTypes = mutableListOf<OrgType>()
         var orgs = mutableListOf<Organization>()
+        var smsCarriers = mutableListOf<SMSCarrier>()
 
         suspend fun loadIDL() {
             var now = System.currentTimeMillis()
@@ -167,12 +170,31 @@ class EvergreenService {
                         val name = ccs_obj.getString("name")
                         if (id != null && name != null) {
                             copyStatusList.add(CopyStatus(id, name))
-                            Log.d(TAG, "loadCopyStatus id:$id name:$name")
+                            Log.d(TAG, "loadCopyStatuses id:$id name:$name")
                         }
                     }
                 }
                 copyStatusList.sort()
             }
         }
+
+        fun loadSMSCarriers(carriers: List<OSRFObject>) {
+            synchronized(this) {
+                smsCarriers.clear()
+                for (obj in carriers) {
+                    val id = obj.getInt("id")
+                    val name = obj.getString("name")
+                    if (id != null && name != null) {
+                        smsCarriers.add(SMSCarrier(id, name))
+                        Log.d(TAG, "loadSMSCarriers id:$id name:$name")
+                    } else {
+                        throw Error("wtf")
+                    }
+                }
+                smsCarriers.sort()
+            }
+        }
+
+        fun findSMSCarrier(id: Int): SMSCarrier? = smsCarriers.firstOrNull { it.id == id }
     }
 }

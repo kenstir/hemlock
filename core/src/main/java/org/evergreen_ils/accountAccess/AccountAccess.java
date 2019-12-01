@@ -30,22 +30,24 @@ import org.evergreen_ils.accountAccess.checkout.CircRecord;
 import org.evergreen_ils.accountAccess.fines.FinesRecord;
 import org.evergreen_ils.accountAccess.holds.HoldRecord;
 import org.evergreen_ils.android.App;
-import org.evergreen_ils.api.EvergreenService;
 import org.evergreen_ils.auth.Const;
 import org.evergreen_ils.data.Account;
+import org.evergreen_ils.searchCatalog.RecordInfo;
+import org.evergreen_ils.system.Analytics;
 import org.evergreen_ils.system.EvergreenServer;
 import org.evergreen_ils.system.Log;
 import org.evergreen_ils.system.Utils;
-import org.evergreen_ils.searchCatalog.RecordInfo;
-import org.evergreen_ils.system.Analytics;
 import org.opensrf.ShouldNotHappenException;
 import org.opensrf.net.http.HttpConnection;
 import org.opensrf.util.GatewayResult;
 import org.opensrf.util.OSRFObject;
 
-import java.util.*;
-
-import static org.evergreen_ils.system.Utils.safeString;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class AccountAccess {
 

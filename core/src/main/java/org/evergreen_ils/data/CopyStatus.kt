@@ -21,5 +21,4 @@ package org.evergreen_ils.data
 data class CopyStatus (val id: Int, val name: String): Comparable<CopyStatus> {
 
     override fun compareTo(other: CopyStatus): Int = this.id.compareTo(other.id)
-//    override fun toString(): String = name
 }

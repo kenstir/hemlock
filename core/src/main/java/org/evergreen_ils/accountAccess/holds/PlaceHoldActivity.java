@@ -56,7 +56,7 @@ import org.evergreen_ils.data.Account;
 import org.evergreen_ils.searchCatalog.RecordInfo;
 import org.evergreen_ils.system.EvergreenServer;
 import org.evergreen_ils.system.Organization;
-import org.evergreen_ils.system.SMSCarrier;
+import org.evergreen_ils.data.SMSCarrier;
 import org.evergreen_ils.utils.ui.ActionBarUtils;
 import org.evergreen_ils.system.Analytics;
 import org.evergreen_ils.utils.ui.ProgressDialogSupport;
@@ -187,7 +187,7 @@ public class PlaceHoldActivity extends AppCompatActivity {
                     selectedOrgID = EvergreenService.Companion.getOrgs().get(selectedOrgPos).id;
                 int selectedSMSCarrierID = -1;
                 if (eg.getSMSCarriers().size() > selectedSMSPos)
-                    selectedSMSCarrierID = eg.getSMSCarriers().get(selectedSMSPos).id;
+                    selectedSMSCarrierID = eg.getSMSCarriers().get(selectedSMSPos).getId();
 
                 Result temp_result = Result.createUnknownError();
                 try {
@@ -359,8 +359,8 @@ public class PlaceHoldActivity extends AppCompatActivity {
         }
         for (int i = 0; i < carriers.size(); i++) {
             SMSCarrier carrier = carriers.get(i);
-            entries.add(carrier.name);
-            if (carrier.id.equals(defaultCarrierID)) {
+            entries.add(carrier.getName());
+            if (carrier.getId() == defaultCarrierID) {
                 selectedSMSPos = i;
             }
         }

@@ -19,35 +19,13 @@
 package org.evergreen_ils.system;
 
 import android.content.Context;
-import android.text.TextUtils;
-
-import com.android.volley.Request;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
 
 import org.evergreen_ils.Api;
-import org.evergreen_ils.accountAccess.AccountAccess;
-import org.evergreen_ils.android.App;
-import org.evergreen_ils.api.EvergreenService;
-import org.evergreen_ils.data.Account;
-import org.evergreen_ils.net.GatewayJsonObjectRequest;
-import org.evergreen_ils.net.VolleyWrangler;
 import org.opensrf.util.GatewayResult;
-import org.opensrf.util.OSRFObject;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class EvergreenServerLoader {
-
-    public interface OnResponseListener<T> {
-        public void onResponse(T data);
-    }
-    public interface OnErrorListener<T> {
-        public void onError(String errorMessage);
-    }
 
     private static final String TAG = EvergreenServerLoader.class.getSimpleName();
 
@@ -118,90 +96,8 @@ public class EvergreenServerLoader {
             String url = eg.getUrl(Analytics.buildGatewayUrl(
                     Api.ACTOR, method,
                     new Object[]{org.id, settings, ac.getAuthToken()}));
-            GatewayJsonObjectRequest r = new GatewayJsonObjectRequest(
-                    url,
-                    Request.Priority.NORMAL,
-                    new Response.Listener<GatewayResult>() {
-                        @Override
-                        public void onResponse(GatewayResult response) {
-                            Analytics.logVolleyResponse(method);
-                            parseOrgSettingsFromGatewayResponse(response, org);
-                            decrNumOutstanding();
-                        }
-                    },
-                    new Response.ErrorListener() {
-                        @Override
-                        public void onErrorResponse(VolleyError error) {
-                            Analytics.logErrorResponse(error.getMessage());
-                            String msg = error.getMessage();
-                            if (!TextUtils.isEmpty(msg))
-                                Log.d(TAG, "id=" + org.id + " error: " + msg);
-                            decrNumOutstanding();
-                        }
-                    });
-            incrNumOutstanding();
-            VolleyWrangler.getInstance(context).addToRequestQueue(r);
+            ...
         }
         */
-    }
-
-    private static void parseSMSCarriersFromGatewayResponse(GatewayResult response) {
-        try {
-            List<OSRFObject> resp_list = (List<OSRFObject>) response.payload;
-            EvergreenServer.getInstance().loadSMSCarriers(resp_list);
-        } catch (Exception ex) {
-            Log.d(TAG, "caught", ex);
-        }
-    }
-
-    public static void fetchSMSCarriers(Context context) {
-        /*
-        HashMap<String, Object> args = new HashMap<>();
-        args.put("active", 1);
-        final String method = Api.SEARCH_SMS_CARRIERS;
-        String url = eg.getUrl(Analytics.buildGatewayUrl(
-                Api.PCRUD, method,
-                new Object[]{ac.getAuthToken(), args}));
-        GatewayJsonObjectRequest r = new GatewayJsonObjectRequest(
-                url,
-                Request.Priority.NORMAL,
-                new Response.Listener<GatewayResult>() {
-                    @Override
-                    public void onResponse(GatewayResult response) {
-                        Analytics.logVolleyResponse(method);
-                        parseSMSCarriersFromGatewayResponse(response);
-                        decrNumOutstanding();
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Analytics.logErrorResponse(error.getMessage());
-                        String msg = error.getMessage();
-                        if (!TextUtils.isEmpty(msg))
-                            Log.d(TAG, "error: "+msg);
-                        decrNumOutstanding();
-                    }
-                });
-        incrNumOutstanding();
-        VolleyWrangler.getInstance(context).addToRequestQueue(r);
-        */
-    }
-
-    // these don't really need to be synchronized as they happen on the main thread
-    private static synchronized void startVolley() {
-        if (mOutstandingRequests == 0) {
-            start_ms = System.currentTimeMillis();
-        }
-    }
-    private static synchronized void incrNumOutstanding() {
-        ++mOutstandingRequests;
-    }
-    private static synchronized void decrNumOutstanding() {
-        --mOutstandingRequests;
-        if (mOutstandingRequests == 0) {
-            Log.logElapsedTime(TAG, start_ms, "all requests finished");
-            start_ms = 0;
-        }
     }
 }

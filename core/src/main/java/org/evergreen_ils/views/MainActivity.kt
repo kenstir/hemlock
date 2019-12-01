@@ -29,6 +29,7 @@ import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.core.view.MenuItemCompat
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.evergreen_ils.R
@@ -39,6 +40,8 @@ import org.evergreen_ils.accountAccess.fines.FinesActivity
 import org.evergreen_ils.accountAccess.holds.HoldsActivity
 import org.evergreen_ils.android.App
 import org.evergreen_ils.api.ActorService
+import org.evergreen_ils.api.EvergreenService
+import org.evergreen_ils.api.PCRUDService
 import org.evergreen_ils.searchCatalog.SearchActivity
 import org.evergreen_ils.system.Analytics
 import org.evergreen_ils.system.Log
@@ -57,10 +60,6 @@ class MainActivity : BaseActivity() {
         Log.d(TAG, object{}.javaClass.enclosingMethod?.name)
 
         setContentView(R.layout.activity_main)
-
-//        EvergreenServerLoader.fetchOrgSettings(this)
-//        EvergreenServerLoader.fetchSMSCarriers(this)
-//        fetchUnreadMessageCount()
     }
 
     override fun onNewIntent(intent: Intent?) {
@@ -80,9 +79,11 @@ class MainActivity : BaseActivity() {
     // We don't want to cancel this data when starting a new Activity.
     private fun loadGlobalData() {
         GlobalScope.launch {
-            Log.d(TAG, "coro: global scope ...")
-            delay(8_000)
-            Log.d(TAG, "coro: global scope ... after")
+
+            async { EvergreenService.loadSMSCarriers(PCRUDService.fetchSMSCarriers()) }
+            //        EvergreenServerLoader.fetchOrgSettings(this)
+//        EvergreenServerLoader.fetchSMSCarriers(this)
+//        fetchUnreadMessageCount()
         }
     }
 
