@@ -54,7 +54,6 @@ import org.evergreen_ils.android.App;
 import org.evergreen_ils.api.EvergreenService;
 import org.evergreen_ils.data.Account;
 import org.evergreen_ils.searchCatalog.RecordInfo;
-import org.evergreen_ils.system.EvergreenServer;
 import org.evergreen_ils.system.Organization;
 import org.evergreen_ils.data.SMSCarrier;
 import org.evergreen_ils.utils.ui.ActionBarUtils;
@@ -94,7 +93,6 @@ public class PlaceHoldActivity extends AppCompatActivity {
     private Date expire_date = null;
     private Date thaw_date = null;
     private Runnable placeHoldRunnable;
-    private EvergreenServer eg = null;
     private int selectedOrgPos = 0;
     private int selectedSMSPos = 0;
     private ProgressDialogSupport progress;
@@ -111,7 +109,6 @@ public class PlaceHoldActivity extends AppCompatActivity {
         setContentView(R.layout.place_hold);
         ActionBarUtils.initActionBarForActivity(this);
 
-        eg = EvergreenServer.getInstance();
         RecordInfo record = (RecordInfo) getIntent().getSerializableExtra("recordInfo");
 
         account = App.getAccount();
@@ -141,7 +138,7 @@ public class PlaceHoldActivity extends AppCompatActivity {
 
         email_notification.setChecked(account.getNotifyByEmail());
         initPhoneControls(getResources().getBoolean(R.bool.ou_enable_phone_notification));
-        initSMSControls(eg.getSMSEnabled());
+        initSMSControls(EvergreenService.Companion.getSmsEnabled());
         initPlaceHoldRunnable(record);
         initPlaceHoldButton();
         initSuspendHoldButton();
@@ -186,8 +183,8 @@ public class PlaceHoldActivity extends AppCompatActivity {
                 if (EvergreenService.Companion.getOrgs().size() > selectedOrgPos)
                     selectedOrgID = EvergreenService.Companion.getOrgs().get(selectedOrgPos).id;
                 int selectedSMSCarrierID = -1;
-                if (eg.getSMSCarriers().size() > selectedSMSPos)
-                    selectedSMSCarrierID = eg.getSMSCarriers().get(selectedSMSPos).getId();
+                if (EvergreenService.Companion.getSmsCarriers().size() > selectedSMSPos)
+                    selectedSMSCarrierID = EvergreenService.Companion.getSmsCarriers().get(selectedSMSPos).getId();
 
                 Result temp_result = Result.createUnknownError();
                 try {
@@ -352,7 +349,7 @@ public class PlaceHoldActivity extends AppCompatActivity {
 
     private void initSMSSpinner(Integer defaultCarrierID) {
         ArrayList<String> entries = new ArrayList<>();
-        List<SMSCarrier> carriers = eg.getSMSCarriers();
+        List<SMSCarrier> carriers = EvergreenService.Companion.getSmsCarriers();
         if (carriers == null) {
             // todo Crashed here once.  It seems the async loading of SMS carriers was not done.
             return;

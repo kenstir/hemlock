@@ -33,7 +33,6 @@ import org.evergreen_ils.accountAccess.SessionNotFoundException;
 import org.evergreen_ils.android.App;
 import org.evergreen_ils.api.EvergreenService;
 import org.evergreen_ils.system.Analytics;
-import org.evergreen_ils.system.EvergreenServer;
 import org.evergreen_ils.system.Log;
 import org.evergreen_ils.system.Organization;
 import org.evergreen_ils.utils.ui.ActionBarUtils;
@@ -96,8 +95,6 @@ public class HoldDetailsActivity extends BaseActivity {
 
     private ProgressDialogSupport progress;
 
-    private EvergreenServer eg;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -110,7 +107,6 @@ public class HoldDetailsActivity extends BaseActivity {
         ActionBarUtils.initActionBarForActivity(this);
 
         context = this;
-        eg = EvergreenServer.getInstance();
         accountAccess = AccountAccess.getInstance();
         progress = new ProgressDialogSupport();
 

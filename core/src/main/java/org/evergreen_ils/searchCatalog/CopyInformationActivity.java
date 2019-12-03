@@ -45,7 +45,6 @@ import org.evergreen_ils.api.EvergreenService;
 import org.evergreen_ils.net.Gateway;
 import org.evergreen_ils.net.GatewayJsonObjectRequest;
 import org.evergreen_ils.net.VolleyWrangler;
-import org.evergreen_ils.system.EvergreenServer;
 import org.evergreen_ils.system.Log;
 import org.evergreen_ils.system.Organization;
 import org.evergreen_ils.utils.ui.ActionBarUtils;
@@ -141,8 +140,6 @@ public class CopyInformationActivity extends AppCompatActivity {
     public void updateCopyInfo(List<CopyLocationCounts> copyLocationCountsList) {
         if (copyLocationCountsList == null)
             return;
-
-        final EvergreenServer eg = EvergreenServer.getInstance();
 
         copyInfoRecords.clear();
         for (CopyLocationCounts info: copyLocationCountsList) {

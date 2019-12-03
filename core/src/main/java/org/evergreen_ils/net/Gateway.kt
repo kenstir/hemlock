@@ -89,6 +89,10 @@ object Gateway {
         return baseUrl.plus(buildQuery(service, method, args, addCacheArgs))
     }
 
+    fun getUrl(relativeUrl: String): String {
+        return baseUrl.plus(relativeUrl)
+    }
+
     fun getIDLUrl(shouldCache: Boolean = true): String {
         val params = mutableListOf<String>()
         for (className in TextUtils.split(Api.IDL_CLASSES_USED, ",")) {

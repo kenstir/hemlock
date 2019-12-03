@@ -37,6 +37,7 @@ class EvergreenService {
         var orgTypes = mutableListOf<OrgType>()
         var orgs = mutableListOf<Organization>()
         var smsCarriers = mutableListOf<SMSCarrier>()
+        var smsEnabled = false
 
         suspend fun loadIDL() {
             var now = System.currentTimeMillis()

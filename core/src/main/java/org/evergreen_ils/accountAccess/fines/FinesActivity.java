@@ -34,10 +34,10 @@ import org.evergreen_ils.accountAccess.AccountUtils;
 import org.evergreen_ils.accountAccess.SessionNotFoundException;
 import org.evergreen_ils.android.App;
 import org.evergreen_ils.api.EvergreenService;
+import org.evergreen_ils.net.Gateway;
 import org.evergreen_ils.searchCatalog.RecordDetails;
 import org.evergreen_ils.searchCatalog.RecordInfo;
 import org.evergreen_ils.system.Analytics;
-import org.evergreen_ils.system.EvergreenServer;
 import org.evergreen_ils.system.Organization;
 import org.evergreen_ils.system.Utils;
 import org.evergreen_ils.utils.ui.BaseActivity;
@@ -141,13 +141,12 @@ public class FinesActivity extends BaseActivity {
                     Analytics.logEvent("Fines: Pay Fines", "num_fines", finesRecords.size());
                     String username = App.getAccount().getUsername();
                     String password = AccountUtils.getPassword(FinesActivity.this, username);
-                    String path =                            "/eg/opac/login"
+                    String url = Gateway.baseUrl
+                            + "/eg/opac/login"
                             + "?redirect_to=" + URLEncoder.encode("/eg/opac/myopac/main_payment_form#pay_fines_now")
                             + "?username=" + URLEncoder.encode(username);
                     if (!TextUtils.isEmpty(password))
-                        path = path
-                            + "&password=" + URLEncoder.encode(password);
-                    String url = EvergreenServer.getInstance().getUrl(path);
+                        url += "&password=" + URLEncoder.encode(password);
                     startActivityForResult(new Intent(Intent.ACTION_VIEW, Uri.parse(url)), REQUEST_LAUNCH_OPAC_LOGIN_REDIRECT);
                 }
             });

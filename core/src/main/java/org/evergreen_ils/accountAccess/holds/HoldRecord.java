@@ -28,8 +28,6 @@ import org.evergreen_ils.Api;
 import org.evergreen_ils.R;
 import org.evergreen_ils.api.EvergreenService;
 import org.evergreen_ils.system.Analytics;
-import org.evergreen_ils.system.EvergreenServer;
-import org.evergreen_ils.system.Log;
 import org.evergreen_ils.searchCatalog.RecordInfo;
 import org.opensrf.ShouldNotHappenException;
 import org.opensrf.util.OSRFObject;

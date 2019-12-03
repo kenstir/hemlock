@@ -21,7 +21,6 @@ package org.evergreen_ils.searchCatalog;
 
 
 import android.text.TextUtils;
-import org.evergreen_ils.system.EvergreenServer;
 
 import java.io.Serializable;
 import java.util.*;

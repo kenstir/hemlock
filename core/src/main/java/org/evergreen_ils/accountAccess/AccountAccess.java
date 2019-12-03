@@ -34,7 +34,6 @@ import org.evergreen_ils.auth.Const;
 import org.evergreen_ils.data.Account;
 import org.evergreen_ils.searchCatalog.RecordInfo;
 import org.evergreen_ils.system.Analytics;
-import org.evergreen_ils.system.EvergreenServer;
 import org.evergreen_ils.system.Log;
 import org.evergreen_ils.system.Utils;
 import org.opensrf.ShouldNotHappenException;
@@ -75,7 +74,7 @@ public class AccountAccess {
     }
 
     private HttpConnection conn() {
-        return EvergreenServer.getInstance().gatewayConnection();
+        return null;//TODO
     }
 
     /** invalidate current auth token and get a new one

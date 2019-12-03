@@ -27,7 +27,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.evergreen_ils.Api;
-import org.evergreen_ils.system.EvergreenServer;
 import org.evergreen_ils.system.Log;
 import org.evergreen_ils.system.Utils;
 import org.evergreen_ils.system.Organization;
@@ -76,7 +75,7 @@ public class SearchCatalog {
     }
 
     private static HttpConnection conn() {
-        return EvergreenServer.getInstance().gatewayConnection();
+        return null; // TODO
     }
 
     /**

@@ -35,7 +35,6 @@ import org.evergreen_ils.android.App;
 import org.evergreen_ils.api.EvergreenService;
 import org.evergreen_ils.barcodescan.CaptureActivity;
 import org.evergreen_ils.system.Analytics;
-import org.evergreen_ils.system.EvergreenServer;
 import org.evergreen_ils.utils.ui.AppState;
 import org.evergreen_ils.system.Log;
 import org.evergreen_ils.system.Organization;
@@ -71,7 +70,6 @@ public class SearchActivity extends BaseActivity {
     private ArrayList<RecordInfo> recordList;
     private ProgressDialogSupport progress;
     private ArrayList<RecordInfo> searchResults;
-    private EvergreenServer eg;
     private ArrayList<BookBag> bookBags;
     private Runnable searchForResultsRunnable = null;
 
@@ -107,7 +105,6 @@ public class SearchActivity extends BaseActivity {
 
         setContentView(R.layout.activity_search);
 
-        eg = EvergreenServer.getInstance();
         search = SearchCatalog.getInstance(getResources().getInteger(R.integer.ou_search_limit));
         bookBags = AccountAccess.getInstance().getBookbags();
         searchResults = new ArrayList<>();
@@ -414,31 +411,32 @@ public class SearchActivity extends BaseActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
 
         // todo we should not switch on resultCode here, we should switch on requestCode
         switch (resultCode) {
-        case SampleUnderlinesNoFade.RETURN_DATA : {
-            try {
-                ArrayList<RecordInfo> resultRecords = (ArrayList<RecordInfo>) data.getSerializableExtra("recordList");
-                replaceRecordListIfLarger((ArrayList)resultRecords);
-            } catch (Exception e) {
-                Log.d(TAG, "caught", e);
+            case SampleUnderlinesNoFade.RETURN_DATA: {
+                try {
+                    ArrayList<RecordInfo> resultRecords = (ArrayList<RecordInfo>) data.getSerializableExtra("recordList");
+                    replaceRecordListIfLarger((ArrayList) resultRecords);
+                } catch (Exception e) {
+                    Log.d(TAG, "caught", e);
+                }
             }
-        }
-        break;
-        
-        case AdvancedSearchActivity.RESULT_ADVANCED_SEARCH: {
-            Log.d(TAG, "result text:" + data.getStringExtra("advancedSearchText"));
-            searchText.setText(data.getStringExtra("advancedSearchText"));
-            startSearchThread();
-        }
-        break;
+            break;
 
-        case CaptureActivity.BARCODE_SEARCH: {
-            searchText.setText("identifier|isbn: "
-                    + data.getStringExtra("barcodeValue"));
-            startSearchThread();
-        }
+            case AdvancedSearchActivity.RESULT_ADVANCED_SEARCH: {
+                Log.d(TAG, "result text:" + data.getStringExtra("advancedSearchText"));
+                searchText.setText(data.getStringExtra("advancedSearchText"));
+                startSearchThread();
+            }
+            break;
+
+            case CaptureActivity.BARCODE_SEARCH: {
+                searchText.setText("identifier|isbn: "
+                        + data.getStringExtra("barcodeValue"));
+                startSearchThread();
+            }
         }
     }
 }

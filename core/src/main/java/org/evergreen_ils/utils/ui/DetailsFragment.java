@@ -44,12 +44,12 @@ import org.evergreen_ils.accountAccess.bookbags.BookBagUtils;
 import org.evergreen_ils.accountAccess.holds.PlaceHoldActivity;
 import org.evergreen_ils.android.App;
 import org.evergreen_ils.api.EvergreenService;
+import org.evergreen_ils.net.Gateway;
 import org.evergreen_ils.net.VolleyWrangler;
 import org.evergreen_ils.searchCatalog.CopyInformationActivity;
 import org.evergreen_ils.searchCatalog.RecordInfo;
 import org.evergreen_ils.searchCatalog.RecordLoader;
 import org.evergreen_ils.system.Analytics;
-import org.evergreen_ils.system.EvergreenServer;
 import org.evergreen_ils.system.Log;
 import org.evergreen_ils.system.Organization;
 import org.evergreen_ils.utils.Link;
@@ -86,8 +86,6 @@ public class DetailsFragment extends Fragment {
     private Button placeHoldButton;
     private Button showCopiesButton;
     private Button onlineAccessButton;
-
-    private EvergreenServer eg;
 
     private Button addToBookbagButton;
     private ArrayList<BookBag> bookBags;
@@ -130,7 +128,6 @@ public class DetailsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         activity = getActivity();
-        eg = EvergreenServer.getInstance();
 
         LinearLayout layout = (LinearLayout) inflater.inflate(
                 R.layout.record_details_fragment, null);
@@ -161,7 +158,7 @@ public class DetailsFragment extends Fragment {
         initButtons();
 
         // Start async image load
-        final String imageHref = EvergreenServer.getInstance().getUrl("/opac/extras/ac/jacket/medium/r/" + record.doc_id);
+        final String imageHref = Gateway.INSTANCE.getUrl("/opac/extras/ac/jacket/medium/r/" + record.doc_id);
         ImageLoader imageLoader = VolleyWrangler.getInstance(getActivity()).getImageLoader();
         recordImage.setImageUrl(imageHref, imageLoader);
         //recordImage.setDefaultImageResId(R.drawable.missing_art);//for screenshots

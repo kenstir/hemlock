@@ -17,17 +17,11 @@
 
 package net.kenstir.apps.pines;
 
-import android.text.TextUtils;
-
 import org.evergreen_ils.android.AppBehavior;
 import org.evergreen_ils.searchCatalog.RecordInfo;
-import org.evergreen_ils.system.EvergreenServer;
-import org.evergreen_ils.system.Log;
 import org.evergreen_ils.utils.Link;
 import org.evergreen_ils.utils.MARCRecord;
 
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 
 import androidx.annotation.NonNull;

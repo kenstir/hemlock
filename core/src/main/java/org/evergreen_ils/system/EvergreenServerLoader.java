@@ -21,6 +21,7 @@ package org.evergreen_ils.system;
 import android.content.Context;
 
 import org.evergreen_ils.Api;
+import org.evergreen_ils.api.EvergreenService;
 import org.opensrf.util.GatewayResult;
 
 import java.util.Map;
@@ -56,7 +57,7 @@ public class EvergreenServerLoader {
             org.settingAllowCreditPayments = allow_credit_payments;
         Boolean sms_enable = parseBoolSetting(response, Api.SETTING_SMS_ENABLE);
         if (sms_enable != null)
-            EvergreenServer.getInstance().setSMSEnabled(sms_enable);
+            EvergreenService.Companion.setSmsEnabled(sms_enable);
 
         org.settingsLoaded = true;
     }

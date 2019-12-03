@@ -46,9 +46,10 @@ import org.evergreen_ils.accountAccess.fines.FinesActivity
 import org.evergreen_ils.accountAccess.holds.HoldsActivity
 import org.evergreen_ils.android.App
 import org.evergreen_ils.android.App.REQUEST_LAUNCH_OPAC_LOGIN_REDIRECT
+import org.evergreen_ils.api.EvergreenService
+import org.evergreen_ils.net.Gateway
 import org.evergreen_ils.searchCatalog.SearchActivity
 import org.evergreen_ils.system.Analytics
-import org.evergreen_ils.system.EvergreenServer
 import org.evergreen_ils.system.Log
 import org.evergreen_ils.views.BarcodeActivity
 import org.evergreen_ils.views.MainActivity
@@ -228,7 +229,7 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
                 path = path + "&username=" + URLEncoder.encode(username)
             if (!TextUtils.isEmpty(password))
                 path = path + "&password=" + URLEncoder.encode(password)
-            val url = EvergreenServer.getInstance().getUrl(path)
+            val url = Gateway.getUrl(path)
             startActivityForResult(Intent(Intent.ACTION_VIEW, Uri.parse(url)), REQUEST_LAUNCH_OPAC_LOGIN_REDIRECT)
             return true
         } else if (id == R.id.action_dark_mode) {
