@@ -21,7 +21,7 @@ package org.evergreen_ils.system;
 import android.content.Context;
 
 import org.evergreen_ils.Api;
-import org.evergreen_ils.api.EvergreenService;
+import org.evergreen_ils.data.EgOrg;
 import org.opensrf.util.GatewayResult;
 
 import java.util.Map;
@@ -29,9 +29,6 @@ import java.util.Map;
 public class EvergreenServerLoader {
 
     private static final String TAG = EvergreenServerLoader.class.getSimpleName();
-
-    private static int mOutstandingRequests = 0;
-    private static long start_ms = 0;
 
     private static Boolean parseBoolSetting(GatewayResult response, String setting) {
         Boolean value = null;
@@ -57,7 +54,7 @@ public class EvergreenServerLoader {
             org.settingAllowCreditPayments = allow_credit_payments;
         Boolean sms_enable = parseBoolSetting(response, Api.SETTING_SMS_ENABLE);
         if (sms_enable != null)
-            EvergreenService.Companion.setSmsEnabled(sms_enable);
+            EgOrg.setSmsEnabled(sms_enable);
 
         org.settingsLoaded = true;
     }

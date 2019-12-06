@@ -26,12 +26,12 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
 import org.evergreen_ils.R
-import org.evergreen_ils.api.ActorService
-import org.evergreen_ils.api.EvergreenService
-import org.evergreen_ils.api.PCRUDService
-import org.evergreen_ils.api.SearchService
+import org.evergreen_ils.api.*
+import org.evergreen_ils.data.EgCopyStatus
+import org.evergreen_ils.data.EgIDL
+import org.evergreen_ils.data.EgOrg
 import org.evergreen_ils.net.Gateway
-import org.evergreen_ils.searchCatalog.CodedValueMap
+import org.evergreen_ils.data.EgCodedValueMap
 import org.evergreen_ils.system.Log
 
 private const val TAG = "LaunchViewModel"
@@ -73,7 +73,7 @@ class LaunchViewModel : ViewModel() {
                 now_ms = Log.logElapsedTime(TAG, now_ms, "fetchServerVersion")
 
                 // sync: load IDL
-                EvergreenService.loadIDL()
+                EgIDL.loadIDL()
                 now_ms = Log.logElapsedTime(TAG, now_ms, "loadIDL")
 
                 // ---------------------------------------------------------------
@@ -82,10 +82,10 @@ class LaunchViewModel : ViewModel() {
                 // ---------------------------------------------------------------
 
                 var defs = arrayListOf<Deferred<Any>>()
-                defs.add(async { EvergreenService.loadOrgTypes(ActorService.fetchOrgTypes()) })
-                defs.add(async { EvergreenService.loadOrgs(ActorService.fetchOrgTree(), resources.getBoolean(R.bool.ou_hierarchical_org_tree)) })
-                defs.add(async { EvergreenService.loadCopyStatuses(SearchService.fetchCopyStatuses()) })
-                defs.add(async { CodedValueMap.loadCodedValueMaps(PCRUDService.fetchCodedValueMaps()) })
+                defs.add(async { EgOrg.loadOrgTypes(ActorService.fetchOrgTypes()) })
+                defs.add(async { EgOrg.loadOrgs(ActorService.fetchOrgTree(), resources.getBoolean(R.bool.ou_hierarchical_org_tree)) })
+                defs.add(async { EgCopyStatus.loadCopyStatuses(SearchService.fetchCopyStatuses()) })
+                defs.add(async { EgCodedValueMap.loadCodedValueMaps(PCRUDService.fetchCodedValueMaps()) })
 
                 // awaitAll
                 Log.d(TAG, "coro: await ${defs.size} deferreds ...")

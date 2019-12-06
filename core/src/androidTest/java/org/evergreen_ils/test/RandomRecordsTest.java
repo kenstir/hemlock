@@ -4,7 +4,6 @@ import android.os.Bundle;
 
 import org.evergreen_ils.Api;
 import org.evergreen_ils.searchCatalog.RecordInfo;
-import org.evergreen_ils.system.EvergreenServer;
 import org.evergreen_ils.system.Log;
 import org.evergreen_ils.system.StdoutLogProvider;
 import org.evergreen_ils.system.Utils;

@@ -51,8 +51,9 @@ import org.evergreen_ils.Result;
 import org.evergreen_ils.accountAccess.AccountAccess;
 import org.evergreen_ils.accountAccess.SessionNotFoundException;
 import org.evergreen_ils.android.App;
-import org.evergreen_ils.api.EvergreenService;
+import org.evergreen_ils.data.EgSms;
 import org.evergreen_ils.data.Account;
+import org.evergreen_ils.data.EgOrg;
 import org.evergreen_ils.searchCatalog.RecordInfo;
 import org.evergreen_ils.system.Organization;
 import org.evergreen_ils.data.SMSCarrier;
@@ -138,7 +139,7 @@ public class PlaceHoldActivity extends AppCompatActivity {
 
         email_notification.setChecked(account.getNotifyByEmail());
         initPhoneControls(getResources().getBoolean(R.bool.ou_enable_phone_notification));
-        initSMSControls(EvergreenService.Companion.getSmsEnabled());
+        initSMSControls(EgOrg.getSmsEnabled());
         initPlaceHoldRunnable(record);
         initPlaceHoldButton();
         initSuspendHoldButton();
@@ -180,11 +181,11 @@ public class PlaceHoldActivity extends AppCompatActivity {
                     thaw_date_s = Api.formatDate(thaw_date);
 
                 int selectedOrgID = -1;
-                if (EvergreenService.Companion.getOrgs().size() > selectedOrgPos)
-                    selectedOrgID = EvergreenService.Companion.getOrgs().get(selectedOrgPos).id;
+                if (EgOrg.getOrgs().size() > selectedOrgPos)
+                    selectedOrgID = EgOrg.getOrgs().get(selectedOrgPos).id;
                 int selectedSMSCarrierID = -1;
-                if (EvergreenService.Companion.getSmsCarriers().size() > selectedSMSPos)
-                    selectedSMSCarrierID = EvergreenService.Companion.getSmsCarriers().get(selectedSMSPos).getId();
+                if (EgSms.getSmsCarriers().size() > selectedSMSPos)
+                    selectedSMSCarrierID = EgSms.getSmsCarriers().get(selectedSMSPos).getId();
 
                 Result temp_result = Result.createUnknownError();
                 try {
@@ -244,8 +245,8 @@ public class PlaceHoldActivity extends AppCompatActivity {
         if (sms_notification.isChecked()) notify.add("sms");
         String notifyTypes = TextUtils.join("|", notify);
         try {
-            Organization pickup_org = EvergreenService.Companion.getOrgs().get(selectedOrgPos);
-            Organization home_org = EvergreenService.Companion.findOrg(App.getAccount().getHomeOrg());
+            Organization pickup_org = EgOrg.getOrgs().get(selectedOrgPos);
+            Organization home_org = EgOrg.findOrg(App.getAccount().getHomeOrg());
             String pickup_val = pickupEventValue(pickup_org, home_org);
             Analytics.logEvent("Place Hold: Execute",
                     "result", result,
@@ -261,7 +262,7 @@ public class PlaceHoldActivity extends AppCompatActivity {
         placeHold.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                Organization selectedOrg = EvergreenService.Companion.getOrgs().get(selectedOrgPos);
+                Organization selectedOrg = EgOrg.getOrgs().get(selectedOrgPos);
                 if (!selectedOrg.isPickupLocation()) {
                     logPlaceHoldResult("not_pickup_location");
                     AlertDialog.Builder builder = new AlertDialog.Builder(PlaceHoldActivity.this);
@@ -349,11 +350,7 @@ public class PlaceHoldActivity extends AppCompatActivity {
 
     private void initSMSSpinner(Integer defaultCarrierID) {
         ArrayList<String> entries = new ArrayList<>();
-        List<SMSCarrier> carriers = EvergreenService.Companion.getSmsCarriers();
-        if (carriers == null) {
-            // todo Crashed here once.  It seems the async loading of SMS carriers was not done.
-            return;
-        }
+        List<SMSCarrier> carriers = EgSms.getSmsCarriers();
         for (int i = 0; i < carriers.size(); i++) {
             SMSCarrier carrier = carriers.get(i);
             entries.add(carrier.getName());
@@ -432,8 +429,8 @@ public class PlaceHoldActivity extends AppCompatActivity {
     private void initOrgSpinner() {
         Integer defaultLibraryID = account.getPickupOrg();
         ArrayList<String> list = new ArrayList<>();
-        for (int i = 0; i < EvergreenService.Companion.getOrgs().size(); i++) {
-            Organization org = EvergreenService.Companion.getOrgs().get(i);
+        for (int i = 0; i < EgOrg.getOrgs().size(); i++) {
+            Organization org = EgOrg.getOrgs().get(i);
             list.add(org.getTreeDisplayName());
             if (org.id.equals(defaultLibraryID)) {
                 selectedOrgPos = i;
@@ -442,7 +439,7 @@ public class PlaceHoldActivity extends AppCompatActivity {
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, R.layout.org_item_layout, list) {
             @Override
             public boolean isEnabled(int pos) {
-                Organization org = EvergreenService.Companion.getOrgs().get(pos);
+                Organization org = EgOrg.getOrgs().get(pos);
                 return org.isPickupLocation();
             }
 

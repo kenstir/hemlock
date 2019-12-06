@@ -17,15 +17,14 @@
  */
 package net.kenstir.apps.core
 
-import org.evergreen_ils.api.EvergreenService
+import org.evergreen_ils.data.EgOrg
+import org.evergreen_ils.data.EgSms
 import org.evergreen_ils.system.Log
 import org.evergreen_ils.system.StdoutLogProvider
 import org.junit.Assert.*
-import org.junit.Before
 import org.junit.BeforeClass
 import org.junit.Test
 import org.opensrf.util.OSRFObject
-import java.lang.Exception
 
 class OrganizationTest {
 
@@ -45,17 +44,17 @@ class OrganizationTest {
         orgType["can_have_users"] = "f"
         orgType["can_have_vols"] = "f"
         val orgTypes = listOf<OSRFObject>(orgType)
-        EvergreenService.loadOrgTypes(orgTypes)
+        EgOrg.loadOrgTypes(orgTypes)
     }
 
     @Test
     fun test_loadOrgTypes() {
         // no orgs yet
-        assertEquals(0, EvergreenService.orgTypes.size)
-        assertNull(EvergreenService.findOrgType(1))
+        assertEquals(0, EgOrg.orgTypes.size)
+        assertNull(EgOrg.findOrgType(1))
 
         setUpOrgTypes()
-        val topOrgType = EvergreenService.findOrgType(1)
+        val topOrgType = EgOrg.findOrgType(1)
         assertEquals(topOrgType?.name, "Consortium")
 
         /*

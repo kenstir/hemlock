@@ -32,8 +32,9 @@ import org.evergreen_ils.accountAccess.bookbags.BookBag;
 import org.evergreen_ils.accountAccess.bookbags.BookBagUtils;
 import org.evergreen_ils.accountAccess.holds.PlaceHoldActivity;
 import org.evergreen_ils.android.App;
-import org.evergreen_ils.api.EvergreenService;
 import org.evergreen_ils.barcodescan.CaptureActivity;
+import org.evergreen_ils.data.EgCodedValueMap;
+import org.evergreen_ils.data.EgOrg;
 import org.evergreen_ils.system.Analytics;
 import org.evergreen_ils.utils.ui.AppState;
 import org.evergreen_ils.system.Log;
@@ -84,7 +85,7 @@ public class SearchActivity extends BaseActivity {
     }
 
     private String getSearchFormatCode() {
-        return CodedValueMap.searchFormatCode(searchFormatSpinner.getSelectedItem().toString());
+        return EgCodedValueMap.searchFormatCode(searchFormatSpinner.getSelectedItem().toString());
     }
 
     private class ContextMenuRecordInfo implements ContextMenuInfo {
@@ -221,7 +222,7 @@ public class SearchActivity extends BaseActivity {
                 searchResults = search.getSearchResults(text, getSearchClass(), getSearchFormatCode(), getString(R.string.ou_sort_by), 0);
                 try {
                     Organization search_org = search.selectedOrganization;
-                    Organization home_org = EvergreenService.Companion.findOrg(App.getAccount().getHomeOrg());
+                    Organization home_org = EgOrg.INSTANCE.findOrg(App.getAccount().getHomeOrg());
                     String search_org_val = TextUtils.equals(search_org.name, home_org.name) ? "home" :
                             ((search_org.isConsortium()) ? search_org.shortname : "other");
                     Analytics.logEvent("Search: Execute",
@@ -264,8 +265,8 @@ public class SearchActivity extends BaseActivity {
         int selectedOrgPos = 0;
         Integer defaultLibraryID = App.getAccount().getSearchOrg();
         ArrayList<String> list = new ArrayList<>();
-        for (int i = 0; i < EvergreenService.Companion.getOrgs().size(); i++) {
-            Organization org = EvergreenService.Companion.getOrgs().get(i);
+        for (int i = 0; i < EgOrg.INSTANCE.getOrgs().size(); i++) {
+            Organization org = EgOrg.INSTANCE.getOrgs().get(i);
             list.add(org.getTreeDisplayName());
             if (org.id.equals(defaultLibraryID)) {
                 selectedOrgPos = i;
@@ -274,11 +275,11 @@ public class SearchActivity extends BaseActivity {
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, R.layout.org_item_layout, list);
         orgSpinner.setAdapter(adapter);
         orgSpinner.setSelection(selectedOrgPos);
-        search.selectOrganisation(EvergreenService.Companion.getOrgs().get(selectedOrgPos));
+        search.selectOrganisation(EgOrg.INSTANCE.getOrgs().get(selectedOrgPos));
         orgSpinner.setOnItemSelectedListener(new OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> arg0, View arg1, int ID, long arg3) {
-                search.selectOrganisation(EvergreenService.Companion.getOrgs().get(ID));
+                search.selectOrganisation(EgOrg.INSTANCE.getOrgs().get(ID));
             }
 
             @Override
@@ -288,7 +289,7 @@ public class SearchActivity extends BaseActivity {
     }
 
     private void initSearchFormatSpinner() {
-        List<String> labels = CodedValueMap.getSearchFormatSpinnerLabels();
+        List<String> labels = EgCodedValueMap.getSearchFormatSpinnerLabels();
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, labels);
         searchFormatSpinner.setAdapter(adapter);
     }

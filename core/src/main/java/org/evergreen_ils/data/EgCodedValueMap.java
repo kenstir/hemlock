@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Kenneth H. Cox
+ * Copyright (c) 2019 Kenneth H. Cox
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -16,7 +16,7 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
-package org.evergreen_ils.searchCatalog;
+package org.evergreen_ils.data;
 
 import org.evergreen_ils.Api;
 import org.evergreen_ils.system.Analytics;
@@ -29,8 +29,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class CodedValueMap {
-    private static final String TAG = CodedValueMap.class.getSimpleName();
+public class EgCodedValueMap {
+    private static final String TAG = EgCodedValueMap.class.getSimpleName();
 
     public static final String SEARCH_FORMAT = "search_format";
     public static final String ICON_FORMAT = "icon_format";

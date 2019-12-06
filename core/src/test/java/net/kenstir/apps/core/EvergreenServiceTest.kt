@@ -18,7 +18,7 @@
 
 package net.kenstir.apps.core
 
-import org.evergreen_ils.api.EvergreenService
+import org.evergreen_ils.data.EgSms
 import org.evergreen_ils.system.Log
 import org.evergreen_ils.system.StdoutLogProvider
 import org.junit.Assert.assertEquals
@@ -44,10 +44,10 @@ class EvergreenServiceTest {
                 make_csc_obj(52, "Sprint (PCS)")
         )
 
-        EvergreenService.loadSMSCarriers(carriers)
+        EgSms.loadSMSCarriers(carriers)
 
-        assertNull(EvergreenService.findSMSCarrier(1))
-        assertEquals("T-Mobile", EvergreenService.findSMSCarrier(48)?.name)
+        assertNull(EgSms.findSMSCarrier(1))
+        assertEquals("T-Mobile", EgSms.findSMSCarrier(48)?.name)
     }
 
     companion object {

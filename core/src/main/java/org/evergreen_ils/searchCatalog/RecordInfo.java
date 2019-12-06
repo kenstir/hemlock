@@ -21,6 +21,7 @@ package org.evergreen_ils.searchCatalog;
 
 import android.text.TextUtils;
 
+import org.evergreen_ils.data.EgCodedValueMap;
 import org.evergreen_ils.system.Log;
 import org.evergreen_ils.utils.MARCRecord;
 import org.evergreen_ils.utils.MARCXMLParser;
@@ -209,7 +210,7 @@ public class RecordInfo implements Serializable {
     }
 
     public String getIconFormatLabel() {
-        return safeString(CodedValueMap.iconFormatLabel(getIconFormat()));
+        return safeString(EgCodedValueMap.iconFormatLabel(getIconFormat()));
     }
 
     public static String getIconFormatLabel(RecordInfo record) {

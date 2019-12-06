@@ -26,7 +26,7 @@ import java.util.Map;
 
 import org.evergreen_ils.Api;
 import org.evergreen_ils.R;
-import org.evergreen_ils.api.EvergreenService;
+import org.evergreen_ils.data.EgOrg;
 import org.evergreen_ils.system.Analytics;
 import org.evergreen_ils.searchCatalog.RecordInfo;
 import org.opensrf.ShouldNotHappenException;
@@ -105,7 +105,7 @@ public class HoldRecord implements Serializable {
         if (transit == null) return null;
         Integer source = transit.getInt("source");
         if (source == null) return null;
-        return EvergreenService.Companion.getOrgNameSafe(source);
+        return EgOrg.getOrgNameSafe(source);
     }
 
     private String getTransitSince() {

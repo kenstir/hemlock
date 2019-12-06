@@ -17,7 +17,7 @@
  */
 package org.evergreen_ils.system;
 
-import org.evergreen_ils.api.EvergreenService;
+import org.evergreen_ils.data.EgOrg;
 import org.evergreen_ils.data.OrgType;
 
 public class Organization {
@@ -55,7 +55,7 @@ public class Organization {
     }
 
     private boolean defaultIsPickupLocation() {
-        OrgType type = EvergreenService.Companion.findOrgType(orgType);
+        OrgType type = EgOrg.findOrgType(orgType);
         if (type == null)
             return true;//should not happen
         return type.getCanHaveVols();

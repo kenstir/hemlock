@@ -30,7 +30,6 @@ import android.widget.TextView
 import androidx.core.view.MenuItemCompat
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.evergreen_ils.R
 import org.evergreen_ils.accountAccess.AccountUtils
@@ -40,7 +39,7 @@ import org.evergreen_ils.accountAccess.fines.FinesActivity
 import org.evergreen_ils.accountAccess.holds.HoldsActivity
 import org.evergreen_ils.android.App
 import org.evergreen_ils.api.ActorService
-import org.evergreen_ils.api.EvergreenService
+import org.evergreen_ils.data.EgSms
 import org.evergreen_ils.api.PCRUDService
 import org.evergreen_ils.searchCatalog.SearchActivity
 import org.evergreen_ils.system.Analytics
@@ -80,7 +79,7 @@ class MainActivity : BaseActivity() {
     private fun loadGlobalData() {
         GlobalScope.launch {
 
-            async { EvergreenService.loadSMSCarriers(PCRUDService.fetchSMSCarriers()) }
+            async { EgSms.loadSMSCarriers(PCRUDService.fetchSMSCarriers()) }
             //        EvergreenServerLoader.fetchOrgSettings(this)
 //        EvergreenServerLoader.fetchSMSCarriers(this)
 //        fetchUnreadMessageCount()

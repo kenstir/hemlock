@@ -18,10 +18,8 @@
 
 package net.kenstir.apps.core;
 
-import org.evergreen_ils.searchCatalog.CodedValueMap;
-import org.evergreen_ils.system.EvergreenServer;
+import org.evergreen_ils.data.EgCodedValueMap;
 import org.evergreen_ils.system.Log;
-import org.evergreen_ils.system.Organization;
 import org.evergreen_ils.system.StdoutLogProvider;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -35,7 +33,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
 public class CodedValueMapUnitTest {
-    EvergreenServer eg;
 
     @BeforeClass
     public static void setUpClass() throws Exception {
@@ -47,7 +44,7 @@ public class CodedValueMapUnitTest {
         ArrayList<OSRFObject> objects = new ArrayList<>();
         {
             OSRFObject obj = new OSRFObject();
-            obj.put("ctype", CodedValueMap.SEARCH_FORMAT);
+            obj.put("ctype", EgCodedValueMap.SEARCH_FORMAT);
             obj.put("opac_visible", true);
             obj.put("code", "book");
             obj.put("value", "Book (All)");
@@ -55,24 +52,24 @@ public class CodedValueMapUnitTest {
         }
         {
             OSRFObject obj = new OSRFObject();
-            obj.put("ctype", CodedValueMap.ICON_FORMAT);
+            obj.put("ctype", EgCodedValueMap.ICON_FORMAT);
             obj.put("opac_visible", true);
             obj.put("code", "book");
             obj.put("value", "Book");
             objects.add(obj);
         }
-        CodedValueMap.loadCodedValueMaps(objects);
+        EgCodedValueMap.loadCodedValueMaps(objects);
     }
 
     @Test
     public void test_basic() throws Exception {
-        assertNull(CodedValueMap.searchFormatLabel("missing"));
-        assertNull(CodedValueMap.searchFormatCode("Missing"));
+        assertNull(EgCodedValueMap.searchFormatLabel("missing"));
+        assertNull(EgCodedValueMap.searchFormatCode("Missing"));
 
-        assertEquals("Book (All)", CodedValueMap.searchFormatLabel("book"));
-        assertEquals("Book", CodedValueMap.iconFormatLabel("book"));
+        assertEquals("Book (All)", EgCodedValueMap.searchFormatLabel("book"));
+        assertEquals("Book", EgCodedValueMap.iconFormatLabel("book"));
 
-        List<String> labels = CodedValueMap.getSearchFormatSpinnerLabels();
-        assertEquals(CodedValueMap.ALL_SEARCH_FORMATS, labels.get(0));
+        List<String> labels = EgCodedValueMap.getSearchFormatSpinnerLabels();
+        assertEquals(EgCodedValueMap.ALL_SEARCH_FORMATS, labels.get(0));
     }
 }

@@ -72,7 +72,7 @@ class LiveGatewayTest {
     fun test_directSuspendFun() {
         runBlocking {
             launch(Dispatchers.IO) {
-                val version = Gateway.fetch(Api.ACTOR, Api.ILS_VERSION, arrayOf()) { response ->
+                val version = Gateway.fetch(Api.ACTOR, Api.ILS_VERSION, arrayOf(), false) { response ->
                     response.asString()
                 }
                 Log.d(TAG, "version:$version")

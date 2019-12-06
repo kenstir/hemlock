@@ -27,7 +27,7 @@ import com.android.volley.VolleyError;
 
 import org.evergreen_ils.Api;
 import org.evergreen_ils.R;
-import org.evergreen_ils.api.EvergreenService;
+import org.evergreen_ils.data.EgOrg;
 import org.evergreen_ils.net.Gateway;
 import org.evergreen_ils.net.GatewayJsonObjectRequest;
 import org.evergreen_ils.net.VolleyWrangler;
@@ -189,7 +189,7 @@ public class RecordLoader {
             }
             String totalCopies = context.getResources().getQuantityString(R.plurals.number_of_copies, total, total);
             copySummaryText = String.format(context.getString(R.string.n_of_m_available),
-                    available, totalCopies, EvergreenService.Companion.getOrgNameSafe(orgID));
+                    available, totalCopies, EgOrg.getOrgNameSafe(orgID));
         }
         return copySummaryText;
     }

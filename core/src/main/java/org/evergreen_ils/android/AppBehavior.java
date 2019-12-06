@@ -19,7 +19,7 @@ package org.evergreen_ils.android;
 
 import android.text.TextUtils;
 
-import org.evergreen_ils.api.EvergreenService;
+import org.evergreen_ils.data.EgOrg;
 import org.evergreen_ils.searchCatalog.RecordInfo;
 import org.evergreen_ils.utils.Link;
 import org.evergreen_ils.utils.MARCRecord;
@@ -80,7 +80,7 @@ public class AppBehavior {
 
     // Implements the above interface for catalogs that use Located URIs
     protected boolean isVisibleViaLocatedURI(MARCRecord.MARCDatafield df, String orgShortName) {
-        List<String> ancestors = EvergreenService.Companion.getOrgAncestry(orgShortName);
+        List<String> ancestors = EgOrg.getOrgAncestry(orgShortName);
         for (MARCRecord.MARCSubfield sf : df.subfields) {
             if (TextUtils.equals(sf.code, "9") && ancestors.contains(sf.text)) {
                 return true;

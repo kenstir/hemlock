@@ -46,7 +46,6 @@ import org.evergreen_ils.accountAccess.fines.FinesActivity
 import org.evergreen_ils.accountAccess.holds.HoldsActivity
 import org.evergreen_ils.android.App
 import org.evergreen_ils.android.App.REQUEST_LAUNCH_OPAC_LOGIN_REDIRECT
-import org.evergreen_ils.api.EvergreenService
 import org.evergreen_ils.net.Gateway
 import org.evergreen_ils.searchCatalog.SearchActivity
 import org.evergreen_ils.system.Analytics
