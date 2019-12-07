@@ -85,6 +85,9 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        Log.d(TAG, "coro: create job")
+        job = Job()
+
         if (!App.isStarted()) {
             App.restartApp(this)
             isRestarting = true
@@ -95,9 +98,6 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         Analytics.initialize(this)
         App.init(this)
         ThemeManager.applyNightMode()
-
-        Log.d(TAG, "coro: create job")
-        job = Job()
 
         initMenuProvider()
         menuItemHandler?.onCreate(this)
