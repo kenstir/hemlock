@@ -17,20 +17,17 @@
  */
 package org.evergreen_ils.system;
 
-import java.io.*;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.util.Map;
-
 import android.text.TextUtils;
 
 import org.evergreen_ils.accountAccess.SessionNotFoundException;
 import org.evergreen_ils.auth.Const;
-import org.evergreen_ils.net.Gateway;
 import org.opensrf.Method;
 import org.opensrf.net.http.GatewayRequest;
 import org.opensrf.net.http.HttpConnection;
 import org.opensrf.net.http.HttpRequest;
+
+import java.net.HttpURLConnection;
+import java.util.Map;
 
 public class Utils {
     private static final String TAG = Utils.class.getSimpleName();

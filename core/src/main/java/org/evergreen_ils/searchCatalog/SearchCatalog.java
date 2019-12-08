@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.evergreen_ils.Api;
+import org.evergreen_ils.net.Gateway;
 import org.evergreen_ils.system.Log;
 import org.evergreen_ils.system.Utils;
 import org.evergreen_ils.system.Organization;
@@ -75,7 +76,7 @@ public class SearchCatalog {
     }
 
     private static HttpConnection conn() {
-        return null; // TODO
+        return Gateway.INSTANCE.getConn();
     }
 
     /**
@@ -175,7 +176,7 @@ public class SearchCatalog {
                 Api.COPY_LOCATION_COUNTS, new Object[] {
                         recordID, orgID, orgDepth });
 
-        ArrayList<CopyLocationCounts> ret = new ArrayList<CopyLocationCounts>();
+        ArrayList<CopyLocationCounts> ret = new ArrayList<>();
         try {
             List<List<Object>> list = (List<List<Object>>) response;
             for (List<Object> elem : list) {

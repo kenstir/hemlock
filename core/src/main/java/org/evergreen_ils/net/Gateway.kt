@@ -25,6 +25,7 @@ import com.android.volley.toolbox.StringRequest
 import org.evergreen_ils.Api
 import org.evergreen_ils.system.Analytics
 import org.opensrf.ShouldNotHappenException
+import org.opensrf.net.http.HttpConnection
 import org.opensrf.util.GatewayResult
 import org.opensrf.util.JSONWriter
 import java.net.URI
@@ -48,6 +49,7 @@ private const val INITIAL_URL_SIZE = 128
 object Gateway {
     lateinit var baseUrl: String
     lateinit var clientCacheKey: String
+    val conn: HttpConnection by lazy { HttpConnection(baseUrl.plus("/osrf-gateway-v1")) }
     var _serverCacheKey: String? = null
     val startTime = System.currentTimeMillis()
     var serverCacheKey: String
@@ -55,11 +57,6 @@ object Gateway {
         set(value) { _serverCacheKey = value }
 
     var state: GatewayState = GatewayState.UNINITIALIZED
-
-    fun init(baseUrl: String, clientCacheKey: String) {
-        Gateway.baseUrl = baseUrl
-        Gateway.clientCacheKey = clientCacheKey
-    }
 
     fun buildQuery(service: String?, method: String?, objects: Array<Any?>, addCacheArgs: Boolean = true): String {
         val sb = StringBuilder(INITIAL_URL_SIZE)

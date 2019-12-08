@@ -32,6 +32,7 @@ import org.evergreen_ils.accountAccess.holds.HoldRecord;
 import org.evergreen_ils.android.App;
 import org.evergreen_ils.auth.Const;
 import org.evergreen_ils.data.Account;
+import org.evergreen_ils.net.Gateway;
 import org.evergreen_ils.searchCatalog.RecordInfo;
 import org.evergreen_ils.system.Analytics;
 import org.evergreen_ils.system.Log;
@@ -74,7 +75,7 @@ public class AccountAccess {
     }
 
     private HttpConnection conn() {
-        return null;//TODO
+        return Gateway.INSTANCE.getConn();
     }
 
     /** invalidate current auth token and get a new one

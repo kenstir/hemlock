@@ -28,6 +28,7 @@ import org.evergreen_ils.Api;
 import org.evergreen_ils.Result;
 import org.evergreen_ils.accountAccess.AccountAccess;
 import org.evergreen_ils.auth.EvergreenAuthenticator;
+import org.evergreen_ils.net.Gateway;
 import org.evergreen_ils.system.Analytics;
 import org.evergreen_ils.system.Log;
 import org.evergreen_ils.system.Utils;
@@ -58,7 +59,7 @@ public class LiveServiceTest {
     private static String mAuthToken;
 
     private static HttpConnection conn() {
-        return mConn;
+        return Gateway.conn;
     }
 
     @BeforeClass

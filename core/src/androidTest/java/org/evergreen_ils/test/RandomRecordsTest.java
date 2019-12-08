@@ -3,6 +3,7 @@ package org.evergreen_ils.test;
 import android.os.Bundle;
 
 import org.evergreen_ils.Api;
+import org.evergreen_ils.net.Gateway;
 import org.evergreen_ils.searchCatalog.RecordInfo;
 import org.evergreen_ils.system.Log;
 import org.evergreen_ils.system.StdoutLogProvider;
@@ -26,13 +27,12 @@ import androidx.test.platform.app.InstrumentationRegistry;
 public class RandomRecordsTest {
     private static final String TAG = RandomRecordsTest.class.getSimpleName();
 
-    private static HttpConnection mConn;
     private static String mServer;
     private static String mAuthToken;
     private static Random mRandom = new Random();
 
     private static HttpConnection conn() {
-        return mConn;
+        return Gateway.conn;
     }
 
     @BeforeClass
