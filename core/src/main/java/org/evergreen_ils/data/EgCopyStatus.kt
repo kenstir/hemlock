@@ -43,4 +43,7 @@ object EgCopyStatus {
             copyStatusList.sort()
         }
     }
+
+    @JvmStatic
+    fun find(id: Int): CopyStatus? = copyStatusList.firstOrNull { it.id == id }
 }
