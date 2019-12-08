@@ -49,6 +49,12 @@ private const val INITIAL_URL_SIZE = 128
 object Gateway {
     lateinit var baseUrl: String
     lateinit var clientCacheKey: String
+
+    var actor: ActorService = GatewayActor
+    var auth: AuthService = GatewayAuth
+    var pcrud: PCRUDService = GatewayPCRUD
+    var search: SearchService = GatewaySearch
+
     val conn: HttpConnection by lazy { HttpConnection(baseUrl.plus("/osrf-gateway-v1")) }
     var _serverCacheKey: String? = null
     val startTime = System.currentTimeMillis()

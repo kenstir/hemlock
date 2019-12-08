@@ -39,8 +39,7 @@ import org.evergreen_ils.accountAccess.fines.FinesActivity
 import org.evergreen_ils.accountAccess.holds.HoldsActivity
 import org.evergreen_ils.android.App
 import org.evergreen_ils.data.EgSms
-import org.evergreen_ils.net.GatewayActor
-import org.evergreen_ils.net.GatewayPCRUD
+import org.evergreen_ils.net.Gateway
 import org.evergreen_ils.searchCatalog.SearchActivity
 import org.evergreen_ils.system.Analytics
 import org.evergreen_ils.system.Log
@@ -79,7 +78,7 @@ class MainActivity : BaseActivity() {
     private fun loadGlobalData() {
         GlobalScope.launch {
 
-            async { EgSms.loadCarriers(GatewayPCRUD.fetchSMSCarriers()) }
+            async { EgSms.loadCarriers(Gateway.pcrud.fetchSMSCarriers()) }
             //        EvergreenServerLoader.fetchOrgSettings(this)
 //        EvergreenServerLoader.fetchSMSCarriers(this)
 //        fetchUnreadMessageCount()
@@ -92,7 +91,7 @@ class MainActivity : BaseActivity() {
             val authToken = App.getAccount().authToken
             val userID = App.getAccount().id
             if (resources.getBoolean(R.bool.ou_enable_messages) && authToken != null && userID != null) {
-                mUnreadMessageCount = countUnread(GatewayActor.fetchMessages(authToken, userID))
+                mUnreadMessageCount = countUnread(Gateway.actor.fetchMessages(authToken, userID))
                 updateUnreadMessageText()
             }
         }

@@ -24,7 +24,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import org.evergreen_ils.Api
 import org.evergreen_ils.net.Gateway
-import org.evergreen_ils.net.GatewayActor
 import org.evergreen_ils.net.VolleyWrangler
 import org.evergreen_ils.system.Log
 import org.evergreen_ils.system.StdoutLogProvider
@@ -85,7 +84,7 @@ class LiveGatewayTest {
     fun test_fetchServerVersion() {
         runBlocking {
             launch(Dispatchers.Main) {
-                val version: String = GatewayActor.fetchServerVersion()
+                val version: String = Gateway.actor.fetchServerVersion()
                 Log.d(TAG, "version:$version")
                 assertTrue(version.isNotEmpty())
             }

@@ -68,7 +68,7 @@ class LaunchViewModel : ViewModel() {
                 var now_ms = start_ms
 
                 // sync: serverVersion is a key for caching all other requests
-                Gateway.serverCacheKey = GatewayActor.fetchServerVersion()
+                Gateway.serverCacheKey = Gateway.actor.fetchServerVersion()
                 now_ms = Log.logElapsedTime(TAG, now_ms, "fetchServerVersion")
 
                 // sync: load IDL
@@ -81,10 +81,10 @@ class LaunchViewModel : ViewModel() {
                 // ---------------------------------------------------------------
 
                 var defs = arrayListOf<Deferred<Any>>()
-                defs.add(async { EgOrg.loadOrgTypes(GatewayActor.fetchOrgTypes()) })
-                defs.add(async { EgOrg.loadOrgs(GatewayActor.fetchOrgTree(), resources.getBoolean(R.bool.ou_hierarchical_org_tree)) })
-                defs.add(async { EgCopyStatus.loadCopyStatuses(GatewaySearch.fetchCopyStatuses()) })
-                defs.add(async { EgCodedValueMap.loadCodedValueMaps(GatewayPCRUD.fetchCodedValueMaps()) })
+                defs.add(async { EgOrg.loadOrgTypes(Gateway.actor.fetchOrgTypes()) })
+                defs.add(async { EgOrg.loadOrgs(Gateway.actor.fetchOrgTree(), resources.getBoolean(R.bool.ou_hierarchical_org_tree)) })
+                defs.add(async { EgCopyStatus.loadCopyStatuses(Gateway.search.fetchCopyStatuses()) })
+                defs.add(async { EgCodedValueMap.loadCodedValueMaps(Gateway.pcrud.fetchCodedValueMaps()) })
 
                 // awaitAll
                 Log.d(TAG, "coro: await ${defs.size} deferreds ...")
