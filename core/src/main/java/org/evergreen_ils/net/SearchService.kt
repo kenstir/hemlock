@@ -16,21 +16,12 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
-package org.evergreen_ils.api
+package org.evergreen_ils.net
 
 import org.evergreen_ils.Api
 import org.evergreen_ils.net.Gateway
 import org.opensrf.util.OSRFObject
 
-object AuthService {
-    suspend fun fetchSession(authToken: String): OSRFObject {
-        return Gateway.fetchNoCache<OSRFObject>(Api.AUTH, Api.AUTH_SESSION_RETRIEVE, arrayOf(authToken)) { response ->
-            response.asObject()
-        }
-    }
-
-    suspend fun fetchSessionUnparsed(authToken: String): String {
-        val url = Gateway.buildUrl(Api.AUTH, Api.AUTH_SESSION_RETRIEVE, arrayOf(authToken), addCacheArgs = false)
-        return Gateway.fetchString(url, shouldCache = false)
-    }
+interface SearchService {
+    suspend fun fetchCopyStatuses(): List<OSRFObject>
 }

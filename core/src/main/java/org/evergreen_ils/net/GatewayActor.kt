@@ -16,44 +16,40 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
-package org.evergreen_ils.api
+package org.evergreen_ils.net
 
 import org.evergreen_ils.Api
-import org.evergreen_ils.net.Gateway
-import org.evergreen_ils.system.Utils
 import org.opensrf.util.OSRFObject
 
-internal const val TAG = "api"
-
-object ActorService {
-    suspend fun fetchServerVersion(): String {
+object GatewayActor: ActorService {
+    override suspend fun fetchServerVersion(): String {
         return Gateway.fetchNoCache(Api.ACTOR, Api.ILS_VERSION, arrayOf()) { response ->
             response.asString()
         }
     }
 
-    suspend fun fetchOrgTypes(): List<OSRFObject> {
+    override suspend fun fetchOrgTypes(): List<OSRFObject> {
         return Gateway.fetchObjectArray(Api.ACTOR, Api.ORG_TYPES_RETRIEVE, arrayOf(), true)
     }
 
-    suspend fun fetchOrgTree(): OSRFObject {
+    override suspend fun fetchOrgTree(): OSRFObject {
         return Gateway.fetchObject(Api.ACTOR, Api.ORG_TREE_RETRIEVE, arrayOf(), true)
     }
 
-    suspend fun fetchOrgSettings(orgID: Int): Any {
+    override suspend fun fetchOrgSettings(orgID: Int): Any {
         val settings = arrayListOf(Api.SETTING_ORG_UNIT_NOT_PICKUP_LIB,
                 Api.SETTING_CREDIT_PAYMENTS_ALLOW)
         val args = arrayOf<Any?>(orgID, settings, Api.ANONYMOUS)
         return Gateway.fetchObject(Api.ACTOR, Api.ORG_UNIT_SETTING_BATCH, args, true)
     }
 
-    suspend fun fetchFleshedUser(authToken: String, userID: Int): OSRFObject {
+    override suspend fun fetchFleshedUser(authToken: String, userID: Int): OSRFObject {
         val settings = listOf("card", "settings")
         val args = arrayOf<Any?>(authToken, userID, settings)
         return Gateway.fetchObject(Api.ACTOR, Api.USER_FLESHED_RETRIEVE, args, true)
     }
 
-    suspend fun fetchMessages(authToken: String, userID: Int): List<OSRFObject> {
+    override suspend fun fetchMessages(authToken: String, userID: Int): List<OSRFObject> {
         val args = arrayOf(authToken, userID, null)
         return Gateway.fetchObjectArray(Api.ACTOR, Api.MESSAGES_RETRIEVE, args, false)
     }

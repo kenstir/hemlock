@@ -184,8 +184,8 @@ public class PlaceHoldActivity extends AppCompatActivity {
                 if (EgOrg.getOrgs().size() > selectedOrgPos)
                     selectedOrgID = EgOrg.getOrgs().get(selectedOrgPos).id;
                 int selectedSMSCarrierID = -1;
-                if (EgSms.getSmsCarriers().size() > selectedSMSPos)
-                    selectedSMSCarrierID = EgSms.getSmsCarriers().get(selectedSMSPos).getId();
+                if (EgSms.getCarriers().size() > selectedSMSPos)
+                    selectedSMSCarrierID = EgSms.getCarriers().get(selectedSMSPos).getId();
 
                 Result temp_result = Result.createUnknownError();
                 try {
@@ -350,7 +350,7 @@ public class PlaceHoldActivity extends AppCompatActivity {
 
     private void initSMSSpinner(Integer defaultCarrierID) {
         ArrayList<String> entries = new ArrayList<>();
-        List<SMSCarrier> carriers = EgSms.getSmsCarriers();
+        List<SMSCarrier> carriers = EgSms.getCarriers();
         for (int i = 0; i < carriers.size(); i++) {
             SMSCarrier carrier = carriers.get(i);
             entries.add(carrier.getName());

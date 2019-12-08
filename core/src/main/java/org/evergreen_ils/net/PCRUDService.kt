@@ -16,31 +16,15 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
-package org.evergreen_ils.data
+package org.evergreen_ils.net
 
 import org.evergreen_ils.Api
-import org.evergreen_ils.system.Log
+import org.evergreen_ils.net.Gateway
+import org.evergreen_ils.data.EgCodedValueMap
 import org.opensrf.util.OSRFObject
 
-private const val TAG = "EgCopyStatus"
+interface PCRUDService {
+    suspend fun fetchCodedValueMaps(): List<OSRFObject>
 
-object EgCopyStatus {
-    var copyStatusList = mutableListOf<CopyStatus>()
-
-    fun loadCopyStatuses(ccs_list: List<OSRFObject>) {
-        synchronized(this) {
-            copyStatusList.clear()
-            for (ccs_obj in ccs_list) {
-                if (Api.parseBoolean(ccs_obj.getString("opac_visible"))) {
-                    val id = ccs_obj.getInt("id")
-                    val name = ccs_obj.getString("name")
-                    if (id != null && name != null) {
-                        copyStatusList.add(CopyStatus(id, name))
-                        Log.d(TAG, "loadCopyStatuses id:$id name:$name")
-                    }
-                }
-            }
-            copyStatusList.sort()
-        }
-    }
+    suspend fun fetchSMSCarriers(): List<OSRFObject>
 }

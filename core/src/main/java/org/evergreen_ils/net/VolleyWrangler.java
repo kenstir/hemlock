@@ -10,10 +10,7 @@ import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.Volley;
 import org.evergreen_ils.system.Log;
 
-/**
- * Created by kenstir on 12/2/2015.
- */
-// code from http://developer.android.com/training/volley/
+// code originally from http://developer.android.com/training/volley/
 // or SallyPort or VolleyPort or VolleyWrapper
 public class VolleyWrangler {
     private static VolleyWrangler mInstance;

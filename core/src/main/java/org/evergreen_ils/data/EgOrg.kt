@@ -26,6 +26,8 @@ import org.opensrf.util.OSRFObject
 import java.util.*
 import kotlin.Comparator
 
+private const val TAG = "EgOrg"
+
 object EgOrg {
     @JvmStatic
     var orgTypes = mutableListOf<OrgType>()
@@ -51,7 +53,7 @@ object EgOrg {
                 }
             }
         }
-        Log.d(org.evergreen_ils.api.TAG, "loadOrgTypes: ${objArray.size} org types")
+        Log.d(TAG, "loadOrgTypes: ${objArray.size} org types")
     }
 
     @JvmStatic
@@ -100,7 +102,7 @@ object EgOrg {
                 }
             }
         }
-        Log.d(org.evergreen_ils.api.TAG, "loadOrgs: ${orgs.size} orgs")
+        Log.d(TAG, "loadOrgs: ${orgs.size} orgs")
     }
 
     @JvmStatic

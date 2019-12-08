@@ -34,8 +34,8 @@ import org.evergreen_ils.R
 import org.evergreen_ils.accountAccess.AccountUtils
 import org.evergreen_ils.accountAccess.AccountUtils.getAuthTokenFuture
 import org.evergreen_ils.android.App
-import org.evergreen_ils.api.ActorService
-import org.evergreen_ils.api.AuthService
+import org.evergreen_ils.net.GatewayActor
+import org.evergreen_ils.net.GatewayAuth
 import org.evergreen_ils.data.Account
 import org.evergreen_ils.system.Analytics
 import org.evergreen_ils.system.Log
@@ -200,7 +200,7 @@ class LaunchActivity : AppCompatActivity(), CoroutineScope by MainScope() {
         account.loadSession(obj)
 
         // get user settings
-        obj = ActorService.fetchFleshedUser(account.authTokenOrThrow(), account.idOrThrow())
+        obj = GatewayActor.fetchFleshedUser(account.authTokenOrThrow(), account.idOrThrow())
         account.loadFleshedUserSettings(obj)
 
 //        Analytics.logEvent("Account: Retrieve Session",
@@ -214,7 +214,7 @@ class LaunchActivity : AppCompatActivity(), CoroutineScope by MainScope() {
 
     private suspend fun fetchSession(authToken: String): OSRFObject {
         Log.d(TAG, "[auth] fetchSession ...")
-        val obj = AuthService.fetchSession(authToken)
+        val obj = GatewayAuth.fetchSession(authToken)
         Log.d(TAG, "[auth] fetchSession ... $obj")
         return obj
     }

@@ -16,14 +16,13 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
-package org.evergreen_ils.api
+package org.evergreen_ils.net
 
 import org.evergreen_ils.Api
-import org.evergreen_ils.net.Gateway
 import org.opensrf.util.OSRFObject
 
-object SearchService {
-    suspend fun fetchCopyStatuses(): List<OSRFObject> {
+object GatewaySearch: SearchService {
+    override suspend fun fetchCopyStatuses(): List<OSRFObject> {
         return Gateway.fetchObjectArray(Api.SEARCH, Api.COPY_STATUS_ALL, arrayOf(), false)
     }
 }

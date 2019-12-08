@@ -22,9 +22,11 @@ import org.evergreen_ils.Api
 import org.evergreen_ils.system.Log
 import org.opensrf.util.OSRFObject
 
+private const val TAG = "EgSms"
+
 object EgSms {
     @JvmStatic
-    var smsCarriers = mutableListOf<SMSCarrier>()
+    var carriers = mutableListOf<SMSCarrier>()
 
     // map returned from `fetchOrgSettings` looks like:
     // {credit.payments.allow={org=49, value=true}, opac.holds.org_unit_not_pickup_lib=null}
@@ -40,23 +42,23 @@ object EgSms {
         return value
     }
 
-    fun loadSMSCarriers(carriers: List<OSRFObject>) {
+    fun loadCarriers(carriers: List<OSRFObject>) {
         synchronized(this) {
-            smsCarriers.clear()
+            this.carriers.clear()
             for (obj in carriers) {
                 val id = obj.getInt("id")
                 val name = obj.getString("name")
                 if (id != null && name != null) {
-                    smsCarriers.add(SMSCarrier(id, name))
-                    Log.d(org.evergreen_ils.api.TAG, "loadSMSCarriers id:$id name:$name")
+                    this.carriers.add(SMSCarrier(id, name))
+                    Log.d(TAG, "loadSMSCarriers id:$id name:$name")
                 } else {
                     throw Error("wtf")
                 }
             }
-            smsCarriers.sort()
+            this.carriers.sort()
         }
     }
 
     @JvmStatic
-    fun findSMSCarrier(id: Int): SMSCarrier? = smsCarriers.firstOrNull { it.id == id }
+    fun findCarrier(id: Int): SMSCarrier? = carriers.firstOrNull { it.id == id }
 }

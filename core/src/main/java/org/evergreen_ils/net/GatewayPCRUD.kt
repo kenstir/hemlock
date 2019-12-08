@@ -16,21 +16,20 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
-package org.evergreen_ils.api
+package org.evergreen_ils.net
 
 import org.evergreen_ils.Api
-import org.evergreen_ils.net.Gateway
 import org.evergreen_ils.data.EgCodedValueMap
 import org.opensrf.util.OSRFObject
 
-object PCRUDService {
-    suspend fun fetchCodedValueMaps(): List<OSRFObject> {
+object GatewayPCRUD: PCRUDService {
+    override suspend fun fetchCodedValueMaps(): List<OSRFObject> {
         val formats = arrayListOf(EgCodedValueMap.ICON_FORMAT, EgCodedValueMap.SEARCH_FORMAT)
         val searchParams = mapOf<String, Any?>("ctype" to formats)
         return Gateway.fetchObjectArray(Api.PCRUD, Api.SEARCH_CCVM, arrayOf<Any?>(Api.ANONYMOUS, searchParams), true)
     }
 
-    suspend fun fetchSMSCarriers(): List<OSRFObject> {
+    override suspend fun fetchSMSCarriers(): List<OSRFObject> {
         val searchParams = mapOf<String, Any?>("active" to 1)
         return Gateway.fetchObjectArray(Api.PCRUD, Api.SEARCH_SMS_CARRIERS, arrayOf(Api.ANONYMOUS, searchParams), true)
     }

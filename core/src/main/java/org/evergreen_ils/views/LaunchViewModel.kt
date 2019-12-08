@@ -26,12 +26,11 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
 import org.evergreen_ils.R
-import org.evergreen_ils.api.*
 import org.evergreen_ils.data.EgCopyStatus
 import org.evergreen_ils.data.EgIDL
 import org.evergreen_ils.data.EgOrg
-import org.evergreen_ils.net.Gateway
 import org.evergreen_ils.data.EgCodedValueMap
+import org.evergreen_ils.net.*
 import org.evergreen_ils.system.Log
 
 private const val TAG = "LaunchViewModel"
@@ -69,7 +68,7 @@ class LaunchViewModel : ViewModel() {
                 var now_ms = start_ms
 
                 // sync: serverVersion is a key for caching all other requests
-                Gateway.serverCacheKey = ActorService.fetchServerVersion()
+                Gateway.serverCacheKey = GatewayActor.fetchServerVersion()
                 now_ms = Log.logElapsedTime(TAG, now_ms, "fetchServerVersion")
 
                 // sync: load IDL
@@ -82,10 +81,10 @@ class LaunchViewModel : ViewModel() {
                 // ---------------------------------------------------------------
 
                 var defs = arrayListOf<Deferred<Any>>()
-                defs.add(async { EgOrg.loadOrgTypes(ActorService.fetchOrgTypes()) })
-                defs.add(async { EgOrg.loadOrgs(ActorService.fetchOrgTree(), resources.getBoolean(R.bool.ou_hierarchical_org_tree)) })
-                defs.add(async { EgCopyStatus.loadCopyStatuses(SearchService.fetchCopyStatuses()) })
-                defs.add(async { EgCodedValueMap.loadCodedValueMaps(PCRUDService.fetchCodedValueMaps()) })
+                defs.add(async { EgOrg.loadOrgTypes(GatewayActor.fetchOrgTypes()) })
+                defs.add(async { EgOrg.loadOrgs(GatewayActor.fetchOrgTree(), resources.getBoolean(R.bool.ou_hierarchical_org_tree)) })
+                defs.add(async { EgCopyStatus.loadCopyStatuses(GatewaySearch.fetchCopyStatuses()) })
+                defs.add(async { EgCodedValueMap.loadCodedValueMaps(GatewayPCRUD.fetchCodedValueMaps()) })
 
                 // awaitAll
                 Log.d(TAG, "coro: await ${defs.size} deferreds ...")

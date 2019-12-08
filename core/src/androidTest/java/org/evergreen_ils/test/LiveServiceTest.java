@@ -59,7 +59,7 @@ public class LiveServiceTest {
     private static String mAuthToken;
 
     private static HttpConnection conn() {
-        return Gateway.conn;
+        return Gateway.INSTANCE.getConn();
     }
 
     @BeforeClass

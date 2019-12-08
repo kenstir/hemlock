@@ -44,10 +44,10 @@ class EvergreenServiceTest {
                 make_csc_obj(52, "Sprint (PCS)")
         )
 
-        EgSms.loadSMSCarriers(carriers)
+        EgSms.loadCarriers(carriers)
 
-        assertNull(EgSms.findSMSCarrier(1))
-        assertEquals("T-Mobile", EgSms.findSMSCarrier(48)?.name)
+        assertNull(EgSms.findCarrier(1))
+        assertEquals("T-Mobile", EgSms.findCarrier(48)?.name)
     }
 
     companion object {

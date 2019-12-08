@@ -32,7 +32,7 @@ public class RandomRecordsTest {
     private static Random mRandom = new Random();
 
     private static HttpConnection conn() {
-        return Gateway.conn;
+        return Gateway.INSTANCE.getConn();
     }
 
     @BeforeClass
@@ -42,12 +42,6 @@ public class RandomRecordsTest {
         Bundle b = InstrumentationRegistry.getArguments();
         mServer = b.getString("server", "https://gapines.org");
         mAuthToken = Api.ANONYMOUS;
-
-        // init like the app does in LoadingTask
-//        EvergreenServer eg = EvergreenServer.getInstance();
-//        eg.connect(mServer);
-//        Log.d(TAG, "connected to " + mServer);
-//        mConn = EvergreenServer.getInstance().gatewayConnection();
     }
 
     @Before
