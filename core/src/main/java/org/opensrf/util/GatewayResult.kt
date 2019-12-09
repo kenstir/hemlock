@@ -73,6 +73,15 @@ class GatewayResult {
     }
 
     @Throws(GatewayError::class)
+    fun asArray(): List<Any> {
+        return try {
+            payload as List<Any>
+        } catch (ex: Exception) {
+            throw GatewayError("Unexpected network response: expected array, got $type")
+        }
+    }
+
+    @Throws(GatewayError::class)
     fun asString(): String {
         return try {
             payload as String

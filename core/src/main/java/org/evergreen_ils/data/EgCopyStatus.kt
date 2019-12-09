@@ -31,7 +31,7 @@ object EgCopyStatus {
         synchronized(this) {
             copyStatusList.clear()
             for (ccs_obj in ccs_list) {
-                if (Api.parseBoolean(ccs_obj.getString("opac_visible"))) {
+                if (ccs_obj.getBoolean("opac_visible")) {
                     val id = ccs_obj.getInt("id")
                     val name = ccs_obj.getString("name")
                     if (id != null && name != null) {
@@ -46,4 +46,10 @@ object EgCopyStatus {
 
     @JvmStatic
     fun find(id: Int): CopyStatus? = copyStatusList.firstOrNull { it.id == id }
+
+    @JvmStatic
+    fun label(id: Int): String {
+        val cs = find(id)
+        return cs?.name ?: ""
+    }
 }
