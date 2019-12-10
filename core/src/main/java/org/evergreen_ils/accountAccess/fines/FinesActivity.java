@@ -19,19 +19,25 @@
  */
 package org.evergreen_ils.accountAccess.fines;
 
-import java.net.URLEncoder;
-import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.List;
-
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Bundle;
 import android.text.TextUtils;
-import android.widget.*;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.Toast;
+
 import org.evergreen_ils.R;
 import org.evergreen_ils.accountAccess.AccountAccess;
-import org.evergreen_ils.android.AccountUtils;
 import org.evergreen_ils.accountAccess.SessionNotFoundException;
+import org.evergreen_ils.android.AccountUtils;
 import org.evergreen_ils.android.App;
 import org.evergreen_ils.data.EgOrg;
 import org.evergreen_ils.net.Gateway;
@@ -44,11 +50,10 @@ import org.evergreen_ils.utils.ui.BaseActivity;
 import org.evergreen_ils.utils.ui.ProgressDialogSupport;
 import org.opensrf.util.OSRFObject;
 
-import android.content.Context;
-import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
+import java.net.URLEncoder;
+import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.evergreen_ils.android.App.REQUEST_LAUNCH_OPAC_LOGIN_REDIRECT;
 
@@ -59,7 +64,7 @@ public class FinesActivity extends BaseActivity {
     private TextView balance_owed;
     private Button pay_fines_button;
     private ListView lv;
-    private OverdueMaterialsArrayAdapter listAdapter;
+    private FinesArrayAdapter listAdapter;
     private ArrayList<FinesRecord> finesRecords;
     private boolean haveAnyGroceryBills = false;
     private boolean haveAnyFines = false;
@@ -89,7 +94,7 @@ public class FinesActivity extends BaseActivity {
         progress = new ProgressDialogSupport();
 
         finesRecords = new ArrayList<>();
-        listAdapter = new OverdueMaterialsArrayAdapter(context,
+        listAdapter = new FinesArrayAdapter(context,
                 R.layout.fines_list_item, finesRecords);
         lv.setAdapter(listAdapter);
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -128,11 +133,11 @@ public class FinesActivity extends BaseActivity {
     }
 
     private void initPayFinesButton() {
-        Integer home_lib = App.getAccount().getHomeOrg();
-        Organization home_org = EgOrg.findOrg(home_lib);
+        Integer homeOrgId = App.getAccount().getHomeOrg();
+        Organization homeOrg = EgOrg.findOrg(homeOrgId); //TODO: handle null
         if (getResources().getBoolean(R.bool.ou_enable_pay_fines)
-                && home_org != null
-                && Utils.safeBool(home_org.settingAllowCreditPayments))
+                && homeOrg != null
+                && Utils.safeBool(homeOrg.settingAllowCreditPayments))
         {
             pay_fines_button.setEnabled(false);
             pay_fines_button.setOnClickListener(new View.OnClickListener() {
@@ -224,7 +229,7 @@ public class FinesActivity extends BaseActivity {
         };
     }
 
-    class OverdueMaterialsArrayAdapter extends ArrayAdapter<FinesRecord> {
+    class FinesArrayAdapter extends ArrayAdapter<FinesRecord> {
         private static final String tag = "CheckoutArrayAdapter";
 
         private TextView fineTitle;
@@ -234,8 +239,8 @@ public class FinesActivity extends BaseActivity {
 
         private List<FinesRecord> records = new ArrayList<>();
 
-        OverdueMaterialsArrayAdapter(Context context,
-                                     int textViewResourceId, List<FinesRecord> objects) {
+        FinesArrayAdapter(Context context,
+                          int textViewResourceId, List<FinesRecord> objects) {
             super(context, textViewResourceId, objects);
             this.records = objects;
         }
@@ -260,10 +265,10 @@ public class FinesActivity extends BaseActivity {
                 row = inflater.inflate(R.layout.fines_list_item, parent, false);
             }
 
-            fineTitle = (TextView) row.findViewById(R.id.fines_title);
-            fineAuthor = (TextView) row.findViewById(R.id.fines_author);
-            fineBalanceOwed = (TextView) row.findViewById(R.id.fines_balance_owed);
-            fineStatus = (TextView) row.findViewById(R.id.fines_status);
+            fineTitle = row.findViewById(R.id.fines_title);
+            fineAuthor = row.findViewById(R.id.fines_author);
+            fineBalanceOwed = row.findViewById(R.id.fines_balance_owed);
+            fineStatus = row.findViewById(R.id.fines_status);
 
             fineTitle.setText(record.title);
             fineAuthor.setText(record.author);
