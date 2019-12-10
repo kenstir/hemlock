@@ -181,22 +181,4 @@ public class SearchCatalog {
         Log.d(TAG, "selectOrganisation id=" + org.id);
         this.selectedOrganization = org;
     }
-
-    public static ArrayList<CopySummary> getCopyCount(Integer recordID, Integer orgID) {
-
-        List<?> list = (List<?>) Utils.doRequest(conn(), Api.SEARCH,
-                Api.COPY_COUNT, new Object[] { orgID, recordID });
-
-        ArrayList<CopySummary> copyInfoList = new ArrayList<CopySummary>();
-
-        if (list == null)
-            return copyInfoList;
-
-        for (int i = 0; i < list.size(); i++) {
-            CopySummary copyInfo = new CopySummary(list.get(i));
-            copyInfoList.add(copyInfo);
-        }
-
-        return copyInfoList;
-    }
 }

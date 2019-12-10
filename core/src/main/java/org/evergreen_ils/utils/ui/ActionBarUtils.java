@@ -18,14 +18,14 @@
 
 package org.evergreen_ils.utils.ui;
 
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 import android.text.TextUtils;
 
 import org.evergreen_ils.R;
-import org.evergreen_ils.accountAccess.AccountAccess;
 import org.evergreen_ils.android.App;
+
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
 public class ActionBarUtils {
 

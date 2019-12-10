@@ -29,6 +29,7 @@ import org.evergreen_ils.accountAccess.bookbags.BookBagItem;
 import org.evergreen_ils.accountAccess.checkout.CircRecord;
 import org.evergreen_ils.accountAccess.fines.FinesRecord;
 import org.evergreen_ils.accountAccess.holds.HoldRecord;
+import org.evergreen_ils.android.AccountUtils;
 import org.evergreen_ils.android.App;
 import org.evergreen_ils.auth.Const;
 import org.evergreen_ils.data.Account;
@@ -99,14 +100,6 @@ public class AccountAccess {
             Log.d(Const.AUTH_TAG, "[auth] reauthenticate exception", e);
             return false;
         }
-    }
-
-    public void logout(Activity activity) {
-        Log.d(Const.AUTH_TAG, "logout");
-        Account account = App.getAccount();
-        AccountUtils.invalidateAuthToken(activity, account.getAuthToken());
-        AccountUtils.clearPassword(activity, account.getUsername());
-        account.clearAuthToken();
     }
 
     // ------------------------Checked Out Items Section

@@ -30,7 +30,7 @@ import android.text.TextUtils;
 import android.widget.*;
 import org.evergreen_ils.R;
 import org.evergreen_ils.accountAccess.AccountAccess;
-import org.evergreen_ils.accountAccess.AccountUtils;
+import org.evergreen_ils.android.AccountUtils;
 import org.evergreen_ils.accountAccess.SessionNotFoundException;
 import org.evergreen_ils.android.App;
 import org.evergreen_ils.data.EgOrg;

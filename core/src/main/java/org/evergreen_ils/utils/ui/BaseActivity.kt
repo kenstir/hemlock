@@ -38,8 +38,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import org.evergreen_ils.R
-import org.evergreen_ils.accountAccess.AccountAccess
-import org.evergreen_ils.accountAccess.AccountUtils
+import org.evergreen_ils.android.AccountUtils
 import org.evergreen_ils.accountAccess.bookbags.BookBagActivity
 import org.evergreen_ils.accountAccess.checkout.CheckoutsActivity
 import org.evergreen_ils.accountAccess.fines.FinesActivity
@@ -212,7 +211,7 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
             return true
         } else if (id == R.id.action_logout) {
             Analytics.logEvent("Account: Logout", "via", "options_menu")
-            AccountAccess.getInstance().logout(this)
+            logout()
             App.restartApp(this)
             return true
             //        } else if (id == R.id.action_feedback) {
@@ -241,6 +240,14 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
             return false
         }
         return false
+    }
+
+    fun logout() {
+        Log.d(TAG, "[auth] logout")
+        val account = App.getAccount()
+        AccountUtils.invalidateAuthToken(this, account.authToken)
+        AccountUtils.clearPassword(this, account.username)
+        account.clearAuthToken()
     }
 
     companion object {

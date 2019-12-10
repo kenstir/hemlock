@@ -18,7 +18,11 @@
 
 package org.evergreen_ils.net
 
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
 import org.evergreen_ils.Api
+import org.evergreen_ils.data.EgOrg
 import org.opensrf.util.OSRFObject
 
 object GatewayActor: ActorService {
@@ -41,6 +45,12 @@ object GatewayActor: ActorService {
                 Api.SETTING_CREDIT_PAYMENTS_ALLOW)
         val args = arrayOf<Any?>(orgID, settings, Api.ANONYMOUS)
         return Gateway.fetchObject(Api.ACTOR, Api.ORG_UNIT_SETTING_BATCH, args, true)
+    }
+
+    suspend fun fetchAllOrgSettings() = GlobalScope.launch {
+        for (org in EgOrg.orgs) {
+            async { fetchOrgSettings(org.id) }
+        }
     }
 
     override suspend fun fetchFleshedUser(authToken: String, userID: Int): OSRFObject {

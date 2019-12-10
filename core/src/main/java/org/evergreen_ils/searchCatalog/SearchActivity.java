@@ -387,7 +387,7 @@ public class SearchActivity extends BaseActivity {
         } else if (id == R.id.action_logout) {
             //// TODO: 4/30/2017 pull up logout action
             Analytics.logEvent("Account: Logout", "via", "options_menu");
-            AccountAccess.getInstance().logout(this);
+            logout();
             App.restartApp(this);
             return true;
         }

@@ -31,8 +31,7 @@ import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import org.evergreen_ils.R
-import org.evergreen_ils.accountAccess.AccountUtils
-import org.evergreen_ils.accountAccess.AccountUtils.getAuthTokenFuture
+import org.evergreen_ils.android.AccountUtils
 import org.evergreen_ils.android.App
 import org.evergreen_ils.data.Account
 import org.evergreen_ils.net.Gateway
@@ -157,7 +156,7 @@ class LaunchActivity : AppCompatActivity(), CoroutineScope by MainScope() {
     private suspend fun getAccount(): Account {
         // get auth token
         Log.d(TAG, "[auth] getAuthTokenFuture")
-        val future = getAuthTokenFuture(this)
+        val future = AccountUtils.getAuthTokenFuture(this)
         Log.d(TAG, "[auth] getAuthTokenFuture ...")
         val bnd: Bundle? = future.await()
         Log.d(TAG, "[auth] getAuthTokenFuture ... $bnd")

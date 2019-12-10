@@ -15,10 +15,6 @@
 -->
 
 <resources>
-    <style name="Theme.PageIndicatorDefaults" parent="android:Theme">
-        <item name="vpiTabPageIndicatorStyle">@style/Widget.TabPageIndicator</item>
-    </style>
-
     <style name="Widget">
     </style>
 

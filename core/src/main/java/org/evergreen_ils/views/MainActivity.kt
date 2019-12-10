@@ -32,7 +32,7 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import org.evergreen_ils.R
-import org.evergreen_ils.accountAccess.AccountUtils
+import org.evergreen_ils.android.AccountUtils
 import org.evergreen_ils.accountAccess.bookbags.BookBagActivity
 import org.evergreen_ils.accountAccess.checkout.CheckoutsActivity
 import org.evergreen_ils.accountAccess.fines.FinesActivity

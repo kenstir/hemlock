@@ -17,12 +17,13 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
  * 
  */
+
 package org.evergreen_ils.accountAccess.bookbags;
+
+import org.opensrf.util.OSRFObject;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-
-import org.opensrf.util.OSRFObject;
 
 public class BookBag implements Serializable {
 
@@ -37,18 +38,11 @@ public class BookBag implements Serializable {
     public ArrayList<BookBagItem> items = null;
 
     public BookBag(OSRFObject object) {
-
         this.id = object.getInt("id");
         this.name = object.getString("name");
         this.description = object.getString("description");
-        this.items = new ArrayList<BookBagItem>();
-
-        String pub_visible = object.getString("pub");
-
-        if (pub_visible.equals("f"))
-            this.shared = false;
-        else
-            this.shared = true;
+        this.items = new ArrayList<>();
+        this.shared = object.getBoolean("pub");
     }
 
 }
