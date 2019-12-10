@@ -26,6 +26,7 @@ import com.crashlytics.android.Crashlytics;
 import com.crashlytics.android.answers.Answers;
 import com.crashlytics.android.answers.CustomEvent;
 
+import org.evergreen_ils.android.App;
 import org.evergreen_ils.net.Gateway;
 import org.opensrf.Method;
 import org.opensrf.util.GatewayResult;
@@ -49,7 +50,8 @@ public class Analytics {
     private static boolean analytics = false;
 
     public static void initialize(Context context) {
-        if (!BuildConfig.DEBUG) { // only enable bug tracking in release version
+        if (!App.getIsDebuggable(context)) {
+            // only enable bug tracking in release version
             Fabric.with(context, new Crashlytics());
             analytics = true;
         }
