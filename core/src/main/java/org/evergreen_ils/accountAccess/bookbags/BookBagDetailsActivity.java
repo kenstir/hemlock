@@ -63,8 +63,6 @@ public class BookBagDetailsActivity extends BaseActivity {
 
     private ArrayList<BookBagItem> bookBagItems = null;
 
-    private Context context;
-
     private ProgressDialogSupport progress;
 
     private BookBag bookBag;
@@ -85,7 +83,6 @@ public class BookBagDetailsActivity extends BaseActivity {
         ActionBarUtils.initActionBarForActivity(this);
 
         accountAccess = AccountAccess.getInstance();
-        context = this;
         progress = new ProgressDialogSupport();
 
         bookBag = (BookBag) getIntent().getSerializableExtra("bookBag");
@@ -99,7 +96,7 @@ public class BookBagDetailsActivity extends BaseActivity {
             @Override
             public void onClick(View v) {
                 Analytics.logEvent("Lists: Delete List");
-                AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                AlertDialog.Builder builder = new AlertDialog.Builder(BookBagDetailsActivity.this);
                 builder.setMessage(R.string.delete_list_confirm_msg);
                 builder.setNegativeButton(R.string.delete_list_negative_button, null);
                 builder.setPositiveButton(R.string.delete_list_positive_button,
@@ -115,7 +112,7 @@ public class BookBagDetailsActivity extends BaseActivity {
 
         lv = (ListView) findViewById(R.id.bookbagitem_list);
         bookBagItems = new ArrayList<BookBagItem>();
-        listAdapter = new BookBagItemsArrayAdapter(context, R.layout.bookbagitem_list_item, bookBagItems);
+        listAdapter = new BookBagItemsArrayAdapter(this, R.layout.bookbagitem_list_item, bookBagItems);
         lv.setAdapter(listAdapter);
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -148,7 +145,7 @@ public class BookBagDetailsActivity extends BaseActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        progress.show(context, getString(R.string.msg_retrieving_list_contents));
+                        progress.show(BookBagDetailsActivity.this, getString(R.string.msg_retrieving_list_contents));
                     }
                 });
 
@@ -173,7 +170,7 @@ public class BookBagDetailsActivity extends BaseActivity {
                         progress.dismiss();
 
                         if (bookBagItems.size() == 0)
-                            Toast.makeText(context, R.string.msg_list_empty, Toast.LENGTH_LONG).show();
+                            Toast.makeText(BookBagDetailsActivity.this, R.string.msg_list_empty, Toast.LENGTH_LONG).show();
 
                         listAdapter.notifyDataSetChanged();
                     }
@@ -183,7 +180,7 @@ public class BookBagDetailsActivity extends BaseActivity {
     }
 
     private void deleteList() {
-        progress.show(context, getString(R.string.msg_deleting_list));
+        progress.show(this, getString(R.string.msg_deleting_list));
         final Thread thread = new Thread(new Runnable() {
 
             @Override
@@ -259,7 +256,7 @@ public class BookBagDetailsActivity extends BaseActivity {
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    progress.show(context, getString(R.string.msg_removing_list_item));
+                                    progress.show(BookBagDetailsActivity.this, getString(R.string.msg_removing_list_item));
                                 }
                             });
 
