@@ -37,13 +37,14 @@ class CopyLocationCountsTest {
     fun setUp() {
         val ccsList = listOf<OSRFObject>(
                 make_ccs(1, "Checked out", "t"),
-                make_ccs(0, "Available", "t")
+                make_ccs(0, "Available", "t"),
+                make_ccs(7, "Reshelving", "t")
         )
         EgCopyStatus.loadCopyStatuses(ccsList)
     }
 
     @Test
-    fun test_basic() {
+    fun test_oneCheckedOut() {
         val cscJson = """
             {"payload":[[["7","","DVD HARRY","","AV",{"1":1}]]],"status":200}
             """
@@ -61,5 +62,19 @@ class CopyLocationCountsTest {
         assertEquals(1, clc.countsByStatus.size)
         assertEquals("1 Checked out", clc.countsByStatusLabel)
         assertEquals("DVD HARRY", clc.callNumber)
+    }
+
+    @Test
+    fun test_someAvailable() {
+        val cscJson = """
+            {"payload":[[["7","","J ROWLING","","JUV",{"1":2,"7":1}],["7","","YA ROWLING","","YA",{"1":1,"0":3}]]],"status":200}
+            """
+        val payloadList = GatewayResult.create(cscJson).asArray()
+        assertEquals(2, payloadList.size)
+        val clcList = CopyLocationCounts.makeArray(payloadList)
+        val (clc1, clc2) = clcList
+        assertEquals(listOf(Pair(1, 2), Pair(7,1)), clc1.countsByStatus)
+        assertEquals("2 Checked out\n1 Reshelving", clc1.countsByStatusLabel)
+        assertEquals("3 Available\n1 Checked out", clc2.countsByStatusLabel)
     }
 }

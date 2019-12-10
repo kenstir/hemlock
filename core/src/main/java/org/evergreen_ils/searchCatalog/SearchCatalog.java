@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.evergreen_ils.Api;
+import org.evergreen_ils.data.CopyLocationCounts;
 import org.evergreen_ils.net.Gateway;
 import org.evergreen_ils.system.Log;
 import org.evergreen_ils.system.Utils;
@@ -168,26 +169,6 @@ public class SearchCatalog {
         } catch (ClassCastException ex) {
             Log.d(TAG, "caught", ex);
         }
-    }
-
-    public ArrayList<CopyLocationCounts> getCopyLocationCounts(Integer recordID, Integer orgID, Integer orgDepth) {
-
-        Object response = Utils.doRequest(conn(), Api.SEARCH,
-                Api.COPY_LOCATION_COUNTS, new Object[] {
-                        recordID, orgID, orgDepth });
-
-        ArrayList<CopyLocationCounts> ret = new ArrayList<>();
-        try {
-            List<List<Object>> list = (List<List<Object>>) response;
-            for (List<Object> elem : list) {
-                CopyLocationCounts copyInfo = new CopyLocationCounts(elem);
-                ret.add(copyInfo);
-            }
-        } catch (Exception e) {
-            Log.d(TAG, "exception in getCopyLocationCounts", e);
-        }
-
-        return ret;
     }
 
     /**

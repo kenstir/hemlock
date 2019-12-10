@@ -21,6 +21,7 @@ package org.evergreen_ils.searchCatalog;
 
 import android.text.TextUtils;
 
+import org.evergreen_ils.data.CopyLocationCounts;
 import org.evergreen_ils.data.EgCodedValueMap;
 import org.evergreen_ils.system.Log;
 import org.evergreen_ils.utils.MARCRecord;
@@ -171,11 +172,7 @@ public class RecordInfo implements Serializable {
         if (response == null || response.failed)
             return copyLocationCountsList;
         try {
-            List<List<Object>> list = (List<List<Object>>) response.payload;
-            for (List<Object> elem : list) {
-                CopyLocationCounts copyInfo = new CopyLocationCounts(elem);
-                copyLocationCountsList.add(copyInfo);
-            }
+            return CopyLocationCounts.makeArray(response.asArray());
         } catch (Exception e) {
             Log.d(TAG, "caught", e);
         }

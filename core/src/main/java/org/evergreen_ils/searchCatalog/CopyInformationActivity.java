@@ -23,7 +23,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import androidx.appcompat.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -41,14 +40,15 @@ import com.android.volley.VolleyError;
 import org.evergreen_ils.Api;
 import org.evergreen_ils.R;
 import org.evergreen_ils.android.App;
+import org.evergreen_ils.data.CopyLocationCounts;
 import org.evergreen_ils.data.EgOrg;
 import org.evergreen_ils.net.Gateway;
 import org.evergreen_ils.net.GatewayJsonObjectRequest;
 import org.evergreen_ils.net.VolleyWrangler;
+import org.evergreen_ils.system.Analytics;
 import org.evergreen_ils.system.Log;
 import org.evergreen_ils.system.Organization;
 import org.evergreen_ils.utils.ui.ActionBarUtils;
-import org.evergreen_ils.system.Analytics;
 import org.evergreen_ils.utils.ui.TextViewUtils;
 import org.opensrf.util.GatewayResult;
 
@@ -56,6 +56,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 public class CopyInformationActivity extends AppCompatActivity {
 
@@ -98,8 +100,8 @@ public class CopyInformationActivity extends AppCompatActivity {
             lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    CopyLocationCounts record = (CopyLocationCounts) lv.getItemAtPosition(position);
-                    String url = EgOrg.getOrgInfoPageUrl(record.org_id);
+                    CopyLocationCounts clc = (CopyLocationCounts) lv.getItemAtPosition(position);
+                    String url = EgOrg.getOrgInfoPageUrl(clc.getOrgId());
                     startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
                 }
             });
@@ -142,11 +144,11 @@ public class CopyInformationActivity extends AppCompatActivity {
             return;
 
         copyInfoRecords.clear();
-        for (CopyLocationCounts info: copyLocationCountsList) {
-            Organization org = EgOrg.findOrg(info.org_id);
+        for (CopyLocationCounts clc: copyLocationCountsList) {
+            Organization org = EgOrg.findOrg(clc.getOrgId());
             // if a branch is not opac visible, its copies should not be visible
             if (org != null && org.opac_visible) {
-                copyInfoRecords.add(info);
+                copyInfoRecords.add(clc);
             }
         }
 
@@ -155,8 +157,8 @@ public class CopyInformationActivity extends AppCompatActivity {
             Collections.sort(copyInfoRecords, new Comparator<CopyLocationCounts>() {
                 @Override
                 public int compare(CopyLocationCounts a, CopyLocationCounts b) {
-                    Organization a_org = EgOrg.findOrg(a.org_id);
-                    Organization b_org = EgOrg.findOrg(b.org_id);
+                    Organization a_org = EgOrg.findOrg(a.getOrgId());
+                    Organization b_org = EgOrg.findOrg(b.getOrgId());
                     String a_system_name = EgOrg.getOrgNameSafe(a_org.parent_ou);
                     String b_system_name = EgOrg.getOrgNameSafe(b_org.parent_ou);
                     int system_cmp = safeCompareTo(a_system_name, b_system_name);
@@ -169,7 +171,7 @@ public class CopyInformationActivity extends AppCompatActivity {
             Collections.sort(copyInfoRecords, new Comparator<CopyLocationCounts>() {
                 @Override
                 public int compare(CopyLocationCounts a, CopyLocationCounts b) {
-                    return EgOrg.getOrgNameSafe(a.org_id).compareTo(EgOrg.getOrgNameSafe(b.org_id));
+                    return EgOrg.getOrgNameSafe(a.getOrgId()).compareTo(EgOrg.getOrgNameSafe(b.getOrgId()));
                 }
             });
         }
@@ -227,7 +229,7 @@ public class CopyInformationActivity extends AppCompatActivity {
         public View getView(int position, View convertView, ViewGroup parent) {
             View row = convertView;
 
-            final CopyLocationCounts item = getItem(position);
+            final CopyLocationCounts clc = getItem(position);
 
             if (row == null) {
                 LayoutInflater inflater = (LayoutInflater) this.getContext()
@@ -235,27 +237,25 @@ public class CopyInformationActivity extends AppCompatActivity {
                 row = inflater.inflate(R.layout.copy_information_item, parent, false);
             }
 
-            majorLocationText = (TextView) row.findViewById(R.id.copy_information_major_location);
-            minorLocationText = (TextView) row.findViewById(R.id.copy_information_minor_location);
-            copyCallNumberText = (TextView) row.findViewById(R.id.copy_information_call_number);
-            copyLocationText = (TextView) row.findViewById(R.id.copy_information_copy_location);
-            copyStatusesText = (TextView) row.findViewById(R.id.copy_information_statuses);
+            majorLocationText = row.findViewById(R.id.copy_information_major_location);
+            minorLocationText = row.findViewById(R.id.copy_information_minor_location);
+            copyCallNumberText = row.findViewById(R.id.copy_information_call_number);
+            copyLocationText = row.findViewById(R.id.copy_information_copy_location);
+            copyStatusesText = row.findViewById(R.id.copy_information_statuses);
 
-            Organization org = EgOrg.findOrg(item.org_id);
+            Organization org = EgOrg.findOrg(clc.getOrgId());
             if (groupBySystem) {
                 majorLocationText.setText(EgOrg.getOrgNameSafe(org.parent_ou));
                 //minorLocationText.setText(EvergreenService.Companion.getOrgNameSafe(item.org_id));
-                String url = EgOrg.getOrgInfoPageUrl(item.org_id);
+                String url = EgOrg.getOrgInfoPageUrl(clc.getOrgId());
                 TextViewUtils.setTextHtml(minorLocationText, TextViewUtils.makeLinkHtml(url, org.name));
             } else {
-                majorLocationText.setText(EgOrg.getOrgNameSafe(item.org_id));
+                majorLocationText.setText(EgOrg.getOrgNameSafe(clc.getOrgId()));
                 minorLocationText.setVisibility(View.GONE);
             }
-            copyCallNumberText.setText(item.getCallNumber());
-            copyLocationText.setText(item.copy_location);
-
-            List<String> statuses = item.getCountsByStatus();
-            copyStatusesText.setText(TextUtils.join("\n", statuses));
+            copyCallNumberText.setText(clc.getCallNumber());
+            copyLocationText.setText(clc.getCopyLocation());
+            copyStatusesText.setText(clc.getCountsByStatusLabel());
 
             return row;
         }
