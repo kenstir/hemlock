@@ -39,7 +39,7 @@ import org.evergreen_ils.system.Analytics;
 import org.evergreen_ils.utils.IntUtils;
 import org.evergreen_ils.utils.ui.AppState;
 import org.evergreen_ils.system.Log;
-import org.evergreen_ils.system.Organization;
+import org.evergreen_ils.data.Organization;
 import org.evergreen_ils.utils.ui.BaseActivity;
 import org.evergreen_ils.utils.ui.ProgressDialogSupport;
 

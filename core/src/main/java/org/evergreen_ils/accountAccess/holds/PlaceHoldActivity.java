@@ -55,7 +55,7 @@ import org.evergreen_ils.data.EgSms;
 import org.evergreen_ils.data.Account;
 import org.evergreen_ils.data.EgOrg;
 import org.evergreen_ils.searchCatalog.RecordInfo;
-import org.evergreen_ils.system.Organization;
+import org.evergreen_ils.data.Organization;
 import org.evergreen_ils.data.SMSCarrier;
 import org.evergreen_ils.utils.IntUtils;
 import org.evergreen_ils.utils.ui.ActionBarUtils;

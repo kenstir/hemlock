@@ -33,7 +33,7 @@ import org.evergreen_ils.android.App;
 import org.evergreen_ils.data.EgOrg;
 import org.evergreen_ils.system.Analytics;
 import org.evergreen_ils.system.Log;
-import org.evergreen_ils.system.Organization;
+import org.evergreen_ils.data.Organization;
 import org.evergreen_ils.utils.ui.ActionBarUtils;
 import org.evergreen_ils.utils.ui.BaseActivity;
 import org.evergreen_ils.utils.ui.ProgressDialogSupport;

@@ -18,10 +18,8 @@
 
 package org.evergreen_ils.data
 
-import org.evergreen_ils.Api
 import org.evergreen_ils.net.Gateway
 import org.evergreen_ils.system.Log
-import org.evergreen_ils.system.Organization
 import org.opensrf.util.OSRFObject
 import java.util.*
 import kotlin.Comparator
@@ -103,7 +101,7 @@ object EgOrg {
     }
 
     @JvmStatic
-    fun findOrg(id: Int): Organization? = orgs.firstOrNull { it.id == id }
+    fun findOrg(id: Int?): Organization? = orgs.firstOrNull { it.id == id }
 
     @JvmStatic
     fun getOrgShortNameSafe(id: Int): String = findOrg(id)?.shortname ?: "?"

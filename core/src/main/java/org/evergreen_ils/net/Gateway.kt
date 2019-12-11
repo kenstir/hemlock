@@ -39,7 +39,7 @@ enum class GatewayState {
     LOADED
 }
 
-private const val TAG = "Gateway"
+const val TAG = "Gateway"
 private const val INITIAL_URL_SIZE = 128
 
 // Notes on caching.  We add 2 parameters to every request to ensure a coherent cache:

@@ -34,9 +34,10 @@ import org.evergreen_ils.accountAccess.AccountAccess
 import org.evergreen_ils.accountAccess.SessionNotFoundException
 import org.evergreen_ils.android.AccountUtils
 import org.evergreen_ils.android.App
+import org.evergreen_ils.data.EgOrg
 import org.evergreen_ils.data.EgOrg.findOrg
 import org.evergreen_ils.net.Gateway
-import org.evergreen_ils.net.GatewayActor
+import org.evergreen_ils.net.GatewayJob
 import org.evergreen_ils.searchCatalog.RecordDetails
 import org.evergreen_ils.searchCatalog.RecordInfo
 import org.evergreen_ils.system.Analytics
@@ -124,10 +125,8 @@ class FinesActivity : BaseActivity() {
             try {
                 val start = System.currentTimeMillis()
                 Log.d(TAG, "[kcxxx] loadData ...")
-                val job = GatewayActor.fetchAllOrgSettings()
-                Log.d(TAG, "[kcxxx] loadData ... join")
-                job.join()
-                Log.d(TAG, "[kcxxx] loadData ... done")
+                val homeOrg = EgOrg.findOrg(App.getAccount().homeOrg)
+                GatewayJob.fetchAllOrgSettingsAsync(homeOrg).join()
                 Log.logElapsedTime(TAG, start, "[kcxxx] loadData")
             } catch (ex: Exception) {
                 Log.d(TAG, "[kcxxx] loadData ... caught", ex)

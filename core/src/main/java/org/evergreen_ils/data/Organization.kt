@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Kenneth H. Cox
+ * Copyright (c) 2019 Kenneth H. Cox
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -15,11 +15,9 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
-package org.evergreen_ils.system
+package org.evergreen_ils.data
 
 import org.evergreen_ils.Api
-import org.evergreen_ils.data.EgOrg
-import org.evergreen_ils.data.OrgType
 import org.evergreen_ils.net.JSONDictionary
 
 class Organization(@JvmField val id: Int,
