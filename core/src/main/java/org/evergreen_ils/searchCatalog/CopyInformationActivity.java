@@ -147,7 +147,8 @@ public class CopyInformationActivity extends AppCompatActivity {
         for (CopyLocationCounts clc: copyLocationCountsList) {
             Organization org = EgOrg.findOrg(clc.getOrgId());
             // if a branch is not opac visible, its copies should not be visible
-            if (org != null && org.opac_visible) {
+            // findOrg will return null for orgs that are not opac visible
+            if (org != null) {
                 copyInfoRecords.add(clc);
             }
         }

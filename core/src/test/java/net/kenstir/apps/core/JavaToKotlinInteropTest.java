@@ -18,6 +18,7 @@
 
 package net.kenstir.apps.core;
 
+import org.evergreen_ils.utils.IntUtils;
 import org.evergreen_ils.utils.Link;
 import org.junit.Test;
 import org.opensrf.util.OSRFObject;
@@ -40,11 +41,17 @@ public class JavaToKotlinInteropTest {
         assertFalse(b.equals(d));
     }
 
-//    @Test
-//    public void test_x() {
-//        HashMap<String, Object> map = new HashMap<>();
-//        map.put("status", 200);
-//        OSRFObject obj = (OSRFObject) map;
-//        assertNotNull(obj);
-//    }
+    @Test
+    public void test_IntUtils() {
+        Integer I1 = null;
+        Integer I2 = 2;
+        int i1 = 1;
+        int i2 = 2;
+        assertTrue(IntUtils.equals(I2, i2));
+        assertTrue(IntUtils.equals(i2, I2));
+        assertFalse(IntUtils.equals(I1, i1));
+        assertFalse(IntUtils.equals(i1, I1));
+        assertFalse(IntUtils.equals(I2, i1));
+        assertFalse(IntUtils.equals(i1, I2));
+    }
 }

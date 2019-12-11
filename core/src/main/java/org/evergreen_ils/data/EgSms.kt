@@ -28,20 +28,6 @@ object EgSms {
     @JvmStatic
     var carriers = mutableListOf<SMSCarrier>()
 
-    // map returned from `fetchOrgSettings` looks like:
-    // {credit.payments.allow={org=49, value=true}, opac.holds.org_unit_not_pickup_lib=null}
-    fun parseBoolSetting(map: Map<String, Any?>, setting: String): Boolean? {
-        var value: Boolean? = null
-        if (map != null) {
-            val o = map[setting]
-            if (o != null) {
-                val setting_map = o as Map<String, *>
-                value = Api.parseBoolean(setting_map["value"])
-            }
-        }
-        return value
-    }
-
     fun loadCarriers(carriers: List<OSRFObject>) {
         synchronized(this) {
             this.carriers.clear()

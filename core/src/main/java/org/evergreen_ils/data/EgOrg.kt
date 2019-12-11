@@ -63,24 +63,21 @@ object EgOrg {
 
     private fun addOrganization(obj: OSRFObject, level: Int) {
         val id = obj.getInt("id")
-        val orgType = obj.getInt("ou_type")
+        val name = obj.getString("name")
+        val ouType = obj.getInt("ou_type")
         if (id == null) return
-        if (orgType == null) return
-        val org = Organization()
-        org.level = level
-        org.id = id
-        org.parent_ou = obj.getInt("parent_ou")
-        org.name = obj.getString("name")
-        org.shortname = obj.getString("shortname")
-        org.orgType = orgType
-        org.opac_visible = Api.parseBoolean(obj.getString("opac_visible"))
+        if (name == null) return
+        if (ouType == null) return
+        val opac_visible = obj.getBoolean("opac_visible")
+        val org = Organization(id, level, name, obj.getString("shortname"),
+                obj.getInt("parent_ou"), ouType)
         org.indentedDisplayPrefix = String(CharArray(level)).replace("\u0000", "   ")
         //Log.d(TAG, "id:$id level:${org.level} vis:${org.opac_visible} shortname:${org.shortname} name:${org.name}")
-        if (org.opac_visible)
+        if (opac_visible)
             orgs.add(org)
         val children = obj.get("children") as? List<OSRFObject>
         children?.forEach { child ->
-            val child_level = if (org.opac_visible) level + 1 else level
+            val child_level = if (opac_visible) level + 1 else level
             addOrganization(child, child_level)
         }
     }

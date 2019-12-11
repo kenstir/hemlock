@@ -19,6 +19,7 @@ package org.opensrf.util
 
 import android.text.TextUtils
 import org.evergreen_ils.net.GatewayError
+import org.evergreen_ils.net.JSONDictionary
 import org.evergreen_ils.utils.fromApiToIntOrNull
 import org.open_ils.Event
 import kotlin.collections.ArrayList
@@ -52,14 +53,17 @@ class GatewayResult {
     fun asObject(): OSRFObject {
         return try {
             payload as OSRFObject
-//            if (payload is OSRFObject) {
-//                payload as OSRFObject
-//            } else  /*if (payload instanceof Map)*/ {
-//                val map = payload as Map<String, Any>?
-//                OSRFObject(map)
-//            }
         } catch (ex: Exception) {
             throw GatewayError("Unexpected network response: expected object, got $type")
+        }
+    }
+
+    @Throws(GatewayError::class)
+    fun asMap(): JSONDictionary {
+        return try {
+            payload as JSONDictionary
+        } catch (ex: Exception) {
+            throw GatewayError("Unexpected network response: expected map, got $type")
         }
     }
 
@@ -134,9 +138,6 @@ class GatewayResult {
                             resp.events = listOf(event)
                             resp.type = ResultType.EVENT
                         } else {
-                            if (payload !is OSRFObject) {
-                                print("STOP HERE")
-                            }
                             resp.type = ResultType.OBJECT
                         }
                     }

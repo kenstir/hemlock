@@ -28,6 +28,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import kotlinx.coroutines.launch
 import org.evergreen_ils.R
 import org.evergreen_ils.accountAccess.AccountAccess
 import org.evergreen_ils.accountAccess.SessionNotFoundException
@@ -35,9 +36,11 @@ import org.evergreen_ils.android.AccountUtils
 import org.evergreen_ils.android.App
 import org.evergreen_ils.data.EgOrg.findOrg
 import org.evergreen_ils.net.Gateway
+import org.evergreen_ils.net.GatewayActor
 import org.evergreen_ils.searchCatalog.RecordDetails
 import org.evergreen_ils.searchCatalog.RecordInfo
 import org.evergreen_ils.system.Analytics
+import org.evergreen_ils.system.Log
 import org.evergreen_ils.system.Utils
 import org.evergreen_ils.utils.ui.BaseActivity
 import org.evergreen_ils.utils.ui.ProgressDialogSupport
@@ -45,6 +48,8 @@ import org.opensrf.util.OSRFObject
 import java.net.URLEncoder
 import java.text.DecimalFormat
 import java.util.*
+
+private const val TAG = "FinesActivity"
 
 class FinesActivity : BaseActivity() {
     private var total_owed: TextView? = null
@@ -107,11 +112,35 @@ class FinesActivity : BaseActivity() {
         super.onDestroy()
     }
 
+    override fun onAttachedToWindow() {
+        super.onAttachedToWindow()
+        Log.d(TAG, object{}.javaClass.enclosingMethod?.name)
+
+        loadData()
+    }
+
+    private fun loadData() {
+        launch {
+            try {
+                val start = System.currentTimeMillis()
+                Log.d(TAG, "[kcxxx] loadData ...")
+                val job = GatewayActor.fetchAllOrgSettings()
+                Log.d(TAG, "[kcxxx] loadData ... join")
+                job.join()
+                Log.d(TAG, "[kcxxx] loadData ... done")
+                Log.logElapsedTime(TAG, start, "[kcxxx] loadData")
+            } catch (ex: Exception) {
+                Log.d(TAG, "[kcxxx] loadData ... caught", ex)
+            }
+        }
+
+    }
+
     private fun initPayFinesButton() {
         val homeOrgId = App.getAccount().homeOrg
         val homeOrg = findOrg(homeOrgId!!) //TODO: handle null
         if (resources.getBoolean(R.bool.ou_enable_pay_fines)
-                && homeOrg != null && Utils.safeBool(homeOrg.settingAllowCreditPayments)) {
+                && homeOrg != null && Utils.safeBool(homeOrg.isPaymentAllowedSetting)) {
             pay_fines_button!!.isEnabled = false
             pay_fines_button!!.setOnClickListener {
                 Analytics.logEvent("Fines: Pay Fines", "num_fines", finesRecords!!.size)

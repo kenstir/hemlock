@@ -57,6 +57,7 @@ import org.evergreen_ils.data.EgOrg;
 import org.evergreen_ils.searchCatalog.RecordInfo;
 import org.evergreen_ils.system.Organization;
 import org.evergreen_ils.data.SMSCarrier;
+import org.evergreen_ils.utils.IntUtils;
 import org.evergreen_ils.utils.ui.ActionBarUtils;
 import org.evergreen_ils.system.Analytics;
 import org.evergreen_ils.utils.ui.ProgressDialogSupport;
@@ -432,7 +433,7 @@ public class PlaceHoldActivity extends AppCompatActivity {
         for (int i = 0; i < EgOrg.getOrgs().size(); i++) {
             Organization org = EgOrg.getOrgs().get(i);
             list.add(org.getTreeDisplayName());
-            if (org.id.equals(defaultLibraryID)) {
+            if (IntUtils.equals(org.id, defaultLibraryID)) {
                 selectedOrgPos = i;
             }
         }

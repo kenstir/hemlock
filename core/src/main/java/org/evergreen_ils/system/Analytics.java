@@ -57,10 +57,6 @@ public class Analytics {
         }
     }
 
-    public static void initializeUnitTest() {
-        analytics = false;
-    }
-
     public static void setString(String key, String val) {
         Crashlytics.setString(key, val);
     }

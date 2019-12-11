@@ -149,7 +149,7 @@ public class CheckoutsActivity extends BaseActivity {
         private TextView recordIsOverdue;
         private TextView renewButton;
 
-        private List<CircRecord> records = new ArrayList<CircRecord>();
+        private List<CircRecord> records;
 
         public CheckOutArrayAdapter(Context context, int textViewResourceId,
                 List<CircRecord> objects) {

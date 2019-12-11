@@ -36,6 +36,7 @@ import org.evergreen_ils.barcodescan.CaptureActivity;
 import org.evergreen_ils.data.EgCodedValueMap;
 import org.evergreen_ils.data.EgOrg;
 import org.evergreen_ils.system.Analytics;
+import org.evergreen_ils.utils.IntUtils;
 import org.evergreen_ils.utils.ui.AppState;
 import org.evergreen_ils.system.Log;
 import org.evergreen_ils.system.Organization;
@@ -265,21 +266,21 @@ public class SearchActivity extends BaseActivity {
         int selectedOrgPos = 0;
         Integer defaultLibraryID = App.getAccount().getSearchOrg();
         ArrayList<String> list = new ArrayList<>();
-        for (int i = 0; i < EgOrg.INSTANCE.getOrgs().size(); i++) {
-            Organization org = EgOrg.INSTANCE.getOrgs().get(i);
+        for (int i = 0; i < EgOrg.getOrgs().size(); i++) {
+            Organization org = EgOrg.getOrgs().get(i);
             list.add(org.getTreeDisplayName());
-            if (org.id.equals(defaultLibraryID)) {
+            if (IntUtils.equals(org.id, defaultLibraryID)) {
                 selectedOrgPos = i;
             }
         }
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, R.layout.org_item_layout, list);
         orgSpinner.setAdapter(adapter);
         orgSpinner.setSelection(selectedOrgPos);
-        search.selectOrganisation(EgOrg.INSTANCE.getOrgs().get(selectedOrgPos));
+        search.selectOrganisation(EgOrg.getOrgs().get(selectedOrgPos));
         orgSpinner.setOnItemSelectedListener(new OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> arg0, View arg1, int ID, long arg3) {
-                search.selectOrganisation(EgOrg.INSTANCE.getOrgs().get(ID));
+                search.selectOrganisation(EgOrg.getOrgs().get(ID));
             }
 
             @Override

@@ -23,7 +23,10 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import org.evergreen_ils.Api
 import org.evergreen_ils.data.EgOrg
+import org.evergreen_ils.system.Log
 import org.opensrf.util.OSRFObject
+
+typealias JSONDictionary = Map<String, Any?>
 
 object GatewayActor: ActorService {
     override suspend fun fetchServerVersion(): String {
@@ -40,16 +43,23 @@ object GatewayActor: ActorService {
         return Gateway.fetchObject(Api.ACTOR, Api.ORG_TREE_RETRIEVE, arrayOf(), true)
     }
 
-    override suspend fun fetchOrgSettings(orgID: Int): Any {
+    override suspend fun fetchOrgSettings(orgID: Int): JSONDictionary {
         val settings = arrayListOf(Api.SETTING_ORG_UNIT_NOT_PICKUP_LIB,
                 Api.SETTING_CREDIT_PAYMENTS_ALLOW)
         val args = arrayOf<Any?>(orgID, settings, Api.ANONYMOUS)
-        return Gateway.fetchObject(Api.ACTOR, Api.ORG_UNIT_SETTING_BATCH, args, true)
+        return Gateway.fetch(Api.ACTOR, Api.ORG_UNIT_SETTING_BATCH, args, true) {
+            it.asMap()
+        }
     }
 
+    // EXPERIMENTAL
     suspend fun fetchAllOrgSettings() = GlobalScope.launch {
         for (org in EgOrg.orgs) {
-            async { fetchOrgSettings(org.id) }
+            if (!org.settingsLoaded) {
+                async { org.loadSettings(fetchOrgSettings(org.id));
+                    Log.d("GatewayActor", "[kcxxx] org ${org.id} loaded")
+                }
+            }
         }
     }
 
