@@ -18,7 +18,7 @@
 package org.evergreen_ils.data
 
 import org.evergreen_ils.Api
-import org.evergreen_ils.net.JSONDictionary
+import org.evergreen_ils.data.JSONDictionary
 
 class Organization(@JvmField val id: Int,
                    @JvmField val level: Int,

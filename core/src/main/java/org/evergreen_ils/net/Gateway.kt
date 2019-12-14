@@ -136,18 +136,23 @@ object Gateway {
     }
 
     // fetchObject - make gateway request and expect json payload of OSRFObject
-    suspend fun fetchObject(service: String, method: String, args: Array<Any?>, shouldCache: Boolean) = fetch(service, method, args, shouldCache) { response ->
-        response.asObject()
+    suspend fun fetchObject(service: String, method: String, args: Array<Any?>, shouldCache: Boolean) = fetch(service, method, args, shouldCache) { result ->
+        result.asObject()
+    }
+
+    // fetchOptionalObject - expect OSRFObject or empty
+    suspend fun fetchOptionalObject(service: String, method: String, args: Array<Any?>, shouldCache: Boolean) = fetch(service, method, args, shouldCache) { result ->
+        result.asOptionalObject()
     }
 
     // fetchObjectArray - make gateway request and expect json payload of [OSRFObject]
-    suspend fun fetchObjectArray(service: String, method: String, args: Array<Any?>, shouldCache: Boolean) = fetch(service, method, args, shouldCache) { response ->
-        response.asObjectArray()
+    suspend fun fetchObjectArray(service: String, method: String, args: Array<Any?>, shouldCache: Boolean) = fetch(service, method, args, shouldCache) { result ->
+        result.asObjectArray()
     }
 
     // fetchStringPayload - make gateway request and expect json payload of String
-    suspend fun fetchObjectString(service: String, method: String, args: Array<Any?>, shouldCache: Boolean) = fetch(service, method, args, shouldCache) { response ->
-        response.asString()
+    suspend fun fetchObjectString(service: String, method: String, args: Array<Any?>, shouldCache: Boolean) = fetch(service, method, args, shouldCache) { result ->
+        result.asString()
     }
 
     // fetchString - fetch url and expect a string response

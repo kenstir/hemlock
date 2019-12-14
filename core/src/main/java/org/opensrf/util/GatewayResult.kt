@@ -17,12 +17,10 @@
  */
 package org.opensrf.util
 
-import android.text.TextUtils
+import org.evergreen_ils.data.JSONDictionary
 import org.evergreen_ils.net.GatewayError
-import org.evergreen_ils.net.JSONDictionary
 import org.evergreen_ils.utils.fromApiToIntOrNull
 import org.open_ils.Event
-import kotlin.collections.ArrayList
 
 class GatewayResult {
     enum class ResultType {
@@ -53,6 +51,15 @@ class GatewayResult {
     fun asObject(): OSRFObject {
         return try {
             payload as OSRFObject
+        } catch (ex: Exception) {
+            throw GatewayError("Unexpected network response: expected object, got $type")
+        }
+    }
+
+    @Throws(GatewayError::class)
+    fun asOptionalObject(): OSRFObject? {
+        return try {
+            payload as? OSRFObject
         } catch (ex: Exception) {
             throw GatewayError("Unexpected network response: expected object, got $type")
         }

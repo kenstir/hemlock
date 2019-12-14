@@ -92,6 +92,9 @@ class GatewayResultTest {
         val result = GatewayResult.create(json)
         assertFalse(result.failed)
 
+        val obj = result.asOptionalObject()
+        assertNull(obj)
+
         val objResult = kotlin.runCatching { result.asObject() }
         assertTrue(objResult.isFailure)
         val strResult = kotlin.runCatching { result.asString() }

@@ -30,6 +30,7 @@ import android.view.ViewGroup
 import android.widget.*
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
+import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
 import org.evergreen_ils.R
 import org.evergreen_ils.accountAccess.AccountAccess
@@ -125,16 +126,25 @@ class FinesActivity : BaseActivity() {
                 val start = System.currentTimeMillis()
                 Log.d(TAG, "[kcxxx] loadData ...")
                 var jobs = mutableListOf<Job>()
+
+                // Need homeOrg's settings to enable/disable fines
                 val homeOrg = EgOrg.findOrg(App.getAccount().homeOrg)
                 jobs.add(GatewayJob.fetchAllOrgSettingsAsync(homeOrg))
-                async {
-                    val authToken = App.getAccount().authToken
-                    val userID = App.getAccount().id
-                    if (authToken != null && userID != null) {
+
+                val authToken = App.getAccount().authToken
+                val userID = App.getAccount().id
+                if (authToken != null && userID != null) {
+                   val job = async {
                         val summary = Gateway.actor.fetchUserFinesSummary(authToken, userID)
                         Log.d(TAG, "summary: $summary")
+
+                        val transactions = Gateway.actor.fetchUserTransactionsWithCharges(authToken, userID)
+                        Log.d(TAG, "transactions: $transactions")
                     }
+                    jobs.add(job)
                 }
+
+                jobs.joinAll()
                 Log.logElapsedTime(TAG, start, "[kcxxx] loadData")
                 initPayFinesButton()
             } catch (ex: Exception) {
