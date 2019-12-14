@@ -65,10 +65,10 @@ object GatewayActor: ActorService {
         }
     }
 
-    override suspend fun fetchUserTransactionsWithCharges(authToken: String, userID: Int): List<Any> {
+    override suspend fun fetchUserTransactionsWithCharges(authToken: String, userID: Int): List<OSRFObject> {
         val args = arrayOf<Any?>(authToken, userID)
         return Gateway.fetch(Api.ACTOR, Api.TRANSACTIONS_WITH_CHARGES, args, false) {
-            it.asArray()
+            it.asObjectArray()
         }
     }
 }

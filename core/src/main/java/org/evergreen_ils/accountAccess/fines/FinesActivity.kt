@@ -28,17 +28,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.async
-import kotlinx.coroutines.joinAll
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import org.evergreen_ils.R
 import org.evergreen_ils.accountAccess.AccountAccess
-import org.evergreen_ils.accountAccess.SessionNotFoundException
 import org.evergreen_ils.android.AccountUtils
 import org.evergreen_ils.android.App
 import org.evergreen_ils.data.EgOrg
 import org.evergreen_ils.net.Gateway
+import org.evergreen_ils.net.GatewayError
 import org.evergreen_ils.net.GatewayJob
 import org.evergreen_ils.searchCatalog.RecordDetails
 import org.evergreen_ils.searchCatalog.RecordInfo
@@ -47,6 +44,7 @@ import org.evergreen_ils.system.Log
 import org.evergreen_ils.utils.ui.BaseActivity
 import org.evergreen_ils.utils.ui.ProgressDialogSupport
 import org.opensrf.util.OSRFObject
+import java.lang.Runnable
 import java.net.URLEncoder
 import java.text.DecimalFormat
 
@@ -102,10 +100,7 @@ class FinesActivity : BaseActivity() {
                 RecordDetails.launchDetailsFlow(this@FinesActivity, records, position)
             }
         })
-        //initRunnable()
-        enablePayFinesButton(false)
-        //progress!!.show(this, getString(R.string.msg_retrieving_fines))
-        //Thread(getFinesInfo).start()
+        updatePayFinesButtonState(false)
     }
 
     override fun onDestroy() {
@@ -118,43 +113,92 @@ class FinesActivity : BaseActivity() {
         Log.d(TAG, object{}.javaClass.enclosingMethod?.name)
 
         loadData()
+//        testExceptionHandling()
+    }
+
+    private fun testExceptionHandling() {
+        val case = (0 until 10).random()
+        Log.d(TAG, "[kcxxx] case:$case -----------------------------------------------------")
+
+        // A
+        try {
+            // B
+            launch {
+                // C
+                try {
+                    // D
+                    Log.d(TAG, "[kcxxx] D: inner try")
+                    if (case == 0) throw GatewayError("case $case")
+
+                    var jobs = mutableListOf<Job>()
+                    jobs.add(async {
+                        // E
+                        Log.d(TAG, "[kcxxx] E: delay ...")
+                        delay(1_000)
+                        if (case == 1) throw GatewayError("case $case")
+                        Log.d(TAG, "[kcxxx] E: delay ... done")
+                    })
+                    jobs.add(async {
+                        // F
+                        Log.d(TAG, "[kcxxx] F: delay ...")
+                        delay(1_000)
+                        if (case == 2) throw GatewayError("case $case")
+                        Log.d(TAG, "[kcxxx] F: delay ... done")
+                    })
+
+                    Log.d(TAG, "[kcxxx} D: joinAll ...")
+                    jobs.joinAll()
+                    Log.d(TAG, "[kcxxx} D: joinAll ...")
+                } catch (e: Exception) {
+                    Log.d(TAG, "[kcxxx} D: caught", e)
+                }
+                if (case == 3) throw GatewayError("case $case")
+            }
+            if (case == 4) throw GatewayError("case $case")
+        } catch (e: Exception) {
+            Log.d(TAG, "[kcxxx] B: caught", e)
+        }
     }
 
     private fun loadData() {
-        launch {
-            try {
-                val start = System.currentTimeMillis()
-                Log.d(TAG, "[kcxxx] loadData ...")
-                var jobs = mutableListOf<Job>()
+        try {
+            launch {
+                try {
+                    val start = System.currentTimeMillis()
+                    var jobs = mutableListOf<Job>()
 
-                // Need homeOrg's settings to enable/disable fines
-                val homeOrg = EgOrg.findOrg(App.getAccount().homeOrg)
-                jobs.add(GatewayJob.fetchAllOrgSettingsAsync(homeOrg))
+                    Log.d(TAG, "[kcxxx] loadData ...")
+                    jobs.add(async {
+                        // Need homeOrg's settings to enable/disable fines
+                        val homeOrg = EgOrg.findOrg(App.getAccount().homeOrg)
+                        GatewayJob.fetchAllOrgSettingsAsync(homeOrg).join()
+                        updatePayFinesButtonVisibility()
+                    })
 
-                val authToken = App.getAccount().authToken
-                val userID = App.getAccount().id
-                if (authToken != null && userID != null) {
-                   val job = async {
-                        val summary = Gateway.actor.fetchUserFinesSummary(authToken, userID)
-                        Log.d(TAG, "summary: $summary")
-
-                        val transactions = Gateway.actor.fetchUserTransactionsWithCharges(authToken, userID)
-                        Log.d(TAG, "transactions: $transactions")
+                    val authToken = App.getAccount().authToken
+                    val userID = App.getAccount().id
+                    if (authToken != null && userID != null) {
+                        jobs.add(async {
+                            updateSummary(Gateway.actor.fetchUserFinesSummary(authToken, userID))
+                        })
+                        jobs.add(async {
+                            updateTransactions(Gateway.actor.fetchUserTransactionsWithCharges(authToken, userID))
+                        })
                     }
-                    jobs.add(job)
-                }
 
-                jobs.joinAll()
-                Log.logElapsedTime(TAG, start, "[kcxxx] loadData")
-                initPayFinesButton()
-            } catch (ex: Exception) {
-                Log.d(TAG, "[kcxxx] loadData ... caught", ex)
+                    jobs.joinAll()
+                    Log.logElapsedTime(TAG, start, "[kcxxx] loadData")
+                } catch (ex: Exception) {
+                    Log.d(TAG, "[kcxxx] loadData ... caught", ex)
+                }
             }
+        } catch (outerEx: Exception) {
+            Log.d(TAG, "[kcxxx] loadData ... caught", outerEx)
         }
 
     }
 
-    private fun initPayFinesButton() {
+    private fun updatePayFinesButtonVisibility() {
         val homeOrg = EgOrg.findOrg(App.getAccount().homeOrg)
         if (resources.getBoolean(R.bool.ou_enable_pay_fines)
                 && homeOrg?.isPaymentAllowedSetting ?: false) {
@@ -173,10 +217,39 @@ class FinesActivity : BaseActivity() {
         } else {
             pay_fines_button?.visibility = View.GONE
         }
+        Log.d(TAG, "[kcxxx] updatePayFinesButtonVisibility v:${pay_fines_button?.visibility}")
     }
 
-    private fun enablePayFinesButton(enabled: Boolean) {
+    private fun updatePayFinesButtonState(enabled: Boolean) {
         pay_fines_button?.isEnabled = enabled
+    }
+
+    private fun updateSummary(obj: OSRFObject?) {
+        Log.d(TAG, "[kcxxx] updateSummary: o:$obj")
+        total_owed?.text = decimalFormatter?.format(getFloat(obj, "total_owed"))
+        total_paid?.text = decimalFormatter?.format(getFloat(obj, "total_paid"))
+        val balance = getFloat(obj, "balance_owed")
+        balance_owed?.text = decimalFormatter?.format(balance)
+        updatePayFinesButtonState(balance > 0)
+    }
+
+    private fun updateTransactions(objects: List<OSRFObject>) {
+        Log.d(TAG, "[kcxxx] updateTransactions o:$objects")
+        listAdapter?.clear()
+        haveAnyFines = false
+        haveAnyGroceryBills = false
+        for (finesRecord in objects) {
+            Log.d(TAG, "finesRecord: $finesRecord")
+        }
+//        listAdapter!!.add(finesRecord)
+//        haveAnyFines = true
+//        if (finesRecord.recordInfo == null) {
+//            haveAnyGroceryBills = true
+//        }
+//    }
+//}
+//listAdapter!!.notifyDataSetChanged()
+//progress!!.dismiss()
     }
 
     private fun getFloat(o: OSRFObject?, field: String): Float {
@@ -187,52 +260,6 @@ class FinesActivity : BaseActivity() {
             Analytics.logException(e)
         }
         return ret
-    }
-
-    private fun initRunnable() {
-        getFinesInfo = Runnable {
-            var summary: OSRFObject? = null
-            try {
-                summary = ac!!.finesSummary
-            } catch (e: SessionNotFoundException) {
-                try {
-                    if (ac!!.reauthenticate(this@FinesActivity)) summary = ac!!.finesSummary
-                } catch (e1: Exception) {
-                }
-            }
-            val finesSummary = summary
-            var frecords: ArrayList<FinesRecord>? = null
-            try {
-                frecords = ac!!.transactions
-            } catch (e: SessionNotFoundException) {
-                try {
-                    if (ac!!.reauthenticate(this@FinesActivity)) frecords = ac!!.transactions
-                } catch (e1: Exception) {
-                }
-            }
-            finesRecords = frecords ?: arrayListOf()
-            runOnUiThread {
-                listAdapter!!.clear()
-                haveAnyFines = false
-                haveAnyGroceryBills = false
-                if (finesRecords != null) {
-                    for (finesRecord in finesRecords) {
-                        listAdapter!!.add(finesRecord)
-                        haveAnyFines = true
-                        if (finesRecord.recordInfo == null) {
-                            haveAnyGroceryBills = true
-                        }
-                    }
-                }
-                listAdapter!!.notifyDataSetChanged()
-                total_owed!!.text = decimalFormatter!!.format(getFloat(finesSummary, "total_owed").toDouble())
-                total_paid!!.text = decimalFormatter!!.format(getFloat(finesSummary, "total_paid").toDouble())
-                val balance = getFloat(finesSummary, "balance_owed").toDouble()
-                balance_owed!!.text = decimalFormatter!!.format(balance)
-                enablePayFinesButton(haveAnyFines && balance > 0)
-                progress!!.dismiss()
-            }
-        }
     }
 
     internal inner class FinesArrayAdapter(context: Context, private val resourceId: Int, private val items: List<FinesRecord>) : ArrayAdapter<FinesRecord>(context, resourceId, items) {
