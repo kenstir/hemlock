@@ -91,7 +91,7 @@ class MainActivity : BaseActivity() {
             val authToken = App.getAccount().authToken
             val userID = App.getAccount().id
             if (resources.getBoolean(R.bool.ou_enable_messages) && authToken != null && userID != null) {
-                mUnreadMessageCount = countUnread(Gateway.actor.fetchMessages(authToken, userID))
+                mUnreadMessageCount = countUnread(Gateway.actor.fetchUserMessages(authToken, userID))
                 updateUnreadMessageText()
             }
         }

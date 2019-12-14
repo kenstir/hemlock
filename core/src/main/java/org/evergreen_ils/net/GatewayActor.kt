@@ -18,16 +18,9 @@
 
 package org.evergreen_ils.net
 
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.async
-import kotlinx.coroutines.launch
 import org.evergreen_ils.Api
-import org.evergreen_ils.data.EgOrg
-import org.evergreen_ils.system.Log
-import org.evergreen_ils.data.Organization
+import org.evergreen_ils.data.JSONDictionary
 import org.opensrf.util.OSRFObject
-
-typealias JSONDictionary = Map<String, Any?>
 
 object GatewayActor: ActorService {
     override suspend fun fetchServerVersion(): String {
@@ -59,8 +52,23 @@ object GatewayActor: ActorService {
         return Gateway.fetchObject(Api.ACTOR, Api.USER_FLESHED_RETRIEVE, args, true)
     }
 
-    override suspend fun fetchMessages(authToken: String, userID: Int): List<OSRFObject> {
+    override suspend fun fetchUserMessages(authToken: String, userID: Int): List<OSRFObject> {
         val args = arrayOf(authToken, userID, null)
         return Gateway.fetchObjectArray(Api.ACTOR, Api.MESSAGES_RETRIEVE, args, false)
+    }
+
+    override suspend fun fetchUserFinesSummary(authToken: String, userID: Int): OSRFObject {
+        val args = arrayOf<Any?>(authToken, userID)
+        //return Gateway.fetchObject(Api.ACTOR, Api.FINES_SUMMARY, args, false)
+        return Gateway.fetch(Api.ACTOR, Api.FINES_SUMMARY, args, false) {
+            it.asObject()
+        }
+    }
+
+    override suspend fun fetchUserTransactionsWithCharges(authToken: String, userID: Int): List<Any> {
+        val args = arrayOf<Any?>(authToken, userID)
+        return Gateway.fetch(Api.ACTOR, Api.TRANSACTIONS_WITH_CHARGES, args, false) {
+            it.asArray()
+        }
     }
 }

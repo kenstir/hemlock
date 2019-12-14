@@ -28,6 +28,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import org.evergreen_ils.R
 import org.evergreen_ils.accountAccess.AccountAccess
@@ -35,20 +37,17 @@ import org.evergreen_ils.accountAccess.SessionNotFoundException
 import org.evergreen_ils.android.AccountUtils
 import org.evergreen_ils.android.App
 import org.evergreen_ils.data.EgOrg
-import org.evergreen_ils.data.EgOrg.findOrg
 import org.evergreen_ils.net.Gateway
 import org.evergreen_ils.net.GatewayJob
 import org.evergreen_ils.searchCatalog.RecordDetails
 import org.evergreen_ils.searchCatalog.RecordInfo
 import org.evergreen_ils.system.Analytics
 import org.evergreen_ils.system.Log
-import org.evergreen_ils.system.Utils
 import org.evergreen_ils.utils.ui.BaseActivity
 import org.evergreen_ils.utils.ui.ProgressDialogSupport
 import org.opensrf.util.OSRFObject
 import java.net.URLEncoder
 import java.text.DecimalFormat
-import java.util.*
 
 private const val TAG = "FinesActivity"
 
@@ -59,13 +58,13 @@ class FinesActivity : BaseActivity() {
     private var pay_fines_button: Button? = null
     private var lv: ListView? = null
     private var listAdapter: FinesArrayAdapter? = null
-    private var finesRecords: ArrayList<FinesRecord>? = null
+    private var finesRecords: ArrayList<FinesRecord> = ArrayList()
     private var haveAnyGroceryBills = false
     private var haveAnyFines = false
     private var getFinesInfo: Runnable? = null
     private var ac: AccountAccess? = null
     private var progress: ProgressDialogSupport? = null
-    private var decimalFormater: DecimalFormat? = null
+    private var decimalFormatter: DecimalFormat? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -73,7 +72,7 @@ class FinesActivity : BaseActivity() {
 
         setContentView(R.layout.activity_fines)
 
-        decimalFormater = DecimalFormat("#0.00")
+        decimalFormatter = DecimalFormat("#0.00")
         lv = findViewById(R.id.fines_overdue_materials_list)
         total_owed = findViewById(R.id.fines_total_owed)
         total_paid = findViewById(R.id.fines_total_paid)
@@ -83,7 +82,7 @@ class FinesActivity : BaseActivity() {
         progress = ProgressDialogSupport()
         finesRecords = ArrayList()
         listAdapter = FinesArrayAdapter(this,
-                R.layout.fines_list_item, finesRecords!!)
+                R.layout.fines_list_item, finesRecords)
         lv?.setAdapter(listAdapter)
         lv?.setOnItemClickListener(AdapterView.OnItemClickListener { parent, view, position, id ->
             Analytics.logEvent("Fines: Tap List Item", "have_grocery_bills", haveAnyGroceryBills)
@@ -92,20 +91,20 @@ class FinesActivity : BaseActivity() {
                 // If any of the fines are for non-circulation items ("grocery bills"), we
                 // start the details flow with only the one record, if a record was selected.
                 // The details flow can't handle nulls.
-                val record = finesRecords!![position].recordInfo
+                val record = finesRecords[position].recordInfo
                 if (record != null) {
                     records.add(record)
                     RecordDetails.launchDetailsFlow(this@FinesActivity, records, 0)
                 }
             } else {
-                for (item in finesRecords!!) records.add(item.recordInfo)
+                for (item in finesRecords) records.add(item.recordInfo)
                 RecordDetails.launchDetailsFlow(this@FinesActivity, records, position)
             }
         })
-        initPayFinesButton()
-        initRunnable()
-        progress!!.show(this, getString(R.string.msg_retrieving_fines))
-        Thread(getFinesInfo).start()
+        //initRunnable()
+        enablePayFinesButton(false)
+        //progress!!.show(this, getString(R.string.msg_retrieving_fines))
+        //Thread(getFinesInfo).start()
     }
 
     override fun onDestroy() {
@@ -125,9 +124,19 @@ class FinesActivity : BaseActivity() {
             try {
                 val start = System.currentTimeMillis()
                 Log.d(TAG, "[kcxxx] loadData ...")
+                var jobs = mutableListOf<Job>()
                 val homeOrg = EgOrg.findOrg(App.getAccount().homeOrg)
-                GatewayJob.fetchAllOrgSettingsAsync(homeOrg).join()
+                jobs.add(GatewayJob.fetchAllOrgSettingsAsync(homeOrg))
+                async {
+                    val authToken = App.getAccount().authToken
+                    val userID = App.getAccount().id
+                    if (authToken != null && userID != null) {
+                        val summary = Gateway.actor.fetchUserFinesSummary(authToken, userID)
+                        Log.d(TAG, "summary: $summary")
+                    }
+                }
                 Log.logElapsedTime(TAG, start, "[kcxxx] loadData")
+                initPayFinesButton()
             } catch (ex: Exception) {
                 Log.d(TAG, "[kcxxx] loadData ... caught", ex)
             }
@@ -136,13 +145,12 @@ class FinesActivity : BaseActivity() {
     }
 
     private fun initPayFinesButton() {
-        val homeOrgId = App.getAccount().homeOrg
-        val homeOrg = findOrg(homeOrgId!!) //TODO: handle null
+        val homeOrg = EgOrg.findOrg(App.getAccount().homeOrg)
         if (resources.getBoolean(R.bool.ou_enable_pay_fines)
-                && homeOrg != null && Utils.safeBool(homeOrg.isPaymentAllowedSetting)) {
-            pay_fines_button!!.isEnabled = false
-            pay_fines_button!!.setOnClickListener {
-                Analytics.logEvent("Fines: Pay Fines", "num_fines", finesRecords!!.size)
+                && homeOrg?.isPaymentAllowedSetting ?: false) {
+            pay_fines_button?.visibility = View.VISIBLE
+            pay_fines_button?.setOnClickListener {
+                Analytics.logEvent("Fines: Pay Fines", "num_fines", finesRecords.size)
                 val username = App.getAccount().username
                 val password = AccountUtils.getPassword(this@FinesActivity, username)
                 var url = (Gateway.baseUrl
@@ -153,8 +161,12 @@ class FinesActivity : BaseActivity() {
                 startActivityForResult(Intent(Intent.ACTION_VIEW, Uri.parse(url)), App.REQUEST_LAUNCH_OPAC_LOGIN_REDIRECT)
             }
         } else {
-            pay_fines_button!!.visibility = View.GONE
+            pay_fines_button?.visibility = View.GONE
         }
+    }
+
+    private fun enablePayFinesButton(enabled: Boolean) {
+        pay_fines_button?.isEnabled = enabled
     }
 
     private fun getFloat(o: OSRFObject?, field: String): Float {
@@ -188,13 +200,13 @@ class FinesActivity : BaseActivity() {
                 } catch (e1: Exception) {
                 }
             }
-            finesRecords = frecords
+            finesRecords = frecords ?: arrayListOf()
             runOnUiThread {
                 listAdapter!!.clear()
                 haveAnyFines = false
                 haveAnyGroceryBills = false
                 if (finesRecords != null) {
-                    for (finesRecord in finesRecords!!) {
+                    for (finesRecord in finesRecords) {
                         listAdapter!!.add(finesRecord)
                         haveAnyFines = true
                         if (finesRecord.recordInfo == null) {
@@ -203,11 +215,11 @@ class FinesActivity : BaseActivity() {
                     }
                 }
                 listAdapter!!.notifyDataSetChanged()
-                total_owed!!.text = decimalFormater!!.format(getFloat(finesSummary, "total_owed").toDouble())
-                total_paid!!.text = decimalFormater!!.format(getFloat(finesSummary, "total_paid").toDouble())
+                total_owed!!.text = decimalFormatter!!.format(getFloat(finesSummary, "total_owed").toDouble())
+                total_paid!!.text = decimalFormatter!!.format(getFloat(finesSummary, "total_paid").toDouble())
                 val balance = getFloat(finesSummary, "balance_owed").toDouble()
-                balance_owed!!.text = decimalFormater!!.format(balance)
-                pay_fines_button!!.isEnabled = haveAnyFines && balance > 0
+                balance_owed!!.text = decimalFormatter!!.format(balance)
+                enablePayFinesButton(haveAnyFines && balance > 0)
                 progress!!.dismiss()
             }
         }
@@ -246,7 +258,7 @@ class FinesActivity : BaseActivity() {
             val record = getItem(position)
             fineTitle?.setText(record.title)
             fineAuthor?.setText(record.author)
-            fineBalanceOwed?.setText(decimalFormater!!.format(record.balance_owed))
+            fineBalanceOwed?.setText(decimalFormatter!!.format(record.balance_owed))
             fineStatus?.setText(record.status)
 
             return row

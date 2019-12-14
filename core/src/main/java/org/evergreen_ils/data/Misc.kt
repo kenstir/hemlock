@@ -16,18 +16,6 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
-package org.evergreen_ils.net
+package org.evergreen_ils.data
 
-import org.evergreen_ils.data.JSONDictionary
-import org.opensrf.util.OSRFObject
-
-interface ActorService {
-    suspend fun fetchServerVersion(): String
-    suspend fun fetchOrgTypes(): List<OSRFObject>
-    suspend fun fetchOrgTree(): OSRFObject
-    suspend fun fetchOrgSettings(orgID: Int): JSONDictionary
-    suspend fun fetchFleshedUser(authToken: String, userID: Int): OSRFObject
-    suspend fun fetchUserMessages(authToken: String, userID: Int): List<OSRFObject>
-    suspend fun fetchUserFinesSummary(authToken: String, userID: Int): OSRFObject
-    suspend fun fetchUserTransactionsWithCharges(authToken: String, userID: Int): List<Any>
-}
+typealias JSONDictionary = Map<String, Any?>

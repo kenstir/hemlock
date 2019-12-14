@@ -33,7 +33,7 @@ object GatewayJob {
         val orgs = if (org != null) listOf(org) else EgOrg.orgs
         for (org in orgs) {
             if (!org.settingsLoaded) {
-                async { org.loadSettings(GatewayActor.fetchOrgSettings(org.id));
+                async { org.loadSettings(Gateway.actor.fetchOrgSettings(org.id));
                     Log.d(TAG, "[kcxxx] org ${org.id} loaded")
                 }
             }
