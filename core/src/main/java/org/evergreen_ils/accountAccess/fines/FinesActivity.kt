@@ -83,7 +83,7 @@ class FinesActivity : BaseActivity() {
         listAdapter = FinesArrayAdapter(this,
                 R.layout.fines_list_item, fineRecords)
         lv?.setAdapter(listAdapter)
-        lv?.setOnItemClickListener(AdapterView.OnItemClickListener { parent, view, position, id ->
+        lv?.setOnItemClickListener { parent, view, position, id ->
             Analytics.logEvent("Fines: Tap List Item", "have_grocery_bills", haveAnyGroceryBills)
             val records = ArrayList<RecordInfo>()
             if (haveAnyGroceryBills) {
@@ -103,7 +103,7 @@ class FinesActivity : BaseActivity() {
                 }
                 RecordDetails.launchDetailsFlow(this@FinesActivity, records, position)
             }
-        })
+        }
         updatePayFinesButtonState(false)
     }
 

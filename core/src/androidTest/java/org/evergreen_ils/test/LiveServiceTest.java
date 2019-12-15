@@ -230,18 +230,18 @@ public class LiveServiceTest {
 //        Log.d(TAG, "msg=" + result.getErrorMessage());
 //        Log.d(TAG, "here");
 //    }
-
-    @Ignore("skip until I figure out how to pass username/password")
-    @Test
-    public void testMessagesRetrieve() throws Exception {
-        assertLoggedIn();
-
-        AccountAccess ac = AccountAccess.getInstance();
-
-        Integer unread_count = ac.getUnreadMessageCount();
-        assertNotNull(unread_count);
-        Log.d(TAG, "unread messages: " + unread_count);
-    }
+//
+//    @Ignore("skip until I figure out how to pass username/password")
+//    @Test
+//    public void testMessagesRetrieve() throws Exception {
+//        assertLoggedIn();
+//
+//        AccountAccess ac = AccountAccess.getInstance();
+//
+//        Integer unread_count = ac.getUnreadMessageCount();
+//        assertNotNull(unread_count);
+//        Log.d(TAG, "unread messages: " + unread_count);
+//    }
 
     @Ignore("todo: reimpl service tests using mocks")
     @Test

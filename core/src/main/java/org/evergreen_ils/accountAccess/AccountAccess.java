@@ -269,10 +269,6 @@ public class AccountAccess {
         return acp;
     }
 
-    /*
-     * Method used to renew a circulation record based on target_copy_id Returns
-     * many objects, don't think they are needed
-     */
     /**
      * Renew circ.
      *
@@ -292,16 +288,6 @@ public class AccountAccess {
                         account.getAuthToken(), param });
 
         return GatewayResult.createFromObject(resp);
-    }
-
-    // ------------------------orgs Section
-    // --------------------------------------//
-
-
-    public OSRFObject fetchOrgTree() {
-        Object resp = Utils.doRequest(conn(), Api.ACTOR,
-                Api.ORG_TREE_RETRIEVE, new Object[]{});
-        return (OSRFObject) resp;
     }
 
     // ------------------------Holds Section
@@ -472,9 +458,6 @@ public class AccountAccess {
         }
     }
 
-    /**
-     * Fetch hold status.
-     */
     public void fetchHoldQueueStats(HoldRecord hold)
             throws SessionNotFoundException {
 
@@ -603,36 +586,6 @@ public class AccountAccess {
         }
 
         return result_obj;
-    }
-
-    /**
-     * Checks if is hold possible.
-     *
-     * @param pickup_lib the pickup_lib
-     * @param recordID the record id
-     * @return the object
-     * @throws SessionNotFoundException the session not found exception
-     */
-    public Object isHoldPossible(Integer recordID, Integer pickup_lib)
-            throws SessionNotFoundException {
-        Account account = App.getAccount();
-
-        HashMap<String, Object> args = new HashMap<>();
-        args.put("patronid", account.getId());
-        args.put("pickup_lib", pickup_lib);
-        args.put("titleid", recordID);
-
-        ArrayList<Integer> ids = new ArrayList<>(1);
-        ids.add(recordID);
-
-        Object response = Utils.doRequest(conn(), Api.SERVICE_CIRC,
-                Api.HOLD_IS_POSSIBLE, account.getAuthToken(), new Object[] {
-                        account.getAuthToken(), args, ids });
-
-        // successs looks like  {local_avail:'',depth:null,success:1}
-        // failure looks like {place_unfillable:1,age_protected_copy:null,success:0,last_event:{...}
-
-        return response;
     }
 
     // ---------------------------------------Book
@@ -833,31 +786,4 @@ public class AccountAccess {
 
         return recordInfoArray;
     }
-
-    //------------------------------------------------------
-
-    /** return number of unread messages in patron message center
-     *
-     * We don't care about the messages themselves here, because I don't see a way to modify
-     * the messages via OSRF, and it's easier to redirect to that section of the OPAC.
-     */
-    public Integer getUnreadMessageCount() {
-        Account account = App.getAccount();
-        Object resp = Utils.doRequest(conn(), Api.ACTOR,
-                Api.MESSAGES_RETRIEVE, new Object[]{
-                        account.getAuthToken(), account.getId(), null});
-        Integer unread_count = 0;
-        if (resp != null) {
-            List<OSRFObject> list = (List<OSRFObject>) resp;
-            for (OSRFObject obj : list) {
-                String read_date = obj.getString("read_date");
-                Boolean deleted = Api.parseBoolean(obj.get("deleted"));
-                if (read_date == null && !deleted) {
-                    ++unread_count;
-                }
-            }
-        }
-        return unread_count;
-    }
-
 }
