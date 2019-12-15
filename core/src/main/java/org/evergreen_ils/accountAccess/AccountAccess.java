@@ -27,12 +27,12 @@ import org.evergreen_ils.Result;
 import org.evergreen_ils.accountAccess.bookbags.BookBag;
 import org.evergreen_ils.accountAccess.bookbags.BookBagItem;
 import org.evergreen_ils.accountAccess.checkout.CircRecord;
-import org.evergreen_ils.accountAccess.fines.FinesRecord;
 import org.evergreen_ils.accountAccess.holds.HoldRecord;
 import org.evergreen_ils.android.AccountUtils;
 import org.evergreen_ils.android.App;
 import org.evergreen_ils.auth.Const;
 import org.evergreen_ils.data.Account;
+import org.evergreen_ils.data.FineRecord;
 import org.evergreen_ils.net.Gateway;
 import org.evergreen_ils.searchCatalog.RecordInfo;
 import org.evergreen_ils.system.Analytics;
@@ -633,53 +633,6 @@ public class AccountAccess {
         // failure looks like {place_unfillable:1,age_protected_copy:null,success:0,last_event:{...}
 
         return response;
-    }
-
-    // ----------------------------Fines
-    // Summary------------------------------------//
-
-    /**
-     * Gets the fines summary.
-     *
-     * @return the fines summary
-     * @throws SessionNotFoundException the session not found exception
-     */
-    public OSRFObject getFinesSummary() throws SessionNotFoundException {
-        Account account = App.getAccount();
-
-        // mous object
-        OSRFObject finesSummary = (OSRFObject) Utils.doRequest(conn(), Api.ACTOR,
-                Api.FINES_SUMMARY, account.getAuthToken(), new Object[] {
-                        account.getAuthToken(), account.getId() });
-
-        return finesSummary;
-    }
-
-    /**
-     * Gets the transactions.
-     *
-     * @return the transactions
-     * @throws SessionNotFoundException the session not found exception
-     */
-    public ArrayList<FinesRecord> getTransactions()
-            throws SessionNotFoundException {
-        Account account = App.getAccount();
-
-        Object transactions = Utils.doRequest(conn(), Api.ACTOR,
-                Api.TRANSACTIONS_WITH_CHARGES, account.getAuthToken(), new Object[] {
-                        account.getAuthToken(), account.getId() });
-
-        ArrayList<FinesRecord> finesRecords = new ArrayList<>();
-        List<Map<String, OSRFObject>> list = (List<Map<String, OSRFObject>>) transactions;
-        if (list == null)
-            return finesRecords;
-
-        for (int i = 0; i < list.size(); i++) {
-            Map<String, OSRFObject> item = list.get(i);
-            FinesRecord record = new FinesRecord(item.get("circ"), item.get("record"), item.get("transaction"));
-            finesRecords.add(record);
-        }
-        return finesRecords;
     }
 
     // ---------------------------------------Book

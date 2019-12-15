@@ -19,6 +19,7 @@
  */
 package org.evergreen_ils.accountAccess.fines
 
+import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
@@ -34,6 +35,9 @@ import org.evergreen_ils.accountAccess.AccountAccess
 import org.evergreen_ils.android.AccountUtils
 import org.evergreen_ils.android.App
 import org.evergreen_ils.data.EgOrg
+import org.evergreen_ils.data.FineRecord
+import org.evergreen_ils.data.JSONDictionary
+import org.evergreen_ils.data.Result
 import org.evergreen_ils.net.Gateway
 import org.evergreen_ils.net.GatewayError
 import org.evergreen_ils.net.GatewayJob
@@ -44,7 +48,6 @@ import org.evergreen_ils.system.Log
 import org.evergreen_ils.utils.ui.BaseActivity
 import org.evergreen_ils.utils.ui.ProgressDialogSupport
 import org.opensrf.util.OSRFObject
-import java.lang.Runnable
 import java.net.URLEncoder
 import java.text.DecimalFormat
 
@@ -57,10 +60,9 @@ class FinesActivity : BaseActivity() {
     private var pay_fines_button: Button? = null
     private var lv: ListView? = null
     private var listAdapter: FinesArrayAdapter? = null
-    private var finesRecords: ArrayList<FinesRecord> = ArrayList()
+    private var fineRecords: ArrayList<FineRecord> = ArrayList()
     private var haveAnyGroceryBills = false
     private var haveAnyFines = false
-    private var getFinesInfo: Runnable? = null
     private var ac: AccountAccess? = null
     private var progress: ProgressDialogSupport? = null
     private var decimalFormatter: DecimalFormat? = null
@@ -79,9 +81,9 @@ class FinesActivity : BaseActivity() {
         pay_fines_button = findViewById(R.id.pay_fines)
         ac = AccountAccess.getInstance()
         progress = ProgressDialogSupport()
-        finesRecords = ArrayList()
+        fineRecords = ArrayList()
         listAdapter = FinesArrayAdapter(this,
-                R.layout.fines_list_item, finesRecords)
+                R.layout.fines_list_item, fineRecords)
         lv?.setAdapter(listAdapter)
         lv?.setOnItemClickListener(AdapterView.OnItemClickListener { parent, view, position, id ->
             Analytics.logEvent("Fines: Tap List Item", "have_grocery_bills", haveAnyGroceryBills)
@@ -90,13 +92,17 @@ class FinesActivity : BaseActivity() {
                 // If any of the fines are for non-circulation items ("grocery bills"), we
                 // start the details flow with only the one record, if a record was selected.
                 // The details flow can't handle nulls.
-                val record = finesRecords[position].recordInfo
+                val record = fineRecords[position].recordInfo
                 if (record != null) {
                     records.add(record)
                     RecordDetails.launchDetailsFlow(this@FinesActivity, records, 0)
                 }
             } else {
-                for (item in finesRecords) records.add(item.recordInfo)
+                for (item in fineRecords) {
+                    item.recordInfo?.let {
+                        records.add(it)
+                    }
+                }
                 RecordDetails.launchDetailsFlow(this@FinesActivity, records, position)
             }
         })
@@ -182,7 +188,7 @@ class FinesActivity : BaseActivity() {
                             updateSummary(Gateway.actor.fetchUserFinesSummary(authToken, userID))
                         })
                         jobs.add(async {
-                            updateTransactions(Gateway.actor.fetchUserTransactionsWithCharges(authToken, userID))
+                            onTransactionsResult(Gateway.actor.fetchUserTransactionsWithCharges(authToken, userID))
                         })
                     }
 
@@ -204,7 +210,7 @@ class FinesActivity : BaseActivity() {
                 && homeOrg?.isPaymentAllowedSetting ?: false) {
             pay_fines_button?.visibility = View.VISIBLE
             pay_fines_button?.setOnClickListener {
-                Analytics.logEvent("Fines: Pay Fines", "num_fines", finesRecords.size)
+                Analytics.logEvent("Fines: Pay Fines", "num_fines", fineRecords.size)
                 val username = App.getAccount().username
                 val password = AccountUtils.getPassword(this@FinesActivity, username)
                 var url = (Gateway.baseUrl
@@ -233,23 +239,46 @@ class FinesActivity : BaseActivity() {
         updatePayFinesButtonState(balance > 0)
     }
 
-    private fun updateTransactions(objects: List<OSRFObject>) {
-        Log.d(TAG, "[kcxxx] updateTransactions o:$objects")
-        listAdapter?.clear()
-        haveAnyFines = false
-        haveAnyGroceryBills = false
-        for (finesRecord in objects) {
-            Log.d(TAG, "finesRecord: $finesRecord")
+    private fun onTransactionsResult(result: Result<List<OSRFObject>>) {
+        when (result) {
+            is Result.Success -> loadTransactions(result.data)
+            is Result.Error -> showAlert(result.exception)
         }
-//        listAdapter!!.add(finesRecord)
-//        haveAnyFines = true
-//        if (finesRecord.recordInfo == null) {
-//            haveAnyGroceryBills = true
-//        }
-//    }
-//}
-//listAdapter!!.notifyDataSetChanged()
-//progress!!.dismiss()
+    }
+
+    private fun loadTransactions(objects: List<JSONDictionary>) {
+        Log.d(TAG, "[kcxxx] updateTransactions o:$objects")
+
+        listAdapter?.clear()
+        val fines = FineRecord.makeArray(objects)
+        haveAnyFines = fines.isNotEmpty()
+        haveAnyGroceryBills = false
+
+        for (fine in fines) {
+            listAdapter?.add(fine)
+            if (fine.recordInfo == null) haveAnyGroceryBills = true
+        }
+
+        listAdapter?.notifyDataSetChanged()
+        //progress!!.dismiss()
+    }
+
+    protected fun showAlert(ex: Exception) {
+        showAlert(ex.localizedMessage)
+    }
+
+    protected fun showAlert(errorMessage: String) {
+        if (isFinishing) return
+        val builder = AlertDialog.Builder(this)
+        //alertMessage = errorMessage
+        builder.setTitle("Login failed")
+                .setMessage(errorMessage)
+                .setPositiveButton(android.R.string.ok) { dialog, which ->
+                    //alertDialog = null
+                    //alertMessage = null
+                }
+        val alertDialog = builder.create()
+        alertDialog.show()
     }
 
     private fun getFloat(o: OSRFObject?, field: String): Float {
@@ -262,7 +291,7 @@ class FinesActivity : BaseActivity() {
         return ret
     }
 
-    internal inner class FinesArrayAdapter(context: Context, private val resourceId: Int, private val items: List<FinesRecord>) : ArrayAdapter<FinesRecord>(context, resourceId, items) {
+    internal inner class FinesArrayAdapter(context: Context, private val resourceId: Int, private val items: List<FineRecord>) : ArrayAdapter<FineRecord>(context, resourceId, items) {
         private var fineTitle: TextView? = null
         private var fineAuthor: TextView? = null
         private var fineBalanceOwed: TextView? = null
@@ -272,7 +301,7 @@ class FinesActivity : BaseActivity() {
             return items.size
         }
 
-        override fun getItem(index: Int): FinesRecord {
+        override fun getItem(index: Int): FineRecord {
             return items[index]
         }
 
@@ -294,7 +323,7 @@ class FinesActivity : BaseActivity() {
 
             val record = getItem(position)
             fineTitle?.setText(record.title)
-            fineAuthor?.setText(record.author)
+            fineAuthor?.setText(record.subtitle)
             fineBalanceOwed?.setText(decimalFormatter!!.format(record.balance_owed))
             fineStatus?.setText(record.status)
 

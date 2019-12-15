@@ -34,6 +34,7 @@ class GatewayResultTest {
         @JvmStatic
         fun setUpClass() {
             Log.setProvider(StdoutLogProvider())
+
             val fields = arrayOf("juvenile","usrname","home_ou")
             OSRFRegistry.registerObject("au", OSRFRegistry.WireProtocol.ARRAY, fields)
         }
@@ -103,9 +104,21 @@ class GatewayResultTest {
         assertTrue(arrayResult.isFailure)
     }
 
-    // not sure if this happens IRL
+    @Test
+    fun test_string() {
+        val json = """
+            {"payload":["3-2-8"],"status":200}
+            """
+        val result = GatewayResult.create(json)
+        assertFalse(result.failed)
+
+        val str = result.asString()
+        assertEquals("3-2-8", str)
+    }
+
     @Test
     fun test_emptyArray() {
+        // open-ils.actor.user.transactions.have_charge.fleshed response if no charges
         val json = """
             {"payload":[[]],"status":200}
             """
@@ -117,19 +130,9 @@ class GatewayResultTest {
         val strResult = kotlin.runCatching { result.asString() }
         assertTrue(strResult.isFailure)
         val arr = result.asObjectArray()
-        assertEquals(0, arr?.size)
-    }
-
-    @Test
-    fun test_string() {
-        val json = """
-            {"payload":["3-2-8"],"status":200}
-            """
-        val result = GatewayResult.create(json)
-        assertFalse(result.failed)
-
-        val str = result.asString()
-        assertEquals("3-2-8", str)
+        assertEquals(0, arr.size)
+        val arr2 = result.asArray()
+        assertEquals(0, arr2.size)
     }
 
     @Test

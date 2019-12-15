@@ -20,6 +20,7 @@ package org.evergreen_ils.net
 
 import org.evergreen_ils.Api
 import org.evergreen_ils.data.JSONDictionary
+import org.evergreen_ils.data.Result
 import org.opensrf.util.OSRFObject
 
 object GatewayActor: ActorService {
@@ -65,10 +66,15 @@ object GatewayActor: ActorService {
         }
     }
 
-    override suspend fun fetchUserTransactionsWithCharges(authToken: String, userID: Int): List<OSRFObject> {
-        val args = arrayOf<Any?>(authToken, userID)
-        return Gateway.fetch(Api.ACTOR, Api.TRANSACTIONS_WITH_CHARGES, args, false) {
-            it.asObjectArray()
+    override suspend fun fetchUserTransactionsWithCharges(authToken: String, userID: Int): Result<List<OSRFObject>> {
+        return try {
+            val args = arrayOf<Any?>(authToken, userID)
+            val arr = Gateway.fetch(Api.ACTOR, Api.TRANSACTIONS_WITH_CHARGES, args, false) {
+                it.asObjectArray()
+            }
+            Result.Success(arr)
+        } catch (e: Exception) {
+            Result.Error(e)
         }
     }
 }

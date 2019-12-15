@@ -19,6 +19,7 @@
 package org.evergreen_ils.net
 
 import org.evergreen_ils.data.JSONDictionary
+import org.evergreen_ils.data.Result
 import org.opensrf.util.OSRFObject
 
 interface ActorService {
@@ -29,5 +30,5 @@ interface ActorService {
     suspend fun fetchFleshedUser(authToken: String, userID: Int): OSRFObject
     suspend fun fetchUserMessages(authToken: String, userID: Int): List<OSRFObject>
     suspend fun fetchUserFinesSummary(authToken: String, userID: Int): OSRFObject?
-    suspend fun fetchUserTransactionsWithCharges(authToken: String, userID: Int): List<OSRFObject>
+    suspend fun fetchUserTransactionsWithCharges(authToken: String, userID: Int): Result<List<OSRFObject>>
 }
