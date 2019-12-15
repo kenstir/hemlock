@@ -63,7 +63,6 @@ class FinesActivity : BaseActivity() {
     private var fineRecords: ArrayList<FineRecord> = ArrayList()
     private var haveAnyGroceryBills = false
     private var haveAnyFines = false
-    private var ac: AccountAccess? = null
     private var progress: ProgressDialogSupport? = null
     private var decimalFormatter: DecimalFormat? = null
 
@@ -79,7 +78,6 @@ class FinesActivity : BaseActivity() {
         total_paid = findViewById(R.id.fines_total_paid)
         balance_owed = findViewById(R.id.fines_balance_owed)
         pay_fines_button = findViewById(R.id.pay_fines)
-        ac = AccountAccess.getInstance()
         progress = ProgressDialogSupport()
         fineRecords = ArrayList()
         listAdapter = FinesArrayAdapter(this,
