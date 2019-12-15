@@ -82,7 +82,7 @@ public class MARCXMLParser {
         return currentRecord;
     }
 
-    private void handleStartElement(XmlPullParser parser) throws IOException, XmlPullParserException {
+    private void handleStartElement(XmlPullParser parser) {
         final String ns = null;
         String name = parser.getName();
         if ("datafield".equals(name)) {
@@ -105,7 +105,7 @@ public class MARCXMLParser {
         }
     }
 
-    private void handleEndElement(XmlPullParser parser) throws Exception {
+    private void handleEndElement(XmlPullParser parser) {
         String name = parser.getName();
         if ("datafield".equals(name)) {
             if (currentDatafield != null) {
