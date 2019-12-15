@@ -64,7 +64,7 @@ public class OSRFRegistry implements Serializable{
      */
     public static OSRFRegistry getRegistry(String netClass) {
         if( netClass == null ) return null;
-        return (OSRFRegistry) registry.get(netClass);
+        return registry.get(netClass);
     }
 
 
