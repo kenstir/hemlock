@@ -36,6 +36,7 @@ import org.evergreen_ils.searchCatalog.RecordInfo;
 import org.evergreen_ils.system.Organization;
 import org.evergreen_ils.utils.ui.ActionBarUtils;
 import org.evergreen_ils.utils.ui.BaseActivity;
+import org.evergreen_ils.utils.ui.OrgArrayAdapter;
 import org.evergreen_ils.utils.ui.ProgressDialogSupport;
 import org.evergreen_ils.views.splashscreen.SplashActivity;
 
@@ -228,7 +229,7 @@ public class HoldDetailsActivity extends BaseActivity {
                 selectedOrgPos = i;
             }
         }
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, R.layout.org_item_layout, list);
+        ArrayAdapter<String> adapter = new OrgArrayAdapter(this, R.layout.org_item_layout, list, true);
         orgSelector.setAdapter(adapter);
         orgSelector.setSelection(selectedOrgPos);
 
