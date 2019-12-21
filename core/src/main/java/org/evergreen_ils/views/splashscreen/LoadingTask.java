@@ -138,15 +138,10 @@ public class LoadingTask {
             publishProgress("Starting session");
             boolean haveSession = false;
             try {
-                Log.d(TAG, "kcxxx: ac.retrieveSession ...");
                 haveSession = ac.retrieveSession(auth_token);
-                Log.d(TAG, "kcxxx: ac.retrieveSession ... "+haveSession);
             } catch (SessionNotFoundException e) {
-                Log.d(TAG, "kcxxx: ac.reauthenticate ...");
                 haveSession = ac.reauthenticate(mCallingActivity, account_name);
-                Log.d(TAG, "kcxxx: ac.reauthenticate ..."+haveSession);
             }
-            Log.d(TAG, "kcxxx: haveSession="+haveSession);
             if (!haveSession)
                 return "no session";
             now_ms = Log.logElapsedTime(TAG, now_ms, "loading.session");
