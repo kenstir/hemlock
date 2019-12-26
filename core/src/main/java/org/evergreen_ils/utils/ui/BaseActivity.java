@@ -160,7 +160,7 @@ public class BaseActivity extends AppCompatActivity
         boolean ret = true;
         if (id == R.id.nav_header) {
             Analytics.logEvent("Home: Open", "via", "nav_drawer");
-            startActivity(new Intent(this, MainActivity.class));
+            startActivity(new Intent(this, MainActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
         } else if (id == R.id.main_btn_search) {
             Analytics.logEvent("Search: Open", "via", "nav_drawer");
             startActivity(new Intent(this, SearchActivity.class));
