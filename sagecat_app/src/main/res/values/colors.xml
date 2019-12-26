@@ -7,8 +7,9 @@
     <color name="sage_green4">#20AE00</color>
     <color name="sage_green5">#23622A</color>
 
-    <color name="hemlock_text_alert">#ff9100</color>
-
     <color name="primary">@color/sage_green5</color>
     <color name="primary_dark">@color/sage_green5</color>
+    <color name="accent">@color/sage_green2</color>
+
+    <color name="hemlock_text_alert">#ff9100</color>
 </resources>
