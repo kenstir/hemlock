@@ -7,6 +7,8 @@
     <string name="menu_logout">Logout</string>
     <string name="menu_feedback">Send feedback</string>
     <string name="menu_messages">Messages</string>
+    <string name="menu_dark_mode">Dark Mode</string>
+    <string name="menu_light_mode">Light Mode</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
@@ -74,9 +76,11 @@
     <string name="renew_item_positive_button">Renew item</string>
     <string name="toast_item_renewed">Item renewed</string>
     <string name="record_of">Item %1$d of %2$d</string>
+    <string name="no_results"></string>
     <string name="n_results">%1$d results</string>
     <string name="first_n_of_m_results">%1$d most relevant results (of %2$d total)</string>
     <string name="n_of_m_available">%1$d of %2$s available at %3$s</string>
+    <string name="n_items_on_hold">items on hold: %1$d</string>
 
     <!-- Search Details View -->
     <string name="show_copies">Copy info</string>
@@ -110,8 +114,7 @@
     <string name="hold_status_in_transit">In Transit from %1$s\nSince %2$s</string>
 
     <!-- Checkout items -->
-    <string name="checkout_items">Items checked out:</string>
-    <string name="checkout_overdue_items">Overdue:</string>
+    <string name="checkout_items">Items checked out: %1$d</string>
     <string name="checkout_renewals_left">Renewals left: %d</string>
     <string name="due">Due %s</string>
     <string name="overdue">(overdue)</string>

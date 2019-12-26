@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <color name="noble_primary">#01579b</color>
+    <color name="noble_light">#4f83cc</color>
+    <color name="noble_dark">#002f6c</color>
+
+    <color name="logo_background">@color/background_material_light</color>
+    <color name="background">@color/background_material_light</color>
+    <color name="dark">@color/background_material_light</color>
+
+    <color name="primary">@color/noble_primary</color>
+    <color name="primary_dark">@color/noble_dark</color>
+    <color name="accent">@color/noble_light</color>
+    <color name="hemlock_text_alert">#ff9100</color>
+
+</resources>

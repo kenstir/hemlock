@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Kenneth H. Cox
+ * Copyright (C) 2015 Kenneth H. Cox
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -30,14 +30,14 @@ import org.evergreen_ils.system.Log;
 import java.util.Date;
 
 /** App State that is persistent across invocations; stored as preferences.
- *
- * Created by kenstir on 11/8/2015.
  */
 public class AppState {
     private static final String TAG = AppState.class.getSimpleName();
+
     public static final String LAUNCH_COUNT = "launch_count";
     public static final String LIBRARY_URL = "library_url";
     public static final String LIBRARY_NAME = "library_name";
+    public static final String NIGHT_MODE = "night_mode";
 
     // increment PREFS_VERSION every time you make a change to the persistent pref storage
     private static final int PREFS_VERSION = 2;
@@ -99,8 +99,12 @@ public class AppState {
     }
 
     public static int getInt(String key) {
+        return getInt(key, 0);
+    }
+
+    public static int getInt(String key, int dflt) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        return prefs.getInt(key, 0);
+        return prefs.getInt(key, dflt);
     }
 
     public static void setString(String key, String value) {

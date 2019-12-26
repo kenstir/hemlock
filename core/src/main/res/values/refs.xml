@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <drawable name="ic_search_24">@drawable/baseline_search_black_24</drawable>
+    <drawable name="ic_search_48">@drawable/baseline_search_black_48</drawable>
+    <drawable name="ic_checkouts_24">@drawable/baseline_book_black_24</drawable>
+    <drawable name="ic_checkouts_48">@drawable/baseline_book_black_24</drawable>
+    <drawable name="ic_holds_24">@drawable/baseline_pan_tool_black_24</drawable>
+    <drawable name="ic_holds_48">@drawable/baseline_pan_tool_black_48</drawable>
+    <drawable name="ic_fines_24">@drawable/baseline_account_balance_black_24</drawable>
+    <drawable name="ic_fines_48">@drawable/baseline_account_balance_black_48</drawable>
+    <drawable name="ic_lists_24">@drawable/baseline_assignment_black_24</drawable>
+    <drawable name="ic_lists_48">@drawable/baseline_assignment_black_48</drawable>
+    <drawable name="ic_barcode_24">@drawable/baseline_credit_card_black_24</drawable>
+    <drawable name="ic_barcode_48">@drawable/baseline_credit_card_black_48</drawable>
+</resources>

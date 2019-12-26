@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools">
+
+    <color name="button_icon_tint">@color/background</color>
+    <color name="logo_background">@color/material_grey_800</color>
+    <color name="search_bar_background">@color/material_grey_850</color>
+    <color name="secondary_bar_background">@color/material_grey_850</color>
+    <color name="table_header_background">@color/material_grey_900</color>
+    <color name="table_header_textcolor">#c0ffffff</color>
+
+</resources>

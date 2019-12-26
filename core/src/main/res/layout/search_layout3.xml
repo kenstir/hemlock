@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
+    xmlns:tools="http://schemas.android.com/tools" android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -11,14 +11,13 @@
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        style="@style/Hemlock.SecondaryToolbar"
         >
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="8dp"
-            android:background="@color/background"
+            style="@style/Hemlock.SearchBar"
             android:orientation="horizontal">
 
             <EditText
@@ -32,7 +31,7 @@
                 android:imeActionLabel="@string/search_button"
                 android:imeOptions="actionSearch"
                 android:inputType="textAutoComplete"
-                android:maxLines="1" />
+                android:maxLines="1" tools:targetApi="o"/>
 
             <androidx.appcompat.widget.SwitchCompat
                 android:id="@+id/search_options_button"
@@ -53,24 +52,29 @@
             android:orientation="vertical"
             android:id="@+id/search_options_layout"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            style="@style/Hemlock.SecondaryBar">
             <LinearLayout
                 android:orientation="horizontal"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
+
                 <Spinner
                     android:id="@+id/search_qtype_spinner"
-                    android:contentDescription="@string/search_qtype_spinner_alt"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:entries="@array/search_qtype"
-                    android:layout_weight="1"/>
+                    android:layout_margin="1dp"
+                    android:layout_weight="1"
+                    android:contentDescription="@string/search_qtype_spinner_alt"
+                    android:entries="@array/search_qtype" />
+
                 <Spinner
                     android:id="@+id/search_format_spinner"
-                    android:contentDescription="@string/search_format_spinner_alt"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"/>
+                    android:layout_margin="1dp"
+                    android:layout_weight="1"
+                    android:contentDescription="@string/search_format_spinner_alt" />
             </LinearLayout>
             <LinearLayout
                 android:orientation="horizontal"
@@ -81,7 +85,8 @@
                     android:id="@+id/search_org_spinner"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="left"
+                    android:layout_gravity="start"
+                    android:layout_margin="1dp"
                     android:layout_weight="2"
                     android:contentDescription="@string/search_org_spinner_alt"
                     android:spinnerMode="dialog" />
@@ -91,19 +96,21 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/background">
+            android:theme="@style/Hemlock.TableHeader">
 
             <TextView
                 android:id="@+id/search_result_number"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:freezesText="true"
-                android:gravity="center" />
+                android:text="@string/no_results"
+                tools:text="200 most relevant results" />
         </LinearLayout>
     </LinearLayout>
+
     <FrameLayout
         android:id="@+id/search_results_list"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        />
 
 </LinearLayout>

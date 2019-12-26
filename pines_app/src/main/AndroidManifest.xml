@@ -3,8 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="net.kenstir.apps.pines"
     android:installLocation="auto"
-    android:versionCode="54"
-    android:versionName="1.2.1">
+    android:versionCode="60"
+    android:versionName="1.3.6">
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS" />
@@ -111,7 +111,9 @@
                 android:label="@string/ou_account_label">
         </activity>
 
-        <activity android:name="org.evergreen_ils.views.MainActivity">
+        <activity
+            android:name="org.evergreen_ils.views.MainActivity"
+            android:launchMode="singleTask">
         </activity>
 
         <activity

@@ -26,6 +26,8 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import com.google.android.material.navigation.NavigationView;
+
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.appcompat.app.ActionBarDrawerToggle;
@@ -69,14 +71,18 @@ public class BaseActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Analytics.initialize(this);
+
         if (!SplashActivity.isAppInitialized()) {
             SplashActivity.restartApp(this);
             mRestarting = true;
             return;
         }
         mRestarting = false;
+
+        Analytics.initialize(this);
         App.init(this);
+        applyNightMode();
+
         initMenuProvider();
         if (mMenuItemHandler != null)
             mMenuItemHandler.onCreate(this);
@@ -94,15 +100,15 @@ public class BaseActivity extends AppCompatActivity
         super.setContentView(layoutResID);
         getToolbar();
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         if (drawer != null) {
             ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                     this, drawer, mToolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-            drawer.setDrawerListener(toggle);
+            drawer.addDrawerListener(toggle);
             toggle.syncState();
         }
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        NavigationView navigationView = findViewById(R.id.nav_view);
         if (navigationView != null) {
             navigationView.setNavigationItemSelectedListener(this);
             View navHeader = navigationView.getHeaderView(0);
@@ -118,7 +124,7 @@ public class BaseActivity extends AppCompatActivity
 
     @Override
     public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         if (drawer != null && drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
@@ -154,7 +160,7 @@ public class BaseActivity extends AppCompatActivity
         boolean ret = true;
         if (id == R.id.nav_header) {
             Analytics.logEvent("Home: Open", "via", "nav_drawer");
-            startActivity(new Intent(this, MainActivity.class));
+            startActivity(new Intent(this, MainActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
         } else if (id == R.id.main_btn_search) {
             Analytics.logEvent("Search: Open", "via", "nav_drawer");
             startActivity(new Intent(this, SearchActivity.class));
@@ -224,8 +230,29 @@ public class BaseActivity extends AppCompatActivity
                 path = path + "&password=" + URLEncoder.encode(password);
             String url = EvergreenServer.getInstance().getUrl(path);
             startActivityForResult(new Intent(Intent.ACTION_VIEW, Uri.parse(url)), REQUEST_LAUNCH_OPAC_LOGIN_REDIRECT);
+            return true;
+        } else if (id == R.id.action_dark_mode) {
+            saveAndApplyNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+            // return false or else the menu view will be leaked when the activity is restarted
+            return false;
+        } else if (id == R.id.action_light_mode) {
+            saveAndApplyNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+            // return false or else the menu view will be leaked when the activity is restarted
+            return false;
         }
         return false;
+    }
+
+    protected void saveAndApplyNightMode(int nightMode) {
+        AppState.setInt(AppState.NIGHT_MODE, nightMode);
+        Log.d(TAG,"saveAndApplyNightMode:"+nightMode);
+        AppCompatDelegate.setDefaultNightMode(nightMode);
+    }
+
+    protected void applyNightMode() {
+        int nightMode = AppState.getInt(AppState.NIGHT_MODE, AppCompatDelegate.MODE_NIGHT_YES);
+        Log.d(TAG,"applyNightMode:"+nightMode);
+        AppCompatDelegate.setDefaultNightMode(nightMode);
     }
 
     @SuppressLint("StringFormatInvalid")

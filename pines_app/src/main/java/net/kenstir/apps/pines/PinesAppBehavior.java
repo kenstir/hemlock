@@ -32,6 +32,7 @@ import java.util.List;
 
 import androidx.annotation.NonNull;
 
+@SuppressWarnings("unused")
 public class PinesAppBehavior extends AppBehavior {
     private static final String TAG = PinesAppBehavior.class.getSimpleName();
 

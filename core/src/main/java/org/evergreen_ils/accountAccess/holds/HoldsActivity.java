@@ -53,7 +53,7 @@ public class HoldsActivity extends BaseActivity {
     private List<HoldRecord> holdRecords = null;
     private Context context;
     private Runnable getHoldsRunnable = null;
-    private TextView holdsNoText;
+    private TextView holdsSummary;
     private ProgressDialogSupport progress;
 
     @Override
@@ -63,7 +63,7 @@ public class HoldsActivity extends BaseActivity {
 
         setContentView(R.layout.activity_holds);
 
-        holdsNoText = findViewById(R.id.holds_number);
+        holdsSummary = findViewById(R.id.holds_summary);
         lv = findViewById(R.id.holds_item_list);
         context = this;
         accountAccess = AccountAccess.getInstance();
@@ -96,7 +96,7 @@ public class HoldsActivity extends BaseActivity {
                         for (int i = 0; i < holdRecords.size(); i++)
                             listAdapter.add(holdRecords.get(i));
 
-                        holdsNoText.setText(String.format("%d", listAdapter.getCount()));
+                        holdsSummary.setText(String.format(getString(R.string.n_items_on_hold), listAdapter.getCount()));
                         progress.dismiss();
                         listAdapter.notifyDataSetChanged();
                     }
@@ -182,10 +182,10 @@ public class HoldsActivity extends BaseActivity {
                 row = inflater.inflate(R.layout.holds_list_item, parent, false);
             }
 
-            holdTitle = (TextView) row.findViewById(R.id.hold_title);
-            holdAuthor = (TextView) row.findViewById(R.id.hold_author);
-            holdFormat = (TextView) row.findViewById(R.id.hold_format);
-            status = (TextView) row.findViewById(R.id.hold_status);
+            holdTitle = row.findViewById(R.id.hold_title);
+            holdAuthor = row.findViewById(R.id.hold_author);
+            holdFormat = row.findViewById(R.id.hold_format);
+            status = row.findViewById(R.id.hold_status);
 
             holdTitle.setText(record.title);
             holdAuthor.setText(record.author);

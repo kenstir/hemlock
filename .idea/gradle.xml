@@ -3,6 +3,9 @@
   <component name="GradleSettings">
     <option name="linkedExternalProjectsSettings">
       <GradleProjectSettings>
+        <compositeConfiguration>
+          <compositeBuild compositeDefinitionSource="SCRIPT" />
+        </compositeConfiguration>
         <option name="distributionType" value="DEFAULT_WRAPPED" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
         <option name="modules">
@@ -12,6 +15,7 @@
             <option value="$PROJECT_DIR$/cool_app" />
             <option value="$PROJECT_DIR$/core" />
             <option value="$PROJECT_DIR$/cwmars_app" />
+            <option value="$PROJECT_DIR$/hemlock-pro-assets" />
             <option value="$PROJECT_DIR$/hemlock_app" />
             <option value="$PROJECT_DIR$/noble_app" />
             <option value="$PROJECT_DIR$/ntlc_app" />

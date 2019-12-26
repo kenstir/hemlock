@@ -44,16 +44,12 @@ import org.evergreen_ils.system.Log;
 import org.evergreen_ils.utils.ui.AppState;
 import org.evergreen_ils.utils.ui.BaseActivity;
 
-/**
- * Created by kenstir on 12/28/13.
- */
 public class MainActivity extends BaseActivity {
 
     private static String TAG = MainActivity.class.getSimpleName();
 
     private Integer mUnreadMessageCount = null; //unknown
     private TextView mUnreadMessageText = null;
-
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -125,6 +121,8 @@ public class MainActivity extends BaseActivity {
 
     private void updateUnreadMessageText() {
         if (mUnreadMessageText == null)
+            return;
+        if (isFinishing())
             return;
         if (mUnreadMessageCount != null) {
             mUnreadMessageText.setVisibility((mUnreadMessageCount > 0) ? View.VISIBLE : View.GONE);

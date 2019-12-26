@@ -32,6 +32,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 
+@SuppressWarnings("unused")
 public class AcornAppBehavior extends AppBehavior {
     private static final String TAG = AcornAppBehavior.class.getSimpleName();
 

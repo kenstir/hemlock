@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools">
+
+    <!-- misc colors used in legacy code -->
+    <color name="white">#ffffff</color>
+    <color name="blue">#1e90ff</color>
+    <color name="possible_result_points">#c0ffff00</color>
+    <color name="result_view">#b0000000</color>
+    <color name="viewfinder_frame">#ff000000</color>
+    <color name="viewfinder_laser">#ffff0000</color>
+    <color name="viewfinder_mask">#60000000</color>
+
+    <!-- Material colors from https://material.google.com/style/color.html#color-color-palette -->
+    <color name="material_grey_50">#FAFAFA</color>
+    <color name="material_grey_100">#F5F5F5</color>
+    <color name="material_grey_200">#EEEEEE</color>
+    <color name="material_grey_300">#E0E0E0</color>
+    <color name="material_grey_400">#BDBDBD</color>
+    <color name="material_grey_500">#9E9E9E</color>
+    <color name="material_grey_700">#616161</color>
+    <color name="material_grey_800">#424242</color>
+    <color name="material_grey_900">#212121</color>
+
+    <!-- dark/light customized colors -->
+    <color name="logo_background">@color/material_grey_300</color>
+    <color name="search_bar_background">@color/material_grey_300</color>
+    <color name="search_bar_hint">?android:textColorSecondary</color>
+    <color name="secondary_bar_background">@color/material_grey_400</color>
+    <color name="table_header_background">@color/material_grey_300</color>
+    <color name="table_header_textcolor">#c0000000</color>
+    <color name="button_icon_tint">@color/accent</color>
+
+    <!-- - -->
+    <color name="hemlock_text_alert">#ff9100</color>
+    <color name="background">@color/background_material_dark</color>
+    <color name="dark">@color/background_material_dark</color>
+    <color name="primary">@color/primary_material_dark</color>
+    <color name="primary_dark">@color/primary_dark_material_dark</color>
+    <color name="accent">#FF8F00</color>
+
+</resources>

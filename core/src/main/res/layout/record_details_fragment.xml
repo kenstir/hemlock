@@ -7,16 +7,15 @@
     android:orientation="vertical">
 
     <LinearLayout
-        style="@style/Hemlock.SecondaryToolbar"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:theme="@style/Hemlock.TableHeader">
 
         <TextView
             android:id="@+id/record_header_text"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:gravity="center"
-            tools:text="Item 1 of 500" />
+            tools:text="Item 1 of 100" />
 
     </LinearLayout>
 

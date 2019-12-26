@@ -20,7 +20,8 @@
         android:paddingLeft="0dp"
         android:paddingRight="32dp"
         android:paddingStart="0dp"
-        android:paddingTop="12dp" />
+        android:paddingTop="12dp"
+        tools:ignore="ContentDescription" />
 
     <LinearLayout
         android:layout_width="0dp"

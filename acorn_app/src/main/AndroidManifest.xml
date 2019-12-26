@@ -148,7 +148,9 @@
                 android:label="@string/ou_account_label">
         </activity>
 
-        <activity android:name="org.evergreen_ils.views.MainActivity">
+        <activity
+            android:name="org.evergreen_ils.views.MainActivity"
+            android:launchMode="singleTask">
         </activity>
 
         <!--<activity android:name="org.evergreen_ils.auth.TestAuthActivity">-->

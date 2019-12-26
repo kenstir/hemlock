@@ -21,8 +21,12 @@ package org.evergreen_ils.searchCatalog;
 
 import java.util.*;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.appcompat.widget.SwitchCompat;
+
+import android.graphics.Typeface;
 import android.text.TextUtils;
 import android.view.*;
 import android.widget.*;
@@ -39,6 +43,7 @@ import org.evergreen_ils.utils.ui.AppState;
 import org.evergreen_ils.system.Log;
 import org.evergreen_ils.system.Organization;
 import org.evergreen_ils.utils.ui.BaseActivity;
+import org.evergreen_ils.utils.ui.OrgArrayAdapter;
 import org.evergreen_ils.utils.ui.ProgressDialogSupport;
 import org.evergreen_ils.views.splashscreen.SplashActivity;
 
@@ -274,7 +279,7 @@ public class SearchActivity extends BaseActivity {
                 selectedOrgPos = i;
             }
         }
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, R.layout.org_item_layout, list);
+        ArrayAdapter<String> adapter = new OrgArrayAdapter(this, R.layout.org_item_layout, list, false);
         orgSpinner.setAdapter(adapter);
         orgSpinner.setSelection(selectedOrgPos);
         search.selectOrganisation(eg.getInstance().getOrganizations().get(selectedOrgPos));

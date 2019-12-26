@@ -2,9 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:orientation="vertical"
-    android:background="@color/background"
-     >
+    android:orientation="vertical">
 
     <include layout="@layout/toolbar_common"/>
 
@@ -12,20 +10,21 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        style="@style/Content"
         >
 
 		<EditText
             android:id="@+id/bookbag_create_name"
-            android:layout_width="200dip"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:hint="@string/list_name_hint"
 			android:layout_weight="1"
             />
         <Button
             android:id="@+id/bookbag_create_button"
-            android:layout_width="120dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:paddingLeft="16dip"
+            android:paddingRight="16dip"
             android:text="@string/create_list_button"
             />
         

@@ -80,8 +80,8 @@ public class BookBagActivity extends BaseActivity {
         accountAccess = AccountAccess.getInstance();
         progress = new ProgressDialogSupport();
 
-        bookbag_name = (EditText) findViewById(R.id.bookbag_create_name);
-        create_bookbag = (Button) findViewById(R.id.bookbag_create_button);
+        bookbag_name = findViewById(R.id.bookbag_create_name);
+        create_bookbag = findViewById(R.id.bookbag_create_button);
         create_bookbag.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -89,7 +89,7 @@ public class BookBagActivity extends BaseActivity {
             }
         });
 
-        lv = (ListView) findViewById(R.id.bookbag_list);
+        lv = findViewById(R.id.bookbag_list);
         bookBags = new ArrayList<BookBag>();
         listAdapter = new BookBagsArrayAdapter(this, R.layout.bookbag_list_item, bookBags);
         lv.setAdapter(listAdapter);

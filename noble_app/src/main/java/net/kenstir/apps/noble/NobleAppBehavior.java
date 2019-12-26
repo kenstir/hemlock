@@ -28,6 +28,7 @@ import java.util.List;
 
 import androidx.annotation.NonNull;
 
+@SuppressWarnings("unused")
 public class NobleAppBehavior extends AppBehavior {
     private static final String TAG = NobleAppBehavior.class.getSimpleName();
 
