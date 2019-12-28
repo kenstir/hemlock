@@ -192,7 +192,7 @@ class FinesActivity : BaseActivity() {
                     }
 
                     jobs.joinAll()
-                    Log.logElapsedTime(TAG, start, "[kcxxx] loadData")
+                    Log.logElapsedTime(TAG, start, "[kcxxx] loadData ... done")
                 } catch (ex: Exception) {
                     Log.d(TAG, "[kcxxx] loadData ... caught", ex)
                 }
@@ -270,7 +270,7 @@ class FinesActivity : BaseActivity() {
         if (isFinishing) return
         val builder = AlertDialog.Builder(this)
         //alertMessage = errorMessage
-        builder.setTitle("Login failed")
+        builder.setTitle("Error")
                 .setMessage(errorMessage)
                 .setPositiveButton(android.R.string.ok) { dialog, which ->
                     //alertDialog = null
