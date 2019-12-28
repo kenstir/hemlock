@@ -21,7 +21,6 @@ package org.evergreen_ils.system;
 import android.content.Context;
 import android.text.TextUtils;
 
-import com.crashlytics.android.BuildConfig;
 import com.crashlytics.android.Crashlytics;
 import com.crashlytics.android.answers.Answers;
 import com.crashlytics.android.answers.CustomEvent;

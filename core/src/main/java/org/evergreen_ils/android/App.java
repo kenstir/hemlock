@@ -26,11 +26,11 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 
 import org.evergreen_ils.R;
+import org.evergreen_ils.data.Account;
+import org.evergreen_ils.data.Library;
 import org.evergreen_ils.net.Gateway;
 import org.evergreen_ils.net.VolleyWrangler;
-import org.evergreen_ils.data.Account;
 import org.evergreen_ils.system.Analytics;
-import org.evergreen_ils.data.Library;
 import org.evergreen_ils.system.Log;
 import org.evergreen_ils.utils.ui.AppState;
 import org.evergreen_ils.views.LaunchActivity;
