@@ -3,8 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="org.cwmars"
     android:installLocation="auto"
-    android:versionCode="68"
-    android:versionName="4.1.2">
+    android:versionCode="70"
+    android:versionName="4.1.4">
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS" />
@@ -30,30 +30,6 @@
 
         <meta-data android:name="android.max_aspect" android:value="2.1" />
 
-        <!-- Notification receiver
-        <receiver
-            android:name="org.evergreen_ils.services.NotificationReceiver"
-            android:process=":remote" >
-        </receiver>
-        -->
-        <!-- Receiver to reinit notifications on reboot -->
-        <!--
-        <receiver android:name="org.evergreen_ils.services.RebootReceiver" >
-            <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED" />
-            </intent-filter>
-        </receiver>
-        <receiver android:name="org.evergreen_ils.services.PeriodicServiceBroadcastReceiver" >
-            <intent-filter>
-                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
-            </intent-filter>
-        </receiver>
-        -->
-        <!--
-        <service android:name="org.evergreen_ils.services.ScheduledIntentService" >
-        </service>
-        -->
-
         <activity
             android:name="org.evergreen_ils.views.LaunchActivity">
             <intent-filter>
@@ -61,8 +37,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <!-- Search -->
 
         <activity
             android:name="org.evergreen_ils.searchCatalog.SampleUnderlinesNoFade"
@@ -87,15 +61,11 @@
             android:theme="@android:style/Theme.NoTitleBar"
             android:windowSoftInputMode="stateAlwaysHidden" >
         </activity>
-
-        <!-- Checkout Activities -->
         <activity
             android:name="org.evergreen_ils.accountAccess.checkout.CheckoutsActivity"
             android:label="@string/checkout_items_title"
             android:parentActivityName="org.evergreen_ils.views.MainActivity">
         </activity>
-
-        <!-- Holds Activities -->
         <activity
             android:name="org.evergreen_ils.accountAccess.holds.HoldsActivity"
             android:label="@string/hold_items_title"
@@ -109,15 +79,11 @@
             android:name="org.evergreen_ils.accountAccess.holds.HoldDetailsActivity"
             android:label="@string/hold_details_title">
         </activity>
-
-        <!-- Fines Activities -->
         <activity
             android:name="org.evergreen_ils.accountAccess.fines.FinesActivity"
             android:label="@string/title_fines"
             android:parentActivityName="org.evergreen_ils.views.MainActivity">
         </activity>
-
-        <!-- Bookbags -->
         <activity
             android:name="org.evergreen_ils.accountAccess.bookbags.BookBagActivity"
             android:label="@string/title_my_lists"
@@ -128,16 +94,11 @@
             android:label="@string/title_list_details"
             android:parentActivityName="org.evergreen_ils.accountAccess.bookbags.BookBagActivity">
         </activity>
-
         <activity
             android:name="org.evergreen_ils.views.BarcodeActivity"
             android:label="@string/barcode_title"
             android:parentActivityName="org.evergreen_ils.views.MainActivity">
         </activity>
-
-        <activity android:name="org.evergreen_ils.auth.TestAuthActivity">
-        </activity>
-
         <activity
             android:name="org.evergreen_ils.auth.AuthenticatorActivity"
             android:label="@string/ou_account_label">

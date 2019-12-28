@@ -203,7 +203,7 @@ public class RecordInfo implements Serializable {
 //    }
 
     public String getIconFormat() {
-        return attrs.get("icon_format");
+        return (attrs != null) ? attrs.get("icon_format") : null;
     }
 
     public String getIconFormatLabel() {

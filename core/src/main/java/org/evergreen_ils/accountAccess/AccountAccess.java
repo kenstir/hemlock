@@ -479,10 +479,11 @@ public class AccountAccess {
     public boolean cancelHold(OSRFObject hold) throws SessionNotFoundException {
         Integer hold_id = hold.getInt("id");
         Account account = App.getAccount();
+        String note = "Cancelled by mobile app";
 
         Object response = Utils.doRequest(conn(), Api.SERVICE_CIRC,
                 Api.HOLD_CANCEL, account.getAuthToken(), new Object[] {
-                        account.getAuthToken(), hold_id });
+                        authToken, hold_id, null, note });
         if (response != null && response.toString().equals("1"))
             return true;
         return false;

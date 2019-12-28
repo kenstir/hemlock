@@ -17,27 +17,27 @@
         android:checkableBehavior="none">
         <item
             android:id="@+id/main_btn_search"
-            android:icon="@drawable/baseline_search_black_24"
+            android:icon="@drawable/ic_search_24"
             android:title="@string/title_search" />
         <item
             android:id="@+id/account_btn_check_out"
-            android:icon="@drawable/baseline_book_black_24"
+            android:icon="@drawable/ic_checkouts_24"
             android:title="@string/title_check_out" />
         <item
             android:id="@id/account_btn_holds"
-            android:icon="@drawable/baseline_pan_tool_black_24"
+            android:icon="@drawable/ic_holds_24"
             android:title="@string/title_holds" />
         <item
             android:id="@id/account_btn_fines"
-            android:icon="@drawable/baseline_account_balance_black_24"
+            android:icon="@drawable/ic_fines_24"
             android:title="@string/title_fines" />
         <item
             android:id="@id/main_my_lists_button"
-            android:icon="@drawable/baseline_assignment_black_24"
+            android:icon="@drawable/ic_lists_24"
             android:title="@string/title_my_lists" />
         <item
             android:id="@+id/btn_barcode"
-            android:icon="@drawable/baseline_credit_card_black_24"
+            android:icon="@drawable/ic_barcode_24"
             android:title="@string/barcode_title" />
     </group>
 

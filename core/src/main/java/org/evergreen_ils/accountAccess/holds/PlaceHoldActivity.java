@@ -22,16 +22,11 @@ package org.evergreen_ils.accountAccess.holds;
 import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.text.format.DateFormat;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
@@ -59,13 +54,16 @@ import org.evergreen_ils.data.Organization;
 import org.evergreen_ils.data.SMSCarrier;
 import org.evergreen_ils.utils.IntUtils;
 import org.evergreen_ils.utils.ui.ActionBarUtils;
-import org.evergreen_ils.system.Analytics;
+import org.evergreen_ils.utils.ui.OrgArrayAdapter;
 import org.evergreen_ils.utils.ui.ProgressDialogSupport;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
 
 import static org.evergreen_ils.system.Utils.safeString;
 
@@ -437,20 +435,7 @@ public class PlaceHoldActivity extends AppCompatActivity {
                 selectedOrgPos = i;
             }
         }
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, R.layout.org_item_layout, list) {
-            @Override
-            public boolean isEnabled(int pos) {
-                Organization org = EgOrg.getOrgs().get(pos);
-                return org.isPickupLocation();
-            }
-
-            @Override
-            public View getDropDownView(int pos, @Nullable View convertView, @NonNull ViewGroup parent) {
-                View v = super.getDropDownView(pos, convertView, parent);
-                v.setEnabled(isEnabled(pos));
-                return v;
-            }
-        };
+        ArrayAdapter<String> adapter = new OrgArrayAdapter(this, R.layout.org_item_layout, list, true);
         orgSpinner.setAdapter(adapter);
         orgSpinner.setSelection(selectedOrgPos);
         orgSpinner.setOnItemSelectedListener(new OnItemSelectedListener() {

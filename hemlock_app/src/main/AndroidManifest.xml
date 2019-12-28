@@ -41,8 +41,6 @@
             </intent-filter>
         </activity>
 
-        <!-- Search -->
-
         <activity
                 android:name="org.evergreen_ils.searchCatalog.SampleUnderlinesNoFade"
                 android:label="@string/search_details_title">
@@ -66,15 +64,11 @@
             android:theme="@android:style/Theme.NoTitleBar"
             android:windowSoftInputMode="stateAlwaysHidden" >
         </activity>
-
-        <!-- Checkout Activities -->
         <activity
                 android:name="org.evergreen_ils.accountAccess.checkout.CheckoutsActivity"
                 android:label="@string/checkout_items_title"
                 android:parentActivityName="org.evergreen_ils.views.MainActivity">
         </activity>
-
-        <!-- Holds Activities -->
         <activity
                 android:name="org.evergreen_ils.accountAccess.holds.HoldsActivity"
                 android:label="@string/hold_items_title"
@@ -88,15 +82,11 @@
                 android:name="org.evergreen_ils.accountAccess.holds.HoldDetailsActivity"
                 android:label="@string/hold_details_title">
         </activity>
-
-        <!-- Fines Activities -->
         <activity
                 android:name="org.evergreen_ils.accountAccess.fines.FinesActivity"
                 android:label="@string/title_fines"
                 android:parentActivityName="org.evergreen_ils.views.MainActivity">
         </activity>
-
-        <!-- Bookbags -->
         <activity
                 android:name="org.evergreen_ils.accountAccess.bookbags.BookBagActivity"
                 android:label="@string/title_my_lists"
@@ -107,13 +97,11 @@
                 android:label="@string/title_list_details"
                 android:parentActivityName="org.evergreen_ils.accountAccess.bookbags.BookBagActivity">
         </activity>
-
         <activity
             android:name="org.evergreen_ils.views.BarcodeActivity"
             android:label="@string/barcode_title"
             android:parentActivityName="org.evergreen_ils.views.MainActivity">
         </activity>
-
         <activity
                 android:name="org.evergreen_ils.auth.AuthenticatorActivity"
                 android:label="@string/ou_account_label">
@@ -126,12 +114,6 @@
         <activity
             android:name="org.evergreen_ils.views.MainActivity"
             android:launchMode="singleTask">
-        </activity>
-
-        <activity android:name="org.evergreen_ils.auth.TestAuthActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-            </intent-filter>
         </activity>
 
         <service

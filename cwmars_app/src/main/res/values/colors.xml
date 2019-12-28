@@ -1,23 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- logo colors from brand book -->
-    <color name="cwmars_dark">#16416F</color>
-    <color name="cwmars_medium">#006098</color>
-    <color name="cwmars_secondary1">#d61d4a</color>
-    <color name="cwmars_secondary2">#ee7623</color>
-    <color name="cwmars_secondary3">#ffc629</color>
-    <color name="cwmars_secondary4">#7bc24e</color>
-    <color name="cwmars_secondary5">#16416f</color>
-    <color name="cwmars_secondary6">#63cfe3</color>
-    <color name="cwmars_secondary7">#006098</color>
-    <color name="cwmars_secondary8">#002b49</color>
-    <color name="cwmars_secondary9">#512873</color>
+    <color name="cwmars_red">#d61d4a</color>
+    <color name="cwmars_orange">#ee7623</color>
+    <color name="cwmars_yellow">#ffc629</color>
+    <color name="cwmars_green">#7bc24e</color>
+    <color name="cwmars_blue">#16416F</color>
+    <!-- color names courtesy of https://www.color-blindness.com/color-name-hue/ -->
+    <color name="cwmars_turquoise_blue">#63cfe3</color>
+    <color name="cwmars_cerulean_blue">#006098</color>
+    <color name="cwmars_sherpa_blue">#002b49</color>
+    <color name="cwmars_windsor">#512873</color>
 
-    <color name="primary">@color/cwmars_dark</color>
+    <color name="primary">@color/cwmars_blue</color>
     <color name="primary_dark">@color/primary_dark_material_dark</color>
-    <color name="accent">@color/cwmars_secondary2</color>
-    <color name="hemlock_text_alert">@color/cwmars_secondary4</color>
+    <color name="accent">@color/cwmars_orange</color>
+    <color name="hemlock_text_alert">@color/cwmars_green</color>
 
-    <color name="button_icon_tint">@color/cwmars_medium</color>
+    <color name="button_icon_tint">@color/cwmars_cerulean_blue</color>
     <color name="logo_background">@color/white</color>
 </resources>
