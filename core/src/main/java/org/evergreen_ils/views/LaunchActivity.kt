@@ -127,10 +127,12 @@ class LaunchActivity : AppCompatActivity(), CoroutineScope by MainScope() {
                 val account = getAccount()
                 Log.d(TAG, "[auth] ${account.username} ${account.authToken}")
                 mModel?.loadServiceData(resources)
+            } catch (ex: TimeoutException) {
+                mProgressText?.text = ex.message ?: "Timeout"
+                onLaunchFailure()
             } catch (ex: Exception) {
                 Log.d(TAG, "[auth] caught in launchLoginFlow", ex)
-                var msg = ex.message ?: "Cancelled"
-                mProgressText?.text = msg
+                mProgressText?.text = ex.message ?: "Cancelled"
                 onLaunchFailure()
             }
         }
