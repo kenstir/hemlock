@@ -2,18 +2,18 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingTop="0dp"
+    android:orientation="vertical"
     android:paddingLeft="0dp"
+    android:paddingTop="0dp"
     android:paddingRight="0dp">
 
     <ScrollView
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:fillViewport="true"
-        android:layout_alignParentTop="true">
+        android:layout_alignParentTop="true"
+        android:fillViewport="true">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -26,8 +26,8 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="0dp"
                 android:paddingLeft="8dp"
-                android:paddingRight="8dp"
                 android:paddingTop="24dp"
+                android:paddingRight="8dp"
                 android:paddingBottom="24dp"
                 android:scaleType="fitCenter"
                 android:src="@drawable/splash_title"
@@ -37,8 +37,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="vertical"
-                android:paddingTop="24dp"
                 android:paddingLeft="16dp"
+                android:paddingTop="24dp"
                 android:paddingRight="16dp">
 
                 <TextView
@@ -48,14 +48,14 @@
                     android:text="@string/ou_account_sign_in_message"
                     android:textAppearance="?android:attr/textAppearanceLarge" />
 
-                <EditText android:id="@+id/accountName"
+                <EditText
+                    android:id="@+id/accountName"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="20dp"
-                    android:inputType="text"
                     android:hint="@string/hint_username"
-                    android:padding="10dp"
-                    />
+                    android:inputType="text"
+                    android:padding="10dp" />
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:layout_width="match_parent"
@@ -72,25 +72,26 @@
                         android:padding="10dp" />
                 </com.google.android.material.textfield.TextInputLayout>
 
-                <LinearLayout style="?android:buttonBarStyle"
+                <LinearLayout
+                    style="?android:buttonBarStyle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
 
-                    <Button android:id="@+id/forgot_password_button"
+                    <Button
+                        android:id="@+id/forgot_password_button"
                         style="?android:buttonBarButtonStyle"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="@string/forgot_password_button"
-                        />
+                        android:text="@string/forgot_password_button" />
 
-                    <Button android:id="@+id/submit"
+                    <Button
+                        android:id="@+id/submit"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="@string/action_sign_in"
-                        />
+                        android:text="@string/action_sign_in" />
                 </LinearLayout>
             </LinearLayout>
         </LinearLayout>
