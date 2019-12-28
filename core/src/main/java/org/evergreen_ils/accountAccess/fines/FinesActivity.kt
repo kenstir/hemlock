@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2012 Evergreen Open-ILS
  * @author Daniel-Octavian Rizea
+ * Kotlin conversion by Kenneth H. Cox
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -108,7 +109,7 @@ class FinesActivity : BaseActivity() {
     }
 
     override fun onDestroy() {
-        if (progress != null) progress!!.dismiss()
+        progress?.dismiss()
         super.onDestroy()
     }
 
