@@ -51,7 +51,6 @@ public class HoldsActivity extends BaseActivity {
     private ListView lv;
     private HoldsArrayAdapter listAdapter = null;
     private List<HoldRecord> holdRecords = null;
-    private Context context;
     private Runnable getHoldsRunnable = null;
     private TextView holdsSummary;
     private ProgressDialogSupport progress;
@@ -65,12 +64,11 @@ public class HoldsActivity extends BaseActivity {
 
         holdsSummary = findViewById(R.id.holds_summary);
         lv = findViewById(R.id.holds_item_list);
-        context = this;
         accountAccess = AccountAccess.getInstance();
         progress = new ProgressDialogSupport();
 
         holdRecords = new ArrayList<>();
-        listAdapter = new HoldsArrayAdapter(context, R.layout.holds_list_item, holdRecords);
+        listAdapter = new HoldsArrayAdapter(this, R.layout.holds_list_item, holdRecords);
         lv.setAdapter(listAdapter);
 
         getHoldsRunnable = new Runnable() {
@@ -104,7 +102,7 @@ public class HoldsActivity extends BaseActivity {
             }
         };
 
-        progress.show(context, getString(R.string.msg_loading_holds));
+        progress.show(this, getString(R.string.msg_loading_holds));
         new Thread(getHoldsRunnable).start();
 
         lv.setOnItemClickListener(new OnItemClickListener() {
@@ -140,7 +138,7 @@ public class HoldsActivity extends BaseActivity {
 
         case HoldDetailsActivity.RESULT_CODE_DELETE_HOLD:
         case HoldDetailsActivity.RESULT_CODE_UPDATE_HOLD:
-            progress.show(context, getString(R.string.msg_loading_holds));
+            progress.show(this, getString(R.string.msg_loading_holds));
             new Thread(getHoldsRunnable).start();
             Log.d(TAG, "Update on result "+resultCode);
             break;
