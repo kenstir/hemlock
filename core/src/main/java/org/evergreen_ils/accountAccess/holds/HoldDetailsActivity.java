@@ -88,8 +88,6 @@ public class HoldDetailsActivity extends BaseActivity {
 
     private Date thaw_date = null;
 
-    private Context context;
-
     private int selectedOrgPos = 0;
 
     public Runnable updateHoldRunnable;
@@ -109,7 +107,6 @@ public class HoldDetailsActivity extends BaseActivity {
         setContentView(R.layout.hold_details);
         ActionBarUtils.initActionBarForActivity(this);
 
-        context = this;
         eg = EvergreenServer.getInstance();
         accountAccess = AccountAccess.getInstance();
         progress = new ProgressDialogSupport();
@@ -152,7 +149,7 @@ public class HoldDetailsActivity extends BaseActivity {
         cancelHold.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                AlertDialog.Builder builder = new AlertDialog.Builder(HoldDetailsActivity.this);
                 builder.setMessage(R.string.cancel_hold_dialog_message);
                 builder.setNegativeButton(R.string.cancel_hold_negative_button, null);
                 builder.setPositiveButton(R.string.cancel_hold_positive_button, new DialogInterface.OnClickListener() {
@@ -252,7 +249,7 @@ public class HoldDetailsActivity extends BaseActivity {
 
     private void cancelHold(final HoldRecord record) {
         Log.d(TAG, "Remove hold with id" + record.ahr.getInt("id"));
-        progress.show(context, "Canceling hold");
+        progress.show(this, "Canceling hold");
         Thread cancelHoldThread = new Thread(
                 new Runnable() {
 
@@ -289,7 +286,7 @@ public class HoldDetailsActivity extends BaseActivity {
                 runOnUiThread(new Runnable() {
                                   @Override
                                   public void run() {
-                                      progress.show(context, "Updating hold");
+                                      progress.show(HoldDetailsActivity.this, "Updating hold");
                                   }
                               });
 
@@ -318,7 +315,7 @@ public class HoldDetailsActivity extends BaseActivity {
                     @Override
                     public void run() {
                         progress.dismiss();
-                        Toast.makeText(context, "Hold updated",
+                        Toast.makeText(HoldDetailsActivity.this, "Hold updated",
                                 Toast.LENGTH_SHORT);
                         setResult(RESULT_CODE_UPDATE_HOLD);
                         finish();
