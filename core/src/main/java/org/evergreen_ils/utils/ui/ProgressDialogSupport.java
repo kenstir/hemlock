@@ -18,6 +18,7 @@
 
 package org.evergreen_ils.utils.ui;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 
@@ -29,16 +30,22 @@ public class ProgressDialogSupport {
     public ProgressDialogSupport() {
     }
 
-    public void show(Context context, CharSequence msg) {
-        if (progressDialog == null)
+    public void show(Activity context, CharSequence msg) {
+        if (progressDialog == null) {
             progressDialog = new ProgressDialog(context);
+            progressDialog.setOwnerActivity(context);
+        }
         progressDialog.setMessage(msg);
         progressDialog.show();
     }
 
     public void dismiss() {
-        if (progressDialog != null && progressDialog.isShowing()) {
+        if (progressDialog == null)
+            return;
+        Activity activity = progressDialog.getOwnerActivity();
+        if (activity != null && activity.isFinishing())
+            return;
+        if (progressDialog.isShowing())
             progressDialog.dismiss();
-        }
     }
 }
