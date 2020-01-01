@@ -168,7 +168,7 @@ class GatewayResultTest {
         val error = res.exceptionOrNull() as? GatewayEventError
         assertEquals(error?.ev?.code, 1001)
         assertEquals(error?.ev?.textCode, "NO_SESSION")
-        assertTrue(error?.isSessionExpired ?: false)
+        assertTrue(error?.isSessionExpired() ?: false)
     }
 
     @Test
@@ -185,6 +185,6 @@ class GatewayResultTest {
         val error = res.exceptionOrNull() as? GatewayEventError
         assertEquals(error?.ev?.code, 7013)
         assertEquals(error?.ev?.textCode, "PATRON_EXCEEDS_FINES")
-        assertFalse(error?.isSessionExpired ?: false)
+        assertFalse(error?.isSessionExpired() ?: false)
     }
 }

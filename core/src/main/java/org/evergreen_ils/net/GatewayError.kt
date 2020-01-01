@@ -22,9 +22,16 @@ import org.open_ils.Event
 
 open class GatewayError(message: String?): Exception(message) {
     constructor(ex: Exception): this(ex.message)
+
+    fun isSessionExpired(): Boolean {
+        (this as? GatewayEventError)?.let {
+            return it.ev.textCode == "NO_SESSION"
+        }
+        return false
+    }
 }
 
 class GatewayEventError constructor(var ev: Event): GatewayError(ev.description) {
-    val isSessionExpired: Boolean
-        get() = ev.textCode == "NO_SESSION"
+//    val isSessionExpired: Boolean
+//        get() = ev.textCode == "NO_SESSION"
 }
