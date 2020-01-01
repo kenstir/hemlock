@@ -19,6 +19,7 @@ package org.opensrf.util
 
 import org.evergreen_ils.data.JSONDictionary
 import org.evergreen_ils.net.GatewayError
+import org.evergreen_ils.net.GatewayEventError
 import org.evergreen_ils.utils.fromApiToIntOrNull
 import org.open_ils.Event
 
@@ -33,22 +34,23 @@ class GatewayResult {
     var failed = false
     @JvmField
     var errorMessage: String? = null
-    //@JvmField
-    private var ex: Exception? = null
-    private var events: List<Event>? = null
 
+    private var error: GatewayError? = null
+    private var events: List<Event>? = null
     private var type: ResultType = ResultType.UNKNOWN
 
     private constructor()
-    private constructor(ex: Exception) {
-        this.ex = ex
+    private constructor(error: GatewayError) {
+        this.error = error
         failed = true
-        errorMessage = ex.message
+        errorMessage = error.message
         type = ResultType.ERROR
     }
+    private constructor(ex: Exception): this(GatewayError(ex))
 
     @Throws(GatewayError::class)
     fun asObject(): OSRFObject {
+        error?.let { throw it }
         return try {
             payload as OSRFObject
         } catch (ex: Exception) {
@@ -58,6 +60,7 @@ class GatewayResult {
 
     @Throws(GatewayError::class)
     fun asOptionalObject(): OSRFObject? {
+        error?.let { throw it }
         return try {
             payload as? OSRFObject
         } catch (ex: Exception) {
@@ -67,6 +70,7 @@ class GatewayResult {
 
     @Throws(GatewayError::class)
     fun asMap(): JSONDictionary {
+        error?.let { throw it }
         return try {
             payload as JSONDictionary
         } catch (ex: Exception) {
@@ -76,6 +80,7 @@ class GatewayResult {
 
     @Throws(GatewayError::class)
     fun asObjectArray(): List<OSRFObject> {
+        error?.let { throw it }
         return try {
             payload as List<OSRFObject>
         } catch (ex: Exception) {
@@ -85,6 +90,7 @@ class GatewayResult {
 
     @Throws(GatewayError::class)
     fun asArray(): List<Any> {
+        error?.let { throw it }
         return try {
             payload as List<Any>
         } catch (ex: Exception) {
@@ -94,6 +100,7 @@ class GatewayResult {
 
     @Throws(GatewayError::class)
     fun asString(): String {
+        error?.let { throw it }
         return try {
             payload as String
         } catch (ex: Exception) {
@@ -141,7 +148,10 @@ class GatewayResult {
                         val event = Event.parseEvent(payload)
                         if (event != null) {
                             resp.failed = event.failed()
-                            if (resp.failed) resp.errorMessage = event.description
+                            if (resp.failed) {
+                                resp.errorMessage = event.description
+                                resp.error = GatewayEventError(event)
+                            }
                             resp.events = listOf(event)
                             resp.type = ResultType.EVENT
                         } else {
@@ -153,7 +163,12 @@ class GatewayResult {
                         val events = mutableListOf<Event>()
                         for (obj in payload as ArrayList<Any?>) {
                             Event.parseEvent(obj)?.let { event ->
-                                if (event.failed()) resp.failed = true
+                                if (event.failed()) {
+                                    resp.failed = true
+                                    if (resp.error == null) {
+                                        resp.error = GatewayEventError(event)
+                                    }
+                                }
                                 events.add(event)
                             }
                         }

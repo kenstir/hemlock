@@ -19,11 +19,13 @@
 package org.evergreen_ils.test
 
 import org.evergreen_ils.Api
+import org.evergreen_ils.net.GatewayEventError
 import org.evergreen_ils.system.Log
 import org.evergreen_ils.system.StdoutLogProvider
 import org.junit.Assert.*
 import org.junit.BeforeClass
 import org.junit.Test
+import org.open_ils.Event
 import org.opensrf.util.GatewayResult
 import org.opensrf.util.OSRFRegistry
 
@@ -163,6 +165,9 @@ class GatewayResultTest {
 
         val res = kotlin.runCatching { result.asObject() }
         assertTrue(res.isFailure)
+        val error = res.exceptionOrNull() as? GatewayEventError
+        assertEquals(error?.ev?.code, 1001)
+        assertEquals(error?.ev?.textCode, "NO_SESSION")
     }
 
     @Test
@@ -176,5 +181,8 @@ class GatewayResultTest {
 
         val res = kotlin.runCatching { result.asObject() }
         assertTrue(res.isFailure)
+        val error = res.exceptionOrNull() as? GatewayEventError
+        assertEquals(error?.ev?.code, 7013)
+        assertEquals(error?.ev?.textCode, "PATRON_EXCEEDS_FINES")
     }
 }

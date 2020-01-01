@@ -18,4 +18,10 @@
 
 package org.evergreen_ils.net
 
-class GatewayError(message: String): Exception(message)
+import org.open_ils.Event
+
+open class GatewayError(message: String?): Exception(message) {
+    constructor(ex: Exception): this(ex.message)
+}
+
+class GatewayEventError constructor(var ev: Event): GatewayError(ev.description)
