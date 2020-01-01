@@ -19,20 +19,27 @@ package org.evergreen_ils.data
 import org.evergreen_ils.data.Result.Success
 
 /**
- * A generic class that holds a value with its loading status.
+ * A generic class that holds a value or an error.
  * @param <T>
  */
 sealed class Result<out R> {
 
     data class Success<out T>(val data: T) : Result<T>()
     data class Error(val exception: Exception) : Result<Nothing>()
-    object Loading : Result<Nothing>()
+
+    // get function that returns data or throws
+    // modelled after Swift 5
+    fun get(): R {
+        return when (this) {
+            is Success -> data
+            is Error -> throw exception
+        }
+    }
 
     override fun toString(): String {
         return when (this) {
             is Success<*> -> "Success[data=$data]"
             is Error -> "Error[exception=$exception]"
-            Loading -> "Loading"
         }
     }
 }
