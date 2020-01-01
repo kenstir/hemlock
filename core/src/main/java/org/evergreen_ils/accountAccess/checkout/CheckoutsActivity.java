@@ -79,7 +79,9 @@ public class CheckoutsActivity extends BaseActivity {
                         records.add(circRecord.recordInfo);
                     }
                 }
-                RecordDetails.launchDetailsFlow(CheckoutsActivity.this, records, position);
+                if (!records.isEmpty()) {
+                    RecordDetails.launchDetailsFlow(CheckoutsActivity.this, records, position);
+                }
             }
         });
     }
