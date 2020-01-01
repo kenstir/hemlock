@@ -24,4 +24,7 @@ open class GatewayError(message: String?): Exception(message) {
     constructor(ex: Exception): this(ex.message)
 }
 
-class GatewayEventError constructor(var ev: Event): GatewayError(ev.description)
+class GatewayEventError constructor(var ev: Event): GatewayError(ev.description) {
+    val isSessionExpired: Boolean
+        get() = ev.textCode == "NO_SESSION"
+}
