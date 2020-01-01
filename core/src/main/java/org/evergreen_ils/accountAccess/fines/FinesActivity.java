@@ -64,7 +64,6 @@ public class FinesActivity extends BaseActivity {
     private Runnable getFinesInfo;
     private AccountAccess ac;
     private ProgressDialogSupport progress;
-    private Context context;
     private DecimalFormat decimalFormater;
 
     @Override
@@ -82,12 +81,11 @@ public class FinesActivity extends BaseActivity {
         balance_owed = findViewById(R.id.fines_balance_owed);
         pay_fines_button = findViewById(R.id.pay_fines);
 
-        context = this;
         ac = AccountAccess.getInstance();
         progress = new ProgressDialogSupport();
 
         finesRecords = new ArrayList<>();
-        listAdapter = new OverdueMaterialsArrayAdapter(context,
+        listAdapter = new OverdueMaterialsArrayAdapter(this,
                 R.layout.fines_list_item, finesRecords);
         lv.setAdapter(listAdapter);
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -115,7 +113,7 @@ public class FinesActivity extends BaseActivity {
         initPayFinesButton();
         initRunnable();
 
-        progress.show(context, getString(R.string.msg_retrieving_fines));
+        progress.show(this, getString(R.string.msg_retrieving_fines));
         new Thread(getFinesInfo).start();
     }
 
