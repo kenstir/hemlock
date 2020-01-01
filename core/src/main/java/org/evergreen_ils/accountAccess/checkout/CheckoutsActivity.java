@@ -75,7 +75,9 @@ public class CheckoutsActivity extends BaseActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 ArrayList<RecordInfo> records = new ArrayList<>();
                 for (CircRecord circRecord : circRecords) {
-                    records.add(circRecord.recordInfo);
+                    if (circRecord.recordInfo.doc_id != -1) {
+                        records.add(circRecord.recordInfo);
+                    }
                 }
                 RecordDetails.launchDetailsFlow(CheckoutsActivity.this, records, position);
             }

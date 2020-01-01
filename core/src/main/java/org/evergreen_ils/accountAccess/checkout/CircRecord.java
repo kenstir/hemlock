@@ -25,6 +25,7 @@ import java.util.Date;
 
 import org.evergreen_ils.Api;
 import org.evergreen_ils.searchCatalog.RecordInfo;
+import org.evergreen_ils.utils.TextUtils;
 import org.opensrf.util.OSRFObject;
 
 /**
@@ -60,32 +61,34 @@ public class CircRecord {
         this.circ_due_date = parseDateFromField(circ, "due_date");
     }
 
+    // dummy_title is used for ILLs; in these cases
+    // recordInfo.id == mvr.doc_id == -1
     public String getTitle() {
-        if (this.recordInfo.title != null)
+        if (!TextUtils.isEmpty(this.recordInfo.title))
             return this.recordInfo.title;
-        // 2016-07-06: not sure if these are ever needed
         String title;
         if (mvr != null) {
             title = mvr.getString("title");
-            if (title != null) return title;
+            if (!TextUtils.isEmpty(title)) return title;
         }
         if (acp != null) {
             title = acp.getString("dummy_title");
-            if (title != null) return title;
+            if (!TextUtils.isEmpty(title)) return title;
         }
         return "Unknown Title";
     }
 
+    // dummy_author is used for ILLs; in these cases
+    // recordInfo.id == mvr.doc_id == -1
     public String getAuthor() {
         String author;
         if (mvr != null) {
             author = mvr.getString("author");
-            if (author != null) return author;
+            if (!TextUtils.isEmpty(author)) return author;
         }
-        // 2019-02-19 I don't know if this code ever gets hit
         if (acp != null) {
             author = acp.getString("dummy_author");
-            if (author != null) return author;
+            if (!TextUtils.isEmpty(author)) return author;
         }
         return "";
     }
