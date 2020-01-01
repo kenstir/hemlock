@@ -245,7 +245,7 @@ class FinesActivity : BaseActivity() {
         }
     }
 
-    private fun loadTransactions(objects: List<JSONDictionary>) {
+    private fun loadTransactions(objects: List<OSRFObject>) {
         Log.d(TAG, "[kcxxx] updateTransactions o:$objects")
 
         listAdapter?.clear()
@@ -262,14 +262,15 @@ class FinesActivity : BaseActivity() {
         //progress!!.dismiss()
     }
 
+    // TODO: move to BaseActivity
     protected fun showAlert(ex: Exception) {
         showAlert(ex.localizedMessage)
     }
 
+    // TODO: move to BaseActivity
     protected fun showAlert(errorMessage: String) {
         if (isFinishing) return
         val builder = AlertDialog.Builder(this)
-        //alertMessage = errorMessage
         builder.setTitle("Error")
                 .setMessage(errorMessage)
                 .setPositiveButton(android.R.string.ok) { dialog, which ->
