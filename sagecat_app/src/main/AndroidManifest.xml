@@ -31,7 +31,7 @@
         <meta-data android:name="android.max_aspect" android:value="2.1" />
 
         <activity
-                android:name="org.evergreen_ils.views.splashscreen.SplashActivity">
+                android:name="org.evergreen_ils.views.LaunchActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
