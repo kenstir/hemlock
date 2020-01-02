@@ -57,11 +57,13 @@ object GatewayActor: ActorService {
         return Gateway.fetchObjectArray(Api.ACTOR, Api.MESSAGES_RETRIEVE, args, false)
     }
 
-    override suspend fun fetchUserFinesSummary(authToken: String, userID: Int): OSRFObject? {
-        val args = arrayOf<Any?>(authToken, userID)
-        //return Gateway.fetchObject(Api.ACTOR, Api.FINES_SUMMARY, args, false)
-        return Gateway.fetch(Api.ACTOR, Api.FINES_SUMMARY, args, false) {
-            it.asOptionalObject()
+    override suspend fun fetchUserFinesSummary(authToken: String, userID: Int): Result<OSRFObject?> {
+        return try {
+            val args = arrayOf<Any?>(authToken, userID)
+            val obj = Gateway.fetchOptionalObject(Api.ACTOR, Api.FINES_SUMMARY, args, false)
+            Result.Success(obj)
+        } catch (e: Exception) {
+            Result.Error(e)
         }
     }
 

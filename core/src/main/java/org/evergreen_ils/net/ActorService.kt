@@ -29,6 +29,6 @@ interface ActorService {
     suspend fun fetchOrgSettings(orgID: Int): JSONDictionary
     suspend fun fetchFleshedUser(authToken: String, userID: Int): OSRFObject
     suspend fun fetchUserMessages(authToken: String, userID: Int): List<OSRFObject>
-    suspend fun fetchUserFinesSummary(authToken: String, userID: Int): OSRFObject?
+    suspend fun fetchUserFinesSummary(authToken: String, userID: Int): Result<OSRFObject?>
     suspend fun fetchUserTransactionsWithCharges(authToken: String, userID: Int): Result<List<OSRFObject>>
 }

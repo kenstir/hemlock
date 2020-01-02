@@ -32,12 +32,10 @@ import android.view.ViewGroup
 import android.widget.*
 import kotlinx.coroutines.*
 import org.evergreen_ils.R
-import org.evergreen_ils.accountAccess.AccountAccess
 import org.evergreen_ils.android.AccountUtils
 import org.evergreen_ils.android.App
 import org.evergreen_ils.data.EgOrg
 import org.evergreen_ils.data.FineRecord
-import org.evergreen_ils.data.JSONDictionary
 import org.evergreen_ils.data.Result
 import org.evergreen_ils.net.Gateway
 import org.evergreen_ils.net.GatewayError
@@ -184,7 +182,7 @@ class FinesActivity : BaseActivity() {
                     val userID = App.getAccount().id
                     if (authToken != null && userID != null) {
                         jobs.add(async {
-                            updateSummary(Gateway.actor.fetchUserFinesSummary(authToken, userID))
+                            onSummaryResult(Gateway.actor.fetchUserFinesSummary(authToken, userID))
                         })
                         jobs.add(async {
                             onTransactionsResult(Gateway.actor.fetchUserTransactionsWithCharges(authToken, userID))
@@ -194,11 +192,11 @@ class FinesActivity : BaseActivity() {
                     jobs.joinAll()
                     Log.logElapsedTime(TAG, start, "[kcxxx] loadData ... done")
                 } catch (ex: Exception) {
-                    Log.d(TAG, "[kcxxx] loadData ... caught", ex)
+                    Log.d(TAG, "[kcxxx] loadData ... caught 1", ex)
                 }
             }
         } catch (outerEx: Exception) {
-            Log.d(TAG, "[kcxxx] loadData ... caught", outerEx)
+            Log.d(TAG, "[kcxxx] loadData ... caught 2", outerEx)
         }
 
     }
@@ -229,7 +227,14 @@ class FinesActivity : BaseActivity() {
         pay_fines_button?.isEnabled = enabled
     }
 
-    private fun updateSummary(obj: OSRFObject?) {
+    private fun onSummaryResult(result: Result<OSRFObject?>) {
+        when (result) {
+            is Result.Success -> loadSummary(result.data)
+            is Result.Error -> showAlert(result.exception)
+        }
+    }
+
+    private fun loadSummary(obj: OSRFObject?) {
         Log.d(TAG, "[kcxxx] updateSummary: o:$obj")
         total_owed?.text = decimalFormatter?.format(getFloat(obj, "total_owed"))
         total_paid?.text = decimalFormatter?.format(getFloat(obj, "total_paid"))
@@ -246,7 +251,8 @@ class FinesActivity : BaseActivity() {
     }
 
     private fun loadTransactions(objects: List<OSRFObject>) {
-        Log.d(TAG, "[kcxxx] updateTransactions o:$objects")
+        Log.d(TAG, "[kcxxx] loadTransactions o:$objects")
+        //throw GatewayError("fake error in loadTransactions");
 
         listAdapter?.clear()
         val fines = FineRecord.makeArray(objects)
