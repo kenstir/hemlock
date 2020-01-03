@@ -19,9 +19,12 @@
 package org.evergreen_ils.data
 
 import org.evergreen_ils.Api
+import org.evergreen_ils.net.GatewayEventError
 import org.opensrf.util.OSRFObject
 
 private const val TAG = "Account"
+
+data class AccountCredentials(val authToken: String, val id: Int)
 
 class Account constructor(val username: String, var authToken: String?) {
     constructor(username: String) : this(username, null)
@@ -47,6 +50,15 @@ class Account constructor(val username: String, var authToken: String?) {
         get() = defaultPickupOrg ?: homeOrg
     val searchOrg: Int?
         get() = defaultSearchOrg ?: homeOrg
+
+    fun getCredentialsOrThrow(): AccountCredentials {
+        val authToken = this.authToken
+        val id = this.id
+        if (authToken == null || id == null) {
+            throw GatewayEventError.makeNoSessionError()
+        }
+        return AccountCredentials(authToken, id)
+    }
 
     fun clearAuthToken() {
         authToken = null

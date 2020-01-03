@@ -18,6 +18,7 @@
 package org.evergreen_ils.net
 
 import org.evergreen_ils.Api
+import org.evergreen_ils.data.Account
 import org.evergreen_ils.data.JSONDictionary
 import org.evergreen_ils.data.Result
 import org.opensrf.util.OSRFObject
@@ -52,13 +53,20 @@ object GatewayActor: ActorService {
         return Gateway.fetchObject(Api.ACTOR, Api.USER_FLESHED_RETRIEVE, args, true)
     }
 
-    override suspend fun fetchUserMessages(authToken: String, userID: Int): List<OSRFObject> {
-        val args = arrayOf(authToken, userID, null)
-        return Gateway.fetchObjectArray(Api.ACTOR, Api.MESSAGES_RETRIEVE, args, false)
+    override suspend fun fetchUserMessages(account: Account): Result<List<OSRFObject>> {
+        return try {
+            val (authToken, userID) = account.getCredentialsOrThrow()
+            val args = arrayOf(authToken, userID, null)
+            val arr = Gateway.fetchObjectArray(Api.ACTOR, Api.MESSAGES_RETRIEVE, args, false)
+            Result.Success(arr)
+        } catch (e: Exception) {
+            Result.Error(e)
+        }
     }
 
-    override suspend fun fetchUserFinesSummary(authToken: String, userID: Int): Result<OSRFObject?> {
+    override suspend fun fetchUserFinesSummary(account: Account): Result<OSRFObject?> {
         return try {
+            val (authToken, userID) = account.getCredentialsOrThrow()
             val args = arrayOf<Any?>(authToken, userID)
             val obj = Gateway.fetchOptionalObject(Api.ACTOR, Api.FINES_SUMMARY, args, false)
             Result.Success(obj)
@@ -67,8 +75,9 @@ object GatewayActor: ActorService {
         }
     }
 
-    override suspend fun fetchUserTransactionsWithCharges(authToken: String, userID: Int): Result<List<OSRFObject>> {
+    override suspend fun fetchUserTransactionsWithCharges(account: Account): Result<List<OSRFObject>> {
         return try {
+            val (authToken, userID) = account.getCredentialsOrThrow()
             val args = arrayOf<Any?>(authToken, userID)
             val arr = Gateway.fetch(Api.ACTOR, Api.TRANSACTIONS_WITH_CHARGES, args, false) {
                 it.asObjectArray()

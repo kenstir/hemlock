@@ -39,6 +39,7 @@ import org.evergreen_ils.accountAccess.fines.FinesActivity
 import org.evergreen_ils.accountAccess.holds.HoldsActivity
 import org.evergreen_ils.android.App
 import org.evergreen_ils.data.EgSms
+import org.evergreen_ils.data.Result
 import org.evergreen_ils.net.Gateway
 import org.evergreen_ils.searchCatalog.SearchActivity
 import org.evergreen_ils.system.Analytics
@@ -77,24 +78,29 @@ class MainActivity : BaseActivity() {
     // We don't want to cancel this data when starting a new Activity.
     private fun loadGlobalData() {
         GlobalScope.launch {
-
             async { EgSms.loadCarriers(Gateway.pcrud.fetchSMSCarriers()) }
-            //        EvergreenServerLoader.fetchOrgSettings(this)
-//        EvergreenServerLoader.fetchSMSCarriers(this)
-//        fetchUnreadMessageCount()
         }
     }
 
     // Load data that is local to this Activity.
     private fun loadUnreadMessageCount() {
-        launch {
-            val authToken = App.getAccount().authToken
-            val userID = App.getAccount().id
-            if (resources.getBoolean(R.bool.ou_enable_messages) && authToken != null && userID != null) {
-                mUnreadMessageCount = countUnread(Gateway.actor.fetchUserMessages(authToken, userID))
-                updateUnreadMessageText()
+        async {
+            if (resources.getBoolean(R.bool.ou_enable_messages)) {
+                onMessagesResult(Gateway.actor.fetchUserMessages(App.getAccount()))
             }
         }
+    }
+
+    private fun onMessagesResult(result: Result<List<OSRFObject>>) {
+        when (result) {
+            is Result.Success ->  updateMessagesBadge(result.data)
+            is Result.Error -> Unit
+        }
+    }
+
+    private fun updateMessagesBadge(messages: List<OSRFObject>) {
+        mUnreadMessageCount = countUnread(messages)
+        updateUnreadMessagesText()
     }
 
     private fun countUnread(messages: List<OSRFObject>): Int {
@@ -139,7 +145,7 @@ class MainActivity : BaseActivity() {
         val item = menu.findItem(R.id.action_switch_account)
         if (item != null)
             item.isEnabled = AccountUtils.haveMoreThanOneAccount(this)
-        updateUnreadMessageText()
+        updateUnreadMessagesText()
         return true
     }
 
@@ -152,14 +158,15 @@ class MainActivity : BaseActivity() {
         button.setOnClickListener { onOptionsItemSelected(item) }
     }
 
-    private fun updateUnreadMessageText() {
+    private fun updateUnreadMessagesText() {
         if (mUnreadMessageText == null)
             return
         if (isFinishing)
             return
-        if (mUnreadMessageCount != null) {
-            mUnreadMessageText?.visibility = if (mUnreadMessageCount!! > 0) View.VISIBLE else View.GONE;
-            mUnreadMessageText?.text = String.format("%d", mUnreadMessageCount)
+        val count = mUnreadMessageCount
+        if (count != null) {
+            mUnreadMessageText?.visibility = if (count > 0) View.VISIBLE else View.GONE;
+            mUnreadMessageText?.text = String.format("%d", count)
         } else {
             mUnreadMessageText?.visibility = View.GONE
         }

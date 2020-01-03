@@ -29,7 +29,8 @@ object GatewayJob {
 
     // EXPERIMENTAL
     // usage: fetchAllOrgSettingsAsync().join()
-    suspend fun fetchAllOrgSettingsAsync(org: Organization?) = GlobalScope.launch {
+    //suspend fun fetchAllOrgSettingsAsync(org: Organization?) = GlobalScope.launch {
+    suspend fun fetchAllOrgSettingsAsync(org: Organization?) = GlobalScope.async {
         val orgs = if (org != null) listOf(org) else EgOrg.orgs
         for (org in orgs) {
             if (!org.settingsLoaded) {

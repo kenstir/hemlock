@@ -49,6 +49,7 @@ import org.evergreen_ils.utils.ui.ProgressDialogSupport
 import org.opensrf.util.OSRFObject
 import java.net.URLEncoder
 import java.text.DecimalFormat
+import kotlin.random.Random
 
 private const val TAG = "FinesActivity"
 
@@ -116,89 +117,35 @@ class FinesActivity : BaseActivity() {
         Log.d(TAG, object{}.javaClass.enclosingMethod?.name)
 
         loadData()
-//        testExceptionHandling()
-    }
-
-    private fun testExceptionHandling() {
-        val case = (0 until 10).random()
-        Log.d(TAG, "[kcxxx] case:$case -----------------------------------------------------")
-
-        // A
-        try {
-            // B
-            launch {
-                // C
-                try {
-                    // D
-                    Log.d(TAG, "[kcxxx] D: inner try")
-                    if (case == 0) throw GatewayError("case $case")
-
-                    var jobs = mutableListOf<Job>()
-                    jobs.add(async {
-                        // E
-                        Log.d(TAG, "[kcxxx] E: delay ...")
-                        delay(1_000)
-                        if (case == 1) throw GatewayError("case $case")
-                        Log.d(TAG, "[kcxxx] E: delay ... done")
-                    })
-                    jobs.add(async {
-                        // F
-                        Log.d(TAG, "[kcxxx] F: delay ...")
-                        delay(1_000)
-                        if (case == 2) throw GatewayError("case $case")
-                        Log.d(TAG, "[kcxxx] F: delay ... done")
-                    })
-
-                    Log.d(TAG, "[kcxxx} D: joinAll ...")
-                    jobs.joinAll()
-                    Log.d(TAG, "[kcxxx} D: joinAll ...")
-                } catch (e: Exception) {
-                    Log.d(TAG, "[kcxxx} D: caught", e)
-                }
-                if (case == 3) throw GatewayError("case $case")
-            }
-            if (case == 4) throw GatewayError("case $case")
-        } catch (e: Exception) {
-            Log.d(TAG, "[kcxxx] B: caught", e)
-        }
     }
 
     private fun loadData() {
-        try {
-            launch {
-                try {
-                    val start = System.currentTimeMillis()
-                    var jobs = mutableListOf<Job>()
+        async {
+            try {
+                val start = System.currentTimeMillis()
+                var jobs = mutableListOf<Job>()
 
-                    Log.d(TAG, "[kcxxx] loadData ...")
-                    jobs.add(async {
-                        // Need homeOrg's settings to enable/disable fines
-                        val homeOrg = EgOrg.findOrg(App.getAccount().homeOrg)
-                        GatewayJob.fetchAllOrgSettingsAsync(homeOrg).join()
-                        updatePayFinesButtonVisibility()
-                    })
+                Log.d(TAG, "[kcxxx] loadData ...")
+                jobs.add(async {
+                    // Need homeOrg's settings to enable/disable fines
+                    val homeOrg = EgOrg.findOrg(App.getAccount().homeOrg)
+                    GatewayJob.fetchAllOrgSettingsAsync(homeOrg).await()
+                    updatePayFinesButtonVisibility()
+                })
 
-                    val authToken = App.getAccount().authToken
-                    val userID = App.getAccount().id
-                    if (authToken != null && userID != null) {
-                        jobs.add(async {
-                            onSummaryResult(Gateway.actor.fetchUserFinesSummary(authToken, userID))
-                        })
-                        jobs.add(async {
-                            onTransactionsResult(Gateway.actor.fetchUserTransactionsWithCharges(authToken, userID))
-                        })
-                    }
+                jobs.add(async {
+                    onSummaryResult(Gateway.actor.fetchUserFinesSummary(App.getAccount()))
+                })
+                jobs.add(async {
+                    onTransactionsResult(Gateway.actor.fetchUserTransactionsWithCharges(App.getAccount()))
+                })
 
-                    jobs.joinAll()
-                    Log.logElapsedTime(TAG, start, "[kcxxx] loadData ... done")
-                } catch (ex: Exception) {
-                    Log.d(TAG, "[kcxxx] loadData ... caught 1", ex)
-                }
+                jobs.joinAll()
+                Log.logElapsedTime(TAG, start, "[kcxxx] loadData ... done")
+            } catch (ex: Exception) {
+                Log.d(TAG, "[kcxxx] loadData ... caught", ex)
             }
-        } catch (outerEx: Exception) {
-            Log.d(TAG, "[kcxxx] loadData ... caught 2", outerEx)
         }
-
     }
 
     private fun updatePayFinesButtonVisibility() {
@@ -236,6 +183,8 @@ class FinesActivity : BaseActivity() {
 
     private fun loadSummary(obj: OSRFObject?) {
         Log.d(TAG, "[kcxxx] updateSummary: o:$obj")
+//        if (Random.nextInt() % 100 < 10)
+//            throw GatewayError("[kcxxx] throwing fake error in loadSummary");
         total_owed?.text = decimalFormatter?.format(getFloat(obj, "total_owed"))
         total_paid?.text = decimalFormatter?.format(getFloat(obj, "total_paid"))
         val balance = getFloat(obj, "balance_owed")
@@ -252,7 +201,8 @@ class FinesActivity : BaseActivity() {
 
     private fun loadTransactions(objects: List<OSRFObject>) {
         Log.d(TAG, "[kcxxx] loadTransactions o:$objects")
-        //throw GatewayError("fake error in loadTransactions");
+//        if (Random.nextInt() % 100 < 10)
+//            throw GatewayError("[kcxxx] throwing fake error in loadTransactions");
 
         listAdapter?.clear()
         val fines = FineRecord.makeArray(objects)
