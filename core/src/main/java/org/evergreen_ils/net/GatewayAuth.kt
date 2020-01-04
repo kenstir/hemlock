@@ -19,12 +19,17 @@
 package org.evergreen_ils.net
 
 import org.evergreen_ils.Api
+import org.evergreen_ils.data.Result
 import org.opensrf.util.OSRFObject
 
 object GatewayAuth: AuthService {
-    override suspend fun fetchSession(authToken: String): OSRFObject {
-        return Gateway.fetchNoCache<OSRFObject>(Api.AUTH, Api.AUTH_SESSION_RETRIEVE, arrayOf(authToken)) { response ->
-            response.asObject()
+    override suspend fun fetchSession(authToken: String): Result<OSRFObject> {
+        return try {
+            Gateway.maybeInjectRandomError()
+            val ret = Gateway.fetchObject(Api.AUTH, Api.AUTH_SESSION_RETRIEVE, arrayOf(authToken), false)
+            Result.Success(ret)
+        } catch (e: Exception) {
+            Result.Error(e)
         }
     }
 }

@@ -19,10 +19,16 @@
 package org.evergreen_ils.net
 
 import org.evergreen_ils.Api
+import org.evergreen_ils.data.Result
 import org.opensrf.util.OSRFObject
 
 object GatewaySearch: SearchService {
-    override suspend fun fetchCopyStatuses(): List<OSRFObject> {
-        return Gateway.fetchObjectArray(Api.SEARCH, Api.COPY_STATUS_ALL, arrayOf(), false)
+    override suspend fun fetchCopyStatuses(): Result<List<OSRFObject>> {
+        return try {
+            val ret = Gateway.fetchObjectArray(Api.SEARCH, Api.COPY_STATUS_ALL, arrayOf(), false)
+            Result.Success(ret)
+        } catch (e: Exception) {
+            Result.Error(e)
+        }
     }
 }

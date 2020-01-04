@@ -18,10 +18,9 @@
 
 package org.evergreen_ils.net
 
-import org.evergreen_ils.Api
-import org.evergreen_ils.net.Gateway
+import org.evergreen_ils.data.Result
 import org.opensrf.util.OSRFObject
 
 interface AuthService {
-    suspend fun fetchSession(authToken: String): OSRFObject
+    suspend fun fetchSession(authToken: String): Result<OSRFObject>
 }

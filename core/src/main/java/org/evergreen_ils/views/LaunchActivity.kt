@@ -26,6 +26,7 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
+import kotlinx.android.synthetic.main.drawer_item.view.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
@@ -131,10 +132,11 @@ class LaunchActivity : AppCompatActivity(), CoroutineScope by MainScope() {
                 Log.d(TAG, "[auth] ${account.username} ${account.authToken}")
                 mModel?.loadServiceData(resources)
             } catch (ex: TimeoutException) {
+                Log.d(TAG, "[kcxxx] timeout in launchLoginFlow")
                 mProgressText?.text = ex.message ?: "Timeout"
                 onLaunchFailure()
             } catch (ex: Exception) {
-                Log.d(TAG, "[auth] caught in launchLoginFlow", ex)
+                Log.d(TAG, "[kcxxx] caught in launchLoginFlow", ex)
                 mProgressText?.text = ex.message ?: "Cancelled"
                 onLaunchFailure()
             }
@@ -144,10 +146,13 @@ class LaunchActivity : AppCompatActivity(), CoroutineScope by MainScope() {
     private fun loadAccountData() {
         launch {
             try {
-                getSession(App.getAccount())
-                onLaunchSuccess()
+                if (getSession(App.getAccount())) {
+                    onLaunchSuccess()
+                } else {
+                    onLaunchFailure()
+                }
             } catch (ex: Exception) {
-                Log.d(TAG, "caught in loadAccountData", ex)
+                Log.d(TAG, "[kcxxx] caught in loadAccountData", ex)
                 var msg = ex.message ?: "Cancelled"
                 mProgressText?.text = msg
                 onLaunchFailure()
@@ -163,7 +168,7 @@ class LaunchActivity : AppCompatActivity(), CoroutineScope by MainScope() {
         Log.d(TAG, "[auth] getAuthTokenFuture")
         val future = AccountUtils.getAuthTokenFuture(this)
         Log.d(TAG, "[auth] getAuthTokenFuture ...")
-        val bnd: Bundle? = future.await()
+        val bnd: Bundle? = future.await(30_000)
         Log.d(TAG, "[auth] getAuthTokenFuture ... $bnd")
         if (bnd == null)
             throw TimeoutException()
@@ -183,12 +188,11 @@ class LaunchActivity : AppCompatActivity(), CoroutineScope by MainScope() {
     }
 
     // Again we have to do this here and not in a ViewModel because it needs an Activity.
-    // TODO: change return type to Result?
     private suspend fun getSession(account: Account): Boolean {
         // authToken zen: try it once and if it fails, invalidate it and try again
-        val sessionResult = runCatching { fetchSession(account.authTokenOrThrow()) }
-        var obj = sessionResult.getOrNull()
-        if (obj == null) {
+        var sessionResult = fetchSession(account.authTokenOrThrow())
+        Log.d(TAG, "[kcxxx] sessionResult:$sessionResult")
+        if (sessionResult is Result.Error) {
             AccountUtils.invalidateAuthToken(this, account.authToken)
             account.authToken = null
             Log.d(TAG, "[auth] getAuthTokenForAccountFuture ...")
@@ -199,18 +203,28 @@ class LaunchActivity : AppCompatActivity(), CoroutineScope by MainScope() {
             if (accountManagerResult.accountName.isNullOrEmpty() || accountManagerResult.authToken.isNullOrEmpty())
                 throw Exception(accountManagerResult.failureMessage)
             account.authToken = accountManagerResult.authToken
-            obj = fetchSession(account.authTokenOrThrow())
+            sessionResult = fetchSession(account.authTokenOrThrow())
+            Log.d(TAG, "[kcxxx] sessionResult:$sessionResult")
         }
-        account.loadSession(obj)
+        when (sessionResult) {
+            is Result.Success -> account.loadSession(sessionResult.data)
+            is Result.Error -> {
+                throw sessionResult.exception
+//                showAlert(sessionResult.exception)
+//                return false
+            }
+        }
 
         // get user settings
         val fleshedUserResult = Gateway.actor.fetchFleshedUser(account)
+        Log.d(TAG, "[kcxxx] fleshedUserResult:$fleshedUserResult")
         when (fleshedUserResult) {
             is Result.Success ->
                 account.loadFleshedUserSettings(fleshedUserResult.data)
             is Result.Error -> {
-                showAlert(fleshedUserResult.exception)
-                return false
+                throw fleshedUserResult.exception
+//                showAlert(fleshedUserResult.exception)
+//                return false
             }
         }
 
@@ -223,11 +237,11 @@ class LaunchActivity : AppCompatActivity(), CoroutineScope by MainScope() {
         return true
     }
 
-    private suspend fun fetchSession(authToken: String): OSRFObject {
+    private suspend fun fetchSession(authToken: String): Result<OSRFObject> {
         Log.d(TAG, "[auth] fetchSession ...")
-        val obj = Gateway.auth.fetchSession(authToken)
-        Log.d(TAG, "[auth] fetchSession ... $obj")
-        return obj
+        val result = Gateway.auth.fetchSession(authToken)
+        Log.d(TAG, "[auth] fetchSession ... $result")
+        return result
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

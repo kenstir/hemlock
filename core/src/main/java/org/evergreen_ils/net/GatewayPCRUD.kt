@@ -20,17 +20,28 @@ package org.evergreen_ils.net
 
 import org.evergreen_ils.Api
 import org.evergreen_ils.data.EgCodedValueMap
+import org.evergreen_ils.data.Result
 import org.opensrf.util.OSRFObject
 
 object GatewayPCRUD: PCRUDService {
-    override suspend fun fetchCodedValueMaps(): List<OSRFObject> {
-        val formats = arrayListOf(EgCodedValueMap.ICON_FORMAT, EgCodedValueMap.SEARCH_FORMAT)
-        val searchParams = mapOf<String, Any?>("ctype" to formats)
-        return Gateway.fetchObjectArray(Api.PCRUD, Api.SEARCH_CCVM, arrayOf<Any?>(Api.ANONYMOUS, searchParams), true)
+    override suspend fun fetchCodedValueMaps(): Result<List<OSRFObject>> {
+        return try {
+            val formats = arrayListOf(EgCodedValueMap.ICON_FORMAT, EgCodedValueMap.SEARCH_FORMAT)
+            val searchParams = mapOf<String, Any?>("ctype" to formats)
+            val ret = Gateway.fetchObjectArray(Api.PCRUD, Api.SEARCH_CCVM, arrayOf<Any?>(Api.ANONYMOUS, searchParams), true)
+            Result.Success(ret)
+        } catch (e: Exception) {
+            Result.Error(e)
+        }
     }
 
-    override suspend fun fetchSMSCarriers(): List<OSRFObject> {
-        val searchParams = mapOf<String, Any?>("active" to 1)
-        return Gateway.fetchObjectArray(Api.PCRUD, Api.SEARCH_SMS_CARRIERS, arrayOf(Api.ANONYMOUS, searchParams), true)
+    override suspend fun fetchSMSCarriers(): Result<List<OSRFObject>> {
+        return try {
+            val searchParams = mapOf<String, Any?>("active" to 1)
+            val ret = Gateway.fetchObjectArray(Api.PCRUD, Api.SEARCH_SMS_CARRIERS, arrayOf(Api.ANONYMOUS, searchParams), true)
+            Result.Success(ret)
+        } catch (e: Exception) {
+            Result.Error(e)
+        }
     }
 }

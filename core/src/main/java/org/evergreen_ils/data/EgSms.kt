@@ -37,8 +37,6 @@ object EgSms {
                 if (id != null && name != null) {
                     this.carriers.add(SMSCarrier(id, name))
                     Log.d(TAG, "loadSMSCarriers id:$id name:$name")
-                } else {
-                    throw Error("wtf")
                 }
             }
             this.carriers.sort()

@@ -25,9 +25,9 @@ import org.opensrf.util.OSRFObject
 
 interface ActorService {
     suspend fun fetchServerVersion(): Result<String>
-    suspend fun fetchOrgTypes(): List<OSRFObject>
-    suspend fun fetchOrgTree(): OSRFObject
-    suspend fun fetchOrgSettings(orgID: Int): JSONDictionary
+    suspend fun fetchOrgTypes(): Result<List<OSRFObject>>
+    suspend fun fetchOrgTree(): Result<OSRFObject>
+    suspend fun fetchOrgSettings(orgID: Int): Result<JSONDictionary>
     suspend fun fetchFleshedUser(account: Account): Result<OSRFObject>
     suspend fun fetchUserMessages(account: Account): Result<List<OSRFObject>>
     suspend fun fetchUserFinesSummary(account: Account): Result<OSRFObject?>

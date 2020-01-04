@@ -52,6 +52,7 @@ class Account constructor(val username: String, var authToken: String?) {
     val searchOrg: Int?
         get() = defaultSearchOrg ?: homeOrg
 
+    /** return (authToken, userID) or throw GatewayEventError */
     fun getCredentialsOrThrow(): AccountCredentials {
         val authToken = this.authToken
         val id = this.id

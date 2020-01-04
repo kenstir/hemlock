@@ -29,10 +29,14 @@ import org.evergreen_ils.R
 import org.evergreen_ils.data.*
 import org.evergreen_ils.net.Gateway
 import org.evergreen_ils.system.Log
+import java.util.concurrent.TimeoutException
+import java.util.concurrent.atomic.AtomicInteger
 
 private const val TAG = "LaunchViewModel"
 
 class LaunchViewModel : ViewModel() {
+
+    private var errors = AtomicInteger(0)
 
     private val _status = MutableLiveData<String>()
     val status: LiveData<String>
@@ -46,9 +50,11 @@ class LaunchViewModel : ViewModel() {
     val serviceDataReady: LiveData<Boolean>
         get() = _serviceDataReady
 
-    private val _accountDataReady = MutableLiveData<Boolean>()
-    val accountDataReady: LiveData<Boolean>
-        get() = _accountDataReady
+    private fun onLoadError(ex: Exception) {
+        errors.incrementAndGet()
+        _status.value = if (ex is TimeoutException) "timeout" else ex.localizedMessage
+        _serviceDataReady.value = false
+    }
 
     // This is where most global initialization happens: especially loading the IDL necessary
     // for decoding most gateway responses.  Important notes:
@@ -60,6 +66,7 @@ class LaunchViewModel : ViewModel() {
                 // update the UI
                 _spinner.value = true
                 _status.value = "Connecting to server"
+                errors.set(0)
 
                 val start_ms = System.currentTimeMillis()
                 var now_ms = start_ms
@@ -68,7 +75,7 @@ class LaunchViewModel : ViewModel() {
                 val result= Gateway.actor.fetchServerVersion()
                 when (result) {
                     is Result.Success -> Gateway.serverCacheKey = result.data
-                    is Result.Error -> return@async
+                    is Result.Error -> { onLoadError(result.exception) ; return@async }
                 }
                 now_ms = Log.logElapsedTime(TAG, now_ms, "fetchServerVersion")
 
@@ -82,24 +89,50 @@ class LaunchViewModel : ViewModel() {
                 // ---------------------------------------------------------------
 
                 var defs = arrayListOf<Deferred<Any>>()
-                defs.add(async { EgOrg.loadOrgTypes(Gateway.actor.fetchOrgTypes()) })
-                defs.add(async { EgOrg.loadOrgs(Gateway.actor.fetchOrgTree(), resources.getBoolean(R.bool.ou_hierarchical_org_tree)) })
-                defs.add(async { EgCopyStatus.loadCopyStatuses(Gateway.search.fetchCopyStatuses()) })
-                defs.add(async { EgCodedValueMap.loadCodedValueMaps(Gateway.pcrud.fetchCodedValueMaps()) })
+                defs.add(async {
+                    val result = Gateway.actor.fetchOrgTypes()
+                    when (result) {
+                        is Result.Success -> EgOrg.loadOrgTypes(result.data)
+                        is Result.Error -> onLoadError(result.exception)
+                    }
+                })
+                defs.add(async {
+                    val result = Gateway.actor.fetchOrgTree()
+                    when (result) {
+                        is Result.Success -> EgOrg.loadOrgs(result.data, resources.getBoolean(R.bool.ou_hierarchical_org_tree))
+                        is Result.Error -> onLoadError(result.exception)
+                    }
+                })
+                defs.add(async {
+                    val result = Gateway.search.fetchCopyStatuses()
+                    when (result) {
+                        is Result.Success -> EgCopyStatus.loadCopyStatuses(result.data)
+                        is Result.Error -> onLoadError(result.exception)
+                    }
+                })
+                defs.add(async {
+                    val result = Gateway.pcrud.fetchCodedValueMaps()
+                    when (result) {
+                        is Result.Success -> EgCodedValueMap.loadCodedValueMaps(result.data)
+                        is Result.Error -> onLoadError(result.exception)
+                    }
+                })
 
                 // awaitAll
                 Log.d(TAG, "coro: await ${defs.size} deferreds ...")
                 defs.map { it.await() }
                 Log.d(TAG, "coro: await ${defs.size} deferreds ... done")
 
-                _status.value = "Connected"
-                _serviceDataReady.value = true
+                if (errors.get() == 0) {
+                    _status.value = "Connected"
+                    _serviceDataReady.value = true
+                }
                 Log.logElapsedTime(TAG, start_ms,"total")
             }
             try {
                 outerJob.await()
             } catch (ex: Exception) {
-                Log.d(TAG, "caught in loadServiceData", ex)
+                Log.d(TAG, "[kcxxx] caught in loadServiceData", ex)
                 _status.value = ex.message
                 _serviceDataReady.value = false
             } finally {

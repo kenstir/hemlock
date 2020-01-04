@@ -45,6 +45,7 @@ import org.evergreen_ils.searchCatalog.SearchActivity
 import org.evergreen_ils.system.Analytics
 import org.evergreen_ils.system.Log
 import org.evergreen_ils.utils.ui.BaseActivity
+import org.evergreen_ils.utils.ui.showAlert
 import org.opensrf.util.OSRFObject
 
 class MainActivity : BaseActivity() {
@@ -78,7 +79,13 @@ class MainActivity : BaseActivity() {
     // We don't want to cancel this data when starting a new Activity.
     private fun loadGlobalData() {
         GlobalScope.launch {
-            async { EgSms.loadCarriers(Gateway.pcrud.fetchSMSCarriers()) }
+            async {
+                val result = Gateway.pcrud.fetchSMSCarriers()
+                when (result) {
+                    is Result.Success -> EgSms.loadCarriers(result.data)
+                    is Result.Error -> showAlert(result.exception)
+                }
+            }
         }
     }
 
@@ -86,15 +93,12 @@ class MainActivity : BaseActivity() {
     private fun loadUnreadMessageCount() {
         async {
             if (resources.getBoolean(R.bool.ou_enable_messages)) {
-                onMessagesResult(Gateway.actor.fetchUserMessages(App.getAccount()))
+                val result = Gateway.actor.fetchUserMessages(App.getAccount())
+                when (result) {
+                    is Result.Success ->  updateMessagesBadge(result.data)
+                    is Result.Error -> showAlert(result.exception)
+                }
             }
-        }
-    }
-
-    private fun onMessagesResult(result: Result<List<OSRFObject>>) {
-        when (result) {
-            is Result.Success ->  updateMessagesBadge(result.data)
-            is Result.Error -> Unit
         }
     }
 

@@ -24,6 +24,7 @@ import kotlinx.coroutines.launch
 import org.evergreen_ils.data.EgOrg
 import org.evergreen_ils.data.Organization
 import org.evergreen_ils.system.Log
+import org.evergreen_ils.data.Result
 
 object GatewayJob {
 
@@ -34,8 +35,12 @@ object GatewayJob {
         val orgs = if (org != null) listOf(org) else EgOrg.orgs
         for (org in orgs) {
             if (!org.settingsLoaded) {
-                async { org.loadSettings(Gateway.actor.fetchOrgSettings(org.id));
-                    Log.d(TAG, "[kcxxx] org ${org.id} loaded")
+                async {
+                    val result = Gateway.actor.fetchOrgSettings(org.id)
+                    if (result is Result.Success) {
+                        org.loadSettings(result.data);
+                        Log.d(TAG, "[kcxxx] org ${org.id} loaded")
+                    }
                 }
             }
         }
