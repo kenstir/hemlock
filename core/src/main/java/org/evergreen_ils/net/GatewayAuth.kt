@@ -25,7 +25,6 @@ import org.opensrf.util.OSRFObject
 object GatewayAuth: AuthService {
     override suspend fun fetchSession(authToken: String): Result<OSRFObject> {
         return try {
-            Gateway.maybeInjectRandomError()
             val ret = Gateway.fetchObject(Api.AUTH, Api.AUTH_SESSION_RETRIEVE, arrayOf(authToken), false)
             Result.Success(ret)
         } catch (e: Exception) {

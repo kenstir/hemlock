@@ -26,7 +26,6 @@ import org.opensrf.util.OSRFObject
 object GatewayActor: ActorService {
     override suspend fun fetchServerVersion(): Result<String> {
         return try {
-//            Gateway.maybeInjectRandomError()
             val ret = Gateway.fetchObjectString(Api.ACTOR, Api.ILS_VERSION, arrayOf(), false)
             Result.Success(ret)
         } catch (e: Exception) {
@@ -36,7 +35,6 @@ object GatewayActor: ActorService {
 
     override suspend fun fetchOrgTypes(): Result<List<OSRFObject>> {
         return try {
-//            Gateway.maybeInjectRandomError()
             val ret = Gateway.fetchObjectArray(Api.ACTOR, Api.ORG_TYPES_RETRIEVE, arrayOf(), true)
             Result.Success(ret)
         } catch (e: Exception) {
@@ -46,7 +44,6 @@ object GatewayActor: ActorService {
 
     override suspend fun fetchOrgTree(): Result<OSRFObject> {
         return try {
-//            Gateway.maybeInjectRandomError()
             val ret = Gateway.fetchObject(Api.ACTOR, Api.ORG_TREE_RETRIEVE, arrayOf(), true)
             Result.Success(ret)
         } catch (e: Exception) {
@@ -56,7 +53,6 @@ object GatewayActor: ActorService {
 
     override suspend fun fetchOrgSettings(orgID: Int): Result<JSONDictionary> {
         return try {
-//            Gateway.maybeInjectRandomError()
             val settings = arrayListOf(Api.SETTING_ORG_UNIT_NOT_PICKUP_LIB,
                     Api.SETTING_CREDIT_PAYMENTS_ALLOW)
             val args = arrayOf<Any?>(orgID, settings, Api.ANONYMOUS)
@@ -71,7 +67,6 @@ object GatewayActor: ActorService {
 
     override suspend fun fetchFleshedUser(account: Account): Result<OSRFObject> {
         return try {
-            Gateway.maybeInjectRandomError()
             val (authToken, userID) = account.getCredentialsOrThrow()
             val settings = listOf("card", "settings")
             val args = arrayOf<Any?>(authToken, userID, settings)
@@ -84,7 +79,6 @@ object GatewayActor: ActorService {
 
     override suspend fun fetchUserMessages(account: Account): Result<List<OSRFObject>> {
         return try {
-//            Gateway.maybeInjectRandomError()
             val (authToken, userID) = account.getCredentialsOrThrow()
             val args = arrayOf(authToken, userID, null)
             val ret = Gateway.fetchObjectArray(Api.ACTOR, Api.MESSAGES_RETRIEVE, args, false)
@@ -96,7 +90,6 @@ object GatewayActor: ActorService {
 
     override suspend fun fetchUserFinesSummary(account: Account): Result<OSRFObject?> {
         return try {
-//            Gateway.maybeInjectRandomError()
             val (authToken, userID) = account.getCredentialsOrThrow()
             val args = arrayOf<Any?>(authToken, userID)
             val ret = Gateway.fetchOptionalObject(Api.ACTOR, Api.FINES_SUMMARY, args, false)
@@ -108,7 +101,6 @@ object GatewayActor: ActorService {
 
     override suspend fun fetchUserTransactionsWithCharges(account: Account): Result<List<OSRFObject>> {
         return try {
-//            Gateway.maybeInjectRandomError()
             val (authToken, userID) = account.getCredentialsOrThrow()
             val args = arrayOf<Any?>(authToken, userID)
             val ret = Gateway.fetchObjectArray(Api.ACTOR, Api.TRANSACTIONS_WITH_CHARGES, args, false)

@@ -24,6 +24,7 @@ import com.android.volley.Response
 import com.android.volley.toolbox.StringRequest
 import org.evergreen_ils.Api
 import org.evergreen_ils.system.Analytics
+import org.evergreen_ils.system.Log
 import org.opensrf.ShouldNotHappenException
 import org.opensrf.net.http.HttpConnection
 import org.opensrf.util.GatewayResult
@@ -32,6 +33,7 @@ import java.net.URI
 import java.net.URISyntaxException
 import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
+import kotlin.random.Random
 
 enum class GatewayState {
     UNINITIALIZED,
@@ -114,6 +116,7 @@ object Gateway {
             fetchImpl(service, method, args, shouldCache, block)
 
     private suspend fun <T> fetchImpl(service: String, method: String, args: Array<Any?>, shouldCache: Boolean, block: (GatewayResult) -> T) = suspendCoroutine<T> { cont ->
+        maybeInjectRandomError()
         val url = buildUrl(service, method, args, shouldCache)
         val r = GatewayJsonObjectRequest(
                 url,
@@ -168,11 +171,10 @@ object Gateway {
     }
 
     /** for testing, inject an error randomly */
-    fun maybeInjectRandomError() {
-        return
-//        val errorPercentage = 30
-//        val r = Random.nextInt(100)
-//        Log.d(TAG, "[kcxxx] Random error if $r < $errorPercentage")
-//        if (r < errorPercentage) throw GatewayError("Random error $r < $errorPercentage")
+    private fun maybeInjectRandomError() {
+        val errorPercentage = 0//5
+        val r = Random.nextInt(100)
+        Log.d(TAG, "[kcxxx] Random error if $r < $errorPercentage")
+        if (r < errorPercentage) throw GatewayError("Random error $r < $errorPercentage")
     }
 }
