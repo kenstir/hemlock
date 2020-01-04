@@ -35,6 +35,7 @@ import org.evergreen_ils.android.AccountUtils
 import org.evergreen_ils.android.App
 import org.evergreen_ils.data.Account
 import org.evergreen_ils.data.EgOrg
+import org.evergreen_ils.data.Result
 import org.evergreen_ils.net.Gateway
 import org.evergreen_ils.system.Analytics
 import org.evergreen_ils.system.Log
@@ -42,6 +43,7 @@ import org.evergreen_ils.utils.await
 import org.evergreen_ils.utils.getAccountManagerResult
 import org.evergreen_ils.utils.ui.AppState
 import org.evergreen_ils.utils.ui.ThemeManager
+import org.evergreen_ils.utils.ui.showAlert
 import org.opensrf.util.OSRFObject
 import java.util.concurrent.TimeoutException
 
@@ -181,9 +183,10 @@ class LaunchActivity : AppCompatActivity(), CoroutineScope by MainScope() {
     }
 
     // Again we have to do this here and not in a ViewModel because it needs an Activity.
+    // TODO: change return type to Result?
     private suspend fun getSession(account: Account): Boolean {
         // authToken zen: try it once and if it fails, invalidate it and try again
-        var sessionResult = runCatching { fetchSession(account.authTokenOrThrow()) }
+        val sessionResult = runCatching { fetchSession(account.authTokenOrThrow()) }
         var obj = sessionResult.getOrNull()
         if (obj == null) {
             AccountUtils.invalidateAuthToken(this, account.authToken)
@@ -201,8 +204,15 @@ class LaunchActivity : AppCompatActivity(), CoroutineScope by MainScope() {
         account.loadSession(obj)
 
         // get user settings
-        obj = Gateway.actor.fetchFleshedUser(account.authTokenOrThrow(), account.idOrThrow())
-        account.loadFleshedUserSettings(obj)
+        val fleshedUserResult = Gateway.actor.fetchFleshedUser(account)
+        when (fleshedUserResult) {
+            is Result.Success ->
+                account.loadFleshedUserSettings(fleshedUserResult.data)
+            is Result.Error -> {
+                showAlert(fleshedUserResult.exception)
+                return false
+            }
+        }
 
         Analytics.logEvent("Account: Retrieve Session",
                 "home_org", EgOrg.getOrgShortNameSafe(account.homeOrg),

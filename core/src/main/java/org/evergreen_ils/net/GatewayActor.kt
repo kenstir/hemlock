@@ -24,9 +24,14 @@ import org.evergreen_ils.data.Result
 import org.opensrf.util.OSRFObject
 
 object GatewayActor: ActorService {
-    override suspend fun fetchServerVersion(): String {
-        return Gateway.fetchNoCache(Api.ACTOR, Api.ILS_VERSION, arrayOf()) { response ->
-            response.asString()
+    override suspend fun fetchServerVersion(): Result<String> {
+        return try {
+            val str = Gateway.fetchNoCache(Api.ACTOR, Api.ILS_VERSION, arrayOf()) { response ->
+                response.asString()
+            }
+            Result.Success(str)
+        } catch (e: Exception) {
+            Result.Error(e)
         }
     }
 
@@ -47,10 +52,16 @@ object GatewayActor: ActorService {
         }
     }
 
-    override suspend fun fetchFleshedUser(authToken: String, userID: Int): OSRFObject {
-        val settings = listOf("card", "settings")
-        val args = arrayOf<Any?>(authToken, userID, settings)
-        return Gateway.fetchObject(Api.ACTOR, Api.USER_FLESHED_RETRIEVE, args, true)
+    override suspend fun fetchFleshedUser(account: Account): Result<OSRFObject> {
+        return try {
+            val (authToken, userID) = account.getCredentialsOrThrow()
+            val settings = listOf("card", "settings")
+            val args = arrayOf<Any?>(authToken, userID, settings)
+            val obj = Gateway.fetchObject(Api.ACTOR, Api.USER_FLESHED_RETRIEVE, args, true)
+            Result.Success(obj)
+        } catch (e: Exception) {
+            Result.Error(e)
+        }
     }
 
     override suspend fun fetchUserMessages(account: Account): Result<List<OSRFObject>> {

@@ -26,11 +26,8 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
 import org.evergreen_ils.R
-import org.evergreen_ils.data.EgCopyStatus
-import org.evergreen_ils.data.EgIDL
-import org.evergreen_ils.data.EgOrg
-import org.evergreen_ils.data.EgCodedValueMap
-import org.evergreen_ils.net.*
+import org.evergreen_ils.data.*
+import org.evergreen_ils.net.Gateway
 import org.evergreen_ils.system.Log
 
 private const val TAG = "LaunchViewModel"
@@ -68,7 +65,11 @@ class LaunchViewModel : ViewModel() {
                 var now_ms = start_ms
 
                 // sync: serverVersion is a key for caching all other requests
-                Gateway.serverCacheKey = Gateway.actor.fetchServerVersion()
+                val result= Gateway.actor.fetchServerVersion()
+                when (result) {
+                    is Result.Success -> Gateway.serverCacheKey = result.data
+                    is Result.Error -> return@async
+                }
                 now_ms = Log.logElapsedTime(TAG, now_ms, "fetchServerVersion")
 
                 // sync: load IDL

@@ -20,6 +20,7 @@
  */
 package org.evergreen_ils.accountAccess.fines
 
+import android.app.Activity
 import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
@@ -30,7 +31,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.async
+import kotlinx.coroutines.joinAll
 import org.evergreen_ils.R
 import org.evergreen_ils.android.AccountUtils
 import org.evergreen_ils.android.App
@@ -38,7 +41,6 @@ import org.evergreen_ils.data.EgOrg
 import org.evergreen_ils.data.FineRecord
 import org.evergreen_ils.data.Result
 import org.evergreen_ils.net.Gateway
-import org.evergreen_ils.net.GatewayError
 import org.evergreen_ils.net.GatewayJob
 import org.evergreen_ils.searchCatalog.RecordDetails
 import org.evergreen_ils.searchCatalog.RecordInfo
@@ -46,10 +48,10 @@ import org.evergreen_ils.system.Analytics
 import org.evergreen_ils.system.Log
 import org.evergreen_ils.utils.ui.BaseActivity
 import org.evergreen_ils.utils.ui.ProgressDialogSupport
+import org.evergreen_ils.utils.ui.showAlert
 import org.opensrf.util.OSRFObject
 import java.net.URLEncoder
 import java.text.DecimalFormat
-import kotlin.random.Random
 
 private const val TAG = "FinesActivity"
 
@@ -216,25 +218,6 @@ class FinesActivity : BaseActivity() {
 
         listAdapter?.notifyDataSetChanged()
         //progress!!.dismiss()
-    }
-
-    // TODO: move to BaseActivity
-    protected fun showAlert(ex: Exception) {
-        showAlert(ex.localizedMessage)
-    }
-
-    // TODO: move to BaseActivity
-    protected fun showAlert(errorMessage: String) {
-        if (isFinishing) return
-        val builder = AlertDialog.Builder(this)
-        builder.setTitle("Error")
-                .setMessage(errorMessage)
-                .setPositiveButton(android.R.string.ok) { dialog, which ->
-                    //alertDialog = null
-                    //alertMessage = null
-                }
-        val alertDialog = builder.create()
-        alertDialog.show()
     }
 
     private fun getFloat(o: OSRFObject?, field: String): Float {
