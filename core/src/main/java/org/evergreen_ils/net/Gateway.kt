@@ -23,9 +23,7 @@ import com.android.volley.Request
 import com.android.volley.Response
 import com.android.volley.toolbox.StringRequest
 import org.evergreen_ils.Api
-import org.evergreen_ils.android.App
 import org.evergreen_ils.system.Analytics
-import org.evergreen_ils.system.Log
 import org.opensrf.ShouldNotHappenException
 import org.opensrf.net.http.HttpConnection
 import org.opensrf.util.GatewayResult
@@ -34,7 +32,6 @@ import java.net.URI
 import java.net.URISyntaxException
 import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
-import kotlin.random.Random
 
 enum class GatewayState {
     UNINITIALIZED,
@@ -113,12 +110,10 @@ object Gateway {
     }
 
     // Make an OSRF Gateway request from inside a CoroutineScope.  `block` is expected to return T or throw
-    suspend fun <T> fetch(service: String, method: String, args: Array<Any?>, shouldCache: Boolean, block: (GatewayResult) -> T) = fetchObjectImpl(service, method, args, shouldCache, block)
+    suspend fun <T> fetch(service: String, method: String, args: Array<Any?>, shouldCache: Boolean, block: (GatewayResult) -> T) =
+            fetchImpl(service, method, args, shouldCache, block)
 
-    // same as above without caching
-    suspend fun <T> fetchNoCache(service: String, method: String, args: Array<Any?>, block: (GatewayResult) -> T) = fetchObjectImpl(service, method, args, false, block)
-
-    private suspend fun <T> fetchObjectImpl(service: String, method: String, args: Array<Any?>, shouldCache: Boolean, block: (GatewayResult) -> T) = suspendCoroutine<T> { cont ->
+    private suspend fun <T> fetchImpl(service: String, method: String, args: Array<Any?>, shouldCache: Boolean, block: (GatewayResult) -> T) = suspendCoroutine<T> { cont ->
         val url = buildUrl(service, method, args, shouldCache)
         val r = GatewayJsonObjectRequest(
                 url,
