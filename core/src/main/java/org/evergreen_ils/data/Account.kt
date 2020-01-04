@@ -37,6 +37,7 @@ class Account constructor(val username: String, var authToken: String?) {
     var notifyBySMS = false
     var smsCarrier: Int? = null
     var smsNumber: String? = null
+    var holdNotifyValue: String? = null // kept for analytics
 
     private var dayPhone: String? = null
     private var defaultPickupOrg: Int? = null
@@ -89,7 +90,8 @@ class Account constructor(val username: String, var authToken: String?) {
         this.defaultSearchOrg = Api.parseInt(map[Api.USER_SETTING_DEFAULT_SEARCH_LOCATION])
         this.defaultSMSCarrier = Api.parseInt(map[Api.USER_SETTING_DEFAULT_SMS_CARRIER])
         this.smsNumber = map[Api.USER_SETTING_DEFAULT_SMS_NOTIFY]
-        parseHoldNotifyValue(map[Api.USER_SETTING_HOLD_NOTIFY])
+        this.holdNotifyValue = map[Api.USER_SETTING_HOLD_NOTIFY]
+        parseHoldNotifyValue(holdNotifyValue)
     }
 
     fun parseHoldNotifyValue(value: String?) {

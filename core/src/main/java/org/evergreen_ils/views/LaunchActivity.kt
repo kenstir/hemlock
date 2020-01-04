@@ -34,6 +34,7 @@ import org.evergreen_ils.R
 import org.evergreen_ils.android.AccountUtils
 import org.evergreen_ils.android.App
 import org.evergreen_ils.data.Account
+import org.evergreen_ils.data.EgOrg
 import org.evergreen_ils.net.Gateway
 import org.evergreen_ils.system.Analytics
 import org.evergreen_ils.system.Log
@@ -203,11 +204,11 @@ class LaunchActivity : AppCompatActivity(), CoroutineScope by MainScope() {
         obj = Gateway.actor.fetchFleshedUser(account.authTokenOrThrow(), account.idOrThrow())
         account.loadFleshedUserSettings(obj)
 
-//        Analytics.logEvent("Account: Retrieve Session",
-//                "home_org", EvergreenService.Companion.getOrgShortNameSafe(homeLibraryID),
-//                "pickup_org", EvergreenService.Companion.getOrgShortNameSafe(defaultPickupLibraryID),
-//                "search_org", EvergreenService.Companion.getOrgShortNameSafe(defaultSearchLibraryID),
-//                "hold_notify", safeString(holdNotifySetting));
+        Analytics.logEvent("Account: Retrieve Session",
+                "home_org", EgOrg.getOrgShortNameSafe(account.homeOrg),
+                "pickup_org", EgOrg.getOrgShortNameSafe(account.pickupOrg),
+                "search_org", EgOrg.getOrgShortNameSafe(account.searchOrg),
+                "hold_notify", account.holdNotifyValue ?: "")
 
         return true
     }

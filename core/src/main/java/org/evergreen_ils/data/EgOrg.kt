@@ -104,10 +104,10 @@ object EgOrg {
     fun findOrg(id: Int?): Organization? = orgs.firstOrNull { it.id == id }
 
     @JvmStatic
-    fun getOrgShortNameSafe(id: Int): String = findOrg(id)?.shortname ?: "?"
+    fun getOrgShortNameSafe(id: Int?): String = findOrg(id)?.shortname ?: "?"
 
     @JvmStatic
-    fun getOrgNameSafe(id: Int): String = findOrg(id)?.name ?: "?"
+    fun getOrgNameSafe(id: Int?): String = findOrg(id)?.name ?: "?"
 
     @JvmStatic
     fun findOrgByShortName(shortName: String): Organization? = orgs.firstOrNull { it.shortname == shortName }
