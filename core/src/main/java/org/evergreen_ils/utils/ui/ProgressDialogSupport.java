@@ -30,10 +30,10 @@ public class ProgressDialogSupport {
     public ProgressDialogSupport() {
     }
 
-    public void show(Activity context, CharSequence msg) {
+    public void show(Activity activity, CharSequence msg) {
         if (progressDialog == null) {
-            progressDialog = new ProgressDialog(context);
-            progressDialog.setOwnerActivity(context);
+            progressDialog = new ProgressDialog(activity);
+            progressDialog.setOwnerActivity(activity);
         }
         progressDialog.setMessage(msg);
         progressDialog.show();
