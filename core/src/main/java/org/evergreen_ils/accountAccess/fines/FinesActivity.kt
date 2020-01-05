@@ -80,8 +80,7 @@ class FinesActivity : BaseActivity() {
         pay_fines_button = findViewById(R.id.pay_fines)
         progress = ProgressDialogSupport()
         fineRecords = ArrayList()
-        listAdapter = FinesArrayAdapter(this,
-                R.layout.fines_list_item, fineRecords)
+        listAdapter = FinesArrayAdapter(this, R.layout.fines_list_item, fineRecords)
         lv?.setAdapter(listAdapter)
         lv?.setOnItemClickListener { parent, view, position, id ->
             Analytics.logEvent("Fines: Tap List Item", "have_grocery_bills", haveAnyGroceryBills)
@@ -90,10 +89,8 @@ class FinesActivity : BaseActivity() {
                 // If any of the fines are for non-circulation items ("grocery bills"), we
                 // start the details flow with only the one record, if a record was selected.
                 // The details flow can't handle nulls.
-                val record = fineRecords[position].recordInfo
-                if (record != null) {
-                    records.add(record)
-                    RecordDetails.launchDetailsFlow(this@FinesActivity, records, 0)
+                fineRecords[position].recordInfo?.let {
+                    records.add(it)
                 }
             } else {
                 for (item in fineRecords) {
@@ -101,7 +98,10 @@ class FinesActivity : BaseActivity() {
                         records.add(it)
                     }
                 }
-                RecordDetails.launchDetailsFlow(this@FinesActivity, records, position)
+            }
+            if (records.size > 0) {
+                val targetPosition = kotlin.math.max(position, records.size - 1)
+                RecordDetails.launchDetailsFlow(this@FinesActivity, records, targetPosition)
             }
         }
         updatePayFinesButtonState(false)
@@ -201,8 +201,6 @@ class FinesActivity : BaseActivity() {
 
     private fun loadTransactions(objects: List<OSRFObject>) {
         Log.d(TAG, "[kcxxx] loadTransactions o:$objects")
-//        if (Random.nextInt() % 100 < 10)
-//            throw GatewayError("[kcxxx] throwing fake error in loadTransactions");
 
         listAdapter?.clear()
         val fines = FineRecord.makeArray(objects)
