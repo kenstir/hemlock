@@ -216,6 +216,8 @@ class LaunchActivity : AppCompatActivity(), CoroutineScope by MainScope() {
             }
         }
 
+        //mProgressText?.text = "Loading account preferences"
+
         // get user settings
         val fleshedUserResult = Gateway.actor.fetchFleshedUser(account)
         Log.d(TAG, "[kcxxx] fleshedUserResult:$fleshedUserResult")

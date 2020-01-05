@@ -83,7 +83,7 @@ public class Api {
 
     /// circ
 
-    public static final String SERVICE_CIRC = "open-ils.circ";
+    public static final String CIRC = "open-ils.circ";
     public static final String CIRC_RETRIEVE = "open-ils.circ.retrieve"; // circ
     public static final String CIRC_RENEW = "open-ils.circ.renew";
     public static final String HOLDS_RETRIEVE = "open-ils.circ.holds.retrieve"; // [ahr]

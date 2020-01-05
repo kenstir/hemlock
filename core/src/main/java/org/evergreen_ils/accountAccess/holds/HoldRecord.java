@@ -21,7 +21,9 @@ package org.evergreen_ils.accountAccess.holds;
 
 import java.io.Serializable;
 import java.text.DateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 import org.evergreen_ils.Api;
@@ -29,6 +31,8 @@ import org.evergreen_ils.R;
 import org.evergreen_ils.data.EgOrg;
 import org.evergreen_ils.system.Analytics;
 import org.evergreen_ils.searchCatalog.RecordInfo;
+import org.evergreen_ils.system.Log;
+import org.jetbrains.annotations.NotNull;
 import org.opensrf.ShouldNotHappenException;
 import org.opensrf.util.OSRFObject;
 import android.content.res.Resources;
@@ -39,6 +43,7 @@ public class HoldRecord implements Serializable {
 
     public OSRFObject ahr = null;
     public RecordInfo recordInfo = null;
+    //TODO: add qstatsObj a la Swift
 
     // hold_type:
     //   T - title (default)
@@ -155,4 +160,11 @@ public class HoldRecord implements Serializable {
         }
     }
 
+    public static @NotNull List<HoldRecord> makeArray(@NotNull List<OSRFObject> ahr_objects) {
+        ArrayList<HoldRecord> ret = new ArrayList<>();
+        for (OSRFObject ahr_obj: ahr_objects) {
+            ret.add(new HoldRecord(ahr_obj));
+        }
+        return ret;
+    }
 }

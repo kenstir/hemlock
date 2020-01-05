@@ -54,6 +54,7 @@ object Gateway {
 
     var actor: ActorService = GatewayActor
     var auth: AuthService = GatewayAuth
+    var circ: CircService = GatewayCirc
     var pcrud: PCRUDService = GatewayPCRUD
     var search: SearchService = GatewaySearch
 

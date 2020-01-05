@@ -32,7 +32,6 @@ import org.evergreen_ils.android.AccountUtils;
 import org.evergreen_ils.android.App;
 import org.evergreen_ils.auth.Const;
 import org.evergreen_ils.data.Account;
-import org.evergreen_ils.data.FineRecord;
 import org.evergreen_ils.net.Gateway;
 import org.evergreen_ils.searchCatalog.RecordInfo;
 import org.evergreen_ils.system.Analytics;
@@ -185,7 +184,7 @@ public class AccountAccess {
             throws SessionNotFoundException {
 
         Account account = App.getAccount();
-        Object resp = Utils.doRequest(conn(), Api.SERVICE_CIRC,
+        Object resp = Utils.doRequest(conn(), Api.CIRC,
                 Api.CIRC_RETRIEVE, account.getAuthToken(), new Object[] {
                         account.getAuthToken(), id });
         return GatewayResult.createFromObject(resp);
@@ -283,7 +282,7 @@ public class AccountAccess {
         param.put("copyid", target_copy);
         param.put("opac_renewal", 1);
 
-        Object resp = Utils.doRequest(conn(), Api.SERVICE_CIRC,
+        Object resp = Utils.doRequest(conn(), Api.CIRC,
                 Api.CIRC_RENEW, account.getAuthToken(), new Object[] {
                         account.getAuthToken(), param });
 
@@ -304,7 +303,7 @@ public class AccountAccess {
         ArrayList<HoldRecord> holds = new ArrayList<HoldRecord>();
         Account account = App.getAccount();
 
-        Object resp = Utils.doRequest(conn(), Api.SERVICE_CIRC,
+        Object resp = Utils.doRequest(conn(), Api.CIRC,
                 Api.HOLDS_RETRIEVE, account.getAuthToken(), new Object[] {
                         account.getAuthToken(), account.getId() });
         if (resp == null) {
@@ -463,7 +462,7 @@ public class AccountAccess {
 
         Account account = App.getAccount();
         Integer hold_id = hold.ahr.getInt("id");
-        Object resp = Utils.doRequest(conn(), Api.SERVICE_CIRC,
+        Object resp = Utils.doRequest(conn(), Api.CIRC,
                 Api.HOLD_QUEUE_STATS, account.getAuthToken(), new Object[] {
                         account.getAuthToken(), hold_id });
         hold.setQueueStats(resp);
@@ -481,7 +480,7 @@ public class AccountAccess {
         Account account = App.getAccount();
         String note = "Cancelled by mobile app";
 
-        Object response = Utils.doRequest(conn(), Api.SERVICE_CIRC,
+        Object response = Utils.doRequest(conn(), Api.CIRC,
                 Api.HOLD_CANCEL, account.getAuthToken(), new Object[] {
                         account.getAuthToken(), hold_id, null, note });
         if (response != null && response.toString().equals("1"))
@@ -510,7 +509,7 @@ public class AccountAccess {
         ahr.put("thaw_date", thaw_date);
         Account account = App.getAccount();
 
-        Object response = Utils.doRequest(conn(), Api.SERVICE_CIRC,
+        Object response = Utils.doRequest(conn(), Api.CIRC,
                 Api.HOLD_UPDATE, account.getAuthToken(), new Object[] {
                         account.getAuthToken(), ahr });
 
@@ -559,7 +558,7 @@ public class AccountAccess {
         ArrayList<Integer> ids = new ArrayList<>(1);
         ids.add(recordID);
 
-        Object resp = Utils.doRequest(conn(), Api.SERVICE_CIRC,
+        Object resp = Utils.doRequest(conn(), Api.CIRC,
                 Api.HOLD_TEST_AND_CREATE, account.getAuthToken(), new Object[] {
                         account.getAuthToken(), args, ids });
 
