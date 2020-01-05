@@ -20,8 +20,6 @@
  */
 package org.evergreen_ils.accountAccess.fines
 
-import android.app.Activity
-import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
@@ -118,16 +116,16 @@ class FinesActivity : BaseActivity() {
         super.onAttachedToWindow()
         Log.d(TAG, object{}.javaClass.enclosingMethod?.name)
 
-        loadData()
+        fetchData()
     }
 
-    private fun loadData() {
+    private fun fetchData() {
         async {
             try {
                 val start = System.currentTimeMillis()
                 var jobs = mutableListOf<Job>()
 
-                Log.d(TAG, "[kcxxx] loadData ...")
+                Log.d(TAG, "[kcxxx] fetchData ...")
                 jobs.add(async {
                     // Need homeOrg's settings to enable/disable fines
                     val homeOrg = EgOrg.findOrg(App.getAccount().homeOrg)
@@ -143,9 +141,9 @@ class FinesActivity : BaseActivity() {
                 })
 
                 jobs.joinAll()
-                Log.logElapsedTime(TAG, start, "[kcxxx] loadData ... done")
+                Log.logElapsedTime(TAG, start, "[kcxxx] fetchData ... done")
             } catch (ex: Exception) {
-                Log.d(TAG, "[kcxxx] loadData ... caught", ex)
+                Log.d(TAG, "[kcxxx] fetchData ... caught", ex)
             }
         }
     }
