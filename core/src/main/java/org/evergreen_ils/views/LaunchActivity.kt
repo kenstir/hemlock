@@ -56,7 +56,6 @@ class LaunchActivity : AppCompatActivity(), CoroutineScope by MainScope() {
     private var mProgressBar: View? = null
     private var mRetryButton: Button? = null
     private lateinit var mModel: LaunchViewModel
-    private var startTime: Long = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         Log.d(TAG, "onCreate")
@@ -189,6 +188,8 @@ class LaunchActivity : AppCompatActivity(), CoroutineScope by MainScope() {
 
     // Again we have to do this here and not in a ViewModel because it needs an Activity.
     private suspend fun getSession(account: Account): Boolean {
+        mProgressText?.text = "Starting session"
+
         // authToken zen: try it once and if it fails, invalidate it and try again
         var sessionResult = fetchSession(account.authTokenOrThrow())
         Log.d(TAG, "[kcxxx] sessionResult:$sessionResult")
