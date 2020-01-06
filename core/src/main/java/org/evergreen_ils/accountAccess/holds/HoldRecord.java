@@ -121,7 +121,7 @@ public class HoldRecord implements Serializable {
         return formatDateTime(date);
     }
 
-    // Retreive hold status in text
+    // Retrieve hold status in text
     public String getHoldStatus(Resources res) {
         // Constants from Holds.pm and logic from hold_status.tt2
         // -1 on error (for now),
@@ -134,7 +134,7 @@ public class HoldRecord implements Serializable {
         //  7 for 'suspended'
         //  8 for 'captured, on wrong hold shelf'
         if (status == null) {
-            return "Network error; status unavailable";
+            return "Status unavailable";
         } else if (status == 4) {
             String status = "Available";
             if (res.getBoolean(R.bool.ou_enable_hold_shelf_expiration) && shelf_expire_time != null)
