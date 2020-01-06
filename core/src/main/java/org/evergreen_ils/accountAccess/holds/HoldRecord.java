@@ -32,10 +32,14 @@ import org.evergreen_ils.data.EgOrg;
 import org.evergreen_ils.system.Analytics;
 import org.evergreen_ils.searchCatalog.RecordInfo;
 import org.evergreen_ils.system.Log;
+import org.evergreen_ils.utils.TextUtils;
 import org.jetbrains.annotations.NotNull;
 import org.opensrf.ShouldNotHappenException;
 import org.opensrf.util.OSRFObject;
+import org.w3c.dom.Text;
+
 import android.content.res.Resources;
+import android.speech.tts.TextToSpeech;
 
 public class HoldRecord implements Serializable {
 
@@ -55,8 +59,8 @@ public class HoldRecord implements Serializable {
     public Integer target = null;
     public Date expire_time = null;
     public Date shelf_expire_time = null;
-    public String title = null;
-    public String author = null;
+    private String title = null;
+    private String author = null;
     public String part_label = null; // only for P types
     public Integer status = null;
     public boolean email_notify = false;
@@ -160,11 +164,41 @@ public class HoldRecord implements Serializable {
         }
     }
 
+    public @NotNull String getHoldType() {
+        if (ahr != null) {
+            String holdType = ahr.getString("hold_type");
+            if (holdType != null) {
+                return holdType;
+            }
+        }
+        return "?";
+    }
+
     public static @NotNull List<HoldRecord> makeArray(@NotNull List<OSRFObject> ahr_objects) {
         ArrayList<HoldRecord> ret = new ArrayList<>();
         for (OSRFObject ahr_obj: ahr_objects) {
             ret.add(new HoldRecord(ahr_obj));
         }
         return ret;
+    }
+
+    public String getTitle() {
+        if (title != null && !TextUtils.isEmpty(title)) return title;
+        if (recordInfo != null && !TextUtils.isEmpty(recordInfo.title)) return recordInfo.title;
+        return "Unknown title";
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getAuthor() {
+        if (author != null && !TextUtils.isEmpty(author)) return author;
+        if (recordInfo != null && !TextUtils.isEmpty(recordInfo.author)) return recordInfo.author;
+        return "";
+    }
+
+    public void setAuthor(String author) {
+        this.author = author;
     }
 }

@@ -26,25 +26,27 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.ListView
 import android.widget.TextView
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.joinAll
+import org.evergreen_ils.Api
 import org.evergreen_ils.R
 import org.evergreen_ils.android.App
+import org.evergreen_ils.data.Account
 import org.evergreen_ils.data.Result
-import org.evergreen_ils.data.EgOrg
 import org.evergreen_ils.net.Gateway
+import org.evergreen_ils.net.GatewayError
 import org.evergreen_ils.searchCatalog.RecordInfo
 import org.evergreen_ils.system.Analytics
 import org.evergreen_ils.system.Log
 import org.evergreen_ils.utils.ui.BaseActivity
 import org.evergreen_ils.utils.ui.ProgressDialogSupport
 import org.evergreen_ils.utils.ui.showAlert
-import kotlin.collections.ArrayList
+import org.opensrf.ShouldNotHappenException
 
 class HoldsActivity : BaseActivity() {
     private var lv: ListView? = null
@@ -93,11 +95,12 @@ class HoldsActivity : BaseActivity() {
     private fun fetchData() {
         async {
             try {
+                Log.d(TAG, "[kcxxx] fetchData ...")
                 val start = System.currentTimeMillis()
-//                var jobs = mutableListOf<Job>()
+                var jobs = mutableListOf<Job>()
                 progress?.show(this@HoldsActivity, getString(R.string.msg_loading_holds))
 
-                Log.d(TAG, "[kcxxx] fetchData ...")
+                // fetchHolds
                 val result = Gateway.circ.fetchHolds(App.getAccount())
                 when (result) {
                     is Result.Success ->
@@ -109,11 +112,19 @@ class HoldsActivity : BaseActivity() {
                 }
                 holdsSummary?.text = String.format(getString(R.string.n_items_on_hold), holdRecords.size)
 
-                //TODO: fetchHoldDetails
+                // fetchHoldDetails
+                for (hold in holdRecords) {
+                    jobs.add(async {
+                        fetchHoldTargetDetails(hold, App.getAccount())
+                    })
+                    jobs.add(async {
+                        //onHoldQueueStatsResult(hold, App.getAccount())
+                        delay(500)
+                    })
+                }
 
-//                jobs.joinAll()
-
-                loadHolds()
+                jobs.joinAll()
+                updateHoldsList()
                 Log.logElapsedTime(TAG, start, "[kcxxx] fetchData ... done")
             } catch (ex: Exception) {
                 Log.d(TAG, "[kcxxx] fetchData ... caught", ex)
@@ -124,7 +135,51 @@ class HoldsActivity : BaseActivity() {
         }
     }
 
-    private fun loadHolds() {
+    suspend fun fetchHoldTargetDetails(hold: HoldRecord, account: Account): Result<Unit> {
+        val target = hold.target
+        return when (hold.holdType) {
+            "T" -> fetchTitleHoldTargetDetails(hold, target, account)
+            "M" -> fetchMetarecordHoldTargetDetails(hold, target, account)
+            "P" -> fetchPartHoldTargetDetails(hold, target, account)
+            "C" -> fetchCopyHoldTargetDetails(hold, target, account)
+            "V" -> fetchVolumeHoldTargetDetails(hold, target, account)
+            else -> {
+                Analytics.logException(ShouldNotHappenException("unexpected holdType:${hold.holdType}"))
+                Result.Error(GatewayError("unexpected hold type: ${hold.holdType}"))
+            }
+        }
+    }
+
+    private suspend fun fetchTitleHoldTargetDetails(hold: HoldRecord, target: Int, account: Account): Result<Unit> {
+        val result = Gateway.search.fetchMetabibVirtualRecord(target)
+        return when (result) {
+            is Result.Success -> {
+                hold.recordInfo = RecordInfo(result.data)
+                Result.Success(Unit)
+            }
+            is Result.Error -> {
+                Result.Error(result.exception)
+            }
+        }
+    }
+
+    private fun fetchMetarecordHoldTargetDetails(hold: HoldRecord, target: Int, account: Account): Result<Unit> {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    private fun fetchPartHoldTargetDetails(hold: HoldRecord, target: Int, account: Account): Result<Unit> {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    private fun fetchCopyHoldTargetDetails(hold: HoldRecord, target: Int, account: Account): Result<Unit> {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    private fun fetchVolumeHoldTargetDetails(hold: HoldRecord, target: Int, account: Account): Result<Unit> {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    private fun updateHoldsList() {
         listAdapter?.clear()
         for (hold in holdRecords) {
             listAdapter?.add(hold)

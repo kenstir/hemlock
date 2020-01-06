@@ -58,8 +58,8 @@ class HoldRecordTest {
         assertEquals("5085551212", hold.sms_notify)
 
         // assertions on record / hold queue
-        assertNull(hold.title)
-        assertNull(hold.author)
+        assertEquals("Unknown title", hold.title)
+        assertEquals("", hold.author)
         assertNull(hold.part_label)
         assertNull(hold.status)
     }

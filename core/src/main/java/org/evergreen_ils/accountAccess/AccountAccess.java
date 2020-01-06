@@ -319,7 +319,7 @@ public class AccountAccess {
             if (hold.recordInfo != null)
                 hold.recordInfo.updateFromMRAResponse(fetchRecordAttributes(hold.target));
             holds.add(hold);
-            Log.d(TAG, "hold email="+hold.email_notify+" phone_notify="+hold.phone_notify+" sms_notify="+hold.sms_notify+" title="+hold.title);
+            Log.d(TAG, "hold email="+hold.email_notify+" phone_notify="+hold.phone_notify+" sms_notify="+hold.sms_notify+" title="+ hold.getTitle());
         }
         return holds;
     }
@@ -342,12 +342,12 @@ public class AccountAccess {
 
             // lame guard against Issue #6
             if (holdInfo == null) {
-                hold.title = "Unknown Title";
-                hold.author = "";
+                hold.setTitle("Unknown Title");
+                hold.setAuthor("");
                 Analytics.logException(new ShouldNotHappenException(6, "null holdInfo, ahr="+hold.ahr));
             } else {
-                hold.title = holdInfo.getString("title");
-                hold.author = holdInfo.getString("author");
+                hold.setTitle(holdInfo.getString("title"));
+                hold.setAuthor(holdInfo.getString("author"));
             }
             hold.recordInfo = new RecordInfo(holdInfo);
         } else {
@@ -389,8 +389,8 @@ public class AccountAccess {
                         Api.SEARCH, Api.MODS_SLIM_RETRIEVE,
                         new Object[] { record });
 
-                holdObj.title = holdInfo.getString("title");
-                holdObj.author = holdInfo.getString("author");
+                holdObj.setTitle(holdInfo.getString("title"));
+                holdObj.setAuthor(holdInfo.getString("author"));
                 holdObj.recordInfo = new RecordInfo(holdInfo);
             }
         } else if (type.equals("V")) {
@@ -411,8 +411,8 @@ public class AccountAccess {
                     Api.SEARCH, Api.MODS_SLIM_RETRIEVE,
                     new Object[] { record });
 
-            holdObj.title = holdInfo.getString("title");
-            holdObj.author = holdInfo.getString("author");
+            holdObj.setTitle(holdInfo.getString("title"));
+            holdObj.setAuthor(holdInfo.getString("author"));
             holdObj.recordInfo = new RecordInfo(holdInfo);
         } else if (type.equals("I")) {
             OSRFObject issuance = (OSRFObject) Utils.doRequest(conn(),
@@ -451,8 +451,8 @@ public class AccountAccess {
                     new Object[] { recordID });
 
             holdObj.part_label = part_label;
-            holdObj.title = holdInfo.getString("title");
-            holdObj.author = holdInfo.getString("author");
+            holdObj.setTitle(holdInfo.getString("title"));
+            holdObj.setAuthor(holdInfo.getString("author"));
             holdObj.recordInfo = new RecordInfo(holdInfo);
         }
     }

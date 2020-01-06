@@ -25,7 +25,16 @@ import org.opensrf.util.OSRFObject
 object GatewaySearch: SearchService {
     override suspend fun fetchCopyStatuses(): Result<List<OSRFObject>> {
         return try {
-            val ret = Gateway.fetchObjectArray(Api.SEARCH, Api.COPY_STATUS_ALL, arrayOf(), false)
+            val ret = Gateway.fetchObjectArray(Api.SEARCH, Api.COPY_STATUS_ALL, arrayOf(), true)
+            Result.Success(ret)
+        } catch (e: Exception) {
+            Result.Error(e)
+        }
+    }
+
+    override suspend fun fetchMetabibVirtualRecord(id: Int): Result<OSRFObject> {
+        return try {
+            val ret = Gateway.fetchObject(Api.SEARCH, Api.MODS_SLIM_RETRIEVE, arrayOf(id), true)
             Result.Success(ret)
         } catch (e: Exception) {
             Result.Error(e)
