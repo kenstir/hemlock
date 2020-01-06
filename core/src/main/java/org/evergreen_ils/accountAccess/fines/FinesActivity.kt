@@ -82,28 +82,7 @@ class FinesActivity : BaseActivity() {
         fineRecords = ArrayList()
         listAdapter = FinesArrayAdapter(this, R.layout.fines_list_item, fineRecords)
         lv?.setAdapter(listAdapter)
-        lv?.setOnItemClickListener { parent, view, position, id ->
-            Analytics.logEvent("Fines: Tap List Item", "have_grocery_bills", haveAnyGroceryBills)
-            val records = ArrayList<RecordInfo>()
-            if (haveAnyGroceryBills) {
-                // If any of the fines are for non-circulation items ("grocery bills"), we
-                // start the details flow with only the one record, if a record was selected.
-                // The details flow can't handle nulls.
-                fineRecords[position].recordInfo?.let {
-                    records.add(it)
-                }
-            } else {
-                for (item in fineRecords) {
-                    item.recordInfo?.let {
-                        records.add(it)
-                    }
-                }
-            }
-            if (records.size > 0) {
-                val targetPosition = kotlin.math.max(position, records.size - 1)
-                RecordDetails.launchDetailsFlow(this@FinesActivity, records, targetPosition)
-            }
-        }
+        lv?.setOnItemClickListener { parent, view, position, id -> onItemClick(position) }
         updatePayFinesButtonState(false)
     }
 
@@ -124,6 +103,7 @@ class FinesActivity : BaseActivity() {
             try {
                 val start = System.currentTimeMillis()
                 var jobs = mutableListOf<Job>()
+                progress?.show(this@FinesActivity, getString(R.string.msg_retrieving_fines))
 
                 Log.d(TAG, "[kcxxx] fetchData ...")
                 jobs.add(async {
@@ -144,6 +124,9 @@ class FinesActivity : BaseActivity() {
                 Log.logElapsedTime(TAG, start, "[kcxxx] fetchData ... done")
             } catch (ex: Exception) {
                 Log.d(TAG, "[kcxxx] fetchData ... caught", ex)
+                showAlert(ex)
+            } finally {
+                progress?.dismiss()
             }
         }
     }
@@ -183,8 +166,6 @@ class FinesActivity : BaseActivity() {
 
     private fun loadSummary(obj: OSRFObject?) {
         Log.d(TAG, "[kcxxx] updateSummary: o:$obj")
-//        if (Random.nextInt() % 100 < 10)
-//            throw GatewayError("[kcxxx] throwing fake error in loadSummary");
         total_owed?.text = decimalFormatter?.format(getFloat(obj, "total_owed"))
         total_paid?.text = decimalFormatter?.format(getFloat(obj, "total_paid"))
         val balance = getFloat(obj, "balance_owed")
@@ -213,7 +194,6 @@ class FinesActivity : BaseActivity() {
         }
 
         listAdapter?.notifyDataSetChanged()
-        //progress!!.dismiss()
     }
 
     private fun getFloat(o: OSRFObject?, field: String): Float {
@@ -224,6 +204,29 @@ class FinesActivity : BaseActivity() {
             Analytics.logException(e)
         }
         return ret
+    }
+
+    private fun onItemClick(position: Int) {
+        Analytics.logEvent("Fines: Tap List Item", "have_grocery_bills", haveAnyGroceryBills)
+        val records = ArrayList<RecordInfo>()
+        if (haveAnyGroceryBills) {
+            // If any of the fines are for non-circulation items ("grocery bills"), we
+            // start the details flow with only the one record, if a record was selected.
+            // The details flow can't handle nulls.
+            fineRecords[position].recordInfo?.let {
+                records.add(it)
+            }
+        } else {
+            for (item in fineRecords) {
+                item.recordInfo?.let {
+                    records.add(it)
+                }
+            }
+        }
+        if (records.size > 0) {
+            val targetPosition = kotlin.math.max(position, records.size - 1)
+            RecordDetails.launchDetailsFlow(this@FinesActivity, records, targetPosition)
+        }
     }
 
     internal inner class FinesArrayAdapter(context: Context, private val resourceId: Int, private val items: List<FineRecord>) : ArrayAdapter<FineRecord>(context, resourceId, items) {
