@@ -31,9 +31,7 @@ import android.widget.ListView
 import android.widget.TextView
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.joinAll
-import org.evergreen_ils.Api
 import org.evergreen_ils.R
 import org.evergreen_ils.android.App
 import org.evergreen_ils.data.Account
@@ -118,8 +116,7 @@ class HoldsActivity : BaseActivity() {
                         fetchHoldTargetDetails(hold, App.getAccount())
                     })
                     jobs.add(async {
-                        //onHoldQueueStatsResult(hold, App.getAccount())
-                        delay(500)
+                        fetchHoldQueueStats(hold, App.getAccount())
                     })
                 }
 
@@ -135,8 +132,20 @@ class HoldsActivity : BaseActivity() {
         }
     }
 
+    suspend fun fetchHoldQueueStats(hold: HoldRecord, account: Account): Result<Unit> {
+        val id = hold.ahr.getInt("id") ?: return Result.Error(GatewayError("null hold id"))
+        val result = Gateway.circ.fetchHoldQueueStats(account, id)
+        return when (result) {
+            is Result.Success -> {
+                hold.setQueueStats(result.data)
+                Result.Success(Unit)
+            }
+            is Result.Error -> result
+        }
+    }
+
     suspend fun fetchHoldTargetDetails(hold: HoldRecord, account: Account): Result<Unit> {
-        val target = hold.target
+        val target = hold.target ?: 0
         return when (hold.holdType) {
             "T" -> fetchTitleHoldTargetDetails(hold, target, account)
             "M" -> fetchMetarecordHoldTargetDetails(hold, target, account)
@@ -157,9 +166,7 @@ class HoldsActivity : BaseActivity() {
                 hold.recordInfo = RecordInfo(result.data)
                 Result.Success(Unit)
             }
-            is Result.Error -> {
-                Result.Error(result.exception)
-            }
+            is Result.Error -> result
         }
     }
 

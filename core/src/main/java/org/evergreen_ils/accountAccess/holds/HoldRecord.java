@@ -31,21 +31,21 @@ import org.evergreen_ils.R;
 import org.evergreen_ils.data.EgOrg;
 import org.evergreen_ils.system.Analytics;
 import org.evergreen_ils.searchCatalog.RecordInfo;
-import org.evergreen_ils.system.Log;
 import org.evergreen_ils.utils.TextUtils;
 import org.jetbrains.annotations.NotNull;
 import org.opensrf.ShouldNotHappenException;
 import org.opensrf.util.OSRFObject;
-import org.w3c.dom.Text;
 
 import android.content.res.Resources;
-import android.speech.tts.TextToSpeech;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 public class HoldRecord implements Serializable {
 
     private static String TAG = HoldRecord.class.getSimpleName();
 
-    public OSRFObject ahr = null;
+    public @NonNull OSRFObject ahr = null;
     public RecordInfo recordInfo = null;
     //TODO: add qstatsObj a la Swift
 
@@ -56,19 +56,10 @@ public class HoldRecord implements Serializable {
     //   V - volume (requires staff client)
     //   M - meta-record
     //public String holdType = null;
-    public Integer target = null;
-    public Date expire_time = null;
-    public Date shelf_expire_time = null;
     private String title = null;
     private String author = null;
     public String part_label = null; // only for P types
     public Integer status = null;
-    public boolean email_notify = false;
-    public String phone_notify = null;
-    public String sms_notify = null;
-    public boolean suspended = false;
-    public Date thaw_date;
-    public int pickup_lib;
     public Integer potentialCopies;
     public Integer estimatedWaitInSeconds;
     public Integer queuePosition;
@@ -76,16 +67,6 @@ public class HoldRecord implements Serializable {
 
     public HoldRecord(OSRFObject ahr) {
         this.ahr = ahr;
-        this.target = ahr.getInt("target");
-        //this.holdType = ahr.getString("hold_type");
-        this.expire_time = Api.parseDate(ahr.getString("expire_time"));
-        this.shelf_expire_time = Api.parseDate(ahr.getString("shelf_expire_time"));
-        this.thaw_date = Api.parseDate(ahr.getString("thaw_date"));
-        this.email_notify = Api.parseBoolean(ahr.getString("email_notify"));
-        this.phone_notify = ahr.getString("phone_notify");
-        this.sms_notify = ahr.getString("sms_notify");
-        this.suspended = Api.parseBoolean(ahr.getString("frozen"));
-        pickup_lib = ahr.getInt("pickup_lib");
     }
 
     public void setQueueStats(Object resp) {
@@ -141,8 +122,8 @@ public class HoldRecord implements Serializable {
             return "Status unavailable";
         } else if (status == 4) {
             String status = "Available";
-            if (res.getBoolean(R.bool.ou_enable_hold_shelf_expiration) && shelf_expire_time != null)
-                status = status + "\nExpires " + DateFormat.getDateInstance().format(shelf_expire_time);
+            if (res.getBoolean(R.bool.ou_enable_hold_shelf_expiration) && getShelfExpireTime() != null)
+                status = status + "\nExpires " + DateFormat.getDateInstance().format(getShelfExpireTime());
             return status;
         } else if (status == 7) {
             return "Suspended";
@@ -200,5 +181,45 @@ public class HoldRecord implements Serializable {
 
     public void setAuthor(String author) {
         this.author = author;
+    }
+
+    @Nullable
+    public Date getExpireTime() {
+        return ahr != null ? ahr.getDate("expire_time") : null;
+    }
+
+    @Nullable
+    public Date getShelfExpireTime() {
+        return ahr.getDate("shelf_expire_time");
+    }
+
+    @Nullable
+    public Date getThawDate() {
+        return ahr.getDate("thaw_date");
+    }
+
+    @Nullable
+    public Integer getTarget() {
+        return ahr.getInt("target");
+    }
+
+    public boolean isEmailNotify() {
+        return ahr.getBoolean("email_notify");
+    }
+
+    public @Nullable String getPhoneNotify() {
+        return ahr.getString("phone_notify");
+    }
+
+    public @Nullable String getSmsNotify() {
+        return ahr.getString("sms_notify");
+    }
+
+    public boolean isSuspended() {
+        return ahr.getBoolean("frozen");
+    }
+
+    public int getPickupLib() {
+        return ahr.getInt("pickup_lib");
     }
 }

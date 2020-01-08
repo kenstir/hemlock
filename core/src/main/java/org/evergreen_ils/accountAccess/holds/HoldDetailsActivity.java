@@ -126,16 +126,16 @@ public class HoldDetailsActivity extends BaseActivity {
             physical_description.setText(record.recordInfo.physical_description);
         }
 
-        suspendHold.setChecked(record.suspended);
-        if (record.suspended) {
-            if (record.thaw_date != null) {
-                thaw_date = record.thaw_date;
+        suspendHold.setChecked(record.isSuspended());
+        if (record.isSuspended()) {
+            if (record.getThawDate() != null) {
+                thaw_date = record.getThawDate();
                 thaw_date_edittext.setText(DateFormat.format("MMMM dd, yyyy", thaw_date));
             }
         }
 
-        if (record.expire_time != null) {
-            expire_date = record.expire_time;
+        if (record.getExpireTime() != null) {
+            expire_date = record.getExpireTime();
             expiration_date.setText(DateFormat.format("MMMM dd, yyyy", expire_date));
         }
 
@@ -217,7 +217,7 @@ public class HoldDetailsActivity extends BaseActivity {
         for (int i = 0; i < EgOrg.getOrgs().size(); i++) {
             Organization org = EgOrg.getOrgs().get(i);
             list.add(org.getTreeDisplayName());
-            if (org.id == record.pickup_lib) {
+            if (org.id == record.getPickupLib()) {
                 selectedOrgPos = i;
             }
         }

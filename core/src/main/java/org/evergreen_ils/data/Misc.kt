@@ -19,3 +19,6 @@
 package org.evergreen_ils.data
 
 typealias JSONDictionary = Map<String, Any?>
+
+public fun jsonMapOf(vararg pairs: Pair<String, Any?>): Map<String, Any?> =
+        if (pairs.size > 0) pairs.toMap(LinkedHashMap(pairs.size+1)) else emptyMap()

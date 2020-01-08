@@ -19,6 +19,7 @@
 package org.evergreen_ils.net
 
 import org.evergreen_ils.Api
+import org.evergreen_ils.accountAccess.holds.HoldRecord
 import org.evergreen_ils.data.Account
 import org.evergreen_ils.data.Result
 import org.opensrf.util.OSRFObject
@@ -29,6 +30,17 @@ object GatewayCirc : CircService {
             val (authToken, userID) = account.getCredentialsOrThrow()
             val args = arrayOf<Any?>(authToken, userID)
             val ret = Gateway.fetchObjectArray(Api.CIRC, Api.HOLDS_RETRIEVE, args, false)
+            Result.Success(ret)
+        } catch (e: Exception) {
+            Result.Error(e)
+        }
+    }
+
+    override suspend fun fetchHoldQueueStats(account: Account, holdId: Int): Result<OSRFObject> {
+        return try {
+            val (authToken, userID) = account.getCredentialsOrThrow()
+            val args = arrayOf<Any?>(authToken, holdId)
+            val ret = Gateway.fetchObject(Api.CIRC, Api.HOLD_QUEUE_STATS, args, false)
             Result.Success(ret)
         } catch (e: Exception) {
             Result.Error(e)

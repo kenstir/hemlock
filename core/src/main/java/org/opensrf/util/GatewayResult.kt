@@ -51,8 +51,10 @@ class GatewayResult {
     @Throws(GatewayError::class)
     fun asObject(): OSRFObject {
         error?.let { throw it }
-        return try {
-            payload as OSRFObject
+        try {
+            (payload as? OSRFObject)?.let { return it }
+            (payload as? JSONDictionary)?.let { return OSRFObject(it) }
+            throw GatewayError("Unexpected type")
         } catch (ex: Exception) {
             throw GatewayError("Unexpected network response: expected object, got $type")
         }
@@ -121,21 +123,14 @@ class GatewayResult {
                 val responseList= result["payload"] as? List<Any?>?
                         ?: throw GatewayError("Unexpected network response: missing payload")
                 val payload = responseList.firstOrNull()
-                createFromObject(payload)
+                createFromPayload(payload)
             } catch (ex: Exception) {
                 GatewayResult(ex)
             }
         }
 
-        // Really GatewayRequest.recv() should return this directly, but that is used everywhere and
-        // I am refactoring incrementally.
-        //
-        // payload is returned from Utils.doRequest, and AFAIK it can be one of 3 things:
-        // 1 - an ilsevent (a map indicating an error or oddly sometimes a success)
-        // 2 - a map containing an OSRFObject response
-        // 3 - a list of events or OSRFObjects
         @JvmStatic
-        fun createFromObject(payload: Any?): GatewayResult {
+        fun createFromPayload(payload: Any?): GatewayResult {
             try {
                 val resp = GatewayResult()
                 resp.payload = payload

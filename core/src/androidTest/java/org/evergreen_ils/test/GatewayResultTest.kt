@@ -58,7 +58,7 @@ class GatewayResultTest {
     }
 
     @Test
-    fun test_unregisteredObj() {
+    fun test_unregisteredClass() {
         val json = """
             {"status":200,"payload":[{"__c":"xyzzy","__p":["f","luser",69]}]}
             """
@@ -68,6 +68,21 @@ class GatewayResultTest {
 
         val res = kotlin.runCatching { result.asObject() }
         assertTrue(res.isFailure)
+    }
+
+    @Test
+    fun test_classlessObject() {
+        val json = """
+            {"payload":[{"queue_position":2,"potential_copies":12,"status":7,"total_holds":3,"estimated_wait":0}],"status":200}
+            """
+        val result = GatewayResult.create(json)
+        assertFalse(result.failed)
+
+        val obj = result.asObject()
+        assertNotNull(obj)
+        if (obj == null) return
+        assertEquals(3, obj.getInt("total_holds"))
+        assertEquals(2, obj.getInt("queue_position"))
     }
 
     @Test
@@ -150,8 +165,8 @@ class GatewayResultTest {
         assertNotNull(map)
         assertEquals("SUCCESS", map?.get("textcode"))
 
-        val res = kotlin.runCatching { result.asObject() }
-        assertTrue(res.isFailure)
+        val obj = result.asObject()
+        assertEquals(0, obj.getInt("ilsevent"))
     }
 
     @Test

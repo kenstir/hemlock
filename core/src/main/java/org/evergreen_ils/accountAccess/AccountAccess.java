@@ -187,7 +187,7 @@ public class AccountAccess {
         Object resp = Utils.doRequest(conn(), Api.CIRC,
                 Api.CIRC_RETRIEVE, account.getAuthToken(), new Object[] {
                         account.getAuthToken(), id });
-        return GatewayResult.createFromObject(resp);
+        return GatewayResult.createFromPayload(resp);
     }
 
     /**
@@ -286,7 +286,7 @@ public class AccountAccess {
                 Api.CIRC_RENEW, account.getAuthToken(), new Object[] {
                         account.getAuthToken(), param });
 
-        return GatewayResult.createFromObject(resp);
+        return GatewayResult.createFromPayload(resp);
     }
 
     // ------------------------Holds Section
@@ -317,9 +317,9 @@ public class AccountAccess {
             fetchHoldTargetDetails(hold);
             fetchHoldQueueStats(hold);
             if (hold.recordInfo != null)
-                hold.recordInfo.updateFromMRAResponse(fetchRecordAttributes(hold.target));
+                hold.recordInfo.updateFromMRAResponse(fetchRecordAttributes(hold.getTarget()));
             holds.add(hold);
-            Log.d(TAG, "hold email="+hold.email_notify+" phone_notify="+hold.phone_notify+" sms_notify="+hold.sms_notify+" title="+ hold.getTitle());
+            Log.d(TAG, "hold email="+ hold.isEmailNotify() +" phone_notify="+ hold.getPhoneNotify() +" sms_notify="+ hold.getSmsNotify() +" title="+ hold.getTitle());
         }
         return holds;
     }

@@ -24,4 +24,5 @@ import org.opensrf.util.OSRFObject
 
 interface CircService {
     suspend fun fetchHolds(account: Account): Result<List<OSRFObject>>
+    suspend fun fetchHoldQueueStats(account: Account, holdId: Int): Result<OSRFObject>
 }

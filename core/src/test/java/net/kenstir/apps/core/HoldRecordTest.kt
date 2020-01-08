@@ -19,6 +19,7 @@
 package net.kenstir.apps.core
 
 import org.evergreen_ils.accountAccess.holds.HoldRecord
+import org.evergreen_ils.data.jsonMapOf
 import org.junit.Assert.*
 import org.junit.Ignore
 import org.junit.Test
@@ -48,14 +49,14 @@ class HoldRecordTest {
         if (hold == null) return
 
         // direct assertions on ahr object
-        assertNull(hold.phone_notify)
-        assertNull(hold.shelf_expire_time)
-        assertNull(hold.thaw_date)
-        assertTrue(hold.email_notify)
-        assertTrue(hold.suspended)
-        assertEquals(69, hold.pickup_lib)
+        assertNull(hold.phoneNotify)
+        assertNull(hold.shelfExpireTime)
+        assertNull(hold.thawDate)
+        assertTrue(hold.isEmailNotify)
+        assertTrue(hold.isSuspended)
+        assertEquals(69, hold.pickupLib)
         assertEquals(4190606, hold.target)
-        assertEquals("5085551212", hold.sms_notify)
+        assertEquals("5085551212", hold.smsNotify)
 
         // assertions on record / hold queue
         assertEquals("Unknown title", hold.title)
@@ -66,12 +67,49 @@ class HoldRecordTest {
 
     @Ignore("TODO: implement when I have more data")
     @Test
+    fun test_available() {
+        val transitObj = OSRFObject(mapOf<String, Any?>(
+                "dest_recv_time" to "2020-01-06T11:49:20-0500",
+                "source_send_time" to "2020-01-03T10:33:22-0500",
+                "source" to 91,
+                "dest" to 69,
+                "id" to 27489477
+        ))
+        val qstatsObj = OSRFObject(mapOf<String, Any?>(
+                "estimated_wait" to 0,
+                "potential_copies" to 12,
+                "queue_position" to 2,
+                "status" to 4,
+                "total_holds" to 3
+        ))
+        val ahrObj = OSRFObject(jsonMapOf(
+                "id" to 15427596,
+                "email_notify" to "t",
+                "frozen" to "f",
+                "hold_type" to "T",
+                "pickup_lib" to 69,
+                "target" to 3870376,
+                "transit" to transitObj
+        ))
+        val hold = HoldRecord(ahrObj)
+
+        // !!! there are no methods to get transit stats w/o Resources
+    }
+
+    @Test
     fun test_inTransit() {
         val transitObj = OSRFObject(mapOf<String, Any?>(
                 "id" to 27468839,
                 "source" to 154,
                 "dest" to 69,
                 "source_send_time" to "2020-01-02T09:54:39-0500"
+        ))
+        val qstatsObj = OSRFObject(mapOf<String, Any?>(
+                "estimated_wait" to 0,
+                "potential_copies" to 1,
+                "queue_position" to 1,
+                "status" to 3,
+                "total_holds" to 2
         ))
         val ahrObj = OSRFObject(mapOf<String, Any?>(
                 "id" to 15368911,
@@ -85,6 +123,17 @@ class HoldRecordTest {
                 "transit" to transitObj
         ))
         val hold = HoldRecord(ahrObj)
+        hold.setQueueStats(qstatsObj)
+
+        assertEquals("5085551212", hold.phoneNotify)
+        assertEquals("5085551212", hold.smsNotify)
+        assertFalse(hold.isSuspended)
+
+        assertEquals(0, hold.estimatedWaitInSeconds)
+        assertEquals(1, hold.potentialCopies)
+        assertEquals(1, hold.queuePosition)
+        assertEquals(3, hold.status)
+        assertEquals(2, hold.totalHolds)
 
         // !!! there are no methods to get transit stats w/o Resources
     }
@@ -93,7 +142,7 @@ class HoldRecordTest {
     @Test
     fun test_waitingForCopy() {
         val qstatsObj = OSRFObject(mapOf<String, Any?>(
-                "estimated_wait" to null,
+                "estimated_wait" to 0,
                 "potential_copies" to 2,
                 "queue_position" to 1,
                 "status" to 2,

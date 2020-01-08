@@ -5,6 +5,7 @@ import org.evergreen_ils.Api;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import java.util.Date;
 import java.util.Map;
 import java.util.HashMap;
 
@@ -56,7 +57,6 @@ public class OSRFObject extends HashMap<String, Object> implements OSRFSerializa
         return super.get(field);
     }
 
-    /** Returns the string value found at the given field */
     public String getString(String field) {
         return getString(field, null);
     }
@@ -66,7 +66,6 @@ public class OSRFObject extends HashMap<String, Object> implements OSRFSerializa
         return (ret != null) ? ret : dflt;
     }
 
-    /** Returns the int value found at the given field */
     @Nullable
     public Integer getInt(String field) {
         Object o = get(field);
@@ -88,5 +87,10 @@ public class OSRFObject extends HashMap<String, Object> implements OSRFSerializa
         if (o != null && o instanceof OSRFObject)
             return (OSRFObject) o;
         return null;
+    }
+
+    @Nullable
+    public Date getDate(String field) {
+        return Api.parseDate(getString(field));
     }
 }
