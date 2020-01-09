@@ -57,13 +57,13 @@ public class HoldDetailsActivity extends BaseActivity {
     public static final int RESULT_CODE_UPDATE_HOLD = 6;
     public static final int RESULT_CODE_CANCEL = 7;
     private AccountAccess accountAccess;
-    private EditText expiration_date;
+    private EditText expirationDate;
     private DatePickerDialog datePicker = null;
     private CheckBox suspendHold;
-    private DatePickerDialog thaw_datePicker = null;
-    private EditText thaw_date_edittext;
-    private Date expire_date = null;
-    private Date thaw_date = null;
+    private DatePickerDialog thawDatePicker = null;
+    private EditText thawDateEdittext;
+    private Date expireDate = null;
+    private Date thawDate = null;
     private int selectedOrgPos = 0;
     public Runnable updateHoldRunnable;
     private ProgressDialogSupport progress;
@@ -92,8 +92,8 @@ public class HoldDetailsActivity extends BaseActivity {
         Button updateHold = findViewById(R.id.update_hold_button);
         suspendHold = findViewById(R.id.hold_suspend_hold);
         Spinner orgSelector = findViewById(R.id.hold_pickup_location);
-        expiration_date = findViewById(R.id.hold_expiration_date);
-        thaw_date_edittext = findViewById(R.id.hold_thaw_date);
+        expirationDate = findViewById(R.id.hold_expiration_date);
+        thawDateEdittext = findViewById(R.id.hold_thaw_date);
 
         title.setText(record.getTitle());
         author.setText(record.getAuthor());
@@ -103,19 +103,17 @@ public class HoldDetailsActivity extends BaseActivity {
         }
 
         suspendHold.setChecked(record.isSuspended());
-        if (record.isSuspended()) {
-            if (record.getThawDate() != null) {
-                thaw_date = record.getThawDate();
-                thaw_date_edittext.setText(DateFormat.format("MMMM dd, yyyy", thaw_date));
-            }
+        if (record.isSuspended() && record.getThawDate() != null) {
+            thawDate = record.getThawDate();
+            thawDateEdittext.setText(DateFormat.format("MMMM dd, yyyy", thawDate));
         }
 
         if (record.getExpireTime() != null) {
-            expire_date = record.getExpireTime();
-            expiration_date.setText(DateFormat.format("MMMM dd, yyyy", expire_date));
+            expireDate = record.getExpireTime();
+            expirationDate.setText(DateFormat.format("MMMM dd, yyyy", expireDate));
         }
 
-        thaw_date_edittext.setEnabled(suspendHold.isChecked());
+        thawDateEdittext.setEnabled(suspendHold.isChecked());
 
         cancelHold.setOnClickListener(new OnClickListener() {
             @Override
@@ -143,11 +141,9 @@ public class HoldDetailsActivity extends BaseActivity {
         });
 
         suspendHold.setOnCheckedChangeListener(new OnCheckedChangeListener() {
-
             @Override
-            public void onCheckedChanged(CompoundButton buttonView,
-                    boolean isChecked) {
-                thaw_date_edittext.setEnabled(isChecked);
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                thawDateEdittext.setEnabled(isChecked);
             }
         });
         Calendar cal = Calendar.getInstance();
@@ -157,35 +153,35 @@ public class HoldDetailsActivity extends BaseActivity {
 
                     public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
                         Date chosenDate = new Date(year - 1900, monthOfYear, dayOfMonth);
-                        expire_date = chosenDate;
+                        expireDate = chosenDate;
                         CharSequence strDate = DateFormat.format("MMMM dd, yyyy", chosenDate);
-                        expiration_date.setText(strDate);
+                        expirationDate.setText(strDate);
                     }
                 }, cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH));
 
-        expiration_date.setOnClickListener(new OnClickListener() {
+        expirationDate.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
                 datePicker.show();
             }
         });
 
-        thaw_datePicker = new DatePickerDialog(this,
+        thawDatePicker = new DatePickerDialog(this,
                 new DatePickerDialog.OnDateSetListener() {
 
                     public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
                         Date chosenDate = new Date(year - 1900, monthOfYear, dayOfMonth);
-                        thaw_date = chosenDate;
+                        thawDate = chosenDate;
                         CharSequence strDate = DateFormat.format("MMMM dd, yyyy", chosenDate);
-                        thaw_date_edittext.setText(strDate);
+                        thawDateEdittext.setText(strDate);
                     }
                 }, cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH));
 
-        thaw_date_edittext.setOnClickListener(new OnClickListener() {
+        thawDateEdittext.setOnClickListener(new OnClickListener() {
 
             @Override
             public void onClick(View v) {
-                thaw_datePicker.show();
+                thawDatePicker.show();
             }
         });
 
@@ -263,10 +259,10 @@ public class HoldDetailsActivity extends BaseActivity {
 
                 String expire_date_s = null;
                 String thaw_date_s = null;
-                if (expire_date != null)
-                    expire_date_s = Api.formatDate(expire_date);
-                if (thaw_date != null)
-                    thaw_date_s = Api.formatDate(thaw_date);
+                if (expireDate != null)
+                    expire_date_s = Api.formatDate(expireDate);
+                if (thawDate != null)
+                    thaw_date_s = Api.formatDate(thawDate);
 
                 try {
                     accountAccess.updateHold(record.ahr, EgOrg.getOrgs().get(selectedOrgPos).id,
