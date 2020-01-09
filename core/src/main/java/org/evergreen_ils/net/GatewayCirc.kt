@@ -19,12 +19,25 @@
 package org.evergreen_ils.net
 
 import org.evergreen_ils.Api
-import org.evergreen_ils.accountAccess.holds.HoldRecord
 import org.evergreen_ils.data.Account
 import org.evergreen_ils.data.Result
 import org.opensrf.util.OSRFObject
 
 object GatewayCirc : CircService {
+    override suspend fun cancelHoldAsync(account: Account, holdId: Int): Result<String?> {
+        return try {
+            val (authToken, userID) = account.getCredentialsOrThrow()
+            val note = "Cancelled by mobile app"
+            val args = arrayOf<Any?>(authToken, holdId, null, note)
+            val ret = Gateway.fetch(Api.CIRC, Api.HOLD_CANCEL, args, false) {
+                it.asString()
+            }
+            Result.Success(ret)
+        } catch (e: Exception) {
+            Result.Error(e)
+        }
+    }
+
     override suspend fun fetchHolds(account: Account): Result<List<OSRFObject>> {
         return try {
             val (authToken, userID) = account.getCredentialsOrThrow()
