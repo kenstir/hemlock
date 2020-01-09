@@ -382,7 +382,7 @@ public class AccountAccess {
                 Integer record = volume.getInt("record");
 
                 // part label
-                holdObj.part_label = volume.getString("label");
+                holdObj.setPartLabel(volume.getString("label"));
 
                 Log.d(TAG, "Record " + record);
                 OSRFObject holdInfo = (OSRFObject) Utils.doRequest(conn(),
@@ -404,7 +404,7 @@ public class AccountAccess {
             Integer record = volume.getInt("record");
 
             // part label
-            holdObj.part_label = volume.getString("label");
+            holdObj.setPartLabel(volume.getString("label"));
 
             Log.d(TAG, "Record " + record);
             OSRFObject holdInfo = (OSRFObject) Utils.doRequest(conn(),
@@ -450,7 +450,7 @@ public class AccountAccess {
                     Api.SEARCH, Api.MODS_SLIM_RETRIEVE,
                     new Object[] { recordID });
 
-            holdObj.part_label = part_label;
+            holdObj.setPartLabel(part_label);
             holdObj.setTitle(holdInfo.getString("title"));
             holdObj.setAuthor(holdInfo.getString("author"));
             holdObj.recordInfo = new RecordInfo(holdInfo);
@@ -465,7 +465,7 @@ public class AccountAccess {
         Object resp = Utils.doRequest(conn(), Api.CIRC,
                 Api.HOLD_QUEUE_STATS, account.getAuthToken(), new Object[] {
                         account.getAuthToken(), hold_id });
-        hold.setQueueStats(resp);
+        hold.qstatsObj = (OSRFObject) resp;
     }
 
     /**

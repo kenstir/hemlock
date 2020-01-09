@@ -137,7 +137,7 @@ class HoldsActivity : BaseActivity() {
         val result = Gateway.circ.fetchHoldQueueStats(account, id)
         return when (result) {
             is Result.Success -> {
-                hold.setQueueStats(result.data)
+                hold.qstatsObj = result.data
                 Result.Success(Unit)
             }
             is Result.Error -> result

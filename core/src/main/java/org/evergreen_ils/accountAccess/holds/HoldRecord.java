@@ -24,16 +24,13 @@ import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 import org.evergreen_ils.Api;
 import org.evergreen_ils.R;
 import org.evergreen_ils.data.EgOrg;
-import org.evergreen_ils.system.Analytics;
 import org.evergreen_ils.searchCatalog.RecordInfo;
 import org.evergreen_ils.utils.TextUtils;
 import org.jetbrains.annotations.NotNull;
-import org.opensrf.ShouldNotHappenException;
 import org.opensrf.util.OSRFObject;
 
 import android.content.res.Resources;
@@ -45,9 +42,9 @@ public class HoldRecord implements Serializable {
 
     private static String TAG = HoldRecord.class.getSimpleName();
 
-    public @NonNull OSRFObject ahr = null;
+    public @NonNull OSRFObject ahr;
     public RecordInfo recordInfo = null;
-    //TODO: add qstatsObj a la Swift
+    public @Nullable OSRFObject qstatsObj = null;
 
     // hold_type:
     //   T - title (default)
@@ -58,32 +55,10 @@ public class HoldRecord implements Serializable {
     //public String holdType = null;
     private String title = null;
     private String author = null;
-    public String part_label = null; // only for P types
-    public Integer status = null;
-    public Integer potentialCopies;
-    public Integer estimatedWaitInSeconds;
-    public Integer queuePosition;
-    public Integer totalHolds;
+    private String partLabel = null; // only for P types
 
     public HoldRecord(OSRFObject ahr) {
         this.ahr = ahr;
-    }
-
-    public void setQueueStats(Object resp) {
-        if (resp == null) {
-            Analytics.logException(new ShouldNotHappenException("null obj"));
-            return;
-        }
-        try {
-            Map<String, Integer> map = (Map<String, Integer>)resp;
-            status = map.get("status");
-            potentialCopies = map.get("potential_copies");
-            estimatedWaitInSeconds = map.get("estimated_wait");
-            queuePosition = map.get("queue_position");
-            totalHolds = map.get("total_holds");
-        } catch (Exception e) {
-            Analytics.logException(e);
-        }
     }
 
     private String formatDateTime(Date date) {
@@ -118,28 +93,29 @@ public class HoldRecord implements Serializable {
         //  6 for 'canceled'
         //  7 for 'suspended'
         //  8 for 'captured, on wrong hold shelf'
+        Integer status = getStatus();
         if (status == null) {
             return "Status unavailable";
         } else if (status == 4) {
-            String status = "Available";
+            String s = "Available";
             if (res.getBoolean(R.bool.ou_enable_hold_shelf_expiration) && getShelfExpireTime() != null)
-                status = status + "\nExpires " + DateFormat.getDateInstance().format(getShelfExpireTime());
-            return status;
+                s = s + "\nExpires " + DateFormat.getDateInstance().format(getShelfExpireTime());
+            return s;
         } else if (status == 7) {
             return "Suspended";
-        } else if (estimatedWaitInSeconds > 0) {
-            int days = (int)Math.ceil((double)estimatedWaitInSeconds / 86400.0);
+        } else if (getEstimatedWaitInSeconds() > 0) {
+            int days = (int)Math.ceil((double) getEstimatedWaitInSeconds() / 86400.0);
             return "Estimated wait: "
                     + res.getQuantityString(R.plurals.number_of_days, days, days);
         } else if (status == 3 || status == 8) {
             return res.getString(R.string.hold_status_in_transit, getTransitFrom(), getTransitSince());
         } else if (status < 3) {
-            String status = "Waiting for copy\n"
-                    + res.getQuantityString(R.plurals.number_of_holds, totalHolds, totalHolds) + " on "
-                    + res.getQuantityString(R.plurals.number_of_copies, potentialCopies, potentialCopies);
+            String s = "Waiting for copy\n"
+                    + res.getQuantityString(R.plurals.number_of_holds, getTotalHolds(), getTotalHolds()) + " on "
+                    + res.getQuantityString(R.plurals.number_of_copies, getPotentialCopies(), getPotentialCopies());
             if (res.getBoolean(R.bool.ou_enable_hold_queue_position))
-                status = status + "\n" + "Queue position: " + queuePosition;
-            return status;
+                s = s + "\n" + "Queue position: " + getQueuePosition();
+            return s;
         } else {
             return "";
         }
@@ -221,5 +197,33 @@ public class HoldRecord implements Serializable {
 
     public int getPickupLib() {
         return ahr.getInt("pickup_lib");
+    }
+
+    public String getPartLabel() {
+        return partLabel;
+    }
+
+    public void setPartLabel(String partLabel) {
+        this.partLabel = partLabel;
+    }
+
+    public @Nullable Integer getStatus() {
+        return (qstatsObj != null) ? qstatsObj.getInt("status") : null;
+    }
+
+    public @Nullable Integer getPotentialCopies() {
+        return (qstatsObj != null) ? qstatsObj.getInt("potential_copies") : null;
+    }
+
+    public @Nullable Integer getEstimatedWaitInSeconds() {
+        return (qstatsObj != null) ? qstatsObj.getInt("estimated_wait") : null;
+    }
+
+    public @Nullable Integer getQueuePosition() {
+        return (qstatsObj != null) ? qstatsObj.getInt("queue_position") : null;
+    }
+
+    public @Nullable Integer getTotalHolds() {
+        return (qstatsObj != null) ? qstatsObj.getInt("total_holds") : null;
     }
 }

@@ -61,7 +61,7 @@ class HoldRecordTest {
         // assertions on record / hold queue
         assertEquals("Unknown title", hold.title)
         assertEquals("", hold.author)
-        assertNull(hold.part_label)
+        assertNull(hold.partLabel)
         assertNull(hold.status)
     }
 
@@ -92,8 +92,13 @@ class HoldRecordTest {
                 "transit" to transitObj
         ))
         val hold = HoldRecord(ahrObj)
+        hold.qstatsObj = qstatsObj
 
-        // !!! there are no methods to get transit stats w/o Resources
+        assertEquals(0, hold.estimatedWaitInSeconds)
+        assertEquals(12, hold.potentialCopies)
+        assertEquals(2, hold.queuePosition)
+        assertEquals(4, hold.status)
+        assertEquals(3, hold.totalHolds)
     }
 
     @Test
@@ -123,7 +128,7 @@ class HoldRecordTest {
                 "transit" to transitObj
         ))
         val hold = HoldRecord(ahrObj)
-        hold.setQueueStats(qstatsObj)
+        hold.qstatsObj = qstatsObj
 
         assertEquals("5085551212", hold.phoneNotify)
         assertEquals("5085551212", hold.smsNotify)
@@ -135,10 +140,9 @@ class HoldRecordTest {
         assertEquals(3, hold.status)
         assertEquals(2, hold.totalHolds)
 
-        // !!! there are no methods to get transit stats w/o Resources
+        // !!! there are no public methods to get transit info w/o Resources
     }
 
-    @Ignore("TODO: implement when I have more data")
     @Test
     fun test_waitingForCopy() {
         val qstatsObj = OSRFObject(mapOf<String, Any?>(
@@ -161,6 +165,8 @@ class HoldRecordTest {
                 "target" to 2722036
         ))
         val hold = HoldRecord(ahrObj)
-        hold.setQueueStats(qstatsObj)
+        hold.qstatsObj = qstatsObj
+
+        assertEquals(2, hold.status)
     }
 }
