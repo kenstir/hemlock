@@ -54,42 +54,18 @@ public class HoldDetailsActivity extends BaseActivity {
     private final static String TAG = HoldDetailsActivity.class.getSimpleName();
 
     public static final int RESULT_CODE_DELETE_HOLD = 5;
-
     public static final int RESULT_CODE_UPDATE_HOLD = 6;
-
     public static final int RESULT_CODE_CANCEL = 7;
-
-    private TextView title;
-    private TextView author;
-    private TextView format;
-    private TextView physical_description;
-
     private AccountAccess accountAccess;
-
     private EditText expiration_date;
-
-    private Button updateHold;
-
-    private Button cancelHold;
-
     private DatePickerDialog datePicker = null;
-
     private CheckBox suspendHold;
-
-    private Spinner orgSelector;
-
     private DatePickerDialog thaw_datePicker = null;
-
     private EditText thaw_date_edittext;
-
     private Date expire_date = null;
-
     private Date thaw_date = null;
-
     private int selectedOrgPos = 0;
-
     public Runnable updateHoldRunnable;
-
     private ProgressDialogSupport progress;
 
     @Override
@@ -108,16 +84,16 @@ public class HoldDetailsActivity extends BaseActivity {
 
         final HoldRecord record = (HoldRecord) getIntent().getSerializableExtra("holdRecord");
 
-        title = (TextView) findViewById(R.id.hold_title);
-        author = (TextView) findViewById(R.id.hold_author);
-        format = (TextView) findViewById(R.id.hold_format);
-        physical_description = (TextView) findViewById(R.id.hold_physical_description);
-        cancelHold = (Button) findViewById(R.id.cancel_hold_button);
-        updateHold = (Button) findViewById(R.id.update_hold_button);
-        suspendHold = (CheckBox) findViewById(R.id.hold_suspend_hold);
-        orgSelector = (Spinner) findViewById(R.id.hold_pickup_location);
-        expiration_date = (EditText) findViewById(R.id.hold_expiration_date);
-        thaw_date_edittext = (EditText) findViewById(R.id.hold_thaw_date);
+        TextView title = findViewById(R.id.hold_title);
+        TextView author = findViewById(R.id.hold_author);
+        TextView format = findViewById(R.id.hold_format);
+        TextView physical_description = findViewById(R.id.hold_physical_description);
+        Button cancelHold = findViewById(R.id.cancel_hold_button);
+        Button updateHold = findViewById(R.id.update_hold_button);
+        suspendHold = findViewById(R.id.hold_suspend_hold);
+        Spinner orgSelector = findViewById(R.id.hold_pickup_location);
+        expiration_date = findViewById(R.id.hold_expiration_date);
+        thaw_date_edittext = findViewById(R.id.hold_thaw_date);
 
         title.setText(record.getTitle());
         author.setText(record.getAuthor());
