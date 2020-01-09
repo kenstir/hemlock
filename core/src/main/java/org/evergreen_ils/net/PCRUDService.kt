@@ -26,6 +26,6 @@ import org.evergreen_ils.data.Result
 
 interface PCRUDService {
     suspend fun fetchCodedValueMaps(): Result<List<OSRFObject>>
-
+    suspend fun fetchMRA(id: Int): Result<OSRFObject>
     suspend fun fetchSMSCarriers(): Result<List<OSRFObject>>
 }

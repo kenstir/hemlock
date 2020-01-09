@@ -23,5 +23,5 @@ import org.opensrf.util.OSRFObject
 
 interface SearchService {
     suspend fun fetchCopyStatuses(): Result<List<OSRFObject>>
-    suspend fun fetchMetabibVirtualRecord(id: Int): Result<OSRFObject>
+    suspend fun fetchRecordMODS(id: Int): Result<OSRFObject>
 }

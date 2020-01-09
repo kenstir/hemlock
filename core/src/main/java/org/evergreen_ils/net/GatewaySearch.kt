@@ -32,7 +32,7 @@ object GatewaySearch: SearchService {
         }
     }
 
-    override suspend fun fetchMetabibVirtualRecord(id: Int): Result<OSRFObject> {
+    override suspend fun fetchRecordMODS(id: Int): Result<OSRFObject> {
         return try {
             val ret = Gateway.fetchObject(Api.SEARCH, Api.MODS_SLIM_RETRIEVE, arrayOf(id), true)
             Result.Success(ret)

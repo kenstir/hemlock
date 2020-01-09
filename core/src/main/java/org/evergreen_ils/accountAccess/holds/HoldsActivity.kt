@@ -110,10 +110,14 @@ class HoldsActivity : BaseActivity() {
                 }
                 holdsSummary?.text = String.format(getString(R.string.n_items_on_hold), holdRecords.size)
 
-                // fetchHoldDetails
+                // fetch hold target details and queue stats
                 for (hold in holdRecords) {
                     jobs.add(async {
                         fetchHoldTargetDetails(hold, App.getAccount())
+                        // we wait until we have a RecordInfo so we have a place to store the attrs
+                        hold.recordInfo?.doc_id?.let { id ->
+                            fetchRecordAttrs(hold.recordInfo, id)
+                        }
                     })
                     jobs.add(async {
                         fetchHoldQueueStats(hold, App.getAccount())
@@ -132,6 +136,17 @@ class HoldsActivity : BaseActivity() {
         }
     }
 
+    suspend fun fetchRecordAttrs(record: RecordInfo, id: Int): Result<Unit> {
+        val result = Gateway.pcrud.fetchMRA(id)
+        return when (result) {
+            is Result.Success -> {
+                record.updateFromMRAResponse(result.data)
+                return Result.Success(Unit)
+            }
+            is Result.Error -> result
+        }
+    }
+
     suspend fun fetchHoldQueueStats(hold: HoldRecord, account: Account): Result<Unit> {
         val id = hold.ahr.getInt("id") ?: return Result.Error(GatewayError("null hold id"))
         val result = Gateway.circ.fetchHoldQueueStats(account, id)
@@ -145,7 +160,7 @@ class HoldsActivity : BaseActivity() {
     }
 
     suspend fun fetchHoldTargetDetails(hold: HoldRecord, account: Account): Result<Unit> {
-        val target = hold.target ?: 0
+        val target = hold.target ?: return Result.Error(GatewayError("null hold target"))
         return when (hold.holdType) {
             "T" -> fetchTitleHoldTargetDetails(hold, target, account)
             "M" -> fetchMetarecordHoldTargetDetails(hold, target, account)
@@ -160,7 +175,7 @@ class HoldsActivity : BaseActivity() {
     }
 
     private suspend fun fetchTitleHoldTargetDetails(hold: HoldRecord, target: Int, account: Account): Result<Unit> {
-        val result = Gateway.search.fetchMetabibVirtualRecord(target)
+        val result = Gateway.search.fetchRecordMODS(target)
         return when (result) {
             is Result.Success -> {
                 hold.recordInfo = RecordInfo(result.data)
