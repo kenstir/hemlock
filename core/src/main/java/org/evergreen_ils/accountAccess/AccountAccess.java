@@ -61,10 +61,6 @@ public class AccountAccess {
 
     private ArrayList<BookBag> bookBags = new ArrayList<>();
 
-    private void clearSession() {
-        bookBags = new ArrayList<>();
-    }
-
     private AccountAccess() {
     }
 
@@ -292,38 +288,6 @@ public class AccountAccess {
     // ------------------------Holds Section
     // --------------------------------------//
 
-    /**
-     * Gets the holds.
-     *
-     * @return the holds
-     * @throws SessionNotFoundException the session not found exception
-     */
-    public List<HoldRecord> getHolds() throws SessionNotFoundException {
-
-        ArrayList<HoldRecord> holds = new ArrayList<HoldRecord>();
-        Account account = App.getAccount();
-
-        Object resp = Utils.doRequest(conn(), Api.CIRC,
-                Api.HOLDS_RETRIEVE, account.getAuthToken(), new Object[] {
-                        account.getAuthToken(), account.getId() });
-        if (resp == null) {
-            Log.d(TAG, "Result: null");
-            return holds;
-        }
-
-        List<OSRFObject> listHoldsAhr = (List<OSRFObject>) resp;
-        for (OSRFObject ahr_obj: listHoldsAhr) {
-            HoldRecord hold = new HoldRecord(ahr_obj);
-            fetchHoldTargetDetails(hold);
-            fetchHoldQueueStats(hold);
-            if (hold.recordInfo != null)
-                hold.recordInfo.updateFromMRAResponse(fetchRecordAttributes(hold.getTarget()));
-            holds.add(hold);
-            Log.d(TAG, "hold email="+ hold.isEmailNotify() +" phone_notify="+ hold.getPhoneNotify() +" sms_notify="+ hold.getSmsNotify() +" title="+ hold.getTitle());
-        }
-        return holds;
-    }
-
     private void fetchHoldTargetDetails(HoldRecord hold) {
 
         String holdType = (String) hold.ahr.get("hold_type");
@@ -455,17 +419,6 @@ public class AccountAccess {
             holdObj.setAuthor(holdInfo.getString("author"));
             holdObj.recordInfo = new RecordInfo(holdInfo);
         }
-    }
-
-    public void fetchHoldQueueStats(HoldRecord hold)
-            throws SessionNotFoundException {
-
-        Account account = App.getAccount();
-        Integer hold_id = hold.ahr.getInt("id");
-        Object resp = Utils.doRequest(conn(), Api.CIRC,
-                Api.HOLD_QUEUE_STATS, account.getAuthToken(), new Object[] {
-                        account.getAuthToken(), hold_id });
-        hold.qstatsObj = (OSRFObject) resp;
     }
 
     /**
@@ -766,7 +719,6 @@ public class AccountAccess {
                         account.getAuthToken(), container, parameter });
     }
 
-    //todo replace callers of this method with RecordLoader.fetchRecordMODS
     private OSRFObject getItemShortInfo(Integer id) {
         OSRFObject response = (OSRFObject) Utils.doRequest(conn(), Api.SEARCH,
                 Api.MODS_SLIM_RETRIEVE, new Object[] {
@@ -774,7 +726,6 @@ public class AccountAccess {
         return response;
     }
 
-    // todo replace callers with RecordLoader
     public ArrayList<RecordInfo> getRecordsInfo(ArrayList<Integer> ids) {
 
         ArrayList<RecordInfo> recordInfoArray = new ArrayList<RecordInfo>();
