@@ -67,12 +67,12 @@ object Gateway {
 
     var state: GatewayState = GatewayState.UNINITIALIZED
 
-    fun buildQuery(service: String?, method: String?, objects: Array<Any?>, addCacheArgs: Boolean = true): String {
+    fun buildQuery(service: String?, method: String?, params: Array<Any?>, addCacheArgs: Boolean = true): String {
         val sb = StringBuilder(INITIAL_URL_SIZE)
         sb.append("/osrf-gateway-v1?service=").append(service)
         sb.append("&method=").append(method)
         var uri: URI? = null
-        for (param in objects) {
+        for (param in params) {
             sb.append("&param=")
             sb.append(JSONWriter(param).write())
         }

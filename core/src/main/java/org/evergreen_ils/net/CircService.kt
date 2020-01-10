@@ -26,4 +26,5 @@ interface CircService {
     suspend fun cancelHoldAsync(account: Account, id: Int): Result<String?>
     suspend fun fetchHolds(account: Account): Result<List<OSRFObject>>
     suspend fun fetchHoldQueueStats(account: Account, holdId: Int): Result<OSRFObject>
+    suspend fun placeHoldAsync(account: Account, recordId: Int, pickupLib: Int, emailNotify: Boolean, phoneNotify: String?, smsNotify: String?, smsCarrierId: Int?, expireTime: String?, suspendHold: Boolean, thawDate: String?): Result<OSRFObject>
 }
