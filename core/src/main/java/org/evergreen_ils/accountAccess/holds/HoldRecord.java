@@ -31,6 +31,7 @@ import org.evergreen_ils.R;
 import org.evergreen_ils.data.EgCodedValueMap;
 import org.evergreen_ils.data.EgOrg;
 import org.evergreen_ils.searchCatalog.RecordInfo;
+import org.evergreen_ils.system.Log;
 import org.evergreen_ils.utils.JsonUtils;
 import org.evergreen_ils.utils.TextUtils;
 import org.jetbrains.annotations.NotNull;
@@ -127,13 +128,8 @@ public class HoldRecord implements Serializable {
     }
 
     public @NotNull String getHoldType() {
-        if (ahr != null) {
-            String holdType = ahr.getString("hold_type");
-            if (holdType != null) {
-                return holdType;
-            }
-        }
-        return "?";
+        String holdType = ahr.getString("hold_type");
+        return (holdType != null) ? holdType : "?";
     }
 
     public static @NotNull List<HoldRecord> makeArray(@NotNull List<OSRFObject> ahr_objects) {
@@ -166,7 +162,7 @@ public class HoldRecord implements Serializable {
 
     @Nullable
     public Date getExpireTime() {
-        return ahr != null ? ahr.getDate("expire_time") : null;
+        return ahr.getDate("expire_time");
     }
 
     @Nullable
@@ -200,7 +196,7 @@ public class HoldRecord implements Serializable {
         return ahr.getBoolean("frozen");
     }
 
-    public int getPickupLib() {
+    public @Nullable Integer getPickupLib() {
         return ahr.getInt("pickup_lib");
     }
 
@@ -234,19 +230,12 @@ public class HoldRecord implements Serializable {
 
     public @Nullable String getFormatLabel() {
         if (getHoldType().equals("M")) {
-            try {
-                String holdableFormats = ahr.getString("holdable_formats");
-                JSONReader r = new JSONReader(holdableFormats);
-                Map<String, ?> map = r.readObject();
-                List<String> formats = JsonUtils.parseHoldableFormats(map);
-                List<String> labels = new ArrayList<>();
-                for (String format: formats) {
-                    labels.add(EgCodedValueMap.iconFormatLabel(format));
-                }
-                return android.text.TextUtils.join(" or ", labels);
-            } catch (JSONException e) {
-                return "";
+            Map<String, Object> map = JsonUtils.parseObject(ahr.getString("holdable_formats"));
+            List<String> labels = new ArrayList<>();
+            for (String format: JsonUtils.parseHoldableFormats(map)) {
+                labels.add(EgCodedValueMap.iconFormatLabel(format));
             }
+            return android.text.TextUtils.join(" or ", labels);
         }
         return RecordInfo.getIconFormatLabel(recordInfo);
     }

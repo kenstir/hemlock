@@ -19,9 +19,11 @@
 package org.evergreen_ils.utils
 
 import org.evergreen_ils.data.JSONDictionary
-import org.json.JSONTokener
+import org.opensrf.util.JSONException
+import org.opensrf.util.JSONReader
 
 object JsonUtils {
+    /** Parse a metarecord hold attribute "holdable_formats" into a list of ccvm codes */
     @JvmStatic
     fun parseHoldableFormats(dict: JSONDictionary?): ArrayList<String> {
         var formats = ArrayList<String>()
@@ -43,24 +45,12 @@ object JsonUtils {
         return formats
     }
 
-//    private fun readSubObject(obj: Any?): Any? {
-//        if (obj == null ||
-//                obj is String ||
-//                obj is Number ||
-//                obj is Boolean)
-//            return obj
-//        return null;
-//    }
-//
-//    @JvmStatic
-//    fun parse(jsonString: String): Any? {
-//        val jt = JSONTokener(jsonString);
-//        return readSubObject(jt.nextValue());
-//    }
-
-//    @JvmStatic
-//    fun parseObject(jsonString: String): JSONDictionary {
-//        val jt = JSONTokener();
-//        return readSubObject(jt.nextValue()) as! JSONDictionary;
-//    }
+    @JvmStatic
+    fun parseObject(json: String?): JSONDictionary? {
+        return try {
+            JSONReader(json).readObject()
+        } catch (e: JSONException) {
+            null
+        }
+    }
 }
