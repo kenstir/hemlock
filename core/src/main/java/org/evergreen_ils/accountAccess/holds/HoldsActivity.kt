@@ -112,10 +112,6 @@ class HoldsActivity : BaseActivity() {
                 for (hold in holdRecords) {
                     jobs.add(async {
                         fetchHoldTargetDetails(hold, App.getAccount())
-                        // we wait until we have a RecordInfo so we have a place to store the attrs
-                        hold.recordInfo?.doc_id?.let { id ->
-                            fetchRecordAttrs(hold.recordInfo, id)
-                        }
                     })
                     jobs.add(async {
                         fetchHoldQueueStats(hold, App.getAccount())
@@ -177,7 +173,11 @@ class HoldsActivity : BaseActivity() {
         return when (result) {
             is Result.Success -> {
                 hold.recordInfo = RecordInfo(result.data)
-                Result.Success(Unit)
+                if (hold.recordInfo.doc_id != null) {
+                    fetchRecordAttrs(hold.recordInfo, hold.recordInfo.doc_id)
+                } else {
+                    Result.Success(Unit)
+                }
             }
             is Result.Error -> result
         }
@@ -259,7 +259,7 @@ class HoldsActivity : BaseActivity() {
             val record = getItem(position)
             holdTitle?.setText(record.title)
             holdAuthor?.setText(record.author)
-            holdFormat?.setText(RecordInfo.getIconFormatLabel(record.recordInfo))
+            holdFormat?.setText(record.getFormatLabel())
             status?.setText(record.getHoldStatus(resources))
 
             return row

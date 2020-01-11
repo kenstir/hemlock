@@ -96,7 +96,7 @@ public class JSONReader {
                 for( Iterator e = jobj.keys(); e.hasNext(); ) {
                     key = (String) e.next();
 
-                    /* we encoutered the special class key */
+                    /* we encountered the class key */
                     if( JSON_CLASS_KEY.equals(key) ) 
                         return buildRegisteredObject(
                             (String) jobj.get(key), jobj.get(JSON_PAYLOAD_KEY));

@@ -24,13 +24,18 @@ import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import org.evergreen_ils.Api;
 import org.evergreen_ils.R;
+import org.evergreen_ils.data.EgCodedValueMap;
 import org.evergreen_ils.data.EgOrg;
 import org.evergreen_ils.searchCatalog.RecordInfo;
+import org.evergreen_ils.utils.JsonUtils;
 import org.evergreen_ils.utils.TextUtils;
 import org.jetbrains.annotations.NotNull;
+import org.opensrf.util.JSONException;
+import org.opensrf.util.JSONReader;
 import org.opensrf.util.OSRFObject;
 
 import android.content.res.Resources;
@@ -225,5 +230,24 @@ public class HoldRecord implements Serializable {
 
     public @Nullable Integer getTotalHolds() {
         return (qstatsObj != null) ? qstatsObj.getInt("total_holds") : null;
+    }
+
+    public @Nullable String getFormatLabel() {
+        if (getHoldType().equals("M")) {
+            try {
+                String holdableFormats = ahr.getString("holdable_formats");
+                JSONReader r = new JSONReader(holdableFormats);
+                Map<String, ?> map = r.readObject();
+                List<String> formats = JsonUtils.parseHoldableFormats(map);
+                List<String> labels = new ArrayList<>();
+                for (String format: formats) {
+                    labels.add(EgCodedValueMap.iconFormatLabel(format));
+                }
+                return android.text.TextUtils.join(" or ", labels);
+            } catch (JSONException e) {
+                return "";
+            }
+        }
+        return RecordInfo.getIconFormatLabel(recordInfo);
     }
 }
