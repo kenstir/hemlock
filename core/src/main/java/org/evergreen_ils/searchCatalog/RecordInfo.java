@@ -36,6 +36,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import static org.evergreen_ils.system.Utils.safeString;
 
 public class RecordInfo implements Serializable {
@@ -194,7 +197,7 @@ public class RecordInfo implements Serializable {
         attrs_loaded = true;
     }
 
-    public String getAttr(String attr_name) {
+    public @Nullable String getAttr(String attr_name) {
         return attrs.get(attr_name);
     }
 
@@ -202,15 +205,15 @@ public class RecordInfo implements Serializable {
 //        return attrs.get("search_format");
 //    }
 
-    public String getIconFormat() {
+    public @Nullable String getIconFormat() {
         return (attrs != null) ? attrs.get("icon_format") : null;
     }
 
-    public String getIconFormatLabel() {
+    public @NonNull String getIconFormatLabel() {
         return safeString(EgCodedValueMap.iconFormatLabel(getIconFormat()));
     }
 
-    public static String getIconFormatLabel(RecordInfo record) {
+    public @NonNull static String getIconFormatLabel(RecordInfo record) {
         if (record == null)
             return "";
         return record.getIconFormatLabel();
