@@ -75,24 +75,24 @@ public class PlaceHoldActivity extends AppCompatActivity {
     private TextView author;
     private TextView format;
     private Account account;
-    private EditText expiration_date;
-    private EditText sms_notify;
-    private EditText phone_notify;
-    private CheckBox phone_notification;
-    private CheckBox email_notification;
-    private CheckBox sms_notification;
-    private Spinner sms_spinner;
+    private EditText expirationDate;
+    private EditText smsNotify;
+    private EditText phoneNotify;
+    private CheckBox phoneNotification;
+    private CheckBox emailNotification;
+    private CheckBox smsNotification;
+    private Spinner smsSpinner;
     private Button placeHold;
     private CheckBox suspendHold;
     private Spinner orgSpinner;
-    private TextView phone_notification_label;
-    private TextView sms_notification_label;
-    private TextView sms_spinner_label;
+    private TextView phoneNotificationLabel;
+    private TextView smsNotificationLabel;
+    private TextView smsSpinnerLabel;
     private DatePickerDialog datePicker = null;
-    private DatePickerDialog thaw_datePicker = null;
-    private EditText thaw_date_edittext;
-    private Date expire_date = null;
-    private Date thaw_date = null;
+    private DatePickerDialog thawDatePicker = null;
+    private EditText thawDateEdittext;
+    private Date expireDate = null;
+    private Date thawDate = null;
     private Runnable placeHoldRunnable;
     private int selectedOrgPos = 0;
     private int selectedSMSPos = 0;
@@ -119,25 +119,25 @@ public class PlaceHoldActivity extends AppCompatActivity {
         author = findViewById(R.id.hold_author);
         format = findViewById(R.id.hold_format);
         placeHold = findViewById(R.id.place_hold);
-        expiration_date = findViewById(R.id.hold_expiration_date);
-        email_notification = findViewById(R.id.hold_enable_email_notification);
-        phone_notification_label = findViewById(R.id.hold_phone_notification_label);
-        sms_notification_label = findViewById(R.id.hold_sms_notification_label);
-        sms_spinner_label = findViewById(R.id.hold_sms_spinner_label);
-        phone_notification = findViewById(R.id.hold_enable_phone_notification);
-        phone_notify = findViewById(R.id.hold_phone_notify);
-        sms_notify = findViewById(R.id.hold_sms_notify);
-        sms_notification = findViewById(R.id.hold_enable_sms_notification);
-        sms_spinner = findViewById(R.id.hold_sms_carrier);
+        expirationDate = findViewById(R.id.hold_expiration_date);
+        emailNotification = findViewById(R.id.hold_enable_email_notification);
+        phoneNotificationLabel = findViewById(R.id.hold_phone_notification_label);
+        smsNotificationLabel = findViewById(R.id.hold_sms_notification_label);
+        smsSpinnerLabel = findViewById(R.id.hold_sms_spinner_label);
+        phoneNotification = findViewById(R.id.hold_enable_phone_notification);
+        phoneNotify = findViewById(R.id.hold_phone_notify);
+        smsNotify = findViewById(R.id.hold_sms_notify);
+        smsNotification = findViewById(R.id.hold_enable_sms_notification);
+        smsSpinner = findViewById(R.id.hold_sms_carrier);
         suspendHold = findViewById(R.id.hold_suspend_hold);
         orgSpinner = findViewById(R.id.hold_pickup_location);
-        thaw_date_edittext = findViewById(R.id.hold_thaw_date);
+        thawDateEdittext = findViewById(R.id.hold_thaw_date);
 
         title.setText(record.title);
         author.setText(record.author);
         format.setText(record.getIconFormatLabel());
 
-        email_notification.setChecked(account.getNotifyByEmail());
+        emailNotification.setChecked(account.getNotifyByEmail());
         initPhoneControls(getResources().getBoolean(R.bool.ou_enable_phone_notification));
         initSMSControls(EgOrg.getSmsEnabled());
         initPlaceHoldRunnable(record);
@@ -148,15 +148,15 @@ public class PlaceHoldActivity extends AppCompatActivity {
     }
 
     private String getPhoneNotify() {
-        return phone_notification.isChecked() ? phone_notify.getText().toString() : null;
+        return phoneNotification.isChecked() ? phoneNotify.getText().toString() : null;
     }
 
     private String getSMSNotify() {
-        return sms_notification.isChecked() ? sms_notify.getText().toString() : null;
+        return smsNotification.isChecked() ? smsNotify.getText().toString() : null;
     }
 
     private Integer getSMSNotifyCarrier(int id) {
-        return sms_notification.isChecked() ? id : null;
+        return smsNotification.isChecked() ? id : null;
     }
 
     private void initPlaceHoldRunnable(RecordInfo record) {
@@ -174,11 +174,11 @@ public class PlaceHoldActivity extends AppCompatActivity {
                 });
 
                 String expire_date_s = null;
-                if (expire_date != null)
-                    expire_date_s = Api.formatDate(expire_date);
+                if (expireDate != null)
+                    expire_date_s = Api.formatDate(expireDate);
                 String thaw_date_s = null;
-                if (thaw_date != null)
-                    thaw_date_s = Api.formatDate(thaw_date);
+                if (thawDate != null)
+                    thaw_date_s = Api.formatDate(thawDate);
 
                 int selectedOrgID = -1;
                 if (EgOrg.getOrgs().size() > selectedOrgPos)
@@ -190,7 +190,7 @@ public class PlaceHoldActivity extends AppCompatActivity {
                 Result temp_result = Result.createUnknownError();
                 try {
                     temp_result = AccountAccess.getInstance().testAndCreateHold(record_id, selectedOrgID,
-                            email_notification.isChecked(), getPhoneNotify(),
+                            emailNotification.isChecked(), getPhoneNotify(),
                             getSMSNotify(), getSMSNotifyCarrier(selectedSMSCarrierID),
                             expire_date_s, suspendHold.isChecked(), thaw_date_s);
                 } catch (SessionNotFoundException e) {
@@ -198,7 +198,7 @@ public class PlaceHoldActivity extends AppCompatActivity {
                         if (AccountAccess.getInstance().reauthenticate(PlaceHoldActivity.this))
                             temp_result = AccountAccess.getInstance().testAndCreateHold(
                                     record_id, selectedOrgID,
-                                    email_notification.isChecked(),  getPhoneNotify(),
+                                    emailNotification.isChecked(),  getPhoneNotify(),
                                     getSMSNotify(), getSMSNotifyCarrier(selectedSMSCarrierID),
                                     expire_date_s, suspendHold.isChecked(), thaw_date_s);
                     } catch (Exception e1) {
@@ -240,9 +240,9 @@ public class PlaceHoldActivity extends AppCompatActivity {
 
     private void logPlaceHoldResult(String result) {
         ArrayList<String> notify = new ArrayList<>();
-        if (email_notification.isChecked()) notify.add("email");
-        if (phone_notification.isChecked()) notify.add("phone");
-        if (sms_notification.isChecked()) notify.add("sms");
+        if (emailNotification.isChecked()) notify.add("email");
+        if (phoneNotification.isChecked()) notify.add("phone");
+        if (smsNotification.isChecked()) notify.add("sms");
         String notifyTypes = TextUtils.join("|", notify);
         try {
             Organization pickup_org = EgOrg.getOrgs().get(selectedOrgPos);
@@ -251,7 +251,7 @@ public class PlaceHoldActivity extends AppCompatActivity {
             Analytics.logEvent("Place Hold: Execute",
                     "result", result,
                     "hold_notify", notifyTypes,
-                    "expires", expire_date != null,
+                    "expires", expireDate != null,
                     "pickup_org", pickup_val);
         } catch(Exception e) {
             Analytics.logException(e);
@@ -270,10 +270,10 @@ public class PlaceHoldActivity extends AppCompatActivity {
                             .setMessage(selectedOrg.name + " is not a valid pickup location; choose a different one.")
                             .setPositiveButton(android.R.string.ok, null);
                     builder.create().show();
-                } else if (phone_notification.isChecked() && TextUtils.isEmpty(phone_notify.getText().toString())) {
-                    phone_notify.setError(getString(R.string.error_phone_notify_empty));
-                } else if (sms_notification.isChecked() && TextUtils.isEmpty(sms_notify.getText().toString())) {
-                    sms_notify.setError(getString(R.string.error_sms_notify_empty));
+                } else if (phoneNotification.isChecked() && TextUtils.isEmpty(phoneNotify.getText().toString())) {
+                    phoneNotify.setError(getString(R.string.error_phone_notify_empty));
+                } else if (smsNotification.isChecked() && TextUtils.isEmpty(smsNotify.getText().toString())) {
+                    smsNotify.setError(getString(R.string.error_sms_notify_empty));
                 } else {
                     placeHold();
                 }
@@ -290,7 +290,7 @@ public class PlaceHoldActivity extends AppCompatActivity {
         suspendHold.setOnCheckedChangeListener(new OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                thaw_date_edittext.setEnabled(isChecked);
+                thawDateEdittext.setEnabled(isChecked);
             }
         });
     }
@@ -299,26 +299,26 @@ public class PlaceHoldActivity extends AppCompatActivity {
         boolean defaultPhoneNotification = account.getNotifyByPhone();
         String defaultPhoneNumber = account.getPhoneNumber();
         if (systemwide_phone_enabled) {
-            phone_notification.setChecked(defaultPhoneNotification);
-            phone_notify.setText(safeString(defaultPhoneNumber));
-            phone_notification.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+            phoneNotification.setChecked(defaultPhoneNotification);
+            phoneNotify.setText(safeString(defaultPhoneNumber));
+            phoneNotification.setOnCheckedChangeListener(new OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    phone_notify.setEnabled(isChecked);
+                    phoneNotify.setEnabled(isChecked);
                 }
             });
-            phone_notify.setEnabled(defaultPhoneNotification);
+            phoneNotify.setEnabled(defaultPhoneNotification);
         } else {
-            phone_notification_label.setVisibility(View.GONE);
-            phone_notification.setVisibility(View.GONE);
-            phone_notify.setVisibility(View.GONE);
+            phoneNotificationLabel.setVisibility(View.GONE);
+            phoneNotification.setVisibility(View.GONE);
+            phoneNotify.setVisibility(View.GONE);
             // As a special case, we set the checkbox and text field for patrons with phone
             // notification turned on with a phone number, even for apps where the checkbox is hidden.
-            // This causes us to set phone_notify=### on holds, which makes it print on hold slips,
+            // This causes us to set phoneNotify=### on holds, which makes it print on hold slips,
             // allowing those few remaining patrons to continue getting notifications by phone.
             if (defaultPhoneNotification && !TextUtils.isEmpty(defaultPhoneNumber)) {
-                phone_notification.setChecked(defaultPhoneNotification);
-                phone_notify.setText(safeString(defaultPhoneNumber));
+                phoneNotification.setChecked(defaultPhoneNotification);
+                phoneNotify.setText(safeString(defaultPhoneNumber));
             }
         }
     }
@@ -326,25 +326,25 @@ public class PlaceHoldActivity extends AppCompatActivity {
     private void initSMSControls(boolean systemwide_sms_enabled) {
         if (systemwide_sms_enabled) {
             boolean isChecked = account.getNotifyBySMS();
-            sms_notification.setChecked(isChecked);
-            sms_notification.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+            smsNotification.setChecked(isChecked);
+            smsNotification.setOnCheckedChangeListener(new OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    sms_spinner.setEnabled(isChecked);
-                    sms_notify.setEnabled(isChecked);
+                    smsSpinner.setEnabled(isChecked);
+                    smsNotify.setEnabled(isChecked);
                 }
             });
-            sms_notify.setEnabled(isChecked);
-            sms_notify.setText(safeString(account.getSmsNumber()));
-            sms_spinner.setEnabled(isChecked);
+            smsNotify.setEnabled(isChecked);
+            smsNotify.setText(safeString(account.getSmsNumber()));
+            smsSpinner.setEnabled(isChecked);
             initSMSSpinner(account.getSmsCarrier());
         } else {
-            sms_notification.setChecked(false);
-            sms_notification_label.setVisibility(View.GONE);
-            sms_spinner_label.setVisibility(View.GONE);
-            sms_notification.setVisibility(View.GONE);
-            sms_spinner.setVisibility(View.GONE);
-            sms_notify.setVisibility(View.GONE);
+            smsNotification.setChecked(false);
+            smsNotificationLabel.setVisibility(View.GONE);
+            smsSpinnerLabel.setVisibility(View.GONE);
+            smsNotification.setVisibility(View.GONE);
+            smsSpinner.setVisibility(View.GONE);
+            smsNotify.setVisibility(View.GONE);
         }
     }
 
@@ -359,9 +359,9 @@ public class PlaceHoldActivity extends AppCompatActivity {
             }
         }
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, R.layout.org_item_layout, entries);
-        sms_spinner.setAdapter(adapter);
-        sms_spinner.setSelection(selectedSMSPos);
-        sms_spinner.setOnItemSelectedListener(new OnItemSelectedListener() {
+        smsSpinner.setAdapter(adapter);
+        smsSpinner.setSelection(selectedSMSPos);
+        smsSpinner.setOnItemSelectedListener(new OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 selectedSMSPos = position;
@@ -384,23 +384,23 @@ public class PlaceHoldActivity extends AppCompatActivity {
 
                         Date chosenDate = new Date(year - 1900, monthOfYear,
                                 dayOfMonth);
-                        expire_date = chosenDate;
+                        expireDate = chosenDate;
                         CharSequence strDate = DateFormat.format(
                                 "MMMM dd, yyyy", chosenDate);
-                        expiration_date.setText(strDate);
+                        expirationDate.setText(strDate);
                         // set current date
                     }
                 }, cal.get(Calendar.YEAR), cal.get(Calendar.MONTH),
                 cal.get(Calendar.DAY_OF_MONTH));
 
-        expiration_date.setOnClickListener(new OnClickListener() {
+        expirationDate.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
                 datePicker.show();
             }
         });
 
-        thaw_datePicker = new DatePickerDialog(this,
+        thawDatePicker = new DatePickerDialog(this,
                 new DatePickerDialog.OnDateSetListener() {
 
                     public void onDateSet(DatePicker view, int year,
@@ -408,20 +408,20 @@ public class PlaceHoldActivity extends AppCompatActivity {
 
                         Date chosenDate = new Date(year - 1900, monthOfYear,
                                 dayOfMonth);
-                        thaw_date = chosenDate;
+                        thawDate = chosenDate;
                         CharSequence strDate = DateFormat.format(
                                 "MMMM dd, yyyy", chosenDate);
-                        thaw_date_edittext.setText(strDate);
+                        thawDateEdittext.setText(strDate);
                         // set current date
                     }
                 }, cal.get(Calendar.YEAR), cal.get(Calendar.MONTH),
                 cal.get(Calendar.DAY_OF_MONTH));
 
-        thaw_date_edittext.setOnClickListener(new OnClickListener() {
+        thawDateEdittext.setOnClickListener(new OnClickListener() {
 
             @Override
             public void onClick(View v) {
-                thaw_datePicker.show();
+                thawDatePicker.show();
             }
         });
     }
