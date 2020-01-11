@@ -40,4 +40,13 @@ object GatewaySearch: SearchService {
             Result.Error(e)
         }
     }
+
+    override suspend fun fetchMetarecordMODS(id: Int): Result<OSRFObject> {
+        return try {
+            val ret = Gateway.fetchObject(Api.SEARCH, Api.METARECORD_MODS_SLIM_RETRIEVE, arrayOf(id), true)
+            Result.Success(ret)
+        } catch (e: Exception) {
+            Result.Error(e)
+        }
+    }
 }

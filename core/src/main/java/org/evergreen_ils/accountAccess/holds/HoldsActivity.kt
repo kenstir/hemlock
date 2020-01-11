@@ -183,8 +183,15 @@ class HoldsActivity : BaseActivity() {
         }
     }
 
-    private fun fetchMetarecordHoldTargetDetails(hold: HoldRecord, target: Int, account: Account): Result<Unit> {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    private suspend fun fetchMetarecordHoldTargetDetails(hold: HoldRecord, target: Int, account: Account): Result<Unit> {
+        val result = Gateway.search.fetchMetarecordMODS(target)
+        return when (result) {
+            is Result.Success -> {
+                hold.recordInfo = RecordInfo(result.data)
+                Result.Success(Unit)
+            }
+            is Result.Error -> result
+        }
     }
 
     private fun fetchPartHoldTargetDetails(hold: HoldRecord, target: Int, account: Account): Result<Unit> {

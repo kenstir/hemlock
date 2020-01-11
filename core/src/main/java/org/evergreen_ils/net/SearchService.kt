@@ -24,4 +24,5 @@ import org.opensrf.util.OSRFObject
 interface SearchService {
     suspend fun fetchCopyStatuses(): Result<List<OSRFObject>>
     suspend fun fetchRecordMODS(id: Int): Result<OSRFObject>
+    suspend fun fetchMetarecordMODS(id: Int): Result<OSRFObject>
 }
