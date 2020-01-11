@@ -21,12 +21,8 @@ package net.kenstir.apps.core;
 import org.evergreen_ils.utils.IntUtils;
 import org.evergreen_ils.utils.Link;
 import org.junit.Test;
-import org.opensrf.util.OSRFObject;
-
-import java.util.HashMap;
 
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 public class JavaToKotlinInteropTest {
