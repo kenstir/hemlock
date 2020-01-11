@@ -38,6 +38,8 @@ public class JSONReader {
      * Map, Number, String, Boolean, or null
      */
     public Object read() throws JSONException {
+        if (json == null)
+            return null;
         JSONTokener tk = new JSONTokener(json);
         try {
             return readSubObject(tk.nextValue());
@@ -71,7 +73,6 @@ public class JSONReader {
             throw new JSONException("readObject(): JSON cast exception");
         }
     }
-
 
     /**
      * Recurse through the object and turn items into maps, lists, etc.
@@ -130,8 +131,6 @@ public class JSONReader {
 
         return null;
     }
-
-
 
     /**
      * Builds an OSRFObject map registered OSRFHash object based on the JSON object data.
