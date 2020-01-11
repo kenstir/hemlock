@@ -66,6 +66,7 @@ object Gateway {
         set(value) { _serverCacheKey = value }
 
     var state: GatewayState = GatewayState.UNINITIALIZED
+    var randomErrorPercentage = 0
 
     fun buildQuery(service: String?, method: String?, params: Array<Any?>, addCacheArgs: Boolean = true): String {
         val sb = StringBuilder(INITIAL_URL_SIZE)
@@ -173,9 +174,9 @@ object Gateway {
 
     /** for testing, inject an error randomly */
     private fun maybeInjectRandomError() {
-        val errorPercentage = 0//5
+        if (randomErrorPercentage <= 0) return
         val r = Random.nextInt(100)
-        Log.d(TAG, "[kcxxx] Random error if $r < $errorPercentage")
-        if (r < errorPercentage) throw GatewayError("Random error $r < $errorPercentage")
+        Log.d(TAG, "[kcxxx] Random error if $r < $randomErrorPercentage")
+        if (r < randomErrorPercentage) throw GatewayError("Random error $r < $randomErrorPercentage")
     }
 }
