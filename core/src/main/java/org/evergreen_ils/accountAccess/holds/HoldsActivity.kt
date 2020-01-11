@@ -50,7 +50,6 @@ class HoldsActivity : BaseActivity() {
     private var lv: ListView? = null
     private var listAdapter: HoldsArrayAdapter? = null
     private var holdRecords = mutableListOf<HoldRecord>()
-    private var getHoldsRunnable: Runnable? = null
     private var holdsSummary: TextView? = null
     private var progress: ProgressDialogSupport? = null
 
@@ -61,7 +60,6 @@ class HoldsActivity : BaseActivity() {
         holdsSummary = findViewById(R.id.holds_summary)
         lv = findViewById(R.id.holds_item_list)
         progress = ProgressDialogSupport()
-        //holdRecords =
         listAdapter = HoldsArrayAdapter(this, R.layout.holds_list_item, holdRecords)
         lv?.setAdapter(listAdapter)
         lv?.setOnItemClickListener { parent, view, position, id -> onItemClick(position) }
