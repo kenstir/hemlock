@@ -324,40 +324,7 @@ public class AccountAccess {
         String type = (String) holdObj.ahr.get("hold_type");
 
         Log.d(TAG, "Hold Type " + type);
-        if (type.equals("C")) {
-
-            /*
-             * steps asset.copy'->'asset.call_number'->'biblio.record_entry' or,
-             * in IDL ids, acp->acn->bre
-             */
-
-            // fetch_copy
-            OSRFObject copyObject = fetchAssetCopy(holdObj.ahr.getInt("target"));
-            // fetch_volume from copyObject.call_number field
-            Integer call_number = null;
-            if (copyObject != null) call_number = copyObject.getInt("call_number");
-
-            if (call_number != null) {
-
-                OSRFObject volume = (OSRFObject) Utils.doRequest(conn(), Api.SEARCH,
-                        Api.ASSET_CALL_NUMBER_RETRIEVE, new Object[] {
-                                copyObject.getInt("call_number") });
-                // in volume object : record
-                Integer record = volume.getInt("record");
-
-                // part label
-                holdObj.setPartLabel(volume.getString("label"));
-
-                Log.d(TAG, "Record " + record);
-                OSRFObject holdInfo = (OSRFObject) Utils.doRequest(conn(),
-                        Api.SEARCH, Api.MODS_SLIM_RETRIEVE,
-                        new Object[] { record });
-
-                holdObj.setTitle(holdInfo.getString("title"));
-                holdObj.setAuthor(holdInfo.getString("author"));
-                holdObj.recordInfo = new RecordInfo(holdInfo);
-            }
-        } else if (type.equals("V")) {
+        if (type.equals("V")) {
             // fetch_volume
             OSRFObject volume = (OSRFObject) Utils.doRequest(conn(),
                     Api.SEARCH, Api.ASSET_CALL_NUMBER_RETRIEVE,
@@ -384,40 +351,6 @@ public class AccountAccess {
                     new Object[] { holdObj.ahr.getInt("target") });
             // TODO
 
-        } else if (type.equals("P")) {
-            HashMap<String, Object> param = new HashMap<String, Object>();
-
-            param.put("cache", 1);
-
-            ArrayList<String> fieldsList = new ArrayList<String>();
-            fieldsList.add("label");
-            fieldsList.add("record");
-
-            param.put("fields", fieldsList);
-            HashMap<String, Integer> queryParam = new HashMap<String, Integer>();
-            // PART_ID use "target field in hold"
-            queryParam.put("id", holdObj.ahr.getInt("target"));
-            param.put("query", queryParam);
-
-            // returns [{record:id, label=part label}]
-
-            List<Object> part = (List<Object>) Utils.doRequest(conn(),
-                    Api.FIELDER, Api.FIELDER_BMP_ATOMIC,
-                    new Object[] { param });
-
-            Map<String, ?> partObj = (Map<String, ?>) part.get(0);
-
-            Integer recordID = (Integer) partObj.get("record");
-            String part_label = (String) partObj.get("label");
-
-            OSRFObject holdInfo = (OSRFObject) Utils.doRequest(conn(),
-                    Api.SEARCH, Api.MODS_SLIM_RETRIEVE,
-                    new Object[] { recordID });
-
-            holdObj.setPartLabel(part_label);
-            holdObj.setTitle(holdInfo.getString("title"));
-            holdObj.setAuthor(holdInfo.getString("author"));
-            holdObj.recordInfo = new RecordInfo(holdInfo);
         }
     }
 

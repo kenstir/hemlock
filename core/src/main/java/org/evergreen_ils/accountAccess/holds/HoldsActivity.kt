@@ -195,6 +195,19 @@ class HoldsActivity : BaseActivity() {
     }
 
     private suspend fun fetchPartHoldTargetDetails(hold: HoldRecord, target: Int, account: Account): Result<Unit> {
+        val bmpResult = Gateway.fielder.fetchBMP(target)
+        if (bmpResult is Result.Error) return bmpResult
+        val bmpObj = bmpResult.get()
+        Log.d(TAG, "bmpObj:$bmpObj")
+        val id = bmpObj.getInt("record") ?: return Result.Error(GatewayError("missing record number in part hold bre"))
+        hold.partLabel = bmpObj.getString("label")
+
+        val modsResult = Gateway.search.fetchRecordMODS(id)
+        if (modsResult is Result.Error) return modsResult
+        val modsObj = modsResult.get()
+        Log.d(TAG, "modsObj:$modsObj")
+
+        hold.recordInfo = RecordInfo(modsObj)
         return Result.Success(Unit)
     }
 

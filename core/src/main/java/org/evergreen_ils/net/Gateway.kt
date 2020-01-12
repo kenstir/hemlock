@@ -35,12 +35,6 @@ import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
 import kotlin.random.Random
 
-enum class GatewayState {
-    UNINITIALIZED,
-    INITIALIZED,
-    LOADED
-}
-
 const val TAG = "Gateway"
 private const val INITIAL_URL_SIZE = 128
 
@@ -55,6 +49,7 @@ object Gateway {
     var actor: ActorService = GatewayActor
     var auth: AuthService = GatewayAuth
     var circ: CircService = GatewayCirc
+    var fielder: FielderService = GatewayFielder
     var pcrud: PCRUDService = GatewayPCRUD
     var search: SearchService = GatewaySearch
 
@@ -65,7 +60,6 @@ object Gateway {
         get() = _serverCacheKey ?: startTime.toString()
         set(value) { _serverCacheKey = value }
 
-    var state: GatewayState = GatewayState.UNINITIALIZED
     var randomErrorPercentage = 0
 
     fun buildQuery(service: String?, method: String?, params: Array<Any?>, addCacheArgs: Boolean = true): String {

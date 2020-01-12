@@ -19,27 +19,23 @@
  */
 package org.evergreen_ils.accountAccess.holds;
 
-import java.io.Serializable;
-import java.text.DateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import android.content.res.Resources;
 
 import org.evergreen_ils.Api;
 import org.evergreen_ils.R;
 import org.evergreen_ils.data.EgCodedValueMap;
 import org.evergreen_ils.data.EgOrg;
 import org.evergreen_ils.searchCatalog.RecordInfo;
-import org.evergreen_ils.system.Log;
 import org.evergreen_ils.utils.JsonUtils;
 import org.evergreen_ils.utils.TextUtils;
-import org.jetbrains.annotations.NotNull;
-import org.opensrf.util.JSONException;
-import org.opensrf.util.JSONReader;
 import org.opensrf.util.OSRFObject;
 
-import android.content.res.Resources;
+import java.io.Serializable;
+import java.text.DateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -127,12 +123,12 @@ public class HoldRecord implements Serializable {
         }
     }
 
-    public @NotNull String getHoldType() {
+    public @NonNull String getHoldType() {
         String holdType = ahr.getString("hold_type");
         return (holdType != null) ? holdType : "?";
     }
 
-    public static @NotNull List<HoldRecord> makeArray(@NotNull List<OSRFObject> ahr_objects) {
+    public static @NonNull List<HoldRecord> makeArray(@NonNull List<OSRFObject> ahr_objects) {
         ArrayList<HoldRecord> ret = new ArrayList<>();
         for (OSRFObject ahr_obj: ahr_objects) {
             ret.add(new HoldRecord(ahr_obj));
@@ -140,9 +136,13 @@ public class HoldRecord implements Serializable {
         return ret;
     }
 
-    public String getTitle() {
-        if (title != null && !TextUtils.isEmpty(title)) return title;
-        if (recordInfo != null && !TextUtils.isEmpty(recordInfo.title)) return recordInfo.title;
+    private @NonNull String withPartLabel(@NonNull String title) {
+        return (!TextUtils.isEmpty(partLabel)) ? title + " (" + partLabel + ")" : title;
+    }
+
+    public @NonNull String getTitle() {
+        if (title != null && !TextUtils.isEmpty(title)) return withPartLabel(title);
+        if (recordInfo != null && !TextUtils.isEmpty(recordInfo.title)) return withPartLabel(recordInfo.title);
         return "Unknown title";
     }
 
