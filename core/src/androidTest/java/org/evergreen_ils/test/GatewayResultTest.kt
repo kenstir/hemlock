@@ -86,6 +86,26 @@ class GatewayResultTest {
     }
 
     @Test
+    fun test_classlessArray() {
+        val json = """
+             {"payload":[[{"label":"JAN 2005","record":2224604}]],"status":200}
+             """
+        val result = GatewayResult.create(json)
+        assertFalse(result.failed)
+
+        val obj = result.asArray()
+        assertEquals(1, obj.size)
+
+        val objArray = result.asObjectArray()
+        assertEquals(1, objArray.size)
+        val first = objArray.firstOrNull()
+        assertNotNull(first)
+        if (first == null) return
+        assertEquals("JAN 2005", first.getString("label"))
+        assertEquals(2224604, first.getInt("record"))
+    }
+
+    @Test
     fun test_failureOnBadStatus() {
         val json = """
             {"payload":[],"status":400}

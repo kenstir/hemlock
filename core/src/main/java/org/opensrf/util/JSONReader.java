@@ -109,7 +109,7 @@ public class JSONReader {
 
                     map.put(key, readSubObject(jobj.get(key)));
                 }
-                return map;
+                return new OSRFObject(map);
             } 
             
             if ( obj instanceof JSONArray ) {
@@ -121,7 +121,6 @@ public class JSONReader {
                 for( int i = 0; i < length; i++ ) 
                     list.add(readSubObject(jarr.get(i)));   
                 return list;
-                
             }
 
         } catch(org.json.JSONException e) {

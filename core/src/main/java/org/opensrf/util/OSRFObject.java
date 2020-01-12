@@ -40,7 +40,9 @@ public class OSRFObject extends HashMap<String, Object> implements OSRFSerializa
     }
 
 
-    public OSRFObject(Map<String, Object> map) { super(map); }
+    public OSRFObject(Map<String, Object> map) {
+        super(map);
+    }
 
 
     /**
@@ -48,6 +50,10 @@ public class OSRFObject extends HashMap<String, Object> implements OSRFSerializa
      */
     public OSRFRegistry getRegistry() {
         return registry;
+    }
+
+    public @Nullable String getNetClass() {
+        return (registry != null) ? registry.getNetClass() : null;
     }
 
     /**
