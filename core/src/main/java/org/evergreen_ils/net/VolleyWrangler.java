@@ -52,8 +52,7 @@ public class VolleyWrangler {
     public static synchronized VolleyWrangler getInstance(Context context) {
         if (mInstance == null) {
             mInstance = new VolleyWrangler(context);
-            //VolleyLog.setTag("volley");
-            VolleyLog.DEBUG = true;
+            //VolleyLog.DEBUG = true;
         }
         return mInstance;
     }
