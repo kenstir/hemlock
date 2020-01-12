@@ -239,7 +239,22 @@ class HoldsActivity : BaseActivity() {
     }
 
     private suspend fun fetchVolumeHoldTargetDetails(hold: HoldRecord, target: Int, account: Account): Result<Unit> {
+        // steps: hold target -> asset call number -> mods
+
+        val acnResult = Gateway.search.fetchAssetCallNumber(target)
+        if (acnResult is Result.Error) return acnResult
+        val acnObj = acnResult.get()
+        Log.d(TAG, "acnObj:$acnObj")
+        val id = acnObj.getInt("record") ?: return Result.Error(GatewayError("missing record number in asset call number"))
+
+        val modsResult = Gateway.search.fetchRecordMODS(id)
+        if (modsResult is Result.Error) return modsResult
+        val modsObj = modsResult.get()
+        Log.d(TAG, "modsObj:$modsObj")
+
+        hold.recordInfo = RecordInfo(modsObj)
         return Result.Success(Unit)
+
     }
 
     private fun updateHoldsList() {
