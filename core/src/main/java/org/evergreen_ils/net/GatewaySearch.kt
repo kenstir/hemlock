@@ -23,6 +23,24 @@ import org.evergreen_ils.data.Result
 import org.opensrf.util.OSRFObject
 
 object GatewaySearch: SearchService {
+    override suspend fun fetchAssetCopy(copyId: Int): Result<OSRFObject> {
+        return try {
+            val ret = Gateway.fetchObject(Api.SEARCH, Api.ASSET_COPY_RETRIEVE, arrayOf(copyId), true)
+            Result.Success(ret)
+        } catch (e: Exception) {
+            Result.Error(e)
+        }
+    }
+
+    override suspend fun fetchAssetCallNumber(callNumber: Int): Result<OSRFObject> {
+        return try {
+            val ret = Gateway.fetchObject(Api.SEARCH, Api.ASSET_CALL_NUMBER_RETRIEVE, arrayOf(callNumber), true)
+            Result.Success(ret)
+        } catch (e: Exception) {
+            Result.Error(e)
+        }
+    }
+
     override suspend fun fetchCopyStatuses(): Result<List<OSRFObject>> {
         return try {
             val ret = Gateway.fetchObjectArray(Api.SEARCH, Api.COPY_STATUS_ALL, arrayOf(), true)

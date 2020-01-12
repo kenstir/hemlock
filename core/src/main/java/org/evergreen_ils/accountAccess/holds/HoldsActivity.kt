@@ -194,16 +194,39 @@ class HoldsActivity : BaseActivity() {
         }
     }
 
-    private fun fetchPartHoldTargetDetails(hold: HoldRecord, target: Int, account: Account): Result<Unit> {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    private suspend fun fetchPartHoldTargetDetails(hold: HoldRecord, target: Int, account: Account): Result<Unit> {
+        return Result.Success(Unit)
     }
 
-    private fun fetchCopyHoldTargetDetails(hold: HoldRecord, target: Int, account: Account): Result<Unit> {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    private suspend fun fetchCopyHoldTargetDetails(hold: HoldRecord, target: Int, account: Account): Result<Unit> {
+        /*
+         * steps: hold target -> asset copy -> asset.call_number -> mods
+         * in IDL: ahr->acp->acn->mvr
+         */
+
+        val acpResult = Gateway.search.fetchAssetCopy(target)
+        if (acpResult is Result.Error) return acpResult
+        val acpObj = acpResult.get()
+        Log.d(TAG, "acpObj:$acpObj")
+        val callNumber = acpObj.getInt("call_number") ?: return Result.Error(GatewayError("missing call_number in copy hold"))
+
+        val acnResult = Gateway.search.fetchAssetCallNumber(callNumber)
+        if (acnResult is Result.Error) return acnResult
+        val acnObj = acnResult.get()
+        Log.d(TAG, "acnObj:$acnObj")
+        val id = acnObj.getInt("record") ?: return Result.Error(GatewayError("missing record number in asset call number"))
+
+        val modsResult = Gateway.search.fetchRecordMODS(id)
+        if (modsResult is Result.Error) return modsResult
+        val modsObj = modsResult.get()
+        Log.d(TAG, "modsObj:$modsObj")
+
+        hold.recordInfo = RecordInfo(modsObj)
+        return Result.Success(Unit)
     }
 
-    private fun fetchVolumeHoldTargetDetails(hold: HoldRecord, target: Int, account: Account): Result<Unit> {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    private suspend fun fetchVolumeHoldTargetDetails(hold: HoldRecord, target: Int, account: Account): Result<Unit> {
+        return Result.Success(Unit)
     }
 
     private fun updateHoldsList() {
