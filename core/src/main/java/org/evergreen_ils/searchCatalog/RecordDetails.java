@@ -26,9 +26,6 @@ import android.content.pm.PackageManager;
 
 import java.util.ArrayList;
 
-/**
- * Created by kenstir on 3/5/2016.
- */
 public class RecordDetails {
     public static void launchDetailsFlow(Context context, ArrayList<RecordInfo> recordList, int recordPosition) {
         // determine name of parent activity

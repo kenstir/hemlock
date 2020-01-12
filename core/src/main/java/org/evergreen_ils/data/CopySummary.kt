@@ -18,7 +18,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
  * 
  */
-package org.evergreen_ils.searchCatalog
+package org.evergreen_ils.data
 
 import org.opensrf.util.OSRFObject
 import java.io.Serializable
