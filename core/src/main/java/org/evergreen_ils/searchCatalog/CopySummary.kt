@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2012 Evergreen Open-ILS
  * @author Daniel-Octavian Rizea
+ * Kotlin conversion by Kenneth H. Cox
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -17,30 +18,17 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
  * 
  */
-package org.evergreen_ils.searchCatalog;
+package org.evergreen_ils.searchCatalog
 
-
-import org.opensrf.util.OSRFObject;
+import org.opensrf.util.OSRFObject
+import java.io.Serializable
 
 /** Copy summary for the given org_id, e.g. 1 available of 4 copies at MPL
  *
  * returned by open-ils.search.biblio.record.copy_count
  */
-public class CopySummary {
-
-    public Integer org_id;
-    public Integer count;
-    public Integer available;
-    public Integer depth;
-    //public Integer unshadow;
-
-    public CopySummary(OSRFObject obj) {
-
-        this.org_id = obj.getInt("org_unit");
-        this.count = obj.getInt("count");
-        this.available = obj.getInt("available");
-        this.depth = obj.getInt("depth");
-        //this.unshadow = obj.getInt("unshadow");
-    }
-
+class CopySummary(obj: OSRFObject) : Serializable {
+    val orgId: Int? = obj.getInt("org_unit")
+    val count: Int? = obj.getInt("count")
+    val available: Int? = obj.getInt("available")
 }

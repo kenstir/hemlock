@@ -181,9 +181,9 @@ public class RecordLoader {
             copySummaryText = "";
         } else {
             for (int i = 0; i < record.copySummaryList.size(); i++) {
-                if (record.copySummaryList.get(i).org_id.equals(orgID)) {
-                    total = record.copySummaryList.get(i).count;
-                    available = record.copySummaryList.get(i).available;
+                if (record.copySummaryList.get(i).getOrgId().equals(orgID)) {
+                    total = record.copySummaryList.get(i).getCount();
+                    available = record.copySummaryList.get(i).getAvailable();
                     break;
                 }
             }

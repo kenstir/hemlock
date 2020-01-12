@@ -159,8 +159,8 @@ public class RecordInfo implements Serializable {
         if (response == null || response.failed)
             return;
         try {
-            List<?> list = (List<?>) response.payload;
-            for (Object obj : list) {
+            List<OSRFObject> l = response.asObjectArray();
+            for (OSRFObject obj : l) {
                 CopySummary info = new CopySummary(obj);
                 record.copySummaryList.add(info);
             }
