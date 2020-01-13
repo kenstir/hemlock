@@ -169,45 +169,42 @@ class HoldsActivity : BaseActivity() {
     }
 
     private suspend fun fetchTitleHoldTargetDetails(hold: HoldRecord, target: Int, account: Account): Result<Unit> {
-        val result = Gateway.search.fetchRecordMODS(target)
-        return when (result) {
-            is Result.Success -> {
-                hold.recordInfo = RecordInfo(result.data)
-                if (hold.recordInfo.doc_id != null) {
-                    fetchRecordAttrs(hold.recordInfo, hold.recordInfo.doc_id)
-                } else {
-                    Result.Success(Unit)
-                }
-            }
-            is Result.Error -> result
-        }
+        val modsResult = Gateway.search.fetchRecordMODS(target)
+        if (modsResult is Result.Error) return modsResult
+        val modsObj = modsResult.get()
+//        Log.d(TAG, "modsObj:$modsObj")
+        hold.recordInfo = RecordInfo(modsObj)
+
+        if (hold.recordInfo.doc_id == null) return Result.Success(Unit)
+        val mraResult = fetchRecordAttrs(hold.recordInfo, hold.recordInfo.doc_id)
+
+        return Result.Success(Unit)
     }
 
     private suspend fun fetchMetarecordHoldTargetDetails(hold: HoldRecord, target: Int, account: Account): Result<Unit> {
         val result = Gateway.search.fetchMetarecordMODS(target)
-        return when (result) {
-            is Result.Success -> {
-                hold.recordInfo = RecordInfo(result.data)
-                Result.Success(Unit)
-            }
-            is Result.Error -> result
-        }
+        if (result is Result.Error) return result
+        hold.recordInfo = RecordInfo(result.get())
+        return Result.Success(Unit)
     }
 
     private suspend fun fetchPartHoldTargetDetails(hold: HoldRecord, target: Int, account: Account): Result<Unit> {
         val bmpResult = Gateway.fielder.fetchBMP(target)
         if (bmpResult is Result.Error) return bmpResult
         val bmpObj = bmpResult.get()
-        Log.d(TAG, "bmpObj:$bmpObj")
+        Log.d(TAG, "title:${hold.title} bmpObj:$bmpObj")
         val id = bmpObj.getInt("record") ?: return Result.Error(GatewayError("missing record number in part hold bre"))
         hold.partLabel = bmpObj.getString("label")
 
         val modsResult = Gateway.search.fetchRecordMODS(id)
         if (modsResult is Result.Error) return modsResult
         val modsObj = modsResult.get()
-        Log.d(TAG, "modsObj:$modsObj")
-
+        Log.d(TAG, "title:${hold.title} modsObj:$modsObj")
         hold.recordInfo = RecordInfo(modsObj)
+
+        if (hold.recordInfo.doc_id == null) return Result.Success(Unit)
+        val mraResult = fetchRecordAttrs(hold.recordInfo, hold.recordInfo.doc_id)
+
         return Result.Success(Unit)
     }
 
@@ -233,8 +230,11 @@ class HoldsActivity : BaseActivity() {
         if (modsResult is Result.Error) return modsResult
         val modsObj = modsResult.get()
         Log.d(TAG, "modsObj:$modsObj")
-
         hold.recordInfo = RecordInfo(modsObj)
+
+        if (hold.recordInfo.doc_id == null) return Result.Success(Unit)
+        val mraResult = fetchRecordAttrs(hold.recordInfo, hold.recordInfo.doc_id)
+
         return Result.Success(Unit)
     }
 
@@ -251,10 +251,12 @@ class HoldsActivity : BaseActivity() {
         if (modsResult is Result.Error) return modsResult
         val modsObj = modsResult.get()
         Log.d(TAG, "modsObj:$modsObj")
-
         hold.recordInfo = RecordInfo(modsObj)
-        return Result.Success(Unit)
 
+        if (hold.recordInfo.doc_id == null) return Result.Success(Unit)
+        val mraResult = fetchRecordAttrs(hold.recordInfo, hold.recordInfo.doc_id)
+
+        return Result.Success(Unit)
     }
 
     private fun updateHoldsList() {
