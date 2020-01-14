@@ -209,10 +209,7 @@ class HoldsActivity : BaseActivity() {
     }
 
     private suspend fun fetchCopyHoldTargetDetails(hold: HoldRecord, target: Int, account: Account): Result<Unit> {
-        /*
-         * steps: hold target -> asset copy -> asset.call_number -> mods
-         * in IDL: ahr->acp->acn->mvr
-         */
+        // steps: hold target -> asset copy -> asset.call_number -> mods
 
         val acpResult = Gateway.search.fetchAssetCopy(target)
         if (acpResult is Result.Error) return acpResult
