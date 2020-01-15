@@ -20,9 +20,16 @@ package org.evergreen_ils.utils.ui
 
 import android.app.Activity
 import android.app.AlertDialog
+import org.evergreen_ils.android.App
+import org.evergreen_ils.net.GatewayError
+import org.evergreen_ils.system.Log
 
 fun Activity.showAlert(ex: Exception) {
-    showAlert(ex.localizedMessage)
+    if (ex is GatewayError && ex.isSessionExpired()) {
+        showSessionExpiredAlert(ex)
+    } else {
+        showAlert(ex.localizedMessage)
+    }
 }
 
 fun Activity.showAlert(errorMessage: String) {
@@ -30,9 +37,23 @@ fun Activity.showAlert(errorMessage: String) {
     val builder = AlertDialog.Builder(this)
     builder.setTitle("Error")
             .setMessage(errorMessage)
-            .setPositiveButton(android.R.string.ok) { dialog, which ->
-                //alertDialog = null
-                //alertMessage = null
+            .setPositiveButton(android.R.string.ok) { _, _ ->
+            }
+    val alertDialog = builder.create()
+    alertDialog.show()
+}
+
+fun Activity.showSessionExpiredAlert(ex: Exception) {
+    if (isFinishing) return
+    val builder = AlertDialog.Builder(this)
+    builder.setTitle("Error")
+            .setMessage(ex.localizedMessage)
+            .setNegativeButton(android.R.string.cancel) { _, _ ->
+                Log.d("sessionexpired", "cancel")
+            }
+            .setPositiveButton("Login Again") { _, _ ->
+                Log.d("sessionexpired", "relog")
+                App.restartApp(this)
             }
     val alertDialog = builder.create()
     alertDialog.show()
