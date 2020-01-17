@@ -60,7 +60,7 @@ public class Analytics {
     }
 
     public static void setString(String key, String val) {
-        Crashlytics.setString(key, val);
+        if (analytics) Crashlytics.setString(key, val);
     }
 
     public static String redactedString(String val) {
