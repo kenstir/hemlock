@@ -242,6 +242,10 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         return false
     }
 
+    /** template method that should be overridden in derived activities that want pull-to-refresh */
+    fun onReload() {
+    }
+
     fun logout() {
         Log.d(TAG, "[auth] logout")
         val account = App.getAccount()
