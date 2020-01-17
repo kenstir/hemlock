@@ -26,7 +26,6 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
-import kotlinx.android.synthetic.main.drawer_item.view.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
@@ -42,9 +41,9 @@ import org.evergreen_ils.system.Analytics
 import org.evergreen_ils.system.Log
 import org.evergreen_ils.utils.await
 import org.evergreen_ils.utils.getAccountManagerResult
+import org.evergreen_ils.utils.getMessage
 import org.evergreen_ils.utils.ui.AppState
 import org.evergreen_ils.utils.ui.ThemeManager
-import org.evergreen_ils.utils.ui.showAlert
 import org.opensrf.util.OSRFObject
 import java.util.concurrent.TimeoutException
 
@@ -130,13 +129,9 @@ class LaunchActivity : AppCompatActivity(), CoroutineScope by MainScope() {
                 val account = getAccount()
                 Log.d(TAG, "[auth] ${account.username} ${account.authToken}")
                 mModel?.loadServiceData(resources)
-            } catch (ex: TimeoutException) {
-                Log.d(TAG, "[kcxxx] timeout in launchLoginFlow")
-                mProgressText?.text = ex.message ?: "Timeout"
-                onLaunchFailure()
             } catch (ex: Exception) {
                 Log.d(TAG, "[kcxxx] caught in launchLoginFlow", ex)
-                mProgressText?.text = ex.message ?: "Cancelled"
+                mProgressText?.text = ex.getMessage()
                 onLaunchFailure()
             }
         }
