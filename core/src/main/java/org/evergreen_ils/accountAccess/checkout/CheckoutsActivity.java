@@ -66,7 +66,7 @@ public class CheckoutsActivity extends BaseActivity {
         accountAccess = AccountAccess.getInstance();
         progress = new ProgressDialogSupport();
 
-        lv = (ListView) findViewById(R.id.checkout_items_list);
+        lv = findViewById(R.id.checkout_items_list);
         circRecords = new ArrayList<>();
         listAdapter = new CheckOutArrayAdapter(this,
                 R.layout.checkout_list_item, circRecords);
