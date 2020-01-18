@@ -150,11 +150,11 @@ public class ScheduledIntentService extends IntentService {
                     Log.d(TAG, "Set notification in " + cal.getTime());
 
                     NotificationAlert notifications = daoNotifications
-                            .fetch(checkoutRecord.circ_id);
+                            .fetch(checkoutRecord.circId);
                     NotificationAlert newNotificationInf = new NotificationAlert(
-                            checkoutRecord.circ_id,
+                            checkoutRecord.circId,
                             NotificationAlert.NOTIFICATION_INTENT
-                                    + checkoutRecord.circ_id, cal.getTime(),
+                                    + checkoutRecord.circId, cal.getTime(),
                             "Checkout " + checkoutRecord.getAuthor()
                                     + " expires on "
                                     + checkoutRecord.getDueDateString());
@@ -164,7 +164,7 @@ public class ScheduledIntentService extends IntentService {
                     } else {
                         // update info in database
                         daoNotifications.update(newNotificationInf,
-                                checkoutRecord.circ_id);
+                                checkoutRecord.circId);
                     }
 
                     Intent intentNotification = new Intent(this,
@@ -181,7 +181,7 @@ public class ScheduledIntentService extends IntentService {
                     // update the current intent if it exists
                     PendingIntent sender = PendingIntent.getBroadcast(this,
                             NotificationAlert.NOTIFICATION_INTENT
-                                    + checkoutRecord.circ_id,
+                                    + checkoutRecord.circId,
                             intentNotification,
                             PendingIntent.FLAG_UPDATE_CURRENT);
 

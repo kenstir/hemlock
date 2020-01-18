@@ -28,37 +28,24 @@ import org.evergreen_ils.searchCatalog.RecordInfo;
 import org.evergreen_ils.utils.TextUtils;
 import org.opensrf.util.OSRFObject;
 
-/**
- * This is a wrapper class that get the information out for a circ object
- * 
- * @author daniel
- * 
- */
 public class CircRecord {
 
-    public enum CircType { OUT, OVERDUE, LONG_OVERDUE, LOST, CLAIMS_RETURNED };
+    public enum CircType { OUT, OVERDUE, LONG_OVERDUE, LOST, CLAIMS_RETURNED }
 
+    private int circId = -1;
+    public OSRFObject circ;
     public OSRFObject mvr = null;
     public OSRFObject acp = null;
-    public OSRFObject circ = null;
     public RecordInfo recordInfo = null;
-    public CircType circ_type;
-    public int circ_id = -1;
+    private CircType circType;
 
-    private Date circ_due_date = null;
+    private Date dueDate = null;
 
-    private Date parseDateFromField(OSRFObject obj, String field) {
-        String s = obj.getString(field);
-        if (s == null)
-            return null;
-        return Api.parseDate(s);
-    }
-
-    public CircRecord(OSRFObject circ, CircType circ_type, int circ_id) {
+    public CircRecord(OSRFObject circ, CircType circType, int circId) {
         this.circ = circ;
-        this.circ_type = circ_type;
-        this.circ_id = circ_id;
-        this.circ_due_date = parseDateFromField(circ, "due_date");
+        this.circType = circType;
+        this.circId = circId;
+        this.dueDate = circ.getDate("due_date");
     }
 
     // dummy_title is used for ILLs; in these cases
@@ -94,11 +81,11 @@ public class CircRecord {
     }
 
     public String getDueDateString() {
-        return DateFormat.getDateInstance().format(circ_due_date);
+        return DateFormat.getDateInstance().format(dueDate);
     }
 
     public Date getDueDate() {
-        return circ_due_date;
+        return dueDate;
     }
 
     public Integer getRenewals() {
