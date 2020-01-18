@@ -29,6 +29,7 @@ import android.widget.*;
 import org.evergreen_ils.R;
 import org.evergreen_ils.accountAccess.AccountAccess;
 import org.evergreen_ils.accountAccess.SessionNotFoundException;
+import org.evergreen_ils.data.CircRecord;
 import org.evergreen_ils.system.Analytics;
 import org.evergreen_ils.system.Log;
 import org.evergreen_ils.searchCatalog.RecordDetails;

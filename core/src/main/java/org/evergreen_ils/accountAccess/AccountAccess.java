@@ -26,7 +26,7 @@ import org.evergreen_ils.Api;
 import org.evergreen_ils.Result;
 import org.evergreen_ils.accountAccess.bookbags.BookBag;
 import org.evergreen_ils.accountAccess.bookbags.BookBagItem;
-import org.evergreen_ils.accountAccess.checkout.CircRecord;
+import org.evergreen_ils.data.CircRecord;
 import org.evergreen_ils.accountAccess.holds.HoldRecord;
 import org.evergreen_ils.android.AccountUtils;
 import org.evergreen_ils.android.App;
