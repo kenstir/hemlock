@@ -21,7 +21,6 @@ package org.evergreen_ils.net
 import org.evergreen_ils.Api
 import org.evergreen_ils.data.Account
 import org.evergreen_ils.data.Result
-import org.evergreen_ils.data.jsonMapOf
 import org.opensrf.util.OSRFObject
 
 object GatewayCirc : CircService {
@@ -34,6 +33,17 @@ object GatewayCirc : CircService {
                 it.asString()
                 TODO("needs testing")
             }
+            Result.Success(ret)
+        } catch (e: Exception) {
+            Result.Error(e)
+        }
+    }
+
+    override suspend fun fetchCirc(account: Account, circId: Int): Result<OSRFObject> {
+        return try {
+            val (authToken, userID) = account.getCredentialsOrThrow()
+            val args = arrayOf<Any?>(authToken, circId)
+            val ret = Gateway.fetchObject(Api.CIRC, Api.CIRC_RETRIEVE, args, false)
             Result.Success(ret)
         } catch (e: Exception) {
             Result.Error(e)

@@ -27,10 +27,8 @@ import org.evergreen_ils.system.Log
 import org.evergreen_ils.system.StdoutLogProvider
 import org.junit.Assert.assertEquals
 import org.junit.BeforeClass
-import org.junit.Ignore
 import org.junit.Test
 import org.opensrf.util.OSRFObject
-import org.opensrf.util.OSRFRegistry
 
 class CircRecordTest {
 
@@ -124,5 +122,19 @@ class CircRecordTest {
         assertEquals("SEO TEST", circRecord.title)
         assertEquals("NO AUTHOR", circRecord.author)
         assertEquals(1507492, circRecord.targetCopy)
+    }
+
+    @Test
+    fun test_makeArray() {
+        val circSlimObj = OSRFObject(jsonMapOf(
+                "long_overdue" to arrayListOf<Any?>(),
+                "overdue" to arrayListOf<Any?>(),
+                "lost" to arrayListOf<Any?>(),
+                "out" to arrayListOf<Any?>("93108558"),
+                "claims_returned" to arrayListOf<Any?>()
+        ))
+        val checkouts = CircRecord.makeArray(circSlimObj)
+        assertEquals(1, checkouts.size)
+        assertEquals(93108558, checkouts.first().circId)
     }
 }

@@ -131,14 +131,11 @@ class HoldsActivity : BaseActivity() {
     }
 
     suspend fun fetchRecordAttrs(record: RecordInfo, id: Int): Result<Unit> {
-        val result = Gateway.pcrud.fetchMRA(id)
-        return when (result) {
-            is Result.Success -> {
-                record.updateFromMRAResponse(result.data)
-                return Result.Success(Unit)
-            }
-            is Result.Error -> result
-        }
+        val mraResult = Gateway.pcrud.fetchMRA(id)
+        if (mraResult is Result.Error) return mraResult
+        val mraObj = mraResult.get()
+        record.updateFromMRAResponse(mraObj)
+        return Result.Success(Unit)
     }
 
     suspend fun fetchHoldQueueStats(hold: HoldRecord, account: Account): Result<Unit> {
@@ -172,10 +169,9 @@ class HoldsActivity : BaseActivity() {
         val modsResult = Gateway.search.fetchRecordMODS(target)
         if (modsResult is Result.Error) return modsResult
         val modsObj = modsResult.get()
-//        Log.d(TAG, "modsObj:$modsObj")
         hold.recordInfo = RecordInfo(modsObj)
 
-        if (hold.recordInfo.doc_id == null) return Result.Success(Unit)
+        if (hold.recordInfo.doc_id == null || hold.recordInfo.doc_id == -1) return Result.Success(Unit)
         val mraResult = fetchRecordAttrs(hold.recordInfo, hold.recordInfo.doc_id)
 
         return Result.Success(Unit)

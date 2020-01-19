@@ -20,18 +20,22 @@
 
 package org.evergreen_ils.data
 
+import org.evergreen_ils.Api
 import org.evergreen_ils.searchCatalog.RecordInfo
 import org.evergreen_ils.utils.TextUtils
 import org.opensrf.util.OSRFObject
 import java.text.DateFormat
 import java.util.*
 
-class CircRecord(circ: OSRFObject, circType: CircType, circId: Int) {
+class CircRecord(circ: OSRFObject?, circType: CircType, circId: Int) {
+
+    constructor(circId: Int) : this(null, CircType.OUT, circId)
+
     enum class CircType {
         OUT, OVERDUE, LONG_OVERDUE, LOST, CLAIMS_RETURNED
     }
 
-    private var circId = -1
+    var circId = -1
     var circ: OSRFObject?
     @JvmField
     var mvr: OSRFObject? = null
@@ -39,8 +43,6 @@ class CircRecord(circ: OSRFObject, circType: CircType, circId: Int) {
     var acp: OSRFObject? = null
     @JvmField
     var recordInfo: RecordInfo? = null
-    private val circType: CircType
-    var dueDate: Date? = null
 
     // dummy_title is used for ILLs; in these cases
     // recordInfo.id == mvr.doc_id == -1
@@ -64,6 +66,9 @@ class CircRecord(circ: OSRFObject, circType: CircType, circId: Int) {
             return ""
         }
 
+    val dueDate: Date?
+        get() = circ?.getDate("due_date")
+
     val dueDateString: String
         get() = DateFormat.getDateInstance().format(dueDate)
 
@@ -76,7 +81,7 @@ class CircRecord(circ: OSRFObject, circType: CircType, circId: Int) {
     val isOverdue: Boolean
         get() {
             val currentDate = Date()
-            return dueDate!!.compareTo(currentDate) < 0
+            return dueDate?.before(currentDate) ?: false
         }
 
     val isDue: Boolean
@@ -93,8 +98,17 @@ class CircRecord(circ: OSRFObject, circType: CircType, circId: Int) {
 
     init {
         this.circ = circ
-        this.circType = circType
         this.circId = circId
-        dueDate = circ.getDate("due_date")
+    }
+
+    companion object {
+        fun makeArray(circSlimObj: OSRFObject): ArrayList<CircRecord> {
+            val ret = ArrayList<CircRecord>()
+            for (id in Api.parseIdsListAsInt(circSlimObj.get("out")))
+                ret.add(CircRecord(id))
+            for (id in Api.parseIdsListAsInt(circSlimObj.get("overdue")))
+                ret.add(CircRecord(id))
+            return ret
+        }
     }
 }

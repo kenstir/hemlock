@@ -28,17 +28,26 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.async
+import kotlinx.coroutines.joinAll
+import org.evergreen_ils.Api
 import org.evergreen_ils.R
 import org.evergreen_ils.accountAccess.AccountAccess
 import org.evergreen_ils.accountAccess.SessionNotFoundException
+import org.evergreen_ils.android.App
 import org.evergreen_ils.data.CircRecord
+import org.evergreen_ils.data.Result
+import org.evergreen_ils.net.Gateway
 import org.evergreen_ils.searchCatalog.RecordDetails
 import org.evergreen_ils.searchCatalog.RecordInfo
 import org.evergreen_ils.system.Analytics
 import org.evergreen_ils.system.Log
 import org.evergreen_ils.utils.ui.BaseActivity
 import org.evergreen_ils.utils.ui.ProgressDialogSupport
+import org.evergreen_ils.utils.ui.showAlert
 import org.opensrf.util.GatewayResult
+import org.opensrf.util.OSRFObject
 import java.util.*
 
 class CheckoutsActivity : BaseActivity() {
@@ -60,27 +69,9 @@ class CheckoutsActivity : BaseActivity() {
         progress = ProgressDialogSupport()
         lv = findViewById(R.id.checkout_items_list)
         circRecords = ArrayList()
-        listAdapter = CheckoutsArrayAdapter(this,
-                R.layout.checkout_list_item, circRecords)
+        listAdapter = CheckoutsArrayAdapter(this, R.layout.checkout_list_item, circRecords)
         lv?.setAdapter(listAdapter)
-        lv?.setOnItemClickListener(AdapterView.OnItemClickListener { parent, view, position, id ->
-            val records = ArrayList<RecordInfo?>()
-            for (circRecord in circRecords) {
-                if (circRecord.recordInfo?.doc_id != -1) {
-                    records.add(circRecord.recordInfo)
-                }
-            }
-            if (!records.isEmpty()) {
-                RecordDetails.launchDetailsFlow(this@CheckoutsActivity, records, position)
-            }
-        })
-    }
-
-    override fun onResume() {
-        super.onResume()
-        progress?.show(this, getString(R.string.msg_retrieving_data))
-        val getCirc = initGetCircThread()
-        getCirc.start()
+        lv?.setOnItemClickListener { parent, view, position, id -> onItemClick(position) }
     }
 
     override fun onDestroy() {
@@ -96,13 +87,83 @@ class CheckoutsActivity : BaseActivity() {
     }
 
     private fun fetchData() {
+        async {
+            try {
+                Log.d(TAG, "[kcxxx] fetchData ...")
+                val start = System.currentTimeMillis()
+                var jobs = mutableListOf<Job>()
+                progress?.show(this@CheckoutsActivity, getString(R.string.msg_retrieving_data))
+
+                // fetch checkouts
+                val result = Gateway.actor.fetchUserCheckedOut(App.getAccount())
+                Log.d(TAG, "checkouts:$result")
+                when (result) {
+                    is Result.Success ->
+                        Log.d(TAG,"success...now make array")
+                    is Result.Error -> {
+                        showAlert(result.exception)
+                        return@async
+                    }
+                }
+
+                // fetch details
+                circRecords = CircRecord.makeArray(result.data)
+                for (circRecord in circRecords) {
+                    jobs.add(async { fetchCircDetails(circRecord) })
+                }
+
+                jobs.joinAll()
+                //updateChecklistList()
+                Log.logElapsedTime(TAG, start, "[kcxxx] fetchData ... done")
+            } catch (ex: Exception) {
+                Log.d(TAG, "[kcxxx] fetchData ... caught", ex)
+                showAlert(ex)
+            } finally {
+                progress?.dismiss()
+            }
+        }
     }
 
-    private fun countOverdues(): Int {
-        var overdues = 0
-        for (circ in circRecords) if (circ.isOverdue) overdues++
-        return overdues
+    private suspend fun fetchCircDetails(circRecord: CircRecord): Result<Unit> {
+        val circResult = Gateway.circ.fetchCirc(App.getAccount(), circRecord.circId)
+        if (circResult is Result.Error) return circResult
+        val circObj = circResult.get()
+        circRecord.circ = circObj
+
+        val targetCopy = circObj.getInt("target_copy") ?: return Result.Error(Exception("circ item has no target_copy"))
+        val modsResult = Gateway.search.fetchCopyMODS(targetCopy)
+        if (modsResult is Result.Error) return modsResult
+        val modsObj = modsResult.get()
+        val record = RecordInfo(modsObj)
+        circRecord.recordInfo = record
+
+        if (record.doc_id != -1) {
+            val mraResult = fetchRecordAttrs(record, record.doc_id)
+        }
+
+        return Result.Success(Unit)
     }
+
+    suspend fun fetchRecordAttrs(record: RecordInfo, id: Int): Result<Unit> {
+        val mraResult = Gateway.pcrud.fetchMRA(id)
+        if (mraResult is Result.Error) return mraResult
+        val mraObj = mraResult.get()
+        record.updateFromMRAResponse(mraObj)
+        return Result.Success(Unit)
+    }
+
+    private fun getOutAndOverdueCircIds(circSlimObj: OSRFObject): List<Int> {
+        var ids = mutableListOf<Int>()
+        ids.addAll(Api.parseIdsListAsInt(circSlimObj.get("out")))
+        ids.addAll(Api.parseIdsListAsInt(circSlimObj.get("overdue")))
+        return ids
+    }
+
+//    private fun countOverdues(): Int {
+//        var overdues = 0
+//        for (circ in circRecords) if (circ.isOverdue) overdues++
+//        return overdues
+//    }
 
     private fun initGetCircThread(): Thread {
         return Thread(Runnable {
@@ -117,13 +178,29 @@ class CheckoutsActivity : BaseActivity() {
             }
             Analytics.logEvent("Checkouts: List Checkouts", "num_items", circRecords.size)
             runOnUiThread {
-                listAdapter?.clear()
-                for (circ in circRecords) listAdapter?.add(circ)
-                checkoutsSummary?.text = String.format(getString(R.string.checkout_items), circRecords.size)
+                updateCheckoutsList()
                 progress?.dismiss()
-                listAdapter?.notifyDataSetChanged()
             }
         })
+    }
+
+    private fun updateCheckoutsList() {
+        listAdapter?.clear()
+        for (circ in circRecords) listAdapter?.add(circ)
+        checkoutsSummary?.text = String.format(getString(R.string.checkout_items), circRecords.size)
+        listAdapter?.notifyDataSetChanged()
+    }
+
+    private fun onItemClick(position: Int) {
+        val records = ArrayList<RecordInfo?>()
+        for (circRecord in circRecords) {
+            if (circRecord.recordInfo?.doc_id != -1) {
+                records.add(circRecord.recordInfo)
+            }
+        }
+        if (records.isNotEmpty()) {
+            RecordDetails.launchDetailsFlow(this@CheckoutsActivity, records, position)
+        }
     }
 
     internal inner class CheckoutsArrayAdapter(context: Context, private val resourceId: Int, private val items: List<CircRecord>) : ArrayAdapter<CircRecord>(context, resourceId, items) {

@@ -18,9 +18,8 @@
 
 package org.evergreen_ils;
 
-import android.text.TextUtils;
-
 import org.evergreen_ils.system.Analytics;
+import org.evergreen_ils.utils.TextUtils;
 import org.opensrf.ShouldNotHappenException;
 
 import java.text.ParseException;
@@ -28,6 +27,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
+import androidx.annotation.NonNull;
 
 /** OSRF API constants
  *
@@ -208,13 +209,26 @@ public class Api {
 
     // Some queries return at times a list of String ids and at times a list of Integer ids,
     // see Issue #1 and PINES Crashlytics #28.
-    public static List<String> parseIdsList(Object o) {
+    public static @NonNull List<String> parseIdsList(Object o) {
         ArrayList<String> ret = new ArrayList<>();
         if (o instanceof List) {
             for (Object elem: (List<?>) o) {
                 Integer i = parseInt(elem);
                 if (i != null) {
                     ret.add(i.toString());
+                }
+            }
+        }
+        return ret;
+    }
+
+    public static @NonNull List<Integer> parseIdsListAsInt(Object o) {
+        ArrayList<Integer> ret = new ArrayList<>();
+        if (o instanceof List) {
+            for (Object elem: (List<?>) o) {
+                Integer i = parseInt(elem);
+                if (i != null) {
+                    ret.add(i);
                 }
             }
         }
