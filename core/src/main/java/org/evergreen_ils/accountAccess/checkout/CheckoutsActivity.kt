@@ -45,25 +45,28 @@ class CheckoutsActivity : BaseActivity() {
     private var accountAccess: AccountAccess? = null
     private var lv: ListView? = null
     private var listAdapter: CheckoutsArrayAdapter? = null
-    private var circRecords: ArrayList<CircRecord>? = null
+    private var circRecords: ArrayList<CircRecord> = ArrayList()
     private var progress: ProgressDialogSupport? = null
     private var checkoutsSummary: TextView? = null
-    public override fun onCreate(savedInstanceState: Bundle?) {
+
+    override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         if (isRestarting) return
+
         setContentView(R.layout.activity_checkouts)
+
         checkoutsSummary = findViewById(R.id.checkout_items_summary)
         accountAccess = AccountAccess.getInstance()
         progress = ProgressDialogSupport()
         lv = findViewById(R.id.checkout_items_list)
         circRecords = ArrayList()
         listAdapter = CheckoutsArrayAdapter(this,
-                R.layout.checkout_list_item, circRecords!!)
+                R.layout.checkout_list_item, circRecords)
         lv?.setAdapter(listAdapter)
         lv?.setOnItemClickListener(AdapterView.OnItemClickListener { parent, view, position, id ->
             val records = ArrayList<RecordInfo?>()
-            for (circRecord in circRecords!!) {
-                if (circRecord.recordInfo!!.doc_id != -1) {
+            for (circRecord in circRecords) {
+                if (circRecord.recordInfo?.doc_id != -1) {
                     records.add(circRecord.recordInfo)
                 }
             }
@@ -75,19 +78,29 @@ class CheckoutsActivity : BaseActivity() {
 
     override fun onResume() {
         super.onResume()
-        progress!!.show(this, getString(R.string.msg_retrieving_data))
+        progress?.show(this, getString(R.string.msg_retrieving_data))
         val getCirc = initGetCircThread()
         getCirc.start()
     }
 
     override fun onDestroy() {
-        if (progress != null) progress!!.dismiss()
+        progress?.dismiss()
         super.onDestroy()
+    }
+
+    override fun onAttachedToWindow() {
+        super.onAttachedToWindow()
+        Log.d(TAG, object{}.javaClass.enclosingMethod?.name)
+
+        fetchData()
+    }
+
+    private fun fetchData() {
     }
 
     private fun countOverdues(): Int {
         var overdues = 0
-        for (circ in circRecords!!) if (circ.isOverdue) overdues++
+        for (circ in circRecords) if (circ.isOverdue) overdues++
         return overdues
     }
 
@@ -102,24 +115,24 @@ class CheckoutsActivity : BaseActivity() {
                     Log.d(TAG, "Exception in reauth", eauth)
                 }
             }
-            Analytics.logEvent("Checkouts: List Checkouts", "num_items", circRecords!!.size)
+            Analytics.logEvent("Checkouts: List Checkouts", "num_items", circRecords.size)
             runOnUiThread {
-                listAdapter!!.clear()
-                for (circ in circRecords!!) listAdapter!!.add(circ)
-                checkoutsSummary!!.text = String.format(getString(R.string.checkout_items), circRecords!!.size)
-                progress!!.dismiss()
-                listAdapter!!.notifyDataSetChanged()
+                listAdapter?.clear()
+                for (circ in circRecords) listAdapter?.add(circ)
+                checkoutsSummary?.text = String.format(getString(R.string.checkout_items), circRecords.size)
+                progress?.dismiss()
+                listAdapter?.notifyDataSetChanged()
             }
         })
     }
 
     internal inner class CheckoutsArrayAdapter(context: Context, private val resourceId: Int, private val items: List<CircRecord>) : ArrayAdapter<CircRecord>(context, resourceId, items) {
-        private var recordTitle: TextView? = null
-        private var recordAuthor: TextView? = null
-        private var recordFormat: TextView? = null
-        private var recordRenewals: TextView? = null
-        private var recordDueDate: TextView? = null
-        private var recordIsOverdue: TextView? = null
+        private var title: TextView? = null
+        private var author: TextView? = null
+        private var format: TextView? = null
+        private var renewals: TextView? = null
+        private var dueDate: TextView? = null
+        private var overdueText: TextView? = null
         private var renewButton: TextView? = null
 
         override fun getCount(): Int {
@@ -141,20 +154,20 @@ class CheckoutsActivity : BaseActivity() {
                 }
             }
 
-            recordTitle = row.findViewById(R.id.checkout_record_title)
-            recordAuthor = row.findViewById(R.id.checkout_record_author)
-            recordFormat = row.findViewById(R.id.checkout_record_format)
-            recordRenewals = row.findViewById(R.id.checkout_record_renewals)
-            recordDueDate = row.findViewById(R.id.checkout_record_due_date)
-            recordIsOverdue = row.findViewById(R.id.checkout_record_overdue)
+            title = row.findViewById(R.id.checkout_record_title)
+            author = row.findViewById(R.id.checkout_record_author)
+            format = row.findViewById(R.id.checkout_record_format)
+            renewals = row.findViewById(R.id.checkout_record_renewals)
+            dueDate = row.findViewById(R.id.checkout_record_due_date)
+            overdueText = row.findViewById(R.id.checkout_record_overdue)
             renewButton = row.findViewById(R.id.renew_button)
 
             val record = getItem(position)
-            recordTitle?.setText(record.title)
-            recordAuthor?.setText(record.author)
-            recordFormat?.setText(RecordInfo.getIconFormatLabel(record.recordInfo))
-            recordRenewals?.setText(String.format(getString(R.string.checkout_renewals_left), record.renewals))
-            recordDueDate?.setText(String.format(getString(R.string.due), record.dueDateString))
+            title?.setText(record.title)
+            author?.setText(record.author)
+            format?.setText(RecordInfo.getIconFormatLabel(record.recordInfo))
+            renewals?.setText(String.format(getString(R.string.checkout_renewals_left), record.renewals))
+            dueDate?.setText(String.format(getString(R.string.due), record.dueDateString))
 
             initRenewButton(record)
             maybeHighlightDueDate(record)
@@ -163,19 +176,19 @@ class CheckoutsActivity : BaseActivity() {
         }
 
         private fun maybeHighlightDueDate(record: CircRecord) {
-            recordIsOverdue!!.visibility = if (record.isOverdue) View.VISIBLE else View.GONE
+            overdueText?.visibility = if (record.isOverdue) View.VISIBLE else View.GONE
             val style = if (record.isDue) R.style.alertText else R.style.HemlockText_ListTertiary
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                recordDueDate!!.setTextAppearance(style)
+                dueDate?.setTextAppearance(style)
             } else {
-                recordDueDate!!.setTextAppearance(applicationContext, style)
+                dueDate?.setTextAppearance(applicationContext, style)
             }
         }
 
         private fun initRenewButton(record: CircRecord) {
-            val renewable = record.renewals!! > 0
-            renewButton!!.isEnabled = renewable
-            renewButton!!.setOnClickListener(View.OnClickListener {
+            val renewable = (record.renewals ?: 0) > 0
+            renewButton?.isEnabled = renewable
+            renewButton?.setOnClickListener(View.OnClickListener {
                 if (!renewable) return@OnClickListener
                 val builder = AlertDialog.Builder(this@CheckoutsActivity)
                 builder.setMessage(R.string.renew_item_message)
@@ -187,12 +200,11 @@ class CheckoutsActivity : BaseActivity() {
                 builder.create().show()
             })
         }
-
     }
 
     private fun renewItem(record: CircRecord) {
         val renew = Thread(Runnable {
-            runOnUiThread { progress!!.show(this@CheckoutsActivity, getString(R.string.msg_renewing_item)) }
+            runOnUiThread { progress?.show(this@CheckoutsActivity, getString(R.string.msg_renewing_item)) }
             val ac = AccountAccess.getInstance()
             var resp: GatewayResult? = null
             var ex: Exception? = null
@@ -217,7 +229,7 @@ class CheckoutsActivity : BaseActivity() {
                     "Unexpected error"
                 }
                 runOnUiThread {
-                    progress!!.dismiss()
+                    progress?.dismiss()
                     val builder = AlertDialog.Builder(this@CheckoutsActivity)
                     builder.setTitle("Failed to renew item")
                             .setMessage(msg)
@@ -236,10 +248,10 @@ class CheckoutsActivity : BaseActivity() {
                     }
                 }
                 runOnUiThread {
-                    listAdapter!!.clear()
-                    for (circ in circRecords!!) listAdapter!!.add(circ)
-                    progress!!.dismiss()
-                    listAdapter!!.notifyDataSetChanged()
+                    listAdapter?.clear()
+                    for (circ in circRecords) listAdapter?.add(circ)
+                    progress?.dismiss()
+                    listAdapter?.notifyDataSetChanged()
                 }
             }
         })
