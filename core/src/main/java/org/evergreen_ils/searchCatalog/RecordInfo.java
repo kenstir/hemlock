@@ -19,8 +19,6 @@
  */
 package org.evergreen_ils.searchCatalog;
 
-import android.text.TextUtils;
-
 import org.evergreen_ils.data.CopyLocationCounts;
 import org.evergreen_ils.data.CopySummary;
 import org.evergreen_ils.data.EgCodedValueMap;
@@ -28,6 +26,7 @@ import org.evergreen_ils.system.Log;
 import org.evergreen_ils.utils.MARCRecord;
 import org.evergreen_ils.utils.MARCXMLParser;
 import org.evergreen_ils.utils.RecordAttributes;
+import org.evergreen_ils.utils.TextUtils;
 import org.opensrf.util.GatewayResult;
 import org.opensrf.util.OSRFObject;
 
@@ -111,17 +110,13 @@ public class RecordInfo implements Serializable {
         record.synopsis = safeString(info.getString("synopsis"));
         record.physical_description = safeString(info.getString("physical_description"));
 
-        try {
-            record.isbn = (String) info.get("isbn");
-        } catch (Exception e) {
-            Log.d(TAG, "caught", e);
-        }
+        record.isbn = info.getString("isbn");
 
         try {
             Map<String, ?> subjectMap = (Map<String, ?>) info.get("subject");
             record.subject = TextUtils.join("\n", subjectMap.keySet());
         } catch (Exception e) {
-            Log.d(TAG, "caught", e);
+            // ignore
         }
 
         try {
@@ -134,7 +129,7 @@ public class RecordInfo implements Serializable {
             List<String> seriesList = (List<String>) info.get("series");
             record.series = TextUtils.join("\n", seriesList);
         } catch (Exception e) {
-            Log.d(TAG, "caught", e);
+            // ignore
         }
 
         record.basic_metadata_loaded = true;
