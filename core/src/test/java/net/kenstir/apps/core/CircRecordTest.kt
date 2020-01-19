@@ -42,7 +42,6 @@ class CircRecordTest {
         }
     }
 
-    @Ignore("until I fix the code")
     @Test
     fun test_noRecordInfo() {
         val circObj = OSRFObject(jsonMapOf(
@@ -57,7 +56,7 @@ class CircRecordTest {
         ))
         val circRecord = CircRecord(circObj, CircRecord.CircType.OUT, 93108558)
 
-        //assertEquals("Unknown Title", circRecord.title)
+        assertEquals("Unknown Title", circRecord.title)
         assertEquals("", circRecord.author)
         assertEquals(0, circRecord.renewals)
         assertEquals(19314463, circRecord.targetCopy)
@@ -77,6 +76,7 @@ class CircRecordTest {
                 "due_date" to "2020-02-05T23:59:59-0500"
         ))
         val mvrObj = OSRFObject(jsonMapOf(
+                "doc_id" to 1234,
                 "title" to "The Testaments",
                 "author" to "Margaret Atwood"
         ))
@@ -89,5 +89,40 @@ class CircRecordTest {
         assertEquals(0, circRecord.renewals)
         assertEquals(19314463, circRecord.targetCopy)
         assertEquals(Api.parseDate("2020-02-05T23:59:59-0500"), circRecord.dueDate)
+    }
+
+    // Something borrowed from another consortium will have a target_copy but
+    // a record.doc_id==-1, and the acp will have dummy_title and dummy_author
+    @Test
+    fun test_illCheckout() {
+        val circObj = OSRFObject(jsonMapOf(
+                "renewal_remaining" to 0,
+                "id" to 1,
+                "target_copy" to 1507492,
+                "due_date" to "2020-02-05T23:59:59-0500"
+        ))
+        val mvrObj = OSRFObject(jsonMapOf(
+                "doc_id" to -1,
+                "title" to null,
+                "author" to null
+        ))
+        val acpObj = OSRFObject(jsonMapOf(
+                "id" to 1507492,
+                "dummy_author" to "NO AUTHOR",
+                "barcode" to "SEOTESTBARCODE",
+                "call_number" to -1,
+                "copy_number" to null,
+                "dummy_isbn" to "NO ISBN",
+                "dummy_title" to "SEO TEST",
+                "status" to 1
+        ))
+        val circRecord = CircRecord(circObj, CircRecord.CircType.OUT, 1)
+        circRecord.mvr = mvrObj
+        circRecord.recordInfo = RecordInfo(mvrObj)
+        circRecord.acp = acpObj
+
+        assertEquals("SEO TEST", circRecord.title)
+        assertEquals("NO AUTHOR", circRecord.author)
+        assertEquals(1507492, circRecord.targetCopy)
     }
 }

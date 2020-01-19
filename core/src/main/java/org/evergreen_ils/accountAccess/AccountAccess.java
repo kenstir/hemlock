@@ -201,20 +201,10 @@ public class AccountAccess {
 
         // TODO: we don't need both the mvrObj and the RecordInfo
         circRecord.mvr = mvrObj;
+        circRecord.recordInfo = new RecordInfo(mvrObj);
+        circRecord.recordInfo.updateFromMRAResponse(fetchRecordAttributes(mvrObj.getInt("doc_id")));
 
-        try {
-            circRecord.recordInfo = new RecordInfo(mvrObj);
-            circRecord.recordInfo.updateFromMRAResponse(fetchRecordAttributes(mvrObj.getInt("doc_id")));
-        } catch (Exception e) {
-            Log.d(TAG, "caught", e);
-        }
-
-        // if title or author not inserted, request acp with copy_target
-        // old comment I don't get: the logic to establish mvr or acp is copied from the opac
-        if (mvrObj == null
-            || mvrObj.getString("title") == null
-            || mvrObj.getString("author") == null)
-        {
+        if (circRecord.recordInfo.doc_id != null && circRecord.recordInfo.doc_id.equals(-1)) {
             circRecord.acp = fetchAssetCopy(target_copy);
         }
     }

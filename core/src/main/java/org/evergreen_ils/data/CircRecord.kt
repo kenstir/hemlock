@@ -46,16 +46,10 @@ class CircRecord(circ: OSRFObject, circType: CircType, circId: Int) {
     // recordInfo.id == mvr.doc_id == -1
     val title: String?
         get() {
-            if (!TextUtils.isEmpty(recordInfo!!.title)) return recordInfo!!.title
-            var title: String?
-            if (mvr != null) {
-                title = mvr!!.getString("title")
-                if (!TextUtils.isEmpty(title)) return title
-            }
-            if (acp != null) {
-                title = acp!!.getString("dummy_title")
-                if (!TextUtils.isEmpty(title)) return title
-            }
+            if (!TextUtils.isEmpty(recordInfo?.title))
+                return recordInfo?.title
+            if (!TextUtils.isEmpty(acp?.getString("dummy_title")))
+                return acp?.getString("dummy_title")
             return "Unknown Title"
         }
 
@@ -63,15 +57,10 @@ class CircRecord(circ: OSRFObject, circType: CircType, circId: Int) {
     // recordInfo.id == mvr.doc_id == -1
     val author: String?
         get() {
-            var author: String?
-            if (mvr != null) {
-                author = mvr!!.getString("author")
-                if (!TextUtils.isEmpty(author)) return author
-            }
-            if (acp != null) {
-                author = acp!!.getString("dummy_author")
-                if (!TextUtils.isEmpty(author)) return author
-            }
+            if (!TextUtils.isEmpty(recordInfo?.author))
+                return recordInfo?.author
+            if (!TextUtils.isEmpty(acp?.getString("dummy_author")))
+                return acp?.getString("dummy_author")
             return ""
         }
 
