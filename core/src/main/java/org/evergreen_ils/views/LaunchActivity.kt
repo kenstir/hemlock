@@ -41,7 +41,7 @@ import org.evergreen_ils.system.Analytics
 import org.evergreen_ils.system.Log
 import org.evergreen_ils.utils.await
 import org.evergreen_ils.utils.getAccountManagerResult
-import org.evergreen_ils.utils.getMessage
+import org.evergreen_ils.utils.getCustomMessage
 import org.evergreen_ils.utils.ui.AppState
 import org.evergreen_ils.utils.ui.ThemeManager
 import org.opensrf.util.OSRFObject
@@ -131,7 +131,7 @@ class LaunchActivity : AppCompatActivity(), CoroutineScope by MainScope() {
                 mModel?.loadServiceData(resources)
             } catch (ex: Exception) {
                 Log.d(TAG, "[kcxxx] caught in launchLoginFlow", ex)
-                mProgressText?.text = ex.getMessage()
+                mProgressText?.text = ex.getCustomMessage()
                 onLaunchFailure()
             }
         }

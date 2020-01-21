@@ -27,3 +27,24 @@ fun Bundle.getAccountManagerResult(): AccountManagerResult {
             getString(AccountManager.KEY_AUTHTOKEN),
             getString(AccountManager.KEY_ERROR_MESSAGE))
 }
+
+/** custom message for particular exceptional conditions
+ * Not all exception messages are suitable as is for the general public
+ */
+fun Exception.getCustomMessage(): String {
+    when (this) {
+        is java.util.concurrent.TimeoutException -> return "Timeout"
+        is com.android.volley.TimeoutError -> return "Timeout"
+        is com.android.volley.ClientError -> {
+            this.networkResponse?.statusCode.let {
+                return when (it) {
+                    404 -> "Not found.  The server may be down for maintenance."
+                    null -> "Unknown client error.  The server may be offline."
+                    else -> "Error $it.  The server may be offline."
+                }
+            }
+        }
+    }
+    this.message?.let { if (it.isNotEmpty()) return it }
+    return "Cancelled"
+}

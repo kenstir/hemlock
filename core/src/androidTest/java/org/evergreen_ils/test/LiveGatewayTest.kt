@@ -28,8 +28,8 @@ import org.evergreen_ils.net.Gateway
 import org.evergreen_ils.net.VolleyWrangler
 import org.evergreen_ils.system.Log
 import org.evergreen_ils.system.StdoutLogProvider
-import org.junit.Assert.assertNotNull
-import org.junit.Assert.assertTrue
+import org.evergreen_ils.utils.getCustomMessage
+import org.junit.Assert.*
 import org.junit.BeforeClass
 import org.junit.Test
 
@@ -90,6 +90,32 @@ class LiveGatewayTest {
                 if (result is Result.Success) {
                     Log.d(TAG, "version:$result.data")
                     assertTrue(result.data.isNotEmpty())
+                }
+            }
+        }
+    }
+
+    // During system maintenance, the server can be up but responding 404 to gateway URLs.
+    suspend fun fetchStringNotFound(): Result<String> {
+        return try {
+            val notFoundUrl = Gateway.baseUrl.plus("/not-found")
+            val ret = Gateway.fetchString(notFoundUrl, false)
+            Result.Success(ret)
+        } catch (e: Exception) {
+            Result.Error(e)
+        }
+    }
+
+    @Test
+    fun test_clientError404() {
+        runBlocking {
+            launch(Dispatchers.Main) {
+                val result = fetchStringNotFound()
+                assertTrue(result is Result.Error)
+                if (result is Result.Error) {
+                    val ex = result.exception
+                    assertEquals("Not found.  The server may be down for maintenance.",
+                            ex.getCustomMessage())
                 }
             }
         }

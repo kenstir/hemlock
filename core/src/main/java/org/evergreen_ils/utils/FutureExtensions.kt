@@ -46,12 +46,3 @@ suspend fun <T> AccountManagerFuture<T>.await(timeoutMs: Int = 30_000): T {
     }
     return result
 }
-
-fun Exception.getMessage(): String {
-    return when {
-        this is TimeoutException -> "Timeout"
-        this is com.android.volley.TimeoutError -> "Timeout"
-        this.localizedMessage.isNotEmpty() -> this.localizedMessage
-        else -> "Cancelled"
-    }
-}
