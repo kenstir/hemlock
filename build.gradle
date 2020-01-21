@@ -2,6 +2,9 @@
 
 buildscript {
     ext.kotlin_version = '1.3.61'
+    ext.test_server = ''
+    ext.test_username = ''
+    ext.test_password = ''
     repositories {
         jcenter()
         maven { url 'https://maven.fabric.io/public' }
@@ -17,6 +20,11 @@ buildscript {
     }
 }
 
+def localConfig = new File('local.gradle')
+if (localConfig.exists()) {
+    apply from: 'local.gradle'
+}
+
 allprojects {
     repositories {
         jcenter()
@@ -29,4 +37,10 @@ allprojects {
 
 task clean(type: Delete) {
     delete rootProject.buildDir
+}
+
+task printProps {
+    doLast {
+        println fabricFubar
+    }
 }

@@ -1,7 +1,8 @@
 *.iml
 .gradle
-fabric.properties
+/fabric.properties
 fm_IDL.*
+/local.gradle
 /local.properties
 /.idea/assetWizardSettings.xml
 /.idea/caches
