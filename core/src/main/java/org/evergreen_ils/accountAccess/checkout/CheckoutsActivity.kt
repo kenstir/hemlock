@@ -111,9 +111,10 @@ class CheckoutsActivity : BaseActivity() {
                 for (circRecord in circRecords) {
                     jobs.add(async { fetchCircDetails(circRecord) })
                 }
+                checkoutsSummary?.text = String.format(getString(R.string.checkout_items), circRecords.size)
 
                 jobs.joinAll()
-                //updateChecklistList()
+                updateCheckoutsList()
                 Log.logElapsedTime(TAG, start, "[kcxxx] fetchData ... done")
             } catch (ex: Exception) {
                 Log.d(TAG, "[kcxxx] fetchData ... caught", ex)
@@ -187,7 +188,6 @@ class CheckoutsActivity : BaseActivity() {
     private fun updateCheckoutsList() {
         listAdapter?.clear()
         for (circ in circRecords) listAdapter?.add(circ)
-        checkoutsSummary?.text = String.format(getString(R.string.checkout_items), circRecords.size)
         listAdapter?.notifyDataSetChanged()
     }
 
