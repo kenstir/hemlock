@@ -36,7 +36,7 @@ class CircRecordTest {
         @BeforeClass
         @JvmStatic
         fun setUpClass() {
-            Log.setProvider(StdoutLogProvider())
+            //Log.setProvider(StdoutLogProvider())
         }
     }
 

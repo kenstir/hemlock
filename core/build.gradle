@@ -2,6 +2,19 @@ apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 
+// take 1: properties file
+def secretFile = rootProject.file('secret.properties')
+def secret = new Properties()
+if (secretFile.exists()) {
+    secret.load(new FileInputStream(secretFile))
+}
+
+// take 2: gradle file
+def secretGradleFile = rootProject.file('secret.gradle')
+if (secretGradleFile.exists()) {
+    apply from: secretGradleFile
+}
+
 android {
     compileSdkVersion 28
     defaultConfig {
@@ -11,7 +24,8 @@ android {
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-        testInstrumentationRunnerArguments = [server: "$test_server", username: "$test_username", password: "$test_password"]
+        //testInstrumentationRunnerArguments = [server: secret.getProperty('test_server'), username: secret.getProperty('test_username'), password: secret.getProperty('test_password')]
+        testInstrumentationRunnerArguments = [server: testServer, username: testUsername, password: testPassword]
     }
     buildTypes {
         release {

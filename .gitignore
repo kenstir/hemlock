@@ -1,7 +1,9 @@
 *.iml
 .gradle
-/fabric.properties
 fm_IDL.*
+/fabric.properties
+/secret.*
+/secrets.*
 /local.gradle
 /local.properties
 /.idea/assetWizardSettings.xml

@@ -92,7 +92,7 @@ public class LiveServiceTest {
     }
 
     @Test
-    @Ignore("todo: reimpl service tests using mocks")
+    //@Ignore("todo: reimpl service tests using mocks")
     public void testCopyStatusAll() throws Exception {
         assertLoggedIn();
 

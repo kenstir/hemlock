@@ -36,7 +36,7 @@ public class BarcodeUtilsUnitTest {
 
     @BeforeClass
     public static void setUpClass() throws Exception {
-        Log.setProvider(new StdoutLogProvider());
+        //Log.setProvider(new StdoutLogProvider());
     }
 
     @Before
