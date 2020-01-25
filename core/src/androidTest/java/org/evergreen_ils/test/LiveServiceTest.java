@@ -64,21 +64,14 @@ public class LiveServiceTest {
 
     @BeforeClass
     public static void getAuthToken() throws Exception {
-        // read extra options: -e server SERVER -e username USER -e password PASS
+        // See root build.gradle for how to override these vars (hint: secret.gradle)
         mContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
         Analytics.initialize(mContext);
         Bundle b = InstrumentationRegistry.getArguments();
-        //mServer = b.getString("server", "https://catalog.cwmars.org");
-        //mServer = b.getString("server", "https://evergreen.noblenet.org");
         mServer = b.getString("server", "https://gapines.org");
         mOrgID = Integer.parseInt(b.getString("orgid", "1"));
         mUsername = b.getString("username");
         mPassword = b.getString("password");
-        // if username and password are empty, then maybe .idea/workspace.xml got messed up again;
-        // it should contain something like:
-        // <option name="EXTRA_OPTIONS" value="-e server http://gapines.org -e username USER -e password PASS" />
-        // 2019-07-20: Looks like Android Studio 3.2.1 does not support EXTRA_OPTIONS any more,
-        // manually entering it causes it to get wiped.  For now we will test as ANONYMOUS.
         if (TextUtils.isEmpty(mUsername) || TextUtils.isEmpty(mPassword)) {
             mAuthToken = Api.ANONYMOUS;
         } else {
@@ -92,7 +85,7 @@ public class LiveServiceTest {
     }
 
     @Test
-    //@Ignore("todo: reimpl service tests using mocks")
+    @Ignore("todo: reimpl service tests using mocks")
     public void testCopyStatusAll() throws Exception {
         assertLoggedIn();
 
