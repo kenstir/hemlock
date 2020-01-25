@@ -51,14 +51,15 @@ class CopyLocationCounts(val orgId: Int, val callNumberPrefix: String, val callN
                 val callNumberLabel = a[2] as? String ?: continue
                 val callNumberSuffix = a[3] as? String ?: continue
                 val copyLocation = a[4] as? String ?: continue
-                val countsByStatus = a[5] as? Map<String, Int> ?: continue
+                val countsByStatusMap = a[5] as? Map<String, Int> ?: continue
 
                 val clc = CopyLocationCounts(orgId, callNumberPrefix, callNumberLabel, callNumberSuffix, copyLocation)
                 ret.add(clc)
-                for ((k, v) in countsByStatus) {
+                for ((k, v) in countsByStatusMap) {
                     val id = k.toIntOrNull() ?: continue
                     clc.countsByStatus.add(Pair(id, v))
                 }
+                clc.countsByStatus.sortBy { it.first }
             }
             return ret
         }
