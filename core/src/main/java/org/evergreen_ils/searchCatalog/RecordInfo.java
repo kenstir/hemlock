@@ -19,6 +19,7 @@
  */
 package org.evergreen_ils.searchCatalog;
 
+import org.evergreen_ils.Api;
 import org.evergreen_ils.data.CopyLocationCounts;
 import org.evergreen_ils.data.CopySummary;
 import org.evergreen_ils.data.EgCodedValueMap;
@@ -221,5 +222,20 @@ public class RecordInfo implements Serializable {
                 (publisher == null) ? "" : publisher,
         });
         return s.trim();
+    }
+
+    /** Create array of skeleton records from the multiclass.query response field "ids".
+     * The "ids" field is a list of lists and looks like one of:
+     *   [[32673,null,"0.0"],[886843,null,"0.0"]]      // integer id,?,?
+     *   [["503610",null,"0.0"],["502717",null,"0.0"]] // string id,?,?
+     *   [["1805532"],["2385399"]]                     // string id only
+     */
+    public static ArrayList<RecordInfo> makeArray(List<List<?>> idsList) {
+        ArrayList<RecordInfo> records = new ArrayList<>();
+        for (int i = 0; i < idsList.size(); i++) {
+            Integer record_id = Api.parseInt(idsList.get(i).get(0));
+            records.add(new RecordInfo(record_id));
+        }
+        return records;
     }
 }
