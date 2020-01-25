@@ -463,6 +463,13 @@ public class AccountAccess {
         return GatewayResponse.createFromObject(resp);
     }
 
+    public List<OSRFObject> fetchCopyStatuses() {
+
+        List<OSRFObject> ccs_list = (List<OSRFObject>) Utils.doRequest(conn(), Api.SEARCH,
+                Api.COPY_STATUS_ALL, new Object[] {});
+        return ccs_list;
+    }
+
     // ------------------------orgs Section
     // --------------------------------------//
 

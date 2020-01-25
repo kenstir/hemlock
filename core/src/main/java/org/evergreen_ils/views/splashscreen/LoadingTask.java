@@ -128,7 +128,7 @@ public class LoadingTask {
             now_ms = Log.logElapsedTime(TAG, now_ms, "loading.org_types");
             eg.loadOrganizations(ac.fetchOrgTree(), mCallingActivity.getResources().getBoolean(R.bool.ou_hierarchical_org_tree));
             now_ms = Log.logElapsedTime(TAG, now_ms, "loading.orgs");
-            eg.loadCopyStatuses(SearchCatalog.fetchCopyStatuses());
+            eg.loadCopyStatuses(ac.fetchCopyStatuses());
             now_ms = Log.logElapsedTime(TAG, now_ms, "loading.copy_status");
             CodedValueMap.loadCodedValueMaps(PCRUDService.fetchCodedValueMaps());
             now_ms = Log.logElapsedTime(TAG, now_ms, "loading.ccvm");
