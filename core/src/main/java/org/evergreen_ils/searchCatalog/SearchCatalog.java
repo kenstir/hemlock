@@ -125,13 +125,6 @@ public class SearchCatalog {
         return results;
     }
 
-    public static List<OSRFObject> fetchCopyStatuses() {
-
-        List<OSRFObject> ccs_list = (List<OSRFObject>) Utils.doRequest(conn(), Api.SEARCH,
-                Api.COPY_STATUS_ALL, new Object[] {});
-        return ccs_list;
-    }
-
     /**
      * Select organisation.
      * 
