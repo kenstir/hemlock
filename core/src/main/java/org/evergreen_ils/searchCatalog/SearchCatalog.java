@@ -21,41 +21,33 @@ package org.evergreen_ils.searchCatalog;
 
 import android.text.TextUtils;
 
+import org.evergreen_ils.Api;
+import org.evergreen_ils.system.EvergreenServer;
+import org.evergreen_ils.system.Log;
+import org.evergreen_ils.system.Organization;
+import org.evergreen_ils.system.Utils;
+import org.opensrf.net.http.HttpConnection;
+import org.opensrf.util.OSRFObject;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.evergreen_ils.Api;
-import org.evergreen_ils.accountAccess.AccountAccess;
-import org.evergreen_ils.system.EvergreenServer;
-import org.evergreen_ils.system.Log;
-import org.evergreen_ils.system.Utils;
-import org.evergreen_ils.system.Organization;
-import org.opensrf.net.http.HttpConnection;
-import org.opensrf.util.OSRFObject;
-
-/**
- * The Class SearchCatalog.
- */
 public class SearchCatalog {
 
     private static final String TAG = SearchCatalog.class.getSimpleName();
-
-    public static final boolean LOAD_BASIC_METADATA_SYNCHRONOUSLY = false;
-    public static final boolean LOAD_SEARCH_FORMAT_SYNCHRONOUSLY = false;
 
     private static SearchCatalog instance = null;
 
     // the org on which the searches will be made
     public Organization selectedOrganization = null;
 
-    public Integer offset;
-
     public Integer visible = 0;
 
     // With limit at 500, we saw some TransactionTooLargeException: data parcel size 684000 bytes
     // 2017-11-24, still seeing the crash with searchLimit=400
+    // 2020-01-25, still seeing it with searchLimit=200
     public int searchLimit;
     
     public String searchText = null;
@@ -92,9 +84,7 @@ public class SearchCatalog {
         this.searchClass = searchClass;
         this.searchFormat = searchFormat;
         
-        ArrayList<RecordInfo> results = new ArrayList<RecordInfo>();
-
-        HashMap argHash = new HashMap<String, Integer>();
+        HashMap<String, Integer> argHash = new HashMap<>();
         argHash.put("limit", searchLimit);
         argHash.put("offset", offset);
 
@@ -124,116 +114,22 @@ public class SearchCatalog {
         Map<String, ?> response = (Map<String, ?>) resp;
         visible = (response != null) ? Api.parseInteger(response.get("count"), 0) : 0;
         if (visible == 0)
-            return results;
+            return new ArrayList<>();
 
-        // record_ids_lol is a list of lists and looks like one of:
-        //   [[32673,null,"0.0"],[886843,null,"0.0"]] // integer ids+?
-        //   [["503610",null,"0.0"],["502717",null,"0.0"]] // string ids+?
-        //   [["1805532"],["2385399"]] // string ids only
+        // parse ids list
         List<List<?>> record_ids_lol = (List<List<?>>) response.get("ids");
-        Log.d(TAG, "length:"+record_ids_lol.size());
-        for (int i = 0; i < record_ids_lol.size(); i++) {
-            Integer record_id = Api.parseInteger(record_ids_lol.get(i).get(0));
-            results.add(new RecordInfo(record_id));
-        }
-
-        if (LOAD_BASIC_METADATA_SYNCHRONOUSLY) {
-            fetchBasicMetadataBatch(results);
-            now_ms = Log.logElapsedTime(TAG, now_ms, "search.fetchBasicMetadataBatch");
-        }
-//        if (LOAD_SEARCH_FORMAT_SYNCHRONOUSLY) {
-//            fetchSearchFormatBatch(results);
-//            now_ms = Log.logElapsedTime(TAG, now_ms, "search.fetchSearchFormatBatch");
-//        }
+        ArrayList<RecordInfo> results = RecordInfo.makeArray(record_ids_lol);
 
         Log.logElapsedTime(TAG, start_ms, "search.total");
 
         return results;
     }
 
-    private void fetchBasicMetadataBatch(ArrayList<RecordInfo> records) {
-        if (records.size() == 0)
-            return;
-        ArrayList<Integer> ids = new ArrayList<Integer>();
-        for (RecordInfo record : records) {
-            ids.add(record.doc_id);
-        }
-        Object response = Utils.doRequest(conn(), Api.SEARCH,
-                Api.MODS_SLIM_BATCH, new Object[] {
-                        ids });
-        try {
-            ArrayList<OSRFObject> responses = (ArrayList<OSRFObject>) response;
-            for (int i = 0; i < records.size(); ++i) {
-                RecordInfo.updateFromMODSResponse(records.get(i), responses.get(i));
-            }
-        } catch (ClassCastException ex) {
-            Log.d(TAG, "caught", ex);
-        }
-    }
-
-    /*
-    public static void fetchSearchFormatBatch(ArrayList<RecordInfo> records) {
-        if (records.size() == 0)
-            return;
-        // todo newer EG supports using "ANONYMOUS" as the auth_token in PCRUD requests.
-        // Older EG does not, and requires a valid auth_token.
-        ArrayList<Integer> ids = new ArrayList<Integer>(records.size());
-        HashMap<Integer, RecordInfo> records_by_id = new HashMap<Integer, RecordInfo>(records.size());
-        for (RecordInfo record : records) {
-            ids.add(record.doc_id);
-            records_by_id.put(record.doc_id, record);
-        }
-        HashMap<String, Object> args = new HashMap<>();
-        args.put("id", ids);
-        Object response = Utils.doRequest(conn(), Api.PCRUD,
-                Api.SEARCH_MRAF, new Object[] {
-                AccountAccess.getInstance().getAuthToken(),
-                args });
-        try {
-            ArrayList<OSRFObject> responses = (ArrayList<OSRFObject>) response;
-            for (OSRFObject attr_obj : responses) {
-                String attr = attr_obj.getString("attr");
-                if (!attr.equals("search_format"))
-                    continue;
-                String value = attr_obj.getString("value");
-                Integer id = attr_obj.getInt("id");
-                RecordInfo record = records_by_id.get(id);
-                if (record == null)
-                    continue;
-                record.setSearchFormat(value);
-            }
-        } catch (ClassCastException ex) {
-            Log.d(TAG, "caught", ex);
-        }
-    }
-    */
-
-    // todo: move to lazy load
     public static List<OSRFObject> fetchCopyStatuses() {
 
         List<OSRFObject> ccs_list = (List<OSRFObject>) Utils.doRequest(conn(), Api.SEARCH,
                 Api.COPY_STATUS_ALL, new Object[] {});
         return ccs_list;
-    }
-
-    public ArrayList<CopyLocationCounts> getCopyLocationCounts(Integer recordID, Integer orgID, Integer orgDepth) {
-
-        Object response = Utils.doRequest(conn(), Api.SEARCH,
-                Api.COPY_LOCATION_COUNTS, new Object[] {
-                        recordID, orgID, orgDepth });
-
-        ArrayList<CopyLocationCounts> ret = new ArrayList<CopyLocationCounts>();
-        try {
-            List<List<Object>> list = (List<List<Object>>) response;
-            for (List<Object> elem : list) {
-                CopyLocationCounts copyInfo = new CopyLocationCounts(elem);
-                ret.add(copyInfo);
-            }
-        } catch (Exception e) {
-            Log.d(TAG, "exception in getCopyLocationCounts", e);
-        }
-
-        return ret;
     }
 
     /**
@@ -245,23 +141,5 @@ public class SearchCatalog {
     public void selectOrganisation(Organization org) {
         Log.d(TAG, "selectOrganisation id=" + org.id);
         this.selectedOrganization = org;
-    }
-
-    public static ArrayList<CopySummary> getCopyCount(Integer recordID, Integer orgID) {
-
-        List<?> list = (List<?>) Utils.doRequest(conn(), Api.SEARCH,
-                Api.COPY_COUNT, new Object[] { orgID, recordID });
-
-        ArrayList<CopySummary> copyInfoList = new ArrayList<CopySummary>();
-
-        if (list == null)
-            return copyInfoList;
-
-        for (int i = 0; i < list.size(); i++) {
-            CopySummary copyInfo = new CopySummary(list.get(i));
-            copyInfoList.add(copyInfo);
-        }
-
-        return copyInfoList;
     }
 }
