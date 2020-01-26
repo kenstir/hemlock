@@ -3,6 +3,7 @@
 fabric.properties
 fm_IDL.*
 /local.properties
+/secret.*
 /.idea/assetWizardSettings.xml
 /.idea/caches
 /.idea/modules.xml
