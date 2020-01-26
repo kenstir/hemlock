@@ -47,6 +47,7 @@ import org.evergreen_ils.android.App
 import org.evergreen_ils.android.App.REQUEST_LAUNCH_OPAC_LOGIN_REDIRECT
 import org.evergreen_ils.net.Gateway
 import org.evergreen_ils.searchCatalog.SearchActivity
+import org.evergreen_ils.searchCatalog.SearchCatalog
 import org.evergreen_ils.system.Analytics
 import org.evergreen_ils.system.Log
 import org.evergreen_ils.views.BarcodeActivity
@@ -96,6 +97,7 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
 
         Analytics.initialize(this)
         App.init(this)
+        SearchCatalog.setSearchLimit(resources.getInteger(R.integer.ou_search_limit))
         ThemeManager.applyNightMode()
 
         initMenuProvider()
