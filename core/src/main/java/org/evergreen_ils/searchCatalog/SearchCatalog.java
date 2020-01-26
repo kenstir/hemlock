@@ -48,24 +48,19 @@ public class SearchCatalog {
     // With limit at 500, we saw some TransactionTooLargeException: data parcel size 684000 bytes
     // 2017-11-24, still seeing the crash with searchLimit=400
     // 2020-01-25, still seeing it with searchLimit=200
-    public int searchLimit;
-    
-    public String searchText = null;
-    public String searchClass = null;
-    public String searchFormat = null;
+    private static int searchLimit = 100;
 
-    public static SearchCatalog getInstance(int searchLimit) {
+    private ArrayList<RecordInfo> results;
+    
+    public static SearchCatalog getInstance() {
         if (instance == null) {
-            instance = new SearchCatalog(searchLimit);
+            instance = new SearchCatalog();
         }
         return instance;
     }
 
-    /**
-     * Instantiates a new search catalog.
-     */
-    private SearchCatalog(int searchLimit) {
-        this.searchLimit = searchLimit;
+    private SearchCatalog() {
+        this.results = new ArrayList<>(searchLimit);
     }
 
     private static HttpConnection conn() {
@@ -80,26 +75,11 @@ public class SearchCatalog {
      */
     public ArrayList<RecordInfo> getSearchResults(String searchText, String searchClass, String searchFormat, String sort, Integer offset) {
 
-        this.searchText = searchText;
-        this.searchClass = searchClass;
-        this.searchFormat = searchFormat;
-        
         HashMap<String, Integer> argHash = new HashMap<>();
         argHash.put("limit", searchLimit);
         argHash.put("offset", offset);
 
-        // build queryString, taken with a grain of salt from
-        // https://wiki.evergreen-ils.org/doku.php?id=documentation:technical:search_grammar
-        // e.g. "title:Harry Potter chamber of secrets search_format(book) site(MARLBORO)"
-        StringBuilder sb = new StringBuilder();
-        sb.append(searchClass).append(":").append(searchText);
-        if (!TextUtils.isEmpty(searchFormat))
-            sb.append(" search_format(").append(searchFormat).append(")");
-        if (this.selectedOrganization != null)
-            sb.append(" site(").append(this.selectedOrganization.shortname).append(")");
-        if (!TextUtils.isEmpty(sort))
-            sb.append(" sort(").append(sort).append(")");
-        String queryString = sb.toString();
+        String queryString = makeQueryString(searchText, searchClass, searchFormat, sort);
 
         long start_ms = System.currentTimeMillis();
         long now_ms = start_ms;
@@ -118,11 +98,26 @@ public class SearchCatalog {
 
         // parse ids list
         List<List<?>> record_ids_lol = (List<List<?>>) response.get("ids");
-        ArrayList<RecordInfo> results = RecordInfo.makeArray(record_ids_lol);
+        results = RecordInfo.makeArray(record_ids_lol);
 
         Log.logElapsedTime(TAG, start_ms, "search.total");
 
         return results;
+    }
+
+    // Build query string, taken with a grain of salt from
+    // https://wiki.evergreen-ils.org/doku.php?id=documentation:technical:search_grammar
+    // e.g. "title:Harry Potter chamber of secrets search_format(book) site(MARLBORO)"
+    private String makeQueryString(String searchText, String searchClass, String searchFormat, String sort) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(searchClass).append(":").append(searchText);
+        if (!TextUtils.isEmpty(searchFormat))
+            sb.append(" search_format(").append(searchFormat).append(")");
+        if (this.selectedOrganization != null)
+            sb.append(" site(").append(this.selectedOrganization.shortname).append(")");
+        if (!TextUtils.isEmpty(sort))
+            sb.append(" sort(").append(sort).append(")");
+        return sb.toString();
     }
 
     /**
@@ -134,5 +129,17 @@ public class SearchCatalog {
     public void selectOrganisation(Organization org) {
         Log.d(TAG, "selectOrganisation id=" + org.id);
         this.selectedOrganization = org;
+    }
+
+    public static void setSearchLimit(int searchLimit) {
+        SearchCatalog.searchLimit = searchLimit;
+    }
+
+    public static int getSearchLimit() {
+        return searchLimit;
+    }
+
+    public ArrayList<RecordInfo> getResults() {
+        return results;
     }
 }

@@ -40,6 +40,7 @@ import android.view.View;
 import org.evergreen_ils.R;
 import org.evergreen_ils.accountAccess.AccountAccess;
 import org.evergreen_ils.accountAccess.AccountUtils;
+import org.evergreen_ils.searchCatalog.SearchCatalog;
 import org.evergreen_ils.views.BarcodeActivity;
 import org.evergreen_ils.accountAccess.bookbags.BookBagActivity;
 import org.evergreen_ils.accountAccess.checkout.CheckoutsActivity;
@@ -81,6 +82,7 @@ public class BaseActivity extends AppCompatActivity
 
         Analytics.initialize(this);
         App.init(this);
+        SearchCatalog.setSearchLimit(getResources().getInteger(R.integer.ou_search_limit));
         applyNightMode();
 
         initMenuProvider();

@@ -79,6 +79,7 @@ public class SearchActivity extends BaseActivity {
     private EvergreenServer eg;
     private ArrayList<BookBag> bookBags;
     private Runnable searchForResultsRunnable = null;
+    private Boolean haveSearched = false;
 
     private ContextMenuRecordInfo contextMenuRecordInfo;
 
@@ -99,11 +100,11 @@ public class SearchActivity extends BaseActivity {
         public int position;
     }
 
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putSerializable("recordList", recordList);
-    }
+//    @Override
+//    protected void onSaveInstanceState(Bundle outState) {
+//        super.onSaveInstanceState(outState);
+//        //outState.putSerializable("recordList", recordList);
+//    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -113,24 +114,25 @@ public class SearchActivity extends BaseActivity {
         setContentView(R.layout.activity_search);
 
         eg = EvergreenServer.getInstance();
-        search = SearchCatalog.getInstance(getResources().getInteger(R.integer.ou_search_limit));
+        search = SearchCatalog.getInstance();
         bookBags = AccountAccess.getInstance().getBookbags();
         searchResults = new ArrayList<>();
         progress = new ProgressDialogSupport();
 
-        if (savedInstanceState == null) {
-            recordList = new ArrayList<>();
-        } else {
-            recordList = (ArrayList<RecordInfo>) savedInstanceState.getSerializable("recordList");
-        }
+//        if (savedInstanceState == null) {
+//            recordList = new ArrayList<>();
+//        } else {
+//            recordList = (ArrayList<RecordInfo>) savedInstanceState.getSerializable("recordList");
+//        }
+        recordList = search.getResults();
 
         // create search results fragment
         if (savedInstanceState == null) {
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
             searchResultsFragment = new SearchResultsFragment();
-            Bundle args = new Bundle();
-            args.putSerializable("recordList", recordList);
-            searchResultsFragment.setArguments(args);
+//            Bundle args = new Bundle();
+//            args.putSerializable("recordList", recordList);
+//            searchResultsFragment.setArguments(args);
             transaction.replace(R.id.search_results_list, searchResultsFragment);
             transaction.commit();
         } else {
@@ -154,6 +156,7 @@ public class SearchActivity extends BaseActivity {
         initSearchOrgSpinner();
         initSearchRunnable();
         initRecordClickListener();
+        updateSearchResultsSummary();
     }
 
     @Override
@@ -259,10 +262,10 @@ public class SearchActivity extends BaseActivity {
     }
 
     private void updateSearchResultsSummary() {
-        String s;
+        String s = null;
         if (recordList.size() < search.visible) {
             s = getString(R.string.first_n_of_m_results, recordList.size(), search.visible);
-        } else {
+        } else if (recordList.size() > 0 || haveSearched) {
             s = getString(R.string.n_results, search.visible);
         }
         searchResultsSummary.setText(s);
@@ -307,12 +310,10 @@ public class SearchActivity extends BaseActivity {
             @Override
             public void onClick(RecordInfo record, int position) {
                 Intent intent = new Intent(getBaseContext(), SampleUnderlinesNoFade.class);
-                //todo add package prefix to names in putExtra
-                intent.putExtra("recordInfo", record);
-                intent.putExtra("recordList", recordList);
+                intent.putExtra("orgID", search.selectedOrganization.id);
+                //intent.putExtra("recordList", recordList);
                 intent.putExtra("recordPosition", position);
                 intent.putExtra("numResults", search.visible);
-                intent.putExtra("orgID", search.selectedOrganization.id);
                 startActivityForResult(intent, 10);
             }
         });
@@ -331,7 +332,6 @@ public class SearchActivity extends BaseActivity {
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
         if (v.getId() == R.id.search_results_list) {
             AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
-            //menu.setHeaderTitle("Options");
             menu.add(Menu.NONE, App.ITEM_SHOW_DETAILS, 0, getString(R.string.show_details_message));
             menu.add(Menu.NONE, App.ITEM_PLACE_HOLD, 1, getString(R.string.hold_place_title));
             menu.add(Menu.NONE, App.ITEM_ADD_TO_LIST, 2, getString(R.string.add_to_my_list_message));
@@ -348,9 +348,8 @@ public class SearchActivity extends BaseActivity {
         switch (item.getItemId()) {
         case App.ITEM_SHOW_DETAILS:
             Intent intent = new Intent(getBaseContext(), SampleUnderlinesNoFade.class);
-            intent.putExtra("recordInfo", info.record);
             intent.putExtra("orgID", search.selectedOrganization.id);
-            intent.putExtra("recordList", recordList);
+//            intent.putExtra("recordList", recordList);
             intent.putExtra("recordPosition", info.position);
             intent.putExtra("numResults", search.visible);
             startActivity(intent);
@@ -392,7 +391,6 @@ public class SearchActivity extends BaseActivity {
             startActivityForResult(new Intent(getApplicationContext(), AdvancedSearchActivity.class), 2);
             return true;
         } else if (id == R.id.action_logout) {
-            //// TODO: 4/30/2017 pull up logout action
             Analytics.logEvent("Account: Logout", "via", "options_menu");
             AccountAccess.getInstance().logout(this);
             SplashActivity.restartApp(this);
@@ -401,18 +399,8 @@ public class SearchActivity extends BaseActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    protected void replaceRecordListIfLarger(ArrayList<RecordInfo> newRecords) {
-        if (newRecords != null && newRecords.size() > recordList.size()) {
-            recordList.clear();
-            for (RecordInfo record : newRecords) {
-                recordList.add(record);
-            }
-            searchResultsFragment.notifyDatasetChanged();
-            updateSearchResultsSummary();
-        }
-    }
-
     protected void startSearchThread() {
+        haveSearched = true;
         Thread searchThread = new Thread(searchForResultsRunnable);
         searchThread.start();
     }
@@ -423,12 +411,12 @@ public class SearchActivity extends BaseActivity {
         // todo we should not switch on resultCode here, we should switch on requestCode
         switch (resultCode) {
         case SampleUnderlinesNoFade.RETURN_DATA : {
-            try {
-                ArrayList<RecordInfo> resultRecords = (ArrayList<RecordInfo>) data.getSerializableExtra("recordList");
-                replaceRecordListIfLarger((ArrayList)resultRecords);
-            } catch (Exception e) {
-                Log.d(TAG, "caught", e);
-            }
+//                try {
+//                    ArrayList<RecordInfo> resultRecords = (ArrayList<RecordInfo>) data.getSerializableExtra("recordList");
+//                    replaceRecordListIfLarger((ArrayList) resultRecords);
+//                } catch (Exception e) {
+//                    Log.d(TAG, "caught", e);
+//                }
         }
         break;
         

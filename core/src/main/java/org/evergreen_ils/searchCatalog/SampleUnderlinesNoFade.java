@@ -66,6 +66,7 @@ public class SampleUnderlinesNoFade extends BasePagerActivity {
 
         orgID = getIntent().getIntExtra("orgID", 1);
         records = (ArrayList<RecordInfo>) getIntent().getSerializableExtra("recordList");
+        if (records == null) records = SearchCatalog.getInstance().getResults();
         int record_position = getIntent().getIntExtra("recordPosition", 0);
         numResults = getIntent().getIntExtra("numResults", records.size());
 
@@ -115,8 +116,8 @@ public class SampleUnderlinesNoFade extends BasePagerActivity {
 
     private void finishWithIntent() {
         Intent intent = new Intent();
-        intent.putExtra("recordList", records);
-        Log.d(TAG, "kcxxx about to setResult with "+records.size()+" items");
+        //intent.putExtra("recordList", records);
+        //Log.d(TAG, "kcxxx about to setResult with "+records.size()+" items");
         setResult(RETURN_DATA, intent);
         finish();
     }
