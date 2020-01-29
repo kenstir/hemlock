@@ -30,8 +30,8 @@ object GatewayCirc : CircService {
             val note = "Cancelled by mobile app"
             val args = arrayOf<Any?>(authToken, holdId, null, note)
             val ret = Gateway.fetch(Api.CIRC, Api.HOLD_CANCEL, args, false) {
+                // HOLD_CANCEL returns "1" on success
                 it.asString()
-                TODO("needs testing")
             }
             Result.Success(ret)
         } catch (e: Exception) {

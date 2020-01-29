@@ -199,6 +199,7 @@
     <string name="title_busy_ellipsis">busy...</string>
     <string name="format">Format</string>
     <string name="msg_loading_holds">Loading holds</string>
+    <string name="msg_canceling_hold">Canceling hold</string>
     <string name="msg_renewing_item">Renewing item</string>
     <string name="forgot_password_button">Forgot Password</string>
     <string name="title_activity_nav_drawer">NavDrawerActivity</string>

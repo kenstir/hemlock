@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2012 Evergreen Open-ILS
  * @author Daniel-Octavian Rizea
+ * Kotlin conversion by Kenneth H. Cox
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -28,18 +29,18 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.*
 import android.widget.AdapterView.OnItemSelectedListener
+import kotlinx.coroutines.async
 import org.evergreen_ils.Api
 import org.evergreen_ils.R
 import org.evergreen_ils.accountAccess.AccountAccess
 import org.evergreen_ils.accountAccess.SessionNotFoundException
 import org.evergreen_ils.android.App
 import org.evergreen_ils.data.EgOrg
+import org.evergreen_ils.data.Result
+import org.evergreen_ils.net.Gateway
 import org.evergreen_ils.system.Analytics
 import org.evergreen_ils.system.Log
-import org.evergreen_ils.utils.ui.ActionBarUtils
-import org.evergreen_ils.utils.ui.BaseActivity
-import org.evergreen_ils.utils.ui.OrgArrayAdapter
-import org.evergreen_ils.utils.ui.ProgressDialogSupport
+import org.evergreen_ils.utils.ui.*
 import java.util.*
 
 class HoldDetailsActivity : BaseActivity() {
@@ -67,6 +68,7 @@ class HoldDetailsActivity : BaseActivity() {
         progress = ProgressDialogSupport()
 
         val record = intent.getSerializableExtra("holdRecord") as HoldRecord
+
         val title = findViewById<TextView>(R.id.hold_title)
         val author = findViewById<TextView>(R.id.hold_author)
         val format = findViewById<TextView>(R.id.hold_format)
@@ -158,26 +160,23 @@ class HoldDetailsActivity : BaseActivity() {
     }
 
     private fun cancelHold(record: HoldRecord) {
-        Log.d(TAG, "Remove hold with id" + record.ahr.getInt("id"))
-        progress?.show(this, "Canceling hold")
-        val cancelHoldThread = Thread(
-                Runnable {
-                    try {
-                        accountAccess!!.cancelHold(record.ahr)
-                    } catch (e: SessionNotFoundException) {
-                        try {
-                            if (accountAccess!!.reauthenticate(this@HoldDetailsActivity)) accountAccess!!.cancelHold(record.ahr)
-                        } catch (eauth: Exception) {
-                            Log.d(TAG, "Exception in reAuth")
-                        }
-                    }
-                    runOnUiThread {
-                        progress!!.dismiss()
-                        setResult(RESULT_CODE_DELETE_HOLD)
-                        finish()
-                    }
-                })
-        cancelHoldThread.start()
+        async {
+            Log.d(TAG, "[kcxxx] cancelHold " + record.ahr.getInt("id"))
+            progress?.show(this@HoldDetailsActivity, getString(R.string.msg_canceling_hold))
+
+            val holdId = record.ahr.getInt("id") ?: 0
+            val result = Gateway.circ.cancelHoldAsync(App.getAccount(), holdId)
+            when (result) {
+                is Result.Success -> {
+                    progress?.dismiss()
+                    setResult(RESULT_CODE_DELETE_HOLD)
+                    finish()
+                }
+                is Result.Error -> {
+                    showAlert(result.exception)
+                }
+            }
+        }
     }
 
     private fun updateHold(record: HoldRecord) {
