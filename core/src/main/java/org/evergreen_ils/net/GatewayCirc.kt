@@ -21,6 +21,7 @@ package org.evergreen_ils.net
 import org.evergreen_ils.Api
 import org.evergreen_ils.data.Account
 import org.evergreen_ils.data.Result
+import org.evergreen_ils.data.jsonMapOf
 import org.opensrf.util.OSRFObject
 
 object GatewayCirc : CircService {
@@ -95,6 +96,31 @@ object GatewayCirc : CircService {
 
             val args = arrayOf<Any?>(authToken, param, arrayOf(recordId))
             val ret = Gateway.fetchObject(Api.CIRC, Api.HOLDS_RETRIEVE, args, false)
+            Result.Success(ret)
+        } catch (e: Exception) {
+            Result.Error(e)
+        }
+    }
+
+    override suspend fun updateHoldAsync(account: Account, holdId: Int, pickupLib: Int, expireTime: String?, suspendHold: Boolean, thawDate: String?): Result<String> {
+        return try {
+            val (authToken, userID) = account.getCredentialsOrThrow()
+            val param = jsonMapOf(
+                    "id" to holdId,
+                    //"email_notify" to emailNotify,
+                    "pickup_lib" to pickupLib,
+                    "frozen" to suspendHold,
+                    //"phone_notify" to phoneNotify,
+                    //"sms_notify" to smsNotify,
+                    //"sms_carrier" to smsCarrierId,
+                    "expire_time" to expireTime,
+                    "thaw_date" to thawDate
+            )
+            val args = arrayOf<Any?>(authToken, null, param)
+            val ret = Gateway.fetch(Api.CIRC, Api.HOLD_UPDATE, args, false) {
+                // HOLD_UPDATE returns holdId as string on success
+                it.asString()
+            }
             Result.Success(ret)
         } catch (e: Exception) {
             Result.Error(e)

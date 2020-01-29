@@ -280,34 +280,6 @@ public class AccountAccess {
     // ------------------------Holds Section
     // --------------------------------------//
 
-    /**
-     * Update hold.
-     *
-     * @param ahr the ahr
-     * @param pickup_lib the pickup_lib
-     * @param suspendHold the suspend hold
-     * @param expire_time the expire_time
-     * @param thaw_date the thaw_date
-     * @return the object
-     * @throws SessionNotFoundException the session not found exception
-     */
-    public Object updateHold(OSRFObject ahr, Integer pickup_lib,
-            boolean suspendHold, String expire_time, String thaw_date)
-            throws SessionNotFoundException {
-
-        ahr.put("pickup_lib", pickup_lib);
-        ahr.put("expire_time", expire_time);
-        ahr.put("frozen", suspendHold);
-        ahr.put("thaw_date", thaw_date);
-        Account account = App.getAccount();
-
-        Object response = Utils.doRequest(conn(), Api.CIRC,
-                Api.HOLD_UPDATE, account.getAuthToken(), new Object[] {
-                        account.getAuthToken(), ahr });
-
-        return response;
-    }
-
     public Result testAndCreateHold(Integer recordID, Integer pickup_lib,
                                     boolean email_notify, String phone_notify,
                                     String sms_notify, Integer sms_carrier_id,

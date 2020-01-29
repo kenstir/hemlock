@@ -33,7 +33,6 @@ import kotlinx.coroutines.async
 import org.evergreen_ils.Api
 import org.evergreen_ils.R
 import org.evergreen_ils.accountAccess.AccountAccess
-import org.evergreen_ils.accountAccess.SessionNotFoundException
 import org.evergreen_ils.android.App
 import org.evergreen_ils.data.EgOrg
 import org.evergreen_ils.data.Result
@@ -166,9 +165,9 @@ class HoldDetailsActivity : BaseActivity() {
 
             val holdId = record.ahr.getInt("id") ?: 0
             val result = Gateway.circ.cancelHoldAsync(App.getAccount(), holdId)
+            progress?.dismiss()
             when (result) {
                 is Result.Success -> {
-                    progress?.dismiss()
                     setResult(RESULT_CODE_DELETE_HOLD)
                     finish()
                 }
@@ -180,34 +179,30 @@ class HoldDetailsActivity : BaseActivity() {
     }
 
     private fun updateHold(record: HoldRecord) {
-        updateHoldRunnable = Runnable {
-            runOnUiThread { progress!!.show(this@HoldDetailsActivity, "Updating hold") }
-            var expire_date_s: String? = null
-            var thaw_date_s: String? = null
-            if (expireDate != null) expire_date_s = Api.formatDate(expireDate)
-            if (thawDate != null) thaw_date_s = Api.formatDate(thawDate)
-            try {
-                accountAccess!!.updateHold(record.ahr, EgOrg.orgs[selectedOrgPos].id,
-                        suspendHold!!.isChecked, expire_date_s, thaw_date_s)
-            } catch (e: SessionNotFoundException) {
-                try {
-                    if (accountAccess!!.reauthenticate(this@HoldDetailsActivity)) accountAccess!!.updateHold(record.ahr,
-                            EgOrg.orgs[selectedOrgPos].id,
-                            suspendHold!!.isChecked, expire_date_s, thaw_date_s)
-                } catch (eauth: Exception) {
-                    Log.d(TAG, "Exception in reAuth")
+        async {
+            progress?.show(this@HoldDetailsActivity, getString(R.string.msg_updating_hold))
+            var expireDateApi: String? = null
+            var thawDateApi: String? = null
+            if (expireDate != null) expireDateApi = Api.formatDate(expireDate)
+            if (thawDate != null) thawDateApi = Api.formatDate(thawDate)
+
+            val holdId = record.ahr.getInt("id") ?: 0
+            val orgId = EgOrg.orgs[selectedOrgPos].id
+            val result = Gateway.circ.updateHoldAsync(App.getAccount(), holdId,
+                    orgId, expireDateApi, suspendHold!!.isChecked, thawDateApi)
+            progress?.dismiss()
+            when (result) {
+                is Result.Success -> {
+                    Toast.makeText(this@HoldDetailsActivity,
+                            getString(R.string.msg_updated_hold), Toast.LENGTH_SHORT)
+                    setResult(RESULT_CODE_UPDATE_HOLD)
+                    finish()
+                }
+                is Result.Error -> {
+                    showAlert(result.exception)
                 }
             }
-            runOnUiThread {
-                progress!!.dismiss()
-                Toast.makeText(this@HoldDetailsActivity, "Hold updated",
-                        Toast.LENGTH_SHORT)
-                setResult(RESULT_CODE_UPDATE_HOLD)
-                finish()
-            }
         }
-        val updateHoldThread = Thread(updateHoldRunnable)
-        updateHoldThread.start()
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

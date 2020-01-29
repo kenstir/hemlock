@@ -23,9 +23,10 @@ import org.evergreen_ils.data.Result
 import org.opensrf.util.OSRFObject
 
 interface CircService {
-    suspend fun cancelHoldAsync(account: Account, id: Int): Result<String?>
+    suspend fun cancelHoldAsync(account: Account, holdId: Int): Result<String?>
     suspend fun fetchCirc(account: Account, circId: Int): Result<OSRFObject>
     suspend fun fetchHolds(account: Account): Result<List<OSRFObject>>
     suspend fun fetchHoldQueueStats(account: Account, holdId: Int): Result<OSRFObject>
     suspend fun placeHoldAsync(account: Account, recordId: Int, pickupLib: Int, emailNotify: Boolean, phoneNotify: String?, smsNotify: String?, smsCarrierId: Int?, expireTime: String?, suspendHold: Boolean, thawDate: String?): Result<OSRFObject>
+    suspend fun updateHoldAsync(account: Account, holdId: Int, pickupLib: Int, expireTime: String?, suspendHold: Boolean, thawDate: String?): Result<String>
 }

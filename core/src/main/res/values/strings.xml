@@ -200,6 +200,8 @@
     <string name="format">Format</string>
     <string name="msg_loading_holds">Loading holds</string>
     <string name="msg_canceling_hold">Canceling hold</string>
+    <string name="msg_updating_hold">Updating hold</string>
+    <string name="msg_updated_hold">Hold updated</string>
     <string name="msg_renewing_item">Renewing item</string>
     <string name="forgot_password_button">Forgot Password</string>
     <string name="title_activity_nav_drawer">NavDrawerActivity</string>
