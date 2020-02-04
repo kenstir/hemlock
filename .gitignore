@@ -12,6 +12,7 @@ fm_IDL.*
 /.idea/tasks.xml
 /.idea/workspace.xml
 /.idea/libraries
+/projectFilesBackup/
 .DS_Store
 /build
 */build
