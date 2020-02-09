@@ -55,7 +55,7 @@ public class VolleyWranglerTest {
 
         // read extra options: -e server SERVER
         Bundle b = InstrumentationRegistry.getArguments();
-        mServer = b.getString("server", "http://catalog.cwmars.org");
+        mServer = b.getString("server", "https://catalog.cwmars.org");
 
         mVolley = VolleyWrangler.getInstance(ctx);
         mVolleyErrorListener = new Response.ErrorListener() {
