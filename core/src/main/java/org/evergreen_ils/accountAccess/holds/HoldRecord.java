@@ -124,8 +124,7 @@ public class HoldRecord implements Serializable {
     }
 
     public @NonNull String getHoldType() {
-        String holdType = ahr.getString("hold_type");
-        return (holdType != null) ? holdType : "?";
+        return ahr.getString("hold_type", "?");
     }
 
     public static @NonNull List<HoldRecord> makeArray(@NonNull List<OSRFObject> ahr_objects) {
