@@ -21,18 +21,26 @@ package org.evergreen_ils.accountAccess.holds;
 
 import java.io.Serializable;
 import java.text.DateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 import org.evergreen_ils.Api;
 import org.evergreen_ils.R;
+import org.evergreen_ils.searchCatalog.CodedValueMap;
 import org.evergreen_ils.system.Analytics;
 import org.evergreen_ils.system.EvergreenServer;
 import org.evergreen_ils.system.Log;
 import org.evergreen_ils.searchCatalog.RecordInfo;
+import org.evergreen_ils.utils.JsonUtils;
+import org.evergreen_ils.utils.TextUtils;
 import org.opensrf.ShouldNotHappenException;
 import org.opensrf.util.OSRFObject;
 import android.content.res.Resources;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 public class HoldRecord implements Serializable {
 
@@ -47,7 +55,6 @@ public class HoldRecord implements Serializable {
     //   I - issuance
     //   V - volume (requires staff client)
     //   M - meta-record
-    //public String holdType = null;
     public Integer target = null;
     public Date expire_time = null;
     public Date shelf_expire_time = null;
@@ -69,7 +76,6 @@ public class HoldRecord implements Serializable {
     public HoldRecord(OSRFObject ahr) {
         this.ahr = ahr;
         this.target = ahr.getInt("target");
-        //this.holdType = ahr.getString("hold_type");
         this.expire_time = Api.parseDate(ahr.getString("expire_time"));
         this.shelf_expire_time = Api.parseDate(ahr.getString("shelf_expire_time"));
         this.thaw_date = Api.parseDate(ahr.getString("thaw_date"));
@@ -128,7 +134,7 @@ public class HoldRecord implements Serializable {
         }
     }
 
-    // Retreive hold status in text
+    // Retrieve hold status in text
     public String getHoldStatus(Resources res) {
         // Constants from Holds.pm and logic from hold_status.tt2
         // -1 on error (for now),
@@ -141,7 +147,7 @@ public class HoldRecord implements Serializable {
         //  7 for 'suspended'
         //  8 for 'captured, on wrong hold shelf'
         if (status == null) {
-            return "Network error; status unavailable";
+            return "Status unavailable";
         } else if (status == 4) {
             String status = "Available";
             if (res.getBoolean(R.bool.ou_enable_hold_shelf_expiration) && shelf_expire_time != null)
@@ -167,4 +173,36 @@ public class HoldRecord implements Serializable {
         }
     }
 
+    public @NonNull
+    String getHoldType() {
+        return ahr.getString("hold_type", "?");
+    }
+
+    private @NonNull String withPartLabel(@NonNull String title) {
+        return (!TextUtils.isEmpty(part_label)) ? title + " (" + part_label + ")" : title;
+    }
+
+    public @NonNull String getTitle() {
+        if (title != null && !TextUtils.isEmpty(title)) return withPartLabel(title);
+        if (recordInfo != null && !TextUtils.isEmpty(recordInfo.title)) return withPartLabel(recordInfo.title);
+        return "Unknown title";
+    }
+
+    public String getAuthor() {
+        if (author != null && !TextUtils.isEmpty(author)) return author;
+        if (recordInfo != null && !TextUtils.isEmpty(recordInfo.author)) return recordInfo.author;
+        return "";
+    }
+
+    public @Nullable String getFormatLabel() {
+        if (getHoldType().equals("M")) {
+            Map<String, Object> map = JsonUtils.parseObject(ahr.getString("holdable_formats"));
+            List<String> labels = new ArrayList<>();
+            for (String format: JsonUtils.parseHoldableFormats(map)) {
+                labels.add(CodedValueMap.iconFormatLabel(format));
+            }
+            return android.text.TextUtils.join(" or ", labels);
+        }
+        return RecordInfo.getIconFormatLabel(recordInfo);
+    }
 }

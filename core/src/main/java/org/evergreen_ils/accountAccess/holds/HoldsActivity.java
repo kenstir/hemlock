@@ -185,9 +185,9 @@ public class HoldsActivity extends BaseActivity {
             holdFormat = row.findViewById(R.id.hold_format);
             status = row.findViewById(R.id.hold_status);
 
-            holdTitle.setText(record.title);
-            holdAuthor.setText(record.author);
-            holdFormat.setText(RecordInfo.getIconFormatLabel(record.recordInfo));
+            holdTitle.setText(record.getTitle());
+            holdAuthor.setText(record.getAuthor());
+            holdFormat.setText(record.getFormatLabel());
             status.setText(record.getHoldStatus(getResources()));
 
             return row;

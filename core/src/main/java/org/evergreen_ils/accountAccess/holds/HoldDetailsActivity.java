@@ -124,10 +124,10 @@ public class HoldDetailsActivity extends BaseActivity {
         expiration_date = (EditText) findViewById(R.id.hold_expiration_date);
         thaw_date_edittext = (EditText) findViewById(R.id.hold_thaw_date);
 
-        title.setText(record.title);
-        author.setText(record.author);
+        title.setText(record.getTitle());
+        author.setText(record.getAuthor());
+        format.setText(record.getFormatLabel());
         if (record.recordInfo != null) {
-            format.setText(record.recordInfo.getIconFormatLabel());
             physical_description.setText(record.recordInfo.physical_description);
         }
 
