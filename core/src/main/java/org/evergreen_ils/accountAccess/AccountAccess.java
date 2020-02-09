@@ -512,8 +512,6 @@ public class AccountAccess {
             HoldRecord hold = new HoldRecord(ahr_obj);
             fetchHoldTargetDetails(hold);
             fetchHoldQueueStats(hold);
-            if (hold.recordInfo != null)
-                hold.recordInfo.updateFromMRAResponse(fetchRecordAttributes(hold.target));
             holds.add(hold);
             Log.d(TAG, "hold email="+hold.email_notify+" phone_notify="+hold.phone_notify+" sms_notify="+hold.sms_notify+" title="+hold.title);
         }
@@ -546,6 +544,7 @@ public class AccountAccess {
                 hold.author = holdInfo.getString("author");
             }
             hold.recordInfo = new RecordInfo(holdInfo);
+            hold.recordInfo.updateFromMRAResponse(fetchRecordAttributes(hold.target));
         } else {
             fetchHoldTargetDetailsOthers(hold);
         }
@@ -650,6 +649,7 @@ public class AccountAccess {
             holdObj.title = holdInfo.getString("title");
             holdObj.author = holdInfo.getString("author");
             holdObj.recordInfo = new RecordInfo(holdInfo);
+            holdObj.recordInfo.updateFromMRAResponse(fetchRecordAttributes(recordID));
         }
     }
 
