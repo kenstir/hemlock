@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- material colors courtesy of https://material.io/tools/color/#!/?view.left=0&view.right=0&primary.color=01579B -->
+    <color name="cool_primary">#01579b</color>
+    <color name="cool_light">#4f83cc</color>
+    <color name="cool_dark">#002f6c</color>
+
+    <color name="primary">@color/cool_primary</color>
+    <color name="primary_dark">@color/primary_dark_material_dark</color>
+    <color name="accent">@color/cool_light</color>
+    <color name="hemlock_text_alert">#ff9100</color>
+
+    <color name="button_icon_tint">@color/cool_primary</color>
+</resources>
