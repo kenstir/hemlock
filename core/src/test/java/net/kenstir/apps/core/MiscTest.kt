@@ -40,7 +40,7 @@ class MiscTest {
     @Test
     fun test_Exception_customMessage_basic() {
         assertEquals("Timeout", java.util.concurrent.TimeoutException().getCustomMessage())
-        assertEquals("Timeout", com.android.volley.TimeoutError().getCustomMessage())
+        assertEquals("Operation timed out after 15 seconds", com.android.volley.TimeoutError().getCustomMessage())
         assertEquals("Cancelled", java.lang.Exception().getCustomMessage())
         assertEquals("Cancelled", java.lang.Exception("").getCustomMessage())
     }
