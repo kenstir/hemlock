@@ -32,6 +32,7 @@ import org.opensrf.util.GatewayResult
 import org.opensrf.util.JSONWriter
 import java.net.URI
 import java.net.URISyntaxException
+import java.net.URLEncoder
 import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
 import kotlin.random.Random
@@ -66,12 +67,11 @@ object Gateway {
 
     fun buildQuery(service: String?, method: String?, params: Array<Any?>, addCacheArgs: Boolean = true): String {
         val sb = StringBuilder(INITIAL_URL_SIZE)
-        sb.append("/osrf-gateway-v1?service=").append(service)
+        sb.append("service=").append(service)
         sb.append("&method=").append(method)
-        var uri: URI? = null
         for (param in params) {
             sb.append("&param=")
-            sb.append(JSONWriter(param).write())
+            sb.append(URLEncoder.encode(JSONWriter(param).write(), "UTF-8"))
         }
 
         if (addCacheArgs) {
@@ -79,17 +79,21 @@ object Gateway {
             sb.append("&_sk=").append(serverCacheKey)
         }
 
-        try { // not using URLEncoder because it replaces ' ' with '+'.
-            uri = URI("http", "", null, sb.toString(), null)
-        } catch (ex: URISyntaxException) {
-            Analytics.logException(ShouldNotHappenException(ex))
-        }
-        return uri?.rawQuery ?: "/osrf-gateway-v1"
+//        var uri: URI? = null
+//        try { // not using URLEncoder because it replaces ' ' with '+'.
+//            uri = URI("http", "", null, sb.toString(), null)
+//        } catch (ex: URISyntaxException) {
+//            Analytics.logException(ShouldNotHappenException(ex))
+//        }
+//        return uri?.rawQuery ?: ""
+
+        return sb.toString()
     }
 
     @JvmOverloads
     fun buildUrl(service: String, method: String, args: Array<Any?>, addCacheArgs: Boolean = true): String {
-        return baseUrl.plus(buildQuery(service, method, args, addCacheArgs))
+        return baseUrl.plus("/osrf-gateway-v1?").plus(
+                buildQuery(service, method, args, addCacheArgs))
     }
 
     fun getUrl(relativeUrl: String): String {

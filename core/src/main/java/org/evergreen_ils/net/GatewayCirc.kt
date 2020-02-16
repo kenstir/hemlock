@@ -73,9 +73,19 @@ object GatewayCirc : CircService {
         }
     }
 
-    override suspend fun placeHoldAsync(account: Account, recordId: Int, pickupLib: Int, emailNotify: Boolean, phoneNotify: String?, smsNotify: String?, smsCarrierId: Int?, expireTime: String?, suspendHold: Boolean, thawDate: String?): Result<OSRFObject> {
+    // Historical comments, not entirely correct:
+    //
+    // The fields in the hash are:
+    //   patronid     - ID of the hold recipient  (required)
+    //   depth        - hold range depth          (default 0)
+    //   pickup_lib   - destination for hold, fallback value for selection_ou
+    //   selection_ou - ID of org_unit establishing hard and soft hold boundary settings
+    //   hold_type    - T, C, I, V or M for Title, Copy, Issuance, Volume or Meta-record
+    override suspend fun placeHoldAsync(account: Account, recordId: Int, pickupLib: Int,
+                                        emailNotify: Boolean, phoneNotify: String?,
+                                        smsNotify: String?, smsCarrierId: Int?,
+                                        expireTime: String?, suspendHold: Boolean, thawDate: String?): Result<OSRFObject> {
         return try {
-            TODO("needs testing")
             val (authToken, userID) = account.getCredentialsOrThrow()
             var param = mutableMapOf(
                     "patronid" to userID,
@@ -94,8 +104,8 @@ object GatewayCirc : CircService {
             if (thawDate != null && thawDate.isNotEmpty())
                 param["thaw_date"] = thawDate
 
-            val args = arrayOf<Any?>(authToken, param, arrayOf(recordId))
-            val ret = Gateway.fetchObject(Api.CIRC, Api.HOLDS_RETRIEVE, args, false)
+            val args = arrayOf<Any?>(authToken, param, arrayListOf(recordId))
+            val ret = Gateway.fetchObject(Api.CIRC, Api.HOLD_TEST_AND_CREATE, args, false)
             Result.Success(ret)
         } catch (e: Exception) {
             Result.Error(e)

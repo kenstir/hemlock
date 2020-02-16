@@ -30,11 +30,9 @@ import android.view.View
 import android.widget.*
 import android.widget.AdapterView.OnItemSelectedListener
 import androidx.appcompat.app.AlertDialog
+import kotlinx.coroutines.async
 import org.evergreen_ils.Api
 import org.evergreen_ils.R
-import org.evergreen_ils.Result
-import org.evergreen_ils.accountAccess.AccountAccess
-import org.evergreen_ils.accountAccess.SessionNotFoundException
 import org.evergreen_ils.android.App
 import org.evergreen_ils.data.Account
 import org.evergreen_ils.data.EgOrg.findOrg
@@ -42,14 +40,19 @@ import org.evergreen_ils.data.EgOrg.orgs
 import org.evergreen_ils.data.EgOrg.smsEnabled
 import org.evergreen_ils.data.EgSms.carriers
 import org.evergreen_ils.data.Organization
+import org.evergreen_ils.data.Result
 import org.evergreen_ils.data.SMSCarrier
+import org.evergreen_ils.net.Gateway
 import org.evergreen_ils.searchCatalog.RecordInfo
 import org.evergreen_ils.system.Analytics
+import org.evergreen_ils.system.Log
 import org.evergreen_ils.system.Utils
 import org.evergreen_ils.utils.IntUtils.equals
+import org.evergreen_ils.utils.getCustomMessage
 import org.evergreen_ils.utils.ui.BaseActivity
 import org.evergreen_ils.utils.ui.OrgArrayAdapter
 import org.evergreen_ils.utils.ui.ProgressDialogSupport
+import org.evergreen_ils.utils.ui.showAlert
 import java.util.*
 
 private const val TAG = "PlaceHold"
@@ -77,10 +80,10 @@ class PlaceHoldActivity : BaseActivity() {
     private var thawDateEdittext: EditText? = null
     private var expireDate: Date? = null
     private var thawDate: Date? = null
-    private var placeHoldRunnable: Runnable? = null
     private var selectedOrgPos = 0
     private var selectedSMSPos = 0
     private var progress: ProgressDialogSupport? = null
+    private lateinit var record: RecordInfo
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -88,7 +91,7 @@ class PlaceHoldActivity : BaseActivity() {
 
         setContentView(R.layout.place_hold)
 
-        val record = intent.getSerializableExtra("recordInfo") as RecordInfo
+        record = intent.getSerializableExtra("recordInfo") as RecordInfo
         account = App.getAccount()
         progress = ProgressDialogSupport()
         title = findViewById(R.id.hold_title)
@@ -116,7 +119,6 @@ class PlaceHoldActivity : BaseActivity() {
 
         initPhoneControls(resources.getBoolean(R.bool.ou_enable_phone_notification))
         initSMSControls(smsEnabled)
-        initPlaceHoldRunnable(record)
         initPlaceHoldButton()
         initSuspendHoldButton()
         initDatePickers()
@@ -133,55 +135,6 @@ class PlaceHoldActivity : BaseActivity() {
 
     private fun getSMSNotifyCarrier(id: Int): Int? {
         return if (smsNotification!!.isChecked) id else null
-    }
-
-    private fun initPlaceHoldRunnable(record: RecordInfo) {
-        val record_id = record.doc_id
-        placeHoldRunnable = Runnable {
-            runOnUiThread { progress!!.show(this@PlaceHoldActivity, "Placing hold") }
-            var expire_date_s: String? = null
-            if (expireDate != null) expire_date_s = Api.formatDate(expireDate)
-            var thaw_date_s: String? = null
-            if (thawDate != null) thaw_date_s = Api.formatDate(thawDate)
-            var selectedOrgID = -1
-            if (orgs.size > selectedOrgPos) selectedOrgID = orgs[selectedOrgPos].id
-            var selectedSMSCarrierID = -1
-            if (carriers.size > selectedSMSPos) selectedSMSCarrierID = carriers[selectedSMSPos].id
-            var temp_result = Result.createUnknownError()
-            try {
-                temp_result = AccountAccess.getInstance().testAndCreateHold(record_id, selectedOrgID,
-                        emailNotification!!.isChecked, getPhoneNotify(),
-                        getSMSNotify(), getSMSNotifyCarrier(selectedSMSCarrierID),
-                        expire_date_s, suspendHold!!.isChecked, thaw_date_s)
-            } catch (e: SessionNotFoundException) {
-                try {
-                    if (AccountAccess.getInstance().reauthenticate(this@PlaceHoldActivity)) temp_result = AccountAccess.getInstance().testAndCreateHold(
-                            record_id, selectedOrgID,
-                            emailNotification!!.isChecked, getPhoneNotify(),
-                            getSMSNotify(), getSMSNotifyCarrier(selectedSMSCarrierID),
-                            expire_date_s, suspendHold!!.isChecked, thaw_date_s)
-                } catch (e1: Exception) {
-                }
-            }
-            val result = temp_result
-            runOnUiThread(Runnable {
-                logPlaceHoldResult(result.errorMessage)
-                if (isFinishing) return@Runnable
-                progress!!.dismiss()
-                if (result.isSuccess) {
-                    Toast.makeText(this@PlaceHoldActivity, "Hold successfully placed",
-                            Toast.LENGTH_LONG).show()
-                    startActivity(Intent(this@PlaceHoldActivity, HoldsActivity::class.java))
-                    finish()
-                } else if (!isFinishing) {
-                    val builder = AlertDialog.Builder(this@PlaceHoldActivity)
-                    builder.setTitle("Failed to place hold")
-                            .setMessage(result.errorMessage)
-                            .setPositiveButton(android.R.string.ok, null)
-                    builder.create().show()
-                }
-            })
-        }
     }
 
     private fun pickupEventValue(pickup_org: Organization?, home_org: Organization?): String {
@@ -217,7 +170,7 @@ class PlaceHoldActivity : BaseActivity() {
     }
 
     private fun initPlaceHoldButton() {
-        placeHold!!.setOnClickListener {
+        placeHold?.setOnClickListener {
             val selectedOrg = orgs[selectedOrgPos]
             if (!selectedOrg.isPickupLocation) {
                 logPlaceHoldResult("not_pickup_location")
@@ -227,9 +180,9 @@ class PlaceHoldActivity : BaseActivity() {
                         .setPositiveButton(android.R.string.ok, null)
                 builder.create().show()
             } else if (phoneNotification!!.isChecked && TextUtils.isEmpty(phoneNotify!!.text.toString())) {
-                phoneNotify!!.error = getString(R.string.error_phone_notify_empty)
+                phoneNotify?.error = getString(R.string.error_phone_notify_empty)
             } else if (smsNotification!!.isChecked && TextUtils.isEmpty(smsNotify!!.text.toString())) {
-                smsNotify!!.error = getString(R.string.error_sms_notify_empty)
+                smsNotify?.error = getString(R.string.error_sms_notify_empty)
             } else {
                 placeHold()
             }
@@ -237,8 +190,32 @@ class PlaceHoldActivity : BaseActivity() {
     }
 
     private fun placeHold() {
-        val placeHoldThread = Thread(placeHoldRunnable)
-        placeHoldThread.start()
+        async {
+            Log.d(TAG, "[kcxxx] placeHold: ${record.doc_id}")
+            val expire_date_s = if (expireDate != null) Api.formatDate(expireDate) else null
+            var thaw_date_s = if (thawDate != null) Api.formatDate(thawDate) else null
+            var selectedOrgID = if (orgs.size > selectedOrgPos) orgs[selectedOrgPos].id else -1
+            var selectedSMSCarrierID = if (carriers.size > selectedSMSPos) carriers[selectedSMSPos].id else -1
+            progress?.show(this@PlaceHoldActivity, "Placing hold")
+            val result = Gateway.circ.placeHoldAsync(App.getAccount(), record.doc_id,
+                    selectedOrgID, emailNotification!!.isChecked, getPhoneNotify(), getSMSNotify(),
+                    getSMSNotifyCarrier(selectedSMSCarrierID), expire_date_s,
+                    suspendHold!!.isChecked, thaw_date_s)
+            Log.d(TAG, "[kcxxx] placeHold: $result")
+            progress?.dismiss()
+            when (result) {
+                is Result.Success -> {
+                    logPlaceHoldResult("ok")
+                    Toast.makeText(this@PlaceHoldActivity, "Hold successfully placed", Toast.LENGTH_LONG).show()
+                    startActivity(Intent(this@PlaceHoldActivity, HoldsActivity::class.java))
+                    finish()
+                }
+                is Result.Error -> {
+                    logPlaceHoldResult(result.exception.getCustomMessage())
+                    showAlert(result.exception)
+                }
+            }
+        }
     }
 
     private fun initSuspendHoldButton() {
