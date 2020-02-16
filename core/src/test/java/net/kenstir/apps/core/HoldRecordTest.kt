@@ -65,7 +65,6 @@ class HoldRecordTest {
         assertNull(hold.status)
     }
 
-    @Ignore("TODO: implement when I have more data")
     @Test
     fun test_available() {
         val transitObj = OSRFObject(mapOf<String, Any?>(
