@@ -26,20 +26,15 @@ import org.evergreen_ils.Api;
 import org.evergreen_ils.Result;
 import org.evergreen_ils.accountAccess.bookbags.BookBag;
 import org.evergreen_ils.accountAccess.bookbags.BookBagItem;
-import org.evergreen_ils.data.CircRecord;
-import org.evergreen_ils.accountAccess.holds.HoldRecord;
 import org.evergreen_ils.android.AccountUtils;
 import org.evergreen_ils.android.App;
 import org.evergreen_ils.auth.Const;
 import org.evergreen_ils.data.Account;
 import org.evergreen_ils.net.Gateway;
 import org.evergreen_ils.searchCatalog.RecordInfo;
-import org.evergreen_ils.system.Analytics;
 import org.evergreen_ils.system.Log;
 import org.evergreen_ils.system.Utils;
-import org.opensrf.ShouldNotHappenException;
 import org.opensrf.net.http.HttpConnection;
-import org.opensrf.util.GatewayResult;
 import org.opensrf.util.OSRFObject;
 
 import java.util.ArrayList;
@@ -52,10 +47,6 @@ import java.util.Map;
 public class AccountAccess {
 
     private final static String TAG = AccountAccess.class.getSimpleName();
-
-    // Used for book bags
-    public static String CONTAINER_CLASS_BIBLIO = "biblio";
-    public static String CONTAINER_BUCKET_TYPE_BOOKBAG = "bookbag";
 
     private static AccountAccess mInstance = null;
 
@@ -187,7 +178,7 @@ public class AccountAccess {
 
         Object response = Utils.doRequest(conn(), Api.ACTOR,
                 Api.CONTAINERS_BY_CLASS, account.getAuthToken(), new Object[] {
-                        account.getAuthToken(), account.getId(), CONTAINER_CLASS_BIBLIO, CONTAINER_BUCKET_TYPE_BOOKBAG });
+                        account.getAuthToken(), account.getId(), Api.CONTAINER_CLASS_BIBLIO, Api.CONTAINER_BUCKET_TYPE_BOOKBAG });
 
         List<OSRFObject> bookbags = (List<OSRFObject>) response;
 
@@ -234,7 +225,7 @@ public class AccountAccess {
 
         Map<String, ?> map = (Map<String, ?>) Utils.doRequest(conn(), Api.ACTOR,
                 Api.CONTAINER_FLESH, account.getAuthToken(), new Object[] {
-                        account.getAuthToken(), CONTAINER_CLASS_BIBLIO, bookbagID });
+                        account.getAuthToken(), Api.CONTAINER_CLASS_BIBLIO, bookbagID });
         
         List<OSRFObject> items  = new ArrayList<OSRFObject>();
         
@@ -261,7 +252,7 @@ public class AccountAccess {
      */
     public void removeBookbagItem(Integer id) throws SessionNotFoundException {
 
-        removeContainerItem(CONTAINER_CLASS_BIBLIO, id);
+        removeContainerItem(Api.CONTAINER_CLASS_BIBLIO, id);
 
     }
 
@@ -275,12 +266,12 @@ public class AccountAccess {
         Account account = App.getAccount();
 
         OSRFObject cbreb = new OSRFObject("cbreb");
-        cbreb.put("btype", CONTAINER_BUCKET_TYPE_BOOKBAG);
+        cbreb.put("btype", Api.CONTAINER_BUCKET_TYPE_BOOKBAG);
         cbreb.put("name", name);
         cbreb.put("pub", false);
         cbreb.put("owner", account.getId());
 
-        createContainer(CONTAINER_CLASS_BIBLIO, cbreb);
+        createContainer(Api.CONTAINER_CLASS_BIBLIO, cbreb);
     }
 
     /**
@@ -294,7 +285,7 @@ public class AccountAccess {
 
         Object response = Utils.doRequest(conn(), Api.ACTOR,
                 Api.CONTAINER_FULL_DELETE, account.getAuthToken(), new Object[] {
-                        account.getAuthToken(), CONTAINER_CLASS_BIBLIO, id });
+                        account.getAuthToken(), Api.CONTAINER_CLASS_BIBLIO, id });
     }
 
     /**
@@ -315,7 +306,7 @@ public class AccountAccess {
 
         Object response = Utils.doRequest(conn(), Api.ACTOR,
                 Api.CONTAINER_ITEM_CREATE, account.getAuthToken(), new Object[] {
-                        account.getAuthToken(), CONTAINER_CLASS_BIBLIO, cbrebi });
+                        account.getAuthToken(), Api.CONTAINER_CLASS_BIBLIO, cbrebi });
     }
 
     /**

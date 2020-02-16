@@ -62,6 +62,8 @@ public class Api {
     public static final String CONTAINER_CREATE = "open-ils.actor.container.create";
     public static final String CONTAINER_ITEM_CREATE = "open-ils.actor.container.item.create";
     public static final String CONTAINER_FULL_DELETE = "open-ils.actor.container.full_delete";
+    public static final String CONTAINER_CLASS_BIBLIO = "biblio";
+    public static final String CONTAINER_BUCKET_TYPE_BOOKBAG = "bookbag";
     public static final String MESSAGES_RETRIEVE = "open-ils.actor.message.retrieve"; // [aum]
 
     public static final String SETTING_CREDIT_PAYMENTS_ALLOW = "credit.payments.allow";
@@ -73,7 +75,6 @@ public class Api {
     public static final String USER_SETTING_DEFAULT_SEARCH_LOCATION = "opac.default_search_location";
     public static final String USER_SETTING_DEFAULT_SMS_CARRIER = "opac.default_sms_carrier";
     public static final String USER_SETTING_DEFAULT_SMS_NOTIFY = "opac.default_sms_notify";
-    public static final String VALUE = "value";
 
     /// auth
 
