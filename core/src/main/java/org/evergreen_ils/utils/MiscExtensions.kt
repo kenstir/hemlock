@@ -21,6 +21,7 @@ package org.evergreen_ils.utils
 import android.accounts.AccountManager
 import android.os.Bundle
 import org.evergreen_ils.data.AccountManagerResult
+import org.evergreen_ils.net.Gateway
 
 fun Bundle.getAccountManagerResult(): AccountManagerResult {
     return AccountManagerResult(getString(AccountManager.KEY_ACCOUNT_NAME),
@@ -34,7 +35,8 @@ fun Bundle.getAccountManagerResult(): AccountManagerResult {
 fun Exception.getCustomMessage(): String {
     when (this) {
         is java.util.concurrent.TimeoutException -> return "Timeout"
-        is com.android.volley.TimeoutError -> return "Timeout"
+        is com.android.volley.TimeoutError ->
+            return "Operation timed out after ${Gateway.timeoutMs/1000} seconds"
         is com.android.volley.ClientError -> {
             this.networkResponse?.statusCode.let {
                 return when (it) {

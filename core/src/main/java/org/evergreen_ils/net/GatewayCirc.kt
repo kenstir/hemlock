@@ -102,6 +102,22 @@ object GatewayCirc : CircService {
         }
     }
 
+    override suspend fun renewCircAsync(account: Account, targetCopy: Int): Result<OSRFObject> {
+        return try {
+            val (authToken, userID) = account.getCredentialsOrThrow()
+            val param = jsonMapOf(
+                    "patron" to userID,
+                    "copyid" to targetCopy,
+                    "opac_renewal" to 1
+            )
+            val args = arrayOf<Any?>(authToken, param)
+            val ret = Gateway.fetchObject(Api.CIRC, Api.CIRC_RENEW, args, false)
+            Result.Success(ret)
+        } catch (e: Exception) {
+            Result.Error(e)
+        }
+    }
+
     override suspend fun updateHoldAsync(account: Account, holdId: Int, pickupLib: Int, expireTime: String?, suspendHold: Boolean, thawDate: String?): Result<String> {
         return try {
             val (authToken, userID) = account.getCredentialsOrThrow()

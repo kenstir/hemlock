@@ -19,6 +19,7 @@
 package org.evergreen_ils.net
 
 import android.text.TextUtils
+import com.android.volley.DefaultRetryPolicy
 import com.android.volley.Request
 import com.android.volley.Response
 import com.android.volley.toolbox.StringRequest
@@ -61,6 +62,7 @@ object Gateway {
         set(value) { _serverCacheKey = value }
 
     var randomErrorPercentage = 0
+    var timeoutMs = 15_000
 
     fun buildQuery(service: String?, method: String?, params: Array<Any?>, addCacheArgs: Boolean = true): String {
         val sb = StringBuilder(INITIAL_URL_SIZE)
@@ -129,6 +131,12 @@ object Gateway {
                     cont.resumeWithException(error)
                 })
         r.setShouldCache(shouldCache)
+        val rp = r.retryPolicy
+        r.retryPolicy = DefaultRetryPolicy(
+                timeoutMs,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT)
+
         VolleyWrangler.getInstance().addToRequestQueue(r)
     }
 

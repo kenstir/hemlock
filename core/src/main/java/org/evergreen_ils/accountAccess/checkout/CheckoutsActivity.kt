@@ -50,6 +50,8 @@ import org.opensrf.util.GatewayResult
 import org.opensrf.util.OSRFObject
 import java.util.*
 
+private const val TAG = "Checkouts"
+
 class CheckoutsActivity : BaseActivity() {
     private var accountAccess: AccountAccess? = null
     private var lv: ListView? = null
@@ -153,38 +155,6 @@ class CheckoutsActivity : BaseActivity() {
         return Result.Success(Unit)
     }
 
-    private fun getOutAndOverdueCircIds(circSlimObj: OSRFObject): List<Int> {
-        var ids = mutableListOf<Int>()
-        ids.addAll(Api.parseIdsListAsInt(circSlimObj.get("out")))
-        ids.addAll(Api.parseIdsListAsInt(circSlimObj.get("overdue")))
-        return ids
-    }
-
-//    private fun countOverdues(): Int {
-//        var overdues = 0
-//        for (circ in circRecords) if (circ.isOverdue) overdues++
-//        return overdues
-//    }
-
-    private fun initGetCircThread(): Thread {
-        return Thread(Runnable {
-            try {
-                circRecords = accountAccess!!.itemsCheckedOut
-            } catch (e: SessionNotFoundException) {
-                try {
-                    if (accountAccess!!.reauthenticate(this@CheckoutsActivity)) circRecords = accountAccess!!.itemsCheckedOut
-                } catch (eauth: Exception) {
-                    Log.d(TAG, "Exception in reauth", eauth)
-                }
-            }
-            Analytics.logEvent("Checkouts: List Checkouts", "num_items", circRecords.size)
-            runOnUiThread {
-                updateCheckoutsList()
-                progress?.dismiss()
-            }
-        })
-    }
-
     private fun updateCheckoutsList() {
         listAdapter?.clear()
         for (circ in circRecords) listAdapter?.add(circ)
@@ -280,62 +250,25 @@ class CheckoutsActivity : BaseActivity() {
     }
 
     private fun renewItem(record: CircRecord) {
-        val renew = Thread(Runnable {
-            runOnUiThread { progress?.show(this@CheckoutsActivity, getString(R.string.msg_renewing_item)) }
-            val ac = AccountAccess.getInstance()
-            var resp: GatewayResult? = null
-            var ex: Exception? = null
-            try {
-                resp = ac.renewCirc(record.targetCopy)
-            } catch (e1: SessionNotFoundException) {
-                try {
-                    if (accountAccess!!.reauthenticate(this@CheckoutsActivity)) {
-                        resp = ac.renewCirc(record.targetCopy)
-                    }
-                } catch (eauth: Exception) {
-                    ex = eauth
-                }
-            }
-            if (resp == null || resp.failed) {
-                val msg: String?
-                msg = if (ex != null) {
-                    ex.message
-                } else if (resp != null) {
-                    resp.errorMessage
-                } else {
-                    "Unexpected error"
-                }
-                runOnUiThread {
-                    progress?.dismiss()
-                    val builder = AlertDialog.Builder(this@CheckoutsActivity)
-                    builder.setTitle("Failed to renew item")
-                            .setMessage(msg)
-                            .setPositiveButton(android.R.string.ok, null)
-                    builder.create().show()
-                }
-            } else {
-                runOnUiThread { Toast.makeText(this@CheckoutsActivity, getString(R.string.toast_item_renewed), Toast.LENGTH_LONG).show() }
-                try {
-                    circRecords = accountAccess!!.itemsCheckedOut
-                } catch (e: SessionNotFoundException) {
-                    try {
-                        if (accountAccess!!.reauthenticate(this@CheckoutsActivity)) circRecords = accountAccess!!.itemsCheckedOut
-                    } catch (eauth: Exception) {
-                        Log.d(TAG, "Exception in reauth", eauth)
-                    }
-                }
-                runOnUiThread {
-                    listAdapter?.clear()
-                    for (circ in circRecords) listAdapter?.add(circ)
-                    progress?.dismiss()
-                    listAdapter?.notifyDataSetChanged()
-                }
-            }
-        })
-        renew.start()
-    }
+        async {
+            Log.d(TAG, "[kcxxx] renewItem: ${record.targetCopy}")
 
-    companion object {
-        private val TAG = CheckoutsActivity::class.java.simpleName
+            record.targetCopy?.let {
+                progress?.show(this@CheckoutsActivity, getString(R.string.msg_renewing_item))
+                val result = Gateway.circ.renewCircAsync(App.getAccount(), it)
+                progress?.dismiss()
+                when (result) {
+                    is Result.Success -> {
+                        // The response is a SUCCESS event, but we just care that it isn't an error
+                        Log.d(TAG, "[kcxxx] ${result.data}")
+                        Toast.makeText(this@CheckoutsActivity, getString(R.string.toast_item_renewed), Toast.LENGTH_LONG).show()
+                        fetchData()
+                    }
+                    is Result.Error -> {
+                        showAlert(result.exception)
+                    }
+                }
+            }
+        }
     }
 }
