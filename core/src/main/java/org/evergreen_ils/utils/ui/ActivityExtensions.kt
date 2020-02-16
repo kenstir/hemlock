@@ -23,12 +23,13 @@ import android.app.AlertDialog
 import org.evergreen_ils.android.App
 import org.evergreen_ils.net.GatewayError
 import org.evergreen_ils.system.Log
+import org.evergreen_ils.utils.getCustomMessage
 
 fun Activity.showAlert(ex: Exception) {
     if (ex is GatewayError && ex.isSessionExpired()) {
         showSessionExpiredAlert(ex)
     } else {
-        showAlert(ex.localizedMessage)
+        showAlert(ex.getCustomMessage())
     }
 }
 
@@ -47,7 +48,7 @@ fun Activity.showSessionExpiredAlert(ex: Exception) {
     if (isFinishing) return
     val builder = AlertDialog.Builder(this)
     builder.setTitle("Error")
-            .setMessage(ex.localizedMessage)
+            .setMessage(ex.getCustomMessage())
             .setNegativeButton(android.R.string.cancel) { _, _ ->
                 Log.d("sessionexpired", "cancel")
             }
