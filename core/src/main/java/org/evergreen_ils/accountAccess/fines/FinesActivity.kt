@@ -81,7 +81,7 @@ class FinesActivity : BaseActivity() {
         progress = ProgressDialogSupport()
         fineRecords = ArrayList()
         listAdapter = FinesArrayAdapter(this, R.layout.fines_list_item, fineRecords)
-        lv?.setAdapter(listAdapter)
+        lv?.adapter = listAdapter
         lv?.setOnItemClickListener { parent, view, position, id -> onItemClick(position) }
         updatePayFinesButtonState(false)
     }
@@ -224,7 +224,7 @@ class FinesActivity : BaseActivity() {
             }
         }
         if (records.size > 0) {
-            val targetPosition = kotlin.math.max(position, records.size - 1)
+            val targetPosition = if (position > records.size - 1) records.size - 1 else position
             RecordDetails.launchDetailsFlow(this@FinesActivity, records, targetPosition)
         }
     }
