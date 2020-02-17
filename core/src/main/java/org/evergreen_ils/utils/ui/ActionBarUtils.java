@@ -36,7 +36,6 @@ public class ActionBarUtils {
         ActionBar actionBar = activity.getSupportActionBar();
         if (actionBar == null)
             return toolbar;
-        //String username = AccountAccess.getInstance().getUserName();
         String username = App.getAccount().getUsername();
         if (activity.getResources().getBoolean(R.bool.admin_screenshot_mode))
             username = "janejetson";

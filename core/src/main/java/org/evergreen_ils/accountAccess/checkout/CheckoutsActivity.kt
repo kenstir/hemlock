@@ -27,14 +27,14 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.*
+import android.widget.ArrayAdapter
+import android.widget.ListView
+import android.widget.TextView
+import android.widget.Toast
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.joinAll
-import org.evergreen_ils.Api
 import org.evergreen_ils.R
-import org.evergreen_ils.accountAccess.AccountAccess
-import org.evergreen_ils.accountAccess.SessionNotFoundException
 import org.evergreen_ils.android.App
 import org.evergreen_ils.data.CircRecord
 import org.evergreen_ils.data.Result
@@ -46,14 +46,11 @@ import org.evergreen_ils.system.Log
 import org.evergreen_ils.utils.ui.BaseActivity
 import org.evergreen_ils.utils.ui.ProgressDialogSupport
 import org.evergreen_ils.utils.ui.showAlert
-import org.opensrf.util.GatewayResult
-import org.opensrf.util.OSRFObject
 import java.util.*
 
 private const val TAG = "Checkouts"
 
 class CheckoutsActivity : BaseActivity() {
-    private var accountAccess: AccountAccess? = null
     private var lv: ListView? = null
     private var listAdapter: CheckoutsArrayAdapter? = null
     private var circRecords: ArrayList<CircRecord> = ArrayList()
@@ -67,7 +64,6 @@ class CheckoutsActivity : BaseActivity() {
         setContentView(R.layout.activity_checkouts)
 
         checkoutsSummary = findViewById(R.id.checkout_items_summary)
-        accountAccess = AccountAccess.getInstance()
         progress = ProgressDialogSupport()
         lv = findViewById(R.id.checkout_items_list)
         circRecords = ArrayList()

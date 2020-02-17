@@ -135,7 +135,6 @@ object Gateway {
                     cont.resumeWithException(error)
                 })
         r.setShouldCache(shouldCache)
-        val rp = r.retryPolicy
         r.retryPolicy = DefaultRetryPolicy(
                 timeoutMs,
                 DefaultRetryPolicy.DEFAULT_MAX_RETRIES,

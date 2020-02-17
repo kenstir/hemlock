@@ -33,14 +33,6 @@ public class PinesMenuProvider extends MenuProvider {
     @Override
     public void onCreate(Activity activity) {
         return;
-        /*
-        AccountAccess ac = AccountAccess.getInstance();
-        Integer unread = ac.getUnreadMessageCount();
-        if (unread > 0) {
-            Button b = (Button)activity.findViewById(R.id.patron_message_center);
-            b.setText("" + unread + " messages");
-        }
-        */
     }
 
     @Override

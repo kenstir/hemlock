@@ -32,7 +32,6 @@ import android.widget.AdapterView.OnItemSelectedListener
 import kotlinx.coroutines.async
 import org.evergreen_ils.Api
 import org.evergreen_ils.R
-import org.evergreen_ils.accountAccess.AccountAccess
 import org.evergreen_ils.android.App
 import org.evergreen_ils.data.EgOrg
 import org.evergreen_ils.data.Result
@@ -43,7 +42,6 @@ import org.evergreen_ils.utils.ui.*
 import java.util.*
 
 class HoldDetailsActivity : BaseActivity() {
-    private var accountAccess: AccountAccess? = null
     private var expirationDate: EditText? = null
     private var datePicker: DatePickerDialog? = null
     private var suspendHold: CheckBox? = null
@@ -52,7 +50,6 @@ class HoldDetailsActivity : BaseActivity() {
     private var expireDate: Date? = null
     private var thawDate: Date? = null
     private var selectedOrgPos = 0
-    var updateHoldRunnable: Runnable? = null
     private var progress: ProgressDialogSupport? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -63,7 +60,6 @@ class HoldDetailsActivity : BaseActivity() {
         }
         setContentView(R.layout.hold_details)
         ActionBarUtils.initActionBarForActivity(this)
-        accountAccess = AccountAccess.getInstance()
         progress = ProgressDialogSupport()
 
         val record = intent.getSerializableExtra("holdRecord") as HoldRecord
