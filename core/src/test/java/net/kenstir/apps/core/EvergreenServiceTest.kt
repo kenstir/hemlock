@@ -19,6 +19,7 @@
 package net.kenstir.apps.core
 
 import org.evergreen_ils.data.EgSms
+import org.evergreen_ils.data.jsonMapOf
 import org.evergreen_ils.system.Log
 import org.evergreen_ils.system.StdoutLogProvider
 import org.junit.Assert.assertEquals
@@ -34,7 +35,7 @@ class EvergreenServiceTest {
     }
 
     fun make_csc_obj(id: Int, name: String): OSRFObject {
-        return OSRFObject(mapOf<String, Any?>("id" to id, "name" to name))
+        return OSRFObject(jsonMapOf("id" to id, "name" to name))
     }
 
     @Test
