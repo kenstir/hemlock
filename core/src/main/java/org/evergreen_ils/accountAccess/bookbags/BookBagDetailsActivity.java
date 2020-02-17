@@ -151,7 +151,7 @@ public class BookBagDetailsActivity extends BaseActivity {
 
                 ArrayList<Integer> ids = new ArrayList<>();
                 for (int i = 0; i < bookBag.items.size(); i++) {
-                    ids.add(bookBag.items.get(i).target_copy);
+                    ids.add(bookBag.items.get(i).targetId);
                 }
                 ArrayList<RecordInfo> records = AccountAccess.getInstance().getRecordsInfo(ids);
 
