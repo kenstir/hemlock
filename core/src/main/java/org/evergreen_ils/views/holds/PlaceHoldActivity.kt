@@ -17,7 +17,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
  * 
  */
-package org.evergreen_ils.accountAccess.holds
+package org.evergreen_ils.views.holds
 
 import android.app.DatePickerDialog
 import android.app.DatePickerDialog.OnDateSetListener

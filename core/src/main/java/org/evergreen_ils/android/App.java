@@ -33,7 +33,7 @@ import org.evergreen_ils.net.VolleyWrangler;
 import org.evergreen_ils.system.Analytics;
 import org.evergreen_ils.system.Log;
 import org.evergreen_ils.utils.ui.AppState;
-import org.evergreen_ils.views.LaunchActivity;
+import org.evergreen_ils.views.launch.LaunchActivity;
 import org.evergreen_ils.views.MainActivity;
 
 import java.io.File;

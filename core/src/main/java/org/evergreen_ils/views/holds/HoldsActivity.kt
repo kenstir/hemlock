@@ -18,7 +18,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
  * 
  */
-package org.evergreen_ils.accountAccess.holds
+package org.evergreen_ils.views.holds
 
 import android.content.Context
 import android.content.Intent
@@ -35,6 +35,7 @@ import kotlinx.coroutines.joinAll
 import org.evergreen_ils.R
 import org.evergreen_ils.android.App
 import org.evergreen_ils.data.Account
+import org.evergreen_ils.data.HoldRecord
 import org.evergreen_ils.data.Result
 import org.evergreen_ils.net.Gateway
 import org.evergreen_ils.net.GatewayError

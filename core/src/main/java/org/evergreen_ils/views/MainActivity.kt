@@ -34,9 +34,7 @@ import kotlinx.coroutines.launch
 import org.evergreen_ils.R
 import org.evergreen_ils.android.AccountUtils
 import org.evergreen_ils.accountAccess.bookbags.BookBagActivity
-import org.evergreen_ils.accountAccess.checkout.CheckoutsActivity
-import org.evergreen_ils.accountAccess.fines.FinesActivity
-import org.evergreen_ils.accountAccess.holds.HoldsActivity
+import org.evergreen_ils.views.holds.HoldsActivity
 import org.evergreen_ils.android.App
 import org.evergreen_ils.data.EgSms
 import org.evergreen_ils.data.Result

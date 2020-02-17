@@ -21,12 +21,9 @@ package org.evergreen_ils.searchCatalog;
 
 import java.util.*;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.appcompat.widget.SwitchCompat;
 
-import android.graphics.Typeface;
 import android.text.TextUtils;
 import android.view.*;
 import android.widget.*;
@@ -34,7 +31,7 @@ import org.evergreen_ils.R;
 import org.evergreen_ils.accountAccess.AccountAccess;
 import org.evergreen_ils.accountAccess.bookbags.BookBag;
 import org.evergreen_ils.accountAccess.bookbags.BookBagUtils;
-import org.evergreen_ils.accountAccess.holds.PlaceHoldActivity;
+import org.evergreen_ils.views.holds.PlaceHoldActivity;
 import org.evergreen_ils.android.App;
 import org.evergreen_ils.barcodescan.CaptureActivity;
 import org.evergreen_ils.data.EgCodedValueMap;

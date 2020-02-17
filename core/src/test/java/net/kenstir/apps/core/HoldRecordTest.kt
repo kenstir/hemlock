@@ -18,10 +18,9 @@
 
 package net.kenstir.apps.core
 
-import org.evergreen_ils.accountAccess.holds.HoldRecord
+import org.evergreen_ils.data.HoldRecord
 import org.evergreen_ils.data.jsonMapOf
 import org.junit.Assert.*
-import org.junit.Ignore
 import org.junit.Test
 import org.opensrf.util.OSRFObject
 

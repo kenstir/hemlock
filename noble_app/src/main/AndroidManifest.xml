@@ -55,7 +55,7 @@
         -->
 
         <activity
-                android:name="org.evergreen_ils.views.LaunchActivity">
+                android:name="org.evergreen_ils.views.launch.LaunchActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -97,16 +97,16 @@
 
         <!-- Holds Activities -->
         <activity
-                android:name="org.evergreen_ils.accountAccess.holds.HoldsActivity"
+                android:name="org.evergreen_ils.views.holds.HoldsActivity"
                 android:label="@string/hold_items_title"
                 android:parentActivityName="org.evergreen_ils.views.MainActivity">
         </activity>
         <activity
-                android:name="org.evergreen_ils.accountAccess.holds.PlaceHoldActivity"
+                android:name="org.evergreen_ils.views.holds.PlaceHoldActivity"
                 android:label="@string/hold_place_title">
         </activity>
         <activity
-                android:name="org.evergreen_ils.accountAccess.holds.HoldDetailsActivity"
+                android:name="org.evergreen_ils.views.holds.HoldDetailsActivity"
                 android:label="@string/hold_details_title">
         </activity>
 
