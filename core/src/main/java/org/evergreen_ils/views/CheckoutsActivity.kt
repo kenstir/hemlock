@@ -206,11 +206,11 @@ class CheckoutsActivity : BaseActivity() {
             renewButton = row.findViewById(R.id.renew_button)
 
             val record = getItem(position)
-            title?.setText(record.title)
-            author?.setText(record.author)
-            format?.setText(RecordInfo.getIconFormatLabel(record.recordInfo))
-            renewals?.setText(String.format(getString(R.string.checkout_renewals_left), record.renewals))
-            dueDate?.setText(String.format(getString(R.string.due), record.dueDateString))
+            title?.text = record.title
+            author?.text = record.author
+            format?.text = RecordInfo.getIconFormatLabel(record.recordInfo)
+            renewals?.text = String.format(getString(R.string.checkout_renewals_left), record.renewals)
+            dueDate?.text = String.format(getString(R.string.due), record.dueDateString)
 
             initRenewButton(record)
             maybeHighlightDueDate(record)
