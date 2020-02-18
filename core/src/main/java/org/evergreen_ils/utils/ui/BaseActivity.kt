@@ -184,11 +184,6 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
             startActivity(Intent(this, BookBagActivity::class.java))
         } else if (id == R.id.btn_barcode) {
             Analytics.logEvent("Barcode: Open", "via", "nav_drawer")
-            // generating via Intent only works if zxing barcode app is installed
-            //            Intent intent = new Intent("com.google.zxing.client.android.ENCODE");
-            //            intent.putExtra("ENCODE_FORMAT", "CODABAR");
-            //            intent.putExtra("ENCODE_DATA", "12345678901234");
-            //            startActivity(intent);
             startActivity(Intent(this, BarcodeActivity::class.java))
         } else if (menuItemHandler != null) {
             ret = menuItemHandler!!.onItemSelected(this, id, "nav_drawer")

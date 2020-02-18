@@ -105,6 +105,7 @@ public class SearchActivity extends BaseActivity {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+//        Log.d(TAG, "[kcxxx] onCreate");
         super.onCreate(savedInstanceState);
         if (isRestarting()) return;
 
@@ -112,9 +113,10 @@ public class SearchActivity extends BaseActivity {
 
         search = SearchCatalog.getInstance();
         bookBags = AccountAccess.getInstance().getBookbags();
-        searchResults = new ArrayList<>();
         progress = new ProgressDialogSupport();
 
+        searchResults = new ArrayList<>();
+        clearResults();
 //        if (savedInstanceState == null) {
 //            recordList = new ArrayList<>();
 //        } else {
@@ -155,10 +157,48 @@ public class SearchActivity extends BaseActivity {
         updateSearchResultsSummary();
     }
 
+//    @Override
+//    protected void onStop() {
+//        Log.d(TAG, "[kcxxx] onStop");
+//        super.onStop();
+//    }
+//
+//    @Override
+//    protected void onStart() {
+//        Log.d(TAG, "[kcxxx] onStart");
+//        super.onStart();
+//    }
+//
+//    @Override
+//    protected void onPause() {
+//        Log.d(TAG, "[kcxxx] onPause");
+//        super.onPause();
+//    }
+//
+//    @Override
+//    protected void onResume() {
+//        Log.d(TAG, "[kcxxx] onResume");
+//        super.onResume();
+//    }
+
     @Override
     protected void onDestroy() {
         if (progress != null) progress.dismiss();
+//        Log.d(TAG, "[kcxxx] onDestroy");
+        clearResults();
         super.onDestroy();
+    }
+
+//    @Override
+//    public void onBackPressed() {
+//        super.onBackPressed();
+//        Log.d(TAG, "[kcxxx] onBackPressed");
+//    }
+
+    private void clearResults() {
+        haveSearched = false;
+        searchResults.clear();
+        search.clearResults();
     }
 
     private void initSearchButton() {
