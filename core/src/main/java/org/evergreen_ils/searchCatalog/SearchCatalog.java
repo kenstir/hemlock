@@ -139,4 +139,9 @@ public class SearchCatalog {
     public ArrayList<RecordInfo> getResults() {
         return results;
     }
+
+    public void clearResults() {
+        results.clear();
+        visible = 0;
+    }
 }

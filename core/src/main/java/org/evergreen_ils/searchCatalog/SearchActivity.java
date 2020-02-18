@@ -21,12 +21,9 @@ package org.evergreen_ils.searchCatalog;
 
 import java.util.*;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.appcompat.widget.SwitchCompat;
 
-import android.graphics.Typeface;
 import android.text.TextUtils;
 import android.view.*;
 import android.widget.*;
@@ -108,6 +105,7 @@ public class SearchActivity extends BaseActivity {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+//        Log.d(TAG, "[kcxxx] onCreate");
         super.onCreate(savedInstanceState);
         if (mRestarting) return;
 
@@ -116,9 +114,10 @@ public class SearchActivity extends BaseActivity {
         eg = EvergreenServer.getInstance();
         search = SearchCatalog.getInstance();
         bookBags = AccountAccess.getInstance().getBookbags();
-        searchResults = new ArrayList<>();
         progress = new ProgressDialogSupport();
 
+        searchResults = new ArrayList<>();
+        clearResults();
 //        if (savedInstanceState == null) {
 //            recordList = new ArrayList<>();
 //        } else {
@@ -159,10 +158,48 @@ public class SearchActivity extends BaseActivity {
         updateSearchResultsSummary();
     }
 
+//    @Override
+//    protected void onStop() {
+//        Log.d(TAG, "[kcxxx] onStop");
+//        super.onStop();
+//    }
+//
+//    @Override
+//    protected void onStart() {
+//        Log.d(TAG, "[kcxxx] onStart");
+//        super.onStart();
+//    }
+//
+//    @Override
+//    protected void onPause() {
+//        Log.d(TAG, "[kcxxx] onPause");
+//        super.onPause();
+//    }
+//
+//    @Override
+//    protected void onResume() {
+//        Log.d(TAG, "[kcxxx] onResume");
+//        super.onResume();
+//    }
+
     @Override
     protected void onDestroy() {
         if (progress != null) progress.dismiss();
+//        Log.d(TAG, "[kcxxx] onDestroy");
+        clearResults();
         super.onDestroy();
+    }
+
+//    @Override
+//    public void onBackPressed() {
+//        super.onBackPressed();
+//        Log.d(TAG, "[kcxxx] onBackPressed");
+//    }
+
+    private void clearResults() {
+        haveSearched = false;
+        searchResults.clear();
+        search.clearResults();
     }
 
     private void initSearchButton() {
@@ -407,31 +444,32 @@ public class SearchActivity extends BaseActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
 
         // todo we should not switch on resultCode here, we should switch on requestCode
         switch (resultCode) {
-        case SampleUnderlinesNoFade.RETURN_DATA : {
+            case SampleUnderlinesNoFade.RETURN_DATA: {
 //                try {
 //                    ArrayList<RecordInfo> resultRecords = (ArrayList<RecordInfo>) data.getSerializableExtra("recordList");
 //                    replaceRecordListIfLarger((ArrayList) resultRecords);
 //                } catch (Exception e) {
 //                    Log.d(TAG, "caught", e);
 //                }
-        }
-        break;
-        
-        case AdvancedSearchActivity.RESULT_ADVANCED_SEARCH: {
-            Log.d(TAG, "result text:" + data.getStringExtra("advancedSearchText"));
-            searchText.setText(data.getStringExtra("advancedSearchText"));
-            startSearchThread();
-        }
-        break;
+            }
+            break;
 
-        case CaptureActivity.BARCODE_SEARCH: {
-            searchText.setText("identifier|isbn: "
-                    + data.getStringExtra("barcodeValue"));
-            startSearchThread();
-        }
+            case AdvancedSearchActivity.RESULT_ADVANCED_SEARCH: {
+                Log.d(TAG, "result text:" + data.getStringExtra("advancedSearchText"));
+                searchText.setText(data.getStringExtra("advancedSearchText"));
+                startSearchThread();
+            }
+            break;
+
+            case CaptureActivity.BARCODE_SEARCH: {
+                searchText.setText("identifier|isbn: "
+                        + data.getStringExtra("barcodeValue"));
+                startSearchThread();
+            }
         }
     }
 }
