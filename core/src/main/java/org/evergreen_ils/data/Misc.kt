@@ -20,9 +20,5 @@ package org.evergreen_ils.data
 
 typealias JSONDictionary = Map<String, Any?>
 
-inline fun jsonMapOf(vararg pairs: Pair<String, Any?>): Map<String, Any?> =
+inline fun jsonMapOf(vararg pairs: Pair<String, Any?>): JSONDictionary =
         if (pairs.size > 0) pairs.toMap(LinkedHashMap(pairs.size+1)) else emptyMap()
-
-//this didn't work for me because Gateway received a built-in array []
-//public inline fun anyArrayOf(vararg args: Any?): Array<Any?> =
-//        arrayOf<Any?>(args)
