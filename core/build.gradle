@@ -30,7 +30,7 @@ repositories {
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     api 'com.google.zxing:core:3.3.3'
-    api('com.crashlytics.sdk.android:crashlytics:2.9.0@aar') {
+    api('com.crashlytics.sdk.android:crashlytics:2.10.1@aar') {
         transitive = true;
     }
     api 'com.google.android.material:material:1.1.0'
