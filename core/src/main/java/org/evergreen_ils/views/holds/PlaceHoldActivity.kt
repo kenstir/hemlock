@@ -44,8 +44,8 @@ import org.evergreen_ils.data.Result
 import org.evergreen_ils.data.SMSCarrier
 import org.evergreen_ils.net.Gateway
 import org.evergreen_ils.searchCatalog.RecordInfo
-import org.evergreen_ils.system.Analytics
-import org.evergreen_ils.system.Log
+import org.evergreen_ils.android.Analytics
+import org.evergreen_ils.android.Log
 import org.evergreen_ils.system.Utils
 import org.evergreen_ils.utils.IntUtils.equals
 import org.evergreen_ils.utils.getCustomMessage

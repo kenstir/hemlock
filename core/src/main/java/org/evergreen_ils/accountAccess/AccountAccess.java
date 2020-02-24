@@ -23,7 +23,6 @@ import android.app.Activity;
 import android.text.TextUtils;
 
 import org.evergreen_ils.Api;
-import org.evergreen_ils.Result;
 import org.evergreen_ils.accountAccess.bookbags.BookBag;
 import org.evergreen_ils.accountAccess.bookbags.BookBagItem;
 import org.evergreen_ils.android.AccountUtils;
@@ -32,7 +31,7 @@ import org.evergreen_ils.auth.Const;
 import org.evergreen_ils.data.Account;
 import org.evergreen_ils.net.Gateway;
 import org.evergreen_ils.searchCatalog.RecordInfo;
-import org.evergreen_ils.system.Log;
+import org.evergreen_ils.android.Log;
 import org.evergreen_ils.system.Utils;
 import org.opensrf.net.http.HttpConnection;
 import org.opensrf.util.OSRFObject;
@@ -40,7 +39,6 @@ import org.opensrf.util.OSRFObject;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 

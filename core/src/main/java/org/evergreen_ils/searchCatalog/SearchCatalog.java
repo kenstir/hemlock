@@ -23,11 +23,10 @@ import android.text.TextUtils;
 
 import org.evergreen_ils.Api;
 import org.evergreen_ils.net.Gateway;
-import org.evergreen_ils.system.Log;
+import org.evergreen_ils.android.Log;
 import org.evergreen_ils.system.Utils;
 import org.evergreen_ils.data.Organization;
 import org.opensrf.net.http.HttpConnection;
-import org.opensrf.util.OSRFObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;

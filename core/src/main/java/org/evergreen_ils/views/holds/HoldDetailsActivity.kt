@@ -37,8 +37,8 @@ import org.evergreen_ils.data.EgOrg
 import org.evergreen_ils.data.HoldRecord
 import org.evergreen_ils.data.Result
 import org.evergreen_ils.net.Gateway
-import org.evergreen_ils.system.Analytics
-import org.evergreen_ils.system.Log
+import org.evergreen_ils.android.Analytics
+import org.evergreen_ils.android.Log
 import org.evergreen_ils.utils.ui.*
 import java.util.*
 

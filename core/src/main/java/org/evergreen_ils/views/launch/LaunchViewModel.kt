@@ -28,7 +28,7 @@ import kotlinx.coroutines.async
 import org.evergreen_ils.R
 import org.evergreen_ils.data.*
 import org.evergreen_ils.net.Gateway
-import org.evergreen_ils.system.Log
+import org.evergreen_ils.android.Log
 import org.evergreen_ils.utils.getCustomMessage
 import java.util.concurrent.atomic.AtomicInteger
 

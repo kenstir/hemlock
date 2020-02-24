@@ -20,12 +20,11 @@ package org.evergreen_ils.test
 
 import org.evergreen_ils.Api
 import org.evergreen_ils.net.GatewayEventError
-import org.evergreen_ils.system.Log
-import org.evergreen_ils.system.StdoutLogProvider
+import org.evergreen_ils.android.Log
+import org.evergreen_ils.android.StdoutLogProvider
 import org.junit.Assert.*
 import org.junit.BeforeClass
 import org.junit.Test
-import org.open_ils.Event
 import org.opensrf.util.GatewayResult
 import org.opensrf.util.OSRFRegistry
 

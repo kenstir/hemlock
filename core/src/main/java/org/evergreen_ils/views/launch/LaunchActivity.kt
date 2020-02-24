@@ -37,8 +37,8 @@ import org.evergreen_ils.data.Account
 import org.evergreen_ils.data.EgOrg
 import org.evergreen_ils.data.Result
 import org.evergreen_ils.net.Gateway
-import org.evergreen_ils.system.Analytics
-import org.evergreen_ils.system.Log
+import org.evergreen_ils.android.Analytics
+import org.evergreen_ils.android.Log
 import org.evergreen_ils.utils.await
 import org.evergreen_ils.utils.getAccountManagerResult
 import org.evergreen_ils.utils.getCustomMessage

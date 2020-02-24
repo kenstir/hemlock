@@ -20,6 +20,8 @@ package org.evergreen_ils.system;
 import android.text.TextUtils;
 
 import org.evergreen_ils.accountAccess.SessionNotFoundException;
+import org.evergreen_ils.android.Analytics;
+import org.evergreen_ils.android.Log;
 import org.evergreen_ils.auth.Const;
 import org.opensrf.Method;
 import org.opensrf.net.http.GatewayRequest;

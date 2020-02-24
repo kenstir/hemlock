@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Kenneth H. Cox
+ * Copyright (c) 2020 Kenneth H. Cox
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -16,18 +16,16 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
-package org.evergreen_ils.system;
-
-import android.content.Context;
+package org.evergreen_ils.android;
 
 /**
  * Created by kenstir on 1/29/2017.
  */
 public interface LogProvider {
-    abstract void d(String TAG, String msg);
-    abstract void d(String TAG, String msg, Throwable tr);
-    abstract void i(String TAG, String msg);
-    abstract void w(String TAG, String msg);
-    abstract void w(String TAG, String msg, Throwable tr);
-    abstract String getLogBuffer();
+    void d(String TAG, String msg);
+    void d(String TAG, String msg, Throwable tr);
+    void i(String TAG, String msg);
+    void w(String TAG, String msg);
+    void w(String TAG, String msg, Throwable tr);
+    String getLogBuffer();
 }

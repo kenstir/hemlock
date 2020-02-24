@@ -24,14 +24,10 @@ import com.android.volley.Request
 import com.android.volley.Response
 import com.android.volley.toolbox.StringRequest
 import org.evergreen_ils.Api
-import org.evergreen_ils.system.Analytics
-import org.evergreen_ils.system.Log
-import org.opensrf.ShouldNotHappenException
+import org.evergreen_ils.android.Log
 import org.opensrf.net.http.HttpConnection
 import org.opensrf.util.GatewayResult
 import org.opensrf.util.JSONWriter
-import java.net.URI
-import java.net.URISyntaxException
 import java.net.URLEncoder
 import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine

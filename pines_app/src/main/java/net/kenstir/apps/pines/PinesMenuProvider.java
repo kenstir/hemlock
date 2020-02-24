@@ -22,7 +22,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 
-import org.evergreen_ils.system.Analytics;
+import org.evergreen_ils.android.Analytics;
 import org.evergreen_ils.views.MenuProvider;
 
 /**

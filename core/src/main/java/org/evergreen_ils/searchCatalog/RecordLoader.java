@@ -31,7 +31,7 @@ import org.evergreen_ils.data.EgOrg;
 import org.evergreen_ils.net.Gateway;
 import org.evergreen_ils.net.GatewayJsonObjectRequest;
 import org.evergreen_ils.net.VolleyWrangler;
-import org.evergreen_ils.system.Log;
+import org.evergreen_ils.android.Log;
 import org.opensrf.util.GatewayResult;
 
 /** Async interface for loading RecordInfo metadata

@@ -22,7 +22,7 @@ import android.app.Activity
 import android.app.AlertDialog
 import org.evergreen_ils.android.App
 import org.evergreen_ils.net.GatewayError
-import org.evergreen_ils.system.Log
+import org.evergreen_ils.android.Log
 import org.evergreen_ils.utils.getCustomMessage
 
 fun Activity.showAlert(ex: Exception) {

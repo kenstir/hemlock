@@ -23,8 +23,6 @@ import org.evergreen_ils.Api
 import org.evergreen_ils.data.CircRecord
 import org.evergreen_ils.data.jsonMapOf
 import org.evergreen_ils.searchCatalog.RecordInfo
-import org.evergreen_ils.system.Log
-import org.evergreen_ils.system.StdoutLogProvider
 import org.junit.Assert.assertEquals
 import org.junit.BeforeClass
 import org.junit.Test

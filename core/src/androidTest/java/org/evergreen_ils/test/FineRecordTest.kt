@@ -19,9 +19,8 @@
 package org.evergreen_ils.test
 
 import org.evergreen_ils.data.FineRecord
-import org.evergreen_ils.data.JSONDictionary
-import org.evergreen_ils.system.Log
-import org.evergreen_ils.system.StdoutLogProvider
+import org.evergreen_ils.android.Log
+import org.evergreen_ils.android.StdoutLogProvider
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.BeforeClass

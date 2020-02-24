@@ -20,10 +20,9 @@ package org.evergreen_ils.net
 
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
-import kotlinx.coroutines.launch
 import org.evergreen_ils.data.EgOrg
 import org.evergreen_ils.data.Organization
-import org.evergreen_ils.system.Log
+import org.evergreen_ils.android.Log
 import org.evergreen_ils.data.Result
 
 object GatewayJob {

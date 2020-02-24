@@ -13,7 +13,7 @@ import com.android.volley.toolbox.StringRequest;
 
 import org.evergreen_ils.Api;
 import org.evergreen_ils.net.Gateway;
-import org.evergreen_ils.system.Log;
+import org.evergreen_ils.android.Log;
 import org.evergreen_ils.net.VolleyWrangler;
 import org.json.JSONArray;
 import org.json.JSONObject;

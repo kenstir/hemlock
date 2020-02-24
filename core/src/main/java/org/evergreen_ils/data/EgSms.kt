@@ -18,8 +18,7 @@
 
 package org.evergreen_ils.data
 
-import org.evergreen_ils.Api
-import org.evergreen_ils.system.Log
+import org.evergreen_ils.android.Log
 import org.opensrf.util.OSRFObject
 
 private const val TAG = "EgSms"

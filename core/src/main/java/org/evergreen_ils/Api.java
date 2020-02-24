@@ -18,7 +18,7 @@
 
 package org.evergreen_ils;
 
-import org.evergreen_ils.system.Analytics;
+import org.evergreen_ils.android.Analytics;
 import org.evergreen_ils.utils.TextUtils;
 import org.opensrf.ShouldNotHappenException;
 
@@ -234,26 +234,5 @@ public class Api {
             }
         }
         return ret;
-    }
-
-    /**
-     * Return o as a double
-     */
-    public static Double parseDouble(Object o) {
-        if (o instanceof Double) {
-            return (Double) o;
-        } else if (o instanceof Float) {
-            return (Double) o;
-        } else if (o instanceof String) {
-            try {
-                return Double.parseDouble((String) o);
-            } catch (NumberFormatException e) {
-                Analytics.logException(e);
-                return null;
-            }
-        } else {
-            Analytics.logException(new ShouldNotHappenException("unexpected type: "+o));
-            return null;
-        }
     }
 }

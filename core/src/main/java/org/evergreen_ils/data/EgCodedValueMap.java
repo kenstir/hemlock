@@ -19,8 +19,8 @@
 package org.evergreen_ils.data;
 
 import org.evergreen_ils.Api;
-import org.evergreen_ils.system.Analytics;
-import org.evergreen_ils.system.Log;
+import org.evergreen_ils.android.Analytics;
+import org.evergreen_ils.android.Log;
 import org.evergreen_ils.utils.TextUtils;
 import org.opensrf.ShouldNotHappenException;
 import org.opensrf.util.OSRFObject;

@@ -48,8 +48,8 @@ import org.evergreen_ils.android.App.REQUEST_LAUNCH_OPAC_LOGIN_REDIRECT
 import org.evergreen_ils.net.Gateway
 import org.evergreen_ils.searchCatalog.SearchActivity
 import org.evergreen_ils.searchCatalog.SearchCatalog
-import org.evergreen_ils.system.Analytics
-import org.evergreen_ils.system.Log
+import org.evergreen_ils.android.Analytics
+import org.evergreen_ils.android.Log
 import org.evergreen_ils.views.BarcodeActivity
 import org.evergreen_ils.views.MainActivity
 import org.evergreen_ils.views.MenuProvider

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Kenneth H. Cox
+ * Copyright (c) 2020 Kenneth H. Cox
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -16,11 +16,7 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
-package org.evergreen_ils.system;
-
-import android.content.Context;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
+package org.evergreen_ils.android;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayDeque;

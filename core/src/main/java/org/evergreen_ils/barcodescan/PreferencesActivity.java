@@ -23,7 +23,7 @@ import android.preference.CheckBoxPreference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceScreen;
 
-import org.evergreen_ils.system.Analytics;
+import org.evergreen_ils.android.Analytics;
 
 import java.util.ArrayList;
 import java.util.Collection;

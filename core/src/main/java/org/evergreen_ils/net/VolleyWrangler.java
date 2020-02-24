@@ -8,7 +8,7 @@ import android.util.LruCache;
 import com.android.volley.*;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.Volley;
-import org.evergreen_ils.system.Log;
+import org.evergreen_ils.android.Log;
 
 // code originally from http://developer.android.com/training/volley/
 // or SallyPort or VolleyPort or VolleyWrapper

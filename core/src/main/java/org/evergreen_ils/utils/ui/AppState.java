@@ -24,8 +24,8 @@ import android.content.pm.PackageManager;
 import android.preference.PreferenceManager;
 import org.evergreen_ils.R;
 import org.evergreen_ils.android.App;
-import org.evergreen_ils.system.BufferedLogProvider;
-import org.evergreen_ils.system.Log;
+import org.evergreen_ils.android.BufferedLogProvider;
+import org.evergreen_ils.android.Log;
 
 import java.util.Date;
 

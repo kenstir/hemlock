@@ -26,7 +26,6 @@ import android.view.MenuItem;
 
 import org.evergreen_ils.R;
 import org.evergreen_ils.android.App;
-import org.evergreen_ils.system.Log;
 import org.evergreen_ils.utils.ui.ActionBarUtils;
 import org.evergreen_ils.utils.ui.BasePagerActivity;
 import org.evergreen_ils.utils.ui.DetailsFragment;

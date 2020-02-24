@@ -25,12 +25,10 @@ import androidx.test.platform.app.InstrumentationRegistry;
 import android.text.TextUtils;
 
 import org.evergreen_ils.Api;
-import org.evergreen_ils.Result;
-import org.evergreen_ils.accountAccess.AccountAccess;
 import org.evergreen_ils.auth.EvergreenAuthenticator;
 import org.evergreen_ils.net.Gateway;
-import org.evergreen_ils.system.Analytics;
-import org.evergreen_ils.system.Log;
+import org.evergreen_ils.android.Analytics;
+import org.evergreen_ils.android.Log;
 import org.evergreen_ils.system.Utils;
 import org.junit.BeforeClass;
 import org.junit.Ignore;

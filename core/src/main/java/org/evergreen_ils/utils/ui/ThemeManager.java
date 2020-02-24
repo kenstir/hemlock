@@ -19,7 +19,7 @@
 package org.evergreen_ils.utils.ui;
 
 import androidx.appcompat.app.AppCompatDelegate;
-import org.evergreen_ils.system.Log;
+import org.evergreen_ils.android.Log;
 
 public class ThemeManager {
 

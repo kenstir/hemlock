@@ -22,7 +22,7 @@ import com.google.zxing.BarcodeFormat;
 import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.common.BitMatrix;
 
-import org.evergreen_ils.system.Analytics;
+import org.evergreen_ils.android.Analytics;
 
 public class BarcodeUtils {
 
