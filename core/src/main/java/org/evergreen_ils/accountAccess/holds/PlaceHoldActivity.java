@@ -63,7 +63,7 @@ import java.util.List;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
-import static org.evergreen_ils.system.Utils.safeString;
+import static org.evergreen_ils.utils.StringUtils.safeString;
 
 public class PlaceHoldActivity extends AppCompatActivity {
 

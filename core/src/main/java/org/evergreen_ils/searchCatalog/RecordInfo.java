@@ -35,7 +35,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.evergreen_ils.system.Utils.safeString;
+import static org.evergreen_ils.utils.StringUtils.safeString;
 
 public class RecordInfo implements Serializable {
 

@@ -185,12 +185,6 @@ public class Utils {
         return uri.getRawQuery();
     }
 
-    public static String safeString(String s) {
-        if (s == null)
-            return "";
-        return s;
-    }
-
     public static boolean safeBool(Boolean b) {
         if (b == null)
             return false;

@@ -30,7 +30,7 @@ import org.evergreen_ils.android.Log;
 
 import java.io.IOException;
 
-import static org.evergreen_ils.system.Utils.safeString;
+import static org.evergreen_ils.utils.StringUtils.safeString;
 
 /**
  * Created by kenstir on 11/17/2015.

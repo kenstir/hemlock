@@ -17,8 +17,6 @@
 
 package org.evergreen_ils.utils;
 
-import org.evergreen_ils.system.Utils;
-
 import androidx.annotation.NonNull;
 
 public class Link {
@@ -28,7 +26,7 @@ public class Link {
 
     public Link(String href, String text) {
         this.href = href;
-        this.text = Utils.safeString(text);
+        this.text = StringUtils.safeString(text);
     }
 
     @Override
