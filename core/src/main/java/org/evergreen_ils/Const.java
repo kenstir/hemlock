@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Kenneth H. Cox
+ * Copyright (c) 2020 Kenneth H. Cox
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -15,12 +15,12 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
-package org.evergreen_ils.system;
+package org.evergreen_ils;
 
 /**
  * Conversion of constants from Const.pm
  */
-public class EvergreenConstants {
+public class Const {
 
     // Copy Statuses
     public static final int COPY_STATUS_AVAILABLE     = 0;
