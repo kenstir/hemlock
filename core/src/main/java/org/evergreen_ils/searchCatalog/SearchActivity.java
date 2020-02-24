@@ -97,15 +97,8 @@ public class SearchActivity extends BaseActivity {
         public int position;
     }
 
-//    @Override
-//    protected void onSaveInstanceState(Bundle outState) {
-//        super.onSaveInstanceState(outState);
-//        //outState.putSerializable("recordList", recordList);
-//    }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
-//        Log.d(TAG, "[kcxxx] onCreate");
         super.onCreate(savedInstanceState);
         if (mRestarting) return;
 
@@ -118,20 +111,12 @@ public class SearchActivity extends BaseActivity {
 
         searchResults = new ArrayList<>();
         clearResults();
-//        if (savedInstanceState == null) {
-//            recordList = new ArrayList<>();
-//        } else {
-//            recordList = (ArrayList<RecordInfo>) savedInstanceState.getSerializable("recordList");
-//        }
         recordList = search.getResults();
 
         // create search results fragment
         if (savedInstanceState == null) {
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
             searchResultsFragment = new SearchResultsFragment();
-//            Bundle args = new Bundle();
-//            args.putSerializable("recordList", recordList);
-//            searchResultsFragment.setArguments(args);
             transaction.replace(R.id.search_results_list, searchResultsFragment);
             transaction.commit();
         } else {
@@ -158,43 +143,12 @@ public class SearchActivity extends BaseActivity {
         updateSearchResultsSummary();
     }
 
-//    @Override
-//    protected void onStop() {
-//        Log.d(TAG, "[kcxxx] onStop");
-//        super.onStop();
-//    }
-//
-//    @Override
-//    protected void onStart() {
-//        Log.d(TAG, "[kcxxx] onStart");
-//        super.onStart();
-//    }
-//
-//    @Override
-//    protected void onPause() {
-//        Log.d(TAG, "[kcxxx] onPause");
-//        super.onPause();
-//    }
-//
-//    @Override
-//    protected void onResume() {
-//        Log.d(TAG, "[kcxxx] onResume");
-//        super.onResume();
-//    }
-
     @Override
     protected void onDestroy() {
         if (progress != null) progress.dismiss();
-//        Log.d(TAG, "[kcxxx] onDestroy");
         clearResults();
         super.onDestroy();
     }
-
-//    @Override
-//    public void onBackPressed() {
-//        super.onBackPressed();
-//        Log.d(TAG, "[kcxxx] onBackPressed");
-//    }
 
     private void clearResults() {
         haveSearched = false;
