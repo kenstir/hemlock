@@ -18,7 +18,7 @@
 
 package net.kenstir.apps.core
 
-import org.evergreen_ils.data.EgSms
+import org.evergreen_ils.system.EgSms
 import org.evergreen_ils.data.jsonMapOf
 import org.evergreen_ils.android.Log
 import org.evergreen_ils.android.StdoutLogProvider

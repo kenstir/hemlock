@@ -40,7 +40,7 @@ import org.evergreen_ils.Api;
 import org.evergreen_ils.R;
 import org.evergreen_ils.android.App;
 import org.evergreen_ils.data.CopyLocationCounts;
-import org.evergreen_ils.data.EgOrg;
+import org.evergreen_ils.system.EgOrg;
 import org.evergreen_ils.net.Gateway;
 import org.evergreen_ils.net.GatewayJsonObjectRequest;
 import org.evergreen_ils.net.VolleyWrangler;

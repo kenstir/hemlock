@@ -35,7 +35,7 @@ import kotlinx.coroutines.joinAll
 import org.evergreen_ils.R
 import org.evergreen_ils.android.AccountUtils
 import org.evergreen_ils.android.App
-import org.evergreen_ils.data.EgOrg
+import org.evergreen_ils.system.EgOrg
 import org.evergreen_ils.data.FineRecord
 import org.evergreen_ils.data.Result
 import org.evergreen_ils.net.Gateway

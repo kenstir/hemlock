@@ -24,6 +24,8 @@ import android.content.res.Resources;
 import org.evergreen_ils.Api;
 import org.evergreen_ils.R;
 import org.evergreen_ils.searchCatalog.RecordInfo;
+import org.evergreen_ils.system.EgCodedValueMap;
+import org.evergreen_ils.system.EgOrg;
 import org.evergreen_ils.utils.JsonUtils;
 import org.evergreen_ils.utils.TextUtils;
 import org.opensrf.util.OSRFObject;

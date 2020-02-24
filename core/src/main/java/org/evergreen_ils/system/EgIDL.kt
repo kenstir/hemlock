@@ -16,32 +16,22 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
-package org.evergreen_ils.data
+package org.evergreen_ils.system
 
+import org.evergreen_ils.Api
+import org.evergreen_ils.net.Gateway
 import org.evergreen_ils.android.Log
-import org.opensrf.util.OSRFObject
+import org.open_ils.idl.IDLParser
 
-private const val TAG = "EgSms"
+object EgIDL {
 
-object EgSms {
-    @JvmStatic
-    var carriers = mutableListOf<SMSCarrier>()
-
-    fun loadCarriers(carriers: List<OSRFObject>) {
-        synchronized(this) {
-            this.carriers.clear()
-            for (obj in carriers) {
-                val id = obj.getInt("id")
-                val name = obj.getString("name")
-                if (id != null && name != null) {
-                    this.carriers.add(SMSCarrier(id, name))
-                    Log.d(TAG, "loadSMSCarriers id:$id name:$name")
-                }
-            }
-            this.carriers.sort()
-        }
+    suspend fun loadIDL() {
+        var now = System.currentTimeMillis()
+        val url = Gateway.getIDLUrl()
+        val xml = Gateway.fetchString(url)
+        val parser = IDLParser(xml.byteInputStream())
+        now = Log.logElapsedTime(Api.TAG, now, "loadIDL.get")
+        parser.parse()
+        Log.logElapsedTime(Api.TAG, now, "loadIDL.parse")
     }
-
-    @JvmStatic
-    fun findCarrier(id: Int): SMSCarrier? = carriers.firstOrNull { it.id == id }
 }

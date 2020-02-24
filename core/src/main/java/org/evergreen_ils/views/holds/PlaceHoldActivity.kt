@@ -35,10 +35,10 @@ import org.evergreen_ils.Api
 import org.evergreen_ils.R
 import org.evergreen_ils.android.App
 import org.evergreen_ils.data.Account
-import org.evergreen_ils.data.EgOrg.findOrg
-import org.evergreen_ils.data.EgOrg.orgs
-import org.evergreen_ils.data.EgOrg.smsEnabled
-import org.evergreen_ils.data.EgSms.carriers
+import org.evergreen_ils.system.EgOrg.findOrg
+import org.evergreen_ils.system.EgOrg.orgs
+import org.evergreen_ils.system.EgOrg.smsEnabled
+import org.evergreen_ils.system.EgSms.carriers
 import org.evergreen_ils.data.Organization
 import org.evergreen_ils.data.Result
 import org.evergreen_ils.data.SMSCarrier
@@ -46,7 +46,6 @@ import org.evergreen_ils.net.Gateway
 import org.evergreen_ils.searchCatalog.RecordInfo
 import org.evergreen_ils.android.Analytics
 import org.evergreen_ils.android.Log
-import org.evergreen_ils.system.Utils
 import org.evergreen_ils.utils.IntUtils.equals
 import org.evergreen_ils.utils.getCustomMessage
 import org.evergreen_ils.utils.ui.BaseActivity

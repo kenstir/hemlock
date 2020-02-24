@@ -18,9 +18,6 @@
 
 package org.evergreen_ils.net
 
-import org.evergreen_ils.Api
-import org.evergreen_ils.net.Gateway
-import org.evergreen_ils.data.EgCodedValueMap
 import org.opensrf.util.OSRFObject
 import org.evergreen_ils.data.Result
 

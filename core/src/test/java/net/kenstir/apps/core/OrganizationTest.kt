@@ -17,7 +17,7 @@
  */
 package net.kenstir.apps.core
 
-import org.evergreen_ils.data.EgOrg
+import org.evergreen_ils.system.EgOrg
 import org.evergreen_ils.android.Log
 import org.evergreen_ils.android.StdoutLogProvider
 import org.junit.Assert.*

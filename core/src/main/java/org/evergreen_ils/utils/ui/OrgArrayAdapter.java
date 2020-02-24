@@ -7,7 +7,7 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 import org.evergreen_ils.R;
-import org.evergreen_ils.data.EgOrg;
+import org.evergreen_ils.system.EgOrg;
 import org.evergreen_ils.data.Organization;
 
 import java.util.List;

@@ -29,6 +29,10 @@ import org.evergreen_ils.R
 import org.evergreen_ils.data.*
 import org.evergreen_ils.net.Gateway
 import org.evergreen_ils.android.Log
+import org.evergreen_ils.system.EgCodedValueMap
+import org.evergreen_ils.system.EgCopyStatus
+import org.evergreen_ils.system.EgIDL
+import org.evergreen_ils.system.EgOrg
 import org.evergreen_ils.utils.getCustomMessage
 import java.util.concurrent.atomic.AtomicInteger
 

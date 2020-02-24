@@ -79,7 +79,6 @@ class GatewayResultTest {
 
         val obj = result.asObject()
         assertNotNull(obj)
-        if (obj == null) return
         assertEquals(3, obj.getInt("total_holds"))
         assertEquals(2, obj.getInt("queue_position"))
     }

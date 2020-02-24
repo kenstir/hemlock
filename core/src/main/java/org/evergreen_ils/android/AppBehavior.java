@@ -19,7 +19,7 @@ package org.evergreen_ils.android;
 
 import android.text.TextUtils;
 
-import org.evergreen_ils.data.EgOrg;
+import org.evergreen_ils.system.EgOrg;
 import org.evergreen_ils.searchCatalog.RecordInfo;
 import org.evergreen_ils.utils.Link;
 import org.evergreen_ils.utils.MARCRecord;

@@ -43,7 +43,7 @@ import org.evergreen_ils.accountAccess.bookbags.BookBag;
 import org.evergreen_ils.accountAccess.bookbags.BookBagUtils;
 import org.evergreen_ils.views.holds.PlaceHoldActivity;
 import org.evergreen_ils.android.App;
-import org.evergreen_ils.data.EgOrg;
+import org.evergreen_ils.system.EgOrg;
 import org.evergreen_ils.net.Gateway;
 import org.evergreen_ils.net.VolleyWrangler;
 import org.evergreen_ils.searchCatalog.CopyInformationActivity;

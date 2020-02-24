@@ -55,7 +55,7 @@ class FineRecordTest {
 
         val fines = FineRecord.makeArray(result.asArray())
         assertNotNull(fines)
-        assertEquals(0, fines?.size)
+        assertEquals(0, fines.size)
     }
 
     @Test
