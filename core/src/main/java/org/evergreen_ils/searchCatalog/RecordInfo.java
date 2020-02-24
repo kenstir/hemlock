@@ -22,8 +22,7 @@ package org.evergreen_ils.searchCatalog;
 import android.text.TextUtils;
 
 import org.evergreen_ils.Api;
-import org.evergreen_ils.system.Log;
-import org.evergreen_ils.system.Utils;
+import org.evergreen_ils.android.Log;
 import org.evergreen_ils.utils.MARCRecord;
 import org.evergreen_ils.utils.MARCXMLParser;
 import org.evergreen_ils.utils.RecordAttributes;

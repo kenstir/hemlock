@@ -24,7 +24,6 @@ import java.util.ArrayList;
 import androidx.fragment.app.FragmentPagerAdapter;
 import android.view.MenuItem;
 import org.evergreen_ils.R;
-import org.evergreen_ils.system.Log;
 import org.evergreen_ils.utils.ui.*;
 import org.evergreen_ils.views.splashscreen.SplashActivity;
 

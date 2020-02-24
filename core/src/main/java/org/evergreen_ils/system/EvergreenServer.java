@@ -21,6 +21,8 @@ package org.evergreen_ils.system;
 import android.text.TextUtils;
 
 import org.evergreen_ils.Api;
+import org.evergreen_ils.android.Analytics;
+import org.evergreen_ils.android.Log;
 import org.open_ils.idl.IDLException;
 import org.open_ils.idl.IDLParser;
 import org.opensrf.net.http.HttpConnection;

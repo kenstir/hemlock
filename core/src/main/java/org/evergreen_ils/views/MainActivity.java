@@ -38,10 +38,9 @@ import org.evergreen_ils.accountAccess.fines.FinesActivity;
 import org.evergreen_ils.accountAccess.holds.HoldsActivity;
 import org.evergreen_ils.android.App;
 import org.evergreen_ils.searchCatalog.SearchActivity;
-import org.evergreen_ils.system.Analytics;
+import org.evergreen_ils.android.Analytics;
 import org.evergreen_ils.system.EvergreenServerLoader;
-import org.evergreen_ils.system.Log;
-import org.evergreen_ils.utils.ui.AppState;
+import org.evergreen_ils.android.Log;
 import org.evergreen_ils.utils.ui.BaseActivity;
 
 public class MainActivity extends BaseActivity {

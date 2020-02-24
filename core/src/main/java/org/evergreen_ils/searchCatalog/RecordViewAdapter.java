@@ -24,7 +24,7 @@ import com.android.volley.toolbox.NetworkImageView;
 import org.evergreen_ils.net.VolleyWrangler;
 import org.evergreen_ils.R;
 import org.evergreen_ils.system.EvergreenServer;
-import org.evergreen_ils.system.Log;
+import org.evergreen_ils.android.Log;
 
 import java.util.List;
 

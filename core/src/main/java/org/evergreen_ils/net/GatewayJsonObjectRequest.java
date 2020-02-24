@@ -23,7 +23,7 @@ import com.android.volley.ParseError;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.toolbox.HttpHeaderParser;
-import org.evergreen_ils.system.Log;
+import org.evergreen_ils.android.Log;
 import org.opensrf.util.GatewayResponse;
 
 import java.io.UnsupportedEncodingException;

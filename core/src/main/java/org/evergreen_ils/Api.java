@@ -20,7 +20,7 @@ package org.evergreen_ils;
 
 import android.text.TextUtils;
 
-import org.evergreen_ils.system.Analytics;
+import org.evergreen_ils.android.Analytics;
 import org.opensrf.ShouldNotHappenException;
 
 import java.text.ParseException;
@@ -28,7 +28,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.StringTokenizer;
 
 /** OSRF API constants
  *

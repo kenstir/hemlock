@@ -29,8 +29,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import org.evergreen_ils.R;
-import org.evergreen_ils.system.Log;
-import org.evergreen_ils.system.Analytics;
+import org.evergreen_ils.android.Log;
+import org.evergreen_ils.android.Analytics;
 
 /**
  * Created with IntelliJ IDEA.

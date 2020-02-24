@@ -32,7 +32,7 @@ import android.widget.TextView;
 import org.evergreen_ils.R;
 import org.evergreen_ils.accountAccess.AccountUtils;
 import org.evergreen_ils.android.App;
-import org.evergreen_ils.system.Analytics;
+import org.evergreen_ils.android.Analytics;
 import org.evergreen_ils.utils.ui.AppState;
 import org.evergreen_ils.views.MainActivity;
 import org.evergreen_ils.views.splashscreen.LoadingTask.LoadingTaskListener;

@@ -22,7 +22,7 @@ package org.evergreen_ils.accountAccess.fines;
 import java.util.Date;
 
 import org.evergreen_ils.Api;
-import org.evergreen_ils.system.Log;
+import org.evergreen_ils.android.Log;
 import org.evergreen_ils.searchCatalog.RecordInfo;
 import org.opensrf.util.OSRFObject;
 

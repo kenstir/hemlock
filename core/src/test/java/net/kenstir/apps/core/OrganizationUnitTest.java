@@ -19,9 +19,9 @@
 package net.kenstir.apps.core;
 
 import org.evergreen_ils.system.EvergreenServer;
-import org.evergreen_ils.system.Log;
+import org.evergreen_ils.android.Log;
 import org.evergreen_ils.system.Organization;
-import org.evergreen_ils.system.StdoutLogProvider;
+import org.evergreen_ils.android.StdoutLogProvider;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;

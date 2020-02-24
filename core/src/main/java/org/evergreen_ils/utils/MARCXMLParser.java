@@ -20,12 +20,10 @@ package org.evergreen_ils.utils;
 import android.text.TextUtils;
 
 import java.io.ByteArrayInputStream;
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 
-import org.evergreen_ils.system.Log;
+import org.evergreen_ils.android.Log;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 import org.xmlpull.v1.XmlPullParserFactory;

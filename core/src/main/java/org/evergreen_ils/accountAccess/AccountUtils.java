@@ -26,7 +26,7 @@ import android.text.TextUtils;
 import org.evergreen_ils.R;
 import org.evergreen_ils.auth.Const;
 import org.evergreen_ils.system.Library;
-import org.evergreen_ils.system.Log;
+import org.evergreen_ils.android.Log;
 
 import java.io.IOException;
 

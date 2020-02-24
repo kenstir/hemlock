@@ -20,8 +20,8 @@ package net.kenstir.apps.core;
 
 import com.google.zxing.BarcodeFormat;
 
-import org.evergreen_ils.system.Log;
-import org.evergreen_ils.system.StdoutLogProvider;
+import org.evergreen_ils.android.Log;
+import org.evergreen_ils.android.StdoutLogProvider;
 import org.evergreen_ils.utils.BarcodeUtils;
 import org.junit.Before;
 import org.junit.BeforeClass;

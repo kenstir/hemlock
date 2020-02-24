@@ -43,8 +43,8 @@ import org.evergreen_ils.R;
 import org.evergreen_ils.accountAccess.AccountUtils;
 import org.evergreen_ils.net.VolleyWrangler;
 import org.evergreen_ils.system.Library;
-import org.evergreen_ils.system.Log;
-import org.evergreen_ils.system.Analytics;
+import org.evergreen_ils.android.Log;
+import org.evergreen_ils.android.Analytics;
 import org.opensrf.util.JSONException;
 import org.opensrf.util.JSONReader;
 

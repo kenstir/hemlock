@@ -24,7 +24,6 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 
 import org.evergreen_ils.R;
-import org.evergreen_ils.system.Log;
 import org.evergreen_ils.utils.ui.AppState;
 
 import java.io.File;

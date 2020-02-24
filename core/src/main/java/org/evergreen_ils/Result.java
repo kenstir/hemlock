@@ -18,7 +18,7 @@
 
 package org.evergreen_ils;
 
-import org.evergreen_ils.system.Log;
+import org.evergreen_ils.android.Log;
 
 import java.util.HashMap;
 import java.util.Map;

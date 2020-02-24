@@ -27,15 +27,14 @@ import org.evergreen_ils.accountAccess.SessionNotFoundException;
 import org.evergreen_ils.android.App;
 import org.evergreen_ils.api.PCRUDService;
 import org.evergreen_ils.searchCatalog.CodedValueMap;
-import org.evergreen_ils.searchCatalog.SearchCatalog;
-import org.evergreen_ils.system.Analytics;
+import org.evergreen_ils.android.Analytics;
 import org.evergreen_ils.utils.ui.AppState;
 
 import android.accounts.AccountManager;
 import android.app.Activity;
 import android.os.Bundle;
 import org.evergreen_ils.system.Library;
-import org.evergreen_ils.system.Log;
+import org.evergreen_ils.android.Log;
 import org.evergreen_ils.system.EvergreenServer;
 
 /** This is basically the same as an AsyncTask<String,String,String>, except that it uses

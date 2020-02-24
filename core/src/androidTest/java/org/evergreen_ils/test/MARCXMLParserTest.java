@@ -20,8 +20,8 @@ package org.evergreen_ils.test;
 import android.content.Context;
 import androidx.test.platform.app.InstrumentationRegistry;
 
-import org.evergreen_ils.system.Log;
-import org.evergreen_ils.system.StdoutLogProvider;
+import org.evergreen_ils.android.Log;
+import org.evergreen_ils.android.StdoutLogProvider;
 import org.evergreen_ils.utils.Link;
 import org.evergreen_ils.utils.MARCRecord;
 import org.evergreen_ils.utils.MARCXMLParser;

@@ -21,7 +21,7 @@ package org.evergreen_ils.services;
 
 import java.util.Date;
 
-import org.evergreen_ils.system.Log;
+import org.evergreen_ils.android.Log;
 
 import android.app.IntentService;
 import android.content.Intent;

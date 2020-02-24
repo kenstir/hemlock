@@ -21,7 +21,6 @@ import android.content.res.Resources;
 import android.text.TextUtils;
 
 import org.evergreen_ils.R;
-import org.evergreen_ils.system.Analytics;
 
 public class AppFactory {
     private static String TAG = AppFactory.class.getSimpleName();
