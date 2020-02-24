@@ -37,7 +37,6 @@ public class EgSearch {
 
     private static EgSearch instance = null;
 
-    // the org on which the searches will be made
     public Organization selectedOrganization = null;
 
     public Integer visible = 0;
