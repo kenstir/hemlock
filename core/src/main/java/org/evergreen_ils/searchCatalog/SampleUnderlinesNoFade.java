@@ -26,6 +26,7 @@ import android.view.MenuItem;
 
 import org.evergreen_ils.R;
 import org.evergreen_ils.android.App;
+import org.evergreen_ils.system.EgSearch;
 import org.evergreen_ils.utils.ui.ActionBarUtils;
 import org.evergreen_ils.utils.ui.BasePagerActivity;
 import org.evergreen_ils.utils.ui.DetailsFragment;
@@ -59,7 +60,7 @@ public class SampleUnderlinesNoFade extends BasePagerActivity {
 
         orgID = getIntent().getIntExtra("orgID", 1);
         records = (ArrayList<RecordInfo>) getIntent().getSerializableExtra("recordList");
-        if (records == null) records = SearchCatalog.getInstance().getResults();
+        if (records == null) records = EgSearch.getInstance().getResults();
         int record_position = getIntent().getIntExtra("recordPosition", 0);
         numResults = getIntent().getIntExtra("numResults", records.size());
 
@@ -77,7 +78,6 @@ public class SampleUnderlinesNoFade extends BasePagerActivity {
     private void finishWithIntent() {
         Intent intent = new Intent();
         //intent.putExtra("recordList", records);
-        //Log.d(TAG, "kcxxx about to setResult with "+records.size()+" items");
         setResult(RETURN_DATA, intent);
         finish();
     }

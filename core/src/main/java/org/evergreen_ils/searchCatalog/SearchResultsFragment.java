@@ -23,6 +23,7 @@ import android.view.*;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import org.evergreen_ils.R;
+import org.evergreen_ils.system.EgSearch;
 import org.evergreen_ils.utils.ui.ItemClickSupport;
 
 import java.util.ArrayList;
@@ -51,7 +52,7 @@ public class SearchResultsFragment extends Fragment {
         super.onCreate(savedInstanceState);
         //Bundle args = this.getArguments();
         //mDataset = (ArrayList<RecordInfo>) args.getSerializable("recordList");
-        mDataset = SearchCatalog.getInstance().getResults();
+        mDataset = EgSearch.getInstance().getResults();
         mAdapter = new RecordViewAdapter(mDataset);
     }
 
