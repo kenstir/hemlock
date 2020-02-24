@@ -39,14 +39,10 @@ public class EgSearch {
 
     private static EgSearch instance = null;
 
-    // the org on which the searches will be made
     public Organization selectedOrganization = null;
 
     public Integer visible = 0;
 
-    // With limit at 500, we saw some TransactionTooLargeException: data parcel size 684000 bytes
-    // 2017-11-24, still seeing the crash with searchLimit=400
-    // 2020-01-25, still seeing it with searchLimit=200
     private static int searchLimit = 100;
 
     private ArrayList<RecordInfo> results;
