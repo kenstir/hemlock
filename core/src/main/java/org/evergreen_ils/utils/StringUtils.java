@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 Kenneth H. Cox
+ * Copyright (c) 2020 Kenneth H. Cox
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -16,21 +16,12 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
-package org.evergreen_ils.utils
+package org.evergreen_ils.utils;
 
-fun Any.fromApiToIntOrNull(): Int? {
-    when (this) {
-        null -> {
-            return null
-        }
-        is Int -> {
-            return this
-        }
-        is String -> {
-            return this.toIntOrNull()
-        }
-        else -> {
-            return null
-        }
+public class StringUtils {
+    public static String safeString(String s) {
+        if (s == null)
+            return "";
+        return s;
     }
 }

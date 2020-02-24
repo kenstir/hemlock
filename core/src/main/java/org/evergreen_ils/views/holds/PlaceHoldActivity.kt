@@ -227,7 +227,7 @@ class PlaceHoldActivity : BaseActivity() {
         val defaultPhoneNumber = account!!.phoneNumber
         if (systemwide_phone_enabled) {
             phoneNotification!!.isChecked = defaultPhoneNotification
-            phoneNotify!!.setText(Utils.safeString(defaultPhoneNumber))
+            phoneNotify?.setText(defaultPhoneNumber)
             phoneNotification!!.setOnCheckedChangeListener { buttonView, isChecked -> phoneNotify!!.isEnabled = isChecked }
             phoneNotify!!.isEnabled = defaultPhoneNotification
         } else {
@@ -235,12 +235,12 @@ class PlaceHoldActivity : BaseActivity() {
             phoneNotification!!.visibility = View.GONE
             phoneNotify!!.visibility = View.GONE
             // As a special case, we set the checkbox and text field for patrons with phone
-// notification turned on with a phone number, even for apps where the checkbox is hidden.
-// This causes us to set phoneNotify=### on holds, which makes it print on hold slips,
-// allowing those few remaining patrons to continue getting notifications by phone.
+            // notification turned on with a phone number, even for apps where the checkbox is hidden.
+            // This causes us to set phoneNotify=### on holds, which makes it print on hold slips,
+            // allowing those few remaining patrons to continue getting notifications by phone.
             if (defaultPhoneNotification && !TextUtils.isEmpty(defaultPhoneNumber)) {
                 phoneNotification!!.isChecked = defaultPhoneNotification
-                phoneNotify!!.setText(Utils.safeString(defaultPhoneNumber))
+                phoneNotify?.setText(defaultPhoneNumber)
             }
         }
     }
@@ -254,7 +254,7 @@ class PlaceHoldActivity : BaseActivity() {
                 smsNotify!!.isEnabled = isChecked
             }
             smsNotify!!.isEnabled = isChecked
-            smsNotify!!.setText(Utils.safeString(account!!.smsNumber))
+            smsNotify?.setText(account?.smsNumber)
             smsSpinner!!.isEnabled = isChecked
             initSMSSpinner(account!!.smsCarrier)
         } else {

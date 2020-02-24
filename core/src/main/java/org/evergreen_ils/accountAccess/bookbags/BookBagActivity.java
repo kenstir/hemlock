@@ -29,7 +29,7 @@ import org.evergreen_ils.accountAccess.AccountAccess;
 import org.evergreen_ils.accountAccess.SessionNotFoundException;
 import org.evergreen_ils.android.Analytics;
 import org.evergreen_ils.android.Log;
-import org.evergreen_ils.system.Utils;
+import org.evergreen_ils.utils.StringUtils;
 import org.evergreen_ils.utils.ui.BaseActivity;
 import org.evergreen_ils.utils.ui.ProgressDialogSupport;
 
@@ -235,9 +235,9 @@ public class BookBagActivity extends BaseActivity {
             }
 
             TextView nameText = (TextView) row.findViewById(R.id.bookbag_name);
-            nameText.setText(Utils.safeString(record.name));
+            nameText.setText(StringUtils.safeString(record.name));
             TextView descText = (TextView) row.findViewById(R.id.bookbag_description);
-            descText.setText(Utils.safeString(record.description));
+            descText.setText(StringUtils.safeString(record.description));
             TextView itemsText = (TextView) row.findViewById(R.id.bookbag_items);
             itemsText.setText(getResources().getQuantityString(R.plurals.number_of_items,
                     record.items.size(), record.items.size()));

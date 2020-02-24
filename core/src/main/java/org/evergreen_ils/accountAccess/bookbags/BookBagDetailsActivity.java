@@ -27,9 +27,9 @@ import org.evergreen_ils.accountAccess.AccountAccess;
 import org.evergreen_ils.accountAccess.SessionNotFoundException;
 import org.evergreen_ils.android.Analytics;
 import org.evergreen_ils.android.Log;
-import org.evergreen_ils.system.Utils;
 import org.evergreen_ils.searchCatalog.RecordDetails;
 import org.evergreen_ils.searchCatalog.RecordInfo;
+import org.evergreen_ils.utils.StringUtils;
 import org.evergreen_ils.utils.ui.ActionBarUtils;
 import org.evergreen_ils.utils.ui.BaseActivity;
 import org.evergreen_ils.utils.ui.ProgressDialogSupport;
@@ -90,7 +90,7 @@ public class BookBagDetailsActivity extends BaseActivity {
         bookbag_name = (TextView) findViewById(R.id.bookbag_name);
         bookbag_name.setText(bookBag.name);
         bookbag_desc = (TextView) findViewById(R.id.bookbag_description);
-        bookbag_desc.setText(Utils.safeString(bookBag.description));
+        bookbag_desc.setText(StringUtils.safeString(bookBag.description));
         delete_bookbag_button = (Button) findViewById(R.id.remove_bookbag);
         delete_bookbag_button.setOnClickListener(new OnClickListener() {
             @Override

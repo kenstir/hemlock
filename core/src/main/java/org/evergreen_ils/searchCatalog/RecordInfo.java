@@ -40,7 +40,7 @@ import java.util.Map;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import static org.evergreen_ils.system.Utils.safeString;
+import static org.evergreen_ils.utils.StringUtils.safeString;
 
 public class RecordInfo implements Serializable {
 

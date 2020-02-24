@@ -98,15 +98,4 @@ public class Utils {
         return null;
     }
 
-    public static String safeString(String s) {
-        if (s == null)
-            return "";
-        return s;
-    }
-
-    public static boolean safeBool(Boolean b) {
-        if (b == null)
-            return false;
-        return b;
-    }
 }

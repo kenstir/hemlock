@@ -30,7 +30,7 @@ import org.evergreen_ils.data.Library;
 
 import java.io.IOException;
 
-import static org.evergreen_ils.system.Utils.safeString;
+import static org.evergreen_ils.utils.StringUtils.safeString;
 
 public class AccountUtils {
 
