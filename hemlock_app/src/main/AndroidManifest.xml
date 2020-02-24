@@ -65,7 +65,7 @@
             android:windowSoftInputMode="stateAlwaysHidden" >
         </activity>
         <activity
-                android:name="org.evergreen_ils.accountAccess.checkout.CheckoutsActivity"
+                android:name="org.evergreen_ils.views.CheckoutsActivity"
                 android:label="@string/checkout_items_title"
                 android:parentActivityName="org.evergreen_ils.views.MainActivity">
         </activity>
@@ -83,7 +83,7 @@
                 android:label="@string/hold_details_title">
         </activity>
         <activity
-                android:name="org.evergreen_ils.accountAccess.fines.FinesActivity"
+                android:name="org.evergreen_ils.views.FinesActivity"
                 android:label="@string/title_fines"
                 android:parentActivityName="org.evergreen_ils.views.MainActivity">
         </activity>
