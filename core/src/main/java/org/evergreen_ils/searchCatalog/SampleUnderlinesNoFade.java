@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import androidx.fragment.app.FragmentPagerAdapter;
 import android.view.MenuItem;
 import org.evergreen_ils.R;
+import org.evergreen_ils.system.EgSearch;
 import org.evergreen_ils.utils.ui.*;
 import org.evergreen_ils.views.splashscreen.SplashActivity;
 
@@ -40,11 +41,7 @@ public class SampleUnderlinesNoFade extends BasePagerActivity {
     private static final String TAG = SampleUnderlinesNoFade.class.getSimpleName();
 
     private ArrayList<RecordInfo> records;
-    //private SearchCatalog search;
-    private ArrayList<RecordInfo> searchRecords;
     private Context context;
-    private ProgressDialog progressDialog;
-    //private Runnable searchRunnableWithOffset;
 
     public static final int RETURN_DATA = 5;
     private Integer orgID = 1;
@@ -61,11 +58,9 @@ public class SampleUnderlinesNoFade extends BasePagerActivity {
         setContentView(R.layout.simple_underlines);
         ActionBarUtils.initActionBarForActivity(this, getIntent().getStringExtra("title"));
 
-        //search = SearchCatalog.getInstance();
-
         orgID = getIntent().getIntExtra("orgID", 1);
         records = (ArrayList<RecordInfo>) getIntent().getSerializableExtra("recordList");
-        if (records == null) records = SearchCatalog.getInstance().getResults();
+        if (records == null) records = EgSearch.getInstance().getResults();
         int record_position = getIntent().getIntExtra("recordPosition", 0);
         numResults = getIntent().getIntExtra("numResults", records.size());
 
@@ -80,43 +75,11 @@ public class SampleUnderlinesNoFade extends BasePagerActivity {
         indicator.setViewPager(mPager);
         indicator.setFades(false);
         mIndicator = indicator;
-        /*
-        searchRunnableWithOffset = new Runnable() {
-
-            @Override
-            public void run() {
-
-                runOnUiThread(new Runnable() {
-                    
-                    @Override
-                    public void run() {
-                        progressDialog = ProgressDialog.show(context, null,getResources().getText(R.string.dialog_load_more_message));
-                    }
-                });
-                
-                searchRecords = search.getSearchResults(search.searchText, search.searchClass, search.searchFormat, records.size());
-
-                runOnUiThread(new Runnable() {
-
-                    @Override
-                    public void run() {
-                        if (searchRecords.size() > 0) {
-                            for (int j = 0; j < searchRecords.size(); j++)
-                                records.add(searchRecords.get(j));
-                        }
-                        mAdapter.notifyDataSetChanged();
-                        progressDialog.dismiss();
-                    }
-                });
-            }
-        };
-        */
     }
 
     private void finishWithIntent() {
         Intent intent = new Intent();
         //intent.putExtra("recordList", records);
-        //Log.d(TAG, "kcxxx about to setResult with "+records.size()+" items");
         setResult(RETURN_DATA, intent);
         finish();
     }
@@ -148,10 +111,6 @@ public class SampleUnderlinesNoFade extends BasePagerActivity {
 
         @Override
         public Fragment getItem(int position) {
-//            if (records.size() > 1 && position == records.size() - 1 && records.size() < numResults) {
-//                Thread getSearchResults = new Thread(searchRunnableWithOffset);
-//                getSearchResults.start();
-//            }
             return DetailsFragment.newInstance(records.get(position), position, numResults, orgID);
         }
 

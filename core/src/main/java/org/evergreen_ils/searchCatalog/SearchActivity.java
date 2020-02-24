@@ -35,6 +35,7 @@ import org.evergreen_ils.accountAccess.holds.PlaceHoldActivity;
 import org.evergreen_ils.android.App;
 import org.evergreen_ils.barcodescan.CaptureActivity;
 import org.evergreen_ils.android.Analytics;
+import org.evergreen_ils.system.EgSearch;
 import org.evergreen_ils.system.EvergreenServer;
 import org.evergreen_ils.utils.ui.AppState;
 import org.evergreen_ils.android.Log;
@@ -69,7 +70,7 @@ public class SearchActivity extends BaseActivity {
     private TextView searchResultsSummary;
     private SearchResultsFragment searchResultsFragment;
 
-    private SearchCatalog search;
+    private EgSearch search;
     private ArrayList<RecordInfo> recordList;
     private ProgressDialogSupport progress;
     private ArrayList<RecordInfo> searchResults;
@@ -105,7 +106,7 @@ public class SearchActivity extends BaseActivity {
         setContentView(R.layout.activity_search);
 
         eg = EvergreenServer.getInstance();
-        search = SearchCatalog.getInstance();
+        search = EgSearch.getInstance();
         bookBags = AccountAccess.getInstance().getBookbags();
         progress = new ProgressDialogSupport();
 
