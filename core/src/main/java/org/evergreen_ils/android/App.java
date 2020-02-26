@@ -48,7 +48,7 @@ public class App {
 
     // request/result codes for use with startActivityForResult
     public static final int REQUEST_PURCHASE = 10001;
-    public static final int REQUEST_LAUNCH_OPAC_LOGIN_REDIRECT = 10002;
+    public static final int REQUEST_MYOPAC_MESSAGES = 10002;
     public static final int RESULT_PURCHASED = 20001;
 
     private static int mIsDebuggable = -1;

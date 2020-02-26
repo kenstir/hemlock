@@ -142,10 +142,8 @@ class FinesActivity : BaseActivity() {
                 val password = AccountUtils.getPassword(this@FinesActivity, username)
                 var url = (Gateway.baseUrl
                         + "/eg/opac/login"
-                        + "?redirect_to=" + URLEncoder.encode("/eg/opac/myopac/main_payment_form#pay_fines_now")
-                        + "?username=" + URLEncoder.encode(username))
-                if (!TextUtils.isEmpty(password)) url += "&password=" + URLEncoder.encode(password)
-                startActivityForResult(Intent(Intent.ACTION_VIEW, Uri.parse(url)), App.REQUEST_LAUNCH_OPAC_LOGIN_REDIRECT)
+                        + "?redirect_to=" + URLEncoder.encode("/eg/opac/myopac/main_payment_form#pay_fines_now"))
+                launchURL(url)
             }
         } else {
             pay_fines_button?.visibility = View.GONE

@@ -120,7 +120,7 @@ class MainActivity : BaseActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         Log.d(TAG, "onActivityResult req=$requestCode result=$resultCode")
-        if (requestCode == App.REQUEST_LAUNCH_OPAC_LOGIN_REDIRECT) {
+        if (requestCode == App.REQUEST_MYOPAC_MESSAGES) {
             loadUnreadMessageCount()
         }
     }

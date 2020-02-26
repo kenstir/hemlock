@@ -38,22 +38,17 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import org.evergreen_ils.R
-import org.evergreen_ils.android.AccountUtils
 import org.evergreen_ils.accountAccess.bookbags.BookBagActivity
-import org.evergreen_ils.views.CheckoutsActivity
-import org.evergreen_ils.views.FinesActivity
-import org.evergreen_ils.views.holds.HoldsActivity
+import org.evergreen_ils.android.AccountUtils
+import org.evergreen_ils.android.Analytics
 import org.evergreen_ils.android.App
-import org.evergreen_ils.android.App.REQUEST_LAUNCH_OPAC_LOGIN_REDIRECT
+import org.evergreen_ils.android.App.REQUEST_MYOPAC_MESSAGES
+import org.evergreen_ils.android.Log
 import org.evergreen_ils.net.Gateway
 import org.evergreen_ils.searchCatalog.SearchActivity
 import org.evergreen_ils.system.EgSearch
-import org.evergreen_ils.android.Analytics
-import org.evergreen_ils.android.Log
-import org.evergreen_ils.views.BarcodeActivity
-import org.evergreen_ils.views.MainActivity
-import org.evergreen_ils.views.MenuProvider
-import java.net.URLEncoder
+import org.evergreen_ils.views.*
+import org.evergreen_ils.views.holds.HoldsActivity
 import kotlin.coroutines.CoroutineContext
 
 /* Activity base class to handle common behaviours like the navigation drawer */
@@ -216,16 +211,8 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
             //            return true;
         } else if (id == R.id.action_messages) {
             Analytics.logEvent("Messages: Open", "via", "options_menu")
-            val username = App.getAccount().username
-            val password = AccountUtils.getPassword(this, username)
-            var path = ("/eg/opac/login"
-                    + "?redirect_to=" + URLEncoder.encode("/eg/opac/myopac/messages"))
-            if (!TextUtils.isEmpty(username))
-                path = path + "&username=" + URLEncoder.encode(username)
-            if (!TextUtils.isEmpty(password))
-                path = path + "&password=" + URLEncoder.encode(password)
-            val url = Gateway.getUrl(path)
-            startActivityForResult(Intent(Intent.ACTION_VIEW, Uri.parse(url)), REQUEST_LAUNCH_OPAC_LOGIN_REDIRECT)
+            val url = Gateway.getUrl("/eg/opac/myopac/messages")
+            launchURL(url, REQUEST_MYOPAC_MESSAGES)
             return true
         } else if (id == R.id.action_dark_mode) {
             ThemeManager.saveAndApplyNightMode(AppCompatDelegate.MODE_NIGHT_YES)
@@ -237,6 +224,18 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
             return false
         }
         return false
+    }
+
+    fun launchURL(url: String, requestId: Int? = null) {
+        val uri = Uri.parse(url)
+        val intent = Intent(Intent.ACTION_VIEW, uri)
+        if (intent.resolveActivity(packageManager) != null) {
+            if (requestId != null) {
+                startActivityForResult(intent, requestId)
+            } else {
+                startActivity(intent)
+            }
+        }
     }
 
     /** template method that should be overridden in derived activities that want pull-to-refresh */
