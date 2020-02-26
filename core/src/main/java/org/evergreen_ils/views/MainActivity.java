@@ -71,7 +71,7 @@ public class MainActivity extends BaseActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         Log.d(TAG, "onActivityResult req=" + requestCode + " result=" + resultCode);
-        if (requestCode == App.REQUEST_LAUNCH_OPAC_LOGIN_REDIRECT) {
+        if (requestCode == App.REQUEST_MYOPAC_MESSAGES) {
             fetchUnreadMessageCount();
         }
     }

@@ -55,10 +55,6 @@ import org.evergreen_ils.views.MainActivity;
 import org.evergreen_ils.views.MenuProvider;
 import org.evergreen_ils.views.splashscreen.SplashActivity;
 
-import java.net.URLEncoder;
-
-import static org.evergreen_ils.android.App.REQUEST_LAUNCH_OPAC_LOGIN_REDIRECT;
-
 /* Activity base class to handle common behaviours like the navigation drawer */
 public class BaseActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -217,16 +213,8 @@ public class BaseActivity extends AppCompatActivity
 //            return true;
         } else if (id == R.id.action_messages) {
             Analytics.logEvent("Messages: Open", "via", "options_menu");
-            String username = AccountAccess.getInstance().getUserName();
-            String password = AccountUtils.getPassword(this, username);
-            String path = "/eg/opac/login"
-                    + "?redirect_to=" + URLEncoder.encode("/eg/opac/myopac/messages");
-            if (!TextUtils.isEmpty(username))
-                path = path + "&username=" + URLEncoder.encode(username);
-            if (!TextUtils.isEmpty(password))
-                path = path + "&password=" + URLEncoder.encode(password);
-            String url = EvergreenServer.getInstance().getUrl(path);
-            startActivityForResult(new Intent(Intent.ACTION_VIEW, Uri.parse(url)), REQUEST_LAUNCH_OPAC_LOGIN_REDIRECT);
+            String url = EvergreenServer.getInstance().getUrl("/eg/opac/myopac/messages");
+            launchURL(url, App.REQUEST_MYOPAC_MESSAGES);
             return true;
         } else if (id == R.id.action_dark_mode) {
             saveAndApplyNightMode(AppCompatDelegate.MODE_NIGHT_YES);
@@ -238,6 +226,22 @@ public class BaseActivity extends AppCompatActivity
             return false;
         }
         return false;
+    }
+
+    protected void launchURL(String url) {
+        launchURL(url, null);
+    }
+
+    protected void launchURL(String url, Integer requestId) {
+        Uri uri = Uri.parse(url);
+        Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+        if (intent.resolveActivity(getPackageManager()) != null) {
+            if (requestId != null) {
+                startActivityForResult(intent, requestId);
+            } else {
+                startActivity(intent);
+            }
+        }
     }
 
     protected void saveAndApplyNightMode(int nightMode) {

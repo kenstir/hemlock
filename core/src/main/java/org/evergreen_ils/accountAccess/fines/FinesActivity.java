@@ -19,22 +19,24 @@
  */
 package org.evergreen_ils.accountAccess.fines;
 
-import java.net.URLEncoder;
-import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.List;
+import android.content.Context;
+import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.Toast;
 
-import android.content.Intent;
-import android.net.Uri;
-import android.text.TextUtils;
-import android.widget.*;
 import org.evergreen_ils.R;
 import org.evergreen_ils.accountAccess.AccountAccess;
-import org.evergreen_ils.accountAccess.AccountUtils;
 import org.evergreen_ils.accountAccess.SessionNotFoundException;
+import org.evergreen_ils.android.Analytics;
 import org.evergreen_ils.searchCatalog.RecordDetails;
 import org.evergreen_ils.searchCatalog.RecordInfo;
-import org.evergreen_ils.android.Analytics;
 import org.evergreen_ils.system.EvergreenServer;
 import org.evergreen_ils.system.Organization;
 import org.evergreen_ils.system.Utils;
@@ -42,13 +44,10 @@ import org.evergreen_ils.utils.ui.BaseActivity;
 import org.evergreen_ils.utils.ui.ProgressDialogSupport;
 import org.opensrf.util.OSRFObject;
 
-import android.content.Context;
-import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-
-import static org.evergreen_ils.android.App.REQUEST_LAUNCH_OPAC_LOGIN_REDIRECT;
+import java.net.URLEncoder;
+import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.List;
 
 public class FinesActivity extends BaseActivity {
 
@@ -135,16 +134,10 @@ public class FinesActivity extends BaseActivity {
                 @Override
                 public void onClick(View v) {
                     Analytics.logEvent("Fines: Pay Fines", "num_fines", finesRecords.size());
-                    String username = AccountAccess.getInstance().getUserName();
-                    String password = AccountUtils.getPassword(FinesActivity.this, username);
-                    String path =                            "/eg/opac/login"
-                            + "?redirect_to=" + URLEncoder.encode("/eg/opac/myopac/main_payment_form#pay_fines_now")
-                            + "?username=" + URLEncoder.encode(username);
-                    if (!TextUtils.isEmpty(password))
-                        path = path
-                            + "&password=" + URLEncoder.encode(password);
+                    String path = "/eg/opac/login"
+                            + "?redirect_to=" + URLEncoder.encode("/eg/opac/myopac/main_payment_form#pay_fines_now");
                     String url = EvergreenServer.getInstance().getUrl(path);
-                    startActivityForResult(new Intent(Intent.ACTION_VIEW, Uri.parse(url)), REQUEST_LAUNCH_OPAC_LOGIN_REDIRECT);
+                    launchURL(url);
                 }
             });
         } else {
@@ -257,10 +250,10 @@ public class FinesActivity extends BaseActivity {
                 row = inflater.inflate(R.layout.fines_list_item, parent, false);
             }
 
-            fineTitle = (TextView) row.findViewById(R.id.fines_title);
-            fineAuthor = (TextView) row.findViewById(R.id.fines_author);
-            fineBalanceOwed = (TextView) row.findViewById(R.id.fines_balance_owed);
-            fineStatus = (TextView) row.findViewById(R.id.fines_status);
+            fineTitle =  row.findViewById(R.id.fines_title);
+            fineAuthor = row.findViewById(R.id.fines_author);
+            fineBalanceOwed = row.findViewById(R.id.fines_balance_owed);
+            fineStatus = row.findViewById(R.id.fines_status);
 
             fineTitle.setText(record.title);
             fineAuthor.setText(record.author);

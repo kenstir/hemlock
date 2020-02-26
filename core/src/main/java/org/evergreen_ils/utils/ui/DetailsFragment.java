@@ -217,8 +217,10 @@ public class DetailsFragment extends Fragment {
 
     private void launchURL(String url) {
         Uri uri = Uri.parse(url);
-        Intent i = new Intent(Intent.ACTION_VIEW, uri);
-        startActivity(i);
+        Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+        if (intent.resolveActivity(getActivity().getPackageManager()) != null) {
+            startActivity(intent);
+        }
     }
 
     private void launchOnlineAccess() {
