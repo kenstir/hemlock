@@ -21,9 +21,7 @@ import org.opensrf.util.OSRFObject
 import java.io.Serializable
 import java.util.*
 
-class BookBag(obj: OSRFObject) : Serializable {
-    @JvmField
-    var id: Int
+class BookBag(@JvmField val id: Int, obj: OSRFObject) : Serializable {
     @JvmField
     var name: String? = null
     @JvmField
@@ -33,7 +31,6 @@ class BookBag(obj: OSRFObject) : Serializable {
     var items: ArrayList<BookBagItem>? = null
 
     init {
-        id = obj.getInt("id")!!
         name = obj.getString("name")
         description = obj.getString("description")
         items = ArrayList()
@@ -43,6 +40,12 @@ class BookBag(obj: OSRFObject) : Serializable {
     companion object {
         fun makeArray(objArray: List<OSRFObject>): ArrayList<BookBag> {
             val ret = ArrayList<BookBag>()
+            for (obj in objArray) {
+                obj.getInt("id")?.let { id ->
+                    val bookBag = BookBag(id, obj)
+                    ret.add(bookBag)
+                }
+            }
             return ret
         }
     }

@@ -89,47 +89,6 @@ public class AccountAccess {
     // ---------------------------------------Book
     // bags-----------------------------------//
 
-    /**
-     * Retrieve bookbags from the server.
-     *
-     * @return the bookbags
-     * @throws SessionNotFoundException the session not found exception
-     */
-    // todo: load on demand.  It takes ~750ms to load my 4 bookbags on startup.
-    public boolean retrieveBookbags() throws SessionNotFoundException {
-        Account account = App.getAccount();
-
-        Object response = Utils.doRequest(conn(), Api.ACTOR,
-                Api.CONTAINERS_BY_CLASS, account.getAuthToken(), new Object[] {
-                        account.getAuthToken(), account.getId(), Api.CONTAINER_CLASS_BIBLIO, Api.CONTAINER_BUCKET_TYPE_BOOKBAG });
-
-        List<OSRFObject> bookbags = (List<OSRFObject>) response;
-
-        ArrayList<BookBag> bookBagObj = new ArrayList<BookBag>();
-        // in order to refresh bookbags
-        this.bookBags = bookBagObj;
-
-        if (bookbags == null)
-            return true;
-
-        for (int i = 0; i < bookbags.size(); i++) {
-
-            BookBag bag = new BookBag(bookbags.get(i));
-            getBookbagContent(bag, bookbags.get(i).getInt("id"));
-
-            bookBagObj.add(bag);
-        }
-
-        Collections.sort(this.bookBags, new Comparator<BookBag>() {
-            @Override
-            public int compare(BookBag lhs, BookBag rhs) {
-                return lhs.name.compareTo(rhs.name);
-            }
-        });
-
-        return true;
-    }
-    
     public ArrayList<BookBag> getBookbags() {
         return this.bookBags;
     }

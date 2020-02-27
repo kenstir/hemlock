@@ -28,6 +28,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.*
+import kotlinx.android.synthetic.main.record_details_fragment.*
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.joinAll
@@ -50,7 +51,7 @@ class BookBagActivity : BaseActivity() {
     private var accountAccess: AccountAccess? = null
     private var lv: ListView? = null
     private var listAdapter: BookBagsArrayAdapter? = null
-    private var bookBags: ArrayList<BookBag>? = null
+    private var bookBags = mutableListOf<BookBag>()
     private var progress: ProgressDialogSupport? = null
     private var bookbag_name: EditText? = null
     private var create_bookbag: Button? = null
@@ -119,7 +120,7 @@ class BookBagActivity : BaseActivity() {
                 }
 
                 jobs.joinAll()
-                //updateList()
+                updateList()
                 Log.logElapsedTime(TAG, start, "[kcxxx] fetchData ... done")
             } catch (ex: Exception) {
                 Log.d(TAG, "[kcxxx] fetchData ... caught", ex)
@@ -128,6 +129,14 @@ class BookBagActivity : BaseActivity() {
                 progress?.dismiss()
             }
         }
+    }
+
+    private fun updateList() {
+        listAdapter?.clear()
+        for (bookBag in bookBags) {
+            listAdapter?.add(bookBag)
+        }
+        listAdapter?.notifyDataSetChanged()
     }
 
     private fun initGetBookbagsRunnable() {
