@@ -27,6 +27,8 @@ import org.evergreen_ils.accountAccess.AccountAccess;
 import org.evergreen_ils.accountAccess.SessionNotFoundException;
 import org.evergreen_ils.android.Analytics;
 import org.evergreen_ils.android.Log;
+import org.evergreen_ils.data.BookBag;
+import org.evergreen_ils.data.BookBagItem;
 import org.evergreen_ils.searchCatalog.RecordDetails;
 import org.evergreen_ils.searchCatalog.RecordInfo;
 import org.evergreen_ils.utils.StringUtils;

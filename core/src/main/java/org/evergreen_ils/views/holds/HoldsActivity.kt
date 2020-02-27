@@ -57,9 +57,12 @@ class HoldsActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         if (isRestarting) return
+
         setContentView(R.layout.activity_holds)
+
         holdsSummary = findViewById(R.id.holds_summary)
         lv = findViewById(R.id.holds_item_list)
+
         progress = ProgressDialogSupport()
         listAdapter = HoldsArrayAdapter(this, R.layout.holds_list_item, holdRecords)
         lv?.setAdapter(listAdapter)
@@ -74,7 +77,6 @@ class HoldsActivity : BaseActivity() {
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
         Log.d(TAG, object{}.javaClass.enclosingMethod?.name)
-
         fetchData()
     }
 

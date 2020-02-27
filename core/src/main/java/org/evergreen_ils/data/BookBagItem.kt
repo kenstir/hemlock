@@ -17,21 +17,22 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
  * 
  */
-package org.evergreen_ils.accountAccess.bookbags;
+package org.evergreen_ils.data
 
-import java.io.Serializable;
+import org.evergreen_ils.searchCatalog.RecordInfo
+import org.opensrf.util.OSRFObject
+import java.io.Serializable
 
-import org.evergreen_ils.searchCatalog.RecordInfo;
-import org.opensrf.util.OSRFObject;
+class BookBagItem(cbrebi: OSRFObject) : Serializable {
+    @JvmField
+    var id: Int
+    @JvmField
+    var targetId: Int
+    @JvmField
+    var recordInfo: RecordInfo? = null
 
-public class BookBagItem implements Serializable {
-
-    public int id;
-    public int targetId;
-    public RecordInfo recordInfo;
-
-    public BookBagItem(OSRFObject cbrebi) {
-        this.id = cbrebi.getInt("id");
-        this.targetId = cbrebi.getInt("target_biblio_record_entry");
+    init {
+        id = cbrebi.getInt("id")!!
+        targetId = cbrebi.getInt("target_biblio_record_entry")!!
     }
 }

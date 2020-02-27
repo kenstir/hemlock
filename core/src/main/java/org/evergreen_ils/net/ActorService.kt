@@ -33,4 +33,5 @@ interface ActorService {
     suspend fun fetchUserMessages(account: Account): Result<List<OSRFObject>>
     suspend fun fetchUserFinesSummary(account: Account): Result<OSRFObject?>
     suspend fun fetchUserTransactionsWithCharges(account: Account): Result<List<OSRFObject>>
+    suspend fun fetchUserBookBags(account: Account): Result<List<OSRFObject>>
 }

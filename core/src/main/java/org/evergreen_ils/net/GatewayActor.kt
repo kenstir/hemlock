@@ -120,4 +120,15 @@ object GatewayActor: ActorService {
             Result.Error(e)
         }
     }
+
+    override suspend fun fetchUserBookBags(account: Account): Result<List<OSRFObject>> {
+        return try {
+            val (authToken, userID) = account.getCredentialsOrThrow()
+            val args = arrayOf<Any?>(authToken, userID, Api.CONTAINER_CLASS_BIBLIO, Api.CONTAINER_BUCKET_TYPE_BOOKBAG)
+            val ret = Gateway.fetchObjectArray(Api.ACTOR, Api.CONTAINERS_BY_CLASS, args, false)
+            Result.Success(ret)
+        } catch (e: Exception) {
+            Result.Error(e)
+        }
+    }
 }

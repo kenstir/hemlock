@@ -26,13 +26,11 @@ import org.evergreen_ils.R;
 import org.evergreen_ils.accountAccess.AccountAccess;
 import org.evergreen_ils.accountAccess.SessionNotFoundException;
 import org.evergreen_ils.android.Log;
+import org.evergreen_ils.data.BookBag;
 import org.evergreen_ils.searchCatalog.RecordInfo;
 
 import java.util.List;
 
-/**
- * Created by kenstir on 2/29/2016.
- */
 public class BookBagUtils {
     private static final String TAG = BookBagUtils.class.getSimpleName();
 

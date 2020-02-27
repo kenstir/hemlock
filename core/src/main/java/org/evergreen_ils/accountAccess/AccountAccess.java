@@ -23,8 +23,8 @@ import android.app.Activity;
 import android.text.TextUtils;
 
 import org.evergreen_ils.Api;
-import org.evergreen_ils.accountAccess.bookbags.BookBag;
-import org.evergreen_ils.accountAccess.bookbags.BookBagItem;
+import org.evergreen_ils.data.BookBag;
+import org.evergreen_ils.data.BookBagItem;
 import org.evergreen_ils.android.AccountUtils;
 import org.evergreen_ils.android.App;
 import org.evergreen_ils.auth.Const;
