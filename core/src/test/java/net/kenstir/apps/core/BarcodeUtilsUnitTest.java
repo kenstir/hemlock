@@ -32,15 +32,6 @@ public class BarcodeUtilsUnitTest {
     static int width = 400;
     static int height = 200;
 
-    @BeforeClass
-    public static void setUpClass() throws Exception {
-        //Log.setProvider(new StdoutLogProvider());
-    }
-
-    @Before
-    public void setUp() throws Exception {
-    }
-
     @Test
     public void test_encodingCodabar() throws Exception {
         assertNotNull(BarcodeUtils.tryEncode("55555000001234", width, height, BarcodeFormat.CODABAR));
