@@ -21,27 +21,18 @@ package org.evergreen_ils.services;
 
 import java.util.Date;
 
-import org.androwrapee.db.DatabaseClass;
-import org.androwrapee.db.DatabaseField;
-import org.androwrapee.db.IdField;
-
-@DatabaseClass
 public class NotificationAlert {
 
     public static final String tableName = "notifications";
 
     public static final int NOTIFICATION_INTENT = 123456;
 
-    @IdField
     public long id;
 
-    @DatabaseField
     public int intent_val;
 
-    @DatabaseField
     public Date triggerDate;
 
-    @DatabaseField
     public String message;
 
     // required constructor for DAO
