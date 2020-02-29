@@ -38,6 +38,7 @@ import org.evergreen_ils.accountAccess.SessionNotFoundException
 import org.evergreen_ils.android.Analytics
 import org.evergreen_ils.android.App
 import org.evergreen_ils.android.Log
+import org.evergreen_ils.data.Account
 import org.evergreen_ils.data.BookBag
 import org.evergreen_ils.data.Result
 import org.evergreen_ils.net.Gateway
@@ -55,7 +56,6 @@ class BookBagActivity : BaseActivity() {
     private var progress: ProgressDialogSupport? = null
     private var bookbag_name: EditText? = null
     private var create_bookbag: Button? = null
-    private var getBookbagsRunnable: Runnable? = null
 
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -84,8 +84,6 @@ class BookBagActivity : BaseActivity() {
             intent.putExtra("bookBag", item)
             startActivityForResult(intent, 0)
         })
-        initGetBookbagsRunnable()
-        Thread(getBookbagsRunnable).start()
     }
 
     override fun onDestroy() {
@@ -119,6 +117,13 @@ class BookBagActivity : BaseActivity() {
                     }
                 }
 
+                // flesh bookbags
+                for (bookBag in bookBags) {
+                    jobs.add(async {
+                        fetchBookBagDetails(bookBag, App.getAccount())
+                    })
+                }
+
                 jobs.joinAll()
                 updateList()
                 Log.logElapsedTime(TAG, start, "[kcxxx] fetchData ... done")
@@ -131,6 +136,17 @@ class BookBagActivity : BaseActivity() {
         }
     }
 
+    private suspend fun fetchBookBagDetails(bookBag: BookBag, account: Account): Result<Unit> {
+        Log.d(TAG, "[kcxxx] bag:${bookBag.name}")
+        val result = Gateway.actor.fetchUserBookBagContent(account, bookBag.id)
+        if (result is Result.Error) return result
+        val obj = result.get()
+        Log.d(TAG, "[kcxxx] bag content:$obj")
+        bookBag.fleshFromObject(obj)
+
+        return Result.Success(Unit)
+    }
+
     private fun updateList() {
         listAdapter?.clear()
         for (bookBag in bookBags) {
@@ -139,36 +155,13 @@ class BookBagActivity : BaseActivity() {
         listAdapter?.notifyDataSetChanged()
     }
 
-    private fun initGetBookbagsRunnable() {
-        /*
-        getBookbagsRunnable = Runnable {
-            runOnUiThread { if (!isFinishing) progress!!.show(this@BookBagActivity, getString(R.string.msg_retrieving_lists)) }
-            try {
-                accountAccess!!.retrieveBookbags()
-            } catch (e: SessionNotFoundException) {
-                try {
-                    if (accountAccess!!.reauthenticate(this@BookBagActivity)) accountAccess!!.retrieveBookbags()
-                } catch (e2: Exception) {
-                    Log.d(TAG, "caught", e2)
-                }
-            }
-            bookBags = accountAccess!!.bookbags
-            runOnUiThread {
-                listAdapter!!.clear()
-                for (bookBag in bookBags) listAdapter!!.add(bookBag)
-                listAdapter!!.notifyDataSetChanged()
-                progress!!.dismiss()
-            }
-        }
-        */
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        when (resultCode) {
-            BookBagDetailsActivity.RESULT_CODE_UPDATE -> Thread(getBookbagsRunnable).start()
-        }
-    }
+    // We now fetchData in onAttachedToWindow, so this is superfluous
+//    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+//        super.onActivityResult(requestCode, resultCode, data)
+//        when (resultCode) {
+//            BookBagDetailsActivity.RESULT_CODE_UPDATE -> fetchData()
+//        }
+//    }
 
     private fun createBookbag(name: String) {
         if (name.length < 2) {
@@ -191,7 +184,7 @@ class BookBagActivity : BaseActivity() {
                 }
             }
             runOnUiThread { progress!!.dismiss() }
-            Thread(getBookbagsRunnable).start()
+            showAlert("not implemented yet")
         })
         progress!!.show(this, getString(R.string.msg_creating_list))
         thread.start()

@@ -23,7 +23,7 @@ import org.evergreen_ils.searchCatalog.RecordInfo
 import org.opensrf.util.OSRFObject
 import java.io.Serializable
 
-class BookBagItem(cbrebi: OSRFObject) : Serializable {
+class BookBagItem(cbrebiObj: OSRFObject) : Serializable {
     @JvmField
     var id: Int
     @JvmField
@@ -32,7 +32,7 @@ class BookBagItem(cbrebi: OSRFObject) : Serializable {
     var recordInfo: RecordInfo? = null
 
     init {
-        id = cbrebi.getInt("id")!!
-        targetId = cbrebi.getInt("target_biblio_record_entry")!!
+        id = cbrebiObj.getInt("id") ?: -1
+        targetId = cbrebiObj.getInt("target_biblio_record_entry") ?: -1
     }
 }

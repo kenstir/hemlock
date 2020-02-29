@@ -23,24 +23,19 @@ import android.app.Activity;
 import android.text.TextUtils;
 
 import org.evergreen_ils.Api;
-import org.evergreen_ils.data.BookBag;
-import org.evergreen_ils.data.BookBagItem;
 import org.evergreen_ils.android.AccountUtils;
 import org.evergreen_ils.android.App;
+import org.evergreen_ils.android.Log;
 import org.evergreen_ils.auth.Const;
 import org.evergreen_ils.data.Account;
+import org.evergreen_ils.data.BookBag;
 import org.evergreen_ils.net.Gateway;
 import org.evergreen_ils.searchCatalog.RecordInfo;
-import org.evergreen_ils.android.Log;
 import org.evergreen_ils.system.Utils;
 import org.opensrf.net.http.HttpConnection;
 import org.opensrf.util.OSRFObject;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
 
 public class AccountAccess {
 
@@ -91,39 +86,6 @@ public class AccountAccess {
 
     public ArrayList<BookBag> getBookbags() {
         return this.bookBags;
-    }
-
-    /**
-     * Gets the bookbag content.
-     *
-     * @param bag the bag
-     * @param bookbagID the bookbag id
-     * @return the bookbag content
-     * @throws SessionNotFoundException the session not found exception
-     */
-    private Object getBookbagContent(BookBag bag, Integer bookbagID)
-            throws SessionNotFoundException {
-        Account account = App.getAccount();
-
-        Map<String, ?> map = (Map<String, ?>) Utils.doRequest(conn(), Api.ACTOR,
-                Api.CONTAINER_FLESH, account.getAuthToken(), new Object[] {
-                        account.getAuthToken(), Api.CONTAINER_CLASS_BIBLIO, bookbagID });
-        
-        List<OSRFObject> items  = new ArrayList<OSRFObject>();
-        
-        try{
-            items = (List<OSRFObject>) map.get("items");
-    
-            for (int i = 0; i < items.size(); i++) {
-    
-                BookBagItem bookBagItem = new BookBagItem(items.get(i));
-    
-                bag.items.add(bookBagItem);
-        }
-
-        }catch(Exception e){};
-        
-        return items;
     }
 
     /**

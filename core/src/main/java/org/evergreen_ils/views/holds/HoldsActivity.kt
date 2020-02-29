@@ -83,8 +83,10 @@ class HoldsActivity : BaseActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         when (resultCode) {
-            HoldDetailsActivity.RESULT_CODE_CANCEL -> Log.d(TAG, "Do nothing")
-            HoldDetailsActivity.RESULT_CODE_DELETE_HOLD, HoldDetailsActivity.RESULT_CODE_UPDATE_HOLD -> {
+            HoldDetailsActivity.RESULT_CODE_CANCEL ->
+                Log.d(TAG, "Do nothing")
+            HoldDetailsActivity.RESULT_CODE_DELETE_HOLD,
+            HoldDetailsActivity.RESULT_CODE_UPDATE_HOLD -> {
                 Log.d(TAG, "Update on result $resultCode")
                 fetchData()
             }

@@ -20,6 +20,7 @@ package org.evergreen_ils.data
 import org.opensrf.util.OSRFObject
 import java.io.Serializable
 import java.util.*
+import kotlin.collections.ArrayList
 
 class BookBag(@JvmField val id: Int, obj: OSRFObject) : Serializable {
     @JvmField
@@ -28,13 +29,21 @@ class BookBag(@JvmField val id: Int, obj: OSRFObject) : Serializable {
     var description: String? = null
     var shared: Boolean? = null
     @JvmField
-    var items: ArrayList<BookBagItem>? = null
+    var items = ArrayList<BookBagItem>()
 
     init {
         name = obj.getString("name")
         description = obj.getString("description")
         items = ArrayList()
         shared = obj.getBoolean("pub")
+    }
+
+    fun fleshFromObject(cbrebObj: OSRFObject) {
+        items.clear()
+        val fleshedItems = cbrebObj.get("items") as? ArrayList<OSRFObject> ?: ArrayList()
+        for (item in fleshedItems) {
+            items.add(BookBagItem(item))
+        }
     }
 
     companion object {
