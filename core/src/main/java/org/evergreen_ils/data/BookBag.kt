@@ -27,7 +27,7 @@ class BookBag(@JvmField val id: Int, obj: OSRFObject) : Serializable {
     var name: String? = null
     @JvmField
     var description: String? = null
-    var shared: Boolean? = null
+    var shared: Boolean
     @JvmField
     var items = ArrayList<BookBagItem>()
 
@@ -35,7 +35,7 @@ class BookBag(@JvmField val id: Int, obj: OSRFObject) : Serializable {
         name = obj.getString("name")
         description = obj.getString("description")
         items = ArrayList()
-        shared = obj.getBoolean("pub")
+        shared = obj.getBoolean("pub") ?: false
     }
 
     fun fleshFromObject(cbrebObj: OSRFObject) {

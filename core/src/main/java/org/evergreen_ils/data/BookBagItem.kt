@@ -25,14 +25,9 @@ import java.io.Serializable
 
 class BookBagItem(cbrebiObj: OSRFObject) : Serializable {
     @JvmField
-    var id: Int
+    var id: Int = cbrebiObj.getInt("id") ?: -1
     @JvmField
-    var targetId: Int
+    var targetId: Int = cbrebiObj.getInt("target_biblio_record_entry") ?: -1
     @JvmField
     var recordInfo: RecordInfo? = null
-
-    init {
-        id = cbrebiObj.getInt("id") ?: -1
-        targetId = cbrebiObj.getInt("target_biblio_record_entry") ?: -1
-    }
 }
