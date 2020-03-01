@@ -38,7 +38,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import org.evergreen_ils.R
-import org.evergreen_ils.accountAccess.bookbags.BookBagActivity
+import org.evergreen_ils.views.bookbags.BookBagsActivity
 import org.evergreen_ils.android.AccountUtils
 import org.evergreen_ils.android.Analytics
 import org.evergreen_ils.android.App
@@ -176,7 +176,7 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
             startActivity(Intent(this, FinesActivity::class.java))
         } else if (id == R.id.main_my_lists_button) {
             Analytics.logEvent("Lists: Open", "via", "nav_drawer")
-            startActivity(Intent(this, BookBagActivity::class.java))
+            startActivity(Intent(this, BookBagsActivity::class.java))
         } else if (id == R.id.btn_barcode) {
             Analytics.logEvent("Barcode: Open", "via", "nav_drawer")
             startActivity(Intent(this, BarcodeActivity::class.java))

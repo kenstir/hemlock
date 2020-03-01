@@ -101,24 +101,6 @@ public class AccountAccess {
     }
 
     /**
-     * Creates the bookbag.
-     *
-     * @param name the name
-     * @throws SessionNotFoundException the session not found exception
-     */
-    public void createBookbag(String name) throws SessionNotFoundException {
-        Account account = App.getAccount();
-
-        OSRFObject cbreb = new OSRFObject("cbreb");
-        cbreb.put("btype", Api.CONTAINER_BUCKET_TYPE_BOOKBAG);
-        cbreb.put("name", name);
-        cbreb.put("pub", false);
-        cbreb.put("owner", account.getId());
-
-        createContainer(Api.CONTAINER_CLASS_BIBLIO, cbreb);
-    }
-
-    /**
      * Delete book bag.
      *
      * @param id the id
@@ -167,22 +149,6 @@ public class AccountAccess {
         Object response = Utils.doRequest(conn(), Api.ACTOR,
                 Api.CONTAINER_ITEM_DELETE, account.getAuthToken(), new Object[] {
                         account.getAuthToken(), container, id });
-    }
-
-    /**
-     * Creates the container.
-     *
-     * @param container the container
-     * @param parameter the parameter
-     * @throws SessionNotFoundException the session not found exception
-     */
-    private void createContainer(String container, Object parameter)
-            throws SessionNotFoundException {
-        Account account = App.getAccount();
-
-        Object response = Utils.doRequest(conn(), Api.ACTOR,
-                Api.CONTAINER_CREATE, account.getAuthToken(), new Object[] {
-                        account.getAuthToken(), container, parameter });
     }
 
     private OSRFObject getItemShortInfo(Integer id) {

@@ -18,9 +18,11 @@
 package org.evergreen_ils.net
 
 import org.evergreen_ils.Api
+import org.evergreen_ils.android.Log
 import org.evergreen_ils.data.Account
 import org.evergreen_ils.data.JSONDictionary
 import org.evergreen_ils.data.Result
+import org.evergreen_ils.data.jsonMapOf
 import org.opensrf.util.OSRFObject
 
 object GatewayActor: ActorService {
@@ -121,7 +123,7 @@ object GatewayActor: ActorService {
         }
     }
 
-    override suspend fun fetchUserBookBags(account: Account): Result<List<OSRFObject>> {
+    override suspend fun fetchBookBags(account: Account): Result<List<OSRFObject>> {
         return try {
             val (authToken, userID) = account.getCredentialsOrThrow()
             val args = arrayOf<Any?>(authToken, userID, Api.CONTAINER_CLASS_BIBLIO, Api.CONTAINER_BUCKET_TYPE_BOOKBAG)
@@ -132,12 +134,75 @@ object GatewayActor: ActorService {
         }
     }
 
-    override suspend fun fetchUserBookBagContent(account: Account, bookBagId: Int): Result<OSRFObject> {
+    override suspend fun fleshBookBagAsync(account: Account, bookBagId: Int): Result<OSRFObject> {
         return try {
-            val (authToken, userID) = account.getCredentialsOrThrow()
+            val (authToken, _) = account.getCredentialsOrThrow()
             val args = arrayOf<Any?>(authToken, Api.CONTAINER_CLASS_BIBLIO, bookBagId)
             val ret = Gateway.fetchObject(Api.ACTOR, Api.CONTAINER_FLESH, args, false)
             Result.Success(ret)
+        } catch (e: Exception) {
+            Result.Error(e)
+        }
+    }
+
+    override suspend fun createBookBagAsync(account: Account, name: String): Result<Unit> {
+        return try {
+            val (authToken, userId) = account.getCredentialsOrThrow()
+            var param = OSRFObject("cbreb", jsonMapOf(
+                    "btype" to Api.CONTAINER_BUCKET_TYPE_BOOKBAG,
+                    "name" to name,
+                    "pub" to false,
+                    "owner" to userId
+            ))
+            val args = arrayOf<Any?>(authToken, Api.CONTAINER_CLASS_BIBLIO, param)
+            val ret = Gateway.fetch(Api.ACTOR, Api.CONTAINER_CREATE, args, false) {
+                Log.d(TAG, "[kcxxx] createResult:$it")
+            }
+            Result.Success(Unit)
+        } catch (e: Exception) {
+            Result.Error(e)
+        }
+    }
+
+    override suspend fun deleteBookBagAsync(account: Account, bookBagId: Int): Result<Unit> {
+        return try {
+            val (authToken, _) = account.getCredentialsOrThrow()
+            val args = arrayOf<Any?>(authToken, Api.CONTAINER_CLASS_BIBLIO, bookBagId)
+            val ret = Gateway.fetch(Api.ACTOR, Api.CONTAINER_FULL_DELETE, args, false) {
+                Log.d(TAG, "[kcxxx] deleteResult:$it")
+            }
+            Result.Success(Unit)
+        } catch (e: Exception) {
+            Result.Error(e)
+        }
+    }
+
+    override suspend fun addItemToBookBagAsync(account: Account, bookBagId: Int, recordId: Int): Result<Unit> {
+        return try {
+            val (authToken, _) = account.getCredentialsOrThrow()
+            var param = jsonMapOf(
+                    "bucket" to bookBagId,
+                    "target_biblio_record_entry" to recordId,
+                    "id" to null
+            )
+            val args = arrayOf<Any?>(authToken, Api.CONTAINER_CLASS_BIBLIO, param)
+            val ret = Gateway.fetch(Api.ACTOR, Api.CONTAINER_ITEM_CREATE, args, false) {
+                Log.d(TAG, "[kcxxx] addItemResult:$it")
+            }
+            Result.Success(Unit)
+        } catch (e: Exception) {
+            Result.Error(e)
+        }
+    }
+
+    override suspend fun removeItemFromBookBagAsync(account: Account, bookBagItemId: Int): Result<Unit> {
+        return try {
+            val (authToken, _) = account.getCredentialsOrThrow()
+            val args = arrayOf<Any?>(authToken, Api.CONTAINER_CLASS_BIBLIO, bookBagItemId)
+            val ret = Gateway.fetch(Api.ACTOR, Api.CONTAINER_ITEM_DELETE, args, false) {
+                Log.d(TAG, "[kcxxx] removeItemResult:$it")
+            }
+            Result.Success(Unit)
         } catch (e: Exception) {
             Result.Error(e)
         }

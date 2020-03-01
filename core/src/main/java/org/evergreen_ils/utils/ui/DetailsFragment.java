@@ -40,7 +40,7 @@ import com.android.volley.toolbox.NetworkImageView;
 import org.evergreen_ils.R;
 import org.evergreen_ils.accountAccess.AccountAccess;
 import org.evergreen_ils.data.BookBag;
-import org.evergreen_ils.accountAccess.bookbags.BookBagUtils;
+import org.evergreen_ils.views.bookbags.BookBagUtils;
 import org.evergreen_ils.views.holds.PlaceHoldActivity;
 import org.evergreen_ils.android.App;
 import org.evergreen_ils.system.EgOrg;

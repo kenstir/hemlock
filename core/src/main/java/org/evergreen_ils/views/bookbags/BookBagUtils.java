@@ -16,7 +16,7 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
-package org.evergreen_ils.accountAccess.bookbags;
+package org.evergreen_ils.views.bookbags;
 
 import android.app.Activity;
 import android.app.AlertDialog;

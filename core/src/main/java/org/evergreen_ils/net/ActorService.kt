@@ -33,6 +33,10 @@ interface ActorService {
     suspend fun fetchUserMessages(account: Account): Result<List<OSRFObject>>
     suspend fun fetchUserFinesSummary(account: Account): Result<OSRFObject?>
     suspend fun fetchUserTransactionsWithCharges(account: Account): Result<List<OSRFObject>>
-    suspend fun fetchUserBookBags(account: Account): Result<List<OSRFObject>>
-    suspend fun fetchUserBookBagContent(account: Account, bookBagId: Int): Result<OSRFObject>
+    suspend fun fetchBookBags(account: Account): Result<List<OSRFObject>>
+    suspend fun fleshBookBagAsync(account: Account, bookBagId: Int): Result<OSRFObject>
+    suspend fun createBookBagAsync(account: Account, name: String): Result<Unit>
+    suspend fun deleteBookBagAsync(account: Account, bookBagId: Int): Result<Unit>
+    suspend fun addItemToBookBagAsync(account: Account, bookBagId: Int, recordId: Int): Result<Unit>
+    suspend fun removeItemFromBookBagAsync(account: Account, bookBagItemId: Int): Result<Unit>
 }

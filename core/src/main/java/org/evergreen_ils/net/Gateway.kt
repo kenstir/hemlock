@@ -18,16 +18,21 @@
 
 package org.evergreen_ils.net
 
+import android.net.Uri
 import android.text.TextUtils
 import com.android.volley.DefaultRetryPolicy
 import com.android.volley.Request
 import com.android.volley.Response
 import com.android.volley.toolbox.StringRequest
 import org.evergreen_ils.Api
+import org.evergreen_ils.android.Analytics
 import org.evergreen_ils.android.Log
+import org.opensrf.ShouldNotHappenException
 import org.opensrf.net.http.HttpConnection
 import org.opensrf.util.GatewayResult
 import org.opensrf.util.JSONWriter
+import java.net.URI
+import java.net.URISyntaxException
 import java.net.URLEncoder
 import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
@@ -67,21 +72,13 @@ object Gateway {
         sb.append("&method=").append(method)
         for (param in params) {
             sb.append("&param=")
-            sb.append(URLEncoder.encode(JSONWriter(param).write(), "UTF-8"))
+            sb.append(Uri.encode(JSONWriter(param).write(), "UTF-8"))
         }
 
         if (addCacheArgs) {
             sb.append("&_ck=").append(clientCacheKey)
             sb.append("&_sk=").append(serverCacheKey)
         }
-
-//        var uri: URI? = null
-//        try { // not using URLEncoder because it replaces ' ' with '+'.
-//            uri = URI("http", "", null, sb.toString(), null)
-//        } catch (ex: URISyntaxException) {
-//            Analytics.logException(ShouldNotHappenException(ex))
-//        }
-//        return uri?.rawQuery ?: ""
 
         return sb.toString()
     }

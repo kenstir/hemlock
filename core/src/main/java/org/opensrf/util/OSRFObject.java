@@ -44,6 +44,10 @@ public class OSRFObject extends HashMap<String, Object> implements OSRFSerializa
         super(map);
     }
 
+    public OSRFObject(String netClass, Map<String, Object> map) {
+        super(map);
+        registry = OSRFRegistry.getRegistry(netClass);
+    }
 
     /**
      * @return This object's registry

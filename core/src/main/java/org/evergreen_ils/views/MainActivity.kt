@@ -33,7 +33,7 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import org.evergreen_ils.R
 import org.evergreen_ils.android.AccountUtils
-import org.evergreen_ils.accountAccess.bookbags.BookBagActivity
+import org.evergreen_ils.views.bookbags.BookBagsActivity
 import org.evergreen_ils.views.holds.HoldsActivity
 import org.evergreen_ils.android.App
 import org.evergreen_ils.system.EgSms
@@ -194,7 +194,7 @@ class MainActivity : BaseActivity() {
             startActivity(Intent(this, FinesActivity::class.java))
         } else if (id == R.id.main_my_lists_button) {
             Analytics.logEvent("Lists: Open", "via", "main_button")
-            startActivity(Intent(this, BookBagActivity::class.java))
+            startActivity(Intent(this, BookBagsActivity::class.java))
         } else if (id == R.id.main_btn_search) {
             Analytics.logEvent("Search: Open", "via", "main_button")
             startActivity(Intent(this, SearchActivity::class.java))

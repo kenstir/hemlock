@@ -17,7 +17,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
  * 
  */
-package org.evergreen_ils.accountAccess.bookbags
+package org.evergreen_ils.views.bookbags
 
 import android.app.AlertDialog
 import android.content.Context
@@ -28,7 +28,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.*
-import kotlinx.android.synthetic.main.record_details_fragment.*
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.joinAll
@@ -48,7 +47,7 @@ import org.evergreen_ils.utils.ui.ProgressDialogSupport
 import org.evergreen_ils.utils.ui.showAlert
 import java.util.*
 
-class BookBagActivity : BaseActivity() {
+class BookBagsActivity : BaseActivity() {
     private var accountAccess: AccountAccess? = null
     private var lv: ListView? = null
     private var listAdapter: BookBagsArrayAdapter? = null
@@ -80,7 +79,7 @@ class BookBagActivity : BaseActivity() {
         lv?.setOnItemClickListener(AdapterView.OnItemClickListener { parent, view, position, id ->
             Analytics.logEvent("Lists: Tap List")
             val item = lv?.getItemAtPosition(position) as BookBag
-            val intent = Intent(this@BookBagActivity, BookBagDetailsActivity::class.java)
+            val intent = Intent(this@BookBagsActivity, BookBagDetailsActivity::class.java)
             intent.putExtra("bookBag", item)
             startActivityForResult(intent, 0)
         })
@@ -103,10 +102,10 @@ class BookBagActivity : BaseActivity() {
                 Log.d(TAG, "[kcxxx] fetchData ...")
                 val start = System.currentTimeMillis()
                 var jobs = mutableListOf<Job>()
-                progress?.show(this@BookBagActivity, getString(R.string.msg_retrieving_lists))
+                progress?.show(this@BookBagsActivity, getString(R.string.msg_retrieving_lists))
 
                 // fetch bookbags
-                val result = Gateway.actor.fetchUserBookBags(App.getAccount())
+                val result = Gateway.actor.fetchBookBags(App.getAccount())
                 when (result) {
                     is Result.Success -> {
                         bookBags = BookBag.makeArray(result.data)
@@ -138,7 +137,7 @@ class BookBagActivity : BaseActivity() {
 
     private suspend fun fetchBookBagDetails(bookBag: BookBag, account: Account): Result<Unit> {
         Log.d(TAG, "[kcxxx] bag:${bookBag.name}")
-        val result = Gateway.actor.fetchUserBookBagContent(account, bookBag.id)
+        val result = Gateway.actor.fleshBookBagAsync(account, bookBag.id)
         if (result is Result.Error) return result
         val obj = result.get()
         Log.d(TAG, "[kcxxx] bag content:$obj")
@@ -155,13 +154,12 @@ class BookBagActivity : BaseActivity() {
         listAdapter?.notifyDataSetChanged()
     }
 
-    // We now fetchData in onAttachedToWindow, so this is superfluous
-//    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-//        super.onActivityResult(requestCode, resultCode, data)
-//        when (resultCode) {
-//            BookBagDetailsActivity.RESULT_CODE_UPDATE -> fetchData()
-//        }
-//    }
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        when (resultCode) {
+            BookBagDetailsActivity.RESULT_CODE_UPDATE -> fetchData()
+        }
+    }
 
     private fun createBookbag(name: String) {
         if (name.length < 2) {
@@ -172,22 +170,16 @@ class BookBagActivity : BaseActivity() {
             builder.create().show()
             return
         }
-        Analytics.logEvent("Lists: Create List")
-        val thread = Thread(Runnable {
-            try {
-                accountAccess!!.createBookbag(name)
-            } catch (e: SessionNotFoundException) {
-                try {
-                    if (accountAccess!!.reauthenticate(this@BookBagActivity)) accountAccess!!.createBookbag(name)
-                } catch (eauth: Exception) {
-                    Log.d(TAG, "caught", eauth)
-                }
+        async {
+            progress?.show(this@BookBagsActivity, getString(R.string.msg_creating_list))
+            Analytics.logEvent("Lists: Create List")
+            val result = Gateway.actor.createBookBagAsync(App.getAccount(), name)
+            progress?.dismiss()
+            when (result) {
+                is Result.Error -> showAlert(result.exception)
+                is Result.Success -> fetchData()
             }
-            runOnUiThread { progress!!.dismiss() }
-            showAlert("not implemented yet")
-        })
-        progress!!.show(this, getString(R.string.msg_creating_list))
-        thread.start()
+        }
     }
 
     internal inner class BookBagsArrayAdapter(context: Context, private val resourceId: Int, private val items: List<BookBag>) : ArrayAdapter<BookBag>(context, resourceId, items) {
@@ -227,6 +219,6 @@ class BookBagActivity : BaseActivity() {
     }
 
     companion object {
-        private val TAG = BookBagActivity::class.java.simpleName
+        private val TAG = BookBagsActivity::class.java.simpleName
     }
 }
