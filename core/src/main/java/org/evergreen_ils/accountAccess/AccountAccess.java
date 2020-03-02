@@ -93,20 +93,6 @@ public class AccountAccess {
     }
 
     /**
-     * Delete book bag.
-     *
-     * @param id the id
-     * @throws SessionNotFoundException the session not found exception
-     */
-    public void deleteBookBag(Integer id) throws SessionNotFoundException {
-        Account account = App.getAccount();
-
-        Object response = Utils.doRequest(conn(), Api.ACTOR,
-                Api.CONTAINER_FULL_DELETE, account.getAuthToken(), new Object[] {
-                        account.getAuthToken(), Api.CONTAINER_CLASS_BIBLIO, id });
-    }
-
-    /**
      * Adds the record to book bag.
      *
      * @param record_id the record_id

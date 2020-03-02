@@ -38,7 +38,6 @@ import org.evergreen_ils.data.Account
 import org.evergreen_ils.data.BookBag
 import org.evergreen_ils.data.Result
 import org.evergreen_ils.net.Gateway
-import org.evergreen_ils.utils.StringUtils
 import org.evergreen_ils.utils.ui.BaseActivity
 import org.evergreen_ils.utils.ui.ProgressDialogSupport
 import org.evergreen_ils.utils.ui.showAlert
@@ -63,7 +62,7 @@ class BookBagsActivity : BaseActivity() {
         bookBagName = findViewById(R.id.bookbag_create_name)
         createButton = findViewById(R.id.bookbag_create_button)
         createButton?.setOnClickListener(View.OnClickListener {
-            createBookbag()
+            createBookBag()
         })
         lv = findViewById(R.id.bookbag_list)
         listAdapter = BookBagsArrayAdapter(this, R.layout.bookbag_list_item)
@@ -152,7 +151,7 @@ class BookBagsActivity : BaseActivity() {
         }
     }
 
-    private fun createBookbag() {
+    private fun createBookBag() {
         val name = bookBagName?.text.toString().trim()
         if (name.isEmpty()) {
             bookBagName?.error = getString(R.string.error_list_name_empty)

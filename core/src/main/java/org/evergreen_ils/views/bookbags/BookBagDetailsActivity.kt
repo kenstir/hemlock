@@ -26,18 +26,23 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import kotlinx.coroutines.async
 import org.evergreen_ils.R
 import org.evergreen_ils.accountAccess.AccountAccess
 import org.evergreen_ils.accountAccess.SessionNotFoundException
 import org.evergreen_ils.android.Analytics
+import org.evergreen_ils.android.App
 import org.evergreen_ils.android.Log
 import org.evergreen_ils.data.BookBag
 import org.evergreen_ils.data.BookBagItem
+import org.evergreen_ils.data.Result
+import org.evergreen_ils.net.Gateway
 import org.evergreen_ils.searchCatalog.RecordDetails
 import org.evergreen_ils.searchCatalog.RecordInfo
 import org.evergreen_ils.utils.ui.ActionBarUtils
 import org.evergreen_ils.utils.ui.BaseActivity
 import org.evergreen_ils.utils.ui.ProgressDialogSupport
+import org.evergreen_ils.utils.ui.showAlert
 import java.util.*
 
 class BookBagDetailsActivity : BaseActivity() {
@@ -125,20 +130,24 @@ class BookBagDetailsActivity : BaseActivity() {
     }
 
     private fun deleteList() {
-        progress?.show(this, getString(R.string.msg_deleting_list))
-        val thread = Thread(Runnable {
-            try {
-                accountAccess!!.deleteBookBag(bookBag!!.id)
-            } catch (e: SessionNotFoundException) {
-                Log.d(TAG, "caught", e)
+        async {
+            progress?.show(this@BookBagDetailsActivity, getString(R.string.msg_deleting_list))
+            Analytics.logEvent("Lists: Delete List")
+            val id = bookBag?.id
+            val result = if (id != null) {
+                Gateway.actor.deleteBookBagAsync(App.getAccount(), id)
+            } else {
+                Result.Success(Unit)
             }
-            runOnUiThread {
-                progress?.dismiss()
-                setResult(RESULT_CODE_UPDATE)
-                finish()
+            progress?.dismiss()
+            when (result) {
+                is Result.Error -> showAlert(result.exception)
+                is Result.Success -> {
+                    setResult(RESULT_CODE_UPDATE)
+                    finish()
+                }
             }
-        })
-        thread.start()
+        }
     }
 
     internal inner class BookBagItemsArrayAdapter(context: Context, private val resourceId: Int) : ArrayAdapter<BookBagItem>(context, resourceId) {
