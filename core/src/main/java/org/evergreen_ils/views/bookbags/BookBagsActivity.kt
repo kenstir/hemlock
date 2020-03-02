@@ -117,7 +117,7 @@ class BookBagsActivity : BaseActivity() {
                 }
 
                 jobs.joinAll()
-                updateList()
+                updateListAdapter()
                 Log.logElapsedTime(TAG, start, "[kcxxx] fetchData ... done")
             } catch (ex: Exception) {
                 Log.d(TAG, "[kcxxx] fetchData ... caught", ex)
@@ -139,7 +139,7 @@ class BookBagsActivity : BaseActivity() {
         return Result.Success(Unit)
     }
 
-    private fun updateList() {
+    private fun updateListAdapter() {
         listAdapter?.clear()
         listAdapter?.addAll(App.getAccount().bookBags)
         listAdapter?.notifyDataSetChanged()
@@ -188,10 +188,10 @@ class BookBagsActivity : BaseActivity() {
             val itemsText = row.findViewById<View>(R.id.bookbag_items) as TextView
 
             val record = getItem(position)
-            nameText.text = StringUtils.safeString(record.name)
-            descText.text = StringUtils.safeString(record.description)
+            nameText.text = record?.name
+            descText.text = record?.description
             itemsText.text = resources.getQuantityString(R.plurals.number_of_items,
-                    record.items!!.size, record.items!!.size)
+                    record?.items?.size ?: 0, record?.items?.size ?: 0)
 
             return row
         }
