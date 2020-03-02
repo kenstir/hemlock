@@ -19,7 +19,6 @@
  */
 package org.evergreen_ils.views.bookbags
 
-import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -32,8 +31,6 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.joinAll
 import org.evergreen_ils.R
-import org.evergreen_ils.accountAccess.AccountAccess
-import org.evergreen_ils.accountAccess.SessionNotFoundException
 import org.evergreen_ils.android.Analytics
 import org.evergreen_ils.android.App
 import org.evergreen_ils.android.Log
@@ -45,16 +42,13 @@ import org.evergreen_ils.utils.StringUtils
 import org.evergreen_ils.utils.ui.BaseActivity
 import org.evergreen_ils.utils.ui.ProgressDialogSupport
 import org.evergreen_ils.utils.ui.showAlert
-import java.util.*
 
 class BookBagsActivity : BaseActivity() {
-    private var accountAccess: AccountAccess? = null
     private var lv: ListView? = null
     private var listAdapter: BookBagsArrayAdapter? = null
-    private var bookBags = mutableListOf<BookBag>()
     private var progress: ProgressDialogSupport? = null
-    private var bookbag_name: EditText? = null
-    private var create_bookbag: Button? = null
+    private var bookBagName: EditText? = null
+    private var createButton: Button? = null
 
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -65,16 +59,14 @@ class BookBagsActivity : BaseActivity() {
         // prevent soft keyboard from popping up when the activity starts
         this.window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN)
 
-        accountAccess = AccountAccess.getInstance()
         progress = ProgressDialogSupport()
-        bookbag_name = findViewById(R.id.bookbag_create_name)
-        create_bookbag = findViewById(R.id.bookbag_create_button)
-        create_bookbag?.setOnClickListener(View.OnClickListener {
-            createBookbag(bookbag_name?.getText().toString())
+        bookBagName = findViewById(R.id.bookbag_create_name)
+        createButton = findViewById(R.id.bookbag_create_button)
+        createButton?.setOnClickListener(View.OnClickListener {
+            createBookbag()
         })
         lv = findViewById(R.id.bookbag_list)
-        bookBags = ArrayList()
-        listAdapter = BookBagsArrayAdapter(this, R.layout.bookbag_list_item, bookBags!!)
+        listAdapter = BookBagsArrayAdapter(this, R.layout.bookbag_list_item)
         lv?.setAdapter(listAdapter)
         lv?.setOnItemClickListener(AdapterView.OnItemClickListener { parent, view, position, id ->
             Analytics.logEvent("Lists: Tap List")
@@ -103,12 +95,13 @@ class BookBagsActivity : BaseActivity() {
                 val start = System.currentTimeMillis()
                 var jobs = mutableListOf<Job>()
                 progress?.show(this@BookBagsActivity, getString(R.string.msg_retrieving_lists))
+                bookBagName?.text = null
 
                 // fetch bookbags
                 val result = Gateway.actor.fetchBookBags(App.getAccount())
                 when (result) {
                     is Result.Success -> {
-                        bookBags = BookBag.makeArray(result.data)
+                        App.getAccount().bookBags = BookBag.makeArray(result.data)
                     }
                     is Result.Error -> {
                         showAlert(result.exception)
@@ -117,7 +110,7 @@ class BookBagsActivity : BaseActivity() {
                 }
 
                 // flesh bookbags
-                for (bookBag in bookBags) {
+                for (bookBag in App.getAccount().bookBags) {
                     jobs.add(async {
                         fetchBookBagDetails(bookBag, App.getAccount())
                     })
@@ -148,9 +141,7 @@ class BookBagsActivity : BaseActivity() {
 
     private fun updateList() {
         listAdapter?.clear()
-        for (bookBag in bookBags) {
-            listAdapter?.add(bookBag)
-        }
+        listAdapter?.addAll(App.getAccount().bookBags)
         listAdapter?.notifyDataSetChanged()
     }
 
@@ -161,13 +152,10 @@ class BookBagsActivity : BaseActivity() {
         }
     }
 
-    private fun createBookbag(name: String) {
-        if (name.length < 2) {
-            val builder = AlertDialog.Builder(this)
-            builder.setTitle(R.string.msg_list_name_too_short_title)
-                    .setMessage(R.string.msg_list_name_too_short)
-                    .setPositiveButton(android.R.string.ok, null)
-            builder.create().show()
+    private fun createBookbag() {
+        val name = bookBagName?.text.toString().trim()
+        if (name.isEmpty()) {
+            bookBagName?.error = getString(R.string.error_list_name_empty)
             return
         }
         async {
@@ -182,15 +170,7 @@ class BookBagsActivity : BaseActivity() {
         }
     }
 
-    internal inner class BookBagsArrayAdapter(context: Context, private val resourceId: Int, private val items: List<BookBag>) : ArrayAdapter<BookBag>(context, resourceId, items) {
-
-        override fun getCount(): Int {
-            return items.size
-        }
-
-        override fun getItem(index: Int): BookBag {
-            return items[index]
-        }
+    internal inner class BookBagsArrayAdapter(context: Context, private val resourceId: Int) : ArrayAdapter<BookBag>(context, resourceId) {
 
         override fun getView(position: Int, convertView: View?, parent: ViewGroup): View? {
             var row = when(convertView) {

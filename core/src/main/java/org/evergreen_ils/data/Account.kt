@@ -39,6 +39,9 @@ class Account constructor(val username: String, var authToken: String?) {
     var smsNumber: String? = null
     var holdNotifyValue: String? = null // kept for analytics
 
+    var bookBags = ArrayList<BookBag>()
+    var bookBagsLoaded: Boolean = false
+
     private var dayPhone: String? = null
     private var defaultPickupOrg: Int? = null
     private var defaultPhone: String? = null

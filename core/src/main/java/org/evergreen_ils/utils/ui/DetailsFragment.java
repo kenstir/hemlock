@@ -38,21 +38,20 @@ import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
 
 import org.evergreen_ils.R;
-import org.evergreen_ils.accountAccess.AccountAccess;
-import org.evergreen_ils.data.BookBag;
-import org.evergreen_ils.views.bookbags.BookBagUtils;
-import org.evergreen_ils.views.holds.PlaceHoldActivity;
+import org.evergreen_ils.android.Analytics;
 import org.evergreen_ils.android.App;
-import org.evergreen_ils.system.EgOrg;
+import org.evergreen_ils.android.Log;
+import org.evergreen_ils.data.BookBag;
+import org.evergreen_ils.data.Organization;
 import org.evergreen_ils.net.Gateway;
 import org.evergreen_ils.net.VolleyWrangler;
 import org.evergreen_ils.searchCatalog.CopyInformationActivity;
 import org.evergreen_ils.searchCatalog.RecordInfo;
 import org.evergreen_ils.searchCatalog.RecordLoader;
-import org.evergreen_ils.android.Analytics;
-import org.evergreen_ils.android.Log;
-import org.evergreen_ils.data.Organization;
+import org.evergreen_ils.system.EgOrg;
 import org.evergreen_ils.utils.Link;
+import org.evergreen_ils.views.bookbags.BookBagUtils;
+import org.evergreen_ils.views.holds.PlaceHoldActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -379,7 +378,6 @@ public class DetailsFragment extends Fragment {
     }
 
     private void initBookbagStuff() {
-        AccountAccess ac = AccountAccess.getInstance();
-        bookBags = ac.getBookbags();
+        bookBags = App.getAccount().getBookBags();
     }
 }

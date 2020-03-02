@@ -28,7 +28,6 @@ import android.text.TextUtils;
 import android.view.*;
 import android.widget.*;
 import org.evergreen_ils.R;
-import org.evergreen_ils.accountAccess.AccountAccess;
 import org.evergreen_ils.data.BookBag;
 import org.evergreen_ils.views.bookbags.BookBagUtils;
 import org.evergreen_ils.system.EgSearch;
@@ -113,7 +112,7 @@ public class SearchActivity extends BaseActivity {
         setContentView(R.layout.activity_search);
 
         search = EgSearch.getInstance();
-        bookBags = AccountAccess.getInstance().getBookbags();
+        bookBags = App.getAccount().getBookBags();
         progress = new ProgressDialogSupport();
 
         searchResults = new ArrayList<>();

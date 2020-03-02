@@ -39,11 +39,7 @@ import java.util.ArrayList;
 
 public class AccountAccess {
 
-    private final static String TAG = AccountAccess.class.getSimpleName();
-
     private static AccountAccess mInstance = null;
-
-    private ArrayList<BookBag> bookBags = new ArrayList<>();
 
     private AccountAccess() {
     }
@@ -83,10 +79,6 @@ public class AccountAccess {
 
     // ---------------------------------------Book
     // bags-----------------------------------//
-
-    public ArrayList<BookBag> getBookbags() {
-        return this.bookBags;
-    }
 
     /**
      * Removes the bookbag item.
