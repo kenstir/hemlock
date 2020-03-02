@@ -53,27 +53,17 @@ import android.widget.Toast;
 
 public class BookBagDetailsActivity extends BaseActivity {
 
-    private final static String TAG = BookBagDetailsActivity.class.getSimpleName();
-
+    private static final String TAG = BookBagDetailsActivity.class.getSimpleName();
     public static final int RESULT_CODE_UPDATE = 1;
 
     private AccountAccess accountAccess;
-
     private ListView lv;
-
     private BookBagItemsArrayAdapter listAdapter = null;
-
-    private ArrayList<BookBagItem> bookBagItems = null;
-
     private ProgressDialogSupport progress;
-
     private BookBag bookBag;
-
-    private TextView bookbag_name;
-    private TextView bookbag_desc;
-
-    private Button delete_bookbag_button;
-
+    private TextView bookBagName;
+    private TextView bookBagDescription;
+    private Button deleteButton;
     private Runnable getItemsRunnable;
 
     @Override
@@ -89,12 +79,13 @@ public class BookBagDetailsActivity extends BaseActivity {
 
         bookBag = (BookBag) getIntent().getSerializableExtra("bookBag");
 
-        bookbag_name = (TextView) findViewById(R.id.bookbag_name);
-        bookbag_name.setText(bookBag.name);
-        bookbag_desc = (TextView) findViewById(R.id.bookbag_description);
-        bookbag_desc.setText(StringUtils.safeString(bookBag.description));
-        delete_bookbag_button = (Button) findViewById(R.id.remove_bookbag);
-        delete_bookbag_button.setOnClickListener(new OnClickListener() {
+        bookBagName = findViewById(R.id.bookbag_name);
+        bookBagDescription = findViewById(R.id.bookbag_description);
+        deleteButton = findViewById(R.id.remove_bookbag);
+
+        bookBagName.setText(bookBag.name);
+        bookBagDescription.setText(bookBag.description);
+        deleteButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
                 Analytics.logEvent("Lists: Delete List");
@@ -112,16 +103,15 @@ public class BookBagDetailsActivity extends BaseActivity {
             }
         });
 
-        lv = (ListView) findViewById(R.id.bookbagitem_list);
-        bookBagItems = new ArrayList<BookBagItem>();
-        listAdapter = new BookBagItemsArrayAdapter(this, R.layout.bookbagitem_list_item, bookBagItems);
+        lv = findViewById(R.id.bookbagitem_list);
+        listAdapter = new BookBagItemsArrayAdapter(this, R.layout.bookbagitem_list_item);
         lv.setAdapter(listAdapter);
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Analytics.logEvent("Lists: Tap List Item");
                 ArrayList<RecordInfo> records = new ArrayList<>();
-                for (BookBagItem item: bookBagItems) {
+                for (BookBagItem item: bookBag.items) {
                     records.add(item.recordInfo);
                 }
                 RecordDetails.launchDetailsFlow(BookBagDetailsActivity.this, records, position);
@@ -129,7 +119,6 @@ public class BookBagDetailsActivity extends BaseActivity {
         });
 
         initRunnable();
-
         new Thread(getItemsRunnable).start();
     }
 
@@ -171,7 +160,7 @@ public class BookBagDetailsActivity extends BaseActivity {
 
                         progress.dismiss();
 
-                        if (bookBagItems.size() == 0)
+                        if (bookBag.items.isEmpty())
                             Toast.makeText(BookBagDetailsActivity.this, R.string.msg_list_empty, Toast.LENGTH_LONG).show();
 
                         listAdapter.notifyDataSetChanged();
@@ -210,19 +199,8 @@ public class BookBagDetailsActivity extends BaseActivity {
         private TextView author;
         private Button remove;
 
-        private List<BookBagItem> records;
-
-        public BookBagItemsArrayAdapter(Context context, int textViewResourceId, List<BookBagItem> objects) {
-            super(context, textViewResourceId, objects);
-            this.records = objects;
-        }
-
-        public int getCount() {
-            return this.records.size();
-        }
-
-        public BookBagItem getItem(int index) {
-            return this.records.get(index);
+        public BookBagItemsArrayAdapter(Context context, int textViewResourceId) {
+            super(context, textViewResourceId);
         }
 
         public View getView(int position, View convertView, ViewGroup parent) {
@@ -238,9 +216,9 @@ public class BookBagDetailsActivity extends BaseActivity {
                 row = inflater.inflate(R.layout.bookbagitem_list_item, parent, false);
             }
 
-            title = (TextView) row.findViewById(R.id.bookbagitem_title);
-            author = (TextView) row.findViewById(R.id.bookbagitem_author);
-            remove = (Button) row.findViewById(R.id.bookbagitem_remove_button);
+            title = row.findViewById(R.id.bookbagitem_title);
+            author = row.findViewById(R.id.bookbagitem_author);
+            remove = row.findViewById(R.id.bookbagitem_remove_button);
 
             title.setText(record.recordInfo.title);
             author.setText(record.recordInfo.author);
