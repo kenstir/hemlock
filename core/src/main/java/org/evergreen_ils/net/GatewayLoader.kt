@@ -20,17 +20,19 @@ package org.evergreen_ils.net
 
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
 import org.evergreen_ils.system.EgOrg
 import org.evergreen_ils.data.Organization
 import org.evergreen_ils.android.Log
+import org.evergreen_ils.data.Account
+import org.evergreen_ils.data.BookBag
 import org.evergreen_ils.data.Result
+import org.opensrf.util.OSRFObject
 
-object GatewayJob {
+object GatewayLoader {
 
-    // EXPERIMENTAL
-    // usage: fetchAllOrgSettingsAsync().join()
-    //suspend fun fetchAllOrgSettingsAsync(org: Organization?) = GlobalScope.launch {
-    suspend fun fetchAllOrgSettingsAsync(org: Organization?) = GlobalScope.async {
+    // usage: loadOrgSettingsAsync(...).await()
+    suspend fun loadOrgSettingsAsync(org: Organization?) = GlobalScope.async {
         val orgs = if (org != null) listOf(org) else EgOrg.orgs
         for (org in orgs) {
             if (!org.settingsLoaded) {
@@ -42,6 +44,16 @@ object GatewayJob {
                     }
                 }
             }
+        }
+    }
+
+    suspend fun loadBookBagsAsync(account: Account): Result<List<OSRFObject>?> {
+        return if (account.bookBagsLoaded) {
+            Log.d(TAG, "[kcxxx] loadBookBagsAsync...noop")
+            Result.Success(null)
+        } else {
+            Log.d(TAG, "[kcxxx] loadBookBagsAsync...")
+            Gateway.actor.fetchBookBags(account)
         }
     }
 }

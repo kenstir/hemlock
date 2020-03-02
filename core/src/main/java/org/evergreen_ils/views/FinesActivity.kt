@@ -21,10 +21,7 @@
 package org.evergreen_ils.views
 
 import android.content.Context
-import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
-import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -39,7 +36,7 @@ import org.evergreen_ils.system.EgOrg
 import org.evergreen_ils.data.FineRecord
 import org.evergreen_ils.data.Result
 import org.evergreen_ils.net.Gateway
-import org.evergreen_ils.net.GatewayJob
+import org.evergreen_ils.net.GatewayLoader
 import org.evergreen_ils.searchCatalog.RecordDetails
 import org.evergreen_ils.searchCatalog.RecordInfo
 import org.evergreen_ils.android.Analytics
@@ -109,7 +106,7 @@ class FinesActivity : BaseActivity() {
                 jobs.add(async {
                     // Need homeOrg's settings to enable/disable fines
                     val homeOrg = EgOrg.findOrg(App.getAccount().homeOrg)
-                    GatewayJob.fetchAllOrgSettingsAsync(homeOrg).await()
+                    GatewayLoader.loadOrgSettingsAsync(homeOrg).await()
                     updatePayFinesButtonVisibility()
                 })
 
