@@ -26,10 +26,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
+import kotlinx.coroutines.joinAll
 import org.evergreen_ils.R
 import org.evergreen_ils.accountAccess.AccountAccess
-import org.evergreen_ils.accountAccess.SessionNotFoundException
 import org.evergreen_ils.android.Analytics
 import org.evergreen_ils.android.App
 import org.evergreen_ils.android.Log
@@ -45,6 +46,9 @@ import org.evergreen_ils.utils.ui.ProgressDialogSupport
 import org.evergreen_ils.utils.ui.showAlert
 import java.util.*
 
+private val TAG = BookBagDetailsActivity::class.java.simpleName
+const val RESULT_CODE_UPDATE = 1
+
 class BookBagDetailsActivity : BaseActivity() {
     private var accountAccess: AccountAccess? = null
     private var lv: ListView? = null
@@ -54,7 +58,6 @@ class BookBagDetailsActivity : BaseActivity() {
     private var bookBagName: TextView? = null
     private var bookBagDescription: TextView? = null
     private var deleteButton: Button? = null
-    private var getItemsRunnable: Runnable? = null
 
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -72,8 +75,8 @@ class BookBagDetailsActivity : BaseActivity() {
         bookBagDescription = findViewById(R.id.bookbag_description)
         deleteButton = findViewById(R.id.remove_bookbag)
 
-        bookBagName?.setText(bookBag?.name)
-        bookBagDescription?.setText(bookBag?.description)
+        bookBagName?.text = bookBag?.name
+        bookBagDescription?.text = bookBag?.description
         deleteButton?.setOnClickListener(View.OnClickListener {
             Analytics.logEvent("Lists: Delete List")
             val builder = AlertDialog.Builder(this@BookBagDetailsActivity)
@@ -95,8 +98,6 @@ class BookBagDetailsActivity : BaseActivity() {
             }
             RecordDetails.launchDetailsFlow(this@BookBagDetailsActivity, records, position)
         })
-        initRunnable()
-        Thread(getItemsRunnable).start()
     }
 
     override fun onDestroy() {
@@ -104,26 +105,53 @@ class BookBagDetailsActivity : BaseActivity() {
         super.onDestroy()
     }
 
-    private fun initRunnable() {
-        getItemsRunnable = Runnable {
-            runOnUiThread { progress!!.show(this@BookBagDetailsActivity, getString(R.string.msg_retrieving_list_contents)) }
-            val ids = ArrayList<Int>()
-            for (i in bookBag!!.items.indices) {
-                ids.add(bookBag!!.items[i].targetId)
-            }
-            val records = AccountAccess.getInstance().getRecordsInfo(ids)
-            for (i in bookBag!!.items.indices) {
-                bookBag!!.items[i].recordInfo = records[i]
-            }
-            runOnUiThread {
-                progress!!.dismiss()
-                if (bookBag!!.items.isEmpty()) Toast.makeText(this@BookBagDetailsActivity, R.string.msg_list_empty, Toast.LENGTH_LONG).show()
-                updateListAdapter()
+    override fun onAttachedToWindow() {
+        super.onAttachedToWindow()
+        Log.d(TAG, object{}.javaClass.enclosingMethod?.name)
+        fetchData()
+    }
+
+    private fun fetchData() {
+        async {
+            try {
+                Log.d(TAG, "[kcxxx] fetchData ...")
+                val start = System.currentTimeMillis()
+                var jobs = mutableListOf<Job>()
+                progress?.show(this@BookBagDetailsActivity, getString(R.string.msg_retrieving_list_contents))
+
+                // fetch item details
+                bookBag?.items?.let {
+                    for (item in it) {
+                        jobs.add(async {
+                            fetchTargetDetails(item)
+                        })
+                    }
+                }
+
+                jobs.joinAll()
+                updateItemsList()
+                Log.logElapsedTime(TAG, start, "[kcxxx] fetchData ... done")
+            } catch (ex: Exception) {
+                Log.d(TAG, "[kcxxx] fetchData ... caught", ex)
+                showAlert(ex)
+            } finally {
+                progress?.dismiss()
             }
         }
     }
 
-    private fun updateListAdapter() {
+    suspend fun fetchTargetDetails(item: BookBagItem): Result<Unit> {
+        val modsResult = Gateway.search.fetchRecordMODS(item.targetId)
+        if (modsResult is Result.Error) return modsResult
+        val modsObj = modsResult.get()
+        item.recordInfo = RecordInfo(modsObj)
+
+        return Result.Success(Unit)
+    }
+
+//    if (bookBag!!.items.isEmpty()) Toast.makeText(this@BookBagDetailsActivity, R.string.msg_list_empty, Toast.LENGTH_LONG).show()
+
+    private fun updateItemsList() {
         listAdapter?.clear()
         bookBag?.items.let { listAdapter?.addAll(it) }
         listAdapter?.notifyDataSetChanged()
@@ -168,37 +196,25 @@ class BookBagDetailsActivity : BaseActivity() {
             val remove = row.findViewById<View>(R.id.bookbagitem_remove_button) as Button
 
             val record = getItem(position)
-            title.setText(record!!.recordInfo!!.title)
-            author.setText(record.recordInfo!!.author)
+            title?.text = record?.recordInfo?.title
+            author?.text = record?.recordInfo?.author
             remove.setOnClickListener(View.OnClickListener {
                 Analytics.logEvent("Lists: Remove List Item")
-                val removeItem = Thread(Runnable {
-                    runOnUiThread { progress!!.show(this@BookBagDetailsActivity, getString(R.string.msg_removing_list_item)) }
-                    try {
-                        accountAccess!!.removeBookbagItem(record.id)
-                    } catch (e: SessionNotFoundException) {
-                        try {
-                            if (accountAccess!!.reauthenticate(this@BookBagDetailsActivity)) accountAccess!!.removeBookbagItem(record.id)
-                        } catch (e1: Exception) {
-                            Log.d(TAG, "caught", e1)
+                async {
+                    progress?.show(this@BookBagDetailsActivity, getString(R.string.msg_removing_list_item))
+                    val result = Gateway.actor.removeItemFromBookBagAsync(App.getAccount(), record.id)
+                    progress?.dismiss()
+                    when (result) {
+                        is Result.Error -> showAlert(result.exception)
+                        is Result.Success -> {
+                            setResult(RESULT_CODE_UPDATE)
+                            fetchData()
                         }
                     }
-                    runOnUiThread {
-                        progress!!.dismiss()
-                        setResult(RESULT_CODE_UPDATE)
-                        bookBag!!.items.remove(record)
-                        Thread(getItemsRunnable).start()
-                    }
-                })
-                removeItem.start()
+                }
             })
 
             return row
         }
-    }
-
-    companion object {
-        private val TAG = BookBagDetailsActivity::class.java.simpleName
-        const val RESULT_CODE_UPDATE = 1
     }
 }

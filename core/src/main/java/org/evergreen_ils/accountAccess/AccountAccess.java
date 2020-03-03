@@ -54,43 +54,9 @@ public class AccountAccess {
         return Gateway.INSTANCE.getConn();
     }
 
-    /** invalidate current auth token and get a new one
-     *
-     * @param activity
-     * @return true if auth successful
-     */
-    public boolean reauthenticate(Activity activity) {
-        Log.d(Const.AUTH_TAG, "reauthenticate");
-        Account account = App.getAccount();
-        AccountUtils.invalidateAuthToken(activity, account.getAuthToken());
-        App.getAccount().setAuthToken(null);
-
-        try {
-            String auth_token = AccountUtils.getAuthTokenForAccount(activity, account.getUsername());
-            if (TextUtils.isEmpty(auth_token))
-                return false;
-            account.clearAuthToken();
-            return true;
-        } catch (Exception e) {
-            Log.d(Const.AUTH_TAG, "[auth] reauthenticate exception", e);
-            return false;
-        }
-    }
 
     // ---------------------------------------Book
     // bags-----------------------------------//
-
-    /**
-     * Removes the bookbag item.
-     *
-     * @param id the id
-     * @throws SessionNotFoundException the session not found exception
-     */
-    public void removeBookbagItem(Integer id) throws SessionNotFoundException {
-
-        removeContainerItem(Api.CONTAINER_CLASS_BIBLIO, id);
-
-    }
 
     /**
      * Adds the record to book bag.
@@ -113,38 +79,4 @@ public class AccountAccess {
                         account.getAuthToken(), Api.CONTAINER_CLASS_BIBLIO, cbrebi });
     }
 
-    /**
-     * Removes the container.
-     *
-     * @param container the container
-     * @param id the id
-     * @throws SessionNotFoundException the session not found exception
-     */
-    private void removeContainerItem(String container, Integer id)
-            throws SessionNotFoundException {
-        Account account = App.getAccount();
-
-        Object response = Utils.doRequest(conn(), Api.ACTOR,
-                Api.CONTAINER_ITEM_DELETE, account.getAuthToken(), new Object[] {
-                        account.getAuthToken(), container, id });
-    }
-
-    private OSRFObject getItemShortInfo(Integer id) {
-        OSRFObject response = (OSRFObject) Utils.doRequest(conn(), Api.SEARCH,
-                Api.MODS_SLIM_RETRIEVE, new Object[] {
-                        id });
-        return response;
-    }
-
-    public ArrayList<RecordInfo> getRecordsInfo(ArrayList<Integer> ids) {
-
-        ArrayList<RecordInfo> recordInfoArray = new ArrayList<RecordInfo>();
-
-        for (int i = 0; i < ids.size(); i++) {
-            RecordInfo recordInfo = new RecordInfo(getItemShortInfo(ids.get(i)));
-            recordInfoArray.add(recordInfo);
-        }
-
-        return recordInfoArray;
-    }
 }

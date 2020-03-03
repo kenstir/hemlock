@@ -147,7 +147,7 @@ class BookBagsActivity : BaseActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         when (resultCode) {
-            BookBagDetailsActivity.RESULT_CODE_UPDATE -> fetchData()
+            RESULT_CODE_UPDATE -> fetchData()
         }
     }
 
@@ -157,9 +157,9 @@ class BookBagsActivity : BaseActivity() {
             bookBagName?.error = getString(R.string.error_list_name_empty)
             return
         }
+        Analytics.logEvent("Lists: Create List")
         async {
             progress?.show(this@BookBagsActivity, getString(R.string.msg_creating_list))
-            Analytics.logEvent("Lists: Create List")
             val result = Gateway.actor.createBookBagAsync(App.getAccount(), name)
             progress?.dismiss()
             when (result) {
