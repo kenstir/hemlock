@@ -153,7 +153,7 @@ public class SearchActivity extends BaseActivity {
 
     private void clearResults() {
         haveSearched = false;
-        searchResults.clear();
+        if (searchResults != null) searchResults.clear();
         search.clearResults();
     }
 
