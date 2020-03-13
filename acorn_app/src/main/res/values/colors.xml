@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- material colors courtesy of https://material.io/tools/color/#!/?view.left=0&view.right=0&primary.color=01579B -->
+    <color name="acorn_primary">#01579b</color>
+    <color name="acorn_light">#4f83cc</color>
+    <color name="acorn_dark">#002f6c</color>
+    <color name="acorn_logo_background">#ddf2ff</color>
+
+    <color name="primary">@color/acorn_primary</color>
+    <color name="primary_dark">@color/primary_dark_material_dark</color>
+    <color name="accent">@color/acorn_light</color>
+    <color name="hemlock_text_alert">#ff9100</color>
+
+    <color name="logo_background">@color/acorn_logo_background</color>
+    <color name="button_icon_tint">@color/acorn_primary</color>
+</resources>
