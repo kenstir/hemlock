@@ -192,7 +192,7 @@ public class AccountAccess {
     // This could be done on demand, but coming in at ~75ms it is not worth it
     public void fleshUserSettings() {
 
-        String holdNotifySetting = null;
+        String holdNotifySetting = "email:phone"; // OPAC default
         try {
             // Array of fields is optional; the default does not include settings
             ArrayList<String> fields = new ArrayList<>();
@@ -220,7 +220,6 @@ public class AccountAccess {
                     } else if (name.equals(Api.USER_SETTING_DEFAULT_SMS_NOTIFY)) {
                         defaultSMSNumber = value;
                     } else if (name.equals(Api.USER_SETTING_HOLD_NOTIFY)) {
-                        parseHoldNotifyValue(value);
                         holdNotifySetting = value;
                     }
                 }
@@ -228,6 +227,7 @@ public class AccountAccess {
         } catch (Exception e) {
             Log.d(TAG, "caught", e);
         }
+        parseHoldNotifyValue(holdNotifySetting);
         Analytics.logEvent("Account: Retrieve Session",
                 "home_org", safeGetOrganizationShortName(homeLibraryID),
                 "pickup_org", safeGetOrganizationShortName(defaultPickupLibraryID),
