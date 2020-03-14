@@ -130,6 +130,7 @@
     <string name="list_item_remove_button">Remove</string>
     <string name="create_list_button">Create List</string>
     <string name="list_name_hint">List name</string>
+    <string name="error_list_name_empty">List name is required</string>
 
     <!-- Camera -->
     <string name="msg_camera_framework_bug">Sorry, the Android camera encountered a problem. You may need to restart the device.</string>
@@ -194,8 +195,6 @@
     <string name="delete_list_negative_button">Keep list</string>
     <string name="delete_list_positive_button">Delete list</string>
     <string name="msg_retrieving_data">Retrieving data</string>
-    <string name="msg_list_name_too_short_title">List name too short</string>
-    <string name="msg_list_name_too_short">List name must be at least 2 characters long</string>
     <string name="title_busy_ellipsis">busy...</string>
     <string name="format">Format</string>
     <string name="msg_loading_holds">Loading holds</string>

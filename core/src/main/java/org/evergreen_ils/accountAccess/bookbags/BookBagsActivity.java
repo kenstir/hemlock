@@ -165,13 +165,10 @@ public class BookBagsActivity extends BaseActivity {
         }
     }
 
-    private void createBookbag(final String name) {
-        if (name.length() < 2) {
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setTitle(R.string.msg_list_name_too_short_title)
-                    .setMessage(R.string.msg_list_name_too_short)
-                    .setPositiveButton(android.R.string.ok, null);
-            builder.create().show();
+    private void createBookbag(final String bookBagName) {
+        String name = bookBagName.trim();
+        if (name.isEmpty()) {
+            bookbag_name.setError(getString(R.string.error_list_name_empty));
             return;
         }
         Analytics.logEvent("Lists: Create List");
