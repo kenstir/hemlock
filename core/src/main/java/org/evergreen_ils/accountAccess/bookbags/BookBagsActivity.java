@@ -47,9 +47,9 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 
-public class BookBagActivity extends BaseActivity {
+public class BookBagsActivity extends BaseActivity {
 
-    private final static String TAG = BookBagActivity.class.getSimpleName();
+    private final static String TAG = BookBagsActivity.class.getSimpleName();
 
     private AccountAccess accountAccess = null;
 
@@ -98,7 +98,7 @@ public class BookBagActivity extends BaseActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Analytics.logEvent("Lists: Tap List");
                 BookBag item = (BookBag) lv.getItemAtPosition(position);
-                Intent intent = new Intent(BookBagActivity.this, BookBagDetailsActivity.class);
+                Intent intent = new Intent(BookBagsActivity.this, BookBagDetailsActivity.class);
                 intent.putExtra("bookBag", item);
                 startActivityForResult(intent, 0);
             }
@@ -122,7 +122,7 @@ public class BookBagActivity extends BaseActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        if (!isFinishing()) progress.show(BookBagActivity.this, getString(R.string.msg_retrieving_lists));
+                        if (!isFinishing()) progress.show(BookBagsActivity.this, getString(R.string.msg_retrieving_lists));
                     }
                 });
 
@@ -130,7 +130,7 @@ public class BookBagActivity extends BaseActivity {
                     accountAccess.retrieveBookbags();
                 } catch (SessionNotFoundException e) {
                     try {
-                        if (accountAccess.reauthenticate(BookBagActivity.this))
+                        if (accountAccess.reauthenticate(BookBagsActivity.this))
                             accountAccess.retrieveBookbags();
                     } catch (Exception e2) {
                         Log.d(TAG, "caught", e2);
@@ -183,7 +183,7 @@ public class BookBagActivity extends BaseActivity {
                     accountAccess.createBookbag(name);
                 } catch (SessionNotFoundException e) {
                     try {
-                        if (accountAccess.reauthenticate(BookBagActivity.this))
+                        if (accountAccess.reauthenticate(BookBagsActivity.this))
                             accountAccess.createBookbag(name);
                     } catch (Exception eauth) {
                         Log.d(TAG, "caught", eauth);

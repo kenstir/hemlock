@@ -32,7 +32,7 @@ import android.widget.TextView;
 
 import org.evergreen_ils.R;
 import org.evergreen_ils.accountAccess.AccountUtils;
-import org.evergreen_ils.accountAccess.bookbags.BookBagActivity;
+import org.evergreen_ils.accountAccess.bookbags.BookBagsActivity;
 import org.evergreen_ils.accountAccess.checkout.CheckoutsActivity;
 import org.evergreen_ils.accountAccess.fines.FinesActivity;
 import org.evergreen_ils.accountAccess.holds.HoldsActivity;
@@ -166,7 +166,7 @@ public class MainActivity extends BaseActivity {
             startActivity(new Intent(this, FinesActivity.class));
         } else if (id == R.id.main_my_lists_button) {
             Analytics.logEvent("Lists: Open", "via", "main_button");
-            startActivity(new Intent(this, BookBagActivity.class));
+            startActivity(new Intent(this, BookBagsActivity.class));
         } else if (id == R.id.main_btn_search) {
             Analytics.logEvent("Search: Open", "via", "main_button");
             startActivity(new Intent(this, SearchActivity.class));

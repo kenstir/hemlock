@@ -85,14 +85,14 @@
             android:parentActivityName="org.evergreen_ils.views.MainActivity">
         </activity>
         <activity
-            android:name="org.evergreen_ils.accountAccess.bookbags.BookBagActivity"
+            android:name="org.evergreen_ils.accountAccess.bookbags.BookBagsActivity"
             android:label="@string/title_my_lists"
             android:parentActivityName="org.evergreen_ils.views.MainActivity">
         </activity>
         <activity
             android:name="org.evergreen_ils.accountAccess.bookbags.BookBagDetailsActivity"
             android:label="@string/title_list_details"
-            android:parentActivityName="org.evergreen_ils.accountAccess.bookbags.BookBagActivity">
+            android:parentActivityName="org.evergreen_ils.accountAccess.bookbags.BookBagsActivity">
         </activity>
         <activity
             android:name="org.evergreen_ils.views.BarcodeActivity"

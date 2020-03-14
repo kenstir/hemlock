@@ -42,7 +42,7 @@ import org.evergreen_ils.accountAccess.AccountAccess;
 import org.evergreen_ils.accountAccess.AccountUtils;
 import org.evergreen_ils.system.EgSearch;
 import org.evergreen_ils.views.BarcodeActivity;
-import org.evergreen_ils.accountAccess.bookbags.BookBagActivity;
+import org.evergreen_ils.accountAccess.bookbags.BookBagsActivity;
 import org.evergreen_ils.accountAccess.checkout.CheckoutsActivity;
 import org.evergreen_ils.accountAccess.fines.FinesActivity;
 import org.evergreen_ils.accountAccess.holds.HoldsActivity;
@@ -173,7 +173,7 @@ public class BaseActivity extends AppCompatActivity
             startActivity(new Intent(this, FinesActivity.class));
         } else if (id == R.id.main_my_lists_button) {
             Analytics.logEvent("Lists: Open", "via", "nav_drawer");
-            startActivity(new Intent(this, BookBagActivity.class));
+            startActivity(new Intent(this, BookBagsActivity.class));
         } else if (id == R.id.btn_barcode) {
             Analytics.logEvent("Barcode: Open", "via", "nav_drawer");
             startActivity(new Intent(this, BarcodeActivity.class));
