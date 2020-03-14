@@ -198,7 +198,7 @@ public class SearchActivity extends BaseActivity {
     private void clearResults() {
         haveSearched = false;
         if (searchResults != null) searchResults.clear();
-        search.clearResults();
+        if (search != null) search.clearResults();
     }
 
     private void initSearchButton() {
