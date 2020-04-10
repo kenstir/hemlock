@@ -62,6 +62,7 @@ import java.util.List;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.util.Pair;
 
 import static org.evergreen_ils.utils.StringUtils.safeString;
 
@@ -180,8 +181,8 @@ public class PlaceHoldActivity extends AppCompatActivity {
                     thaw_date_s = Api.formatDate(thaw_date);
 
                 int selectedOrgID = -1;
-                if (eg.getOrganizations().size() > selectedOrgPos)
-                    selectedOrgID = eg.getOrganizations().get(selectedOrgPos).id;
+                if (eg.getVisibleOrganizations().size() > selectedOrgPos)
+                    selectedOrgID = eg.getVisibleOrganizations().get(selectedOrgPos).id;
                 int selectedSMSCarrierID = -1;
                 if (eg.getSMSCarriers().size() > selectedSMSPos)
                     selectedSMSCarrierID = eg.getSMSCarriers().get(selectedSMSPos).id;
@@ -197,7 +198,7 @@ public class PlaceHoldActivity extends AppCompatActivity {
                         if (accountAccess.reauthenticate(PlaceHoldActivity.this))
                             temp_result = accountAccess.testAndCreateHold(
                                     record_id, selectedOrgID,
-                                    email_notification.isChecked(),  getPhoneNotify(),
+                                    email_notification.isChecked(), getPhoneNotify(),
                                     getSMSNotify(), getSMSNotifyCarrier(selectedSMSCarrierID),
                                     expire_date_s, suspendHold.isChecked(), thaw_date_s);
                     } catch (Exception e1) {
@@ -244,7 +245,7 @@ public class PlaceHoldActivity extends AppCompatActivity {
         if (sms_notification.isChecked()) notify.add("sms");
         String notifyTypes = TextUtils.join("|", notify);
         try {
-            Organization pickup_org = eg.getOrganizations().get(selectedOrgPos);
+            Organization pickup_org = eg.getVisibleOrganizations().get(selectedOrgPos);
             Organization home_org = eg.getOrganization(AccountAccess.getInstance().getHomeLibraryID());
             String pickup_val = pickupEventValue(pickup_org, home_org);
             Analytics.logEvent("Place Hold: Execute",
@@ -261,7 +262,7 @@ public class PlaceHoldActivity extends AppCompatActivity {
         placeHold.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                Organization selectedOrg = eg.getOrganizations().get(selectedOrgPos);
+                Organization selectedOrg = eg.getVisibleOrganizations().get(selectedOrgPos);
                 if (!selectedOrg.isPickupLocation()) {
                     logPlaceHoldResult("not_pickup_location");
                     AlertDialog.Builder builder = new AlertDialog.Builder(PlaceHoldActivity.this);
@@ -430,16 +431,11 @@ public class PlaceHoldActivity extends AppCompatActivity {
     }
 
     private void initOrgSpinner() {
-        Integer defaultLibraryID = AccountAccess.getInstance().getDefaultPickupLibraryID();
-        ArrayList<String> list = new ArrayList<>();
-        for (int i = 0; i < eg.getOrganizations().size(); i++) {
-            Organization org = eg.getOrganizations().get(i);
-            list.add(org.getTreeDisplayName());
-            if (org.id.equals(defaultLibraryID)) {
-                selectedOrgPos = i;
-            }
-        }
-        ArrayAdapter<String> adapter = new OrgArrayAdapter(this, R.layout.org_item_layout, list, true);
+        Integer defaultOrgId = AccountAccess.getInstance().getDefaultPickupLibraryID();
+        Pair<ArrayList<String>, Integer> pair = eg.getOrganizationSpinnerLabelsAndSelectedIndex(defaultOrgId);
+        selectedOrgPos = pair.second;
+
+        ArrayAdapter<String> adapter = new OrgArrayAdapter(this, R.layout.org_item_layout, pair.first, true);
         orgSpinner.setAdapter(adapter);
         orgSpinner.setSelection(selectedOrgPos);
         orgSpinner.setOnItemSelectedListener(new OnItemSelectedListener() {
@@ -449,7 +445,7 @@ public class PlaceHoldActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onNothingSelected(android.widget.AdapterView<?> arg0) {
+            public void onNothingSelected(AdapterView<?> arg0) {
             }
         });
     }

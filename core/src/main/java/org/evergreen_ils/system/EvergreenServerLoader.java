@@ -96,7 +96,7 @@ public class EvergreenServerLoader {
 
         // To minimize risk of race condition, load home and pickup orgs first.
         // Use a clone so we don't screw up the search org spinner.
-        ArrayList<Organization> orgs = (ArrayList<Organization>) eg.getOrganizations().clone();
+        ArrayList<Organization> orgs = (ArrayList<Organization>) eg.getVisibleOrganizations().clone();
         if (home_org != null) {
             orgs.remove(home_org);
             orgs.add(0, home_org);

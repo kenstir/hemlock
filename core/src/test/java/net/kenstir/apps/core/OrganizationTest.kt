@@ -21,7 +21,6 @@ import org.evergreen_ils.android.Log
 import org.evergreen_ils.android.StdoutLogProvider
 import org.evergreen_ils.data.jsonMapOf
 import org.evergreen_ils.system.EvergreenServer
-import org.evergreen_ils.system.Organization
 import org.junit.Assert.*
 import org.junit.BeforeClass
 import org.junit.Test
@@ -101,32 +100,22 @@ class OrganizationTest {
         setUpOrgs()
     }
 
-    fun getSpinnerLabels(): ArrayList<String> {
-        var list = java.util.ArrayList<String>()
-        for (org in eg.organizations) {
-            list.add(org.treeDisplayName)
-        }
-        return list
-    }
-
     @Test
     fun test_loadOrgTypes() {
-        // no orgs yet
-        assertEquals(0, eg.orgTypes.size)
-        assertNull(eg.findOrgType(1))
-
         setUpOrgTypes()
         assertEquals(3, eg.orgTypes.size)
 
         val topOrgType = eg.findOrgType(1)
         assertEquals(topOrgType?.name, "Consortium")
+
+        assertNull(eg.findOrgType(999))
     }
 
     @Test
     fun test_loadOrganizations() {
         setUp()
 
-        assert(eg.organizations.isNotEmpty())
+        assert(eg.visibleOrganizations.isNotEmpty())
     }
 
     @Test
@@ -154,36 +143,52 @@ class OrganizationTest {
         val lib = eg.getOrganizationByShortName("BETHEL")
         assertEquals("   ", lib?.indentedDisplayPrefix)
 
-        val labels = getSpinnerLabels()
-        assertEquals(arrayListOf(
-                "Bibliomation",
-                "   Bethel Public Library"
-        ), labels)
+        val labels = eg.organizationSpinnerLabels
+        assertEquals(arrayListOf("Bibliomation", "   Bethel Public Library"), labels)
     }
 
+    @Test
+    fun test_getOrganizationSpinnerLabelsAndSelectedIndex() {
+        setUp()
 
+        var pair = eg.getOrganizationSpinnerLabelsAndSelectedIndex(null)
+        assertEquals(arrayListOf("Bibliomation", "   Bethel Public Library"), pair.first)
+        assertEquals(0, pair.second) // 0 here means not found
+
+        pair = eg.getOrganizationSpinnerLabelsAndSelectedIndex(1)
+        assertEquals(0, pair.second) // 0 here is found
+        assertEquals(1, eg.visibleOrganizations.get(pair.second!!).id)
+
+        pair = eg.getOrganizationSpinnerLabelsAndSelectedIndex(28)
+        assertEquals(0, pair.second) // 0 here means not found
+
+        pair = eg.getOrganizationSpinnerLabelsAndSelectedIndex(29)
+        assertEquals(1, pair.second)
+        assertEquals(29, eg.visibleOrganizations.get(pair.second!!).id)
+    }
 
     @Test
     fun test_invisibleOrgsAreLoaded() {
         setUp()
 
-        assertEquals(3, eg.organizations.size)
+        assertEquals(3, eg.allOrganizations.size)
+        assertEquals(2, eg.visibleOrganizations.size)
 
         val lib = eg.getOrganization(29)
         assertEquals(true, lib?.opac_visible)
         assertEquals("BETHEL", lib?.shortname)
-        assert(lib!!.orgType.can_have_users)
-        assert(lib!!.orgType.can_have_vols)
+        assertTrue(lib!!.orgType.can_have_users)
+        assertTrue(lib!!.orgType.can_have_vols)
 
         val system = eg.getOrganization(28)
-        assertEquals(false, lib?.opac_visible)
-        assertEquals("BETSYS", lib?.shortname)
+        assertEquals(false, system?.opac_visible)
+        assertEquals("BETSYS", system?.shortname)
         assertFalse(system!!.orgType.can_have_users)
         assertFalse(system!!.orgType.can_have_vols)
 
         val cons = eg.getOrganization(1)
-        assertEquals(true, lib?.opac_visible)
-        assertEquals("CONS", lib?.shortname)
+        assertEquals(true, cons?.opac_visible)
+        assertEquals("CONS", cons?.shortname)
         assertFalse(cons!!.orgType.can_have_users)
         assertFalse(cons!!.orgType.can_have_vols)
     }

@@ -49,6 +49,8 @@ import android.view.View.OnClickListener;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 
+import androidx.core.util.Pair;
+
 public class HoldDetailsActivity extends BaseActivity {
 
     private final static String TAG = HoldDetailsActivity.class.getSimpleName();
@@ -199,7 +201,6 @@ public class HoldDetailsActivity extends BaseActivity {
 
         thaw_datePicker = new DatePickerDialog(this,
                 new DatePickerDialog.OnDateSetListener() {
-
                     public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
                         Date chosenDate = new Date(year - 1900, monthOfYear, dayOfMonth);
                         thaw_date = chosenDate;
@@ -209,32 +210,26 @@ public class HoldDetailsActivity extends BaseActivity {
                 }, cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH));
 
         thaw_date_edittext.setOnClickListener(new OnClickListener() {
-
             @Override
             public void onClick(View v) {
                 thaw_datePicker.show();
             }
         });
 
-        ArrayList<String> list = new ArrayList<String>();
-        for (int i = 0; i < eg.getInstance().getOrganizations().size(); i++) {
-            Organization org = eg.getInstance().getOrganizations().get(i);
-            list.add(org.getTreeDisplayName());
-            if (org.id == record.pickup_lib) {
-                selectedOrgPos = i;
-            }
-        }
-        ArrayAdapter<String> adapter = new OrgArrayAdapter(this, R.layout.org_item_layout, list, true);
+        Pair<ArrayList<String>, Integer> pair = eg.getOrganizationSpinnerLabelsAndSelectedIndex(record.pickup_lib);
+        selectedOrgPos = pair.second;
+
+        ArrayAdapter<String> adapter = new OrgArrayAdapter(this, R.layout.org_item_layout, pair.first, true);
         orgSelector.setAdapter(adapter);
         orgSelector.setSelection(selectedOrgPos);
-
         orgSelector.setOnItemSelectedListener(new OnItemSelectedListener() {
             @Override
-            public void onItemSelected(AdapterView<?> arg0, View arg1, int ID, long arg3) {
-                selectedOrgPos = ID;
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                selectedOrgPos = position;
             }
 
-            public void onNothingSelected(android.widget.AdapterView<?> arg0) {
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
             }
         });
     }
@@ -296,13 +291,13 @@ public class HoldDetailsActivity extends BaseActivity {
                     thaw_date_s = Api.formatDate(thaw_date);
 
                 try {
-                    accountAccess.updateHold(record.ahr, eg.getInstance().getOrganizations().get(selectedOrgPos).id,
+                    accountAccess.updateHold(record.ahr, eg.getVisibleOrganizations().get(selectedOrgPos).id,
                             suspendHold.isChecked(), expire_date_s, thaw_date_s);
                 } catch (SessionNotFoundException e) {
                     try {
                         if (accountAccess.reauthenticate(HoldDetailsActivity.this))
                             accountAccess.updateHold(record.ahr,
-                                    eg.getInstance().getOrganizations().get(selectedOrgPos).id,
+                                    eg.getVisibleOrganizations().get(selectedOrgPos).id,
                                     suspendHold.isChecked(), expire_date_s, thaw_date_s);
                     } catch (Exception eauth) {
                         Log.d(TAG, "Exception in reAuth");
