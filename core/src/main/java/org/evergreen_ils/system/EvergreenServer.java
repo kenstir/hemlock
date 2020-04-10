@@ -147,7 +147,11 @@ public class EvergreenServer {
         }
     }
 
-    private OrgType getOrgType(int id) {
+    public List<OrgType> getOrgTypes() {
+        return mOrgTypes;
+    }
+
+    public OrgType getOrgType(int id) {
         for (OrgType orgType: mOrgTypes) {
             if (orgType.id == id) {
                 return orgType;
