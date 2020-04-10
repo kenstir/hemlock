@@ -151,7 +151,7 @@ public class EvergreenServer {
         return mOrgTypes;
     }
 
-    public OrgType getOrgType(int id) {
+    public OrgType findOrgType(int id) {
         for (OrgType orgType: mOrgTypes) {
             if (orgType.id == id) {
                 return orgType;
@@ -167,7 +167,7 @@ public class EvergreenServer {
         org.parent_ou = obj.getInt("parent_ou");
         org.name = obj.getString("name");
         org.shortname = obj.getString("shortname");
-        org.orgType = getOrgType(obj.getInt("ou_type"));
+        org.orgType = findOrgType(obj.getInt("ou_type"));
         org.opac_visible = Api.parseBoolean(obj.getString("opac_visible"));
         org.indentedDisplayPrefix = new String(new char[level]).replace("\0", "   ");
         Log.d(TAG, "id="+org.id+" level="+org.level+" type="+org.orgType.id+" users="+org.orgType.can_have_users+" vols="+org.orgType.can_have_vols+" vis="+(org.opac_visible ? "1" : "0")+" site="+org.shortname+" name="+org.name);
