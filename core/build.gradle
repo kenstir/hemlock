@@ -1,4 +1,6 @@
 apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-android'
 
 android {
     compileSdkVersion 28
@@ -25,6 +27,7 @@ android {
 
 repositories {
     maven { url 'https://maven.fabric.io/public' }
+    mavenCentral()
 }
 
 
@@ -50,4 +53,6 @@ dependencies {
     // androidTestCompile 'com.android.support.test.uiautomator:uiautomator-v18:2.1.2'
     //annotationProcessor "android.arch.lifecycle:compiler:1.0.0-alpha5"
     testImplementation 'junit:junit:4.13'
+    implementation "androidx.core:core-ktx:+"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 }

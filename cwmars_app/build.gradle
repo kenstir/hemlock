@@ -8,6 +8,8 @@ buildscript {
 }
 
 apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-android'
 apply plugin: 'io.fabric'
 
 android {
@@ -37,4 +39,9 @@ dependencies {
     })
     testImplementation 'junit:junit:4.13'
     implementation project(path: ':hemlock-pro-assets')
+    implementation "androidx.core:core-ktx:+"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+}
+repositories {
+    mavenCentral()
 }
