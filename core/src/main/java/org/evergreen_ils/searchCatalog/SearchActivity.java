@@ -21,6 +21,8 @@ package org.evergreen_ils.searchCatalog;
 
 import java.util.*;
 
+import androidx.annotation.NonNull;
+import androidx.core.util.Pair;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.appcompat.widget.SwitchCompat;
 
@@ -264,24 +266,18 @@ public class SearchActivity extends BaseActivity {
     }
 
     private void initSearchOrgSpinner() {
-        int selectedOrgPos = 0;
-        Integer defaultLibraryID = AccountAccess.getInstance().getDefaultSearchLibraryID();
-        ArrayList<String> list = new ArrayList<>();
-        for (int i = 0; i < eg.getInstance().getOrganizations().size(); i++) {
-            Organization org = eg.getInstance().getOrganizations().get(i);
-            list.add(org.getTreeDisplayName());
-            if (org.id.equals(defaultLibraryID)) {
-                selectedOrgPos = i;
-            }
-        }
-        ArrayAdapter<String> adapter = new OrgArrayAdapter(this, R.layout.org_item_layout, list, false);
+        Integer defaultOrgId = AccountAccess.getInstance().getDefaultSearchLibraryID();
+        Organization defaultOrg = eg.getOrganization(defaultOrgId);
+        Pair<ArrayList<String>, Integer> pair = eg.getOrganizationSpinnerLabelsAndSelectedIndex(defaultOrgId);
+
+        ArrayAdapter<String> adapter = new OrgArrayAdapter(this, R.layout.org_item_layout, pair.first, false);
         orgSpinner.setAdapter(adapter);
-        orgSpinner.setSelection(selectedOrgPos);
-        search.selectOrganisation(eg.getInstance().getOrganizations().get(selectedOrgPos));
+        orgSpinner.setSelection(pair.second);
+        search.selectOrganisation(eg.getVisibleOrganizations().get(pair.second));
         orgSpinner.setOnItemSelectedListener(new OnItemSelectedListener() {
             @Override
-            public void onItemSelected(AdapterView<?> arg0, View arg1, int ID, long arg3) {
-                search.selectOrganisation(eg.getInstance().getOrganizations().get(ID));
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                search.selectOrganisation(eg.getVisibleOrganizations().get(position));
             }
 
             @Override

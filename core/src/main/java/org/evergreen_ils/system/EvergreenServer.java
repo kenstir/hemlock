@@ -23,6 +23,7 @@ import android.text.TextUtils;
 import org.evergreen_ils.Api;
 import org.evergreen_ils.android.Analytics;
 import org.evergreen_ils.android.Log;
+import org.evergreen_ils.utils.IntUtils;
 import org.open_ils.idl.IDLException;
 import org.open_ils.idl.IDLParser;
 import org.opensrf.net.http.HttpConnection;
@@ -37,6 +38,12 @@ import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.util.Pair;
+
+import static org.evergreen_ils.system.Organization.consortiumOrgId;
 
 /** Represents the library system
  *
@@ -172,8 +179,8 @@ public class EvergreenServer {
         org.indentedDisplayPrefix = new String(new char[level]).replace("\0", "   ");
         Log.d(TAG, "id="+org.id+" level="+org.level+" type="+org.orgType.id+" users="+org.orgType.can_have_users+" vols="+org.orgType.can_have_vols+" vis="+(org.opac_visible ? "1" : "0")+" site="+org.shortname+" name="+org.name);
 
-        if (org.opac_visible)
-            mOrganizations.add(org);
+        //if (org.opac_visible)
+        mOrganizations.add(org);
 
         List<OSRFObject> children = null;
         try {
@@ -211,8 +218,44 @@ public class EvergreenServer {
         }
     }
 
-    public ArrayList<Organization> getOrganizations() {
+    public ArrayList<Organization> getAllOrganizations() {
         return mOrganizations;
+    }
+
+    public @NonNull ArrayList<Organization> getVisibleOrganizations() {
+        ArrayList<Organization> orgs = new ArrayList<>(mOrganizations.size());
+        for (Organization org : mOrganizations) {
+            if (org.opac_visible) {
+                orgs.add(org);
+            }
+        }
+        return orgs;
+    }
+
+    public ArrayList<String> getOrganizationSpinnerLabels() {
+        Pair<ArrayList<String>, Integer> pair = getOrganizationSpinnerLabelsAndSelectedIndex(null);
+        return pair.first;
+    }
+
+    // return list of spinner labels and the index at which defaultOrgId appears (0)
+    public @NonNull Pair<ArrayList<String>, Integer> getOrganizationSpinnerLabelsAndSelectedIndex(@Nullable Integer defaultOrgId) {
+        ArrayList<String> labels = new ArrayList<>(mOrganizations.size());
+        Integer selectedIndex = 0;
+        Integer index = 0;
+        for (Organization org : mOrganizations) {
+            if (org.opac_visible) {
+                labels.add(org.getTreeDisplayName());
+                if (IntUtils.equals(org.id, defaultOrgId)) {
+                    selectedIndex = index;
+                }
+                ++index;
+            }
+        }
+        return new Pair<ArrayList<String>, Integer>(labels, selectedIndex);
+    }
+
+    public Organization getConsortium() {
+        return getOrganization(consortiumOrgId);
     }
 
     public Organization getOrganization(Integer id) {
