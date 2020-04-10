@@ -1,15 +1,21 @@
 package org.opensrf.util;
 
+import org.evergreen_ils.Api;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
+import java.util.Date;
 import java.util.Map;
 import java.util.HashMap;
 
 
 /**
  * Generic OpenSRF network-serializable object.  This allows
- * access to object fields.  
+ * access to object fields.
  */
 public class OSRFObject extends HashMap<String, Object> implements OSRFSerializable {
-    
+
     /** This objects registry */
     private OSRFRegistry registry;
 
@@ -34,11 +40,24 @@ public class OSRFObject extends HashMap<String, Object> implements OSRFSerializa
     }
 
 
+    public OSRFObject(Map<String, Object> map) {
+        super(map);
+    }
+
+    public OSRFObject(String netClass, Map<String, Object> map) {
+        super(map);
+        registry = OSRFRegistry.getRegistry(netClass);
+    }
+
     /**
      * @return This object's registry
      */
     public OSRFRegistry getRegistry() {
         return registry;
+    }
+
+    public @Nullable String getNetClass() {
+        return (registry != null) ? registry.getNetClass() : null;
     }
 
     /**
@@ -48,7 +67,6 @@ public class OSRFObject extends HashMap<String, Object> implements OSRFSerializa
         return super.get(field);
     }
 
-    /** Returns the string value found at the given field */
     public String getString(String field) {
         return getString(field, null);
     }
@@ -58,7 +76,7 @@ public class OSRFObject extends HashMap<String, Object> implements OSRFSerializa
         return (ret != null) ? ret : dflt;
     }
 
-    /** Returns the int value found at the given field */
+    @Nullable
     public Integer getInt(String field) {
         Object o = get(field);
         if (o == null)
@@ -66,5 +84,23 @@ public class OSRFObject extends HashMap<String, Object> implements OSRFSerializa
         else if (o instanceof String)
             return Integer.parseInt((String) o);
         return (Integer) get(field);
+    }
+
+    @NonNull
+    public Boolean getBoolean(String field) {
+        return Api.parseBoolean(get(field));
+    }
+
+    @Nullable
+    public OSRFObject getObject(String field) {
+        Object o = get(field);
+        if (o != null && o instanceof OSRFObject)
+            return (OSRFObject) o;
+        return null;
+    }
+
+    @Nullable
+    public Date getDate(String field) {
+        return Api.parseDate(getString(field));
     }
 }
