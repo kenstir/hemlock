@@ -19,6 +19,7 @@
 package org.evergreen_ils.test
 
 import org.evergreen_ils.data.CopyLocationCounts
+import org.evergreen_ils.data.jsonMapOf
 import org.evergreen_ils.system.EgCopyStatus
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
@@ -30,7 +31,7 @@ import org.opensrf.util.OSRFObject
 class CopyLocationCountsTest {
 
     fun make_ccs(id: Int, name: String, opac_visible: String): OSRFObject {
-        return OSRFObject(mapOf<String, Any?>("id" to id, "name" to name, "opac_visible" to opac_visible))
+        return OSRFObject(jsonMapOf("id" to id, "name" to name, "opac_visible" to opac_visible))
     }
 
     @Before
