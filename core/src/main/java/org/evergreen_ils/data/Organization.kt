@@ -25,7 +25,8 @@ class Organization(@JvmField val id: Int,
                    @JvmField val name: String,
                    @JvmField val shortname: String,
                    @JvmField val parent_ou: Int?,
-                   @JvmField val ouType: Int) {
+                   @JvmField val ouType: Int,
+                   @JvmField val opac_visible: Boolean) {
 
     var indentedDisplayPrefix = ""
     var settingsLoaded = false

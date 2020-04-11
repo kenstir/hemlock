@@ -35,10 +35,8 @@ import org.evergreen_ils.Api
 import org.evergreen_ils.R
 import org.evergreen_ils.android.App
 import org.evergreen_ils.data.Account
-import org.evergreen_ils.system.EgOrg.findOrg
-import org.evergreen_ils.system.EgOrg.orgs
-import org.evergreen_ils.system.EgOrg.smsEnabled
-import org.evergreen_ils.system.EgSms.carriers
+import org.evergreen_ils.system.EgOrg
+import org.evergreen_ils.system.EgSms
 import org.evergreen_ils.data.Organization
 import org.evergreen_ils.data.Result
 import org.evergreen_ils.data.SMSCarrier
@@ -117,7 +115,7 @@ class PlaceHoldActivity : BaseActivity() {
         emailNotification?.isChecked = account?.notifyByEmail ?: false
 
         initPhoneControls(resources.getBoolean(R.bool.ou_enable_phone_notification))
-        initSMSControls(smsEnabled)
+        initSMSControls(EgOrg.smsEnabled)
         initPlaceHoldButton()
         initSuspendHoldButton()
         initDatePickers()
@@ -155,8 +153,8 @@ class PlaceHoldActivity : BaseActivity() {
         if (smsNotification!!.isChecked) notify.add("sms")
         val notifyTypes = TextUtils.join("|", notify)
         try {
-            val pickup_org = orgs[selectedOrgPos]
-            val home_org = findOrg(App.getAccount().homeOrg)
+            val pickup_org = EgOrg.visibleOrgs[selectedOrgPos]
+            val home_org = EgOrg.findOrg(App.getAccount().homeOrg)
             val pickup_val = pickupEventValue(pickup_org, home_org)
             Analytics.logEvent("Place Hold: Execute",
                     "result", result,
@@ -170,7 +168,7 @@ class PlaceHoldActivity : BaseActivity() {
 
     private fun initPlaceHoldButton() {
         placeHold?.setOnClickListener {
-            val selectedOrg = orgs[selectedOrgPos]
+            val selectedOrg = EgOrg.visibleOrgs[selectedOrgPos]
             if (!selectedOrg.isPickupLocation) {
                 logPlaceHoldResult("not_pickup_location")
                 val builder = AlertDialog.Builder(this@PlaceHoldActivity)
@@ -193,8 +191,8 @@ class PlaceHoldActivity : BaseActivity() {
             Log.d(TAG, "[kcxxx] placeHold: ${record.doc_id}")
             val expire_date_s = if (expireDate != null) Api.formatDate(expireDate) else null
             var thaw_date_s = if (thawDate != null) Api.formatDate(thawDate) else null
-            var selectedOrgID = if (orgs.size > selectedOrgPos) orgs[selectedOrgPos].id else -1
-            var selectedSMSCarrierID = if (carriers.size > selectedSMSPos) carriers[selectedSMSPos].id else -1
+            var selectedOrgID = if (EgOrg.visibleOrgs.size > selectedOrgPos) EgOrg.visibleOrgs[selectedOrgPos].id else -1
+            var selectedSMSCarrierID = if (EgSms.carriers.size > selectedSMSPos) EgSms.carriers[selectedSMSPos].id else -1
             progress?.show(this@PlaceHoldActivity, "Placing hold")
             val result = Gateway.circ.placeHoldAsync(App.getAccount(), record.doc_id,
                     selectedOrgID, emailNotification!!.isChecked, getPhoneNotify(), getSMSNotify(),
@@ -268,7 +266,7 @@ class PlaceHoldActivity : BaseActivity() {
 
     private fun initSMSSpinner(defaultCarrierID: Int?) {
         val entries = ArrayList<String>()
-        val carriers: List<SMSCarrier> = carriers
+        val carriers: List<SMSCarrier> = EgSms.carriers
         for (i in carriers.indices) {
             val (id, name) = carriers[i]
             entries.add(name)
@@ -319,8 +317,8 @@ class PlaceHoldActivity : BaseActivity() {
     private fun initOrgSpinner() {
         val defaultLibraryID = account!!.pickupOrg
         val list = ArrayList<String?>()
-        for (i in orgs.indices) {
-            val org = orgs[i]
+        for (i in EgOrg.visibleOrgs.indices) {
+            val org = EgOrg.visibleOrgs[i]
             list.add(org.treeDisplayName)
             if (equals(org.id, defaultLibraryID)) {
                 selectedOrgPos = i

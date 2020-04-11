@@ -311,8 +311,8 @@ public class SearchActivity extends BaseActivity {
         int selectedOrgPos = 0;
         Integer defaultLibraryID = App.getAccount().getSearchOrg();
         ArrayList<String> list = new ArrayList<>();
-        for (int i = 0; i < EgOrg.getOrgs().size(); i++) {
-            Organization org = EgOrg.getOrgs().get(i);
+        for (int i = 0; i < EgOrg.getVisibleOrgs().size(); i++) {
+            Organization org = EgOrg.getVisibleOrgs().get(i);
             list.add(org.getTreeDisplayName());
             if (IntUtils.equals(org.id, defaultLibraryID)) {
                 selectedOrgPos = i;
@@ -321,11 +321,11 @@ public class SearchActivity extends BaseActivity {
         ArrayAdapter<String> adapter = new OrgArrayAdapter(this, R.layout.org_item_layout, list, false);
         orgSpinner.setAdapter(adapter);
         orgSpinner.setSelection(selectedOrgPos);
-        search.selectOrganisation(EgOrg.getOrgs().get(selectedOrgPos));
+        search.selectOrganisation(EgOrg.getVisibleOrgs().get(selectedOrgPos));
         orgSpinner.setOnItemSelectedListener(new OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> arg0, View arg1, int ID, long arg3) {
-                search.selectOrganisation(EgOrg.getOrgs().get(ID));
+                search.selectOrganisation(EgOrg.getVisibleOrgs().get(ID));
             }
 
             @Override

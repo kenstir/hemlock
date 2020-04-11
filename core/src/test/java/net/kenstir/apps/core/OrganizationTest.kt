@@ -20,6 +20,7 @@ package net.kenstir.apps.core
 import org.evergreen_ils.system.EgOrg
 import org.evergreen_ils.android.Log
 import org.evergreen_ils.android.StdoutLogProvider
+import org.evergreen_ils.data.jsonMapOf
 import org.junit.Assert.*
 import org.junit.BeforeClass
 import org.junit.Test
@@ -36,46 +37,168 @@ class OrganizationTest {
     }
 
     fun setUpOrgTypes() {
-        val orgType = OSRFObject()
-        orgType["name"] = "Consortium"
-        orgType["id"] = 1
-        orgType["opac_label"] = "All PINES Libraries"
-        orgType["can_have_users"] = "f"
-        orgType["can_have_vols"] = "f"
-        val orgTypes = listOf<OSRFObject>(orgType)
+        val orgTypeConsortium = OSRFObject(jsonMapOf(
+                "id" to 1,
+                "name" to "Consortium",
+                "opac_label" to "All Libraries in Our Network",
+                "can_have_users" to "f",
+                "can_have_vols" to "f"
+        ))
+        val orgTypeLibrary = OSRFObject(jsonMapOf(
+                "id" to 3,
+                "name" to "Library",
+                "opac_label" to "This Library",
+                "can_have_users" to "t",
+                "can_have_vols" to "t"
+        ))
+        val orgTypeSystem = OSRFObject(jsonMapOf(
+                "id" to 2,
+                "name" to "System",
+                "opac_label" to "All Branches of This Library",
+                "can_have_users" to "f",
+                "can_have_vols" to "f"
+        ))
+        val orgTypes = arrayListOf(orgTypeConsortium, orgTypeLibrary, orgTypeSystem)
         EgOrg.loadOrgTypes(orgTypes)
+    }
+
+    fun setUpOrgs() {
+        val branchObj = OSRFObject(jsonMapOf(
+                "id" to 29,
+                "ou_type" to 3,
+                "shortname" to "BETHEL",
+                "name" to "Bethel Public Library",
+                "opac_visible" to "t",
+                "parent_ou" to 28,
+                "children" to null
+        ))
+        val systemObj = OSRFObject(jsonMapOf(
+                "id" to 28,
+                "ou_type" to 2,
+                "shortname" to "BETSYS",
+                "name" to "Bethel",
+                "opac_visible" to "f",
+                "parent_ou" to 1,
+                "children" to arrayListOf(branchObj)
+        ))
+        val consortiumObj = OSRFObject(jsonMapOf(
+                "id" to 1,
+                "ou_type" to 1,
+                "shortname" to "CONS",
+                "name" to "Bibliomation",
+                "opac_visible" to "t",
+                "parent_ou" to null,
+                "children" to arrayListOf(systemObj)
+        ))
+        EgOrg.loadOrgs(consortiumObj, true)
+    }
+
+    fun setUp() {
+        setUpOrgTypes()
+        setUpOrgs()
     }
 
     @Test
     fun test_loadOrgTypes() {
-        // no orgs yet
-        assertEquals(0, EgOrg.orgTypes.size)
-        assertNull(EgOrg.findOrgType(1))
-
         setUpOrgTypes()
+        assertEquals(3, EgOrg.orgTypes.size)
+
         val topOrgType = EgOrg.findOrgType(1)
         assertEquals(topOrgType?.name, "Consortium")
 
-        /*
-        Assert.assertNull(EvergreenService.getOrganization(null))
-        Assert.assertNull(eg!!.getOrganization(1))
-        // add org
-        val o = OSRFObject()
-        o["name"] = String("Example Consortium")
-        o["ou_type"] = 1
-        o["opac_visible"] = String("t")
-        o["parent_ou"] = null
-        o["id"] = 1
-        o["shortname"] = String("CONS")
-        eg!!.loadOrganizations(o, true)
-        // now we can find it
-        val org = eg!!.getOrganization(1)
-        org.junit.Assert.assertEquals(1, org.id)
-        org.junit.Assert.assertEquals("CONS", org.shortname)
-        // misc
-        org.junit.Assert.assertEquals("Example Consortium", eg!!.getOrganizationName(1))
-        org.junit.Assert.assertEquals("", eg!!.getOrganizationName(2))
-        org.junit.Assert.assertNull(eg!!.getOrganization(2))
-        */
+        assertNull(EgOrg.findOrgType(999))
+    }
+
+    @Test
+    fun test_loadOrganizations() {
+        setUp()
+
+        assertTrue(EgOrg.allOrgs.isNotEmpty())
+    }
+
+    @Test
+    fun test_findOrg() {
+        setUp()
+
+        val lib = EgOrg.findOrg(29)
+        assertEquals("BETHEL", lib?.shortname)
+
+        assertNull(EgOrg.findOrg(999))
+    }
+
+    @Test
+    fun test_findOrgByShortName() {
+        setUp()
+
+        val lib = EgOrg.findOrgByShortName("BETHEL")
+        assertEquals(29, lib?.id)
+    }
+
+    @Test
+    fun test_spinnerLabels() {
+        setUp()
+
+        val lib = EgOrg.findOrgByShortName("BETHEL")
+        assertEquals("   ", lib?.indentedDisplayPrefix)
+
+        val labels = EgOrg.orgSpinnerLabels()
+        assertEquals(arrayListOf("Bibliomation", "   Bethel Public Library"), labels)
+    }
+
+    /*
+    @Test
+    fun test_getOrganizationSpinnerLabelsAndSelectedIndex() {
+        setUp()
+
+        var pair = eg.getOrganizationSpinnerLabelsAndSelectedIndex(null)
+        assertEquals(arrayListOf("Bibliomation", "   Bethel Public Library"), pair.first)
+        assertEquals(0, pair.second) // 0 here means not found
+
+        pair = eg.getOrganizationSpinnerLabelsAndSelectedIndex(1)
+        assertEquals(0, pair.second) // 0 here is found
+        assertEquals(1, eg.visibleOrganizations.get(pair.second!!).id)
+
+        pair = eg.getOrganizationSpinnerLabelsAndSelectedIndex(28)
+        assertEquals(0, pair.second) // 0 here means not found
+
+        pair = eg.getOrganizationSpinnerLabelsAndSelectedIndex(29)
+        assertEquals(1, pair.second)
+        assertEquals(29, eg.visibleOrganizations.get(pair.second!!).id)
+    }
+
+     */
+
+    @Test
+    fun test_invisibleOrgsAreLoaded() {
+        setUp()
+
+        assertEquals(3, EgOrg.allOrgs.size)
+        assertEquals(2, EgOrg.visibleOrgs.size)
+
+        val lib = EgOrg.findOrg(29)
+        assertEquals(true, lib?.opac_visible)
+        assertEquals("BETHEL", lib?.shortname)
+        assertTrue(lib!!.orgType!!.canHaveUsers)
+        assertTrue(lib!!.orgType!!.canHaveVols)
+
+        val system = EgOrg.findOrg(28)
+        assertEquals(false, system?.opac_visible)
+        assertEquals("BETSYS", system?.shortname)
+        assertFalse(system!!.orgType!!.canHaveUsers)
+        assertFalse(system!!.orgType!!.canHaveVols)
+
+        val cons = EgOrg.findOrg(1)
+        assertEquals(true, cons?.opac_visible)
+        assertEquals("CONS", cons?.shortname)
+        assertFalse(system!!.orgType!!.canHaveUsers)
+        assertFalse(system!!.orgType!!.canHaveVols)
+    }
+
+    @Test
+    fun test_orgAncestry() {
+        setUp()
+
+        val libAncestry = EgOrg.getOrgAncestry("BETHEL")
+        assertEquals(arrayListOf("BETHEL", "BETSYS", "CONS"), libAncestry)
     }
 }

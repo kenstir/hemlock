@@ -131,8 +131,8 @@ class HoldDetailsActivity : BaseActivity() {
             thawDatePicker?.show()
         }
         var l = mutableListOf<String>()
-        for (i in EgOrg.orgs.indices) {
-            val org = EgOrg.orgs[i]
+        for (i in EgOrg.visibleOrgs.indices) {
+            val org = EgOrg.visibleOrgs[i]
             l.add(org.treeDisplayName)
             if (org.id == record.pickupLib) {
                 selectedOrgPos = i
@@ -184,14 +184,14 @@ class HoldDetailsActivity : BaseActivity() {
             if (thawDate != null) thawDateApi = Api.formatDate(thawDate)
 
             val holdId = record.ahr.getInt("id") ?: 0
-            val orgId = EgOrg.orgs[selectedOrgPos].id
+            val orgId = EgOrg.visibleOrgs[selectedOrgPos].id
             val result = Gateway.circ.updateHoldAsync(App.getAccount(), holdId,
                     orgId, expireDateApi, suspendHold!!.isChecked, thawDateApi)
             progress?.dismiss()
             when (result) {
                 is Result.Success -> {
                     Toast.makeText(this@HoldDetailsActivity,
-                            getString(R.string.msg_updated_hold), Toast.LENGTH_SHORT)
+                            getString(R.string.msg_updated_hold), Toast.LENGTH_SHORT).show()
                     setResult(RESULT_CODE_UPDATE_HOLD)
                     finish()
                 }

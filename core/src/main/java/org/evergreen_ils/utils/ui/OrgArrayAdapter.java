@@ -27,14 +27,14 @@ public class OrgArrayAdapter extends ArrayAdapter<String> {
     public boolean isEnabled(int pos) {
         if (!forPickup)
             return true;
-        Organization org = EgOrg.getOrgs().get(pos);
+        Organization org = EgOrg.getVisibleOrgs().get(pos);
         return org.isPickupLocation();
     }
 
     @Override
     public View getDropDownView(int pos, @Nullable View convertView, @NonNull ViewGroup parent) {
         View v = super.getDropDownView(pos, convertView, parent);
-        Organization org = EgOrg.getOrgs().get(pos);
+        Organization org = EgOrg.getVisibleOrgs().get(pos);
         if (v instanceof TextView) {
             TextView tv = (TextView) v;
             //tv.setTypeface(org.orgType.can_have_users ? Typeface.DEFAULT : Typeface.DEFAULT_BOLD);

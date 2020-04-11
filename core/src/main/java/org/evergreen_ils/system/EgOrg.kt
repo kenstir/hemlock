@@ -24,18 +24,21 @@ import org.evergreen_ils.data.Organization
 import org.opensrf.util.OSRFObject
 import java.util.*
 import kotlin.Comparator
+import kotlin.collections.ArrayList
 
 private const val TAG = "EgOrg"
 
 object EgOrg {
-    @JvmStatic
     var orgTypes = mutableListOf<OrgType>()
-    @JvmStatic
-    var orgs = mutableListOf<Organization>()
-    @JvmStatic
+    private var orgs = mutableListOf<Organization>()
     var smsEnabled = false
-    @JvmStatic
     val consortiumID = 1
+
+    val allOrgs: List<Organization>
+        get() = orgs
+    @JvmStatic
+    val visibleOrgs: List<Organization>
+        get() = orgs.filter { it.opac_visible }
 
     fun loadOrgTypes(objArray: List<OSRFObject>) {
         synchronized(this) {
@@ -67,16 +70,15 @@ object EgOrg {
         if (id == null) return
         if (name == null) return
         if (ouType == null) return
-        val opac_visible = obj.getBoolean("opac_visible")
+        val opacVisible = obj.getBoolean("opac_visible")
         val org = Organization(id, level, name, obj.getString("shortname"),
-                obj.getInt("parent_ou"), ouType)
+                obj.getInt("parent_ou"), ouType, opacVisible)
         org.indentedDisplayPrefix = String(CharArray(level)).replace("\u0000", "   ")
         //Log.d(TAG, "id:$id level:${org.level} vis:${org.opac_visible} shortname:${org.shortname} name:${org.name}")
-        if (opac_visible)
-            orgs.add(org)
+        orgs.add(org)
         val children = obj.get("children") as? List<OSRFObject>
         children?.forEach { child ->
-            val child_level = if (opac_visible) level + 1 else level
+            val child_level = if (opacVisible) level + 1 else level
             addOrganization(child, child_level)
         }
     }
@@ -121,7 +123,7 @@ object EgOrg {
         var org = findOrgByShortName(shortName)
         while (org != null) {
             ancestry.add(org.shortname)
-            org = findOrg(org.id)
+            org = findOrg(org.parent_ou)
         }
         return ancestry
     }
@@ -137,5 +139,9 @@ object EgOrg {
         // /?#main-content no better
         // trying #main-content
         return Gateway.baseUrl.plus("/eg/opac/library/${org.shortname}#main-content")
+    }
+
+    fun orgSpinnerLabels(): List<String> {
+        return visibleOrgs.map { it.treeDisplayName }
     }
 }

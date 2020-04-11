@@ -33,7 +33,7 @@ object GatewayLoader {
 
     // usage: loadOrgSettingsAsync(...).await()
     suspend fun loadOrgSettingsAsync(org: Organization?) = GlobalScope.async {
-        val orgs = if (org != null) listOf(org) else EgOrg.orgs
+        val orgs = if (org != null) listOf(org) else EgOrg.visibleOrgs
         for (org in orgs) {
             if (!org.settingsLoaded) {
                 async {
