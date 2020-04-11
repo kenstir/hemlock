@@ -309,7 +309,7 @@ public class HoldDetailsActivity extends BaseActivity {
                     public void run() {
                         progress.dismiss();
                         Toast.makeText(HoldDetailsActivity.this, "Hold updated",
-                                Toast.LENGTH_SHORT);
+                                Toast.LENGTH_SHORT).show();
                         setResult(RESULT_CODE_UPDATE_HOLD);
                         finish();
                     }
