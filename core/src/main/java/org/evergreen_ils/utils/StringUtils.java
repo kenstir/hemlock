@@ -18,8 +18,10 @@
 
 package org.evergreen_ils.utils;
 
+import androidx.annotation.NonNull;
+
 public class StringUtils {
-    public static String safeString(String s) {
+    public static @NonNull String safeString(String s) {
         if (s == null)
             return "";
         return s;
