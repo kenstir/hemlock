@@ -243,7 +243,7 @@ public class EvergreenServer {
         Integer index = 0;
         for (Organization org : mOrganizations) {
             if (org.opac_visible) {
-                labels.add(org.getTreeDisplayName());
+                labels.add(org.getSpinnerLabel());
                 if (IntUtils.equals(org.id, defaultOrgId)) {
                     selectedIndex = index;
                 }

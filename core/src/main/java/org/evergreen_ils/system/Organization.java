@@ -39,7 +39,7 @@ public class Organization /*implements Serializable*/ {
     public Organization() {
     }
 
-    public String getTreeDisplayName() {
+    public String getSpinnerLabel() {
         return indentedDisplayPrefix + name;
     }
 
