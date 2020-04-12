@@ -58,7 +58,7 @@ public class AccountAccess {
     private String userName = null;
     private String authToken = null;
     private Integer userID = null;
-    private String daytimePhoneNumber = null;
+    private String dayPhone = null;
     private String barcode = null;
     private Integer homeLibraryID = null;
     private Integer defaultPickupLibraryID = null;
@@ -75,7 +75,7 @@ public class AccountAccess {
         userName = null;
         authToken = null;
         userID = null;
-        daytimePhoneNumber = null;
+        dayPhone = null;
         barcode = null;
         homeLibraryID = null;
         defaultPickupLibraryID = null;
@@ -136,7 +136,7 @@ public class AccountAccess {
     public String getDefaultPhoneNumber() {
         if (!TextUtils.isEmpty(defaultPhoneNumber))
             return defaultPhoneNumber;
-        return daytimePhoneNumber;
+        return dayPhone;
     }
 
     public boolean getDefaultSMSNotification() {
@@ -172,7 +172,7 @@ public class AccountAccess {
             userID = au.getInt("id");
             homeLibraryID = au.getInt("home_ou");
             userName = au.getString("usrname");
-            daytimePhoneNumber = au.getString("day_phone");
+            dayPhone = au.getString("day_phone");
             //email = au.getString("email");
             // todo: warn when account is nearing expiration
             //expireDate = Api.parseDate(au.getString("expire_date"));

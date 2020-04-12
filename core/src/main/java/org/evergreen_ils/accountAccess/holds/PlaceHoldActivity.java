@@ -314,8 +314,7 @@ public class PlaceHoldActivity extends AppCompatActivity {
             phone_notify.setVisibility(View.GONE);
             // As a special case, we set the checkbox and text field for patrons with phone
             // notification turned on with a phone number, even for apps where the checkbox is hidden.
-            // This causes us to set phone_notify=### on holds, which makes it print on hold slips,
-            // allowing those few remaining patrons to continue getting notifications by phone.
+            // This causes us to set phone_notify=### on holds, which makes it print on hold slips.
             if (defaultPhoneNotification && !TextUtils.isEmpty(defaultPhoneNumber)) {
                 phone_notification.setChecked(defaultPhoneNotification);
                 phone_notify.setText(safeString(defaultPhoneNumber));
