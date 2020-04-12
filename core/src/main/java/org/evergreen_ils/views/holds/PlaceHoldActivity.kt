@@ -319,7 +319,7 @@ class PlaceHoldActivity : BaseActivity() {
         val list = ArrayList<String?>()
         for (i in EgOrg.visibleOrgs.indices) {
             val org = EgOrg.visibleOrgs[i]
-            list.add(org.treeDisplayName)
+            list.add(org.spinnerLabel)
             if (equals(org.id, defaultLibraryID)) {
                 selectedOrgPos = i
             }

@@ -133,7 +133,7 @@ class HoldDetailsActivity : BaseActivity() {
         var l = mutableListOf<String>()
         for (i in EgOrg.visibleOrgs.indices) {
             val org = EgOrg.visibleOrgs[i]
-            l.add(org.treeDisplayName)
+            l.add(org.spinnerLabel)
             if (org.id == record.pickupLib) {
                 selectedOrgPos = i
             }
