@@ -24,7 +24,6 @@ import org.evergreen_ils.data.Organization
 import org.opensrf.util.OSRFObject
 import java.util.*
 import kotlin.Comparator
-import kotlin.collections.ArrayList
 
 private const val TAG = "EgOrg"
 
@@ -142,6 +141,6 @@ object EgOrg {
     }
 
     fun orgSpinnerLabels(): List<String> {
-        return visibleOrgs.map { it.treeDisplayName }
+        return visibleOrgs.map { it.spinnerLabel }
     }
 }

@@ -313,7 +313,7 @@ public class SearchActivity extends BaseActivity {
         ArrayList<String> list = new ArrayList<>();
         for (int i = 0; i < EgOrg.getVisibleOrgs().size(); i++) {
             Organization org = EgOrg.getVisibleOrgs().get(i);
-            list.add(org.getTreeDisplayName());
+            list.add(org.getSpinnerLabel());
             if (IntUtils.equals(org.id, defaultLibraryID)) {
                 selectedOrgPos = i;
             }

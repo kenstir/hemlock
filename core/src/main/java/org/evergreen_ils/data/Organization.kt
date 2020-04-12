@@ -32,7 +32,7 @@ class Organization(@JvmField val id: Int,
     var settingsLoaded = false
     private var isNotPickupLocationSetting: Boolean? = null // null=not loaded
     var isPaymentAllowedSetting: Boolean? = null // null=not loaded
-    val treeDisplayName: String
+    val spinnerLabel: String
         get() = indentedDisplayPrefix + name
     val isPickupLocation: Boolean
         get() {
