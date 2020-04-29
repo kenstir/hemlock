@@ -43,17 +43,16 @@ class Account constructor(val username: String, var authToken: String?) {
     var bookBagsLoaded: Boolean = false
 
     private var dayPhone: String? = null
-    private var defaultPickupOrg: Int? = null
-    private var defaultPhone: String? = null
-    private var defaultSearchOrg: Int? = null
-    private var defaultSMSCarrier: Int? = null
+    private var notifyPhoneNumber: String? = null
+    private var _pickupOrg: Int? = null
+    private var _searchOrg: Int? = null
 
     val phoneNumber: String?
-        get() = defaultPhone ?: dayPhone
+        get() = notifyPhoneNumber ?: dayPhone
     val pickupOrg: Int?
-        get() = defaultPickupOrg ?: homeOrg
+        get() = _pickupOrg ?: homeOrg
     val searchOrg: Int?
-        get() = defaultSearchOrg ?: homeOrg
+        get() = _searchOrg ?: homeOrg
 
     /** return (authToken, userID) or throw GatewayEventError */
     fun getCredentialsOrThrow(): AccountCredentials {
@@ -89,10 +88,10 @@ class Account constructor(val username: String, var authToken: String?) {
                 map[name] = value
             }
         }
-        this.defaultPickupOrg = Api.parseInt(map[Api.USER_SETTING_DEFAULT_PICKUP_LOCATION])
-        this.defaultPhone = map[Api.USER_SETTING_DEFAULT_PHONE]
-        this.defaultSearchOrg = Api.parseInt(map[Api.USER_SETTING_DEFAULT_SEARCH_LOCATION])
-        this.defaultSMSCarrier = Api.parseInt(map[Api.USER_SETTING_DEFAULT_SMS_CARRIER])
+        this._pickupOrg = Api.parseInt(map[Api.USER_SETTING_DEFAULT_PICKUP_LOCATION])
+        this.notifyPhoneNumber = map[Api.USER_SETTING_DEFAULT_PHONE]
+        this._searchOrg = Api.parseInt(map[Api.USER_SETTING_DEFAULT_SEARCH_LOCATION])
+        this.smsCarrier = Api.parseInt(map[Api.USER_SETTING_DEFAULT_SMS_CARRIER])
         this.smsNumber = map[Api.USER_SETTING_DEFAULT_SMS_NOTIFY]
         this.holdNotifyValue = map[Api.USER_SETTING_HOLD_NOTIFY]
         parseHoldNotifyValue(holdNotifyValue)

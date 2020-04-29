@@ -123,31 +123,33 @@ class PlaceHoldActivity : BaseActivity() {
     }
 
     private fun getPhoneNotify(): String? {
+        // TODO clean up conversion
         return if (phoneNotification!!.isChecked) phoneNotify!!.text.toString() else null
     }
 
     private fun getSMSNotify(): String? {
+        // TODO clean up conversion
         return if (smsNotification!!.isChecked) smsNotify!!.text.toString() else null
     }
 
     private fun getSMSNotifyCarrier(id: Int): Int? {
+        // TODO clean up conversion
         return if (smsNotification!!.isChecked) id else null
     }
 
     private fun pickupEventValue(pickup_org: Organization?, home_org: Organization?): String {
-        return if (home_org == null) {
-            "homeless"
-        } else if (pickup_org == null) {
-            "null_pickup"
-        } else if (TextUtils.equals(pickup_org.name, home_org.name)) {
-            "home"
-        } else if (pickup_org.isConsortium) {
-            pickup_org.shortname
-        } else "other"
+        return when {
+            home_org == null -> "homeless"
+            pickup_org == null -> "null_pickup"
+            TextUtils.equals(pickup_org.name, home_org.name) -> "home"
+            pickup_org.isConsortium -> pickup_org.shortname
+            else -> "other"
+        }
     }
 
     private fun logPlaceHoldResult(result: String) {
         val notify = ArrayList<String?>()
+        // TODO clean up conversion
         if (emailNotification!!.isChecked) notify.add("email")
         if (phoneNotification!!.isChecked) notify.add("phone")
         if (smsNotification!!.isChecked) notify.add("sms")
@@ -220,6 +222,7 @@ class PlaceHoldActivity : BaseActivity() {
     }
 
     private fun initPhoneControls(systemwide_phone_enabled: Boolean) {
+        // TODO sync logic with master
         val defaultPhoneNotification = account!!.notifyByPhone
         val defaultPhoneNumber = account!!.phoneNumber
         if (systemwide_phone_enabled) {
@@ -242,6 +245,7 @@ class PlaceHoldActivity : BaseActivity() {
     }
 
     private fun initSMSControls(systemwide_sms_enabled: Boolean) {
+        // TODO sync logic with master
         if (systemwide_sms_enabled) {
             val isChecked = account!!.notifyBySMS
             smsNotification!!.isChecked = isChecked
