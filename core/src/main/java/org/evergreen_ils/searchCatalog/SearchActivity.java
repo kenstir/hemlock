@@ -21,7 +21,6 @@ package org.evergreen_ils.searchCatalog;
 
 import java.util.*;
 
-import androidx.annotation.NonNull;
 import androidx.core.util.Pair;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.appcompat.widget.SwitchCompat;
@@ -226,7 +225,7 @@ public class SearchActivity extends BaseActivity {
                 searchResults = search.getSearchResults(text, getSearchClass(), getSearchFormatCode(), getString(R.string.ou_sort_by), 0);
                 try {
                     Organization search_org = search.selectedOrganization;
-                    Organization home_org = eg.getOrganization(AccountAccess.getInstance().getHomeLibraryID());
+                    Organization home_org = eg.getOrganization(AccountAccess.getInstance().getHomeOrgID());
                     String search_org_val = TextUtils.equals(search_org.name, home_org.name) ? "home" :
                             ((search_org.isConsortium()) ? search_org.shortname : "other");
                     Analytics.logEvent("Search: Execute",
@@ -266,7 +265,7 @@ public class SearchActivity extends BaseActivity {
     }
 
     private void initSearchOrgSpinner() {
-        Integer defaultOrgId = AccountAccess.getInstance().getDefaultSearchLibraryID();
+        Integer defaultOrgId = AccountAccess.getInstance().getSearchOrgID();
         Organization defaultOrg = eg.getOrganization(defaultOrgId);
         Pair<ArrayList<String>, Integer> pair = eg.getOrganizationSpinnerLabelsAndSelectedIndex(defaultOrgId);
 

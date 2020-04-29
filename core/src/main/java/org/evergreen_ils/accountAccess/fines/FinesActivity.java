@@ -123,7 +123,7 @@ public class FinesActivity extends BaseActivity {
     }
 
     private void initPayFinesButton() {
-        Integer home_lib = AccountAccess.getInstance().getHomeLibraryID();
+        Integer home_lib = AccountAccess.getInstance().getHomeOrgID();
         Organization home_org = (home_lib != null) ? EvergreenServer.getInstance().getOrganization(home_lib) : null;
         if (getResources().getBoolean(R.bool.ou_enable_pay_fines)
                 && home_org != null

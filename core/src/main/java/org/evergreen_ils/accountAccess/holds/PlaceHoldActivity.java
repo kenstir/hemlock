@@ -50,6 +50,7 @@ import org.evergreen_ils.android.Analytics;
 import org.evergreen_ils.system.EvergreenServer;
 import org.evergreen_ils.system.Organization;
 import org.evergreen_ils.system.SMSCarrier;
+import org.evergreen_ils.system.Utils;
 import org.evergreen_ils.utils.ui.ActionBarUtils;
 import org.evergreen_ils.utils.ui.OrgArrayAdapter;
 import org.evergreen_ils.utils.ui.ProgressDialogSupport;
@@ -137,7 +138,7 @@ public class PlaceHoldActivity extends AppCompatActivity {
         author.setText(record.author);
         format.setText(record.getIconFormatLabel());
 
-        email_notification.setChecked(accountAccess.getDefaultEmailNotification());
+        email_notification.setChecked(accountAccess.getNotifyByEmail());
         initPhoneControls(getResources().getBoolean(R.bool.ou_enable_phone_notification));
         initSMSControls(eg.getSMSEnabled());
         initPlaceHoldRunnable(record);
@@ -246,7 +247,7 @@ public class PlaceHoldActivity extends AppCompatActivity {
         String notifyTypes = TextUtils.join("|", notify);
         try {
             Organization pickup_org = eg.getVisibleOrganizations().get(selectedOrgPos);
-            Organization home_org = eg.getOrganization(AccountAccess.getInstance().getHomeLibraryID());
+            Organization home_org = eg.getOrganization(AccountAccess.getInstance().getHomeOrgID());
             String pickup_val = pickupEventValue(pickup_org, home_org);
             Analytics.logEvent("Place Hold: Execute",
                     "result", result,
@@ -295,37 +296,37 @@ public class PlaceHoldActivity extends AppCompatActivity {
         });
     }
 
-    private void initPhoneControls(boolean systemwide_phone_enabled) {
-        boolean defaultPhoneNotification = accountAccess.getDefaultPhoneNotification();
-        String defaultPhoneNumber = accountAccess.getDefaultPhoneNumber();
-        if (systemwide_phone_enabled) {
-            phone_notification.setChecked(defaultPhoneNotification);
-            phone_notify.setText(safeString(defaultPhoneNumber));
+    private void initPhoneControls(boolean show_phone_notify_ux) {
+        // Allow phone_notify to be set even if UX is not visible
+        String notifyPhoneNumber = accountAccess.getNotifyPhoneNumber();
+        phone_notify.setText(safeString(notifyPhoneNumber));
+        if (accountAccess.getNotifyByPhone() && !TextUtils.isEmpty(notifyPhoneNumber)) {
+            phone_notification.setChecked(true);
+        }
+
+        if (show_phone_notify_ux) {
             phone_notification.setOnCheckedChangeListener(new OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                     phone_notify.setEnabled(isChecked);
                 }
             });
-            phone_notify.setEnabled(defaultPhoneNotification);
+            phone_notify.setEnabled(phone_notification.isChecked());
         } else {
             phone_notification_label.setVisibility(View.GONE);
             phone_notification.setVisibility(View.GONE);
             phone_notify.setVisibility(View.GONE);
-            // As a special case, we set the checkbox and text field for patrons with phone
-            // notification turned on with a phone number, even for apps where the checkbox is hidden.
-            // This causes us to set phone_notify=### on holds, which makes it print on hold slips.
-            if (defaultPhoneNotification && !TextUtils.isEmpty(defaultPhoneNumber)) {
-                phone_notification.setChecked(defaultPhoneNotification);
-                phone_notify.setText(safeString(defaultPhoneNumber));
-            }
         }
     }
 
     private void initSMSControls(boolean systemwide_sms_enabled) {
+        String notifySMSNumber = accountAccess.getNotifySMSNumber();
+        sms_notify.setText(safeString(notifySMSNumber));
+        if (accountAccess.getNotifyBySMS() && !TextUtils.isEmpty(notifySMSNumber)) {
+            sms_notification.setChecked(true);
+        }
+
         if (systemwide_sms_enabled) {
-            boolean isChecked = accountAccess.getDefaultSMSNotification();
-            sms_notification.setChecked(isChecked);
             sms_notification.setOnCheckedChangeListener(new OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -333,12 +334,10 @@ public class PlaceHoldActivity extends AppCompatActivity {
                     sms_notify.setEnabled(isChecked);
                 }
             });
-            sms_notify.setEnabled(isChecked);
-            sms_notify.setText(safeString(accountAccess.getDefaultSMSNumber()));
-            sms_spinner.setEnabled(isChecked);
-            initSMSSpinner(accountAccess.getDefaultSMSCarrierID());
+            sms_notify.setEnabled(sms_notification.isChecked());
+            sms_spinner.setEnabled(sms_notification.isChecked());
+            initSMSSpinner(accountAccess.getNotifySMSCarrierID());
         } else {
-            sms_notification.setChecked(false);
             sms_notification_label.setVisibility(View.GONE);
             sms_spinner_label.setVisibility(View.GONE);
             sms_notification.setVisibility(View.GONE);
@@ -430,7 +429,7 @@ public class PlaceHoldActivity extends AppCompatActivity {
     }
 
     private void initOrgSpinner() {
-        Integer defaultOrgId = AccountAccess.getInstance().getDefaultPickupLibraryID();
+        Integer defaultOrgId = AccountAccess.getInstance().getPickupOrgID();
         Pair<ArrayList<String>, Integer> pair = eg.getOrganizationSpinnerLabelsAndSelectedIndex(defaultOrgId);
         selectedOrgPos = pair.second;
 

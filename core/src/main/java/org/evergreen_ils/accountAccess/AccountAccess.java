@@ -60,15 +60,15 @@ public class AccountAccess {
     private Integer userID = null;
     private String dayPhone = null;
     private String barcode = null;
-    private Integer homeLibraryID = null;
-    private Integer defaultPickupLibraryID = null;
-    private Integer defaultSearchLibraryID = null;
+    private Integer homeOrgID = null;
+    private Integer pickupOrgID = null;
+    private Integer searchOrgID = null;
     private Integer defaultSMSCarrierID = null;
     private String defaultSMSNumber = null;
-    private String defaultPhoneNumber = null;
-    private Boolean defaultHoldNotifyEmail = null;
-    private Boolean defaultHoldNotifyPhone = null;
-    private Boolean defaultHoldNotifySMS = null;
+    private String notifyPhoneNumber = null;
+    private Boolean notifyByEmail = null;
+    private Boolean notifyByPhone = null;
+    private Boolean notifyBySMS = null;
     private ArrayList<BookBag> bookBags = new ArrayList<>();
 
     private void clearSession() {
@@ -77,15 +77,15 @@ public class AccountAccess {
         userID = null;
         dayPhone = null;
         barcode = null;
-        homeLibraryID = null;
-        defaultPickupLibraryID = null;
-        defaultSearchLibraryID = null;
+        homeOrgID = null;
+        pickupOrgID = null;
+        searchOrgID = null;
         defaultSMSCarrierID = null;
         defaultSMSNumber = null;
-        defaultPhoneNumber = null;
-        defaultHoldNotifyEmail = null;
-        defaultHoldNotifyPhone = null;
-        defaultHoldNotifySMS = null;
+        notifyPhoneNumber = null;
+        notifyByEmail = null;
+        notifyByPhone = null;
+        notifyBySMS = null;
         bookBags = new ArrayList<>();
     }
 
@@ -102,20 +102,20 @@ public class AccountAccess {
 
     public String getBarcode() { return barcode; }
 
-    public Integer getHomeLibraryID() {
-        return homeLibraryID;
+    public Integer getHomeOrgID() {
+        return homeOrgID;
     }
 
-    public Integer getDefaultPickupLibraryID() {
-        if (defaultPickupLibraryID != null)
-            return defaultPickupLibraryID;
-        return homeLibraryID;
+    public Integer getPickupOrgID() {
+        if (pickupOrgID != null)
+            return pickupOrgID;
+        return homeOrgID;
     }
 
-    public Integer getDefaultSearchLibraryID() {
-        if (defaultSearchLibraryID != null)
-            return defaultSearchLibraryID;
-        return homeLibraryID;
+    public Integer getSearchOrgID() {
+        if (searchOrgID != null)
+            return searchOrgID;
+        return homeOrgID;
     }
 
     public static String safeGetOrganizationShortName(Integer orgID) {
@@ -125,29 +125,29 @@ public class AccountAccess {
         return org.shortname;
     }
 
-    public boolean getDefaultEmailNotification() {
-        return Utils.safeBool(defaultHoldNotifyEmail);
+    public boolean getNotifyByEmail() {
+        return Utils.safeBool(notifyByEmail);
     }
 
-    public boolean getDefaultPhoneNotification() {
-        return Utils.safeBool(defaultHoldNotifyPhone);
+    public boolean getNotifyByPhone() {
+        return Utils.safeBool(notifyByPhone);
     }
 
-    public String getDefaultPhoneNumber() {
-        if (!TextUtils.isEmpty(defaultPhoneNumber))
-            return defaultPhoneNumber;
+    public String getNotifyPhoneNumber() {
+        if (!TextUtils.isEmpty(notifyPhoneNumber))
+            return notifyPhoneNumber;
         return dayPhone;
     }
 
-    public boolean getDefaultSMSNotification() {
-        return Utils.safeBool(defaultHoldNotifySMS);
+    public boolean getNotifyBySMS() {
+        return Utils.safeBool(notifyBySMS);
     }
 
-    public Integer getDefaultSMSCarrierID() {
+    public Integer getNotifySMSCarrierID() {
         return defaultSMSCarrierID;
     }
 
-    public String getDefaultSMSNumber() {
+    public String getNotifySMSNumber() {
         return defaultSMSNumber;
     }
 
@@ -170,7 +170,7 @@ public class AccountAccess {
         if (resp != null) {
             OSRFObject au = (OSRFObject) resp;
             userID = au.getInt("id");
-            homeLibraryID = au.getInt("home_ou");
+            homeOrgID = au.getInt("home_ou");
             userName = au.getString("usrname");
             dayPhone = au.getString("day_phone");
             //email = au.getString("email");
@@ -210,11 +210,11 @@ public class AccountAccess {
                     String name = setting.getString("name");
                     String value = removeStupidExtraQuotes(setting.getString(Api.VALUE));
                     if (name.equals(Api.USER_SETTING_DEFAULT_PICKUP_LOCATION)) {
-                        defaultPickupLibraryID = Api.parseInteger(value);
+                        pickupOrgID = Api.parseInteger(value);
                     } else if (name.equals(Api.USER_SETTING_DEFAULT_PHONE)) {
-                        defaultPhoneNumber = value;
+                        notifyPhoneNumber = value;
                     } else if (name.equals(Api.USER_SETTING_DEFAULT_SEARCH_LOCATION)) {
-                        defaultSearchLibraryID = Api.parseInteger(value);
+                        searchOrgID = Api.parseInteger(value);
                     } else if (name.equals(Api.USER_SETTING_DEFAULT_SMS_CARRIER)) {
                         defaultSMSCarrierID = Api.parseInteger(value);
                     } else if (name.equals(Api.USER_SETTING_DEFAULT_SMS_NOTIFY)) {
@@ -229,18 +229,18 @@ public class AccountAccess {
         }
         parseHoldNotifyValue(holdNotifySetting);
         Analytics.logEvent("Account: Retrieve Session",
-                "home_org", safeGetOrganizationShortName(homeLibraryID),
-                "pickup_org", safeGetOrganizationShortName(defaultPickupLibraryID),
-                "search_org", safeGetOrganizationShortName(defaultSearchLibraryID),
+                "home_org", safeGetOrganizationShortName(homeOrgID),
+                "pickup_org", safeGetOrganizationShortName(pickupOrgID),
+                "search_org", safeGetOrganizationShortName(searchOrgID),
                 "hold_notify", safeString(holdNotifySetting));
         Log.d(TAG, "done fleshing user settings");
     }
 
     private void parseHoldNotifyValue(String value) {
         // NB: value may be either ':' separated or '|' separated, e.g. "phone:email" or "email|sms"
-        defaultHoldNotifyEmail = value.contains("email");
-        defaultHoldNotifyPhone = value.contains("phone");
-        defaultHoldNotifySMS = value.contains("sms");
+        notifyByEmail = value.contains("email");
+        notifyByPhone = value.contains("phone");
+        notifyBySMS = value.contains("sms");
     }
 
     public boolean reauthenticate(Activity activity) {

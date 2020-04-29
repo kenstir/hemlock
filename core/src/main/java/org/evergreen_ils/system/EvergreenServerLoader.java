@@ -91,8 +91,8 @@ public class EvergreenServerLoader {
         startVolley();
         final EvergreenServer eg = EvergreenServer.getInstance();
         final AccountAccess ac = AccountAccess.getInstance();
-        final Organization home_org = eg.getOrganization(ac.getHomeLibraryID());
-        final Organization pickup_org = eg.getOrganization(ac.getDefaultPickupLibraryID());
+        final Organization home_org = eg.getOrganization(ac.getHomeOrgID());
+        final Organization pickup_org = eg.getOrganization(ac.getPickupOrgID());
 
         // To minimize risk of race condition, load home and pickup orgs first.
         // Use a clone so we don't screw up the search org spinner.

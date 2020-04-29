@@ -235,10 +235,10 @@ public class OSRFTest {
         //recordID = 4030530;//cwmars: Arrival (ITEM_AGE_PROTECTED)
         recordID = 3788817; //cwmars: Anomalisa (ok)
 
-        Integer pickup_lib = ac.getDefaultPickupLibraryID();
+        Integer pickup_lib = ac.getPickupOrgID();
         boolean email_notify = true;
-        Integer sms_carrier_id = ac.getDefaultSMSCarrierID();
-        String sms_number = ac.getDefaultSMSNumber();
+        Integer sms_carrier_id = ac.getNotifySMSCarrierID();
+        String sms_number = ac.getNotifySMSNumber();
         boolean suspendHold = false;
         String expire_time = null;
         String thaw_date = null;
