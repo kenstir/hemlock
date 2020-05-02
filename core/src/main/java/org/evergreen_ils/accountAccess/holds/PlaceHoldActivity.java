@@ -296,7 +296,7 @@ public class PlaceHoldActivity extends AppCompatActivity {
         });
     }
 
-    private void initPhoneControls(boolean show_phone_notify_ux) {
+    private void initPhoneControls(boolean isPhoneNotifyVisible) {
         // Allow phone_notify to be set even if UX is not visible
         String notifyPhoneNumber = accountAccess.getNotifyPhoneNumber();
         phone_notify.setText(safeString(notifyPhoneNumber));
@@ -304,7 +304,7 @@ public class PlaceHoldActivity extends AppCompatActivity {
             phone_notification.setChecked(true);
         }
 
-        if (show_phone_notify_ux) {
+        if (isPhoneNotifyVisible) {
             phone_notification.setOnCheckedChangeListener(new OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -319,14 +319,14 @@ public class PlaceHoldActivity extends AppCompatActivity {
         }
     }
 
-    private void initSMSControls(boolean systemwide_sms_enabled) {
+    private void initSMSControls(boolean isSmsNotifyEnabled) {
         String notifySMSNumber = accountAccess.getNotifySMSNumber();
         sms_notify.setText(safeString(notifySMSNumber));
         if (accountAccess.getNotifyBySMS() && !TextUtils.isEmpty(notifySMSNumber)) {
             sms_notification.setChecked(true);
         }
 
-        if (systemwide_sms_enabled) {
+        if (isSmsNotifyEnabled) {
             sms_notification.setOnCheckedChangeListener(new OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -443,7 +443,7 @@ public class PlaceHoldActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onNothingSelected(AdapterView<?> arg0) {
+            public void onNothingSelected(AdapterView<?> parent) {
             }
         });
     }

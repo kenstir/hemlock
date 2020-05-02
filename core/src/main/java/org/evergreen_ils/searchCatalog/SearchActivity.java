@@ -280,7 +280,7 @@ public class SearchActivity extends BaseActivity {
             }
 
             @Override
-            public void onNothingSelected(AdapterView<?> arg0) {
+            public void onNothingSelected(AdapterView<?> parent) {
             }
         });
     }
