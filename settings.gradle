@@ -1,4 +1,13 @@
-include ':core', ':hemlock_app', ':pines_app', ':cwmars_app', ':cool_app', ':acorn_app', ':noble_app', ':ntlc_app', ':sagecat_app'
+include ':core'
+include ':acorn_app'
+include ':cwmars_app'
+include ':cool_app'
+include ':hemlock_app'
+include ':indiana_app'
+include ':noble_app'
+include ':ntlc_app'
+include ':pines_app'
+include ':sagecat_app'
 
 // include hemlock-pro-assets if it exists
 def dir = new File('hemlock-pro-assets')
