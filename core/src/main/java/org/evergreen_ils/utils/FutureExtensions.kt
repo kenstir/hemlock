@@ -28,7 +28,6 @@ suspend fun <T> Future<T>.await(timeoutMs: Int = 30_000): T {
     val start = System.currentTimeMillis()
     while (!isDone) {
         if (System.currentTimeMillis() - start > timeoutMs)
-            //return null
             throw TimeoutException()
         delay(50)
     }
@@ -40,7 +39,6 @@ suspend fun <T> AccountManagerFuture<T>.await(timeoutMs: Int = 30_000): T {
     val start = System.currentTimeMillis()
     while (!isDone) {
         if (System.currentTimeMillis() - start > timeoutMs)
-            //return null
             throw TimeoutException()
         delay(50)
     }
