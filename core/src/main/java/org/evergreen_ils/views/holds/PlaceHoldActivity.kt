@@ -122,19 +122,13 @@ class PlaceHoldActivity : BaseActivity() {
         initOrgSpinner()
     }
 
-    private fun getPhoneNotify(): String? {
-        // TODO clean up conversion
-        return if (phoneNotification!!.isChecked) phoneNotify!!.text.toString() else null
-    }
-
-    private fun getSMSNotify(): String? {
-        // TODO clean up conversion
-        return if (smsNotification!!.isChecked) smsNotify!!.text.toString() else null
-    }
-
-    private fun getSMSNotifyCarrier(id: Int): Int? {
-        // TODO clean up conversion
-        return if (smsNotification!!.isChecked) id else null
+    fun <T> coalesce(vararg args: T): T? {
+        for (arg in args) {
+            if (arg != null) {
+                return arg
+            }
+        }
+        return null
     }
 
     private fun pickupEventValue(pickup_org: Organization?, home_org: Organization?): String {
@@ -149,20 +143,19 @@ class PlaceHoldActivity : BaseActivity() {
 
     private fun logPlaceHoldResult(result: String) {
         val notify = ArrayList<String?>()
-        // TODO clean up conversion
         if (emailNotification!!.isChecked) notify.add("email")
         if (phoneNotification!!.isChecked) notify.add("phone")
         if (smsNotification!!.isChecked) notify.add("sms")
         val notifyTypes = TextUtils.join("|", notify)
         try {
-            val pickup_org = EgOrg.visibleOrgs[selectedOrgPos]
-            val home_org = EgOrg.findOrg(App.getAccount().homeOrg)
-            val pickup_val = pickupEventValue(pickup_org, home_org)
+            val pickupOrg = EgOrg.visibleOrgs[selectedOrgPos]
+            val homeOrg = EgOrg.findOrg(App.getAccount().homeOrg)
+            val pickupVal = pickupEventValue(pickupOrg, homeOrg)
             Analytics.logEvent("Place Hold: Execute",
                     "result", result,
                     "hold_notify", notifyTypes,
                     "expires", expireDate != null,
-                    "pickup_org", pickup_val)
+                    "pickup_org", pickupVal)
         } catch (e: Exception) {
             Analytics.logException(e)
         }
@@ -174,8 +167,8 @@ class PlaceHoldActivity : BaseActivity() {
             if (!selectedOrg.isPickupLocation) {
                 logPlaceHoldResult("not_pickup_location")
                 val builder = AlertDialog.Builder(this@PlaceHoldActivity)
-                builder.setTitle("Failed to place hold")
-                        .setMessage(selectedOrg.name + " is not a valid pickup location; choose a different one.")
+                builder.setTitle("Not a pickup location")
+                        .setMessage("You cannot pick up items at "+selectedOrg.name)
                         .setPositiveButton(android.R.string.ok, null)
                 builder.create().show()
             } else if (phoneNotification!!.isChecked && TextUtils.isEmpty(phoneNotify!!.text.toString())) {
@@ -188,18 +181,36 @@ class PlaceHoldActivity : BaseActivity() {
         }
     }
 
+    private fun getPhoneNotify(): String? {
+        return if (phoneNotification!!.isChecked) phoneNotify!!.text.toString() else null
+    }
+
+    private fun getSMSNotify(): String? {
+        return if (smsNotification!!.isChecked) smsNotify!!.text.toString() else null
+    }
+
+    private fun getSMSNotifyCarrier(id: Int): Int? {
+        return if (smsNotification!!.isChecked) id else null
+    }
+
+    private fun getExpireDate(): String? {
+        return if (expireDate != null) Api.formatDate(expireDate) else null
+    }
+
+    private fun getThawDate(): String? {
+        return if (thawDate != null) Api.formatDate(thawDate) else null
+    }
+
     private fun placeHold() {
         async {
             Log.d(TAG, "[kcxxx] placeHold: ${record.doc_id}")
-            val expire_date_s = if (expireDate != null) Api.formatDate(expireDate) else null
-            var thaw_date_s = if (thawDate != null) Api.formatDate(thawDate) else null
             var selectedOrgID = if (EgOrg.visibleOrgs.size > selectedOrgPos) EgOrg.visibleOrgs[selectedOrgPos].id else -1
             var selectedSMSCarrierID = if (EgSms.carriers.size > selectedSMSPos) EgSms.carriers[selectedSMSPos].id else -1
             progress?.show(this@PlaceHoldActivity, "Placing hold")
             val result = Gateway.circ.placeHoldAsync(App.getAccount(), record.doc_id,
                     selectedOrgID, emailNotification!!.isChecked, getPhoneNotify(), getSMSNotify(),
-                    getSMSNotifyCarrier(selectedSMSCarrierID), expire_date_s,
-                    suspendHold!!.isChecked, thaw_date_s)
+                    getSMSNotifyCarrier(selectedSMSCarrierID), getExpireDate(),
+                    suspendHold!!.isChecked, getThawDate())
             Log.d(TAG, "[kcxxx] placeHold: $result")
             progress?.dismiss()
             when (result) {
@@ -221,49 +232,47 @@ class PlaceHoldActivity : BaseActivity() {
         suspendHold!!.setOnCheckedChangeListener { buttonView, isChecked -> thawDateEdittext!!.isEnabled = isChecked }
     }
 
-    private fun initPhoneControls(systemwide_phone_enabled: Boolean) {
-        // TODO sync logic with master
-        val defaultPhoneNotification = account!!.notifyByPhone
-        val defaultPhoneNumber = account!!.phoneNumber
-        if (systemwide_phone_enabled) {
-            phoneNotification!!.isChecked = defaultPhoneNotification
-            phoneNotify?.setText(defaultPhoneNumber)
-            phoneNotification!!.setOnCheckedChangeListener { buttonView, isChecked -> phoneNotify!!.isEnabled = isChecked }
-            phoneNotify!!.isEnabled = defaultPhoneNotification
-        } else {
-            phoneNotificationLabel!!.visibility = View.GONE
-            phoneNotification!!.visibility = View.GONE
-            phoneNotify!!.visibility = View.GONE
-            // As a special case, we set the checkbox and text field for patrons with phone
-            // notification turned on with a phone number, even for apps where the checkbox is hidden.
-            // This causes us to set phoneNotify=### on holds, which makes it print on hold slips.
-            if (defaultPhoneNotification && !TextUtils.isEmpty(defaultPhoneNumber)) {
-                phoneNotification!!.isChecked = defaultPhoneNotification
-                phoneNotify?.setText(defaultPhoneNumber)
+    private fun initPhoneControls(isPhoneNotifyVisible: Boolean) {
+        // Allow phone_notify to be set even if UX is not visible
+        val notifyPhoneNumber = account?.phoneNumber
+        phoneNotify?.setText(notifyPhoneNumber)
+        if (account?.notifyByPhone == true && !notifyPhoneNumber.isNullOrEmpty()) {
+            phoneNotification?.isChecked = true
+        }
+
+        if (isPhoneNotifyVisible) {
+            phoneNotification?.setOnCheckedChangeListener { buttonView, isChecked ->
+                phoneNotify?.isEnabled = isChecked
             }
+            phoneNotify?.isEnabled = (phoneNotification?.isChecked == true)
+        } else {
+            phoneNotificationLabel?.visibility = View.GONE
+            phoneNotification?.visibility = View.GONE
+            phoneNotify?.visibility = View.GONE
         }
     }
 
-    private fun initSMSControls(systemwide_sms_enabled: Boolean) {
-        // TODO sync logic with master
-        if (systemwide_sms_enabled) {
-            val isChecked = account!!.notifyBySMS
-            smsNotification!!.isChecked = isChecked
-            smsNotification!!.setOnCheckedChangeListener { buttonView, isChecked ->
-                smsSpinner!!.isEnabled = isChecked
-                smsNotify!!.isEnabled = isChecked
+    private fun initSMSControls(isSmsNotifyEnabled: Boolean) {
+        val notifySmsNumber = account?.smsNumber
+        smsNotify?.setText(notifySmsNumber)
+        if (account?.notifyBySMS == true && !notifySmsNumber.isNullOrEmpty()) {
+            smsNotification?.isChecked = true
+        }
+
+        if (isSmsNotifyEnabled) {
+            smsNotification?.setOnCheckedChangeListener { buttonView, isChecked ->
+                smsSpinner?.isEnabled = isChecked
+                smsNotify?.isEnabled = isChecked
             }
-            smsNotify!!.isEnabled = isChecked
-            smsNotify?.setText(account?.smsNumber)
-            smsSpinner!!.isEnabled = isChecked
-            initSMSSpinner(account!!.smsCarrier)
+            smsNotify?.isEnabled = (smsNotification?.isChecked == true)
+            smsSpinner?.isEnabled = (smsNotification?.isChecked == true)
+            initSMSSpinner(account?.smsCarrier)
         } else {
-            smsNotification!!.isChecked = false
-            smsNotificationLabel!!.visibility = View.GONE
-            smsSpinnerLabel!!.visibility = View.GONE
-            smsNotification!!.visibility = View.GONE
-            smsSpinner!!.visibility = View.GONE
-            smsNotify!!.visibility = View.GONE
+            smsNotificationLabel?.visibility = View.GONE
+            smsSpinnerLabel?.visibility = View.GONE
+            smsNotification?.visibility = View.GONE
+            smsSpinner?.visibility = View.GONE
+            smsNotify?.visibility = View.GONE
         }
     }
 
@@ -293,37 +302,31 @@ class PlaceHoldActivity : BaseActivity() {
         val cal = Calendar.getInstance()
         datePicker = DatePickerDialog(this,
                 OnDateSetListener { view, year, monthOfYear, dayOfMonth ->
-                    val chosenDate = Date(year - 1900, monthOfYear,
-                            dayOfMonth)
+                    val chosenDate = Date(year - 1900, monthOfYear, dayOfMonth)
                     expireDate = chosenDate
-                    val strDate = DateFormat.format(
-                            "MMMM dd, yyyy", chosenDate)
-                    expirationDate!!.setText(strDate)
-                    // set current date
+                    val strDate = DateFormat.format("MMMM dd, yyyy", chosenDate)
+                    expirationDate?.setText(strDate)
                 }, cal[Calendar.YEAR], cal[Calendar.MONTH],
                 cal[Calendar.DAY_OF_MONTH])
-        expirationDate!!.setOnClickListener { datePicker!!.show() }
+        expirationDate!!.setOnClickListener { datePicker?.show() }
         thawDatePicker = DatePickerDialog(this,
                 OnDateSetListener { view, year, monthOfYear, dayOfMonth ->
-                    val chosenDate = Date(year - 1900, monthOfYear,
-                            dayOfMonth)
+                    val chosenDate = Date(year - 1900, monthOfYear, dayOfMonth)
                     thawDate = chosenDate
-                    val strDate = DateFormat.format(
-                            "MMMM dd, yyyy", chosenDate)
-                    thawDateEdittext!!.setText(strDate)
-                    // set current date
+                    val strDate = DateFormat.format("MMMM dd, yyyy", chosenDate)
+                    thawDateEdittext?.setText(strDate)
                 }, cal[Calendar.YEAR], cal[Calendar.MONTH],
                 cal[Calendar.DAY_OF_MONTH])
-        thawDateEdittext!!.setOnClickListener { thawDatePicker!!.show() }
+        thawDateEdittext?.setOnClickListener { thawDatePicker?.show() }
     }
 
     private fun initOrgSpinner() {
-        val defaultLibraryID = account!!.pickupOrg
+        val defaultOrgId = account?.pickupOrg
         val list = ArrayList<String?>()
         for (i in EgOrg.visibleOrgs.indices) {
             val org = EgOrg.visibleOrgs[i]
             list.add(org.spinnerLabel)
-            if (equals(org.id, defaultLibraryID)) {
+            if (org.id == defaultOrgId) {
                 selectedOrgPos = i
             }
         }
@@ -335,7 +338,7 @@ class PlaceHoldActivity : BaseActivity() {
                 selectedOrgPos = position
             }
 
-            override fun onNothingSelected(arg0: AdapterView<*>?) {}
+            override fun onNothingSelected(parent: AdapterView<*>?) {}
         }
     }
 
