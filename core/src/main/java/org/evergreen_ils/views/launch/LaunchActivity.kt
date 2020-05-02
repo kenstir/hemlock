@@ -162,7 +162,7 @@ class LaunchActivity : AppCompatActivity(), CoroutineScope by MainScope() {
         Log.d(TAG, "[auth] getAuthTokenFuture")
         val future = AccountUtils.getAuthTokenFuture(this)
         Log.d(TAG, "[auth] getAuthTokenFuture ...")
-        val bnd: Bundle? = future.await(30_000)
+        val bnd: Bundle? = future.await(3_600_000) // long to allow authenticator activity
         Log.d(TAG, "[auth] getAuthTokenFuture ... $bnd")
         if (bnd == null)
             throw TimeoutException()
