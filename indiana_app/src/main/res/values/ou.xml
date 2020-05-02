@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- see ../core/res/values/ou.xml for a description -->
+    <string name="ou_account_label">Evergreen Indiana</string>
+    <string name="ou_account_sign_in_message">Sign in to your Evergreen Indiana account</string>
+    <string name="ou_choose_library_label"></string>
+    <string name="ou_sign_in_label">Login:</string>
+    <string name="ou_account_type">net.kenstir.apps.indiana</string>
+    <string name="ou_app_label">Evergreen Indiana</string>
+    <string name="ou_library_name">Evergreen Indiana</string>
+    <string name="ou_activity_subtitle">%2$s</string>
+    <string name="ou_library_url">https://evergreen.lib.in.us</string>
+    <string name="ou_behavior_provider"></string>
+    <string name="ou_menu_provider"></string>
+    <bool name="ou_hierarchical_org_tree">true</bool>
+    <bool name="ou_group_copy_info_by_system">false</bool>
+    <bool name="ou_enable_phone_notification">true</bool><!-- TODO -->
+    <bool name="ou_enable_hold_queue_position">true</bool>
+    <bool name="ou_enable_hold_shelf_expiration">false</bool>
+    <bool name="ou_enable_messages">false</bool>
+    <bool name="ou_enable_pay_fines">false</bool><!-- TODO -->
+    <bool name="ou_need_marc_record">false</bool><!-- TODO -->
+    <bool name="ou_always_popup_online_links">true</bool>
+    <string name="ou_barcode_format">Codabar</string>
+</resources>

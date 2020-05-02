@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center_vertical">
+
+    <include layout="@layout/toolbar_common"/>
+
+    <Button
+        android:id="@+id/main_btn_search"
+        style="@style/Hemlock.ActionButton"
+        android:layout_width="0dp"
+        android:layout_height="60dp"
+        android:layout_marginLeft="24dp"
+        android:layout_marginRight="24dp"
+        android:drawableLeft="@drawable/ic_search_48"
+        android:onClick="onButtonClick"
+        android:text="@string/title_search"
+        app:layout_constraintBottom_toTopOf="@+id/account_btn_check_out"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar" />
+
+    <Button
+        android:id="@+id/account_btn_check_out"
+        style="@style/Hemlock.ActionButton"
+        android:layout_width="0dp"
+        android:layout_height="60dp"
+        android:layout_marginLeft="24dp"
+        android:layout_marginRight="24dp"
+        android:drawableLeft="@drawable/ic_checkouts_48"
+        android:onClick="onButtonClick"
+        android:text="@string/title_check_out"
+        app:layout_constraintBottom_toTopOf="@+id/account_btn_holds"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/main_btn_search"
+        app:layout_constraintVertical_chainStyle="packed" />
+
+    <Button
+        android:id="@+id/account_btn_holds"
+        style="@style/Hemlock.ActionButton"
+        android:layout_width="0dp"
+        android:layout_height="60dp"
+        android:layout_marginLeft="24dp"
+        android:layout_marginRight="24dp"
+        android:drawableLeft="@drawable/ic_holds_48"
+        android:onClick="onButtonClick"
+        android:text="@string/title_holds"
+        app:layout_constraintBottom_toTopOf="@+id/account_btn_fines"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/account_btn_check_out" />
+
+    <Button
+        android:id="@+id/account_btn_fines"
+        style="@style/Hemlock.ActionButton"
+        android:layout_width="0dp"
+        android:layout_height="60dp"
+        android:layout_marginLeft="24dp"
+        android:layout_marginRight="24dp"
+        android:drawableLeft="@drawable/ic_fines_48"
+        android:onClick="onButtonClick"
+        android:text="@string/title_fines"
+        app:layout_constraintBottom_toTopOf="@+id/main_my_lists_button"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/account_btn_holds" />
+
+    <Button
+        android:id="@+id/main_my_lists_button"
+        style="@style/Hemlock.ActionButton"
+        android:layout_width="0dp"
+        android:layout_height="60dp"
+        android:layout_marginLeft="24dp"
+        android:layout_marginRight="24dp"
+        android:drawableLeft="@drawable/ic_lists_48"
+        android:onClick="onButtonClick"
+        android:text="@string/title_my_lists"
+        app:layout_constraintBottom_toTopOf="@+id/main_barcode_button"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/account_btn_fines" />
+
+    <Button
+        android:id="@+id/main_barcode_button"
+        style="@style/Hemlock.ActionButton"
+        android:layout_width="0dp"
+        android:layout_height="60dp"
+        android:layout_marginLeft="24dp"
+        android:layout_marginRight="24dp"
+        android:drawableLeft="@drawable/ic_barcode_48"
+        android:onClick="onButtonClick"
+        android:text="@string/barcode_title"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/main_my_lists_button" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
