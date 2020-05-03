@@ -14,7 +14,7 @@
     <string name="ou_menu_provider"></string>
     <bool name="ou_hierarchical_org_tree">true</bool>
     <bool name="ou_group_copy_info_by_system">false</bool>
-    <bool name="ou_enable_phone_notification">true</bool><!-- TODO -->
+    <bool name="ou_enable_phone_notification">true</bool>
     <bool name="ou_enable_hold_queue_position">true</bool>
     <bool name="ou_enable_hold_shelf_expiration">false</bool>
     <bool name="ou_enable_messages">false</bool>
