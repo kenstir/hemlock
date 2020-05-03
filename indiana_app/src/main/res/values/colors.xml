@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools" xmlns:android="http://schemas.android.com/apk/res/android">
-    <!-- converted from CMYK by https://www.rapidtables.com/convert/color/cmyk-to-rgb.html -->
     <color name="indiana_logo_green">#007647</color>
     <color name="indiana_opac_dark_green">#005A3E</color>
 
     <color name="primary">@color/indiana_logo_green</color>
     <color name="primary_dark">@color/indiana_opac_dark_green</color>
+    <!--    <color name="accent">#ff9100</color>-->
     <color name="accent">@color/indiana_logo_green</color>
     <color name="logo_background">@color/material_grey_50</color>
-
-    <color name="hemlock_text_alert">#ff9100</color>
+    <color name="button_icon_tint">@color/indiana_opac_dark_green</color>
 </resources>
