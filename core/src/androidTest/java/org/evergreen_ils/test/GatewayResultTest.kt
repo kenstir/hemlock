@@ -205,7 +205,8 @@ class GatewayResultTest {
     }
 
     @Test
-    fun test_failureWithMultipleEvents() {
+    fun test_failureWithEventList() {
+        // This payload is an array of events
         val json = """
             {"payload":[[{"stacktrace":"...","payload":{"fail_part":"PATRON_EXCEEDS_FINES"},"servertime":"Mon Nov 25 20:57:11 2019","ilsevent":"7013","pid":23476,"textcode":"PATRON_EXCEEDS_FINES","desc":"The patron in question has reached the maximum fine amount"},{"stacktrace":"...","payload":{"fail_part":"PATRON_EXCEEDS_LOST_COUNT"},"servertime":"Mon Nov 25 20:57:11 2019","ilsevent":"1236","pid":23476,"textcode":"PATRON_EXCEEDS_LOST_COUNT","desc":"The patron has too many lost items."}]],"status":200}
             """
@@ -219,5 +220,36 @@ class GatewayResultTest {
         assertEquals(error?.ev?.code, 7013)
         assertEquals(error?.ev?.textCode, "PATRON_EXCEEDS_FINES")
         assertFalse(error?.isSessionExpired() ?: false)
+    }
+
+    @Test
+    fun test_placeHold_failWithResultObjContainingEventList() {
+        // This payload is an object, containing a result object, containing a last_event event
+        // I have only seen such a response from open-ils.circ.holds.test_and_create.batch
+        val json = """
+            {"payload":[{"result":{"success":0,"last_event":{"servertime":"Mon May  4 20:26:18 2020","payload":{"fail_part":"config.hold_matrix_test.holdable"},"stacktrace":"Holds.pm:3028","textcode":"ITEM_NOT_HOLDABLE","pid":2131,"ilsevent":"1220","desc":"A copy with a remote circulating library (circ_lib) was encountered"},"age_protected_copy":0,"place_unfillable":0},"target":6249829}],"status":200}
+            """
+        val result = GatewayResult.create(json)
+        assertTrue(result.failed)
+        assertEquals("A copy with a remote circulating library (circ_lib) was encountered", result.errorMessage)
+
+        val res = kotlin.runCatching { result.asObject() }
+        assertTrue(res.isFailure)
+        val error = res.exceptionOrNull() as? GatewayEventError
+        assertEquals(error?.ev?.code, 1220)
+        assertEquals(error?.ev?.textCode, "ITEM_NOT_HOLDABLE")
+        assertFalse(error?.isSessionExpired() ?: false)
+    }
+
+    @Test
+    fun test_placeHold_success() {
+        val json = """
+            {"payload":[{"result":6309896,"target":21296176}],"status":200}
+            """
+        val result = GatewayResult.create(json)
+        assertFalse(result.failed)
+
+        val obj = result.asObject()
+        assertEquals(obj.getInt("result"), 6309896)
     }
 }

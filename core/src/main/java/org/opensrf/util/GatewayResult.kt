@@ -167,7 +167,9 @@ class GatewayResult {
                                 events.add(event)
                             }
                         }
-                        if (resp.failed) resp.errorMessage = events.joinToString("\n\n") { it.description }
+                        if (resp.failed) resp.errorMessage = events.joinToString("\n\n") {
+                            it.description ?: ""
+                        }
                         resp.type = ResultType.ARRAY
                     }
                     is String -> {
