@@ -113,16 +113,16 @@ public class HoldDetailsActivity extends BaseActivity {
 
         final HoldRecord record = (HoldRecord) getIntent().getSerializableExtra("holdRecord");
 
-        title = (TextView) findViewById(R.id.hold_title);
-        author = (TextView) findViewById(R.id.hold_author);
-        format = (TextView) findViewById(R.id.hold_format);
-        physical_description = (TextView) findViewById(R.id.hold_physical_description);
-        cancelHold = (Button) findViewById(R.id.cancel_hold_button);
-        updateHold = (Button) findViewById(R.id.update_hold_button);
-        suspendHold = (CheckBox) findViewById(R.id.hold_suspend_hold);
-        orgSelector = (Spinner) findViewById(R.id.hold_pickup_location);
-        expiration_date = (EditText) findViewById(R.id.hold_expiration_date);
-        thaw_date_edittext = (EditText) findViewById(R.id.hold_thaw_date);
+        title = findViewById(R.id.hold_title);
+        author = findViewById(R.id.hold_author);
+        format = findViewById(R.id.hold_format);
+        physical_description = findViewById(R.id.hold_physical_description);
+        cancelHold = findViewById(R.id.cancel_hold_button);
+        updateHold = findViewById(R.id.update_hold_button);
+        suspendHold = findViewById(R.id.hold_suspend_hold);
+        orgSelector = findViewById(R.id.hold_pickup_location);
+        expiration_date = findViewById(R.id.hold_expiration_date);
+        thaw_date_edittext = findViewById(R.id.hold_thaw_date);
 
         title.setText(record.getTitle());
         author.setText(record.getAuthor());
