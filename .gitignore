@@ -12,7 +12,7 @@ fm_IDL.*
 /.idea/libraries
 .DS_Store
 /build
-*/build
+/*/build
 /captures
 ConcreteBillingDataProvider.java
 version.*
