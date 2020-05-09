@@ -2,8 +2,6 @@
 <resources>
     <string name="ou_account_label">NTLC</string>
     <string name="ou_account_sign_in_message">Sign in to your NTLC account</string>
-    <string name="ou_choose_library_label"></string>
-    <string name="ou_sign_in_label"></string>
     <string name="ou_account_type">net.kenstir.apps.ntlc</string>
     <string name="ou_app_label">NTLC</string>
     <string name="ou_library_name">NTCL</string>

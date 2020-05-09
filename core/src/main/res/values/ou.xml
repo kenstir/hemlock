@@ -6,7 +6,7 @@
     <string name="ou_account_sign_in_message"></string>
     <!-- label above choose library spinner, leave empty for library-specific app -->
     <string name="ou_choose_library_label">Choose your library system:</string>
-    <!-- label above sign_in fields -->
+    <!-- label above sign_in field on generic Hemlock app -->
     <string name="ou_sign_in_label">Login to your account:</string>
     <!-- android account manager internal type.
          Each evergreen-derived app must have its own unique ou_account_type. -->

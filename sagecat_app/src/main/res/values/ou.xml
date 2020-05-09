@@ -3,8 +3,6 @@
     <!-- see ../core/res/values/ou.xml for a description -->
     <string name="ou_account_label">SageCat</string>
     <string name="ou_account_sign_in_message">Sign in to your SageCat account</string>
-    <string name="ou_choose_library_label"></string>
-    <string name="ou_sign_in_label">Login:</string>
     <string name="ou_account_type">net.kenstir.apps.sagecat</string>
     <string name="ou_app_label">SageCat</string>
     <string name="ou_library_name">SageCat</string>

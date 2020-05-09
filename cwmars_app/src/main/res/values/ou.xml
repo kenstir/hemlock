@@ -4,8 +4,6 @@
     <!-- see ../core/res/values/ou.xml for a description -->
     <string name="ou_account_label">CW MARS</string>
     <string name="ou_account_sign_in_message">Sign in to your CW MARS account</string>
-    <string name="ou_choose_library_label"></string>
-    <string name="ou_sign_in_label"></string>
     <string name="ou_account_type">org.cwmars</string>
     <string name="ou_app_label">CW MARS</string>
     <string name="ou_library_name">CW MARS</string>
