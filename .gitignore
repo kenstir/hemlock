@@ -16,6 +16,7 @@ fm_IDL.*
 .DS_Store
 /build
 /*/build
+/*/release
 /captures
 ConcreteBillingDataProvider.java
 version.*
