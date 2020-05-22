@@ -93,7 +93,7 @@ object GatewayActor: ActorService {
     override suspend fun fetchUserMessages(account: Account): Result<List<OSRFObject>> {
         return try {
             val (authToken, userID) = account.getCredentialsOrThrow()
-            val args = arrayOf(authToken, userID, null)
+            val args = arrayOf<Any?>(authToken, userID, null)
             val ret = Gateway.fetchObjectArray(Api.ACTOR, Api.MESSAGES_RETRIEVE, args, false)
             Result.Success(ret)
         } catch (e: Exception) {
