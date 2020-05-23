@@ -110,6 +110,7 @@
 
         <activity
             android:name="org.evergreen_ils.views.MainActivity"
+            android:label="@string/ou_library_name"
             android:launchMode="singleTask">
         </activity>
 

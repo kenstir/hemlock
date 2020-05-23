@@ -4,7 +4,7 @@
     <string name="ou_account_label">Evergreen Indiana</string>
     <string name="ou_account_sign_in_message">Sign in to your Evergreen Indiana account</string>
     <string name="ou_account_type">net.kenstir.apps.indiana</string>
-    <string name="ou_app_label">Evergreen Indiana</string>
+    <string name="ou_app_label">Indiana</string>
     <string name="ou_library_name">Evergreen Indiana</string>
     <string name="ou_activity_subtitle">%2$s</string>
     <string name="ou_library_url">https://evergreen.lib.in.us</string>
