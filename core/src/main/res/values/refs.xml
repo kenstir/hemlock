@@ -12,4 +12,6 @@
     <drawable name="ic_lists_48">@drawable/baseline_assignment_black_36</drawable>
     <drawable name="ic_barcode_24">@drawable/baseline_credit_card_black_24</drawable>
     <drawable name="ic_barcode_48">@drawable/baseline_credit_card_black_36</drawable>
+    <drawable name="ic_library_24">@drawable/baseline_local_library_black_24</drawable>
+    <drawable name="ic_library_48">@drawable/baseline_local_library_black_36</drawable>
 </resources>
