@@ -206,5 +206,6 @@
     <string name="title_activity_nav_drawer">NavDrawerActivity</string>
     <string name="invalid_barcode">Invalid barcode: %s</string>
     <string name="home">Home</string>
+    <string name="title_library_info">Library Info</string>
 
 </resources>

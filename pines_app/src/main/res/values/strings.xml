@@ -2,6 +2,5 @@
 <resources>
     <string name="title_open_full_catalog">Full Catalog</string>
     <string name="title_library_locator">Library Locator</string>
-    <string name="title_my_library_info">My Library</string>
     <string name="title_patron_message_center">Messages</string>
 </resources>
