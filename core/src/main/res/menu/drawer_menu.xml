@@ -36,6 +36,10 @@
             android:icon="@drawable/ic_lists_24"
             android:title="@string/title_my_lists" />
         <item
+            android:id="@+id/main_library_info_button"
+            android:icon="@drawable/ic_library_24"
+            android:title="@string/title_library_info" />
+        <item
             android:id="@+id/btn_barcode"
             android:icon="@drawable/ic_barcode_24"
             android:title="@string/barcode_title" />

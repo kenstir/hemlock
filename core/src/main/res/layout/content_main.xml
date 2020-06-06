@@ -96,9 +96,18 @@
         app:layout_constraintTop_toBottomOf="@+id/account_btn_fines" />
 
     <Button
+        android:id="@+id/main_library_info_button"
+        android:layout_width="0dp"
+        android:layout_height="60dp"
+        android:text="Invisible placeholder button"
+        android:visibility="gone"
+        tools:layout_editor_absoluteX="118dp"
+        tools:layout_editor_absoluteY="459dp" />
+
+    <Button
         android:id="@+id/main_barcode_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="0dp"
+        android:layout_height="60dp"
         android:text="Invisible placeholder button"
         android:visibility="gone"
         tools:layout_editor_absoluteX="118dp"
