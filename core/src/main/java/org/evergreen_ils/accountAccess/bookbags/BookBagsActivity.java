@@ -22,7 +22,6 @@ package org.evergreen_ils.accountAccess.bookbags;
 import java.util.ArrayList;
 import java.util.List;
 
-import android.app.AlertDialog;
 import android.view.WindowManager;
 import org.evergreen_ils.R;
 import org.evergreen_ils.accountAccess.AccountAccess;
@@ -70,7 +69,7 @@ public class BookBagsActivity extends BaseActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (mRestarting) return;
+        if (isRestarting) return;
 
         setContentView(R.layout.activity_bookbags);
 

@@ -53,7 +53,7 @@ public class MainActivity extends BaseActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (mRestarting) return;
+        if (isRestarting) return;
 
         setContentView(R.layout.activity_main);
 
@@ -170,6 +170,9 @@ public class MainActivity extends BaseActivity {
         } else if (id == R.id.main_btn_search) {
             Analytics.logEvent("Search: Open", "via", "main_button");
             startActivity(new Intent(this, SearchActivity.class));
+        } else if (id == R.id.main_library_info_button) {
+            Analytics.logEvent("LibraryInfo: Open", "via", "main_button");
+            startActivity(new Intent(this, OrgDetailsActivity.class));
         } else if (id == R.id.main_barcode_button) {
             Analytics.logEvent("Barcode: Open", "via", "main_button");
             startActivity(new Intent(this, BarcodeActivity.class));

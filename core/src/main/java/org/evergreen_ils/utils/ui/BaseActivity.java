@@ -53,6 +53,7 @@ import org.evergreen_ils.system.EvergreenServer;
 import org.evergreen_ils.android.Log;
 import org.evergreen_ils.views.MainActivity;
 import org.evergreen_ils.views.MenuProvider;
+import org.evergreen_ils.views.OrgDetailsActivity;
 import org.evergreen_ils.views.splashscreen.SplashActivity;
 
 /* Activity base class to handle common behaviours like the navigation drawer */
@@ -63,7 +64,7 @@ public class BaseActivity extends AppCompatActivity
 
     protected Toolbar mToolbar;
     protected MenuProvider mMenuItemHandler = null;
-    protected boolean mRestarting = false;
+    protected boolean isRestarting = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,10 +72,10 @@ public class BaseActivity extends AppCompatActivity
 
         if (!SplashActivity.isAppInitialized()) {
             SplashActivity.restartApp(this);
-            mRestarting = true;
+            isRestarting = true;
             return;
         }
-        mRestarting = false;
+        isRestarting = false;
 
         Analytics.initialize(this);
         App.init(this);
@@ -174,6 +175,9 @@ public class BaseActivity extends AppCompatActivity
         } else if (id == R.id.main_my_lists_button) {
             Analytics.logEvent("Lists: Open", "via", "nav_drawer");
             startActivity(new Intent(this, BookBagsActivity.class));
+        } else if (id == R.id.main_library_info_button) {
+            Analytics.logEvent("LibraryInfo: Open", "via", "nav_drawer");
+            startActivity(new Intent(this, OrgDetailsActivity.class));
         } else if (id == R.id.btn_barcode) {
             Analytics.logEvent("Barcode: Open", "via", "nav_drawer");
             startActivity(new Intent(this, BarcodeActivity.class));
