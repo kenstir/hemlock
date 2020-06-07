@@ -29,6 +29,7 @@ import java.util.Date;
 import java.util.List;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 /** OSRF API constants
  *
@@ -137,7 +138,7 @@ public class Api {
 
     public static final String API_DATE_PATTERN = "yyyy-MM-dd'T'hh:mm:ssZ";
     public static final String API_HOURS_PATTERN = "HH:mm:ss";
-    public static final String DISPLAY_HOURS_PATTERN = "hh:mm a";
+    public static final String DISPLAY_HOURS_PATTERN = "h:mm a";
     public static final String TAG = Api.class.getSimpleName();
 
     // get date string to pass to API methods
@@ -166,7 +167,7 @@ public class Api {
     }
 
     // parse time string HH:MM:SS returned from API
-    public static Date parseHours(String hoursString) {
+    public static @Nullable Date parseHours(String hoursString) {
         if (hoursString == null)
             return null;
 
@@ -182,7 +183,7 @@ public class Api {
         return date;
     }
 
-    public static String formatHoursForOutput(Date date) {
+    public static String formatHoursForOutput(@NonNull Date date) {
         final SimpleDateFormat df = new SimpleDateFormat(DISPLAY_HOURS_PATTERN);
         return df.format(date);
     }
