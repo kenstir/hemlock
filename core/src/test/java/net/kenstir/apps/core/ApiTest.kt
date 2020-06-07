@@ -52,15 +52,15 @@ class ApiTest {
 
     @Test
     fun test_parseTime_API_to_AM() {
-        val apiTime = "10:00:00"
+        val apiTime = "09:00:00"
         val date = Api.parseHours(apiTime)
-        Assert.assertEquals("10:00 AM", Api.formatHoursForOutput(date))
+        Assert.assertEquals("9:00 AM", Api.formatHoursForOutput(date!!))
     }
 
     @Test
     fun test_parseTime_API_to_PM() {
-        val apiTime = "22:00:00"
+        val apiTime = "17:00:00"
         val date = Api.parseHours(apiTime)
-        Assert.assertEquals("10:00 PM", Api.formatHoursForOutput(date))
+        Assert.assertEquals("5:00 PM", Api.formatHoursForOutput(date!!))
     }
 }
