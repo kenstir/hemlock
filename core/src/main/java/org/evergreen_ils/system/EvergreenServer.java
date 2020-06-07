@@ -174,6 +174,8 @@ public class EvergreenServer {
         org.parent_ou = obj.getInt("parent_ou");
         org.name = obj.getString("name");
         org.shortname = obj.getString("shortname");
+        org.email = obj.getString("email");
+        org.phone = obj.getString("phone");
         org.orgType = findOrgType(obj.getInt("ou_type"));
         org.opac_visible = Api.parseBoolean(obj.getString("opac_visible"));
         org.indentedDisplayPrefix = new String(new char[level]).replace("\0", "   ");

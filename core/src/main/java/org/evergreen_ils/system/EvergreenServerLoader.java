@@ -35,9 +35,14 @@ import org.opensrf.util.GatewayResponse;
 import org.opensrf.util.OSRFObject;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 /** Responsible for lazy loading of general server settings
  *
@@ -60,11 +65,26 @@ public class EvergreenServerLoader {
     private static Boolean parseBoolSetting(GatewayResponse response, String setting) {
         Boolean value = null;
         try {
-            Map<String, ?> resp_map = (Map<String, ?>) response.payload;
-            Object o = resp_map.get(setting);
+            Map<String, ?> responseMap = (Map<String, ?>) response.payload;
+            Object o = responseMap.get(setting);
             if (o != null) {
-                Map<String, ?> resp_setting_map = (Map<String, ?>)o;
-                value = Api.parseBoolean(resp_setting_map.get("value"));
+                Map<String, ?> valueMap = (Map<String, ?>)o;
+                value = Api.parseBoolean(valueMap.get("value"));
+            }
+        } catch (Exception e) {
+            Log.d(TAG, "caught", e);
+        }
+        return value;
+    }
+
+    private static String parseStringSetting(GatewayResponse response, String setting) {
+        String value = null;
+        try {
+            Map<String, ?> responseMap = (Map<String, ?>) response.payload;
+            Object o = responseMap.get(setting);
+            if (o != null) {
+                Map<String, String> valueMap = (Map<String, String>)o;
+                value = valueMap.get("value");
             }
         } catch (Exception e) {
             Log.d(TAG, "caught", e);
@@ -73,6 +93,7 @@ public class EvergreenServerLoader {
     }
 
     private static void parseOrgSettingsFromGatewayResponse(GatewayResponse response, final Organization org) {
+        org.setting_info_url = parseStringSetting(response, Api.SETTING_INFO_URL);
         Boolean not_pickup_lib = parseBoolSetting(response, Api.SETTING_ORG_UNIT_NOT_PICKUP_LIB);
         if (not_pickup_lib != null)
             org.setting_is_pickup_location = !not_pickup_lib;
@@ -112,6 +133,7 @@ public class EvergreenServerLoader {
             ArrayList<String> settings = new ArrayList<>();
             settings.add(Api.SETTING_ORG_UNIT_NOT_PICKUP_LIB);
             settings.add(Api.SETTING_CREDIT_PAYMENTS_ALLOW);
+            settings.add(Api.SETTING_INFO_URL);
             if (org.parent_ou == null) {
                 settings.add((Api.SETTING_SMS_ENABLE));
             }

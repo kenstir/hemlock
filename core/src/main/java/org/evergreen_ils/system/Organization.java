@@ -27,6 +27,8 @@ public class Organization /*implements Serializable*/ {
     public Integer parent_ou = null;
     public String name = null;
     public String shortname = null;
+    public String email = null;
+    public String phone = null;
     public OrgType orgType = null;
     public String indentedDisplayPrefix = "";
 
@@ -35,6 +37,7 @@ public class Organization /*implements Serializable*/ {
     public Boolean settings_loaded = false;
     public Boolean setting_is_pickup_location = null; // null=not loaded
     public Boolean setting_allow_credit_payments = null; // null=not loaded
+    public String setting_info_url = null;
 
     public Organization() {
     }

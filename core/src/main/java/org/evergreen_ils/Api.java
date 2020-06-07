@@ -70,6 +70,7 @@ public class Api {
     public static final String HOURS_OF_OPERATION_RETRIEVE = "open-ils.actor.org_unit.hours_of_operation.retrieve"; // [aouhoo]
 
     public static final String SETTING_CREDIT_PAYMENTS_ALLOW = "credit.payments.allow";
+    public static final String SETTING_INFO_URL = "lib.info_url";
     public static final String SETTING_ORG_UNIT_NOT_PICKUP_LIB = "opac.holds.org_unit_not_pickup_lib";
     public static final String SETTING_SMS_ENABLE = "sms.enable";
     public static final String USER_SETTING_HOLD_NOTIFY = "opac.hold_notify"; // e.g. "email|sms" or "phone:email"
