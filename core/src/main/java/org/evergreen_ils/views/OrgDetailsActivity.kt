@@ -50,6 +50,8 @@ class OrgDetailsActivity : BaseActivity() {
     private var day4Hours: TextView? = null
     private var day5Hours: TextView? = null
     private var day6Hours: TextView? = null
+    private var email: TextView? = null
+    private var phone: TextView? = null
     private lateinit var orgDetailsRunnable: Runnable
     private var progress: ProgressDialogSupport? = null
 
@@ -77,6 +79,8 @@ class OrgDetailsActivity : BaseActivity() {
         day4Hours = findViewById(R.id.org_details_day4hours)
         day5Hours = findViewById(R.id.org_details_day5hours)
         day6Hours = findViewById(R.id.org_details_day6hours)
+        email = findViewById(R.id.org_details_email)
+        phone = findViewById(R.id.org_details_phone)
 
         progress = ProgressDialogSupport()
 
@@ -140,6 +144,11 @@ class OrgDetailsActivity : BaseActivity() {
         day4Hours?.text = hoursOfOperation(obj, 4)
         day5Hours?.text = hoursOfOperation(obj, 5)
         day6Hours?.text = hoursOfOperation(obj, 6)
+    }
+
+    private fun onOrgsLoaded() {
+        email?.text = org?.email
+        phone?.text = org?.phone
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
