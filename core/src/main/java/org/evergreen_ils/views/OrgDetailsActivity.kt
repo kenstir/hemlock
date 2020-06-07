@@ -27,6 +27,7 @@ import android.widget.ArrayAdapter
 import android.widget.Spinner
 import android.widget.TextView
 import androidx.core.util.Pair
+import org.evergreen_ils.Api
 import org.evergreen_ils.R
 import org.evergreen_ils.android.App
 import org.evergreen_ils.android.Log
@@ -118,13 +119,17 @@ class OrgDetailsActivity : BaseActivity() {
     private fun hoursOfOperation(obj: OSRFObject?, day: Int): String? {
         val openTimeApi = obj?.getString("dow_${day}_open")
         val closeTimeApi = obj?.getString("dow_${day}_close")
-        if (openTimeApi.isNullOrEmpty() || closeTimeApi.isNullOrEmpty()) {
+        val openTime = Api.parseHours(openTimeApi)
+        val closeTime = Api.parseHours(closeTimeApi)
+        if (openTime == null || closeTime == null) {
             return null
         }
         if (openTimeApi == closeTimeApi) {
             return "closed"
         }
-        return "$openTimeApi - $closeTimeApi"
+        val openTimeLocal = Api.formatHoursForOutput(openTime)
+        val closeTimeLocal = Api.formatHoursForOutput(closeTime)
+        return "$openTimeLocal - $closeTimeLocal"
     }
 
     private fun onHoursLoaded(obj: OSRFObject?) {
