@@ -259,6 +259,17 @@ public class BaseActivity extends AppCompatActivity
         }
     }
 
+    protected void sendEmail(String to) {
+        if (to == null)
+            return;
+        String url = "mailto:" + to;
+        Uri uri = Uri.parse(url);
+        Intent intent = new Intent(Intent.ACTION_SENDTO, uri);
+        if (intent.resolveActivity(getPackageManager()) != null) {
+            startActivity(intent);
+        }
+    }
+
     protected void saveAndApplyNightMode(int nightMode) {
         AppState.setInt(AppState.NIGHT_MODE, nightMode);
         Log.d(TAG,"saveAndApplyNightMode:"+nightMode);
