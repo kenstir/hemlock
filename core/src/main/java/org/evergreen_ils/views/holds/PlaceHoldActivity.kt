@@ -331,9 +331,9 @@ class PlaceHoldActivity : BaseActivity() {
             }
         }
         val adapter: ArrayAdapter<String> = OrgArrayAdapter(this, R.layout.org_item_layout, list, true)
-        orgSpinner!!.adapter = adapter
-        orgSpinner!!.setSelection(selectedOrgPos)
-        orgSpinner!!.onItemSelectedListener = object : OnItemSelectedListener {
+        orgSpinner?.adapter = adapter
+        orgSpinner?.setSelection(selectedOrgPos)
+        orgSpinner?.onItemSelectedListener = object : OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>?, view: View, position: Int, id: Long) {
                 selectedOrgPos = position
             }
