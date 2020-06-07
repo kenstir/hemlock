@@ -248,6 +248,17 @@ public class BaseActivity extends AppCompatActivity
         }
     }
 
+    protected void dialPhone(String phoneNumber) {
+        if (phoneNumber == null)
+            return;
+        String url = "tel:" + phoneNumber;
+        Uri uri = Uri.parse(url);
+        Intent intent = new Intent(Intent.ACTION_DIAL, uri);
+        if (intent.resolveActivity(getPackageManager()) != null) {
+            startActivity(intent);
+        }
+    }
+
     protected void saveAndApplyNightMode(int nightMode) {
         AppState.setInt(AppState.NIGHT_MODE, nightMode);
         Log.d(TAG,"saveAndApplyNightMode:"+nightMode);
