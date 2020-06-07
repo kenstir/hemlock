@@ -82,12 +82,11 @@
     <string name="n_of_m_available">%1$d of %2$s available at %3$s</string>
     <string name="n_items_on_hold">items on hold: %1$d</string>
 
-    <!-- Search Details View -->
+    <!-- Search Details -->
     <string name="show_copies">Copy info</string>
 
-    <!-- Place Hold Activity View -->
+    <!-- Place Hold -->
 
-    <string name="recipient">Recipient</string>
     <string name="title">Title</string>
     <string name="author">Author</string>
     <string name="physical_description">Physical Description</string>
@@ -206,8 +205,18 @@
     <string name="title_activity_nav_drawer">NavDrawerActivity</string>
     <string name="invalid_barcode">Invalid barcode: %s</string>
     <string name="home">Home</string>
+
+    <!-- OrgDetails -->
     <string name="title_library_info">Library Info</string>
     <string name="location">Location</string>
     <string name="msg_loading_details">Loading details</string>
+    <string name="title_sun">Sunday</string>
+    <string name="title_mon">Monday</string>
+    <string name="title_tue">Tuesday</string>
+    <string name="title_wed">Wednesday</string>
+    <string name="title_thu">Thursday</string>
+    <string name="title_fri">Friday</string>
+    <string name="title_sat">Saturday</string>
+    <string name="value_closed">closed</string>
 
 </resources>
