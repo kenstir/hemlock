@@ -135,13 +135,15 @@ public class Api {
 
     /// general
 
-    public static final String DATE_PATTERN = "yyyy-MM-dd'T'hh:mm:ssZ";
+    public static final String API_DATE_PATTERN = "yyyy-MM-dd'T'hh:mm:ssZ";
+    public static final String API_HOURS_PATTERN = "HH:mm:ss";
+    public static final String DISPLAY_HOURS_PATTERN = "hh:mm a";
     public static final String TAG = Api.class.getSimpleName();
 
     // get date string to pass to API methods
     public static String formatDate(Date date) {
-        final SimpleDateFormat sdf = new SimpleDateFormat(DATE_PATTERN);
-        return sdf.format(date);
+        final SimpleDateFormat df = new SimpleDateFormat(API_DATE_PATTERN);
+        return df.format(date);
     }
 
     // parse date string returned from API methods
@@ -151,16 +153,38 @@ public class Api {
             return null;
 
         Date date = null;
-        final SimpleDateFormat sdf = new SimpleDateFormat(DATE_PATTERN);
+        final SimpleDateFormat df = new SimpleDateFormat(API_DATE_PATTERN);
 
         try {
-            date = sdf.parse(dateString);
+            date = df.parse(dateString);
         } catch (ParseException e) {
             Analytics.logException(e);
             date = new Date();
         }
 
         return date;
+    }
+
+    // parse time string HH:MM:SS returned from API
+    public static Date parseHours(String hoursString) {
+        if (hoursString == null)
+            return null;
+
+        Date date = null;
+        final SimpleDateFormat df = new SimpleDateFormat(API_HOURS_PATTERN);
+
+        try {
+            date = df.parse(hoursString);
+        } catch (ParseException e) {
+            date = new Date();
+        }
+
+        return date;
+    }
+
+    public static String formatHoursForOutput(Date date) {
+        final SimpleDateFormat df = new SimpleDateFormat(DISPLAY_HOURS_PATTERN);
+        return df.format(date);
     }
 
     public static Integer formatBoolean(Boolean obj) {
