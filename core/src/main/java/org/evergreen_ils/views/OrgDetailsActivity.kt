@@ -122,7 +122,7 @@ class OrgDetailsActivity : BaseActivity() {
 
     private fun initButtons() {
         email?.setOnClickListener {
-            Log.d(TAG, "here")
+            sendEmail(org?.email)
         }
         phone?.setOnClickListener {
             dialPhone(org?.phone)
