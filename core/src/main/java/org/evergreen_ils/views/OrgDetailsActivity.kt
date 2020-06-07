@@ -25,9 +25,7 @@ import android.widget.AdapterView
 import android.widget.AdapterView.OnItemSelectedListener
 import android.widget.ArrayAdapter
 import android.widget.Spinner
-import androidx.core.util.Pair
 import org.evergreen_ils.R
-import org.evergreen_ils.accountAccess.AccountAccess
 import org.evergreen_ils.android.App
 import org.evergreen_ils.android.Log
 import org.evergreen_ils.data.Organization
@@ -35,7 +33,7 @@ import org.evergreen_ils.system.EgOrg
 import org.evergreen_ils.utils.ui.BaseActivity
 import org.evergreen_ils.utils.ui.OrgArrayAdapter
 import org.evergreen_ils.utils.ui.ProgressDialogSupport
-import java.util.*
+import org.opensrf.util.OSRFObject
 
 private const val TAG = "OrgDetailsActivity"
 
@@ -94,6 +92,10 @@ class OrgDetailsActivity : BaseActivity() {
 
             override fun onNothingSelected(parent: AdapterView<*>?) {}
         }
+    }
+
+    private fun onHoursLoaded(obj: OSRFObject) {
+        print("blah")
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

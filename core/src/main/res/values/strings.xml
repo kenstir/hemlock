@@ -208,5 +208,6 @@
     <string name="home">Home</string>
     <string name="title_library_info">Library Info</string>
     <string name="location">Location</string>
+    <string name="msg_loading_details">Loading details</string>
 
 </resources>

@@ -56,10 +56,23 @@ object GatewayActor: ActorService {
     override suspend fun fetchOrgSettings(orgID: Int): Result<JSONDictionary> {
         return try {
             val settings = arrayListOf(Api.SETTING_ORG_UNIT_NOT_PICKUP_LIB,
-                    Api.SETTING_CREDIT_PAYMENTS_ALLOW)
+                    Api.SETTING_CREDIT_PAYMENTS_ALLOW, Api.SETTING_INFO_URL)
             val args = arrayOf<Any?>(orgID, settings, Api.ANONYMOUS)
             val ret = Gateway.fetch(Api.ACTOR, Api.ORG_UNIT_SETTING_BATCH, args, true) {
                 it.asMap()
+            }
+            Result.Success(ret)
+        } catch (e: Exception) {
+            Result.Error(e)
+        }
+    }
+
+    override suspend fun fetchOrgHours(account: Account, orgID: Int): Result<OSRFObject> {
+        return try {
+            val (authToken, userID) = account.getCredentialsOrThrow()
+            val args = arrayOf<Any?>(authToken, orgID)
+            val ret = Gateway.fetch(Api.ACTOR, Api.HOURS_OF_OPERATION_RETRIEVE, args, true) {
+                it.asObject()
             }
             Result.Success(ret)
         } catch (e: Exception) {
