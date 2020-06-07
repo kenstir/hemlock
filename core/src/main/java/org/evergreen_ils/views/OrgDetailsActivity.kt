@@ -47,8 +47,9 @@ class OrgDetailsActivity : BaseActivity() {
     private var day4Hours: TextView? = null
     private var day5Hours: TextView? = null
     private var day6Hours: TextView? = null
-    private var email: TextView? = null
-    private var phone: TextView? = null
+    private var webSite: Button? = null
+    private var email: Button? = null
+    private var phone: Button? = null
     private lateinit var orgDetailsRunnable: Runnable
     private var progress: ProgressDialogSupport? = null
 
@@ -76,6 +77,7 @@ class OrgDetailsActivity : BaseActivity() {
         day4Hours = findViewById(R.id.org_details_day4hours)
         day5Hours = findViewById(R.id.org_details_day5hours)
         day6Hours = findViewById(R.id.org_details_day6hours)
+        webSite = findViewById(R.id.org_details_web_site)
         email = findViewById(R.id.org_details_email)
         phone = findViewById(R.id.org_details_phone)
 
@@ -120,12 +122,22 @@ class OrgDetailsActivity : BaseActivity() {
     }
 
     private fun initButtons() {
+        webSite?.setOnClickListener {
+            launchURL(org?.setting_info_url)
+        }
         email?.setOnClickListener {
             sendEmail(org?.email)
         }
         phone?.setOnClickListener {
             dialPhone(org?.phone)
         }
+        enableButtonsWhenReady()
+    }
+
+    private fun enableButtonsWhenReady() {
+        webSite?.isEnabled = !(org?.setting_info_url.isNullOrEmpty())
+        email?.isEnabled = !(org?.email.isNullOrEmpty())
+        phone?.isEnabled = !(org?.phone.isNullOrEmpty())
     }
 
     private fun hoursOfOperation(obj: OSRFObject?, day: Int): String? {
@@ -157,6 +169,7 @@ class OrgDetailsActivity : BaseActivity() {
     private fun onOrgsLoaded() {
         email?.text = org?.email
         phone?.text = org?.phone
+        enableButtonsWhenReady()
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
