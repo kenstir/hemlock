@@ -164,16 +164,24 @@
                         tools:text="contact_us@athenslibrary.org"/>
                 </TableRow>
                 <TableRow>
+
                     <TextView
+                        android:layout_gravity="center"
                         android:paddingLeft="16dp"
-                        android:text="@string/title_phone"/>
-                    <TextView
-                        android:paddingLeft="16dp"
-                        android:id="@+id/org_details_phone"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        tools:text="706-555-1212"/>
+                        android:text="@string/title_phone" />
+                    <LinearLayout
+                        style="?android:buttonBarStyle"
+                        android:orientation="horizontal">
+                        <Button
+                            style="?android:buttonBarButtonStyle"
+                            android:paddingLeft="16dp"
+                            android:paddingRight="16dp"
+                            android:id="@+id/org_details_phone"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            tools:text="706-555-1212"/>
+                    </LinearLayout>
                 </TableRow>
             </TableLayout>
         </LinearLayout>

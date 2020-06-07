@@ -21,11 +21,8 @@ package org.evergreen_ils.views
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
-import android.widget.AdapterView
+import android.widget.*
 import android.widget.AdapterView.OnItemSelectedListener
-import android.widget.ArrayAdapter
-import android.widget.Spinner
-import android.widget.TextView
 import androidx.core.util.Pair
 import org.evergreen_ils.Api
 import org.evergreen_ils.R
@@ -82,6 +79,7 @@ class OrgDetailsActivity : BaseActivity() {
 
         initOrgSpinner()
         initOrgDetailsRunnable()
+        initButtons()
     }
 
     override fun onDestroy() {
@@ -119,6 +117,15 @@ class OrgDetailsActivity : BaseActivity() {
             runOnUiThread { progress?.show(this, getString(R.string.msg_loading_details)) }
             val obj = AccountAccess.getInstance().getHoursOfOperation(orgID);
             runOnUiThread { onOrgsLoaded(); onHoursLoaded(obj); progress?.dismiss() }
+        }
+    }
+
+    private fun initButtons() {
+        email?.setOnClickListener {
+            Log.d(TAG, "here")
+        }
+        phone?.setOnClickListener {
+            dialPhone(org?.phone)
         }
     }
 
