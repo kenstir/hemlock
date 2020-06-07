@@ -47,7 +47,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:paddingTop="20dp"
-                android:text="Opening Hours"
+                android:text="@string/title_opening_hours"
                 style="@style/HemlockText.PagePrimary"/>
 
             <TableLayout
@@ -140,6 +140,42 @@
                 </TableRow>
             </TableLayout>
 
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="20dp"
+                android:text="@string/title_contact_information"
+                style="@style/HemlockText.PagePrimary"/>
+
+            <TableLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content">
+                <TableRow
+                    android:paddingTop="4dp">
+                    <TextView
+                        android:paddingLeft="16dp"
+                        android:text="@string/title_email"/>
+                    <TextView
+                        android:paddingLeft="16dp"
+                        android:id="@+id/org_details_email"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        tools:text="contact_us@athenslibrary.org"/>
+                </TableRow>
+                <TableRow>
+                    <TextView
+                        android:paddingLeft="16dp"
+                        android:text="@string/title_phone"/>
+                    <TextView
+                        android:paddingLeft="16dp"
+                        android:id="@+id/org_details_phone"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        tools:text="706-555-1212"/>
+                </TableRow>
+            </TableLayout>
         </LinearLayout>
 
     </ScrollView>

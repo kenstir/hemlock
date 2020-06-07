@@ -215,5 +215,9 @@
     <string name="title_fri">Friday</string>
     <string name="title_sat">Saturday</string>
     <string name="value_closed">closed</string>
+    <string name="title_opening_hours">Opening Hours</string>
+    <string name="title_contact_information">Contact Information</string>
+    <string name="title_email">Email</string>
+    <string name="title_phone">Phone</string>
 
 </resources>
