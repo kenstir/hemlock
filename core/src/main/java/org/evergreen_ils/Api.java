@@ -22,11 +22,13 @@ import org.evergreen_ils.android.Analytics;
 import org.evergreen_ils.utils.TextUtils;
 import org.opensrf.ShouldNotHappenException;
 
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -138,7 +140,6 @@ public class Api {
 
     public static final String API_DATE_PATTERN = "yyyy-MM-dd'T'hh:mm:ssZ";
     public static final String API_HOURS_PATTERN = "HH:mm:ss";
-    public static final String DISPLAY_HOURS_PATTERN = "h:mm a";
     public static final String TAG = Api.class.getSimpleName();
 
     // get date string to pass to API methods
@@ -184,8 +185,14 @@ public class Api {
     }
 
     public static String formatHoursForOutput(@NonNull Date date) {
-        final SimpleDateFormat df = new SimpleDateFormat(DISPLAY_HOURS_PATTERN);
-        return df.format(date);
+        // Use the default locale instead of fixed AM/PM, even though
+        // this will make the tests break when run in a non-US locale.
+//        final String DISPLAY_HOURS_PATTERN = "h:mm a";
+//        final SimpleDateFormat df = new SimpleDateFormat(DISPLAY_HOURS_PATTERN);
+//        return df.format(date);
+        DateFormat timeFormatter =
+                DateFormat.getTimeInstance(DateFormat.SHORT, Locale.getDefault());
+        return timeFormatter.format(date);
     }
 
     public static Integer formatBoolean(Boolean obj) {
