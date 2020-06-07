@@ -152,16 +152,26 @@
                 android:layout_height="wrap_content">
                 <TableRow
                     android:paddingTop="4dp">
+
                     <TextView
+                        android:layout_gravity="center"
                         android:paddingLeft="16dp"
-                        android:text="@string/title_email"/>
-                    <TextView
-                        android:paddingLeft="16dp"
-                        android:id="@+id/org_details_email"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        tools:text="contact_us@athenslibrary.org"/>
+                        android:text="@string/title_email" />
+                    <LinearLayout
+                        style="?android:buttonBarStyle"
+                        android:orientation="horizontal">
+
+                        <Button
+                            android:id="@+id/org_details_email"
+                            style="?android:buttonBarButtonStyle"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:gravity="left|center_vertical"
+                            android:paddingLeft="16dp"
+                            android:paddingRight="16dp"
+                            tools:text="contact_us@athenslibrary.org" />
+                    </LinearLayout>
                 </TableRow>
                 <TableRow>
 
@@ -172,15 +182,17 @@
                     <LinearLayout
                         style="?android:buttonBarStyle"
                         android:orientation="horizontal">
+
                         <Button
-                            style="?android:buttonBarButtonStyle"
-                            android:paddingLeft="16dp"
-                            android:paddingRight="16dp"
                             android:id="@+id/org_details_phone"
+                            style="?android:buttonBarButtonStyle"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            tools:text="706-555-1212"/>
+                            android:gravity="left|center_vertical"
+                            android:paddingLeft="16dp"
+                            android:paddingRight="16dp"
+                            tools:text="706-555-1212" />
                     </LinearLayout>
                 </TableRow>
             </TableLayout>
