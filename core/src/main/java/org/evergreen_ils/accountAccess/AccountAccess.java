@@ -43,6 +43,8 @@ import org.opensrf.util.OSRFObject;
 
 import java.util.*;
 
+import androidx.annotation.NonNull;
+
 import static org.evergreen_ils.utils.StringUtils.safeString;
 
 public class AccountAccess {
@@ -1082,4 +1084,10 @@ public class AccountAccess {
         return unread_count;
     }
 
+    public OSRFObject getHoursOfOperation(Integer orgID) {
+        Object resp = Utils.doRequest(conn(), Api.ACTOR,
+                Api.HOURS_OF_OPERATION_RETRIEVE, new Object[] {
+                        authToken, orgID});
+        return (OSRFObject)resp;
+    }
 }

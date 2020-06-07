@@ -34,6 +34,7 @@ import org.evergreen_ils.system.Organization
 import org.evergreen_ils.utils.ui.BaseActivity
 import org.evergreen_ils.utils.ui.OrgArrayAdapter
 import org.evergreen_ils.utils.ui.ProgressDialogSupport
+import org.opensrf.util.OSRFObject
 import java.util.*
 
 private const val TAG = "OrgDetailsActivity"
@@ -41,6 +42,7 @@ private const val TAG = "OrgDetailsActivity"
 class OrgDetailsActivity : BaseActivity() {
 
     private var orgSpinner: Spinner? = null
+    private lateinit var orgDetailsRunnable: Runnable
     private var progress: ProgressDialogSupport? = null
 
     private var orgID: Int? = null
@@ -59,6 +61,7 @@ class OrgDetailsActivity : BaseActivity() {
         progress = ProgressDialogSupport()
 
         initOrgSpinner()
+        initOrgDetailsRunnable()
     }
 
     override fun onDestroy() {
@@ -90,6 +93,18 @@ class OrgDetailsActivity : BaseActivity() {
         }
     }
 
+    private fun initOrgDetailsRunnable() {
+        orgDetailsRunnable = Runnable {
+            runOnUiThread { progress?.show(this, getString(R.string.msg_loading_details)) }
+            val obj = AccountAccess.getInstance().getHoursOfOperation(orgID);
+            runOnUiThread { onHoursLoaded(obj); progress?.dismiss() }
+        }
+    }
+
+    private fun onHoursLoaded(obj: OSRFObject) {
+        print("blah")
+    }
+
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         val id = item.itemId
         if (id == android.R.id.home) {
@@ -100,5 +115,6 @@ class OrgDetailsActivity : BaseActivity() {
     }
 
     private fun fetchData() {
+        Thread(orgDetailsRunnable).start()
     }
 }
