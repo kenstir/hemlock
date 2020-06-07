@@ -9,12 +9,6 @@
 
     <include layout="@layout/toolbar_common"/>
 
-<!--    <LinearLayout-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="wrap_content">-->
-<!--        -->
-<!--    </LinearLayout>-->
-
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -22,43 +16,132 @@
         android:padding="10dip"
         >
 
-        <TableLayout
-            android:layout_width="fill_parent"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            >
-            <TableRow android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    style="@style/HemlockText.PagePrimary"
-                    android:paddingLeft="0dp"
-                    android:paddingTop="20dp"
-                    android:text="@string/location" />
-                <Spinner
-                    android:id="@+id/org_details_spinner"
-                    android:layout_width="0dip"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:spinnerMode="dialog"
-                    />
-            </TableRow>
-        </TableLayout>
-    </ScrollView>
+            android:orientation="vertical">
 
-    <LinearLayout
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:paddingBottom="3dip" >
-        <Button
-            android:id="@+id/place_hold"
-            android:layout_width="120dip"
-            android:layout_height="wrap_content"
-            android:text="@string/button_place_hold"
-            style="@style/ApplicationButton"
-            android:layout_margin="5dip"
-            />
-    </LinearLayout>
+            <TableLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content">
+                <TableRow android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        style="@style/HemlockText.PagePrimary"
+                        android:paddingLeft="0dp"
+                        android:paddingTop="20dp"
+                        android:text="@string/location" />
+                    <Spinner
+                        android:id="@+id/org_details_spinner"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:spinnerMode="dialog"
+                        />
+                </TableRow>
+            </TableLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="20dp"
+                android:text="Opening Hours"
+                style="@style/HemlockText.PagePrimary"/>
+
+            <TableLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content">
+                <TableRow
+                    android:paddingTop="4dp">
+                    <TextView
+                        android:paddingLeft="16dp"
+                        android:text="@string/title_mon"/>
+                    <TextView
+                        android:paddingLeft="16dp"
+                        android:id="@+id/org_details_day0hours"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        tools:text="9:00 AM - 5:00 PM"/>
+                </TableRow>
+                <TableRow>
+                    <TextView
+                        android:paddingLeft="16dp"
+                        android:text="@string/title_tue"/>
+                    <TextView
+                        android:paddingLeft="16dp"
+                        android:id="@+id/org_details_day1hours"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        tools:text="9:00 AM - 5:00 PM"/>
+                </TableRow>
+                <TableRow>
+                    <TextView
+                        android:paddingLeft="16dp"
+                        android:text="@string/title_wed"/>
+                    <TextView
+                        android:paddingLeft="16dp"
+                        android:id="@+id/org_details_day2hours"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        tools:text="9:00 AM - 5:00 PM"/>
+                </TableRow>
+                <TableRow>
+                    <TextView
+                        android:paddingLeft="16dp"
+                        android:text="@string/title_thu"/>
+                    <TextView
+                        android:paddingLeft="16dp"
+                        android:id="@+id/org_details_day3hours"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        tools:text="9:00 AM - 5:00 PM"/>
+                </TableRow>
+                <TableRow>
+                    <TextView
+                        android:paddingLeft="16dp"
+                        android:text="@string/title_fri"/>
+                    <TextView
+                        android:paddingLeft="16dp"
+                        android:id="@+id/org_details_day4hours"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        tools:text="9:00 AM - 5:00 PM"/>
+                </TableRow>
+                <TableRow>
+                    <TextView
+                        android:paddingLeft="16dp"
+                        android:text="@string/title_sat"/>
+                    <TextView
+                        android:paddingLeft="16dp"
+                        android:id="@+id/org_details_day5hours"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        tools:text="9:00 AM - 5:00 PM"/>
+                </TableRow>
+                <TableRow>
+                    <TextView
+                        android:paddingLeft="16dp"
+                        android:text="@string/title_sun"/>
+                    <TextView
+                        android:paddingLeft="16dp"
+                        android:id="@+id/org_details_day6hours"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        tools:text="@string/value_closed"/>
+                </TableRow>
+            </TableLayout>
+
+        </LinearLayout>
+
+    </ScrollView>
 
 </LinearLayout>

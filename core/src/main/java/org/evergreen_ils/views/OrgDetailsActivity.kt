@@ -25,6 +25,7 @@ import android.widget.AdapterView
 import android.widget.AdapterView.OnItemSelectedListener
 import android.widget.ArrayAdapter
 import android.widget.Spinner
+import android.widget.TextView
 import androidx.core.util.Pair
 import org.evergreen_ils.R
 import org.evergreen_ils.accountAccess.AccountAccess
@@ -42,6 +43,13 @@ private const val TAG = "OrgDetailsActivity"
 class OrgDetailsActivity : BaseActivity() {
 
     private var orgSpinner: Spinner? = null
+    private var day0Hours: TextView? = null
+    private var day1Hours: TextView? = null
+    private var day2Hours: TextView? = null
+    private var day3Hours: TextView? = null
+    private var day4Hours: TextView? = null
+    private var day5Hours: TextView? = null
+    private var day6Hours: TextView? = null
     private lateinit var orgDetailsRunnable: Runnable
     private var progress: ProgressDialogSupport? = null
 
@@ -57,6 +65,13 @@ class OrgDetailsActivity : BaseActivity() {
         orgID = intent.getIntExtra("orgID", 1)
 
         orgSpinner = findViewById(R.id.org_details_spinner)
+        day0Hours = findViewById(R.id.org_details_day0hours)
+        day1Hours = findViewById(R.id.org_details_day1hours)
+        day2Hours = findViewById(R.id.org_details_day2hours)
+        day3Hours = findViewById(R.id.org_details_day3hours)
+        day4Hours = findViewById(R.id.org_details_day4hours)
+        day5Hours = findViewById(R.id.org_details_day5hours)
+        day6Hours = findViewById(R.id.org_details_day6hours)
 
         progress = ProgressDialogSupport()
 
@@ -87,6 +102,7 @@ class OrgDetailsActivity : BaseActivity() {
             override fun onItemSelected(parent: AdapterView<*>?, view: View, position: Int, id: Long) {
                 org = EvergreenServer.getInstance().visibleOrganizations[position]
                 orgID = org?.id
+                fetchData()
             }
 
             override fun onNothingSelected(parent: AdapterView<*>?) {}
@@ -101,8 +117,26 @@ class OrgDetailsActivity : BaseActivity() {
         }
     }
 
-    private fun onHoursLoaded(obj: OSRFObject) {
-        print("blah")
+    private fun hoursOfOperation(obj: OSRFObject?, day: Int): String? {
+        val openTimeApi = obj?.getString("dow_${day}_open")
+        val closeTimeApi = obj?.getString("dow_${day}_close")
+        if (openTimeApi.isNullOrEmpty() || closeTimeApi.isNullOrEmpty()) {
+            return null
+        }
+        if (openTimeApi == closeTimeApi) {
+            return "closed"
+        }
+        return "$openTimeApi - $closeTimeApi"
+    }
+
+    private fun onHoursLoaded(obj: OSRFObject?) {
+        day0Hours?.text = hoursOfOperation(obj, 0)
+        day1Hours?.text = hoursOfOperation(obj, 1)
+        day2Hours?.text = hoursOfOperation(obj, 2)
+        day3Hours?.text = hoursOfOperation(obj, 3)
+        day4Hours?.text = hoursOfOperation(obj, 4)
+        day5Hours?.text = hoursOfOperation(obj, 5)
+        day6Hours?.text = hoursOfOperation(obj, 6)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
