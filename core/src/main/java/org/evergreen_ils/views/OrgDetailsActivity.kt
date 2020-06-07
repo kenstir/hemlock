@@ -21,11 +21,8 @@ package org.evergreen_ils.views
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
-import android.widget.AdapterView
+import android.widget.*
 import android.widget.AdapterView.OnItemSelectedListener
-import android.widget.ArrayAdapter
-import android.widget.Spinner
-import android.widget.TextView
 import androidx.core.util.Pair
 import org.evergreen_ils.Api
 import org.evergreen_ils.R
@@ -85,6 +82,8 @@ class OrgDetailsActivity : BaseActivity() {
         progress = ProgressDialogSupport()
 
         initOrgSpinner()
+        initOrgDetailsRunnable()
+        initButtons()
     }
 
     override fun onDestroy() {
@@ -118,6 +117,15 @@ class OrgDetailsActivity : BaseActivity() {
 
     private fun initOrgDetailsRunnable() {
         // hangover from Java
+    }
+
+    private fun initButtons() {
+        email?.setOnClickListener {
+            Log.d(TAG, "here")
+        }
+        phone?.setOnClickListener {
+            dialPhone(org?.phone)
+        }
     }
 
     private fun hoursOfOperation(obj: OSRFObject?, day: Int): String? {
