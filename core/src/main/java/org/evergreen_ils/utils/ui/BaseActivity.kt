@@ -177,6 +177,9 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         } else if (id == R.id.main_my_lists_button) {
             Analytics.logEvent("Lists: Open", "via", "nav_drawer")
             startActivity(Intent(this, BookBagsActivity::class.java))
+        } else if (id == R.id.main_library_info_button) {
+            Analytics.logEvent("LibraryInfo: Open", "via", "nav_drawer")
+            startActivity(Intent(this, OrgDetailsActivity::class.java))
         } else if (id == R.id.btn_barcode) {
             Analytics.logEvent("Barcode: Open", "via", "nav_drawer")
             startActivity(Intent(this, BarcodeActivity::class.java))

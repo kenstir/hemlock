@@ -18,7 +18,7 @@ import androidx.annotation.Nullable;
 public class OrgArrayAdapter extends ArrayAdapter<String> {
     protected boolean forPickup;
 
-    public OrgArrayAdapter(@NonNull Context context, int resource, @NonNull List objects, boolean forPickup) {
+    public OrgArrayAdapter(@NonNull Context context, int resource, @NonNull List<String> objects, boolean forPickup) {
         super(context, resource, objects);
         this.forPickup = forPickup;
     }

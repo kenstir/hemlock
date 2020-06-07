@@ -17,10 +17,12 @@
  */
 package org.evergreen_ils.system
 
-import org.evergreen_ils.net.Gateway
+import androidx.core.util.Pair
 import org.evergreen_ils.android.Log
 import org.evergreen_ils.data.OrgType
 import org.evergreen_ils.data.Organization
+import org.evergreen_ils.net.Gateway
+import org.evergreen_ils.utils.IntUtils.equals
 import org.opensrf.util.OSRFObject
 import java.util.*
 import kotlin.Comparator
@@ -112,6 +114,9 @@ object EgOrg {
     fun getOrgNameSafe(id: Int?): String = findOrg(id)?.name ?: "?"
 
     @JvmStatic
+    fun findOrgBySpinnerLabel(label: String): Organization? = orgs.firstOrNull { it.spinnerLabel == label }
+
+    @JvmStatic
     fun findOrgByShortName(shortName: String): Organization? = orgs.firstOrNull { it.shortname == shortName }
 
     // Return the short names of the org itself and every level up to the consortium.
@@ -142,5 +147,18 @@ object EgOrg {
 
     fun orgSpinnerLabels(): List<String> {
         return visibleOrgs.map { it.spinnerLabel }
+    }
+
+    // return list of spinner labels and the index at which defaultOrgId appears else (0)
+    fun orgSpinnerLabelsAndSelectedIndex(defaultOrgId: Int?): Pair<ArrayList<String>, Int> {
+        val labels: ArrayList<String> = ArrayList<String>(visibleOrgs.size)
+        var selectedIndex = 0
+        for ((index, org) in visibleOrgs.withIndex()) {
+            labels.add(org.spinnerLabel)
+            if (org.id == defaultOrgId) {
+                selectedIndex = index
+            }
+        }
+        return Pair(labels, selectedIndex)
     }
 }

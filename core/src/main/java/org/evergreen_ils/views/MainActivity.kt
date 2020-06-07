@@ -198,6 +198,9 @@ class MainActivity : BaseActivity() {
         } else if (id == R.id.main_btn_search) {
             Analytics.logEvent("Search: Open", "via", "main_button")
             startActivity(Intent(this, SearchActivity::class.java))
+        } else if (id == R.id.main_library_info_button) {
+            Analytics.logEvent("LibraryInfo: Open", "via", "main_button")
+            startActivity(Intent(this, OrgDetailsActivity::class.java))
         } else if (id == R.id.main_barcode_button) {
             Analytics.logEvent("Barcode: Open", "via", "main_button")
             startActivity(Intent(this, BarcodeActivity::class.java))

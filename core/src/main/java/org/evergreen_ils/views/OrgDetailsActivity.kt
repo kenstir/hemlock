@@ -28,9 +28,10 @@ import android.widget.Spinner
 import androidx.core.util.Pair
 import org.evergreen_ils.R
 import org.evergreen_ils.accountAccess.AccountAccess
+import org.evergreen_ils.android.App
 import org.evergreen_ils.android.Log
-import org.evergreen_ils.system.EvergreenServer
-import org.evergreen_ils.system.Organization
+import org.evergreen_ils.data.Organization
+import org.evergreen_ils.system.EgOrg
 import org.evergreen_ils.utils.ui.BaseActivity
 import org.evergreen_ils.utils.ui.OrgArrayAdapter
 import org.evergreen_ils.utils.ui.ProgressDialogSupport
@@ -52,7 +53,12 @@ class OrgDetailsActivity : BaseActivity() {
 
         setContentView(R.layout.activity_org_details)
 
-        orgID = intent.getIntExtra("orgID", 1)
+        orgID = if (intent.hasExtra("orgID")) {
+            intent.getIntExtra("orgID", 1)
+        } else {
+            App.getAccount().homeOrg
+        }
+        org = EgOrg.findOrg(orgID)
 
         orgSpinner = findViewById(R.id.org_details_spinner)
 
@@ -74,16 +80,16 @@ class OrgDetailsActivity : BaseActivity() {
     }
 
     private fun initOrgSpinner() {
-        val defaultOrgId = AccountAccess.getInstance().homeOrgID
-        val pair: Pair<ArrayList<String?>, Int> = EvergreenServer.getInstance().getOrganizationSpinnerLabelsAndSelectedIndex(defaultOrgId)
-        val selectedOrgPos = pair.second
-        val adapter: ArrayAdapter<String> = OrgArrayAdapter(this, R.layout.org_item_layout, pair.first, false)
+        val orgs = EgOrg.orgSpinnerLabels()
+        val index = orgs.indexOfFirst { it == org?.spinnerLabel }
+        val adapter: ArrayAdapter<String> = OrgArrayAdapter(this, R.layout.org_item_layout, orgs, false)
         orgSpinner?.adapter = adapter
-        orgSpinner?.setSelection(selectedOrgPos)
+        orgSpinner?.setSelection(if (index > 0) index else 0)
         orgSpinner?.onItemSelectedListener = object : OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>?, view: View, position: Int, id: Long) {
-                org = EvergreenServer.getInstance().visibleOrganizations[position]
+                org = EgOrg.visibleOrgs[position]
                 orgID = org?.id
+                fetchData()
             }
 
             override fun onNothingSelected(parent: AdapterView<*>?) {}
@@ -100,5 +106,6 @@ class OrgDetailsActivity : BaseActivity() {
     }
 
     private fun fetchData() {
+        Log.d(TAG, "org: $org?.name")
     }
 }
