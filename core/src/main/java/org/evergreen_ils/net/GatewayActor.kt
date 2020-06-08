@@ -67,7 +67,7 @@ object GatewayActor: ActorService {
         }
     }
 
-    override suspend fun fetchOrgHours(account: Account, orgID: Int): Result<OSRFObject> {
+    override suspend fun fetchOrgHours(account: Account, orgID: Int?): Result<OSRFObject> {
         return try {
             val (authToken, userID) = account.getCredentialsOrThrow()
             val args = arrayOf<Any?>(authToken, orgID)

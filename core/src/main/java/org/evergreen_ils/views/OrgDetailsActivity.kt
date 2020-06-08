@@ -23,16 +23,22 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.*
 import android.widget.AdapterView.OnItemSelectedListener
-import androidx.core.util.Pair
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.async
+import kotlinx.coroutines.joinAll
 import org.evergreen_ils.Api
 import org.evergreen_ils.R
 import org.evergreen_ils.android.App
 import org.evergreen_ils.android.Log
 import org.evergreen_ils.data.Organization
+import org.evergreen_ils.data.Result
+import org.evergreen_ils.net.Gateway
+import org.evergreen_ils.net.GatewayLoader
 import org.evergreen_ils.system.EgOrg
 import org.evergreen_ils.utils.ui.BaseActivity
 import org.evergreen_ils.utils.ui.OrgArrayAdapter
 import org.evergreen_ils.utils.ui.ProgressDialogSupport
+import org.evergreen_ils.utils.ui.showAlert
 import org.opensrf.util.OSRFObject
 
 private const val TAG = "OrgDetailsActivity"
@@ -123,7 +129,7 @@ class OrgDetailsActivity : BaseActivity() {
 
     private fun initButtons() {
         webSite?.setOnClickListener {
-            launchURL(org?.setting_info_url)
+            launchURL(org?.infoURL)
         }
         email?.setOnClickListener {
             sendEmail(org?.email)
@@ -135,7 +141,7 @@ class OrgDetailsActivity : BaseActivity() {
     }
 
     private fun enableButtonsWhenReady() {
-        webSite?.isEnabled = !(org?.setting_info_url.isNullOrEmpty())
+        webSite?.isEnabled = !(org?.infoURL.isNullOrEmpty())
         email?.isEnabled = !(org?.email.isNullOrEmpty())
         phone?.isEnabled = !(org?.phone.isNullOrEmpty())
     }
@@ -156,7 +162,7 @@ class OrgDetailsActivity : BaseActivity() {
         return "$openTimeLocal - $closeTimeLocal"
     }
 
-    private fun onHoursLoaded(obj: OSRFObject?) {
+    private fun loadHours(obj: OSRFObject?) {
         day0Hours?.text = hoursOfOperation(obj, 0)
         day1Hours?.text = hoursOfOperation(obj, 1)
         day2Hours?.text = hoursOfOperation(obj, 2)
@@ -166,7 +172,14 @@ class OrgDetailsActivity : BaseActivity() {
         day6Hours?.text = hoursOfOperation(obj, 6)
     }
 
-    private fun onOrgsLoaded() {
+    private fun onHoursResult(result: Result<OSRFObject>) {
+        when (result) {
+            is Result.Success -> loadHours(result.data)
+            is Result.Error -> showAlert(result.exception)
+        }
+    }
+
+    private fun onOrgLoaded() {
         email?.text = org?.email
         phone?.text = org?.phone
         enableButtonsWhenReady()
@@ -182,6 +195,32 @@ class OrgDetailsActivity : BaseActivity() {
     }
 
     private fun fetchData() {
-        Log.d(TAG, "org: $org?.name")
+        async {
+            try {
+                val start = System.currentTimeMillis()
+                var jobs = mutableListOf<Job>()
+                progress?.show(this@OrgDetailsActivity, getString(R.string.msg_loading_details))
+
+                Log.d(TAG, "[kcxxx] fetchData ...")
+
+                jobs.add(async {
+                    GatewayLoader.loadOrgSettingsAsync(org).await()
+                    onOrgLoaded()
+                })
+
+                jobs.add(async {
+                    val result = Gateway.actor.fetchOrgHours(App.getAccount(), orgID)
+                    onHoursResult(result)
+                })
+
+                jobs.joinAll()
+                Log.logElapsedTime(TAG, start, "[kcxxx] fetchData ... done")
+            } catch (ex: Exception) {
+                Log.d(TAG, "[kcxxx] fetchData ... caught", ex)
+                showAlert(ex)
+            } finally {
+                progress?.dismiss()
+            }
+        }
     }
 }

@@ -229,7 +229,8 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         return false
     }
 
-    fun launchURL(url: String, requestId: Int? = null) {
+    fun launchURL(url: String?, requestId: Int? = null) {
+        if (url == null) return
         val uri = Uri.parse(url)
         val intent = Intent(Intent.ACTION_VIEW, uri)
         if (intent.resolveActivity(packageManager) != null) {
