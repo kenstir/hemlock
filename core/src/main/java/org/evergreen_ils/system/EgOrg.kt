@@ -22,7 +22,6 @@ import org.evergreen_ils.android.Log
 import org.evergreen_ils.data.OrgType
 import org.evergreen_ils.data.Organization
 import org.evergreen_ils.net.Gateway
-import org.evergreen_ils.utils.IntUtils.equals
 import org.opensrf.util.OSRFObject
 import java.util.*
 import kotlin.Comparator
@@ -65,15 +64,12 @@ object EgOrg {
     }
 
     private fun addOrganization(obj: OSRFObject, level: Int) {
-        val id = obj.getInt("id")
-        val name = obj.getString("name")
-        val ouType = obj.getInt("ou_type")
-        if (id == null) return
-        if (name == null) return
-        if (ouType == null) return
+        val id = obj.getInt("id") ?: return
+        val name = obj.getString("name") ?: return
+        val ouType = obj.getInt("ou_type") ?: return
         val opacVisible = obj.getBoolean("opac_visible")
         val org = Organization(id, level, name, obj.getString("shortname"),
-                obj.getInt("parent_ou"), ouType, opacVisible)
+                ouType, opacVisible, obj)
         org.indentedDisplayPrefix = String(CharArray(level)).replace("\u0000", "   ")
         //Log.d(TAG, "id:$id level:${org.level} vis:${org.opac_visible} shortname:${org.shortname} name:${org.name}")
         orgs.add(org)
