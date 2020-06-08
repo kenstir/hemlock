@@ -27,6 +27,7 @@ import androidx.core.util.Pair
 import org.evergreen_ils.Api
 import org.evergreen_ils.R
 import org.evergreen_ils.accountAccess.AccountAccess
+import org.evergreen_ils.android.App
 import org.evergreen_ils.android.Log
 import org.evergreen_ils.system.EvergreenServer
 import org.evergreen_ils.system.Organization
@@ -63,7 +64,11 @@ class OrgDetailsActivity : BaseActivity() {
 
         setContentView(R.layout.activity_org_details)
 
-        orgID = intent.getIntExtra("orgID", 1)
+        orgID = if (intent.hasExtra("orgID")) {
+            intent.getIntExtra("orgID", 1)
+        } else {
+            AccountAccess.getInstance().homeOrgID
+        }
 
         orgSpinner = findViewById(R.id.org_details_spinner)
         day0Hours = findViewById(R.id.org_details_day0hours)
@@ -97,8 +102,7 @@ class OrgDetailsActivity : BaseActivity() {
     }
 
     private fun initOrgSpinner() {
-        val defaultOrgId = AccountAccess.getInstance().homeOrgID
-        val pair: Pair<ArrayList<String?>, Int> = EvergreenServer.getInstance().getOrganizationSpinnerLabelsAndSelectedIndex(defaultOrgId)
+        val pair: Pair<ArrayList<String?>, Int> = EvergreenServer.getInstance().getOrganizationSpinnerLabelsAndSelectedIndex(orgID)
         val selectedOrgPos = pair.second
         val adapter: ArrayAdapter<String> = OrgArrayAdapter(this, R.layout.org_item_layout, pair.first, false)
         orgSpinner?.adapter = adapter
