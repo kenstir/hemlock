@@ -38,7 +38,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import org.evergreen_ils.R
-import org.evergreen_ils.views.bookbags.BookBagsActivity
 import org.evergreen_ils.android.AccountUtils
 import org.evergreen_ils.android.Analytics
 import org.evergreen_ils.android.App
@@ -48,6 +47,7 @@ import org.evergreen_ils.net.Gateway
 import org.evergreen_ils.searchCatalog.SearchActivity
 import org.evergreen_ils.system.EgSearch
 import org.evergreen_ils.views.*
+import org.evergreen_ils.views.bookbags.BookBagsActivity
 import org.evergreen_ils.views.holds.HoldsActivity
 import kotlin.coroutines.CoroutineContext
 
@@ -238,6 +238,26 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
             } else {
                 startActivity(intent)
             }
+        }
+    }
+
+    fun dialPhone(phoneNumber: String?) {
+        if (phoneNumber == null) return
+        val url = "tel:$phoneNumber"
+        val uri = Uri.parse(url)
+        val intent = Intent(Intent.ACTION_DIAL, uri)
+        if (intent.resolveActivity(packageManager) != null) {
+            startActivity(intent)
+        }
+    }
+
+    fun sendEmail(to: String?) {
+        if (to == null) return
+        val url = "mailto:$to"
+        val uri = Uri.parse(url)
+        val intent = Intent(Intent.ACTION_SENDTO, uri)
+        if (intent.resolveActivity(packageManager) != null) {
+            startActivity(intent)
         }
     }
 
