@@ -49,6 +49,7 @@ import org.evergreen_ils.system.EgSearch
 import org.evergreen_ils.views.*
 import org.evergreen_ils.views.bookbags.BookBagsActivity
 import org.evergreen_ils.views.holds.HoldsActivity
+import java.net.URLEncoder
 import kotlin.coroutines.CoroutineContext
 
 /* Activity base class to handle common behaviours like the navigation drawer */
@@ -240,6 +241,19 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
                 startActivity(intent)
             }
         }
+    }
+
+    protected open fun launchMap(address: String?) {
+        val encodedAddress = URLEncoder.encode(address)
+        /*
+        Intent intent = new Intent(android.content.Intent.ACTION_VIEW,
+                Uri.parse("google.navigation:q=" + encodedAddress));
+        if (intent.resolveActivity(getPackageManager()) != null) {
+            startActivity(intent);
+        }
+         */
+        val url = "https://www.google.com/maps/search/?api=1&query=$encodedAddress"
+        launchURL(url)
     }
 
     fun dialPhone(phoneNumber: String?) {
