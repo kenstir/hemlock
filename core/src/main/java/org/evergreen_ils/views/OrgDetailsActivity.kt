@@ -179,6 +179,23 @@ class OrgDetailsActivity : BaseActivity() {
         }
     }
 
+    private fun loadAddress(obj: OSRFObject) {
+        var sb = StringBuilder(obj.getString("street1"))
+        obj.getString("street2")?.let { sb.append(" ").append(it) }
+        sb.append(" ").append(obj.getString("city"))
+        sb.append(" ").append(obj.getString("state"))
+        sb.append(" ").append(obj.getString("country"))
+        sb.append(" ").append(obj.getString("post_code"))
+        print(sb)
+    }
+
+    private fun onAddressResult(result: Result<OSRFObject>) {
+        when (result) {
+            is Result.Success -> loadAddress(result.data)
+            is Result.Error -> showAlert(result.exception)
+        }
+    }
+
     private fun onOrgLoaded() {
         email?.text = org?.email
         phone?.text = org?.phone
@@ -211,6 +228,11 @@ class OrgDetailsActivity : BaseActivity() {
                 jobs.add(async {
                     val result = Gateway.actor.fetchOrgHours(App.getAccount(), orgID)
                     onHoursResult(result)
+                })
+
+                jobs.add(async {
+                    val result = Gateway.actor.fetchOrgAddress(orgID)
+                    onAddressResult(result)
                 })
 
                 jobs.joinAll()
