@@ -80,6 +80,16 @@ object GatewayActor: ActorService {
         }
     }
 
+    override suspend fun fetchOrgAddress(orgID: Int?): Result<OSRFObject> {
+        return try {
+            val args = arrayOf<Any?>(orgID)
+            val ret = Gateway.fetchObject(Api.ACTOR, Api.ADDRESS_RETRIEVE, args, true)
+            Result.Success(ret)
+        } catch (e: Exception) {
+            Result.Error(e)
+        }
+    }
+
     override suspend fun fetchFleshedUser(account: Account): Result<OSRFObject> {
         return try {
             val (authToken, userID) = account.getCredentialsOrThrow()
