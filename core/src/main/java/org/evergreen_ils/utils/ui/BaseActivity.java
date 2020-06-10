@@ -56,6 +56,8 @@ import org.evergreen_ils.views.MenuProvider;
 import org.evergreen_ils.views.OrgDetailsActivity;
 import org.evergreen_ils.views.splashscreen.SplashActivity;
 
+import java.net.URLEncoder;
+
 /* Activity base class to handle common behaviours like the navigation drawer */
 public class BaseActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -246,6 +248,19 @@ public class BaseActivity extends AppCompatActivity
                 startActivity(intent);
             }
         }
+    }
+
+    protected void launchMap(String address) {
+        String encodedAddress = URLEncoder.encode(address);
+        /*
+        Intent intent = new Intent(android.content.Intent.ACTION_VIEW,
+                Uri.parse("google.navigation:q=" + encodedAddress));
+        if (intent.resolveActivity(getPackageManager()) != null) {
+            startActivity(intent);
+        }
+         */
+        String url = "https://www.google.com/maps/search/?api=1&query=" + encodedAddress;
+        launchURL(url);
     }
 
     protected void dialPhone(String phoneNumber) {
