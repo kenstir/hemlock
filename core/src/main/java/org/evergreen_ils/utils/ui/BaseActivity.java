@@ -252,13 +252,7 @@ public class BaseActivity extends AppCompatActivity
 
     protected void launchMap(String address) {
         String encodedAddress = URLEncoder.encode(address);
-        /*
-        Intent intent = new Intent(android.content.Intent.ACTION_VIEW,
-                Uri.parse("google.navigation:q=" + encodedAddress));
-        if (intent.resolveActivity(getPackageManager()) != null) {
-            startActivity(intent);
-        }
-         */
+        // url = "google.navigation:q=" + encodedAddress
         String url = "https://www.google.com/maps/search/?api=1&query=" + encodedAddress;
         launchURL(url);
     }
