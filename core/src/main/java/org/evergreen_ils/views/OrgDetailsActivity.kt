@@ -127,7 +127,7 @@ class OrgDetailsActivity : BaseActivity() {
                 progress?.show(this, getString(R.string.msg_loading_details))
             }
             val hoursObj = AccountAccess.getInstance().getHoursOfOperation(orgID);
-            val addressObj = AccountAccess.getInstance().getOrgAddress(orgID);
+            val addressObj = AccountAccess.getInstance().getOrgAddress(org?.mailingAddressID);
             runOnUiThread {
                 onOrgLoaded()
                 onHoursLoaded(hoursObj)
@@ -186,7 +186,7 @@ class OrgDetailsActivity : BaseActivity() {
         day6Hours?.text = hoursOfOperation(obj, 6)
     }
 
-    private fun loadAddress(obj: OSRFObject) {
+    private fun loadAddress(obj: OSRFObject?) {
         org?.addressObj = obj
         address?.text = org?.getAddress("\n")
         enableButtonsWhenReady()

@@ -21,7 +21,7 @@
         app:drawableTint="@color/button_icon_tint"
         android:onClick="onButtonClick"
         android:text="@string/title_search"
-        app:layout_constraintBottom_toTopOf="@+id/account_btn_check_out"
+        app:layout_constraintBottom_toTopOf="@+id/main_checkouts_button"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
@@ -38,11 +38,11 @@
         app:drawableTint="@color/button_icon_tint"
         android:onClick="onButtonClick"
         android:text="@string/title_check_out"
-        app:layout_constraintBottom_toTopOf="@+id/account_btn_holds"
+        app:layout_constraintBottom_toTopOf="@+id/main_holds_button"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/main_btn_search"
+        app:layout_constraintTop_toBottomOf="@+id/main_search_button"
         app:layout_constraintVertical_chainStyle="packed" />
 
     <Button
@@ -56,10 +56,10 @@
         app:drawableTint="@color/button_icon_tint"
         android:onClick="onButtonClick"
         android:text="@string/title_holds"
-        app:layout_constraintBottom_toTopOf="@+id/account_btn_fines"
+        app:layout_constraintBottom_toTopOf="@+id/main_fines_button"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/account_btn_check_out" />
+        app:layout_constraintTop_toBottomOf="@+id/main_checkouts_button" />
 
     <Button
         android:id="@+id/account_btn_fines"
@@ -76,7 +76,7 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/account_btn_holds" />
+        app:layout_constraintTop_toBottomOf="@+id/main_holds_button" />
 
     <Button
         android:id="@+id/main_my_lists_button"
@@ -93,7 +93,7 @@
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/account_btn_fines" />
+        app:layout_constraintTop_toBottomOf="@+id/main_fines_button" />
 
     <Button
         android:id="@+id/main_barcode_button"

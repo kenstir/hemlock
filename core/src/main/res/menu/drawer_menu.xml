@@ -16,19 +16,19 @@
         android:id="@+id/grp2"
         android:checkableBehavior="none">
         <item
-            android:id="@+id/main_btn_search"
+            android:id="@+id/main_search_button"
             android:icon="@drawable/ic_search_24"
             android:title="@string/title_search" />
         <item
-            android:id="@+id/account_btn_check_out"
+            android:id="@+id/main_checkouts_button"
             android:icon="@drawable/ic_checkouts_24"
             android:title="@string/title_check_out" />
         <item
-            android:id="@id/account_btn_holds"
+            android:id="@id/main_holds_button"
             android:icon="@drawable/ic_holds_24"
             android:title="@string/title_holds" />
         <item
-            android:id="@id/account_btn_fines"
+            android:id="@id/main_fines_button"
             android:icon="@drawable/ic_fines_24"
             android:title="@string/title_fines" />
         <item
@@ -40,7 +40,7 @@
             android:icon="@drawable/ic_library_24"
             android:title="@string/title_library_info" />
         <item
-            android:id="@+id/btn_barcode"
+            android:id="@+id/main_showcard_button"
             android:icon="@drawable/ic_barcode_24"
             android:title="@string/barcode_title" />
     </group>

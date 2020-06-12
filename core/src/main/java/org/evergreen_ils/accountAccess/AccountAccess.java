@@ -48,6 +48,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import androidx.annotation.Nullable;
+
 import static org.evergreen_ils.utils.StringUtils.safeString;
 
 public class AccountAccess {
@@ -1094,10 +1096,11 @@ public class AccountAccess {
         return (OSRFObject)resp;
     }
 
-    public OSRFObject getOrgAddress(Integer orgID) {
+    @Nullable
+    public OSRFObject getOrgAddress(Integer addressID) {
         Object resp = Utils.doRequest(conn(), Api.ACTOR,
                 Api.ADDRESS_RETRIEVE, new Object[] {
-                        orgID});
+                        addressID});
         return (OSRFObject)resp;
     }
 }
