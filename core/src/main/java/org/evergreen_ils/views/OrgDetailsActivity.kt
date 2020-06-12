@@ -142,7 +142,7 @@ class OrgDetailsActivity : BaseActivity() {
             dialPhone(org?.phone)
         }
         map?.setOnClickListener {
-            showAlert("not implemented yet")
+            launchMap(org?.getAddress(" "))
         }
         enableButtonsWhenReady()
     }
@@ -190,6 +190,7 @@ class OrgDetailsActivity : BaseActivity() {
     private fun loadAddress(obj: OSRFObject) {
         org?.addressObj = obj
         address?.text = org?.getAddress("\n")
+        enableButtonsWhenReady()
     }
 
     private fun onAddressResult(result: Result<OSRFObject>) {
