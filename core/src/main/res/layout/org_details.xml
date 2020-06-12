@@ -230,7 +230,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:paddingTop="16dp"
+                android:paddingTop="4dp"
                 android:paddingLeft="16dp"
                 android:ellipsize="none"
                 android:maxLines="10"
