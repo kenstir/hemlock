@@ -56,6 +56,8 @@ class OrgDetailsActivity : BaseActivity() {
     private var webSite: Button? = null
     private var email: Button? = null
     private var phone: Button? = null
+    private var map: Button? = null
+    private var address: TextView? = null
     private lateinit var orgDetailsRunnable: Runnable
     private var progress: ProgressDialogSupport? = null
 
@@ -86,6 +88,8 @@ class OrgDetailsActivity : BaseActivity() {
         webSite = findViewById(R.id.org_details_web_site)
         email = findViewById(R.id.org_details_email)
         phone = findViewById(R.id.org_details_phone)
+        map = findViewById(R.id.org_details_map)
+        address = findViewById(R.id.org_details_address)
 
         progress = ProgressDialogSupport()
 
@@ -137,6 +141,9 @@ class OrgDetailsActivity : BaseActivity() {
         phone?.setOnClickListener {
             dialPhone(org?.phone)
         }
+        map?.setOnClickListener {
+            showAlert("not implemented yet")
+        }
         enableButtonsWhenReady()
     }
 
@@ -144,6 +151,7 @@ class OrgDetailsActivity : BaseActivity() {
         webSite?.isEnabled = !(org?.infoURL.isNullOrEmpty())
         email?.isEnabled = !(org?.email.isNullOrEmpty())
         phone?.isEnabled = !(org?.phone.isNullOrEmpty())
+        map?.isEnabled = (org?.addressObj != null)
     }
 
     private fun hoursOfOperation(obj: OSRFObject?, day: Int): String? {
@@ -180,13 +188,8 @@ class OrgDetailsActivity : BaseActivity() {
     }
 
     private fun loadAddress(obj: OSRFObject) {
-        var sb = StringBuilder(obj.getString("street1"))
-        obj.getString("street2")?.let { sb.append(" ").append(it) }
-        sb.append(" ").append(obj.getString("city"))
-        sb.append(" ").append(obj.getString("state"))
-        sb.append(" ").append(obj.getString("country"))
-        sb.append(" ").append(obj.getString("post_code"))
-        print(sb)
+        org?.addressObj = obj
+        address?.text = org?.getAddress("\n")
     }
 
     private fun onAddressResult(result: Result<OSRFObject>) {

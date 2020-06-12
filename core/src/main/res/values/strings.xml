@@ -222,5 +222,8 @@
     <string name="title_contact_information">Contact Information</string>
     <string name="title_email">Email</string>
     <string name="title_phone">Phone</string>
+    <string name="title_address">Address</string>
+    <string name="button_library_web_site">Library web site</string>
+    <string name="button_library_map">Show map</string>
 
 </resources>
