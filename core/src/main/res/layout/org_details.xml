@@ -59,7 +59,7 @@
                     android:gravity="left|center_vertical"
                     android:paddingLeft="0dp"
                     android:paddingRight="0dp"
-                    android:text="Library web site" />
+                    android:text="@string/button_library_web_site" />
             </LinearLayout>
 
             <TextView
@@ -217,6 +217,45 @@
                     </LinearLayout>
                 </TableRow>
             </TableLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="16dp"
+                android:text="@string/title_address"
+                style="@style/HemlockText.PagePrimary"/>
+
+            <TextView
+                android:id="@+id/org_details_address"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:paddingTop="16dp"
+                android:paddingLeft="16dp"
+                android:ellipsize="none"
+                android:maxLines="10"
+                android:scrollHorizontally="false"
+                tools:text="Athens-Clarke County Library\n2025 BAXTER ST
+ATHENS, GA\n30606-6331"/>
+
+            <LinearLayout
+                style="?android:buttonBarStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/org_details_map"
+                    style="?android:buttonBarButtonStyle"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:minHeight="24dp"
+                    android:gravity="left|center_vertical"
+                    android:paddingLeft="0dp"
+                    android:paddingRight="0dp"
+                    android:text="@string/button_library_map" />
+            </LinearLayout>
         </LinearLayout>
 
     </ScrollView>
