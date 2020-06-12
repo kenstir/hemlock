@@ -34,6 +34,8 @@ class Organization(@JvmField val id: Int,
     @JvmField val email = obj.getString("email")
     @JvmField val phone = obj.getString("phone")
 
+    var addressObj: OSRFObject? = null
+
     var indentedDisplayPrefix = ""
     var settingsLoaded = false
     private var isNotPickupLocationSetting: Boolean? = null // null=not loaded
@@ -73,5 +75,16 @@ class Organization(@JvmField val id: Int,
         val valueObj = obj.getObject(setting)
         val value = valueObj?.getString("value")
         return value
+    }
+
+    fun getAddress(separator: String = " "): String {
+        var sb = StringBuilder()
+        sb.append(addressObj?.getString("street1"))
+        addressObj?.getString("street2")?.let { sb.append(separator).append(it) }
+        sb.append(separator).append(addressObj?.getString("city"))
+        sb.append(separator).append(addressObj?.getString("state"))
+        sb.append(separator).append(addressObj?.getString("country"))
+        sb.append(separator).append(addressObj?.getString("post_code"))
+        return sb.toString()
     }
 }
