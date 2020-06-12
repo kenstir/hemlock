@@ -29,21 +29,24 @@ import org.evergreen_ils.accountAccess.bookbags.BookBagItem;
 import org.evergreen_ils.accountAccess.checkout.CircRecord;
 import org.evergreen_ils.accountAccess.fines.FinesRecord;
 import org.evergreen_ils.accountAccess.holds.HoldRecord;
-import org.evergreen_ils.auth.Const;
-import org.evergreen_ils.system.EvergreenServer;
+import org.evergreen_ils.android.Analytics;
 import org.evergreen_ils.android.Log;
+import org.evergreen_ils.auth.Const;
+import org.evergreen_ils.searchCatalog.RecordInfo;
+import org.evergreen_ils.system.EvergreenServer;
 import org.evergreen_ils.system.Organization;
 import org.evergreen_ils.system.Utils;
-import org.evergreen_ils.searchCatalog.RecordInfo;
-import org.evergreen_ils.android.Analytics;
 import org.opensrf.ShouldNotHappenException;
 import org.opensrf.net.http.HttpConnection;
 import org.opensrf.util.GatewayResponse;
 import org.opensrf.util.OSRFObject;
 
-import java.util.*;
-
-import androidx.annotation.NonNull;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static org.evergreen_ils.utils.StringUtils.safeString;
 
@@ -1088,6 +1091,13 @@ public class AccountAccess {
         Object resp = Utils.doRequest(conn(), Api.ACTOR,
                 Api.HOURS_OF_OPERATION_RETRIEVE, new Object[] {
                         authToken, orgID});
+        return (OSRFObject)resp;
+    }
+
+    public OSRFObject getOrgAddress(Integer orgID) {
+        Object resp = Utils.doRequest(conn(), Api.ACTOR,
+                Api.ADDRESS_RETRIEVE, new Object[] {
+                        orgID});
         return (OSRFObject)resp;
     }
 }

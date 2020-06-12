@@ -27,7 +27,6 @@ import androidx.core.util.Pair
 import org.evergreen_ils.Api
 import org.evergreen_ils.R
 import org.evergreen_ils.accountAccess.AccountAccess
-import org.evergreen_ils.android.App
 import org.evergreen_ils.android.Log
 import org.evergreen_ils.system.EvergreenServer
 import org.evergreen_ils.system.Organization
@@ -124,9 +123,17 @@ class OrgDetailsActivity : BaseActivity() {
 
     private fun initOrgDetailsRunnable() {
         orgDetailsRunnable = Runnable {
-            runOnUiThread { progress?.show(this, getString(R.string.msg_loading_details)) }
-            val obj = AccountAccess.getInstance().getHoursOfOperation(orgID);
-            runOnUiThread { onOrgsLoaded(); onHoursLoaded(obj); progress?.dismiss() }
+            runOnUiThread {
+                progress?.show(this, getString(R.string.msg_loading_details))
+            }
+            val hoursObj = AccountAccess.getInstance().getHoursOfOperation(orgID);
+            val addressObj = AccountAccess.getInstance().getOrgAddress(orgID);
+            runOnUiThread {
+                onOrgLoaded()
+                onHoursLoaded(hoursObj)
+                loadAddress(addressObj)
+                progress?.dismiss()
+            }
         }
     }
 
@@ -141,7 +148,7 @@ class OrgDetailsActivity : BaseActivity() {
             dialPhone(org?.phone)
         }
         map?.setOnClickListener {
-            showAlert("not implemented yet")
+            launchMap(org?.getAddress(" "))
         }
         enableButtonsWhenReady()
     }
@@ -179,24 +186,10 @@ class OrgDetailsActivity : BaseActivity() {
         day6Hours?.text = hoursOfOperation(obj, 6)
     }
 
-    private fun onHoursResult(result: Result<OSRFObject>) {
-        when (result) {
-            is Result.Success -> loadHours(result.data)
-            is Result.Error -> showAlert(result.exception)
-        }
-    }
-
     private fun loadAddress(obj: OSRFObject) {
         org?.addressObj = obj
         address?.text = org?.getAddress("\n")
         enableButtonsWhenReady()
-    }
-
-    private fun onAddressResult(result: Result<OSRFObject>) {
-        when (result) {
-            is Result.Success -> loadAddress(result.data)
-            is Result.Error -> showAlert(result.exception)
-        }
     }
 
     private fun onOrgLoaded() {

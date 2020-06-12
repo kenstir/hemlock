@@ -17,6 +17,9 @@
  */
 package org.evergreen_ils.system;
 
+import org.evergreen_ils.utils.TextUtils;
+import org.opensrf.util.OSRFObject;
+
 public class Organization /*implements Serializable*/ {
     private static final String TAG = Organization.class.getSimpleName();
 
@@ -30,6 +33,7 @@ public class Organization /*implements Serializable*/ {
     public String email = null;
     public String phone = null;
     public OrgType orgType = null;
+    public OSRFObject addressObj = null;
     public String indentedDisplayPrefix = "";
 
     public Boolean opac_visible = null;
@@ -44,6 +48,19 @@ public class Organization /*implements Serializable*/ {
 
     public String getSpinnerLabel() {
         return indentedDisplayPrefix + name;
+    }
+
+    public String getAddress(String separator) {
+        StringBuilder sb = new StringBuilder();
+        if (addressObj == null) return null;
+        sb.append(addressObj.getString("street1"));
+        String s = addressObj.getString("street2");
+        if (!TextUtils.isEmpty(s)) { sb.append(separator).append(s); }
+        sb.append(separator).append(addressObj.getString("city"));
+        sb.append(separator).append(addressObj.getString("state"));
+        sb.append(separator).append(addressObj.getString("country"));
+        sb.append(separator).append(addressObj.getString("post_code"));
+        return sb.toString();
     }
 
     public boolean isPickupLocation() {

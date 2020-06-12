@@ -44,7 +44,7 @@ import androidx.annotation.Nullable;
 public class Api {
 
     public static final String ANONYMOUS = "ANONYMOUS";
-    public static final String IDL_CLASSES_USED = "ac,acn,acp,ahr,ahtc,aou,aouhoo,aout,au,aua,auact,aum,aus,bmp,bre,cbreb,cbrebi,cbrebin,cbrebn,ccs,ccvm,cfg,circ,csc,cuat,ex,mbt,mbts,mous,mra,mraf,mus,mvr,perm_ex";
+    public static final String IDL_CLASSES_USED = "ac,acn,acp,ahr,ahtc,aoa,aou,aouhoo,aout,au,aua,auact,aum,aus,bmp,bre,cbreb,cbrebi,cbrebin,cbrebn,ccs,ccvm,cfg,circ,csc,cuat,ex,mbt,mbts,mous,mra,mraf,mus,mvr,perm_ex";
     public static final int LONG_TIMEOUT_MS = 10000;
 
     /// actor
@@ -68,6 +68,7 @@ public class Api {
     public static final String CONTAINER_FULL_DELETE = "open-ils.actor.container.full_delete";
     public static final String MESSAGES_RETRIEVE = "open-ils.actor.message.retrieve"; // [aum]
     public static final String HOURS_OF_OPERATION_RETRIEVE = "open-ils.actor.org_unit.hours_of_operation.retrieve"; // [aouhoo]
+    public static final String ADDRESS_RETRIEVE = "open-ils.actor.org_unit.address.retrieve"; // [aoa]
 
     public static final String SETTING_CREDIT_PAYMENTS_ALLOW = "credit.payments.allow";
     public static final String SETTING_INFO_URL = "lib.info_url";
