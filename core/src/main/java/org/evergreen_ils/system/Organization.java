@@ -58,9 +58,9 @@ public class Organization /*implements Serializable*/ {
         String s = addressObj.getString("street2");
         if (!TextUtils.isEmpty(s)) { sb.append(separator).append(s); }
         sb.append(separator).append(addressObj.getString("city"));
-        sb.append(separator).append(addressObj.getString("state"));
+        sb.append(", ").append(addressObj.getString("state"));
         //sb.append(separator).append(addressObj.getString("country"));
-        sb.append(separator).append(addressObj.getString("post_code"));
+        sb.append(" ").append(addressObj.getString("post_code"));
         return sb.toString();
     }
 
