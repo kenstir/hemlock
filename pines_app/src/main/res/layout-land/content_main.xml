@@ -102,10 +102,10 @@
         app:layout_constraintHorizontal_bias="1.0"
         android:layout_marginStart="24dp"
         android:layout_marginEnd="24dp"
-        app:layout_constraintBottom_toTopOf="@+id/main_barcode_button" />
+        app:layout_constraintBottom_toTopOf="@+id/main_showcard_button" />
 
     <Button
-        android:id="@+id/main_barcode_button"
+        android:id="@+id/main_showcard_button"
         style="@style/Hemlock.ActionButton"
         android:layout_width="0dp"
         android:layout_height="48dp"

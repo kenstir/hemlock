@@ -105,7 +105,7 @@
         tools:layout_editor_absoluteY="459dp" />
 
     <Button
-        android:id="@+id/main_barcode_button"
+        android:id="@+id/main_showcard_button"
         android:layout_width="0dp"
         android:layout_height="60dp"
         android:text="Invisible placeholder button"
