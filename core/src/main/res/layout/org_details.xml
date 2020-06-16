@@ -235,8 +235,7 @@
                 android:ellipsize="none"
                 android:maxLines="10"
                 android:scrollHorizontally="false"
-                tools:text="Athens-Clarke County Library\n2025 BAXTER ST
-ATHENS, GA\n30606-6331"/>
+                tools:text="Athens-Clarke County Library\n2025 BAXTER ST\nATHENS, GA 30606-6331"/>
 
             <LinearLayout
                 style="?android:buttonBarStyle"
