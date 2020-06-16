@@ -127,7 +127,7 @@ class OrgDetailsActivity : BaseActivity() {
                 progress?.show(this, getString(R.string.msg_loading_details))
             }
             val hoursObj = AccountAccess.getInstance().getHoursOfOperation(orgID);
-            val addressObj = AccountAccess.getInstance().getOrgAddress(org?.mailingAddressID);
+            val addressObj = AccountAccess.getInstance().getOrgAddress(org?.addressID);
             runOnUiThread {
                 onOrgLoaded()
                 onHoursLoaded(hoursObj)

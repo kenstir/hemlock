@@ -177,7 +177,7 @@ public class EvergreenServer {
         org.email = obj.getString("email");
         org.phone = obj.getString("phone");
         org.orgType = findOrgType(obj.getInt("ou_type"));
-        org.mailingAddressID = obj.getInt("mailing_address");
+        org.addressID = obj.getInt("mailing_address");
         org.opac_visible = Api.parseBoolean(obj.getString("opac_visible"));
         org.indentedDisplayPrefix = new String(new char[level]).replace("\0", "   ");
         Log.d(TAG, "id="+org.id+" level="+org.level+" type="+org.orgType.id+" users="+org.orgType.can_have_users+" vols="+org.orgType.can_have_vols+" vis="+(org.opac_visible ? "1" : "0")+" site="+org.shortname+" name="+org.name);

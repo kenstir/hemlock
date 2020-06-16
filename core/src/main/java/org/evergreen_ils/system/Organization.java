@@ -33,11 +33,10 @@ public class Organization /*implements Serializable*/ {
     public String email = null;
     public String phone = null;
     public OrgType orgType = null;
-    public Integer mailingAddressID = null;
-    public OSRFObject addressObj = null;
-    public String indentedDisplayPrefix = "";
-
     public Boolean opac_visible = null;
+    public Integer addressID = null;
+    public OSRFObject addressObj = null; // demand-loaded
+    public String indentedDisplayPrefix = "";
 
     public Boolean settings_loaded = false;
     public Boolean setting_is_pickup_location = null; // null=not loaded
