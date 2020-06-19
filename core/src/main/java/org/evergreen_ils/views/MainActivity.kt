@@ -183,25 +183,25 @@ class MainActivity : BaseActivity() {
 
     fun onButtonClick(v: View) {
         val id = v.id
-        if (id == R.id.account_btn_check_out) {
+        if (id == R.id.main_checkouts_button) {
             Analytics.logEvent("Checkouts: Open", "via", "main_button")
             startActivity(Intent(this, CheckoutsActivity::class.java))
-        } else if (id == R.id.account_btn_holds) {
+        } else if (id == R.id.main_holds_button) {
             Analytics.logEvent("Holds: Open", "via", "main_button")
             startActivity(Intent(this, HoldsActivity::class.java))
-        } else if (id == R.id.account_btn_fines) {
+        } else if (id == R.id.main_fines_button) {
             Analytics.logEvent("Fines: Open", "via", "main_button")
             startActivity(Intent(this, FinesActivity::class.java))
         } else if (id == R.id.main_my_lists_button) {
             Analytics.logEvent("Lists: Open", "via", "main_button")
             startActivity(Intent(this, BookBagsActivity::class.java))
-        } else if (id == R.id.main_btn_search) {
+        } else if (id == R.id.main_search_button) {
             Analytics.logEvent("Search: Open", "via", "main_button")
             startActivity(Intent(this, SearchActivity::class.java))
         } else if (id == R.id.main_library_info_button) {
             Analytics.logEvent("LibraryInfo: Open", "via", "main_button")
             startActivity(Intent(this, OrgDetailsActivity::class.java))
-        } else if (id == R.id.main_barcode_button) {
+        } else if (id == R.id.main_showcard_button) {
             Analytics.logEvent("Barcode: Open", "via", "main_button")
             startActivity(Intent(this, BarcodeActivity::class.java))
         } else if (menuItemHandler != null) {
