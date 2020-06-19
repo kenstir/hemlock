@@ -82,9 +82,9 @@ class Organization(@JvmField val id: Int,
         sb.append(addressObj?.getString("street1"))
         addressObj?.getString("street2")?.let { sb.append(separator).append(it) }
         sb.append(separator).append(addressObj?.getString("city"))
-        sb.append(separator).append(addressObj?.getString("state"))
-        sb.append(separator).append(addressObj?.getString("country"))
-        sb.append(separator).append(addressObj?.getString("post_code"))
+        sb.append(", ").append(addressObj?.getString("state"))
+        //sb.append(separator).append(addressObj?.getString("country"))
+        sb.append(" ").append(addressObj?.getString("post_code"))
         return sb.toString()
     }
 }
