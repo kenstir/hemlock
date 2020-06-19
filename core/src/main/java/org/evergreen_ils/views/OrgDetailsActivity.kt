@@ -27,6 +27,8 @@ import androidx.core.util.Pair
 import org.evergreen_ils.Api
 import org.evergreen_ils.R
 import org.evergreen_ils.accountAccess.AccountAccess
+import org.evergreen_ils.accountAccess.SessionNotFoundException
+import org.evergreen_ils.accountAccess.checkout.CheckoutsActivity
 import org.evergreen_ils.android.Log
 import org.evergreen_ils.system.EvergreenServer
 import org.evergreen_ils.system.Organization
@@ -126,8 +128,21 @@ class OrgDetailsActivity : BaseActivity() {
             runOnUiThread {
                 progress?.show(this, getString(R.string.msg_loading_details))
             }
-            val hoursObj = AccountAccess.getInstance().getHoursOfOperation(orgID);
-            val addressObj = AccountAccess.getInstance().getOrgAddress(org?.addressID);
+            var hoursObj = OSRFObject()
+            var addressObj: OSRFObject? = null
+            try {
+                hoursObj = AccountAccess.getInstance().getHoursOfOperation(orgID);
+                addressObj = AccountAccess.getInstance().getOrgAddress(org?.addressID);
+            } catch (e: SessionNotFoundException) {
+                try {
+                    if (AccountAccess.getInstance().reauthenticate(this)) {
+                        hoursObj = AccountAccess.getInstance().getHoursOfOperation(orgID);
+                        addressObj = AccountAccess.getInstance().getOrgAddress(org?.addressID);
+                    }
+                } catch (e: SessionNotFoundException) {
+                    Log.d(TAG, "reauth failed", e);
+                }
+            }
             runOnUiThread {
                 onOrgLoaded()
                 onHoursLoaded(hoursObj)

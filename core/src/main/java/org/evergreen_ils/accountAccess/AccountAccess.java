@@ -1089,17 +1089,17 @@ public class AccountAccess {
         return unread_count;
     }
 
-    public OSRFObject getHoursOfOperation(Integer orgID) {
+    public OSRFObject getHoursOfOperation(Integer orgID) throws SessionNotFoundException {
         Object resp = Utils.doRequest(conn(), Api.ACTOR,
-                Api.HOURS_OF_OPERATION_RETRIEVE, new Object[] {
+                Api.HOURS_OF_OPERATION_RETRIEVE, authToken, new Object[] {
                         authToken, orgID});
         return (OSRFObject)resp;
     }
 
     @Nullable
-    public OSRFObject getOrgAddress(Integer addressID) {
+    public OSRFObject getOrgAddress(Integer addressID) throws SessionNotFoundException {
         Object resp = Utils.doRequest(conn(), Api.ACTOR,
-                Api.ADDRESS_RETRIEVE, new Object[] {
+                Api.ADDRESS_RETRIEVE, authToken, new Object[] {
                         addressID});
         return (OSRFObject)resp;
     }
