@@ -135,6 +135,11 @@
             android:label="@string/barcode_title"
             android:parentActivityName="org.evergreen_ils.views.MainActivity">
         </activity>
+        <activity
+            android:name="org.evergreen_ils.views.OrgDetailsActivity"
+            android:label="@string/title_library_info"
+            android:parentActivityName="org.evergreen_ils.views.MainActivity">
+        </activity>
 
         <activity android:name="org.evergreen_ils.auth.TestAuthActivity">
         </activity>
