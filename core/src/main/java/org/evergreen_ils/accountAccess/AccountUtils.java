@@ -20,6 +20,7 @@ package org.evergreen_ils.accountAccess;
 
 import android.accounts.*;
 import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.os.Looper;
 import android.text.TextUtils;
@@ -62,12 +63,12 @@ public class AccountUtils {
         return getLibraryForAccount(activity, account.name, account.type);
     }
 
-    public static void invalidateAuthToken(Activity activity, String auth_token) {
+    public static void invalidateAuthToken(Context context, String auth_token) {
         Log.i(Const.AUTH_TAG, "invalidateAuthToken "+auth_token);
         if (TextUtils.isEmpty(auth_token))
             return;
-        final AccountManager am = AccountManager.get(activity);
-        final String accountType = activity.getString(R.string.ou_account_type);
+        final AccountManager am = AccountManager.get(context);
+        final String accountType = context.getString(R.string.ou_account_type);
         am.invalidateAuthToken(accountType, auth_token);
     }
 
