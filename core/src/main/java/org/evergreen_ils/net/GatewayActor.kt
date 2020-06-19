@@ -80,9 +80,9 @@ object GatewayActor: ActorService {
         }
     }
 
-    override suspend fun fetchOrgAddress(orgID: Int?): Result<OSRFObject> {
+    override suspend fun fetchOrgAddress(addressID: Int?): Result<OSRFObject> {
         return try {
-            val args = arrayOf<Any?>(orgID)
+            val args = arrayOf<Any?>(addressID)
             val ret = Gateway.fetchObject(Api.ACTOR, Api.ADDRESS_RETRIEVE, args, true)
             Result.Success(ret)
         } catch (e: Exception) {

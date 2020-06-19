@@ -33,6 +33,7 @@ class Organization(@JvmField val id: Int,
     @JvmField val parent_ou = obj.getInt("parent_ou")
     @JvmField val email = obj.getString("email")
     @JvmField val phone = obj.getString("phone")
+    @JvmField val addressID = obj.getInt("mailing_address")
 
     var addressObj: OSRFObject? = null
 

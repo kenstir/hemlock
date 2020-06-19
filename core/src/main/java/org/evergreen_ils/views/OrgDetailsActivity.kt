@@ -235,7 +235,7 @@ class OrgDetailsActivity : BaseActivity() {
                 })
 
                 jobs.add(async {
-                    val result = Gateway.actor.fetchOrgAddress(orgID)
+                    val result = Gateway.actor.fetchOrgAddress(org?.addressID)
                     onAddressResult(result)
                 })
 
