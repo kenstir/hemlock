@@ -7,6 +7,7 @@
     <string name="ou_library_name">COOL</string>
     <string name="ou_activity_subtitle">%2$s</string>
     <string name="ou_library_url">https://cool-cat.org</string>
+    <bool name="ou_hierarchical_org_tree">true</bool>
     <bool name="ou_enable_phone_notification">false</bool>
     <bool name="ou_enable_hold_queue_position">true</bool>
     <bool name="ou_enable_pay_fines">false</bool>
