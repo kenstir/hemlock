@@ -10,19 +10,9 @@
 
     <color name="primary">@color/ntlc_dark</color>
     <color name="primary_dark">@color/primary_dark_material_dark</color>
-    <color name="accent">@color/ntlc_4</color>
+    <color name="accent">@color/ntlc_dark</color>
     <color name="hemlock_text_alert">#ff9100</color>
-
-    <style name="HemlockDark" parent="Theme.AppCompat">
-        <item name="colorPrimary">@color/primary</item>
-        <item name="colorPrimaryDark">@color/primary_dark</item>
-        <item name="colorAccent">@color/accent</item>
-    </style>
-
-    <style name="HemlockDarkNoActionBar" parent="Theme.AppCompat.NoActionBar">
-        <item name="colorPrimary">@color/primary</item>
-        <item name="colorPrimaryDark">@color/primary_dark</item>
-        <item name="colorAccent">@color/accent</item>
-    </style>
+    <color name="button_icon_tint">@color/ntlc_dark</color>
+    <color name="logo_background">@color/white</color>
 
 </resources>

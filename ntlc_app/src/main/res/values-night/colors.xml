@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="accent">@color/ntlc_4</color>
+    <color name="button_icon_tint">@color/background</color>
+    <color name="logo_background">@color/material_grey_800</color>
+</resources>
