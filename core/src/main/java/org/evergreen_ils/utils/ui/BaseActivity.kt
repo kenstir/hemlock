@@ -181,7 +181,7 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         } else if (id == R.id.main_library_info_button) {
             Analytics.logEvent("LibraryInfo: Open", "via", "nav_drawer")
             startActivity(Intent(this, OrgDetailsActivity::class.java))
-        } else if (id == R.id.btn_barcode) {
+        } else if (id == R.id.main_showcard_button) {
             Analytics.logEvent("Barcode: Open", "via", "nav_drawer")
             startActivity(Intent(this, BarcodeActivity::class.java))
         } else if (menuItemHandler != null) {
@@ -210,9 +210,9 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
             logout()
             App.restartApp(this)
             return true
-            //        } else if (id == R.id.action_feedback) {
-            //            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(getFeedbackUrl())));
-            //            return true;
+        //} else if (id == R.id.action_feedback) {
+        //    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(getFeedbackUrl())));
+        //    return true;
         } else if (id == R.id.action_messages) {
             Analytics.logEvent("Messages: Open", "via", "options_menu")
             val url = Gateway.getUrl("/eg/opac/myopac/messages")

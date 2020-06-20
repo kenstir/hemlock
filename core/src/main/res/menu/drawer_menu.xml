@@ -40,7 +40,7 @@
             android:icon="@drawable/ic_library_24"
             android:title="@string/title_library_info" />
         <item
-            android:id="@+id/btn_barcode"
+            android:id="@+id/main_showcard_button"
             android:icon="@drawable/ic_barcode_24"
             android:title="@string/barcode_title" />
     </group>
