@@ -180,20 +180,20 @@ class OrgDetailsActivity : BaseActivity() {
         day6Hours?.text = hoursOfOperation(obj, 6)
     }
 
-    private fun onHoursResult(result: Result<OSRFObject>) {
+    private fun onHoursResult(result: Result<OSRFObject?>) {
         when (result) {
             is Result.Success -> loadHours(result.data)
             is Result.Error -> showAlert(result.exception)
         }
     }
 
-    private fun loadAddress(obj: OSRFObject) {
+    private fun loadAddress(obj: OSRFObject?) {
         org?.addressObj = obj
         address?.text = org?.getAddress("\n")
         enableButtonsWhenReady()
     }
 
-    private fun onAddressResult(result: Result<OSRFObject>) {
+    private fun onAddressResult(result: Result<OSRFObject?>) {
         when (result) {
             is Result.Success -> loadAddress(result.data)
             is Result.Error -> showAlert(result.exception)

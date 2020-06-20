@@ -67,12 +67,14 @@ object GatewayActor: ActorService {
         }
     }
 
-    override suspend fun fetchOrgHours(account: Account, orgID: Int?): Result<OSRFObject> {
+    override suspend fun fetchOrgHours(account: Account, orgID: Int?): Result<OSRFObject?> {
+        if (orgID == null)
+            return Result.Success(null)
         return try {
             val (authToken, userID) = account.getCredentialsOrThrow()
             val args = arrayOf<Any?>(authToken, orgID)
             val ret = Gateway.fetch(Api.ACTOR, Api.HOURS_OF_OPERATION_RETRIEVE, args, true) {
-                it.asObject()
+                it.asOptionalObject()
             }
             Result.Success(ret)
         } catch (e: Exception) {
@@ -80,7 +82,9 @@ object GatewayActor: ActorService {
         }
     }
 
-    override suspend fun fetchOrgAddress(addressID: Int?): Result<OSRFObject> {
+    override suspend fun fetchOrgAddress(addressID: Int?): Result<OSRFObject?> {
+        if (addressID == null)
+            return Result.Success(null)
         return try {
             val args = arrayOf<Any?>(addressID)
             val ret = Gateway.fetchObject(Api.ACTOR, Api.ADDRESS_RETRIEVE, args, true)

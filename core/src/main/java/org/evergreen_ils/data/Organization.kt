@@ -79,6 +79,7 @@ class Organization(@JvmField val id: Int,
     }
 
     fun getAddress(separator: String = " "): String {
+        if (addressObj == null) return ""
         var sb = StringBuilder()
         sb.append(addressObj?.getString("street1"))
         addressObj?.getString("street2")?.let { sb.append(separator).append(it) }
