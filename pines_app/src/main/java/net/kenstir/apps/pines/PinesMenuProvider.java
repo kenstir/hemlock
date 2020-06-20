@@ -23,7 +23,10 @@ import android.content.Intent;
 import android.net.Uri;
 
 import org.evergreen_ils.android.Analytics;
+import org.evergreen_ils.net.Gateway;
 import org.evergreen_ils.views.MenuProvider;
+
+import static org.evergreen_ils.android.App.REQUEST_MYOPAC_MESSAGES;
 
 /**
  * Created by kenstir on 1/28/2017.
@@ -45,6 +48,10 @@ public class PinesMenuProvider extends MenuProvider {
             Analytics.logEvent("Link: Library Locator", "via", via);
             String url = "http://pines.georgialibraries.org/pinesLocator/locator.html";
             activity.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
+        } else if (id == R.id.patron_message_center) {
+            Analytics.logEvent("Messages: Open", "via", "options_menu");
+            String url = Gateway.INSTANCE.getUrl("/eg/opac/myopac/messages");
+            activity.startActivityForResult(new Intent(Intent.ACTION_VIEW, Uri.parse(url)), REQUEST_MYOPAC_MESSAGES);
         } else {
             return false;
         }
