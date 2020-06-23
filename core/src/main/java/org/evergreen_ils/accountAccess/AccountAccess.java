@@ -1089,7 +1089,9 @@ public class AccountAccess {
         return unread_count;
     }
 
+    @Nullable
     public OSRFObject getHoursOfOperation(Integer orgID) throws SessionNotFoundException {
+        if (orgID == null) return null;
         Object resp = Utils.doRequest(conn(), Api.ACTOR,
                 Api.HOURS_OF_OPERATION_RETRIEVE, authToken, new Object[] {
                         authToken, orgID});
@@ -1098,6 +1100,7 @@ public class AccountAccess {
 
     @Nullable
     public OSRFObject getOrgAddress(Integer addressID) throws SessionNotFoundException {
+        if (addressID == null) return null;
         Object resp = Utils.doRequest(conn(), Api.ACTOR,
                 Api.ADDRESS_RETRIEVE, authToken, new Object[] {
                         addressID});

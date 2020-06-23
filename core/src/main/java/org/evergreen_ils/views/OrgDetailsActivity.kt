@@ -128,7 +128,7 @@ class OrgDetailsActivity : BaseActivity() {
             runOnUiThread {
                 progress?.show(this, getString(R.string.msg_loading_details))
             }
-            var hoursObj = OSRFObject()
+            var hoursObj: OSRFObject? = null
             var addressObj: OSRFObject? = null
             try {
                 hoursObj = AccountAccess.getInstance().getHoursOfOperation(orgID);
