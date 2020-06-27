@@ -121,7 +121,7 @@ public class Api {
     public static final String SEARCH = "open-ils.search";
     public static final String MULTICLASS_QUERY = "open-ils.search.biblio.multiclass.query";
     public static final String MODS_SLIM_RETRIEVE = "open-ils.search.biblio.record.mods_slim.retrieve";
-    public static final String MODS_SLIM_BATCH = "open-ils.search.biblio.record.mods_slim.batch.retrieve.atomic";
+    //public static final String MODS_SLIM_BATCH = "open-ils.search.biblio.record.mods_slim.batch.retrieve.atomic";
     public static final String COPY_LOCATION_COUNTS = "open-ils.search.biblio.copy_location_counts.summary.retrieve";
     public static final String COPY_STATUS_ALL = "open-ils.search.config.copy_status.retrieve.all"; // [ccs]
     public static final String COPY_COUNT = "open-ils.search.biblio.record.copy_count";
@@ -129,6 +129,7 @@ public class Api {
     public static final String METARECORD_MODS_SLIM_RETRIEVE = "open-ils.search.biblio.metarecord.mods_slim.retrieve";
     public static final String ASSET_COPY_RETRIEVE = "open-ils.search.asset.copy.retrieve";
     public static final String MODS_FROM_COPY = "open-ils.search.biblio.mods_from_copy";
+    public static final String HOLD_PARTS = "open-ils.search.biblio.record_hold_parts";
 
     /// serial
 

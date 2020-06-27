@@ -15,6 +15,7 @@
     <bool name="ou_enable_phone_notification">true</bool>
     <bool name="ou_enable_hold_queue_position">true</bool>
     <bool name="ou_enable_hold_shelf_expiration">false</bool>
+    <bool name="ou_enable_part_holds">true</bool>
     <bool name="ou_enable_messages">false</bool>
     <bool name="ou_enable_pay_fines">false</bool>
     <bool name="ou_need_marc_record">false</bool>

@@ -50,6 +50,7 @@ import org.evergreen_ils.utils.ui.BaseActivity
 import org.evergreen_ils.utils.ui.OrgArrayAdapter
 import org.evergreen_ils.utils.ui.ProgressDialogSupport
 import org.evergreen_ils.utils.ui.showAlert
+import org.opensrf.util.OSRFObject
 import java.util.*
 
 private const val TAG = "PlaceHold"
@@ -81,6 +82,7 @@ class PlaceHoldActivity : BaseActivity() {
     private var selectedSMSPos = 0
     private var progress: ProgressDialogSupport? = null
     private var holdType: String = HOLD_TYPE_TITLE
+    private var parts: List<OSRFObject>? = null
     private lateinit var record: RecordInfo
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -121,6 +123,55 @@ class PlaceHoldActivity : BaseActivity() {
         initSuspendHoldButton()
         initDatePickers()
         initOrgSpinner()
+    }
+
+    override fun onDestroy() {
+        progress?.dismiss()
+        super.onDestroy()
+    }
+
+    override fun onAttachedToWindow() {
+        super.onAttachedToWindow()
+        Log.d(TAG, object{}.javaClass.enclosingMethod?.name)
+
+        fetchData()
+    }
+
+    private fun fetchData() {
+        val partHoldsEnabled = resources.getBoolean(R.bool.ou_enable_part_holds)
+        if (!partHoldsEnabled) return
+        placeHold?.isEnabled = false
+
+        async {
+            try {
+                Log.d(TAG, "[kcxxx] fetchData ...")
+                val start = System.currentTimeMillis()
+                //var jobs = mutableListOf<Job>()
+                progress?.show(this@PlaceHoldActivity, getString(R.string.msg_loading_parts))
+
+                val result = Gateway.search.fetchHoldParts(record.doc_id)
+                when (result) {
+                    is Result.Success -> {
+                        parts = result.data
+                        Log.d(TAG, "Got array of length ${parts?.size}")
+                        placeHold?.isEnabled = true
+                    }
+                    is Result.Error -> {
+                        showAlert(result.exception)
+                        return@async
+                    }
+                }
+                //jobs.add(async {})
+
+                //jobs.joinAll()
+                Log.logElapsedTime(TAG, start, "[kcxxx] fetchData ... done")
+            } catch (ex: Exception) {
+                Log.d(TAG, "[kcxxx] fetchData ... caught", ex)
+                showAlert(ex)
+            } finally {
+                progress?.dismiss()
+            }
+        }
     }
 
     fun <T> coalesce(vararg args: T): T? {

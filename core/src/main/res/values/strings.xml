@@ -226,4 +226,6 @@
     <string name="button_library_web_site">Library web site</string>
     <string name="button_library_map">Show map</string>
 
+    <string name="msg_loading_parts">Loading hold parts</string>
+
 </resources>
