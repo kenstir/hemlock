@@ -73,24 +73,18 @@ object GatewayCirc : CircService {
         }
     }
 
-    // Historical comments, not entirely correct:
-    //
-    // The fields in the hash are:
-    //   patronid     - ID of the hold recipient  (required)
-    //   depth        - hold range depth          (default 0)
-    //   pickup_lib   - destination for hold, fallback value for selection_ou
-    //   selection_ou - ID of org_unit establishing hard and soft hold boundary settings
-    //   hold_type    - T, C, I, V or M for Title, Copy, Issuance, Volume or Meta-record
-    override suspend fun placeHoldAsync(account: Account, recordId: Int, pickupLib: Int,
-                                        emailNotify: Boolean, phoneNotify: String?,
-                                        smsNotify: String?, smsCarrierId: Int?,
-                                        expireTime: String?, suspendHold: Boolean, thawDate: String?): Result<OSRFObject> {
+    // recordId - titleID for Title hold, partID for Part hold
+    override suspend fun placeHoldAsync(account: Account, holdType: String, recordId: Int,
+                                        pickupLib: Int, emailNotify: Boolean,
+                                        phoneNotify: String?, smsNotify: String?,
+                                        smsCarrierId: Int?, expireTime: String?, suspendHold: Boolean,
+                                        thawDate: String?): Result<OSRFObject> {
         return try {
             val (authToken, userID) = account.getCredentialsOrThrow()
             var param = mutableMapOf(
                     "patronid" to userID,
                     "pickup_lib" to pickupLib,
-                    "hold_type" to "T",
+                    "hold_type" to holdType,
                     "email_notify" to emailNotify,
                     "expire_time" to expireTime,
                     "frozen" to suspendHold

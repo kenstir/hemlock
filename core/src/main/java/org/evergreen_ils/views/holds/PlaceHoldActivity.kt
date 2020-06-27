@@ -32,6 +32,7 @@ import android.widget.AdapterView.OnItemSelectedListener
 import androidx.appcompat.app.AlertDialog
 import kotlinx.coroutines.async
 import org.evergreen_ils.Api
+import org.evergreen_ils.HOLD_TYPE_TITLE
 import org.evergreen_ils.R
 import org.evergreen_ils.android.App
 import org.evergreen_ils.data.Account
@@ -44,7 +45,6 @@ import org.evergreen_ils.net.Gateway
 import org.evergreen_ils.searchCatalog.RecordInfo
 import org.evergreen_ils.android.Analytics
 import org.evergreen_ils.android.Log
-import org.evergreen_ils.utils.IntUtils.equals
 import org.evergreen_ils.utils.getCustomMessage
 import org.evergreen_ils.utils.ui.BaseActivity
 import org.evergreen_ils.utils.ui.OrgArrayAdapter
@@ -80,6 +80,7 @@ class PlaceHoldActivity : BaseActivity() {
     private var selectedOrgPos = 0
     private var selectedSMSPos = 0
     private var progress: ProgressDialogSupport? = null
+    private var holdType: String = HOLD_TYPE_TITLE
     private lateinit var record: RecordInfo
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -207,7 +208,7 @@ class PlaceHoldActivity : BaseActivity() {
             var selectedOrgID = if (EgOrg.visibleOrgs.size > selectedOrgPos) EgOrg.visibleOrgs[selectedOrgPos].id else -1
             var selectedSMSCarrierID = if (EgSms.carriers.size > selectedSMSPos) EgSms.carriers[selectedSMSPos].id else -1
             progress?.show(this@PlaceHoldActivity, "Placing hold")
-            val result = Gateway.circ.placeHoldAsync(App.getAccount(), record.doc_id,
+            val result = Gateway.circ.placeHoldAsync(App.getAccount(), holdType, record.doc_id,
                     selectedOrgID, emailNotification!!.isChecked, getPhoneNotify(), getSMSNotify(),
                     getSMSNotifyCarrier(selectedSMSCarrierID), getExpireDate(),
                     suspendHold!!.isChecked, getThawDate())
