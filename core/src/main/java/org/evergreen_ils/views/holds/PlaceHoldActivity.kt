@@ -32,19 +32,20 @@ import android.widget.AdapterView.OnItemSelectedListener
 import androidx.appcompat.app.AlertDialog
 import kotlinx.coroutines.async
 import org.evergreen_ils.Api
+import org.evergreen_ils.HOLD_TYPE_PART
 import org.evergreen_ils.HOLD_TYPE_TITLE
 import org.evergreen_ils.R
+import org.evergreen_ils.android.Analytics
 import org.evergreen_ils.android.App
+import org.evergreen_ils.android.Log
 import org.evergreen_ils.data.Account
-import org.evergreen_ils.system.EgOrg
-import org.evergreen_ils.system.EgSms
 import org.evergreen_ils.data.Organization
 import org.evergreen_ils.data.Result
 import org.evergreen_ils.data.SMSCarrier
 import org.evergreen_ils.net.Gateway
 import org.evergreen_ils.searchCatalog.RecordInfo
-import org.evergreen_ils.android.Analytics
-import org.evergreen_ils.android.Log
+import org.evergreen_ils.system.EgOrg
+import org.evergreen_ils.system.EgSms
 import org.evergreen_ils.utils.getCustomMessage
 import org.evergreen_ils.utils.ui.BaseActivity
 import org.evergreen_ils.utils.ui.OrgArrayAdapter
@@ -69,6 +70,8 @@ class PlaceHoldActivity : BaseActivity() {
     private var smsSpinner: Spinner? = null
     private var placeHold: Button? = null
     private var suspendHold: CheckBox? = null
+    private var partRow: View? = null
+    private var partSpinner: Spinner? = null
     private var orgSpinner: Spinner? = null
     private var phoneNotificationLabel: TextView? = null
     private var smsNotificationLabel: TextView? = null
@@ -81,9 +84,13 @@ class PlaceHoldActivity : BaseActivity() {
     private var selectedOrgPos = 0
     private var selectedSMSPos = 0
     private var progress: ProgressDialogSupport? = null
-    private var holdType: String = HOLD_TYPE_TITLE
     private var parts: List<OSRFObject>? = null
     private lateinit var record: RecordInfo
+
+    private val hasParts: Boolean
+        get() = !(parts.isNullOrEmpty())
+    private val holdType: String
+        get() = if (hasParts) HOLD_TYPE_PART else HOLD_TYPE_TITLE
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -109,6 +116,8 @@ class PlaceHoldActivity : BaseActivity() {
         smsNotification = findViewById(R.id.hold_enable_sms_notification)
         smsSpinner = findViewById(R.id.hold_sms_carrier)
         suspendHold = findViewById(R.id.hold_suspend_hold)
+        partRow = findViewById(R.id.hold_part_row)
+        partSpinner = findViewById(R.id.hold_part_spinner)
         orgSpinner = findViewById(R.id.hold_pickup_location)
         thawDateEdittext = findViewById(R.id.hold_thaw_date)
 
@@ -122,6 +131,7 @@ class PlaceHoldActivity : BaseActivity() {
         initPlaceHoldButton()
         initSuspendHoldButton()
         initDatePickers()
+        initPartControls()
         initOrgSpinner()
     }
 
@@ -150,17 +160,8 @@ class PlaceHoldActivity : BaseActivity() {
                 progress?.show(this@PlaceHoldActivity, getString(R.string.msg_loading_parts))
 
                 val result = Gateway.search.fetchHoldParts(record.doc_id)
-                when (result) {
-                    is Result.Success -> {
-                        parts = result.data
-                        Log.d(TAG, "Got array of length ${parts?.size}")
-                        placeHold?.isEnabled = true
-                    }
-                    is Result.Error -> {
-                        showAlert(result.exception)
-                        return@async
-                    }
-                }
+                onPartsResult(result)
+
                 //jobs.add(async {})
 
                 //jobs.joinAll()
@@ -170,6 +171,20 @@ class PlaceHoldActivity : BaseActivity() {
                 showAlert(ex)
             } finally {
                 progress?.dismiss()
+            }
+        }
+    }
+
+    private fun onPartsResult(result: Result<List<OSRFObject>>) {
+        when (result) {
+            is Result.Success -> {
+                parts = result.data
+                Log.d(TAG, "Got array of length ${parts?.size}")
+                initPartControls()
+                placeHold?.isEnabled = true
+            }
+            is Result.Error -> {
+                showAlert(result.exception)
             }
         }
     }
@@ -195,9 +210,9 @@ class PlaceHoldActivity : BaseActivity() {
 
     private fun logPlaceHoldResult(result: String) {
         val notify = ArrayList<String?>()
-        if (emailNotification!!.isChecked) notify.add("email")
-        if (phoneNotification!!.isChecked) notify.add("phone")
-        if (smsNotification!!.isChecked) notify.add("sms")
+        if (emailNotification?.isChecked == true) notify.add("email")
+        if (phoneNotification?.isChecked == true) notify.add("phone")
+        if (smsNotification?.isChecked == true) notify.add("sms")
         val notifyTypes = TextUtils.join("|", notify)
         try {
             val pickupOrg = EgOrg.visibleOrgs[selectedOrgPos]
@@ -223,9 +238,15 @@ class PlaceHoldActivity : BaseActivity() {
                         .setMessage("You cannot pick up items at "+selectedOrg.name)
                         .setPositiveButton(android.R.string.ok, null)
                 builder.create().show()
-            } else if (phoneNotification!!.isChecked && TextUtils.isEmpty(phoneNotify!!.text.toString())) {
+            } else if (hasParts && partSpinner?.selectedItem.toString().isEmpty()) {
+                val builder = AlertDialog.Builder(this@PlaceHoldActivity)
+                builder.setTitle("No part selected")
+                        .setMessage("You must select a part before placing a hold")
+                        .setPositiveButton(android.R.string.ok, null)
+                builder.create().show()
+            } else if (phoneNotification?.isChecked == true && TextUtils.isEmpty(phoneNotify?.text.toString())) {
                 phoneNotify?.error = getString(R.string.error_phone_notify_empty)
-            } else if (smsNotification!!.isChecked && TextUtils.isEmpty(smsNotify!!.text.toString())) {
+            } else if (smsNotification?.isChecked == true && TextUtils.isEmpty(smsNotify?.text.toString())) {
                 smsNotify?.error = getString(R.string.error_sms_notify_empty)
             } else {
                 placeHold()
@@ -234,15 +255,15 @@ class PlaceHoldActivity : BaseActivity() {
     }
 
     private fun getPhoneNotify(): String? {
-        return if (phoneNotification!!.isChecked) phoneNotify!!.text.toString() else null
+        return if (phoneNotification?.isChecked == true) phoneNotify?.text.toString() else null
     }
 
     private fun getSMSNotify(): String? {
-        return if (smsNotification!!.isChecked) smsNotify!!.text.toString() else null
+        return if (smsNotification?.isChecked == true) smsNotify?.text.toString() else null
     }
 
     private fun getSMSNotifyCarrier(id: Int): Int? {
-        return if (smsNotification!!.isChecked) id else null
+        return if (smsNotification?.isChecked == true) id else null
     }
 
     private fun getExpireDate(): String? {
@@ -256,13 +277,14 @@ class PlaceHoldActivity : BaseActivity() {
     private fun placeHold() {
         async {
             Log.d(TAG, "[kcxxx] placeHold: ${record.doc_id}")
-            var selectedOrgID = if (EgOrg.visibleOrgs.size > selectedOrgPos) EgOrg.visibleOrgs[selectedOrgPos].id else -1
-            var selectedSMSCarrierID = if (EgSms.carriers.size > selectedSMSPos) EgSms.carriers[selectedSMSPos].id else -1
+            val selectedOrgID = if (EgOrg.visibleOrgs.size > selectedOrgPos) EgOrg.visibleOrgs[selectedOrgPos].id else -1
+            val selectedSMSCarrierID = if (EgSms.carriers.size > selectedSMSPos) EgSms.carriers[selectedSMSPos].id else -1
+            val itemId = if (hasParts) getPartId() else record.doc_id
             progress?.show(this@PlaceHoldActivity, "Placing hold")
-            val result = Gateway.circ.placeHoldAsync(App.getAccount(), holdType, record.doc_id,
-                    selectedOrgID, emailNotification!!.isChecked, getPhoneNotify(), getSMSNotify(),
+            val result = Gateway.circ.placeHoldAsync(App.getAccount(), holdType, itemId,
+                    selectedOrgID, emailNotification?.isChecked == true, getPhoneNotify(), getSMSNotify(),
                     getSMSNotifyCarrier(selectedSMSCarrierID), getExpireDate(),
-                    suspendHold!!.isChecked, getThawDate())
+                    suspendHold?.isChecked == true, getThawDate())
             Log.d(TAG, "[kcxxx] placeHold: $result")
             progress?.dismiss()
             when (result) {
@@ -281,7 +303,7 @@ class PlaceHoldActivity : BaseActivity() {
     }
 
     private fun initSuspendHoldButton() {
-        suspendHold!!.setOnCheckedChangeListener { buttonView, isChecked -> thawDateEdittext!!.isEnabled = isChecked }
+        suspendHold?.setOnCheckedChangeListener { buttonView, isChecked -> thawDateEdittext?.isEnabled = isChecked }
     }
 
     private fun initPhoneControls(isPhoneNotifyVisible: Boolean) {
@@ -339,9 +361,9 @@ class PlaceHoldActivity : BaseActivity() {
             }
         }
         val adapter = ArrayAdapter(this, R.layout.org_item_layout, entries)
-        smsSpinner!!.adapter = adapter
-        smsSpinner!!.setSelection(selectedSMSPos)
-        smsSpinner!!.onItemSelectedListener = object : OnItemSelectedListener {
+        smsSpinner?.adapter = adapter
+        smsSpinner?.setSelection(selectedSMSPos)
+        smsSpinner?.onItemSelectedListener = object : OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>?, view: View, position: Int, id: Long) {
                 selectedSMSPos = position
             }
@@ -360,7 +382,7 @@ class PlaceHoldActivity : BaseActivity() {
                     expirationDate?.setText(strDate)
                 }, cal[Calendar.YEAR], cal[Calendar.MONTH],
                 cal[Calendar.DAY_OF_MONTH])
-        expirationDate!!.setOnClickListener { datePicker?.show() }
+        expirationDate?.setOnClickListener { datePicker?.show() }
         thawDatePicker = DatePickerDialog(this,
                 OnDateSetListener { view, year, monthOfYear, dayOfMonth ->
                     val chosenDate = Date(year - 1900, monthOfYear, dayOfMonth)
@@ -370,6 +392,35 @@ class PlaceHoldActivity : BaseActivity() {
                 }, cal[Calendar.YEAR], cal[Calendar.MONTH],
                 cal[Calendar.DAY_OF_MONTH])
         thawDateEdittext?.setOnClickListener { thawDatePicker?.show() }
+    }
+
+    private fun initPartControls() {
+        if (!hasParts) {
+            partRow?.visibility = View.GONE
+        } else {
+            partRow?.visibility = View.VISIBLE
+            initPartSpinner()
+        }
+    }
+
+    private fun initPartSpinner() {
+        val labels = mutableListOf("")
+        parts?.let {
+            for (elem in it) {
+                labels.add(elem.getString("label"))
+            }
+        }
+        val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, labels)
+        partSpinner?.adapter = adapter
+    }
+
+    private fun getPartId(): Int {
+        // partSpinner[1] is parts[0] because we added a blank first entry
+        //val index = partSpinner?.selectedItemPosition
+        val label = partSpinner?.selectedItem.toString()
+        val partObj = parts?.find { it.getString("label") == label }
+        val partId = partObj?.getInt("id")
+        return partId ?: -1
     }
 
     private fun initOrgSpinner() {

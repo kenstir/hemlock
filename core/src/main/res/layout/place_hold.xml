@@ -61,6 +61,21 @@
                     android:paddingBottom="20dp"
                     tools:text="Book" />
             </TableRow>
+            <TableRow android:id="@+id/hold_part_row"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/label_select_hold_part" />
+                <Spinner
+                    android:id="@+id/hold_part_spinner"
+                    android:layout_width="0dip"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:spinnerMode="dialog"
+                    />
+            </TableRow>
             <TableRow android:layout_width="wrap_content"
                 android:layout_height="wrap_content">
                 <TextView

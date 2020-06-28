@@ -111,6 +111,8 @@
     <string name="hold_phone_hint">Contact phone number</string>
     <string name="hold_items">Items on hold: </string>
     <string name="hold_status_in_transit">In Transit from %1$s\nSince %2$s</string>
+    <string name="msg_loading_parts">Loading hold parts</string>
+    <string name="label_select_hold_part">Select a part</string>
 
     <!-- Checkout items -->
     <string name="checkout_items">Items checked out: %1$d</string>
@@ -225,7 +227,5 @@
     <string name="title_address">Address</string>
     <string name="button_library_web_site">Library web site</string>
     <string name="button_library_map">Show map</string>
-
-    <string name="msg_loading_parts">Loading hold parts</string>
 
 </resources>

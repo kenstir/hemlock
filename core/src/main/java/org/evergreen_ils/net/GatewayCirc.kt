@@ -73,8 +73,8 @@ object GatewayCirc : CircService {
         }
     }
 
-    // recordId - titleID for Title hold, partID for Part hold
-    override suspend fun placeHoldAsync(account: Account, holdType: String, recordId: Int,
+    // targetId - titleId for Title hold, partId for Part hold
+    override suspend fun placeHoldAsync(account: Account, holdType: String, targetId: Int,
                                         pickupLib: Int, emailNotify: Boolean,
                                         phoneNotify: String?, smsNotify: String?,
                                         smsCarrierId: Int?, expireTime: String?, suspendHold: Boolean,
@@ -89,8 +89,12 @@ object GatewayCirc : CircService {
                     "expire_time" to expireTime,
                     "frozen" to suspendHold
             )
+// Apparently unnecessary:
+//            when (holdType) {
+//                "T" -> param["titleid"] = targetId
+//                "P" -> param["partid"] = targetId
+//            }
             if (phoneNotify != null && phoneNotify.isNotEmpty())
-                param["phone_notify"] = phoneNotify
             if (smsCarrierId != null && smsNotify != null && smsNotify.isNotEmpty()) {
                 param["sms_carrier"] = smsCarrierId
                 param["sms_notify"] = smsNotify
@@ -98,7 +102,7 @@ object GatewayCirc : CircService {
             if (thawDate != null && thawDate.isNotEmpty())
                 param["thaw_date"] = thawDate
 
-            val args = arrayOf<Any?>(authToken, param, arrayListOf(recordId))
+            val args = arrayOf<Any?>(authToken, param, arrayListOf(targetId))
             val ret = Gateway.fetchObject(Api.CIRC, Api.HOLD_TEST_AND_CREATE, args, false)
             Result.Success(ret)
         } catch (e: Exception) {
