@@ -53,7 +53,7 @@ public class Api {
     public static final String USER_FLESHED_RETRIEVE = "open-ils.actor.user.fleshed.retrieve"; // au,aua,ac,auact,cuat
     public static final String ORG_TREE_RETRIEVE = "open-ils.actor.org_tree.retrieve";
     public static final String ORG_TYPES_RETRIEVE = "open-ils.actor.org_types.retrieve";
-    public static final String ORG_UNIT_RETRIEVE = "open-ils.actor.org_unit.retrieve";
+    //public static final String ORG_UNIT_RETRIEVE = "open-ils.actor.org_unit.retrieve";
     public static final String ORG_UNIT_SETTING_RETRIEVE = "open-ils.actor.org_unit_setting.values.ranged.retrieve";
     public static final String ORG_UNIT_SETTING_BATCH = "open-ils.actor.ou_setting.ancestor_default.batch";
     public static final String ORG_UNIT_SETTING = "open-ils.actor.ou_setting.ancestor_default";
@@ -112,8 +112,8 @@ public class Api {
     public static final String RETRIEVE_BRE = "open-ils.pcrud.retrieve.bre";
     public static final String RETRIEVE_MRA = "open-ils.pcrud.retrieve.mra";
     public static final String SEARCH_CCVM = "open-ils.pcrud.search.ccvm.atomic";
-    public static final String SEARCH_MRA = "open-ils.pcrud.search.mra.atomic";
-    public static final String SEARCH_MRAF = "open-ils.pcrud.search.mraf.atomic";
+    //public static final String SEARCH_MRA = "open-ils.pcrud.search.mra.atomic";
+    //public static final String SEARCH_MRAF = "open-ils.pcrud.search.mraf.atomic";
     public static final String SEARCH_SMS_CARRIERS = "open-ils.pcrud.search.csc.atomic"; // [csc]
 
     /// search
@@ -133,8 +133,8 @@ public class Api {
 
     /// serial
 
-    public static final String SERVICE_SERIAL = "open-ils.serial";
-    public static final String METHOD_FETCH_ISSUANCE = "open-ils.serial.issuance.pub_fleshed.batch.retrieve";
+    //public static final String SERVICE_SERIAL = "open-ils.serial";
+    //public static final String METHOD_FETCH_ISSUANCE = "open-ils.serial.issuance.pub_fleshed.batch.retrieve";
 
     /// misc
     public static final String ILS_VERSION = "opensrf.open-ils.system.ils_version";
@@ -245,7 +245,7 @@ public class Api {
     }
 
     // Some queries return at times a list of String ids and at times a list of Integer ids,
-    // see Issue #1 and PINES Crashlytics #28.
+    // See issue hemlock#1
     public static @NonNull List<String> parseIdsList(Object o) {
         ArrayList<String> ret = new ArrayList<>();
         if (o instanceof List) {
