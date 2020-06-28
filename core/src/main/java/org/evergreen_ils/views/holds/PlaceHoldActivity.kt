@@ -30,7 +30,9 @@ import android.view.View
 import android.widget.*
 import android.widget.AdapterView.OnItemSelectedListener
 import androidx.appcompat.app.AlertDialog
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
+import kotlinx.coroutines.joinAll
 import org.evergreen_ils.Api
 import org.evergreen_ils.HOLD_TYPE_PART
 import org.evergreen_ils.HOLD_TYPE_TITLE
@@ -43,6 +45,7 @@ import org.evergreen_ils.data.Organization
 import org.evergreen_ils.data.Result
 import org.evergreen_ils.data.SMSCarrier
 import org.evergreen_ils.net.Gateway
+import org.evergreen_ils.net.GatewayLoader
 import org.evergreen_ils.searchCatalog.RecordInfo
 import org.evergreen_ils.system.EgOrg
 import org.evergreen_ils.system.EgSms
@@ -127,12 +130,18 @@ class PlaceHoldActivity : BaseActivity() {
         emailNotification?.isChecked = account?.notifyByEmail ?: false
 
         initPhoneControls(resources.getBoolean(R.bool.ou_enable_phone_notification))
-        initSMSControls(EgOrg.smsEnabled)
         initPlaceHoldButton()
         initSuspendHoldButton()
         initDatePickers()
-        initPartControls()
         initOrgSpinner()
+
+        // Prevent unnecessary UI flash by not calling initSMSControls yet.
+        // Most consortia allow SMS notification, so disabling it here would
+        // cause a flash when the orgs are loaded in fetchData.
+        // By contrast, we do allow part controls to be disabled here,
+        // because most items do not have parts.
+        //initSMSControls()
+        initPartControls()
     }
 
     override fun onDestroy() {
@@ -149,22 +158,30 @@ class PlaceHoldActivity : BaseActivity() {
 
     private fun fetchData() {
         val partHoldsEnabled = resources.getBoolean(R.bool.ou_enable_part_holds)
-        if (!partHoldsEnabled) return
-        placeHold?.isEnabled = false
 
         async {
             try {
                 Log.d(TAG, "[kcxxx] fetchData ...")
                 val start = System.currentTimeMillis()
-                //var jobs = mutableListOf<Job>()
-                progress?.show(this@PlaceHoldActivity, getString(R.string.msg_loading_parts))
+                var jobs = mutableListOf<Job>()
+                progress?.show(this@PlaceHoldActivity, getString(R.string.msg_loading_place_hold))
+                placeHold?.isEnabled = false
 
-                val result = Gateway.search.fetchHoldParts(record.doc_id)
-                onPartsResult(result)
+                jobs.add(async {
+                    GatewayLoader.loadOrgSettingsAsync(null).await()
+                })
 
-                //jobs.add(async {})
+                if (partHoldsEnabled) {
+                    jobs.add(async {
+                        val result = Gateway.search.fetchHoldParts(record.doc_id)
+                        onPartsResult(result)
+                    })
+                }
 
-                //jobs.joinAll()
+                jobs.joinAll()
+                initPartControls()
+                initSMSControls()
+                placeHold?.isEnabled = true
                 Log.logElapsedTime(TAG, start, "[kcxxx] fetchData ... done")
             } catch (ex: Exception) {
                 Log.d(TAG, "[kcxxx] fetchData ... caught", ex)
@@ -180,8 +197,6 @@ class PlaceHoldActivity : BaseActivity() {
             is Result.Success -> {
                 parts = result.data
                 Log.d(TAG, "Got array of length ${parts?.size}")
-                initPartControls()
-                placeHold?.isEnabled = true
             }
             is Result.Error -> {
                 showAlert(result.exception)
@@ -326,14 +341,15 @@ class PlaceHoldActivity : BaseActivity() {
         }
     }
 
-    private fun initSMSControls(isSmsNotifyEnabled: Boolean) {
+    private fun initSMSControls() {
         val notifySmsNumber = account?.smsNumber
         smsNotify?.setText(notifySmsNumber)
         if (account?.notifyBySMS == true && !notifySmsNumber.isNullOrEmpty()) {
             smsNotification?.isChecked = true
         }
 
-        if (isSmsNotifyEnabled) {
+        val enabled: Boolean = EgOrg.smsEnabled
+        if (enabled) {
             smsNotification?.setOnCheckedChangeListener { buttonView, isChecked ->
                 smsSpinner?.isEnabled = isChecked
                 smsNotify?.isEnabled = isChecked
@@ -341,13 +357,14 @@ class PlaceHoldActivity : BaseActivity() {
             smsNotify?.isEnabled = (smsNotification?.isChecked == true)
             smsSpinner?.isEnabled = (smsNotification?.isChecked == true)
             initSMSSpinner(account?.smsCarrier)
-        } else {
-            smsNotificationLabel?.visibility = View.GONE
-            smsSpinnerLabel?.visibility = View.GONE
-            smsNotification?.visibility = View.GONE
-            smsSpinner?.visibility = View.GONE
-            smsNotify?.visibility = View.GONE
         }
+
+        val visibility = if (enabled) View.VISIBLE else View.GONE
+        smsNotificationLabel?.visibility = visibility
+        smsSpinnerLabel?.visibility = visibility
+        smsNotification?.visibility = visibility
+        smsSpinner?.visibility = visibility
+        smsNotify?.visibility = visibility
     }
 
     private fun initSMSSpinner(defaultCarrierID: Int?) {
@@ -404,6 +421,7 @@ class PlaceHoldActivity : BaseActivity() {
     }
 
     private fun initPartSpinner() {
+        // First label is the empty string to force the user to make a selection
         val labels = mutableListOf("")
         parts?.let {
             for (elem in it) {

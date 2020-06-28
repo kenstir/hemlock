@@ -23,6 +23,7 @@ import org.evergreen_ils.data.Account
 import org.evergreen_ils.data.JSONDictionary
 import org.evergreen_ils.data.Result
 import org.evergreen_ils.data.jsonMapOf
+import org.evergreen_ils.system.EgOrg
 import org.opensrf.util.OSRFObject
 
 object GatewayActor: ActorService {
@@ -55,8 +56,11 @@ object GatewayActor: ActorService {
 
     override suspend fun fetchOrgSettings(orgID: Int): Result<OSRFObject> {
         return try {
-            val settings = arrayListOf(Api.SETTING_ORG_UNIT_NOT_PICKUP_LIB,
-                    Api.SETTING_CREDIT_PAYMENTS_ALLOW, Api.SETTING_INFO_URL)
+            val settings = mutableListOf(Api.SETTING_ORG_UNIT_NOT_PICKUP_LIB,
+                    Api.SETTING_CREDIT_PAYMENTS_ALLOW,
+                    Api.SETTING_INFO_URL)
+            if (orgID == EgOrg.consortiumID)
+                settings.add(Api.SETTING_SMS_ENABLE)
             val args = arrayOf<Any?>(orgID, settings, Api.ANONYMOUS)
             val ret = Gateway.fetch(Api.ACTOR, Api.ORG_UNIT_SETTING_BATCH, args, true) {
                 it.asObject()
