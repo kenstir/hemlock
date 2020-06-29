@@ -111,6 +111,10 @@
     <string name="hold_status_in_transit">In Transit from %1$s\nSince %2$s</string>
     <string name="msg_loading_place_hold">Loading</string>
     <string name="label_select_hold_part">Select a part</string>
+    <string name="title_no_part_selected">No part selected</string>
+    <string name="msg_no_part_selected">You must select a part before placing a hold on this item</string>
+    <string name="title_not_pickup_location">Not a pickup location</string>
+    <string name="msg_not_pickup_location">You cannot pick up items at %s</string>
 
     <!-- Checkout items -->
     <string name="checkout_items">Items checked out: %1$d</string>

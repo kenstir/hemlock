@@ -249,14 +249,14 @@ class PlaceHoldActivity : BaseActivity() {
             if (!selectedOrg.isPickupLocation) {
                 logPlaceHoldResult("not_pickup_location")
                 val builder = AlertDialog.Builder(this@PlaceHoldActivity)
-                builder.setTitle("Not a pickup location")
-                        .setMessage("You cannot pick up items at "+selectedOrg.name)
+                builder.setTitle(getString(R.string.title_not_pickup_location))
+                        .setMessage(String.format(getString(R.string.msg_not_pickup_location), selectedOrg.name))
                         .setPositiveButton(android.R.string.ok, null)
                 builder.create().show()
             } else if (hasParts && partSpinner?.selectedItem.toString().isEmpty()) {
                 val builder = AlertDialog.Builder(this@PlaceHoldActivity)
-                builder.setTitle("No part selected")
-                        .setMessage("You must select a part before placing a hold")
+                builder.setTitle(getString(R.string.title_no_part_selected))
+                        .setMessage(getString(R.string.msg_no_part_selected))
                         .setPositiveButton(android.R.string.ok, null)
                 builder.create().show()
             } else if (phoneNotification?.isChecked == true && TextUtils.isEmpty(phoneNotify?.text.toString())) {
