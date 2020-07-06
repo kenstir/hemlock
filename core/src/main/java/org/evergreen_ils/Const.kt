@@ -18,6 +18,8 @@
 
 package org.evergreen_ils
 
-const val HOLD_TYPE_TITLE = "T"
-const val HOLD_TYPE_PART = "P"
+const val HOLD_TYPE_COPY = "C"
 const val HOLD_TYPE_METARECORD = "M"
+const val HOLD_TYPE_PART = "P"
+const val HOLD_TYPE_TITLE = "T"
+const val HOLD_TYPE_VOLUME = "V"
