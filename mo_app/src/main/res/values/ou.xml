@@ -16,7 +16,7 @@
     <bool name="ou_enable_hold_queue_position">true</bool>
     <bool name="ou_enable_hold_shelf_expiration">false</bool>
     <bool name="ou_enable_messages">false</bool>
-    <bool name="ou_enable_pay_fines">true</bool><!-- TODO: verify with Anna -->
+    <bool name="ou_enable_pay_fines">true</bool>
     <bool name="ou_need_marc_record">true</bool>
     <bool name="ou_show_online_access_hostname">false</bool>
     <bool name="ou_always_popup_online_links">true</bool>
