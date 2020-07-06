@@ -31,6 +31,6 @@ set -x
 tag=${app}_v${versionCode}
 msg="${tag} (${versionName})"
 
-git commit "$manifest" -m "$msg"
+git commit "$manifest" -m "$msg" || true
 git tag -a -m "$msg" $tag
 git push --tags
