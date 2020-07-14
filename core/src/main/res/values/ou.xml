@@ -44,19 +44,20 @@
     <bool name="ou_enable_hold_queue_position">true</bool>
     <!-- if true, show "expires DATE" for holds that are Available -->
     <bool name="ou_enable_hold_shelf_expiration">true</bool>
+    <!-- if true, part holds are available -->
+    <bool name="ou_enable_part_holds">false</bool>
     <!-- if true, enable messages link in app bar -->
     <bool name="ou_enable_messages">false</bool>
     <!-- if true, enable Pay Fines button based on settings -->
     <bool name="ou_enable_pay_fines">true</bool>
     <!-- if true, display label host name in Item Details view for online items -->
     <bool name="ou_show_online_access_hostname">true</bool>
-    <!--- if true, clicking Online Access always shows a popup, even if there is only 1 link -->
+    <!-- if true, clicking Online Access always shows a popup, even if there is only 1 link -->
     <bool name="ou_always_popup_online_links">false</bool>
     <!-- if true, we must load MARCXML records to load online locations -->
     <bool name="ou_need_marc_record">false</bool>
     <!-- if non-empty, the Barcode format to display for Show Card -->
     <string name="ou_barcode_format"></string>
-    <!-- max number of results to return from Search.  Do not exceed 400 or you may
-         encounter a TransactionTooLargeException -->
+    <!-- max number of results to return from Search -->
     <integer name="ou_search_limit">200</integer>
 </resources>

@@ -54,10 +54,8 @@
     <string name="search_format_spinner_alt">item type</string>
     <string name="search_org_spinner_alt">search library</string>
     <string name="advanced_search">Advanced Search</string>
-    <string name="loading_dialog_text"></string>
     <string name="dialog_please_wait"></string>
     <string name="dialog_fetching_data_message">Searching catalog</string>
-    <string name="dialog_load_more_message">Fetching more results</string>
     <string name="advanced_search_hint">Enter text here</string>
     <string name="advanced_search_add_filter_button">Add filter</string>
     <string name="advanced_search_filter_text">Added filters:</string>
@@ -111,6 +109,12 @@
     <string name="hold_phone_hint">Contact phone number</string>
     <string name="hold_items">Items on hold: </string>
     <string name="hold_status_in_transit">In Transit from %1$s\nSince %2$s</string>
+    <string name="msg_loading_place_hold">Loading</string>
+    <string name="label_select_hold_part">Select a part</string>
+    <string name="title_no_part_selected">No part selected</string>
+    <string name="msg_no_part_selected">You must select a part before placing a hold on this item</string>
+    <string name="title_not_pickup_location">Not a pickup location</string>
+    <string name="msg_not_pickup_location">You cannot pick up items at %s</string>
 
     <!-- Checkout items -->
     <string name="checkout_items">Items checked out: %1$d</string>

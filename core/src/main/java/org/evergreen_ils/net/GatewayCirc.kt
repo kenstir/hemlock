@@ -73,30 +73,28 @@ object GatewayCirc : CircService {
         }
     }
 
-    // Historical comments, not entirely correct:
-    //
-    // The fields in the hash are:
-    //   patronid     - ID of the hold recipient  (required)
-    //   depth        - hold range depth          (default 0)
-    //   pickup_lib   - destination for hold, fallback value for selection_ou
-    //   selection_ou - ID of org_unit establishing hard and soft hold boundary settings
-    //   hold_type    - T, C, I, V or M for Title, Copy, Issuance, Volume or Meta-record
-    override suspend fun placeHoldAsync(account: Account, recordId: Int, pickupLib: Int,
-                                        emailNotify: Boolean, phoneNotify: String?,
-                                        smsNotify: String?, smsCarrierId: Int?,
-                                        expireTime: String?, suspendHold: Boolean, thawDate: String?): Result<OSRFObject> {
+    // targetId - titleId for Title hold, partId for Part hold
+    override suspend fun placeHoldAsync(account: Account, holdType: String, targetId: Int,
+                                        pickupLib: Int, emailNotify: Boolean,
+                                        phoneNotify: String?, smsNotify: String?,
+                                        smsCarrierId: Int?, expireTime: String?, suspendHold: Boolean,
+                                        thawDate: String?): Result<OSRFObject> {
         return try {
             val (authToken, userID) = account.getCredentialsOrThrow()
             var param = mutableMapOf(
                     "patronid" to userID,
                     "pickup_lib" to pickupLib,
-                    "hold_type" to "T",
+                    "hold_type" to holdType,
                     "email_notify" to emailNotify,
                     "expire_time" to expireTime,
                     "frozen" to suspendHold
             )
+// Apparently unnecessary:
+//            when (holdType) {
+//                "T" -> param["titleid"] = targetId
+//                "P" -> param["partid"] = targetId
+//            }
             if (phoneNotify != null && phoneNotify.isNotEmpty())
-                param["phone_notify"] = phoneNotify
             if (smsCarrierId != null && smsNotify != null && smsNotify.isNotEmpty()) {
                 param["sms_carrier"] = smsCarrierId
                 param["sms_notify"] = smsNotify
@@ -104,7 +102,7 @@ object GatewayCirc : CircService {
             if (thawDate != null && thawDate.isNotEmpty())
                 param["thaw_date"] = thawDate
 
-            val args = arrayOf<Any?>(authToken, param, arrayListOf(recordId))
+            val args = arrayOf<Any?>(authToken, param, arrayListOf(targetId))
             val ret = Gateway.fetchObject(Api.CIRC, Api.HOLD_TEST_AND_CREATE, args, false)
             Result.Success(ret)
         } catch (e: Exception) {

@@ -32,7 +32,7 @@ object EgOrg {
     var orgTypes = mutableListOf<OrgType>()
     private var orgs = mutableListOf<Organization>()
     var smsEnabled = false
-    val consortiumID = 1
+    const val consortiumID = 1
 
     val allOrgs: List<Organization>
         get() = orgs

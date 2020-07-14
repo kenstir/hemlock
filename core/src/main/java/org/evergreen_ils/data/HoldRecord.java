@@ -40,6 +40,8 @@ import java.util.Map;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import static org.evergreen_ils.ConstKt.HOLD_TYPE_METARECORD;
+
 public class HoldRecord implements Serializable {
 
     private static String TAG = HoldRecord.class.getSimpleName();
@@ -48,16 +50,9 @@ public class HoldRecord implements Serializable {
     public RecordInfo recordInfo = null;
     public @Nullable OSRFObject qstatsObj = null;
 
-    // hold_type:
-    //   T - title (default)
-    //   C (or R or F?) - copy (requires staff client)
-    //   I - issuance
-    //   V - volume (requires staff client)
-    //   M - meta-record
-    //public String holdType = null;
     private String title = null;
     private String author = null;
-    private String partLabel = null; // only for P types
+    private String partLabel = null; // only for HOLD_TYPE_PART
 
     public HoldRecord(OSRFObject ahr) {
         this.ahr = ahr;
@@ -228,7 +223,7 @@ public class HoldRecord implements Serializable {
     }
 
     public @Nullable String getFormatLabel() {
-        if (getHoldType().equals("M")) {
+        if (getHoldType().equals(HOLD_TYPE_METARECORD)) {
             Map<String, Object> map = JsonUtils.parseObject(ahr.getString("holdable_formats"));
             List<String> labels = new ArrayList<>();
             for (String format: JsonUtils.parseHoldableFormats(map)) {

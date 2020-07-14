@@ -101,8 +101,8 @@ class FinesActivity : BaseActivity() {
                 val start = System.currentTimeMillis()
                 var jobs = mutableListOf<Job>()
                 progress?.show(this@FinesActivity, getString(R.string.msg_retrieving_fines))
-
                 Log.d(TAG, "[kcxxx] fetchData ...")
+
                 jobs.add(async {
                     // Need homeOrg's settings to enable/disable fines
                     val homeOrg = EgOrg.findOrg(App.getAccount().homeOrg)

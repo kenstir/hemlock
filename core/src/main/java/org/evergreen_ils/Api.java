@@ -53,7 +53,7 @@ public class Api {
     public static final String USER_FLESHED_RETRIEVE = "open-ils.actor.user.fleshed.retrieve"; // au,aua,ac,auact,cuat
     public static final String ORG_TREE_RETRIEVE = "open-ils.actor.org_tree.retrieve";
     public static final String ORG_TYPES_RETRIEVE = "open-ils.actor.org_types.retrieve";
-    public static final String ORG_UNIT_RETRIEVE = "open-ils.actor.org_unit.retrieve";
+    //public static final String ORG_UNIT_RETRIEVE = "open-ils.actor.org_unit.retrieve";
     public static final String ORG_UNIT_SETTING_RETRIEVE = "open-ils.actor.org_unit_setting.values.ranged.retrieve";
     public static final String ORG_UNIT_SETTING_BATCH = "open-ils.actor.ou_setting.ancestor_default.batch";
     public static final String ORG_UNIT_SETTING = "open-ils.actor.ou_setting.ancestor_default";
@@ -99,7 +99,7 @@ public class Api {
     public static final String HOLD_UPDATE = "open-ils.circ.hold.update";
     public static final String HOLD_CANCEL = "open-ils.circ.hold.cancel";
     public static final String HOLD_TEST_AND_CREATE = "open-ils.circ.holds.test_and_create.batch";
-    public static final String MONEY_BILLING_RETRIEVE = "open-ils.circ.money.billing.retrieve.all";
+    //public static final String MONEY_BILLING_RETRIEVE = "open-ils.circ.money.billing.retrieve.all";
 
     /// fielder
 
@@ -112,8 +112,8 @@ public class Api {
     public static final String RETRIEVE_BRE = "open-ils.pcrud.retrieve.bre";
     public static final String RETRIEVE_MRA = "open-ils.pcrud.retrieve.mra";
     public static final String SEARCH_CCVM = "open-ils.pcrud.search.ccvm.atomic";
-    public static final String SEARCH_MRA = "open-ils.pcrud.search.mra.atomic";
-    public static final String SEARCH_MRAF = "open-ils.pcrud.search.mraf.atomic";
+    //public static final String SEARCH_MRA = "open-ils.pcrud.search.mra.atomic";
+    //public static final String SEARCH_MRAF = "open-ils.pcrud.search.mraf.atomic";
     public static final String SEARCH_SMS_CARRIERS = "open-ils.pcrud.search.csc.atomic"; // [csc]
 
     /// search
@@ -121,7 +121,7 @@ public class Api {
     public static final String SEARCH = "open-ils.search";
     public static final String MULTICLASS_QUERY = "open-ils.search.biblio.multiclass.query";
     public static final String MODS_SLIM_RETRIEVE = "open-ils.search.biblio.record.mods_slim.retrieve";
-    public static final String MODS_SLIM_BATCH = "open-ils.search.biblio.record.mods_slim.batch.retrieve.atomic";
+    //public static final String MODS_SLIM_BATCH = "open-ils.search.biblio.record.mods_slim.batch.retrieve.atomic";
     public static final String COPY_LOCATION_COUNTS = "open-ils.search.biblio.copy_location_counts.summary.retrieve";
     public static final String COPY_STATUS_ALL = "open-ils.search.config.copy_status.retrieve.all"; // [ccs]
     public static final String COPY_COUNT = "open-ils.search.biblio.record.copy_count";
@@ -129,11 +129,12 @@ public class Api {
     public static final String METARECORD_MODS_SLIM_RETRIEVE = "open-ils.search.biblio.metarecord.mods_slim.retrieve";
     public static final String ASSET_COPY_RETRIEVE = "open-ils.search.asset.copy.retrieve";
     public static final String MODS_FROM_COPY = "open-ils.search.biblio.mods_from_copy";
+    public static final String HOLD_PARTS = "open-ils.search.biblio.record_hold_parts";
 
     /// serial
 
-    public static final String SERVICE_SERIAL = "open-ils.serial";
-    public static final String METHOD_FETCH_ISSUANCE = "open-ils.serial.issuance.pub_fleshed.batch.retrieve";
+    //public static final String SERVICE_SERIAL = "open-ils.serial";
+    //public static final String METHOD_FETCH_ISSUANCE = "open-ils.serial.issuance.pub_fleshed.batch.retrieve";
 
     /// misc
     public static final String ILS_VERSION = "opensrf.open-ils.system.ils_version";
@@ -244,7 +245,7 @@ public class Api {
     }
 
     // Some queries return at times a list of String ids and at times a list of Integer ids,
-    // see Issue #1 and PINES Crashlytics #28.
+    // See issue hemlock#1
     public static @NonNull List<String> parseIdsList(Object o) {
         ArrayList<String> ret = new ArrayList<>();
         if (o instanceof List) {

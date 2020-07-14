@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 Kenneth H. Cox
+ * Copyright (c) 2020 Kenneth H. Cox
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -16,17 +16,10 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
-package org.evergreen_ils.net
+package org.evergreen_ils
 
-import org.evergreen_ils.data.Result
-import org.opensrf.util.OSRFObject
-
-interface SearchService {
-    suspend fun fetchAssetCopy(copyId: Int): Result<OSRFObject>
-    suspend fun fetchAssetCallNumber(callNumber: Int): Result<OSRFObject>
-    suspend fun fetchCopyStatuses(): Result<List<OSRFObject>>
-    suspend fun fetchCopyMODS(copyId: Int): Result<OSRFObject>
-    suspend fun fetchRecordMODS(id: Int): Result<OSRFObject>
-    suspend fun fetchMetarecordMODS(id: Int): Result<OSRFObject>
-    suspend fun fetchHoldParts(id: Int): Result<List<OSRFObject>>
-}
+const val HOLD_TYPE_COPY = "C"
+const val HOLD_TYPE_METARECORD = "M"
+const val HOLD_TYPE_PART = "P"
+const val HOLD_TYPE_TITLE = "T"
+const val HOLD_TYPE_VOLUME = "V"

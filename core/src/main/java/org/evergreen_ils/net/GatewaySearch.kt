@@ -20,6 +20,7 @@ package org.evergreen_ils.net
 
 import org.evergreen_ils.Api
 import org.evergreen_ils.data.Result
+import org.evergreen_ils.data.jsonMapOf
 import org.opensrf.util.OSRFObject
 
 object GatewaySearch: SearchService {
@@ -71,6 +72,16 @@ object GatewaySearch: SearchService {
     override suspend fun fetchMetarecordMODS(id: Int): Result<OSRFObject> {
         return try {
             val ret = Gateway.fetchObject(Api.SEARCH, Api.METARECORD_MODS_SLIM_RETRIEVE, arrayOf(id), true)
+            Result.Success(ret)
+        } catch (e: Exception) {
+            Result.Error(e)
+        }
+    }
+
+    override suspend fun fetchHoldParts(id: Int): Result<List<OSRFObject>> {
+        return try {
+            val param = jsonMapOf("record" to id)
+            val ret = Gateway.fetchObjectArray(Api.SEARCH, Api.HOLD_PARTS, arrayOf(param), true)
             Result.Success(ret)
         } catch (e: Exception) {
             Result.Error(e)
