@@ -56,6 +56,8 @@
     <bool name="ou_always_popup_online_links">false</bool>
     <!-- if true, we must load MARCXML records to load online locations -->
     <bool name="ou_need_marc_record">false</bool>
+    <!-- if true, display the hours of operation on the Library Info screen -->
+    <bool name="ou_enable_hours_of_operation">true</bool>
     <!-- if non-empty, the Barcode format to display for Show Card -->
     <string name="ou_barcode_format"></string>
     <!-- max number of results to return from Search -->
