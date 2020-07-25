@@ -87,9 +87,13 @@ class OrgDetailsActivity : BaseActivity() {
         map = findViewById(R.id.org_details_map)
         address = findViewById(R.id.org_details_address)
 
+        val hours_header: View? = findViewById(R.id.org_details_opening_hours_header)
+        val hours_table: View? = findViewById(R.id.org_details_opening_hours_table)
+
         progress = ProgressDialogSupport()
 
         initOrgSpinner()
+        initHoursViews(hours_header, hours_table)
         initOrgDetailsRunnable()
         initButtons()
     }
@@ -120,6 +124,13 @@ class OrgDetailsActivity : BaseActivity() {
             }
 
             override fun onNothingSelected(parent: AdapterView<*>?) {}
+        }
+    }
+
+    private fun initHoursViews(hoursHeader: View?, hoursTable: View?) {
+        if (!resources.getBoolean(R.bool.ou_enable_hours_of_operation)) {
+            hoursHeader?.visibility = View.GONE
+            hoursTable?.visibility = View.GONE
         }
     }
 
