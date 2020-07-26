@@ -223,4 +223,8 @@
     <string name="button_library_web_site">Library web site</string>
     <string name="button_library_map">Show map</string>
 
+    <!-- misc -->
+    <string name="msg_barcode_copied">Barcode copied to clipboard</string>
+    <string name="label_barcode">barcode</string>
+
 </resources>

@@ -18,12 +18,17 @@
 
 package org.evergreen_ils.views;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.common.BitMatrix;
@@ -48,9 +53,13 @@ public class BarcodeActivity extends BaseActivity {
         setContentView(R.layout.activity_barcode);
 
         barcode_text = findViewById(R.id.barcode_text);
-        String barcode = AccountAccess.getInstance().getBarcode();
-
         image_view = findViewById(R.id.barcode_image);
+
+        initBarcodeViews();
+    }
+
+    private void initBarcodeViews() {
+        String barcode = AccountAccess.getInstance().getBarcode();
         DisplayMetrics metrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(metrics);
         int image_width = Math.min(metrics.widthPixels, metrics.heightPixels) * 8 / 10;
@@ -63,6 +72,19 @@ public class BarcodeActivity extends BaseActivity {
             barcode_text.setText(getString(R.string.invalid_barcode, barcode));
             image_view.setImageResource(R.drawable.invalid_barcode);
         }
+
+        barcode_text.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                copyBarcodeToClipboard();
+            }
+        });
+        image_view.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                copyBarcodeToClipboard();
+            }
+        });
     }
 
     private Bitmap createBitmap(String data, int image_width, int image_height) {
@@ -92,5 +114,12 @@ public class BarcodeActivity extends BaseActivity {
         bitmap.setPixels(pixels, 0, width, 0, 0, width, height);
 
         return bitmap;
+    }
+
+    private void copyBarcodeToClipboard() {
+        ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+        ClipData clip = ClipData.newPlainText(getString(R.string.label_barcode), AccountAccess.getInstance().getBarcode());
+        clipboard.setPrimaryClip(clip);
+        Toast.makeText(this, R.string.msg_barcode_copied, Toast.LENGTH_SHORT).show();
     }
 }
