@@ -17,12 +17,16 @@
  */
 package org.evergreen_ils.views
 
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Color
 import android.os.Bundle
 import android.util.DisplayMetrics
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.common.BitMatrix
 import org.evergreen_ils.R
@@ -37,15 +41,22 @@ class BarcodeActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         if (isRestarting) return
+
         setContentView(R.layout.activity_barcode)
+
         barcode_text = findViewById(R.id.barcode_text)
         image_view = findViewById(R.id.barcode_image)
+
+        initBarcodeViews()
+    }
+
+    private fun initBarcodeViews() {
         val barcode = App.getAccount().barcode
         val metrics = DisplayMetrics()
         windowManager.defaultDisplay.getMetrics(metrics)
-        val image_width = Math.min(metrics.widthPixels, metrics.heightPixels) * 8 / 10
-        val image_height = image_width * 4 / 10
-        val bitmap = createBitmap(barcode, image_width, image_height)
+        val imageWidth = Math.min(metrics.widthPixels, metrics.heightPixels) * 8 / 10
+        val imageHeight = imageWidth * 4 / 10
+        val bitmap = createBitmap(barcode, imageWidth, imageHeight)
         if (bitmap != null) {
             barcode_text?.setText(barcode)
             image_view?.setImageBitmap(bitmap)
@@ -53,6 +64,9 @@ class BarcodeActivity : BaseActivity() {
             barcode_text?.setText(getString(R.string.invalid_barcode, barcode))
             image_view?.setImageResource(R.drawable.invalid_barcode)
         }
+
+        barcode_text?.setOnClickListener { copyBarcodeToClipboard() }
+        image_view?.setOnClickListener { copyBarcodeToClipboard() }
     }
 
     private fun createBitmap(data: String?, image_width: Int, image_height: Int): Bitmap? {
@@ -77,5 +91,12 @@ class BarcodeActivity : BaseActivity() {
         }
         bitmap.setPixels(pixels, 0, width, 0, 0, width, height)
         return bitmap
+    }
+
+    private fun copyBarcodeToClipboard() {
+        val clipboard =  getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+        val clip = ClipData.newPlainText(getString(R.string.label_barcode), App.getAccount().barcode)
+        clipboard.primaryClip = clip
+        Toast.makeText(this, getString(R.string.msg_barcode_copied), Toast.LENGTH_SHORT).show()
     }
 }
