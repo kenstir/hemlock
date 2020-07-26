@@ -77,7 +77,7 @@ object GatewayActor: ActorService {
         return try {
             val (authToken, userID) = account.getCredentialsOrThrow()
             val args = arrayOf<Any?>(authToken, orgID)
-            val ret = Gateway.fetch(Api.ACTOR, Api.HOURS_OF_OPERATION_RETRIEVE, args, true) {
+            val ret = Gateway.fetch(Api.ACTOR, Api.HOURS_OF_OPERATION_RETRIEVE, args, false) {
                 it.asOptionalObject()
             }
             Result.Success(ret)
