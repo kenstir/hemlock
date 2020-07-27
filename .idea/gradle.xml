@@ -20,7 +20,6 @@
             <option value="$PROJECT_DIR$/noble_app" />
             <option value="$PROJECT_DIR$/ntlc_app" />
             <option value="$PROJECT_DIR$/pines_app" />
-            <option value="$PROJECT_DIR$/sagecat_app" />
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />
