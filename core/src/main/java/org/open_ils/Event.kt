@@ -14,6 +14,14 @@ class Event : HashMap<String, Any?> {
     val textCode: String?
         get() = get("textcode") as String?
 
+    val failPart: String?
+        get() {
+            (get("payload") as? JSONDictionary)?.let {
+                return it["fail_part"] as String?
+            }
+            return null
+        }
+
     val code: Int
         get() = Api.parseInt(get("ilsevent"), 0)
 

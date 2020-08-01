@@ -201,6 +201,7 @@ class GatewayResultTest {
         val error = res.exceptionOrNull() as? GatewayEventError
         assertEquals(error?.ev?.code, 1001)
         assertEquals(error?.ev?.textCode, "NO_SESSION")
+        assertEquals(error?.ev?.failPart, null)
         assertTrue(error?.isSessionExpired() ?: false)
     }
 
@@ -223,7 +224,7 @@ class GatewayResultTest {
     }
 
     @Test
-    fun test_placeHold_failWithResultObjContainingEventList() {
+    fun test_placeHold_failWithFailPart() {
         // This payload is an object, containing a result object, containing a last_event event
         // I have only seen such a response from open-ils.circ.holds.test_and_create.batch
         val json = """
@@ -238,6 +239,7 @@ class GatewayResultTest {
         val error = res.exceptionOrNull() as? GatewayEventError
         assertEquals(error?.ev?.code, 1220)
         assertEquals(error?.ev?.textCode, "ITEM_NOT_HOLDABLE")
+        assertEquals(error?.ev?.failPart, "config.hold_matrix_test.holdable")
         assertFalse(error?.isSessionExpired() ?: false)
     }
 
