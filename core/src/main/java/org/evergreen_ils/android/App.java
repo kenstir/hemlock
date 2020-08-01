@@ -179,8 +179,4 @@ public class App {
     public static void setAccount(Account account) {
         App.account = account;
     }
-
-    public static Context getApplicationContext() {
-        return applicationContext;
-    }
 }
