@@ -144,7 +144,7 @@ class GatewayResult {
                         if (event != null) {
                             resp.failed = event.failed()
                             if (resp.failed) {
-                                resp.errorMessage = event.description
+                                resp.errorMessage = event.message
                                 resp.error = GatewayEventError(event)
                             }
                             resp.events = listOf(event)
@@ -168,7 +168,7 @@ class GatewayResult {
                             }
                         }
                         if (resp.failed) resp.errorMessage = events.joinToString("\n\n") {
-                            it.description ?: ""
+                            it.message
                         }
                         resp.type = ResultType.ARRAY
                     }

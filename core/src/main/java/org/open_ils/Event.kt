@@ -8,8 +8,23 @@ class Event : HashMap<String, Any?> {
     constructor() {}
     constructor(map: Map<String, Any?>?) : super(map) {}
 
+    val message: String
+        get() {
+            // This logic is similar to that in place_hold_result.tt2
+            failPart?.let { failPartKey ->
+                failPartMessageMap[failPartKey]?.let { msg ->
+                    return msg
+                }
+            }
+            description?.let { return it }
+            textCode?.let { return it }
+            return "Unknown problem. Contact your local library for further assistance."
+        }
+
     val description: String?
-        get() = get("desc") as String?
+        get() {
+            return get("desc") as String?
+        }
 
     val textCode: String?
         get() = get("textcode") as String?
@@ -30,6 +45,9 @@ class Event : HashMap<String, Any?> {
     }
 
     companion object {
+        // failPartMessageMap is injected
+        var failPartMessageMap = mutableMapOf<String, String>()
+
         fun parseEvent(payload: Any?): Event? {
             val obj = payload as? JSONDictionary ?: return null
             parseEvent(obj)?.let {
@@ -42,6 +60,7 @@ class Event : HashMap<String, Any?> {
             }
             return null
         }
+
         fun parseEvent(obj: JSONDictionary): Event? {
             if (obj.containsKey("ilsevent") && obj.containsKey("textcode")) {
                 return Event(obj)

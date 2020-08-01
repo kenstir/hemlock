@@ -1,0 +1,20 @@
+{
+"actor.usr.barred": "The patron is barred",
+"asset.copy.circulate": "The item does not circulate",
+"asset.copy_location.circulate": "Items from this shelving location do not circulate",
+"asset.copy.status": "The item cannot circulate at this time",
+"circ.holds.target_skip_me": "The item's circulation library does not fulfill holds",
+"config.circ_matrix_circ_mod_test": "The patron has too many items of this type checked out",
+"config.circ_matrix_test.circulate": "Circulation rules reject this item as non-circulatable",
+"config.hold_matrix_test.holdable": "Hold rules reject this item as unholdable",
+"config.hold_matrix_test.max_holds": "The patron has reached the maximum number of holds",
+"config.rule_age_hold_protect.prox": "The item is too new to transit this far",
+"item.holdable": "The item is not holdable",
+"location.holdable": "The item's location is not holdable",
+"status.holdable": "The item is not in a holdable status",
+"no_item": "The system could not find this item",
+"no_ultimate_items": "The system could not find any items to match this hold request",
+"no_matchpoint": "System rules do not define how to handle this item",
+"no_user": "The system could not find this patron",
+"transit_range": "The item cannot transit this far"
+}

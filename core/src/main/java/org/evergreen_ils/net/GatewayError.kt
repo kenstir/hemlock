@@ -31,7 +31,7 @@ open class GatewayError(message: String?): Exception(message) {
     }
 }
 
-class GatewayEventError constructor(var ev: Event): GatewayError(ev.description) {
+class GatewayEventError constructor(var ev: Event): GatewayError(ev.message) {
     companion object {
         // for use when we have null/empty creds and we want to treat it like isSessionExpired()
         fun makeNoSessionError(): GatewayEventError {

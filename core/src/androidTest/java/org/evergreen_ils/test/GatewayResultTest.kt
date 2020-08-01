@@ -18,11 +18,15 @@
 
 package org.evergreen_ils.test
 
+import android.content.Context
+import androidx.test.platform.app.InstrumentationRegistry
 import org.evergreen_ils.Api
 import org.evergreen_ils.net.GatewayEventError
 import org.evergreen_ils.android.Log
 import org.evergreen_ils.android.StdoutLogProvider
+import org.evergreen_ils.system.EgMessageMap
 import org.junit.Assert.*
+import org.junit.Before
 import org.junit.BeforeClass
 import org.junit.Test
 import org.opensrf.util.GatewayResult
@@ -31,6 +35,7 @@ import org.opensrf.util.OSRFRegistry
 class GatewayResultTest {
 
     companion object {
+
         @BeforeClass
         @JvmStatic
         fun setUpClass() {
@@ -38,6 +43,9 @@ class GatewayResultTest {
 
             val fields = arrayOf("juvenile","usrname","home_ou")
             OSRFRegistry.registerObject("au", OSRFRegistry.WireProtocol.ARRAY, fields)
+
+            val resources = InstrumentationRegistry.getInstrumentation().targetContext.resources
+            EgMessageMap.init(resources)
         }
     }
 
@@ -218,8 +226,9 @@ class GatewayResultTest {
         val res = kotlin.runCatching { result.asObject() }
         assertTrue(res.isFailure)
         val error = res.exceptionOrNull() as? GatewayEventError
-        assertEquals(error?.ev?.code, 7013)
-        assertEquals(error?.ev?.textCode, "PATRON_EXCEEDS_FINES")
+        assertEquals(7013, error?.ev?.code)
+        assertEquals("PATRON_EXCEEDS_FINES", error?.ev?.textCode)
+        assertEquals("The patron in question has reached the maximum fine amount", error?.ev?.message)
         assertFalse(error?.isSessionExpired() ?: false)
     }
 
@@ -232,14 +241,15 @@ class GatewayResultTest {
             """
         val result = GatewayResult.create(json)
         assertTrue(result.failed)
-        assertEquals("A copy with a remote circulating library (circ_lib) was encountered", result.errorMessage)
+        assertEquals("Hold rules reject this item as unholdable", result.errorMessage)
 
         val res = kotlin.runCatching { result.asObject() }
         assertTrue(res.isFailure)
         val error = res.exceptionOrNull() as? GatewayEventError
-        assertEquals(error?.ev?.code, 1220)
-        assertEquals(error?.ev?.textCode, "ITEM_NOT_HOLDABLE")
-        assertEquals(error?.ev?.failPart, "config.hold_matrix_test.holdable")
+        assertEquals(1220, error?.ev?.code)
+        assertEquals("ITEM_NOT_HOLDABLE", error?.ev?.textCode)
+        assertEquals("Hold rules reject this item as unholdable", error?.ev?.message)
+        assertEquals("config.hold_matrix_test.holdable", error?.ev?.failPart)
         assertFalse(error?.isSessionExpired() ?: false)
     }
 
