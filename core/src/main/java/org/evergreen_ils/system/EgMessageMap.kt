@@ -53,10 +53,4 @@ object EgMessageMap {
             initialized = true
         }
     }
-
-    @JvmStatic
-    fun failPartMessage(resources: Resources, failPartKey: String): String? {
-        init(resources)
-        return failPartMessageMap[failPartKey]
-    }
 }
