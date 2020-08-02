@@ -63,6 +63,7 @@
             </LinearLayout>
 
             <TextView
+                android:id="@+id/org_details_opening_hours_header"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:paddingTop="16dp"
@@ -70,6 +71,7 @@
                 style="@style/HemlockText.PagePrimary"/>
 
             <TableLayout
+                android:id="@+id/org_details_opening_hours_table"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content">
                 <TableRow
