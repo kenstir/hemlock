@@ -32,7 +32,6 @@ import org.open_ils.Event
  */
 object EgMessageMap {
     var initialized = false
-    var failPartMessageMap = mutableMapOf<String, String>()
 
     fun init(resources: Resources) {
         synchronized(this) {
