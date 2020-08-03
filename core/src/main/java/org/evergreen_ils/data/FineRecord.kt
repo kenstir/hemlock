@@ -53,7 +53,7 @@ class FineRecord(circ: OSRFObject?, mvr_record: OSRFObject?, mbts_transaction: O
             subtitle = mbts_transaction.getString("last_billing_note")
         }
         try {
-            balance_owed = mbts_transaction.getString("balance_owed").toDouble()
+            balance_owed = mbts_transaction.getString("balance_owed")?.toDouble()
         } catch (e: NumberFormatException) {
             Log.d(TAG, "error converting double", e)
         }

@@ -155,22 +155,17 @@ class GatewayResult {
                     }
                     is ArrayList<*> -> {
                         // list of objects or list of events
-                        val events = mutableListOf<Event>()
-                        for (obj in payload as ArrayList<Any?>) {
-                            Event.parseEvent(obj)?.let { event ->
-                                if (event.failed()) {
-                                    resp.failed = true
-                                    if (resp.error == null) {
-                                        resp.error = GatewayEventError(event)
-                                    }
-                                }
-                                events.add(event)
-                            }
+                        val obj = payload.firstOrNull()
+                        val event = Event.parseEvent(obj)
+                        if (event != null && event.failed()) {
+                            resp.failed = true
+                            resp.errorMessage = event.message
+                            resp.error = GatewayEventError(event)
+                            resp.events = listOf(event)
+                            resp.type = ResultType.EVENT
+                        } else {
+                            resp.type = ResultType.ARRAY
                         }
-                        if (resp.failed) resp.errorMessage = events.joinToString("\n\n") {
-                            it.message
-                        }
-                        resp.type = ResultType.ARRAY
                     }
                     is String -> {
                         resp.type = ResultType.STRING

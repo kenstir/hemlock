@@ -194,7 +194,7 @@ class FinesActivity : BaseActivity() {
     private fun getFloat(o: OSRFObject?, field: String): Float {
         var ret = 0.0f
         try {
-            if (o != null) ret = o.getString(field).toFloat()
+            ret = o?.getString(field)?.toFloat() ?: 0.0f
         } catch (e: Exception) {
             Analytics.logException(e)
         }

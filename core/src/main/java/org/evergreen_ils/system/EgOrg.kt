@@ -66,10 +66,10 @@ object EgOrg {
     private fun addOrganization(obj: OSRFObject, level: Int) {
         val id = obj.getInt("id") ?: return
         val name = obj.getString("name") ?: return
+        val shortName = obj.getString("shortname") ?: return
         val ouType = obj.getInt("ou_type") ?: return
         val opacVisible = obj.getBoolean("opac_visible")
-        val org = Organization(id, level, name, obj.getString("shortname"),
-                ouType, opacVisible, obj)
+        val org = Organization(id, level, name, shortName, ouType, opacVisible, obj)
         org.indentedDisplayPrefix = String(CharArray(level)).replace("\u0000", "   ")
         //Log.d(TAG, "id:$id level:${org.level} vis:${org.opac_visible} shortname:${org.shortname} name:${org.name}")
         orgs.add(org)

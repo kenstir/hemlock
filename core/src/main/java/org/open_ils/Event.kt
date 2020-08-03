@@ -2,6 +2,7 @@ package org.open_ils
 
 import org.evergreen_ils.Api
 import org.evergreen_ils.data.JSONDictionary
+import org.opensrf.util.OSRFObject
 import java.util.*
 
 class Event : HashMap<String, Any?> {
@@ -49,22 +50,34 @@ class Event : HashMap<String, Any?> {
         var failPartMessageMap = mutableMapOf<String, String>()
 
         fun parseEvent(payload: Any?): Event? {
-            val obj = payload as? JSONDictionary ?: return null
-            parseEvent(obj)?.let {
-                return it
-            }
-            val resultObj = obj.get("result") as? JSONDictionary ?: return null
-            val lastEvent = resultObj.get("last_event") as? JSONDictionary ?: return null
-            parseEvent(lastEvent)?.let {
-                return it
-            }
+            (payload as? OSRFObject)?.let { return parseEvent(it) }
+            (payload as? JSONDictionary)?.let { return parseEvent(OSRFObject(it)) }
             return null
         }
 
-        fun parseEvent(obj: JSONDictionary): Event? {
-            if (obj.containsKey("ilsevent") && obj.containsKey("textcode")) {
+        fun parseEvent(obj: OSRFObject): Event? {
+            // case 1: obj is an event
+            val ilsevent = obj.getInt("ilsevent")
+            val textcode = obj.getString("textcode")
+            val desc = obj.getString("desc")
+            if (ilsevent != null && ilsevent != 0 && textcode != null && desc != null) {
                 return Event(obj)
             }
+
+            // case 2: obj has a result that has a last_event
+            val resultObj = obj.getObject("result")
+            val lastEvent = resultObj?.getObject("last_event")
+            if (resultObj != null && lastEvent != null) {
+                return parseEvent(lastEvent)
+            }
+
+            // case 3: obj has a result that is an array of events
+            val objList = obj.get("result") as? ArrayList<OSRFObject>
+            val firstObj = objList?.firstOrNull()
+            if (firstObj != null) {
+                return parseEvent(firstObj)
+            }
+
             return null
         }
     }

@@ -425,7 +425,9 @@ class PlaceHoldActivity : BaseActivity() {
         val labels = mutableListOf("")
         parts?.let {
             for (elem in it) {
-                labels.add(elem.getString("label"))
+                elem.getString("label")?.let { label ->
+                    labels.add(label)
+                }
             }
         }
         val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, labels)

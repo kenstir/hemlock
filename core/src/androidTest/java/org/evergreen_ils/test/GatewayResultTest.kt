@@ -221,7 +221,7 @@ class GatewayResultTest {
             """
         val result = GatewayResult.create(json)
         assertTrue(result.failed)
-        assertEquals("The patron in question has reached the maximum fine amount\n\nThe patron has too many lost items.", result.errorMessage)
+        assertEquals("The patron in question has reached the maximum fine amount", result.errorMessage)
 
         val res = kotlin.runCatching { result.asObject() }
         assertTrue(res.isFailure)
@@ -251,6 +251,16 @@ class GatewayResultTest {
         assertEquals("Hold rules reject this item as unholdable", error?.ev?.message)
         assertEquals("config.hold_matrix_test.holdable", error?.ev?.failPart)
         assertFalse(error?.isSessionExpired() ?: false)
+    }
+
+    @Test
+    fun test_placeHold_failWithHoldExists() {
+        val json = """
+            {"payload":[{"target":210,"result":[{"ilsevent":"1707","servertime":"Sun Aug  2 18:19:53 2020","stacktrace":"Holds.pm:302","desc":"User already has an open hold on the selected item","pid":9379,"textcode":"HOLD_EXISTS"}]}],"status":200}
+            """
+        val result = GatewayResult.create(json)
+        assertTrue(result.failed)
+        assertEquals("User already has an open hold on the selected item", result.errorMessage)
     }
 
     @Test

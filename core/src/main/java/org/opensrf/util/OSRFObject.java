@@ -63,21 +63,23 @@ public class OSRFObject extends HashMap<String, Object> implements OSRFSerializa
     /**
      * Implement get() to fulfill our contract with OSRFSerializable
      */
-    public Object get(String field) {
+    public Object get(@NonNull String field) {
         return super.get(field);
     }
 
-    public String getString(String field) {
+    @Nullable
+    public String getString(@NonNull String field) {
         return getString(field, null);
     }
 
-    public String getString(String field, String dflt) {
+    @Nullable
+    public String getString(@NonNull String field, String dflt) {
         String ret = (String) get(field);
         return (ret != null) ? ret : dflt;
     }
 
     @Nullable
-    public Integer getInt(String field) {
+    public Integer getInt(@NonNull String field) {
         Object o = get(field);
         if (o == null)
             return null;
@@ -87,20 +89,28 @@ public class OSRFObject extends HashMap<String, Object> implements OSRFSerializa
     }
 
     @NonNull
-    public Boolean getBoolean(String field) {
+    public Boolean getBoolean(@NonNull String field) {
         return Api.parseBoolean(get(field));
     }
 
     @Nullable
-    public OSRFObject getObject(String field) {
+    public OSRFObject getObject(@NonNull String field) {
         Object o = get(field);
-        if (o != null && o instanceof OSRFObject)
+        if (o == null) return null;
+        if (o instanceof OSRFObject)
             return (OSRFObject) o;
+        if (o instanceof HashMap) {
+            try {
+                HashMap<String, Object> map = (HashMap<String, Object>) o;
+                return new OSRFObject(map);
+            } catch (ClassCastException e) {
+            }
+        }
         return null;
     }
 
     @Nullable
-    public Date getDate(String field) {
+    public Date getDate(@NonNull String field) {
         return Api.parseDate(getString(field));
     }
 }
