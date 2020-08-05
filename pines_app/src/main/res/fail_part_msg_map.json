@@ -1,0 +1,22 @@
+{
+"actor.usr.barred": "There appears to be a problem with your library account.  Please contact your local library for assistance.",
+"asset.copy.circulate": "This item cannot be checked out.  Please contact your local library for assistance.",
+"asset.copy_location.circulate": "This item cannot be checked out.  Please contact your local library for assistance.",
+"asset.copy.status": "This item is not available at this time.  Please contact your local library for assistance.",
+"circ.holds.target_skip_me": "This item is not available at this time.  Please contact your local library for assistance.",
+"config.circ_matrix_circ_mod_test": "There are too many items of this type checked out on your account to be able to place this hold request.  Please contact your local library for assistance.",
+"config.circ_matrix_test.available_copy_hold_ratio": "This item is not available at this time.  Please contact your local library for assistance.",
+"config.circ_matrix_test.circulate": "Holds cannot be placed on this item. Please contact your local library for assistance.",
+"config.circ_matrix_test.total_copy_hold_ratio": "This item is not available at this time.  Please contact your local library for assistance.",
+"config.hold_matrix_test.holdable": "Holds cannot be placed on this item.  Please contact your local library for assistance.",
+"config.hold_matrix_test.max_holds": "Your account has reached the maximum number of hold requests allowed at once. Please contact your local library for assistance.",
+"config.rule_age_hold_protect.prox": "This is a new item that is not owned by your local library, so you will be unable to place a hold on it for 3-6 months. Please contact your local library for assistance.",
+"item.holdable": "Holds cannot be placed on this item.  Please contact your local library for assistance.",
+"location.holdable": "Holds cannot be placed on this item.  Please contact your local library for assistance.",
+"status.holdable": "Holds cannot be placed on this item.  Please contact your local library for assistance.",
+"no_item": "There are no copies of this item available at this time.  Please contact your local library for assistance.",
+"no_ultimate_items": "This item is not available at this time.  Please contact your local library for assistance.",
+"no_matchpoint": "There was a problem processing this hold request.  Please contact your local library for assistance.",
+"no_user": "There was a problem processing this hold request.  Please contact your local library for assistance.",
+"transit_range": "The title you have requested is not available for hold requests from your local library.  Please contact your local library for assistance."
+}
