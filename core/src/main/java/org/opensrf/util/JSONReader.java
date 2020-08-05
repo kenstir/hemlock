@@ -44,7 +44,7 @@ public class JSONReader {
         try {
             return readSubObject(tk.nextValue());
         } catch(org.json.JSONException e) {
-            throw new JSONException(e.toString());
+            throw new JSONParserException(e);
         }
     }
 
@@ -124,8 +124,7 @@ public class JSONReader {
             }
 
         } catch(org.json.JSONException e) {
-
-            throw new JSONException(e.toString());
+            throw new JSONParserException(e);
         }
 
         return null;
@@ -141,7 +140,7 @@ public class JSONReader {
 
         OSRFRegistry registry = OSRFRegistry.getRegistry(netClass);
         if (registry == null)
-            throw new JSONException("Unregistered class: "+netClass);
+            throw new JSONUnregisteredClassException(netClass);
         OSRFObject obj = new OSRFObject(registry);
  
         try {
@@ -168,7 +167,7 @@ public class JSONReader {
             }
 
         } catch(org.json.JSONException e) {
-            throw new JSONException(e.toString());
+            throw new JSONParserException(e);
         }
 
         return obj;

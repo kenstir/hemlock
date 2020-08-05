@@ -276,12 +276,22 @@ class GatewayResultTest {
     }
 
     @Test
-    fun test_errorResponseNotJSON() {
+    fun test_errorResponseNotJSON_postgresTimeout() {
         val jsonIsh = """
             {"payload":[],"debug": "osrfMethodException :  *** Call to [open-ils.search.biblio.multiclass.query] failed for session [1590536419.970333.159053641999519], thread trace [1]:\nException: OpenSRF::EX::ERROR 2020-05-26T19:41:01 OpenSRF::Application /usr/local/share/perl/5.22.1/OpenSRF/Application.pm:243 System ERROR: Call to open-ils.storage for method open-ils.storage.biblio.multiclass.staged.search_fts.atomic \n failed with exception: Exception: OpenSRF::EX::ERROR 2020-05-26T19:41:01 OpenILS::Application::AppUtils /usr/local/share/perl/5.22.1/OpenILS/Application/AppUtils.pm:201 System ERROR: Exception: OpenSRF::DomainObject::oilsMethodException 2020-05-26T19:41:01 OpenSRF::AppRequest /usr/local/share/perl/5.22.1/OpenSRF/AppSession.pm:1159 <500>   *** Call to [open-ils.storage.biblio.multiclass.staged.search_fts.atomic] failed for session [1590536419.97576725.9316069925], thread trace [1]:\nDBD::Pg::st execute failed: ERROR:  canceling statement due to user request [for Statement \"        -- bib search: #CD_documentLength #CD_meanHarmonic #CD_uniqueWords core_limit(10000) badge_orgs(129,1,124) estimation_strategy(inclusion) skip_check(0) check_limit(1000) subject:romance fiction site(CLAYTN-MOR)\n        WITH w AS ...UNION ALL\n  SELECT NULL,NULL,NULL,COUNT(*),COUNT(*),COUNT(*),0,0,NULL,NULL F,"status":500}
             """
         val result = GatewayResult.create(jsonIsh)
         assertTrue(result.failed)
-        assertEquals("x", result.errorMessage)
+        assertEquals("Timeout; the request took too long to complete and the server killed it", result.errorMessage)
+    }
+
+    @Test
+    fun test_errorResponseNotJSON_other() {
+        val jsonIsh = """
+            {"payload":[],"debug": "...NULL,NULL F,"status":500}
+            """
+        val result = GatewayResult.create(jsonIsh)
+        assertTrue(result.failed)
+        assertEquals("Internal Server Error; the server response is not JSON", result.errorMessage)
     }
 }

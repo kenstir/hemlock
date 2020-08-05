@@ -112,7 +112,7 @@ class GatewayResult {
 
     companion object {
         @JvmStatic
-        fun create(json: String?): GatewayResult {
+        fun create(json: String): GatewayResult {
             return try {
                 val result = JSONReader(json).readObject()
                         ?: throw GatewayError("Unexpected network response: empty")
@@ -124,6 +124,12 @@ class GatewayResult {
                         ?: throw GatewayError("Unexpected network response: missing payload")
                 val payload = responseList.firstOrNull()
                 createFromPayload(payload)
+            } catch (ex: JSONParserException) {
+                if (json?.contains("canceling statement due to user request")) {
+                    GatewayResult(GatewayError("Timeout; the request took too long to complete and the server killed it"))
+                } else {
+                    GatewayResult(GatewayError("Internal Server Error; the server response is not JSON"))
+                }
             } catch (ex: Exception) {
                 GatewayResult(ex)
             }
