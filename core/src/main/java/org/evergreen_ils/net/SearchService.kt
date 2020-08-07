@@ -29,4 +29,5 @@ interface SearchService {
     suspend fun fetchRecordMODS(id: Int): Result<OSRFObject>
     suspend fun fetchMetarecordMODS(id: Int): Result<OSRFObject>
     suspend fun fetchHoldParts(id: Int): Result<List<OSRFObject>>
+    suspend fun fetchMulticlassQuery(queryString: String, limit: Int): Result<OSRFObject>
 }

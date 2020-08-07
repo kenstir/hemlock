@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2012 Evergreen Open-ILS
  * @author Daniel-Octavian Rizea
+ * Kotlin conversion by Kenneth H. Cox
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -445,12 +446,11 @@ class PlaceHoldActivity : BaseActivity() {
 
     private fun initOrgSpinner() {
         val defaultOrgId = account?.pickupOrg
-        val list = ArrayList<String?>()
-        for (i in EgOrg.visibleOrgs.indices) {
-            val org = EgOrg.visibleOrgs[i]
+        val list = ArrayList<String>()
+        for ((index, org) in EgOrg.visibleOrgs.withIndex()) {
             list.add(org.spinnerLabel)
             if (org.id == defaultOrgId) {
-                selectedOrgPos = i
+                selectedOrgPos = index
             }
         }
         val adapter: ArrayAdapter<String> = OrgArrayAdapter(this, R.layout.org_item_layout, list, true)

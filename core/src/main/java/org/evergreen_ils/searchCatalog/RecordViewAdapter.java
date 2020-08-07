@@ -65,7 +65,7 @@ public class RecordViewAdapter extends RecyclerView.Adapter<RecordViewAdapter.Vi
             final String url = Gateway.INSTANCE.getUrl("/opac/extras/ac/jacket/small/r/" + record.doc_id);
             imageView.setImageUrl(url, Volley.getInstance(context).getImageLoader());
             //imageView.setDefaultImageResId(R.drawable.missing_art);//for screenshots
-            titleText.setText((record.title != null) ? record.title : context.getString(R.string.title_busy_ellipsis));
+            titleText.setText((record.title != null) ? record.title : "");
             RecordLoader.fetchSummaryMetadata(record, context, new RecordLoader.ResponseListener() {
                 @Override
                 public void onMetadataLoaded() {

@@ -58,7 +58,6 @@ class OrgDetailsActivity : BaseActivity() {
     private var phone: Button? = null
     private var map: Button? = null
     private var address: TextView? = null
-    private lateinit var orgDetailsRunnable: Runnable
     private var progress: ProgressDialogSupport? = null
 
     private var orgID: Int? = null

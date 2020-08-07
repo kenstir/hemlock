@@ -47,6 +47,7 @@
     <!-- Search -->
 
     <string name="search_hint">Search words</string>
+    <string name="msg_search_words_required">Search words cannot be empty</string>
     <string name="search_button">Search</string>
     <string name="search_button_alt">search</string>
     <string name="search_options_button_alt">search options visible</string>
@@ -198,7 +199,6 @@
     <string name="delete_list_negative_button">Keep list</string>
     <string name="delete_list_positive_button">Delete list</string>
     <string name="msg_retrieving_data">Retrieving data</string>
-    <string name="title_busy_ellipsis">busy...</string>
     <string name="format">Format</string>
     <string name="msg_loading_holds">Loading holds</string>
     <string name="msg_canceling_hold">Canceling hold</string>

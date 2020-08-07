@@ -27,11 +27,14 @@ import org.evergreen_ils.android.Log;
 import org.evergreen_ils.searchCatalog.RecordInfo;
 import org.evergreen_ils.data.Organization;
 import org.opensrf.net.http.HttpConnection;
+import org.opensrf.util.OSRFObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import androidx.annotation.NonNull;
 
 public class EgSearch {
 
@@ -41,11 +44,11 @@ public class EgSearch {
 
     public Organization selectedOrganization = null;
 
-    public Integer visible = 0;
+    public @NonNull Integer visible = 0;
 
     private static int searchLimit = 100;
 
-    private ArrayList<RecordInfo> results;
+    final private @NonNull ArrayList<RecordInfo> results;
     
     public static EgSearch getInstance() {
         if (instance == null) {
@@ -58,52 +61,22 @@ public class EgSearch {
         this.results = new ArrayList<>(searchLimit);
     }
 
-    private static HttpConnection conn() {
-        return Gateway.INSTANCE.getConn();
-    }
-
-    /**
-     * Gets the search results
-     * 
-     * @param searchText the search words
-     * @return the search results
-     */
-    public ArrayList<RecordInfo> getSearchResults(String searchText, String searchClass, String searchFormat, String sort, Integer offset) {
-
-        HashMap<String, Integer> argHash = new HashMap<>();
-        argHash.put("limit", searchLimit);
-        argHash.put("offset", offset);
-
-        String queryString = makeQueryString(searchText, searchClass, searchFormat, sort);
-
-        long start_ms = System.currentTimeMillis();
-        long now_ms = start_ms;
-
-        // do request
-        Object resp = Utils.doRequest(conn(), Api.SEARCH, Api.MULTICLASS_QUERY,
-                new Object[] { argHash, queryString, 1 });
-        Log.d(TAG, "Sync Response: " + resp);
-        now_ms = Log.logElapsedTime(TAG, now_ms, "search.query");
-
-        // handle cases of no results
-        Map<String, ?> response = (Map<String, ?>) resp;
-        visible = (response != null) ? Api.parseInt(response.get("count"), 0) : 0;
-        if (visible == 0)
-            return new ArrayList<>();
+    public void loadResults(@NonNull OSRFObject obj) {
+        clearResults();
+        visible = Api.parseInt(obj.get("count"), 0);
+        if (visible == 0) return;
 
         // parse ids list
-        List<List<?>> record_ids_lol = (List<List<?>>) response.get("ids");
-        results = RecordInfo.makeArray(record_ids_lol);
+        List<List<?>> record_ids_lol = (List<List<?>>) obj.get("ids");
 
-        Log.logElapsedTime(TAG, start_ms, "search.total");
-
-        return results;
+        // add to existing array, because SearchResultsFragment has an Adapter on it
+        results.addAll(RecordInfo.makeArray(record_ids_lol));
     }
 
     // Build query string, taken with a grain of salt from
     // https://wiki.evergreen-ils.org/doku.php?id=documentation:technical:search_grammar
     // e.g. "title:Harry Potter chamber of secrets search_format(book) site(MARLBORO)"
-    private String makeQueryString(String searchText, String searchClass, String searchFormat, String sort) {
+    public String makeQueryString(String searchText, String searchClass, String searchFormat, String sort) {
         StringBuilder sb = new StringBuilder();
         sb.append(searchClass).append(":").append(searchText);
         if (!TextUtils.isEmpty(searchFormat))

@@ -66,7 +66,7 @@ public class LiveServiceTest {
         mContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
         Analytics.initialize(mContext);
         Bundle b = InstrumentationRegistry.getArguments();
-        mServer = b.getString("server", "https://gapines.org");
+        mServer = b.getString("server");
         mOrgID = Integer.parseInt(b.getString("orgid", "1"));
         mUsername = b.getString("username");
         mPassword = b.getString("password");

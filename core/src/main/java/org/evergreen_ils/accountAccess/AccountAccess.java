@@ -19,23 +19,13 @@
  */
 package org.evergreen_ils.accountAccess;
 
-import android.app.Activity;
-import android.text.TextUtils;
-
 import org.evergreen_ils.Api;
-import org.evergreen_ils.android.AccountUtils;
 import org.evergreen_ils.android.App;
-import org.evergreen_ils.android.Log;
-import org.evergreen_ils.auth.Const;
 import org.evergreen_ils.data.Account;
-import org.evergreen_ils.data.BookBag;
 import org.evergreen_ils.net.Gateway;
-import org.evergreen_ils.searchCatalog.RecordInfo;
 import org.evergreen_ils.system.Utils;
 import org.opensrf.net.http.HttpConnection;
 import org.opensrf.util.OSRFObject;
-
-import java.util.ArrayList;
 
 public class AccountAccess {
 

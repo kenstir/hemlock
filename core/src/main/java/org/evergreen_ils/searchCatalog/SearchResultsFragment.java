@@ -50,8 +50,6 @@ public class SearchResultsFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //Bundle args = this.getArguments();
-        //mDataset = (ArrayList<RecordInfo>) args.getSerializable("recordList");
         mDataset = EgSearch.getInstance().getResults();
         mAdapter = new RecordViewAdapter(mDataset);
     }
