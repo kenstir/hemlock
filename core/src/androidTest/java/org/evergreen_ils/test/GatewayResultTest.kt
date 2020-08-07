@@ -18,15 +18,13 @@
 
 package org.evergreen_ils.test
 
-import android.content.Context
 import androidx.test.platform.app.InstrumentationRegistry
 import org.evergreen_ils.Api
-import org.evergreen_ils.net.GatewayEventError
 import org.evergreen_ils.android.Log
 import org.evergreen_ils.android.StdoutLogProvider
+import org.evergreen_ils.net.GatewayEventError
 import org.evergreen_ils.system.EgMessageMap
 import org.junit.Assert.*
-import org.junit.Before
 import org.junit.BeforeClass
 import org.junit.Test
 import org.opensrf.util.GatewayResult

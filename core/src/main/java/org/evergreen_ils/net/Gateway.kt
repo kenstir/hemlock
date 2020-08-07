@@ -56,8 +56,8 @@ object Gateway {
     var search: SearchService = GatewaySearch
 
     val conn: HttpConnection by lazy { HttpConnection(baseUrl.plus("/osrf-gateway-v1")) }
-    var _serverCacheKey: String? = null
-    val startTime = System.currentTimeMillis()
+    private var _serverCacheKey: String? = null
+    private val startTime = System.currentTimeMillis()
     var serverCacheKey: String
         get() = _serverCacheKey ?: startTime.toString()
         set(value) { _serverCacheKey = value }
@@ -126,13 +126,7 @@ object Gateway {
                 Response.ErrorListener { error ->
                     cont.resumeWithException(error)
                 })
-        r.setShouldCache(shouldCache)
-        r.retryPolicy = DefaultRetryPolicy(
-                timeoutMs,
-                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
-                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT)
-
-        VolleyWrangler.getInstance().addToRequestQueue(r)
+        enqueueRequest(r, shouldCache)
     }
 
     // fetchObject - make gateway request and expect json payload of OSRFObject
@@ -165,7 +159,15 @@ object Gateway {
                 Response.ErrorListener { error ->
                     cont.resumeWithException(error)
                 })
+        enqueueRequest(r, shouldCache)
+    }
+
+    private fun enqueueRequest(r: Request<*>, shouldCache: Boolean) {
         r.setShouldCache(shouldCache)
+        r.retryPolicy = DefaultRetryPolicy(
+                timeoutMs,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                0.0f)//do not increase timeout on retry
         VolleyWrangler.getInstance().addToRequestQueue(r)
     }
 

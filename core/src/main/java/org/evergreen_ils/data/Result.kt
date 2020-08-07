@@ -36,6 +36,23 @@ sealed class Result<out R> {
         }
     }
 
+    // useful for tests
+    val unwrappedError: Exception?
+        get() {
+            return when (this) {
+                is Success<*> -> null
+                is Error -> exception
+            }
+        }
+
+    val succeeded: Boolean
+        get() {
+            return when (this) {
+                is Success<*> -> true
+                is Error -> false
+            }
+        }
+
     override fun toString(): String {
         return when (this) {
             is Success<*> -> "Success[data=$data]"
@@ -43,9 +60,3 @@ sealed class Result<out R> {
         }
     }
 }
-
-/**
- * `true` if [Result] is of type [Success] & holds non-null [Success.data].
- */
-val Result<*>.succeeded
-    get() = this is Success && data != null

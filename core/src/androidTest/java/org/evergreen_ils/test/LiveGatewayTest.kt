@@ -18,16 +18,18 @@
 
 package org.evergreen_ils.test
 
+import android.os.Bundle
 import androidx.test.platform.app.InstrumentationRegistry
+import com.android.volley.TimeoutError
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import org.evergreen_ils.Api
+import org.evergreen_ils.android.Log
+import org.evergreen_ils.android.StdoutLogProvider
 import org.evergreen_ils.data.Result
 import org.evergreen_ils.net.Gateway
 import org.evergreen_ils.net.VolleyWrangler
-import org.evergreen_ils.android.Log
-import org.evergreen_ils.android.StdoutLogProvider
 import org.evergreen_ils.utils.getCustomMessage
 import org.junit.Assert.*
 import org.junit.BeforeClass
@@ -35,21 +37,28 @@ import org.junit.Test
 
 private const val TAG = "GatewayTest"
 
-//@RunWith(AndroidJUnit4::class)
 class LiveGatewayTest {
 
     companion object {
+
+        lateinit var args: Bundle
 
         @BeforeClass
         @JvmStatic
         @Throws(Exception::class)
         fun setUpClass() {
             Log.setProvider(StdoutLogProvider())
-            Log.d("hey", "here");
 
             val ctx = InstrumentationRegistry.getInstrumentation().targetContext
             VolleyWrangler.init(ctx)
-            Gateway.baseUrl = "https://kenstir.ddns.net"
+
+            // See root build.gradle for notes on customizing instrumented test variables
+            args = InstrumentationRegistry.getArguments()
+            val server = args.getString("server")
+            val username = args.getString("username")
+            val password = args.getString("password")
+
+            Gateway.baseUrl = server
             Gateway.clientCacheKey = "42"
         }
     }
@@ -117,6 +126,52 @@ class LiveGatewayTest {
                     assertEquals("Not found.  The server may be down for maintenance.",
                             ex.getCustomMessage())
                 }
+            }
+        }
+    }
+
+    suspend fun fetchStringWithDelay(timeoutMs: Int, delaySeconds: Float): Result<String> {
+        val oldTimeoutMs = Gateway.timeoutMs
+        Gateway.timeoutMs = timeoutMs
+        return try {
+            val url = args.getString("httpbinServer").plus("/delay/$delaySeconds")
+            val ret = Gateway.fetchString(url, false)
+            Result.Success(ret)
+        } catch (e: Exception) {
+            Result.Error(e)
+        } finally {
+            Gateway.timeoutMs = oldTimeoutMs
+        }
+    }
+
+    private fun logResult(result: Result<*>) {
+        when (result) {
+            is Result.Success -> Log.d(TAG, "success: ${result.data}")
+            is Result.Error -> Log.d(TAG, "error: ${result.exception}")
+        }
+    }
+
+    // With 0.5s delay, 100ms timeout, and 1 retry, this should fail with a TimeoutError
+    @Test
+    fun test_failWithTimeoutError() {
+        runBlocking {
+            launch(Dispatchers.Main) {
+                val result = fetchStringWithDelay(100, 0.5f)
+                logResult(result)
+                assertFalse(result.succeeded)
+                assertTrue(result.unwrappedError is TimeoutError)
+            }
+        }
+    }
+
+    // With 0 delay, 10s timeout, this should succeed
+    @Test
+    fun test_completesWithinTimeout() {
+        runBlocking {
+            launch(Dispatchers.Main) {
+                val result = fetchStringWithDelay(10_000, 0f)
+                logResult(result)
+                assertTrue(result.succeeded)
             }
         }
     }
