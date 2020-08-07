@@ -41,7 +41,7 @@ import com.android.volley.toolbox.StringRequest;
 
 import org.evergreen_ils.R;
 import org.evergreen_ils.accountAccess.AccountUtils;
-import org.evergreen_ils.net.VolleyWrangler;
+import org.evergreen_ils.net.Volley;
 import org.evergreen_ils.system.Library;
 import org.evergreen_ils.android.Log;
 import org.evergreen_ils.android.Analytics;
@@ -120,7 +120,7 @@ public class GenericAuthenticatorActivity extends AuthenticatorActivity {
                         showAlert(error.getMessage());
                     }
                 });
-        VolleyWrangler.getInstance(this).addToRequestQueue(r);
+        Volley.getInstance(this).addToRequestQueue(r);
     }
 
     private void chooseNearestLibrary() {

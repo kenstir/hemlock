@@ -7,21 +7,17 @@ import android.util.LruCache;
 
 import com.android.volley.*;
 import com.android.volley.toolbox.ImageLoader;
-import com.android.volley.toolbox.Volley;
+
 import org.evergreen_ils.android.Log;
 
-/**
- * Created by kenstir on 12/2/2015.
- */
-// code from http://developer.android.com/training/volley/
-// or SallyPort or VolleyPort or VolleyWrapper
-public class VolleyWrangler {
-    private static VolleyWrangler mInstance;
+// code derived from http://developer.android.com/training/volley/
+public class Volley {
+    private static Volley mInstance;
     private RequestQueue mRequestQueue;
     private ImageLoader mImageLoader;
     private static Context mCtx;
 
-    private VolleyWrangler(Context context) {
+    private Volley(Context context) {
         mCtx = context.getApplicationContext();
         mRequestQueue = getRequestQueue();
 
@@ -42,9 +38,9 @@ public class VolleyWrangler {
                 });
     }
 
-    public static synchronized VolleyWrangler getInstance(Context context) {
+    public static synchronized Volley getInstance(Context context) {
         if (mInstance == null) {
-            mInstance = new VolleyWrangler(context);
+            mInstance = new Volley(context);
             //VolleyLog.setTag("volley");
             VolleyLog.DEBUG = true;
         }
@@ -55,7 +51,7 @@ public class VolleyWrangler {
         if (mRequestQueue == null) {
             // getApplicationContext() is key, it keeps you from leaking the
             // Activity or BroadcastReceiver if someone passes one in.
-            mRequestQueue = Volley.newRequestQueue(mCtx.getApplicationContext());
+            mRequestQueue = com.android.volley.toolbox.Volley.newRequestQueue(mCtx.getApplicationContext());
         }
         return mRequestQueue;
     }

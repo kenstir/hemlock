@@ -30,19 +30,14 @@ import org.evergreen_ils.accountAccess.AccountAccess;
 import org.evergreen_ils.android.Analytics;
 import org.evergreen_ils.android.Log;
 import org.evergreen_ils.net.GatewayJsonObjectRequest;
-import org.evergreen_ils.net.VolleyWrangler;
+import org.evergreen_ils.net.Volley;
 import org.opensrf.util.GatewayResponse;
 import org.opensrf.util.OSRFObject;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 
 /** Responsible for lazy loading of general server settings
  *
@@ -163,7 +158,7 @@ public class EvergreenServerLoader {
                         }
                     });
             incrNumOutstanding();
-            VolleyWrangler.getInstance(context).addToRequestQueue(r);
+            Volley.getInstance(context).addToRequestQueue(r);
         }
     }
 
@@ -208,7 +203,7 @@ public class EvergreenServerLoader {
                     }
                 });
         incrNumOutstanding();
-        VolleyWrangler.getInstance(context).addToRequestQueue(r);
+        Volley.getInstance(context).addToRequestQueue(r);
     }
 
     private static Integer parseMessagesResponse(GatewayResponse response) {
@@ -266,7 +261,7 @@ public class EvergreenServerLoader {
                 });
         incrNumOutstanding();
         r.setShouldCache(false);
-        VolleyWrangler.getInstance(context).addToRequestQueue(r);
+        Volley.getInstance(context).addToRequestQueue(r);
     }
 
     // these don't really need to be synchronized as they happen on the main thread

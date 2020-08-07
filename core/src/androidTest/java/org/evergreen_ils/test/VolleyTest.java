@@ -13,7 +13,7 @@ import com.android.volley.toolbox.StringRequest;
 
 import org.evergreen_ils.Api;
 import org.evergreen_ils.android.Log;
-import org.evergreen_ils.net.VolleyWrangler;
+import org.evergreen_ils.net.Volley;
 import org.evergreen_ils.system.Utils;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -31,11 +31,11 @@ import java.util.concurrent.locks.ReentrantLock;
  * Created by kenstir on 12/5/2015.
  */
 @RunWith(AndroidJUnit4.class)
-public class VolleyWranglerTest {
+public class VolleyTest {
 
-    private static final String TAG = VolleyWranglerTest.class.getSimpleName();
+    private static final String TAG = VolleyTest.class.getSimpleName();
     private String mServer;
-    private VolleyWrangler mVolley;
+    private Volley mVolley;
     private Response.ErrorListener mVolleyErrorListener;
     private Response.Listener<String> mVolleyStringResponseListener;
     private Response.Listener<JSONObject> mVolleyJsonResponseListener;
@@ -57,7 +57,7 @@ public class VolleyWranglerTest {
         Bundle b = InstrumentationRegistry.getArguments();
         mServer = b.getString("server", "https://catalog.cwmars.org");
 
-        mVolley = VolleyWrangler.getInstance(ctx);
+        mVolley = Volley.getInstance(ctx);
         mVolleyErrorListener = new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
