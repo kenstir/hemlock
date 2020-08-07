@@ -53,9 +53,10 @@ public class VolleyTest {
     public void setUp() throws Exception {
         Context ctx = InstrumentationRegistry.getInstrumentation().getTargetContext();
 
-        // read extra options: -e server SERVER
+        // See root build.gradle for notes on customizing instrumented test variables
         Bundle b = InstrumentationRegistry.getArguments();
-        mServer = b.getString("server", "https://catalog.cwmars.org");
+        mServer = b.getString("server");
+
         Gateway.baseUrl = mServer;
         Gateway.clientCacheKey = "42";
 
