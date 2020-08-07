@@ -29,7 +29,7 @@ import org.evergreen_ils.android.Log
 import org.evergreen_ils.android.StdoutLogProvider
 import org.evergreen_ils.data.Result
 import org.evergreen_ils.net.Gateway
-import org.evergreen_ils.net.VolleyWrangler
+import org.evergreen_ils.net.Volley
 import org.evergreen_ils.utils.getCustomMessage
 import org.junit.Assert.*
 import org.junit.BeforeClass
@@ -50,7 +50,7 @@ class LiveGatewayTest {
             Log.setProvider(StdoutLogProvider())
 
             val ctx = InstrumentationRegistry.getInstrumentation().targetContext
-            VolleyWrangler.init(ctx)
+            Volley.init(ctx)
 
             // See root build.gradle for notes on customizing instrumented test variables
             args = InstrumentationRegistry.getArguments()

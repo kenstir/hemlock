@@ -164,7 +164,7 @@ object Gateway {
                 timeoutMs,
                 DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
                 0.0f)//do not increase timeout on retry
-        VolleyWrangler.getInstance().addToRequestQueue(r)
+        Volley.getInstance().addToRequestQueue(r)
     }
 
     /** for testing, inject an error randomly */

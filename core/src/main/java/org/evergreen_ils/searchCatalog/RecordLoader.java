@@ -30,7 +30,7 @@ import org.evergreen_ils.R;
 import org.evergreen_ils.system.EgOrg;
 import org.evergreen_ils.net.Gateway;
 import org.evergreen_ils.net.GatewayJsonObjectRequest;
-import org.evergreen_ils.net.VolleyWrangler;
+import org.evergreen_ils.net.Volley;
 import org.evergreen_ils.android.Log;
 import org.opensrf.util.GatewayResult;
 
@@ -83,8 +83,8 @@ public class RecordLoader {
                             responseListener.onMetadataLoaded();
                         }
                     },
-                    VolleyWrangler.logErrorListener(TAG));
-            VolleyWrangler.getInstance(context).addToRequestQueue(r);
+                    Volley.logErrorListener(TAG));
+            Volley.getInstance(context).addToRequestQueue(r);
         }
     }
 
@@ -109,12 +109,12 @@ public class RecordLoader {
                             responseListener.onMetadataLoaded();
                         }
                     },
-                    VolleyWrangler.logErrorListener(TAG));
+                    Volley.logErrorListener(TAG));
             r.setRetryPolicy(new DefaultRetryPolicy(
                     Api.LONG_TIMEOUT_MS,
                     DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
                     DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-            VolleyWrangler.getInstance(context).addToRequestQueue(r);
+            Volley.getInstance(context).addToRequestQueue(r);
         }
     }
 
@@ -139,8 +139,8 @@ public class RecordLoader {
                             responseListener.onIconFormatLoaded();
                         }
                     },
-                    VolleyWrangler.logErrorListener(TAG));
-            VolleyWrangler.getInstance(context).addToRequestQueue(r);
+                    Volley.logErrorListener(TAG));
+            Volley.getInstance(context).addToRequestQueue(r);
         }
     }
 
@@ -169,7 +169,7 @@ public class RecordLoader {
                             RecordInfo.setCopySummary(record, null);
                         }
                     });
-            VolleyWrangler.getInstance(context).addToRequestQueue(r);
+            Volley.getInstance(context).addToRequestQueue(r);
         }
     }
 

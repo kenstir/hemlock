@@ -43,7 +43,7 @@ import org.evergreen_ils.data.CopyLocationCounts;
 import org.evergreen_ils.system.EgOrg;
 import org.evergreen_ils.net.Gateway;
 import org.evergreen_ils.net.GatewayJsonObjectRequest;
-import org.evergreen_ils.net.VolleyWrangler;
+import org.evergreen_ils.net.Volley;
 import org.evergreen_ils.android.Analytics;
 import org.evergreen_ils.android.Log;
 import org.evergreen_ils.data.Organization;
@@ -202,7 +202,7 @@ public class CopyInformationActivity extends AppCompatActivity {
                         updateCopyInfo(RecordInfo.parseCopyLocationCounts(record, null));
                     }
                 });
-        VolleyWrangler.getInstance(this).addToRequestQueue(r);
+        Volley.getInstance(this).addToRequestQueue(r);
     }
 
     class CopyInformationArrayAdapter extends ArrayAdapter<CopyLocationCounts> {

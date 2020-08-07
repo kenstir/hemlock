@@ -23,7 +23,7 @@ import android.widget.TextView;
 import com.android.volley.toolbox.NetworkImageView;
 
 import org.evergreen_ils.net.Gateway;
-import org.evergreen_ils.net.VolleyWrangler;
+import org.evergreen_ils.net.Volley;
 import org.evergreen_ils.R;
 import org.evergreen_ils.android.Log;
 
@@ -63,7 +63,7 @@ public class RecordViewAdapter extends RecyclerView.Adapter<RecordViewAdapter.Vi
             final Context context = imageView.getContext();
             // todo is it better to load /jacket/medium/ here so it is cached for the details view?
             final String url = Gateway.INSTANCE.getUrl("/opac/extras/ac/jacket/small/r/" + record.doc_id);
-            imageView.setImageUrl(url, VolleyWrangler.getInstance(context).getImageLoader());
+            imageView.setImageUrl(url, Volley.getInstance(context).getImageLoader());
             //imageView.setDefaultImageResId(R.drawable.missing_art);//for screenshots
             titleText.setText((record.title != null) ? record.title : context.getString(R.string.title_busy_ellipsis));
             RecordLoader.fetchSummaryMetadata(record, context, new RecordLoader.ResponseListener() {

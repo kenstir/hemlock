@@ -44,7 +44,7 @@ import org.evergreen_ils.android.Log;
 import org.evergreen_ils.data.BookBag;
 import org.evergreen_ils.data.Organization;
 import org.evergreen_ils.net.Gateway;
-import org.evergreen_ils.net.VolleyWrangler;
+import org.evergreen_ils.net.Volley;
 import org.evergreen_ils.searchCatalog.CopyInformationActivity;
 import org.evergreen_ils.searchCatalog.RecordInfo;
 import org.evergreen_ils.searchCatalog.RecordLoader;
@@ -158,7 +158,7 @@ public class DetailsFragment extends Fragment {
 
         // Start async image load
         final String imageHref = Gateway.INSTANCE.getUrl("/opac/extras/ac/jacket/medium/r/" + record.doc_id);
-        ImageLoader imageLoader = VolleyWrangler.getInstance(getActivity()).getImageLoader();
+        ImageLoader imageLoader = Volley.getInstance(getActivity()).getImageLoader();
         recordImage.setImageUrl(imageHref, imageLoader);
         //recordImage.setDefaultImageResId(R.drawable.missing_art);//for screenshots
 

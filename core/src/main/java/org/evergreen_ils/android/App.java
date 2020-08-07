@@ -29,7 +29,7 @@ import org.evergreen_ils.R;
 import org.evergreen_ils.data.Account;
 import org.evergreen_ils.data.Library;
 import org.evergreen_ils.net.Gateway;
-import org.evergreen_ils.net.VolleyWrangler;
+import org.evergreen_ils.net.Volley;
 import org.evergreen_ils.utils.ui.AppState;
 import org.evergreen_ils.views.launch.LaunchActivity;
 import org.evergreen_ils.views.MainActivity;
@@ -113,7 +113,7 @@ public class App {
         AppState.init(context);
         if (behavior == null)
             behavior = AppFactory.makeBehavior(context.getResources());
-        VolleyWrangler.init(context);
+        Volley.init(context);
         Gateway.clientCacheKey = Integer.toString(getVersionCode(context));
     }
 

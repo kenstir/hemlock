@@ -14,7 +14,7 @@ import com.android.volley.toolbox.StringRequest;
 import org.evergreen_ils.Api;
 import org.evergreen_ils.net.Gateway;
 import org.evergreen_ils.android.Log;
-import org.evergreen_ils.net.VolleyWrangler;
+import org.evergreen_ils.net.Volley;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.Before;
@@ -35,7 +35,7 @@ public class VolleyWranglerTest {
 
     private static final String TAG = VolleyWranglerTest.class.getSimpleName();
     private String mServer;
-    private VolleyWrangler mVolley;
+    private Volley mVolley;
     private Response.ErrorListener mVolleyErrorListener;
     private Response.Listener<String> mVolleyStringResponseListener;
     private Response.Listener<JSONObject> mVolleyJsonResponseListener;
@@ -59,7 +59,7 @@ public class VolleyWranglerTest {
         Gateway.baseUrl = mServer;
         Gateway.clientCacheKey = "42";
 
-        mVolley = VolleyWrangler.getInstance(ctx);
+        mVolley = Volley.getInstance(ctx);
         mVolleyErrorListener = new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
