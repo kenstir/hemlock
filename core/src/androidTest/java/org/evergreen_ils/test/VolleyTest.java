@@ -31,9 +31,9 @@ import java.util.concurrent.locks.ReentrantLock;
  * Created by kenstir on 12/5/2015.
  */
 @RunWith(AndroidJUnit4.class)
-public class VolleyWranglerTest {
+public class VolleyTest {
 
-    private static final String TAG = VolleyWranglerTest.class.getSimpleName();
+    private static final String TAG = VolleyTest.class.getSimpleName();
     private String mServer;
     private Volley mVolley;
     private Response.ErrorListener mVolleyErrorListener;
