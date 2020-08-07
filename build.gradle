@@ -1,10 +1,14 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
-// Instrumented unit tests use these 'test*' variables.
-// Override them in a secret.gradle file.
+// INSTRUMENTED TEST VARIABLES
+// ---------------------------
+// test* variables are defaulted here,
+// passed as arguments to instrumented tests in core/build.gradle, and
+// can be overridden in (git-ignored) secret.gradle
 ext.testServer = "https://demo.evergreencatalog.com"
 ext.testUsername = "hemlock"
-ext.testPassword = "xyzzy"
+ext.testPassword = "1234"
+ext.testHttpbinServer = "https://httpbin.org"
 def secretGradleFile = rootProject.file('secret.gradle')
 if (secretGradleFile.exists()) {
     apply from: secretGradleFile
