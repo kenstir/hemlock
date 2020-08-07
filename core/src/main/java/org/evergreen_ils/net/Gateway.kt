@@ -24,15 +24,10 @@ import com.android.volley.Request
 import com.android.volley.Response
 import com.android.volley.toolbox.StringRequest
 import org.evergreen_ils.Api
-import org.evergreen_ils.android.Analytics
 import org.evergreen_ils.android.Log
-import org.opensrf.ShouldNotHappenException
 import org.opensrf.net.http.HttpConnection
 import org.opensrf.util.GatewayResult
 import org.opensrf.util.JSONWriter
-import java.net.URI
-import java.net.URISyntaxException
-import java.net.URLEncoder
 import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
 import kotlin.random.Random
@@ -64,6 +59,7 @@ object Gateway {
 
     var randomErrorPercentage = 0
     var timeoutMs = 15_000
+    var searchTimeoutMs = 60_000
 
     fun buildQuery(service: String?, method: String?, params: Array<Any?>, addCacheArgs: Boolean = true): String {
         val sb = StringBuilder(INITIAL_URL_SIZE)

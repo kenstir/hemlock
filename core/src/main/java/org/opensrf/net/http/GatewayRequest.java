@@ -2,6 +2,7 @@ package org.opensrf.net.http;
 
 import org.evergreen_ils.android.Log;
 import org.evergreen_ils.android.Analytics;
+import org.evergreen_ils.net.Gateway;
 import org.json.JSONObject;
 import org.opensrf.Method;
 import org.opensrf.util.JSONReader;
@@ -34,7 +35,8 @@ public class GatewayRequest extends HttpRequest {
             Log.d(TAG, "[net] POST "+httpConn.url.toString()+"?"+postData);
 
             urlConn = (HttpURLConnection) httpConn.url.openConnection();
-            urlConn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded"); 
+            urlConn.setReadTimeout(Gateway.INSTANCE.getSearchTimeoutMs());
+            urlConn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
             urlConn.setDoInput(true);
             urlConn.setDoOutput(true);
 

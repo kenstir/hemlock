@@ -32,21 +32,6 @@ public abstract class HttpRequest {
         this.method = method;
     }
 
-    public void sendAsync(final HttpRequestHandler handler) {
-        this.handler = handler;
-        httpConn.manageAsyncRequest(this);
-    }
-
-    protected void pushResponse(Object response) {
-        if (responseList == null)
-            responseList = new LinkedList<Object>();
-        responseList.add(response);
-    }
-
-    protected List responses() {
-        return responseList;
-    }
-    
     protected Object nextResponse() {
         if (complete || failed) return null;
         if (responseList.size() > 0)
