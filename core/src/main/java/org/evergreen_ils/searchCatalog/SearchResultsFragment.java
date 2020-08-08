@@ -50,7 +50,7 @@ public class SearchResultsFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mDataset = EgSearch.getInstance().getResults();
+        mDataset = EgSearch.INSTANCE.getResults();
         mAdapter = new RecordViewAdapter(mDataset);
     }
 

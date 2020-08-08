@@ -127,7 +127,7 @@ class SearchActivity : BaseActivity() {
 
     private fun clearResults() {
         haveSearched = false
-        EgSearch.getInstance().clearResults()
+        EgSearch.clearResults()
     }
 
     private fun initSearchButton() {
@@ -179,12 +179,12 @@ class SearchActivity : BaseActivity() {
                 imm.hideSoftInputFromWindow(searchTextView?.windowToken, 0)
 
                 // query returns a list of IDs
-                val queryString = EgSearch.getInstance().makeQueryString(searchText, searchClass, searchFormatCode, getString(R.string.ou_sort_by))
-                val result = Gateway.search.fetchMulticlassQuery(queryString, EgSearch.getSearchLimit())
+                val queryString = EgSearch.makeQueryString(searchText, searchClass, searchFormatCode, getString(R.string.ou_sort_by))
+                val result = Gateway.search.fetchMulticlassQuery(queryString, EgSearch.searchLimit)
                 // logSearchExecuteEvent(result)
                 when (result) {
                     is Result.Success ->
-                        EgSearch.getInstance().loadResults(result.data)
+                        EgSearch.loadResults(result.data)
                     is Result.Error -> {
                         showAlert(result.exception)
                         return@async
@@ -206,11 +206,11 @@ class SearchActivity : BaseActivity() {
 
     private fun updateSearchResultsSummary() {
         var s: String? = null
-        val size = EgSearch.getInstance().results.size
-        if (size < EgSearch.getInstance().visible) {
-            s = getString(R.string.first_n_of_m_results, size, EgSearch.getInstance().visible)
+        val size = EgSearch.results.size
+        if (size < EgSearch.visible) {
+            s = getString(R.string.first_n_of_m_results, size, EgSearch.visible)
         } else if (size > 0 || haveSearched) {
-            s = getString(R.string.n_results, EgSearch.getInstance().visible)
+            s = getString(R.string.n_results, EgSearch.visible)
         }
         searchResultsSummary?.text = s
     }
@@ -228,10 +228,10 @@ class SearchActivity : BaseActivity() {
         val adapter: ArrayAdapter<String> = OrgArrayAdapter(this, R.layout.org_item_layout, list, false)
         orgSpinner?.adapter = adapter
         orgSpinner?.setSelection(selectedOrgPos)
-        EgSearch.getInstance().selectOrganisation(EgOrg.visibleOrgs[selectedOrgPos])
+        EgSearch.selectedOrganization = EgOrg.visibleOrgs[selectedOrgPos]
         orgSpinner?.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>?, view: View, position: Int, id: Long) {
-                EgSearch.getInstance().selectOrganisation(EgOrg.visibleOrgs[position])
+                EgSearch.selectedOrganization = EgOrg.visibleOrgs[position]
             }
 
             override fun onNothingSelected(arg0: AdapterView<*>?) {}
@@ -248,9 +248,9 @@ class SearchActivity : BaseActivity() {
         registerForContextMenu(findViewById(R.id.search_results_list))
         searchResultsFragment?.setOnRecordClickListener { record, position ->
             val intent = Intent(baseContext, SampleUnderlinesNoFade::class.java)
-            intent.putExtra("orgID", EgSearch.getInstance().selectedOrganization.id)
+            intent.putExtra("orgID", EgSearch.selectedOrganization?.id)
             intent.putExtra("recordPosition", position)
-            intent.putExtra("numResults", EgSearch.getInstance().visible)
+            intent.putExtra("numResults", EgSearch.visible)
             startActivityForResult(intent, 10)
         }
         searchResultsFragment?.setOnRecordLongClickListener { record, position ->
@@ -276,9 +276,9 @@ class SearchActivity : BaseActivity() {
         when (item.itemId) {
             App.ITEM_SHOW_DETAILS -> {
                 val intent = Intent(baseContext, SampleUnderlinesNoFade::class.java)
-                intent.putExtra("orgID", EgSearch.getInstance().selectedOrganization.id)
+                intent.putExtra("orgID", EgSearch.selectedOrganization?.id)
                 intent.putExtra("recordPosition", info.position)
-                intent.putExtra("numResults", EgSearch.getInstance().visible)
+                intent.putExtra("numResults", EgSearch.visible)
                 startActivity(intent)
                 return true
             }

@@ -93,7 +93,7 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
 
         Analytics.initialize(this)
         App.init(this)
-        EgSearch.setSearchLimit(resources.getInteger(R.integer.ou_search_limit))
+        EgSearch.searchLimit = resources.getInteger(R.integer.ou_search_limit)
         ThemeManager.applyNightMode()
 
         initMenuProvider()

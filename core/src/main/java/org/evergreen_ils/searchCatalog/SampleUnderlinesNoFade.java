@@ -60,7 +60,7 @@ public class SampleUnderlinesNoFade extends BasePagerActivity {
 
         orgID = getIntent().getIntExtra("orgID", 1);
         records = (ArrayList<RecordInfo>) getIntent().getSerializableExtra("recordList");
-        if (records == null) records = EgSearch.getInstance().getResults();
+        if (records == null) records = EgSearch.INSTANCE.getResults();
         int record_position = getIntent().getIntExtra("recordPosition", 0);
         numResults = getIntent().getIntExtra("numResults", records.size());
 
