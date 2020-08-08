@@ -77,7 +77,6 @@ public class SampleUnderlinesNoFade extends BasePagerActivity {
 
     private void finishWithIntent() {
         Intent intent = new Intent();
-        //intent.putExtra("recordList", records);
         setResult(RETURN_DATA, intent);
         finish();
     }
