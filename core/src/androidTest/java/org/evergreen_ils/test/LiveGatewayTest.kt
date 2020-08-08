@@ -131,8 +131,8 @@ class LiveGatewayTest {
     }
 
     suspend fun fetchStringWithDelay(timeoutMs: Int, delaySeconds: Float): Result<String> {
-        val oldTimeoutMs = Gateway.timeoutMs
-        Gateway.timeoutMs = timeoutMs
+        val oldTimeoutMs = Gateway.defaultTimeoutMs
+        Gateway.defaultTimeoutMs = timeoutMs
         return try {
             val url = args.getString("httpbinServer").plus("/delay/$delaySeconds")
             val ret = Gateway.fetchString(url, false)
@@ -140,7 +140,7 @@ class LiveGatewayTest {
         } catch (e: Exception) {
             Result.Error(e)
         } finally {
-            Gateway.timeoutMs = oldTimeoutMs
+            Gateway.defaultTimeoutMs = oldTimeoutMs
         }
     }
 

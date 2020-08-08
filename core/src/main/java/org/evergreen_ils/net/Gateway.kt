@@ -28,6 +28,7 @@ import org.evergreen_ils.android.Log
 import org.opensrf.net.http.HttpConnection
 import org.opensrf.util.GatewayResult
 import org.opensrf.util.JSONWriter
+import org.opensrf.util.OSRFObject
 import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
 import kotlin.random.Random
@@ -58,7 +59,7 @@ object Gateway {
         set(value) { _serverCacheKey = value }
 
     var randomErrorPercentage = 0
-    var timeoutMs = 15_000
+    var defaultTimeoutMs = 30_000
     var searchTimeoutMs = 60_000
 
     fun buildQuery(service: String?, method: String?, params: Array<Any?>, addCacheArgs: Boolean = true): String {
@@ -102,12 +103,14 @@ object Gateway {
     }
 
     // Make an OSRF Gateway request from inside a CoroutineScope.  `block` is expected to return T or throw
+    suspend fun <T> fetch(service: String, method: String, args: Array<Any?>, options: RequestOptions, block: (GatewayResult) -> T) =
+            fetchImpl(service, method, args, options, block)
     suspend fun <T> fetch(service: String, method: String, args: Array<Any?>, shouldCache: Boolean, block: (GatewayResult) -> T) =
-            fetchImpl(service, method, args, shouldCache, block)
+            fetchImpl(service, method, args, RequestOptions(defaultTimeoutMs, shouldCache, true), block)
 
-    private suspend fun <T> fetchImpl(service: String, method: String, args: Array<Any?>, shouldCache: Boolean, block: (GatewayResult) -> T) = suspendCoroutine<T> { cont ->
+    private suspend fun <T> fetchImpl(service: String, method: String, args: Array<Any?>, options: RequestOptions, block: (GatewayResult) -> T) = suspendCoroutine<T> { cont ->
         maybeInjectRandomError()
-        val url = buildUrl(service, method, args, shouldCache)
+        val url = buildUrl(service, method, args, options.shouldCache)
         val r = GatewayJsonObjectRequest(
                 url,
                 Request.Priority.NORMAL,
@@ -122,7 +125,7 @@ object Gateway {
                 Response.ErrorListener { error ->
                     cont.resumeWithException(error)
                 })
-        enqueueRequest(r, shouldCache)
+        enqueueRequest(r, options)
     }
 
     // fetchObject - make gateway request and expect json payload of OSRFObject
@@ -155,14 +158,14 @@ object Gateway {
                 Response.ErrorListener { error ->
                     cont.resumeWithException(error)
                 })
-        enqueueRequest(r, shouldCache)
+        enqueueRequest(r, RequestOptions(defaultTimeoutMs, shouldCache, true))
     }
 
-    private fun enqueueRequest(r: Request<*>, shouldCache: Boolean) {
-        r.setShouldCache(shouldCache)
+    private fun enqueueRequest(r: Request<*>, options: RequestOptions) {
+        r.setShouldCache(options.shouldCache)
         r.retryPolicy = DefaultRetryPolicy(
-                timeoutMs,
-                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                options.timeoutMs,
+                if (options.shouldRetry) 1 else 0,
                 0.0f)//do not increase timeout on retry
         Volley.getInstance().addToRequestQueue(r)
     }

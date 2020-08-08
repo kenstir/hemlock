@@ -74,28 +74,4 @@ public class Utils {
         return null;
 
     }
-
-    // alternate version of doRequest
-    public static Object doRequest(HttpConnection conn, String service,
-                                   String methodName, Object[] params) {
-        Method method = new Method(methodName);
-        for (int i = 0; i < params.length; i++) {
-            method.addParam(params[i]);
-        }
-        Analytics.logRequest(service, method);
-
-        // sync request
-        long now_ms = System.currentTimeMillis();
-        HttpRequest req = new GatewayRequest(conn, service, method).send();
-        Object resp;
-
-        while ((resp = req.recv()) != null) {
-            Analytics.logResponse(resp);
-            Log.logElapsedTime(TAG, now_ms, "doRequest "+methodName);
-            return resp;
-        }
-
-        return null;
-    }
-
 }

@@ -87,8 +87,7 @@ public class LiveServiceTest {
     public void testCopyStatusAll() throws Exception {
         assertLoggedIn();
 
-        Object o = Utils.doRequest(conn(), Api.SEARCH,
-                Api.COPY_STATUS_ALL, new Object[]{});
+        Object o = doRequest(conn(), Api.SEARCH, Api.COPY_STATUS_ALL, new Object[]{});
         List<OSRFObject> ccs_list = (List<OSRFObject>) o;
         assertNotNull(ccs_list);
         assertTrue(ccs_list.size() > 0);
@@ -100,8 +99,7 @@ public class LiveServiceTest {
     public void testOrgTypesRetrieve() throws Exception {
         assertLoggedIn();
 
-        Object resp = Utils.doRequest(mConn, Api.ACTOR,
-                Api.ORG_TYPES_RETRIEVE, new Object[]{});
+        Object resp = doRequest(mConn, Api.ACTOR, Api.ORG_TYPES_RETRIEVE, new Object[]{});
         List<OSRFObject> l = (List<OSRFObject>) resp;
         Log.i(TAG, "l=" + l);
     }
@@ -121,9 +119,7 @@ public class LiveServiceTest {
         assertLoggedIn();
 
         Integer org_id = mOrgID;
-        Object resp = Utils.doRequest(mConn, Api.ACTOR,
-                Api.ORG_UNIT_SETTING_RETRIEVE, new Object[]{
-                        mAuthToken, org_id});
+        Object resp = doRequest(mConn, Api.ACTOR, Api.ORG_UNIT_SETTING_RETRIEVE, new Object[]{mAuthToken, org_id});
         Map<String, ?> resp_map = ((Map<String, ?>) resp);
         printMap(resp_map);
         Boolean is_pickup_location = null;
@@ -141,7 +137,7 @@ public class LiveServiceTest {
         ArrayList<String> settings = new ArrayList<>();
         settings.add(Api.SETTING_ORG_UNIT_NOT_PICKUP_LIB);
         settings.add(Api.SETTING_SMS_ENABLE);
-        Object resp = Utils.doRequest(mConn, Api.ACTOR,
+        Object resp = doRequest(mConn, Api.ACTOR,
                 Api.ORG_UNIT_SETTING_BATCH, new Object[]{
                         org_id, settings, mAuthToken});
         Map<String, ?> resp_map = ((Map<String, ?>) resp);
@@ -164,7 +160,7 @@ public class LiveServiceTest {
         Integer org_id = mOrgID;
         String setting = Api.SETTING_ORG_UNIT_NOT_PICKUP_LIB;
         //String setting = Api.SETTING_SMS_ENABLE;
-        Object resp = Utils.doRequest(mConn, Api.ACTOR,
+        Object resp = doRequest(mConn, Api.ACTOR,
                 Api.ORG_UNIT_SETTING, new Object[]{
                         org_id, setting, Api.ANONYMOUS});
         Boolean is_pickup_location = null;
@@ -183,7 +179,7 @@ public class LiveServiceTest {
 
         HashMap<String, Object> args = new HashMap<>();
         args.put("active", 1);
-        Object resp = Utils.doRequest(conn(), Api.PCRUD,
+        Object resp = doRequest(conn(), Api.PCRUD,
                 Api.SEARCH_SMS_CARRIERS, new Object[]{
                         Api.ANONYMOUS, args});
         Log.d(TAG, "did we make it?");
@@ -264,7 +260,7 @@ public class LiveServiceTest {
         long now_ms = start_ms;
 
         // do request
-        Object resp = Utils.doRequest(conn(), Api.SEARCH, Api.MULTICLASS_QUERY,
+        Object resp = doRequest(conn(), Api.SEARCH, Api.MULTICLASS_QUERY,
                 new Object[]{argHash, queryString, 1});
         Log.d(TAG, "Sync Response: " + resp);
         now_ms = Log.logElapsedTime(TAG, now_ms, "search.query");
@@ -280,5 +276,10 @@ public class LiveServiceTest {
         //   [["1805532"],["2385399"]] // string ids only
         List<List<?>> record_ids_lol = (List<List<?>>) response.get("ids");
         Log.d(TAG, "length:" + record_ids_lol.size());
+    }
+
+    // hack until I evaluate the utility of this test code
+    Object doRequest(HttpConnection conn, String service, String methodName, Object[] params) {
+        return null;
     }
 }

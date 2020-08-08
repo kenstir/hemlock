@@ -91,7 +91,10 @@ object GatewaySearch: SearchService {
     override suspend fun fetchMulticlassQuery(queryString: String, limit: Int): Result<OSRFObject> {
         return try {
             val param = jsonMapOf("limit" to limit, "offset" to 0)
-            val ret = Gateway.fetchObject(Api.SEARCH, Api.MULTICLASS_QUERY, arrayOf(param, queryString, 1), true)
+            val options = RequestOptions(Gateway.searchTimeoutMs, true, true)
+            val ret = Gateway.fetch(Api.SEARCH, Api.MULTICLASS_QUERY, arrayOf<Any?>(param, queryString, 1), options) { result ->
+                result.asObject()
+            }
             Result.Success(ret)
         } catch (e: Exception) {
             Result.Error(e)

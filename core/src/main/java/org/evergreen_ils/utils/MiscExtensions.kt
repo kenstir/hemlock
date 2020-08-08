@@ -36,7 +36,7 @@ fun Exception.getCustomMessage(): String {
     when (this) {
         is java.util.concurrent.TimeoutException -> return "Timeout"
         is com.android.volley.TimeoutError ->
-            return "Operation timed out after ${Gateway.timeoutMs/1000} seconds"
+            return "Operation timed out"
         is com.android.volley.ClientError -> {
             this.networkResponse?.statusCode.let {
                 return when (it) {

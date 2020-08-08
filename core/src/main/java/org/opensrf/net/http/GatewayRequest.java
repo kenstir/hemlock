@@ -35,7 +35,7 @@ public class GatewayRequest extends HttpRequest {
             Log.d(TAG, "[net] POST "+httpConn.url.toString()+"?"+postData);
 
             urlConn = (HttpURLConnection) httpConn.url.openConnection();
-            urlConn.setReadTimeout(Gateway.INSTANCE.getSearchTimeoutMs());
+            urlConn.setReadTimeout(Gateway.INSTANCE.getDefaultTimeoutMs());
             urlConn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
             urlConn.setDoInput(true);
             urlConn.setDoOutput(true);

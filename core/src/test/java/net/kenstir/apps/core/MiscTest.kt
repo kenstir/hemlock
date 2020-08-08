@@ -20,6 +20,7 @@ package net.kenstir.apps.core
 
 import org.evergreen_ils.android.Log
 import org.evergreen_ils.android.StdoutLogProvider
+import org.evergreen_ils.net.Gateway
 import org.evergreen_ils.utils.getCustomMessage
 import org.junit.Assert.assertEquals
 import org.junit.BeforeClass
@@ -38,7 +39,7 @@ class MiscTest {
     @Test
     fun test_Exception_customMessage_basic() {
         assertEquals("Timeout", java.util.concurrent.TimeoutException().getCustomMessage())
-        assertEquals("Operation timed out after 15 seconds", com.android.volley.TimeoutError().getCustomMessage())
+        assertEquals("Operation timed out", com.android.volley.TimeoutError().getCustomMessage())
         assertEquals("Cancelled", java.lang.Exception().getCustomMessage())
         assertEquals("Cancelled", java.lang.Exception("").getCustomMessage())
     }

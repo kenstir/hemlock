@@ -289,7 +289,7 @@ class SearchActivity : BaseActivity() {
                 return true
             }
             App.ITEM_ADD_TO_LIST -> {
-                if (bookBags!!.size > 0) {
+                if (bookBags!!?.size > 0) {
                     Analytics.logEvent("Lists: Add to List", "via", "results_long_press")
                     showAddToListDialog(this, bookBags!!, info.record!!)
                 } else {
