@@ -38,6 +38,7 @@ import org.evergreen_ils.data.Account
 import org.evergreen_ils.data.BookBag
 import org.evergreen_ils.data.Result
 import org.evergreen_ils.net.Gateway
+import org.evergreen_ils.net.GatewayLoader
 import org.evergreen_ils.utils.ui.BaseActivity
 import org.evergreen_ils.utils.ui.ProgressDialogSupport
 import org.evergreen_ils.utils.ui.showAlert
@@ -97,15 +98,10 @@ class BookBagsActivity : BaseActivity() {
                 bookBagName?.text = null
 
                 // fetch bookbags
-                val result = Gateway.actor.fetchBookBags(App.getAccount())
+                val result = GatewayLoader.loadBookBagsAsync(App.getAccount())
                 when (result) {
-                    is Result.Success -> {
-                        App.getAccount().bookBags = BookBag.makeArray(result.data)
-                    }
-                    is Result.Error -> {
-                        showAlert(result.exception)
-                        return@async
-                    }
+                    is Result.Success -> {}
+                    is Result.Error -> { showAlert(result.exception); return@async }
                 }
 
                 // flesh bookbags

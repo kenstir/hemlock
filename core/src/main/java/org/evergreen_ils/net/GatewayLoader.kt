@@ -21,6 +21,7 @@ package org.evergreen_ils.net
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
+import org.evergreen_ils.android.App
 import org.evergreen_ils.system.EgOrg
 import org.evergreen_ils.data.Organization
 import org.evergreen_ils.android.Log
@@ -47,13 +48,23 @@ object GatewayLoader {
         }
     }
 
-    suspend fun loadBookBagsAsync(account: Account): Result<List<OSRFObject>?> {
+    suspend fun loadBookBagsAsync(account: Account): Result<Unit> {
         return if (account.bookBagsLoaded) {
             Log.d(TAG, "[kcxxx] loadBookBagsAsync...noop")
-            Result.Success(null)
+            Result.Success(Unit)
         } else {
             Log.d(TAG, "[kcxxx] loadBookBagsAsync...")
-            Gateway.actor.fetchBookBags(account)
+            val result = Gateway.actor.fetchBookBags(account)
+            when (result) {
+                is Result.Success -> {
+                    App.getAccount().loadBookBags(result.data)
+                    Log.d(TAG, "[kcxxx] loadBookBagsAsync...done")
+                    Result.Success(Unit)
+                }
+                is Result.Error -> {
+                    result
+                }
+            }
         }
     }
 }

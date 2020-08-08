@@ -97,6 +97,11 @@ class Account constructor(val username: String, var authToken: String?) {
         parseHoldNotifyValue(holdNotifyValue)
     }
 
+    fun loadBookBags(objects: List<OSRFObject>) {
+        bookBags = BookBag.makeArray(objects)
+        bookBagsLoaded = true
+    }
+
     fun parseHoldNotifyValue(value: String?) {
         // NB: value may be either ':' separated or '|' separated, e.g. "phone:email" or "email|sms"
         this.notifyByEmail = value?.contains("email") ?: false
