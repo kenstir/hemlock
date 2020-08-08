@@ -189,35 +189,6 @@ public class LiveServiceTest {
         }
     }
 
-//    @Ignore("run on demand")
-//    @Test
-//    public void testCreateHold() throws Exception {
-//        assertLoggedIn();
-//
-//        AccountAccess ac = AccountAccess.getInstance();
-//
-//        // Test cases
-//        Integer recordID;
-//        //recordID = 3486408;//cwmars: Zero Theorem
-//        //recordID = 1;//cwmars: will fail
-//        //recordID = 4030530;//cwmars: Arrival (ITEM_AGE_PROTECTED)
-//        recordID = 3788817; //cwmars: Anomalisa (ok)
-//
-//        Integer pickup_lib = ac.getDefaultPickupLibraryID();
-//        boolean email_notify = true;
-//        Integer sms_carrier_id = ac.getDefaultSMSCarrierID();
-//        String sms_number = ac.getDefaultSMSNumber();
-//        boolean suspendHold = false;
-//        String expire_time = null;
-//        String thaw_date = null;
-//
-//        Result result = ac.testAndCreateHold(recordID, pickup_lib, email_notify, null,
-//                sms_number, sms_carrier_id, expire_time, suspendHold, thaw_date);
-//        Log.d(TAG, "ok=" + result.isSuccess());
-//        Log.d(TAG, "msg=" + result.getErrorMessage());
-//        Log.d(TAG, "here");
-//    }
-//
 //    @Ignore("skip until I figure out how to pass username/password")
 //    @Test
 //    public void testMessagesRetrieve() throws Exception {
