@@ -22,11 +22,12 @@ import org.evergreen_ils.android.Log
 import org.evergreen_ils.data.SMSCarrier
 import org.opensrf.util.OSRFObject
 
-private const val TAG = "EgSms"
 
 object EgSms {
     @JvmStatic
     var carriers = mutableListOf<SMSCarrier>()
+
+    private const val TAG = "EgSms"
 
     fun loadCarriers(carriers: List<OSRFObject>) {
         synchronized(this) {

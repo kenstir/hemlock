@@ -22,10 +22,9 @@ import org.evergreen_ils.android.Log
 import org.evergreen_ils.data.CopyStatus
 import org.opensrf.util.OSRFObject
 
-private const val TAG = "EgCopyStatus"
-
 object EgCopyStatus {
     var copyStatusList = mutableListOf<CopyStatus>()
+    private const val TAG = "EgCopyStatus"
 
     fun loadCopyStatuses(ccs_list: List<OSRFObject>) {
         synchronized(this) {

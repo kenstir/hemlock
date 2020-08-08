@@ -26,13 +26,12 @@ import org.opensrf.util.OSRFObject
 import java.util.*
 import kotlin.Comparator
 
-private const val TAG = "EgOrg"
-
 object EgOrg {
     var orgTypes = mutableListOf<OrgType>()
     private var orgs = mutableListOf<Organization>()
     var smsEnabled = false
     const val consortiumID = 1
+    private const val TAG = "EgOrg"
 
     val allOrgs: List<Organization>
         get() = orgs
