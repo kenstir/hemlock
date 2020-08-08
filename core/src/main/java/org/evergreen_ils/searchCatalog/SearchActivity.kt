@@ -127,7 +127,7 @@ class SearchActivity : BaseActivity() {
 
     private fun clearResults() {
         haveSearched = false
-        EgSearch.getInstance().results.clear()
+        EgSearch.getInstance().clearResults()
     }
 
     private fun initSearchButton() {
