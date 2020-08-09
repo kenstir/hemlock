@@ -153,8 +153,6 @@ class BookBagDetailsActivity : BaseActivity() {
         return Result.Success(Unit)
     }
 
-//    if (bookBag!!.items.isEmpty()) Toast.makeText(this@BookBagDetailsActivity, R.string.msg_list_empty, Toast.LENGTH_LONG).show()
-
     private fun updateItemsList() {
         listAdapter?.clear()
         bookBag?.items.let { listAdapter?.addAll(it) }
@@ -185,7 +183,7 @@ class BookBagDetailsActivity : BaseActivity() {
     internal inner class BookBagItemsArrayAdapter(context: Context, private val resourceId: Int) : ArrayAdapter<BookBagItem>(context, resourceId) {
 
         override fun getView(position: Int, convertView: View?, parent: ViewGroup): View? {
-            var row = when(convertView) {
+            val row = when(convertView) {
                 null -> {
                     val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
                     inflater.inflate(resourceId, parent, false)
