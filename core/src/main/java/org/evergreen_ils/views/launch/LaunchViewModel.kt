@@ -127,10 +127,10 @@ class LaunchViewModel : ViewModel() {
                     }
                 })
 
-                // awaitAll
-                Log.d(TAG, "coro: await ${defs.size} deferreds ...")
+                // await all deferreds (see awaitAll doc for differences)
+                Log.d(TAG, "[kcxxx] await ${defs.size} deferreds ...")
                 defs.map { it.await() }
-                Log.d(TAG, "coro: await ${defs.size} deferreds ... done")
+                Log.d(TAG, "[kcxxx] await ${defs.size} deferreds ... done")
 
                 if (errors.get() == 0) {
                     _status.value = "Connected"

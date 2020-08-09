@@ -34,7 +34,6 @@ import org.evergreen_ils.R
 import org.evergreen_ils.android.Analytics
 import org.evergreen_ils.android.App
 import org.evergreen_ils.android.Log
-import org.evergreen_ils.data.Account
 import org.evergreen_ils.data.BookBag
 import org.evergreen_ils.data.Result
 import org.evergreen_ils.net.Gateway
@@ -98,8 +97,7 @@ class BookBagsActivity : BaseActivity() {
                 bookBagName?.text = null
 
                 // fetch bookbags
-                val result = GatewayLoader.loadBookBagsAsync(App.getAccount())
-                when (result) {
+                when (val result = GatewayLoader.loadBookBagsAsync(App.getAccount())) {
                     is Result.Success -> {}
                     is Result.Error -> { showAlert(result.exception); return@async }
                 }
@@ -107,7 +105,7 @@ class BookBagsActivity : BaseActivity() {
                 // flesh bookbags
                 for (bookBag in App.getAccount().bookBags) {
                     jobs.add(async {
-                        fetchBookBagDetails(bookBag, App.getAccount())
+                        GatewayLoader.loadBookBagContents(App.getAccount(), bookBag)
                     })
                 }
 
@@ -121,17 +119,6 @@ class BookBagsActivity : BaseActivity() {
                 progress?.dismiss()
             }
         }
-    }
-
-    private suspend fun fetchBookBagDetails(bookBag: BookBag, account: Account): Result<Unit> {
-        Log.d(TAG, "[kcxxx] bag:${bookBag.name}")
-        val result = Gateway.actor.fleshBookBagAsync(account, bookBag.id)
-        if (result is Result.Error) return result
-        val obj = result.get()
-        Log.d(TAG, "[kcxxx] bag content:$obj")
-        bookBag.fleshFromObject(obj)
-
-        return Result.Success(Unit)
     }
 
     private fun updateListAdapter() {

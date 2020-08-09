@@ -157,7 +157,7 @@ class HoldDetailsActivity : BaseActivity() {
 
     private fun cancelHold(record: HoldRecord) {
         async {
-            Log.d(TAG, "[kcxxx] cancelHold " + record.ahr.getInt("id"))
+//            Log.d(TAG, "[kcxxx] cancelHold " + record.ahr.getInt("id"))
             progress?.show(this@HoldDetailsActivity, getString(R.string.msg_canceling_hold))
 
             val holdId = record.ahr.getInt("id") ?: 0

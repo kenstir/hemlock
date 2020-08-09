@@ -38,6 +38,7 @@ import org.evergreen_ils.data.BookBag
 import org.evergreen_ils.data.BookBagItem
 import org.evergreen_ils.data.Result
 import org.evergreen_ils.net.Gateway
+import org.evergreen_ils.net.GatewayLoader
 import org.evergreen_ils.searchCatalog.RecordDetails
 import org.evergreen_ils.searchCatalog.RecordInfo
 import org.evergreen_ils.utils.ui.ActionBarUtils
@@ -54,7 +55,7 @@ class BookBagDetailsActivity : BaseActivity() {
     private var lv: ListView? = null
     private var listAdapter: BookBagItemsArrayAdapter? = null
     private var progress: ProgressDialogSupport? = null
-    private var bookBag: BookBag? = null
+    private lateinit var bookBag: BookBag
     private var bookBagName: TextView? = null
     private var bookBagDescription: TextView? = null
     private var deleteButton: Button? = null
@@ -75,8 +76,8 @@ class BookBagDetailsActivity : BaseActivity() {
         bookBagDescription = findViewById(R.id.bookbag_description)
         deleteButton = findViewById(R.id.remove_bookbag)
 
-        bookBagName?.text = bookBag?.name
-        bookBagDescription?.text = bookBag?.description
+        bookBagName?.text = bookBag.name
+        bookBagDescription?.text = bookBag.description
         deleteButton?.setOnClickListener(View.OnClickListener {
             Analytics.logEvent("Lists: Delete List")
             val builder = AlertDialog.Builder(this@BookBagDetailsActivity)
@@ -91,7 +92,7 @@ class BookBagDetailsActivity : BaseActivity() {
         lv?.setOnItemClickListener(AdapterView.OnItemClickListener { parent, view, position, id ->
             Analytics.logEvent("Lists: Tap List Item")
             val records = ArrayList<RecordInfo?>()
-            bookBag?.items?.let {
+            bookBag.items?.let {
                 for (item in it) {
                     records.add(item.recordInfo)
                 }
@@ -119,8 +120,14 @@ class BookBagDetailsActivity : BaseActivity() {
                 var jobs = mutableListOf<Job>()
                 progress?.show(this@BookBagDetailsActivity, getString(R.string.msg_retrieving_list_contents))
 
+                // fetch bookBag contents
+                when (val result = GatewayLoader.loadBookBagContents(App.getAccount(), bookBag)) {
+                    is Result.Success -> {}
+                    is Result.Error -> { showAlert(result.exception); return@async }
+                }
+
                 // fetch item details
-                bookBag?.items?.let {
+                bookBag.items?.let {
                     for (item in it) {
                         jobs.add(async {
                             fetchTargetDetails(item)

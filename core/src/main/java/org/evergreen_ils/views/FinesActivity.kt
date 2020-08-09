@@ -145,7 +145,7 @@ class FinesActivity : BaseActivity() {
         } else {
             pay_fines_button?.visibility = View.GONE
         }
-        Log.d(TAG, "[kcxxx] updatePayFinesButtonVisibility v:${pay_fines_button?.visibility}")
+//        Log.d(TAG, "[kcxxx] updatePayFinesButtonVisibility v:${pay_fines_button?.visibility}")
     }
 
     private fun updatePayFinesButtonState(enabled: Boolean) {
@@ -160,7 +160,7 @@ class FinesActivity : BaseActivity() {
     }
 
     private fun loadSummary(obj: OSRFObject?) {
-        Log.d(TAG, "[kcxxx] updateSummary: o:$obj")
+//        Log.d(TAG, "[kcxxx] updateSummary: o:$obj")
         total_owed?.text = decimalFormatter?.format(getFloat(obj, "total_owed"))
         total_paid?.text = decimalFormatter?.format(getFloat(obj, "total_paid"))
         val balance = getFloat(obj, "balance_owed")
@@ -176,7 +176,7 @@ class FinesActivity : BaseActivity() {
     }
 
     private fun loadTransactions(objects: List<OSRFObject>) {
-        Log.d(TAG, "[kcxxx] loadTransactions o:$objects")
+//        Log.d(TAG, "[kcxxx] loadTransactions o:$objects")
 
         listAdapter?.clear()
         val fines = FineRecord.makeArray(objects)

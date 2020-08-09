@@ -187,7 +187,7 @@ class LaunchActivity : AppCompatActivity(), CoroutineScope by MainScope() {
 
         // authToken zen: try it once and if it fails, invalidate it and try again
         var sessionResult = fetchSession(account.authTokenOrThrow())
-        Log.d(TAG, "[kcxxx] sessionResult:$sessionResult")
+        Log.d(TAG, "[auth] sessionResult.succeeded:${sessionResult.succeeded}")
         if (sessionResult is Result.Error) {
             AccountUtils.invalidateAuthToken(this, account.authToken)
             account.authToken = null
@@ -200,7 +200,7 @@ class LaunchActivity : AppCompatActivity(), CoroutineScope by MainScope() {
                 throw Exception(accountManagerResult.failureMessage)
             account.authToken = accountManagerResult.authToken
             sessionResult = fetchSession(account.authTokenOrThrow())
-            Log.d(TAG, "[kcxxx] sessionResult:$sessionResult")
+            Log.d(TAG, "[auth] sessionResult.succeeded:${sessionResult.succeeded}")
         }
         when (sessionResult) {
             is Result.Success -> account.loadSession(sessionResult.data)
@@ -215,7 +215,7 @@ class LaunchActivity : AppCompatActivity(), CoroutineScope by MainScope() {
 
         // get user settings
         val fleshedUserResult = Gateway.actor.fetchFleshedUser(account)
-        Log.d(TAG, "[kcxxx] fleshedUserResult:$fleshedUserResult")
+//        Log.d(TAG, "[kcxxx] fleshedUserResult:$fleshedUserResult")
         when (fleshedUserResult) {
             is Result.Success ->
                 account.loadFleshedUserSettings(fleshedUserResult.data)

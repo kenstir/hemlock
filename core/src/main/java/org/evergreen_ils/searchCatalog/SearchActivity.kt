@@ -43,6 +43,7 @@ import org.evergreen_ils.barcodescan.CaptureActivity
 import org.evergreen_ils.data.BookBag
 import org.evergreen_ils.data.Result
 import org.evergreen_ils.net.Gateway
+import org.evergreen_ils.net.GatewayLoader
 import org.evergreen_ils.system.EgCodedValueMap
 import org.evergreen_ils.system.EgOrg
 import org.evergreen_ils.system.EgSearch
@@ -61,7 +62,6 @@ class SearchActivity : BaseActivity() {
     private var searchResultsSummary: TextView? = null
     private var searchResultsFragment: SearchResultsFragment? = null
     private var progress: ProgressDialogSupport? = null
-    private var bookBags: ArrayList<BookBag>? = null
     private var searchForResultsRunnable: Runnable? = null
     private var haveSearched = false
     private var contextMenuRecordInfo: ContextMenuRecordInfo? = null
@@ -86,7 +86,6 @@ class SearchActivity : BaseActivity() {
 
         setContentView(R.layout.activity_search)
 
-        bookBags = App.getAccount().bookBags
         progress = ProgressDialogSupport()
         clearResults()
 
@@ -125,6 +124,12 @@ class SearchActivity : BaseActivity() {
         super.onDestroy()
     }
 
+    override fun onAttachedToWindow() {
+        super.onAttachedToWindow()
+        Log.d(TAG, object{}.javaClass.enclosingMethod?.name)
+        fetchData()
+    }
+
     private fun clearResults() {
         haveSearched = false
         EgSearch.clearResults()
@@ -157,6 +162,25 @@ class SearchActivity : BaseActivity() {
             }
             false
         })
+    }
+
+    private fun fetchData() {
+        async {
+            try {
+                Log.d(TAG, "[kcxxx] fetchData ...")
+                val start = System.currentTimeMillis()
+
+                // fetch bookbags
+                when (val result = GatewayLoader.loadBookBagsAsync(App.getAccount())) {
+                    is Result.Success -> {}
+                    is Result.Error -> { showAlert(result.exception); return@async }
+                }
+                Log.logElapsedTime(TAG, start, "[kcxxx] fetchData ... done")
+            } catch (ex: Exception) {
+                Log.d(TAG, "[kcxxx] fetchData ... caught", ex)
+                showAlert(ex)
+            }
+        }
     }
 
     private fun fetchSearchResults() {
@@ -261,11 +285,11 @@ class SearchActivity : BaseActivity() {
         }
     }
 
-    override fun onCreateContextMenu(menu: ContextMenu, v: View, menuInfo: ContextMenu.ContextMenuInfo) {
+    override fun onCreateContextMenu(menu: ContextMenu, v: View, menuInfo: ContextMenu.ContextMenuInfo?) {
         if (v.id == R.id.search_results_list) {
 //            val info = menuInfo as AdapterView.AdapterContextMenuInfo
             menu.add(Menu.NONE, App.ITEM_SHOW_DETAILS, 0, getString(R.string.show_details_message))
-            menu.add(Menu.NONE, App.ITEM_PLACE_HOLD, 1, getString(R.string.hold_place_title))
+            menu.add(Menu.NONE, App.ITEM_PLACE_HOLD, 1, getString(R.string.button_place_hold))
             menu.add(Menu.NONE, App.ITEM_ADD_TO_LIST, 2, getString(R.string.add_to_my_list_message))
         }
     }
@@ -283,15 +307,15 @@ class SearchActivity : BaseActivity() {
                 return true
             }
             App.ITEM_PLACE_HOLD -> {
-                val hold_intent = Intent(baseContext, PlaceHoldActivity::class.java)
-                hold_intent.putExtra("recordInfo", info.record)
-                startActivity(hold_intent)
+                val intent = Intent(baseContext, PlaceHoldActivity::class.java)
+                intent.putExtra("recordInfo", info.record)
+                startActivity(intent)
                 return true
             }
             App.ITEM_ADD_TO_LIST -> {
-                if (bookBags!!?.size > 0) {
+                if (!App.getAccount().bookBags.isNullOrEmpty()) {
                     Analytics.logEvent("Lists: Add to List", "via", "results_long_press")
-                    showAddToListDialog(this, bookBags!!, info.record!!)
+                    showAddToListDialog(this, App.getAccount().bookBags, info.record!!)
                 } else {
                     Toast.makeText(this, getText(R.string.msg_no_lists), Toast.LENGTH_SHORT).show()
                 }

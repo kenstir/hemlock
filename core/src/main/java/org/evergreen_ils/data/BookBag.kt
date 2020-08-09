@@ -22,21 +22,10 @@ import java.io.Serializable
 import java.util.*
 import kotlin.collections.ArrayList
 
-class BookBag(@JvmField val id: Int, obj: OSRFObject) : Serializable {
-    @JvmField
-    var name: String? = null
-    @JvmField
-    var description: String? = null
-    var shared: Boolean
-    @JvmField
+class BookBag(val id: Int, val name: String, obj: OSRFObject) : Serializable {
+    var description: String? = obj.getString("description")
+    var shared: Boolean = obj.getBoolean("pub") ?: false
     var items = ArrayList<BookBagItem>()
-
-    init {
-        name = obj.getString("name")
-        description = obj.getString("description")
-        items = ArrayList()
-        shared = obj.getBoolean("pub") ?: false
-    }
 
     fun fleshFromObject(cbrebObj: OSRFObject) {
         items.clear()
@@ -50,8 +39,10 @@ class BookBag(@JvmField val id: Int, obj: OSRFObject) : Serializable {
         fun makeArray(objArray: List<OSRFObject>): ArrayList<BookBag> {
             val ret = ArrayList<BookBag>()
             for (obj in objArray) {
-                obj.getInt("id")?.let { id ->
-                    val bookBag = BookBag(id, obj)
+                val id = obj.getInt("id")
+                val name = obj.getString("name")
+                if (id != null && name != null) {
+                    val bookBag = BookBag(id, name, obj)
                     ret.add(bookBag)
                 }
             }

@@ -50,15 +50,14 @@ object GatewayLoader {
 
     suspend fun loadBookBagsAsync(account: Account): Result<Unit> {
         return if (account.bookBagsLoaded) {
-            Log.d(TAG, "[kcxxx] loadBookBagsAsync...noop")
+            Log.d(TAG, "[bookbag] loadBookBagsAsync...noop")
             Result.Success(Unit)
         } else {
-            Log.d(TAG, "[kcxxx] loadBookBagsAsync...")
-            val result = Gateway.actor.fetchBookBags(account)
-            when (result) {
+            Log.d(TAG, "[bookbag] loadBookBagsAsync...")
+            when (val result = Gateway.actor.fetchBookBags(account)) {
                 is Result.Success -> {
                     App.getAccount().loadBookBags(result.data)
-                    Log.d(TAG, "[kcxxx] loadBookBagsAsync...done")
+                    Log.d(TAG, "[bookbag] loadBookBagsAsync...done")
                     Result.Success(Unit)
                 }
                 is Result.Error -> {
@@ -66,5 +65,17 @@ object GatewayLoader {
                 }
             }
         }
+    }
+
+    suspend fun loadBookBagContents(account: Account, bookBag: BookBag): Result<Unit> {
+        // TODO: only flesh bookBag if it's unloaded or dirty
+        Log.d(TAG, "[kcxxx] bag:${bookBag.name}")
+        val result = Gateway.actor.fleshBookBagAsync(account, bookBag.id)
+        if (result is Result.Error) return result
+        val obj = result.get()
+        Log.d(TAG, "[kcxxx] bag content:$obj")
+        bookBag.fleshFromObject(obj)
+
+        return Result.Success(Unit)
     }
 }

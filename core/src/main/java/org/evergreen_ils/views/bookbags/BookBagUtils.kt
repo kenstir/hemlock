@@ -26,27 +26,28 @@ import org.evergreen_ils.accountAccess.SessionNotFoundException
 import org.evergreen_ils.android.Log
 import org.evergreen_ils.data.BookBag
 import org.evergreen_ils.searchCatalog.RecordInfo
+import org.evergreen_ils.utils.ui.BaseActivity
 
 object BookBagUtils {
     private val TAG = BookBagUtils::class.java.simpleName
-    @JvmStatic
-    fun showAddToListDialog(activity: Activity, bookBags: List<BookBag>, info: RecordInfo) {
-        val list_names = arrayOfNulls<String>(bookBags.size)
-        for (i in list_names.indices) list_names[i] = bookBags[i].name
+
+    fun showAddToListDialog(activity: BaseActivity, bookBags: List<BookBag>, info: RecordInfo) {
+        val listNames = bookBags.map { it.name }.toTypedArray()
+
         val builder = AlertDialog.Builder(activity)
         builder.setTitle(R.string.choose_list_message)
-        builder.setItems(list_names) { dialog, which -> addRecordToList(activity, bookBags[which], info) }
+        builder.setItems(listNames) { _, which -> addRecordToList(activity, bookBags[which], info) }
         builder.create().show()
     }
 
-    fun addRecordToList(activity: Activity, bookbag: BookBag, info: RecordInfo) {
+    private fun addRecordToList(activity: Activity, bookBag: BookBag, info: RecordInfo) {
         val progressDialog = ProgressDialog.show(activity,
                 activity.getString(R.string.dialog_please_wait),
                 activity.getString(R.string.adding_to_list_message))
         val thread = Thread(Runnable {
             val ac = AccountAccess.getInstance()
             try {
-                ac.addRecordToBookBag(info.doc_id, bookbag.id)
+                ac.addRecordToBookBag(info.doc_id, bookBag.id)
             } catch (e: SessionNotFoundException) {
                 Log.d(TAG, "caught", e)
             }

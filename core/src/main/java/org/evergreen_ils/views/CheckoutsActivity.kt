@@ -247,7 +247,7 @@ class CheckoutsActivity : BaseActivity() {
 
     private fun renewItem(record: CircRecord) {
         async {
-            Log.d(TAG, "[kcxxx] renewItem: ${record.targetCopy}")
+//            Log.d(TAG, "[kcxxx] renewItem: ${record.targetCopy}")
 
             record.targetCopy?.let {
                 progress?.show(this@CheckoutsActivity, getString(R.string.msg_renewing_item))
@@ -256,7 +256,7 @@ class CheckoutsActivity : BaseActivity() {
                 when (result) {
                     is Result.Success -> {
                         // The response is a SUCCESS event, but we just care that it isn't an error
-                        Log.d(TAG, "[kcxxx] ${result.data}")
+//                        Log.d(TAG, "[kcxxx] ${result.data}")
                         Toast.makeText(this@CheckoutsActivity, getString(R.string.toast_item_renewed), Toast.LENGTH_LONG).show()
                         fetchData()
                     }

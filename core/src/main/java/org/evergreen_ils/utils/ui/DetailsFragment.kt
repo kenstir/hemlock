@@ -19,7 +19,6 @@
  */
 package org.evergreen_ils.utils.ui
 
-import android.app.Activity
 import android.app.AlertDialog
 import android.content.Intent
 import android.net.Uri
@@ -37,7 +36,6 @@ import org.evergreen_ils.R
 import org.evergreen_ils.android.Analytics
 import org.evergreen_ils.android.App
 import org.evergreen_ils.android.Log
-import org.evergreen_ils.data.BookBag
 import org.evergreen_ils.net.Gateway.getUrl
 import org.evergreen_ils.net.Volley
 import org.evergreen_ils.searchCatalog.CopyInformationActivity
@@ -47,11 +45,8 @@ import org.evergreen_ils.searchCatalog.RecordLoader.ResponseListener
 import org.evergreen_ils.system.EgOrg.findOrg
 import org.evergreen_ils.views.bookbags.BookBagUtils.showAddToListDialog
 import org.evergreen_ils.views.holds.PlaceHoldActivity
-import java.util.*
 
 class DetailsFragment : Fragment() {
-    private var activity: Activity? = null
-
     private var record: RecordInfo? = null
     private var orgID: Int? = null
     private var position: Int? = null
@@ -74,7 +69,6 @@ class DetailsFragment : Fragment() {
     private var showCopiesButton: Button? = null
     private var onlineAccessButton: Button? = null
     private var addToBookbagButton: Button? = null
-    private var bookBags: ArrayList<BookBag>? = null
     private var recordImage: NetworkImageView? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -96,11 +90,10 @@ class DetailsFragment : Fragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        activity = getActivity()
         val layout = inflater.inflate(
                 R.layout.record_details_fragment, null) as LinearLayout
 
-        val record_header = layout.findViewById<TextView>(R.id.record_header_text)
+        val recordHeader = layout.findViewById<TextView>(R.id.record_header_text)
         titleTextView = layout.findViewById(R.id.record_details_simple_title)
         formatTextView = layout.findViewById(R.id.record_details_format)
         authorTextView = layout.findViewById(R.id.record_details_simple_author)
@@ -120,19 +113,19 @@ class DetailsFragment : Fragment() {
         subjectTableRow = layout.findViewById(R.id.record_details_subject_row)
         isbnTableRow = layout.findViewById(R.id.record_details_isbn_row)
 
-        record_header.text = String.format(getString(R.string.record_of), position!! + 1, total)
+        recordHeader.text = String.format(getString(R.string.record_of), position!! + 1, total)
         descriptionTextView?.text = ""
         initButtons()
 
         // Start async image load
         val imageHref = getUrl("/opac/extras/ac/jacket/medium/r/" + record!!.doc_id)
-        val imageLoader = Volley.getInstance(getActivity()).imageLoader
+        val imageLoader = Volley.getInstance(activity).imageLoader
         recordImage?.setImageUrl(imageHref, imageLoader)
         //recordImage?.setDefaultImageResId(R.drawable.missing_art);//for screenshots
 
         // Start async record load
         fetchRecordInfo(record)
-        initBookbagStuff()
+
         return layout
     }
 
@@ -144,13 +137,13 @@ class DetailsFragment : Fragment() {
         updateButtonViews()
         placeHoldButton!!.setOnClickListener {
             Analytics.logEvent("Place Hold: Open", "via", "details_button")
-            val intent = Intent(getActivity()!!.applicationContext, PlaceHoldActivity::class.java)
+            val intent = Intent(activity?.applicationContext, PlaceHoldActivity::class.java)
             intent.putExtra("recordInfo", record)
             startActivity(intent)
         }
         showCopiesButton!!.setOnClickListener {
             Analytics.logEvent("Copy Info: Open", "via", "details_button")
-            val intent = Intent(getActivity()!!.applicationContext, CopyInformationActivity::class.java)
+            val intent = Intent(activity?.applicationContext, CopyInformationActivity::class.java)
             intent.putExtra("recordInfo", record)
             intent.putExtra("orgID", orgID)
             startActivity(intent)
@@ -161,22 +154,26 @@ class DetailsFragment : Fragment() {
         }
         addToBookbagButton!!.setOnClickListener {
             Analytics.logEvent("Lists: Add to List", "via", "details_button")
-            showAddToListDialog(activity!!, bookBags!!, record!!)
+            (activity as? BaseActivity)?.let {
+                showAddToListDialog(it, App.getAccount().bookBags, record!!)
+            }
         }
     }
 
     private fun launchURL(url: String) {
         val uri = Uri.parse(url)
         val intent = Intent(Intent.ACTION_VIEW, uri)
-        if (intent.resolveActivity(getActivity()!!.packageManager) != null) {
-            startActivity(intent)
+        activity?.packageManager?.let {
+            if (intent.resolveActivity(it) != null) {
+                startActivity(intent)
+            }
         }
     }
 
     private fun launchOnlineAccess() {
         val org = findOrg(orgID)
         val links = App.getBehavior().getOnlineLocations(record, org!!.shortname)
-        if (links == null || links.size == 0) return  // TODO: alert
+        if (links.isEmpty()) return // TODO: alert
 
         // if there's only one link, launch it without ceremony
         if (links.size == 1 && !resources.getBoolean(R.bool.ou_always_popup_online_links)) {
@@ -204,7 +201,7 @@ class DetailsFragment : Fragment() {
             val org = findOrg(orgID)
             val links = App.getBehavior().getOnlineLocations(record, org!!.shortname)
             Log.d(TAG, "yyy: updateButtonViews: title:" + record?.title + " links:" + links.size)
-            if (links == null || links.isEmpty()) {
+            if (links.isEmpty()) {
                 onlineAccessButton?.isEnabled = false
             } else if (resources.getBoolean(R.bool.ou_show_online_access_hostname)) {
                 val uri = Uri.parse(links[0].href)
@@ -238,7 +235,7 @@ class DetailsFragment : Fragment() {
     }
 
     private fun fetchRecordInfo(record: RecordInfo?) {
-        RecordLoader.fetchDetailsMetadata(record, getActivity(),
+        RecordLoader.fetchDetailsMetadata(record, activity,
                 object : ResponseListener {
                     override fun onMetadataLoaded() {
                         Log.d(TAG, "yyyyy: onMetadataLoaded()")
@@ -256,11 +253,11 @@ class DetailsFragment : Fragment() {
 
     private fun fetchCopyCountInfo(record: RecordInfo?) {
         // Check for copy counts only after we know it is not an online_resource.
-        val is_online_resource = App.getBehavior().isOnlineResource(record)
+        val isOnlineResource = App.getBehavior().isOnlineResource(record)
         Log.d(TAG, "fetchCopyCountInfo id=" + record?.doc_id
-                + " is_online_resource=" + is_online_resource)
-        if (is_online_resource == null) return  // not ready yet
-        if (!is_online_resource && record != null
+                + " is_online_resource=" + isOnlineResource)
+        if (isOnlineResource == null) return  // not ready yet
+        if (!isOnlineResource && record != null
                 && !record.copy_summary_loaded) {
             RecordLoader.fetchCopySummary(record, orgID!!, context) { updateCopyCountView() }
         } else {
@@ -271,10 +268,6 @@ class DetailsFragment : Fragment() {
     private fun updateCopyCountView() {
         if (!isAdded) return  // discard late results
         descriptionTextView?.text = RecordLoader.getCopySummary(record, orgID!!, context)
-    }
-
-    private fun initBookbagStuff() {
-        bookBags = App.getAccount().bookBags
     }
 
     companion object {
