@@ -21,8 +21,10 @@ package org.evergreen_ils.searchCatalog;
 
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
+import android.text.SpannableString;
+import android.text.Spanned;
+import android.text.style.URLSpan;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -49,6 +51,7 @@ import org.evergreen_ils.android.Log;
 import org.evergreen_ils.data.Organization;
 import org.evergreen_ils.utils.ui.ActionBarUtils;
 import org.evergreen_ils.utils.ui.TextViewUtils;
+import org.evergreen_ils.views.OrgDetailsActivity;
 import org.opensrf.util.GatewayResult;
 
 import java.util.ArrayList;
@@ -100,8 +103,7 @@ public class CopyInformationActivity extends AppCompatActivity {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                     CopyLocationCounts clc = (CopyLocationCounts) lv.getItemAtPosition(position);
-                    String url = EgOrg.getOrgInfoPageUrl(clc.getOrgId());
-                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
+                    launchOrgDetails(clc.getOrgId());
                 }
             });
         } else {
@@ -129,6 +131,12 @@ public class CopyInformationActivity extends AppCompatActivity {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    void launchOrgDetails(Integer orgID) {
+        Intent intent = new Intent(this, OrgDetailsActivity.class);
+        intent.putExtra("orgID", orgID);
+        startActivity(intent);
     }
 
     static int safeCompareTo(String a, String b) {
@@ -243,12 +251,19 @@ public class CopyInformationActivity extends AppCompatActivity {
             copyLocationText = row.findViewById(R.id.copy_information_copy_location);
             copyStatusesText = row.findViewById(R.id.copy_information_statuses);
 
-            Organization org = EgOrg.findOrg(clc.getOrgId());
+            final Organization org = EgOrg.findOrg(clc.getOrgId());
             if (groupBySystem) {
                 majorLocationText.setText(EgOrg.getOrgNameSafe(org.parent_ou));
-                //minorLocationText.setText(EvergreenService.Companion.getOrgNameSafe(item.org_id));
-                String url = EgOrg.getOrgInfoPageUrl(clc.getOrgId());
-                TextViewUtils.setTextHtml(minorLocationText, TextViewUtils.makeLinkHtml(url, org.name));
+                final SpannableString ss = new SpannableString(org.name);
+                ss.setSpan(new URLSpan(""), 0, ss.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                //minorLocationText.setText(org.name);
+                minorLocationText.setText(ss, TextView.BufferType.SPANNABLE);
+                minorLocationText.setOnClickListener(new View.OnClickListener() {
+                                                         @Override
+                                                         public void onClick(View v) {
+                                                             launchOrgDetails(org.id);
+                                                         }
+                                                     });
             } else {
                 majorLocationText.setText(EgOrg.getOrgNameSafe(clc.getOrgId()));
                 minorLocationText.setVisibility(View.GONE);
