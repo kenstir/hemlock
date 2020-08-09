@@ -26,7 +26,7 @@ public class EvergreenAuthenticator {
             byte messageDigest[] = digest.digest();
 
             // Create Hex String
-            StringBuffer hexString = new StringBuffer();
+            StringBuilder hexString = new StringBuilder();
             for (int i = 0; i < messageDigest.length; i++) {
                 String hex = Integer.toHexString(0xFF & messageDigest[i]);
                 if (hex.length() == 1) {
