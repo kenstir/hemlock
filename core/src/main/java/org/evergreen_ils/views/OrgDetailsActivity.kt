@@ -41,9 +41,8 @@ import org.evergreen_ils.utils.ui.ProgressDialogSupport
 import org.evergreen_ils.utils.ui.showAlert
 import org.opensrf.util.OSRFObject
 
-private const val TAG = "OrgDetailsActivity"
-
 class OrgDetailsActivity : BaseActivity() {
+    private val TAG = OrgDetailsActivity::class.java.simpleName
 
     private var orgSpinner: Spinner? = null
     private var day0Hours: TextView? = null
