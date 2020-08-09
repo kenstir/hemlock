@@ -50,7 +50,6 @@ import org.evergreen_ils.android.Analytics;
 import org.evergreen_ils.android.Log;
 import org.evergreen_ils.data.Organization;
 import org.evergreen_ils.utils.ui.ActionBarUtils;
-import org.evergreen_ils.utils.ui.TextViewUtils;
 import org.evergreen_ils.views.OrgDetailsActivity;
 import org.opensrf.util.GatewayResult;
 
@@ -66,7 +65,7 @@ public class CopyInformationActivity extends AppCompatActivity {
     private static final String TAG = CopyInformationActivity.class.getSimpleName();
     private RecordInfo record;
     private Integer orgID;
-    private boolean groupBySystem;
+    private boolean groupCopiesBySystem;
     private ListView lv;
     private ArrayList<CopyLocationCounts> copyInfoRecords;
     private CopyInformationArrayAdapter listAdapter;
@@ -91,7 +90,7 @@ public class CopyInformationActivity extends AppCompatActivity {
             orgID = getIntent().getIntExtra("orgID", 1);
         }
 
-        groupBySystem = getResources().getBoolean(R.bool.ou_group_copy_info_by_system);
+        groupCopiesBySystem = getResources().getBoolean(R.bool.ou_group_copy_info_by_system);
 
         lv = findViewById(R.id.copy_information_list);
         copyInfoRecords = new ArrayList<>();
@@ -153,14 +152,13 @@ public class CopyInformationActivity extends AppCompatActivity {
         copyInfoRecords.clear();
         for (CopyLocationCounts clc: copyLocationCountsList) {
             Organization org = EgOrg.findOrg(clc.getOrgId());
-            // if a branch is not opac visible, its copies should not be visible
-            // findOrg will return null for orgs that are not opac visible
-            if (org != null) {
+            // if a branch is not opac_visible, its copies should not be visible
+            if (org != null && org.opac_visible) {
                 copyInfoRecords.add(clc);
             }
         }
 
-        if (groupBySystem) {
+        if (groupCopiesBySystem) {
             // sort by system, then by branch, like http://gapines.org/eg/opac/record/5700567?locg=1
             Collections.sort(copyInfoRecords, new Comparator<CopyLocationCounts>() {
                 @Override
@@ -214,11 +212,6 @@ public class CopyInformationActivity extends AppCompatActivity {
     }
 
     class CopyInformationArrayAdapter extends ArrayAdapter<CopyLocationCounts> {
-        private TextView majorLocationText;
-        private TextView minorLocationText;
-        private TextView copyCallNumberText;
-        private TextView copyLocationText;
-        private TextView copyStatusesText;
         private List<CopyLocationCounts> records;
 
         public CopyInformationArrayAdapter(Context context, int textViewResourceId, List<CopyLocationCounts> objects) {
@@ -245,18 +238,17 @@ public class CopyInformationActivity extends AppCompatActivity {
                 row = inflater.inflate(R.layout.copy_information_item, parent, false);
             }
 
-            majorLocationText = row.findViewById(R.id.copy_information_major_location);
-            minorLocationText = row.findViewById(R.id.copy_information_minor_location);
-            copyCallNumberText = row.findViewById(R.id.copy_information_call_number);
-            copyLocationText = row.findViewById(R.id.copy_information_copy_location);
-            copyStatusesText = row.findViewById(R.id.copy_information_statuses);
+            TextView majorLocationText = row.findViewById(R.id.copy_information_major_location);
+            TextView minorLocationText = row.findViewById(R.id.copy_information_minor_location);
+            TextView copyCallNumberText = row.findViewById(R.id.copy_information_call_number);
+            TextView copyLocationText = row.findViewById(R.id.copy_information_copy_location);
+            TextView copyStatusesText = row.findViewById(R.id.copy_information_statuses);
 
             final Organization org = EgOrg.findOrg(clc.getOrgId());
-            if (groupBySystem) {
+            if (groupCopiesBySystem) {
                 majorLocationText.setText(EgOrg.getOrgNameSafe(org.parent_ou));
                 final SpannableString ss = new SpannableString(org.name);
                 ss.setSpan(new URLSpan(""), 0, ss.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-                //minorLocationText.setText(org.name);
                 minorLocationText.setText(ss, TextView.BufferType.SPANNABLE);
                 minorLocationText.setOnClickListener(new View.OnClickListener() {
                                                          @Override
