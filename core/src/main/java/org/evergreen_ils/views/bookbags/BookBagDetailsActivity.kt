@@ -30,7 +30,6 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.joinAll
 import org.evergreen_ils.R
-import org.evergreen_ils.accountAccess.AccountAccess
 import org.evergreen_ils.android.Analytics
 import org.evergreen_ils.android.App
 import org.evergreen_ils.android.Log
@@ -51,7 +50,6 @@ private val TAG = BookBagDetailsActivity::class.java.simpleName
 const val RESULT_CODE_UPDATE = 1
 
 class BookBagDetailsActivity : BaseActivity() {
-    private var accountAccess: AccountAccess? = null
     private var lv: ListView? = null
     private var listAdapter: BookBagItemsArrayAdapter? = null
     private var progress: ProgressDialogSupport? = null
@@ -68,7 +66,6 @@ class BookBagDetailsActivity : BaseActivity() {
 
         ActionBarUtils.initActionBarForActivity(this)
 
-        accountAccess = AccountAccess.getInstance()
         progress = ProgressDialogSupport()
         bookBag = intent.getSerializableExtra("bookBag") as BookBag
 

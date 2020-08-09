@@ -30,6 +30,7 @@
     <string name="title_my_lists">My Lists</string>
     <string name="title_list_details">List Details</string>
     <string name="add_to_my_list_message">Add to list</string>
+    <string name="msg_added_to_list">Item added to list</string>
     <string name="add_to_my_list_button">Add to list</string>
     <string name="adding_to_list_message">Adding item to list</string>
     <string name="show_details_message">Show details</string>

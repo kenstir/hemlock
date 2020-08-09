@@ -17,20 +17,20 @@
  */
 package org.evergreen_ils.views.bookbags
 
-import android.app.Activity
 import android.app.AlertDialog
-import android.app.ProgressDialog
+import android.widget.Toast
+import kotlinx.coroutines.async
 import org.evergreen_ils.R
-import org.evergreen_ils.accountAccess.AccountAccess
-import org.evergreen_ils.accountAccess.SessionNotFoundException
-import org.evergreen_ils.android.Log
+import org.evergreen_ils.android.App
 import org.evergreen_ils.data.BookBag
+import org.evergreen_ils.data.Result
+import org.evergreen_ils.net.Gateway
 import org.evergreen_ils.searchCatalog.RecordInfo
 import org.evergreen_ils.utils.ui.BaseActivity
+import org.evergreen_ils.utils.ui.ProgressDialogSupport
+import org.evergreen_ils.utils.ui.showAlert
 
 object BookBagUtils {
-    private val TAG = BookBagUtils::class.java.simpleName
-
     fun showAddToListDialog(activity: BaseActivity, bookBags: List<BookBag>, info: RecordInfo) {
         val listNames = bookBags.map { it.name }.toTypedArray()
 
@@ -40,19 +40,23 @@ object BookBagUtils {
         builder.create().show()
     }
 
-    private fun addRecordToList(activity: Activity, bookBag: BookBag, info: RecordInfo) {
-        val progressDialog = ProgressDialog.show(activity,
-                activity.getString(R.string.dialog_please_wait),
-                activity.getString(R.string.adding_to_list_message))
-        val thread = Thread(Runnable {
-            val ac = AccountAccess.getInstance()
+    private fun addRecordToList(activity: BaseActivity, bookBag: BookBag, info: RecordInfo) {
+        activity.async {
+            val progress = ProgressDialogSupport()
             try {
-                ac.addRecordToBookBag(info.doc_id, bookBag.id)
-            } catch (e: SessionNotFoundException) {
-                Log.d(TAG, "caught", e)
+                progress.show(activity, activity.getString(R.string.adding_to_list_message))
+
+                when (val result = Gateway.actor.addItemToBookBagAsync(App.getAccount(), bookBag.id, info.doc_id)) {
+                    is Result.Success -> {}
+                    is Result.Error -> { activity.showAlert(result.exception); return@async }
+                }
+
+                Toast.makeText(activity, activity.resources.getString(R.string.msg_added_to_list), Toast.LENGTH_SHORT).show()
+            } catch (ex: Exception) {
+                activity.showAlert(ex)
+            } finally {
+                progress.dismiss()
             }
-            activity.runOnUiThread { progressDialog.dismiss() }
-        })
-        thread.start()
+        }
     }
 }

@@ -213,11 +213,11 @@ object GatewayActor: ActorService {
     override suspend fun addItemToBookBagAsync(account: Account, bookBagId: Int, recordId: Int): Result<Unit> {
         return try {
             val (authToken, _) = account.getCredentialsOrThrow()
-            var param = jsonMapOf(
+            val param = OSRFObject("cbrebi", jsonMapOf(
                     "bucket" to bookBagId,
                     "target_biblio_record_entry" to recordId,
                     "id" to null
-            )
+            ))
             val args = arrayOf<Any?>(authToken, Api.CONTAINER_CLASS_BIBLIO, param)
             val ret = Gateway.fetch(Api.ACTOR, Api.CONTAINER_ITEM_CREATE, args, false) {
                 // e.g. ???
