@@ -32,7 +32,7 @@ import java.util.List;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
-public class CodedValueMapUnitTest {
+public class CodedValueMapTest {
 
     @BeforeClass
     public static void setUpClass() throws Exception {

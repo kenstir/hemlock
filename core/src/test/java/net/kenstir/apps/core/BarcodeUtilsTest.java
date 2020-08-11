@@ -28,7 +28,7 @@ import org.junit.Test;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
-public class BarcodeUtilsUnitTest {
+public class BarcodeUtilsTest {
     static int width = 400;
     static int height = 200;
 
