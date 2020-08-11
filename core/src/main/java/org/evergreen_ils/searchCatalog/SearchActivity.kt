@@ -67,13 +67,13 @@ class SearchActivity : BaseActivity() {
     private var contextMenuRecordInfo: ContextMenuRecordInfo? = null
 
     private val searchText: String
-        get() = searchTextView!!.text.toString().trim()
+        get() = searchTextView?.text.toString().trim()
 
     private val searchClass: String
-        get() = searchClassSpinner!!.selectedItem.toString().toLowerCase()
+        get() = searchClassSpinner?.selectedItem.toString().toLowerCase()
 
-    private val searchFormatCode: String
-        get() = EgCodedValueMap.searchFormatCode(searchFormatSpinner!!.selectedItem.toString())
+    private val searchFormatCode: String?
+        get() = EgCodedValueMap.searchFormatCode(searchFormatSpinner?.selectedItem.toString())
 
     private inner class ContextMenuRecordInfo : ContextMenu.ContextMenuInfo {
         var record: RecordInfo? = null
@@ -263,7 +263,7 @@ class SearchActivity : BaseActivity() {
     }
 
     private fun initSearchFormatSpinner() {
-        val labels = EgCodedValueMap.getSearchFormatSpinnerLabels()
+        val labels = EgCodedValueMap.searchFormatSpinnerLabels
         val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, labels)
         searchFormatSpinner?.adapter = adapter
     }
