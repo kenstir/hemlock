@@ -47,8 +47,8 @@ public class EgCodedValueMap {
         }
     }
 
-    static ArrayList<CodedValue> search_formats = new ArrayList<>();
-    static ArrayList<CodedValue> icon_formats = new ArrayList<>();
+    private static ArrayList<CodedValue> search_formats = new ArrayList<>();
+    private static ArrayList<CodedValue> icon_formats = new ArrayList<>();
 
     public static void loadCodedValueMaps(List<OSRFObject> objects) {
         search_formats = new ArrayList<>();

@@ -29,6 +29,7 @@ import org.opensrf.util.OSRFObject;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.evergreen_ils.system.EgCodedValueMap.ALL_SEARCH_FORMATS;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
@@ -65,6 +66,10 @@ public class CodedValueMapTest {
     public void test_basic() throws Exception {
         assertNull(EgCodedValueMap.searchFormatLabel("missing"));
         assertNull(EgCodedValueMap.searchFormatCode("Missing"));
+
+        assertEquals("", EgCodedValueMap.searchFormatCode(null));
+        assertEquals("", EgCodedValueMap.searchFormatCode(""));
+        assertEquals("", EgCodedValueMap.searchFormatCode(ALL_SEARCH_FORMATS));
 
         assertEquals("Book (All)", EgCodedValueMap.searchFormatLabel("book"));
         assertEquals("Book", EgCodedValueMap.iconFormatLabel("book"));
