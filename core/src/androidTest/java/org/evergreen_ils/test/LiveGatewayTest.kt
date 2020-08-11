@@ -35,11 +35,10 @@ import org.junit.Assert.*
 import org.junit.BeforeClass
 import org.junit.Test
 
-private const val TAG = "GatewayTest"
-
 class LiveGatewayTest {
 
     companion object {
+        private val TAG = LiveGatewayTest::class.java.simpleName
 
         lateinit var args: Bundle
 
