@@ -45,29 +45,13 @@
             android:gravity="left"
             tools:text="Renewals left: 1" />
 
-        <LinearLayout
+        <TextView
+            android:id="@+id/checkout_record_due_date"
+            style="@style/HemlockText.ListTertiary"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
-
-            <TextView
-                android:id="@+id/checkout_record_due_date"
-                style="@style/HemlockText.ListTertiary"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="left"
-                tools:text="Due Oct 31, 2015" />
-
-            <TextView
-                android:id="@+id/checkout_record_overdue"
-                style="@style/alertText"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="left"
-                android:paddingLeft="8dp"
-                android:paddingRight="8dp"
-                android:text="@string/overdue"
-                tools:text="@string/overdue" />
-        </LinearLayout>
+            android:layout_height="wrap_content"
+            android:gravity="left"
+            tools:text="Due Oct 31, 2015 (overdue)" />
 
     </LinearLayout>
 

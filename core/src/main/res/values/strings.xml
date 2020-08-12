@@ -121,8 +121,9 @@
     <!-- Checkout items -->
     <string name="checkout_items">Items checked out: %1$d</string>
     <string name="checkout_renewals_left">Renewals left: %d</string>
-    <string name="due">Due %s</string>
-    <string name="overdue">(overdue)</string>
+    <string name="msg_due">Due %s</string>
+    <string name="msg_due_but_may_autorenew">Due %s (but may auto-renew)</string>
+    <string name="msg_overdue">(overdue)</string>
 
     <!-- Fines Activity -->
     <string name="total_owed">Total Owed</string>

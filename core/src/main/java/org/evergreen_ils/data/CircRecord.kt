@@ -72,8 +72,11 @@ class CircRecord(circ: OSRFObject?, circType: CircType, circId: Int) {
     val dueDateString: String
         get() = DateFormat.getDateInstance().format(dueDate)
 
-    val renewals: Int?
-        get() = circ?.getInt("renewal_remaining")
+    val renewals: Int
+        get() = circ?.getInt("renewal_remaining") ?: 0
+
+    val autoRenewals: Int
+        get() = circ?.getInt("auto_renewal_remaining") ?: 0
 
     val targetCopy: Int?
         get() = circ?.getInt("target_copy")

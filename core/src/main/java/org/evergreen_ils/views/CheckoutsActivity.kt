@@ -175,7 +175,6 @@ class CheckoutsActivity : BaseActivity() {
         private var format: TextView? = null
         private var renewals: TextView? = null
         private var dueDate: TextView? = null
-        private var overdueText: TextView? = null
         private var renewButton: TextView? = null
 
         override fun getCount(): Int {
@@ -202,7 +201,6 @@ class CheckoutsActivity : BaseActivity() {
             format = row.findViewById(R.id.checkout_record_format)
             renewals = row.findViewById(R.id.checkout_record_renewals)
             dueDate = row.findViewById(R.id.checkout_record_due_date)
-            overdueText = row.findViewById(R.id.checkout_record_overdue)
             renewButton = row.findViewById(R.id.renew_button)
 
             val record = getItem(position)
@@ -210,7 +208,7 @@ class CheckoutsActivity : BaseActivity() {
             author?.text = record.author
             format?.text = RecordInfo.getIconFormatLabel(record.recordInfo)
             renewals?.text = String.format(getString(R.string.checkout_renewals_left), record.renewals)
-            dueDate?.text = String.format(getString(R.string.due), record.dueDateString)
+            dueDate?.text = dueDateText(record)
 
             initRenewButton(record)
             maybeHighlightDueDate(record)
@@ -218,8 +216,17 @@ class CheckoutsActivity : BaseActivity() {
             return row
         }
 
+        private fun dueDateText(record: CircRecord): String {
+            return if (record.isOverdue) {
+                String.format(getString(R.string.msg_overdue), record.dueDateString)
+            } else if (record.isDue && record.autoRenewals > 0) {
+                String.format(getString(R.string.msg_due_but_may_autorenew), record.dueDateString)
+            } else {
+                String.format(getString(R.string.msg_due), record.dueDateString)
+            }
+        }
+
         private fun maybeHighlightDueDate(record: CircRecord) {
-            overdueText?.visibility = if (record.isOverdue) View.VISIBLE else View.GONE
             val style = if (record.isDue) R.style.alertText else R.style.HemlockText_ListTertiary
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 dueDate?.setTextAppearance(style)
