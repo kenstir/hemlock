@@ -118,9 +118,24 @@
         android:onClick="onButtonClick"
         android:text="@string/barcode_title"
         app:drawableTint="@color/button_icon_tint"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/main_econtent_button"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/main_library_info_button" />
+
+    <Button
+        android:id="@+id/main_econtent_button"
+        style="@style/Hemlock.ActionButton"
+        android:layout_width="0dp"
+        android:layout_height="60dp"
+        android:layout_marginLeft="24dp"
+        android:layout_marginRight="24dp"
+        android:drawableLeft="@drawable/ic_barcode_48"
+        android:onClick="onButtonClick"
+        android:text="@string/title_electronic_resourses"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/main_showcard_button" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
