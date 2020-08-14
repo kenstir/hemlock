@@ -153,6 +153,7 @@ class CheckoutsActivity : BaseActivity() {
 
     private fun updateCheckoutsList() {
         listAdapter?.clear()
+        circRecords.sortBy { it.dueDate }
         for (circ in circRecords) listAdapter?.add(circ)
         listAdapter?.notifyDataSetChanged()
     }
