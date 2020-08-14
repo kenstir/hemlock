@@ -78,6 +78,9 @@ class CircRecord(circ: OSRFObject?, circType: CircType, circId: Int) {
     val autoRenewals: Int
         get() = circ?.getInt("auto_renewal_remaining") ?: 0
 
+    val wasAutorenewed: Boolean
+        get() = circ?.getBoolean("auto_renewal") ?: false
+
     val targetCopy: Int?
         get() = circ?.getInt("target_copy")
 

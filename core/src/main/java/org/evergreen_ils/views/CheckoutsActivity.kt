@@ -217,12 +217,15 @@ class CheckoutsActivity : BaseActivity() {
         }
 
         private fun dueDateText(record: CircRecord): String {
-            return if (record.isOverdue) {
-                String.format(getString(R.string.msg_overdue), record.dueDateString)
-            } else if (record.isDue && record.autoRenewals > 0) {
-                String.format(getString(R.string.msg_due_but_may_autorenew), record.dueDateString)
-            } else {
-                String.format(getString(R.string.msg_due), record.dueDateString)
+            return when {
+                record.isOverdue ->
+                    String.format(getString(R.string.msg_overdue), record.dueDateString)
+                record.isDue && record.autoRenewals > 0 ->
+                    String.format(getString(R.string.msg_due_but_may_autorenew), record.dueDateString)
+                record.wasAutorenewed ->
+                    String.format(getString(R.string.msg_due_was_autorenewed), record.dueDateString)
+                else ->
+                    String.format(getString(R.string.msg_due), record.dueDateString)
             }
         }
 
