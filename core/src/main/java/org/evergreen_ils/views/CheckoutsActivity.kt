@@ -94,18 +94,11 @@ class CheckoutsActivity : BaseActivity() {
 
                 // fetch checkouts
                 val result = Gateway.actor.fetchUserCheckedOut(App.getAccount())
-                Log.d(TAG, "checkouts:$result")
-                when (result) {
-                    is Result.Success ->
-                        Log.d(TAG,"success...now make array")
-                    is Result.Error -> {
-                        showAlert(result.exception)
-                        return@async
-                    }
-                }
+                if (result is Result.Error) { showAlert(result.exception); return@async }
+                val obj = result.get()
 
                 // fetch details
-                circRecords = CircRecord.makeArray(result.data)
+                circRecords = CircRecord.makeArray(obj)
                 for (circRecord in circRecords) {
                     jobs.add(async { fetchCircDetails(circRecord) })
                 }
