@@ -20,7 +20,6 @@ package org.evergreen_ils.system
 import org.evergreen_ils.Api
 import org.evergreen_ils.android.Analytics
 import org.evergreen_ils.android.Log
-import org.evergreen_ils.utils.TextUtils
 import org.opensrf.ShouldNotHappenException
 import org.opensrf.util.OSRFObject
 import java.util.*
@@ -32,7 +31,7 @@ object EgCodedValueMap {
     const val ICON_FORMAT = "icon_format"
     const val ALL_SEARCH_FORMATS = "All Formats"
 
-    internal data class CodedValue(val code: String, val value: String, val opac_visible: Boolean)
+    internal data class CodedValue(val code: String, val value: String, val opacVisible: Boolean)
 
     private var searchFormats = ArrayList<CodedValue>()
     private var iconFormats = ArrayList<CodedValue>()
@@ -57,44 +56,32 @@ object EgCodedValueMap {
         }
     }
 
-    fun getValueFromCode(ctype: String, code: String): String? {
-        val values: ArrayList<CodedValue>
-        values = if (ctype == SEARCH_FORMAT) {
-            searchFormats
-        } else if (ctype == ICON_FORMAT) {
-            iconFormats
-        } else {
-            return null
+    fun getValueFromCode(ctype: String, code: String?): String? {
+        val codedValues: ArrayList<CodedValue> = when (ctype) {
+            SEARCH_FORMAT -> searchFormats
+            ICON_FORMAT -> iconFormats
+            else -> return null
         }
-        for (cv in values) {
-            if (TextUtils.equals(code, cv.code)) {
-                return cv.value
-            }
-        }
-        Analytics.logException(ShouldNotHappenException("Unknown ccvm code: $code"))
-        return null
+        val cv = codedValues.firstOrNull { code == it.code }
+        if (cv == null)
+            Analytics.logException(ShouldNotHappenException("Unknown ccvm code: $code"))
+        return cv?.value
     }
 
-    fun getCodeFromValue(ctype: String, value: String): String? {
-        val values: ArrayList<CodedValue>
-        values = if (ctype == SEARCH_FORMAT) {
-            searchFormats
-        } else if (ctype == ICON_FORMAT) {
-            iconFormats
-        } else {
-            return null
+    fun getCodeFromValue(ctype: String, value: String?): String? {
+        val codedValues: ArrayList<CodedValue> = when (ctype) {
+            SEARCH_FORMAT -> searchFormats
+            ICON_FORMAT -> iconFormats
+            else -> return null
         }
-        for (cv in values) {
-            if (TextUtils.equals(value, cv.value)) {
-                return cv.code
-            }
-        }
-        Analytics.logException(ShouldNotHappenException("Unknown ccvm value: $value"))
-        return null
+        val cv = codedValues.firstOrNull { value == it.value }
+        if (cv == null)
+            Analytics.logException(ShouldNotHappenException("Unknown ccvm value: $value"))
+        return cv?.code
     }
 
     @JvmStatic
-    fun iconFormatLabel(code: String): String? {
+    fun iconFormatLabel(code: String?): String? {
         return getValueFromCode(ICON_FORMAT, code)
     }
 
@@ -114,7 +101,7 @@ object EgCodedValueMap {
         get() {
             val labels = ArrayList<String>()
             for (cv in searchFormats) {
-                if (cv.opac_visible) {
+                if (cv.opacVisible) {
                     labels.add(cv.value)
                 }
             }

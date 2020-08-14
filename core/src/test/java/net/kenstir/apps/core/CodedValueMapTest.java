@@ -77,4 +77,9 @@ public class CodedValueMapTest {
         List<String> labels = EgCodedValueMap.getSearchFormatSpinnerLabels();
         assertEquals(EgCodedValueMap.ALL_SEARCH_FORMATS, labels.get(0));
     }
+
+    @Test
+    public void test_nulls() {
+        assertNull(EgCodedValueMap.iconFormatLabel(null));
+    }
 }
