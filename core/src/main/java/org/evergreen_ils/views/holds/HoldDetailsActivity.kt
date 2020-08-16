@@ -38,7 +38,6 @@ import org.evergreen_ils.data.HoldRecord
 import org.evergreen_ils.data.Result
 import org.evergreen_ils.net.Gateway
 import org.evergreen_ils.android.Analytics
-import org.evergreen_ils.android.Log
 import org.evergreen_ils.utils.ui.*
 import java.util.*
 
@@ -142,11 +141,11 @@ class HoldDetailsActivity : BaseActivity() {
         orgSelector.adapter = adapter
         orgSelector.setSelection(selectedOrgPos)
         orgSelector.onItemSelectedListener = object : OnItemSelectedListener {
-            override fun onItemSelected(arg0: AdapterView<*>?, arg1: View, ID: Int, arg3: Long) {
-                selectedOrgPos = ID
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                selectedOrgPos = position
             }
 
-            override fun onNothingSelected(arg0: AdapterView<*>?) {}
+            override fun onNothingSelected(parent: AdapterView<*>?) {}
         }
     }
 

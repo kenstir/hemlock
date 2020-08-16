@@ -382,7 +382,7 @@ class PlaceHoldActivity : BaseActivity() {
         smsSpinner?.adapter = adapter
         smsSpinner?.setSelection(selectedSMSPos)
         smsSpinner?.onItemSelectedListener = object : OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>?, view: View, position: Int, id: Long) {
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
                 selectedSMSPos = position
             }
 
@@ -457,7 +457,7 @@ class PlaceHoldActivity : BaseActivity() {
         orgSpinner?.adapter = adapter
         orgSpinner?.setSelection(selectedOrgPos)
         orgSpinner?.onItemSelectedListener = object : OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>?, view: View, position: Int, id: Long) {
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
                 selectedOrgPos = position
             }
 

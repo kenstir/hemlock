@@ -119,7 +119,7 @@ class OrgDetailsActivity : BaseActivity() {
         orgSpinner?.adapter = adapter
         orgSpinner?.setSelection(if (index > 0) index else 0)
         orgSpinner?.onItemSelectedListener = object : OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>?, view: View, position: Int, id: Long) {
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
                 org = EgOrg.visibleOrgs[position]
                 orgID = org?.id
                 fetchData()

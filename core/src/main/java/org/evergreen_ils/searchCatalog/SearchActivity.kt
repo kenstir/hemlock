@@ -254,7 +254,7 @@ class SearchActivity : BaseActivity() {
         orgSpinner?.setSelection(selectedOrgPos)
         EgSearch.selectedOrganization = EgOrg.visibleOrgs[selectedOrgPos]
         orgSpinner?.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>?, view: View, position: Int, id: Long) {
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
                 EgSearch.selectedOrganization = EgOrg.visibleOrgs[position]
             }
 
