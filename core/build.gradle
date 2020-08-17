@@ -5,7 +5,7 @@ apply plugin: 'kotlin-android-extensions'
 android {
     compileSdkVersion 28
     defaultConfig {
-        minSdkVersion 15
+        minSdkVersion 16
         targetSdkVersion 28
         versionCode 1
         versionName "1.0"
@@ -27,7 +27,6 @@ android {
 }
 
 repositories {
-    maven { url 'https://maven.fabric.io/public' }
     mavenCentral()
 }
 
@@ -35,9 +34,6 @@ repositories {
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     api 'com.google.zxing:core:3.4.0'
-    api('com.crashlytics.sdk.android:crashlytics:2.10.1@aar') {
-        transitive = true;
-    }
     api 'com.google.android.material:material:1.2.0'
     api 'androidx.appcompat:appcompat:1.2.0'
     api 'androidx.gridlayout:gridlayout:1.0.0'

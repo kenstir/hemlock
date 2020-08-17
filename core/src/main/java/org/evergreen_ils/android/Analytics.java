@@ -21,9 +21,9 @@ package org.evergreen_ils.android;
 import android.content.Context;
 import android.text.TextUtils;
 
-import com.crashlytics.android.Crashlytics;
-import com.crashlytics.android.answers.Answers;
-import com.crashlytics.android.answers.CustomEvent;
+//import com.crashlytics.android.Crashlytics;
+//import com.crashlytics.android.answers.Answers;
+//import com.crashlytics.android.answers.CustomEvent;
 
 import org.evergreen_ils.net.Gateway;
 import org.opensrf.Method;
@@ -34,29 +34,47 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import io.fabric.sdk.android.Fabric;
+//import io.fabric.sdk.android.Fabric;
 
 /** Utils that wrap Crashlytics
  *
  * Created by kenstir on 12/5/2017.
  */
-
 public class Analytics {
     private static final String TAG = Analytics.class.getSimpleName();
     private static final int MAX_PARAMS = 5;
     private static String mLastAuthToken = null;
     private static boolean analytics = false;
 
-    public static void initialize(Context context) {
-        if (!App.getIsDebuggable(context)) {
-            // only enable bug tracking in release version
-            Fabric.with(context, new Crashlytics());
-            analytics = true;
+    private static class CustomEvent {
+        private String ev;
+        public CustomEvent(String ev) {
+            this.ev = ev;
+        }
+
+        public CustomEvent putCustomAttribute(String name, String val) {
+            return this;
+        }
+
+        public CustomEvent putCustomAttribute(String name, Integer val) {
+            return this;
+        }
+
+        public CustomEvent putCustomAttribute(String name, long val) {
+            return this;
         }
     }
 
+    public static void initialize(Context context) {
+//        if (!App.getIsDebuggable(context)) {
+//            // only enable bug tracking in release version
+//            Fabric.with(context, new Crashlytics());
+//            analytics = true;
+//        }
+    }
+
     public static void setString(String key, String val) {
-        if (analytics) Crashlytics.setString(key, val);
+//        if (analytics) Crashlytics.setString(key, val);
     }
 
     public static String redactedString(String val) {
@@ -66,7 +84,7 @@ public class Analytics {
     }
 
     public static void log(String tag, String msg) {
-        if (analytics) Crashlytics.log(Log.DEBUG, TAG, msg);
+//        if (analytics) Crashlytics.log(Log.DEBUG, TAG, msg);
     }
     public static void log(String msg) {
         log(TAG, msg);
@@ -80,8 +98,8 @@ public class Analytics {
     public static void logRequest(String service, String method, List<Object> params) {
         if (!analytics) return;
 
-        Crashlytics.setString("svc", service);
-        Crashlytics.setString("m", method);
+//        Crashlytics.setString("svc", service);
+//        Crashlytics.setString("m", method);
         int i;
         List<String> logParams = new ArrayList<String>();
         for (i = 0; i < params.size(); i++) {
@@ -89,15 +107,15 @@ public class Analytics {
             String val = "" + params.get(i);
             if (val.length() > 0 && TextUtils.equals(val, mLastAuthToken)) val = "***";//redacted
             logParams.add(val);
-            if (i < MAX_PARAMS)
-                Crashlytics.setString(key, val);
+//            if (i < MAX_PARAMS)
+//                Crashlytics.setString(key, val);
         }
         for (; i < MAX_PARAMS; i++) {
             String key = "p" + i;
-            Crashlytics.setString(key, null);
+//            Crashlytics.setString(key, null);
         }
-        Crashlytics.log(Log.DEBUG, TAG, method
-                + "(" + TextUtils.join(", ", logParams) + ")");
+//        Crashlytics.log(Log.DEBUG, TAG, method
+//                + "(" + TextUtils.join(", ", logParams) + ")");
     }
 
     public static void logRequest(String service, Method method) {
@@ -130,34 +148,34 @@ public class Analytics {
                 OSRFObject o = (OSRFObject) resp;
                 String netClass = o.getRegistry().getNetClass();
                 String s = redactResponse(o, netClass);
-                Crashlytics.log(Log.DEBUG, TAG, "resp [" + netClass + "]: " + s);
+//                Crashlytics.log(Log.DEBUG, TAG, "resp [" + netClass + "]: " + s);
                 return;
             }
         } catch (Exception e) {
-            Crashlytics.log(Log.DEBUG, TAG, "exception parsing resp: " + e.getMessage());
+//            Crashlytics.log(Log.DEBUG, TAG, "exception parsing resp: " + e.getMessage());
         }
-        Crashlytics.log(Log.DEBUG, TAG, "resp: " + resp);
+//        Crashlytics.log(Log.DEBUG, TAG, "resp: " + resp);
     }
 
     public static void logResponse(GatewayResult resp) {
-        if (analytics) Crashlytics.log(Log.DEBUG, TAG, "resp: " + resp.payload);
+//        if (analytics) Crashlytics.log(Log.DEBUG, TAG, "resp: " + resp.payload);
     }
 
     public static void logRedactedResponse() {
-        if (analytics) Crashlytics.log(Log.DEBUG, TAG, "resp: ***");
+//        if (analytics) Crashlytics.log(Log.DEBUG, TAG, "resp: ***");
     }
 
     public static void logVolleyResponse(String method) {
-        if (analytics) Crashlytics.log(Log.DEBUG, TAG, method + " ok");
+//        if (analytics) Crashlytics.log(Log.DEBUG, TAG, method + " ok");
     }
 
     public static void logErrorResponse(String resp) {
-        if (analytics) Crashlytics.log(Log.WARN, TAG, "err_resp: " + resp);
+//        if (analytics) Crashlytics.log(Log.WARN, TAG, "err_resp: " + resp);
     }
 
     public static void logException(String tag, Throwable e) {
         Log.d(tag, "caught", e);
-        if (analytics) Crashlytics.logException(e);
+//        if (analytics) Crashlytics.logException(e);
     }
     public static void logException(Throwable e) {
         logException(TAG, e);
@@ -167,7 +185,7 @@ public class Analytics {
 
     private static void logEvent(CustomEvent ev) {
         Log.d(TAG, "logEvent "+ev.toString());
-        if (analytics) Answers.getInstance().logCustom(ev);
+//        if (analytics) Answers.getInstance().logCustom(ev);
     }
     public static void logEvent(String event) {
         CustomEvent ev = new CustomEvent(event);
