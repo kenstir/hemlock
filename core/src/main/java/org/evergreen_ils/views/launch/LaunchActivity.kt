@@ -226,11 +226,13 @@ class LaunchActivity : AppCompatActivity(), CoroutineScope by MainScope() {
             }
         }
 
-        Analytics.logEvent("Account: Retrieve Session",
-                "home_org", EgOrg.getOrgShortNameSafe(account.homeOrg),
-                "pickup_org", EgOrg.getOrgShortNameSafe(account.pickupOrg),
-                "search_org", EgOrg.getOrgShortNameSafe(account.searchOrg),
-                "hold_notify", account.holdNotifyValue ?: "")
+        // analytics
+        val b = Bundle()
+        b.putString("home_org", EgOrg.getOrgShortNameSafe(account.homeOrg))
+        b.putString("pickup_org", EgOrg.getOrgShortNameSafe(account.pickupOrg))
+        b.putString("search_org", EgOrg.getOrgShortNameSafe(account.searchOrg))
+        b.putString("hold_notify", account.holdNotifyValue ?: "")
+        Analytics.logEvent("account_retrievesession", b)
 
         return true
     }

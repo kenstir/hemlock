@@ -19,11 +19,11 @@
 package org.evergreen_ils.android;
 
 import android.content.Context;
+import android.os.Bundle;
 import android.text.TextUtils;
 
-//import com.crashlytics.android.Crashlytics;
-//import com.crashlytics.android.answers.Answers;
-//import com.crashlytics.android.answers.CustomEvent;
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
+import com.google.firebase.analytics.FirebaseAnalytics;
 
 import org.evergreen_ils.net.Gateway;
 import org.opensrf.Method;
@@ -34,38 +34,18 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-//import io.fabric.sdk.android.Fabric;
-
-/** Utils that wrap Crashlytics
- *
- * Created by kenstir on 12/5/2017.
+/** Utils that wrap Crashlytics (and now Analytics)
  */
 public class Analytics {
     private static final String TAG = Analytics.class.getSimpleName();
     private static final int MAX_PARAMS = 5;
     private static String mLastAuthToken = null;
     private static boolean analytics = false;
-
-    private static class CustomEvent {
-        private String ev;
-        public CustomEvent(String ev) {
-            this.ev = ev;
-        }
-
-        public CustomEvent putCustomAttribute(String name, String val) {
-            return this;
-        }
-
-        public CustomEvent putCustomAttribute(String name, Integer val) {
-            return this;
-        }
-
-        public CustomEvent putCustomAttribute(String name, long val) {
-            return this;
-        }
-    }
+    private static FirebaseAnalytics mAnalytics = null;
 
     public static void initialize(Context context) {
+        if (mAnalytics == null) mAnalytics = FirebaseAnalytics.getInstance(context);
+        analytics = true;
 //        if (!App.getIsDebuggable(context)) {
 //            // only enable bug tracking in release version
 //            Fabric.with(context, new Crashlytics());
@@ -84,7 +64,8 @@ public class Analytics {
     }
 
     public static void log(String tag, String msg) {
-//        if (analytics) Crashlytics.log(Log.DEBUG, TAG, msg);
+        Log.d(tag, msg);
+        if (analytics) FirebaseCrashlytics.getInstance().log(msg);
     }
     public static void log(String msg) {
         log(TAG, msg);
@@ -98,8 +79,8 @@ public class Analytics {
     public static void logRequest(String service, String method, List<Object> params) {
         if (!analytics) return;
 
-//        Crashlytics.setString("svc", service);
-//        Crashlytics.setString("m", method);
+        FirebaseCrashlytics.getInstance().setCustomKey("svc", service);
+        FirebaseCrashlytics.getInstance().setCustomKey("m", method);
         int i;
         List<String> logParams = new ArrayList<String>();
         for (i = 0; i < params.size(); i++) {
@@ -107,12 +88,12 @@ public class Analytics {
             String val = "" + params.get(i);
             if (val.length() > 0 && TextUtils.equals(val, mLastAuthToken)) val = "***";//redacted
             logParams.add(val);
-//            if (i < MAX_PARAMS)
-//                Crashlytics.setString(key, val);
+            if (i < MAX_PARAMS)
+                FirebaseCrashlytics.getInstance().setCustomKey(key, val);
         }
         for (; i < MAX_PARAMS; i++) {
             String key = "p" + i;
-//            Crashlytics.setString(key, null);
+            FirebaseCrashlytics.getInstance().setCustomKey(key, null);
         }
 //        Crashlytics.log(Log.DEBUG, TAG, method
 //                + "(" + TextUtils.join(", ", logParams) + ")");
@@ -175,7 +156,7 @@ public class Analytics {
 
     public static void logException(String tag, Throwable e) {
         Log.d(tag, "caught", e);
-//        if (analytics) Crashlytics.logException(e);
+        if (analytics) FirebaseCrashlytics.getInstance().recordException(e);
     }
     public static void logException(Throwable e) {
         logException(TAG, e);
@@ -183,95 +164,37 @@ public class Analytics {
 
     private static String bool2str(boolean val) { return val ? "true" : "false"; }
 
-    private static void logEvent(CustomEvent ev) {
-        Log.d(TAG, "logEvent "+ev.toString());
-//        if (analytics) Answers.getInstance().logCustom(ev);
+    public static void logEvent(String event, Bundle b) {
+        if (analytics) mAnalytics.logEvent(event, b);
     }
     public static void logEvent(String event) {
-        CustomEvent ev = new CustomEvent(event);
-        logEvent(ev);
+        logEvent(event, null);
     }
     public static void logEvent(String event, String name, String val) {
-        CustomEvent ev = new CustomEvent(event);
-        ev.putCustomAttribute(name, val);
-        logEvent(ev);
+        Bundle b = new Bundle();
+        b.putString(name, val);
+        logEvent(event, b);
     }
     public static void logEvent(String event, String name, boolean val) {
-        logEvent(event, name, bool2str(val));
+        Bundle b = new Bundle();
+        b.putBoolean(name, val);
+        logEvent(event, b);
     }
     public static void logEvent(String event, String name, Integer val) {
-        CustomEvent ev = new CustomEvent(event);
-        ev.putCustomAttribute(name, val);
-        logEvent(ev);
+        Bundle b = new Bundle();
+        b.putInt(name, val);
+        logEvent(event, b);
     }
     public static void logEvent(String event, String name, String val, String n2, String v2) {
-        CustomEvent ev = new CustomEvent(event);
-        ev.putCustomAttribute(name, val)
-                .putCustomAttribute(n2, v2);
-        logEvent(ev);
+        Bundle b = new Bundle();
+        b.putString(name, val);
+        b.putString(n2, v2);
+        logEvent(event, b);
     }
     public static void logEvent(String event, String name, Integer val, String n2, boolean v2) {
-        CustomEvent ev = new CustomEvent(event);
-        ev.putCustomAttribute(name, val)
-                .putCustomAttribute(n2, bool2str(v2));
-        logEvent(ev);
-    }
-    public static void logEvent(String event, String name, boolean val, String n2, boolean v2) {
-        logEvent(event, name, bool2str(val), n2, bool2str(v2));
-    }
-    public static void logEvent(String event, String name, String val, String n2, String v2, String n3, String v3) {
-        CustomEvent ev = new CustomEvent(event);
-        ev.putCustomAttribute(name, val)
-                .putCustomAttribute(n2, v2)
-                .putCustomAttribute(n3, v3);
-        logEvent(ev);
-    }
-    public static void logEvent(String event, String name, String val, String n2, String v2, String n3, long v3) {
-        CustomEvent ev = new CustomEvent(event);
-        ev.putCustomAttribute(name, val)
-                .putCustomAttribute(n2, v2)
-                .putCustomAttribute(n3, v3);
-        logEvent(ev);
-    }
-    public static void logEvent(String event, String n, String v, String n2, String v2, String n3, String v3, String n4, String v4) {
-        CustomEvent ev = new CustomEvent(event);
-        ev.putCustomAttribute(n, v)
-                .putCustomAttribute(n2, v2)
-                .putCustomAttribute(n3, v3)
-                .putCustomAttribute(n4,v4);
-        logEvent(ev);
-    }
-    public static void logEvent(String event, String n, String v, String n2, String v2, String n3, boolean v3, String n4, String v4) {
-        CustomEvent ev = new CustomEvent(event);
-        ev.putCustomAttribute(n, v)
-                .putCustomAttribute(n2, v2)
-                .putCustomAttribute(n3, bool2str(v3))
-                .putCustomAttribute(n4, v4);
-        logEvent(ev);
-    }
-    public static void logEvent(String event, String n, String v, String n2, String v2, String n3, boolean v3, String n4, boolean v4) {
-        CustomEvent ev = new CustomEvent(event);
-        ev.putCustomAttribute(n, v)
-                .putCustomAttribute(n2, v2)
-                .putCustomAttribute(n3, bool2str(v3))
-                .putCustomAttribute(n4, bool2str(v4));
-        logEvent(ev);
-    }
-    public static void logEvent(String event, String n, Integer v, String n2, String v2, String n3, String v3, String n4, String v4) {
-        CustomEvent ev = new CustomEvent(event);
-        ev.putCustomAttribute(n, v)
-                .putCustomAttribute(n2, v2)
-                .putCustomAttribute(n3, v3)
-                .putCustomAttribute(n4, v4);
-        logEvent(ev);
-    }
-    public static void logEvent(String event, String n, String v, String n2, String v2, String n3, long v3, String n4, boolean v4, String n5, long v5) {
-        CustomEvent ev = new CustomEvent(event);
-        ev.putCustomAttribute(n, v)
-                .putCustomAttribute(n2, v2)
-                .putCustomAttribute(n3, v3)
-                .putCustomAttribute(n4, bool2str(v4))
-                .putCustomAttribute(n5, v5);
-        logEvent(ev);
+        Bundle b = new Bundle();
+        b.putInt(name, val);
+        b.putBoolean(n2, v2);
+        logEvent(event, b);
     }
 }

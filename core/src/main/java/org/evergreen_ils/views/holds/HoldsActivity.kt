@@ -266,7 +266,7 @@ class HoldsActivity : BaseActivity() {
     }
 
     private fun onItemClick(position: Int) {
-        Analytics.logEvent("Holds: Tap List Item")
+        Analytics.logEvent("holds_itemclick")
         val record = lv?.getItemAtPosition(position) as? HoldRecord
         if (record != null) {
             val intent = Intent(applicationContext, HoldDetailsActivity::class.java)

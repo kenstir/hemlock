@@ -96,13 +96,13 @@ class HoldDetailsActivity : BaseActivity() {
             builder.setMessage(R.string.cancel_hold_dialog_message)
             builder.setNegativeButton(R.string.cancel_hold_negative_button, null)
             builder.setPositiveButton(R.string.cancel_hold_positive_button) { dialog, which ->
-                Analytics.logEvent("Holds: Cancel Hold")
+                Analytics.logEvent("holds_cancelhold")
                 cancelHold(record)
             }
             builder.create().show()
         }
         updateHold.setOnClickListener {
-            Analytics.logEvent("Holds: Update Hold")
+            Analytics.logEvent("holds_updatehold")
             updateHold(record)
         }
         suspendHold?.setOnCheckedChangeListener { buttonView, isChecked ->

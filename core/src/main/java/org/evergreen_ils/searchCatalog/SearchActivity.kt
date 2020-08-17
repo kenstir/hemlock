@@ -314,7 +314,7 @@ class SearchActivity : BaseActivity() {
             }
             App.ITEM_ADD_TO_LIST -> {
                 if (!App.getAccount().bookBags.isNullOrEmpty()) {
-                    Analytics.logEvent("Lists: Add to List", "via", "results_long_press")
+                    Analytics.logEvent("lists_additem", "via", "results_long_press")
                     showAddToListDialog(this, App.getAccount().bookBags, info.record!!)
                 } else {
                     Toast.makeText(this, getText(R.string.msg_no_lists), Toast.LENGTH_SHORT).show()
@@ -337,11 +337,11 @@ class SearchActivity : BaseActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         val id = item.itemId
         if (id == R.id.action_advanced_search) {
-            Analytics.logEvent("Advanced Search: Open", "via", "options_menu")
+            Analytics.logEvent("advsearch_view", "via", "options_menu")
             startActivityForResult(Intent(applicationContext, AdvancedSearchActivity::class.java), 2)
             return true
         } else if (id == R.id.action_logout) {
-            Analytics.logEvent("Account: Logout", "via", "options_menu")
+            Analytics.logEvent("account_logout", "via", "options_menu")
             logout()
             App.restartApp(this)
             return true
