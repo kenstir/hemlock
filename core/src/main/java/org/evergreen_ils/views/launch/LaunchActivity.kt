@@ -229,10 +229,10 @@ class LaunchActivity : AppCompatActivity(), CoroutineScope by MainScope() {
         // analytics
         val b = Bundle()
         b.putString("home_org", EgOrg.getOrgShortNameSafe(account.homeOrg))
-        b.putString("pickup_org", EgOrg.getOrgShortNameSafe(account.pickupOrg))
-        b.putString("search_org", EgOrg.getOrgShortNameSafe(account.searchOrg))
+        //b.putString("pickup_org", EgOrg.getOrgShortNameSafe(account.pickupOrg))
+        //b.putString("search_org", EgOrg.getOrgShortNameSafe(account.searchOrg))
         b.putString("hold_notify", account.holdNotifyValue ?: "")
-        Analytics.logEvent("account_retrievesession", b)
+        Analytics.setUserProperties(b)
 
         return true
     }
