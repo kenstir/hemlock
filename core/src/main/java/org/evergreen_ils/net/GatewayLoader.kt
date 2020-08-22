@@ -49,12 +49,12 @@ object GatewayLoader {
     }
 
     suspend fun loadBookBagsAsync(account: Account): Result<Unit> {
-        return if (account.bookBagsLoaded) {
-            Log.d(TAG, "[bookbag] loadBookBagsAsync...noop")
-            Result.Success(Unit)
-        } else {
+//        return if (account.bookBagsLoaded) {
+//            Log.d(TAG, "[bookbag] loadBookBagsAsync...noop")
+//            Result.Success(Unit)
+//        } else {
             Log.d(TAG, "[bookbag] loadBookBagsAsync...")
-            when (val result = Gateway.actor.fetchBookBags(account)) {
+            return when (val result = Gateway.actor.fetchBookBags(account)) {
                 is Result.Success -> {
                     App.getAccount().loadBookBags(result.data)
                     Log.d(TAG, "[bookbag] loadBookBagsAsync...done")
@@ -64,7 +64,7 @@ object GatewayLoader {
                     result
                 }
             }
-        }
+//        }
     }
 
     suspend fun loadBookBagContents(account: Account, bookBag: BookBag): Result<Unit> {
