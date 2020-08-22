@@ -162,28 +162,28 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
     protected fun onNavigationAction(id: Int): Boolean {
         var ret = true
         if (id == R.id.nav_header) {
-            Analytics.logEvent("home_view", "via", "nav_drawer")
+//            Analytics.logEvent("home_view", "via", "nav_drawer")
             startActivity(Intent(this, MainActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
         } else if (id == R.id.main_search_button) {
-            Analytics.logEvent("search_view", "via", "nav_drawer")
+//            Analytics.logEvent("search_view", "via", "nav_drawer")
             startActivity(Intent(this, SearchActivity::class.java))
         } else if (id == R.id.main_checkouts_button) {
-            Analytics.logEvent("checkouts_view", "via", "nav_drawer")
+//            Analytics.logEvent("checkouts_view", "via", "nav_drawer")
             startActivity(Intent(this, CheckoutsActivity::class.java))
         } else if (id == R.id.main_holds_button) {
-            Analytics.logEvent("holds_view", "via", "nav_drawer")
+//            Analytics.logEvent("holds_view", "via", "nav_drawer")
             startActivity(Intent(this, HoldsActivity::class.java))
         } else if (id == R.id.main_fines_button) {
-            Analytics.logEvent("fines_view", "via", "nav_drawer")
+//            Analytics.logEvent("fines_view", "via", "nav_drawer")
             startActivity(Intent(this, FinesActivity::class.java))
         } else if (id == R.id.main_my_lists_button) {
-            Analytics.logEvent("lists_view", "via", "nav_drawer")
+//            Analytics.logEvent("lists_view", "via", "nav_drawer")
             startActivity(Intent(this, BookBagsActivity::class.java))
         } else if (id == R.id.main_library_info_button) {
-            Analytics.logEvent("libinfo_view", "via", "nav_drawer")
+//            Analytics.logEvent("libinfo_view", "via", "nav_drawer")
             startActivity(Intent(this, OrgDetailsActivity::class.java))
         } else if (id == R.id.main_showcard_button) {
-            Analytics.logEvent("showcard_view", "via", "nav_drawer")
+//            Analytics.logEvent("showcard_view", "via", "nav_drawer")
             startActivity(Intent(this, BarcodeActivity::class.java))
         } else if (menuItemHandler != null) {
             ret = menuItemHandler!!.onItemSelected(this, id, "nav_drawer")

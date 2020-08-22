@@ -136,20 +136,20 @@ class DetailsFragment : Fragment() {
         onlineAccessButton!!.isEnabled = false
         updateButtonViews()
         placeHoldButton!!.setOnClickListener {
-            Analytics.logEvent("placehold_view", "via", "details_button")
+//            Analytics.logEvent("placehold_view", "via", "details_button")
             val intent = Intent(activity?.applicationContext, PlaceHoldActivity::class.java)
             intent.putExtra("recordInfo", record)
             startActivity(intent)
         }
         showCopiesButton!!.setOnClickListener {
-            Analytics.logEvent("copyinfo_view", "via", "details_button")
+//            Analytics.logEvent("copyinfo_view", "via", "details_button")
             val intent = Intent(activity?.applicationContext, CopyInformationActivity::class.java)
             intent.putExtra("recordInfo", record)
             intent.putExtra("orgID", orgID)
             startActivity(intent)
         }
         onlineAccessButton!!.setOnClickListener {
-            Analytics.logEvent("onlineaccess_view", "via", "details_button")
+//            Analytics.logEvent("onlineaccess_view", "via", "details_button")
             launchOnlineAccess()
         }
         addToBookbagButton!!.setOnClickListener {

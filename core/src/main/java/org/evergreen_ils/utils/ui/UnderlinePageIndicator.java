@@ -17,6 +17,7 @@ package org.evergreen_ils.utils.ui;
 
 import org.evergreen_ils.R;
 import org.evergreen_ils.android.Analytics;
+import org.evergreen_ils.android.Log;
 
 import android.content.Context;
 import android.content.res.Resources;
@@ -293,6 +294,7 @@ public class UnderlinePageIndicator extends View implements PageIndicator {
             throw new IllegalStateException("ViewPager has not been bound.");
         }
         mViewPager.setCurrentItem(item);
+        Log.d("xyzzy", "setCurrentItem "+item);
         mCurrentPage = item;
         invalidate();
     }
@@ -337,6 +339,7 @@ public class UnderlinePageIndicator extends View implements PageIndicator {
             mCurrentPage = position;
             mPositionOffset = 0;
             invalidate();
+            Log.d("xyzzy", "onPageSelected "+position);
             mFadeRunnable.run();
         }
         if (mListener != null) {

@@ -146,6 +146,7 @@ object Analytics {
 //        if (analytics) Crashlytics.log(Log.WARN, TAG, "err_resp: " + resp);
     }
 
+    @JvmStatic
     fun logException(tag: String?, e: Throwable?) {
         Log.d(tag, "caught", e)
         if (analytics) FirebaseCrashlytics.getInstance().recordException(e!!)
@@ -165,44 +166,50 @@ object Analytics {
         }
     }
 
-    @JvmOverloads
-    fun logEvent(event: String, b: Bundle? = null) {
+    @JvmStatic
+    fun logEvent(event: String, b: Bundle?) {
         Log.d(TAG, "kcxxx: event.length:" + event.length + " name:" + event + " b:" + b)
         if (event.length > 40) {
             if (BuildConfig.DEBUG) throw AssertionError("Event name is too long")
             return
         }
-        if (analytics) mAnalytics!!.logEvent(event, b)
+        if (analytics) mAnalytics?.logEvent(event, b)
     }
 
-    fun logEvent(event: String, name: String?, `val`: String?) {
+    @JvmStatic
+    fun logEvent(event: String) {
+        logEvent(event, null)
+    }
+
+    @JvmStatic
+    fun logEvent(event: String, name: String?, value: String?) {
         val b = Bundle()
-        b.putString(name, `val`)
+        b.putString(name, value)
         logEvent(event, b)
     }
 
-    fun logEvent(event: String, name: String?, `val`: Boolean) {
+    fun logEvent(event: String, name: String?, value: Boolean) {
         val b = Bundle()
-        b.putBoolean(name, `val`)
+        b.putBoolean(name, value)
         logEvent(event, b)
     }
 
-    fun logEvent(event: String, name: String?, `val`: Int) {
+    fun logEvent(event: String, name: String?, value: Int) {
         val b = Bundle()
-        b.putLong(name, `val`.toLong())
+        b.putLong(name, value.toLong())
         logEvent(event, b)
     }
 
-    fun logEvent(event: String, name: String?, `val`: String?, n2: String?, v2: String?) {
+    fun logEvent(event: String, name: String?, value: String?, n2: String?, v2: String?) {
         val b = Bundle()
-        b.putString(name, `val`)
+        b.putString(name, value)
         b.putString(n2, v2)
         logEvent(event, b)
     }
 
-    fun logEvent(event: String, name: String?, `val`: Int, n2: String?, v2: Boolean) {
+    fun logEvent(event: String, name: String?, value: Int, n2: String?, v2: Boolean) {
         val b = Bundle()
-        b.putLong(name, `val`.toLong())
+        b.putLong(name, value.toLong())
         b.putBoolean(n2, v2)
         logEvent(event, b)
     }
