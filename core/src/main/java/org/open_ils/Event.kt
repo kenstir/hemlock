@@ -64,10 +64,10 @@ class Event : HashMap<String, Any?> {
                 return Event(obj)
             }
 
-            // case 2: obj has a result that has a last_event
-            val resultObj = obj.getObject("result")
-            val lastEvent = resultObj?.getObject("last_event")
-            if (resultObj != null && lastEvent != null) {
+            // case 2: obj has a last_event, or a result with a last_event
+            val lastEvent = obj.getObject("result")?.getObject("last_event")
+                    ?: obj.getObject("last_event")
+            if (lastEvent != null) {
                 return parseEvent(lastEvent)
             }
 

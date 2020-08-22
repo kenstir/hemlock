@@ -262,6 +262,16 @@ class GatewayResultTest {
     }
 
     @Test
+    fun test_titleHoldIsPossible_fail() {
+        val json = """
+            {"payload":[{"last_event":{"ilsevent":"1714","servertime":"Sat Aug 22 09:45:28 2020","pid":6842,"textcode":"HIGH_LEVEL_HOLD_HAS_NO_COPIES","stacktrace":"Holds.pm:2617","desc":"A hold request at a higher level than copy has been attempted, but there are no copies that belonging to the higher-level unit.","payload":{"fail_part":"no_ultimate_items"}},"place_unfillable":1,"age_protected_copy":null,"success":0}],"status":200}
+            """
+        val result = GatewayResult.create(json)
+        assertTrue(result.failed)
+        assertEquals("The system could not find any items to match this hold request", result.errorMessage)
+    }
+
+    @Test
     fun test_placeHold_success() {
         val json = """
             {"payload":[{"result":6309896,"target":21296176}],"status":200}
