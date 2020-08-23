@@ -32,24 +32,23 @@ import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.*
 import androidx.appcompat.widget.SwitchCompat
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
-import kotlinx.coroutines.joinAll
 import org.evergreen_ils.R
 import org.evergreen_ils.android.Analytics
 import org.evergreen_ils.android.App
 import org.evergreen_ils.android.Log
 import org.evergreen_ils.barcodescan.CaptureActivity
-import org.evergreen_ils.data.BookBag
 import org.evergreen_ils.data.Result
 import org.evergreen_ils.net.Gateway
 import org.evergreen_ils.net.GatewayLoader
 import org.evergreen_ils.system.EgCodedValueMap
 import org.evergreen_ils.system.EgOrg
 import org.evergreen_ils.system.EgSearch
+import org.evergreen_ils.utils.getCustomMessage
 import org.evergreen_ils.utils.ui.*
 import org.evergreen_ils.views.bookbags.BookBagUtils.showAddToListDialog
 import org.evergreen_ils.views.holds.PlaceHoldActivity
+import org.opensrf.util.OSRFObject
 
 class SearchActivity : BaseActivity() {
     private var searchTextView: EditText? = null
@@ -187,7 +186,7 @@ class SearchActivity : BaseActivity() {
         async {
             try {
                 val start = System.currentTimeMillis()
-                var jobs = mutableListOf<Job>()
+                //var jobs = mutableListOf<Job>()
                 progress?.show(this@SearchActivity, getString(R.string.dialog_fetching_data_message))
 
                 Log.d(TAG, "[kcxxx] fetchSearchResults ...")
@@ -205,19 +204,21 @@ class SearchActivity : BaseActivity() {
                 // query returns a list of IDs
                 val queryString = EgSearch.makeQueryString(searchText, searchClass, searchFormatCode, getString(R.string.ou_sort_by))
                 val result = Gateway.search.fetchMulticlassQuery(queryString, EgSearch.searchLimit)
-                // logSearchExecuteEvent(result)
                 when (result) {
-                    is Result.Success ->
+                    is Result.Success -> {
                         EgSearch.loadResults(result.data)
+                        logSearchEvent(result)
+                    }
                     is Result.Error -> {
                         showAlert(result.exception)
+                        logSearchEvent(result)
                         return@async
                     }
                 }
                 updateSearchResultsSummary()
                 searchResultsFragment?.notifyDatasetChanged()
 
-                jobs.joinAll()
+                //jobs.joinAll()
                 Log.logElapsedTime(TAG, start, "[kcxxx] fetchSearchResults ... done")
             } catch (ex: Exception) {
                 Log.d(TAG, "[kcxxx] fetchSearchResults ... caught", ex)
@@ -226,6 +227,21 @@ class SearchActivity : BaseActivity() {
                 progress?.dismiss()
             }
         }
+    }
+
+    private fun logSearchEvent(result: Result<OSRFObject>) {
+        val b = Bundle()
+        b.putString(Analytics.Param.SEARCH_TERM, searchText)
+        b.putString(Analytics.Param.SEARCH_CLASS, searchClass)
+        b.putString(Analytics.Param.SEARCH_FORMAT, searchFormatCode)
+        b.putBoolean(Analytics.Param.SUCCEEDED, result.succeeded)
+        when (result) {
+            is Result.Success ->
+                b.putInt(Analytics.Param.NUM_RESULTS, EgSearch.visible)
+            is Result.Error ->
+                b.putString(Analytics.Param.ERROR_MESSAGE, result.exception.getCustomMessage())
+        }
+        Analytics.logEvent(Analytics.Event.SEARCH, b)
     }
 
     private fun updateSearchResultsSummary() {
@@ -314,7 +330,7 @@ class SearchActivity : BaseActivity() {
             }
             App.ITEM_ADD_TO_LIST -> {
                 if (!App.getAccount().bookBags.isNullOrEmpty()) {
-                    Analytics.logEvent("Lists: Add to List", "via", "results_long_press")
+                    //Analytics.logEvent("lists_additem", "via", "results_long_press")
                     showAddToListDialog(this, App.getAccount().bookBags, info.record!!)
                 } else {
                     Toast.makeText(this, getText(R.string.msg_no_lists), Toast.LENGTH_SHORT).show()
@@ -337,11 +353,10 @@ class SearchActivity : BaseActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         val id = item.itemId
         if (id == R.id.action_advanced_search) {
-            Analytics.logEvent("Advanced Search: Open", "via", "options_menu")
             startActivityForResult(Intent(applicationContext, AdvancedSearchActivity::class.java), 2)
             return true
         } else if (id == R.id.action_logout) {
-            Analytics.logEvent("Account: Logout", "via", "options_menu")
+            Analytics.logEvent(Analytics.Event.ACCOUNT_LOGOUT)
             logout()
             App.restartApp(this)
             return true

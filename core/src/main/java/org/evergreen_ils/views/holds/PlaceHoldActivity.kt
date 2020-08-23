@@ -234,11 +234,12 @@ class PlaceHoldActivity : BaseActivity() {
             val pickupOrg = EgOrg.visibleOrgs[selectedOrgPos]
             val homeOrg = EgOrg.findOrg(App.getAccount().homeOrg)
             val pickupVal = pickupEventValue(pickupOrg, homeOrg)
-            Analytics.logEvent("Place Hold: Execute",
-                    "result", result,
-                    "hold_notify", notifyTypes,
-                    "expires", expireDate != null,
-                    "pickup_org", pickupVal)
+            val b = Bundle()
+            b.putString("result", result)
+            b.putString("hold_notify", notifyTypes)
+            b.putBoolean("expires", expireDate != null)
+            b.putString("pickup_org", pickupVal)
+            Analytics.logEvent(Analytics.Event.HOLD_PLACEHOLD, b)
         } catch (e: Exception) {
             Analytics.logException(e)
         }

@@ -32,13 +32,13 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import org.evergreen_ils.R
 import org.evergreen_ils.android.AccountUtils
+import org.evergreen_ils.android.Analytics
 import org.evergreen_ils.android.App
+import org.evergreen_ils.android.Log
 import org.evergreen_ils.data.Account
-import org.evergreen_ils.system.EgOrg
 import org.evergreen_ils.data.Result
 import org.evergreen_ils.net.Gateway
-import org.evergreen_ils.android.Analytics
-import org.evergreen_ils.android.Log
+import org.evergreen_ils.system.EgOrg
 import org.evergreen_ils.utils.await
 import org.evergreen_ils.utils.getAccountManagerResult
 import org.evergreen_ils.utils.getCustomMessage
@@ -169,6 +169,7 @@ class LaunchActivity : AppCompatActivity(), CoroutineScope by MainScope() {
         val result = bnd.getAccountManagerResult()
         if (result.accountName.isNullOrEmpty() || result.authToken.isNullOrEmpty())
             throw Exception(result.failureMessage)
+        Analytics.logEvent(Analytics.Event.LOGIN)
 
         // turn that into a Library and Account
         val accountType: String = applicationContext.getString(R.string.ou_account_type)
@@ -226,11 +227,13 @@ class LaunchActivity : AppCompatActivity(), CoroutineScope by MainScope() {
             }
         }
 
-        Analytics.logEvent("Account: Retrieve Session",
-                "home_org", EgOrg.getOrgShortNameSafe(account.homeOrg),
-                "pickup_org", EgOrg.getOrgShortNameSafe(account.pickupOrg),
-                "search_org", EgOrg.getOrgShortNameSafe(account.searchOrg),
-                "hold_notify", account.holdNotifyValue ?: "")
+        // analytics
+        val b = Bundle()
+        b.putString("home_org", EgOrg.getOrgShortNameSafe(account.homeOrg))
+        b.putString("pickup_org", EgOrg.getOrgShortNameSafe(account.pickupOrg))
+        b.putString("search_org", EgOrg.getOrgShortNameSafe(account.searchOrg))
+        b.putString("hold_notify", account.holdNotifyValue ?: "")
+        Analytics.setUserProperties(b)
 
         return true
     }

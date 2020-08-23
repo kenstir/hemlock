@@ -24,8 +24,10 @@ import org.evergreen_ils.utils.MARCRecord;
 
 import java.util.List;
 
+import androidx.annotation.Keep;
 import androidx.annotation.NonNull;
 
+@Keep
 @SuppressWarnings("unused")
 public class PinesAppBehavior extends AppBehavior {
     private static final String TAG = PinesAppBehavior.class.getSimpleName();

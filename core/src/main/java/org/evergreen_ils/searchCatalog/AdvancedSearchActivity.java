@@ -112,7 +112,7 @@ public class AdvancedSearchActivity extends AppCompatActivity {
         cancel.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                Analytics.logEvent("Advanced Search: Cancel");
+//                Analytics.logEvent("advsearch_cancel");
                 finish();
             }
         });
@@ -122,7 +122,7 @@ public class AdvancedSearchActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 String types = TextUtils.join("|", searchTermTypes);
-                Analytics.logEvent("Advanced Search: Search", "search_type", types);
+                //Analytics.logEvent("advsearch_search", "search_type", types);//TODO
                 Intent returnIntent = new Intent();
                 returnIntent.putExtra("advancedSearchText", TextUtils.join(" ", searchTerms));
                 setResult(RESULT_ADVANCED_SEARCH, returnIntent);

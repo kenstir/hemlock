@@ -76,7 +76,6 @@ class BookBagDetailsActivity : BaseActivity() {
         bookBagName?.text = bookBag.name
         bookBagDescription?.text = bookBag.description
         deleteButton?.setOnClickListener(View.OnClickListener {
-            Analytics.logEvent("Lists: Delete List")
             val builder = AlertDialog.Builder(this@BookBagDetailsActivity)
             builder.setMessage(R.string.delete_list_confirm_msg)
             builder.setNegativeButton(R.string.delete_list_negative_button, null)
@@ -87,7 +86,7 @@ class BookBagDetailsActivity : BaseActivity() {
         listAdapter = BookBagItemsArrayAdapter(this, R.layout.bookbagitem_list_item)
         lv?.setAdapter(listAdapter)
         lv?.setOnItemClickListener(AdapterView.OnItemClickListener { parent, view, position, id ->
-            Analytics.logEvent("Lists: Tap List Item")
+            //Analytics.logEvent("list_itemclick")
             val records = ArrayList<RecordInfo?>()
             bookBag.items?.let {
                 for (item in it) {
@@ -162,7 +161,7 @@ class BookBagDetailsActivity : BaseActivity() {
     private fun deleteList() {
         async {
             progress?.show(this@BookBagDetailsActivity, getString(R.string.msg_deleting_list))
-            Analytics.logEvent("Lists: Delete List")
+            //Analytics.logEvent("list_deletelist")
             val id = bookBag?.id
             val result = if (id != null) {
                 Gateway.actor.deleteBookBagAsync(App.getAccount(), id)
@@ -201,7 +200,7 @@ class BookBagDetailsActivity : BaseActivity() {
             title?.text = record?.recordInfo?.title
             author?.text = record?.recordInfo?.author
             remove.setOnClickListener(View.OnClickListener {
-                Analytics.logEvent("Lists: Remove List Item")
+                //Analytics.logEvent("list_removeitem")
                 async {
                     progress?.show(this@BookBagDetailsActivity, getString(R.string.msg_removing_list_item))
                     val result = Gateway.actor.removeItemFromBookBagAsync(App.getAccount(), record.id)

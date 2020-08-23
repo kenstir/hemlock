@@ -136,24 +136,21 @@ class DetailsFragment : Fragment() {
         onlineAccessButton!!.isEnabled = false
         updateButtonViews()
         placeHoldButton!!.setOnClickListener {
-            Analytics.logEvent("Place Hold: Open", "via", "details_button")
             val intent = Intent(activity?.applicationContext, PlaceHoldActivity::class.java)
             intent.putExtra("recordInfo", record)
             startActivity(intent)
         }
         showCopiesButton!!.setOnClickListener {
-            Analytics.logEvent("Copy Info: Open", "via", "details_button")
             val intent = Intent(activity?.applicationContext, CopyInformationActivity::class.java)
             intent.putExtra("recordInfo", record)
             intent.putExtra("orgID", orgID)
             startActivity(intent)
         }
         onlineAccessButton!!.setOnClickListener {
-            Analytics.logEvent("Online Access: Open", "via", "details_button")
             launchOnlineAccess()
         }
         addToBookbagButton!!.setOnClickListener {
-            Analytics.logEvent("Lists: Add to List", "via", "details_button")
+            //Analytics.logEvent("lists_addtolist", "via", "details_button")
             (activity as? BaseActivity)?.let {
                 showAddToListDialog(it, App.getAccount().bookBags, record!!)
             }

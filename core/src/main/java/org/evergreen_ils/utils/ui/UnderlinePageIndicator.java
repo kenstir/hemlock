@@ -16,7 +16,6 @@
 package org.evergreen_ils.utils.ui;
 
 import org.evergreen_ils.R;
-import org.evergreen_ils.android.Analytics;
 
 import android.content.Context;
 import android.content.res.Resources;
@@ -313,9 +312,6 @@ public class UnderlinePageIndicator extends View implements PageIndicator {
 
     @Override
     public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-        if (!mFirstScroll) {
-            Analytics.logEvent("Details: Swipe Page");
-        }
         mFirstScroll = false;
         mCurrentPage = position;
         mPositionOffset = positionOffset;
