@@ -26,9 +26,10 @@ import org.evergreen_ils.utils.MARCRecord;
 
 import java.util.List;
 
+import androidx.annotation.Keep;
 import androidx.annotation.NonNull;
 
-@SuppressWarnings("unused")
+@Keep
 public class IndianaAppBehavior extends AppBehavior {
     private static final String TAG = IndianaAppBehavior.class.getSimpleName();
 

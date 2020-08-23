@@ -17,6 +17,7 @@
 
 package net.kenstir.apps.acorn;
 
+import androidx.annotation.Keep;
 import androidx.annotation.NonNull;
 import android.text.TextUtils;
 
@@ -30,7 +31,7 @@ import org.evergreen_ils.utils.MARCRecord;
 import java.util.Arrays;
 import java.util.List;
 
-@SuppressWarnings("unused")
+@Keep
 public class AcornAppBehavior extends AppBehavior {
     private static final String TAG = AcornAppBehavior.class.getSimpleName();
 
