@@ -239,7 +239,7 @@ class PlaceHoldActivity : BaseActivity() {
             b.putString("hold_notify", notifyTypes)
             b.putBoolean("expires", expireDate != null)
             b.putString("pickup_org", pickupVal)
-            Analytics.logEvent("placehold_click", b)
+            Analytics.logEvent(Analytics.Event.HOLD_PLACEHOLD, b)
         } catch (e: Exception) {
             Analytics.logException(e)
         }

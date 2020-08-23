@@ -68,7 +68,7 @@ class BookBagsActivity : BaseActivity() {
         listAdapter = BookBagsArrayAdapter(this, R.layout.bookbag_list_item)
         lv?.setAdapter(listAdapter)
         lv?.setOnItemClickListener(AdapterView.OnItemClickListener { parent, view, position, id ->
-            Analytics.logEvent("lists_itemclick")
+            //Analytics.logEvent("lists_itemclick")
             val item = lv?.getItemAtPosition(position) as BookBag
             val intent = Intent(this@BookBagsActivity, BookBagDetailsActivity::class.java)
             intent.putExtra("bookBag", item)
@@ -140,7 +140,7 @@ class BookBagsActivity : BaseActivity() {
             bookBagName?.error = getString(R.string.error_list_name_empty)
             return
         }
-        Analytics.logEvent("lists_createlist")
+        //Analytics.logEvent("lists_createlist")
         async {
             progress?.show(this@BookBagsActivity, getString(R.string.msg_creating_list))
             val result = Gateway.actor.createBookBagAsync(App.getAccount(), name)

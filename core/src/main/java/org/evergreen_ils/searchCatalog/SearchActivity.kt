@@ -32,16 +32,12 @@ import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.*
 import androidx.appcompat.widget.SwitchCompat
-import com.google.firebase.analytics.FirebaseAnalytics
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
-import kotlinx.coroutines.joinAll
 import org.evergreen_ils.R
 import org.evergreen_ils.android.Analytics
 import org.evergreen_ils.android.App
 import org.evergreen_ils.android.Log
 import org.evergreen_ils.barcodescan.CaptureActivity
-import org.evergreen_ils.data.BookBag
 import org.evergreen_ils.data.Result
 import org.evergreen_ils.net.Gateway
 import org.evergreen_ils.net.GatewayLoader
@@ -235,17 +231,17 @@ class SearchActivity : BaseActivity() {
 
     private fun logSearchEvent(result: Result<OSRFObject>) {
         val b = Bundle()
-        b.putString(FirebaseAnalytics.Param.SEARCH_TERM, searchText)
-        b.putString("search_class", searchClass)
-        b.putString("search_format", searchFormatCode)
-        b.putBoolean("ok", result.succeeded)
+        b.putString(Analytics.Param.SEARCH_TERM, searchText)
+        b.putString(Analytics.Param.SEARCH_CLASS, searchClass)
+        b.putString(Analytics.Param.SEARCH_FORMAT, searchFormatCode)
+        b.putBoolean(Analytics.Param.SUCCEEDED, result.succeeded)
         when (result) {
             is Result.Success ->
-                b.putInt("num_results", EgSearch.visible)
+                b.putInt(Analytics.Param.NUM_RESULTS, EgSearch.visible)
             is Result.Error ->
-                b.putString("error_message", result.exception.getCustomMessage())
+                b.putString(Analytics.Param.ERROR_MESSAGE, result.exception.getCustomMessage())
         }
-        Analytics.logEvent(FirebaseAnalytics.Event.SEARCH, b)
+        Analytics.logEvent(Analytics.Event.SEARCH, b)
     }
 
     private fun updateSearchResultsSummary() {
@@ -334,7 +330,7 @@ class SearchActivity : BaseActivity() {
             }
             App.ITEM_ADD_TO_LIST -> {
                 if (!App.getAccount().bookBags.isNullOrEmpty()) {
-                    Analytics.logEvent("lists_additem", "via", "results_long_press")
+                    //Analytics.logEvent("lists_additem", "via", "results_long_press")
                     showAddToListDialog(this, App.getAccount().bookBags, info.record!!)
                 } else {
                     Toast.makeText(this, getText(R.string.msg_no_lists), Toast.LENGTH_SHORT).show()
@@ -357,11 +353,10 @@ class SearchActivity : BaseActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         val id = item.itemId
         if (id == R.id.action_advanced_search) {
-//            Analytics.logEvent("advsearch_view", "via", "options_menu")
             startActivityForResult(Intent(applicationContext, AdvancedSearchActivity::class.java), 2)
             return true
         } else if (id == R.id.action_logout) {
-            Analytics.logEvent("account_logout", "via", "options_menu")
+            Analytics.logEvent(Analytics.Event.ACCOUNT_LOGOUT)
             logout()
             App.restartApp(this)
             return true

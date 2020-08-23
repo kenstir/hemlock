@@ -28,6 +28,28 @@ import org.opensrf.util.OSRFObject
 /** Utils that wrap Crashlytics (and now Analytics)
  */
 object Analytics {
+    object Event {
+        const val ACCOUNT_ADD = "account_add"
+        const val ACCOUNT_LOGOUT = "account_logout"
+        const val ACCOUNT_SWITCH = "account_switch"
+        const val FEEDBACK_OPEN = "feedback_open"
+        const val HOLD_PLACEHOLD = "hold_place"
+        const val MESSAGES_OPEN = "messages_open"
+
+        const val LOGIN = FirebaseAnalytics.Event.LOGIN
+        const val SEARCH = FirebaseAnalytics.Event.SEARCH
+        const val VIEW_ITEM_DETAILS = FirebaseAnalytics.Event.VIEW_ITEM
+    }
+
+    object Param {
+        const val ERROR_MESSAGE = "error_message"
+        const val NUM_RESULTS = "num_results"
+        const val SEARCH_CLASS = "search_class"
+        const val SEARCH_FORMAT = "search_format"
+        const val SEARCH_TERM = FirebaseAnalytics.Param.SEARCH_TERM
+        const val SUCCEEDED = "succeeded"
+    }
+
     private val TAG = Analytics::class.java.simpleName
     private const val MAX_PARAMS = 5
     private var mLastAuthToken: String? = null

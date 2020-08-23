@@ -26,7 +26,6 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
-import com.google.firebase.analytics.FirebaseAnalytics
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
@@ -170,7 +169,7 @@ class LaunchActivity : AppCompatActivity(), CoroutineScope by MainScope() {
         val result = bnd.getAccountManagerResult()
         if (result.accountName.isNullOrEmpty() || result.authToken.isNullOrEmpty())
             throw Exception(result.failureMessage)
-        Analytics.logEvent(FirebaseAnalytics.Event.LOGIN)
+        Analytics.logEvent(Analytics.Event.LOGIN)
 
         // turn that into a Library and Account
         val accountType: String = applicationContext.getString(R.string.ou_account_type)

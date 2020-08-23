@@ -134,7 +134,7 @@ class FinesActivity : BaseActivity() {
                 && homeOrg?.isPaymentAllowedSetting ?: false) {
             pay_fines_button?.visibility = View.VISIBLE
             pay_fines_button?.setOnClickListener {
-                Analytics.logEvent("fines_payfines", "num_fines", fineRecords.size)
+                //Analytics.logEvent("fines_payfines", "num_fines", fineRecords.size)
                 val username = App.getAccount().username
                 val password = AccountUtils.getPassword(this@FinesActivity, username)
                 var url = (Gateway.baseUrl
@@ -202,7 +202,7 @@ class FinesActivity : BaseActivity() {
     }
 
     private fun onItemClick(position: Int) {
-        Analytics.logEvent("fines_itemclick", "have_grocery_bills", haveAnyGroceryBills)
+        //Analytics.logEvent("fines_itemclick", "have_grocery_bills", haveAnyGroceryBills)
         val records = ArrayList<RecordInfo>()
         if (haveAnyGroceryBills) {
             // If any of the fines are for non-circulation items ("grocery bills"), we
