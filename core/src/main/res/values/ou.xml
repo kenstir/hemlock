@@ -58,6 +58,8 @@
     <bool name="ou_need_marc_record">false</bool>
     <!-- if true, display the hours of operation on the Library Info screen -->
     <bool name="ou_enable_hours_of_operation">true</bool>
+    <!-- if true, Firebase Analytics is initialized -->
+    <bool name="ou_enable_analytics">false</bool>
     <!-- if non-empty, the Barcode format to display for Show Card -->
     <string name="ou_barcode_format"></string>
     <!-- max number of results to return from Search -->

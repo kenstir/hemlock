@@ -26,7 +26,6 @@
         android:icon="@mipmap/launcher_icon"
         android:label="@string/ou_app_label"
         android:theme="@style/CWMARSNoActionBar"
-        android:name="androidx.multidex.MultiDexApplication"
         tools:ignore="GoogleAppIndexingWarning">
 
         <meta-data android:name="android.max_aspect" android:value="2.1" />

@@ -22,6 +22,7 @@ import android.os.Bundle
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import org.evergreen_ils.BuildConfig
+import org.evergreen_ils.R
 import org.opensrf.util.GatewayResult
 import org.opensrf.util.OSRFObject
 
@@ -57,9 +58,12 @@ object Analytics {
     private var mAnalytics: FirebaseAnalytics? = null
 
     @JvmStatic
-    fun initialize(context: Context?) {
-        if (mAnalytics == null) mAnalytics = FirebaseAnalytics.getInstance(context!!)
-        analytics = true
+    fun initialize(context: Context) {
+        if (context.resources.getBoolean(R.bool.ou_enable_analytics)) {
+            analytics = true
+            if (mAnalytics == null)
+                mAnalytics = FirebaseAnalytics.getInstance(context)
+        }
     }
 
     @JvmStatic
