@@ -60,11 +60,6 @@ object Analytics {
     fun initialize(context: Context?) {
         if (mAnalytics == null) mAnalytics = FirebaseAnalytics.getInstance(context!!)
         analytics = true
-        //        if (!App.getIsDebuggable(context)) {
-//            // only enable bug tracking in release version
-//            Fabric.with(context, new Crashlytics());
-//            analytics = true;
-//        }
     }
 
     @JvmStatic
