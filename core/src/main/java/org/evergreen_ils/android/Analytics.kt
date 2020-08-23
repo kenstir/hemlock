@@ -83,89 +83,13 @@ object Analytics {
         if (analytics) FirebaseCrashlytics.getInstance().log(msg)
     }
 
-    fun log(msg: String) {
-        log(TAG, msg)
-    }
-
-//    fun logRequest(service: String?, method: Method, authToken: String?) {
-//        mLastAuthToken = authToken
-//        logRequest(service, method)
-//    }
-
-//    fun logRequest(service: String?, method: String?, params: List<Any>) {
-//        if (!analytics) return
-//        FirebaseCrashlytics.getInstance().setCustomKey("svc", service!!)
-//        FirebaseCrashlytics.getInstance().setCustomKey("m", method!!)
-//        val logParams: MutableList<String> = ArrayList()
-//        var i: Int = 0
-//        while (i < params.size) {
-//            val key = "p$i"
-//            var value = "" + params[i]
-//            if (value.length > 0 && TextUtils.equals(value, mLastAuthToken)) value = "***" //redacted
-//            logParams.add(value)
-//            if (i < MAX_PARAMS) FirebaseCrashlytics.getInstance().setCustomKey(key, value)
-//            i++
-//        }
-//        while (i < MAX_PARAMS) {
-//            val key = "p$i"
-//            FirebaseCrashlytics.getInstance().setCustomKey(key, null)
-//            i++
+//    private fun redactResponse(o: OSRFObject, netClass: String): String {
+//        return if (netClass == "au" || netClass == "aou" /*orgTree*/) {
+//            "***"
+//        } else {
+//            o.toString()
 //        }
 //    }
-
-//    fun logRequest(service: String?, method: Method) {
-//        logRequest(service, method.name, method.params)
-//    }
-
-//    fun buildGatewayUrl(service: String?, method: String?, params: Array<Any?>): String {
-//        logVolleyRequest(service, method, params)
-//        return buildUrl(service!!, method!!, params)
-//    }
-
-//    fun logVolleyRequest(service: String?, method: String?, params: Array<Any?>) {
-//        val p = Arrays.asList<Any>(*params)
-//        logRequest(service, method, p)
-//    }
-
-    private fun redactResponse(o: OSRFObject, netClass: String): String {
-        return if (netClass == "au" || netClass == "aou" /*orgTree*/) {
-            "***"
-        } else {
-            o.toString()
-        }
-    }
-
-    fun logResponse(resp: Any?) {
-        if (!analytics) return
-        try {
-            if (resp is OSRFObject) {
-                val o = resp
-                val netClass = o.registry.netClass
-                val s = redactResponse(o, netClass)
-                //                Crashlytics.log(Log.DEBUG, TAG, "resp [" + netClass + "]: " + s);
-                return
-            }
-        } catch (e: Exception) {
-//            Crashlytics.log(Log.DEBUG, TAG, "exception parsing resp: " + e.getMessage());
-        }
-        //        Crashlytics.log(Log.DEBUG, TAG, "resp: " + resp);
-    }
-
-    fun logResponse(resp: GatewayResult?) {
-//        if (analytics) Crashlytics.log(Log.DEBUG, TAG, "resp: " + resp.payload);
-    }
-
-    fun logRedactedResponse() {
-//        if (analytics) Crashlytics.log(Log.DEBUG, TAG, "resp: ***");
-    }
-
-    fun logVolleyResponse(method: String?) {
-//        if (analytics) Crashlytics.log(Log.DEBUG, TAG, method + " ok");
-    }
-
-    fun logErrorResponse(resp: String?) {
-//        if (analytics) Crashlytics.log(Log.WARN, TAG, "err_resp: " + resp);
-    }
 
     @JvmStatic
     fun logException(tag: String?, e: Throwable) {
@@ -206,32 +130,6 @@ object Analytics {
     fun logEvent(event: String, name: String?, value: String?) {
         val b = Bundle()
         b.putString(name, value)
-        logEvent(event, b)
-    }
-
-    fun logEvent(event: String, name: String?, value: Boolean) {
-        val b = Bundle()
-        b.putBoolean(name, value)
-        logEvent(event, b)
-    }
-
-    fun logEvent(event: String, name: String?, value: Int) {
-        val b = Bundle()
-        b.putLong(name, value.toLong())
-        logEvent(event, b)
-    }
-
-    fun logEvent(event: String, name: String?, value: String?, n2: String?, v2: String?) {
-        val b = Bundle()
-        b.putString(name, value)
-        b.putString(n2, v2)
-        logEvent(event, b)
-    }
-
-    fun logEvent(event: String, name: String?, value: Int, n2: String?, v2: Boolean) {
-        val b = Bundle()
-        b.putLong(name, value.toLong())
-        b.putBoolean(n2, v2)
         logEvent(event, b)
     }
 }
