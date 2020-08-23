@@ -63,14 +63,14 @@ object Analytics {
     }
 
     @JvmStatic
-    fun setString(key: String?, `val`: String?) {
+    fun setString(key: String?, value: String?) {
 //        if (analytics) Crashlytics.setString(key, val);
     }
 
     @JvmStatic
-    fun redactedString(`val`: String?): String {
-        if (`val` == null) return "(null)"
-        return if (`val`.length == 0) "(empty)" else "***"
+    fun redactedString(value: String?): String {
+        if (value == null) return "(null)"
+        return if (value.length == 0) "(empty)" else "***"
     }
 
     @JvmStatic
@@ -164,13 +164,13 @@ object Analytics {
     }
 
     @JvmStatic
-    fun logException(tag: String?, e: Throwable?) {
+    fun logException(tag: String?, e: Throwable) {
         Log.d(tag, "caught", e)
-        if (analytics) FirebaseCrashlytics.getInstance().recordException(e!!)
+        if (analytics) FirebaseCrashlytics.getInstance().recordException(e)
     }
 
     @JvmStatic
-    fun logException(e: Throwable?) {
+    fun logException(e: Throwable) {
         logException(TAG, e)
     }
 
