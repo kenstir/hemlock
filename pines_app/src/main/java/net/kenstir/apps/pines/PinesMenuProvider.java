@@ -26,11 +26,11 @@ import org.evergreen_ils.android.Analytics;
 import org.evergreen_ils.net.Gateway;
 import org.evergreen_ils.views.MenuProvider;
 
+import androidx.annotation.Keep;
+
 import static org.evergreen_ils.android.App.REQUEST_MYOPAC_MESSAGES;
 
-/**
- * Created by kenstir on 1/28/2017.
- */
+@Keep
 public class PinesMenuProvider extends MenuProvider {
 
     @Override
