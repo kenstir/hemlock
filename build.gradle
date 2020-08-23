@@ -15,7 +15,7 @@ if (secretGradleFile.exists()) {
 }
 
 buildscript {
-    ext.kotlin_version = '1.3.72'
+    ext.kotlin_version = '1.4.0'
     repositories {
         jcenter()
         maven { url 'https://maven.fabric.io/public' }
