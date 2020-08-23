@@ -26,6 +26,7 @@
         android:icon="@mipmap/launcher_icon"
         android:label="@string/ou_app_label"
         android:theme="@style/CWMARSNoActionBar"
+        android:name="androidx.multidex.MultiDexApplication"
         tools:ignore="GoogleAppIndexingWarning">
 
         <meta-data android:name="android.max_aspect" android:value="2.1" />
@@ -129,9 +130,5 @@
                 android:name="android.accounts.AccountAuthenticator"
                 android:resource="@xml/authenticator" />
         </service>
-
-        <meta-data
-            android:name="io.fabric.ApiKey"
-            android:value="13bfee3eaddbbff9639b69461f4b9aa1dbe940ad" />
     </application>
 </manifest>
