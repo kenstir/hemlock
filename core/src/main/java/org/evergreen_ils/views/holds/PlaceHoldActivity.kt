@@ -58,8 +58,6 @@ import org.evergreen_ils.utils.ui.showAlert
 import org.opensrf.util.OSRFObject
 import java.util.*
 
-private const val TAG = "PlaceHold"
-
 class PlaceHoldActivity : BaseActivity() {
     private var title: TextView? = null
     private var author: TextView? = null
@@ -500,5 +498,9 @@ class PlaceHoldActivity : BaseActivity() {
             return true
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    companion object {
+        private val TAG = PlaceHoldActivity::class.java.simpleName
     }
 }
