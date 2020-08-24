@@ -19,6 +19,7 @@
 package org.evergreen_ils.net
 
 import org.evergreen_ils.Api
+import org.evergreen_ils.HOLD_TYPE_TITLE
 import org.evergreen_ils.data.Account
 import org.evergreen_ils.data.Result
 import org.evergreen_ils.data.jsonMapOf
@@ -116,10 +117,10 @@ object GatewayCirc : CircService {
             val param = mutableMapOf(
                     "patronid" to userID,
                     "pickup_lib" to pickupLib,
-                    "hold_type" to "T",
+                    "hold_type" to HOLD_TYPE_TITLE,
                     "titleid" to targetId
             )
-            val args = arrayOf<Any?>(authToken, param, arrayListOf(targetId))
+            val args = arrayOf<Any?>(authToken, param)
             val ret = Gateway.fetchObject(Api.CIRC, Api.TITLE_HOLD_IS_POSSIBLE, args, false)
             Result.Success(ret)
         } catch (e: Exception) {
