@@ -13,16 +13,16 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:fillViewport="true"
-        android:padding="10dip"
+        android:padding="10dp"
         >
 
         <TableLayout
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             >
+
             <TableRow android:layout_width="wrap_content"
                 android:layout_height="wrap_content">
-
                 <TextView
                     android:id="@+id/hold_title"
                     style="@style/HemlockText.PagePrimary"
@@ -36,7 +36,6 @@
             </TableRow>
             <TableRow android:layout_width="wrap_content"
                 android:layout_height="wrap_content">
-
                 <TextView
                     android:id="@+id/hold_author"
                     style="@style/HemlockText.PageTertiary"
@@ -49,7 +48,6 @@
             </TableRow>
             <TableRow android:layout_width="wrap_content"
                 android:layout_height="wrap_content">
-
                 <TextView
                     android:id="@+id/hold_format"
                     style="@style/HemlockText.PageTertiary"
