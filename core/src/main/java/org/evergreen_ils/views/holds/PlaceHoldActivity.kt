@@ -58,8 +58,6 @@ import org.evergreen_ils.utils.ui.showAlert
 import org.opensrf.util.OSRFObject
 import java.util.*
 
-private const val TAG = "PlaceHold"
-
 class PlaceHoldActivity : BaseActivity() {
     private var title: TextView? = null
     private var author: TextView? = null
@@ -89,12 +87,13 @@ class PlaceHoldActivity : BaseActivity() {
     private var selectedSMSPos = 0
     private var progress: ProgressDialogSupport? = null
     private var parts: List<OSRFObject>? = null
+    private var titleHoldSeemsPossible: Boolean? = null
     private lateinit var record: RecordInfo
 
     private val hasParts: Boolean
         get() = !(parts.isNullOrEmpty())
-    private val holdType: String
-        get() = if (hasParts) HOLD_TYPE_PART else HOLD_TYPE_TITLE
+    private val partRequired: Boolean
+        get() = hasParts && (titleHoldSeemsPossible == false)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -176,6 +175,10 @@ class PlaceHoldActivity : BaseActivity() {
                     jobs.add(async {
                         val result = Gateway.search.fetchHoldParts(record.doc_id)
                         onPartsResult(result)
+                        if (hasParts) {
+                            val isPossibleResult = Gateway.circ.fetchTitleHoldIsPossible(App.getAccount(), record.doc_id, App.getAccount().pickupOrg ?: 1)
+                            onTitleHoldIsPossibleResult(isPossibleResult)
+                        }
                     })
                 }
 
@@ -205,6 +208,13 @@ class PlaceHoldActivity : BaseActivity() {
         }
     }
 
+    private fun onTitleHoldIsPossibleResult(result: Result<OSRFObject>) {
+        titleHoldSeemsPossible = when (result) {
+            is Result.Success -> true
+            is Result.Error -> false
+        }
+    }
+
     fun <T> coalesce(vararg args: T): T? {
         for (arg in args) {
             if (arg != null) {
@@ -218,7 +228,7 @@ class PlaceHoldActivity : BaseActivity() {
         return when {
             home_org == null -> "homeless"
             pickup_org == null -> "null_pickup"
-            TextUtils.equals(pickup_org.name, home_org.name) -> "home"
+            pickup_org.id == home_org.id -> "home"
             pickup_org.isConsortium -> pickup_org.shortname
             else -> "other"
         }
@@ -246,29 +256,7 @@ class PlaceHoldActivity : BaseActivity() {
     }
 
     private fun initPlaceHoldButton() {
-        placeHold?.setOnClickListener {
-            val selectedOrg = EgOrg.visibleOrgs[selectedOrgPos]
-            if (!selectedOrg.isPickupLocation) {
-                logPlaceHoldResult("not_pickup_location")
-                val builder = AlertDialog.Builder(this@PlaceHoldActivity)
-                builder.setTitle(getString(R.string.title_not_pickup_location))
-                        .setMessage(String.format(getString(R.string.msg_not_pickup_location), selectedOrg.name))
-                        .setPositiveButton(android.R.string.ok, null)
-                builder.create().show()
-            } else if (hasParts && partSpinner?.selectedItem.toString().isEmpty()) {
-                val builder = AlertDialog.Builder(this@PlaceHoldActivity)
-                builder.setTitle(getString(R.string.title_no_part_selected))
-                        .setMessage(getString(R.string.msg_no_part_selected))
-                        .setPositiveButton(android.R.string.ok, null)
-                builder.create().show()
-            } else if (phoneNotification?.isChecked == true && TextUtils.isEmpty(phoneNotify?.text.toString())) {
-                phoneNotify?.error = getString(R.string.error_phone_notify_empty)
-            } else if (smsNotification?.isChecked == true && TextUtils.isEmpty(smsNotify?.text.toString())) {
-                smsNotify?.error = getString(R.string.error_sms_notify_empty)
-            } else {
-                placeHold()
-            }
-        }
+        placeHold?.setOnClickListener { placeHold() }
     }
 
     private fun getPhoneNotify(): String? {
@@ -291,12 +279,50 @@ class PlaceHoldActivity : BaseActivity() {
         return if (thawDate != null) Api.formatDate(thawDate) else null
     }
 
+    private fun placeHoldPreFlightCheck(): Boolean {
+        val selectedOrg = EgOrg.visibleOrgs[selectedOrgPos]
+        if (!selectedOrg.isPickupLocation) {
+            logPlaceHoldResult("not_pickup_location")
+            val builder = AlertDialog.Builder(this@PlaceHoldActivity)
+            builder.setTitle(getString(R.string.title_not_pickup_location))
+                    .setMessage(String.format(getString(R.string.msg_not_pickup_location), selectedOrg.name))
+                    .setPositiveButton(android.R.string.ok, null)
+            builder.create().show()
+            return false
+        }
+        if (partRequired && partSpinner?.selectedItem.toString().isEmpty()) {
+            val builder = AlertDialog.Builder(this@PlaceHoldActivity)
+            builder.setTitle(getString(R.string.title_no_part_selected))
+                    .setMessage(getString(R.string.msg_no_part_selected))
+                    .setPositiveButton(android.R.string.ok, null)
+            builder.create().show()
+            return false
+        }
+        if (phoneNotification?.isChecked == true && TextUtils.isEmpty(phoneNotify?.text.toString())) {
+            phoneNotify?.error = getString(R.string.error_phone_notify_empty)
+            return false
+        }
+        if (smsNotification?.isChecked == true && TextUtils.isEmpty(smsNotify?.text.toString())) {
+            smsNotify?.error = getString(R.string.error_sms_notify_empty)
+            return false
+        }
+        return true
+    }
+
     private fun placeHold() {
+        if (!placeHoldPreFlightCheck())
+            return
+
         async {
             Log.d(TAG, "[kcxxx] placeHold: ${record.doc_id}")
             val selectedOrgID = if (EgOrg.visibleOrgs.size > selectedOrgPos) EgOrg.visibleOrgs[selectedOrgPos].id else -1
             val selectedSMSCarrierID = if (EgSms.carriers.size > selectedSMSPos) EgSms.carriers[selectedSMSPos].id else -1
-            val itemId = if (hasParts) getPartId() else record.doc_id
+            val holdType: String
+            val itemId: Int
+            when {
+                partRequired || getPartId() > 0 -> { holdType = HOLD_TYPE_PART; itemId = getPartId() }
+                else -> { holdType = HOLD_TYPE_TITLE; itemId = record.doc_id }
+            }
             progress?.show(this@PlaceHoldActivity, "Placing hold")
             val result = Gateway.circ.placeHoldAsync(App.getAccount(), holdType, itemId,
                     selectedOrgID, emailNotification?.isChecked == true, getPhoneNotify(), getSMSNotify(),
@@ -423,8 +449,8 @@ class PlaceHoldActivity : BaseActivity() {
     }
 
     private fun initPartSpinner() {
-        // First label is the empty string to force the user to make a selection
-        val labels = mutableListOf("")
+        val sentinelLabel = if (partRequired) "" else "- All parts -"
+        val labels = mutableListOf(sentinelLabel)
         parts?.let {
             for (elem in it) {
                 elem.getString("label")?.let { label ->
@@ -473,5 +499,9 @@ class PlaceHoldActivity : BaseActivity() {
             return true
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    companion object {
+        private val TAG = PlaceHoldActivity::class.java.simpleName
     }
 }
