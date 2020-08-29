@@ -43,7 +43,7 @@
 
     <EditText android:id="@+id/accountName"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="48dp"
         android:layout_marginTop="20dp"
         android:inputType="text|textNoSuggestions"
         android:hint="@string/hint_username"
@@ -52,7 +52,7 @@
 
     <EditText android:id="@+id/accountPassword"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="48dp"
         android:layout_marginTop="10dp"
         android:inputType="textPassword"
         android:hint="@string/hint_password"
