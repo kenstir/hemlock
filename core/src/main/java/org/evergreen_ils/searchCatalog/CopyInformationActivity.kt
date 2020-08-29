@@ -158,12 +158,12 @@ class CopyInformationActivity : AppCompatActivity() {
         val r = GatewayJsonObjectRequest(
                 url,
                 Request.Priority.NORMAL,
-                Response.Listener { response ->
+                { response ->
                     val duration_ms = System.currentTimeMillis() - start_ms
                     Log.d(TAG, "fetch " + record!!.doc_id + " took " + duration_ms + "ms")
                     updateCopyInfo(RecordInfo.parseCopyLocationCounts(record, response))
                 },
-                Response.ErrorListener { error ->
+                { error ->
                     Log.d(TAG, "caught", error)
                     updateCopyInfo(RecordInfo.parseCopyLocationCounts(record, null))
                 })
