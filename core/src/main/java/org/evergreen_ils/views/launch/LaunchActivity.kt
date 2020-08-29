@@ -169,7 +169,6 @@ class LaunchActivity : AppCompatActivity(), CoroutineScope by MainScope() {
         val result = bnd.getAccountManagerResult()
         if (result.accountName.isNullOrEmpty() || result.authToken.isNullOrEmpty())
             throw Exception(result.failureMessage)
-        Analytics.logEvent(Analytics.Event.LOGIN)
 
         // turn that into a Library and Account
         val accountType: String = applicationContext.getString(R.string.ou_account_type)
@@ -227,15 +226,22 @@ class LaunchActivity : AppCompatActivity(), CoroutineScope by MainScope() {
             }
         }
 
-        // analytics
-        val b = Bundle()
-        b.putString("home_org", EgOrg.getOrgShortNameSafe(account.homeOrg))
-        b.putString("pickup_org", EgOrg.getOrgShortNameSafe(account.pickupOrg))
-        b.putString("search_org", EgOrg.getOrgShortNameSafe(account.searchOrg))
-        b.putString("hold_notify", account.holdNotifyValue ?: "")
-        Analytics.setUserProperties(b)
+        logStartEvent(account)
 
         return true
+    }
+
+    // We call this event "login", but it happens after auth and after fleshing the user.
+    // NB: "session_start" seems more appropriate but that is a predefined automatic event.
+    private fun logStartEvent(account: Account) {
+        // analytics
+        val b = Bundle()
+        b.putString(Analytics.UserProperty.HOME_ORG, EgOrg.getOrgShortNameSafe(account.homeOrg))
+        b.putString(Analytics.UserProperty.DEFAULT_PICKUP_ORG, EgOrg.getOrgShortNameSafe(account.pickupOrg))
+        b.putString(Analytics.UserProperty.DEFAULT_SEARCH_ORG, EgOrg.getOrgShortNameSafe(account.searchOrg))
+        b.putString(Analytics.UserProperty.DEFAULT_HOLD_NOTIFY, account.holdNotifyValue ?: "")
+        Analytics.setUserProperties(b)
+        Analytics.logEvent(Analytics.Event.LOGIN)
     }
 
     private suspend fun fetchSession(authToken: String): Result<OSRFObject> {
