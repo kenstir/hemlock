@@ -87,13 +87,13 @@ class PlaceHoldActivity : BaseActivity() {
     private var selectedSMSPos = 0
     private var progress: ProgressDialogSupport? = null
     private var parts: List<OSRFObject>? = null
-    private var titleHoldSeemsPossible: Boolean? = null
+    private var titleHoldIsPossible: Boolean? = null
     private lateinit var record: RecordInfo
 
     private val hasParts: Boolean
         get() = !(parts.isNullOrEmpty())
     private val partRequired: Boolean
-        get() = hasParts && (titleHoldSeemsPossible == false)
+        get() = hasParts && titleHoldIsPossible != true
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -157,8 +157,6 @@ class PlaceHoldActivity : BaseActivity() {
     }
 
     private fun fetchData() {
-        val partHoldsEnabled = resources.getBoolean(R.bool.ou_enable_part_holds)
-
         async {
             try {
                 Log.d(TAG, "[kcxxx] fetchData ...")
@@ -171,11 +169,13 @@ class PlaceHoldActivity : BaseActivity() {
                     GatewayLoader.loadOrgSettingsAsync(null).await()
                 })
 
-                if (partHoldsEnabled) {
+                if (resources.getBoolean(R.bool.ou_enable_part_holds)) {
+                    Log.d(TAG, "${record.title}: fetching parts")
                     jobs.add(async {
                         val result = Gateway.search.fetchHoldParts(record.doc_id)
                         onPartsResult(result)
-                        if (hasParts) {
+                        if (hasParts && resources.getBoolean(R.bool.ou_enable_title_hold_on_item_with_parts)) {
+                            Log.d(TAG, "${record.title}: checking titleHoldIsPossible")
                             val isPossibleResult = Gateway.circ.fetchTitleHoldIsPossible(App.getAccount(), record.doc_id, App.getAccount().pickupOrg ?: 1)
                             onTitleHoldIsPossibleResult(isPossibleResult)
                         }
@@ -200,7 +200,7 @@ class PlaceHoldActivity : BaseActivity() {
         when (result) {
             is Result.Success -> {
                 parts = result.data
-                Log.d(TAG, "Got array of length ${parts?.size}")
+                Log.d(TAG, "${record.title}: ${parts?.size} parts found")
             }
             is Result.Error -> {
                 showAlert(result.exception)
@@ -209,10 +209,11 @@ class PlaceHoldActivity : BaseActivity() {
     }
 
     private fun onTitleHoldIsPossibleResult(result: Result<OSRFObject>) {
-        titleHoldSeemsPossible = when (result) {
+        titleHoldIsPossible = when (result) {
             is Result.Success -> true
             is Result.Error -> false
         }
+        Log.d(TAG, "${record.title}: titleHoldIsPossible=$titleHoldIsPossible")
     }
 
     fun <T> coalesce(vararg args: T): T? {
