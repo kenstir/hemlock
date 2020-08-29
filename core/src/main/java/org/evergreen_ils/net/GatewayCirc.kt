@@ -19,6 +19,7 @@
 package org.evergreen_ils.net
 
 import org.evergreen_ils.Api
+import org.evergreen_ils.HOLD_TYPE_TITLE
 import org.evergreen_ils.data.Account
 import org.evergreen_ils.data.Result
 import org.evergreen_ils.data.jsonMapOf
@@ -89,7 +90,7 @@ object GatewayCirc : CircService {
                     "expire_time" to expireTime,
                     "frozen" to suspendHold
             )
-// Apparently unnecessary:
+// titleid/partid are supplied by holds.test_and_create.batch
 //            when (holdType) {
 //                "T" -> param["titleid"] = targetId
 //                "P" -> param["partid"] = targetId
@@ -104,6 +105,23 @@ object GatewayCirc : CircService {
 
             val args = arrayOf<Any?>(authToken, param, arrayListOf(targetId))
             val ret = Gateway.fetchObject(Api.CIRC, Api.HOLD_TEST_AND_CREATE, args, false)
+            Result.Success(ret)
+        } catch (e: Exception) {
+            Result.Error(e)
+        }
+    }
+
+    override suspend fun fetchTitleHoldIsPossible(account: Account, targetId: Int, pickupLib: Int): Result<OSRFObject> {
+        return try {
+            val (authToken, userID) = account.getCredentialsOrThrow()
+            val param = mutableMapOf(
+                    "patronid" to userID,
+                    "pickup_lib" to pickupLib,
+                    "hold_type" to HOLD_TYPE_TITLE,
+                    "titleid" to targetId
+            )
+            val args = arrayOf<Any?>(authToken, param)
+            val ret = Gateway.fetchObject(Api.CIRC, Api.TITLE_HOLD_IS_POSSIBLE, args, false)
             Result.Success(ret)
         } catch (e: Exception) {
             Result.Error(e)

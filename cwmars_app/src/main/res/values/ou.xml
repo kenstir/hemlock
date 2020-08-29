@@ -13,4 +13,6 @@
     <string name="ou_barcode_format">Codabar</string>
     <bool name="ou_hierarchical_org_tree">false</bool>
     <bool name="ou_enable_part_holds">true</bool>
+    <bool name="ou_enable_title_hold_on_item_with_parts">true</bool>
+    <bool name="ou_enable_analytics">true</bool>
 </resources>
