@@ -32,6 +32,8 @@
     <!-- sort keyword to use in the open-ils.search.biblio.multiclass.query request, e.g. poprel
          if empty the sort() clause is omitted -->
     <string name="ou_sort_by"></string>
+    <!-- if non-empty, the Barcode format to display for Show Card -->
+    <string name="ou_barcode_format"></string>
     <!-- if true, organize library spinners hierarchically -->
     <bool name="ou_hierarchical_org_tree">true</bool>
     <!-- if true, group copy information by system and branch, instead of by branch -->
@@ -44,8 +46,11 @@
     <bool name="ou_enable_hold_queue_position">true</bool>
     <!-- if true, show "expires DATE" for holds that are Available -->
     <bool name="ou_enable_hold_shelf_expiration">true</bool>
-    <!-- if true, part holds are available -->
+    <!-- if true, we query an item for parts to allow a part hold -->
     <bool name="ou_enable_part_holds">false</bool>
+    <!-- if true, and the item has parts, try title_hold.is_possible and if so, allow title hold.
+         if false, require a part hold for an item with parts. -->
+    <bool name="ou_enable_title_hold_on_item_with_parts">false</bool>
     <!-- if true, enable messages link in app bar -->
     <bool name="ou_enable_messages">false</bool>
     <!-- if true, enable Pay Fines button based on settings -->
@@ -60,8 +65,6 @@
     <bool name="ou_enable_hours_of_operation">true</bool>
     <!-- if true, Firebase Analytics is initialized -->
     <bool name="ou_enable_analytics">false</bool>
-    <!-- if non-empty, the Barcode format to display for Show Card -->
-    <string name="ou_barcode_format"></string>
     <!-- max number of results to return from Search -->
     <integer name="ou_search_limit">200</integer>
 </resources>
