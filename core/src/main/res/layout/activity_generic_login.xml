@@ -12,6 +12,7 @@
         android:id="@+id/image_splash"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:background="@color/logo_background"
         android:src="@drawable/splash_title"
         tools:ignore="ContentDescription" />
 
