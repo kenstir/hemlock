@@ -19,12 +19,11 @@ package org.evergreen_ils.android
 
 import android.content.Context
 import android.os.Bundle
+import android.provider.Settings
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import org.evergreen_ils.BuildConfig
 import org.evergreen_ils.R
-import org.opensrf.util.GatewayResult
-import org.opensrf.util.OSRFObject
 
 /** Utils that wrap Crashlytics (and now Analytics)
  */
@@ -65,18 +64,25 @@ object Analytics {
     }
 
     private val TAG = Analytics::class.java.simpleName
-    private const val MAX_PARAMS = 5
-    private var mLastAuthToken: String? = null
+    private var initialized = false
     private var analytics = false
+    private var runningInTestLab = false
     private var mAnalytics: FirebaseAnalytics? = null
 
     @JvmStatic
     fun initialize(context: Context) {
-        if (context.resources.getBoolean(R.bool.ou_enable_analytics)) {
+        if (initialized) return
+
+        val setting: String? = Settings.System.getString(context.contentResolver, "firebase.test.lab")
+        runningInTestLab = (setting == "true")
+
+        if (context.resources.getBoolean(R.bool.ou_enable_analytics) && !runningInTestLab) {
             analytics = true
             if (mAnalytics == null)
                 mAnalytics = FirebaseAnalytics.getInstance(context)
         }
+
+        initialized = true
     }
 
     @JvmStatic
