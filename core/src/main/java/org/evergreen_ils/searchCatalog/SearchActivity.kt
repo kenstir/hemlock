@@ -187,7 +187,7 @@ class SearchActivity : BaseActivity() {
         async {
             try {
                 val start = System.currentTimeMillis()
-                var jobs = mutableListOf<Job>()
+                //var jobs = mutableListOf<Job>()
                 progress?.show(this@SearchActivity, getString(R.string.dialog_fetching_data_message))
 
                 Log.d(TAG, "[kcxxx] fetchSearchResults ...")
@@ -217,7 +217,7 @@ class SearchActivity : BaseActivity() {
                 updateSearchResultsSummary()
                 searchResultsFragment?.notifyDatasetChanged()
 
-                jobs.joinAll()
+                //jobs.joinAll()
                 Log.logElapsedTime(TAG, start, "[kcxxx] fetchSearchResults ... done")
             } catch (ex: Exception) {
                 Log.d(TAG, "[kcxxx] fetchSearchResults ... caught", ex)
