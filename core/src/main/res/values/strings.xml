@@ -236,5 +236,6 @@
     <!-- misc -->
     <string name="msg_barcode_copied">Barcode copied to clipboard</string>
     <string name="label_barcode">barcode</string>
+    <string name="label_hold_any_part">All parts</string>
 
 </resources>

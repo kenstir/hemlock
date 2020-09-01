@@ -449,7 +449,7 @@ class PlaceHoldActivity : BaseActivity() {
     }
 
     private fun initPartSpinner() {
-        val sentinelLabel = if (partRequired) "" else "- All parts -"
+        val sentinelLabel = if (partRequired) "" else "- ${resources.getString(R.string.label_hold_any_part)} -"
         val labels = mutableListOf(sentinelLabel)
         parts?.let {
             for (elem in it) {
