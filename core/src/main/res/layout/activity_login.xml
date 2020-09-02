@@ -52,16 +52,16 @@
                 <EditText
                     android:id="@+id/accountName"
                     android:layout_width="match_parent"
-                    android:layout_height="48dp"
+                    android:layout_height="wrap_content"
                     android:layout_marginTop="20dp"
-                    android:contentDescription="@string/username_description"
                     android:hint="@string/hint_username"
                     android:inputType="text|textNoSuggestions"
+                    android:minHeight="48dp"
                     android:padding="10dp" />
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:layout_width="match_parent"
-                    android:layout_height="48dp"
+                    android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
                     app:passwordToggleEnabled="true">
 
@@ -69,9 +69,9 @@
                         android:id="@+id/accountPassword"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:contentDescription="@string/password_description"
                         android:hint="@string/hint_password"
                         android:inputType="textPassword"
+                        android:minHeight="48dp"
                         android:padding="10dp" />
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -85,8 +85,9 @@
                         android:id="@+id/forgot_password_button"
                         style="?android:buttonBarButtonStyle"
                         android:layout_width="0dp"
-                        android:layout_height="48dp"
+                        android:layout_height="wrap_content"
                         android:layout_weight="1"
+                        android:minHeight="48dp"
                         android:text="@string/forgot_password_button" />
 
                     <Button
