@@ -24,6 +24,7 @@ import android.view.View
 import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.os.bundleOf
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import kotlinx.coroutines.CoroutineScope
@@ -234,14 +235,15 @@ class LaunchActivity : AppCompatActivity(), CoroutineScope by MainScope() {
     // We call this event "login", but it happens after auth and after fleshing the user.
     // NB: "session_start" seems more appropriate but that is a predefined automatic event.
     private fun logStartEvent(account: Account) {
-        // analytics
-        val b = Bundle()
-        b.putString(Analytics.UserProperty.HOME_ORG, EgOrg.getOrgShortNameSafe(account.homeOrg))
-        b.putString(Analytics.UserProperty.DEFAULT_PICKUP_ORG, EgOrg.getOrgShortNameSafe(account.pickupOrg))
-        b.putString(Analytics.UserProperty.DEFAULT_SEARCH_ORG, EgOrg.getOrgShortNameSafe(account.searchOrg))
-        b.putString(Analytics.UserProperty.DEFAULT_HOLD_NOTIFY, account.holdNotifyValue ?: "")
-        Analytics.setUserProperties(b)
-        Analytics.logEvent(Analytics.Event.LOGIN)
+        Analytics.setUserProperties(bundleOf(
+                Analytics.UserProperty.HOME_ORG to EgOrg.getOrgShortNameSafe(account.homeOrg)
+        ))
+        Analytics.logEvent(Analytics.Event.LOGIN, bundleOf(
+                Analytics.UserProperty.HOME_ORG to EgOrg.getOrgShortNameSafe(account.homeOrg),
+                Analytics.Param.DEFAULT_PICKUP_ORG to EgOrg.getOrgShortNameSafe(account.pickupOrg),
+                Analytics.Param.DEFAULT_SEARCH_ORG to EgOrg.getOrgShortNameSafe(account.searchOrg),
+                Analytics.Param.DEFAULT_HOLD_NOTIFY to account.holdNotifyValue
+        ))
     }
 
     private suspend fun fetchSession(authToken: String): Result<OSRFObject> {

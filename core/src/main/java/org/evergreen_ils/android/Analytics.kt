@@ -43,6 +43,9 @@ object Analytics {
     }
 
     object Param {
+        const val DEFAULT_HOLD_NOTIFY = "default_hold_notify"
+        const val DEFAULT_PICKUP_ORG = "default_pickup_org"
+        const val DEFAULT_SEARCH_ORG = "default_search_org"
         const val ERROR_MESSAGE = "error_message"
         const val HOLD_EXPIRES_KEY = "hold_expires" // bool
         const val HOLD_NOTIFY = "hold_notify"
@@ -57,9 +60,6 @@ object Analytics {
 
     // these need to be registered in GA
     object UserProperty {
-        const val DEFAULT_HOLD_NOTIFY = "default_hold_notify"
-        const val DEFAULT_PICKUP_ORG = "default_pickup_org"
-        const val DEFAULT_SEARCH_ORG = "default_search_org"
         const val HOME_ORG = "home_org"
     }
 
