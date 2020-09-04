@@ -55,6 +55,7 @@
     <string name="search_button_alt">search</string>
     <string name="search_options_button_alt">search options visible</string>
     <string name="search_qtype_spinner_alt">query type</string>
+    <string name="search_results_alt">search results</string>
     <string name="search_format_spinner_alt">item type</string>
     <string name="search_org_spinner_alt">search library</string>
     <string name="advanced_search">Advanced Search</string>

@@ -4,6 +4,7 @@
     <dimen name="target_min_height">48dp</dimen>
     <!-- even though accessibility scanner recommends 48dp, that feels big for spinners -->
     <dimen name="spinner_min_height">32dp</dimen>
+    <dimen name="spinner_item_min_height">32dp</dimen>
 
     <dimen name="text_size_medium">18sp</dimen>
     <dimen name="text_size_large">22sp</dimen>
