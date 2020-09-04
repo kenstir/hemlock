@@ -280,7 +280,7 @@ class SearchActivity : BaseActivity() {
 
     private fun initSearchFormatSpinner() {
         val labels = EgCodedValueMap.searchFormatSpinnerLabels
-        val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, labels)
+        val adapter = ArrayAdapter(this, R.layout.org_item_layout, labels)
         searchFormatSpinner?.adapter = adapter
     }
 
