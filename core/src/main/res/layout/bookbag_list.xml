@@ -6,36 +6,33 @@
 
     <include layout="@layout/toolbar_common"/>
 
-    <LinearLayout 
+    <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        >
+        android:orientation="horizontal">
 
-		<EditText
+        <EditText
             android:id="@+id/bookbag_create_name"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:hint="@string/list_name_hint"
-			android:layout_weight="1"
-            />
+            android:layout_weight="1"
+            android:minHeight="@dimen/target_min_height" />
         <Button
             android:id="@+id/bookbag_create_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingLeft="16dip"
             android:paddingRight="16dip"
-            android:text="@string/create_list_button"
-            />
-        
+            android:text="@string/create_list_button" />
+
     </LinearLayout>
 
     <ListView
-            android:id="@+id/bookbag_list"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:paddingTop="10dip"
-            android:dividerHeight="1dp"
-    />
+        android:id="@+id/bookbag_list"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="10dip"
+        android:dividerHeight="1dp" />
 
 </LinearLayout>

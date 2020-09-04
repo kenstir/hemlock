@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- touch target min height recommended by accessibility scanner -->
+    <dimen name="target_min_height">48dp</dimen>
+    <!-- even though accessibility scanner recommends 48dp, that feels big for spinners -->
+    <dimen name="spinner_min_height">32dp</dimen>
+
     <dimen name="text_size_medium">18sp</dimen>
     <dimen name="text_size_large">22sp</dimen>
     <dimen name="bigActionButton_marginVertical">16dp</dimen>

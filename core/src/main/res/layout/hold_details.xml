@@ -81,7 +81,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:spinnerMode="dialog"
-                    android:minHeight="32dp" />
+                    android:minHeight="@dimen/spinner_min_height" />
             </TableRow>
             <TableRow>
                 <TextView
@@ -96,7 +96,7 @@
                     android:layout_width="0dip"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:minHeight="48dp" />
+                    android:minHeight="@dimen/target_min_height" />
             </TableRow>
             <TableRow android:id="@+id/hold_suspend_hold_row">
                 <TextView
@@ -111,7 +111,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:checked="true"
-                    android:minHeight="48dp" />
+                    android:minHeight="@dimen/target_min_height" />
             </TableRow>
             <TableRow android:id="@+id/hold_thaw_date_row">
                 <TextView
@@ -126,7 +126,7 @@
                     android:layout_width="0dip"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:minHeight="48dp" />
+                    android:minHeight="@dimen/target_min_height" />
             </TableRow>
         </TableLayout>
     </ScrollView>

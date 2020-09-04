@@ -31,7 +31,7 @@
                 android:imeOptions="actionSearch"
                 android:inputType="textAutoComplete"
                 android:maxLines="1"
-                android:minHeight="48dp"
+                android:minHeight="@dimen/target_min_height"
                 tools:targetApi="o"/>
 
             <androidx.appcompat.widget.SwitchCompat
@@ -40,7 +40,8 @@
                 android:layout_height="wrap_content"
                 android:checked="true"
                 android:contentDescription="@string/search_options_button_alt"
-                android:minHeight="48dp" />
+                android:minHeight="@dimen/target_min_height"
+                android:minWidth="@dimen/target_min_height" />
 
             <Button
                 android:id="@+id/search_button"
@@ -69,7 +70,7 @@
                     android:layout_weight="1"
                     android:contentDescription="@string/search_qtype_spinner_alt"
                     android:entries="@array/search_qtype"
-                    android:minHeight="32dp" />
+                    android:minHeight="@dimen/spinner_min_height" />
 
                 <Spinner
                     android:id="@+id/search_format_spinner"
@@ -78,7 +79,7 @@
                     android:layout_margin="1dp"
                     android:layout_weight="1"
                     android:contentDescription="@string/search_format_spinner_alt"
-                    android:minHeight="32dp" />
+                    android:minHeight="@dimen/spinner_min_height" />
             </LinearLayout>
             <LinearLayout
                 android:orientation="horizontal"
@@ -94,7 +95,7 @@
                     android:layout_weight="2"
                     android:contentDescription="@string/search_org_spinner_alt"
                     android:spinnerMode="dialog"
-                    android:minHeight="32dp" />
+                    android:minHeight="@dimen/spinner_min_height" />
             </LinearLayout>
         </LinearLayout>
 
