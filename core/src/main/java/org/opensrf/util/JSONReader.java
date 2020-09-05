@@ -10,6 +10,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import static java.lang.Math.min;
+
 
 /**
  * JSON utilities.
@@ -147,11 +149,12 @@ public class JSONReader {
             if( payload instanceof JSONArray ) {
                 JSONArray jarr = (JSONArray) payload;
 
-                /* for each array item, instert the item into the hash.  the hash 
+                /* for each array item, insert the item into the hash.  the hash
                  * key is found by extracting the fields array from the registered 
                  * object at the current array index */
                 String fields[] = registry.getFields();
-                for( int i = 0; i < jarr.length(); i++ ) {
+                int count = min(jarr.length(), fields.length);
+                for( int i = 0; i < count; i++ ) {
                     obj.put(fields[i], readSubObject(jarr.get(i)));   
                 }
 
