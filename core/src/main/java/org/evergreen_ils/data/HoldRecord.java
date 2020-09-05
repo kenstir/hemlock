@@ -222,7 +222,7 @@ public class HoldRecord implements Serializable {
         return (qstatsObj != null) ? qstatsObj.getInt("total_holds") : null;
     }
 
-    public @Nullable String getFormatLabel() {
+    public @NonNull String getFormatLabel() {
         if (getHoldType().equals(HOLD_TYPE_METARECORD)) {
             Map<String, Object> map = JsonUtils.parseObject(ahr.getString("holdable_formats"));
             List<String> labels = new ArrayList<>();
