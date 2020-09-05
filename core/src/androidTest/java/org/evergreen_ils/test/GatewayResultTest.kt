@@ -63,6 +63,38 @@ class GatewayResultTest {
     }
 
     @Test
+    fun test_shortObject() {
+        // decoding an object where the wire protocol has fewer elements than the class has fields
+        val json = """
+            {"status":200,"payload":[{"__c":"au","__p":["f","luser"]}]}
+            """
+        val result = GatewayResult.create(json)
+        assertFalse(result.failed)
+
+        val obj = result.asObject()
+        assertNotNull(obj)
+        assertEquals(false, Api.parseBoolean(obj.get("juvenile")))
+        assertEquals("luser", obj.getString("usrname"))
+        assertEquals(null, obj.getInt("home_ou"))
+    }
+
+    @Test
+    fun test_tooManyFields() {
+        // decoding an object where the wire protocol has more elements than the class has fields
+        val json = """
+            {"status":200,"payload":[{"__c":"au","__p":["f","luser", 69, "Unexpected"]}]}
+            """
+        val result = GatewayResult.create(json)
+        assertFalse(result.failed)
+
+        val obj = result.asObject()
+        assertNotNull(obj)
+        assertEquals(false, Api.parseBoolean(obj.get("juvenile")))
+        assertEquals("luser", obj.getString("usrname"))
+        assertEquals(69, obj.getInt("home_ou"))
+    }
+
+    @Test
     fun test_unregisteredClass() {
         val json = """
             {"status":200,"payload":[{"__c":"xyzzy","__p":["f","luser",69]}]}
