@@ -70,7 +70,7 @@ class CircRecord(circ: OSRFObject?, circType: CircType, circId: Int) {
         get() = circ?.getDate("due_date")
 
     val dueDateString: String
-        get() = DateFormat.getDateInstance().format(dueDate)
+        get() = if (dueDate != null) DateFormat.getDateInstance().format(dueDate) else ""
 
     val renewals: Int
         get() = circ?.getInt("renewal_remaining") ?: 0
