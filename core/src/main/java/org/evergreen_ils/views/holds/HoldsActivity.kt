@@ -157,7 +157,7 @@ class HoldsActivity : BaseActivity() {
 
     suspend fun fetchHoldTargetDetails(hold: HoldRecord, account: Account): Result<Unit> {
         val target = hold.target ?: return Result.Error(GatewayError("null hold target"))
-        return when (hold.holdType) {
+        val result = when (hold.holdType) {
             "T" -> fetchTitleHoldTargetDetails(hold, target, account)
             "M" -> fetchMetarecordHoldTargetDetails(hold, target, account)
             "P" -> fetchPartHoldTargetDetails(hold, target, account)
@@ -168,6 +168,8 @@ class HoldsActivity : BaseActivity() {
                 Result.Error(GatewayError("unexpected hold type: ${hold.holdType}"))
             }
         }
+        Log.d(TAG, "$target: holdType:${hold.holdType} format:${hold.formatLabel} title:${hold.recordInfo.title}")
+        return result
     }
 
     private suspend fun fetchTitleHoldTargetDetails(hold: HoldRecord, target: Int, account: Account): Result<Unit> {
@@ -193,14 +195,14 @@ class HoldsActivity : BaseActivity() {
         val bmpResult = Gateway.fielder.fetchBMP(target)
         if (bmpResult is Result.Error) return bmpResult
         val bmpObj = bmpResult.get()
-        Log.d(TAG, "title:${hold.title} bmpObj:$bmpObj")
+        //Log.d(TAG, "title:${hold.title} bmpObj:$bmpObj")
         val id = bmpObj.getInt("record") ?: return Result.Error(GatewayError("missing record number in part hold bre"))
         hold.partLabel = bmpObj.getString("label")
 
         val modsResult = Gateway.search.fetchRecordMODS(id)
         if (modsResult is Result.Error) return modsResult
         val modsObj = modsResult.get()
-        Log.d(TAG, "title:${hold.title} modsObj:$modsObj")
+        //Log.d(TAG, "title:${hold.title} modsObj:$modsObj")
         hold.recordInfo = RecordInfo(modsObj)
 
         if (hold.recordInfo.doc_id == null) return Result.Success(Unit)
@@ -215,19 +217,19 @@ class HoldsActivity : BaseActivity() {
         val acpResult = Gateway.search.fetchAssetCopy(target)
         if (acpResult is Result.Error) return acpResult
         val acpObj = acpResult.get()
-        Log.d(TAG, "acpObj:$acpObj")
+        //Log.d(TAG, "acpObj:$acpObj")
         val callNumber = acpObj.getInt("call_number") ?: return Result.Error(GatewayError("missing call_number in copy hold"))
 
         val acnResult = Gateway.search.fetchAssetCallNumber(callNumber)
         if (acnResult is Result.Error) return acnResult
         val acnObj = acnResult.get()
-        Log.d(TAG, "acnObj:$acnObj")
+        //Log.d(TAG, "acnObj:$acnObj")
         val id = acnObj.getInt("record") ?: return Result.Error(GatewayError("missing record number in asset call number"))
 
         val modsResult = Gateway.search.fetchRecordMODS(id)
         if (modsResult is Result.Error) return modsResult
         val modsObj = modsResult.get()
-        Log.d(TAG, "modsObj:$modsObj")
+        //Log.d(TAG, "modsObj:$modsObj")
         hold.recordInfo = RecordInfo(modsObj)
 
         if (hold.recordInfo.doc_id == null) return Result.Success(Unit)
@@ -242,13 +244,13 @@ class HoldsActivity : BaseActivity() {
         val acnResult = Gateway.search.fetchAssetCallNumber(target)
         if (acnResult is Result.Error) return acnResult
         val acnObj = acnResult.get()
-        Log.d(TAG, "acnObj:$acnObj")
+        //Log.d(TAG, "acnObj:$acnObj")
         val id = acnObj.getInt("record") ?: return Result.Error(GatewayError("missing record number in asset call number"))
 
         val modsResult = Gateway.search.fetchRecordMODS(id)
         if (modsResult is Result.Error) return modsResult
         val modsObj = modsResult.get()
-        Log.d(TAG, "modsObj:$modsObj")
+        //Log.d(TAG, "modsObj:$modsObj")
         hold.recordInfo = RecordInfo(modsObj)
 
         if (hold.recordInfo.doc_id == null) return Result.Success(Unit)
