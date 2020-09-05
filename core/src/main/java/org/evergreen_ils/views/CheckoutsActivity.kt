@@ -41,7 +41,6 @@ import org.evergreen_ils.data.Result
 import org.evergreen_ils.net.Gateway
 import org.evergreen_ils.searchCatalog.RecordDetails
 import org.evergreen_ils.searchCatalog.RecordInfo
-import org.evergreen_ils.android.Analytics
 import org.evergreen_ils.android.Log
 import org.evergreen_ils.utils.ui.BaseActivity
 import org.evergreen_ils.utils.ui.ProgressDialogSupport
@@ -213,13 +212,13 @@ class CheckoutsActivity : BaseActivity() {
         private fun dueDateText(record: CircRecord): String {
             return when {
                 record.isOverdue ->
-                    String.format(getString(R.string.msg_overdue), record.dueDateString)
+                    String.format(getString(R.string.label_due_date_overdue), record.dueDateString)
                 record.isDue && record.autoRenewals > 0 ->
-                    String.format(getString(R.string.msg_due_but_may_autorenew), record.dueDateString)
+                    String.format(getString(R.string.label_due_date_may_autorenew), record.dueDateString)
                 record.wasAutorenewed ->
-                    String.format(getString(R.string.msg_due_was_autorenewed), record.dueDateString)
+                    String.format(getString(R.string.label_due_date_autorenewed), record.dueDateString)
                 else ->
-                    String.format(getString(R.string.msg_due), record.dueDateString)
+                    String.format(getString(R.string.label_due_date), record.dueDateString)
             }
         }
 

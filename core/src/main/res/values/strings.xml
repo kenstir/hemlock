@@ -124,10 +124,10 @@
     <!-- Checkout items -->
     <string name="checkout_items">Items checked out: %1$d</string>
     <string name="checkout_renewals_left">Renewals left: %d</string>
-    <string name="msg_due">Due %s</string>
-    <string name="msg_due_but_may_autorenew">Due %s (but may auto-renew)</string>
-    <string name="msg_due_was_autorenewed">Due %s (item was auto-renewed)</string>
-    <string name="msg_overdue">(overdue)</string>
+    <string name="label_due_date">Due %s</string>
+    <string name="label_due_date_may_autorenew">Due %s (but may auto-renew)</string>
+    <string name="label_due_date_autorenewed">Due %s (item was auto-renewed)</string>
+    <string name="label_due_date_overdue">Due %s (overdue)</string>
 
     <!-- Fines Activity -->
     <string name="total_owed">Total Owed</string>
