@@ -117,7 +117,7 @@ class OrgDetailsActivity : BaseActivity() {
         orgSpinner?.adapter = adapter
         orgSpinner?.setSelection(selectedOrgPos)
         orgSpinner?.onItemSelectedListener = object : OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>?, view: View, position: Int, id: Long) {
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
                 org = EvergreenServer.getInstance().visibleOrganizations[position]
                 orgID = org?.id
                 fetchData()
