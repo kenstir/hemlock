@@ -35,6 +35,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.joinAll
 import org.evergreen_ils.R
+import org.evergreen_ils.android.Analytics
 import org.evergreen_ils.android.App
 import org.evergreen_ils.data.CircRecord
 import org.evergreen_ils.data.Result
@@ -47,9 +48,9 @@ import org.evergreen_ils.utils.ui.ProgressDialogSupport
 import org.evergreen_ils.utils.ui.showAlert
 import java.util.*
 
-private const val TAG = "Checkouts"
-
 class CheckoutsActivity : BaseActivity() {
+    private val TAG = "Checkouts"
+
     private var lv: ListView? = null
     private var listAdapter: CheckoutsArrayAdapter? = null
     private var circRecords: ArrayList<CircRecord> = ArrayList()
