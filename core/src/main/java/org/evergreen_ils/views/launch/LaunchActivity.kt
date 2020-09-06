@@ -235,11 +235,15 @@ class LaunchActivity : AppCompatActivity(), CoroutineScope by MainScope() {
     // We call this event "login", but it happens after auth and after fleshing the user.
     // NB: "session_start" seems more appropriate but that is a predefined automatic event.
     private fun logStartEvent(account: Account) {
+        val homeOrg = EgOrg.getOrgShortNameSafe(account.homeOrg)
+        val parentOrg = EgOrg.getOrgShortNameSafe(EgOrg.findOrg(account.homeOrg)?.parent_ou)
         Analytics.setUserProperties(bundleOf(
-                Analytics.UserProperty.HOME_ORG to EgOrg.getOrgShortNameSafe(account.homeOrg)
+                Analytics.UserProperty.HOME_ORG to homeOrg,
+                Analytics.UserProperty.PARENT_ORG to parentOrg
         ))
         Analytics.logEvent(Analytics.Event.LOGIN, bundleOf(
-                Analytics.UserProperty.HOME_ORG to EgOrg.getOrgShortNameSafe(account.homeOrg),
+                Analytics.UserProperty.HOME_ORG to homeOrg,
+                Analytics.UserProperty.PARENT_ORG to parentOrg,
                 Analytics.Param.DEFAULT_PICKUP_ORG to EgOrg.getOrgShortNameSafe(account.pickupOrg),
                 Analytics.Param.DEFAULT_SEARCH_ORG to EgOrg.getOrgShortNameSafe(account.searchOrg),
                 Analytics.Param.DEFAULT_HOLD_NOTIFY to account.holdNotifyValue

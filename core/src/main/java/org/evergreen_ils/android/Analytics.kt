@@ -61,6 +61,7 @@ object Analytics {
     // these need to be registered in GA
     object UserProperty {
         const val HOME_ORG = "home_org"
+        const val PARENT_ORG = "parent_org"
     }
 
     private val TAG = Analytics::class.java.simpleName
