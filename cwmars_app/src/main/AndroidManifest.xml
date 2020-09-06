@@ -3,8 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="org.cwmars"
     android:installLocation="auto"
-    android:versionCode="83"
-    android:versionName="4.3.8">
+    android:versionCode="84"
+    android:versionName="4.3.9">
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS" />
