@@ -119,7 +119,7 @@ public class SampleUnderlinesNoFade extends BasePagerActivity {
 
     class SearchFragmentAdapter extends FragmentPagerAdapter {
         public SearchFragmentAdapter(FragmentManager fm) {
-            super(fm);
+            super(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
         }
 
         @Override
