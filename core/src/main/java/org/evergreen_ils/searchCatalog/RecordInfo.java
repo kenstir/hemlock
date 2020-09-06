@@ -19,11 +19,15 @@
  */
 package org.evergreen_ils.searchCatalog;
 
+import android.content.res.Resources;
+
 import org.evergreen_ils.Api;
+import org.evergreen_ils.R;
 import org.evergreen_ils.data.CopyLocationCounts;
 import org.evergreen_ils.data.CopySummary;
 import org.evergreen_ils.system.EgCodedValueMap;
 import org.evergreen_ils.android.Log;
+import org.evergreen_ils.system.EgOrg;
 import org.evergreen_ils.utils.MARCRecord;
 import org.evergreen_ils.utils.MARCXMLParser;
 import org.evergreen_ils.utils.RecordAttributes;
@@ -67,12 +71,10 @@ public class RecordInfo implements Serializable {
     public String physical_description = null;
     public String series = "";
 
-    // todo: put the knowledge of whether this record has been loaded here in RecordInfo
-    // and not scattered e.g. in RecordLoader and BasicDetailsFragment
-    public boolean basic_metadata_loaded = false;
-    public boolean attrs_loaded = false;
-    public boolean copy_summary_loaded = false;
-    public boolean marcxml_loaded = false;
+    public boolean hasMetadata = false;
+    public boolean hasAttributes = false;
+    public boolean hasCopySummary = false;
+    public boolean hasMARC = false;
 
     public ArrayList<CopySummary> copySummaryList = null;
     public MARCRecord marc_record = null;
@@ -133,13 +135,12 @@ public class RecordInfo implements Serializable {
             // ignore
         }
 
-        record.basic_metadata_loaded = true;
+        record.hasMetadata = true;
     }
 
-    public void updateFromBREResponse(GatewayResult response) {
+    public void updateFromBREResponse(OSRFObject info) {
         try {
-            OSRFObject info = (OSRFObject) response.payload;
-            marcxml_loaded = true;
+            hasMARC = true;
 
             String marcxml = info.getString("marc");
             if (!TextUtils.isEmpty(marcxml)) {
@@ -151,20 +152,31 @@ public class RecordInfo implements Serializable {
         }
     }
 
-    public static void setCopySummary(RecordInfo record, GatewayResult response) {
-        record.copySummaryList = new ArrayList<>();
-        if (response == null || response.failed)
-            return;
-        try {
-            List<OSRFObject> l = response.asObjectArray();
-            for (OSRFObject obj : l) {
-                CopySummary info = new CopySummary(obj);
-                record.copySummaryList.add(info);
-            }
-        } catch (Exception e) {
-            Log.d(TAG, "caught", e);
+    public void updateFromCopyCountResponse(List<OSRFObject> l) {
+        copySummaryList = new ArrayList<>();
+        for (OSRFObject obj : l) {
+            CopySummary info = new CopySummary(obj);
+            copySummaryList.add(info);
         }
-        record.copy_summary_loaded = true;
+        hasCopySummary = true;
+    }
+
+    @NonNull
+    public String getCopySummary(Resources resources, Integer orgID) {
+        int total = 0;
+        int available = 0;
+        if (copySummaryList == null) return "";
+        if (orgID == null) return "";
+        for (int i = 0; i < copySummaryList.size(); i++) {
+            if (copySummaryList.get(i).getOrgId().equals(orgID)) {
+                total = copySummaryList.get(i).getCount();
+                available = copySummaryList.get(i).getAvailable();
+                break;
+            }
+        }
+        String totalCopies = resources.getQuantityString(R.plurals.number_of_copies, total, total);
+        return String.format(resources.getString(R.string.n_of_m_available),
+                available, totalCopies, EgOrg.getOrgNameSafe(orgID));
     }
 
     public static List<CopyLocationCounts> parseCopyLocationCounts(RecordInfo record, GatewayResult response) {
@@ -191,7 +203,7 @@ public class RecordInfo implements Serializable {
 
     public void updateFromMRAResponse(OSRFObject mra_obj) {
         attrs = RecordAttributes.parseAttributes(mra_obj);
-        attrs_loaded = true;
+        hasAttributes = true;
     }
 
     public @Nullable String getAttr(String attr_name) {

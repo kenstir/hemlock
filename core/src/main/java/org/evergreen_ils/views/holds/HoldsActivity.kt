@@ -135,14 +135,6 @@ class HoldsActivity : BaseActivity() {
         }
     }
 
-    suspend fun fetchRecordAttrs(record: RecordInfo, id: Int): Result<Unit> {
-        val mraResult = Gateway.pcrud.fetchMRA(id)
-        if (mraResult is Result.Error) return mraResult
-        val mraObj = mraResult.get()
-        record.updateFromMRAResponse(mraObj)
-        return Result.Success(Unit)
-    }
-
     suspend fun fetchHoldQueueStats(hold: HoldRecord, account: Account): Result<Unit> {
         val id = hold.ahr.getInt("id") ?: return Result.Error(GatewayError("null hold id"))
         val result = Gateway.circ.fetchHoldQueueStats(account, id)
@@ -321,5 +313,14 @@ class HoldsActivity : BaseActivity() {
 
     companion object {
         private val TAG = HoldsActivity::class.java.simpleName
+
+        //TODO: replace with GatewayLoader.loadRecordAttributesAsync
+        suspend fun fetchRecordAttrs(record: RecordInfo, id: Int): Result<Unit> {
+            val mraResult = Gateway.pcrud.fetchMRA(id)
+            if (mraResult is Result.Error) return mraResult
+            val mraObj = mraResult.get()
+            record.updateFromMRAResponse(mraObj)
+            return Result.Success(Unit)
+        }
     }
 }

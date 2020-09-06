@@ -124,7 +124,7 @@ public class SampleUnderlinesNoFade extends BasePagerActivity {
 
         @Override
         public Fragment getItem(int position) {
-            return DetailsFragment.newInstance(records.get(position), position, numResults, orgID);
+            return DetailsFragment.create(records.get(position), orgID, position, numResults);
         }
 
         @Override

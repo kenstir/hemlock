@@ -46,6 +46,7 @@ import org.evergreen_ils.data.CopyLocationCounts
 import org.evergreen_ils.net.Gateway.buildUrl
 import org.evergreen_ils.net.GatewayJsonObjectRequest
 import org.evergreen_ils.net.Volley
+import org.evergreen_ils.system.EgOrg
 import org.evergreen_ils.system.EgOrg.findOrg
 import org.evergreen_ils.system.EgOrg.getOrgNameSafe
 import org.evergreen_ils.utils.ui.ActionBarUtils
@@ -80,7 +81,7 @@ class CopyInformationActivity : AppCompatActivity() {
             orgID = savedInstanceState.getInt("orgID")
         } else {
             record = intent.getSerializableExtra("recordInfo") as RecordInfo
-            orgID = intent.getIntExtra("orgID", 1)
+            orgID = intent.getIntExtra("orgID", EgOrg.consortiumID)
         }
         groupCopiesBySystem = resources.getBoolean(R.bool.ou_group_copy_info_by_system)
 
@@ -97,7 +98,7 @@ class CopyInformationActivity : AppCompatActivity() {
         }
 
         val summaryText = findViewById<View>(R.id.copy_information_summary) as TextView
-        summaryText.text = RecordLoader.getCopySummary(record, orgID!!, this)
+        summaryText.text = record?.getCopySummary(resources, orgID!!)
 
         initCopyLocationCounts()
     }

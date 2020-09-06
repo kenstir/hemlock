@@ -20,7 +20,6 @@ package org.evergreen_ils.net
 
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
-import kotlinx.coroutines.launch
 import org.evergreen_ils.android.App
 import org.evergreen_ils.system.EgOrg
 import org.evergreen_ils.data.Organization
@@ -28,7 +27,7 @@ import org.evergreen_ils.android.Log
 import org.evergreen_ils.data.Account
 import org.evergreen_ils.data.BookBag
 import org.evergreen_ils.data.Result
-import org.opensrf.util.OSRFObject
+import org.evergreen_ils.searchCatalog.RecordInfo
 
 object GatewayLoader {
 
@@ -49,6 +48,7 @@ object GatewayLoader {
     }
 
     suspend fun loadBookBagsAsync(account: Account): Result<Unit> {
+        // do not cache bookbags
 //        return if (account.bookBagsLoaded) {
 //            Log.d(TAG, "[bookbag] loadBookBagsAsync...noop")
 //            Result.Success(Unit)
@@ -68,13 +68,57 @@ object GatewayLoader {
     }
 
     suspend fun loadBookBagContents(account: Account, bookBag: BookBag): Result<Unit> {
-        // TODO: only flesh bookBag if it's unloaded or dirty
-        Log.d(TAG, "[kcxxx] bag:${bookBag.name}")
+        // do not cache bookbag contents
+        Log.d(TAG, "[bookbag] bag:${bookBag.name}")
         val result = Gateway.actor.fleshBookBagAsync(account, bookBag.id)
         if (result is Result.Error) return result
         val obj = result.get()
-        Log.d(TAG, "[kcxxx] bag content:$obj")
+        Log.d(TAG, "[bookbag] bag content:$obj")
         bookBag.fleshFromObject(obj)
+
+        return Result.Success(Unit)
+    }
+
+    suspend fun loadRecordMetadataAsync(record: RecordInfo): Result<Unit> {
+        if (record.hasMetadata) return Result.Success(Unit)
+
+        val result = Gateway.search.fetchRecordMODS(record.doc_id)
+        if (result is Result.Error) return result
+        val modsObj = result.get()
+        RecordInfo.updateFromMODSResponse(record, modsObj)
+
+        return Result.Success(Unit)
+    }
+
+    suspend fun loadRecordAttributesAsync(record: RecordInfo, id: Int = record.doc_id): Result<Unit> {
+        if (record.hasAttributes) return Result.Success(Unit)
+
+        val mraResult = Gateway.pcrud.fetchMRA(id)
+        if (mraResult is Result.Error) return mraResult
+        val mraObj = mraResult.get()
+        record.updateFromMRAResponse(mraObj)
+
+        return Result.Success(Unit)
+    }
+
+    suspend fun loadRecordMarcAsync(record: RecordInfo): Result<Unit> {
+        if (record.hasMARC) return Result.Success(Unit)
+
+        val result = Gateway.pcrud.fetchMARC(record.doc_id)
+        if (result is Result.Error) return result
+        val obj = result.get()
+        record.updateFromBREResponse(obj)
+
+        return Result.Success(Unit)
+    }
+
+    suspend fun loadRecordCopyCountsAsync(record: RecordInfo, orgId: Int): Result<Unit> {
+        if (record.hasCopySummary) return Result.Success(Unit)
+
+        val result = Gateway.search.fetchCopySummary(record.doc_id, orgId)
+        if (result is Result.Error) return result
+        val objList = result.get()
+        record.updateFromCopyCountResponse(objList)
 
         return Result.Success(Unit)
     }

@@ -51,6 +51,15 @@ object GatewaySearch: SearchService {
         }
     }
 
+    override suspend fun fetchCopySummary(id: Int, orgId: Int): Result<List<OSRFObject>> {
+        return try {
+            val ret = Gateway.fetchObjectArray(Api.SEARCH, Api.COPY_COUNT, arrayOf(orgId, id), false)
+            Result.Success(ret)
+        } catch (e: Exception) {
+            Result.Error(e)
+        }
+    }
+
     override suspend fun fetchCopyMODS(copyId: Int): Result<OSRFObject> {
         return try {
             val ret = Gateway.fetchObject(Api.SEARCH, Api.MODS_FROM_COPY, arrayOf(copyId), true)

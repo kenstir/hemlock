@@ -30,6 +30,7 @@ import java.util.Comparator;
 import java.util.List;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 /** AppBehavior - custom app behaviors
  *
@@ -56,9 +57,10 @@ public class AppBehavior {
         return (icon_format_label.startsWith("E-")); // E-book, E-audio
     }
 
+    @Nullable
     public Boolean isOnlineResource(RecordInfo record) {
-        if (!record.basic_metadata_loaded) return null;
-        if (!record.attrs_loaded) return null;
+        if (!record.hasMetadata) return null;
+        if (!record.hasAttributes) return null;
 
         String item_form = record.getAttr("item_form");
         if (TextUtils.equals(item_form, "o")
@@ -92,7 +94,7 @@ public class AppBehavior {
     @NonNull
     protected List<Link> getOnlineLocationsFromMARC(RecordInfo record, String orgShortName) {
         ArrayList<Link> links = new ArrayList<>();
-        if (!record.marcxml_loaded || record.marc_record == null)
+        if (!record.hasMARC || record.marc_record == null)
             return links;
 
         for (MARCRecord.MARCDatafield df: record.marc_record.datafields) {
