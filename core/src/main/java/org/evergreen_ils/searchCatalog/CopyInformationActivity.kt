@@ -136,16 +136,16 @@ class CopyInformationActivity : AppCompatActivity() {
         if (groupCopiesBySystem) {
             // sort by system, then by branch, like http://gapines.org/eg/opac/record/5700567?locg=1
             copyInfoRecords.sortWith(Comparator { a, b ->
-                val a_org = findOrg(a.orgId)
-                val b_org = findOrg(b.orgId)
-                val a_system_name = getOrgNameSafe(a_org!!.parent_ou)
-                val b_system_name = getOrgNameSafe(b_org!!.parent_ou)
-                val system_cmp = safeCompareTo(a_system_name, b_system_name)
-                if (system_cmp != 0) system_cmp else a_org.name.compareTo(b_org.name)
+                val aOrg = findOrg(a.orgId)
+                val bOrg = findOrg(b.orgId)
+                val aSystemName = getOrgNameSafe(aOrg?.parent_ou)
+                val bSystemName = getOrgNameSafe(bOrg?.parent_ou)
+                val compareBySystem = compareValues(aSystemName, bSystemName)
+                if (compareBySystem != 0) compareBySystem else compareValues(aOrg?.name, bOrg?.name)
             })
         } else {
             copyInfoRecords.sortWith(Comparator { a, b ->
-                getOrgNameSafe(a.orgId).compareTo(getOrgNameSafe(b.orgId))
+                compareValues(getOrgNameSafe(a.orgId), getOrgNameSafe(b.orgId))
             })
         }
         listAdapter?.notifyDataSetChanged()
@@ -207,18 +207,6 @@ class CopyInformationActivity : AppCompatActivity() {
             copyStatusesText.text = clc.countsByStatusLabel
 
             return row
-        }
-    }
-
-    companion object {
-        fun safeCompareTo(a: String?, b: String?): Int {
-            return if (a == null && b == null) {
-                0
-            } else if (a == null) {
-                -1
-            } else if (b == null) {
-                1
-            } else a.compareTo(b)
         }
     }
 }
