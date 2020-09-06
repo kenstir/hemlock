@@ -94,7 +94,7 @@ public class CircRecord {
     }
 
     public String getDueDateString() {
-        return DateFormat.getDateInstance().format(circ_due_date);
+        return (circ_due_date != null) ? DateFormat.getDateInstance().format(circ_due_date) : "";
     }
 
     public Date getDueDate() {
