@@ -18,8 +18,7 @@
 
         <TableLayout
             android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            >
+            android:layout_height="wrap_content" >
 
             <TableRow android:layout_width="wrap_content"
                 android:layout_height="wrap_content">
@@ -72,7 +71,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:spinnerMode="dialog"
-                    />
+                    android:minHeight="@dimen/spinner_min_height" />
             </TableRow>
             <TableRow android:layout_width="wrap_content"
                 android:layout_height="wrap_content">
@@ -86,7 +85,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:spinnerMode="dialog"
-                    />
+                    android:minHeight="@dimen/spinner_min_height" />
             </TableRow>
             <TableRow android:layout_width="wrap_content"
                 android:layout_height="wrap_content">
@@ -127,7 +126,8 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:inputType="phone"
-                        android:autofillHints="phone" />
+                        android:autofillHints="phone"
+                        android:minHeight="@dimen/target_min_height" />
                 </LinearLayout>
             </TableRow>
             <TableRow android:layout_width="wrap_content"
@@ -154,7 +154,8 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:inputType="phone"
-                        android:autofillHints="phone" />
+                        android:autofillHints="phone"
+                        android:minHeight="@dimen/target_min_height" />
                 </LinearLayout>
             </TableRow>
             <TableRow android:layout_width="wrap_content"
@@ -172,7 +173,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:spinnerMode="dialog"
-                    />
+                    android:minHeight="@dimen/spinner_min_height" />
             </TableRow>
             <TableRow android:layout_width="wrap_content"
                 android:layout_height="wrap_content">
@@ -188,7 +189,8 @@
                     android:layout_width="0dip"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:inputType="text" />
+                    android:inputType="text"
+                    android:minHeight="@dimen/target_min_height" />
             </TableRow>
             <TableRow android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -222,7 +224,8 @@
                     android:layout_width="0dip"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:inputType="text" />
+                    android:inputType="text"
+                    android:minHeight="@dimen/target_min_height" />
             </TableRow>
         </TableLayout>
     </ScrollView>

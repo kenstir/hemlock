@@ -24,6 +24,7 @@ import android.view.View
 import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.os.bundleOf
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import kotlinx.coroutines.CoroutineScope
@@ -32,13 +33,13 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import org.evergreen_ils.R
 import org.evergreen_ils.android.AccountUtils
+import org.evergreen_ils.android.Analytics
 import org.evergreen_ils.android.App
+import org.evergreen_ils.android.Log
 import org.evergreen_ils.data.Account
-import org.evergreen_ils.system.EgOrg
 import org.evergreen_ils.data.Result
 import org.evergreen_ils.net.Gateway
-import org.evergreen_ils.android.Analytics
-import org.evergreen_ils.android.Log
+import org.evergreen_ils.system.EgOrg
 import org.evergreen_ils.utils.await
 import org.evergreen_ils.utils.getAccountManagerResult
 import org.evergreen_ils.utils.getCustomMessage
@@ -226,13 +227,27 @@ class LaunchActivity : AppCompatActivity(), CoroutineScope by MainScope() {
             }
         }
 
-        Analytics.logEvent("Account: Retrieve Session",
-                "home_org", EgOrg.getOrgShortNameSafe(account.homeOrg),
-                "pickup_org", EgOrg.getOrgShortNameSafe(account.pickupOrg),
-                "search_org", EgOrg.getOrgShortNameSafe(account.searchOrg),
-                "hold_notify", account.holdNotifyValue ?: "")
+        logStartEvent(account)
 
         return true
+    }
+
+    // We call this event "login", but it happens after auth and after fleshing the user.
+    // NB: "session_start" seems more appropriate but that is a predefined automatic event.
+    private fun logStartEvent(account: Account) {
+        val homeOrg = EgOrg.getOrgShortNameSafe(account.homeOrg)
+        val parentOrg = EgOrg.getOrgShortNameSafe(EgOrg.findOrg(account.homeOrg)?.parent_ou)
+        Analytics.setUserProperties(bundleOf(
+                Analytics.UserProperty.HOME_ORG to homeOrg,
+                Analytics.UserProperty.PARENT_ORG to parentOrg
+        ))
+        Analytics.logEvent(Analytics.Event.LOGIN, bundleOf(
+                Analytics.UserProperty.HOME_ORG to homeOrg,
+                Analytics.UserProperty.PARENT_ORG to parentOrg,
+                Analytics.Param.DEFAULT_PICKUP_ORG to EgOrg.getOrgShortNameSafe(account.pickupOrg),
+                Analytics.Param.DEFAULT_SEARCH_ORG to EgOrg.getOrgShortNameSafe(account.searchOrg),
+                Analytics.Param.DEFAULT_HOLD_NOTIFY to account.holdNotifyValue
+        ))
     }
 
     private suspend fun fetchSession(authToken: String): Result<OSRFObject> {

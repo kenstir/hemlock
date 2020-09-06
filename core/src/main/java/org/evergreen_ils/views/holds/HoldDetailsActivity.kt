@@ -29,6 +29,7 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.*
 import android.widget.AdapterView.OnItemSelectedListener
+import androidx.core.os.bundleOf
 import kotlinx.coroutines.async
 import org.evergreen_ils.Api
 import org.evergreen_ils.R
@@ -38,6 +39,7 @@ import org.evergreen_ils.data.HoldRecord
 import org.evergreen_ils.data.Result
 import org.evergreen_ils.net.Gateway
 import org.evergreen_ils.android.Analytics
+import org.evergreen_ils.utils.getCustomMessage
 import org.evergreen_ils.utils.ui.*
 import java.util.*
 
@@ -96,13 +98,13 @@ class HoldDetailsActivity : BaseActivity() {
             builder.setMessage(R.string.cancel_hold_dialog_message)
             builder.setNegativeButton(R.string.cancel_hold_negative_button, null)
             builder.setPositiveButton(R.string.cancel_hold_positive_button) { dialog, which ->
-                Analytics.logEvent("Holds: Cancel Hold")
+                //Analytics.logEvent("holds_cancelhold")
                 cancelHold(record)
             }
             builder.create().show()
         }
         updateHold.setOnClickListener {
-            Analytics.logEvent("Holds: Update Hold")
+            //Analytics.logEvent("holds_updatehold")
             updateHold(record)
         }
         suspendHold?.setOnCheckedChangeListener { buttonView, isChecked ->
@@ -156,7 +158,6 @@ class HoldDetailsActivity : BaseActivity() {
 
     private fun cancelHold(record: HoldRecord) {
         async {
-//            Log.d(TAG, "[kcxxx] cancelHold " + record.ahr.getInt("id"))
             progress?.show(this@HoldDetailsActivity, getString(R.string.msg_canceling_hold))
 
             val holdId = record.ahr.getInt("id") ?: 0
@@ -164,10 +165,12 @@ class HoldDetailsActivity : BaseActivity() {
             progress?.dismiss()
             when (result) {
                 is Result.Success -> {
+                    logCancelHoldResult(true, "ok")
                     setResult(RESULT_CODE_DELETE_HOLD)
                     finish()
                 }
                 is Result.Error -> {
+                    logCancelHoldResult(true, result.exception.getCustomMessage())
                     showAlert(result.exception)
                 }
             }
@@ -189,16 +192,34 @@ class HoldDetailsActivity : BaseActivity() {
             progress?.dismiss()
             when (result) {
                 is Result.Success -> {
+                    logUpdateHoldResult(true, "ok")
                     Toast.makeText(this@HoldDetailsActivity,
                             getString(R.string.msg_updated_hold), Toast.LENGTH_SHORT).show()
                     setResult(RESULT_CODE_UPDATE_HOLD)
                     finish()
                 }
                 is Result.Error -> {
+                    logUpdateHoldResult(false, result.exception.getCustomMessage())
                     showAlert(result.exception)
                 }
             }
         }
+    }
+
+    private fun logCancelHoldResult(succeeded: Boolean, result: String) {
+        val b = bundleOf(
+                Analytics.Param.SUCCEEDED to succeeded,
+                Analytics.Param.RESULT to result
+        )
+        Analytics.logEvent(Analytics.Event.HOLD_CANCEL_HOLD, b)
+    }
+
+    private fun logUpdateHoldResult(succeeded: Boolean, result: String) {
+        val b = bundleOf(
+                Analytics.Param.SUCCEEDED to succeeded,
+                Analytics.Param.RESULT to result
+        )
+        Analytics.logEvent(Analytics.Event.HOLD_UPDATE_HOLD, b)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

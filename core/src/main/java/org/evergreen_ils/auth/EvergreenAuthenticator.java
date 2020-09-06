@@ -67,7 +67,6 @@ public class EvergreenAuthenticator {
     }
     
     public static String signIn(String library_url, String username, String password) throws AuthenticationException {
-        Log.d(TAG, "signIn> "+username+" "+library_url);
         Analytics.log(TAG, "signIn: library_url=" + library_url);
 
         HttpConnection conn;

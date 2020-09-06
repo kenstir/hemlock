@@ -241,7 +241,7 @@ class CheckoutsActivity : BaseActivity() {
                 builder.setMessage(R.string.renew_item_message)
                 builder.setNegativeButton(android.R.string.no, null)
                 builder.setPositiveButton(android.R.string.yes) { dialog, which ->
-                    Analytics.logEvent("Checkouts: Renew", "num_renewals", record.renewals, "overdue", record.isOverdue)
+                    //Analytics.logEvent("checkouts_renewitem", "num_renewals", record.renewals, "overdue", record.isOverdue)
                     renewItem(record)
                 }
                 builder.create().show()

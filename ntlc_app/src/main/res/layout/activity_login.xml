@@ -54,7 +54,8 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="20dp"
                     android:hint="@string/hint_username"
-                    android:inputType="text"
+                    android:inputType="text|textNoSuggestions"
+                    android:minHeight="@dimen/target_min_height"
                     android:padding="10dp" />
 
                 <com.google.android.material.textfield.TextInputLayout
@@ -69,6 +70,7 @@
                         android:layout_height="wrap_content"
                         android:hint="@string/hint_password"
                         android:inputType="textPassword"
+                        android:minHeight="@dimen/target_min_height"
                         android:padding="10dp" />
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -84,6 +86,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
+                        android:minHeight="@dimen/target_min_height"
                         android:text="@string/forgot_password_button" />
 
                     <Button

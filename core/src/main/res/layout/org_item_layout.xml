@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- see also https://github.com/aosp-mirror/platform_frameworks_base/blob/master/core/res/res/layout/simple_list_item_1.xml -->
 <TextView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     style="?android:attr/spinnerItemStyle"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
-    android:gravity="left"
-    android:maxLines="1"
     android:ellipsize="end"
-    tools:text="Pinewoods North Community Learning Center etc. etc. should ellipsize"
-    />
+    android:gravity="left|center_vertical"
+    android:maxLines="1"
+    android:minHeight="@dimen/spinner_item_min_height"
+    tools:text="Pinewoods North Community Learning Center etc. etc. should ellipsize" />

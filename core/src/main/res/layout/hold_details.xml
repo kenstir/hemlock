@@ -13,13 +13,11 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:fillViewport="true"
-        android:padding="10dp"
-        >
+        android:padding="10dp" >
 
         <TableLayout
             android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            >
+            android:layout_height="wrap_content" >
 
             <TableRow android:layout_width="wrap_content"
                 android:layout_height="wrap_content">
@@ -75,25 +73,22 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/pickup_location"
-                    android:paddingRight="6dp"/>
+                    android:text="@string/pickup_location" />
 
                 <Spinner
                     android:id="@+id/hold_pickup_location"
                     android:layout_width="0dip"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:gravity="left"
                     android:spinnerMode="dialog"
-                    android:layout_gravity="left"/>
+                    android:minHeight="@dimen/spinner_min_height" />
             </TableRow>
             <TableRow>
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/expiration_date"
-                    android:paddingRight="6dp"
-                    />
+                    android:paddingRight="6dp" />
 
                 <EditText
                     android:id="@+id/hold_expiration_date"
@@ -101,8 +96,7 @@
                     android:layout_width="0dip"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:gravity="left|center"
-                    />
+                    android:minHeight="@dimen/target_min_height" />
             </TableRow>
             <TableRow android:id="@+id/hold_suspend_hold_row">
                 <TextView
@@ -116,8 +110,8 @@
                     android:layout_width="0dip"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:gravity="left|center"
-                    android:layout_gravity="left" android:checked="true"/>
+                    android:checked="true"
+                    android:minHeight="@dimen/target_min_height" />
             </TableRow>
             <TableRow android:id="@+id/hold_thaw_date_row">
                 <TextView
@@ -132,10 +126,7 @@
                     android:layout_width="0dip"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:gravity="left"
-                    android:layout_gravity="left"/>
-
-
+                    android:minHeight="@dimen/target_min_height" />
             </TableRow>
         </TableLayout>
     </ScrollView>
