@@ -46,22 +46,24 @@ object Analytics {
         const val DEFAULT_HOLD_NOTIFY = "default_hold_notify"
         const val DEFAULT_PICKUP_ORG = "default_pickup_org"
         const val DEFAULT_SEARCH_ORG = "default_search_org"
-        const val ERROR_MESSAGE = "error_message"
         const val HOLD_EXPIRES_KEY = "hold_expires" // bool
         const val HOLD_NOTIFY = "hold_notify"
         const val HOLD_PICKUP_KEY = "hold_pickup" // { home | other }
         const val NUM_RESULTS = "num_results"
-        const val RESULT = "result"
+        const val RESULT = "result" // { ok | error message }
         const val SEARCH_CLASS = "search_class"
         const val SEARCH_FORMAT = "search_format"
         const val SEARCH_TERM = FirebaseAnalytics.Param.SEARCH_TERM
-        const val SUCCEEDED = "succeeded"
     }
 
     // these need to be registered in GA
     object UserProperty {
         const val HOME_ORG = "home_org"
         const val PARENT_ORG = "parent_org"
+    }
+
+    object Value {
+        const val OK = "ok"
     }
 
     private val TAG = Analytics::class.java.simpleName

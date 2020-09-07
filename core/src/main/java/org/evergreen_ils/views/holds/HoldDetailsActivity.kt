@@ -165,7 +165,7 @@ class HoldDetailsActivity : BaseActivity() {
             progress?.dismiss()
             when (result) {
                 is Result.Success -> {
-                    logCancelHoldResult(true, "ok")
+                    logCancelHoldResult(true, Analytics.Value.OK)
                     setResult(RESULT_CODE_DELETE_HOLD)
                     finish()
                 }
@@ -192,7 +192,7 @@ class HoldDetailsActivity : BaseActivity() {
             progress?.dismiss()
             when (result) {
                 is Result.Success -> {
-                    logUpdateHoldResult(true, "ok")
+                    logUpdateHoldResult(true, Analytics.Value.OK)
                     Toast.makeText(this@HoldDetailsActivity,
                             getString(R.string.msg_updated_hold), Toast.LENGTH_SHORT).show()
                     setResult(RESULT_CODE_UPDATE_HOLD)
@@ -208,7 +208,6 @@ class HoldDetailsActivity : BaseActivity() {
 
     private fun logCancelHoldResult(succeeded: Boolean, result: String) {
         val b = bundleOf(
-                Analytics.Param.SUCCEEDED to succeeded,
                 Analytics.Param.RESULT to result
         )
         Analytics.logEvent(Analytics.Event.HOLD_CANCEL_HOLD, b)
@@ -216,7 +215,6 @@ class HoldDetailsActivity : BaseActivity() {
 
     private fun logUpdateHoldResult(succeeded: Boolean, result: String) {
         val b = bundleOf(
-                Analytics.Param.SUCCEEDED to succeeded,
                 Analytics.Param.RESULT to result
         )
         Analytics.logEvent(Analytics.Event.HOLD_UPDATE_HOLD, b)

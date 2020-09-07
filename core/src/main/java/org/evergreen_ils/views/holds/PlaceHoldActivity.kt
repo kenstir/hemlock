@@ -247,7 +247,6 @@ class PlaceHoldActivity : BaseActivity() {
             val homeOrg = EgOrg.findOrg(App.getAccount().homeOrg)
             val pickupVal = getHoldPickupDimensionKey(pickupOrg, homeOrg)
             val b = Bundle()
-            b.putBoolean(Analytics.Param.SUCCEEDED, succeeded)
             b.putString(Analytics.Param.RESULT, result)
             b.putString(Analytics.Param.HOLD_NOTIFY, notifyTypes)
             b.putBoolean(Analytics.Param.HOLD_EXPIRES_KEY, expireDate != null)
@@ -334,7 +333,7 @@ class PlaceHoldActivity : BaseActivity() {
             progress?.dismiss()
             when (result) {
                 is Result.Success -> {
-                    logPlaceHoldResult(true, "ok")
+                    logPlaceHoldResult(true, Analytics.Value.OK)
                     Toast.makeText(this@PlaceHoldActivity, "Hold successfully placed", Toast.LENGTH_LONG).show()
                     startActivity(Intent(this@PlaceHoldActivity, HoldsActivity::class.java))
                     finish()

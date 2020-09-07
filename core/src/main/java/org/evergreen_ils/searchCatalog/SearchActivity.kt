@@ -234,12 +234,13 @@ class SearchActivity : BaseActivity() {
         b.putString(Analytics.Param.SEARCH_TERM, searchText)
         b.putString(Analytics.Param.SEARCH_CLASS, searchClass)
         b.putString(Analytics.Param.SEARCH_FORMAT, searchFormatCode)
-        b.putBoolean(Analytics.Param.SUCCEEDED, result.succeeded)
         when (result) {
-            is Result.Success ->
+            is Result.Success -> {
+                b.putString(Analytics.Param.RESULT, Analytics.Value.OK)
                 b.putInt(Analytics.Param.NUM_RESULTS, EgSearch.visible)
+            }
             is Result.Error ->
-                b.putString(Analytics.Param.ERROR_MESSAGE, result.exception.getCustomMessage())
+                b.putString(Analytics.Param.RESULT, result.exception.getCustomMessage())
         }
         Analytics.logEvent(Analytics.Event.SEARCH, b)
     }
