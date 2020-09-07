@@ -179,28 +179,6 @@ public class RecordInfo implements Serializable {
                 available, totalCopies, EgOrg.getOrgNameSafe(orgID));
     }
 
-    public static List<CopyLocationCounts> parseCopyLocationCounts(RecordInfo record, GatewayResult response) {
-        List<CopyLocationCounts> copyLocationCountsList = new ArrayList<>();
-        if (response == null || response.failed)
-            return copyLocationCountsList;
-        try {
-            return CopyLocationCounts.makeArray(response.asArray());
-        } catch (Exception e) {
-            Log.d(TAG, "caught", e);
-        }
-        return copyLocationCountsList;
-    }
-
-    public void updateFromMRAResponse(GatewayResult response) {
-        OSRFObject mra_obj = null;
-        try {
-            mra_obj = (OSRFObject) response.payload;
-        } catch (ClassCastException e) {
-            Log.d(TAG, "caught", e);
-        }
-        updateFromMRAResponse(mra_obj);
-    }
-
     public void updateFromMRAResponse(OSRFObject mra_obj) {
         attrs = RecordAttributes.parseAttributes(mra_obj);
         hasAttributes = true;
