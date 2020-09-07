@@ -2,6 +2,6 @@
 <resources xmlns:tools="http://schemas.android.com/tools" xmlns:android="http://schemas.android.com/apk/res/android">
 
     <color name="button_icon_tint">@color/cwmars_blue</color>
-    <color name="logo_background">@color/material_grey_800</color>
+    <color name="logo_background">@color/material_grey_850</color>
 
 </resources>
