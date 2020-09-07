@@ -65,11 +65,11 @@ public class AdvancedSearchActivity extends AppCompatActivity {
         searchTerms = new ArrayList<>();
         searchTermTypes = new ArrayList<>();
 
-        final LinearLayout layout = (LinearLayout) findViewById(R.id.advanced_search_filters);
-        Button addFilter = (Button) findViewById(R.id.advanced_search_add_filter_button);
-        final Spinner search_qtype_spinner = (Spinner) findViewById(R.id.advanced_search_qtype_spinner);
-        final Spinner search_contains_spinner = (Spinner) findViewById(R.id.advanced_search_contains_spinner);
-        final EditText search_filter_text = (EditText) findViewById(R.id.advanced_search_text);
+        final LinearLayout layout = findViewById(R.id.advanced_search_filters);
+        Button addFilter = findViewById(R.id.advanced_search_add_filter_button);
+        final Spinner search_qtype_spinner = findViewById(R.id.advanced_search_qtype_spinner);
+        final Spinner search_contains_spinner = findViewById(R.id.advanced_search_contains_spinner);
+        final EditText search_filter_text = findViewById(R.id.advanced_search_text);
 
         addFilter.setOnClickListener(new OnClickListener() {
             @Override
@@ -108,7 +108,7 @@ public class AdvancedSearchActivity extends AppCompatActivity {
             }
         });
 
-        Button cancel = (Button) findViewById(R.id.advanced_search_cancel);
+        Button cancel = findViewById(R.id.advanced_search_cancel);
         cancel.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -117,7 +117,7 @@ public class AdvancedSearchActivity extends AppCompatActivity {
             }
         });
 
-        Button search = (Button) findViewById(R.id.advanced_search_button);
+        Button search = findViewById(R.id.advanced_search_button);
         search.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {

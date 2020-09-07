@@ -6,7 +6,7 @@ import java.util.*;
 
 public class TestJSON {
 
-    public static void main(String args[]) throws Exception {
+    public static void main(String[] args) throws Exception {
         
         Map<String,Object> map = new HashMap<String,Object>();
         map.put("key1", "value1");

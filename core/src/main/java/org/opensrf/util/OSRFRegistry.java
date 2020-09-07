@@ -27,10 +27,10 @@ public class OSRFRegistry implements Serializable{
     /** Serialization types for registered objects */
     public enum WireProtocol {
         ARRAY, HASH
-    };
+    }
 
     /** Array of field names for this registered object */
-    String fields[];
+    String[] fields;
     /** The wire protocol for this object */
     WireProtocol wireProtocol;
     /** The network class for this object */
@@ -52,7 +52,7 @@ public class OSRFRegistry implements Serializable{
      * wire protocol is ARRAY, the positions of the field names 
      * will be used as the array indices for the fields at serialization time
      */
-    public static OSRFRegistry registerObject(String netClass, WireProtocol wireProtocol, String fields[]) {
+    public static OSRFRegistry registerObject(String netClass, WireProtocol wireProtocol, String[] fields) {
         OSRFRegistry r = new OSRFRegistry(netClass, wireProtocol, fields);
         registry.put(netClass, r);
         return r;
@@ -97,7 +97,7 @@ public class OSRFRegistry implements Serializable{
      * the fields array must be sorted in accordance with the sorting
      * of the objects in the array.
      */ 
-    public OSRFRegistry(String netClass, WireProtocol wireProtocol, String fields[]) {
+    public OSRFRegistry(String netClass, WireProtocol wireProtocol, String[] fields) {
         this.netClass = netClass;
         this.wireProtocol = wireProtocol;
         this.fields = fields;

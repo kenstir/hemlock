@@ -131,7 +131,7 @@ object EgOrg {
     fun getOrgInfoPageUrl(id: Int): String {
         val org = findOrg(id)
         if (org == null)
-            return "";
+            return ""
         // jump past the header stuff to the library info
         // #content-wrapper works only sometimes
         // ?#content-wrapper no better

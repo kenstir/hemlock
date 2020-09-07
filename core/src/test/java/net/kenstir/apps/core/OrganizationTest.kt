@@ -179,19 +179,19 @@ class OrganizationTest {
         assertEquals(true, lib?.opac_visible)
         assertEquals("BETHEL", lib?.shortname)
         assertTrue(lib!!.orgType!!.canHaveUsers)
-        assertTrue(lib!!.orgType!!.canHaveVols)
+        assertTrue(lib.orgType!!.canHaveVols)
 
         val system = EgOrg.findOrg(28)
         assertEquals(false, system?.opac_visible)
         assertEquals("BETSYS", system?.shortname)
         assertFalse(system!!.orgType!!.canHaveUsers)
-        assertFalse(system!!.orgType!!.canHaveVols)
+        assertFalse(system.orgType!!.canHaveVols)
 
         val cons = EgOrg.findOrg(1)
         assertEquals(true, cons?.opac_visible)
         assertEquals("CONS", cons?.shortname)
-        assertFalse(system!!.orgType!!.canHaveUsers)
-        assertFalse(system!!.orgType!!.canHaveVols)
+        assertFalse(system.orgType!!.canHaveUsers)
+        assertFalse(system.orgType!!.canHaveVols)
     }
 
     @Test

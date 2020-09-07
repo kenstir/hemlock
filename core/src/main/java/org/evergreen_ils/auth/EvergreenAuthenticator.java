@@ -23,7 +23,7 @@ public class EvergreenAuthenticator {
         try {
             MessageDigest digest = java.security.MessageDigest.getInstance("MD5");
             digest.update(s.getBytes());
-            byte messageDigest[] = digest.digest();
+            byte[] messageDigest = digest.digest();
 
             // Create Hex String
             StringBuilder hexString = new StringBuilder();
@@ -60,7 +60,7 @@ public class EvergreenAuthenticator {
 
         while ((resp = req.recv()) != null) {
             Log.d(TAG, "doRequest> Sync Response: " + resp);
-            Object response = (Object) resp;
+            Object response = resp;
             return response;
         }
         return null;

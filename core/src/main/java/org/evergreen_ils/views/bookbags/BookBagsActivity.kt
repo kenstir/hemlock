@@ -66,14 +66,14 @@ class BookBagsActivity : BaseActivity() {
         })
         lv = findViewById(R.id.bookbag_list)
         listAdapter = BookBagsArrayAdapter(this, R.layout.bookbag_list_item)
-        lv?.setAdapter(listAdapter)
-        lv?.setOnItemClickListener(AdapterView.OnItemClickListener { parent, view, position, id ->
+        lv?.adapter = listAdapter
+        lv?.onItemClickListener = AdapterView.OnItemClickListener { parent, view, position, id ->
             //Analytics.logEvent("lists_itemclick")
             val item = lv?.getItemAtPosition(position) as BookBag
             val intent = Intent(this@BookBagsActivity, BookBagDetailsActivity::class.java)
             intent.putExtra("bookBag", item)
             startActivityForResult(intent, 0)
-        })
+        }
     }
 
     override fun onDestroy() {

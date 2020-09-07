@@ -24,7 +24,7 @@ import kotlin.collections.ArrayList
 
 class BookBag(val id: Int, val name: String, obj: OSRFObject) : Serializable {
     var description: String? = obj.getString("description")
-    var shared: Boolean = obj.getBoolean("pub") ?: false
+    var shared: Boolean = obj.getBoolean("pub")
     var items = ArrayList<BookBagItem>()
 
     fun fleshFromObject(cbrebObj: OSRFObject) {

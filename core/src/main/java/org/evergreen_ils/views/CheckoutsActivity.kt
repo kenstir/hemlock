@@ -68,7 +68,7 @@ class CheckoutsActivity : BaseActivity() {
         lv = findViewById(R.id.checkout_items_list)
         circRecords = ArrayList()
         listAdapter = CheckoutsArrayAdapter(this, R.layout.checkout_list_item, circRecords)
-        lv?.setAdapter(listAdapter)
+        lv?.adapter = listAdapter
         lv?.setOnItemClickListener { parent, view, position, id -> onItemClick(position) }
     }
 
@@ -233,7 +233,7 @@ class CheckoutsActivity : BaseActivity() {
         }
 
         private fun initRenewButton(record: CircRecord) {
-            val renewable = (record.renewals ?: 0) > 0
+            val renewable = record.renewals > 0
             renewButton?.isEnabled = renewable
             renewButton?.setOnClickListener(View.OnClickListener {
                 if (!renewable) return@OnClickListener

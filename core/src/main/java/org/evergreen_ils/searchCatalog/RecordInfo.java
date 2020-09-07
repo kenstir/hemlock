@@ -53,10 +53,10 @@ public class RecordInfo implements Serializable {
     private static final String TAG = RecordInfo.class.getSimpleName();
 
     public interface OnRecordClickListener {
-        abstract void onClick(RecordInfo record, int position);
+        void onClick(RecordInfo record, int position);
     }
     public interface OnRecordLongClickListener {
-        abstract void onLongClick(RecordInfo record, int position);
+        void onLongClick(RecordInfo record, int position);
     }
 
     public Integer doc_id = -1;

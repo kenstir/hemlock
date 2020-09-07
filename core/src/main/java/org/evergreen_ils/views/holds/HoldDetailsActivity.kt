@@ -83,7 +83,7 @@ class HoldDetailsActivity : BaseActivity() {
             format.text = record.recordInfo.iconFormatLabel
             physical_description.text = record.recordInfo.physical_description
         }
-        suspendHold?.setChecked(record.isSuspended)
+        suspendHold?.isChecked = record.isSuspended
         if (record.isSuspended && record.thawDate != null) {
             thawDate = record.thawDate
             thawDateEdittext?.setText(DateFormat.format("MMMM dd, yyyy", thawDate))
@@ -92,7 +92,7 @@ class HoldDetailsActivity : BaseActivity() {
             expireDate = record.expireTime
             expirationDate?.setText(DateFormat.format("MMMM dd, yyyy", expireDate))
         }
-        thawDateEdittext?.setEnabled(suspendHold?.isChecked() ?: false)
+        thawDateEdittext?.isEnabled = suspendHold?.isChecked ?: false
         cancelHold.setOnClickListener {
             val builder = AlertDialog.Builder(this@HoldDetailsActivity)
             builder.setMessage(R.string.cancel_hold_dialog_message)
@@ -108,7 +108,7 @@ class HoldDetailsActivity : BaseActivity() {
             updateHold(record)
         }
         suspendHold?.setOnCheckedChangeListener { buttonView, isChecked ->
-            thawDateEdittext?.setEnabled(isChecked)
+            thawDateEdittext?.isEnabled = isChecked
         }
         val cal = Calendar.getInstance()
         datePicker = DatePickerDialog(this,

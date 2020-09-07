@@ -18,5 +18,4 @@
 
 package org.evergreen_ils.net
 
-data class RequestOptions(val timeoutMs: Int, val shouldCache: Boolean = true, val shouldRetry: Boolean = true) {
-}
+data class RequestOptions(val timeoutMs: Int, val shouldCache: Boolean = true, val shouldRetry: Boolean = true)

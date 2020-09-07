@@ -131,7 +131,7 @@ class FinesActivity : BaseActivity() {
     private fun updatePayFinesButtonVisibility() {
         val homeOrg = EgOrg.findOrg(App.getAccount().homeOrg)
         if (resources.getBoolean(R.bool.ou_enable_pay_fines)
-                && homeOrg?.isPaymentAllowedSetting ?: false) {
+                && homeOrg?.isPaymentAllowedSetting == true) {
             pay_fines_button?.visibility = View.VISIBLE
             pay_fines_button?.setOnClickListener {
                 //Analytics.logEvent("fines_payfines", "num_fines", fineRecords.size)
@@ -255,10 +255,10 @@ class FinesActivity : BaseActivity() {
             fineStatus = row.findViewById(R.id.fines_status)
 
             val record = getItem(position)
-            fineTitle?.setText(record.title)
-            fineAuthor?.setText(record.subtitle)
-            fineBalanceOwed?.setText(decimalFormatter!!.format(record.balance_owed))
-            fineStatus?.setText(record.status)
+            fineTitle?.text = record.title
+            fineAuthor?.text = record.subtitle
+            fineBalanceOwed?.text = decimalFormatter!!.format(record.balance_owed)
+            fineStatus?.text = record.status
 
             return row
         }

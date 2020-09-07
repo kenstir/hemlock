@@ -66,7 +66,7 @@ public class CaptureActivity extends Activity implements SurfaceHolder.Callback 
 		hasSurface = false;
 		handler = null;
 
-		viewfinderView = (ViewfinderView) findViewById(R.id.viewfinder_view);
+		viewfinderView = findViewById(R.id.viewfinder_view);
 
 		viewfinderView.setCameraManager(cameraManager);
 		//database = new DBHelper(this);
@@ -79,7 +79,7 @@ public class CaptureActivity extends Activity implements SurfaceHolder.Callback 
 	public void onResume() {
 		super.onResume();
 
-		SurfaceView surfaceView = (SurfaceView) findViewById(R.id.camera_view);
+		SurfaceView surfaceView = findViewById(R.id.camera_view);
 		SurfaceHolder surfaceHolder = surfaceView.getHolder();
 		if (hasSurface) {
 			// The activity was paused but not stopped, so the surface still

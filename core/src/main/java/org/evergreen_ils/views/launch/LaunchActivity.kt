@@ -129,7 +129,7 @@ class LaunchActivity : AppCompatActivity(), CoroutineScope by MainScope() {
             try {
                 val account = getAccount()
                 Log.d(TAG, "[auth] ${account.username} ${account.authToken}")
-                mModel?.loadServiceData(resources)
+                mModel.loadServiceData(resources)
             } catch (ex: Exception) {
                 Log.d(TAG, "[kcxxx] caught in launchLoginFlow", ex)
                 mProgressText?.text = ex.getCustomMessage()

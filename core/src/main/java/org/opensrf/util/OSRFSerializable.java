@@ -8,12 +8,12 @@ public interface OSRFSerializable {
     /**
      * Returns the object registry object for the implementing class.
      */
-    public abstract OSRFRegistry getRegistry();
+    OSRFRegistry getRegistry();
 
     /**
      * Returns the object found at the given field
      */
-    public abstract Object get(String field);
+    Object get(String field);
 }
 
 

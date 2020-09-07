@@ -39,7 +39,7 @@ object GatewayLoader {
                 async {
                     val result = Gateway.actor.fetchOrgSettings(org.id)
                     if (result is Result.Success) {
-                        org.loadSettings(result.data);
+                        org.loadSettings(result.data)
                         Log.d(TAG, "[kcxxx] org ${org.id} loaded")
                     }
                 }

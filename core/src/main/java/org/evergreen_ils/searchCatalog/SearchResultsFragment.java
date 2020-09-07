@@ -60,7 +60,7 @@ public class SearchResultsFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.recycler_view_frag, container, false);
         rootView.setTag(TAG);
 
-        mRecyclerView = (RecyclerView) rootView.findViewById(R.id.recycler_view);
+        mRecyclerView = rootView.findViewById(R.id.recycler_view);
 
         mLayoutManager = new LinearLayoutManager(getActivity());
 

@@ -125,7 +125,7 @@ class GatewayResult {
                 val payload = responseList.firstOrNull()
                 createFromPayload(payload)
             } catch (ex: JSONParserException) {
-                if (json?.contains("canceling statement due to user request")) {
+                if (json.contains("canceling statement due to user request")) {
                     GatewayResult(GatewayError("Timeout; the request took too long to complete and the server killed it"))
                 } else {
                     GatewayResult(GatewayError("Internal Server Error; the server response is not JSON"))

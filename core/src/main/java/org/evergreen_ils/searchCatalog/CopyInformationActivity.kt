@@ -76,18 +76,18 @@ class CopyInformationActivity : BaseActivity() {
 
         lv = findViewById(R.id.copy_information_list)
         listAdapter = CopyInformationArrayAdapter(this, R.layout.copy_information_item, copyInfoRecords)
-        lv?.setAdapter(listAdapter)
+        lv?.adapter = listAdapter
         if (resources.getBoolean(R.bool.ou_enable_copy_info_web_links)) {
-            lv?.setOnItemClickListener(AdapterView.OnItemClickListener { parent, view, position, id ->
+            lv?.onItemClickListener = AdapterView.OnItemClickListener { parent, view, position, id ->
                 val clc = lv?.getItemAtPosition(position) as CopyLocationCounts
                 launchOrgDetails(clc.orgId)
-            })
+            }
         } else {
             lv?.setSelector(android.R.color.transparent)
         }
 
         val summaryText = findViewById<View>(R.id.copy_information_summary) as TextView
-        summaryText.text = record?.getCopySummary(resources, orgID!!)
+        summaryText.text = record.getCopySummary(resources, orgID)
     }
 
     override fun onAttachedToWindow() {
@@ -100,7 +100,7 @@ class CopyInformationActivity : BaseActivity() {
     public override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         outState.putSerializable("recordInfo", record)
-        outState.putInt("orgID", orgID!!)
+        outState.putInt("orgID", orgID)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -125,7 +125,7 @@ class CopyInformationActivity : BaseActivity() {
             val org = findOrg(clc.orgId)
             // if a branch is not opac_visible, its copies should not be visible
             if (org != null && org.opac_visible) {
-                copyInfoRecords!!.add(clc)
+                copyInfoRecords.add(clc)
             }
         }
         if (groupCopiesBySystem) {

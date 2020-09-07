@@ -167,7 +167,7 @@ class MainActivity : BaseActivity() {
             return
         val count = mUnreadMessageCount
         if (count != null) {
-            mUnreadMessageText?.visibility = if (count > 0) View.VISIBLE else View.GONE;
+            mUnreadMessageText?.visibility = if (count > 0) View.VISIBLE else View.GONE
             mUnreadMessageText?.text = String.format("%d", count)
         } else {
             mUnreadMessageText?.visibility = View.GONE
@@ -203,6 +203,6 @@ class MainActivity : BaseActivity() {
     }
 
     companion object {
-        private val TAG = MainActivity::class.java.getSimpleName()
+        private val TAG = MainActivity::class.java.simpleName
     }
 }

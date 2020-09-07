@@ -65,7 +65,7 @@ class HoldsActivity : BaseActivity() {
 
         progress = ProgressDialogSupport()
         listAdapter = HoldsArrayAdapter(this, R.layout.holds_list_item, holdRecords)
-        lv?.setAdapter(listAdapter)
+        lv?.adapter = listAdapter
         lv?.setOnItemClickListener { parent, view, position, id -> onItemClick(position) }
     }
 
@@ -302,10 +302,10 @@ class HoldsActivity : BaseActivity() {
             status = row.findViewById(R.id.hold_status)
 
             val record = getItem(position)
-            holdTitle?.setText(record.title)
-            holdAuthor?.setText(record.author)
-            holdFormat?.setText(record.getFormatLabel())
-            status?.setText(record.getHoldStatus(resources))
+            holdTitle?.text = record.title
+            holdAuthor?.text = record.author
+            holdFormat?.text = record.formatLabel
+            status?.text = record.getHoldStatus(resources)
 
             return row
         }

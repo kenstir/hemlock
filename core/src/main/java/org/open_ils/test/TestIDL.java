@@ -4,7 +4,7 @@ import org.opensrf.*;
 import org.opensrf.util.*;
 
 public class TestIDL {
-    public static void main(String args[]) throws Exception {
+    public static void main(String[] args) throws Exception {
         String idlFile = "fm_IDL.xml";
         IDLParser parser = new IDLParser(idlFile);
         parser.parse();
