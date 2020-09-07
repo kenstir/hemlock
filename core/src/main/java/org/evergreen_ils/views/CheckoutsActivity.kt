@@ -216,7 +216,7 @@ class CheckoutsActivity : BaseActivity() {
                     String.format(getString(R.string.label_due_date_overdue), record.dueDateString)
                 record.isDue && record.autoRenewals > 0 ->
                     String.format(getString(R.string.label_due_date_may_autorenew), record.dueDateString)
-                record.wasAutorenewed ->
+                record.wasAutorenewed && !record.isDue ->
                     String.format(getString(R.string.label_due_date_autorenewed), record.dueDateString)
                 else ->
                     String.format(getString(R.string.label_due_date), record.dueDateString)
