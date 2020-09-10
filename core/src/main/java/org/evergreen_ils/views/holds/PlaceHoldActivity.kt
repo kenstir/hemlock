@@ -225,7 +225,6 @@ class PlaceHoldActivity : BaseActivity() {
         return null
     }
 
-    // TODO: move to Analytics
     fun getHoldPickupDimensionKey(pickup_org: Organization?, home_org: Organization?): String {
         return when {
             home_org == null -> "homeless"
