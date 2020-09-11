@@ -74,7 +74,7 @@ class SearchActivity : BaseActivity() {
     private val searchFormatCode: String?
         get() = EgCodedValueMap.searchFormatCode(searchFormatSpinner?.selectedItem.toString())
 
-    private inner class ContextMenuRecordInfo : ContextMenu.ContextMenuInfo {
+    private class ContextMenuRecordInfo : ContextMenu.ContextMenuInfo {
         var record: RecordInfo? = null
         var position = 0
     }
