@@ -34,78 +34,73 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.ListView
 import android.widget.TextView
-import androidx.appcompat.app.AppCompatActivity
-import com.android.volley.Request
-import com.android.volley.Response
-import org.evergreen_ils.Api
+import kotlinx.coroutines.async
 import org.evergreen_ils.R
-import org.evergreen_ils.android.Analytics
-import org.evergreen_ils.android.App
 import org.evergreen_ils.android.Log
 import org.evergreen_ils.data.CopyLocationCounts
-import org.evergreen_ils.net.Gateway.buildUrl
-import org.evergreen_ils.net.GatewayJsonObjectRequest
-import org.evergreen_ils.net.Volley
+import org.evergreen_ils.data.Result
+import org.evergreen_ils.net.Gateway
+import org.evergreen_ils.system.EgOrg
 import org.evergreen_ils.system.EgOrg.findOrg
 import org.evergreen_ils.system.EgOrg.getOrgNameSafe
-import org.evergreen_ils.utils.ui.ActionBarUtils
+import org.evergreen_ils.utils.ui.BaseActivity
+import org.evergreen_ils.utils.ui.showAlert
 import org.evergreen_ils.views.OrgDetailsActivity
 import java.util.*
 
-// TODO: derive from BaseActivity()
-class CopyInformationActivity : AppCompatActivity() {
+class CopyInformationActivity : BaseActivity() {
     private val TAG = CopyInformationActivity::class.java.simpleName
 
-    private var record: RecordInfo? = null
-    private var orgID: Int? = null
-    private var groupCopiesBySystem = false
+    private lateinit var record: RecordInfo
+    private var orgID: Int = EgOrg.consortiumID
     private var lv: ListView? = null
     private val copyInfoRecords = ArrayList<CopyLocationCounts>()
     private var listAdapter: CopyInformationArrayAdapter? = null
 
+    private val groupCopiesBySystem: Boolean
+        get() = resources.getBoolean(R.bool.ou_group_copy_info_by_system)
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        Analytics.initialize(this)
-        if (!App.isStarted()) {
-            App.restartApp(this)
-            return
-        }
+        if (isRestarting) return
 
         setContentView(R.layout.copy_information_list)
-
-        ActionBarUtils.initActionBarForActivity(this)
 
         if (savedInstanceState != null) {
             record = savedInstanceState.getSerializable("recordInfo") as RecordInfo
             orgID = savedInstanceState.getInt("orgID")
         } else {
             record = intent.getSerializableExtra("recordInfo") as RecordInfo
-            orgID = intent.getIntExtra("orgID", 1)
+            orgID = intent.getIntExtra("orgID", EgOrg.consortiumID)
         }
-        groupCopiesBySystem = resources.getBoolean(R.bool.ou_group_copy_info_by_system)
 
         lv = findViewById(R.id.copy_information_list)
         listAdapter = CopyInformationArrayAdapter(this, R.layout.copy_information_item, copyInfoRecords)
-        lv?.setAdapter(listAdapter)
+        lv?.adapter = listAdapter
         if (resources.getBoolean(R.bool.ou_enable_copy_info_web_links)) {
-            lv?.setOnItemClickListener(AdapterView.OnItemClickListener { parent, view, position, id ->
+            lv?.onItemClickListener = AdapterView.OnItemClickListener { parent, view, position, id ->
                 val clc = lv?.getItemAtPosition(position) as CopyLocationCounts
                 launchOrgDetails(clc.orgId)
-            })
+            }
         } else {
             lv?.setSelector(android.R.color.transparent)
         }
 
         val summaryText = findViewById<View>(R.id.copy_information_summary) as TextView
-        summaryText.text = RecordLoader.getCopySummary(record, orgID!!, this)
+        summaryText.text = record.getCopySummary(resources, orgID)
+    }
 
-        initCopyLocationCounts()
+    override fun onAttachedToWindow() {
+        super.onAttachedToWindow()
+        Log.d(TAG, object{}.javaClass.enclosingMethod?.name)
+
+        fetchData()
     }
 
     public override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         outState.putSerializable("recordInfo", record)
-        outState.putInt("orgID", orgID!!)
+        outState.putInt("orgID", orgID)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -130,47 +125,42 @@ class CopyInformationActivity : AppCompatActivity() {
             val org = findOrg(clc.orgId)
             // if a branch is not opac_visible, its copies should not be visible
             if (org != null && org.opac_visible) {
-                copyInfoRecords!!.add(clc)
+                copyInfoRecords.add(clc)
             }
         }
         if (groupCopiesBySystem) {
             // sort by system, then by branch, like http://gapines.org/eg/opac/record/5700567?locg=1
             copyInfoRecords.sortWith(Comparator { a, b ->
-                val a_org = findOrg(a.orgId)
-                val b_org = findOrg(b.orgId)
-                val a_system_name = getOrgNameSafe(a_org!!.parent_ou)
-                val b_system_name = getOrgNameSafe(b_org!!.parent_ou)
-                val system_cmp = safeCompareTo(a_system_name, b_system_name)
-                if (system_cmp != 0) system_cmp else a_org.name.compareTo(b_org.name)
+                val aOrg = findOrg(a.orgId)
+                val bOrg = findOrg(b.orgId)
+                val aSystemName = getOrgNameSafe(aOrg?.parent_ou)
+                val bSystemName = getOrgNameSafe(bOrg?.parent_ou)
+                val compareBySystem = compareValues(aSystemName, bSystemName)
+                if (compareBySystem != 0) compareBySystem else compareValues(aOrg?.name, bOrg?.name)
             })
         } else {
             copyInfoRecords.sortWith(Comparator { a, b ->
-                getOrgNameSafe(a.orgId).compareTo(getOrgNameSafe(b.orgId))
+                compareValues(getOrgNameSafe(a.orgId), getOrgNameSafe(b.orgId))
             })
         }
         listAdapter?.notifyDataSetChanged()
     }
 
-    private fun initCopyLocationCounts() {
-        val start_ms = System.currentTimeMillis()
-        val org = findOrg(orgID)
-        val url = buildUrl(Api.SEARCH, Api.COPY_LOCATION_COUNTS, arrayOf(record!!.doc_id, org!!.id, org.level))
-        val r = GatewayJsonObjectRequest(
-                url,
-                Request.Priority.NORMAL,
-                { response ->
-                    val duration_ms = System.currentTimeMillis() - start_ms
-                    Log.d(TAG, "fetch " + record!!.doc_id + " took " + duration_ms + "ms")
-                    updateCopyInfo(RecordInfo.parseCopyLocationCounts(record, response))
-                },
-                { error ->
-                    Log.d(TAG, "caught", error)
-                    updateCopyInfo(RecordInfo.parseCopyLocationCounts(record, null))
-                })
-        Volley.getInstance(this).addToRequestQueue(r)
+    private fun fetchData() {
+        async {
+            try {
+                val start_ms = System.currentTimeMillis()
+                val org = findOrg(orgID) ?: return@async
+                val result = Gateway.search.fetchCopyLocationCounts(record.doc_id, org.id, org.level)
+                if (result is Result.Error) { showAlert(result.exception); return@async }
+                updateCopyInfo(CopyLocationCounts.makeArray(result.get()))
+            } catch (ex: Exception) {
+                showAlert(ex)
+            }
+        }
     }
 
-    internal inner class CopyInformationArrayAdapter(context: Context, private val resourceId: Int, private val records: List<CopyLocationCounts>) : ArrayAdapter<CopyLocationCounts>(context, resourceId, records) {
+    internal inner class CopyInformationArrayAdapter(context: Context, private val resourceId: Int, private val items: List<CopyLocationCounts>) : ArrayAdapter<CopyLocationCounts>(context, resourceId, items) {
 
         override fun getView(position: Int, convertView: View?, parent: ViewGroup): View? {
             val row = when(convertView) {
@@ -207,18 +197,6 @@ class CopyInformationActivity : AppCompatActivity() {
             copyStatusesText.text = clc.countsByStatusLabel
 
             return row
-        }
-    }
-
-    companion object {
-        fun safeCompareTo(a: String?, b: String?): Int {
-            return if (a == null && b == null) {
-                0
-            } else if (a == null) {
-                -1
-            } else if (b == null) {
-                1
-            } else a.compareTo(b)
         }
     }
 }

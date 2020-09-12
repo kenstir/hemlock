@@ -21,7 +21,7 @@ public class IDLObject {
     }
     
     public IDLField getField(String name) {
-        return (IDLField) fields.get(name);
+        return fields.get(name);
     }
 
     public HashMap getFields() {
@@ -38,7 +38,7 @@ public class IDLObject {
         Iterator itr = fields.keySet().iterator();        
         IDLField field;
         while(itr.hasNext()) {
-            field = fields.get((String) itr.next()); 
+            field = fields.get(itr.next());
             field.toXML(sb);
         }
         sb.append("\t\t</fields>");

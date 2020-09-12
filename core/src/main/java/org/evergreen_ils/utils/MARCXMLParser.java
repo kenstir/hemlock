@@ -22,6 +22,7 @@ import android.text.TextUtils;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 
 import org.evergreen_ils.android.Log;
 import org.xmlpull.v1.XmlPullParser;
@@ -40,7 +41,7 @@ public class MARCXMLParser {
     }
 
     public MARCXMLParser(String xml) throws UnsupportedEncodingException {
-        this(new ByteArrayInputStream(xml.getBytes("UTF-8")));
+        this(new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8)));
     }
 
     public MARCXMLParser(InputStream inStream) {

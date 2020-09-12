@@ -6,8 +6,8 @@ import org.opensrf.util.OSRFObject
 import java.util.*
 
 class Event : HashMap<String, Any?> {
-    constructor() {}
-    constructor(map: Map<String, Any?>?) : super(map) {}
+    constructor()
+    constructor(map: Map<String, Any?>?) : super(map)
 
     val message: String
         get() {

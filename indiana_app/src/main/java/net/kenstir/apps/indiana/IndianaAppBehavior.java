@@ -39,8 +39,8 @@ public class IndianaAppBehavior extends AppBehavior {
 
     @Override
     public Boolean isOnlineResource(RecordInfo record) {
-        if (!record.basic_metadata_loaded) return null;
-        if (!record.attrs_loaded) return null;
+        if (!record.hasMetadata) return null;
+        if (!record.hasAttributes) return null;
 
         // TODO: verify if correct
         String item_form = record.getAttr("item_form");

@@ -131,10 +131,10 @@ class FinesActivity : BaseActivity() {
     private fun updatePayFinesButtonVisibility() {
         val homeOrg = EgOrg.findOrg(App.getAccount().homeOrg)
         if (resources.getBoolean(R.bool.ou_enable_pay_fines)
-                && homeOrg?.isPaymentAllowedSetting ?: false) {
+                && homeOrg?.isPaymentAllowedSetting == true) {
             pay_fines_button?.visibility = View.VISIBLE
             pay_fines_button?.setOnClickListener {
-                Analytics.logEvent("Fines: Pay Fines", "num_fines", fineRecords.size)
+                //Analytics.logEvent("fines_payfines", "num_fines", fineRecords.size)
                 val username = App.getAccount().username
                 val password = AccountUtils.getPassword(this@FinesActivity, username)
                 var url = (Gateway.baseUrl
@@ -202,7 +202,7 @@ class FinesActivity : BaseActivity() {
     }
 
     private fun onItemClick(position: Int) {
-        Analytics.logEvent("Fines: Tap List Item", "have_grocery_bills", haveAnyGroceryBills)
+        //Analytics.logEvent("fines_itemclick", "have_grocery_bills", haveAnyGroceryBills)
         val records = ArrayList<RecordInfo>()
         if (haveAnyGroceryBills) {
             // If any of the fines are for non-circulation items ("grocery bills"), we
@@ -255,10 +255,10 @@ class FinesActivity : BaseActivity() {
             fineStatus = row.findViewById(R.id.fines_status)
 
             val record = getItem(position)
-            fineTitle?.setText(record.title)
-            fineAuthor?.setText(record.subtitle)
-            fineBalanceOwed?.setText(decimalFormatter!!.format(record.balance_owed))
-            fineStatus?.setText(record.status)
+            fineTitle?.text = record.title
+            fineAuthor?.text = record.subtitle
+            fineBalanceOwed?.text = decimalFormatter!!.format(record.balance_owed)
+            fineStatus?.text = record.status
 
             return row
         }

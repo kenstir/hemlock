@@ -152,7 +152,7 @@ public class JSONReader {
                 /* for each array item, insert the item into the hash.  the hash
                  * key is found by extracting the fields array from the registered 
                  * object at the current array index */
-                String fields[] = registry.getFields();
+                String[] fields = registry.getFields();
                 int count = min(jarr.length(), fields.length);
                 for( int i = 0; i < count; i++ ) {
                     obj.put(fields[i], readSubObject(jarr.get(i)));   

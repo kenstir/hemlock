@@ -58,10 +58,10 @@ class BarcodeActivity : BaseActivity() {
         val imageHeight = imageWidth * 4 / 10
         val bitmap = createBitmap(barcode, imageWidth, imageHeight)
         if (bitmap != null) {
-            barcode_text?.setText(barcode)
+            barcode_text?.text = barcode
             image_view?.setImageBitmap(bitmap)
         } else {
-            barcode_text?.setText(getString(R.string.invalid_barcode, barcode))
+            barcode_text?.text = getString(R.string.invalid_barcode, barcode)
             image_view?.setImageResource(R.drawable.invalid_barcode)
         }
 

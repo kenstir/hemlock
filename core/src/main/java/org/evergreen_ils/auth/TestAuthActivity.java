@@ -86,7 +86,7 @@ public class TestAuthActivity extends Activity {
             }
         });
         
-        mLastTextView = (TextView)findViewById(R.id.txtLastAccountName);
+        mLastTextView = findViewById(R.id.txtLastAccountName);
 
         if (savedInstanceState != null) {
         	boolean showDialog = savedInstanceState.getBoolean(STATE_DIALOG);
@@ -137,13 +137,13 @@ public class TestAuthActivity extends Activity {
      */
     private void showAccountPicker(final String authTokenType, final boolean invalidate) {
     	mInvalidate = invalidate;
-        final Account availableAccounts[] = mAccountManager.getAccountsByType(mAccountType);
+        final Account[] availableAccounts = mAccountManager.getAccountsByType(mAccountType);
 
         if (availableAccounts.length == 0) {
             Toast.makeText(this, "No accounts", Toast.LENGTH_SHORT).show();
             addNewAccount(mAccountType, Const.AUTHTOKEN_TYPE);
         } else {
-            String name[] = new String[availableAccounts.length];
+            String[] name = new String[availableAccounts.length];
             for (int i = 0; i < availableAccounts.length; i++) {
                 name[i] = availableAccounts[i].name;
                 String library_name = mAccountManager.getUserData(availableAccounts[i], Const.KEY_LIBRARY_NAME);
@@ -195,7 +195,7 @@ public class TestAuthActivity extends Activity {
     }
 
     private void reuseExistingAccountAuthToken(final String account_name, String authTokenType) {
-        final Account availableAccounts[] = mAccountManager.getAccountsByType(mAccountType);
+        final Account[] availableAccounts = mAccountManager.getAccountsByType(mAccountType);
         final Account account = null;
         for (int i = 0; i < availableAccounts.length; i++) {
             if (account_name.equals(availableAccounts[i].name)) {

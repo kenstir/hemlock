@@ -225,17 +225,17 @@ class PlaceHoldActivity : BaseActivity() {
         return null
     }
 
-    private fun pickupEventValue(pickup_org: Organization?, home_org: Organization?): String {
+    fun getHoldPickupDimensionKey(pickup_org: Organization?, home_org: Organization?): String {
         return when {
             home_org == null -> "homeless"
-            pickup_org == null -> "null_pickup"
+            pickup_org == null -> "null"
             pickup_org.id == home_org.id -> "home"
             pickup_org.isConsortium -> pickup_org.shortname
             else -> "other"
         }
     }
 
-    private fun logPlaceHoldResult(result: String) {
+    private fun logPlaceHoldResult(succeeded: Boolean, result: String) {
         val notify = ArrayList<String?>()
         if (emailNotification?.isChecked == true) notify.add("email")
         if (phoneNotification?.isChecked == true) notify.add("phone")
@@ -244,12 +244,13 @@ class PlaceHoldActivity : BaseActivity() {
         try {
             val pickupOrg = EgOrg.visibleOrgs[selectedOrgPos]
             val homeOrg = EgOrg.findOrg(App.getAccount().homeOrg)
-            val pickupVal = pickupEventValue(pickupOrg, homeOrg)
-            Analytics.logEvent("Place Hold: Execute",
-                    "result", result,
-                    "hold_notify", notifyTypes,
-                    "expires", expireDate != null,
-                    "pickup_org", pickupVal)
+            val pickupVal = getHoldPickupDimensionKey(pickupOrg, homeOrg)
+            val b = Bundle()
+            b.putString(Analytics.Param.RESULT, result)
+            b.putString(Analytics.Param.HOLD_NOTIFY, notifyTypes)
+            b.putBoolean(Analytics.Param.HOLD_EXPIRES_KEY, expireDate != null)
+            b.putString(Analytics.Param.HOLD_PICKUP_KEY, pickupVal)
+            Analytics.logEvent(Analytics.Event.HOLD_PLACE_HOLD, b)
         } catch (e: Exception) {
             Analytics.logException(e)
         }
@@ -282,7 +283,6 @@ class PlaceHoldActivity : BaseActivity() {
     private fun placeHoldPreFlightCheck(): Boolean {
         val selectedOrg = EgOrg.visibleOrgs[selectedOrgPos]
         if (!selectedOrg.isPickupLocation) {
-            logPlaceHoldResult("not_pickup_location")
             val builder = AlertDialog.Builder(this@PlaceHoldActivity)
             builder.setTitle(getString(R.string.title_not_pickup_location))
                     .setMessage(String.format(getString(R.string.msg_not_pickup_location), selectedOrg.name))
@@ -332,13 +332,13 @@ class PlaceHoldActivity : BaseActivity() {
             progress?.dismiss()
             when (result) {
                 is Result.Success -> {
-                    logPlaceHoldResult("ok")
+                    logPlaceHoldResult(true, Analytics.Value.OK)
                     Toast.makeText(this@PlaceHoldActivity, "Hold successfully placed", Toast.LENGTH_LONG).show()
                     startActivity(Intent(this@PlaceHoldActivity, HoldsActivity::class.java))
                     finish()
                 }
                 is Result.Error -> {
-                    logPlaceHoldResult(result.exception.getCustomMessage())
+                    logPlaceHoldResult(false, result.exception.getCustomMessage())
                     showAlert(result.exception)
                 }
             }
@@ -458,7 +458,7 @@ class PlaceHoldActivity : BaseActivity() {
                 }
             }
         }
-        val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, labels)
+        val adapter = ArrayAdapter(this, R.layout.org_item_layout, labels)
         partSpinner?.adapter = adapter
     }
 

@@ -24,7 +24,9 @@ import org.opensrf.util.OSRFObject
 interface SearchService {
     suspend fun fetchAssetCopy(copyId: Int): Result<OSRFObject>
     suspend fun fetchAssetCallNumber(callNumber: Int): Result<OSRFObject>
+    suspend fun fetchCopyLocationCounts(id: Int, orgId: Int, level: Int): Result<List<Any>>
     suspend fun fetchCopyStatuses(): Result<List<OSRFObject>>
+    suspend fun fetchCopySummary(id: Int, orgId: Int): Result<List<OSRFObject>>
     suspend fun fetchCopyMODS(copyId: Int): Result<OSRFObject>
     suspend fun fetchRecordMODS(id: Int): Result<OSRFObject>
     suspend fun fetchMetarecordMODS(id: Int): Result<OSRFObject>

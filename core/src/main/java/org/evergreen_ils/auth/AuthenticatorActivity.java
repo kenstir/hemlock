@@ -67,13 +67,13 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity {
             authTokenType = Const.AUTHTOKEN_TYPE;
         Analytics.log(TAG, "authTokenType=" + authTokenType);
 
-        TextView signInText = (TextView) findViewById(R.id.account_sign_in_text);
+        TextView signInText = findViewById(R.id.account_sign_in_text);
         signInText.setText(String.format(getString(R.string.ou_account_sign_in_message),
                 AppState.getString(AppState.LIBRARY_NAME)));
 
         // Turn off suggestions for the accountName field.  Turning them off with setInputType worked on my phone
         // whereas using android:inputType="text|textNoSuggestions" in xml did not.
-        TextView accountNameText = (TextView) findViewById(R.id.accountName);
+        TextView accountNameText = findViewById(R.id.accountName);
         accountNameText.setInputType(InputType.TYPE_CLASS_TEXT|InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
         if (accountName != null) {
             accountNameText.setText(accountName);
@@ -87,7 +87,7 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity {
         });
 
         try {
-            forgotPasswordButton = (Button) findViewById(R.id.forgot_password_button);
+            forgotPasswordButton = findViewById(R.id.forgot_password_button);
         } catch (NoSuchFieldError e) {
         }
         if (forgotPasswordButton != null) {

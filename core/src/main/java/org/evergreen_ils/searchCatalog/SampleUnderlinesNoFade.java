@@ -25,6 +25,7 @@ import android.view.KeyEvent;
 import android.view.MenuItem;
 
 import org.evergreen_ils.R;
+import org.evergreen_ils.android.Analytics;
 import org.evergreen_ils.android.App;
 import org.evergreen_ils.system.EgSearch;
 import org.evergreen_ils.utils.ui.ActionBarUtils;
@@ -37,6 +38,7 @@ import java.util.ArrayList;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
+import androidx.viewpager.widget.ViewPager;
 
 public class SampleUnderlinesNoFade extends BasePagerActivity {
     private static final String TAG = SampleUnderlinesNoFade.class.getSimpleName();
@@ -72,6 +74,20 @@ public class SampleUnderlinesNoFade extends BasePagerActivity {
         UnderlinePageIndicator indicator = findViewById(R.id.indicator);
         indicator.setViewPager(mPager);
         indicator.setFades(false);
+        indicator.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+                                              @Override
+                                              public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+                                              }
+
+                                              @Override
+                                              public void onPageSelected(int position) {
+                                                  Analytics.logEvent(Analytics.Event.VIEW_ITEM_DETAILS);
+                                              }
+
+                                              @Override
+                                              public void onPageScrollStateChanged(int state) {
+                                              }
+                                          });
         mIndicator = indicator;
     }
 
@@ -103,12 +119,12 @@ public class SampleUnderlinesNoFade extends BasePagerActivity {
 
     class SearchFragmentAdapter extends FragmentPagerAdapter {
         public SearchFragmentAdapter(FragmentManager fm) {
-            super(fm);
+            super(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
         }
 
         @Override
         public Fragment getItem(int position) {
-            return DetailsFragment.newInstance(records.get(position), position, numResults, orgID);
+            return DetailsFragment.create(records.get(position), orgID, position, numResults);
         }
 
         @Override

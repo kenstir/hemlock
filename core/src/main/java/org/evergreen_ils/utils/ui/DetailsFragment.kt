@@ -32,23 +32,27 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import com.android.volley.toolbox.NetworkImageView
+import kotlinx.android.synthetic.main.org_details.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.async
+import kotlinx.coroutines.joinAll
 import org.evergreen_ils.R
-import org.evergreen_ils.android.Analytics
 import org.evergreen_ils.android.App
 import org.evergreen_ils.android.Log
 import org.evergreen_ils.net.Gateway.getUrl
+import org.evergreen_ils.net.GatewayLoader
 import org.evergreen_ils.net.Volley
 import org.evergreen_ils.searchCatalog.CopyInformationActivity
 import org.evergreen_ils.searchCatalog.RecordInfo
-import org.evergreen_ils.searchCatalog.RecordLoader
-import org.evergreen_ils.searchCatalog.RecordLoader.ResponseListener
+import org.evergreen_ils.system.EgOrg
 import org.evergreen_ils.system.EgOrg.findOrg
 import org.evergreen_ils.views.bookbags.BookBagUtils.showAddToListDialog
 import org.evergreen_ils.views.holds.PlaceHoldActivity
 
 class DetailsFragment : Fragment() {
     private var record: RecordInfo? = null
-    private var orgID: Int? = null
+    private var orgID: Int = EgOrg.consortiumID
     private var position: Int? = null
     private var total: Int? = null
 
@@ -83,7 +87,7 @@ class DetailsFragment : Fragment() {
 
     override fun onSaveInstanceState(outState: Bundle) {
         outState.putSerializable("recordInfo", record)
-        outState.putInt("orgID", orgID!!)
+        outState.putInt("orgID", orgID)
         outState.putInt("position", position!!)
         outState.putInt("total", total!!)
         super.onSaveInstanceState(outState)
@@ -118,13 +122,11 @@ class DetailsFragment : Fragment() {
         initButtons()
 
         // Start async image load
-        val imageHref = getUrl("/opac/extras/ac/jacket/medium/r/" + record!!.doc_id)
-        val imageLoader = Volley.getInstance(activity).imageLoader
-        recordImage?.setImageUrl(imageHref, imageLoader)
+        val url = getUrl("/opac/extras/ac/jacket/medium/r/" + record!!.doc_id)
+        recordImage?.setImageUrl(url, Volley.getInstance(activity).imageLoader)
         //recordImage?.setDefaultImageResId(R.drawable.missing_art);//for screenshots
 
-        // Start async record load
-        fetchRecordInfo(record)
+        record?.let { fetchData(it) }
 
         return layout
     }
@@ -136,24 +138,21 @@ class DetailsFragment : Fragment() {
         onlineAccessButton!!.isEnabled = false
         updateButtonViews()
         placeHoldButton!!.setOnClickListener {
-            Analytics.logEvent("Place Hold: Open", "via", "details_button")
             val intent = Intent(activity?.applicationContext, PlaceHoldActivity::class.java)
             intent.putExtra("recordInfo", record)
             startActivity(intent)
         }
         showCopiesButton!!.setOnClickListener {
-            Analytics.logEvent("Copy Info: Open", "via", "details_button")
             val intent = Intent(activity?.applicationContext, CopyInformationActivity::class.java)
             intent.putExtra("recordInfo", record)
             intent.putExtra("orgID", orgID)
             startActivity(intent)
         }
         onlineAccessButton!!.setOnClickListener {
-            Analytics.logEvent("Online Access: Open", "via", "details_button")
             launchOnlineAccess()
         }
         addToBookbagButton!!.setOnClickListener {
-            Analytics.logEvent("Lists: Add to List", "via", "details_button")
+            //Analytics.logEvent("lists_addtolist", "via", "details_button")
             (activity as? BaseActivity)?.let {
                 showAddToListDialog(it, App.getAccount().bookBags, record!!)
             }
@@ -191,16 +190,16 @@ class DetailsFragment : Fragment() {
     }
 
     private fun updateButtonViews() {
-        val is_online_resource = App.getBehavior().isOnlineResource(record)
-        Log.d(TAG, "yyy: updateButtonViews: title:" + record!!.title + " is_online_resource:" + is_online_resource)
-        if (is_online_resource == null) return  // not ready yet
-        placeHoldButton!!.isEnabled = true
-        showCopiesButton!!.isEnabled = true
-        onlineAccessButton!!.isEnabled = true
-        if (is_online_resource) {
+        val isOnlineResource = App.getBehavior().isOnlineResource(record)
+        Log.d(TAG, "updateButtonViews: title:${record?.title} isOnlineResource:$isOnlineResource")
+        if (isOnlineResource == null) return  // not ready yet
+        placeHoldButton?.isEnabled = true
+        showCopiesButton?.isEnabled = true
+        onlineAccessButton?.isEnabled = true
+        if (isOnlineResource) {
             val org = findOrg(orgID)
             val links = App.getBehavior().getOnlineLocations(record, org!!.shortname)
-            Log.d(TAG, "yyy: updateButtonViews: title:" + record?.title + " links:" + links.size)
+            Log.d(TAG, "updateButtonViews: title:${record?.title} links:${links.size}")
             if (links.isEmpty()) {
                 onlineAccessButton?.isEnabled = false
             } else if (resources.getBoolean(R.bool.ou_show_online_access_hostname)) {
@@ -208,18 +207,18 @@ class DetailsFragment : Fragment() {
                 descriptionTextView?.text = uri.host
             }
         }
-        onlineAccessButton?.visibility = if (is_online_resource) View.VISIBLE else View.GONE
-        placeHoldButton?.visibility = if (is_online_resource) View.GONE else View.VISIBLE
-        showCopiesButton?.visibility = if (is_online_resource) View.GONE else View.VISIBLE
+        onlineAccessButton?.visibility = if (isOnlineResource) View.VISIBLE else View.GONE
+        placeHoldButton?.visibility = if (isOnlineResource) View.GONE else View.VISIBLE
+        showCopiesButton?.visibility = if (isOnlineResource) View.GONE else View.VISIBLE
     }
 
-    private fun updateIconFormatView() {
+    private fun loadFormat() {
         if (!isAdded) return  // discard late results
-        formatTextView?.text = RecordInfo.getIconFormatLabel(record)
-        updateButtonViews()
+        formatTextView?.text = record?.iconFormatLabel
+        //updateButtonViews()
     }
 
-    private fun updateBasicMetadataViews() {
+    private fun loadMetadata() {
         if (!isAdded) return  // discard late results
         titleTextView?.text = record?.title
         authorTextView?.text = record?.author
@@ -231,49 +230,68 @@ class DetailsFragment : Fragment() {
         subjectTableRow?.visibility = if (TextUtils.isEmpty(record?.subject)) View.GONE else View.VISIBLE
         isbnTextView?.text = record?.isbn
         isbnTableRow?.visibility = if (TextUtils.isEmpty(record?.isbn)) View.GONE else View.VISIBLE
-        updateButtonViews()
+        //updateButtonViews()
     }
 
-    private fun fetchRecordInfo(record: RecordInfo?) {
-        RecordLoader.fetchDetailsMetadata(record, activity,
-                object : ResponseListener {
-                    override fun onMetadataLoaded() {
-                        Log.d(TAG, "yyyyy: onMetadataLoaded()")
-                        updateBasicMetadataViews()
-                        fetchCopyCountInfo(record)
-                    }
-
-                    override fun onIconFormatLoaded() {
-                        Log.d(TAG, "yyyyy: onIconFormatLoaded()")
-                        updateIconFormatView()
-                        fetchCopyCountInfo(record)
-                    }
-                })
-    }
-
-    private fun fetchCopyCountInfo(record: RecordInfo?) {
-        // Check for copy counts only after we know it is not an online_resource.
-        val isOnlineResource = App.getBehavior().isOnlineResource(record)
-        Log.d(TAG, "fetchCopyCountInfo id=" + record?.doc_id
-                + " is_online_resource=" + isOnlineResource)
-        if (isOnlineResource == null) return  // not ready yet
-        if (!isOnlineResource && record != null
-                && !record.copy_summary_loaded) {
-            RecordLoader.fetchCopySummary(record, orgID!!, context) { updateCopyCountView() }
-        } else {
-            Log.d(TAG, "not updating copy count view for some reason, STOPHERE")
-        }
-    }
-
-    private fun updateCopyCountView() {
+    private fun loadCopyCount() {
         if (!isAdded) return  // discard late results
-        descriptionTextView?.text = RecordLoader.getCopySummary(record, orgID!!, context)
+        descriptionTextView?.text = record?.getCopySummary(resources, orgID)
+    }
+
+    private fun fetchData(record: RecordInfo) {
+        val coroutineScope = (activity as? CoroutineScope) ?: return
+        coroutineScope.async {
+            try {
+                val start = System.currentTimeMillis()
+                var jobs = mutableListOf<Job>()
+
+                jobs.add(async {
+                    GatewayLoader.loadRecordMetadataAsync(record)
+                    loadMetadata()
+                })
+
+                jobs.add(async {
+                    GatewayLoader.loadRecordAttributesAsync(record)
+                    loadFormat()
+                })
+
+                if (resources.getBoolean(R.bool.ou_need_marc_record)) {
+                    jobs.add(async {
+                        GatewayLoader.loadRecordMarcAsync(record)
+                    })
+                }
+
+                jobs.joinAll()
+
+                // Check for copy counts only after we know it is not an online_resource
+                val isOnlineResource = App.getBehavior().isOnlineResource(record)
+                if (isOnlineResource == null) {
+                    throw IllegalStateException("it shouldn't be possible for isOnlineResource to be unresolved at this point")
+                }
+                if (isOnlineResource != true) {
+                    jobs.add(async {
+                        GatewayLoader.loadRecordCopyCountsAsync(record, orgID)
+                        loadCopyCount()
+                    })
+                }
+
+                //TODO: is it ok to call joinAll again here?  seems the most logical to me
+                jobs.joinAll()
+
+                updateButtonViews()
+
+                Log.logElapsedTime(TAG, start, "[kcxxx] fetchData ... done")
+            } catch (ex: Exception) {
+                activity?.showAlert(ex)
+            }
+        }
     }
 
     companion object {
         private val TAG = DetailsFragment::class.java.simpleName
+
         @JvmStatic
-        fun newInstance(record: RecordInfo?, position: Int?, total: Int?, orgID: Int?): DetailsFragment {
+        fun create(record: RecordInfo, orgID: Int, position: Int, total: Int): DetailsFragment {
             val fragment = DetailsFragment()
             fragment.record = record
             fragment.orgID = orgID

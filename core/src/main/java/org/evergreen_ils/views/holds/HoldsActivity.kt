@@ -65,7 +65,7 @@ class HoldsActivity : BaseActivity() {
 
         progress = ProgressDialogSupport()
         listAdapter = HoldsArrayAdapter(this, R.layout.holds_list_item, holdRecords)
-        lv?.setAdapter(listAdapter)
+        lv?.adapter = listAdapter
         lv?.setOnItemClickListener { parent, view, position, id -> onItemClick(position) }
     }
 
@@ -133,14 +133,6 @@ class HoldsActivity : BaseActivity() {
                 progress?.dismiss()
             }
         }
-    }
-
-    suspend fun fetchRecordAttrs(record: RecordInfo, id: Int): Result<Unit> {
-        val mraResult = Gateway.pcrud.fetchMRA(id)
-        if (mraResult is Result.Error) return mraResult
-        val mraObj = mraResult.get()
-        record.updateFromMRAResponse(mraObj)
-        return Result.Success(Unit)
     }
 
     suspend fun fetchHoldQueueStats(hold: HoldRecord, account: Account): Result<Unit> {
@@ -268,7 +260,7 @@ class HoldsActivity : BaseActivity() {
     }
 
     private fun onItemClick(position: Int) {
-        Analytics.logEvent("Holds: Tap List Item")
+        //Analytics.logEvent("holds_itemclick")
         val record = lv?.getItemAtPosition(position) as? HoldRecord
         if (record != null) {
             val intent = Intent(applicationContext, HoldDetailsActivity::class.java)
@@ -310,10 +302,10 @@ class HoldsActivity : BaseActivity() {
             status = row.findViewById(R.id.hold_status)
 
             val record = getItem(position)
-            holdTitle?.setText(record.title)
-            holdAuthor?.setText(record.author)
-            holdFormat?.setText(record.getFormatLabel())
-            status?.setText(record.getHoldStatus(resources))
+            holdTitle?.text = record.title
+            holdAuthor?.text = record.author
+            holdFormat?.text = record.formatLabel
+            status?.text = record.getHoldStatus(resources)
 
             return row
         }
@@ -321,5 +313,14 @@ class HoldsActivity : BaseActivity() {
 
     companion object {
         private val TAG = HoldsActivity::class.java.simpleName
+
+        //TODO: replace with GatewayLoader.loadRecordAttributesAsync
+        suspend fun fetchRecordAttrs(record: RecordInfo, id: Int): Result<Unit> {
+            val mraResult = Gateway.pcrud.fetchMRA(id)
+            if (mraResult is Result.Error) return mraResult
+            val mraObj = mraResult.get()
+            record.updateFromMRAResponse(mraObj)
+            return Result.Success(Unit)
+        }
     }
 }

@@ -42,9 +42,30 @@ object GatewaySearch: SearchService {
         }
     }
 
+    override suspend fun fetchCopyLocationCounts(id: Int, orgId: Int, orgLevel: Int): Result<List<Any>> {
+        return try {
+            val args = arrayOf<Any?>(id, orgId, orgLevel)
+            val ret = Gateway.fetch(Api.SEARCH, Api.COPY_LOCATION_COUNTS, args, false) {
+                it.asArray()
+            }
+            Result.Success(ret)
+        } catch (e: Exception) {
+            Result.Error(e)
+        }
+    }
+
     override suspend fun fetchCopyStatuses(): Result<List<OSRFObject>> {
         return try {
             val ret = Gateway.fetchObjectArray(Api.SEARCH, Api.COPY_STATUS_ALL, arrayOf(), true)
+            Result.Success(ret)
+        } catch (e: Exception) {
+            Result.Error(e)
+        }
+    }
+
+    override suspend fun fetchCopySummary(id: Int, orgId: Int): Result<List<OSRFObject>> {
+        return try {
+            val ret = Gateway.fetchObjectArray(Api.SEARCH, Api.COPY_COUNT, arrayOf(orgId, id), false)
             Result.Success(ret)
         } catch (e: Exception) {
             Result.Error(e)

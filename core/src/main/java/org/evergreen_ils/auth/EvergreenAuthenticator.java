@@ -23,7 +23,7 @@ public class EvergreenAuthenticator {
         try {
             MessageDigest digest = java.security.MessageDigest.getInstance("MD5");
             digest.update(s.getBytes());
-            byte messageDigest[] = digest.digest();
+            byte[] messageDigest = digest.digest();
 
             // Create Hex String
             StringBuilder hexString = new StringBuilder();
@@ -60,14 +60,13 @@ public class EvergreenAuthenticator {
 
         while ((resp = req.recv()) != null) {
             Log.d(TAG, "doRequest> Sync Response: " + resp);
-            Object response = (Object) resp;
+            Object response = resp;
             return response;
         }
         return null;
     }
     
     public static String signIn(String library_url, String username, String password) throws AuthenticationException {
-        Log.d(TAG, "signIn> "+username+" "+library_url);
         Analytics.log(TAG, "signIn: library_url=" + library_url);
 
         HttpConnection conn;

@@ -7,31 +7,29 @@
 	android:paddingTop="3dip"
     android:paddingLeft="12dip"
     android:paddingRight="12dip"
-    android:orientation="horizontal">
+    android:orientation="horizontal"
+    android:minHeight="@dimen/target_min_height">
 
     <LinearLayout
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:gravity="top"
-            android:layout_weight="1"
-    >
+            android:layout_weight="1">
 
         <TextView
                 android:id="@+id/bookbag_name"
                 style="@style/HemlockText.ListPrimary"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                tools:text="Stuff to Read"
-        />
+                tools:text="Stuff to Read" />
 
         <TextView
                 android:id="@+id/bookbag_description"
                 style="@style/HemlockText.ListSecondary"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                tools:text="a collection of stuff to read"
-        />
+                tools:text="a collection of stuff to read" />
 
     </LinearLayout>
 
@@ -41,7 +39,6 @@
             android:layout_width="wrap_content"
             android:layout_height="fill_parent"
             android:gravity="top"
-            tools:text="7 items"
-    />
+            tools:text="7 items" />
 
 </LinearLayout>

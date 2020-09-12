@@ -35,6 +35,15 @@ object GatewayPCRUD: PCRUDService {
         }
     }
 
+    override suspend fun fetchMARC(id: Int): Result<OSRFObject> {
+        return try {
+            val ret = Gateway.fetchObject(Api.PCRUD, Api.RETRIEVE_BRE, arrayOf(Api.ANONYMOUS, id), true)
+            Result.Success(ret)
+        } catch (e: Exception) {
+            Result.Error(e)
+        }
+    }
+
     override suspend fun fetchMRA(id: Int): Result<OSRFObject> {
         return try {
             val ret = Gateway.fetchObject(Api.PCRUD, Api.RETRIEVE_MRA, arrayOf(Api.ANONYMOUS, id), true)

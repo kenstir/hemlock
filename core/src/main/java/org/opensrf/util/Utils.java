@@ -75,7 +75,7 @@ public class Utils {
      */
 
     public static Object findPath(Map map, String path) {
-        String keys[] = path.split("/", -1);
+        String[] keys = path.split("/", -1);
         int i = 0;
         if(path.charAt(0) == '/') i++;
         for(; i < keys.length - 1; i++ ) 

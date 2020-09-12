@@ -76,7 +76,7 @@ public class GenericAuthenticatorActivity extends AuthenticatorActivity {
 
         libraries_directory_json_url = getString(R.string.evergreen_libraries_url);
 
-        librarySpinner = (Spinner) findViewById(R.id.choose_library_spinner);
+        librarySpinner = findViewById(R.id.choose_library_spinner);
         librarySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {

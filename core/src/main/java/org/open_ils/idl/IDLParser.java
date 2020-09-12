@@ -100,7 +100,7 @@ public class IDLParser {
 
         if("class".equals(localpart)) {
             HashMap fields = current.getFields();
-            String fieldNames[] = new String[fields.size()];
+            String[] fieldNames = new String[fields.size()];
 
             for(Iterator itr = fields.keySet().iterator(); itr.hasNext(); ) {
                 String key = (String) itr.next();

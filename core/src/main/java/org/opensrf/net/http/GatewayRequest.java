@@ -82,7 +82,7 @@ public class GatewayRequest extends HttpRequest {
             //System.out.println("osrf: Received " +  readBuf.toString());
             try {
                 Log.d(TAG, "[net] recv " + readBuf.length() + ": " +  readBuf.toString());
-                result = (Map<String, ?>) new JSONReader(readBuf.toString()).readObject();
+                result = new JSONReader(readBuf.toString()).readObject();
             } catch (org.opensrf.util.JSONException ex) {
                 Log.d(TAG, "caught", ex);
                 return null;

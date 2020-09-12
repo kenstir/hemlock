@@ -76,7 +76,6 @@ class BookBagDetailsActivity : BaseActivity() {
         bookBagName?.text = bookBag.name
         bookBagDescription?.text = bookBag.description
         deleteButton?.setOnClickListener(View.OnClickListener {
-            Analytics.logEvent("Lists: Delete List")
             val builder = AlertDialog.Builder(this@BookBagDetailsActivity)
             builder.setMessage(R.string.delete_list_confirm_msg)
             builder.setNegativeButton(R.string.delete_list_negative_button, null)
@@ -85,17 +84,17 @@ class BookBagDetailsActivity : BaseActivity() {
         })
         lv = findViewById(R.id.bookbagitem_list)
         listAdapter = BookBagItemsArrayAdapter(this, R.layout.bookbagitem_list_item)
-        lv?.setAdapter(listAdapter)
-        lv?.setOnItemClickListener(AdapterView.OnItemClickListener { parent, view, position, id ->
-            Analytics.logEvent("Lists: Tap List Item")
+        lv?.adapter = listAdapter
+        lv?.onItemClickListener = AdapterView.OnItemClickListener { parent, view, position, id ->
+            //Analytics.logEvent("list_itemclick")
             val records = ArrayList<RecordInfo?>()
-            bookBag.items?.let {
+            bookBag.items.let {
                 for (item in it) {
                     records.add(item.recordInfo)
                 }
             }
             RecordDetails.launchDetailsFlow(this@BookBagDetailsActivity, records, position)
-        })
+        }
     }
 
     override fun onDestroy() {
@@ -124,7 +123,7 @@ class BookBagDetailsActivity : BaseActivity() {
                 }
 
                 // fetch item details
-                bookBag.items?.let {
+                bookBag.items.let {
                     for (item in it) {
                         jobs.add(async {
                             fetchTargetDetails(item)
@@ -155,15 +154,15 @@ class BookBagDetailsActivity : BaseActivity() {
 
     private fun updateItemsList() {
         listAdapter?.clear()
-        bookBag?.items.let { listAdapter?.addAll(it) }
+        bookBag.items.let { listAdapter?.addAll(it) }
         listAdapter?.notifyDataSetChanged()
     }
 
     private fun deleteList() {
         async {
             progress?.show(this@BookBagDetailsActivity, getString(R.string.msg_deleting_list))
-            Analytics.logEvent("Lists: Delete List")
-            val id = bookBag?.id
+            //Analytics.logEvent("list_deletelist")
+            val id = bookBag.id
             val result = if (id != null) {
                 Gateway.actor.deleteBookBagAsync(App.getAccount(), id)
             } else {
@@ -198,10 +197,10 @@ class BookBagDetailsActivity : BaseActivity() {
             val remove = row.findViewById<View>(R.id.bookbagitem_remove_button) as Button
 
             val record = getItem(position)
-            title?.text = record?.recordInfo?.title
-            author?.text = record?.recordInfo?.author
+            title.text = record?.recordInfo?.title
+            author.text = record?.recordInfo?.author
             remove.setOnClickListener(View.OnClickListener {
-                Analytics.logEvent("Lists: Remove List Item")
+                //Analytics.logEvent("list_removeitem")
                 async {
                     progress?.show(this@BookBagDetailsActivity, getString(R.string.msg_removing_list_item))
                     val result = Gateway.actor.removeItemFromBookBagAsync(App.getAccount(), record.id)
