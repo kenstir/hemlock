@@ -182,6 +182,7 @@ class MainActivity : BaseActivity() {
     }
 
     fun onButtonClick(v: View) {
+        //throw RuntimeException("Test Crash") // test Crashlytics
         val id = v.id
         if (id == R.id.main_checkouts_button) {
             startActivity(Intent(this, CheckoutsActivity::class.java))
