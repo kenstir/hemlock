@@ -31,6 +31,7 @@ import android.view.View
 import android.widget.*
 import android.widget.AdapterView.OnItemSelectedListener
 import androidx.appcompat.app.AlertDialog
+import androidx.core.os.bundleOf
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.joinAll
@@ -39,6 +40,7 @@ import org.evergreen_ils.HOLD_TYPE_PART
 import org.evergreen_ils.HOLD_TYPE_TITLE
 import org.evergreen_ils.R
 import org.evergreen_ils.android.Analytics
+import org.evergreen_ils.android.Analytics.orgDimensionKey
 import org.evergreen_ils.android.App
 import org.evergreen_ils.android.Log
 import org.evergreen_ils.data.Account
@@ -225,16 +227,6 @@ class PlaceHoldActivity : BaseActivity() {
         return null
     }
 
-    fun getHoldPickupDimensionKey(pickup_org: Organization?, home_org: Organization?): String {
-        return when {
-            home_org == null -> "homeless"
-            pickup_org == null -> "null"
-            pickup_org.id == home_org.id -> "home"
-            pickup_org.isConsortium -> pickup_org.shortname
-            else -> "other"
-        }
-    }
-
     private fun logPlaceHoldResult(succeeded: Boolean, result: String) {
         val notify = ArrayList<String?>()
         if (emailNotification?.isChecked == true) notify.add("email")
@@ -244,13 +236,12 @@ class PlaceHoldActivity : BaseActivity() {
         try {
             val pickupOrg = EgOrg.visibleOrgs[selectedOrgPos]
             val homeOrg = EgOrg.findOrg(App.getAccount().homeOrg)
-            val pickupVal = getHoldPickupDimensionKey(pickupOrg, homeOrg)
-            val b = Bundle()
-            b.putString(Analytics.Param.RESULT, result)
-            b.putString(Analytics.Param.HOLD_NOTIFY, notifyTypes)
-            b.putBoolean(Analytics.Param.HOLD_EXPIRES_KEY, expireDate != null)
-            b.putString(Analytics.Param.HOLD_PICKUP_KEY, pickupVal)
-            Analytics.logEvent(Analytics.Event.HOLD_PLACE_HOLD, b)
+            Analytics.logEvent(Analytics.Event.HOLD_PLACE_HOLD, bundleOf(
+                    Analytics.Param.RESULT to result,
+                    Analytics.Param.HOLD_NOTIFY to notifyTypes,
+                    Analytics.Param.HOLD_EXPIRES_KEY to (expireDate != null),
+                    Analytics.Param.HOLD_PICKUP_KEY to orgDimensionKey(pickupOrg, homeOrg),
+            ))
         } catch (e: Exception) {
             Analytics.logException(e)
         }

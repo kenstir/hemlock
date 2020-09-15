@@ -24,6 +24,7 @@ import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import org.evergreen_ils.BuildConfig
 import org.evergreen_ils.R
+import org.evergreen_ils.data.Organization
 
 /** Utils that wrap Crashlytics (and now Analytics)
  */
@@ -44,15 +45,14 @@ object Analytics {
 
     object Param {
         const val DEFAULT_HOLD_NOTIFY = "default_hold_notify"
-        const val DEFAULT_PICKUP_ORG = "default_pickup_org"
-        const val DEFAULT_SEARCH_ORG = "default_search_org"
         const val HOLD_EXPIRES_KEY = "hold_expires" // bool
         const val HOLD_NOTIFY = "hold_notify"
         const val HOLD_PICKUP_KEY = "hold_pickup" // { home | other }
         const val NUM_RESULTS = "num_results"
-        const val RESULT = "result" // { ok | error message }
+        const val RESULT = "result" // { ok | error_message }
         const val SEARCH_CLASS = "search_class"
         const val SEARCH_FORMAT = "search_format"
+        const val SEARCH_ORG_KEY = "search_org" // { home | other }
         const val SEARCH_TERM = FirebaseAnalytics.Param.SEARCH_TERM
     }
 
@@ -154,5 +154,24 @@ object Analytics {
         val b = Bundle()
         b.putString(name, value)
         logEvent(event, b)
+    }
+
+    fun orgDimensionKey(org: Organization?, homeOrg: Organization?): String {
+        return when {
+            org == null || homeOrg == null -> "null"
+            org.id == homeOrg.id -> "home"
+            org.isConsortium -> org.shortname
+            else -> "other"
+        }
+    }
+
+    fun searchOrgDimensionKey(searchOrg: Organization?, defaultSearchOrg: Organization?, homeOrg: Organization?): String {
+        return when {
+            searchOrg == null || defaultSearchOrg == null || homeOrg == null -> "null"
+            searchOrg.id == defaultSearchOrg.id -> "default"
+            searchOrg.id == homeOrg.id -> "home"
+            searchOrg.isConsortium -> searchOrg.shortname
+            else -> "other"
+        }
     }
 }

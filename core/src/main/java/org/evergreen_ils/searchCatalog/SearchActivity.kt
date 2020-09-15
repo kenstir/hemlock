@@ -32,9 +32,11 @@ import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.*
 import androidx.appcompat.widget.SwitchCompat
+import androidx.core.os.bundleOf
 import kotlinx.coroutines.async
 import org.evergreen_ils.R
 import org.evergreen_ils.android.Analytics
+import org.evergreen_ils.android.Analytics.searchOrgDimensionKey
 import org.evergreen_ils.android.App
 import org.evergreen_ils.android.Log
 import org.evergreen_ils.barcodescan.CaptureActivity
@@ -230,10 +232,15 @@ class SearchActivity : BaseActivity() {
     }
 
     private fun logSearchEvent(result: Result<OSRFObject>) {
-        val b = Bundle()
-        b.putString(Analytics.Param.SEARCH_TERM, searchText)
-        b.putString(Analytics.Param.SEARCH_CLASS, searchClass)
-        b.putString(Analytics.Param.SEARCH_FORMAT, searchFormatCode)
+        val b = bundleOf(
+                Analytics.Param.SEARCH_TERM to searchText,
+                Analytics.Param.SEARCH_CLASS to searchClass,
+                Analytics.Param.SEARCH_FORMAT to searchFormatCode,
+                Analytics.Param.SEARCH_ORG_KEY to
+                        searchOrgDimensionKey(EgSearch.selectedOrganization,
+                                EgOrg.findOrg(App.getAccount().searchOrg),
+                                EgOrg.findOrg(App.getAccount().homeOrg)),
+        )
         when (result) {
             is Result.Success -> {
                 b.putString(Analytics.Param.RESULT, Analytics.Value.OK)
