@@ -44,7 +44,6 @@ import org.evergreen_ils.android.Analytics.orgDimensionKey
 import org.evergreen_ils.android.App
 import org.evergreen_ils.android.Log
 import org.evergreen_ils.data.Account
-import org.evergreen_ils.data.Organization
 import org.evergreen_ils.data.Result
 import org.evergreen_ils.data.SMSCarrier
 import org.evergreen_ils.net.Gateway
@@ -234,13 +233,13 @@ class PlaceHoldActivity : BaseActivity() {
         if (smsNotification?.isChecked == true) notify.add("sms")
         val notifyTypes = TextUtils.join("|", notify)
         try {
-            val pickupOrg = EgOrg.visibleOrgs[selectedOrgPos]
-            val homeOrg = EgOrg.findOrg(App.getAccount().homeOrg)
             Analytics.logEvent(Analytics.Event.HOLD_PLACE_HOLD, bundleOf(
                     Analytics.Param.RESULT to result,
                     Analytics.Param.HOLD_NOTIFY to notifyTypes,
                     Analytics.Param.HOLD_EXPIRES_KEY to (expireDate != null),
-                    Analytics.Param.HOLD_PICKUP_KEY to orgDimensionKey(pickupOrg, homeOrg),
+                    Analytics.Param.HOLD_PICKUP_KEY to orgDimensionKey(EgOrg.visibleOrgs[selectedOrgPos],
+                            EgOrg.findOrg(App.getAccount().pickupOrg),
+                            EgOrg.findOrg(App.getAccount().homeOrg)),
             ))
         } catch (e: Exception) {
             Analytics.logException(e)

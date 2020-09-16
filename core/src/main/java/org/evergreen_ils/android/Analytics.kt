@@ -156,21 +156,12 @@ object Analytics {
         logEvent(event, b)
     }
 
-    fun orgDimensionKey(org: Organization?, homeOrg: Organization?): String {
+    fun orgDimensionKey(selectedOrg: Organization?, defaultOrg: Organization?, homeOrg: Organization?): String {
         return when {
-            org == null || homeOrg == null -> "null"
-            org.id == homeOrg.id -> "home"
-            org.isConsortium -> org.shortname
-            else -> "other"
-        }
-    }
-
-    fun searchOrgDimensionKey(searchOrg: Organization?, defaultSearchOrg: Organization?, homeOrg: Organization?): String {
-        return when {
-            searchOrg == null || defaultSearchOrg == null || homeOrg == null -> "null"
-            searchOrg.id == defaultSearchOrg.id -> "default"
-            searchOrg.id == homeOrg.id -> "home"
-            searchOrg.isConsortium -> searchOrg.shortname
+            selectedOrg == null || defaultOrg == null || homeOrg == null -> "null"
+            selectedOrg.id == defaultOrg.id -> "default"
+            selectedOrg.id == homeOrg.id -> "home"
+            selectedOrg.isConsortium -> selectedOrg.shortname
             else -> "other"
         }
     }
