@@ -231,6 +231,9 @@ class PlaceHoldActivity : BaseActivity() {
         if (emailNotification?.isChecked == true) notify.add("email")
         if (phoneNotification?.isChecked == true) notify.add("phone")
         if (smsNotification?.isChecked == true) notify.add("sms")
+
+        //TODO: change HOLD_NOTIFY to dimensional value {default | +-email:+-phone:+-sms:
+
         val notifyTypes = TextUtils.join("|", notify)
         try {
             Analytics.logEvent(Analytics.Event.HOLD_PLACE_HOLD, bundleOf(

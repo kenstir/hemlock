@@ -244,9 +244,6 @@ class LaunchActivity : AppCompatActivity(), CoroutineScope by MainScope() {
         Analytics.logEvent(Analytics.Event.LOGIN, bundleOf(
                 Analytics.UserProperty.HOME_ORG to homeOrg,
                 Analytics.UserProperty.PARENT_ORG to parentOrg,
-                //Analytics.Param.DEFAULT_PICKUP_ORG to EgOrg.getOrgShortNameSafe(account.pickupOrg),
-                //Analytics.Param.DEFAULT_SEARCH_ORG to EgOrg.getOrgShortNameSafe(account.searchOrg),
-                //Analytics.Param.DEFAULT_HOLD_NOTIFY to account.holdNotifyValue
         ))
     }
 
