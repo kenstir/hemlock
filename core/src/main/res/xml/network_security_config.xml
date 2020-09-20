@@ -3,5 +3,6 @@
     <domain-config cleartextTrafficPermitted="true">
         <domain includeSubdomains="true">192.168.1.4</domain>
         <domain includeSubdomains="true">192.168.1.4:8080</domain>
+        <domain includeSubdomains="true">httpbin.org</domain>
     </domain-config>
 </network-security-config>

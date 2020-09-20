@@ -20,7 +20,6 @@ package org.evergreen_ils.net
 import org.evergreen_ils.Api
 import org.evergreen_ils.android.Log
 import org.evergreen_ils.data.Account
-import org.evergreen_ils.data.JSONDictionary
 import org.evergreen_ils.data.Result
 import org.evergreen_ils.data.jsonMapOf
 import org.evergreen_ils.system.EgOrg
@@ -47,7 +46,10 @@ object GatewayActor: ActorService {
 
     override suspend fun fetchOrgTree(): Result<OSRFObject> {
         return try {
-            val ret = Gateway.fetchObject(Api.ACTOR, Api.ORG_TREE_RETRIEVE, arrayOf(), true)
+            val options = RequestOptions(Gateway.defaultTimeoutMs, Gateway.limitedCacheTtlSeconds)
+            val ret = Gateway.fetch(Api.ACTOR, Api.ORG_TREE_RETRIEVE, arrayOf(), options) {
+                it.asObject()
+            }
             Result.Success(ret)
         } catch (e: Exception) {
             Result.Error(e)
@@ -103,7 +105,7 @@ object GatewayActor: ActorService {
             val (authToken, userID) = account.getCredentialsOrThrow()
             val settings = listOf("card", "settings")
             val args = arrayOf<Any?>(authToken, userID, settings)
-            val ret = Gateway.fetchObject(Api.ACTOR, Api.USER_FLESHED_RETRIEVE, args, true)
+            val ret = Gateway.fetchObject(Api.ACTOR, Api.USER_FLESHED_RETRIEVE, args, false)
             Result.Success(ret)
         } catch (e: Exception) {
             Result.Error(e)

@@ -20,7 +20,6 @@ package org.evergreen_ils.net;
 
 import com.android.volley.Cache;
 import com.android.volley.NetworkResponse;
-import com.android.volley.ParseError;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.toolbox.HttpHeaderParser;
@@ -35,14 +34,14 @@ public class GatewayStringRequest extends StringRequest {
     private String TAG = GatewayStringRequest.class.getSimpleName();
 
     private final Priority mPriority;
-    private final Integer mCacheLifetimeSeconds;
+    private final int mCacheTtlSeconds;
     protected Boolean mCacheHit;
 
-    public GatewayStringRequest(String url, Priority priority, Response.Listener<String> listener, Response.ErrorListener errorListener, Integer cacheLifetimeSeconds) {
+    public GatewayStringRequest(String url, Priority priority, Response.Listener<String> listener, Response.ErrorListener errorListener, int cacheTtlSeconds) {
         super(Request.Method.GET, url, listener, errorListener);
         mPriority = priority;
-        mCacheLifetimeSeconds = cacheLifetimeSeconds;
-        Log.d(TAG, "[net] send "+url);
+        mCacheTtlSeconds = cacheTtlSeconds;
+        Log.d(TAG, "[net] request "+url);
     }
 
     @Override
@@ -73,10 +72,10 @@ public class GatewayStringRequest extends StringRequest {
         // don't cache failures
         Cache.Entry entry = response.statusCode != 200 ? null : HttpHeaderParser.parseCacheHeaders(response);
 
-        // limit duration of cache entry; EG defaults to *one year*
-        if (entry != null && mCacheLifetimeSeconds > 0) {
-            entry.softTtl = Math.min(entry.softTtl, entry.serverDate + mCacheLifetimeSeconds*1000);
-            entry.ttl = Math.min(entry.ttl, entry.serverDate + mCacheLifetimeSeconds*1000);
+        // limit cache TTL
+        if (entry != null && mCacheTtlSeconds > 0) {
+            entry.softTtl = Math.min(entry.softTtl, entry.serverDate + mCacheTtlSeconds * 1000);
+            entry.ttl = Math.min(entry.ttl, entry.serverDate + mCacheTtlSeconds * 1000);
         }
 
         return Response.success(parsed, entry);

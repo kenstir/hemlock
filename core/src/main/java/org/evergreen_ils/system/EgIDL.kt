@@ -21,6 +21,7 @@ package org.evergreen_ils.system
 import org.evergreen_ils.Api
 import org.evergreen_ils.net.Gateway
 import org.evergreen_ils.android.Log
+import org.evergreen_ils.net.RequestOptions
 import org.open_ils.idl.IDLParser
 
 object EgIDL {
@@ -28,7 +29,8 @@ object EgIDL {
     suspend fun loadIDL() {
         var now = System.currentTimeMillis()
         val url = Gateway.getIDLUrl()
-        val xml = Gateway.fetchString(url)
+        val options = RequestOptions(Gateway.defaultTimeoutMs)
+        val xml = Gateway.fetchString(url, options)
         val parser = IDLParser(xml.byteInputStream())
         now = Log.logElapsedTime(Api.TAG, now, "loadIDL.get")
         parser.parse()

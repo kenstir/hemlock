@@ -21,14 +21,11 @@ import android.net.Uri
 import android.text.TextUtils
 import com.android.volley.DefaultRetryPolicy
 import com.android.volley.Request
-import com.android.volley.Response
-import com.android.volley.toolbox.StringRequest
 import org.evergreen_ils.Api
 import org.evergreen_ils.android.Log
 import org.opensrf.net.http.HttpConnection
 import org.opensrf.util.GatewayResult
 import org.opensrf.util.JSONWriter
-import org.opensrf.util.OSRFObject
 import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
 import kotlin.random.Random
@@ -61,6 +58,7 @@ object Gateway {
     var randomErrorPercentage = 0
     var defaultTimeoutMs = 30_000
     var searchTimeoutMs = 60_000
+    const val limitedCacheTtlSeconds = 120//86400
 
     fun buildQuery(service: String?, method: String?, params: Array<Any?>, addCacheArgs: Boolean = true): String {
         val sb = StringBuilder(INITIAL_URL_SIZE)
@@ -111,10 +109,10 @@ object Gateway {
     private suspend fun <T> fetchImpl(service: String, method: String, args: Array<Any?>, options: RequestOptions, block: (GatewayResult) -> T) = suspendCoroutine<T> { cont ->
         maybeInjectRandomError()
         val url = buildUrl(service, method, args, options.shouldCache)
-        val r = GatewayJsonObjectRequest(
+        val r = GatewayJsonRequest(
                 url,
                 Request.Priority.NORMAL,
-                Response.Listener { response ->
+                { response ->
                     try {
                         val res = block(response)
                         cont.resumeWith(Result.success(res))
@@ -122,9 +120,27 @@ object Gateway {
                         cont.resumeWithException(ex)
                     }
                 },
-                Response.ErrorListener { error ->
+                { error ->
                     cont.resumeWithException(error)
-                })
+                },
+                options.cacheMaxTtlSeconds
+        )
+        enqueueRequest(r, options)
+    }
+
+    // fetchString - fetch url and expect a string response
+    suspend fun fetchString(url: String, options: RequestOptions = RequestOptions(defaultTimeoutMs)) = suspendCoroutine<String> { cont ->
+        maybeInjectRandomError()
+        val r = GatewayStringRequest(
+                url,
+                Request.Priority.NORMAL,
+                { response ->
+                    cont.resumeWith(Result.success(response))
+                },
+                { error ->
+                    cont.resumeWithException(error)
+                },
+                options.cacheMaxTtlSeconds)
         enqueueRequest(r, options)
     }
 
@@ -146,19 +162,6 @@ object Gateway {
     // fetchStringPayload - make gateway request and expect json payload of String
     suspend fun fetchObjectString(service: String, method: String, args: Array<Any?>, shouldCache: Boolean) = fetch(service, method, args, shouldCache) { result ->
         result.asString()
-    }
-
-    // fetchString - fetch url and expect a string response
-    suspend fun fetchString(url: String, shouldCache: Boolean = true) = suspendCoroutine<String> { cont ->
-        val r = StringRequest(Request.Method.GET,
-                url,
-                Response.Listener { response ->
-                    cont.resumeWith(Result.success(response))
-                },
-                Response.ErrorListener { error ->
-                    cont.resumeWithException(error)
-                })
-        enqueueRequest(r, RequestOptions(defaultTimeoutMs, shouldCache, true))
     }
 
     private fun enqueueRequest(r: Request<*>, options: RequestOptions) {

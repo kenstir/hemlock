@@ -29,6 +29,7 @@ import org.evergreen_ils.android.Log
 import org.evergreen_ils.android.StdoutLogProvider
 import org.evergreen_ils.data.Result
 import org.evergreen_ils.net.Gateway
+import org.evergreen_ils.net.RequestOptions
 import org.evergreen_ils.net.Volley
 import org.evergreen_ils.utils.getCustomMessage
 import org.junit.Assert.*
@@ -107,7 +108,7 @@ class LiveGatewayTest {
     suspend fun fetchStringNotFound(): Result<String> {
         return try {
             val notFoundUrl = Gateway.baseUrl.plus("/not-found")
-            val ret = Gateway.fetchString(notFoundUrl, false)
+            val ret = Gateway.fetchString(notFoundUrl)
             Result.Success(ret)
         } catch (e: Exception) {
             Result.Error(e)
@@ -130,16 +131,12 @@ class LiveGatewayTest {
     }
 
     suspend fun fetchStringWithDelay(timeoutMs: Int, delaySeconds: Float): Result<String> {
-        val oldTimeoutMs = Gateway.defaultTimeoutMs
-        Gateway.defaultTimeoutMs = timeoutMs
         return try {
             val url = args.getString("httpbinServer").plus("/delay/$delaySeconds")
-            val ret = Gateway.fetchString(url, false)
+            val ret = Gateway.fetchString(url, RequestOptions(timeoutMs))
             Result.Success(ret)
         } catch (e: Exception) {
             Result.Error(e)
-        } finally {
-            Gateway.defaultTimeoutMs = oldTimeoutMs
         }
     }
 

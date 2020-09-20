@@ -29,18 +29,20 @@ import org.opensrf.util.GatewayResult;
 
 import java.io.UnsupportedEncodingException;
 
-public class GatewayJsonObjectRequest extends Request<GatewayResult> {
-    private String TAG = GatewayJsonObjectRequest.class.getSimpleName();
+public class GatewayJsonRequest extends Request<GatewayResult> {
+    private String TAG = GatewayJsonRequest.class.getSimpleName();
 
     private final Response.Listener<GatewayResult> mListener;
     private final Priority mPriority;
+    private final int mCacheTtlSeconds;
     protected Boolean mCacheHit;
 
-    public GatewayJsonObjectRequest(String url, Priority priority, Response.Listener<GatewayResult> listener, Response.ErrorListener errorListener) {
+    public GatewayJsonRequest(String url, Priority priority, Response.Listener<GatewayResult> listener, Response.ErrorListener errorListener, int cacheTtlSeconds) {
         super(Request.Method.GET, url, errorListener);
-        Log.d(TAG, "[net] send "+url);
-        this.mPriority = priority;
-        this.mListener = listener;
+        mPriority = priority;
+        mListener = listener;
+        mCacheTtlSeconds = cacheTtlSeconds;
+        Log.d(TAG, "[net] request "+url);
     }
 
     protected void deliverResponse(GatewayResult response) {
@@ -71,9 +73,14 @@ public class GatewayJsonObjectRequest extends Request<GatewayResult> {
 
             // don't cache failures
             Cache.Entry entry = gatewayResult.failed ? null : HttpHeaderParser.parseCacheHeaders(response);
-            // TODO: limit duration of cache entry; server defaults to *one year*
 
-            // treat all well-formed gatewayResults as success here, but don't cache failures
+            // limit cache TTL
+            if (entry != null && mCacheTtlSeconds > 0) {
+                entry.softTtl = Math.min(entry.softTtl, entry.serverDate + mCacheTtlSeconds * 1000);
+                entry.ttl = Math.min(entry.ttl, entry.serverDate + mCacheTtlSeconds * 1000);
+            }
+
+            // treat all well-formed gatewayResults as success
             return Response.success(gatewayResult, entry);
         } catch (UnsupportedEncodingException ex) {
             Log.d(TAG, "caught", ex);
