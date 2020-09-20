@@ -18,6 +18,7 @@
 
 package org.evergreen_ils.net;
 
+import com.android.volley.Cache;
 import com.android.volley.NetworkResponse;
 import com.android.volley.ParseError;
 import com.android.volley.Request;
@@ -64,21 +65,16 @@ public class GatewayJsonObjectRequest extends Request<GatewayResult> {
     protected Response<GatewayResult> parseNetworkResponse(NetworkResponse response) {
         try {
             String json = new String(response.data, HttpHeaderParser.parseCharset(response.headers));
-            //Log.d(TAG, "[net] cached:"+(mCacheHit?"1":"0")+" url:"+getUrl());
+            Log.d(TAG, "[net] cached:"+(mCacheHit?"1":"0")+" url:"+getUrl());
             Log.d(TAG, "[net] recv "+response.data.length+": "+json);
             GatewayResult gatewayResult = GatewayResult.create(json);
 
-            // treat all well-formed gatewayResults as success here, but don't cache failures
-            return Response.success(gatewayResult, gatewayResult.failed ? null : HttpHeaderParser.parseCacheHeaders(response));
+            // don't cache failures
+            Cache.Entry entry = gatewayResult.failed ? null : HttpHeaderParser.parseCacheHeaders(response);
+            // TODO: limit duration of cache entry; server defaults to *one year*
 
-            /*
-            if (gatewayResponse.failed == false) {
-                return Response.success(gatewayResponse, HttpHeaderParser.parseCacheHeaders(response));
-            } else {
-                Log.d(TAG, "failed:" + gatewayResponse.description);
-                return Response.error(new VolleyError(gatewayResponse.description));
-            }
-            */
+            // treat all well-formed gatewayResults as success here, but don't cache failures
+            return Response.success(gatewayResult, entry);
         } catch (UnsupportedEncodingException ex) {
             Log.d(TAG, "caught", ex);
             return Response.error(new ParseError(ex));

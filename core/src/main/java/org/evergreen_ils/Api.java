@@ -18,6 +18,8 @@
 
 package org.evergreen_ils;
 
+import android.annotation.SuppressLint;
+
 import org.evergreen_ils.android.Analytics;
 import org.evergreen_ils.utils.TextUtils;
 import org.opensrf.ShouldNotHappenException;
@@ -147,7 +149,7 @@ public class Api {
 
     // get date string to pass to API methods
     public static String formatDate(Date date) {
-        final SimpleDateFormat df = new SimpleDateFormat(API_DATE_PATTERN);
+        @SuppressLint("SimpleDateFormat") final SimpleDateFormat df = new SimpleDateFormat(API_DATE_PATTERN);
         return df.format(date);
     }
 
@@ -158,7 +160,7 @@ public class Api {
             return null;
 
         Date date = null;
-        final SimpleDateFormat df = new SimpleDateFormat(API_DATE_PATTERN);
+        @SuppressLint("SimpleDateFormat") final SimpleDateFormat df = new SimpleDateFormat(API_DATE_PATTERN);
 
         try {
             date = df.parse(dateString);
