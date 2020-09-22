@@ -58,7 +58,7 @@ object Gateway {
     var randomErrorPercentage = 0
     var defaultTimeoutMs = 30_000
     var searchTimeoutMs = 60_000
-    const val limitedCacheTtlSeconds = 120//86400
+    const val limitedCacheTtlSeconds = 86_400 // 24h
 
     fun buildQuery(service: String?, method: String?, params: Array<Any?>, addCacheArgs: Boolean = true): String {
         val sb = StringBuilder(INITIAL_URL_SIZE)
