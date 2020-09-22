@@ -115,7 +115,7 @@ object GatewayLoader {
     suspend fun loadRecordCopyCountsAsync(record: RecordInfo, orgId: Int): Result<Unit> {
         if (record.hasCopySummary) return Result.Success(Unit)
 
-        val result = Gateway.search.fetchCopySummary(record.doc_id, orgId)
+        val result = Gateway.search.fetchCopyCount(record.doc_id, orgId)
         if (result is Result.Error) return result
         val objList = result.get()
         record.updateFromCopyCountResponse(objList)
