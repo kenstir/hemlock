@@ -140,7 +140,8 @@ public class RecordInfo implements Serializable {
 
     public void updateFromBREResponse(OSRFObject info) {
         try {
-            hasMARC = true;
+//            Boolean isDeleted = info.getBoolean("deleted");
+//            Log.d(TAG, "id=" + doc_id + " deleted=" + isDeleted);
 
             String marcxml = info.getString("marc");
             if (!TextUtils.isEmpty(marcxml)) {
@@ -150,6 +151,8 @@ public class RecordInfo implements Serializable {
         } catch (Exception e) {
             Log.d(TAG, "caught", e);
         }
+
+        hasMARC = true;
     }
 
     public void updateFromCopyCountResponse(List<OSRFObject> l) {
