@@ -88,8 +88,8 @@ object EgOrg {
             if (!hierarchical_org_tree && orgs.size > 25) {
                 Collections.sort(orgs, Comparator<Organization> { a, b ->
                     // top-level OU appears first
-                    if (a.level == 0) return@Comparator -1
-                    if (b.level == 0) 1 else a.name.compareTo(b.name)
+                    if (a.id == consortiumID) return@Comparator -1
+                    if (b.id == consortiumID) 1 else a.name.compareTo(b.name)
                 })
                 for (o in orgs) {
                     o.indentedDisplayPrefix = ""
