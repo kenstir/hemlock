@@ -21,13 +21,13 @@ package org.evergreen_ils.net
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 import org.evergreen_ils.android.App
-import org.evergreen_ils.system.EgOrg
-import org.evergreen_ils.data.Organization
 import org.evergreen_ils.android.Log
 import org.evergreen_ils.data.Account
 import org.evergreen_ils.data.BookBag
+import org.evergreen_ils.data.Organization
 import org.evergreen_ils.data.Result
 import org.evergreen_ils.searchCatalog.RecordInfo
+import org.evergreen_ils.system.EgOrg
 
 object GatewayLoader {
 
@@ -40,10 +40,19 @@ object GatewayLoader {
                     val result = Gateway.actor.fetchOrgSettings(org.id)
                     if (result is Result.Success) {
                         org.loadSettings(result.data)
-                        Log.d(TAG, "[kcxxx] org ${org.id} loaded")
+                        Log.d(TAG, "[kcxxx] org ${org.id} settings loaded")
                     }
                 }
             }
+        }
+    }
+
+    suspend fun loadOrg(org: Organization?) = GlobalScope.async {
+        val id = org?.id ?: return@async
+        val result = Gateway.actor.fetchOrg(id)
+        if (result is Result.Success) {
+            org.aouObj = result.data
+            Log.d(TAG, "[kcxxx] org ${org.id} aou loaded")
         }
     }
 

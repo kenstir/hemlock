@@ -124,7 +124,7 @@ class CopyInformationActivity : BaseActivity() {
         for (clc in copyLocationCountsList) {
             val org = findOrg(clc.orgId)
             // if a branch is not opac_visible, its copies should not be visible
-            if (org != null && org.opac_visible) {
+            if (org != null && org.opacVisible) {
                 copyInfoRecords.add(clc)
             }
         }
@@ -133,8 +133,8 @@ class CopyInformationActivity : BaseActivity() {
             copyInfoRecords.sortWith(Comparator { a, b ->
                 val aOrg = findOrg(a.orgId)
                 val bOrg = findOrg(b.orgId)
-                val aSystemName = getOrgNameSafe(aOrg?.parent_ou)
-                val bSystemName = getOrgNameSafe(bOrg?.parent_ou)
+                val aSystemName = getOrgNameSafe(aOrg?.parent)
+                val bSystemName = getOrgNameSafe(bOrg?.parent)
                 val compareBySystem = compareValues(aSystemName, bSystemName)
                 if (compareBySystem != 0) compareBySystem else compareValues(aOrg?.name, bOrg?.name)
             })
@@ -183,7 +183,7 @@ class CopyInformationActivity : BaseActivity() {
             val org = findOrg(clc.orgId)
 
             if (groupCopiesBySystem) {
-                majorLocationText.text = getOrgNameSafe(org!!.parent_ou)
+                majorLocationText.text = getOrgNameSafe(org!!.parent)
                 val ss = SpannableString(org.name)
                 ss.setSpan(URLSpan(""), 0, ss.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
                 minorLocationText.setText(ss, TextView.BufferType.SPANNABLE)

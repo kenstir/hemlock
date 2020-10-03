@@ -26,14 +26,13 @@ class Organization(@JvmField val id: Int,
                    @JvmField val name: String,
                    @JvmField val shortname: String,
                    @JvmField val ouType: Int,
-                   @JvmField val opac_visible: Boolean,
-                   @JvmField val obj: OSRFObject) {
+                   @JvmField val opacVisible: Boolean,
+                   @JvmField var aouObj: OSRFObject) {
 
-    // optional fields are loaded from the aou object
-    @JvmField val parent_ou = obj.getInt("parent_ou")
-    @JvmField val email = obj.getString("email")
-    @JvmField val phone = obj.getString("phone")
-    @JvmField val addressID = obj.getInt("mailing_address")
+    val parent: Int? = aouObj.getInt("parent_ou")
+    val addressID: Int? = aouObj.getInt("mailing_address")
+    val email: String? = aouObj.getString("email")
+    val phone: String? = aouObj.getString("phone")
 
     var addressObj: OSRFObject? = null
 
@@ -53,7 +52,7 @@ class Organization(@JvmField val id: Int,
     val orgType: OrgType?
         get() = EgOrg.findOrgType(ouType)
     val isConsortium: Boolean
-        get() = parent_ou == null
+        get() = parent == null
 
     fun loadSettings(obj: OSRFObject) {
         infoURL = parseStringSetting(obj, Api.SETTING_INFO_URL)

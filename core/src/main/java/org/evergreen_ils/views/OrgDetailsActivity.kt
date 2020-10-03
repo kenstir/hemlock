@@ -109,7 +109,8 @@ class OrgDetailsActivity : BaseActivity() {
         super.onAttachedToWindow()
         Log.d(TAG, object{}.javaClass.enclosingMethod?.name)
 
-        fetchData()
+        // It seems onItemSelected is always triggered, so avoid calling fetchData twice on load
+        //fetchData()
     }
 
     private fun initOrgSpinner() {
@@ -118,10 +119,12 @@ class OrgDetailsActivity : BaseActivity() {
         val adapter: ArrayAdapter<String> = OrgArrayAdapter(this, R.layout.org_item_layout, orgs, false)
         orgSpinner?.adapter = adapter
         orgSpinner?.setSelection(if (index > 0) index else 0)
+        Log.d(TAG, "[kcxxx] setSelection $index")
         orgSpinner?.onItemSelectedListener = object : OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
                 org = EgOrg.visibleOrgs[position]
                 orgID = org?.id
+                Log.d(TAG, "[kcxxx] onItemSelected $position")
                 fetchData()
             }
 
@@ -235,7 +238,10 @@ class OrgDetailsActivity : BaseActivity() {
 
                 jobs.add(async {
                     GatewayLoader.loadOrgSettingsAsync(org).await()
-                    onOrgLoaded()
+                })
+
+                jobs.add(async {
+                    GatewayLoader.loadOrg(org).await()
                 })
 
                 jobs.add(async {
@@ -249,6 +255,7 @@ class OrgDetailsActivity : BaseActivity() {
                 })
 
                 jobs.joinAll()
+                onOrgLoaded()
                 Log.logElapsedTime(TAG, start, "[kcxxx] fetchData ... done")
             } catch (ex: Exception) {
                 Log.d(TAG, "[kcxxx] fetchData ... caught", ex)

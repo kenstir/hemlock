@@ -56,6 +56,17 @@ object GatewayActor: ActorService {
         }
     }
 
+    override suspend fun fetchOrg(orgID: Int): Result<OSRFObject> {
+        return try {
+            // This request is not cached, because we use it to make sure we have the most
+            // up-to-date email and phone number.
+            val ret = Gateway.fetchObject(Api.ACTOR, Api.ORG_UNIT_RETRIEVE, arrayOf(Api.ANONYMOUS, orgID), false)
+            Result.Success(ret)
+        } catch (e: Exception) {
+            Result.Error(e)
+        }
+    }
+
     override suspend fun fetchOrgSettings(orgID: Int): Result<OSRFObject> {
         return try {
             val settings = mutableListOf(Api.SETTING_ORG_UNIT_NOT_PICKUP_LIB,

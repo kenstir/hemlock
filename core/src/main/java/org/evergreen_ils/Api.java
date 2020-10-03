@@ -55,7 +55,7 @@ public class Api {
     public static final String USER_FLESHED_RETRIEVE = "open-ils.actor.user.fleshed.retrieve"; // au,aua,ac,auact,cuat
     public static final String ORG_TREE_RETRIEVE = "open-ils.actor.org_tree.retrieve";
     public static final String ORG_TYPES_RETRIEVE = "open-ils.actor.org_types.retrieve";
-    //public static final String ORG_UNIT_RETRIEVE = "open-ils.actor.org_unit.retrieve";
+    public static final String ORG_UNIT_RETRIEVE = "open-ils.actor.org_unit.retrieve";
     public static final String ORG_UNIT_SETTING_RETRIEVE = "open-ils.actor.org_unit_setting.values.ranged.retrieve";
     public static final String ORG_UNIT_SETTING_BATCH = "open-ils.actor.ou_setting.ancestor_default.batch";
     public static final String ORG_UNIT_SETTING = "open-ils.actor.ou_setting.ancestor_default";

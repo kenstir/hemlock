@@ -37,7 +37,7 @@ object EgOrg {
         get() = orgs
     @JvmStatic
     val visibleOrgs: List<Organization>
-        get() = orgs.filter { it.opac_visible }
+        get() = orgs.filter { it.opacVisible }
 
     fun loadOrgTypes(objArray: List<OSRFObject>) {
         synchronized(this) {
@@ -71,6 +71,7 @@ object EgOrg {
         val org = Organization(id, level, name, shortName, ouType, opacVisible, obj)
         org.indentedDisplayPrefix = String(CharArray(level)).replace("\u0000", "   ")
         //Log.d(TAG, "id:$id level:${org.level} vis:${org.opac_visible} shortname:${org.shortname} name:${org.name}")
+        Log.d(TAG, "[kcxxx] org ${org.id} aou loaded")
         orgs.add(org)
         val children = obj.get("children") as? List<OSRFObject>
         children?.forEach { child ->
@@ -122,7 +123,7 @@ object EgOrg {
         var org = findOrgByShortName(shortName)
         while (org != null) {
             ancestry.add(org.shortname)
-            org = findOrg(org.parent_ou)
+            org = findOrg(org.parent)
         }
         return ancestry
     }

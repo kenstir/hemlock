@@ -236,7 +236,7 @@ class LaunchActivity : AppCompatActivity(), CoroutineScope by MainScope() {
     // NB: "session_start" seems more appropriate but that is a predefined automatic event.
     private fun logStartEvent(account: Account) {
         val homeOrg = EgOrg.getOrgShortNameSafe(account.homeOrg)
-        val parentOrg = EgOrg.getOrgShortNameSafe(EgOrg.findOrg(account.homeOrg)?.parent_ou)
+        val parentOrg = EgOrg.getOrgShortNameSafe(EgOrg.findOrg(account.homeOrg)?.parent)
         Analytics.setUserProperties(bundleOf(
                 Analytics.UserProperty.HOME_ORG to homeOrg,
                 Analytics.UserProperty.PARENT_ORG to parentOrg
