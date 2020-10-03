@@ -149,7 +149,7 @@ class CopyInformationActivity : BaseActivity() {
     private fun fetchData() {
         async {
             try {
-                val start_ms = System.currentTimeMillis()
+                //val start_ms = System.currentTimeMillis()
                 val org = findOrg(orgID) ?: return@async
                 val result = Gateway.search.fetchCopyLocationCounts(record.doc_id, org.id, org.level)
                 if (result is Result.Error) { showAlert(result.exception); return@async }
