@@ -27,6 +27,7 @@ import android.view.MenuItem;
 import org.evergreen_ils.R;
 import org.evergreen_ils.android.Analytics;
 import org.evergreen_ils.android.App;
+import org.evergreen_ils.android.Log;
 import org.evergreen_ils.system.EgSearch;
 import org.evergreen_ils.utils.ui.ActionBarUtils;
 import org.evergreen_ils.utils.ui.BasePagerActivity;
@@ -43,7 +44,7 @@ import androidx.viewpager.widget.ViewPager;
 public class SampleUnderlinesNoFade extends BasePagerActivity {
     private static final String TAG = SampleUnderlinesNoFade.class.getSimpleName();
 
-    private ArrayList<RecordInfo> records;
+    private ArrayList<RecordInfo> records = new ArrayList<>();
 
     public static final int RETURN_DATA = 5;
     private Integer orgID = 1;
@@ -61,15 +62,20 @@ public class SampleUnderlinesNoFade extends BasePagerActivity {
         ActionBarUtils.initActionBarForActivity(this, getIntent().getStringExtra("title"));
 
         orgID = getIntent().getIntExtra("orgID", 1);
-        records = (ArrayList<RecordInfo>) getIntent().getSerializableExtra("recordList");
-        if (records == null) records = EgSearch.INSTANCE.getResults();
-        int record_position = getIntent().getIntExtra("recordPosition", 0);
+        int recordPosition = getIntent().getIntExtra("recordPosition", 0);
         numResults = getIntent().getIntExtra("numResults", records.size());
+
+        // Copy either serialized recordList or search results into our own ArrayList.
+        // This is an attempt to fix an IllegalStateException crash (see commit for details).
+        ArrayList<RecordInfo> recordList = (ArrayList<RecordInfo>) getIntent().getSerializableExtra("recordList");
+        if (recordList == null) recordList = EgSearch.INSTANCE.getResults();
+        records.clear();
+        records.addAll(recordList);
 
         mAdapter = new SearchFragmentAdapter(getSupportFragmentManager());
         mPager = findViewById(R.id.pager);
         mPager.setAdapter(mAdapter);
-        mPager.setCurrentItem(record_position);
+        mPager.setCurrentItem(recordPosition);
 
         UnderlinePageIndicator indicator = findViewById(R.id.indicator);
         indicator.setViewPager(mPager);
@@ -119,7 +125,7 @@ public class SampleUnderlinesNoFade extends BasePagerActivity {
 
     class SearchFragmentAdapter extends FragmentPagerAdapter {
         public SearchFragmentAdapter(FragmentManager fm) {
-            super(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
+            super(fm);
         }
 
         @Override
