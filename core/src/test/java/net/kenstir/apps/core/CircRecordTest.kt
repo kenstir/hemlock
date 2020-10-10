@@ -123,6 +123,21 @@ class CircRecordTest {
     }
 
     @Test
+    fun test_noDueDate() {
+        // seen in the wild via Crashlytics
+        val circObj = OSRFObject(jsonMapOf(
+                "renewal_remaining" to 0,
+                "id" to 1,
+                "target_copy" to 1507492,
+                //"due_date" to "2020-02-05T23:59:59-0500"
+        ))
+        val circRecord = CircRecord(circObj, CircRecord.CircType.OUT, 1)
+
+        assertEquals(false, circRecord.isDue)
+        assertEquals(false, circRecord.isOverdue)
+    }
+
+    @Test
     fun test_makeArray() {
         val circSlimObj = OSRFObject(jsonMapOf(
                 "long_overdue" to arrayListOf<Any?>(),

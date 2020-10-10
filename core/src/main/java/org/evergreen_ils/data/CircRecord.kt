@@ -92,14 +92,15 @@ class CircRecord(circ: OSRFObject?, circType: CircType, circId: Int) {
 
     val isDue: Boolean
         get() {
-            val currentDate = Date()
+            if (dueDate == null) return false
             // Because the due dates in C/W MARS at least are 23:59:59, "3 days" here
             // really behaves like 2 days, highlighting if it's due tomorrow or the next day.
             val ITEM_DUE_HIGHLIGHT_DAYS = 3
             val cal = Calendar.getInstance()
             cal.time = dueDate
             cal.add(Calendar.DAY_OF_MONTH, -ITEM_DUE_HIGHLIGHT_DAYS)
-            return currentDate.compareTo(cal.time) > 0
+            val currentDate = Date()
+            return currentDate > cal.time
         }
 
     init {
