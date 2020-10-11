@@ -163,7 +163,7 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         if (id == R.id.nav_header) {
             startActivity(Intent(this, MainActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
         } else if (id == R.id.main_search_button) {
-            startActivity(Intent(this, SearchActivity::class.java))
+            startActivity(Intent(this, SearchActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
         } else if (id == R.id.main_checkouts_button) {
             startActivity(Intent(this, CheckoutsActivity::class.java))
         } else if (id == R.id.main_holds_button) {
