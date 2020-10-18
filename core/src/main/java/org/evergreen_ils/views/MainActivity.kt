@@ -77,7 +77,6 @@ class MainActivity : BaseActivity() {
     }
 
     // TODO: Make this on demand by making it a suspend fun in GatewayLoader.
-    // NB: Don't use GlobalScope.launch which causes the scope to be on a non-main thread
     private fun loadSMSCarriers() {
         Log.d(TAG, "[async] fetchSMSCarriers ...")
         async {
@@ -107,7 +106,6 @@ class MainActivity : BaseActivity() {
     }
 
     private fun updateMessagesBadge(messages: List<OSRFObject>) {
-        Log.d(TAG, "zzzzz: thread check: updateMessagesBadge")
         mUnreadMessageCount = countUnread(messages)
         updateUnreadMessagesText()
     }
