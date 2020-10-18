@@ -176,6 +176,7 @@ class SearchActivity : BaseActivity() {
                     is Result.Success -> {}
                     is Result.Error -> { showAlert(result.exception); return@async }
                 }
+
                 Log.logElapsedTime(TAG, start, "[kcxxx] fetchData ... done")
             } catch (ex: Exception) {
                 Log.d(TAG, "[kcxxx] fetchData ... caught", ex)

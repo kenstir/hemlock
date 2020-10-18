@@ -67,31 +67,37 @@ class MainActivity : BaseActivity() {
 
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
-
         Log.d(TAG, object{}.javaClass.enclosingMethod?.name)
-        loadGlobalData()
+        fetchData()
+    }
+
+    private fun fetchData() {
+        loadSMSCarriers()
         loadUnreadMessageCount()
     }
 
-    // Start the async load of data whose lifetime extends past that of MainActivity.
-    // We don't want to cancel this data when starting a new Activity.
-    private fun loadGlobalData() {
-        GlobalScope.launch {
-            async {
-                val result = Gateway.pcrud.fetchSMSCarriers()
-                when (result) {
-                    is Result.Success -> EgSms.loadCarriers(result.data)
-                    is Result.Error -> showAlert(result.exception)
-                }
+    // TODO: Make this on demand by making it a suspend fun in GatewayLoader.
+    // NB: Don't use GlobalScope.launch which causes the scope to be on a non-main thread
+    private fun loadSMSCarriers() {
+        Log.d(TAG, "[async] fetchSMSCarriers ...")
+        async {
+            val start = System.currentTimeMillis()
+            val result = Gateway.pcrud.fetchSMSCarriers()
+            Log.logElapsedTime(TAG, start, "[async] fetchSMSCarriers ... done")
+            when (result) {
+                is Result.Success -> EgSms.loadCarriers(result.data)
+                is Result.Error -> showAlert(result.exception)
             }
         }
     }
 
-    // Load data that is local to this Activity.
     private fun loadUnreadMessageCount() {
+        Log.d(TAG, "[async] fetchUserMessages ...")
         async {
             if (resources.getBoolean(R.bool.ou_enable_messages)) {
+                val start = System.currentTimeMillis()
                 val result = Gateway.actor.fetchUserMessages(App.getAccount())
+                Log.logElapsedTime(TAG, start, "[async] fetchUserMessages ... done")
                 when (result) {
                     is Result.Success ->  updateMessagesBadge(result.data)
                     is Result.Error -> showAlert(result.exception)
@@ -101,6 +107,7 @@ class MainActivity : BaseActivity() {
     }
 
     private fun updateMessagesBadge(messages: List<OSRFObject>) {
+        Log.d(TAG, "zzzzz: thread check: updateMessagesBadge")
         mUnreadMessageCount = countUnread(messages)
         updateUnreadMessagesText()
     }
