@@ -28,6 +28,7 @@ import org.evergreen_ils.R;
 import org.evergreen_ils.android.Analytics;
 import org.evergreen_ils.android.App;
 import org.evergreen_ils.android.Log;
+import org.evergreen_ils.system.EgOrg;
 import org.evergreen_ils.system.EgSearch;
 import org.evergreen_ils.utils.ui.ActionBarUtils;
 import org.evergreen_ils.utils.ui.BasePagerActivity;
@@ -61,16 +62,17 @@ public class SampleUnderlinesNoFade extends BasePagerActivity {
         setContentView(R.layout.simple_underlines);
         ActionBarUtils.initActionBarForActivity(this, getIntent().getStringExtra("title"));
 
-        orgID = getIntent().getIntExtra("orgID", 1);
-        int recordPosition = getIntent().getIntExtra("recordPosition", 0);
-        numResults = getIntent().getIntExtra("numResults", records.size());
-
         // Copy either serialized recordList or search results into our own ArrayList.
         // This is an attempt to fix an IllegalStateException crash (see commit for details).
         ArrayList<RecordInfo> recordList = (ArrayList<RecordInfo>) getIntent().getSerializableExtra("recordList");
         if (recordList == null) recordList = EgSearch.INSTANCE.getResults();
         records.clear();
         records.addAll(recordList);
+
+        // Calculate numResults after records are loaded
+        orgID = getIntent().getIntExtra("orgID", EgOrg.consortiumID);
+        int recordPosition = getIntent().getIntExtra("recordPosition", 0);
+        numResults = getIntent().getIntExtra("numResults", records.size());
 
         mAdapter = new SearchFragmentAdapter(getSupportFragmentManager());
         mPager = findViewById(R.id.pager);
