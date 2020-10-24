@@ -23,6 +23,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
+import android.os.Bundle;
+import android.os.Parcel;
+
+import org.evergreen_ils.android.Log;
 
 import java.util.ArrayList;
 
@@ -36,10 +40,32 @@ public class RecordDetails {
             parentActivityLabel = context.getString(info.labelRes);
         } catch (PackageManager.NameNotFoundException e) {
         }
+
+        // Prevent TransactionTooLargeException by limiting the data passed via Intent.
+        // In my testing, 100 records ~= 100KB, well below the limit of ~500KB.  If the
+        // list is too long, start the details flow with just the selected item.
+        final int MAX_RECORDS_IN_TRANSACTION = 100;
+        ArrayList<RecordInfo> recordListForTransaction = recordList;
+        int recordPositionForTransaction = recordPosition;
+        if (recordList.size() > MAX_RECORDS_IN_TRANSACTION) {
+            recordListForTransaction = new ArrayList<>();
+            recordListForTransaction.add(recordList.get(recordPosition));
+            recordPositionForTransaction = 0;
+        }
+
         Intent intent = new Intent(context, SampleUnderlinesNoFade.class);
-        intent.putExtra("recordList", recordList);
-        intent.putExtra("recordPosition", recordPosition);
+        intent.putExtra("recordList", recordListForTransaction);
+        intent.putExtra("recordPosition", recordPositionForTransaction);
         intent.putExtra("title", parentActivityLabel);
+//        Log.d("xzyyz", "intent size: " + bundleSize(intent.getExtras()));
         context.startActivity(intent);
     }
+
+//    private static int bundleSize(Bundle bundle) {
+//        Parcel parcel = Parcel.obtain();
+//        parcel.writeBundle(bundle);
+//        int size = parcel.dataSize();
+//        parcel.recycle();
+//        return size;
+//    }
 }
