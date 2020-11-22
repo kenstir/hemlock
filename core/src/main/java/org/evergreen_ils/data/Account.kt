@@ -93,7 +93,7 @@ class Account constructor(val username: String, var authToken: String?) {
         this._searchOrg = Api.parseInt(map[Api.USER_SETTING_DEFAULT_SEARCH_LOCATION])
         this.smsCarrier = Api.parseInt(map[Api.USER_SETTING_DEFAULT_SMS_CARRIER])
         this.smsNumber = map[Api.USER_SETTING_DEFAULT_SMS_NOTIFY]
-        this.holdNotifyValue = map[Api.USER_SETTING_HOLD_NOTIFY]
+        this.holdNotifyValue = map[Api.USER_SETTING_HOLD_NOTIFY] ?: "email:phone"
         parseHoldNotifyValue(holdNotifyValue)
     }
 
