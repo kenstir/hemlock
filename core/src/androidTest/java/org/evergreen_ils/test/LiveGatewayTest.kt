@@ -54,7 +54,7 @@ class LiveGatewayTest {
 
             // See root build.gradle for notes on customizing instrumented test variables
             args = InstrumentationRegistry.getArguments()
-            val server = args.getString("server")
+            val server = args.getString("server") ?: "https://gapines.org"
             val username = args.getString("username")
             val password = args.getString("password")
 
