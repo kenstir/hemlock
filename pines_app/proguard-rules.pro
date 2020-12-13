@@ -7,11 +7,13 @@
 # For more details, see
 #   http://developer.android.com/guide/developing/tools/proguard.html
 
-# Add any project specific keep options here:
+# Trying to prevent the Play Store warning
+# "This App Bundle contains Java/Kotlin code, which might be obfuscated."
+# https://stackoverflow.com/questions/52525155/crashlitycs-reporting-wrong-line-number-after-kotlin-migration
+-keepattributes SourceFile,LineNumberTable
 
-# If your project uses WebView with JS, uncomment the following
-# and specify the fully qualified class name to the JavaScript interface
-# class:
-#-keepclassmembers class fqcn.of.javascript.interface.for.webview {
-#   public *;
-#}
+# To disable R8 features:
+# https://stackoverflow.com/questions/51860843/how-to-turn-off-only-the-obfuscation-in-android-r8
+#-dontshrink
+-dontobfuscate
+#-dontoptimize
