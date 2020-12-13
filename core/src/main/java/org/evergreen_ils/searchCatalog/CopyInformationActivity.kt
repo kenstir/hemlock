@@ -162,7 +162,7 @@ class CopyInformationActivity : BaseActivity() {
 
     internal inner class CopyInformationArrayAdapter(context: Context, private val resourceId: Int, private val items: List<CopyLocationCounts>) : ArrayAdapter<CopyLocationCounts>(context, resourceId, items) {
 
-        override fun getView(position: Int, convertView: View?, parent: ViewGroup): View? {
+        override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
             val row = when(convertView) {
                 null -> {
                     val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
@@ -180,21 +180,21 @@ class CopyInformationActivity : BaseActivity() {
             val copyStatusesText = row.findViewById<TextView>(R.id.copy_information_statuses)
 
             val clc = getItem(position)
-            val org = findOrg(clc.orgId)
+            val org = findOrg(clc?.orgId)
 
             if (groupCopiesBySystem) {
-                majorLocationText.text = getOrgNameSafe(org!!.parent)
-                val ss = SpannableString(org.name)
+                majorLocationText.text = getOrgNameSafe(org?.parent)
+                val ss = SpannableString(org?.name)
                 ss.setSpan(URLSpan(""), 0, ss.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
                 minorLocationText.setText(ss, TextView.BufferType.SPANNABLE)
-                minorLocationText.setOnClickListener { launchOrgDetails(org.id) }
+                minorLocationText.setOnClickListener { launchOrgDetails(org?.id) }
             } else {
-                majorLocationText.text = getOrgNameSafe(clc.orgId)
+                majorLocationText.text = getOrgNameSafe(clc?.orgId)
                 minorLocationText.visibility = View.GONE
             }
-            copyCallNumberText.text = clc.callNumber
-            copyLocationText.text = clc.copyLocation
-            copyStatusesText.text = clc.countsByStatusLabel
+            copyCallNumberText.text = clc?.callNumber
+            copyLocationText.text = clc?.copyLocation
+            copyStatusesText.text = clc?.countsByStatusLabel
 
             return row
         }

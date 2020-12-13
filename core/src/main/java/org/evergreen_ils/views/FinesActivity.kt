@@ -238,7 +238,7 @@ class FinesActivity : BaseActivity() {
             return items[index]
         }
 
-        override fun getView(position: Int, convertView: View?, parent: ViewGroup): View? {
+        override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
             val row = when(convertView) {
                 null -> {
                     val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater

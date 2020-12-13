@@ -96,7 +96,7 @@ class BarcodeActivity : BaseActivity() {
     private fun copyBarcodeToClipboard() {
         val clipboard =  getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
         val clip = ClipData.newPlainText(getString(R.string.label_barcode), App.getAccount().barcode)
-        clipboard.primaryClip = clip
+        clipboard.setPrimaryClip(clip)
         Toast.makeText(this, getString(R.string.msg_barcode_copied), Toast.LENGTH_SHORT).show()
     }
 }

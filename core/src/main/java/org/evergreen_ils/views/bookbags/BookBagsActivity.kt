@@ -154,7 +154,7 @@ class BookBagsActivity : BaseActivity() {
 
     internal inner class BookBagsArrayAdapter(context: Context, private val resourceId: Int) : ArrayAdapter<BookBag>(context, resourceId) {
 
-        override fun getView(position: Int, convertView: View?, parent: ViewGroup): View? {
+        override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
             var row = when(convertView) {
                 null -> {
                     val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater

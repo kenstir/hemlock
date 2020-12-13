@@ -181,7 +181,7 @@ class BookBagDetailsActivity : BaseActivity() {
 
     internal inner class BookBagItemsArrayAdapter(context: Context, private val resourceId: Int) : ArrayAdapter<BookBagItem>(context, resourceId) {
 
-        override fun getView(position: Int, convertView: View?, parent: ViewGroup): View? {
+        override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
             val row = when(convertView) {
                 null -> {
                     val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
@@ -201,9 +201,10 @@ class BookBagDetailsActivity : BaseActivity() {
             author.text = record?.recordInfo?.author
             remove.setOnClickListener(View.OnClickListener {
                 //Analytics.logEvent("list_removeitem")
+                val id = record?.id ?: return@OnClickListener
                 async {
                     progress?.show(this@BookBagDetailsActivity, getString(R.string.msg_removing_list_item))
-                    val result = Gateway.actor.removeItemFromBookBagAsync(App.getAccount(), record.id)
+                    val result = Gateway.actor.removeItemFromBookBagAsync(App.getAccount(), id)
                     progress?.dismiss()
                     when (result) {
                         is Result.Error -> showAlert(result.exception)
