@@ -37,6 +37,7 @@ import org.evergreen_ils.utils.ui.UnderlinePageIndicator;
 
 import java.util.ArrayList;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
@@ -131,6 +132,7 @@ public class SampleUnderlinesNoFade extends BasePagerActivity {
         }
 
         @Override
+        @NonNull
         public Fragment getItem(int position) {
             return DetailsFragment.create(records.get(position), orgID, position, numResults);
         }
