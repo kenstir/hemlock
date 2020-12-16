@@ -3,8 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="net.kenstir.apps.hemlock"
           android:installLocation="auto"
-          android:versionCode="85"
-          android:versionName="5.0.4">
+          android:versionCode="87"
+          android:versionName="5.0.6">
 
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
