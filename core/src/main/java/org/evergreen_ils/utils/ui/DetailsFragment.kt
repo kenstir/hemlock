@@ -32,7 +32,6 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import com.android.volley.toolbox.NetworkImageView
-import kotlinx.android.synthetic.main.org_details.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
