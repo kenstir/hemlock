@@ -96,7 +96,7 @@ object Analytics {
     @JvmStatic
     fun redactedString(value: String?): String {
         if (value == null) return "(null)"
-        return if (value.length == 0) "(empty)" else "***"
+        return if (value.isEmpty()) "(empty)" else "***"
     }
 
     @JvmStatic
