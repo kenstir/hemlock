@@ -12,6 +12,11 @@ class Event : HashMap<String, Any?> {
     val message: String
         get() {
             // This logic is similar to that in place_hold_result.tt2
+            textCode?.let { eventKey ->
+                eventMessageMap[eventKey]?.let { msg ->
+                    return msg
+                }
+            }
             failPart?.let { failPartKey ->
                 failPartMessageMap[failPartKey]?.let { msg ->
                     return msg
@@ -46,6 +51,8 @@ class Event : HashMap<String, Any?> {
     }
 
     companion object {
+        // eventMessageMap is injected
+        var eventMessageMap = mutableMapOf<String, String>()
         // failPartMessageMap is injected
         var failPartMessageMap = mutableMapOf<String, String>()
 

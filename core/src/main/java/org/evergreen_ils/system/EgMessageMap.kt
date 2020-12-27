@@ -37,19 +37,24 @@ object EgMessageMap {
         synchronized(this) {
             if (initialized) return
 
-            Event.failPartMessageMap.clear()
-
-            // load map from json resource
-            val inputStream = resources.openRawResource(R.raw.fail_part_msg_map)
-            val contents = inputStream.bufferedReader().use { it.readText() }
-            val dict = JsonUtils.parseObject(contents) ?: mapOf()
-            for ((k, v) in dict) {
-                (v as? String)?.let {
-                    Event.failPartMessageMap[k] = it
-                }
-            }
+            Event.eventMessageMap = loadStringMap(resources, R.raw.event_msg_map)
+            Event.failPartMessageMap = loadStringMap(resources, R.raw.fail_part_msg_map)
 
             initialized = true
         }
+    }
+
+    // load string map from json resource
+    private fun loadStringMap(resources: Resources, resourceId: Int): MutableMap<String, String> {
+        val map = mutableMapOf<String, String>()
+        val inputStream = resources.openRawResource(resourceId)
+        val contents = inputStream.bufferedReader().use { it.readText() }
+        val dict = JsonUtils.parseObject(contents) ?: mapOf()
+        for ((k, v) in dict) {
+            (v as? String)?.let {
+                map[k] = it
+            }
+        }
+        return map
     }
 }

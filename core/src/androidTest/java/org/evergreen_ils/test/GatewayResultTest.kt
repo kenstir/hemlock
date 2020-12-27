@@ -251,14 +251,15 @@ class GatewayResultTest {
             """
         val result = GatewayResult.create(json)
         assertTrue(result.failed)
-        assertEquals("The patron in question has reached the maximum fine amount", result.errorMessage)
+        val customMessage = "Patron has reached the maximum fine amount" // event_msg_map.json
+        assertEquals(customMessage, result.errorMessage)
 
         val res = kotlin.runCatching { result.asObject() }
         assertTrue(res.isFailure)
         val error = res.exceptionOrNull() as? GatewayEventError
         assertEquals(7013, error?.ev?.code)
         assertEquals("PATRON_EXCEEDS_FINES", error?.ev?.textCode)
-        assertEquals("The patron in question has reached the maximum fine amount", error?.ev?.message)
+        assertEquals(customMessage, error?.ev?.message)
         assertFalse(error?.isSessionExpired() ?: false)
     }
 
@@ -271,14 +272,15 @@ class GatewayResultTest {
             """
         val result = GatewayResult.create(json)
         assertTrue(result.failed)
-        assertEquals("Hold rules reject this item as unholdable", result.errorMessage)
+        val customMessage = "Hold rules reject this item as unholdable" // fail_part_msg_map.json
+        assertEquals(customMessage, result.errorMessage)
 
         val res = kotlin.runCatching { result.asObject() }
         assertTrue(res.isFailure)
         val error = res.exceptionOrNull() as? GatewayEventError
         assertEquals(1220, error?.ev?.code)
         assertEquals("ITEM_NOT_HOLDABLE", error?.ev?.textCode)
-        assertEquals("Hold rules reject this item as unholdable", error?.ev?.message)
+        assertEquals(customMessage, error?.ev?.message)
         assertEquals("config.hold_matrix_test.holdable", error?.ev?.failPart)
         assertFalse(error?.isSessionExpired() ?: false)
     }
