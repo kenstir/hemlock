@@ -1,4 +1,4 @@
-# https://stackoverflow.com/questions/52525155/crashlitycs-reporting-wrong-line-number-after-kotlin-migration
+# https://developer.android.com/studio/build/shrink-code
 # https://firebase.google.com/docs/crashlytics/get-deobfuscated-reports?platform=android
 -keepattributes SourceFile,LineNumberTable
 -keep public class * extends java.lang.Exception
