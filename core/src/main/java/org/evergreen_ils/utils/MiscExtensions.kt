@@ -22,6 +22,7 @@ import android.accounts.AccountManager
 import android.os.Bundle
 import org.evergreen_ils.data.AccountManagerResult
 import org.evergreen_ils.net.Gateway
+import java.util.*
 
 fun Bundle.getAccountManagerResult(): AccountManagerResult {
     return AccountManagerResult(getString(AccountManager.KEY_ACCOUNT_NAME),
@@ -49,4 +50,12 @@ fun Exception.getCustomMessage(): String {
     }
     this.message?.let { if (it.isNotEmpty()) return it }
     return "Cancelled"
+}
+
+fun Date.isWithin(days: Int): Boolean {
+    val cal = Calendar.getInstance()
+    cal.time = this
+    cal.add(Calendar.DAY_OF_MONTH, -days)
+    val now = Date()
+    return now > cal.time
 }

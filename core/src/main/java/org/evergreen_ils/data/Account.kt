@@ -21,6 +21,7 @@ package org.evergreen_ils.data
 import org.evergreen_ils.Api
 import org.evergreen_ils.net.GatewayEventError
 import org.opensrf.util.OSRFObject
+import java.util.*
 
 private const val TAG = "Account"
 
@@ -32,6 +33,7 @@ class Account constructor(val username: String, var authToken: String?) {
     var id: Int? = null
     var homeOrg: Int? = null
     var barcode: String? = null
+    var expireDate: Date? = null
     var notifyByEmail = false
     var notifyByPhone = false
     var notifyBySMS = false
@@ -76,6 +78,7 @@ class Account constructor(val username: String, var authToken: String?) {
 
     fun loadFleshedUserSettings(obj: OSRFObject) {
         barcode = obj.getObject("card")?.getString("barcode")
+        expireDate = obj.getDate("expire_date")
 
         // settings is a list of objects with name and value as string;
         // construct a map of all settings, then parse out the ones we care about

@@ -18,6 +18,8 @@
 
 package org.evergreen_ils.views
 
+import android.app.Activity
+import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
 import android.text.TextUtils
@@ -42,9 +44,11 @@ import org.evergreen_ils.net.Gateway
 import org.evergreen_ils.searchCatalog.SearchActivity
 import org.evergreen_ils.android.Analytics
 import org.evergreen_ils.android.Log
+import org.evergreen_ils.utils.isWithin
 import org.evergreen_ils.utils.ui.BaseActivity
 import org.evergreen_ils.utils.ui.showAlert
 import org.opensrf.util.OSRFObject
+import java.text.DateFormat
 
 class MainActivity : BaseActivity() {
 
@@ -74,6 +78,26 @@ class MainActivity : BaseActivity() {
     private fun fetchData() {
         loadSMSCarriers()
         loadUnreadMessageCount()
+        checkAccountExpiry()
+    }
+
+    private fun checkAccountExpiry() {
+        // warn if account will expire
+        val expireDate = App.getAccount().expireDate ?: return
+        if (expireDate.isWithin(days = 30)) {
+            val dateString = DateFormat.getDateInstance().format(expireDate)
+            val message = "Your library card is set to expire soon, on ${dateString}.  Please contact your local library to avoid an interruption in service."
+            val builder = AlertDialog.Builder(this)
+            builder.setTitle("Time to renew your library card")
+                    .setMessage(message)
+                    .setPositiveButton(android.R.string.ok) { _, _ ->
+                    }
+                    .setNeutralButton(R.string.title_library_info) { _, _ ->
+                        startActivity(Intent(this, OrgDetailsActivity::class.java))
+                    }
+            val alertDialog = builder.create()
+            alertDialog.show()
+        }
     }
 
     // TODO: Make this on demand by making it a suspend fun in GatewayLoader.
