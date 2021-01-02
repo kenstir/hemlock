@@ -207,8 +207,6 @@ class LaunchActivity : AppCompatActivity(), CoroutineScope by MainScope() {
             is Result.Success -> account.loadSession(sessionResult.data)
             is Result.Error -> {
                 throw sessionResult.exception
-//                showAlert(sessionResult.exception)
-//                return false
             }
         }
 
@@ -216,14 +214,11 @@ class LaunchActivity : AppCompatActivity(), CoroutineScope by MainScope() {
 
         // get user settings
         val fleshedUserResult = Gateway.actor.fetchFleshedUser(account)
-//        Log.d(TAG, "[kcxxx] fleshedUserResult:$fleshedUserResult")
         when (fleshedUserResult) {
             is Result.Success ->
                 account.loadFleshedUserSettings(fleshedUserResult.data)
             is Result.Error -> {
                 throw fleshedUserResult.exception
-//                showAlert(fleshedUserResult.exception)
-//                return false
             }
         }
 
