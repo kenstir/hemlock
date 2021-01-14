@@ -44,7 +44,6 @@ object Analytics {
     }
 
     object Param {
-        const val DEFAULT_HOLD_NOTIFY = "default_hold_notify"
         const val HOLD_EXPIRES_KEY = "hold_expires" // bool
         const val HOLD_NOTIFY = "hold_notify"
         const val HOLD_PICKUP_KEY = "hold_pickup" // { home | other }
