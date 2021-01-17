@@ -149,7 +149,7 @@ class GatewayResultTest {
         val result = GatewayResult.create(json)
         assertTrue(result.failed)
 
-        val errorMessage = "Network request failed (status:400)"
+        val errorMessage = "Request failed with status 400"
         val objResult = kotlin.runCatching { result.asObject() }
         assertTrue(objResult.isFailure)
         assertEquals(errorMessage, objResult.exceptionOrNull()?.message)
