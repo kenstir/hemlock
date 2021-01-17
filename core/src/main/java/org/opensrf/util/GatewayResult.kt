@@ -35,6 +35,11 @@ class GatewayResult {
     @JvmField
     var errorMessage: String? = null
 
+    // don't cache failures or empty results
+    // (empty results can be caused by timeouts or server errors)
+    val shouldCache: Boolean
+        get() = (!failed && type != ResultType.EMPTY)
+
     private var error: GatewayError? = null
     private var events: List<Event>? = null
     private var type: ResultType = ResultType.UNKNOWN

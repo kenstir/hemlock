@@ -71,8 +71,8 @@ public class GatewayJsonRequest extends Request<GatewayResult> {
             Log.d(TAG, "[net] recv "+response.data.length+": "+json);
             GatewayResult gatewayResult = GatewayResult.create(json);
 
-            // don't cache failures
-            Cache.Entry entry = gatewayResult.failed ? null : HttpHeaderParser.parseCacheHeaders(response);
+            // decide whether to cache result
+            Cache.Entry entry = gatewayResult.getShouldCache() ? HttpHeaderParser.parseCacheHeaders(response) : null;
 
             // limit cache TTL
             if (entry != null && mCacheTtlSeconds > 0) {
