@@ -175,13 +175,13 @@ class GatewayResultTest {
 
         val objResult = kotlin.runCatching { result.asObject() }
         assertTrue(objResult.isFailure)
-        assertEquals("Server error: expected object, got EMPTY", objResult.exceptionOrNull()?.message)
+        assertEquals("Internal Server Error: expected object, got EMPTY", objResult.exceptionOrNull()?.message)
         val strResult = kotlin.runCatching { result.asString() }
         assertTrue(strResult.isFailure)
-        assertEquals("Server error: expected string, got EMPTY", strResult.exceptionOrNull()?.message)
+        assertEquals("Internal Server Error: expected string, got EMPTY", strResult.exceptionOrNull()?.message)
         val arrayResult = kotlin.runCatching { result.asObjectArray() }
         assertTrue(arrayResult.isFailure)
-        assertEquals("Server error: expected array, got EMPTY", arrayResult.exceptionOrNull()?.message)
+        assertEquals("Internal Server Error: expected array, got EMPTY", arrayResult.exceptionOrNull()?.message)
     }
 
     @Test
@@ -342,7 +342,7 @@ class GatewayResultTest {
             """
         val result = GatewayResult.create(jsonIsh)
         assertTrue(result.failed)
-        assertEquals("Server error: response is not JSON", result.errorMessage)
+        assertEquals("Internal Server Error: response is not JSON", result.errorMessage)
     }
 
     @Test
