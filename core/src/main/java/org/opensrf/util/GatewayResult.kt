@@ -61,7 +61,7 @@ class GatewayResult {
             (payload as? JSONDictionary)?.let { return OSRFObject(it) }
             throw GatewayError("Unexpected type")
         } catch (ex: Exception) {
-            throw GatewayError("Unexpected network response: expected object, got $type")
+            throw GatewayError("Server error: expected object, got $type")
         }
     }
 
@@ -71,7 +71,7 @@ class GatewayResult {
         return try {
             payload as? OSRFObject
         } catch (ex: Exception) {
-            throw GatewayError("Unexpected network response: expected object, got $type")
+            throw GatewayError("Server error: expected object, got $type")
         }
     }
 
@@ -81,7 +81,7 @@ class GatewayResult {
         return try {
             payload as JSONDictionary
         } catch (ex: Exception) {
-            throw GatewayError("Unexpected network response: expected map, got $type")
+            throw GatewayError("Server error: expected map, got $type")
         }
     }
 
@@ -91,7 +91,7 @@ class GatewayResult {
         return try {
             payload as List<OSRFObject>
         } catch (ex: Exception) {
-            throw GatewayError("Unexpected network response: expected array, got $type")
+            throw GatewayError("Server error: expected array, got $type")
         }
     }
 
@@ -101,7 +101,7 @@ class GatewayResult {
         return try {
             payload as List<Any>
         } catch (ex: Exception) {
-            throw GatewayError("Unexpected network response: expected array, got $type")
+            throw GatewayError("Server error: expected array, got $type")
         }
     }
 
@@ -111,7 +111,7 @@ class GatewayResult {
         return try {
             payload as String
         } catch (ex: Exception) {
-            throw GatewayError("Unexpected network response: expected string, got $type")
+            throw GatewayError("Server error: expected string, got $type")
         }
     }
 
@@ -120,20 +120,20 @@ class GatewayResult {
         fun create(json: String): GatewayResult {
             return try {
                 val result = JSONReader(json).readObject()
-                        ?: throw GatewayError("Unexpected network response: empty")
+                        ?: throw GatewayError("Server error: response is empty")
                 val status = result["status"]?.fromApiToIntOrNull()
-                        ?: throw GatewayError("Unexpected network response: missing status")
+                        ?: throw GatewayError("Server error: response is missing status")
                 if (status != 200)
                     throw GatewayError("Network request failed (status:$status)")
                 val responseList= result["payload"] as? List<Any?>?
-                        ?: throw GatewayError("Unexpected network response: missing payload")
+                        ?: throw GatewayError("Server error: response is missing payload")
                 val payload = responseList.firstOrNull()
                 createFromPayload(payload)
             } catch (ex: JSONParserException) {
                 if (json.contains("canceling statement due to user request")) {
                     GatewayResult(GatewayError("Timeout; the request took too long to complete and the server killed it"))
                 } else {
-                    GatewayResult(GatewayError("Internal Server Error; the server response is not JSON"))
+                    GatewayResult(GatewayError("Server error: response is not JSON"))
                 }
             } catch (ex: Exception) {
                 GatewayResult(ex)

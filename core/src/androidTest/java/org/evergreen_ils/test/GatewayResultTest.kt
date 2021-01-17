@@ -149,15 +149,19 @@ class GatewayResultTest {
         val result = GatewayResult.create(json)
         assertTrue(result.failed)
 
+        val errorMessage = "Network request failed (status:400)"
         val objResult = kotlin.runCatching { result.asObject() }
         assertTrue(objResult.isFailure)
+        assertEquals(errorMessage, objResult.exceptionOrNull()?.message)
         val strResult = kotlin.runCatching { result.asString() }
         assertTrue(strResult.isFailure)
+        assertEquals(errorMessage, objResult.exceptionOrNull()?.message)
         val arrayResult = kotlin.runCatching { result.asObjectArray() }
         assertTrue(arrayResult.isFailure)
+        assertEquals(errorMessage, objResult.exceptionOrNull()?.message)
     }
 
-    // not sure if this happens IRL
+    // This does happens IRL but it's a server error
     @Test
     fun test_emptyPayload() {
         val json = """
@@ -171,10 +175,13 @@ class GatewayResultTest {
 
         val objResult = kotlin.runCatching { result.asObject() }
         assertTrue(objResult.isFailure)
+        assertEquals("Server error: expected object, got EMPTY", objResult.exceptionOrNull()?.message)
         val strResult = kotlin.runCatching { result.asString() }
         assertTrue(strResult.isFailure)
+        assertEquals("Server error: expected string, got EMPTY", strResult.exceptionOrNull()?.message)
         val arrayResult = kotlin.runCatching { result.asObjectArray() }
         assertTrue(arrayResult.isFailure)
+        assertEquals("Server error: expected array, got EMPTY", arrayResult.exceptionOrNull()?.message)
     }
 
     @Test
@@ -335,7 +342,7 @@ class GatewayResultTest {
             """
         val result = GatewayResult.create(jsonIsh)
         assertTrue(result.failed)
-        assertEquals("Internal Server Error; the server response is not JSON", result.errorMessage)
+        assertEquals("Server error: response is not JSON", result.errorMessage)
     }
 
     @Test
