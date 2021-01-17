@@ -337,4 +337,26 @@ class GatewayResultTest {
         assertTrue(result.failed)
         assertEquals("Internal Server Error; the server response is not JSON", result.errorMessage)
     }
+
+    @Test
+    fun test_shouldCache() {
+        val tests = listOf<Pair<String, Boolean>>(
+                Pair("""
+                     {"payload":[{"result":6309896,"target":21296176}],"status":200}
+                     """.trimIndent(), true),
+                Pair("""
+                     {"payload":[[]],"status":200}
+                     """.trimIndent(), true),
+                Pair("""
+                     {"payload":[],"status":200}
+                     """.trimIndent(), false),
+                Pair("""
+                     {"payload":[],"status":400}
+                     """.trimIndent(), false),
+        )
+        for (test in tests) {
+            val result = GatewayResult.create(test.first)
+            assertEquals(test.second, result.shouldCache)
+        }
+    }
 }
