@@ -43,12 +43,22 @@ class Account constructor(val username: String, var authToken: String?) {
     var bookBagsLoaded: Boolean = false
 
     private var dayPhone: String? = null
+    private var firstGivenName: String? = null
+    private var familyName: String? = null
     private var notifyPhoneNumber: String? = null
     private var _pickupOrg: Int? = null
     private var _searchOrg: Int? = null
 
     val phoneNumber: String?
         get() = notifyPhoneNumber ?: dayPhone
+    val displayName: String
+        get() {
+            if (username == barcode && firstGivenName != null && familyName != null) {
+                return "$firstGivenName $familyName"
+            } else {
+                return username
+            }
+        }
     val pickupOrg: Int?
         get() = _pickupOrg ?: homeOrg
     val searchOrg: Int?
