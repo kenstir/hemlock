@@ -36,7 +36,7 @@ public class ActionBarUtils {
         ActionBar actionBar = activity.getSupportActionBar();
         if (actionBar == null)
             return toolbar;
-        String username = App.getAccount().getUsername();
+        String username = App.getAccount().getDisplayName();
         if (activity.getResources().getBoolean(R.bool.admin_screenshot_mode))
             username = "janejetson";
         actionBar.setSubtitle(String.format(activity.getString(R.string.ou_activity_subtitle),

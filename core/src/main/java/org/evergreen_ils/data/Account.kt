@@ -53,10 +53,10 @@ class Account constructor(val username: String, var authToken: String?) {
         get() = notifyPhoneNumber ?: dayPhone
     val displayName: String
         get() {
-            if (username == barcode && firstGivenName != null && familyName != null) {
-                return "$firstGivenName $familyName"
+            return if (username == barcode && firstGivenName != null && familyName != null) {
+                "$firstGivenName $familyName"
             } else {
-                return username
+                username
             }
         }
     val pickupOrg: Int?
@@ -82,6 +82,8 @@ class Account constructor(val username: String, var authToken: String?) {
         id = obj.getInt("id")
         homeOrg = obj.getInt("home_ou")
         dayPhone = obj.getString("day_phone")
+        firstGivenName = obj.getString("pref_first_given_name") ?: obj.getString("first_given_name")
+        familyName = obj.getString("pref_family_name") ?: obj.getString("family_name")
     }
 
     fun loadFleshedUserSettings(obj: OSRFObject) {
