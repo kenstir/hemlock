@@ -47,6 +47,7 @@ object Analytics {
         const val HOLD_EXPIRES_KEY = "hold_expires" // bool
         const val HOLD_NOTIFY = "hold_notify"
         const val HOLD_PICKUP_KEY = "hold_pickup" // { home | other }
+        const val LOGIN_TYPE = "login_type" // { barcode | username }
         const val NUM_RESULTS = "num_results"
         const val RESULT = "result" // { ok | error_message }
         const val SEARCH_CLASS = "search_class"
@@ -162,6 +163,13 @@ object Analytics {
             selectedOrg.id == homeOrg.id -> "home"
             selectedOrg.isConsortium -> selectedOrg.shortname
             else -> "other"
+        }
+    }
+
+    fun loginTypeKey(username: String, barcode: String?): String {
+        return when {
+            username == barcode -> "barcode"
+            else -> "username"
         }
     }
 }
