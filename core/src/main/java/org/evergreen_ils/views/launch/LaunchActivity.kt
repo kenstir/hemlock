@@ -239,6 +239,7 @@ class LaunchActivity : AppCompatActivity(), CoroutineScope by MainScope() {
         Analytics.logEvent(Analytics.Event.LOGIN, bundleOf(
                 Analytics.UserProperty.HOME_ORG to homeOrg,
                 Analytics.UserProperty.PARENT_ORG to parentOrg,
+                Analytics.Param.LOGIN_TYPE to Analytics.loginTypeKey(account.username, account.barcode),
         ))
     }
 
