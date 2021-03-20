@@ -22,13 +22,10 @@ import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 
-import org.evergreen_ils.android.Analytics;
 import org.evergreen_ils.net.Gateway;
 import org.evergreen_ils.views.MenuProvider;
 
 import androidx.annotation.Keep;
-
-import static org.evergreen_ils.android.App.REQUEST_MYOPAC_MESSAGES;
 
 @Keep
 public class PinesMenuProvider extends MenuProvider {
@@ -43,18 +40,27 @@ public class PinesMenuProvider extends MenuProvider {
         if (id == R.id.open_full_catalog_button) {
             //Analytics.logEvent("fullcatalog_click", "via", via);
             String url = activity.getString(org.evergreen_ils.R.string.ou_library_url);
-            activity.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
+            launchURL(activity, url);
         } else if (id == R.id.library_locator_button) {
             //Analytics.logEvent("librarylocator_click", "via", via);
-            String url = "http://pines.georgialibraries.org/pinesLocator/locator.html";
-            activity.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
+            String url = "https://pines.georgialibraries.org/pinesLocator/locator.html";
+            launchURL(activity, url);
         } else if (id == R.id.patron_message_center) {
             //Analytics.logEvent("messages_click", "via", "options_menu");
             String url = Gateway.INSTANCE.getUrl("/eg/opac/myopac/messages");
-            activity.startActivityForResult(new Intent(Intent.ACTION_VIEW, Uri.parse(url)), REQUEST_MYOPAC_MESSAGES);
+            launchURL(activity, url);
         } else {
             return false;
         }
         return true;
+    }
+
+    void launchURL(Activity activity, String url) {
+        if (url == null) return;
+        Uri uri = Uri.parse(url);
+        Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+        if (intent.resolveActivity(activity.getPackageManager()) != null) {
+            activity.startActivity(intent);
+        }
     }
 }
