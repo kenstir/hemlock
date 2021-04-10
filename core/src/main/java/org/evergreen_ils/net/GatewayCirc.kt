@@ -95,13 +95,16 @@ object GatewayCirc : CircService {
 //                "T" -> param["titleid"] = targetId
 //                "P" -> param["partid"] = targetId
 //            }
-            if (phoneNotify != null && phoneNotify.isNotEmpty())
+            if (phoneNotify != null && phoneNotify.isNotEmpty()) {
+                param["phone_notify"] = phoneNotify
+            }
             if (smsCarrierId != null && smsNotify != null && smsNotify.isNotEmpty()) {
                 param["sms_carrier"] = smsCarrierId
                 param["sms_notify"] = smsNotify
             }
-            if (thawDate != null && thawDate.isNotEmpty())
+            if (thawDate != null && thawDate.isNotEmpty()) {
                 param["thaw_date"] = thawDate
+            }
 
             val args = arrayOf<Any?>(authToken, param, arrayListOf(targetId))
             val ret = Gateway.fetchObject(Api.CIRC, Api.HOLD_TEST_AND_CREATE, args, false)
