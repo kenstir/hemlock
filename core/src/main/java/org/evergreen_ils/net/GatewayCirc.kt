@@ -90,11 +90,6 @@ object GatewayCirc : CircService {
                     "expire_time" to expireTime,
                     "frozen" to suspendHold
             )
-// titleid/partid are supplied by holds.test_and_create.batch
-//            when (holdType) {
-//                "T" -> param["titleid"] = targetId
-//                "P" -> param["partid"] = targetId
-//            }
             if (phoneNotify != null && phoneNotify.isNotEmpty()) {
                 param["phone_notify"] = phoneNotify
             }
