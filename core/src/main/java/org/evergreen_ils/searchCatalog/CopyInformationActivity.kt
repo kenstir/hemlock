@@ -30,10 +30,7 @@ import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import android.widget.AdapterView
-import android.widget.ArrayAdapter
-import android.widget.ListView
-import android.widget.TextView
+import android.widget.*
 import kotlinx.coroutines.async
 import org.evergreen_ils.R
 import org.evergreen_ils.android.Log
@@ -46,6 +43,7 @@ import org.evergreen_ils.system.EgOrg.getOrgNameSafe
 import org.evergreen_ils.utils.ui.BaseActivity
 import org.evergreen_ils.utils.ui.showAlert
 import org.evergreen_ils.views.OrgDetailsActivity
+import org.evergreen_ils.views.holds.PlaceHoldActivity
 import java.util.*
 
 class CopyInformationActivity : BaseActivity() {
@@ -54,6 +52,7 @@ class CopyInformationActivity : BaseActivity() {
     private lateinit var record: RecordInfo
     private var orgID: Int = EgOrg.consortiumID
     private var lv: ListView? = null
+    private var placeHoldButton: Button? = null
     private val copyInfoRecords = ArrayList<CopyLocationCounts>()
     private var listAdapter: CopyInformationArrayAdapter? = null
 
@@ -88,6 +87,13 @@ class CopyInformationActivity : BaseActivity() {
 
         val summaryText = findViewById<View>(R.id.copy_information_summary) as TextView
         summaryText.text = record.getCopySummary(resources, orgID)
+
+        placeHoldButton = findViewById(R.id.simple_place_hold_button)
+        placeHoldButton?.setOnClickListener {
+            val intent = Intent(this, PlaceHoldActivity::class.java)
+            intent.putExtra("recordInfo", record)
+            startActivity(intent)
+        }
     }
 
     override fun onAttachedToWindow() {

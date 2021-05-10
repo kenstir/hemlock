@@ -92,7 +92,7 @@
                 android:layout_height="wrap_content"
                 android:paddingTop="8dp"
                 android:paddingBottom="8dp"
-                tools:text="185 of 242 copies available at All C/W MARS Libraries" />
+                tools:text="185 of 242 copies available at All CW MARS Libraries" />
 
             <LinearLayout
                 android:layout_width="fill_parent"
