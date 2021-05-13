@@ -132,25 +132,25 @@ class DetailsFragment : Fragment() {
 
     private fun initButtons() {
         // disable most buttons until the record is loaded
-        placeHoldButton!!.isEnabled = false
-        showCopiesButton!!.isEnabled = false
-        onlineAccessButton!!.isEnabled = false
+        placeHoldButton?.isEnabled = false
+        showCopiesButton?.isEnabled = false
+        onlineAccessButton?.isEnabled = false
         updateButtonViews()
-        placeHoldButton!!.setOnClickListener {
+        placeHoldButton?.setOnClickListener {
             val intent = Intent(activity?.applicationContext, PlaceHoldActivity::class.java)
             intent.putExtra("recordInfo", record)
             startActivity(intent)
         }
-        showCopiesButton!!.setOnClickListener {
+        showCopiesButton?.setOnClickListener {
             val intent = Intent(activity?.applicationContext, CopyInformationActivity::class.java)
             intent.putExtra("recordInfo", record)
             intent.putExtra("orgID", orgID)
             startActivity(intent)
         }
-        onlineAccessButton!!.setOnClickListener {
+        onlineAccessButton?.setOnClickListener {
             launchOnlineAccess()
         }
-        addToBookbagButton!!.setOnClickListener {
+        addToBookbagButton?.setOnClickListener {
             //Analytics.logEvent("lists_addtolist", "via", "details_button")
             (activity as? BaseActivity)?.let {
                 showAddToListDialog(it, App.getAccount().bookBags, record!!)
