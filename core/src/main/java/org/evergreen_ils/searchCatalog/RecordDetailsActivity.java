@@ -25,26 +25,25 @@ import android.view.KeyEvent;
 import android.view.MenuItem;
 
 import org.evergreen_ils.R;
-import org.evergreen_ils.android.Analytics;
 import org.evergreen_ils.android.App;
-import org.evergreen_ils.android.Log;
 import org.evergreen_ils.system.EgOrg;
 import org.evergreen_ils.system.EgSearch;
 import org.evergreen_ils.utils.ui.ActionBarUtils;
-import org.evergreen_ils.utils.ui.BasePagerActivity;
+import org.evergreen_ils.utils.ui.BaseActivity;
 import org.evergreen_ils.utils.ui.DetailsFragment;
-import org.evergreen_ils.utils.ui.UnderlinePageIndicator;
 
 import java.util.ArrayList;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentPagerAdapter;
-import androidx.viewpager.widget.ViewPager;
+import androidx.fragment.app.FragmentActivity;
+import androidx.viewpager2.adapter.FragmentStateAdapter;
+import androidx.viewpager2.widget.ViewPager2;
 
-public class SampleUnderlinesNoFade extends BasePagerActivity {
-    private static final String TAG = SampleUnderlinesNoFade.class.getSimpleName();
+public class RecordDetailsActivity extends BaseActivity {
+    private static final String TAG = RecordDetailsActivity.class.getSimpleName();
+
+    public ViewPager2 mPager;
 
     private ArrayList<RecordInfo> records = new ArrayList<>();
 
@@ -60,7 +59,7 @@ public class SampleUnderlinesNoFade extends BasePagerActivity {
             return;
         }
 
-        setContentView(R.layout.simple_underlines);
+        setContentView(R.layout.record_details);
         ActionBarUtils.initActionBarForActivity(this, getIntent().getStringExtra("title"));
 
         // Copy either serialized recordList or search results into our own ArrayList.
@@ -75,29 +74,9 @@ public class SampleUnderlinesNoFade extends BasePagerActivity {
         int recordPosition = getIntent().getIntExtra("recordPosition", 0);
         numResults = getIntent().getIntExtra("numResults", records.size());
 
-        mAdapter = new SearchFragmentAdapter(getSupportFragmentManager());
         mPager = findViewById(R.id.pager);
-        mPager.setAdapter(mAdapter);
+        mPager.setAdapter(new SearchFragmentAdapter(this));
         mPager.setCurrentItem(recordPosition);
-
-        UnderlinePageIndicator indicator = findViewById(R.id.indicator);
-        indicator.setViewPager(mPager);
-        indicator.setFades(false);
-        indicator.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-                                              @Override
-                                              public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-                                              }
-
-                                              @Override
-                                              public void onPageSelected(int position) {
-                                                  Analytics.logEvent(Analytics.Event.VIEW_ITEM_DETAILS);
-                                              }
-
-                                              @Override
-                                              public void onPageScrollStateChanged(int state) {
-                                              }
-                                          });
-        mIndicator = indicator;
     }
 
     private void finishWithIntent() {
@@ -126,19 +105,19 @@ public class SampleUnderlinesNoFade extends BasePagerActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    class SearchFragmentAdapter extends FragmentPagerAdapter {
-        public SearchFragmentAdapter(FragmentManager fm) {
-            super(fm);
+    class SearchFragmentAdapter extends FragmentStateAdapter {
+        public SearchFragmentAdapter(FragmentActivity fa) {
+            super(fa);
         }
 
-        @Override
         @NonNull
-        public Fragment getItem(int position) {
+        @Override
+        public Fragment createFragment(int position) {
             return DetailsFragment.create(records.get(position), orgID, position, numResults);
         }
 
         @Override
-        public int getCount() {
+        public int getItemCount() {
             return records.size();
         }
     }

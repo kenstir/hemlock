@@ -84,13 +84,6 @@
         <item name="android:textSize">22sp</item>
     </style>
 
-    <style name="CustomUnderlinePageIndicator">
-        <item name="selectedColor">#FFCC0000</item>
-        <item name="android:background">#FFff0000</item>
-        <item name="fadeLength">1000</item>
-        <item name="fadeDelay">1000</item>
-    </style>
-
     <style name="Content">
         <item name="android:layout_marginTop">5dip</item>
     </style>

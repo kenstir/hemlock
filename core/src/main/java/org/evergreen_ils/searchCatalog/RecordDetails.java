@@ -23,10 +23,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
-import android.os.Bundle;
-import android.os.Parcel;
-
-import org.evergreen_ils.android.Log;
 
 import java.util.ArrayList;
 
@@ -53,7 +49,7 @@ public class RecordDetails {
             recordPositionForTransaction = 0;
         }
 
-        Intent intent = new Intent(context, SampleUnderlinesNoFade.class);
+        Intent intent = new Intent(context, RecordDetailsActivity.class);
         intent.putExtra("recordList", recordListForTransaction);
         intent.putExtra("recordPosition", recordPositionForTransaction);
         intent.putExtra("title", parentActivityLabel);

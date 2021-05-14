@@ -65,7 +65,7 @@
         <!-- Search -->
 
         <activity
-                android:name="org.evergreen_ils.searchCatalog.SampleUnderlinesNoFade"
+                android:name="org.evergreen_ils.searchCatalog.RecordDetailsActivity"
                 android:label="@string/search_details_title">
         </activity>
         <activity

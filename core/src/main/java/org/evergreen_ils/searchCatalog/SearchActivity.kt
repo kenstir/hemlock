@@ -297,7 +297,7 @@ class SearchActivity : BaseActivity() {
     private fun initRecordClickListener() {
         registerForContextMenu(findViewById(R.id.search_results_list))
         searchResultsFragment?.setOnRecordClickListener { record, position ->
-            val intent = Intent(baseContext, SampleUnderlinesNoFade::class.java)
+            val intent = Intent(baseContext, RecordDetailsActivity::class.java)
             intent.putExtra("orgID", EgSearch.selectedOrganization?.id)
             intent.putExtra("recordPosition", position)
             intent.putExtra("numResults", EgSearch.visible)
@@ -325,7 +325,7 @@ class SearchActivity : BaseActivity() {
         val info = contextMenuRecordInfo ?: return false
         when (item.itemId) {
             App.ITEM_SHOW_DETAILS -> {
-                val intent = Intent(baseContext, SampleUnderlinesNoFade::class.java)
+                val intent = Intent(baseContext, RecordDetailsActivity::class.java)
                 intent.putExtra("orgID", EgSearch.selectedOrganization?.id)
                 intent.putExtra("recordPosition", info.position)
                 intent.putExtra("numResults", EgSearch.visible)
@@ -383,7 +383,7 @@ class SearchActivity : BaseActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         when (resultCode) {
-            SampleUnderlinesNoFade.RETURN_DATA -> {
+            RecordDetailsActivity.RETURN_DATA -> {
             }
             AdvancedSearchActivity.RESULT_ADVANCED_SEARCH -> {
                 Log.d(TAG, "result text:" + data!!.getStringExtra("advancedSearchText"))
