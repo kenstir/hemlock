@@ -92,9 +92,10 @@ class DetailsFragment : Fragment() {
         super.onSaveInstanceState(outState)
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+        Log.d("xyzzy", "${record?.doc_id}: oncreateview")
         val layout = inflater.inflate(
-                R.layout.record_details_fragment, null) as LinearLayout
+                R.layout.record_details_fragment, container, false) as LinearLayout
 
         val recordHeader = layout.findViewById<TextView>(R.id.record_header_text)
         titleTextView = layout.findViewById(R.id.record_details_simple_title)
@@ -122,6 +123,7 @@ class DetailsFragment : Fragment() {
 
         // Start async image load
         val url = getUrl("/opac/extras/ac/jacket/medium/r/" + record!!.doc_id)
+        Log.d("xyzzy", "${record?.doc_id}: setimageurl $url")
         recordImage?.setImageUrl(url, Volley.getInstance(activity).imageLoader)
         //recordImage?.setDefaultImageResId(R.drawable.missing_art);//for screenshots
 
@@ -190,6 +192,7 @@ class DetailsFragment : Fragment() {
 
     private fun updateButtonViews() {
         val isOnlineResource = App.getBehavior().isOnlineResource(record)
+        Log.d("xyzzy", "${record?.doc_id}: updateButtonViews")
         Log.d(TAG, "updateButtonViews: title:${record?.title} isOnlineResource:$isOnlineResource")
         if (isOnlineResource == null) return  // not ready yet
         placeHoldButton?.isEnabled = true
@@ -241,22 +244,27 @@ class DetailsFragment : Fragment() {
         val coroutineScope = (activity as? CoroutineScope) ?: return
         coroutineScope.async {
             try {
+                Log.d(TAG, "[kcxxx] fetchData ...")
+                Log.d("xyzzy", "${record.doc_id}: fetchData")
                 val start = System.currentTimeMillis()
                 var jobs = mutableListOf<Job>()
 
                 jobs.add(async {
                     GatewayLoader.loadRecordMetadataAsync(record)
+                    Log.d("xyzzy", "${record.doc_id}: loadMetadata")
                     loadMetadata()
                 })
 
                 jobs.add(async {
                     GatewayLoader.loadRecordAttributesAsync(record)
+                    Log.d("xyzzy", "${record.doc_id}: loadFormat")
                     loadFormat()
                 })
 
                 if (resources.getBoolean(R.bool.ou_need_marc_record)) {
                     jobs.add(async {
                         GatewayLoader.loadRecordMarcAsync(record)
+                        Log.d("xyzzy", "${record.doc_id}: loadRecordMarcAsync")
                     })
                 }
 
@@ -270,6 +278,7 @@ class DetailsFragment : Fragment() {
                 if (isOnlineResource != true) {
                     jobs.add(async {
                         GatewayLoader.loadRecordCopyCountsAsync(record, orgID)
+                        Log.d("xyzzy", "${record.doc_id}: loadCopyCount")
                         loadCopyCount()
                     })
                 }
