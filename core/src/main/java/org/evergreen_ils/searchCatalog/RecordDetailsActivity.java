@@ -36,14 +36,14 @@ import java.util.ArrayList;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
-import androidx.viewpager2.adapter.FragmentStateAdapter;
-import androidx.viewpager2.widget.ViewPager2;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentPagerAdapter;
+import androidx.viewpager.widget.ViewPager;
 
 public class RecordDetailsActivity extends BaseActivity {
     private static final String TAG = RecordDetailsActivity.class.getSimpleName();
 
-    public ViewPager2 mPager;
+    public ViewPager mPager;
 
     private ArrayList<RecordInfo> records = new ArrayList<>();
 
@@ -75,7 +75,7 @@ public class RecordDetailsActivity extends BaseActivity {
         numResults = getIntent().getIntExtra("numResults", records.size());
 
         mPager = findViewById(R.id.pager);
-        mPager.setAdapter(new SearchFragmentAdapter(this));
+        mPager.setAdapter(new SearchFragmentAdapter(getSupportFragmentManager()));
         mPager.setCurrentItem(recordPosition);
     }
 
@@ -105,19 +105,19 @@ public class RecordDetailsActivity extends BaseActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    class SearchFragmentAdapter extends FragmentStateAdapter {
-        public SearchFragmentAdapter(FragmentActivity fa) {
-            super(fa);
+    class SearchFragmentAdapter extends FragmentPagerAdapter {
+        public SearchFragmentAdapter(FragmentManager fm) {
+            super(fm);
         }
 
         @NonNull
         @Override
-        public Fragment createFragment(int position) {
+        public Fragment getItem(int position) {
             return DetailsFragment.create(records.get(position), orgID, position, numResults);
         }
 
         @Override
-        public int getItemCount() {
+        public int getCount() {
             return records.size();
         }
     }
