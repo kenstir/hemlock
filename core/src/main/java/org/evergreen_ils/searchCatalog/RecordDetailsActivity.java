@@ -38,6 +38,7 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
+import androidx.fragment.app.FragmentStatePagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
 public class RecordDetailsActivity extends BaseActivity {
@@ -105,9 +106,10 @@ public class RecordDetailsActivity extends BaseActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    class SearchFragmentAdapter extends FragmentPagerAdapter {
+    class SearchFragmentAdapter extends FragmentStatePagerAdapter {
         public SearchFragmentAdapter(FragmentManager fm) {
-            super(fm);
+            //super(fm, BEHAVIOR_SET_USER_VISIBLE_HINT); //compatible
+            super(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT); //recommended
         }
 
         @NonNull
