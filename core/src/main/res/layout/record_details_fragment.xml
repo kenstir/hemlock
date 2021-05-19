@@ -133,6 +133,14 @@
                     android:text="@string/add_to_my_list_button" />
             </LinearLayout>
 
+            <Button
+                android:id="@+id/extras_button"
+                style="?android:buttonBarButtonStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:minHeight="@dimen/target_min_height"
+                android:text="@string/ou_details_link_text" />
+
             <TableLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

@@ -72,6 +72,7 @@ class DetailsFragment : Fragment() {
     private var showCopiesButton: Button? = null
     private var onlineAccessButton: Button? = null
     private var addToBookbagButton: Button? = null
+    private var extrasButton: Button? = null
     private var recordImage: NetworkImageView? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -112,6 +113,7 @@ class DetailsFragment : Fragment() {
         showCopiesButton = layout.findViewById(R.id.show_copy_information_button)
         onlineAccessButton = layout.findViewById(R.id.record_details_online_button)
         addToBookbagButton = layout.findViewById(R.id.add_to_bookbag_button)
+        extrasButton = layout.findViewById(R.id.extras_button)
         synopsisTableRow = layout.findViewById(R.id.record_details_synopsis_row)
         seriesTableRow = layout.findViewById(R.id.record_details_series_row)
         subjectTableRow = layout.findViewById(R.id.record_details_subject_row)
@@ -158,6 +160,18 @@ class DetailsFragment : Fragment() {
                 showAddToListDialog(it, App.getAccount().bookBags, record!!)
             }
         }
+        val extrasLinkText = resources.getString(R.string.ou_details_link_text)
+        if (extrasLinkText.isEmpty()) {
+            extrasButton?.visibility = View.GONE
+        } else {
+            extrasButton?.text = extrasLinkText
+            extrasButton?.setOnClickListener {
+                val url = StringBuilder(resources.getString(R.string.ou_library_url))
+                url.append("/eg/opac/record/").append(record?.doc_id)
+                url.append("#").append(resources.getString(R.string.ou_details_link_fragment))
+                launchURL(url.toString())
+            }
+        }
     }
 
     private fun launchURL(url: String) {
@@ -186,7 +200,7 @@ class DetailsFragment : Fragment() {
         for (i in titles.indices) titles[i] = links[i].text
         val builder = AlertDialog.Builder(activity)
         builder.setTitle(R.string.record_online_access)
-        builder.setItems(titles) { dialog, which -> launchURL(links[which].href) }
+        builder.setItems(titles) { _, which -> launchURL(links[which].href) }
         builder.create().show()
     }
 

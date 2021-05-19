@@ -12,6 +12,8 @@
     <string name="ou_behavior_provider">net.kenstir.apps.pines.PinesAppBehavior</string>
     <string name="ou_menu_provider">net.kenstir.apps.pines.PinesMenuProvider</string>
     <string name="ou_barcode_format">Codabar</string>
+    <string name="ou_details_link_text">Recommended Reads</string>
+    <string name="ou_details_link_fragment">awards</string>
     <bool name="ou_hierarchical_org_tree">true</bool>
     <bool name="ou_group_copy_info_by_system">true</bool>
     <bool name="ou_enable_phone_notification">true</bool>

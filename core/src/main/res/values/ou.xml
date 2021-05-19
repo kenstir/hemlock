@@ -34,6 +34,10 @@
     <string name="ou_sort_by"></string>
     <!-- if non-empty, the Barcode format to display for Show Card -->
     <string name="ou_barcode_format"></string>
+    <!-- if non-empty, the text of link to add to Item Details -->
+    <string name="ou_details_link_text"></string>
+    <!-- if non-empty, the URL fragment to add to Item Details /eg/opac/record/6276882#awards -->
+    <string name="ou_details_link_fragment"></string>
     <!-- if true, organize library spinners hierarchically -->
     <bool name="ou_hierarchical_org_tree">true</bool>
     <!-- if true, group copy information by system and branch, instead of by branch -->
