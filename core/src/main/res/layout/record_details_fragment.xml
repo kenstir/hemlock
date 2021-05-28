@@ -133,14 +133,6 @@
                     android:text="@string/add_to_my_list_button" />
             </LinearLayout>
 
-            <Button
-                android:id="@+id/extras_button"
-                style="?android:buttonBarButtonStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:minHeight="@dimen/target_min_height"
-                android:text="@string/ou_details_link_text" />
-
             <TableLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -155,6 +147,17 @@
                         android:paddingTop="8dp"
                         android:paddingBottom="8dp"
                         tools:text="Fourteen-year-old Harry Potter joins the Weasleys at the Quidditch World Cup, then enters his fourth year at Hogwarts Academy where he is mysteriously entered in an unusual contest..." />
+                </TableRow>
+
+                <TableRow>
+                    <Button
+                        android:id="@+id/extras_button"
+                        style="?android:buttonBarButtonStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:minHeight="@dimen/target_min_height"
+                        android:text="@string/ou_details_link_text"
+                        tools:text="Recommended Reads"/>
                 </TableRow>
 
                 <TableRow android:id="@+id/record_details_series_row">
