@@ -23,6 +23,7 @@ import android.content.Intent;
 import android.net.Uri;
 
 import org.evergreen_ils.net.Gateway;
+import org.evergreen_ils.utils.ui.ActivityUtils;
 import org.evergreen_ils.views.MenuProvider;
 
 import androidx.annotation.Keep;
@@ -40,27 +41,18 @@ public class PinesMenuProvider extends MenuProvider {
         if (id == R.id.open_full_catalog_button) {
             //Analytics.logEvent("fullcatalog_click", "via", via);
             String url = activity.getString(org.evergreen_ils.R.string.ou_library_url);
-            launchURL(activity, url);
+            ActivityUtils.launchURL(activity, url);
         } else if (id == R.id.library_locator_button) {
             //Analytics.logEvent("librarylocator_click", "via", via);
             String url = "https://pines.georgialibraries.org/pinesLocator/locator.html";
-            launchURL(activity, url);
+            ActivityUtils.launchURL(activity, url);
         } else if (id == R.id.patron_message_center) {
             //Analytics.logEvent("messages_click", "via", "options_menu");
             String url = Gateway.INSTANCE.getUrl("/eg/opac/myopac/messages");
-            launchURL(activity, url);
+            ActivityUtils.launchURL(activity, url);
         } else {
             return false;
         }
         return true;
-    }
-
-    void launchURL(Activity activity, String url) {
-        if (url == null) return;
-        Uri uri = Uri.parse(url);
-        Intent intent = new Intent(Intent.ACTION_VIEW, uri);
-        if (intent.resolveActivity(activity.getPackageManager()) != null) {
-            activity.startActivity(intent);
-        }
     }
 }

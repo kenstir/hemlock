@@ -177,8 +177,8 @@ class DetailsFragment : Fragment() {
     private fun launchURL(url: String) {
         val uri = Uri.parse(url)
         val intent = Intent(Intent.ACTION_VIEW, uri)
-        activity?.packageManager?.let {
-            if (intent.resolveActivity(it) != null) {
+        activity?.packageManager?.let { pm ->
+            if (intent.resolveActivity(pm) != null) {
                 startActivity(intent)
             }
         }

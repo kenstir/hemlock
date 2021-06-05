@@ -3,6 +3,7 @@ package org.evergreen_ils.auth;
 import android.accounts.Account;
 import android.accounts.AccountAuthenticatorActivity;
 import android.accounts.AccountManager;
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
@@ -21,6 +22,7 @@ import org.evergreen_ils.android.App;
 import org.evergreen_ils.R;
 import org.evergreen_ils.android.Analytics;
 import org.evergreen_ils.data.Library;
+import org.evergreen_ils.utils.ui.ActivityUtils;
 import org.evergreen_ils.utils.ui.AppState;
 
 public class AuthenticatorActivity extends AccountAuthenticatorActivity {
@@ -50,6 +52,7 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity {
         setContentView(R.layout.activity_login);
     }
 
+    @SuppressLint("StringFormatInvalid")
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -95,7 +98,7 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity {
                 @Override
                 public void onClick(View v) {
                     String url = getString(R.string.ou_library_url) + "/eg/opac/password_reset";
-                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
+                    ActivityUtils.launchURL(AuthenticatorActivity.this, url);
                 }
             });
         }
