@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="org.cwmars"
     android:installLocation="auto"
-    android:versionCode="99"
+    android:versionCode="100"
     android:versionName="5.3.0.3">
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
