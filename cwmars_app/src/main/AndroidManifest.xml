@@ -4,7 +4,7 @@
     package="org.cwmars"
     android:installLocation="auto"
     android:versionCode="99"
-    android:versionName="5.3.3">
+    android:versionName="5.3.0.3">
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS" />

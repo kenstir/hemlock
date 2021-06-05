@@ -4,7 +4,7 @@
     package="net.kenstir.apps.hemlock"
           android:installLocation="auto"
           android:versionCode="89"
-          android:versionName="5.3.0">
+          android:versionName="5.3.0.0">
 
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />

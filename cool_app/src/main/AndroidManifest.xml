@@ -4,7 +4,7 @@
     package="net.kenstir.apps.cool"
           android:installLocation="auto"
           android:versionCode="14"
-          android:versionName="2.3.0">
+          android:versionName="2.3.0.0">
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS" />
