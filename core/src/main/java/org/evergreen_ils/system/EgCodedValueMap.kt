@@ -63,8 +63,9 @@ object EgCodedValueMap {
             else -> return null
         }
         val cv = codedValues.firstOrNull { code == it.code }
-        if (cv == null)
-            Analytics.logException(ShouldNotHappenException("Unknown ccvm code: $code"))
+        // It happens often...~4k times in 30d for PINES
+        // and represents a cataloging problem, not an app issue
+        //if (cv == null) Analytics.logException(ShouldNotHappenException("Unknown ccvm code: $code"))
         return cv?.value
     }
 
