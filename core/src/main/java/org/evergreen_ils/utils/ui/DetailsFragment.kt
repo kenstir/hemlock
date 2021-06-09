@@ -124,7 +124,7 @@ class DetailsFragment : Fragment() {
         initButtons()
 
         // Start async image load
-        val url = getUrl("/opac/extras/ac/jacket/medium/r/" + record!!.doc_id)
+        val url = getUrl("/opac/extras/ac/jacket/medium/r/" + record?.doc_id)
         Log.d("xyzzy", "${record?.doc_id}: setimageurl $url")
         recordImage?.setImageUrl(url, Volley.getInstance(activity).imageLoader)
         //recordImage?.setDefaultImageResId(R.drawable.missing_art);//for screenshots
@@ -157,7 +157,9 @@ class DetailsFragment : Fragment() {
         addToBookbagButton?.setOnClickListener {
             //Analytics.logEvent("lists_addtolist", "via", "details_button")
             (activity as? BaseActivity)?.let {
-                showAddToListDialog(it, App.getAccount().bookBags, record!!)
+                record?.let { record ->
+                    showAddToListDialog(it, App.getAccount().bookBags, record)
+                }
             }
         }
         val extrasLinkText = resources.getString(R.string.ou_details_link_text)
@@ -312,8 +314,7 @@ class DetailsFragment : Fragment() {
     companion object {
         private val TAG = DetailsFragment::class.java.simpleName
 
-        @JvmStatic
-        fun create(record: RecordInfo, orgID: Int, position: Int, total: Int): DetailsFragment {
+                                                            fun create(record: RecordInfo?, orgID: Int, position: Int, total: Int): DetailsFragment {
             val fragment = DetailsFragment()
             fragment.record = record
             fragment.orgID = orgID
