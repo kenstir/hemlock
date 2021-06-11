@@ -1,7 +1,8 @@
 /*
  * Copyright (C) 2012 Evergreen Open-ILS
  * @author Daniel-Octavian Rizea
- * 
+ * Kotlin conversion by Kenneth H. Cox
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -19,17 +20,14 @@
  */
 package org.evergreen_ils.searchCatalog
 
-import org.evergreen_ils.system.EgSearch.results
 import org.evergreen_ils.utils.ui.BaseActivity
 import androidx.viewpager.widget.ViewPager
-import org.evergreen_ils.searchCatalog.RecordInfo
 import android.os.Bundle
 import org.evergreen_ils.android.App
 import org.evergreen_ils.R
 import org.evergreen_ils.utils.ui.ActionBarUtils
 import org.evergreen_ils.system.EgSearch
 import org.evergreen_ils.system.EgOrg
-import org.evergreen_ils.searchCatalog.RecordDetailsActivity.SearchFragmentAdapter
 import android.content.Intent
 import android.view.KeyEvent
 import android.view.MenuItem
@@ -57,7 +55,7 @@ class RecordDetailsActivity : BaseActivity() {
         // Copy either serialized recordList or search results into our own ArrayList.
         // This is an attempt to fix an IllegalStateException crash (see commit for details).
         var recordList = intent.getSerializableExtra("recordList") as? ArrayList<RecordInfo>
-        if (recordList == null) recordList = results
+        if (recordList == null) recordList = EgSearch.results
         records.clear()
         records.addAll(recordList)
 
@@ -66,8 +64,8 @@ class RecordDetailsActivity : BaseActivity() {
         val recordPosition = intent.getIntExtra("recordPosition", 0)
         numResults = intent.getIntExtra("numResults", records.size)
         mPager = findViewById(R.id.pager)
-        mPager?.setAdapter(SearchFragmentAdapter(supportFragmentManager))
-        mPager?.setCurrentItem(recordPosition)
+        mPager?.adapter = SearchFragmentAdapter(supportFragmentManager)
+        mPager?.currentItem = recordPosition
     }
 
     private fun finishWithIntent() {
