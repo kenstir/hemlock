@@ -56,7 +56,7 @@ class RecordDetailsActivity : BaseActivity() {
 
         // Copy either serialized recordList or search results into our own ArrayList.
         // This is an attempt to fix an IllegalStateException crash (see commit for details).
-        var recordList = intent.getSerializableExtra("recordList") as ArrayList<RecordInfo>
+        var recordList = intent.getSerializableExtra("recordList") as? ArrayList<RecordInfo>
         if (recordList == null) recordList = results
         records.clear()
         records.addAll(recordList)
