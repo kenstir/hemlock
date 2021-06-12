@@ -33,6 +33,8 @@ object Analytics {
         const val ACCOUNT_ADD = "account_add"
         const val ACCOUNT_LOGOUT = "account_logout"
         const val ACCOUNT_SWITCH = "account_switch"
+        const val BOOKBAG_LOAD = "bookbag_load"
+        const val BOOKBAGS_LOAD = "bookbags_load"
         const val FEEDBACK_OPEN = "feedback_open"
         const val HOLD_CANCEL_HOLD = "hold_cancel"
         const val HOLD_PLACE_HOLD = "hold_place"
@@ -48,6 +50,7 @@ object Analytics {
         const val HOLD_NOTIFY = "hold_notify"
         const val HOLD_PICKUP_KEY = "hold_pickup" // { home | other }
         const val LOGIN_TYPE = "login_type" // { barcode | username }
+        const val NUM_ITEMS = "num_items"
         const val NUM_RESULTS = "num_results"
         const val RESULT = "result" // { ok | error_message }
         const val SEARCH_CLASS = "search_class"

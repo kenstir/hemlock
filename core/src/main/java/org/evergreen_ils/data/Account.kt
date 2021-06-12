@@ -18,7 +18,9 @@
 
 package org.evergreen_ils.data
 
+import androidx.core.os.bundleOf
 import org.evergreen_ils.Api
+import org.evergreen_ils.android.Analytics
 import org.evergreen_ils.net.GatewayEventError
 import org.opensrf.util.OSRFObject
 
@@ -100,6 +102,9 @@ class Account constructor(val username: String, var authToken: String?) {
     fun loadBookBags(objects: List<OSRFObject>) {
         bookBags = BookBag.makeArray(objects)
         bookBagsLoaded = true
+        Analytics.logEvent(Analytics.Event.BOOKBAGS_LOAD, bundleOf(
+            Analytics.Param.NUM_ITEMS to bookBags.size
+        ))
     }
 
     fun parseHoldNotifyValue(value: String?) {

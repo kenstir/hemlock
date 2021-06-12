@@ -18,8 +18,10 @@
 
 package org.evergreen_ils.net
 
+import androidx.core.os.bundleOf
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
+import org.evergreen_ils.android.Analytics
 import org.evergreen_ils.android.App
 import org.evergreen_ils.android.Log
 import org.evergreen_ils.data.Account
@@ -84,6 +86,9 @@ object GatewayLoader {
         val obj = result.get()
         Log.d(TAG, "[bookbag] bag content:$obj")
         bookBag.fleshFromObject(obj)
+        Analytics.logEvent(Analytics.Event.BOOKBAG_LOAD, bundleOf(
+            Analytics.Param.NUM_ITEMS to bookBag.items.size
+        ))
 
         return Result.Success(Unit)
     }

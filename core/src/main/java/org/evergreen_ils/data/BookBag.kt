@@ -17,6 +17,8 @@
  */
 package org.evergreen_ils.data
 
+import androidx.core.os.bundleOf
+import org.evergreen_ils.android.Analytics
 import org.opensrf.util.OSRFObject
 import java.io.Serializable
 import java.util.*
