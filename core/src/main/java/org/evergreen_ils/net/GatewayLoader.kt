@@ -49,6 +49,7 @@ object GatewayLoader {
         }
     }
 
+    // this function reloads the org, so we can be sure the hours of operation are up-to-date
     suspend fun loadOrgAsync(org: Organization?) = GlobalScope.async {
         val id = org?.id ?: return@async
         val result = Gateway.actor.fetchOrg(id)
