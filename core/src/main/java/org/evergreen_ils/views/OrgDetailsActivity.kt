@@ -241,7 +241,7 @@ class OrgDetailsActivity : BaseActivity() {
                 })
 
                 jobs.add(async {
-                    GatewayLoader.loadOrg(org).await()
+                    GatewayLoader.loadOrgAsync(org).await()
                 })
 
                 jobs.add(async {

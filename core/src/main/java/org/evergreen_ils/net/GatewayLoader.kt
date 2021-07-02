@@ -49,7 +49,7 @@ object GatewayLoader {
         }
     }
 
-    suspend fun loadOrg(org: Organization?) = GlobalScope.async {
+    suspend fun loadOrgAsync(org: Organization?) = GlobalScope.async {
         val id = org?.id ?: return@async
         val result = Gateway.actor.fetchOrg(id)
         if (result is Result.Success) {

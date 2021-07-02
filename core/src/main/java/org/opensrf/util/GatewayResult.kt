@@ -111,6 +111,7 @@ class GatewayResult {
         return try {
             payload as String
         } catch (ex: Exception) {
+            // TODO: add analytics
             throw GatewayError("Internal Server Error: expected string, got $type")
         }
     }
