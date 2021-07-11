@@ -45,7 +45,7 @@ import androidx.annotation.Nullable;
 public class Api {
 
     public static final String ANONYMOUS = "ANONYMOUS";
-    public static final String IDL_CLASSES_USED = "ac,acn,acp,ahr,ahtc,aoa,aou,aouhoo,aout,au,aua,auact,aum,aus,bmp,bre,cbreb,cbrebi,cbrebin,cbrebn,ccs,ccvm,cfg,circ,csc,cuat,ex,mbt,mbts,mous,mra,mraf,mus,mvr,perm_ex";
+    public static final String IDL_CLASSES_USED = "ac,acn,acp,ahr,ahrn,ahtc,aoa,aou,aouhoo,aout,au,aua,auact,aum,aus,bmp,bre,cbreb,cbrebi,cbrebin,cbrebn,ccs,ccvm,cfg,circ,csc,cuat,ex,mbt,mbts,mous,mra,mraf,mus,mvr,perm_ex";
     public static final int LONG_TIMEOUT_MS = 10000;
 
     /// actor
