@@ -209,10 +209,11 @@ public class GenericAuthenticatorActivity extends AuthenticatorActivity {
         libraries.clear();
 
         if (isDebuggable(this)) {
-            libraries.add(new Library("https://webby.evergreencatalog.com", "evergreencatalog.com Demo", "0ut There, US  (evergreencatalog.com Demo)", null));
+            //libraries.add(new Library("https://webby.evergreencatalog.com", "evergreencatalog.com Demo", "0ut There, US  (evergreencatalog.com Demo)", null));
             //new Library("https://demo.evergreencatalog.com", "evergreencatalog.com Demo", "0ut There, US  (evergreencatalog.com Demo)", null);
             //new Library("http://mlnc4.mvlcstaff.org"), "MVLC Demo", "0ut There, US (MVLC Demo)", null);// Android does not like this cert
-            libraries.add(new Library("https://kenstir.ddns.net", "debug catalog", "00debug catalog", null));
+            //libraries.add(new Library("https://kenstir.ddns.net", "debug catalog", "00debug catalog", null));
+            libraries.add(new Library("http://192.168.1.4", "debug catalog", "00debug catalog", null));
         }
 
         if (json != null) {
