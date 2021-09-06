@@ -286,6 +286,10 @@ class DetailsFragment : Fragment() {
 
                 jobs.joinAll()
 
+                if (record.isDeleted) {
+                    throw java.lang.IllegalStateException("This item is marked deleted in the database.")
+                }
+
                 // Check for copy counts only after we know it is not an online_resource
                 val isOnlineResource = App.getBehavior().isOnlineResource(record)
                 if (isOnlineResource == null) {
