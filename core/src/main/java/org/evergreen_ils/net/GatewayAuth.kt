@@ -31,4 +31,13 @@ object GatewayAuth: AuthService {
             Result.Error(e)
         }
     }
+
+    override suspend fun deleteSession(authToken: String): Result<OSRFObject> {
+        return try {
+            val ret = Gateway.fetchObject(Api.AUTH, Api.AUTH_SESSION_DELETE, arrayOf(authToken), false)
+            Result.Success(ret)
+        } catch (e: Exception) {
+            Result.Error(e)
+        }
+    }
 }

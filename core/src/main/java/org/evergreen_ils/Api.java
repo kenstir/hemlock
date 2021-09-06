@@ -90,6 +90,7 @@ public class Api {
     public static final String AUTH_INIT = "open-ils.auth.authenticate.init";
     public static final String AUTH_COMPLETE = "open-ils.auth.authenticate.complete";
     public static final String AUTH_SESSION_RETRIEVE = "open-ils.auth.session.retrieve"; // au
+    public static final String AUTH_SESSION_DELETE = "open-ils.auth.session.delete";
 
     /// circ
 

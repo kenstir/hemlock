@@ -21,20 +21,25 @@ package org.evergreen_ils.test
 import android.os.Bundle
 import androidx.test.platform.app.InstrumentationRegistry
 import com.android.volley.TimeoutError
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.*
 import org.evergreen_ils.Api
+import org.evergreen_ils.android.App
 import org.evergreen_ils.android.Log
 import org.evergreen_ils.android.StdoutLogProvider
+import org.evergreen_ils.auth.EvergreenAuthenticator
+import org.evergreen_ils.data.Account
+import org.evergreen_ils.data.BookBag
 import org.evergreen_ils.data.Result
-import org.evergreen_ils.net.Gateway
-import org.evergreen_ils.net.RequestOptions
-import org.evergreen_ils.net.Volley
+import org.evergreen_ils.net.*
+import org.evergreen_ils.system.EgIDL
 import org.evergreen_ils.utils.getCustomMessage
+import org.evergreen_ils.utils.ui.showAlert
+import org.junit.AfterClass
 import org.junit.Assert.*
 import org.junit.BeforeClass
 import org.junit.Test
+import org.opensrf.util.OSRFObject
+import org.opensrf.util.OSRFRegistry
 
 class LiveGatewayTest {
 
@@ -42,6 +47,16 @@ class LiveGatewayTest {
         private val TAG = LiveGatewayTest::class.java.simpleName
 
         lateinit var args: Bundle
+        lateinit var server: String
+        lateinit var username: String
+        lateinit var password: String
+        lateinit var account: Account
+
+        var authToken = ""
+        //var bookagId: Int? = 2656342
+        var bookbagId: Int? = 1087308
+
+        var isIDLLoaded = false
 
         @BeforeClass
         @JvmStatic
@@ -52,14 +67,65 @@ class LiveGatewayTest {
             val ctx = InstrumentationRegistry.getInstrumentation().targetContext
             Volley.init(ctx)
 
-            // See root build.gradle for notes on customizing instrumented test variables
+            // See root build.gradle for notes on customizing instrumented test variables (hint: secret.gradle)
             args = InstrumentationRegistry.getArguments()
-            val server = args.getString("server") ?: "https://gapines.org"
-            val username = args.getString("username")
-            val password = args.getString("password")
+            server = args.getString("server") ?: "https://demo.evergreencatalog.com/"
+            username = args.getString("username") ?: "no-such-user"
+            password = args.getString("password") ?: "password1"
+
+            account = Account(username)
 
             Gateway.baseUrl = server
             Gateway.clientCacheKey = "42"
+        }
+
+        @AfterClass
+        @JvmStatic
+        fun tearDownClass() {
+            if (authToken.isEmpty()) return
+
+            Log.d(TAG, "deleting session with authToken=${authToken}")
+            runBlocking {
+                launch(Dispatchers.Main) {
+                    Gateway.auth.deleteSession(authToken)
+                }
+            }
+        }
+
+        // stripped down version of LaunchActivity.getAccount()
+        @JvmStatic
+        fun getAccount() {
+            if (authToken.isNotEmpty()) return
+
+            authToken = EvergreenAuthenticator.signIn(server, username, password)
+            Log.d(TAG, "authToken=${authToken}")
+            account.authToken = authToken
+            App.setAccount(account)
+        }
+
+        // stripped down version of LaunchActivity.getSession()
+        @JvmStatic
+        suspend fun getSession() {
+            if (account.id != null) return
+
+            val sessionResult = Gateway.auth.fetchSession(authToken)
+            when (sessionResult) {
+                is Result.Success -> account.loadSession(sessionResult.data)
+                is Result.Error -> {
+                    throw sessionResult.exception
+                }
+            }
+        }
+
+        // stripped down version of LaunchViewModel.loadServiceData()
+        @JvmStatic
+        suspend fun loadServiceData() {
+            if (!isIDLLoaded) {
+                Log.d(TAG, "registry:${OSRFRegistry.getRegistry("au")}")
+                EgIDL.loadIDL()
+                Log.d(TAG, "registry:${OSRFRegistry.getRegistry("au")}")
+                isIDLLoaded = true
+            }
         }
     }
 
@@ -80,7 +146,7 @@ class LiveGatewayTest {
     @Test
     fun test_directSuspendFun() {
         runBlocking {
-            launch(Dispatchers.IO) {
+            launch(Dispatchers.Main) {
                 val version = Gateway.fetch(Api.ACTOR, Api.ILS_VERSION, arrayOf(), false) { response ->
                     response.asString()
                 }
@@ -168,6 +234,89 @@ class LiveGatewayTest {
                 val result = fetchStringWithDelay(10_000, 0f)
                 logResult(result)
                 assertTrue(result.succeeded)
+            }
+        }
+    }
+
+    @Test
+    fun test_loadBookbags() {
+        getAccount()
+        runBlocking {
+            launch(Dispatchers.Main) {
+                loadServiceData()
+                getSession()
+
+                var jobs = mutableListOf<Job>()
+
+                // fetch bookbags
+                when (val result = GatewayLoader.loadBookBagsAsync(App.getAccount())) {
+                    is Result.Success -> {}
+                    is Result.Error -> { throw result.exception }
+                }
+
+                // flesh bookbags
+                for (bookBag in App.getAccount().bookBags) {
+                    jobs.add(async {
+                        GatewayLoader.loadBookBagContents(App.getAccount(), bookBag)
+                    })
+                }
+
+                jobs.joinAll()
+                assertTrue(true)
+            }
+        }
+    }
+
+    @Test
+    fun test_loadBookbagContents() {
+        val id = bookbagId ?: return
+
+        getAccount()
+        runBlocking {
+            launch(Dispatchers.Main) {
+                loadServiceData()
+                getSession()
+
+                val bookBag = BookBag(id, "a list", OSRFObject())
+                val args = arrayOf<Any?>(authToken, Api.CONTAINER_CLASS_BIBLIO, id)
+                val ret = Gateway.fetchObject(Api.ACTOR, Api.CONTAINER_FLESH, args, false)
+                Log.d(TAG, "ret=${ret}")
+                bookBag.fleshFromObject(ret)
+
+                assertTrue(true)
+                assertEquals(3, bookBag.items.size)
+            }
+        }
+    }
+
+    @Test
+    fun test_loadBookbagContentsViaQuery() {
+        val id = bookbagId ?: return
+
+        getAccount()
+        runBlocking {
+            launch(Dispatchers.Main) {
+                loadServiceData()
+                getSession()
+
+                val query = "container(bre,bookbag,${id},${authToken})"
+                val result = Gateway.search.fetchMulticlassQuery(query, 200)
+                when (result) {
+                    is Result.Success -> Log.d(TAG, "bag success: ${result.data}")
+                    is Result.Error -> Log.d(TAG, "bag error: ${result.exception}")
+                }
+                val stuff = result.get()
+                Log.d(TAG, "stuff=${stuff}")
+/*
+                val bookBag = BookBag(id, "a list", OSRFObject())
+                val args = arrayOf<Any?>(authToken, Api.CONTAINER_CLASS_BIBLIO, id)
+                val ret = Gateway.fetchObject(Api.ACTOR, Api.CONTAINER_FLESH, args, false)
+                Log.d(TAG, "ret=${ret}")
+                bookBag.fleshFromObject(ret)
+
+                assertTrue(true)
+                assertEquals(3, bookBag.items.size)
+*/
             }
         }
     }
