@@ -160,7 +160,7 @@ class HoldsActivity : BaseActivity() {
                 Result.Error(GatewayError("unexpected hold type: ${hold.holdType}"))
             }
         }
-        Log.d(TAG, "$target: holdType:${hold.holdType} format:${hold.formatLabel} title:${hold.recordInfo.title}")
+        Log.d(TAG, "$target: holdType:${hold.holdType} format:${hold.formatLabel} title:${hold.recordInfo?.title}")
         return result
     }
 
