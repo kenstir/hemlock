@@ -32,7 +32,7 @@ import android.widget.TextView
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.joinAll
-import org.evergreen_ils.R
+import org.evergreen_ils.*
 import org.evergreen_ils.android.App
 import org.evergreen_ils.data.Account
 import org.evergreen_ils.data.HoldRecord
@@ -150,11 +150,16 @@ class HoldsActivity : BaseActivity() {
     suspend fun fetchHoldTargetDetails(hold: HoldRecord, account: Account): Result<Unit> {
         val target = hold.target ?: return Result.Error(GatewayError("null hold target"))
         val result = when (hold.holdType) {
-            "T" -> fetchTitleHoldTargetDetails(hold, target, account)
-            "M" -> fetchMetarecordHoldTargetDetails(hold, target, account)
-            "P" -> fetchPartHoldTargetDetails(hold, target, account)
-            "C" -> fetchCopyHoldTargetDetails(hold, target, account)
-            "V" -> fetchVolumeHoldTargetDetails(hold, target, account)
+            HOLD_TYPE_TITLE ->
+                fetchTitleHoldTargetDetails(hold, target, account)
+            HOLD_TYPE_METARECORD ->
+                fetchMetarecordHoldTargetDetails(hold, target, account)
+            HOLD_TYPE_PART ->
+                fetchPartHoldTargetDetails(hold, target, account)
+            HOLD_TYPE_COPY, HOLD_TYPE_FORCE, HOLD_TYPE_RECALL ->
+                fetchCopyHoldTargetDetails(hold, target, account)
+            HOLD_TYPE_VOLUME ->
+                fetchVolumeHoldTargetDetails(hold, target, account)
             else -> {
                 Analytics.logException(ShouldNotHappenException("unexpected holdType:${hold.holdType}"))
                 Result.Error(GatewayError("unexpected hold type: ${hold.holdType}"))
