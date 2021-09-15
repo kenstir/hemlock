@@ -2,9 +2,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="net.kenstir.apps.hemlock"
-          android:installLocation="auto"
-          android:versionCode="89"
-          android:versionName="5.3.0.0">
+    android:installLocation="auto"
+    android:versionCode="90"
+    android:versionName="5.3.2">
 
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -13,7 +13,6 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.MANAGE_ACCOUNTS" />
     <uses-permission android:name="android.permission.USE_CREDENTIALS" />
-    <uses-permission android:name="com.android.vending.BILLING" />
 
     <!-- uses-feature elements are used in Play Store device matching -->
     <uses-feature android:name="android.hardware.location" android:required="false" />
