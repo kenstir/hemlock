@@ -224,6 +224,7 @@ class GatewayResultTest {
             """
         val result = GatewayResult.create(json)
         assertFalse(result.failed)
+        @Suppress("UNCHECKED_CAST")
         val map = result.payload as? Map<String, Any?>
         assertNotNull(map)
         assertEquals("SUCCESS", map?.get("textcode"))
