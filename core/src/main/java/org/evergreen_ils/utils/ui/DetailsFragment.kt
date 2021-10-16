@@ -171,7 +171,14 @@ class DetailsFragment : Fragment() {
             extrasButton?.setOnClickListener {
                 val url = StringBuilder(resources.getString(R.string.ou_library_url))
                 url.append("/eg/opac/record/").append(record?.doc_id)
-                url.append("#").append(resources.getString(R.string.ou_details_link_fragment))
+                val q = resources.getString(R.string.ou_details_link_query)
+                if (q.isNotEmpty()) {
+                    url.append("?").append(q)
+                }
+                val frag = resources.getString(R.string.ou_details_link_fragment)
+                if (frag.isNotEmpty()) {
+                    url.append("#").append(frag)
+                }
                 launchURL(url.toString())
             }
         }
