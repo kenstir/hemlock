@@ -12,5 +12,6 @@
     <bool name="ou_enable_phone_notification">false</bool>
     <bool name="ou_enable_hold_queue_position">true</bool>
     <bool name="ou_enable_pay_fines">false</bool>
+    <bool name="ou_need_marc_record">true</bool>
     <integer name="ou_search_limit">100</integer>
 </resources>
