@@ -19,6 +19,7 @@
 package org.evergreen_ils.utils.ui
 
 import android.annotation.SuppressLint
+import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -27,6 +28,7 @@ import android.os.Bundle
 import android.text.TextUtils
 import android.view.MenuItem
 import android.view.View
+import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
@@ -144,11 +146,8 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         val id = item.itemId
         if (id == R.id.action_feedback) {
             Analytics.logEvent(Analytics.Event.FEEDBACK_OPEN)
-            val url = feedbackUrl
-            if (!TextUtils.isEmpty(url)) {
-                startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
-                return true
-            }
+            launchURL(feedbackUrl)
+            return true
         }
         return super.onOptionsItemSelected(item)
     }
@@ -202,9 +201,6 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
             logout()
             App.restartApp(this)
             return true
-        //} else if (id == R.id.action_feedback) {
-        //    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(getFeedbackUrl())));
-        //    return true;
         } else if (id == R.id.action_messages) {
             Analytics.logEvent(Analytics.Event.MESSAGES_OPEN)
             val url = Gateway.getUrl("/eg/opac/myopac/messages")
@@ -222,28 +218,27 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         return false
     }
 
+    // Starting with Android 11 (API level 30), you should just catch ActivityNotFoundException;
+    // calling resolveActivity requires permission.
+    // https://developer.android.com/training/package-visibility/use-cases
     fun launchURL(url: String?, requestId: Int? = null) {
-        if (url == null) return
+        if (url.isNullOrEmpty()) return
         val uri = Uri.parse(url)
         val intent = Intent(Intent.ACTION_VIEW, uri)
-        if (intent.resolveActivity(packageManager) != null) {
+        try {
             if (requestId != null) {
                 startActivityForResult(intent, requestId)
             } else {
                 startActivity(intent)
             }
+        } catch (e: ActivityNotFoundException) {
+            Toast.makeText(this, R.string.msg_no_browser_installed, Toast.LENGTH_LONG).show()
         }
     }
 
     protected open fun launchMap(address: String?) {
         val encodedAddress = URLEncoder.encode(address)
-        /*
-        Intent intent = new Intent(android.content.Intent.ACTION_VIEW,
-                Uri.parse("google.navigation:q=" + encodedAddress));
-        if (intent.resolveActivity(getPackageManager()) != null) {
-            startActivity(intent);
-        }
-         */
+        //val url = "google.navigation:q=" + encodedAddress
         val url = "https://www.google.com/maps/search/?api=1&query=$encodedAddress"
         launchURL(url)
     }
@@ -253,8 +248,10 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         val url = "tel:$phoneNumber"
         val uri = Uri.parse(url)
         val intent = Intent(Intent.ACTION_DIAL, uri)
-        if (intent.resolveActivity(packageManager) != null) {
+        try {
             startActivity(intent)
+        } catch (e: ActivityNotFoundException) {
+            e.message?.let { showAlert(it) }
         }
     }
 
@@ -263,8 +260,10 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         val url = "mailto:$to"
         val uri = Uri.parse(url)
         val intent = Intent(Intent.ACTION_SENDTO, uri)
-        if (intent.resolveActivity(packageManager) != null) {
+        try {
             startActivity(intent)
+        } catch (e: ActivityNotFoundException) {
+            e.message?.let { showAlert(it) }
         }
     }
 
