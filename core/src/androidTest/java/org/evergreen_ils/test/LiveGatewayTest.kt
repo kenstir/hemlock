@@ -53,8 +53,8 @@ class LiveGatewayTest {
         lateinit var account: Account
 
         var authToken = ""
-        //var bookagId: Int? = 2656342
-        //var bookbagId: Int? = 1087308
+        //var bookbagId: Int? = 2656342
+        //var bookbagId: Int? = 1087308 // cool
         var bookbagId: Int? = null
 
         var isIDLLoaded = false
@@ -279,13 +279,12 @@ class LiveGatewayTest {
                 getSession()
 
                 val bookBag = BookBag(id, "a list", OSRFObject())
-                val args = arrayOf<Any?>(authToken, Api.CONTAINER_CLASS_BIBLIO, id)
-                val ret = Gateway.fetchObject(Api.ACTOR, Api.CONTAINER_FLESH, args, false)
-                Log.d(TAG, "ret=${ret}")
-                bookBag.fleshFromObject(ret)
+                val result = Gateway.actor.fleshBookBagAsync(account, id)
+                logResult(result)
+                val obj = result.get()
+                bookBag.fleshFromObject(obj)
 
                 assertTrue(true)
-                assertEquals(3, bookBag.items.size)
             }
         }
     }
@@ -308,16 +307,6 @@ class LiveGatewayTest {
                 }
                 val stuff = result.get()
                 Log.d(TAG, "stuff=${stuff}")
-/*
-                val bookBag = BookBag(id, "a list", OSRFObject())
-                val args = arrayOf<Any?>(authToken, Api.CONTAINER_CLASS_BIBLIO, id)
-                val ret = Gateway.fetchObject(Api.ACTOR, Api.CONTAINER_FLESH, args, false)
-                Log.d(TAG, "ret=${ret}")
-                bookBag.fleshFromObject(ret)
-
-                assertTrue(true)
-                assertEquals(3, bookBag.items.size)
-*/
             }
         }
     }
