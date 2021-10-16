@@ -54,7 +54,8 @@ class LiveGatewayTest {
 
         var authToken = ""
         //var bookagId: Int? = 2656342
-        var bookbagId: Int? = 1087308
+        //var bookbagId: Int? = 1087308
+        var bookbagId: Int? = null
 
         var isIDLLoaded = false
 
