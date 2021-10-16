@@ -5,6 +5,14 @@
       <configuration PROFILE_NAME="Debug" CONFIG_NAME="Debug" />
     </configurations>
   </component>
+  <component name="DesignSurface">
+    <option name="filePathToZoomLevelMap">
+      <map>
+        <entry key="..\:/src/hemlock/core/src/main/res/layout/activity_fines.xml" value="0.23489583333333333" />
+        <entry key="..\:/src/hemlock/core/src/main/res/layout/fines_list.xml" value="0.23489583333333333" />
+      </map>
+    </option>
+  </component>
   <component name="EntryPointsManager">
     <list size="1">
       <item index="0" class="java.lang.String" itemvalue="androidx.annotation.Keep" />

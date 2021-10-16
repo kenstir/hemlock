@@ -20,6 +20,7 @@
 package org.evergreen_ils.utils.ui
 
 import android.app.AlertDialog
+import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -177,13 +178,7 @@ class DetailsFragment : Fragment() {
     }
 
     private fun launchURL(url: String) {
-        val uri = Uri.parse(url)
-        val intent = Intent(Intent.ACTION_VIEW, uri)
-        activity?.packageManager?.let { pm ->
-            if (intent.resolveActivity(pm) != null) {
-                startActivity(intent)
-            }
-        }
+        (activity as? BaseActivity)?.launchURL(url)
     }
 
     private fun launchOnlineAccess() {

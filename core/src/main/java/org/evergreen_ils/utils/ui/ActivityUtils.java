@@ -19,16 +19,22 @@
 package org.evergreen_ils.utils.ui;
 
 import android.app.Activity;
+import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.net.Uri;
+import android.widget.Toast;
+
+import org.evergreen_ils.R;
 
 public class ActivityUtils {
     public static void launchURL(Activity activity, String url) {
         if (url == null) return;
         Uri uri = Uri.parse(url);
         Intent intent = new Intent(Intent.ACTION_VIEW, uri);
-        if (intent.resolveActivity(activity.getPackageManager()) != null) {
+        try {
             activity.startActivity(intent);
+        } catch (ActivityNotFoundException e) {
+            Toast.makeText(activity, R.string.msg_no_browser_installed, Toast.LENGTH_LONG).show();
         }
     }
 }
