@@ -75,6 +75,7 @@ public class RecordInfo implements Serializable {
     public boolean hasAttributes = false;
     public boolean hasCopySummary = false;
     public boolean hasMARC = false;
+    public boolean isDeleted = false;
 
     public ArrayList<CopySummary> copySummaryList = null;
     public MARCRecord marc_record = null;
@@ -140,8 +141,8 @@ public class RecordInfo implements Serializable {
 
     public void updateFromBREResponse(OSRFObject info) {
         try {
-//            Boolean isDeleted = info.getBoolean("deleted");
-//            Log.d(TAG, "id=" + doc_id + " deleted=" + isDeleted);
+            isDeleted = info.getBoolean("deleted");
+            Log.d(TAG, "[kcxxx] record ${doc_id}: deleted=${isDeleted}");
 
             String marcxml = info.getString("marc");
             if (!TextUtils.isEmpty(marcxml)) {

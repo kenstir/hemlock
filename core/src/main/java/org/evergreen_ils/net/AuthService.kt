@@ -23,4 +23,5 @@ import org.opensrf.util.OSRFObject
 
 interface AuthService {
     suspend fun fetchSession(authToken: String): Result<OSRFObject>
+    suspend fun deleteSession(authToken: String): Result<OSRFObject>
 }

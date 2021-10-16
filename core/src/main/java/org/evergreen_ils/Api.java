@@ -72,6 +72,7 @@ public class Api {
     public static final String MESSAGES_RETRIEVE = "open-ils.actor.message.retrieve"; // [aum]
     public static final String HOURS_OF_OPERATION_RETRIEVE = "open-ils.actor.org_unit.hours_of_operation.retrieve"; // [aouhoo]
     public static final String ADDRESS_RETRIEVE = "open-ils.actor.org_unit.address.retrieve"; // [aoa]
+    //public static final String VITAL_STATS = "open-ils.actor.user.opac.vital_stats"; //TODO
 
     public static final String SETTING_CREDIT_PAYMENTS_ALLOW = "credit.payments.allow";
     public static final String SETTING_INFO_URL = "lib.info_url";
@@ -90,6 +91,7 @@ public class Api {
     public static final String AUTH_INIT = "open-ils.auth.authenticate.init";
     public static final String AUTH_COMPLETE = "open-ils.auth.authenticate.complete";
     public static final String AUTH_SESSION_RETRIEVE = "open-ils.auth.session.retrieve"; // au
+    public static final String AUTH_SESSION_DELETE = "open-ils.auth.session.delete";
 
     /// circ
 
