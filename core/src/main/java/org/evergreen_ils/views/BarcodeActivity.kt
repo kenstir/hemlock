@@ -50,11 +50,36 @@ class BarcodeActivity : BaseActivity() {
         initBarcodeViews()
     }
 
-    private fun initBarcodeViews() {
-        val barcode = App.getAccount().barcode
+    // get lesser of display width or height
+    private fun getDisplayWidth(): Int {
+        /* this is the Right Way according to
+           https://stackoverflow.com/questions/63407883/getting-screen-width-on-api-level-30-android-11-getdefaultdisplay-and-getme
+           but the old deprecated way is working for now and is far less code
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            val metrics = windowManager.currentWindowMetrics
+            // Gets all excluding insets
+            val windowInsets = metrics.windowInsets
+            val insets = windowInsets.getInsetsIgnoringVisibility(
+                WindowInsets.Type.navigationBars()
+                        or WindowInsets.Type.displayCutout()
+            )
+
+            val insetsWidth = insets.right + insets.left
+            val insetsHeight = insets.top + insets.bottom
+
+            // Legacy size that Display#getSize reports
+            val bounds = metrics.bounds
+            return minOf(bounds.width() - insetsWidth, bounds.height() - insetsHeight, 480)
+        }
+        */
         val metrics = DisplayMetrics()
         windowManager.defaultDisplay.getMetrics(metrics)
-        val imageWidth = Math.min(metrics.widthPixels, metrics.heightPixels) * 8 / 10
+        return minOf(metrics.widthPixels, metrics.heightPixels, 480)
+    }
+
+    private fun initBarcodeViews() {
+        val barcode = App.getAccount().barcode
+        val imageWidth = getDisplayWidth() * 8 / 10
         val imageHeight = imageWidth * 4 / 10
         val bitmap = createBitmap(barcode, imageWidth, imageHeight)
         if (bitmap != null) {
@@ -79,9 +104,10 @@ class BarcodeActivity : BaseActivity() {
         if (bitMatrix == null) return null
 
         // Create a Bitmap from the BitMatrix
-        val bitmap = Bitmap.createBitmap(image_width, image_height, Bitmap.Config.ARGB_8888)
+        // NB: use width/Height from bitMatrix; they may be larger than imageWidth/Height
         val width = bitMatrix.width
         val height = bitMatrix.height
+        val bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
         val pixels = IntArray(width * height)
         for (y in 0 until height) {
             val offset = y * width
