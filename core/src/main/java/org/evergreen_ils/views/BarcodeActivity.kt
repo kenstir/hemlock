@@ -35,8 +35,8 @@ import org.evergreen_ils.utils.BarcodeUtils
 import org.evergreen_ils.utils.ui.BaseActivity
 
 class BarcodeActivity : BaseActivity() {
-    private var barcode_text: TextView? = null
-    private var image_view: ImageView? = null
+    private var barcodeText: TextView? = null
+    private var imageView: ImageView? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,8 +44,8 @@ class BarcodeActivity : BaseActivity() {
 
         setContentView(R.layout.activity_barcode)
 
-        barcode_text = findViewById(R.id.barcode_text)
-        image_view = findViewById(R.id.barcode_image)
+        barcodeText = findViewById(R.id.barcode_text)
+        imageView = findViewById(R.id.barcode_image)
 
         initBarcodeViews()
     }
@@ -83,24 +83,24 @@ class BarcodeActivity : BaseActivity() {
         val imageHeight = imageWidth * 4 / 10
         val bitmap = createBitmap(barcode, imageWidth, imageHeight)
         if (bitmap != null) {
-            barcode_text?.text = barcode
-            image_view?.setImageBitmap(bitmap)
+            barcodeText?.text = barcode
+            imageView?.setImageBitmap(bitmap)
         } else {
-            barcode_text?.text = getString(R.string.invalid_barcode, barcode)
-            image_view?.setImageResource(R.drawable.invalid_barcode)
+            barcodeText?.text = getString(R.string.invalid_barcode, barcode)
+            imageView?.setImageResource(R.drawable.invalid_barcode)
         }
 
-        barcode_text?.setOnClickListener { copyBarcodeToClipboard() }
-        image_view?.setOnClickListener { copyBarcodeToClipboard() }
+        barcodeText?.setOnClickListener { copyBarcodeToClipboard() }
+        imageView?.setOnClickListener { copyBarcodeToClipboard() }
     }
 
-    private fun createBitmap(data: String?, image_width: Int, image_height: Int): Bitmap? {
-        if (image_width <= 0 || image_height <= 0) return null
+    private fun createBitmap(data: String?, imageWidth: Int, imageHeight: Int): Bitmap? {
+        if (imageWidth <= 0 || imageHeight <= 0) return null
 
         // Try formats until we successfully encode the data
         var bitMatrix: BitMatrix? = null
-        if (bitMatrix == null) bitMatrix = BarcodeUtils.tryEncode(data, image_width, image_height, BarcodeFormat.CODABAR)
-        if (bitMatrix == null) bitMatrix = BarcodeUtils.tryEncode(data, image_width, image_height, BarcodeFormat.CODE_39)
+        if (bitMatrix == null) bitMatrix = BarcodeUtils.tryEncode(data, imageWidth, imageHeight, BarcodeFormat.CODABAR)
+        if (bitMatrix == null) bitMatrix = BarcodeUtils.tryEncode(data, imageWidth, imageHeight, BarcodeFormat.CODE_39)
         if (bitMatrix == null) return null
 
         // Create a Bitmap from the BitMatrix
