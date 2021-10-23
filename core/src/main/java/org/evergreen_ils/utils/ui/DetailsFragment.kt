@@ -38,6 +38,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.joinAll
 import org.evergreen_ils.R
+import org.evergreen_ils.android.Analytics
 import org.evergreen_ils.android.App
 import org.evergreen_ils.android.Log
 import org.evergreen_ils.net.Gateway.getUrl
@@ -295,7 +296,9 @@ class DetailsFragment : Fragment() {
                 // Check for copy counts only after we know it is not an online_resource
                 val isOnlineResource = App.getBehavior().isOnlineResource(record)
                 if (isOnlineResource == null) {
-                    throw IllegalStateException("it shouldn't be possible for isOnlineResource to be unresolved at this point")
+                    val ex = IllegalStateException("isOnlineResource is null")
+                    Analytics.logException(ex)
+                    //throw ex
                 }
                 if (isOnlineResource != true) {
                     jobs.add(async {
