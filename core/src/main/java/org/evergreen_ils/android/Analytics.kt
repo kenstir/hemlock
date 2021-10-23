@@ -25,6 +25,8 @@ import com.google.firebase.crashlytics.FirebaseCrashlytics
 import org.evergreen_ils.BuildConfig
 import org.evergreen_ils.R
 import org.evergreen_ils.data.Organization
+import org.evergreen_ils.data.Result
+import org.evergreen_ils.utils.getCustomMessage
 
 /** Utils that wrap Crashlytics (and now Analytics)
  */
@@ -33,7 +35,11 @@ object Analytics {
         const val ACCOUNT_ADD = "account_add"
         const val ACCOUNT_LOGOUT = "account_logout"
         const val ACCOUNT_SWITCH = "account_switch"
+        const val BOOKBAG_ADD_ITEM = "bookbag_add_item"
+        const val BOOKBAG_DELETE_ITEM = "bookbag_delete_item"
         const val BOOKBAG_LOAD = "bookbag_load"
+        const val BOOKBAGS_CREATE_LIST = "bookbags_create_list"
+        const val BOOKBAGS_DELETE_LIST = "bookbags_delete_list"
         const val BOOKBAGS_LOAD = "bookbags_load"
         const val FEEDBACK_OPEN = "feedback_open"
         const val HOLD_CANCEL_HOLD = "hold_cancel"
@@ -172,6 +178,13 @@ object Analytics {
         return when {
             username == barcode -> "barcode"
             else -> "username"
+        }
+    }
+
+    fun resultValue(result: Result<Any?>): String {
+        return when (result) {
+            is Result.Error -> result.exception.getCustomMessage()
+            is Result.Success -> Value.OK
         }
     }
 }

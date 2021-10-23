@@ -19,8 +19,10 @@ package org.evergreen_ils.views.bookbags
 
 import android.app.AlertDialog
 import android.widget.Toast
+import androidx.core.os.bundleOf
 import kotlinx.coroutines.async
 import org.evergreen_ils.R
+import org.evergreen_ils.android.Analytics
 import org.evergreen_ils.android.App
 import org.evergreen_ils.data.BookBag
 import org.evergreen_ils.data.Result
@@ -46,7 +48,11 @@ object BookBagUtils {
             try {
                 progress.show(activity, activity.getString(R.string.adding_to_list_message))
 
-                when (val result = Gateway.actor.addItemToBookBagAsync(App.getAccount(), bookBag.id, info.doc_id)) {
+                val result = Gateway.actor.addItemToBookBagAsync(App.getAccount(), bookBag.id, info.doc_id)
+                Analytics.logEvent(Analytics.Event.BOOKBAG_ADD_ITEM, bundleOf(
+                    Analytics.Param.RESULT to Analytics.resultValue(result)
+                ))
+                when (result) {
                     is Result.Success -> {}
                     is Result.Error -> { activity.showAlert(result.exception); return@async }
                 }

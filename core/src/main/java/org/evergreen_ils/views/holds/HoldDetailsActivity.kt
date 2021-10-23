@@ -163,14 +163,15 @@ class HoldDetailsActivity : BaseActivity() {
             val holdId = record.ahr.getInt("id") ?: 0
             val result = Gateway.circ.cancelHoldAsync(App.getAccount(), holdId)
             progress?.dismiss()
+            Analytics.logEvent(Analytics.Event.HOLD_CANCEL_HOLD, bundleOf(
+                Analytics.Param.RESULT to Analytics.resultValue(result)
+            ))
             when (result) {
                 is Result.Success -> {
-                    logCancelHoldResult(true, Analytics.Value.OK)
                     setResult(RESULT_CODE_DELETE_HOLD)
                     finish()
                 }
                 is Result.Error -> {
-                    logCancelHoldResult(true, result.exception.getCustomMessage())
                     showAlert(result.exception)
                 }
             }
@@ -190,34 +191,21 @@ class HoldDetailsActivity : BaseActivity() {
             val result = Gateway.circ.updateHoldAsync(App.getAccount(), holdId,
                     orgId, expireDateApi, suspendHold!!.isChecked, thawDateApi)
             progress?.dismiss()
+            Analytics.logEvent(Analytics.Event.HOLD_UPDATE_HOLD, bundleOf(
+                Analytics.Param.RESULT to Analytics.resultValue(result)
+            ))
             when (result) {
                 is Result.Success -> {
-                    logUpdateHoldResult(true, Analytics.Value.OK)
                     Toast.makeText(this@HoldDetailsActivity,
                             getString(R.string.msg_updated_hold), Toast.LENGTH_SHORT).show()
                     setResult(RESULT_CODE_UPDATE_HOLD)
                     finish()
                 }
                 is Result.Error -> {
-                    logUpdateHoldResult(false, result.exception.getCustomMessage())
                     showAlert(result.exception)
                 }
             }
         }
-    }
-
-    private fun logCancelHoldResult(succeeded: Boolean, result: String) {
-        val b = bundleOf(
-                Analytics.Param.RESULT to result
-        )
-        Analytics.logEvent(Analytics.Event.HOLD_CANCEL_HOLD, b)
-    }
-
-    private fun logUpdateHoldResult(succeeded: Boolean, result: String) {
-        val b = bundleOf(
-                Analytics.Param.RESULT to result
-        )
-        Analytics.logEvent(Analytics.Event.HOLD_UPDATE_HOLD, b)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

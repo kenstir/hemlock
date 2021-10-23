@@ -27,6 +27,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.*
+import androidx.core.os.bundleOf
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.joinAll
@@ -68,7 +69,6 @@ class BookBagsActivity : BaseActivity() {
         listAdapter = BookBagsArrayAdapter(this, R.layout.bookbag_list_item)
         lv?.adapter = listAdapter
         lv?.onItemClickListener = AdapterView.OnItemClickListener { parent, view, position, id ->
-            //Analytics.logEvent("lists_itemclick")
             val item = lv?.getItemAtPosition(position) as BookBag
             val intent = Intent(this@BookBagsActivity, BookBagDetailsActivity::class.java)
             intent.putExtra("bookBag", item)
@@ -140,11 +140,13 @@ class BookBagsActivity : BaseActivity() {
             bookBagName?.error = getString(R.string.error_list_name_empty)
             return
         }
-        //Analytics.logEvent("lists_createlist")
         async {
             progress?.show(this@BookBagsActivity, getString(R.string.msg_creating_list))
             val result = Gateway.actor.createBookBagAsync(App.getAccount(), name)
             progress?.dismiss()
+            Analytics.logEvent(Analytics.Event.BOOKBAGS_CREATE_LIST, bundleOf(
+                Analytics.Param.RESULT to Analytics.resultValue(result)
+            ))
             when (result) {
                 is Result.Error -> showAlert(result.exception)
                 is Result.Success -> fetchData()

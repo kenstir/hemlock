@@ -26,6 +26,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import androidx.core.os.bundleOf
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.joinAll
@@ -161,7 +162,6 @@ class BookBagDetailsActivity : BaseActivity() {
     private fun deleteList() {
         async {
             progress?.show(this@BookBagDetailsActivity, getString(R.string.msg_deleting_list))
-            //Analytics.logEvent("list_deletelist")
             val id = bookBag.id
             val result = if (id != null) {
                 Gateway.actor.deleteBookBagAsync(App.getAccount(), id)
@@ -169,6 +169,9 @@ class BookBagDetailsActivity : BaseActivity() {
                 Result.Success(Unit)
             }
             progress?.dismiss()
+            Analytics.logEvent(Analytics.Event.BOOKBAGS_DELETE_LIST, bundleOf(
+                Analytics.Param.RESULT to Analytics.resultValue(result)
+            ))
             when (result) {
                 is Result.Error -> showAlert(result.exception)
                 is Result.Success -> {
@@ -200,12 +203,14 @@ class BookBagDetailsActivity : BaseActivity() {
             title.text = record?.recordInfo?.title
             author.text = record?.recordInfo?.author
             remove.setOnClickListener(View.OnClickListener {
-                //Analytics.logEvent("list_removeitem")
                 val id = record?.id ?: return@OnClickListener
                 async {
                     progress?.show(this@BookBagDetailsActivity, getString(R.string.msg_removing_list_item))
                     val result = Gateway.actor.removeItemFromBookBagAsync(App.getAccount(), id)
                     progress?.dismiss()
+                    Analytics.logEvent(Analytics.Event.BOOKBAG_DELETE_ITEM, bundleOf(
+                        Analytics.Param.RESULT to Analytics.resultValue(result)
+                    ))
                     when (result) {
                         is Result.Error -> showAlert(result.exception)
                         is Result.Success -> {
