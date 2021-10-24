@@ -17,23 +17,39 @@
  */
 package org.evergreen_ils.data
 
-import androidx.core.os.bundleOf
-import org.evergreen_ils.android.Analytics
 import org.opensrf.util.OSRFObject
 import java.io.Serializable
-import java.util.*
 import kotlin.collections.ArrayList
 
 class BookBag(val id: Int, val name: String, obj: OSRFObject) : Serializable {
     var description: String? = obj.getString("description")
     var shared: Boolean = obj.getBoolean("pub")
     var items = ArrayList<BookBagItem>()
+    var filterToVisibleRecords = false
+    var visibleRecordIds = ArrayList<Int>() // list of bre IDs used to filter out deleted items
+
+    fun initVisibleIdsFromQuery(multiclassQueryObj: OSRFObject) {
+        filterToVisibleRecords = true
+
+        // ids is a list of lists of [record_id, ?, ?], e.g.:
+        // [[1471992,"2","4.0"]]
+        val idList = multiclassQueryObj.get("ids") as? ArrayList<ArrayList<Any?>>
+        visibleRecordIds.clear()
+        idList?.mapNotNullTo(visibleRecordIds) { it[0] as? Int }
+    }
 
     fun fleshFromObject(cbrebObj: OSRFObject) {
         items.clear()
         val fleshedItems = cbrebObj.get("items") as? ArrayList<OSRFObject> ?: ArrayList()
         for (item in fleshedItems) {
-            items.add(BookBagItem(item))
+            if (!filterToVisibleRecords) {
+                items.add(BookBagItem(item))
+            } else {
+                val targetId = item.getInt("target_biblio_record_entry")
+                if (visibleRecordIds.find { it == targetId } != null) {
+                    items.add(BookBagItem(item))
+                }
+            }
         }
     }
 

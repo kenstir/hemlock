@@ -61,27 +61,34 @@ object GatewayLoader {
 
     suspend fun loadBookBagsAsync(account: Account): Result<Unit> {
         // do not cache bookbags
-//        return if (account.bookBagsLoaded) {
-//            Log.d(TAG, "[bookbag] loadBookBagsAsync...noop")
-//            Result.Success(Unit)
-//        } else {
-            Log.d(TAG, "[bookbag] loadBookBagsAsync...")
-            return when (val result = Gateway.actor.fetchBookBags(account)) {
-                is Result.Success -> {
-                    App.getAccount().loadBookBags(result.data)
-                    Log.d(TAG, "[bookbag] loadBookBagsAsync...done")
-                    Result.Success(Unit)
-                }
-                is Result.Error -> {
-                    result
-                }
+        Log.d(TAG, "[bookbag] loadBookBagsAsync...")
+        val result = Gateway.actor.fetchBookBags(account)
+        return when (result) {
+            is Result.Error -> {
+                result
             }
-//        }
+            is Result.Success -> {
+                App.getAccount().loadBookBags(result.data)
+                Log.d(TAG, "[bookbag] loadBookBagsAsync...done")
+                Result.Success(Unit)
+            }
+        }
     }
 
-    suspend fun loadBookBagContents(account: Account, bookBag: BookBag): Result<Unit> {
+    suspend fun loadBookBagContents(account: Account, bookBag: BookBag, queryForVisibleItems: Boolean): Result<Unit> {
         // do not cache bookbag contents
         Log.d(TAG, "[bookbag] bag:${bookBag.name}")
+
+        // query first to find visible items; CONTAINER_FLESH returns the contents including
+        // items that are marked deleted
+        if (queryForVisibleItems) {
+            val query = "container(bre,bookbag,${bookBag.id},${account.authToken})"
+            val queryResult = Gateway.search.fetchMulticlassQuery(query, 1)
+            if (queryResult is Result.Error) return queryResult
+            bookBag.initVisibleIdsFromQuery(queryResult.get())
+        }
+
+        // then flesh the objects
         val result = Gateway.actor.fleshBookBagAsync(account, bookBag.id)
         if (result is Result.Error) return result
         val obj = result.get()

@@ -118,10 +118,8 @@ class BookBagDetailsActivity : BaseActivity() {
                 progress?.show(this@BookBagDetailsActivity, getString(R.string.msg_retrieving_list_contents))
 
                 // fetch bookBag contents
-                when (val result = GatewayLoader.loadBookBagContents(App.getAccount(), bookBag)) {
-                    is Result.Success -> {}
-                    is Result.Error -> { showAlert(result.exception); return@async }
-                }
+                val result = GatewayLoader.loadBookBagContents(App.getAccount(), bookBag, resources.getBoolean(R.bool.ou_extra_bookbag_query))
+                if (result is Result.Error) { showAlert(result.exception); return@async }
 
                 // fetch item details
                 bookBag.items.let {

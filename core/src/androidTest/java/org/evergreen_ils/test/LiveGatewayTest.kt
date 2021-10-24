@@ -33,7 +33,6 @@ import org.evergreen_ils.data.Result
 import org.evergreen_ils.net.*
 import org.evergreen_ils.system.EgIDL
 import org.evergreen_ils.utils.getCustomMessage
-import org.evergreen_ils.utils.ui.showAlert
 import org.junit.AfterClass
 import org.junit.Assert.*
 import org.junit.BeforeClass
@@ -53,8 +52,8 @@ class LiveGatewayTest {
         lateinit var account: Account
 
         var authToken = ""
-        //var bookbagId: Int? = 2656342
-        //var bookbagId: Int? = 1087308 // cool
+        //var bookbagId: Int? = 1197349 // cool list with 1 deleted item
+        //var bookbagId: Int? = 1194240 // cool list with 1 item
         var bookbagId: Int? = null
 
         var isIDLLoaded = false
@@ -247,7 +246,7 @@ class LiveGatewayTest {
                 loadServiceData()
                 getSession()
 
-                var jobs = mutableListOf<Job>()
+                val jobs = mutableListOf<Job>()
 
                 // fetch bookbags
                 when (val result = GatewayLoader.loadBookBagsAsync(App.getAccount())) {
@@ -258,7 +257,7 @@ class LiveGatewayTest {
                 // flesh bookbags
                 for (bookBag in App.getAccount().bookBags) {
                     jobs.add(async {
-                        GatewayLoader.loadBookBagContents(App.getAccount(), bookBag)
+                        GatewayLoader.loadBookBagContents(App.getAccount(), bookBag, true)
                     })
                 }
 
@@ -300,13 +299,15 @@ class LiveGatewayTest {
                 getSession()
 
                 val query = "container(bre,bookbag,${id},${authToken})"
-                val result = Gateway.search.fetchMulticlassQuery(query, 200)
+                val result = Gateway.search.fetchMulticlassQuery(query, 1)
                 when (result) {
                     is Result.Success -> Log.d(TAG, "bag success: ${result.data}")
                     is Result.Error -> Log.d(TAG, "bag error: ${result.exception}")
                 }
                 val stuff = result.get()
                 Log.d(TAG, "stuff=${stuff}")
+                val bookBag = BookBag(id, "a list", OSRFObject())
+                bookBag.initVisibleIdsFromQuery(stuff)
             }
         }
     }

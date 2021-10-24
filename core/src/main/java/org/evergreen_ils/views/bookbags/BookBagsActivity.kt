@@ -105,7 +105,7 @@ class BookBagsActivity : BaseActivity() {
                 // flesh bookbags
                 for (bookBag in App.getAccount().bookBags) {
                     jobs.add(async {
-                        GatewayLoader.loadBookBagContents(App.getAccount(), bookBag)
+                        GatewayLoader.loadBookBagContents(App.getAccount(), bookBag, resources.getBoolean(R.bool.ou_extra_bookbag_query))
                     })
                 }
 
