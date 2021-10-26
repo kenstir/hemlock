@@ -42,7 +42,6 @@ class Account constructor(val username: String, var authToken: String?) {
     var holdNotifyValue: String? = null // kept for analytics
 
     var bookBags = ArrayList<BookBag>()
-    var bookBagsLoaded: Boolean = false
 
     private var dayPhone: String? = null
     private var firstGivenName: String? = null
@@ -113,7 +112,6 @@ class Account constructor(val username: String, var authToken: String?) {
 
     fun loadBookBags(objects: List<OSRFObject>) {
         bookBags = BookBag.makeArray(objects)
-        bookBagsLoaded = true
         Analytics.logEvent(Analytics.Event.BOOKBAGS_LOAD, bundleOf(
             Analytics.Param.NUM_ITEMS to bookBags.size
         ))
