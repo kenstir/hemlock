@@ -65,11 +65,12 @@ object GatewayLoader {
         val result = Gateway.actor.fetchBookBags(account)
         return when (result) {
             is Result.Error -> {
+                Log.d(TAG, "[bookbag] loadBookBagsAsync...error")
                 result
             }
             is Result.Success -> {
                 App.getAccount().loadBookBags(result.data)
-                Log.d(TAG, "[bookbag] loadBookBagsAsync...done")
+                Log.d(TAG, "[bookbag] loadBookBagsAsync...${App.getAccount().bookBags.size} bags")
                 Result.Success(Unit)
             }
         }
@@ -77,23 +78,24 @@ object GatewayLoader {
 
     suspend fun loadBookBagContents(account: Account, bookBag: BookBag, queryForVisibleItems: Boolean): Result<Unit> {
         // do not cache bookbag contents
-        Log.d(TAG, "[bookbag] bag:${bookBag.name}")
+        Log.d(TAG, "[bookbag] bag ${bookBag.id} name ${bookBag.name}")
 
         // query first to find visible items; CONTAINER_FLESH returns the contents including
         // items that are marked deleted
         if (queryForVisibleItems) {
             val query = "container(bre,bookbag,${bookBag.id},${account.authToken})"
-            val queryResult = Gateway.search.fetchMulticlassQuery(query, 1)
+            val queryResult = Gateway.search.fetchMulticlassQuery(query, 999)
             if (queryResult is Result.Error) return queryResult
             bookBag.initVisibleIdsFromQuery(queryResult.get())
+            Log.d(TAG, "[bookbag] bag ${bookBag.id} has ${bookBag.visibleRecordIds.size} visible items")
         }
 
         // then flesh the objects
         val result = Gateway.actor.fleshBookBagAsync(account, bookBag.id)
         if (result is Result.Error) return result
         val obj = result.get()
-        Log.d(TAG, "[bookbag] bag content:$obj")
         bookBag.fleshFromObject(obj)
+        Log.d(TAG, "[bookbag] bag ${bookBag.id} has ${bookBag.items.size} items")
         Analytics.logEvent(Analytics.Event.BOOKBAG_LOAD, bundleOf(
             Analytics.Param.NUM_ITEMS to bookBag.items.size
         ))

@@ -201,7 +201,7 @@ object GatewayActor: ActorService {
             val args = arrayOf<Any?>(authToken, Api.CONTAINER_CLASS_BIBLIO, param)
             val ret = Gateway.fetch(Api.ACTOR, Api.CONTAINER_CREATE, args, false) {
                 // e.g. "9"
-                Log.d(TAG, "[bookbag] createResult:${it.payload}")
+                Log.d(TAG, "[bookbag] createBag ${name} result ${it.payload}")
             }
             Result.Success(Unit)
         } catch (e: Exception) {
@@ -215,7 +215,7 @@ object GatewayActor: ActorService {
             val args = arrayOf<Any?>(authToken, Api.CONTAINER_CLASS_BIBLIO, bookBagId)
             val ret = Gateway.fetch(Api.ACTOR, Api.CONTAINER_FULL_DELETE, args, false) {
                 // e.g. "9"
-                Log.d(TAG, "[bookbag] deleteResult:${it.payload}")
+                Log.d(TAG, "[bookbag] bag ${bookBagId} deleteBag result ${it.payload}")
             }
             Result.Success(Unit)
         } catch (e: Exception) {
@@ -234,7 +234,7 @@ object GatewayActor: ActorService {
             val args = arrayOf<Any?>(authToken, Api.CONTAINER_CLASS_BIBLIO, param)
             val ret = Gateway.fetch(Api.ACTOR, Api.CONTAINER_ITEM_CREATE, args, false) {
                 // e.g. ???
-                Log.d(TAG, "[bookbag] addItemResult:${it.payload}")
+                Log.d(TAG, "[bookbag] bag ${bookBagId} addItem ${recordId} result ${it.payload}")
             }
             Result.Success(Unit)
         } catch (e: Exception) {
@@ -248,7 +248,7 @@ object GatewayActor: ActorService {
             val args = arrayOf<Any?>(authToken, Api.CONTAINER_CLASS_BIBLIO, bookBagItemId)
             val ret = Gateway.fetch(Api.ACTOR, Api.CONTAINER_ITEM_DELETE, args, false) {
                 // e.g. ???
-                Log.d(TAG, "[bookbag] removeItemResult:${it.payload}")
+                Log.d(TAG, "[bookbag] removeItem ${bookBagItemId} result ${it.payload}")
             }
             Result.Success(Unit)
         } catch (e: Exception) {
