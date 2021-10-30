@@ -20,6 +20,5 @@ fm_IDL.*
 /*/build
 /*/release
 /captures
-ConcreteBillingDataProvider.java
 google-services.json
 version.*
