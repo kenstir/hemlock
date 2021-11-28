@@ -59,6 +59,7 @@ public class AppBehavior {
 
     @Nullable
     public Boolean isOnlineResource(RecordInfo record) {
+        if (record == null) return null;
         if (!record.hasMetadata) return null;
         if (!record.hasAttributes) return null;
 
