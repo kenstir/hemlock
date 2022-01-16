@@ -115,7 +115,8 @@ class MainActivity : BaseActivity() {
         messages.forEach {
             val readDate = it.getString("read_date")
             val deleted = it.getBoolean("deleted")
-            if (readDate == null && !deleted) {
+            val patronVisible = it.getBoolean("pub")
+            if (readDate == null && !deleted && patronVisible) {
                 ++count
             }
         }
