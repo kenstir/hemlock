@@ -39,6 +39,7 @@ public class IndianaAppBehavior extends AppBehavior {
 
     @Override
     public Boolean isOnlineResource(RecordInfo record) {
+        if (record == null) return null;
         if (!record.hasMetadata) return null;
         if (!record.hasAttributes) return null;
 
