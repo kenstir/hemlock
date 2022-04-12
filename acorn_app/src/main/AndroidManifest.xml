@@ -55,8 +55,9 @@
         -->
 
         <activity
-                android:name="org.evergreen_ils.views.launch.LaunchActivity"
-                android:theme="@style/HemlockDarkNoActionBar">
+            android:name="org.evergreen_ils.views.launch.LaunchActivity"
+            android:theme="@style/HemlockDarkNoActionBar"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
