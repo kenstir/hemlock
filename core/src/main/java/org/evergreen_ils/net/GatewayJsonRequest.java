@@ -30,7 +30,7 @@ import org.opensrf.util.GatewayResult;
 import java.io.UnsupportedEncodingException;
 
 public class GatewayJsonRequest extends Request<GatewayResult> {
-    private String TAG = GatewayJsonRequest.class.getSimpleName();
+    private final String TAG = GatewayJsonRequest.class.getSimpleName();
 
     private final Response.Listener<GatewayResult> mListener;
     private final Priority mPriority;

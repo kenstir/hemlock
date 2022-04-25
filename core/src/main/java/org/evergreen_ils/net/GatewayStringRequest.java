@@ -31,7 +31,7 @@ import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 
 public class GatewayStringRequest extends StringRequest {
-    private String TAG = GatewayStringRequest.class.getSimpleName();
+    private final String TAG = GatewayStringRequest.class.getSimpleName();
 
     private final Priority mPriority;
     private final int mCacheTtlSeconds;

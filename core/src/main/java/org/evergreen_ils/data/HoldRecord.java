@@ -44,7 +44,7 @@ import static org.evergreen_ils.ConstKt.HOLD_TYPE_METARECORD;
 
 public class HoldRecord implements Serializable {
 
-    private static String TAG = HoldRecord.class.getSimpleName();
+    private static final String TAG = HoldRecord.class.getSimpleName();
 
     public @NonNull OSRFObject ahr;
     public RecordInfo recordInfo = null;

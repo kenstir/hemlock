@@ -23,7 +23,7 @@ import android.text.TextUtils;
 import org.evergreen_ils.R;
 
 public class AppFactory {
-    private static String TAG = AppFactory.class.getSimpleName();
+    private static final String TAG = AppFactory.class.getSimpleName();
 
     static public AppBehavior makeBehavior(Resources resources) {
         String clazzName = resources.getString(R.string.ou_behavior_provider);

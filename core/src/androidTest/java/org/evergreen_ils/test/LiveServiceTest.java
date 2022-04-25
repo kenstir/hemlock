@@ -45,7 +45,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 public class LiveServiceTest {
-    private static String TAG = LiveServiceTest.class.getSimpleName();
+    private static final String TAG = LiveServiceTest.class.getSimpleName();
 
     private static Context mContext;
     private static HttpConnection mConn;
