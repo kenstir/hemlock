@@ -69,6 +69,15 @@ class MainActivity : BaseActivity() {
         super.onAttachedToWindow()
         Log.d(TAG, object{}.javaClass.enclosingMethod?.name)
         fetchData()
+
+        // Debugging crashes reported to Crashlytics.
+        // Every occurrence is Nexus 5X Android 8.1.0
+        // Fatal Exception: java.lang.RuntimeException: Unable to start activity ComponentInfo{net.kenstir.apps.indiana/org.evergreen_ils.views.launch.LaunchActivity}: android.view.InflateException: Binary XML file line #43: Binary XML file line #43: Error inflating class ImageView
+        // Caused by android.view.InflateException: Binary XML file line #43: Binary XML file line #43: Error inflating class ImageView
+        // Caused by android.content.res.Resources$NotFoundException: Drawable (missing name) with resource ID #0x7f0800c4
+//        val resourceName = resources.getResourceName(0x7f0800c3) // net.kenstir.apps.pines:drawable/notification_bg_low
+//        val resourceName = resources.getResourceName(0x7f0800c4) // net.kenstir.apps.pines:drawable/notify_panel_notification_icon_bg
+//        showAlert("$resourceName")
     }
 
     private fun fetchData() {

@@ -8,6 +8,9 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/src/hemlock/core/src/main/res/drawable/action_button.xml" value="0.18541666666666667" />
+        <entry key="..\:/src/hemlock/core/src/main/res/drawable/action_button_focus.xml" value="0.27239583333333334" />
+        <entry key="..\:/src/hemlock/core/src/main/res/drawable/custom_tab_indicator.xml" value="0.27239583333333334" />
         <entry key="..\:/src/hemlock/core/src/main/res/layout/activity_fines.xml" value="0.23489583333333333" />
         <entry key="..\:/src/hemlock/core/src/main/res/layout/fines_list.xml" value="0.23489583333333333" />
       </map>
