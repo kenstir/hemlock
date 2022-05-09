@@ -20,7 +20,6 @@ package net.kenstir.apps.core
 
 import org.evergreen_ils.android.Log
 import org.evergreen_ils.android.StdoutLogProvider
-import org.evergreen_ils.net.Gateway
 import org.evergreen_ils.utils.getCustomMessage
 import org.junit.Assert.assertEquals
 import org.junit.BeforeClass
