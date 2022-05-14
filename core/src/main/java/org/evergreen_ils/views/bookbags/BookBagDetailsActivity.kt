@@ -41,6 +41,7 @@ import org.evergreen_ils.net.Gateway
 import org.evergreen_ils.net.GatewayLoader
 import org.evergreen_ils.searchCatalog.RecordDetails
 import org.evergreen_ils.searchCatalog.RecordInfo
+import org.evergreen_ils.utils.pubdateComparator
 import org.evergreen_ils.utils.ui.ActionBarUtils
 import org.evergreen_ils.utils.ui.BaseActivity
 import org.evergreen_ils.utils.ui.ProgressDialogSupport
@@ -153,7 +154,7 @@ class BookBagDetailsActivity : BaseActivity() {
 
     private fun updateItemsList() {
         listAdapter?.clear()
-        bookBag.items.let { listAdapter?.addAll(it) }
+        listAdapter?.addAll( bookBag.items.sortedByDescending { pubdateComparator(it.recordInfo?.pubdate) } )
         listAdapter?.notifyDataSetChanged()
     }
 
