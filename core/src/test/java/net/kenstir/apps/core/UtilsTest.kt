@@ -20,7 +20,7 @@ package net.kenstir.apps.core
 
 import org.evergreen_ils.data.jsonMapOf
 import org.evergreen_ils.utils.fromApiToIntOrNull
-import org.evergreen_ils.utils.pubdateComparator
+import org.evergreen_ils.utils.pubdateSortKey
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Test
@@ -35,12 +35,12 @@ class UtilsTest {
     }
 
     @Test
-    fun test_pubdateComparator() {
-        assertNull(pubdateComparator(null))
-        assertNull(pubdateComparator("abcde"))
-        assertEquals(2000, pubdateComparator("2000"))
-        assertEquals(2002, pubdateComparator("c2002"))
-        assertEquals(2003, pubdateComparator("2003-"))
-        assertEquals(2007, pubdateComparator("2007-2014"))
+    fun test_pubdateSortKey() {
+        assertNull(pubdateSortKey(null))
+        assertNull(pubdateSortKey("abcde"))
+        assertEquals(2000, pubdateSortKey("2000"))
+        assertEquals(2002, pubdateSortKey("c2002"))
+        assertEquals(2003, pubdateSortKey("2003-"))
+        assertEquals(2007, pubdateSortKey("2007-2014"))
     }
 }
