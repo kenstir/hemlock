@@ -37,23 +37,9 @@ import java.util.*
 
 private val TAG = HoldRecord::class.java.simpleName
 
-class HoldRecord(var ahr: OSRFObject) : Serializable {
+class HoldRecord(val ahr: OSRFObject) : Serializable {
     var recordInfo: RecordInfo? = null
     var qstatsObj: OSRFObject? = null
-    var title: String? = null
-        get() {
-            if (field != null && !TextUtils.isEmpty(field)) return withPartLabel(
-                field!!
-            )
-            return if (recordInfo != null && !TextUtils.isEmpty(recordInfo!!.title)) withPartLabel(
-                recordInfo!!.title
-            ) else "Unknown title"
-        }
-    var author: String? = null
-        get() {
-            if (field != null && !TextUtils.isEmpty(field)) return field
-            return if (recordInfo != null && !TextUtils.isEmpty(recordInfo!!.author)) recordInfo!!.author else ""
-        }
     var partLabel: String? = null // only for HOLD_TYPE_PART
 
     private fun formatDateTime(date: Date): String {
@@ -126,6 +112,12 @@ ${res.getQuantityString(R.plurals.number_of_holds, totalHolds!!, totalHolds)} on
         return if (!TextUtils.isEmpty(partLabel)) "$title ($partLabel)" else title
     }
 
+    val title: String
+        get() = if (recordInfo != null && !TextUtils.isEmpty(recordInfo!!.title)) withPartLabel(
+            recordInfo!!.title
+        ) else "Unknown title"
+    val author: String
+        get() = if (recordInfo != null && !TextUtils.isEmpty(recordInfo!!.author)) recordInfo!!.author else ""
     val expireTime: Date?
         get() = ahr.getDate("expire_time")
     val shelfExpireTime: Date?
