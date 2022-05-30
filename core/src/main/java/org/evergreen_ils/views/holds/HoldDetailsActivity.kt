@@ -103,7 +103,6 @@ class HoldDetailsActivity : BaseActivity() {
             builder.create().show()
         }
         updateHold.setOnClickListener {
-            //Analytics.logEvent("holds_updatehold")
             updateHold(record)
         }
         suspendHold?.setOnCheckedChangeListener { buttonView, isChecked ->
@@ -191,7 +190,9 @@ class HoldDetailsActivity : BaseActivity() {
                     orgId, expireDateApi, suspendHold!!.isChecked, thawDateApi)
             progress?.dismiss()
             Analytics.logEvent(Analytics.Event.HOLD_UPDATE_HOLD, bundleOf(
-                Analytics.Param.RESULT to Analytics.resultValue(result)
+                Analytics.Param.RESULT to Analytics.resultValue(result),
+                Analytics.Param.HOLD_SUSPEND_KEY to suspendHold!!.isChecked,
+                Analytics.Param.HOLD_REACTIVATE_KEY to (thawDate != null),
             ))
             when (result) {
                 is Result.Success -> {
