@@ -36,17 +36,11 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 /** OSRF API constants
- *
- * See also https://webby.evergreencatalog.com/opac/extras/docgen.xsl
- * for online service/method documentation.
- *
- * Created by kenstir on 9/26/2016.
  */
 public class Api {
 
     public static final String ANONYMOUS = "ANONYMOUS";
     public static final String IDL_CLASSES_USED = "ac,acn,acp,ahr,ahrn,ahtc,aoa,aou,aouhoo,aout,au,aua,auact,aum,aus,bmp,bre,cbreb,cbrebi,cbrebin,cbrebn,ccs,ccvm,cfg,circ,csc,cuat,ex,mbt,mbts,mous,mra,mraf,mus,mvr,perm_ex";
-    public static final int LONG_TIMEOUT_MS = 10000;
 
     /// actor
 
@@ -72,7 +66,7 @@ public class Api {
     public static final String MESSAGES_RETRIEVE = "open-ils.actor.message.retrieve"; // [aum]
     public static final String HOURS_OF_OPERATION_RETRIEVE = "open-ils.actor.org_unit.hours_of_operation.retrieve"; // [aouhoo]
     public static final String ADDRESS_RETRIEVE = "open-ils.actor.org_unit.address.retrieve"; // [aoa]
-    //public static final String VITAL_STATS = "open-ils.actor.user.opac.vital_stats"; //TODO
+    //public static final String VITAL_STATS = "open-ils.actor.user.opac.vital_stats"; // Used by OPAC for summary stats
 
     public static final String SETTING_CREDIT_PAYMENTS_ALLOW = "credit.payments.allow";
     public static final String SETTING_INFO_URL = "lib.info_url";
@@ -116,8 +110,6 @@ public class Api {
     public static final String RETRIEVE_BRE = "open-ils.pcrud.retrieve.bre";
     public static final String RETRIEVE_MRA = "open-ils.pcrud.retrieve.mra";
     public static final String SEARCH_CCVM = "open-ils.pcrud.search.ccvm.atomic";
-    //public static final String SEARCH_MRA = "open-ils.pcrud.search.mra.atomic";
-    //public static final String SEARCH_MRAF = "open-ils.pcrud.search.mraf.atomic";
     public static final String SEARCH_SMS_CARRIERS = "open-ils.pcrud.search.csc.atomic"; // [csc]
 
     /// search
@@ -125,7 +117,6 @@ public class Api {
     public static final String SEARCH = "open-ils.search";
     public static final String MULTICLASS_QUERY = "open-ils.search.biblio.multiclass.query";
     public static final String MODS_SLIM_RETRIEVE = "open-ils.search.biblio.record.mods_slim.retrieve";
-    //public static final String MODS_SLIM_BATCH = "open-ils.search.biblio.record.mods_slim.batch.retrieve.atomic";
     public static final String COPY_LOCATION_COUNTS = "open-ils.search.biblio.copy_location_counts.summary.retrieve";
     public static final String COPY_STATUS_ALL = "open-ils.search.config.copy_status.retrieve.all"; // [ccs]
     public static final String COPY_COUNT = "open-ils.search.biblio.record.copy_count";
