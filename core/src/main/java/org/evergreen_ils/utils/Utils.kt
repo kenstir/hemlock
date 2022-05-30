@@ -34,7 +34,7 @@ fun Any.fromApiToIntOrNull(): Int? {
 
 // Given a pubdate like "2000", "c2002", "2003-", or "2007-2014",
 // extract the first number as an Int for sorting.
-fun pubdateComparator(pubdate: String?): Int? {
+fun pubdateSortKey(pubdate: String?): Int? {
     val s = pubdate ?: return null
     val startIndex = s.indexOfFirst { it.isDigit() }
     if (startIndex < 0) return null

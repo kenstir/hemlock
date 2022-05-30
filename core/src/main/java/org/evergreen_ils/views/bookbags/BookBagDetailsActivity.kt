@@ -21,11 +21,13 @@ package org.evergreen_ils.views.bookbags
 
 import android.app.AlertDialog
 import android.content.Context
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import androidx.annotation.RequiresApi
 import androidx.core.os.bundleOf
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
@@ -41,7 +43,7 @@ import org.evergreen_ils.net.Gateway
 import org.evergreen_ils.net.GatewayLoader
 import org.evergreen_ils.searchCatalog.RecordDetails
 import org.evergreen_ils.searchCatalog.RecordInfo
-import org.evergreen_ils.utils.pubdateComparator
+import org.evergreen_ils.utils.pubdateSortKey
 import org.evergreen_ils.utils.ui.ActionBarUtils
 import org.evergreen_ils.utils.ui.BaseActivity
 import org.evergreen_ils.utils.ui.ProgressDialogSupport
@@ -56,6 +58,7 @@ class BookBagDetailsActivity : BaseActivity() {
     private var listAdapter: BookBagItemsArrayAdapter? = null
     private var progress: ProgressDialogSupport? = null
     private lateinit var bookBag: BookBag
+    private var sortedItems = ArrayList<BookBagItem>()
     private var bookBagName: TextView? = null
     private var bookBagDescription: TextView? = null
     private var deleteButton: Button? = null
@@ -85,12 +88,12 @@ class BookBagDetailsActivity : BaseActivity() {
             builder.create().show()
         })
         lv = findViewById(R.id.bookbagitem_list)
-        listAdapter = BookBagItemsArrayAdapter(this, R.layout.bookbagitem_list_item)
+        listAdapter = BookBagItemsArrayAdapter(this, R.layout.bookbagitem_list_item, sortedItems)
         lv?.adapter = listAdapter
         lv?.onItemClickListener = AdapterView.OnItemClickListener { parent, view, position, id ->
             //Analytics.logEvent("list_itemclick")
             val records = ArrayList<RecordInfo?>()
-            bookBag.items.let {
+            sortedItems.let {
                 for (item in it) {
                     records.add(item.recordInfo)
                 }
@@ -153,8 +156,9 @@ class BookBagDetailsActivity : BaseActivity() {
     }
 
     private fun updateItemsList() {
-        listAdapter?.clear()
-        listAdapter?.addAll( bookBag.items.sortedByDescending { pubdateComparator(it.recordInfo?.pubdate) } )
+        val comparator = BookBagItemPubdateComparator(true)
+        sortedItems.clear()
+        sortedItems.addAll(bookBag.items.sortedWith(comparator))
         listAdapter?.notifyDataSetChanged()
     }
 
@@ -181,7 +185,26 @@ class BookBagDetailsActivity : BaseActivity() {
         }
     }
 
-    internal inner class BookBagItemsArrayAdapter(context: Context, private val resourceId: Int) : ArrayAdapter<BookBagItem>(context, resourceId) {
+    internal class BookBagItemPubdateComparator(descending: Boolean): Comparator<BookBagItem> {
+        private val descending = descending
+
+        override fun compare(o1: BookBagItem?, o2: BookBagItem?): Int {
+            val key1 = if (descending) pubdateSortKey(o2?.recordInfo?.pubdate) else pubdateSortKey(o1?.recordInfo?.pubdate)
+            val key2 = if (descending) pubdateSortKey(o1?.recordInfo?.pubdate) else pubdateSortKey(o2?.recordInfo?.pubdate)
+            return when {
+                key1 == null && key2 == null -> 0
+                key1 == null -> -1
+                key2 == null -> 1
+                else -> key1.compareTo(key2)
+            }
+        }
+    }
+
+    internal inner class BookBagItemsArrayAdapter(
+        context: Context,
+        private val resourceId: Int,
+        items: ArrayList<BookBagItem>
+    ) : ArrayAdapter<BookBagItem>(context, resourceId, items) {
 
         override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
             val row = when(convertView) {
