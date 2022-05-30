@@ -173,10 +173,11 @@ class HoldsActivity : BaseActivity() {
         val modsResult = Gateway.search.fetchRecordMODS(target)
         if (modsResult is Result.Error) return modsResult
         val modsObj = modsResult.get()
-        hold.recordInfo = RecordInfo(modsObj)
+        val recordInfo = RecordInfo(modsObj)
+        hold.recordInfo = recordInfo
 
-        if (hold.recordInfo.doc_id == null || hold.recordInfo.doc_id == -1) return Result.Success(Unit)
-        val mraResult = fetchRecordAttrs(hold.recordInfo, hold.recordInfo.doc_id)
+        if (recordInfo.doc_id == null || recordInfo.doc_id == -1) return Result.Success(Unit)
+        val mraResult = fetchRecordAttrs(recordInfo, recordInfo.doc_id)
 
         return Result.Success(Unit)
     }
@@ -200,10 +201,11 @@ class HoldsActivity : BaseActivity() {
         if (modsResult is Result.Error) return modsResult
         val modsObj = modsResult.get()
         //Log.d(TAG, "title:${hold.title} modsObj:$modsObj")
-        hold.recordInfo = RecordInfo(modsObj)
+        val recordInfo = RecordInfo(modsObj)
+        hold.recordInfo = recordInfo
 
-        if (hold.recordInfo.doc_id == null) return Result.Success(Unit)
-        val mraResult = fetchRecordAttrs(hold.recordInfo, hold.recordInfo.doc_id)
+        if (recordInfo.doc_id == null) return Result.Success(Unit)
+        val mraResult = fetchRecordAttrs(recordInfo, recordInfo.doc_id)
 
         return Result.Success(Unit)
     }
@@ -227,10 +229,11 @@ class HoldsActivity : BaseActivity() {
         if (modsResult is Result.Error) return modsResult
         val modsObj = modsResult.get()
         //Log.d(TAG, "modsObj:$modsObj")
-        hold.recordInfo = RecordInfo(modsObj)
+        val recordInfo = RecordInfo(modsObj)
+        hold.recordInfo = recordInfo
 
-        if (hold.recordInfo.doc_id == null) return Result.Success(Unit)
-        val mraResult = fetchRecordAttrs(hold.recordInfo, hold.recordInfo.doc_id)
+        if (recordInfo.doc_id == null) return Result.Success(Unit)
+        val mraResult = fetchRecordAttrs(recordInfo, recordInfo.doc_id)
 
         return Result.Success(Unit)
     }
@@ -248,10 +251,11 @@ class HoldsActivity : BaseActivity() {
         if (modsResult is Result.Error) return modsResult
         val modsObj = modsResult.get()
         //Log.d(TAG, "modsObj:$modsObj")
-        hold.recordInfo = RecordInfo(modsObj)
+        val recordInfo = RecordInfo(modsObj)
+        hold.recordInfo = recordInfo
 
-        if (hold.recordInfo.doc_id == null) return Result.Success(Unit)
-        val mraResult = fetchRecordAttrs(hold.recordInfo, hold.recordInfo.doc_id)
+        if (recordInfo.doc_id == null) return Result.Success(Unit)
+        val mraResult = fetchRecordAttrs(recordInfo, recordInfo.doc_id)
 
         return Result.Success(Unit)
     }
