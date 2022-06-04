@@ -19,7 +19,7 @@
  */
 package org.evergreen_ils.data
 
-import org.evergreen_ils.Api
+import org.evergreen_ils.OSRFUtils
 import org.evergreen_ils.searchCatalog.RecordInfo
 import org.evergreen_ils.android.Log
 import org.opensrf.util.OSRFObject
@@ -46,7 +46,7 @@ class FineRecord(circ: OSRFObject?, mvr_record: OSRFObject?, mbts_transaction: O
         if (mbts_transaction["xact_type"].toString() == "circulation") {
             title = mvr_record?.getString("title")
             subtitle = mvr_record?.getString("author")
-            checkin_time = Api.parseDate(circ?.getString("checkin_time"))
+            checkin_time = OSRFUtils.parseDate(circ?.getString("checkin_time"))
             recordInfo = RecordInfo(mvr_record)
         } else { // xact_type = "grocery"
             title = mbts_transaction.getString("last_billing_type")

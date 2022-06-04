@@ -25,6 +25,7 @@ import androidx.test.platform.app.InstrumentationRegistry;
 import android.text.TextUtils;
 
 import org.evergreen_ils.Api;
+import org.evergreen_ils.OSRFUtils;
 import org.evergreen_ils.auth.EvergreenAuthenticator;
 import org.evergreen_ils.net.Gateway;
 import org.evergreen_ils.android.Analytics;
@@ -122,7 +123,7 @@ public class LiveServiceTest {
         Map<String, ?> resp_map = ((Map<String, ?>) resp);
         printMap(resp_map);
         Boolean is_pickup_location = null;
-        is_pickup_location = !Api.parseBoolean(resp_map.get(Api.SETTING_ORG_UNIT_NOT_PICKUP_LIB));
+        is_pickup_location = !OSRFUtils.parseBoolean(resp_map.get(Api.SETTING_ORG_UNIT_NOT_PICKUP_LIB));
         Log.d(TAG, "settingIsPickupLocation(" + org_id + ") = " + is_pickup_location);
     }
 
@@ -145,7 +146,7 @@ public class LiveServiceTest {
         Object o = resp_map.get(Api.SETTING_ORG_UNIT_NOT_PICKUP_LIB);
         if (o != null) {
             Map<String, ?> resp_org_map = (Map<String, ?>) o;
-            is_pickup_location = !Api.parseBoolean(resp_org_map.get("value"));
+            is_pickup_location = !OSRFUtils.parseBoolean(resp_org_map.get("value"));
         }
         Log.d(TAG, "settingIsPickupLocation(" + org_id + ") = " + is_pickup_location);
     }
@@ -166,7 +167,7 @@ public class LiveServiceTest {
         if (resp != null) {
             Map<String, ?> resp_map = ((Map<String, ?>) resp);
             printMap(resp_map);
-            is_pickup_location = !Api.parseBoolean(resp_map.get("value"));
+            is_pickup_location = !OSRFUtils.parseBoolean(resp_map.get("value"));
         }
         Log.d(TAG, "settingIsPickupLocation(" + org_id + ") = " + is_pickup_location);
     }
@@ -238,7 +239,7 @@ public class LiveServiceTest {
             return; // search failed or server crashed
 
         Map<String, ?> response = (Map<String, ?>) resp;
-        Integer visible = Api.parseInt(response.get("count"), 0);
+        Integer visible = OSRFUtils.parseInt(response.get("count"), 0);
 
         // record_ids_lol is a list of lists and looks like one of:
         //   [[32673,null,"0.0"],[886843,null,"0.0"]] // integer ids+?

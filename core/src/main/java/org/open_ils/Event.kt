@@ -1,6 +1,6 @@
 package org.open_ils
 
-import org.evergreen_ils.Api
+import org.evergreen_ils.OSRFUtils
 import org.evergreen_ils.data.JSONDictionary
 import org.opensrf.util.OSRFObject
 import java.util.*
@@ -44,7 +44,7 @@ class Event : HashMap<String, Any?> {
         }
 
     val code: Int
-        get() = Api.parseInt(get("ilsevent"), 0)
+        get() = OSRFUtils.parseInt(get("ilsevent"), 0)
 
     fun failed(): Boolean {
         return code != 0

@@ -19,7 +19,7 @@
 package org.evergreen_ils.test
 
 import androidx.test.platform.app.InstrumentationRegistry
-import org.evergreen_ils.Api
+import org.evergreen_ils.OSRFUtils
 import org.evergreen_ils.android.Log
 import org.evergreen_ils.android.StdoutLogProvider
 import org.evergreen_ils.net.GatewayEventError
@@ -57,7 +57,7 @@ class GatewayResultTest {
 
         val obj = result.asObject()
         assertNotNull(obj)
-        assertEquals(false, Api.parseBoolean(obj.get("juvenile")))
+        assertEquals(false, OSRFUtils.parseBoolean(obj.get("juvenile")))
         assertEquals("luser", obj.getString("usrname"))
         assertEquals(69, obj.getInt("home_ou"))
     }
@@ -73,7 +73,7 @@ class GatewayResultTest {
 
         val obj = result.asObject()
         assertNotNull(obj)
-        assertEquals(false, Api.parseBoolean(obj.get("juvenile")))
+        assertEquals(false, OSRFUtils.parseBoolean(obj.get("juvenile")))
         assertEquals("luser", obj.getString("usrname"))
         assertEquals(null, obj.getInt("home_ou"))
     }
@@ -89,7 +89,7 @@ class GatewayResultTest {
 
         val obj = result.asObject()
         assertNotNull(obj)
-        assertEquals(false, Api.parseBoolean(obj.get("juvenile")))
+        assertEquals(false, OSRFUtils.parseBoolean(obj.get("juvenile")))
         assertEquals("luser", obj.getString("usrname"))
         assertEquals(69, obj.getInt("home_ou"))
     }

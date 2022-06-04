@@ -20,7 +20,7 @@
 
 package org.evergreen_ils.data
 
-import org.evergreen_ils.Api
+import org.evergreen_ils.OSRFUtils
 import org.evergreen_ils.searchCatalog.RecordInfo
 import org.evergreen_ils.utils.TextUtils
 import org.opensrf.util.OSRFObject
@@ -111,9 +111,9 @@ class CircRecord(circ: OSRFObject?, circType: CircType, circId: Int) {
     companion object {
         fun makeArray(circSlimObj: OSRFObject): ArrayList<CircRecord> {
             val ret = ArrayList<CircRecord>()
-            for (id in Api.parseIdsListAsInt(circSlimObj.get("out")))
+            for (id in OSRFUtils.parseIdsListAsInt(circSlimObj.get("out")))
                 ret.add(CircRecord(id))
-            for (id in Api.parseIdsListAsInt(circSlimObj.get("overdue")))
+            for (id in OSRFUtils.parseIdsListAsInt(circSlimObj.get("overdue")))
                 ret.add(CircRecord(id))
             return ret
         }

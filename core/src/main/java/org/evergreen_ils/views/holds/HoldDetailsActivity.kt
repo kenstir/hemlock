@@ -31,7 +31,7 @@ import android.widget.*
 import android.widget.AdapterView.OnItemSelectedListener
 import androidx.core.os.bundleOf
 import kotlinx.coroutines.async
-import org.evergreen_ils.Api
+import org.evergreen_ils.OSRFUtils
 import org.evergreen_ils.R
 import org.evergreen_ils.android.App
 import org.evergreen_ils.system.EgOrg
@@ -179,8 +179,8 @@ class HoldDetailsActivity : BaseActivity() {
             progress?.show(this@HoldDetailsActivity, getString(R.string.msg_updating_hold))
             var expireDateApi: String? = null
             var thawDateApi: String? = null
-            if (expireDate != null) expireDateApi = Api.formatDate(expireDate)
-            if (thawDate != null) thawDateApi = Api.formatDate(thawDate)
+            if (expireDate != null) expireDateApi = OSRFUtils.formatDate(expireDate)
+            if (thawDate != null) thawDateApi = OSRFUtils.formatDate(thawDate)
 
             val holdId = record.ahr.getInt("id") ?: 0
             val orgId = EgOrg.visibleOrgs[selectedOrgPos].id

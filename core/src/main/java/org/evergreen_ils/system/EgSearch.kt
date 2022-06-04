@@ -20,11 +20,10 @@
 package org.evergreen_ils.system
 
 import android.text.TextUtils
-import org.evergreen_ils.Api
+import org.evergreen_ils.OSRFUtils
 import org.evergreen_ils.data.Organization
 import org.evergreen_ils.searchCatalog.RecordInfo
 import org.opensrf.util.OSRFObject
-import java.util.*
 import kotlin.collections.ArrayList
 
 object EgSearch {
@@ -37,7 +36,7 @@ object EgSearch {
 
     fun loadResults(obj: OSRFObject) {
         clearResults()
-        visible = Api.parseInt(obj["count"], 0)
+        visible = OSRFUtils.parseInt(obj["count"], 0)
         if (visible == 0) return
 
         // parse ids list

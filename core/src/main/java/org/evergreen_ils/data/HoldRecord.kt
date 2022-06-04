@@ -21,8 +21,8 @@
 package org.evergreen_ils.data
 
 import android.content.res.Resources
-import org.evergreen_ils.Api
 import org.evergreen_ils.HOLD_TYPE_METARECORD
+import org.evergreen_ils.OSRFUtils
 import org.evergreen_ils.R
 import org.evergreen_ils.utils.JsonUtils.parseObject
 import org.evergreen_ils.utils.JsonUtils.parseHoldableFormats
@@ -56,7 +56,7 @@ class HoldRecord(val ahr: OSRFObject) : Serializable {
         private get() {
             val transit = ahr["transit"] as OSRFObject ?: return null
             val sent = transit.getString("source_send_time")
-            val date = Api.parseDate(sent)
+            val date = OSRFUtils.parseDate(sent)
             return formatDateTime(date)
         }
 

@@ -35,10 +35,7 @@ import androidx.core.os.bundleOf
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.joinAll
-import org.evergreen_ils.Api
-import org.evergreen_ils.HOLD_TYPE_PART
-import org.evergreen_ils.HOLD_TYPE_TITLE
-import org.evergreen_ils.R
+import org.evergreen_ils.*
 import org.evergreen_ils.android.Analytics
 import org.evergreen_ils.android.Analytics.orgDimensionKey
 import org.evergreen_ils.android.App
@@ -266,11 +263,11 @@ class PlaceHoldActivity : BaseActivity() {
     }
 
     private fun getExpireDate(): String? {
-        return if (expireDate != null) Api.formatDate(expireDate) else null
+        return if (expireDate != null) OSRFUtils.formatDate(expireDate) else null
     }
 
     private fun getThawDate(): String? {
-        return if (thawDate != null) Api.formatDate(thawDate) else null
+        return if (thawDate != null) OSRFUtils.formatDate(thawDate) else null
     }
 
     private fun placeHoldPreFlightCheck(): Boolean {

@@ -20,6 +20,7 @@ package org.evergreen_ils.data
 
 import androidx.core.os.bundleOf
 import org.evergreen_ils.Api
+import org.evergreen_ils.OSRFUtils
 import org.evergreen_ils.android.Analytics
 import org.evergreen_ils.net.GatewayEventError
 import org.opensrf.util.OSRFObject
@@ -101,10 +102,10 @@ class Account constructor(val username: String, var authToken: String?) {
                 map[name] = value
             }
         }
-        this._pickupOrg = Api.parseInt(map[Api.USER_SETTING_DEFAULT_PICKUP_LOCATION])
+        this._pickupOrg = OSRFUtils.parseInt(map[Api.USER_SETTING_DEFAULT_PICKUP_LOCATION])
         this.notifyPhoneNumber = map[Api.USER_SETTING_DEFAULT_PHONE]
-        this._searchOrg = Api.parseInt(map[Api.USER_SETTING_DEFAULT_SEARCH_LOCATION])
-        this.smsCarrier = Api.parseInt(map[Api.USER_SETTING_DEFAULT_SMS_CARRIER])
+        this._searchOrg = OSRFUtils.parseInt(map[Api.USER_SETTING_DEFAULT_SEARCH_LOCATION])
+        this.smsCarrier = OSRFUtils.parseInt(map[Api.USER_SETTING_DEFAULT_SMS_CARRIER])
         this.smsNumber = map[Api.USER_SETTING_DEFAULT_SMS_NOTIFY]
         this.holdNotifyValue = map[Api.USER_SETTING_HOLD_NOTIFY] ?: "email:phone"
         parseHoldNotifyValue(holdNotifyValue)

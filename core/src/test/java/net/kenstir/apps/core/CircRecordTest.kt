@@ -19,7 +19,7 @@
 
 package net.kenstir.apps.core
 
-import org.evergreen_ils.Api
+import org.evergreen_ils.OSRFUtils
 import org.evergreen_ils.data.CircRecord
 import org.evergreen_ils.data.jsonMapOf
 import org.evergreen_ils.searchCatalog.RecordInfo
@@ -56,7 +56,7 @@ class CircRecordTest {
         assertEquals("", circRecord.author)
         assertEquals(0, circRecord.renewals)
         assertEquals(19314463, circRecord.targetCopy)
-        assertEquals(Api.parseDate("2020-02-05T23:59:59-0500"), circRecord.dueDate)
+        assertEquals(OSRFUtils.parseDate("2020-02-05T23:59:59-0500"), circRecord.dueDate)
     }
 
     @Test
@@ -84,7 +84,7 @@ class CircRecordTest {
         assertEquals("Margaret Atwood", circRecord.author)
         assertEquals(0, circRecord.renewals)
         assertEquals(19314463, circRecord.targetCopy)
-        assertEquals(Api.parseDate("2020-02-05T23:59:59-0500"), circRecord.dueDate)
+        assertEquals(OSRFUtils.parseDate("2020-02-05T23:59:59-0500"), circRecord.dueDate)
     }
 
     // Something borrowed from another consortium will have a target_copy but

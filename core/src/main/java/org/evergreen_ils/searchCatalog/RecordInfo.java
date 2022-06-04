@@ -21,9 +21,8 @@ package org.evergreen_ils.searchCatalog;
 
 import android.content.res.Resources;
 
-import org.evergreen_ils.Api;
+import org.evergreen_ils.OSRFUtils;
 import org.evergreen_ils.R;
-import org.evergreen_ils.data.CopyLocationCounts;
 import org.evergreen_ils.data.CopySummary;
 import org.evergreen_ils.system.EgCodedValueMap;
 import org.evergreen_ils.android.Log;
@@ -32,7 +31,6 @@ import org.evergreen_ils.utils.MARCRecord;
 import org.evergreen_ils.utils.MARCXMLParser;
 import org.evergreen_ils.utils.RecordAttributes;
 import org.evergreen_ils.utils.TextUtils;
-import org.opensrf.util.GatewayResult;
 import org.opensrf.util.OSRFObject;
 
 import java.io.Serializable;
@@ -227,7 +225,7 @@ public class RecordInfo implements Serializable {
     public static ArrayList<RecordInfo> makeArray(List<List<?>> idsList) {
         ArrayList<RecordInfo> records = new ArrayList<>();
         for (int i = 0; i < idsList.size(); i++) {
-            Integer record_id = Api.parseInt(idsList.get(i).get(0));
+            Integer record_id = OSRFUtils.parseInt(idsList.get(i).get(0));
             records.add(new RecordInfo(record_id));
         }
         return records;
