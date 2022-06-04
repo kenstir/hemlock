@@ -20,7 +20,7 @@ package org.evergreen_ils.android;
 import android.text.TextUtils;
 
 import org.evergreen_ils.system.EgOrg;
-import org.evergreen_ils.searchCatalog.RecordInfo;
+import org.evergreen_ils.data.MBRecord;
 import org.evergreen_ils.utils.Link;
 import org.evergreen_ils.utils.MARCRecord;
 
@@ -58,7 +58,7 @@ public class AppBehavior {
     }
 
     @Nullable
-    public Boolean isOnlineResource(RecordInfo record) {
+    public Boolean isOnlineResource(MBRecord record) {
         if (record == null) return null;
         if (!record.hasMetadata) return null;
         if (!record.hasAttributes) return null;
@@ -93,7 +93,7 @@ public class AppBehavior {
     }
 
     @NonNull
-    protected List<Link> getOnlineLocationsFromMARC(RecordInfo record, String orgShortName) {
+    protected List<Link> getOnlineLocationsFromMARC(MBRecord record, String orgShortName) {
         ArrayList<Link> links = new ArrayList<>();
         if (!record.hasMARC || record.marc_record == null)
             return links;
@@ -125,7 +125,7 @@ public class AppBehavior {
     }
 
     @NonNull
-    public List<Link> getOnlineLocations(RecordInfo record, String orgShortName) {
+    public List<Link> getOnlineLocations(MBRecord record, String orgShortName) {
         ArrayList<Link> links = new ArrayList<>();
         if (TextUtils.isEmpty(record.online_loc))
             return links;

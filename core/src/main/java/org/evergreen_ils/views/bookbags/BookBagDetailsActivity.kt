@@ -21,13 +21,11 @@ package org.evergreen_ils.views.bookbags
 
 import android.app.AlertDialog
 import android.content.Context
-import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
-import androidx.annotation.RequiresApi
 import androidx.core.os.bundleOf
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
@@ -42,7 +40,7 @@ import org.evergreen_ils.data.Result
 import org.evergreen_ils.net.Gateway
 import org.evergreen_ils.net.GatewayLoader
 import org.evergreen_ils.searchCatalog.RecordDetails
-import org.evergreen_ils.searchCatalog.RecordInfo
+import org.evergreen_ils.data.MBRecord
 import org.evergreen_ils.utils.pubdateSortKey
 import org.evergreen_ils.utils.ui.ActionBarUtils
 import org.evergreen_ils.utils.ui.BaseActivity
@@ -92,10 +90,10 @@ class BookBagDetailsActivity : BaseActivity() {
         lv?.adapter = listAdapter
         lv?.onItemClickListener = AdapterView.OnItemClickListener { parent, view, position, id ->
             //Analytics.logEvent("list_itemclick")
-            val records = ArrayList<RecordInfo?>()
+            val records = ArrayList<MBRecord?>()
             sortedItems.let {
                 for (item in it) {
-                    records.add(item.recordInfo)
+                    records.add(item.record)
                 }
             }
             RecordDetails.launchDetailsFlow(this@BookBagDetailsActivity, records, position)
@@ -150,7 +148,7 @@ class BookBagDetailsActivity : BaseActivity() {
         val modsResult = Gateway.search.fetchRecordMODS(item.targetId)
         if (modsResult is Result.Error) return modsResult
         val modsObj = modsResult.get()
-        item.recordInfo = RecordInfo(modsObj)
+        item.record = MBRecord(modsObj)
 
         return Result.Success(Unit)
     }
@@ -189,8 +187,8 @@ class BookBagDetailsActivity : BaseActivity() {
         private val descending = descending
 
         override fun compare(o1: BookBagItem?, o2: BookBagItem?): Int {
-            val key1 = if (descending) pubdateSortKey(o2?.recordInfo?.pubdate) else pubdateSortKey(o1?.recordInfo?.pubdate)
-            val key2 = if (descending) pubdateSortKey(o1?.recordInfo?.pubdate) else pubdateSortKey(o2?.recordInfo?.pubdate)
+            val key1 = if (descending) pubdateSortKey(o2?.record?.pubdate) else pubdateSortKey(o1?.record?.pubdate)
+            val key2 = if (descending) pubdateSortKey(o1?.record?.pubdate) else pubdateSortKey(o2?.record?.pubdate)
             return when {
                 key1 == null && key2 == null -> 0
                 key1 == null -> -1
@@ -222,8 +220,8 @@ class BookBagDetailsActivity : BaseActivity() {
             val remove = row.findViewById<View>(R.id.bookbagitem_remove_button) as Button
 
             val record = getItem(position)
-            title.text = record?.recordInfo?.title
-            author.text = record?.recordInfo?.author
+            title.text = record?.record?.title
+            author.text = record?.record?.author
             remove.setOnClickListener(View.OnClickListener {
                 val id = record?.id ?: return@OnClickListener
                 async {

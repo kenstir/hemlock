@@ -28,7 +28,7 @@ import org.evergreen_ils.data.Account
 import org.evergreen_ils.data.BookBag
 import org.evergreen_ils.data.Organization
 import org.evergreen_ils.data.Result
-import org.evergreen_ils.searchCatalog.RecordInfo
+import org.evergreen_ils.data.MBRecord
 import org.evergreen_ils.system.EgOrg
 
 object GatewayLoader {
@@ -103,18 +103,18 @@ object GatewayLoader {
         return Result.Success(Unit)
     }
 
-    suspend fun loadRecordMetadataAsync(record: RecordInfo): Result<Unit> {
+    suspend fun loadRecordMetadataAsync(record: MBRecord): Result<Unit> {
         if (record.hasMetadata) return Result.Success(Unit)
 
-        val result = Gateway.search.fetchRecordMODS(record.doc_id)
+        val result = Gateway.search.fetchRecordMODS(record.id)
         if (result is Result.Error) return result
         val modsObj = result.get()
-        RecordInfo.updateFromMODSResponse(record, modsObj)
+        MBRecord.updateFromMODSResponse(record, modsObj)
 
         return Result.Success(Unit)
     }
 
-    suspend fun loadRecordAttributesAsync(record: RecordInfo, id: Int = record.doc_id): Result<Unit> {
+    suspend fun loadRecordAttributesAsync(record: MBRecord, id: Int = record.id): Result<Unit> {
         if (record.hasAttributes) return Result.Success(Unit)
 
         val mraResult = Gateway.pcrud.fetchMRA(id)
@@ -125,10 +125,10 @@ object GatewayLoader {
         return Result.Success(Unit)
     }
 
-    suspend fun loadRecordMarcAsync(record: RecordInfo): Result<Unit> {
+    suspend fun loadRecordMarcAsync(record: MBRecord): Result<Unit> {
         if (record.hasMARC) return Result.Success(Unit)
 
-        val result = Gateway.pcrud.fetchMARC(record.doc_id)
+        val result = Gateway.pcrud.fetchMARC(record.id)
         if (result is Result.Error) return result
         val obj = result.get()
         record.updateFromBREResponse(obj)
@@ -136,10 +136,10 @@ object GatewayLoader {
         return Result.Success(Unit)
     }
 
-    suspend fun loadRecordCopyCountsAsync(record: RecordInfo, orgId: Int): Result<Unit> {
+    suspend fun loadRecordCopyCountsAsync(record: MBRecord, orgId: Int): Result<Unit> {
         if (record.hasCopySummary) return Result.Success(Unit)
 
-        val result = Gateway.search.fetchCopyCount(record.doc_id, orgId)
+        val result = Gateway.search.fetchCopyCount(record.id, orgId)
         if (result is Result.Error) return result
         val objList = result.get()
         record.updateFromCopyCountResponse(objList)

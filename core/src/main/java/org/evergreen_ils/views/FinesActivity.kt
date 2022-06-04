@@ -38,7 +38,7 @@ import org.evergreen_ils.data.Result
 import org.evergreen_ils.net.Gateway
 import org.evergreen_ils.net.GatewayLoader
 import org.evergreen_ils.searchCatalog.RecordDetails
-import org.evergreen_ils.searchCatalog.RecordInfo
+import org.evergreen_ils.data.MBRecord
 import org.evergreen_ils.android.Analytics
 import org.evergreen_ils.android.Log
 import org.evergreen_ils.utils.ui.BaseActivity
@@ -185,7 +185,7 @@ class FinesActivity : BaseActivity() {
 
         for (fine in fines) {
             listAdapter?.add(fine)
-            if (fine.recordInfo == null) haveAnyGroceryBills = true
+            if (fine.record == null) haveAnyGroceryBills = true
         }
 
         listAdapter?.notifyDataSetChanged()
@@ -203,17 +203,17 @@ class FinesActivity : BaseActivity() {
 
     private fun onItemClick(position: Int) {
         //Analytics.logEvent("fines_itemclick", "have_grocery_bills", haveAnyGroceryBills)
-        val records = ArrayList<RecordInfo>()
+        val records = ArrayList<MBRecord>()
         if (haveAnyGroceryBills) {
             // If any of the fines are for non-circulation items ("grocery bills"), we
             // start the details flow with only the one record, if a record was selected.
             // The details flow can't handle nulls.
-            fineRecords[position].recordInfo?.let {
+            fineRecords[position].record?.let {
                 records.add(it)
             }
         } else {
             for (item in fineRecords) {
-                item.recordInfo?.let {
+                item.record?.let {
                     records.add(it)
                 }
             }

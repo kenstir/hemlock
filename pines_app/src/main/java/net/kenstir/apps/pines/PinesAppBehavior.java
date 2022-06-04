@@ -18,7 +18,7 @@
 package net.kenstir.apps.pines;
 
 import org.evergreen_ils.android.AppBehavior;
-import org.evergreen_ils.searchCatalog.RecordInfo;
+import org.evergreen_ils.data.MBRecord;
 import org.evergreen_ils.utils.Link;
 import org.evergreen_ils.utils.MARCRecord;
 
@@ -42,7 +42,7 @@ public class PinesAppBehavior extends AppBehavior {
     }
 
     @Override @NonNull
-    public List<Link> getOnlineLocations(RecordInfo record, String orgShortName) {
+    public List<Link> getOnlineLocations(MBRecord record, String orgShortName) {
         return getOnlineLocationsFromMARC(record, orgShortName);
     }
 }

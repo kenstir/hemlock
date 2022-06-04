@@ -26,6 +26,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.async
 import org.evergreen_ils.R
 import org.evergreen_ils.android.Log
+import org.evergreen_ils.data.MBRecord
 import org.evergreen_ils.net.Gateway.getUrl
 import org.evergreen_ils.net.GatewayLoader
 import org.evergreen_ils.net.Volley
@@ -34,7 +35,7 @@ import org.evergreen_ils.utils.ui.showAlert
 /**
  * Provide views to RecyclerView with data from records.
  */
-class RecordViewAdapter(private val records: List<RecordInfo>) : RecyclerView.Adapter<RecordViewAdapter.ViewHolder>() {
+class RecordViewAdapter(private val records: List<MBRecord>) : RecyclerView.Adapter<RecordViewAdapter.ViewHolder>() {
     /**
      * Provide a reference to the type of views that you are using (custom ViewHolder)
      */
@@ -45,11 +46,11 @@ class RecordViewAdapter(private val records: List<RecordInfo>) : RecyclerView.Ad
         private val iconFormatText: TextView = v.findViewById(R.id.search_record_format)
         private val publisherText: TextView = v.findViewById(R.id.search_record_publishing)
 
-        fun bindView(record: RecordInfo) {
-            Log.d(TAG, "id:${record.doc_id} bindView")
+        fun bindView(record: MBRecord) {
+            Log.d(TAG, "id:${record.id} bindView")
             val context = recordImage.context
             // todo is it better to load /jacket/medium/ here so it is cached for the details view?
-            val url = getUrl("/opac/extras/ac/jacket/small/r/" + record.doc_id)
+            val url = getUrl("/opac/extras/ac/jacket/small/r/" + record.id)
             recordImage.setImageUrl(url, Volley.getInstance(context).imageLoader)
             //recordImage.setDefaultImageResId(R.drawable.missing_art);//for screenshots
 
@@ -72,15 +73,15 @@ class RecordViewAdapter(private val records: List<RecordInfo>) : RecyclerView.Ad
             }
         }
 
-        private fun loadMetadata(record: RecordInfo) {
-            Log.d(TAG, "id:${record.doc_id} title:${record.title}")
+        private fun loadMetadata(record: MBRecord) {
+            Log.d(TAG, "id:${record.id} title:${record.title}")
             titleText.text = record.title
             authorText.text = record.author
             publisherText.text = record.publishingInfo
         }
 
-        private fun loadFormat(record: RecordInfo) {
-            Log.d(TAG, "id:${record.doc_id} format:${record.iconFormatLabel}")
+        private fun loadFormat(record: MBRecord) {
+            Log.d(TAG, "id:${record.id} format:${record.iconFormatLabel}")
             iconFormatText.text = record.iconFormatLabel
         }
     }

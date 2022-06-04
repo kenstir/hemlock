@@ -39,7 +39,7 @@ import org.evergreen_ils.data.HoldRecord
 import org.evergreen_ils.data.Result
 import org.evergreen_ils.net.Gateway
 import org.evergreen_ils.net.GatewayError
-import org.evergreen_ils.searchCatalog.RecordInfo
+import org.evergreen_ils.data.MBRecord
 import org.evergreen_ils.android.Analytics
 import org.evergreen_ils.android.Log
 import org.evergreen_ils.utils.ui.BaseActivity
@@ -165,7 +165,7 @@ class HoldsActivity : BaseActivity() {
                 Result.Error(GatewayError("unexpected hold type: ${hold.holdType}"))
             }
         }
-        Log.d(TAG, "$target: holdType:${hold.holdType} format:${hold.formatLabel} title:${hold.recordInfo?.title}")
+        Log.d(TAG, "$target: holdType:${hold.holdType} format:${hold.formatLabel} title:${hold.record?.title}")
         return result
     }
 
@@ -173,11 +173,11 @@ class HoldsActivity : BaseActivity() {
         val modsResult = Gateway.search.fetchRecordMODS(target)
         if (modsResult is Result.Error) return modsResult
         val modsObj = modsResult.get()
-        val recordInfo = RecordInfo(modsObj)
-        hold.recordInfo = recordInfo
+        val record = MBRecord(modsObj)
+        hold.record = record
 
-        if (recordInfo.doc_id == null || recordInfo.doc_id == -1) return Result.Success(Unit)
-        val mraResult = fetchRecordAttrs(recordInfo, recordInfo.doc_id)
+        if (record.id == null || record.id == -1) return Result.Success(Unit)
+        val mraResult = fetchRecordAttrs(record, record.id)
 
         return Result.Success(Unit)
     }
@@ -185,7 +185,7 @@ class HoldsActivity : BaseActivity() {
     private suspend fun fetchMetarecordHoldTargetDetails(hold: HoldRecord, target: Int, account: Account): Result<Unit> {
         val result = Gateway.search.fetchMetarecordMODS(target)
         if (result is Result.Error) return result
-        hold.recordInfo = RecordInfo(result.get())
+        hold.record = MBRecord(result.get())
         return Result.Success(Unit)
     }
 
@@ -201,11 +201,11 @@ class HoldsActivity : BaseActivity() {
         if (modsResult is Result.Error) return modsResult
         val modsObj = modsResult.get()
         //Log.d(TAG, "title:${hold.title} modsObj:$modsObj")
-        val recordInfo = RecordInfo(modsObj)
-        hold.recordInfo = recordInfo
+        val record = MBRecord(modsObj)
+        hold.record = record
 
-        if (recordInfo.doc_id == null) return Result.Success(Unit)
-        val mraResult = fetchRecordAttrs(recordInfo, recordInfo.doc_id)
+        if (record.id == null) return Result.Success(Unit)
+        val mraResult = fetchRecordAttrs(record, record.id)
 
         return Result.Success(Unit)
     }
@@ -229,11 +229,11 @@ class HoldsActivity : BaseActivity() {
         if (modsResult is Result.Error) return modsResult
         val modsObj = modsResult.get()
         //Log.d(TAG, "modsObj:$modsObj")
-        val recordInfo = RecordInfo(modsObj)
-        hold.recordInfo = recordInfo
+        val record = MBRecord(modsObj)
+        hold.record = record
 
-        if (recordInfo.doc_id == null) return Result.Success(Unit)
-        val mraResult = fetchRecordAttrs(recordInfo, recordInfo.doc_id)
+        if (record.id == null) return Result.Success(Unit)
+        val mraResult = fetchRecordAttrs(record, record.id)
 
         return Result.Success(Unit)
     }
@@ -251,11 +251,11 @@ class HoldsActivity : BaseActivity() {
         if (modsResult is Result.Error) return modsResult
         val modsObj = modsResult.get()
         //Log.d(TAG, "modsObj:$modsObj")
-        val recordInfo = RecordInfo(modsObj)
-        hold.recordInfo = recordInfo
+        val record = MBRecord(modsObj)
+        hold.record = record
 
-        if (recordInfo.doc_id == null) return Result.Success(Unit)
-        val mraResult = fetchRecordAttrs(recordInfo, recordInfo.doc_id)
+        if (record.id == null) return Result.Success(Unit)
+        val mraResult = fetchRecordAttrs(record, record.id)
 
         return Result.Success(Unit)
     }
@@ -324,7 +324,7 @@ class HoldsActivity : BaseActivity() {
         private val TAG = HoldsActivity::class.java.simpleName
 
         //TODO: replace with GatewayLoader.loadRecordAttributesAsync
-        suspend fun fetchRecordAttrs(record: RecordInfo, id: Int): Result<Unit> {
+        suspend fun fetchRecordAttrs(record: MBRecord, id: Int): Result<Unit> {
             val mraResult = Gateway.pcrud.fetchMRA(id)
             if (mraResult is Result.Error) return mraResult
             val mraObj = mraResult.get()

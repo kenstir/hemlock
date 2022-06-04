@@ -20,7 +20,6 @@
 package org.evergreen_ils.data
 
 import org.evergreen_ils.OSRFUtils
-import org.evergreen_ils.searchCatalog.RecordInfo
 import org.evergreen_ils.android.Log
 import org.opensrf.util.OSRFObject
 import java.util.*
@@ -28,7 +27,7 @@ import java.util.*
 private const val TAG = "FineRecord"
 
 class FineRecord(circ: OSRFObject?, mvr_record: OSRFObject?, mbts_transaction: OSRFObject) {
-    var recordInfo: RecordInfo? = null
+    var record: MBRecord? = null
     var title: String? = null
     var subtitle: String? = null
     var balance_owed: Double? = null
@@ -37,7 +36,7 @@ class FineRecord(circ: OSRFObject?, mvr_record: OSRFObject?, mbts_transaction: O
 
     val status: String
         get() {
-            if (recordInfo == null) return ""
+            if (record == null) return ""
             if (checkin_time != null) return "returned"
             return if (balance_owed != null && max_fine != null && balance_owed!! >= max_fine!!) "maximum fine" else "fines accruing"
         }
@@ -47,7 +46,7 @@ class FineRecord(circ: OSRFObject?, mvr_record: OSRFObject?, mbts_transaction: O
             title = mvr_record?.getString("title")
             subtitle = mvr_record?.getString("author")
             checkin_time = OSRFUtils.parseDate(circ?.getString("checkin_time"))
-            recordInfo = RecordInfo(mvr_record)
+            record = MBRecord(mvr_record)
         } else { // xact_type = "grocery"
             title = mbts_transaction.getString("last_billing_type")
             subtitle = mbts_transaction.getString("last_billing_note")

@@ -19,7 +19,6 @@
  */
 package org.evergreen_ils.data
 
-import org.evergreen_ils.searchCatalog.RecordInfo
 import org.opensrf.util.OSRFObject
 import java.io.Serializable
 import java.util.*
@@ -31,5 +30,5 @@ class BookBagItem(cbrebiObj: OSRFObject) : Serializable {
     var targetId: Int = cbrebiObj.getInt("target_biblio_record_entry") ?: -1
     var createTime: Date? = cbrebiObj.getDate("create_time")
     @JvmField
-    var recordInfo: RecordInfo? = null
+    var record: MBRecord? = null
 }

@@ -22,7 +22,7 @@ package net.kenstir.apps.core
 import org.evergreen_ils.OSRFUtils
 import org.evergreen_ils.data.CircRecord
 import org.evergreen_ils.data.jsonMapOf
-import org.evergreen_ils.searchCatalog.RecordInfo
+import org.evergreen_ils.data.MBRecord
 import org.junit.Assert.assertEquals
 import org.junit.BeforeClass
 import org.junit.Test
@@ -78,7 +78,7 @@ class CircRecordTest {
         ))
         val circRecord = CircRecord(circObj, CircRecord.CircType.OUT, 93108558)
         circRecord.mvr = mvrObj
-        circRecord.recordInfo = RecordInfo(mvrObj)
+        circRecord.record = MBRecord(mvrObj)
 
         assertEquals("The Testaments", circRecord.title)
         assertEquals("Margaret Atwood", circRecord.author)
@@ -114,7 +114,7 @@ class CircRecordTest {
         ))
         val circRecord = CircRecord(circObj, CircRecord.CircType.OUT, 1)
         circRecord.mvr = mvrObj
-        circRecord.recordInfo = RecordInfo(mvrObj)
+        circRecord.record = MBRecord(mvrObj)
         circRecord.acp = acpObj
 
         assertEquals("SEO TEST", circRecord.title)

@@ -28,7 +28,6 @@ import org.evergreen_ils.utils.JsonUtils.parseObject
 import org.evergreen_ils.utils.JsonUtils.parseHoldableFormats
 import org.evergreen_ils.system.EgCodedValueMap.iconFormatLabel
 import org.opensrf.util.OSRFObject
-import org.evergreen_ils.searchCatalog.RecordInfo
 import org.evergreen_ils.system.EgOrg
 import org.evergreen_ils.utils.TextUtils
 import java.io.Serializable
@@ -38,7 +37,7 @@ import java.util.*
 private val TAG = HoldRecord::class.java.simpleName
 
 class HoldRecord(val ahr: OSRFObject) : Serializable {
-    var recordInfo: RecordInfo? = null
+    var record: MBRecord? = null
     var qstatsObj: OSRFObject? = null
     var partLabel: String? = null // only for HOLD_TYPE_PART
 
@@ -113,11 +112,11 @@ ${res.getQuantityString(R.plurals.number_of_holds, totalHolds!!, totalHolds)} on
     }
 
     val title: String
-        get() = if (recordInfo != null && !TextUtils.isEmpty(recordInfo!!.title)) withPartLabel(
-            recordInfo!!.title
+        get() = if (record != null && !TextUtils.isEmpty(record!!.title)) withPartLabel(
+            record!!.title
         ) else "Unknown title"
     val author: String
-        get() = if (recordInfo != null && !TextUtils.isEmpty(recordInfo!!.author)) recordInfo!!.author else ""
+        get() = if (record != null && !TextUtils.isEmpty(record!!.author)) record!!.author else ""
     val expireTime: Date?
         get() = ahr.getDate("expire_time")
     val shelfExpireTime: Date?
@@ -158,7 +157,7 @@ ${res.getQuantityString(R.plurals.number_of_holds, totalHolds!!, totalHolds)} on
                 }
                 return android.text.TextUtils.join(" or ", labels)
             }
-            return RecordInfo.getIconFormatLabel(recordInfo)
+            return MBRecord.getIconFormatLabel(record)
         }
 
     companion object {

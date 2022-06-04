@@ -21,7 +21,6 @@
 package org.evergreen_ils.data
 
 import org.evergreen_ils.OSRFUtils
-import org.evergreen_ils.searchCatalog.RecordInfo
 import org.evergreen_ils.utils.TextUtils
 import org.opensrf.util.OSRFObject
 import java.text.DateFormat
@@ -42,14 +41,14 @@ class CircRecord(circ: OSRFObject?, circType: CircType, circId: Int) {
     @JvmField
     var acp: OSRFObject? = null
     @JvmField
-    var recordInfo: RecordInfo? = null
+    var record: MBRecord? = null
 
     // dummy_title is used for ILLs; in these cases
     // recordInfo.id == mvr.doc_id == -1
     val title: String?
         get() {
-            if (!TextUtils.isEmpty(recordInfo?.title))
-                return recordInfo?.title
+            if (!TextUtils.isEmpty(record?.title))
+                return record?.title
             if (!TextUtils.isEmpty(acp?.getString("dummy_title")))
                 return acp?.getString("dummy_title")
             return "Unknown Title"
@@ -59,8 +58,8 @@ class CircRecord(circ: OSRFObject?, circType: CircType, circId: Int) {
     // recordInfo.id == mvr.doc_id == -1
     val author: String?
         get() {
-            if (!TextUtils.isEmpty(recordInfo?.author))
-                return recordInfo?.author
+            if (!TextUtils.isEmpty(record?.author))
+                return record?.author
             if (!TextUtils.isEmpty(acp?.getString("dummy_author")))
                 return acp?.getString("dummy_author")
             return ""

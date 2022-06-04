@@ -40,6 +40,7 @@ import org.evergreen_ils.android.Analytics.orgDimensionKey
 import org.evergreen_ils.android.App
 import org.evergreen_ils.android.Log
 import org.evergreen_ils.barcodescan.CaptureActivity
+import org.evergreen_ils.data.MBRecord
 import org.evergreen_ils.data.Result
 import org.evergreen_ils.net.Gateway
 import org.evergreen_ils.net.GatewayLoader
@@ -77,7 +78,7 @@ class SearchActivity : BaseActivity() {
         get() = EgCodedValueMap.searchFormatCode(searchFormatSpinner?.selectedItem.toString())
 
     private class ContextMenuRecordInfo : ContextMenu.ContextMenuInfo {
-        var record: RecordInfo? = null
+        var record: MBRecord? = null
         var position = 0
     }
 

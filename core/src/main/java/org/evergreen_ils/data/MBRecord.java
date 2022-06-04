@@ -1,29 +1,27 @@
 /*
  * Copyright (C) 2012 Evergreen Open-ILS
  * @author Daniel-Octavian Rizea
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
- * or the License, or (at your option) any later version.
- * 
+ * of the License, or (at your option) any later version.
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software 
+ * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
- * 
  */
-package org.evergreen_ils.searchCatalog;
+package org.evergreen_ils.data;
 
 import android.content.res.Resources;
 
 import org.evergreen_ils.OSRFUtils;
 import org.evergreen_ils.R;
-import org.evergreen_ils.data.CopySummary;
 import org.evergreen_ils.system.EgCodedValueMap;
 import org.evergreen_ils.android.Log;
 import org.evergreen_ils.system.EgOrg;
@@ -44,20 +42,13 @@ import androidx.annotation.Nullable;
 
 import static org.evergreen_ils.utils.StringUtils.safeString;
 
-public class RecordInfo implements Serializable {
+public class MBRecord implements Serializable {
 
     private static final long serialVersionUID = 10123L;
 
-    private static final String TAG = RecordInfo.class.getSimpleName();
+    private static final String TAG = MBRecord.class.getSimpleName();
 
-    public interface OnRecordClickListener {
-        void onClick(RecordInfo record, int position);
-    }
-    public interface OnRecordLongClickListener {
-        void onLongClick(RecordInfo record, int position);
-    }
-
-    public Integer doc_id = -1;
+    public Integer id = -1;
     public String title = null;
     public String author = null;
     public String pubdate = null;
@@ -79,15 +70,15 @@ public class RecordInfo implements Serializable {
     public MARCRecord marc_record = null;
     public HashMap<String, String> attrs = null;
 
-    public RecordInfo(int doc_id) {
-        this.doc_id = doc_id;
+    public MBRecord(int id) {
+        this.id = id;
     }
 
-    public RecordInfo(OSRFObject info) {
+    public MBRecord(OSRFObject info) {
         updateFromMODSResponse(this, info);
     }
 
-    public static void updateFromMODSResponse(RecordInfo record, Object mods_slim_response) {
+    public static void updateFromMODSResponse(MBRecord record, Object mods_slim_response) {
         if (mods_slim_response == null)
             return;
         OSRFObject info;
@@ -99,8 +90,8 @@ public class RecordInfo implements Serializable {
         }
 
         try {
-            if (record.doc_id == -1)
-                record.doc_id = info.getInt("doc_id");
+            if (record.id == -1)
+                record.id = info.getInt("doc_id");
         } catch (Exception e) {
             Log.d(TAG, "caught", e);
         }
@@ -190,10 +181,6 @@ public class RecordInfo implements Serializable {
         return attrs.get(attr_name);
     }
 
-//    public String getSearchFormat() {
-//        return attrs.get("search_format");
-//    }
-
     public @Nullable String getIconFormat() {
         return (attrs != null) ? attrs.get("icon_format") : null;
     }
@@ -202,7 +189,7 @@ public class RecordInfo implements Serializable {
         return safeString(EgCodedValueMap.iconFormatLabel(getIconFormat()));
     }
 
-    public @NonNull static String getIconFormatLabel(RecordInfo record) {
+    public @NonNull static String getIconFormatLabel(MBRecord record) {
         if (record == null)
             return "";
         return record.getIconFormatLabel();
@@ -222,11 +209,11 @@ public class RecordInfo implements Serializable {
      *   [["503610",null,"0.0"],["502717",null,"0.0"]] // string id,?,?
      *   [["1805532"],["2385399"]]                     // string id only
      */
-    public static ArrayList<RecordInfo> makeArray(List<List<?>> idsList) {
-        ArrayList<RecordInfo> records = new ArrayList<>();
+    public static ArrayList<MBRecord> makeArray(List<List<?>> idsList) {
+        ArrayList<MBRecord> records = new ArrayList<>();
         for (int i = 0; i < idsList.size(); i++) {
             Integer record_id = OSRFUtils.parseInt(idsList.get(i).get(0));
-            records.add(new RecordInfo(record_id));
+            records.add(new MBRecord(record_id));
         }
         return records;
     }

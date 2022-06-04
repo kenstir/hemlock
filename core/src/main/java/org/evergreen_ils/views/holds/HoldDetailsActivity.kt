@@ -78,8 +78,8 @@ class HoldDetailsActivity : BaseActivity() {
 
         title.text = record.title
         author.text = record.author
-        format.text = record.recordInfo?.iconFormatLabel
-        physical_description.text = record.recordInfo?.physical_description
+        format.text = record.record?.iconFormatLabel
+        physical_description.text = record.record?.physical_description
         suspendHold?.isChecked = record.isSuspended
         if (record.isSuspended && record.thawDate != null) {
             thawDate = record.thawDate
