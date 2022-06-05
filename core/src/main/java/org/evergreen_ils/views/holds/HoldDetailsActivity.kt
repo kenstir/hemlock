@@ -68,7 +68,7 @@ class HoldDetailsActivity : BaseActivity() {
         val title = findViewById<TextView>(R.id.hold_title)
         val author = findViewById<TextView>(R.id.hold_author)
         val format = findViewById<TextView>(R.id.hold_format)
-        val physical_description = findViewById<TextView>(R.id.hold_physical_description)
+        val physicalDescription = findViewById<TextView>(R.id.hold_physical_description)
         val cancelHold = findViewById<Button>(R.id.cancel_hold_button)
         val updateHold = findViewById<Button>(R.id.update_hold_button)
         suspendHold = findViewById(R.id.hold_suspend_hold)
@@ -79,7 +79,7 @@ class HoldDetailsActivity : BaseActivity() {
         title.text = record.title
         author.text = record.author
         format.text = record.record?.iconFormatLabel
-        physical_description.text = record.record?.physical_description
+        physicalDescription.text = record.record?.physicalDescription
         suspendHold?.isChecked = record.isSuspended
         if (record.isSuspended && record.thawDate != null) {
             thawDate = record.thawDate

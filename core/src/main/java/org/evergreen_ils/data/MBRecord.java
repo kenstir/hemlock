@@ -49,15 +49,15 @@ public class MBRecord implements Serializable {
     private static final String TAG = MBRecord.class.getSimpleName();
 
     public Integer id = -1;
-    public String title = null;
-    public String author = null;
+    public String title = "";
+    public String author = "";
     public String pubdate = null;
     public String publisher = null;
     public String isbn = null;
     public String subject = "";
     public String online_loc = null;
     public String synopsis = null;
-    public String physical_description = null;
+    public String physicalDescription = null;
     public String series = "";
 
     public boolean hasMetadata = false;
@@ -67,7 +67,7 @@ public class MBRecord implements Serializable {
     public boolean isDeleted = false;
 
     public ArrayList<CopySummary> copySummaryList = null;
-    public MARCRecord marc_record = null;
+    public MARCRecord marcRecord = null;
     public HashMap<String, String> attrs = null;
 
     public MBRecord(int id) {
@@ -75,10 +75,10 @@ public class MBRecord implements Serializable {
     }
 
     public MBRecord(OSRFObject info) {
-        updateFromMODSResponse(this, info);
+        updateFromMODSResponse(info);
     }
 
-    public static void updateFromMODSResponse(MBRecord record, Object mods_slim_response) {
+    public void updateFromMODSResponse(Object mods_slim_response) {
         if (mods_slim_response == null)
             return;
         OSRFObject info;
@@ -90,42 +90,42 @@ public class MBRecord implements Serializable {
         }
 
         try {
-            if (record.id == -1)
-                record.id = info.getInt("doc_id");
+            if (id == -1)
+                id = info.getInt("doc_id");
         } catch (Exception e) {
             Log.d(TAG, "caught", e);
         }
 
-        record.title = safeString(info.getString("title"));
-        record.author = safeString(info.getString("author"));
-        record.pubdate = safeString(info.getString("pubdate"));
-        record.publisher = safeString(info.getString("publisher"));
-        record.synopsis = safeString(info.getString("synopsis"));
-        record.physical_description = safeString(info.getString("physical_description"));
+        title = safeString(info.getString("title"));
+        author = safeString(info.getString("author"));
+        pubdate = safeString(info.getString("pubdate"));
+        publisher = safeString(info.getString("publisher"));
+        synopsis = safeString(info.getString("synopsis"));
+        physicalDescription = safeString(info.getString("physical_description"));
 
-        record.isbn = info.getString("isbn");
+        isbn = info.getString("isbn");
 
         try {
             Map<String, ?> subjectMap = (Map<String, ?>) info.get("subject");
-            record.subject = TextUtils.join("\n", subjectMap.keySet());
+            subject = TextUtils.join("\n", subjectMap.keySet());
         } catch (Exception e) {
             // ignore
         }
 
         try {
-            record.online_loc = ((List) info.get("online_loc")).get(0).toString();
+            online_loc = ((List) info.get("online_loc")).get(0).toString();
         } catch (Exception e) {
             // common
         }
 
         try {
             List<String> seriesList = (List<String>) info.get("series");
-            record.series = TextUtils.join("\n", seriesList);
+            series = TextUtils.join("\n", seriesList);
         } catch (Exception e) {
             // ignore
         }
 
-        record.hasMetadata = true;
+        hasMetadata = true;
     }
 
     public void updateFromBREResponse(OSRFObject info) {
@@ -136,7 +136,7 @@ public class MBRecord implements Serializable {
             String marcxml = info.getString("marc");
             if (!TextUtils.isEmpty(marcxml)) {
                 MARCXMLParser parser = new MARCXMLParser(marcxml);
-                marc_record = parser.parse();
+                marcRecord = parser.parse();
             }
         } catch (Exception e) {
             Log.d(TAG, "caught", e);
@@ -212,8 +212,8 @@ public class MBRecord implements Serializable {
     public static ArrayList<MBRecord> makeArray(List<List<?>> idsList) {
         ArrayList<MBRecord> records = new ArrayList<>();
         for (int i = 0; i < idsList.size(); i++) {
-            Integer record_id = OSRFUtils.parseInt(idsList.get(i).get(0));
-            records.add(new MBRecord(record_id));
+            Integer id = OSRFUtils.parseInt(idsList.get(i).get(0));
+            records.add(new MBRecord(id));
         }
         return records;
     }

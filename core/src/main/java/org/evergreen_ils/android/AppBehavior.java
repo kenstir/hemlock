@@ -95,10 +95,10 @@ public class AppBehavior {
     @NonNull
     protected List<Link> getOnlineLocationsFromMARC(MBRecord record, String orgShortName) {
         ArrayList<Link> links = new ArrayList<>();
-        if (!record.hasMARC || record.marc_record == null)
+        if (!record.hasMARC || record.marcRecord == null)
             return links;
 
-        for (MARCRecord.MARCDatafield df: record.marc_record.datafields) {
+        for (MARCRecord.MARCDatafield df: record.marcRecord.datafields) {
             if (df.isOnlineLocation()
                     && isVisibleToOrg(df, orgShortName))
             {

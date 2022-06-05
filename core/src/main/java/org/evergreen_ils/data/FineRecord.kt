@@ -26,7 +26,7 @@ import java.util.*
 
 private const val TAG = "FineRecord"
 
-class FineRecord(circ: OSRFObject?, mvr_record: OSRFObject?, mbts_transaction: OSRFObject) {
+class FineRecord(circ: OSRFObject?, mvrObj: OSRFObject?, mbts_transaction: OSRFObject) {
     var record: MBRecord? = null
     var title: String? = null
     var subtitle: String? = null
@@ -43,10 +43,10 @@ class FineRecord(circ: OSRFObject?, mvr_record: OSRFObject?, mbts_transaction: O
 
     init {
         if (mbts_transaction["xact_type"].toString() == "circulation") {
-            title = mvr_record?.getString("title")
-            subtitle = mvr_record?.getString("author")
+            title = mvrObj?.getString("title")
+            subtitle = mvrObj?.getString("author")
             checkin_time = OSRFUtils.parseDate(circ?.getString("checkin_time"))
-            record = MBRecord(mvr_record)
+            record = MBRecord(mvrObj)
         } else { // xact_type = "grocery"
             title = mbts_transaction.getString("last_billing_type")
             subtitle = mbts_transaction.getString("last_billing_note")

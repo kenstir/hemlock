@@ -109,7 +109,7 @@ object GatewayLoader {
         val result = Gateway.search.fetchRecordMODS(record.id)
         if (result is Result.Error) return result
         val modsObj = result.get()
-        MBRecord.updateFromMODSResponse(record, modsObj)
+        record.updateFromMODSResponse(modsObj)
 
         return Result.Success(Unit)
     }

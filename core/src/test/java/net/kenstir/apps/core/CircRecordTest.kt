@@ -88,7 +88,7 @@ class CircRecordTest {
     }
 
     // Something borrowed from another consortium will have a target_copy but
-    // a record.doc_id==-1, and the acp will have dummy_title and dummy_author
+    // a record.id==-1, and the acp will have dummy_title and dummy_author
     @Test
     fun test_illCheckout() {
         val circObj = OSRFObject(jsonMapOf(
