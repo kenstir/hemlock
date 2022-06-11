@@ -24,11 +24,20 @@ import org.opensrf.util.OSRFObject
 import java.io.Serializable
 
 /** Copy summary for the given org_id, e.g. 1 available of 4 copies at MPL
- *
- * returned by open-ils.search.biblio.record.copy_count
  */
-class CopySummary(obj: OSRFObject) : Serializable {
+class CopyCount(obj: OSRFObject) : Serializable {
     val orgId: Int? = obj.getInt("org_unit")
     val count: Int? = obj.getInt("count")
     val available: Int? = obj.getInt("available")
+
+    companion object {
+        fun makeArray(l: List<OSRFObject>): ArrayList<CopyCount> {
+            val ret = ArrayList<CopyCount>()
+            for (obj in l) {
+                val info = CopyCount(obj)
+                ret.add(info)
+            }
+            return ret
+        }
+    }
 }

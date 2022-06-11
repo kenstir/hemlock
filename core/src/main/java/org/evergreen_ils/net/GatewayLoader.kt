@@ -24,11 +24,8 @@ import kotlinx.coroutines.async
 import org.evergreen_ils.android.Analytics
 import org.evergreen_ils.android.App
 import org.evergreen_ils.android.Log
-import org.evergreen_ils.data.Account
-import org.evergreen_ils.data.BookBag
-import org.evergreen_ils.data.Organization
-import org.evergreen_ils.data.Result
-import org.evergreen_ils.data.MBRecord
+import org.evergreen_ils.data.*
+import org.evergreen_ils.data.CopyCount.Companion
 import org.evergreen_ils.system.EgOrg
 
 object GatewayLoader {
@@ -136,13 +133,13 @@ object GatewayLoader {
         return Result.Success(Unit)
     }
 
-    suspend fun loadRecordCopyCountsAsync(record: MBRecord, orgId: Int): Result<Unit> {
-        if (record.hasCopySummary) return Result.Success(Unit)
+    suspend fun loadRecordCopyCountAsync(record: MBRecord, orgId: Int): Result<Unit> {
+        if (record.copyCounts != null) return Result.Success(Unit)
 
         val result = Gateway.search.fetchCopyCount(record.id, orgId)
         if (result is Result.Error) return result
         val objList = result.get()
-        record.updateFromCopyCountResponse(objList)
+        record.copyCounts = CopyCount.makeArray(objList)
 
         return Result.Success(Unit)
     }

@@ -301,7 +301,7 @@ class DetailsFragment : Fragment() {
                 }
                 if (isOnlineResource != true) {
                     jobs.add(async {
-                        GatewayLoader.loadRecordCopyCountsAsync(record, orgID)
+                        GatewayLoader.loadRecordCopyCountAsync(record, orgID)
                         Log.d("xyzzy", "${record.id}: loadCopyCount")
                         loadCopyCount()
                     })

@@ -62,11 +62,10 @@ public class MBRecord implements Serializable {
 
     public boolean hasMetadata = false;
     public boolean hasAttributes = false;
-    public boolean hasCopySummary = false;
     public boolean hasMARC = false;
     public boolean isDeleted = false;
 
-    public ArrayList<CopySummary> copySummaryList = null;
+    public ArrayList<CopyCount> copyCounts = null;
     public MARCRecord marcRecord = null;
     public HashMap<String, String> attrs = null;
 
@@ -145,25 +144,16 @@ public class MBRecord implements Serializable {
         hasMARC = true;
     }
 
-    public void updateFromCopyCountResponse(List<OSRFObject> l) {
-        copySummaryList = new ArrayList<>();
-        for (OSRFObject obj : l) {
-            CopySummary info = new CopySummary(obj);
-            copySummaryList.add(info);
-        }
-        hasCopySummary = true;
-    }
-
     @NonNull
     public String getCopySummary(Resources resources, Integer orgID) {
         int total = 0;
         int available = 0;
-        if (copySummaryList == null) return "";
+        if (copyCounts == null) return "";
         if (orgID == null) return "";
-        for (int i = 0; i < copySummaryList.size(); i++) {
-            if (copySummaryList.get(i).getOrgId().equals(orgID)) {
-                total = copySummaryList.get(i).getCount();
-                available = copySummaryList.get(i).getAvailable();
+        for (int i = 0; i < copyCounts.size(); i++) {
+            if (copyCounts.get(i).getOrgId().equals(orgID)) {
+                total = copyCounts.get(i).getCount();
+                available = copyCounts.get(i).getAvailable();
                 break;
             }
         }
