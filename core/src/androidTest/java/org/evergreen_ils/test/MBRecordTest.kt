@@ -65,8 +65,7 @@ class MBRecordTest {
         """.trimIndent()
         val result = GatewayResult.create(json)
         val mvrObj = result.asObject()
-        val record = MBRecord(4600952)
-        record.updateFromMODSResponse(mvrObj)
+        val record = MBRecord(4600952, mvrObj)
 
         assertEquals(true, record.hasMetadata)
         assertEquals(4600952, record.id)
@@ -89,7 +88,7 @@ class MBRecordTest {
     }
 
     private fun makeArrayFromJson(json: String): ArrayList<MBRecord> {
-        val idsList = JSONReader(json).readArray() as List<List<*>?>
+        val idsList = JSONReader(json).readArray() as List<List<*>>
         return MBRecord.makeArray(idsList)
     }
 

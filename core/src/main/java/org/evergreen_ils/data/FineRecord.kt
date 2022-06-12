@@ -26,8 +26,7 @@ import java.util.*
 
 private const val TAG = "FineRecord"
 
-class FineRecord(circ: OSRFObject?, mvrObj: OSRFObject?, mbts_transaction: OSRFObject) {
-    var record: MBRecord? = null
+class FineRecord(circ: OSRFObject?, val mvrObj: OSRFObject?, mbts_transaction: OSRFObject) {
     var title: String? = null
     var subtitle: String? = null
     var balance_owed: Double? = null
@@ -36,7 +35,7 @@ class FineRecord(circ: OSRFObject?, mvrObj: OSRFObject?, mbts_transaction: OSRFO
 
     val status: String
         get() {
-            if (record == null) return ""
+            if (mvrObj == null) return ""
             if (checkin_time != null) return "returned"
             return if (balance_owed != null && max_fine != null && balance_owed!! >= max_fine!!) "maximum fine" else "fines accruing"
         }
@@ -46,7 +45,6 @@ class FineRecord(circ: OSRFObject?, mvrObj: OSRFObject?, mbts_transaction: OSRFO
             title = mvrObj?.getString("title")
             subtitle = mvrObj?.getString("author")
             checkin_time = OSRFUtils.parseDate(circ?.getString("checkin_time"))
-            record = MBRecord(mvrObj)
         } else { // xact_type = "grocery"
             title = mbts_transaction.getString("last_billing_type")
             subtitle = mbts_transaction.getString("last_billing_note")

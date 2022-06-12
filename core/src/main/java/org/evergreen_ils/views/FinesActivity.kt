@@ -185,7 +185,7 @@ class FinesActivity : BaseActivity() {
 
         for (fine in fines) {
             listAdapter?.add(fine)
-            if (fine.record == null) haveAnyGroceryBills = true
+            if (fine.mvrObj == null) haveAnyGroceryBills = true
         }
 
         listAdapter?.notifyDataSetChanged()
@@ -208,13 +208,17 @@ class FinesActivity : BaseActivity() {
             // If any of the fines are for non-circulation items ("grocery bills"), we
             // start the details flow with only the one record, if a record was selected.
             // The details flow can't handle nulls.
-            fineRecords[position].record?.let {
-                records.add(it)
+            fineRecords[position].mvrObj?.let { mvrObj ->
+                mvrObj.getInt("doc_ic")?.let { id ->
+                    records.add(MBRecord(id, mvrObj))
+                }
             }
         } else {
             for (item in fineRecords) {
-                item.record?.let {
-                    records.add(it)
+                item.mvrObj?.let { mvrObj ->
+                    mvrObj.getInt("doc_ic")?.let { id ->
+                        records.add(MBRecord(id, mvrObj))
+                    }
                 }
             }
         }
