@@ -323,7 +323,7 @@ class DetailsFragment : Fragment() {
     companion object {
         private val TAG = DetailsFragment::class.java.simpleName
 
-                                                            fun create(record: RecordInfo?, orgID: Int, position: Int, total: Int): DetailsFragment {
+        fun create(record: RecordInfo?, orgID: Int, position: Int, total: Int): DetailsFragment {
             val fragment = DetailsFragment()
             fragment.record = record
             fragment.orgID = orgID
