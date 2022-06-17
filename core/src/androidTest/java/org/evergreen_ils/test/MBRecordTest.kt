@@ -22,6 +22,7 @@ import org.evergreen_ils.android.StdoutLogProvider
 import org.evergreen_ils.data.MBRecord
 import org.junit.Assert
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNull
 import org.junit.Before
 import org.junit.BeforeClass
 import org.junit.Test
@@ -81,9 +82,9 @@ class MBRecordTest {
         //assertEquals("Employees\nUnited States. Central Intelligence Agency.", record.subject)
 
         assertEquals("", record.iconFormatLabel)
-        assertEquals(false, record.hasAttributes)
-        assertEquals(false, record.hasCopySummary)
-        assertEquals(false, record.hasMARC)
+        assertNull(record.attrs)
+        assertNull(record.copyCounts)
+        assertNull(record.marcRecord)
         assertEquals(false, record.isDeleted)
     }
 

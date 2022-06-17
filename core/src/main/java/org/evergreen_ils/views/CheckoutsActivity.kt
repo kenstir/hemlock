@@ -199,7 +199,7 @@ class CheckoutsActivity : BaseActivity() {
             val record = getItem(position)
             title?.text = record.title
             author?.text = record.author
-            format?.text = MBRecord.getIconFormatLabel(record.record)
+            format?.text = record.record?.iconFormatLabel
             renewals?.text = String.format(getString(R.string.checkout_renewals_left), record.renewals)
             dueDate?.text = dueDateText(record)
 

@@ -61,8 +61,6 @@ public class MBRecord implements Serializable {
     public String series = "";
 
     public boolean hasMetadata = false;
-    public boolean hasAttributes = false;
-    public boolean hasMARC = false;
     public boolean isDeleted = false;
 
     public ArrayList<CopyCount> copyCounts = null;
@@ -77,17 +75,7 @@ public class MBRecord implements Serializable {
         updateFromMODSResponse(info);
     }
 
-    public void updateFromMODSResponse(Object mods_slim_response) {
-        if (mods_slim_response == null)
-            return;
-        OSRFObject info;
-        try {
-            info = (OSRFObject) mods_slim_response;
-        } catch (ClassCastException e) {
-            Log.d(TAG, "caught", e);
-            return;
-        }
-
+    public void updateFromMODSResponse(@NonNull OSRFObject info) {
         try {
             if (id == -1)
                 id = info.getInt("doc_id");
@@ -127,21 +115,19 @@ public class MBRecord implements Serializable {
         hasMetadata = true;
     }
 
-    public void updateFromBREResponse(OSRFObject info) {
+    public void updateFromBREResponse(OSRFObject breObj) {
         try {
-            isDeleted = info.getBoolean("deleted");
+            isDeleted = breObj.getBoolean("deleted");
             Log.d(TAG, "[kcxxx] record ${doc_id}: deleted=${isDeleted}");
 
-            String marcxml = info.getString("marc");
+            String marcxml = breObj.getString("marc");
             if (!TextUtils.isEmpty(marcxml)) {
                 MARCXMLParser parser = new MARCXMLParser(marcxml);
                 marcRecord = parser.parse();
             }
         } catch (Exception e) {
-            Log.d(TAG, "caught", e);
+            // ignore
         }
-
-        hasMARC = true;
     }
 
     @NonNull
@@ -162,9 +148,8 @@ public class MBRecord implements Serializable {
                 available, totalCopies, EgOrg.getOrgNameSafe(orgID));
     }
 
-    public void updateFromMRAResponse(OSRFObject mra_obj) {
-        attrs = RecordAttributes.parseAttributes(mra_obj);
-        hasAttributes = true;
+    public void updateFromMRAResponse(OSRFObject mraObj) {
+        attrs = RecordAttributes.parseAttributes(mraObj);
     }
 
     public @Nullable String getAttr(String attr_name) {
@@ -177,12 +162,6 @@ public class MBRecord implements Serializable {
 
     public @NonNull String getIconFormatLabel() {
         return safeString(EgCodedValueMap.iconFormatLabel(getIconFormat()));
-    }
-
-    public @NonNull static String getIconFormatLabel(MBRecord record) {
-        if (record == null)
-            return "";
-        return record.getIconFormatLabel();
     }
 
     public String getPublishingInfo() {

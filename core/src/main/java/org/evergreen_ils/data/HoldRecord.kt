@@ -145,7 +145,7 @@ ${res.getQuantityString(R.plurals.number_of_holds, totalHolds!!, totalHolds)} on
         get() = qstatsObj?.getInt("queue_position")
     val totalHolds: Int?
         get() = qstatsObj?.getInt("total_holds")
-    val formatLabel: String
+    val formatLabel: String?
         get() {
             if (holdType == HOLD_TYPE_METARECORD) {
                 val map = parseObject(
@@ -157,7 +157,7 @@ ${res.getQuantityString(R.plurals.number_of_holds, totalHolds!!, totalHolds)} on
                 }
                 return android.text.TextUtils.join(" or ", labels)
             }
-            return MBRecord.getIconFormatLabel(record)
+            return record?.iconFormatLabel
         }
 
     companion object {

@@ -25,7 +25,6 @@ import org.evergreen_ils.android.Analytics
 import org.evergreen_ils.android.App
 import org.evergreen_ils.android.Log
 import org.evergreen_ils.data.*
-import org.evergreen_ils.data.CopyCount.Companion
 import org.evergreen_ils.system.EgOrg
 
 object GatewayLoader {
@@ -112,7 +111,7 @@ object GatewayLoader {
     }
 
     suspend fun loadRecordAttributesAsync(record: MBRecord, id: Int = record.id): Result<Unit> {
-        if (record.hasAttributes) return Result.Success(Unit)
+        if (record.attrs != null) return Result.Success(Unit)
 
         val mraResult = Gateway.pcrud.fetchMRA(id)
         if (mraResult is Result.Error) return mraResult
@@ -123,12 +122,12 @@ object GatewayLoader {
     }
 
     suspend fun loadRecordMarcAsync(record: MBRecord): Result<Unit> {
-        if (record.hasMARC) return Result.Success(Unit)
+        if (record.marcRecord != null) return Result.Success(Unit)
 
         val result = Gateway.pcrud.fetchMARC(record.id)
         if (result is Result.Error) return result
-        val obj = result.get()
-        record.updateFromBREResponse(obj)
+        val breObj = result.get()
+        record.updateFromBREResponse(breObj)
 
         return Result.Success(Unit)
     }
