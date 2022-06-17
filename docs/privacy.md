@@ -9,10 +9,14 @@ redirect_from:
 This page outlines the privacy policy of Hemlock and related apps for Android ("the app"):
 
 - [Hemlock](https://play.google.com/store/apps/details?id=net.kenstir.apps.hemlock)
+- [Acorn Catalog](https://play.google.com/store/apps/details?id=net.kenstir.apps.bibliomation)
 - [COOL Libraries](https://play.google.com/store/apps/details?id=net.kenstir.apps.cool)
 - [CW MARS Libraries](https://play.google.com/store/apps/details?id=org.cwmars)
 - [Evergreen Indiana](https://play.google.com/store/apps/details?id=net.kenstir.apps.indiana)
+- [Missouri Evergreen](https://play.google.com/store/apps/details?id=net.kenstir.apps.mo)
+- [NOBLE Libraries](https://play.google.com/store/apps/details?id=net.kenstir.apps.noble)
 - [PINES (Georgia)](https://play.google.com/store/apps/details?id=net.kenstir.apps.pines)
+- [SageCat](https://play.google.com/store/apps/details?id=net.kenstir.apps.sagecat)
 
 
 ## Reason for Collection
