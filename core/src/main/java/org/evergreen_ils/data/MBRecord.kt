@@ -34,18 +34,22 @@ class MBRecord(val id: Int, var mvrObj: OSRFObject? = null) : Serializable {
     constructor(mvrObj: OSRFObject) : this(mvrObj.getInt("doc_id") ?: -1, mvrObj)
 
     var copyCounts: ArrayList<CopyCount>? = null
-    @JvmField var marcRecord: MARCRecord? = null
-    @JvmField var attrs: HashMap<String, String>? = null
+    var marcRecord: MARCRecord? = null
+    var attrs: HashMap<String, String>? = null
     var isDeleted = false
 
-    @JvmField val hasMetadata = (mvrObj != null)
-    @JvmField val title = mvrObj?.getString("title") ?: ""
-    val author = mvrObj?.getString("author") ?: ""
-    val isbn = mvrObj?.getString("isbn") ?: ""
-    @JvmField val online_loc = getFirstOnlineLocation()
-    val pubdate = mvrObj?.getString("pubdate") ?: ""
-    val physicalDescription = mvrObj?.getString("physical_description") ?: ""
-    val synopsis = mvrObj?.getString("synopsis") ?: ""
+    val author: String
+        get() = mvrObj?.getString("author") ?: ""
+    val isbn: String
+        get() = mvrObj?.getString("isbn") ?: ""
+    val pubdate: String
+        get() = mvrObj?.getString("pubdate") ?: ""
+    val physicalDescription: String
+        get() = mvrObj?.getString("physical_description") ?: ""
+    val synopsis: String
+        get() = mvrObj?.getString("synopsis") ?: ""
+    val title: String
+        get() = mvrObj?.getString("title") ?: ""
 
     val publishingInfo: String
         get() {
@@ -68,8 +72,14 @@ class MBRecord(val id: Int, var mvrObj: OSRFObject? = null) : Serializable {
             return obj.keys.joinToString("\n")
         }
 
-    val iconFormat: String? = attrs?.get("icon_format")
-    val iconFormatLabel: String  = EgCodedValueMap.iconFormatLabel(iconFormat) ?: ""
+    val iconFormat: String?
+        get() = attrs?.get("icon_format")
+    val iconFormatLabel: String
+        get() = EgCodedValueMap.iconFormatLabel(iconFormat) ?: ""
+
+    fun hasAttributes() = (attrs != null)
+    fun hasMarc() = (marcRecord != null)
+    fun hasMetadata() = (mvrObj != null)
 
     fun updateFromBREResponse(breObj: OSRFObject) {
         isDeleted = breObj.getBoolean("deleted")

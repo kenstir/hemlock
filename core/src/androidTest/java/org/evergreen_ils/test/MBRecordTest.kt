@@ -44,6 +44,10 @@ class MBRecordTest {
         }
     }
 
+    val blackOpsMvrJson = """
+            {"payload":[{"__c":"mvr","__p":["Black ops","Prado, Ric",4600952,null,"2022","9781250271846",null,"4600952",{"Employees":1,"United States. Central Intelligence Agency.":1},["text"],[],"First edition.",[],"\"A memoir\"","print xiv, 384 pages",null,null,[]]}],"status":200}
+        """.trimIndent()
+
     @Before
     fun setUp() {
     }
@@ -52,7 +56,7 @@ class MBRecordTest {
     fun test_bareRecord() {
         val record = MBRecord(4600952)
 
-        assertEquals(false, record.hasMetadata)
+        assertEquals(false, record.hasMetadata())
         assertEquals(4600952, record.id)
         assertEquals("", record.title)
         assertEquals("", record.subject)
@@ -60,14 +64,11 @@ class MBRecordTest {
 
     @Test
     fun test_withMvrObj() {
-        val json = """
-            {"payload":[{"__c":"mvr","__p":["Black ops","Prado, Ric",4600952,null,"2022","9781250271846",null,"4600952",{"Employees":1,"United States. Central Intelligence Agency.":1},["text"],[],"First edition.",[],"\"A memoir\"","print xiv, 384 pages",null,null,[]]}],"status":200}
-        """.trimIndent()
-        val result = GatewayResult.create(json)
+        val result = GatewayResult.create(blackOpsMvrJson)
         val mvrObj = result.asObject()
         val record = MBRecord(4600952, mvrObj)
 
-        assertEquals(true, record.hasMetadata)
+        assertEquals(true, record.hasMetadata())
         assertEquals(4600952, record.id)
         assertEquals("Black ops", record.title)
         assertEquals("Prado, Ric", record.author)
@@ -85,6 +86,21 @@ class MBRecordTest {
         assertNull(record.copyCounts)
         assertNull(record.marcRecord)
         assertEquals(false, record.isDeleted)
+    }
+
+    @Test
+    fun test_searchResultsGetMvrObjLater() {
+        val record = MBRecord(4600952)
+
+        assertEquals("", record.title)
+        assertEquals("", record.author)
+
+        val result = GatewayResult.create(blackOpsMvrJson)
+        val mvrObj = result.asObject()
+        record.mvrObj = mvrObj
+
+        assertEquals("Black ops", record.title)
+        assertEquals("Prado, Ric", record.author)
     }
 
     private fun makeArrayFromJson(json: String): ArrayList<MBRecord> {

@@ -40,8 +40,8 @@ public class MoAppBehavior extends AppBehavior {
     @Override
     public Boolean isOnlineResource(MBRecord record) {
         if (record == null) return null;
-        if (!record.hasMetadata) return null;
-        if (record.attrs == null) return null;
+        if (!record.hasMetadata()) return null;
+        if (!record.hasAttributes()) return null;
 
         // TODO: verify if correct
         String item_form = record.getAttr("item_form");

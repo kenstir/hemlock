@@ -100,7 +100,7 @@ object GatewayLoader {
     }
 
     suspend fun loadRecordMetadataAsync(record: MBRecord): Result<Unit> {
-        if (record.hasMetadata) return Result.Success(Unit)
+        if (record.mvrObj != null) return Result.Success(Unit)
 
         val result = Gateway.search.fetchRecordMODS(record.id)
         if (result is Result.Error) return result

@@ -47,12 +47,12 @@ public class AcornAppBehavior extends AppBehavior {
     @Override
     public Boolean isOnlineResource(MBRecord record) {
         if (record == null) return null;
-        if (!record.hasMetadata) return null;
-        if (record.attrs == null) return null;
+        if (!record.hasMetadata()) return null;
+        if (!record.hasAttributes()) return null;
 
         String iconFormatCode = record.getIconFormat();
         if (TextUtils.equals(record.getAttr("item_form"), "o")) {
-            Log.d("isOnlineResource", "title:" + record.title + " item_form:o icon_format:" + iconFormatCode + "-> true");
+            Log.d("isOnlineResource", "title:" + record.getTitle() + " item_form:o icon_format:" + iconFormatCode + "-> true");
             return true;
         }
 

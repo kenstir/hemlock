@@ -60,8 +60,8 @@ public class AppBehavior {
     @Nullable
     public Boolean isOnlineResource(MBRecord record) {
         if (record == null) return null;
-        if (!record.hasMetadata) return null;
-        if (record.attrs == null) return null;
+        if (!record.hasMetadata()) return null;
+        if (!record.hasAttributes()) return null;
 
         String item_form = record.getAttr("item_form");
         if (TextUtils.equals(item_form, "o")
@@ -95,10 +95,11 @@ public class AppBehavior {
     @NonNull
     protected List<Link> getOnlineLocationsFromMARC(MBRecord record, String orgShortName) {
         ArrayList<Link> links = new ArrayList<>();
-        if (record.marcRecord == null)
+        MARCRecord marcRecord = record.getMarcRecord();
+        if (marcRecord == null)
             return links;
 
-        for (MARCRecord.MARCDatafield df: record.marcRecord.datafields) {
+        for (MARCRecord.MARCDatafield df: record.getMarcRecord().datafields) {
             if (df.isOnlineLocation()
                     && isVisibleToOrg(df, orgShortName))
             {
@@ -127,9 +128,10 @@ public class AppBehavior {
     @NonNull
     public List<Link> getOnlineLocations(MBRecord record, String orgShortName) {
         ArrayList<Link> links = new ArrayList<>();
-        if (TextUtils.isEmpty(record.online_loc))
+        String onlineLoc = record.getFirstOnlineLocation();
+        if (TextUtils.isEmpty(onlineLoc))
             return links;
-        links.add(new Link(record.online_loc, ""));
+        links.add(new Link(onlineLoc, ""));
         return links;
     }
 }
