@@ -176,7 +176,8 @@
                     android:minHeight="@dimen/spinner_min_height" />
             </TableRow>
             <TableRow android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:visibility="gone">
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
