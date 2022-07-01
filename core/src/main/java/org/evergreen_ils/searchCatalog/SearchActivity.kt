@@ -77,6 +77,8 @@ class SearchActivity : BaseActivity() {
     private val searchFormatCode: String?
         get() = EgCodedValueMap.searchFormatCode(searchFormatSpinner?.selectedItem.toString())
 
+    private val accountIdKey = "accountId"
+
     private class ContextMenuRecordInfo : ContextMenu.ContextMenuInfo {
         var record: MBRecord? = null
         var position = 0
@@ -89,7 +91,15 @@ class SearchActivity : BaseActivity() {
         setContentView(R.layout.activity_search)
 
         progress = ProgressDialogSupport()
-        clearResults()
+
+        // clear prior search results unless this is the same user and we just rotated
+        val lastAccountId = savedInstanceState?.getInt(accountIdKey)
+        val accountId = App.getAccount().id ?: -1
+        Log.d(TAG, "lastAccountId = $lastAccountId")
+        Log.d(TAG, "accountId = $accountId")
+        if (lastAccountId == null || lastAccountId != accountId) {
+            clearResults()
+        }
 
         // create search results fragment
         if (savedInstanceState == null) {
@@ -120,9 +130,15 @@ class SearchActivity : BaseActivity() {
         updateSearchResultsSummary()
     }
 
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        App.getAccount().id?.let { id ->
+            outState.putInt(accountIdKey, id)
+        }
+    }
+
     override fun onDestroy() {
         progress?.dismiss()
-        clearResults()
         super.onDestroy()
     }
 
