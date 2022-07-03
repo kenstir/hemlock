@@ -96,7 +96,6 @@ class OrgDetailsActivity : BaseActivity() {
 
         initOrgSpinner()
         initHoursViews(hours_header, hours_table)
-        initOrgDetailsRunnable()
         initButtons()
     }
 
@@ -137,10 +136,6 @@ class OrgDetailsActivity : BaseActivity() {
             hoursHeader?.visibility = View.GONE
             hoursTable?.visibility = View.GONE
         }
-    }
-
-    private fun initOrgDetailsRunnable() {
-        // hangover from Java
     }
 
     private fun initButtons() {

@@ -40,6 +40,10 @@
             android:icon="@drawable/ic_library_24"
             android:title="@string/title_library_info" />
         <item
+            android:id="@+id/main_events_button"
+            android:icon="@drawable/ic_event_24"
+            android:title="@string/title_events" />
+        <item
             android:id="@+id/main_showcard_button"
             android:icon="@drawable/ic_barcode_24"
             android:title="@string/barcode_title" />

@@ -50,6 +50,7 @@ object Api {
 
     //public static final String VITAL_STATS = "open-ils.actor.user.opac.vital_stats"; // Used by OPAC for summary stats
     const val SETTING_CREDIT_PAYMENTS_ALLOW = "credit.payments.allow"
+    const val SETTING_HEMLOCK_EVENTS_URL = "hemlock.events_calendar_url"
     const val SETTING_INFO_URL = "lib.info_url"
     const val SETTING_ORG_UNIT_NOT_PICKUP_LIB = "opac.holds.org_unit_not_pickup_lib"
     const val SETTING_SMS_ENABLE = "sms.enable"

@@ -24,13 +24,12 @@ import android.text.TextUtils
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.widget.Button
 import android.widget.ImageButton
 import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.core.view.MenuItemCompat
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
-import kotlinx.coroutines.launch
 import org.evergreen_ils.R
 import org.evergreen_ils.android.AccountUtils
 import org.evergreen_ils.views.bookbags.BookBagsActivity
@@ -40,8 +39,9 @@ import org.evergreen_ils.system.EgSms
 import org.evergreen_ils.data.Result
 import org.evergreen_ils.net.Gateway
 import org.evergreen_ils.searchCatalog.SearchActivity
-import org.evergreen_ils.android.Analytics
 import org.evergreen_ils.android.Log
+import org.evergreen_ils.net.GatewayLoader
+import org.evergreen_ils.system.EgOrg
 import org.evergreen_ils.utils.ui.BaseActivity
 import org.evergreen_ils.utils.ui.showAlert
 import org.opensrf.util.OSRFObject
@@ -50,6 +50,7 @@ class MainActivity : BaseActivity() {
 
     private var mUnreadMessageCount: Int? = null //unknown
     private var mUnreadMessageText: TextView? = null
+    private var eventsButton: Button? = null
 
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -58,6 +59,9 @@ class MainActivity : BaseActivity() {
         Log.d(TAG, object{}.javaClass.enclosingMethod?.name)
 
         setContentView(R.layout.activity_main)
+
+        eventsButton = findViewById(R.id.main_events_button)
+        setupEventsButton()
     }
 
     override fun onNewIntent(intent: Intent?) {
@@ -85,9 +89,17 @@ class MainActivity : BaseActivity() {
         loadUnreadMessageCount()
     }
 
+    private fun setupEventsButton() {
+        val url = EgOrg.findOrg(App.getAccount().homeOrg)?.eventsURL
+        // hide Events button if not enabled, or if the org has no eventsURL
+        if (!resources.getBoolean(R.bool.ou_enable_events_button) || url.isNullOrEmpty()) {
+            eventsButton?.visibility = View.GONE
+        }
+    }
+
     // TODO: Make this on demand by making it a suspend fun in GatewayLoader.
     private fun loadSMSCarriers() {
-        Log.d(TAG, "[async] fetchSMSCarriers ...")
+        Log.d(TAG, "[async] loadSMSCarriers ...")
         async {
             val start = System.currentTimeMillis()
             val result = Gateway.pcrud.fetchSMSCarriers()
@@ -100,7 +112,7 @@ class MainActivity : BaseActivity() {
     }
 
     private fun loadUnreadMessageCount() {
-        Log.d(TAG, "[async] fetchUserMessages ...")
+        Log.d(TAG, "[async] loadUnreadMessageCount ...")
         async {
             if (resources.getBoolean(R.bool.ou_enable_messages)) {
                 val start = System.currentTimeMillis()
@@ -211,6 +223,8 @@ class MainActivity : BaseActivity() {
             startActivity(Intent(this, SearchActivity::class.java))
         } else if (id == R.id.main_library_info_button) {
             startActivity(Intent(this, OrgDetailsActivity::class.java))
+        } else if (id == R.id.main_events_button) {
+            launchURL(getEventsUrl())
         } else if (id == R.id.main_showcard_button) {
             startActivity(Intent(this, BarcodeActivity::class.java))
         } else if (menuItemHandler != null) {
