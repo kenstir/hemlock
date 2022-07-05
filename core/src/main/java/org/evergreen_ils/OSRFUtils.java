@@ -140,22 +140,6 @@ public class OSRFUtils {
         return parseInt(o, null);
     }
 
-    // Some queries return at times a list of String ids and at times a list of Integer ids,
-    // See issue hemlock#1
-    public static @NonNull
-    List<String> parseIdsList(Object o) {
-        ArrayList<String> ret = new ArrayList<>();
-        if (o instanceof List) {
-            for (Object elem: (List<?>) o) {
-                Integer i = parseInt(elem);
-                if (i != null) {
-                    ret.add(i.toString());
-                }
-            }
-        }
-        return ret;
-    }
-
     public static @NonNull List<Integer> parseIdsListAsInt(Object o) {
         ArrayList<Integer> ret = new ArrayList<>();
         if (o instanceof List) {
