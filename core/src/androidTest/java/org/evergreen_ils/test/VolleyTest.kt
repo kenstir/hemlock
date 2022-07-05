@@ -24,6 +24,8 @@ import java.util.concurrent.TimeUnit
 import java.util.concurrent.locks.Lock
 import java.util.concurrent.locks.ReentrantLock
 
+private val TAG = VolleyTest::class.java.simpleName
+
 /**
  * Created by kenstir on 12/5/2015.
  */
@@ -45,7 +47,6 @@ class VolleyTest {
     private val mFinishedCondition = mLock.newCondition()
 
     @Before
-    @Throws(Exception::class)
     fun setUp() {
         val ctx = InstrumentationRegistry.getInstrumentation().targetContext
 
@@ -97,7 +98,6 @@ class VolleyTest {
         mLock.unlock()
     }
 
-    @Throws(InterruptedException::class)
     private fun waitForAllResponses(): Boolean {
         Log.d(TAG, "waitForAllResponses:lock")
         mLock.lock()
@@ -114,7 +114,6 @@ class VolleyTest {
     }
 
     @Test
-    @Throws(InterruptedException::class)
     fun testVolleyFetch_basic() {
         val url = "https://evergreen-ils.org/directory/libraries.json"
         val request = StringRequest(Request.Method.GET, url,
@@ -129,7 +128,6 @@ class VolleyTest {
     }
 
     @Test
-    @Throws(Exception::class)
     fun testVolley_json() {
         val url = getUrl(Api.ACTOR, Api.ILS_VERSION, arrayOf())
         val request = JsonObjectRequest(Request.Method.GET, url, null,
@@ -151,8 +149,7 @@ class VolleyTest {
         Assert.assertNotNull(version)
     }
 
-    @Test //todo replace with GatewayJsonObjectRequest
-    @Throws(Exception::class)
+    @Test
     fun testVolley_osrf() {
         val url = getUrl(Api.ACTOR, Api.ORG_TYPES_RETRIEVE, arrayOf())
         val request = StringRequest(Request.Method.GET, url,
@@ -181,9 +178,5 @@ class VolleyTest {
         Log.d(TAG, "version:" + version);
         assertEquals(0, response.responseList.size());
           */
-    }
-
-    companion object {
-        private val TAG = VolleyTest::class.java.simpleName
     }
 }
