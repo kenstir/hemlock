@@ -51,7 +51,7 @@ public class OSRFUtils {
         if (dateString == null)
             return null;
 
-        Date date = null;
+        Date date;
         @SuppressLint("SimpleDateFormat") final SimpleDateFormat df = new SimpleDateFormat(API_DATE_PATTERN);
 
         try {
@@ -70,8 +70,8 @@ public class OSRFUtils {
         if (hoursString == null)
             return null;
 
-        Date date = null;
-        final SimpleDateFormat df = new SimpleDateFormat(API_HOURS_PATTERN);
+        Date date;
+        @SuppressLint("SimpleDateFormat") final SimpleDateFormat df = new SimpleDateFormat(API_HOURS_PATTERN);
 
         try {
             date = df.parse(hoursString);
@@ -93,9 +93,9 @@ public class OSRFUtils {
         return timeFormatter.format(date);
     }
 
-    public static Integer formatBoolean(Boolean obj) {
-        return obj ? 1 : 0;
-    }
+//    public static Integer formatBoolean(Boolean obj) {
+//        return obj ? 1 : 0;
+//    }
 
     // parse bool string returned from API methods
     public static Boolean parseBoolean(Object obj) {
@@ -103,7 +103,7 @@ public class OSRFUtils {
             return (Boolean) obj;
         } else if (obj instanceof String) {
             String s = (String) obj;
-            return (s != null && s.equals("t"));
+            return s.equals("t");
         } else {
             return false;
         }
