@@ -295,9 +295,8 @@ class DetailsFragment : Fragment() {
                 // Check for copy counts only after we know it is not an online_resource
                 val isOnlineResource = App.getBehavior().isOnlineResource(record)
                 if (isOnlineResource == null) {
-                    val ex = IllegalStateException("isOnlineResource is null")
+                    val ex = IllegalStateException("isOnlineResource is null for record ${record.id}")
                     Analytics.logException(ex)
-                    //throw ex
                 }
                 if (isOnlineResource != true) {
                     jobs.add(async {
