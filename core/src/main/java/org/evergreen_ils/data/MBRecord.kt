@@ -137,8 +137,9 @@ class MBRecord(val id: Int, var mvrObj: OSRFObject? = null) : Serializable {
         fun makeArray(idsList: List<List<*>>): ArrayList<MBRecord> {
             val records = ArrayList<MBRecord>()
             for (i in idsList.indices) {
-                val id = OSRFUtils.parseInt(idsList[i][0])
-                records.add(MBRecord(id))
+                OSRFUtils.parseInt(idsList[i][0])?.let { id ->
+                    records.add(MBRecord(id))
+                }
             }
             return records
         }

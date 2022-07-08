@@ -21,6 +21,7 @@ package org.evergreen_ils;
 import android.annotation.SuppressLint;
 
 import org.evergreen_ils.android.Analytics;
+import org.evergreen_ils.android.Log;
 import org.evergreen_ils.utils.TextUtils;
 import org.opensrf.ShouldNotHappenException;
 
@@ -115,27 +116,21 @@ public class OSRFUtils {
      * Sometimes search returns a count as a json number ("count":0), sometimes a string ("count":"1103").
      * Seems to be the same for result "ids" list (See Issue #1).  Handle either form and return as an int.
      */
+    @Nullable
     public static Integer parseInt(Object o, Integer dflt) {
         if (o == null) {
             return dflt;
         } else if (o instanceof Integer) {
             return (Integer)o;
         } else if (o instanceof String) {
-            // I have seen settings with value=null, e.g. opac.default_search_location
-            if ("null".equals(o) || TextUtils.isEmpty((String) o))
-                return dflt;
-            try {
-                return Integer.parseInt((String) o);
-            } catch (NumberFormatException e) {
-                Analytics.logException(e);
-                return dflt;
-            }
+            return Integer.parseInt((String) o);
         } else {
             Analytics.logException(new ShouldNotHappenException("unexpected type: "+o));
             return dflt;
         }
     }
 
+    @Nullable
     public static Integer parseInt(Object o) {
         return parseInt(o, null);
     }

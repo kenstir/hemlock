@@ -36,7 +36,7 @@ object EgSearch {
 
     fun loadResults(obj: OSRFObject) {
         clearResults()
-        visible = OSRFUtils.parseInt(obj["count"], 0)
+        visible = OSRFUtils.parseInt(obj["count"]) ?: 0
         if (visible == 0) return
 
         // parse ids list

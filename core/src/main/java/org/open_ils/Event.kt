@@ -44,7 +44,7 @@ class Event : HashMap<String, Any?> {
         }
 
     val code: Int
-        get() = OSRFUtils.parseInt(get("ilsevent"), 0)
+        get() = OSRFUtils.parseInt(get("ilsevent")) ?: 0
 
     fun failed(): Boolean {
         return code != 0

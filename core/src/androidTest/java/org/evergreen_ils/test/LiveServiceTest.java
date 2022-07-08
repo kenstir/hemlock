@@ -239,7 +239,7 @@ public class LiveServiceTest {
             return; // search failed or server crashed
 
         Map<String, ?> response = (Map<String, ?>) resp;
-        Integer visible = OSRFUtils.parseInt(response.get("count"), 0);
+        Integer visible = OSRFUtils.parseInt(response.get("count"));
 
         // record_ids_lol is a list of lists and looks like one of:
         //   [[32673,null,"0.0"],[886843,null,"0.0"]] // integer ids+?
