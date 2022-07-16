@@ -67,13 +67,13 @@ class Organization(@JvmField val id: Int,
 
     // map returned from `fetchOrgSettings` looks like:
     // {credit.payments.allow={org=49, value=true}, opac.holds.org_unit_not_pickup_lib=null}
-    fun parseBoolSetting(obj: OSRFObject, setting: String): Boolean? {
+    private fun parseBoolSetting(obj: OSRFObject, setting: String): Boolean? {
         val valueObj = obj.getObject(setting)
         val value = valueObj?.getBoolean("value")
         return value
     }
 
-    fun parseStringSetting(obj: OSRFObject, setting: String): String? {
+    private fun parseStringSetting(obj: OSRFObject, setting: String): String? {
         val valueObj = obj.getObject(setting)
         val value = valueObj?.getString("value")
         return value
@@ -81,7 +81,7 @@ class Organization(@JvmField val id: Int,
 
     fun getAddress(separator: String = " "): String {
         if (addressObj == null) return ""
-        var sb = StringBuilder()
+        val sb = StringBuilder()
         sb.append(addressObj?.getString("street1"))
         addressObj?.getString("street2")?.let { sb.append(separator).append(it) }
         sb.append(separator).append(addressObj?.getString("city"))
