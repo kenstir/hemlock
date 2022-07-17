@@ -20,31 +20,30 @@
 package org.evergreen_ils.system
 
 import android.text.TextUtils
-import org.evergreen_ils.Api
+import org.evergreen_ils.OSRFUtils
 import org.evergreen_ils.data.Organization
-import org.evergreen_ils.searchCatalog.RecordInfo
+import org.evergreen_ils.data.MBRecord
 import org.opensrf.util.OSRFObject
-import java.util.*
 import kotlin.collections.ArrayList
 
 object EgSearch {
     var selectedOrganization: Organization? = null
     var visible = 0
     var searchLimit = 100
-    val results: ArrayList<RecordInfo> = ArrayList(searchLimit)
+    val results: ArrayList<MBRecord> = ArrayList(searchLimit)
 
     private val TAG = EgSearch::class.java.simpleName
 
     fun loadResults(obj: OSRFObject) {
         clearResults()
-        visible = Api.parseInt(obj["count"], 0)
+        visible = OSRFUtils.parseInt(obj["count"]) ?: 0
         if (visible == 0) return
 
         // parse ids list
         val record_ids_lol = obj["ids"] as List<List<*>>
 
         // add to existing array, because SearchResultsFragment has an Adapter on it
-        results.addAll(RecordInfo.makeArray(record_ids_lol))
+        results.addAll(MBRecord.makeArray(record_ids_lol))
     }
 
     // Build query string, taken with a grain of salt from

@@ -47,6 +47,7 @@ import org.evergreen_ils.android.App.REQUEST_MYOPAC_MESSAGES
 import org.evergreen_ils.android.Log
 import org.evergreen_ils.net.Gateway
 import org.evergreen_ils.searchCatalog.SearchActivity
+import org.evergreen_ils.system.EgOrg
 import org.evergreen_ils.system.EgSearch
 import org.evergreen_ils.views.*
 import org.evergreen_ils.views.bookbags.BookBagsActivity
@@ -126,6 +127,9 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
             navigationView.setNavigationItemSelectedListener(this)
             val navHeader = navigationView.getHeaderView(0)
             navHeader?.setOnClickListener { v -> onNavigationAction(v.id) }
+            if (!resources.getBoolean(R.bool.ou_enable_events_button)) {
+                navigationView.menu.removeItem(R.id.main_events_button)
+            }
         }
     }
 
@@ -152,6 +156,10 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         return super.onOptionsItemSelected(item)
     }
 
+    fun getEventsUrl(): String? {
+        return EgOrg.findOrg(App.getAccount().homeOrg)?.eventsURL
+    }
+
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         val id = item.itemId
         return onNavigationAction(id)
@@ -173,6 +181,8 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
             startActivity(Intent(this, BookBagsActivity::class.java))
         } else if (id == R.id.main_library_info_button) {
             startActivity(Intent(this, OrgDetailsActivity::class.java))
+        } else if (id == R.id.main_events_button) {
+            launchURL(getEventsUrl())
         } else if (id == R.id.main_showcard_button) {
             startActivity(Intent(this, BarcodeActivity::class.java))
         } else if (menuItemHandler != null) {

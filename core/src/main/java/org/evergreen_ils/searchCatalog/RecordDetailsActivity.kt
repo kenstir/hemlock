@@ -34,12 +34,13 @@ import android.view.MenuItem
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentStatePagerAdapter
+import org.evergreen_ils.data.MBRecord
 import org.evergreen_ils.utils.ui.DetailsFragment
 import java.util.ArrayList
 
 class RecordDetailsActivity : BaseActivity() {
     private var mPager: ViewPager? = null
-    private val records = ArrayList<RecordInfo>()
+    private val records = ArrayList<MBRecord>()
     private var orgID = 1
     private var numResults = 0
 
@@ -54,7 +55,7 @@ class RecordDetailsActivity : BaseActivity() {
 
         // Copy either serialized recordList or search results into our own ArrayList.
         // This is an attempt to fix an IllegalStateException crash (see commit for details).
-        var recordList = intent.getSerializableExtra("recordList") as? ArrayList<RecordInfo>
+        var recordList = intent.getSerializableExtra("recordList") as? ArrayList<MBRecord>
         if (recordList == null) recordList = EgSearch.results
         records.clear()
         records.addAll(recordList)

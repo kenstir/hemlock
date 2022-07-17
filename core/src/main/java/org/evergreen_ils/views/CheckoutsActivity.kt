@@ -35,13 +35,12 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.joinAll
 import org.evergreen_ils.R
-import org.evergreen_ils.android.Analytics
 import org.evergreen_ils.android.App
 import org.evergreen_ils.data.CircRecord
 import org.evergreen_ils.data.Result
 import org.evergreen_ils.net.Gateway
 import org.evergreen_ils.searchCatalog.RecordDetails
-import org.evergreen_ils.searchCatalog.RecordInfo
+import org.evergreen_ils.data.MBRecord
 import org.evergreen_ils.android.Log
 import org.evergreen_ils.utils.ui.BaseActivity
 import org.evergreen_ils.utils.ui.ProgressDialogSupport
@@ -126,17 +125,17 @@ class CheckoutsActivity : BaseActivity() {
         val modsResult = Gateway.search.fetchCopyMODS(targetCopy)
         if (modsResult is Result.Error) return modsResult
         val modsObj = modsResult.get()
-        val record = RecordInfo(modsObj)
-        circRecord.recordInfo = record
+        val record = MBRecord(modsObj)
+        circRecord.record = record
 
-        if (record.doc_id != -1) {
-            val mraResult = fetchRecordAttrs(record, record.doc_id)
+        if (record.id != -1) {
+            val mraResult = fetchRecordAttrs(record, record.id)
         }
 
         return Result.Success(Unit)
     }
 
-    suspend fun fetchRecordAttrs(record: RecordInfo, id: Int): Result<Unit> {
+    suspend fun fetchRecordAttrs(record: MBRecord, id: Int): Result<Unit> {
         val mraResult = Gateway.pcrud.fetchMRA(id)
         if (mraResult is Result.Error) return mraResult
         val mraObj = mraResult.get()
@@ -152,10 +151,10 @@ class CheckoutsActivity : BaseActivity() {
     }
 
     private fun onItemClick(position: Int) {
-        val records = ArrayList<RecordInfo?>()
+        val records = ArrayList<MBRecord?>()
         for (circRecord in circRecords) {
-            if (circRecord.recordInfo?.doc_id != -1) {
-                records.add(circRecord.recordInfo)
+            if (circRecord.record?.id != -1) {
+                records.add(circRecord.record)
             }
         }
         if (records.isNotEmpty()) {
@@ -200,7 +199,7 @@ class CheckoutsActivity : BaseActivity() {
             val record = getItem(position)
             title?.text = record.title
             author?.text = record.author
-            format?.text = RecordInfo.getIconFormatLabel(record.recordInfo)
+            format?.text = record.record?.iconFormatLabel
             renewals?.text = String.format(getString(R.string.checkout_renewals_left), record.renewals)
             dueDate?.text = dueDateText(record)
 

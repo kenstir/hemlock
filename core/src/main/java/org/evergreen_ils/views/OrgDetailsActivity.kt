@@ -26,7 +26,7 @@ import android.widget.AdapterView.OnItemSelectedListener
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.joinAll
-import org.evergreen_ils.Api
+import org.evergreen_ils.OSRFUtils
 import org.evergreen_ils.R
 import org.evergreen_ils.android.App
 import org.evergreen_ils.android.Log
@@ -96,7 +96,6 @@ class OrgDetailsActivity : BaseActivity() {
 
         initOrgSpinner()
         initHoursViews(hours_header, hours_table)
-        initOrgDetailsRunnable()
         initButtons()
     }
 
@@ -139,10 +138,6 @@ class OrgDetailsActivity : BaseActivity() {
         }
     }
 
-    private fun initOrgDetailsRunnable() {
-        // hangover from Java
-    }
-
     private fun initButtons() {
         webSite?.setOnClickListener {
             launchURL(org?.infoURL)
@@ -169,16 +164,16 @@ class OrgDetailsActivity : BaseActivity() {
     private fun hoursOfOperation(obj: OSRFObject?, day: Int): String? {
         val openTimeApi = obj?.getString("dow_${day}_open")
         val closeTimeApi = obj?.getString("dow_${day}_close")
-        val openTime = Api.parseHours(openTimeApi)
-        val closeTime = Api.parseHours(closeTimeApi)
+        val openTime = OSRFUtils.parseHours(openTimeApi)
+        val closeTime = OSRFUtils.parseHours(closeTimeApi)
         if (openTime == null || closeTime == null) {
             return null
         }
         if (openTimeApi == closeTimeApi) {
             return "closed"
         }
-        val openTimeLocal = Api.formatHoursForOutput(openTime)
-        val closeTimeLocal = Api.formatHoursForOutput(closeTime)
+        val openTimeLocal = OSRFUtils.formatHoursForOutput(openTime)
+        val closeTimeLocal = OSRFUtils.formatHoursForOutput(closeTime)
         return "$openTimeLocal - $closeTimeLocal"
     }
 

@@ -1,6 +1,6 @@
 package org.opensrf.util;
 
-import org.evergreen_ils.Api;
+import org.evergreen_ils.OSRFUtils;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -90,7 +90,7 @@ public class OSRFObject extends HashMap<String, Object> implements OSRFSerializa
 
     @NonNull
     public Boolean getBoolean(@NonNull String field) {
-        return Api.parseBoolean(get(field));
+        return OSRFUtils.parseBoolean(get(field));
     }
 
     @Nullable
@@ -111,6 +111,6 @@ public class OSRFObject extends HashMap<String, Object> implements OSRFSerializa
 
     @Nullable
     public Date getDate(@NonNull String field) {
-        return Api.parseDate(getString(field));
+        return OSRFUtils.parseDate(getString(field));
     }
 }

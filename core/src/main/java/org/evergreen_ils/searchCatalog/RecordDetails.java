@@ -24,10 +24,12 @@ import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 
+import org.evergreen_ils.data.MBRecord;
+
 import java.util.ArrayList;
 
 public class RecordDetails {
-    public static void launchDetailsFlow(Context context, ArrayList<RecordInfo> recordList, int recordPosition) {
+    public static void launchDetailsFlow(Context context, ArrayList<MBRecord> recordList, int recordPosition) {
         // determine name of parent activity
         PackageManager pm = context.getPackageManager();
         String parentActivityLabel = null;
@@ -41,7 +43,7 @@ public class RecordDetails {
         // In my testing, 100 records ~= 100KB, well below the limit of ~500KB.  If the
         // list is too long, start the details flow with just the selected item.
         final int MAX_RECORDS_IN_TRANSACTION = 100;
-        ArrayList<RecordInfo> recordListForTransaction = recordList;
+        ArrayList<MBRecord> recordListForTransaction = recordList;
         int recordPositionForTransaction = recordPosition;
         if (recordList.size() > MAX_RECORDS_IN_TRANSACTION) {
             recordListForTransaction = new ArrayList<>();

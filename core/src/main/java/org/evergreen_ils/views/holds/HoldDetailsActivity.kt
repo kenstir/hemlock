@@ -31,7 +31,7 @@ import android.widget.*
 import android.widget.AdapterView.OnItemSelectedListener
 import androidx.core.os.bundleOf
 import kotlinx.coroutines.async
-import org.evergreen_ils.Api
+import org.evergreen_ils.OSRFUtils
 import org.evergreen_ils.R
 import org.evergreen_ils.android.App
 import org.evergreen_ils.system.EgOrg
@@ -39,7 +39,6 @@ import org.evergreen_ils.data.HoldRecord
 import org.evergreen_ils.data.Result
 import org.evergreen_ils.net.Gateway
 import org.evergreen_ils.android.Analytics
-import org.evergreen_ils.utils.getCustomMessage
 import org.evergreen_ils.utils.ui.*
 import java.util.*
 
@@ -69,7 +68,7 @@ class HoldDetailsActivity : BaseActivity() {
         val title = findViewById<TextView>(R.id.hold_title)
         val author = findViewById<TextView>(R.id.hold_author)
         val format = findViewById<TextView>(R.id.hold_format)
-        val physical_description = findViewById<TextView>(R.id.hold_physical_description)
+        val physicalDescription = findViewById<TextView>(R.id.hold_physical_description)
         val cancelHold = findViewById<Button>(R.id.cancel_hold_button)
         val updateHold = findViewById<Button>(R.id.update_hold_button)
         suspendHold = findViewById(R.id.hold_suspend_hold)
@@ -79,10 +78,8 @@ class HoldDetailsActivity : BaseActivity() {
 
         title.text = record.title
         author.text = record.author
-        if (record.recordInfo != null) {
-            format.text = record.recordInfo.iconFormatLabel
-            physical_description.text = record.recordInfo.physical_description
-        }
+        format.text = record.record?.iconFormatLabel
+        physicalDescription.text = record.record?.physicalDescription
         suspendHold?.isChecked = record.isSuspended
         if (record.isSuspended && record.thawDate != null) {
             thawDate = record.thawDate
@@ -104,7 +101,6 @@ class HoldDetailsActivity : BaseActivity() {
             builder.create().show()
         }
         updateHold.setOnClickListener {
-            //Analytics.logEvent("holds_updatehold")
             updateHold(record)
         }
         suspendHold?.setOnCheckedChangeListener { buttonView, isChecked ->
@@ -183,8 +179,8 @@ class HoldDetailsActivity : BaseActivity() {
             progress?.show(this@HoldDetailsActivity, getString(R.string.msg_updating_hold))
             var expireDateApi: String? = null
             var thawDateApi: String? = null
-            if (expireDate != null) expireDateApi = Api.formatDate(expireDate)
-            if (thawDate != null) thawDateApi = Api.formatDate(thawDate)
+            if (expireDate != null) expireDateApi = OSRFUtils.formatDate(expireDate)
+            if (thawDate != null) thawDateApi = OSRFUtils.formatDate(thawDate)
 
             val holdId = record.ahr.getInt("id") ?: 0
             val orgId = EgOrg.visibleOrgs[selectedOrgPos].id
@@ -192,7 +188,9 @@ class HoldDetailsActivity : BaseActivity() {
                     orgId, expireDateApi, suspendHold!!.isChecked, thawDateApi)
             progress?.dismiss()
             Analytics.logEvent(Analytics.Event.HOLD_UPDATE_HOLD, bundleOf(
-                Analytics.Param.RESULT to Analytics.resultValue(result)
+                Analytics.Param.RESULT to Analytics.resultValue(result),
+                Analytics.Param.HOLD_SUSPEND_KEY to suspendHold!!.isChecked,
+                Analytics.Param.HOLD_REACTIVATE_KEY to (thawDate != null),
             ))
             when (result) {
                 is Result.Success -> {

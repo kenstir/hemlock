@@ -17,7 +17,7 @@
  */
 package org.evergreen_ils.system
 
-import org.evergreen_ils.Api
+import org.evergreen_ils.OSRFUtils
 import org.evergreen_ils.android.Analytics
 import org.evergreen_ils.android.Log
 import org.opensrf.ShouldNotHappenException
@@ -43,7 +43,7 @@ object EgCodedValueMap {
         for (obj in objects) {
             val ctype = obj.getString("ctype", "")
             val code = obj.getString("code") ?: continue
-            val opac_visible = Api.parseBoolean(obj["opac_visible"])
+            val opac_visible = OSRFUtils.parseBoolean(obj["opac_visible"])
             val search_label = obj.getString("search_label") ?: ""
             val value = obj.getString("value") ?: ""
             val cv = CodedValue(code, if (search_label.isNotBlank()) search_label else value, opac_visible)

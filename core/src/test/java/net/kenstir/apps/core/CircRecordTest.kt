@@ -19,10 +19,10 @@
 
 package net.kenstir.apps.core
 
-import org.evergreen_ils.Api
+import org.evergreen_ils.OSRFUtils
 import org.evergreen_ils.data.CircRecord
 import org.evergreen_ils.data.jsonMapOf
-import org.evergreen_ils.searchCatalog.RecordInfo
+import org.evergreen_ils.data.MBRecord
 import org.junit.Assert.assertEquals
 import org.junit.BeforeClass
 import org.junit.Test
@@ -56,7 +56,7 @@ class CircRecordTest {
         assertEquals("", circRecord.author)
         assertEquals(0, circRecord.renewals)
         assertEquals(19314463, circRecord.targetCopy)
-        assertEquals(Api.parseDate("2020-02-05T23:59:59-0500"), circRecord.dueDate)
+        assertEquals(OSRFUtils.parseDate("2020-02-05T23:59:59-0500"), circRecord.dueDate)
     }
 
     @Test
@@ -78,17 +78,17 @@ class CircRecordTest {
         ))
         val circRecord = CircRecord(circObj, CircRecord.CircType.OUT, 93108558)
         circRecord.mvr = mvrObj
-        circRecord.recordInfo = RecordInfo(mvrObj)
+        circRecord.record = MBRecord(mvrObj)
 
         assertEquals("The Testaments", circRecord.title)
         assertEquals("Margaret Atwood", circRecord.author)
         assertEquals(0, circRecord.renewals)
         assertEquals(19314463, circRecord.targetCopy)
-        assertEquals(Api.parseDate("2020-02-05T23:59:59-0500"), circRecord.dueDate)
+        assertEquals(OSRFUtils.parseDate("2020-02-05T23:59:59-0500"), circRecord.dueDate)
     }
 
     // Something borrowed from another consortium will have a target_copy but
-    // a record.doc_id==-1, and the acp will have dummy_title and dummy_author
+    // a record.id==-1, and the acp will have dummy_title and dummy_author
     @Test
     fun test_illCheckout() {
         val circObj = OSRFObject(jsonMapOf(
@@ -114,7 +114,7 @@ class CircRecordTest {
         ))
         val circRecord = CircRecord(circObj, CircRecord.CircType.OUT, 1)
         circRecord.mvr = mvrObj
-        circRecord.recordInfo = RecordInfo(mvrObj)
+        circRecord.record = MBRecord(mvrObj)
         circRecord.acp = acpObj
 
         assertEquals("SEO TEST", circRecord.title)

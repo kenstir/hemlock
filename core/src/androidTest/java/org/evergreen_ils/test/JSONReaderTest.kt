@@ -18,7 +18,7 @@
 
 package org.evergreen_ils.test
 
-import org.evergreen_ils.Api
+import org.evergreen_ils.OSRFUtils
 import org.junit.Assert.assertEquals
 import org.junit.BeforeClass
 import org.junit.Test
@@ -42,7 +42,7 @@ class JSONReaderTest {
             {"__c":"test","__p":["t",1]}
             """
         val obj = JSONReader(json).readObject()
-        assertEquals(true, Api.parseBoolean(obj["can_haz_bacon"]))
+        assertEquals(true, OSRFUtils.parseBoolean(obj["can_haz_bacon"]))
         assertEquals(1, obj["id"])
     }
 
@@ -52,7 +52,7 @@ class JSONReaderTest {
             {"__c":"test","__p":["t",1,"Hormel","Unexpected"]}
             """
         val obj = JSONReader(json).readObject()
-        assertEquals(true, Api.parseBoolean(obj["can_haz_bacon"]))
+        assertEquals(true, OSRFUtils.parseBoolean(obj["can_haz_bacon"]))
         assertEquals(1, obj["id"])
         assertEquals("Hormel", obj["name"])
     }

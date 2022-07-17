@@ -35,10 +35,7 @@ import androidx.core.os.bundleOf
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.joinAll
-import org.evergreen_ils.Api
-import org.evergreen_ils.HOLD_TYPE_PART
-import org.evergreen_ils.HOLD_TYPE_TITLE
-import org.evergreen_ils.R
+import org.evergreen_ils.*
 import org.evergreen_ils.android.Analytics
 import org.evergreen_ils.android.Analytics.orgDimensionKey
 import org.evergreen_ils.android.App
@@ -48,7 +45,7 @@ import org.evergreen_ils.data.Result
 import org.evergreen_ils.data.SMSCarrier
 import org.evergreen_ils.net.Gateway
 import org.evergreen_ils.net.GatewayLoader
-import org.evergreen_ils.searchCatalog.RecordInfo
+import org.evergreen_ils.data.MBRecord
 import org.evergreen_ils.system.EgOrg
 import org.evergreen_ils.system.EgSms
 import org.evergreen_ils.utils.getCustomMessage
@@ -89,7 +86,7 @@ class PlaceHoldActivity : BaseActivity() {
     private var progress: ProgressDialogSupport? = null
     private var parts: List<OSRFObject>? = null
     private var titleHoldIsPossible: Boolean? = null
-    private lateinit var record: RecordInfo
+    private lateinit var record: MBRecord
 
     private val hasParts: Boolean
         get() = !(parts.isNullOrEmpty())
@@ -102,7 +99,7 @@ class PlaceHoldActivity : BaseActivity() {
 
         setContentView(R.layout.place_hold)
 
-        record = intent.getSerializableExtra("recordInfo") as RecordInfo
+        record = intent.getSerializableExtra("recordInfo") as MBRecord
         account = App.getAccount()
         progress = ProgressDialogSupport()
         title = findViewById(R.id.hold_title)
@@ -173,11 +170,11 @@ class PlaceHoldActivity : BaseActivity() {
                 if (resources.getBoolean(R.bool.ou_enable_part_holds)) {
                     Log.d(TAG, "${record.title}: fetching parts")
                     jobs.add(async {
-                        val result = Gateway.search.fetchHoldParts(record.doc_id)
+                        val result = Gateway.search.fetchHoldParts(record.id)
                         onPartsResult(result)
                         if (hasParts && resources.getBoolean(R.bool.ou_enable_title_hold_on_item_with_parts)) {
                             Log.d(TAG, "${record.title}: checking titleHoldIsPossible")
-                            val isPossibleResult = Gateway.circ.fetchTitleHoldIsPossible(App.getAccount(), record.doc_id, App.getAccount().pickupOrg ?: 1)
+                            val isPossibleResult = Gateway.circ.fetchTitleHoldIsPossible(App.getAccount(), record.id, App.getAccount().pickupOrg ?: 1)
                             onTitleHoldIsPossibleResult(isPossibleResult)
                         }
                     })
@@ -266,11 +263,11 @@ class PlaceHoldActivity : BaseActivity() {
     }
 
     private fun getExpireDate(): String? {
-        return if (expireDate != null) Api.formatDate(expireDate) else null
+        return if (expireDate != null) OSRFUtils.formatDate(expireDate) else null
     }
 
     private fun getThawDate(): String? {
-        return if (thawDate != null) Api.formatDate(thawDate) else null
+        return if (thawDate != null) OSRFUtils.formatDate(thawDate) else null
     }
 
     private fun placeHoldPreFlightCheck(): Boolean {
@@ -307,14 +304,14 @@ class PlaceHoldActivity : BaseActivity() {
             return
 
         async {
-            Log.d(TAG, "[kcxxx] placeHold: ${record.doc_id}")
+            Log.d(TAG, "[kcxxx] placeHold: ${record.id}")
             val selectedOrgID = if (EgOrg.visibleOrgs.size > selectedOrgPos) EgOrg.visibleOrgs[selectedOrgPos].id else -1
             val selectedSMSCarrierID = if (EgSms.carriers.size > selectedSMSPos) EgSms.carriers[selectedSMSPos].id else -1
             val holdType: String
             val itemId: Int
             when {
                 partRequired || getPartId() > 0 -> { holdType = HOLD_TYPE_PART; itemId = getPartId() }
-                else -> { holdType = HOLD_TYPE_TITLE; itemId = record.doc_id }
+                else -> { holdType = HOLD_TYPE_TITLE; itemId = record.id }
             }
             progress?.show(this@PlaceHoldActivity, "Placing hold")
             val result = Gateway.circ.placeHoldAsync(App.getAccount(), holdType, itemId,

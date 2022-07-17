@@ -35,6 +35,7 @@ import kotlinx.coroutines.async
 import org.evergreen_ils.R
 import org.evergreen_ils.android.Log
 import org.evergreen_ils.data.CopyLocationCounts
+import org.evergreen_ils.data.MBRecord
 import org.evergreen_ils.data.Result
 import org.evergreen_ils.net.Gateway
 import org.evergreen_ils.system.EgOrg
@@ -49,7 +50,7 @@ import java.util.*
 class CopyInformationActivity : BaseActivity() {
     private val TAG = CopyInformationActivity::class.java.simpleName
 
-    private lateinit var record: RecordInfo
+    private lateinit var record: MBRecord
     private var orgID: Int = EgOrg.consortiumID
     private var lv: ListView? = null
     private var placeHoldButton: Button? = null
@@ -66,10 +67,10 @@ class CopyInformationActivity : BaseActivity() {
         setContentView(R.layout.copy_information_list)
 
         if (savedInstanceState != null) {
-            record = savedInstanceState.getSerializable("recordInfo") as RecordInfo
+            record = savedInstanceState.getSerializable("recordInfo") as MBRecord
             orgID = savedInstanceState.getInt("orgID")
         } else {
-            record = intent.getSerializableExtra("recordInfo") as RecordInfo
+            record = intent.getSerializableExtra("recordInfo") as MBRecord
             orgID = intent.getIntExtra("orgID", EgOrg.consortiumID)
         }
 
@@ -157,7 +158,7 @@ class CopyInformationActivity : BaseActivity() {
             try {
                 //val start_ms = System.currentTimeMillis()
                 val org = findOrg(orgID) ?: return@async
-                val result = Gateway.search.fetchCopyLocationCounts(record.doc_id, org.id, org.level)
+                val result = Gateway.search.fetchCopyLocationCounts(record.id, org.id, org.level)
                 if (result is Result.Error) { showAlert(result.exception); return@async }
                 updateCopyInfo(CopyLocationCounts.makeArray(result.get()))
             } catch (ex: Exception) {

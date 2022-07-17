@@ -36,9 +36,6 @@ import org.evergreen_ils.views.MainActivity;
 
 import java.io.File;
 
-/**
- * Created by kenstir on 1/29/2017.
- */
 public class App {
     private static final String TAG = App.class.getSimpleName();
 
@@ -47,9 +44,7 @@ public class App {
     public static final int ITEM_ADD_TO_LIST = 2;
 
     // request/result codes for use with startActivityForResult
-    public static final int REQUEST_PURCHASE = 10001;
     public static final int REQUEST_MYOPAC_MESSAGES = 10002;
-    public static final int RESULT_PURCHASED = 20001;
 
     private static int mIsDebuggable = -1;
 
@@ -59,7 +54,6 @@ public class App {
     private static AppBehavior behavior = null;
     private static Library library = null;
     private static Account account = null;
-    private static Context applicationContext = null;
 
     public static boolean getIsDebuggable(Context context) {
         if (mIsDebuggable < 0)
@@ -108,7 +102,6 @@ public class App {
     }
 
     static public void init(Context context) {
-        applicationContext = context.getApplicationContext();
         enableCaching(context);
         AppState.init(context);
         if (behavior == null)

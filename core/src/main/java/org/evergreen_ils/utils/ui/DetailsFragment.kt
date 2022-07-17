@@ -20,7 +20,6 @@
 package org.evergreen_ils.utils.ui
 
 import android.app.AlertDialog
-import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -45,14 +44,14 @@ import org.evergreen_ils.net.Gateway.getUrl
 import org.evergreen_ils.net.GatewayLoader
 import org.evergreen_ils.net.Volley
 import org.evergreen_ils.searchCatalog.CopyInformationActivity
-import org.evergreen_ils.searchCatalog.RecordInfo
+import org.evergreen_ils.data.MBRecord
 import org.evergreen_ils.system.EgOrg
 import org.evergreen_ils.system.EgOrg.findOrg
 import org.evergreen_ils.views.bookbags.BookBagUtils.showAddToListDialog
 import org.evergreen_ils.views.holds.PlaceHoldActivity
 
 class DetailsFragment : Fragment() {
-    private var record: RecordInfo? = null
+    private var record: MBRecord? = null
     private var orgID: Int = EgOrg.consortiumID
     private var position: Int? = null
     private var total: Int? = null
@@ -80,7 +79,7 @@ class DetailsFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         if (savedInstanceState != null) {
-            record = savedInstanceState.getSerializable("recordInfo") as RecordInfo
+            record = savedInstanceState.getSerializable("recordInfo") as MBRecord
             orgID = savedInstanceState.getInt("orgID")
             position = savedInstanceState.getInt("position")
             total = savedInstanceState.getInt("total")
@@ -96,7 +95,7 @@ class DetailsFragment : Fragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        Log.d("xyzzy", "${record?.doc_id}: oncreateview")
+        Log.d("xyzzy", "${record?.id}: oncreateview")
         val layout = inflater.inflate(
                 R.layout.record_details_fragment, container, false) as LinearLayout
 
@@ -126,8 +125,8 @@ class DetailsFragment : Fragment() {
         initButtons()
 
         // Start async image load
-        val url = getUrl("/opac/extras/ac/jacket/medium/r/" + record?.doc_id)
-        Log.d("xyzzy", "${record?.doc_id}: setimageurl $url")
+        val url = getUrl("/opac/extras/ac/jacket/medium/r/" + record?.id)
+        Log.d("xyzzy", "${record?.id}: setimageurl $url")
         recordImage?.setImageUrl(url, Volley.getInstance(activity).imageLoader)
         //recordImage?.setDefaultImageResId(R.drawable.missing_art);//for screenshots
 
@@ -171,7 +170,7 @@ class DetailsFragment : Fragment() {
             extrasButton?.text = extrasLinkText
             extrasButton?.setOnClickListener {
                 val url = StringBuilder(resources.getString(R.string.ou_library_url))
-                url.append("/eg/opac/record/").append(record?.doc_id)
+                url.append("/eg/opac/record/").append(record?.id)
                 val q = resources.getString(R.string.ou_details_link_query)
                 if (q.isNotEmpty()) {
                     url.append("?").append(q)
@@ -211,7 +210,7 @@ class DetailsFragment : Fragment() {
 
     private fun updateButtonViews() {
         val isOnlineResource = App.getBehavior().isOnlineResource(record)
-        Log.d("xyzzy", "${record?.doc_id}: updateButtonViews")
+        Log.d("xyzzy", "${record?.id}: updateButtonViews")
         Log.d(TAG, "updateButtonViews: title:${record?.title} isOnlineResource:$isOnlineResource")
         if (isOnlineResource == null) return  // not ready yet
         placeHoldButton?.isEnabled = true
@@ -259,31 +258,31 @@ class DetailsFragment : Fragment() {
         descriptionTextView?.text = record?.getCopySummary(resources, orgID)
     }
 
-    private fun fetchData(record: RecordInfo) {
+    private fun fetchData(record: MBRecord) {
         val coroutineScope = (activity as? CoroutineScope) ?: return
         coroutineScope.async {
             try {
                 Log.d(TAG, "[kcxxx] fetchData ...")
-                Log.d("xyzzy", "${record.doc_id}: fetchData")
+                Log.d("xyzzy", "${record.id}: fetchData")
                 val start = System.currentTimeMillis()
                 var jobs = mutableListOf<Job>()
 
                 jobs.add(async {
                     GatewayLoader.loadRecordMetadataAsync(record)
-                    Log.d("xyzzy", "${record.doc_id}: loadMetadata")
+                    Log.d("xyzzy", "${record.id}: loadMetadata")
                     loadMetadata()
                 })
 
                 jobs.add(async {
                     GatewayLoader.loadRecordAttributesAsync(record)
-                    Log.d("xyzzy", "${record.doc_id}: loadFormat")
+                    Log.d("xyzzy", "${record.id}: loadFormat")
                     loadFormat()
                 })
 
                 if (resources.getBoolean(R.bool.ou_need_marc_record)) {
                     jobs.add(async {
                         GatewayLoader.loadRecordMarcAsync(record)
-                        Log.d("xyzzy", "${record.doc_id}: loadRecordMarcAsync")
+                        Log.d("xyzzy", "${record.id}: loadRecordMarcAsync")
                     })
                 }
 
@@ -296,14 +295,13 @@ class DetailsFragment : Fragment() {
                 // Check for copy counts only after we know it is not an online_resource
                 val isOnlineResource = App.getBehavior().isOnlineResource(record)
                 if (isOnlineResource == null) {
-                    val ex = IllegalStateException("isOnlineResource is null")
+                    val ex = IllegalStateException("isOnlineResource is null for record ${record.id}")
                     Analytics.logException(ex)
-                    //throw ex
                 }
                 if (isOnlineResource != true) {
                     jobs.add(async {
-                        GatewayLoader.loadRecordCopyCountsAsync(record, orgID)
-                        Log.d("xyzzy", "${record.doc_id}: loadCopyCount")
+                        GatewayLoader.loadRecordCopyCountAsync(record, orgID)
+                        Log.d("xyzzy", "${record.id}: loadCopyCount")
                         loadCopyCount()
                     })
                 }
@@ -323,7 +321,7 @@ class DetailsFragment : Fragment() {
     companion object {
         private val TAG = DetailsFragment::class.java.simpleName
 
-        fun create(record: RecordInfo?, orgID: Int, position: Int, total: Int): DetailsFragment {
+        fun create(record: MBRecord?, orgID: Int, position: Int, total: Int): DetailsFragment {
             val fragment = DetailsFragment()
             fragment.record = record
             fragment.orgID = orgID

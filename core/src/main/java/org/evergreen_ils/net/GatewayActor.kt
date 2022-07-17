@@ -70,8 +70,9 @@ object GatewayActor: ActorService {
     override suspend fun fetchOrgSettings(orgID: Int): Result<OSRFObject> {
         return try {
             val settings = mutableListOf(Api.SETTING_ORG_UNIT_NOT_PICKUP_LIB,
-                    Api.SETTING_CREDIT_PAYMENTS_ALLOW,
-                    Api.SETTING_INFO_URL)
+                Api.SETTING_CREDIT_PAYMENTS_ALLOW,
+                Api.SETTING_INFO_URL,
+                Api.SETTING_HEMLOCK_EVENTS_URL)
             if (orgID == EgOrg.consortiumID)
                 settings.add(Api.SETTING_SMS_ENABLE)
             val args = arrayOf<Any?>(orgID, settings, Api.ANONYMOUS)
@@ -88,7 +89,7 @@ object GatewayActor: ActorService {
         if (orgID == null)
             return Result.Success(null)
         return try {
-            val (authToken, userID) = account.getCredentialsOrThrow()
+            val (authToken, _) = account.getCredentialsOrThrow()
             val args = arrayOf<Any?>(authToken, orgID)
             val ret = Gateway.fetch(Api.ACTOR, Api.HOURS_OF_OPERATION_RETRIEVE, args, false) {
                 it.asOptionalObject()
@@ -192,7 +193,7 @@ object GatewayActor: ActorService {
     override suspend fun createBookBagAsync(account: Account, name: String): Result<Unit> {
         return try {
             val (authToken, userId) = account.getCredentialsOrThrow()
-            var param = OSRFObject("cbreb", jsonMapOf(
+            val param = OSRFObject("cbreb", jsonMapOf(
                     "btype" to Api.CONTAINER_BUCKET_TYPE_BOOKBAG,
                     "name" to name,
                     "pub" to false,
@@ -201,7 +202,7 @@ object GatewayActor: ActorService {
             val args = arrayOf<Any?>(authToken, Api.CONTAINER_CLASS_BIBLIO, param)
             val ret = Gateway.fetch(Api.ACTOR, Api.CONTAINER_CREATE, args, false) {
                 // e.g. "9"
-                Log.d(TAG, "[bookbag] createBag ${name} result ${it.payload}")
+                Log.d(TAG, "[bookbag] createBag $name result ${it.payload}")
             }
             Result.Success(Unit)
         } catch (e: Exception) {
@@ -215,7 +216,7 @@ object GatewayActor: ActorService {
             val args = arrayOf<Any?>(authToken, Api.CONTAINER_CLASS_BIBLIO, bookBagId)
             val ret = Gateway.fetch(Api.ACTOR, Api.CONTAINER_FULL_DELETE, args, false) {
                 // e.g. "9"
-                Log.d(TAG, "[bookbag] bag ${bookBagId} deleteBag result ${it.payload}")
+                Log.d(TAG, "[bookbag] bag $bookBagId deleteBag result ${it.payload}")
             }
             Result.Success(Unit)
         } catch (e: Exception) {
@@ -234,7 +235,7 @@ object GatewayActor: ActorService {
             val args = arrayOf<Any?>(authToken, Api.CONTAINER_CLASS_BIBLIO, param)
             val ret = Gateway.fetch(Api.ACTOR, Api.CONTAINER_ITEM_CREATE, args, false) {
                 // e.g. ???
-                Log.d(TAG, "[bookbag] bag ${bookBagId} addItem ${recordId} result ${it.payload}")
+                Log.d(TAG, "[bookbag] bag $bookBagId addItem $recordId result ${it.payload}")
             }
             Result.Success(Unit)
         } catch (e: Exception) {
@@ -248,7 +249,7 @@ object GatewayActor: ActorService {
             val args = arrayOf<Any?>(authToken, Api.CONTAINER_CLASS_BIBLIO, bookBagItemId)
             val ret = Gateway.fetch(Api.ACTOR, Api.CONTAINER_ITEM_DELETE, args, false) {
                 // e.g. ???
-                Log.d(TAG, "[bookbag] removeItem ${bookBagItemId} result ${it.payload}")
+                Log.d(TAG, "[bookbag] removeItem $bookBagItemId result ${it.payload}")
             }
             Result.Success(Unit)
         } catch (e: Exception) {

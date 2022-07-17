@@ -23,6 +23,7 @@ import android.view.*;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import org.evergreen_ils.R;
+import org.evergreen_ils.data.MBRecord;
 import org.evergreen_ils.system.EgSearch;
 import org.evergreen_ils.utils.ui.ItemClickSupport;
 
@@ -42,10 +43,10 @@ public class SearchResultsFragment extends Fragment {
     protected LayoutManagerType mCurrentLayoutManagerType;
     protected RecyclerView mRecyclerView;
     protected RecyclerView.LayoutManager mLayoutManager;
-    protected ArrayList<RecordInfo> mDataset;
+    protected ArrayList<MBRecord> mDataset;
     protected RecordViewAdapter mAdapter;
-    protected RecordInfo.OnRecordClickListener mOnRecordClickListener;
-    protected RecordInfo.OnRecordLongClickListener mOnRecordLongClickListener;
+    protected OnRecordClickListener mOnRecordClickListener;
+    protected OnRecordLongClickListener mOnRecordLongClickListener;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -79,7 +80,7 @@ public class SearchResultsFragment extends Fragment {
             @Override
             public void onItemClicked(RecyclerView recyclerView, int position, View v) {
                 if (mOnRecordClickListener != null) {
-                    RecordInfo record = mDataset.get(position);
+                    MBRecord record = mDataset.get(position);
                     mOnRecordClickListener.onClick(record, position);
                 }
             }
@@ -88,7 +89,7 @@ public class SearchResultsFragment extends Fragment {
             @Override
             public boolean onItemLongClicked(RecyclerView recyclerView, int position, View v) {
                 if (mOnRecordLongClickListener != null) {
-                    RecordInfo record = mDataset.get(position);
+                    MBRecord record = mDataset.get(position);
                     mOnRecordLongClickListener.onLongClick(record, position);
                     return true;
                 }
@@ -139,11 +140,19 @@ public class SearchResultsFragment extends Fragment {
         mAdapter.notifyDataSetChanged();
     }
 
-    public void setOnRecordClickListener(RecordInfo.OnRecordClickListener listener) {
+    public void setOnRecordClickListener(OnRecordClickListener listener) {
         mOnRecordClickListener = listener;
     }
 
-    public void setOnRecordLongClickListener(RecordInfo.OnRecordLongClickListener listener) {
+    public void setOnRecordLongClickListener(OnRecordLongClickListener listener) {
         mOnRecordLongClickListener = listener;
+    }
+
+    public interface OnRecordClickListener {
+        void onClick(MBRecord record, int position);
+    }
+
+    public interface OnRecordLongClickListener {
+        void onLongClick(MBRecord record, int position);
     }
 }

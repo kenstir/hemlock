@@ -222,6 +222,17 @@ class LaunchActivity : AppCompatActivity(), CoroutineScope by MainScope() {
             }
         }
 
+        // load the home org settings, used to control visibility of the Events button
+        if (resources.getBoolean(R.bool.ou_enable_events_button)) {
+            EgOrg.findOrg(App.getAccount().homeOrg)?.let { org ->
+                val orgSettingsResult = Gateway.actor.fetchOrgSettings(org.id)
+                if (orgSettingsResult is Result.Success) {
+                    org.loadSettings(orgSettingsResult.data)
+                    Log.d(TAG, "[kcxxx] org ${org.id} settings loaded")
+                }
+            }
+        }
+
         logStartEvent(account)
 
         return true

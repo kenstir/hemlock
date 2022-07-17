@@ -59,9 +59,14 @@ class OSRFObjectTest {
 
     @Test
     fun test_getInt() {
-        val obj = OSRFObject(mapOf<String, Any?>("id" to 42, "stringish_id" to "42"))
+        val obj = OSRFObject(mapOf<String, Any?>(
+            "id" to 42,
+            "count" to "42",
+            "null_key" to null
+        ))
         assertEquals(42, obj.getInt("id"))
-        assertEquals(42, obj.getInt("stringish_id"))
+        assertEquals(42, obj.getInt("count"))
+        assertNull(obj.getInt("null_key"))
     }
 
     @Test

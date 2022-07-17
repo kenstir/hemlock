@@ -55,6 +55,8 @@ object Analytics {
         const val HOLD_EXPIRES_KEY = "hold_expires" // bool
         const val HOLD_NOTIFY = "hold_notify"
         const val HOLD_PICKUP_KEY = "hold_pickup" // { home | other }
+        const val HOLD_REACTIVATE_KEY = "hold_reactivate" // bool
+        const val HOLD_SUSPEND_KEY = "hold_suspend" // bool
         const val LOGIN_TYPE = "login_type" // { barcode | username }
         const val NUM_ITEMS = "num_items"
         const val NUM_RESULTS = "num_results"

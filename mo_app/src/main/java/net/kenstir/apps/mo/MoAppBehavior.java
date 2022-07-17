@@ -20,7 +20,7 @@ package net.kenstir.apps.mo;
 import android.text.TextUtils;
 
 import org.evergreen_ils.android.AppBehavior;
-import org.evergreen_ils.searchCatalog.RecordInfo;
+import org.evergreen_ils.data.MBRecord;
 import org.evergreen_ils.utils.Link;
 import org.evergreen_ils.utils.MARCRecord;
 
@@ -38,10 +38,10 @@ public class MoAppBehavior extends AppBehavior {
     }
 
     @Override
-    public Boolean isOnlineResource(RecordInfo record) {
+    public Boolean isOnlineResource(MBRecord record) {
         if (record == null) return null;
-        if (!record.hasMetadata) return null;
-        if (!record.hasAttributes) return null;
+        if (!record.hasMetadata()) return null;
+        if (!record.hasAttributes()) return null;
 
         // TODO: verify if correct
         String item_form = record.getAttr("item_form");
@@ -66,7 +66,7 @@ public class MoAppBehavior extends AppBehavior {
     }
 
     @Override @NonNull
-    public List<Link> getOnlineLocations(RecordInfo record, String orgShortName) {
+    public List<Link> getOnlineLocations(MBRecord record, String orgShortName) {
         return getOnlineLocationsFromMARC(record, orgShortName);
     }
 }

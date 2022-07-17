@@ -27,13 +27,13 @@ import org.evergreen_ils.android.App
 import org.evergreen_ils.data.BookBag
 import org.evergreen_ils.data.Result
 import org.evergreen_ils.net.Gateway
-import org.evergreen_ils.searchCatalog.RecordInfo
+import org.evergreen_ils.data.MBRecord
 import org.evergreen_ils.utils.ui.BaseActivity
 import org.evergreen_ils.utils.ui.ProgressDialogSupport
 import org.evergreen_ils.utils.ui.showAlert
 
 object BookBagUtils {
-    fun showAddToListDialog(activity: BaseActivity, bookBags: List<BookBag>, info: RecordInfo) {
+    fun showAddToListDialog(activity: BaseActivity, bookBags: List<BookBag>, info: MBRecord) {
         val listNames = bookBags.map { it.name }.toTypedArray()
 
         val builder = AlertDialog.Builder(activity)
@@ -42,13 +42,13 @@ object BookBagUtils {
         builder.create().show()
     }
 
-    private fun addRecordToList(activity: BaseActivity, bookBag: BookBag, info: RecordInfo) {
+    private fun addRecordToList(activity: BaseActivity, bookBag: BookBag, info: MBRecord) {
         activity.async {
             val progress = ProgressDialogSupport()
             try {
                 progress.show(activity, activity.getString(R.string.adding_to_list_message))
 
-                val result = Gateway.actor.addItemToBookBagAsync(App.getAccount(), bookBag.id, info.doc_id)
+                val result = Gateway.actor.addItemToBookBagAsync(App.getAccount(), bookBag.id, info.id)
                 Analytics.logEvent(Analytics.Event.BOOKBAG_ADD_ITEM, bundleOf(
                     Analytics.Param.RESULT to Analytics.resultValue(result)
                 ))
