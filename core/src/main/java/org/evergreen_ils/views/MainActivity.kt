@@ -40,6 +40,7 @@ import org.evergreen_ils.data.Result
 import org.evergreen_ils.net.Gateway
 import org.evergreen_ils.searchCatalog.SearchActivity
 import org.evergreen_ils.android.Log
+import org.evergreen_ils.barcodescan.CaptureActivity
 import org.evergreen_ils.net.GatewayLoader
 import org.evergreen_ils.system.EgOrg
 import org.evergreen_ils.utils.ui.BaseActivity
@@ -90,11 +91,11 @@ class MainActivity : BaseActivity() {
     }
 
     private fun setupEventsButton() {
-        val url = EgOrg.findOrg(App.getAccount().homeOrg)?.eventsURL
-        // hide Events button if not enabled, or if the org has no eventsURL
-        if (!resources.getBoolean(R.bool.ou_enable_events_button) || url.isNullOrEmpty()) {
-            eventsButton?.visibility = View.GONE
-        }
+//        val url = EgOrg.findOrg(App.getAccount().homeOrg)?.eventsURL
+//        // hide Events button if not enabled, or if the org has no eventsURL
+//        if (!resources.getBoolean(R.bool.ou_enable_events_button) || url.isNullOrEmpty()) {
+//            eventsButton?.visibility = View.GONE
+//        }
     }
 
     // TODO: Make this on demand by making it a suspend fun in GatewayLoader.
@@ -224,7 +225,8 @@ class MainActivity : BaseActivity() {
         } else if (id == R.id.main_library_info_button) {
             startActivity(Intent(this, OrgDetailsActivity::class.java))
         } else if (id == R.id.main_events_button) {
-            launchURL(getEventsUrl())
+            //launchURL(getEventsUrl())
+            startActivity(Intent(this, CaptureActivity::class.java))
         } else if (id == R.id.main_showcard_button) {
             startActivity(Intent(this, BarcodeActivity::class.java))
         } else if (menuItemHandler != null) {

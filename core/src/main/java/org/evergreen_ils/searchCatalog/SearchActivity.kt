@@ -20,8 +20,10 @@
  */
 package org.evergreen_ils.searchCatalog
 
+import android.Manifest
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.text.TextUtils
 import android.view.ContextMenu
@@ -32,6 +34,8 @@ import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.*
 import androidx.appcompat.widget.SwitchCompat
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import kotlinx.coroutines.async
 import org.evergreen_ils.R
@@ -53,7 +57,7 @@ import org.evergreen_ils.views.bookbags.BookBagUtils.showAddToListDialog
 import org.evergreen_ils.views.holds.PlaceHoldActivity
 import org.opensrf.util.OSRFObject
 
-class SearchActivity : BaseActivity() {
+class SearchActivity : BaseActivity(), ActivityCompat.OnRequestPermissionsResultCallback {
     private var searchTextView: EditText? = null
     private var searchOptionsButton: SwitchCompat? = null
     private var searchOptionsLayout: View? = null
@@ -124,6 +128,7 @@ class SearchActivity : BaseActivity() {
         initSearchText()
         initSearchOptionsButton()
         initSearchButton()
+        initSearchClassSpinner()
         initSearchFormatSpinner()
         initOrgSpinner()
         initRecordClickListener()
@@ -311,6 +316,21 @@ class SearchActivity : BaseActivity() {
         searchFormatSpinner?.adapter = adapter
     }
 
+    private fun initSearchClassSpinner() {
+        searchClassSpinner?.onItemSelectedListener = object: AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                Log.d(TAG, "position: $position")
+                if (position == 5) {
+                    startScanning()
+                }
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>?) {
+                Log.d(TAG, "here")
+            }
+        }
+    }
+
     private fun initRecordClickListener() {
         registerForContextMenu(findViewById(R.id.search_results_list))
         searchResultsFragment?.setOnRecordClickListener { record, position ->
@@ -387,6 +407,9 @@ class SearchActivity : BaseActivity() {
             logout()
             App.restartApp(this)
             return true
+        } else if (id == R.id.action_barcode_search) {
+            startScanning()
+            return true
         }
         return super.onOptionsItemSelected(item)
     }
@@ -415,8 +438,22 @@ class SearchActivity : BaseActivity() {
         }
     }
 
+    fun startScanning() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
+            showAlert("permission granted")
+        } else {
+            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.CAMERA), PERMISSION_REQUESTS)
+        }
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+    }
+
     companion object {
         private val TAG = SearchActivity::class.java.simpleName
         const val SEARCH_OPTIONS_VISIBLE = "search_options_visible"
+        private const val PERMISSION_REQUESTS = 1
+        private const val BARCODE_SCAN_COMPLETE = 2
     }
 }
