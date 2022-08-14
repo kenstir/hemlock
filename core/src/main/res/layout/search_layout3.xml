@@ -63,13 +63,13 @@
                 android:layout_height="wrap_content">
 
                 <Spinner
-                    android:id="@+id/search_qtype_spinner"
+                    android:id="@+id/search_class_spinner"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_margin="1dp"
                     android:layout_weight="1"
-                    android:contentDescription="@string/search_qtype_spinner_alt"
-                    android:entries="@array/search_qtype"
+                    android:contentDescription="@string/search_class_spinner_alt"
+                    android:entries="@array/search_class"
                     android:minHeight="@dimen/spinner_min_height" />
 
                 <Spinner

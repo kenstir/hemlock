@@ -20,10 +20,8 @@
  */
 package org.evergreen_ils.searchCatalog
 
-import android.Manifest
 import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.os.Bundle
 import android.text.TextUtils
 import android.view.ContextMenu
@@ -35,7 +33,6 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.*
 import androidx.appcompat.widget.SwitchCompat
 import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import com.google.mlkit.vision.barcode.common.Barcode
 import com.google.mlkit.vision.codescanner.GmsBarcodeScanning
@@ -61,6 +58,7 @@ import org.opensrf.util.OSRFObject
 class SearchActivity : BaseActivity(), ActivityCompat.OnRequestPermissionsResultCallback {
     private val TAG = SearchActivity::class.java.simpleName
     private val SEARCH_OPTIONS_VISIBLE = "search_options_visible"
+    private val SEARCH_CLASS_IDENTIFIER = "identifier"
 
     private var searchTextView: EditText? = null
     private var searchOptionsButton: SwitchCompat? = null
@@ -74,12 +72,20 @@ class SearchActivity : BaseActivity(), ActivityCompat.OnRequestPermissionsResult
     private var progress: ProgressDialogSupport? = null
     private var haveSearched = false
     private var contextMenuRecordInfo: ContextMenuRecordInfo? = null
+    private lateinit var searchClassKeywords: Array<String>
 
     private val searchText: String
         get() = searchTextView?.text.toString().trim()
 
     private val searchClass: String
-        get() = searchClassSpinner?.selectedItem.toString().toLowerCase()
+        get() {
+            val index = searchClassSpinner?.selectedItemPosition
+            return index?.let { searchClassKeywords[it] }!!
+        }
+    private val searchClassIdentifierIndex: Int
+        get() {
+            return searchClassKeywords.indexOf(SEARCH_CLASS_IDENTIFIER)
+        }
 
     private val searchFormatCode: String?
         get() = EgCodedValueMap.searchFormatCode(searchFormatSpinner?.selectedItem.toString())
@@ -122,10 +128,12 @@ class SearchActivity : BaseActivity(), ActivityCompat.OnRequestPermissionsResult
         searchOptionsButton = findViewById(R.id.search_options_button)
         searchOptionsLayout = findViewById(R.id.search_options_layout)
         searchButton = findViewById(R.id.search_button)
-        searchClassSpinner = findViewById(R.id.search_qtype_spinner)
+        searchClassSpinner = findViewById(R.id.search_class_spinner)
         searchFormatSpinner = findViewById(R.id.search_format_spinner)
         orgSpinner = findViewById(R.id.search_org_spinner)
         searchResultsSummary = findViewById(R.id.search_result_number)
+
+        searchClassKeywords = resources.getStringArray(R.array.search_class_keyword)
 
         initSearchOptionsVisibility()
         initSearchText()
@@ -177,11 +185,11 @@ class SearchActivity : BaseActivity(), ActivityCompat.OnRequestPermissionsResult
     }
 
     private fun initSearchOptionsButton() {
-        searchOptionsButton?.setOnCheckedChangeListener { buttonView, isChecked -> setSearchOptionsVisibility(isChecked) }
+        searchOptionsButton?.setOnCheckedChangeListener { _, isChecked -> setSearchOptionsVisibility(isChecked) }
     }
 
     private fun initSearchText() {
-        searchTextView?.setOnEditorActionListener(TextView.OnEditorActionListener { textView, id, keyEvent ->
+        searchTextView?.setOnEditorActionListener(TextView.OnEditorActionListener { _, id, _ ->
             if (id == EditorInfo.IME_ACTION_SEARCH) {
                 fetchSearchResults()
                 return@OnEditorActionListener true
@@ -325,10 +333,13 @@ class SearchActivity : BaseActivity(), ActivityCompat.OnRequestPermissionsResult
     private fun initSearchClassSpinner() {
         searchClassSpinner?.onItemSelectedListener = object: AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                Log.d(TAG, "position: $position")
-                if (position == 5) {
-                    startScanning()
-                }
+                Log.d(TAG, "SCANNER: position $position class $searchClass")
+                // Do not startScanning here because it can be called twice when invoked from the
+                // app bar scan icon (scan_icon >> startScanning >> setSelection >> onItemSelected).
+//                if (searchClass == SEARCH_CLASS_IDENTIFIER) {
+//                    Log.d(TAG, "SCANNER: start scanning???")
+//                    startScanning()
+//                }
             }
 
             override fun onNothingSelected(parent: AdapterView<*>?) {
@@ -339,7 +350,7 @@ class SearchActivity : BaseActivity(), ActivityCompat.OnRequestPermissionsResult
 
     private fun initRecordClickListener() {
         registerForContextMenu(findViewById(R.id.search_results_list))
-        searchResultsFragment?.setOnRecordClickListener { record, position ->
+        searchResultsFragment?.setOnRecordClickListener { _, position ->
             val intent = Intent(baseContext, RecordDetailsActivity::class.java)
             intent.putExtra("orgID", EgSearch.selectedOrganization?.id)
             intent.putExtra("recordPosition", position)
@@ -440,16 +451,20 @@ class SearchActivity : BaseActivity(), ActivityCompat.OnRequestPermissionsResult
 
     fun startScanning() {
         val scanner = GmsBarcodeScanning.getClient(this)
+        //userIsScanning = true
         scanner.startScan()
             .addOnSuccessListener { barcode ->
                 handleBarcodeResult(barcode)
             }
-            .addOnCanceledListener {
-                //this.showAlert("cancelled")
-            }
+//            .addOnCanceledListener {
+//                //this.showAlert("cancelled")
+//            }
             .addOnFailureListener { e ->
                 this.showAlert(e)
             }
+//            .addOnCompleteListener {
+//                userIsScanning = false
+//            }
 
     }
 
@@ -463,7 +478,15 @@ class SearchActivity : BaseActivity(), ActivityCompat.OnRequestPermissionsResult
             }
         }
         barcode.rawValue?.let {
-            searchTextView?.setText("identifier:$it")
+            Log.d(TAG, "SCANNER: scanned $it")
+
+            // We set searchClassSpinner=identifier so that the search is done with the right class.
+            // Because we are changing the state of the spinner, force the searchOptionsButton on
+            // to ensure the spinner is visible.
+            searchClassSpinner?.setSelection(searchClassIdentifierIndex)
+            searchOptionsButton?.isChecked = true
+            searchTextView?.setText(it)
+
             fetchSearchResults()
         }
     }
