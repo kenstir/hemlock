@@ -57,12 +57,6 @@
             android:label="@string/advanced_search">
         </activity>
         <activity
-            android:name="org.evergreen_ils.barcodescan.CaptureActivity"
-            android:screenOrientation="landscape"
-            android:theme="@android:style/Theme.NoTitleBar"
-            android:windowSoftInputMode="stateAlwaysHidden" >
-        </activity>
-        <activity
             android:name="org.evergreen_ils.views.CheckoutsActivity"
             android:label="@string/checkout_items_title"
             android:parentActivityName="org.evergreen_ils.views.MainActivity">

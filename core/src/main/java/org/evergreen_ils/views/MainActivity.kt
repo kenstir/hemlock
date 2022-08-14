@@ -40,9 +40,6 @@ import org.evergreen_ils.data.Result
 import org.evergreen_ils.net.Gateway
 import org.evergreen_ils.searchCatalog.SearchActivity
 import org.evergreen_ils.android.Log
-import org.evergreen_ils.barcodescan.CaptureActivity
-import org.evergreen_ils.net.GatewayLoader
-import org.evergreen_ils.system.EgOrg
 import org.evergreen_ils.utils.ui.BaseActivity
 import org.evergreen_ils.utils.ui.showAlert
 import org.opensrf.util.OSRFObject
@@ -225,8 +222,7 @@ class MainActivity : BaseActivity() {
         } else if (id == R.id.main_library_info_button) {
             startActivity(Intent(this, OrgDetailsActivity::class.java))
         } else if (id == R.id.main_events_button) {
-            //launchURL(getEventsUrl())
-            startActivity(Intent(this, CaptureActivity::class.java))
+            launchURL(getEventsUrl())
         } else if (id == R.id.main_showcard_button) {
             startActivity(Intent(this, BarcodeActivity::class.java))
         } else if (menuItemHandler != null) {

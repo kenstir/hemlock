@@ -11,9 +11,9 @@
     <uses-permission android:name="android.permission.WAKE_LOCK" />
 
     <application
+        android:name="androidx.multidex.MultiDexApplication"
         android:allowBackup="true"
         android:label="@string/ou_app_label"
-        android:name="androidx.multidex.MultiDexApplication"
         android:networkSecurityConfig="@xml/network_security_config">
     </application>
 

@@ -242,6 +242,6 @@
     <string name="label_barcode">barcode</string>
     <string name="label_hold_any_part">All parts</string>
     <string name="msg_no_browser_installed">No browser installed</string>
-    <string name="menu_scan_barcode">Scan a barcode</string>
+    <string name="menu_scan_barcode">Scan an ISBN or UPC</string>
 
 </resources>

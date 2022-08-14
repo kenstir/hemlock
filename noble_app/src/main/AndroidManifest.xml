@@ -82,12 +82,6 @@
                 android:name="org.evergreen_ils.searchCatalog.AdvancedSearchActivity"
                 android:label="@string/advanced_search">
         </activity>
-        <activity
-            android:name="org.evergreen_ils.barcodescan.CaptureActivity"
-            android:screenOrientation="landscape"
-            android:theme="@android:style/Theme.NoTitleBar"
-            android:windowSoftInputMode="stateAlwaysHidden" >
-        </activity>
 
         <!-- Checkout Activities -->
         <activity

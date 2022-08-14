@@ -37,13 +37,14 @@ import androidx.appcompat.widget.SwitchCompat
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
+import com.google.mlkit.vision.barcode.common.Barcode
+import com.google.mlkit.vision.codescanner.GmsBarcodeScanning
 import kotlinx.coroutines.async
 import org.evergreen_ils.R
 import org.evergreen_ils.android.Analytics
 import org.evergreen_ils.android.Analytics.orgDimensionKey
 import org.evergreen_ils.android.App
 import org.evergreen_ils.android.Log
-import org.evergreen_ils.barcodescan.CaptureActivity
 import org.evergreen_ils.data.MBRecord
 import org.evergreen_ils.data.Result
 import org.evergreen_ils.net.Gateway
@@ -58,6 +59,11 @@ import org.evergreen_ils.views.holds.PlaceHoldActivity
 import org.opensrf.util.OSRFObject
 
 class SearchActivity : BaseActivity(), ActivityCompat.OnRequestPermissionsResultCallback {
+    private val TAG = SearchActivity::class.java.simpleName
+    private val SEARCH_OPTIONS_VISIBLE = "search_options_visible"
+    private val PERMISSION_REQUESTS = 1
+    private val BARCODE_SCAN_COMPLETE = 2
+
     private var searchTextView: EditText? = null
     private var searchOptionsButton: SwitchCompat? = null
     private var searchOptionsLayout: View? = null
@@ -68,7 +74,6 @@ class SearchActivity : BaseActivity(), ActivityCompat.OnRequestPermissionsResult
     private var searchResultsSummary: TextView? = null
     private var searchResultsFragment: SearchResultsFragment? = null
     private var progress: ProgressDialogSupport? = null
-    private var searchForResultsRunnable: Runnable? = null
     private var haveSearched = false
     private var contextMenuRecordInfo: ContextMenuRecordInfo? = null
 
@@ -414,12 +419,6 @@ class SearchActivity : BaseActivity(), ActivityCompat.OnRequestPermissionsResult
         return super.onOptionsItemSelected(item)
     }
 
-    protected fun startSearchThread() {
-        haveSearched = true
-        val searchThread = Thread(searchForResultsRunnable)
-        searchThread.start()
-    }
-
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         when (resultCode) {
@@ -427,33 +426,44 @@ class SearchActivity : BaseActivity(), ActivityCompat.OnRequestPermissionsResult
             }
             AdvancedSearchActivity.RESULT_ADVANCED_SEARCH -> {
                 Log.d(TAG, "result text:" + data!!.getStringExtra("advancedSearchText"))
-                searchTextView!!.setText(data.getStringExtra("advancedSearchText"))
-                startSearchThread()
+                searchTextView?.setText(data.getStringExtra("advancedSearchText"))
+                fetchSearchResults()
             }
-            CaptureActivity.BARCODE_SEARCH -> {
-                searchTextView!!.setText("identifier|isbn: "
-                        + data!!.getStringExtra("barcodeValue"))
-                startSearchThread()
-            }
+//            CaptureActivity.BARCODE_SEARCH -> {
+//                searchTextView?.setText("identifier|isbn: "
+//                        + data?.getStringExtra("barcodeValue"))
+//                fetchSearchResults()
+//            }
         }
     }
 
     fun startScanning() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
-            showAlert("permission granted")
-        } else {
-            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.CAMERA), PERMISSION_REQUESTS)
+        val scanner = GmsBarcodeScanning.getClient(this)
+        scanner.startScan()
+            .addOnSuccessListener { barcode ->
+                handleBarcodeResult(barcode)
+            }
+            .addOnCanceledListener {
+                //this.showAlert("cancelled")
+            }
+            .addOnFailureListener { e ->
+                this.showAlert(e)
+            }
+
+    }
+
+    private fun handleBarcodeResult(barcode: Barcode) {
+        when(barcode.valueType) {
+            Barcode.TYPE_ISBN -> {}
+            Barcode.TYPE_PRODUCT -> {}
+            else -> {
+                showAlert("Only ISBN or UPC barcodes are supported")
+                return
+            }
         }
-    }
-
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-    }
-
-    companion object {
-        private val TAG = SearchActivity::class.java.simpleName
-        const val SEARCH_OPTIONS_VISIBLE = "search_options_visible"
-        private const val PERMISSION_REQUESTS = 1
-        private const val BARCODE_SCAN_COMPLETE = 2
+        barcode.rawValue?.let {
+            searchTextView?.setText("identifier:$it")
+            fetchSearchResults()
+        }
     }
 }
