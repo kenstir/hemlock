@@ -61,8 +61,6 @@ import org.opensrf.util.OSRFObject
 class SearchActivity : BaseActivity(), ActivityCompat.OnRequestPermissionsResultCallback {
     private val TAG = SearchActivity::class.java.simpleName
     private val SEARCH_OPTIONS_VISIBLE = "search_options_visible"
-    private val PERMISSION_REQUESTS = 1
-    private val BARCODE_SCAN_COMPLETE = 2
 
     private var searchTextView: EditText? = null
     private var searchOptionsButton: SwitchCompat? = null
@@ -236,6 +234,7 @@ class SearchActivity : BaseActivity(), ActivityCompat.OnRequestPermissionsResult
                 val result = Gateway.search.fetchMulticlassQuery(queryString, EgSearch.searchLimit)
                 when (result) {
                     is Result.Success -> {
+                        haveSearched = true
                         EgSearch.loadResults(result.data)
                         logSearchEvent(result)
                     }
@@ -285,6 +284,8 @@ class SearchActivity : BaseActivity(), ActivityCompat.OnRequestPermissionsResult
         val size = EgSearch.results.size
         if (size < EgSearch.visible) {
             s = getString(R.string.first_n_of_m_results, size, EgSearch.visible)
+        } else if (size == 0 && haveSearched) {
+            s = getString(R.string.no_results)
         } else if (size > 0 || haveSearched) {
             s = getString(R.string.n_results, EgSearch.visible)
         }
