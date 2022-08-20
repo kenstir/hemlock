@@ -8,7 +8,7 @@
         <item>Series</item>
         <item>ISBN or UPC</item>
     </string-array>
-
+    <!-- NB: search_class_keyword must be in sync with search_class -->
     <string-array name="search_class_keyword">
         <item>keyword</item>
         <item>title</item>

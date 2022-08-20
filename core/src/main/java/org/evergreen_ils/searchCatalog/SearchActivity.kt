@@ -441,31 +441,17 @@ class SearchActivity : BaseActivity(), ActivityCompat.OnRequestPermissionsResult
                 searchTextView?.setText(data.getStringExtra("advancedSearchText"))
                 fetchSearchResults()
             }
-//            CaptureActivity.BARCODE_SEARCH -> {
-//                searchTextView?.setText("identifier|isbn: "
-//                        + data?.getStringExtra("barcodeValue"))
-//                fetchSearchResults()
-//            }
         }
     }
 
-    fun startScanning() {
+    private fun startScanning() {
         val scanner = GmsBarcodeScanning.getClient(this)
         //userIsScanning = true
         scanner.startScan()
-            .addOnSuccessListener { barcode ->
-                handleBarcodeResult(barcode)
-            }
-//            .addOnCanceledListener {
-//                //this.showAlert("cancelled")
-//            }
-            .addOnFailureListener { e ->
-                this.showAlert(e)
-            }
-//            .addOnCompleteListener {
-//                userIsScanning = false
-//            }
-
+            .addOnSuccessListener { barcode -> handleBarcodeResult(barcode) }
+            .addOnFailureListener { e -> this.showAlert(e) }
+//            .addOnCanceledListener {}
+//            .addOnCompleteListener { userIsScanning = false }
     }
 
     private fun handleBarcodeResult(barcode: Barcode) {
