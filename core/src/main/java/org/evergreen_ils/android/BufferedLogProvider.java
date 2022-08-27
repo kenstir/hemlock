@@ -28,7 +28,7 @@ import java.util.Locale;
  */
 
 public class BufferedLogProvider implements LogProvider {
-    private static final int mQueueSize = 200;
+    private static final int mQueueSize = 256;
     private static final ArrayDeque<String> mEntries = new ArrayDeque<>(mQueueSize);
     private static final SimpleDateFormat mTimeFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS", Locale.US);
 
