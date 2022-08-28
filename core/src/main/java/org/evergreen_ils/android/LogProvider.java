@@ -27,5 +27,4 @@ public interface LogProvider {
     void i(String TAG, String msg);
     void w(String TAG, String msg);
     void w(String TAG, String msg, Throwable tr);
-    String getLogBuffer();
 }

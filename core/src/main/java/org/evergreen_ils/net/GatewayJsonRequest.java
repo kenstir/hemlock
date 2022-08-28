@@ -24,6 +24,8 @@ import com.android.volley.ParseError;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.toolbox.HttpHeaderParser;
+
+import org.evergreen_ils.android.Analytics;
 import org.evergreen_ils.android.Log;
 import org.opensrf.util.GatewayResult;
 
@@ -36,13 +38,16 @@ public class GatewayJsonRequest extends Request<GatewayResult> {
     private final Priority mPriority;
     private final int mCacheTtlSeconds;
     protected Boolean mCacheHit;
+    private String mDebugTag;
 
     public GatewayJsonRequest(String url, Priority priority, Response.Listener<GatewayResult> listener, Response.ErrorListener errorListener, int cacheTtlSeconds) {
         super(Request.Method.GET, url, errorListener);
         mPriority = priority;
         mListener = listener;
         mCacheTtlSeconds = cacheTtlSeconds;
-        Log.d(TAG, "[net] request "+url);
+        mDebugTag = Integer.toHexString(url.hashCode());
+        Log.d(TAG, "[net] "+mDebugTag+" send "+url);
+        Analytics.logRequest(mDebugTag, url);
     }
 
     protected void deliverResponse(GatewayResult response) {
@@ -67,8 +72,9 @@ public class GatewayJsonRequest extends Request<GatewayResult> {
     protected Response<GatewayResult> parseNetworkResponse(NetworkResponse response) {
         try {
             String json = new String(response.data, HttpHeaderParser.parseCharset(response.headers));
-            Log.d(TAG, "[net] cached:"+(mCacheHit?"1":"0")+" url:"+getUrl());
+            //Log.d(TAG, "[net] cached:"+(mCacheHit?"1":"0")+" url:"+getUrl());
             Log.d(TAG, "[net] recv "+response.data.length+": "+json);
+            Analytics.logResponse(mDebugTag, getUrl(), mCacheHit, json);
             GatewayResult gatewayResult = GatewayResult.create(json);
 
             // decide whether to cache result

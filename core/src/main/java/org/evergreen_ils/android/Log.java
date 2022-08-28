@@ -18,8 +18,7 @@
 
 package org.evergreen_ils.android;
 
-/** private logging class that allows substituting different behaviors,
- * Created by kenstir on 12/9/2015.
+/** private logging class that allows substituting different behaviors
  */
 public class Log {
     public static LogProvider provider = new AndroidLogProvider();
@@ -31,10 +30,6 @@ public class Log {
 
     public static void setProvider(LogProvider _provider) {
         provider = _provider;
-    }
-    public static String getLogBuffer() {
-        if (provider != null) return provider.getLogBuffer();
-        return null;
     }
 
     public static void d(String TAG, String msg) {

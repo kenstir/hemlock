@@ -27,6 +27,8 @@ import org.evergreen_ils.R
 import org.evergreen_ils.data.Organization
 import org.evergreen_ils.data.Result
 import org.evergreen_ils.utils.getCustomMessage
+import java.text.SimpleDateFormat
+import java.util.*
 
 /** Utils that wrap Crashlytics (and now Analytics)
  */
@@ -82,6 +84,12 @@ object Analytics {
     private var analytics = false
     private var runningInTestLab = false
     private var mAnalytics: FirebaseAnalytics? = null
+    private const val mQueueSize = 256
+    private val mEntries = ArrayDeque<String>(mQueueSize)
+    private val mTimeFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS", Locale.US)
+    val mRedactedResponseRegex = Regex("""
+        ("__c":"aum?"|"__c":"aou"|"authtoken":)
+    """.trimIndent())
 
     @JvmStatic
     fun initialize(context: Context) {
@@ -127,6 +135,7 @@ object Analytics {
     @JvmStatic
     fun logException(tag: String?, e: Throwable) {
         Log.d(tag, "caught", e)
+        addToLogBuffer("err:  ${e.stackTraceToString()}")
         if (analytics) FirebaseCrashlytics.getInstance().recordException(e)
     }
 
@@ -164,6 +173,47 @@ object Analytics {
         val b = Bundle()
         b.putString(name, value)
         logEvent(event, b)
+    }
+
+    // Add request to the logBuffer to be available in an error report
+    @JvmStatic
+    fun logRequest(tag: String, url: String) {
+        addToLogBuffer("$tag send: $url")
+    }
+
+    // Add response to the logBuffer to be available in an error report
+    @JvmStatic
+    fun logResponse(tag: String, url: String, cached: Boolean, data: String) {
+        // trim or redact certain responses
+        if (data.startsWith("<IDL ")) {
+            addToLogBuffer("$tag recv: <IDL>")
+        } else if (mRedactedResponseRegex.containsMatchIn(data)) {
+            addToLogBuffer("$tag recv: ***")
+        } else {
+            addToLogBuffer("$tag recv: $data")
+        }
+    }
+
+    private fun addToLogBuffer(msg: String) {
+        val sb = java.lang.StringBuilder()
+        val date = mTimeFormat.format(System.currentTimeMillis())
+        sb.append(date).append(' ').append(msg)
+        mEntries.push(sb.toString())
+        //Log.d(TAG, "[LOGBUF] ${sb.toString()}")
+
+        while (mEntries.size > mQueueSize) {
+            mEntries.pop()
+        }
+    }
+
+    @JvmStatic
+    fun getLogBuffer(): String {
+        val sb = StringBuilder(mQueueSize * 120)
+        val it = mEntries.descendingIterator()
+        while (it.hasNext()) {
+            sb.append(it.next()).append('\n')
+        }
+        return sb.toString()
     }
 
     fun orgDimensionKey(selectedOrg: Organization?, defaultOrg: Organization?, homeOrg: Organization?): String {

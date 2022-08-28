@@ -33,6 +33,7 @@ public class GatewayRequest extends HttpRequest {
 
             String postData = compilePostData(service, method);
             Log.d(TAG, "[net] POST "+httpConn.url.toString()+"?"+postData);
+            Analytics.logRequest("auth0000", httpConn.url.toString());
 
             urlConn = (HttpURLConnection) httpConn.url.openConnection();
             urlConn.setReadTimeout(Gateway.INSTANCE.getDefaultTimeoutMs());
@@ -40,8 +41,6 @@ public class GatewayRequest extends HttpRequest {
             urlConn.setDoInput(true);
             urlConn.setDoOutput(true);
 
-            
-            
             OutputStreamWriter wr = new OutputStreamWriter(urlConn.getOutputStream());
             wr.write(postData);
             wr.flush();
@@ -82,6 +81,7 @@ public class GatewayRequest extends HttpRequest {
             //System.out.println("osrf: Received " +  readBuf.toString());
             try {
                 Log.d(TAG, "[net] recv " + readBuf.length() + ": " +  readBuf.toString());
+                Analytics.logResponse("auth0000", httpConn.url.toString(), false, readBuf.toString());
                 result = new JSONReader(readBuf.toString()).readObject();
             } catch (org.opensrf.util.JSONException ex) {
                 Log.d(TAG, "caught", ex);

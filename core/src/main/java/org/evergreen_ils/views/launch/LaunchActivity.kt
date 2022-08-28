@@ -158,7 +158,8 @@ class LaunchActivity : AppCompatActivity(), CoroutineScope by MainScope() {
         i.putExtra(Intent.EXTRA_EMAIL, arrayOf(resources.getString(R.string.ou_developer_email)))
         val appInfo = App.getAppInfo(this)
         i.putExtra(Intent.EXTRA_SUBJECT, "[Hemlock] error report - $appInfo")
-        i.putExtra(Intent.EXTRA_TEXT, Log.getLogBuffer())
+        //TODO: append as attachment
+        i.putExtra(Intent.EXTRA_TEXT, Analytics.getLogBuffer())
         if (i.resolveActivity(packageManager) != null) {
             startActivity(i)
         } else {
@@ -176,6 +177,7 @@ class LaunchActivity : AppCompatActivity(), CoroutineScope by MainScope() {
                 }
             } catch (ex: Exception) {
                 Log.d(TAG, "[kcxxx] caught in loadAccountData", ex)
+                Analytics.logException(ex)
                 var msg = ex.message ?: "Cancelled"
                 mProgressText?.text = msg
                 onLaunchFailure()
