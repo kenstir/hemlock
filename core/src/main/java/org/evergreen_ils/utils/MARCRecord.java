@@ -62,11 +62,11 @@ public class MARCRecord implements Serializable {
 
         public String getLinkText() {
             for (MARCSubfield sf: subfields) {
-                if (TextUtils.equals(sf.code, "3") || TextUtils.equals(sf.code, "y"))
+                if (TextUtils.equals(sf.code, "y"))
                     return sf.text;
             }
             for (MARCSubfield sf: subfields) {
-                if (TextUtils.equals(sf.code, "z"))
+                if (TextUtils.equals(sf.code, "z") || TextUtils.equals(sf.code, "3"))
                     return sf.text;
             }
             return "Tap to access";
