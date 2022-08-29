@@ -124,14 +124,6 @@ object Analytics {
         if (analytics) FirebaseCrashlytics.getInstance().log(msg)
     }
 
-//    private fun redactResponse(o: OSRFObject, netClass: String): String {
-//        return if (netClass == "au" || netClass == "aou" /*orgTree*/) {
-//            "***"
-//        } else {
-//            o.toString()
-//        }
-//    }
-
     @JvmStatic
     fun logException(tag: String?, e: Throwable) {
         Log.d(tag, "caught", e)
@@ -188,7 +180,8 @@ object Analytics {
         if (data.startsWith("<IDL ")) {
             addToLogBuffer("$tag recv: <IDL>")
         } else if (mRedactedResponseRegex.containsMatchIn(data)) {
-            addToLogBuffer("$tag recv: ***")
+//            addToLogBuffer("$tag recv: ***")
+            addToLogBuffer("$tag recv: *** $data")
         } else {
             addToLogBuffer("$tag recv: $data")
         }
