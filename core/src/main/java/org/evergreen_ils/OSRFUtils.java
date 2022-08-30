@@ -123,7 +123,12 @@ public class OSRFUtils {
         } else if (o instanceof Integer) {
             return (Integer)o;
         } else if (o instanceof String) {
-            return Integer.parseInt((String) o);
+            // I have seen settings with value "", e.g. opac.default_sms_carrier
+            try {
+                return Integer.parseInt((String) o);
+            } catch (NumberFormatException e) {
+                return dflt;
+            }
         } else {
             Analytics.logException(new ShouldNotHappenException("unexpected type: "+o));
             return dflt;

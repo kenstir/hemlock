@@ -30,5 +30,9 @@ class OSRFUtilsTest {
 
         assertEquals(42, OSRFUtils.parseInt(Integer(42)))
         assertEquals(42, OSRFUtils.parseInt("42"))
+
+        assertNull(OSRFUtils.parseInt(""))
+        assertNull(OSRFUtils.parseInt("null"))
+        assertEquals(1, OSRFUtils.parseInt("", 1))
     }
 }
