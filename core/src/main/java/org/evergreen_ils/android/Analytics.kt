@@ -84,7 +84,7 @@ object Analytics {
     private var analytics = false
     private var runningInTestLab = false
     private var mAnalytics: FirebaseAnalytics? = null
-    private const val mQueueSize = 256
+    private const val mQueueSize = 64
     private val mEntries = ArrayDeque<String>(mQueueSize)
     private val mTimeFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS", Locale.US)
     val mRedactedResponseRegex = Regex("""
@@ -180,8 +180,7 @@ object Analytics {
         if (data.startsWith("<IDL ")) {
             addToLogBuffer("$tag recv: <IDL>")
         } else if (mRedactedResponseRegex.containsMatchIn(data)) {
-//            addToLogBuffer("$tag recv: ***")
-            addToLogBuffer("$tag recv: *** $data")
+            addToLogBuffer("$tag recv: ***")
         } else {
             addToLogBuffer("$tag recv: $data")
         }
