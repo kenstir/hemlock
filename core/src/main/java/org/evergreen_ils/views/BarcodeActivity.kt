@@ -50,6 +50,15 @@ class BarcodeActivity : BaseActivity() {
         initBarcodeViews()
     }
 
+    override fun onResume() {
+        super.onResume()
+
+        // Increase screenBrightness to max to make barcode scanning easier
+        val layout = window.attributes
+        layout.screenBrightness = 1f
+        window.attributes = layout
+    }
+
     // get lesser of display width or height
     private fun getDisplayWidth(): Int {
         /* this is the Right Way according to
