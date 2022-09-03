@@ -79,6 +79,7 @@ class MainActivity : BaseActivity() {
         // Caused by android.content.res.Resources$NotFoundException: Drawable (missing name) with resource ID #0x7f0800c4
 //        val resourceName = resources.getResourceName(0x7f0800c3) // net.kenstir.apps.pines:drawable/notification_bg_low
 //        val resourceName = resources.getResourceName(0x7f0800c4) // net.kenstir.apps.pines:drawable/notify_panel_notification_icon_bg
+//        val resourceName = resources.getResourceName(0x7f0800e1) // net.kenstir.apps.pines:drawable/splash_title
 //        showAlert("$resourceName")
     }
 
