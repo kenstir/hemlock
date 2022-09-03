@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- see ../core/res/values/ou.xml for a description -->
+    <string name="ou_account_label">OWWL</string>
+    <string name="ou_account_sign_in_message">Sign in to your OWWL Library System account</string>
+    <string name="ou_account_type">net.kenstir.apps.owwl</string>
+    <string name="ou_app_label">OWWL</string>
+    <string name="ou_library_name">OWWL</string>
+    <string name="ou_activity_subtitle">%2$s</string>
+    <string name="ou_library_url">https://evergreen.owwl.org</string>
+    <string name="ou_barcode_format">Codabar</string>
+    <bool name="ou_enable_phone_notification">true</bool>
+    <bool name="ou_enable_part_holds">true</bool>
+    <bool name="ou_enable_pay_fines">false</bool>
+    <bool name="ou_need_marc_record">true</bool>
+    <bool name="ou_enable_analytics">true</bool>
+    <integer name="ou_search_limit">100</integer>
+</resources>
