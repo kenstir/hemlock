@@ -79,7 +79,7 @@ object GatewayCirc : CircService {
                                         pickupLib: Int, emailNotify: Boolean,
                                         phoneNotify: String?, smsNotify: String?,
                                         smsCarrierId: Int?, expireTime: String?, suspendHold: Boolean,
-                                        thawDate: String?): Result<OSRFObject> {
+                                        thawDate: String?, useOverride: Boolean): Result<OSRFObject> {
         return try {
             val (authToken, userID) = account.getCredentialsOrThrow()
             var param = mutableMapOf(
@@ -102,7 +102,8 @@ object GatewayCirc : CircService {
             }
 
             val args = arrayOf<Any?>(authToken, param, arrayListOf(targetId))
-            val ret = Gateway.fetchObject(Api.CIRC, Api.HOLD_TEST_AND_CREATE, args, false)
+            val method = if (useOverride) Api.HOLD_TEST_AND_CREATE_OVERRIDE else Api.HOLD_TEST_AND_CREATE
+            val ret = Gateway.fetchObject(Api.CIRC, method, args, false)
             Result.Success(ret)
         } catch (e: Exception) {
             Result.Error(e)

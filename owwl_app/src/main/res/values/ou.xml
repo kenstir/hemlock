@@ -10,6 +10,7 @@
     <string name="ou_library_url">https://evergreen.owwl.org</string>
     <string name="ou_barcode_format">Codabar</string>
     <bool name="ou_enable_phone_notification">true</bool>
+    <bool name="ou_enable_hold_use_override">true</bool>
     <bool name="ou_enable_part_holds">true</bool>
     <bool name="ou_enable_pay_fines">false</bool>
     <bool name="ou_need_marc_record">true</bool>

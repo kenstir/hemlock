@@ -317,7 +317,8 @@ class PlaceHoldActivity : BaseActivity() {
             val result = Gateway.circ.placeHoldAsync(App.getAccount(), holdType, itemId,
                     selectedOrgID, emailNotification?.isChecked == true, getPhoneNotify(), getSMSNotify(),
                     getSMSNotifyCarrier(selectedSMSCarrierID), getExpireDate(),
-                    suspendHold?.isChecked == true, getThawDate())
+                    suspendHold?.isChecked == true, getThawDate(),
+                    resources.getBoolean(R.bool.ou_enable_hold_use_override))
             Log.d(TAG, "[kcxxx] placeHold: $result")
             progress?.dismiss()
             when (result) {
