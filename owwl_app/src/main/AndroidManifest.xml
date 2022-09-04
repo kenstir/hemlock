@@ -40,12 +40,12 @@
         </activity>
 
         <activity
-                android:name="org.evergreen_ils.searchCatalog.RecordDetailsActivity"
-                android:label="@string/search_details_title">
+            android:name="org.evergreen_ils.searchCatalog.RecordDetailsActivity"
+            android:label="@string/search_details_title">
         </activity>
         <activity
-                android:name="org.evergreen_ils.searchCatalog.CopyInformationActivity"
-                android:label="@string/copy_information_title">
+            android:name="org.evergreen_ils.searchCatalog.CopyInformationActivity"
+            android:label="@string/copy_information_title">
         </activity>
         <activity
             android:name="org.evergreen_ils.searchCatalog.SearchActivity"
@@ -53,8 +53,8 @@
             android:parentActivityName="org.evergreen_ils.views.MainActivity">
         </activity>
         <activity
-                android:name="org.evergreen_ils.searchCatalog.AdvancedSearchActivity"
-                android:label="@string/advanced_search">
+            android:name="org.evergreen_ils.searchCatalog.AdvancedSearchActivity"
+            android:label="@string/advanced_search">
         </activity>
         <activity
             android:name="org.evergreen_ils.barcodescan.CaptureActivity"
@@ -63,37 +63,37 @@
             android:windowSoftInputMode="stateAlwaysHidden" >
         </activity>
         <activity
-                android:name="org.evergreen_ils.views.CheckoutsActivity"
-                android:label="@string/checkout_items_title"
-                android:parentActivityName="org.evergreen_ils.views.MainActivity">
+            android:name="org.evergreen_ils.views.CheckoutsActivity"
+            android:label="@string/checkout_items_title"
+            android:parentActivityName="org.evergreen_ils.views.MainActivity">
         </activity>
         <activity
-                android:name="org.evergreen_ils.views.holds.HoldsActivity"
-                android:label="@string/hold_items_title"
-                android:parentActivityName="org.evergreen_ils.views.MainActivity">
+            android:name="org.evergreen_ils.views.holds.HoldsActivity"
+            android:label="@string/hold_items_title"
+            android:parentActivityName="org.evergreen_ils.views.MainActivity">
         </activity>
         <activity
-                android:name="org.evergreen_ils.views.holds.PlaceHoldActivity"
-                android:label="@string/hold_place_title">
+            android:name="org.evergreen_ils.views.holds.PlaceHoldActivity"
+            android:label="@string/hold_place_title">
         </activity>
         <activity
-                android:name="org.evergreen_ils.views.holds.HoldDetailsActivity"
-                android:label="@string/hold_details_title">
+            android:name="org.evergreen_ils.views.holds.HoldDetailsActivity"
+            android:label="@string/hold_details_title">
         </activity>
         <activity
-                android:name="org.evergreen_ils.views.FinesActivity"
-                android:label="@string/title_fines"
-                android:parentActivityName="org.evergreen_ils.views.MainActivity">
+            android:name="org.evergreen_ils.views.FinesActivity"
+            android:label="@string/title_fines"
+            android:parentActivityName="org.evergreen_ils.views.MainActivity">
         </activity>
         <activity
-                android:name="org.evergreen_ils.views.bookbags.BookBagsActivity"
-                android:label="@string/title_my_lists"
-                android:parentActivityName="org.evergreen_ils.views.MainActivity">
+            android:name="org.evergreen_ils.views.bookbags.BookBagsActivity"
+            android:label="@string/title_my_lists"
+            android:parentActivityName="org.evergreen_ils.views.MainActivity">
         </activity>
         <activity
-                android:name="org.evergreen_ils.views.bookbags.BookBagDetailsActivity"
-                android:label="@string/title_list_details"
-                android:parentActivityName="org.evergreen_ils.views.bookbags.BookBagsActivity">
+            android:name="org.evergreen_ils.views.bookbags.BookBagDetailsActivity"
+            android:label="@string/title_list_details"
+            android:parentActivityName="org.evergreen_ils.views.bookbags.BookBagsActivity">
         </activity>
         <activity
             android:name="org.evergreen_ils.views.BarcodeActivity"
@@ -106,12 +106,8 @@
             android:parentActivityName="org.evergreen_ils.views.MainActivity">
         </activity>
         <activity
-                android:name="org.evergreen_ils.auth.AuthenticatorActivity"
-                android:label="@string/ou_account_label">
-        </activity>
-        <activity
-                android:name="org.evergreen_ils.auth.GenericAuthenticatorActivity"
-                android:label="@string/ou_account_label">
+            android:name="org.evergreen_ils.auth.AuthenticatorActivity"
+            android:label="@string/ou_account_label">
         </activity>
 
         <activity
