@@ -3,7 +3,7 @@
     <!-- the label shown in the android account manager -->
     <string name="ou_account_label">Example Library</string>
     <!-- title shown on sign in activity -->
-    <string name="ou_account_sign_in_message"></string>
+    <string name="ou_account_sign_in_message" />
     <!-- label above choose library spinner, leave empty for library-specific app -->
     <string name="ou_choose_library_label">Choose your library system:</string>
     <!-- label above sign_in field on generic Hemlock app -->
@@ -20,24 +20,24 @@
     <!-- OPAC URL -->
     <string name="ou_library_url">https://demo.evergreencatalog.com</string>
     <!-- URL of feedback form -->
-    <string name="ou_feedback_url"></string>
+    <string name="ou_feedback_url" />
     <!-- name of class that supplies menu handler for main menu extensions -->
-    <string name="ou_menu_provider"></string>
+    <string name="ou_menu_provider" />
     <!-- name of class that implements AppBehavior -->
-    <string name="ou_behavior_provider"></string>
+    <string name="ou_behavior_provider" />
     <!-- email address to which debug logs may be sent -->
     <string name="ou_developer_email">kenstir.apps@gmail.com</string>
     <!-- sort keyword to use in the open-ils.search.biblio.multiclass.query request, e.g. poprel
          if empty the sort() clause is omitted -->
-    <string name="ou_sort_by"></string>
+    <string name="ou_sort_by" />
     <!-- if non-empty, the Barcode format to display for Show Card -->
-    <string name="ou_barcode_format"></string>
+    <string name="ou_barcode_format" />
     <!-- if non-empty, the text of link to add to Item Details, e.g. "Recommended Reads" -->
-    <string name="ou_details_link_text"></string>
+    <string name="ou_details_link_text" />
     <!-- if non-empty, the URL query to add to Item Details -->
-    <string name="ou_details_link_query"></string>
+    <string name="ou_details_link_query" />
     <!-- if non-empty, the URL fragment to add to Item Details /eg/opac/record/6276882#awards -->
-    <string name="ou_details_link_fragment"></string>
+    <string name="ou_details_link_fragment" />
     <!-- if true, organize library spinners hierarchically -->
     <bool name="ou_hierarchical_org_tree">true</bool>
     <!-- if true, group copy information by system and branch, instead of by branch -->
