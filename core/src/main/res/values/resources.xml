@@ -1,13 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string-array name="search_qtype">
-		<item>Keyword</item>
-		<item>Title</item>
-		<item>Author</item>
-		<item>Subject</item>
-		<item>Series</item>
+    <string-array name="search_class">
+        <item>Keyword</item>
+        <item>Title</item>
+        <item>Author</item>
+        <item>Subject</item>
+        <item>Series</item>
+        <item>ISBN or UPC</item>
     </string-array>
-    
+    <!-- NB: search_class_keyword must be in sync with search_class -->
+    <string-array name="search_class_keyword">
+        <item>keyword</item>
+        <item>title</item>
+        <item>author</item>
+        <item>subject</item>
+        <item>series</item>
+        <item>identifier</item>
+    </string-array>
+
     <string-array name="advanced_search_contains">
 		<item>Contains</item>
 		<item>Does not contain</item>

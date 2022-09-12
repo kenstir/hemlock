@@ -3,8 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="net.kenstir.apps.pines"
     android:installLocation="auto"
-    android:versionCode="95"
-    android:versionName="2.3.3.2">
+    android:versionCode="99"
+    android:versionName="2.4.0.3">
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS" />
@@ -55,12 +55,6 @@
         <activity
                 android:name="org.evergreen_ils.searchCatalog.AdvancedSearchActivity"
                 android:label="@string/advanced_search">
-        </activity>
-        <activity
-            android:name="org.evergreen_ils.barcodescan.CaptureActivity"
-            android:screenOrientation="landscape"
-            android:theme="@android:style/Theme.NoTitleBar"
-            android:windowSoftInputMode="stateAlwaysHidden" >
         </activity>
         <activity
                 android:name="org.evergreen_ils.views.CheckoutsActivity"

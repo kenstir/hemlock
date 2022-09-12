@@ -25,6 +25,7 @@ import com.android.volley.Response;
 import com.android.volley.toolbox.HttpHeaderParser;
 import com.android.volley.toolbox.StringRequest;
 
+import org.evergreen_ils.android.Analytics;
 import org.evergreen_ils.android.Log;
 
 import java.io.UnsupportedEncodingException;
@@ -36,12 +37,15 @@ public class GatewayStringRequest extends StringRequest {
     private final Priority mPriority;
     private final int mCacheTtlSeconds;
     protected Boolean mCacheHit;
+    private String mDebugTag;
 
     public GatewayStringRequest(String url, Priority priority, Response.Listener<String> listener, Response.ErrorListener errorListener, int cacheTtlSeconds) {
         super(Request.Method.GET, url, listener, errorListener);
         mPriority = priority;
         mCacheTtlSeconds = cacheTtlSeconds;
-        Log.d(TAG, "[net] request "+url);
+        mDebugTag = Integer.toHexString(url.hashCode());
+        Log.d(TAG, "[net] "+mDebugTag+" send "+url);
+        Analytics.logRequest(mDebugTag, url);
     }
 
     @Override
@@ -66,8 +70,9 @@ public class GatewayStringRequest extends StringRequest {
         } catch (UnsupportedEncodingException ex) {
             parsed = new String(response.data, Charset.defaultCharset());
         }
-        Log.d(TAG, "[net] cached:"+(mCacheHit?"1":"0")+" url:"+getUrl());
+        //Log.d(TAG, "[net] cached:"+(mCacheHit?"1":"0")+" url:"+getUrl());
         Log.d(TAG, "[net] recv "+response.data.length+": "+parsed);
+        Analytics.logResponse(mDebugTag, getUrl(), mCacheHit, parsed);
 
         // don't cache failures
         Cache.Entry entry = response.statusCode != 200 ? null : HttpHeaderParser.parseCacheHeaders(response);

@@ -16,3 +16,10 @@ def dir = new File('hemlock-pro-assets')
 if (dir.exists()) {
   include ':' + dir
 }
+
+dependencyResolutionManagement {
+  repositories {
+    google()
+    mavenCentral()
+  }
+}

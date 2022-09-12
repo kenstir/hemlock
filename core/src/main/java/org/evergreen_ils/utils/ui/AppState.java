@@ -24,7 +24,6 @@ import android.content.pm.PackageManager;
 import android.preference.PreferenceManager;
 import org.evergreen_ils.R;
 import org.evergreen_ils.android.App;
-import org.evergreen_ils.android.BufferedLogProvider;
 import org.evergreen_ils.android.Log;
 
 import java.util.Date;
@@ -52,8 +51,8 @@ public class AppState {
         context = callingContext.getApplicationContext();
         initialized = true;
 
-        if (App.getIsDebuggable(context))
-            Log.setProvider(new BufferedLogProvider());
+//        if (App.getIsDebuggable(context))
+//            Log.setProvider(new SystemLogProvider());
 
         // set default values unless already set
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);

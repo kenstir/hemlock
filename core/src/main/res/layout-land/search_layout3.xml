@@ -49,11 +49,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
             <Spinner
-                android:id="@+id/search_qtype_spinner"
-                android:contentDescription="@string/search_qtype_spinner_alt"
+                android:id="@+id/search_class_spinner"
+                android:contentDescription="@string/search_class_spinner_alt"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:entries="@array/search_qtype"
+                android:entries="@array/search_class"
                 android:layout_weight="1"/>
             <Spinner
                 android:id="@+id/search_format_spinner"

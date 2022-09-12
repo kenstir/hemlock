@@ -18,8 +18,6 @@
 
 package org.evergreen_ils.android;
 
-import org.evergreen_ils.android.LogProvider;
-
 public class StdoutLogProvider implements LogProvider {
     @Override
     public void d(String TAG, String msg) {
@@ -46,10 +44,5 @@ public class StdoutLogProvider implements LogProvider {
     public void w(String TAG, String msg, Throwable tr) {
         System.out.println(TAG + ": " + msg);
         tr.printStackTrace(System.out);
-    }
-
-    @Override
-    public String getLogBuffer() {
-        return null;
     }
 }

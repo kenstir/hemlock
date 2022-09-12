@@ -67,7 +67,7 @@ public class AdvancedSearchActivity extends AppCompatActivity {
 
         final LinearLayout layout = findViewById(R.id.advanced_search_filters);
         Button addFilter = findViewById(R.id.advanced_search_add_filter_button);
-        final Spinner search_qtype_spinner = findViewById(R.id.advanced_search_qtype_spinner);
+        final Spinner search_class_spinner = findViewById(R.id.advanced_search_class_spinner);
         final Spinner search_contains_spinner = findViewById(R.id.advanced_search_contains_spinner);
         final EditText search_filter_text = findViewById(R.id.advanced_search_text);
 
@@ -77,7 +77,7 @@ public class AdvancedSearchActivity extends AppCompatActivity {
 
                 int contains_pos = search_contains_spinner.getSelectedItemPosition();
                 String query = "";
-                String qtype = search_qtype_spinner.getSelectedItem().toString().toLowerCase();
+                String qtype = search_class_spinner.getSelectedItem().toString().toLowerCase();
                 searchTermTypes.add(qtype);
                 String filter = search_filter_text.getText().toString();
 

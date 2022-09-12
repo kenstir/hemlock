@@ -40,8 +40,6 @@ import org.evergreen_ils.data.Result
 import org.evergreen_ils.net.Gateway
 import org.evergreen_ils.searchCatalog.SearchActivity
 import org.evergreen_ils.android.Log
-import org.evergreen_ils.net.GatewayLoader
-import org.evergreen_ils.system.EgOrg
 import org.evergreen_ils.utils.ui.BaseActivity
 import org.evergreen_ils.utils.ui.showAlert
 import org.opensrf.util.OSRFObject
@@ -81,6 +79,7 @@ class MainActivity : BaseActivity() {
         // Caused by android.content.res.Resources$NotFoundException: Drawable (missing name) with resource ID #0x7f0800c4
 //        val resourceName = resources.getResourceName(0x7f0800c3) // net.kenstir.apps.pines:drawable/notification_bg_low
 //        val resourceName = resources.getResourceName(0x7f0800c4) // net.kenstir.apps.pines:drawable/notify_panel_notification_icon_bg
+//        val resourceName = resources.getResourceName(0x7f0800e1) // net.kenstir.apps.pines:drawable/splash_title
 //        showAlert("$resourceName")
     }
 
@@ -90,11 +89,11 @@ class MainActivity : BaseActivity() {
     }
 
     private fun setupEventsButton() {
-        val url = EgOrg.findOrg(App.getAccount().homeOrg)?.eventsURL
-        // hide Events button if not enabled, or if the org has no eventsURL
-        if (!resources.getBoolean(R.bool.ou_enable_events_button) || url.isNullOrEmpty()) {
-            eventsButton?.visibility = View.GONE
-        }
+//        val url = EgOrg.findOrg(App.getAccount().homeOrg)?.eventsURL
+//        // hide Events button if not enabled, or if the org has no eventsURL
+//        if (!resources.getBoolean(R.bool.ou_enable_events_button) || url.isNullOrEmpty()) {
+//            eventsButton?.visibility = View.GONE
+//        }
     }
 
     // TODO: Make this on demand by making it a suspend fun in GatewayLoader.

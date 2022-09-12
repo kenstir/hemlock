@@ -3,8 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="net.kenstir.apps.cool"
           android:installLocation="auto"
-          android:versionCode="20"
-          android:versionName="2.3.4.2">
+          android:versionCode="22"
+          android:versionName="2.4.0.1">
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS" />
@@ -29,30 +29,9 @@
         tools:ignore="GoogleAppIndexingWarning">
 
         <meta-data android:name="android.max_aspect" android:value="2.1" />
-
-        <!-- Notification receiver -->
-        <receiver
-            android:name="org.evergreen_ils.services.NotificationReceiver"
-            android:process=":remote" >
-        </receiver>
-        <!-- Receiver to reinit notifications on reboot -->
-        <!--
-        <receiver android:name="org.evergreen_ils.services.RebootReceiver" >
-            <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED" />
-            </intent-filter>
-        </receiver>
-        <receiver android:name="org.evergreen_ils.services.PeriodicServiceBroadcastReceiver" >
-            <intent-filter>
-                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
-            </intent-filter>
-        </receiver>
-        -->
-
-        <!--
-        <service android:name="org.evergreen_ils.services.ScheduledIntentService" >
-        </service>
-        -->
+        <meta-data
+            android:name="com.google.mlkit.vision.DEPENDENCIES"
+            android:value="barcode_ui"/>
 
         <activity
             android:name="org.evergreen_ils.views.launch.LaunchActivity"
@@ -62,8 +41,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <!-- Search -->
 
         <activity
                 android:name="org.evergreen_ils.searchCatalog.RecordDetailsActivity"
@@ -83,20 +60,10 @@
                 android:label="@string/advanced_search">
         </activity>
         <activity
-            android:name="org.evergreen_ils.barcodescan.CaptureActivity"
-            android:screenOrientation="landscape"
-            android:theme="@android:style/Theme.NoTitleBar"
-            android:windowSoftInputMode="stateAlwaysHidden" >
-        </activity>
-
-        <!-- Checkout Activities -->
-        <activity
                 android:name="org.evergreen_ils.views.CheckoutsActivity"
                 android:label="@string/checkout_items_title"
                 android:parentActivityName="org.evergreen_ils.views.MainActivity">
         </activity>
-
-        <!-- Holds Activities -->
         <activity
                 android:name="org.evergreen_ils.views.holds.HoldsActivity"
                 android:label="@string/hold_items_title"
@@ -110,15 +77,11 @@
                 android:name="org.evergreen_ils.views.holds.HoldDetailsActivity"
                 android:label="@string/hold_details_title">
         </activity>
-
-        <!-- Fines Activities -->
         <activity
                 android:name="org.evergreen_ils.views.FinesActivity"
                 android:label="@string/title_fines"
                 android:parentActivityName="org.evergreen_ils.views.MainActivity">
         </activity>
-
-        <!-- Bookbags -->
         <activity
                 android:name="org.evergreen_ils.views.bookbags.BookBagsActivity"
                 android:label="@string/title_my_lists"
@@ -129,7 +92,6 @@
                 android:label="@string/title_list_details"
                 android:parentActivityName="org.evergreen_ils.views.bookbags.BookBagsActivity">
         </activity>
-
         <activity
             android:name="org.evergreen_ils.views.BarcodeActivity"
             android:label="@string/barcode_title"
@@ -140,14 +102,9 @@
             android:label="@string/title_library_info"
             android:parentActivityName="org.evergreen_ils.views.MainActivity">
         </activity>
-
         <activity
             android:name="org.evergreen_ils.auth.AuthenticatorActivity"
             android:label="@string/ou_account_label">
-        </activity>
-        <activity
-                android:name="org.evergreen_ils.auth.GenericAuthenticatorActivity"
-                android:label="@string/ou_account_label">
         </activity>
 
         <activity
@@ -157,7 +114,7 @@
 
         <service
             android:name="org.evergreen_ils.auth.AuthenticatorService"
-            android:exported="true" >
+            android:exported="false" >
             <intent-filter>
                 <action android:name="android.accounts.AccountAuthenticator" />
             </intent-filter>

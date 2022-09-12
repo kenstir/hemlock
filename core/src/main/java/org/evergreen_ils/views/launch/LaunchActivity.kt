@@ -18,11 +18,14 @@
 
 package org.evergreen_ils.views.launch
 
+import android.content.ActivityNotFoundException
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.os.bundleOf
 import androidx.lifecycle.Observer
@@ -55,7 +58,9 @@ class LaunchActivity : AppCompatActivity(), CoroutineScope by MainScope() {
     private var mProgressText: TextView? = null
     private var mProgressBar: View? = null
     private var mRetryButton: Button? = null
+    private var mSendReportButton: Button? = null
     private lateinit var mModel: LaunchViewModel
+    private var mRetryCount = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         Log.d(TAG, "onCreate")
@@ -70,12 +75,18 @@ class LaunchActivity : AppCompatActivity(), CoroutineScope by MainScope() {
         mProgressText = findViewById(R.id.action_in_progress)
         mProgressBar = findViewById(R.id.activity_splash_progress_bar)
         mRetryButton = findViewById(R.id.activity_splash_retry_button)
+        mSendReportButton = findViewById(R.id.activity_splash_log_button)
 
         mProgressBar?.visibility = View.INVISIBLE
         mRetryButton?.visibility = View.GONE
+        mSendReportButton?.visibility = View.GONE
 
         mRetryButton?.setOnClickListener {
+            ++mRetryCount
             launchLoginFlow()
+        }
+        mSendReportButton?.setOnClickListener {
+            sendErrorReport()
         }
 
         mModel = ViewModelProviders.of(this)[LaunchViewModel::class.java]
@@ -116,6 +127,9 @@ class LaunchActivity : AppCompatActivity(), CoroutineScope by MainScope() {
 
     private fun onLaunchFailure() {
         mRetryButton?.visibility = View.VISIBLE
+        if (mRetryCount > 0) {
+            mSendReportButton?.visibility = View.VISIBLE
+        }
         mProgressBar?.visibility = View.INVISIBLE
     }
 
@@ -138,6 +152,21 @@ class LaunchActivity : AppCompatActivity(), CoroutineScope by MainScope() {
         }
     }
 
+    private fun sendErrorReport() {
+        val i = Intent(Intent.ACTION_SENDTO)
+        i.data = Uri.parse("mailto:") // only email apps should handle this
+        i.putExtra(Intent.EXTRA_EMAIL, arrayOf(resources.getString(R.string.ou_developer_email)))
+        val appInfo = App.getAppInfo(this)
+        i.putExtra(Intent.EXTRA_SUBJECT, "[Hemlock] error report - $appInfo")
+        //TODO: append as attachment
+        i.putExtra(Intent.EXTRA_TEXT, Analytics.getLogBuffer())
+        if (i.resolveActivity(packageManager) != null) {
+            startActivity(i)
+        } else {
+            Toast.makeText(this, "There is no email app installed", Toast.LENGTH_LONG).show()
+        }
+    }
+
     private fun loadAccountData() {
         launch {
             try {
@@ -148,6 +177,7 @@ class LaunchActivity : AppCompatActivity(), CoroutineScope by MainScope() {
                 }
             } catch (ex: Exception) {
                 Log.d(TAG, "[kcxxx] caught in loadAccountData", ex)
+                Analytics.logException(ex)
                 var msg = ex.message ?: "Cancelled"
                 mProgressText?.text = msg
                 onLaunchFailure()

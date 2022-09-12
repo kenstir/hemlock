@@ -3,8 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="org.cwmars"
     android:installLocation="auto"
-    android:versionCode="111"
-    android:versionName="5.3.4.1">
+    android:versionCode="113"
+    android:versionName="5.4.0.2">
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS" />
@@ -57,12 +57,6 @@
             android:label="@string/advanced_search">
         </activity>
         <activity
-            android:name="org.evergreen_ils.barcodescan.CaptureActivity"
-            android:screenOrientation="landscape"
-            android:theme="@android:style/Theme.NoTitleBar"
-            android:windowSoftInputMode="stateAlwaysHidden" >
-        </activity>
-        <activity
             android:name="org.evergreen_ils.views.CheckoutsActivity"
             android:label="@string/checkout_items_title"
             android:parentActivityName="org.evergreen_ils.views.MainActivity">
@@ -109,10 +103,6 @@
             android:name="org.evergreen_ils.auth.AuthenticatorActivity"
             android:label="@string/ou_account_label">
         </activity>
-        <activity
-            android:name="org.evergreen_ils.auth.GenericAuthenticatorActivity"
-            android:label="@string/ou_account_label">
-        </activity>
 
         <activity
             android:name="org.evergreen_ils.views.MainActivity"
@@ -121,7 +111,7 @@
 
         <service
             android:name="org.evergreen_ils.auth.AuthenticatorService"
-            android:exported="true" >
+            android:exported="false" >
             <intent-filter>
                 <action android:name="android.accounts.AccountAuthenticator" />
             </intent-filter>

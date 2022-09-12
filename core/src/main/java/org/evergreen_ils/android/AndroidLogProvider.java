@@ -46,9 +46,4 @@ public class AndroidLogProvider implements LogProvider {
     public void w(String TAG, String msg, Throwable tr) {
         android.util.Log.w(TAG, msg, tr);
     }
-
-    @Override
-    public String getLogBuffer() {
-        return null;
-    }
 }
