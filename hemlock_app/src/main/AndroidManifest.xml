@@ -42,20 +42,20 @@
         </activity>
 
         <activity
-                android:name="org.evergreen_ils.searchCatalog.RecordDetailsActivity"
+                android:name="org.evergreen_ils.views.search.RecordDetailsActivity"
                 android:label="@string/search_details_title">
         </activity>
         <activity
-                android:name="org.evergreen_ils.searchCatalog.CopyInformationActivity"
+                android:name="org.evergreen_ils.views.search.CopyInformationActivity"
                 android:label="@string/copy_information_title">
         </activity>
         <activity
-                android:name="org.evergreen_ils.searchCatalog.SearchActivity"
+                android:name="org.evergreen_ils.views.search.SearchActivity"
                 android:label="@string/title_search"
                 android:parentActivityName="org.evergreen_ils.views.MainActivity">
         </activity>
         <activity
-                android:name="org.evergreen_ils.searchCatalog.AdvancedSearchActivity"
+                android:name="org.evergreen_ils.views.search.AdvancedSearchActivity"
                 android:label="@string/advanced_search">
         </activity>
         <activity

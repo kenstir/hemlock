@@ -43,7 +43,7 @@ import org.evergreen_ils.android.Log
 import org.evergreen_ils.net.Gateway.getUrl
 import org.evergreen_ils.net.GatewayLoader
 import org.evergreen_ils.net.Volley
-import org.evergreen_ils.searchCatalog.CopyInformationActivity
+import org.evergreen_ils.views.search.CopyInformationActivity
 import org.evergreen_ils.data.MBRecord
 import org.evergreen_ils.system.EgOrg
 import org.evergreen_ils.system.EgOrg.findOrg

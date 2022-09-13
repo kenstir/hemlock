@@ -18,7 +18,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
  *
  */
-package org.evergreen_ils.searchCatalog
+package org.evergreen_ils.views.search
 
 import org.evergreen_ils.utils.ui.BaseActivity
 import androidx.viewpager.widget.ViewPager

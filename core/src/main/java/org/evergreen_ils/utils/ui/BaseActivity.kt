@@ -25,7 +25,6 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
-import android.text.TextUtils
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
@@ -46,7 +45,7 @@ import org.evergreen_ils.android.App
 import org.evergreen_ils.android.App.REQUEST_MYOPAC_MESSAGES
 import org.evergreen_ils.android.Log
 import org.evergreen_ils.net.Gateway
-import org.evergreen_ils.searchCatalog.SearchActivity
+import org.evergreen_ils.views.search.SearchActivity
 import org.evergreen_ils.system.EgOrg
 import org.evergreen_ils.system.EgSearch
 import org.evergreen_ils.views.*

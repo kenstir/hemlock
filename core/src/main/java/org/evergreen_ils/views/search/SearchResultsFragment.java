@@ -14,7 +14,7 @@
 * limitations under the License.
 */
 
-package org.evergreen_ils.searchCatalog;
+package org.evergreen_ils.views.search;
 
 import android.os.Bundle;
 import androidx.fragment.app.Fragment;

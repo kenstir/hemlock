@@ -37,7 +37,7 @@ import org.evergreen_ils.data.FineRecord
 import org.evergreen_ils.data.Result
 import org.evergreen_ils.net.Gateway
 import org.evergreen_ils.net.GatewayLoader
-import org.evergreen_ils.searchCatalog.RecordDetails
+import org.evergreen_ils.views.search.RecordDetails
 import org.evergreen_ils.data.MBRecord
 import org.evergreen_ils.android.Analytics
 import org.evergreen_ils.android.Log

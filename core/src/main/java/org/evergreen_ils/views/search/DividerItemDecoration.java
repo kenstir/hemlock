@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.evergreen_ils.searchCatalog;
+package org.evergreen_ils.views.search;
 
 import android.content.Context;
 import android.content.res.TypedArray;

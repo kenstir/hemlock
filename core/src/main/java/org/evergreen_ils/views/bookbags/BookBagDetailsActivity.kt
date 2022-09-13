@@ -39,7 +39,7 @@ import org.evergreen_ils.data.BookBagItem
 import org.evergreen_ils.data.Result
 import org.evergreen_ils.net.Gateway
 import org.evergreen_ils.net.GatewayLoader
-import org.evergreen_ils.searchCatalog.RecordDetails
+import org.evergreen_ils.views.search.RecordDetails
 import org.evergreen_ils.data.MBRecord
 import org.evergreen_ils.utils.pubdateSortKey
 import org.evergreen_ils.utils.ui.ActionBarUtils

@@ -13,7 +13,7 @@
 * See the License for the specific language governing permissions and
 * limitations under the License.
 */
-package org.evergreen_ils.searchCatalog
+package org.evergreen_ils.views.search
 
 import android.app.Activity
 import android.view.LayoutInflater
