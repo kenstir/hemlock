@@ -18,8 +18,8 @@
 
 package net.kenstir.apps.core
 
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertNull
+import org.hamcrest.core.IsInstanceOf
+import org.junit.Assert.*
 import org.junit.BeforeClass
 import org.junit.Test
 import org.opensrf.util.OSRFObject
@@ -76,5 +76,56 @@ class OSRFObjectTest {
         val obj = fleshedUserObj.getObject("card")
         assertEquals("1234", obj?.getString("barcode"))
         assertNull(obj?.getObject("na"))
+    }
+
+    // Test to understand warning: Unchecked cast: Any! to List<OSRFObject>
+    @Test
+    fun test_misc_uncheckedCast1() {
+        val obj = OSRFObject(mapOf<String, Any?>(
+            "settings" to "0"
+        ))
+        val settings = obj.get("settings") as? List<OSRFObject>
+        assertNull(settings)
+        // As Expected; as? returns null
+    }
+
+    @Test
+    fun test_misc_uncheckedCast2() {
+        val obj = OSRFObject(mapOf<String, Any?>(
+            "settings" to arrayListOf(
+                OSRFObject(mapOf<String, Any?>("id" to 1)),
+                OSRFObject(mapOf<String, Any?>("id" to 2))
+            )
+        ))
+        val settings = obj.get("settings") as? List<OSRFObject>
+        assertNotNull(settings)
+        assertEquals(2, settings?.size)
+        assertTrue(settings?.first() is OSRFObject)
+        // As Expected; as? returns non-null
+    }
+
+    @Test
+    fun test_misc_uncheckedCast3() {
+        val obj = OSRFObject(mapOf<String, Any?>(
+            "settings" to arrayListOf(1,2,3)
+        ))
+        val settings = obj.get("settings") as? List<OSRFObject>
+        assertNotNull(settings)
+//        val first = settings?.first()
+//        assertEquals(1, settings?.first())
+        // Surprising: as? returns non-null but the result is a List<Int>,
+        // first() fails with a ClassCastException.
+    }
+
+    @Test
+    fun test_misc_uncheckedCast4() {
+        val obj = OSRFObject(mapOf<String, Any?>(
+            "settings" to arrayListOf(1,2,3)
+        ))
+        val settings = obj.get("settings") as? List<*>
+        assertNotNull(settings)
+        val l = settings?.filterIsInstance<OSRFObject>()
+        assertEquals(0, l?.size)
+        // As Expected; as? returns List, filterIsInstance returns empty.
     }
 }
