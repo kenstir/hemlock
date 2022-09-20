@@ -186,6 +186,7 @@ object Analytics {
         }
     }
 
+    @Synchronized
     private fun addToLogBuffer(msg: String) {
         val sb = java.lang.StringBuilder()
         val date = mTimeFormat.format(System.currentTimeMillis())
@@ -199,6 +200,7 @@ object Analytics {
     }
 
     @JvmStatic
+    @Synchronized
     fun getLogBuffer(): String {
         val sb = StringBuilder(mQueueSize * 120)
         val it = mEntries.descendingIterator()
