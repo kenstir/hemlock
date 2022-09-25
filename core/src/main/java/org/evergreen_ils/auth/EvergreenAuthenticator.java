@@ -120,7 +120,7 @@ public class EvergreenAuthenticator {
             Integer authtime = ((Map<String, Integer>) payload).get("authtime");
             Log.d(TAG, "authtime: " + authtime);
             return authtoken;
-        } else if (textcode.equals("LOGIN_FAILED")) {
+        } else if (!TextUtils.isEmpty(textcode)) {
             String desc = ((Map<String, String>) resp).get("desc");
             Log.d(TAG, "desc: " + desc);
             if (!TextUtils.isEmpty(desc)) {
