@@ -29,6 +29,9 @@
         tools:ignore="GoogleAppIndexingWarning">
 
         <meta-data android:name="android.max_aspect" android:value="2.1" />
+        <meta-data
+            android:name="com.google.mlkit.vision.DEPENDENCIES"
+            android:value="barcode_ui"/>
 
         <activity
             android:name="org.evergreen_ils.views.launch.LaunchActivity"
