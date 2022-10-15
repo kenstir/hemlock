@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools" xmlns:android="http://schemas.android.com/apk/res/android">
+    <color name="accent">@color/owwl_logo_green_lighter</color>
     <color name="logo_background">@color/material_grey_850</color>
     <color name="button_icon_tint">@color/material_grey_900</color>
 </resources>

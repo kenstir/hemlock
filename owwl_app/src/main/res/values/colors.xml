@@ -3,6 +3,10 @@
     <color name="owwl_logo_green">#007647</color>
     <color name="owwl_logo_blue">#003865</color>
 
+    <!-- derived using https://material.io/resources/color/ -->
+    <color name="owwl_logo_green_light">#46a673</color>
+    <color name="owwl_logo_green_lighter">#79d8a2</color>
+
     <color name="primary">@color/owwl_logo_blue</color>
     <color name="primary_dark">@color/owwl_logo_blue</color>
     <color name="accent">@color/owwl_logo_green</color>
