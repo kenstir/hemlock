@@ -224,7 +224,7 @@ class LaunchActivity : AppCompatActivity(), CoroutineScope by MainScope() {
             account.authToken = null
             Log.d(TAG, "[auth] getAuthTokenForAccountFuture ...")
             val future = AccountUtils.getAuthTokenForAccountFuture(this, account.username)
-            val bnd = future.await()
+            val bnd = future.await(3_600_000) // long to allow authenticator activity
             Log.d(TAG, "[auth] getAuthTokenForAccountFuture ... $bnd")
             val accountManagerResult = bnd.getAccountManagerResult()
             if (accountManagerResult.accountName.isNullOrEmpty() || accountManagerResult.authToken.isNullOrEmpty())
