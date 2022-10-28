@@ -41,7 +41,8 @@ class BookBag(val id: Int, val name: String, obj: OSRFObject) : Serializable {
     fun fleshFromObject(cbrebObj: OSRFObject) {
         items.clear()
         val fleshedItems = cbrebObj.get("items") as? ArrayList<OSRFObject> ?: ArrayList()
-        for (item in fleshedItems) {
+        val distinctItems = fleshedItems.distinctBy { it.getInt("target_biblio_record_entry") }
+        for (item in distinctItems) {
             if (!filterToVisibleRecords) {
                 items.add(BookBagItem(item))
             } else {
