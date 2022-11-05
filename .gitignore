@@ -7,6 +7,7 @@ fm_IDL.*
 /secrets.*
 /local.gradle
 /local.properties
+/.idea/androidTestResultsUserPreferences.xml
 /.idea/assetWizardSettings.xml
 /.idea/caches
 /.idea/deploymentTargetDropDown.xml
