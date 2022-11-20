@@ -20,28 +20,21 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <TableLayout
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content">
-                <TableRow
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content">
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        style="@style/HemlockText.PagePrimary"
-                        android:paddingLeft="0dp"
-                        android:paddingTop="16dp"
-                        android:text="@string/location" />
-                    <Spinner
-                        android:id="@+id/org_details_spinner"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:spinnerMode="dialog"
-                        android:minHeight="@dimen/spinner_min_height" />
-                </TableRow>
-            </TableLayout>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/HemlockText.PagePrimary"
+                android:paddingLeft="0dp"
+                android:paddingTop="16dp"
+                android:text="@string/location" />
+
+            <Spinner
+                android:id="@+id/org_details_spinner"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:minHeight="48dp"
+                android:spinnerMode="dialog" />
 
             <LinearLayout
                 style="?android:buttonBarStyle"
@@ -57,7 +50,7 @@
                     android:layout_weight="1"
                     android:minHeight="@dimen/target_min_height"
                     android:gravity="left|center_vertical"
-                    android:paddingLeft="0dp"
+                    android:paddingLeft="16dp"
                     android:paddingRight="0dp"
                     android:text="@string/button_library_web_site" />
             </LinearLayout>
@@ -75,84 +68,126 @@
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content">
                 <TableRow
-                    android:paddingTop="4dp">
+                    android:paddingTop="4dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
                     <TextView
-                        android:paddingLeft="16dp"
-                        android:text="@string/title_mon"/>
+                        android:paddingStart="16dp"
+                        android:paddingEnd="0dp"
+                        android:text="@string/title_mon"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
                     <TextView
-                        android:paddingLeft="16dp"
+                        android:paddingStart="16dp"
+                        android:paddingEnd="0dp"
                         android:id="@+id/org_details_day0hours"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         tools:text="9:00 AM - 5:00 PM"/>
                 </TableRow>
-                <TableRow>
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
                     <TextView
-                        android:paddingLeft="16dp"
-                        android:text="@string/title_tue"/>
+                        android:paddingStart="16dp"
+                        android:paddingEnd="0dp"
+                        android:text="@string/title_tue"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
                     <TextView
-                        android:paddingLeft="16dp"
+                        android:paddingStart="16dp"
+                        android:paddingEnd="0dp"
                         android:id="@+id/org_details_day1hours"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         tools:text="9:00 AM - 5:00 PM"/>
                 </TableRow>
-                <TableRow>
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
                     <TextView
-                        android:paddingLeft="16dp"
-                        android:text="@string/title_wed"/>
+                        android:paddingStart="16dp"
+                        android:paddingEnd="0dp"
+                        android:text="@string/title_wed"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
                     <TextView
-                        android:paddingLeft="16dp"
+                        android:paddingStart="16dp"
+                        android:paddingEnd="0dp"
                         android:id="@+id/org_details_day2hours"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         tools:text="9:00 AM - 5:00 PM"/>
                 </TableRow>
-                <TableRow>
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
                     <TextView
-                        android:paddingLeft="16dp"
-                        android:text="@string/title_thu"/>
+                        android:paddingStart="16dp"
+                        android:paddingEnd="0dp"
+                        android:text="@string/title_thu"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
                     <TextView
-                        android:paddingLeft="16dp"
+                        android:paddingStart="16dp"
+                        android:paddingEnd="0dp"
                         android:id="@+id/org_details_day3hours"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         tools:text="9:00 AM - 5:00 PM"/>
                 </TableRow>
-                <TableRow>
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
                     <TextView
-                        android:paddingLeft="16dp"
-                        android:text="@string/title_fri"/>
+                        android:paddingStart="16dp"
+                        android:paddingEnd="0dp"
+                        android:text="@string/title_fri"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
                     <TextView
-                        android:paddingLeft="16dp"
+                        android:paddingStart="16dp"
+                        android:paddingEnd="0dp"
                         android:id="@+id/org_details_day4hours"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         tools:text="9:00 AM - 5:00 PM"/>
                 </TableRow>
-                <TableRow>
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
                     <TextView
-                        android:paddingLeft="16dp"
-                        android:text="@string/title_sat"/>
+                        android:paddingStart="16dp"
+                        android:paddingEnd="0dp"
+                        android:text="@string/title_sat"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
                     <TextView
-                        android:paddingLeft="16dp"
+                        android:paddingStart="16dp"
+                        android:paddingEnd="0dp"
                         android:id="@+id/org_details_day5hours"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         tools:text="9:00 AM - 5:00 PM"/>
                 </TableRow>
-                <TableRow>
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
                     <TextView
-                        android:paddingLeft="16dp"
-                        android:text="@string/title_sun"/>
+                        android:paddingStart="16dp"
+                        android:paddingEnd="0dp"
+                        android:text="@string/title_sun"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
                     <TextView
-                        android:paddingLeft="16dp"
+                        android:paddingStart="16dp"
+                        android:paddingEnd="0dp"
                         android:id="@+id/org_details_day6hours"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
@@ -172,15 +207,22 @@
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content">
                 <TableRow
-                    android:paddingTop="0dp">
+                    android:paddingTop="0dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
 
                     <TextView
-                        android:layout_gravity="center"
-                        android:paddingLeft="16dp"
-                        android:text="@string/title_email" />
+                        android:layout_gravity="start|center_vertical"
+                        android:paddingStart="16dp"
+                        android:paddingEnd="16dp"
+                        android:text="@string/title_email"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
                     <LinearLayout
                         style="?android:buttonBarStyle"
-                        android:orientation="horizontal">
+                        android:orientation="horizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
 
                         <Button
                             android:id="@+id/org_details_email"
@@ -189,21 +231,28 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:minHeight="@dimen/target_min_height"
-                            android:gravity="left|center_vertical"
-                            android:paddingLeft="16dp"
-                            android:paddingRight="16dp"
+                            android:gravity="start|center_vertical"
+                            android:paddingStart="16dp"
+                            android:paddingEnd="16dp"
                             tools:text="contact_us@athenslibrary.org" />
                     </LinearLayout>
                 </TableRow>
-                <TableRow>
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
 
                     <TextView
-                        android:layout_gravity="center"
-                        android:paddingLeft="16dp"
-                        android:text="@string/title_phone" />
+                        android:layout_gravity="start|center_vertical"
+                        android:paddingStart="16dp"
+                        android:paddingEnd="16dp"
+                        android:text="@string/title_phone"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
                     <LinearLayout
                         style="?android:buttonBarStyle"
-                        android:orientation="horizontal">
+                        android:orientation="horizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
 
                         <Button
                             android:id="@+id/org_details_phone"
@@ -212,9 +261,9 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:minHeight="@dimen/target_min_height"
-                            android:gravity="left|center_vertical"
-                            android:paddingLeft="16dp"
-                            android:paddingRight="16dp"
+                            android:gravity="start|center_vertical"
+                            android:paddingStart="16dp"
+                            android:paddingEnd="16dp"
                             tools:text="706-555-1212" />
                     </LinearLayout>
                 </TableRow>
@@ -233,7 +282,8 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:paddingTop="4dp"
-                android:paddingLeft="16dp"
+                android:paddingStart="16dp"
+                android:paddingEnd="0dp"
                 android:ellipsize="none"
                 android:maxLines="10"
                 android:scrollHorizontally="false"
@@ -252,9 +302,9 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:minHeight="@dimen/target_min_height"
-                    android:gravity="left|center_vertical"
-                    android:paddingLeft="0dp"
-                    android:paddingRight="0dp"
+                    android:gravity="start|center_vertical"
+                    android:paddingStart="16dp"
+                    android:paddingEnd="0dp"
                     android:text="@string/button_library_map" />
             </LinearLayout>
         </LinearLayout>
