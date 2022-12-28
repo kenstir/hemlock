@@ -3,6 +3,8 @@ import java.util.List;
 import java.util.ArrayList;
 import org.opensrf.util.*;
 
+import androidx.annotation.NonNull;
+
 
 public class Method extends OSRFObject {
 
@@ -59,7 +61,7 @@ public class Method extends OSRFObject {
     /**
      * Implements the generic get() API required by OSRFSerializable
      */
-    public Object get(String field) {
+    public Object get(@NonNull String field) {
         if("method".equals(field))
             return getName();
         if("params".equals(field))

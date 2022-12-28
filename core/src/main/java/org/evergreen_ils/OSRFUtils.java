@@ -21,8 +21,6 @@ package org.evergreen_ils;
 import android.annotation.SuppressLint;
 
 import org.evergreen_ils.android.Analytics;
-import org.evergreen_ils.android.Log;
-import org.evergreen_ils.utils.TextUtils;
 import org.opensrf.ShouldNotHappenException;
 
 import java.text.DateFormat;
@@ -94,10 +92,6 @@ public class OSRFUtils {
         return timeFormatter.format(date);
     }
 
-//    public static Integer formatBoolean(Boolean obj) {
-//        return obj ? 1 : 0;
-//    }
-
     // parse bool string returned from API methods
     public static Boolean parseBoolean(Object obj) {
         if (obj instanceof Boolean) {
@@ -117,9 +111,9 @@ public class OSRFUtils {
      * Seems to be the same for result "ids" list (See Issue #1).  Handle either form and return as an int.
      */
     @Nullable
-    public static Integer parseInt(Object o, Integer dflt) {
+    public static Integer parseInt(Object o, Integer defaultValue) {
         if (o == null) {
-            return dflt;
+            return defaultValue;
         } else if (o instanceof Integer) {
             return (Integer)o;
         } else if (o instanceof String) {
@@ -127,11 +121,11 @@ public class OSRFUtils {
             try {
                 return Integer.parseInt((String) o);
             } catch (NumberFormatException e) {
-                return dflt;
+                return defaultValue;
             }
         } else {
             Analytics.logException(new ShouldNotHappenException("unexpected type: "+o));
-            return dflt;
+            return defaultValue;
         }
     }
 

@@ -18,7 +18,6 @@
 
 package net.kenstir.apps.core
 
-import org.hamcrest.core.IsInstanceOf
 import org.junit.Assert.*
 import org.junit.BeforeClass
 import org.junit.Test
@@ -89,6 +88,7 @@ class OSRFObjectTest {
         // As Expected; as? returns null
     }
 
+    // Test to understand warning: Unchecked cast: Any! to List<OSRFObject>
     @Test
     fun test_misc_uncheckedCast2() {
         val obj = OSRFObject(mapOf<String, Any?>(
@@ -104,6 +104,7 @@ class OSRFObjectTest {
         // As Expected; as? returns non-null
     }
 
+    // Test to understand warning: Unchecked cast: Any! to List<OSRFObject>
     @Test
     fun test_misc_uncheckedCast3() {
         val obj = OSRFObject(mapOf<String, Any?>(
@@ -117,6 +118,7 @@ class OSRFObjectTest {
         // first() fails with a ClassCastException.
     }
 
+    // Try to avoid unchecked cast using filterIsInstance
     @Test
     fun test_misc_uncheckedCast4() {
         val obj = OSRFObject(mapOf<String, Any?>(

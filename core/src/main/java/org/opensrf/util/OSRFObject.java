@@ -73,9 +73,9 @@ public class OSRFObject extends HashMap<String, Object> implements OSRFSerializa
     }
 
     @Nullable
-    public String getString(@NonNull String field, String dflt) {
+    public String getString(@NonNull String field, String defaultValue) {
         String ret = (String) get(field);
-        return (ret != null) ? ret : dflt;
+        return (ret != null) ? ret : defaultValue;
     }
 
     @Nullable
@@ -101,9 +101,11 @@ public class OSRFObject extends HashMap<String, Object> implements OSRFSerializa
             return (OSRFObject) o;
         if (o instanceof HashMap) {
             try {
+                @SuppressWarnings("unchecked")
                 HashMap<String, Object> map = (HashMap<String, Object>) o;
                 return new OSRFObject(map);
             } catch (ClassCastException e) {
+                return null;
             }
         }
         return null;

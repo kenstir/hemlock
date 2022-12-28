@@ -92,18 +92,18 @@ public class AppState {
         return getBoolean(key, false);
     }
 
-    public static boolean getBoolean(String key, boolean dflt) {
+    public static boolean getBoolean(String key, boolean defaultValue) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        return prefs.getBoolean(key, dflt);
+        return prefs.getBoolean(key, defaultValue);
     }
 
     public static int getInt(String key) {
         return getInt(key, 0);
     }
 
-    public static int getInt(String key, int dflt) {
+    public static int getInt(String key, int defaultValue) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        return prefs.getInt(key, dflt);
+        return prefs.getInt(key, defaultValue);
     }
 
     public static void setString(String key, String value) {
