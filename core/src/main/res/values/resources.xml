@@ -24,6 +24,21 @@
 		<item>Matches exactly</item>
     </string-array>
 
+    <string-array name="sort_by">
+        <item>Author</item>
+        <item>Publication date</item>
+        <item>Title</item>
+    </string-array>
+    <string name="sort_by_author_keyword">authorsort</string>
+    <string name="sort_by_pubdate_keyword">pubdate</string>
+    <string name="sort_by_title_keyword">titlesort</string>
+    <!-- NB: sort_by_keyword must be in sync with sort_by -->
+    <string-array name="sort_by_keyword">
+        <item>@string/sort_by_author_keyword</item>
+        <item>@string/sort_by_pubdate_keyword</item>
+        <item>@string/sort_by_title_keyword</item>
+    </string-array>
+
     <string-array name="notification_preferences_list_values">
         <item>1</item>
         <item>2</item>

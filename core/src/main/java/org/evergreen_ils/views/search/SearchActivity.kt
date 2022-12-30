@@ -55,10 +55,11 @@ import org.evergreen_ils.views.bookbags.BookBagUtils.showAddToListDialog
 import org.evergreen_ils.views.holds.PlaceHoldActivity
 import org.opensrf.util.OSRFObject
 
+const val SEARCH_OPTIONS_VISIBLE_STATE_KEY = "search_options_visible"
+const val SEARCH_CLASS_IDENTIFIER = "identifier"
+
 class SearchActivity : BaseActivity(), ActivityCompat.OnRequestPermissionsResultCallback {
-    private val TAG = SearchActivity::class.java.simpleName
-    private val SEARCH_OPTIONS_VISIBLE = "search_options_visible"
-    private val SEARCH_CLASS_IDENTIFIER = "identifier"
+    private val TAG = javaClass.simpleName
 
     private var searchTextView: EditText? = null
     private var searchOptionsButton: SwitchCompat? = null
@@ -174,14 +175,14 @@ class SearchActivity : BaseActivity(), ActivityCompat.OnRequestPermissionsResult
     }
 
     private fun initSearchOptionsVisibility() {
-        val lastState = AppState.getBoolean(SEARCH_OPTIONS_VISIBLE, true)
+        val lastState = AppState.getBoolean(SEARCH_OPTIONS_VISIBLE_STATE_KEY, true)
         searchOptionsButton?.isChecked = lastState
         setSearchOptionsVisibility(lastState)
     }
 
     private fun setSearchOptionsVisibility(visible: Boolean) {
         searchOptionsLayout?.visibility = if (visible) View.VISIBLE else View.GONE
-        AppState.setBoolean(SEARCH_OPTIONS_VISIBLE, visible)
+        AppState.setBoolean(SEARCH_OPTIONS_VISIBLE_STATE_KEY, visible)
     }
 
     private fun initSearchOptionsButton() {
