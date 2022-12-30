@@ -405,7 +405,6 @@ class SearchActivity : BaseActivity(), ActivityCompat.OnRequestPermissionsResult
         return super.onContextItemSelected(item)
     }
 
-    //// TODO: 4/30/2017 pull up
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         val inflater = menuInflater
         inflater.inflate(R.menu.menu_search, menu)

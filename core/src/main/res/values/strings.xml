@@ -136,6 +136,7 @@
     <string name="balance_owed">Balance Owed</string>
 
     <!-- Bookbag Activities -->
+    <string name="menu_delete_bookbag">Delete list</string>
     <string name="list_delete_button">Delete List</string>
     <string name="list_details_button">Details</string>
     <string name="list_item_remove_button">Remove</string>

@@ -22,9 +22,8 @@ package org.evergreen_ils.views.bookbags
 import android.app.AlertDialog
 import android.content.Context
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.text.TextUtils
+import android.view.*
 import android.widget.*
 import androidx.core.os.bundleOf
 import kotlinx.coroutines.Job
@@ -59,7 +58,6 @@ class BookBagDetailsActivity : BaseActivity() {
     private var sortedItems = ArrayList<BookBagItem>()
     private var bookBagName: TextView? = null
     private var bookBagDescription: TextView? = null
-    private var deleteButton: Button? = null
 
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -74,17 +72,10 @@ class BookBagDetailsActivity : BaseActivity() {
 
         bookBagName = findViewById(R.id.bookbag_name)
         bookBagDescription = findViewById(R.id.bookbag_description)
-        deleteButton = findViewById(R.id.remove_bookbag)
 
         bookBagName?.text = bookBag.name
         bookBagDescription?.text = bookBag.description
-        deleteButton?.setOnClickListener(View.OnClickListener {
-            val builder = AlertDialog.Builder(this@BookBagDetailsActivity)
-            builder.setMessage(R.string.delete_list_confirm_msg)
-            builder.setNegativeButton(R.string.delete_list_negative_button, null)
-            builder.setPositiveButton(R.string.delete_list_positive_button) { dialog, which -> deleteList() }
-            builder.create().show()
-        })
+
         lv = findViewById(R.id.bookbagitem_list)
         listAdapter = BookBagItemsArrayAdapter(this, R.layout.bookbagitem_list_item, sortedItems)
         lv?.adapter = listAdapter
@@ -109,6 +100,21 @@ class BookBagDetailsActivity : BaseActivity() {
         super.onAttachedToWindow()
         Log.d(TAG, object{}.javaClass.enclosingMethod?.name)
         fetchData()
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        val inflater = menuInflater
+        inflater.inflate(R.menu.menu_bookbag_details, menu)
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        val id = item.itemId
+        if (id == R.id.action_bookbag_delete) {
+            confirmDeleteList()
+            return true
+        }
+        return super.onOptionsItemSelected(item)
     }
 
     private fun fetchData() {
@@ -158,6 +164,14 @@ class BookBagDetailsActivity : BaseActivity() {
         sortedItems.clear()
         sortedItems.addAll(bookBag.items.sortedWith(comparator))
         listAdapter?.notifyDataSetChanged()
+    }
+
+    private fun confirmDeleteList() {
+        val builder = AlertDialog.Builder(this@BookBagDetailsActivity)
+        builder.setMessage(R.string.delete_list_confirm_msg)
+        builder.setNegativeButton(R.string.delete_list_negative_button, null)
+        builder.setPositiveButton(R.string.delete_list_positive_button) { dialog, which -> deleteList() }
+        builder.create().show()
     }
 
     private fun deleteList() {

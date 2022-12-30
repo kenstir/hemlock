@@ -22,7 +22,7 @@
 
             <TextView
                 android:id="@+id/bookbag_name"
-                style="@style/HemlockText.ListPrimary"
+                style="@style/HemlockText.PagePrimary"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="left"
@@ -30,23 +30,12 @@
 
             <TextView
                 android:id="@+id/bookbag_description"
-                style="@style/HemlockText.ListSecondary"
+                style="@style/HemlockText.PageSecondary"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="left"
                 tools:text="a collection of stuff to read" />
         </LinearLayout>
-
-        <Button
-            android:id="@+id/remove_bookbag"
-            style="@style/ApplicationButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="16dip"
-            android:paddingLeft="16dip"
-            android:paddingRight="16dip"
-            android:text="@string/list_delete_button" />
-        
     </LinearLayout>
      
 	<ListView 
