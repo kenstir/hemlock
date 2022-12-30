@@ -113,7 +113,7 @@ object GatewaySearch: SearchService {
         return try {
             val param = jsonMapOf("limit" to limit, "offset" to 0)
             val options = RequestOptions(Gateway.searchTimeoutMs, false, true)
-            val ret = Gateway.fetch(Api.SEARCH, Api.MULTICLASS_QUERY, arrayOf<Any?>(param, queryString, 1), options) { result ->
+            val ret = Gateway.fetch(Api.SEARCH, Api.MULTICLASS_QUERY, arrayOf<Any?>(param, queryString, 0), options) { result ->
                 result.asObject()
             }
             Result.Success(ret)
