@@ -22,6 +22,8 @@ package org.evergreen_ils.views.search
 
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageInfo
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.text.TextUtils
 import android.view.ContextMenu
@@ -33,7 +35,12 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.*
 import androidx.appcompat.widget.SwitchCompat
 import androidx.core.app.ActivityCompat
+import androidx.core.content.ContentProviderCompat.requireContext
+import androidx.core.content.pm.PackageInfoCompat
 import androidx.core.os.bundleOf
+import com.google.android.gms.common.GoogleApiAvailability
+import com.google.firebase.crashlytics.FirebaseCrashlytics
+import com.google.mlkit.common.MlKitException
 import com.google.mlkit.vision.barcode.common.Barcode
 import com.google.mlkit.vision.codescanner.GmsBarcodeScanning
 import kotlinx.coroutines.async
@@ -54,6 +61,7 @@ import org.evergreen_ils.utils.ui.*
 import org.evergreen_ils.views.bookbags.BookBagUtils.showAddToListDialog
 import org.evergreen_ils.views.holds.PlaceHoldActivity
 import org.opensrf.util.OSRFObject
+
 
 const val SEARCH_OPTIONS_VISIBLE_STATE_KEY = "search_options_visible"
 const val SEARCH_CLASS_IDENTIFIER = "identifier"
@@ -446,12 +454,31 @@ class SearchActivity : BaseActivity(), ActivityCompat.OnRequestPermissionsResult
 
     private fun startScanning() {
         val scanner = GmsBarcodeScanning.getClient(this)
-        //userIsScanning = true
         scanner.startScan()
             .addOnSuccessListener { barcode -> handleBarcodeResult(barcode) }
-            .addOnFailureListener { e -> this.showAlert(e) }
+            .addOnFailureListener { e ->
+                if (e is MlKitException) {
+                    val errorCode = e.errorCode
+                    Analytics.log(TAG, "MlKitException errorCode: $errorCode")
+                    when (errorCode) {
+                        MlKitException.CODE_SCANNER_UNAVAILABLE -> {}
+                        MlKitException.CODE_SCANNER_GOOGLE_PLAY_SERVICES_VERSION_TOO_OLD -> {}
+                        else -> {
+                            try {
+                                val gpsPackageInfo: PackageInfo = this@SearchActivity.packageManager.getPackageInfo(GoogleApiAvailability.GOOGLE_PLAY_SERVICES_PACKAGE, 0)
+                                Analytics.log(TAG, "Google Play Services versionName: ${gpsPackageInfo.versionName}")
+                                Analytics.log(TAG, "Google Play Services versionCode: ${PackageInfoCompat.getLongVersionCode(gpsPackageInfo)}")
+                            } catch (ex: PackageManager.NameNotFoundException) {
+                                ex.printStackTrace()
+                            }
+                        }
+                    }
+                }
+                Analytics.logException(TAG, e)
+                this.showAlert(e)
+            }
 //            .addOnCanceledListener {}
-//            .addOnCompleteListener { userIsScanning = false }
+//            .addOnCompleteListener {}
     }
 
     private fun handleBarcodeResult(barcode: Barcode) {
