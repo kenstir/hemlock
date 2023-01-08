@@ -51,6 +51,7 @@ import org.evergreen_ils.system.EgSearch
 import org.evergreen_ils.views.*
 import org.evergreen_ils.views.bookbags.BookBagsActivity
 import org.evergreen_ils.views.holds.HoldsActivity
+import org.evergreen_ils.views.messages.MessagesActivity
 import java.net.URLEncoder
 import kotlin.coroutines.CoroutineContext
 
@@ -212,8 +213,7 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
             return true
         } else if (id == R.id.action_messages) {
             Analytics.logEvent(Analytics.Event.MESSAGES_OPEN)
-            val url = Gateway.getUrl("/eg/opac/myopac/messages")
-            launchURL(url, REQUEST_MYOPAC_MESSAGES)
+            startActivity(Intent(this, MessagesActivity::class.java))
             return true
         } else if (id == R.id.action_dark_mode) {
             ThemeManager.saveAndApplyNightMode(AppCompatDelegate.MODE_NIGHT_YES)

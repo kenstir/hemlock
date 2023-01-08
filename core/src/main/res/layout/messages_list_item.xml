@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:paddingLeft="8dp"
+    android:paddingTop="4dp"
+    android:paddingRight="8dp"
+    android:paddingBottom="4dp">
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/message_title"
+            style="@style/HemlockText.ListPrimary"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="Overdue Library Materials" />
+
+        <TextView
+            android:id="@+id/message_body"
+            style="@style/HemlockText.ListSecondary"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:maxLines="6"
+            android:gravity="left"
+            android:ellipsize="end"
+            tools:text="Our records indicate the following items are 10 days or more overdue.\n\n     Title:    Georgia adult literacy resources manual\n     Author:   State Bar of Georgia\n     Call No:  374.012 G\n     Checked Out At: Georgia Public Library Service - Professional Collection\n     Due Date: 12-20-2017\n\n\n\nItems may be returned and fines paid at any PINES member library. Fines will continue to accrue until items are returned.\n\nIf you have any questions, please contact your home library at:\n\n     Athens Regional Library System\n     Athens-Clarke County Library\n     2025 BAXTER ST\n     ATHENS, GA 30606-6331\n     706-613-3650\n     contact_us@arlsmail.org\n     (Please have your library card available.)\n" />
+
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/delete_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top"
+        android:focusable="false"
+        android:text="@string/button_delete" />
+
+</LinearLayout>

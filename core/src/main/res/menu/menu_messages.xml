@@ -1,0 +1,8 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="org.evergreen_ils.views.messages.MessagesActivity">
+    <item android:id="@+id/action_message_delete" android:title="@string/menu_delete_message"
+        android:icon="@drawable/baseline_delete_white_24"
+        app:showAsAction="never" />
+</menu>

@@ -40,6 +40,7 @@ import org.evergreen_ils.data.Result
 import org.evergreen_ils.net.Gateway
 import org.evergreen_ils.views.search.SearchActivity
 import org.evergreen_ils.android.Log
+import org.evergreen_ils.data.PatronMessage
 import org.evergreen_ils.system.EgOrg
 import org.evergreen_ils.utils.ui.BaseActivity
 import org.evergreen_ils.utils.ui.showAlert
@@ -126,22 +127,12 @@ class MainActivity : BaseActivity() {
         }
     }
 
-    private fun updateMessagesBadge(messages: List<OSRFObject>) {
-        mUnreadMessageCount = countUnread(messages)
-        updateUnreadMessagesText()
-    }
-
-    private fun countUnread(messages: List<OSRFObject>): Int {
-        var count = 0
-        messages.forEach {
-            val readDate = it.getString("read_date")
-            val deleted = it.getBoolean("deleted")
-            val patronVisible = it.getBoolean("pub")
-            if (readDate == null && !deleted && patronVisible) {
-                ++count
-            }
+    private fun updateMessagesBadge(messageList: List<OSRFObject>) {
+        val messages = PatronMessage.makeArray(messageList)
+        mUnreadMessageCount = messages.count {
+            !it.isRead && !it.isDeleted && it.isPatronVisible
         }
-        return count
+        updateUnreadMessagesText()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

@@ -88,7 +88,6 @@ class RecordViewAdapter(private val records: List<MBRecord>) : RecyclerView.Adap
 
     // Create new views (invoked by the layout manager)
     override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): ViewHolder {
-        // Create a new view.
         val v = LayoutInflater.from(viewGroup.context)
                 .inflate(R.layout.search_result_item, viewGroup, false)
         return ViewHolder(v)
