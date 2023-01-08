@@ -46,3 +46,12 @@ fun pubdateSortKey(pubdate: String?): Int? {
     }
     return s3.toIntOrNull()
 }
+
+// Given a title, return a sort key, removing leading articles and lowercasing the string.
+fun titleSortKey(title: String?): String? {
+    val t = title ?: return null
+    return t.lowercase()
+        .removePrefix("a ")
+        .removePrefix("an ")
+        .removePrefix("the ")
+}

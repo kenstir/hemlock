@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/action_bookbag_sort" android:title="@string/menu_sort_bookbag"
+        android:icon="@drawable/outline_sort_white_24"
+        app:showAsAction="always" />
+    <item android:id="@+id/action_bookbag_delete" android:title="@string/menu_delete_bookbag"
+        android:icon="@drawable/baseline_delete_white_24"
+        app:showAsAction="never" />
+</menu>

@@ -1,6 +1,7 @@
 <component name="ProjectDictionaryState">
   <dictionary name="kenstir">
     <words>
+      <w>authorsort</w>
       <w>biblio</w>
       <w>bookbag</w>
       <w>bookbags</w>
@@ -9,7 +10,9 @@
       <w>metarecord</w>
       <w>multiclass</w>
       <w>opac</w>
+      <w>pubdate</w>
       <w>recv</w>
+      <w>titlesort</w>
     </words>
   </dictionary>
 </component>

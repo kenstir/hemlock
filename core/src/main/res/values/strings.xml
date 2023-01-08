@@ -136,16 +136,15 @@
     <string name="balance_owed">Balance Owed</string>
 
     <!-- Bookbag Activities -->
+    <string name="menu_delete_bookbag">Delete list</string>
+    <string name="menu_sort_bookbag">Sort list</string>
+    <string name="sort_by_message">Sort by</string>
     <string name="list_delete_button">Delete List</string>
     <string name="list_details_button">Details</string>
     <string name="list_item_remove_button">Remove</string>
     <string name="create_list_button">Create List</string>
     <string name="list_name_hint">List name</string>
     <string name="error_list_name_empty">List name is required</string>
-
-    <!-- Camera -->
-    <string name="msg_camera_framework_bug">Sorry, the Android camera encountered a problem. You may need to restart the device.</string>
-    <string name="button_ok">OK</string>
 
     <!-- Preference Activity -->
     <string name="preference_login_information">Login information</string>

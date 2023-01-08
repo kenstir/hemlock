@@ -22,6 +22,8 @@ package org.evergreen_ils.views.search
 
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageInfo
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.text.TextUtils
 import android.view.ContextMenu
@@ -33,7 +35,12 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.*
 import androidx.appcompat.widget.SwitchCompat
 import androidx.core.app.ActivityCompat
+import androidx.core.content.ContentProviderCompat.requireContext
+import androidx.core.content.pm.PackageInfoCompat
 import androidx.core.os.bundleOf
+import com.google.android.gms.common.GoogleApiAvailability
+import com.google.firebase.crashlytics.FirebaseCrashlytics
+import com.google.mlkit.common.MlKitException
 import com.google.mlkit.vision.barcode.common.Barcode
 import com.google.mlkit.vision.codescanner.GmsBarcodeScanning
 import kotlinx.coroutines.async
@@ -55,10 +62,12 @@ import org.evergreen_ils.views.bookbags.BookBagUtils.showAddToListDialog
 import org.evergreen_ils.views.holds.PlaceHoldActivity
 import org.opensrf.util.OSRFObject
 
+
+const val SEARCH_OPTIONS_VISIBLE_STATE_KEY = "search_options_visible"
+const val SEARCH_CLASS_IDENTIFIER = "identifier"
+
 class SearchActivity : BaseActivity(), ActivityCompat.OnRequestPermissionsResultCallback {
-    private val TAG = SearchActivity::class.java.simpleName
-    private val SEARCH_OPTIONS_VISIBLE = "search_options_visible"
-    private val SEARCH_CLASS_IDENTIFIER = "identifier"
+    private val TAG = javaClass.simpleName
 
     private var searchTextView: EditText? = null
     private var searchOptionsButton: SwitchCompat? = null
@@ -174,14 +183,14 @@ class SearchActivity : BaseActivity(), ActivityCompat.OnRequestPermissionsResult
     }
 
     private fun initSearchOptionsVisibility() {
-        val lastState = AppState.getBoolean(SEARCH_OPTIONS_VISIBLE, true)
+        val lastState = AppState.getBoolean(SEARCH_OPTIONS_VISIBLE_STATE_KEY, true)
         searchOptionsButton?.isChecked = lastState
         setSearchOptionsVisibility(lastState)
     }
 
     private fun setSearchOptionsVisibility(visible: Boolean) {
         searchOptionsLayout?.visibility = if (visible) View.VISIBLE else View.GONE
-        AppState.setBoolean(SEARCH_OPTIONS_VISIBLE, visible)
+        AppState.setBoolean(SEARCH_OPTIONS_VISIBLE_STATE_KEY, visible)
     }
 
     private fun initSearchOptionsButton() {
@@ -405,7 +414,6 @@ class SearchActivity : BaseActivity(), ActivityCompat.OnRequestPermissionsResult
         return super.onContextItemSelected(item)
     }
 
-    //// TODO: 4/30/2017 pull up
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         val inflater = menuInflater
         inflater.inflate(R.menu.menu_search, menu)
@@ -446,12 +454,31 @@ class SearchActivity : BaseActivity(), ActivityCompat.OnRequestPermissionsResult
 
     private fun startScanning() {
         val scanner = GmsBarcodeScanning.getClient(this)
-        //userIsScanning = true
         scanner.startScan()
             .addOnSuccessListener { barcode -> handleBarcodeResult(barcode) }
-            .addOnFailureListener { e -> this.showAlert(e) }
+            .addOnFailureListener { e ->
+                if (e is MlKitException) {
+                    val errorCode = e.errorCode
+                    Analytics.log(TAG, "MlKitException errorCode: $errorCode")
+                    when (errorCode) {
+                        MlKitException.CODE_SCANNER_UNAVAILABLE -> {}
+                        MlKitException.CODE_SCANNER_GOOGLE_PLAY_SERVICES_VERSION_TOO_OLD -> {}
+                        else -> {
+                            try {
+                                val gpsPackageInfo: PackageInfo = this@SearchActivity.packageManager.getPackageInfo(GoogleApiAvailability.GOOGLE_PLAY_SERVICES_PACKAGE, 0)
+                                Analytics.log(TAG, "Google Play Services versionName: ${gpsPackageInfo.versionName}")
+                                Analytics.log(TAG, "Google Play Services versionCode: ${PackageInfoCompat.getLongVersionCode(gpsPackageInfo)}")
+                            } catch (ex: PackageManager.NameNotFoundException) {
+                                ex.printStackTrace()
+                            }
+                        }
+                    }
+                }
+                Analytics.logException(TAG, e)
+                this.showAlert(e)
+            }
 //            .addOnCanceledListener {}
-//            .addOnCompleteListener { userIsScanning = false }
+//            .addOnCompleteListener {}
     }
 
     private fun handleBarcodeResult(barcode: Barcode) {

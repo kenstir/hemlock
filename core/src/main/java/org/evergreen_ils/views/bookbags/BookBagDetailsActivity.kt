@@ -22,9 +22,7 @@ package org.evergreen_ils.views.bookbags
 import android.app.AlertDialog
 import android.content.Context
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.*
 import androidx.core.os.bundleOf
 import kotlinx.coroutines.Job
@@ -42,16 +40,16 @@ import org.evergreen_ils.net.GatewayLoader
 import org.evergreen_ils.views.search.RecordDetails
 import org.evergreen_ils.data.MBRecord
 import org.evergreen_ils.utils.pubdateSortKey
-import org.evergreen_ils.utils.ui.ActionBarUtils
-import org.evergreen_ils.utils.ui.BaseActivity
-import org.evergreen_ils.utils.ui.ProgressDialogSupport
-import org.evergreen_ils.utils.ui.showAlert
+import org.evergreen_ils.utils.titleSortKey
+import org.evergreen_ils.utils.ui.*
 import java.util.*
 
-private val TAG = BookBagDetailsActivity::class.java.simpleName
 const val RESULT_CODE_UPDATE = 1
+const val SORT_BY_STATE_KEY = "sort_by"
 
 class BookBagDetailsActivity : BaseActivity() {
+    private val TAG = javaClass.simpleName
+
     private var lv: ListView? = null
     private var listAdapter: BookBagItemsArrayAdapter? = null
     private var progress: ProgressDialogSupport? = null
@@ -59,7 +57,17 @@ class BookBagDetailsActivity : BaseActivity() {
     private var sortedItems = ArrayList<BookBagItem>()
     private var bookBagName: TextView? = null
     private var bookBagDescription: TextView? = null
-    private var deleteButton: Button? = null
+
+    private lateinit var sortByKeywords: Array<String>
+    private lateinit var SORT_BY_AUTHOR: String
+    private lateinit var SORT_BY_PUBDATE: String
+    private lateinit var SORT_BY_TITLE: String
+    private var sortBySelectedIndex = 0
+
+    private val sortByKeyword: String
+        get() {
+            return sortByKeywords[sortBySelectedIndex]
+        }
 
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -74,17 +82,10 @@ class BookBagDetailsActivity : BaseActivity() {
 
         bookBagName = findViewById(R.id.bookbag_name)
         bookBagDescription = findViewById(R.id.bookbag_description)
-        deleteButton = findViewById(R.id.remove_bookbag)
 
         bookBagName?.text = bookBag.name
         bookBagDescription?.text = bookBag.description
-        deleteButton?.setOnClickListener(View.OnClickListener {
-            val builder = AlertDialog.Builder(this@BookBagDetailsActivity)
-            builder.setMessage(R.string.delete_list_confirm_msg)
-            builder.setNegativeButton(R.string.delete_list_negative_button, null)
-            builder.setPositiveButton(R.string.delete_list_positive_button) { dialog, which -> deleteList() }
-            builder.create().show()
-        })
+
         lv = findViewById(R.id.bookbagitem_list)
         listAdapter = BookBagItemsArrayAdapter(this, R.layout.bookbagitem_list_item, sortedItems)
         lv?.adapter = listAdapter
@@ -98,6 +99,8 @@ class BookBagDetailsActivity : BaseActivity() {
             }
             RecordDetails.launchDetailsFlow(this@BookBagDetailsActivity, records, position)
         }
+
+        initSortBy()
     }
 
     override fun onDestroy() {
@@ -109,6 +112,36 @@ class BookBagDetailsActivity : BaseActivity() {
         super.onAttachedToWindow()
         Log.d(TAG, object{}.javaClass.enclosingMethod?.name)
         fetchData()
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        val inflater = menuInflater
+        inflater.inflate(R.menu.menu_bookbag_details, menu)
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        val id = item.itemId
+        if (id == R.id.action_bookbag_delete) {
+            confirmDeleteList()
+            return true
+        } else if (id == R.id.action_bookbag_sort) {
+            showSortListDialog()
+            return true
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
+    private fun initSortBy() {
+        sortByKeywords = resources.getStringArray(R.array.sort_by_keyword)
+        SORT_BY_AUTHOR = resources.getString(R.string.sort_by_author_keyword)
+        SORT_BY_PUBDATE = resources.getString(R.string.sort_by_pubdate_keyword)
+        SORT_BY_TITLE = resources.getString(R.string.sort_by_title_keyword)
+
+        // the default sort is last used, pubdate by default
+        val keyword = AppState.getString(SORT_BY_STATE_KEY, SORT_BY_PUBDATE)
+        val index = if (keyword in sortByKeywords) sortByKeywords.indexOf(keyword) else sortByKeywords.indexOf(SORT_BY_PUBDATE)
+        sortBySelectedIndex = index
     }
 
     private fun fetchData() {
@@ -154,10 +187,24 @@ class BookBagDetailsActivity : BaseActivity() {
     }
 
     private fun updateItemsList() {
-        val comparator = BookBagItemPubdateComparator(true)
+        val comparator = when (sortByKeyword) {
+            SORT_BY_AUTHOR -> BookBagItemAuthorComparator(false)
+            SORT_BY_PUBDATE -> BookBagItemPubdateComparator(true)
+            SORT_BY_TITLE -> BookBagItemTitleComparator(false)
+            else -> BookBagItemPubdateComparator(true)
+        }
+
         sortedItems.clear()
         sortedItems.addAll(bookBag.items.sortedWith(comparator))
         listAdapter?.notifyDataSetChanged()
+    }
+
+    private fun confirmDeleteList() {
+        val builder = AlertDialog.Builder(this@BookBagDetailsActivity)
+        builder.setMessage(R.string.delete_list_confirm_msg)
+        builder.setNegativeButton(R.string.delete_list_negative_button, null)
+        builder.setPositiveButton(R.string.delete_list_positive_button) { dialog, which -> deleteList() }
+        builder.create().show()
     }
 
     private fun deleteList() {
@@ -183,12 +230,54 @@ class BookBagDetailsActivity : BaseActivity() {
         }
     }
 
+    private fun showSortListDialog() {
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle(R.string.sort_by_message)
+        builder.setSingleChoiceItems(R.array.sort_by, sortBySelectedIndex) { dialog, which ->
+            this.sortBySelectedIndex = which
+            AppState.setString(SORT_BY_STATE_KEY, sortByKeyword)
+            updateItemsList()
+            dialog.dismiss()
+        }
+        builder.create().show()
+    }
+
+    internal class BookBagItemAuthorComparator(descending: Boolean): Comparator<BookBagItem> {
+        private val descending = descending
+
+        override fun compare(o1: BookBagItem?, o2: BookBagItem?): Int {
+            val key1 = if (descending) o2?.record?.author else o1?.record?.author
+            val key2 = if (descending) o1?.record?.author else o2?.record?.author
+            return when {
+                key1 == null && key2 == null -> 0
+                key1 == null -> -1
+                key2 == null -> 1
+                else -> key1.compareTo(key2)
+            }
+        }
+    }
+
     internal class BookBagItemPubdateComparator(descending: Boolean): Comparator<BookBagItem> {
         private val descending = descending
 
         override fun compare(o1: BookBagItem?, o2: BookBagItem?): Int {
             val key1 = if (descending) pubdateSortKey(o2?.record?.pubdate) else pubdateSortKey(o1?.record?.pubdate)
             val key2 = if (descending) pubdateSortKey(o1?.record?.pubdate) else pubdateSortKey(o2?.record?.pubdate)
+            return when {
+                key1 == null && key2 == null -> 0
+                key1 == null -> -1
+                key2 == null -> 1
+                else -> key1.compareTo(key2)
+            }
+        }
+    }
+
+    internal class BookBagItemTitleComparator(descending: Boolean): Comparator<BookBagItem> {
+        private val descending = descending
+
+        override fun compare(o1: BookBagItem?, o2: BookBagItem?): Int {
+            val key1 = if (descending) titleSortKey(o2?.record?.title) else titleSortKey(o1?.record?.title)
+            val key2 = if (descending) titleSortKey(o1?.record?.title) else titleSortKey(o2?.record?.title)
             return when {
                 key1 == null && key2 == null -> 0
                 key1 == null -> -1

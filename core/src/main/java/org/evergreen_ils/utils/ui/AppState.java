@@ -28,6 +28,8 @@ import org.evergreen_ils.android.Log;
 
 import java.util.Date;
 
+import androidx.annotation.NonNull;
+
 /** App State that is persistent across invocations; stored as preferences.
  */
 public class AppState {
@@ -83,44 +85,48 @@ public class AppState {
         }
     }
 
-    public static String getString(String key) {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        return prefs.getString(key, null);
+    public static String getString(@NonNull String key) {
+        return getString(key, null);
     }
 
-    public static boolean getBoolean(String key) {
+    public static String getString(@NonNull String key, String defaultValue) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        return prefs.getString(key, defaultValue);
+    }
+
+    public static boolean getBoolean(@NonNull String key) {
         return getBoolean(key, false);
     }
 
-    public static boolean getBoolean(String key, boolean defaultValue) {
+    public static boolean getBoolean(@NonNull String key, boolean defaultValue) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         return prefs.getBoolean(key, defaultValue);
     }
 
-    public static int getInt(String key) {
+    public static int getInt(@NonNull String key) {
         return getInt(key, 0);
     }
 
-    public static int getInt(String key, int defaultValue) {
+    public static int getInt(@NonNull String key, int defaultValue) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         return prefs.getInt(key, defaultValue);
     }
 
-    public static void setString(String key, String value) {
+    public static void setString(@NonNull String key, String value) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString(key, value);
         editor.commit();
     }
 
-    public static void setBoolean(String key, boolean value) {
+    public static void setBoolean(@NonNull String key, boolean value) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putBoolean(key, value);
         editor.commit();
     }
 
-    public static void setInt(String key, int value) {
+    public static void setInt(@NonNull String key, int value) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putInt(key, value);
