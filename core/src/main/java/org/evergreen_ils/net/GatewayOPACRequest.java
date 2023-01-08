@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Kenneth H. Cox
+ * Copyright (c) 2023 Kenneth H. Cox
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -13,14 +13,12 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
  */
 
 package org.evergreen_ils.net;
 
-import android.annotation.SuppressLint;
-import android.text.TextUtils;
-
+import com.android.volley.AuthFailureError;
 import com.android.volley.Cache;
 import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
@@ -30,33 +28,49 @@ import com.android.volley.toolbox.StringRequest;
 
 import org.evergreen_ils.android.Analytics;
 import org.evergreen_ils.android.Log;
-import org.evergreen_ils.utils.StringUtils;
 
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
-import androidx.core.text.TextUtilsCompat;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
-public class GatewayStringRequest extends StringRequest {
+// A request to an OPAC url that mimics a browser session with cookies.
+// We need this for managing patron messages because there is no OSRF API for it.
+public class GatewayOPACRequest extends StringRequest {
     private final String TAG = GatewayStringRequest.class.getSimpleName();
 
-    private final Priority mPriority;
+    private final Request.Priority mPriority;
     private final int mCacheTtlSeconds;
     protected Boolean mCacheHit;
     private final String mDebugTag;
+    private final String mAuthToken;
 
-    public GatewayStringRequest(String url, Priority priority, Response.Listener<String> listener, Response.ErrorListener errorListener, int cacheTtlSeconds) {
+    public GatewayOPACRequest(String url, String authToken, Request.Priority priority, Response.Listener<String> listener, Response.ErrorListener errorListener, int cacheTtlSeconds) {
         super(Request.Method.GET, url, listener, errorListener);
+        mAuthToken = authToken;
         mPriority = priority;
         mCacheTtlSeconds = cacheTtlSeconds;
         mDebugTag = Integer.toHexString(url.hashCode());
-        Log.d(TAG, String.format("[net] %1$8s send: %2$s", mDebugTag, url));
+        Log.d(TAG, "[net] "+mDebugTag+" send "+url);
         Analytics.logRequest(mDebugTag, url);
     }
 
     @Override
-    public Priority getPriority() {
+    public Request.Priority getPriority() {
         return mPriority;
+    }
+
+    @Override
+    public Map<String, String> getHeaders() throws AuthFailureError {
+        Map<String, String> m = new HashMap<>();
+        String cookie = "ses=" + mAuthToken + "; eg_loggedin=1";
+        m.put("Cookie", cookie);
+        return m;
     }
 
     @Override
@@ -69,7 +83,6 @@ public class GatewayStringRequest extends StringRequest {
         }
     }
 
-    @SuppressLint("DefaultLocale")
     protected Response<String> parseNetworkResponse(NetworkResponse response) {
         String parsed;
         try {
@@ -77,7 +90,8 @@ public class GatewayStringRequest extends StringRequest {
         } catch (UnsupportedEncodingException ex) {
             parsed = new String(response.data, Charset.defaultCharset());
         }
-        Log.d(TAG, String.format("[net] %1$8s recv:%2$s %3$5d %4$s", mDebugTag, (mCacheHit?"*":" "), response.data.length, StringUtils.take(parsed, 512)));
+        //Log.d(TAG, "[net] cached:"+(mCacheHit?"1":"0")+" url:"+getUrl());
+        Log.d(TAG, "[net] recv "+response.data.length+": "+parsed);
         Analytics.logResponse(mDebugTag, getUrl(), mCacheHit, parsed);
 
         // decide whether to cache result

@@ -132,15 +132,31 @@ object Gateway {
     suspend fun fetchString(url: String, options: RequestOptions = RequestOptions(defaultTimeoutMs)) = suspendCoroutine<String> { cont ->
         maybeInjectRandomError()
         val r = GatewayStringRequest(
-                url,
-                Request.Priority.NORMAL,
-                { response ->
-                    cont.resumeWith(Result.success(response))
-                },
-                { error ->
-                    cont.resumeWithException(error)
-                },
-                options.cacheMaxTtlSeconds)
+            url,
+            Request.Priority.NORMAL,
+            { response ->
+                cont.resumeWith(Result.success(response))
+            },
+            { error ->
+                cont.resumeWithException(error)
+            },
+            options.cacheMaxTtlSeconds)
+        enqueueRequest(r, options)
+    }
+
+    suspend fun fetchOPAC(url: String, authToken: String, options: RequestOptions = RequestOptions(defaultTimeoutMs)) = suspendCoroutine<String> { cont ->
+        maybeInjectRandomError()
+        val r = GatewayOPACRequest(
+            url,
+            authToken,
+            Request.Priority.NORMAL,
+            { response ->
+                cont.resumeWith(Result.success(response))
+            },
+            { error ->
+                cont.resumeWithException(error)
+            },
+            options.cacheMaxTtlSeconds)
         enqueueRequest(r, options)
     }
 

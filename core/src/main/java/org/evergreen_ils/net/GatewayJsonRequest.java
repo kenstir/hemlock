@@ -40,7 +40,7 @@ public class GatewayJsonRequest extends Request<GatewayResult> {
     private final Priority mPriority;
     private final int mCacheTtlSeconds;
     protected Boolean mCacheHit;
-    private String mDebugTag;
+    private final String mDebugTag;
 
     public GatewayJsonRequest(String url, Priority priority, Response.Listener<GatewayResult> listener, Response.ErrorListener errorListener, int cacheTtlSeconds) {
         super(Request.Method.GET, url, errorListener);
@@ -52,6 +52,7 @@ public class GatewayJsonRequest extends Request<GatewayResult> {
         Analytics.logRequest(mDebugTag, url);
     }
 
+    @Override
     protected void deliverResponse(GatewayResult response) {
         this.mListener.onResponse(response);
     }
@@ -80,7 +81,7 @@ public class GatewayJsonRequest extends Request<GatewayResult> {
             GatewayResult gatewayResult = GatewayResult.create(json);
 
             // decide whether to cache result
-            Cache.Entry entry = gatewayResult.getShouldCache() ? HttpHeaderParser.parseCacheHeaders(response) : null;
+            Cache.Entry entry = (shouldCache() && gatewayResult.getShouldCache()) ? HttpHeaderParser.parseCacheHeaders(response) : null;
 
             // limit cache TTL
             if (entry != null && mCacheTtlSeconds > 0) {

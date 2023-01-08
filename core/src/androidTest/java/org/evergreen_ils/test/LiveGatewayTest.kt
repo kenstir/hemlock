@@ -311,4 +311,22 @@ class LiveGatewayTest {
             }
         }
     }
+
+    @Test
+    fun test_updateMessageViaOPACRequest() {
+        val messageId = 28295855
+        val action = "mark_unread"
+        val url = Gateway.baseUrl.plus("/eg/opac/myopac/messages?action=$action&message_id=$messageId");
+
+        getAccount()
+        runBlocking {
+            launch(Dispatchers.Main) {
+                loadServiceData()
+                getSession()
+
+                val s = Gateway.fetchOPAC(url, authToken)
+//                Log.d(TAG, "s=$s")
+            }
+        }
+    }
 }
