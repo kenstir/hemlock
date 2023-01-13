@@ -27,6 +27,7 @@ import org.evergreen_ils.android.Log
 import org.evergreen_ils.data.PatronMessage
 import org.evergreen_ils.data.Result
 import org.evergreen_ils.net.Gateway
+import org.evergreen_ils.utils.ui.ActionBarUtils
 import org.evergreen_ils.utils.ui.BaseActivity
 import org.evergreen_ils.utils.ui.ProgressDialogSupport
 import org.evergreen_ils.utils.ui.showAlert
@@ -45,7 +46,7 @@ class MessagesActivity : BaseActivity() {
         if (isRestarting) return
 
         setContentView(R.layout.activity_messages)
-
+        ActionBarUtils.initActionBarForActivity(this)
         progress = ProgressDialogSupport()
 
         rv = findViewById(R.id.recycler_view)

@@ -46,10 +46,8 @@ class RecordDetailsActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        if (!App.isStarted()) {
-            App.restartApp(this)
-            return
-        }
+        if (isRestarting) return
+
         setContentView(R.layout.record_details)
         ActionBarUtils.initActionBarForActivity(this, intent.getStringExtra("title"))
 

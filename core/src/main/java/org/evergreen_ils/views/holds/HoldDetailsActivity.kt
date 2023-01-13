@@ -55,10 +55,8 @@ class HoldDetailsActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        if (!App.isStarted()) {
-            App.restartApp(this)
-            return
-        }
+        if (isRestarting) return
+
         setContentView(R.layout.hold_details)
         ActionBarUtils.initActionBarForActivity(this)
         progress = ProgressDialogSupport()
