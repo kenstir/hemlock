@@ -18,6 +18,8 @@
 
 package org.evergreen_ils.net;
 
+import android.annotation.SuppressLint;
+
 import com.android.volley.Cache;
 import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
@@ -44,7 +46,7 @@ public class GatewayStringRequest extends StringRequest {
         mPriority = priority;
         mCacheTtlSeconds = cacheTtlSeconds;
         mDebugTag = Integer.toHexString(url.hashCode());
-        Log.d(TAG, "[net] "+mDebugTag+" send "+url);
+        Log.d(TAG, String.format("[net] %1$8s send: %2$s", mDebugTag, url));
         Analytics.logRequest(mDebugTag, url);
     }
 
@@ -63,6 +65,7 @@ public class GatewayStringRequest extends StringRequest {
         }
     }
 
+    @SuppressLint("DefaultLocale")
     protected Response<String> parseNetworkResponse(NetworkResponse response) {
         String parsed;
         try {
@@ -70,8 +73,7 @@ public class GatewayStringRequest extends StringRequest {
         } catch (UnsupportedEncodingException ex) {
             parsed = new String(response.data, Charset.defaultCharset());
         }
-        //Log.d(TAG, "[net] cached:"+(mCacheHit?"1":"0")+" url:"+getUrl());
-        Log.d(TAG, "[net] recv "+response.data.length+": "+parsed);
+        Log.d(TAG, String.format("[net] %1$8s recv:%2$s %3$5d %4$s", mDebugTag, (mCacheHit?"*":" "), response.data.length, parsed));
         Analytics.logResponse(mDebugTag, getUrl(), mCacheHit, parsed);
 
         // don't cache failures

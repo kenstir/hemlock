@@ -18,6 +18,8 @@
 
 package org.evergreen_ils.net;
 
+import android.annotation.SuppressLint;
+
 import com.android.volley.Cache;
 import com.android.volley.NetworkResponse;
 import com.android.volley.ParseError;
@@ -46,7 +48,7 @@ public class GatewayJsonRequest extends Request<GatewayResult> {
         mListener = listener;
         mCacheTtlSeconds = cacheTtlSeconds;
         mDebugTag = Integer.toHexString(url.hashCode());
-        Log.d(TAG, "[net] "+mDebugTag+" send "+url);
+        Log.d(TAG, String.format("[net] %1$8s send: %2$s", mDebugTag, url));
         Analytics.logRequest(mDebugTag, url);
     }
 
@@ -69,11 +71,11 @@ public class GatewayJsonRequest extends Request<GatewayResult> {
         }
     }
 
+    @SuppressLint("DefaultLocale")
     protected Response<GatewayResult> parseNetworkResponse(NetworkResponse response) {
         try {
             String json = new String(response.data, HttpHeaderParser.parseCharset(response.headers));
-            //Log.d(TAG, "[net] cached:"+(mCacheHit?"1":"0")+" url:"+getUrl());
-            Log.d(TAG, "[net] recv "+response.data.length+": "+json);
+            Log.d(TAG, String.format("[net] %1$8s recv:%2$s %3$5d %4$s", mDebugTag, (mCacheHit?"*":" "), response.data.length, json));
             Analytics.logResponse(mDebugTag, getUrl(), mCacheHit, json);
             GatewayResult gatewayResult = GatewayResult.create(json);
 

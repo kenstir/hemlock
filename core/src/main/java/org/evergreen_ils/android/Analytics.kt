@@ -20,6 +20,7 @@ package org.evergreen_ils.android
 import android.content.Context
 import android.os.Bundle
 import android.provider.Settings
+import android.text.TextUtils
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import org.evergreen_ils.BuildConfig
@@ -177,12 +178,14 @@ object Analytics {
     @JvmStatic
     fun logResponse(tag: String, url: String, cached: Boolean, data: String) {
         // trim or redact certain responses
+        val tag8 = tag.padStart(8)
+        val badge = if (cached) "*" else " "
         if (data.startsWith("<IDL ")) {
-            addToLogBuffer("$tag recv: <IDL>")
+            addToLogBuffer("$tag recv:$badge <IDL>")
         } else if (mRedactedResponseRegex.containsMatchIn(data)) {
-            addToLogBuffer("$tag recv: ***")
+            addToLogBuffer("$tag recv:$badge ***")
         } else {
-            addToLogBuffer("$tag recv: $data")
+            addToLogBuffer("$tag recv:$badge $data")
         }
     }
 
