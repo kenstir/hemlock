@@ -18,7 +18,6 @@
 package org.evergreen_ils.net
 
 import org.evergreen_ils.data.Account
-import org.evergreen_ils.data.JSONDictionary
 import org.evergreen_ils.data.Result
 import org.opensrf.util.OSRFObject
 
@@ -32,7 +31,10 @@ interface ActorService {
     suspend fun fetchOrgAddress(addressID: Int?): Result<OSRFObject?>
     suspend fun fetchFleshedUser(account: Account): Result<OSRFObject>
     suspend fun fetchUserCheckedOut(account: Account): Result<OSRFObject>
-    suspend fun fetchUserMessages(account: Account): Result<List<OSRFObject>>
+    suspend fun fetchMessages(account: Account): Result<List<OSRFObject>>
+    suspend fun markMessageDeleted(account: Account, messageId: Int): Result<Unit>
+    suspend fun markMessageRead(account: Account, messageId: Int): Result<Unit>
+    suspend fun markMessageUnread(account: Account, messageId: Int): Result<Unit>
     suspend fun fetchUserFinesSummary(account: Account): Result<OSRFObject?>
     suspend fun fetchUserTransactionsWithCharges(account: Account): Result<List<OSRFObject>>
     suspend fun fetchBookBags(account: Account): Result<List<OSRFObject>>

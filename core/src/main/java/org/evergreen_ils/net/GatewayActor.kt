@@ -135,7 +135,7 @@ object GatewayActor: ActorService {
         }
     }
 
-    override suspend fun fetchUserMessages(account: Account): Result<List<OSRFObject>> {
+    override suspend fun fetchMessages(account: Account): Result<List<OSRFObject>> {
         return try {
             val (authToken, userID) = account.getCredentialsOrThrow()
             val args = arrayOf<Any?>(authToken, userID, null)
@@ -145,6 +145,26 @@ object GatewayActor: ActorService {
             Result.Error(e)
         }
     }
+
+    private suspend fun markMessageAction(account: Account, messageId: Int, action: String): Result<Unit> {
+        return try {
+            val (authToken, _) = account.getCredentialsOrThrow()
+            val url = Gateway.getUrl("/eg/opac/myopac/messages?action=$action&message_id=$messageId")
+            Gateway.fetchOPAC(url, authToken, RequestOptions(Gateway.defaultTimeoutMs, false, true))
+            Result.Success(Unit)
+        } catch (e: Exception) {
+            Result.Error(e)
+        }
+    }
+
+    override suspend fun markMessageDeleted(account: Account, messageId: Int): Result<Unit> =
+        markMessageAction(account, messageId, "mark_deleted")
+
+    override suspend fun markMessageRead(account: Account, messageId: Int): Result<Unit> =
+        markMessageAction(account, messageId, "mark_read")
+
+    override suspend fun markMessageUnread(account: Account, messageId: Int): Result<Unit>  =
+        markMessageAction(account, messageId, "mark_unread")
 
     override suspend fun fetchUserFinesSummary(account: Account): Result<OSRFObject?> {
         return try {

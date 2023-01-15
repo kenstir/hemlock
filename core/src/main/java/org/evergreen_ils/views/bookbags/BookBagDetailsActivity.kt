@@ -74,7 +74,6 @@ class BookBagDetailsActivity : BaseActivity() {
         if (isRestarting) return
 
         setContentView(R.layout.bookbagitem_list)
-
         ActionBarUtils.initActionBarForActivity(this)
 
         progress = ProgressDialogSupport()

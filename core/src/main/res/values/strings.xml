@@ -246,5 +246,9 @@
     <string name="menu_delete_message">Delete message</string>
     <string name="title_messages">Messages</string>
     <string name="button_delete">Delete</string>
+    <string name="title_message_details">Message Details</string>
+    <string name="menu_mark_read">Mark read</string>
+    <string name="menu_mark_unread">Mark unread</string>
+    <string name="menu_view_message">View message</string>
 
 </resources>

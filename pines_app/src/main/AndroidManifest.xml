@@ -109,6 +109,10 @@
             android:label="@string/hold_place_title">
         </activity>
         <activity
+            android:name="org.evergreen_ils.views.messages.MessageDetailsActivity"
+            android:label="@string/title_message_details">
+        </activity>
+        <activity
             android:name="org.evergreen_ils.views.search.AdvancedSearchActivity"
             android:label="@string/advanced_search">
         </activity>

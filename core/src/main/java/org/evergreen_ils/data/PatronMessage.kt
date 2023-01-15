@@ -21,7 +21,7 @@ package org.evergreen_ils.data
 import org.opensrf.util.OSRFObject
 import java.util.ArrayList
 
-data class PatronMessage(val id: Int, val obj: OSRFObject) {
+data class PatronMessage(val id: Int, val obj: OSRFObject) : java.io.Serializable {
 
     val createDate = obj.getDate("create_date")
     val readDate = obj.getDate("read_date")

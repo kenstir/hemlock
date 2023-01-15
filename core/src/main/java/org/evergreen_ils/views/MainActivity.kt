@@ -117,7 +117,7 @@ class MainActivity : BaseActivity() {
         async {
             if (resources.getBoolean(R.bool.ou_enable_messages)) {
                 val start = System.currentTimeMillis()
-                val result = Gateway.actor.fetchUserMessages(App.getAccount())
+                val result = Gateway.actor.fetchMessages(App.getAccount())
                 Log.logElapsedTime(TAG, start, "[async] fetchUserMessages ... done")
                 when (result) {
                     is Result.Success ->  updateMessagesBadge(result.data)
