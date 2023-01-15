@@ -19,6 +19,7 @@
 package org.evergreen_ils.net;
 
 import android.annotation.SuppressLint;
+import android.text.TextUtils;
 
 import com.android.volley.Cache;
 import com.android.volley.NetworkResponse;
@@ -29,9 +30,12 @@ import com.android.volley.toolbox.StringRequest;
 
 import org.evergreen_ils.android.Analytics;
 import org.evergreen_ils.android.Log;
+import org.evergreen_ils.utils.StringUtils;
 
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
+
+import androidx.core.text.TextUtilsCompat;
 
 public class GatewayStringRequest extends StringRequest {
     private final String TAG = GatewayStringRequest.class.getSimpleName();
@@ -73,7 +77,7 @@ public class GatewayStringRequest extends StringRequest {
         } catch (UnsupportedEncodingException ex) {
             parsed = new String(response.data, Charset.defaultCharset());
         }
-        Log.d(TAG, String.format("[net] %1$8s recv:%2$s %3$5d %4$s", mDebugTag, (mCacheHit?"*":" "), response.data.length, parsed));
+        Log.d(TAG, String.format("[net] %1$8s recv:%2$s %3$5d %4$s", mDebugTag, (mCacheHit?"*":" "), response.data.length, StringUtils.take(parsed, 512)));
         Analytics.logResponse(mDebugTag, getUrl(), mCacheHit, parsed);
 
         // don't cache failures

@@ -26,4 +26,12 @@ public class StringUtils {
             return "";
         return s;
     }
+
+    public static @NonNull String take(String s, Integer len) {
+        if (s == null)
+            return "";
+        if (s.length() < len)
+            return s;
+        return s.substring(0, len);
+    }
 }
