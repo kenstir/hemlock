@@ -19,14 +19,19 @@
 package org.evergreen_ils.views.messages
 
 import android.os.Bundle
+import android.view.Menu
 import android.view.MenuItem
 import android.widget.TextView
+import kotlinx.coroutines.async
 import org.evergreen_ils.R
-import org.evergreen_ils.data.BookBag
+import org.evergreen_ils.android.App
 import org.evergreen_ils.data.PatronMessage
+import org.evergreen_ils.data.Result
+import org.evergreen_ils.net.Gateway
 import org.evergreen_ils.utils.ui.ActionBarUtils
 import org.evergreen_ils.utils.ui.BaseActivity
-import org.w3c.dom.Text
+import org.evergreen_ils.utils.ui.showAlert
+import org.evergreen_ils.views.messages.MessagesActivity.Companion.RESULT_MESSAGE_UPDATED
 
 class MessageDetailsActivity : BaseActivity() {
     val TAG = javaClass.simpleName
@@ -51,12 +56,53 @@ class MessageDetailsActivity : BaseActivity() {
         body.text = message.message
     }
 
+    override fun onAttachedToWindow() {
+        super.onAttachedToWindow()
+        markMessageRead()
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        menuInflater.inflate(R.menu.menu_message_details, menu)
+        return super.onCreateOptionsMenu(menu)
+    }
+
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        val id = item.itemId
-        if (id == android.R.id.home) {
-            onBackPressed()
-            return true
+        when (item.itemId) {
+            R.id.action_message_mark_unread -> markMessageUnreadAndFinish()
+            R.id.action_message_delete -> markMessageDeletedAndFinish()
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    private fun markMessageDeletedAndFinish() {
+        async {
+            val result = Gateway.actor.markMessageDeleted(App.getAccount(), message.id)
+            if (result is Result.Error) {
+                showAlert(result.exception); return@async
+            }
+            setResult(RESULT_MESSAGE_UPDATED)
+            finish()
+        }
+    }
+
+    private fun markMessageRead() {
+        async {
+            val result = Gateway.actor.markMessageRead(App.getAccount(), message.id)
+            if (result is Result.Error) {
+                showAlert(result.exception); return@async
+            }
+            setResult(RESULT_MESSAGE_UPDATED)
+        }
+    }
+
+    private fun markMessageUnreadAndFinish() {
+        async {
+            val result = Gateway.actor.markMessageUnread(App.getAccount(), message.id)
+            if (result is Result.Error) {
+                showAlert(result.exception); return@async
+            }
+            setResult(RESULT_MESSAGE_UPDATED)
+            finish()
+        }
     }
 }

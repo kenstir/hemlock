@@ -34,12 +34,12 @@
 
     </LinearLayout>
 
-    <Button
-        android:id="@+id/delete_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="top"
-        android:focusable="false"
-        android:text="@string/button_delete" />
+<!--    <Button-->
+<!--        android:id="@+id/delete_button"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_gravity="top"-->
+<!--        android:focusable="false"-->
+<!--        android:text="@string/button_delete" />-->
 
 </LinearLayout>

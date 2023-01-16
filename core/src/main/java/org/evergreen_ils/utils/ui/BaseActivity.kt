@@ -42,9 +42,8 @@ import org.evergreen_ils.R
 import org.evergreen_ils.android.AccountUtils
 import org.evergreen_ils.android.Analytics
 import org.evergreen_ils.android.App
-import org.evergreen_ils.android.App.REQUEST_MYOPAC_MESSAGES
+import org.evergreen_ils.android.App.REQUEST_MESSAGES
 import org.evergreen_ils.android.Log
-import org.evergreen_ils.net.Gateway
 import org.evergreen_ils.views.search.SearchActivity
 import org.evergreen_ils.system.EgOrg
 import org.evergreen_ils.system.EgSearch
@@ -147,11 +146,16 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        val id = item.itemId
-        if (id == R.id.action_feedback) {
-            Analytics.logEvent(Analytics.Event.FEEDBACK_OPEN)
-            launchURL(feedbackUrl)
-            return true
+        when (item.itemId) {
+            android.R.id.home -> {
+                onBackPressed()
+                return true
+            }
+            R.id.action_feedback -> {
+                Analytics.logEvent(Analytics.Event.FEEDBACK_OPEN)
+                launchURL(feedbackUrl)
+                return true
+            }
         }
         return super.onOptionsItemSelected(item)
     }
@@ -213,7 +217,7 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
             return true
         } else if (id == R.id.action_messages) {
             Analytics.logEvent(Analytics.Event.MESSAGES_OPEN)
-            startActivity(Intent(this, MessagesActivity::class.java))
+            startActivityForResult(Intent(this, MessagesActivity::class.java), REQUEST_MESSAGES)
             return true
         } else if (id == R.id.action_dark_mode) {
             ThemeManager.saveAndApplyNightMode(AppCompatDelegate.MODE_NIGHT_YES)

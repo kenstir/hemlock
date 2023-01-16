@@ -128,6 +128,13 @@ class MessagesActivity : BaseActivity() {
         }
     }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (resultCode != RESULT_CANCELED) {
+            fetchData()
+        }
+    }
+
     override fun onCreateContextMenu(menu: ContextMenu, v: View, menuInfo: ContextMenu.ContextMenuInfo?) {
         if (v.id == R.id.recycler_view) {
             menu.add(Menu.NONE, MESSAGE_DELETE, 3, getString(R.string.menu_delete_message))
@@ -163,7 +170,7 @@ class MessagesActivity : BaseActivity() {
     private fun viewMessage(message: PatronMessage) {
         val intent = Intent(this, MessageDetailsActivity::class.java)
         intent.putExtra("patronMessage", message)
-        startActivity(intent)
+        startActivityForResult(intent, 0)
     }
 
     private fun markMessageDeleted(message: PatronMessage) {
@@ -194,5 +201,9 @@ class MessagesActivity : BaseActivity() {
             }
             fetchData()
         }
+    }
+
+    companion object {
+        const val RESULT_MESSAGE_UPDATED = 1
     }
 }

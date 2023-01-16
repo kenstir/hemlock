@@ -64,10 +64,7 @@ class BookBagDetailsActivity : BaseActivity() {
     private lateinit var SORT_BY_TITLE: String
     private var sortBySelectedIndex = 0
 
-    private val sortByKeyword: String
-        get() {
-            return sortByKeywords[sortBySelectedIndex]
-        }
+    private val sortByKeyword: String = sortByKeywords[sortBySelectedIndex]
 
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -114,8 +111,7 @@ class BookBagDetailsActivity : BaseActivity() {
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        val inflater = menuInflater
-        inflater.inflate(R.menu.menu_bookbag_details, menu)
+        menuInflater.inflate(R.menu.menu_bookbag_details, menu)
         return super.onCreateOptionsMenu(menu)
     }
 

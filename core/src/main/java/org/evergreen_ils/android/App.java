@@ -40,7 +40,7 @@ public class App {
     private static final String TAG = App.class.getSimpleName();
 
     // request/result codes for use with startActivityForResult
-    public static final int REQUEST_MYOPAC_MESSAGES = 10002;
+    public static final int REQUEST_MESSAGES = 10002;
 
     private static int mIsDebuggable = -1;
 

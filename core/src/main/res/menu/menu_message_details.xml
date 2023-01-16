@@ -4,5 +4,8 @@
     tools:context="org.evergreen_ils.views.messages.MessagesActivity">
     <item android:id="@+id/action_message_delete" android:title="@string/menu_delete_message"
         android:icon="@drawable/baseline_delete_white_24"
-        app:showAsAction="never" />
+        app:showAsAction="ifRoom" />
+    <item android:id="@+id/action_message_mark_unread" android:title="@string/menu_mark_unread"
+        android:icon="@drawable/baseline_mark_email_unread_white_24"
+        app:showAsAction="ifRoom" />
 </menu>
