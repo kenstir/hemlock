@@ -58,7 +58,6 @@ class MessagesActivity : BaseActivity() {
         if (isRestarting) return
 
         setContentView(R.layout.activity_messages)
-//        ActionBarUtils.initActionBarForActivity(this)
         progress = ProgressDialogSupport()
 
         rv = findViewById(R.id.recycler_view)
