@@ -39,10 +39,6 @@ import java.io.File;
 public class App {
     private static final String TAG = App.class.getSimpleName();
 
-    public static final int ITEM_PLACE_HOLD = 0;
-    public static final int ITEM_SHOW_DETAILS = 1;
-    public static final int ITEM_ADD_TO_LIST = 2;
-
     // request/result codes for use with startActivityForResult
     public static final int REQUEST_MYOPAC_MESSAGES = 10002;
 

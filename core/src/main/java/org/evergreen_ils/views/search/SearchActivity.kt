@@ -35,11 +35,9 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.*
 import androidx.appcompat.widget.SwitchCompat
 import androidx.core.app.ActivityCompat
-import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.content.pm.PackageInfoCompat
 import androidx.core.os.bundleOf
 import com.google.android.gms.common.GoogleApiAvailability
-import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.mlkit.common.MlKitException
 import com.google.mlkit.vision.barcode.common.Barcode
 import com.google.mlkit.vision.codescanner.GmsBarcodeScanning
@@ -62,6 +60,10 @@ import org.evergreen_ils.views.bookbags.BookBagUtils.showAddToListDialog
 import org.evergreen_ils.views.holds.PlaceHoldActivity
 import org.opensrf.util.OSRFObject
 
+
+const val ITEM_PLACE_HOLD = 0
+const val ITEM_SHOW_DETAILS = 1
+const val ITEM_ADD_TO_LIST = 2
 
 const val SEARCH_OPTIONS_VISIBLE_STATE_KEY = "search_options_visible"
 const val SEARCH_CLASS_IDENTIFIER = "identifier"
@@ -111,7 +113,6 @@ class SearchActivity : BaseActivity(), ActivityCompat.OnRequestPermissionsResult
         if (isRestarting) return
 
         setContentView(R.layout.activity_search)
-
         progress = ProgressDialogSupport()
 
         // clear prior search results unless this is the same user and we just rotated
@@ -376,18 +377,16 @@ class SearchActivity : BaseActivity(), ActivityCompat.OnRequestPermissionsResult
 
     override fun onCreateContextMenu(menu: ContextMenu, v: View, menuInfo: ContextMenu.ContextMenuInfo?) {
         if (v.id == R.id.search_results_list) {
-//            val info = menuInfo as AdapterView.AdapterContextMenuInfo
-            menu.add(Menu.NONE, App.ITEM_SHOW_DETAILS, 0, getString(R.string.show_details_message))
-            menu.add(Menu.NONE, App.ITEM_PLACE_HOLD, 1, getString(R.string.button_place_hold))
-            menu.add(Menu.NONE, App.ITEM_ADD_TO_LIST, 2, getString(R.string.add_to_my_list_message))
+            menu.add(Menu.NONE, ITEM_SHOW_DETAILS, 0, getString(R.string.show_details_message))
+            menu.add(Menu.NONE, ITEM_PLACE_HOLD, 1, getString(R.string.button_place_hold))
+            menu.add(Menu.NONE, ITEM_ADD_TO_LIST, 2, getString(R.string.add_to_my_list_message))
         }
     }
 
     override fun onContextItemSelected(item: MenuItem): Boolean {
-        //ContextMenuRecordInfo info = (ContextMenuRecordInfo)item.getMenuInfo();
-        val info = contextMenuRecordInfo ?: return false
+        val info = contextMenuRecordInfo ?: return super.onContextItemSelected(item)
         when (item.itemId) {
-            App.ITEM_SHOW_DETAILS -> {
+            ITEM_SHOW_DETAILS -> {
                 val intent = Intent(baseContext, RecordDetailsActivity::class.java)
                 intent.putExtra("orgID", EgSearch.selectedOrganization?.id)
                 intent.putExtra("recordPosition", info.position)
@@ -395,13 +394,13 @@ class SearchActivity : BaseActivity(), ActivityCompat.OnRequestPermissionsResult
                 startActivity(intent)
                 return true
             }
-            App.ITEM_PLACE_HOLD -> {
+            ITEM_PLACE_HOLD -> {
                 val intent = Intent(baseContext, PlaceHoldActivity::class.java)
                 intent.putExtra("recordInfo", info.record)
                 startActivity(intent)
                 return true
             }
-            App.ITEM_ADD_TO_LIST -> {
+            ITEM_ADD_TO_LIST -> {
                 if (!App.getAccount().bookBags.isNullOrEmpty()) {
                     //Analytics.logEvent("lists_additem", "via", "results_long_press")
                     showAddToListDialog(this, App.getAccount().bookBags, info.record!!)
