@@ -64,7 +64,10 @@ class BookBagDetailsActivity : BaseActivity() {
     private lateinit var SORT_BY_TITLE: String
     private var sortBySelectedIndex = 0
 
-    private val sortByKeyword: String = sortByKeywords[sortBySelectedIndex]
+    private val sortByKeyword: String
+        get() {
+            return sortByKeywords[sortBySelectedIndex]
+        }
 
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
