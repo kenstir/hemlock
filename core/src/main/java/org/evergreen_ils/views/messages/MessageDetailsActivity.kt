@@ -32,13 +32,12 @@ import org.evergreen_ils.utils.ui.ActionBarUtils
 import org.evergreen_ils.utils.ui.BaseActivity
 import org.evergreen_ils.utils.ui.showAlert
 import org.evergreen_ils.views.messages.MessagesActivity.Companion.RESULT_MESSAGE_UPDATED
+import java.text.DateFormat
 
 class MessageDetailsActivity : BaseActivity() {
     val TAG = javaClass.simpleName
 
     private lateinit var message: PatronMessage
-    private var title: TextView? = null
-    private var body: TextView? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,9 +49,11 @@ class MessageDetailsActivity : BaseActivity() {
         message = intent.getSerializableExtra("patronMessage") as PatronMessage
 
         val title = findViewById<TextView>(R.id.message_title)
+        val date = findViewById<TextView>(R.id.message_date)
         val body = findViewById<TextView>(R.id.message_body)
 
         title.text = message.title
+        date.text = if (message.createDate != null) DateFormat.getDateInstance().format(message.createDate) else ""
         body.text = message.message
     }
 
