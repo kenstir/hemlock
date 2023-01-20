@@ -28,6 +28,7 @@ import com.android.volley.toolbox.StringRequest;
 
 import org.evergreen_ils.android.Analytics;
 import org.evergreen_ils.android.Log;
+import org.evergreen_ils.utils.StringUtils;
 
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
@@ -56,7 +57,7 @@ public class GatewayOPACRequest extends StringRequest {
         mPriority = priority;
         mCacheTtlSeconds = cacheTtlSeconds;
         mDebugTag = Integer.toHexString(url.hashCode());
-        Log.d(TAG, "[net] "+mDebugTag+" send "+url);
+        Log.d(TAG, String.format("[net] %1$8s send: %2$s", mDebugTag, url));
         Analytics.logRequest(mDebugTag, url);
     }
 
@@ -90,9 +91,9 @@ public class GatewayOPACRequest extends StringRequest {
         } catch (UnsupportedEncodingException ex) {
             parsed = new String(response.data, Charset.defaultCharset());
         }
-        //Log.d(TAG, "[net] cached:"+(mCacheHit?"1":"0")+" url:"+getUrl());
-        Log.d(TAG, "[net] recv "+response.data.length+": "+parsed);
-        Analytics.logResponse(mDebugTag, getUrl(), mCacheHit, parsed);
+        String trimmed = StringUtils.take(parsed, 512);
+        Log.d(TAG, String.format("[net] %1$8s recv:%2$s %3$5d %4$s", mDebugTag, (mCacheHit?"*":" "), response.data.length, trimmed));
+        Analytics.logResponse(mDebugTag, getUrl(), mCacheHit, trimmed);
 
         // decide whether to cache result
         Cache.Entry entry = (shouldCache() && response.statusCode == 200) ? HttpHeaderParser.parseCacheHeaders(response) : null;

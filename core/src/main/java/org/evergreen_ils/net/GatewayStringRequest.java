@@ -77,8 +77,9 @@ public class GatewayStringRequest extends StringRequest {
         } catch (UnsupportedEncodingException ex) {
             parsed = new String(response.data, Charset.defaultCharset());
         }
-        Log.d(TAG, String.format("[net] %1$8s recv:%2$s %3$5d %4$s", mDebugTag, (mCacheHit?"*":" "), response.data.length, StringUtils.take(parsed, 512)));
-        Analytics.logResponse(mDebugTag, getUrl(), mCacheHit, parsed);
+        String trimmed = StringUtils.take(parsed, 512);
+        Log.d(TAG, String.format("[net] %1$8s recv:%2$s %3$5d %4$s", mDebugTag, (mCacheHit?"*":" "), response.data.length, trimmed));
+        Analytics.logResponse(mDebugTag, getUrl(), mCacheHit, trimmed);
 
         // decide whether to cache result
         Cache.Entry entry = (shouldCache() && response.statusCode == 200) ? HttpHeaderParser.parseCacheHeaders(response) : null;
