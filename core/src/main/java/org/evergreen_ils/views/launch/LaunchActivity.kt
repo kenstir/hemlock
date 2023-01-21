@@ -18,7 +18,6 @@
 
 package org.evergreen_ils.views.launch
 
-import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -176,9 +175,8 @@ class LaunchActivity : AppCompatActivity(), CoroutineScope by MainScope() {
                     onLaunchFailure()
                 }
             } catch (ex: Exception) {
-                Log.d(TAG, "[kcxxx] caught in loadAccountData", ex)
-                Analytics.logException(ex)
-                var msg = ex.message ?: "Cancelled"
+                logFailedLogin(ex)
+                val msg = ex.message ?: "Cancelled"
                 mProgressText?.text = msg
                 onLaunchFailure()
             }
@@ -263,24 +261,33 @@ class LaunchActivity : AppCompatActivity(), CoroutineScope by MainScope() {
             }
         }
 
-        logStartEvent(account)
+        logSuccessfulLogin(account)
 
         return true
     }
 
     // We call this event "login", but it happens after auth and after fleshing the user.
     // NB: "session_start" seems more appropriate but that is a predefined automatic event.
-    private fun logStartEvent(account: Account) {
+    private fun logSuccessfulLogin(account: Account) {
         val homeOrg = EgOrg.getOrgShortNameSafe(account.homeOrg)
         val parentOrg = EgOrg.getOrgShortNameSafe(EgOrg.findOrg(account.homeOrg)?.parent)
         Analytics.setUserProperties(bundleOf(
-                Analytics.UserProperty.HOME_ORG to homeOrg,
-                Analytics.UserProperty.PARENT_ORG to parentOrg
+            Analytics.UserProperty.HOME_ORG to homeOrg,
+            Analytics.UserProperty.PARENT_ORG to parentOrg
         ))
         Analytics.logEvent(Analytics.Event.LOGIN, bundleOf(
-                Analytics.UserProperty.HOME_ORG to homeOrg,
-                Analytics.UserProperty.PARENT_ORG to parentOrg,
-                Analytics.Param.LOGIN_TYPE to Analytics.loginTypeKey(account.username, account.barcode),
+            Analytics.Param.RESULT to Analytics.Value.OK,
+            Analytics.UserProperty.HOME_ORG to homeOrg,
+            Analytics.UserProperty.PARENT_ORG to parentOrg,
+            Analytics.Param.LOGIN_TYPE to Analytics.loginTypeKey(account.username, account.barcode),
+        ))
+    }
+
+    private fun logFailedLogin(ex: java.lang.Exception) {
+        val c = ex.javaClass.simpleName
+        val m = ex.message ?: c
+        Analytics.logEvent(Analytics.Event.LOGIN, bundleOf(
+            Analytics.Param.RESULT to m
         ))
     }
 

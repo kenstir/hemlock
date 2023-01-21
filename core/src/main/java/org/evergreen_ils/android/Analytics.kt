@@ -20,7 +20,6 @@ package org.evergreen_ils.android
 import android.content.Context
 import android.os.Bundle
 import android.provider.Settings
-import android.text.TextUtils
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import org.evergreen_ils.BuildConfig
