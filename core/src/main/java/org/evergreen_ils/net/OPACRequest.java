@@ -32,17 +32,12 @@ import org.evergreen_ils.utils.StringUtils;
 
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 
 // A request to an OPAC url that mimics a browser session with cookies.
 // We need this for managing patron messages because there is no OSRF API for it.
-public class GatewayOPACRequest extends StringRequest {
+public class OPACRequest extends StringRequest {
     private final String TAG = GatewayStringRequest.class.getSimpleName();
 
     private final Request.Priority mPriority;
@@ -51,7 +46,7 @@ public class GatewayOPACRequest extends StringRequest {
     private final String mDebugTag;
     private final String mAuthToken;
 
-    public GatewayOPACRequest(String url, String authToken, Request.Priority priority, Response.Listener<String> listener, Response.ErrorListener errorListener, int cacheTtlSeconds) {
+    public OPACRequest(String url, String authToken, Request.Priority priority, Response.Listener<String> listener, Response.ErrorListener errorListener, int cacheTtlSeconds) {
         super(Request.Method.GET, url, listener, errorListener);
         mAuthToken = authToken;
         mPriority = priority;

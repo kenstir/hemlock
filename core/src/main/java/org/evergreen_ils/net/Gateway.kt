@@ -146,7 +146,7 @@ object Gateway {
 
     suspend fun fetchOPAC(url: String, authToken: String, options: RequestOptions = RequestOptions(defaultTimeoutMs)) = suspendCoroutine<String> { cont ->
         maybeInjectRandomError()
-        val r = GatewayOPACRequest(
+        val r = OPACRequest(
             url,
             authToken,
             Request.Priority.NORMAL,
