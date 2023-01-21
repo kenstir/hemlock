@@ -18,6 +18,7 @@
 package org.evergreen_ils.android
 
 import android.content.Context
+import android.content.pm.ApplicationInfo
 import android.os.Bundle
 import android.provider.Settings
 import com.google.firebase.analytics.FirebaseAnalytics
@@ -98,13 +99,17 @@ object Analytics {
         val setting: String? = Settings.System.getString(context.contentResolver, "firebase.test.lab")
         runningInTestLab = (setting == "true")
 
-        if (context.resources.getBoolean(R.bool.ou_enable_analytics) && !runningInTestLab) {
+        if (context.resources.getBoolean(R.bool.ou_enable_analytics) && !runningInTestLab && !isDebuggable(context)) {
             analytics = true
             if (mAnalytics == null)
                 mAnalytics = FirebaseAnalytics.getInstance(context)
         }
 
         initialized = true
+    }
+
+    private fun isDebuggable(context: Context): Boolean {
+        return 0 != ApplicationInfo.FLAG_DEBUGGABLE.let { context.applicationInfo.flags = context.applicationInfo.flags and it; context.applicationInfo.flags }
     }
 
     @JvmStatic

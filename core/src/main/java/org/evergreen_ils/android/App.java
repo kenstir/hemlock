@@ -42,20 +42,12 @@ public class App {
     // request/result codes for use with startActivityForResult
     public static final int REQUEST_MESSAGES = 10002;
 
-    private static int mIsDebuggable = -1;
-
     public static boolean mStarted = false;
     private static boolean mCachedEnabled = false;
 
     private static AppBehavior behavior = null;
     private static Library library = null;
     private static Account account = null;
-
-    public static boolean getIsDebuggable(Context context) {
-        if (mIsDebuggable < 0)
-            mIsDebuggable = (context.getApplicationInfo().flags &= ApplicationInfo.FLAG_DEBUGGABLE);
-        return mIsDebuggable > 0;
-    }
 
     public static int getVersionCode(Context context) {
         PackageInfo pInfo = null;
