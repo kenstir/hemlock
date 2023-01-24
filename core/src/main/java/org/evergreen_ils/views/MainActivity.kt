@@ -130,7 +130,7 @@ class MainActivity : BaseActivity() {
     private fun updateMessagesBadge(messageList: List<OSRFObject>) {
         val messages = PatronMessage.makeArray(messageList)
         mUnreadMessageCount = messages.count {
-            !it.isRead && !it.isDeleted && it.isPatronVisible
+            it.isPatronVisible && !it.isDeleted && !it.isRead
         }
         updateUnreadMessagesText()
     }

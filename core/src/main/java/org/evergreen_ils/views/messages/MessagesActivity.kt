@@ -105,7 +105,7 @@ class MessagesActivity : BaseActivity() {
     private fun loadVisibleMessages(messageList: List<PatronMessage>) {
         items.clear()
         messageList.forEach {
-            if (!it.isDeleted && it.isPatronVisible) {
+            if (it.isPatronVisible && !it.isDeleted) {
                 items.add(it)
             }
         }
