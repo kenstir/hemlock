@@ -306,11 +306,13 @@ class BookBagDetailsActivity : BaseActivity() {
 
             val title = row.findViewById<View>(R.id.bookbagitem_title) as TextView
             val author = row.findViewById<View>(R.id.bookbagitem_author) as TextView
+            val pubdate = row.findViewById<View>(R.id.bookbagitem_pubdate) as TextView
             val remove = row.findViewById<View>(R.id.bookbagitem_remove_button) as Button
 
             val record = getItem(position)
             title.text = record?.record?.title
             author.text = record?.record?.author
+            pubdate.text = record?.record?.pubdate
             remove.setOnClickListener(View.OnClickListener {
                 val id = record?.id ?: return@OnClickListener
                 async {
