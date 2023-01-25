@@ -4,7 +4,10 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:id="@+id/action_bookbag_sort" android:title="@string/menu_sort_bookbag"
         android:icon="@drawable/outline_sort_white_24"
-        app:showAsAction="always" />
+        app:showAsAction="ifRoom" />
+    <item android:id="@+id/action_bookbag_sort_order" android:title="Sort order"
+        android:icon="@drawable/baseline_arrow_downward_white_24"
+        app:showAsAction="ifRoom" />
     <item android:id="@+id/action_bookbag_delete" android:title="@string/menu_delete_bookbag"
         android:icon="@drawable/baseline_delete_white_24"
         app:showAsAction="never" />
