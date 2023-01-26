@@ -5,8 +5,11 @@
     <item android:id="@+id/action_bookbag_sort" android:title="@string/menu_sort_bookbag"
         android:icon="@drawable/outline_sort_white_24"
         app:showAsAction="ifRoom" />
-    <item android:id="@+id/action_bookbag_sort_order" android:title="Sort order"
+    <item android:id="@+id/action_bookbag_sort_desc" android:title="@string/menu_sort_descending"
         android:icon="@drawable/baseline_arrow_downward_white_24"
+        app:showAsAction="ifRoom" />
+    <item android:id="@+id/action_bookbag_sort_asc" android:title="@string/menu_sort_ascending"
+        android:icon="@drawable/baseline_arrow_upward_white_24"
         app:showAsAction="ifRoom" />
     <item android:id="@+id/action_bookbag_delete" android:title="@string/menu_delete_bookbag"
         android:icon="@drawable/baseline_delete_white_24"

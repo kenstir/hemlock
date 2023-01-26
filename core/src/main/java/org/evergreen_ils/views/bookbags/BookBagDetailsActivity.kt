@@ -117,9 +117,16 @@ class BookBagDetailsActivity : BaseActivity() {
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        val inflater = menuInflater
-        inflater.inflate(R.menu.menu_bookbag_details, menu)
+        menuInflater.inflate(R.menu.menu_bookbag_details, menu)
         return super.onCreateOptionsMenu(menu)
+    }
+
+    // According to https://developer.android.com/develop/ui/views/components/menus#ChangingTheMenu
+    // one should make runtime menu changes in onPrepareOptionsMenu, not onCreateOptionsMenu.
+    override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
+        // whichever way the sort is going, remove the other menuItem
+        menu?.removeItem(if (sortDescending) { R.id.action_bookbag_sort_asc } else R.id.action_bookbag_sort_desc)
+        return super.onPrepareOptionsMenu(menu)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -132,7 +139,7 @@ class BookBagDetailsActivity : BaseActivity() {
                 showSortListDialog()
                 return true
             }
-            R.id.action_bookbag_sort_order -> {
+            R.id.action_bookbag_sort_asc, R.id.action_bookbag_sort_desc -> {
                 reverseSortOrder()
                 return true
             }
@@ -241,7 +248,7 @@ class BookBagDetailsActivity : BaseActivity() {
 
     private fun showSortListDialog() {
         val builder = AlertDialog.Builder(this)
-        builder.setTitle(R.string.sort_by_message)
+        builder.setTitle(R.string.msg_sort_by)
         builder.setSingleChoiceItems(R.array.sort_by, sortBySelectedIndex) { dialog, which ->
             this.sortBySelectedIndex = which
             AppState.setString(SORT_BY_STATE_KEY, sortByKeyword)
@@ -254,6 +261,7 @@ class BookBagDetailsActivity : BaseActivity() {
     private fun reverseSortOrder() {
         sortDescending = !sortDescending
         AppState.setBoolean(SORT_DESC_STATE_KEY, sortDescending)
+        invalidateOptionsMenu()
         updateItemsList()
     }
 

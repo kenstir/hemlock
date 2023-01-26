@@ -138,7 +138,9 @@
     <!-- Bookbag Activities -->
     <string name="menu_delete_bookbag">Delete list</string>
     <string name="menu_sort_bookbag">Sort list</string>
-    <string name="sort_by_message">Sort by</string>
+    <string name="menu_sort_descending">Sort descending</string>
+    <string name="menu_sort_ascending">Sort ascending</string>
+    <string name="msg_sort_by">Sort by</string>
     <string name="list_delete_button">Delete List</string>
     <string name="list_details_button">Details</string>
     <string name="list_item_remove_button">Remove</string>
