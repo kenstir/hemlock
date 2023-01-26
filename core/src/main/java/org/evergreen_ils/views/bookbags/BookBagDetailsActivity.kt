@@ -46,6 +46,7 @@ import java.util.*
 
 const val RESULT_CODE_UPDATE = 1
 const val SORT_BY_STATE_KEY = "sort_by"
+const val SORT_DESC_STATE_KEY = "sort_desc"
 
 class BookBagDetailsActivity : BaseActivity() {
     private val TAG = javaClass.simpleName
@@ -63,6 +64,7 @@ class BookBagDetailsActivity : BaseActivity() {
     private lateinit var SORT_BY_PUBDATE: String
     private lateinit var SORT_BY_TITLE: String
     private var sortBySelectedIndex = 0
+    private var sortDescending = true
 
     private val sortByKeyword: String
         get() {
@@ -118,16 +120,30 @@ class BookBagDetailsActivity : BaseActivity() {
         return super.onCreateOptionsMenu(menu)
     }
 
+    // According to https://developer.android.com/develop/ui/views/components/menus#ChangingTheMenu
+    // one should make runtime menu changes in onPrepareOptionsMenu, not onCreateOptionsMenu.
+    override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
+        // whichever way the sort is going, remove the other menuItem
+        menu?.removeItem(if (sortDescending) { R.id.action_bookbag_sort_asc } else R.id.action_bookbag_sort_desc)
+        return super.onPrepareOptionsMenu(menu)
+    }
+
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        val id = item.itemId
-        if (id == R.id.action_bookbag_delete) {
-            confirmDeleteList()
-            return true
-        } else if (id == R.id.action_bookbag_sort) {
-            showSortListDialog()
-            return true
+        when (item.itemId) {
+            R.id.action_bookbag_delete -> {
+                confirmDeleteList()
+                return true
+            }
+            R.id.action_bookbag_sort -> {
+                showSortListDialog()
+                return true
+            }
+            R.id.action_bookbag_sort_asc, R.id.action_bookbag_sort_desc -> {
+                reverseSortOrder()
+                return true
+            }
+            else -> return super.onOptionsItemSelected(item)
         }
-        return super.onOptionsItemSelected(item)
     }
 
     private fun initSortBy() {
@@ -136,7 +152,8 @@ class BookBagDetailsActivity : BaseActivity() {
         SORT_BY_PUBDATE = resources.getString(R.string.sort_by_pubdate_keyword)
         SORT_BY_TITLE = resources.getString(R.string.sort_by_title_keyword)
 
-        // the default sort is last used, pubdate by default
+        // the default sort is whatever was last selected; pubdate descending by default
+        sortDescending = AppState.getBoolean(SORT_DESC_STATE_KEY, true)
         val keyword = AppState.getString(SORT_BY_STATE_KEY, SORT_BY_PUBDATE)
         val index = if (keyword in sortByKeywords) sortByKeywords.indexOf(keyword) else sortByKeywords.indexOf(SORT_BY_PUBDATE)
         sortBySelectedIndex = index
@@ -186,10 +203,10 @@ class BookBagDetailsActivity : BaseActivity() {
 
     private fun updateItemsList() {
         val comparator = when (sortByKeyword) {
-            SORT_BY_AUTHOR -> BookBagItemAuthorComparator(false)
-            SORT_BY_PUBDATE -> BookBagItemPubdateComparator(true)
-            SORT_BY_TITLE -> BookBagItemTitleComparator(false)
-            else -> BookBagItemPubdateComparator(true)
+            SORT_BY_AUTHOR -> BookBagItemAuthorComparator(sortDescending)
+            SORT_BY_PUBDATE -> BookBagItemPubdateComparator(sortDescending)
+            SORT_BY_TITLE -> BookBagItemTitleComparator(sortDescending)
+            else -> BookBagItemPubdateComparator(sortDescending)
         }
 
         sortedItems.clear()
@@ -230,7 +247,7 @@ class BookBagDetailsActivity : BaseActivity() {
 
     private fun showSortListDialog() {
         val builder = AlertDialog.Builder(this)
-        builder.setTitle(R.string.sort_by_message)
+        builder.setTitle(R.string.msg_sort_by)
         builder.setSingleChoiceItems(R.array.sort_by, sortBySelectedIndex) { dialog, which ->
             this.sortBySelectedIndex = which
             AppState.setString(SORT_BY_STATE_KEY, sortByKeyword)
@@ -238,6 +255,13 @@ class BookBagDetailsActivity : BaseActivity() {
             dialog.dismiss()
         }
         builder.create().show()
+    }
+
+    private fun reverseSortOrder() {
+        sortDescending = !sortDescending
+        AppState.setBoolean(SORT_DESC_STATE_KEY, sortDescending)
+        invalidateOptionsMenu()
+        updateItemsList()
     }
 
     internal class BookBagItemAuthorComparator(descending: Boolean): Comparator<BookBagItem> {
@@ -304,11 +328,13 @@ class BookBagDetailsActivity : BaseActivity() {
 
             val title = row.findViewById<View>(R.id.bookbagitem_title) as TextView
             val author = row.findViewById<View>(R.id.bookbagitem_author) as TextView
+            val pubdate = row.findViewById<View>(R.id.bookbagitem_pubdate) as TextView
             val remove = row.findViewById<View>(R.id.bookbagitem_remove_button) as Button
 
             val record = getItem(position)
             title.text = record?.record?.title
             author.text = record?.record?.author
+            pubdate.text = record?.record?.pubdate
             remove.setOnClickListener(View.OnClickListener {
                 val id = record?.id ?: return@OnClickListener
                 async {

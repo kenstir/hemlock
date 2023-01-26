@@ -414,10 +414,9 @@ class SearchActivity : BaseActivity(), ActivityCompat.OnRequestPermissionsResult
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        val inflater = menuInflater
-        inflater.inflate(R.menu.menu_search, menu)
-        val url = feedbackUrl
-        if (TextUtils.isEmpty(url)) menu.removeItem(R.id.action_feedback)
+        menuInflater.inflate(R.menu.menu_search, menu)
+        if (TextUtils.isEmpty(feedbackUrl))
+            menu.removeItem(R.id.action_feedback)
         return super.onCreateOptionsMenu(menu)
     }
 
