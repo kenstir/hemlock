@@ -23,11 +23,9 @@ import org.evergreen_ils.OSRFUtils
 import org.evergreen_ils.R
 import org.evergreen_ils.system.EgCodedValueMap
 import org.evergreen_ils.system.EgOrg.getOrgNameSafe
-import org.evergreen_ils.utils.MARCRecord
-import org.evergreen_ils.utils.MARCXMLParser
-import org.evergreen_ils.utils.RecordAttributes
-import org.evergreen_ils.utils.TextUtils
+import org.evergreen_ils.utils.*
 import org.opensrf.util.OSRFObject
+import org.opensrf.util.Utils
 import java.io.Serializable
 
 class MBRecord(val id: Int, var mvrObj: OSRFObject? = null) : Serializable {
@@ -50,6 +48,31 @@ class MBRecord(val id: Int, var mvrObj: OSRFObject? = null) : Serializable {
         get() = mvrObj?.getString("synopsis") ?: ""
     val title: String
         get() = mvrObj?.getString("title") ?: ""
+    val titleSort: String
+        get() {
+            if (hasMarc()) {
+                val skip = nonFilingCharacters
+                if (skip != null && skip > 0) {
+                    return title.uppercase().substring(skip)
+                }
+                return title.uppercase().replace("^[^A-Z0-9]*".toRegex(), "")
+            } else {
+                return titleSortKey(title) ?: ""
+            }
+        }
+    val nonFilingCharacters: Int?
+        get() {
+            marcRecord?.let {
+                for (df in it.datafields) {
+                    if (df.isTitleStatement) {
+                        df.nonFilingCharacters?.let { n ->
+                            return n
+                        }
+                    }
+                }
+            }
+            return null
+        }
 
     val publishingInfo: String
         get() {

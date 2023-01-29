@@ -21,6 +21,7 @@ package net.kenstir.apps.core
 import org.evergreen_ils.data.jsonMapOf
 import org.evergreen_ils.utils.fromApiToIntOrNull
 import org.evergreen_ils.utils.pubdateSortKey
+import org.evergreen_ils.utils.titleSortKey
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Test
@@ -42,5 +43,14 @@ class UtilsTest {
         assertEquals(2002, pubdateSortKey("c2002"))
         assertEquals(2003, pubdateSortKey("2003-"))
         assertEquals(2007, pubdateSortKey("2007-2014"))
+    }
+
+    @Test
+    fun test_titleSortKey() {
+        assertNull(titleSortKey(null))
+        assertEquals("A\" IS FOR ALIBI", titleSortKey("\"A\" is for Alibi"))
+        assertEquals("IS FOR ALIBI", titleSortKey("A is for Alibi"))
+        assertEquals("CAT IN THE HAT", titleSortKey("The Cat in the Hat"))
+        assertEquals("DIARY]", titleSortKey("[Diary]"))
     }
 }

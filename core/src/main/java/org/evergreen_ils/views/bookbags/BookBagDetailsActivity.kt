@@ -40,7 +40,6 @@ import org.evergreen_ils.net.GatewayLoader
 import org.evergreen_ils.views.search.RecordDetails
 import org.evergreen_ils.data.MBRecord
 import org.evergreen_ils.utils.pubdateSortKey
-import org.evergreen_ils.utils.titleSortKey
 import org.evergreen_ils.utils.ui.*
 import java.util.*
 
@@ -196,7 +195,15 @@ class BookBagDetailsActivity : BaseActivity() {
         val modsResult = Gateway.search.fetchRecordMODS(item.targetId)
         if (modsResult is Result.Error) return modsResult
         val modsObj = modsResult.get()
-        item.record = MBRecord(modsObj)
+        val record = MBRecord(modsObj)
+        item.record = record
+
+        if (resources.getBoolean(R.bool.ou_need_marc_record)) {
+            val result = Gateway.pcrud.fetchMARC(record.id)
+            if (result is Result.Error) return result
+            val breObj = result.get()
+            record.updateFromBREResponse(breObj)
+        }
 
         return Result.Success(Unit)
     }
@@ -211,6 +218,11 @@ class BookBagDetailsActivity : BaseActivity() {
 
         sortedItems.clear()
         sortedItems.addAll(bookBag.items.sortedWith(comparator))
+//        for (item in sortedItems) {
+//            item.record?.let {
+//                Log.d(TAG, "[sort] ${it.id} has ${it.nonFilingCharacters} non-filing chars: \"${item.record?.title}\" -> \"${item.record?.titleSort}\"")
+//            }
+//        }
         listAdapter?.notifyDataSetChanged()
     }
 
@@ -298,8 +310,8 @@ class BookBagDetailsActivity : BaseActivity() {
         private val descending = descending
 
         override fun compare(o1: BookBagItem?, o2: BookBagItem?): Int {
-            val key1 = if (descending) titleSortKey(o2?.record?.title) else titleSortKey(o1?.record?.title)
-            val key2 = if (descending) titleSortKey(o1?.record?.title) else titleSortKey(o2?.record?.title)
+            val key1 = if (descending) o2?.record?.titleSort else o1?.record?.titleSort
+            val key2 = if (descending) o1?.record?.titleSort else o2?.record?.titleSort
             return when {
                 key1 == null && key2 == null -> 0
                 key1 == null -> -1

@@ -23,6 +23,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.annotation.Nullable;
+
 // TODO: remove Serializable, that will make the TransactionTooLargeException issue worse
 public class MARCRecord implements Serializable {
     public static class MARCSubfield implements Serializable {
@@ -50,6 +52,21 @@ public class MARCRecord implements Serializable {
             return (TextUtils.equals(tag, "856")
                     && TextUtils.equals(ind1, "4")
                     && (TextUtils.equals(ind2, "0") || TextUtils.equals(ind2, "1")));
+        }
+
+        public boolean isTitleStatement() {
+            return (TextUtils.equals(tag, "245"));
+        }
+
+        // only valid if isTitleStatement
+        @Nullable
+        public Integer getNonFilingCharacters() {
+            try {
+                Integer numNonFilingCharacters = Integer.valueOf(ind2);
+                return numNonFilingCharacters;
+            } catch (NumberFormatException e) {
+                return null;
+            }
         }
 
         public String getUri() {

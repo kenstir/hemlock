@@ -88,12 +88,15 @@ public class MARCXMLParser {
             String tag = parser.getAttributeValue(ns, "tag");
             String ind1 = parser.getAttributeValue(ns, "ind1");
             String ind2 = parser.getAttributeValue(ns, "ind2");
-            // We only care about certain 856 tags
+            // We only care about certain tags
             // See also templates/opac/parts/misc_util.tt2
             // See also https://www.loc.gov/marc/bibliographic/bd856.html
             if (TextUtils.equals(tag, "856")
                 && TextUtils.equals(ind1, "4")
                 && (TextUtils.equals(ind2, "0") || TextUtils.equals(ind2, "1"))) {
+                currentDatafield = new MARCRecord.MARCDatafield(tag, ind1, ind2);
+            }
+            if (TextUtils.equals(tag, "245")) {
                 currentDatafield = new MARCRecord.MARCDatafield(tag, ind1, ind2);
             }
         } else if ("subfield".equals(name)) {
