@@ -53,7 +53,7 @@ class MBRecord(val id: Int, var mvrObj: OSRFObject? = null) : Serializable {
             if (hasMarc()) {
                 val skip = nonFilingCharacters
                 if (skip != null && skip > 0) {
-                    return title.uppercase().substring(skip)
+                    return title.uppercase().substring(skip).trim()
                 }
                 return title.uppercase().replace("^[^A-Z0-9]*".toRegex(), "")
             } else {
