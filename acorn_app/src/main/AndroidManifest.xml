@@ -3,8 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="net.kenstir.apps.bibliomation"
           android:installLocation="auto"
-          android:versionCode="20"
-          android:versionName="2.3.2.1">
+          android:versionCode="21"
+          android:versionName="2.5.0.4">
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS" />
@@ -22,108 +22,32 @@
 
     <application
         android:allowBackup="true"
-        android:fullBackupContent="true"
         android:icon="@mipmap/launcher_icon"
         android:label="@string/ou_app_label"
         android:theme="@style/HemlockDarkNoActionBar"
         tools:ignore="GoogleAppIndexingWarning">
 
         <meta-data android:name="android.max_aspect" android:value="2.1" />
+        <meta-data
+            android:name="com.google.mlkit.vision.DEPENDENCIES"
+            android:value="barcode_ui"/>
 
-        <!-- Notification receiver -->
-        <receiver
-            android:name="org.evergreen_ils.services.NotificationReceiver"
-            android:process=":remote" >
-        </receiver>
-        <!-- Receiver to reinit notifications on reboot -->
-        <!--
-        <receiver android:name="org.evergreen_ils.services.RebootReceiver" >
-            <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED" />
-            </intent-filter>
-        </receiver>
-        <receiver android:name="org.evergreen_ils.services.PeriodicServiceBroadcastReceiver" >
-            <intent-filter>
-                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
-            </intent-filter>
-        </receiver>
-        -->
-
-        <!--
-        <service android:name="org.evergreen_ils.services.ScheduledIntentService" >
-        </service>
-        -->
+        <!-- launch and main -->
 
         <activity
             android:name="org.evergreen_ils.views.launch.LaunchActivity"
-            android:theme="@style/HemlockDarkNoActionBar"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <!-- Search -->
-
         <activity
-                android:name="org.evergreen_ils.views.search.RecordDetailsActivity"
-                android:label="@string/search_details_title">
-        </activity>
-        <activity
-                android:name="org.evergreen_ils.views.search.CopyInformationActivity"
-                android:label="@string/copy_information_title">
-        </activity>
-        <activity
-                android:name="org.evergreen_ils.views.search.SearchActivity"
-                android:label="@string/title_search"
-                android:parentActivityName="org.evergreen_ils.views.MainActivity">
-        </activity>
-        <activity
-                android:name="org.evergreen_ils.views.search.AdvancedSearchActivity"
-                android:label="@string/advanced_search">
+            android:name="org.evergreen_ils.views.MainActivity"
+            android:launchMode="singleTask">
         </activity>
 
-        <!-- Checkout Activities -->
-        <activity
-                android:name="org.evergreen_ils.views.CheckoutsActivity"
-                android:label="@string/checkout_items_title"
-                android:parentActivityName="org.evergreen_ils.views.MainActivity">
-        </activity>
-
-        <!-- Holds Activities -->
-        <activity
-                android:name="org.evergreen_ils.views.holds.HoldsActivity"
-                android:label="@string/hold_items_title"
-                android:parentActivityName="org.evergreen_ils.views.MainActivity">
-        </activity>
-        <activity
-                android:name="org.evergreen_ils.views.holds.PlaceHoldActivity"
-                android:label="@string/hold_place_title">
-        </activity>
-        <activity
-                android:name="org.evergreen_ils.views.holds.HoldDetailsActivity"
-                android:label="@string/hold_details_title">
-        </activity>
-
-        <!-- Fines Activities -->
-        <activity
-                android:name="org.evergreen_ils.views.FinesActivity"
-                android:label="@string/title_fines"
-                android:parentActivityName="org.evergreen_ils.views.MainActivity">
-        </activity>
-
-        <!-- Bookbags -->
-        <activity
-                android:name="org.evergreen_ils.views.bookbags.BookBagsActivity"
-                android:label="@string/title_my_lists"
-                android:parentActivityName="org.evergreen_ils.views.MainActivity">
-        </activity>
-        <activity
-                android:name="org.evergreen_ils.views.bookbags.BookBagDetailsActivity"
-                android:label="@string/title_list_details"
-                android:parentActivityName="org.evergreen_ils.views.bookbags.BookBagsActivity">
-        </activity>
+        <!-- top-level activities -->
 
         <activity
             android:name="org.evergreen_ils.views.BarcodeActivity"
@@ -131,38 +55,85 @@
             android:parentActivityName="org.evergreen_ils.views.MainActivity">
         </activity>
         <activity
+            android:name="org.evergreen_ils.views.bookbags.BookBagsActivity"
+            android:label="@string/title_my_lists"
+            android:parentActivityName="org.evergreen_ils.views.MainActivity">
+        </activity>
+        <activity
+            android:name="org.evergreen_ils.views.CheckoutsActivity"
+            android:label="@string/checkout_items_title"
+            android:parentActivityName="org.evergreen_ils.views.MainActivity">
+        </activity>
+        <activity
+            android:name="org.evergreen_ils.views.holds.HoldsActivity"
+            android:label="@string/hold_items_title"
+            android:parentActivityName="org.evergreen_ils.views.MainActivity">
+        </activity>
+<!--        <activity-->
+<!--            android:name="org.evergreen_ils.views.messages.MessagesActivity"-->
+<!--            android:label="@string/title_messages"-->
+<!--            android:parentActivityName="org.evergreen_ils.views.MainActivity">-->
+<!--        </activity>-->
+        <activity
             android:name="org.evergreen_ils.views.OrgDetailsActivity"
             android:label="@string/title_library_info"
             android:parentActivityName="org.evergreen_ils.views.MainActivity">
         </activity>
+        <activity
+            android:name="org.evergreen_ils.views.search.SearchActivity"
+            android:label="@string/title_search"
+            android:parentActivityName="org.evergreen_ils.views.MainActivity">
+        </activity>
+        <activity
+            android:name="org.evergreen_ils.views.FinesActivity"
+            android:label="@string/title_fines"
+            android:parentActivityName="org.evergreen_ils.views.MainActivity">
+        </activity>
+
+        <!-- secondary activities -->
+
+        <activity
+            android:name="org.evergreen_ils.views.bookbags.BookBagDetailsActivity"
+            android:label="@string/title_list_details"
+            android:parentActivityName="org.evergreen_ils.views.bookbags.BookBagsActivity">
+        </activity>
+        <activity
+            android:name="org.evergreen_ils.views.holds.HoldDetailsActivity"
+            android:label="@string/hold_details_title">
+        </activity>
+        <activity
+            android:name="org.evergreen_ils.views.holds.PlaceHoldActivity"
+            android:label="@string/hold_place_title">
+        </activity>
+<!--        <activity-->
+<!--            android:name="org.evergreen_ils.views.messages.MessageDetailsActivity"-->
+<!--            android:label="@string/title_message_details">-->
+<!--        </activity>-->
+        <activity
+            android:name="org.evergreen_ils.views.search.AdvancedSearchActivity"
+            android:label="@string/advanced_search">
+        </activity>
+        <activity
+            android:name="org.evergreen_ils.views.search.CopyInformationActivity"
+            android:label="@string/copy_information_title">
+        </activity>
+        <activity
+            android:name="org.evergreen_ils.views.search.RecordDetailsActivity"
+            android:label="@string/search_details_title">
+        </activity>
+
+        <!-- auth stuff -->
 
         <activity
             android:name="org.evergreen_ils.auth.AuthenticatorActivity"
             android:label="@string/ou_account_label">
         </activity>
-        <activity
-                android:name="org.evergreen_ils.auth.GenericAuthenticatorActivity"
-                android:label="@string/ou_account_label">
-        </activity>
-
-        <activity
-            android:name="org.evergreen_ils.views.MainActivity"
-            android:launchMode="singleTask">
-        </activity>
-
-        <!--<activity android:name="org.evergreen_ils.auth.TestAuthActivity">-->
-            <!--<intent-filter>-->
-                <!--<action android:name="android.intent.action.MAIN" />-->
-            <!--</intent-filter>-->
-        <!--</activity>-->
-
         <service
             android:name="org.evergreen_ils.auth.AuthenticatorService"
             android:exported="true" >
             <intent-filter>
                 <action android:name="android.accounts.AccountAuthenticator" />
             </intent-filter>
-
             <meta-data
                 android:name="android.accounts.AccountAuthenticator"
                 android:resource="@xml/authenticator" />
