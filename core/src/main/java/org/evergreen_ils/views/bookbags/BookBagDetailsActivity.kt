@@ -218,12 +218,15 @@ class BookBagDetailsActivity : BaseActivity() {
 
         sortedItems.clear()
         sortedItems.addAll(bookBag.items.sortedWith(comparator))
+        listAdapter?.notifyDataSetChanged()
+
+//        val direction = if (sortDescending) { "desc" } else "asc"
+//        Log.d(TAG, "[sort] $sortByKeyword $direction")
 //        for (item in sortedItems) {
 //            item.record?.let {
-//                Log.d(TAG, "[sort] ${it.id} has ${it.nonFilingCharacters} non-filing chars: \"${item.record?.title}\" -> \"${item.record?.titleSort}\"")
+//                Log.d(TAG, "[sort] key <<${it.titleSort.take(32).padEnd(32)}>> title <<${it.title.take(32).padEnd(32)}>> nf ${it.nonFilingCharacters} id ${it.id}")
 //            }
 //        }
-        listAdapter?.notifyDataSetChanged()
     }
 
     private fun confirmDeleteList() {
