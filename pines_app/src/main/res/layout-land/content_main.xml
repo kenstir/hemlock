@@ -160,6 +160,15 @@
             android:text="@string/title_library_locator" />
 
         <Button
+            android:id="@+id/galileo_button"
+            style="?android:buttonBarButtonStyle"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:onClick="onButtonClick"
+            android:text="@string/title_galileo" />
+
+        <Button
             android:id="@+id/patron_message_center"
             style="?android:buttonBarButtonStyle"
             android:layout_width="0dp"
