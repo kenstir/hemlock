@@ -2,7 +2,7 @@
 <resources>
     <string name="title_open_full_catalog">Full Catalog</string>
     <string name="title_library_locator">Library Locator</string>
-    <string name="title_galileo">Galileo Virtual Library</string>
+    <string name="title_galileo">GALILEO Virtual Library</string>
     <string name="title_patron_message_center">Messages</string>
     <string name="label_hold_any_part">Any part</string>
 </resources>
