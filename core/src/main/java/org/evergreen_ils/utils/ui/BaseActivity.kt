@@ -34,10 +34,9 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
+import androidx.lifecycle.lifecycleScope
 import com.google.android.material.navigation.NavigationView
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
+import kotlinx.coroutines.*
 import org.evergreen_ils.R
 import org.evergreen_ils.android.AccountUtils
 import org.evergreen_ils.android.Analytics
@@ -55,15 +54,12 @@ import java.net.URLEncoder
 import kotlin.coroutines.CoroutineContext
 
 /* Activity base class to handle common behaviours like the navigation drawer */
-open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener, CoroutineScope {
+open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
     private var _toolbar: Toolbar? = null
     protected var menuItemHandler: MenuProvider? = null
     protected var isRestarting = false
-    private lateinit var job: Job
-
-    override val coroutineContext: CoroutineContext
-        get() = job + Dispatchers.Main
+    var scope = lifecycleScope
 
     protected val toolbar: Toolbar?
         get() {
@@ -83,9 +79,6 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        Log.d(TAG, "coro: create job")
-        job = Job()
-
         if (!App.isStarted()) {
             App.restartApp(this)
             isRestarting = true
@@ -100,12 +93,6 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
 
         initMenuProvider()
         menuItemHandler?.onCreate(this)
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        Log.d(TAG, "coro: cancel job")
-        job.cancel()
     }
 
     override fun setContentView(layoutResID: Int) {
