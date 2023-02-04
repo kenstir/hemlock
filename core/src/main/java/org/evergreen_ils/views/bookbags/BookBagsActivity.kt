@@ -88,7 +88,7 @@ class BookBagsActivity : BaseActivity() {
     }
 
     private fun fetchData() {
-        async {
+        scope.async {
             try {
                 Log.d(TAG, "[kcxxx] fetchData ...")
                 val start = System.currentTimeMillis()
@@ -104,7 +104,7 @@ class BookBagsActivity : BaseActivity() {
 
                 // flesh bookbags
                 for (bookBag in App.getAccount().bookBags) {
-                    jobs.add(async {
+                    jobs.add(scope.async {
                         GatewayLoader.loadBookBagContents(App.getAccount(), bookBag, resources.getBoolean(R.bool.ou_extra_bookbag_query))
                     })
                 }
@@ -140,7 +140,7 @@ class BookBagsActivity : BaseActivity() {
             bookBagName?.error = getString(R.string.error_list_name_empty)
             return
         }
-        async {
+        scope.async {
             progress?.show(this@BookBagsActivity, getString(R.string.msg_creating_list))
             val result = Gateway.actor.createBookBagAsync(App.getAccount(), name)
             progress?.dismiss()

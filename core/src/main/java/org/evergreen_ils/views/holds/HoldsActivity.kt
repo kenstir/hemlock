@@ -94,7 +94,7 @@ class HoldsActivity : BaseActivity() {
     }
 
     private fun fetchData() {
-        async {
+        scope.async {
             try {
                 Log.d(TAG, "[kcxxx] fetchData ...")
                 val start = System.currentTimeMillis()
@@ -115,10 +115,10 @@ class HoldsActivity : BaseActivity() {
 
                 // fetch hold target details and queue stats
                 for (hold in holdRecords) {
-                    jobs.add(async {
+                    jobs.add(scope.async {
                         fetchHoldTargetDetails(hold, App.getAccount())
                     })
-                    jobs.add(async {
+                    jobs.add(scope.async {
                         fetchHoldQueueStats(hold, App.getAccount())
                     })
                 }

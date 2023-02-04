@@ -154,7 +154,7 @@ class CopyInformationActivity : BaseActivity() {
     }
 
     private fun fetchData() {
-        async {
+        scope.async {
             try {
                 //val start_ms = System.currentTimeMillis()
                 val org = findOrg(orgID) ?: return@async

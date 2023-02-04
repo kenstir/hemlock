@@ -43,7 +43,7 @@ object BookBagUtils {
     }
 
     private fun addRecordToList(activity: BaseActivity, bookBag: BookBag, info: MBRecord) {
-        activity.async {
+        activity.scope.async {
             val progress = ProgressDialogSupport()
             try {
                 progress.show(activity, activity.getString(R.string.adding_to_list_message))

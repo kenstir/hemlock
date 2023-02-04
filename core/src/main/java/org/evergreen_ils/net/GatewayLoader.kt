@@ -30,6 +30,9 @@ import org.evergreen_ils.system.EgOrg
 object GatewayLoader {
 
     // usage: loadOrgSettingsAsync(...).await()
+    // TODO: consider passing activity:BaseActivity param and using activity.scope
+    // or returning [Deferred<Result>]
+    // because these org ops are happening on thread DefaultDispatcher-worker-1 :/
     suspend fun loadOrgSettingsAsync(org: Organization?) = GlobalScope.async {
         val orgs = if (org != null) listOf(org) else EgOrg.visibleOrgs
         for (org in orgs) {
@@ -46,6 +49,8 @@ object GatewayLoader {
     }
 
     // this function reloads the org, so we can be sure the hours of operation are up-to-date
+    // TODO: consider passing activity:BaseActivity param and using activity.scope
+    // because these org ops are happening on thread DefaultDispatcher-worker-1 :/
     suspend fun loadOrgAsync(org: Organization?) = GlobalScope.async {
         val id = org?.id ?: return@async
         val result = Gateway.actor.fetchOrg(id)
