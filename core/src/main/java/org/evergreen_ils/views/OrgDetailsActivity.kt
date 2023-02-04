@@ -223,7 +223,7 @@ class OrgDetailsActivity : BaseActivity() {
     }
 
     private fun fetchData() {
-        async {
+        scope.async {
             try {
                 val start = System.currentTimeMillis()
                 var jobs = mutableListOf<Job>()
@@ -231,20 +231,20 @@ class OrgDetailsActivity : BaseActivity() {
 
                 Log.d(TAG, "[kcxxx] fetchData ...")
 
-                jobs.add(async {
+                jobs.add(scope.async {
                     GatewayLoader.loadOrgSettingsAsync(org).await()
                 })
 
-                jobs.add(async {
+                jobs.add(scope.async {
                     GatewayLoader.loadOrgAsync(org).await()
                 })
 
-                jobs.add(async {
+                jobs.add(scope.async {
                     val result = Gateway.actor.fetchOrgHours(App.getAccount(), orgID)
                     onHoursResult(result)
                 })
 
-                jobs.add(async {
+                jobs.add(scope.async {
                     val result = Gateway.actor.fetchOrgAddress(org?.addressID)
                     onAddressResult(result)
                 })

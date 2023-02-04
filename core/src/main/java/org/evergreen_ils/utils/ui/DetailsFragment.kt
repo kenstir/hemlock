@@ -31,6 +31,7 @@ import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import com.android.volley.toolbox.NetworkImageView
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -259,28 +260,28 @@ class DetailsFragment : Fragment() {
     }
 
     private fun fetchData(record: MBRecord) {
-        val coroutineScope = (activity as? CoroutineScope) ?: return
-        coroutineScope.async {
+        val scope = viewLifecycleOwner.lifecycleScope
+        scope.async {
             try {
                 Log.d(TAG, "[kcxxx] fetchData ...")
                 Log.d("xyzzy", "${record.id}: fetchData")
                 val start = System.currentTimeMillis()
-                var jobs = mutableListOf<Job>()
+                val jobs = mutableListOf<Job>()
 
-                jobs.add(async {
+                jobs.add(scope.async {
                     GatewayLoader.loadRecordMetadataAsync(record)
                     Log.d("xyzzy", "${record.id}: loadMetadata")
                     loadMetadata()
                 })
 
-                jobs.add(async {
+                jobs.add(scope.async {
                     GatewayLoader.loadRecordAttributesAsync(record)
                     Log.d("xyzzy", "${record.id}: loadFormat")
                     loadFormat()
                 })
 
                 if (resources.getBoolean(R.bool.ou_need_marc_record)) {
-                    jobs.add(async {
+                    jobs.add(scope.async {
                         GatewayLoader.loadRecordMarcAsync(record)
                         Log.d("xyzzy", "${record.id}: loadRecordMarcAsync")
                     })
@@ -299,7 +300,7 @@ class DetailsFragment : Fragment() {
                     Analytics.logException(ex)
                 }
                 if (isOnlineResource != true) {
-                    jobs.add(async {
+                    jobs.add(scope.async {
                         GatewayLoader.loadRecordCopyCountAsync(record, orgID)
                         Log.d("xyzzy", "${record.id}: loadCopyCount")
                         loadCopyCount()

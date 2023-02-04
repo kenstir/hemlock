@@ -151,7 +151,7 @@ class HoldDetailsActivity : BaseActivity() {
     }
 
     private fun cancelHold(record: HoldRecord) {
-        async {
+        scope.async {
             progress?.show(this@HoldDetailsActivity, getString(R.string.msg_canceling_hold))
 
             val holdId = record.ahr.getInt("id") ?: 0
@@ -173,7 +173,7 @@ class HoldDetailsActivity : BaseActivity() {
     }
 
     private fun updateHold(record: HoldRecord) {
-        async {
+        scope.async {
             progress?.show(this@HoldDetailsActivity, getString(R.string.msg_updating_hold))
             var expireDateApi: String? = null
             var thawDateApi: String? = null

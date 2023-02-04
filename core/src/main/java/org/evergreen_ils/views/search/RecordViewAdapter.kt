@@ -20,6 +20,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
 import com.android.volley.toolbox.NetworkImageView
 import kotlinx.coroutines.CoroutineScope
@@ -30,6 +32,7 @@ import org.evergreen_ils.data.MBRecord
 import org.evergreen_ils.net.Gateway.getUrl
 import org.evergreen_ils.net.GatewayLoader
 import org.evergreen_ils.net.Volley
+import org.evergreen_ils.utils.ui.BaseActivity
 import org.evergreen_ils.utils.ui.showAlert
 
 /**
@@ -54,15 +57,15 @@ class RecordViewAdapter(private val records: List<MBRecord>) : RecyclerView.Adap
             recordImage.setImageUrl(url, Volley.getInstance(context).imageLoader)
             //recordImage.setDefaultImageResId(R.drawable.missing_art);//for screenshots
 
-            val coroutineScope = (context as? CoroutineScope) ?: return
-            coroutineScope.async {
+            val scope = (context as? BaseActivity)?.lifecycleScope ?: return
+            scope.async {
                 try {
-                    async {
+                    scope.async {
                         GatewayLoader.loadRecordMetadataAsync(record)
                         loadMetadata(record)
                     }
 
-                    async {
+                    scope.async {
                         GatewayLoader.loadRecordAttributesAsync(record)
                         loadFormat(record)
                     }

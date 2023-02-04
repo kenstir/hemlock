@@ -159,7 +159,7 @@ class BookBagDetailsActivity : BaseActivity() {
     }
 
     private fun fetchData() {
-        async {
+        scope.async {
             try {
                 Log.d(TAG, "[kcxxx] fetchData ...")
                 val start = System.currentTimeMillis()
@@ -173,7 +173,7 @@ class BookBagDetailsActivity : BaseActivity() {
                 // fetch item details
                 bookBag.items.let {
                     for (item in it) {
-                        jobs.add(async {
+                        jobs.add(scope.async {
                             fetchTargetDetails(item)
                         })
                     }
@@ -238,7 +238,7 @@ class BookBagDetailsActivity : BaseActivity() {
     }
 
     private fun deleteList() {
-        async {
+        scope.async {
             progress?.show(this@BookBagDetailsActivity, getString(R.string.msg_deleting_list))
             val id = bookBag.id
             val result = if (id != null) {
@@ -352,7 +352,7 @@ class BookBagDetailsActivity : BaseActivity() {
             pubdate.text = record?.record?.pubdate
             remove.setOnClickListener(View.OnClickListener {
                 val id = record?.id ?: return@OnClickListener
-                async {
+                scope.async {
                     progress?.show(this@BookBagDetailsActivity, getString(R.string.msg_removing_list_item))
                     val result = Gateway.actor.removeItemFromBookBagAsync(App.getAccount(), id)
                     progress?.dismiss()
