@@ -50,6 +50,7 @@ object Analytics {
         const val HOLD_UPDATE_HOLD = "hold_update"
         const val LOGIN = FirebaseAnalytics.Event.LOGIN
         const val MESSAGES_OPEN = "messages_open"
+        const val SCAN = "barcode_scan"
         const val SEARCH = FirebaseAnalytics.Event.SEARCH
         const val VIEW_ITEM_DETAILS = FirebaseAnalytics.Event.VIEW_ITEM
     }

@@ -453,7 +453,10 @@ class SearchActivity : BaseActivity(), ActivityCompat.OnRequestPermissionsResult
     private fun startScanning() {
         val scanner = GmsBarcodeScanning.getClient(this)
         scanner.startScan()
-            .addOnSuccessListener { barcode -> handleBarcodeResult(barcode) }
+            .addOnSuccessListener { barcode ->
+                Analytics.logEvent(Analytics.Event.SCAN, Analytics.Param.RESULT, Analytics.Value.OK)
+                handleBarcodeResult(barcode)
+            }
             .addOnFailureListener { e ->
                 if (e is MlKitException) {
                     val errorCode = e.errorCode
@@ -473,10 +476,9 @@ class SearchActivity : BaseActivity(), ActivityCompat.OnRequestPermissionsResult
                     }
                 }
                 Analytics.logException(TAG, e)
+                Analytics.logEvent(Analytics.Event.SCAN, Analytics.Param.RESULT, e.message)
                 this.showAlert(e)
             }
-//            .addOnCanceledListener {}
-//            .addOnCompleteListener {}
     }
 
     private fun handleBarcodeResult(barcode: Barcode) {
