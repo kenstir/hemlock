@@ -43,7 +43,7 @@
     <!-- if true, group copy information by system and branch, instead of by branch -->
     <bool name="ou_group_copy_info_by_system">false</bool>
     <!-- if true, copy information links to the library info page -->
-    <bool name="ou_enable_copy_info_web_links">false</bool>
+    <bool name="ou_enable_copy_info_web_links">true</bool>
     <!-- if true, enable phone notification controls on Place Hold screen -->
     <bool name="ou_enable_phone_notification">false</bool>
     <!-- if true, use .override api method to place holds -->
