@@ -129,48 +129,6 @@
                     android:minHeight="@dimen/target_min_height" />
             </TableRow>
             <TableRow>
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/thaw_date"
-                    android:paddingRight="6dp"
-                    />
-                <EditText
-                    android:focusable="false"
-                    android:layout_width="0dip"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:minHeight="@dimen/target_min_height" />
-            </TableRow>
-            <TableRow>
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/thaw_date"
-                    android:paddingRight="6dp"
-                    />
-                <EditText
-                    android:focusable="false"
-                    android:layout_width="0dip"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:minHeight="@dimen/target_min_height" />
-            </TableRow>
-            <TableRow>
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/thaw_date"
-                    android:paddingRight="6dp"
-                    />
-                <EditText
-                    android:focusable="false"
-                    android:layout_width="0dip"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:minHeight="@dimen/target_min_height" />
-            </TableRow>
-            <TableRow>
                 <LinearLayout
                     android:layout_height="wrap_content"
                     android:layout_span="2"
