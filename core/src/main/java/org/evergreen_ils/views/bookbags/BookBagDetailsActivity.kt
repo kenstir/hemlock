@@ -41,6 +41,7 @@ import org.evergreen_ils.views.search.RecordDetails
 import org.evergreen_ils.data.MBRecord
 import org.evergreen_ils.utils.pubdateSortKey
 import org.evergreen_ils.utils.ui.*
+import java.text.Collator
 import java.util.*
 
 const val RESULT_CODE_UPDATE = 1
@@ -311,6 +312,7 @@ class BookBagDetailsActivity : BaseActivity() {
 
     internal class BookBagItemTitleComparator(descending: Boolean): Comparator<BookBagItem> {
         private val descending = descending
+        private val collator = Collator.getInstance()
 
         override fun compare(o1: BookBagItem?, o2: BookBagItem?): Int {
             val key1 = if (descending) o2?.record?.titleSort else o1?.record?.titleSort
@@ -319,7 +321,7 @@ class BookBagDetailsActivity : BaseActivity() {
                 key1 == null && key2 == null -> 0
                 key1 == null -> -1
                 key2 == null -> 1
-                else -> key1.compareTo(key2)
+                else -> collator.compare(key1, key2) //key1.compareTo(key2)
             }
         }
     }
