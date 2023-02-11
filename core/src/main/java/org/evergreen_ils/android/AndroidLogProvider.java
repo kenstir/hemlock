@@ -23,6 +23,11 @@ package org.evergreen_ils.android;
  */
 public class AndroidLogProvider implements LogProvider {
     @Override
+    public void v(String TAG, String msg) {
+        android.util.Log.v(TAG, msg);
+    }
+
+    @Override
     public void d(String TAG, String msg) {
         android.util.Log.d(TAG, msg);
     }

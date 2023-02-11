@@ -106,7 +106,7 @@ class OrgDetailsActivity : BaseActivity() {
 
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
-        Log.d(TAG, object{}.javaClass.enclosingMethod?.name)
+        Log.d(TAG, object{}.javaClass.enclosingMethod?.name ?: "")
 
         // It seems onItemSelected is always triggered, so avoid calling fetchData twice on load
         //fetchData()

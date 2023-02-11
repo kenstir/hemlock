@@ -56,7 +56,7 @@ class MainActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         if (isRestarting) return
 
-        Log.d(TAG, object{}.javaClass.enclosingMethod?.name)
+        Log.d(TAG, object{}.javaClass.enclosingMethod?.name ?: "")
 
         setContentView(R.layout.activity_main)
 
@@ -66,12 +66,12 @@ class MainActivity : BaseActivity() {
 
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
-        Log.d(TAG, object{}.javaClass.enclosingMethod?.name)
+        Log.d(TAG, object{}.javaClass.enclosingMethod?.name ?: "")
     }
 
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
-        Log.d(TAG, object{}.javaClass.enclosingMethod?.name)
+        Log.d(TAG, object{}.javaClass.enclosingMethod?.name ?: "")
         fetchData()
 
         // Debugging crashes reported to Crashlytics.

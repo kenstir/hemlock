@@ -100,13 +100,22 @@ object Analytics {
         val setting: String? = Settings.System.getString(context.contentResolver, "firebase.test.lab")
         runningInTestLab = (setting == "true")
 
-        if (context.resources.getBoolean(R.bool.ou_enable_analytics) && !runningInTestLab && !isDebuggable(context)) {
+        if (wantAnalytics(context)) {
             analytics = true
             if (mAnalytics == null)
                 mAnalytics = FirebaseAnalytics.getInstance(context)
         }
 
         initialized = true
+    }
+
+    private fun wantAnalytics(context: Context): Boolean {
+        // Enable debug mode on the device:
+        //   adb shell setprop debug.firebase.analytics.app PACKAGE_NAME
+        // Log verbosely:
+        //   adb shell setprop log.tag.FA VERBOSE
+        // See also: https://firebase.google.com/docs/analytics/debugview#android
+        return context.resources.getBoolean(R.bool.ou_enable_analytics) && !runningInTestLab && !isDebuggable(context)
     }
 
     private fun isDebuggable(context: Context): Boolean {
@@ -131,7 +140,7 @@ object Analytics {
     }
 
     @JvmStatic
-    fun logException(tag: String?, e: Throwable) {
+    fun logException(tag: String, e: Throwable) {
         Log.d(tag, "caught", e)
         addToLogBuffer("err:  ${e.stackTraceToString()}")
         if (analytics) FirebaseCrashlytics.getInstance().recordException(e)

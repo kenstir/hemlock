@@ -152,6 +152,6 @@ class LaunchViewModel : ViewModel() {
 
     override fun onCleared() {
         super.onCleared()
-        Log.d(TAG, object{}.javaClass.enclosingMethod?.name)
+        Log.d(TAG, object{}.javaClass.enclosingMethod?.name ?: "")
     }
 }

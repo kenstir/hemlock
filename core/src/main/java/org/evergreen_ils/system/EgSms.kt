@@ -37,7 +37,7 @@ object EgSms {
                 val name = obj.getString("name")
                 if (id != null && name != null) {
                     EgSms.carriers.add(SMSCarrier(id, name))
-                    Log.d(TAG, "loadSMSCarriers id:$id name:$name")
+                    Log.v(TAG, "loadSMSCarriers id:$id name:$name")
                 }
             }
             EgSms.carriers.sort()

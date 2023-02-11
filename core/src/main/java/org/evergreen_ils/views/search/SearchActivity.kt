@@ -170,7 +170,8 @@ class SearchActivity : BaseActivity(), ActivityCompat.OnRequestPermissionsResult
 
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
-        Log.d(TAG, object{}.javaClass.enclosingMethod?.name)
+        Log.d(TAG, object{}.javaClass.enclosingMethod?.name ?: "")
+
         fetchData()
     }
 
@@ -343,17 +344,16 @@ class SearchActivity : BaseActivity(), ActivityCompat.OnRequestPermissionsResult
     private fun initSearchClassSpinner() {
         searchClassSpinner?.onItemSelectedListener = object: AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                Log.d(TAG, "SCANNER: position $position class $searchClass")
+                Log.d(TAG, "searchClassSpinner: position $position class $searchClass")
                 // Do not startScanning here because it can be called twice when invoked from the
                 // app bar scan icon (scan_icon >> startScanning >> setSelection >> onItemSelected).
 //                if (searchClass == SEARCH_CLASS_IDENTIFIER) {
-//                    Log.d(TAG, "SCANNER: start scanning???")
 //                    startScanning()
 //                }
             }
 
             override fun onNothingSelected(parent: AdapterView<*>?) {
-                Log.d(TAG, "here")
+                Log.d(TAG, "onNothingSelected")
             }
         }
     }

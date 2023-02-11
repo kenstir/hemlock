@@ -27,13 +27,13 @@ public class ThemeManager {
 
     public static void applyNightMode() {
         int nightMode = AppState.getInt(AppState.NIGHT_MODE, AppCompatDelegate.MODE_NIGHT_YES);
-        Log.d(TAG, "applyNightMode:$nightMode");
+        Log.d(TAG, "applyNightMode:" + nightMode);
         AppCompatDelegate.setDefaultNightMode(nightMode);
     }
 
     public static void saveAndApplyNightMode(int nightMode) {
         AppState.setInt(AppState.NIGHT_MODE, nightMode);
-        Log.d(TAG, "saveAndApplyNightMode:$nightMode");
+        Log.d(TAG, "saveAndApplyNightMode:" + nightMode);
         AppCompatDelegate.setDefaultNightMode(nightMode);
     }
 }

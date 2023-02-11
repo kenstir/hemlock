@@ -18,37 +18,50 @@
 
 package org.evergreen_ils.android;
 
+import android.annotation.SuppressLint;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 /** private logging class that allows substituting different behaviors
  */
 public class Log {
-    public static LogProvider provider = new AndroidLogProvider();
-
     // defining these statics here allows me to unit test code that logs / calls analytics
     // values from https://developer.android.com/reference/android/util/Log
+
+    public static final int VERBOSE = 2;
     public static final int DEBUG = 3;
     public static final int WARN = 5;
+
+    public static LogProvider provider = new AndroidLogProvider();
+    public static int level = DEBUG;
 
     public static void setProvider(LogProvider _provider) {
         provider = _provider;
     }
 
-    public static void d(String TAG, String msg) {
-        if (provider != null) provider.d(TAG, msg);
+    public static void v(@NonNull String tag, @NonNull String msg) {
+        if (provider != null && level <= VERBOSE) provider.v(tag, msg);
     }
-    public static void d(String TAG, String msg, Throwable tr) {
-        if (provider != null) provider.d(TAG, msg, tr);
+
+    public static void d(@NonNull String TAG, @NonNull String msg) {
+        if (provider != null && level <= DEBUG) provider.d(TAG, msg);
     }
-    public static void i(String TAG, String msg) {
+    public static void d(@NonNull String TAG, @NonNull String msg, Throwable tr) {
+        if (provider != null && level <= DEBUG) provider.d(TAG, msg, tr);
+    }
+    public static void i(@NonNull String TAG, @NonNull String msg) {
         if (provider != null) provider.i(TAG, msg);
     }
-    public static void w(String TAG, String msg) {
+    public static void w(@NonNull String TAG, @NonNull String msg) {
         if (provider != null) provider.w(TAG, msg);
     }
-    public static void w(String TAG, String msg, Throwable tr) {
+    public static void w(@NonNull String TAG, @NonNull String msg, Throwable tr) {
         if (provider != null) provider.w(TAG, msg, tr);
     }
 
-    public static long logElapsedTime(String TAG, long start_ms, String s) {
+    @SuppressLint("DefaultLocale")
+    public static long logElapsedTime(@NonNull String TAG, long start_ms, @NonNull String s) {
         long now_ms = System.currentTimeMillis();
         if (provider != null) provider.d(TAG, String.format("%3dms: %s", now_ms - start_ms, s));
         return now_ms;

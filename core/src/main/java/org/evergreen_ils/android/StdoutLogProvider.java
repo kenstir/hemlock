@@ -20,6 +20,11 @@ package org.evergreen_ils.android;
 
 public class StdoutLogProvider implements LogProvider {
     @Override
+    public void v(String TAG, String msg) {
+        System.out.println(TAG + ": " + msg);
+    }
+
+    @Override
     public void d(String TAG, String msg) {
         System.out.println(TAG + ": " + msg);
     }

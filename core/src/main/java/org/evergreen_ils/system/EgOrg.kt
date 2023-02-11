@@ -70,8 +70,8 @@ object EgOrg {
         val opacVisible = obj.getBoolean("opac_visible")
         val org = Organization(id, level, name, shortName, ouType, opacVisible, obj)
         org.indentedDisplayPrefix = String(CharArray(level)).replace("\u0000", "   ")
-        //Log.d(TAG, "id:$id level:${org.level} vis:${org.opac_visible} shortname:${org.shortname} name:${org.name}")
-        Log.d(TAG, "[kcxxx] org ${org.id} aou loaded")
+        Log.v(TAG, "org id:${org.id} level:${org.level} vis:${org.opacVisible} shortname:${org.shortname} name:${org.name}")
+        //Log.v(TAG, "org ${org.id} aou loaded")
         orgs.add(org)
         val children = obj.get("children") as? List<OSRFObject>
         children?.forEach { child ->

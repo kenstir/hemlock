@@ -111,7 +111,7 @@ class BookBagDetailsActivity : BaseActivity() {
 
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
-        Log.d(TAG, object{}.javaClass.enclosingMethod?.name)
+        Log.d(TAG, object{}.javaClass.enclosingMethod?.name ?: "")
         fetchData()
     }
 

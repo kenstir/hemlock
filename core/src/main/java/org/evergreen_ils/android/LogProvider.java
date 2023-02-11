@@ -22,6 +22,7 @@ package org.evergreen_ils.android;
  * Created by kenstir on 1/29/2017.
  */
 public interface LogProvider {
+    void v(String TAG, String msg);
     void d(String TAG, String msg);
     void d(String TAG, String msg, Throwable tr);
     void i(String TAG, String msg);

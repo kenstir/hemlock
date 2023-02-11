@@ -51,7 +51,8 @@ object GatewayLoader {
         val result = Gateway.actor.fetchOrg(id)
         if (result is Result.Success) {
             org.aouObj = result.data
-            Log.d(TAG, "[kcxxx] org ${org.id} aou loaded")
+            Log.v(TAG, "org id:${org.id} level:${org.level} vis:${org.opacVisible} shortname:${org.shortname} name:${org.name}")
+            //Log.v(TAG, "org ${org.id} aou loaded")
         }
     }
 

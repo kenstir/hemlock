@@ -111,13 +111,13 @@ class LaunchActivity : AppCompatActivity(), CoroutineScope by MainScope() {
 
     override fun onDestroy() {
         super.onDestroy()
-        Log.d(TAG, object{}.javaClass.enclosingMethod?.name)
+        Log.d(TAG, object{}.javaClass.enclosingMethod?.name ?: "")
         cancel()
     }
 
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
-        Log.d(TAG, object{}.javaClass.enclosingMethod?.name)
+        Log.d(TAG, object{}.javaClass.enclosingMethod?.name ?: "")
 
         // setDefaultNightMode causes onCreate to be called twice.  Calling launchLoginFlow here
         // saves a launch/cancel cycle.
