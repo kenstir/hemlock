@@ -175,7 +175,7 @@ class LaunchActivity : AppCompatActivity(), CoroutineScope by MainScope() {
                     onLaunchFailure()
                 }
             } catch (ex: Exception) {
-                logFailedLogin(ex)
+                Analytics.logFailedLogin(ex)
                 val msg = ex.message ?: "Cancelled"
                 mProgressText?.text = msg
                 onLaunchFailure()
@@ -261,34 +261,11 @@ class LaunchActivity : AppCompatActivity(), CoroutineScope by MainScope() {
             }
         }
 
-        logSuccessfulLogin(account)
+        Analytics.logSuccessfulLogin(account.username, account.barcode,
+            EgOrg.getOrgShortNameSafe(account.homeOrg),
+            EgOrg.getOrgShortNameSafe(EgOrg.findOrg(account.homeOrg)?.parent))
 
         return true
-    }
-
-    // We call this event "login", but it happens after auth and after fleshing the user.
-    // NB: "session_start" seems more appropriate but that is a predefined automatic event.
-    private fun logSuccessfulLogin(account: Account) {
-        val homeOrg = EgOrg.getOrgShortNameSafe(account.homeOrg)
-        val parentOrg = EgOrg.getOrgShortNameSafe(EgOrg.findOrg(account.homeOrg)?.parent)
-        Analytics.setUserProperties(bundleOf(
-            Analytics.UserProperty.HOME_ORG to homeOrg,
-            Analytics.UserProperty.PARENT_ORG to parentOrg
-        ))
-        Analytics.logEvent(Analytics.Event.LOGIN, bundleOf(
-            Analytics.Param.RESULT to Analytics.Value.OK,
-            Analytics.UserProperty.HOME_ORG to homeOrg,
-            Analytics.UserProperty.PARENT_ORG to parentOrg,
-            Analytics.Param.LOGIN_TYPE to Analytics.loginTypeKey(account.username, account.barcode),
-        ))
-    }
-
-    private fun logFailedLogin(ex: java.lang.Exception) {
-        val c = ex.javaClass.simpleName
-        val m = ex.message ?: c
-        Analytics.logEvent(Analytics.Event.LOGIN, bundleOf(
-            Analytics.Param.RESULT to m
-        ))
     }
 
     private suspend fun fetchSession(authToken: String): Result<OSRFObject> {

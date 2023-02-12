@@ -79,13 +79,13 @@ public class AccountAuthenticator extends AbstractAccountAuthenticator {
                     Analytics.log(TAG, "getAuthToken> attempting to sign in with existing password");
                     authToken = EvergreenAuthenticator.signIn(library_url, account.name, password);
                 } catch (AuthenticationException e) {
-                    Analytics.logException(e);
+                    //Analytics.logException(e);
                     am.clearPassword(account);
                     final Bundle result = new Bundle();
                     result.putString(AccountManager.KEY_ERROR_MESSAGE, e.getMessage());
                     return result;
                 } catch (Exception e2) {
-                    Analytics.logException(e2);
+                    //Analytics.logException(e2);
                     am.clearPassword(account);
                     final Bundle result = new Bundle();
                     result.putString(AccountManager.KEY_ERROR_MESSAGE, "Sign in failed");

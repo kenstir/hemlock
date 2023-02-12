@@ -177,10 +177,10 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity {
                     data.putString(Const.KEY_LIBRARY_URL, selected_library.getUrl());
                 } catch (AuthenticationException e) {
                     if (e != null) errorMessage = e.getMessage();
-                    //Analytics.logException(TAG, e);
+                    Analytics.logFailedLogin(e);
                 } catch (Exception e2) {
                     if (e2 != null) errorMessage = e2.getMessage();
-                    Analytics.logException(TAG, e2);
+                    Analytics.logFailedLogin(e2);
                 }
                 if (authtoken == null)
                     data.putString(KEY_ERROR_MESSAGE, errorMessage);

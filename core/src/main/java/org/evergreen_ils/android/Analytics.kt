@@ -21,6 +21,7 @@ import android.content.Context
 import android.content.pm.ApplicationInfo
 import android.os.Bundle
 import android.provider.Settings
+import androidx.core.os.bundleOf
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import org.evergreen_ils.BuildConfig
@@ -237,11 +238,36 @@ object Analytics {
         }
     }
 
-    fun loginTypeKey(username: String, barcode: String?): String {
+    private fun loginTypeKey(username: String, barcode: String?): String {
         return when {
             username == barcode -> "barcode"
             else -> "username"
         }
+    }
+
+    // We call this event "login", but it happens after auth and after fleshing the user.
+    // NB: "session_start" seems more appropriate but that is a predefined automatic event.
+    @JvmStatic
+    fun logSuccessfulLogin(username: String, barcode: String?, homeOrg: String, parentOrg: String) {
+        setUserProperties(bundleOf(
+            UserProperty.HOME_ORG to homeOrg,
+            UserProperty.PARENT_ORG to parentOrg
+        ))
+        logEvent(Event.LOGIN, bundleOf(
+            Param.RESULT to Value.OK,
+            UserProperty.HOME_ORG to homeOrg,
+            UserProperty.PARENT_ORG to parentOrg,
+            Param.LOGIN_TYPE to loginTypeKey(username, barcode),
+        ))
+    }
+
+    @JvmStatic
+    fun logFailedLogin(ex: Exception) {
+        val c = ex.javaClass.simpleName
+        val m = ex.cause?.localizedMessage ?: ex.localizedMessage ?: c
+        logEvent(Event.LOGIN, bundleOf(
+            Param.RESULT to m
+        ))
     }
 
     fun resultValue(result: Result<Any?>): String {
