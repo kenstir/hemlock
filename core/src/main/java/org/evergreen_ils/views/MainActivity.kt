@@ -91,11 +91,15 @@ class MainActivity : BaseActivity() {
     }
 
     private fun setupEventsButton() {
-        val url = EgOrg.findOrg(App.getAccount().homeOrg)?.eventsURL
         // hide Events button if not enabled, or if the org has no eventsURL
-        if (!resources.getBoolean(R.bool.ou_enable_events_button) || url.isNullOrEmpty()) {
+        if (!homeOrgHasEvents()) {
             eventsButton?.visibility = View.GONE
         }
+    }
+
+    private fun homeOrgHasEvents(): Boolean {
+        val url = EgOrg.findOrg(App.getAccount().homeOrg)?.eventsURL
+        return resources.getBoolean(R.bool.ou_enable_events_button) && !url.isNullOrEmpty()
     }
 
     // TODO: Make this on demand by making it a suspend fun in GatewayLoader.

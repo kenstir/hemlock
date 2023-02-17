@@ -56,27 +56,13 @@ class Organization(@JvmField val id: Int,
         get() = parent == null
 
     fun loadSettings(obj: OSRFObject) {
-        eventsURL = parseStringSetting(obj, Api.SETTING_HEMLOCK_EVENTS_URL)
-        infoURL = parseStringSetting(obj, Api.SETTING_INFO_URL)
-        isNotPickupLocationSetting = parseBoolSetting(obj, Api.SETTING_ORG_UNIT_NOT_PICKUP_LIB)
-        isPaymentAllowedSetting = parseBoolSetting(obj, Api.SETTING_CREDIT_PAYMENTS_ALLOW)
-        val smsEnable = parseBoolSetting(obj, Api.SETTING_SMS_ENABLE)
+        eventsURL = parseOrgStringSetting(obj, Api.SETTING_HEMLOCK_EVENTS_URL)
+        infoURL = parseOrgStringSetting(obj, Api.SETTING_INFO_URL)
+        isNotPickupLocationSetting = parseOrgBoolSetting(obj, Api.SETTING_ORG_UNIT_NOT_PICKUP_LIB)
+        isPaymentAllowedSetting = parseOrgBoolSetting(obj, Api.SETTING_CREDIT_PAYMENTS_ALLOW)
+        val smsEnable = parseOrgBoolSetting(obj, Api.SETTING_SMS_ENABLE)
         smsEnable?.let { EgOrg.smsEnabled = smsEnable }
         settingsLoaded = true
-    }
-
-    // map returned from `fetchOrgSettings` looks like:
-    // {credit.payments.allow={org=49, value=true}, opac.holds.org_unit_not_pickup_lib=null}
-    private fun parseBoolSetting(obj: OSRFObject, setting: String): Boolean? {
-        val valueObj = obj.getObject(setting)
-        val value = valueObj?.getBoolean("value")
-        return value
-    }
-
-    private fun parseStringSetting(obj: OSRFObject, setting: String): String? {
-        val valueObj = obj.getObject(setting)
-        val value = valueObj?.getString("value")
-        return value
     }
 
     fun getAddress(separator: String = " "): String {
@@ -90,4 +76,18 @@ class Organization(@JvmField val id: Int,
         sb.append(" ").append(addressObj?.getString("post_code"))
         return sb.toString()
     }
+}
+
+// map returned from `fetchOrgSettings` looks like:
+// {credit.payments.allow={org=49, value=true}, opac.holds.org_unit_not_pickup_lib=null}
+private fun parseOrgBoolSetting(obj: OSRFObject, setting: String): Boolean? {
+    val valueObj = obj.getObject(setting)
+    val value = valueObj?.getBoolean("value")
+    return value
+}
+
+fun parseOrgStringSetting(obj: OSRFObject, setting: String): String? {
+    val valueObj = obj.getObject(setting)
+    val value = valueObj?.getString("value")
+    return value
 }

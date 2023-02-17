@@ -34,9 +34,15 @@ const val TAG = "Gateway"
 private const val INITIAL_URL_SIZE = 128
 
 // Notes on caching.  We add 2 parameters to every request to ensure a coherent cache:
-// clientCacheKey (the app versionCode), and serverCacheKey (the server ils-version).
-// In this way we can force cache misses by either upgrading the server or the client.
-// Server upgrades sometimes involve incompatible IDL which can cause OSRF decode crashes.
+//     _ck=clientCacheKey (the app versionCode)
+//     _sk=serverCacheKey (the server ils-version appended with hemlock.cache_key).
+//
+// In this way we force cache misses in three situations:
+// 1. An app upgrade.
+// 2. A server upgrade.  Server upgrades sometimes involve incompatible IDL which
+//    would otherwise cause OSRF decode crashes.
+// 3. Evergreen admin action.  Changing "hemlock.cache_key" on orgID=1 is a final
+//    override that is needed only to push out org tree or org URL changes immediately.
 object Gateway {
     lateinit var baseUrl: String
     lateinit var clientCacheKey: String

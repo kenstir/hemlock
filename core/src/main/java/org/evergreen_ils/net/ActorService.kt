@@ -23,6 +23,7 @@ import org.opensrf.util.OSRFObject
 
 interface ActorService {
     suspend fun fetchServerVersion(): Result<String>
+    suspend fun fetchServerCacheKey(): Result<String?>
     suspend fun fetchOrgTypes(): Result<List<OSRFObject>>
     suspend fun fetchOrgTree(): Result<OSRFObject>
     suspend fun fetchOrg(orgID: Int): Result<OSRFObject>
