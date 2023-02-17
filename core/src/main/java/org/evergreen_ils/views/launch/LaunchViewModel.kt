@@ -78,12 +78,22 @@ class LaunchViewModel : ViewModel() {
                 var now_ms = start_ms
 
                 // sync: serverVersion is a key for caching all other requests
-                val result= Gateway.actor.fetchServerVersion()
-                when (result) {
-                    is Result.Success -> Gateway.serverCacheKey = result.data
+                val serverVersion = when (val result = Gateway.actor.fetchServerVersion()) {
+                    is Result.Success -> { result.data }
                     is Result.Error -> { onLoadError(result.exception) ; return@async }
                 }
-                now_ms = Log.logElapsedTime(TAG, now_ms, "fetchServerVersion")
+                Gateway.serverCacheKey = serverVersion
+                now_ms = Log.logElapsedTime(TAG, now_ms, "fetchServerVersion: $serverVersion")
+
+                // sync: serverCacheKey is an additional way for the EG admin to clear the app cache
+                val serverCacheKey = when (val result = Gateway.actor.fetchServerCacheKey()) {
+                    is Result.Success -> { result.data ?: "x" }
+                    is Result.Error -> { onLoadError(result.exception) ; return@async }
+                }
+                serverCacheKey?.let {
+                    Gateway.serverCacheKey = "$serverVersion-$serverCacheKey"
+                }
+                now_ms = Log.logElapsedTime(TAG, now_ms, "fetchServerCacheKey: $serverCacheKey")
 
                 // sync: load IDL
                 EgIDL.loadIDL()

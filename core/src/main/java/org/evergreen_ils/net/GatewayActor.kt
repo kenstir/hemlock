@@ -22,14 +22,29 @@ import org.evergreen_ils.android.Log
 import org.evergreen_ils.data.Account
 import org.evergreen_ils.data.Result
 import org.evergreen_ils.data.jsonMapOf
+import org.evergreen_ils.data.parseOrgStringSetting
 import org.evergreen_ils.system.EgOrg
 import org.opensrf.util.OSRFObject
 
 object GatewayActor: ActorService {
     override suspend fun fetchServerVersion(): Result<String> {
         return try {
+            // shouldCache=false because this result is used as a cache-busting param
             val ret = Gateway.fetchObjectString(Api.ACTOR, Api.ILS_VERSION, arrayOf(), false)
             Result.Success(ret)
+        } catch (e: Exception) {
+            Result.Error(e)
+        }
+    }
+
+    override suspend fun fetchServerCacheKey(): Result<String?> {
+        return try {
+            // shouldCache=false because this result is used as a cache-busting param
+            val settings = listOf(Api.SETTING_HEMLOCK_CACHE_KEY)
+            val args = arrayOf<Any?>(EgOrg.consortiumID, settings, Api.ANONYMOUS)
+            val ret = Gateway.fetchObject(Api.ACTOR, Api.ORG_UNIT_SETTING_BATCH, args, false)
+            val value = parseOrgStringSetting(ret, Api.SETTING_HEMLOCK_CACHE_KEY)
+            Result.Success(value)
         } catch (e: Exception) {
             Result.Error(e)
         }
