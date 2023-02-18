@@ -38,6 +38,7 @@
             android:paddingLeft="16dp"
             android:paddingTop="32dp"
             android:paddingRight="16dp"
+            android:paddingBottom="0dp"
             android:text=""
             android:textAppearance="@style/TextAppearance.AppCompat.Large"
             android:textColor="@android:color/black"
@@ -54,9 +55,25 @@
             android:background="@color/white"
             android:contentDescription="@string/barcode_description"
             android:paddingLeft="32dp"
-            android:paddingTop="0dp"
+            android:paddingTop="8dp"
             android:paddingRight="32dp"
-            android:paddingBottom="32dp" />
+            android:paddingBottom="8dp" />
+
+        <TextView
+            android:id="@+id/barcode_warning"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|center_horizontal|center"
+            android:background="@color/white"
+            android:contentDescription="@string/barcode_expiration_date_description"
+            android:gravity="bottom|center_horizontal|center"
+            android:paddingLeft="16dp"
+            android:paddingTop="0dp"
+            android:paddingRight="16dp"
+            android:paddingBottom="32dp"
+            android:textAppearance="@style/TextAppearance.AppCompat.Large"
+            android:textColor="@color/material_grey_700"
+            tools:text="Expires May 3, 2023" />
     </LinearLayout>
 
 </LinearLayout>
