@@ -24,6 +24,8 @@ import org.evergreen_ils.OSRFUtils
 import org.evergreen_ils.android.Analytics
 import org.evergreen_ils.net.GatewayEventError
 import org.opensrf.util.OSRFObject
+import java.text.DateFormat
+import java.util.Date
 
 private const val TAG = "Account"
 
@@ -35,6 +37,7 @@ class Account constructor(val username: String, var authToken: String?) {
     var id: Int? = null
     var homeOrg: Int? = null
     var barcode: String? = null
+    var expireDate: Date? = null
     var notifyByEmail = false
     var notifyByPhone = false
     var notifyBySMS = false
@@ -65,6 +68,8 @@ class Account constructor(val username: String, var authToken: String?) {
         get() = _pickupOrg ?: homeOrg
     val searchOrg: Int?
         get() = _searchOrg ?: homeOrg
+    val expireDateString: String?
+        get() = expireDate?.let { DateFormat.getDateInstance().format(it) }
 
     /** return (authToken, userID) or throw GatewayEventError */
     fun getCredentialsOrThrow(): AccountCredentials {
@@ -86,6 +91,7 @@ class Account constructor(val username: String, var authToken: String?) {
         dayPhone = obj.getString("day_phone")
         firstGivenName = obj.getString("pref_first_given_name") ?: obj.getString("first_given_name")
         familyName = obj.getString("pref_family_name") ?: obj.getString("family_name")
+        expireDate = obj.getDate("expire_date")
     }
 
     fun loadFleshedUserSettings(obj: OSRFObject) {

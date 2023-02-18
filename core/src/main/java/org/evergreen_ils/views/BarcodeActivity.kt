@@ -24,6 +24,7 @@ import android.graphics.Bitmap
 import android.graphics.Color
 import android.os.Bundle
 import android.util.DisplayMetrics
+import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
@@ -36,6 +37,7 @@ import org.evergreen_ils.utils.ui.BaseActivity
 
 class BarcodeActivity : BaseActivity() {
     private var barcodeText: TextView? = null
+    private var barcodeWarning: TextView? = null
     private var imageView: ImageView? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -45,6 +47,7 @@ class BarcodeActivity : BaseActivity() {
         setContentView(R.layout.activity_barcode)
 
         barcodeText = findViewById(R.id.barcode_text)
+        barcodeWarning = findViewById(R.id.barcode_warning)
         imageView = findViewById(R.id.barcode_image)
 
         initBarcodeViews()
@@ -97,6 +100,13 @@ class BarcodeActivity : BaseActivity() {
         } else {
             barcodeText?.text = getString(R.string.invalid_barcode, barcode)
             imageView?.setImageResource(R.drawable.invalid_barcode)
+        }
+
+        if (resources.getBoolean(R.bool.ou_enable_barcode_expiration)) {
+            val date = App.getAccount().expireDateString
+            barcodeWarning?.text = resources.getString(R.string.barcode_expires_msg, date)
+        } else {
+            barcodeWarning?.visibility = View.GONE
         }
 
         barcodeText?.setOnClickListener { copyBarcodeToClipboard() }

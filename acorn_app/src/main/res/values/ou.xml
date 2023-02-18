@@ -10,6 +10,7 @@
     <string name="ou_behavior_provider">net.kenstir.apps.acorn.AcornAppBehavior</string>
     <string name="ou_barcode_format">Codabar</string>
     <bool name="ou_hierarchical_org_tree">true</bool>
+    <bool name="ou_enable_barcode_expiration">true</bool>
     <bool name="ou_enable_phone_notification">true</bool>
     <bool name="ou_enable_hold_queue_position">true</bool>
     <bool name="ou_enable_part_holds">true</bool>
