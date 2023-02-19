@@ -38,8 +38,12 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.pm.PackageInfoCompat
 import androidx.core.os.bundleOf
 import com.google.android.gms.common.GoogleApiAvailability
+import com.google.android.gms.common.moduleinstall.*
+import com.google.android.gms.common.moduleinstall.ModuleAvailabilityResponse.AvailabilityStatus.STATUS_ALREADY_AVAILABLE
+import com.google.android.gms.common.moduleinstall.ModuleAvailabilityResponse.AvailabilityStatus.STATUS_READY_TO_DOWNLOAD
 import com.google.mlkit.common.MlKitException
 import com.google.mlkit.vision.barcode.common.Barcode
+import com.google.mlkit.vision.codescanner.GmsBarcodeScanner
 import com.google.mlkit.vision.codescanner.GmsBarcodeScanning
 import kotlinx.coroutines.async
 import org.evergreen_ils.R
@@ -451,7 +455,47 @@ class SearchActivity : BaseActivity(), ActivityCompat.OnRequestPermissionsResult
     }
 
     private fun startScanning() {
-        val scanner = GmsBarcodeScanning.getClient(this)
+        // determine if the barcode scanning module is installed, and if not, install it now
+        // See also https://developers.google.com/android/guides/module-install-apis
+        val start = System.currentTimeMillis()
+        val moduleInstallClient = ModuleInstall.getClient(this)
+        val barcodeScanner = GmsBarcodeScanning.getClient(this)
+        moduleInstallClient
+            .areModulesAvailable(barcodeScanner)
+            .addOnSuccessListener {
+                Log.logElapsedTime(TAG, start, "[scanner] module status: ${it.availabilityStatus}")
+                if (it.availabilityStatus == STATUS_READY_TO_DOWNLOAD) {
+                    this.installScannerModule(moduleInstallClient, barcodeScanner)
+                } else if (it.availabilityStatus == STATUS_ALREADY_AVAILABLE) {
+                    this.startScanningWithClient(barcodeScanner)
+                }
+            }
+            .addOnFailureListener {
+                this.onScannerFailure(it)
+            }
+
+    }
+
+    private fun installScannerModule(moduleInstallClient: ModuleInstallClient, scanner: GmsBarcodeScanner) {
+        val start = System.currentTimeMillis()
+        val moduleInstallRequest = ModuleInstallRequest.newBuilder()
+            .addApi(scanner)
+            .build()
+        progress?.show(this@SearchActivity, getString(R.string.msg_installing_scanner_module))
+        moduleInstallClient.installModules(moduleInstallRequest)
+            .addOnSuccessListener {
+                this.startScanningWithClient(scanner)
+            }
+            .addOnFailureListener {
+                this.onScannerFailure(it)
+            }
+            .addOnCompleteListener {
+                progress?.dismiss()
+                Log.logElapsedTime(TAG, start, "[scanner] module install done")
+            }
+    }
+
+    private fun startScanningWithClient(scanner: GmsBarcodeScanner) {
         scanner.startScan()
             .addOnSuccessListener { barcode ->
                 Analytics.logEvent(Analytics.Event.SCAN, Analytics.Param.RESULT, Analytics.Value.OK)
@@ -475,10 +519,14 @@ class SearchActivity : BaseActivity(), ActivityCompat.OnRequestPermissionsResult
                         }
                     }
                 }
-                Analytics.logException(TAG, e)
-                Analytics.logEvent(Analytics.Event.SCAN, Analytics.Param.RESULT, e.message)
-                this.showAlert(e)
+                this.onScannerFailure(e)
             }
+    }
+
+    private fun onScannerFailure(e: Exception) {
+        Analytics.logException(TAG, e)
+        Analytics.logEvent(Analytics.Event.SCAN, Analytics.Param.RESULT, e.message)
+        this.showAlert(e)
     }
 
     private fun handleBarcodeResult(barcode: Barcode) {
@@ -491,7 +539,7 @@ class SearchActivity : BaseActivity(), ActivityCompat.OnRequestPermissionsResult
             }
         }
         barcode.rawValue?.let {
-            Log.d(TAG, "SCANNER: scanned $it")
+            Log.d(TAG, "[scanner]: got $it")
 
             // We set searchClassSpinner=identifier so that the search is done with the right class.
             // Because we are changing the state of the spinner, force the searchOptionsButton on
