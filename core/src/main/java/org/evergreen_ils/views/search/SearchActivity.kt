@@ -441,6 +441,7 @@ class SearchActivity : BaseActivity(), ActivityCompat.OnRequestPermissionsResult
         return super.onOptionsItemSelected(item)
     }
 
+    @Deprecated("Deprecated in Java")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         when (resultCode) {
@@ -471,7 +472,10 @@ class SearchActivity : BaseActivity(), ActivityCompat.OnRequestPermissionsResult
                 }
             }
             .addOnFailureListener {
-                this.onScannerFailure(it)
+                // this can fail with "17: API: ModuleInstall.API is not available on this device..."
+                // and that is a terrible UX.  Calling startScanning still fails, but produces
+                // a better error message.
+                this.startScanningWithClient(barcodeScanner)
             }
 
     }
