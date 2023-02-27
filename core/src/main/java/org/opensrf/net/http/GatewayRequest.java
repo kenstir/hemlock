@@ -103,9 +103,9 @@ public class GatewayRequest extends HttpRequest {
             failed = true;
             failure = ex;
             Log.d(TAG, "caught exception", ex);
-            Analytics.setString("svc", service);
-            Analytics.setString("m", method.getName());
-            Analytics.logException(ex);
+//            Analytics.setString("svc", service);
+//            Analytics.setString("m", method.getName());
+//            Analytics.logException(ex);
         }
 
         readComplete = true;
