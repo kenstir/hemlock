@@ -528,7 +528,7 @@ class SearchActivity : BaseActivity(), ActivityCompat.OnRequestPermissionsResult
     }
 
     private fun onScannerFailure(e: Exception) {
-        Analytics.logException(TAG, e)
+        //Analytics.logException(TAG, e)
         Analytics.logEvent(Analytics.Event.SCAN, Analytics.Param.RESULT, e.message)
         this.showAlert(e)
     }
