@@ -82,12 +82,10 @@ class Organization(@JvmField val id: Int,
 // {credit.payments.allow={org=49, value=true}, opac.holds.org_unit_not_pickup_lib=null}
 private fun parseOrgBoolSetting(obj: OSRFObject, setting: String): Boolean? {
     val valueObj = obj.getObject(setting)
-    val value = valueObj?.getBoolean("value")
-    return value
+    return valueObj?.getBoolean("value")
 }
 
 fun parseOrgStringSetting(obj: OSRFObject, setting: String): String? {
     val valueObj = obj.getObject(setting)
-    val value = valueObj?.getString("value")
-    return value
+    return valueObj?.getString("value")
 }
