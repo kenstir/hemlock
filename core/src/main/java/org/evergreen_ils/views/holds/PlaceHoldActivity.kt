@@ -155,7 +155,7 @@ class PlaceHoldActivity : BaseActivity() {
     }
 
     private fun fetchData() {
-        async {
+        scope.async {
             try {
                 Log.d(TAG, "[kcxxx] fetchData ...")
                 val start = System.currentTimeMillis()
@@ -163,13 +163,13 @@ class PlaceHoldActivity : BaseActivity() {
                 progress?.show(this@PlaceHoldActivity, getString(R.string.msg_loading_place_hold))
                 placeHold?.isEnabled = false
 
-                jobs.add(async {
+                jobs.add(scope.async {
                     GatewayLoader.loadOrgSettingsAsync(null).await()
                 })
 
                 if (resources.getBoolean(R.bool.ou_enable_part_holds)) {
                     Log.d(TAG, "${record.title}: fetching parts")
-                    jobs.add(async {
+                    jobs.add(scope.async {
                         val result = Gateway.search.fetchHoldParts(record.id)
                         onPartsResult(result)
                         if (hasParts && resources.getBoolean(R.bool.ou_enable_title_hold_on_item_with_parts)) {
@@ -303,7 +303,7 @@ class PlaceHoldActivity : BaseActivity() {
         if (!placeHoldPreFlightCheck())
             return
 
-        async {
+        scope.async {
             Log.d(TAG, "[kcxxx] placeHold: ${record.id}")
             val selectedOrgID = if (EgOrg.visibleOrgs.size > selectedOrgPos) EgOrg.visibleOrgs[selectedOrgPos].id else -1
             val selectedSMSCarrierID = if (EgSms.carriers.size > selectedSMSPos) EgSms.carriers[selectedSMSPos].id else -1

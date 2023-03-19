@@ -85,7 +85,7 @@ class CheckoutsActivity : BaseActivity() {
     }
 
     private fun fetchData() {
-        async {
+        scope.async {
             try {
                 Log.d(TAG, "[kcxxx] fetchData ...")
                 val start = System.currentTimeMillis()
@@ -100,7 +100,7 @@ class CheckoutsActivity : BaseActivity() {
                 // fetch details
                 circRecords = CircRecord.makeArray(obj)
                 for (circRecord in circRecords) {
-                    jobs.add(async { fetchCircDetails(circRecord) })
+                    jobs.add(scope.async { fetchCircDetails(circRecord) })
                 }
                 checkoutsSummary?.text = String.format(getString(R.string.checkout_items), circRecords.size)
 
@@ -250,7 +250,7 @@ class CheckoutsActivity : BaseActivity() {
     }
 
     private fun renewItem(record: CircRecord) {
-        async {
+        scope.async {
 //            Log.d(TAG, "[kcxxx] renewItem: ${record.targetCopy}")
 
             record.targetCopy?.let {

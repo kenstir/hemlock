@@ -76,7 +76,7 @@ class MessageDetailsActivity : BaseActivity() {
     }
 
     private fun markMessageDeletedAndFinish() {
-        async {
+        scope.async {
             val result = Gateway.actor.markMessageDeleted(App.getAccount(), message.id)
             if (result is Result.Error) {
                 showAlert(result.exception); return@async
@@ -87,7 +87,7 @@ class MessageDetailsActivity : BaseActivity() {
     }
 
     private fun markMessageRead() {
-        async {
+        scope.async {
             val result = Gateway.actor.markMessageRead(App.getAccount(), message.id)
             if (result is Result.Error) {
                 showAlert(result.exception); return@async
@@ -97,7 +97,7 @@ class MessageDetailsActivity : BaseActivity() {
     }
 
     private fun markMessageUnreadAndFinish() {
-        async {
+        scope.async {
             val result = Gateway.actor.markMessageUnread(App.getAccount(), message.id)
             if (result is Result.Error) {
                 showAlert(result.exception); return@async

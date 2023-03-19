@@ -28,6 +28,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
@@ -51,7 +52,7 @@ import java.util.concurrent.TimeoutException
 
 private const val TAG = "LaunchActivity"
 
-class LaunchActivity : AppCompatActivity(), CoroutineScope by MainScope() {
+class LaunchActivity : AppCompatActivity() {
 
     private var mProgressText: TextView? = null
     private var mProgressBar: View? = null
@@ -59,6 +60,7 @@ class LaunchActivity : AppCompatActivity(), CoroutineScope by MainScope() {
     private var mSendReportButton: Button? = null
     private lateinit var mModel: LaunchViewModel
     private var mRetryCount = 0
+    var scope = lifecycleScope
 
     override fun onCreate(savedInstanceState: Bundle?) {
         Log.d(TAG, "onCreate")
@@ -104,14 +106,11 @@ class LaunchActivity : AppCompatActivity(), CoroutineScope by MainScope() {
                 onLaunchFailure()
             }
         })
-
-        //launchLoginFlow()
     }
 
     override fun onDestroy() {
         super.onDestroy()
         Log.d(TAG, object{}.javaClass.enclosingMethod?.name ?: "")
-        cancel()
     }
 
     override fun onAttachedToWindow() {
@@ -137,7 +136,7 @@ class LaunchActivity : AppCompatActivity(), CoroutineScope by MainScope() {
 
     private fun launchLoginFlow() {
         Log.d(TAG, "[auth] launch")
-        launch {
+        scope.launch {
             try {
                 val account = getAccount()
                 Log.d(TAG, "[auth] ${account.username} ${account.authToken}")
@@ -166,7 +165,7 @@ class LaunchActivity : AppCompatActivity(), CoroutineScope by MainScope() {
     }
 
     private fun loadAccountData() {
-        launch {
+        scope.launch {
             try {
                 if (getSession(App.getAccount())) {
                     onLaunchSuccess()

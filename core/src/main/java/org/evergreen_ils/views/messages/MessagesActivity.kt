@@ -76,7 +76,7 @@ class MessagesActivity : BaseActivity() {
     }
 
     private fun fetchData() {
-        async {
+        scope.async {
             try {
                 Log.d(TAG, "[kcxxx] fetchData ...")
                 val start = System.currentTimeMillis()
@@ -174,7 +174,7 @@ class MessagesActivity : BaseActivity() {
     }
 
     private fun markMessageDeleted(message: PatronMessage) {
-        async {
+        scope.async {
             val result = Gateway.actor.markMessageDeleted(App.getAccount(), message.id)
             if (result is Result.Error) {
                 showAlert(result.exception); return@async
@@ -184,7 +184,7 @@ class MessagesActivity : BaseActivity() {
     }
 
     private fun markMessageRead(message: PatronMessage) {
-        async {
+        scope.async {
             val result = Gateway.actor.markMessageRead(App.getAccount(), message.id)
             if (result is Result.Error) {
                 showAlert(result.exception); return@async
@@ -194,7 +194,7 @@ class MessagesActivity : BaseActivity() {
     }
 
     private fun markMessageUnread(message: PatronMessage) {
-        async {
+        scope.async {
             val result = Gateway.actor.markMessageUnread(App.getAccount(), message.id)
             if (result is Result.Error) {
                 showAlert(result.exception); return@async

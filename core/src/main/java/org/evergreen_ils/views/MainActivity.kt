@@ -30,6 +30,7 @@ import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.core.view.MenuItemCompat
 import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
 import org.evergreen_ils.R
 import org.evergreen_ils.android.AccountUtils
 import org.evergreen_ils.views.bookbags.BookBagsActivity
@@ -41,6 +42,7 @@ import org.evergreen_ils.net.Gateway
 import org.evergreen_ils.views.search.SearchActivity
 import org.evergreen_ils.android.Log
 import org.evergreen_ils.data.PatronMessage
+import org.evergreen_ils.net.GatewayError
 import org.evergreen_ils.system.EgOrg
 import org.evergreen_ils.utils.ui.BaseActivity
 import org.evergreen_ils.utils.ui.showAlert
@@ -105,7 +107,7 @@ class MainActivity : BaseActivity() {
     // TODO: Make this on demand by making it a suspend fun in GatewayLoader.
     private fun loadSMSCarriers() {
         Log.d(TAG, "[async] loadSMSCarriers ...")
-        async {
+        scope.async {
             val start = System.currentTimeMillis()
             val result = Gateway.pcrud.fetchSMSCarriers()
             Log.logElapsedTime(TAG, start, "[async] fetchSMSCarriers ... done")
@@ -118,7 +120,7 @@ class MainActivity : BaseActivity() {
 
     private fun loadUnreadMessageCount() {
         Log.d(TAG, "[async] loadUnreadMessageCount ...")
-        async {
+        scope.async {
             if (resources.getBoolean(R.bool.ou_enable_messages)) {
                 val start = System.currentTimeMillis()
                 val result = Gateway.actor.fetchMessages(App.getAccount())

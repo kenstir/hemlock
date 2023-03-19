@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="net.kenstir.apps.cool"
-          android:installLocation="auto"
+    android:installLocation="auto"
           android:versionCode="22"
           android:versionName="2.4.0.1">
 

@@ -96,24 +96,24 @@ class FinesActivity : BaseActivity() {
     }
 
     private fun fetchData() {
-        async {
+        scope.async {
             try {
                 val start = System.currentTimeMillis()
                 var jobs = mutableListOf<Job>()
                 progress?.show(this@FinesActivity, getString(R.string.msg_retrieving_fines))
                 Log.d(TAG, "[kcxxx] fetchData ...")
 
-                jobs.add(async {
+                jobs.add(scope.async {
                     // Need homeOrg's settings to enable/disable fines
                     val homeOrg = EgOrg.findOrg(App.getAccount().homeOrg)
                     GatewayLoader.loadOrgSettingsAsync(homeOrg).await()
                     updatePayFinesButtonVisibility()
                 })
 
-                jobs.add(async {
+                jobs.add(scope.async {
                     onSummaryResult(Gateway.actor.fetchUserFinesSummary(App.getAccount()))
                 })
-                jobs.add(async {
+                jobs.add(scope.async {
                     onTransactionsResult(Gateway.actor.fetchUserTransactionsWithCharges(App.getAccount()))
                 })
 

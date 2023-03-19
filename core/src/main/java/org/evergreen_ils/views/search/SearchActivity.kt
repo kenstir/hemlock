@@ -214,7 +214,7 @@ class SearchActivity : BaseActivity(), ActivityCompat.OnRequestPermissionsResult
     }
 
     private fun fetchData() {
-        async {
+        scope.async {
             try {
                 Log.d(TAG, "[kcxxx] fetchData ...")
                 val start = System.currentTimeMillis()
@@ -234,7 +234,7 @@ class SearchActivity : BaseActivity(), ActivityCompat.OnRequestPermissionsResult
     }
 
     private fun fetchSearchResults() {
-        async {
+        scope.async {
             try {
                 val start = System.currentTimeMillis()
                 //var jobs = mutableListOf<Job>()
