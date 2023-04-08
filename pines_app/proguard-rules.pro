@@ -7,3 +7,6 @@
 #-dontshrink
 -dontobfuscate
 -dontoptimize
+
+# suppress warning
+-dontwarn kotlin.jvm.internal.SourceDebugExtension
