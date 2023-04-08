@@ -37,6 +37,9 @@ android {
             //     5
             //     2.5.0.7 (114)
             //     5
+            // Note also that the acorn app did not enable resource shrinking
+            // and it also sees this crash in crashlytics.
+            //
             // See also https://stackoverflow.com/questions/70860082/resourcesnotfoundexception-unable-to-find-resource-id-0x7f080043-for-drawable/70866805#70866805
             //
             // Usually shows up on Nexus 5X Android 8.1.0
