@@ -2,8 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:installLocation="auto"
-    android:versionCode="11"
-    android:versionName="2.3.2.1">
+    android:versionCode="12"
+    android:versionName="2.6.0.0">
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS" />
@@ -21,7 +21,6 @@
 
     <application
         android:allowBackup="true"
-        android:fullBackupContent="true"
         android:icon="@mipmap/launcher_icon"
         android:label="@string/ou_app_label"
         android:theme="@style/IndianaDarkNoActionBar"
@@ -115,7 +114,7 @@
 
         <service
             android:name="org.evergreen_ils.auth.AuthenticatorService"
-            android:exported="true" >
+            android:exported="false" >
             <intent-filter>
                 <action android:name="android.accounts.AccountAuthenticator" />
             </intent-filter>
