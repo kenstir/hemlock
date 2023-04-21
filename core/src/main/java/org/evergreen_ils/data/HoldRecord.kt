@@ -53,7 +53,7 @@ class HoldRecord(val ahr: OSRFObject) : Serializable {
         }
     private val transitSince: String?
         private get() {
-            val transit = ahr["transit"] as OSRFObject ?: return null
+            val transit = ahr["transit"] as? OSRFObject ?: return null
             val sent = transit.getString("source_send_time")
             val date = OSRFUtils.parseDate(sent)
             return formatDateTime(date)
