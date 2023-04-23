@@ -66,6 +66,11 @@
             android:parentActivityName="org.evergreen_ils.views.MainActivity">
         </activity>
         <activity
+            android:name="org.evergreen_ils.views.FinesActivity"
+            android:label="@string/title_fines"
+            android:parentActivityName="org.evergreen_ils.views.MainActivity">
+        </activity>
+        <activity
             android:name="org.evergreen_ils.views.holds.HoldsActivity"
             android:label="@string/hold_items_title"
             android:parentActivityName="org.evergreen_ils.views.MainActivity">
@@ -83,11 +88,6 @@
         <activity
             android:name="org.evergreen_ils.views.search.SearchActivity"
             android:label="@string/title_search"
-            android:parentActivityName="org.evergreen_ils.views.MainActivity">
-        </activity>
-        <activity
-            android:name="org.evergreen_ils.views.FinesActivity"
-            android:label="@string/title_fines"
             android:parentActivityName="org.evergreen_ils.views.MainActivity">
         </activity>
 
