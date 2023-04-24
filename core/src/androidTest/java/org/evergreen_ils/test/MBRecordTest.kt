@@ -22,6 +22,7 @@ import org.evergreen_ils.android.StdoutLogProvider
 import org.evergreen_ils.data.MBRecord
 import org.junit.Assert
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
 import org.junit.Before
 import org.junit.BeforeClass
@@ -114,8 +115,8 @@ class MBRecordTest {
             [[32673,null,"0.0"],[886843,null,"0.0"]]
             """
         val records = makeArrayFromJson(json)
-        Assert.assertEquals(2, records.size.toLong())
-        Assert.assertEquals(32673, records[0].id)
+        assertEquals(2, records.size.toLong())
+        assertEquals(32673, records[0].id)
     }
 
     @Test
@@ -124,9 +125,9 @@ class MBRecordTest {
             [["503610",null,"0.0"],["502717",null,"0.0"]]
             """
         val records = makeArrayFromJson(json)
-        Assert.assertEquals(2, records.size.toLong())
-        Assert.assertEquals(503610, records[0].id)
-        Assert.assertEquals(502717, records[1].id)
+        assertEquals(2, records.size.toLong())
+        assertEquals(503610, records[0].id)
+        assertEquals(502717, records[1].id)
     }
 
     @Test
@@ -135,8 +136,8 @@ class MBRecordTest {
             [["1805532"],["2385399"]]
             """
         val records = makeArrayFromJson(json)
-        Assert.assertEquals(2, records.size.toLong())
-        Assert.assertEquals(1805532, records[0].id)
-        Assert.assertEquals(2385399, records[1].id)
+        assertEquals(2, records.size.toLong())
+        assertEquals(1805532, records[0].id)
+        assertEquals(2385399, records[1].id)
     }
 }
