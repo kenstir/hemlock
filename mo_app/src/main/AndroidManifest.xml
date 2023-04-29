@@ -35,6 +35,7 @@
 
         <activity
             android:name="org.evergreen_ils.views.launch.LaunchActivity"
+            android:configChanges="uiMode"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
