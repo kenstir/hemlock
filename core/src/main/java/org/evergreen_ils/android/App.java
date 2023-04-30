@@ -91,7 +91,6 @@ public class App {
 
     static public void init(Context context) {
         enableCaching(context);
-        AppState.init(context);
         if (behavior == null)
             behavior = AppFactory.makeBehavior(context.getResources());
         Volley.init(context);

@@ -50,9 +50,8 @@ import org.evergreen_ils.utils.ui.ThemeManager
 import org.opensrf.util.OSRFObject
 import java.util.concurrent.TimeoutException
 
-private const val TAG = "LaunchActivity"
-
 class LaunchActivity : AppCompatActivity() {
+    private val TAG = javaClass.simpleName
 
     private var mProgressText: TextView? = null
     private var mProgressBar: View? = null
@@ -69,8 +68,6 @@ class LaunchActivity : AppCompatActivity() {
 
         Analytics.initialize(this)
         App.init(this)
-        val changed = ThemeManager.applyNightMode()
-        Log.d(TAG, "applyNightMode returned $changed")
 
         mProgressText = findViewById(R.id.action_in_progress)
         mProgressBar = findViewById(R.id.activity_splash_progress_bar)
@@ -117,8 +114,6 @@ class LaunchActivity : AppCompatActivity() {
         Log.d(TAG, object{}.javaClass.enclosingMethod?.name ?: "")
         super.onAttachedToWindow()
 
-        // setDefaultNightMode causes onCreate to be called twice.  Calling launchLoginFlow here
-        // saves a launch/cancel cycle.
         launchLoginFlow()
     }
 
