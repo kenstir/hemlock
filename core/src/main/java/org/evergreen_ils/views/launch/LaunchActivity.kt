@@ -144,7 +144,7 @@ class LaunchActivity : AppCompatActivity() {
         Log.d(TAG, object{}.javaClass.enclosingMethod?.name ?: "")
         // use GlobalScope so this coroutine isn't canceled when the AuthenticatorActivity is
         // started and this activity is destroyed
-        GlobalScope.async {
+        GlobalScope.launch {
             try {
                 val account = getAccount()
                 Log.d(TAG, "[auth] ${account.username} ${account.authToken}")
