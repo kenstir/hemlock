@@ -28,7 +28,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
@@ -89,7 +89,7 @@ class LaunchActivity : AppCompatActivity() {
             sendErrorReport()
         }
 
-        mModel = ViewModelProviders.of(this)[LaunchViewModel::class.java]
+        mModel = ViewModelProvider(this)[LaunchViewModel::class.java]
         mModel.status.observe(this, Observer { s ->
             Log.d(TAG, "status:$s")
             mProgressText?.text = s
