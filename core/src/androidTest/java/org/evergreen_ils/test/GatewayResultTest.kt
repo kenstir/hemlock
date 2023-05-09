@@ -33,7 +33,6 @@ import org.opensrf.util.OSRFRegistry
 class GatewayResultTest {
 
     companion object {
-
         @BeforeClass
         @JvmStatic
         fun setUpClass() {
