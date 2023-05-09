@@ -18,38 +18,26 @@
 
 package org.evergreen_ils.test;
 
-import android.text.TextUtils;
-
-import androidx.test.ext.junit.runners.AndroidJUnit4;
-
 import org.evergreen_ils.android.Log;
 import org.evergreen_ils.android.StdoutLogProvider;
 import org.evergreen_ils.utils.RecordAttributes;
 import org.evergreen_ils.utils.StringUtils;
-import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 
 import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
-@RunWith(AndroidJUnit4.class)
 public class RecordAttributesTest {
 
     @BeforeClass
-    public static void setUpClass() throws Exception {
+    public static void setUpClass() {
         Log.setProvider(new StdoutLogProvider());
     }
 
-    @Before
-    public void setUp() throws Exception {
-    }
-
     @Test
-    public void test_basic() throws Exception {
+    public void test_basic() {
         String attrs = "'item_form'=>' ', 'item_type'=>'a', 'icon_format'=>'book', 'content_type'=>'still image', 'search_format'=>'book', 'mr_hold_format'=>'book'".replace("'", "\"");
         Map<String, String> map = RecordAttributes.parseAttributes(attrs);
         assertEquals(6, map.size());
