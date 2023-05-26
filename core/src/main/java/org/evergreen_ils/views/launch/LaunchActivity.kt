@@ -30,6 +30,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
@@ -137,9 +138,10 @@ class LaunchActivity : AppCompatActivity() {
 
     private fun launchLoginFlow() {
         Log.d(TAG, object{}.javaClass.enclosingMethod?.name ?: "")
-        // use GlobalScope so this coroutine isn't canceled when the AuthenticatorActivity is
-        // started and this activity is destroyed
-        GlobalScope.launch {
+        // Use GlobalScope so this coroutine isn't canceled when the AuthenticatorActivity is
+        // started and this activity is destroyed.  Use Dispatchers.Main so that if an exception
+        // happens, it is safe to update the UI.
+        GlobalScope.launch(Dispatchers.Main) {
             try {
                 val account = getAccount()
                 Log.d(TAG, "[auth] ${account.username} ${account.authToken}")
