@@ -1,0 +1,110 @@
+<record xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.loc.gov/MARC21/slim http://www.loc.gov/standards/marcxml/schema/MARC21slim.xsd" xmlns="http://www.loc.gov/MARC21/slim">
+	<leader>03929cim a2200649Ki 4500</leader>
+	<controlfield tag="001">89986</controlfield>
+	<controlfield tag="003">ME</controlfield>
+	<controlfield tag="005">20120411021335.0</controlfield>
+	<controlfield tag="006">m        h        </controlfield>
+	<controlfield tag="007">sz usnnnn|||ed</controlfield>
+	<controlfield tag="007">cr nna||||||||</controlfield>
+	<controlfield tag="008">120402p20122000enknnnnjo      f  n eng d</controlfield>
+	<datafield tag="100" ind1="1" ind2=" ">
+		<subfield code="a">Rowling, J. K.</subfield>
+	</datafield>
+	<datafield tag="245" ind1="1" ind2="0">
+		<subfield code="a">Harry Potter and the prisoner of Azkaban /</subfield>
+		<subfield code="c">J.K. Rowling.</subfield>
+	</datafield>
+	<datafield tag="856" ind1="4" ind2="0">
+		<subfield code="u">http://scenicregional.lib.overdrive.com/ContentDetails.htm?ID=E02542E0-7769-41FB-8CA3-C8262175C8AE</subfield>
+		<subfield code="9">SRL</subfield>
+		<subfield code="9">WA</subfield>
+		<subfield code="9">WPL</subfield>
+		<subfield code="9">SRL-UN</subfield>
+		<subfield code="9">SRL-HR</subfield>
+		<subfield code="9">SRL-OW</subfield>
+		<subfield code="9">SRL-PC</subfield>
+		<subfield code="9">SRL-NH</subfield>
+		<subfield code="9">SRL-SC</subfield>
+		<subfield code="9">SRL-WR</subfield>
+		<subfield code="9">SRL-BK</subfield>
+		<subfield code="9">SRLWA</subfield>
+	</datafield>
+	<datafield tag="856" ind1="4" ind2="0">
+		<subfield code="u">http://www.molib2go.org/ContentDetails.htm?ID=5D12A9AB-C7E6-4FE9-8444-177E25636E0A</subfield>
+		<subfield code="z">Click for access to the downloadable eAudioBook via Overdrive</subfield>
+		<subfield code="9">PB</subfield>
+		<subfield code="7">molib2go</subfield>
+		<subfield code="9">CP</subfield>
+		<subfield code="9">GC</subfield>
+		<subfield code="9">HOCO</subfield>
+		<subfield code="9">LLCL</subfield>
+		<subfield code="9">SCL</subfield>
+		<subfield code="9">WC</subfield>
+		<subfield code="9">LDXR</subfield>
+		<subfield code="9">CGP</subfield>
+		<subfield code="9">NNCL</subfield>
+		<subfield code="9">CVP</subfield>
+		<subfield code="9">SKP</subfield>
+		<subfield code="9">AC</subfield>
+		<subfield code="9">MC</subfield>
+		<subfield code="9">SLVN</subfield>
+		<subfield code="9">DRCL</subfield>
+		<subfield code="9">SCYC</subfield>
+		<subfield code="9">CAM</subfield>
+		<subfield code="9">DM</subfield>
+		<subfield code="9">MP</subfield>
+		<subfield code="9">SLM</subfield>
+		<subfield code="9">PLK</subfield>
+		<subfield code="9">JCL</subfield>
+		<subfield code="9">PLSK</subfield>
+		<subfield code="9">FEST</subfield>
+		<subfield code="9">TX</subfield>
+		<subfield code="9">TRLS</subfield>
+		<subfield code="9">LVG</subfield>
+		<subfield code="9">NKC</subfield>
+	</datafield>
+	<datafield tag="856" ind1="4" ind2="0">
+		<subfield code="u">http://scenicregional.lib.overdrive.com/ContentDetails.htm?ID=5D12A9AB-C7E6-4FE9-8444-177E25636E0A</subfield>
+		<subfield code="z">Instantly available on overdrive</subfield>
+		<subfield code="7">scenic overdrive</subfield>
+		<subfield code="9">REMOVE</subfield>
+	</datafield>
+	<datafield tag="856" ind1="4" ind2=" ">
+		<subfield code="3">Excerpt</subfield>
+		<subfield code="u">http://excerpts.contentreserve.com/FormatType-425/3450-1/791186-HarryPotterAndThePrisonerOf.mp3</subfield>
+	</datafield>
+	<datafield tag="856" ind1="4" ind2="0">
+		<subfield code="u">http://www.molib2go.org/ContentDetails.htm?ID=E02542E0-7769-41FB-8CA3-C8262175C8AE</subfield>
+		<subfield code="z">Click for access to the downloadable eBook via Overdrive</subfield>
+		<subfield code="9">PB</subfield>
+		<subfield code="7">molib2go</subfield>
+		<subfield code="9">CP</subfield>
+		<subfield code="9">GC</subfield>
+		<subfield code="9">HOCO</subfield>
+		<subfield code="9">LLCL</subfield>
+		<subfield code="9">SCL</subfield>
+		<subfield code="9">WC</subfield>
+		<subfield code="9">LDXR</subfield>
+		<subfield code="9">CGP</subfield>
+		<subfield code="9">NNCL</subfield>
+		<subfield code="9">CVP</subfield>
+		<subfield code="9">SKP</subfield>
+		<subfield code="9">AC</subfield>
+		<subfield code="9">MC</subfield>
+		<subfield code="9">SLVN</subfield>
+		<subfield code="9">DRCL</subfield>
+		<subfield code="9">SCYC</subfield>
+		<subfield code="9">CAM</subfield>
+		<subfield code="9">DM</subfield>
+		<subfield code="9">MP</subfield>
+		<subfield code="9">SLM</subfield>
+		<subfield code="9">PLK</subfield>
+		<subfield code="9">JCL</subfield>
+		<subfield code="9">PLSK</subfield>
+		<subfield code="9">FEST</subfield>
+		<subfield code="9">TX</subfield>
+		<subfield code="9">TRLS</subfield>
+		<subfield code="9">LVG</subfield>
+		<subfield code="9">NKC</subfield>
+	</datafield>
+</record>

@@ -10,7 +10,7 @@ apply plugin: 'com.google.gms.google-services'
 apply plugin: 'com.google.firebase.crashlytics'
 
 android {
-    compileSdkVersion 32
+    compileSdk 33
     defaultConfig {
         minSdkVersion 21
         targetSdkVersion 32
@@ -43,7 +43,7 @@ dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation project(':core')
     implementation 'androidx.multidex:multidex:2.0.1'
-    androidTestImplementation('androidx.test.espresso:espresso-core:3.4.0', {
+    androidTestImplementation('androidx.test.espresso:espresso-core:3.5.1', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
     testImplementation 'junit:junit:4.13.2'

@@ -36,6 +36,7 @@ import org.evergreen_ils.views.MainActivity;
 
 import java.io.File;
 
+// TODO: This functionality could be moved to our custom Application class
 public class App {
     private static final String TAG = App.class.getSimpleName();
 
@@ -91,7 +92,6 @@ public class App {
 
     static public void init(Context context) {
         enableCaching(context);
-        AppState.init(context);
         if (behavior == null)
             behavior = AppFactory.makeBehavior(context.getResources());
         Volley.init(context);

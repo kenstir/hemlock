@@ -19,6 +19,7 @@
 package org.evergreen_ils.views.launch
 
 import android.content.Intent
+import android.content.res.Configuration
 import android.net.Uri
 import android.os.Bundle
 import android.view.View
@@ -27,11 +28,10 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.MainScope
-import kotlinx.coroutines.cancel
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import org.evergreen_ils.R
 import org.evergreen_ils.android.AccountUtils
@@ -50,9 +50,8 @@ import org.evergreen_ils.utils.ui.ThemeManager
 import org.opensrf.util.OSRFObject
 import java.util.concurrent.TimeoutException
 
-private const val TAG = "LaunchActivity"
-
 class LaunchActivity : AppCompatActivity() {
+    private val TAG = javaClass.simpleName
 
     private var mProgressText: TextView? = null
     private var mProgressBar: View? = null
@@ -60,17 +59,15 @@ class LaunchActivity : AppCompatActivity() {
     private var mSendReportButton: Button? = null
     private lateinit var mModel: LaunchViewModel
     private var mRetryCount = 0
-    var scope = lifecycleScope
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        Log.d(TAG, "onCreate")
+        Log.d(TAG, object{}.javaClass.enclosingMethod?.name ?: "")
         super.onCreate(savedInstanceState)
 
         setContentView(R.layout.activity_splash)
 
         Analytics.initialize(this)
         App.init(this)
-        ThemeManager.applyNightMode()
 
         mProgressText = findViewById(R.id.action_in_progress)
         mProgressBar = findViewById(R.id.activity_splash_progress_bar)
@@ -89,7 +86,7 @@ class LaunchActivity : AppCompatActivity() {
             sendErrorReport()
         }
 
-        mModel = ViewModelProviders.of(this)[LaunchViewModel::class.java]
+        mModel = ViewModelProvider(this)[LaunchViewModel::class.java]
         mModel.status.observe(this, Observer { s ->
             Log.d(TAG, "status:$s")
             mProgressText?.text = s
@@ -109,17 +106,20 @@ class LaunchActivity : AppCompatActivity() {
     }
 
     override fun onDestroy() {
-        super.onDestroy()
         Log.d(TAG, object{}.javaClass.enclosingMethod?.name ?: "")
+        super.onDestroy()
     }
 
     override fun onAttachedToWindow() {
-        super.onAttachedToWindow()
         Log.d(TAG, object{}.javaClass.enclosingMethod?.name ?: "")
+        super.onAttachedToWindow()
 
-        // setDefaultNightMode causes onCreate to be called twice.  Calling launchLoginFlow here
-        // saves a launch/cancel cycle.
         launchLoginFlow()
+    }
+
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        Log.d(TAG, object{}.javaClass.enclosingMethod?.name ?: "")
+        super.onConfigurationChanged(newConfig)
     }
 
     private fun onLaunchFailure() {
@@ -131,18 +131,21 @@ class LaunchActivity : AppCompatActivity() {
     }
 
     private fun onLaunchSuccess() {
+        Log.d(TAG, (object{}.javaClass.enclosingMethod?.name ?: "") + " isFinishing:$isFinishing")
         App.startApp(this)
     }
 
     private fun launchLoginFlow() {
-        Log.d(TAG, "[auth] launch")
-        scope.launch {
+        Log.d(TAG, object{}.javaClass.enclosingMethod?.name ?: "")
+        // use GlobalScope so this coroutine isn't canceled when the AuthenticatorActivity is
+        // started and this activity is destroyed
+        GlobalScope.launch {
             try {
                 val account = getAccount()
                 Log.d(TAG, "[auth] ${account.username} ${account.authToken}")
                 mModel.loadServiceData(resources)
             } catch (ex: Exception) {
-                Log.d(TAG, "[kcxxx] caught in launchLoginFlow", ex)
+                Log.d(TAG, "[auth] caught", ex)
                 mProgressText?.text = ex.getCustomMessage()
                 onLaunchFailure()
             }
@@ -165,7 +168,7 @@ class LaunchActivity : AppCompatActivity() {
     }
 
     private fun loadAccountData() {
-        scope.launch {
+        lifecycleScope.launch {
             try {
                 if (getSession(App.getAccount())) {
                     onLaunchSuccess()
@@ -186,10 +189,9 @@ class LaunchActivity : AppCompatActivity() {
     // needs an Activity.
     private suspend fun getAccount(): Account {
         // get auth token
-        Log.d(TAG, "[auth] getAuthTokenFuture")
         val future = AccountUtils.getAuthTokenFuture(this)
         Log.d(TAG, "[auth] getAuthTokenFuture ...")
-        val bnd: Bundle? = future.await(3_600_000) // long to allow authenticator activity
+        val bnd = future.await(3_600_000) // long to allow authenticator activity
         Log.d(TAG, "[auth] getAuthTokenFuture ... $bnd")
         if (bnd == null)
             throw TimeoutException()
@@ -220,6 +222,7 @@ class LaunchActivity : AppCompatActivity() {
             account.authToken = null
             Log.d(TAG, "[auth] getAuthTokenForAccountFuture ...")
             val future = AccountUtils.getAuthTokenForAccountFuture(this, account.username)
+            Log.d(TAG, "[auth] getAuthTokenForAccountFuture ... await")
             val bnd = future.await(3_600_000) // long to allow authenticator activity
             Log.d(TAG, "[auth] getAuthTokenForAccountFuture ... $bnd")
             val accountManagerResult = bnd.getAccountManagerResult()
@@ -254,7 +257,7 @@ class LaunchActivity : AppCompatActivity() {
                 val orgSettingsResult = Gateway.actor.fetchOrgSettings(org.id)
                 if (orgSettingsResult is Result.Success) {
                     org.loadSettings(orgSettingsResult.data)
-                    Log.d(TAG, "[kcxxx] org ${org.id} settings loaded")
+                    Log.v(TAG, "org ${org.id} settings loaded")
                 }
             }
         }

@@ -10,7 +10,7 @@ apply plugin: 'com.google.gms.google-services'
 apply plugin: 'com.google.firebase.crashlytics'
 
 android {
-    compileSdkVersion 32
+    compileSdk 33
     defaultConfig {
         minSdkVersion 21
         targetSdkVersion 32
@@ -19,8 +19,17 @@ android {
     }
     buildTypes {
         release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            /// https://developer.android.com/studio/build/shrink-code
+
+            // enable code shrinking, obfuscating, and optimization
+            // see also {dontshrink|dontobfuscate|dontoptimize} in proguard-rules.pro
+            minifyEnabled true
+
+            // enable resource shrinking
+            shrinkResources true
+
+            // include ProGuard rules files
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
     compileOptions {
@@ -34,7 +43,7 @@ dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation project(':core')
     implementation 'androidx.multidex:multidex:2.0.1'
-    androidTestImplementation('androidx.test.espresso:espresso-core:3.4.0', {
+    androidTestImplementation('androidx.test.espresso:espresso-core:3.5.1', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
     testImplementation 'junit:junit:4.13.2'
