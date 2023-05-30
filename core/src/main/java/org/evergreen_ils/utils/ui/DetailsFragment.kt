@@ -23,7 +23,10 @@ import android.app.AlertDialog
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.text.SpannableString
+import android.text.Spanned
 import android.text.TextUtils
+import android.text.style.URLSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -50,6 +53,7 @@ import org.evergreen_ils.system.EgOrg
 import org.evergreen_ils.system.EgOrg.findOrg
 import org.evergreen_ils.views.bookbags.BookBagUtils.showAddToListDialog
 import org.evergreen_ils.views.holds.PlaceHoldActivity
+import org.evergreen_ils.views.search.RecordDetailsActivity.Companion.RETURN_DATA
 
 class DetailsFragment : Fragment() {
     private var record: MBRecord? = null
@@ -242,7 +246,10 @@ class DetailsFragment : Fragment() {
     private fun loadMetadata() {
         if (!isAdded) return  // discard late results
         titleTextView?.text = record?.title
-        authorTextView?.text = record?.author
+        val ss = SpannableString(record?.author)
+        ss.setSpan(URLSpan(""), 0, ss.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+        authorTextView?.setText(ss, TextView.BufferType.SPANNABLE)
+        authorTextView?.setOnClickListener { searchByAuthor() }
         publisherTextView?.text = record?.publishingInfo
         synopsisTextView?.text = record?.synopsis
         seriesTextView?.text = record?.series
@@ -252,6 +259,14 @@ class DetailsFragment : Fragment() {
         isbnTextView?.text = record?.isbn
         isbnTableRow?.visibility = if (TextUtils.isEmpty(record?.isbn)) View.GONE else View.VISIBLE
         //updateButtonViews()
+    }
+
+    private fun searchByAuthor() {
+        val author = record?.author ?: return
+        val returnIntent = Intent()
+        returnIntent.putExtra("author", author)
+        activity?.setResult(RETURN_DATA, returnIntent)
+        activity?.finish()
     }
 
     private fun loadCopyCount() {
