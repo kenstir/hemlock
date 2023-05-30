@@ -70,6 +70,7 @@ const val ITEM_SHOW_DETAILS = 1
 const val ITEM_ADD_TO_LIST = 2
 
 const val SEARCH_OPTIONS_VISIBLE_STATE_KEY = "search_options_visible"
+const val SEARCH_CLASS_AUTHOR = "author"
 const val SEARCH_CLASS_IDENTIFIER = "identifier"
 
 class SearchActivity : BaseActivity(), ActivityCompat.OnRequestPermissionsResultCallback {
@@ -100,6 +101,10 @@ class SearchActivity : BaseActivity(), ActivityCompat.OnRequestPermissionsResult
     private val searchClassIdentifierIndex: Int
         get() {
             return searchClassKeywords.indexOf(SEARCH_CLASS_IDENTIFIER)
+        }
+    private val searchClassAuthorIndex: Int
+        get() {
+            return searchClassKeywords.indexOf(SEARCH_CLASS_AUTHOR)
         }
 
     private val searchFormatCode: String?
@@ -446,10 +451,12 @@ class SearchActivity : BaseActivity(), ActivityCompat.OnRequestPermissionsResult
         super.onActivityResult(requestCode, resultCode, data)
         when (resultCode) {
             RecordDetailsActivity.RETURN_DATA -> {
+                searchTextView?.setText(data?.getStringExtra("author"))
+                setSearchClass(searchClassAuthorIndex)
+                fetchSearchResults()
             }
             AdvancedSearchActivity.RESULT_ADVANCED_SEARCH -> {
-                Log.d(TAG, "result text:" + data!!.getStringExtra("advancedSearchText"))
-                searchTextView?.setText(data.getStringExtra("advancedSearchText"))
+                searchTextView?.setText(data?.getStringExtra("advancedSearchText"))
                 fetchSearchResults()
             }
         }
@@ -528,7 +535,6 @@ class SearchActivity : BaseActivity(), ActivityCompat.OnRequestPermissionsResult
     }
 
     private fun onScannerFailure(e: Exception) {
-        //Analytics.logException(TAG, e)
         Analytics.logEvent(Analytics.Event.SCAN, Analytics.Param.RESULT, e.message)
         this.showAlert(e)
     }
@@ -544,15 +550,16 @@ class SearchActivity : BaseActivity(), ActivityCompat.OnRequestPermissionsResult
         }
         barcode.rawValue?.let {
             Log.d(TAG, "[scanner]: got $it")
-
-            // We set searchClassSpinner=identifier so that the search is done with the right class.
-            // Because we are changing the state of the spinner, force the searchOptionsButton on
-            // to ensure the spinner is visible.
-            searchClassSpinner?.setSelection(searchClassIdentifierIndex)
-            searchOptionsButton?.isChecked = true
             searchTextView?.setText(it)
-
+            setSearchClass(searchClassIdentifierIndex)
             fetchSearchResults()
         }
+    }
+
+    private fun setSearchClass(index: Int) {
+        // Set the searchClassSpinner to the specified index. Because we are changing the state
+        // of the spinner, force the searchOptionsButton on to ensure the spinner is visible.
+        searchClassSpinner?.setSelection(index)
+        searchOptionsButton?.isChecked = true
     }
 }
