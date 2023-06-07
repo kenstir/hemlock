@@ -20,13 +20,13 @@ versionCode=${versionCode%\"*}
 echo versionCode=$versionCode
 test -n "$versionCode"
 
-versionName=$(egrep android:versionName $manifest)
+versionName=$(cat ${app}_app/build.gradle core/build.gradle | egrep -m 1 versionName)
 versionName=${versionName#*\"}
 versionName=${versionName%\"*}
 echo versionName=$versionName
 test -n "$versionName"
 
-set -x
+set -ex
 
 tag=${app}_v${versionCode}
 msg="${tag} (${versionName})"
