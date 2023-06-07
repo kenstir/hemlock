@@ -19,8 +19,17 @@ android {
     }
     buildTypes {
         release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            /// https://developer.android.com/studio/build/shrink-code
+
+            // enable code shrinking, obfuscating, and optimization
+            // see also {dontshrink|dontobfuscate|dontoptimize} in proguard-rules.pro
+            minifyEnabled true
+
+            // enable resource shrinking
+            shrinkResources true
+
+            // include ProGuard rules files
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
     compileOptions {
