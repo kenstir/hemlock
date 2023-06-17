@@ -6,7 +6,6 @@ android {
     defaultConfig {
         minSdkVersion 21
         targetSdkVersion 32
-        versionName "2.6.2"
         multiDexEnabled true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         testInstrumentationRunnerArguments = [server: testServer, username: testUsername, password: testPassword, httpbinServer: testHttpbinServer]
