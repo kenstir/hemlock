@@ -3,7 +3,7 @@
 
     <!-- material colors courtesy of https://material.io/tools/color/#!/?view.left=0&view.right=0&primary.color=01579B -->
     <color name="cool_primary">#01579b</color>
-    <color name="cool_light">#4f83cc</color>
+    <color name="cool_light">#01579b</color>
     <color name="cool_dark">#002f6c</color>
 
     <color name="primary">@color/cool_primary</color>
