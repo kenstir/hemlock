@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <include
+        android:id="@+id/include"
+        layout="@layout/toolbar_common" />
+
+    <Button
+        android:id="@+id/main_showcard_button"
+        style="@style/Hemlock.TileButton"
+        android:layout_width="160dp"
+        android:layout_height="128dp"
+        android:drawableTop="@drawable/ic_search_48"
+        android:onClick="onButtonClick"
+        android:text="Digital Library Card"
+        app:drawableTint="@color/button_icon_tint"
+        tools:layout_editor_absoluteX="24dp"
+        tools:layout_editor_absoluteY="56dp" />
+
+    <Button
+        android:id="@+id/main_search_button"
+        style="@style/Hemlock.TileButton"
+        android:layout_width="160dp"
+        android:layout_height="128dp"
+        android:drawableTop="@drawable/ic_search_48"
+        android:onClick="onButtonClick"
+        android:text="Catalog"
+        app:drawableTint="@color/button_icon_tint"
+        tools:layout_editor_absoluteX="221dp"
+        tools:layout_editor_absoluteY="56dp" />
+
+    <Button
+        android:id="@+id/button6"
+        style="@style/Hemlock.TileButton"
+        android:layout_width="160dp"
+        android:layout_height="128dp"
+        android:drawableTop="@drawable/ic_search_48"
+        android:onClick="onButtonClick"
+        android:text="Library Hours &amp; Info"
+        app:drawableTint="@color/button_icon_tint"
+        tools:layout_editor_absoluteX="24dp"
+        tools:layout_editor_absoluteY="217dp" />
+
+    <Button
+        android:id="@+id/button"
+        style="@style/Hemlock.TileButton"
+        android:layout_width="160dp"
+        android:layout_height="128dp"
+        android:drawableTop="@drawable/ic_search_48"
+        android:onClick="onButtonClick"
+        android:text="Programs &amp; Events"
+        app:drawableTint="@color/button_icon_tint"
+        tools:layout_editor_absoluteX="221dp"
+        tools:layout_editor_absoluteY="217dp" />
+
+    <Button
+        android:id="@+id/button2"
+        style="@style/Hemlock.TileButton"
+        android:layout_width="160dp"
+        android:layout_height="128dp"
+        android:drawableTop="@drawable/ic_search_48"
+        android:onClick="onButtonClick"
+        android:text="Ebooks &amp; Digital Resources"
+        app:drawableTint="@color/button_icon_tint"
+        tools:layout_editor_absoluteX="24dp"
+        tools:layout_editor_absoluteY="377dp" />
+
+    <Button
+        android:id="@+id/button3"
+        style="@style/Hemlock.TileButton"
+        android:layout_width="160dp"
+        android:layout_height="128dp"
+        android:drawableTop="@drawable/ic_search_48"
+        android:onClick="onButtonClick"
+        android:text="Museum Passes"
+        app:drawableTint="@color/button_icon_tint"
+        tools:layout_editor_absoluteX="221dp"
+        tools:layout_editor_absoluteY="377dp" />
+
+    <Button
+        android:id="@+id/button4"
+        style="@style/Hemlock.TileButton"
+        android:layout_width="160dp"
+        android:layout_height="128dp"
+        android:drawableTop="@drawable/ic_search_48"
+        android:onClick="onButtonClick"
+        android:text="Reserve a Meeting Room"
+        app:drawableTint="@color/button_icon_tint"
+        tools:layout_editor_absoluteX="24dp"
+        tools:layout_editor_absoluteY="541dp" />
+
+    <Button
+        android:id="@+id/button5"
+        style="@style/Hemlock.TileButton"
+        android:layout_width="160dp"
+        android:layout_height="128dp"
+        android:drawableTop="@drawable/ic_search_48"
+        android:onClick="onButtonClick"
+        android:text="My Account"
+        app:drawableTint="@color/button_icon_tint"
+        tools:layout_editor_absoluteX="221dp"
+        tools:layout_editor_absoluteY="541dp" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
