@@ -27,7 +27,7 @@
         style="@style/Hemlock.TileButton"
         android:layout_width="160dp"
         android:layout_height="128dp"
-        android:drawableTop="@drawable/magnifying_glass_sharp_solid"
+        android:drawableTop="@drawable/magnifying_glass_solid"
         android:onClick="onButtonClick"
         android:text="Catalog"
         app:drawableTint="@color/button_icon_tint"
@@ -35,7 +35,7 @@
         tools:layout_editor_absoluteY="56dp" />
 
     <Button
-        android:id="@+id/button6"
+        android:id="@+id/main_library_info_button"
         style="@style/Hemlock.TileButton"
         android:layout_width="160dp"
         android:layout_height="128dp"
@@ -47,7 +47,7 @@
         tools:layout_editor_absoluteY="217dp" />
 
     <Button
-        android:id="@+id/button"
+        android:id="@+id/main_events_button"
         style="@style/Hemlock.TileButton"
         android:layout_width="160dp"
         android:layout_height="128dp"
@@ -59,7 +59,7 @@
         tools:layout_editor_absoluteY="217dp" />
 
     <Button
-        android:id="@+id/button2"
+        android:id="@+id/main_eresources_button"
         style="@style/Hemlock.TileButton"
         android:layout_width="160dp"
         android:layout_height="128dp"
@@ -71,7 +71,7 @@
         tools:layout_editor_absoluteY="377dp" />
 
     <Button
-        android:id="@+id/button3"
+        android:id="@+id/main_museum_passes_button"
         style="@style/Hemlock.TileButton"
         android:layout_width="160dp"
         android:layout_height="128dp"
@@ -83,7 +83,7 @@
         tools:layout_editor_absoluteY="377dp" />
 
     <Button
-        android:id="@+id/button4"
+        android:id="@+id/main_meeting_room_button"
         style="@style/Hemlock.TileButton"
         android:layout_width="160dp"
         android:layout_height="128dp"
@@ -95,7 +95,7 @@
         tools:layout_editor_absoluteY="541dp" />
 
     <Button
-        android:id="@+id/button5"
+        android:id="@+id/main_my_account_button"
         style="@style/Hemlock.TileButton"
         android:layout_width="160dp"
         android:layout_height="128dp"
