@@ -47,11 +47,19 @@ object Api {
     const val MESSAGES_RETRIEVE = "open-ils.actor.message.retrieve" // [aum]
     const val HOURS_OF_OPERATION_RETRIEVE = "open-ils.actor.org_unit.hours_of_operation.retrieve" // [aouhoo]
     const val ADDRESS_RETRIEVE = "open-ils.actor.org_unit.address.retrieve" // [aoa]
+    //const val VITAL_STATS = "open-ils.actor.user.opac.vital_stats"; // Used by OPAC for summary stats
 
-    //public static final String VITAL_STATS = "open-ils.actor.user.opac.vital_stats"; // Used by OPAC for summary stats
-    const val SETTING_CREDIT_PAYMENTS_ALLOW = "credit.payments.allow"
+    /// Hemlock-specific org settings
+
     const val SETTING_HEMLOCK_CACHE_KEY = "hemlock.cache_key"
+    const val SETTING_HEMLOCK_ERESOURCES_URL = "hemlock.eresources_url" //proposed
     const val SETTING_HEMLOCK_EVENTS_URL = "hemlock.events_calendar_url"
+    const val SETTING_HEMLOCK_MEETING_ROOMS_URL = "hemlock.meeting_rooms_url" //proposed
+    const val SETTING_HEMLOCK_MUSEUM_PASSES_URL = "hemlock.museum_passes_url" //proposed
+
+    /// org and user settings
+
+    const val SETTING_CREDIT_PAYMENTS_ALLOW = "credit.payments.allow"
     const val SETTING_INFO_URL = "lib.info_url"
     const val SETTING_ORG_UNIT_NOT_PICKUP_LIB = "opac.holds.org_unit_not_pickup_lib"
     const val SETTING_SMS_ENABLE = "sms.enable"
@@ -112,8 +120,9 @@ object Api {
 
     /// serial
 
-    //public static final String SERVICE_SERIAL = "open-ils.serial";
-    //public static final String METHOD_FETCH_ISSUANCE = "open-ils.serial.issuance.pub_fleshed.batch.retrieve";
+    //const val SERVICE_SERIAL = "open-ils.serial"
+    //const val METHOD_FETCH_ISSUANCE = "open-ils.serial.issuance.pub_fleshed.batch.retrieve"
+
     /// misc
 
     const val ILS_VERSION = "opensrf.open-ils.system.ils_version"
