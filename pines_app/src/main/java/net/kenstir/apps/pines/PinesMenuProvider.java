@@ -47,12 +47,8 @@ public class PinesMenuProvider extends MenuProvider {
             String url = "https://pines.georgialibraries.org/pinesLocator/locator.html";
             ActivityUtils.launchURL(activity, url);
         } else if (id == R.id.galileo_button) {
-            //Analytics.logEvent("librarylocator_click", "via", via);
+            //Analytics.logEvent("galileo_click", "via", via);
             String url = "https://www.galileo.usg.edu";
-            ActivityUtils.launchURL(activity, url);
-        } else if (id == R.id.patron_message_center) {
-            //Analytics.logEvent("galileo_click", "via", "options_menu");
-            String url = Gateway.INSTANCE.getUrl("/eg/opac/myopac/messages");
             ActivityUtils.launchURL(activity, url);
         } else {
             return false;
