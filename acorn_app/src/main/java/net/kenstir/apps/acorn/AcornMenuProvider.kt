@@ -19,14 +19,9 @@
 package net.kenstir.apps.acorn
 
 import android.app.Activity
-import android.content.Intent
 import androidx.annotation.Keep
-import androidx.core.content.ContextCompat.startActivity
-import net.kenstir.apps.bibliomation.MainTilesActivity
 import net.kenstir.apps.bibliomation.R
 import org.evergreen_ils.android.Log
-import org.evergreen_ils.utils.ui.ActivityUtils
-import org.evergreen_ils.views.CheckoutsActivity
 import org.evergreen_ils.views.MenuProvider
 
 @Keep
@@ -41,7 +36,7 @@ class AcornMenuProvider : MenuProvider() {
         when (id) {
             R.id.main_my_account_button -> {
                 Log.d(TAG, "stop here")
-                activity?.startActivity(Intent(activity, MainTilesActivity::class.java))
+//                activity?.startActivity(Intent(activity, MyAccountActivity::class.java))
             }
             else -> {
                 Log.d(TAG, "stop here")
