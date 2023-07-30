@@ -46,7 +46,7 @@ class MessagesActivity : BaseActivity() {
 
     private var rv: RecyclerView? = null
     private var adapter: MessageViewAdapter? = null
-    private var items = ArrayList<PatronMessage>();
+    private var items = ArrayList<PatronMessage>()
     private var progress: ProgressDialogSupport? = null
     private var contextMenuInfo: ContextMenuMessageInfo? = null
 
