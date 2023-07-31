@@ -127,7 +127,7 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         }
     }
 
-    internal fun initMenuProvider() {
+    private fun initMenuProvider() {
         menuItemHandler = MenuProvider.create(getString(R.string.ou_menu_provider))
     }
 
@@ -158,7 +158,7 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
     protected fun onNavigationAction(id: Int): Boolean {
         var ret = true
         if (id == R.id.nav_header) {
-            startActivity(Intent(this, MainActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
+            startActivity(App.getMainActivityIntent(this).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
         } else if (id == R.id.main_search_button) {
             startActivity(Intent(this, SearchActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
         } else if (id == R.id.main_checkouts_button) {

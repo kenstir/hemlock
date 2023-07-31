@@ -21,9 +21,9 @@ package org.evergreen_ils.android;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.text.TextUtils;
 
 import org.evergreen_ils.R;
 import org.evergreen_ils.data.Account;
@@ -31,6 +31,7 @@ import org.evergreen_ils.data.Library;
 import org.evergreen_ils.net.Gateway;
 import org.evergreen_ils.net.Volley;
 import org.evergreen_ils.utils.ui.AppState;
+import org.evergreen_ils.views.MenuProvider;
 import org.evergreen_ils.views.launch.LaunchActivity;
 import org.evergreen_ils.views.MainActivity;
 
@@ -135,10 +136,28 @@ public class App {
     public static void startApp(Activity activity) {
         setStarted(true);
         updateLaunchCount();
-        Intent intent = new Intent(activity.getApplicationContext(), MainActivity.class);
+        Intent intent = getMainActivityIntent(activity);
         activity.startActivity(intent);
         activity.finish();
     }
+
+    public static Intent getMainActivityIntent(Activity activity) {
+        String clazzName = activity.getString(R.string.ou_main_activity);
+        if (!TextUtils.isEmpty(clazzName)) {
+            try {
+                Class clazz = Class.forName(clazzName);
+                return new Intent(activity.getApplicationContext(), clazz);
+            } catch (Exception e) {
+                Analytics.logException(e);
+            }
+        }
+        return new Intent(activity.getApplicationContext(), MainActivity.class);
+    }
+
+//    static void Class<?> getMainActivityClass(Activity activity) {
+//        //String className = activity.getString(R.string.ou_main_activity);
+//        return MainActivity.class;
+//    }
 
     static void updateLaunchCount() {
         int launch_count = AppState.getInt(AppState.LAUNCH_COUNT);
