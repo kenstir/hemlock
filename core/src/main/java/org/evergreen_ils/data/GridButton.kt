@@ -16,32 +16,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
  */
 
-package net.kenstir.apps.acorn
+package org.evergreen_ils.data
 
 import android.app.Activity
-import androidx.annotation.Keep
-import net.kenstir.apps.bibliomation.R
-import org.evergreen_ils.android.Log
-import org.evergreen_ils.views.MenuProvider
 
-@Keep
-class AcornMenuProvider : MenuProvider() {
-    private val TAG = javaClass.simpleName
-
-    override fun onCreate(activity: Activity?) {
-        return;
-    }
-
-    override fun onItemSelected(activity: Activity?, id: Int, via: String?): Boolean {
-        when (id) {
-            0 /*R.id.main_my_account_button*/ -> {
-                Log.d(TAG, "stop here")
-            }
-            else -> {
-                Log.d(TAG, "stop here")
-                return false
-            }
-        }
-        return true
-    }
-}
+data class GridButton(val icon: Int, val title: String, val activity: Activity, val url: String)
