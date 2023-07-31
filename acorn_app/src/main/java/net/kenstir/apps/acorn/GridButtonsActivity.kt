@@ -18,30 +18,38 @@
 
 package net.kenstir.apps.acorn
 
-import android.app.Activity
+import android.os.Bundle
 import androidx.annotation.Keep
-import net.kenstir.apps.bibliomation.R
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import org.evergreen_ils.R
 import org.evergreen_ils.android.Log
-import org.evergreen_ils.views.MenuProvider
+import org.evergreen_ils.data.GridButton
+import org.evergreen_ils.utils.ui.BaseActivity
+
+const val SPAN_COUNT = 2
+x = y
 
 @Keep
-class AcornMenuProvider : MenuProvider() {
+class GridButtonsActivity : BaseActivity() {
     private val TAG = javaClass.simpleName
 
-    override fun onCreate(activity: Activity?) {
-        return;
+    private var rv: RecyclerView? = null
+    private var adapter: GridButtonViewAdapter? = null
+    private var items = ArrayList<GridButton>()
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState) // not super
+        if (isRestarting) return
+
+        Log.d(TAG, object{}.javaClass.enclosingMethod?.name ?: "")
+
+        setContentView(R.layout.activity_grid_buttons)
+
+        rv = findViewById(R.id.recycler_view)
+        rv?.layoutManager = GridLayoutManager(this, SPAN_COUNT)
+        adapter = GridButtonViewAdapter(items)
+        rv?.adapter = adapter
     }
 
-    override fun onItemSelected(activity: Activity?, id: Int, via: String?): Boolean {
-        when (id) {
-            0 /*R.id.main_my_account_button*/ -> {
-                Log.d(TAG, "stop here")
-            }
-            else -> {
-                Log.d(TAG, "stop here")
-                return false
-            }
-        }
-        return true
-    }
 }
