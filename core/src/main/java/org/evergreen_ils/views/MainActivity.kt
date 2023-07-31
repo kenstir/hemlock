@@ -48,8 +48,9 @@ import org.evergreen_ils.utils.ui.BaseActivity
 import org.evergreen_ils.utils.ui.showAlert
 import org.opensrf.util.OSRFObject
 
-class MainActivity : BaseActivity() {
+open class MainActivity : BaseActivity() {
 
+    private val TAG = javaClass.simpleName
     private var mUnreadMessageCount: Int? = null //unknown
     private var mUnreadMessageText: TextView? = null
     private var eventsButton: Button? = null
@@ -226,9 +227,5 @@ class MainActivity : BaseActivity() {
         } else if (menuItemHandler != null) {
             menuItemHandler?.onItemSelected(this, id, "main_button")
         }
-    }
-
-    companion object {
-        private val TAG = MainActivity::class.java.simpleName
     }
 }
