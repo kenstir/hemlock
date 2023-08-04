@@ -18,6 +18,10 @@
 
 package org.evergreen_ils.data
 
-import android.app.Activity
+data class ButtonAction(val url: String)
+//, val activityClass: Class? = null) {
+//    constructor ButtonActivity(val activityClass: Class): this()
+//}
 
-data class GridButton(val icon: Int, val title: String, val activity: Activity, val url: String)
+//data class GridButton(val drawable: Int, val contentDescription: String, val title: String, val action: ButtonAction)
+data class GridButton(val title: String, val action: ButtonAction)
