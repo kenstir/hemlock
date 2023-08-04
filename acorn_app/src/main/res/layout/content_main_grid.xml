@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
@@ -17,102 +19,109 @@
             app:layoutManager="GridLayoutManager" />
     </FrameLayout>
 
-</LinearLayout>
-<!--
     <Button
         android:id="@+id/main_showcard_button"
-        style="@style/Hemlock.TileButton"
+        style="@style/Hemlock.GridButton"
         android:layout_width="160dp"
         android:layout_height="128dp"
         android:drawableTop="@drawable/id_card_solid"
         android:onClick="onButtonClick"
         android:text="Digital Library Card"
+        android:visibility="gone"
         app:drawableTint="@color/button_icon_tint"
         tools:layout_editor_absoluteX="24dp"
-        tools:layout_editor_absoluteY="56dp" />
+        tools:layout_editor_absoluteY="56dp"
+        tools:visibility="visible" />
 
     <Button
         android:id="@+id/main_search_button"
-        style="@style/Hemlock.TileButton"
+        style="@style/Hemlock.GridButton"
         android:layout_width="160dp"
         android:layout_height="128dp"
         android:drawableTop="@drawable/magnifying_glass_solid"
         android:onClick="onButtonClick"
         android:text="Catalog"
+        android:visibility="gone"
         app:drawableTint="@color/button_icon_tint"
         tools:layout_editor_absoluteX="221dp"
         tools:layout_editor_absoluteY="56dp" />
 
     <Button
         android:id="@+id/main_library_info_button"
-        style="@style/Hemlock.TileButton"
+        style="@style/Hemlock.GridButton"
         android:layout_width="160dp"
         android:layout_height="128dp"
         android:drawableTop="@drawable/square_info_solid"
         android:onClick="onButtonClick"
         android:text="Library Hours &amp; Info"
+        android:visibility="gone"
         app:drawableTint="@color/button_icon_tint"
         tools:layout_editor_absoluteX="24dp"
         tools:layout_editor_absoluteY="217dp" />
 
     <Button
         android:id="@+id/main_events_button"
-        style="@style/Hemlock.TileButton"
+        style="@style/Hemlock.GridButton"
         android:layout_width="160dp"
         android:layout_height="128dp"
         android:drawableTop="@drawable/calendar_day_solid"
         android:onClick="onButtonClick"
         android:text="Programs &amp; Events"
+        android:visibility="gone"
         app:drawableTint="@color/button_icon_tint"
         tools:layout_editor_absoluteX="221dp"
         tools:layout_editor_absoluteY="217dp" />
 
     <Button
         android:id="@+id/main_eresources_button"
-        style="@style/Hemlock.TileButton"
+        style="@style/Hemlock.GridButton"
         android:layout_width="160dp"
         android:layout_height="128dp"
         android:drawableTop="@drawable/solid_book_circle_arrow_down"
         android:onClick="onButtonClick"
         android:text="Ebooks &amp; Digital Resources"
+        android:visibility="gone"
         app:drawableTint="@color/button_icon_tint"
         tools:layout_editor_absoluteX="24dp"
         tools:layout_editor_absoluteY="377dp" />
 
     <Button
         android:id="@+id/main_museum_passes_button"
-        style="@style/Hemlock.TileButton"
+        style="@style/Hemlock.GridButton"
         android:layout_width="160dp"
         android:layout_height="128dp"
         android:drawableTop="@drawable/ticket_solid"
         android:onClick="onButtonClick"
         android:text="Museum Passes"
+        android:visibility="gone"
         app:drawableTint="@color/button_icon_tint"
         tools:layout_editor_absoluteX="221dp"
         tools:layout_editor_absoluteY="377dp" />
 
     <Button
         android:id="@+id/main_meeting_room_button"
-        style="@style/Hemlock.TileButton"
+        style="@style/Hemlock.GridButton"
         android:layout_width="160dp"
         android:layout_height="128dp"
         android:drawableTop="@drawable/users_solid"
         android:onClick="onButtonClick"
         android:text="Reserve a Meeting Room"
+        android:visibility="gone"
         app:drawableTint="@color/button_icon_tint"
         tools:layout_editor_absoluteX="24dp"
         tools:layout_editor_absoluteY="541dp" />
 
     <Button
         android:id="@+id/main_my_account_button"
-        style="@style/Hemlock.TileButton"
+        style="@style/Hemlock.GridButton"
         android:layout_width="160dp"
         android:layout_height="128dp"
         android:drawableTop="@drawable/circle_user_solid"
         android:onClick="onButtonClick"
         android:text="My Account"
+        android:visibility="gone"
         app:drawableTint="@color/button_icon_tint"
         tools:layout_editor_absoluteX="221dp"
         tools:layout_editor_absoluteY="541dp" />
 
--->
+</LinearLayout>
