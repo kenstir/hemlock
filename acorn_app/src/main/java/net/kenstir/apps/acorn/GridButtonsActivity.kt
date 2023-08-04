@@ -28,7 +28,6 @@ import org.evergreen_ils.data.GridButton
 import org.evergreen_ils.utils.ui.BaseActivity
 
 const val SPAN_COUNT = 2
-x = y
 
 @Keep
 class GridButtonsActivity : BaseActivity() {
