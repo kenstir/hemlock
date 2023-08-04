@@ -7,7 +7,7 @@
     android:fitsSystemWindows="true">
 
     <include
-        layout="@layout/buttons_grid"
+        layout="@layout/content_main_grid"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
