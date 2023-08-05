@@ -27,17 +27,18 @@ import androidx.recyclerview.widget.RecyclerView
 import net.kenstir.apps.bibliomation.R
 import org.evergreen_ils.android.App
 import org.evergreen_ils.android.Log
-import org.evergreen_ils.data.ButtonAction
 import org.evergreen_ils.data.GridButton
 import org.evergreen_ils.system.EgOrg
 import org.evergreen_ils.utils.ui.BaseActivity
 import org.evergreen_ils.views.BarcodeActivity
 import org.evergreen_ils.views.CheckoutsActivity
 import org.evergreen_ils.views.FinesActivity
+import org.evergreen_ils.views.MainActivity
 import org.evergreen_ils.views.OrgDetailsActivity
 import org.evergreen_ils.views.bookbags.BookBagsActivity
 import org.evergreen_ils.views.holds.HoldsActivity
 import org.evergreen_ils.views.search.SearchActivity
+import kotlin.random.Random
 
 class MainGridActivity : BaseActivity() {
     private val TAG = javaClass.simpleName
@@ -67,18 +68,73 @@ class MainGridActivity : BaseActivity() {
     }
 
     private fun addGridButtons() {
-        val icon = resources.getDrawable(R.drawable.ic_barcode_48, null)
-        val b = GridButton("Digital Library Card", ButtonAction("https://www.google.com"))
-        items.add(b)
+        // Show Card
+        items.add(GridButton("Digital Library Card",
+            resources.getDrawable(R.drawable.ic_barcode_48, null),
+            "library card") {
+            startActivity(Intent(this, BarcodeActivity::class.java))
+        })
 
-        val url = EgOrg.findOrg(App.getAccount().homeOrg)?.eventsURL
-        if (!url.isNullOrEmpty()) {
-            items.add(GridButton("Events", ButtonAction(url)))
+        // Search
+        items.add(GridButton("Search Catalog",
+            resources.getDrawable(R.drawable.magnifying_glass_solid, null),
+            "magnifying glass") {
+            startActivity(Intent(this, SearchActivity::class.java))
+        })
+
+        // Org Details
+        items.add(GridButton("Library Hours & Info",
+            resources.getDrawable(R.drawable.square_info_solid, null),
+            "info") {
+            startActivity(Intent(this, OrgDetailsActivity::class.java))
+        })
+
+        // Events
+        val eventsUrl = EgOrg.findOrg(App.getAccount().homeOrg)?.eventsURL
+        if (!eventsUrl.isNullOrEmpty()) {
+            items.add(GridButton("Events",
+                resources.getDrawable(R.drawable.calendar_day_solid, null),
+                "calendar") {
+                launchURL(eventsUrl)
+            })
         }
 
-//        items.add(GridButton(R.drawable.id_card_solid, "library card", "Digital Library Card", ButtonAction(activity = BarcodeActivity.java.class))
-//
-//        url = EgOrg.findOrg(App.getAccount().homeOrg)?.eventsURL
+        // E-resources
+        val ebooksUrl = if (Random.nextInt(100) < 50) "https://www.google.com" else null
+        if (!ebooksUrl.isNullOrEmpty()) {
+            items.add(GridButton("Ebooks & Digital Resources",
+                resources.getDrawable(R.drawable.solid_book_circle_arrow_down, null),
+                "e-book") {
+                launchURL(ebooksUrl)
+            })
+        }
+
+        // Museum Passes
+        val passesUrl = if (Random.nextInt(100) < 50) "https://www.google.com" else null
+        if (!passesUrl.isNullOrEmpty()) {
+            items.add(GridButton("Museum Passes",
+                resources.getDrawable(R.drawable.ticket_solid, null),
+                "ticket") {
+                launchURL(passesUrl)
+            })
+        }
+
+        // Meeting Rooms
+        val roomsUrl = if (Random.nextInt(100) < 50) "https://www.google.com" else null
+        if (!roomsUrl.isNullOrEmpty()) {
+            items.add(GridButton("Meeting Rooms",
+                resources.getDrawable(R.drawable.users_solid, null),
+                "group of people") {
+                launchURL(roomsUrl)
+            })
+        }
+
+        // My Account
+        items.add(GridButton("My Account",
+            resources.getDrawable(R.drawable.circle_user_solid, null),
+            "person") {
+            startActivity(Intent(this, MainActivity::class.java))
+        })
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
