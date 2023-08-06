@@ -19,9 +19,12 @@
 package net.kenstir.apps.acorn
 
 import android.content.Intent
+import android.content.res.Resources.Theme
+import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import net.kenstir.apps.bibliomation.R
@@ -67,17 +70,25 @@ class MainGridActivity : BaseActivity() {
         rv?.adapter = adapter
     }
 
+    private fun getDrawable(drawableId: Int, colorId: Int): Drawable {
+        val drawable = resources.getDrawable(drawableId, null)
+        drawable.setTint(ContextCompat.getColor(this, colorId))
+        return drawable
+    }
+
     private fun addGridButtons() {
         // Show Card
+        val cardDrawable = getDrawable(R.drawable.ic_barcode_48, R.color.cwmars_violet)
         items.add(GridButton("Digital Library Card",
-            resources.getDrawable(R.drawable.ic_barcode_48, null),
+            cardDrawable,
             "library card") {
             startActivity(Intent(this, BarcodeActivity::class.java))
         })
 
         // Search
+        val searchDrawable = getDrawable(R.drawable.magnifying_glass_solid, R.color.cwmars_red)
         items.add(GridButton("Search Catalog",
-            resources.getDrawable(R.drawable.magnifying_glass_solid, null),
+            searchDrawable,
             "magnifying glass") {
             startActivity(Intent(this, SearchActivity::class.java))
         })
