@@ -14,4 +14,12 @@
 
     <color name="logo_background">@color/acorn_logo_background</color>
     <color name="button_icon_tint">@color/acorn_primary</color>
+
+    <color name="cwmars_red">#d61d4a</color>
+    <color name="cwmars_orange">#ee7623</color>
+    <color name="cwmars_yellow">#ffc629</color>
+    <color name="cwmars_green">#7bc24e</color>
+    <color name="cwmars_blue">#16416F</color>
+    <color name="cwmars_windsor">#512873</color>
+    <color name="cwmars_violet">#7f00ff</color>
 </resources>
