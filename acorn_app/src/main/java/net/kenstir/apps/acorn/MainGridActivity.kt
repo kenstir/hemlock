@@ -19,12 +19,10 @@
 package net.kenstir.apps.acorn
 
 import android.content.Intent
-import android.content.res.Resources.Theme
 import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
-import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import net.kenstir.apps.bibliomation.R
@@ -41,7 +39,6 @@ import org.evergreen_ils.views.OrgDetailsActivity
 import org.evergreen_ils.views.bookbags.BookBagsActivity
 import org.evergreen_ils.views.holds.HoldsActivity
 import org.evergreen_ils.views.search.SearchActivity
-import kotlin.random.Random
 
 class MainGridActivity : BaseActivity() {
     private val TAG = javaClass.simpleName
@@ -72,13 +69,16 @@ class MainGridActivity : BaseActivity() {
 
     private fun getDrawable(drawableId: Int, colorId: Int): Drawable {
         val drawable = resources.getDrawable(drawableId, null)
-        drawable.setTint(ContextCompat.getColor(this, colorId))
+//        drawable.setTint(ContextCompat.getColor(this, colorId))
         return drawable
     }
 
     private fun addGridButtons() {
+        val homeOrg = EgOrg.findOrg(App.getAccount().homeOrg)
+        val defaultUrl = "https://google.com"
+
         // Show Card
-        val cardDrawable = getDrawable(R.drawable.ic_barcode_48, R.color.cwmars_violet)
+        val cardDrawable = getDrawable(R.drawable.acorn_id_card_light, R.color.cwmars_violet)
         items.add(GridButton("Digital Library Card",
             cardDrawable,
             "library card") {
@@ -86,7 +86,7 @@ class MainGridActivity : BaseActivity() {
         })
 
         // Search
-        val searchDrawable = getDrawable(R.drawable.magnifying_glass_solid, R.color.cwmars_red)
+        val searchDrawable = getDrawable(R.drawable.acorn_magnifying_glass_light, R.color.cwmars_red)
         items.add(GridButton("Search Catalog",
             searchDrawable,
             "magnifying glass") {
@@ -95,46 +95,46 @@ class MainGridActivity : BaseActivity() {
 
         // Org Details
         items.add(GridButton("Library Hours & Info",
-            resources.getDrawable(R.drawable.square_info_solid, null),
+            resources.getDrawable(R.drawable.acorn_square_info_light, null),
             "info") {
             startActivity(Intent(this, OrgDetailsActivity::class.java))
         })
 
         // Events
-        val eventsUrl = EgOrg.findOrg(App.getAccount().homeOrg)?.eventsURL
+        val eventsUrl = homeOrg?.eventsURL ?: defaultUrl
         if (!eventsUrl.isNullOrEmpty()) {
             items.add(GridButton("Events",
-                resources.getDrawable(R.drawable.calendar_day_solid, null),
+                resources.getDrawable(R.drawable.acorn_calendar_day_light, null),
                 "calendar") {
                 launchURL(eventsUrl)
             })
         }
 
         // E-resources
-        val ebooksUrl = if (Random.nextInt(100) < 50) "https://www.google.com" else null
-        if (!ebooksUrl.isNullOrEmpty()) {
+        val eresourcesUrl = homeOrg?.eresourcesUrl ?: defaultUrl
+        if (!eresourcesUrl.isNullOrEmpty()) {
             items.add(GridButton("Ebooks & Digital Resources",
-                resources.getDrawable(R.drawable.solid_book_circle_arrow_down, null),
+                resources.getDrawable(R.drawable.acorn_light_book_circle_arrow_down, null),
                 "e-book") {
-                launchURL(ebooksUrl)
+                launchURL(eresourcesUrl)
             })
         }
 
         // Museum Passes
-        val passesUrl = if (Random.nextInt(100) < 50) "https://www.google.com" else null
+        val passesUrl = homeOrg?.museumPassesUrl ?: defaultUrl
         if (!passesUrl.isNullOrEmpty()) {
             items.add(GridButton("Museum Passes",
-                resources.getDrawable(R.drawable.ticket_solid, null),
+                resources.getDrawable(R.drawable.acorn_ticket_light, null),
                 "ticket") {
                 launchURL(passesUrl)
             })
         }
 
         // Meeting Rooms
-        val roomsUrl = if (Random.nextInt(100) < 50) "https://www.google.com" else null
+        val roomsUrl = homeOrg?.museumPassesUrl ?: defaultUrl
         if (!roomsUrl.isNullOrEmpty()) {
             items.add(GridButton("Meeting Rooms",
-                resources.getDrawable(R.drawable.users_solid, null),
+                resources.getDrawable(R.drawable.acorn_users_light, null),
                 "group of people") {
                 launchURL(roomsUrl)
             })
@@ -142,7 +142,7 @@ class MainGridActivity : BaseActivity() {
 
         // My Account
         items.add(GridButton("My Account",
-            resources.getDrawable(R.drawable.circle_user_solid, null),
+            resources.getDrawable(R.drawable.acorn_circle_user_light, null),
             "person") {
             startActivity(Intent(this, MainActivity::class.java))
         })
