@@ -40,8 +40,12 @@ class Organization(@JvmField val id: Int,
     var settingsLoaded = false
     private var isNotPickupLocationSetting: Boolean? = null // null=not loaded
     var isPaymentAllowedSetting: Boolean? = null // null=not loaded
+    var eresourcesUrl: String? = null
     var eventsURL: String? = null
     var infoURL: String? = null
+    var meetingRoomsUrl: String? = null
+    var museumPassesUrl: String? = null
+
     val spinnerLabel: String
         get() = indentedDisplayPrefix + name
     val isPickupLocation: Boolean
@@ -57,6 +61,9 @@ class Organization(@JvmField val id: Int,
 
     fun loadSettings(obj: OSRFObject) {
         eventsURL = parseOrgStringSetting(obj, Api.SETTING_HEMLOCK_EVENTS_URL)
+        eresourcesUrl = parseOrgStringSetting(obj, Api.SETTING_HEMLOCK_ERESOURCES_URL)
+        meetingRoomsUrl = parseOrgStringSetting(obj, Api.SETTING_HEMLOCK_MEETING_ROOMS_URL)
+        museumPassesUrl = parseOrgStringSetting(obj, Api.SETTING_HEMLOCK_MUSEUM_PASSES_URL)
         infoURL = parseOrgStringSetting(obj, Api.SETTING_INFO_URL)
         isNotPickupLocationSetting = parseOrgBoolSetting(obj, Api.SETTING_ORG_UNIT_NOT_PICKUP_LIB)
         isPaymentAllowedSetting = parseOrgBoolSetting(obj, Api.SETTING_CREDIT_PAYMENTS_ALLOW)
