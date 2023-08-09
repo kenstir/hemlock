@@ -75,7 +75,8 @@ class MainGridActivity : BaseActivity() {
 
     private fun addGridButtons() {
         val homeOrg = EgOrg.findOrg(App.getAccount().homeOrg)
-        val defaultUrl = "https://google.com"
+//        val defaultUrl = "https://google.com"
+        val defaultUrl: String? = null
 
         // Show Card
         val cardDrawable = getDrawable(R.drawable.acorn_id_card_light, R.color.cwmars_violet)
