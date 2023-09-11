@@ -40,6 +40,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.joinAll
+import org.evergreen_ils.KEY_SEARCH_TEXT
 import org.evergreen_ils.R
 import org.evergreen_ils.android.Analytics
 import org.evergreen_ils.android.App
@@ -53,7 +54,7 @@ import org.evergreen_ils.system.EgOrg
 import org.evergreen_ils.system.EgOrg.findOrg
 import org.evergreen_ils.views.bookbags.BookBagUtils.showAddToListDialog
 import org.evergreen_ils.views.holds.PlaceHoldActivity
-import org.evergreen_ils.views.search.RecordDetailsActivity.Companion.RETURN_DATA
+import org.evergreen_ils.views.search.SearchActivity.Companion.RESULT_CODE_SEARCH_BY_AUTHOR
 
 class DetailsFragment : Fragment() {
     private var record: MBRecord? = null
@@ -264,8 +265,8 @@ class DetailsFragment : Fragment() {
     private fun searchByAuthor() {
         val author = record?.author ?: return
         val returnIntent = Intent()
-        returnIntent.putExtra("author", author)
-        activity?.setResult(RETURN_DATA, returnIntent)
+        returnIntent.putExtra(KEY_SEARCH_TEXT, author)
+        activity?.setResult(RESULT_CODE_SEARCH_BY_AUTHOR, returnIntent)
         activity?.finish()
     }
 

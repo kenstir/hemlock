@@ -46,6 +46,7 @@ import com.google.mlkit.vision.barcode.common.Barcode
 import com.google.mlkit.vision.codescanner.GmsBarcodeScanner
 import com.google.mlkit.vision.codescanner.GmsBarcodeScanning
 import kotlinx.coroutines.async
+import org.evergreen_ils.KEY_SEARCH_TEXT
 import org.evergreen_ils.R
 import org.evergreen_ils.android.Analytics
 import org.evergreen_ils.android.Analytics.orgDimensionKey
@@ -450,13 +451,16 @@ class SearchActivity : BaseActivity(), ActivityCompat.OnRequestPermissionsResult
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         when (resultCode) {
-            RecordDetailsActivity.RETURN_DATA -> {
-                searchTextView?.setText(data?.getStringExtra("author"))
+            Companion.RESULT_CODE_NORMAL -> {
+                // noop
+            }
+            RESULT_CODE_SEARCH_BY_AUTHOR -> {
+                searchTextView?.setText(data?.getStringExtra(KEY_SEARCH_TEXT))
                 setSearchClass(searchClassAuthorIndex)
                 fetchSearchResults()
             }
-            AdvancedSearchActivity.RESULT_ADVANCED_SEARCH -> {
-                searchTextView?.setText(data?.getStringExtra("advancedSearchText"))
+            RESULT_CODE_SEARCH_BY_KEYWORD -> {
+                searchTextView?.setText(data?.getStringExtra(KEY_SEARCH_TEXT))
                 fetchSearchResults()
             }
         }
@@ -561,5 +565,11 @@ class SearchActivity : BaseActivity(), ActivityCompat.OnRequestPermissionsResult
         // of the spinner, force the searchOptionsButton on to ensure the spinner is visible.
         searchClassSpinner?.setSelection(index)
         searchOptionsButton?.isChecked = true
+    }
+
+    companion object {
+        const val RESULT_CODE_NORMAL = 10
+        const val RESULT_CODE_SEARCH_BY_AUTHOR = 11
+        const val RESULT_CODE_SEARCH_BY_KEYWORD = 12
     }
 }
