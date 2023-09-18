@@ -27,4 +27,5 @@ const val HOLD_TYPE_TITLE = "T"
 const val HOLD_TYPE_METARECORD = "M"
 const val HOLD_TYPE_PART = "P"
 
+const val KEY_SEARCH_BY = "searchBy"
 const val KEY_SEARCH_TEXT = "searchText"

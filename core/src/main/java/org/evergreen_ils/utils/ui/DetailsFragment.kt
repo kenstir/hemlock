@@ -40,6 +40,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.joinAll
+import org.evergreen_ils.KEY_SEARCH_BY
 import org.evergreen_ils.KEY_SEARCH_TEXT
 import org.evergreen_ils.R
 import org.evergreen_ils.android.Analytics
@@ -52,8 +53,10 @@ import org.evergreen_ils.views.search.CopyInformationActivity
 import org.evergreen_ils.data.MBRecord
 import org.evergreen_ils.system.EgOrg
 import org.evergreen_ils.system.EgOrg.findOrg
+import org.evergreen_ils.views.MainActivity
 import org.evergreen_ils.views.bookbags.BookBagUtils.showAddToListDialog
 import org.evergreen_ils.views.holds.PlaceHoldActivity
+import org.evergreen_ils.views.search.SearchActivity
 import org.evergreen_ils.views.search.SearchActivity.Companion.RESULT_CODE_SEARCH_BY_AUTHOR
 
 class DetailsFragment : Fragment() {
@@ -264,10 +267,12 @@ class DetailsFragment : Fragment() {
 
     private fun searchByAuthor() {
         val author = record?.author ?: return
-        val returnIntent = Intent()
-        returnIntent.putExtra(KEY_SEARCH_TEXT, author)
-        activity?.setResult(RESULT_CODE_SEARCH_BY_AUTHOR, returnIntent)
-        activity?.finish()
+        // Instead of setResult and finish, we clear the activity stack and push SearchActivity.
+        // A finish would work only from Search Details, not from List Details.
+        val intent = Intent(activity, SearchActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+        intent.putExtra(KEY_SEARCH_TEXT, author)
+        intent.putExtra(KEY_SEARCH_BY, RESULT_CODE_SEARCH_BY_AUTHOR)
+        startActivity(intent)
     }
 
     private fun loadCopyCount() {

@@ -46,6 +46,7 @@ import com.google.mlkit.vision.barcode.common.Barcode
 import com.google.mlkit.vision.codescanner.GmsBarcodeScanner
 import com.google.mlkit.vision.codescanner.GmsBarcodeScanning
 import kotlinx.coroutines.async
+import org.evergreen_ils.KEY_SEARCH_BY
 import org.evergreen_ils.KEY_SEARCH_TEXT
 import org.evergreen_ils.R
 import org.evergreen_ils.android.Analytics
@@ -164,6 +165,7 @@ class SearchActivity : BaseActivity(), ActivityCompat.OnRequestPermissionsResult
         initOrgSpinner()
         initRecordClickListener()
         updateSearchResultsSummary()
+        doSearchOnStartup(intent)
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -455,6 +457,7 @@ class SearchActivity : BaseActivity(), ActivityCompat.OnRequestPermissionsResult
                 // noop
             }
             RESULT_CODE_SEARCH_BY_AUTHOR -> {
+                // NOTREACHED
                 searchTextView?.setText(data?.getStringExtra(KEY_SEARCH_TEXT))
                 setSearchClass(searchClassAuthorIndex)
                 fetchSearchResults()
@@ -463,6 +466,16 @@ class SearchActivity : BaseActivity(), ActivityCompat.OnRequestPermissionsResult
                 searchTextView?.setText(data?.getStringExtra(KEY_SEARCH_TEXT))
                 fetchSearchResults()
             }
+        }
+    }
+
+    private fun doSearchOnStartup(data: Intent) {
+        val text = data.getStringExtra(KEY_SEARCH_TEXT)
+        val code = data.getIntExtra(KEY_SEARCH_BY, 0)
+        if (text?.isNotEmpty() == true && code == RESULT_CODE_SEARCH_BY_AUTHOR) {
+            searchTextView?.setText(text)
+            setSearchClass(searchClassAuthorIndex)
+            fetchSearchResults()
         }
     }
 
