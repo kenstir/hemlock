@@ -19,6 +19,9 @@
  */
 package org.evergreen_ils.views.search;
 
+import static org.evergreen_ils.ConstKt.KEY_SEARCH_TEXT;
+import static org.evergreen_ils.views.search.SearchActivity.RESULT_CODE_SEARCH_BY_KEYWORD;
+
 import android.content.Intent;
 import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
@@ -47,8 +50,6 @@ public class AdvancedSearchActivity extends AppCompatActivity {
 
     private ArrayList<String> searchTerms;
     private ArrayList<String> searchTermTypes;
-
-    public static final int RESULT_ADVANCED_SEARCH = 10;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -124,8 +125,8 @@ public class AdvancedSearchActivity extends AppCompatActivity {
                 String types = TextUtils.join("|", searchTermTypes);
                 //Analytics.logEvent("advsearch_search", "search_type", types);//TODO
                 Intent returnIntent = new Intent();
-                returnIntent.putExtra("advancedSearchText", TextUtils.join(" ", searchTerms));
-                setResult(RESULT_ADVANCED_SEARCH, returnIntent);
+                returnIntent.putExtra(KEY_SEARCH_TEXT, TextUtils.join(" ", searchTerms));
+                setResult(RESULT_CODE_SEARCH_BY_KEYWORD, returnIntent);
                 finish();
             }
         });
@@ -141,5 +142,4 @@ public class AdvancedSearchActivity extends AppCompatActivity {
         }
         return super.onOptionsItemSelected(item);
     }
-
 }

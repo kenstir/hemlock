@@ -46,6 +46,8 @@ import com.google.mlkit.vision.barcode.common.Barcode
 import com.google.mlkit.vision.codescanner.GmsBarcodeScanner
 import com.google.mlkit.vision.codescanner.GmsBarcodeScanning
 import kotlinx.coroutines.async
+import org.evergreen_ils.KEY_SEARCH_BY
+import org.evergreen_ils.KEY_SEARCH_TEXT
 import org.evergreen_ils.R
 import org.evergreen_ils.android.Analytics
 import org.evergreen_ils.android.Analytics.orgDimensionKey
@@ -70,6 +72,7 @@ const val ITEM_SHOW_DETAILS = 1
 const val ITEM_ADD_TO_LIST = 2
 
 const val SEARCH_OPTIONS_VISIBLE_STATE_KEY = "search_options_visible"
+const val SEARCH_CLASS_AUTHOR = "author"
 const val SEARCH_CLASS_IDENTIFIER = "identifier"
 
 class SearchActivity : BaseActivity(), ActivityCompat.OnRequestPermissionsResultCallback {
@@ -100,6 +103,10 @@ class SearchActivity : BaseActivity(), ActivityCompat.OnRequestPermissionsResult
     private val searchClassIdentifierIndex: Int
         get() {
             return searchClassKeywords.indexOf(SEARCH_CLASS_IDENTIFIER)
+        }
+    private val searchClassAuthorIndex: Int
+        get() {
+            return searchClassKeywords.indexOf(SEARCH_CLASS_AUTHOR)
         }
 
     private val searchFormatCode: String?
@@ -158,6 +165,7 @@ class SearchActivity : BaseActivity(), ActivityCompat.OnRequestPermissionsResult
         initOrgSpinner()
         initRecordClickListener()
         updateSearchResultsSummary()
+        doSearchOnStartup(intent)
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -445,13 +453,29 @@ class SearchActivity : BaseActivity(), ActivityCompat.OnRequestPermissionsResult
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         when (resultCode) {
-            RecordDetailsActivity.RETURN_DATA -> {
+            Companion.RESULT_CODE_NORMAL -> {
+                // noop
             }
-            AdvancedSearchActivity.RESULT_ADVANCED_SEARCH -> {
-                Log.d(TAG, "result text:" + data!!.getStringExtra("advancedSearchText"))
-                searchTextView?.setText(data.getStringExtra("advancedSearchText"))
+            RESULT_CODE_SEARCH_BY_AUTHOR -> {
+                // NOTREACHED
+                searchTextView?.setText(data?.getStringExtra(KEY_SEARCH_TEXT))
+                setSearchClass(searchClassAuthorIndex)
                 fetchSearchResults()
             }
+            RESULT_CODE_SEARCH_BY_KEYWORD -> {
+                searchTextView?.setText(data?.getStringExtra(KEY_SEARCH_TEXT))
+                fetchSearchResults()
+            }
+        }
+    }
+
+    private fun doSearchOnStartup(data: Intent) {
+        val text = data.getStringExtra(KEY_SEARCH_TEXT)
+        val code = data.getIntExtra(KEY_SEARCH_BY, 0)
+        if (text?.isNotEmpty() == true && code == RESULT_CODE_SEARCH_BY_AUTHOR) {
+            searchTextView?.setText(text)
+            setSearchClass(searchClassAuthorIndex)
+            fetchSearchResults()
         }
     }
 
@@ -528,7 +552,6 @@ class SearchActivity : BaseActivity(), ActivityCompat.OnRequestPermissionsResult
     }
 
     private fun onScannerFailure(e: Exception) {
-        //Analytics.logException(TAG, e)
         Analytics.logEvent(Analytics.Event.SCAN, Analytics.Param.RESULT, e.message)
         this.showAlert(e)
     }
@@ -544,15 +567,22 @@ class SearchActivity : BaseActivity(), ActivityCompat.OnRequestPermissionsResult
         }
         barcode.rawValue?.let {
             Log.d(TAG, "[scanner]: got $it")
-
-            // We set searchClassSpinner=identifier so that the search is done with the right class.
-            // Because we are changing the state of the spinner, force the searchOptionsButton on
-            // to ensure the spinner is visible.
-            searchClassSpinner?.setSelection(searchClassIdentifierIndex)
-            searchOptionsButton?.isChecked = true
             searchTextView?.setText(it)
-
+            setSearchClass(searchClassIdentifierIndex)
             fetchSearchResults()
         }
+    }
+
+    private fun setSearchClass(index: Int) {
+        // Set the searchClassSpinner to the specified index. Because we are changing the state
+        // of the spinner, force the searchOptionsButton on to ensure the spinner is visible.
+        searchClassSpinner?.setSelection(index)
+        searchOptionsButton?.isChecked = true
+    }
+
+    companion object {
+        const val RESULT_CODE_NORMAL = 10
+        const val RESULT_CODE_SEARCH_BY_AUTHOR = 11
+        const val RESULT_CODE_SEARCH_BY_KEYWORD = 12
     }
 }

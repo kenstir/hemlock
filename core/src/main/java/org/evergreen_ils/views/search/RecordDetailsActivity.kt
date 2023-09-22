@@ -23,7 +23,6 @@ package org.evergreen_ils.views.search
 import org.evergreen_ils.utils.ui.BaseActivity
 import androidx.viewpager.widget.ViewPager
 import android.os.Bundle
-import org.evergreen_ils.android.App
 import org.evergreen_ils.R
 import org.evergreen_ils.utils.ui.ActionBarUtils
 import org.evergreen_ils.system.EgSearch
@@ -36,6 +35,7 @@ import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentStatePagerAdapter
 import org.evergreen_ils.data.MBRecord
 import org.evergreen_ils.utils.ui.DetailsFragment
+import org.evergreen_ils.views.search.SearchActivity.Companion.RESULT_CODE_NORMAL
 import java.util.ArrayList
 
 class RecordDetailsActivity : BaseActivity() {
@@ -69,7 +69,7 @@ class RecordDetailsActivity : BaseActivity() {
 
     private fun finishWithIntent() {
         val intent = Intent()
-        setResult(RETURN_DATA, intent)
+        setResult(RESULT_CODE_NORMAL, intent)
         finish()
     }
 
@@ -84,7 +84,6 @@ class RecordDetailsActivity : BaseActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         val id = item.itemId
         if (id == android.R.id.home) {
-            //onBackPressed();
             finishWithIntent()
             return true
         }
@@ -101,10 +100,5 @@ class RecordDetailsActivity : BaseActivity() {
         override fun getCount(): Int {
             return records.size
         }
-    }
-
-    companion object {
-        private val TAG = RecordDetailsActivity::class.java.simpleName
-        const val RETURN_DATA = 5
     }
 }

@@ -23,7 +23,10 @@ import android.app.AlertDialog
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.text.SpannableString
+import android.text.Spanned
 import android.text.TextUtils
+import android.text.style.URLSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -37,6 +40,8 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.joinAll
+import org.evergreen_ils.KEY_SEARCH_BY
+import org.evergreen_ils.KEY_SEARCH_TEXT
 import org.evergreen_ils.R
 import org.evergreen_ils.android.Analytics
 import org.evergreen_ils.android.App
@@ -48,8 +53,11 @@ import org.evergreen_ils.views.search.CopyInformationActivity
 import org.evergreen_ils.data.MBRecord
 import org.evergreen_ils.system.EgOrg
 import org.evergreen_ils.system.EgOrg.findOrg
+import org.evergreen_ils.views.MainActivity
 import org.evergreen_ils.views.bookbags.BookBagUtils.showAddToListDialog
 import org.evergreen_ils.views.holds.PlaceHoldActivity
+import org.evergreen_ils.views.search.SearchActivity
+import org.evergreen_ils.views.search.SearchActivity.Companion.RESULT_CODE_SEARCH_BY_AUTHOR
 
 class DetailsFragment : Fragment() {
     private var record: MBRecord? = null
@@ -242,7 +250,10 @@ class DetailsFragment : Fragment() {
     private fun loadMetadata() {
         if (!isAdded) return  // discard late results
         titleTextView?.text = record?.title
-        authorTextView?.text = record?.author
+        val ss = SpannableString(record?.author)
+        ss.setSpan(URLSpan(""), 0, ss.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+        authorTextView?.setText(ss, TextView.BufferType.SPANNABLE)
+        authorTextView?.setOnClickListener { searchByAuthor() }
         publisherTextView?.text = record?.publishingInfo
         synopsisTextView?.text = record?.synopsis
         seriesTextView?.text = record?.series
@@ -252,6 +263,16 @@ class DetailsFragment : Fragment() {
         isbnTextView?.text = record?.isbn
         isbnTableRow?.visibility = if (TextUtils.isEmpty(record?.isbn)) View.GONE else View.VISIBLE
         //updateButtonViews()
+    }
+
+    private fun searchByAuthor() {
+        val author = record?.author ?: return
+        // Instead of setResult and finish, we clear the activity stack and push SearchActivity.
+        // A finish would work only from Search Details, not from List Details.
+        val intent = Intent(activity, SearchActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+        intent.putExtra(KEY_SEARCH_TEXT, author)
+        intent.putExtra(KEY_SEARCH_BY, RESULT_CODE_SEARCH_BY_AUTHOR)
+        startActivity(intent)
     }
 
     private fun loadCopyCount() {
