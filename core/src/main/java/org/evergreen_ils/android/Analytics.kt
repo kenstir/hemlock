@@ -82,7 +82,7 @@ object Analytics {
         const val OK = "ok"
     }
 
-    private val TAG = Analytics::class.java.simpleName
+    private val TAG = javaClass.simpleName
     private var initialized = false
     private var analytics = false
     private var runningInTestLab = false

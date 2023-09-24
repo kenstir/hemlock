@@ -64,7 +64,7 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity {
         accountManager = AccountManager.get(getBaseContext());
 
         String accountName = getIntent().getStringExtra(ARG_ACCOUNT_NAME);
-        Analytics.log(TAG, "accountName=" + accountName);
+        Analytics.log(TAG, "accountName=" + Analytics.redactedString(accountName));
         authTokenType = getIntent().getStringExtra(ARG_AUTH_TYPE);
         if (authTokenType == null)
             authTokenType = Const.AUTHTOKEN_TYPE;
@@ -234,14 +234,14 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity {
         String library_name = intent.getStringExtra(Const.KEY_LIBRARY_NAME);
         String library_url = intent.getStringExtra(Const.KEY_LIBRARY_URL);
         final Account account = new Account(accountName, accountType);
-        Analytics.log(TAG, "onAuthSuccess> accountName=" + accountName
+        Analytics.log(TAG, "onAuthSuccess> accountName=" + Analytics.redactedString(accountName)
                         + " accountType=" + accountType
                         + " accountPassword=" + Analytics.redactedString(accountPassword)
                         + " library_name=" + library_name
                         + " library_url=" + library_url);
 
         //if (getIntent().getBooleanExtra(ARG_IS_ADDING_NEW_ACCOUNT, false))
-        Analytics.log(TAG, "onAuthSuccess> addAccountExplicitly " + accountName);
+        Analytics.log(TAG, "onAuthSuccess> addAccountExplicitly " + Analytics.redactedString(accountName));
         String authtoken = intent.getStringExtra(AccountManager.KEY_AUTHTOKEN);
         String authtokenType = authTokenType;
 

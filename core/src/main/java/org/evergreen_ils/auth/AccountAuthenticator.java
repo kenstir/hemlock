@@ -47,7 +47,7 @@ public class AccountAuthenticator extends AbstractAccountAuthenticator {
 
     @Override
     public Bundle getAuthToken(AccountAuthenticatorResponse response, Account account, String authTokenType, Bundle options) throws NetworkErrorException {
-        Analytics.log(TAG, "getAuthToken> "+account.name);
+        Analytics.log(TAG, "getAuthToken> " + Analytics.redactedString(account.name));
 
         // If the caller requested an authToken type we don't support, then
         // return an error
@@ -71,7 +71,7 @@ public class AccountAuthenticator extends AbstractAccountAuthenticator {
         }
 
         String authToken = am.peekAuthToken(account, authTokenType);
-        Analytics.log(TAG, "getAuthToken> peekAuthToken returned " + authToken);
+        Analytics.log(TAG, "getAuthToken> peekAuthToken returned " + Analytics.redactedString(authToken));
         if (TextUtils.isEmpty(authToken)) {
             final String password = am.getPassword(account);
             if (password != null) {
@@ -127,7 +127,7 @@ public class AccountAuthenticator extends AbstractAccountAuthenticator {
 
     @Override
     public Bundle hasFeatures(AccountAuthenticatorResponse response, Account account, String[] features) throws NetworkErrorException {
-        Analytics.log(TAG, "hasFeatures "+account.name+" features "+features);
+        Analytics.log(TAG, "hasFeatures features "+features);
         final Bundle result = new Bundle();
         result.putBoolean(AccountManager.KEY_BOOLEAN_RESULT, false);
         return result;
@@ -141,13 +141,13 @@ public class AccountAuthenticator extends AbstractAccountAuthenticator {
 
     @Override
     public Bundle confirmCredentials(AccountAuthenticatorResponse response, Account account, Bundle options) throws NetworkErrorException {
-        Analytics.log(TAG, "confirmCredentials "+account.name);
+        Analytics.log(TAG, "confirmCredentials");
         return null;
     }
 
     @Override
     public Bundle updateCredentials(AccountAuthenticatorResponse response, Account account, String authTokenType, Bundle options) throws NetworkErrorException {
-        Analytics.log(TAG, "updateCredentials "+account.name);
+        Analytics.log(TAG, "updateCredentials");
         return null;
     }
 }
