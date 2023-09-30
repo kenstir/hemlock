@@ -177,6 +177,8 @@ class OrgDetailsActivity : BaseActivity() {
         return "$openTimeLocal - $closeTimeLocal"
     }
 
+    // TODO: [Add Hours of Operation Note field](https://evergreen-ils.org/documentation/release/RELEASE_NOTES_3_10.html#_hours_of_operation_note_field)
+    // Look for fields e.g. "dow_0_note"
     private fun loadHours(obj: OSRFObject?) {
         day0Hours?.text = hoursOfOperation(obj, 0)
         day1Hours?.text = hoursOfOperation(obj, 1)
