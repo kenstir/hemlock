@@ -37,17 +37,15 @@ public class AccountUtils {
     public static Library getLibraryForAccount(Context context, String account_name, String account_type) {
         final AccountManager am = AccountManager.get(context);
         Account account = new Account(account_name, account_type);
-        String library_url = am.getUserData(account, Const.KEY_LIBRARY_URL);
-        String library_name = am.getUserData(account, Const.KEY_LIBRARY_NAME);
 
-        // Compatibility with old versions of cwmars_app.  If no library_url exists as userdata on the account,
-        // get it from the resources.
+        // For custom apps, library_url should come from the resources.
+        // For the generic Hemlock app, it is stored as user data in the AccountManager.
+        String library_url = context.getString(R.string.ou_library_url);
         if (TextUtils.isEmpty(library_url)) {
-            library_url = context.getString(R.string.ou_library_url);
-            if (!TextUtils.isEmpty(library_url)) {
-                am.setUserData(account, Const.KEY_LIBRARY_URL, library_url);
-            }
+            library_url = am.getUserData(account, Const.KEY_LIBRARY_URL);
         }
+
+        String library_name = am.getUserData(account, Const.KEY_LIBRARY_NAME);
         if (TextUtils.isEmpty(library_name)) {
             library_name = context.getString(R.string.ou_library_name);
         }
