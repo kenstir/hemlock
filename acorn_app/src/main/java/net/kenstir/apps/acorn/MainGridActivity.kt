@@ -132,7 +132,7 @@ class MainGridActivity : BaseActivity() {
         }
 
         // Meeting Rooms
-        val roomsUrl = homeOrg?.museumPassesUrl ?: defaultUrl
+        val roomsUrl = homeOrg?.meetingRoomsUrl ?: defaultUrl
         if (!roomsUrl.isNullOrEmpty()) {
             items.add(GridButton("Meeting Rooms",
                 resources.getDrawable(R.drawable.acorn_users_light, null),
