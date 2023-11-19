@@ -78,14 +78,6 @@ class MainGridActivity : BaseActivity() {
 //        val defaultUrl = "https://google.com"
         val defaultUrl: String? = null
 
-        // Show Card
-        val cardDrawable = getDrawable(R.drawable.acorn_id_card_light, R.color.cwmars_violet)
-        items.add(GridButton("Digital Library Card",
-            cardDrawable,
-            "library card") {
-            startActivity(Intent(this, BarcodeActivity::class.java))
-        })
-
         // Search
         val searchDrawable = getDrawable(R.drawable.acorn_magnifying_glass_light, R.color.cwmars_red)
         items.add(GridButton("Search Catalog",
@@ -114,7 +106,7 @@ class MainGridActivity : BaseActivity() {
         // E-resources
         val eresourcesUrl = homeOrg?.eresourcesUrl ?: defaultUrl
         if (!eresourcesUrl.isNullOrEmpty()) {
-            items.add(GridButton("Ebooks & Digital Resources",
+            items.add(GridButton("Ebooks & Digital",
                 resources.getDrawable(R.drawable.acorn_light_book_circle_arrow_down, null),
                 "e-book") {
                 launchURL(eresourcesUrl)
@@ -141,11 +133,40 @@ class MainGridActivity : BaseActivity() {
             })
         }
 
-        // My Account
-        items.add(GridButton("My Account",
-            resources.getDrawable(R.drawable.acorn_circle_user_light, null),
-            "person") {
-            startActivity(Intent(this, MainActivity::class.java))
+        // Items Checked Out
+        items.add(GridButton("Items Checked Out",
+            resources.getDrawable(R.drawable.ic_checkouts_48, null),
+            "items checked out") {
+            startActivity(Intent(this, BarcodeActivity::class.java))//todo
+        })
+
+        // Holds
+        items.add(GridButton("Holds",
+            resources.getDrawable(R.drawable.ic_holds_48, null),
+            "items on hold") {
+            startActivity(Intent(this, BarcodeActivity::class.java))//todo
+        })
+
+        // Fines
+        items.add(GridButton("Fines",
+            resources.getDrawable(R.drawable.ic_fines_48, null),
+            "fines") {
+            startActivity(Intent(this, BarcodeActivity::class.java))//todo
+        })
+
+        // My Lists
+        items.add(GridButton("My Lists",
+            resources.getDrawable(R.drawable.ic_lists_48, null),
+            "my lists") {
+            startActivity(Intent(this, BarcodeActivity::class.java))//todo
+        })
+
+        // Show Card
+        val cardDrawable = getDrawable(R.drawable.acorn_id_card_light, R.color.cwmars_violet)
+        items.add(GridButton("Digital Library Card",
+            cardDrawable,
+            "library card") {
+            startActivity(Intent(this, BarcodeActivity::class.java))
         })
     }
 
