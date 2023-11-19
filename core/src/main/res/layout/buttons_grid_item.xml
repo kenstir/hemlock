@@ -8,7 +8,7 @@
         android:id="@+id/grid_button"
         style="@style/Hemlock.GridButton"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="110dp"
         android:drawableTop="@drawable/ic_search_48"
         tools:text="Digital Library Card"
         android:layout_margin="10dp"/>
