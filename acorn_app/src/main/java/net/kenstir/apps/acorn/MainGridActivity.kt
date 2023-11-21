@@ -100,16 +100,6 @@ class MainGridActivity : BaseActivity() {
             "info") {
             startActivity(Intent(this, OrgDetailsActivity::class.java))
         })
-
-//        // Events
-//        val eventsUrl = homeOrg?.eventsURL ?: defaultUrl
-//        if (!eventsUrl.isNullOrEmpty()) {
-//            items.add(GridButton("Events",
-//                resources.getDrawable(R.drawable.acorn_calendar_day_light, null),
-//                "calendar") {
-//                launchURL(eventsUrl)
-//            })
-//        }
 //
 //        // E-resources
 //        val eresourcesUrl = homeOrg?.eresourcesUrl ?: defaultUrl
@@ -168,6 +158,16 @@ class MainGridActivity : BaseActivity() {
             "my lists") {
             startActivity(Intent(this, BarcodeActivity::class.java))//todo
         })
+
+        // Events
+        val eventsUrl = homeOrg?.eventsURL ?: defaultUrl
+        if (!eventsUrl.isNullOrEmpty()) {
+            items.add(GridButton("Events",
+                resources.getDrawable(R.drawable.acorn_calendar_day_light, null),
+                "calendar") {
+                launchURL(eventsUrl)
+            })
+        }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
