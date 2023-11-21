@@ -78,6 +78,14 @@ class MainGridActivity : BaseActivity() {
 //        val defaultUrl = "https://google.com"
         val defaultUrl: String? = null
 
+        // Show Card
+        val cardDrawable = getDrawable(R.drawable.acorn_id_card_light, R.color.cwmars_violet)
+        items.add(GridButton("Digital Library Card",
+            cardDrawable,
+            "library card") {
+            startActivity(Intent(this, BarcodeActivity::class.java))
+        })
+
         // Search
         val searchDrawable = getDrawable(R.drawable.acorn_magnifying_glass_light, R.color.cwmars_red)
         items.add(GridButton("Search Catalog",
@@ -93,45 +101,45 @@ class MainGridActivity : BaseActivity() {
             startActivity(Intent(this, OrgDetailsActivity::class.java))
         })
 
-        // Events
-        val eventsUrl = homeOrg?.eventsURL ?: defaultUrl
-        if (!eventsUrl.isNullOrEmpty()) {
-            items.add(GridButton("Events",
-                resources.getDrawable(R.drawable.acorn_calendar_day_light, null),
-                "calendar") {
-                launchURL(eventsUrl)
-            })
-        }
-
-        // E-resources
-        val eresourcesUrl = homeOrg?.eresourcesUrl ?: defaultUrl
-        if (!eresourcesUrl.isNullOrEmpty()) {
-            items.add(GridButton("Ebooks & Digital",
-                resources.getDrawable(R.drawable.acorn_light_book_circle_arrow_down, null),
-                "e-book") {
-                launchURL(eresourcesUrl)
-            })
-        }
-
-        // Museum Passes
-        val passesUrl = homeOrg?.museumPassesUrl ?: defaultUrl
-        if (!passesUrl.isNullOrEmpty()) {
-            items.add(GridButton("Museum Passes",
-                resources.getDrawable(R.drawable.acorn_ticket_light, null),
-                "ticket") {
-                launchURL(passesUrl)
-            })
-        }
-
-        // Meeting Rooms
-        val roomsUrl = homeOrg?.meetingRoomsUrl ?: defaultUrl
-        if (!roomsUrl.isNullOrEmpty()) {
-            items.add(GridButton("Meeting Rooms",
-                resources.getDrawable(R.drawable.acorn_users_light, null),
-                "group of people") {
-                launchURL(roomsUrl)
-            })
-        }
+//        // Events
+//        val eventsUrl = homeOrg?.eventsURL ?: defaultUrl
+//        if (!eventsUrl.isNullOrEmpty()) {
+//            items.add(GridButton("Events",
+//                resources.getDrawable(R.drawable.acorn_calendar_day_light, null),
+//                "calendar") {
+//                launchURL(eventsUrl)
+//            })
+//        }
+//
+//        // E-resources
+//        val eresourcesUrl = homeOrg?.eresourcesUrl ?: defaultUrl
+//        if (!eresourcesUrl.isNullOrEmpty()) {
+//            items.add(GridButton("Ebooks & Digital",
+//                resources.getDrawable(R.drawable.acorn_light_book_circle_arrow_down, null),
+//                "e-book") {
+//                launchURL(eresourcesUrl)
+//            })
+//        }
+//
+//        // Museum Passes
+//        val passesUrl = homeOrg?.museumPassesUrl ?: defaultUrl
+//        if (!passesUrl.isNullOrEmpty()) {
+//            items.add(GridButton("Museum Passes",
+//                resources.getDrawable(R.drawable.acorn_ticket_light, null),
+//                "ticket") {
+//                launchURL(passesUrl)
+//            })
+//        }
+//
+//        // Meeting Rooms
+//        val roomsUrl = homeOrg?.meetingRoomsUrl ?: defaultUrl
+//        if (!roomsUrl.isNullOrEmpty()) {
+//            items.add(GridButton("Meeting Rooms",
+//                resources.getDrawable(R.drawable.acorn_users_light, null),
+//                "group of people") {
+//                launchURL(roomsUrl)
+//            })
+//        }
 
         // Items Checked Out
         items.add(GridButton("Items Checked Out",
@@ -159,14 +167,6 @@ class MainGridActivity : BaseActivity() {
             resources.getDrawable(R.drawable.ic_lists_48, null),
             "my lists") {
             startActivity(Intent(this, BarcodeActivity::class.java))//todo
-        })
-
-        // Show Card
-        val cardDrawable = getDrawable(R.drawable.acorn_id_card_light, R.color.cwmars_violet)
-        items.add(GridButton("Digital Library Card",
-            cardDrawable,
-            "library card") {
-            startActivity(Intent(this, BarcodeActivity::class.java))
         })
     }
 
