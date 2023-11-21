@@ -41,15 +41,15 @@
             android:onClick="onButtonClick"
             android:text="Ebooks &amp; Digital" />
 
-        <Button
-            android:id="@+id/grid_button_2"
-            style="@style/Hemlock.GridButton"
-            android:drawableTop="@drawable/acorn_calendar_day_light"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:onClick="onButtonClick"
-            android:text="Events" />
+<!--        <Button-->
+<!--            android:id="@+id/grid_button_2"-->
+<!--            style="@style/Hemlock.GridButton"-->
+<!--            android:drawableTop="@drawable/acorn_calendar_day_light"-->
+<!--            android:layout_width="0dp"-->
+<!--            android:layout_height="match_parent"-->
+<!--            android:layout_weight="1"-->
+<!--            android:onClick="onButtonClick"-->
+<!--            android:text="Events" />-->
 
         <Button
             android:id="@+id/grid_button_4"
