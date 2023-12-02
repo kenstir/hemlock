@@ -8,7 +8,7 @@
     <string name="ou_app_label">CW MARS</string>
     <string name="ou_library_name">CW MARS</string>
     <string name="ou_activity_subtitle">%2$s</string>
-    <string name="ou_library_url">https://catalog.cwmars.org</string>
+    <string name="ou_library_url">https://bark.cwmars.org</string>
     <string name="ou_feedback_url">https://docs.google.com/forms/d/e/1FAIpQLSeiz6sK73pNPL0ClkSnbtmU0wQXF1r-lNV8A2dFNrSxxp5AXA/viewform?entry.382826236=%1$s</string>
     <string name="ou_barcode_format">Codabar</string>
     <bool name="ou_hierarchical_org_tree">false</bool>
