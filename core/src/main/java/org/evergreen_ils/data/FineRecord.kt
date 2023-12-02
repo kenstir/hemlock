@@ -24,38 +24,39 @@ import org.evergreen_ils.android.Log
 import org.opensrf.util.OSRFObject
 import java.util.*
 
-private const val TAG = "FineRecord"
+private val TAG = FineRecord::class.java.simpleName
 
-class FineRecord(circ: OSRFObject?, val mvrObj: OSRFObject?, mbts_transaction: OSRFObject) {
+class FineRecord(circ: OSRFObject?, val mvrObj: OSRFObject?, mbtsObj: OSRFObject) {
     var title: String? = null
     var subtitle: String? = null
-    var balance_owed: Double? = null
-    var max_fine: Double? = null
-    private var checkin_time: Date? = null
+    var balanceOwed: Double? = null
+    var maxFine: Double? = null
+    private var checkinTime: Date? = null
 
     val status: String
         get() {
             if (mvrObj == null) return ""
-            if (checkin_time != null) return "returned"
-            return if (balance_owed != null && max_fine != null && balance_owed!! >= max_fine!!) "maximum fine" else "fines accruing"
+            if (checkinTime != null) return "returned"
+            if (balanceOwed != null && maxFine != null && balanceOwed!! >= maxFine!!) return "maximum fine"
+            return "fines accruing"
         }
 
     init {
-        if (mbts_transaction["xact_type"].toString() == "circulation") {
+        if (mbtsObj["xact_type"].toString() == "circulation") {
             title = mvrObj?.getString("title")
             subtitle = mvrObj?.getString("author")
-            checkin_time = OSRFUtils.parseDate(circ?.getString("checkin_time"))
+            checkinTime = OSRFUtils.parseDate(circ?.getString("checkin_time"))
         } else { // xact_type = "grocery"
-            title = mbts_transaction.getString("last_billing_type")
-            subtitle = mbts_transaction.getString("last_billing_note")
+            title = mbtsObj.getString("last_billing_type")
+            subtitle = mbtsObj.getString("last_billing_note")
         }
         try {
-            balance_owed = mbts_transaction.getString("balance_owed")?.toDouble()
+            balanceOwed = mbtsObj.getString("balance_owed")?.toDouble()
         } catch (e: NumberFormatException) {
             Log.d(TAG, "error converting double", e)
         }
         try {
-            max_fine = circ?.getString("max_fine")?.toDouble()
+            maxFine = circ?.getString("max_fine")?.toDouble()
         } catch (e: NumberFormatException) {
             Log.d(TAG, "error converting double", e)
         }
@@ -64,7 +65,7 @@ class FineRecord(circ: OSRFObject?, val mvrObj: OSRFObject?, mbts_transaction: O
     companion object {
         @JvmStatic
         fun makeArray(payload: List<Any>): List<FineRecord> {
-            var ret = mutableListOf<FineRecord>()
+            val ret = mutableListOf<FineRecord>()
             val records = payload as? List<JSONDictionary>
             if (records != null) {
                 for (item in records) {

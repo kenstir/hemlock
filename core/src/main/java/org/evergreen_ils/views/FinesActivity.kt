@@ -261,7 +261,7 @@ class FinesActivity : BaseActivity() {
             val record = getItem(position)
             fineTitle?.text = record.title
             fineAuthor?.text = record.subtitle
-            fineBalanceOwed?.text = decimalFormatter!!.format(record.balance_owed)
+            fineBalanceOwed?.text = decimalFormatter!!.format(record.balanceOwed)
             fineStatus?.text = record.status
 
             return row
