@@ -146,8 +146,20 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         return super.onOptionsItemSelected(item)
     }
 
+    fun getEbooksUrl(): String? {
+        return EgOrg.findOrg(App.getAccount().homeOrg)?.eresourcesUrl
+    }
+
     fun getEventsUrl(): String? {
         return EgOrg.findOrg(App.getAccount().homeOrg)?.eventsURL
+    }
+
+    fun getMeetingRoomsUrl(): String? {
+        return EgOrg.findOrg(App.getAccount().homeOrg)?.meetingRoomsUrl
+    }
+
+    fun getMuseumPassesUrl(): String? {
+        return EgOrg.findOrg(App.getAccount().homeOrg)?.museumPassesUrl
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
