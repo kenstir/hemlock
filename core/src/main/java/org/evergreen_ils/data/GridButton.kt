@@ -20,4 +20,5 @@ package org.evergreen_ils.data
 
 import android.graphics.drawable.Drawable
 
-data class GridButton(val title: String, val drawable: Drawable, val contentDescription: String, val action: () -> Unit)
+/// if contentDescription is null, use the title
+data class GridButton(val title: String, val drawable: Drawable, val contentDescription: String?, val action: () -> Unit)

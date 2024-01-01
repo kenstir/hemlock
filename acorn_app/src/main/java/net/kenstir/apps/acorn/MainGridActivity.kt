@@ -82,7 +82,7 @@ class MainGridActivity : BaseActivity() {
         val cardDrawable = getDrawable(R.drawable.acorn_id_card_light, R.color.cwmars_violet)
         items.add(GridButton("Digital Library Card",
             cardDrawable,
-            "library card") {
+            null) {
             startActivity(Intent(this, BarcodeActivity::class.java))
         })
 
@@ -90,42 +90,42 @@ class MainGridActivity : BaseActivity() {
         val searchDrawable = getDrawable(R.drawable.acorn_magnifying_glass_light, R.color.cwmars_red)
         items.add(GridButton("Search Catalog",
             searchDrawable,
-            "magnifying glass") {
+            null) {
             startActivity(Intent(this, SearchActivity::class.java))
         })
 
         // Org Details
         items.add(GridButton("Library Hours & Info",
             resources.getDrawable(R.drawable.acorn_square_info_light, null),
-            "info") {
+            null) {
             startActivity(Intent(this, OrgDetailsActivity::class.java))
         })
 
         // Items Checked Out
         items.add(GridButton("Items Checked Out",
             resources.getDrawable(R.drawable.ic_checkouts_48, null),
-            "items checked out") {
+            null) {
             startActivity(Intent(this, BarcodeActivity::class.java))
         })
 
         // Fines
         items.add(GridButton("Fines",
             resources.getDrawable(R.drawable.ic_fines_48, null),
-            "fines") {
+            null) {
             startActivity(Intent(this, FinesActivity::class.java))
         })
 
         // Holds
         items.add(GridButton("Holds",
             resources.getDrawable(R.drawable.ic_holds_48, null),
-            "items on hold") {
+            null) {
             startActivity(Intent(this, HoldsActivity::class.java))
         })
 
         // My Lists
         items.add(GridButton("My Lists",
             resources.getDrawable(R.drawable.ic_lists_48, null),
-            "my lists") {
+            null) {
             startActivity(Intent(this, BookBagsActivity::class.java))
         })
 
@@ -134,7 +134,7 @@ class MainGridActivity : BaseActivity() {
         if (!eventsUrl.isNullOrEmpty()) {
             items.add(GridButton("Events",
                 resources.getDrawable(R.drawable.acorn_calendar_day_light, null),
-                "calendar") {
+                null) {
                 launchURL(eventsUrl)
             })
         }
