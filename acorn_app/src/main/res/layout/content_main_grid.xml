@@ -27,34 +27,24 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="0dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
+        android:layout_marginStart="0dp"
+        android:layout_marginEnd="0dp"
         android:orientation="horizontal">
 
         <Button
             android:id="@+id/grid_button_3"
-            style="@style/Hemlock.GridButton"
-            android:drawableTop="@drawable/acorn_light_book_circle_arrow_down"
+            style="@style/Hemlock.GridButton.Small"
+            android:drawableTop="@drawable/acorn_light_book_circle_arrow_down_36"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:onClick="onButtonClick"
             android:text="Ebooks &amp; Digital" />
 
-<!--        <Button-->
-<!--            android:id="@+id/grid_button_2"-->
-<!--            style="@style/Hemlock.GridButton"-->
-<!--            android:drawableTop="@drawable/acorn_calendar_day_light"-->
-<!--            android:layout_width="0dp"-->
-<!--            android:layout_height="match_parent"-->
-<!--            android:layout_weight="1"-->
-<!--            android:onClick="onButtonClick"-->
-<!--            android:text="Events" />-->
-
         <Button
             android:id="@+id/grid_button_4"
-            style="@style/Hemlock.GridButton"
-            android:drawableTop="@drawable/acorn_users_light"
+            style="@style/Hemlock.GridButton.Small"
+            android:drawableTop="@drawable/acorn_users_light_36"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
@@ -63,8 +53,8 @@
 
         <Button
             android:id="@+id/grid_button_1"
-            style="@style/Hemlock.GridButton"
-            android:drawableTop="@drawable/acorn_ticket_light"
+            style="@style/Hemlock.GridButton.Small"
+            android:drawableTop="@drawable/acorn_ticket_light_36"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
