@@ -23,6 +23,7 @@ import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
+import android.widget.Button
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import net.kenstir.apps.bibliomation.R
@@ -34,7 +35,6 @@ import org.evergreen_ils.utils.ui.BaseActivity
 import org.evergreen_ils.views.BarcodeActivity
 import org.evergreen_ils.views.CheckoutsActivity
 import org.evergreen_ils.views.FinesActivity
-import org.evergreen_ils.views.MainActivity
 import org.evergreen_ils.views.OrgDetailsActivity
 import org.evergreen_ils.views.bookbags.BookBagsActivity
 import org.evergreen_ils.views.holds.HoldsActivity
@@ -59,6 +59,7 @@ class MainGridActivity : BaseActivity() {
         rv = findViewById(R.id.recycler_view)
         setupRecyclerView()
         addGridButtons()
+        setupBottomRowButtons()
     }
 
     private fun setupRecyclerView() {
@@ -105,7 +106,7 @@ class MainGridActivity : BaseActivity() {
         items.add(GridButton("Items Checked Out",
             resources.getDrawable(R.drawable.ic_checkouts_48, null),
             null) {
-            startActivity(Intent(this, BarcodeActivity::class.java))
+            startActivity(Intent(this, CheckoutsActivity::class.java))
         })
 
         // Fines
@@ -140,6 +141,35 @@ class MainGridActivity : BaseActivity() {
         }
     }
 
+    fun setupBottomRowButtons() {
+        val homeOrg = EgOrg.findOrg(App.getAccount().homeOrg)
+        var numVisible = 0
+
+        // E-books
+        val ebooksUrl = homeOrg?.eresourcesUrl
+        if (!ebooksUrl.isNullOrEmpty()) {
+            ++numVisible
+        } else {
+            findViewById<Button>(R.id.grid_ebooks_button)?.visibility = View.GONE
+        }
+
+        // Meeting Rooms
+        val meetingRoomsUrl = homeOrg?.meetingRoomsUrl
+        if (!meetingRoomsUrl.isNullOrEmpty()) {
+            ++numVisible
+        } else {
+            findViewById<Button>(R.id.grid_meeting_rooms_button)?.visibility = View.GONE
+        }
+
+        // Museum Passes
+        val museumPassesUrl = homeOrg?.museumPassesUrl
+        if (!museumPassesUrl.isNullOrEmpty()) {
+            ++numVisible
+        } else {
+            findViewById<Button>(R.id.grid_museum_passes_button)?.visibility = View.GONE
+        }
+    }
+
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         val id = item.itemId
         if (menuItemHandler?.onItemSelected(this, id, "main_option_menu") == true)
@@ -162,10 +192,16 @@ class MainGridActivity : BaseActivity() {
             startActivity(Intent(this, SearchActivity::class.java))
         } else if (id == org.evergreen_ils.R.id.main_library_info_button) {
             startActivity(Intent(this, OrgDetailsActivity::class.java))
-        } else if (id == org.evergreen_ils.R.id.main_events_button) {
-            launchURL(getEventsUrl())
         } else if (id == org.evergreen_ils.R.id.main_showcard_button) {
             startActivity(Intent(this, BarcodeActivity::class.java))
+        } else if (id == org.evergreen_ils.R.id.main_events_button) {
+            launchURL(getEventsUrl())
+        } else if (id == R.id.grid_ebooks_button) {
+            launchURL(getEbooksUrl())
+        } else if (id == R.id.grid_meeting_rooms_button) {
+            launchURL(getMeetingRoomsUrl())
+        } else if (id == R.id.grid_museum_passes_button) {
+            launchURL(getMuseumPassesUrl())
         } else if (menuItemHandler != null) {
             menuItemHandler?.onItemSelected(this, id, "main_button")
         }
