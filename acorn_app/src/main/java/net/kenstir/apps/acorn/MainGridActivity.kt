@@ -100,63 +100,33 @@ class MainGridActivity : BaseActivity() {
             "info") {
             startActivity(Intent(this, OrgDetailsActivity::class.java))
         })
-//
-//        // E-resources
-//        val eresourcesUrl = homeOrg?.eresourcesUrl ?: defaultUrl
-//        if (!eresourcesUrl.isNullOrEmpty()) {
-//            items.add(GridButton("Ebooks & Digital",
-//                resources.getDrawable(R.drawable.acorn_light_book_circle_arrow_down, null),
-//                "e-book") {
-//                launchURL(eresourcesUrl)
-//            })
-//        }
-//
-//        // Museum Passes
-//        val passesUrl = homeOrg?.museumPassesUrl ?: defaultUrl
-//        if (!passesUrl.isNullOrEmpty()) {
-//            items.add(GridButton("Museum Passes",
-//                resources.getDrawable(R.drawable.acorn_ticket_light, null),
-//                "ticket") {
-//                launchURL(passesUrl)
-//            })
-//        }
-//
-//        // Meeting Rooms
-//        val roomsUrl = homeOrg?.meetingRoomsUrl ?: defaultUrl
-//        if (!roomsUrl.isNullOrEmpty()) {
-//            items.add(GridButton("Meeting Rooms",
-//                resources.getDrawable(R.drawable.acorn_users_light, null),
-//                "group of people") {
-//                launchURL(roomsUrl)
-//            })
-//        }
 
         // Items Checked Out
         items.add(GridButton("Items Checked Out",
             resources.getDrawable(R.drawable.ic_checkouts_48, null),
             "items checked out") {
-            startActivity(Intent(this, BarcodeActivity::class.java))//todo
-        })
-
-        // Holds
-        items.add(GridButton("Holds",
-            resources.getDrawable(R.drawable.ic_holds_48, null),
-            "items on hold") {
-            startActivity(Intent(this, BarcodeActivity::class.java))//todo
+            startActivity(Intent(this, BarcodeActivity::class.java))
         })
 
         // Fines
         items.add(GridButton("Fines",
             resources.getDrawable(R.drawable.ic_fines_48, null),
             "fines") {
-            startActivity(Intent(this, BarcodeActivity::class.java))//todo
+            startActivity(Intent(this, FinesActivity::class.java))
+        })
+
+        // Holds
+        items.add(GridButton("Holds",
+            resources.getDrawable(R.drawable.ic_holds_48, null),
+            "items on hold") {
+            startActivity(Intent(this, HoldsActivity::class.java))
         })
 
         // My Lists
         items.add(GridButton("My Lists",
             resources.getDrawable(R.drawable.ic_lists_48, null),
             "my lists") {
-            startActivity(Intent(this, BarcodeActivity::class.java))//todo
+            startActivity(Intent(this, BookBagsActivity::class.java))
         })
 
         // Events
