@@ -34,7 +34,7 @@ class GridButtonViewAdapter(private val items: List<GridButton>) : RecyclerView.
         fun bindView(item: GridButton) {
             button.text = item.title
             button.setCompoundDrawablesWithIntrinsicBounds(null, item.drawable, null, null)
-            button.contentDescription = item.contentDescription
+            button.contentDescription = item.contentDescription ?: item.title
             button.setOnClickListener { item.action() }
         }
     }
