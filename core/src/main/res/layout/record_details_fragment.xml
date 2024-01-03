@@ -157,7 +157,7 @@
                         android:layout_height="wrap_content"
                         android:minHeight="@dimen/target_min_height"
                         android:text="@string/ou_details_link_text"
-                        tools:text="Recommended Reads"/>
+                        tools:text="More Information"/>
                 </TableRow>
 
                 <TableRow android:id="@+id/record_details_series_row">
