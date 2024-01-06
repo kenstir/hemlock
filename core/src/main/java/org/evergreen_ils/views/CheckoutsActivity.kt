@@ -26,6 +26,8 @@ import android.content.Context
 import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
@@ -82,6 +84,20 @@ class CheckoutsActivity : BaseActivity() {
         Log.d(TAG, object{}.javaClass.enclosingMethod?.name ?: "")
 
         fetchData()
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        menuInflater.inflate(R.menu.menu_checkouts, menu)
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.action_history -> fun () {
+                // TODO
+            }
+        }
+        return super.onOptionsItemSelected(item)
     }
 
     private fun fetchData() {

@@ -254,5 +254,6 @@
     <string name="menu_mark_read">Mark read</string>
     <string name="menu_mark_unread">Mark unread</string>
     <string name="menu_view_message">View message</string>
+    <string name="title_checkout_history">Checkout History</string>
 
 </resources>
