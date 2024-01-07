@@ -18,47 +18,47 @@
 
 package org.evergreen_ils.views.history
 
+import android.net.Network
 import android.os.Build
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.android.volley.toolbox.NetworkImageView
 import org.evergreen_ils.R
-import org.evergreen_ils.data.PatronMessage
+import org.evergreen_ils.data.HistoryRecord
 import java.text.DateFormat
 
-class HistoryViewAdapter(private val items: List<PatronMessage>) : RecyclerView.Adapter<HistoryViewAdapter.ViewHolder>() {
+class HistoryViewAdapter(private val items: List<HistoryRecord>) : RecyclerView.Adapter<HistoryViewAdapter.ViewHolder>() {
 
     class ViewHolder(v: View) : RecyclerView.ViewHolder(v) {
-        //private val TAG = javaClass.simpleName
+        private val recordImage: NetworkImageView = v.findViewById(R.id.search_record_img)
+        private val title: TextView = v.findViewById(R.id.search_record_title)
+        private val author: TextView = v.findViewById(R.id.search_record_author)
+        private val checkoutDate: TextView = v.findViewById(R.id.item_checkout_date)
+        private val returnDate: TextView = v.findViewById(R.id.item_return_date)
 
-        private val title: TextView = v.findViewById(R.id.message_title)
-        private val date: TextView = v.findViewById(R.id.message_date)
-        private val body: TextView = v.findViewById(R.id.message_body)
-
-        fun bindView(message: PatronMessage) {
-            title.text = message.title
-            date.text = if (message.createDate != null) DateFormat.getDateInstance().format(message.createDate) else ""
-            body.text = message.message.trim()
-            val primaryStyle = if (message.isRead) R.style.HemlockText_ListPrimaryRead else R.style.HemlockText_ListPrimary
-            val secondaryStyle = if (message.isRead) R.style.HemlockText_ListSecondaryRead else R.style.HemlockText_ListSecondary
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                title.setTextAppearance(primaryStyle)
-                date.setTextAppearance(primaryStyle)
-                body.setTextAppearance(secondaryStyle)
-            } else {
-                title.setTextAppearance(title.context, primaryStyle)
-                date.setTextAppearance(date.context, primaryStyle)
-                body.setTextAppearance(body.context, secondaryStyle)
-            }
+        fun bindView(historyRecord: HistoryRecord) {
+            title.text = historyRecord.title
+            author.text = historyRecord.author
+            checkoutDate.text = historyRecord.checkoutDateString
+            returnDate.text = historyRecord.returnedDateString
+            // TODO: alter returnDate appearance if not returned?
+//            val primaryStyle = if (historyRecord.isRead) R.style.HemlockText_ListPrimaryRead else R.style.HemlockText_ListPrimary
+//            val secondaryStyle = if (historyRecord.isRead) R.style.HemlockText_ListSecondaryRead else R.style.HemlockText_ListSecondary
+//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+//                date.setTextAppearance(primaryStyle)
+//            } else {
+//                date.setTextAppearance(date.context, primaryStyle)
+//            }
         }
     }
-    
+
     // Create new views (invoked by the layout manager)
     override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): ViewHolder {
         val v = LayoutInflater.from(viewGroup.context)
-            .inflate(R.layout.messages_list_item, viewGroup, false)
+            .inflate(R.layout.history_list_item, viewGroup, false)
         return ViewHolder(v)
     }
 

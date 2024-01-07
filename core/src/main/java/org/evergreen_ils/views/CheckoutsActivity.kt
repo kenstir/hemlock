@@ -23,6 +23,7 @@ package org.evergreen_ils.views
 
 import android.app.AlertDialog
 import android.content.Context
+import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -48,6 +49,7 @@ import org.evergreen_ils.android.Log
 import org.evergreen_ils.utils.ui.BaseActivity
 import org.evergreen_ils.utils.ui.ProgressDialogSupport
 import org.evergreen_ils.utils.ui.showAlert
+import org.evergreen_ils.views.history.HistoryActivity
 import java.util.*
 
 class CheckoutsActivity : BaseActivity() {
@@ -93,9 +95,7 @@ class CheckoutsActivity : BaseActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.action_history -> fun () {
-                // TODO
-            }
+            R.id.action_history -> startActivity(Intent(this, HistoryActivity::class.java))
         }
         return super.onOptionsItemSelected(item)
     }

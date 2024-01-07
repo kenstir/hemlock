@@ -150,6 +150,17 @@ object GatewayActor: ActorService {
         }
     }
 
+    override suspend fun fetchCheckoutHistory(account: Account): Result<List<OSRFObject>> {
+        return try {
+            val (authToken, _) = account.getCredentialsOrThrow()
+            val args = arrayOf<Any?>(authToken)
+            val ret = Gateway.fetchObjectArray(Api.ACTOR, Api.CHECKOUT_HISTORY, args, false)
+            Result.Success(ret)
+        } catch (e: Exception) {
+            Result.Error(e)
+        }
+    }
+
     override suspend fun fetchMessages(account: Account): Result<List<OSRFObject>> {
         return try {
             val (authToken, userID) = account.getCredentialsOrThrow()

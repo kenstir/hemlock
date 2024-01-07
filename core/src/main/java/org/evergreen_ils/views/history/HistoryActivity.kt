@@ -29,6 +29,7 @@ import kotlinx.coroutines.async
 import org.evergreen_ils.R
 import org.evergreen_ils.android.App
 import org.evergreen_ils.android.Log
+import org.evergreen_ils.data.HistoryRecord
 import org.evergreen_ils.data.PatronMessage
 import org.evergreen_ils.data.Result
 import org.evergreen_ils.net.Gateway
@@ -41,7 +42,7 @@ class HistoryActivity : BaseActivity() {
 
     private var rv: RecyclerView? = null
     private var adapter: HistoryViewAdapter? = null
-    private var items = ArrayList<PatronMessage>()
+    private var items = ArrayList<HistoryRecord>()
     private var progress: ProgressDialogSupport? = null
     private var contextMenuInfo: ContextMenuMessageInfo? = null
 
@@ -75,16 +76,16 @@ class HistoryActivity : BaseActivity() {
             try {
                 Log.d(TAG, "[kcxxx] fetchData ...")
                 val start = System.currentTimeMillis()
-                progress?.show(this@MessagesActivity, getString(R.string.msg_retrieving_data))
+                progress?.show(this@HistoryActivity, getString(R.string.msg_retrieving_data))
 
-                // fetch messages
-                val result = Gateway.actor.fetchMessages(App.getAccount())
+                // fetch history
+                val result = Gateway.actor.fetchCheckoutHistory(App.getAccount())
                 if (result is Result.Error) {
                     showAlert(result.exception); return@async
                 }
-                val messageList = result.get()
+                val objects = result.get()
 
-                loadVisibleMessages(PatronMessage.makeArray(messageList))
+                loadHistory(HistoryRecord.makeArray(objects))
                 updateList()
 
                 Log.logElapsedTime(TAG, start, "[kcxxx] fetchData ... done")
@@ -97,13 +98,9 @@ class HistoryActivity : BaseActivity() {
         }
     }
 
-    private fun loadVisibleMessages(messageList: List<PatronMessage>) {
+    private fun loadHistory(historyList: List<HistoryRecord>) {
         items.clear()
-        messageList.forEach {
-            if (it.isPatronVisible && !it.isDeleted) {
-                items.add(it)
-            }
-        }
+        items.addAll(historyList)
     }
 
     private fun updateList() {
@@ -111,11 +108,11 @@ class HistoryActivity : BaseActivity() {
     }
 
     private fun initClickListener() {
-        registerForContextMenu(rv)
-        val cs = ItemClickSupport.addTo(rv)
-        cs.setOnItemClickListener { _, position, _ ->
-            viewMessage(items[position])
-        }
+//        registerForContextMenu(rv)
+//        val cs = ItemClickSupport.addTo(rv)
+//        cs.setOnItemClickListener { _, position, _ ->
+//            viewMessage(items[position])
+//        }
 //        cs.setOnItemLongClickListener { recyclerView, position, _ ->
 //            contextMenuInfo = ContextMenuMessageInfo(position, items[position])
 //            openContextMenu(recyclerView)

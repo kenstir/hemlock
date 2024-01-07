@@ -32,6 +32,7 @@ interface ActorService {
     suspend fun fetchOrgAddress(addressID: Int?): Result<OSRFObject?>
     suspend fun fetchFleshedUser(account: Account): Result<OSRFObject>
     suspend fun fetchUserCheckedOut(account: Account): Result<OSRFObject>
+    suspend fun fetchCheckoutHistory(account: Account): Result<List<OSRFObject>>
     suspend fun fetchMessages(account: Account): Result<List<OSRFObject>>
     suspend fun markMessageDeleted(account: Account, messageId: Int): Result<Unit>
     suspend fun markMessageRead(account: Account, messageId: Int): Result<Unit>

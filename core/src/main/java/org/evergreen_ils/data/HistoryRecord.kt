@@ -18,26 +18,49 @@
 
 package org.evergreen_ils.data
 
+import org.evergreen_ils.utils.TextUtils
 import org.opensrf.util.OSRFObject
+import java.text.DateFormat
 import java.util.ArrayList
 
 data class HistoryRecord(val id: Int, val obj: OSRFObject) : java.io.Serializable {
 
-    val createDate = obj.getDate("create_date")
-    val readDate = obj.getDate("read_date")
-    val isRead = (obj.getDate("read_date") != null)
-    val isDeleted = obj.getBoolean("deleted")
-    val isPatronVisible = obj.getBoolean("pub")
-    val title = obj.getString("title") ?: ""
-    val message = obj.getString("message") ?: ""
+    var record: MBRecord? = null
+
+    val title: String?
+        get() {
+            if (!TextUtils.isEmpty(record?.title))
+                return record?.title
+//            if (!TextUtils.isEmpty(acp?.getString("dummy_title")))
+//                return acp?.getString("dummy_title")
+            return "Unknown Title"
+        }
+    val author: String?
+        get() {
+            if (!TextUtils.isEmpty(record?.author))
+                return record?.author
+//            if (!TextUtils.isEmpty(acp?.getString("dummy_author")))
+//                return acp?.getString("dummy_author")
+            return ""
+        }
+    val dueDate = obj.getDate("due_date")
+    val dueDateString: String
+        get() = if (dueDate != null) DateFormat.getDateInstance().format(dueDate) else ""
+    val checkoutDate = obj.getDate("xact_start")
+    val checkoutDateString: String
+        get() = if (checkoutDate != null) DateFormat.getDateInstance().format(checkoutDate) else ""
+    val returnedDate = obj.getDate("checkin_time")
+    val returnedDateString: String
+        get() = if (returnedDate != null) DateFormat.getDateInstance().format(returnedDate) else ""
+    val targetCopy = obj.getInt("target_copy") ?: -1
 
     companion object {
-        fun makeArray(messageList: List<OSRFObject>): ArrayList<PatronMessage> {
-            val ret = ArrayList<PatronMessage>()
-            messageList.forEach { obj ->
+        fun makeArray(objects: List<OSRFObject>): ArrayList<HistoryRecord> {
+            val ret = ArrayList<HistoryRecord>()
+            objects.forEach { obj ->
                 val id = obj.getInt("id")
                 if (id != null) {
-                    ret.add(PatronMessage(id, obj))
+                    ret.add(HistoryRecord(id, obj))
                 }
             }
             return ret
