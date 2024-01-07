@@ -154,7 +154,7 @@ object GatewayActor: ActorService {
         return try {
             val (authToken, _) = account.getCredentialsOrThrow()
             val args = arrayOf<Any?>(authToken)
-            val ret = Gateway.fetchObjectArray(Api.ACTOR, Api.CHECKOUT_HISTORY, args, false)
+            val ret = Gateway.fetchMaybeEmptyArray(Api.ACTOR, Api.CHECKOUT_HISTORY, args, false)
             Result.Success(ret)
         } catch (e: Exception) {
             Result.Error(e)

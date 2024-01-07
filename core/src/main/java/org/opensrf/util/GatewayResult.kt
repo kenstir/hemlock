@@ -96,6 +96,20 @@ class GatewayResult {
     }
 
     @Throws(GatewayError::class)
+    fun asMaybeEmptyArray(): List<OSRFObject> {
+        error?.let { throw it }
+        return try {
+            when (type) {
+                ResultType.EMPTY -> ArrayList<OSRFObject>()
+                else -> payload as List<OSRFObject>
+
+            }
+        } catch (ex: Exception) {
+            throw GatewayError("Internal Server Error: expected array, got $type")
+        }
+    }
+
+    @Throws(GatewayError::class)
     fun asArray(): List<Any> {
         error?.let { throw it }
         return try {

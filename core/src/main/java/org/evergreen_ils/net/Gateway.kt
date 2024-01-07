@@ -172,6 +172,11 @@ object Gateway {
         result.asObjectArray()
     }
 
+    // fetchMaybeEmptyArray - expect json payload of OSRFObjects or empty (not inside extra array)
+    suspend fun fetchMaybeEmptyArray(service: String, method: String, args: Array<Any?>, shouldCache: Boolean) = fetch(service, method, args, shouldCache) { result ->
+        result.asMaybeEmptyArray()
+    }
+
     // fetchStringPayload - make gateway request and expect json payload of String
     suspend fun fetchObjectString(service: String, method: String, args: Array<Any?>, shouldCache: Boolean) = fetch(service, method, args, shouldCache) { result ->
         result.asString()
