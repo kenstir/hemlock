@@ -159,27 +159,27 @@ object Gateway {
 
     // fetchObject - make gateway request and expect json payload of OSRFObject
     suspend fun fetchObject(service: String, method: String, args: Array<Any?>, shouldCache: Boolean) = fetch(service, method, args, shouldCache) { result ->
-        result.asObject()
+        result.payloadFirstAsObject()
     }
 
     // fetchOptionalObject - expect OSRFObject or empty
     suspend fun fetchOptionalObject(service: String, method: String, args: Array<Any?>, shouldCache: Boolean) = fetch(service, method, args, shouldCache) { result ->
-        result.asOptionalObject()
+        result.payloadFirstAsOptionalObject()
     }
 
     // fetchObjectArray - make gateway request and expect json payload of [OSRFObject]
     suspend fun fetchObjectArray(service: String, method: String, args: Array<Any?>, shouldCache: Boolean) = fetch(service, method, args, shouldCache) { result ->
-        result.asObjectArray()
+        result.payloadFirstAsObjectList()
     }
 
     // fetchMaybeEmptyArray - expect json payload of OSRFObjects or empty (not inside extra array)
     suspend fun fetchMaybeEmptyArray(service: String, method: String, args: Array<Any?>, shouldCache: Boolean) = fetch(service, method, args, shouldCache) { result ->
-        result.asMaybeEmptyArray()
+        result.payloadAsObjectList()
     }
 
     // fetchStringPayload - make gateway request and expect json payload of String
     suspend fun fetchObjectString(service: String, method: String, args: Array<Any?>, shouldCache: Boolean) = fetch(service, method, args, shouldCache) { result ->
-        result.asString()
+        result.payloadFirstAsString()
     }
 
     private fun enqueueRequest(r: Request<*>, options: RequestOptions) {

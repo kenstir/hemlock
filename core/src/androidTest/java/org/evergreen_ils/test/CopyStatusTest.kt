@@ -49,7 +49,7 @@ class CopyStatusTest {
     @Test
     fun test_load() {
         val result = GatewayResult.create(ccsListJson)
-        val ccsList = result.asObjectArray()
+        val ccsList = result.payloadFirstAsObjectList()
         EgCopyStatus.loadCopyStatuses(ccsList)
 
         assertEquals(5, ccsList.size)

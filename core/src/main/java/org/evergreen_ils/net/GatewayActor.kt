@@ -63,7 +63,7 @@ object GatewayActor: ActorService {
         return try {
             val options = RequestOptions(Gateway.defaultTimeoutMs, Gateway.limitedCacheTtlSeconds)
             val ret = Gateway.fetch(Api.ACTOR, Api.ORG_TREE_RETRIEVE, arrayOf(), options) {
-                it.asObject()
+                it.payloadFirstAsObject()
             }
             Result.Success(ret)
         } catch (e: Exception) {
@@ -92,7 +92,7 @@ object GatewayActor: ActorService {
                 settings.add(Api.SETTING_SMS_ENABLE)
             val args = arrayOf<Any?>(orgID, settings, Api.ANONYMOUS)
             val ret = Gateway.fetch(Api.ACTOR, Api.ORG_UNIT_SETTING_BATCH, args, true) {
-                it.asObject()
+                it.payloadFirstAsObject()
             }
             Result.Success(ret)
         } catch (e: Exception) {
@@ -107,7 +107,7 @@ object GatewayActor: ActorService {
             val (authToken, _) = account.getCredentialsOrThrow()
             val args = arrayOf<Any?>(authToken, orgID)
             val ret = Gateway.fetch(Api.ACTOR, Api.HOURS_OF_OPERATION_RETRIEVE, args, false) {
-                it.asOptionalObject()
+                it.payloadFirstAsOptionalObject()
             }
             Result.Success(ret)
         } catch (e: Exception) {

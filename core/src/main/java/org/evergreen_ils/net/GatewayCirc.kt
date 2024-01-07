@@ -33,7 +33,7 @@ object GatewayCirc : CircService {
             val args = arrayOf<Any?>(authToken, holdId, null, note)
             val ret = Gateway.fetch(Api.CIRC, Api.HOLD_CANCEL, args, false) {
                 // HOLD_CANCEL returns "1" on success
-                it.asString()
+                it.payloadFirstAsString()
             }
             Result.Success(ret)
         } catch (e: Exception) {
@@ -160,7 +160,7 @@ object GatewayCirc : CircService {
             val args = arrayOf<Any?>(authToken, null, param)
             val ret = Gateway.fetch(Api.CIRC, Api.HOLD_UPDATE, args, false) {
                 // HOLD_UPDATE returns holdId as string on success
-                it.asString()
+                it.payloadFirstAsString()
             }
             Result.Success(ret)
         } catch (e: Exception) {

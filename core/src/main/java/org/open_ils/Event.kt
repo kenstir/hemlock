@@ -62,6 +62,10 @@ class Event : HashMap<String, Any?> {
             return null
         }
 
+        /**
+         * return an Event if [obj] is an Evergreen "event" (error) or null if not.
+         * See also AppUtils::is_event and Account::attempt_hold_placement.
+         */
         fun parseEvent(obj: OSRFObject): Event? {
             // case 1: obj is an event
             val ilsevent = obj.getInt("ilsevent")

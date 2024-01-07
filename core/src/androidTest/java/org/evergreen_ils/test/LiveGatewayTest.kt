@@ -148,7 +148,7 @@ class LiveGatewayTest {
         runBlocking {
             launch(Dispatchers.Main) {
                 val version = Gateway.fetch(Api.ACTOR, Api.ILS_VERSION, arrayOf(), false) { response ->
-                    response.asString()
+                    response.payloadFirstAsString()
                 }
                 Log.d(TAG, "version:$version")
                 assertTrue(version.isNotEmpty())
