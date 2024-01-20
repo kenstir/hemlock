@@ -149,7 +149,7 @@ class HistoryActivity : BaseActivity() {
         return super.onContextItemSelected(item)
     }
 
-    private fun viewMessage(message: PatronMessage) {
+    private fun viewMessage(historyRecord: HistoryRecord) {
         //TODO
 //        val intent = Intent(this, MessageDetailsActivity::class.java)
 //        intent.putExtra("patronMessage", message)

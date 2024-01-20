@@ -18,17 +18,29 @@
 
 package org.evergreen_ils.views.history
 
+import android.app.Activity
+import android.content.Context
 import android.net.Network
 import android.os.Build
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
 import com.android.volley.toolbox.NetworkImageView
+import kotlinx.coroutines.async
 import org.evergreen_ils.R
+import org.evergreen_ils.android.Log
 import org.evergreen_ils.data.HistoryRecord
-import java.text.DateFormat
+import org.evergreen_ils.data.MBRecord
+import org.evergreen_ils.data.Result
+import org.evergreen_ils.net.Gateway
+import org.evergreen_ils.net.GatewayLoader
+import org.evergreen_ils.net.Volley
+import org.evergreen_ils.utils.ui.BaseActivity
+import org.evergreen_ils.utils.ui.showAlert
+import org.evergreen_ils.views.search.RecordViewAdapter
 
 class HistoryViewAdapter(private val items: List<HistoryRecord>) : RecyclerView.Adapter<HistoryViewAdapter.ViewHolder>() {
 
@@ -40,10 +52,15 @@ class HistoryViewAdapter(private val items: List<HistoryRecord>) : RecyclerView.
         private val returnDate: TextView = v.findViewById(R.id.item_return_date)
 
         fun bindView(historyRecord: HistoryRecord) {
-            title.text = historyRecord.title
-            author.text = historyRecord.author
-            checkoutDate.text = historyRecord.checkoutDateString
-            returnDate.text = historyRecord.returnedDateString
+            Log.d(TAG, "id:${historyRecord.id} bindView")
+            val context = title.context
+
+            title.text = null
+            author.text = null
+            checkoutDate.text = String.format(context.getString(R.string.label_checkout_date), historyRecord.checkoutDateString)
+            returnDate.text = String.format(context.getString(R.string.label_returned_date), historyRecord.returnedDateString)
+            // TODO: clear recordImage?
+
             // TODO: alter returnDate appearance if not returned?
 //            val primaryStyle = if (historyRecord.isRead) R.style.HemlockText_ListPrimaryRead else R.style.HemlockText_ListPrimary
 //            val secondaryStyle = if (historyRecord.isRead) R.style.HemlockText_ListSecondaryRead else R.style.HemlockText_ListSecondary
@@ -52,6 +69,38 @@ class HistoryViewAdapter(private val items: List<HistoryRecord>) : RecyclerView.
 //            } else {
 //                date.setTextAppearance(date.context, primaryStyle)
 //            }
+
+            val scope = (context as? BaseActivity)?.lifecycleScope ?: return
+            scope.async {
+                try {
+                    scope.async {
+                        fetchCopyDetails(historyRecord)
+                        loadMetadata(context, historyRecord)
+                    }
+                } catch (ex: Exception) {
+                    (context as? Activity)?.showAlert(ex)
+                }
+            }
+        }
+
+        private suspend fun fetchCopyDetails(historyRecord: HistoryRecord): Result<Unit> {
+            val targetCopy = historyRecord.targetCopy ?: return Result.Success(Unit)
+            val modsResult = Gateway.search.fetchCopyMODS(targetCopy)
+            if (modsResult is Result.Error) return modsResult
+            val modsObj = modsResult.get()
+            historyRecord.record = MBRecord(modsObj)
+            return Result.Success(Unit)
+        }
+
+        private fun loadMetadata(context: Context, historyRecord: HistoryRecord) {
+            Log.d(TAG, "id:${historyRecord.id} title:${historyRecord.title}")
+            title.text = historyRecord.title
+            author.text = historyRecord.author
+
+            historyRecord.record?.id.let { id ->
+                val url = Gateway.getUrl("/opac/extras/ac/jacket/small/r/" + id)
+                recordImage.setImageUrl(url, Volley.getInstance(context).imageLoader)
+            }
         }
     }
 
@@ -71,5 +120,9 @@ class HistoryViewAdapter(private val items: List<HistoryRecord>) : RecyclerView.
     // Return the size of your dataset (invoked by the layout manager)
     override fun getItemCount(): Int {
         return items.size
+    }
+
+    companion object {
+        private val TAG = HistoryViewAdapter::class.java.simpleName
     }
 }

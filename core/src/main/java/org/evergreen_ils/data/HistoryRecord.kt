@@ -51,8 +51,8 @@ data class HistoryRecord(val id: Int, val obj: OSRFObject) : java.io.Serializabl
         get() = if (checkoutDate != null) DateFormat.getDateInstance().format(checkoutDate) else ""
     val returnedDate = obj.getDate("checkin_time")
     val returnedDateString: String
-        get() = if (returnedDate != null) DateFormat.getDateInstance().format(returnedDate) else ""
-    val targetCopy = obj.getInt("target_copy") ?: -1
+        get() = if (returnedDate != null) DateFormat.getDateInstance().format(returnedDate) else "Not Returned"
+    val targetCopy = obj.getInt("target_copy")
 
     companion object {
         fun makeArray(objects: List<OSRFObject>): ArrayList<HistoryRecord> {

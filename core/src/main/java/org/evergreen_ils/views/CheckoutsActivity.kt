@@ -51,6 +51,7 @@ import org.evergreen_ils.utils.ui.ProgressDialogSupport
 import org.evergreen_ils.utils.ui.showAlert
 import org.evergreen_ils.views.history.HistoryActivity
 import java.util.*
+import kotlin.system.measureTimeMillis
 
 class CheckoutsActivity : BaseActivity() {
     private val TAG = "Checkouts"
