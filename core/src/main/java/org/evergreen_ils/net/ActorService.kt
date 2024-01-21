@@ -45,4 +45,6 @@ interface ActorService {
     suspend fun deleteBookBagAsync(account: Account, bookBagId: Int): Result<Unit>
     suspend fun addItemToBookBagAsync(account: Account, bookBagId: Int, recordId: Int): Result<Unit>
     suspend fun removeItemFromBookBagAsync(account: Account, bookBagItemId: Int): Result<Unit>
+    suspend fun updatePatronSettings(account: Account, name: String, value: String): Result<String>
+    suspend fun enableCheckoutHistory(account: Account): Result<Unit>
 }

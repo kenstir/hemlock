@@ -36,6 +36,7 @@ object Api {
     const val ORG_UNIT_SETTING_RETRIEVE = "open-ils.actor.org_unit_setting.values.ranged.retrieve"
     const val ORG_UNIT_SETTING_BATCH = "open-ils.actor.ou_setting.ancestor_default.batch"
     const val ORG_UNIT_SETTING = "open-ils.actor.ou_setting.ancestor_default"
+    const val PATRON_SETTINGS_UPDATE = "open-ils.actor.patron.settings.update"
     const val FINES_SUMMARY = "open-ils.actor.user.fines.summary"
     const val TRANSACTIONS_WITH_CHARGES = "open-ils.actor.user.transactions.have_charge.fleshed"
     const val CONTAINERS_BY_CLASS = "open-ils.actor.container.retrieve_by_class.authoritative" // [cbreb]

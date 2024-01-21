@@ -98,6 +98,10 @@
             android:parentActivityName="org.evergreen_ils.views.bookbags.BookBagsActivity">
         </activity>
         <activity
+            android:name="org.evergreen_ils.views.history.HistoryActivity"
+            android:label="@string/title_checkout_history">
+        </activity>
+        <activity
             android:name="org.evergreen_ils.views.holds.HoldDetailsActivity"
             android:label="@string/hold_details_title">
         </activity>

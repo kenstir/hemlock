@@ -174,7 +174,7 @@ class LiveGatewayTest {
     suspend fun fetchStringNotFound(): Result<String> {
         return try {
             val notFoundUrl = Gateway.baseUrl.plus("/not-found")
-            val ret = Gateway.fetchString(notFoundUrl)
+            val ret = Gateway.fetchBodyAsString(notFoundUrl)
             Result.Success(ret)
         } catch (e: Exception) {
             Result.Error(e)
@@ -199,7 +199,7 @@ class LiveGatewayTest {
     suspend fun fetchStringWithDelay(timeoutMs: Int, delaySeconds: Float): Result<String> {
         return try {
             val url = args.getString("httpbinServer").plus("/delay/$delaySeconds")
-            val ret = Gateway.fetchString(url, RequestOptions(timeoutMs))
+            val ret = Gateway.fetchBodyAsString(url, RequestOptions(timeoutMs))
             Result.Success(ret)
         } catch (e: Exception) {
             Result.Error(e)

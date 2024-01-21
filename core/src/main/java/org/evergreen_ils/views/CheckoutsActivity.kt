@@ -38,6 +38,7 @@ import android.widget.Toast
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.joinAll
+import org.evergreen_ils.OSRFUtils
 import org.evergreen_ils.R
 import org.evergreen_ils.android.App
 import org.evergreen_ils.data.CircRecord
@@ -46,6 +47,7 @@ import org.evergreen_ils.net.Gateway
 import org.evergreen_ils.views.search.RecordDetails
 import org.evergreen_ils.data.MBRecord
 import org.evergreen_ils.android.Log
+import org.evergreen_ils.net.ActorService
 import org.evergreen_ils.utils.ui.BaseActivity
 import org.evergreen_ils.utils.ui.ProgressDialogSupport
 import org.evergreen_ils.utils.ui.showAlert
@@ -96,9 +98,47 @@ class CheckoutsActivity : BaseActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.action_history -> startActivity(Intent(this, HistoryActivity::class.java))
+            R.id.action_history -> {
+                if (App.getAccount().circHistoryStart != null) {
+                    startActivity(Intent(this, HistoryActivity::class.java))
+                } else {
+                    maybeEnableHistory()
+                }
+                return true
+            }
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    private fun maybeEnableHistory() {
+        val builder = AlertDialog.Builder(this@CheckoutsActivity)
+        builder.setTitle("Enable checkout history?")
+            .setMessage("Your account does not have checkout history enabled.  If you enable it, items you check out from now on will appear in your history.")
+            .setNegativeButton(android.R.string.cancel) { _, _ ->
+            }
+            .setPositiveButton("Enable history") { dialog, which ->
+                enableCheckoutHistory()
+            }
+        builder.create().show()
+    }
+
+    private fun enableCheckoutHistory() {
+        scope.async {
+            try {
+                val result = Gateway.actor.enableCheckoutHistory(App.getAccount())
+                when (result) {
+                    is Result.Error -> {
+                        showAlert(result.exception); return@async
+                    }
+
+                    is Result.Success -> {
+                        showAlert("Checkout history is now enabled")
+                    }
+                }
+            } catch (ex: Exception) {
+                showAlert(ex)
+            }
+        }
     }
 
     private fun fetchData() {

@@ -125,8 +125,8 @@ object Gateway {
         enqueueRequest(r, options)
     }
 
-    // fetchString - fetch url and expect a string response
-    suspend fun fetchString(url: String, options: RequestOptions = RequestOptions(defaultTimeoutMs)) = suspendCoroutine<String> { cont ->
+    /** fetch url and return response body as a string */
+    suspend fun fetchBodyAsString(url: String, options: RequestOptions = RequestOptions(defaultTimeoutMs)) = suspendCoroutine<String> { cont ->
         maybeInjectRandomError()
         val r = GatewayStringRequest(
             url,
@@ -141,6 +141,7 @@ object Gateway {
         enqueueRequest(r, options)
     }
 
+    /** fetch OPAC url as a browser session with cookies and return response as a string */
     suspend fun fetchOPAC(url: String, authToken: String, options: RequestOptions = RequestOptions(defaultTimeoutMs)) = suspendCoroutine<String> { cont ->
         maybeInjectRandomError()
         val r = OPACRequest(
@@ -155,6 +156,11 @@ object Gateway {
             },
             options.cacheMaxTtlSeconds)
         enqueueRequest(r, options)
+    }
+
+    /** make gateway request and return first payload item as string */
+    suspend fun fetchString(service: String, method: String, args: Array<Any?>, shouldCache: Boolean) = fetch(service, method, args, shouldCache) { result ->
+        result.payloadFirstAsString()
     }
 
     // fetchObject - make gateway request and expect json payload of OSRFObject
@@ -175,11 +181,6 @@ object Gateway {
     // fetchMaybeEmptyArray - expect json payload of OSRFObjects or empty (not inside extra array)
     suspend fun fetchMaybeEmptyArray(service: String, method: String, args: Array<Any?>, shouldCache: Boolean) = fetch(service, method, args, shouldCache) { result ->
         result.payloadAsObjectList()
-    }
-
-    // fetchStringPayload - make gateway request and expect json payload of String
-    suspend fun fetchObjectString(service: String, method: String, args: Array<Any?>, shouldCache: Boolean) = fetch(service, method, args, shouldCache) { result ->
-        result.payloadFirstAsString()
     }
 
     private fun enqueueRequest(r: Request<*>, options: RequestOptions) {

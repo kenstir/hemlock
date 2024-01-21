@@ -44,6 +44,7 @@ class Account constructor(val username: String, var authToken: String?) {
     var smsCarrier: Int? = null
     var smsNumber: String? = null
     var holdNotifyValue: String? = null // kept for analytics
+    var circHistoryStart: String? = null
 
     var bookBags = ArrayList<BookBag>()
 
@@ -115,6 +116,7 @@ class Account constructor(val username: String, var authToken: String?) {
         this.smsNumber = map[Api.USER_SETTING_DEFAULT_SMS_NOTIFY]
         this.holdNotifyValue = map[Api.USER_SETTING_HOLD_NOTIFY] ?: "email:phone"
         parseHoldNotifyValue(holdNotifyValue)
+        this.circHistoryStart = map[Api.USER_SETTING_CIRC_HISTORY_START]
     }
 
     fun loadBookBags(objects: List<OSRFObject>) {
