@@ -55,7 +55,6 @@ public class RecordDetails {
         intent.putExtra("recordList", recordListForTransaction);
         intent.putExtra("recordPosition", recordPositionForTransaction);
         intent.putExtra("title", parentActivityLabel);
-//        Log.d("xzyyz", "intent size: " + bundleSize(intent.getExtras()));
         context.startActivity(intent);
     }
 

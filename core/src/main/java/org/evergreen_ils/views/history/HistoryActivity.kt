@@ -21,7 +21,6 @@ package org.evergreen_ils.views.history
 import android.content.Intent
 import android.os.Bundle
 import android.view.ContextMenu
-import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
@@ -30,12 +29,12 @@ import org.evergreen_ils.R
 import org.evergreen_ils.android.App
 import org.evergreen_ils.android.Log
 import org.evergreen_ils.data.HistoryRecord
-import org.evergreen_ils.data.PatronMessage
+import org.evergreen_ils.data.MBRecord
 import org.evergreen_ils.data.Result
 import org.evergreen_ils.net.Gateway
-import org.evergreen_ils.net.RequestOptions
 import org.evergreen_ils.utils.ui.*
 import org.evergreen_ils.views.search.DividerItemDecoration
+import org.evergreen_ils.views.search.RecordDetails
 
 class HistoryActivity : BaseActivity() {
     private val TAG = javaClass.simpleName
@@ -44,9 +43,9 @@ class HistoryActivity : BaseActivity() {
     private var adapter: HistoryViewAdapter? = null
     private var items = ArrayList<HistoryRecord>()
     private var progress: ProgressDialogSupport? = null
-    private var contextMenuInfo: ContextMenuMessageInfo? = null
+    private var contextMenuInfo: ContextMenuItemInfo? = null
 
-    private class ContextMenuMessageInfo(val position: Int, val message: PatronMessage) : ContextMenu.ContextMenuInfo {
+    private class ContextMenuItemInfo(val position: Int, val item: HistoryRecord) : ContextMenu.ContextMenuInfo {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -108,11 +107,18 @@ class HistoryActivity : BaseActivity() {
     }
 
     private fun initClickListener() {
-//        registerForContextMenu(rv)
-//        val cs = ItemClickSupport.addTo(rv)
-//        cs.setOnItemClickListener { _, position, _ ->
-//            viewMessage(items[position])
-//        }
+        registerForContextMenu(rv)
+        val cs = ItemClickSupport.addTo(rv)
+        cs.setOnItemClickListener { _, position, _ ->
+            // The history list may be quite long; just look at this one item?
+            val records = ArrayList<MBRecord>()
+            items[position].record?.let { record ->
+                if (record.id != -1) {
+                    records.add(record)
+                    RecordDetails.launchDetailsFlow(this@HistoryActivity, records, 0)
+                }
+            }
+        }
 //        cs.setOnItemLongClickListener { recyclerView, position, _ ->
 //            contextMenuInfo = ContextMenuMessageInfo(position, items[position])
 //            openContextMenu(recyclerView)
