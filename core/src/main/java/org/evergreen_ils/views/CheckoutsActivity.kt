@@ -209,10 +209,12 @@ class CheckoutsActivity : BaseActivity() {
     }
 
     private fun onItemClick(position: Int) {
-        val records = ArrayList<MBRecord?>()
+        val records = ArrayList<MBRecord>()
         for (circRecord in circRecords) {
-            if (circRecord.record?.id != -1) {
-                records.add(circRecord.record)
+            circRecord.record?.let { record ->
+                if (record.id != -1) {
+                    records.add(record)
+                }
             }
         }
         if (records.isNotEmpty()) {
