@@ -282,7 +282,7 @@ object GatewayActor: ActorService {
             ))
             val args = arrayOf<Any?>(authToken, Api.CONTAINER_CLASS_BIBLIO, param)
             val ret = Gateway.fetch(Api.ACTOR, Api.CONTAINER_ITEM_CREATE, args, false) {
-                // e.g. ???
+                // e.g. "579683692"
                 Log.d(TAG, "[bookbag] bag $bookBagId addItem $recordId result ${it.payload}")
             }
             Result.Success(Unit)
@@ -296,7 +296,7 @@ object GatewayActor: ActorService {
             val (authToken, _) = account.getCredentialsOrThrow()
             val args = arrayOf<Any?>(authToken, Api.CONTAINER_CLASS_BIBLIO, bookBagItemId)
             val ret = Gateway.fetch(Api.ACTOR, Api.CONTAINER_ITEM_DELETE, args, false) {
-                // e.g. ???
+                // e.g. "498474680"
                 Log.d(TAG, "[bookbag] removeItem $bookBagItemId result ${it.payload}")
             }
             Result.Success(Unit)
