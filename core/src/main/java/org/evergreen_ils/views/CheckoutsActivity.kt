@@ -116,7 +116,7 @@ class CheckoutsActivity : BaseActivity() {
             .setMessage("Your account does not have checkout history enabled.  If you enable it, items you check out from now on will appear in your history.")
             .setNegativeButton(android.R.string.cancel) { _, _ ->
             }
-            .setPositiveButton("Enable history") { dialog, which ->
+            .setPositiveButton("Enable history") { _, _ ->
                 enableCheckoutHistory()
             }
         builder.create().show()

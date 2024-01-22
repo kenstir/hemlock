@@ -124,7 +124,7 @@
     <string name="msg_not_pickup_location">You cannot pick up items at %s</string>
 
     <!-- Checkout items -->
-    <string name="checkout_items">Items checked out: %1$d</string>
+    <string name="checkout_items">%1$d items checked out</string>
     <string name="checkout_renewals_left">Renewals left: %d</string>
     <string name="label_due_date">Due %s</string>
     <string name="label_due_date_may_autorenew">Due %s (but may auto-renew)</string>
@@ -257,5 +257,6 @@
     <string name="menu_mark_unread">Mark unread</string>
     <string name="menu_view_message">View message</string>
     <string name="title_checkout_history">Checkout History</string>
+    <string name="history_items">%1$d items checked out since %2$s</string>
 
 </resources>

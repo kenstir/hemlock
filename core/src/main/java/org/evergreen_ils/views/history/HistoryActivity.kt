@@ -23,6 +23,7 @@ import android.os.Bundle
 import android.view.ContextMenu
 import android.view.MenuItem
 import android.view.View
+import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.coroutines.async
 import org.evergreen_ils.R
@@ -39,6 +40,7 @@ import org.evergreen_ils.views.search.RecordDetails
 class HistoryActivity : BaseActivity() {
     private val TAG = javaClass.simpleName
 
+    private var historySummary: TextView? = null
     private var rv: RecyclerView? = null
     private var adapter: HistoryViewAdapter? = null
     private var items = ArrayList<HistoryRecord>()
@@ -52,13 +54,14 @@ class HistoryActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         if (isRestarting) return
 
-        setContentView(R.layout.activity_messages)
+        setContentView(R.layout.activity_history)
         progress = ProgressDialogSupport()
 
+        historySummary = findViewById(R.id.history_items_summary)
         rv = findViewById(R.id.recycler_view)
         adapter = HistoryViewAdapter(items)
         rv?.adapter = adapter
-        rv?.addItemDecoration(DividerItemDecoration(this, DividerItemDecoration.VERTICAL_LIST));
+        rv?.addItemDecoration(DividerItemDecoration(this, DividerItemDecoration.VERTICAL_LIST))
 
         initClickListener()
     }
@@ -84,7 +87,9 @@ class HistoryActivity : BaseActivity() {
                 }
                 val objects = result.get()
 
-                loadHistory(HistoryRecord.makeArray(objects))
+                val historyList = HistoryRecord.makeArray(objects)
+                loadHistory(historyList)
+                historySummary?.text = String.format(getString(R.string.history_items), historyList.size, App.getAccount().circHistoryStart)
                 updateList()
 
                 Log.logElapsedTime(TAG, start, "[kcxxx] fetchData ... done")
@@ -110,27 +115,13 @@ class HistoryActivity : BaseActivity() {
         registerForContextMenu(rv)
         val cs = ItemClickSupport.addTo(rv)
         cs.setOnItemClickListener { _, position, _ ->
-            // The history list may be quite long; just look at this one item?
-            val records = ArrayList<MBRecord>()
-            items[position].record?.let { record ->
-                if (record.id != -1) {
-                    records.add(record)
-                    RecordDetails.launchDetailsFlow(this@HistoryActivity, records, 0)
-                }
-            }
+            viewItemAtPosition(position)
         }
 //        cs.setOnItemLongClickListener { recyclerView, position, _ ->
 //            contextMenuInfo = ContextMenuMessageInfo(position, items[position])
 //            openContextMenu(recyclerView)
 //            return@setOnItemLongClickListener true
 //        }
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (resultCode != RESULT_CANCELED) {
-            fetchData()
-        }
     }
 
     override fun onCreateContextMenu(menu: ContextMenu, v: View, menuInfo: ContextMenu.ContextMenuInfo?) {
@@ -155,10 +146,15 @@ class HistoryActivity : BaseActivity() {
         return super.onContextItemSelected(item)
     }
 
-    private fun viewMessage(historyRecord: HistoryRecord) {
-        //TODO
-//        val intent = Intent(this, MessageDetailsActivity::class.java)
-//        intent.putExtra("patronMessage", message)
-//        startActivityForResult(intent, 0)
+    private fun viewItemAtPosition(position: Int) {
+        // The history list may be quite long; just look at this one item, or else we risk
+        // a TransactionTooLargeException.
+        val records = ArrayList<MBRecord>()
+        items[position].record?.let { record ->
+            if (record.id != -1) {
+                records.add(record)
+                RecordDetails.launchDetailsFlow(this@HistoryActivity, records, 0)
+            }
+        }
     }
 }
