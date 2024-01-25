@@ -163,6 +163,24 @@ object GatewayActor: ActorService {
         }
     }
 
+    /** remove [circIDs] from history, or all if [circIDs] is null */
+    override suspend fun clearCheckoutHistory(account: Account, circIDs: List<Int>?): Result<String> {
+        return try {
+            val (authToken, _) = account.getCredentialsOrThrow()
+            val args: Array<Any?>
+            if (circIDs != null) {
+                val param = jsonMapOf("circ_ids" to circIDs)
+                args = arrayOf(authToken, param)
+            } else {
+                args = arrayOf(authToken)
+            }
+            val ret = Gateway.fetchString(Api.ACTOR, Api.CLEAR_CHECKOUT_HISTORY, args, false)
+            Result.Success(ret)
+        } catch (e: Exception) {
+            Result.Error(e)
+        }
+    }
+
     override suspend fun fetchMessages(account: Account): Result<List<OSRFObject>> {
         return try {
             val (authToken, userID) = account.getCredentialsOrThrow()
@@ -305,7 +323,7 @@ object GatewayActor: ActorService {
         }
     }
 
-    override suspend fun updatePatronSettings(account: Account, name: String, value: String): Result<String> {
+    override suspend fun updatePatronSettings(account: Account, name: String, value: String?): Result<String> {
         return try {
             val (authToken, userID) = account.getCredentialsOrThrow()
             val param = jsonMapOf(name to value)
@@ -324,6 +342,23 @@ object GatewayActor: ActorService {
             when (result) {
                 is Result.Success -> {
                     account.circHistoryStart = dateString
+                    return Result.Success(Unit)
+                }
+                is Result.Error -> {
+                    return result
+                }
+            }
+        } catch (e: Exception) {
+            Result.Error(e)
+        }
+    }
+
+    override suspend fun disableCheckoutHistory(account: Account): Result<Unit> {
+        return try {
+            val result = updatePatronSettings(account, Api.USER_SETTING_CIRC_HISTORY_START, null)
+            when (result) {
+                is Result.Success -> {
+                    account.circHistoryStart = null
                     return Result.Success(Unit)
                 }
                 is Result.Error -> {

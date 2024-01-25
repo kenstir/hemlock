@@ -33,6 +33,7 @@ interface ActorService {
     suspend fun fetchFleshedUser(account: Account): Result<OSRFObject>
     suspend fun fetchUserCheckedOut(account: Account): Result<OSRFObject>
     suspend fun fetchCheckoutHistory(account: Account): Result<List<OSRFObject>>
+    suspend fun clearCheckoutHistory(account: Account, circIDs: List<Int>?): Result<String>
     suspend fun fetchMessages(account: Account): Result<List<OSRFObject>>
     suspend fun markMessageDeleted(account: Account, messageId: Int): Result<Unit>
     suspend fun markMessageRead(account: Account, messageId: Int): Result<Unit>
@@ -45,6 +46,7 @@ interface ActorService {
     suspend fun deleteBookBagAsync(account: Account, bookBagId: Int): Result<Unit>
     suspend fun addItemToBookBagAsync(account: Account, bookBagId: Int, recordId: Int): Result<Unit>
     suspend fun removeItemFromBookBagAsync(account: Account, bookBagItemId: Int): Result<Unit>
-    suspend fun updatePatronSettings(account: Account, name: String, value: String): Result<String>
+    suspend fun updatePatronSettings(account: Account, name: String, value: String?): Result<String>
     suspend fun enableCheckoutHistory(account: Account): Result<Unit>
+    suspend fun disableCheckoutHistory(account: Account): Result<Unit>
 }

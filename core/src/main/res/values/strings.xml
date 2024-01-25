@@ -257,6 +257,13 @@
     <string name="menu_mark_unread">Mark unread</string>
     <string name="menu_view_message">View message</string>
     <string name="title_checkout_history">Checkout History</string>
+    <string name="title_disable_history">Disable History</string>
     <string name="history_items">%1$d items checked out since %2$s</string>
+    <string name="enable_history_alert_title">Enable checkout history?</string>
+    <string name="enable_history_alert_msg">Your account does not have checkout history enabled.  If you enable it, items you check out from now on will appear in your history.</string>
+    <string name="enable_history_button">Enable history</string>
+    <string name="disable_history_alert_title">Disable checkout history?</string>
+    <string name="disable_history_alert_msg">Disabling checkout history will permanently remove all items from your history.</string>
+    <string name="disable_history_alert_button">Disable history</string>
 
 </resources>

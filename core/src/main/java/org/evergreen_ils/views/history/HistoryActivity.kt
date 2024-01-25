@@ -18,9 +18,10 @@
 
 package org.evergreen_ils.views.history
 
-import android.content.Intent
+import android.app.AlertDialog
 import android.os.Bundle
 import android.view.ContextMenu
+import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.TextView
@@ -71,6 +72,51 @@ class HistoryActivity : BaseActivity() {
         Log.d(TAG, object{}.javaClass.enclosingMethod?.name ?: "")
 
         fetchData()
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        menuInflater.inflate(R.menu.menu_history, menu)
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.action_disable_history -> {
+                maybeDisableHistory()
+                return true
+            }
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
+    private fun maybeDisableHistory() {
+        val builder = AlertDialog.Builder(this@HistoryActivity)
+        builder.setTitle(getString(R.string.disable_history_alert_title))
+            .setMessage(getString(R.string.disable_history_alert_msg))
+            .setNegativeButton(android.R.string.cancel) { _, _ ->
+            }
+            .setPositiveButton(getString(R.string.disable_history_alert_button)) { _, _ ->
+                disableCheckoutHistory()
+            }
+        builder.create().show()
+    }
+
+    private fun disableCheckoutHistory() {
+        scope.async {
+            try {
+                // first disable the patron setting
+                val result = Gateway.actor.disableCheckoutHistory(App.getAccount())
+                if (result is Result.Error) { showAlert(result.exception); return@async }
+
+                // then clear history
+                val clearResult = Gateway.actor.clearCheckoutHistory(App.getAccount(), null)
+                if (clearResult is Result.Error) { showAlert(clearResult.exception); return@async }
+
+                finish()
+            } catch (ex: Exception) {
+                showAlert(ex)
+            }
+        }
     }
 
     private fun fetchData() {

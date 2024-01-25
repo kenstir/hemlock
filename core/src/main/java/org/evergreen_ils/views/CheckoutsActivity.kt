@@ -38,7 +38,6 @@ import android.widget.Toast
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.joinAll
-import org.evergreen_ils.OSRFUtils
 import org.evergreen_ils.R
 import org.evergreen_ils.android.App
 import org.evergreen_ils.data.CircRecord
@@ -47,13 +46,11 @@ import org.evergreen_ils.net.Gateway
 import org.evergreen_ils.views.search.RecordDetails
 import org.evergreen_ils.data.MBRecord
 import org.evergreen_ils.android.Log
-import org.evergreen_ils.net.ActorService
 import org.evergreen_ils.utils.ui.BaseActivity
 import org.evergreen_ils.utils.ui.ProgressDialogSupport
 import org.evergreen_ils.utils.ui.showAlert
 import org.evergreen_ils.views.history.HistoryActivity
 import java.util.*
-import kotlin.system.measureTimeMillis
 
 class CheckoutsActivity : BaseActivity() {
     private val TAG = "Checkouts"
@@ -112,11 +109,11 @@ class CheckoutsActivity : BaseActivity() {
 
     private fun maybeEnableHistory() {
         val builder = AlertDialog.Builder(this@CheckoutsActivity)
-        builder.setTitle("Enable checkout history?")
-            .setMessage("Your account does not have checkout history enabled.  If you enable it, items you check out from now on will appear in your history.")
+        builder.setTitle(getString(R.string.enable_history_alert_title))
+            .setMessage(getString(R.string.enable_history_alert_msg))
             .setNegativeButton(android.R.string.cancel) { _, _ ->
             }
-            .setPositiveButton("Enable history") { _, _ ->
+            .setPositiveButton(getString(R.string.enable_history_button)) { _, _ ->
                 enableCheckoutHistory()
             }
         builder.create().show()
@@ -130,7 +127,6 @@ class CheckoutsActivity : BaseActivity() {
                     is Result.Error -> {
                         showAlert(result.exception); return@async
                     }
-
                     is Result.Success -> {
                         showAlert("Checkout history is now enabled")
                     }
