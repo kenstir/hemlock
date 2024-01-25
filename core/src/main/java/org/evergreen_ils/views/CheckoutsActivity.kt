@@ -123,13 +123,8 @@ class CheckoutsActivity : BaseActivity() {
         scope.async {
             try {
                 val result = Gateway.actor.enableCheckoutHistory(App.getAccount())
-                when (result) {
-                    is Result.Error -> {
-                        showAlert(result.exception); return@async
-                    }
-                    is Result.Success -> {
-                        showAlert("Checkout history is now enabled")
-                    }
+                if (result is Result.Error) {
+                    showAlert(result.exception); return@async
                 }
             } catch (ex: Exception) {
                 showAlert(ex)
