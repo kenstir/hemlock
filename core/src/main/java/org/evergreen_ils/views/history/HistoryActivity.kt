@@ -33,10 +33,12 @@ import org.evergreen_ils.android.Log
 import org.evergreen_ils.data.HistoryRecord
 import org.evergreen_ils.data.MBRecord
 import org.evergreen_ils.data.Result
+import org.evergreen_ils.data.jsonMapOf
 import org.evergreen_ils.net.Gateway
 import org.evergreen_ils.utils.ui.*
 import org.evergreen_ils.views.search.DividerItemDecoration
 import org.evergreen_ils.views.search.RecordDetails
+import org.opensrf.util.OSRFObject
 
 class HistoryActivity : BaseActivity() {
     private val TAG = javaClass.simpleName
@@ -133,7 +135,23 @@ class HistoryActivity : BaseActivity() {
                 }
                 val objects = result.get()
 
-                val historyList = HistoryRecord.makeArray(objects)
+                // HACK ALERT - test using CWMARS object with deleted target_id
+                var hackList = ArrayList<OSRFObject>()
+                objects.firstOrNull()?.let {
+                    hackList.add(it)
+                }
+                hackList.add(OSRFObject("auch", jsonMapOf(
+                    "target_copy" to 16959993,
+                    "xact_start" to "2023-07-05T18:20:39-0400",
+                    "due_date" to "2023-07-26T23:59:59-0400",
+                    "source_circ" to 119438804,
+                    "id" to 8912637,
+                    "checkin_time" to "2023-07-20T12:19:54-0400"
+                )))
+
+                // make history list from auch objects
+//                val historyList = HistoryRecord.makeArray(objects)
+                val historyList = HistoryRecord.makeArray(hackList)
                 loadHistory(historyList)
                 historySummary?.text = String.format(getString(R.string.history_items), historyList.size, App.getAccount().circHistoryStart)
                 updateList()
