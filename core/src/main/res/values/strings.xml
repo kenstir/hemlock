@@ -265,5 +265,6 @@
     <string name="disable_history_alert_title">Disable checkout history?</string>
     <string name="disable_history_alert_msg">Disabling checkout history will permanently remove all items from your history.</string>
     <string name="disable_history_alert_button">Disable history</string>
+    <string name="item_marked_deleted_msg">[ item is marked deleted in the database ]</string>
 
 </resources>
