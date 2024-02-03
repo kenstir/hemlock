@@ -215,9 +215,7 @@ class DetailsFragment : Fragment() {
     }
 
     private fun updateButtonViews() {
-        val isOnlineResource = App.getBehavior().isOnlineResource(record)
-        Log.d("xyzzy", "${record?.id}: updateButtonViews")
-        Log.d(TAG, "updateButtonViews: title:${record?.title} isOnlineResource:$isOnlineResource isDeleted:${record?.isDeleted}")
+        Log.d(TAG, "${record?.id}: updateButtonViews: title:${record?.title}")
 
         if (record?.isDeleted == true) {
             placeHoldButton?.isEnabled = false
@@ -227,23 +225,24 @@ class DetailsFragment : Fragment() {
             return
         }
 
-        placeHoldButton?.isEnabled = true
-        showCopiesButton?.isEnabled = true
-        onlineAccessButton?.isEnabled = true
-        if (isOnlineResource == true) {
-            val org = findOrg(orgID)
-            val links = App.getBehavior().getOnlineLocations(record, org!!.shortname)
-            Log.d(TAG, "updateButtonViews: title:${record?.title} links:${links.size}")
-            if (links.isEmpty()) {
-                onlineAccessButton?.isEnabled = false
-            } else if (resources.getBoolean(R.bool.ou_show_online_access_hostname)) {
+        val org = findOrg(orgID)
+        val links = App.getBehavior().getOnlineLocations(record, org!!.shortname)
+        val numCopies = record?.totalCopies(orgID) ?: 0
+        placeHoldButton?.isEnabled = (numCopies > 0)
+        showCopiesButton?.isEnabled = (numCopies > 0)
+        Log.d(TAG, "${record?.id}: updateButtonViews: title:${record?.title} links:${links.size} copies:${numCopies}")
+        if (links.isEmpty()) {
+            onlineAccessButton?.isEnabled = false
+            onlineAccessButton?.visibility = View.GONE
+        } else {
+            onlineAccessButton?.isEnabled = true
+            onlineAccessButton?.visibility = View.VISIBLE
+
+            if (resources.getBoolean(R.bool.ou_show_online_access_hostname)) {
                 val uri = Uri.parse(links[0].href)
                 descriptionTextView?.text = uri.host
             }
         }
-        onlineAccessButton?.visibility = if (isOnlineResource == true) View.VISIBLE else View.GONE
-        placeHoldButton?.visibility = if (isOnlineResource == true) View.GONE else View.VISIBLE
-        showCopiesButton?.visibility = if (isOnlineResource == true) View.GONE else View.VISIBLE
     }
 
     private fun loadFormat() {
