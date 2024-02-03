@@ -49,9 +49,7 @@ class CopyLocationCountsTest {
         val cscJson = """
             {"payload":[[["7","","DVD HARRY","","AV",{"1":1}]]],"status":200}
             """
-        val gwResult = GatewayResult.create(cscJson)
-        assertNotNull(gwResult)
-        val payloadList = gwResult.asArray()
+        val payloadList = GatewayResult.create(cscJson).payloadFirstAsList()
         assertEquals(1, payloadList.size)
         val clcList = CopyLocationCounts.makeArray(payloadList)
         val clc = clcList.first()
@@ -70,7 +68,7 @@ class CopyLocationCountsTest {
         val cscJson = """
             {"payload":[[["7","","J ROWLING","","JUV",{"1":2,"7":1}],["7","","YA ROWLING","","YA",{"1":1,"0":3}]]],"status":200}
             """
-        val payloadList = GatewayResult.create(cscJson).asArray()
+        val payloadList = GatewayResult.create(cscJson).payloadFirstAsList()
         assertEquals(2, payloadList.size)
         val clcList = CopyLocationCounts.makeArray(payloadList)
         val (clc1, clc2) = clcList

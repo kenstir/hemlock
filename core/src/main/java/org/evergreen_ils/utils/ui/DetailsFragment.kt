@@ -36,14 +36,12 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.android.volley.toolbox.NetworkImageView
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.joinAll
 import org.evergreen_ils.KEY_SEARCH_BY
 import org.evergreen_ils.KEY_SEARCH_TEXT
 import org.evergreen_ils.R
-import org.evergreen_ils.android.Analytics
 import org.evergreen_ils.android.App
 import org.evergreen_ils.android.Log
 import org.evergreen_ils.net.Gateway.getUrl
@@ -53,7 +51,6 @@ import org.evergreen_ils.views.search.CopyInformationActivity
 import org.evergreen_ils.data.MBRecord
 import org.evergreen_ils.system.EgOrg
 import org.evergreen_ils.system.EgOrg.findOrg
-import org.evergreen_ils.views.MainActivity
 import org.evergreen_ils.views.bookbags.BookBagUtils.showAddToListDialog
 import org.evergreen_ils.views.holds.PlaceHoldActivity
 import org.evergreen_ils.views.search.SearchActivity
@@ -220,12 +217,20 @@ class DetailsFragment : Fragment() {
     private fun updateButtonViews() {
         val isOnlineResource = App.getBehavior().isOnlineResource(record)
         Log.d("xyzzy", "${record?.id}: updateButtonViews")
-        Log.d(TAG, "updateButtonViews: title:${record?.title} isOnlineResource:$isOnlineResource")
-        if (isOnlineResource == null) return  // not ready yet
+        Log.d(TAG, "updateButtonViews: title:${record?.title} isOnlineResource:$isOnlineResource isDeleted:${record?.isDeleted}")
+
+        if (record?.isDeleted == true) {
+            placeHoldButton?.isEnabled = false
+            showCopiesButton?.isEnabled = false
+            onlineAccessButton?.isEnabled = false
+            addToBookbagButton?.isEnabled = false
+            return
+        }
+
         placeHoldButton?.isEnabled = true
         showCopiesButton?.isEnabled = true
         onlineAccessButton?.isEnabled = true
-        if (isOnlineResource) {
+        if (isOnlineResource == true) {
             val org = findOrg(orgID)
             val links = App.getBehavior().getOnlineLocations(record, org!!.shortname)
             Log.d(TAG, "updateButtonViews: title:${record?.title} links:${links.size}")
@@ -236,15 +241,14 @@ class DetailsFragment : Fragment() {
                 descriptionTextView?.text = uri.host
             }
         }
-        onlineAccessButton?.visibility = if (isOnlineResource) View.VISIBLE else View.GONE
-        placeHoldButton?.visibility = if (isOnlineResource) View.GONE else View.VISIBLE
-        showCopiesButton?.visibility = if (isOnlineResource) View.GONE else View.VISIBLE
+        onlineAccessButton?.visibility = if (isOnlineResource == true) View.VISIBLE else View.GONE
+        placeHoldButton?.visibility = if (isOnlineResource == true) View.GONE else View.VISIBLE
+        showCopiesButton?.visibility = if (isOnlineResource == true) View.GONE else View.VISIBLE
     }
 
     private fun loadFormat() {
         if (!isAdded) return  // discard late results
         formatTextView?.text = record?.iconFormatLabel
-        //updateButtonViews()
     }
 
     private fun loadMetadata() {
@@ -275,9 +279,11 @@ class DetailsFragment : Fragment() {
         startActivity(intent)
     }
 
-    private fun loadCopyCount() {
+    private fun loadCopySummary() {
         if (!isAdded) return  // discard late results
-        descriptionTextView?.text = record?.getCopySummary(resources, orgID)
+        descriptionTextView?.text = if (record?.isDeleted == true)
+            getString(R.string.item_marked_deleted_msg)
+            else record?.getCopySummary(resources, orgID)
     }
 
     private fun fetchData(record: MBRecord) {
@@ -291,14 +297,20 @@ class DetailsFragment : Fragment() {
 
                 jobs.add(scope.async {
                     GatewayLoader.loadRecordMetadataAsync(record)
-                    Log.d("xyzzy", "${record.id}: loadMetadata")
                     loadMetadata()
+                    Log.d("xyzzy", "${record.id}: loadRecordMetadataAsync")
                 })
 
                 jobs.add(scope.async {
                     GatewayLoader.loadRecordAttributesAsync(record)
-                    Log.d("xyzzy", "${record.id}: loadFormat")
                     loadFormat()
+                    Log.d("xyzzy", "${record.id}: loadRecordAttributesAsync")
+                })
+
+                jobs.add(scope.async {
+                    GatewayLoader.loadRecordCopyCountAsync(record, orgID)
+                    // do not loadCopySummary yet, we need the MARC
+                    Log.d("xyzzy", "${record.id}: loadRecordCopyCountAsync")
                 })
 
                 if (resources.getBoolean(R.bool.ou_need_marc_record)) {
@@ -310,27 +322,7 @@ class DetailsFragment : Fragment() {
 
                 jobs.joinAll()
 
-                if (record.isDeleted) {
-                    throw java.lang.IllegalStateException("This item is marked deleted in the database.")
-                }
-
-                // Check for copy counts only after we know it is not an online_resource
-                val isOnlineResource = App.getBehavior().isOnlineResource(record)
-                if (isOnlineResource == null) {
-                    val ex = IllegalStateException("isOnlineResource is null for record ${record.id}")
-                    Analytics.logException(ex)
-                }
-                if (isOnlineResource != true) {
-                    jobs.add(scope.async {
-                        GatewayLoader.loadRecordCopyCountAsync(record, orgID)
-                        Log.d("xyzzy", "${record.id}: loadCopyCount")
-                        loadCopyCount()
-                    })
-                }
-
-                //TODO: is it ok to call joinAll again here?  seems the most logical to me
-                jobs.joinAll()
-
+                loadCopySummary()
                 updateButtonViews()
 
                 Log.logElapsedTime(TAG, start, "[kcxxx] fetchData ... done")

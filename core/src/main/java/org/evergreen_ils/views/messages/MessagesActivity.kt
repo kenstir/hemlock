@@ -32,7 +32,6 @@ import org.evergreen_ils.android.Log
 import org.evergreen_ils.data.PatronMessage
 import org.evergreen_ils.data.Result
 import org.evergreen_ils.net.Gateway
-import org.evergreen_ils.net.RequestOptions
 import org.evergreen_ils.utils.ui.*
 import org.evergreen_ils.views.search.DividerItemDecoration
 

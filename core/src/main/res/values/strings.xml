@@ -124,12 +124,14 @@
     <string name="msg_not_pickup_location">You cannot pick up items at %s</string>
 
     <!-- Checkout items -->
-    <string name="checkout_items">Items checked out: %1$d</string>
+    <string name="checkout_items">%1$d items checked out</string>
     <string name="checkout_renewals_left">Renewals left: %d</string>
     <string name="label_due_date">Due %s</string>
     <string name="label_due_date_may_autorenew">Due %s (but may auto-renew)</string>
     <string name="label_due_date_autorenewed">Due %s (item was auto-renewed)</string>
     <string name="label_due_date_overdue">Due %s (overdue)</string>
+    <string name="label_checkout_date">Checkout date: %s</string>
+    <string name="label_returned_date">Returned date: %s</string>
 
     <!-- Fines Activity -->
     <string name="total_owed">Total Owed</string>
@@ -254,5 +256,15 @@
     <string name="menu_mark_read">Mark read</string>
     <string name="menu_mark_unread">Mark unread</string>
     <string name="menu_view_message">View message</string>
+    <string name="title_checkout_history">Checkout History</string>
+    <string name="title_disable_history">Disable History</string>
+    <string name="history_items">%1$d items checked out since %2$s</string>
+    <string name="enable_history_alert_title">Enable checkout history?</string>
+    <string name="enable_history_alert_msg">Your account does not have checkout history enabled.  If you enable it, items you check out from now on will appear in your history.</string>
+    <string name="enable_history_button">Enable history</string>
+    <string name="disable_history_alert_title">Disable checkout history?</string>
+    <string name="disable_history_alert_msg">Disabling checkout history will permanently remove all items from your history.</string>
+    <string name="disable_history_alert_button">Disable history</string>
+    <string name="item_marked_deleted_msg">[ item is marked deleted in the database ]</string>
 
 </resources>

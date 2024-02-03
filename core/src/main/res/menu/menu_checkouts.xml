@@ -1,0 +1,6 @@
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/action_history" android:title="@string/title_checkout_history"
+        android:icon="@drawable/baseline_history_white_24"
+        app:showAsAction="ifRoom" />
+</menu>

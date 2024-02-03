@@ -16,8 +16,6 @@
 
 package org.evergreen_ils.data
 
-import org.evergreen_ils.data.Result.Success
-
 /**
  * A generic class that holds a value or an error.
  * @param <T>

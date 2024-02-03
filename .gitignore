@@ -2,7 +2,6 @@
 *.iml
 .gradle
 fm_IDL.*
-/fabric.properties
 /secret.*
 /secrets.*
 /local.gradle

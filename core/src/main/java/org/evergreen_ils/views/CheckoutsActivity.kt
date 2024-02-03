@@ -23,9 +23,12 @@ package org.evergreen_ils.views
 
 import android.app.AlertDialog
 import android.content.Context
+import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
@@ -46,6 +49,7 @@ import org.evergreen_ils.android.Log
 import org.evergreen_ils.utils.ui.BaseActivity
 import org.evergreen_ils.utils.ui.ProgressDialogSupport
 import org.evergreen_ils.utils.ui.showAlert
+import org.evergreen_ils.views.history.HistoryActivity
 import java.util.*
 
 class CheckoutsActivity : BaseActivity() {
@@ -82,6 +86,50 @@ class CheckoutsActivity : BaseActivity() {
         Log.d(TAG, object{}.javaClass.enclosingMethod?.name ?: "")
 
         fetchData()
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        menuInflater.inflate(R.menu.menu_checkouts, menu)
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.action_history -> {
+                if (App.getAccount().circHistoryStart != null) {
+                    startActivity(Intent(this, HistoryActivity::class.java))
+                } else {
+                    maybeEnableHistory()
+                }
+                return true
+            }
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
+    private fun maybeEnableHistory() {
+        val builder = AlertDialog.Builder(this@CheckoutsActivity)
+        builder.setTitle(getString(R.string.enable_history_alert_title))
+            .setMessage(getString(R.string.enable_history_alert_msg))
+            .setNegativeButton(android.R.string.cancel) { _, _ ->
+            }
+            .setPositiveButton(getString(R.string.enable_history_button)) { _, _ ->
+                enableCheckoutHistory()
+            }
+        builder.create().show()
+    }
+
+    private fun enableCheckoutHistory() {
+        scope.async {
+            try {
+                val result = Gateway.actor.enableCheckoutHistory(App.getAccount())
+                if (result is Result.Error) {
+                    showAlert(result.exception); return@async
+                }
+            } catch (ex: Exception) {
+                showAlert(ex)
+            }
+        }
     }
 
     private fun fetchData() {
@@ -152,10 +200,12 @@ class CheckoutsActivity : BaseActivity() {
     }
 
     private fun onItemClick(position: Int) {
-        val records = ArrayList<MBRecord?>()
+        val records = ArrayList<MBRecord>()
         for (circRecord in circRecords) {
-            if (circRecord.record?.id != -1) {
-                records.add(circRecord.record)
+            circRecord.record?.let { record ->
+                if (record.id != -1) {
+                    records.add(record)
+                }
             }
         }
         if (records.isNotEmpty()) {

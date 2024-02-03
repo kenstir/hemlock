@@ -25,11 +25,11 @@ import org.open_ils.Event
 
 class GatewayResult {
     enum class ResultType {
-        OBJECT, ARRAY, STRING, EMPTY, EVENT, UNKNOWN, ERROR
+        STRING, OBJECT, ARRAY, EMPTY, EVENT, UNKNOWN, ERROR
     }
 
     @JvmField
-    var payload: Any? = null
+    var payload: List<Any?> = ArrayList()
     @JvmField
     var failed = false
     @JvmField
@@ -53,72 +53,79 @@ class GatewayResult {
     }
     private constructor(ex: Exception): this(GatewayError(ex))
 
+    /** given `"payload":["string"]` return `"string"` */
     @Throws(GatewayError::class)
-    fun asObject(): OSRFObject {
+    fun payloadFirstAsString(): String {
+        error?.let { throw it }
+        return try {
+            payload.first() as String
+        } catch (ex: Exception) {
+            throw GatewayError("Internal Server Error: expected string, got $type")
+        }
+    }
+
+    /** given `"payload":[obj]` return `obj` */
+    @Throws(GatewayError::class)
+    fun payloadFirstAsObject(): OSRFObject {
         error?.let { throw it }
         try {
-            (payload as? OSRFObject)?.let { return it }
-            (payload as? JSONDictionary)?.let { return OSRFObject(it) }
+            (payload.firstOrNull() as? OSRFObject)?.let { return it }
+            (payload.firstOrNull() as? JSONDictionary)?.let { return OSRFObject(it) }
             throw GatewayError("Unexpected type")
         } catch (ex: Exception) {
             throw GatewayError("Internal Server Error: expected object, got $type")
         }
     }
 
+    /** given `"payload":[obj]` return `obj` or null if payload empty */
     @Throws(GatewayError::class)
-    fun asOptionalObject(): OSRFObject? {
-        error?.let { throw it }
-        return try {
-            payload as? OSRFObject
-        } catch (ex: Exception) {
-            throw GatewayError("Internal Server Error: expected object, got $type")
-        }
+    fun payloadFirstAsOptionalObject(): OSRFObject? {
+        return payloadAsObjectList().firstOrNull()
     }
 
+    /** given `"payload":[obj,obj]` return `[obj,obj]` */
     @Throws(GatewayError::class)
-    fun asMap(): JSONDictionary {
+    fun payloadAsObjectList(): List<OSRFObject> {
         error?.let { throw it }
         return try {
-            payload as JSONDictionary
-        } catch (ex: Exception) {
-            throw GatewayError("Internal Server Error: expected map, got $type")
-        }
-    }
+            when (type) {
+                ResultType.EMPTY -> ArrayList<OSRFObject>()
+                else -> payload as List<OSRFObject>
 
-    @Throws(GatewayError::class)
-    fun asObjectArray(): List<OSRFObject> {
-        error?.let { throw it }
-        return try {
-            payload as List<OSRFObject>
+            }
         } catch (ex: Exception) {
             throw GatewayError("Internal Server Error: expected array, got $type")
         }
     }
 
+    /** given `"payload":[[obj,obj]]` return `[obj,obj]` */
     @Throws(GatewayError::class)
-    fun asArray(): List<Any> {
+    fun payloadFirstAsObjectList(): List<OSRFObject> {
         error?.let { throw it }
         return try {
-            payload as List<Any>
+            val first = payload.firstOrNull() as List<Any>
+            first as List<OSRFObject>
         } catch (ex: Exception) {
             throw GatewayError("Internal Server Error: expected array, got $type")
         }
     }
 
+    /** given `"payload":[[any]]` return `[any]` */
     @Throws(GatewayError::class)
-    fun asString(): String {
+    fun payloadFirstAsList(): List<Any> {
         error?.let { throw it }
         return try {
-            payload as String
+            val inner = payload as List<Any>
+            inner.first() as List<Any>
         } catch (ex: Exception) {
-            // TODO: add analytics
-            throw GatewayError("Internal Server Error: expected string, got $type")
+            throw GatewayError("Internal Server Error: expected array, got $type")
         }
     }
 
     companion object {
         @JvmStatic
         fun create(json: String): GatewayResult {
+            /** Create a GatewayResult from [json] returned from the OSRF gateway */
             return try {
                 val result = JSONReader(json).readObject()
                         ?: throw GatewayError("Internal Server Error: response is empty")
@@ -126,9 +133,8 @@ class GatewayResult {
                         ?: throw GatewayError("Internal Server Error: response is missing status")
                 if (status != 200)
                     throw GatewayError("Request failed with status $status")
-                val responseList= result["payload"] as? List<Any?>?
+                val payload = result["payload"] as? List<Any?>?
                         ?: throw GatewayError("Internal Server Error: response is missing payload")
-                val payload = responseList.firstOrNull()
                 createFromPayload(payload)
             } catch (ex: JSONParserException) {
                 if (json.contains("canceling statement due to user request")) {
@@ -142,17 +148,17 @@ class GatewayResult {
         }
 
         @JvmStatic
-        fun createFromPayload(payload: Any?): GatewayResult {
+        fun createFromPayload(payload: List<Any?>): GatewayResult {
             try {
                 val resp = GatewayResult()
                 resp.payload = payload
-                when (payload) {
+                when (val first = payload.firstOrNull()) {
                     null -> {
                         resp.type = ResultType.EMPTY
                     }
                     is Map<*, *> -> {
                         // object or event
-                        val event = Event.parseEvent(payload)
+                        val event = Event.parseEvent(first)
                         if (event != null) {
                             resp.failed = event.failed()
                             if (resp.failed) {
@@ -167,7 +173,7 @@ class GatewayResult {
                     }
                     is ArrayList<*> -> {
                         // list of objects or list of events
-                        val obj = payload.firstOrNull()
+                        val obj = first.firstOrNull()
                         val event = Event.parseEvent(obj)
                         if (event != null && event.failed()) {
                             resp.failed = true

@@ -36,11 +36,17 @@ import androidx.annotation.Nullable;
 
 public class OSRFUtils {
     public static final String API_DATE_PATTERN = "yyyy-MM-dd'T'hh:mm:ssZ";
+    public static final String API_DAY_ONLY_PATTERN = "yyyy-MM-dd";
     public static final String API_HOURS_PATTERN = "HH:mm:ss";
 
     // get date string to pass to API methods
     public static String formatDate(Date date) {
         @SuppressLint("SimpleDateFormat") final SimpleDateFormat df = new SimpleDateFormat(API_DATE_PATTERN);
+        return df.format(date);
+    }
+
+    public static String formatDateAsDayOnly(Date date) {
+        @SuppressLint("SimpleDateFormat") final SimpleDateFormat df = new SimpleDateFormat(API_DAY_ONLY_PATTERN);
         return df.format(date);
     }
 

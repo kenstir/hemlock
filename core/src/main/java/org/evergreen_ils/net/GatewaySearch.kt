@@ -46,7 +46,7 @@ object GatewaySearch: SearchService {
         return try {
             val args = arrayOf<Any?>(id, orgId, orgLevel)
             val ret = Gateway.fetch(Api.SEARCH, Api.COPY_LOCATION_COUNTS, args, false) {
-                it.asArray()
+                it.payloadFirstAsList()
             }
             Result.Success(ret)
         } catch (e: Exception) {
@@ -114,7 +114,7 @@ object GatewaySearch: SearchService {
             val param = jsonMapOf("limit" to limit, "offset" to 0)
             val options = RequestOptions(Gateway.searchTimeoutMs, false, true)
             val ret = Gateway.fetch(Api.SEARCH, Api.MULTICLASS_QUERY, arrayOf<Any?>(param, queryString, 0), options) { result ->
-                result.asObject()
+                result.payloadFirstAsObject()
             }
             Result.Success(ret)
         } catch (e: Exception) {

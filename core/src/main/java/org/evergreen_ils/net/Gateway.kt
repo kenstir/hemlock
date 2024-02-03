@@ -125,8 +125,8 @@ object Gateway {
         enqueueRequest(r, options)
     }
 
-    // fetchString - fetch url and expect a string response
-    suspend fun fetchString(url: String, options: RequestOptions = RequestOptions(defaultTimeoutMs)) = suspendCoroutine<String> { cont ->
+    /** fetch url and return response body as a string */
+    suspend fun fetchBodyAsString(url: String, options: RequestOptions = RequestOptions(defaultTimeoutMs)) = suspendCoroutine<String> { cont ->
         maybeInjectRandomError()
         val r = GatewayStringRequest(
             url,
@@ -141,6 +141,7 @@ object Gateway {
         enqueueRequest(r, options)
     }
 
+    /** fetch OPAC url as a browser session with cookies and return response as a string */
     suspend fun fetchOPAC(url: String, authToken: String, options: RequestOptions = RequestOptions(defaultTimeoutMs)) = suspendCoroutine<String> { cont ->
         maybeInjectRandomError()
         val r = OPACRequest(
@@ -157,24 +158,29 @@ object Gateway {
         enqueueRequest(r, options)
     }
 
+    /** make gateway request and return first payload item as string */
+    suspend fun fetchString(service: String, method: String, args: Array<Any?>, shouldCache: Boolean) = fetch(service, method, args, shouldCache) { result ->
+        result.payloadFirstAsString()
+    }
+
     // fetchObject - make gateway request and expect json payload of OSRFObject
     suspend fun fetchObject(service: String, method: String, args: Array<Any?>, shouldCache: Boolean) = fetch(service, method, args, shouldCache) { result ->
-        result.asObject()
+        result.payloadFirstAsObject()
     }
 
     // fetchOptionalObject - expect OSRFObject or empty
     suspend fun fetchOptionalObject(service: String, method: String, args: Array<Any?>, shouldCache: Boolean) = fetch(service, method, args, shouldCache) { result ->
-        result.asOptionalObject()
+        result.payloadFirstAsOptionalObject()
     }
 
     // fetchObjectArray - make gateway request and expect json payload of [OSRFObject]
     suspend fun fetchObjectArray(service: String, method: String, args: Array<Any?>, shouldCache: Boolean) = fetch(service, method, args, shouldCache) { result ->
-        result.asObjectArray()
+        result.payloadFirstAsObjectList()
     }
 
-    // fetchStringPayload - make gateway request and expect json payload of String
-    suspend fun fetchObjectString(service: String, method: String, args: Array<Any?>, shouldCache: Boolean) = fetch(service, method, args, shouldCache) { result ->
-        result.asString()
+    // fetchMaybeEmptyArray - expect json payload of OSRFObjects or empty (not inside extra array)
+    suspend fun fetchMaybeEmptyArray(service: String, method: String, args: Array<Any?>, shouldCache: Boolean) = fetch(service, method, args, shouldCache) { result ->
+        result.payloadAsObjectList()
     }
 
     private fun enqueueRequest(r: Request<*>, options: RequestOptions) {

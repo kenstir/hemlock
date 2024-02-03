@@ -52,7 +52,7 @@ class RecordViewAdapter(private val records: List<MBRecord>) : RecyclerView.Adap
         fun bindView(record: MBRecord) {
             Log.d(TAG, "id:${record.id} bindView")
             val context = recordImage.context
-            // todo is it better to load /jacket/medium/ here so it is cached for the details view?
+
             val url = getUrl("/opac/extras/ac/jacket/small/r/" + record.id)
             recordImage.setImageUrl(url, Volley.getInstance(context).imageLoader)
             //recordImage.setDefaultImageResId(R.drawable.missing_art);//for screenshots

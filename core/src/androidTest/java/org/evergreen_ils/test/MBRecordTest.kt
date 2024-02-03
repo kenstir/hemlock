@@ -20,9 +20,7 @@ package org.evergreen_ils.test
 import org.evergreen_ils.android.Log
 import org.evergreen_ils.android.StdoutLogProvider
 import org.evergreen_ils.data.MBRecord
-import org.junit.Assert
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
 import org.junit.Before
 import org.junit.BeforeClass
@@ -66,7 +64,7 @@ class MBRecordTest {
     @Test
     fun test_withMvrObj() {
         val result = GatewayResult.create(blackOpsMvrJson)
-        val mvrObj = result.asObject()
+        val mvrObj = result.payloadFirstAsObject()
         val record = MBRecord(4600952, mvrObj)
 
         assertEquals(true, record.hasMetadata())
@@ -97,7 +95,7 @@ class MBRecordTest {
         assertEquals("", record.author)
 
         val result = GatewayResult.create(blackOpsMvrJson)
-        val mvrObj = result.asObject()
+        val mvrObj = result.payloadFirstAsObject()
         record.mvrObj = mvrObj
 
         assertEquals("Black ops", record.title)

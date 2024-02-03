@@ -21,12 +21,14 @@ package org.evergreen_ils
  */
 object Api {
     const val ANONYMOUS = "ANONYMOUS"
-    const val IDL_CLASSES_USED = "ac,acn,acp,ahr,ahrn,ahtc,aoa,aou,aouhoo,aout,au,aua,auact,aum,aus,bmp,bre,cbreb,cbrebi,cbrebin,cbrebn,ccs,ccvm,cfg,circ,csc,cuat,ex,mbt,mbts,mous,mra,mraf,mus,mvr,perm_ex"
+    const val IDL_CLASSES_USED = "ac,acn,acp,ahr,ahrn,ahtc,aoa,aou,aouhoo,aout,au,aua,auact,auch,aum,aus,bmp,bre,cbreb,cbrebi,cbrebin,cbrebn,ccs,ccvm,cfg,circ,csc,cuat,ex,mbt,mbts,mous,mra,mraf,mus,mvr,perm_ex"
 
     /// actor
 
     const val ACTOR = "open-ils.actor"
     const val CHECKED_OUT = "open-ils.actor.user.checked_out"
+    const val CHECKOUT_HISTORY = "open-ils.actor.history.circ"
+    const val CLEAR_CHECKOUT_HISTORY = "open-ils.actor.history.circ.clear"
     const val USER_FLESHED_RETRIEVE = "open-ils.actor.user.fleshed.retrieve" // au,aua,ac,auact,cuat
     const val ORG_TREE_RETRIEVE = "open-ils.actor.org_tree.retrieve"
     const val ORG_TYPES_RETRIEVE = "open-ils.actor.org_types.retrieve"
@@ -34,6 +36,7 @@ object Api {
     const val ORG_UNIT_SETTING_RETRIEVE = "open-ils.actor.org_unit_setting.values.ranged.retrieve"
     const val ORG_UNIT_SETTING_BATCH = "open-ils.actor.ou_setting.ancestor_default.batch"
     const val ORG_UNIT_SETTING = "open-ils.actor.ou_setting.ancestor_default"
+    const val PATRON_SETTINGS_UPDATE = "open-ils.actor.patron.settings.update"
     const val FINES_SUMMARY = "open-ils.actor.user.fines.summary"
     const val TRANSACTIONS_WITH_CHARGES = "open-ils.actor.user.transactions.have_charge.fleshed"
     const val CONTAINERS_BY_CLASS = "open-ils.actor.container.retrieve_by_class.authoritative" // [cbreb]
@@ -63,6 +66,7 @@ object Api {
     const val SETTING_INFO_URL = "lib.info_url"
     const val SETTING_ORG_UNIT_NOT_PICKUP_LIB = "opac.holds.org_unit_not_pickup_lib"
     const val SETTING_SMS_ENABLE = "sms.enable"
+    const val USER_SETTING_CIRC_HISTORY_START = "history.circ.retention_start"
     const val USER_SETTING_HOLD_NOTIFY = "opac.hold_notify" // e.g. "email|sms" or "phone:email"
     const val USER_SETTING_DEFAULT_PHONE = "opac.default_phone"
     const val USER_SETTING_DEFAULT_PICKUP_LOCATION = "opac.default_pickup_location"
