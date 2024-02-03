@@ -51,7 +51,9 @@ public class MARCRecord implements Serializable {
         public boolean isOnlineLocation() {
             return (TextUtils.equals(tag, "856")
                     && TextUtils.equals(ind1, "4")
-                    && (TextUtils.equals(ind2, "0") || TextUtils.equals(ind2, "1")));
+                    && (TextUtils.equals(ind2, "0")
+                        || TextUtils.equals(ind2, "1")
+                        || TextUtils.equals(ind2, "2")));
         }
 
         public boolean isTitleStatement() {

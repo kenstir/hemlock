@@ -92,8 +92,7 @@ public class MARCXMLParser {
             // See also templates/opac/parts/misc_util.tt2
             // See also https://www.loc.gov/marc/bibliographic/bd856.html
             if (TextUtils.equals(tag, "856")
-                && TextUtils.equals(ind1, "4")
-                && (TextUtils.equals(ind2, "0") || TextUtils.equals(ind2, "1"))) {
+                && TextUtils.equals(ind1, "4")) {
                 currentDatafield = new MARCRecord.MARCDatafield(tag, ind1, ind2);
             }
             if (TextUtils.equals(tag, "245")) {

@@ -83,13 +83,20 @@ public class AppBehavior {
 
     // Implements the above interface for catalogs that use Located URIs
     protected boolean isVisibleViaLocatedURI(MARCRecord.MARCDatafield df, String orgShortName) {
-        List<String> ancestors = EgOrg.getOrgAncestry(orgShortName);
+        // it is visible if there is no subfield 9 limiting access
+        MARCRecord.MARCSubfield subfield9 = null;
         for (MARCRecord.MARCSubfield sf : df.subfields) {
-            if (TextUtils.equals(sf.code, "9") && ancestors.contains(sf.text)) {
-                return true;
+            if (TextUtils.equals(sf.code, "9")) {
+                subfield9 = sf;
             }
         }
-        return false;
+        if (subfield9 == null) {
+            return true;
+        }
+
+        // otherwise it is visible if subfield 9 is this org or an ancestor of it
+        List<String> ancestors = EgOrg.getOrgAncestry(orgShortName);
+        return ancestors.contains(subfield9.text);
     }
 
     @NonNull
@@ -100,6 +107,7 @@ public class AppBehavior {
             return links;
 
         for (MARCRecord.MARCDatafield df: record.getMarcRecord().datafields) {
+            Log.d("marc", "tag="+df.tag+" ind1="+df.ind1+" ind2="+df.ind2);
             if (df.isOnlineLocation()
                     && isVisibleToOrg(df, orgShortName))
             {
