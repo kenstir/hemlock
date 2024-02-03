@@ -130,16 +130,25 @@ class MBRecord(val id: Int, var mvrObj: OSRFObject? = null) : Serializable {
         var available = 0
         if (copyCounts == null) return ""
         if (orgID == null) return ""
-        for (i in copyCounts!!.indices) {
-            if (copyCounts!![i].orgId == orgID) {
-                total = copyCounts!![i].count!!
-                available = copyCounts!![i].available!!
+        for (copyCount in copyCounts.orEmpty()) {
+            if (copyCount.orgId == orgID) {
+                total = copyCount.count
+                available = copyCount.available
                 break
             }
         }
         val totalCopies = resources.getQuantityString(R.plurals.number_of_copies, total, total)
         return String.format(resources.getString(R.string.n_of_m_available),
             available, totalCopies, getOrgNameSafe(orgID))
+    }
+
+    fun totalCopies(orgID: Int?): Int {
+        for (copyCount in copyCounts.orEmpty()) {
+            if (copyCount.orgId == orgID) {
+                return copyCount.count
+            }
+        }
+        return 0
     }
 
     fun getFirstOnlineLocation(): String? {

@@ -26,9 +26,9 @@ import java.io.Serializable
 /** Copy summary for the given org_id, e.g. 1 available of 4 copies at MPL
  */
 class CopyCount(obj: OSRFObject) : Serializable {
-    val orgId: Int? = obj.getInt("org_unit")
-    val count: Int? = obj.getInt("count")
-    val available: Int? = obj.getInt("available")
+    val orgId: Int = obj.getInt("org_unit") ?: 1
+    val count: Int = obj.getInt("count") ?: 0
+    val available: Int = obj.getInt("available") ?: 0
 
     companion object {
         fun makeArray(l: List<OSRFObject>): ArrayList<CopyCount> {
