@@ -30,6 +30,14 @@ class PinesAppBehavior : AppBehavior() {
         return isVisibleViaLocatedURI(df, orgShortName)
     }
 
+    override fun trimLinkTitle(s: String?): String {
+        return when (s) {
+            null -> ""
+            "null" -> ""
+            else -> s
+        }
+    }
+
     override fun getOnlineLocations(record: MBRecord, orgShortName: String): List<Link> {
         return getOnlineLocationsFromMARC(record, orgShortName)
     }
