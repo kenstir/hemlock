@@ -125,42 +125,44 @@
                     android:text="@string/add_to_my_list_button" />
             </LinearLayout>
 
+            <TextView
+                android:id="@+id/record_details_synopsis_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp"
+                tools:text="Fourteen-year-old Harry Potter joins the Weasleys at the Quidditch World Cup, then enters his fourth year at Hogwarts Academy where he is mysteriously entered in an unusual contest..." />
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:gravity="left"
+                android:orientation="horizontal"
+                tools:ignore="RtlHardcoded">
+
+                <Button
+                    android:id="@+id/record_details_online_button"
+                    style="?android:buttonBarButtonStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:minHeight="@dimen/target_min_height"
+                    android:text="@string/eresources_button"/>
+
+                <Button
+                    android:id="@+id/extras_button"
+                    style="?android:buttonBarButtonStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:minHeight="@dimen/target_min_height"
+                    android:text="@string/ou_details_link_text"
+                    tools:text="More Information"/>
+            </LinearLayout>
+
             <TableLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:shrinkColumns="1"
                 android:stretchColumns="1">
-
-                <TableRow android:id="@+id/record_details_synopsis_row">
-
-                    <TextView
-                        android:id="@+id/record_details_synopsis_text"
-                        android:layout_span="2"
-                        android:paddingTop="8dp"
-                        android:paddingBottom="8dp"
-                        tools:text="Fourteen-year-old Harry Potter joins the Weasleys at the Quidditch World Cup, then enters his fourth year at Hogwarts Academy where he is mysteriously entered in an unusual contest..." />
-                </TableRow>
-
-                <TableRow>
-                    <Button
-                        android:id="@+id/record_details_online_button"
-                        style="?android:buttonBarButtonStyle"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:minHeight="@dimen/target_min_height"
-                        android:text="@string/eresources_button"/>
-                </TableRow>
-
-                <TableRow>
-                    <Button
-                        android:id="@+id/extras_button"
-                        style="?android:buttonBarButtonStyle"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:minHeight="@dimen/target_min_height"
-                        android:text="@string/ou_details_link_text"
-                        tools:text="More Information"/>
-                </TableRow>
 
                 <TableRow android:id="@+id/record_details_series_row">
 

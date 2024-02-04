@@ -71,7 +71,6 @@ class DetailsFragment : Fragment() {
     private var synopsisTextView: TextView? = null
     private var isbnTextView: TextView? = null
     private var descriptionTextView: TextView? = null
-    private var synopsisTableRow: View? = null
     private var subjectTableRow: View? = null
     private var seriesTableRow: View? = null
     private var isbnTableRow: View? = null
@@ -121,7 +120,6 @@ class DetailsFragment : Fragment() {
         onlineAccessButton = layout.findViewById(R.id.record_details_online_button)
         addToBookbagButton = layout.findViewById(R.id.add_to_bookbag_button)
         extrasButton = layout.findViewById(R.id.extras_button)
-        synopsisTableRow = layout.findViewById(R.id.record_details_synopsis_row)
         seriesTableRow = layout.findViewById(R.id.record_details_series_row)
         subjectTableRow = layout.findViewById(R.id.record_details_subject_row)
         isbnTableRow = layout.findViewById(R.id.record_details_isbn_row)
