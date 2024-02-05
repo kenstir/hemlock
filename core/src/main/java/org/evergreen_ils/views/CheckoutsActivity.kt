@@ -73,7 +73,7 @@ class CheckoutsActivity : BaseActivity() {
         circRecords = ArrayList()
         listAdapter = CheckoutsArrayAdapter(this, R.layout.checkout_list_item, circRecords)
         lv?.adapter = listAdapter
-        lv?.setOnItemClickListener { parent, view, position, id -> onItemClick(position) }
+        lv?.setOnItemClickListener { _, _, position, _ -> onItemClick(position) }
     }
 
     override fun onDestroy() {
