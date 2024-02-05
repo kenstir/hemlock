@@ -421,8 +421,9 @@ class SearchActivity : BaseActivity(), ActivityCompat.OnRequestPermissionsResult
                 }
                 return true
             }
+            else ->
+                return super.onContextItemSelected(item)
         }
-        return super.onContextItemSelected(item)
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
