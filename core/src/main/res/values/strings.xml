@@ -35,6 +35,7 @@
     <string name="add_to_my_list_button">Add to list</string>
     <string name="adding_to_list_message">Adding item to list</string>
     <string name="show_details_message">Show details</string>
+    <string name="edit_hold_message">Edit hold</string>
     <string name="choose_list_message">Select a list</string>
     <string name="title_events">Events</string>
 
