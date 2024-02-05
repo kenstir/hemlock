@@ -10,240 +10,249 @@
     <include layout="@layout/toolbar_common"/>
 
     <ScrollView
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:fillViewport="true"
-        android:padding="10dp"
-        >
+        android:padding="10dp" >
 
-        <TableLayout
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content" >
-
-            <TableRow android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
-                <TextView
-                    android:id="@+id/hold_title"
-                    style="@style/HemlockText.PagePrimary"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_span="2"
-                    android:layout_weight="1"
-                    android:paddingLeft="0dp"
-                    android:paddingTop="20dp"
-                    tools:text="Trashed : a graphic novel" />
-            </TableRow>
-            <TableRow android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
-                <TextView
-                    android:id="@+id/hold_author"
-                    style="@style/HemlockText.PageTertiary"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_span="2"
-                    android:layout_weight="1"
-                    android:paddingLeft="0dp"
-                    tools:text="Derf" />
-            </TableRow>
-            <TableRow android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
-                <TextView
-                    android:id="@+id/hold_format"
-                    style="@style/HemlockText.PageTertiary"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_span="2"
-                    android:layout_weight="1"
-                    android:paddingLeft="0dp"
-                    android:paddingBottom="20dp"
-                    tools:text="Book" />
-            </TableRow>
-            <TableRow android:id="@+id/hold_part_row"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/label_select_hold_part" />
-                <Spinner
-                    android:id="@+id/hold_part_spinner"
-                    android:layout_width="0dip"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:spinnerMode="dialog"
-                    android:minHeight="@dimen/spinner_min_height" />
-            </TableRow>
-            <TableRow android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/pickup_location" />
-                <Spinner
-                    android:id="@+id/hold_pickup_location"
-                    android:layout_width="0dip"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:spinnerMode="dialog"
-                    android:minHeight="@dimen/spinner_min_height" />
-            </TableRow>
-            <TableRow android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/enable_email_notification"
-                    android:paddingRight="6dp" />
-                <CheckBox
-                    android:id="@+id/hold_enable_email_notification"
-                    android:layout_width="0dip"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:enabled="true"
-                    android:checked="true" />
-            </TableRow>
-            <TableRow android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
-                <TextView
-                    android:id="@+id/hold_phone_notification_label"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/enable_phone_notification"
-                    android:paddingRight="6dp"
-                    android:layout_gravity="left|center_vertical" />
-                <LinearLayout
-                    android:orientation="horizontal"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1">
-                    <CheckBox
-                        android:id="@+id/hold_enable_phone_notification"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" />
-                    <EditText
-                        android:id="@+id/hold_phone_notify"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:inputType="phone"
-                        android:autofillHints="phone"
-                        android:minHeight="@dimen/target_min_height" />
-                </LinearLayout>
-            </TableRow>
-            <TableRow android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
-                <TextView
-                    android:id="@+id/hold_sms_notification_label"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/enable_sms_notification"
-                    android:paddingRight="6dp"
-                    android:layout_gravity="left|center_vertical" />
-                <LinearLayout
-                    android:orientation="horizontal"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1">
-                    <CheckBox
-                        android:id="@+id/hold_enable_sms_notification"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" />
-                    <EditText
-                        android:id="@+id/hold_sms_notify"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:inputType="phone"
-                        android:autofillHints="phone"
-                        android:minHeight="@dimen/target_min_height" />
-                </LinearLayout>
-            </TableRow>
-            <TableRow android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
-                <TextView
-                    android:id="@+id/hold_sms_spinner_label"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/mobile_carrier"
-                    android:paddingRight="6dp"
-                    android:layout_gravity="left|center_vertical" />
-                <Spinner
-                    android:id="@+id/hold_sms_carrier"
-                    android:layout_width="0dip"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:spinnerMode="dialog"
-                    android:minHeight="@dimen/spinner_min_height" />
-            </TableRow>
-            <TableRow android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:visibility="gone">
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/expiration_date"
-                    android:paddingRight="6dp"
-                    />
-                <EditText
-                    android:id="@+id/hold_expiration_date"
-                    android:focusable="false"
-                    android:layout_width="0dip"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:inputType="text"
-                    android:minHeight="@dimen/target_min_height" />
-            </TableRow>
-            <TableRow android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:visibility="gone">
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/suspend_hold"
-                    android:paddingRight="6dp"/>
-
-                <CheckBox
-                    android:id="@+id/hold_suspend_hold"
-                    android:layout_width="0dip"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    />
-            </TableRow>
-            <TableRow android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:visibility="gone">
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/thaw_date"
-                    android:paddingRight="6dp"
-                    />
-                <EditText
-                    android:id="@+id/hold_thaw_date"
-                    android:focusable="false"
-                    android:enabled="false"
-                    android:layout_width="0dip"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:inputType="text"
-                    android:minHeight="@dimen/target_min_height" />
-            </TableRow>
-        </TableLayout>
-    </ScrollView>
-
-    <LinearLayout
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:paddingBottom="3dip" >
-        <Button
-            android:id="@+id/place_hold"
-            android:layout_width="120dip"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/button_place_hold"
-            style="@style/ApplicationButton"
-            android:layout_margin="5dip"
-            />
-    </LinearLayout>
+            android:orientation="vertical">
+
+            <TableLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content" >
+
+                <TableRow android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+                    <TextView
+                        android:id="@+id/hold_title"
+                        style="@style/HemlockText.PagePrimary"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_span="2"
+                        android:layout_weight="1"
+                        android:paddingLeft="0dp"
+                        android:paddingTop="20dp"
+                        tools:text="Trashed : a graphic novel" />
+                </TableRow>
+                <TableRow android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+                    <TextView
+                        android:id="@+id/hold_author"
+                        style="@style/HemlockText.PageTertiary"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_span="2"
+                        android:layout_weight="1"
+                        android:paddingLeft="0dp"
+                        tools:text="Derf" />
+                </TableRow>
+                <TableRow android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+                    <TextView
+                        android:id="@+id/hold_format"
+                        style="@style/HemlockText.PageTertiary"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_span="2"
+                        android:layout_weight="1"
+                        android:paddingLeft="0dp"
+                        android:paddingBottom="20dp"
+                        tools:text="Book" />
+                </TableRow>
+                <TableRow android:id="@+id/hold_part_row"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/label_select_hold_part" />
+                    <Spinner
+                        android:id="@+id/hold_part_spinner"
+                        android:layout_width="0dip"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:spinnerMode="dialog"
+                        android:minHeight="@dimen/spinner_min_height" />
+                </TableRow>
+                <TableRow android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/pickup_location" />
+                    <Spinner
+                        android:id="@+id/hold_pickup_location"
+                        android:layout_width="0dip"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:spinnerMode="dialog"
+                        android:minHeight="@dimen/spinner_min_height" />
+                </TableRow>
+                <TableRow android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/enable_email_notification"
+                        android:paddingRight="6dp" />
+                    <CheckBox
+                        android:id="@+id/hold_enable_email_notification"
+                        android:layout_width="0dip"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:enabled="true"
+                        android:checked="true" />
+                </TableRow>
+                <TableRow android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+                    <TextView
+                        android:id="@+id/hold_phone_notification_label"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/enable_phone_notification"
+                        android:paddingRight="6dp"
+                        android:layout_gravity="left|center_vertical" />
+                    <LinearLayout
+                        android:orientation="horizontal"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1">
+                        <CheckBox
+                            android:id="@+id/hold_enable_phone_notification"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content" />
+                        <EditText
+                            android:id="@+id/hold_phone_notify"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:inputType="phone"
+                            android:autofillHints="phone"
+                            android:minHeight="@dimen/target_min_height" />
+                    </LinearLayout>
+                </TableRow>
+                <TableRow android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+                    <TextView
+                        android:id="@+id/hold_sms_notification_label"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/enable_sms_notification"
+                        android:paddingRight="6dp"
+                        android:layout_gravity="left|center_vertical" />
+                    <LinearLayout
+                        android:orientation="horizontal"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1">
+                        <CheckBox
+                            android:id="@+id/hold_enable_sms_notification"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content" />
+                        <EditText
+                            android:id="@+id/hold_sms_notify"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:inputType="phone"
+                            android:autofillHints="phone"
+                            android:minHeight="@dimen/target_min_height" />
+                    </LinearLayout>
+                </TableRow>
+                <TableRow android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+                    <TextView
+                        android:id="@+id/hold_sms_spinner_label"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/mobile_carrier"
+                        android:paddingRight="6dp"
+                        android:layout_gravity="left|center_vertical" />
+                    <Spinner
+                        android:id="@+id/hold_sms_carrier"
+                        android:layout_width="0dip"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:spinnerMode="dialog"
+                        android:minHeight="@dimen/spinner_min_height" />
+                </TableRow>
+                <TableRow android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/expiration_date"
+                        android:paddingRight="6dp"
+                        />
+                    <EditText
+                        android:id="@+id/hold_expiration_date"
+                        android:focusable="false"
+                        android:layout_width="0dip"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:inputType="text"
+                        android:minHeight="@dimen/target_min_height" />
+                </TableRow>
+                <TableRow android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/suspend_hold"
+                        android:paddingRight="6dp"/>
+
+                    <CheckBox
+                        android:id="@+id/hold_suspend_hold"
+                        android:layout_width="0dip"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        />
+                </TableRow>
+                <TableRow android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/thaw_date"
+                        android:paddingRight="6dp"
+                        />
+                    <EditText
+                        android:id="@+id/hold_thaw_date"
+                        android:focusable="false"
+                        android:enabled="false"
+                        android:layout_width="0dip"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:inputType="text"
+                        android:minHeight="@dimen/target_min_height" />
+                </TableRow>
+            </TableLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp"
+                android:paddingLeft="0dp"
+                android:paddingRight="0dp">
+
+                <Button
+                    android:id="@+id/place_hold"
+                    style="@style/ApplicationButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/button_place_hold" />
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </ScrollView>
 
 </LinearLayout>
