@@ -23,7 +23,10 @@ package org.evergreen_ils.views.holds
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.view.ContextMenu
 import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
@@ -42,10 +45,17 @@ import org.evergreen_ils.net.GatewayError
 import org.evergreen_ils.data.MBRecord
 import org.evergreen_ils.android.Analytics
 import org.evergreen_ils.android.Log
+import org.evergreen_ils.system.EgSearch
 import org.evergreen_ils.utils.ui.BaseActivity
 import org.evergreen_ils.utils.ui.ProgressDialogSupport
 import org.evergreen_ils.utils.ui.showAlert
+import org.evergreen_ils.views.search.RecordDetails
+import org.evergreen_ils.views.search.RecordDetailsActivity
 import org.opensrf.ShouldNotHappenException
+import java.util.ArrayList
+
+const val HOLD_EDIT_HOLD = 0
+const val HOLD_SHOW_DETAILS = 1
 
 class HoldsActivity : BaseActivity() {
     private var lv: ListView? = null
@@ -53,6 +63,10 @@ class HoldsActivity : BaseActivity() {
     private var holdRecords = mutableListOf<HoldRecord>()
     private var holdsSummary: TextView? = null
     private var progress: ProgressDialogSupport? = null
+    private var contextMenuInfo: ContextMenuHoldInfo? = null
+
+    private class ContextMenuHoldInfo(val position: Int, val holdRecord: HoldRecord) : ContextMenu.ContextMenuInfo {
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -66,7 +80,7 @@ class HoldsActivity : BaseActivity() {
         progress = ProgressDialogSupport()
         listAdapter = HoldsArrayAdapter(this, R.layout.holds_list_item, holdRecords)
         lv?.adapter = listAdapter
-        lv?.setOnItemClickListener { parent, view, position, id -> onItemClick(position) }
+        initClickListener()
     }
 
     override fun onDestroy() {
@@ -268,14 +282,59 @@ class HoldsActivity : BaseActivity() {
         listAdapter?.notifyDataSetChanged()
     }
 
-    private fun onItemClick(position: Int) {
-        //Analytics.logEvent("holds_itemclick")
-        val record = lv?.getItemAtPosition(position) as? HoldRecord
-        if (record != null) {
-            val intent = Intent(applicationContext, HoldDetailsActivity::class.java)
-            intent.putExtra("holdRecord", record)
-            // request code does not matter, but we use the result code
-            startActivityForResult(intent, 0)
+    private fun initClickListener() {
+        registerForContextMenu(lv)
+        lv?.setOnItemClickListener { _, _, position, _ ->
+            val record = lv?.getItemAtPosition(position) as? HoldRecord ?: return@setOnItemClickListener
+            editHold(record)
+        }
+        lv?.setOnItemLongClickListener { _, _, position, _ ->
+            val record = lv?.getItemAtPosition(position) as? HoldRecord ?: return@setOnItemLongClickListener false
+            contextMenuInfo = ContextMenuHoldInfo(position, record)
+            openContextMenu(lv)
+            return@setOnItemLongClickListener true
+        }
+    }
+
+    override fun onCreateContextMenu(menu: ContextMenu, v: View, menuInfo: ContextMenu.ContextMenuInfo?) {
+        if (v.id == R.id.holds_item_list) {
+            menu.add(Menu.NONE, HOLD_EDIT_HOLD, 0, getString(R.string.edit_hold_message))
+            menu.add(Menu.NONE, HOLD_SHOW_DETAILS, 1, getString(R.string.show_details_message))
+        }
+    }
+
+    override fun onContextItemSelected(item: MenuItem): Boolean {
+        val info = contextMenuInfo ?: return super.onContextItemSelected(item)
+        when (item.itemId) {
+            HOLD_EDIT_HOLD -> {
+                editHold(info.holdRecord)
+                return true
+            }
+            HOLD_SHOW_DETAILS -> {
+                showItemDetails(info.position, info.holdRecord)
+                return true
+            }
+            else ->
+                return super.onContextItemSelected(item)
+        }
+    }
+
+    private fun editHold(record: HoldRecord) {
+        val intent = Intent(applicationContext, HoldDetailsActivity::class.java)
+        intent.putExtra("holdRecord", record)
+        // request code does not matter, but we use the result code
+        startActivityForResult(intent, 0)
+    }
+
+    private fun showItemDetails(position: Int, record: HoldRecord) {
+        val records = ArrayList<MBRecord>()
+        for (hold in holdRecords) {
+            hold.record?.let { record ->
+                records.add(record)
+            }
+        }
+        if (records.isNotEmpty()) {
+            RecordDetails.launchDetailsFlow(this@HoldsActivity, records, position)
         }
     }
 
