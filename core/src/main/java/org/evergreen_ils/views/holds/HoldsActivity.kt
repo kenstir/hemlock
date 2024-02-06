@@ -27,6 +27,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
+import android.widget.Button
 import android.widget.ListView
 import android.widget.TextView
 import kotlinx.coroutines.Job
@@ -285,6 +286,7 @@ class HoldsActivity : BaseActivity() {
         private var holdAuthor: TextView? = null
         private var holdFormat: TextView? = null
         private var status: TextView? = null
+        private var editButton: Button? = null
 
         override fun getCount(): Int {
             return items.size
@@ -309,6 +311,7 @@ class HoldsActivity : BaseActivity() {
             holdAuthor = row.findViewById(R.id.hold_author)
             holdFormat = row.findViewById(R.id.hold_format)
             status = row.findViewById(R.id.hold_status)
+            editButton = row.findViewById(R.id.edit_button)
 
             val record = getItem(position)
             holdTitle?.text = record.title
@@ -316,7 +319,15 @@ class HoldsActivity : BaseActivity() {
             holdFormat?.text = record.formatLabel
             status?.text = record.getHoldStatus(resources)
 
+            initEditButton()
+
             return row
+        }
+
+        private fun initEditButton() {
+            editButton?.setOnClickListener {
+                showAlert("yassssssss")
+            }
         }
     }
 
