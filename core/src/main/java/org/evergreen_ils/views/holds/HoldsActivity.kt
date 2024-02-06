@@ -27,6 +27,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
+import android.widget.Button
 import android.widget.ListView
 import android.widget.TextView
 import kotlinx.coroutines.Job
@@ -45,7 +46,9 @@ import org.evergreen_ils.android.Log
 import org.evergreen_ils.utils.ui.BaseActivity
 import org.evergreen_ils.utils.ui.ProgressDialogSupport
 import org.evergreen_ils.utils.ui.showAlert
+import org.evergreen_ils.views.search.RecordDetails
 import org.opensrf.ShouldNotHappenException
+import java.util.ArrayList
 
 class HoldsActivity : BaseActivity() {
     private var lv: ListView? = null
@@ -66,7 +69,9 @@ class HoldsActivity : BaseActivity() {
         progress = ProgressDialogSupport()
         listAdapter = HoldsArrayAdapter(this, R.layout.holds_list_item, holdRecords)
         lv?.adapter = listAdapter
-        lv?.setOnItemClickListener { parent, view, position, id -> onItemClick(position) }
+        lv?.setOnItemClickListener { _, _, position, _ ->
+            showItemDetails(position)
+        }
     }
 
     override fun onDestroy() {
@@ -268,23 +273,33 @@ class HoldsActivity : BaseActivity() {
         listAdapter?.notifyDataSetChanged()
     }
 
-    private fun onItemClick(position: Int) {
-        //Analytics.logEvent("holds_itemclick")
-        val record = lv?.getItemAtPosition(position) as? HoldRecord
-        if (record != null) {
-            val intent = Intent(applicationContext, HoldDetailsActivity::class.java)
-            intent.putExtra("holdRecord", record)
-            // request code does not matter, but we use the result code
-            startActivityForResult(intent, 0)
+    private fun editHold(record: HoldRecord) {
+        val intent = Intent(applicationContext, HoldDetailsActivity::class.java)
+        intent.putExtra("holdRecord", record)
+        // request code does not matter, but we use the result code
+        startActivityForResult(intent, 0)
+    }
+
+    private fun showItemDetails(position: Int) {
+        val records = ArrayList<MBRecord>()
+        for (hold in holdRecords) {
+            hold.record?.let { record ->
+                records.add(record)
+            }
+        }
+        if (records.isNotEmpty()) {
+            RecordDetails.launchDetailsFlow(this@HoldsActivity, records, position)
         }
     }
 
     internal inner class HoldsArrayAdapter(context: Context, private val resourceId: Int, private val items: List<HoldRecord>) :
             ArrayAdapter<HoldRecord>(context, resourceId, items) {
+        lateinit var record: HoldRecord
         private var holdTitle: TextView? = null
         private var holdAuthor: TextView? = null
         private var holdFormat: TextView? = null
         private var status: TextView? = null
+        private var editButton: Button? = null
 
         override fun getCount(): Int {
             return items.size
@@ -309,19 +324,30 @@ class HoldsActivity : BaseActivity() {
             holdAuthor = row.findViewById(R.id.hold_author)
             holdFormat = row.findViewById(R.id.hold_format)
             status = row.findViewById(R.id.hold_status)
+            editButton = row.findViewById(R.id.edit_button)
 
-            val record = getItem(position)
+            record = getItem(position)
             holdTitle?.text = record.title
             holdAuthor?.text = record.author
             holdFormat?.text = record.formatLabel
             status?.text = record.getHoldStatus(resources)
 
+            initEditButton(record)
+
             return row
+        }
+
+        // This one-line function is necessary; doing setOnClickListener inside getView()
+        // captures the wrong [record], and all edit buttons operate on the last hold.
+        fun initEditButton(record: HoldRecord) {
+            editButton?.setOnClickListener {
+                editHold(record)
+            }
         }
     }
 
     companion object {
-        private val TAG = HoldsActivity::class.java.simpleName
+        public val TAG = HoldsActivity::class.java.simpleName
 
         //TODO: replace with GatewayLoader.loadRecordAttributesAsync
         suspend fun fetchRecordAttrs(record: MBRecord, id: Int): Result<Unit> {

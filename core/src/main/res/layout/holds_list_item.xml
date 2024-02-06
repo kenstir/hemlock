@@ -1,38 +1,56 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools"
-              android:layout_width="fill_parent"
-              android:layout_height="fill_parent"
-              android:orientation="vertical"
-              android:padding="5dp"
-              android:layout_weight="1"
-        >
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:paddingLeft="8dp"
+    android:paddingTop="4dp"
+    android:paddingRight="8dp"
+    android:paddingBottom="4dp">
 
-    <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <TextView
             android:id="@+id/hold_title"
             style="@style/HemlockText.ListPrimary"
-            tools:text="La Dolce Vita"/>
-
-    <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            tools:text="La Dolce Vita" />
+
+        <TextView
             android:id="@+id/hold_author"
             style="@style/HemlockText.ListSecondary"
-            tools:text="Fellini, Federico"/>
-
-    <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            tools:text="Fellini, Federico" />
+
+        <TextView
             android:id="@+id/hold_format"
             style="@style/HemlockText.ListSecondary"
-            tools:text="DVD"/>
-
-    <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            tools:text="DVD" />
+
+        <TextView
             android:id="@+id/hold_status"
             style="@style/alertText"
-            tools:text="Waiting for copy\n1 hold on 0 copies\nQueue position: 1"/>
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="Waiting for copy\n1 hold on 0 copies\nQueue position: 1" />
+
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/edit_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top"
+        android:focusable="false"
+        android:text="@string/edit_button" />
 
 </LinearLayout>
