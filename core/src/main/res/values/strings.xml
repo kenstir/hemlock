@@ -76,6 +76,7 @@
     <string name="title_check_out">Items Checked Out</string>
     <string name="title_holds">Holds</string>
     <string name="renew_button">Renew</string>
+    <string name="edit_button">Edit</string>
     <string name="renew_item_message">Renew item?</string>
     <string name="renew_item_negative_button">Don\'t renew</string>
     <string name="renew_item_positive_button">Renew item</string>
