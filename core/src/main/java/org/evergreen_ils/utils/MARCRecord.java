@@ -27,6 +27,22 @@ import androidx.annotation.Nullable;
 
 // TODO: remove Serializable, that will make the TransactionTooLargeException issue worse
 public class MARCRecord implements Serializable {
+    public static boolean isOnlineLocation(String tag, String ind1, String ind2) {
+        return (TextUtils.equals(tag, "856")
+                && TextUtils.equals(ind1, "4")
+                && (TextUtils.equals(ind2, "0")
+                || TextUtils.equals(ind2, "1")
+                || TextUtils.equals(ind2, "2")));
+    }
+
+    public static boolean isTitleStatement(String tag) {
+        return (TextUtils.equals(tag, "245"));
+    }
+
+    public static boolean isDatafieldUseful(String tag, String ind1, String ind2) {
+        return isOnlineLocation(tag, ind1, ind2) || isTitleStatement(tag);
+    }
+
     public static class MARCSubfield implements Serializable {
         public String code;
         public String text = null;
@@ -49,15 +65,11 @@ public class MARCRecord implements Serializable {
         }
 
         public boolean isOnlineLocation() {
-            return (TextUtils.equals(tag, "856")
-                    && TextUtils.equals(ind1, "4")
-                    && (TextUtils.equals(ind2, "0")
-                        || TextUtils.equals(ind2, "1")
-                        || TextUtils.equals(ind2, "2")));
+            return MARCRecord.isOnlineLocation(tag, ind1, ind2);
         }
 
         public boolean isTitleStatement() {
-            return (TextUtils.equals(tag, "245"));
+            return MARCRecord.isTitleStatement(tag);
         }
 
         // only valid if isTitleStatement
