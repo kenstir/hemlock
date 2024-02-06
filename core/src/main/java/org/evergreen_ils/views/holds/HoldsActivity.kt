@@ -69,7 +69,9 @@ class HoldsActivity : BaseActivity() {
         progress = ProgressDialogSupport()
         listAdapter = HoldsArrayAdapter(this, R.layout.holds_list_item, holdRecords)
         lv?.adapter = listAdapter
-        initClickListener()
+        lv?.setOnItemClickListener { _, _, position, _ ->
+            showItemDetails(position)
+        }
     }
 
     override fun onDestroy() {
@@ -271,12 +273,6 @@ class HoldsActivity : BaseActivity() {
         listAdapter?.notifyDataSetChanged()
     }
 
-    private fun initClickListener() {
-        lv?.setOnItemClickListener { _, _, position, _ ->
-            showItemDetails(position)
-        }
-    }
-
     private fun editHold(record: HoldRecord) {
         val intent = Intent(applicationContext, HoldDetailsActivity::class.java)
         intent.putExtra("holdRecord", record)
@@ -336,12 +332,14 @@ class HoldsActivity : BaseActivity() {
             holdFormat?.text = record.formatLabel
             status?.text = record.getHoldStatus(resources)
 
-            initEditButton()
+            initEditButton(record)
 
             return row
         }
 
-        private fun initEditButton() {
+        // This one-line function is necessary; doing setOnClickListener inside getView()
+        // captures the wrong [record], and all edit buttons operate on the last hold.
+        fun initEditButton(record: HoldRecord) {
             editButton?.setOnClickListener {
                 editHold(record)
             }
@@ -349,7 +347,7 @@ class HoldsActivity : BaseActivity() {
     }
 
     companion object {
-        private val TAG = HoldsActivity::class.java.simpleName
+        public val TAG = HoldsActivity::class.java.simpleName
 
         //TODO: replace with GatewayLoader.loadRecordAttributesAsync
         suspend fun fetchRecordAttrs(record: MBRecord, id: Int): Result<Unit> {
