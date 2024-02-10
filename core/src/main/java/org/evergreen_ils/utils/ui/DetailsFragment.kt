@@ -278,9 +278,20 @@ class DetailsFragment : Fragment() {
 
     private fun loadCopySummary() {
         if (!isAdded) return  // discard late results
-        descriptionTextView?.text = if (record?.isDeleted == true)
-            getString(R.string.item_marked_deleted_msg)
-            else record?.getCopySummary(resources, orgID)
+        val record = this.record ?: return
+        descriptionTextView?.text = when {
+            record.isDeleted -> getString(R.string.item_marked_deleted_msg)
+            App.getBehavior().isOnlineResource(record) ?: false -> {
+                val onlineLocation = record.getFirstOnlineLocation()
+                if (resources.getBoolean(R.bool.ou_show_online_access_hostname) && !onlineLocation.isNullOrEmpty()) {
+                    val uri = Uri.parse(onlineLocation)
+                    uri.host
+                } else {
+                    ""
+                }
+            }
+            else -> record.getCopySummary(resources, orgID)
+        }
     }
 
     private fun fetchData(record: MBRecord) {
