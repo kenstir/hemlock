@@ -18,6 +18,7 @@
     <bool name="ou_enable_barcode_expiration">true</bool>
     <bool name="ou_group_copy_info_by_system">true</bool>
     <bool name="ou_enable_phone_notification">true</bool>
+    <bool name="ou_enable_hold_pickup_location">true</bool>
     <bool name="ou_enable_hold_queue_position">false</bool>
     <bool name="ou_enable_hold_shelf_expiration">false</bool>
     <bool name="ou_enable_messages">true</bool>

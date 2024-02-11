@@ -34,8 +34,6 @@ import java.io.Serializable
 import java.text.DateFormat
 import java.util.*
 
-private val TAG = HoldRecord::class.java.simpleName
-
 class HoldRecord(val ahr: OSRFObject) : Serializable {
     var record: MBRecord? = null
     var qstatsObj: OSRFObject? = null
@@ -76,10 +74,11 @@ class HoldRecord(val ahr: OSRFObject) : Serializable {
             "Status unavailable"
         } else if (status == 4) {
             var s = "Available"
-            if (res.getBoolean(R.bool.ou_enable_hold_shelf_expiration) && shelfExpireTime != null) s =
-                "$s\nExpires " + DateFormat.getDateInstance().format(
-                    shelfExpireTime
-                )
+            if (res.getBoolean(R.bool.ou_enable_hold_pickup_location)) {
+                s = "$s at $pickupOrgName"
+            }
+            if (res.getBoolean(R.bool.ou_enable_hold_shelf_expiration) && shelfExpireTime != null)
+                s = "$s\nExpires " + DateFormat.getDateInstance().format(shelfExpireTime)
             s
         } else if (status == 7) {
             "Suspended"
@@ -135,6 +134,8 @@ ${res.getQuantityString(R.plurals.number_of_holds, totalHolds!!, totalHolds)} on
         get() = ahr.getBoolean("frozen")
     val pickupLib: Int?
         get() = ahr.getInt("pickup_lib")
+    val pickupOrgName: String
+        get() = EgOrg.getOrgNameSafe(pickupLib)
     val status: Int?
         get() = qstatsObj?.getInt("status")
     val potentialCopies: Int?
