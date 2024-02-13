@@ -50,9 +50,8 @@ class MARCXMLParserTest {
     @Test
     fun test_marcxml_partial() {
         val ctx = InstrumentationRegistry.getInstrumentation().targetContext
-        val `is` = ctx.resources.assets.open("marcxml_acorn_partial_3185816.xml")
-        val parser = MARCXMLParser(`is`)
-        assertNotNull(parser)
+        val inStream = ctx.resources.assets.open("marcxml_acorn_partial_3185816.xml")
+        val parser = MARCXMLParser(inStream)
         val marcRecord = parser.parse()
 
         // Only a subset of 856 tags are kept, see MARCXMLParser
@@ -77,9 +76,8 @@ class MARCXMLParserTest {
     @Test
     fun test_marcxml_wtf() {
         val ctx = InstrumentationRegistry.getInstrumentation().targetContext
-        val `is` = ctx.resources.assets.open("marcxml_mo_89986_partial.xml")
-        val parser = MARCXMLParser(`is`)
-        assertNotNull(parser)
+        val inStream = ctx.resources.assets.open("marcxml_mo_89986_partial.xml")
+        val parser = MARCXMLParser(inStream)
         val marcRecord = parser.parse()
 
         // Only a subset of 856 tags are kept, see MARCXMLParser

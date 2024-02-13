@@ -1,0 +1,134 @@
+<record    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"    xsi:schemaLocation="http://www.loc.gov/MARC21/slim http://www.loc.gov/standards/marcxml/schema/MARC21slim.xsd"    xmlns="http://www.loc.gov/MARC21/slim">
+  <leader>02501cpc a2200433Ii 4500</leader>
+  <controlfield tag="001">6215832</controlfield>
+  <controlfield tag="003">GaAaGPL</controlfield>
+  <controlfield tag="005">20200603160124.0</controlfield>
+  <controlfield tag="008">190226s2018    nju     s           eng d</controlfield>
+  <datafield tag="035" ind1=" " ind2=" ">
+    <subfield code="a">(OCoLC)1088505059</subfield>
+  </datafield>
+  <datafield tag="040" ind1=" " ind2=" ">
+    <subfield code="a">JTH</subfield>
+    <subfield code="b">eng</subfield>
+    <subfield code="e">rda</subfield>
+    <subfield code="c">JTH</subfield>
+    <subfield code="d">JTH</subfield>
+    <subfield code="d">NHI</subfield>
+    <subfield code="d">UtOrBLW</subfield>
+  </datafield>
+  <datafield tag="245" ind1="0" ind2="0">
+    <subfield code="a">Verizon Jetpack MiFi 8800L.</subfield>
+  </datafield>
+  <datafield tag="246" ind1="3" ind2=" ">
+    <subfield code="a">Jetpack MiFi 8800L</subfield>
+  </datafield>
+  <datafield tag="246" ind1="3" ind2=" ">
+    <subfield code="a">Verizon Jetpack 4G LTE Mobile Hotspot MiFi 8800L</subfield>
+  </datafield>
+  <datafield tag="246" ind1="3" ind2=" ">
+    <subfield code="a">Mobile Hotspot MiFi 8800L</subfield>
+  </datafield>
+  <datafield tag="246" ind1="3" ind2=" ">
+    <subfield code="a">Jetpack</subfield>
+  </datafield>
+  <datafield tag="246" ind1="3" ind2="0">
+    <subfield code="a">MiFi8800L</subfield>
+  </datafield>
+  <datafield tag="264" ind1=" " ind2="1">
+    <subfield code="a">[Basking Ridge, New Jersey] :</subfield>
+    <subfield code="b">Verizon Wireless,</subfield>
+    <subfield code="c">[2018]</subfield>
+  </datafield>
+  <datafield tag="264" ind1=" " ind2="4">
+    <subfield code="c">&#xA9;2018</subfield>
+  </datafield>
+  <datafield tag="300" ind1=" " ind2=" ">
+    <subfield code="a">1 mobile hotspot +</subfield>
+    <subfield code="e">1 pre-installed SIM card (4FF), 1 4400mAh Li-Ion battery, 1 wall adapter/USB Cable, 1 quick reference guide</subfield>
+  </datafield>
+  <datafield tag="336" ind1=" " ind2=" ">
+    <subfield code="a">other</subfield>
+    <subfield code="b">xxx</subfield>
+    <subfield code="2">rdacontent</subfield>
+  </datafield>
+  <datafield tag="337" ind1=" " ind2=" ">
+    <subfield code="a">computer</subfield>
+    <subfield code="b">c</subfield>
+    <subfield code="2">rdamedia</subfield>
+  </datafield>
+  <datafield tag="338" ind1=" " ind2=" ">
+    <subfield code="a">computer card</subfield>
+    <subfield code="b">ck</subfield>
+    <subfield code="2">rdacarrier</subfield>
+  </datafield>
+  <datafield tag="500" ind1=" " ind2=" ">
+    <subfield code="a">Battery life: up to 24 hours when fully charged.</subfield>
+  </datafield>
+  <datafield tag="520" ind1=" " ind2=" ">
+    <subfield code="a">Got Wi-Fi-enabled devices such as tablets and laptops that you want to connect to the Internet? By using the MiFi 8800L Mobile Hotspot with 2, 3 and 4 carrier CA and LAA technologies, you can enjoy a faster connection on a Global-Ready&#xAE; device with an intuitive 2.4-inch color touchscreen up to 24 hours of battery life. Work confidently using advanced security features like Auto VPN, data monitoring and an optional guest network. The MiFi 8800L includes a universal charger and USB port for fueling up smartphones, tablets and other devices. And you can connect up to 15 different devices at a time over Wi-Fi. .</subfield>
+  </datafield>
+  <datafield tag="650" ind1=" " ind2="0">
+    <subfield code="a">Wireless LANs.</subfield>
+    <subfield code="0">(GaAaGPL)457996</subfield>
+  </datafield>
+  <datafield tag="650" ind1=" " ind2="0">
+    <subfield code="a">Wireless Internet.</subfield>
+    <subfield code="0">(GaAaGPL)457881</subfield>
+  </datafield>
+  <datafield tag="650" ind1=" " ind2="0">
+    <subfield code="a">Wireless communication systems.</subfield>
+    <subfield code="0">(GaAaGPL)449796</subfield>
+  </datafield>
+  <datafield tag="650" ind1=" " ind2="0">
+    <subfield code="a">Routers (Computer networks)</subfield>
+    <subfield code="0">(GaAaGPL)457231</subfield>
+  </datafield>
+  <datafield tag="650" ind1=" " ind2="0">
+    <subfield code="a">Battery chargers.</subfield>
+    <subfield code="0">(GaAaGPL)401701</subfield>
+  </datafield>
+  <datafield tag="650" ind1=" " ind2="7">
+    <subfield code="a">Battery chargers.</subfield>
+    <subfield code="2">fast</subfield>
+    <subfield code="0">(GaAaGPL)401701</subfield>
+  </datafield>
+  <datafield tag="650" ind1=" " ind2="7">
+    <subfield code="a">Routers (Computer networks)</subfield>
+    <subfield code="2">fast</subfield>
+    <subfield code="0">(GaAaGPL)457231</subfield>
+  </datafield>
+  <datafield tag="650" ind1=" " ind2="7">
+    <subfield code="a">Wireless communication systems.</subfield>
+    <subfield code="2">fast</subfield>
+    <subfield code="0">(GaAaGPL)449796</subfield>
+  </datafield>
+  <datafield tag="650" ind1=" " ind2="7">
+    <subfield code="a">Wireless Internet.</subfield>
+    <subfield code="2">fast</subfield>
+    <subfield code="0">(GaAaGPL)457881</subfield>
+  </datafield>
+  <datafield tag="650" ind1=" " ind2="7">
+    <subfield code="a">Wireless LANs.</subfield>
+    <subfield code="2">fast</subfield>
+    <subfield code="0">(GaAaGPL)457996</subfield>
+  </datafield>
+  <datafield tag="710" ind1="2" ind2=" ">
+    <subfield code="a">Verizon.</subfield>
+    <subfield code="0">(GaAaGPL)1247513</subfield>
+  </datafield>
+  <datafield tag="856" ind1="4" ind2="2">
+    <subfield code="3">user manual:</subfield>
+    <subfield code="u">https://ss7.vzw.com/is/content/VerizonWireless/Devices/Verizon/Jetpack%20MiFi%208800L/User%20Manual/verizon-jetpack-mifi-8800l-um.pdf</subfield>
+  </datafield>
+  <datafield tag="994" ind1=" " ind2=" ">
+    <subfield code="a">Z0</subfield>
+    <subfield code="b">ZHJ</subfield>
+  </datafield>
+  <datafield tag="901" ind1=" " ind2=" ">
+    <subfield code="a">on1088505059</subfield>
+    <subfield code="b">OCoLC</subfield>
+    <subfield code="c">6215832</subfield>
+    <subfield code="t">biblio</subfield>
+    <subfield code="s">oclc</subfield>
+  </datafield>
+</record>

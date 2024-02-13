@@ -100,13 +100,18 @@ public class AppBehavior {
     }
 
     @NonNull
-    protected List<Link> getOnlineLocationsFromMARC(MBRecord record, String orgShortName) {
-        ArrayList<Link> links = new ArrayList<>();
+    public List<Link> getOnlineLocationsFromMARC(MBRecord record, String orgShortName) {
         MARCRecord marcRecord = record.getMarcRecord();
         if (marcRecord == null)
-            return links;
+            return new ArrayList<Link>();
 
-        for (MARCRecord.MARCDatafield df: record.getMarcRecord().datafields) {
+        return getLinksFromMARCRecord(marcRecord, orgShortName);
+    }
+
+    @NonNull
+    public List<Link> getLinksFromMARCRecord(MARCRecord marcRecord, String orgShortName) {
+        ArrayList<Link> links = new ArrayList<>();
+        for (MARCRecord.MARCDatafield df: marcRecord.datafields) {
             Log.d("marc", "tag="+df.tag+" ind1="+df.ind1+" ind2="+df.ind2);
             if (df.isOnlineLocation()
                     && isVisibleToOrg(df, orgShortName))
@@ -123,12 +128,14 @@ public class AppBehavior {
             }
         }
 
-        Collections.sort(links, new Comparator<Link>() {
-            @Override
-            public int compare(Link a, Link b) {
-                return a.getText().compareTo(b.getText());
-            }
-        });
+        // I don't know where I got the notion to sort these;
+        // I don't see that done in the OPAC.
+//        Collections.sort(links, new Comparator<Link>() {
+//            @Override
+//            public int compare(Link a, Link b) {
+//                return a.getText().compareTo(b.getText());
+//            }
+//        });
 
         return links;
     }
