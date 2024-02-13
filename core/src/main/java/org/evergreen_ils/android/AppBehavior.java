@@ -83,20 +83,26 @@ public class AppBehavior {
 
     // Implements the above interface for catalogs that use Located URIs
     protected boolean isVisibleViaLocatedURI(MARCRecord.MARCDatafield df, String orgShortName) {
-        // it is visible if there is no subfield 9 limiting access
-        MARCRecord.MARCSubfield subfield9 = null;
+        List<String> subfield9s = new ArrayList<>();
         for (MARCRecord.MARCSubfield sf : df.subfields) {
             if (TextUtils.equals(sf.code, "9")) {
-                subfield9 = sf;
+                subfield9s.add(sf.text);
             }
         }
-        if (subfield9 == null) {
+
+        // the item is visible if there are no subfield 9s limiting access
+        if (subfield9s.isEmpty()) {
             return true;
         }
 
         // otherwise it is visible if subfield 9 is this org or an ancestor of it
         List<String> ancestors = EgOrg.getOrgAncestry(orgShortName);
-        return ancestors.contains(subfield9.text);
+        for (String s : subfield9s) {
+            if (ancestors.contains(s)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @NonNull
