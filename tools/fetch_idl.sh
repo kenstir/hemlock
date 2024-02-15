@@ -1,14 +1,17 @@
-#!/bin/sh
+#!/bin/sh -ex
 
-base=https://bark.cwmars.org
-#base=http://kenstir.ddns.net
-if [ -n "$1" ]; then
+case $# in
+1) 
     base="$1"
-fi
+    ;;
+*) 
+    echo >&2 "usage: $0 URL"
+    echo >&2 "e.g.:  $0 https://bark.cwmars.org"
+    exit 1
+esac
 
-version=$(curl -sS "$base/osrf-gateway-v1?service=open-ils.actor&method=opensrf.open-ils.system.ils_version" | q -r '.payload[0]')
+version=$(curl -sS "$base/osrf-gateway-v1?service=open-ils.actor&method=opensrf.open-ils.system.ils_version" | jq -r '.payload[0]')
 
-#classes="ac,acn,acp,ahr,ahrn,ahtc,aoa,aou,aouhoo,aout,au,aua,auact,auch,aum,aus,bmp,bre,cbreb,cbrebi,cbrebin,cbrebn,ccs,ccvm,cfg,circ,csc,cuat,ex,mbt,mbts,mous,mra,mraf,mus,mvr,perm_ex"
 classes=$(grep IDL_CLASSES core/src/main/java/org/evergreen_ils/Api.kt | awk '{print $NF}' | sed -e 's/"//g')
 
 # create array params
