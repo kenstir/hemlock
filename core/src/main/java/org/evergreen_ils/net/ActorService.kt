@@ -28,7 +28,8 @@ interface ActorService {
     suspend fun fetchOrgTree(): Result<OSRFObject>
     suspend fun fetchOrg(orgID: Int): Result<OSRFObject>
     suspend fun fetchOrgSettings(orgID: Int): Result<OSRFObject>
-    suspend fun fetchOrgHours(account: Account, orgID: Int?): Result<OSRFObject?>
+    suspend fun fetchOrgHours(account: Account, orgID: Int): Result<OSRFObject?>
+    suspend fun fetchOrgUpcomingClosures(account: Account, orgID: Int): Result<List<OSRFObject>>
     suspend fun fetchOrgAddress(addressID: Int?): Result<OSRFObject?>
     suspend fun fetchFleshedUser(account: Account): Result<OSRFObject>
     suspend fun fetchUserCheckedOut(account: Account): Result<OSRFObject>

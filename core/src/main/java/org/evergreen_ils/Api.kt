@@ -21,7 +21,7 @@ package org.evergreen_ils
  */
 object Api {
     const val ANONYMOUS = "ANONYMOUS"
-    const val IDL_CLASSES_USED = "ac,acn,acp,ahr,ahrn,ahtc,aoa,aou,aouhoo,aout,au,aua,auact,auch,aum,aus,bmp,bre,cbreb,cbrebi,cbrebin,cbrebn,ccs,ccvm,cfg,circ,csc,cuat,ex,mbt,mbts,mous,mra,mraf,mus,mvr,perm_ex"
+    const val IDL_CLASSES_USED = "ac,acn,acp,aec,aecs,ahr,ahrn,ahtc,aoa,aou,aoucd,aouhoo,aout,au,aua,auact,auch,aum,aus,bmp,bre,cbreb,cbrebi,cbrebin,cbrebn,ccs,ccvm,cfg,circ,csc,cuat,ex,mbt,mbts,mous,mra,mraf,mus,mvr,perm_ex"
 
     /// actor
 
@@ -49,6 +49,7 @@ object Api {
     const val CONTAINER_BUCKET_TYPE_BOOKBAG = "bookbag"
     const val MESSAGES_RETRIEVE = "open-ils.actor.message.retrieve" // [aum]
     const val HOURS_OF_OPERATION_RETRIEVE = "open-ils.actor.org_unit.hours_of_operation.retrieve" // [aouhoo]
+    const val HOURS_CLOSED_RETRIEVE = "open-ils.actor.org_unit.closed.retrieve.all"
     const val ADDRESS_RETRIEVE = "open-ils.actor.org_unit.address.retrieve" // [aoa]
     //const val VITAL_STATS = "open-ils.actor.user.opac.vital_stats"; // Used by OPAC for summary stats
 

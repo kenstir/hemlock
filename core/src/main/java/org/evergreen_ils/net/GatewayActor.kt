@@ -102,15 +102,25 @@ object GatewayActor: ActorService {
         }
     }
 
-    override suspend fun fetchOrgHours(account: Account, orgID: Int?): Result<OSRFObject?> {
-        if (orgID == null)
-            return Result.Success(null)
+    override suspend fun fetchOrgHours(account: Account, orgID: Int): Result<OSRFObject?> {
         return try {
             val (authToken, _) = account.getCredentialsOrThrow()
             val args = arrayOf<Any?>(authToken, orgID)
             val ret = Gateway.fetch(Api.ACTOR, Api.HOURS_OF_OPERATION_RETRIEVE, args, false) {
                 it.payloadFirstAsOptionalObject()
             }
+            Result.Success(ret)
+        } catch (e: Exception) {
+            Result.Error(e)
+        }
+    }
+
+    override suspend fun fetchOrgUpcomingClosures(account: Account, orgID: Int): Result<List<OSRFObject>> {
+        return try {
+            val (authToken, _) = account.getCredentialsOrThrow()
+            val param = jsonMapOf("orgid" to orgID)
+            val args = arrayOf<Any?>(authToken, param)
+            val ret = Gateway.fetchObjectArray(Api.ACTOR, Api.HOURS_CLOSED_RETRIEVE, args, false)
             Result.Success(ret)
         } catch (e: Exception) {
             Result.Error(e)

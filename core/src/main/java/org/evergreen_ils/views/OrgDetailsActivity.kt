@@ -196,6 +196,20 @@ class OrgDetailsActivity : BaseActivity() {
         }
     }
 
+    private fun onClosedHoursResult(result: Result<List<OSRFObject>>) {
+        when (result) {
+            is Result.Success -> {
+                val res = result.data
+                for (obj in res) {
+                    Log.d(TAG, "obj: $obj")
+                    Log.d(TAG, obj.asJSON())
+                }
+                print("stop here")
+            }
+            is Result.Error -> showAlert(result.exception)
+        }
+    }
+
     private fun loadAddress(obj: OSRFObject?) {
         org?.addressObj = obj
         address?.text = org?.getAddress("\n")
@@ -227,6 +241,9 @@ class OrgDetailsActivity : BaseActivity() {
     private fun fetchData() {
         scope.async {
             try {
+                val org = org ?: return@async
+                val orgID = orgID ?: return@async
+
                 val start = System.currentTimeMillis()
                 var jobs = mutableListOf<Job>()
                 progress?.show(this@OrgDetailsActivity, getString(R.string.msg_loading_details))
@@ -244,6 +261,11 @@ class OrgDetailsActivity : BaseActivity() {
                 jobs.add(scope.async {
                     val result = Gateway.actor.fetchOrgHours(App.getAccount(), orgID)
                     onHoursResult(result)
+                })
+
+                jobs.add(scope.async {
+                    val result = Gateway.actor.fetchOrgUpcomingClosures(App.getAccount(), orgID)
+                    onClosedHoursResult(result)
                 })
 
                 jobs.add(scope.async {

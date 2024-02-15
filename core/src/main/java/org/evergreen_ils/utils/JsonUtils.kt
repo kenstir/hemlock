@@ -53,4 +53,8 @@ object JsonUtils {
             null
         }
     }
+
+    @JvmStatic
+    fun printObj(obj: JSONDictionary): String {
+    }
 }
