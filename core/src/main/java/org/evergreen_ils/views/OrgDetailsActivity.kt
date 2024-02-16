@@ -35,6 +35,7 @@ import org.evergreen_ils.data.Result
 import org.evergreen_ils.net.Gateway
 import org.evergreen_ils.net.GatewayLoader
 import org.evergreen_ils.system.EgOrg
+import org.evergreen_ils.utils.JsonUtils
 import org.evergreen_ils.utils.ui.BaseActivity
 import org.evergreen_ils.utils.ui.OrgArrayAdapter
 import org.evergreen_ils.utils.ui.ProgressDialogSupport
@@ -201,8 +202,7 @@ class OrgDetailsActivity : BaseActivity() {
             is Result.Success -> {
                 val res = result.data
                 for (obj in res) {
-                    Log.d(TAG, "obj: $obj")
-                    Log.d(TAG, obj.asJSON())
+                    Log.d(TAG, JsonUtils.toJSONString(obj))
                 }
                 print("stop here")
             }

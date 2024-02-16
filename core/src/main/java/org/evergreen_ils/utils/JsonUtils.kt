@@ -19,6 +19,7 @@
 package org.evergreen_ils.utils
 
 import org.evergreen_ils.data.JSONDictionary
+import org.json.JSONObject
 import org.opensrf.util.JSONException
 import org.opensrf.util.JSONReader
 
@@ -55,6 +56,8 @@ object JsonUtils {
     }
 
     @JvmStatic
-    fun printObj(obj: JSONDictionary): String {
+    fun toJSONString(obj: JSONDictionary): String {
+        val jsonObject = JSONObject(obj)
+        return jsonObject.toString()
     }
 }
