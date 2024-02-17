@@ -41,6 +41,7 @@ import org.evergreen_ils.utils.ui.OrgArrayAdapter
 import org.evergreen_ils.utils.ui.ProgressDialogSupport
 import org.evergreen_ils.utils.ui.showAlert
 import org.opensrf.util.OSRFObject
+import java.util.Date
 
 class OrgDetailsActivity : BaseActivity() {
     private val TAG = OrgDetailsActivity::class.java.simpleName
@@ -53,6 +54,7 @@ class OrgDetailsActivity : BaseActivity() {
     private var day4Hours: TextView? = null
     private var day5Hours: TextView? = null
     private var day6Hours: TextView? = null
+    private lateinit var closuresTable: TableLayout
     private var webSite: Button? = null
     private var email: Button? = null
     private var phone: Button? = null
@@ -84,6 +86,7 @@ class OrgDetailsActivity : BaseActivity() {
         day4Hours = findViewById(R.id.org_details_day4hours)
         day5Hours = findViewById(R.id.org_details_day5hours)
         day6Hours = findViewById(R.id.org_details_day6hours)
+        closuresTable = findViewById(R.id.org_details_closures_table)
         webSite = findViewById(R.id.org_details_web_site)
         email = findViewById(R.id.org_details_email)
         phone = findViewById(R.id.org_details_phone)
@@ -197,17 +200,22 @@ class OrgDetailsActivity : BaseActivity() {
         }
     }
 
-    private fun onClosedHoursResult(result: Result<List<OSRFObject>>) {
+    private fun onOrgClosuresResult(result: Result<List<OSRFObject>>) {
         when (result) {
-            is Result.Success -> {
-                val res = result.data
-                for (obj in res) {
-                    Log.d(TAG, JsonUtils.toJSONString(obj))
-                }
-                print("stop here")
-            }
+            is Result.Success -> loadClosures(result.data)
             is Result.Error -> showAlert(result.exception)
         }
+    }
+
+    private fun loadClosures(closures: List<OSRFObject>) {
+        val now = Date()
+        for (closure in closures) {
+            val end = closure.getDate("close_end")
+            if (end == null || end < now) { continue }
+            Log.d(TAG, JsonUtils.toJSONString(closure))
+        }
+        print("stop here")
+//        closuresTable
     }
 
     private fun loadAddress(obj: OSRFObject?) {
@@ -264,8 +272,8 @@ class OrgDetailsActivity : BaseActivity() {
                 })
 
                 jobs.add(scope.async {
-                    val result = Gateway.actor.fetchOrgUpcomingClosures(App.getAccount(), orgID)
-                    onClosedHoursResult(result)
+                    val result = Gateway.actor.fetchOrgClosures(App.getAccount(), orgID)
+                    onOrgClosuresResult(result)
                 })
 
                 jobs.add(scope.async {

@@ -197,6 +197,76 @@
             </TableLayout>
 
             <TextView
+                android:id="@+id/org_details_upcoming_closures_header"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="16dp"
+                android:text="@string/title_upcoming_closures"
+                style="@style/HemlockText.PagePrimary"/>
+
+            <TableLayout
+                android:id="@+id/org_details_closures_table"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content">
+                <TableRow
+                    android:id="@+id/org_details_closures_header_row"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <TextView
+                        android:paddingStart="16dp"
+                        android:paddingEnd="0dp"
+                        android:text="@string/title_date"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        style="@style/HemlockText.PageSecondary" />
+                    <TextView
+                        android:paddingStart="16dp"
+                        android:paddingEnd="0dp"
+                        android:text="@string/title_reason_for_closure"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        style="@style/HemlockText.PageSecondary" />
+                </TableRow>
+                <TableRow
+                    android:id="@+id/org_details_closures_none_row"
+                    android:paddingTop="4dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <TextView
+                        android:paddingStart="16dp"
+                        android:paddingEnd="0dp"
+                        android:text="@string/no_closures_scheduled_msg"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+                    <TextView
+                        android:paddingStart="16dp"
+                        android:paddingEnd="0dp"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"/>
+                </TableRow>
+                <TableRow
+                    android:paddingTop="4dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <TextView
+                        android:paddingStart="16dp"
+                        android:paddingEnd="0dp"
+                        tools:text="02/16/2024 - 02/20/2024"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+                    <TextView
+                        android:paddingStart="16dp"
+                        android:paddingEnd="0dp"
+                        tools:text="President's Day and PINES 3.12 Upgrade"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"/>
+                </TableRow>
+            </TableLayout>
+
+            <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:paddingTop="16dp"

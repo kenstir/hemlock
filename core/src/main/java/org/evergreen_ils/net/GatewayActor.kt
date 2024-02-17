@@ -115,9 +115,11 @@ object GatewayActor: ActorService {
         }
     }
 
-    override suspend fun fetchOrgUpcomingClosures(account: Account, orgID: Int): Result<List<OSRFObject>> {
+    override suspend fun fetchOrgClosures(account: Account, orgID: Int): Result<List<OSRFObject>> {
         return try {
             val (authToken, _) = account.getCredentialsOrThrow()
+            // Neither the default start_date in ClosedDates::fetch_dates nor the start_date
+            // in [param] is working to limit the results; we get all closures since day 1.
             val param = jsonMapOf("orgid" to orgID)
             val args = arrayOf<Any?>(authToken, param)
             val ret = Gateway.fetchObjectArray(Api.ACTOR, Api.HOURS_CLOSED_RETRIEVE, args, false)

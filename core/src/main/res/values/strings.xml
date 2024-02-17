@@ -268,5 +268,9 @@
     <string name="disable_history_alert_button">Disable history</string>
     <string name="item_marked_deleted_msg">[ item is marked deleted in the database ]</string>
     <string name="eresources_button">Electronic Resources</string>
+    <string name="title_upcoming_closures">Upcoming Closures</string>
+    <string name="title_date">Date</string>
+    <string name="title_reason_for_closure">Reason for Closure</string>
+    <string name="no_closures_scheduled_msg">No closures scheduled</string>
 
 </resources>
