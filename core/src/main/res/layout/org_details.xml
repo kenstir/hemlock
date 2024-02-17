@@ -75,15 +75,16 @@
                         android:paddingStart="16dp"
                         android:paddingEnd="0dp"
                         android:text="@string/title_mon"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content" />
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="28"/>
                     <TextView
-                        android:paddingStart="16dp"
+                        android:paddingStart="8dp"
                         android:paddingEnd="0dp"
                         android:id="@+id/org_details_day0hours"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
+                        android:layout_weight="72"
                         tools:text="9:00 AM - 5:00 PM"/>
                 </TableRow>
                 <TableRow
@@ -93,15 +94,16 @@
                         android:paddingStart="16dp"
                         android:paddingEnd="0dp"
                         android:text="@string/title_tue"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content" />
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="28"/>
                     <TextView
-                        android:paddingStart="16dp"
+                        android:paddingStart="8dp"
                         android:paddingEnd="0dp"
                         android:id="@+id/org_details_day1hours"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
+                        android:layout_weight="72"
                         tools:text="9:00 AM - 5:00 PM"/>
                 </TableRow>
                 <TableRow
@@ -111,15 +113,16 @@
                         android:paddingStart="16dp"
                         android:paddingEnd="0dp"
                         android:text="@string/title_wed"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content" />
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="28"/>
                     <TextView
-                        android:paddingStart="16dp"
+                        android:paddingStart="8dp"
                         android:paddingEnd="0dp"
                         android:id="@+id/org_details_day2hours"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
+                        android:layout_weight="72"
                         tools:text="9:00 AM - 5:00 PM"/>
                 </TableRow>
                 <TableRow
@@ -129,15 +132,16 @@
                         android:paddingStart="16dp"
                         android:paddingEnd="0dp"
                         android:text="@string/title_thu"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content" />
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="28"/>
                     <TextView
-                        android:paddingStart="16dp"
+                        android:paddingStart="8dp"
                         android:paddingEnd="0dp"
                         android:id="@+id/org_details_day3hours"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
+                        android:layout_weight="72"
                         tools:text="9:00 AM - 5:00 PM"/>
                 </TableRow>
                 <TableRow
@@ -147,15 +151,16 @@
                         android:paddingStart="16dp"
                         android:paddingEnd="0dp"
                         android:text="@string/title_fri"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content" />
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="28"/>
                     <TextView
-                        android:paddingStart="16dp"
+                        android:paddingStart="8dp"
                         android:paddingEnd="0dp"
                         android:id="@+id/org_details_day4hours"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
+                        android:layout_weight="72"
                         tools:text="9:00 AM - 5:00 PM"/>
                 </TableRow>
                 <TableRow
@@ -165,15 +170,16 @@
                         android:paddingStart="16dp"
                         android:paddingEnd="0dp"
                         android:text="@string/title_sat"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content" />
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="28"/>
                     <TextView
-                        android:paddingStart="16dp"
+                        android:paddingStart="8dp"
                         android:paddingEnd="0dp"
                         android:id="@+id/org_details_day5hours"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
+                        android:layout_weight="72"
                         tools:text="9:00 AM - 5:00 PM"/>
                 </TableRow>
                 <TableRow
@@ -183,15 +189,16 @@
                         android:paddingStart="16dp"
                         android:paddingEnd="0dp"
                         android:text="@string/title_sun"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content" />
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="28"/>
                     <TextView
-                        android:paddingStart="16dp"
+                        android:paddingStart="8dp"
                         android:paddingEnd="0dp"
                         android:id="@+id/org_details_day6hours"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
+                        android:layout_weight="72"
                         tools:text="@string/value_closed"/>
                 </TableRow>
             </TableLayout>
@@ -216,16 +223,17 @@
                         android:paddingStart="16dp"
                         android:paddingEnd="0dp"
                         android:text="@string/title_date"
-                        android:layout_width="match_parent"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
+                        android:layout_weight="28"
                         style="@style/HemlockText.PageTertiary" />
                     <TextView
-                        android:paddingStart="16dp"
+                        android:paddingStart="8dp"
                         android:paddingEnd="0dp"
                         android:text="@string/title_reason_for_closure"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
+                        android:layout_weight="72"
                         style="@style/HemlockText.PageTertiary" />
                 </TableRow>
                 <TableRow
@@ -238,13 +246,9 @@
                         android:paddingEnd="0dp"
                         android:text="@string/no_closures_scheduled_msg"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content" />
-                    <TextView
-                        android:paddingStart="16dp"
-                        android:paddingEnd="0dp"
-                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"/>
+                        android:layout_weight="100"
+                        android:layout_span="2"/>
                 </TableRow>
             </TableLayout>
 

@@ -41,7 +41,6 @@ import org.evergreen_ils.utils.ui.OrgArrayAdapter
 import org.evergreen_ils.utils.ui.ProgressDialogSupport
 import org.evergreen_ils.utils.ui.showAlert
 import org.opensrf.util.OSRFObject
-import java.text.DateFormat
 import java.util.Date
 
 class OrgDetailsActivity : BaseActivity() {

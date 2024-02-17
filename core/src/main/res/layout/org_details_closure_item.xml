@@ -6,16 +6,15 @@
         android:paddingStart="16dp"
         android:paddingEnd="0dp"
         tools:text="02/16/2024 - 02/20/2024"
-        android:text="02/16/2024 - 02/20/2024"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-    <TextView
-        android:id="@+id/org_details_closure_item_reason"
-        android:paddingStart="16dp"
-        android:paddingEnd="0dp"
-        tools:text="President's Day and PINES 3.12 Upgrade"
-        android:text="President's Day and PINES 3.12 Upgrade"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_weight="1"/>
+        android:layout_weight="28"/>
+    <TextView
+        android:id="@+id/org_details_closure_item_reason"
+        android:paddingStart="8dp"
+        android:paddingEnd="0dp"
+        tools:text="President's Day and PINES 3.12 Upgrade"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="72"/>
 </merge>
