@@ -18,10 +18,12 @@
 
 package net.kenstir.apps.core
 
+import org.evergreen_ils.data.jsonMapOf
 import org.junit.Assert.*
 import org.junit.BeforeClass
 import org.junit.Test
 import org.opensrf.util.OSRFObject
+import java.util.concurrent.TimeUnit
 
 class OSRFObjectTest {
 
@@ -47,18 +49,16 @@ class OSRFObjectTest {
 
     @Test
     fun test_getBoolean() {
-        val map = mapOf<String, Any?>(
-                "juvenile" to "f",
-                "active" to "t"
-        )
-        val obj = OSRFObject(map)
+        val obj = OSRFObject(jsonMapOf(
+            "juvenile" to "f", "active" to "t"
+        ))
         assertEquals(true, obj.getBoolean("active"))
         assertEquals(false, obj.getBoolean("juvenile"))
     }
 
     @Test
     fun test_getInt() {
-        val obj = OSRFObject(mapOf<String, Any?>(
+        val obj = OSRFObject(jsonMapOf(
             "id" to 42,
             "count" to "42",
             "null_key" to null
@@ -75,6 +75,31 @@ class OSRFObjectTest {
         val obj = fleshedUserObj.getObject("card")
         assertEquals("1234", obj?.getString("barcode"))
         assertNull(obj?.getObject("na"))
+    }
+
+    @Test
+    fun test_getDate() {
+        val obj = OSRFObject(jsonMapOf(
+            "reason" to "Good Friday",
+            "close_start" to "2024-03-29T12:00:47-0400",
+            "close_end" to "2024-03-29T20:00:47-0400",
+            "org_unit" to 69,
+            "multi_day" to "f",
+            "full_day" to "f"
+        ))
+        val start = obj.getDate("close_start")
+        assertNotNull(start)
+        val end = obj.getDate("close_end")
+        assertNotNull(end)
+        if (start != null && end != null) {
+            val diff = end.time - start.time
+            print("start: $start")
+            print("end:   $end")
+            print("diff:  $diff")
+            val diffInHours = TimeUnit.MILLISECONDS.toHours(diff)
+            assertEquals(8, diffInHours)
+            print("stop here")
+        }
     }
 
     // Test to understand warning: Unchecked cast: Any! to List<OSRFObject>
