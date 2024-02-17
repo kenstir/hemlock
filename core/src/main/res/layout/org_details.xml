@@ -218,7 +218,7 @@
                         android:text="@string/title_date"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        style="@style/HemlockText.PageSecondary" />
+                        style="@style/HemlockText.PageTertiary" />
                     <TextView
                         android:paddingStart="16dp"
                         android:paddingEnd="0dp"
@@ -226,7 +226,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        style="@style/HemlockText.PageSecondary" />
+                        style="@style/HemlockText.PageTertiary" />
                 </TableRow>
                 <TableRow
                     android:id="@+id/org_details_closures_none_row"
@@ -242,24 +242,6 @@
                     <TextView
                         android:paddingStart="16dp"
                         android:paddingEnd="0dp"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"/>
-                </TableRow>
-                <TableRow
-                    android:paddingTop="4dp"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-                    <TextView
-                        android:paddingStart="16dp"
-                        android:paddingEnd="0dp"
-                        tools:text="02/16/2024 - 02/20/2024"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content" />
-                    <TextView
-                        android:paddingStart="16dp"
-                        android:paddingEnd="0dp"
-                        tools:text="President's Day and PINES 3.12 Upgrade"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"/>

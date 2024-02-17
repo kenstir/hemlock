@@ -41,6 +41,7 @@ import org.evergreen_ils.utils.ui.OrgArrayAdapter
 import org.evergreen_ils.utils.ui.ProgressDialogSupport
 import org.evergreen_ils.utils.ui.showAlert
 import org.opensrf.util.OSRFObject
+import java.text.DateFormat
 import java.util.Date
 
 class OrgDetailsActivity : BaseActivity() {
@@ -209,19 +210,56 @@ class OrgDetailsActivity : BaseActivity() {
 
     private fun loadClosures(closures: List<OSRFObject>) {
         val now = Date()
-        for (closure in closures) {
-            val end = closure.getDate("close_end")
-            if (end == null || end < now) { continue }
-            Log.d(TAG, JsonUtils.toJSONString(closure))
-            addClosureRow(closure)
+        val upcomingClosures = closures.filter {
+            val end = it.getDate("close_end")
+            end != null && end > now
+        }
+        if (upcomingClosures.isEmpty()) {
+            findViewById<TableRow>(R.id.org_details_closures_header_row).visibility = View.GONE
+            findViewById<TableRow>(R.id.org_details_closures_none_row).visibility = View.VISIBLE
+        } else {
+            findViewById<TableRow>(R.id.org_details_closures_header_row).visibility = View.VISIBLE
+            findViewById<TableRow>(R.id.org_details_closures_none_row).visibility = View.GONE
+            for (closure in upcomingClosures) {
+                Log.d(TAG, JsonUtils.toJSONString(closure))
+                addClosureRow(closure)
+            }
         }
     }
 
     private fun addClosureRow(closure: OSRFObject) {
+        // figure out how to display the date
+        val start = closure.getDate("close_start") ?: return
+        val end = closure.getDate("close_end") ?: return
+        val reason = closure.getString("reason") ?: return
+        val startDateString = OSRFUtils.formatDateForOutput(start)
+        val isFullDay = closure.getBoolean("full_day")
+        val isMultiDay = closure.getBoolean("multi_day")
+        val dateString = when {
+            isMultiDay -> {
+                val endDateString = OSRFUtils.formatDateForOutput(end)
+                "$startDateString - $endDateString"
+            }
+            isFullDay -> {
+                startDateString
+            }
+            else -> {
+                val startDateTimeString = OSRFUtils.formatDateTimeForOutput(start)
+                val endDateTimeString = OSRFUtils.formatDateTimeForOutput(end)
+                "$startDateTimeString - $endDateTimeString"
+            }
+        }
+
+        // create a row, inflate its contents, and add it to the table
         val row = TableRow(baseContext)
-        val x = layoutInflater.inflate(R.layout.org_details_closure_item, row)
-        print("$x")
-        closuresTable.addView(x)
+        layoutInflater.inflate(R.layout.org_details_closure_item, row)
+        closuresTable.addView(row)
+
+        // fill out the details
+        val dateTextView = row.findViewById<TextView>(R.id.org_details_closure_item_date)
+        dateTextView.text = dateString
+        val reasonTextView = row.findViewById<TextView>(R.id.org_details_closure_item_reason)
+        reasonTextView.text = reason
     }
 
     private fun loadAddress(obj: OSRFObject?) {

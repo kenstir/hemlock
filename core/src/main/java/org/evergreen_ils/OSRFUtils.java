@@ -34,24 +34,29 @@ import java.util.Locale;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.google.android.material.timepicker.TimeFormat;
+
 public class OSRFUtils {
     public static final String API_DATE_PATTERN = "yyyy-MM-dd'T'hh:mm:ssZ";
     public static final String API_DAY_ONLY_PATTERN = "yyyy-MM-dd";
     public static final String API_HOURS_PATTERN = "HH:mm:ss";
+    public static final String OUTPUT_DATE_PATTERN = "MM/dd/yyyy";
+    public static final String OUTPUT_DATE_TIME_PATTERN = "MM/dd/yyyy h:mm a";
 
-    // get date string to pass to API methods
+    /** get date+time string to pass to API methods */
     public static String formatDate(Date date) {
         @SuppressLint("SimpleDateFormat") final SimpleDateFormat df = new SimpleDateFormat(API_DATE_PATTERN);
         return df.format(date);
     }
 
+    /** get date string yyyy-MM-dd to pass to API methods */
     public static String formatDateAsDayOnly(Date date) {
         @SuppressLint("SimpleDateFormat") final SimpleDateFormat df = new SimpleDateFormat(API_DAY_ONLY_PATTERN);
         return df.format(date);
     }
 
     // parse date string returned from API methods
-    public static Date parseDate(String dateString) {
+    public static Date parseDate(@Nullable String dateString) {
 
         if (dateString == null)
             return null;
@@ -90,12 +95,18 @@ public class OSRFUtils {
     public static String formatHoursForOutput(@NonNull Date date) {
         // Use the default locale instead of fixed AM/PM, even though
         // this will make the tests break when run in a non-US locale.
-//        final String DISPLAY_HOURS_PATTERN = "h:mm a";
-//        final SimpleDateFormat df = new SimpleDateFormat(DISPLAY_HOURS_PATTERN);
-//        return df.format(date);
-        DateFormat timeFormatter =
-                DateFormat.getTimeInstance(DateFormat.SHORT, Locale.getDefault());
+        DateFormat timeFormatter = DateFormat.getTimeInstance(DateFormat.SHORT, Locale.getDefault());
         return timeFormatter.format(date);
+    }
+
+    public static String formatDateForOutput(@NonNull Date date) {
+        @SuppressLint("SimpleDateFormat") final SimpleDateFormat df = new SimpleDateFormat(OUTPUT_DATE_PATTERN);
+        return df.format(date);
+    }
+
+    public static String formatDateTimeForOutput(@NonNull Date date) {
+        @SuppressLint("SimpleDateFormat") final SimpleDateFormat df = new SimpleDateFormat(OUTPUT_DATE_TIME_PATTERN);
+        return df.format(date);
     }
 
     // parse bool string returned from API methods

@@ -39,10 +39,6 @@ class HoldRecord(val ahr: OSRFObject) : Serializable {
     var qstatsObj: OSRFObject? = null
     var partLabel: String? = null // only for HOLD_TYPE_PART
 
-    private fun formatDateTime(date: Date): String {
-        return DateFormat.getDateTimeInstance().format(date)
-    }
-
     private val transitFrom: String?
         private get() {
             val transit = ahr["transit"] as? OSRFObject ?: return null
@@ -52,9 +48,8 @@ class HoldRecord(val ahr: OSRFObject) : Serializable {
     private val transitSince: String?
         private get() {
             val transit = ahr["transit"] as? OSRFObject ?: return null
-            val sent = transit.getString("source_send_time")
-            val date = OSRFUtils.parseDate(sent)
-            return formatDateTime(date)
+            val sent = transit.getDate("source_send_time") ?: return null
+            return OSRFUtils.formatDateTimeForOutput(sent)
         }
 
     // Retrieve hold status in text
