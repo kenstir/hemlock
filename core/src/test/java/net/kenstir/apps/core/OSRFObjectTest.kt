@@ -36,12 +36,11 @@ class OSRFObjectTest {
 
     @Test
     fun test_basic() {
-        val map = mutableMapOf<String, Any?>(
-                "id" to 42,
-                "home_ou" to 69,
-                "day_phone" to "508-555-1212"
-        )
-        val obj = OSRFObject(map)
+        val obj = OSRFObject(jsonMapOf(
+            "id" to 42,
+            "home_ou" to 69,
+            "day_phone" to "508-555-1212"
+        ))
         assertEquals(42, obj.getInt("id"))
         assertEquals("508-555-1212", obj.getString("day_phone"))
         assertNull(obj.getString("na"))
@@ -70,8 +69,8 @@ class OSRFObjectTest {
 
     @Test
     fun test_getObject() {
-        val cardObj = OSRFObject(mapOf<String, Any?>("barcode" to "1234"))
-        val fleshedUserObj = OSRFObject(mapOf<String, Any?>("card" to cardObj))
+        val cardObj = OSRFObject(jsonMapOf("barcode" to "1234"))
+        val fleshedUserObj = OSRFObject(jsonMapOf("card" to cardObj))
         val obj = fleshedUserObj.getObject("card")
         assertEquals("1234", obj?.getString("barcode"))
         assertNull(obj?.getObject("na"))
@@ -98,14 +97,13 @@ class OSRFObjectTest {
             print("diff:  $diff")
             val diffInHours = TimeUnit.MILLISECONDS.toHours(diff)
             assertEquals(8, diffInHours)
-            print("stop here")
         }
     }
 
     // Test to understand warning: Unchecked cast: Any! to List<OSRFObject>
     @Test
     fun test_misc_uncheckedCast1() {
-        val obj = OSRFObject(mapOf<String, Any?>(
+        val obj = OSRFObject(jsonMapOf(
             "settings" to "0"
         ))
         val settings = obj.get("settings") as? List<OSRFObject>
@@ -116,10 +114,10 @@ class OSRFObjectTest {
     // Test to understand warning: Unchecked cast: Any! to List<OSRFObject>
     @Test
     fun test_misc_uncheckedCast2() {
-        val obj = OSRFObject(mapOf<String, Any?>(
+        val obj = OSRFObject(jsonMapOf(
             "settings" to arrayListOf(
-                OSRFObject(mapOf<String, Any?>("id" to 1)),
-                OSRFObject(mapOf<String, Any?>("id" to 2))
+                OSRFObject(jsonMapOf("id" to 1)),
+                OSRFObject(jsonMapOf("id" to 2))
             )
         ))
         val settings = obj.get("settings") as? List<OSRFObject>
@@ -132,7 +130,7 @@ class OSRFObjectTest {
     // Test to understand warning: Unchecked cast: Any! to List<OSRFObject>
     @Test
     fun test_misc_uncheckedCast3() {
-        val obj = OSRFObject(mapOf<String, Any?>(
+        val obj = OSRFObject(jsonMapOf(
             "settings" to arrayListOf(1,2,3)
         ))
         val settings = obj.get("settings") as? List<OSRFObject>
@@ -146,7 +144,7 @@ class OSRFObjectTest {
     // Try to avoid unchecked cast using filterIsInstance
     @Test
     fun test_misc_uncheckedCast4() {
-        val obj = OSRFObject(mapOf<String, Any?>(
+        val obj = OSRFObject(jsonMapOf(
             "settings" to arrayListOf(1,2,3)
         ))
         val settings = obj.get("settings") as? List<*>
