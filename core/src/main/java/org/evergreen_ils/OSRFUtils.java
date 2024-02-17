@@ -37,7 +37,7 @@ import androidx.annotation.Nullable;
 import com.google.android.material.timepicker.TimeFormat;
 
 public class OSRFUtils {
-    public static final String API_DATE_PATTERN = "yyyy-MM-dd'T'hh:mm:ssZ";
+    public static final String API_DATE_PATTERN = "yyyy-MM-dd'T'HH:mm:ssZ";
     public static final String API_DAY_ONLY_PATTERN = "yyyy-MM-dd";
     public static final String API_HOURS_PATTERN = "HH:mm:ss";
     public static final String OUTPUT_DATE_PATTERN = "MM/dd/yyyy";
