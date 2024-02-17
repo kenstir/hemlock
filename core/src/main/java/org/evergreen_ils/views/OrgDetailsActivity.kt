@@ -214,6 +214,10 @@ class OrgDetailsActivity : BaseActivity() {
             val end = it.getDate("close_end")
             end != null && end > now
         }
+        val rowCount = closuresTable.childCount
+        if (rowCount > 2) {
+            closuresTable.removeViews(2, rowCount - 2)
+        }
         if (upcomingClosures.isEmpty()) {
             findViewById<TableRow>(R.id.org_details_closures_header_row).visibility = View.GONE
             findViewById<TableRow>(R.id.org_details_closures_none_row).visibility = View.VISIBLE
