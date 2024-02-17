@@ -213,9 +213,15 @@ class OrgDetailsActivity : BaseActivity() {
             val end = closure.getDate("close_end")
             if (end == null || end < now) { continue }
             Log.d(TAG, JsonUtils.toJSONString(closure))
+            addClosureRow(closure)
         }
-        print("stop here")
-//        closuresTable
+    }
+
+    private fun addClosureRow(closure: OSRFObject) {
+        val row = TableRow(baseContext)
+        val x = layoutInflater.inflate(R.layout.org_details_closure_item, row)
+        print("$x")
+        closuresTable.addView(x)
     }
 
     private fun loadAddress(obj: OSRFObject?) {
