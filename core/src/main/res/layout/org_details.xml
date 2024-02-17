@@ -220,6 +220,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
                     <TextView
+                        android:id="@+id/org_details_closures_header_date"
                         android:paddingStart="16dp"
                         android:paddingEnd="0dp"
                         android:text="@string/title_date"
@@ -228,6 +229,7 @@
                         android:layout_weight="28"
                         style="@style/HemlockText.PageTertiary" />
                     <TextView
+                        android:id="@+id/org_details_closures_header_reason"
                         android:paddingStart="8dp"
                         android:paddingEnd="0dp"
                         android:text="@string/title_reason_for_closure"

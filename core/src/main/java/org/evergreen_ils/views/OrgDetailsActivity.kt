@@ -19,8 +19,10 @@
 package org.evergreen_ils.views
 
 import android.os.Bundle
+import android.util.TypedValue
 import android.view.MenuItem
 import android.view.View
+import android.view.ViewGroup
 import android.widget.*
 import android.widget.AdapterView.OnItemSelectedListener
 import kotlinx.coroutines.Job
@@ -223,23 +225,23 @@ class OrgDetailsActivity : BaseActivity() {
         } else {
             findViewById<TableRow>(R.id.org_details_closures_header_row).visibility = View.VISIBLE
             findViewById<TableRow>(R.id.org_details_closures_none_row).visibility = View.GONE
-            for (closure in upcomingClosures) {
-                Log.d(TAG, JsonUtils.toJSONString(closure))
-                addClosureRow(closure)
-            }
+            addClosureRows(upcomingClosures)
         }
     }
 
-    private fun addClosureRow(closure: OSRFObject) {
-        // figure out how to display the date
-        val start = closure.getDate("close_start") ?: return
-        val end = closure.getDate("close_end") ?: return
-        val reason = closure.getString("reason") ?: return
+    private fun getClosureInfo(closure: OSRFObject): Triple<String?, String?, Boolean> {
+        val nullReturn = Triple(null, null, false)
+        val start = closure.getDate("close_start") ?: return nullReturn
+        val end = closure.getDate("close_end") ?: return nullReturn
+        val reason = closure.getString("reason") ?: return nullReturn
+
         val startDateString = OSRFUtils.formatDateForOutput(start)
         val isFullDay = closure.getBoolean("full_day")
         val isMultiDay = closure.getBoolean("multi_day")
+        var isDateRange = false
         val dateString = when {
             isMultiDay -> {
+                isDateRange = true
                 val endDateString = OSRFUtils.formatDateForOutput(end)
                 "$startDateString - $endDateString"
             }
@@ -247,22 +249,57 @@ class OrgDetailsActivity : BaseActivity() {
                 startDateString
             }
             else -> {
+                isDateRange = true
                 val startDateTimeString = OSRFUtils.formatDateTimeForOutput(start)
                 val endDateTimeString = OSRFUtils.formatDateTimeForOutput(end)
                 "$startDateTimeString - $endDateTimeString"
             }
         }
+        return Triple(dateString, reason, isDateRange)
+    }
 
-        // create a row, inflate its contents, and add it to the table
-        val row = TableRow(baseContext)
-        layoutInflater.inflate(R.layout.org_details_closure_item, row)
-        closuresTable.addView(row)
+    private fun addClosureRows(closures: List<OSRFObject>) {
+        // First, walk through the closures to see if any have date ranges.
+        // If they do, we need to alter the layout params to make the columns look right.
+        val anyClosuresWithDateRange = closures.any {
+            val (_, _, isDateRange) = getClosureInfo(it)
+            isDateRange
+        }
 
-        // fill out the details
-        val dateTextView = row.findViewById<TextView>(R.id.org_details_closure_item_date)
-        dateTextView.text = dateString
-        val reasonTextView = row.findViewById<TextView>(R.id.org_details_closure_item_reason)
-        reasonTextView.text = reason
+        // Now, add closure rows and maybe tweak the layout
+        for (closure in closures) {
+            Log.d(TAG, JsonUtils.toJSONString(closure))
+            val (dateString, reason, isDateRange) = getClosureInfo(closure)
+
+            // create a row, inflate its contents, and add it to the table
+            val row = TableRow(baseContext)
+            layoutInflater.inflate(R.layout.org_details_closure_item, row)
+            closuresTable.addView(row)
+
+            // fill out the details
+            val dateTextView = row.findViewById<TextView>(R.id.org_details_closure_item_date)
+            dateTextView.text = dateString
+            val reasonTextView = row.findViewById<TextView>(R.id.org_details_closure_item_reason)
+            reasonTextView.text = reason
+
+            // tweak layout to give more space to the date column
+            if (anyClosuresWithDateRange) {
+                val width = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 0F, resources.displayMetrics).toInt()
+                val height = ViewGroup.LayoutParams.MATCH_PARENT
+                dateTextView.layoutParams = TableRow.LayoutParams(width, height, 50F)
+                reasonTextView.layoutParams = TableRow.LayoutParams(width, height, 50F)
+            }
+        }
+
+        // tweak header layout also
+        if (anyClosuresWithDateRange) {
+            val width = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 0F, resources.displayMetrics).toInt()
+            val height = ViewGroup.LayoutParams.MATCH_PARENT
+            val dateHeaderView = findViewById<TextView>(R.id.org_details_closures_header_date)
+            val reasonHeaderView = findViewById<TextView>(R.id.org_details_closures_header_reason)
+            dateHeaderView.layoutParams = TableRow.LayoutParams(width, height, 50F)
+            reasonHeaderView.layoutParams = TableRow.LayoutParams(width, height, 50F)
+        }
     }
 
     private fun loadAddress(obj: OSRFObject?) {
