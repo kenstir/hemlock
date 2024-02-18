@@ -43,19 +43,19 @@ public class OSRFUtils {
     public static final String OUTPUT_DATE_PATTERN = "MM/dd/yyyy";
     public static final String OUTPUT_DATE_TIME_PATTERN = "MM/dd/yyyy h:mm a";
 
-    /** get date+time string to pass to API methods */
+    /** format ISO date+time string to pass to API methods */
     public static String formatDate(Date date) {
         @SuppressLint("SimpleDateFormat") final SimpleDateFormat df = new SimpleDateFormat(API_DATE_PATTERN);
         return df.format(date);
     }
 
-    /** get date string yyyy-MM-dd to pass to API methods */
+    /** format ISO date string yyyy-MM-dd to pass to API methods */
     public static String formatDateAsDayOnly(Date date) {
         @SuppressLint("SimpleDateFormat") final SimpleDateFormat df = new SimpleDateFormat(API_DAY_ONLY_PATTERN);
         return df.format(date);
     }
 
-    // parse date string returned from API methods
+    /** parse ISO date+time string returned from API methods */
     public static Date parseDate(@Nullable String dateString) {
 
         if (dateString == null)
@@ -74,7 +74,7 @@ public class OSRFUtils {
         return date;
     }
 
-    // parse time string HH:MM:SS returned from API
+    /** parse time string HH:MM:SS returned from API */
     public static @Nullable
     Date parseHours(String hoursString) {
         if (hoursString == null)
