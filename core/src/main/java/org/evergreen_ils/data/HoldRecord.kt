@@ -68,7 +68,8 @@ class HoldRecord(val ahr: OSRFObject) : Serializable {
         return if (status == null) {
             "Status unavailable"
         } else if (status == 4) {
-            var s = "Available"
+            //var s = "Available"
+            var s = "Ready for pickup" // If necessary, move this to a string resource
             if (res.getBoolean(R.bool.ou_enable_hold_pickup_location)) {
                 s = "$s at $pickupOrgName"
             }
