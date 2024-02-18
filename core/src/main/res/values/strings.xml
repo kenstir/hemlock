@@ -116,13 +116,20 @@
     <string name="thaw_date">Activate hold on</string>
     <string name="hold_phone_hint">Contact phone number</string>
     <string name="hold_items">Items on hold: </string>
-    <string name="hold_status_in_transit">In Transit from %1$s\nSince %2$s</string>
     <string name="msg_loading_place_hold">Loading</string>
     <string name="label_select_hold_part">Select a part</string>
     <string name="title_no_part_selected">No part selected</string>
     <string name="msg_no_part_selected">You must select a part before placing a hold on this item</string>
     <string name="title_not_pickup_location">Not a pickup location</string>
-    <string name="msg_not_pickup_location">You cannot pick up items at %s</string>
+    <string name="msg_not_pickup_location">You cannot pick up items at %1$s</string>
+    <string name="hold_status_in_transit">In Transit from %1$s\nSince %2$s</string>
+    <string name="hold_status_unavailable">Status unavailable</string>
+    <string name="hold_status_available">Ready for pickup</string>
+    <string name="hold_status_suspended">Suspended</string>
+    <string name="hold_status_waiting_for_copy">Waiting for copy\n%1$s on %2$s</string>
+    <string name="hold_status_queue_position">Queue position: %1$d</string>
+    <string name="hold_status_expires">Expires %1$s</string>
+    <string name="hold_status_estimated_wait">Estimated wait: %1$s</string>
 
     <!-- Checkout items -->
     <string name="checkout_items">%1$d items checked out</string>

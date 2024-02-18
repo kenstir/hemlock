@@ -20,6 +20,7 @@
  */
 package org.evergreen_ils.data
 
+import android.annotation.SuppressLint
 import android.content.res.Resources
 import org.evergreen_ils.HOLD_TYPE_METARECORD
 import org.evergreen_ils.OSRFUtils
@@ -53,6 +54,7 @@ class HoldRecord(val ahr: OSRFObject) : Serializable {
         }
 
     // Retrieve hold status in text
+    @SuppressLint("StringFormatInvalid")
     fun getHoldStatus(res: Resources): String {
         // Constants from Holds.pm and logic from hold_status.tt2
         // -1 on error (for now),
@@ -66,33 +68,26 @@ class HoldRecord(val ahr: OSRFObject) : Serializable {
         //  8 for 'captured, on wrong hold shelf'
         val status = status
         return if (status == null) {
-            "Status unavailable"
+            res.getString(R.string.hold_status_unavailable)
         } else if (status == 4) {
-            //var s = "Available"
-            var s = "Ready for pickup" // If necessary, move this to a string resource
-            if (res.getBoolean(R.bool.ou_enable_hold_pickup_location)) {
-                s = "$s at $pickupOrgName"
-            }
+            var s = res.getString(R.string.hold_status_available, pickupOrgName)
             if (res.getBoolean(R.bool.ou_enable_hold_shelf_expiration) && shelfExpireTime != null)
-                s = "$s\nExpires " + DateFormat.getDateInstance().format(shelfExpireTime)
+                s = s + "\n" + res.getString(R.string.hold_status_expires, DateFormat.getDateInstance().format(shelfExpireTime))
             s
         } else if (status == 7) {
-            "Suspended"
+            res.getString(R.string.hold_status_suspended)
         } else if (estimatedWaitInSeconds!! > 0) {
             val days = Math.ceil(estimatedWaitInSeconds!!.toDouble() / 86400.0).toInt()
-            ("Estimated wait: "
-                    + res.getQuantityString(R.plurals.number_of_days, days, days))
+            res.getString(R.string.hold_status_estimated_wait,
+                res.getQuantityString(R.plurals.number_of_days, days, days))
         } else if (status == 3 || status == 8) {
             res.getString(R.string.hold_status_in_transit, transitFrom, transitSince)
         } else if (status < 3) {
-            var s = """Waiting for copy
-${res.getQuantityString(R.plurals.number_of_holds, totalHolds!!, totalHolds)} on ${
-                res.getQuantityString(
-                    R.plurals.number_of_copies, potentialCopies!!, potentialCopies
-                )
-            }"""
-            if (res.getBoolean(R.bool.ou_enable_hold_queue_position)) s =
-                "$s\nQueue position: $queuePosition"
+            var s = res.getString(R.string.hold_status_waiting_for_copy,
+                res.getQuantityString(R.plurals.number_of_holds, totalHolds!!, totalHolds),
+                res.getQuantityString(R.plurals.number_of_copies, potentialCopies!!, potentialCopies))
+            if (res.getBoolean(R.bool.ou_enable_hold_queue_position))
+                s = s + "\n" + res.getString(R.string.hold_status_queue_position, queuePosition)
             s
         } else {
             ""

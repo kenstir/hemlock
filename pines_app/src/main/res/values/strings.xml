@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="hold_status_available">Ready for pickup at %1$s</string>
     <string name="title_open_full_catalog">Full Catalog</string>
     <string name="title_library_locator">Library Locator</string>
     <string name="title_galileo">GALILEO Virtual Library</string>

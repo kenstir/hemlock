@@ -275,7 +275,7 @@ class PlaceHoldActivity : BaseActivity() {
         if (!selectedOrg.isPickupLocation) {
             val builder = AlertDialog.Builder(this@PlaceHoldActivity)
             builder.setTitle(getString(R.string.title_not_pickup_location))
-                    .setMessage(String.format(getString(R.string.msg_not_pickup_location), selectedOrg.name))
+                    .setMessage(getString(R.string.msg_not_pickup_location, selectedOrg.name))
                     .setPositiveButton(android.R.string.ok, null)
             builder.create().show()
             return false
