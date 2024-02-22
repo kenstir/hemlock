@@ -133,7 +133,7 @@ class CircRecordTest {
         ))
         val circRecord = CircRecord(circObj, CircRecord.CircType.OUT, 1)
 
-        assertEquals(false, circRecord.isDue)
+        assertEquals(false, circRecord.isDueSoon)
         assertEquals(false, circRecord.isOverdue)
     }
 
