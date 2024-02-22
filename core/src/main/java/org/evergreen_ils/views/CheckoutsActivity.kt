@@ -264,9 +264,9 @@ class CheckoutsActivity : BaseActivity() {
             return when {
                 record.isOverdue ->
                     String.format(getString(R.string.label_due_date_overdue), record.dueDateString)
-                record.isDue && record.autoRenewals > 0 ->
+                record.isDueSoon && record.autoRenewals > 0 ->
                     String.format(getString(R.string.label_due_date_may_autorenew), record.dueDateString)
-                record.wasAutorenewed && !record.isDue ->
+                record.wasAutorenewed ->
                     String.format(getString(R.string.label_due_date_autorenewed), record.dueDateString)
                 else ->
                     String.format(getString(R.string.label_due_date), record.dueDateString)
@@ -274,7 +274,7 @@ class CheckoutsActivity : BaseActivity() {
         }
 
         private fun maybeHighlightDueDate(record: CircRecord) {
-            val style = if (record.isDue) R.style.alertText else R.style.HemlockText_ListTertiary
+            val style = if (record.isOverdue) R.style.alertText else R.style.HemlockText_ListTertiary
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 dueDate?.setTextAppearance(style)
             } else {
