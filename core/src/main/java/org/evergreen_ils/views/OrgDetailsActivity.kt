@@ -229,6 +229,7 @@ class OrgDetailsActivity : BaseActivity() {
         }
     }
 
+    /** return Triple<dateString, reasonString, isDateRange> */
     private fun getClosureInfo(closure: OSRFObject): Triple<String?, String?, Boolean> {
         val nullReturn = Triple(null, null, false)
         val start = closure.getDate("close_start") ?: return nullReturn
@@ -265,11 +266,13 @@ class OrgDetailsActivity : BaseActivity() {
             val (_, _, isDateRange) = getClosureInfo(it)
             isDateRange
         }
+        val dateColumnWidth = if (anyClosuresWithDateRange) 53F else 28F
+        val reasonColumnWidth = if (anyClosuresWithDateRange) 47F else 72F
 
         // Now, add closure rows and maybe tweak the layout
         for (closure in closures) {
             Log.d(TAG, JsonUtils.toJSONString(closure))
-            val (dateString, reason, isDateRange) = getClosureInfo(closure)
+            val (dateString, reason, _) = getClosureInfo(closure)
 
             // create a row, inflate its contents, and add it to the table
             val row = TableRow(baseContext)
@@ -286,8 +289,8 @@ class OrgDetailsActivity : BaseActivity() {
             if (anyClosuresWithDateRange) {
                 val width = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 0F, resources.displayMetrics).toInt()
                 val height = ViewGroup.LayoutParams.MATCH_PARENT
-                dateTextView.layoutParams = TableRow.LayoutParams(width, height, 50F)
-                reasonTextView.layoutParams = TableRow.LayoutParams(width, height, 50F)
+                dateTextView.layoutParams = TableRow.LayoutParams(width, height, dateColumnWidth)
+                reasonTextView.layoutParams = TableRow.LayoutParams(width, height, reasonColumnWidth)
             }
         }
 
@@ -297,8 +300,8 @@ class OrgDetailsActivity : BaseActivity() {
             val height = ViewGroup.LayoutParams.MATCH_PARENT
             val dateHeaderView = findViewById<TextView>(R.id.org_details_closures_header_date)
             val reasonHeaderView = findViewById<TextView>(R.id.org_details_closures_header_reason)
-            dateHeaderView.layoutParams = TableRow.LayoutParams(width, height, 50F)
-            reasonHeaderView.layoutParams = TableRow.LayoutParams(width, height, 50F)
+            dateHeaderView.layoutParams = TableRow.LayoutParams(width, height, dateColumnWidth)
+            reasonHeaderView.layoutParams = TableRow.LayoutParams(width, height, reasonColumnWidth)
         }
     }
 

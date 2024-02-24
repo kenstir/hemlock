@@ -60,6 +60,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:paddingTop="16dp"
+                android:paddingBottom="4dp"
                 android:text="@string/title_opening_hours"
                 style="@style/HemlockText.PagePrimary"/>
 
@@ -68,7 +69,6 @@
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content">
                 <TableRow
-                    android:paddingTop="4dp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
                     <TextView
@@ -208,6 +208,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:paddingTop="16dp"
+                android:paddingBottom="4dp"
                 android:text="@string/title_upcoming_closures"
                 style="@style/HemlockText.PagePrimary"/>
 
@@ -215,6 +216,19 @@
                 android:id="@+id/org_details_closures_table"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content">
+                <TableRow
+                    android:id="@+id/org_details_closures_none_row"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <TextView
+                        android:paddingStart="16dp"
+                        android:paddingEnd="0dp"
+                        android:text="@string/no_closures_scheduled_msg"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="100"
+                        android:layout_span="2"/>
+                </TableRow>
                 <TableRow
                     android:id="@+id/org_details_closures_header_row"
                     android:layout_width="match_parent"
@@ -239,18 +253,42 @@
                         style="@style/HemlockText.PageTertiary" />
                 </TableRow>
                 <TableRow
-                    android:id="@+id/org_details_closures_none_row"
-                    android:paddingTop="4dp"
+                    android:id="@+id/org_details_closures_prototype_row1"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
                     <TextView
                         android:paddingStart="16dp"
                         android:paddingEnd="0dp"
-                        android:text="@string/no_closures_scheduled_msg"
-                        android:layout_width="match_parent"
+                        tools:text="12/24/2024 - 12/26/2024"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_weight="100"
-                        android:layout_span="2"/>
+                        android:layout_weight="50"/>
+                    <TextView
+                        android:paddingStart="8dp"
+                        android:paddingEnd="0dp"
+                        tools:text="Christmas Holidays"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="50"/>
+                </TableRow>
+                <TableRow
+                    android:id="@+id/org_details_closures_prototype_row2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <TextView
+                        android:paddingStart="16dp"
+                        android:paddingEnd="0dp"
+                        tools:text="3/29/2024 12:00 PM - 3/29/2024 8:00 PM"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="50"/>
+                    <TextView
+                        android:paddingStart="8dp"
+                        android:paddingEnd="0dp"
+                        tools:text="Good Friday"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="50"/>
                 </TableRow>
             </TableLayout>
 
