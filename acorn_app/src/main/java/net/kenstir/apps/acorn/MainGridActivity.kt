@@ -48,6 +48,9 @@ class MainGridActivity : BaseActivity() {
     private var adapter: GridButtonViewAdapter? = null
     private var items = ArrayList<GridButton>()
 
+    private val defaultButtonUrl: String? = "https://google.com" // use for debugging
+//    private val defaultButtonUrl: String? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState) // not super
         if (isRestarting) return
@@ -76,8 +79,6 @@ class MainGridActivity : BaseActivity() {
 
     private fun addGridButtons() {
         val homeOrg = EgOrg.findOrg(App.getAccount().homeOrg)
-//        val defaultUrl = "https://google.com"
-        val defaultUrl: String? = null
 
         // Show Card
         val cardDrawable = getDrawable(R.drawable.acorn_id_card_light, R.color.cwmars_violet)
@@ -131,7 +132,7 @@ class MainGridActivity : BaseActivity() {
         })
 
         // Events
-        val eventsUrl = homeOrg?.eventsURL ?: defaultUrl
+        val eventsUrl = homeOrg?.eventsURL ?: defaultButtonUrl
         if (!eventsUrl.isNullOrEmpty()) {
             items.add(GridButton("Events",
                 resources.getDrawable(R.drawable.acorn_calendar_day_light, null),
@@ -146,7 +147,7 @@ class MainGridActivity : BaseActivity() {
         var numVisible = 0
 
         // E-books
-        val ebooksUrl = homeOrg?.eresourcesUrl
+        val ebooksUrl = homeOrg?.eresourcesUrl ?: defaultButtonUrl
         if (!ebooksUrl.isNullOrEmpty()) {
             ++numVisible
         } else {
@@ -154,7 +155,7 @@ class MainGridActivity : BaseActivity() {
         }
 
         // Meeting Rooms
-        val meetingRoomsUrl = homeOrg?.meetingRoomsUrl
+        val meetingRoomsUrl = homeOrg?.meetingRoomsUrl ?: defaultButtonUrl
         if (!meetingRoomsUrl.isNullOrEmpty()) {
             ++numVisible
         } else {
@@ -162,7 +163,7 @@ class MainGridActivity : BaseActivity() {
         }
 
         // Museum Passes
-        val museumPassesUrl = homeOrg?.museumPassesUrl
+        val museumPassesUrl = homeOrg?.museumPassesUrl ?: defaultButtonUrl
         if (!museumPassesUrl.isNullOrEmpty()) {
             ++numVisible
         } else {
