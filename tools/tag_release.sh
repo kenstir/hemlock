@@ -34,4 +34,5 @@ msg="${tag} (${versionName})"
 git commit core/build.gradle "$manifest" -m "$msg" || true
 git tag -a -m "$msg" $tag
 git push
-git push --tags
+#git push --tags
+git push origin $tag
