@@ -233,7 +233,10 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
     // calling resolveActivity requires permission.
     // https://developer.android.com/training/package-visibility/use-cases
     fun launchURL(url: String?, requestId: Int? = null) {
-        if (url.isNullOrEmpty()) return
+        if (url.isNullOrEmpty()) {
+            Toast.makeText(this, R.string.msg_null_url, Toast.LENGTH_LONG).show()
+            return
+        }
         val uri = Uri.parse(url)
         val intent = Intent(Intent.ACTION_VIEW, uri)
         try {
