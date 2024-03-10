@@ -27,6 +27,7 @@ import android.widget.Button
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import net.kenstir.apps.bibliomation.R
+import org.evergreen_ils.BuildConfig
 import org.evergreen_ils.android.App
 import org.evergreen_ils.android.Log
 import org.evergreen_ils.data.GridButton
@@ -48,8 +49,8 @@ class MainGridActivity : BaseActivity() {
     private var adapter: GridButtonViewAdapter? = null
     private var items = ArrayList<GridButton>()
 
-    private val defaultButtonUrl: String? = "https://google.com" // use for debugging
-//    private val defaultButtonUrl: String? = null
+    // arrange for all buttons to be visible when debugging
+    private val showButtonsWithoutURLsForDebugging = BuildConfig.DEBUG
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState) // not super
@@ -71,15 +72,7 @@ class MainGridActivity : BaseActivity() {
         rv?.adapter = adapter
     }
 
-    private fun getDrawable(drawableId: Int, colorId: Int): Drawable {
-        val drawable = resources.getDrawable(drawableId, null)
-//        drawable.setTint(ContextCompat.getColor(this, colorId))
-        return drawable
-    }
-
     private fun addGridButtons() {
-        val homeOrg = EgOrg.findOrg(App.getAccount().homeOrg)
-
         // Show Card
         items.add(GridButton("Digital Library Card",
             resources.getDrawable(R.drawable.acorn_id_card_light_48, null),
@@ -130,8 +123,9 @@ class MainGridActivity : BaseActivity() {
         })
 
         // Events
-        val eventsUrl = homeOrg?.eventsURL ?: defaultButtonUrl
-        if (!eventsUrl.isNullOrEmpty()) {
+        val homeOrg = EgOrg.findOrg(App.getAccount().homeOrg)
+        val eventsUrl = homeOrg?.eventsURL
+        if (!eventsUrl.isNullOrEmpty() || showButtonsWithoutURLsForDebugging) {
             items.add(GridButton("Events",
                 resources.getDrawable(R.drawable.acorn_calendar_day_light_48, null),
                 null) {
@@ -145,24 +139,24 @@ class MainGridActivity : BaseActivity() {
         var numVisible = 0
 
         // E-books
-        val ebooksUrl = homeOrg?.eresourcesUrl ?: defaultButtonUrl
-        if (!ebooksUrl.isNullOrEmpty()) {
+        val ebooksUrl = homeOrg?.eresourcesUrl
+        if (!ebooksUrl.isNullOrEmpty() || showButtonsWithoutURLsForDebugging) {
             ++numVisible
         } else {
             findViewById<Button>(R.id.grid_ebooks_button)?.visibility = View.GONE
         }
 
         // Meeting Rooms
-        val meetingRoomsUrl = homeOrg?.meetingRoomsUrl ?: defaultButtonUrl
-        if (!meetingRoomsUrl.isNullOrEmpty()) {
+        val meetingRoomsUrl = homeOrg?.meetingRoomsUrl
+        if (!meetingRoomsUrl.isNullOrEmpty() || showButtonsWithoutURLsForDebugging) {
             ++numVisible
         } else {
             findViewById<Button>(R.id.grid_meeting_rooms_button)?.visibility = View.GONE
         }
 
         // Museum Passes
-        val museumPassesUrl = homeOrg?.museumPassesUrl ?: defaultButtonUrl
-        if (!museumPassesUrl.isNullOrEmpty()) {
+        val museumPassesUrl = homeOrg?.museumPassesUrl
+        if (!museumPassesUrl.isNullOrEmpty() || showButtonsWithoutURLsForDebugging) {
             ++numVisible
         } else {
             findViewById<Button>(R.id.grid_museum_passes_button)?.visibility = View.GONE
