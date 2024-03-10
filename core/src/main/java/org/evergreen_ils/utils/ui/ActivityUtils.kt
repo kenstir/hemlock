@@ -15,26 +15,28 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
+package org.evergreen_ils.utils.ui
 
-package org.evergreen_ils.utils.ui;
+import android.app.Activity
+import android.content.ActivityNotFoundException
+import android.content.Intent
+import android.net.Uri
+import android.widget.Toast
+import org.evergreen_ils.R
 
-import android.app.Activity;
-import android.content.ActivityNotFoundException;
-import android.content.Intent;
-import android.net.Uri;
-import android.widget.Toast;
-
-import org.evergreen_ils.R;
-
-public class ActivityUtils {
-    public static void launchURL(Activity activity, String url) {
-        if (url == null) return;
-        Uri uri = Uri.parse(url);
-        Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+object ActivityUtils {
+    @JvmStatic
+    fun launchURL(activity: Activity, url: String?) {
+        if (url.isNullOrEmpty()) {
+            Toast.makeText(activity, R.string.msg_null_url, Toast.LENGTH_LONG).show()
+            return
+        }
+        val uri = Uri.parse(url)
+        val intent = Intent(Intent.ACTION_VIEW, uri)
         try {
-            activity.startActivity(intent);
-        } catch (ActivityNotFoundException e) {
-            Toast.makeText(activity, R.string.msg_no_browser_installed, Toast.LENGTH_LONG).show();
+            activity.startActivity(intent)
+        } catch (e: ActivityNotFoundException) {
+            Toast.makeText(activity, R.string.msg_no_browser_installed, Toast.LENGTH_LONG).show()
         }
     }
 }
