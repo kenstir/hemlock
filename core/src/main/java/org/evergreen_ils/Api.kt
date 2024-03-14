@@ -56,10 +56,10 @@ object Api {
     /// Hemlock-specific org settings
 
     const val SETTING_HEMLOCK_CACHE_KEY = "hemlock.cache_key"
-    const val SETTING_HEMLOCK_ERESOURCES_URL = "hemlock.eresources_url" //proposed
+    const val SETTING_HEMLOCK_ERESOURCES_URL = "hemlock.eresources_url"
     const val SETTING_HEMLOCK_EVENTS_URL = "hemlock.events_calendar_url"
-    const val SETTING_HEMLOCK_MEETING_ROOMS_URL = "hemlock.meeting_rooms_url" //proposed
-    const val SETTING_HEMLOCK_MUSEUM_PASSES_URL = "hemlock.museum_passes_url" //proposed
+    const val SETTING_HEMLOCK_MEETING_ROOMS_URL = "hemlock.meeting_rooms_url"
+    const val SETTING_HEMLOCK_MUSEUM_PASSES_URL = "hemlock.museum_passes_url"
 
     /// org and user settings
 
