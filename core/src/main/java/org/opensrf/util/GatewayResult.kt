@@ -160,11 +160,9 @@ class GatewayResult {
                         // object or event
                         val event = Event.parseEvent(first)
                         if (event != null) {
-                            resp.failed = event.failed()
-                            if (resp.failed) {
-                                resp.errorMessage = event.message
-                                resp.error = GatewayEventError(event)
-                            }
+                            resp.failed = true
+                            resp.errorMessage = event.message
+                            resp.error = GatewayEventError(event)
                             resp.events = listOf(event)
                             resp.type = ResultType.EVENT
                         } else {
@@ -175,7 +173,7 @@ class GatewayResult {
                         // list of objects or list of events
                         val obj = first.firstOrNull()
                         val event = Event.parseEvent(obj)
-                        if (event != null && event.failed()) {
+                        if (event != null) {
                             resp.failed = true
                             resp.errorMessage = event.message
                             resp.error = GatewayEventError(event)

@@ -22,8 +22,15 @@ class Event : HashMap<String, Any?> {
                     return msg
                 }
             }
-            description?.let { return it }
-            textCode?.let { return it }
+            description?.let { msg ->
+                if (msg.isNotEmpty()) return msg
+            }
+            failPart?.let { msg ->
+                if (msg.isNotEmpty()) return msg
+            }
+            textCode?.let { msg ->
+                if (msg.isNotEmpty()) return msg
+            }
             return "Unknown problem. Contact your local library for further assistance."
         }
 
@@ -46,10 +53,6 @@ class Event : HashMap<String, Any?> {
     val code: Int
         get() = OSRFUtils.parseInt(get("ilsevent")) ?: 0
 
-    fun failed(): Boolean {
-        return code != 0
-    }
-
     companion object {
         // eventMessageMap is injected
         var eventMessageMap = mutableMapOf<String, String>()
@@ -68,10 +71,10 @@ class Event : HashMap<String, Any?> {
          */
         fun parseEvent(obj: OSRFObject): Event? {
             // case 1: obj is an event
-            val ilsevent = obj.getInt("ilsevent")
+            val ilsevent = obj.get("ilsevent")
             val textcode = obj.getString("textcode")
             val desc = obj.getString("desc")
-            if (ilsevent != null && ilsevent != 0 && textcode != null && desc != null) {
+            if (ilsevent != null && textcode != null && textcode != "SUCCESS" && desc != null) {
                 return Event(obj)
             }
 

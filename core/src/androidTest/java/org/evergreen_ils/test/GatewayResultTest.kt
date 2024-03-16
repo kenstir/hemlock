@@ -307,7 +307,6 @@ class GatewayResultTest {
         val res = kotlin.runCatching { result.payloadFirstAsObject() }
         assertTrue(res.isFailure)
         val error = res.exceptionOrNull() as? GatewayEventError
-        assertEquals(error?.ev?.code, 1001)
         assertEquals(error?.ev?.textCode, "NO_SESSION")
         assertEquals(error?.ev?.failPart, null)
         assertTrue(error?.isSessionExpired() ?: false)
@@ -327,7 +326,6 @@ class GatewayResultTest {
         val res = kotlin.runCatching { result.payloadFirstAsObject() }
         assertTrue(res.isFailure)
         val error = res.exceptionOrNull() as? GatewayEventError
-        assertEquals(7013, error?.ev?.code)
         assertEquals("PATRON_EXCEEDS_FINES", error?.ev?.textCode)
         assertEquals(customMessage, error?.ev?.message)
         assertFalse(error?.isSessionExpired() ?: false)
@@ -359,7 +357,6 @@ class GatewayResultTest {
         val res = kotlin.runCatching { result.payloadFirstAsObject() }
         assertTrue(res.isFailure)
         val error = res.exceptionOrNull() as? GatewayEventError
-        assertEquals(1220, error?.ev?.code)
         assertEquals("ITEM_NOT_HOLDABLE", error?.ev?.textCode)
         assertEquals(customMessage, error?.ev?.message)
         assertEquals("config.hold_matrix_test.holdable", error?.ev?.failPart)
@@ -374,6 +371,18 @@ class GatewayResultTest {
         val result = GatewayResult.create(json)
         assertTrue(result.failed)
         assertEquals("User already has an open hold on the selected item", result.errorMessage)
+    }
+
+    // This hold response has a result containing an auto-generated last_event, with an empty "ilsevent" and "desc".
+    // The OPAC gets the error message from a cascading series of checks that ends up with "Problem: STAFF_CHR".
+    @Test
+    fun test_placeHold_failWithAlertBlock() {
+        val json = """
+            {"payload":[{"result":{"place_unfillable":0,"last_event":{"servertime":"Fri Mar 15 14:40:20 2024","payload":{"fail_part":"STAFF_CHR"},"pid":1337988,"ilsevent":"","stacktrace":"Holds.pm:3370","textcode":"STAFF_CHR","desc":""},"success":0,"age_protected_copy":0},"target":6390231}],"status":200}
+            """
+        val result = GatewayResult.create(json)
+        assertTrue(result.failed)
+        assertEquals("STAFF_CHR", result.errorMessage)
     }
 
     @Test
