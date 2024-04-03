@@ -36,7 +36,7 @@ public class RecordAttributes {
 
     public static HashMap<String, String> parseAttributes(String attrs_dump) {
         HashMap<String, String> map = new HashMap<>();
-        String[] attr_arr = TextUtils.split(attrs_dump, ", ");
+        String[] attr_arr = TextUtils.split(attrs_dump, "(?<=\"), (?=\")");
         for (int i=0; i<attr_arr.length; ++i) {
             String[] kv = TextUtils.split(attr_arr[i], "=>");
             String k = kv[0].replace("\"", "");

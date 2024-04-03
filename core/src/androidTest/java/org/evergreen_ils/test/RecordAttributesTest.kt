@@ -20,7 +20,6 @@ package org.evergreen_ils.test
 import org.evergreen_ils.android.Log
 import org.evergreen_ils.android.StdoutLogProvider
 import org.evergreen_ils.utils.RecordAttributes
-import org.evergreen_ils.utils.StringUtils
 import org.junit.Assert.assertEquals
 import org.junit.BeforeClass
 import org.junit.Test
@@ -35,22 +34,22 @@ class RecordAttributesTest {
     }
 
     @Test
-    fun test_basic() {
-        val attrs = "'item_form'=>' ', 'item_type'=>'a', 'icon_format'=>'book', 'content_type'=>'still image', 'search_format'=>'book', 'mr_hold_format'=>'book'".replace("'", "\"")
-        val map: Map<String, String> = RecordAttributes.parseAttributes(attrs)
-        assertEquals(6, map.size.toLong())
+    fun test_parseAttributes_basic() {
+        val attrs = "\"item_form\"=>\" \", \"item_type\"=>\"a\", \"icon_format\"=>\"book\", \"content_type\"=>\"still image\", \"search_format\"=>\"book\", \"mr_hold_format\"=>\"book\""
+        val map = RecordAttributes.parseAttributes(attrs)
+        assertEquals(6, map.size)
         assertEquals("book", map["icon_format"])
         assertEquals(" ", map["item_form"])
         assertEquals(null, map["xyzzy"])
     }
 
+    /* from https://evergreen.cool-cat.org/osrf-gateway-v1?service=open-ils.pcrud&method=open-ils.pcrud.retrieve.mra&param=%22ANONYMOUS%22&param=1613894 */
     @Test
-    fun test_xxxxx() {
-        val s1: String? = null
-        assertEquals("", StringUtils.take(s1, 4))
-        val s2 = "abcdef"
-        assertEquals("abcd", StringUtils.take(s2, 4))
-        assertEquals(s2, StringUtils.take(s2, 6))
-        assertEquals(s2, StringUtils.take(s2, 8))
+    fun test_parseAttributes_withEmbeddedComma() {
+        val attrs = "\"icon_format\"=>\"book\", \"marc21_biblio_300_sub_a\"=>\"xviii, 253 pages ;\""
+        val map = RecordAttributes.parseAttributes(attrs)
+        assertEquals(2, map.size)
+        assertEquals("book", map["icon_format"])
+        assertEquals("xviii, 253 pages ;", map["marc21_biblio_300_sub_a"])
     }
 }
