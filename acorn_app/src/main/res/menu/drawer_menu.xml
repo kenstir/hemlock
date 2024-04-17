@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group
+        android:id="@+id/grp2"
+        android:checkableBehavior="none">
+        <item
+            android:id="@+id/main_showcard_button"
+            android:icon="@drawable/ic_barcode_24"
+            android:title="@string/barcode_title" />
+        <item
+            android:id="@+id/main_search_button"
+            android:icon="@drawable/ic_search_24"
+            android:title="@string/title_search" />
+        <item
+            android:id="@+id/main_library_info_button"
+            android:icon="@drawable/ic_library_24"
+            android:title="@string/title_library_info" />
+        <item
+            android:id="@+id/main_checkouts_button"
+            android:icon="@drawable/ic_checkouts_24"
+            android:title="@string/title_check_out" />
+        <item
+            android:id="@id/main_fines_button"
+            android:icon="@drawable/ic_fines_24"
+            android:title="@string/title_fines" />
+        <item
+            android:id="@id/main_holds_button"
+            android:icon="@drawable/ic_holds_24"
+            android:title="@string/title_holds" />
+        <item
+            android:id="@id/main_my_lists_button"
+            android:icon="@drawable/ic_lists_24"
+            android:title="@string/title_my_lists" />
+        <item
+            android:id="@+id/main_events_button"
+            android:icon="@drawable/ic_event_24"
+            android:title="@string/title_events" />
+    </group>
+
+</menu>

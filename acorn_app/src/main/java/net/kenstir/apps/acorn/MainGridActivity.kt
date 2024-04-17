@@ -74,49 +74,49 @@ class MainGridActivity : BaseActivity() {
 
     private fun addGridButtons() {
         // Show Card
-        items.add(GridButton("Digital Library Card",
+        items.add(GridButton(resources.getString(R.string.barcode_title),
             resources.getDrawable(R.drawable.acorn_id_card_light_48, null),
             null) {
             startActivity(Intent(this, BarcodeActivity::class.java))
         })
 
         // Search
-        items.add(GridButton("Search Catalog",
+        items.add(GridButton(resources.getString(R.string.title_search),
             resources.getDrawable(R.drawable.acorn_magnifying_glass_light_48, null),
             null) {
             startActivity(Intent(this, SearchActivity::class.java))
         })
 
         // Org Details
-        items.add(GridButton("Library Hours & Info",
+        items.add(GridButton(resources.getString(R.string.title_library_info),
             resources.getDrawable(R.drawable.acorn_square_info_light_48, null),
             null) {
             startActivity(Intent(this, OrgDetailsActivity::class.java))
         })
 
         // Items Checked Out
-        items.add(GridButton("Items Checked Out",
+        items.add(GridButton(resources.getString(R.string.title_check_out),
             resources.getDrawable(R.drawable.acorn_book_light_48, null),
             null) {
             startActivity(Intent(this, CheckoutsActivity::class.java))
         })
 
         // Fines
-        items.add(GridButton("Fines",
+        items.add(GridButton(resources.getString(R.string.title_fines),
             resources.getDrawable(R.drawable.acorn_piggy_bank_light_48, null),
             null) {
             startActivity(Intent(this, FinesActivity::class.java))
         })
 
         // Holds
-        items.add(GridButton("Holds",
+        items.add(GridButton(resources.getString(R.string.title_holds),
             resources.getDrawable(R.drawable.acorn_hand_holding_book_48, null),
             null) {
             startActivity(Intent(this, HoldsActivity::class.java))
         })
 
         // My Lists
-        items.add(GridButton("My Lists",
+        items.add(GridButton(resources.getString(R.string.title_my_lists),
             resources.getDrawable(R.drawable.acorn_list_light_48, null),
             null) {
             startActivity(Intent(this, BookBagsActivity::class.java))
@@ -126,7 +126,7 @@ class MainGridActivity : BaseActivity() {
         val homeOrg = EgOrg.findOrg(App.getAccount().homeOrg)
         val eventsUrl = homeOrg?.eventsURL
         if (!eventsUrl.isNullOrEmpty() || showButtonsWithoutURLsForDebugging) {
-            items.add(GridButton("Events",
+            items.add(GridButton(resources.getString(R.string.title_events),
                 resources.getDrawable(R.drawable.acorn_calendar_day_light_48, null),
                 null) {
                 launchURL(eventsUrl)

@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="barcode_title">Digital Library Card</string>
+    <string name="title_search">Search Catalog</string>
     <string name="title_library_info">Library Hours &amp; Info</string>
 </resources>
