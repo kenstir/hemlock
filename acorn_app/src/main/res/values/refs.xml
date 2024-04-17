@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!--    <drawable name="ic_search_24">no override</drawable>-->
     <drawable name="ic_search_48">@drawable/magnifying_glass_solid</drawable>
     <drawable name="ic_checkouts_24">@drawable/hemlock_book_light_24</drawable>
     <drawable name="ic_checkouts_48">@drawable/hemlock_book_light_48</drawable>
@@ -10,10 +9,10 @@
     <drawable name="ic_fines_48">@drawable/hemlock_piggy_bank_light_48</drawable>
     <drawable name="ic_lists_24">@drawable/hemlock_list_light_24</drawable>
     <drawable name="ic_lists_48">@drawable/hemlock_list_light_48</drawable>
-    <drawable name="ic_barcode_24">@drawable/hemlock_barcode_alt_light_24</drawable>
+    <drawable name="ic_barcode_24">@drawable/acorn_id_card_light_24</drawable>
     <drawable name="ic_barcode_48">@drawable/id_card_solid</drawable>
-    <drawable name="ic_library_24">@drawable/hemlock_book_reader_light_24</drawable>
+    <drawable name="ic_library_24">@drawable/acorn_square_info_light_24</drawable>
     <drawable name="ic_library_48">@drawable/hemlock_book_reader_light_48</drawable>
-    <drawable name="ic_event_24">@drawable/hemlock_calendar_day_light_24</drawable>
+    <drawable name="ic_event_24">@drawable/acorn_calendar_day_light_24</drawable>
     <drawable name="ic_event_48">@drawable/hemlock_calendar_day_light_48</drawable>
 </resources>
