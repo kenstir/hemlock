@@ -329,4 +329,22 @@ class LiveGatewayTest {
             }
         }
     }
+
+    @Test
+    fun test_storeUserData() {
+        getAccount()
+        runBlocking {
+            launch(Dispatchers.Main) {
+                loadServiceData()
+                getSession()
+
+                val result = Gateway.actor.updatePushNotificationToken(account, "xyzzy")
+                when (result) {
+                    is Result.Success -> {}
+                    is Result.Error -> { throw result.exception }
+                }
+                assertTrue(true)
+            }
+        }
+    }
 }
