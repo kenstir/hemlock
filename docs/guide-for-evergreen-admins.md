@@ -43,7 +43,7 @@ There are 2 ways:
 
 ### How to invalidate the cache for all patrons
 
-This is rarely necessary, but you can invalidate the cache for all patrons.  To do this:
-* on the org with ID 1, add a setting `hemlock.cache_key` to today's date in ISO format, e.g. `20230416`.
-
+This is rarely necessary, but you can invalidate the cache for all patrons.  To do that,
+add a setting `hemlock.cache_key` to the org with ID 1.  Use a value of today's date in
+ISO format, e.g. `20230416`.  Add a number to the end if you change it more than once per day.
 The format is not itself important, just that it is different from prior values.
