@@ -21,6 +21,8 @@
     <string name="ou_library_url">https://demo.evergreencatalog.com</string>
     <!-- URL of feedback form -->
     <string name="ou_feedback_url" />
+    <!-- name of class overriding main activity -->
+    <string name="ou_main_activity" />
     <!-- name of class that supplies menu handler for main menu extensions -->
     <string name="ou_menu_provider" />
     <!-- name of class that implements AppBehavior -->

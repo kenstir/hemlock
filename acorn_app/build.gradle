@@ -8,6 +8,7 @@ buildscript {
 apply plugin: 'com.android.application'
 apply plugin: 'com.google.gms.google-services'
 apply plugin: 'com.google.firebase.crashlytics'
+apply plugin: 'kotlin-android'
 
 android {
     compileSdk 34
@@ -19,13 +20,25 @@ android {
     }
     buildTypes {
         release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            /// https://developer.android.com/studio/build/shrink-code
+
+            // enable code shrinking, obfuscating, and optimization
+            // see also {dontshrink|dontobfuscate|dontoptimize} in proguard-rules.pro
+            minifyEnabled true
+
+            // enable resource shrinking
+            shrinkResources true
+
+            // include ProGuard rules files
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_17
         targetCompatibility JavaVersion.VERSION_17
+    }
+    buildFeatures {
+        buildConfig true
     }
     namespace 'net.kenstir.apps.bibliomation'
 }
@@ -38,4 +51,10 @@ dependencies {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
     testImplementation 'junit:junit:4.13.2'
+
+    // include hemlock-pro-assets if it exists
+    def dir = new File('hemlock-pro-assets')
+    if (dir.exists()) {
+        implementation project(path: ':hemlock-pro-assets')
+    }
 }

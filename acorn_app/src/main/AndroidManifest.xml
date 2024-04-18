@@ -2,8 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:installLocation="auto"
-    android:versionCode="28"
-    android:versionName="2.6.2">
+    android:versionCode="35"
+    android:versionName="3.0.7">
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS" />
@@ -45,48 +45,52 @@
             android:name="org.evergreen_ils.views.MainActivity"
             android:launchMode="singleTask">
         </activity>
+        <activity
+            android:name="net.kenstir.apps.acorn.MainGridActivity"
+            android:launchMode="singleTask">
+        </activity>
 
         <!-- top-level activities -->
 
         <activity
             android:name="org.evergreen_ils.views.BarcodeActivity"
             android:label="@string/barcode_title"
-            android:parentActivityName="org.evergreen_ils.views.MainActivity">
+            >
         </activity>
         <activity
             android:name="org.evergreen_ils.views.bookbags.BookBagsActivity"
             android:label="@string/title_my_lists"
-            android:parentActivityName="org.evergreen_ils.views.MainActivity">
+            >
         </activity>
         <activity
             android:name="org.evergreen_ils.views.CheckoutsActivity"
             android:label="@string/checkout_items_title"
-            android:parentActivityName="org.evergreen_ils.views.MainActivity">
+            >
         </activity>
         <activity
             android:name="org.evergreen_ils.views.holds.HoldsActivity"
             android:label="@string/hold_items_title"
-            android:parentActivityName="org.evergreen_ils.views.MainActivity">
+            >
         </activity>
 <!--        <activity-->
 <!--            android:name="org.evergreen_ils.views.messages.MessagesActivity"-->
 <!--            android:label="@string/title_messages"-->
-<!--            android:parentActivityName="org.evergreen_ils.views.MainActivity">-->
+<!--            >-->
 <!--        </activity>-->
         <activity
             android:name="org.evergreen_ils.views.OrgDetailsActivity"
             android:label="@string/title_library_info"
-            android:parentActivityName="org.evergreen_ils.views.MainActivity">
+            >
         </activity>
         <activity
             android:name="org.evergreen_ils.views.search.SearchActivity"
             android:label="@string/title_search"
-            android:parentActivityName="org.evergreen_ils.views.MainActivity">
+            >
         </activity>
         <activity
             android:name="org.evergreen_ils.views.FinesActivity"
             android:label="@string/title_fines"
-            android:parentActivityName="org.evergreen_ils.views.MainActivity">
+            >
         </activity>
 
         <!-- secondary activities -->

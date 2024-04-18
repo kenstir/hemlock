@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <include layout="@layout/toolbar_common"/>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:padding="10dp"
+        app:layoutManager="GridLayoutManager"
+        app:layout_constraintBottom_toTopOf="@+id/grid_buttonrow_1"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar" />
+
+    <LinearLayout
+        android:id="@+id/grid_buttonrow_1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="0dp"
+        android:layout_marginStart="0dp"
+        android:layout_marginEnd="0dp"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/grid_ebooks_button"
+            style="@style/Hemlock.GridButton.Small"
+            android:drawableTop="@drawable/acorn_light_book_circle_arrow_down_36"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:onClick="onButtonClick"
+            android:text="Ebooks &amp; Digital" />
+
+        <Button
+            android:id="@+id/grid_meeting_rooms_button"
+            style="@style/Hemlock.GridButton.Small"
+            android:drawableTop="@drawable/acorn_users_light_36"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:onClick="onButtonClick"
+            android:text="Meeting Rooms" />
+
+        <Button
+            android:id="@+id/grid_museum_passes_button"
+            style="@style/Hemlock.GridButton.Small"
+            android:drawableTop="@drawable/acorn_ticket_light_36"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:onClick="onButtonClick"
+            android:text="Museum Passes" />
+
+    </LinearLayout>
+
+</LinearLayout>

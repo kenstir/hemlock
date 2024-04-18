@@ -137,6 +137,24 @@
         <item name="android:textAllCaps">false</item>
     </style>
 
+    <style name="Hemlock.GridButton" parent="Widget.AppCompat.Button">
+        <item name="android:drawablePadding">12dp</item>
+        <item name="android:paddingLeft">4dp</item>
+        <item name="android:paddingRight">4dp</item>
+        <item name="android:paddingTop">16dp</item>
+        <item name="android:paddingBottom">16dp</item>
+        <item name="android:minHeight">120dp</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:textAllCaps">false</item>
+    </style>
+
+    <style name="Hemlock.GridButton.Small" parent="Hemlock.GridButton">
+        <item name="android:paddingTop">16dp</item>
+        <item name="android:paddingBottom">16dp</item>
+        <item name="android:minHeight">80dp</item>
+        <item name="android:textSize">12sp</item>
+    </style>
+
     <style name="HemlockDark" parent="Theme.AppCompat.DayNight">
         <item name="colorPrimary">@color/primary</item>
         <item name="colorPrimaryDark">@color/primary_dark</item>

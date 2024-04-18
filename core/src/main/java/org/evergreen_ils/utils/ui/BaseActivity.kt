@@ -127,7 +127,7 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         }
     }
 
-    internal fun initMenuProvider() {
+    private fun initMenuProvider() {
         menuItemHandler = MenuProvider.create(getString(R.string.ou_menu_provider))
     }
 
@@ -146,8 +146,20 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         return super.onOptionsItemSelected(item)
     }
 
+    fun getEbooksUrl(): String? {
+        return EgOrg.findOrg(App.getAccount().homeOrg)?.eresourcesUrl
+    }
+
     fun getEventsUrl(): String? {
         return EgOrg.findOrg(App.getAccount().homeOrg)?.eventsURL
+    }
+
+    fun getMeetingRoomsUrl(): String? {
+        return EgOrg.findOrg(App.getAccount().homeOrg)?.meetingRoomsUrl
+    }
+
+    fun getMuseumPassesUrl(): String? {
+        return EgOrg.findOrg(App.getAccount().homeOrg)?.museumPassesUrl
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
@@ -158,7 +170,7 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
     protected fun onNavigationAction(id: Int): Boolean {
         var ret = true
         if (id == R.id.nav_header) {
-            startActivity(Intent(this, MainActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
+            startActivity(App.getMainActivityIntent(this).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
         } else if (id == R.id.main_search_button) {
             startActivity(Intent(this, SearchActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
         } else if (id == R.id.main_checkouts_button) {
@@ -221,7 +233,10 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
     // calling resolveActivity requires permission.
     // https://developer.android.com/training/package-visibility/use-cases
     fun launchURL(url: String?, requestId: Int? = null) {
-        if (url.isNullOrEmpty()) return
+        if (url.isNullOrEmpty()) {
+            Toast.makeText(this, R.string.msg_null_url, Toast.LENGTH_LONG).show()
+            return
+        }
         val uri = Uri.parse(url)
         val intent = Intent(Intent.ACTION_VIEW, uri)
         try {
