@@ -53,17 +53,27 @@ Procedure:
 
 * Set the Template form value to
   ```
-  method get
-  url http://localhost:8842/send
+method get
+url http://localhost:8842/send
   
-  [%- USE date -%]
-  [%- user = target.0.usr -%]
-  [%- homelib = user.home_ou -%]
+[%- USE date -%]
+[%- user = target.0.usr -%]
+[%- homelib = user.home_ou -%]
   
-  <Parameters>
+<Parameters>
   title Courtesy Notice
   body You have a item due
+
+  # if the patron is not a mobile app user, token will be empty;
+  # this does no harm and allows hemlock-sendmsg to keep a metric of all send attempts
   token [%- helpers.get_user_setting(user.id, 'hemlock.push_notification_data') %]
-  </Parameters>
+
+  # username is used by the app if there are multiple accounts on the device;
+  # barcode might be better but the app does not currently store that
+  username [%- user.usrname %]
+
+  # debug=1 causes hemlock-sendmsg to log requests on stdout
+  debug 1
+</Parameters>
   ```
 * Click `Save`
