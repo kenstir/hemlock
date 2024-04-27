@@ -21,7 +21,6 @@ package org.evergreen_ils.android;
 import android.annotation.SuppressLint;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 
 /** private logging class that allows substituting different behaviors
  */
@@ -35,6 +34,8 @@ public class Log {
 
     public static LogProvider provider = new AndroidLogProvider();
     public static int level = DEBUG;
+
+    public static String TAG_ASYNC = "async";
 
     public static void setProvider(LogProvider _provider) {
         provider = _provider;

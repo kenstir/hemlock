@@ -45,6 +45,7 @@ import org.evergreen_ils.KEY_SEARCH_TEXT
 import org.evergreen_ils.R
 import org.evergreen_ils.android.App
 import org.evergreen_ils.android.Log
+import org.evergreen_ils.android.Log.TAG_ASYNC
 import org.evergreen_ils.net.Gateway.getUrl
 import org.evergreen_ils.net.GatewayLoader
 import org.evergreen_ils.net.Volley
@@ -101,7 +102,7 @@ class DetailsFragment : Fragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        Log.d("xyzzy", "${record?.id}: oncreateview")
+        Log.d(TAG_ASYNC, "${record?.id}: oncreateview")
         val layout = inflater.inflate(
                 R.layout.record_details_fragment, container, false) as LinearLayout
 
@@ -131,7 +132,7 @@ class DetailsFragment : Fragment() {
 
         // Start async image load
         val url = getUrl("/opac/extras/ac/jacket/medium/r/" + record?.id)
-        Log.d("xyzzy", "${record?.id}: setimageurl $url")
+        Log.d(TAG_ASYNC, "${record?.id}: setimageurl $url")
         recordImage?.setImageUrl(url, Volley.getInstance(activity).imageLoader)
         //recordImage?.setDefaultImageResId(R.drawable.missing_art);//for screenshots
 
@@ -299,33 +300,33 @@ class DetailsFragment : Fragment() {
         val scope = viewLifecycleOwner.lifecycleScope
         scope.async {
             try {
-                Log.d(TAG, "[kcxxx] fetchData ...")
-                Log.d("xyzzy", "${record.id}: fetchData")
+                //Log.d(TAG_ASYNC, "fetchData ...")
+                Log.d(TAG_ASYNC, "${record.id}: fetchData")
                 val start = System.currentTimeMillis()
                 val jobs = mutableListOf<Job>()
 
                 jobs.add(scope.async {
                     GatewayLoader.loadRecordMetadataAsync(record)
                     loadMetadata()
-                    Log.d("xyzzy", "${record.id}: loadRecordMetadataAsync")
+                    Log.d(TAG_ASYNC, "${record.id}: loadRecordMetadataAsync done")
                 })
 
                 jobs.add(scope.async {
                     GatewayLoader.loadRecordAttributesAsync(record)
                     loadFormat()
-                    Log.d("xyzzy", "${record.id}: loadRecordAttributesAsync")
+                    Log.d(TAG_ASYNC, "${record.id}: loadRecordAttributesAsync done")
                 })
 
                 jobs.add(scope.async {
                     GatewayLoader.loadRecordCopyCountAsync(record, orgID)
                     // do not loadCopySummary yet, we need the MARC
-                    Log.d("xyzzy", "${record.id}: loadRecordCopyCountAsync")
+                    Log.d(TAG_ASYNC, "${record.id}: loadRecordCopyCountAsync done")
                 })
 
                 if (resources.getBoolean(R.bool.ou_need_marc_record)) {
                     jobs.add(scope.async {
                         GatewayLoader.loadRecordMarcAsync(record)
-                        Log.d("xyzzy", "${record.id}: loadRecordMarcAsync")
+                        Log.d(TAG_ASYNC, "${record.id}: loadRecordMarcAsync done")
                     })
                 }
 

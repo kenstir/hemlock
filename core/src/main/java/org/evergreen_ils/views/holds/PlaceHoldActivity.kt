@@ -167,6 +167,10 @@ class PlaceHoldActivity : BaseActivity() {
                     GatewayLoader.loadOrgSettingsAsync(null).await()
                 })
 
+                jobs.add(scope.async {
+                    GatewayLoader.loadSMSCarriersAsync()
+                })
+
                 if (resources.getBoolean(R.bool.ou_enable_part_holds)) {
                     Log.d(TAG, "${record.title}: fetching parts")
                     jobs.add(scope.async {
@@ -367,7 +371,7 @@ class PlaceHoldActivity : BaseActivity() {
             smsNotification?.isChecked = true
         }
 
-        val enabled: Boolean = EgOrg.smsEnabled
+        val enabled = EgOrg.smsEnabled
         if (enabled) {
             smsNotification?.setOnCheckedChangeListener { buttonView, isChecked ->
                 smsSpinner?.isEnabled = isChecked
