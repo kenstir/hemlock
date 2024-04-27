@@ -26,6 +26,7 @@ import org.evergreen_ils.android.App
 import org.evergreen_ils.android.Log
 import org.evergreen_ils.data.*
 import org.evergreen_ils.system.EgOrg
+import org.evergreen_ils.system.EgSms
 
 object GatewayLoader {
 
@@ -146,6 +147,15 @@ object GatewayLoader {
         val objList = result.get()
         record.copyCounts = CopyCount.makeArray(objList)
 
+        return Result.Success(Unit)
+    }
+
+    suspend fun loadSMSCarriersAsync(): Result<Unit> {
+        if (EgSms.carriers.isNotEmpty()) return Result.Success(Unit)
+
+        val result = Gateway.pcrud.fetchSMSCarriers()
+        if (result is Result.Error) return result
+        EgSms.loadCarriers(result.get())
         return Result.Success(Unit)
     }
 }
