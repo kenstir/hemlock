@@ -347,7 +347,7 @@ class HoldsActivity : BaseActivity() {
     }
 
     companion object {
-        public val TAG = HoldsActivity::class.java.simpleName
+        val TAG = HoldsActivity::class.java.simpleName
 
         //TODO: replace with GatewayLoader.loadRecordAttributesAsync
         suspend fun fetchRecordAttrs(record: MBRecord, id: Int): Result<Unit> {

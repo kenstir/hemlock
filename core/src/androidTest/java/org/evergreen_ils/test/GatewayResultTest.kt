@@ -373,6 +373,17 @@ class GatewayResultTest {
         assertEquals("User already has an open hold on the selected item", result.errorMessage)
     }
 
+    /// This hold response has a payload with a result that is an event (not a list of events)
+    @Test
+    fun test_placeHold_failWithDatabaseError() {
+        val json = """
+            {"payload":[{"result":{"payload":{"__c":"au","__p":["f","luser",69]},"textcode":"DATABASE_UPDATE_FAILED","desc":"The attempt to write to the DB failed","ilsevent":"2001"},"target":4438693}],"status":200}
+            """
+        val result = GatewayResult.create(json)
+        assertTrue(result.failed)
+        assertEquals("The attempt to write to the DB failed", result.errorMessage)
+    }
+
     // This hold response has a result containing an auto-generated last_event, with an empty "ilsevent" and "desc".
     // The OPAC gets the error message from a cascading series of checks that ends up with "Problem: STAFF_CHR".
     @Test
