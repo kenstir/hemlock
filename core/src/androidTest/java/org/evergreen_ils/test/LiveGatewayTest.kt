@@ -330,7 +330,9 @@ class LiveGatewayTest {
         }
     }
 
-    @Test
+    // One-off test should not run because it updates the account
+    // and requires creating the User Setting Type.
+    //@Test
     fun test_storeUserData() {
         getAccount()
         runBlocking {
