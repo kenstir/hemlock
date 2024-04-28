@@ -32,7 +32,6 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import org.evergreen_ils.R
 import org.evergreen_ils.android.AccountUtils
@@ -47,7 +46,6 @@ import org.evergreen_ils.utils.await
 import org.evergreen_ils.utils.getAccountManagerResult
 import org.evergreen_ils.utils.getCustomMessage
 import org.evergreen_ils.utils.ui.AppState
-import org.evergreen_ils.utils.ui.ThemeManager
 import org.opensrf.util.OSRFObject
 import java.util.concurrent.TimeoutException
 
@@ -251,6 +249,16 @@ class LaunchActivity : AppCompatActivity() {
             is Result.Error -> {
                 throw fleshedUserResult.exception
             }
+        }
+
+        // we just got the storedFcmToken from the user settings.  If the one we have in the app
+        // is different, we need to update the user setting in Evergreen
+        val storedToken = account.storedFcmToken
+        val currentToken = App.getFcmNotificationToken()
+        Log.d(Log.TAG_FCM, "stored token:  $storedToken")
+        Log.d(Log.TAG_FCM, "current token: $currentToken")
+        if (currentToken != null && currentToken != storedToken) {
+            Gateway.actor.updatePushNotificationToken(account, currentToken)
         }
 
         // load the home org settings, used to control visibility of the Events button
