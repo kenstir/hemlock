@@ -25,13 +25,14 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.text.TextUtils;
 
+import androidx.annotation.Nullable;
+
 import org.evergreen_ils.R;
 import org.evergreen_ils.data.Account;
 import org.evergreen_ils.data.Library;
 import org.evergreen_ils.net.Gateway;
 import org.evergreen_ils.net.Volley;
 import org.evergreen_ils.utils.ui.AppState;
-import org.evergreen_ils.views.MenuProvider;
 import org.evergreen_ils.views.launch.LaunchActivity;
 import org.evergreen_ils.views.MainActivity;
 
@@ -50,6 +51,7 @@ public class App {
     private static AppBehavior behavior = null;
     private static Library library = null;
     private static Account account = null;
+    private static String fcmNotificationToken = null;
 
     public static int getVersionCode(Context context) {
         PackageInfo pInfo = null;
@@ -112,6 +114,15 @@ public class App {
         Gateway.baseUrl = library.getUrl();
     }
 
+    @Nullable
+    public static String getFcmNotificationToken() {
+        return fcmNotificationToken;
+    }
+
+    public static void setFcmNotificationToken(@Nullable String fcmNotificationToken) {
+        App.fcmNotificationToken = fcmNotificationToken;
+    }
+
     /**
      * android may choose to initialize the app at a non-MAIN activity if the
      * app crashed or for other reasons.  In these cases we want to force sane
@@ -153,11 +164,6 @@ public class App {
         }
         return new Intent(activity.getApplicationContext(), MainActivity.class);
     }
-
-//    static void Class<?> getMainActivityClass(Activity activity) {
-//        //String className = activity.getString(R.string.ou_main_activity);
-//        return MainActivity.class;
-//    }
 
     static void updateLaunchCount() {
         int launch_count = AppState.getInt(AppState.LAUNCH_COUNT);

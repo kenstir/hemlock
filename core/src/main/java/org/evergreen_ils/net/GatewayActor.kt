@@ -395,7 +395,7 @@ object GatewayActor: ActorService {
             val result = updatePatronSettings(account, Api.USER_SETTING_HEMLOCK_PUSH_NOTIFICATION_DATA, value)
             when (result) {
                 is Result.Success -> {
-                    account.hemlockUserData = value
+                    account.storedFcmToken = value
                     return Result.Success(Unit)
                 }
                 is Result.Error -> {
