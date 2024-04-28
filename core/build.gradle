@@ -34,8 +34,14 @@ repositories {
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    implementation 'com.google.firebase:firebase-analytics:21.5.1'
-    implementation 'com.google.firebase:firebase-crashlytics:18.6.2'
+
+    // Import the BoM for the Firebase platform
+    // https://firebase.google.com/docs/android/learn-more#bom
+    implementation platform('com.google.firebase:firebase-bom:32.8.1')
+    implementation 'com.google.firebase:firebase-analytics'
+    implementation 'com.google.firebase:firebase-crashlytics'
+    implementation 'com.google.firebase:firebase-messaging'
+
     api 'com.google.zxing:core:3.5.2'
     api 'com.google.android.material:material:1.9.0'
     api 'androidx.appcompat:appcompat:1.6.1'
