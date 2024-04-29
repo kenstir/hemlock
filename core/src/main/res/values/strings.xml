@@ -280,5 +280,7 @@
     <string name="title_date">Date</string>
     <string name="title_reason_for_closure">Reason for Closure</string>
     <string name="no_closures_scheduled_msg">No closures scheduled</string>
+    <string name="notification_permission_rationale_msg">%1$s wants to send a notification when you have a new message in your account, e.g. when a hold is ready for pickup.</string>
+    <string name="notification_permission_denied_msg">%1$s will not be able to send a notification when you have a new message in your account, e.g. when a hold is ready for pickup.</string>
 
 </resources>
