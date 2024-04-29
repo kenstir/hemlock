@@ -97,7 +97,6 @@ class Account constructor(val username: String, var authToken: String?) {
     }
 
     fun loadFleshedUserSettings(obj: OSRFObject) {
-        print("obj: $obj")
         barcode = obj.getObject("card")?.getString("barcode")
 
         // settings is a list of objects with name and value as string;

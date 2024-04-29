@@ -86,6 +86,8 @@ open class MainActivity : BaseActivity() {
     }
 
     private fun fetchData() {
+        fetchFcmNotificationToken()
+        requestNotificationPermission()
         loadUnreadMessageCount()
     }
 

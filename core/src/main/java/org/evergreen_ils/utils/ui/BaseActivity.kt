@@ -18,31 +18,38 @@
 
 package org.evergreen_ils.utils.ui
 
+import android.Manifest
 import android.annotation.SuppressLint
 import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.ActionBarDrawerToggle
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.Toolbar
+import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.lifecycleScope
+import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.material.navigation.NavigationView
-import kotlinx.coroutines.*
+import com.google.firebase.messaging.FirebaseMessaging
 import org.evergreen_ils.R
 import org.evergreen_ils.android.AccountUtils
 import org.evergreen_ils.android.Analytics
 import org.evergreen_ils.android.App
 import org.evergreen_ils.android.App.REQUEST_MESSAGES
 import org.evergreen_ils.android.Log
+import org.evergreen_ils.android.Log.TAG_FCM
 import org.evergreen_ils.views.search.SearchActivity
 import org.evergreen_ils.system.EgOrg
 import org.evergreen_ils.system.EgSearch
@@ -51,7 +58,6 @@ import org.evergreen_ils.views.bookbags.BookBagsActivity
 import org.evergreen_ils.views.holds.HoldsActivity
 import org.evergreen_ils.views.messages.MessagesActivity
 import java.net.URLEncoder
-import kotlin.coroutines.CoroutineContext
 
 /* Activity base class to handle common behaviours like the navigation drawer */
 open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
@@ -75,6 +81,57 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
             val urlFormat = getString(R.string.ou_feedback_url)
             return if (urlFormat.isEmpty()) urlFormat else String.format(urlFormat, getAppVersionCode(this))
         }
+
+    private val requestPermissionLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
+        if (isGranted) {
+            Log.d(TAG_FCM, "Permission granted")
+        } else {
+            //TODO: change title to "Notice" and add text on how to update it later
+            //TODO: don't show again
+            this.showAlert(getString(R.string.notification_permission_denied_msg, getString(R.string.ou_app_label)))
+        }
+    }
+
+    fun requestNotificationPermission() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) return
+
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) ==
+            PackageManager.PERMISSION_GRANTED
+        ) {
+            Log.d(TAG_FCM, "Permission granted (2)")
+        } else if (shouldShowRequestPermissionRationale(Manifest.permission.POST_NOTIFICATIONS)) {
+            Log.d(TAG_FCM, "Showing rationale for notifications")
+            AlertDialog.Builder(this)
+                .setMessage(getString(R.string.notification_permission_rationale_msg, getString(R.string.ou_app_label)))
+                .setPositiveButton("OK") { _, _ ->
+                    Log.d(TAG_FCM, "Launching request for permission")
+                    requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+                }
+                .setNegativeButton("No thanks") { _, _ ->
+                    Log.d(TAG_FCM, "Permission denied")
+                }
+                .show()
+
+        } else {
+            // Directly ask for the permission
+            Log.d(TAG_FCM, "Launching request for permission (2)")
+            requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+        }
+    }
+
+    fun fetchFcmNotificationToken() {
+        FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
+            if (!task.isSuccessful) {
+                Log.w(TAG_FCM, "Fetching FCM registration token failed", task.exception)
+                return@OnCompleteListener
+            }
+            val token = task.result
+            val msg = "Got token: $token"
+            Log.d(TAG_FCM, msg)
+            App.setFcmNotificationToken(token)
+            Toast.makeText(baseContext, msg, Toast.LENGTH_SHORT).show()
+        })
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
