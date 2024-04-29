@@ -251,16 +251,6 @@ class LaunchActivity : AppCompatActivity() {
             }
         }
 
-        // we just got the storedFcmToken from the user settings.  If the one we have in the app
-        // is different, we need to update the user setting in Evergreen
-        val storedToken = account.storedFcmToken
-        val currentToken = App.getFcmNotificationToken()
-        Log.d(Log.TAG_FCM, "stored token:  $storedToken")
-        Log.d(Log.TAG_FCM, "current token: $currentToken")
-        if (currentToken != null && currentToken != storedToken) {
-            Gateway.actor.updatePushNotificationToken(account, currentToken)
-        }
-
         // load the home org settings, used to control visibility of the Events button
         if (resources.getBoolean(R.bool.ou_enable_events_button)) {
             EgOrg.findOrg(App.getAccount().homeOrg)?.let { org ->
