@@ -43,6 +43,7 @@ import androidx.lifecycle.lifecycleScope
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.messaging.FirebaseMessaging
+import kotlinx.coroutines.tasks.await
 import org.evergreen_ils.R
 import org.evergreen_ils.android.AccountUtils
 import org.evergreen_ils.android.Analytics
@@ -50,6 +51,7 @@ import org.evergreen_ils.android.App
 import org.evergreen_ils.android.App.REQUEST_MESSAGES
 import org.evergreen_ils.android.Log
 import org.evergreen_ils.android.Log.TAG_FCM
+import org.evergreen_ils.data.Result
 import org.evergreen_ils.views.search.SearchActivity
 import org.evergreen_ils.system.EgOrg
 import org.evergreen_ils.system.EgSearch
@@ -88,11 +90,14 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         } else {
             //TODO: change title to "Notice" and add text on how to update it later
             //TODO: don't show again
-            this.showAlert(getString(R.string.notification_permission_denied_msg, getString(R.string.ou_app_label)))
+            val msg = getString(R.string.notification_permission_denied_msg, getString(R.string.ou_app_label))
+            Toast.makeText(baseContext, msg, Toast.LENGTH_SHORT).show()
         }
     }
 
     fun requestNotificationPermission() {
+        val v = Build.VERSION.SDK_INT
+        Log.d(TAG_FCM, "Version $v")
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) return
 
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) ==
@@ -119,18 +124,18 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         }
     }
 
-    fun fetchFcmNotificationToken() {
-        FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
-            if (!task.isSuccessful) {
-                Log.w(TAG_FCM, "Fetching FCM registration token failed", task.exception)
-                return@OnCompleteListener
-            }
-            val token = task.result
-            val msg = "Got token: $token"
-            Log.d(TAG_FCM, msg)
-            App.setFcmNotificationToken(token)
-            Toast.makeText(baseContext, msg, Toast.LENGTH_SHORT).show()
-        })
+    suspend fun fetchFcmNotificationToken(): Result<Unit> {
+        val task = FirebaseMessaging.getInstance().token
+        task.await()
+        if (!task.isSuccessful) {
+            return Result.Error(task.exception ?: Exception("Failed fetching notification token"))
+        }
+        val token = task.result
+        val msg = "Got token: $token"
+        Log.d(TAG_FCM, msg)
+        App.setFcmNotificationToken(token)
+        Toast.makeText(baseContext, msg, Toast.LENGTH_SHORT).show()
+        return Result.Success(Unit)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
