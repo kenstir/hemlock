@@ -4,6 +4,7 @@ import android.util.Log
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import org.evergreen_ils.android.Log.TAG_FCM
+import org.evergreen_ils.data.PushNotification
 
 class MessagingService: FirebaseMessagingService() {
 
@@ -11,7 +12,12 @@ class MessagingService: FirebaseMessagingService() {
      * Called when message is received and the app is in the foreground.
      */
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
-        Log.d(TAG_FCM, "From: ${remoteMessage.from}")
+        val notification = PushNotification(remoteMessage.notification?.title,
+            remoteMessage.notification?.body,
+            remoteMessage.data[PushNotification.TYPE_KEY],
+            remoteMessage.data[PushNotification.USERNAME_KEY])
+
+        Log.d(TAG_FCM, "foreground notification: $notification")
 
         // Check if message contains a data payload.
         if (remoteMessage.data.isNotEmpty()) {
