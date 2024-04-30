@@ -138,7 +138,6 @@ open class MainActivity : BaseActivity() {
             val storedToken = App.getAccount().storedFcmToken
             val currentToken = App.getFcmNotificationToken()
             Log.d(TAG_FCM, "stored token:  $storedToken")
-            Log.d(TAG_FCM, "current token: $currentToken")
             if (currentToken != null && currentToken != storedToken) {
                 val updateResult = Gateway.actor.updatePushNotificationToken(App.getAccount(), currentToken)
                 if (updateResult is Result.Error) {

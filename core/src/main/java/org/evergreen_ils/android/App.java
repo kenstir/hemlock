@@ -35,6 +35,7 @@ import org.evergreen_ils.net.Volley;
 import org.evergreen_ils.utils.ui.AppState;
 import org.evergreen_ils.views.launch.LaunchActivity;
 import org.evergreen_ils.views.MainActivity;
+import org.evergreen_ils.views.messages.MessagesActivity;
 
 import java.io.File;
 
@@ -148,6 +149,15 @@ public class App {
         setStarted(true);
         updateLaunchCount();
         Intent intent = getMainActivityIntent(activity);
+        activity.startActivity(intent);
+        activity.finish();
+    }
+
+    /** Start app from a push notification */
+    public static void startAppForPMC(Activity activity) {
+        setStarted(true);
+        updateLaunchCount();
+        Intent intent = new Intent(activity.getApplicationContext(), MessagesActivity.class);
         activity.startActivity(intent);
         activity.finish();
     }
