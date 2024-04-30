@@ -70,16 +70,6 @@ class LaunchActivity : AppCompatActivity() {
         Analytics.initialize(this)
         App.init(this)
 
-        // FCM: handle background push notification
-        Log.d(TAG_FCM, "LaunchActivity intent: $intent")
-        intent.extras?.let {
-            val notification = PushNotification(it)
-            Log.d(TAG_FCM, "background notification: $notification")
-            if (notification.type == PushNotification.TYPE_PMC) {
-                // TODO: launch Messages activity
-            }
-        }
-
         mProgressText = findViewById(R.id.action_in_progress)
         mProgressBar = findViewById(R.id.activity_splash_progress_bar)
         mRetryButton = findViewById(R.id.activity_splash_retry_button)
@@ -143,6 +133,18 @@ class LaunchActivity : AppCompatActivity() {
 
     private fun onLaunchSuccess() {
         Log.d(TAG, (object{}.javaClass.enclosingMethod?.name ?: "") + " isFinishing:$isFinishing")
+
+        // FCM: handle background push notification
+        Log.d(TAG_FCM, "[onLaunchSuccess] LaunchActivity intent: $intent")
+        intent.extras?.let {
+            val notification = PushNotification(it)
+            Log.d(TAG_FCM, "[onLaunchSuccess] background notification: $notification")
+            if (notification.type == PushNotification.TYPE_PMC) {
+                App.startAppForPMC(this)
+                return
+            }
+        }
+
         App.startApp(this)
     }
 
