@@ -133,10 +133,8 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
             return Result.Error(task.exception ?: Exception("Failed fetching notification token"))
         }
         val token = task.result
-        val msg = "Got token: $token"
-        Log.d(TAG_FCM, msg)
+        Log.d(TAG_FCM, "got fcm token: $token")
         App.setFcmNotificationToken(token)
-        Toast.makeText(baseContext, msg, Toast.LENGTH_SHORT).show()
         return Result.Success(Unit)
     }
 
