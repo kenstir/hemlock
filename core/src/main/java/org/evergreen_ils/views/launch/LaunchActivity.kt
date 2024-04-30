@@ -40,6 +40,7 @@ import org.evergreen_ils.android.App
 import org.evergreen_ils.android.Log
 import org.evergreen_ils.android.Log.TAG_FCM
 import org.evergreen_ils.data.Account
+import org.evergreen_ils.data.PushNotification
 import org.evergreen_ils.data.Result
 import org.evergreen_ils.net.Gateway
 import org.evergreen_ils.system.EgOrg
@@ -69,18 +70,13 @@ class LaunchActivity : AppCompatActivity() {
         Analytics.initialize(this)
         App.init(this)
 
-        // FCM TODO: handle this
+        // FCM: handle background push notification
         Log.d(TAG_FCM, "launch intent: $intent")
-        intent.data?.let {
-            Log.d(TAG_FCM, "data: $it")
-        }
-        intent.dataString?.let {
-            Log.d(TAG_FCM, "dataString: $it")
-        }
         intent.extras?.let {
-            for (key in it.keySet()) {
-                val value = it.getString(key)
-                Log.d(TAG_FCM, "extra: $key -> $value")
+            val notification = PushNotification(it)
+            Log.d(TAG_FCM, "background notification: $notification")
+            if (notification.type == PushNotification.TYPE_PMC) {
+                // TODO: launch Messages activity
             }
         }
 
