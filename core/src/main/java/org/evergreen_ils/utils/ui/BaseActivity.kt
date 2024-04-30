@@ -20,6 +20,8 @@ package org.evergreen_ils.utils.ui
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
@@ -40,7 +42,6 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.lifecycleScope
-import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.messaging.FirebaseMessaging
 import kotlinx.coroutines.tasks.await
@@ -52,14 +53,15 @@ import org.evergreen_ils.android.App.REQUEST_MESSAGES
 import org.evergreen_ils.android.Log
 import org.evergreen_ils.android.Log.TAG_FCM
 import org.evergreen_ils.data.Result
-import org.evergreen_ils.views.search.SearchActivity
 import org.evergreen_ils.system.EgOrg
 import org.evergreen_ils.system.EgSearch
 import org.evergreen_ils.views.*
 import org.evergreen_ils.views.bookbags.BookBagsActivity
 import org.evergreen_ils.views.holds.HoldsActivity
 import org.evergreen_ils.views.messages.MessagesActivity
+import org.evergreen_ils.views.search.SearchActivity
 import java.net.URLEncoder
+
 
 /* Activity base class to handle common behaviours like the navigation drawer */
 open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
@@ -138,6 +140,16 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         return Result.Success(Unit)
     }
 
+    /** Create channel to show notifications. */
+    fun createNotificationChannel() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val channelId = getString(R.string.default_notification_channel_id)
+            val channelName = getString(R.string.default_notification_channel_name)
+            val notificationManager = getSystemService(NotificationManager::class.java)
+            notificationManager.createNotificationChannel(NotificationChannel(channelId, channelName, NotificationManager.IMPORTANCE_DEFAULT))
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -150,7 +162,7 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
 
         Analytics.initialize(this)
         App.init(this)
-        EgSearch.searchLimit = resources.getInteger(R.integer.ou_search_limit)
+        EgSearch.searchLimit = resources.getInteger(org.evergreen_ils.R.integer.ou_search_limit)
 
         initMenuProvider()
         menuItemHandler?.onCreate(this)
