@@ -2,8 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:installLocation="auto"
-    android:versionCode="36"
-    android:versionName="3.0.8">
+    android:versionCode="37"
+    android:versionName="3.0.9">
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS" />
@@ -26,7 +26,9 @@
         android:theme="@style/HemlockDarkNoActionBar"
         tools:ignore="GoogleAppIndexingWarning">
 
-        <meta-data android:name="android.max_aspect" android:value="2.1" />
+        <meta-data
+            android:name="android.max_aspect"
+            android:value="2.1" />
         <meta-data
             android:name="com.google.mlkit.vision.DEPENDENCIES"
             android:value="barcode_ui"/>
@@ -54,24 +56,16 @@
 
         <activity
             android:name="org.evergreen_ils.views.BarcodeActivity"
-            android:label="@string/barcode_title"
-            >
-        </activity>
+            android:label="@string/barcode_title" />
         <activity
             android:name="org.evergreen_ils.views.bookbags.BookBagsActivity"
-            android:label="@string/title_my_lists"
-            >
-        </activity>
+            android:label="@string/title_my_lists" />
         <activity
             android:name="org.evergreen_ils.views.CheckoutsActivity"
-            android:label="@string/checkout_items_title"
-            >
-        </activity>
+            android:label="@string/checkout_items_title" />
         <activity
             android:name="org.evergreen_ils.views.holds.HoldsActivity"
-            android:label="@string/hold_items_title"
-            >
-        </activity>
+            android:label="@string/hold_items_title" />
 <!--        <activity-->
 <!--            android:name="org.evergreen_ils.views.messages.MessagesActivity"-->
 <!--            android:label="@string/title_messages"-->
@@ -79,19 +73,13 @@
 <!--        </activity>-->
         <activity
             android:name="org.evergreen_ils.views.OrgDetailsActivity"
-            android:label="@string/title_library_info"
-            >
-        </activity>
+            android:label="@string/title_library_info" />
         <activity
             android:name="org.evergreen_ils.views.search.SearchActivity"
-            android:label="@string/title_search"
-            >
-        </activity>
+            android:label="@string/title_search" />
         <activity
             android:name="org.evergreen_ils.views.FinesActivity"
-            android:label="@string/title_fines"
-            >
-        </activity>
+            android:label="@string/title_fines" />
 
         <!-- secondary activities -->
 
@@ -99,6 +87,10 @@
             android:name="org.evergreen_ils.views.bookbags.BookBagDetailsActivity"
             android:label="@string/title_list_details"
             android:parentActivityName="org.evergreen_ils.views.bookbags.BookBagsActivity">
+        </activity>
+        <activity
+            android:name="org.evergreen_ils.views.history.HistoryActivity"
+            android:label="@string/title_checkout_history">
         </activity>
         <activity
             android:name="org.evergreen_ils.views.holds.HoldDetailsActivity"
