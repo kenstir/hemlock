@@ -17,6 +17,7 @@
     <bool name="ou_enable_pay_fines">false</bool>
     <bool name="ou_need_marc_record">true</bool>
     <bool name="ou_extra_bookbag_query">true</bool>
+    <bool name="ou_enable_analytics">true</bool>
     <bool name="ou_enable_events_button">true</bool>
     <integer name="ou_search_limit">100</integer>
 </resources>
