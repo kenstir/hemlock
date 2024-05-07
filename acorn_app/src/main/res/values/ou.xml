@@ -18,6 +18,7 @@
     <bool name="ou_enable_part_holds">true</bool>
     <bool name="ou_enable_pay_fines">true</bool>
     <bool name="ou_need_marc_record">true</bool>
+    <bool name="ou_enable_analytics">true</bool>
     <bool name="ou_enable_events_button">true</bool>
     <integer name="ou_search_limit">100</integer>
 </resources>
