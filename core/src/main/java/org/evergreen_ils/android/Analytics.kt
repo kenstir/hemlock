@@ -111,12 +111,18 @@ object Analytics {
     }
 
     private fun wantAnalytics(context: Context): Boolean {
-        // Enable debug mode on the device:
+        // To enable debug mode on a device:
         //   adb shell setprop debug.firebase.analytics.app PACKAGE_NAME
         // Log verbosely:
         //   adb shell setprop log.tag.FA VERBOSE
+        // Disable:
+        //   adb shell setprop debug.firebase.analytics.app .none.
+        //   adb shell setprop log.tag.FA SILENT
         // See also: https://firebase.google.com/docs/analytics/debugview#android
-        return context.resources.getBoolean(R.bool.ou_enable_analytics) && !runningInTestLab && !isDebuggable(context)
+
+        // Usually I do not want to include events while I am running in the debugger
+        val includeDebugEvents = false
+        return context.resources.getBoolean(R.bool.ou_enable_analytics) && !runningInTestLab && (!isDebuggable(context) || includeDebugEvents)
     }
 
     private fun isDebuggable(context: Context): Boolean {
