@@ -284,5 +284,7 @@
     <string name="notification_permission_denied_msg">%1$s will not be able to send a notification when you have a new message in your account, e.g. when a hold is ready for pickup.</string>
     <string name="default_notification_channel_id">pmc</string>
     <string name="default_notification_channel_name">Messages</string>
+    <string name="ok">OK</string>
+    <string name="no_thanks">No thanks</string>
 
 </resources>
