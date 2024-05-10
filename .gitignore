@@ -7,11 +7,13 @@ fm_IDL.*
 /local.gradle
 /local.properties
 /.idea/androidTestResultsUserPreferences.xml
+/.idea/appInsightsSettings.xml
 /.idea/assetWizardSettings.xml
 /.idea/caches
-/.idea/deploymentTargetDropDown.xml
+/.idea/deploymentTarget*.xml
 /.idea/misc.xml
 /.idea/modules.xml
+/.idea/other.xml
 /.idea/tasks.xml
 /.idea/workspace.xml
 /.idea/libraries
