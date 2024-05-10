@@ -53,13 +53,14 @@ object Api {
     const val ADDRESS_RETRIEVE = "open-ils.actor.org_unit.address.retrieve" // [aoa]
     //const val VITAL_STATS = "open-ils.actor.user.opac.vital_stats"; // Used by OPAC for summary stats
 
-    /// Hemlock-specific org settings
+    /// Hemlock-specific settings
 
     const val SETTING_HEMLOCK_CACHE_KEY = "hemlock.cache_key"
     const val SETTING_HEMLOCK_ERESOURCES_URL = "hemlock.eresources_url"
     const val SETTING_HEMLOCK_EVENTS_URL = "hemlock.events_calendar_url"
     const val SETTING_HEMLOCK_MEETING_ROOMS_URL = "hemlock.meeting_rooms_url"
     const val SETTING_HEMLOCK_MUSEUM_PASSES_URL = "hemlock.museum_passes_url"
+    const val USER_SETTING_HEMLOCK_PUSH_NOTIFICATION_DATA = "hemlock.push_notification_data"
 
     /// org and user settings
 

@@ -50,4 +50,5 @@ interface ActorService {
     suspend fun updatePatronSettings(account: Account, name: String, value: String?): Result<String>
     suspend fun enableCheckoutHistory(account: Account): Result<Unit>
     suspend fun disableCheckoutHistory(account: Account): Result<Unit>
+    suspend fun updatePushNotificationToken(account: Account, token: String?): Result<Unit>
 }

@@ -18,40 +18,50 @@
 
 package org.evergreen_ils.utils.ui
 
+import android.Manifest
 import android.annotation.SuppressLint
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.ActionBarDrawerToggle
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.Toolbar
+import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.navigation.NavigationView
-import kotlinx.coroutines.*
+import com.google.firebase.messaging.FirebaseMessaging
+import kotlinx.coroutines.tasks.await
 import org.evergreen_ils.R
 import org.evergreen_ils.android.AccountUtils
 import org.evergreen_ils.android.Analytics
 import org.evergreen_ils.android.App
 import org.evergreen_ils.android.App.REQUEST_MESSAGES
 import org.evergreen_ils.android.Log
-import org.evergreen_ils.views.search.SearchActivity
+import org.evergreen_ils.android.Log.TAG_FCM
+import org.evergreen_ils.data.Result
 import org.evergreen_ils.system.EgOrg
 import org.evergreen_ils.system.EgSearch
 import org.evergreen_ils.views.*
 import org.evergreen_ils.views.bookbags.BookBagsActivity
 import org.evergreen_ils.views.holds.HoldsActivity
 import org.evergreen_ils.views.messages.MessagesActivity
+import org.evergreen_ils.views.search.SearchActivity
 import java.net.URLEncoder
-import kotlin.coroutines.CoroutineContext
+
 
 /* Activity base class to handle common behaviours like the navigation drawer */
 open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
@@ -75,6 +85,68 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
             val urlFormat = getString(R.string.ou_feedback_url)
             return if (urlFormat.isEmpty()) urlFormat else String.format(urlFormat, getAppVersionCode(this))
         }
+
+    private val requestPermissionLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
+        if (isGranted) {
+            Log.d(TAG_FCM, "Permission granted")
+        } else {
+            //TODO: change title to "Notice" and add text on how to update it later
+            //TODO: don't show again
+            val msg = getString(R.string.notification_permission_denied_msg, getString(R.string.ou_app_label))
+            Toast.makeText(baseContext, msg, Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    fun requestNotificationPermission() {
+        val v = Build.VERSION.SDK_INT
+        Log.d(TAG_FCM, "Version $v")
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) return
+
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) ==
+            PackageManager.PERMISSION_GRANTED
+        ) {
+            Log.d(TAG_FCM, "Permission granted (2)")
+        } else if (shouldShowRequestPermissionRationale(Manifest.permission.POST_NOTIFICATIONS)) {
+            Log.d(TAG_FCM, "Showing rationale for notifications")
+            AlertDialog.Builder(this)
+                .setMessage(getString(R.string.notification_permission_rationale_msg, getString(R.string.ou_app_label)))
+                .setPositiveButton(getString(R.string.ok)) { _, _ ->
+                    Log.d(TAG_FCM, "Launching request for permission")
+                    requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+                }
+                .setNegativeButton(getString(R.string.no_thanks)) { _, _ ->
+                    Log.d(TAG_FCM, "Permission denied")
+                }
+                .show()
+
+        } else {
+            // Directly ask for the permission
+            Log.d(TAG_FCM, "Launching request for permission (2)")
+            requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+        }
+    }
+
+    suspend fun fetchFcmNotificationToken(): Result<Unit> {
+        val task = FirebaseMessaging.getInstance().token
+        task.await()
+        if (!task.isSuccessful) {
+            return Result.Error(task.exception ?: Exception("Failed fetching notification token"))
+        }
+        val token = task.result
+        Log.d(TAG_FCM, "got fcm token: $token")
+        App.setFcmNotificationToken(token)
+        return Result.Success(Unit)
+    }
+
+    /** Create channel to show notifications. */
+    fun createNotificationChannel() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val channelId = getString(R.string.default_notification_channel_id)
+            val channelName = getString(R.string.default_notification_channel_name)
+            val notificationManager = getSystemService(NotificationManager::class.java)
+            notificationManager.createNotificationChannel(NotificationChannel(channelId, channelName, NotificationManager.IMPORTANCE_DEFAULT))
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

@@ -329,4 +329,24 @@ class LiveGatewayTest {
             }
         }
     }
+
+    // One-off test should not run because it updates the account
+    // and requires creating the User Setting Type.
+    //@Test
+    fun test_storeUserData() {
+        getAccount()
+        runBlocking {
+            launch(Dispatchers.Main) {
+                loadServiceData()
+                getSession()
+
+                val result = Gateway.actor.updatePushNotificationToken(account, "xyzzy")
+                when (result) {
+                    is Result.Success -> {}
+                    is Result.Error -> { throw result.exception }
+                }
+                assertTrue(true)
+            }
+        }
+    }
 }

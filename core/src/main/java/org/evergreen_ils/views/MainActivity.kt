@@ -39,7 +39,9 @@ import org.evergreen_ils.data.Result
 import org.evergreen_ils.net.Gateway
 import org.evergreen_ils.views.search.SearchActivity
 import org.evergreen_ils.android.Log
+import org.evergreen_ils.android.Log.TAG_FCM
 import org.evergreen_ils.data.PatronMessage
+import org.evergreen_ils.data.PushNotification
 import org.evergreen_ils.system.EgOrg
 import org.evergreen_ils.utils.ui.BaseActivity
 import org.evergreen_ils.utils.ui.showAlert
@@ -59,6 +61,16 @@ open class MainActivity : BaseActivity() {
         Log.d(TAG, object{}.javaClass.enclosingMethod?.name ?: "")
 
         setContentView(R.layout.activity_main)
+
+        // FCM: handle background push notification
+        Log.d(TAG_FCM, "MainActivity intent: $intent")
+        intent.extras?.let {
+            val notification = PushNotification(it)
+            Log.d(TAG_FCM, "background notification: $notification")
+            if (notification.type == PushNotification.TYPE_PMC) {
+                // TODO: launch Messages activity
+            }
+        }
 
         eventsButton = findViewById(R.id.main_events_button)
         setupEventsButton()
@@ -86,6 +98,7 @@ open class MainActivity : BaseActivity() {
     }
 
     private fun fetchData() {
+        initializePushNotifications()
         loadUnreadMessageCount()
     }
 
@@ -99,6 +112,40 @@ open class MainActivity : BaseActivity() {
     private fun homeOrgHasEvents(): Boolean {
         val url = EgOrg.findOrg(App.getAccount().homeOrg)?.eventsURL
         return resources.getBoolean(R.bool.ou_enable_events_button) && !url.isNullOrEmpty()
+    }
+
+    private fun initializePushNotifications() {
+        if (!resources.getBoolean(R.bool.ou_enable_push_notifications)) return
+
+        requestNotificationPermission()
+        createNotificationChannel()
+        updateStoredNotificationToken()
+    }
+
+    private fun updateStoredNotificationToken() {
+        scope.async {
+            val start = System.currentTimeMillis()
+
+            // get the fcmToken
+            val result = fetchFcmNotificationToken()
+            if (result is Result.Error) {
+                showAlert(result.exception)
+                return@async
+            }
+
+            // If the current FCM token is different from the one we got from the user settings,
+            // we need to update the user setting in Evergreen
+            val storedToken = App.getAccount().storedFcmToken
+            val currentToken = App.getFcmNotificationToken()
+            Log.d(TAG_FCM, "stored token:  $storedToken")
+            if (currentToken != null && currentToken != storedToken) {
+                val updateResult = Gateway.actor.updatePushNotificationToken(App.getAccount(), currentToken)
+                if (updateResult is Result.Error) {
+                    showAlert(updateResult.exception)
+                    return@async
+                }
+            }
+        }
     }
 
     private fun loadUnreadMessageCount() {
