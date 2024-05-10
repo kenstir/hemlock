@@ -52,7 +52,7 @@ class MessagingService: FirebaseMessagingService() {
         val channelId = getString(R.string.default_notification_channel_id)
         val defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
         val notificationBuilder = NotificationCompat.Builder(this, channelId)
-            .setSmallIcon(R.drawable.ic_library_24)
+            .setSmallIcon(R.drawable.ic_notification_24)
             .setContentTitle(notification.title)
             .setContentText(notification.body)
             .setAutoCancel(true)
@@ -60,18 +60,6 @@ class MessagingService: FirebaseMessagingService() {
             .setContentIntent(pendingIntent)
 
         val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-
-        /* I think this was already done in createNotificationChannel
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val channel = NotificationChannel(
-                channelId,
-                "Channel human readable title",
-                NotificationManager.IMPORTANCE_DEFAULT,
-            )
-            notificationManager.createNotificationChannel(channel)
-        }
-        */
-
         val notificationId = 0
         notificationManager.notify(notificationId, notificationBuilder.build())
     }
