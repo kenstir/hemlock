@@ -28,7 +28,7 @@
         tools:ignore="GoogleAppIndexingWarning">
 
         <meta-data android:name="android.max_aspect" android:value="2.1" />
-        <!-- Tried commenting out to see if it fixes bug https://issuetracker.google.com/issues/261579118
+        <!-- Tried commenting out barcode_ui to see if it fixes bug https://issuetracker.google.com/issues/261579118
              ... it did not -->
         <meta-data
             android:name="com.google.mlkit.vision.DEPENDENCIES"
