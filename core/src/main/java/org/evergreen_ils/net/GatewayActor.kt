@@ -390,7 +390,6 @@ object GatewayActor: ActorService {
 
     override suspend fun updatePushNotificationToken(account: Account, token: String?): Result<Unit> {
         return try {
-            //TODO: make this a real json object and store in hemlock.user_data?
             val value = token
             val result = updatePatronSettings(account, Api.USER_SETTING_HEMLOCK_PUSH_NOTIFICATION_DATA, value)
             when (result) {
