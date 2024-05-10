@@ -26,10 +26,12 @@
         android:theme="@style/CWMARSNoActionBar"
         tools:ignore="GoogleAppIndexingWarning">
 
-        <meta-data android:name="android.max_aspect" android:value="2.1" />
+        <meta-data
+            android:name="android.max_aspect"
+            android:value="2.1" />
         <meta-data
             android:name="com.google.mlkit.vision.DEPENDENCIES"
-            android:value="barcode_ui"/>
+            android:value="barcode_ui" />
 
         <!-- launch and main -->
 
