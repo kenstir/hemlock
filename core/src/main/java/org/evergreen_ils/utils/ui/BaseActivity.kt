@@ -110,11 +110,11 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
             Log.d(TAG_FCM, "Showing rationale for notifications")
             AlertDialog.Builder(this)
                 .setMessage(getString(R.string.notification_permission_rationale_msg, getString(R.string.ou_app_label)))
-                .setPositiveButton("OK") { _, _ ->
+                .setPositiveButton(getString(R.string.ok)) { _, _ ->
                     Log.d(TAG_FCM, "Launching request for permission")
                     requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
                 }
-                .setNegativeButton("No thanks") { _, _ ->
+                .setNegativeButton(getString(R.string.no_thanks)) { _, _ ->
                     Log.d(TAG_FCM, "Permission denied")
                 }
                 .show()
