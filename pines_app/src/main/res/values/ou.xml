@@ -8,10 +8,7 @@
     <string name="ou_app_label">PINES</string>
     <string name="ou_library_name">PINES</string>
     <string name="ou_activity_subtitle">%2$s</string>
-    <!-- REVERT THIS !!! for now use local server with User Setting Type -->
-<!--    <string name="ou_library_url">https://gapines.org</string>-->
-    <string name="ou_library_url">http://192.168.1.8</string>
-    <!-- REVERT THIS -->
+    <string name="ou_library_url">https://gapines.org</string>
     <string name="ou_behavior_provider">net.kenstir.apps.pines.PinesAppBehavior</string>
     <string name="ou_menu_provider">net.kenstir.apps.pines.PinesMenuProvider</string>
     <string name="ou_barcode_format">Codabar</string>
