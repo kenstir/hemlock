@@ -86,13 +86,15 @@ object GatewayActor: ActorService {
 
     override suspend fun fetchOrgSettings(orgID: Int): Result<OSRFObject> {
         return try {
-            val settings = mutableListOf(Api.SETTING_ORG_UNIT_NOT_PICKUP_LIB,
+            val settings = mutableListOf(
                 Api.SETTING_CREDIT_PAYMENTS_ALLOW,
                 Api.SETTING_INFO_URL,
+                Api.SETTING_ORG_UNIT_NOT_PICKUP_LIB,
                 Api.SETTING_HEMLOCK_ERESOURCES_URL,
                 Api.SETTING_HEMLOCK_EVENTS_URL,
                 Api.SETTING_HEMLOCK_MEETING_ROOMS_URL,
-                Api.SETTING_HEMLOCK_MUSEUM_PASSES_URL)
+                Api.SETTING_HEMLOCK_MUSEUM_PASSES_URL,
+            )
             if (orgID == EgOrg.consortiumID)
                 settings.add(Api.SETTING_SMS_ENABLE)
             val args = arrayOf<Any?>(orgID, settings, Api.ANONYMOUS)
