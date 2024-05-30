@@ -81,6 +81,8 @@
     <bool name="ou_extra_bookbag_query">true</bool>
     <!-- if true, add Events button, link to home org setting hemlock.events_calendar_url -->
     <bool name="ou_enable_events_button">false</bool>
+    <!-- true only for the Hemlock generic app; used for analytics -->
+    <bool name="ou_is_generic_app">false</bool>
     <!-- max number of results to return from Search -->
     <integer name="ou_search_limit">200</integer>
 </resources>

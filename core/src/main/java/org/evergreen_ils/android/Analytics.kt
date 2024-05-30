@@ -158,7 +158,7 @@ object Analytics {
         logException(TAG, e)
     }
 
-    fun setUserProperties(b: Bundle?) {
+    private fun setUserProperties(b: Bundle?) {
         if (b == null) return
         if (analytics) {
             for (name in b.keySet()) {
@@ -254,7 +254,7 @@ object Analytics {
     // We call this event "login", but it happens after auth and after fleshing the user.
     // NB: "session_start" seems more appropriate but that is a predefined automatic event.
     @JvmStatic
-    fun logSuccessfulLogin(username: String, barcode: String?, homeOrg: String, parentOrg: String) {
+    fun logSuccessfulLogin(username: String, barcode: String?, homeOrg: String?, parentOrg: String) {
         setUserProperties(bundleOf(
             UserProperty.HOME_ORG to homeOrg,
             UserProperty.PARENT_ORG to parentOrg

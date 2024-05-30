@@ -264,9 +264,15 @@ class LaunchActivity : AppCompatActivity() {
             }
         }
 
-        Analytics.logSuccessfulLogin(account.username, account.barcode,
-            EgOrg.getOrgShortNameSafe(account.homeOrg),
-            EgOrg.getOrgShortNameSafe(EgOrg.findOrg(account.homeOrg)?.parent))
+        if (resources.getBoolean(R.bool.ou_is_generic_app)) {
+            // For Hemlock, we only care to track the user's consortium
+            Analytics.logSuccessfulLogin(account.username, account.barcode,
+                null, EgOrg.getOrgShortNameSafe(EgOrg.consortiumID))
+        } else {
+            Analytics.logSuccessfulLogin(account.username, account.barcode,
+                EgOrg.getOrgShortNameSafe(account.homeOrg),
+                EgOrg.getOrgShortNameSafe(EgOrg.findOrg(account.homeOrg)?.parent))
+        }
 
         return true
     }
