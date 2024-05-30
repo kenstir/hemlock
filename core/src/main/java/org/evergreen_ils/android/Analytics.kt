@@ -121,8 +121,8 @@ object Analytics {
         // See also: https://firebase.google.com/docs/analytics/debugview#android
 
         // Usually I do not want to include events while I am running in the debugger
-        val includeDebugEvents = false
-        return context.resources.getBoolean(R.bool.ou_enable_analytics) && !runningInTestLab && (!isDebuggable(context) || includeDebugEvents)
+        val includeEventsForDebugBuilds = false
+        return context.resources.getBoolean(R.bool.ou_enable_analytics) && !runningInTestLab && (!isDebuggable(context) || includeEventsForDebugBuilds)
     }
 
     private fun isDebuggable(context: Context): Boolean {
