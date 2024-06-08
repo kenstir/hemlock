@@ -9,8 +9,3 @@ Setup involves the following steps (and the following people):
 * [Configure the Hemlock app (Mobile App Developer)](pn/configure-hemlock-app.md)
 * [Install the hemlock-sendmsg daemon (Evergreen System Admin)](pn/install-sendmsg-daemon.md)
 * [Create an action trigger (Evergreen Admin)](pn/create-an-action-trigger.md)
-
-
-## Set up an action trigger
-
-Refer to the [Evergreen Setup Guide for Push Notifications](./setup-evergreen-for-push-notifications.md).
