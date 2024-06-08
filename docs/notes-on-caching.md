@@ -11,3 +11,4 @@ In this way we force cache misses in three situations:
 1. An app upgrade.
 2. A server upgrade.  Server upgrades sometimes involve incompatible IDL which would otherwise cause OSRF decode crashes.
 3. Evergreen admin action.  Changing `hemlock.cache_key` on orgID=1 is a final override that is needed only to push out org tree or org URL changes immediately.
+
