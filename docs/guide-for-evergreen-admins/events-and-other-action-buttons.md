@@ -1,28 +1,26 @@
-# Evergreen Administrators Guide
-
-## Events and other Special Buttons
+# Events and Other Action Buttons
 
 The Hemlock app can display an Events button on the main screen, which opens the browser on
 the events calendar for the patron's home org.  If the app is using the main grid screen (Acorn Catalog),
-there are additional special buttons.
+there are additional action buttons.
 
 The Events button must be enabled in the app config (resource `ou_enable_events_button`).
 
 The main grid screen must be enabled in the app source code; right now there is no config for it.
 
-These special buttons appear up if:
+These action buttons appear up if:
 1. they are enabled in the app config
 2. the patron's home org has a value for a custom org setting (see below for a list of the org settings)
 3. this value is a valid URL
 
 Custom org settings for the Hemlock apps
 
-| Org Setting | Button | Description |
-| ----------- | ------ | ----------- |
-| `hemlock.eresources_url`      | Ebooks & Digital | URL of digital resources page |
-| `hemlock.events_calendar_url` | Events           | events calendar |
-| `hemlock.meeting_rooms_url`   | Meeting Rooms    | meeting rooms signup page |
-| `hemlock.museum_passes_url`   | Museum Passes    | museum passes signup page |
+| Org Setting                   | Datatype | Button           | Description                   |
+|-------------------------------|----------|------------------|-------------------------------|
+| `hemlock.eresources_url`      | string   | Ebooks & Digital | URL of digital resources page |
+| `hemlock.events_calendar_url` | string   | Events           | events calendar               |
+| `hemlock.meeting_rooms_url`   | string   | Meeting Rooms    | meeting rooms signup page     |
+| `hemlock.museum_passes_url`   | string   | Museum Passes    | museum passes signup page     |
 
 
 ## Caching, or why doesn't the Events button show up after I added the URL?
@@ -33,7 +31,7 @@ it doesn't show up in the app.  The kinds of things cached are:
 * the org tree
 * org settings, e.g. `hemlock.events_calendar_url` or `credit.payments.allow`
 
-For details on how the caching is implemented, see [notes on caching](notes-on-caching.md).
+For details on how the caching is implemented, see [notes on caching](../notes-on-caching.md).
 
 ### How to bust the cache for you yourself right now
 
