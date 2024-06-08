@@ -15,13 +15,14 @@ if [ ! -f "$settings" ]; then
     exit 1
 fi
 
-set -e
-
 # scrape library_url from settings xml
 url=$(egrep library_url $settings)
 url=${url%<*}
 url=${url#*>}
-test -n "$url"
+test -n "$url" || {
+    echo >&2 "library_url is empty for ${app}_app"
+    exit 1
+}
 
 # construct url
 url="${url}/osrf-gateway-v1"
