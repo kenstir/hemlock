@@ -52,6 +52,7 @@ Procedure:
     | Context User Path               | usr |
 
 * Set the Template form value to
+
   ```
 method get
 url http://localhost:8842/send
