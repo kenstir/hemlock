@@ -33,23 +33,23 @@ Procedure:
 * Click `New Event Definition`
 * Set the following form values:
 
-    | Label | Value |
-    | ---   | ---   |
-    | Owning Library                  | CONS |
-    | Hook                            | checkout.due |
-    | Processing Delay                | -300 days |
-    | Processing Delay Context Field  | due_date |
-    | Processing Group Context Field  | usr |
-    | Reactor                         | CallHTTP |
-    | Validator                       | CircIsOpen |
-    | Event Repeatability Delay       | 00:00:00 |
-    | Max Event Validity Delay        | -300 days |
-    | Retention Interval              | 6 mons |
-    | Template                        | (see below) |
-    | Context Bib Path                | target_copy.call_number.record |
-    | Context Item Path               | target_copy |
-    | Context Library Path            | circ_lib |
-    | Context User Path               | usr |
+    | Label                          | Value                          |
+    |--------------------------------|--------------------------------|
+    | Owning Library                 | CONS                           |
+    | Hook                           | checkout.due                   |
+    | Processing Delay               | -300 days                      |
+    | Processing Delay Context Field | due_date                       |
+    | Processing Group Context Field | usr                            |
+    | Reactor                        | CallHTTP                       |
+    | Validator                      | CircIsOpen                     |
+    | Event Repeatability Delay      | 00:00:00                       |
+    | Max Event Validity Delay       | -300 days                      |
+    | Retention Interval             | 6 mons                         |
+    | Template                       | (see below)                    |
+    | Context Bib Path               | target_copy.call_number.record |
+    | Context Item Path              | target_copy                    |
+    | Context Library Path           | circ_lib                       |
+    | Context User Path              | usr                            |
 
 * Set the Template form value to
 
