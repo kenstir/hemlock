@@ -20,8 +20,5 @@ add a setting `hemlock.cache_key` to the org with ID 1.  Use a STRING value of t
 ISO format, e.g. `20230416`.  Add a number to the end if you change it more than once per day.
 The format is not itself important, just that it is different from prior values.
 
-| Org Setting         | Datatype | Description                        |
-|---------------------|----------|------------------------------------|
-| `hemlock.cache_key` | string   | Cache-busting key, e.g. YYYYmmdd## |
-
-See 
+See [Add Hemlock-specific Org Unit Settings](add-hemlock-org-unit-settings.md)
+for the specific details of how to add this org unit setting.
