@@ -53,7 +53,7 @@ Procedure:
 
 * Set the Template form value to
 
-  ```
+```
 method get
 url http://localhost:8842/send
   
@@ -76,5 +76,5 @@ url http://localhost:8842/send
   # debug=1 causes hemlock-sendmsg to log requests on stdout
   debug 1
 </Parameters>
-  ```
+```
 * Click `Save`
