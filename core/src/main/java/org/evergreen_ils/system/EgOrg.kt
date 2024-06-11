@@ -128,19 +128,6 @@ object EgOrg {
         return ancestry
     }
 
-    @JvmStatic
-    fun getOrgInfoPageUrl(id: Int): String {
-        val org = findOrg(id)
-        if (org == null)
-            return ""
-        // jump past the header stuff to the library info
-        // #content-wrapper works only sometimes
-        // ?#content-wrapper no better
-        // /?#main-content no better
-        // trying #main-content
-        return Gateway.baseUrl.plus("/eg/opac/library/${org.shortname}#main-content")
-    }
-
     fun orgSpinnerLabels(): List<String> {
         return visibleOrgs.map { it.spinnerLabel }
     }
@@ -156,5 +143,18 @@ object EgOrg {
             }
         }
         return Pair(labels, selectedIndex)
+    }
+
+    fun dumpOrgStats() {
+        val numPickupLocations = visibleOrgs.count { it.isPickupLocation }
+        val numWithEvents = visibleOrgs.count { !it.eventsURL.isNullOrEmpty() }
+        val numWithEresources = visibleOrgs.count { !it.eresourcesUrl.isNullOrEmpty() }
+        val numWithMeetingRooms = visibleOrgs.count { !it.meetingRoomsUrl.isNullOrEmpty() }
+        val numWithMuseumPasses = visibleOrgs.count { !it.museumPassesUrl.isNullOrEmpty() }
+        Log.d(TAG, "$numPickupLocations pickup locations")
+        Log.d(TAG, "$numWithEvents have events URLs")
+        Log.d(TAG, "$numWithEresources have eresources URLs")
+        Log.d(TAG, "$numWithMeetingRooms have meeting rooms URLs")
+        Log.d(TAG, "$numWithMuseumPasses have museum passes URLs")
     }
 }

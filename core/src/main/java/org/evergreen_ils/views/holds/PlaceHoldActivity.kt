@@ -165,6 +165,7 @@ class PlaceHoldActivity : BaseActivity() {
 
                 jobs.add(scope.async {
                     GatewayLoader.loadOrgSettingsAsync(null).await()
+                    logOrgStats()
                 })
 
                 jobs.add(scope.async {
@@ -195,6 +196,12 @@ class PlaceHoldActivity : BaseActivity() {
             } finally {
                 progress?.dismiss()
             }
+        }
+    }
+
+    private fun logOrgStats() {
+        if (Analytics.isDebuggable(this)) {
+            EgOrg.dumpOrgStats()
         }
     }
 

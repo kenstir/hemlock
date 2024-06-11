@@ -125,7 +125,7 @@ object Analytics {
         return context.resources.getBoolean(R.bool.ou_enable_analytics) && !runningInTestLab && (!isDebuggable(context) || includeEventsForDebugBuilds)
     }
 
-    private fun isDebuggable(context: Context): Boolean {
+    fun isDebuggable(context: Context): Boolean {
         return 0 != ApplicationInfo.FLAG_DEBUGGABLE.let { context.applicationInfo.flags = context.applicationInfo.flags and it; context.applicationInfo.flags }
     }
 
