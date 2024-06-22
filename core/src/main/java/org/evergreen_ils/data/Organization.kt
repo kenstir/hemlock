@@ -67,6 +67,10 @@ class Organization(@JvmField val id: Int,
         infoURL = parseOrgStringSetting(obj, Api.SETTING_INFO_URL)
         isNotPickupLocationSetting = parseOrgBoolSetting(obj, Api.SETTING_ORG_UNIT_NOT_PICKUP_LIB)
         isPaymentAllowedSetting = parseOrgBoolSetting(obj, Api.SETTING_CREDIT_PAYMENTS_ALLOW)
+        val requireMonographicPart = parseOrgBoolSetting(obj, Api.SETTING_REQUIRE_MONOGRAPHIC_PART)
+        if (requireMonographicPart != null) {
+            print("yeah we got it")
+        }
         val smsEnable = parseOrgBoolSetting(obj, Api.SETTING_SMS_ENABLE)
         smsEnable?.let { EgOrg.smsEnabled = smsEnable }
         settingsLoaded = true

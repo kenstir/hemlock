@@ -1,11 +1,19 @@
 #!/bin/sh
 
-if [ $# -ne 1 ]; then
-    echo "usage: $0 app_name"
+case $# in
+1)
+    app="$1"
+    what=sk
+    ;;
+2)
+    app="$1"
+    what="$2"
+    ;;
+*)
+    echo "usage: $0 app_name [sk|require_part]"
     exit 1
-fi
-app="$1"
-what=sk
+    ;;
+esac
 
 topdir=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
 
@@ -27,6 +35,9 @@ test -n "$url" || {
 # construct url
 url="${url}/osrf-gateway-v1"
 case "$what" in
+require_part)
+    url="${url}?service=open-ils.actor&method=open-ils.actor.ou_setting.ancestor_default.batch&param=1&param=%5B%22circ.holds.ui_require_monographic_part_when_present%22%5D&param=%22ANONYMOUS%22"
+    ;;
 sk)
     url="${url}?service=open-ils.actor&method=open-ils.actor.ou_setting.ancestor_default.batch&param=1&param=%5B%22hemlock.cache_key%22%5D&param=%22ANONYMOUS%22"
     ;;
@@ -37,4 +48,5 @@ sk)
 esac
 
 # fetch
-curl -sS "${url}"
+set -x
+curl -sS "${url}" && echo
