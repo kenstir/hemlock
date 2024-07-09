@@ -31,7 +31,6 @@ class MessagingService: FirebaseMessagingService() {
 
     override fun onNewToken(token: String) {
         Log.d(TAG_FCM, "Refreshed token: $token")
-        // TODO: send token to EG server
     }
 
     /**
