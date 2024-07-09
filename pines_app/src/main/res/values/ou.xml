@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- ou.xml - C/W MARS organizational unit -->
 <resources>
     <!-- see ../core/res/values/ou.xml for a description -->
     <string name="ou_account_label">PINES</string>
@@ -8,7 +7,11 @@
     <string name="ou_app_label">PINES</string>
     <string name="ou_library_name">PINES</string>
     <string name="ou_activity_subtitle">%2$s</string>
-    <string name="ou_library_url">https://gapines.org</string>
+<!--    <string name="ou_library_url">https://gapines.org</string>-->
+    <!-- LAN test server -->
+    <string name="ou_library_url">http://192.168.1.8</string>
+    <!-- PINES test server -->
+<!--    <string name="ou_library_url">https://test.gapines.org</string>-->
     <string name="ou_behavior_provider">net.kenstir.apps.pines.PinesAppBehavior</string>
     <string name="ou_menu_provider">net.kenstir.apps.pines.PinesMenuProvider</string>
     <string name="ou_barcode_format">Codabar</string>
