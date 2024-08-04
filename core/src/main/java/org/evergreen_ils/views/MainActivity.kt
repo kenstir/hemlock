@@ -114,6 +114,7 @@ open class MainActivity : BaseActivity() {
         return resources.getBoolean(R.bool.ou_enable_events_button) && !url.isNullOrEmpty()
     }
 
+    //TODO: move this to BaseActivity to share with acorn MainGridActivity
     private fun initializePushNotifications() {
         if (!resources.getBoolean(R.bool.ou_enable_push_notifications)) return
 
