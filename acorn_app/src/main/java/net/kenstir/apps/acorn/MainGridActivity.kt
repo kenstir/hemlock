@@ -33,6 +33,7 @@ import org.evergreen_ils.android.Log
 import org.evergreen_ils.data.GridButton
 import org.evergreen_ils.system.EgOrg
 import org.evergreen_ils.utils.ui.BaseActivity
+import org.evergreen_ils.utils.ui.MainBaseActivity
 import org.evergreen_ils.views.BarcodeActivity
 import org.evergreen_ils.views.CheckoutsActivity
 import org.evergreen_ils.views.FinesActivity
@@ -41,7 +42,7 @@ import org.evergreen_ils.views.bookbags.BookBagsActivity
 import org.evergreen_ils.views.holds.HoldsActivity
 import org.evergreen_ils.views.search.SearchActivity
 
-class MainGridActivity : BaseActivity() {
+class MainGridActivity : MainBaseActivity() {
     private val TAG = javaClass.simpleName
     private val SPAN_COUNT = 2
 
@@ -53,7 +54,7 @@ class MainGridActivity : BaseActivity() {
     private val showButtonsWithoutURLsForDebugging = BuildConfig.DEBUG
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState) // not super
+        super.onCreate(savedInstanceState)
         if (isRestarting) return
 
         Log.d(TAG, object{}.javaClass.enclosingMethod?.name ?: "")

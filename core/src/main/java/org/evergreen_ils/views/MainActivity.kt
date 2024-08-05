@@ -13,7 +13,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
  */
 
 package org.evergreen_ils.views
@@ -39,15 +39,14 @@ import org.evergreen_ils.data.Result
 import org.evergreen_ils.net.Gateway
 import org.evergreen_ils.views.search.SearchActivity
 import org.evergreen_ils.android.Log
-import org.evergreen_ils.android.Log.TAG_FCM
 import org.evergreen_ils.data.PatronMessage
 import org.evergreen_ils.data.PushNotification
 import org.evergreen_ils.system.EgOrg
-import org.evergreen_ils.utils.ui.BaseActivity
+import org.evergreen_ils.utils.ui.MainBaseActivity
 import org.evergreen_ils.utils.ui.showAlert
 import org.opensrf.util.OSRFObject
 
-open class MainActivity : BaseActivity() {
+open class MainActivity : MainBaseActivity() {
 
     private val TAG = javaClass.simpleName
     private var mUnreadMessageCount: Int? = null //unknown
@@ -62,15 +61,7 @@ open class MainActivity : BaseActivity() {
 
         setContentView(R.layout.activity_main)
 
-        // FCM: handle background push notification
-        Log.d(TAG_FCM, "MainActivity intent: $intent")
-        intent.extras?.let {
-            val notification = PushNotification(it)
-            Log.d(TAG_FCM, "background notification: $notification")
-            if (notification.type == PushNotification.TYPE_PMC) {
-                // TODO: launch Messages activity
-            }
-        }
+        if (onCreateHandleLaunchIntent()) return
 
         eventsButton = findViewById(R.id.main_events_button)
         setupEventsButton()
@@ -112,41 +103,6 @@ open class MainActivity : BaseActivity() {
     private fun homeOrgHasEvents(): Boolean {
         val url = EgOrg.findOrg(App.getAccount().homeOrg)?.eventsURL
         return resources.getBoolean(R.bool.ou_enable_events_button) && !url.isNullOrEmpty()
-    }
-
-    //TODO: move this to BaseActivity to share with acorn MainGridActivity
-    private fun initializePushNotifications() {
-        if (!resources.getBoolean(R.bool.ou_enable_push_notifications)) return
-
-        requestNotificationPermission()
-        createNotificationChannel()
-        updateStoredNotificationToken()
-    }
-
-    private fun updateStoredNotificationToken() {
-        scope.async {
-            val start = System.currentTimeMillis()
-
-            // get the fcmToken
-            val result = fetchFcmNotificationToken()
-            if (result is Result.Error) {
-                showAlert(result.exception)
-                return@async
-            }
-
-            // If the current FCM token is different from the one we got from the user settings,
-            // we need to update the user setting in Evergreen
-            val storedToken = App.getAccount().storedFcmToken
-            val currentToken = App.getFcmNotificationToken()
-            Log.d(TAG_FCM, "stored token:  $storedToken")
-            if (currentToken != null && currentToken != storedToken) {
-                val updateResult = Gateway.actor.updatePushNotificationToken(App.getAccount(), currentToken)
-                if (updateResult is Result.Error) {
-                    showAlert(updateResult.exception)
-                    return@async
-                }
-            }
-        }
     }
 
     private fun loadUnreadMessageCount() {
