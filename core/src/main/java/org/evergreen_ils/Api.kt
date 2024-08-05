@@ -63,7 +63,8 @@ object Api {
 
     /// org and user settings
 
-    const val SETTING_REQUIRE_MONOGRAPHIC_PART = "circ.holds.ui_require_monographic_part_when_present"
+    const val SETTING_REQUIRE_MONOGRAPHIC_PART = "circ.holds.api_require_monographic_part_when_present"
+    //const val SETTING_REQUIRE_MONOGRAPHIC_PART = "circ.holds.ui_require_monographic_part_when_present"
     const val SETTING_CREDIT_PAYMENTS_ALLOW = "credit.payments.allow"
     const val SETTING_INFO_URL = "lib.info_url"
     const val SETTING_ORG_UNIT_NOT_PICKUP_LIB = "opac.holds.org_unit_not_pickup_lib"

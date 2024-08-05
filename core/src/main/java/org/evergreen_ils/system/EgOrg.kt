@@ -17,6 +17,7 @@
  */
 package org.evergreen_ils.system
 
+import android.annotation.SuppressLint
 import androidx.core.util.Pair
 import org.evergreen_ils.android.Log
 import org.evergreen_ils.data.OrgType
@@ -145,16 +146,21 @@ object EgOrg {
         return Pair(labels, selectedIndex)
     }
 
+    @SuppressLint("DefaultLocale")
     fun dumpOrgStats() {
         val numPickupLocations = visibleOrgs.count { it.isPickupLocation }
         val numWithEvents = visibleOrgs.count { !it.eventsURL.isNullOrEmpty() }
         val numWithEresources = visibleOrgs.count { !it.eresourcesUrl.isNullOrEmpty() }
         val numWithMeetingRooms = visibleOrgs.count { !it.meetingRoomsUrl.isNullOrEmpty() }
         val numWithMuseumPasses = visibleOrgs.count { !it.museumPassesUrl.isNullOrEmpty() }
-        Log.d(TAG, "$numPickupLocations pickup locations")
-        Log.d(TAG, "$numWithEvents have events URLs")
-        Log.d(TAG, "$numWithEresources have eresources URLs")
-        Log.d(TAG, "$numWithMeetingRooms have meeting rooms URLs")
-        Log.d(TAG, "$numWithMuseumPasses have museum passes URLs")
+        val numRequireMonographicPart = orgs.count { it.requireMonographicPart != null }
+        Log.d(TAG, String.format("%3d visible orgs", visibleOrgs.size))
+        Log.d(TAG, String.format("%3d are pickup locations", numPickupLocations))
+        Log.d(TAG, String.format("%3d have events URLs", numWithEvents))
+        Log.d(TAG, String.format("%3d have eresources URLs", numWithEresources))
+        Log.d(TAG, String.format("%3d have meeting rooms URLs", numWithMeetingRooms))
+        Log.d(TAG, String.format("%3d have museum passes URLs", numWithMuseumPasses))
+        Log.d(TAG, String.format("%3d have require_monographic_part set", numRequireMonographicPart))
+        print("")
     }
 }

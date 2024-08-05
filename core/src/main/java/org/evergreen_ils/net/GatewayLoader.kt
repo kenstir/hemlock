@@ -43,6 +43,9 @@ object GatewayLoader {
                     if (result is Result.Success) {
                         org.loadSettings(result.data)
                         Log.d(TAG, "[kcxxx] org ${org.id} settings loaded")
+                        org.requireMonographicPart?.let {
+                            Log.d(TAG, "[kcxxx] org ${org.id} requireMonographicPart=$it")
+                        }
                     }
                 }
             }
