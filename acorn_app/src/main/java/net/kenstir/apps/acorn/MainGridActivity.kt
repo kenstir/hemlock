@@ -67,6 +67,17 @@ class MainGridActivity : MainBaseActivity() {
         setupBottomRowButtons()
     }
 
+    override fun onAttachedToWindow() {
+        super.onAttachedToWindow()
+        Log.d(TAG, object {}.javaClass.enclosingMethod?.name ?: "")
+        fetchData()
+    }
+
+    private fun fetchData() {
+        initializePushNotifications()
+//        loadUnreadMessageCount()
+    }
+
     private fun setupRecyclerView() {
         rv?.layoutManager = GridLayoutManager(this, SPAN_COUNT)
         adapter = GridButtonViewAdapter(items)
