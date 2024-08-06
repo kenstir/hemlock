@@ -2,13 +2,17 @@
 <resources>
     <string name="ou_account_label">Acorn Catalog</string>
     <string name="ou_account_sign_in_message">Sign in to your Bibliomation account</string>
-    <string name="ou_account_type">net.kenstir.apps.bibliomation</string>
     <string name="ou_app_label">Acorn Catalog</string>
     <string name="ou_library_name">Bibliomation</string>
     <string name="ou_activity_subtitle">%2$s</string>
-<!--    <string name="ou_library_url">https://opac.biblio.org</string>-->
+
+    <!-- NOTA BENE: If you change ou_library_url, you must change ou_account_type -->
+    <string name="ou_library_url">https://opac.biblio.org</string>
+    <string name="ou_account_type">net.kenstir.apps.bibliomation</string>
     <!-- test server -->
-    <string name="ou_library_url">https://theory.biblio.org</string>
+<!--    <string name="ou_library_url">https://theory.biblio.org</string>-->
+<!--    <string name="ou_account_type">net.kenstir.apps.bibliomation.TEST</string>-->
+
     <string name="ou_behavior_provider">net.kenstir.apps.acorn.AcornAppBehavior</string>
     <string name="ou_main_activity">net.kenstir.apps.acorn.MainGridActivity</string>
     <string name="ou_menu_provider">net.kenstir.apps.acorn.AcornMenuProvider</string>
