@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="ou_library_url">https://evergreen.cool-cat.org</string>
+    <string name="ou_account_type">net.kenstir.apps.cool</string>
+
     <string name="ou_account_label">COOL Library</string>
     <string name="ou_account_sign_in_message">Sign in to your COOL account</string>
-    <string name="ou_account_type">net.kenstir.apps.cool</string>
     <string name="ou_app_label">COOL</string>
     <string name="ou_library_name">COOL</string>
     <string name="ou_activity_subtitle">%2$s</string>
-    <string name="ou_library_url">https://evergreen.cool-cat.org</string>
     <string name="ou_barcode_format">Codabar</string>
     <string name="ou_details_link_text">Additional Content</string>
     <string name="ou_details_link_query">expand=addedcontent;ac=summary</string>
