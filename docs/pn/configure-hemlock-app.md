@@ -2,6 +2,8 @@
 
 This guide is for the mobile app developer.
 
+## Configure the Android app
+
 **TODO**
 
 ## Configure the iOS app
@@ -14,3 +16,4 @@ This guide is for the mobile app developer.
   * Click "+ Capability" and add the "Push Notifications" capability
   * Click "+ Capability" and add the "Background Modes" capability, then select "Remote notifications"
   * For cleanliness, move the newly created .entitlements file (drag it in Xcode to Source/pines_app/)
+  * Close Xcode, then edit the project.pbxproj to fix the relative path `CODE_SIGN_ENTITLEMENTS = Source/pines_app/PINES.entitlements;`
