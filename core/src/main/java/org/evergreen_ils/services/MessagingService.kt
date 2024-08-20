@@ -1,12 +1,10 @@
 package org.evergreen_ils.services
 
-import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.media.RingtoneManager
-import android.os.Build
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import com.google.firebase.messaging.FirebaseMessagingService
@@ -14,6 +12,7 @@ import com.google.firebase.messaging.RemoteMessage
 import org.evergreen_ils.R
 import org.evergreen_ils.android.Log.TAG_FCM
 import org.evergreen_ils.data.PushNotification
+import org.evergreen_ils.utils.ui.BaseActivity
 import org.evergreen_ils.views.MainActivity
 import org.evergreen_ils.views.messages.MessagesActivity
 
@@ -38,7 +37,11 @@ class MessagingService: FirebaseMessagingService() {
      */
     private fun sendNotification(notification: PushNotification) {
         val requestCode = 0
-        val clazz = if (notification.type == PushNotification.TYPE_PMC) MessagesActivity::class.java else MainActivity::class.java
+        val clazz = when (notification.type) {
+            PushNotification.TYPE_PMC -> MessagesActivity::class.java
+            else -> MainActivity::class.java
+        }
+
         val intent = Intent(this, clazz)
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
         val pendingIntent = PendingIntent.getActivity(
