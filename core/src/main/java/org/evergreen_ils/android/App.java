@@ -30,9 +30,11 @@ import androidx.annotation.Nullable;
 import org.evergreen_ils.R;
 import org.evergreen_ils.data.Account;
 import org.evergreen_ils.data.Library;
+import org.evergreen_ils.data.PushNotification;
 import org.evergreen_ils.net.Gateway;
 import org.evergreen_ils.net.Volley;
 import org.evergreen_ils.utils.ui.AppState;
+import org.evergreen_ils.utils.ui.BaseActivity;
 import org.evergreen_ils.views.launch.LaunchActivity;
 import org.evergreen_ils.views.MainActivity;
 import org.evergreen_ils.views.messages.MessagesActivity;
@@ -154,10 +156,10 @@ public class App {
     }
 
     /** Start app from a push notification */
-    public static void startAppForPMC(Activity activity) {
+    public static void startAppFromPushNotification(Activity activity, Class<? extends BaseActivity> targetActivityClass) {
         setStarted(true);
         updateLaunchCount();
-        Intent intent = new Intent(activity.getApplicationContext(), MessagesActivity.class);
+        Intent intent = new Intent(activity.getApplicationContext(), targetActivityClass);
         activity.startActivity(intent);
         activity.finish();
     }

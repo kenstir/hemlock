@@ -13,13 +13,12 @@ import org.evergreen_ils.R
 import org.evergreen_ils.android.Log.TAG_FCM
 import org.evergreen_ils.data.PushNotification
 import org.evergreen_ils.utils.ui.BaseActivity
-import org.evergreen_ils.views.MainActivity
-import org.evergreen_ils.views.messages.MessagesActivity
 
 class MessagingService: FirebaseMessagingService() {
 
     /** Called when message is received and the app is in the foreground. */
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
+        Log.d(TAG_FCM, "onMessageReceived: $remoteMessage")
         val notification = PushNotification(remoteMessage.notification?.title,
             remoteMessage.notification?.body,
             remoteMessage.data[PushNotification.TYPE_KEY],
@@ -37,10 +36,7 @@ class MessagingService: FirebaseMessagingService() {
      */
     private fun sendNotification(notification: PushNotification) {
         val requestCode = 0
-        val clazz = when (notification.type) {
-            PushNotification.TYPE_PMC -> MessagesActivity::class.java
-            else -> MainActivity::class.java
-        }
+        val clazz = BaseActivity.activityForNotificationType(notification)
 
         val intent = Intent(this, clazz)
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
@@ -51,10 +47,10 @@ class MessagingService: FirebaseMessagingService() {
             PendingIntent.FLAG_IMMUTABLE,
         )
 
-        val channelId = getString(R.string.default_notification_channel_id)
+        val channelId = PushNotification.getChannelId(notification.type)
         val defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
         val notificationBuilder = NotificationCompat.Builder(this, channelId)
-            .setSmallIcon(R.drawable.ic_notification_24)
+            .setSmallIcon(R.drawable.ic_notification)
             .setContentTitle(notification.title)
             .setContentText(notification.body)
             .setAutoCancel(true)

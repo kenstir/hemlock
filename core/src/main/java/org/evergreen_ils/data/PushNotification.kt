@@ -29,7 +29,29 @@ class PushNotification(val title: String?, val body: String?, val type: String?,
 
     companion object {
         const val TYPE_KEY = "hemlock.t"
+
+        // These TYPE_* values correspond to Android notification channel IDs;
+        // once created these IDs cannot be changed.  But the names and descriptions
+        // can be changed.
+        // See also https://developer.android.com/develop/ui/views/notifications/channels
+        const val TYPE_CHECKOUTS = "checkouts"
+        const val TYPE_GENERAL = "general"
+        const val TYPE_HOLDS = "holds"
         const val TYPE_PMC = "pmc"
+
         const val USERNAME_KEY = "hemlock.u"
+
+        // This function ensures we use a valid channel ID for an incoming notification type.
+        // Notifications sent with an unregistered type are not delivered.
+        fun getChannelId(type: String?): String {
+            return when (type) {
+                "checkouts" -> TYPE_CHECKOUTS
+                "holds" -> TYPE_HOLDS
+                "general" -> TYPE_GENERAL
+                "main" -> TYPE_GENERAL // Acorn is using type=main
+                "pmc" -> TYPE_PMC
+                else -> TYPE_PMC
+            }
+        }
     }
 }

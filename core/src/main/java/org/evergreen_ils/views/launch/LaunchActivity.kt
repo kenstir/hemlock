@@ -48,6 +48,7 @@ import org.evergreen_ils.utils.await
 import org.evergreen_ils.utils.getAccountManagerResult
 import org.evergreen_ils.utils.getCustomMessage
 import org.evergreen_ils.utils.ui.AppState
+import org.evergreen_ils.utils.ui.BaseActivity.Companion.activityForNotificationType
 import org.opensrf.util.OSRFObject
 import java.util.concurrent.TimeoutException
 
@@ -138,9 +139,10 @@ class LaunchActivity : AppCompatActivity() {
         Log.d(TAG_FCM, "[onLaunchSuccess] LaunchActivity intent: $intent")
         intent.extras?.let {
             val notification = PushNotification(it)
-            Log.d(TAG_FCM, "[onLaunchSuccess] background notification: $notification")
-            if (notification.type == PushNotification.TYPE_PMC) {
-                App.startAppForPMC(this)
+            Log.d(TAG_FCM, "[onLaunchSuccess] notification: $notification")
+            if (notification.type != PushNotification.TYPE_GENERAL) {
+                val targetActivityClass = activityForNotificationType(notification)
+                App.startAppFromPushNotification(this, targetActivityClass)
                 return
             }
         }

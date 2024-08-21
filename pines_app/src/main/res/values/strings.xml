@@ -6,4 +6,11 @@
     <string name="title_galileo">GALILEO Virtual Library</string>
     <string name="title_patron_message_center">Messages</string>
     <string name="label_hold_any_part">Any part</string>
+
+    <!-- [fcm] -->
+    <bool name="notification_channel_register_checkouts_channel">false</bool>
+    <bool name="notification_channel_register_general_channel">false</bool>
+    <bool name="notification_channel_register_holds_channel">false</bool>
+    <bool name="notification_channel_register_pmc_channel">true</bool>
+    <string name="notification_channel_pmc_name">Messages</string>
 </resources>

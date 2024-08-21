@@ -18,7 +18,6 @@
 
 package org.evergreen_ils.utils.ui
 
-import android.os.Bundle
 import kotlinx.coroutines.async
 import org.evergreen_ils.R
 import org.evergreen_ils.android.App
@@ -38,6 +37,7 @@ open class MainBaseActivity : BaseActivity() {
         intent.extras?.let {
             val notification = PushNotification(it)
             Log.d(TAG_FCM, "background notification: $notification")
+            Log.d(TAG_FCM, "launch intent extras: $it")
             if (notification.type == PushNotification.TYPE_PMC) {
                 // TODO: launch Messages activity
                 return true
@@ -50,7 +50,7 @@ open class MainBaseActivity : BaseActivity() {
         if (!resources.getBoolean(R.bool.ou_enable_push_notifications)) return
 
         requestNotificationPermission()
-        createNotificationChannel()
+        createNotificationChannels()
         updateStoredNotificationToken()
     }
 

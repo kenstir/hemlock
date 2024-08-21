@@ -52,6 +52,7 @@ import org.evergreen_ils.android.App
 import org.evergreen_ils.android.App.REQUEST_MESSAGES
 import org.evergreen_ils.android.Log
 import org.evergreen_ils.android.Log.TAG_FCM
+import org.evergreen_ils.data.PushNotification
 import org.evergreen_ils.data.Result
 import org.evergreen_ils.system.EgOrg
 import org.evergreen_ils.system.EgSearch
@@ -138,13 +139,33 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         return Result.Success(Unit)
     }
 
-    /** Create channel to show notifications. */
-    fun createNotificationChannel() {
+    /** Create channels to show notifications.
+     * See also: https://developer.android.com/develop/ui/views/notifications/channels
+     */
+    fun createNotificationChannels() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val channelId = getString(R.string.default_notification_channel_id)
-            val channelName = getString(R.string.default_notification_channel_name)
             val notificationManager = getSystemService(NotificationManager::class.java)
-            notificationManager.createNotificationChannel(NotificationChannel(channelId, channelName, NotificationManager.IMPORTANCE_DEFAULT))
+
+            if (resources.getBoolean(R.bool.notification_channel_register_pmc_channel))
+                notificationManager.createNotificationChannel(NotificationChannel(
+                    PushNotification.TYPE_PMC,
+                    getString(R.string.notification_channel_pmc_name),
+                    NotificationManager.IMPORTANCE_DEFAULT))
+            if (resources.getBoolean(R.bool.notification_channel_register_holds_channel))
+                notificationManager.createNotificationChannel(NotificationChannel(
+                    PushNotification.TYPE_HOLDS,
+                    getString(R.string.notification_channel_holds_Name),
+                    NotificationManager.IMPORTANCE_DEFAULT))
+            if (resources.getBoolean(R.bool.notification_channel_register_checkouts_channel))
+                notificationManager.createNotificationChannel(NotificationChannel(
+                    PushNotification.TYPE_CHECKOUTS,
+                    getString(R.string.notification_channel_checkouts_Name),
+                    NotificationManager.IMPORTANCE_DEFAULT))
+            if (resources.getBoolean(R.bool.notification_channel_register_general_channel))
+                notificationManager.createNotificationChannel(NotificationChannel(
+                    PushNotification.TYPE_GENERAL,
+                    getString(R.string.notification_channel_general_name),
+                    NotificationManager.IMPORTANCE_DEFAULT))
         }
     }
 
@@ -379,6 +400,15 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
             }
 
             return version
+        }
+
+        fun activityForNotificationType(notification: PushNotification): Class<out BaseActivity> {
+            return when (notification.type) {
+                PushNotification.TYPE_CHECKOUTS -> CheckoutsActivity::class.java
+                PushNotification.TYPE_HOLDS -> HoldsActivity::class.java
+                PushNotification.TYPE_PMC -> MessagesActivity::class.java
+                else -> MainActivity::class.java
+            }
         }
     }
 }
