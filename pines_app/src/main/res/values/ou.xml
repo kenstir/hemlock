@@ -35,4 +35,11 @@
     <bool name="ou_always_popup_online_links">true</bool>
     <bool name="ou_enable_analytics">true</bool>
     <bool name="ou_extra_bookbag_query">true</bool>
+
+    <!-- [fcm] -->
+    <bool name="notification_channel_register_checkouts_channel">true</bool>
+    <bool name="notification_channel_register_fines_channel">true</bool>
+    <bool name="notification_channel_register_general_channel">false</bool>
+    <bool name="notification_channel_register_holds_channel">true</bool>
+    <bool name="notification_channel_register_pmc_channel">true</bool>
 </resources>

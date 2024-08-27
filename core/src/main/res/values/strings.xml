@@ -282,16 +282,6 @@
     <string name="no_closures_scheduled_msg">No closures scheduled</string>
     <string name="notification_permission_rationale_msg">%1$s wants to send a notification when you have a new message in your account, e.g. when a hold is ready for pickup.</string>
     <string name="notification_permission_denied_msg">%1$s will not be able to send a notification when you have a new message in your account, e.g. when a hold is ready for pickup.</string>
-    <bool name="notification_channel_register_checkouts_channel">true</bool>
-    <bool name="notification_channel_register_general_channel">true</bool>
-    <bool name="notification_channel_register_holds_channel">true</bool>
-    <bool name="notification_channel_register_pmc_channel">false</bool>
-    <string name="notification_channel_default_channel_id">pmc</string>
-    <string name="notification_channel_checkouts_Name">Item checked out courtesy notices</string>
-    <string name="notification_channel_general_name">Other notifications</string>
-    <string name="notification_channel_holds_Name">Holds available</string>
-    <string name="notification_channel_pmc_name">System messages</string>
     <string name="ok">OK</string>
     <string name="no_thanks">No thanks</string>
-
 </resources>

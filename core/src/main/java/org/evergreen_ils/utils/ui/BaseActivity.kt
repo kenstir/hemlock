@@ -154,12 +154,17 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
             if (resources.getBoolean(R.bool.notification_channel_register_holds_channel))
                 notificationManager.createNotificationChannel(NotificationChannel(
                     PushNotification.TYPE_HOLDS,
-                    getString(R.string.notification_channel_holds_Name),
+                    getString(R.string.notification_channel_holds_name),
                     NotificationManager.IMPORTANCE_DEFAULT))
             if (resources.getBoolean(R.bool.notification_channel_register_checkouts_channel))
                 notificationManager.createNotificationChannel(NotificationChannel(
                     PushNotification.TYPE_CHECKOUTS,
-                    getString(R.string.notification_channel_checkouts_Name),
+                    getString(R.string.notification_channel_checkouts_name),
+                    NotificationManager.IMPORTANCE_DEFAULT))
+            if (resources.getBoolean(R.bool.notification_channel_register_fines_channel))
+                notificationManager.createNotificationChannel(NotificationChannel(
+                    PushNotification.TYPE_FINES,
+                    getString(R.string.notification_channel_fines_name),
                     NotificationManager.IMPORTANCE_DEFAULT))
             if (resources.getBoolean(R.bool.notification_channel_register_general_channel))
                 notificationManager.createNotificationChannel(NotificationChannel(
@@ -405,9 +410,10 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         fun activityForNotificationType(notification: PushNotification): Class<out BaseActivity> {
             return when (notification.type) {
                 PushNotification.TYPE_CHECKOUTS -> CheckoutsActivity::class.java
+                PushNotification.TYPE_FINES -> FinesActivity::class.java
                 PushNotification.TYPE_HOLDS -> HoldsActivity::class.java
                 PushNotification.TYPE_PMC -> MessagesActivity::class.java
-                else -> MainActivity::class.java
+                PushNotification.TYPE_GENERAL -> MainActivity::class.java
             }
         }
     }

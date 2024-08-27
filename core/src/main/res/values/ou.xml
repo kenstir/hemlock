@@ -89,4 +89,17 @@
     <bool name="ou_is_generic_app">false</bool>
     <!-- max number of results to return from Search -->
     <integer name="ou_search_limit">200</integer>
+
+    <!-- [fcm] -->
+    <bool name="notification_channel_register_checkouts_channel">true</bool>
+    <bool name="notification_channel_register_fines_channel">true</bool>
+    <bool name="notification_channel_register_general_channel">true</bool>
+    <bool name="notification_channel_register_holds_channel">true</bool>
+    <bool name="notification_channel_register_pmc_channel">false</bool>
+    <string name="notification_channel_default_channel_id">pmc</string>
+    <string name="notification_channel_checkouts_name">Items due or overdue</string>
+    <string name="notification_channel_fines_name">Fines and other charges</string>
+    <string name="notification_channel_general_name">Other notifications</string>
+    <string name="notification_channel_holds_name">Holds available</string>
+    <string name="notification_channel_pmc_name">System messages</string>
 </resources>

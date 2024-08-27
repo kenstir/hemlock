@@ -35,6 +35,7 @@ class PushNotification(val title: String?, val body: String?, val type: String?,
         // can be changed.
         // See also https://developer.android.com/develop/ui/views/notifications/channels
         const val TYPE_CHECKOUTS = "checkouts"
+        const val TYPE_FINES = "fines"
         const val TYPE_GENERAL = "general"
         const val TYPE_HOLDS = "holds"
         const val TYPE_PMC = "pmc"
@@ -43,14 +44,15 @@ class PushNotification(val title: String?, val body: String?, val type: String?,
 
         // This function ensures we use a valid channel ID for an incoming notification type.
         // Notifications sent with an unregistered type are not delivered.
-        fun getChannelId(type: String?): String {
+        fun getChannelId(type: String?, defaultChannelId: String): String {
             return when (type) {
                 "checkouts" -> TYPE_CHECKOUTS
+                "fines" -> TYPE_FINES
                 "holds" -> TYPE_HOLDS
                 "general" -> TYPE_GENERAL
                 "main" -> TYPE_GENERAL // Acorn is using type=main
                 "pmc" -> TYPE_PMC
-                else -> TYPE_PMC
+                else -> defaultChannelId // TODO: this is a error in the action trigger
             }
         }
     }

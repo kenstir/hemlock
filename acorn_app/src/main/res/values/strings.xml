@@ -3,11 +3,4 @@
     <string name="barcode_title">Digital Library Card</string>
     <string name="title_search">Search Catalog</string>
     <string name="title_library_info">Library Hours &amp; Info</string>
-
-    <!-- [fcm] -->
-    <bool name="notification_channel_register_checkouts_channel">true</bool>
-    <bool name="notification_channel_register_general_channel">true</bool>
-    <bool name="notification_channel_register_holds_channel">true</bool>
-    <bool name="notification_channel_register_pmc_channel">false</bool>
-    <string name="notification_channel_default_channel_id">general</string>
 </resources>
