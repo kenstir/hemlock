@@ -225,15 +225,6 @@ class PlaceHoldActivity : BaseActivity() {
         Log.d(TAG, "${record.title}: titleHoldIsPossible=$titleHoldIsPossible")
     }
 
-    fun <T> coalesce(vararg args: T): T? {
-        for (arg in args) {
-            if (arg != null) {
-                return arg
-            }
-        }
-        return null
-    }
-
     private fun logPlaceHoldResult(succeeded: Boolean, result: String) {
         val notify = ArrayList<String?>()
         if (emailNotification?.isChecked == true) notify.add("email")

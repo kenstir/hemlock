@@ -18,6 +18,7 @@
 
 package org.evergreen_ils.utils.ui
 
+import android.content.Intent
 import kotlinx.coroutines.async
 import org.evergreen_ils.R
 import org.evergreen_ils.android.App
@@ -31,15 +32,18 @@ open class MainBaseActivity : BaseActivity() {
     private val TAG = javaClass.simpleName
 
     /// FCM: handle background push notification
-    /// If launch intent is a push notification of type PMC, launch Messages activity and return true
+    /// If launch intent is a push notification with a target activity, launch it and return true
+    /// TODO: is this ever hit?
     fun onCreateHandleLaunchIntent(): Boolean {
-        Log.d(TAG_FCM, "MainActivity intent: $intent")
+        Log.d(TAG_FCM, "************************************** MainActivity intent: $intent")
         intent.extras?.let {
             val notification = PushNotification(it)
             Log.d(TAG_FCM, "background notification: $notification")
-            Log.d(TAG_FCM, "launch intent extras: $it")
-            if (notification.type == PushNotification.TYPE_PMC) {
-                // TODO: launch Messages activity
+            if (notification.isNotGeneral()) {
+                val targetActivityClass = activityForNotificationType(notification)
+                val intent = Intent(applicationContext, targetActivityClass)
+                startActivity(intent)
+                finish()
                 return true
             }
         }

@@ -20,40 +20,39 @@ package org.evergreen_ils.data
 
 import android.os.Bundle
 
-class PushNotification(val title: String?, val body: String?, val type: String?, val username: String?) {
-    constructor(extras: Bundle) : this(null, null, extras.getString(TYPE_KEY), extras.getString(USERNAME_KEY))
+// Once created, the channelId string cannot be changed without uninstalling the app.
+// But the descriptions can be changed, e.g. R.string.notification_channel_checkouts_name.
+// See also https://developer.android.com/develop/ui/views/notifications/channels
+enum class HemlockNotificationChannel(val id: String) {
+    CHECKOUTS("checkouts"),
+    FINES("fines"),
+    GENERAL("general"),
+    HOLDS("holds"),
+    PMC("pmc");
+
+    companion object {
+        fun fromType(notificationType: String?): HemlockNotificationChannel? {
+            return values().find { it.id == notificationType }
+        }
+    }
+}
+
+class PushNotification(val title: String?, val body: String?, val channel: HemlockNotificationChannel, val username: String?) {
+    constructor(title: String?, body: String?, type: String?, username: String?) :
+            this(title, body, HemlockNotificationChannel.fromType(type) ?: HemlockNotificationChannel.HOLDS, username)
+    constructor(extras: Bundle) :
+            this(null, null, extras.getString(TYPE_KEY), extras.getString(USERNAME_KEY))
+
+    fun isNotGeneral(): Boolean {
+        return channel != HemlockNotificationChannel.GENERAL
+    }
 
     override fun toString(): String {
-        return "{user=$username type=${type} title=\"$title\" body=\"$body\"}"
+        return "{user=$username chan=${channel.id} title=\"$title\" body=\"$body\"}"
     }
 
     companion object {
         const val TYPE_KEY = "hemlock.t"
-
-        // These TYPE_* values correspond to Android notification channel IDs;
-        // once created these IDs cannot be changed.  But the names and descriptions
-        // can be changed.
-        // See also https://developer.android.com/develop/ui/views/notifications/channels
-        const val TYPE_CHECKOUTS = "checkouts"
-        const val TYPE_FINES = "fines"
-        const val TYPE_GENERAL = "general"
-        const val TYPE_HOLDS = "holds"
-        const val TYPE_PMC = "pmc"
-
         const val USERNAME_KEY = "hemlock.u"
-
-        // This function ensures we use a valid channel ID for an incoming notification type.
-        // Notifications sent with an unregistered type are not delivered.
-        fun getChannelId(type: String?, defaultChannelId: String): String {
-            return when (type) {
-                "checkouts" -> TYPE_CHECKOUTS
-                "fines" -> TYPE_FINES
-                "holds" -> TYPE_HOLDS
-                "general" -> TYPE_GENERAL
-                "main" -> TYPE_GENERAL // Acorn is using type=main
-                "pmc" -> TYPE_PMC
-                else -> defaultChannelId // TODO: this is a error in the action trigger
-            }
-        }
     }
 }

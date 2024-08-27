@@ -96,7 +96,7 @@
     <bool name="notification_channel_register_general_channel">true</bool>
     <bool name="notification_channel_register_holds_channel">true</bool>
     <bool name="notification_channel_register_pmc_channel">false</bool>
-    <string name="notification_channel_default_channel_id">pmc</string>
+    <string name="notification_channel_default_channel_id">holds</string>
     <string name="notification_channel_checkouts_name">Items due or overdue</string>
     <string name="notification_channel_fines_name">Fines and other charges</string>
     <string name="notification_channel_general_name">Other notifications</string>

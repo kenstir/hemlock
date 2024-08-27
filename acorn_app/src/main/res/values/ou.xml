@@ -35,5 +35,4 @@
     <bool name="notification_channel_register_general_channel">true</bool>
     <bool name="notification_channel_register_holds_channel">true</bool>
     <bool name="notification_channel_register_pmc_channel">false</bool>
-    <string name="notification_channel_default_channel_id">holds</string>
 </resources>

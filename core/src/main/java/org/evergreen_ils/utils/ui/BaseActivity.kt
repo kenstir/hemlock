@@ -52,6 +52,7 @@ import org.evergreen_ils.android.App
 import org.evergreen_ils.android.App.REQUEST_MESSAGES
 import org.evergreen_ils.android.Log
 import org.evergreen_ils.android.Log.TAG_FCM
+import org.evergreen_ils.data.HemlockNotificationChannel
 import org.evergreen_ils.data.PushNotification
 import org.evergreen_ils.data.Result
 import org.evergreen_ils.system.EgOrg
@@ -146,30 +147,30 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val notificationManager = getSystemService(NotificationManager::class.java)
 
-            if (resources.getBoolean(R.bool.notification_channel_register_pmc_channel))
-                notificationManager.createNotificationChannel(NotificationChannel(
-                    PushNotification.TYPE_PMC,
-                    getString(R.string.notification_channel_pmc_name),
-                    NotificationManager.IMPORTANCE_DEFAULT))
-            if (resources.getBoolean(R.bool.notification_channel_register_holds_channel))
-                notificationManager.createNotificationChannel(NotificationChannel(
-                    PushNotification.TYPE_HOLDS,
-                    getString(R.string.notification_channel_holds_name),
-                    NotificationManager.IMPORTANCE_DEFAULT))
             if (resources.getBoolean(R.bool.notification_channel_register_checkouts_channel))
                 notificationManager.createNotificationChannel(NotificationChannel(
-                    PushNotification.TYPE_CHECKOUTS,
+                    HemlockNotificationChannel.CHECKOUTS.id,
                     getString(R.string.notification_channel_checkouts_name),
                     NotificationManager.IMPORTANCE_DEFAULT))
             if (resources.getBoolean(R.bool.notification_channel_register_fines_channel))
                 notificationManager.createNotificationChannel(NotificationChannel(
-                    PushNotification.TYPE_FINES,
+                    HemlockNotificationChannel.FINES.id,
                     getString(R.string.notification_channel_fines_name),
                     NotificationManager.IMPORTANCE_DEFAULT))
             if (resources.getBoolean(R.bool.notification_channel_register_general_channel))
                 notificationManager.createNotificationChannel(NotificationChannel(
-                    PushNotification.TYPE_GENERAL,
+                    HemlockNotificationChannel.GENERAL.id,
                     getString(R.string.notification_channel_general_name),
+                    NotificationManager.IMPORTANCE_DEFAULT))
+            if (resources.getBoolean(R.bool.notification_channel_register_holds_channel))
+                notificationManager.createNotificationChannel(NotificationChannel(
+                    HemlockNotificationChannel.HOLDS.id,
+                    getString(R.string.notification_channel_holds_name),
+                    NotificationManager.IMPORTANCE_DEFAULT))
+            if (resources.getBoolean(R.bool.notification_channel_register_pmc_channel))
+                notificationManager.createNotificationChannel(NotificationChannel(
+                    HemlockNotificationChannel.PMC.id,
+                    getString(R.string.notification_channel_pmc_name),
                     NotificationManager.IMPORTANCE_DEFAULT))
         }
     }
@@ -408,12 +409,12 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         }
 
         fun activityForNotificationType(notification: PushNotification): Class<out BaseActivity> {
-            return when (notification.type) {
-                PushNotification.TYPE_CHECKOUTS -> CheckoutsActivity::class.java
-                PushNotification.TYPE_FINES -> FinesActivity::class.java
-                PushNotification.TYPE_HOLDS -> HoldsActivity::class.java
-                PushNotification.TYPE_PMC -> MessagesActivity::class.java
-                PushNotification.TYPE_GENERAL -> MainActivity::class.java
+            return when (notification.channel) {
+                HemlockNotificationChannel.CHECKOUTS -> CheckoutsActivity::class.java
+                HemlockNotificationChannel.FINES -> FinesActivity::class.java
+                HemlockNotificationChannel.HOLDS -> HoldsActivity::class.java
+                HemlockNotificationChannel.PMC -> MessagesActivity::class.java
+                HemlockNotificationChannel.GENERAL -> MainActivity::class.java
             }
         }
     }

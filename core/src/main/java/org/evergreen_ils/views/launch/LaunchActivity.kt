@@ -140,7 +140,7 @@ class LaunchActivity : AppCompatActivity() {
         intent.extras?.let {
             val notification = PushNotification(it)
             Log.d(TAG_FCM, "[onLaunchSuccess] notification: $notification")
-            if (notification.type != PushNotification.TYPE_GENERAL) {
+            if (notification.isNotGeneral()) {
                 val targetActivityClass = activityForNotificationType(notification)
                 App.startAppFromPushNotification(this, targetActivityClass)
                 return
