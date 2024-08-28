@@ -38,14 +38,15 @@ open class MainBaseActivity : BaseActivity() {
         Log.d(TAG_FCM, "************************************** MainActivity intent: $intent")
         intent.extras?.let {
             val notification = PushNotification(it)
-            Log.d(TAG_FCM, "background notification: $notification")
-            if (notification.isNotGeneral()) {
-                val targetActivityClass = activityForNotificationType(notification)
-                val intent = Intent(applicationContext, targetActivityClass)
-                startActivity(intent)
-                finish()
-                return true
-            }
+            Log.d(TAG_FCM, "======================================================================================== background notification: $notification")
+            showAlert("background notification in MainBaseActivity: $notification")
+//            if (notification.isNotGeneral()) {
+//                val targetActivityClass = activityForNotificationType(notification)
+//                val intent = Intent(applicationContext, targetActivityClass)
+//                startActivity(intent)
+//                finish()
+//                return true
+//            }
         }
         return false
     }

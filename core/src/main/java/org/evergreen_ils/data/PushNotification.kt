@@ -20,10 +20,16 @@ package org.evergreen_ils.data
 
 import android.os.Bundle
 
-// Once created, the channelId string cannot be changed without uninstalling the app.
-// But the descriptions can be changed, e.g. R.string.notification_channel_checkouts_name.
+// The `channelId` string is used when registering the notification channels.
+// Once created, a channelId string cannot be changed without uninstalling the app.
+// The descriptions can be changed, e.g. R.string.notification_channel_checkouts_name.
 // See also https://developer.android.com/develop/ui/views/notifications/channels
-enum class HemlockNotificationChannel(val id: String) {
+//
+// NB: This list of channelId strings must be kept in sync in 3 places:
+// * hemlock (android): core/src/main/java/org/evergreen_ils/data/PushNotification.kt
+// * hemlock-ios:       Source/Models/PushNotification.swift
+// * hemlock-sendmsg:   sendmsg.go
+enum class NotificationType(val channelId: String) {
     CHECKOUTS("checkouts"),
     FINES("fines"),
     GENERAL("general"),
@@ -31,24 +37,24 @@ enum class HemlockNotificationChannel(val id: String) {
     PMC("pmc");
 
     companion object {
-        fun fromType(notificationType: String?): HemlockNotificationChannel? {
-            return values().find { it.id == notificationType }
+        fun make(strValue: String?): NotificationType {
+            return values().find { it.channelId == strValue } ?: HOLDS
         }
     }
 }
 
-class PushNotification(val title: String?, val body: String?, val channel: HemlockNotificationChannel, val username: String?) {
+class PushNotification(val title: String?, val body: String?, val type: NotificationType, val username: String?) {
     constructor(title: String?, body: String?, type: String?, username: String?) :
-            this(title, body, HemlockNotificationChannel.fromType(type) ?: HemlockNotificationChannel.HOLDS, username)
+            this(title, body, NotificationType.make(type), username)
     constructor(extras: Bundle) :
             this(null, null, extras.getString(TYPE_KEY), extras.getString(USERNAME_KEY))
 
     fun isNotGeneral(): Boolean {
-        return channel != HemlockNotificationChannel.GENERAL
+        return type != NotificationType.GENERAL
     }
 
     override fun toString(): String {
-        return "{user=$username chan=${channel.id} title=\"$title\" body=\"$body\"}"
+        return "{user=$username chan=${type.channelId} title=\"$title\" body=\"$body\"}"
     }
 
     companion object {
