@@ -147,6 +147,12 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val notificationManager = getSystemService(NotificationManager::class.java)
 
+            // NB: The order these are created is the order they appear in Settings>>Notifications
+            if (resources.getBoolean(R.bool.notification_channel_register_holds_channel))
+                notificationManager.createNotificationChannel(NotificationChannel(
+                    NotificationType.HOLDS.channelId,
+                    getString(R.string.notification_channel_holds_name),
+                    NotificationManager.IMPORTANCE_DEFAULT))
             if (resources.getBoolean(R.bool.notification_channel_register_checkouts_channel))
                 notificationManager.createNotificationChannel(NotificationChannel(
                     NotificationType.CHECKOUTS.channelId,
@@ -157,20 +163,16 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
                     NotificationType.FINES.channelId,
                     getString(R.string.notification_channel_fines_name),
                     NotificationManager.IMPORTANCE_DEFAULT))
-            if (resources.getBoolean(R.bool.notification_channel_register_general_channel))
-                notificationManager.createNotificationChannel(NotificationChannel(
-                    NotificationType.GENERAL.channelId,
-                    getString(R.string.notification_channel_general_name),
-                    NotificationManager.IMPORTANCE_DEFAULT))
-            if (resources.getBoolean(R.bool.notification_channel_register_holds_channel))
-                notificationManager.createNotificationChannel(NotificationChannel(
-                    NotificationType.HOLDS.channelId,
-                    getString(R.string.notification_channel_holds_name),
-                    NotificationManager.IMPORTANCE_DEFAULT))
             if (resources.getBoolean(R.bool.notification_channel_register_pmc_channel))
                 notificationManager.createNotificationChannel(NotificationChannel(
                     NotificationType.PMC.channelId,
                     getString(R.string.notification_channel_pmc_name),
+                    NotificationManager.IMPORTANCE_DEFAULT))
+            // register the spillover channel last
+            if (resources.getBoolean(R.bool.notification_channel_register_general_channel))
+                notificationManager.createNotificationChannel(NotificationChannel(
+                    NotificationType.GENERAL.channelId,
+                    getString(R.string.notification_channel_general_name),
                     NotificationManager.IMPORTANCE_DEFAULT))
         }
     }
