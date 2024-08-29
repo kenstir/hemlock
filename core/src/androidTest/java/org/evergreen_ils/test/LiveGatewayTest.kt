@@ -196,7 +196,7 @@ class LiveGatewayTest {
         }
     }
 
-    suspend fun fetchStringWithDelay(timeoutMs: Int, delaySeconds: Float): Result<String> {
+    private suspend fun fetchStringWithDelay(timeoutMs: Int, delaySeconds: Float): Result<String> {
         return try {
             val url = args.getString("httpbinServer").plus("/delay/$delaySeconds")
             val ret = Gateway.fetchBodyAsString(url, RequestOptions(timeoutMs))
