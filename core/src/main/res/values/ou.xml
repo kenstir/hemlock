@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- NOTA BENE: If you change ou_library_url, you must change ou_account_type -->
+    <!-- NOTA BENE: change these together: ou_library_url, ou_account_type, ou_app_label -->
     <!-- OPAC URL -->
     <string name="ou_library_url">https://demo.evergreencatalog.com</string>
     <!-- Android AccountManager internal type.

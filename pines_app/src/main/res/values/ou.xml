@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- NOTA BENE: If you change ou_library_url, you must change ou_account_type -->
+    <!-- NOTA BENE: change these together: ou_library_url, ou_account_type, ou_app_label -->
     <!-- production server -->
 <!--    <string name="ou_library_url">https://gapines.org</string>-->
 <!--    <string name="ou_account_type">net.kenstir.apps.pines</string>-->
     <!-- PINES test server -->
     <string name="ou_library_url">https://test.gapines.org</string>
     <string name="ou_account_type">net.kenstir.apps.pines.test</string>
+    <string name="ou_app_label">PINES TEST</string>
 
     <string name="ou_account_label">PINES</string>
     <string name="ou_account_sign_in_message">Sign in to your PINES account</string>
-    <string name="ou_app_label">PINES</string>
     <string name="ou_library_name">PINES</string>
     <string name="ou_activity_subtitle">%2$s</string>
     <string name="ou_behavior_provider">net.kenstir.apps.pines.PinesAppBehavior</string>
