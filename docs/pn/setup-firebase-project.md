@@ -63,7 +63,7 @@ Create a key:
 
 If I setup your project, you already have these.
 
-In the [Firebase Console](https://console.firebase.google.com/), choose `Project Overview` fromt the lef navigation menu.
+In the [Firebase Console](https://console.firebase.google.com/), choose `Project Overview` fromt the left navigation menu.
 
 * Add an Android app to the project with `+ Add app`
 * Add an iOS app to the project with `+ Add app`
@@ -71,3 +71,20 @@ In the [Firebase Console](https://console.firebase.google.com/), choose `Project
 Under `Your apps` you can now download the file needed to build the Hemlock app.
 * Android: `google-services.json`
 * iOS: `GoogleService-Info.plist`
+
+## Create an Apple APNs key and add it
+
+### Create an Apple APNs key
+
+* Go to [Keys at the Apple Developer site] https://developer.apple.com/account/resources/authkeys/list
+* If there is no APNs key, select "Create a key"
+* Name it, e.g. "Acorn APNs Key"
+* Select "Apple Push Notification service (APNs)"
+* Click "Continue", then "Register"
+* Download the APNs key (.p8 file)
+
+### Add the APNs key to the Firebase project
+
+* In the [Firebase Console](https://console.firebase.google.com/), choose project settings under the gear icon
+* Choose the "Cloud Messaging" tab
+* Under "Apple app configuration" >> "APNs Authentication Key", upload the .p8 key file
