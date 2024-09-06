@@ -136,7 +136,6 @@ class LaunchActivity : AppCompatActivity() {
         Log.d(TAG, (object{}.javaClass.enclosingMethod?.name ?: "") + " isFinishing:$isFinishing")
 
         // FCM: handle background push notification
-        Log.d(TAG_FCM, "[onLaunchSuccess] LaunchActivity intent: $intent")
         intent.extras?.let {
             val notification = PushNotification(it)
             Log.d(TAG_FCM, "[onLaunchSuccess] notification: $notification")

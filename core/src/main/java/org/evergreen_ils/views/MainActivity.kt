@@ -61,7 +61,7 @@ open class MainActivity : MainBaseActivity() {
 
         setContentView(R.layout.activity_main)
 
-        if (onCreateHandleLaunchIntent()) return
+//        if (onCreateHandleLaunchIntent()) return
 
         eventsButton = findViewById(R.id.main_events_button)
         setupEventsButton()

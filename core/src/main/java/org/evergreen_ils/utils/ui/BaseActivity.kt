@@ -38,6 +38,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.Toolbar
+import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
@@ -52,6 +53,7 @@ import org.evergreen_ils.android.App
 import org.evergreen_ils.android.App.REQUEST_MESSAGES
 import org.evergreen_ils.android.Log
 import org.evergreen_ils.android.Log.TAG_FCM
+import org.evergreen_ils.android.Log.TAG_PERM
 import org.evergreen_ils.data.NotificationType
 import org.evergreen_ils.data.PushNotification
 import org.evergreen_ils.data.Result
@@ -90,42 +92,75 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
 
     private val requestPermissionLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
         if (isGranted) {
-            Log.d(TAG_FCM, "Permission granted")
-        } else {
-            //TODO: change title to "Notice" and add text on how to update it later
-            //TODO: don't show again
-            val msg = getString(R.string.notification_permission_denied_msg, getString(R.string.ou_app_label))
-            Toast.makeText(baseContext, msg, Toast.LENGTH_SHORT).show()
+            Log.d(TAG_PERM, "Permission granted (1)")
+            resetDenyCount()
+//        } else {
+//            //TODO: change to an alert
+//            //TODO: change title to "Notice" and add text on how to update it later
+//            val msg = getString(R.string.notification_permission_denied_msg, getString(R.string.ou_app_label))
+//            Toast.makeText(baseContext, msg, Toast.LENGTH_SHORT).show()
         }
     }
 
+    // This logic is a little different from that recommended in the docs at
+    // https://developer.android.com/training/permissions/requesting
+    // because ActivityCompat.shouldShowRequestPermissionRationale() kept returning true even after
+    // the user said "no thanks".  We avoid that case by keeping a deny counter.
     fun requestNotificationPermission() {
-        val v = Build.VERSION.SDK_INT
-        Log.d(TAG_FCM, "Version $v")
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) return
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
+            Log.d(TAG_PERM, "API Version < 33 did not have a permission dialog")
+            return
+        }
 
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) ==
-            PackageManager.PERMISSION_GRANTED
-        ) {
-            Log.d(TAG_FCM, "Permission granted (2)")
-        } else if (shouldShowRequestPermissionRationale(Manifest.permission.POST_NOTIFICATIONS)) {
-            Log.d(TAG_FCM, "Showing rationale for notifications")
+            PackageManager.PERMISSION_GRANTED) {
+            Log.d(TAG_PERM, "Permission granted (2)")
+            resetDenyCount()
+            return
+        }
+
+        // See if the system thinks we should show the rationale dialog but show it only once.
+        if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.POST_NOTIFICATIONS)) {
+            val denyCount = getDenyCount()
+            Log.d(TAG_PERM, "shouldShowRequestPermissionRationale true, denyCount = $denyCount")
+            if (denyCount > 0) {
+                return
+            }
             AlertDialog.Builder(this)
-                .setMessage(getString(R.string.notification_permission_rationale_msg, getString(R.string.ou_app_label)))
+                .setTitle(getString(R.string.notification_permission_rationale_title, getString(R.string.ou_app_label)))
+                .setMessage(getString(R.string.notification_permission_rationale_msg))
                 .setPositiveButton(getString(R.string.ok)) { _, _ ->
-                    Log.d(TAG_FCM, "Launching request for permission")
+                    Log.d(TAG_PERM, "Launching request for permission (2)")
+                    resetDenyCount()
                     requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
                 }
                 .setNegativeButton(getString(R.string.no_thanks)) { _, _ ->
-                    Log.d(TAG_FCM, "Permission denied")
+                    Log.d(TAG_PERM, "Permission denied")
+                    incrementDenyCount()
                 }
                 .show()
-
-        } else {
-            // Directly ask for the permission
-            Log.d(TAG_FCM, "Launching request for permission (2)")
-            requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+            return
         }
+
+        // Directly ask for the permission
+        Log.d(TAG_PERM, "Launching request for permission (1)")
+        requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+    }
+
+    private fun resetDenyCount() {
+        Log.d(TAG_PERM, "Resetting deny count")
+        AppState.setInt(AppState.NOTIFICATIONS_DENY_COUNT, 0)
+    }
+
+    private fun incrementDenyCount() {
+        val count = AppState.getInt(AppState.NOTIFICATIONS_DENY_COUNT) + 1
+        Log.d(TAG_PERM, "Incrementing deny count to $count")
+        AppState.setInt(AppState.NOTIFICATIONS_DENY_COUNT, count)
+    }
+
+    private fun getDenyCount(): Int {
+        val count = AppState.getInt(AppState.NOTIFICATIONS_DENY_COUNT)
+        return count
     }
 
     suspend fun fetchFcmNotificationToken(): Result<Unit> {

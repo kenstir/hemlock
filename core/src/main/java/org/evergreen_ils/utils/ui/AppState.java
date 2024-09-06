@@ -23,7 +23,6 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.preference.PreferenceManager;
 import org.evergreen_ils.R;
-import org.evergreen_ils.android.App;
 import org.evergreen_ils.android.Log;
 
 import java.util.Date;
@@ -39,6 +38,7 @@ public class AppState {
     public static final String LIBRARY_URL = "library_url";
     public static final String LIBRARY_NAME = "library_name";
     public static final String NIGHT_MODE = "night_mode";
+    public static final String NOTIFICATIONS_DENY_COUNT = "notifications_deny_count";
 
     // increment PREFS_VERSION every time you make a change to the persistent pref storage
     private static final int PREFS_VERSION = 2;

@@ -32,14 +32,13 @@ open class MainBaseActivity : BaseActivity() {
     private val TAG = javaClass.simpleName
 
     /// FCM: handle background push notification
-    /// If launch intent is a push notification with a target activity, launch it and return true
-    /// TODO: is this ever hit?
-    fun onCreateHandleLaunchIntent(): Boolean {
-        Log.d(TAG_FCM, "************************************** MainActivity intent: $intent")
-        intent.extras?.let {
-            val notification = PushNotification(it)
-            Log.d(TAG_FCM, "======================================================================================== background notification: $notification")
-            showAlert("background notification in MainBaseActivity: $notification")
+    // NB: this doesn't happen here, it happens in LaunchActivity.onLaunchSuccess
+//    fun onCreateHandleLaunchIntent(): Boolean {
+//        Log.d(TAG_FCM, "************************************** MainActivity intent: $intent")
+//        intent.extras?.let {
+//            val notification = PushNotification(it)
+//            Log.d(TAG_FCM, "======================================================================================== background notification: $notification")
+//            showAlert("background notification in MainBaseActivity: $notification")
 //            if (notification.isNotGeneral()) {
 //                val targetActivityClass = activityForNotificationType(notification)
 //                val intent = Intent(applicationContext, targetActivityClass)
@@ -47,9 +46,9 @@ open class MainBaseActivity : BaseActivity() {
 //                finish()
 //                return true
 //            }
-        }
-        return false
-    }
+//        }
+//        return false
+//    }
 
     fun initializePushNotifications() {
         if (!resources.getBoolean(R.bool.ou_enable_push_notifications)) return

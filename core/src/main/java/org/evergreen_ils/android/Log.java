@@ -37,6 +37,7 @@ public class Log {
 
     public static String TAG_ASYNC = "async";
     public static String TAG_FCM = "fcm";
+    public static String TAG_PERM = "perm";
 
     public static void setProvider(LogProvider _provider) {
         provider = _provider;
