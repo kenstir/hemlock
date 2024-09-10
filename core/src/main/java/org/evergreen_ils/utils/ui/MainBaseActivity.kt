@@ -19,6 +19,7 @@
 package org.evergreen_ils.utils.ui
 
 import android.content.Intent
+import android.view.MenuItem
 import kotlinx.coroutines.async
 import org.evergreen_ils.R
 import org.evergreen_ils.android.App
@@ -82,5 +83,12 @@ open class MainBaseActivity : BaseActivity() {
                 }
             }
         }
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        val id = item.itemId
+        if (menuItemHandler?.onItemSelected(this, id, "main_option_menu") == true)
+            return true
+        return if (handleMenuAction(id)) true else super.onOptionsItemSelected(item)
     }
 }

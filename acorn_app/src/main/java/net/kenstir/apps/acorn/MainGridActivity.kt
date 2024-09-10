@@ -175,13 +175,6 @@ class MainGridActivity : MainBaseActivity() {
         }
     }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        val id = item.itemId
-        if (menuItemHandler?.onItemSelected(this, id, "main_option_menu") == true)
-            return true
-        return if (handleMenuAction(id)) true else super.onOptionsItemSelected(item)
-    }
-
     fun onButtonClick(v: View) {
         //throw RuntimeException("Test Crash") // test Crashlytics
         val id = v.id

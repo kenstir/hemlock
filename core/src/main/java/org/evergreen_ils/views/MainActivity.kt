@@ -144,10 +144,10 @@ open class MainActivity : MainBaseActivity() {
             menu.removeItem(R.id.action_feedback)
 
         // set up the messages action view, it didn't work when set in xml
-        if (!resources.getBoolean(R.bool.ou_enable_messages)) {
-            menu.removeItem(R.id.action_messages)
-        } else {
+        if (resources.getBoolean(R.bool.ou_enable_messages)) {
             createMessagesActionView(menu)
+        } else {
+            menu.removeItem(R.id.action_messages)
         }
 
         return true
@@ -182,13 +182,6 @@ open class MainActivity : MainBaseActivity() {
         } else {
             mUnreadMessageText?.visibility = View.GONE
         }
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        val id = item.itemId
-        if (menuItemHandler?.onItemSelected(this, id, "main_option_menu") == true)
-            return true
-        return if (handleMenuAction(id)) true else super.onOptionsItemSelected(item)
     }
 
     fun onButtonClick(v: View) {
