@@ -280,7 +280,7 @@ object Analytics {
     // We call this event "login", but it happens after auth and after fleshing the user.
     // NB: "session_start" seems more appropriate but that is a predefined automatic event.
     @JvmStatic
-    fun logSuccessfulLogin(username: String, barcode: String?, homeOrg: String?, parentOrg: String) {
+    fun logSuccessfulLogin(username: String, barcode: String?, homeOrg: String?, parentOrg: String, numAccounts: Int) {
         setUserProperties(bundleOf(
             UserProperty.HOME_ORG to homeOrg,
             UserProperty.PARENT_ORG to parentOrg
@@ -288,6 +288,7 @@ object Analytics {
         logEvent(Event.LOGIN, bundleOf(
             Param.RESULT to Value.OK,
             Param.LOGIN_TYPE to loginTypeKey(username, barcode),
+            Param.NUM_ACCOUNTS to numAccounts
         ))
     }
 
