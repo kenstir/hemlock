@@ -63,6 +63,7 @@ object Analytics {
         const val HOLD_REACTIVATE_KEY = "hold_reactivate" // bool
         const val HOLD_SUSPEND_KEY = "hold_suspend" // bool
         const val LOGIN_TYPE = "login_type" // { barcode | username }
+        const val NUM_ACCOUNTS = "num_accounts"
         const val NUM_ITEMS = "num_items"
         const val NUM_RESULTS = "num_results"
         const val RESULT = "result" // { ok | error_message }
@@ -254,7 +255,7 @@ object Analytics {
     // We call this event "login", but it happens after auth and after fleshing the user.
     // NB: "session_start" seems more appropriate but that is a predefined automatic event.
     @JvmStatic
-    fun logSuccessfulLogin(username: String, barcode: String?, homeOrg: String?, parentOrg: String) {
+    fun logSuccessfulLogin(username: String, barcode: String?, homeOrg: String?, parentOrg: String, numAccounts: Int) {
         setUserProperties(bundleOf(
             UserProperty.HOME_ORG to homeOrg,
             UserProperty.PARENT_ORG to parentOrg
@@ -264,6 +265,7 @@ object Analytics {
             UserProperty.HOME_ORG to homeOrg,
             UserProperty.PARENT_ORG to parentOrg,
             Param.LOGIN_TYPE to loginTypeKey(username, barcode),
+            Param.NUM_ACCOUNTS to numAccounts
         ))
     }
 
