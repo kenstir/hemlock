@@ -19,9 +19,12 @@
 package org.evergreen_ils.utils.ui
 
 import android.content.Intent
+import android.view.Menu
 import android.view.MenuItem
 import kotlinx.coroutines.async
 import org.evergreen_ils.R
+import org.evergreen_ils.android.AccountUtils
+import org.evergreen_ils.android.Analytics
 import org.evergreen_ils.android.App
 import org.evergreen_ils.android.Log
 import org.evergreen_ils.android.Log.TAG_FCM
@@ -83,6 +86,13 @@ open class MainBaseActivity : BaseActivity() {
                 }
             }
         }
+    }
+
+    override fun onPrepareOptionsMenu(menu: Menu): Boolean {
+        val item = menu.findItem(R.id.action_switch_account)
+        val numAccounts = AccountUtils.getAccountsByType(this).size
+        item?.isEnabled = (numAccounts > 1)
+        return true
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

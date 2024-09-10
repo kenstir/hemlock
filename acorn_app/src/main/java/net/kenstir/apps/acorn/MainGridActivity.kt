@@ -21,6 +21,8 @@ package net.kenstir.apps.acorn
 import android.content.Intent
 import android.graphics.drawable.Drawable
 import android.os.Bundle
+import android.text.TextUtils
+import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.Button
@@ -173,6 +175,21 @@ class MainGridActivity : MainBaseActivity() {
         } else {
             findViewById<Button>(R.id.grid_museum_passes_button)?.visibility = View.GONE
         }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        menuInflater.inflate(org.evergreen_ils.R.menu.menu_main, menu)
+
+        // remove items we don't need
+        if (TextUtils.isEmpty(feedbackUrl))
+            menu.removeItem(org.evergreen_ils.R.id.action_feedback)
+
+        // set up the messages action view, it didn't work when set in xml
+        if (!resources.getBoolean(org.evergreen_ils.R.bool.ou_enable_messages)) {
+            menu.removeItem(org.evergreen_ils.R.id.action_messages)
+        }
+
+        return true
     }
 
     fun onButtonClick(v: View) {

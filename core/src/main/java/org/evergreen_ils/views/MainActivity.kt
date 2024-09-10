@@ -154,9 +154,7 @@ open class MainActivity : MainBaseActivity() {
     }
 
     override fun onPrepareOptionsMenu(menu: Menu): Boolean {
-        val item = menu.findItem(R.id.action_switch_account)
-        if (item != null)
-            item.isEnabled = AccountUtils.haveMoreThanOneAccount(this)
+        super.onPrepareOptionsMenu(menu)
         updateUnreadMessagesText()
         return true
     }
