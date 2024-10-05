@@ -69,7 +69,7 @@
     <bool name="ou_enable_messages">false</bool>
     <!-- if true, enable Pay Fines button based on settings -->
     <bool name="ou_enable_pay_fines">true</bool>
-    <!-- if true, initialize Firebase Cloud Messaging and send token to EG -->
+    <!-- [fcm] if true, initialize Firebase Cloud Messaging and send token to EG -->
     <bool name="ou_enable_push_notifications">false</bool>
     <!-- if true, display label host name in Item Details view for online items -->
     <bool name="ou_show_online_access_hostname">true</bool>

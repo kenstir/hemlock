@@ -29,7 +29,6 @@
     <bool name="ou_enable_part_holds">true</bool>
     <bool name="ou_enable_title_hold_on_item_with_parts">false</bool>
     <bool name="ou_enable_pay_fines">true</bool>
-    <bool name="ou_enable_push_notifications">true</bool>
     <bool name="ou_show_online_access_hostname">false</bool>
     <bool name="ou_need_marc_record">true</bool>
     <bool name="ou_always_popup_online_links">true</bool>
@@ -37,6 +36,7 @@
     <bool name="ou_extra_bookbag_query">true</bool>
 
     <!-- [fcm] -->
+    <bool name="ou_enable_push_notifications">true</bool>
     <bool name="notification_channel_register_checkouts_channel">true</bool>
     <bool name="notification_channel_register_fines_channel">true</bool>
     <bool name="notification_channel_register_general_channel">false</bool>
