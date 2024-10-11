@@ -291,7 +291,6 @@ class SearchActivity : BaseActivity(), ActivityCompat.OnRequestPermissionsResult
 
     private fun logSearchEvent(result: Result<OSRFObject>) {
         val b = bundleOf(
-                Analytics.Param.SEARCH_TERM to searchText,
                 Analytics.Param.SEARCH_CLASS to searchClass,
                 Analytics.Param.SEARCH_FORMAT to searchFormatCode,
                 Analytics.Param.SEARCH_ORG_KEY to
@@ -299,6 +298,7 @@ class SearchActivity : BaseActivity(), ActivityCompat.OnRequestPermissionsResult
                                 EgOrg.findOrg(App.getAccount().searchOrg),
                                 EgOrg.findOrg(App.getAccount().homeOrg)),
         )
+        b.putAll(Analytics.searchTextStats(searchText))
         when (result) {
             is Result.Success -> {
                 b.putString(Analytics.Param.RESULT, Analytics.Value.OK)

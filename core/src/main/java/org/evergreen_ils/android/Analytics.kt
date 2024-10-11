@@ -31,6 +31,7 @@ import org.evergreen_ils.data.Result
 import org.evergreen_ils.utils.getCustomMessage
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.math.round
 
 /** Utils that wrap Crashlytics (and now Analytics)
  */
@@ -57,25 +58,31 @@ object Analytics {
     }
 
     object Param {
+        // these need to be registered in FA as Custom Dimensions w/ scope=Event
         const val HOLD_EXPIRES_KEY = "hold_expires" // bool
         const val HOLD_NOTIFY = "hold_notify"
         const val HOLD_PICKUP_KEY = "hold_pickup" // { home | other }
         const val HOLD_REACTIVATE_KEY = "hold_reactivate" // bool
         const val HOLD_SUSPEND_KEY = "hold_suspend" // bool
         const val LOGIN_TYPE = "login_type" // { barcode | username }
-        const val NUM_ITEMS = "num_items"
-        const val NUM_RESULTS = "num_results"
         const val RESULT = "result" // { ok | error_message }
         const val SEARCH_CLASS = "search_class"
         const val SEARCH_FORMAT = "search_format"
         const val SEARCH_ORG_KEY = "search_org" // { home | other }
-        const val SEARCH_TERM = FirebaseAnalytics.Param.SEARCH_TERM
+        //const val SEARCH_TERM = FirebaseAnalytics.Param.SEARCH_TERM omitted for privacy
+        const val SEARCH_TERM_UNIQ_WORDS = "search_term_uniq_words"
+        const val SEARCH_TERM_AVG_WORD_LEN_X10 = "search_term_avg_word_len_x10"
+
+        // these need to be registered in FA as Custom Metrics
+        const val NUM_ACCOUNTS = "num_accounts"
+        const val NUM_ITEMS = "num_items"
+        const val NUM_RESULTS = "num_results"
     }
 
-    // these need to be registered in GA
     object UserProperty {
-        const val HOME_ORG = "home_org"
-        const val PARENT_ORG = "parent_org"
+        // these need to be registered in FA as Custom Dimensions w/ scope=User
+        const val HOME_ORG = "user_home_org"
+        const val PARENT_ORG = "user_parent_org"
     }
 
     object Value {
@@ -251,6 +258,25 @@ object Analytics {
         }
     }
 
+    fun searchTextStats(searchText: String): Bundle {
+        // Count unique words in searchText
+        val words = searchText.lowercase().split("\\s+".toRegex()).toTypedArray()
+        val wordSet = HashSet<String>()
+        wordSet.addAll(words)
+
+        // Calculate average word length
+        val totalLen = wordSet.fold(0) { acc, word -> acc + word.length }
+        val avgLen = if (totalLen > 0) totalLen / wordSet.size else 0
+
+        // round avgLen * 10 to nearest integer
+        val avgLenInt = round(10.0 * avgLen.toDouble()).toInt()
+
+        return bundleOf(
+            Param.SEARCH_TERM_UNIQ_WORDS to wordSet.size,
+            Param.SEARCH_TERM_AVG_WORD_LEN_X10 to avgLenInt
+        )
+    }
+
     // We call this event "login", but it happens after auth and after fleshing the user.
     // NB: "session_start" seems more appropriate but that is a predefined automatic event.
     @JvmStatic
@@ -261,8 +287,6 @@ object Analytics {
         ))
         logEvent(Event.LOGIN, bundleOf(
             Param.RESULT to Value.OK,
-            UserProperty.HOME_ORG to homeOrg,
-            UserProperty.PARENT_ORG to parentOrg,
             Param.LOGIN_TYPE to loginTypeKey(username, barcode),
         ))
     }
