@@ -16,11 +16,12 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
-package net.kenstir.apps.core
+package org.evergreen_ils.test
 
 import org.evergreen_ils.android.Analytics
 import org.evergreen_ils.android.Log
 import org.evergreen_ils.android.StdoutLogProvider
+import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.BeforeClass
 import org.junit.Test
@@ -45,5 +46,14 @@ class AnalyticsTest {
         val authSessionRetrieveResponse = """
             
         """.trimIndent()
+    }
+
+    @Test
+    fun test_searchTextStats() {
+        val searchText = "La la land"
+        val b = Analytics.searchTextStats(searchText)
+        assertEquals(2, b.size())
+        assertEquals(2, b.getInt(Analytics.Param.SEARCH_TERM_UNIQ_WORDS))
+        assertEquals(30, b.getInt(Analytics.Param.SEARCH_TERM_AVG_WORD_LEN_X10))
     }
 }
