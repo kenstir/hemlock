@@ -70,13 +70,13 @@ object Analytics {
         const val SEARCH_FORMAT = "search_format"
         const val SEARCH_ORG_KEY = "search_org" // { home | other }
         //const val SEARCH_TERM = FirebaseAnalytics.Param.SEARCH_TERM omitted for privacy
-        const val SEARCH_TERM_UNIQ_WORDS = "search_term_uniq_words"
-        const val SEARCH_TERM_AVG_WORD_LEN_X10 = "search_term_avg_word_len_x10"
 
         // these need to be registered in FA as Custom Metrics
         const val NUM_ACCOUNTS = "num_accounts"
         const val NUM_ITEMS = "num_items"
         const val NUM_RESULTS = "num_results"
+        const val SEARCH_TERM_UNIQ_WORDS = "search_term_uniq_words"
+        const val SEARCH_TERM_AVG_WORD_LEN_X10 = "search_term_avg_word_len_x10"
     }
 
     object UserProperty {

@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- see ../core/res/values/ou.xml for a description -->
+    <string name="ou_library_url">https://catalog.sage.eou.edu</string>
+    <string name="ou_account_type">net.kenstir.apps.sagecat</string>
+
     <string name="ou_account_label">SageCat</string>
     <string name="ou_account_sign_in_message">Sign in to your SageCat account</string>
-    <string name="ou_account_type">net.kenstir.apps.sagecat</string>
     <string name="ou_app_label">SageCat</string>
     <string name="ou_library_name">SageCat</string>
     <string name="ou_activity_subtitle">%2$s</string>
-    <string name="ou_library_url">https://catalog.sage.eou.edu</string>
     <string name="ou_behavior_provider"></string>
     <string name="ou_menu_provider"></string>
     <string name="ou_barcode_format">Codabar</string>

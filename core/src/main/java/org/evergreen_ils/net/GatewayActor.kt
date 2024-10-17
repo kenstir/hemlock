@@ -387,4 +387,22 @@ object GatewayActor: ActorService {
             Result.Error(e)
         }
     }
+
+    override suspend fun updatePushNotificationToken(account: Account, token: String?): Result<Unit> {
+        return try {
+            val value = token
+            val result = updatePatronSettings(account, Api.USER_SETTING_HEMLOCK_PUSH_NOTIFICATION_DATA, value)
+            when (result) {
+                is Result.Success -> {
+                    account.storedFcmToken = value
+                    return Result.Success(Unit)
+                }
+                is Result.Error -> {
+                    return result
+                }
+            }
+        } catch (e: Exception) {
+            Result.Error(e)
+        }
+    }
 }

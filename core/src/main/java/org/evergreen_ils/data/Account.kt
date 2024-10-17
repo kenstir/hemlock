@@ -45,6 +45,7 @@ class Account constructor(val username: String, var authToken: String?) {
     var smsNumber: String? = null
     var holdNotifyValue: String? = null // kept for analytics
     var circHistoryStart: String? = null
+    var storedFcmToken: String? = null // stored user setting, not the current value
 
     var bookBags = ArrayList<BookBag>()
 
@@ -117,6 +118,7 @@ class Account constructor(val username: String, var authToken: String?) {
         this.holdNotifyValue = map[Api.USER_SETTING_HOLD_NOTIFY] ?: "email:phone"
         parseHoldNotifyValue(holdNotifyValue)
         this.circHistoryStart = map[Api.USER_SETTING_CIRC_HISTORY_START]
+        this.storedFcmToken = map[Api.USER_SETTING_HEMLOCK_PUSH_NOTIFICATION_DATA]
     }
 
     fun loadBookBags(objects: List<OSRFObject>) {

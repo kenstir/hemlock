@@ -21,6 +21,8 @@ package net.kenstir.apps.acorn
 import android.content.Intent
 import android.graphics.drawable.Drawable
 import android.os.Bundle
+import android.text.TextUtils
+import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.Button
@@ -33,6 +35,7 @@ import org.evergreen_ils.android.Log
 import org.evergreen_ils.data.GridButton
 import org.evergreen_ils.system.EgOrg
 import org.evergreen_ils.utils.ui.BaseActivity
+import org.evergreen_ils.utils.ui.MainBaseActivity
 import org.evergreen_ils.views.BarcodeActivity
 import org.evergreen_ils.views.CheckoutsActivity
 import org.evergreen_ils.views.FinesActivity
@@ -41,7 +44,7 @@ import org.evergreen_ils.views.bookbags.BookBagsActivity
 import org.evergreen_ils.views.holds.HoldsActivity
 import org.evergreen_ils.views.search.SearchActivity
 
-class MainGridActivity : BaseActivity() {
+class MainGridActivity : MainBaseActivity() {
     private val TAG = javaClass.simpleName
     private val SPAN_COUNT = 2
 
@@ -53,7 +56,7 @@ class MainGridActivity : BaseActivity() {
     private val showButtonsWithoutURLsForDebugging = BuildConfig.DEBUG
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState) // not super
+        super.onCreate(savedInstanceState)
         if (isRestarting) return
 
         Log.d(TAG, object{}.javaClass.enclosingMethod?.name ?: "")
@@ -64,6 +67,17 @@ class MainGridActivity : BaseActivity() {
         setupRecyclerView()
         addGridButtons()
         setupBottomRowButtons()
+    }
+
+    override fun onAttachedToWindow() {
+        super.onAttachedToWindow()
+        Log.d(TAG, object {}.javaClass.enclosingMethod?.name ?: "")
+        fetchData()
+    }
+
+    private fun fetchData() {
+        initializePushNotifications()
+//        loadUnreadMessageCount()
     }
 
     private fun setupRecyclerView() {
@@ -163,11 +177,19 @@ class MainGridActivity : BaseActivity() {
         }
     }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        val id = item.itemId
-        if (menuItemHandler?.onItemSelected(this, id, "main_option_menu") == true)
-            return true
-        return if (handleMenuAction(id)) true else super.onOptionsItemSelected(item)
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        menuInflater.inflate(org.evergreen_ils.R.menu.menu_main, menu)
+
+        // remove items we don't need
+        if (TextUtils.isEmpty(feedbackUrl))
+            menu.removeItem(org.evergreen_ils.R.id.action_feedback)
+
+        // set up the messages action view, it didn't work when set in xml
+        if (!resources.getBoolean(org.evergreen_ils.R.bool.ou_enable_messages)) {
+            menu.removeItem(org.evergreen_ils.R.id.action_messages)
+        }
+
+        return true
     }
 
     fun onButtonClick(v: View) {

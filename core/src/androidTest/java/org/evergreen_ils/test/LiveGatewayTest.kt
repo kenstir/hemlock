@@ -196,7 +196,7 @@ class LiveGatewayTest {
         }
     }
 
-    suspend fun fetchStringWithDelay(timeoutMs: Int, delaySeconds: Float): Result<String> {
+    private suspend fun fetchStringWithDelay(timeoutMs: Int, delaySeconds: Float): Result<String> {
         return try {
             val url = args.getString("httpbinServer").plus("/delay/$delaySeconds")
             val ret = Gateway.fetchBodyAsString(url, RequestOptions(timeoutMs))
@@ -326,6 +326,26 @@ class LiveGatewayTest {
 
                 val s = Gateway.fetchOPAC(url, authToken)
 //                Log.d(TAG, "s=$s")
+            }
+        }
+    }
+
+    // One-off test should not run because it updates the account
+    // and requires creating the User Setting Type.
+    //@Test
+    fun test_storeUserData() {
+        getAccount()
+        runBlocking {
+            launch(Dispatchers.Main) {
+                loadServiceData()
+                getSession()
+
+                val result = Gateway.actor.updatePushNotificationToken(account, "xyzzy")
+                when (result) {
+                    is Result.Success -> {}
+                    is Result.Error -> { throw result.exception }
+                }
+                assertTrue(true)
             }
         }
     }

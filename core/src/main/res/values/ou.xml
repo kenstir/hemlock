@@ -1,5 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- NOTA BENE: change these together: ou_library_url, ou_account_type, ou_app_label -->
+    <!-- OPAC URL -->
+    <string name="ou_library_url">https://demo.evergreencatalog.com</string>
+    <!-- Android AccountManager internal type.
+         Each evergreen-derived app must have its own unique ou_account_type. -->
+    <string name="ou_account_type">org.evergreen_ils.example</string>
+    <!-- app name used to launch app -->
+    <string name="ou_app_label">Hemlock</string>
+
     <!-- the label shown in the android account manager -->
     <string name="ou_account_label">Example Library</string>
     <!-- title shown on sign in activity -->
@@ -8,17 +17,10 @@
     <string name="ou_choose_library_label">Choose your library system:</string>
     <!-- label above sign_in field on generic Hemlock app -->
     <string name="ou_sign_in_label">Login to your account:</string>
-    <!-- android account manager internal type.
-         Each evergreen-derived app must have its own unique ou_account_type. -->
-    <string name="ou_account_type">org.evergreen_ils.example</string>
-    <!-- app name used to launch app -->
-    <string name="ou_app_label">Evergreen</string>
     <!-- library name displayed in the app bar -->
     <string name="ou_library_name">EXAMPLE</string>
     <!-- subtitle displayed in the app bar -->
     <string name="ou_activity_subtitle">%1$s - %2$s</string>
-    <!-- OPAC URL -->
-    <string name="ou_library_url">https://demo.evergreencatalog.com</string>
     <!-- URL of feedback form -->
     <string name="ou_feedback_url" />
     <!-- name of class overriding main activity -->
@@ -67,6 +69,8 @@
     <bool name="ou_enable_messages">false</bool>
     <!-- if true, enable Pay Fines button based on settings -->
     <bool name="ou_enable_pay_fines">true</bool>
+    <!-- [fcm] if true, initialize Firebase Cloud Messaging and send token to EG -->
+    <bool name="ou_enable_push_notifications">false</bool>
     <!-- if true, display label host name in Item Details view for online items -->
     <bool name="ou_show_online_access_hostname">true</bool>
     <!-- if true, clicking Online Access always shows a popup, even if there is only 1 link -->
@@ -85,4 +89,17 @@
     <bool name="ou_is_generic_app">false</bool>
     <!-- max number of results to return from Search -->
     <integer name="ou_search_limit">200</integer>
+
+    <!-- [fcm] -->
+    <bool name="notification_channel_register_checkouts_channel">true</bool>
+    <bool name="notification_channel_register_fines_channel">true</bool>
+    <bool name="notification_channel_register_general_channel">true</bool>
+    <bool name="notification_channel_register_holds_channel">true</bool>
+    <bool name="notification_channel_register_pmc_channel">false</bool>
+    <string name="notification_channel_default_channel_id">holds</string>
+    <string name="notification_channel_checkouts_name">Items due or overdue</string>
+    <string name="notification_channel_fines_name">Fines and other charges</string>
+    <string name="notification_channel_general_name">Other notifications</string>
+    <string name="notification_channel_holds_name">Holds available</string>
+    <string name="notification_channel_pmc_name">System messages</string>
 </resources>

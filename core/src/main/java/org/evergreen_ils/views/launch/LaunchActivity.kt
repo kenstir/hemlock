@@ -32,14 +32,15 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import org.evergreen_ils.R
 import org.evergreen_ils.android.AccountUtils
 import org.evergreen_ils.android.Analytics
 import org.evergreen_ils.android.App
 import org.evergreen_ils.android.Log
+import org.evergreen_ils.android.Log.TAG_FCM
 import org.evergreen_ils.data.Account
+import org.evergreen_ils.data.PushNotification
 import org.evergreen_ils.data.Result
 import org.evergreen_ils.net.Gateway
 import org.evergreen_ils.system.EgOrg
@@ -47,7 +48,7 @@ import org.evergreen_ils.utils.await
 import org.evergreen_ils.utils.getAccountManagerResult
 import org.evergreen_ils.utils.getCustomMessage
 import org.evergreen_ils.utils.ui.AppState
-import org.evergreen_ils.utils.ui.ThemeManager
+import org.evergreen_ils.utils.ui.BaseActivity.Companion.activityForNotificationType
 import org.opensrf.util.OSRFObject
 import java.util.concurrent.TimeoutException
 
@@ -133,6 +134,18 @@ class LaunchActivity : AppCompatActivity() {
 
     private fun onLaunchSuccess() {
         Log.d(TAG, (object{}.javaClass.enclosingMethod?.name ?: "") + " isFinishing:$isFinishing")
+
+        // FCM: handle background push notification
+        intent.extras?.let {
+            val notification = PushNotification(it)
+            Log.d(TAG_FCM, "[onLaunchSuccess] notification: $notification")
+            if (notification.isNotGeneral()) {
+                val targetActivityClass = activityForNotificationType(notification)
+                App.startAppFromPushNotification(this, targetActivityClass)
+                return
+            }
+        }
+
         App.startApp(this)
     }
 

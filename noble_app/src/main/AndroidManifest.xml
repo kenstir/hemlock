@@ -2,8 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:installLocation="auto"
-    android:versionCode="18"
-    android:versionName="2.7.0.1">
+    android:versionCode="20"
+    android:versionName="3.1.0.2">
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS" />
@@ -64,6 +64,11 @@
             android:parentActivityName="org.evergreen_ils.views.MainActivity">
         </activity>
         <activity
+            android:name="org.evergreen_ils.views.FinesActivity"
+            android:label="@string/title_fines"
+            android:parentActivityName="org.evergreen_ils.views.MainActivity">
+        </activity>
+        <activity
             android:name="org.evergreen_ils.views.holds.HoldsActivity"
             android:label="@string/hold_items_title"
             android:parentActivityName="org.evergreen_ils.views.MainActivity">
@@ -78,11 +83,6 @@
             android:label="@string/title_search"
             android:parentActivityName="org.evergreen_ils.views.MainActivity">
         </activity>
-        <activity
-            android:name="org.evergreen_ils.views.FinesActivity"
-            android:label="@string/title_fines"
-            android:parentActivityName="org.evergreen_ils.views.MainActivity">
-        </activity>
 
         <!-- secondary activities -->
 
@@ -90,6 +90,10 @@
             android:name="org.evergreen_ils.views.bookbags.BookBagDetailsActivity"
             android:label="@string/title_list_details"
             android:parentActivityName="org.evergreen_ils.views.bookbags.BookBagsActivity">
+        </activity>
+        <activity
+            android:name="org.evergreen_ils.views.history.HistoryActivity"
+            android:label="@string/title_checkout_history">
         </activity>
         <activity
             android:name="org.evergreen_ils.views.holds.HoldDetailsActivity"

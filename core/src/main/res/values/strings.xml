@@ -280,5 +280,9 @@
     <string name="title_date">Date</string>
     <string name="title_reason_for_closure">Reason for Closure</string>
     <string name="no_closures_scheduled_msg">No closures scheduled</string>
-
+    <string name="notification_permission_rationale_title">%1$s would like to send you notifications.</string>
+    <string name="notification_permission_rationale_msg">Notifications include due date reminders, hold pickup notices, and more.  You may disable individual notifications you do not want at any time in Settings.</string>
+    <string name="notification_permission_denied_msg">%1$s will not be able to send you notifications.</string>
+    <string name="ok">OK</string>
+    <string name="no_thanks">No thanks</string>
 </resources>

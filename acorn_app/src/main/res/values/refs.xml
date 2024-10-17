@@ -15,4 +15,5 @@
     <drawable name="ic_library_48">@drawable/hemlock_book_reader_light_48</drawable>
     <drawable name="ic_event_24">@drawable/acorn_calendar_day_light_24</drawable>
     <drawable name="ic_event_48">@drawable/hemlock_calendar_day_light_48</drawable>
+    <drawable name="ic_notification">@drawable/acorn_notification_round</drawable>
 </resources>

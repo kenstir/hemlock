@@ -33,11 +33,11 @@ fun Activity.showAlert(ex: Exception) {
     }
 }
 
-fun Activity.showAlert(errorMessage: String) {
+fun Activity.showAlert(message: String, title: String? = "Error") {
     if (isFinishing) return
     val builder = AlertDialog.Builder(this)
-    builder.setTitle("Error")
-            .setMessage(errorMessage)
+    builder.setTitle(title)
+            .setMessage(message)
             .setPositiveButton(android.R.string.ok) { _, _ ->
             }
     val alertDialog = builder.create()

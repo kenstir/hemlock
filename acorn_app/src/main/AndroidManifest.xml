@@ -2,8 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:installLocation="auto"
-    android:versionCode="42"
-    android:versionName="3.0.10.1">
+    android:versionCode="46"
+    android:versionName="3.1.0.7">
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS" />
@@ -11,6 +11,8 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.MANAGE_ACCOUNTS" />
     <uses-permission android:name="android.permission.USE_CREDENTIALS" />
+    <!-- [fcm] -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
     <!-- uses-feature elements are used in Play Store device matching -->
     <uses-feature android:name="android.hardware.location" android:required="false" />
@@ -32,6 +34,14 @@
         <meta-data
             android:name="com.google.mlkit.vision.DEPENDENCIES"
             android:value="barcode_ui"/>
+
+        <!-- [fcm] -->
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_icon"
+            android:resource="@drawable/ic_notification" />
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_channel_id"
+            android:value="@string/notification_channel_default_channel_id" />
 
         <!-- launch and main -->
 
@@ -132,6 +142,15 @@
             <meta-data
                 android:name="android.accounts.AccountAuthenticator"
                 android:resource="@xml/authenticator" />
+        </service>
+
+        <!-- [fcm] -->
+        <service
+            android:name="org.evergreen_ils.services.MessagingService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
         </service>
     </application>
 </manifest>

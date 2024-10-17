@@ -13,7 +13,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
  */
 
 package org.evergreen_ils.views
@@ -40,12 +40,13 @@ import org.evergreen_ils.net.Gateway
 import org.evergreen_ils.views.search.SearchActivity
 import org.evergreen_ils.android.Log
 import org.evergreen_ils.data.PatronMessage
+import org.evergreen_ils.data.PushNotification
 import org.evergreen_ils.system.EgOrg
-import org.evergreen_ils.utils.ui.BaseActivity
+import org.evergreen_ils.utils.ui.MainBaseActivity
 import org.evergreen_ils.utils.ui.showAlert
 import org.opensrf.util.OSRFObject
 
-open class MainActivity : BaseActivity() {
+open class MainActivity : MainBaseActivity() {
 
     private val TAG = javaClass.simpleName
     private var mUnreadMessageCount: Int? = null //unknown
@@ -59,6 +60,8 @@ open class MainActivity : BaseActivity() {
         Log.d(TAG, object{}.javaClass.enclosingMethod?.name ?: "")
 
         setContentView(R.layout.activity_main)
+
+//        if (onCreateHandleLaunchIntent()) return
 
         eventsButton = findViewById(R.id.main_events_button)
         setupEventsButton()
@@ -86,6 +89,7 @@ open class MainActivity : BaseActivity() {
     }
 
     private fun fetchData() {
+        initializePushNotifications()
         loadUnreadMessageCount()
     }
 
@@ -140,19 +144,17 @@ open class MainActivity : BaseActivity() {
             menu.removeItem(R.id.action_feedback)
 
         // set up the messages action view, it didn't work when set in xml
-        if (!resources.getBoolean(R.bool.ou_enable_messages)) {
-            menu.removeItem(R.id.action_messages)
-        } else {
+        if (resources.getBoolean(R.bool.ou_enable_messages)) {
             createMessagesActionView(menu)
+        } else {
+            menu.removeItem(R.id.action_messages)
         }
 
         return true
     }
 
     override fun onPrepareOptionsMenu(menu: Menu): Boolean {
-        val item = menu.findItem(R.id.action_switch_account)
-        if (item != null)
-            item.isEnabled = AccountUtils.haveMoreThanOneAccount(this)
+        super.onPrepareOptionsMenu(menu)
         updateUnreadMessagesText()
         return true
     }
@@ -178,13 +180,6 @@ open class MainActivity : BaseActivity() {
         } else {
             mUnreadMessageText?.visibility = View.GONE
         }
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        val id = item.itemId
-        if (menuItemHandler?.onItemSelected(this, id, "main_option_menu") == true)
-            return true
-        return if (handleMenuAction(id)) true else super.onOptionsItemSelected(item)
     }
 
     fun onButtonClick(v: View) {
