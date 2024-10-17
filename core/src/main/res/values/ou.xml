@@ -6,6 +6,8 @@
     <!-- Android AccountManager internal type.
          Each evergreen-derived app must have its own unique ou_account_type. -->
     <string name="ou_account_type">org.evergreen_ils.example</string>
+    <!-- app name used to launch app -->
+    <string name="ou_app_label">Hemlock</string>
 
     <!-- the label shown in the android account manager -->
     <string name="ou_account_label">Example Library</string>
@@ -15,8 +17,6 @@
     <string name="ou_choose_library_label">Choose your library system:</string>
     <!-- label above sign_in field on generic Hemlock app -->
     <string name="ou_sign_in_label">Login to your account:</string>
-    <!-- app name used to launch app -->
-    <string name="ou_app_label">Evergreen</string>
     <!-- library name displayed in the app bar -->
     <string name="ou_library_name">EXAMPLE</string>
     <!-- subtitle displayed in the app bar -->
