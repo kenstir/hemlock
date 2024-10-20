@@ -30,6 +30,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
 import com.android.volley.toolbox.NetworkImageView
 import kotlinx.coroutines.async
+import org.evergreen_ils.OSRFUtils
 import org.evergreen_ils.R
 import org.evergreen_ils.android.Log
 import org.evergreen_ils.data.HistoryRecord
@@ -41,6 +42,7 @@ import org.evergreen_ils.net.Volley
 import org.evergreen_ils.utils.ui.BaseActivity
 import org.evergreen_ils.utils.ui.showAlert
 import org.evergreen_ils.views.search.RecordViewAdapter
+import java.util.Calendar
 
 class HistoryViewAdapter(private val items: List<HistoryRecord>) : RecyclerView.Adapter<HistoryViewAdapter.ViewHolder>() {
 
@@ -96,6 +98,20 @@ class HistoryViewAdapter(private val items: List<HistoryRecord>) : RecyclerView.
             Log.d(TAG, "id:${historyRecord.id} title:${historyRecord.title}")
             title.text = historyRecord.title
             author.text = historyRecord.author
+            /// HACK
+            var watchDate: String = ""
+            try {
+                val returnDate = OSRFUtils.parseDate(historyRecord.returnedDateString)
+                returnDate?.let {
+                    val calendar = Calendar.getInstance()
+                    calendar.time = it
+                    calendar.add(Calendar.DAY_OF_YEAR, -1)
+                    watchDate = OSRFUtils.formatDateAsDayOnly(calendar.time)
+                }
+            } catch (e: Exception) {
+                Log.d(TAG, "Error parsing return date", e)
+            }
+            print("kcxxx,${historyRecord.title},${historyRecord.record?.pubdate},${watchDate}")
 
             historyRecord.record?.id.let { id ->
                 val url = Gateway.getUrl("/opac/extras/ac/jacket/small/r/" + id)
