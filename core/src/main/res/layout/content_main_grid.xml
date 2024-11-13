@@ -34,7 +34,7 @@
         <Button
             android:id="@+id/grid_ebooks_button"
             style="@style/Hemlock.GridButton.Small"
-            android:drawableTop="@drawable/acorn_light_book_circle_arrow_down_36"
+            android:drawableTop="@drawable/ic_grid_ebooks_36"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
@@ -44,7 +44,7 @@
         <Button
             android:id="@+id/grid_meeting_rooms_button"
             style="@style/Hemlock.GridButton.Small"
-            android:drawableTop="@drawable/acorn_users_light_36"
+            android:drawableTop="@drawable/ic_grid_meeting_rooms_36"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
@@ -54,7 +54,7 @@
         <Button
             android:id="@+id/grid_museum_passes_button"
             style="@style/Hemlock.GridButton.Small"
-            android:drawableTop="@drawable/acorn_ticket_light_36"
+            android:drawableTop="@drawable/ic_grid_museum_passes_36"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"

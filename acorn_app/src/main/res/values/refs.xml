@@ -16,4 +16,19 @@
     <drawable name="ic_event_24">@drawable/acorn_calendar_day_light_24</drawable>
     <drawable name="ic_event_48">@drawable/hemlock_calendar_day_light_48</drawable>
     <drawable name="ic_notification">@drawable/acorn_notification_round</drawable>
+
+    <!-- MainGridActivity large buttons -->
+    <drawable name="ic_grid_show_card_48">@drawable/acorn_id_card_light_48</drawable>
+    <drawable name="ic_grid_search_48">@drawable/acorn_magnifying_glass_light_48</drawable>
+    <drawable name="ic_grid_library_info_48">@drawable/acorn_square_info_light_48</drawable>
+    <drawable name="ic_grid_checkouts_48">@drawable/acorn_book_light_48</drawable>
+    <drawable name="ic_grid_fines_48">@drawable/acorn_piggy_bank_light_48</drawable>
+    <drawable name="ic_grid_holds_48">@drawable/acorn_hand_holding_book_48</drawable>
+    <drawable name="ic_grid_bookbags_48">@drawable/acorn_list_light_48</drawable>
+    <drawable name="ic_grid_events_48">@drawable/acorn_calendar_day_light_48</drawable>
+
+    <!-- MainGridActivity button row buttons -->
+    <drawable name="ic_grid_ebooks_36">@drawable/acorn_light_book_circle_arrow_down_36</drawable>
+    <drawable name="ic_grid_meeting_rooms_36">@drawable/acorn_users_light_36</drawable>
+    <drawable name="ic_grid_museum_passes_36">@drawable/acorn_ticket_light_36</drawable>
 </resources>
