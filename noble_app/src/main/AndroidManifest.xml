@@ -45,6 +45,10 @@
             android:name="org.evergreen_ils.views.MainActivity"
             android:launchMode="singleTask">
         </activity>
+        <activity
+            android:name="org.evergreen_ils.views.MainGridActivity"
+            android:launchMode="singleTask">
+        </activity>
 
         <!-- top-level activities -->
 

@@ -58,7 +58,7 @@
             android:launchMode="singleTask">
         </activity>
         <activity
-            android:name="net.kenstir.apps.acorn.MainGridActivity"
+            android:name="org.evergreen_ils.views.MainGridActivity"
             android:launchMode="singleTask">
         </activity>
 
