@@ -98,20 +98,6 @@ class HistoryViewAdapter(private val items: List<HistoryRecord>) : RecyclerView.
             Log.d(TAG, "id:${historyRecord.id} title:${historyRecord.title}")
             title.text = historyRecord.title
             author.text = historyRecord.author
-            /// HACK
-            var watchDate: String = ""
-            try {
-                val returnDate = OSRFUtils.parseDate(historyRecord.returnedDateString)
-                returnDate?.let {
-                    val calendar = Calendar.getInstance()
-                    calendar.time = it
-                    calendar.add(Calendar.DAY_OF_YEAR, -1)
-                    watchDate = OSRFUtils.formatDateAsDayOnly(calendar.time)
-                }
-            } catch (e: Exception) {
-                Log.d(TAG, "Error parsing return date", e)
-            }
-            print("kcxxx,${historyRecord.title},${historyRecord.record?.pubdate},${watchDate}")
 
             historyRecord.record?.id.let { id ->
                 val url = Gateway.getUrl("/opac/extras/ac/jacket/small/r/" + id)
