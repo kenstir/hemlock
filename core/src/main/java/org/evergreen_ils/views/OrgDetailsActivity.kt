@@ -212,9 +212,12 @@ class OrgDetailsActivity : BaseActivity() {
 
     private fun loadClosures(closures: List<OSRFObject>) {
         val now = Date()
-        val upcomingClosures = closures.filter {
+        val upcomingClosures = mutableListOf<OSRFObject>()
+        for (it in closures) {
             val end = it.getDate("close_end")
-            end != null && end > now
+            if (end != null && end > now && upcomingClosures.size < resources.getInteger(R.integer.ou_upcoming_closures_limit)) {
+                upcomingClosures.add(it)
+            }
         }
         val rowCount = closuresTable.childCount
         if (rowCount > 2) {

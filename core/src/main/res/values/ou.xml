@@ -89,6 +89,8 @@
     <bool name="ou_is_generic_app">false</bool>
     <!-- max number of results to return from Search -->
     <integer name="ou_search_limit">200</integer>
+    <!-- max number of upcoming closures to display -->
+    <integer name="ou_upcoming_closures_limit">5</integer>
 
     <!-- [fcm] -->
     <bool name="notification_channel_register_checkouts_channel">true</bool>
