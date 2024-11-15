@@ -10,12 +10,19 @@ With the Hemlock app, you can:
 
 Quick start for end users
 -------------------------
-1. Make sure your library catalog is powered by Evergreen.  Open the catalog in your browser, search for "Harry Potter", and scroll to the bottom.  If you see "powered by Evergreen", you are in luck!
+1. Make sure your library catalog is powered by Evergreen.  Open the catalog in your browser,
+    search for "harry potter goblet of fire", and scroll to the bottom.
+    If you see "powered by Evergreen", you are in luck!
+    If you see "powered by Aspen Discovery", you may or may not be in luck, ask your library staff.
 2. Install the app from the [Google Play Store](https://play.google.com/store/apps/details?id=net.kenstir.apps.hemlock)
 
 Quick start for developers
 --------------------------
-1. Get [Android Studio](https://developer.android.com/studio/index.html).
+1. Get the correct version of [Android Studio](https://developer.android.com/studio/index.html). 
+   This branch is built using
+   ```
+   Android Studio Koala Feature Drop | 2024.1.2 Patch 1
+   ```
 2. Directory `core/` contains the shared code and resources, `cwmars_app/` the code and resources needed to customize it for the C/W MARS system.
 3. Profit. C'mon, you know better. This is Open Source.
 
