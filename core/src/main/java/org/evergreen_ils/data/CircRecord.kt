@@ -92,10 +92,11 @@ class CircRecord(circ: OSRFObject?, circType: CircType, circId: Int) {
     val isDueSoon: Boolean
         get() {
             if (dueDate == null) return false
-            val oneWeekOfDays = 7
+            // this is effectively 3 days, because dueDate is at 23:59:59
+            val threeDaysPrior = 4
             val cal = Calendar.getInstance()
             cal.time = dueDate
-            cal.add(Calendar.DAY_OF_MONTH, -oneWeekOfDays)
+            cal.add(Calendar.DAY_OF_MONTH, -threeDaysPrior)
             val currentDate = Date()
             return currentDate > cal.time
         }
