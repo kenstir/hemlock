@@ -274,7 +274,11 @@ class CheckoutsActivity : BaseActivity() {
         }
 
         private fun maybeHighlightDueDate(record: CircRecord) {
-            val style = if (record.isOverdue) R.style.alertText else R.style.HemlockText_ListTertiary
+            val style = when {
+                record.isOverdue -> R.style.alertText
+                record.isDueSoon -> R.style.warningText
+                else -> R.style.HemlockText_ListTertiary
+            }
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 dueDate?.setTextAppearance(style)
             } else {

@@ -95,6 +95,14 @@
         <item name="android:textColor">@color/hemlock_text_alert</item>
     </style>
 
+    <style name="warningText">
+        <item name="android:textColor">@color/hemlock_text_warning</item>
+    </style>
+
+    <style name="noticeText">
+        <item name="android:textColor">@color/hemlock_text_notice</item>
+    </style>
+
     <style name="textSplash">
         <item name="android:textSize">22sp</item>
     </style>

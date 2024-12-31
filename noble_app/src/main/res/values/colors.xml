@@ -11,7 +11,6 @@
     <color name="primary">@color/noble_primary</color>
     <color name="primary_dark">@color/noble_dark</color>
     <color name="accent">@color/noble_light</color>
-    <color name="hemlock_text_alert">#ff9100</color>
     <color name="button_icon_tint">@color/noble_primary</color>
 
 </resources>

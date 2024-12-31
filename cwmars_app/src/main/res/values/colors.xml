@@ -15,8 +15,11 @@
     <color name="primary">@color/cwmars_blue</color>
     <color name="primary_dark">@color/primary_dark_material_dark</color>
     <color name="accent">@color/cwmars_orange</color>
-    <color name="hemlock_text_alert">@color/cwmars_green</color>
 
     <color name="button_icon_tint">@color/cwmars_cerulean_blue</color>
     <color name="logo_background">@color/white</color>
+
+    <color name="hemlock_text_alert">#AF510D</color>
+    <color name="hemlock_text_warning">#AF510D</color>
+    <color name="hemlock_text_notice">#416e26</color>
 </resources>

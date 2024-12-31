@@ -8,4 +8,7 @@
     <color name="table_header_background">@color/material_grey_900</color>
     <color name="table_header_textcolor">#c0ffffff</color>
 
+    <color name="hemlock_text_alert">#FF6666</color>
+    <color name="hemlock_text_warning">#ff9100</color>
+    <color name="hemlock_text_notice">#7bc24e</color>
 </resources>

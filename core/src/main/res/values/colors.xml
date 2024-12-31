@@ -3,12 +3,6 @@
 
     <!-- misc colors used in legacy code -->
     <color name="white">#ffffff</color>
-    <color name="blue">#1e90ff</color>
-    <color name="possible_result_points">#c0ffff00</color>
-    <color name="result_view">#b0000000</color>
-    <color name="viewfinder_frame">#ff000000</color>
-    <color name="viewfinder_laser">#ffff0000</color>
-    <color name="viewfinder_mask">#60000000</color>
 
     <!-- Material colors from https://material.google.com/style/color.html#color-color-palette -->
     <color name="material_grey_50">#FAFAFA</color>
@@ -29,13 +23,14 @@
     <color name="table_header_background">@color/material_grey_300</color>
     <color name="table_header_textcolor">#c0000000</color>
     <color name="button_icon_tint">@color/accent</color>
-
-    <!-- - -->
-    <color name="hemlock_text_alert">#ff9100</color>
     <color name="background">@color/background_material_dark</color>
     <color name="dark">@color/background_material_dark</color>
     <color name="primary">@color/primary_material_dark</color>
     <color name="primary_dark">@color/primary_dark_material_dark</color>
     <color name="accent">#FF8F00</color>
 
+    <!-- colors for highlighting text -->
+    <color name="hemlock_text_alert">#E60000</color>
+    <color name="hemlock_text_warning">#AF510D</color>
+    <color name="hemlock_text_notice">#416e26</color>
 </resources>

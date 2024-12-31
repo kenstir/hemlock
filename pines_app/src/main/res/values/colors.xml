@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools" xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <color name="hemlock_text_alert">#ff9100</color>
-
     <!-- pines - logo color from http://pines.georgialibraries.org/graphics -->
     <color name="pines">#379676</color>
     <color name="accent">@color/pines</color>

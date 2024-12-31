@@ -9,7 +9,6 @@
     <color name="primary">@color/cool_primary</color>
     <color name="primary_dark">@color/primary_dark_material_dark</color>
     <color name="accent">@color/cool_light</color>
-    <color name="hemlock_text_alert">#ff9100</color>
 
     <color name="button_icon_tint">@color/cool_primary</color>
 </resources>

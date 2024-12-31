@@ -11,6 +11,4 @@
     <color name="primary_dark">@color/sage_green5</color>
     <color name="accent">@color/sage_green2</color>
     <color name="logo_background">@color/material_grey_50</color>
-
-    <color name="hemlock_text_alert">#ff9100</color>
 </resources>
