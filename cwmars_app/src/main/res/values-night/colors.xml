@@ -5,6 +5,6 @@
     <color name="logo_background">@color/material_grey_850</color>
 
     <color name="hemlock_text_alert">#ff9100</color>
-    <color name="hemlock_text_warning">#ff9100</color>
+    <color name="hemlock_text_warning">#ffc629</color>
     <color name="hemlock_text_notice">#7bc24e</color>
 </resources>
