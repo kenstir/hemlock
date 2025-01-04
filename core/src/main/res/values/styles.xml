@@ -92,10 +92,12 @@
     </style>
 
     <style name="alertText">
+        <item name="android:textStyle">bold</item>
         <item name="android:textColor">@color/hemlock_text_alert</item>
     </style>
 
     <style name="warningText">
+        <item name="android:textStyle">bold</item>
         <item name="android:textColor">@color/hemlock_text_warning</item>
     </style>
 
