@@ -30,7 +30,7 @@
     <color name="accent">#FF8F00</color>
 
     <!-- colors for highlighting text -->
-    <color name="hemlock_text_alert">#E60000</color>
-    <color name="hemlock_text_warning">#AF510D</color>
+    <color name="hemlock_text_alert">#AF510D</color>
+    <color name="hemlock_text_warning">#946C00</color>
     <color name="hemlock_text_notice">#416e26</color>
 </resources>
