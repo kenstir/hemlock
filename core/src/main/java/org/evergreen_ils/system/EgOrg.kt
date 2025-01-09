@@ -111,9 +111,6 @@ object EgOrg {
     fun getOrgNameSafe(id: Int?): String = findOrg(id)?.name ?: "?"
 
     @JvmStatic
-    fun findOrgBySpinnerLabel(label: String): Organization? = orgs.firstOrNull { it.spinnerLabel == label }
-
-    @JvmStatic
     fun findOrgByShortName(shortName: String): Organization? = orgs.firstOrNull { it.shortname == shortName }
 
     // Return the short names of the org itself and every level up to the consortium.

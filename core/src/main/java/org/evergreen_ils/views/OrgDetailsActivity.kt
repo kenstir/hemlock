@@ -25,6 +25,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import android.widget.AdapterView.OnItemSelectedListener
+import androidx.core.util.component1
+import androidx.core.util.component2
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.joinAll
@@ -119,9 +121,8 @@ class OrgDetailsActivity : BaseActivity() {
     }
 
     private fun initOrgSpinner() {
-        val orgs = EgOrg.orgSpinnerLabels()
-        val index = orgs.indexOfFirst { it == org?.spinnerLabel }
-        val adapter: ArrayAdapter<String> = OrgArrayAdapter(this, R.layout.org_item_layout, orgs, false)
+        val (spinnerLabels, index) = EgOrg.orgSpinnerLabelsAndSelectedIndex(orgID)
+        val adapter: ArrayAdapter<String> = OrgArrayAdapter(this, R.layout.org_item_layout, spinnerLabels, false)
         orgSpinner?.adapter = adapter
         orgSpinner?.setSelection(if (index > 0) index else 0)
         Log.d(TAG, "[kcxxx] setSelection $index")
@@ -129,7 +130,7 @@ class OrgDetailsActivity : BaseActivity() {
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
                 org = EgOrg.visibleOrgs[position]
                 orgID = org?.id
-                Log.d(TAG, "[kcxxx] onItemSelected $position")
+                Log.d(TAG, "[kcxxx] onItemSelected $position, orgID=$orgID")
                 fetchData()
             }
 
@@ -343,7 +344,7 @@ class OrgDetailsActivity : BaseActivity() {
                 var jobs = mutableListOf<Job>()
                 progress?.show(this@OrgDetailsActivity, getString(R.string.msg_loading_details))
 
-                Log.d(TAG, "[kcxxx] fetchData ...")
+                Log.d(TAG, "[kcxxx] fetchData ... orgID=$orgID")
 
                 jobs.add(scope.async {
                     GatewayLoader.loadOrgSettingsAsync(org).await()
