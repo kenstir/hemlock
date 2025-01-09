@@ -16,30 +16,23 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
  */
 
-package net.kenstir.apps.acorn
+package org.evergreen_ils.views
 
 import android.content.Intent
-import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.text.TextUtils
 import android.view.Menu
-import android.view.MenuItem
 import android.view.View
 import android.widget.Button
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import net.kenstir.apps.bibliomation.R
 import org.evergreen_ils.BuildConfig
+import org.evergreen_ils.R
 import org.evergreen_ils.android.App
 import org.evergreen_ils.android.Log
 import org.evergreen_ils.data.GridButton
 import org.evergreen_ils.system.EgOrg
-import org.evergreen_ils.utils.ui.BaseActivity
 import org.evergreen_ils.utils.ui.MainBaseActivity
-import org.evergreen_ils.views.BarcodeActivity
-import org.evergreen_ils.views.CheckoutsActivity
-import org.evergreen_ils.views.FinesActivity
-import org.evergreen_ils.views.OrgDetailsActivity
 import org.evergreen_ils.views.bookbags.BookBagsActivity
 import org.evergreen_ils.views.holds.HoldsActivity
 import org.evergreen_ils.views.search.SearchActivity
@@ -89,49 +82,49 @@ class MainGridActivity : MainBaseActivity() {
     private fun addGridButtons() {
         // Show Card
         items.add(GridButton(resources.getString(R.string.barcode_title),
-            resources.getDrawable(R.drawable.acorn_id_card_light_48, null),
+            resources.getDrawable(R.drawable.ic_grid_show_card_48, null),
             null) {
             startActivity(Intent(this, BarcodeActivity::class.java))
         })
 
         // Search
         items.add(GridButton(resources.getString(R.string.title_search),
-            resources.getDrawable(R.drawable.acorn_magnifying_glass_light_48, null),
+            resources.getDrawable(R.drawable.ic_grid_search_48, null),
             null) {
             startActivity(Intent(this, SearchActivity::class.java))
         })
 
         // Org Details
         items.add(GridButton(resources.getString(R.string.title_library_info),
-            resources.getDrawable(R.drawable.acorn_square_info_light_48, null),
+            resources.getDrawable(R.drawable.ic_grid_library_info_48, null),
             null) {
             startActivity(Intent(this, OrgDetailsActivity::class.java))
         })
 
         // Items Checked Out
         items.add(GridButton(resources.getString(R.string.title_check_out),
-            resources.getDrawable(R.drawable.acorn_book_light_48, null),
+            resources.getDrawable(R.drawable.ic_grid_checkouts_48, null),
             null) {
             startActivity(Intent(this, CheckoutsActivity::class.java))
         })
 
         // Fines
         items.add(GridButton(resources.getString(R.string.title_fines),
-            resources.getDrawable(R.drawable.acorn_piggy_bank_light_48, null),
+            resources.getDrawable(R.drawable.ic_grid_fines_48, null),
             null) {
             startActivity(Intent(this, FinesActivity::class.java))
         })
 
         // Holds
         items.add(GridButton(resources.getString(R.string.title_holds),
-            resources.getDrawable(R.drawable.acorn_hand_holding_book_48, null),
+            resources.getDrawable(R.drawable.ic_grid_holds_48, null),
             null) {
             startActivity(Intent(this, HoldsActivity::class.java))
         })
 
         // My Lists
         items.add(GridButton(resources.getString(R.string.title_my_lists),
-            resources.getDrawable(R.drawable.acorn_list_light_48, null),
+            resources.getDrawable(R.drawable.ic_grid_bookbags_48, null),
             null) {
             startActivity(Intent(this, BookBagsActivity::class.java))
         })
@@ -141,7 +134,7 @@ class MainGridActivity : MainBaseActivity() {
         val eventsUrl = homeOrg?.eventsURL
         if (!eventsUrl.isNullOrEmpty() || showButtonsWithoutURLsForDebugging) {
             items.add(GridButton(resources.getString(R.string.title_events),
-                resources.getDrawable(R.drawable.acorn_calendar_day_light_48, null),
+                resources.getDrawable(R.drawable.ic_grid_events_48, null),
                 null) {
                 launchURL(eventsUrl)
             })

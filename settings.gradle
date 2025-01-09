@@ -16,6 +16,7 @@ def dir = new File('hemlock-pro-assets')
 if (dir.exists()) {
   include ':' + dir
 }
+include ':hemlock-assets'
 
 dependencyResolutionManagement {
   repositories {

@@ -2,8 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:installLocation="auto"
-    android:versionCode="46"
-    android:versionName="3.1.0.7">
+    android:versionCode="47"
+    android:versionName="3.1.0.8">
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS" />
@@ -58,7 +58,7 @@
             android:launchMode="singleTask">
         </activity>
         <activity
-            android:name="net.kenstir.apps.acorn.MainGridActivity"
+            android:name="org.evergreen_ils.views.MainGridActivity"
             android:launchMode="singleTask">
         </activity>
 

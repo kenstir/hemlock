@@ -17,4 +17,19 @@
     <drawable name="ic_event_24">@drawable/baseline_event_black_24</drawable>
     <drawable name="ic_event_48">@drawable/baseline_event_black_36</drawable>
     <drawable name="ic_notification">@drawable/ic_library_24</drawable>
+
+    <!-- MainGridActivity large buttons -->
+    <drawable name="ic_grid_show_card_48">@drawable/digital_library_card_48</drawable>
+    <drawable name="ic_grid_search_48">@drawable/search_catalog_48</drawable>
+    <drawable name="ic_grid_library_info_48">@drawable/library_info_48</drawable>
+    <drawable name="ic_grid_checkouts_48">@drawable/items_checked_out_48</drawable>
+    <drawable name="ic_grid_fines_48">@drawable/fines_48</drawable>
+    <drawable name="ic_grid_holds_48">@drawable/holds_48</drawable>
+    <drawable name="ic_grid_bookbags_48">@drawable/my_lists_48</drawable>
+    <drawable name="ic_grid_events_48">@drawable/events_48</drawable>
+
+    <!-- MainGridActivity button row buttons -->
+    <drawable name="ic_grid_ebooks_36">@drawable/ebook_digital_36</drawable>
+    <drawable name="ic_grid_meeting_rooms_36">@drawable/meeting_rooms_alternate_36</drawable>
+    <drawable name="ic_grid_museum_passes_36">@drawable/museum_passes_36</drawable>
 </resources>
