@@ -77,6 +77,9 @@ object Analytics {
         const val NUM_RESULTS = "num_results"
         const val SEARCH_TERM_UNIQ_WORDS = "search_term_uniq_words"
         const val SEARCH_TERM_AVG_WORD_LEN_X10 = "search_term_avg_word_len_x10"
+
+        // boolean params do not need to be registered
+        const val MULTIPLE_ACCOUNTS = "multiple_accounts"
     }
 
     object UserProperty {
@@ -288,7 +291,8 @@ object Analytics {
         logEvent(Event.LOGIN, bundleOf(
             Param.RESULT to Value.OK,
             Param.LOGIN_TYPE to loginTypeKey(username, barcode),
-            Param.NUM_ACCOUNTS to numAccounts
+            Param.NUM_ACCOUNTS to numAccounts,
+            Param.MULTIPLE_ACCOUNTS to (numAccounts > 1)
         ))
     }
 
