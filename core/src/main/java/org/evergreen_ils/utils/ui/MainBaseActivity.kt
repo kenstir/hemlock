@@ -77,8 +77,9 @@ open class MainBaseActivity : BaseActivity() {
             // we need to update the user setting in Evergreen
             val storedToken = App.getAccount().storedFcmToken
             val currentToken = App.getFcmNotificationToken()
-            Log.d(TAG_FCM, "stored token:  $storedToken")
+            Log.d(TAG_FCM, "stored token was:  $storedToken")
             if (currentToken != null && currentToken != storedToken) {
+                Log.d(TAG_FCM, "updating stored token")
                 val updateResult = Gateway.actor.updatePushNotificationToken(App.getAccount(), currentToken)
                 if (updateResult is Result.Error) {
                     showAlert(updateResult.exception)

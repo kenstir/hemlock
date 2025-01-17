@@ -170,7 +170,7 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
             return Result.Error(task.exception ?: Exception("Failed fetching notification token"))
         }
         val token = task.result
-        Log.d(TAG_FCM, "got fcm token: $token")
+        Log.d(TAG_FCM, "fetched fcm token: $token")
         App.setFcmNotificationToken(token)
         return Result.Success(Unit)
     }
