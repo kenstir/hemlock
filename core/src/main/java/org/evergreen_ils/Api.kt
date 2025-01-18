@@ -61,6 +61,7 @@ object Api {
     const val SETTING_HEMLOCK_MEETING_ROOMS_URL = "hemlock.meeting_rooms_url"
     const val SETTING_HEMLOCK_MUSEUM_PASSES_URL = "hemlock.museum_passes_url"
     const val USER_SETTING_HEMLOCK_PUSH_NOTIFICATION_DATA = "hemlock.push_notification_data"
+    const val USER_SETTING_HEMLOCK_PUSH_NOTIFICATION_ENABLED = "hemlock.push_notification_enabled"
 
     /// org and user settings
 

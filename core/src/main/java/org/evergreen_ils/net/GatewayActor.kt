@@ -21,6 +21,7 @@ import org.evergreen_ils.Api
 import org.evergreen_ils.OSRFUtils
 import org.evergreen_ils.android.Log
 import org.evergreen_ils.data.Account
+import org.evergreen_ils.data.JSONDictionary
 import org.evergreen_ils.data.Result
 import org.evergreen_ils.data.jsonMapOf
 import org.evergreen_ils.data.parseOrgStringSetting
@@ -341,11 +342,10 @@ object GatewayActor: ActorService {
         }
     }
 
-    override suspend fun updatePatronSettings(account: Account, name: String, value: String?): Result<String> {
+    override suspend fun updatePatronSettings(account: Account, settings: JSONDictionary): Result<String> {
         return try {
             val (authToken, userID) = account.getCredentialsOrThrow()
-            val param = jsonMapOf(name to value)
-            val args = arrayOf<Any?>(authToken, userID, param)
+            val args = arrayOf<Any?>(authToken, userID, settings)
             val ret = Gateway.fetchString(Api.ACTOR, Api.PATRON_SETTINGS_UPDATE, args, false)
             Result.Success(ret)
         } catch (e: Exception) {
@@ -356,7 +356,7 @@ object GatewayActor: ActorService {
     override suspend fun enableCheckoutHistory(account: Account): Result<Unit> {
         return try {
             val dateString = OSRFUtils.formatDateAsDayOnly(Date())
-            val result = updatePatronSettings(account, Api.USER_SETTING_CIRC_HISTORY_START, dateString)
+            val result = updatePatronSettings(account, jsonMapOf(Api.USER_SETTING_CIRC_HISTORY_START to dateString))
             when (result) {
                 is Result.Success -> {
                     account.circHistoryStart = dateString
@@ -373,7 +373,7 @@ object GatewayActor: ActorService {
 
     override suspend fun disableCheckoutHistory(account: Account): Result<Unit> {
         return try {
-            val result = updatePatronSettings(account, Api.USER_SETTING_CIRC_HISTORY_START, null)
+            val result = updatePatronSettings(account, jsonMapOf(Api.USER_SETTING_CIRC_HISTORY_START to null))
             when (result) {
                 is Result.Success -> {
                     account.circHistoryStart = null
@@ -390,11 +390,14 @@ object GatewayActor: ActorService {
 
     override suspend fun updatePushNotificationToken(account: Account, token: String?): Result<Unit> {
         return try {
-            val value = token
-            val result = updatePatronSettings(account, Api.USER_SETTING_HEMLOCK_PUSH_NOTIFICATION_DATA, value)
+            val result = updatePatronSettings(account, jsonMapOf(
+                Api.USER_SETTING_HEMLOCK_PUSH_NOTIFICATION_DATA to token,
+                Api.USER_SETTING_HEMLOCK_PUSH_NOTIFICATION_ENABLED to true,
+            ))
             when (result) {
                 is Result.Success -> {
-                    account.storedFcmToken = value
+                    account.savedPushNotificationData = token
+                    account.savedPushNotificationEnabled = true
                     return Result.Success(Unit)
                 }
                 is Result.Error -> {

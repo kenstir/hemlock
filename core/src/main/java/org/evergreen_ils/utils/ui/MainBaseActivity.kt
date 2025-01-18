@@ -18,17 +18,14 @@
 
 package org.evergreen_ils.utils.ui
 
-import android.content.Intent
 import android.view.Menu
 import android.view.MenuItem
 import kotlinx.coroutines.async
 import org.evergreen_ils.R
 import org.evergreen_ils.android.AccountUtils
-import org.evergreen_ils.android.Analytics
 import org.evergreen_ils.android.App
 import org.evergreen_ils.android.Log
 import org.evergreen_ils.android.Log.TAG_FCM
-import org.evergreen_ils.data.PushNotification
 import org.evergreen_ils.data.Result
 import org.evergreen_ils.net.Gateway
 
@@ -75,10 +72,12 @@ open class MainBaseActivity : BaseActivity() {
 
             // If the current FCM token is different from the one we got from the user settings,
             // we need to update the user setting in Evergreen
-            val storedToken = App.getAccount().storedFcmToken
+            val storedToken = App.getAccount().savedPushNotificationData
+            val storedEnabledFlag = App.getAccount().savedPushNotificationEnabled
             val currentToken = App.getFcmNotificationToken()
             Log.d(TAG_FCM, "stored token was:  $storedToken")
-            if (currentToken != null && currentToken != storedToken) {
+            if ((currentToken != null && currentToken != storedToken) || !storedEnabledFlag)
+            {
                 Log.d(TAG_FCM, "updating stored token")
                 val updateResult = Gateway.actor.updatePushNotificationToken(App.getAccount(), currentToken)
                 if (updateResult is Result.Error) {

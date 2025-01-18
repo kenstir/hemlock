@@ -45,7 +45,8 @@ class Account constructor(val username: String, var authToken: String?) {
     var smsNumber: String? = null
     var holdNotifyValue: String? = null // kept for analytics
     var circHistoryStart: String? = null
-    var storedFcmToken: String? = null // stored user setting, not the current value
+    var savedPushNotificationData: String? = null // last saved user setting, not the current token
+    var savedPushNotificationEnabled: Boolean = false
 
     var bookBags = ArrayList<BookBag>()
 
@@ -118,7 +119,8 @@ class Account constructor(val username: String, var authToken: String?) {
         this.holdNotifyValue = map[Api.USER_SETTING_HOLD_NOTIFY] ?: "email:phone"
         parseHoldNotifyValue(holdNotifyValue)
         this.circHistoryStart = map[Api.USER_SETTING_CIRC_HISTORY_START]
-        this.storedFcmToken = map[Api.USER_SETTING_HEMLOCK_PUSH_NOTIFICATION_DATA]
+        this.savedPushNotificationData = map[Api.USER_SETTING_HEMLOCK_PUSH_NOTIFICATION_DATA]
+        this.savedPushNotificationEnabled = map[Api.USER_SETTING_HEMLOCK_PUSH_NOTIFICATION_ENABLED] == "true"
     }
 
     fun loadBookBags(objects: List<OSRFObject>) {

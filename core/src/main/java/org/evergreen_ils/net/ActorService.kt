@@ -18,6 +18,7 @@
 package org.evergreen_ils.net
 
 import org.evergreen_ils.data.Account
+import org.evergreen_ils.data.JSONDictionary
 import org.evergreen_ils.data.Result
 import org.opensrf.util.OSRFObject
 
@@ -47,7 +48,7 @@ interface ActorService {
     suspend fun deleteBookBagAsync(account: Account, bookBagId: Int): Result<Unit>
     suspend fun addItemToBookBagAsync(account: Account, bookBagId: Int, recordId: Int): Result<Unit>
     suspend fun removeItemFromBookBagAsync(account: Account, bookBagItemId: Int): Result<Unit>
-    suspend fun updatePatronSettings(account: Account, name: String, value: String?): Result<String>
+    suspend fun updatePatronSettings(account: Account, settings: JSONDictionary): Result<String>
     suspend fun enableCheckoutHistory(account: Account): Result<Unit>
     suspend fun disableCheckoutHistory(account: Account): Result<Unit>
     suspend fun updatePushNotificationToken(account: Account, token: String?): Result<Unit>
