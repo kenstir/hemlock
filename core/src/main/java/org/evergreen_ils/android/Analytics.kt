@@ -192,13 +192,6 @@ object Analytics {
         logEvent(event, null)
     }
 
-    @JvmStatic
-    fun logEvent(event: String, name: String?, value: String?) {
-        val b = Bundle()
-        b.putString(name, value)
-        logEvent(event, b)
-    }
-
     // Add request to the logBuffer to be available in an error report
     @JvmStatic
     fun logRequest(tag: String, url: String) {

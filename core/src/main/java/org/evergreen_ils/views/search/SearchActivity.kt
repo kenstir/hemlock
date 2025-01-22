@@ -527,7 +527,7 @@ class SearchActivity : BaseActivity(), ActivityCompat.OnRequestPermissionsResult
     private fun startScanningWithClient(scanner: GmsBarcodeScanner) {
         scanner.startScan()
             .addOnSuccessListener { barcode ->
-                Analytics.logEvent(Analytics.Event.SCAN, Analytics.Param.RESULT, Analytics.Value.OK)
+                Analytics.logEvent(Analytics.Event.SCAN, bundleOf(Analytics.Param.RESULT to Analytics.Value.OK))
                 handleBarcodeResult(barcode)
             }
             .addOnFailureListener { e ->
@@ -553,7 +553,7 @@ class SearchActivity : BaseActivity(), ActivityCompat.OnRequestPermissionsResult
     }
 
     private fun onScannerFailure(e: Exception) {
-        Analytics.logEvent(Analytics.Event.SCAN, Analytics.Param.RESULT, e.message)
+        Analytics.logEvent(Analytics.Event.SCAN, bundleOf(Analytics.Param.RESULT to e.message))
         this.showAlert(e)
     }
 
