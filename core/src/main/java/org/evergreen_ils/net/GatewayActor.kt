@@ -356,7 +356,7 @@ object GatewayActor: ActorService {
     override suspend fun enableCheckoutHistory(account: Account): Result<Unit> {
         return try {
             val dateString = OSRFUtils.formatDateAsDayOnly(Date())
-            val result = updatePatronSettings(account, jsonMapOf(Api.USER_SETTING_CIRC_HISTORY_START to dateString))
+            val result = updatePatronSettings(account, jsonMapOf(Api.USER_SETTING_CHECKOUT_HISTORY_START to dateString))
             when (result) {
                 is Result.Success -> {
                     account.circHistoryStart = dateString
@@ -373,7 +373,7 @@ object GatewayActor: ActorService {
 
     override suspend fun disableCheckoutHistory(account: Account): Result<Unit> {
         return try {
-            val result = updatePatronSettings(account, jsonMapOf(Api.USER_SETTING_CIRC_HISTORY_START to null))
+            val result = updatePatronSettings(account, jsonMapOf(Api.USER_SETTING_CHECKOUT_HISTORY_START to null))
             when (result) {
                 is Result.Success -> {
                     account.circHistoryStart = null

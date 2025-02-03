@@ -63,7 +63,7 @@ object Api {
     const val USER_SETTING_HEMLOCK_PUSH_NOTIFICATION_DATA = "hemlock.push_notification_data"
     const val USER_SETTING_HEMLOCK_PUSH_NOTIFICATION_ENABLED = "hemlock.push_notification_enabled"
 
-    /// org and user settings
+    /// org settings
 
     const val SETTING_REQUIRE_MONOGRAPHIC_PART = "circ.holds.api_require_monographic_part_when_present"
     //const val SETTING_REQUIRE_MONOGRAPHIC_PART = "circ.holds.ui_require_monographic_part_when_present"
@@ -71,7 +71,10 @@ object Api {
     const val SETTING_INFO_URL = "lib.info_url"
     const val SETTING_ORG_UNIT_NOT_PICKUP_LIB = "opac.holds.org_unit_not_pickup_lib"
     const val SETTING_SMS_ENABLE = "sms.enable"
-    const val USER_SETTING_CIRC_HISTORY_START = "history.circ.retention_start"
+
+    ///  user settings
+
+    const val USER_SETTING_CHECKOUT_HISTORY_START = "history.circ.retention_start"
     const val USER_SETTING_HOLD_NOTIFY = "opac.hold_notify" // e.g. "email|sms" or "phone:email"
     const val USER_SETTING_DEFAULT_PHONE = "opac.default_phone"
     const val USER_SETTING_DEFAULT_PICKUP_LOCATION = "opac.default_pickup_location"
