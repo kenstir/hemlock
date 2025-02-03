@@ -16,6 +16,7 @@
     <drawable name="ic_library_48">@drawable/baseline_local_library_black_36</drawable>
     <drawable name="ic_event_24">@drawable/baseline_event_black_24</drawable>
     <drawable name="ic_event_48">@drawable/baseline_event_black_36</drawable>
+    <drawable name="ic_settings_24">@drawable/baseline_settings_black_24</drawable>
     <drawable name="ic_notification">@drawable/ic_library_24</drawable>
 
     <!-- MainGridActivity large buttons -->

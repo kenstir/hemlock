@@ -1,24 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen
-        xmlns:android="http://schemas.android.com/apk/res/android">
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
-	<PreferenceCategory
-	   android:title="@string/preference_notifications_title" >
-        <CheckBoxPreference
-            android:title="@string/preference_enable_notifications"
-            android:key="notifications_enabled"
-            android:summaryOn="@string/preference_enable_notifications_summary_on"
-            android:summaryOff="@string/preference_enable_notifications_summary_off"
-            android:defaultValue="false"
-            />
+    <PreferenceCategory
+        app:title="@string/preference_notifications_title" >
 
-        <ListPreference
-            android:title="@string/preference_notifications_days_before"
-            android:key="notifications_days_before_expiration"
-            android:summary="@string/preference_notifications_days_before_summary"
-            android:entries="@array/notification_preferences_list_entries"
-            android:entryValues="@array/notification_preferences_list_values"
-            android:defaultValue="3"
-            />
+        <SwitchPreferenceCompat
+            app:key="push_notifications"
+            app:title="Enable push notifications"/>
+
     </PreferenceCategory>
-</PreferenceScreen> 
+    <PreferenceCategory
+        app:title="@string/preference_search_and_history_title">
+
+        <SwitchPreferenceCompat
+            app:key="keep_checkout_history"
+            app:title="Keep checkout history"/>
+
+        <Preference
+            app:key="feedback"
+            app:title="Send feedback"
+            app:summary="Report technical issues or suggest new features"/>
+
+    </PreferenceCategory>
+
+</PreferenceScreen>

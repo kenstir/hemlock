@@ -48,5 +48,12 @@
             android:icon="@drawable/ic_barcode_24"
             android:title="@string/barcode_title" />
     </group>
-
+    <group
+        android:id="@+id/settings_group"
+        android:checkableBehavior="none">
+        <item
+            android:id="@+id/main_settings_button"
+            android:icon="@drawable/ic_settings_24"
+            android:title="@string/title_settings" />
+    </group>
 </menu>

@@ -118,7 +118,7 @@ class Account constructor(val username: String, var authToken: String?) {
         this.smsNumber = map[Api.USER_SETTING_DEFAULT_SMS_NOTIFY]
         this.holdNotifyValue = map[Api.USER_SETTING_HOLD_NOTIFY] ?: "email:phone"
         parseHoldNotifyValue(holdNotifyValue)
-        this.circHistoryStart = map[Api.USER_SETTING_CIRC_HISTORY_START]
+        this.circHistoryStart = map[Api.USER_SETTING_CHECKOUT_HISTORY_START]
         this.savedPushNotificationData = map[Api.USER_SETTING_HEMLOCK_PUSH_NOTIFICATION_DATA]
         this.savedPushNotificationEnabled = map[Api.USER_SETTING_HEMLOCK_PUSH_NOTIFICATION_ENABLED] == "true"
     }

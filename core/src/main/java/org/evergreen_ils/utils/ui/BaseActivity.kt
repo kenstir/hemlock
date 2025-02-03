@@ -323,6 +323,8 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
             launchURL(getEventsUrl())
         } else if (id == R.id.main_showcard_button) {
             startActivity(Intent(this, BarcodeActivity::class.java))
+        } else if (id == R.id.main_settings_button) {
+            startActivity(Intent(this, SettingsActivity::class.java))
         } else if (menuItemHandler != null) {
             ret = menuItemHandler!!.onItemSelected(this, id, "nav_drawer")
         } else {
