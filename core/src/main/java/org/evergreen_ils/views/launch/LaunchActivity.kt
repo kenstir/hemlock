@@ -18,6 +18,7 @@
 
 package org.evergreen_ils.views.launch
 
+import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.content.res.Configuration
 import android.net.Uri
@@ -175,9 +176,14 @@ class LaunchActivity : AppCompatActivity() {
         i.putExtra(Intent.EXTRA_SUBJECT, "[Hemlock] error report - $appInfo")
         //TODO: append as attachment
         i.putExtra(Intent.EXTRA_TEXT, Analytics.getLogBuffer())
-        if (i.resolveActivity(packageManager) != null) {
+
+        // Starting with Android 11 (API level 30), you should just catch ActivityNotFoundException;
+        // calling resolveActivity requires permission.
+        // https://developer.android.com/training/package-visibility/use-cases
+        try {
             startActivity(i)
-        } else {
+        }
+        catch (ex: ActivityNotFoundException) {
             Toast.makeText(this, "There is no email app installed", Toast.LENGTH_LONG).show()
         }
     }
