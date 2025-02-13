@@ -29,10 +29,14 @@ class Organization(@JvmField val id: Int,
                    @JvmField val opacVisible: Boolean,
                    @JvmField var aouObj: OSRFObject) {
 
-    val parent: Int? = aouObj.getInt("parent_ou")
-    val addressID: Int? = aouObj.getInt("mailing_address")
-    val email: String? = aouObj.getString("email")
-    val phone: String? = aouObj.getString("phone")
+    val parent: Int?
+        get() = aouObj.getInt("parent_ou")
+    val addressID: Int?
+        get() = aouObj.getInt("mailing_address")
+    val email: String?
+        get() = aouObj.getString("email")
+    val phone: String?
+        get() = aouObj.getString("phone")
 
     var addressObj: OSRFObject? = null
 
