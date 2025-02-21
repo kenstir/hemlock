@@ -50,7 +50,8 @@ object Analytics {
         const val HOLD_CANCEL_HOLD = "hold_cancel"
         const val HOLD_PLACE_HOLD = "hold_place"
         const val HOLD_UPDATE_HOLD = "hold_update"
-        const val LOGIN = FirebaseAnalytics.Event.LOGIN
+        //const val LOGIN = FirebaseAnalytics.Event.LOGIN // avoid builtin name so my custom dimension works
+        const val LOGIN = "login_v2"
         const val MESSAGES_OPEN = "messages_open"
         const val SCAN = "barcode_scan"
         const val SEARCH = FirebaseAnalytics.Event.SEARCH
