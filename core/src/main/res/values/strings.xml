@@ -285,4 +285,7 @@
     <string name="notification_permission_denied_msg">%1$s will not be able to send you notifications.</string>
     <string name="ok">OK</string>
     <string name="no_thanks">No thanks</string>
+    <string name="title_ebooks_and_digital"><![CDATA[Ebooks & Digital]]></string>
+    <string name="title_meeting_rooms">Meeting Rooms</string>
+    <string name="title_museum_passes">Museum Passes</string>
 </resources>

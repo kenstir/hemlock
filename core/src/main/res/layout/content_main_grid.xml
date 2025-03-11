@@ -26,9 +26,9 @@
         android:id="@+id/grid_buttonrow_1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="0dp"
-        android:layout_marginStart="0dp"
-        android:layout_marginEnd="0dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
         android:orientation="horizontal">
 
         <Button
@@ -39,7 +39,7 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:onClick="onButtonClick"
-            android:text="Ebooks &amp; Digital" />
+            android:text="@string/title_ebooks_and_digital" />
 
         <Button
             android:id="@+id/grid_meeting_rooms_button"
@@ -49,7 +49,7 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:onClick="onButtonClick"
-            android:text="Meeting Rooms" />
+            android:text="@string/title_meeting_rooms" />
 
         <Button
             android:id="@+id/grid_museum_passes_button"
@@ -59,7 +59,7 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:onClick="onButtonClick"
-            android:text="Museum Passes" />
+            android:text="@string/title_museum_passes" />
 
     </LinearLayout>
 
