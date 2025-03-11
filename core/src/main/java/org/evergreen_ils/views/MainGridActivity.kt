@@ -26,7 +26,6 @@ import android.view.View
 import android.widget.Button
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import org.evergreen_ils.BuildConfig
 import org.evergreen_ils.R
 import org.evergreen_ils.android.App
 import org.evergreen_ils.android.Log
@@ -45,8 +44,13 @@ class MainGridActivity : MainBaseActivity() {
     private var adapter: GridButtonViewAdapter? = null
     private var items = ArrayList<GridButton>()
 
-    // arrange for all buttons to be visible when debugging
-    private val showButtonsWithoutURLsForDebugging = BuildConfig.DEBUG
+    // force display of optional buttons when debugging
+    private val forceButton = mapOf<String, Boolean>(
+//        "events" to BuildConfig.DEBUG,
+//        "ebooks" to BuildConfig.DEBUG,
+//        "meeting_rooms" to BuildConfig.DEBUG,
+//        "museum_passes" to BuildConfig.DEBUG,
+    )
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -132,7 +136,7 @@ class MainGridActivity : MainBaseActivity() {
         // Events
         val homeOrg = EgOrg.findOrg(App.getAccount().homeOrg)
         val eventsUrl = homeOrg?.eventsURL
-        if (!eventsUrl.isNullOrEmpty() || showButtonsWithoutURLsForDebugging) {
+        if (!eventsUrl.isNullOrEmpty() || forceButton["events"] == true) {
             items.add(GridButton(resources.getString(R.string.title_events),
                 resources.getDrawable(R.drawable.ic_grid_events_48, null),
                 null) {
@@ -143,28 +147,27 @@ class MainGridActivity : MainBaseActivity() {
 
     fun setupBottomRowButtons() {
         val homeOrg = EgOrg.findOrg(App.getAccount().homeOrg)
-        var numVisible = 0
 
         // E-books
         val ebooksUrl = homeOrg?.eresourcesUrl
-        if (!ebooksUrl.isNullOrEmpty() || showButtonsWithoutURLsForDebugging) {
-            ++numVisible
+        if (!ebooksUrl.isNullOrEmpty() || forceButton["ebooks"] == true) {
+            Unit
         } else {
             findViewById<Button>(R.id.grid_ebooks_button)?.visibility = View.GONE
         }
 
         // Meeting Rooms
         val meetingRoomsUrl = homeOrg?.meetingRoomsUrl
-        if (!meetingRoomsUrl.isNullOrEmpty() || showButtonsWithoutURLsForDebugging) {
-            ++numVisible
+        if (!meetingRoomsUrl.isNullOrEmpty() || forceButton["meeting_rooms"] == true) {
+            Unit
         } else {
             findViewById<Button>(R.id.grid_meeting_rooms_button)?.visibility = View.GONE
         }
 
         // Museum Passes
         val museumPassesUrl = homeOrg?.museumPassesUrl
-        if (!museumPassesUrl.isNullOrEmpty() || showButtonsWithoutURLsForDebugging) {
-            ++numVisible
+        if (!museumPassesUrl.isNullOrEmpty() || forceButton["museum_passes"] == true) {
+            Unit
         } else {
             findViewById<Button>(R.id.grid_museum_passes_button)?.visibility = View.GONE
         }
