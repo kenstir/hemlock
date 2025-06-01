@@ -23,7 +23,7 @@ import kotlin.collections.ArrayList
 
 class BookBag(val id: Int, val name: String, obj: OSRFObject) : Serializable {
     var description: String? = obj.getString("description")
-    var shared: Boolean = obj.getBoolean("pub")
+    var public: Boolean = obj.getBoolean("pub")
     var items = ArrayList<BookBagItem>()
     var filterToVisibleRecords = false
     var visibleRecordIds = ArrayList<Int>() // list of bre IDs used to filter out deleted items
