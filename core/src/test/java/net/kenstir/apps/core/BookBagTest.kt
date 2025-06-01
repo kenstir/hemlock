@@ -40,7 +40,7 @@ class BookBagTest {
         assertEquals(1, bookBags.size)
         assertEquals("books to read", bookBags.first().name)
         assertNull(bookBags.first().description)
-        assertTrue(bookBags.first().shared)
+        assertTrue(bookBags.first().public)
     }
 
     @Test
