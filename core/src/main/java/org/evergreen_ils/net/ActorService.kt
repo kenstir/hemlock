@@ -19,7 +19,7 @@ package org.evergreen_ils.net
 
 import org.evergreen_ils.data.Account
 import org.evergreen_ils.data.JSONDictionary
-import org.evergreen_ils.data.Result
+import net.kenstir.hemlock.data.Result
 import org.opensrf.util.OSRFObject
 
 interface ActorService {

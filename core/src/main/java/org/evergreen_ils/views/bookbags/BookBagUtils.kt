@@ -25,7 +25,7 @@ import org.evergreen_ils.R
 import org.evergreen_ils.android.Analytics
 import org.evergreen_ils.android.App
 import org.evergreen_ils.data.BookBag
-import org.evergreen_ils.data.Result
+import net.kenstir.hemlock.data.Result
 import org.evergreen_ils.net.Gateway
 import org.evergreen_ils.data.MBRecord
 import org.evergreen_ils.utils.ui.BaseActivity

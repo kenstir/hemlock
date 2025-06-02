@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 Kenneth H. Cox
+ * Copyright (c) 2025 Kenneth H. Cox
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -12,16 +12,16 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ * along with this program; if not, see <https://www.gnu.org/licenses/>.
  */
+package net.kenstir.hemlock.data.models
 
-package org.evergreen_ils.net
+class Record(val id: Int, val title: String? = null, val author: String? = null) {
+    constructor(id: Int): this(id, null, null)
 
-import net.kenstir.hemlock.data.Result
-import org.opensrf.util.OSRFObject
+    override fun toString(): String {
+        return "Record(id=$id, title='$title', author=$author)"
+    }
 
-interface AuthService {
-    suspend fun fetchSession(authToken: String): Result<OSRFObject>
-    suspend fun deleteSession(authToken: String): Result<OSRFObject>
+    var isDeleted = false
 }

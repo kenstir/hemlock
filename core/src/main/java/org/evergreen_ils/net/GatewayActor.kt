@@ -22,7 +22,7 @@ import org.evergreen_ils.OSRFUtils
 import org.evergreen_ils.android.Log
 import org.evergreen_ils.data.Account
 import org.evergreen_ils.data.JSONDictionary
-import org.evergreen_ils.data.Result
+import net.kenstir.hemlock.data.Result
 import org.evergreen_ils.data.jsonMapOf
 import org.evergreen_ils.data.parseOrgStringSetting
 import org.evergreen_ils.system.EgOrg
@@ -228,7 +228,7 @@ object GatewayActor: ActorService {
     override suspend fun markMessageRead(account: Account, messageId: Int): Result<Unit> =
         markMessageAction(account, messageId, "mark_read")
 
-    override suspend fun markMessageUnread(account: Account, messageId: Int): Result<Unit>  =
+    override suspend fun markMessageUnread(account: Account, messageId: Int): Result<Unit> =
         markMessageAction(account, messageId, "mark_unread")
 
     override suspend fun fetchUserFinesSummary(account: Account): Result<OSRFObject?> {

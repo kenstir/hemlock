@@ -6,6 +6,7 @@ fm_IDL.*
 /secrets.*
 /local.gradle
 /local.properties
+/.idea/AndroidProjectSystem.xml
 /.idea/androidTestResultsUserPreferences.xml
 /.idea/appInsightsSettings.xml
 /.idea/assetWizardSettings.xml

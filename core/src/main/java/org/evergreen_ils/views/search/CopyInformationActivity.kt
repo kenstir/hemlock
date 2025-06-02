@@ -36,7 +36,7 @@ import org.evergreen_ils.R
 import org.evergreen_ils.android.Log
 import org.evergreen_ils.data.CopyLocationCounts
 import org.evergreen_ils.data.MBRecord
-import org.evergreen_ils.data.Result
+import net.kenstir.hemlock.data.Result
 import org.evergreen_ils.net.Gateway
 import org.evergreen_ils.system.EgOrg
 import org.evergreen_ils.system.EgOrg.findOrg

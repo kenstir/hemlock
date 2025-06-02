@@ -19,7 +19,7 @@
 package org.evergreen_ils.net
 
 import org.evergreen_ils.Api
-import org.evergreen_ils.data.Result
+import net.kenstir.hemlock.data.Result
 import org.opensrf.util.OSRFObject
 
 object GatewayAuth: AuthService {

@@ -19,7 +19,7 @@
 package org.evergreen_ils.net
 
 import org.opensrf.util.OSRFObject
-import org.evergreen_ils.data.Result
+import net.kenstir.hemlock.data.Result
 
 interface PCRUDService {
     suspend fun fetchCodedValueMaps(): Result<List<OSRFObject>>

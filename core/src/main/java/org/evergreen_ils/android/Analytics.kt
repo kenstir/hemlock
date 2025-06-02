@@ -27,7 +27,7 @@ import com.google.firebase.crashlytics.FirebaseCrashlytics
 import org.evergreen_ils.BuildConfig
 import org.evergreen_ils.R
 import org.evergreen_ils.data.Organization
-import org.evergreen_ils.data.Result
+import net.kenstir.hemlock.data.Result
 import org.evergreen_ils.utils.getCustomMessage
 import java.text.SimpleDateFormat
 import java.util.*

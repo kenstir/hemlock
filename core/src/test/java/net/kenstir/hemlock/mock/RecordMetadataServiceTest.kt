@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 Kenneth H. Cox
+ * Copyright (c) 2025 Kenneth H. Cox
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -12,16 +12,22 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ * along with this program; if not, see <https://www.gnu.org/licenses/>.
  */
 
-package org.evergreen_ils.net
+package net.kenstir.hemlock.mock
 
+import kotlinx.coroutines.test.runTest
+import net.kenstir.hemlock.data.EvergreenRecordRepository
 import net.kenstir.hemlock.data.Result
-import org.opensrf.util.OSRFObject
+import net.kenstir.hemlock.mock.MockMetadataSource.getRecordMetadata
+import org.junit.Assert.assertEquals
+import org.junit.Test
 
-interface AuthService {
-    suspend fun fetchSession(authToken: String): Result<OSRFObject>
-    suspend fun deleteSession(authToken: String): Result<OSRFObject>
+class RecordMetadataServiceTest {
+    @Test
+    fun repository_getMetadata() = runTest {
+        val repository = EvergreenRecordRepository(MockMetadataService())
+        assertEquals(getRecordMetadata(1), repository.fetchRecordMetadata(1).get())
+    }
 }
