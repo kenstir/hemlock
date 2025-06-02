@@ -14,13 +14,14 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, see <https://www.gnu.org/licenses/>.
  */
-package net.kenstir.hemlock.data
+package net.kenstir.hemlock.data.models
 
-data class PatronList(
-    val id: Int,
-    val name: String,
-    val description: String? = null,
-    val public: Boolean,
-    var items: List<PatronListItem> = emptyList(),
-    var fetched: Boolean = false,
-)
+data class RecordMetadata(
+    val title: String,
+    val author: String,
+    val isbn: String
+) {
+    override fun toString(): String {
+        return "RecordMetadata(title='$title', author='$author', isbn='$isbn')"
+    }
+}

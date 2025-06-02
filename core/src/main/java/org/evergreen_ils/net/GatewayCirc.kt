@@ -21,7 +21,7 @@ package org.evergreen_ils.net
 import org.evergreen_ils.Api
 import org.evergreen_ils.HOLD_TYPE_TITLE
 import org.evergreen_ils.data.Account
-import org.evergreen_ils.data.Result
+import net.kenstir.hemlock.data.Result
 import org.evergreen_ils.data.jsonMapOf
 import org.opensrf.util.OSRFObject
 

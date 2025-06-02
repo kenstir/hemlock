@@ -42,7 +42,7 @@ import org.evergreen_ils.android.Log
 import org.evergreen_ils.android.Log.TAG_FCM
 import org.evergreen_ils.data.Account
 import org.evergreen_ils.data.PushNotification
-import org.evergreen_ils.data.Result
+import net.kenstir.hemlock.data.Result
 import org.evergreen_ils.net.Gateway
 import org.evergreen_ils.system.EgOrg
 import org.evergreen_ils.utils.await

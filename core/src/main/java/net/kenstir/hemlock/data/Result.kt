@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.evergreen_ils.data
+package net.kenstir.hemlock.data
 
 /**
  * A generic class that holds a value or an error.

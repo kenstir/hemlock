@@ -37,7 +37,7 @@ import org.evergreen_ils.*
 import org.evergreen_ils.android.App
 import org.evergreen_ils.data.Account
 import org.evergreen_ils.data.HoldRecord
-import org.evergreen_ils.data.Result
+import net.kenstir.hemlock.data.Result
 import org.evergreen_ils.net.Gateway
 import org.evergreen_ils.net.GatewayError
 import org.evergreen_ils.data.MBRecord

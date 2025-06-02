@@ -54,7 +54,7 @@ import org.evergreen_ils.android.Analytics.orgDimensionKey
 import org.evergreen_ils.android.App
 import org.evergreen_ils.android.Log
 import org.evergreen_ils.data.MBRecord
-import org.evergreen_ils.data.Result
+import net.kenstir.hemlock.data.Result
 import org.evergreen_ils.net.Gateway
 import org.evergreen_ils.net.GatewayLoader
 import org.evergreen_ils.system.EgCodedValueMap

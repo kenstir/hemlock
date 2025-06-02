@@ -26,7 +26,7 @@ import org.evergreen_ils.android.AccountUtils
 import org.evergreen_ils.android.App
 import org.evergreen_ils.android.Log
 import org.evergreen_ils.android.Log.TAG_FCM
-import org.evergreen_ils.data.Result
+import net.kenstir.hemlock.data.Result
 import org.evergreen_ils.net.Gateway
 
 open class MainBaseActivity : BaseActivity() {

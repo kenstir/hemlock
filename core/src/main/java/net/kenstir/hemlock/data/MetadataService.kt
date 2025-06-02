@@ -16,9 +16,8 @@
  */
 package net.kenstir.hemlock.data
 
-data class PatronListItem(
-    val id: Int,
-    val recordId: String,
-//    val record: MBRecord,
-) {
+import net.kenstir.hemlock.data.models.RecordMetadata
+
+interface MetadataService {
+    suspend fun fetchRecordMetadata(recordId: Int): Result<RecordMetadata>
 }
