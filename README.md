@@ -21,7 +21,7 @@ Quick start for developers
 1. Get the correct version of [Android Studio](https://developer.android.com/studio/index.html). 
    This branch is built using
    ```
-   Android Studio Ladybug | 2024.2.1 Patch 3
+   Android Studio Meerkat Feature Drop | 2024.3.2 Patch 1
    ```
 2. Directory `core/` contains the shared code and resources, `cwmars_app/` the code and resources needed to customize it for the C/W MARS system.
 3. Profit. C'mon, you know better. This is Open Source.
