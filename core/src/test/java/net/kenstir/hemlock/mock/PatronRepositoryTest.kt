@@ -14,13 +14,21 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, see <https://www.gnu.org/licenses/>.
  */
-package net.kenstir.hemlock.data
 
-import net.kenstir.hemlock.data.models.RecordMetadata
+package net.kenstir.hemlock.mock
 
-class EvergreenRecordRepository(val metadataService: MetadataService): RecordRepository {
+import kotlinx.coroutines.test.runTest
+import net.kenstir.hemlock.data.HemlockPatronRepository
+import org.junit.Assert.assertEquals
+import org.junit.Test
 
-    override suspend fun fetchRecordMetadata(recordId: Int): Result<RecordMetadata> {
-        return metadataService.fetchRecordMetadata(recordId)
+class PatronRepositoryTest {
+    @Test
+    fun getLists() = runTest {
+        val repository = HemlockPatronRepository(MockPatronService())
+        val lists = repository.fetchLists(1, "authtoken").get()
+        assertEquals(2, lists.size)
+        assertEquals("Books to Read", lists[0].name)
+        assertEquals("Movies to Watch", lists[1].name)
     }
 }
