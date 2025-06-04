@@ -16,8 +16,8 @@
  */
 package net.kenstir.hemlock.data
 
-import net.kenstir.hemlock.data.models.RecordMetadata
+import net.kenstir.hemlock.data.models.PatronList
 
-interface MetadataService {
-    suspend fun fetchRecordMetadata(recordId: Int): Result<RecordMetadata>
+interface PatronService {
+    suspend fun fetchLists(patronId: Int, authToken: String): Result<List<PatronList>>
 }

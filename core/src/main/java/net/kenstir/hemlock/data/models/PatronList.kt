@@ -19,7 +19,7 @@ package net.kenstir.hemlock.data.models
 class PatronList(
     val id: Int,
     val name: String,
-    val description: String? = null,
+    val description: String,
     val public: Boolean = false,
 ) {
     override fun toString(): String {

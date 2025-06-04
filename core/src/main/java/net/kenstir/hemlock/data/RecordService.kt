@@ -18,6 +18,6 @@ package net.kenstir.hemlock.data
 
 import net.kenstir.hemlock.data.models.RecordMetadata
 
-interface RecordRepository {
-    suspend fun fetchMetadata(recordId: Int): Result<RecordMetadata>
+interface RecordService {
+    suspend fun fetchRecordMetadata(recordId: Int): Result<RecordMetadata>
 }

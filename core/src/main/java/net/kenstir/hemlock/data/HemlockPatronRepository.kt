@@ -14,10 +14,14 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, see <https://www.gnu.org/licenses/>.
  */
+
 package net.kenstir.hemlock.data
 
-import net.kenstir.hemlock.data.models.RecordMetadata
+import net.kenstir.hemlock.data.models.PatronList
 
-interface RecordRepository {
-    suspend fun fetchMetadata(recordId: Int): Result<RecordMetadata>
+class HemlockPatronRepository(val patronService: PatronService): PatronRepository {
+
+    override suspend fun fetchLists(patronId: Int, authToken: String): Result<List<PatronList>> {
+        return patronService.fetchLists(patronId, authToken)
+    }
 }

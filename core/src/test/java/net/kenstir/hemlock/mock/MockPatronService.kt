@@ -14,10 +14,15 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, see <https://www.gnu.org/licenses/>.
  */
-package net.kenstir.hemlock.data
 
-import net.kenstir.hemlock.data.models.RecordMetadata
+package net.kenstir.hemlock.mock
 
-interface RecordRepository {
-    suspend fun fetchMetadata(recordId: Int): Result<RecordMetadata>
+import net.kenstir.hemlock.data.PatronService
+import net.kenstir.hemlock.data.Result
+import net.kenstir.hemlock.data.models.PatronList
+
+class MockPatronService: PatronService {
+    override suspend fun fetchLists(patronId: Int, authToken: String): Result<List<PatronList>> {
+        return Result.Success(MockPatronDataSource.getLists())
+    }
 }
