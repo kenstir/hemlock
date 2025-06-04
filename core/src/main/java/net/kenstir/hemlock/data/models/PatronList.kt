@@ -27,6 +27,9 @@ class PatronList(
     }
 
     var items: List<PatronListItem>? = null
+
+    val isFullyLoaded: Boolean
+        get() = items != null
     var filterToVisibleRecords = false
     var visibleRecordIds = ArrayList<Int>() // list of bre IDs used to filter out deleted items
 }

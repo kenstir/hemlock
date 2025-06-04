@@ -17,7 +17,9 @@
 package net.kenstir.hemlock.data
 
 import net.kenstir.hemlock.data.models.PatronList
+import net.kenstir.hemlock.data.models.PatronListItem
 
 interface PatronService {
     suspend fun fetchLists(patronId: Int, authToken: String): Result<List<PatronList>>
+    suspend fun fetchListItems(patronId: Int, authToken: String, listId: Int): Result<List<PatronListItem>>
 }
