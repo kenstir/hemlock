@@ -30,5 +30,14 @@ class PatronRepositoryTest {
         assertEquals(2, lists.size)
         assertEquals("Books to Read", lists[0].name)
         assertEquals("Movies to Watch", lists[1].name)
+        assertEquals(false, lists[0].isFullyLoaded)
+    }
+
+    @Test
+    fun getItems() = runTest {
+        val repository = HemlockPatronRepository(MockPatronService())
+        val items = repository.fetchListItems(1, "authtoken", 1).get()
+        assertEquals(1, items.size)
+        assertEquals(253, items[0].record.id)
     }
 }

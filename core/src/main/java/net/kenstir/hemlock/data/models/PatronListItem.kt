@@ -18,7 +18,6 @@ package net.kenstir.hemlock.data.models
 
 data class PatronListItem(
     val id: Int,
-    val recordId: Int,
-    val record: Record? = null,
+    val record: Record,
 ) {
 }
