@@ -107,9 +107,8 @@ public class EvergreenAuthenticator {
         if (resp == null)
             throw new AuthenticationException("Unable to complete login");
         
-        // parse response
-        // TODO: handle PATRON_INACTIVE and other events
-        // {"payload":[{"ilsevent":1217,"pid":7861,"stacktrace":"oils_auth.c:844","textcode":"PATRON_INACTIVE","desc":"This account is marked as inactive"}],"status":200}
+        // parse response, throw if error
+        // {"payload":[{"payload":{"authtoken":"***","authtime":1209600},"ilsevent":0,"textcode":"SUCCESS","desc":"Success"}],"status":200}
         String textcode = ((Map<String, String>) resp).get("textcode");
         Log.d(TAG, "textcode: " + textcode);
         if (textcode.equals("SUCCESS")) {
