@@ -20,6 +20,12 @@ package net.kenstir.hemlock.sertest
 import android.os.Bundle
 import androidx.test.platform.app.InstrumentationRegistry
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonElement
+import kotlinx.serialization.json.JsonNull
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.jsonArray
+import kotlinx.serialization.json.jsonObject
+import kotlinx.serialization.json.jsonPrimitive
 import org.evergreen_ils.android.Log
 import org.evergreen_ils.android.StdoutLogProvider
 import org.evergreen_ils.data.Account
@@ -115,5 +121,38 @@ class SerializationTest {
 
         assertNotNull(resp)
         assertEquals(1, resp.payload.size)
+        assertEquals(emptyList<JsonElement>(), resp.payload[0].jsonArray)
+    }
+
+    @Test
+    fun test_gateway_response_string() {
+        val json = """
+            {"payload":["3-7-4"],"status":200}
+        """.trimIndent()
+
+        val resp = Json.decodeFromString<XGatewayResponse>(json)
+        Log.d(TAG, "Deserialized Gateway Response: $resp")
+
+        assertNotNull(resp)
+        assertEquals(1, resp.payload.size)
+        assertTrue(resp.payload[0].jsonPrimitive.isString)
+        assertEquals("3-7-4", resp.payload[0].jsonPrimitive.content)
+    }
+
+    @Test
+    fun test_gateway_response_object() {
+        val json = """
+            {"payload":[{"hemlock.cache_key":null}],"status":200}
+        """.trimIndent()
+
+        val resp = Json.decodeFromString<XGatewayResponse>(json)
+        Log.d(TAG, "Deserialized Gateway Response: $resp")
+
+        assertNotNull(resp)
+        assertEquals(1, resp.payload.size)
+
+        val obj = resp.payload[0].jsonObject
+        val value = obj["hemlock.cache_key"]
+        assertEquals(JsonNull, value)
     }
 }
