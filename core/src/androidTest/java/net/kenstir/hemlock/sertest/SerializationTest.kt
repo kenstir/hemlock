@@ -25,6 +25,7 @@ import org.evergreen_ils.android.StdoutLogProvider
 import org.evergreen_ils.data.Account
 import org.evergreen_ils.net.Volley
 import org.junit.AfterClass
+import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
 import org.junit.BeforeClass
@@ -78,7 +79,6 @@ class SerializationTest {
             XData(1, "one"),
             XData(2, "two"),
         )
-//        val json = Json.encodeToString(XData.serializer(), dataList)
         val json = Json.encodeToString(dataList)
         Log.d(TAG, "Serialized JSON: $json")
 
@@ -89,5 +89,31 @@ class SerializationTest {
         assertTrue(deserializedList.isNotEmpty())
         assertTrue(deserializedList[0].id == 1 && deserializedList[0].name == "one")
         assertTrue(deserializedList[1].id == 2 && deserializedList[1].name == "two")
+    }
+
+    @Test
+    fun test_gateway_response_empty() {
+        val json = """
+            {"payload":[],"status":200}
+        """.trimIndent()
+
+        val resp = Json.decodeFromString<XGatewayResponse>(json)
+        Log.d(TAG, "Deserialized Gateway Response: $resp")
+
+        assertNotNull(resp)
+        assertEquals(0, resp.payload.size)
+    }
+
+    @Test
+    fun test_gateway_response_emptyList() {
+        val json = """
+            {"payload":[[]],"status":200}
+        """.trimIndent()
+
+        val resp = Json.decodeFromString<XGatewayResponse>(json)
+        Log.d(TAG, "Deserialized Gateway Response: $resp")
+
+        assertNotNull(resp)
+        assertEquals(1, resp.payload.size)
     }
 }

@@ -18,14 +18,14 @@
 package net.kenstir.hemlock.sertest
 
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.json.JsonElement
+import kotlinx.serialization.json.JsonArray
 
-enum class GatewayResponseType {
+enum class XGatewayResponseType {
     UNKNOWN, STRING, OBJECT, ARRAY, EMPTY
 }
 
-data class GatewayResponse(
-    val status: Int,
-    @Serializable(with = EvergreenSerializer::class)
-    val payload: JsonElement,
+@Serializable
+data class XGatewayResponse(
+    val payload: JsonArray,
+    val status: Int = 200,
 )
