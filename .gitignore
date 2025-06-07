@@ -20,6 +20,7 @@ fm_IDL.*
 /.idea/vcs.xml
 /.idea/workspace.xml
 /.idea/libraries
+/.kotlin/
 /projectFilesBackup/
 .DS_Store
 /build
