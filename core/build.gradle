@@ -1,5 +1,6 @@
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
+apply plugin: 'org.jetbrains.kotlin.plugin.serialization'
 
 android {
     compileSdk 34
@@ -44,6 +45,9 @@ dependencies {
     implementation 'com.google.firebase:firebase-analytics'
     implementation 'com.google.firebase:firebase-crashlytics'
     implementation 'com.google.firebase:firebase-messaging'
+
+    // kotlinx.serialization
+    implementation 'org.jetbrains.kotlinx:kotlinx-serialization-json:1.8.1'
 
     api 'com.google.zxing:core:3.5.3'
     api 'com.google.android.material:material:1.12.0'
