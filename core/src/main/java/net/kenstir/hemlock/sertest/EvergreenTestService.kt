@@ -22,10 +22,9 @@ import kotlinx.serialization.json.JsonPrimitive
 import net.kenstir.hemlock.data.Result
 
 class EvergreenTestService {
-    suspend fun fetchAuthInit(): Result<GatewayResponse> {
+    suspend fun fetchAuthInit(): Result<XGatewayResponse> {
         return Result.Success(
-            GatewayResponse(
-                status = 200,
+            XGatewayResponse(
                 payload = JsonArray(listOf(JsonPrimitive("mock-auth-init-data")))
             )
         )
