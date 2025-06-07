@@ -15,7 +15,7 @@
  * along with this program; if not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.kenstir.hemlock.network
+package net.kenstir.hemlock.sertest
 
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
@@ -23,18 +23,7 @@ import kotlinx.serialization.Serializer
 import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
-import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonElement
-
-enum class GatewayResponseType {
-    UNKNOWN, STRING, OBJECT, ARRAY, EMPTY
-}
-
-data class GatewayResponse(
-    val status: Int,
-    @Serializable(with = EvergreenSerializer::class)
-    val payload: JsonElement,
-)
 
 // OpenSRF Gateway response serializer
 @Serializer(forClass = JsonElement::class)
