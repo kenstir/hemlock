@@ -111,6 +111,19 @@ class SerializationTest {
     }
 
     @Test
+    fun test_gateway_response_emptyReverse() {
+        val json = """
+            {"status":200,"payload":[]}
+        """.trimIndent()
+
+        val resp = Json.decodeFromString<XGatewayResponse>(json)
+        Log.d(TAG, "Deserialized Gateway Response: $resp")
+
+        assertNotNull(resp)
+        assertEquals(0, resp.payload.size)
+    }
+
+    @Test
     fun test_gateway_response_emptyList() {
         val json = """
             {"payload":[[]],"status":200}
