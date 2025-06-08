@@ -28,13 +28,12 @@ enum class XGatewayResponseType {
     UNKNOWN, STRING, OBJECT, ARRAY, EMPTY
 }
 
-@Serializable
+@Serializable(with = XGatewayResponseSerializer::class)
 data class XGatewayResponse(
     val payload: JsonArray,
     val status: Int = 200,
 )
 
-/*
 object XGatewayResponseSerializer : KSerializer<XGatewayResponse> {
     override val descriptor: SerialDescriptor = buildClassSerialDescriptor("XGatewayResponse") {
         element<JsonArray>("payload")
@@ -65,10 +64,9 @@ object XGatewayResponseSerializer : KSerializer<XGatewayResponse> {
             }
         }
         dec.endStructure(descriptor)
-        return XGatewayResponse(payload ?: throw SerializationException("Missing payload"), status)
+        return XGatewayResponse(payload ?: throw SerializationException("missing payload"), status)
     }
 }
 
 // Extension function to safely get JsonArray or null
 private fun JsonElement.jsonArrayOrNull(): JsonArray? = this as? JsonArray
-*/
