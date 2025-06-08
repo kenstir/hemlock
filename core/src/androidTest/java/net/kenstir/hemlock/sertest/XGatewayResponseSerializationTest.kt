@@ -22,7 +22,6 @@ import androidx.test.platform.app.InstrumentationRegistry
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonNull
-import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.jsonArray
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
@@ -37,10 +36,10 @@ import org.junit.Assert.assertTrue
 import org.junit.BeforeClass
 import org.junit.Test
 
-class SerializationTest {
+class XGatewayResponseSerializationTest {
 
     companion object {
-        private val TAG = SerializationTest::class.java.simpleName
+        private val TAG = XGatewayResponseSerializationTest::class.java.simpleName
 
         lateinit var args: Bundle
         lateinit var server: String
@@ -98,7 +97,7 @@ class SerializationTest {
     }
 
     @Test
-    fun test_gateway_response_empty() {
+    fun test_decode_emptyPayload() {
         val json = """
             {"payload":[],"status":200}
         """.trimIndent()
@@ -111,7 +110,7 @@ class SerializationTest {
     }
 
     @Test
-    fun test_gateway_response_emptyReversedKeys() {
+    fun test_decode_emptyPayloadWithReversedKeys() {
         val json = """
             {"status":200,"payload":[]}
         """.trimIndent()
@@ -124,7 +123,7 @@ class SerializationTest {
     }
 
     @Test
-    fun test_gateway_response_emptyList() {
+    fun test_decode_emptyList() {
         val json = """
             {"payload":[[]],"status":200}
         """.trimIndent()
@@ -138,7 +137,7 @@ class SerializationTest {
     }
 
     @Test
-    fun test_gateway_response_string() {
+    fun test_decode_string() {
         val json = """
             {"payload":["3-7-4"],"status":200}
         """.trimIndent()
@@ -153,7 +152,7 @@ class SerializationTest {
     }
 
     @Test
-    fun test_gateway_response_object() {
+    fun test_decode_object() {
         val json = """
             {"payload":[{"hemlock.cache_key":null}],"status":200}
         """.trimIndent()
@@ -170,7 +169,7 @@ class SerializationTest {
     }
 
     @Test
-    fun test_gateway_response_nestedObject() {
+    fun test_decode_nestedObject() {
         val json = """
             {"payload":[{"ilsevent":0,"textcode":"SUCCESS","desc":"Success","payload":{"authtoken":"***","authtime":1209600}}],"status":200}
         """.trimIndent()
@@ -189,7 +188,7 @@ class SerializationTest {
     }
 
     @Test
-    fun test_gateway_response_OSRFWireObject() {
+    fun test_decode_OSRFWireObject() {
         val json = """
             {"payload":[{"__c":"cbreb","__p":[[],"bookbag",2958647,"books to read",null,1826347,"f","2025-01-04T01:08:16-0500",null]}],"status":200}
         """.trimIndent()
@@ -199,7 +198,7 @@ class SerializationTest {
     }
 
     @Test
-    fun test_gateway_response_nestedOSRFWireObject() {
+    fun test_decode_nestedOSRFWireObject() {
         val json = """
             {"payload": [{"__c": "aou", "__p": [[{"__c": "aou", "__p": [[{"__c": "aou", "__p": [[], 11, 12, 7, 12, 10, "Example Branch 4", 3, 3, "BR4", "br4@example.com", "(555) 555-0274", "t", 1]}], 3, 3, 3, 3, 3, "Example System 2", 2, 1, "SYS2", null, null, "t", 1]}], 1, 1, 1, 1, 1, "Example Consortium", 1, null, "CONS", null, null, "t", 1]}], "status": 200}
         """.trimIndent()
