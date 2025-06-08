@@ -19,14 +19,15 @@
 package net.kenstir.apps.core
 
 import org.evergreen_ils.data.PatronMessage
-import org.evergreen_ils.data.jsonMapOf
+import net.kenstir.hemlock.data.jsonMapOf
 import org.junit.Assert.*
 import org.junit.Test
 import org.opensrf.util.OSRFObject
 
 class PatronMessageTest {
 
-    val unreadMessage = OSRFObject(jsonMapOf(
+    val unreadMessage = OSRFObject(
+        jsonMapOf(
         "id" to 28295855,
         "deleted" to "f",
         "pub" to "t",
@@ -34,8 +35,10 @@ class PatronMessageTest {
         "message" to "you never picked up your hold so we cancelled it.  bummer dude",
         "create_date" to "2022-04-19T10:03:00-0400",
         "read_date" to null
-    ))
-    val readMessage = OSRFObject(jsonMapOf(
+    )
+    )
+    val readMessage = OSRFObject(
+        jsonMapOf(
         "id" to 28229453,
         "deleted" to "f",
         "pub" to "t",
@@ -43,8 +46,10 @@ class PatronMessageTest {
         "message" to "patron-visible note example [TM]",
         "create_date" to "2022-04-11T14:31:49-0400",
         "read_date" to "2022-05-28T12:17:47-0400"
-    ))
-    val deletedMessage = OSRFObject(jsonMapOf(
+    )
+    )
+    val deletedMessage = OSRFObject(
+        jsonMapOf(
         "id" to 11777013,
         "deleted" to "t",
         "pub" to "t",
@@ -52,8 +57,10 @@ class PatronMessageTest {
         "message" to "please pickup your hold dude",
         "create_date" to "2020-08-18T13:46:32-0400",
         "read_date" to "2020-08-19T11:00:00-0400"
-    ))
-    val hiddenMessage = OSRFObject(jsonMapOf(
+    )
+    )
+    val hiddenMessage = OSRFObject(
+        jsonMapOf(
         "id" to 20249966,
         "deleted" to "t",
         "pub" to "f",
@@ -61,7 +68,8 @@ class PatronMessageTest {
         "message" to "can u dig it yes I can",
         "create_date" to "2017-03-29T10:07:59-0400",
         "read_date" to null
-    ))
+    )
+    )
 
     @Test
     fun test_makeArray() {

@@ -21,7 +21,7 @@ package net.kenstir.apps.core
 
 import org.evergreen_ils.OSRFUtils
 import org.evergreen_ils.data.CircRecord
-import org.evergreen_ils.data.jsonMapOf
+import net.kenstir.hemlock.data.jsonMapOf
 import org.evergreen_ils.data.MBRecord
 import org.junit.Assert.assertEquals
 import org.junit.BeforeClass
@@ -40,7 +40,8 @@ class CircRecordTest {
 
     @Test
     fun test_noRecordInfo() {
-        val circObj = OSRFObject(jsonMapOf(
+        val circObj = OSRFObject(
+            jsonMapOf(
                 "renewal_remaining" to 0,
                 "auto_renewal" to "f",
                 "auto_renewal_remaining" to 0,
@@ -49,7 +50,8 @@ class CircRecordTest {
                 "copy_location" to 2356,
                 "target_copy" to 19314463,
                 "due_date" to "2020-02-05T23:59:59-0500"
-        ))
+        )
+        )
         val circRecord = CircRecord(circObj, CircRecord.CircType.OUT, 93108558)
 
         assertEquals("Unknown Title", circRecord.title)
@@ -61,7 +63,8 @@ class CircRecordTest {
 
     @Test
     fun test_basic() {
-        val circObj = OSRFObject(jsonMapOf(
+        val circObj = OSRFObject(
+            jsonMapOf(
                 "renewal_remaining" to 0,
                 "auto_renewal" to "f",
                 "auto_renewal_remaining" to 0,
@@ -70,12 +73,15 @@ class CircRecordTest {
                 "copy_location" to 2356,
                 "target_copy" to 19314463,
                 "due_date" to "2020-02-05T23:59:59-0500"
-        ))
-        val mvrObj = OSRFObject(jsonMapOf(
+        )
+        )
+        val mvrObj = OSRFObject(
+            jsonMapOf(
                 "doc_id" to 1234,
                 "title" to "The Testaments",
                 "author" to "Margaret Atwood"
-        ))
+        )
+        )
         val circRecord = CircRecord(circObj, CircRecord.CircType.OUT, 93108558)
         circRecord.mvr = mvrObj
         circRecord.record = MBRecord(mvrObj)
@@ -91,18 +97,23 @@ class CircRecordTest {
     // a record.id==-1, and the acp will have dummy_title and dummy_author
     @Test
     fun test_illCheckout() {
-        val circObj = OSRFObject(jsonMapOf(
+        val circObj = OSRFObject(
+            jsonMapOf(
                 "renewal_remaining" to 0,
                 "id" to 1,
                 "target_copy" to 1507492,
                 "due_date" to "2020-02-05T23:59:59-0500"
-        ))
-        val mvrObj = OSRFObject(jsonMapOf(
+        )
+        )
+        val mvrObj = OSRFObject(
+            jsonMapOf(
                 "doc_id" to -1,
                 "title" to null,
                 "author" to null
-        ))
-        val acpObj = OSRFObject(jsonMapOf(
+        )
+        )
+        val acpObj = OSRFObject(
+            jsonMapOf(
                 "id" to 1507492,
                 "dummy_author" to "NO AUTHOR",
                 "barcode" to "SEOTESTBARCODE",
@@ -111,7 +122,8 @@ class CircRecordTest {
                 "dummy_isbn" to "NO ISBN",
                 "dummy_title" to "SEO TEST",
                 "status" to 1
-        ))
+        )
+        )
         val circRecord = CircRecord(circObj, CircRecord.CircType.OUT, 1)
         circRecord.mvr = mvrObj
         circRecord.record = MBRecord(mvrObj)
@@ -125,12 +137,14 @@ class CircRecordTest {
     @Test
     fun test_noDueDate() {
         // seen in the wild via Crashlytics
-        val circObj = OSRFObject(jsonMapOf(
+        val circObj = OSRFObject(
+            jsonMapOf(
                 "renewal_remaining" to 0,
                 "id" to 1,
                 "target_copy" to 1507492,
                 //"due_date" to "2020-02-05T23:59:59-0500"
-        ))
+        )
+        )
         val circRecord = CircRecord(circObj, CircRecord.CircType.OUT, 1)
 
         assertEquals(false, circRecord.isDueSoon)
@@ -139,13 +153,15 @@ class CircRecordTest {
 
     @Test
     fun test_makeArray() {
-        val circSlimObj = OSRFObject(jsonMapOf(
+        val circSlimObj = OSRFObject(
+            jsonMapOf(
                 "long_overdue" to arrayListOf<Any?>(),
                 "overdue" to arrayListOf<Any?>(),
                 "lost" to arrayListOf<Any?>(),
                 "out" to arrayListOf<Any?>("93108558"),
                 "claims_returned" to arrayListOf<Any?>()
-        ))
+        )
+        )
         val checkouts = CircRecord.makeArray(circSlimObj)
         assertEquals(1, checkouts.size)
         assertEquals(93108558, checkouts.first().circId)

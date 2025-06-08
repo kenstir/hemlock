@@ -20,7 +20,7 @@ package net.kenstir.apps.core
 import org.evergreen_ils.system.EgOrg
 import org.evergreen_ils.android.Log
 import org.evergreen_ils.android.StdoutLogProvider
-import org.evergreen_ils.data.jsonMapOf
+import net.kenstir.hemlock.data.jsonMapOf
 import org.junit.Assert.*
 import org.junit.BeforeClass
 import org.junit.Test
@@ -37,33 +37,40 @@ class OrganizationTest {
     }
 
     fun setUpOrgTypes() {
-        val orgTypeConsortium = OSRFObject(jsonMapOf(
+        val orgTypeConsortium = OSRFObject(
+            jsonMapOf(
                 "id" to 1,
                 "name" to "Consortium",
                 "opac_label" to "All Libraries in Our Network",
                 "can_have_users" to "f",
                 "can_have_vols" to "f"
-        ))
-        val orgTypeLibrary = OSRFObject(jsonMapOf(
+        )
+        )
+        val orgTypeLibrary = OSRFObject(
+            jsonMapOf(
                 "id" to 3,
                 "name" to "Library",
                 "opac_label" to "This Library",
                 "can_have_users" to "t",
                 "can_have_vols" to "t"
-        ))
-        val orgTypeSystem = OSRFObject(jsonMapOf(
+        )
+        )
+        val orgTypeSystem = OSRFObject(
+            jsonMapOf(
                 "id" to 2,
                 "name" to "System",
                 "opac_label" to "All Branches of This Library",
                 "can_have_users" to "f",
                 "can_have_vols" to "f"
-        ))
+        )
+        )
         val orgTypes = arrayListOf(orgTypeConsortium, orgTypeLibrary, orgTypeSystem)
         EgOrg.loadOrgTypes(orgTypes)
     }
 
     fun setUpOrgs() {
-        val branchObj = OSRFObject(jsonMapOf(
+        val branchObj = OSRFObject(
+            jsonMapOf(
                 "id" to 29,
                 "ou_type" to 3,
                 "shortname" to "BETHEL",
@@ -71,8 +78,10 @@ class OrganizationTest {
                 "opac_visible" to "t",
                 "parent_ou" to 28,
                 "children" to null
-        ))
-        val systemObj = OSRFObject(jsonMapOf(
+        )
+        )
+        val systemObj = OSRFObject(
+            jsonMapOf(
                 "id" to 28,
                 "ou_type" to 2,
                 "shortname" to "BETSYS",
@@ -80,8 +89,10 @@ class OrganizationTest {
                 "opac_visible" to "f",
                 "parent_ou" to 1,
                 "children" to arrayListOf(branchObj)
-        ))
-        val consortiumObj = OSRFObject(jsonMapOf(
+        )
+        )
+        val consortiumObj = OSRFObject(
+            jsonMapOf(
                 "id" to 1,
                 "ou_type" to 1,
                 "shortname" to "CONS",
@@ -89,7 +100,8 @@ class OrganizationTest {
                 "opac_visible" to "t",
                 "parent_ou" to null,
                 "children" to arrayListOf(systemObj)
-        ))
+        )
+        )
         EgOrg.loadOrgs(consortiumObj, true)
     }
 
