@@ -111,7 +111,7 @@ class SerializationTest {
     }
 
     @Test
-    fun test_gateway_response_emptyReverse() {
+    fun test_gateway_response_emptyReversedKeys() {
         val json = """
             {"status":200,"payload":[]}
         """.trimIndent()
@@ -167,5 +167,51 @@ class SerializationTest {
         val obj = resp.payload[0].jsonObject
         val value = obj["hemlock.cache_key"]
         assertEquals(JsonNull, value)
+    }
+
+    @Test
+    fun test_gateway_response_nestedObject() {
+        val json = """
+            {"payload":[{"ilsevent":0,"textcode":"SUCCESS","desc":"Success","payload":{"authtoken":"***","authtime":1209600}}],"status":200}
+        """.trimIndent()
+
+        val resp = Json.decodeFromString<XGatewayResponse>(json)
+        Log.d(TAG, "Deserialized Gateway Response: $resp")
+
+        assertNotNull(resp)
+        assertEquals(1, resp.payload.size)
+
+        val obj = resp.payload[0].jsonObject
+        assertEquals("SUCCESS", obj["textcode"]?.jsonPrimitive?.content)
+        val subPayload = obj["payload"]?.jsonObject
+        assertNotNull(subPayload)
+        assertEquals("***", subPayload?.get("authtoken")?.jsonPrimitive?.content)
+    }
+
+    @Test
+    fun test_gateway_response_OSRFWireObject() {
+        val json = """
+            {"payload":[{"__c":"cbreb","__p":[[],"bookbag",2958647,"books to read",null,1826347,"f","2025-01-04T01:08:16-0500",null]}],"status":200}
+        """.trimIndent()
+
+        val resp = Json.decodeFromString<XGatewayResponse>(json)
+        Log.d(TAG, "Deserialized Gateway Response: $resp")
+    }
+
+    @Test
+    fun test_gateway_response_nestedOSRFWireObject() {
+        val json = """
+            {"payload": [{"__c": "aou", "__p": [[{"__c": "aou", "__p": [[{"__c": "aou", "__p": [[], 11, 12, 7, 12, 10, "Example Branch 4", 3, 3, "BR4", "br4@example.com", "(555) 555-0274", "t", 1]}], 3, 3, 3, 3, 3, "Example System 2", 2, 1, "SYS2", null, null, "t", 1]}], 1, 1, 1, 1, 1, "Example Consortium", 1, null, "CONS", null, null, "t", 1]}], "status": 200}
+        """.trimIndent()
+
+        val resp = Json.decodeFromString<XGatewayResponse>(json)
+        Log.d(TAG, "Deserialized Gateway Response: $resp")
+
+        assertNotNull(resp)
+        assertEquals(1, resp.payload.size)
+
+        val obj = resp.payload[0].jsonObject
+        val nestedPayload = obj["__p"]?.jsonArray?.getOrNull(0)
+        assertNotNull(nestedPayload)
     }
 }
