@@ -17,66 +17,18 @@
 
 package net.kenstir.hemlock.sertest
 
-import android.os.Bundle
-import androidx.test.platform.app.InstrumentationRegistry
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonNull
 import kotlinx.serialization.json.jsonArray
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
-import org.evergreen_ils.android.Log
-import org.evergreen_ils.android.StdoutLogProvider
-import org.evergreen_ils.data.Account
-import org.evergreen_ils.net.Volley
-import org.junit.AfterClass
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
-import org.junit.BeforeClass
 import org.junit.Test
 
 class XGatewayResponseSerializationTest {
-
-    companion object {
-        private val TAG = XGatewayResponseSerializationTest::class.java.simpleName
-
-        lateinit var args: Bundle
-        lateinit var server: String
-        lateinit var username: String
-        lateinit var password: String
-        lateinit var account: Account
-
-        var authToken = ""
-
-        @BeforeClass
-        @JvmStatic
-        @Throws(Exception::class)
-        fun setUpClass() {
-            Log.setProvider(StdoutLogProvider())
-
-            val ctx = InstrumentationRegistry.getInstrumentation().targetContext
-            Volley.init(ctx)
-
-            // See root build.gradle for notes on customizing instrumented test variables (hint: secret.gradle)
-            args = InstrumentationRegistry.getArguments()
-            server = args.getString("server") ?: "https://demo.evergreencatalog.com/"
-            username = args.getString("username") ?: "no-such-user"
-            password = args.getString("password") ?: "password1"
-
-            account = Account(username)
-        }
-
-        @AfterClass
-        @JvmStatic
-        fun tearDownClass() {
-            if (authToken.isEmpty()) return
-        }
-
-        @JvmStatic
-        suspend fun getSession() {
-        }
-    }
 
     @Test
     fun test_basic() {
@@ -85,10 +37,10 @@ class XGatewayResponseSerializationTest {
             XData(2, "two"),
         )
         val json = Json.encodeToString(dataList)
-        Log.d(TAG, "Serialized JSON: $json")
+        println("Serialized  : $json")
 
         val deserializedList = Json.decodeFromString<List<XData>>(json)
-        Log.d(TAG, "Deserialized List: $deserializedList")
+        println("Deserialized: $deserializedList")
 
         assertNotNull(deserializedList)
         assertTrue(deserializedList.isNotEmpty())
@@ -103,7 +55,7 @@ class XGatewayResponseSerializationTest {
         """.trimIndent()
 
         val resp = Json.decodeFromString<XGatewayResponse>(json)
-        Log.d(TAG, "Deserialized Gateway Response: $resp")
+        println("Deserialized: $resp")
 
         assertNotNull(resp)
         assertEquals(0, resp.payload.size)
@@ -116,7 +68,7 @@ class XGatewayResponseSerializationTest {
         """.trimIndent()
 
         val resp = Json.decodeFromString<XGatewayResponse>(json)
-        Log.d(TAG, "Deserialized Gateway Response: $resp")
+        println("Deserialized: $resp")
 
         assertNotNull(resp)
         assertEquals(0, resp.payload.size)
@@ -129,7 +81,7 @@ class XGatewayResponseSerializationTest {
         """.trimIndent()
 
         val resp = Json.decodeFromString<XGatewayResponse>(json)
-        Log.d(TAG, "Deserialized Gateway Response: $resp")
+        println("Deserialized: $resp")
 
         assertNotNull(resp)
         assertEquals(1, resp.payload.size)
@@ -143,7 +95,7 @@ class XGatewayResponseSerializationTest {
         """.trimIndent()
 
         val resp = Json.decodeFromString<XGatewayResponse>(json)
-        Log.d(TAG, "Deserialized Gateway Response: $resp")
+        println("Deserialized: $resp")
 
         assertNotNull(resp)
         assertEquals(1, resp.payload.size)
@@ -158,7 +110,7 @@ class XGatewayResponseSerializationTest {
         """.trimIndent()
 
         val resp = Json.decodeFromString<XGatewayResponse>(json)
-        Log.d(TAG, "Deserialized Gateway Response: $resp")
+        println("Deserialized: $resp")
 
         assertNotNull(resp)
         assertEquals(1, resp.payload.size)
@@ -175,7 +127,7 @@ class XGatewayResponseSerializationTest {
         """.trimIndent()
 
         val resp = Json.decodeFromString<XGatewayResponse>(json)
-        Log.d(TAG, "Deserialized Gateway Response: $resp")
+        println("Deserialized: $resp")
 
         assertNotNull(resp)
         assertEquals(1, resp.payload.size)
@@ -194,7 +146,7 @@ class XGatewayResponseSerializationTest {
         """.trimIndent()
 
         val resp = Json.decodeFromString<XGatewayResponse>(json)
-        Log.d(TAG, "Deserialized Gateway Response: $resp")
+        println("Deserialized: $resp")
     }
 
     @Test
@@ -204,7 +156,7 @@ class XGatewayResponseSerializationTest {
         """.trimIndent()
 
         val resp = Json.decodeFromString<XGatewayResponse>(json)
-        Log.d(TAG, "Deserialized Gateway Response: $resp")
+        println("Deserialized: $resp")
 
         assertNotNull(resp)
         assertEquals(1, resp.payload.size)
