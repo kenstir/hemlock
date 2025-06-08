@@ -19,6 +19,7 @@
  */
 package org.evergreen_ils.data
 
+import net.kenstir.hemlock.data.JSONDictionary
 import org.evergreen_ils.OSRFUtils
 import org.evergreen_ils.android.Log
 import org.opensrf.util.OSRFObject

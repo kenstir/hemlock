@@ -18,7 +18,7 @@
 
 package org.evergreen_ils.utils
 
-import org.evergreen_ils.data.JSONDictionary
+import net.kenstir.hemlock.data.JSONDictionary
 import org.json.JSONObject
 import org.opensrf.util.JSONException
 import org.opensrf.util.JSONReader

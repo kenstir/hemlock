@@ -1,7 +1,7 @@
 package org.open_ils
 
 import org.evergreen_ils.OSRFUtils
-import org.evergreen_ils.data.JSONDictionary
+import net.kenstir.hemlock.data.JSONDictionary
 import org.opensrf.util.OSRFObject
 import java.util.*
 

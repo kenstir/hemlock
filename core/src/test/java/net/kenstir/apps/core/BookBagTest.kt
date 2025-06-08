@@ -19,20 +19,22 @@
 package net.kenstir.apps.core
 
 import org.evergreen_ils.data.BookBag
-import org.evergreen_ils.data.jsonMapOf
+import net.kenstir.hemlock.data.jsonMapOf
 import org.junit.Assert.*
 import org.junit.Test
 import org.opensrf.util.OSRFObject
 
 class BookBagTest {
 
-    val cbrebObj = OSRFObject(jsonMapOf(
+    val cbrebObj = OSRFObject(
+        jsonMapOf(
             "id" to 24919,
             "name" to "books to read",
             "description" to null,
             "pub" to "t",
             "items" to null
-    ))
+    )
+    )
 
     @Test
     fun test_makeArray() {
@@ -51,13 +53,15 @@ class BookBagTest {
 
         val fleshedCbrebObj = cbrebObj.clone() as OSRFObject
         fleshedCbrebObj["items"] = arrayListOf(
-            OSRFObject(jsonMapOf(
+            OSRFObject(
+                jsonMapOf(
                 "bucket" to 961216,
                 "create_time" to "2020-01-11T10:31:44-0500",
                 "pos" to null,
                 "id" to 51454078,
                 "target_biblio_record_entry" to 2914107
-            ))
+            )
+            )
         )
 
         bookBag.fleshFromObject(fleshedCbrebObj)
@@ -72,25 +76,31 @@ class BookBagTest {
         assertEquals(0, bookBag.items.size)
 
         val recordId = 2914107
-        val queryPayload = OSRFObject(jsonMapOf(
+        val queryPayload = OSRFObject(
+            jsonMapOf(
             "count" to 1,
             "ids" to arrayListOf(
                 arrayListOf(recordId, "2", "4.0")
-            )))
-        val emptyQueryPayload = OSRFObject(jsonMapOf(
+            ))
+        )
+        val emptyQueryPayload = OSRFObject(
+            jsonMapOf(
             "count" to 0,
             "ids" to arrayListOf<ArrayList<Any?>>()
-        ))
+        )
+        )
 
         val fleshedCbrebObj = cbrebObj.clone() as OSRFObject
         fleshedCbrebObj["items"] = arrayListOf(
-            OSRFObject(jsonMapOf(
+            OSRFObject(
+                jsonMapOf(
                 "bucket" to 961216,
                 "create_time" to "2020-01-11T10:31:44-0500",
                 "pos" to null,
                 "id" to 51454078,
                 "target_biblio_record_entry" to recordId
-            ))
+            )
+            )
         )
 
         // case 1: recordId is in the visible list

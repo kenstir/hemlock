@@ -23,7 +23,7 @@ import org.evergreen_ils.android.AppBehavior
 import org.evergreen_ils.android.Log
 import org.evergreen_ils.android.StdoutLogProvider
 import org.evergreen_ils.data.MBRecord
-import org.evergreen_ils.data.jsonMapOf
+import net.kenstir.hemlock.data.jsonMapOf
 import org.evergreen_ils.system.EgOrg
 import org.evergreen_ils.utils.Link
 import org.evergreen_ils.utils.MARCRecord

@@ -17,7 +17,7 @@
  */
 package org.opensrf.util
 
-import org.evergreen_ils.data.JSONDictionary
+import net.kenstir.hemlock.data.JSONDictionary
 import org.evergreen_ils.net.GatewayError
 import org.evergreen_ils.net.GatewayEventError
 import org.evergreen_ils.utils.fromApiToIntOrNull

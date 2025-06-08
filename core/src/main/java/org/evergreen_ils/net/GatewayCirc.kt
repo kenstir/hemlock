@@ -22,7 +22,7 @@ import org.evergreen_ils.Api
 import org.evergreen_ils.HOLD_TYPE_TITLE
 import org.evergreen_ils.data.Account
 import net.kenstir.hemlock.data.Result
-import org.evergreen_ils.data.jsonMapOf
+import net.kenstir.hemlock.data.jsonMapOf
 import org.opensrf.util.OSRFObject
 
 object GatewayCirc : CircService {

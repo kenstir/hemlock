@@ -18,7 +18,7 @@
 
 package net.kenstir.apps.core
 
-import org.evergreen_ils.data.jsonMapOf
+import net.kenstir.hemlock.data.jsonMapOf
 import org.evergreen_ils.utils.fromApiToIntOrNull
 import org.evergreen_ils.utils.pubdateSortKey
 import org.evergreen_ils.utils.titleSortKey

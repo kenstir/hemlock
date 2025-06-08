@@ -20,7 +20,7 @@ package org.evergreen_ils.net
 
 import org.evergreen_ils.Api
 import net.kenstir.hemlock.data.Result
-import org.evergreen_ils.data.jsonMapOf
+import net.kenstir.hemlock.data.jsonMapOf
 import org.opensrf.util.OSRFObject
 
 object GatewayFielder: FielderService {
