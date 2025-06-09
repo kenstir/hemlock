@@ -31,24 +31,9 @@ import net.kenstir.hemlock.data.MapStringAnySerializer
 data class XOSRFObject(
     @Serializable(with = MapStringAnySerializer::class)
     val map: Map<String, Any?> = emptyMap(),
-    val netClass: String? = null) {
-
+    val netClass: String? = null)
+{
     override fun toString(): String {
         return "XOSRFObject(netClass=$netClass, ${super.toString()})"
     }
-
 }
-
-// Helper extension to extract primitive or keep as JsonElement
-private fun JsonElement.jsonPrimitiveOrNull(): Any? = when (this) {
-    is JsonPrimitive -> when {
-        isString -> content
-        booleanOrNull != null -> boolean
-        longOrNull != null -> long
-        doubleOrNull != null -> double
-        else -> null
-    }
-    JsonNull -> null
-    else -> null
-}
-
