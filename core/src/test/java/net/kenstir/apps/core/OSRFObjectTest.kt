@@ -38,10 +38,10 @@ class OSRFObjectTest {
     fun test_basic() {
         val obj = OSRFObject(
             jsonMapOf(
-            "id" to 42,
-            "home_ou" to 69,
-            "day_phone" to "508-555-1212"
-        )
+                "id" to 42,
+                "home_ou" to 69,
+                "day_phone" to "508-555-1212"
+            )
         )
         assertEquals(42, obj.getInt("id"))
         assertEquals("508-555-1212", obj.getString("day_phone"))
