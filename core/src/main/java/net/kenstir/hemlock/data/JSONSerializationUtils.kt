@@ -17,6 +17,7 @@
 
 package net.kenstir.hemlock.data
 
+import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonNull
 import kotlinx.serialization.json.JsonPrimitive
@@ -27,8 +28,8 @@ import kotlinx.serialization.json.doubleOrNull
 import kotlinx.serialization.json.long
 import kotlinx.serialization.json.longOrNull
 
-// Helper extension to extract primitive or keep as JsonElement
-private fun JsonElement.jsonPrimitiveOrNull(): Any? = when (this) {
+// Extension to extract primitive or keep as JsonElement
+fun JsonElement.jsonPrimitiveOrNull(): Any? = when (this) {
     is JsonPrimitive -> when {
         isString -> content
         booleanOrNull != null -> boolean
@@ -39,3 +40,6 @@ private fun JsonElement.jsonPrimitiveOrNull(): Any? = when (this) {
     JsonNull -> null
     else -> null
 }
+
+// Extension to safely get JsonArray or null
+fun JsonElement.jsonArrayOrNull(): JsonArray? = this as? JsonArray

@@ -17,6 +17,7 @@
 
 package net.kenstir.hemlock.sertest
 
+import kotlinx.serialization.decodeFromString
 import net.kenstir.hemlock.data.jsonMapOf
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonElement
@@ -25,7 +26,7 @@ import kotlinx.serialization.json.jsonArray
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
@@ -36,7 +37,7 @@ class XOSRFObjectSerializationTest {
             "id" to 42,
             "home_ou" to 69,
             "day_phone" to "508-555-1212",
-            "x" to null,
+            "real_null" to null,
         ))
         println("Original:     $obj")
 
@@ -44,9 +45,33 @@ class XOSRFObjectSerializationTest {
         val json = Json.encodeToString(obj)
         println("Serialized:   $json")
 
-        val deserializedObj = Json.decodeFromString(XOSRFObject.serializer(), json)
+        //val deserializedObj = Json.decodeFromString(XOSRFObject.serializer(), json)
+        val deserializedObj = Json.decodeFromString<XOSRFObject>(json)
         println("Deserialized: $deserializedObj")
 
         assertEquals(obj, deserializedObj)
+        assertNull(deserializedObj.map["real_null"])
+    }
+
+    @Test
+    fun test_encodeAndDecode_objectWithClass() {
+        val obj = XOSRFObject(jsonMapOf(
+            "id" to 42,
+            "home_ou" to 69,
+            "day_phone" to "508-555-1212",
+            "real_null" to null,
+        ), "au")
+        println("Original:     $obj")
+
+        //val json = Json.encodeToString(XOSRFObject.serializer(), obj)
+        val json = Json.encodeToString(obj)
+        println("Serialized:   $json")
+
+        //val deserializedObj = Json.decodeFromString(XOSRFObject.serializer(), json)
+        val deserializedObj = Json.decodeFromString<XOSRFObject>(json)
+        println("Deserialized: $deserializedObj")
+
+        assertEquals(obj, deserializedObj)
+        assertNull(deserializedObj.map["real_null"])
     }
 }
