@@ -23,6 +23,8 @@ import kotlinx.serialization.json.JsonNull
 import kotlinx.serialization.json.jsonArray
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
+import net.kenstir.hemlock.data.JSONDictionary
+import net.kenstir.hemlock.data.jsonMapOf
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
@@ -32,20 +34,22 @@ class XGatewayResponseSerializationTest {
 
     @Test
     fun test_basic() {
-        val dataList = listOf(
-            XData(1, "one"),
-            XData(2, "two"),
+        val obj = jsonMapOf(
+            "id" to 42,
+            "name" to "Holden Caulfield",
+            "connection" to null,
         )
-        val json = Json.encodeToString(dataList)
-        println("Serialized  : $json")
+        val json = Json.encodeToString(obj)
+        println("Serialized:   $json")
 
-        val deserializedList = Json.decodeFromString<List<XData>>(json)
-        println("Deserialized: $deserializedList")
+        val deserializedObj = Json.decodeFromString<JSONDictionary>(json)
+        println("Deserialized: $deserializedObj")
 
-        assertNotNull(deserializedList)
-        assertTrue(deserializedList.isNotEmpty())
-        assertTrue(deserializedList[0].id == 1 && deserializedList[0].name == "one")
-        assertTrue(deserializedList[1].id == 2 && deserializedList[1].name == "two")
+        assertNotNull(deserializedObj)
+        assertTrue(deserializedObj.isNotEmpty())
+        assertEquals(42, deserializedObj["id"])
+        assertEquals("Holden Caulfield", deserializedObj["name"])
+        assertEquals(JsonNull, deserializedObj["connection"])
     }
 
     @Test
