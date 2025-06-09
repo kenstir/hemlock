@@ -23,6 +23,7 @@ import kotlinx.serialization.SerializationException
 import kotlinx.serialization.descriptors.*
 import kotlinx.serialization.encoding.*
 import kotlinx.serialization.json.*
+import net.kenstir.hemlock.data.jsonArrayOrNull
 
 enum class XGatewayResponseType {
     UNKNOWN, STRING, OBJECT, ARRAY, EMPTY
@@ -67,6 +68,3 @@ object XGatewayResponseSerializer : KSerializer<XGatewayResponse> {
         return XGatewayResponse(payload ?: throw SerializationException("missing payload"), status)
     }
 }
-
-// Extension function to safely get JsonArray or null
-private fun JsonElement.jsonArrayOrNull(): JsonArray? = this as? JsonArray
