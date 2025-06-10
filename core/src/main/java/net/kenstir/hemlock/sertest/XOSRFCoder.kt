@@ -17,7 +17,7 @@
 
 package net.kenstir.hemlock.sertest
 
-/*** [OSRFCoder] decodes OSRF objects from OpenSRF wire format. */
+/*** [OSRFCoder] is used to decode OSRF objects from OpenSRF wire format. */
 class XOSRFCoder(val netClass: String, val fields: List<String>) {
 
 
@@ -28,7 +28,7 @@ class XOSRFCoder(val netClass: String, val fields: List<String>) {
             registry.clear()
         }
 
-        fun registerCoder(netClass: String, fields: List<String>) {
+        fun registerClass(netClass: String, fields: List<String>) {
             registry[netClass] = XOSRFCoder(netClass, fields)
         }
 
