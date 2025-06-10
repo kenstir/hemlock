@@ -67,18 +67,6 @@ public class OSRFRegistry implements Serializable{
         return registry.get(netClass);
     }
 
-
-    /**
-     * @param field The name of the field to lookup
-     * @return the index into the fields array of the given field name.
-     */
-    public int getFieldIndex(String field) {
-        for( int i = 0; i < fields.length; i++ )
-            if( fields[i].equals(field) ) 
-                return i;
-        return -1;
-    }
-
     /** Returns the wire protocol of this object */
     public WireProtocol getWireProtocol() {
         return this.wireProtocol;
