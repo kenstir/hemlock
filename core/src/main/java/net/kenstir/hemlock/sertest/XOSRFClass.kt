@@ -17,4 +17,4 @@
 
 package net.kenstir.hemlock.sertest
 
-data class XOSRFClass(val netClass: String, val fields: List<String>)
+data class XOSRFClass(val netClass: String, var fields: List<String> = arrayListOf())

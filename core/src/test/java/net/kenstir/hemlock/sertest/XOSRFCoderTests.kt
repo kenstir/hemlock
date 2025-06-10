@@ -70,6 +70,10 @@ class XOSRFCoderTests {
         val obj = Json.decodeFromString<XOSRFObject>(json)
         println("Deserialized: $obj")
         assertNotNull(obj)
+        assertEquals("test", obj.netClass)
+        assertEquals(true, obj.getBoolean("can_haz_bacon"))
+        assertEquals(1, obj.getInt("id"))
+        assertEquals("Hormel", obj.getString("name"))
     }
 
     // Case: decode an OSRF object when the class hasn't been registered
@@ -89,6 +93,12 @@ class XOSRFCoderTests {
     // Case: decode an OSRF object from an empty object
     @Test
     fun test_decode_wireObject_empty() {
+        val json = "{}"
+
+        val obj = Json.decodeFromString<XOSRFObject>(json)
+        println("Deserialized: $obj")
+        assertNull(obj.netClass)
+        assertEquals(0, obj.map.size)
     }
 
     // Case: decoding an object having 9 fields given an array of only 8 elements.
@@ -104,9 +114,30 @@ class XOSRFCoderTests {
         // 2025-06-10 kenstir: I'm not sure this is still a valid case
     }
 
-    // Case: decoding an array of OSRF objects from wire protocol
+    // Case: decoding an array of objects from wire protocol
     @Test
     fun test_decode_wireArray() {
+        XOSRFCoder.registerClass("mbts", listOf("balance_owed","id","last_billing_ts"))
+        XOSRFCoder.registerClass("circ", listOf("checkin_lib","checkin_staff","checkin_time"))
+        XOSRFCoder.registerClass("mvr", listOf("title","author","doc_id"))
+
+        val json = """
+            [
+                {
+                    "transaction":{"__c":"mbts","__p":["1.15",182746988,"2018-01-10T23:59:59-0500"]},
+                    "circ":{"__c":"circ","__p":[66,1175852,"2018-01-10T16:32:17-0500"]},
+                    "record":{"__c":"mvr","__p":["Georgia adult literacy resources manual","State Bar of Georgia",1475710]},
+                    "copy":null
+                },
+                {
+                    "transaction":{"__c":"mbts","__p":["0.10",174615422,"2017-05-01T14:03:24-0400"]}
+                }
+            ]
+        """.trimIndent()
+
+        val objList = Json.decodeFromString<List<XOSRFObject>>(json)
+        println("Deserialized: $objList")
+        assertEquals(2, objList.size)
     }
 
     // Case: decode a recursive object from wire protocol
