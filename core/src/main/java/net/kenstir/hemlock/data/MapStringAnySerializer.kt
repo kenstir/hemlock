@@ -63,22 +63,4 @@ object MapStringAnySerializer : KSerializer<Map<String, Any?>> {
         }
         else -> throw SerializationException("Unsupported type: ${value::class}")
     }
-
-    private fun fromJsonElement(element: JsonElement): Any? = when (element) {
-        is JsonNull -> null
-        is JsonPrimitive -> {
-            when {
-                element.isString -> element.content
-                element.booleanOrNull != null -> element.boolean
-                element.longOrNull != null -> {
-                    val long = element.long
-                    if (long in Int.MIN_VALUE..Int.MAX_VALUE) long.toInt() else long
-                }
-                element.doubleOrNull != null -> element.double
-                else -> element.content
-            }
-        }
-        is JsonObject -> element.mapValues { fromJsonElement(it.value) }
-        is JsonArray -> element.map { fromJsonElement(it) }
-    }
 }

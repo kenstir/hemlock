@@ -20,6 +20,7 @@ package net.kenstir.hemlock.data
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonNull
+import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.boolean
 import kotlinx.serialization.json.booleanOrNull
@@ -28,7 +29,7 @@ import kotlinx.serialization.json.doubleOrNull
 import kotlinx.serialization.json.long
 import kotlinx.serialization.json.longOrNull
 
-// Extension to extract primitive or keep as JsonElement
+/** convert deserialized JSON element to a Kotlin primitive */
 fun JsonElement.jsonPrimitiveOrNull(): Any? = when (this) {
     is JsonPrimitive -> when {
         isString -> content
@@ -41,5 +42,24 @@ fun JsonElement.jsonPrimitiveOrNull(): Any? = when (this) {
     else -> null
 }
 
-// Extension to safely get JsonArray or null
+/** safely get JsonArray or null */
 fun JsonElement.jsonArrayOrNull(): JsonArray? = this as? JsonArray
+
+/** convert deserialized JSON element to a native Kotlin type */
+fun fromJsonElement(element: JsonElement): Any? = when (element) {
+    is JsonNull -> null
+    is JsonPrimitive -> {
+        when {
+            element.isString -> element.content
+            element.booleanOrNull != null -> element.boolean
+            element.longOrNull != null -> {
+                val long = element.long
+                if (long in Int.MIN_VALUE..Int.MAX_VALUE) long.toInt() else long
+            }
+            element.doubleOrNull != null -> element.double
+            else -> element.content
+        }
+    }
+    is JsonObject -> element.mapValues { fromJsonElement(it.value) }
+    is JsonArray -> element.map { fromJsonElement(it) }
+}

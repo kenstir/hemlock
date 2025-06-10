@@ -34,7 +34,7 @@ data class XOSRFObject(
     val netClass: String? = null)
 {
     override fun toString(): String {
-        return "XOSRFObject(netClass=$netClass, ${super.toString()})"
+        return "XOSRFObject(netClass=$netClass, map${map.toString()})"
     }
 
     operator fun get(key: String): Any? {
@@ -85,7 +85,7 @@ object XOSRFObjectSerializer : KSerializer<XOSRFObject> {
             ?: throw SerializationException("This serializer only works with JSON")
 
         value.netClass?.let {
-            serializeAsWireProtocol(jsonEncoder, value, it)
+            serializeWireProtocol(jsonEncoder, value, it)
         } ?: run {
             // If netClass is not present, serialize as a map
             val jsonObject = buildJsonObject {
@@ -97,7 +97,7 @@ object XOSRFObjectSerializer : KSerializer<XOSRFObject> {
         }
     }
 
-    private fun serializeAsWireProtocol(jsonEncoder: JsonEncoder, value: XOSRFObject, netClass: String) {
+    private fun serializeWireProtocol(jsonEncoder: JsonEncoder, value: XOSRFObject, netClass: String) {
         val coder = XOSRFCoder.getCoder(netClass)
             ?: throw SerializationException("unregistered class: $netClass")
 
@@ -114,12 +114,39 @@ object XOSRFObjectSerializer : KSerializer<XOSRFObject> {
     }
 
     override fun deserialize(decoder: Decoder): XOSRFObject {
-        TODO("not implemented yet")
-//        val jsonDecoder = decoder as? JsonDecoder
-//            ?: throw SerializationException("This deserializer only works with JSON")
-//
-//        val jsonObject = jsonDecoder.decodeJsonElement().jsonObject
-//        return jsonObject.mapValues { fromJsonElement(it.value) }
+        val jsonDecoder = decoder as? JsonDecoder
+            ?: throw SerializationException("This deserializer only works with JSON")
+
+        val jsonObject = jsonDecoder.decodeJsonElement().jsonObject
+        if ("__c" in jsonObject) {
+            // Deserialize as wire protocol object
+            return deserializeWireProtocol(jsonObject)
+        } else {
+            // Deserialize as a regular map
+            return XOSRFObject(jsonObject.mapValues { fromJsonElement(it.value) })
+        }
+    }
+
+    private fun deserializeWireProtocol(jsonObject: JsonObject): XOSRFObject {
+        val netClass = jsonObject["__c"]?.jsonPrimitive?.content
+            ?: throw SerializationException("Missing __c field in wire protocol object")
+
+        val coder = XOSRFCoder.getCoder(netClass)
+            ?: throw SerializationException("unregistered class: $netClass")
+
+        val values = jsonObject["__p"]?.jsonArray
+            ?: throw SerializationException("Missing __p field in wire protocol object")
+
+        if (values.size != coder.fields.size) {
+            throw SerializationException("Field count mismatch for class $netClass")
+        }
+
+        val map = mutableMapOf<String, Any?>()
+        for (i in coder.fields.indices) {
+            map[coder.fields[i]] = fromJsonElement(values[i])
+        }
+
+        return XOSRFObject(map, netClass)
     }
 
     private fun toJsonElement(value: Any?): JsonElement = when (value) {
