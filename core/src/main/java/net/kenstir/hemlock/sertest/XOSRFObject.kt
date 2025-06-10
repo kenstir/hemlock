@@ -17,6 +17,7 @@
 
 package net.kenstir.hemlock.sertest
 
+import java.util.Date
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.KSerializer
@@ -26,7 +27,6 @@ import kotlinx.serialization.builtins.serializer
 import kotlinx.serialization.descriptors.*
 import kotlinx.serialization.encoding.*
 import kotlinx.serialization.json.*
-import net.kenstir.hemlock.data.MapStringAnySerializer
 
 @Serializable(with = XOSRFObjectSerializer::class)
 data class XOSRFObject(
@@ -35,6 +35,44 @@ data class XOSRFObject(
 {
     override fun toString(): String {
         return "XOSRFObject(netClass=$netClass, ${super.toString()})"
+    }
+
+    operator fun get(key: String): Any? {
+        return map[key]
+    }
+
+    fun getString(key: String, defaultValue: String? = null): String? {
+        return map[key] as? String ?: defaultValue
+    }
+
+    fun getInt(key: String): Int? {
+        return when (val value = map[key]) {
+            is Int -> value
+            is Number -> value.toInt()
+            is String -> value.toIntOrNull()
+            else -> null
+        }
+    }
+
+    fun getBoolean(key: String): Boolean {
+        return when (val value = map[key]) {
+            is Boolean -> value
+            is String -> value == "t"
+            else -> false
+        }
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    fun getObject(key: String): XOSRFObject? {
+        return when (val value = map[key]) {
+            is XOSRFObject -> value
+            is Map<*, *> -> XOSRFObject(value as Map<String, Any?>)
+            else -> null
+        }
+    }
+
+    fun getDate(key: String): Date? {
+        TODO("not yet implemented")
     }
 }
 
@@ -47,9 +85,9 @@ object XOSRFObjectSerializer : KSerializer<XOSRFObject> {
             ?: throw SerializationException("This serializer only works with JSON")
 
         value.netClass?.let {
-            serializeAsWireProtocol(jsonEncoder, value)
+            serializeAsWireProtocol(jsonEncoder, value, it)
         } ?: run {
-            // If netClass is not present, serialize as a regular map
+            // If netClass is not present, serialize as a map
             val jsonObject = buildJsonObject {
                 for ((key, v) in value.map) {
                     put(key, toJsonElement(v))
@@ -59,20 +97,17 @@ object XOSRFObjectSerializer : KSerializer<XOSRFObject> {
         }
     }
 
-    private fun serializeAsWireProtocol(jsonEncoder: JsonEncoder, value: XOSRFObject) {
-        val jsonKeys = buildJsonArray {
-            for ((k, v) in value.map) {
-                add(toJsonElement(k))
-            }
-        }
+    private fun serializeAsWireProtocol(jsonEncoder: JsonEncoder, value: XOSRFObject, netClass: String) {
+        val coder = XOSRFCoder.getCoder(netClass)
+            ?: throw SerializationException("unregistered class: $netClass")
+
         val jsonValues = buildJsonArray {
-            for ((k, v) in value.map) {
-                add(toJsonElement(v))
+            for (key in coder.fields) {
+                add(toJsonElement(value[key]))
             }
         }
         val jsonObject = JsonObject(mapOf(
-            "__c" to JsonPrimitive(value.netClass ?: ""),
-            "__keys" to jsonKeys,
+            "__c" to JsonPrimitive(netClass),
             "__p" to jsonValues
         ))
         jsonEncoder.encodeJsonElement(jsonObject)

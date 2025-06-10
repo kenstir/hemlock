@@ -18,14 +18,8 @@
 package net.kenstir.hemlock.sertest
 
 import org.junit.Before
-import kotlinx.serialization.decodeFromString
-import net.kenstir.hemlock.data.jsonMapOf
 import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.JsonElement
-import kotlinx.serialization.json.JsonNull
-import kotlinx.serialization.json.jsonArray
-import kotlinx.serialization.json.jsonObject
-import kotlinx.serialization.json.jsonPrimitive
+import net.kenstir.hemlock.data.jsonMapOf
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
@@ -40,7 +34,7 @@ class XOSRFCoderTests {
 
     @Test
     fun test_register() {
-        XOSRFCoder.registerCoder(
+        XOSRFCoder.registerClass(
             "aout",
             listOf(
                 "children",
@@ -64,23 +58,25 @@ class XOSRFCoderTests {
         assertEquals(9, coder?.fields?.size)
     }
 
-    // Case: decoding an object having 9 fields given an array of only 8 elements.
-    // The result should be an OSRFObject with the last field omitted.
-    @Test
-    fun test_decode_shortObject() {
-
-    }
-
     // Case: decoding an OSRF object from the wire protocol {"__c": netClass, "__p": [...]}
     @Test
     fun test_decode_wireObject() {
+        XOSRFCoder.registerClass("test", listOf("can_haz_bacon","id","name"))
+
+        val json = """
+            {"__c":"test","__p":["t",1,"Hormel"]}
+        """.trimIndent()
+
+        val obj = Json.decodeFromString<XOSRFObject>(json)
+        println("Deserialized: $obj")
+        assertNotNull(obj)
     }
 
     // Case: decode an OSRF object when the class hasn't been registered
     @Test
     fun test_decode_wireObject_unregisteredClass() {
         val json = """
-            {"__c": "test", "__p": ["t",1,"Hormel"]}
+            {"__c":"test","__p":["t",1,"Hormel"]}
         """.trimIndent()
 
         val res = kotlin.runCatching { Json.decodeFromString<XOSRFObject>(json) }
@@ -95,10 +91,17 @@ class XOSRFCoderTests {
     fun test_decode_wireObject_empty() {
     }
 
+    // Case: decoding an object having 9 fields given an array of only 8 elements.
+    // The result should be an OSRFObject with the last field omitted.
+    @Test
+    fun test_decode_shortObject() {
+        // 2025-06-10 kenstir: I'm not sure this is still a valid case
+    }
+
     // Case: decode object from array larger than expected
     @Test
     fun test_decode_wireObject_tooManyFields() {
-
+        // 2025-06-10 kenstir: I'm not sure this is still a valid case
     }
 
     // Case: decoding an array of OSRF objects from wire protocol
@@ -113,5 +116,22 @@ class XOSRFCoderTests {
 
     @Test
     fun test_encode_wireObject() {
+        XOSRFCoder.registerClass("test", listOf("can_haz_bacon","id","name","opt"))
+
+        val obj = XOSRFObject(
+            jsonMapOf(
+                "can_haz_bacon" to true,
+                "id" to 1,
+                "name" to "Hormel",
+                "opt" to null
+            ),
+            "test"
+        )
+
+        val expected = """
+            {"__c":"test","__p":[true,1,"Hormel",null]}
+        """.trimIndent()
+        val actual = Json.encodeToString(XOSRFObject.serializer(), obj)
+        assertEquals(expected, actual)
     }
 }
