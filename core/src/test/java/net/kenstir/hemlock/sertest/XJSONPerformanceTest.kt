@@ -45,8 +45,8 @@ class XJSONPerformanceTest {
         val json = gapines_org_tree_json
         for (i in 0 until iterations) {
             val resp = Json.decodeFromString<XGatewayResponse>(json)
-            val obj = resp.payload
-            assertNotNull(obj)
+            val list = XOSRFCoder.decodePayload(resp.payload)
+            assertNotNull(list)
         }
     }
 }
