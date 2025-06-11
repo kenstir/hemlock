@@ -178,7 +178,9 @@ object XOSRFObjectSerializer : KSerializer<XOSRFObject> {
                 else -> element.content
             }
         }
-        is JsonObject -> element.mapValues { fromJsonElement(it.value) }
+        is JsonObject -> {
+            element.mapValues { fromJsonElement(it.value) }
+        }
         is JsonArray -> element.map { fromJsonElement(it) }
     }
 }
