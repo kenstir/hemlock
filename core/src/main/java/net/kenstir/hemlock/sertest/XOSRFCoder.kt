@@ -86,7 +86,7 @@ class XOSRFCoder(val netClass: String, val fields: List<String>) {
                 val values = element["__p"]?.jsonArray
                     ?: throw XDecodingException("missing __p field in wire protocol object")
                 if (values.size != coder.fields.size) {
-                    throw XDecodingException("field count mismatch for class $netClass")
+                    throw XDecodingException("field count mismatch for class $netClass (expected ${coder.fields.size}, got ${values.size})")
                 }
                 val map = mutableMapOf<String, Any?>()
                 for (i in coder.fields.indices) {
