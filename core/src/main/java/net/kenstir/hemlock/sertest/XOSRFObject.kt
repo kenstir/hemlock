@@ -74,6 +74,10 @@ data class XOSRFObject(
     fun getDate(key: String): Date? {
         TODO("not yet implemented")
     }
+
+    fun getAny(key: String): Any? {
+        return map[key]
+    }
 }
 
 // this is the kotlinx.serialization way to do it
