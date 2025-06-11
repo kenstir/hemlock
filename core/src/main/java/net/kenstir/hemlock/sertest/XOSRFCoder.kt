@@ -34,7 +34,6 @@ import kotlinx.serialization.json.longOrNull
 /*** [OSRFCoder] is used to decode OSRF objects from OpenSRF wire format. */
 class XOSRFCoder(val netClass: String, val fields: List<String>) {
 
-
     companion object {
         var registry: HashMap<String, XOSRFCoder> = HashMap()
 
@@ -54,14 +53,15 @@ class XOSRFCoder(val netClass: String, val fields: List<String>) {
          *
          * in the process, flesh out any OSRFObjects in wire format
          */
-        fun decodePayload(elementList: JsonArray): List<Any?> {
-            return decodeArray(elementList)
+        fun decodePayload(elements: JsonArray): List<Any?> {
+            return decodeArray(elements)
         }
 
-        private fun decodeArray(elementList: JsonArray): List<Any?> {
-            var decoded = mutableListOf<Any?>()
-            for (element in elementList) {
-                decoded.add(decodeElement(element))
+        private fun decodeArray(elements: JsonArray): List<Any?> {
+            val size = elements.size
+            val decoded = ArrayList<Any?>(size)
+            for (i in 0 until size) {
+                decoded.add(decodeElement(elements[i]))
             }
             return decoded
         }
@@ -88,7 +88,7 @@ class XOSRFCoder(val netClass: String, val fields: List<String>) {
                 if (values.size != coder.fields.size) {
                     throw XDecodingException("field count mismatch for class $netClass (expected ${coder.fields.size}, got ${values.size})")
                 }
-                val map = mutableMapOf<String, Any?>()
+                val map = HashMap<String, Any?>(coder.fields.size)
                 for (i in coder.fields.indices) {
                     map[coder.fields[i]] = decodeElement(values[i])
                 }
