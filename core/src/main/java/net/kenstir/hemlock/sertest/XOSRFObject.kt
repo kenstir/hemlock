@@ -76,6 +76,8 @@ data class XOSRFObject(
     }
 }
 
+// this is the kotlinx.serialization way to do it
+// It is not sufficiently flexible for our needs
 object XOSRFObjectSerializer : KSerializer<XOSRFObject> {
     override val descriptor: SerialDescriptor =
         MapSerializer(String.serializer(), JsonElement.serializer()).descriptor

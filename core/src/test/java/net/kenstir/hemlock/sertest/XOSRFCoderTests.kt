@@ -19,6 +19,8 @@ package net.kenstir.hemlock.sertest
 
 import org.junit.Before
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonArray
+import net.kenstir.hemlock.data.JSONDictionary
 import net.kenstir.hemlock.data.jsonMapOf
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
@@ -86,7 +88,7 @@ class XOSRFCoderTests {
         val res = kotlin.runCatching { Json.decodeFromString<XOSRFObject>(json) }
         assertTrue(res.isFailure)
         val ex = res.exceptionOrNull()
-        println("Exception: $ex")
+        println("Exception:    $ex")
         assertEquals("unregistered class: test", ex?.message)
     }
 
@@ -122,7 +124,7 @@ class XOSRFCoderTests {
         XOSRFCoder.registerClass("mvr", listOf("title","author","doc_id"))
 
         val json = """
-            [
+{"payload":[[
                 {
                     "transaction":{"__c":"mbts","__p":["1.15",182746988,"2018-01-10T23:59:59-0500"]},
                     "circ":{"__c":"circ","__p":[66,1175852,"2018-01-10T16:32:17-0500"]},
@@ -132,12 +134,22 @@ class XOSRFCoderTests {
                 {
                     "transaction":{"__c":"mbts","__p":["0.10",174615422,"2017-05-01T14:03:24-0400"]}
                 }
-            ]
+            ]],"status":200}
         """.trimIndent()
 
-        val objList = Json.decodeFromString<List<XOSRFObject>>(json)
-        println("Deserialized: $objList")
-        assertEquals(2, objList.size)
+        val response = Json.decodeFromString<XGatewayResponse>(json)
+        println("Deserialized: $response")
+
+        assertEquals(true, response.payload[0] is JsonArray)
+        val decodedPayload = XOSRFCoder.decodePayload(response.payload)
+        println("Decoded:      $decodedPayload")
+
+        assertEquals(1, decodedPayload.size)
+        val listOfFines = decodedPayload[0] as? List<*>
+        val firstItem = listOfFines?.get(0) as? JSONDictionary
+        val transactionObj = firstItem?.get("transaction") as? XOSRFObject
+        assertNotNull(transactionObj)
+        assertEquals("1.15", transactionObj?.getString("balance_owed"))
     }
 
     // Case: decode a recursive object from wire protocol
