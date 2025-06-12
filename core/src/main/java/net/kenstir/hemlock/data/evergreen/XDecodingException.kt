@@ -14,10 +14,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, see <https://www.gnu.org/licenses/>.
  */
-package net.kenstir.hemlock.data
 
-import net.kenstir.hemlock.data.models.RecordMetadata
+package net.kenstir.hemlock.data.evergreen
 
-interface RecordRepository {
-    suspend fun fetchMetadata(recordId: Int): Result<RecordMetadata>
+class XDecodingException: Exception {
+    constructor(message: String): super(message)
+    constructor(message: String, cause: Throwable): super(message, cause)
+    constructor(cause: Throwable): super(cause)
+    constructor(): super("Decoding error occurred")
 }

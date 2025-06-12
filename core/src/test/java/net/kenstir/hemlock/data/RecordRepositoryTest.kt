@@ -15,11 +15,18 @@
  * along with this program; if not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.kenstir.hemlock.sertest
+package net.kenstir.hemlock.data
 
-class XDecodingException: Exception {
-    constructor(message: String): super(message)
-    constructor(message: String, cause: Throwable): super(message, cause)
-    constructor(cause: Throwable): super(cause)
-    constructor(): super("Decoding error occurred")
+import kotlinx.coroutines.test.runTest
+import net.kenstir.hemlock.mock.MockMetadataSource.getRecordMetadata
+import net.kenstir.hemlock.mock.MockRecordService
+import org.junit.Assert.assertEquals
+import org.junit.Test
+
+class RecordRepositoryTest {
+    @Test
+    fun repository_getMetadata() = runTest {
+        val service = MockRecordService()
+        assertEquals(getRecordMetadata(1), service.fetchRecordMetadata(1).get())
+    }
 }

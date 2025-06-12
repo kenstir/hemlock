@@ -26,7 +26,7 @@ class PatronList(
         return "PatronList(id=$id, name='$name', description=$description, public=$public, items=${items?.size ?: 0})"
     }
 
-    var items: List<PatronListItem>? = null
+    var items: List<ListItem>? = null
 
     val isFullyLoaded: Boolean
         get() = items != null

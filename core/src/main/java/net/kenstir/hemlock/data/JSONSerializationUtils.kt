@@ -28,20 +28,6 @@ import kotlinx.serialization.json.double
 import kotlinx.serialization.json.doubleOrNull
 import kotlinx.serialization.json.long
 import kotlinx.serialization.json.longOrNull
-import net.kenstir.hemlock.sertest.XDecodingException
-
-/** convert deserialized JSON element to a Kotlin primitive */
-fun JsonElement.jsonPrimitiveOrNull(): Any? = when (this) {
-    is JsonPrimitive -> when {
-        isString -> content
-        booleanOrNull != null -> boolean
-        longOrNull != null -> long
-        doubleOrNull != null -> double
-        else -> throw XDecodingException("unsupported element type: ${this::class.simpleName}") // null
-    }
-    JsonNull -> null
-    else -> null
-}
 
 /** safely get JsonArray or null */
 fun JsonElement.jsonArrayOrNull(): JsonArray? = this as? JsonArray

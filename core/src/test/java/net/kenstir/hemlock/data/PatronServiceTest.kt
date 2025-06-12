@@ -15,18 +15,29 @@
  * along with this program; if not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.kenstir.hemlock.mock
+package net.kenstir.hemlock.data
 
 import kotlinx.coroutines.test.runTest
-import net.kenstir.hemlock.data.HemlockRecordRepository
-import net.kenstir.hemlock.mock.MockMetadataSource.getRecordMetadata
+import net.kenstir.hemlock.mock.MockPatronService
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
-class RecordRepositoryTest {
+class PatronServiceTest {
     @Test
-    fun repository_getMetadata() = runTest {
-        val repository = HemlockRecordRepository(MockRecordService())
-        assertEquals(getRecordMetadata(1), repository.fetchMetadata(1).get())
+    fun getLists() = runTest {
+        val service = MockPatronService()
+        val lists = service.fetchLists(1, "authtoken").get()
+        assertEquals(2, lists.size)
+        assertEquals("Books to Read", lists[0].name)
+        assertEquals("Movies to Watch", lists[1].name)
+        assertEquals(false, lists[0].isFullyLoaded)
+    }
+
+    @Test
+    fun getItems() = runTest {
+        val service = MockPatronService()
+        val items = service.fetchListItems(1, "authtoken", 1).get()
+        assertEquals(1, items.size)
+        assertEquals(253, items[0].record.id)
     }
 }

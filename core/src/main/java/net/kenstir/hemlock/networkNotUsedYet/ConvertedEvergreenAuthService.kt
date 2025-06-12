@@ -1,4 +1,4 @@
-package net.kenstir.hemlock.network
+package net.kenstir.hemlock.networkNotUsedYet
 
 import android.text.TextUtils
 import net.kenstir.hemlock.data.AuthenticationException

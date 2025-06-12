@@ -18,7 +18,7 @@
 package net.kenstir.hemlock.mock
 
 import net.kenstir.hemlock.data.models.PatronList
-import net.kenstir.hemlock.data.models.PatronListItem
+import net.kenstir.hemlock.data.models.ListItem
 import net.kenstir.hemlock.data.models.Record
 
 object MockPatronDataSource {
@@ -29,14 +29,14 @@ object MockPatronDataSource {
         )
     }
 
-    fun getItems(listId: Int): List<PatronListItem> {
+    fun getItems(listId: Int): List<ListItem> {
         return when (listId) {
             1 -> listOf(
-                PatronListItem(1, Record(253,"Ready Player Two", "Cline, Ernest"))
+                ListItem(1, Record(253,"Ready Player Two", "Cline, Ernest"))
             )
             2 -> listOf(
-                PatronListItem(2, Record(320, "The Matrix Revolutions", "Wachowski, Lana")),
-                PatronListItem(3, Record(222, "The Avengers", "Chechik, Jeremiah")),
+                ListItem(2, Record(320, "The Matrix Revolutions", "Wachowski, Lana")),
+                ListItem(3, Record(222, "The Avengers", "Chechik, Jeremiah")),
             )
             else -> emptyList()
         }

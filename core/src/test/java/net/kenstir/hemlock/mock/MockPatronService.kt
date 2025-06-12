@@ -20,7 +20,7 @@ package net.kenstir.hemlock.mock
 import net.kenstir.hemlock.data.PatronService
 import net.kenstir.hemlock.data.Result
 import net.kenstir.hemlock.data.models.PatronList
-import net.kenstir.hemlock.data.models.PatronListItem
+import net.kenstir.hemlock.data.models.ListItem
 
 class MockPatronService: PatronService {
     override suspend fun fetchLists(patronId: Int, authToken: String): Result<List<PatronList>> {
@@ -31,7 +31,7 @@ class MockPatronService: PatronService {
         patronId: Int,
         authToken: String,
         listId: Int
-    ): Result<List<PatronListItem>> {
+    ): Result<List<ListItem>> {
         return Result.Success(MockPatronDataSource.getItems(listId))
     }
 }

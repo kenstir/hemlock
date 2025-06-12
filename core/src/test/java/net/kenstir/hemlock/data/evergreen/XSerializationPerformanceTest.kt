@@ -15,14 +15,14 @@
  * along with this program; if not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.kenstir.hemlock.sertest
+package net.kenstir.hemlock.data.evergreen
 
 import kotlinx.serialization.json.Json
 import org.junit.Assert.assertNotNull
 import org.junit.Before
 import org.junit.Test
 
-class XJSONPerformanceTest {
+class XSerializationPerformanceTest {
 
     val iterations = 100
     val gapines_org_tree_json = """

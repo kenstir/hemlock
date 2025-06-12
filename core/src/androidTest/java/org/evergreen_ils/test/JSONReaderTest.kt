@@ -19,13 +19,10 @@
 package org.evergreen_ils.test
 
 import kotlinx.serialization.json.Json
-import net.kenstir.hemlock.sertest.XGatewayResponse
-import net.kenstir.hemlock.sertest.XOSRFCoder
-import org.evergreen_ils.OSRFUtils
-import org.junit.Assert.assertEquals
+import net.kenstir.hemlock.data.evergreen.XGatewayResponse
+import net.kenstir.hemlock.data.evergreen.XOSRFCoder
 import org.junit.Assert.assertNotNull
 import org.junit.Before
-import org.junit.BeforeClass
 import org.junit.Test
 import org.opensrf.util.JSONReader
 import org.opensrf.util.OSRFRegistry
