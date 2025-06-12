@@ -15,7 +15,7 @@
  * along with this program; if not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.kenstir.hemlock.sertest
+package net.kenstir.hemlock.data.evergreen
 
 import org.junit.Before
 import kotlinx.serialization.json.Json

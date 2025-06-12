@@ -15,18 +15,22 @@
  * along with this program; if not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.kenstir.hemlock.sertest
+package net.kenstir.hemlock.data.evergreen
 
-import kotlinx.serialization.json.JsonArray
-import kotlinx.serialization.json.JsonPrimitive
+import io.ktor.client.HttpClient
+import net.kenstir.hemlock.data.AuthService
 import net.kenstir.hemlock.data.Result
 
-class EvergreenTestService {
-    suspend fun fetchAuthInit(): Result<XGatewayResponse> {
-        return Result.Success(
-            XGatewayResponse(
-                payload = JsonArray(listOf(JsonPrimitive("mock-auth-init-data")))
-            )
-        )
+class EvergreenAuthService(private val client: HttpClient, private val baseUrl: String): AuthService {
+    override suspend fun fetchServerVersion(): Result<String> {
+        return Result.Success("3.1.5")
+    }
+
+    override suspend fun login(username: String, password: String): Result<String> {
+        return Result.Success("AuthToken12345")
+    }
+
+    override suspend fun logout(authToken: String): Result<Unit> {
+        return Result.Success(Unit)
     }
 }

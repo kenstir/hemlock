@@ -14,13 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, see <https://www.gnu.org/licenses/>.
  */
-package net.kenstir.hemlock.data
 
-import net.kenstir.hemlock.data.models.PatronList
-import net.kenstir.hemlock.data.models.PatronListItem
-import net.kenstir.hemlock.data.models.RecordMetadata
+package net.kenstir.hemlock.data.evergreen
 
-interface PatronRepository {
-    suspend fun fetchLists(patronId: Int, authToken: String): Result<List<PatronList>>
-    suspend fun fetchListItems(patronId: Int, authToken: String, listId: Int): Result<List<PatronListItem>>
-}
+data class XOSRFClass(val netClass: String, var fields: List<String> = arrayListOf())

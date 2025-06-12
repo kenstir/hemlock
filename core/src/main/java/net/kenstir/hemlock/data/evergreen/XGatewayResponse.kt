@@ -15,7 +15,7 @@
  * along with this program; if not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.kenstir.hemlock.sertest
+package net.kenstir.hemlock.data.evergreen
 
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
@@ -24,10 +24,6 @@ import kotlinx.serialization.descriptors.*
 import kotlinx.serialization.encoding.*
 import kotlinx.serialization.json.*
 import net.kenstir.hemlock.data.jsonArrayOrNull
-
-enum class XGatewayResponseType {
-    UNKNOWN, STRING, OBJECT, ARRAY, EMPTY
-}
 
 @Serializable(with = XGatewayResponseSerializer::class)
 data class XGatewayResponse(

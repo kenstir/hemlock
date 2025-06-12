@@ -17,17 +17,9 @@
 
 package net.kenstir.hemlock.sertest
 
-import kotlinx.serialization.decodeFromString
 import net.kenstir.hemlock.data.jsonMapOf
 import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.JsonElement
-import kotlinx.serialization.json.JsonNull
-import kotlinx.serialization.json.jsonArray
-import kotlinx.serialization.json.jsonObject
-import kotlinx.serialization.json.jsonPrimitive
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertNull
-import org.junit.Assert.assertTrue
+import net.kenstir.hemlock.data.evergreen.XOSRFObject
 import org.junit.Test
 
 class XOSRFObjectSerializationTest {

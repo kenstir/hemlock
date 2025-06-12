@@ -18,7 +18,7 @@
 package net.kenstir.hemlock.sertest
 
 import kotlinx.coroutines.test.runTest
-import kotlinx.serialization.json.Json
+import net.kenstir.hemlock.data.evergreen.XOSRFCoder
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
@@ -31,13 +31,13 @@ class XGatewayClientTest {
         @BeforeClass
         fun setUpClass() {
             // TODO: get this from gradle config
-            XGatewayClient.server = "https://gapines.org/osrf-gateway-v1"
+            XGatewayClient.baseUrl = "https://gapines.org/osrf-gateway-v1"
         }
     }
 
      @Test
-     fun test_fetchGatewayResponse() = runTest {
-         val response = XGatewayClient.fetchGatewayResponse()
+     fun test_fetchServerVersion() = runTest {
+         val response = XGatewayClient.fetchServerVersion()
          println("Response: $response")
          assertNotNull(response)
 

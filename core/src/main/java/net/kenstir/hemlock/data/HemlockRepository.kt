@@ -18,9 +18,8 @@ package net.kenstir.hemlock.data
 
 import net.kenstir.hemlock.data.models.RecordMetadata
 
-class HemlockRecordRepository(val recordService: RecordService): RecordRepository {
-
-    override suspend fun fetchMetadata(recordId: Int): Result<RecordMetadata> {
-        return recordService.fetchRecordMetadata(recordId)
-    }
+/** collects all the services used by Hemlock */
+object HemlockRepository {
+    lateinit var authService: AuthService
+    lateinit var recordService: RecordService
 }

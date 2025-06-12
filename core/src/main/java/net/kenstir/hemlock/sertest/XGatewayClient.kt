@@ -21,17 +21,16 @@ import io.ktor.client.*
 import io.ktor.client.call.body
 import io.ktor.client.engine.cio.*
 import io.ktor.client.request.*
-import io.ktor.client.statement.*
 import io.ktor.client.plugins.contentnegotiation.*
-import io.ktor.client.utils.EmptyContent.contentType
 import io.ktor.http.ContentType
 import io.ktor.serialization.kotlinx.json.*
-import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
+import net.kenstir.hemlock.data.evergreen.XGatewayResponse
 
+/** shared state for using the OSRF Gateway */
 object XGatewayClient {
 
-    lateinit var server: String
+    lateinit var baseUrl: String
 
     private val client = HttpClient(CIO) {
         install(ContentNegotiation) {
@@ -42,8 +41,8 @@ object XGatewayClient {
         }
     }
 
-    suspend fun fetchGatewayResponse(): XGatewayResponse {
-        val url = "${server}?service=open-ils.actor&method=opensrf.open-ils.system.ils_version"
+    suspend fun fetchServerVersion(): XGatewayResponse {
+        val url = "${baseUrl}?service=open-ils.actor&method=opensrf.open-ils.system.ils_version"
         return client.get(url).body()
     }
 }
