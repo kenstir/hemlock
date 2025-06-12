@@ -193,4 +193,27 @@ class XOSRFCoderTests {
         val actual = Json.encodeToString(XOSRFObject.serializer(), obj)
         assertEquals(expected, actual)
     }
+
+    @Test
+    fun test_encode_classlessObject() {
+        val obj = XOSRFObject(jsonMapOf(
+            "id" to 42,
+            "home_ou" to 69,
+            "day_phone" to "508-555-1212",
+            "real_null" to null,
+        ))
+        println("Original:     $obj")
+
+        //val json = Json.encodeToString(XOSRFObject.serializer(), obj)
+        val json = Json.encodeToString(obj)
+        println("Serialized:   $json")
+
+        // If this check proves fragile, we can either change XOSRFObjectSerializer to add the keys
+        // in field order, or we can just assert some substrings.  I don't think
+        // XOSRFObjectSerializer.serialize() is used enough to worry about its performance.
+        assertEquals(
+            """{"id":42,"home_ou":69,"day_phone":"508-555-1212","real_null":null}""",
+            json
+        )
+    }
 }

@@ -33,26 +33,6 @@ import org.junit.Test
 class XGatewayResponseSerializationTest {
 
     @Test
-    fun test_basic() {
-        val obj = jsonMapOf(
-            "id" to 42,
-            "name" to "Holden Caulfield",
-            "connection" to null,
-        )
-        val json = Json.encodeToString(obj)
-        println("Serialized:   $json")
-
-        val deserializedObj = Json.decodeFromString<JSONDictionary>(json)
-        println("Deserialized: $deserializedObj")
-
-        assertNotNull(deserializedObj)
-        assertTrue(deserializedObj.isNotEmpty())
-        assertEquals(42, deserializedObj["id"])
-        assertEquals("Holden Caulfield", deserializedObj["name"])
-        assertEquals(JsonNull, deserializedObj["connection"])
-    }
-
-    @Test
     fun test_decode_emptyPayload() {
         val json = """
             {"payload":[],"status":200}
