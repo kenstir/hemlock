@@ -32,8 +32,11 @@ class LiveAuthServiceTest {
         @JvmStatic
         @BeforeClass
         fun setUpClass() {
-            // TODO: get this from gradle config
-            XGatewayClient.baseUrl = "https://gapines.org/osrf-gateway-v1"
+            val testServer = System.getProperty("testEvergreenServer")
+            val testUsername = System.getProperty("testEvergreenUsername")
+            val testPassword = System.getProperty("testEvergreenPassword")
+
+            XGatewayClient.baseUrl = testServer
         }
     }
 

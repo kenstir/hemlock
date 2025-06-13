@@ -11,6 +11,15 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         testInstrumentationRunnerArguments = [server: testServer, username: testUsername, password: testPassword, httpbinServer: testHttpbinServer]
     }
+    testOptions {
+        unitTests.all {
+            // use system properties to pass same test parameters as above
+            systemProperty 'testEvergreenServer', testServer
+            systemProperty 'testEvergreenUsername', testUsername
+            systemProperty 'testEvergreenPassword', testPassword
+            systemProperty 'testHttpbinServer', testHttpbinServer
+        }
+    }
     buildTypes {
         release {
             minifyEnabled false
@@ -28,7 +37,7 @@ android {
         viewBinding true
         buildConfig true
     }
-    namespace 'org.evergreen_ils'
+    namespace 'net.kenstir.hemlock'
 }
 
 repositories {
