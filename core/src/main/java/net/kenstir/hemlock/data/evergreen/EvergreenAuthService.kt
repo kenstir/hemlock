@@ -17,13 +17,20 @@
 
 package net.kenstir.hemlock.data.evergreen
 
-import io.ktor.client.HttpClient
 import net.kenstir.hemlock.data.AuthService
 import net.kenstir.hemlock.data.Result
 
-class EvergreenAuthService(private val client: HttpClient, private val baseUrl: String): AuthService {
+class EvergreenAuthService: AuthService {
     override suspend fun fetchServerVersion(): Result<String> {
-        return Result.Success("3.1.5")
+        return try {
+            val resp = XGatewayClient.fetch("open-ils.actor", "opensrf.open-ils.system.ils_version", arrayOf(), false)
+            val payload = XOSRFCoder.decodePayload(resp.payload)
+            val version = payload[0] as? String ?: throw GatewayError("expected string, got ${payload}")
+            //TODO: GOAL IS: val version = XGatewayResult.payloadFirstAsString(resp)
+            Result.Success(version)
+        } catch (e: Exception) {
+            Result.Error(e)
+        }
     }
 
     override suspend fun login(username: String, password: String): Result<String> {

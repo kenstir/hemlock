@@ -1,4 +1,4 @@
-package org.open_ils
+package net.kenstir.hemlock.data.evergreen
 
 import org.evergreen_ils.OSRFUtils
 import net.kenstir.hemlock.data.JSONDictionary

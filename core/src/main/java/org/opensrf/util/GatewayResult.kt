@@ -18,10 +18,10 @@
 package org.opensrf.util
 
 import net.kenstir.hemlock.data.JSONDictionary
-import org.evergreen_ils.net.GatewayError
-import org.evergreen_ils.net.GatewayEventError
+import net.kenstir.hemlock.data.evergreen.GatewayError
+import net.kenstir.hemlock.data.evergreen.GatewayEventError
 import org.evergreen_ils.utils.fromApiToIntOrNull
-import org.open_ils.Event
+import net.kenstir.hemlock.data.evergreen.Event
 
 class GatewayResult {
     enum class ResultType {

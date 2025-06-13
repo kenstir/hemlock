@@ -22,6 +22,7 @@ import android.os.Bundle
 import androidx.test.platform.app.InstrumentationRegistry
 import com.android.volley.TimeoutError
 import kotlinx.coroutines.*
+import net.kenstir.hemlock.data.RequestOptions
 import org.evergreen_ils.Api
 import org.evergreen_ils.android.App
 import org.evergreen_ils.android.Log
