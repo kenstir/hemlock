@@ -43,6 +43,7 @@ object XGatewayClient {
         set(value) { _serverCacheKey = value }
 
     private const val GATEWAY_PATH = "/osrf-gateway-v1"
+    const val defaultTimeoutMs = 30_000
 
     private val client = HttpClient(CIO) {
         install(ContentNegotiation) {
@@ -81,7 +82,7 @@ object XGatewayClient {
     }
 
     suspend fun fetch(service: String, method: String, args: Array<Any?>, shouldCache: Boolean): XGatewayResponse {
-        return fetch(service, method, args, RequestOptions(30_000, shouldCache, true))
+        return fetch(service, method, args, RequestOptions(defaultTimeoutMs, shouldCache, true))
     }
 
     suspend fun fetch(service: String, method: String, args: Array<Any?>, options: RequestOptions): XGatewayResponse {

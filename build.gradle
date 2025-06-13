@@ -20,11 +20,12 @@ plugins {
 
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
-// INSTRUMENTED TEST VARIABLES
-// ---------------------------
+// TEST VARIABLES
+// --------------
 // test* variables are defaulted here,
 // passed as arguments to instrumented tests in core/build.gradle, and
-// can be overridden in (git-ignored) secret.gradle
+// passed as system properties to unit tests in core/build.gradle.
+// They can be overridden in (git-ignored) secret.gradle
 ext.testServer = "https://demo.evergreencatalog.com"
 ext.testUsername = "hemlock"
 ext.testPassword = "1234"
