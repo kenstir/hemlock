@@ -9,7 +9,7 @@ import android.util.Log
 import androidx.core.app.NotificationCompat
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
-import org.evergreen_ils.R
+import net.kenstir.hemlock.R
 import org.evergreen_ils.android.Log.TAG_FCM
 import org.evergreen_ils.data.PushNotification
 import org.evergreen_ils.utils.ui.BaseActivity

@@ -22,7 +22,7 @@ import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.net.Uri
 import android.widget.Toast
-import org.evergreen_ils.R
+import net.kenstir.hemlock.R
 
 object ActivityUtils {
     @JvmStatic

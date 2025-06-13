@@ -20,7 +20,7 @@ package org.evergreen_ils.android;
 import android.content.res.Resources;
 import android.text.TextUtils;
 
-import org.evergreen_ils.R;
+import net.kenstir.hemlock.R;
 
 public class AppFactory {
     private static final String TAG = AppFactory.class.getSimpleName();

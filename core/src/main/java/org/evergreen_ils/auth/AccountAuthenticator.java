@@ -9,7 +9,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
-import org.evergreen_ils.R;
+import net.kenstir.hemlock.R;
 import org.evergreen_ils.android.Analytics;
 
 public class AccountAuthenticator extends AbstractAccountAuthenticator {

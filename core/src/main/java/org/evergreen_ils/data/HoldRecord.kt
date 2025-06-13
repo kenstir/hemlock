@@ -24,7 +24,7 @@ import android.annotation.SuppressLint
 import android.content.res.Resources
 import org.evergreen_ils.HOLD_TYPE_METARECORD
 import org.evergreen_ils.OSRFUtils
-import org.evergreen_ils.R
+import net.kenstir.hemlock.R
 import org.evergreen_ils.utils.JsonUtils.parseObject
 import org.evergreen_ils.utils.JsonUtils.parseHoldableFormats
 import org.evergreen_ils.system.EgCodedValueMap.iconFormatLabel

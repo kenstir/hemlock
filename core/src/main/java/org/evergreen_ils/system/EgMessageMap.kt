@@ -19,7 +19,7 @@
 package org.evergreen_ils.system
 
 import android.content.res.Resources
-import org.evergreen_ils.R
+import net.kenstir.hemlock.R
 import org.evergreen_ils.utils.JsonUtils
 import net.kenstir.hemlock.data.evergreen.Event
 

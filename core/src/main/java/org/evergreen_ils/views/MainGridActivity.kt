@@ -26,7 +26,7 @@ import android.view.View
 import android.widget.Button
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import org.evergreen_ils.R
+import net.kenstir.hemlock.R
 import org.evergreen_ils.android.App
 import org.evergreen_ils.android.Log
 import org.evergreen_ils.data.GridButton
@@ -174,15 +174,15 @@ class MainGridActivity : MainBaseActivity() {
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        menuInflater.inflate(org.evergreen_ils.R.menu.menu_main, menu)
+        menuInflater.inflate(R.menu.menu_main, menu)
 
         // remove items we don't need
         if (TextUtils.isEmpty(feedbackUrl))
-            menu.removeItem(org.evergreen_ils.R.id.action_feedback)
+            menu.removeItem(R.id.action_feedback)
 
         // set up the messages action view, it didn't work when set in xml
-        if (!resources.getBoolean(org.evergreen_ils.R.bool.ou_enable_messages)) {
-            menu.removeItem(org.evergreen_ils.R.id.action_messages)
+        if (!resources.getBoolean(R.bool.ou_enable_messages)) {
+            menu.removeItem(R.id.action_messages)
         }
 
         return true
@@ -191,21 +191,21 @@ class MainGridActivity : MainBaseActivity() {
     fun onButtonClick(v: View) {
         //throw RuntimeException("Test Crash") // test Crashlytics
         val id = v.id
-        if (id == org.evergreen_ils.R.id.main_checkouts_button) {
+        if (id == R.id.main_checkouts_button) {
             startActivity(Intent(this, CheckoutsActivity::class.java))
-        } else if (id == org.evergreen_ils.R.id.main_holds_button) {
+        } else if (id == R.id.main_holds_button) {
             startActivity(Intent(this, HoldsActivity::class.java))
-        } else if (id == org.evergreen_ils.R.id.main_fines_button) {
+        } else if (id == R.id.main_fines_button) {
             startActivity(Intent(this, FinesActivity::class.java))
-        } else if (id == org.evergreen_ils.R.id.main_my_lists_button) {
+        } else if (id == R.id.main_my_lists_button) {
             startActivity(Intent(this, BookBagsActivity::class.java))
-        } else if (id == org.evergreen_ils.R.id.main_search_button) {
+        } else if (id == R.id.main_search_button) {
             startActivity(Intent(this, SearchActivity::class.java))
-        } else if (id == org.evergreen_ils.R.id.main_library_info_button) {
+        } else if (id == R.id.main_library_info_button) {
             startActivity(Intent(this, OrgDetailsActivity::class.java))
-        } else if (id == org.evergreen_ils.R.id.main_showcard_button) {
+        } else if (id == R.id.main_showcard_button) {
             startActivity(Intent(this, BarcodeActivity::class.java))
-        } else if (id == org.evergreen_ils.R.id.main_events_button) {
+        } else if (id == R.id.main_events_button) {
             launchURL(getEventsUrl())
         } else if (id == R.id.grid_ebooks_button) {
             launchURL(getEbooksUrl())

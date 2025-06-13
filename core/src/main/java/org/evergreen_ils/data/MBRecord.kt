@@ -19,13 +19,16 @@
 package org.evergreen_ils.data
 
 import android.content.res.Resources
+import net.kenstir.hemlock.R
 import org.evergreen_ils.OSRFUtils
-import org.evergreen_ils.R
 import org.evergreen_ils.system.EgCodedValueMap
 import org.evergreen_ils.system.EgOrg.getOrgNameSafe
-import org.evergreen_ils.utils.*
+import org.evergreen_ils.utils.MARCRecord
+import org.evergreen_ils.utils.MARCXMLParser
+import org.evergreen_ils.utils.RecordAttributes
+import org.evergreen_ils.utils.TextUtils
+import org.evergreen_ils.utils.titleSortKey
 import org.opensrf.util.OSRFObject
-import org.opensrf.util.Utils
 import java.io.Serializable
 
 class MBRecord(val id: Int, var mvrObj: OSRFObject? = null) : Serializable {

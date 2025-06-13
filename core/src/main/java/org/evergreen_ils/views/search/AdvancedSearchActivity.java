@@ -36,7 +36,7 @@ import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import org.evergreen_ils.R;
+import net.kenstir.hemlock.R;
 import org.evergreen_ils.android.App;
 import org.evergreen_ils.utils.ui.ActionBarUtils;
 import org.evergreen_ils.android.Analytics;

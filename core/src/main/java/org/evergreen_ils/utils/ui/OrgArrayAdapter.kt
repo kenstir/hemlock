@@ -5,7 +5,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.TextView
-import org.evergreen_ils.R
+import net.kenstir.hemlock.R
 import org.evergreen_ils.system.EgOrg
 
 class OrgArrayAdapter(

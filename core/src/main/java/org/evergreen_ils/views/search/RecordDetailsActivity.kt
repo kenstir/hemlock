@@ -23,7 +23,7 @@ package org.evergreen_ils.views.search
 import org.evergreen_ils.utils.ui.BaseActivity
 import androidx.viewpager.widget.ViewPager
 import android.os.Bundle
-import org.evergreen_ils.R
+import net.kenstir.hemlock.R
 import org.evergreen_ils.utils.ui.ActionBarUtils
 import org.evergreen_ils.system.EgSearch
 import org.evergreen_ils.system.EgOrg
