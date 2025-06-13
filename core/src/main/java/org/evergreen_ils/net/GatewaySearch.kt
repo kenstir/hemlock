@@ -18,6 +18,7 @@
 
 package org.evergreen_ils.net
 
+import net.kenstir.hemlock.data.RequestOptions
 import org.evergreen_ils.Api
 import net.kenstir.hemlock.data.Result
 import net.kenstir.hemlock.data.jsonMapOf

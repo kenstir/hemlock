@@ -22,7 +22,7 @@ import androidx.core.os.bundleOf
 import org.evergreen_ils.Api
 import org.evergreen_ils.OSRFUtils
 import org.evergreen_ils.android.Analytics
-import org.evergreen_ils.net.GatewayEventError
+import net.kenstir.hemlock.data.evergreen.GatewayEventError
 import org.opensrf.util.OSRFObject
 import java.text.DateFormat
 import java.util.Date

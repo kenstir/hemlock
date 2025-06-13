@@ -15,18 +15,20 @@
  * along with this program; if not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.kenstir.hemlock.sertest
+package net.kenstir.hemlock.data.evergreen
 
 import kotlinx.coroutines.test.runTest
-import net.kenstir.hemlock.data.evergreen.XOSRFCoder
+import net.kenstir.hemlock.data.AuthService
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
 import org.junit.BeforeClass
 import org.junit.Test
 
-class XGatewayClientTest {
+class LiveAuthServiceTest {
     companion object {
+        val authService = EvergreenAuthService()
+
         @JvmStatic
         @BeforeClass
         fun setUpClass() {
@@ -37,13 +39,11 @@ class XGatewayClientTest {
 
      @Test
      fun test_fetchServerVersion() = runTest {
-         val response = XGatewayClient.fetchServerVersion()
-         println("Response: $response")
-         assertNotNull(response)
+         val result = authService.fetchServerVersion()
+         println("Result: $result")
+         assertTrue(result.succeeded)
 
-         val decodedPayload = XOSRFCoder.decodePayload(response.payload)
-         println("Decoded:      $decodedPayload")
-         assertEquals(1, decodedPayload.size)
-         assertTrue(decodedPayload[0] is String)
+         val version = result.get()
+         assertNotNull(version)
      }
 }

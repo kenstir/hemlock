@@ -22,6 +22,7 @@ import org.evergreen_ils.OSRFUtils
 import org.evergreen_ils.android.Log
 import org.evergreen_ils.data.Account
 import net.kenstir.hemlock.data.JSONDictionary
+import net.kenstir.hemlock.data.RequestOptions
 import net.kenstir.hemlock.data.Result
 import net.kenstir.hemlock.data.jsonMapOf
 import org.evergreen_ils.data.parseOrgStringSetting

@@ -22,7 +22,7 @@ import androidx.test.platform.app.InstrumentationRegistry
 import org.evergreen_ils.OSRFUtils
 import org.evergreen_ils.android.Log
 import org.evergreen_ils.android.StdoutLogProvider
-import org.evergreen_ils.net.GatewayEventError
+import net.kenstir.hemlock.data.evergreen.GatewayEventError
 import org.evergreen_ils.system.EgMessageMap
 import org.junit.Assert.*
 import org.junit.BeforeClass

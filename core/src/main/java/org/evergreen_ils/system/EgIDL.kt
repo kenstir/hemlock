@@ -20,7 +20,7 @@ package org.evergreen_ils.system
 
 import org.evergreen_ils.net.Gateway
 import org.evergreen_ils.android.Log
-import org.evergreen_ils.net.RequestOptions
+import net.kenstir.hemlock.data.RequestOptions
 import org.open_ils.idl.IDLParser
 
 private val TAG = EgIDL::class.java.simpleName
