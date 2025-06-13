@@ -23,7 +23,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import androidx.recyclerview.widget.RecyclerView
-import org.evergreen_ils.R
+import net.kenstir.hemlock.R
 import org.evergreen_ils.data.GridButton
 
 class GridButtonViewAdapter(private val items: List<GridButton>) : RecyclerView.Adapter<GridButtonViewAdapter.ViewHolder>() {

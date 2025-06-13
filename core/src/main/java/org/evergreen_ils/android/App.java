@@ -27,7 +27,7 @@ import android.text.TextUtils;
 
 import androidx.annotation.Nullable;
 
-import org.evergreen_ils.R;
+import net.kenstir.hemlock.R;
 import org.evergreen_ils.data.Account;
 import org.evergreen_ils.data.Library;
 import org.evergreen_ils.data.PushNotification;

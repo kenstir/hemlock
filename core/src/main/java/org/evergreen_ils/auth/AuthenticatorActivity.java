@@ -19,7 +19,7 @@ import android.widget.TextView;
 
 import org.evergreen_ils.android.App;
 
-import org.evergreen_ils.R;
+import net.kenstir.hemlock.R;
 import org.evergreen_ils.android.Analytics;
 import org.evergreen_ils.data.Library;
 import org.evergreen_ils.utils.ui.ActivityUtils;

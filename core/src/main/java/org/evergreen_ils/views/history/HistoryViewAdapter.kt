@@ -28,7 +28,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
 import com.android.volley.toolbox.NetworkImageView
 import kotlinx.coroutines.async
-import org.evergreen_ils.R
+import net.kenstir.hemlock.R
 import org.evergreen_ils.android.Log
 import org.evergreen_ils.data.HistoryRecord
 import org.evergreen_ils.data.MBRecord

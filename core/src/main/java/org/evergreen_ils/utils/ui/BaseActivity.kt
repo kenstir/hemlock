@@ -46,7 +46,7 @@ import androidx.lifecycle.lifecycleScope
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.messaging.FirebaseMessaging
 import kotlinx.coroutines.tasks.await
-import org.evergreen_ils.R
+import net.kenstir.hemlock.R
 import org.evergreen_ils.android.AccountUtils
 import org.evergreen_ils.android.Analytics
 import org.evergreen_ils.android.App

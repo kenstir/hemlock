@@ -22,7 +22,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.preference.PreferenceManager;
-import org.evergreen_ils.R;
+import net.kenstir.hemlock.R;
 import org.evergreen_ils.android.Log;
 
 import java.util.Date;

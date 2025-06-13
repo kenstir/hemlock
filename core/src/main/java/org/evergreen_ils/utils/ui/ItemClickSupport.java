@@ -31,7 +31,7 @@ package org.evergreen_ils.utils.ui;
 
 import androidx.recyclerview.widget.RecyclerView;
 import android.view.View;
-import org.evergreen_ils.R;
+import net.kenstir.hemlock.R;
 
 public class ItemClickSupport {
     private final RecyclerView mRecyclerView;

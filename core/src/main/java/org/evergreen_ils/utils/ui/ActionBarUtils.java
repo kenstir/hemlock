@@ -20,7 +20,7 @@ package org.evergreen_ils.utils.ui;
 
 import android.text.TextUtils;
 
-import org.evergreen_ils.R;
+import net.kenstir.hemlock.R;
 import org.evergreen_ils.android.App;
 
 import androidx.appcompat.app.ActionBar;

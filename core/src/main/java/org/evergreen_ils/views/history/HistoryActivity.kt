@@ -27,7 +27,7 @@ import android.view.View
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.coroutines.async
-import org.evergreen_ils.R
+import net.kenstir.hemlock.R
 import org.evergreen_ils.android.App
 import org.evergreen_ils.android.Log
 import org.evergreen_ils.data.HistoryRecord

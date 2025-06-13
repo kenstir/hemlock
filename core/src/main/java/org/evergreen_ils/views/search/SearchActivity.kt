@@ -48,7 +48,7 @@ import com.google.mlkit.vision.codescanner.GmsBarcodeScanning
 import kotlinx.coroutines.async
 import org.evergreen_ils.KEY_SEARCH_BY
 import org.evergreen_ils.KEY_SEARCH_TEXT
-import org.evergreen_ils.R
+import net.kenstir.hemlock.R
 import org.evergreen_ils.android.Analytics
 import org.evergreen_ils.android.Analytics.orgDimensionKey
 import org.evergreen_ils.android.App

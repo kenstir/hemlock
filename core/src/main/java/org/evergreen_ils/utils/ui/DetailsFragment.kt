@@ -42,7 +42,7 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.joinAll
 import org.evergreen_ils.KEY_SEARCH_BY
 import org.evergreen_ils.KEY_SEARCH_TEXT
-import org.evergreen_ils.R
+import net.kenstir.hemlock.R
 import org.evergreen_ils.android.App
 import org.evergreen_ils.android.Log
 import org.evergreen_ils.android.Log.TAG_ASYNC

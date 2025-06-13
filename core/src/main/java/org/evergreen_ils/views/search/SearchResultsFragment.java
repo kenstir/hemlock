@@ -22,7 +22,7 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import android.view.*;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import org.evergreen_ils.R;
+import net.kenstir.hemlock.R;
 import org.evergreen_ils.data.MBRecord;
 import org.evergreen_ils.system.EgSearch;
 import org.evergreen_ils.utils.ui.ItemClickSupport;

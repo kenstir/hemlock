@@ -24,8 +24,8 @@ import android.provider.Settings
 import androidx.core.os.bundleOf
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.crashlytics.FirebaseCrashlytics
-import org.evergreen_ils.BuildConfig
-import org.evergreen_ils.R
+import net.kenstir.hemlock.BuildConfig
+import net.kenstir.hemlock.R
 import org.evergreen_ils.data.Organization
 import net.kenstir.hemlock.data.Result
 import org.evergreen_ils.utils.getCustomMessage

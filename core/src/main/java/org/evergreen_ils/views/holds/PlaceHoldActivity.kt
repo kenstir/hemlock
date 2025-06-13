@@ -35,6 +35,7 @@ import androidx.core.os.bundleOf
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.joinAll
+import net.kenstir.hemlock.R
 import org.evergreen_ils.*
 import org.evergreen_ils.android.Analytics
 import org.evergreen_ils.android.Analytics.orgDimensionKey

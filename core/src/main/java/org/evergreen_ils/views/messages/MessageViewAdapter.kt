@@ -24,7 +24,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import org.evergreen_ils.R
+import net.kenstir.hemlock.R
 import org.evergreen_ils.data.PatronMessage
 import java.text.DateFormat
 
