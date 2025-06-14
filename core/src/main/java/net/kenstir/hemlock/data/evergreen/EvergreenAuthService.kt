@@ -23,11 +23,9 @@ import net.kenstir.hemlock.data.Result
 class EvergreenAuthService: AuthService {
     override suspend fun fetchServerVersion(): Result<String> {
         return try {
-            val resp = XGatewayClient.fetch("open-ils.actor", "opensrf.open-ils.system.ils_version", arrayOf(), false)
-            //TODO: Goal: simplify this decode/cast sequence, e.g.: val version = XGatewayResult.payloadFirstAsString(resp)
-            val payload = XOSRFCoder.decodePayload(resp.payload)
-            val version = payload[0] as? String ?: throw GatewayError("expected string, got ${payload}")
-            Result.Success(version)
+            val json = XGatewayClient.fetch(Api.ACTOR, Api.ILS_VERSION, arrayOf(), false)
+            val ret = XGatewayResult.create(json).payloadFirstAsString()
+            Result.Success(ret)
         } catch (e: Exception) {
             Result.Error(e)
         }

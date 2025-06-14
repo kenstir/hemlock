@@ -122,9 +122,9 @@ class XGatewayResult {
     }
 
     companion object {
+        /** Create a XGatewayResult from [json] returned from the OSRF gateway */
         @JvmStatic
         fun create(json: String): XGatewayResult {
-            /** Create a XGatewayResult from [json] returned from the OSRF gateway */
             return try {
                 val response = Json.decodeFromString<XGatewayResponse>(json)
                 if (response.status != 200)
