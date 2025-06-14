@@ -12,7 +12,7 @@ esac
 
 version=$(curl -sS "$base/osrf-gateway-v1?service=open-ils.actor&method=opensrf.open-ils.system.ils_version" | jq -r '.payload[0]')
 
-classes=$(grep IDL_CLASSES core/src/main/java/org/evergreen_ils/Api.kt | awk '{print $NF}' | sed -e 's/"//g')
+classes=$(grep IDL_CLASSES ./core/src/main/java/net/kenstir/hemlock/data/evergreen/Api.kt | awk '{print $NF}' | sed -e 's/"//g')
 
 # create array params
 IFS=, read -r -a class_array <<< "$classes"

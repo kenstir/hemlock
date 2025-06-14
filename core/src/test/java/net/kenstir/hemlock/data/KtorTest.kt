@@ -15,20 +15,20 @@
  * along with this program; if not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.kenstir.hemlock.data.evergreen
+package net.kenstir.hemlock.data
 
+import io.ktor.client.HttpClient
+import io.ktor.client.engine.cio.CIO
+import io.ktor.client.plugins.cache.HttpCache
+import io.ktor.client.request.get
+import io.ktor.client.statement.bodyAsText
 import kotlinx.coroutines.test.runTest
-import net.kenstir.hemlock.data.AuthService
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertNotNull
-import org.junit.Assert.assertTrue
+import net.kenstir.hemlock.data.evergreen.XGatewayClient
 import org.junit.BeforeClass
 import org.junit.Test
 
-class LiveAuthServiceTest {
+class KtorTest {
     companion object {
-        val authService = EvergreenAuthService()
-
         @JvmStatic
         @BeforeClass
         fun setUpClass() {
@@ -37,20 +37,35 @@ class LiveAuthServiceTest {
             val testPassword = getRequiredProperty("testEvergreenPassword")
 
             XGatewayClient.baseUrl = testServer
+            XGatewayClient.clientCacheKey = System.currentTimeMillis().toString()
         }
 
         fun getRequiredProperty(name: String): String {
             return System.getProperty(name) ?: throw RuntimeException("Missing required system property: $name")
         }
+
+        val cachingClient = HttpClient(CIO) {
+            install(HttpCache)
+        }
     }
 
-     @Test
-     fun test_fetchServerVersion() = runTest {
-         val result = authService.fetchServerVersion()
-         println("Result: $result")
-         assertTrue(result.succeeded)
+    @Test
+    fun test_fetchServerVersion() = runTest {
+        val url = XGatewayClient.buildUrl("open-ils.actor", "opensrf.open-ils.system.ils_version", arrayOf())
 
-         val version = result.get()
-         assertNotNull(version)
-     }
+        val response1 = cachingClient.get(url)
+        println("try1: $response1")
+        println("Status: ${response1.status}")
+        println("Headers: ${response1.headers.entries()}")
+        println("Body length: ${response1.bodyAsText().length}")
+
+        // sleep for a short time to allow cache to be populated
+        Thread.sleep(5000)
+
+        val response2 = cachingClient.get(url)
+        println("try2: $response2")
+        println("Status: ${response2.status}")
+        println("Headers: ${response2.headers.entries()}")
+        println("Body length: ${response2.bodyAsText().length}")
+    }
 }

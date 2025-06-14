@@ -73,7 +73,7 @@ object XGatewayClient {
     }
 
     fun buildUrl(service: String, method: String, args: Array<Any?>, addCacheArgs: Boolean = true): String {
-        return baseUrl.plus("/osrf-gateway-v1?").plus(
+        return baseUrl.plus(GATEWAY_PATH).plus("?").plus(
             buildQuery(service, method, args, addCacheArgs)
         )
     }
