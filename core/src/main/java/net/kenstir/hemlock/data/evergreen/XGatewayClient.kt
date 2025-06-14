@@ -23,6 +23,7 @@ import io.ktor.client.call.body
 import io.ktor.client.engine.cio.*
 import io.ktor.client.request.*
 import io.ktor.client.plugins.contentnegotiation.*
+import io.ktor.client.statement.bodyAsText
 import io.ktor.http.ContentType
 import io.ktor.serialization.kotlinx.json.*
 import kotlinx.serialization.json.Json
@@ -81,12 +82,12 @@ object XGatewayClient {
         return baseUrl.plus(relativeUrl)
     }
 
-    suspend fun fetch(service: String, method: String, args: Array<Any?>, shouldCache: Boolean): XGatewayResponse {
+    suspend fun fetch(service: String, method: String, args: Array<Any?>, shouldCache: Boolean): String {
         return fetch(service, method, args, RequestOptions(defaultTimeoutMs, shouldCache, true))
     }
 
-    suspend fun fetch(service: String, method: String, args: Array<Any?>, options: RequestOptions): XGatewayResponse {
+    suspend fun fetch(service: String, method: String, args: Array<Any?>, options: RequestOptions): String {
         val url = buildUrl(service, method, args, options.shouldCache)
-        return client.get(url).body()
+        return client.get(url).bodyAsText()
     }
 }
