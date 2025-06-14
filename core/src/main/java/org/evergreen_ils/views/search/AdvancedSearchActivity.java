@@ -19,7 +19,7 @@
  */
 package org.evergreen_ils.views.search;
 
-import static org.evergreen_ils.ConstKt.KEY_SEARCH_TEXT;
+import static net.kenstir.hemlock.data.evergreen.ConstKt.KEY_SEARCH_TEXT;
 import static org.evergreen_ils.views.search.SearchActivity.RESULT_CODE_SEARCH_BY_KEYWORD;
 
 import android.content.Intent;

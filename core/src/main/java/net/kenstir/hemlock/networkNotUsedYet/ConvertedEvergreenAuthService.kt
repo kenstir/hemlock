@@ -2,7 +2,7 @@ package net.kenstir.hemlock.networkNotUsedYet
 
 import android.text.TextUtils
 import net.kenstir.hemlock.data.AuthenticationException
-import org.evergreen_ils.Api
+import net.kenstir.hemlock.data.evergreen.Api
 import org.evergreen_ils.android.Analytics.log
 import org.evergreen_ils.android.Log
 import org.opensrf.Method

@@ -1,6 +1,6 @@
 package org.opensrf.util;
 
-import org.evergreen_ils.OSRFUtils;
+import net.kenstir.hemlock.data.evergreen.OSRFUtils;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;

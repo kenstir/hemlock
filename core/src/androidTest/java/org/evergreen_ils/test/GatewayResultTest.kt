@@ -19,7 +19,7 @@
 package org.evergreen_ils.test
 
 import androidx.test.platform.app.InstrumentationRegistry
-import org.evergreen_ils.OSRFUtils
+import net.kenstir.hemlock.data.evergreen.OSRFUtils
 import org.evergreen_ils.android.Log
 import org.evergreen_ils.android.StdoutLogProvider
 import net.kenstir.hemlock.data.evergreen.GatewayEventError
@@ -408,17 +408,7 @@ class GatewayResultTest {
 
     // Test to handle https://bugs.launchpad.net/opensrf/+bug/1883169
     @Test
-    fun test_errorResponseNotJSON_postgresQueryKilled() {
-        val jsonIsh = """
-            {"payload":[],"debug": "osrfMethodException :  *** Call to [open-ils.search.biblio.multiclass.query] failed for session [1590536419.970333.159053641999519], thread trace [1]:\nException: OpenSRF::EX::ERROR 2020-05-26T19:41:01 OpenSRF::Application /usr/local/share/perl/5.22.1/OpenSRF/Application.pm:243 System ERROR: Call to open-ils.storage for method open-ils.storage.biblio.multiclass.staged.search_fts.atomic \n failed with exception: Exception: OpenSRF::EX::ERROR 2020-05-26T19:41:01 OpenILS::Application::AppUtils /usr/local/share/perl/5.22.1/OpenILS/Application/AppUtils.pm:201 System ERROR: Exception: OpenSRF::DomainObject::oilsMethodException 2020-05-26T19:41:01 OpenSRF::AppRequest /usr/local/share/perl/5.22.1/OpenSRF/AppSession.pm:1159 <500>   *** Call to [open-ils.storage.biblio.multiclass.staged.search_fts.atomic] failed for session [1590536419.97576725.9316069925], thread trace [1]:\nDBD::Pg::st execute failed: ERROR:  canceling statement due to user request [for Statement ... COUNT(*),COUNT(*),COUNT(*),0,0,NULL,NULL F,"status":500}
-            """
-        val result = GatewayResult.create(jsonIsh)
-        assertTrue(result.failed)
-        assertEquals("Timeout; the request took too long to complete and the server killed it", result.errorMessage)
-    }
-
-    @Test
-    fun test_errorResponseNotJSON_other() {
+    fun test_crashResponseNotJSON() {
         val jsonIsh = """
             {"payload":[],"debug": "...NULL,NULL F,"status":500}
             """

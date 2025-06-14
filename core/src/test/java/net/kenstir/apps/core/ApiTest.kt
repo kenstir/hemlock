@@ -18,7 +18,7 @@
 
 package net.kenstir.apps.core
 
-import org.evergreen_ils.OSRFUtils
+import net.kenstir.hemlock.data.evergreen.OSRFUtils
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test

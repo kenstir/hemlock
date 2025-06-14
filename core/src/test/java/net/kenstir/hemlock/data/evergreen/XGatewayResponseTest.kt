@@ -17,6 +17,7 @@
 
 package net.kenstir.hemlock.data.evergreen
 
+import kotlinx.serialization.SerializationException
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonNull
@@ -146,5 +147,31 @@ class XGatewayResponseTest {
         val obj = resp.payload[0].jsonObject
         val nestedPayload = obj["__p"]?.jsonArray?.getOrNull(0)
         assertNotNull(nestedPayload)
+    }
+
+    // the OSRF gateway adds a debug message if the request dies
+    @Test
+    fun test_decode_serverCrash() {
+        val json = """
+            {"payload":[],"debug": "osrfMethodException : ...","status":500}
+        """.trimIndent()
+
+        val resp = Json.decodeFromString<XGatewayResponse>(json)
+        assertEquals("osrfMethodException : ...", resp.debug)
+    }
+
+    // Test to handle https://bugs.launchpad.net/opensrf/+bug/1883169
+    @Test
+    fun test_decode_gatewayErrorResponseIsNotValidJSON() {
+        val jsonIsh = """
+            {"payload":[],"debug": "...NULL,NULL F,"status":500}
+            """
+
+        try {
+            Json.decodeFromString<XGatewayResponse>(jsonIsh)
+            assertTrue("Expected SerializationException", false)
+        } catch (e: Exception) {
+            assertTrue(e is SerializationException)
+        }
     }
 }

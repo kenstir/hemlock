@@ -17,7 +17,7 @@
  */
 package org.evergreen_ils.data
 
-import org.evergreen_ils.Api
+import net.kenstir.hemlock.data.evergreen.Api
 import org.evergreen_ils.system.EgOrg
 import org.opensrf.util.OSRFObject
 

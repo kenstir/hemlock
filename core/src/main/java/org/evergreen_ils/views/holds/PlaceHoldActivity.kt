@@ -36,13 +36,15 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.joinAll
 import net.kenstir.hemlock.R
-import org.evergreen_ils.*
 import org.evergreen_ils.android.Analytics
 import org.evergreen_ils.android.Analytics.orgDimensionKey
 import org.evergreen_ils.android.App
 import org.evergreen_ils.android.Log
 import org.evergreen_ils.data.Account
 import net.kenstir.hemlock.data.Result
+import net.kenstir.hemlock.data.evergreen.HOLD_TYPE_PART
+import net.kenstir.hemlock.data.evergreen.HOLD_TYPE_TITLE
+import net.kenstir.hemlock.data.evergreen.OSRFUtils
 import org.evergreen_ils.data.SMSCarrier
 import org.evergreen_ils.net.Gateway
 import org.evergreen_ils.net.GatewayLoader

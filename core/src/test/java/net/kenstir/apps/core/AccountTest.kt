@@ -18,7 +18,7 @@
 
 package net.kenstir.apps.core
 
-import org.evergreen_ils.Api
+import net.kenstir.hemlock.data.evergreen.Api
 import org.evergreen_ils.data.Account
 import org.junit.Assert.*
 import org.junit.Before

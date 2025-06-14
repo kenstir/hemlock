@@ -19,8 +19,8 @@
 package org.evergreen_ils.data
 
 import androidx.core.os.bundleOf
-import org.evergreen_ils.Api
-import org.evergreen_ils.OSRFUtils
+import net.kenstir.hemlock.data.evergreen.Api
+import net.kenstir.hemlock.data.evergreen.OSRFUtils
 import org.evergreen_ils.android.Analytics
 import net.kenstir.hemlock.data.evergreen.GatewayEventError
 import org.opensrf.util.OSRFObject

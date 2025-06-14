@@ -18,13 +18,15 @@
 
 package net.kenstir.hemlock.data.evergreen
 
+import kotlinx.serialization.SerializationException
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonArray
 import net.kenstir.hemlock.data.JSONDictionary
+import org.opensrf.util.GatewayResult
 
 class XGatewayResult {
     enum class ResultType {
-        UNKNOWN, EMPTY, ERROR
+        STRING, OBJECT, ARRAY, EMPTY, EVENT, UNKNOWN, ERROR
     }
 
     @JvmField
@@ -69,7 +71,7 @@ class XGatewayResult {
         error?.let { throw it }
         try {
             (payload.firstOrNull() as? XOSRFObject)?.let { return it }
-            (payload.firstOrNull() as? JSONDictionary)?.let { return XOSRFObject(it) }
+            (payload.firstOrNull() as? JSONDictionary)?.let { return XOSRFObject(it) } // NOT HIT
             throw GatewayError("Unexpected type")
         } catch (ex: Exception) {
             throw GatewayError("Internal Server Error: expected object, got $type")
@@ -128,8 +130,10 @@ class XGatewayResult {
             return try {
                 val response = Json.decodeFromString<XGatewayResponse>(json)
                 if (response.status != 200)
-                    throw GatewayError("Request failed with status $response.status")
+                    throw GatewayError("Request failed with status ${response.status}")
                 createFromPayload(response.payload)
+            } catch (ex: SerializationException) {
+                XGatewayResult(GatewayError("Internal Server Error: response is not JSON"))
             } catch (ex: Exception) {
                 XGatewayResult(ex)
             }
@@ -145,7 +149,7 @@ class XGatewayResult {
                     null -> {
                         resp.type = ResultType.EMPTY
                     }
-                    is Map<*, *> -> {
+                    is XOSRFObject -> {
                         // object or event
                         val event = Event.parseEvent(first)
                         if (event != null) {
@@ -156,7 +160,7 @@ class XGatewayResult {
                             resp.type = ResultType.ERROR
                         }
                     }
-                    is ArrayList<*> -> {
+                    is List<*> -> {
                         // list of objects or list of events
                         val obj = first.firstOrNull()
                         val event = Event.parseEvent(obj)

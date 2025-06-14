@@ -17,8 +17,8 @@
  */
 package org.evergreen_ils.net
 
-import org.evergreen_ils.Api
-import org.evergreen_ils.OSRFUtils
+import net.kenstir.hemlock.data.evergreen.Api
+import net.kenstir.hemlock.data.evergreen.OSRFUtils
 import org.evergreen_ils.android.Log
 import org.evergreen_ils.data.Account
 import net.kenstir.hemlock.data.JSONDictionary
