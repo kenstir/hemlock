@@ -105,7 +105,7 @@ object XOSRFObjectSerializer : KSerializer<XOSRFObject> {
 
     private fun serializeWireProtocol(jsonEncoder: JsonEncoder, value: XOSRFObject, netClass: String) {
         val coder = XOSRFCoder.getCoder(netClass)
-            ?: throw SerializationException("unregistered class: $netClass")
+            ?: throw SerializationException("Unregistered class: $netClass")
 
         val jsonValues = buildJsonArray {
             for (key in coder.fields) {
@@ -138,7 +138,7 @@ object XOSRFObjectSerializer : KSerializer<XOSRFObject> {
             ?: throw SerializationException("Missing __c field in wire protocol object")
 
         val coder = XOSRFCoder.getCoder(netClass)
-            ?: throw SerializationException("unregistered class: $netClass")
+            ?: throw SerializationException("Unregistered class: $netClass")
 
         val values = jsonObject["__p"]?.jsonArray
             ?: throw SerializationException("Missing __p field in wire protocol object")

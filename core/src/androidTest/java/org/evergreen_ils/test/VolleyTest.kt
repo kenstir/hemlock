@@ -5,13 +5,10 @@ import androidx.test.platform.app.InstrumentationRegistry
 import com.android.volley.Request
 import com.android.volley.Response
 import org.evergreen_ils.net.Gateway.buildUrl
-import kotlin.Throws
 import org.evergreen_ils.net.Gateway
-import com.android.volley.VolleyError
-import org.evergreen_ils.test.VolleyTest
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.JsonObjectRequest
-import org.evergreen_ils.Api
+import net.kenstir.hemlock.data.evergreen.Api
 import org.evergreen_ils.android.Log
 import org.evergreen_ils.net.Volley
 import org.json.JSONObject
@@ -19,7 +16,6 @@ import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-import java.lang.Exception
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.locks.Lock
 import java.util.concurrent.locks.ReentrantLock

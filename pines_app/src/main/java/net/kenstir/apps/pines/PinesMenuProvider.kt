@@ -36,7 +36,7 @@ class PinesMenuProvider : MenuProvider() {
     override fun onItemSelected(activity: Activity, id: Int, via: String): Boolean {
         if (id == R.id.open_full_catalog_button) {
             //Analytics.logEvent("fullcatalog_click", "via", via);
-            val url = activity.getString(org.evergreen_ils.R.string.ou_library_url)
+            val url = activity.getString(R.string.ou_library_url)
             ActivityUtils.launchURL(activity, url)
         } else if (id == R.id.library_locator_button) {
             //Analytics.logEvent("librarylocator_click", "via", via);

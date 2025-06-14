@@ -28,12 +28,14 @@ import net.kenstir.hemlock.data.jsonArrayOrNull
 @Serializable(with = XGatewayResponseSerializer::class)
 data class XGatewayResponse(
     val payload: JsonArray,
+    val debug: String = "",
     val status: Int = 200,
 )
 
 object XGatewayResponseSerializer : KSerializer<XGatewayResponse> {
     override val descriptor: SerialDescriptor = buildClassSerialDescriptor("XGatewayResponse") {
         element<JsonArray>("payload")
+        element<JsonElement>("debug", isOptional = true)
         element<Int>("status", isOptional = true) // optional to make testing easier
     }
 
@@ -47,6 +49,7 @@ object XGatewayResponseSerializer : KSerializer<XGatewayResponse> {
     override fun deserialize(decoder: Decoder): XGatewayResponse {
         val dec = decoder.beginStructure(descriptor)
         var payload: JsonArray? = null
+        var debug = ""
         var status = 200
         loop@ while (true) {
             when (val index = dec.decodeElementIndex(descriptor)) {
@@ -55,12 +58,13 @@ object XGatewayResponseSerializer : KSerializer<XGatewayResponse> {
                     payload = element.jsonArrayOrNull()
                         ?: throw SerializationException("payload must be a JSON array")
                 }
-                1 -> status = dec.decodeIntElement(descriptor, 1)
+                1 -> debug = dec.decodeStringElement(descriptor, 1)
+                2 -> status = dec.decodeIntElement(descriptor, 2)
                 CompositeDecoder.DECODE_DONE -> break@loop
                 else -> throw SerializationException("Unknown index $index")
             }
         }
         dec.endStructure(descriptor)
-        return XGatewayResponse(payload ?: throw SerializationException("missing payload"), status)
+        return XGatewayResponse(payload ?: throw SerializationException("missing payload"), debug, status)
     }
 }

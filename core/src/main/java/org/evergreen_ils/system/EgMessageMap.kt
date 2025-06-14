@@ -45,7 +45,7 @@ object EgMessageMap {
     }
 
     // load string map from json resource
-    private fun loadStringMap(resources: Resources, resourceId: Int): MutableMap<String, String> {
+    private fun loadStringMap(resources: Resources, resourceId: Int): Map<String, String> {
         val map = mutableMapOf<String, String>()
         val inputStream = resources.openRawResource(resourceId)
         val contents = inputStream.bufferedReader().use { it.readText() }

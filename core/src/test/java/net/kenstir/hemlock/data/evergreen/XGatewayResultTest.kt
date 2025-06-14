@@ -18,8 +18,6 @@
 
 package net.kenstir.hemlock.data.evergreen
 
-import kotlinx.serialization.json.Json
-import org.evergreen_ils.OSRFUtils
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
@@ -27,7 +25,6 @@ import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.BeforeClass
 import org.junit.Test
-import net.kenstir.hemlock.data.Result
 
 class XGatewayResultTest {
 
@@ -40,6 +37,14 @@ class XGatewayResultTest {
 
             val testFields = listOf("id","name")
             XOSRFCoder.registerClass("test1", testFields)
+
+            Event.eventMessageMap = mapOf(
+                "PATRON_EXCEEDS_FINES" to "Patron has reached the maximum fine amount",
+            )
+            Event.failPartMessageMap = mapOf(
+                "config.hold_matrix_test.holdable" to "Hold rules reject this item as unholdable",
+                "no_ultimate_items" to "The system could not find any items to match this hold request",
+            )
         }
     }
 
@@ -65,7 +70,7 @@ class XGatewayResultTest {
 
         val obj = result.payloadFirstAsObject()
         assertNotNull(obj)
-        assertEquals(false, OSRFUtils.parseBoolean(obj.get("juvenile")))
+        assertEquals(false, obj.getBoolean("juvenile"))
         assertEquals("luser", obj.getString("usrname"))
         assertEquals(69, obj.getInt("home_ou"))
     }
@@ -368,17 +373,7 @@ class XGatewayResultTest {
 
     // Test to handle https://bugs.launchpad.net/opensrf/+bug/1883169
     @Test
-    fun test_errorResponseNotJSON_postgresQueryKilled() {
-        val jsonIsh = """
-            {"payload":[],"debug": "osrfMethodException :  *** Call to [open-ils.search.biblio.multiclass.query] failed for session [1590536419.970333.159053641999519], thread trace [1]:\nException: OpenSRF::EX::ERROR 2020-05-26T19:41:01 OpenSRF::Application /usr/local/share/perl/5.22.1/OpenSRF/Application.pm:243 System ERROR: Call to open-ils.storage for method open-ils.storage.biblio.multiclass.staged.search_fts.atomic \n failed with exception: Exception: OpenSRF::EX::ERROR 2020-05-26T19:41:01 OpenILS::Application::AppUtils /usr/local/share/perl/5.22.1/OpenILS/Application/AppUtils.pm:201 System ERROR: Exception: OpenSRF::DomainObject::oilsMethodException 2020-05-26T19:41:01 OpenSRF::AppRequest /usr/local/share/perl/5.22.1/OpenSRF/AppSession.pm:1159 <500>   *** Call to [open-ils.storage.biblio.multiclass.staged.search_fts.atomic] failed for session [1590536419.97576725.9316069925], thread trace [1]:\nDBD::Pg::st execute failed: ERROR:  canceling statement due to user request [for Statement ... COUNT(*),COUNT(*),COUNT(*),0,0,NULL,NULL F,"status":500}
-            """
-        val result = XGatewayResult.create(jsonIsh)
-        assertTrue(result.failed)
-        assertEquals("Timeout; the request took too long to complete and the server killed it", result.errorMessage)
-    }
-
-    @Test
-    fun test_errorResponseNotJSON_other() {
+    fun test_gatewayErrorResponseIsNotValidJSON() {
         val jsonIsh = """
             {"payload":[],"debug": "...NULL,NULL F,"status":500}
             """

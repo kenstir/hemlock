@@ -80,13 +80,13 @@ class XOSRFCoder(val netClass: String, val fields: List<String>) {
             if (element.containsKey("__c") && element.containsKey("__p")) {
                 // wire protocol object
                 val netClass = element["__c"]?.jsonPrimitive?.content
-                    ?: throw XDecodingException("missing __c field in wire protocol object")
+                    ?: throw XDecodingException("Missing __c field in wire protocol object")
                 val coder = getCoder(netClass)
-                    ?: throw XDecodingException("unregistered class: $netClass")
+                    ?: throw XDecodingException("Unregistered class: $netClass")
                 val values = element["__p"]?.jsonArray
-                    ?: throw XDecodingException("missing __p field in wire protocol object")
+                    ?: throw XDecodingException("Missing __p field in wire protocol object")
                 if (values.size != coder.fields.size) {
-                    throw XDecodingException("field count mismatch for class $netClass (expected ${coder.fields.size}, got ${values.size})")
+                    throw XDecodingException("Field count mismatch for class $netClass (expected ${coder.fields.size}, got ${values.size})")
                 }
                 val map = HashMap<String, Any?>(coder.fields.size)
                 for (i in coder.fields.indices) {
@@ -94,8 +94,8 @@ class XOSRFCoder(val netClass: String, val fields: List<String>) {
                 }
                 return XOSRFObject(map, netClass)
             } else {
-                // regular object
-                return element.mapValues { decodeElement(it.value) }
+                // regular object, return OSRFObject for compatibility with old code
+                return XOSRFObject(element.mapValues { decodeElement(it.value) })
             }
         }
 

@@ -22,8 +22,8 @@ package org.evergreen_ils.data
 
 import android.annotation.SuppressLint
 import android.content.res.Resources
-import org.evergreen_ils.HOLD_TYPE_METARECORD
-import org.evergreen_ils.OSRFUtils
+import net.kenstir.hemlock.data.evergreen.HOLD_TYPE_METARECORD
+import net.kenstir.hemlock.data.evergreen.OSRFUtils
 import net.kenstir.hemlock.R
 import org.evergreen_ils.utils.JsonUtils.parseObject
 import org.evergreen_ils.utils.JsonUtils.parseHoldableFormats

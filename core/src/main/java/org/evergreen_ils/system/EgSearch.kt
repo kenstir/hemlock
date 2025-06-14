@@ -21,7 +21,7 @@
 package org.evergreen_ils.system
 
 import android.text.TextUtils
-import org.evergreen_ils.OSRFUtils
+import net.kenstir.hemlock.data.evergreen.OSRFUtils
 import org.evergreen_ils.data.Organization
 import org.evergreen_ils.data.MBRecord
 import org.opensrf.util.OSRFObject

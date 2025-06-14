@@ -89,7 +89,7 @@ class XOSRFCoderTests {
         assertTrue(res.isFailure)
         val ex = res.exceptionOrNull()
         println("Exception:    $ex")
-        assertEquals("unregistered class: test", ex?.message)
+        assertEquals("Unregistered class: test", ex?.message)
     }
 
     // Case: decode an OSRF object from an empty object
@@ -145,11 +145,12 @@ class XOSRFCoderTests {
         println("Decoded:      $decodedPayload")
 
         assertEquals(1, decodedPayload.size)
-        val listOfFines = decodedPayload[0] as? List<*>
-        val firstItem = listOfFines?.get(0) as? JSONDictionary
-        val transactionObj = firstItem?.get("transaction") as? XOSRFObject
-        assertNotNull(transactionObj)
-        assertEquals("1.15", transactionObj?.getString("balance_owed"))
+        val fines = decodedPayload.firstOrNull() as? List<XOSRFObject>
+        assertEquals(2, fines?.size)
+        val firstFine = fines?.get(0)
+        assertEquals("circ", firstFine?.getObject("circ")?.netClass ?: "")
+        val secondFine = fines?.get(1)
+        assertNull(secondFine?.getObject("circ"))
     }
 
     // Case: decode a recursive object from wire protocol

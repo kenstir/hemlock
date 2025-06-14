@@ -18,7 +18,7 @@
 
 package org.evergreen_ils.net
 
-import org.evergreen_ils.Api
+import net.kenstir.hemlock.data.evergreen.Api
 import net.kenstir.hemlock.data.Result
 import net.kenstir.hemlock.data.jsonMapOf
 import org.opensrf.util.OSRFObject

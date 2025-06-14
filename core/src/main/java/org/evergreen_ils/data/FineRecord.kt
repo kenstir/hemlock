@@ -20,7 +20,7 @@
 package org.evergreen_ils.data
 
 import net.kenstir.hemlock.data.JSONDictionary
-import org.evergreen_ils.OSRFUtils
+import net.kenstir.hemlock.data.evergreen.OSRFUtils
 import org.evergreen_ils.android.Log
 import org.opensrf.util.OSRFObject
 import java.util.*
@@ -67,7 +67,7 @@ class FineRecord(circ: OSRFObject?, val mvrObj: OSRFObject?, mbtsObj: OSRFObject
         @JvmStatic
         fun makeArray(payload: List<Any>): List<FineRecord> {
             val ret = mutableListOf<FineRecord>()
-            val records = payload as? List<JSONDictionary>
+            val records = payload as? List<JSONDictionary> // TODO X: use XOSRFObject instead of JSONDictionary
             if (records != null) {
                 for (item in records) {
                     val mbts = item["transaction"] as? OSRFObject ?: continue

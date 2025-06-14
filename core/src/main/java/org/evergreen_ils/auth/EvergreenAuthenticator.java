@@ -6,7 +6,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.evergreen_ils.Api;
+import net.kenstir.hemlock.data.evergreen.Api;
 import org.evergreen_ils.android.Analytics;
 import org.evergreen_ils.android.Log;
 import org.opensrf.Method;
