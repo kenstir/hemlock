@@ -22,7 +22,6 @@ import kotlinx.serialization.SerializationException
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonArray
 import net.kenstir.hemlock.data.JSONDictionary
-import org.opensrf.util.GatewayResult
 
 class XGatewayResult {
     enum class ResultType {
@@ -42,7 +41,6 @@ class XGatewayResult {
         get() = (!failed && type != ResultType.EMPTY)
 
     private var error: GatewayError? = null
-    private var events: List<Event>? = null
     private var type: ResultType = ResultType.UNKNOWN
 
     private constructor()
@@ -156,8 +154,9 @@ class XGatewayResult {
                             resp.failed = true
                             resp.errorMessage = event.message
                             resp.error = GatewayEventError(event)
-                            resp.events = listOf(event)
-                            resp.type = ResultType.ERROR
+                            resp.type = ResultType.EVENT
+                        } else {
+                            resp.type = ResultType.OBJECT
                         }
                     }
                     is List<*> -> {
@@ -168,9 +167,16 @@ class XGatewayResult {
                             resp.failed = true
                             resp.errorMessage = event.message
                             resp.error = GatewayEventError(event)
-                            resp.events = listOf(event)
-                            resp.type = ResultType.ERROR
+                            resp.type = ResultType.EVENT
+                        } else {
+                            resp.type = ResultType.ARRAY
                         }
+                    }
+                    is String -> {
+                        resp.type = ResultType.STRING
+                    }
+                    else -> {
+                        resp.type = ResultType.UNKNOWN
                     }
                 }
                 return resp
