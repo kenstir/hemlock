@@ -24,6 +24,7 @@ import io.ktor.client.request.get
 import io.ktor.client.statement.bodyAsText
 import kotlinx.coroutines.test.runTest
 import net.kenstir.hemlock.data.evergreen.XGatewayClient
+import net.kenstir.hemlock.data.evergreen.paramListOf
 import org.junit.BeforeClass
 import org.junit.Test
 
@@ -51,7 +52,7 @@ class KtorTest {
 
     @Test
     fun test_fetchServerVersion() = runTest {
-        val url = XGatewayClient.buildUrl("open-ils.actor", "opensrf.open-ils.system.ils_version", arrayOf())
+        val url = XGatewayClient.buildUrl("open-ils.actor", "opensrf.open-ils.system.ils_version", paramListOf())
 
         val response1 = cachingClient.get(url)
         println("try1: $response1")

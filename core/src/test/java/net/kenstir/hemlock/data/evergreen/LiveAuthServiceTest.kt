@@ -19,7 +19,9 @@ package net.kenstir.hemlock.data.evergreen
 
 import kotlinx.coroutines.test.runTest
 import net.kenstir.hemlock.data.AuthService
+import net.kenstir.hemlock.data.Result
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
 import org.junit.BeforeClass
@@ -28,14 +30,13 @@ import org.junit.Test
 class LiveAuthServiceTest {
     companion object {
         val authService = EvergreenAuthService()
+        val testServer = getRequiredProperty("testEvergreenServer")
+        val testUsername = getRequiredProperty("testEvergreenUsername")
+        val testPassword = getRequiredProperty("testEvergreenPassword")
 
         @JvmStatic
         @BeforeClass
         fun setUpClass() {
-            val testServer = getRequiredProperty("testEvergreenServer")
-            val testUsername = getRequiredProperty("testEvergreenUsername")
-            val testPassword = getRequiredProperty("testEvergreenPassword")
-
             XGatewayClient.baseUrl = testServer
         }
 
@@ -51,6 +52,16 @@ class LiveAuthServiceTest {
          assertTrue(result.succeeded)
 
          val version = result.get()
-         assertNotNull(version)
+         assertNotEquals("", version)
      }
+
+    @Test
+    fun test_login() = runTest {
+        val result = authService.login(testUsername, testPassword)
+        println("Result: $result")
+        assertTrue(result.succeeded)
+
+        val authToken = result.get()
+        assertTrue(authToken.isNotEmpty())
+    }
 }

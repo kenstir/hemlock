@@ -17,9 +17,7 @@
 
 package net.kenstir.hemlock.data.evergreen
 
-import android.net.Uri
 import io.ktor.client.*
-import io.ktor.client.call.body
 import io.ktor.client.engine.cio.*
 import io.ktor.client.request.*
 import io.ktor.client.plugins.contentnegotiation.*
@@ -28,6 +26,7 @@ import io.ktor.http.ContentType
 import io.ktor.serialization.kotlinx.json.*
 import kotlinx.serialization.json.Json
 import net.kenstir.hemlock.data.RequestOptions
+import java.net.URLEncoder
 
 private const val INITIAL_URL_SIZE = 128
 
@@ -55,13 +54,13 @@ object XGatewayClient {
         }
     }
 
-    fun buildQuery(service: String?, method: String?, params: Array<Any?>, addCacheArgs: Boolean = true): String {
+    fun buildQuery(service: String?, method: String?, params: List<GatewayParam>, addCacheArgs: Boolean = true): String {
         val sb = StringBuilder(INITIAL_URL_SIZE)
         sb.append("service=").append(service)
         sb.append("&method=").append(method)
         for (param in params) {
             sb.append("&param=")
-            sb.append(Uri.encode(Json.encodeToString(param), "UTF-8"))
+            sb.append(URLEncoder.encode(Json.encodeToString(param), "UTF-8"))
         }
 
         if (addCacheArgs) {
@@ -72,9 +71,9 @@ object XGatewayClient {
         return sb.toString()
     }
 
-    fun buildUrl(service: String, method: String, args: Array<Any?>, addCacheArgs: Boolean = true): String {
+    fun buildUrl(service: String, method: String, params: List<GatewayParam>, addCacheArgs: Boolean = true): String {
         return baseUrl.plus(GATEWAY_PATH).plus("?").plus(
-            buildQuery(service, method, args, addCacheArgs)
+            buildQuery(service, method, params, addCacheArgs)
         )
     }
 
@@ -82,12 +81,12 @@ object XGatewayClient {
         return baseUrl.plus(relativeUrl)
     }
 
-    suspend fun fetch(service: String, method: String, args: Array<Any?>, shouldCache: Boolean): String {
-        return fetch(service, method, args, RequestOptions(defaultTimeoutMs, shouldCache, true))
+    suspend fun fetch(service: String, method: String, params: List<GatewayParam>, shouldCache: Boolean): String {
+        return fetch(service, method, params, RequestOptions(defaultTimeoutMs, shouldCache, true))
     }
 
-    suspend fun fetch(service: String, method: String, args: Array<Any?>, options: RequestOptions): String {
-        val url = buildUrl(service, method, args, options.shouldCache)
+    suspend fun fetch(service: String, method: String, params: List<GatewayParam>, options: RequestOptions): String {
+        val url = buildUrl(service, method, params, options.shouldCache)
         return client.get(url).bodyAsText()
     }
 }
