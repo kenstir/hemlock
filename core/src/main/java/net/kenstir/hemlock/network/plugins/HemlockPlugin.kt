@@ -60,5 +60,14 @@ val HemlockPlugin = createClientPlugin("HemlockPlugin") {
 // function to check if the response was cached
 // We infer that a response was cached if the `onResponse` hook was not called
 fun isCached(response: HttpResponse): Boolean {
-    return !response.call.attributes.contains(HemlockPluginAttributeKeys.recvTimeKey)
+    return !response.call.attributes.contains(recvTimeKey)
+}
+
+fun elapsedTime(response: HttpResponse): Long {
+    if (!response.call.attributes.contains(recvTimeKey)) {
+        return 0
+    }
+    val recvTime = response.call.attributes[recvTimeKey]
+    val sentTime = response.call.attributes[sentTimeKey]
+    return recvTime - sentTime
 }
