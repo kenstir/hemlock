@@ -26,6 +26,7 @@ import io.ktor.client.plugins.logging.Logging
 import io.ktor.client.plugins.logging.SIMPLE
 import io.ktor.client.request.get
 import kotlinx.coroutines.test.runTest
+import net.kenstir.hemlock.data.evergreen.Api
 import net.kenstir.hemlock.data.evergreen.XGatewayClient
 import net.kenstir.hemlock.data.evergreen.paramListOf
 import net.kenstir.hemlock.network.plugins.HemlockPlugin
@@ -70,8 +71,9 @@ class KtorTest {
     }
 
     @Test
-    fun test_fetchServerVersion() = runTest {
-        val url = XGatewayClient.buildUrl("open-ils.actor", "opensrf.open-ils.system.ils_version", paramListOf())
+    fun test_get_withCaching() = runTest {
+//        val url = XGatewayClient.buildUrl("open-ils.actor", "opensrf.open-ils.system.ils_version", paramListOf())
+        val url = XGatewayClient.buildUrl(Api.ACTOR, Api.ORG_UNIT_RETRIEVE, paramListOf(Api.ANONYMOUS, 1))
 
         val response1 = cachingClient.get(url)
         println("try1: $response1")

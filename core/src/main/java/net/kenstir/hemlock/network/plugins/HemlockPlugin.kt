@@ -20,15 +20,18 @@ package net.kenstir.hemlock.network.plugins
 import io.ktor.client.plugins.api.*
 import io.ktor.client.statement.HttpResponse
 import io.ktor.util.*
+import net.kenstir.hemlock.network.plugins.HemlockPluginAttributeKeys.recvTimeKey
 import net.kenstir.hemlock.network.plugins.HemlockPluginAttributeKeys.sentTimeKey
 
 object HemlockPluginKeys {
-    val onResponse = "h.onResponse"
+    //val onResponse = "h.onResponse"
+    val recvTime = "h.recvTime"
     val sentTime = "h.sentTime"
 }
 
 object HemlockPluginAttributeKeys {
-    val onResponseKey = AttributeKey<Boolean>(HemlockPluginKeys.onResponse)
+    //val onResponseKey = AttributeKey<Boolean>(HemlockPluginKeys.onResponse)
+    val recvTimeKey = AttributeKey<Long>(HemlockPluginKeys.recvTime)
     val sentTimeKey = AttributeKey<Long>(HemlockPluginKeys.sentTime)
 }
 
@@ -36,26 +39,26 @@ val HemlockPlugin = createClientPlugin("HemlockPlugin") {
 
     onRequest { request, _ ->
         val now = System.currentTimeMillis()
-        println("%.3f: onRequest: ${request.url}".format(now.toDouble() / 1000))
+        println("%.3f: onRequest: %s".format(now.toDouble() / 1000, request.url))
     }
 
     on(SendingRequest) { request, content ->
         val now = System.currentTimeMillis()
         request.attributes.put(sentTimeKey, now)
-        println("%.3f: send: ${request.url} with content length ${content.contentLength ?: "unknown"} bytes".format(now.toDouble() / 1000))
+        println("%.3f: send: %s with content length ${content.contentLength ?: "unknown"} bytes".format(now.toDouble() / 1000, request.url))
     }
 
     onResponse { response ->
-        response.call.attributes.put(HemlockPluginAttributeKeys.onResponseKey, true)
-        val sent = response.call.attributes[sentTimeKey]
         val now = System.currentTimeMillis()
+        response.call.attributes.put(recvTimeKey, now)
+        val sent = response.call.attributes[sentTimeKey]
         val elapsed = now - sent
-        println("%.3f: recv: ${response.call.request.url} with status ${response.status.value} in ${elapsed}ms".format(now.toDouble() / 1000))
+        println("%.3f: recv: %s with status ${response.status.value} in ${elapsed}ms".format(now.toDouble() / 1000, response.call.request.url))
     }
 }
 
-// extension function to check if the response was cached
+// function to check if the response was cached
 // We infer that a response was cached if the `onResponse` hook was not called
 fun isCached(response: HttpResponse): Boolean {
-    return !response.call.attributes.contains(HemlockPluginAttributeKeys.onResponseKey)
+    return !response.call.attributes.contains(HemlockPluginAttributeKeys.recvTimeKey)
 }
