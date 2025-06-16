@@ -54,7 +54,7 @@ object XGatewayClient {
         }
     }
 
-    fun buildQuery(service: String?, method: String?, params: List<GatewayParam>, addCacheArgs: Boolean = true): String {
+    fun buildQuery(service: String?, method: String?, params: List<GatewayParam>, addCacheParams: Boolean = true): String {
         val sb = StringBuilder(INITIAL_URL_SIZE)
         sb.append("service=").append(service)
         sb.append("&method=").append(method)
@@ -63,7 +63,7 @@ object XGatewayClient {
             sb.append(URLEncoder.encode(Json.encodeToString(param), "UTF-8"))
         }
 
-        if (addCacheArgs) {
+        if (addCacheParams) {
             sb.append("&_ck=").append(clientCacheKey)
             sb.append("&_sk=").append(serverCacheKey)
         }
@@ -71,10 +71,14 @@ object XGatewayClient {
         return sb.toString()
     }
 
-    fun buildUrl(service: String, method: String, params: List<GatewayParam>, addCacheArgs: Boolean = true): String {
+    fun buildUrl(service: String, method: String, params: List<GatewayParam>, addCacheParams: Boolean = true): String {
         return baseUrl.plus(GATEWAY_PATH).plus("?").plus(
-            buildQuery(service, method, params, addCacheArgs)
+            buildQuery(service, method, params, addCacheParams)
         )
+    }
+
+    fun gatewayUrl(): String {
+        return baseUrl.plus(GATEWAY_PATH)
     }
 
     fun getUrl(relativeUrl: String): String {
