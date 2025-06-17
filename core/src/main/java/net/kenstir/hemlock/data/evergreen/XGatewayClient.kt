@@ -22,8 +22,6 @@ import io.ktor.client.engine.cio.*
 import io.ktor.client.plugins.cache.HttpCache
 import io.ktor.client.request.*
 import io.ktor.client.plugins.contentnegotiation.*
-import io.ktor.client.statement.HttpResponse
-import io.ktor.client.statement.bodyAsText
 import io.ktor.http.ContentType
 import io.ktor.http.contentType
 import io.ktor.serialization.kotlinx.json.*
@@ -93,17 +91,17 @@ object XGatewayClient {
         return baseUrl.plus(relativeUrl)
     }
 
-    suspend fun fetch(service: String, method: String, params: List<GatewayParam>, shouldCache: Boolean): XGatewayHttpResponse {
+    suspend fun fetch(service: String, method: String, params: List<GatewayParam>, shouldCache: Boolean): GatewayResponse {
         return fetch(service, method, params, RequestOptions(defaultTimeoutMs, shouldCache, true))
     }
 
-    suspend fun fetch(service: String, method: String, params: List<GatewayParam>, options: RequestOptions): XGatewayHttpResponse {
+    suspend fun fetch(service: String, method: String, params: List<GatewayParam>, options: RequestOptions): GatewayResponse {
         if (options.shouldCache) {
             val url = buildUrl(service, method, params, options.shouldCache)
-            return XGatewayHttpResponse(client.get(url))
+            return GatewayResponse(client.get(url))
         } else {
             val body = buildQuery(service, method, params, options.shouldCache)
-            return XGatewayHttpResponse(client.post(gatewayUrl()) {
+            return GatewayResponse(client.post(gatewayUrl()) {
                 setBody(body)
                 contentType(ContentType.Application.FormUrlEncoded)
             })

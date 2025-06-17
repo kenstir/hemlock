@@ -99,6 +99,11 @@ private fun parseOrgBoolSetting(obj: OSRFObject, setting: String): Boolean? {
     return valueObj?.getBoolean("value")
 }
 
+private fun parseOrgBoolSetting(obj: XOSRFObject, setting: String): Boolean? {
+    val valueObj = obj.getObject(setting)
+    return valueObj?.getBoolean("value")
+}
+
 fun parseOrgStringSetting(obj: OSRFObject, setting: String): String? {
     val valueObj = obj.getObject(setting)
     return valueObj?.getString("value")
