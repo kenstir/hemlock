@@ -54,8 +54,6 @@ class KtorTest {
         @BeforeClass
         fun setUpClass() {
             val testServer = getRequiredProperty("testEvergreenServer")
-            val testUsername = getRequiredProperty("testEvergreenUsername")
-            val testPassword = getRequiredProperty("testEvergreenPassword")
 
             XGatewayClient.baseUrl = testServer
             XGatewayClient.clientCacheKey = System.currentTimeMillis().toString()

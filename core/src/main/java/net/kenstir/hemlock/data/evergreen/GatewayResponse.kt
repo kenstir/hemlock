@@ -22,7 +22,7 @@ import io.ktor.client.statement.bodyAsText
 import net.kenstir.hemlock.network.plugins.elapsedTime
 import net.kenstir.hemlock.network.plugins.isCached
 
-class XGatewayHttpResponse(val response: HttpResponse) {
+class GatewayResponse(val response: HttpResponse) {
     val isCached: Boolean
         get() = isCached(response)
 
@@ -32,4 +32,14 @@ class XGatewayHttpResponse(val response: HttpResponse) {
     suspend fun bodyAsText(): String {
         return response.bodyAsText()
     }
+}
+
+suspend fun GatewayResponse.payloadFirstAsObject(): XOSRFObject {
+    val json = bodyAsText()
+    return XGatewayResult.create(json).payloadFirstAsObject()
+}
+
+suspend fun GatewayResponse.payloadFirstAsString(): String {
+    val json = bodyAsText()
+    return XGatewayResult.create(json).payloadFirstAsString()
 }
