@@ -18,6 +18,7 @@
 package org.evergreen_ils.data
 
 import net.kenstir.hemlock.data.evergreen.Api
+import net.kenstir.hemlock.data.evergreen.XOSRFObject
 import org.evergreen_ils.system.EgOrg
 import org.opensrf.util.OSRFObject
 
@@ -99,6 +100,11 @@ private fun parseOrgBoolSetting(obj: OSRFObject, setting: String): Boolean? {
 }
 
 fun parseOrgStringSetting(obj: OSRFObject, setting: String): String? {
+    val valueObj = obj.getObject(setting)
+    return valueObj?.getString("value")
+}
+
+fun parseOrgStringSetting(obj: XOSRFObject, setting: String): String? {
     val valueObj = obj.getObject(setting)
     return valueObj?.getString("value")
 }
