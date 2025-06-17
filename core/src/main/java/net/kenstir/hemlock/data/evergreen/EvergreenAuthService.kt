@@ -26,7 +26,7 @@ class EvergreenAuthService: AuthService {
     override suspend fun fetchServerVersion(): Result<String> {
         return try {
             // shouldCache=false because this result is used as a cache-busting param
-            val json = XGatewayClient.fetch(Api.ACTOR, Api.ILS_VERSION, paramListOf(), false)
+            val json = XGatewayClient.fetch(Api.ACTOR, Api.ILS_VERSION, paramListOf(), false).bodyAsText()
             val ret = XGatewayResult.create(json).payloadFirstAsString()
             Result.Success(ret)
         } catch (e: Exception) {
@@ -38,7 +38,7 @@ class EvergreenAuthService: AuthService {
 //        return Result.Success("AuthToken12345")
         return try {
             // step 1: get seed
-            val json = XGatewayClient.fetch(Api.AUTH, Api.AUTH_INIT, paramListOf(username), false)
+            val json = XGatewayClient.fetch(Api.AUTH, Api.AUTH_INIT, paramListOf(username), false).bodyAsText()
             println("recv: $json")
             val seed = XGatewayResult.create(json).payloadFirstAsString()
             Result.Success(seed)
@@ -49,7 +49,7 @@ class EvergreenAuthService: AuthService {
                 "username" to username,
                 "password" to md5(seed + md5(password))
             )
-            val json2 = XGatewayClient.fetch(Api.AUTH, Api.AUTH_COMPLETE, paramListOf(authParams), false)
+            val json2 = XGatewayClient.fetch(Api.AUTH, Api.AUTH_COMPLETE, paramListOf(authParams), false).bodyAsText()
             println("recv: $json2")
 
             // step 3: get authtoken from response
