@@ -25,28 +25,29 @@ import kotlinx.serialization.encoding.*
 import kotlinx.serialization.json.*
 import net.kenstir.hemlock.data.jsonArrayOrNull
 
-@Serializable(with = XGatewayResponseSerializer::class)
-data class XGatewayResponse(
+/** internal data object to facilitate deserialization of the raw gateway response body */
+@Serializable(with = GatewayResponseContentSerializer::class)
+data class GatewayResponseContent(
     val payload: JsonArray,
     val debug: String = "",
     val status: Int = 200,
 )
 
-object XGatewayResponseSerializer : KSerializer<XGatewayResponse> {
+object GatewayResponseContentSerializer : KSerializer<GatewayResponseContent> {
     override val descriptor: SerialDescriptor = buildClassSerialDescriptor("XGatewayResponse") {
         element<JsonArray>("payload")
         element<JsonElement>("debug", isOptional = true)
         element<Int>("status", isOptional = true) // optional to make testing easier
     }
 
-    override fun serialize(encoder: Encoder, value: XGatewayResponse) {
+    override fun serialize(encoder: Encoder, value: GatewayResponseContent) {
         val composite = encoder.beginStructure(descriptor)
         composite.encodeSerializableElement(descriptor, 0, JsonElement.serializer(), value.payload)
         composite.encodeIntElement(descriptor, 1, value.status)
         composite.endStructure(descriptor)
     }
 
-    override fun deserialize(decoder: Decoder): XGatewayResponse {
+    override fun deserialize(decoder: Decoder): GatewayResponseContent {
         val dec = decoder.beginStructure(descriptor)
         var payload: JsonArray? = null
         var debug = ""
@@ -65,6 +66,6 @@ object XGatewayResponseSerializer : KSerializer<XGatewayResponse> {
             }
         }
         dec.endStructure(descriptor)
-        return XGatewayResponse(payload ?: throw SerializationException("missing payload"), debug, status)
+        return GatewayResponseContent(payload ?: throw SerializationException("missing payload"), debug, status)
     }
 }

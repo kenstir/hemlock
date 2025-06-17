@@ -19,7 +19,7 @@
 package org.evergreen_ils.test
 
 import kotlinx.serialization.json.Json
-import net.kenstir.hemlock.data.evergreen.XGatewayResponse
+import net.kenstir.hemlock.data.evergreen.GatewayResponseContent
 import net.kenstir.hemlock.data.evergreen.XOSRFCoder
 import org.junit.Assert.assertNotNull
 import org.junit.Before
@@ -56,7 +56,7 @@ class JSONReaderTest {
     fun test_perf_kotlinreader() {
         val json = gapines_org_tree_json
         for (i in 0 until iterations) {
-            val resp = Json.decodeFromString<XGatewayResponse>(json)
+            val resp = Json.decodeFromString<GatewayResponseContent>(json)
             val list = XOSRFCoder.decodePayload(resp.payload)
             assertNotNull(list)
         }

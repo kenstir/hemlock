@@ -19,6 +19,7 @@ package net.kenstir.hemlock.data
 
 interface AuthService {
     suspend fun fetchServerVersion(): Result<String>
+    suspend fun fetchServerCacheKey(): Result<String?>
     suspend fun login(username: String, password: String): Result<String>
     suspend fun logout(authToken: String): Result<Unit>
 }
