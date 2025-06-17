@@ -19,13 +19,17 @@ package net.kenstir.hemlock.data.evergreen
 
 import io.ktor.client.*
 import io.ktor.client.engine.cio.*
+import io.ktor.client.plugins.cache.HttpCache
 import io.ktor.client.request.*
 import io.ktor.client.plugins.contentnegotiation.*
+import io.ktor.client.statement.HttpResponse
 import io.ktor.client.statement.bodyAsText
 import io.ktor.http.ContentType
+import io.ktor.http.contentType
 import io.ktor.serialization.kotlinx.json.*
 import kotlinx.serialization.json.Json
 import net.kenstir.hemlock.data.RequestOptions
+import net.kenstir.hemlock.network.plugins.HemlockPlugin
 import java.net.URLEncoder
 
 private const val INITIAL_URL_SIZE = 128
@@ -45,13 +49,17 @@ object XGatewayClient {
     private const val GATEWAY_PATH = "/osrf-gateway-v1"
     const val defaultTimeoutMs = 30_000
 
-    private val client = HttpClient(CIO) {
+    val client = HttpClient(CIO) {
         install(ContentNegotiation) {
             json(
                 Json { ignoreUnknownKeys = true },
                 contentType = ContentType.Any
             )
         }
+        install(HttpCache) {
+            // TODO: configure caching options
+        }
+        install(HemlockPlugin)
     }
 
     fun buildQuery(service: String?, method: String?, params: List<GatewayParam>, addCacheParams: Boolean = true): String {
@@ -85,12 +93,20 @@ object XGatewayClient {
         return baseUrl.plus(relativeUrl)
     }
 
-    suspend fun fetch(service: String, method: String, params: List<GatewayParam>, shouldCache: Boolean): String {
+    suspend fun fetch(service: String, method: String, params: List<GatewayParam>, shouldCache: Boolean): XGatewayHttpResponse {
         return fetch(service, method, params, RequestOptions(defaultTimeoutMs, shouldCache, true))
     }
 
-    suspend fun fetch(service: String, method: String, params: List<GatewayParam>, options: RequestOptions): String {
-        val url = buildUrl(service, method, params, options.shouldCache)
-        return client.get(url).bodyAsText()
+    suspend fun fetch(service: String, method: String, params: List<GatewayParam>, options: RequestOptions): XGatewayHttpResponse {
+        if (options.shouldCache) {
+            val url = buildUrl(service, method, params, options.shouldCache)
+            return XGatewayHttpResponse(client.get(url))
+        } else {
+            val body = buildQuery(service, method, params, options.shouldCache)
+            return XGatewayHttpResponse(client.post(gatewayUrl()) {
+                setBody(body)
+                contentType(ContentType.Application.FormUrlEncoded)
+            })
+        }
     }
 }
