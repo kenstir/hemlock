@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 Kenneth H. Cox
+ * Copyright (c) 2025 Kenneth H. Cox
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -12,26 +12,22 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ * along with this program; if not, see <https://www.gnu.org/licenses/>.
  */
 
-package org.evergreen_ils.data
+package net.kenstir.hemlock.data.models
 
 import androidx.core.os.bundleOf
-import net.kenstir.hemlock.data.evergreen.Api
-import net.kenstir.hemlock.data.evergreen.OSRFUtils
 import org.evergreen_ils.android.Analytics
 import net.kenstir.hemlock.data.evergreen.GatewayEventError
+import org.evergreen_ils.data.BookBag
 import org.opensrf.util.OSRFObject
 import java.text.DateFormat
 import java.util.Date
 
-private const val TAG = "Account"
-
 data class AccountCredentials(val authToken: String, val id: Int)
 
-class Account constructor(val username: String, var authToken: String?) {
+open class Account(val username: String, var authToken: String?) {
     constructor(username: String) : this(username, null)
 
     var id: Int? = null
@@ -50,12 +46,12 @@ class Account constructor(val username: String, var authToken: String?) {
 
     var bookBags = ArrayList<BookBag>()
 
-    private var dayPhone: String? = null
-    private var firstGivenName: String? = null
-    private var familyName: String? = null
-    private var notifyPhoneNumber: String? = null
-    private var _pickupOrg: Int? = null
-    private var _searchOrg: Int? = null
+    protected var dayPhone: String? = null
+    protected var firstGivenName: String? = null
+    protected var familyName: String? = null
+    protected var notifyPhoneNumber: String? = null
+    protected var _pickupOrg: Int? = null
+    protected var _searchOrg: Int? = null
 
     val phoneNumber: String?
         get() = notifyPhoneNumber ?: dayPhone
@@ -88,42 +84,8 @@ class Account constructor(val username: String, var authToken: String?) {
         authToken = null
     }
 
-    fun loadSession(obj: OSRFObject) {
-        id = obj.getInt("id")
-        homeOrg = obj.getInt("home_ou")
-        dayPhone = obj.getString("day_phone")
-        firstGivenName = obj.getString("pref_first_given_name") ?: obj.getString("first_given_name")
-        familyName = obj.getString("pref_family_name") ?: obj.getString("family_name")
-        expireDate = obj.getDate("expire_date")
-    }
-
-    fun loadFleshedUserSettings(obj: OSRFObject) {
-        barcode = obj.getObject("card")?.getString("barcode")
-
-        // settings is a list of objects with name and value as string;
-        // construct a map of all settings, then parse out the ones we care about
-        val settings = obj.get("settings") as? List<OSRFObject>
-        val map = mutableMapOf<String, String>()
-        settings?.forEach {
-            val name = it.getString("name")
-            val value = it.getString("value")?.removeStupidExtraQuotes()
-            if (name != null && value != null) {
-                map[name] = value
-            }
-        }
-        this._pickupOrg = OSRFUtils.parseInt(map[Api.USER_SETTING_DEFAULT_PICKUP_LOCATION])
-        this.notifyPhoneNumber = map[Api.USER_SETTING_DEFAULT_PHONE]
-        this._searchOrg = OSRFUtils.parseInt(map[Api.USER_SETTING_DEFAULT_SEARCH_LOCATION])
-        this.smsCarrier = OSRFUtils.parseInt(map[Api.USER_SETTING_DEFAULT_SMS_CARRIER])
-        this.smsNumber = map[Api.USER_SETTING_DEFAULT_SMS_NOTIFY]
-        this.holdNotifyValue = map[Api.USER_SETTING_HOLD_NOTIFY] ?: "email:phone"
-        parseHoldNotifyValue(holdNotifyValue)
-        this.circHistoryStart = map[Api.USER_SETTING_CIRC_HISTORY_START]
-        this.savedPushNotificationData = map[Api.USER_SETTING_HEMLOCK_PUSH_NOTIFICATION_DATA]
-        this.savedPushNotificationEnabled = map[Api.USER_SETTING_HEMLOCK_PUSH_NOTIFICATION_ENABLED] == "true"
-    }
-
     fun loadBookBags(objects: List<OSRFObject>) {
+        TODO("refactor to remove dependency on OSRFObject")
         bookBags = BookBag.makeArray(objects)
         Analytics.logEvent(Analytics.Event.BOOKBAGS_LOAD, bundleOf(
             Analytics.Param.NUM_ITEMS to bookBags.size

@@ -40,7 +40,7 @@ import org.evergreen_ils.android.Analytics
 import org.evergreen_ils.android.Analytics.orgDimensionKey
 import org.evergreen_ils.android.App
 import org.evergreen_ils.android.Log
-import org.evergreen_ils.data.Account
+import net.kenstir.hemlock.data.models.Account
 import net.kenstir.hemlock.data.Result
 import net.kenstir.hemlock.data.evergreen.HOLD_TYPE_PART
 import net.kenstir.hemlock.data.evergreen.HOLD_TYPE_TITLE

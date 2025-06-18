@@ -72,7 +72,7 @@ data class XOSRFObject(
     }
 
     fun getDate(key: String): Date? {
-        TODO("not yet implemented")
+        return OSRFUtils.parseDate(getString(key))
     }
 
     fun getAny(key: String): Any? {

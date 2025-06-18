@@ -40,7 +40,7 @@ import org.evergreen_ils.android.Analytics
 import org.evergreen_ils.android.App
 import org.evergreen_ils.android.Log
 import org.evergreen_ils.android.Log.TAG_FCM
-import org.evergreen_ils.data.Account
+import net.kenstir.hemlock.data.models.Account
 import org.evergreen_ils.data.PushNotification
 import net.kenstir.hemlock.data.Result
 import org.evergreen_ils.net.Gateway
@@ -157,8 +157,7 @@ class LaunchActivity : AppCompatActivity() {
         // happens, it is safe to update the UI.
         GlobalScope.launch(Dispatchers.Main) {
             try {
-                val account = getAccount()
-                Log.d(TAG, "[auth] ${account.username} ${account.authToken}")
+                getAccount()
                 mModel.loadServiceData(resources)
             } catch (ex: Exception) {
                 Log.d(TAG, "[auth] caught", ex)
@@ -208,7 +207,7 @@ class LaunchActivity : AppCompatActivity() {
     // Here we use the AccountManager to get an auth token, maybe creating or selecting an
     // account along the way.  We have to do that here and not in a ViewModel because it
     // needs an Activity.
-    private suspend fun getAccount(): Account {
+    private suspend fun getAccount() {
         // get auth token
         val future = AccountUtils.getAuthTokenFuture(this)
         Log.d(TAG, "[auth] getAuthTokenFuture ...")
@@ -228,7 +227,6 @@ class LaunchActivity : AppCompatActivity() {
         App.setLibrary(library)
         val account = Account(result.accountName, result.authToken)
         App.setAccount(account)
-        return account
     }
 
     // Again we have to do this here and not in a ViewModel because it needs an Activity.
@@ -236,7 +234,7 @@ class LaunchActivity : AppCompatActivity() {
         mProgressText?.text = "Starting session"
 
         // authToken zen: try it once and if it fails, invalidate it and try again
-        var sessionResult = fetchSession(account.authTokenOrThrow())
+        var sessionResult = fetchSession(account)
         Log.d(TAG, "[auth] sessionResult.succeeded:${sessionResult.succeeded}")
         if (sessionResult is Result.Error) {
             AccountUtils.invalidateAuthToken(this, account.authToken)
@@ -250,25 +248,14 @@ class LaunchActivity : AppCompatActivity() {
             if (accountManagerResult.accountName.isNullOrEmpty() || accountManagerResult.authToken.isNullOrEmpty())
                 throw Exception(accountManagerResult.failureMessage)
             account.authToken = accountManagerResult.authToken
-            sessionResult = fetchSession(account.authTokenOrThrow())
+            sessionResult = fetchSession(account)
             Log.d(TAG, "[auth] sessionResult.succeeded:${sessionResult.succeeded}")
         }
         when (sessionResult) {
-            is Result.Success -> account.loadSession(sessionResult.data)
+            is Result.Success -> {
+            }
             is Result.Error -> {
                 throw sessionResult.exception
-            }
-        }
-
-        //mProgressText?.text = "Loading account preferences"
-
-        // get user settings
-        val fleshedUserResult = Gateway.actor.fetchFleshedUser(account)
-        when (fleshedUserResult) {
-            is Result.Success ->
-                account.loadFleshedUserSettings(fleshedUserResult.data)
-            is Result.Error -> {
-                throw fleshedUserResult.exception
             }
         }
 
@@ -295,8 +282,10 @@ class LaunchActivity : AppCompatActivity() {
         return true
     }
 
-    private suspend fun fetchSession(authToken: String): Result<OSRFObject> {
+    private suspend fun fetchSession(account: Account): Result<OSRFObject> {
         Log.d(TAG, "[auth] fetchSession ...")
+        val authToken = account.authTokenOrThrow()
+        // TODO: replace with authService.fetchSession
         val result = Gateway.auth.fetchSession(authToken)
         Log.d(TAG, "[auth] fetchSession ... $result")
         return result

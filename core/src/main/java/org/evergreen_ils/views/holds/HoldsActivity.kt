@@ -35,7 +35,7 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.joinAll
 import net.kenstir.hemlock.R
 import org.evergreen_ils.android.App
-import org.evergreen_ils.data.Account
+import net.kenstir.hemlock.data.models.Account
 import org.evergreen_ils.data.HoldRecord
 import net.kenstir.hemlock.data.Result
 import org.evergreen_ils.net.Gateway

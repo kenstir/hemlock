@@ -28,16 +28,14 @@ import android.text.TextUtils;
 import androidx.annotation.Nullable;
 
 import net.kenstir.hemlock.R;
-import org.evergreen_ils.data.Account;
+import net.kenstir.hemlock.data.models.Account;
 import org.evergreen_ils.data.Library;
-import org.evergreen_ils.data.PushNotification;
 import org.evergreen_ils.net.Gateway;
 import org.evergreen_ils.net.Volley;
 import org.evergreen_ils.utils.ui.AppState;
 import org.evergreen_ils.utils.ui.BaseActivity;
 import org.evergreen_ils.views.launch.LaunchActivity;
 import org.evergreen_ils.views.MainActivity;
-import org.evergreen_ils.views.messages.MessagesActivity;
 
 import java.io.File;
 

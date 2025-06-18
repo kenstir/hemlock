@@ -28,7 +28,7 @@ import org.evergreen_ils.android.App
 import org.evergreen_ils.android.Log
 import org.evergreen_ils.android.StdoutLogProvider
 import org.evergreen_ils.auth.EvergreenAuthenticator
-import org.evergreen_ils.data.Account
+import net.kenstir.hemlock.data.models.Account
 import org.evergreen_ils.data.BookBag
 import net.kenstir.hemlock.data.Result
 import org.evergreen_ils.net.*
