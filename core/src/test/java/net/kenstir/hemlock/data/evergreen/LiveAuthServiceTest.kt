@@ -18,11 +18,7 @@
 package net.kenstir.hemlock.data.evergreen
 
 import kotlinx.coroutines.test.runTest
-import net.kenstir.hemlock.data.AuthService
-import net.kenstir.hemlock.data.Result
-import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotEquals
-import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
 import org.junit.BeforeClass
 import org.junit.Test
@@ -56,8 +52,8 @@ class LiveAuthServiceTest {
      }
 
     @Test
-    fun test_login() = runTest {
-        val result = authService.login(testUsername, testPassword)
+    fun test_getAuthToken() = runTest {
+        val result = authService.getAuthToken(testUsername, testPassword)
         println("Result: $result")
         assertTrue(result.succeeded)
 

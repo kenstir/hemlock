@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 Kenneth H. Cox
+ * Copyright (c) 2025 Kenneth H. Cox
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -12,27 +12,25 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ * along with this program; if not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.kenstir.apps.core
+package net.kenstir.hemlock.data.evergreen
 
-import net.kenstir.hemlock.data.evergreen.Api
-import org.evergreen_ils.data.Account
+import net.kenstir.hemlock.data.models.Account
 import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Test
 import org.opensrf.util.OSRFObject
 
-class AccountTest {
+class EvergreenAccountTest {
 
-    var sessionObj = OSRFObject(mapOf<String, Any?>(
+    var sessionObj = XOSRFObject(mapOf<String, Any?>(
             "id" to 42,
             "home_ou" to 69,
             "day_phone" to "508-555-1212"
     ))
-    var cardObj = OSRFObject(mapOf<String, Any?>("barcode" to "1234"))
+    var cardObj = XOSRFObject(mapOf<String, Any?>("barcode" to "1234"))
 
     @Before
     fun setUp() {
@@ -47,7 +45,7 @@ class AccountTest {
 
     @Test
     fun test_loadSession() {
-        val account = Account("hemlock", "636f7666656665")
+        val account = EvergreenAccount("hemlock", "636f7666656665")
         assertEquals("636f7666656665", account.authTokenOrThrow())
 
         account.loadSession(sessionObj)
@@ -61,14 +59,14 @@ class AccountTest {
 
     @Test
     fun test_loadFleshedUserSettings() {
-        val account = Account("hemlock", "636f7666656665")
+        val account = EvergreenAccount("hemlock", "636f7666656665")
         account.loadSession(sessionObj)
 
         val settingsObj = arrayListOf(
                 makeSetting(Api.USER_SETTING_DEFAULT_PHONE, "617-555-1212"),
                 makeSetting(Api.USER_SETTING_HOLD_NOTIFY,"email|sms")
         )
-        val fleshedUserSettingsObj = OSRFObject(mapOf<String, Any?>(
+        val fleshedUserSettingsObj = XOSRFObject(mapOf<String, Any?>(
                 "card" to cardObj,
                 "settings" to settingsObj
         ))

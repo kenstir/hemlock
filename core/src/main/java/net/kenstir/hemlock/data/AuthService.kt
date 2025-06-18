@@ -17,9 +17,13 @@
 
 package net.kenstir.hemlock.data
 
+import net.kenstir.hemlock.data.models.Account
+
 interface AuthService {
     suspend fun fetchServerVersion(): Result<String>
     suspend fun fetchServerCacheKey(): Result<String?>
-    suspend fun login(username: String, password: String): Result<String>
-    suspend fun logout(authToken: String): Result<Unit>
+    suspend fun getAuthToken(username: String, password: String): Result<String>
+    fun makeAccount(username: String, authToken: String): Account
+    suspend fun fetchSession(account: Account): Result<Unit>
+    suspend fun deleteSession(account: Account): Result<Unit>
 }
