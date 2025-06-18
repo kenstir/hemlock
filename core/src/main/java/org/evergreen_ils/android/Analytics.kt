@@ -180,6 +180,15 @@ object Analytics {
     }
 
     @JvmStatic
+    fun logElapsed(tag: String, startTime: Long, debugTag: String, shouldCache: Boolean, msg: String) {
+        val elapsed = System.currentTimeMillis() - startTime
+        val elapsedStr = String.format("%5d ms", elapsed)
+        val badge = if (shouldCache) "cacheable" else "no-store "
+        val logMsg = "[net] $debugTag: $elapsedStr: $badge: $msg"
+        Log.d(tag, logMsg)
+    }
+
+    @JvmStatic
     fun logEvent(event: String, b: Bundle?) {
         if (event.length > 40) {
             if (BuildConfig.DEBUG) throw AssertionError("Event name is too long")

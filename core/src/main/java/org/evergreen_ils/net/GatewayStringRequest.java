@@ -44,6 +44,7 @@ public class GatewayStringRequest extends StringRequest {
     private final int mCacheTtlSeconds;
     protected Boolean mCacheHit;
     private final String mDebugTag;
+    private final Long mStartTime;
 
     public GatewayStringRequest(String url, Priority priority, Response.Listener<String> listener, Response.ErrorListener errorListener, int cacheTtlSeconds) {
         super(Request.Method.GET, url, listener, errorListener);
@@ -52,6 +53,7 @@ public class GatewayStringRequest extends StringRequest {
         mDebugTag = Integer.toHexString(url.hashCode());
         Log.d(TAG, String.format("[net] %1$8s send: %2$s", mDebugTag, url));
         Analytics.logRequest(mDebugTag, url);
+        mStartTime = System.currentTimeMillis();
     }
 
     @Override
@@ -71,6 +73,7 @@ public class GatewayStringRequest extends StringRequest {
 
     @SuppressLint("DefaultLocale")
     protected Response<String> parseNetworkResponse(NetworkResponse response) {
+        Analytics.logElapsed(TAG, mStartTime, mDebugTag, shouldCache(), "parseNetworkResponse");
         String parsed;
         try {
             parsed = new String(response.data, HttpHeaderParser.parseCharset(response.headers));
