@@ -28,6 +28,7 @@ import android.text.TextUtils
 import android.view.View
 import android.widget.Button
 import android.widget.TextView
+import androidx.lifecycle.lifecycleScope
 import net.kenstir.hemlock.R
 import net.kenstir.hemlock.android.Analytics.initialize
 import net.kenstir.hemlock.android.Analytics.log
@@ -41,6 +42,7 @@ import org.evergreen_ils.utils.ui.AppState
 open class AuthenticatorActivity: AccountAuthenticatorActivity() {
     val REQ_SIGNUP: Int = 1
     protected var accountManager: AccountManager? = null
+    protected val scope = lifecycleScope
 
     private var authTokenType: String? = null
     private var signinTask: AsyncTask<*, *, *>? = null
@@ -124,14 +126,16 @@ open class AuthenticatorActivity: AccountAuthenticatorActivity() {
         }
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent) {
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         log(TAG,
             "onActivityResult> requestCode=$requestCode resultCode=$resultCode")
         // The sign up activity returned that the user has successfully created
         // an account
-        if (requestCode == REQ_SIGNUP && resultCode == RESULT_OK) {
+        if (requestCode == REQ_SIGNUP && resultCode == RESULT_OK && data != null) {
             onAuthSuccess(data)
-        } else super.onActivityResult(requestCode, resultCode, data)
+        } else {
+            super.onActivityResult(requestCode, resultCode, data)
+        }
     }
 
     fun submit() {
