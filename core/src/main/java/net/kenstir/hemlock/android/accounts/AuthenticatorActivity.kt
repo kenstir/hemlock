@@ -21,7 +21,6 @@ import android.accounts.AccountManager
 import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.content.Intent
-import android.os.AsyncTask
 import android.os.Bundle
 import android.text.InputType
 import android.text.TextUtils
@@ -29,15 +28,17 @@ import android.view.View
 import android.widget.Button
 import android.widget.TextView
 import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.async
 import net.kenstir.hemlock.R
 import net.kenstir.hemlock.android.Analytics.initialize
 import net.kenstir.hemlock.android.Analytics.log
-import net.kenstir.hemlock.android.Analytics.logFailedLogin
 import net.kenstir.hemlock.android.Analytics.redactedString
 import net.kenstir.hemlock.android.App
+import net.kenstir.hemlock.data.Result
 import org.evergreen_ils.data.Library
 import org.evergreen_ils.utils.ui.ActivityUtils.launchURL
 import org.evergreen_ils.utils.ui.AppState
+import org.evergreen_ils.utils.ui.showAlert
 
 open class AuthenticatorActivity: AccountAuthenticatorActivity() {
     val REQ_SIGNUP: Int = 1
@@ -45,8 +46,8 @@ open class AuthenticatorActivity: AccountAuthenticatorActivity() {
     protected val scope = lifecycleScope
 
     private var authTokenType: String? = null
-    private var signinTask: AsyncTask<*, *, *>? = null
-    private var alertMessage: String? = null
+    @JvmField
+    protected var alertMessage: String? = null
     @JvmField
     protected var selectedLibrary: Library? = null
     protected var forgotPasswordButton: Button? = null
@@ -91,11 +92,9 @@ open class AuthenticatorActivity: AccountAuthenticatorActivity() {
             launchURL(this@AuthenticatorActivity, url)
         }
 
-        if (savedInstanceState != null) {
-            log(TAG, "savedInstanceState=$savedInstanceState")
-            if (savedInstanceState.getString(STATE_ALERT_MESSAGE) != null) {
-                showAlert(savedInstanceState.getString(STATE_ALERT_MESSAGE))
-            }
+        val msg = savedInstanceState?.getString(STATE_ALERT_MESSAGE)
+        if (msg != null) {
+            showAlert(msg)
         }
     }
 
@@ -135,15 +134,41 @@ open class AuthenticatorActivity: AccountAuthenticatorActivity() {
         val password = (findViewById<View>(R.id.accountPassword) as TextView).text.toString()
 
         // TODO: use coroutines instead of AsyncTask
-        //final String account_type = getIntent().getStringExtra(ARG_ACCOUNT_TYPE);
-        signinTask = SignInAsyncTask(username, password).execute()
+        scope.async {
+            try {
+                var authtoken: String? = null
+                var errorMessage = "Login failed"
+                val accountType = this@AuthenticatorActivity.getString(R.string.ou_account_type)
+                val data = Bundle()
+
+                val result = App.getServiceConfig().authService.getAuthToken(username, password)
+                when (result) {
+                    is Result.Success -> authtoken = result.get()
+                    is Result.Error -> {
+                        result.exception.message?.let { errorMessage = it }
+                        showAlert(errorMessage)
+                        return@async
+                    }
+                }
+
+                data.putString(AccountManager.KEY_ACCOUNT_NAME, username)
+                data.putString(AccountManager.KEY_ACCOUNT_TYPE, accountType)
+                data.putString(AccountManager.KEY_AUTHTOKEN, authtoken)
+                data.putString(PARAM_USER_PASS, password)
+                data.putString(Const.KEY_LIBRARY_NAME, selectedLibrary!!.name)
+                data.putString(Const.KEY_LIBRARY_URL, selectedLibrary!!.url)
+
+                val intent = Intent()
+                intent.putExtras(data)
+                onAuthSuccess(intent)
+            } catch (ex: Exception) {
+                showAlert(ex)
+            }
+        }
     }
 
-    protected fun onAuthFailure(errorMessage: String?) {
-        showAlert(errorMessage)
-    }
-
-    protected fun showAlert(errorMessage: String?) {
+    // this now exists only until the subclass can be converted to kotlin+coroutines
+    protected fun showAlertCompat(errorMessage: String?) {
         if (isFinishing) return
         val builder = AlertDialog.Builder(this)
         alertMessage = errorMessage
@@ -201,52 +226,6 @@ open class AuthenticatorActivity: AccountAuthenticatorActivity() {
         setAccountAuthenticatorResult(intent.extras)
         setResult(RESULT_OK, intent)
         finish()
-    }
-
-    private inner class SignInAsyncTask(private val username: String, private val password: String):
-        AsyncTask<String?, Void?, Intent>() {
-        override fun doInBackground(vararg params: String?): Intent? {
-            log(TAG, "signinTask> Start authenticating")
-
-            var authtoken: String? = null
-            var errorMessage = "Login failed"
-            val accountType = this@AuthenticatorActivity.getString(R.string.ou_account_type)
-            val data = Bundle()
-            try {
-                authtoken = EvergreenAuthenticator.signIn(selectedLibrary!!.url, username, password)
-                log(TAG, "signinTask> signIn returned " + redactedString(authtoken))
-
-                data.putString(AccountManager.KEY_ACCOUNT_NAME, username)
-                data.putString(AccountManager.KEY_ACCOUNT_TYPE, accountType)
-                data.putString(AccountManager.KEY_AUTHTOKEN, authtoken)
-                data.putString(PARAM_USER_PASS, password)
-                data.putString(Const.KEY_LIBRARY_NAME, selectedLibrary!!.name)
-                data.putString(Const.KEY_LIBRARY_URL, selectedLibrary!!.url)
-            } catch (e: AuthenticationException) {
-                errorMessage = e.message ?: "Authentication failed"
-                logFailedLogin(e)
-            } catch (e2: Exception) {
-                errorMessage = e2.message ?: "Authentication failed"
-                logFailedLogin(e2)
-            }
-            if (authtoken == null) data.putString(KEY_ERROR_MESSAGE, errorMessage)
-
-            val res = Intent()
-            res.putExtras(data)
-            return res
-        }
-
-        override fun onPostExecute(intent: Intent) {
-            signinTask = null
-            log(TAG, "signinTask.onPostExecute> intent=$intent")
-            if (intent.hasExtra(KEY_ERROR_MESSAGE)) {
-                log(TAG, "signinTask.onPostExecute> error msg: " + intent.getStringExtra(KEY_ERROR_MESSAGE))
-                onAuthFailure(intent.getStringExtra(KEY_ERROR_MESSAGE))
-            } else {
-                log(TAG, "signinTask.onPostExecute> no error msg")
-                onAuthSuccess(intent)
-            }
-        }
     }
 
     companion object {

@@ -19,7 +19,9 @@ package net.kenstir.hemlock.android.accounts;
 
 import android.Manifest;
 import android.accounts.Account;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.location.Location;
@@ -27,6 +29,7 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.AdapterView;
@@ -116,7 +119,7 @@ public class GenericAuthenticatorActivity extends AuthenticatorActivity {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        showAlert(error.getMessage());
+                        showAlertCompat(error.getMessage());
                     }
                 });
         Volley.getInstance(this).addToRequestQueue(r);
