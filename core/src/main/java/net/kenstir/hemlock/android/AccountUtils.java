@@ -24,7 +24,7 @@ import android.os.Bundle;
 import android.os.Looper;
 import android.text.TextUtils;
 import net.kenstir.hemlock.R;
-import org.evergreen_ils.auth.Const;
+import net.kenstir.hemlock.android.accounts.Const;
 import org.evergreen_ils.data.Library;
 
 import java.io.IOException;

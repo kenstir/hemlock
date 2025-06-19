@@ -30,9 +30,9 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.joinAll
 import net.kenstir.hemlock.R
-import org.evergreen_ils.android.Analytics
-import org.evergreen_ils.android.App
-import org.evergreen_ils.android.Log
+import net.kenstir.hemlock.android.Analytics
+import net.kenstir.hemlock.android.App
+import net.kenstir.hemlock.android.Log
 import org.evergreen_ils.data.BookBag
 import org.evergreen_ils.data.BookBagItem
 import net.kenstir.hemlock.data.Result

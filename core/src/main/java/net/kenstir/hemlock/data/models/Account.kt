@@ -18,7 +18,7 @@
 package net.kenstir.hemlock.data.models
 
 import androidx.core.os.bundleOf
-import org.evergreen_ils.android.Analytics
+import net.kenstir.hemlock.android.Analytics
 import net.kenstir.hemlock.data.evergreen.GatewayEventError
 import org.evergreen_ils.data.BookBag
 import org.opensrf.util.OSRFObject
