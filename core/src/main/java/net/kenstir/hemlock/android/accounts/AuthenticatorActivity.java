@@ -18,7 +18,6 @@
 package net.kenstir.hemlock.android.accounts;
 
 import android.accounts.Account;
-import android.accounts.AccountAuthenticatorActivity;
 import android.accounts.AccountManager;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
@@ -170,55 +169,7 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity {
         final String password = ((TextView) findViewById(R.id.accountPassword)).getText().toString();
         //final String account_type = getIntent().getStringExtra(ARG_ACCOUNT_TYPE);
 
-        signinTask = new AsyncTask<String, Void, Intent>() {
-
-            @Override
-            protected Intent doInBackground(String... params) {
-
-                Analytics.log(TAG, "signinTask> Start authenticating");
-
-                String authtoken = null;
-                String errorMessage = "Login failed";
-                final String accountType = AuthenticatorActivity.this.getString(R.string.ou_account_type);
-                Bundle data = new Bundle();
-                try {
-                    authtoken = EvergreenAuthenticator.signIn(selected_library.getUrl(), username, password);
-                    Analytics.log(TAG, "signinTask> signIn returned " + Analytics.redactedString(authtoken));
-
-                    data.putString(AccountManager.KEY_ACCOUNT_NAME, username);
-                    data.putString(AccountManager.KEY_ACCOUNT_TYPE, accountType);
-                    data.putString(AccountManager.KEY_AUTHTOKEN, authtoken);
-                    data.putString(PARAM_USER_PASS, password);
-                    data.putString(Const.KEY_LIBRARY_NAME, selected_library.getName());
-                    data.putString(Const.KEY_LIBRARY_URL, selected_library.getUrl());
-                } catch (AuthenticationException e) {
-                    if (e != null) errorMessage = e.getMessage();
-                    Analytics.logFailedLogin(e);
-                } catch (Exception e2) {
-                    if (e2 != null) errorMessage = e2.getMessage();
-                    Analytics.logFailedLogin(e2);
-                }
-                if (authtoken == null)
-                    data.putString(KEY_ERROR_MESSAGE, errorMessage);
-
-                final Intent res = new Intent();
-                res.putExtras(data);
-                return res;
-            }
-
-            @Override
-            protected void onPostExecute(Intent intent) {
-                signinTask = null;
-                Analytics.log(TAG, "signinTask.onPostExecute> intent=" + intent);
-                if (intent.hasExtra(KEY_ERROR_MESSAGE)) {
-                    Analytics.log(TAG, "signinTask.onPostExecute> error msg: " + intent.getStringExtra(KEY_ERROR_MESSAGE));
-                    onAuthFailure(intent.getStringExtra(KEY_ERROR_MESSAGE));
-                } else {
-                    Analytics.log(TAG, "signinTask.onPostExecute> no error msg");
-                    onAuthSuccess(intent);
-                }
-            }
-        }.execute();
+        signinTask = new SignInAsyncTask(username, password).execute();
     }
 
     protected void onAuthFailure(String errorMessage) {
@@ -286,5 +237,63 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity {
         setAccountAuthenticatorResult(intent.getExtras());
         setResult(RESULT_OK, intent);
         finish();
+    }
+
+    private class SignInAsyncTask extends AsyncTask<String, Void, Intent> {
+
+        private final String username;
+        private final String password;
+
+        public SignInAsyncTask(String username, String password) {
+            this.username = username;
+            this.password = password;
+        }
+
+        @Override
+        protected Intent doInBackground(String... params) {
+
+            Analytics.log(TAG, "signinTask> Start authenticating");
+
+            String authtoken = null;
+            String errorMessage = "Login failed";
+            final String accountType = AuthenticatorActivity.this.getString(R.string.ou_account_type);
+            Bundle data = new Bundle();
+            try {
+                authtoken = EvergreenAuthenticator.signIn(selected_library.getUrl(), username, password);
+                Analytics.log(TAG, "signinTask> signIn returned " + Analytics.redactedString(authtoken));
+
+                data.putString(AccountManager.KEY_ACCOUNT_NAME, username);
+                data.putString(AccountManager.KEY_ACCOUNT_TYPE, accountType);
+                data.putString(AccountManager.KEY_AUTHTOKEN, authtoken);
+                data.putString(PARAM_USER_PASS, password);
+                data.putString(Const.KEY_LIBRARY_NAME, selected_library.getName());
+                data.putString(Const.KEY_LIBRARY_URL, selected_library.getUrl());
+            } catch (AuthenticationException e) {
+                errorMessage = e.getMessage();
+                Analytics.logFailedLogin(e);
+            } catch (Exception e2) {
+                errorMessage = e2.getMessage();
+                Analytics.logFailedLogin(e2);
+            }
+            if (authtoken == null)
+                data.putString(KEY_ERROR_MESSAGE, errorMessage);
+
+            final Intent res = new Intent();
+            res.putExtras(data);
+            return res;
+        }
+
+        @Override
+        protected void onPostExecute(Intent intent) {
+            signinTask = null;
+            Analytics.log(TAG, "signinTask.onPostExecute> intent=" + intent);
+            if (intent.hasExtra(KEY_ERROR_MESSAGE)) {
+                Analytics.log(TAG, "signinTask.onPostExecute> error msg: " + intent.getStringExtra(KEY_ERROR_MESSAGE));
+                onAuthFailure(intent.getStringExtra(KEY_ERROR_MESSAGE));
+            } else {
+                Analytics.log(TAG, "signinTask.onPostExecute> no error msg");
+                onAuthSuccess(intent);
+            }
+        }
     }
 }
