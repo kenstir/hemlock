@@ -44,7 +44,6 @@ open class AuthenticatorActivity: AccountAuthenticatorActivity() {
 
     private var authTokenType: String? = null
     private var signinTask: AsyncTask<*, *, *>? = null
-    private var alertDialog: AlertDialog? = null
     private var alertMessage: String? = null
     @JvmField
     protected var selected_library: Library? = null
@@ -156,11 +155,9 @@ open class AuthenticatorActivity: AccountAuthenticatorActivity() {
         builder.setTitle("Login failed")
             .setMessage(errorMessage)
             .setPositiveButton(android.R.string.ok) { dialog, which ->
-                alertDialog = null
                 alertMessage = null
             }
-        alertDialog = builder.create()
-        alertDialog?.show()
+        builder.create().show()
     }
 
     private fun onAuthSuccess(intent: Intent) {
