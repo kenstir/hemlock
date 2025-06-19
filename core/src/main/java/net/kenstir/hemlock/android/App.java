@@ -46,7 +46,7 @@ public class App {
     public static final int REQUEST_MESSAGES = 10002;
 
     public static boolean mStarted = false;
-    private static boolean mCachedEnabled = false;
+    private static boolean mInitialized = false;
 
     private static AppBehavior behavior = null;
     private static Library library = null;
@@ -79,8 +79,6 @@ public class App {
     }
 
     public static void enableCaching(Context context) {
-        if (mCachedEnabled)
-            return;
         try {
             long httpCacheSize = 10 * 1024 * 1024; // 10 MiB
             File httpCacheDir = new File(context.getCacheDir(), "volley");//try to reuse same cache dir as volley
@@ -90,15 +88,17 @@ public class App {
         } catch (Exception httpResponseCacheNotAvailable) {
             Log.d(TAG, "HTTP response cache is unavailable.");
         }
-        mCachedEnabled = true;
     }
 
     static public void init(Context context) {
+        if (mInitialized) {
+            return;
+        }
         enableCaching(context);
-        if (behavior == null)
-            behavior = AppFactory.makeBehavior(context.getResources());
+        behavior = AppFactory.makeBehavior(context.getResources());
         Volley.init(context);
         Gateway.clientCacheKey = Integer.toString(getVersionCode(context));
+        mInitialized = true;
     }
 
     public static AppBehavior getBehavior() {
