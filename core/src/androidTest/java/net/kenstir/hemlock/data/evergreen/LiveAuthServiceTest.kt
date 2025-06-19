@@ -17,9 +17,11 @@
 
 package net.kenstir.hemlock.data.evergreen
 
+import androidx.test.platform.app.InstrumentationRegistry
 import kotlinx.coroutines.test.runTest
 import net.kenstir.hemlock.data.Result
-import org.evergreen_ils.net.Gateway
+import org.evergreen_ils.android.Log
+import org.evergreen_ils.android.StdoutLogProvider
 import org.junit.Assert.assertNotEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
@@ -32,9 +34,10 @@ class LiveAuthServiceTest {
         val initializationService = EvergreenInitService()
         val userService = EvergreenUserService()
 
-        val testServer = getRequiredProperty("testEvergreenServer")
-        val testUsername = getRequiredProperty("testEvergreenUsername")
-        val testPassword = getRequiredProperty("testEvergreenPassword")
+        // See root build.gradle for notes on customizing instrumented test variables (hint: secret.gradle)
+        val testServer = getRequiredArg("server")
+        val testUsername = getRequiredArg("username")
+        val testPassword = getRequiredArg("password")
 
         var account = EvergreenAccount(testUsername)
         var isServiceDataLoaded = false
@@ -42,12 +45,14 @@ class LiveAuthServiceTest {
         @JvmStatic
         @BeforeClass
         fun setUpClass() {
+            Log.setProvider(StdoutLogProvider())
+
             XGatewayClient.baseUrl = testServer
             XGatewayClient.clientCacheKey = "42"
         }
 
-        fun getRequiredProperty(name: String): String {
-            return System.getProperty(name) ?: throw RuntimeException("Missing required system property: $name")
+        fun getRequiredArg(name: String): String {
+            return InstrumentationRegistry.getArguments().getString(name) ?: throw RuntimeException("Missing required arg: $name")
         }
     }
 
