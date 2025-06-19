@@ -18,7 +18,10 @@
 package net.kenstir.hemlock.data.evergreen
 
 import kotlinx.coroutines.test.runTest
+import net.kenstir.hemlock.data.Result
+import org.evergreen_ils.net.Gateway
 import org.junit.Assert.assertNotEquals
+import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
 import org.junit.BeforeClass
 import org.junit.Test
@@ -26,19 +29,37 @@ import org.junit.Test
 class LiveAuthServiceTest {
     companion object {
         val authService = EvergreenAuthService()
+        val initializationService = EvergreenInitService()
+        val userService = EvergreenUserService()
+
         val testServer = getRequiredProperty("testEvergreenServer")
         val testUsername = getRequiredProperty("testEvergreenUsername")
         val testPassword = getRequiredProperty("testEvergreenPassword")
+
+        var account = EvergreenAccount(testUsername)
+        var isServiceDataLoaded = false
 
         @JvmStatic
         @BeforeClass
         fun setUpClass() {
             XGatewayClient.baseUrl = testServer
+            XGatewayClient.clientCacheKey = "42"
         }
 
         fun getRequiredProperty(name: String): String {
             return System.getProperty(name) ?: throw RuntimeException("Missing required system property: $name")
         }
+    }
+
+    suspend fun getTestAuthToken(): Result<String> {
+        return authService.getAuthToken(testUsername, testPassword)
+    }
+
+    suspend fun loadTestServiceData(): Result<Unit> {
+        if (isServiceDataLoaded) return Result.Success(Unit)
+        val result = initializationService.initializeServiceData()
+        isServiceDataLoaded = true
+        return result
     }
 
      @Test
@@ -53,11 +74,30 @@ class LiveAuthServiceTest {
 
     @Test
     fun test_getAuthToken() = runTest {
-        val result = authService.getAuthToken(testUsername, testPassword)
+        val result = getTestAuthToken()
         println("Result: $result")
         assertTrue(result.succeeded)
 
         val authToken = result.get()
         assertTrue(authToken.isNotEmpty())
+    }
+
+    @Test
+    fun test_fetchSession() = runTest {
+        account.authToken = getTestAuthToken().get()
+        println("authToken: ${account.authToken}")
+        assertNotNull(account.authToken)
+
+        assertTrue(loadTestServiceData().succeeded)
+
+        val result = userService.fetchSession(account)
+        println("Result: $result")
+        assertTrue(result.succeeded)
+
+        assertNotNull(account.id)
+        println("username: ${account.username}")
+        println("displayName: ${account.displayName}")
+        assertTrue(account.username.isNotEmpty())
+        assertTrue(account.displayName.isNotEmpty())
     }
 }
