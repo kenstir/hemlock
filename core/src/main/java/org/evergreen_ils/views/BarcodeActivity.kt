@@ -115,6 +115,7 @@ class BarcodeActivity : BaseActivity() {
 
     private fun createBitmap(data: String?, imageWidth: Int, imageHeight: Int): Bitmap? {
         if (imageWidth <= 0 || imageHeight <= 0) return null
+        if (data.isNullOrEmpty()) return null
 
         // Try formats until we successfully encode the data
         var bitMatrix: BitMatrix? = null

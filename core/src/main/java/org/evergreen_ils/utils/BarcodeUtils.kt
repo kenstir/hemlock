@@ -15,28 +15,24 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
+package org.evergreen_ils.utils
 
-package org.evergreen_ils.utils;
+import com.google.zxing.BarcodeFormat
+import com.google.zxing.MultiFormatWriter
+import com.google.zxing.common.BitMatrix
+import net.kenstir.hemlock.android.Analytics.logException
 
-import com.google.zxing.BarcodeFormat;
-import com.google.zxing.MultiFormatWriter;
-import com.google.zxing.common.BitMatrix;
-
-import net.kenstir.hemlock.android.Analytics;
-
-public class BarcodeUtils {
-
+object BarcodeUtils {
     // Try to encode the barcode data using the given format
     // @returns BitMatrix if successful, null if not
-    public static BitMatrix tryEncode(String data, int image_width, int image_height, BarcodeFormat format) {
+    fun tryEncode(data: String, image_width: Int, image_height: Int, format: BarcodeFormat): BitMatrix? {
         try {
-            MultiFormatWriter barcodeWriter = new MultiFormatWriter();
-            return barcodeWriter.encode(data, format, image_width, image_height);
-        } catch (Exception e) {
+            val barcodeWriter = MultiFormatWriter()
+            return barcodeWriter.encode(data, format, image_width, image_height)
+        } catch (e: Exception) {
             // IllegalArgumentException happens for invalid chars in barcode, don't log that
-            if (!(e instanceof IllegalArgumentException))
-                Analytics.logException(e);
-            return null;
+            if (e !is IllegalArgumentException) logException(e)
+            return null
         }
     }
 }
