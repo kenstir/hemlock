@@ -19,7 +19,6 @@
 package org.evergreen_ils.net;
 
 import android.annotation.SuppressLint;
-import android.text.TextUtils;
 
 import com.android.volley.Cache;
 import com.android.volley.NetworkResponse;
@@ -28,14 +27,12 @@ import com.android.volley.Response;
 import com.android.volley.toolbox.HttpHeaderParser;
 import com.android.volley.toolbox.StringRequest;
 
-import org.evergreen_ils.android.Analytics;
-import org.evergreen_ils.android.Log;
+import net.kenstir.hemlock.android.Analytics;
+import net.kenstir.hemlock.android.Log;
 import org.evergreen_ils.utils.StringUtils;
 
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
-
-import androidx.core.text.TextUtilsCompat;
 
 public class GatewayStringRequest extends StringRequest {
     private final String TAG = GatewayStringRequest.class.getSimpleName();

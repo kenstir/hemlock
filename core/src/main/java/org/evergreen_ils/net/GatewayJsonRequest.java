@@ -20,8 +20,6 @@ package org.evergreen_ils.net;
 
 import android.annotation.SuppressLint;
 
-import androidx.annotation.NonNull;
-
 import com.android.volley.Cache;
 import com.android.volley.NetworkResponse;
 import com.android.volley.ParseError;
@@ -29,8 +27,8 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.toolbox.HttpHeaderParser;
 
-import org.evergreen_ils.android.Analytics;
-import org.evergreen_ils.android.Log;
+import net.kenstir.hemlock.android.Analytics;
+import net.kenstir.hemlock.android.Log;
 import org.opensrf.util.GatewayResult;
 
 import java.io.UnsupportedEncodingException;

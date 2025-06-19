@@ -18,9 +18,9 @@
 
 package org.evergreen_ils.test
 
-import org.evergreen_ils.android.Analytics
-import org.evergreen_ils.android.Log
-import org.evergreen_ils.android.StdoutLogProvider
+import net.kenstir.hemlock.android.Analytics
+import net.kenstir.hemlock.android.Log
+import net.kenstir.hemlock.android.StdoutLogProvider
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.BeforeClass

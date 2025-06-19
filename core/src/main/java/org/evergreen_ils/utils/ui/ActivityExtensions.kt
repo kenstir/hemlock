@@ -20,9 +20,9 @@ package org.evergreen_ils.utils.ui
 
 import android.app.Activity
 import android.app.AlertDialog
-import org.evergreen_ils.android.App
+import net.kenstir.hemlock.android.App
 import net.kenstir.hemlock.data.evergreen.GatewayError
-import org.evergreen_ils.android.Log
+import net.kenstir.hemlock.android.Log
 import org.evergreen_ils.utils.getCustomMessage
 
 fun Activity.showAlert(ex: Exception) {

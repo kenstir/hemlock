@@ -8,7 +8,6 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.InputType;
@@ -17,10 +16,10 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-import org.evergreen_ils.android.App;
+import net.kenstir.hemlock.android.App;
 
 import net.kenstir.hemlock.R;
-import org.evergreen_ils.android.Analytics;
+import net.kenstir.hemlock.android.Analytics;
 import org.evergreen_ils.data.Library;
 import org.evergreen_ils.utils.ui.ActivityUtils;
 import org.evergreen_ils.utils.ui.AppState;

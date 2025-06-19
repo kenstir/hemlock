@@ -29,7 +29,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.android.volley.toolbox.NetworkImageView
 import kotlinx.coroutines.async
 import net.kenstir.hemlock.R
-import org.evergreen_ils.android.Log
+import net.kenstir.hemlock.android.Log
 import org.evergreen_ils.data.HistoryRecord
 import org.evergreen_ils.data.MBRecord
 import net.kenstir.hemlock.data.Result

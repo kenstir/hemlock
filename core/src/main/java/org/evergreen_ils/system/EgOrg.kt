@@ -19,10 +19,9 @@ package org.evergreen_ils.system
 
 import android.annotation.SuppressLint
 import androidx.core.util.Pair
-import org.evergreen_ils.android.Log
+import net.kenstir.hemlock.android.Log
 import org.evergreen_ils.data.OrgType
 import org.evergreen_ils.data.Organization
-import org.evergreen_ils.net.Gateway
 import org.opensrf.util.OSRFObject
 import java.util.*
 import kotlin.Comparator

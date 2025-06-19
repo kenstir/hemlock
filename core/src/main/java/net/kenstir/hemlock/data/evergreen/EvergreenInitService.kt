@@ -19,7 +19,7 @@ package net.kenstir.hemlock.data.evergreen
 
 import net.kenstir.hemlock.data.InitService
 import net.kenstir.hemlock.data.Result
-import org.evergreen_ils.android.Log
+import net.kenstir.hemlock.android.Log
 import org.open_ils.idl.IDLParser
 
 private val TAG = EvergreenInitService::class.java.simpleName

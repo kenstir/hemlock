@@ -31,7 +31,7 @@ import android.widget.Toast
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.common.BitMatrix
 import net.kenstir.hemlock.R
-import org.evergreen_ils.android.App
+import net.kenstir.hemlock.android.App
 import org.evergreen_ils.utils.BarcodeUtils
 import org.evergreen_ils.utils.ui.BaseActivity
 

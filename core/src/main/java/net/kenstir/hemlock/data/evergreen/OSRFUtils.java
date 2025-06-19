@@ -19,7 +19,7 @@ package net.kenstir.hemlock.data.evergreen;
 
 import android.annotation.SuppressLint;
 
-import org.evergreen_ils.android.Analytics;
+import net.kenstir.hemlock.android.Analytics;
 import org.opensrf.ShouldNotHappenException;
 
 import java.text.DateFormat;

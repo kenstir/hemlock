@@ -39,13 +39,13 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.joinAll
 import net.kenstir.hemlock.R
-import org.evergreen_ils.android.App
+import net.kenstir.hemlock.android.App
 import org.evergreen_ils.data.CircRecord
 import net.kenstir.hemlock.data.Result
 import org.evergreen_ils.net.Gateway
 import org.evergreen_ils.views.search.RecordDetails
 import org.evergreen_ils.data.MBRecord
-import org.evergreen_ils.android.Log
+import net.kenstir.hemlock.android.Log
 import org.evergreen_ils.utils.ui.BaseActivity
 import org.evergreen_ils.utils.ui.ProgressDialogSupport
 import org.evergreen_ils.utils.ui.showAlert

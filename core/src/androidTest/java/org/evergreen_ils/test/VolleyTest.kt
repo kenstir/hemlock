@@ -9,7 +9,7 @@ import org.evergreen_ils.net.Gateway
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.JsonObjectRequest
 import net.kenstir.hemlock.data.evergreen.Api
-import org.evergreen_ils.android.Log
+import net.kenstir.hemlock.android.Log
 import org.evergreen_ils.net.Volley
 import org.json.JSONObject
 import org.junit.Assert

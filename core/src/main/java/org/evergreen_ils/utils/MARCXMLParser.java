@@ -17,14 +17,12 @@
 
 package org.evergreen_ils.utils;
 
-import android.text.TextUtils;
-
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 
-import org.evergreen_ils.android.Log;
+import net.kenstir.hemlock.android.Log;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 import org.xmlpull.v1.XmlPullParserFactory;

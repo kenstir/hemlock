@@ -19,7 +19,7 @@
 package org.evergreen_ils.system
 
 import org.evergreen_ils.net.Gateway
-import org.evergreen_ils.android.Log
+import net.kenstir.hemlock.android.Log
 import net.kenstir.hemlock.data.RequestOptions
 import org.open_ils.idl.IDLParser
 

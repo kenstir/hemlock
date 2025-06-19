@@ -17,8 +17,8 @@
  */
 package net.kenstir.apps.core
 
-import org.evergreen_ils.android.Log
-import org.evergreen_ils.android.StdoutLogProvider
+import net.kenstir.hemlock.android.Log
+import net.kenstir.hemlock.android.StdoutLogProvider
 import org.evergreen_ils.system.EgCodedValueMap
 import org.evergreen_ils.system.EgCodedValueMap.ALL_SEARCH_FORMATS
 import org.evergreen_ils.system.EgCodedValueMap.iconFormatLabel

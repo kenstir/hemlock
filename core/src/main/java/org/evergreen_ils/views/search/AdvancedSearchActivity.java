@@ -37,9 +37,9 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import net.kenstir.hemlock.R;
-import org.evergreen_ils.android.App;
+import net.kenstir.hemlock.android.App;
 import org.evergreen_ils.utils.ui.ActionBarUtils;
-import org.evergreen_ils.android.Analytics;
+import net.kenstir.hemlock.android.Analytics;
 
 import java.util.ArrayList;
 import java.util.StringTokenizer;

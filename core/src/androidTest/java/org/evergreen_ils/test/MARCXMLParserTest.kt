@@ -18,8 +18,8 @@
 package org.evergreen_ils.test
 
 import androidx.test.platform.app.InstrumentationRegistry
-import org.evergreen_ils.android.Log
-import org.evergreen_ils.android.StdoutLogProvider
+import net.kenstir.hemlock.android.Log
+import net.kenstir.hemlock.android.StdoutLogProvider
 import org.evergreen_ils.utils.MARCRecord
 import org.evergreen_ils.utils.MARCXMLParser
 import org.junit.Assert.*

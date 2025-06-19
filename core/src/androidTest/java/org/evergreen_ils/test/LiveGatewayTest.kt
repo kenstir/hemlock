@@ -24,9 +24,9 @@ import com.android.volley.TimeoutError
 import kotlinx.coroutines.*
 import net.kenstir.hemlock.data.RequestOptions
 import net.kenstir.hemlock.data.evergreen.Api
-import org.evergreen_ils.android.App
-import org.evergreen_ils.android.Log
-import org.evergreen_ils.android.StdoutLogProvider
+import net.kenstir.hemlock.android.App
+import net.kenstir.hemlock.android.Log
+import net.kenstir.hemlock.android.StdoutLogProvider
 import org.evergreen_ils.auth.EvergreenAuthenticator
 import net.kenstir.hemlock.data.models.Account
 import org.evergreen_ils.data.BookBag

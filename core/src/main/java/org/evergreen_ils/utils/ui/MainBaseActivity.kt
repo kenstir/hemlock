@@ -22,10 +22,10 @@ import android.view.Menu
 import android.view.MenuItem
 import kotlinx.coroutines.async
 import net.kenstir.hemlock.R
-import org.evergreen_ils.android.AccountUtils
-import org.evergreen_ils.android.App
-import org.evergreen_ils.android.Log
-import org.evergreen_ils.android.Log.TAG_FCM
+import net.kenstir.hemlock.android.AccountUtils
+import net.kenstir.hemlock.android.App
+import net.kenstir.hemlock.android.Log
+import net.kenstir.hemlock.android.Log.TAG_FCM
 import net.kenstir.hemlock.data.Result
 import org.evergreen_ils.net.Gateway
 

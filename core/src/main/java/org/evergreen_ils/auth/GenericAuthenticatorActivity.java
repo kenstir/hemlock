@@ -40,11 +40,11 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 
 import net.kenstir.hemlock.R;
-import org.evergreen_ils.android.AccountUtils;
+import net.kenstir.hemlock.android.AccountUtils;
 import org.evergreen_ils.net.Volley;
 import org.evergreen_ils.data.Library;
-import org.evergreen_ils.android.Log;
-import org.evergreen_ils.android.Analytics;
+import net.kenstir.hemlock.android.Log;
+import net.kenstir.hemlock.android.Analytics;
 import org.opensrf.util.JSONException;
 import org.opensrf.util.JSONReader;
 

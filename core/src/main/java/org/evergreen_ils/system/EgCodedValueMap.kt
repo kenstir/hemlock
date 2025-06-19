@@ -18,8 +18,8 @@
 package org.evergreen_ils.system
 
 import net.kenstir.hemlock.data.evergreen.OSRFUtils
-import org.evergreen_ils.android.Analytics
-import org.evergreen_ils.android.Log
+import net.kenstir.hemlock.android.Analytics
+import net.kenstir.hemlock.android.Log
 import org.opensrf.ShouldNotHappenException
 import org.opensrf.util.OSRFObject
 import java.util.*
