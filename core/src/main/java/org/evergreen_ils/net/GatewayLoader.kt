@@ -21,11 +21,11 @@ package org.evergreen_ils.net
 import androidx.core.os.bundleOf
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
+import net.kenstir.hemlock.android.Analytics
+import net.kenstir.hemlock.android.App
+import net.kenstir.hemlock.android.Log
 import net.kenstir.hemlock.data.Result
 import net.kenstir.hemlock.data.models.Account
-import org.evergreen_ils.android.Analytics
-import org.evergreen_ils.android.App
-import org.evergreen_ils.android.Log
 import org.evergreen_ils.data.*
 import org.evergreen_ils.system.EgOrg
 import org.evergreen_ils.system.EgSms

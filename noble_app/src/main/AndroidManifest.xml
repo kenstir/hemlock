@@ -123,11 +123,11 @@
         <!-- auth stuff -->
 
         <activity
-            android:name="org.evergreen_ils.auth.AuthenticatorActivity"
+            android:name="net.kenstir.hemlock.android.accounts.AuthenticatorActivity"
             android:label="@string/ou_account_label">
         </activity>
         <service
-            android:name="org.evergreen_ils.auth.AuthenticatorService"
+            android:name="net.kenstir.hemlock.android.accounts.AuthenticatorService"
             android:exported="false" >
             <intent-filter>
                 <action android:name="android.accounts.AccountAuthenticator" />

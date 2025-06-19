@@ -30,7 +30,7 @@ import java.util.List;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-/** AppBehavior - custom app behaviors
+/** AppBehavior - customizable app behaviors
  *
  * to override, create a subclass of AppBehavior in the xxx_app module,
  * and specify the name of that class in R.string.ou_behavior_provider.

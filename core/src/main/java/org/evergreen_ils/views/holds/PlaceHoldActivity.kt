@@ -36,10 +36,9 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.joinAll
 import net.kenstir.hemlock.R
-import org.evergreen_ils.android.Analytics
-import org.evergreen_ils.android.Analytics.orgDimensionKey
-import org.evergreen_ils.android.App
-import org.evergreen_ils.android.Log
+import net.kenstir.hemlock.android.Analytics
+import net.kenstir.hemlock.android.App
+import net.kenstir.hemlock.android.Log
 import net.kenstir.hemlock.data.models.Account
 import net.kenstir.hemlock.data.Result
 import net.kenstir.hemlock.data.evergreen.HOLD_TYPE_PART
@@ -242,7 +241,7 @@ class PlaceHoldActivity : BaseActivity() {
                     Analytics.Param.RESULT to result,
                     Analytics.Param.HOLD_NOTIFY to notifyTypes,
                     Analytics.Param.HOLD_EXPIRES_KEY to (expireDate != null),
-                    Analytics.Param.HOLD_PICKUP_KEY to orgDimensionKey(EgOrg.visibleOrgs[selectedOrgPos],
+                    Analytics.Param.HOLD_PICKUP_KEY to Analytics.orgDimensionKey(EgOrg.visibleOrgs[selectedOrgPos],
                             EgOrg.findOrg(App.getAccount().pickupOrg),
                             EgOrg.findOrg(App.getAccount().homeOrg)),
             ))
