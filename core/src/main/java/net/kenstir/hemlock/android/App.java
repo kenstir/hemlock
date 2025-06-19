@@ -24,9 +24,12 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.text.TextUtils;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import net.kenstir.hemlock.R;
+import net.kenstir.hemlock.data.ServiceConfig;
+import net.kenstir.hemlock.data.evergreen.XGatewayClient;
 import net.kenstir.hemlock.data.models.Account;
 import org.evergreen_ils.data.Library;
 import org.evergreen_ils.net.Gateway;
@@ -52,6 +55,8 @@ public class App {
     private static Library library = null;
     private static Account account = null;
     private static String fcmNotificationToken = null;
+
+    private static ServiceConfig mServiceConfig = null;
 
     public static int getVersionCode(Context context) {
         PackageInfo pInfo = null;
@@ -97,7 +102,11 @@ public class App {
         enableCaching(context);
         behavior = AppFactory.makeBehavior(context.getResources());
         Volley.init(context);
-        Gateway.clientCacheKey = Integer.toString(getVersionCode(context));
+        XGatewayClient.clientCacheKey = Integer.toString(getVersionCode(context));
+        Gateway.clientCacheKey = XGatewayClient.clientCacheKey;
+        if (mServiceConfig == null) {
+            mServiceConfig = new ServiceConfig();
+        }
         mInitialized = true;
     }
 
@@ -111,6 +120,7 @@ public class App {
 
     public static void setLibrary(Library library) {
         App.library = library;
+        XGatewayClient.baseUrl = library.getUrl();
         Gateway.baseUrl = library.getUrl();
     }
 
@@ -193,5 +203,14 @@ public class App {
 
     public static void setAccount(Account account) {
         App.account = account;
+    }
+
+    @NonNull
+    public static ServiceConfig getServiceConfig() {
+        return mServiceConfig;
+    }
+
+    public static void setServiceConfig(@NonNull ServiceConfig serviceConfig) {
+        App.mServiceConfig = serviceConfig;
     }
 }
