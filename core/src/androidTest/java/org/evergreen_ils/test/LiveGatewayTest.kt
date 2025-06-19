@@ -108,14 +108,15 @@ class LiveGatewayTest {
         @JvmStatic
         suspend fun getSession() {
             if (account.id != null) return
-
-            val sessionResult = Gateway.auth.fetchSession(authToken)
-            when (sessionResult) {
-                is Result.Success -> account.loadSession(sessionResult.data)
-                is Result.Error -> {
-                    throw sessionResult.exception
-                }
-            }
+            TODO("fun requires a session")
+//
+//            val sessionResult = Gateway.auth.fetchSession(authToken)
+//            when (sessionResult) {
+//                is Result.Success -> account.loadSession(sessionResult.data)
+//                is Result.Error -> {
+//                    throw sessionResult.exception
+//                }
+//            }
         }
 
         // stripped down version of LaunchViewModel.loadServiceData()

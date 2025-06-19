@@ -19,8 +19,8 @@ package net.kenstir.hemlock.data.evergreen
 
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.SerializationException
+import kotlinx.serialization.builtins.ListSerializer
 import net.kenstir.hemlock.data.JSONDictionary
-import net.kenstir.hemlock.data.MapStringAnySerializer
 
 /** a parameter for requests through the OSRF Gateway */
 @Serializable(with = GatewayParamSerializer::class)
@@ -53,6 +53,10 @@ object GatewayParamSerializer : kotlinx.serialization.KSerializer<GatewayParam> 
             }
             is XOSRFObject -> {
                 encoder.encodeSerializableValue(XOSRFObject.serializer(), value.value as XOSRFObject)
+            }
+            is List<*> -> {
+                val jsonArray = value.value.map { GatewayParam(it) }
+                encoder.encodeSerializableValue(ListSerializer(GatewayParam.serializer()), jsonArray)
             }
             else -> throw SerializationException("Unsupported type for GatewayParam: ${value.value::class.simpleName}")
         }
