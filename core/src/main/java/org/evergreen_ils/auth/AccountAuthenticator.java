@@ -16,7 +16,7 @@ public class AccountAuthenticator extends AbstractAccountAuthenticator {
     
     private final static String TAG = AccountAuthenticator.class.getSimpleName();
     private Context context;
-    private Class authenticatorActivity;
+    private Class<?> authenticatorActivity;
 
     public AccountAuthenticator(Context context) {
         super(context);
