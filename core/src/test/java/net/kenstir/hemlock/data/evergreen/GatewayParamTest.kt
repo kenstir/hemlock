@@ -27,7 +27,6 @@ class GatewayParamTest {
     @Test
     fun test_paramArrayOf() {
         val params = paramListOf("test", 123, true, null)
-        assertTrue(params is List<GatewayParam>)
         assertTrue(params is ArrayList<GatewayParam>)
         assertEquals(4, params.size)
         assertEquals("test", params[0].value)
