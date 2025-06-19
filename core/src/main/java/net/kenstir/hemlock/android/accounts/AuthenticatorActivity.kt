@@ -48,7 +48,7 @@ open class AuthenticatorActivity: AccountAuthenticatorActivity() {
     private var signinTask: AsyncTask<*, *, *>? = null
     private var alertMessage: String? = null
     @JvmField
-    protected var selected_library: Library? = null
+    protected var selectedLibrary: Library? = null
     protected var forgotPasswordButton: Button? = null
 
     protected open fun setContentViewImpl() {
@@ -66,34 +66,29 @@ open class AuthenticatorActivity: AccountAuthenticatorActivity() {
         accountManager = AccountManager.get(baseContext)
 
         val accountName = intent.getStringExtra(ARG_ACCOUNT_NAME)
-        log(TAG, "accountName=" + redactedString(accountName))
+        log(TAG, "accountName=$accountName")
         authTokenType = intent.getStringExtra(ARG_AUTH_TYPE)
         if (authTokenType == null) authTokenType = Const.AUTHTOKEN_TYPE
         log(TAG, "authTokenType=$authTokenType")
 
         val signInText = findViewById<TextView>(R.id.account_sign_in_text)
-        signInText.text = String.format(getString(R.string.ou_account_sign_in_message),
-            AppState.getString(AppState.LIBRARY_NAME))
+        signInText.text = String.format(getString(R.string.ou_account_sign_in_message), AppState.getString(AppState.LIBRARY_NAME))
 
         // Turn off suggestions for the accountName field.  Turning them off with setInputType worked on my phone
         // whereas using android:inputType="text|textNoSuggestions" in xml did not.
         val accountNameText = findViewById<TextView>(R.id.accountName)
         accountNameText.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS
-        if (accountName != null) {
-            accountNameText.text = accountName
-        }
+        accountNameText.text = accountName
 
         findViewById<View>(R.id.submit).setOnClickListener { submit() }
 
         try {
             forgotPasswordButton = findViewById(R.id.forgot_password_button)
-        } catch (e: NoSuchFieldError) {
+        } catch (_: NoSuchFieldError) {
         }
-        if (forgotPasswordButton != null) {
-            forgotPasswordButton!!.setOnClickListener {
-                val url = getString(R.string.ou_library_url) + "/eg/opac/password_reset"
-                launchURL(this@AuthenticatorActivity, url)
-            }
+        forgotPasswordButton?.setOnClickListener {
+            val url = getString(R.string.ou_library_url) + "/eg/opac/password_reset"
+            launchURL(this@AuthenticatorActivity, url)
         }
 
         if (savedInstanceState != null) {
@@ -105,18 +100,14 @@ open class AuthenticatorActivity: AccountAuthenticatorActivity() {
     }
 
     protected open fun initSelectedLibrary() {
-        selected_library = Library(getString(R.string.ou_library_url), getString(R.string.ou_library_name))
-        log(TAG, ("initSelectedLibrary name=" + selected_library!!.name
-                + " url=" + selected_library!!.url))
+        selectedLibrary = Library(getString(R.string.ou_library_url), getString(R.string.ou_library_name))
+        log(TAG, ("initSelectedLibrary name=" + selectedLibrary!!.name
+                + " url=" + selectedLibrary!!.url))
     }
 
     override fun onStart() {
         super.onStart()
         initSelectedLibrary()
-    }
-
-    override fun onRestart() {
-        super.onRestart()
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -127,8 +118,7 @@ open class AuthenticatorActivity: AccountAuthenticatorActivity() {
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        log(TAG,
-            "onActivityResult> requestCode=$requestCode resultCode=$resultCode")
+        log(TAG,"onActivityResult> requestCode=$requestCode resultCode=$resultCode")
         // The sign up activity returned that the user has successfully created
         // an account
         if (requestCode == REQ_SIGNUP && resultCode == RESULT_OK && data != null) {
@@ -144,6 +134,7 @@ open class AuthenticatorActivity: AccountAuthenticatorActivity() {
         val username = (findViewById<View>(R.id.accountName) as TextView).text.toString()
         val password = (findViewById<View>(R.id.accountPassword) as TextView).text.toString()
 
+        // TODO: use coroutines instead of AsyncTask
         //final String account_type = getIntent().getStringExtra(ARG_ACCOUNT_TYPE);
         signinTask = SignInAsyncTask(username, password).execute()
     }
@@ -222,15 +213,15 @@ open class AuthenticatorActivity: AccountAuthenticatorActivity() {
             val accountType = this@AuthenticatorActivity.getString(R.string.ou_account_type)
             val data = Bundle()
             try {
-                authtoken = EvergreenAuthenticator.signIn(selected_library!!.url, username, password)
+                authtoken = EvergreenAuthenticator.signIn(selectedLibrary!!.url, username, password)
                 log(TAG, "signinTask> signIn returned " + redactedString(authtoken))
 
                 data.putString(AccountManager.KEY_ACCOUNT_NAME, username)
                 data.putString(AccountManager.KEY_ACCOUNT_TYPE, accountType)
                 data.putString(AccountManager.KEY_AUTHTOKEN, authtoken)
                 data.putString(PARAM_USER_PASS, password)
-                data.putString(Const.KEY_LIBRARY_NAME, selected_library!!.name)
-                data.putString(Const.KEY_LIBRARY_URL, selected_library!!.url)
+                data.putString(Const.KEY_LIBRARY_NAME, selectedLibrary!!.name)
+                data.putString(Const.KEY_LIBRARY_URL, selectedLibrary!!.url)
             } catch (e: AuthenticationException) {
                 errorMessage = e.message ?: "Authentication failed"
                 logFailedLogin(e)

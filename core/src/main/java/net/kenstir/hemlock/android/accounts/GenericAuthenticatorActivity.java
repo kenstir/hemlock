@@ -79,19 +79,19 @@ public class GenericAuthenticatorActivity extends AuthenticatorActivity {
         librarySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                selected_library = libraries.get(position);
+                selectedLibrary = libraries.get(position);
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
-                selected_library = null;
+                selectedLibrary = null;
             }
         });
     }
 
     @Override
     protected void initSelectedLibrary() {
-        selected_library = null;
+        selectedLibrary = null;
         Analytics.log(TAG, "initSelectedLibrary null");
     }
 
