@@ -73,7 +73,7 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
     private var _toolbar: Toolbar? = null
     protected var menuItemHandler: MenuProvider? = null
     protected var isRestarting = false
-    var scope = lifecycleScope
+    val scope = lifecycleScope
 
     protected val toolbar: Toolbar?
         get() {
