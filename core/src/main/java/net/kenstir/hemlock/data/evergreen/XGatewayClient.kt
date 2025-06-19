@@ -47,17 +47,19 @@ object XGatewayClient {
     private const val GATEWAY_PATH = "/osrf-gateway-v1"
     const val defaultTimeoutMs = 30_000
 
-    val client = HttpClient(CIO) {
-        install(ContentNegotiation) {
-            json(
-                Json { ignoreUnknownKeys = true },
-                contentType = ContentType.Any
-            )
+    val client: HttpClient by lazy {
+        HttpClient(CIO) {
+            install(ContentNegotiation) {
+                json(
+                    Json { ignoreUnknownKeys = true },
+                    contentType = ContentType.Any
+                )
+            }
+            install(HttpCache) {
+                // TODO: configure caching options, to make it persistent in the application
+            }
+            install(HemlockPlugin)
         }
-        install(HttpCache) {
-            // TODO: configure caching options
-        }
-        install(HemlockPlugin)
     }
 
     fun buildQuery(service: String?, method: String?, params: List<GatewayParam>, addCacheParams: Boolean = true): String {
@@ -91,6 +93,19 @@ object XGatewayClient {
         return baseUrl.plus(relativeUrl)
     }
 
+    fun getIDLUrl(shouldCache: Boolean = true): String {
+        val params = mutableListOf<String>()
+        for (className in Api.IDL_CLASSES_USED.split(",")) {
+            params.add("class=$className")
+        }
+        if (shouldCache) {
+            params.add("_ck=${clientCacheKey}")
+            params.add("_sk=${serverCacheKey}")
+        }
+        return baseUrl.plus("/reports/fm_IDL.xml?")
+            .plus(params.joinToString("&"))
+    }
+
     suspend fun fetch(service: String, method: String, params: List<GatewayParam>, shouldCache: Boolean): GatewayResponse {
         return fetch(service, method, params, RequestOptions(defaultTimeoutMs, shouldCache, true))
     }
@@ -106,5 +121,9 @@ object XGatewayClient {
                 contentType(ContentType.Application.FormUrlEncoded)
             })
         }
+    }
+
+    suspend fun get(url: String): GatewayResponse {
+        return GatewayResponse(client.get(url))
     }
 }

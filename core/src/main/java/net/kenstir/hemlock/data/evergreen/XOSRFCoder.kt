@@ -41,6 +41,7 @@ class XOSRFCoder(val netClass: String, val fields: List<String>) {
             registry.clear()
         }
 
+        @JvmStatic
         fun registerClass(netClass: String, fields: List<String>) {
             registry[netClass] = XOSRFCoder(netClass, fields)
         }
@@ -72,7 +73,6 @@ class XOSRFCoder(val netClass: String, val fields: List<String>) {
                 is JsonPrimitive -> decodePrimitive(element)
                 is JsonObject -> decodeObject(element)
                 is JsonArray -> decodeArray(element)
-                else -> throw XDecodingException("unsupported element type: ${element::class.simpleName}")
             }
         }
 

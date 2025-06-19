@@ -1,10 +1,13 @@
 package org.open_ils.idl;
 
+import net.kenstir.hemlock.data.evergreen.XOSRFCoder;
+
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 
 import org.opensrf.util.OSRFRegistry;
 import org.xmlpull.v1.XmlPullParser;
@@ -69,7 +72,7 @@ public class IDLParser {
         } catch(XmlPullParserException se) {
             throw new IDLException("Error parsing IDL XML", se);
         }
-   }
+    }
 
 
     public void handleStartElement(XmlPullParser reader) {
@@ -114,6 +117,8 @@ public class IDLParser {
                 }
             }
 
+            XOSRFCoder.registerClass(
+                current.getIDLClass(), List.of(fieldNames));
             OSRFRegistry.registerObject(
                 current.getIDLClass(), OSRFRegistry.WireProtocol.ARRAY, fieldNames);
 

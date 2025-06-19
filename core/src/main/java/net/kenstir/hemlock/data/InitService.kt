@@ -17,8 +17,7 @@
 
 package net.kenstir.hemlock.data
 
-interface AuthService {
-    suspend fun fetchServerVersion(): Result<String>
-    suspend fun fetchServerCacheKey(): Result<String?>
-    suspend fun getAuthToken(username: String, password: String): Result<String>
+interface InitService {
+    /** must be called before most other service methods, except for AuthService */
+    suspend fun initializeServiceData(): Result<Unit>
 }

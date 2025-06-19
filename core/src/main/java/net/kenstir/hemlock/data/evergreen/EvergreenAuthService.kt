@@ -76,33 +76,6 @@ class EvergreenAuthService: AuthService {
         }
     }
 
-    override fun makeAccount(username: String, authToken: String): Account {
-        return EvergreenAccount(username, authToken)
-    }
-
-    override suspend fun fetchSession(account: Account): Result<Unit> {
-        return try {
-            val evergreenAccount = account as? EvergreenAccount
-                ?: throw IllegalArgumentException("Expected EvergreenAccount, got ${account::class.java.simpleName}")
-
-            val sessionResponse = XGatewayClient.fetch(Api.AUTH, Api.AUTH_SESSION_RETRIEVE, paramListOf(account.authToken), false)
-            account.loadSession(sessionResponse.payloadFirstAsObject())
-
-            val settings = listOf("card", "settings")
-            val params = paramListOf(account.authToken, account.id, settings)
-            val userSettingsResponse = XGatewayClient.fetch(Api.ACTOR, Api.USER_FLESHED_RETRIEVE, params,false)
-            account.loadFleshedUserSettings(userSettingsResponse.payloadFirstAsObject())
-
-            Result.Success(Unit)
-        } catch (e: Exception) {
-            Result.Error(e)
-        }
-    }
-
-    override suspend fun deleteSession(account: Account): Result<Unit> {
-        TODO("Not yet implemented")
-    }
-
     private fun md5(s: String): String {
         val digest = MessageDigest.getInstance("MD5")
         digest.update(s.toByteArray())
