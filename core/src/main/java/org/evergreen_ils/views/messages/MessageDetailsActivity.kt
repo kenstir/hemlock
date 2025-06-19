@@ -24,7 +24,7 @@ import android.view.MenuItem
 import android.widget.TextView
 import kotlinx.coroutines.async
 import net.kenstir.hemlock.R
-import org.evergreen_ils.android.App
+import net.kenstir.hemlock.android.App
 import org.evergreen_ils.data.PatronMessage
 import net.kenstir.hemlock.data.Result
 import org.evergreen_ils.net.Gateway

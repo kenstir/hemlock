@@ -35,11 +35,11 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import net.kenstir.hemlock.R
-import org.evergreen_ils.android.AccountUtils
-import org.evergreen_ils.android.Analytics
-import org.evergreen_ils.android.App
-import org.evergreen_ils.android.Log
-import org.evergreen_ils.android.Log.TAG_FCM
+import net.kenstir.hemlock.android.AccountUtils
+import net.kenstir.hemlock.android.Analytics
+import net.kenstir.hemlock.android.App
+import net.kenstir.hemlock.android.Log
+import net.kenstir.hemlock.android.Log.TAG_FCM
 import net.kenstir.hemlock.data.models.Account
 import org.evergreen_ils.data.PushNotification
 import net.kenstir.hemlock.data.Result

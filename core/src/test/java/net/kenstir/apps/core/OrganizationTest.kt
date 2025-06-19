@@ -18,8 +18,8 @@
 package net.kenstir.apps.core
 
 import org.evergreen_ils.system.EgOrg
-import org.evergreen_ils.android.Log
-import org.evergreen_ils.android.StdoutLogProvider
+import net.kenstir.hemlock.android.Log
+import net.kenstir.hemlock.android.StdoutLogProvider
 import net.kenstir.hemlock.data.jsonMapOf
 import org.junit.Assert.*
 import org.junit.BeforeClass

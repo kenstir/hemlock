@@ -34,7 +34,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.joinAll
 import net.kenstir.hemlock.R
-import org.evergreen_ils.android.App
+import net.kenstir.hemlock.android.App
 import net.kenstir.hemlock.data.models.Account
 import org.evergreen_ils.data.HoldRecord
 import net.kenstir.hemlock.data.Result
@@ -48,8 +48,8 @@ import net.kenstir.hemlock.data.evergreen.HOLD_TYPE_RECALL
 import net.kenstir.hemlock.data.evergreen.HOLD_TYPE_TITLE
 import net.kenstir.hemlock.data.evergreen.HOLD_TYPE_VOLUME
 import org.evergreen_ils.data.MBRecord
-import org.evergreen_ils.android.Analytics
-import org.evergreen_ils.android.Log
+import net.kenstir.hemlock.android.Analytics
+import net.kenstir.hemlock.android.Log
 import org.evergreen_ils.utils.ui.BaseActivity
 import org.evergreen_ils.utils.ui.ProgressDialogSupport
 import org.evergreen_ils.utils.ui.showAlert

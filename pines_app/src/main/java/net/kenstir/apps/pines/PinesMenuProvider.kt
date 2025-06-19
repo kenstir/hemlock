@@ -20,9 +20,7 @@ package net.kenstir.apps.pines
 import android.app.Activity
 import android.content.Intent
 import androidx.annotation.Keep
-import androidx.core.app.ActivityCompat.startActivityForResult
-import org.evergreen_ils.android.App.REQUEST_MESSAGES
-import org.evergreen_ils.net.Gateway.getUrl
+import net.kenstir.hemlock.android.App.REQUEST_MESSAGES
 import org.evergreen_ils.utils.ui.ActivityUtils
 import org.evergreen_ils.views.MenuProvider
 import org.evergreen_ils.views.messages.MessagesActivity

@@ -20,14 +20,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
 import com.android.volley.toolbox.NetworkImageView
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.async
 import net.kenstir.hemlock.R
-import org.evergreen_ils.android.Log
+import net.kenstir.hemlock.android.Log
 import org.evergreen_ils.data.MBRecord
 import org.evergreen_ils.net.Gateway.getUrl
 import org.evergreen_ils.net.GatewayLoader

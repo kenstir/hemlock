@@ -32,11 +32,11 @@ import kotlinx.coroutines.async
 import net.kenstir.hemlock.R
 import org.evergreen_ils.views.bookbags.BookBagsActivity
 import org.evergreen_ils.views.holds.HoldsActivity
-import org.evergreen_ils.android.App
+import net.kenstir.hemlock.android.App
 import net.kenstir.hemlock.data.Result
 import org.evergreen_ils.net.Gateway
 import org.evergreen_ils.views.search.SearchActivity
-import org.evergreen_ils.android.Log
+import net.kenstir.hemlock.android.Log
 import org.evergreen_ils.data.PatronMessage
 import org.evergreen_ils.system.EgOrg
 import org.evergreen_ils.utils.ui.MainBaseActivity

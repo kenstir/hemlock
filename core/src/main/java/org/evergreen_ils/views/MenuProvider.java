@@ -21,7 +21,7 @@ package org.evergreen_ils.views;
 import android.app.Activity;
 import android.text.TextUtils;
 
-import org.evergreen_ils.android.Analytics;
+import net.kenstir.hemlock.android.Analytics;
 
 /** Interface to get extra buttons provided by the main main of a custom app.
  * Concrete implementation is provided by the app

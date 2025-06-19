@@ -49,10 +49,10 @@ import kotlinx.coroutines.async
 import net.kenstir.hemlock.data.evergreen.KEY_SEARCH_BY
 import net.kenstir.hemlock.data.evergreen.KEY_SEARCH_TEXT
 import net.kenstir.hemlock.R
-import org.evergreen_ils.android.Analytics
-import org.evergreen_ils.android.Analytics.orgDimensionKey
-import org.evergreen_ils.android.App
-import org.evergreen_ils.android.Log
+import net.kenstir.hemlock.android.Analytics
+import net.kenstir.hemlock.android.Analytics.orgDimensionKey
+import net.kenstir.hemlock.android.App
+import net.kenstir.hemlock.android.Log
 import org.evergreen_ils.data.MBRecord
 import net.kenstir.hemlock.data.Result
 import org.evergreen_ils.net.Gateway

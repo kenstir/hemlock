@@ -1,7 +1,7 @@
 package org.opensrf.net.http;
 
-import org.evergreen_ils.android.Log;
-import org.evergreen_ils.android.Analytics;
+import net.kenstir.hemlock.android.Log;
+import net.kenstir.hemlock.android.Analytics;
 import org.evergreen_ils.net.Gateway;
 import org.json.JSONObject;
 import org.opensrf.Method;

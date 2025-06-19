@@ -20,8 +20,8 @@ package net.kenstir.hemlock.data.evergreen
 import androidx.test.platform.app.InstrumentationRegistry
 import kotlinx.coroutines.test.runTest
 import net.kenstir.hemlock.data.Result
-import org.evergreen_ils.android.Log
-import org.evergreen_ils.android.StdoutLogProvider
+import net.kenstir.hemlock.android.Log
+import net.kenstir.hemlock.android.StdoutLogProvider
 import org.junit.Assert.assertNotEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue

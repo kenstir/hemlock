@@ -27,8 +27,8 @@ import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.coroutines.async
 import net.kenstir.hemlock.R
-import org.evergreen_ils.android.App
-import org.evergreen_ils.android.Log
+import net.kenstir.hemlock.android.App
+import net.kenstir.hemlock.android.Log
 import org.evergreen_ils.data.PatronMessage
 import net.kenstir.hemlock.data.Result
 import org.evergreen_ils.net.Gateway

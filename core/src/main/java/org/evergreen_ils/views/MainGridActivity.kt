@@ -27,8 +27,8 @@ import android.widget.Button
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import net.kenstir.hemlock.R
-import org.evergreen_ils.android.App
-import org.evergreen_ils.android.Log
+import net.kenstir.hemlock.android.App
+import net.kenstir.hemlock.android.Log
 import org.evergreen_ils.data.GridButton
 import org.evergreen_ils.system.EgOrg
 import org.evergreen_ils.utils.ui.MainBaseActivity

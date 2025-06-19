@@ -7,8 +7,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import net.kenstir.hemlock.data.evergreen.Api;
-import org.evergreen_ils.android.Analytics;
-import org.evergreen_ils.android.Log;
+import net.kenstir.hemlock.android.Analytics;
+import net.kenstir.hemlock.android.Log;
 import org.opensrf.Method;
 import org.opensrf.net.http.GatewayRequest;
 import org.opensrf.net.http.HttpConnection;

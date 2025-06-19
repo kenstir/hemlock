@@ -21,10 +21,10 @@ import androidx.annotation.Keep;
 import androidx.annotation.NonNull;
 import android.text.TextUtils;
 
-import org.evergreen_ils.android.AppBehavior;
+import net.kenstir.hemlock.android.AppBehavior;
 
 import org.evergreen_ils.data.MBRecord;
-import org.evergreen_ils.android.Log;
+import net.kenstir.hemlock.android.Log;
 import org.evergreen_ils.utils.Link;
 import org.evergreen_ils.utils.MARCRecord;
 

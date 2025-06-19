@@ -1,6 +1,6 @@
 package org.opensrf;
 
-import org.evergreen_ils.android.Analytics;
+import net.kenstir.hemlock.android.Analytics;
 
 /**
  * Used to log unexpected events to Crashlytics.

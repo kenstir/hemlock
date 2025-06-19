@@ -18,7 +18,7 @@
 package org.evergreen_ils.utils.ui
 
 import androidx.appcompat.app.AppCompatDelegate
-import org.evergreen_ils.android.Log
+import net.kenstir.hemlock.android.Log
 
 object ThemeManager {
     private val TAG = ThemeManager::class.java.simpleName
