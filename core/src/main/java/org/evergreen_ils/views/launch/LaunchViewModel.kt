@@ -85,7 +85,7 @@ class LaunchViewModel : ViewModel() {
                     is Result.Error -> { onLoadError(result.exception) ; return@async }
                 }
                 XGatewayClient.serverCacheKey = serverVersion
-                Gateway.serverCacheKey = serverVersion
+                Gateway.serverCacheKey = serverVersion//xxcompat
                 now_ms = Log.logElapsedTime(TAG, now_ms, "fetchServerVersion: $serverVersion")
 
                 // sync: serverCacheKey is an additional way for the EG admin to clear the app cache
@@ -95,12 +95,15 @@ class LaunchViewModel : ViewModel() {
                 }
                 serverCacheKey?.let {
                     XGatewayClient.serverCacheKey = "$serverVersion-$serverCacheKey"
-                    Gateway.serverCacheKey = "$serverVersion-$serverCacheKey"
+                    Gateway.serverCacheKey = "$serverVersion-$serverCacheKey"//xxcompat
                 }
                 now_ms = Log.logElapsedTime(TAG, now_ms, "fetchServerCacheKey: $serverCacheKey")
 
                 // sync: load IDL
-                EgIDL.loadIDL()
+                when (val result = App.getServiceConfig().initService.initializeServiceData()) {
+                    is Result.Success -> {}
+                    is Result.Error -> { onLoadError(result.exception) ; return@async }
+                }
                 now_ms = Log.logElapsedTime(TAG, now_ms, "loadIDL")
 
                 // sync: load messages
