@@ -19,7 +19,6 @@
 package org.evergreen_ils.data
 
 import android.location.Location
-import android.text.TextUtils
 
 data class Library constructor(val url: String              // e.g. "https://bark.cwmars.org"
                                , val name: String           // e.g. "C/W MARS"
