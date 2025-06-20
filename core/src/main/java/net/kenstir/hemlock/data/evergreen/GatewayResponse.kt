@@ -39,6 +39,11 @@ suspend fun GatewayResponse.payloadFirstAsObject(): XOSRFObject {
     return XGatewayResult.create(json).payloadFirstAsObject()
 }
 
+suspend fun GatewayResponse.payloadFirstAsObjectList(): List<XOSRFObject> {
+    val json = bodyAsText()
+    return XGatewayResult.create(json).payloadFirstAsObjectList()
+}
+
 suspend fun GatewayResponse.payloadFirstAsString(): String {
     val json = bodyAsText()
     return XGatewayResult.create(json).payloadFirstAsString()

@@ -100,7 +100,7 @@ class LaunchViewModel : ViewModel() {
                 now_ms = Log.logElapsedTime(TAG, now_ms, "fetchServerCacheKey: $serverCacheKey")
 
                 // sync: load IDL
-                when (val result = App.getServiceConfig().initService.initializeServiceData()) {
+                when (val result = App.getServiceConfig().initService.loadServiceData()) {
                     is Result.Success -> {}
                     is Result.Error -> { onLoadError(result.exception) ; return@async }
                 }
@@ -115,13 +115,13 @@ class LaunchViewModel : ViewModel() {
                 // ---------------------------------------------------------------
 
                 var defs = arrayListOf<Deferred<Any>>()
-                defs.add(viewModelScope.async {
-                    val result = Gateway.actor.fetchOrgTypes()
-                    when (result) {
-                        is Result.Success -> EgOrg.loadOrgTypes(result.data)
-                        is Result.Error -> onLoadError(result.exception)
-                    }
-                })
+//                defs.add(viewModelScope.async {
+//                    val result = Gateway.actor.fetchOrgTypes()
+//                    when (result) {
+//                        is Result.Success -> EgOrg.loadOrgTypes(result.data)
+//                        is Result.Error -> onLoadError(result.exception)
+//                    }
+//                })
                 defs.add(viewModelScope.async {
                     val result = Gateway.actor.fetchOrgTree()
                     when (result) {

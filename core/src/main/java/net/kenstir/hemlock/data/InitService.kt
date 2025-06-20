@@ -19,5 +19,5 @@ package net.kenstir.hemlock.data
 
 interface InitService {
     /** must be called before most other service methods, except for AuthService */
-    suspend fun initializeServiceData(): Result<Unit>
+    suspend fun loadServiceData(): Result<Unit>
 }

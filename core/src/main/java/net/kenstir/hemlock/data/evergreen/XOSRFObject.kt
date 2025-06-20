@@ -133,25 +133,22 @@ object XOSRFObjectSerializer : KSerializer<XOSRFObject> {
         }
     }
 
+    // TODO: why do we have both XOSRFObjectSerializer.deserializeWireProtocol and XOSRFCoder.decodeObject?
+    // They seem almost identical
     private fun deserializeWireProtocol(jsonObject: JsonObject): XOSRFObject {
         val netClass = jsonObject["__c"]?.jsonPrimitive?.content
             ?: throw SerializationException("Missing __c field in wire protocol object")
-
         val coder = XOSRFCoder.getCoder(netClass)
             ?: throw SerializationException("Unregistered class: $netClass")
-
         val values = jsonObject["__p"]?.jsonArray
             ?: throw SerializationException("Missing __p field in wire protocol object")
-
         if (values.size != coder.fields.size) {
-            throw SerializationException("Field count mismatch for class $netClass")
+            throw SerializationException("Field count mismatch for class $netClass (expected ${coder.fields.size}, got ${values.size})")
         }
-
-        val map = mutableMapOf<String, Any?>()
+        val map = HashMap<String, Any?>(coder.fields.size)
         for (i in coder.fields.indices) {
             map[coder.fields[i]] = fromJsonElement(values[i])
         }
-
         return XOSRFObject(map, netClass)
     }
 

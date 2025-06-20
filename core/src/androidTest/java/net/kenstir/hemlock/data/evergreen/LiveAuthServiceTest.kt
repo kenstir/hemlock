@@ -62,7 +62,7 @@ class LiveAuthServiceTest {
 
     suspend fun loadTestServiceData(): Result<Unit> {
         if (isServiceDataLoaded) return Result.Success(Unit)
-        val result = initializationService.initializeServiceData()
+        val result = initializationService.loadServiceData()
         isServiceDataLoaded = true
         return result
     }
