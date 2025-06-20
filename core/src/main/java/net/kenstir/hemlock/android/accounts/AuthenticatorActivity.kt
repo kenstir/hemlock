@@ -19,7 +19,6 @@ package net.kenstir.hemlock.android.accounts
 import android.accounts.Account
 import android.accounts.AccountManager
 import android.annotation.SuppressLint
-import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
 import android.text.InputType
@@ -30,7 +29,7 @@ import android.widget.TextView
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.async
 import net.kenstir.hemlock.R
-import net.kenstir.hemlock.android.Analytics.initialize
+import net.kenstir.hemlock.android.Analytics
 import net.kenstir.hemlock.android.Analytics.log
 import net.kenstir.hemlock.android.Analytics.redactedString
 import net.kenstir.hemlock.android.App
@@ -46,11 +45,10 @@ open class AuthenticatorActivity: AccountAuthenticatorActivity() {
     protected val scope = lifecycleScope
 
     private var authTokenType: String? = null
-    @JvmField
     protected var alertMessage: String? = null
-    @JvmField
-    protected var selectedLibrary: Library? = null
+    private var selectedLibrary: Library? = null
     protected var forgotPasswordButton: Button? = null
+    protected var submitButton: Button? = null
 
     protected open fun setContentViewImpl() {
         setContentView(R.layout.activity_login)
@@ -59,7 +57,7 @@ open class AuthenticatorActivity: AccountAuthenticatorActivity() {
     @SuppressLint("StringFormatInvalid")
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        initialize(this)
+        Analytics.initialize(this)
         setContentViewImpl()
 
         App.init(this)
@@ -81,7 +79,8 @@ open class AuthenticatorActivity: AccountAuthenticatorActivity() {
         accountNameText.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS
         accountNameText.text = accountName
 
-        findViewById<View>(R.id.submit).setOnClickListener { submit() }
+        submitButton = findViewById(R.id.submit)
+        submitButton?.setOnClickListener { submit() }
 
         try {
             forgotPasswordButton = findViewById(R.id.forgot_password_button)
@@ -99,9 +98,18 @@ open class AuthenticatorActivity: AccountAuthenticatorActivity() {
     }
 
     protected open fun initSelectedLibrary() {
-        selectedLibrary = Library(getString(R.string.ou_library_url), getString(R.string.ou_library_name))
-        log(TAG, ("initSelectedLibrary name=" + selectedLibrary!!.name
-                + " url=" + selectedLibrary!!.url))
+        setLibrary(Library(getString(R.string.ou_library_url), getString(R.string.ou_library_name)))
+    }
+
+    protected open fun setLibrary(library: Library?) {
+        selectedLibrary = library
+        if (library == null) {
+            submitButton?.setEnabled(false)
+        } else {
+            submitButton?.setEnabled(true)
+            App.setLibrary(library)
+            log(TAG, "onLibrarySelected ${library.name} ${library.url}")
+        }
     }
 
     override fun onStart() {
@@ -165,19 +173,6 @@ open class AuthenticatorActivity: AccountAuthenticatorActivity() {
                 showAlert(ex)
             }
         }
-    }
-
-    // this now exists only until the subclass can be converted to kotlin+coroutines
-    protected fun showAlertCompat(errorMessage: String?) {
-        if (isFinishing) return
-        val builder = AlertDialog.Builder(this)
-        alertMessage = errorMessage
-        builder.setTitle("Login failed")
-            .setMessage(errorMessage)
-            .setPositiveButton(android.R.string.ok) { dialog, which ->
-                alertMessage = null
-            }
-        builder.create().show()
     }
 
     private fun onAuthSuccess(intent: Intent) {
