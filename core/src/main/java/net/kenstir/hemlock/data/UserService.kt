@@ -21,6 +21,6 @@ import net.kenstir.hemlock.data.models.Account
 
 interface UserService {
     fun makeAccount(username: String, authToken: String): Account
-    suspend fun fetchSession(account: Account): Result<Unit>
+    suspend fun loadUserSession(account: Account): Result<Unit>
     suspend fun deleteSession(account: Account): Result<Unit>
 }
