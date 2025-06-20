@@ -27,8 +27,10 @@ import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
 import net.kenstir.hemlock.data.Result
 import net.kenstir.hemlock.R
+import net.kenstir.hemlock.android.App
 import org.evergreen_ils.net.Gateway
 import net.kenstir.hemlock.android.Log
+import net.kenstir.hemlock.data.evergreen.XGatewayClient
 import org.evergreen_ils.system.*
 import org.evergreen_ils.utils.getCustomMessage
 import java.util.concurrent.atomic.AtomicInteger
@@ -78,19 +80,21 @@ class LaunchViewModel : ViewModel() {
                 var now_ms = start_ms
 
                 // sync: serverVersion is a key for caching all other requests
-                val serverVersion = when (val result = Gateway.actor.fetchServerVersion()) {
+                val serverVersion = when (val result = App.getServiceConfig().authService.fetchServerVersion()) {
                     is Result.Success -> { result.data }
                     is Result.Error -> { onLoadError(result.exception) ; return@async }
                 }
+                XGatewayClient.serverCacheKey = serverVersion
                 Gateway.serverCacheKey = serverVersion
                 now_ms = Log.logElapsedTime(TAG, now_ms, "fetchServerVersion: $serverVersion")
 
                 // sync: serverCacheKey is an additional way for the EG admin to clear the app cache
-                val serverCacheKey = when (val result = Gateway.actor.fetchServerCacheKey()) {
-                    is Result.Success -> { result.data ?: "x" }
+                val serverCacheKey = when (val result = App.getServiceConfig().authService.fetchServerCacheKey()) {
+                    is Result.Success -> { result.data }
                     is Result.Error -> { onLoadError(result.exception) ; return@async }
                 }
                 serverCacheKey?.let {
+                    XGatewayClient.serverCacheKey = "$serverVersion-$serverCacheKey"
                     Gateway.serverCacheKey = "$serverVersion-$serverCacheKey"
                 }
                 now_ms = Log.logElapsedTime(TAG, now_ms, "fetchServerCacheKey: $serverCacheKey")

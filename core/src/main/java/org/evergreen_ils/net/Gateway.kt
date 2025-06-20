@@ -73,6 +73,9 @@ object Gateway {
             sb.append("&_sk=").append(serverCacheKey)
         }
 
+        // Add OG for Old Gateway code, so I can find it in the logs
+        sb.append("&_v=OG")
+
         return sb.toString()
     }
 

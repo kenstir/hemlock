@@ -95,7 +95,7 @@ class LiveAuthServiceTest {
 
         assertTrue(loadTestServiceData().succeeded)
 
-        val result = userService.fetchSession(account)
+        val result = userService.loadUserSession(account)
         println("Result: $result")
         assertTrue(result.succeeded)
 

@@ -20,7 +20,6 @@ package net.kenstir.hemlock.data.evergreen
 import net.kenstir.hemlock.data.AuthService
 import net.kenstir.hemlock.data.Result
 import net.kenstir.hemlock.data.jsonMapOf
-import net.kenstir.hemlock.data.models.Account
 import org.evergreen_ils.data.parseOrgStringSetting
 import org.evergreen_ils.system.EgOrg
 import java.security.MessageDigest

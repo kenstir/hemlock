@@ -20,7 +20,7 @@ package net.kenstir.hemlock.data.evergreen
 import net.kenstir.hemlock.data.models.Account
 import org.opensrf.util.OSRFObject
 
-class EvergreenAccount(username: String, authToken: String? = null) : Account(username, authToken) {
+class EvergreenAccount(username: String, authToken: String? = null): Account(username, authToken) {
 
     fun loadSession(obj: XOSRFObject) {
         id = obj.getInt("id")

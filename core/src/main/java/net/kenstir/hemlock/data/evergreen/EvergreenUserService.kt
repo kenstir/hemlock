@@ -27,9 +27,9 @@ class EvergreenUserService: UserService {
         return EvergreenAccount(username, authToken)
     }
 
-    override suspend fun fetchSession(account: Account): Result<Unit> {
+    override suspend fun loadUserSession(account: Account): Result<Unit> {
         return try {
-            val evergreenAccount = account as? EvergreenAccount
+            account as? EvergreenAccount
                 ?: throw IllegalArgumentException("Expected EvergreenAccount, got ${account::class.java.simpleName}")
 
             val sessionResponse = XGatewayClient.fetch(Api.AUTH, Api.AUTH_SESSION_RETRIEVE, paramListOf(account.authToken), false)
