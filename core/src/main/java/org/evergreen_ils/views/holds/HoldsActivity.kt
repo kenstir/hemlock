@@ -54,7 +54,7 @@ import org.evergreen_ils.utils.ui.BaseActivity
 import org.evergreen_ils.utils.ui.ProgressDialogSupport
 import org.evergreen_ils.utils.ui.showAlert
 import org.evergreen_ils.views.search.RecordDetails
-import org.opensrf.ShouldNotHappenException
+import net.kenstir.hemlock.data.ShouldNotHappenException
 import java.util.ArrayList
 
 class HoldsActivity : BaseActivity() {

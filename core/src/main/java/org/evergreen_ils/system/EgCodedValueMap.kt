@@ -20,7 +20,7 @@ package org.evergreen_ils.system
 import net.kenstir.hemlock.data.evergreen.OSRFUtils
 import net.kenstir.hemlock.android.Analytics
 import net.kenstir.hemlock.android.Log
-import org.opensrf.ShouldNotHappenException
+import net.kenstir.hemlock.data.ShouldNotHappenException
 import org.opensrf.util.OSRFObject
 import java.util.*
 
