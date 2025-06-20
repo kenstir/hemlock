@@ -33,6 +33,7 @@ import io.ktor.client.engine.cio.CIO
 import io.ktor.client.request.get
 import io.ktor.client.statement.bodyAsText
 import kotlinx.coroutines.async
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import net.kenstir.hemlock.R
@@ -44,9 +45,9 @@ import org.evergreen_ils.utils.ui.showAlert
 import java.util.Collections
 
 @Serializable
-data class LibraryEntry(
-    val short_name: String,
-    val directory_name: String,
+data class DirectoryEntry(
+    @SerialName("short_name") val shortName: String,
+    @SerialName("directory_name") val directoryName: String,
     val url: String,
     val latitude: Double,
     val longitude: Double,
@@ -199,12 +200,12 @@ class GenericAuthenticatorActivity: AuthenticatorActivity() {
             libraries.add(Library("http://192.168.1.8", "debug catalog", "00debug catalog", null))
         }
 
-        val entries = Json.decodeFromString<List<LibraryEntry>>(json)
+        val entries = Json.decodeFromString<List<DirectoryEntry>>(json)
         for (entry in entries) {
             val location = Location("")
             location.latitude = entry.latitude
             location.longitude = entry.longitude
-            val library = Library(entry.url, entry.short_name, entry.directory_name, location)
+            val library = Library(entry.url, entry.shortName, entry.directoryName, location)
             libraries.add(library)
         }
 
