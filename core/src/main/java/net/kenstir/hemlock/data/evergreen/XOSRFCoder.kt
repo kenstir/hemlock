@@ -76,6 +76,8 @@ class XOSRFCoder(val netClass: String, val fields: List<String>) {
             }
         }
 
+        // TODO: why do we have both XOSRFObjectSerializer.deserializeWireProtocol and XOSRFCoder.decodeObject?
+        // They seem almost identical
         private fun decodeObject(element: JsonObject): Any? {
             if (element.containsKey("__c") && element.containsKey("__p")) {
                 // wire protocol object

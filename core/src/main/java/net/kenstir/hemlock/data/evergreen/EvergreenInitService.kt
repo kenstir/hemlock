@@ -25,21 +25,22 @@ import net.kenstir.hemlock.data.InitService
 import net.kenstir.hemlock.data.Result
 import net.kenstir.hemlock.android.Log
 import net.kenstir.hemlock.data.ShouldNotHappenException
+import org.evergreen_ils.system.EgOrg
 import org.open_ils.idl.IDLParser
 
 private val TAG = EvergreenInitService::class.java.simpleName
 
 class EvergreenInitService : InitService {
 
-    override suspend fun initializeServiceData(): Result<Unit> {
+    override suspend fun loadServiceData(): Result<Unit> {
         return try {
-            return initializeServiceDataImpl()
+            return Result.Success(loadServiceDataImpl())
         } catch (e: Exception) {
             Result.Error(e)
         }
     }
 
-    private suspend fun initializeServiceDataImpl(): Result<Unit> = coroutineScope {
+    private suspend fun loadServiceDataImpl(): Unit = coroutineScope {
         // sync: Load the IDL first, because everything else depends on it
         var now = System.currentTimeMillis()
         val url = XGatewayClient.getIDLUrl()
@@ -49,30 +50,43 @@ class EvergreenInitService : InitService {
         parser.parse()
         Log.logElapsedTime(TAG, now, "loadIDL.parse")
 
-        // Example suspend functions
+        // async: Load the rest of the data in parallel
         val job1 = async {
-            Log.d(TAG, "job1: start")
-            delay(100);
-            Log.d(TAG, "job1: end")
-            return@async Result.Error(ShouldNotHappenException("Example error from job1"))
+            loadOrgTypes()
         }
         val job2 = async {
             Log.d(TAG, "job2: start")
             delay(1000);
             Log.d(TAG, "job2: end")
-            return@async Result.Success(Unit)
         }
         val job3 = async {
             Log.d(TAG, "job3: start")
             delay(200);
             Log.d(TAG, "job3: end")
-            return@async Result.Success(Unit)
         }
 
+        val results = listOf<Unit>(job1.await(), job2.await(), job3.await())
+//        val result = results.firstOrNull { it is Result.Error }
+//            ?: Result.Success(Unit)
+//        result
+    }
 
-        val results = listOf<Result<Unit>>(job1.await(), job2.await(), job3.await())
-        val result = results.firstOrNull { it is Result.Error }
-            ?: Result.Success(Unit)
-        result
+    private suspend fun loadOrgTypes() {
+        Log.d(TAG, "job1: loading org types")
+        val response = XGatewayClient.fetch(Api.ACTOR, Api.ORG_TYPES_RETRIEVE, paramListOf(), true)
+        EgOrg.loadOrgTypes(response.payloadFirstAsObjectList())
+        Log.d(TAG, "job1: loading org types done")
+    }
+
+    private suspend fun loadOrgTree(): Result<Unit> {
+        TODO()
+    }
+
+    private suspend fun loadCopyStatuses(): Result<Unit> {
+        TODO()
+    }
+
+    private suspend fun loadCodedValueMaps(): Result<Unit> {
+        TODO()
     }
 }

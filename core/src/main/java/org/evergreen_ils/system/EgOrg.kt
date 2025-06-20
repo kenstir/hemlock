@@ -20,6 +20,7 @@ package org.evergreen_ils.system
 import android.annotation.SuppressLint
 import androidx.core.util.Pair
 import net.kenstir.hemlock.android.Log
+import net.kenstir.hemlock.data.evergreen.XOSRFObject
 import org.evergreen_ils.data.OrgType
 import org.evergreen_ils.data.Organization
 import org.opensrf.util.OSRFObject
@@ -39,7 +40,7 @@ object EgOrg {
     val visibleOrgs: List<Organization>
         get() = orgs.filter { it.opacVisible }
 
-    fun loadOrgTypes(objArray: List<OSRFObject>) {
+    fun loadOrgTypes(objArray: List<XOSRFObject>) {
         synchronized(this) {
             orgTypes.clear()
             objArray.forEach { obj ->
