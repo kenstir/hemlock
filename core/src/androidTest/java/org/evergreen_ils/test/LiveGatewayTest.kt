@@ -32,7 +32,6 @@ import net.kenstir.hemlock.data.models.Account
 import org.evergreen_ils.data.BookBag
 import net.kenstir.hemlock.data.Result
 import org.evergreen_ils.net.*
-import org.evergreen_ils.system.EgIDL
 import org.evergreen_ils.utils.getCustomMessage
 import org.junit.AfterClass
 import org.junit.Assert.*
@@ -122,12 +121,7 @@ class LiveGatewayTest {
         // stripped down version of LaunchViewModel.loadServiceData()
         @JvmStatic
         suspend fun loadServiceData() {
-            if (!isIDLLoaded) {
-                Log.d(TAG, "registry:${OSRFRegistry.getRegistry("au")}")
-                EgIDL.loadIDL()
-                Log.d(TAG, "registry:${OSRFRegistry.getRegistry("au")}")
-                isIDLLoaded = true
-            }
+            TODO("LiveGatewayTest is dead, long live XGatewayClient")
         }
     }
 
