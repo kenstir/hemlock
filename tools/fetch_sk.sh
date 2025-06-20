@@ -17,7 +17,12 @@ esac
 
 topdir=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
 
-settings="${topdir}/${app}_app/src/main/res/values/ou.xml"
+case "$app" in
+*_app) app_dir="$app";;
+*)     app_dir="${app}_app";;
+esac
+
+settings="${topdir}/${app_dir}/src/main/res/values/ou.xml"
 if [ ! -f "$settings" ]; then
     echo "No such file: $settings"
     exit 1
@@ -28,7 +33,7 @@ url=$(fgrep -m1 '"ou_library_url"' $settings)
 url=${url%<*}
 url=${url#*>}
 test -n "$url" || {
-    echo >&2 "library_url is empty for ${app}_app"
+    echo >&2 "library_url is empty in ${app_dir}"
     exit 1
 }
 #echo "url: $url"
