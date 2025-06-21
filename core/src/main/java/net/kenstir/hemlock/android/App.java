@@ -32,6 +32,7 @@ import net.kenstir.hemlock.data.ServiceConfig;
 import net.kenstir.hemlock.data.evergreen.XGatewayClient;
 import net.kenstir.hemlock.data.models.Account;
 import net.kenstir.hemlock.data.Library;
+
 import org.evergreen_ils.net.Gateway;
 import org.evergreen_ils.net.Volley;
 import org.evergreen_ils.utils.ui.AppState;
@@ -69,6 +70,10 @@ public class App {
         }
     }
 
+    public static String getVersion(Context context) {
+        return Integer.toString(getVersionCode(context));
+    }
+
     public static String getAppInfo(Context context) {
         PackageInfo pInfo = null;
         try {
@@ -102,8 +107,6 @@ public class App {
         enableCaching(context);
         behavior = AppFactory.makeBehavior(context.getResources());
         Volley.init(context);
-        XGatewayClient.clientCacheKey = Integer.toString(getVersionCode(context));
-        Gateway.clientCacheKey = XGatewayClient.clientCacheKey;
         if (mServiceConfig == null) {
             mServiceConfig = new ServiceConfig();
         }
@@ -120,6 +123,7 @@ public class App {
 
     public static void setLibrary(Library library) {
         App.library = library;
+        // TODO: this should be in the Evergreen data layer, not here
         XGatewayClient.baseUrl = library.getUrl();
         Gateway.baseUrl = library.getUrl();
     }

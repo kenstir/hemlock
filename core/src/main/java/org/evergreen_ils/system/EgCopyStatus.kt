@@ -19,14 +19,14 @@
 package org.evergreen_ils.system
 
 import net.kenstir.hemlock.android.Log
+import net.kenstir.hemlock.data.evergreen.XOSRFObject
 import org.evergreen_ils.data.CopyStatus
-import org.opensrf.util.OSRFObject
 
 object EgCopyStatus {
     var copyStatusList = mutableListOf<CopyStatus>()
     private const val TAG = "EgCopyStatus"
 
-    fun loadCopyStatuses(ccs_list: List<OSRFObject>) {
+    fun loadCopyStatuses(ccs_list: List<XOSRFObject>) {
         synchronized(this) {
             copyStatusList.clear()
             for (ccs_obj in ccs_list) {

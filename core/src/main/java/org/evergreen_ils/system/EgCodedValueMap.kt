@@ -21,6 +21,7 @@ import net.kenstir.hemlock.data.evergreen.OSRFUtils
 import net.kenstir.hemlock.android.Analytics
 import net.kenstir.hemlock.android.Log
 import net.kenstir.hemlock.data.ShouldNotHappenException
+import net.kenstir.hemlock.data.evergreen.XOSRFObject
 import org.opensrf.util.OSRFObject
 import java.util.*
 
@@ -37,7 +38,7 @@ object EgCodedValueMap {
     private var iconFormats = ArrayList<CodedValue>()
 
     @JvmStatic
-    fun loadCodedValueMaps(objects: List<OSRFObject>) {
+    fun loadCodedValueMaps(objects: List<XOSRFObject>) {
         searchFormats = ArrayList()
         iconFormats = ArrayList()
         for (obj in objects) {

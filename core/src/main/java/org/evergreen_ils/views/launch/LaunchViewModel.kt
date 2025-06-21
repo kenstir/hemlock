@@ -18,20 +18,20 @@
 
 package org.evergreen_ils.views.launch
 
-import android.content.res.Resources
+import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
-import net.kenstir.hemlock.data.Result
 import net.kenstir.hemlock.R
 import net.kenstir.hemlock.android.App
-import org.evergreen_ils.net.Gateway
 import net.kenstir.hemlock.android.Log
+import net.kenstir.hemlock.data.InitServiceOptions
+import net.kenstir.hemlock.data.Result
 import net.kenstir.hemlock.data.evergreen.XGatewayClient
-import org.evergreen_ils.system.*
+import org.evergreen_ils.net.Gateway
+import org.evergreen_ils.system.EgMessageMap
 import org.evergreen_ils.utils.getCustomMessage
 import java.util.concurrent.atomic.AtomicInteger
 
@@ -64,12 +64,10 @@ class LaunchViewModel : ViewModel() {
         _serviceDataReady.value = false
     }
 
-    // This is where most global initialization happens: especially loading the IDL necessary
-    // for decoding most gateway responses.  Important notes:
-    // * fetchServerCacheKey() is done first
-    // * loadServiceData() is called second
-    // * other initialization can happen async after that
-    fun loadServiceData(resources: Resources) {
+    // This is where most global initialization happens.
+    //
+    // TODO: why did I use async inside async?
+    fun loadServiceData(context: Context) {
         viewModelScope.async {
             val outerJob = viewModelScope.async {
                 // update the UI
@@ -77,67 +75,23 @@ class LaunchViewModel : ViewModel() {
                 _status.value = "Connecting to server"
                 errors.set(0)
 
-                val start_ms = System.currentTimeMillis()
-                var now_ms = start_ms
-
-                // sync: serverVersion is a key for caching all other requests
-                val serverCacheKey = when (val result = App.getServiceConfig().initService.fetchServerCacheKey()) {
-                    is Result.Success -> { result.data }
-                    is Result.Error -> { onLoadError(result.exception) ; return@async }
-                }
-                XGatewayClient.serverCacheKey = serverCacheKey
-                Gateway.serverCacheKey = serverCacheKey//xxcompat
-                now_ms = Log.logElapsedTime(TAG, now_ms, "serverCacheKey: $serverCacheKey")
-
-                // sync: loadServiceData
-                when (val result = App.getServiceConfig().initService.loadServiceData()) {
+                // load the IDL etc.
+                val options = InitServiceOptions(App.getVersion(context), context.resources.getBoolean(R.bool.ou_hierarchical_org_tree))
+                when (val result = App.getServiceConfig().initService.loadServiceData(options)) {
                     is Result.Success -> {}
                     is Result.Error -> { onLoadError(result.exception) ; return@async }
                 }
-                now_ms = Log.logElapsedTime(TAG, now_ms, "loadIDL")
 
-                // sync: load messages
-                EgMessageMap.init(resources)
+                // xxcompat: set old Gateway vars
+                Gateway.clientCacheKey = XGatewayClient.clientCacheKey
+                Gateway.serverCacheKey = XGatewayClient.serverCacheKey
 
-                // ---------------------------------------------------------------
-                // We could move this init until later, as is done for iOS
-                // but this more closely models the existing Android app
-                // ---------------------------------------------------------------
+                // load custom messages from resources
+                // TODO: move Evergreen-specific init to some evergreen-specific package
+                EgMessageMap.init(context.resources)
 
-                var defs = arrayListOf<Deferred<Any>>()
-                // TODO: add this to loadServiceData
-//                defs.add(viewModelScope.async {
-//                    val result = Gateway.actor.fetchOrgTree()
-//                    when (result) {
-//                        is Result.Success -> EgOrg.loadOrgs(result.data, resources.getBoolean(R.bool.ou_hierarchical_org_tree))
-//                        is Result.Error -> onLoadError(result.exception)
-//                    }
-//                })
-                defs.add(viewModelScope.async {
-                    val result = Gateway.search.fetchCopyStatuses()
-                    when (result) {
-                        is Result.Success -> EgCopyStatus.loadCopyStatuses(result.data)
-                        is Result.Error -> onLoadError(result.exception)
-                    }
-                })
-                defs.add(viewModelScope.async {
-                    val result = Gateway.pcrud.fetchCodedValueMaps()
-                    when (result) {
-                        is Result.Success -> EgCodedValueMap.loadCodedValueMaps(result.data)
-                        is Result.Error -> onLoadError(result.exception)
-                    }
-                })
-
-                // await all deferreds (see awaitAll doc for differences)
-                Log.d(TAG, "[kcxxx] await ${defs.size} deferreds ...")
-                defs.map { it.await() }
-                Log.d(TAG, "[kcxxx] await ${defs.size} deferreds ... done")
-
-                if (errors.get() == 0) {
-                    _status.value = "Connected"
-                    _serviceDataReady.value = true
-                }
-                Log.logElapsedTime(TAG, start_ms,"total")
+                _status.value = "Connected"
+                _serviceDataReady.value = true
             }
             try {
                 outerJob.await()

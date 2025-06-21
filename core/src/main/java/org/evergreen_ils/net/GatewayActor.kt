@@ -32,38 +32,19 @@ import java.util.Date
 
 object GatewayActor: ActorService {
     override suspend fun fetchServerVersion(): Result<String> {
-        return try {
-            // shouldCache=false because this result is used as a cache-busting param
-            val ret = Gateway.fetchString(Api.ACTOR, Api.ILS_VERSION, arrayOf(), false)
-            Result.Success(ret)
-        } catch (e: Exception) {
-            Result.Error(e)
-        }
+        return Result.Error(Exception("dead"))
     }
 
     override suspend fun fetchServerCacheKey(): Result<String?> {
-        return Result.Error(Exception("not implemented"))
+        return Result.Error(Exception("dead"))
     }
 
     override suspend fun fetchOrgTypes(): Result<List<OSRFObject>> {
-        return try {
-            val ret = Gateway.fetchObjectArray(Api.ACTOR, Api.ORG_TYPES_RETRIEVE, arrayOf(), true)
-            Result.Success(ret)
-        } catch (e: Exception) {
-            Result.Error(e)
-        }
+        return Result.Error(Exception("dead"))
     }
 
     override suspend fun fetchOrgTree(): Result<OSRFObject> {
-        return try {
-            val options = RequestOptions(Gateway.defaultTimeoutMs, Gateway.limitedCacheTtlSeconds)
-            val ret = Gateway.fetch(Api.ACTOR, Api.ORG_TREE_RETRIEVE, arrayOf(), options) {
-                it.payloadFirstAsObject()
-            }
-            Result.Success(ret)
-        } catch (e: Exception) {
-            Result.Error(e)
-        }
+        return Result.Error(Exception("dead"))
     }
 
     override suspend fun fetchOrg(orgID: Int): Result<OSRFObject> {

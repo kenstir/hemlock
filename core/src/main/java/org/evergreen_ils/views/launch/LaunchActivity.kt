@@ -158,7 +158,7 @@ class LaunchActivity : AppCompatActivity() {
         GlobalScope.launch(Dispatchers.Main) {
             try {
                 getAccount()
-                mModel.loadServiceData(resources)
+                mModel.loadServiceData(this@LaunchActivity)
             } catch (ex: Exception) {
                 Log.d(TAG, "[auth] caught", ex)
                 mProgressText?.text = ex.getCustomMessage()
