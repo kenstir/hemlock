@@ -310,7 +310,8 @@ class OrgDetailsActivity : BaseActivity() {
     }
 
     private fun loadAddress(obj: OSRFObject?) {
-        org?.addressObj = obj
+        TODO("fixme")
+        //org?.addressObj = obj
         address?.text = org?.getAddress("\n")
         enableButtonsWhenReady()
     }

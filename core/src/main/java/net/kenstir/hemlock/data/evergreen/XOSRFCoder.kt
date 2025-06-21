@@ -81,6 +81,8 @@ class XOSRFCoder(val netClass: String, val fields: List<String>) {
         private fun decodeObject(element: JsonObject): Any? {
             if (element.containsKey("__c") && element.containsKey("__p")) {
                 // wire protocol object
+                return XOSRFObjectSerializer.deserializeWireProtocol(element)
+                /*
                 val netClass = element["__c"]?.jsonPrimitive?.content
                     ?: throw XDecodingException("Missing __c field in wire protocol object")
                 val coder = getCoder(netClass)
@@ -95,6 +97,7 @@ class XOSRFCoder(val netClass: String, val fields: List<String>) {
                     map[coder.fields[i]] = decodeElement(values[i])
                 }
                 return XOSRFObject(map, netClass)
+                */
             } else {
                 // regular object, return OSRFObject for compatibility with old code
                 return XOSRFObject(element.mapValues { decodeElement(it.value) })

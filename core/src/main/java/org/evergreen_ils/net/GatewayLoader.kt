@@ -43,7 +43,8 @@ object GatewayLoader {
                 async {
                     val result = Gateway.actor.fetchOrgSettings(org.id)
                     if (result is Result.Success) {
-                        org.loadSettings(result.data)
+                        //org.loadSettings(result.data)
+                        // TODO: fixme
                         Log.d(TAG, "[kcxxx] org ${org.id} settings loaded")
                         org.requireMonographicPart?.let {
                             Log.d(TAG, "[kcxxx] org ${org.id} requireMonographicPart=$it")
@@ -61,7 +62,8 @@ object GatewayLoader {
         val id = org?.id ?: return@async
         val result = Gateway.actor.fetchOrg(id)
         if (result is Result.Success) {
-            org.aouObj = result.data
+            // TODO: fixme
+//            org.aouObj = result.data
             Log.v(TAG, "org id:${org.id} level:${org.level} vis:${org.opacVisible} shortname:${org.shortname} name:${org.name}")
             //Log.v(TAG, "org ${org.id} aou loaded")
         }

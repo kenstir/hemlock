@@ -104,9 +104,21 @@ class XOSRFCoderTests {
 
     // Case: decoding an object having 9 fields given an array of only 8 elements.
     // The result should be an OSRFObject with the last field omitted.
+    // This happens in the ORG_TYPES_RETRIEVE response, where the last field is omitted.
     @Test
     fun test_decode_shortObject() {
-        // 2025-06-10 kenstir: I'm not sure this is still a valid case
+        XOSRFCoder.registerClass("test", listOf("juvenile","usrname","home_ou"))
+
+        val json = """
+            {"__c":"test","__p":["f","luser"]}
+            """.trimIndent()
+
+        val obj = Json.decodeFromString<XOSRFObject>(json)
+        println("Deserialized: $obj")
+        assertNotNull(obj)
+        assertEquals(false, obj.getBoolean("juvenile"))
+        assertEquals("luser", obj.getString("usrname"))
+        assertEquals(null, obj.getInt("home_ou"))
     }
 
     // Case: decode object from array larger than expected

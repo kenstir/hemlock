@@ -17,6 +17,7 @@
 
 package net.kenstir.hemlock.data.evergreen
 
+import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.SerializationException
 import kotlinx.serialization.builtins.ListSerializer
@@ -38,6 +39,7 @@ object GatewayParamSerializer : kotlinx.serialization.KSerializer<GatewayParam> 
         return GatewayParam(decoder.decodeString())
     }
 
+    @OptIn(ExperimentalSerializationApi::class)
     override fun serialize(encoder: kotlinx.serialization.encoding.Encoder, value: GatewayParam) {
         when (value.value) {
             null -> encoder.encodeNull()

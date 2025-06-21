@@ -263,7 +263,8 @@ class LaunchActivity : AppCompatActivity() {
         EgOrg.findOrg(App.getAccount().homeOrg)?.let { org ->
             val orgSettingsResult = Gateway.actor.fetchOrgSettings(org.id)
             if (orgSettingsResult is Result.Success) {
-                org.loadSettings(orgSettingsResult.data)
+                TODO("fixme")
+                //org.loadSettings(orgSettingsResult.data)
                 Log.v(TAG, "org ${org.id} settings loaded")
             }
         }

@@ -21,10 +21,10 @@ import org.evergreen_ils.system.EgOrg
 import net.kenstir.hemlock.android.Log
 import net.kenstir.hemlock.android.StdoutLogProvider
 import net.kenstir.hemlock.data.jsonMapOf
+import net.kenstir.hemlock.data.evergreen.XOSRFObject
 import org.junit.Assert.*
 import org.junit.BeforeClass
 import org.junit.Test
-import org.opensrf.util.OSRFObject
 
 class OrganizationTest {
 
@@ -37,7 +37,7 @@ class OrganizationTest {
     }
 
     fun setUpOrgTypes() {
-        val orgTypeConsortium = OSRFObject(
+        val orgTypeConsortium = XOSRFObject(
             jsonMapOf(
                 "id" to 1,
                 "name" to "Consortium",
@@ -46,7 +46,7 @@ class OrganizationTest {
                 "can_have_vols" to "f"
         )
         )
-        val orgTypeLibrary = OSRFObject(
+        val orgTypeLibrary = XOSRFObject(
             jsonMapOf(
                 "id" to 3,
                 "name" to "Library",
@@ -55,7 +55,7 @@ class OrganizationTest {
                 "can_have_vols" to "t"
         )
         )
-        val orgTypeSystem = OSRFObject(
+        val orgTypeSystem = XOSRFObject(
             jsonMapOf(
                 "id" to 2,
                 "name" to "System",
@@ -64,12 +64,12 @@ class OrganizationTest {
                 "can_have_vols" to "f"
         )
         )
-        val orgTypes = arrayListOf(orgTypeConsortium, orgTypeLibrary, orgTypeSystem)
+        val orgTypes = listOf(orgTypeConsortium, orgTypeLibrary, orgTypeSystem)
         EgOrg.loadOrgTypes(orgTypes)
     }
 
     fun setUpOrgs() {
-        val branchObj = OSRFObject(
+        val branchObj = XOSRFObject(
             jsonMapOf(
                 "id" to 29,
                 "ou_type" to 3,
@@ -80,7 +80,7 @@ class OrganizationTest {
                 "children" to null
         )
         )
-        val systemObj = OSRFObject(
+        val systemObj = XOSRFObject(
             jsonMapOf(
                 "id" to 28,
                 "ou_type" to 2,
@@ -91,7 +91,7 @@ class OrganizationTest {
                 "children" to arrayListOf(branchObj)
         )
         )
-        val consortiumObj = OSRFObject(
+        val consortiumObj = XOSRFObject(
             jsonMapOf(
                 "id" to 1,
                 "ou_type" to 1,
