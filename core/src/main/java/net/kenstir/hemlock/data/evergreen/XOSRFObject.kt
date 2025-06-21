@@ -87,9 +87,9 @@ data class XOSRFObject(
  * This class is useful for encoding gateway parameters, but it alone is not
  * sufficiently flexible for decoding gateway payloads.  That is because
  * Json.decodeFromString<XOSRFObject>() requires that you know you want
- * an object.  When decoding a gateway payload, all you know is that
+ * an XOSRFObject.  When decoding a gateway payload, all you know is that
  * payload is an array.  Thus we ended up with GatewayResponseContent
- * and XOSRFCoder.
+ * and the deserialization happening in XOSRFCoder.
  */
 object XOSRFObjectSerializer : KSerializer<XOSRFObject> {
     override val descriptor: SerialDescriptor =
@@ -98,21 +98,23 @@ object XOSRFObjectSerializer : KSerializer<XOSRFObject> {
     override fun serialize(encoder: Encoder, value: XOSRFObject) {
         val jsonEncoder = encoder as? JsonEncoder
             ?: throw SerializationException("This serializer only works with JSON")
+        jsonEncoder.encodeJsonElement(toJsonObject(value))
+    }
 
+    private fun toJsonObject(value: XOSRFObject): JsonObject {
         value.netClass?.let {
-            serializeWireProtocol(jsonEncoder, value, it)
+            return serializeAsWireProtocol(value, it)
         } ?: run {
             // If netClass is not present, serialize as a map
-            val jsonObject = buildJsonObject {
+            return buildJsonObject {
                 for ((key, v) in value.map) {
                     put(key, toJsonElement(v))
                 }
             }
-            jsonEncoder.encodeJsonElement(jsonObject)
         }
     }
 
-    private fun serializeWireProtocol(jsonEncoder: JsonEncoder, value: XOSRFObject, netClass: String) {
+    private fun serializeAsWireProtocol(value: XOSRFObject, netClass: String): JsonObject {
         val coder = XOSRFCoder.getCoder(netClass)
             ?: throw SerializationException("Unregistered class: $netClass")
 
@@ -121,43 +123,10 @@ object XOSRFObjectSerializer : KSerializer<XOSRFObject> {
                 add(toJsonElement(value[key]))
             }
         }
-        val jsonObject = JsonObject(mapOf(
+        return JsonObject(mapOf(
             "__c" to JsonPrimitive(netClass),
             "__p" to jsonValues
         ))
-        jsonEncoder.encodeJsonElement(jsonObject)
-    }
-
-    override fun deserialize(decoder: Decoder): XOSRFObject {
-        val jsonDecoder = decoder as? JsonDecoder
-            ?: throw SerializationException("This deserializer only works with JSON")
-
-        val jsonObject = jsonDecoder.decodeJsonElement().jsonObject
-        if ("__c" in jsonObject) {
-            // Deserialize as wire protocol object
-            return deserializeWireProtocol(jsonObject)
-        } else {
-            // Deserialize as a regular map
-            return XOSRFObject(jsonObject.mapValues { fromJsonElement(it.value) })
-        }
-    }
-
-    fun deserializeWireProtocol(jsonObject: JsonObject): XOSRFObject {
-        val netClass = jsonObject["__c"]?.jsonPrimitive?.content
-            ?: throw SerializationException("Missing __c field in wire protocol object")
-        val coder = XOSRFCoder.getCoder(netClass)
-            ?: throw SerializationException("Unregistered class: $netClass")
-        val values = jsonObject["__p"]?.jsonArray
-            ?: throw SerializationException("Missing __p field in wire protocol object")
-        if (values.size > coder.fields.size) {
-            throw SerializationException("Field count mismatch for class $netClass (expected ${coder.fields.size}, got ${values.size})")
-        }
-        val map = HashMap<String, Any?>(coder.fields.size)
-        val count = min(coder.fields.size, values.size)
-        for (i in 0 until count) {
-            map[coder.fields[i]] = fromJsonElement(values[i])
-        }
-        return XOSRFObject(map, netClass)
     }
 
     private fun toJsonElement(value: Any?): JsonElement = when (value) {
@@ -172,26 +141,15 @@ object XOSRFObjectSerializer : KSerializer<XOSRFObject> {
                 ?: throw SerializationException("Only Map<String, Any?> is supported")
             JsonObject(map.mapValues { toJsonElement(it.value) })
         }
+        is XOSRFObject -> toJsonObject(value)
         else -> throw SerializationException("Unsupported type: ${value::class}")
     }
 
-    private fun fromJsonElement(element: JsonElement): Any? = when (element) {
-        is JsonNull -> null
-        is JsonPrimitive -> {
-            when {
-                element.isString -> element.content
-                element.booleanOrNull != null -> element.boolean
-                element.longOrNull != null -> {
-                    val long = element.long
-                    if (long in Int.MIN_VALUE..Int.MAX_VALUE) long.toInt() else long
-                }
-                element.doubleOrNull != null -> element.double
-                else -> element.content
-            }
-        }
-        is JsonObject -> {
-            element.mapValues { fromJsonElement(it.value) }
-        }
-        is JsonArray -> element.map { fromJsonElement(it) }
+    override fun deserialize(decoder: Decoder): XOSRFObject {
+        val jsonDecoder = decoder as? JsonDecoder
+            ?: throw SerializationException("This deserializer only works with JSON")
+
+        val jsonObject = jsonDecoder.decodeJsonElement().jsonObject
+        return XOSRFCoder.decodeObject(jsonObject)
     }
 }

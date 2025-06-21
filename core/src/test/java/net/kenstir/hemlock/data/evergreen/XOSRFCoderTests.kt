@@ -178,11 +178,14 @@ class XOSRFCoderTests {
         val decodedPayload = XOSRFCoder.decodePayload(response.payload)
         println("Decoded:      $decodedPayload")
 
-        val obj = decodedPayload[0] as? XOSRFObject
+
+//        val obj = decodedPayload[0] as? XOSRFObject
+        val obj = XGatewayResult.create(json).payloadFirstAsObject()
         assertNotNull(obj)
         assertEquals("CONS", obj?.getString("shortname"))
         val children = obj?.getAny("children") as? List<XOSRFObject>
         assertEquals(2, children?.size)
+        assertEquals("SYS1", children?.get(0)?.getString("shortname"))
     }
 
     @Test
