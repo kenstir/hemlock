@@ -17,6 +17,7 @@
 
 package net.kenstir.hemlock.data.evergreen
 
+import kotlinx.serialization.SerializationException
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonNull
@@ -30,6 +31,7 @@ import kotlinx.serialization.json.jsonArray
 import kotlinx.serialization.json.jsonPrimitive
 import kotlinx.serialization.json.long
 import kotlinx.serialization.json.longOrNull
+import kotlin.math.min
 
 /*** [OSRFCoder] is used to decode OSRF objects from OpenSRF wire format. */
 class XOSRFCoder(val netClass: String, val fields: List<String>) {
@@ -58,7 +60,7 @@ class XOSRFCoder(val netClass: String, val fields: List<String>) {
             return decodeArray(elements)
         }
 
-        private fun decodeArray(elements: JsonArray): List<Any?> {
+        fun decodeArray(elements: JsonArray): List<Any?> {
             val size = elements.size
             val decoded = ArrayList<Any?>(size)
             for (i in 0 until size) {
@@ -67,7 +69,7 @@ class XOSRFCoder(val netClass: String, val fields: List<String>) {
             return decoded
         }
 
-        private fun decodeElement(element: JsonElement): Any? {
+        fun decodeElement(element: JsonElement): Any? {
             return when (element) {
                 is JsonNull -> null
                 is JsonPrimitive -> decodePrimitive(element)
@@ -76,24 +78,42 @@ class XOSRFCoder(val netClass: String, val fields: List<String>) {
             }
         }
 
-        private fun decodeObject(element: JsonObject): Any? {
-            return if (element.containsKey("__c") && element.containsKey("__p")) {
-                // wire protocol object
-                XOSRFObjectSerializer.deserializeWireProtocol(element)
-            } else {
-                // regular object, return OSRFObject for compatibility with old code
-                XOSRFObject(element.mapValues { decodeElement(it.value) })
-            }
-        }
-
-        private fun decodePrimitive(element: JsonPrimitive): Any? {
+        fun decodePrimitive(element: JsonPrimitive): Any {
             return when {
                 element.isString -> element.content
                 element.booleanOrNull != null -> element.boolean
                 element.longOrNull != null -> element.long
                 element.doubleOrNull != null -> element.double
-                else -> throw XDecodingException("unsupported element type: ${element::class.simpleName}")
+                else -> throw XDecodingException("Unsupported element type: ${element::class.simpleName}")
             }
+        }
+
+        fun decodeObject(element: JsonObject): XOSRFObject {
+            return if (element.containsKey("__c") && element.containsKey("__p")) {
+                // wire protocol object
+                decodeObjectFromWireProtocol(element)
+            } else {
+                // regular object, return XOSRFObject for compatibility with old code
+                XOSRFObject(element.mapValues { decodeElement(it.value) })
+            }
+        }
+
+        private fun decodeObjectFromWireProtocol(jsonObject: JsonObject): XOSRFObject {
+            val netClass = jsonObject["__c"]?.jsonPrimitive?.content
+                ?: throw XDecodingException("Missing __c field in wire protocol object")
+            val coder = getCoder(netClass)
+                ?: throw XDecodingException("Unregistered class: $netClass")
+            val values = jsonObject["__p"]?.jsonArray
+                ?: throw XDecodingException("Missing __p field in wire protocol object")
+            if (values.size > coder.fields.size) {
+                throw XDecodingException("Field count mismatch for class $netClass (expected ${coder.fields.size}, got ${values.size})")
+            }
+            val map = HashMap<String, Any?>(coder.fields.size)
+            val count = min(coder.fields.size, values.size)
+            for (i in 0 until count) {
+                map[coder.fields[i]] = decodeElement(values[i])
+            }
+            return XOSRFObject(map, netClass)
         }
     }
 }
