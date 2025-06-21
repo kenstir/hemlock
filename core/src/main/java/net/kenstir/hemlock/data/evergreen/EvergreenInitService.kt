@@ -17,96 +17,102 @@
 
 package net.kenstir.hemlock.data.evergreen
 
+import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.delay
 
 import net.kenstir.hemlock.data.InitService
 import net.kenstir.hemlock.data.Result
 import net.kenstir.hemlock.android.Log
+import net.kenstir.hemlock.data.InitServiceOptions
+import net.kenstir.hemlock.data.jsonMapOf
 import org.evergreen_ils.data.parseOrgStringSetting
+import org.evergreen_ils.system.EgCodedValueMap
+import org.evergreen_ils.system.EgCopyStatus
 import org.evergreen_ils.system.EgOrg
 import org.open_ils.idl.IDLParser
 
 private val TAG = EvergreenInitService::class.java.simpleName
 
-class EvergreenInitService : InitService {
+class EvergreenInitService: InitService {
 
-    override suspend fun fetchServerCacheKey(): Result<String> {
+    override suspend fun loadServiceData(serviceOptions: InitServiceOptions): Result<Unit> {
         return try {
-            // fetch the server version
-            val response = XGatewayClient.fetch(Api.ACTOR, Api.ILS_VERSION, paramListOf(), false)
-            val serverVersion = response.payloadFirstAsString()
-
-            // fetch the cache key org setting
-            val settings = listOf(Api.SETTING_HEMLOCK_CACHE_KEY)
-            val params = paramListOf(EgOrg.consortiumID, settings, Api.ANONYMOUS)
-            val obj = XGatewayClient.fetch(Api.ACTOR, Api.ORG_UNIT_SETTING_BATCH, params, false)
-                .payloadFirstAsObject()
-            val hemlockCacheKey = parseOrgStringSetting(obj, Api.SETTING_HEMLOCK_CACHE_KEY)
-
-            val serverCacheKey = if (hemlockCacheKey.isNullOrEmpty()) serverVersion else "$serverVersion-$hemlockCacheKey"
-            Result.Success(serverCacheKey)
+            return Result.Success(loadServiceDataImpl(serviceOptions))
         } catch (e: Exception) {
             Result.Error(e)
         }
     }
 
-    override suspend fun loadServiceData(): Result<Unit> {
-        return try {
-            return Result.Success(loadServiceDataImpl())
-        } catch (e: Exception) {
-            Result.Error(e)
-        }
-    }
+    private suspend fun loadServiceDataImpl(serviceOptions: InitServiceOptions): Unit = coroutineScope {
+        // sync: cache keys must be established first, before IDL is loaded
+        XGatewayClient.clientCacheKey = serviceOptions.clientCacheKey
+        XGatewayClient.serverCacheKey = fetchServerCacheKey()
 
-    private suspend fun loadServiceDataImpl(): Unit = coroutineScope {
-        // sync: Load the IDL first, because everything else depends on it
+        // sync: Load the IDL next, because everything else depends on it
         var now = System.currentTimeMillis()
         val url = XGatewayClient.getIDLUrl()
         val xml = XGatewayClient.get(url).bodyAsText()
         val parser = IDLParser(xml.byteInputStream())
-        now = Log.logElapsedTime(TAG, now, "loadIDL.get")
+        now = Log.logElapsedTime(TAG, now, "loadServiceData IDL fetched")
         parser.parse()
-        Log.logElapsedTime(TAG, now, "loadIDL.parse")
+        now = Log.logElapsedTime(TAG, now, "loadServiceData IDL parsed")
 
         // async: Load the rest of the data in parallel
-        val job1 = async {
-            loadOrgTypes()
-        }
-        val job2 = async {
-            Log.d(TAG, "job2: start")
-            delay(1000);
-            Log.d(TAG, "job2: end")
-        }
-        val job3 = async {
-            Log.d(TAG, "job3: start")
-            delay(200);
-            Log.d(TAG, "job3: end")
-        }
+        val jobs = mutableListOf<Deferred<Any>>()
+        jobs.add(async { loadOrgTypes() })
+        jobs.add(async { loadOrgTree(serviceOptions.useHierarchicalOrgTree) })
+        jobs.add(async { loadCopyStatuses() })
+        jobs.add(async { loadCodedValueMaps() })
 
-        val results = listOf<Unit>(job1.await(), job2.await(), job3.await())
-//        val result = results.firstOrNull { it is Result.Error }
-//            ?: Result.Success(Unit)
-//        result
+        // await all deferred (see awaitAll doc for differences)
+        jobs.map { it.await() }
+        now = Log.logElapsedTime(TAG, now, "loadServiceData ${jobs.size} deferreds completed")
+    }
+
+    private suspend fun fetchServerCacheKey(): String {
+        // fetch the server version
+        val response = XGatewayClient.fetch(Api.ACTOR, Api.ILS_VERSION, paramListOf(), false)
+        val serverVersion = response.payloadFirstAsString()
+
+        // fetch the cache key org setting
+        val settings = listOf(Api.SETTING_HEMLOCK_CACHE_KEY)
+        val params = paramListOf(EgOrg.consortiumID, settings, Api.ANONYMOUS)
+        val obj = XGatewayClient.fetch(Api.ACTOR, Api.ORG_UNIT_SETTING_BATCH, params, false)
+            .payloadFirstAsObject()
+        val hemlockCacheKey = parseOrgStringSetting(obj, Api.SETTING_HEMLOCK_CACHE_KEY)
+
+        return if (hemlockCacheKey.isNullOrEmpty()) serverVersion else "$serverVersion-$hemlockCacheKey"
     }
 
     private suspend fun loadOrgTypes() {
-        Log.d(TAG, "job1: loading org types")
+        Log.d(TAG, "loading org types ...")
         val response = XGatewayClient.fetch(Api.ACTOR, Api.ORG_TYPES_RETRIEVE, paramListOf(), true)
         EgOrg.loadOrgTypes(response.payloadFirstAsObjectList())
-        Log.d(TAG, "job1: loading org types done")
+        Log.d(TAG, "loading org types ... done")
     }
 
-    private suspend fun loadOrgTree(): Result<Unit> {
-        TODO()
+    private suspend fun loadOrgTree(useHierarchicalOrgTree: Boolean) {
+        Log.d(TAG, "loading org tree ...")
+        val response = XGatewayClient.fetch(Api.ACTOR, Api.ORG_TREE_RETRIEVE, paramListOf(), true)
+        EgOrg.loadOrgs(response.payloadFirstAsObject(), useHierarchicalOrgTree)
+        Log.d(TAG, "loading org tree ... done")
     }
 
-    private suspend fun loadCopyStatuses(): Result<Unit> {
-        TODO()
+    private suspend fun loadCopyStatuses() {
+        Log.d(TAG, "loading copy statuses ...")
+        val response = XGatewayClient.fetch(Api.SEARCH, Api.COPY_STATUS_ALL, paramListOf(), true)
+        val ret = response.payloadFirstAsObjectList()
+        EgCopyStatus.loadCopyStatuses(ret)
+        Log.d(TAG, "loading copy statuses ... done")
     }
 
-    private suspend fun loadCodedValueMaps(): Result<Unit> {
-        TODO()
+    private suspend fun loadCodedValueMaps() {
+        Log.d(TAG, "loading coded value maps ...")
+        val formats = listOf(EgCodedValueMap.ICON_FORMAT, EgCodedValueMap.SEARCH_FORMAT)
+        val searchParams = jsonMapOf("ctype" to formats)
+        val response = XGatewayClient.fetch(Api.PCRUD, Api.SEARCH_CCVM, paramListOf(Api.ANONYMOUS, searchParams), true)
+        EgCodedValueMap.loadCodedValueMaps(response.payloadFirstAsObjectList())
+        Log.d(TAG, "loading coded value maps ... done")
     }
 }

@@ -19,6 +19,8 @@ package net.kenstir.apps.core
 
 import net.kenstir.hemlock.android.Log
 import net.kenstir.hemlock.android.StdoutLogProvider
+import net.kenstir.hemlock.data.evergreen.XOSRFObject
+import net.kenstir.hemlock.data.jsonMapOf
 import org.evergreen_ils.system.EgCodedValueMap
 import org.evergreen_ils.system.EgCodedValueMap.ALL_SEARCH_FORMATS
 import org.evergreen_ils.system.EgCodedValueMap.iconFormatLabel
@@ -43,21 +45,27 @@ class CodedValueMapTest {
 
     @Before
     fun setUp() {
-        val objects = ArrayList<OSRFObject>()
+        val objects = ArrayList<XOSRFObject>()
         run {
-            val obj = OSRFObject()
-            obj["ctype"] = EgCodedValueMap.SEARCH_FORMAT
-            obj["opac_visible"] = true
-            obj["code"] = "book"
-            obj["value"] = "Book (All)"
+            val obj = XOSRFObject(
+                jsonMapOf(
+                    "ctype" to EgCodedValueMap.SEARCH_FORMAT,
+                    "opac_visible" to true,
+                    "code" to "book",
+                    "value" to "Book (All)",
+                )
+            )
             objects.add(obj)
         }
         run {
-            val obj = OSRFObject()
-            obj["ctype"] = EgCodedValueMap.ICON_FORMAT
-            obj["opac_visible"] = true
-            obj["code"] = "book"
-            obj["value"] = "Book"
+            val obj = XOSRFObject(
+                jsonMapOf(
+                    "ctype" to EgCodedValueMap.ICON_FORMAT,
+                    "opac_visible" to true,
+                    "code" to "book",
+                    "value" to "Book",
+                )
+            )
             objects.add(obj)
         }
         loadCodedValueMaps(objects)
