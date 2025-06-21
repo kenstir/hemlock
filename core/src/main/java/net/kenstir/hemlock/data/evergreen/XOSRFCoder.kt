@@ -76,31 +76,13 @@ class XOSRFCoder(val netClass: String, val fields: List<String>) {
             }
         }
 
-        // TODO: why do we have both XOSRFObjectSerializer.deserializeWireProtocol and XOSRFCoder.decodeObject?
-        // They seem almost identical
         private fun decodeObject(element: JsonObject): Any? {
-            if (element.containsKey("__c") && element.containsKey("__p")) {
+            return if (element.containsKey("__c") && element.containsKey("__p")) {
                 // wire protocol object
-                return XOSRFObjectSerializer.deserializeWireProtocol(element)
-                /*
-                val netClass = element["__c"]?.jsonPrimitive?.content
-                    ?: throw XDecodingException("Missing __c field in wire protocol object")
-                val coder = getCoder(netClass)
-                    ?: throw XDecodingException("Unregistered class: $netClass")
-                val values = element["__p"]?.jsonArray
-                    ?: throw XDecodingException("Missing __p field in wire protocol object")
-                if (values.size != coder.fields.size) {
-                    throw XDecodingException("Field count mismatch for class $netClass (expected ${coder.fields.size}, got ${values.size})")
-                }
-                val map = HashMap<String, Any?>(coder.fields.size)
-                for (i in coder.fields.indices) {
-                    map[coder.fields[i]] = decodeElement(values[i])
-                }
-                return XOSRFObject(map, netClass)
-                */
+                XOSRFObjectSerializer.deserializeWireProtocol(element)
             } else {
                 // regular object, return OSRFObject for compatibility with old code
-                return XOSRFObject(element.mapValues { decodeElement(it.value) })
+                XOSRFObject(element.mapValues { decodeElement(it.value) })
             }
         }
 
