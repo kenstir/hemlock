@@ -81,9 +81,16 @@ data class XOSRFObject(
     }
 }
 
-// this is the kotlinx.serialization way to do it
-//
-// It is useful for encoding but not sufficiently flexible for decoding gateway payloads
+/**
+ * This is the kotlinx.serialization way to do serialization.
+ *
+ * This class is useful for encoding gateway parameters, but it alone is not
+ * sufficiently flexible for decoding gateway payloads.  That is because
+ * Json.decodeFromString<XOSRFObject>() requires that you know you want
+ * an object.  When decoding a gateway payload, all you know is that
+ * payload is an array.  Thus we ended up with GatewayResponseContent
+ * and XOSRFCoder.
+ */
 object XOSRFObjectSerializer : KSerializer<XOSRFObject> {
     override val descriptor: SerialDescriptor =
         MapSerializer(String.serializer(), JsonElement.serializer()).descriptor
@@ -135,9 +142,6 @@ object XOSRFObjectSerializer : KSerializer<XOSRFObject> {
         }
     }
 
-    // TODO: why do we have both XOSRFObjectSerializer.deserializeWireProtocol and XOSRFCoder.decodeObject?
-    // They seem almost identical
-    // It seems to be used only in our unit tests
     fun deserializeWireProtocol(jsonObject: JsonObject): XOSRFObject {
         val netClass = jsonObject["__c"]?.jsonPrimitive?.content
             ?: throw SerializationException("Missing __c field in wire protocol object")
