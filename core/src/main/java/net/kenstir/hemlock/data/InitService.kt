@@ -17,7 +17,22 @@
 
 package net.kenstir.hemlock.data
 
+/**
+ * Service methods required to initialize the client.  Except for AuthService,
+ * these methods must be called before most other Service methods.
+ */
 interface InitService {
-    /** must be called before most other service methods, except for AuthService */
+    /**
+     * Returns a string to be used in the a cache-busting param for GET requests.
+     * For Evergreen, this is composed of the server version and optional cache key.
+     *
+     * See <a href="https://kenstir.github.io/hemlock-docs/docs/admin-guide/notes-on-caching">Notes on Caching</a>
+     */
+    suspend fun fetchServerCacheKey(): Result<String>
+
+    /**
+     * Initializes the service by loading any required data.
+     * fetchServerCacheKey() must be called before this method.
+     */
     suspend fun loadServiceData(): Result<Unit>
 }

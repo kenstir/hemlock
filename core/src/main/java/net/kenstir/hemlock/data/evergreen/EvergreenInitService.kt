@@ -24,13 +24,33 @@ import kotlinx.coroutines.delay
 import net.kenstir.hemlock.data.InitService
 import net.kenstir.hemlock.data.Result
 import net.kenstir.hemlock.android.Log
-import net.kenstir.hemlock.data.ShouldNotHappenException
+import org.evergreen_ils.data.parseOrgStringSetting
 import org.evergreen_ils.system.EgOrg
 import org.open_ils.idl.IDLParser
 
 private val TAG = EvergreenInitService::class.java.simpleName
 
 class EvergreenInitService : InitService {
+
+    override suspend fun fetchServerCacheKey(): Result<String> {
+        return try {
+            // fetch the server version
+            val response = XGatewayClient.fetch(Api.ACTOR, Api.ILS_VERSION, paramListOf(), false)
+            val serverVersion = response.payloadFirstAsString()
+
+            // fetch the cache key org setting
+            val settings = listOf(Api.SETTING_HEMLOCK_CACHE_KEY)
+            val params = paramListOf(EgOrg.consortiumID, settings, Api.ANONYMOUS)
+            val obj = XGatewayClient.fetch(Api.ACTOR, Api.ORG_UNIT_SETTING_BATCH, params, false)
+                .payloadFirstAsObject()
+            val hemlockCacheKey = parseOrgStringSetting(obj, Api.SETTING_HEMLOCK_CACHE_KEY)
+
+            val serverCacheKey = if (hemlockCacheKey.isNullOrEmpty()) serverVersion else "$serverVersion-$hemlockCacheKey"
+            Result.Success(serverCacheKey)
+        } catch (e: Exception) {
+            Result.Error(e)
+        }
+    }
 
     override suspend fun loadServiceData(): Result<Unit> {
         return try {
