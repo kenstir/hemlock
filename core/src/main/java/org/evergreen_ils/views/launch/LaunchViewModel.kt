@@ -66,7 +66,8 @@ class LaunchViewModel : ViewModel() {
 
     // This is where most global initialization happens: especially loading the IDL necessary
     // for decoding most gateway responses.  Important notes:
-    // * server version and IDL are done synchronously and first
+    // * fetchServerCacheKey() is done first
+    // * loadServiceData() is called second
     // * other initialization can happen async after that
     fun loadServiceData(resources: Resources) {
         viewModelScope.async {
@@ -80,26 +81,15 @@ class LaunchViewModel : ViewModel() {
                 var now_ms = start_ms
 
                 // sync: serverVersion is a key for caching all other requests
-                val serverVersion = when (val result = App.getServiceConfig().authService.fetchServerVersion()) {
+                val serverCacheKey = when (val result = App.getServiceConfig().initService.fetchServerCacheKey()) {
                     is Result.Success -> { result.data }
                     is Result.Error -> { onLoadError(result.exception) ; return@async }
                 }
-                XGatewayClient.serverCacheKey = serverVersion
-                Gateway.serverCacheKey = serverVersion//xxcompat
-                now_ms = Log.logElapsedTime(TAG, now_ms, "fetchServerVersion: $serverVersion")
+                XGatewayClient.serverCacheKey = serverCacheKey
+                Gateway.serverCacheKey = serverCacheKey//xxcompat
+                now_ms = Log.logElapsedTime(TAG, now_ms, "serverCacheKey: $serverCacheKey")
 
-                // sync: serverCacheKey is an additional way for the EG admin to clear the app cache
-                val serverCacheKey = when (val result = App.getServiceConfig().authService.fetchServerCacheKey()) {
-                    is Result.Success -> { result.data }
-                    is Result.Error -> { onLoadError(result.exception) ; return@async }
-                }
-                serverCacheKey?.let {
-                    XGatewayClient.serverCacheKey = "$serverVersion-$serverCacheKey"
-                    Gateway.serverCacheKey = "$serverVersion-$serverCacheKey"//xxcompat
-                }
-                now_ms = Log.logElapsedTime(TAG, now_ms, "fetchServerCacheKey: $serverCacheKey")
-
-                // sync: load IDL
+                // sync: loadServiceData
                 when (val result = App.getServiceConfig().initService.loadServiceData()) {
                     is Result.Success -> {}
                     is Result.Error -> { onLoadError(result.exception) ; return@async }

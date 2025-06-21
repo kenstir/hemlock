@@ -20,34 +20,9 @@ package net.kenstir.hemlock.data.evergreen
 import net.kenstir.hemlock.data.AuthService
 import net.kenstir.hemlock.data.Result
 import net.kenstir.hemlock.data.jsonMapOf
-import org.evergreen_ils.data.parseOrgStringSetting
-import org.evergreen_ils.system.EgOrg
 import java.security.MessageDigest
 
 class EvergreenAuthService: AuthService {
-    override suspend fun fetchServerVersion(): Result<String> {
-        return try {
-            // shouldCache=false because this result is used as a cache-busting param
-            val response = XGatewayClient.fetch(Api.ACTOR, Api.ILS_VERSION, paramListOf(), false)
-            Result.Success(response.payloadFirstAsString())
-        } catch (e: Exception) {
-            Result.Error(e)
-        }
-    }
-
-    override suspend fun fetchServerCacheKey(): Result<String?> {
-        return try {
-            // shouldCache=false because this result is used as a cache-busting param
-            val settings = listOf(Api.SETTING_HEMLOCK_CACHE_KEY)
-            val params = paramListOf(EgOrg.consortiumID, settings, Api.ANONYMOUS)
-            val obj = XGatewayClient.fetch(Api.ACTOR, Api.ORG_UNIT_SETTING_BATCH, params, false)
-                .payloadFirstAsObject()
-            val value = parseOrgStringSetting(obj, Api.SETTING_HEMLOCK_CACHE_KEY)
-            Result.Success(value)
-        } catch (e: Exception) {
-            Result.Error(e)
-        }
-    }
 
     override suspend fun getAuthToken(username: String, password: String): Result<String> {
         return try {
