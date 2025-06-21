@@ -42,16 +42,7 @@ object GatewayActor: ActorService {
     }
 
     override suspend fun fetchServerCacheKey(): Result<String?> {
-        return try {
-            // shouldCache=false because this result is used as a cache-busting param
-            val settings = listOf(Api.SETTING_HEMLOCK_CACHE_KEY)
-            val args = arrayOf<Any?>(EgOrg.consortiumID, settings, Api.ANONYMOUS)
-            val ret = Gateway.fetchObject(Api.ACTOR, Api.ORG_UNIT_SETTING_BATCH, args, false)
-            val value = parseOrgStringSetting(ret, Api.SETTING_HEMLOCK_CACHE_KEY)
-            Result.Success(value)
-        } catch (e: Exception) {
-            Result.Error(e)
-        }
+        return Result.Error(Exception("not implemented"))
     }
 
     override suspend fun fetchOrgTypes(): Result<List<OSRFObject>> {

@@ -165,7 +165,7 @@ class GatewayResultTest {
     @Test
     fun test_shortObject() {
         // Decode an object where the wire protocol has fewer elements than the class has fields.
-        // This used to happen before we added the `_sk` cache-busting param when fetching the IDL.
+        // This happens in the ORG_TYPES_RETRIEVE response, where the last field is omitted.
         val json = """
             {"status":200,"payload":[{"__c":"au","__p":["f","luser"]}]}
             """

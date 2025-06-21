@@ -105,20 +105,14 @@ class LaunchViewModel : ViewModel() {
                 // ---------------------------------------------------------------
 
                 var defs = arrayListOf<Deferred<Any>>()
+                // TODO: add this to loadServiceData
 //                defs.add(viewModelScope.async {
-//                    val result = Gateway.actor.fetchOrgTypes()
+//                    val result = Gateway.actor.fetchOrgTree()
 //                    when (result) {
-//                        is Result.Success -> EgOrg.loadOrgTypes(result.data)
+//                        is Result.Success -> EgOrg.loadOrgs(result.data, resources.getBoolean(R.bool.ou_hierarchical_org_tree))
 //                        is Result.Error -> onLoadError(result.exception)
 //                    }
 //                })
-                defs.add(viewModelScope.async {
-                    val result = Gateway.actor.fetchOrgTree()
-                    when (result) {
-                        is Result.Success -> EgOrg.loadOrgs(result.data, resources.getBoolean(R.bool.ou_hierarchical_org_tree))
-                        is Result.Error -> onLoadError(result.exception)
-                    }
-                })
                 defs.add(viewModelScope.async {
                     val result = Gateway.search.fetchCopyStatuses()
                     when (result) {

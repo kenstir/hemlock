@@ -23,7 +23,6 @@ import net.kenstir.hemlock.android.Log
 import net.kenstir.hemlock.data.evergreen.XOSRFObject
 import org.evergreen_ils.data.OrgType
 import org.evergreen_ils.data.Organization
-import org.opensrf.util.OSRFObject
 import java.util.*
 import kotlin.Comparator
 
@@ -63,7 +62,7 @@ object EgOrg {
         return orgTypes.firstOrNull { it.id == id }
     }
 
-    private fun addOrganization(obj: OSRFObject, level: Int) {
+    private fun addOrganization(obj: XOSRFObject, level: Int) {
         val id = obj.getInt("id") ?: return
         val name = obj.getString("name") ?: return
         val shortName = obj.getString("shortname") ?: return
@@ -73,14 +72,14 @@ object EgOrg {
         org.indentedDisplayPrefix = String(CharArray(level)).replace("\u0000", "   ")
         Log.v(TAG, "org id:${org.id} level:${org.level} vis:${org.opacVisible} shortname:${org.shortname} name:${org.name}")
         orgs.add(org)
-        val children = obj.get("children") as? List<OSRFObject>
+        val children = obj.get("children") as? List<XOSRFObject>
         children?.forEach { child ->
             val child_level = if (opacVisible) level + 1 else level
             addOrganization(child, child_level)
         }
     }
 
-    fun loadOrgs(orgTree: OSRFObject, hierarchical_org_tree: Boolean) {
+    fun loadOrgs(orgTree: XOSRFObject, hierarchical_org_tree: Boolean) {
         synchronized(this) {
             orgs.clear()
             addOrganization(orgTree, 0)
@@ -130,6 +129,7 @@ object EgOrg {
     }
 
     // return list of spinner labels and the index at which defaultOrgId appears else (0)
+    // TODO: move to .android package
     fun orgSpinnerLabelsAndSelectedIndex(defaultOrgId: Int?): Pair<ArrayList<String>, Int> {
         val labels: ArrayList<String> = ArrayList<String>(visibleOrgs.size)
         var selectedIndex = 0

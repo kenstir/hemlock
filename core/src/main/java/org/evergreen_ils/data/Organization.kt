@@ -20,7 +20,6 @@ package org.evergreen_ils.data
 import net.kenstir.hemlock.data.evergreen.Api
 import net.kenstir.hemlock.data.evergreen.XOSRFObject
 import org.evergreen_ils.system.EgOrg
-import org.opensrf.util.OSRFObject
 
 class Organization(@JvmField val id: Int,
                    @JvmField val level: Int,
@@ -28,7 +27,7 @@ class Organization(@JvmField val id: Int,
                    @JvmField val shortname: String,
                    @JvmField val ouType: Int,
                    @JvmField val opacVisible: Boolean,
-                   @JvmField var aouObj: OSRFObject) {
+                   @JvmField var aouObj: XOSRFObject) {
 
     val parent: Int?
         get() = aouObj.getInt("parent_ou")
@@ -39,7 +38,7 @@ class Organization(@JvmField val id: Int,
     val phone: String?
         get() = aouObj.getString("phone")
 
-    var addressObj: OSRFObject? = null
+    var addressObj: XOSRFObject? = null
 
     var indentedDisplayPrefix = ""
     var settingsLoaded = false
@@ -65,7 +64,7 @@ class Organization(@JvmField val id: Int,
     val isConsortium: Boolean
         get() = parent == null
 
-    fun loadSettings(obj: OSRFObject) {
+    fun loadSettings(obj: XOSRFObject) {
         eventsURL = parseOrgStringSetting(obj, Api.SETTING_HEMLOCK_EVENTS_URL)
         eresourcesUrl = parseOrgStringSetting(obj, Api.SETTING_HEMLOCK_ERESOURCES_URL)
         meetingRoomsUrl = parseOrgStringSetting(obj, Api.SETTING_HEMLOCK_MEETING_ROOMS_URL)
@@ -94,19 +93,9 @@ class Organization(@JvmField val id: Int,
 
 // map returned from `fetchOrgSettings` looks like:
 // {credit.payments.allow={org=49, value=true}, opac.holds.org_unit_not_pickup_lib=null}
-private fun parseOrgBoolSetting(obj: OSRFObject, setting: String): Boolean? {
-    val valueObj = obj.getObject(setting)
-    return valueObj?.getBoolean("value")
-}
-
 private fun parseOrgBoolSetting(obj: XOSRFObject, setting: String): Boolean? {
     val valueObj = obj.getObject(setting)
     return valueObj?.getBoolean("value")
-}
-
-fun parseOrgStringSetting(obj: OSRFObject, setting: String): String? {
-    val valueObj = obj.getObject(setting)
-    return valueObj?.getString("value")
 }
 
 fun parseOrgStringSetting(obj: XOSRFObject, setting: String): String? {

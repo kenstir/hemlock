@@ -88,7 +88,7 @@ class XGatewayResult {
         error?.let { throw it }
         return try {
             when (type) {
-                ResultType.EMPTY -> ArrayList<XOSRFObject>()
+                ResultType.EMPTY -> ArrayList()
                 else -> payload as List<XOSRFObject>
 
             }
