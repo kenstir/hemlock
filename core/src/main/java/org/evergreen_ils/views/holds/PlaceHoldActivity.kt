@@ -48,7 +48,7 @@ import org.evergreen_ils.data.SMSCarrier
 import org.evergreen_ils.net.Gateway
 import org.evergreen_ils.net.GatewayLoader
 import org.evergreen_ils.data.MBRecord
-import org.evergreen_ils.system.EgOrg
+import net.kenstir.hemlock.data.evergreen.system.EgOrg
 import org.evergreen_ils.system.EgSms
 import org.evergreen_ils.utils.getCustomMessage
 import org.evergreen_ils.utils.ui.BaseActivity

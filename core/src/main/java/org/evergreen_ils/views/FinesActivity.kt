@@ -32,7 +32,7 @@ import kotlinx.coroutines.joinAll
 import net.kenstir.hemlock.R
 import net.kenstir.hemlock.android.AccountUtils
 import net.kenstir.hemlock.android.App
-import org.evergreen_ils.system.EgOrg
+import net.kenstir.hemlock.data.evergreen.system.EgOrg
 import org.evergreen_ils.data.FineRecord
 import net.kenstir.hemlock.data.Result
 import org.evergreen_ils.net.Gateway

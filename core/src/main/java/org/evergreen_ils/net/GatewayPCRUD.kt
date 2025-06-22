@@ -19,7 +19,7 @@
 package org.evergreen_ils.net
 
 import net.kenstir.hemlock.data.evergreen.Api
-import org.evergreen_ils.system.EgCodedValueMap
+import net.kenstir.hemlock.data.evergreen.system.EgCodedValueMap
 import net.kenstir.hemlock.data.Result
 import org.opensrf.util.OSRFObject
 

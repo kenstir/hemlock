@@ -27,7 +27,7 @@ import net.kenstir.hemlock.android.Log
 import net.kenstir.hemlock.data.Result
 import net.kenstir.hemlock.data.models.Account
 import org.evergreen_ils.data.*
-import org.evergreen_ils.system.EgOrg
+import net.kenstir.hemlock.data.evergreen.system.EgOrg
 import org.evergreen_ils.system.EgSms
 
 object GatewayLoader {

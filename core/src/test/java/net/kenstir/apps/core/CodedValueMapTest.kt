@@ -21,18 +21,17 @@ import net.kenstir.hemlock.android.Log
 import net.kenstir.hemlock.android.StdoutLogProvider
 import net.kenstir.hemlock.data.evergreen.XOSRFObject
 import net.kenstir.hemlock.data.jsonMapOf
-import org.evergreen_ils.system.EgCodedValueMap
-import org.evergreen_ils.system.EgCodedValueMap.ALL_SEARCH_FORMATS
-import org.evergreen_ils.system.EgCodedValueMap.iconFormatLabel
-import org.evergreen_ils.system.EgCodedValueMap.loadCodedValueMaps
-import org.evergreen_ils.system.EgCodedValueMap.searchFormatCode
-import org.evergreen_ils.system.EgCodedValueMap.searchFormatLabel
-import org.evergreen_ils.system.EgCodedValueMap.searchFormatSpinnerLabels
+import net.kenstir.hemlock.data.evergreen.system.EgCodedValueMap
+import net.kenstir.hemlock.data.evergreen.system.EgCodedValueMap.ALL_SEARCH_FORMATS
+import net.kenstir.hemlock.data.evergreen.system.EgCodedValueMap.iconFormatLabel
+import net.kenstir.hemlock.data.evergreen.system.EgCodedValueMap.loadCodedValueMaps
+import net.kenstir.hemlock.data.evergreen.system.EgCodedValueMap.searchFormatCode
+import net.kenstir.hemlock.data.evergreen.system.EgCodedValueMap.searchFormatLabel
+import net.kenstir.hemlock.data.evergreen.system.EgCodedValueMap.searchFormatSpinnerLabels
 import org.junit.Assert.*
 import org.junit.Before
 import org.junit.BeforeClass
 import org.junit.Test
-import org.opensrf.util.OSRFObject
 
 class CodedValueMapTest {
     companion object {

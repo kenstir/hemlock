@@ -38,9 +38,9 @@ import org.evergreen_ils.data.CopyLocationCounts
 import org.evergreen_ils.data.MBRecord
 import net.kenstir.hemlock.data.Result
 import org.evergreen_ils.net.Gateway
-import org.evergreen_ils.system.EgOrg
-import org.evergreen_ils.system.EgOrg.findOrg
-import org.evergreen_ils.system.EgOrg.getOrgNameSafe
+import net.kenstir.hemlock.data.evergreen.system.EgOrg
+import net.kenstir.hemlock.data.evergreen.system.EgOrg.findOrg
+import net.kenstir.hemlock.data.evergreen.system.EgOrg.getOrgNameSafe
 import org.evergreen_ils.utils.ui.BaseActivity
 import org.evergreen_ils.utils.ui.showAlert
 import org.evergreen_ils.views.OrgDetailsActivity

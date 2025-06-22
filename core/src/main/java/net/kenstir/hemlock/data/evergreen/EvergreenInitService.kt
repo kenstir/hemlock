@@ -27,9 +27,9 @@ import net.kenstir.hemlock.android.Log
 import net.kenstir.hemlock.data.InitServiceOptions
 import net.kenstir.hemlock.data.jsonMapOf
 import org.evergreen_ils.data.parseOrgStringSetting
-import org.evergreen_ils.system.EgCodedValueMap
-import org.evergreen_ils.system.EgCopyStatus
-import org.evergreen_ils.system.EgOrg
+import net.kenstir.hemlock.data.evergreen.system.EgCodedValueMap
+import net.kenstir.hemlock.data.evergreen.system.EgCopyStatus
+import net.kenstir.hemlock.data.evergreen.system.EgOrg
 import org.open_ils.idl.IDLParser
 
 private val TAG = EvergreenInitService::class.java.simpleName
