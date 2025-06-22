@@ -57,7 +57,7 @@ import net.kenstir.hemlock.android.Log.TAG_PERM
 import org.evergreen_ils.data.NotificationType
 import org.evergreen_ils.data.PushNotification
 import net.kenstir.hemlock.data.Result
-import org.evergreen_ils.system.EgOrg
+import net.kenstir.hemlock.data.evergreen.system.EgOrg
 import org.evergreen_ils.system.EgSearch
 import org.evergreen_ils.views.*
 import org.evergreen_ils.views.bookbags.BookBagsActivity

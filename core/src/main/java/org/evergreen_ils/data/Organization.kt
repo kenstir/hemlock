@@ -19,7 +19,7 @@ package org.evergreen_ils.data
 
 import net.kenstir.hemlock.data.evergreen.Api
 import net.kenstir.hemlock.data.evergreen.XOSRFObject
-import org.evergreen_ils.system.EgOrg
+import net.kenstir.hemlock.data.evergreen.system.EgOrg
 
 class Organization(@JvmField val id: Int,
                    @JvmField val level: Int,

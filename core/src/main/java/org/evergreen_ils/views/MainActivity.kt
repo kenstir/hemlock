@@ -38,7 +38,7 @@ import org.evergreen_ils.net.Gateway
 import org.evergreen_ils.views.search.SearchActivity
 import net.kenstir.hemlock.android.Log
 import org.evergreen_ils.data.PatronMessage
-import org.evergreen_ils.system.EgOrg
+import net.kenstir.hemlock.data.evergreen.system.EgOrg
 import org.evergreen_ils.utils.ui.MainBaseActivity
 import org.evergreen_ils.utils.ui.showAlert
 import org.opensrf.util.OSRFObject

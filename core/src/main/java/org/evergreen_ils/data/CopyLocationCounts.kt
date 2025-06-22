@@ -20,7 +20,7 @@
 
 package org.evergreen_ils.data
 
-import org.evergreen_ils.system.EgCopyStatus
+import net.kenstir.hemlock.data.evergreen.system.EgCopyStatus
 
 class CopyLocationCounts(val orgId: Int, val callNumberPrefix: String, val callNumberLabel: String, val callNumberSuffix: String, val copyLocation: String) {
     var countsByStatus = mutableListOf<Pair<Int, Int>>() // (copyStatusId, count)

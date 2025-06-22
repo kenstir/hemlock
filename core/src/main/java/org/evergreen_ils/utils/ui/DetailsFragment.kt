@@ -51,8 +51,7 @@ import org.evergreen_ils.net.GatewayLoader
 import org.evergreen_ils.net.Volley
 import org.evergreen_ils.views.search.CopyInformationActivity
 import org.evergreen_ils.data.MBRecord
-import org.evergreen_ils.system.EgOrg
-import org.evergreen_ils.system.EgOrg.findOrg
+import net.kenstir.hemlock.data.evergreen.system.EgOrg
 import org.evergreen_ils.views.bookbags.BookBagUtils.showAddToListDialog
 import org.evergreen_ils.views.holds.PlaceHoldActivity
 import org.evergreen_ils.views.search.SearchActivity
@@ -195,7 +194,7 @@ class DetailsFragment : Fragment() {
     }
 
     private fun launchOnlineAccess() {
-        val org = findOrg(orgID)
+        val org = EgOrg.findOrg(orgID)
         val links = App.getBehavior().getOnlineLocations(record, org!!.shortname)
         if (links.isEmpty()) return // TODO: alert
 
@@ -225,7 +224,7 @@ class DetailsFragment : Fragment() {
             return
         }
 
-        val org = findOrg(orgID)
+        val org = EgOrg.findOrg(orgID)
         val links = App.getBehavior().getOnlineLocations(record, org!!.shortname)
         val numCopies = record?.totalCopies(orgID) ?: 0
         placeHoldButton?.isEnabled = (numCopies > 0)

@@ -57,8 +57,8 @@ import org.evergreen_ils.data.MBRecord
 import net.kenstir.hemlock.data.Result
 import org.evergreen_ils.net.Gateway
 import org.evergreen_ils.net.GatewayLoader
-import org.evergreen_ils.system.EgCodedValueMap
-import org.evergreen_ils.system.EgOrg
+import net.kenstir.hemlock.data.evergreen.system.EgCodedValueMap
+import net.kenstir.hemlock.data.evergreen.system.EgOrg
 import org.evergreen_ils.system.EgSearch
 import org.evergreen_ils.utils.getCustomMessage
 import org.evergreen_ils.utils.ui.*

@@ -26,7 +26,7 @@ import android.os.Bundle
 import net.kenstir.hemlock.R
 import org.evergreen_ils.utils.ui.ActionBarUtils
 import org.evergreen_ils.system.EgSearch
-import org.evergreen_ils.system.EgOrg
+import net.kenstir.hemlock.data.evergreen.system.EgOrg
 import android.content.Intent
 import android.view.KeyEvent
 import android.view.MenuItem
