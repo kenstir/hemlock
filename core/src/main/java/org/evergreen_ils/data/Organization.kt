@@ -62,7 +62,7 @@ class Organization(@JvmField val id: Int,
     val orgType: OrgType?
         get() = EgOrg.findOrgType(ouType)
     val isConsortium: Boolean
-        get() = parent == null
+        get() = id == CONSORTIUM_ID
 
     fun loadSettings(obj: XOSRFObject) {
         eventsURL = parseOrgStringSetting(obj, Api.SETTING_HEMLOCK_EVENTS_URL)
@@ -88,6 +88,10 @@ class Organization(@JvmField val id: Int,
         //sb.append(separator).append(addressObj?.getString("country"))
         sb.append(" ").append(addressObj?.getString("post_code"))
         return sb.toString()
+    }
+
+    companion object {
+        const val CONSORTIUM_ID = 1 // // as defaulted in Open-ILS code
     }
 }
 

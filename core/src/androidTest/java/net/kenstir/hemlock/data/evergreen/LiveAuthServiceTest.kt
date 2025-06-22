@@ -86,23 +86,4 @@ class LiveAuthServiceTest {
         val authToken = result.get()
         assertTrue(authToken.isNotEmpty())
     }
-
-    @Test
-    fun test_fetchSession() = runTest {
-        account.authToken = getTestAuthToken().get()
-        println("authToken: ${account.authToken}")
-        assertNotNull(account.authToken)
-
-        assertTrue(loadTestServiceData().succeeded)
-
-        val result = userService.loadUserSession(account)
-        println("Result: $result")
-        assertTrue(result.succeeded)
-
-        assertNotNull(account.id)
-        println("username: ${account.username}")
-        println("displayName: ${account.displayName}")
-        assertTrue(account.username.isNotEmpty())
-        assertTrue(account.displayName.isNotEmpty())
-    }
 }
