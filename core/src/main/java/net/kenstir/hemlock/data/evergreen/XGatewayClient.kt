@@ -62,7 +62,7 @@ object XGatewayClient {
         }
     }
 
-    fun buildQuery(service: String?, method: String?, params: List<GatewayParam>, addCacheParams: Boolean = true): String {
+    fun buildQuery(service: String?, method: String?, params: List<XGatewayParam>, addCacheParams: Boolean = true): String {
         val sb = StringBuilder(INITIAL_URL_SIZE)
         sb.append("service=").append(service)
         sb.append("&method=").append(method)
@@ -79,7 +79,7 @@ object XGatewayClient {
         return sb.toString()
     }
 
-    fun buildUrl(service: String, method: String, params: List<GatewayParam>, addCacheParams: Boolean = true): String {
+    fun buildUrl(service: String, method: String, params: List<XGatewayParam>, addCacheParams: Boolean = true): String {
         return baseUrl.plus(GATEWAY_PATH).plus("?").plus(
             buildQuery(service, method, params, addCacheParams)
         )
@@ -106,24 +106,24 @@ object XGatewayClient {
             .plus(params.joinToString("&"))
     }
 
-    suspend fun fetch(service: String, method: String, params: List<GatewayParam>, shouldCache: Boolean): GatewayResponse {
+    suspend fun fetch(service: String, method: String, params: List<XGatewayParam>, shouldCache: Boolean): XGatewayResponse {
         return fetch(service, method, params, RequestOptions(defaultTimeoutMs, shouldCache, true))
     }
 
-    suspend fun fetch(service: String, method: String, params: List<GatewayParam>, options: RequestOptions): GatewayResponse {
+    suspend fun fetch(service: String, method: String, params: List<XGatewayParam>, options: RequestOptions): XGatewayResponse {
         if (options.shouldCache) {
             val url = buildUrl(service, method, params, options.shouldCache)
-            return GatewayResponse(client.get(url))
+            return XGatewayResponse(client.get(url))
         } else {
             val body = buildQuery(service, method, params, options.shouldCache)
-            return GatewayResponse(client.post(gatewayUrl()) {
+            return XGatewayResponse(client.post(gatewayUrl()) {
                 setBody(body)
                 contentType(ContentType.Application.FormUrlEncoded)
             })
         }
     }
 
-    suspend fun get(url: String): GatewayResponse {
-        return GatewayResponse(client.get(url))
+    suspend fun get(url: String): XGatewayResponse {
+        return XGatewayResponse(client.get(url))
     }
 }

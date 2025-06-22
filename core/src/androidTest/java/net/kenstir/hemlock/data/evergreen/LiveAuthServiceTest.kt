@@ -22,6 +22,7 @@ import kotlinx.coroutines.test.runTest
 import net.kenstir.hemlock.data.Result
 import net.kenstir.hemlock.android.Log
 import net.kenstir.hemlock.android.StdoutLogProvider
+import net.kenstir.hemlock.data.InitServiceOptions
 import org.junit.Assert.assertNotEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
@@ -62,20 +63,10 @@ class LiveAuthServiceTest {
 
     suspend fun loadTestServiceData(): Result<Unit> {
         if (isServiceDataLoaded) return Result.Success(Unit)
-        val result = initializationService.loadServiceData()
+        val result = initializationService.loadServiceData(InitServiceOptions("42", true))
         isServiceDataLoaded = true
         return result
     }
-
-     @Test
-     fun test_fetchServerVersion() = runTest {
-         val result = authService.fetchServerVersion()
-         println("Result: $result")
-         assertTrue(result.succeeded)
-
-         val version = result.get()
-         assertNotEquals("", version)
-     }
 
     @Test
     fun test_getAuthToken() = runTest {
@@ -85,5 +76,12 @@ class LiveAuthServiceTest {
 
         val authToken = result.get()
         assertTrue(authToken.isNotEmpty())
+    }
+
+    @Test
+    fun loadServiceData() = runTest {
+        val result = loadTestServiceData()
+        println("Result: $result")
+        assertTrue(result.succeeded)
     }
 }

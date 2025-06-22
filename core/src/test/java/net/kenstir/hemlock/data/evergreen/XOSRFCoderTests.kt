@@ -148,7 +148,7 @@ class XOSRFCoderTests {
             ]],"status":200}
         """.trimIndent()
 
-        val response = Json.decodeFromString<GatewayResponseContent>(json)
+        val response = Json.decodeFromString<XGatewayResponseContent>(json)
         println("Deserialized: $response")
 
         assertEquals(true, response.payload[0] is JsonArray)
@@ -172,7 +172,7 @@ class XOSRFCoderTests {
 {"payload":[{"__c":"aou","__p":[[{"__c":"aou","__p":[[{"__c":"aou","__p":[[{"__c":"aou","__p":[[],8,"Example Sub-library 1",4,4,"SL1","t",1]}],4,"Example Branch 1",3,2,"BR1","t",1]},{"__c":"aou","__p":[[],7,"Example Branch 2",3,2,"BR2","t",1]}],2,"Example System 1",2,1,"SYS1","t",1]},{"__c":"aou","__p":[[{"__c":"aou","__p":[[{"__c":"aou","__p":[[],9,"Example Bookmobile 1",5,6,"BM1","t",1]}],9,"Example Branch 3",3,3,"BR3","t",1]},{"__c":"aou","__p":[[],11,"Example Branch 4",3,3,"BR4","t",1]}],3,"Example System 2",2,1,"SYS2","t",1]}],1,"Example Consortium",1,null,"CONS","t",1]}],"status":200}
             """
 
-        val response = Json.decodeFromString<GatewayResponseContent>(json)
+        val response = Json.decodeFromString<XGatewayResponseContent>(json)
         println("Deserialized: $response")
 
         val decodedPayload = XOSRFCoder.decodePayload(response.payload)
