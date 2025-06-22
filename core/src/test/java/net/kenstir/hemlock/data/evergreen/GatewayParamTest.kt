@@ -27,7 +27,7 @@ class GatewayParamTest {
     @Test
     fun test_paramArrayOf() {
         val params = paramListOf("test", 123, true, null)
-        assertTrue(params is ArrayList<GatewayParam>)
+        assertTrue(params is ArrayList<XGatewayParam>)
         assertEquals(4, params.size)
         assertEquals("test", params[0].value)
         assertEquals(123, params[1].value)
@@ -44,7 +44,7 @@ class GatewayParamTest {
             "null" to null
         )
         for ((expected, value) in tests) {
-            val json = Json.encodeToString(GatewayParam(value))
+            val json = Json.encodeToString(XGatewayParam(value))
             println("Serialized: $json")
             assertEquals(expected, json)
         }

@@ -126,7 +126,7 @@ class XGatewayResult {
         @JvmStatic
         fun create(json: String): XGatewayResult {
             return try {
-                val response = Json.decodeFromString<GatewayResponseContent>(json)
+                val response = Json.decodeFromString<XGatewayResponseContent>(json)
                 if (response.status != 200)
                     throw GatewayError("Request failed with status ${response.status}")
                 createFromPayload(response.payload)

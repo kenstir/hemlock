@@ -39,7 +39,7 @@ class XSerializationPerformanceTest {
     fun test_perf_kotlinreader() {
         val json = gapines_org_tree_json
         for (i in 0 until iterations) {
-            val resp = Json.decodeFromString<GatewayResponseContent>(json)
+            val resp = Json.decodeFromString<XGatewayResponseContent>(json)
             val list = XOSRFCoder.decodePayload(resp.payload)
             assertNotNull(list)
         }

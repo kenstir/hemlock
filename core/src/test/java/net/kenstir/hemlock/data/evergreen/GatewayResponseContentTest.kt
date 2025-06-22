@@ -37,7 +37,7 @@ class GatewayResponseContentTest {
             {"payload":[],"status":200}
         """.trimIndent()
 
-        val resp = Json.decodeFromString<GatewayResponseContent>(json)
+        val resp = Json.decodeFromString<XGatewayResponseContent>(json)
         println("Deserialized: $resp")
 
         assertNotNull(resp)
@@ -50,7 +50,7 @@ class GatewayResponseContentTest {
             {"status":200,"payload":[]}
         """.trimIndent()
 
-        val resp = Json.decodeFromString<GatewayResponseContent>(json)
+        val resp = Json.decodeFromString<XGatewayResponseContent>(json)
         println("Deserialized: $resp")
 
         assertNotNull(resp)
@@ -63,7 +63,7 @@ class GatewayResponseContentTest {
             {"payload":[[]],"status":200}
         """.trimIndent()
 
-        val resp = Json.decodeFromString<GatewayResponseContent>(json)
+        val resp = Json.decodeFromString<XGatewayResponseContent>(json)
         println("Deserialized: $resp")
 
         assertNotNull(resp)
@@ -77,7 +77,7 @@ class GatewayResponseContentTest {
             {"payload":["3-7-4"],"status":200}
         """.trimIndent()
 
-        val resp = Json.decodeFromString<GatewayResponseContent>(json)
+        val resp = Json.decodeFromString<XGatewayResponseContent>(json)
         println("Deserialized: $resp")
 
         assertNotNull(resp)
@@ -92,7 +92,7 @@ class GatewayResponseContentTest {
             {"payload":[{"hemlock.cache_key":null}],"status":200}
         """.trimIndent()
 
-        val resp = Json.decodeFromString<GatewayResponseContent>(json)
+        val resp = Json.decodeFromString<XGatewayResponseContent>(json)
         println("Deserialized: $resp")
 
         assertNotNull(resp)
@@ -109,7 +109,7 @@ class GatewayResponseContentTest {
             {"payload":[{"ilsevent":0,"textcode":"SUCCESS","desc":"Success","payload":{"authtoken":"***","authtime":1209600}}],"status":200}
         """.trimIndent()
 
-        val resp = Json.decodeFromString<GatewayResponseContent>(json)
+        val resp = Json.decodeFromString<XGatewayResponseContent>(json)
         println("Deserialized: $resp")
 
         assertNotNull(resp)
@@ -128,7 +128,7 @@ class GatewayResponseContentTest {
             {"payload":[{"__c":"cbreb","__p":[[],"bookbag",2958647,"books to read",null,1826347,"f","2025-01-04T01:08:16-0500",null]}],"status":200}
         """.trimIndent()
 
-        val resp = Json.decodeFromString<GatewayResponseContent>(json)
+        val resp = Json.decodeFromString<XGatewayResponseContent>(json)
         println("Deserialized: $resp")
     }
 
@@ -138,7 +138,7 @@ class GatewayResponseContentTest {
             {"payload": [{"__c": "aou", "__p": [[{"__c": "aou", "__p": [[{"__c": "aou", "__p": [[], 11, 12, 7, 12, 10, "Example Branch 4", 3, 3, "BR4", "br4@example.com", "(555) 555-0274", "t", 1]}], 3, 3, 3, 3, 3, "Example System 2", 2, 1, "SYS2", null, null, "t", 1]}], 1, 1, 1, 1, 1, "Example Consortium", 1, null, "CONS", null, null, "t", 1]}], "status": 200}
         """.trimIndent()
 
-        val resp = Json.decodeFromString<GatewayResponseContent>(json)
+        val resp = Json.decodeFromString<XGatewayResponseContent>(json)
         println("Deserialized: $resp")
 
         assertNotNull(resp)
@@ -156,7 +156,7 @@ class GatewayResponseContentTest {
             {"payload":[],"debug": "osrfMethodException : ...","status":500}
         """.trimIndent()
 
-        val resp = Json.decodeFromString<GatewayResponseContent>(json)
+        val resp = Json.decodeFromString<XGatewayResponseContent>(json)
         assertEquals("osrfMethodException : ...", resp.debug)
     }
 
@@ -168,7 +168,7 @@ class GatewayResponseContentTest {
             """
 
         try {
-            Json.decodeFromString<GatewayResponseContent>(jsonIsh)
+            Json.decodeFromString<XGatewayResponseContent>(jsonIsh)
             assertTrue("Expected SerializationException", false)
         } catch (e: Exception) {
             assertTrue(e is SerializationException)

@@ -18,13 +18,13 @@
 
 package org.evergreen_ils.test
 
+import net.kenstir.hemlock.data.evergreen.XGatewayResult
+import net.kenstir.hemlock.data.evergreen.XOSRFCoder
 import org.evergreen_ils.system.EgCopyStatus
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.BeforeClass
 import org.junit.Test
-import org.opensrf.util.GatewayResult
-import org.opensrf.util.OSRFRegistry
 
 class CopyStatusTest {
     val ccsListJson = """
@@ -41,14 +41,14 @@ class CopyStatusTest {
         @JvmStatic
         @BeforeClass
         fun setUpClass() {
-            val ccsFields = arrayOf("holdable","id","name","opac_visible","copy_active","restrict_copy_delete","is_available")
-            OSRFRegistry.registerObject("ccs", OSRFRegistry.WireProtocol.ARRAY, ccsFields)
+            val ccsFields = listOf("holdable","id","name","opac_visible","copy_active","restrict_copy_delete","is_available")
+            XOSRFCoder.registerClass("ccs", ccsFields)
         }
     }
 
     @Test
     fun test_load() {
-        val result = GatewayResult.create(ccsListJson)
+        val result = XGatewayResult.create(ccsListJson)
         val ccsList = result.payloadFirstAsObjectList()
         EgCopyStatus.loadCopyStatuses(ccsList)
 

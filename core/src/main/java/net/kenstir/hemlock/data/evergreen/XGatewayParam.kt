@@ -24,23 +24,23 @@ import kotlinx.serialization.builtins.ListSerializer
 import net.kenstir.hemlock.data.JSONDictionary
 
 /** a parameter for requests through the OSRF Gateway */
-@Serializable(with = GatewayParamSerializer::class)
-data class GatewayParam(val value: Any?)
+@Serializable(with = XGatewayParamSerializer::class)
+data class XGatewayParam(val value: Any?)
 
-fun paramListOf(vararg elements: Any?): List<GatewayParam> =
-    ArrayList(elements.map { GatewayParam(it) })
+fun paramListOf(vararg elements: Any?): List<XGatewayParam> =
+    ArrayList(elements.map { XGatewayParam(it) })
 
-object GatewayParamSerializer : kotlinx.serialization.KSerializer<GatewayParam> {
+object XGatewayParamSerializer : kotlinx.serialization.KSerializer<XGatewayParam> {
     override val descriptor: kotlinx.serialization.descriptors.SerialDescriptor =
         kotlinx.serialization.descriptors.PrimitiveSerialDescriptor("GatewayParam", kotlinx.serialization.descriptors.PrimitiveKind.STRING)
 
-    override fun deserialize(decoder: kotlinx.serialization.encoding.Decoder): GatewayParam {
+    override fun deserialize(decoder: kotlinx.serialization.encoding.Decoder): XGatewayParam {
         // not used
-        return GatewayParam(decoder.decodeString())
+        return XGatewayParam(decoder.decodeString())
     }
 
     @OptIn(ExperimentalSerializationApi::class)
-    override fun serialize(encoder: kotlinx.serialization.encoding.Encoder, value: GatewayParam) {
+    override fun serialize(encoder: kotlinx.serialization.encoding.Encoder, value: XGatewayParam) {
         when (value.value) {
             null -> encoder.encodeNull()
             is String -> encoder.encodeString(value.value)
@@ -57,8 +57,8 @@ object GatewayParamSerializer : kotlinx.serialization.KSerializer<GatewayParam> 
                 encoder.encodeSerializableValue(XOSRFObject.serializer(), value.value as XOSRFObject)
             }
             is List<*> -> {
-                val jsonArray = value.value.map { GatewayParam(it) }
-                encoder.encodeSerializableValue(ListSerializer(GatewayParam.serializer()), jsonArray)
+                val jsonArray = value.value.map { XGatewayParam(it) }
+                encoder.encodeSerializableValue(ListSerializer(XGatewayParam.serializer()), jsonArray)
             }
             else -> throw SerializationException("Unsupported type for GatewayParam: ${value.value::class.simpleName}")
         }

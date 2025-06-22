@@ -35,7 +35,6 @@ object EgOrg {
 
     val allOrgs: List<Organization>
         get() = orgs
-    @JvmStatic
     val visibleOrgs: List<Organization>
         get() = orgs.filter { it.opacVisible }
 
