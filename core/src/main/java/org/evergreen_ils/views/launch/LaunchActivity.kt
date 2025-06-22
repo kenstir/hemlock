@@ -225,7 +225,7 @@ class LaunchActivity : AppCompatActivity() {
         AppState.setString(AppState.LIBRARY_NAME, library.name)
         AppState.setString(AppState.LIBRARY_URL, library.url)
         App.setLibrary(library)
-        val account = Account(result.accountName, result.authToken)
+        val account = App.getServiceConfig().userService.makeAccount(result.accountName, result.authToken)
         App.setAccount(account)
     }
 
@@ -259,7 +259,7 @@ class LaunchActivity : AppCompatActivity() {
             }
         }
 
-        // load the home org settings, used to control visibility of the Events button
+        // load the home org settings, used to control visibility of Events and other buttons
         EgOrg.findOrg(App.getAccount().homeOrg)?.let { org ->
             val orgSettingsResult = Gateway.actor.fetchOrgSettings(org.id)
             if (orgSettingsResult is Result.Success) {
@@ -269,6 +269,7 @@ class LaunchActivity : AppCompatActivity() {
             }
         }
 
+        // record analytics
         val numAccounts = AccountUtils.getAccountsByType(this).size
         if (resources.getBoolean(R.bool.ou_is_generic_app)) {
             // For Hemlock, we only care to track the user's consortium
@@ -283,13 +284,8 @@ class LaunchActivity : AppCompatActivity() {
         return true
     }
 
-    private suspend fun fetchSession(account: Account): Result<OSRFObject> {
-        Log.d(TAG, "[auth] fetchSession ...")
-        val authToken = account.authTokenOrThrow()
-        // TODO: replace with authService.fetchSession
-        val result = Gateway.auth.fetchSession(authToken)
-        Log.d(TAG, "[auth] fetchSession ... $result")
-        return result
+    private suspend fun fetchSession(account: Account): Result<Unit> {
+        return App.getServiceConfig().userService.loadUserSession(account)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

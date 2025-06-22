@@ -121,18 +121,6 @@ object GatewayActor: ActorService {
         }
     }
 
-    override suspend fun fetchFleshedUser(account: Account): Result<OSRFObject> {
-        return try {
-            val (authToken, userID) = account.getCredentialsOrThrow()
-            val settings = listOf("card", "settings")
-            val args = arrayOf<Any?>(authToken, userID, settings)
-            val ret = Gateway.fetchObject(Api.ACTOR, Api.USER_FLESHED_RETRIEVE, args, false)
-            Result.Success(ret)
-        } catch (e: Exception) {
-            Result.Error(e)
-        }
-    }
-
     override suspend fun fetchUserCheckedOut(account: Account): Result<OSRFObject> {
         return try {
             val (authToken, userID) = account.getCredentialsOrThrow()

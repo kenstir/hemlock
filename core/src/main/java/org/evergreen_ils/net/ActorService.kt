@@ -32,7 +32,6 @@ interface ActorService {
     suspend fun fetchOrgHours(account: Account, orgID: Int): Result<OSRFObject?>
     suspend fun fetchOrgClosures(account: Account, orgID: Int): Result<List<OSRFObject>>
     suspend fun fetchOrgAddress(addressID: Int?): Result<OSRFObject?>
-    suspend fun fetchFleshedUser(account: Account): Result<OSRFObject>
     suspend fun fetchUserCheckedOut(account: Account): Result<OSRFObject>
     suspend fun fetchCheckoutHistory(account: Account): Result<List<OSRFObject>>
     suspend fun clearCheckoutHistory(account: Account, circIDs: List<Int>?): Result<String>
