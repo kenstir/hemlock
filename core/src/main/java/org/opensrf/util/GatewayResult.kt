@@ -18,8 +18,8 @@
 package org.opensrf.util
 
 import net.kenstir.hemlock.data.JSONDictionary
-import net.kenstir.hemlock.data.evergreen.GatewayError
-import net.kenstir.hemlock.data.evergreen.GatewayEventError
+import org.evergreen_ils.net.GatewayError
+import org.evergreen_ils.net.GatewayEventError
 import org.evergreen_ils.utils.fromApiToIntOrNull
 import org.evergreen_ils.data.Event
 

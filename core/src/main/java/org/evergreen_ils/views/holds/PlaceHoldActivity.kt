@@ -41,9 +41,9 @@ import net.kenstir.hemlock.android.App
 import net.kenstir.hemlock.android.Log
 import net.kenstir.hemlock.data.model.Account
 import net.kenstir.hemlock.data.Result
-import net.kenstir.hemlock.data.evergreen.HOLD_TYPE_PART
-import net.kenstir.hemlock.data.evergreen.HOLD_TYPE_TITLE
-import net.kenstir.hemlock.data.evergreen.OSRFUtils
+import org.evergreen_ils.HOLD_TYPE_PART
+import org.evergreen_ils.HOLD_TYPE_TITLE
+import org.evergreen_ils.data.OSRFUtils
 import org.evergreen_ils.data.SMSCarrier
 import org.evergreen_ils.net.Gateway
 import org.evergreen_ils.net.GatewayLoader

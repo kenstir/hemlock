@@ -17,7 +17,7 @@
 
 package net.kenstir.hemlock.data
 
-import net.kenstir.hemlock.data.evergreen.XOSRFObject
+import org.evergreen_ils.datax.XOSRFObject
 
 interface SearchService {
     suspend fun fetchAssetCopy(copyId: Int): Result<XOSRFObject>

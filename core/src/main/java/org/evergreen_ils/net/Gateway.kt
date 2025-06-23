@@ -22,7 +22,6 @@ import android.text.TextUtils
 import com.android.volley.DefaultRetryPolicy
 import com.android.volley.Request
 import net.kenstir.hemlock.data.RequestOptions
-import net.kenstir.hemlock.data.evergreen.GatewayError
 import org.evergreen_ils.Api
 import net.kenstir.hemlock.android.Log
 import org.opensrf.net.http.HttpConnection

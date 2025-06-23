@@ -19,6 +19,9 @@ package net.kenstir.hemlock.data.evergreen
 
 import kotlinx.serialization.json.Json
 import net.kenstir.hemlock.data.jsonMapOf
+import org.evergreen_ils.datax.XGatewayParam
+import org.evergreen_ils.datax.XOSRFObject
+import org.evergreen_ils.datax.paramListOf
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test

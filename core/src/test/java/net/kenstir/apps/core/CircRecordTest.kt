@@ -19,7 +19,7 @@
 
 package net.kenstir.apps.core
 
-import net.kenstir.hemlock.data.evergreen.OSRFUtils
+import org.evergreen_ils.data.OSRFUtils
 import org.evergreen_ils.data.CircRecord
 import net.kenstir.hemlock.data.jsonMapOf
 import org.evergreen_ils.data.MBRecord

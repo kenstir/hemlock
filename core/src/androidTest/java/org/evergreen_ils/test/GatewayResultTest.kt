@@ -19,10 +19,10 @@
 package org.evergreen_ils.test
 
 import androidx.test.platform.app.InstrumentationRegistry
-import net.kenstir.hemlock.data.evergreen.OSRFUtils
+import org.evergreen_ils.data.OSRFUtils
 import net.kenstir.hemlock.android.Log
 import net.kenstir.hemlock.android.StdoutLogProvider
-import net.kenstir.hemlock.data.evergreen.GatewayEventError
+import org.evergreen_ils.net.GatewayEventError
 import org.evergreen_ils.system.EgMessageMap
 import org.junit.Assert.*
 import org.junit.BeforeClass

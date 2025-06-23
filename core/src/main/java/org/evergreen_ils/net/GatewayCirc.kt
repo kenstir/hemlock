@@ -19,7 +19,7 @@
 package org.evergreen_ils.net
 
 import org.evergreen_ils.Api
-import net.kenstir.hemlock.data.evergreen.HOLD_TYPE_TITLE
+import org.evergreen_ils.HOLD_TYPE_TITLE
 import net.kenstir.hemlock.data.model.Account
 import net.kenstir.hemlock.data.Result
 import net.kenstir.hemlock.data.jsonMapOf

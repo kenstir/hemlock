@@ -15,7 +15,7 @@
  * along with this program; if not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.kenstir.hemlock.data.evergreen
+package org.evergreen_ils.datax
 
 import java.util.Date
 import kotlinx.serialization.Serializable
@@ -27,7 +27,7 @@ import kotlinx.serialization.builtins.serializer
 import kotlinx.serialization.descriptors.*
 import kotlinx.serialization.encoding.*
 import kotlinx.serialization.json.*
-import kotlin.math.min
+import org.evergreen_ils.data.OSRFUtils
 
 @Serializable(with = XOSRFObjectSerializer::class)
 data class XOSRFObject(

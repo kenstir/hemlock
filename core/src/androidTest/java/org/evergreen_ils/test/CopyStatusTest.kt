@@ -18,8 +18,8 @@
 
 package org.evergreen_ils.test
 
-import net.kenstir.hemlock.data.evergreen.XGatewayResult
-import net.kenstir.hemlock.data.evergreen.XOSRFCoder
+import org.evergreen_ils.datax.XGatewayResult
+import org.evergreen_ils.datax.XOSRFCoder
 import org.evergreen_ils.system.EgCopyStatus
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull

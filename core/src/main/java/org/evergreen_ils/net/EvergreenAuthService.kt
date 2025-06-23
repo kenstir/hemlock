@@ -19,11 +19,10 @@ package org.evergreen_ils.net
 
 import net.kenstir.hemlock.net.AuthService
 import net.kenstir.hemlock.data.Result
-import net.kenstir.hemlock.data.evergreen.GatewayError
-import net.kenstir.hemlock.data.evergreen.XGatewayClient
-import net.kenstir.hemlock.data.evergreen.paramListOf
-import net.kenstir.hemlock.data.evergreen.payloadFirstAsObject
-import net.kenstir.hemlock.data.evergreen.payloadFirstAsString
+import org.evergreen_ils.datax.XGatewayClient
+import org.evergreen_ils.datax.paramListOf
+import org.evergreen_ils.datax.payloadFirstAsObject
+import org.evergreen_ils.datax.payloadFirstAsString
 import net.kenstir.hemlock.data.jsonMapOf
 import org.evergreen_ils.Api
 import java.security.MessageDigest

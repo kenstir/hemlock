@@ -15,7 +15,7 @@
  * along with this program; if not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.kenstir.hemlock.data.evergreen
+package org.evergreen_ils.datax
 
 import io.ktor.client.*
 import io.ktor.client.engine.cio.*
@@ -100,8 +100,8 @@ object XGatewayClient {
             params.add("class=$className")
         }
         if (shouldCache) {
-            params.add("_ck=${clientCacheKey}")
-            params.add("_sk=${serverCacheKey}")
+            params.add("_ck=$clientCacheKey")
+            params.add("_sk=$serverCacheKey")
         }
         return baseUrl.plus("/reports/fm_IDL.xml?")
             .plus(params.joinToString("&"))

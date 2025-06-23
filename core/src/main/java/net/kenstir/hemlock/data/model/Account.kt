@@ -19,7 +19,7 @@ package net.kenstir.hemlock.data.model
 
 import androidx.core.os.bundleOf
 import net.kenstir.hemlock.android.Analytics
-import net.kenstir.hemlock.data.evergreen.GatewayEventError
+import org.evergreen_ils.net.GatewayEventError
 import org.evergreen_ils.data.BookBag
 import org.opensrf.util.OSRFObject
 import java.text.DateFormat

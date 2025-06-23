@@ -31,7 +31,7 @@ import android.widget.*
 import android.widget.AdapterView.OnItemSelectedListener
 import androidx.core.os.bundleOf
 import kotlinx.coroutines.async
-import net.kenstir.hemlock.data.evergreen.OSRFUtils
+import org.evergreen_ils.data.OSRFUtils
 import net.kenstir.hemlock.R
 import net.kenstir.hemlock.android.Analytics
 import net.kenstir.hemlock.android.App

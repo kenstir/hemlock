@@ -1,6 +1,6 @@
 package org.evergreen_ils.idl;
 
-import net.kenstir.hemlock.data.evergreen.XOSRFCoder;
+import org.evergreen_ils.datax.XOSRFCoder;
 
 import java.io.FileInputStream;
 import java.io.IOException;

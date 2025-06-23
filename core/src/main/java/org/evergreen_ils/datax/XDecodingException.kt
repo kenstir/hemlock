@@ -15,16 +15,11 @@
  * along with this program; if not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.kenstir.hemlock.data.evergreen
+package org.evergreen_ils.datax
 
-// map returned from `fetchOrgSettings` looks like:
-// {credit.payments.allow={org=49, value=true}, opac.holds.org_unit_not_pickup_lib=null}
-fun parseOrgBoolSetting(obj: XOSRFObject, setting: String): Boolean? {
-    val valueObj = obj.getObject(setting)
-    return valueObj?.getBoolean("value")
-}
-
-fun parseOrgStringSetting(obj: XOSRFObject, setting: String): String? {
-    val valueObj = obj.getObject(setting)
-    return valueObj?.getString("value")
+class XDecodingException: Exception {
+    constructor(message: String): super(message)
+    constructor(message: String, cause: Throwable): super(message, cause)
+    constructor(cause: Throwable): super(cause)
+    constructor(): super("Decoding error occurred")
 }

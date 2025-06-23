@@ -18,7 +18,7 @@
 
 package org.evergreen_ils.test
 
-import net.kenstir.hemlock.data.evergreen.XOSRFObject
+import org.evergreen_ils.datax.XOSRFObject
 import org.evergreen_ils.data.CopyLocationCounts
 import net.kenstir.hemlock.data.jsonMapOf
 import org.evergreen_ils.system.EgCopyStatus

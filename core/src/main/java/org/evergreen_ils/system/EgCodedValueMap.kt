@@ -16,11 +16,11 @@
  */
 package org.evergreen_ils.system
 
-import net.kenstir.hemlock.data.evergreen.OSRFUtils
+import org.evergreen_ils.data.OSRFUtils
 import net.kenstir.hemlock.android.Analytics
 import net.kenstir.hemlock.android.Log
 import net.kenstir.hemlock.data.ShouldNotHappenException
-import net.kenstir.hemlock.data.evergreen.XOSRFObject
+import org.evergreen_ils.datax.XOSRFObject
 import java.util.*
 
 object EgCodedValueMap {

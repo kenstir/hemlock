@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Kenneth H. Cox
+ * Copyright (c) 2025 Kenneth H. Cox
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -12,17 +12,18 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ * along with this program; if not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.kenstir.hemlock.data.evergreen
+package org.evergreen_ils.datax
 
 import kotlinx.serialization.SerializationException
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonArray
 import net.kenstir.hemlock.data.JSONDictionary
 import org.evergreen_ils.data.Event
+import org.evergreen_ils.net.GatewayError
+import org.evergreen_ils.net.GatewayEventError
 
 class XGatewayResult {
     enum class ResultType {

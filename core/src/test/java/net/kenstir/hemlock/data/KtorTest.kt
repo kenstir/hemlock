@@ -35,8 +35,8 @@ import io.ktor.http.HttpHeaders
 import io.ktor.http.contentType
 import kotlinx.coroutines.test.runTest
 import org.evergreen_ils.Api
-import net.kenstir.hemlock.data.evergreen.XGatewayClient
-import net.kenstir.hemlock.data.evergreen.paramListOf
+import org.evergreen_ils.datax.XGatewayClient
+import org.evergreen_ils.datax.paramListOf
 import net.kenstir.hemlock.net.HemlockPlugin
 import net.kenstir.hemlock.net.elapsedTime
 import net.kenstir.hemlock.net.isCached

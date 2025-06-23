@@ -40,8 +40,8 @@ import com.android.volley.toolbox.NetworkImageView
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.joinAll
-import net.kenstir.hemlock.data.evergreen.KEY_SEARCH_BY
-import net.kenstir.hemlock.data.evergreen.KEY_SEARCH_TEXT
+import org.evergreen_ils.KEY_SEARCH_BY
+import org.evergreen_ils.KEY_SEARCH_TEXT
 import net.kenstir.hemlock.R
 import net.kenstir.hemlock.android.App
 import net.kenstir.hemlock.android.Log
