@@ -23,7 +23,7 @@ import net.kenstir.hemlock.data.Result
 import net.kenstir.hemlock.android.Log
 import net.kenstir.hemlock.android.StdoutLogProvider
 import net.kenstir.hemlock.net.InitServiceOptions
-import org.evergreen_ils.datax.XGatewayClient
+import org.evergreen_ils.xdata.XGatewayClient
 import org.evergreen_ils.model.EvergreenAccount
 import org.evergreen_ils.net.EvergreenAuthService
 import org.evergreen_ils.net.EvergreenInitService

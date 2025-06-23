@@ -17,7 +17,7 @@
 
 package net.kenstir.hemlock.mock
 
-import net.kenstir.hemlock.data.RecordService
+import net.kenstir.hemlock.unused.RecordService
 import net.kenstir.hemlock.data.Result
 import net.kenstir.hemlock.data.model.RecordMetadata
 

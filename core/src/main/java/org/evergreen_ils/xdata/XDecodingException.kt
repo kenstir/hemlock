@@ -15,6 +15,11 @@
  * along with this program; if not, see <https://www.gnu.org/licenses/>.
  */
 
-package org.evergreen_ils.datax
+package org.evergreen_ils.xdata
 
-data class XOSRFClass(val netClass: String, var fields: List<String> = arrayListOf())
+class XDecodingException: Exception {
+    constructor(message: String): super(message)
+    constructor(message: String, cause: Throwable): super(message, cause)
+    constructor(cause: Throwable): super(cause)
+    constructor(): super("Decoding error occurred")
+}

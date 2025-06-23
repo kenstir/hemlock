@@ -21,10 +21,10 @@ import org.junit.Before
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonArray
 import net.kenstir.hemlock.data.jsonMapOf
-import org.evergreen_ils.datax.XGatewayResponseContent
-import org.evergreen_ils.datax.XGatewayResult
-import org.evergreen_ils.datax.XOSRFCoder
-import org.evergreen_ils.datax.XOSRFObject
+import org.evergreen_ils.xdata.XGatewayResponseContent
+import org.evergreen_ils.xdata.XGatewayResult
+import org.evergreen_ils.xdata.XOSRFCoder
+import org.evergreen_ils.xdata.XOSRFObject
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull

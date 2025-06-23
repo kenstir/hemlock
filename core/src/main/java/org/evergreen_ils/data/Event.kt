@@ -18,7 +18,7 @@
 package org.evergreen_ils.data
 
 import net.kenstir.hemlock.data.JSONDictionary
-import org.evergreen_ils.datax.XOSRFObject
+import org.evergreen_ils.xdata.XOSRFObject
 import org.opensrf.util.OSRFObject
 import java.util.*
 

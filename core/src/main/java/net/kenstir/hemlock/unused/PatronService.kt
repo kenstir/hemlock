@@ -14,12 +14,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, see <https://www.gnu.org/licenses/>.
  */
+package net.kenstir.hemlock.unused
 
-package org.evergreen_ils.datax
+import net.kenstir.hemlock.data.Result
+import net.kenstir.hemlock.data.model.PatronList
+import net.kenstir.hemlock.data.model.ListItem
 
-class XDecodingException: Exception {
-    constructor(message: String): super(message)
-    constructor(message: String, cause: Throwable): super(message, cause)
-    constructor(cause: Throwable): super(cause)
-    constructor(): super("Decoding error occurred")
+interface PatronService {
+    suspend fun fetchLists(patronId: Int, authToken: String): Result<List<PatronList>>
+    suspend fun fetchListItems(patronId: Int, authToken: String, listId: Int): Result<List<ListItem>>
 }

@@ -15,7 +15,7 @@
  * along with this program; if not, see <https://www.gnu.org/licenses/>.
  */
 
-package org.evergreen_ils.datax
+package org.evergreen_ils.xdata
 
 // map returned from `fetchOrgSettings` looks like:
 // {credit.payments.allow={org=49, value=true}, opac.holds.org_unit_not_pickup_lib=null}

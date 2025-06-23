@@ -35,6 +35,9 @@ object HemlockPluginAttributeKeys {
     val sentTimeKey = AttributeKey<Long>(HemlockPluginKeys.sentTime)
 }
 
+/**
+ * a ktor client plugin that tracks response times and detects responses cached by the HttpCache plugin.
+ */
 val HemlockPlugin = createClientPlugin("HemlockPlugin") {
 
     onRequest { request, _ ->
@@ -57,12 +60,18 @@ val HemlockPlugin = createClientPlugin("HemlockPlugin") {
     }
 }
 
-// function to check if the response was cached
-// We infer that a response was cached if the `onResponse` hook was not called
+/**
+ * returns true if the response was cached by the HttpCache plugin.
+ *
+ * We infer that a response was cached if the `onResponse` hook was not called
+ */
 fun isCached(response: HttpResponse): Boolean {
     return !response.call.attributes.contains(recvTimeKey)
 }
 
+/**
+ * returns the elapsed time in milliseconds between send and receive, 0 if the response was cached
+ */
 fun elapsedTime(response: HttpResponse): Long {
     if (!response.call.attributes.contains(recvTimeKey)) {
         return 0
