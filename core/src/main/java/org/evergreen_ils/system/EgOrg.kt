@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, see <https://www.gnu.org/licenses/>.
  */
-package net.kenstir.hemlock.data.evergreen.system
+package org.evergreen_ils.system
 
 import android.annotation.SuppressLint
 import androidx.core.util.Pair

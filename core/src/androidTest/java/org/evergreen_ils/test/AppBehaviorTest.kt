@@ -25,7 +25,7 @@ import net.kenstir.hemlock.android.StdoutLogProvider
 import net.kenstir.hemlock.data.evergreen.XOSRFObject
 import org.evergreen_ils.data.MBRecord
 import net.kenstir.hemlock.data.jsonMapOf
-import net.kenstir.hemlock.data.evergreen.system.EgOrg
+import org.evergreen_ils.system.EgOrg
 import org.evergreen_ils.utils.Link
 import org.evergreen_ils.utils.MARCRecord
 import org.evergreen_ils.utils.MARCXMLParser

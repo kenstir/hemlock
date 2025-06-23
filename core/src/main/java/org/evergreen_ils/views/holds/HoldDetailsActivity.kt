@@ -35,7 +35,7 @@ import net.kenstir.hemlock.data.evergreen.OSRFUtils
 import net.kenstir.hemlock.R
 import net.kenstir.hemlock.android.Analytics
 import net.kenstir.hemlock.android.App
-import net.kenstir.hemlock.data.evergreen.system.EgOrg
+import org.evergreen_ils.system.EgOrg
 import org.evergreen_ils.data.HoldRecord
 import net.kenstir.hemlock.data.Result
 import org.evergreen_ils.net.Gateway

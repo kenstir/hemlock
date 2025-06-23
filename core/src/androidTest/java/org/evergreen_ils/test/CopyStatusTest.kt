@@ -20,7 +20,7 @@ package org.evergreen_ils.test
 
 import net.kenstir.hemlock.data.evergreen.XGatewayResult
 import net.kenstir.hemlock.data.evergreen.XOSRFCoder
-import net.kenstir.hemlock.data.evergreen.system.EgCopyStatus
+import org.evergreen_ils.system.EgCopyStatus
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.BeforeClass

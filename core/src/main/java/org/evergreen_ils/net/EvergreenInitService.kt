@@ -32,9 +32,9 @@ import net.kenstir.hemlock.data.evergreen.payloadFirstAsObjectList
 import net.kenstir.hemlock.data.evergreen.payloadFirstAsString
 import net.kenstir.hemlock.net.InitServiceOptions
 import net.kenstir.hemlock.data.jsonMapOf
-import net.kenstir.hemlock.data.evergreen.system.EgCodedValueMap
-import net.kenstir.hemlock.data.evergreen.system.EgCopyStatus
-import net.kenstir.hemlock.data.evergreen.system.EgOrg
+import org.evergreen_ils.system.EgCodedValueMap
+import org.evergreen_ils.system.EgCopyStatus
+import org.evergreen_ils.system.EgOrg
 import org.evergreen_ils.Api
 import org.evergreen_ils.idl.IDLParser
 

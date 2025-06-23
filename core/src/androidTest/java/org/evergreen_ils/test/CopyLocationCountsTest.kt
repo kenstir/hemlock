@@ -21,7 +21,7 @@ package org.evergreen_ils.test
 import net.kenstir.hemlock.data.evergreen.XOSRFObject
 import org.evergreen_ils.data.CopyLocationCounts
 import net.kenstir.hemlock.data.jsonMapOf
-import net.kenstir.hemlock.data.evergreen.system.EgCopyStatus
+import org.evergreen_ils.system.EgCopyStatus
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test

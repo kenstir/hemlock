@@ -31,7 +31,7 @@ import net.kenstir.hemlock.net.InitServiceOptions
 import net.kenstir.hemlock.data.Result
 import net.kenstir.hemlock.data.evergreen.XGatewayClient
 import org.evergreen_ils.net.Gateway
-import net.kenstir.hemlock.data.evergreen.system.EgMessageMap
+import org.evergreen_ils.system.EgMessageMap
 import org.evergreen_ils.utils.getCustomMessage
 import java.util.concurrent.atomic.AtomicInteger
 

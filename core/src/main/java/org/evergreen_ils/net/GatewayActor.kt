@@ -25,7 +25,7 @@ import net.kenstir.hemlock.data.JSONDictionary
 import net.kenstir.hemlock.data.RequestOptions
 import net.kenstir.hemlock.data.Result
 import net.kenstir.hemlock.data.jsonMapOf
-import net.kenstir.hemlock.data.evergreen.system.EgOrg
+import org.evergreen_ils.system.EgOrg
 import org.opensrf.util.OSRFObject
 import java.util.Date
 

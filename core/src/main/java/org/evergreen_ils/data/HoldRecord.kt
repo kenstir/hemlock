@@ -27,9 +27,9 @@ import net.kenstir.hemlock.data.evergreen.OSRFUtils
 import net.kenstir.hemlock.R
 import org.evergreen_ils.utils.JsonUtils.parseObject
 import org.evergreen_ils.utils.JsonUtils.parseHoldableFormats
-import net.kenstir.hemlock.data.evergreen.system.EgCodedValueMap.iconFormatLabel
+import org.evergreen_ils.system.EgCodedValueMap.iconFormatLabel
 import org.opensrf.util.OSRFObject
-import net.kenstir.hemlock.data.evergreen.system.EgOrg
+import org.evergreen_ils.system.EgOrg
 import org.evergreen_ils.utils.TextUtils
 import java.io.Serializable
 import java.text.DateFormat

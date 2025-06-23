@@ -17,7 +17,7 @@
  */
 package net.kenstir.apps.core
 
-import net.kenstir.hemlock.data.evergreen.system.EgOrg
+import org.evergreen_ils.system.EgOrg
 import net.kenstir.hemlock.android.Log
 import net.kenstir.hemlock.android.StdoutLogProvider
 import net.kenstir.hemlock.data.jsonMapOf

@@ -19,7 +19,7 @@ package net.kenstir.hemlock.android;
 
 import android.text.TextUtils;
 
-import net.kenstir.hemlock.data.evergreen.system.EgOrg;
+import org.evergreen_ils.system.EgOrg;
 import org.evergreen_ils.data.MBRecord;
 import org.evergreen_ils.utils.Link;
 import org.evergreen_ils.utils.MARCRecord;
