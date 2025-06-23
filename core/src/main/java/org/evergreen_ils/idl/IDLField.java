@@ -1,4 +1,4 @@
-package org.open_ils.idl;
+package org.evergreen_ils.idl;
 
 public class IDLField {
 
