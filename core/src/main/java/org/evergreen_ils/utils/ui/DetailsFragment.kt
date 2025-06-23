@@ -51,7 +51,7 @@ import org.evergreen_ils.net.GatewayLoader
 import org.evergreen_ils.net.Volley
 import org.evergreen_ils.views.search.CopyInformationActivity
 import org.evergreen_ils.data.MBRecord
-import net.kenstir.hemlock.data.evergreen.system.EgOrg
+import org.evergreen_ils.system.EgOrg
 import org.evergreen_ils.views.bookbags.BookBagUtils.showAddToListDialog
 import org.evergreen_ils.views.holds.PlaceHoldActivity
 import org.evergreen_ils.views.search.SearchActivity

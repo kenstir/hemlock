@@ -44,7 +44,7 @@ import net.kenstir.hemlock.data.model.Account
 import org.evergreen_ils.data.PushNotification
 import net.kenstir.hemlock.data.Result
 import org.evergreen_ils.net.Gateway
-import net.kenstir.hemlock.data.evergreen.system.EgOrg
+import org.evergreen_ils.system.EgOrg
 import org.evergreen_ils.utils.await
 import org.evergreen_ils.utils.getAccountManagerResult
 import org.evergreen_ils.utils.getCustomMessage

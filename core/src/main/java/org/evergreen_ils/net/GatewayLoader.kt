@@ -27,7 +27,7 @@ import net.kenstir.hemlock.android.Log
 import net.kenstir.hemlock.data.Result
 import net.kenstir.hemlock.data.model.Account
 import org.evergreen_ils.data.*
-import net.kenstir.hemlock.data.evergreen.system.EgOrg
+import org.evergreen_ils.system.EgOrg
 import net.kenstir.hemlock.data.model.Organization
 import org.evergreen_ils.system.EgSms
 

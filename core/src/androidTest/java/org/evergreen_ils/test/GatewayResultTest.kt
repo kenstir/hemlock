@@ -23,7 +23,7 @@ import net.kenstir.hemlock.data.evergreen.OSRFUtils
 import net.kenstir.hemlock.android.Log
 import net.kenstir.hemlock.android.StdoutLogProvider
 import net.kenstir.hemlock.data.evergreen.GatewayEventError
-import net.kenstir.hemlock.data.evergreen.system.EgMessageMap
+import org.evergreen_ils.system.EgMessageMap
 import org.junit.Assert.*
 import org.junit.BeforeClass
 import org.junit.Test
