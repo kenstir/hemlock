@@ -32,11 +32,28 @@ class EvergreenOrganization(
     val obj: XOSRFObject,
 ): Organization(id, level, name, shortname, opacVisible, parent) {
     private val orgType: OrgType? = EgOrg.findOrgType(obj.getInt("ou_type") ?: -1)
-    private val addressID: Int? = obj.getInt("mailing_address")
+    val addressID: Int? = obj.getInt("mailing_address")
     private var addressObj: XOSRFObject? = null
 
     override val isConsortium: Boolean
         get() = id == CONSORTIUM_ID
+
+    var isNotPickupLocationSetting: Boolean? = null
+    override val isPickupLocation: Boolean
+        get() {
+            isNotPickupLocationSetting?.let { return !it }
+            orgType?.canHaveVols?.let { return it }
+            return true // should not happen
+        }
+
+    override val canHaveUsers: Boolean
+        get() = orgType?.canHaveUsers ?: true
+
+    override val canHaveVols: Boolean
+        get() = orgType?.canHaveVols ?: true
+
+    override val hasAddress: Boolean
+        get() = addressObj != null
 
     override fun getAddress(separator: String): String {
         if (addressObj == null) return ""
@@ -50,13 +67,6 @@ class EvergreenOrganization(
         return sb.toString()
     }
 
-    var isNotPickupLocationSetting: Boolean? = null
-    override val isPickupLocation: Boolean
-        get() {
-            isNotPickupLocationSetting?.let { return !it }
-            orgType?.canHaveVols?.let { return it }
-            return true // should not happen
-        }
 
     companion object {
         const val CONSORTIUM_ID = 1 // // as defaulted in Open-ILS code

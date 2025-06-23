@@ -40,7 +40,7 @@ import net.kenstir.hemlock.R
 import net.kenstir.hemlock.android.Analytics
 import net.kenstir.hemlock.android.Log
 import net.kenstir.hemlock.data.model.Library
-import org.evergreen_ils.utils.ui.showAlert
+import net.kenstir.hemlock.android.ui.showAlert
 import java.util.Collections
 
 @Serializable

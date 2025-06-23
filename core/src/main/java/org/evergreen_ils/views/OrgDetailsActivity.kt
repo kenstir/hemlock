@@ -36,6 +36,7 @@ import net.kenstir.hemlock.android.App
 import net.kenstir.hemlock.android.Log
 import net.kenstir.hemlock.data.model.Organization
 import net.kenstir.hemlock.data.Result
+import org.evergreen_ils.model.EvergreenOrganization
 import org.evergreen_ils.net.Gateway
 import org.evergreen_ils.net.GatewayLoader
 import org.evergreen_ils.system.EgOrg
@@ -43,7 +44,7 @@ import org.evergreen_ils.utils.JsonUtils
 import org.evergreen_ils.utils.ui.BaseActivity
 import org.evergreen_ils.utils.ui.OrgArrayAdapter
 import net.kenstir.hemlock.android.ui.ProgressDialogSupport
-import org.evergreen_ils.utils.ui.showAlert
+import net.kenstir.hemlock.android.ui.showAlert
 import org.opensrf.util.OSRFObject
 import java.util.Date
 
@@ -165,7 +166,7 @@ class OrgDetailsActivity : BaseActivity() {
         webSite?.isEnabled = !(org?.infoURL.isNullOrEmpty())
         email?.isEnabled = !(org?.email.isNullOrEmpty())
         phone?.isEnabled = !(org?.phone.isNullOrEmpty())
-        map?.isEnabled = (org?.addressObj != null)
+        map?.isEnabled = org?.hasAddress ?: false
     }
 
     private fun hoursOfOperation(obj: OSRFObject?, day: Int): String? {
@@ -369,7 +370,8 @@ class OrgDetailsActivity : BaseActivity() {
                 })
 
                 jobs.add(scope.async {
-                    val result = Gateway.actor.fetchOrgAddress(org?.addressID)
+                    val evergreenOrg = org as? EvergreenOrganization
+                    val result = Gateway.actor.fetchOrgAddress(evergreenOrg?.addressID)
                     onAddressResult(result)
                 })
 

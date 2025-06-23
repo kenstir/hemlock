@@ -36,7 +36,7 @@ import net.kenstir.hemlock.android.AppState
 import net.kenstir.hemlock.android.Log
 import net.kenstir.hemlock.android.ui.ActionBarUtils
 import net.kenstir.hemlock.android.ui.ProgressDialogSupport
-import org.evergreen_ils.utils.ui.showAlert
+import net.kenstir.hemlock.android.ui.showAlert
 import org.evergreen_ils.data.BookBag
 import org.evergreen_ils.data.BookBagItem
 import net.kenstir.hemlock.data.Result

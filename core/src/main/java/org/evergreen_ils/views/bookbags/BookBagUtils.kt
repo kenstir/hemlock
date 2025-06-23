@@ -30,7 +30,7 @@ import org.evergreen_ils.net.Gateway
 import org.evergreen_ils.data.MBRecord
 import org.evergreen_ils.utils.ui.BaseActivity
 import net.kenstir.hemlock.android.ui.ProgressDialogSupport
-import org.evergreen_ils.utils.ui.showAlert
+import net.kenstir.hemlock.android.ui.showAlert
 
 object BookBagUtils {
     fun showAddToListDialog(activity: BaseActivity, bookBags: List<BookBag>, info: MBRecord) {

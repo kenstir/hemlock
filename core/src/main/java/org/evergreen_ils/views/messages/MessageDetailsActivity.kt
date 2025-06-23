@@ -30,7 +30,7 @@ import net.kenstir.hemlock.data.Result
 import org.evergreen_ils.net.Gateway
 import net.kenstir.hemlock.android.ui.ActionBarUtils
 import org.evergreen_ils.utils.ui.BaseActivity
-import org.evergreen_ils.utils.ui.showAlert
+import net.kenstir.hemlock.android.ui.showAlert
 import org.evergreen_ils.views.messages.MessagesActivity.Companion.RESULT_MESSAGE_UPDATED
 import java.text.DateFormat
 

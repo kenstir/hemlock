@@ -31,7 +31,7 @@ import org.evergreen_ils.net.Gateway.getUrl
 import org.evergreen_ils.net.GatewayLoader
 import org.evergreen_ils.net.Volley
 import org.evergreen_ils.utils.ui.BaseActivity
-import org.evergreen_ils.utils.ui.showAlert
+import net.kenstir.hemlock.android.ui.showAlert
 
 /**
  * Provide views to RecyclerView with data from records.

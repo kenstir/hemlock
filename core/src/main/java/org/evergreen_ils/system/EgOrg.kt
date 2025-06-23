@@ -25,6 +25,7 @@ import org.evergreen_ils.xdata.parseOrgBoolSetting
 import org.evergreen_ils.xdata.parseOrgStringSetting
 import org.evergreen_ils.data.OrgType
 import net.kenstir.hemlock.data.model.Organization
+import org.evergreen_ils.model.EvergreenOrganization
 import java.util.*
 import kotlin.Comparator
 
@@ -67,9 +68,9 @@ object EgOrg {
         val id = obj.getInt("id") ?: return
         val name = obj.getString("name") ?: return
         val shortName = obj.getString("shortname") ?: return
-        val ouType = obj.getInt("ou_type") ?: return
         val opacVisible = obj.getBoolean("opac_visible")
-        val org = Organization(id, level, name, shortName, ouType, opacVisible, obj)
+        val parent = obj.getInt("parent_ou")
+        val org = EvergreenOrganization(id, level, name, shortName, opacVisible, parent, obj)
         org.indentedDisplayPrefix = String(CharArray(level)).replace("\u0000", "   ")
         Log.v(TAG, "org id:${org.id} level:${org.level} vis:${org.opacVisible} shortname:${org.shortname} name:${org.name}")
         orgs.add(org)
@@ -100,11 +101,11 @@ object EgOrg {
         Log.d(TAG, "loadOrgs: ${orgs.size} orgs")
     }
 
-    fun loadOrgSettings(org: Organization, obj: XOSRFObject) {
+    fun loadOrgSettings(org: EvergreenOrganization, obj: XOSRFObject) {
         org.email = obj.getString("email")
         org.phone = obj.getString("phone")
         org.isNotPickupLocationSetting = parseOrgBoolSetting(obj, Api.SETTING_ORG_UNIT_NOT_PICKUP_LIB)
-        org.isPaymentAllowedSetting = parseOrgBoolSetting(obj, Api.SETTING_CREDIT_PAYMENTS_ALLOW)
+        org.isPaymentAllowed = parseOrgBoolSetting(obj, Api.SETTING_CREDIT_PAYMENTS_ALLOW) ?: false
         org.eresourcesUrl = parseOrgStringSetting(obj, Api.SETTING_HEMLOCK_ERESOURCES_URL)
         org.eventsURL = parseOrgStringSetting(obj, Api.SETTING_HEMLOCK_EVENTS_URL)
         org.infoURL = parseOrgStringSetting(obj, Api.SETTING_INFO_URL)

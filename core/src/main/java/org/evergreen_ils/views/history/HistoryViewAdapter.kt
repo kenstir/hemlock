@@ -36,7 +36,7 @@ import net.kenstir.hemlock.data.Result
 import org.evergreen_ils.net.Gateway
 import org.evergreen_ils.net.Volley
 import org.evergreen_ils.utils.ui.BaseActivity
-import org.evergreen_ils.utils.ui.showAlert
+import net.kenstir.hemlock.android.ui.showAlert
 
 class HistoryViewAdapter(private val items: List<HistoryRecord>) : RecyclerView.Adapter<HistoryViewAdapter.ViewHolder>() {
 

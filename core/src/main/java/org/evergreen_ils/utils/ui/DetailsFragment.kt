@@ -46,6 +46,7 @@ import net.kenstir.hemlock.R
 import net.kenstir.hemlock.android.App
 import net.kenstir.hemlock.android.Log
 import net.kenstir.hemlock.android.Log.TAG_ASYNC
+import net.kenstir.hemlock.android.ui.showAlert
 import org.evergreen_ils.net.Gateway.getUrl
 import org.evergreen_ils.net.GatewayLoader
 import org.evergreen_ils.net.Volley
