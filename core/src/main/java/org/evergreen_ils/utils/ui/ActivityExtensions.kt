@@ -21,8 +21,9 @@ package org.evergreen_ils.utils.ui
 import android.app.Activity
 import android.app.AlertDialog
 import net.kenstir.hemlock.android.App
-import org.evergreen_ils.net.GatewayError
 import net.kenstir.hemlock.android.Log
+import net.kenstir.hemlock.android.ui.showAlert
+import org.evergreen_ils.net.GatewayError
 import org.evergreen_ils.utils.getCustomMessage
 
 fun Activity.showAlert(ex: Exception) {
@@ -31,17 +32,6 @@ fun Activity.showAlert(ex: Exception) {
     } else {
         showAlert(ex.getCustomMessage())
     }
-}
-
-fun Activity.showAlert(message: String, title: String? = "Error") {
-    if (isFinishing) return
-    val builder = AlertDialog.Builder(this)
-    builder.setTitle(title)
-            .setMessage(message)
-            .setPositiveButton(android.R.string.ok) { _, _ ->
-            }
-    val alertDialog = builder.create()
-    alertDialog.show()
 }
 
 fun Activity.showSessionExpiredAlert(ex: Exception) {

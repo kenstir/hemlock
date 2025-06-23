@@ -41,7 +41,7 @@ import net.kenstir.hemlock.android.App
 import net.kenstir.hemlock.android.Log
 import net.kenstir.hemlock.android.Log.TAG_FCM
 import net.kenstir.hemlock.data.model.Account
-import org.evergreen_ils.data.PushNotification
+import net.kenstir.hemlock.android.pn.PushNotification
 import net.kenstir.hemlock.data.Result
 import org.evergreen_ils.net.Gateway
 import org.evergreen_ils.system.EgOrg

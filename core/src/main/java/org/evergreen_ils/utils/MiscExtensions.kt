@@ -20,7 +20,7 @@ package org.evergreen_ils.utils
 
 import android.accounts.AccountManager
 import android.os.Bundle
-import org.evergreen_ils.data.AccountManagerResult
+import net.kenstir.hemlock.android.account.AccountManagerResult
 
 fun Bundle.getAccountManagerResult(): AccountManagerResult {
     return AccountManagerResult(getString(AccountManager.KEY_ACCOUNT_NAME),

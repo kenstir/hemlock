@@ -146,7 +146,7 @@
 
         <!-- [fcm] -->
         <service
-            android:name="org.evergreen_ils.services.MessagingService"
+            android:name="net.kenstir.hemlock.android.pn.MessagingService"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />

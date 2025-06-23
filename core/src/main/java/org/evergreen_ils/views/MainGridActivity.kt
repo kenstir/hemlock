@@ -29,7 +29,7 @@ import androidx.recyclerview.widget.RecyclerView
 import net.kenstir.hemlock.R
 import net.kenstir.hemlock.android.App
 import net.kenstir.hemlock.android.Log
-import org.evergreen_ils.data.GridButton
+import net.kenstir.hemlock.android.ui.GridButton
 import org.evergreen_ils.system.EgOrg
 import org.evergreen_ils.utils.ui.MainBaseActivity
 import org.evergreen_ils.views.bookbags.BookBagsActivity

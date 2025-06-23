@@ -38,7 +38,7 @@ import android.widget.TextView;
 
 import net.kenstir.hemlock.R;
 import net.kenstir.hemlock.android.App;
-import org.evergreen_ils.utils.ui.ActionBarUtils;
+import net.kenstir.hemlock.android.ui.ActionBarUtils;
 import net.kenstir.hemlock.android.Analytics;
 
 import java.util.ArrayList;
