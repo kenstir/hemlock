@@ -26,7 +26,6 @@ import net.kenstir.hemlock.data.Result
 import net.kenstir.hemlock.android.Log
 import net.kenstir.hemlock.data.InitServiceOptions
 import net.kenstir.hemlock.data.jsonMapOf
-import org.evergreen_ils.data.parseOrgStringSetting
 import net.kenstir.hemlock.data.evergreen.system.EgCodedValueMap
 import net.kenstir.hemlock.data.evergreen.system.EgCopyStatus
 import net.kenstir.hemlock.data.evergreen.system.EgOrg

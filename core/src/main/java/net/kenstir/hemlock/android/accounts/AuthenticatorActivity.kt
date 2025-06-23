@@ -34,7 +34,7 @@ import net.kenstir.hemlock.android.Analytics.log
 import net.kenstir.hemlock.android.Analytics.redactedString
 import net.kenstir.hemlock.android.App
 import net.kenstir.hemlock.data.Result
-import net.kenstir.hemlock.data.Library
+import net.kenstir.hemlock.data.models.Library
 import org.evergreen_ils.utils.ui.ActivityUtils.launchURL
 import org.evergreen_ils.utils.ui.AppState
 import org.evergreen_ils.utils.ui.showAlert

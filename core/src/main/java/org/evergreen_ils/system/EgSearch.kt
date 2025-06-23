@@ -22,7 +22,7 @@ package org.evergreen_ils.system
 
 import android.text.TextUtils
 import net.kenstir.hemlock.data.evergreen.OSRFUtils
-import org.evergreen_ils.data.Organization
+import net.kenstir.hemlock.data.models.Organization
 import org.evergreen_ils.data.MBRecord
 import org.opensrf.util.OSRFObject
 import kotlin.collections.ArrayList
