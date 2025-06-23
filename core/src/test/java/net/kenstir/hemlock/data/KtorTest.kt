@@ -34,12 +34,12 @@ import io.ktor.http.ContentType
 import io.ktor.http.HttpHeaders
 import io.ktor.http.contentType
 import kotlinx.coroutines.test.runTest
-import net.kenstir.hemlock.data.evergreen.Api
+import org.evergreen_ils.Api
 import net.kenstir.hemlock.data.evergreen.XGatewayClient
 import net.kenstir.hemlock.data.evergreen.paramListOf
-import net.kenstir.hemlock.network.plugins.HemlockPlugin
-import net.kenstir.hemlock.network.plugins.elapsedTime
-import net.kenstir.hemlock.network.plugins.isCached
+import net.kenstir.hemlock.net.HemlockPlugin
+import net.kenstir.hemlock.net.elapsedTime
+import net.kenstir.hemlock.net.isCached
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull

@@ -15,8 +15,13 @@
  * along with this program; if not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.kenstir.hemlock.data
+package net.kenstir.hemlock.net
 
-interface AuthService {
-    suspend fun getAuthToken(username: String, password: String): Result<String>
+import net.kenstir.hemlock.data.Result
+import net.kenstir.hemlock.data.model.Account
+
+interface UserService {
+    fun makeAccount(username: String, authToken: String): Account
+    suspend fun loadUserSession(account: Account): Result<Unit>
+    suspend fun deleteSession(account: Account): Result<Unit>
 }

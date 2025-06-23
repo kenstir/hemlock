@@ -14,13 +14,14 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, see <https://www.gnu.org/licenses/>.
  */
+package net.kenstir.hemlock.data.model
 
-package net.kenstir.hemlock.mock
+class Record(val id: Int, val title: String? = null, val author: String? = null) {
+    constructor(id: Int): this(id, null, null)
 
-import net.kenstir.hemlock.data.model.RecordMetadata
-
-object MockMetadataSource {
-    fun getRecordMetadata(recordId: Int): RecordMetadata {
-        return RecordMetadata("Mock Title", "Mock Author", "Mock ISBN")
+    override fun toString(): String {
+        return "Record(id=$id, title='$title', author=$author)"
     }
+
+    var isDeleted = false
 }

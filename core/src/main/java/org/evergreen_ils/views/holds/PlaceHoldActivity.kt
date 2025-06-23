@@ -39,7 +39,7 @@ import net.kenstir.hemlock.R
 import net.kenstir.hemlock.android.Analytics
 import net.kenstir.hemlock.android.App
 import net.kenstir.hemlock.android.Log
-import net.kenstir.hemlock.data.models.Account
+import net.kenstir.hemlock.data.model.Account
 import net.kenstir.hemlock.data.Result
 import net.kenstir.hemlock.data.evergreen.HOLD_TYPE_PART
 import net.kenstir.hemlock.data.evergreen.HOLD_TYPE_TITLE

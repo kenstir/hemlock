@@ -14,14 +14,14 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, see <https://www.gnu.org/licenses/>.
  */
-package net.kenstir.hemlock.data.models
 
-data class RecordMetadata(
-    val title: String,
-    val author: String,
-    val isbn: String
-) {
-    override fun toString(): String {
-        return "RecordMetadata(title='$title', author='$author', isbn='$isbn')"
-    }
+package net.kenstir.hemlock.data.model
+
+import android.location.Location
+
+data class Library constructor(val url: String              // e.g. "https://bark.cwmars.org"
+                               , val name: String           // e.g. "C/W MARS"
+                               , val directoryName: String? // e.g. "Massachusetts, US (C/W MARS)"
+                               , val location: Location?) {
+    constructor(url: String, name: String) : this(url, name, null, null)
 }

@@ -17,7 +17,9 @@
 
 package net.kenstir.hemlock.data.evergreen
 
-import net.kenstir.hemlock.data.models.Account
+import net.kenstir.hemlock.data.model.Account
+import org.evergreen_ils.Api
+import org.evergreen_ils.model.EvergreenAccount
 import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Test

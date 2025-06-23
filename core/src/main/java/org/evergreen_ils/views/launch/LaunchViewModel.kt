@@ -27,7 +27,7 @@ import kotlinx.coroutines.async
 import net.kenstir.hemlock.R
 import net.kenstir.hemlock.android.App
 import net.kenstir.hemlock.android.Log
-import net.kenstir.hemlock.data.InitServiceOptions
+import net.kenstir.hemlock.net.InitServiceOptions
 import net.kenstir.hemlock.data.Result
 import net.kenstir.hemlock.data.evergreen.XGatewayClient
 import org.evergreen_ils.net.Gateway

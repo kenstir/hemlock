@@ -100,6 +100,7 @@ class AccountAuthenticator(private val context: Context): AbstractAccountAuthent
             if (password != null) {
                 try {
                     log(TAG, "getAuthToken> attempting to sign in with existing password")
+                    TODO("replace with coroutines version")
                     authToken = EvergreenAuthenticator.signIn(library_url, account.name, password)
                 } catch (e: AuthenticationException) {
                     //Analytics.logException(e);

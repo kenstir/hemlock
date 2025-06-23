@@ -17,9 +17,9 @@
 
 package net.kenstir.hemlock.mock
 
-import net.kenstir.hemlock.data.models.PatronList
-import net.kenstir.hemlock.data.models.ListItem
-import net.kenstir.hemlock.data.models.Record
+import net.kenstir.hemlock.data.model.PatronList
+import net.kenstir.hemlock.data.model.ListItem
+import net.kenstir.hemlock.data.model.Record
 
 object MockPatronDataSource {
     fun getLists(): List<PatronList> {

@@ -15,11 +15,16 @@
  * along with this program; if not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.kenstir.hemlock.data.evergreen
+package org.evergreen_ils.net
 
 import net.kenstir.hemlock.data.Result
-import net.kenstir.hemlock.data.UserService
-import net.kenstir.hemlock.data.models.Account
+import net.kenstir.hemlock.data.evergreen.XGatewayClient
+import net.kenstir.hemlock.data.evergreen.paramListOf
+import net.kenstir.hemlock.data.evergreen.payloadFirstAsObject
+import net.kenstir.hemlock.net.UserService
+import net.kenstir.hemlock.data.model.Account
+import org.evergreen_ils.Api
+import org.evergreen_ils.model.EvergreenAccount
 
 class EvergreenUserService: UserService {
 
@@ -32,12 +37,13 @@ class EvergreenUserService: UserService {
             account as? EvergreenAccount
                 ?: throw IllegalArgumentException("Expected EvergreenAccount, got ${account::class.java.simpleName}")
 
-            val sessionResponse = XGatewayClient.fetch(Api.AUTH, Api.AUTH_SESSION_RETRIEVE, paramListOf(account.authToken), false)
+            val sessionResponse =
+                XGatewayClient.fetch(Api.AUTH, Api.AUTH_SESSION_RETRIEVE, paramListOf(account.authToken), false)
             account.loadSession(sessionResponse.payloadFirstAsObject())
 
             val settings = listOf("card", "settings")
             val params = paramListOf(account.authToken, account.id, settings)
-            val userSettingsResponse = XGatewayClient.fetch(Api.ACTOR, Api.USER_FLESHED_RETRIEVE, params,false)
+            val userSettingsResponse = XGatewayClient.fetch(Api.ACTOR, Api.USER_FLESHED_RETRIEVE, params, false)
             account.loadFleshedUserSettings(userSettingsResponse.payloadFirstAsObject())
 
             Result.Success(Unit)

@@ -16,7 +16,7 @@
  */
 package net.kenstir.hemlock.data
 
-import net.kenstir.hemlock.data.models.RecordMetadata
+import net.kenstir.hemlock.data.model.RecordMetadata
 
 interface RecordService {
     suspend fun fetchRecordMetadata(recordId: Int): Result<RecordMetadata>

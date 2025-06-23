@@ -15,12 +15,11 @@
  * along with this program; if not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.kenstir.hemlock.data.evergreen
+package org.evergreen_ils.net
 
 import net.kenstir.hemlock.data.Result
 import net.kenstir.hemlock.data.SearchService
-
-private val TAG = EvergreenInitService::class.java.simpleName
+import net.kenstir.hemlock.data.evergreen.XOSRFObject
 
 class EvergreenSearchService: SearchService {
     override suspend fun fetchAssetCopy(copyId: Int): Result<XOSRFObject> {

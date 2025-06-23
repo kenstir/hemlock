@@ -23,7 +23,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.Map;
 
-import net.kenstir.hemlock.data.evergreen.Api;
+import org.evergreen_ils.Api;
 import net.kenstir.hemlock.android.Analytics;
 import net.kenstir.hemlock.android.Log;
 import org.opensrf.Method;
@@ -34,7 +34,7 @@ import org.opensrf.net.http.HttpRequest;
 import android.text.TextUtils;
 
 public class EvergreenAuthenticator {
-    private final static String TAG = EvergreenAuthenticator.class.getSimpleName();
+    private final static String TAG = "EvergreenAuthenticator";
 
     private static String md5(String s) {
         try {

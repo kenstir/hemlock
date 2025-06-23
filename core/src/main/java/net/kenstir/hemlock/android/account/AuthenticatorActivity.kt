@@ -34,7 +34,7 @@ import net.kenstir.hemlock.android.Analytics.log
 import net.kenstir.hemlock.android.Analytics.redactedString
 import net.kenstir.hemlock.android.App
 import net.kenstir.hemlock.data.Result
-import net.kenstir.hemlock.data.models.Library
+import net.kenstir.hemlock.data.model.Library
 import org.evergreen_ils.utils.ui.ActivityUtils.launchURL
 import org.evergreen_ils.utils.ui.AppState
 import org.evergreen_ils.utils.ui.showAlert
@@ -141,7 +141,6 @@ open class AuthenticatorActivity: AccountAuthenticatorActivity() {
         val username = (findViewById<View>(R.id.accountName) as TextView).text.toString()
         val password = (findViewById<View>(R.id.accountPassword) as TextView).text.toString()
 
-        // TODO: use coroutines instead of AsyncTask
         scope.async {
             try {
                 var authtoken: String? = null

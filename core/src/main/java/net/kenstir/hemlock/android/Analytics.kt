@@ -25,7 +25,7 @@ import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import net.kenstir.hemlock.BuildConfig
 import net.kenstir.hemlock.R
-import net.kenstir.hemlock.data.models.Organization
+import net.kenstir.hemlock.data.model.Organization
 import net.kenstir.hemlock.data.Result
 import org.evergreen_ils.utils.getCustomMessage
 import java.text.SimpleDateFormat

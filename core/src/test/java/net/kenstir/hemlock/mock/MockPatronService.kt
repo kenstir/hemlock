@@ -19,8 +19,8 @@ package net.kenstir.hemlock.mock
 
 import net.kenstir.hemlock.data.PatronService
 import net.kenstir.hemlock.data.Result
-import net.kenstir.hemlock.data.models.PatronList
-import net.kenstir.hemlock.data.models.ListItem
+import net.kenstir.hemlock.data.model.PatronList
+import net.kenstir.hemlock.data.model.ListItem
 
 class MockPatronService: PatronService {
     override suspend fun fetchLists(patronId: Int, authToken: String): Result<List<PatronList>> {

@@ -15,23 +15,28 @@
  * along with this program; if not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.kenstir.hemlock.data.evergreen
+package org.evergreen_ils.net
 
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 
-import net.kenstir.hemlock.data.InitService
+import net.kenstir.hemlock.net.InitService
 import net.kenstir.hemlock.data.Result
 import net.kenstir.hemlock.android.Log
-import net.kenstir.hemlock.data.InitServiceOptions
+import net.kenstir.hemlock.data.evergreen.XGatewayClient
+import net.kenstir.hemlock.data.evergreen.paramListOf
+import net.kenstir.hemlock.data.evergreen.parseOrgStringSetting
+import net.kenstir.hemlock.data.evergreen.payloadFirstAsObject
+import net.kenstir.hemlock.data.evergreen.payloadFirstAsObjectList
+import net.kenstir.hemlock.data.evergreen.payloadFirstAsString
+import net.kenstir.hemlock.net.InitServiceOptions
 import net.kenstir.hemlock.data.jsonMapOf
 import net.kenstir.hemlock.data.evergreen.system.EgCodedValueMap
 import net.kenstir.hemlock.data.evergreen.system.EgCopyStatus
 import net.kenstir.hemlock.data.evergreen.system.EgOrg
+import org.evergreen_ils.Api
 import org.evergreen_ils.idl.IDLParser
-
-private val TAG = EvergreenInitService::class.java.simpleName
 
 class EvergreenInitService: InitService {
 
@@ -113,5 +118,9 @@ class EvergreenInitService: InitService {
         val response = XGatewayClient.fetch(Api.PCRUD, Api.SEARCH_CCVM, paramListOf(Api.ANONYMOUS, searchParams), true)
         EgCodedValueMap.loadCodedValueMaps(response.payloadFirstAsObjectList())
         Log.d(TAG, "loading coded value maps ... done")
+    }
+
+    companion object {
+        private val TAG = EvergreenInitService::class.java.simpleName
     }
 }

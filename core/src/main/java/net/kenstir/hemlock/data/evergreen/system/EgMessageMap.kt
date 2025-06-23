@@ -20,7 +20,7 @@ package net.kenstir.hemlock.data.evergreen.system
 import android.content.res.Resources
 import net.kenstir.hemlock.R
 import org.evergreen_ils.utils.JsonUtils
-import net.kenstir.hemlock.data.evergreen.Event
+import org.evergreen_ils.data.Event
 
 /** Emulate the behavior of OPAC messages customized in hold_error_messages.tt2.
  *
