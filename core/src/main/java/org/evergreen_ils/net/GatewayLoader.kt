@@ -28,6 +28,7 @@ import net.kenstir.hemlock.data.Result
 import net.kenstir.hemlock.data.models.Account
 import org.evergreen_ils.data.*
 import net.kenstir.hemlock.data.evergreen.system.EgOrg
+import net.kenstir.hemlock.data.models.Organization
 import org.evergreen_ils.system.EgSms
 
 object GatewayLoader {
@@ -44,11 +45,8 @@ object GatewayLoader {
                     val result = Gateway.actor.fetchOrgSettings(org.id)
                     if (result is Result.Success) {
                         //org.loadSettings(result.data)
-                        // TODO: fixme
+                        // TODO: fixme ^^^ settings not loaded
                         Log.d(TAG, "[kcxxx] org ${org.id} settings loaded")
-                        org.requireMonographicPart?.let {
-                            Log.d(TAG, "[kcxxx] org ${org.id} requireMonographicPart=$it")
-                        }
                     }
                 }
             }

@@ -62,7 +62,6 @@ object GatewayActor: ActorService {
             val settings = mutableListOf(
                 Api.SETTING_CREDIT_PAYMENTS_ALLOW,
                 Api.SETTING_INFO_URL,
-                Api.SETTING_REQUIRE_MONOGRAPHIC_PART,
                 Api.SETTING_ORG_UNIT_NOT_PICKUP_LIB,
                 Api.SETTING_HEMLOCK_ERESOURCES_URL,
                 Api.SETTING_HEMLOCK_EVENTS_URL,

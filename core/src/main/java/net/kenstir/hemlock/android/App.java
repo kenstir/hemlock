@@ -31,7 +31,7 @@ import net.kenstir.hemlock.R;
 import net.kenstir.hemlock.data.ServiceConfig;
 import net.kenstir.hemlock.data.evergreen.XGatewayClient;
 import net.kenstir.hemlock.data.models.Account;
-import net.kenstir.hemlock.data.Library;
+import net.kenstir.hemlock.data.models.Library;
 
 import org.evergreen_ils.net.Gateway;
 import org.evergreen_ils.net.Volley;

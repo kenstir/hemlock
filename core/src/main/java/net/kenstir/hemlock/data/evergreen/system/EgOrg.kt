@@ -19,9 +19,12 @@ package net.kenstir.hemlock.data.evergreen.system
 import android.annotation.SuppressLint
 import androidx.core.util.Pair
 import net.kenstir.hemlock.android.Log
+import net.kenstir.hemlock.data.evergreen.Api
 import net.kenstir.hemlock.data.evergreen.XOSRFObject
+import net.kenstir.hemlock.data.evergreen.parseOrgBoolSetting
+import net.kenstir.hemlock.data.evergreen.parseOrgStringSetting
 import org.evergreen_ils.data.OrgType
-import org.evergreen_ils.data.Organization
+import net.kenstir.hemlock.data.models.Organization
 import java.util.*
 import kotlin.Comparator
 
@@ -97,6 +100,24 @@ object EgOrg {
         Log.d(TAG, "loadOrgs: ${orgs.size} orgs")
     }
 
+    fun loadOrgSettings(org: Organization, obj: XOSRFObject) {
+        org.email = obj.getString("email")
+        org.phone = obj.getString("phone")
+        org.isNotPickupLocationSetting = parseOrgBoolSetting(obj, Api.SETTING_ORG_UNIT_NOT_PICKUP_LIB)
+        org.isPaymentAllowedSetting = parseOrgBoolSetting(obj, Api.SETTING_CREDIT_PAYMENTS_ALLOW)
+        org.eresourcesUrl = parseOrgStringSetting(obj, Api.SETTING_HEMLOCK_ERESOURCES_URL)
+        org.eventsURL = parseOrgStringSetting(obj, Api.SETTING_HEMLOCK_EVENTS_URL)
+        org.infoURL = parseOrgStringSetting(obj, Api.SETTING_INFO_URL)
+        org.meetingRoomsUrl = parseOrgStringSetting(obj, Api.SETTING_HEMLOCK_MEETING_ROOMS_URL)
+        org.museumPassesUrl = parseOrgStringSetting(obj, Api.SETTING_HEMLOCK_MUSEUM_PASSES_URL)
+
+        // this setting only appears on the consortium org
+        val smsEnableSetting = parseOrgBoolSetting(obj, Api.SETTING_SMS_ENABLE)
+        smsEnableSetting?.let { smsEnabled = smsEnableSetting }
+
+        org.settingsLoaded = true
+    }
+
     @JvmStatic
     fun findOrg(id: Int?): Organization? = orgs.firstOrNull { it.id == id }
 
@@ -147,14 +168,12 @@ object EgOrg {
         val numWithEresources = visibleOrgs.count { !it.eresourcesUrl.isNullOrEmpty() }
         val numWithMeetingRooms = visibleOrgs.count { !it.meetingRoomsUrl.isNullOrEmpty() }
         val numWithMuseumPasses = visibleOrgs.count { !it.museumPassesUrl.isNullOrEmpty() }
-        val numRequireMonographicPart = orgs.count { it.requireMonographicPart != null }
         Log.d(TAG, String.format("%3d visible orgs", visibleOrgs.size))
         Log.d(TAG, String.format("%3d are pickup locations", numPickupLocations))
         Log.d(TAG, String.format("%3d have events URLs", numWithEvents))
         Log.d(TAG, String.format("%3d have eresources URLs", numWithEresources))
         Log.d(TAG, String.format("%3d have meeting rooms URLs", numWithMeetingRooms))
         Log.d(TAG, String.format("%3d have museum passes URLs", numWithMuseumPasses))
-        Log.d(TAG, String.format("%3d have require_monographic_part set", numRequireMonographicPart))
         print("")
     }
 }

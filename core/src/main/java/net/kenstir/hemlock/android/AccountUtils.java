@@ -25,7 +25,7 @@ import android.os.Looper;
 import android.text.TextUtils;
 import net.kenstir.hemlock.R;
 import net.kenstir.hemlock.android.accounts.Const;
-import net.kenstir.hemlock.data.Library;
+import net.kenstir.hemlock.data.models.Library;
 
 import java.io.IOException;
 

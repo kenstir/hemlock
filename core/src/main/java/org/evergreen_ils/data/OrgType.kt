@@ -22,5 +22,3 @@ data class OrgType (val id: Int,
                     val opacLabel: String?,
                     val canHaveUsers: Boolean,
                     val canHaveVols: Boolean)
-//val parent: Int
-//val depth: Int
