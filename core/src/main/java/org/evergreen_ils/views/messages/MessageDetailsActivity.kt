@@ -28,7 +28,7 @@ import net.kenstir.hemlock.android.App
 import org.evergreen_ils.data.PatronMessage
 import net.kenstir.hemlock.data.Result
 import org.evergreen_ils.net.Gateway
-import org.evergreen_ils.utils.ui.ActionBarUtils
+import net.kenstir.hemlock.android.ui.ActionBarUtils
 import org.evergreen_ils.utils.ui.BaseActivity
 import org.evergreen_ils.utils.ui.showAlert
 import org.evergreen_ils.views.messages.MessagesActivity.Companion.RESULT_MESSAGE_UPDATED

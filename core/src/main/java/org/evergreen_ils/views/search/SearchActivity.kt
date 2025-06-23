@@ -53,6 +53,7 @@ import net.kenstir.hemlock.android.Analytics
 import net.kenstir.hemlock.android.Analytics.orgDimensionKey
 import net.kenstir.hemlock.android.App
 import net.kenstir.hemlock.android.Log
+import org.evergreen_ils.utils.ui.showAlert
 import org.evergreen_ils.data.MBRecord
 import net.kenstir.hemlock.data.Result
 import org.evergreen_ils.net.Gateway

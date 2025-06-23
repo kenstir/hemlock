@@ -24,7 +24,7 @@ import android.view.ViewGroup
 import android.widget.Button
 import androidx.recyclerview.widget.RecyclerView
 import net.kenstir.hemlock.R
-import org.evergreen_ils.data.GridButton
+import net.kenstir.hemlock.android.ui.GridButton
 
 class GridButtonViewAdapter(private val items: List<GridButton>) : RecyclerView.Adapter<GridButtonViewAdapter.ViewHolder>() {
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Kenneth H. Cox
+ * Copyright (c) 2025 Kenneth H. Cox
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -12,13 +12,21 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
+ * along with this program; if not, see <https://www.gnu.org/licenses/>.
  */
 
-package org.evergreen_ils.data
+package net.kenstir.hemlock.android.ui
 
-import android.graphics.drawable.Drawable
+import android.app.Activity
+import android.app.AlertDialog
 
-/// if contentDescription is null, use the title
-data class GridButton(val title: String, val drawable: Drawable, val contentDescription: String?, val action: () -> Unit)
+fun Activity.showAlert(message: String, title: String? = "Error") {
+    if (isFinishing) return
+    val builder = AlertDialog.Builder(this)
+    builder.setTitle(title)
+            .setMessage(message)
+            .setPositiveButton(android.R.string.ok) { _, _ ->
+            }
+    val alertDialog = builder.create()
+    alertDialog.show()
+}
