@@ -29,7 +29,7 @@ import com.android.volley.toolbox.StringRequest;
 
 import net.kenstir.hemlock.android.Analytics;
 import net.kenstir.hemlock.android.Log;
-import org.evergreen_ils.utils.StringUtils;
+import net.kenstir.hemlock.util.StringUtils;
 
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;

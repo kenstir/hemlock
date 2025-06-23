@@ -47,7 +47,7 @@ import org.evergreen_ils.views.search.RecordDetails
 import org.evergreen_ils.data.MBRecord
 import net.kenstir.hemlock.android.Log
 import org.evergreen_ils.utils.ui.BaseActivity
-import org.evergreen_ils.utils.ui.ProgressDialogSupport
+import net.kenstir.hemlock.android.ui.ProgressDialogSupport
 import org.evergreen_ils.utils.ui.showAlert
 import org.evergreen_ils.views.history.HistoryActivity
 import java.util.*

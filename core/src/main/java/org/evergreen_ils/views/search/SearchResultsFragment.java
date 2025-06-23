@@ -25,7 +25,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import net.kenstir.hemlock.R;
 import org.evergreen_ils.data.MBRecord;
 import org.evergreen_ils.system.EgSearch;
-import org.evergreen_ils.utils.ui.ItemClickSupport;
+import net.kenstir.hemlock.android.ui.ItemClickSupport;
 
 import java.util.ArrayList;
 

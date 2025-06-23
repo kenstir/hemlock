@@ -45,10 +45,10 @@ import net.kenstir.hemlock.android.pn.PushNotification
 import net.kenstir.hemlock.data.Result
 import org.evergreen_ils.net.Gateway
 import org.evergreen_ils.system.EgOrg
-import org.evergreen_ils.utils.await
-import org.evergreen_ils.utils.getAccountManagerResult
+import net.kenstir.hemlock.android.account.await
+import net.kenstir.hemlock.android.account.getAccountManagerResult
 import org.evergreen_ils.utils.getCustomMessage
-import org.evergreen_ils.utils.ui.AppState
+import net.kenstir.hemlock.android.AppState
 import org.evergreen_ils.utils.ui.BaseActivity.Companion.activityForNotificationType
 import java.util.concurrent.TimeoutException
 

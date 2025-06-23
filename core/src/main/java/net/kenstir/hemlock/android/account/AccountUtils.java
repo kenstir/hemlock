@@ -29,7 +29,7 @@ import net.kenstir.hemlock.data.model.Library;
 
 import java.io.IOException;
 
-import static org.evergreen_ils.utils.StringUtils.safeString;
+import static net.kenstir.hemlock.util.StringUtils.safeString;
 
 public class AccountUtils {
 

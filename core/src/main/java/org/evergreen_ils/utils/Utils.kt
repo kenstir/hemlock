@@ -62,13 +62,3 @@ fun titleSortKey(title: String?): String? {
     // modeled after code in misc_util.tt2 block get_marc_attrs
     return t2.replace("^[^A-Z0-9]*".toRegex(), "")
 }
-
-fun <T> coalesce(vararg args: T): T? {
-    for (arg in args) {
-        if (arg != null) {
-            return arg
-        }
-    }
-    return null
-}
-

@@ -36,6 +36,7 @@ import net.kenstir.hemlock.R
 import net.kenstir.hemlock.android.Analytics
 import net.kenstir.hemlock.android.App
 import net.kenstir.hemlock.android.ui.ActionBarUtils
+import net.kenstir.hemlock.android.ui.ProgressDialogSupport
 import org.evergreen_ils.utils.ui.showAlert
 import org.evergreen_ils.system.EgOrg
 import org.evergreen_ils.data.HoldRecord

@@ -16,7 +16,7 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
-package net.kenstir.hemlock.data
+package net.kenstir.hemlock.net
 
 data class RequestOptions(val timeoutMs: Int, val shouldCache: Boolean = true, val shouldRetry: Boolean = true, val cacheMaxTtlSeconds: Int = 0) {
     constructor(timeoutMs: Int, cacheMaxTtlSeconds: Int): this(timeoutMs, cacheMaxTtlSeconds >= 0, true, cacheMaxTtlSeconds)

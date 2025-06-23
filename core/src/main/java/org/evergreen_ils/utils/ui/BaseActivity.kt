@@ -51,12 +51,14 @@ import net.kenstir.hemlock.android.account.AccountUtils
 import net.kenstir.hemlock.android.Analytics
 import net.kenstir.hemlock.android.App
 import net.kenstir.hemlock.android.App.REQUEST_MESSAGES
+import net.kenstir.hemlock.android.AppState
 import net.kenstir.hemlock.android.Log
 import net.kenstir.hemlock.android.Log.TAG_FCM
 import net.kenstir.hemlock.android.Log.TAG_PERM
 import net.kenstir.hemlock.android.pn.NotificationType
 import net.kenstir.hemlock.android.pn.PushNotification
 import net.kenstir.hemlock.android.ui.ActionBarUtils
+import net.kenstir.hemlock.android.ui.ThemeManager
 import net.kenstir.hemlock.data.Result
 import org.evergreen_ils.system.EgOrg
 import org.evergreen_ils.system.EgSearch

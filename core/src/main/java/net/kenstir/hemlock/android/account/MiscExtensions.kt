@@ -17,13 +17,11 @@
 
 package net.kenstir.hemlock.android.account
 
-data class AccountManagerResult (
-        val accountName: String?,
-        val authToken: String?,
-        val errorMessage: String?
-) {
-    val failed: Boolean
-        get() = accountName.isNullOrEmpty() || authToken.isNullOrEmpty()
-    val failureMessage: String
-        get() = errorMessage ?: "Login failed"
+import android.accounts.AccountManager
+import android.os.Bundle
+
+fun Bundle.getAccountManagerResult(): AccountManagerResult {
+    return AccountManagerResult(getString(AccountManager.KEY_ACCOUNT_NAME),
+        getString(AccountManager.KEY_AUTHTOKEN),
+        getString(AccountManager.KEY_ERROR_MESSAGE))
 }

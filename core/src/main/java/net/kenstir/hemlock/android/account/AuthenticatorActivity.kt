@@ -35,8 +35,8 @@ import net.kenstir.hemlock.android.Analytics.redactedString
 import net.kenstir.hemlock.android.App
 import net.kenstir.hemlock.data.Result
 import net.kenstir.hemlock.data.model.Library
-import org.evergreen_ils.utils.ui.ActivityUtils.launchURL
-import org.evergreen_ils.utils.ui.AppState
+import net.kenstir.hemlock.android.ui.ActivityUtils.launchURL
+import net.kenstir.hemlock.android.AppState
 import org.evergreen_ils.utils.ui.showAlert
 
 open class AuthenticatorActivity: AccountAuthenticatorActivity() {
@@ -71,7 +71,8 @@ open class AuthenticatorActivity: AccountAuthenticatorActivity() {
         log(TAG, "authTokenType=$authTokenType")
 
         val signInText = findViewById<TextView>(R.id.account_sign_in_text)
-        signInText.text = String.format(getString(R.string.ou_account_sign_in_message), AppState.getString(AppState.LIBRARY_NAME))
+        signInText.text = String.format(getString(R.string.ou_account_sign_in_message), AppState.getString(
+            AppState.LIBRARY_NAME))
 
         // Turn off suggestions for the accountName field.  Turning them off with setInputType worked on my phone
         // whereas using android:inputType="text|textNoSuggestions" in xml did not.

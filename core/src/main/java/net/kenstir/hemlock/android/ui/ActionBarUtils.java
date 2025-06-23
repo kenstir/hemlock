@@ -26,7 +26,7 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
-import org.evergreen_ils.utils.ui.AppState;
+import net.kenstir.hemlock.android.AppState;
 
 public class ActionBarUtils {
 

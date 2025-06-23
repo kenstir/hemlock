@@ -18,7 +18,7 @@
 
 package org.evergreen_ils.test
 
-import org.evergreen_ils.utils.StringUtils
+import net.kenstir.hemlock.util.StringUtils
 import org.junit.Assert
 import org.junit.Test
 

@@ -17,6 +17,6 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 */
 
-package org.evergreen_ils.utils
+package net.kenstir.hemlock.data.model
 
 data class Link(val href: String, val text: String)
