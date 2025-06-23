@@ -40,7 +40,7 @@ import net.kenstir.hemlock.android.Log
 import org.evergreen_ils.data.PatronMessage
 import org.evergreen_ils.system.EgOrg
 import org.evergreen_ils.utils.ui.MainBaseActivity
-import org.evergreen_ils.utils.ui.showAlert
+import net.kenstir.hemlock.android.ui.showAlert
 import org.opensrf.util.OSRFObject
 
 open class MainActivity : MainBaseActivity() {

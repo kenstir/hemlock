@@ -24,10 +24,9 @@ class OrgArrayAdapter(
         val v = super.getDropDownView(pos, convertView, parent)
         val org = EgOrg.visibleOrgs[pos]
         if (v is TextView) {
-            val canHaveUsers = org.orgType?.canHaveUsers ?: true
             v.setTextAppearance(
                 context,
-                if (canHaveUsers) R.style.HemlockText_SpinnerSecondary else R.style.HemlockText_SpinnerPrimary
+                if (org.canHaveUsers) R.style.HemlockText_SpinnerSecondary else R.style.HemlockText_SpinnerPrimary
             )
         }
         v.isEnabled = isEnabled(pos)

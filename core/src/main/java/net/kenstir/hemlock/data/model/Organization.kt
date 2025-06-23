@@ -26,14 +26,19 @@ open class Organization(
 ) {
     var email: String? = null
     var phone: String? = null
+    protected var address: String? = null // use getAddress()
     var eresourcesUrl: String? = null
     var eventsURL: String? = null
     var infoURL: String? = null
     var meetingRoomsUrl: String? = null
     var museumPassesUrl: String? = null
     open val isConsortium: Boolean = false
-    var isPaymentAllowed: Boolean = false
+    open var isPaymentAllowed: Boolean = false
     open val isPickupLocation: Boolean = true
+    open val canHaveUsers: Boolean = true
+    open val canHaveVols: Boolean = true
+    open val hasAddress: Boolean = !address.isNullOrEmpty()
+
     var settingsLoaded = false
 
     // display fields
@@ -42,6 +47,6 @@ open class Organization(
         get() = indentedDisplayPrefix + name
 
     open fun getAddress(separator: String = " "): String {
-        return ""
+        return address ?: ""
     }
 }

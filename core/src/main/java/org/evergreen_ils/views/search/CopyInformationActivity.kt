@@ -42,7 +42,7 @@ import org.evergreen_ils.system.EgOrg
 import org.evergreen_ils.system.EgOrg.findOrg
 import org.evergreen_ils.system.EgOrg.getOrgNameSafe
 import org.evergreen_ils.utils.ui.BaseActivity
-import org.evergreen_ils.utils.ui.showAlert
+import net.kenstir.hemlock.android.ui.showAlert
 import org.evergreen_ils.views.OrgDetailsActivity
 import org.evergreen_ils.views.holds.PlaceHoldActivity
 import java.util.*

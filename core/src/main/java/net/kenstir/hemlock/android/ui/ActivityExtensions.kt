@@ -19,6 +19,11 @@ package net.kenstir.hemlock.android.ui
 
 import android.app.Activity
 import android.app.AlertDialog
+import net.kenstir.hemlock.android.App
+import net.kenstir.hemlock.android.Log
+import org.evergreen_ils.net.GatewayError
+import org.evergreen_ils.utils.getCustomMessage
+import net.kenstir.hemlock.android.ui.showSessionExpiredAlert
 
 fun Activity.showAlert(message: String, title: String? = "Error") {
     if (isFinishing) return
@@ -26,6 +31,30 @@ fun Activity.showAlert(message: String, title: String? = "Error") {
     builder.setTitle(title)
             .setMessage(message)
             .setPositiveButton(android.R.string.ok) { _, _ ->
+            }
+    val alertDialog = builder.create()
+    alertDialog.show()
+}
+
+fun Activity.showAlert(ex: Exception) {
+    if (ex is GatewayError && ex.isSessionExpired()) {
+        showSessionExpiredAlert(ex)
+    } else {
+        showAlert(ex.getCustomMessage())
+    }
+}
+
+fun Activity.showSessionExpiredAlert(ex: Exception) {
+    if (isFinishing) return
+    val builder = AlertDialog.Builder(this)
+    builder.setTitle("Error")
+            .setMessage(ex.getCustomMessage())
+            .setNegativeButton(android.R.string.cancel) { _, _ ->
+                Log.d("sessionexpired", "cancel")
+            }
+            .setPositiveButton("Login Again") { _, _ ->
+                Log.d("sessionexpired", "relog")
+                App.restartApp(this)
             }
     val alertDialog = builder.create()
     alertDialog.show()

@@ -44,7 +44,7 @@ class OrganizationTest {
                 "opac_label" to "All Libraries in Our Network",
                 "can_have_users" to "f",
                 "can_have_vols" to "f"
-        )
+            )
         )
         val orgTypeLibrary = XOSRFObject(
             jsonMapOf(
@@ -53,7 +53,7 @@ class OrganizationTest {
                 "opac_label" to "This Library",
                 "can_have_users" to "t",
                 "can_have_vols" to "t"
-        )
+            )
         )
         val orgTypeSystem = XOSRFObject(
             jsonMapOf(
@@ -62,7 +62,7 @@ class OrganizationTest {
                 "opac_label" to "All Branches of This Library",
                 "can_have_users" to "f",
                 "can_have_vols" to "f"
-        )
+            )
         )
         val orgTypes = listOf(orgTypeConsortium, orgTypeLibrary, orgTypeSystem)
         EgOrg.loadOrgTypes(orgTypes)
@@ -78,7 +78,7 @@ class OrganizationTest {
                 "opac_visible" to "t",
                 "parent_ou" to 28,
                 "children" to null
-        )
+            )
         )
         val systemObj = XOSRFObject(
             jsonMapOf(
@@ -89,7 +89,7 @@ class OrganizationTest {
                 "opac_visible" to "f",
                 "parent_ou" to 1,
                 "children" to arrayListOf(branchObj)
-        )
+            )
         )
         val consortiumObj = XOSRFObject(
             jsonMapOf(
@@ -100,7 +100,7 @@ class OrganizationTest {
                 "opac_visible" to "t",
                 "parent_ou" to null,
                 "children" to arrayListOf(systemObj)
-        )
+            )
         )
         EgOrg.loadOrgs(consortiumObj, true)
     }
@@ -190,20 +190,20 @@ class OrganizationTest {
         val lib = EgOrg.findOrg(29)
         assertEquals(true, lib?.opacVisible)
         assertEquals("BETHEL", lib?.shortname)
-        assertTrue(lib!!.orgType!!.canHaveUsers)
-        assertTrue(lib.orgType!!.canHaveVols)
+        assertTrue(lib!!.canHaveUsers)
+        assertTrue(lib.canHaveVols)
 
         val system = EgOrg.findOrg(28)
         assertEquals(false, system?.opacVisible)
         assertEquals("BETSYS", system?.shortname)
-        assertFalse(system!!.orgType!!.canHaveUsers)
-        assertFalse(system.orgType!!.canHaveVols)
+        assertFalse(system!!.canHaveUsers)
+        assertFalse(system.canHaveVols)
 
         val cons = EgOrg.findOrg(1)
         assertEquals(true, cons?.opacVisible)
         assertEquals("CONS", cons?.shortname)
-        assertFalse(system.orgType!!.canHaveUsers)
-        assertFalse(system.orgType!!.canHaveVols)
+        assertFalse(system.canHaveUsers)
+        assertFalse(system.canHaveVols)
     }
 
     @Test

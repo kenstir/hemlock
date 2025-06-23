@@ -37,7 +37,7 @@ import net.kenstir.hemlock.data.Result
 import net.kenstir.hemlock.data.model.Library
 import net.kenstir.hemlock.android.ui.ActivityUtils.launchURL
 import net.kenstir.hemlock.android.AppState
-import org.evergreen_ils.utils.ui.showAlert
+import net.kenstir.hemlock.android.ui.showAlert
 
 open class AuthenticatorActivity: AccountAuthenticatorActivity() {
     val REQ_SIGNUP: Int = 1

@@ -52,7 +52,7 @@ import net.kenstir.hemlock.android.Analytics
 import net.kenstir.hemlock.android.Log
 import org.evergreen_ils.utils.ui.BaseActivity
 import net.kenstir.hemlock.android.ui.ProgressDialogSupport
-import org.evergreen_ils.utils.ui.showAlert
+import net.kenstir.hemlock.android.ui.showAlert
 import org.evergreen_ils.views.search.RecordDetails
 import net.kenstir.hemlock.data.ShouldNotHappenException
 import java.util.ArrayList
