@@ -29,7 +29,7 @@ import net.kenstir.hemlock.data.jsonMapOf
 import net.kenstir.hemlock.data.evergreen.system.EgCodedValueMap
 import net.kenstir.hemlock.data.evergreen.system.EgCopyStatus
 import net.kenstir.hemlock.data.evergreen.system.EgOrg
-import org.open_ils.idl.IDLParser
+import org.evergreen_ils.idl.IDLParser
 
 private val TAG = EvergreenInitService::class.java.simpleName
 
