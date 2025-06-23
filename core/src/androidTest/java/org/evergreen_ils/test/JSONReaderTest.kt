@@ -19,8 +19,8 @@
 package org.evergreen_ils.test
 
 import kotlinx.serialization.json.Json
-import net.kenstir.hemlock.data.evergreen.XGatewayResponseContent
-import net.kenstir.hemlock.data.evergreen.XOSRFCoder
+import org.evergreen_ils.datax.XGatewayResponseContent
+import org.evergreen_ils.datax.XOSRFCoder
 import org.junit.Assert.assertNotNull
 import org.junit.Before
 import org.junit.Test

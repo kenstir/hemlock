@@ -21,7 +21,7 @@ import org.evergreen_ils.system.EgOrg
 import net.kenstir.hemlock.android.Log
 import net.kenstir.hemlock.android.StdoutLogProvider
 import net.kenstir.hemlock.data.jsonMapOf
-import net.kenstir.hemlock.data.evergreen.XOSRFObject
+import org.evergreen_ils.datax.XOSRFObject
 import org.junit.Assert.*
 import org.junit.BeforeClass
 import org.junit.Test

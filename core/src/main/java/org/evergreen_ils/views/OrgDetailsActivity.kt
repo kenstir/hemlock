@@ -30,7 +30,7 @@ import androidx.core.util.component2
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.joinAll
-import net.kenstir.hemlock.data.evergreen.OSRFUtils
+import org.evergreen_ils.data.OSRFUtils
 import net.kenstir.hemlock.R
 import net.kenstir.hemlock.android.App
 import net.kenstir.hemlock.android.Log

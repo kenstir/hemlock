@@ -18,7 +18,7 @@
 
 package net.kenstir.apps.core
 
-import net.kenstir.hemlock.data.evergreen.OSRFUtils
+import org.evergreen_ils.data.OSRFUtils
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Test

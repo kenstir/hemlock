@@ -15,7 +15,7 @@
  * along with this program; if not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.kenstir.hemlock.data.evergreen
+package org.evergreen_ils.net
 
 import org.evergreen_ils.data.Event
 

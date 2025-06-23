@@ -17,7 +17,7 @@
 
 package org.evergreen_ils.model
 
-import net.kenstir.hemlock.data.evergreen.XOSRFObject
+import org.evergreen_ils.datax.XOSRFObject
 import org.evergreen_ils.system.EgOrg
 import net.kenstir.hemlock.data.model.Organization
 import org.evergreen_ils.data.OrgType

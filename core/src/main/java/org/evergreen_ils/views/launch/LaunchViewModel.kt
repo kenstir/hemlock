@@ -29,7 +29,7 @@ import net.kenstir.hemlock.android.App
 import net.kenstir.hemlock.android.Log
 import net.kenstir.hemlock.net.InitServiceOptions
 import net.kenstir.hemlock.data.Result
-import net.kenstir.hemlock.data.evergreen.XGatewayClient
+import org.evergreen_ils.datax.XGatewayClient
 import org.evergreen_ils.net.Gateway
 import org.evergreen_ils.system.EgMessageMap
 import org.evergreen_ils.utils.getCustomMessage

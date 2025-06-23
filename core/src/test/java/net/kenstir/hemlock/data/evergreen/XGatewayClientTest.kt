@@ -22,6 +22,8 @@ import io.ktor.client.plugins.pluginOrNull
 import kotlinx.coroutines.test.runTest
 import net.kenstir.hemlock.net.HemlockPlugin
 import org.evergreen_ils.Api
+import org.evergreen_ils.datax.XGatewayClient
+import org.evergreen_ils.datax.paramListOf
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull

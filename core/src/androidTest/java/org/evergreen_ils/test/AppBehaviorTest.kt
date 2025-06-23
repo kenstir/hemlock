@@ -22,7 +22,7 @@ import androidx.test.platform.app.InstrumentationRegistry
 import net.kenstir.hemlock.android.AppBehavior
 import net.kenstir.hemlock.android.Log
 import net.kenstir.hemlock.android.StdoutLogProvider
-import net.kenstir.hemlock.data.evergreen.XOSRFObject
+import org.evergreen_ils.datax.XOSRFObject
 import org.evergreen_ils.data.MBRecord
 import net.kenstir.hemlock.data.jsonMapOf
 import org.evergreen_ils.system.EgOrg

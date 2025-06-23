@@ -29,7 +29,7 @@ import androidx.annotation.Nullable;
 
 import net.kenstir.hemlock.R;
 import net.kenstir.hemlock.net.ServiceConfig;
-import net.kenstir.hemlock.data.evergreen.XGatewayClient;
+import org.evergreen_ils.datax.XGatewayClient;
 import net.kenstir.hemlock.data.model.Account;
 import net.kenstir.hemlock.data.model.Library;
 

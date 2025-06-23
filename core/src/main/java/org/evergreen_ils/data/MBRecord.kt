@@ -20,7 +20,6 @@ package org.evergreen_ils.data
 
 import android.content.res.Resources
 import net.kenstir.hemlock.R
-import net.kenstir.hemlock.data.evergreen.OSRFUtils
 import org.evergreen_ils.system.EgCodedValueMap
 import org.evergreen_ils.system.EgOrg.getOrgNameSafe
 import org.evergreen_ils.utils.MARCRecord
