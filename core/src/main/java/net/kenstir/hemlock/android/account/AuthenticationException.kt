@@ -14,13 +14,14 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, see <https://www.gnu.org/licenses/>.
  */
+package net.kenstir.hemlock.android.account
 
-package net.kenstir.hemlock.android.accounts;
+class AuthenticationException: Exception {
+    constructor()
 
-public class Const {
-    public static final String AUTHTOKEN_TYPE = "opac";
-    public static final String AUTHTOKEN_TYPE_LABEL = "Online Public Access Catalog";
-    public static final String KEY_LIBRARY_NAME = "library_name";
-    public static final String KEY_LIBRARY_URL = "library_url";
-    public final static String AUTH_TAG = "auth";
+    constructor(detailMessage: String?): super(detailMessage)
+
+    constructor(throwable: Throwable?): super(throwable)
+
+    constructor(detailMessage: String?, throwable: Throwable?): super(detailMessage, throwable)
 }

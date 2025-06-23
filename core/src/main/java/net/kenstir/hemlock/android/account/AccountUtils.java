@@ -15,7 +15,7 @@
  * along with this program; if not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.kenstir.hemlock.android;
+package net.kenstir.hemlock.android.account;
 
 import android.accounts.*;
 import android.app.Activity;
@@ -24,7 +24,7 @@ import android.os.Bundle;
 import android.os.Looper;
 import android.text.TextUtils;
 import net.kenstir.hemlock.R;
-import net.kenstir.hemlock.android.accounts.Const;
+import net.kenstir.hemlock.android.Log;
 import net.kenstir.hemlock.data.models.Library;
 
 import java.io.IOException;

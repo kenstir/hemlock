@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, see <https://www.gnu.org/licenses/>.
  */
-package net.kenstir.hemlock.android.accounts
+package net.kenstir.hemlock.android.account
 
 import android.Manifest
 import android.content.pm.PackageManager
@@ -37,7 +37,6 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import net.kenstir.hemlock.R
-import net.kenstir.hemlock.android.AccountUtils
 import net.kenstir.hemlock.android.Analytics
 import net.kenstir.hemlock.android.Log
 import net.kenstir.hemlock.data.models.Library

@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, see <https://www.gnu.org/licenses/>.
  */
-package net.kenstir.hemlock.android.accounts
+package net.kenstir.hemlock.android.account
 
 import android.accounts.Account
 import android.accounts.AccountManager

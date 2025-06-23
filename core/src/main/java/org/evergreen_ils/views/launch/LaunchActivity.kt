@@ -35,7 +35,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import net.kenstir.hemlock.R
-import net.kenstir.hemlock.android.AccountUtils
+import net.kenstir.hemlock.android.account.AccountUtils
 import net.kenstir.hemlock.android.Analytics
 import net.kenstir.hemlock.android.App
 import net.kenstir.hemlock.android.Log

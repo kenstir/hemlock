@@ -101,7 +101,7 @@
             android:parentActivityName="org.evergreen_ils.views.MainActivity">
         </activity>
         <activity
-            android:name="net.kenstir.hemlock.android.accounts.AuthenticatorActivity"
+            android:name="net.kenstir.hemlock.android.account.AuthenticatorActivity"
             android:label="@string/ou_account_label">
         </activity>
 
@@ -111,7 +111,7 @@
         </activity>
 
         <service
-            android:name="net.kenstir.hemlock.android.accounts.AuthenticatorService"
+            android:name="net.kenstir.hemlock.android.account.AuthenticatorService"
             android:exported="false" >
             <intent-filter>
                 <action android:name="android.accounts.AccountAuthenticator" />

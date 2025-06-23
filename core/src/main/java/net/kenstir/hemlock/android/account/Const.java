@@ -14,16 +14,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, see <https://www.gnu.org/licenses/>.
  */
-package net.kenstir.hemlock.android.accounts
 
-import android.app.Service
-import android.content.Intent
-import android.os.IBinder
-import net.kenstir.hemlock.android.Log
+package net.kenstir.hemlock.android.account;
 
-class AuthenticatorService: Service() {
-    override fun onBind(arg0: Intent): IBinder? {
-        Log.d(Const.AUTH_TAG, "onBind intent:$arg0")
-        return AccountAuthenticator(this).iBinder
-    }
+public class Const {
+    public static final String AUTHTOKEN_TYPE = "opac";
+    public static final String AUTHTOKEN_TYPE_LABEL = "Online Public Access Catalog";
+    public static final String KEY_LIBRARY_NAME = "library_name";
+    public static final String KEY_LIBRARY_URL = "library_url";
+    public final static String AUTH_TAG = "auth";
 }

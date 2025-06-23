@@ -14,11 +14,10 @@
  * limitations under the License.
  */
 
-package net.kenstir.hemlock.android.accounts;
+package net.kenstir.hemlock.android.account;
 
 import android.accounts.AccountAuthenticatorResponse;
 import android.accounts.AccountManager;
-import android.app.Activity;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
