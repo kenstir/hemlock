@@ -22,7 +22,7 @@ import android.text.TextUtils
 import androidx.annotation.Keep
 import net.kenstir.hemlock.android.AppBehavior
 import org.evergreen_ils.data.MBRecord
-import org.evergreen_ils.utils.Link
+import net.kenstir.hemlock.data.model.Link
 import org.evergreen_ils.utils.MARCRecord.MARCDatafield
 
 @Keep

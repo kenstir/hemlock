@@ -21,7 +21,7 @@ import android.text.TextUtils;
 
 import org.evergreen_ils.system.EgOrg;
 import org.evergreen_ils.data.MBRecord;
-import org.evergreen_ils.utils.Link;
+import net.kenstir.hemlock.data.model.Link;
 import org.evergreen_ils.utils.MARCRecord;
 
 import java.util.ArrayList;

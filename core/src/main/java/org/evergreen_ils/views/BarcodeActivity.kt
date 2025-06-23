@@ -32,7 +32,7 @@ import com.google.zxing.BarcodeFormat
 import com.google.zxing.common.BitMatrix
 import net.kenstir.hemlock.R
 import net.kenstir.hemlock.android.App
-import org.evergreen_ils.utils.BarcodeUtils
+import net.kenstir.hemlock.util.BarcodeUtils
 import org.evergreen_ils.utils.ui.BaseActivity
 
 class BarcodeActivity : BaseActivity() {

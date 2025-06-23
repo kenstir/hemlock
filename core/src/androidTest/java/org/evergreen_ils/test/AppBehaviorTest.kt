@@ -26,7 +26,7 @@ import org.evergreen_ils.xdata.XOSRFObject
 import org.evergreen_ils.data.MBRecord
 import net.kenstir.hemlock.data.jsonMapOf
 import org.evergreen_ils.system.EgOrg
-import org.evergreen_ils.utils.Link
+import net.kenstir.hemlock.data.model.Link
 import org.evergreen_ils.utils.MARCRecord
 import org.evergreen_ils.utils.MARCXMLParser
 import org.junit.Assert.assertEquals

@@ -18,7 +18,7 @@
 
 package net.kenstir.apps.core
 
-import org.evergreen_ils.utils.Link
+import net.kenstir.hemlock.data.model.Link
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test

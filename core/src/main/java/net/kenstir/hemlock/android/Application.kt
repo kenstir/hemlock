@@ -17,8 +17,7 @@
 
 package net.kenstir.hemlock.android
 
-import org.evergreen_ils.utils.ui.AppState
-import org.evergreen_ils.utils.ui.ThemeManager
+import net.kenstir.hemlock.android.ui.ThemeManager
 
 class Application : androidx.multidex.MultiDexApplication() {
     private val TAG = javaClass.simpleName

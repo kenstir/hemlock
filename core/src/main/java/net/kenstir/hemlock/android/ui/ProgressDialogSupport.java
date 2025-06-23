@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Kenneth H. Cox
+ * Copyright (c) 2025 Kenneth H. Cox
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -12,15 +12,13 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ * along with this program; if not, see <https://www.gnu.org/licenses/>.
  */
 
-package org.evergreen_ils.utils.ui;
+package net.kenstir.hemlock.android.ui;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
-import android.content.Context;
 
 /** Methods to manage the lifecycle of a ProgressBar used to indicate async activity
  */

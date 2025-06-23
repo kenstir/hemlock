@@ -18,16 +18,6 @@
 
 package org.evergreen_ils.utils
 
-import android.accounts.AccountManager
-import android.os.Bundle
-import net.kenstir.hemlock.android.account.AccountManagerResult
-
-fun Bundle.getAccountManagerResult(): AccountManagerResult {
-    return AccountManagerResult(getString(AccountManager.KEY_ACCOUNT_NAME),
-            getString(AccountManager.KEY_AUTHTOKEN),
-            getString(AccountManager.KEY_ERROR_MESSAGE))
-}
-
 /** custom message for particular exceptional conditions
  * Not all exception messages are suitable as is for the general public
  */

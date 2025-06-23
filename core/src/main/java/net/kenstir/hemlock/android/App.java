@@ -35,7 +35,6 @@ import net.kenstir.hemlock.data.model.Library;
 
 import org.evergreen_ils.net.Gateway;
 import org.evergreen_ils.net.Volley;
-import org.evergreen_ils.utils.ui.AppState;
 import org.evergreen_ils.utils.ui.BaseActivity;
 import org.evergreen_ils.views.launch.LaunchActivity;
 import org.evergreen_ils.views.MainActivity;

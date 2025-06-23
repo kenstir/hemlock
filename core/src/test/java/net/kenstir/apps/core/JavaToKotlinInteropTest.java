@@ -18,8 +18,8 @@
 
 package net.kenstir.apps.core;
 
-import org.evergreen_ils.utils.IntUtils;
-import org.evergreen_ils.utils.Link;
+import net.kenstir.hemlock.util.IntUtils;
+import net.kenstir.hemlock.data.model.Link;
 import org.junit.Test;
 
 import static org.junit.Assert.assertFalse;

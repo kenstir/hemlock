@@ -21,7 +21,7 @@ import android.app.Activity
 import android.content.Intent
 import androidx.annotation.Keep
 import net.kenstir.hemlock.android.App.REQUEST_MESSAGES
-import org.evergreen_ils.utils.ui.ActivityUtils
+import net.kenstir.hemlock.android.ui.ActivityUtils
 import org.evergreen_ils.views.MenuProvider
 import org.evergreen_ils.views.messages.MessagesActivity
 

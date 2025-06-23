@@ -26,7 +26,7 @@ import io.ktor.http.ContentType
 import io.ktor.http.contentType
 import io.ktor.serialization.kotlinx.json.*
 import kotlinx.serialization.json.Json
-import net.kenstir.hemlock.data.RequestOptions
+import net.kenstir.hemlock.net.RequestOptions
 import net.kenstir.hemlock.net.HemlockPlugin
 import org.evergreen_ils.Api
 import java.net.URLEncoder

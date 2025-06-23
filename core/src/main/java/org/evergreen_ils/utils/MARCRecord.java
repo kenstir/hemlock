@@ -25,6 +25,8 @@ import java.util.List;
 
 import androidx.annotation.Nullable;
 
+import net.kenstir.hemlock.data.model.Link;
+
 // TODO: remove Serializable, that will make the TransactionTooLargeException issue worse
 public class MARCRecord implements Serializable {
     public static boolean isOnlineLocation(String tag, String ind1, String ind2) {
