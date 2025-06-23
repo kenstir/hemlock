@@ -14,8 +14,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, see <https://www.gnu.org/licenses/>.
  */
-package net.kenstir.hemlock.data
+package net.kenstir.hemlock.unused
 
+import net.kenstir.hemlock.data.Result
 import net.kenstir.hemlock.data.model.RecordMetadata
 
 interface RecordService {

@@ -19,7 +19,7 @@ package net.kenstir.apps.core
 
 import net.kenstir.hemlock.android.Log
 import net.kenstir.hemlock.android.StdoutLogProvider
-import org.evergreen_ils.datax.XOSRFObject
+import org.evergreen_ils.xdata.XOSRFObject
 import net.kenstir.hemlock.data.jsonMapOf
 import org.evergreen_ils.system.EgCodedValueMap
 import org.evergreen_ils.system.EgCodedValueMap.ALL_SEARCH_FORMATS

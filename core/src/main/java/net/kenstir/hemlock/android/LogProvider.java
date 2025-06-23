@@ -19,6 +19,7 @@ package net.kenstir.hemlock.android;
 
 /**
  * Created by kenstir on 1/29/2017.
+ * TODO(data): replace with SLF4J and move out of android package
  */
 public interface LogProvider {
     void v(String TAG, String msg);

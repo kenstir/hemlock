@@ -17,6 +17,7 @@
 
 package net.kenstir.hemlock.android;
 
+// TODO(data): replace with SLF4J and move out of android package
 public class StdoutLogProvider implements LogProvider {
     @Override
     public void v(String TAG, String msg) {

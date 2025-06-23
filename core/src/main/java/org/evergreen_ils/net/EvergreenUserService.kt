@@ -18,9 +18,9 @@
 package org.evergreen_ils.net
 
 import net.kenstir.hemlock.data.Result
-import org.evergreen_ils.datax.XGatewayClient
-import org.evergreen_ils.datax.paramListOf
-import org.evergreen_ils.datax.payloadFirstAsObject
+import org.evergreen_ils.xdata.XGatewayClient
+import org.evergreen_ils.xdata.paramListOf
+import org.evergreen_ils.xdata.payloadFirstAsObject
 import net.kenstir.hemlock.net.UserService
 import net.kenstir.hemlock.data.model.Account
 import org.evergreen_ils.Api

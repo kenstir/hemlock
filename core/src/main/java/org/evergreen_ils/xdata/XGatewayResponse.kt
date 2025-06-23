@@ -15,7 +15,7 @@
  * along with this program; if not, see <https://www.gnu.org/licenses/>.
  */
 
-package org.evergreen_ils.datax
+package org.evergreen_ils.xdata
 
 import io.ktor.client.statement.HttpResponse
 import io.ktor.client.statement.bodyAsText

@@ -18,7 +18,7 @@
 package org.evergreen_ils.model
 
 import org.evergreen_ils.data.OSRFUtils
-import org.evergreen_ils.datax.XOSRFObject
+import org.evergreen_ils.xdata.XOSRFObject
 import net.kenstir.hemlock.data.model.Account
 import org.evergreen_ils.Api
 

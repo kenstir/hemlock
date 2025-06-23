@@ -1,6 +1,6 @@
 package org.evergreen_ils.idl;
 
-import org.evergreen_ils.datax.XOSRFCoder;
+import org.evergreen_ils.xdata.XOSRFCoder;
 
 import java.io.FileInputStream;
 import java.io.IOException;

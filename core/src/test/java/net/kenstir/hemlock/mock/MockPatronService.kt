@@ -17,7 +17,7 @@
 
 package net.kenstir.hemlock.mock
 
-import net.kenstir.hemlock.data.PatronService
+import net.kenstir.hemlock.unused.PatronService
 import net.kenstir.hemlock.data.Result
 import net.kenstir.hemlock.data.model.PatronList
 import net.kenstir.hemlock.data.model.ListItem

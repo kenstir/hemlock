@@ -18,8 +18,8 @@
 package org.evergreen_ils.net
 
 import net.kenstir.hemlock.data.Result
-import net.kenstir.hemlock.data.SearchService
-import org.evergreen_ils.datax.XOSRFObject
+import net.kenstir.hemlock.net.SearchService
+import org.evergreen_ils.xdata.XOSRFObject
 
 class EvergreenSearchService: SearchService {
     override suspend fun fetchAssetCopy(copyId: Int): Result<XOSRFObject> {

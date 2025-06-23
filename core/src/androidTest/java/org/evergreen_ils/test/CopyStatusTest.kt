@@ -18,8 +18,8 @@
 
 package org.evergreen_ils.test
 
-import org.evergreen_ils.datax.XGatewayResult
-import org.evergreen_ils.datax.XOSRFCoder
+import org.evergreen_ils.xdata.XGatewayResult
+import org.evergreen_ils.xdata.XOSRFCoder
 import org.evergreen_ils.system.EgCopyStatus
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull

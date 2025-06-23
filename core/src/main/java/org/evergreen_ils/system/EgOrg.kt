@@ -20,9 +20,9 @@ import android.annotation.SuppressLint
 import androidx.core.util.Pair
 import net.kenstir.hemlock.android.Log
 import org.evergreen_ils.Api
-import org.evergreen_ils.datax.XOSRFObject
-import org.evergreen_ils.datax.parseOrgBoolSetting
-import org.evergreen_ils.datax.parseOrgStringSetting
+import org.evergreen_ils.xdata.XOSRFObject
+import org.evergreen_ils.xdata.parseOrgBoolSetting
+import org.evergreen_ils.xdata.parseOrgStringSetting
 import org.evergreen_ils.data.OrgType
 import net.kenstir.hemlock.data.model.Organization
 import java.util.*

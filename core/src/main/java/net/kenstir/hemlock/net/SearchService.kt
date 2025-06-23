@@ -15,9 +15,10 @@
  * along with this program; if not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.kenstir.hemlock.data
+package net.kenstir.hemlock.net
 
-import org.evergreen_ils.datax.XOSRFObject
+import net.kenstir.hemlock.data.Result
+import org.evergreen_ils.xdata.XOSRFObject
 
 interface SearchService {
     suspend fun fetchAssetCopy(copyId: Int): Result<XOSRFObject>
