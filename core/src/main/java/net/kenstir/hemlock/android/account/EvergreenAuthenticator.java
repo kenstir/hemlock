@@ -15,7 +15,7 @@
  * along with this program; if not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.kenstir.hemlock.android.accounts;
+package net.kenstir.hemlock.android.account;
 
 import java.net.MalformedURLException;
 import java.security.MessageDigest;

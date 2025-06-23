@@ -14,14 +14,16 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, see <https://www.gnu.org/licenses/>.
  */
-package net.kenstir.hemlock.android.accounts
+package net.kenstir.hemlock.android.account
 
-class AuthenticationException: Exception {
-    constructor()
+import android.app.Service
+import android.content.Intent
+import android.os.IBinder
+import net.kenstir.hemlock.android.Log
 
-    constructor(detailMessage: String?): super(detailMessage)
-
-    constructor(throwable: Throwable?): super(throwable)
-
-    constructor(detailMessage: String?, throwable: Throwable?): super(detailMessage, throwable)
+class AuthenticatorService: Service() {
+    override fun onBind(arg0: Intent): IBinder? {
+        Log.d(Const.AUTH_TAG, "onBind intent:$arg0")
+        return AccountAuthenticator(this).iBinder
+    }
 }

@@ -47,7 +47,7 @@ import com.google.android.material.navigation.NavigationView
 import com.google.firebase.messaging.FirebaseMessaging
 import kotlinx.coroutines.tasks.await
 import net.kenstir.hemlock.R
-import net.kenstir.hemlock.android.AccountUtils
+import net.kenstir.hemlock.android.account.AccountUtils
 import net.kenstir.hemlock.android.Analytics
 import net.kenstir.hemlock.android.App
 import net.kenstir.hemlock.android.App.REQUEST_MESSAGES

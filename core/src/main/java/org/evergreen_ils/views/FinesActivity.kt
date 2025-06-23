@@ -30,7 +30,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.joinAll
 import net.kenstir.hemlock.R
-import net.kenstir.hemlock.android.AccountUtils
+import net.kenstir.hemlock.android.account.AccountUtils
 import net.kenstir.hemlock.android.App
 import net.kenstir.hemlock.data.evergreen.system.EgOrg
 import org.evergreen_ils.data.FineRecord

@@ -18,28 +18,6 @@
 
 package org.evergreen_ils.test
 
-import android.os.Bundle
-import androidx.test.platform.app.InstrumentationRegistry
-import com.android.volley.TimeoutError
-import kotlinx.coroutines.*
-import net.kenstir.hemlock.data.RequestOptions
-import net.kenstir.hemlock.data.evergreen.Api
-import net.kenstir.hemlock.android.App
-import net.kenstir.hemlock.android.Log
-import net.kenstir.hemlock.android.StdoutLogProvider
-import net.kenstir.hemlock.android.accounts.EvergreenAuthenticator
-import net.kenstir.hemlock.data.models.Account
-import org.evergreen_ils.data.BookBag
-import net.kenstir.hemlock.data.Result
-import org.evergreen_ils.net.*
-import org.evergreen_ils.utils.getCustomMessage
-import org.junit.AfterClass
-import org.junit.Assert.*
-import org.junit.BeforeClass
-import org.junit.Test
-import org.opensrf.util.OSRFObject
-import org.opensrf.util.OSRFRegistry
-
 class LiveGatewayTest {
 
     /*
