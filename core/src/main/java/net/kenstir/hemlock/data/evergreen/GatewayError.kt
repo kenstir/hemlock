@@ -17,6 +17,8 @@
 
 package net.kenstir.hemlock.data.evergreen
 
+import org.evergreen_ils.data.Event
+
 open class GatewayError(message: String?): Exception(message) {
     constructor(ex: Exception): this(ex.message)
 

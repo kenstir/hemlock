@@ -14,14 +14,10 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, see <https://www.gnu.org/licenses/>.
  */
-package net.kenstir.hemlock.data.models
+package net.kenstir.hemlock.data.model
 
-class Record(val id: Int, val title: String? = null, val author: String? = null) {
-    constructor(id: Int): this(id, null, null)
-
-    override fun toString(): String {
-        return "Record(id=$id, title='$title', author=$author)"
-    }
-
-    var isDeleted = false
+data class ListItem(
+    val id: Int,
+    val record: Record,
+) {
 }

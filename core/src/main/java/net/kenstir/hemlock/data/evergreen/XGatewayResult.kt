@@ -22,6 +22,7 @@ import kotlinx.serialization.SerializationException
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonArray
 import net.kenstir.hemlock.data.JSONDictionary
+import org.evergreen_ils.data.Event
 
 class XGatewayResult {
     enum class ResultType {

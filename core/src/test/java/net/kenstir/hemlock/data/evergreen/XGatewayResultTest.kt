@@ -18,6 +18,7 @@
 
 package net.kenstir.hemlock.data.evergreen
 
+import org.evergreen_ils.data.Event
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull

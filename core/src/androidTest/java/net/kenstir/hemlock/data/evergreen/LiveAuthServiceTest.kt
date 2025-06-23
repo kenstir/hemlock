@@ -22,9 +22,11 @@ import kotlinx.coroutines.test.runTest
 import net.kenstir.hemlock.data.Result
 import net.kenstir.hemlock.android.Log
 import net.kenstir.hemlock.android.StdoutLogProvider
-import net.kenstir.hemlock.data.InitServiceOptions
-import org.junit.Assert.assertNotEquals
-import org.junit.Assert.assertNotNull
+import net.kenstir.hemlock.net.InitServiceOptions
+import org.evergreen_ils.model.EvergreenAccount
+import org.evergreen_ils.net.EvergreenAuthService
+import org.evergreen_ils.net.EvergreenInitService
+import org.evergreen_ils.net.EvergreenUserService
 import org.junit.Assert.assertTrue
 import org.junit.BeforeClass
 import org.junit.Test

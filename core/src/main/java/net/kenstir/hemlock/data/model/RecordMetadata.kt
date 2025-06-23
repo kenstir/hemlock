@@ -14,13 +14,14 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, see <https://www.gnu.org/licenses/>.
  */
+package net.kenstir.hemlock.data.model
 
-package net.kenstir.hemlock.data
-
-import net.kenstir.hemlock.data.models.Account
-
-interface UserService {
-    fun makeAccount(username: String, authToken: String): Account
-    suspend fun loadUserSession(account: Account): Result<Unit>
-    suspend fun deleteSession(account: Account): Result<Unit>
+data class RecordMetadata(
+    val title: String,
+    val author: String,
+    val isbn: String
+) {
+    override fun toString(): String {
+        return "RecordMetadata(title='$title', author='$author', isbn='$isbn')"
+    }
 }

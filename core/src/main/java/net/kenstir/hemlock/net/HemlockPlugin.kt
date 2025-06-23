@@ -15,13 +15,13 @@
  * along with this program; if not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.kenstir.hemlock.network.plugins
+package net.kenstir.hemlock.net
 
 import io.ktor.client.plugins.api.*
 import io.ktor.client.statement.HttpResponse
 import io.ktor.util.*
-import net.kenstir.hemlock.network.plugins.HemlockPluginAttributeKeys.recvTimeKey
-import net.kenstir.hemlock.network.plugins.HemlockPluginAttributeKeys.sentTimeKey
+import net.kenstir.hemlock.net.HemlockPluginAttributeKeys.recvTimeKey
+import net.kenstir.hemlock.net.HemlockPluginAttributeKeys.sentTimeKey
 
 object HemlockPluginKeys {
     //val onResponse = "h.onResponse"

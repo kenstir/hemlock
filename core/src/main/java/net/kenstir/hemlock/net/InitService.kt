@@ -15,7 +15,9 @@
  * along with this program; if not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.kenstir.hemlock.data
+package net.kenstir.hemlock.net
+
+import net.kenstir.hemlock.data.Result
 
 data class InitServiceOptions(
     val clientCacheKey: String,

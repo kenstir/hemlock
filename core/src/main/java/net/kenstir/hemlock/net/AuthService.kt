@@ -15,14 +15,10 @@
  * along with this program; if not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.kenstir.hemlock.data
+package net.kenstir.hemlock.net
 
-import net.kenstir.hemlock.data.evergreen.EvergreenAuthService
-import net.kenstir.hemlock.data.evergreen.EvergreenInitService
-import net.kenstir.hemlock.data.evergreen.EvergreenUserService
+import net.kenstir.hemlock.data.Result
 
-class ServiceConfig(
-    val initService: InitService = EvergreenInitService(),
-    val authService: AuthService = EvergreenAuthService(),
-    val userService: UserService = EvergreenUserService(),
-)
+interface AuthService {
+    suspend fun getAuthToken(username: String, password: String): Result<String>
+}

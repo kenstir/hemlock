@@ -21,7 +21,7 @@ import net.kenstir.hemlock.data.JSONDictionary
 import net.kenstir.hemlock.data.evergreen.GatewayError
 import net.kenstir.hemlock.data.evergreen.GatewayEventError
 import org.evergreen_ils.utils.fromApiToIntOrNull
-import net.kenstir.hemlock.data.evergreen.Event
+import org.evergreen_ils.data.Event
 
 class GatewayResult {
     enum class ResultType {

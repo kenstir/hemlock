@@ -20,7 +20,8 @@ package net.kenstir.hemlock.data.evergreen
 import io.ktor.client.plugins.cache.HttpCache
 import io.ktor.client.plugins.pluginOrNull
 import kotlinx.coroutines.test.runTest
-import net.kenstir.hemlock.network.plugins.HemlockPlugin
+import net.kenstir.hemlock.net.HemlockPlugin
+import org.evergreen_ils.Api
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull

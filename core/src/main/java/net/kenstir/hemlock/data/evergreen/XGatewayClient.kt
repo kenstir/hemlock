@@ -27,7 +27,8 @@ import io.ktor.http.contentType
 import io.ktor.serialization.kotlinx.json.*
 import kotlinx.serialization.json.Json
 import net.kenstir.hemlock.data.RequestOptions
-import net.kenstir.hemlock.network.plugins.HemlockPlugin
+import net.kenstir.hemlock.net.HemlockPlugin
+import org.evergreen_ils.Api
 import java.net.URLEncoder
 
 private const val INITIAL_URL_SIZE = 128

@@ -19,8 +19,8 @@ package net.kenstir.hemlock.data.evergreen
 
 import io.ktor.client.statement.HttpResponse
 import io.ktor.client.statement.bodyAsText
-import net.kenstir.hemlock.network.plugins.elapsedTime
-import net.kenstir.hemlock.network.plugins.isCached
+import net.kenstir.hemlock.net.elapsedTime
+import net.kenstir.hemlock.net.isCached
 
 class XGatewayResponse(val response: HttpResponse) {
     val isCached: Boolean

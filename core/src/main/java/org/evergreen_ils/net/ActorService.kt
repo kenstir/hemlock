@@ -17,7 +17,7 @@
  */
 package org.evergreen_ils.net
 
-import net.kenstir.hemlock.data.models.Account
+import net.kenstir.hemlock.data.model.Account
 import net.kenstir.hemlock.data.JSONDictionary
 import net.kenstir.hemlock.data.Result
 import org.opensrf.util.OSRFObject

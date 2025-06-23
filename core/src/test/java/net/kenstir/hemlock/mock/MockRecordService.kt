@@ -19,7 +19,7 @@ package net.kenstir.hemlock.mock
 
 import net.kenstir.hemlock.data.RecordService
 import net.kenstir.hemlock.data.Result
-import net.kenstir.hemlock.data.models.RecordMetadata
+import net.kenstir.hemlock.data.model.RecordMetadata
 
 class MockRecordService: RecordService {
     override suspend fun fetchRecordMetadata(recordId: Int): Result<RecordMetadata> {

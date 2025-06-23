@@ -15,11 +15,17 @@
  * along with this program; if not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.kenstir.hemlock.data.evergreen
+package org.evergreen_ils.net
 
-import net.kenstir.hemlock.data.AuthService
+import net.kenstir.hemlock.net.AuthService
 import net.kenstir.hemlock.data.Result
+import net.kenstir.hemlock.data.evergreen.GatewayError
+import net.kenstir.hemlock.data.evergreen.XGatewayClient
+import net.kenstir.hemlock.data.evergreen.paramListOf
+import net.kenstir.hemlock.data.evergreen.payloadFirstAsObject
+import net.kenstir.hemlock.data.evergreen.payloadFirstAsString
 import net.kenstir.hemlock.data.jsonMapOf
+import org.evergreen_ils.Api
 import java.security.MessageDigest
 
 class EvergreenAuthService: AuthService {

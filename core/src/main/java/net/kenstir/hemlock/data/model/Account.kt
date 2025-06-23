@@ -15,7 +15,7 @@
  * along with this program; if not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.kenstir.hemlock.data.models
+package net.kenstir.hemlock.data.model
 
 import androidx.core.os.bundleOf
 import net.kenstir.hemlock.android.Analytics

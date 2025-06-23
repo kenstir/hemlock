@@ -15,10 +15,12 @@
  * along with this program; if not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.kenstir.hemlock.data.evergreen
+package org.evergreen_ils.model
 
-import net.kenstir.hemlock.data.models.Account
-import org.opensrf.util.OSRFObject
+import net.kenstir.hemlock.data.evergreen.OSRFUtils
+import net.kenstir.hemlock.data.evergreen.XOSRFObject
+import net.kenstir.hemlock.data.model.Account
+import org.evergreen_ils.Api
 
 class EvergreenAccount(username: String, authToken: String? = null): Account(username, authToken) {
 

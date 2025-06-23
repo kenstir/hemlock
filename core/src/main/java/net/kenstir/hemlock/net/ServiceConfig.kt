@@ -14,10 +14,15 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, see <https://www.gnu.org/licenses/>.
  */
-package net.kenstir.hemlock.data.models
 
-data class ListItem(
-    val id: Int,
-    val record: Record,
-) {
-}
+package net.kenstir.hemlock.net
+
+import org.evergreen_ils.net.EvergreenAuthService
+import org.evergreen_ils.net.EvergreenInitService
+import org.evergreen_ils.net.EvergreenUserService
+
+class ServiceConfig(
+    val initService: InitService = EvergreenInitService(),
+    val authService: AuthService = EvergreenAuthService(),
+    val userService: UserService = EvergreenUserService(),
+)
