@@ -231,15 +231,15 @@ class OrgDetailsActivity : BaseActivity() {
     }
 
     /** return Triple<dateString, reasonString, isDateRange> */
-    private fun getClosureInfo(closure: OSRFObject): Triple<String?, String?, Boolean> {
+    private fun getClosureInfo(obj: OSRFObject): Triple<String?, String?, Boolean> {
         val nullReturn = Triple(null, null, false)
-        val start = closure.getDate("close_start") ?: return nullReturn
-        val end = closure.getDate("close_end") ?: return nullReturn
-        val reason = closure.getString("reason") ?: return nullReturn
+        val start = obj.getDate("close_start") ?: return nullReturn
+        val end = obj.getDate("close_end") ?: return nullReturn
+        val reason = obj.getString("reason") ?: return nullReturn
 
         val startDateString = OSRFUtils.formatDateForOutput(start)
-        val isFullDay = closure.getBoolean("full_day")
-        val isMultiDay = closure.getBoolean("multi_day")
+        val isFullDay = obj.getBoolean("full_day")
+        val isMultiDay = obj.getBoolean("multi_day")
         var isDateRange = false
         val dateString = when {
             isMultiDay -> {
