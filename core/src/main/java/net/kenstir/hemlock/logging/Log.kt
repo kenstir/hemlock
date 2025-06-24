@@ -27,7 +27,7 @@ object Log {
     const val DEBUG: Int = 3
     const val WARN: Int = 5
 
-    var provider: LogProvider? = AndroidLogProvider()
+    val provider: LogProvider by lazy { AndroidLogProvider() }
     var level: Int = DEBUG
 
     var TAG_ASYNC: String = "async"
@@ -35,24 +35,24 @@ object Log {
     var TAG_PERM: String = "perm"
 
     fun v(tag: String, msg: String) {
-        if (provider != null && level <= VERBOSE) provider!!.v(tag, msg)
+        if (level <= VERBOSE) provider.v(tag, msg)
     }
 
     @JvmStatic
-    fun d(TAG: String, msg: String) {
-        if (provider != null && level <= DEBUG) provider!!.d(TAG, msg)
+    fun d(tag: String, msg: String) {
+        if (level <= DEBUG) provider.d(tag, msg)
     }
 
     @JvmStatic
-    fun d(TAG: String, msg: String, tr: Throwable?) {
-        if (provider != null && level <= DEBUG) provider!!.d(TAG, msg, tr)
+    fun d(tag: String, msg: String, tr: Throwable?) {
+        if (level <= DEBUG) provider.d(tag, msg, tr)
     }
 
     @JvmStatic
     @SuppressLint("DefaultLocale")
-    fun logElapsedTime(TAG: String, start_ms: Long, s: String): Long {
-        val now_ms = System.currentTimeMillis()
-        if (provider != null) provider!!.d(TAG, String.format("%3dms: %s", now_ms - start_ms, s))
-        return now_ms
+    fun logElapsedTime(tag: String, startTime: Long, s: String): Long {
+        val now = System.currentTimeMillis()
+        provider.d(tag, String.format("%3dms: %s", now - startTime, s))
+        return now
     }
 }
