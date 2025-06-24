@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 Kenneth H. Cox
+ * Copyright (c) 2025 Kenneth H. Cox
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -12,16 +12,13 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
+ * along with this program; if not, see <https://www.gnu.org/licenses/>.
  */
 
-package org.evergreen_ils.test
+package org.evergreen_ils
 
 import androidx.test.platform.app.InstrumentationRegistry
 import net.kenstir.hemlock.android.AppBehavior
-import net.kenstir.hemlock.logging.Log
-import net.kenstir.hemlock.logging.StdoutLogProvider
 import org.evergreen_ils.xdata.XOSRFObject
 import org.evergreen_ils.data.MBRecord
 import net.kenstir.hemlock.data.jsonMapOf
@@ -31,7 +28,6 @@ import org.evergreen_ils.utils.MARCRecord
 import org.evergreen_ils.utils.MARCXMLParser
 import org.junit.Assert.assertEquals
 import org.junit.Before
-import org.junit.BeforeClass
 import org.junit.Test
 
 class TestAppBehavior: AppBehavior() {

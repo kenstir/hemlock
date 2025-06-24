@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Kenneth H. Cox
+ * Copyright (c) 2025 Kenneth H. Cox
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -12,16 +12,12 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ * along with this program; if not, see <https://www.gnu.org/licenses/>.
  */
-package org.evergreen_ils.test
+package org.evergreen_ils
 
-import net.kenstir.hemlock.logging.Log
-import net.kenstir.hemlock.logging.StdoutLogProvider
 import org.evergreen_ils.utils.RecordAttributes
 import org.junit.Assert.assertEquals
-import org.junit.BeforeClass
 import org.junit.Test
 
 class RecordAttributesTest {

@@ -16,7 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
  */
 
-package org.evergreen_ils.test
+package org.evergreen_ils
 
 import net.kenstir.hemlock.util.StringUtils
 import org.junit.Assert
