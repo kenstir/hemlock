@@ -343,23 +343,24 @@ class OrgDetailsActivity : BaseActivity() {
     private fun fetchData() {
         scope.async {
             try {
+                val account = App.getAccount()
                 val org = org ?: return@async
                 val orgID = orgID ?: return@async
 
                 val start = System.currentTimeMillis()
-                var jobs = mutableListOf<Deferred<Any>>()
                 progress?.show(this@OrgDetailsActivity, getString(R.string.msg_loading_details))
 
                 Log.d(TAG, "[kcxxx] fetchData ... orgID=$orgID")
 
+                val jobs = mutableListOf<Deferred<Any>>()
                 jobs.add(scope.async {
-                    val result = App.getServiceConfig().loaderService.loadOrgSettings(orgID)
+                    val result = App.getServiceConfig().orgService.loadOrgSettings(orgID)
                     if (result is Result.Error) {
                         throw result.exception
                     }
                 })
                 jobs.add(scope.async {
-                    val result = App.getServiceConfig().loaderService.loadOrgDetails(orgID)
+                    val result = App.getServiceConfig().orgService.loadOrgDetails(account, orgID)
                     if (result is Result.Error) {
                         throw result.exception
                     }

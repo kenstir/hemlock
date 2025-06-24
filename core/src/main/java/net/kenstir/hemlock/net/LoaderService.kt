@@ -18,6 +18,7 @@
 package net.kenstir.hemlock.net
 
 import net.kenstir.hemlock.data.Result
+import net.kenstir.hemlock.data.model.Account
 
 data class LoaderServiceOptions(
     val clientCacheKey: String,
@@ -38,16 +39,4 @@ interface LoaderService {
      * See <a href="https://kenstir.github.io/hemlock-docs/docs/admin-guide/notes-on-caching">Notes on Caching</a>
      */
     suspend fun loadServiceData(serviceOptions: LoaderServiceOptions): Result<Unit>
-
-    /**
-     * Load org settings, e.g. eventsUrl and isPickupLocation.
-     * In Evergreen, this requires a specific round-trip for each org.
-     */
-    suspend fun loadOrgSettings(orgID: Int): Result<Unit>
-
-    /**
-     * Load the details required for the OrgDetails screen, e.g. address, hours, and closures.
-     * In Evergreen, this requires multiple round-trips per org.
-     */
-    suspend fun loadOrgDetails(orgID: Int): Result<Unit>
 }

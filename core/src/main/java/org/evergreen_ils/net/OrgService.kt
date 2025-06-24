@@ -15,17 +15,25 @@
  * along with this program; if not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.kenstir.hemlock.net
+package org.evergreen_ils.net
 
-import org.evergreen_ils.net.EvergreenAuthService
-import org.evergreen_ils.net.EvergreenLoaderService
-import org.evergreen_ils.net.EvergreenOrgService
-import org.evergreen_ils.net.EvergreenUserService
-import org.evergreen_ils.net.OrgService
+import net.kenstir.hemlock.data.Result
+import net.kenstir.hemlock.data.model.Account
 
-class ServiceConfig(
-    val loaderService: LoaderService = EvergreenLoaderService(),
-    val authService: AuthService = EvergreenAuthService(),
-    val userService: UserService = EvergreenUserService(),
-    val orgService: OrgService = EvergreenOrgService(),
-)
+/**
+ * Service for loading organization (library) settings and details.
+ */
+interface OrgService {
+
+    /**
+     * Load org settings, e.g. eventsUrl and isPickupLocation.
+     * In Evergreen, this requires a specific round-trip for each org.
+     */
+    suspend fun loadOrgSettings(orgID: Int): Result<Unit>
+
+    /**
+     * Load the details required for the OrgDetails screen, e.g. address, hours, and closures.
+     * In Evergreen, this requires multiple round-trips per org.
+     */
+    suspend fun loadOrgDetails(account: Account, orgID: Int): Result<Unit>
+}

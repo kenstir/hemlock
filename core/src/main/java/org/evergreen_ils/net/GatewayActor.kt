@@ -30,17 +30,6 @@ import org.opensrf.util.OSRFObject
 import java.util.Date
 
 object GatewayActor: ActorService {
-    override suspend fun fetchOrgAddress(addressID: Int?): Result<OSRFObject?> {
-        if (addressID == null)
-            return Result.Success(null)
-        return try {
-            val args = arrayOf<Any?>(addressID)
-            val ret = Gateway.fetchObject(Api.ACTOR, Api.ADDRESS_RETRIEVE, args, true)
-            Result.Success(ret)
-        } catch (e: Exception) {
-            Result.Error(e)
-        }
-    }
 
     override suspend fun fetchUserCheckedOut(account: Account): Result<OSRFObject> {
         return try {

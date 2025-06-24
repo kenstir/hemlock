@@ -259,7 +259,7 @@ class LaunchActivity : AppCompatActivity() {
 
         // load the home org settings, used to control visibility of Events and other buttons
         EgOrg.findOrg(App.getAccount().homeOrg)?.let { org ->
-            val result = App.getServiceConfig().loaderService.loadOrgSettings(org.id)
+            val result = App.getServiceConfig().orgService.loadOrgSettings(org.id)
             if (result is Result.Error) {
                 throw result.exception
             }
