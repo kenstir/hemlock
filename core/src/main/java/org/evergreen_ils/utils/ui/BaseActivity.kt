@@ -258,6 +258,7 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         }
     }
 
+    @Deprecated("Deprecated in Java")
     override fun onBackPressed() {
         val drawer = findViewById<DrawerLayout>(R.id.drawer_layout)
         if (drawer != null && drawer.isDrawerOpen(GravityCompat.START)) {

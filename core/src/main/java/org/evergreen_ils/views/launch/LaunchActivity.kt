@@ -284,6 +284,7 @@ class LaunchActivity : AppCompatActivity() {
         return App.getServiceConfig().userService.loadUserSession(account)
     }
 
+    @Deprecated("Deprecated in Java")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         Analytics.log(TAG, "onactivityresult: $requestCode $resultCode")
