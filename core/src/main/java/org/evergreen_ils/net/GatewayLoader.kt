@@ -19,16 +19,12 @@
 package org.evergreen_ils.net
 
 import androidx.core.os.bundleOf
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.async
 import net.kenstir.hemlock.android.Analytics
 import net.kenstir.hemlock.android.App
-import net.kenstir.hemlock.android.Log
+import net.kenstir.hemlock.logging.Log
 import net.kenstir.hemlock.data.Result
 import net.kenstir.hemlock.data.model.Account
 import org.evergreen_ils.data.*
-import org.evergreen_ils.system.EgOrg
-import net.kenstir.hemlock.data.model.Organization
 import org.evergreen_ils.system.EgSms
 
 object GatewayLoader {

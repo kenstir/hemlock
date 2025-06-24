@@ -23,7 +23,7 @@ import kotlinx.coroutines.coroutineScope
 
 import net.kenstir.hemlock.net.LoaderService
 import net.kenstir.hemlock.data.Result
-import net.kenstir.hemlock.android.Log
+import net.kenstir.hemlock.logging.Log
 import org.evergreen_ils.xdata.XGatewayClient
 import org.evergreen_ils.xdata.paramListOf
 import org.evergreen_ils.xdata.parseOrgStringSetting
@@ -32,13 +32,11 @@ import org.evergreen_ils.xdata.payloadFirstAsObjectList
 import org.evergreen_ils.xdata.payloadFirstAsString
 import net.kenstir.hemlock.net.LoaderServiceOptions
 import net.kenstir.hemlock.data.jsonMapOf
-import net.kenstir.hemlock.data.model.Account
 import org.evergreen_ils.system.EgCodedValueMap
 import org.evergreen_ils.system.EgCopyStatus
 import org.evergreen_ils.system.EgOrg
 import org.evergreen_ils.Api
 import org.evergreen_ils.idl.IDLParser
-import org.evergreen_ils.model.EvergreenOrganization
 
 class EvergreenLoaderService: LoaderService {
 

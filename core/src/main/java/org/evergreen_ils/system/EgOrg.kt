@@ -18,11 +18,8 @@ package org.evergreen_ils.system
 
 import android.annotation.SuppressLint
 import androidx.core.util.Pair
-import net.kenstir.hemlock.android.Log
-import org.evergreen_ils.Api
+import net.kenstir.hemlock.logging.Log
 import org.evergreen_ils.xdata.XOSRFObject
-import org.evergreen_ils.xdata.parseOrgBoolSetting
-import org.evergreen_ils.xdata.parseOrgStringSetting
 import org.evergreen_ils.data.OrgType
 import net.kenstir.hemlock.data.model.Organization
 import org.evergreen_ils.model.EvergreenOrganization

@@ -28,7 +28,7 @@ import com.android.volley.Response;
 import com.android.volley.toolbox.HttpHeaderParser;
 
 import net.kenstir.hemlock.android.Analytics;
-import net.kenstir.hemlock.android.Log;
+import net.kenstir.hemlock.logging.Log;
 import org.opensrf.util.GatewayResult;
 
 import java.io.UnsupportedEncodingException;

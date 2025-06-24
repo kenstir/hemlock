@@ -18,7 +18,7 @@
 
 package org.evergreen_ils.system
 
-import net.kenstir.hemlock.android.Log
+import net.kenstir.hemlock.logging.Log
 import org.evergreen_ils.data.SMSCarrier
 import org.opensrf.util.OSRFObject
 

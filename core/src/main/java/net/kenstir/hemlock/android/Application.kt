@@ -17,6 +17,7 @@
 
 package net.kenstir.hemlock.android
 
+import net.kenstir.hemlock.logging.Log
 import net.kenstir.hemlock.android.ui.ThemeManager
 
 class Application : androidx.multidex.MultiDexApplication() {

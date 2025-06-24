@@ -19,13 +19,12 @@ package org.evergreen_ils.net
 
 import org.evergreen_ils.Api
 import org.evergreen_ils.data.OSRFUtils
-import net.kenstir.hemlock.android.Log
+import net.kenstir.hemlock.logging.Log
 import net.kenstir.hemlock.data.model.Account
 import net.kenstir.hemlock.data.JSONDictionary
 import net.kenstir.hemlock.net.RequestOptions
 import net.kenstir.hemlock.data.Result
 import net.kenstir.hemlock.data.jsonMapOf
-import org.evergreen_ils.system.EgOrg
 import org.opensrf.util.OSRFObject
 import java.util.Date
 

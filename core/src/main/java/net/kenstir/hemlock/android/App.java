@@ -28,6 +28,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import net.kenstir.hemlock.R;
+import net.kenstir.hemlock.logging.Log;
 import net.kenstir.hemlock.net.ServiceConfig;
 import org.evergreen_ils.xdata.XGatewayClient;
 import net.kenstir.hemlock.data.model.Account;

@@ -36,7 +36,7 @@ import net.kenstir.hemlock.android.App
 import net.kenstir.hemlock.data.Result
 import org.evergreen_ils.net.Gateway
 import org.evergreen_ils.views.search.SearchActivity
-import net.kenstir.hemlock.android.Log
+import net.kenstir.hemlock.logging.Log
 import org.evergreen_ils.data.PatronMessage
 import org.evergreen_ils.system.EgOrg
 import org.evergreen_ils.utils.ui.MainBaseActivity

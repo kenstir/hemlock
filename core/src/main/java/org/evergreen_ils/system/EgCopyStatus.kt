@@ -17,7 +17,7 @@
 
 package org.evergreen_ils.system
 
-import net.kenstir.hemlock.android.Log
+import net.kenstir.hemlock.logging.Log
 import org.evergreen_ils.xdata.XOSRFObject
 import org.evergreen_ils.data.CopyStatus
 

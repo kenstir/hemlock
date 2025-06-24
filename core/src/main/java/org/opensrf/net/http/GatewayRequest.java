@@ -1,6 +1,6 @@
 package org.opensrf.net.http;
 
-import net.kenstir.hemlock.android.Log;
+import net.kenstir.hemlock.logging.Log;
 import net.kenstir.hemlock.android.Analytics;
 import org.evergreen_ils.net.Gateway;
 import org.json.JSONObject;
@@ -57,7 +57,7 @@ public class GatewayRequest extends HttpRequest {
 
     public Object recv() {
 
-        if (readComplete) 
+        if (readComplete)
             return nextResponse();
 
         try {
@@ -71,7 +71,7 @@ public class GatewayRequest extends HttpRequest {
             while ((bytesRead = netStream.read(buffer)) != -1) {
                 readBuf.append(new String(buffer, 0, bytesRead));
             }
-            
+
             netStream.close();
             urlConn = null;
 
@@ -99,7 +99,7 @@ public class GatewayRequest extends HttpRequest {
             responseList = (List) result.get("payload");
 
             Log.d(TAG, "payload: "+responseList);
-        } catch (java.io.IOException ex) { 
+        } catch (java.io.IOException ex) {
             failed = true;
             failure = ex;
             Log.d(TAG, "caught exception", ex);
@@ -147,5 +147,3 @@ public class GatewayRequest extends HttpRequest {
         return uri.getRawQuery();
     }
 }
-
-

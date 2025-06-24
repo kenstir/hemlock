@@ -14,16 +14,19 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, see <https://www.gnu.org/licenses/>.
  */
-package net.kenstir.hemlock.android.account
+package net.kenstir.hemlock.logging
 
-import android.app.Service
-import android.content.Intent
-import android.os.IBinder
-import net.kenstir.hemlock.logging.Log
+class StdoutLogProvider: LogProvider {
+    override fun v(tag: String?, msg: String) {
+        println("$tag: $msg")
+    }
 
-class AuthenticatorService: Service() {
-    override fun onBind(arg0: Intent): IBinder? {
-        Log.d(Const.AUTH_TAG, "onBind intent:$arg0")
-        return AccountAuthenticator(this).iBinder
+    override fun d(tag: String?, msg: String) {
+        println("$tag: $msg")
+    }
+
+    override fun d(tag: String?, msg: String, tr: Throwable?) {
+        println("$tag: $msg")
+        tr?.printStackTrace(System.out)
     }
 }

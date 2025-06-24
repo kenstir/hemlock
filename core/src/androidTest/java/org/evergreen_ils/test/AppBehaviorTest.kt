@@ -20,8 +20,8 @@ package org.evergreen_ils.test
 
 import androidx.test.platform.app.InstrumentationRegistry
 import net.kenstir.hemlock.android.AppBehavior
-import net.kenstir.hemlock.android.Log
-import net.kenstir.hemlock.android.StdoutLogProvider
+import net.kenstir.hemlock.logging.Log
+import net.kenstir.hemlock.logging.StdoutLogProvider
 import org.evergreen_ils.xdata.XOSRFObject
 import org.evergreen_ils.data.MBRecord
 import net.kenstir.hemlock.data.jsonMapOf

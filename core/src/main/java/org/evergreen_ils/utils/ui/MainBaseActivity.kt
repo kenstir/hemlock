@@ -24,8 +24,8 @@ import kotlinx.coroutines.async
 import net.kenstir.hemlock.R
 import net.kenstir.hemlock.android.account.AccountUtils
 import net.kenstir.hemlock.android.App
-import net.kenstir.hemlock.android.Log
-import net.kenstir.hemlock.android.Log.TAG_FCM
+import net.kenstir.hemlock.logging.Log
+import net.kenstir.hemlock.logging.Log.TAG_FCM
 import net.kenstir.hemlock.android.ui.showAlert
 import net.kenstir.hemlock.data.Result
 import org.evergreen_ils.net.Gateway

@@ -23,7 +23,7 @@ import com.android.volley.DefaultRetryPolicy
 import com.android.volley.Request
 import net.kenstir.hemlock.net.RequestOptions
 import org.evergreen_ils.Api
-import net.kenstir.hemlock.android.Log
+import net.kenstir.hemlock.logging.Log
 import org.opensrf.net.http.HttpConnection
 import org.opensrf.util.GatewayResult
 import org.opensrf.util.JSONWriter

@@ -20,7 +20,7 @@ package net.kenstir.apps.acorn
 
 import android.app.Activity
 import androidx.annotation.Keep
-import net.kenstir.hemlock.android.Log
+import net.kenstir.hemlock.logging.Log
 import org.evergreen_ils.views.MenuProvider
 
 @Keep

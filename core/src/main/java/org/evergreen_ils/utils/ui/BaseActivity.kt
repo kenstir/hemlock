@@ -52,9 +52,9 @@ import net.kenstir.hemlock.android.Analytics
 import net.kenstir.hemlock.android.App
 import net.kenstir.hemlock.android.App.REQUEST_MESSAGES
 import net.kenstir.hemlock.android.AppState
-import net.kenstir.hemlock.android.Log
-import net.kenstir.hemlock.android.Log.TAG_FCM
-import net.kenstir.hemlock.android.Log.TAG_PERM
+import net.kenstir.hemlock.logging.Log
+import net.kenstir.hemlock.logging.Log.TAG_FCM
+import net.kenstir.hemlock.logging.Log.TAG_PERM
 import net.kenstir.hemlock.android.pn.NotificationType
 import net.kenstir.hemlock.android.pn.PushNotification
 import net.kenstir.hemlock.android.ui.ActionBarUtils

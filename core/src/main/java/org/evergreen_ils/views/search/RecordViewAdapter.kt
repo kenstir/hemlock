@@ -25,7 +25,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.android.volley.toolbox.NetworkImageView
 import kotlinx.coroutines.async
 import net.kenstir.hemlock.R
-import net.kenstir.hemlock.android.Log
+import net.kenstir.hemlock.logging.Log
 import org.evergreen_ils.data.MBRecord
 import org.evergreen_ils.net.Gateway.getUrl
 import org.evergreen_ils.net.GatewayLoader

@@ -19,8 +19,8 @@
 package org.evergreen_ils.test
 
 import org.evergreen_ils.data.FineRecord
-import net.kenstir.hemlock.android.Log
-import net.kenstir.hemlock.android.StdoutLogProvider
+import net.kenstir.hemlock.logging.Log
+import net.kenstir.hemlock.logging.StdoutLogProvider
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.BeforeClass
