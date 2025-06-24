@@ -33,4 +33,19 @@ class AndroidLogProvider: LogProvider {
     override fun d(tag: String?, msg: String, tr: Throwable?) {
         Log.d(tag, msg, tr)
     }
+
+    companion object {
+        fun create(): LogProvider? {
+            val androidLoggingAvailable = try {
+                // Android's Log class is present in unit tests, but throws a RuntimeException, so we can't simply
+                // check for the presence of the android.util.Log class.
+                Log.v(null, "Initializing AndroidLogProvider")
+                true
+            } catch (e: RuntimeException) {
+//                e.message?.contains("not mocked") != true
+                false
+            }
+            return if (androidLoggingAvailable) AndroidLogProvider() else null
+        }
+    }
 }

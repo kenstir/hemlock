@@ -52,9 +52,6 @@ public class AppState {
         context = callingContext.getApplicationContext();
         initialized = true;
 
-//        if (App.getIsDebuggable(context))
-//            Log.setProvider(new SystemLogProvider());
-
         // set default values unless already set
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         int version = prefs.getInt(VERSION, 0);

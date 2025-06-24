@@ -22,6 +22,7 @@ package net.kenstir.apps.core
 import org.evergreen_ils.data.OSRFUtils
 import org.evergreen_ils.data.CircRecord
 import net.kenstir.hemlock.data.jsonMapOf
+import net.kenstir.hemlock.logging.Log
 import org.evergreen_ils.data.MBRecord
 import org.junit.Assert.assertEquals
 import org.junit.BeforeClass
@@ -29,14 +30,6 @@ import org.junit.Test
 import org.opensrf.util.OSRFObject
 
 class CircRecordTest {
-
-    companion object {
-        @BeforeClass
-        @JvmStatic
-        fun setUpClass() {
-            //Log.setProvider(StdoutLogProvider())
-        }
-    }
 
     @Test
     fun test_noRecordInfo() {

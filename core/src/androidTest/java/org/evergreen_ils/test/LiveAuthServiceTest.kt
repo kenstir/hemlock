@@ -54,8 +54,6 @@ class LiveAuthServiceTest {
         @JvmStatic
         @BeforeClass
         fun setUpClass() {
-            Log.setProvider(StdoutLogProvider())
-
             XGatewayClient.baseUrl = testServer
             XGatewayClient.clientCacheKey = "42"
         }

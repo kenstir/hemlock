@@ -28,14 +28,6 @@ import org.junit.Test
 
 class OrganizationTest {
 
-    companion object {
-        @JvmStatic
-        @BeforeClass
-        fun setUpClass() {
-            Log.setProvider(StdoutLogProvider())
-        }
-    }
-
     fun setUpOrgTypes() {
         val orgTypeConsortium = XOSRFObject(
             jsonMapOf(

@@ -36,8 +36,6 @@ class GatewayResultTest {
         @BeforeClass
         @JvmStatic
         fun setUpClass() {
-            Log.setProvider(StdoutLogProvider())
-
             val fields = arrayOf("juvenile","usrname","home_ou")
             OSRFRegistry.registerObject("au", OSRFRegistry.WireProtocol.ARRAY, fields)
 

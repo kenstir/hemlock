@@ -27,7 +27,7 @@ object Log {
     const val DEBUG: Int = 3
     const val WARN: Int = 5
 
-    val provider: LogProvider by lazy { AndroidLogProvider() }
+    val provider: LogProvider by lazy { getLogProvider() }
     var level: Int = DEBUG
 
     var TAG_ASYNC: String = "async"
@@ -54,5 +54,9 @@ object Log {
         val now = System.currentTimeMillis()
         provider.d(tag, String.format("%3dms: %s", now - startTime, s))
         return now
+    }
+
+    private fun getLogProvider(): LogProvider {
+        return AndroidLogProvider.create() ?: StdoutLogProvider()
     }
 }
