@@ -40,6 +40,12 @@ suspend fun XGatewayResponse.payloadFirstAsObject(): XOSRFObject {
     return XGatewayResult.create(json).payloadFirstAsObject()
 }
 
+/** given `"payload":[obj]` return `obj` or null if payload empty */
+suspend fun XGatewayResponse.payloadFirstAsObjectOrNull(): XOSRFObject? {
+    val json = bodyAsText()
+    return XGatewayResult.create(json).payloadFirstAsOptionalObject()
+}
+
 /** given `"payload":[[obj,obj]]` return `[obj,obj]` */
 suspend fun XGatewayResponse.payloadFirstAsObjectList(): List<XOSRFObject> {
     val json = bodyAsText()
