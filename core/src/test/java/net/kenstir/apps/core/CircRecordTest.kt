@@ -30,6 +30,7 @@ import org.junit.Test
 import org.opensrf.util.OSRFObject
 
 class CircRecordTest {
+    // TODO(data): refactor to XOSRFObject and move to different package
 
     @Test
     fun test_noRecordInfo() {

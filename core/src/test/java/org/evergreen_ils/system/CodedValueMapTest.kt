@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Kenneth H. Cox
+ * Copyright (c) 2025 Kenneth H. Cox
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -12,16 +12,12 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ * along with this program; if not, see <https://www.gnu.org/licenses/>.
  */
-package net.kenstir.apps.core
+package org.evergreen_ils.system
 
-import net.kenstir.hemlock.logging.Log
-import net.kenstir.hemlock.logging.StdoutLogProvider
 import org.evergreen_ils.xdata.XOSRFObject
 import net.kenstir.hemlock.data.jsonMapOf
-import org.evergreen_ils.system.EgCodedValueMap
 import org.evergreen_ils.system.EgCodedValueMap.ALL_SEARCH_FORMATS
 import org.evergreen_ils.system.EgCodedValueMap.iconFormatLabel
 import org.evergreen_ils.system.EgCodedValueMap.loadCodedValueMaps
@@ -30,7 +26,6 @@ import org.evergreen_ils.system.EgCodedValueMap.searchFormatLabel
 import org.evergreen_ils.system.EgCodedValueMap.searchFormatSpinnerLabels
 import org.junit.Assert.*
 import org.junit.Before
-import org.junit.BeforeClass
 import org.junit.Test
 
 class CodedValueMapTest {

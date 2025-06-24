@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Kenneth H. Cox
+ * Copyright (c) 2025 Kenneth H. Cox
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -12,42 +12,41 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ * along with this program; if not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.kenstir.apps.core
+package org.evergreen_ils.data
 
-import org.evergreen_ils.data.OSRFUtils
 import org.junit.Assert
-import org.junit.Before
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNull
 import org.junit.Test
-import org.opensrf.util.OSRFObject
 
-class ApiTest {
-
-    var sessionObj = OSRFObject(mapOf<String, Any?>(
-            "id" to 42,
-            "home_ou" to 69,
-            "day_phone" to "508-555-1212"
-    ))
-    var cardObj = OSRFObject(mapOf<String, Any?>("barcode" to "1234"))
-
-    @Before
-    fun setUp() {
-    }
+class OSRFUtilsTest {
 
     @Test
     fun test_parseBoolean() {
-        Assert.assertEquals(true, OSRFUtils.parseBoolean("t"))
-        Assert.assertEquals(true, OSRFUtils.parseBoolean(true))
+        assertEquals(true, OSRFUtils.parseBoolean("t"))
+        assertEquals(true, OSRFUtils.parseBoolean(true))
 
-        Assert.assertEquals(false, OSRFUtils.parseBoolean("f"))
-        Assert.assertEquals(false, OSRFUtils.parseBoolean(false))
+        assertEquals(false, OSRFUtils.parseBoolean("f"))
+        assertEquals(false, OSRFUtils.parseBoolean(false))
 
         // anything else is false
-        Assert.assertEquals(false, OSRFUtils.parseBoolean(null))
-        Assert.assertEquals(false, OSRFUtils.parseBoolean("jibberish"))
+        assertEquals(false, OSRFUtils.parseBoolean(null))
+        assertEquals(false, OSRFUtils.parseBoolean("jibberish"))
+    }
+
+    @Test
+    fun test_parseInt() {
+        assertNull(OSRFUtils.parseInt(null))
+
+        assertEquals(42, OSRFUtils.parseInt(Integer(42)))
+        assertEquals(42, OSRFUtils.parseInt("42"))
+
+        assertNull(OSRFUtils.parseInt(""))
+        assertNull(OSRFUtils.parseInt("null"))
+        assertEquals(1, OSRFUtils.parseInt("", 1))
     }
 
     @Test
