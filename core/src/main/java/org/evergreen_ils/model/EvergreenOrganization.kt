@@ -89,7 +89,7 @@ class EvergreenOrganization(
         addressObj = obj
     }
 
-    fun loadHours(obj: XOSRFObject) {
+    fun loadHours(obj: XOSRFObject?) {
         hoursObj = obj
     }
 

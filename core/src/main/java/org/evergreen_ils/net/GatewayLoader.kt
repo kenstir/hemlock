@@ -33,26 +33,6 @@ import org.evergreen_ils.system.EgSms
 
 object GatewayLoader {
 
-    // usage: loadOrgSettingsAsync(...).await()
-    // TODO: consider passing activity:BaseActivity param and using activity.scope
-    // or returning [Deferred<Result>]
-    // because these org ops are happening on thread DefaultDispatcher-worker-1 :/
-    suspend fun loadOrgSettingsAsync(org: Organization?) = GlobalScope.async {
-        val orgs = if (org != null) listOf(org) else EgOrg.visibleOrgs
-        for (org in orgs) {
-            if (!org.settingsLoaded) {
-                async {
-                    val result = Gateway.actor.fetchOrgSettings(org.id)
-                    if (result is Result.Success) {
-                        //org.loadSettings(result.data)
-                        // TODO: fixme ^^^ settings not loaded
-                        Log.d(TAG, "[kcxxx] org ${org.id} settings loaded")
-                    }
-                }
-            }
-        }
-    }
-
     suspend fun loadBookBagsAsync(account: Account): Result<Unit> {
         // do not cache bookbags
         Log.d(TAG, "[bookbag] loadBookBagsAsync...")

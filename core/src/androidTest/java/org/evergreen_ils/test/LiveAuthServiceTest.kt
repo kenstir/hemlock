@@ -19,24 +19,29 @@ package org.evergreen_ils.test
 
 import androidx.test.platform.app.InstrumentationRegistry
 import kotlinx.coroutines.test.runTest
-import net.kenstir.hemlock.data.Result
 import net.kenstir.hemlock.android.Log
 import net.kenstir.hemlock.android.StdoutLogProvider
+import net.kenstir.hemlock.data.Result
 import net.kenstir.hemlock.net.LoaderServiceOptions
-import org.evergreen_ils.xdata.XGatewayClient
+import net.kenstir.hemlock.net.ServiceConfig
 import org.evergreen_ils.model.EvergreenAccount
 import org.evergreen_ils.net.EvergreenAuthService
 import org.evergreen_ils.net.EvergreenLoaderService
+import org.evergreen_ils.net.EvergreenOrgService
 import org.evergreen_ils.net.EvergreenUserService
+import org.evergreen_ils.xdata.XGatewayClient
 import org.junit.Assert.assertTrue
 import org.junit.BeforeClass
 import org.junit.Test
 
 class LiveAuthServiceTest {
     companion object {
-        val authService = EvergreenAuthService()
-        val initializationService = EvergreenLoaderService()
-        val userService = EvergreenUserService()
+        val serviceConfig = ServiceConfig(
+            EvergreenLoaderService(),
+            EvergreenAuthService(),
+            EvergreenUserService(),
+            EvergreenOrgService(),
+        )
 
         // See root build.gradle for notes on customizing instrumented test variables (hint: secret.gradle)
         val testServer = getRequiredArg("server")
@@ -61,12 +66,12 @@ class LiveAuthServiceTest {
     }
 
     suspend fun getTestAuthToken(): Result<String> {
-        return authService.getAuthToken(testUsername, testPassword)
+        return serviceConfig.authService.getAuthToken(testUsername, testPassword)
     }
 
     suspend fun loadTestServiceData(): Result<Unit> {
         if (isServiceDataLoaded) return Result.Success(Unit)
-        val result = initializationService.loadServiceData(LoaderServiceOptions("42", true))
+        val result = serviceConfig.loaderService.loadServiceData(LoaderServiceOptions("42", true))
         isServiceDataLoaded = true
         return result
     }

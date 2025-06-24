@@ -99,17 +99,20 @@ class FinesActivity : BaseActivity() {
         scope.async {
             try {
                 val start = System.currentTimeMillis()
-                var jobs = mutableListOf<Job>()
                 progress?.show(this@FinesActivity, getString(R.string.msg_retrieving_fines))
                 Log.d(TAG, "[kcxxx] fetchData ...")
 
-                jobs.add(scope.async {
-                    // Need homeOrg's settings to enable/disable fines
-                    val homeOrg = EgOrg.findOrg(App.getAccount().homeOrg)
-                    GatewayLoader.loadOrgSettingsAsync(homeOrg).await()
-                    updatePayFinesButtonVisibility()
-                })
-
+                val jobs = mutableListOf<Job>()
+                val homeOrg = EgOrg.findOrg(App.getAccount().homeOrg)
+                homeOrg?.let {
+                    jobs.add(scope.async {
+                        val result = App.getServiceConfig().orgService.loadOrgSettings(homeOrg.id)
+                        if (result is Result.Error) {
+                            throw result.exception
+                        }
+                        updatePayFinesButtonVisibility()
+                    })
+                }
                 jobs.add(scope.async {
                     onSummaryResult(Gateway.actor.fetchUserFinesSummary(App.getAccount()))
                 })
