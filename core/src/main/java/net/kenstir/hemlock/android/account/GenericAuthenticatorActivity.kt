@@ -38,7 +38,7 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import net.kenstir.hemlock.R
 import net.kenstir.hemlock.android.Analytics
-import net.kenstir.hemlock.android.Log
+import net.kenstir.hemlock.logging.Log
 import net.kenstir.hemlock.data.model.Library
 import net.kenstir.hemlock.android.ui.showAlert
 import java.util.Collections

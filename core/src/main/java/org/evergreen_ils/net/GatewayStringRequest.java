@@ -28,7 +28,7 @@ import com.android.volley.toolbox.HttpHeaderParser;
 import com.android.volley.toolbox.StringRequest;
 
 import net.kenstir.hemlock.android.Analytics;
-import net.kenstir.hemlock.android.Log;
+import net.kenstir.hemlock.logging.Log;
 import net.kenstir.hemlock.util.StringUtils;
 
 import java.io.UnsupportedEncodingException;

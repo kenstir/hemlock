@@ -49,7 +49,7 @@ import org.evergreen_ils.HOLD_TYPE_TITLE
 import org.evergreen_ils.HOLD_TYPE_VOLUME
 import org.evergreen_ils.data.MBRecord
 import net.kenstir.hemlock.android.Analytics
-import net.kenstir.hemlock.android.Log
+import net.kenstir.hemlock.logging.Log
 import org.evergreen_ils.utils.ui.BaseActivity
 import net.kenstir.hemlock.android.ui.ProgressDialogSupport
 import net.kenstir.hemlock.android.ui.showAlert

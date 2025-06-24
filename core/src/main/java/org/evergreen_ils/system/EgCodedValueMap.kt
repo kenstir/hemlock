@@ -18,7 +18,7 @@ package org.evergreen_ils.system
 
 import org.evergreen_ils.data.OSRFUtils
 import net.kenstir.hemlock.android.Analytics
-import net.kenstir.hemlock.android.Log
+import net.kenstir.hemlock.logging.Log
 import net.kenstir.hemlock.data.ShouldNotHappenException
 import org.evergreen_ils.xdata.XOSRFObject
 import java.util.*

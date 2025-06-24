@@ -36,11 +36,10 @@ import org.evergreen_ils.system.EgOrg
 import org.evergreen_ils.data.FineRecord
 import net.kenstir.hemlock.data.Result
 import org.evergreen_ils.net.Gateway
-import org.evergreen_ils.net.GatewayLoader
 import org.evergreen_ils.views.search.RecordDetails
 import org.evergreen_ils.data.MBRecord
 import net.kenstir.hemlock.android.Analytics
-import net.kenstir.hemlock.android.Log
+import net.kenstir.hemlock.logging.Log
 import org.evergreen_ils.utils.ui.BaseActivity
 import net.kenstir.hemlock.android.ui.ProgressDialogSupport
 import net.kenstir.hemlock.android.ui.showAlert

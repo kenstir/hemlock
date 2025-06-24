@@ -18,8 +18,8 @@
 package net.kenstir.apps.core
 
 import org.evergreen_ils.system.EgOrg
-import net.kenstir.hemlock.android.Log
-import net.kenstir.hemlock.android.StdoutLogProvider
+import net.kenstir.hemlock.logging.Log
+import net.kenstir.hemlock.logging.StdoutLogProvider
 import net.kenstir.hemlock.data.jsonMapOf
 import org.evergreen_ils.xdata.XOSRFObject
 import org.junit.Assert.*

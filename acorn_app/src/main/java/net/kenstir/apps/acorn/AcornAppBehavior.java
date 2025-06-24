@@ -24,7 +24,7 @@ import android.text.TextUtils;
 import net.kenstir.hemlock.android.AppBehavior;
 
 import org.evergreen_ils.data.MBRecord;
-import net.kenstir.hemlock.android.Log;
+import net.kenstir.hemlock.logging.Log;
 import net.kenstir.hemlock.data.model.Link;
 import org.evergreen_ils.utils.MARCRecord;
 

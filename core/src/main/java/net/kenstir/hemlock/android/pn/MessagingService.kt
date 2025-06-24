@@ -27,7 +27,7 @@ import androidx.core.app.NotificationCompat
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import net.kenstir.hemlock.R
-import net.kenstir.hemlock.android.Log.TAG_FCM
+import net.kenstir.hemlock.logging.Log.TAG_FCM
 import org.evergreen_ils.utils.ui.BaseActivity
 
 class MessagingService: FirebaseMessagingService() {

@@ -25,7 +25,7 @@ import java.util.Map;
 
 import org.evergreen_ils.Api;
 import net.kenstir.hemlock.android.Analytics;
-import net.kenstir.hemlock.android.Log;
+import net.kenstir.hemlock.logging.Log;
 import org.opensrf.Method;
 import org.opensrf.net.http.GatewayRequest;
 import org.opensrf.net.http.HttpConnection;
@@ -86,7 +86,7 @@ public class EvergreenAuthenticator {
         }
         return null;
     }
-    
+
     public static String signIn(String library_url, String username, String password) throws AuthenticationException {
         Analytics.log(TAG, "signIn: library_url=" + library_url);
 
@@ -123,7 +123,7 @@ public class EvergreenAuthenticator {
 
         if (resp == null)
             throw new AuthenticationException("Unable to complete login");
-        
+
         // parse response, throw if error
         // {"payload":[{"payload":{"authtoken":"***","authtime":1209600},"ilsevent":0,"textcode":"SUCCESS","desc":"Success"}],"status":200}
         String textcode = ((Map<String, String>) resp).get("textcode");

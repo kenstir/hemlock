@@ -14,18 +14,14 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, see <https://www.gnu.org/licenses/>.
  */
-
-package net.kenstir.hemlock.android;
+package net.kenstir.hemlock.logging
 
 /**
  * Created by kenstir on 1/29/2017.
- * TODO(data): replace with SLF4J and move out of android package
+ * TODO(logging): replace with SLF4J?
  */
-public interface LogProvider {
-    void v(String TAG, String msg);
-    void d(String TAG, String msg);
-    void d(String TAG, String msg, Throwable tr);
-    void i(String TAG, String msg);
-    void w(String TAG, String msg);
-    void w(String TAG, String msg, Throwable tr);
+interface LogProvider {
+    fun v(tag: String?, msg: String)
+    fun d(tag: String?, msg: String)
+    fun d(tag: String?, msg: String, tr: Throwable?)
 }

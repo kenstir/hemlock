@@ -33,13 +33,11 @@ import android.widget.AdapterView.OnItemSelectedListener
 import androidx.appcompat.app.AlertDialog
 import androidx.core.os.bundleOf
 import kotlinx.coroutines.Deferred
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
-import kotlinx.coroutines.joinAll
 import net.kenstir.hemlock.R
 import net.kenstir.hemlock.android.Analytics
 import net.kenstir.hemlock.android.App
-import net.kenstir.hemlock.android.Log
+import net.kenstir.hemlock.logging.Log
 import net.kenstir.hemlock.data.model.Account
 import net.kenstir.hemlock.data.Result
 import org.evergreen_ils.HOLD_TYPE_PART

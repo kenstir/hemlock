@@ -14,40 +14,23 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, see <https://www.gnu.org/licenses/>.
  */
+package net.kenstir.hemlock.logging
 
-package net.kenstir.hemlock.android;
+import android.util.Log
 
 /**
  * Created by kenstir on 1/29/2017.
  */
-public class AndroidLogProvider implements LogProvider {
-    @Override
-    public void v(String TAG, String msg) {
-        android.util.Log.v(TAG, msg);
+class AndroidLogProvider: LogProvider {
+    override fun v(tag: String?, msg: String) {
+        Log.v(tag, msg)
     }
 
-    @Override
-    public void d(String TAG, String msg) {
-        android.util.Log.d(TAG, msg);
+    override fun d(tag: String?, msg: String) {
+        Log.d(tag, msg)
     }
 
-    @Override
-    public void d(String TAG, String msg, Throwable tr) {
-        android.util.Log.d(TAG, msg, tr);
-    }
-
-    @Override
-    public void i(String TAG, String msg) {
-        android.util.Log.i(TAG, msg);
-    }
-
-    @Override
-    public void w(String TAG, String msg) {
-        android.util.Log.w(TAG, msg);
-    }
-
-    @Override
-    public void w(String TAG, String msg, Throwable tr) {
-        android.util.Log.w(TAG, msg, tr);
+    override fun d(tag: String?, msg: String, tr: Throwable?) {
+        Log.d(tag, msg, tr)
     }
 }

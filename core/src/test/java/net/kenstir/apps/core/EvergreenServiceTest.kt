@@ -20,8 +20,8 @@ package net.kenstir.apps.core
 
 import org.evergreen_ils.system.EgSms
 import net.kenstir.hemlock.data.jsonMapOf
-import net.kenstir.hemlock.android.Log
-import net.kenstir.hemlock.android.StdoutLogProvider
+import net.kenstir.hemlock.logging.Log
+import net.kenstir.hemlock.logging.StdoutLogProvider
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.BeforeClass

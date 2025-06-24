@@ -18,7 +18,7 @@ package net.kenstir.hemlock.android.ui
 
 import androidx.appcompat.app.AppCompatDelegate
 import net.kenstir.hemlock.android.AppState
-import net.kenstir.hemlock.android.Log
+import net.kenstir.hemlock.logging.Log
 
 object ThemeManager {
     private val TAG = ThemeManager::class.java.simpleName

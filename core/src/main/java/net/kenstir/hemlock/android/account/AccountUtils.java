@@ -24,7 +24,7 @@ import android.os.Bundle;
 import android.os.Looper;
 import android.text.TextUtils;
 import net.kenstir.hemlock.R;
-import net.kenstir.hemlock.android.Log;
+import net.kenstir.hemlock.logging.Log;
 import net.kenstir.hemlock.data.model.Library;
 
 import java.io.IOException;
@@ -57,7 +57,7 @@ public class AccountUtils {
     }
 
     public static void invalidateAuthToken(Context context, String auth_token) {
-        Log.i(Const.AUTH_TAG, "invalidateAuthToken "+auth_token);
+        Log.d(Const.AUTH_TAG, "invalidateAuthToken "+auth_token);
         if (TextUtils.isEmpty(auth_token))
             return;
         final AccountManager am = AccountManager.get(context);
@@ -66,7 +66,7 @@ public class AccountUtils {
     }
 
     public static void clearPassword(Context context, String account_name) {
-        Log.i(Const.AUTH_TAG, "clearPassword "+account_name);
+        Log.d(Const.AUTH_TAG, "clearPassword "+account_name);
         if (TextUtils.isEmpty(account_name))
             return;
         final AccountManager am = AccountManager.get(context);
@@ -85,9 +85,9 @@ public class AccountUtils {
     }
 
     public static String getAuthTokenForAccount(Activity activity, String account_name) throws AuthenticatorException, OperationCanceledException, IOException {
-        Log.i(Const.AUTH_TAG, "getAuthTokenForAccount "+account_name);
+        Log.d(Const.AUTH_TAG, "getAuthTokenForAccount "+account_name);
         if (runningOnUIThread() || TextUtils.isEmpty(account_name)) {
-            Log.i(Const.AUTH_TAG, "getAuthTokenForAccount returns null");
+            Log.d(Const.AUTH_TAG, "getAuthTokenForAccount returns null");
             return null;
         }
         final AccountManager am = AccountManager.get(activity);
@@ -95,12 +95,12 @@ public class AccountUtils {
         final Account account = new Account(account_name, accountType);
         Bundle b = am.getAuthToken(account, Const.AUTHTOKEN_TYPE, null, activity, null, null).getResult();
         final String auth_token = b.getString(AccountManager.KEY_AUTHTOKEN);
-        Log.i(Const.AUTH_TAG, "getAuthTokenForAccount " + account_name + " returns " + auth_token);
+        Log.d(Const.AUTH_TAG, "getAuthTokenForAccount " + account_name + " returns " + auth_token);
         return auth_token;
     }
 
     public static AccountManagerFuture<Bundle> getAuthTokenForAccountFuture(Activity activity, String account_name) throws AuthenticatorException, OperationCanceledException, IOException {
-        Log.i(Const.AUTH_TAG, "getAuthTokenForAccountFuture "+account_name);
+        Log.d(Const.AUTH_TAG, "getAuthTokenForAccountFuture "+account_name);
         if (TextUtils.isEmpty(account_name)) {
             return null;
         }
@@ -111,19 +111,19 @@ public class AccountUtils {
     }
 
     public static Bundle getAuthToken(Activity activity) throws AuthenticatorException, OperationCanceledException, IOException {
-        Log.i(Const.AUTH_TAG, "getAuthToken");
+        Log.d(Const.AUTH_TAG, "getAuthToken");
         if (runningOnUIThread())
             return new Bundle();
         final AccountManager am = AccountManager.get(activity);
         final String accountType = activity.getString(R.string.ou_account_type);
         AccountManagerFuture<Bundle> future = am.getAuthTokenByFeatures(accountType, Const.AUTHTOKEN_TYPE, null, activity, null, null, null, null);
         Bundle bnd = future.getResult();
-        Log.i(Const.AUTH_TAG, "getAuthToken returns "+bnd);
+        Log.d(Const.AUTH_TAG, "getAuthToken returns "+bnd);
         return bnd;
     }
 
     public static AccountManagerFuture<Bundle> getAuthTokenFuture(Activity activity) throws AuthenticatorException, OperationCanceledException, IOException {
-        Log.i(Const.AUTH_TAG, "getAuthTokenFuture");
+        Log.d(Const.AUTH_TAG, "getAuthTokenFuture");
         final AccountManager am = AccountManager.get(activity);
         final String accountType = activity.getString(R.string.ou_account_type);
         return am.getAuthTokenByFeatures(accountType, Const.AUTHTOKEN_TYPE, null, activity, null, null, null, null);

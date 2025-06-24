@@ -22,6 +22,7 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.preference.PreferenceManager;
 import net.kenstir.hemlock.R;
+import net.kenstir.hemlock.logging.Log;
 
 import java.util.Date;
 

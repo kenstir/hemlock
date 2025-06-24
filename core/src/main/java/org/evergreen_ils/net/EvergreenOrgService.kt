@@ -20,7 +20,7 @@ package org.evergreen_ils.net
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
-import net.kenstir.hemlock.android.Log
+import net.kenstir.hemlock.logging.Log
 import net.kenstir.hemlock.data.Result
 import net.kenstir.hemlock.data.jsonMapOf
 import net.kenstir.hemlock.data.model.Account

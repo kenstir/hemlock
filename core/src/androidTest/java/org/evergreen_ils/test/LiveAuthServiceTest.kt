@@ -19,8 +19,8 @@ package org.evergreen_ils.test
 
 import androidx.test.platform.app.InstrumentationRegistry
 import kotlinx.coroutines.test.runTest
-import net.kenstir.hemlock.android.Log
-import net.kenstir.hemlock.android.StdoutLogProvider
+import net.kenstir.hemlock.logging.Log
+import net.kenstir.hemlock.logging.StdoutLogProvider
 import net.kenstir.hemlock.data.Result
 import net.kenstir.hemlock.net.LoaderServiceOptions
 import net.kenstir.hemlock.net.ServiceConfig

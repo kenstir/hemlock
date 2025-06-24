@@ -20,10 +20,9 @@ package net.kenstir.hemlock.android.ui
 import android.app.Activity
 import android.app.AlertDialog
 import net.kenstir.hemlock.android.App
-import net.kenstir.hemlock.android.Log
+import net.kenstir.hemlock.logging.Log
 import org.evergreen_ils.net.GatewayError
 import org.evergreen_ils.utils.getCustomMessage
-import net.kenstir.hemlock.android.ui.showSessionExpiredAlert
 
 fun Activity.showAlert(message: String, title: String? = "Error") {
     if (isFinishing) return

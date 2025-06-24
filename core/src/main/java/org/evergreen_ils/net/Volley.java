@@ -8,7 +8,7 @@ import android.util.LruCache;
 import com.android.volley.*;
 import com.android.volley.toolbox.ImageLoader;
 
-import net.kenstir.hemlock.android.Log;
+import net.kenstir.hemlock.logging.Log;
 
 // code adapted from http://developer.android.com/training/volley/
 public class Volley {

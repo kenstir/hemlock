@@ -22,7 +22,7 @@ import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 
-import net.kenstir.hemlock.android.Log;
+import net.kenstir.hemlock.logging.Log;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 import org.xmlpull.v1.XmlPullParserFactory;

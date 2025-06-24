@@ -26,7 +26,7 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.async
 import net.kenstir.hemlock.R
 import net.kenstir.hemlock.android.App
-import net.kenstir.hemlock.android.Log
+import net.kenstir.hemlock.logging.Log
 import net.kenstir.hemlock.net.LoaderServiceOptions
 import net.kenstir.hemlock.data.Result
 import org.evergreen_ils.xdata.XGatewayClient
