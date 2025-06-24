@@ -16,7 +16,7 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
-package net.kenstir.apps.core
+package org.evergreen_ils.data
 
 import net.kenstir.hemlock.data.jsonMapOf
 import org.evergreen_ils.utils.fromApiToIntOrNull

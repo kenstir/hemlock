@@ -15,15 +15,12 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
-package net.kenstir.apps.core
+package org.evergreen_ils.data
 
 import org.evergreen_ils.system.EgOrg
-import net.kenstir.hemlock.logging.Log
-import net.kenstir.hemlock.logging.StdoutLogProvider
 import net.kenstir.hemlock.data.jsonMapOf
 import org.evergreen_ils.xdata.XOSRFObject
 import org.junit.Assert.*
-import org.junit.BeforeClass
 import org.junit.Test
 
 class OrganizationTest {

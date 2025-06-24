@@ -18,11 +18,8 @@
 
 package net.kenstir.apps.core
 
-import net.kenstir.hemlock.logging.Log
-import net.kenstir.hemlock.logging.StdoutLogProvider
 import org.evergreen_ils.utils.getCustomMessage
 import org.junit.Assert.assertEquals
-import org.junit.BeforeClass
 import org.junit.Test
 
 class MiscTest {
