@@ -46,6 +46,8 @@ class EvergreenOrgService: OrgService {
         Log.d(TAG, "loading org settings for org $orgID ...")
         val org = EgOrg.findOrg(orgID) as? EvergreenOrganization
             ?: throw IllegalArgumentException("Org $orgID not found")
+        if (org.settingsLoaded)
+            return
         val settings = mutableListOf(
             Api.SETTING_CREDIT_PAYMENTS_ALLOW,
             Api.SETTING_INFO_URL,

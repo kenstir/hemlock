@@ -32,6 +32,7 @@ import android.widget.*
 import android.widget.AdapterView.OnItemSelectedListener
 import androidx.appcompat.app.AlertDialog
 import androidx.core.os.bundleOf
+import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.joinAll
@@ -161,20 +162,16 @@ class PlaceHoldActivity : BaseActivity() {
             try {
                 Log.d(TAG, "[kcxxx] fetchData ...")
                 val start = System.currentTimeMillis()
-                val jobs = mutableListOf<Job>()
+                val jobs = mutableListOf<Deferred<Result<Unit>>>()
                 progress?.show(this@PlaceHoldActivity, getString(R.string.msg_loading_place_hold))
                 placeHold?.isEnabled = false
 
+                val serviceConfig = App.getServiceConfig()
                 for (org in EgOrg.visibleOrgs) {
-                    Log.d(TAG, "[kcxxx] fetchData: loading org ${org.id} ${org.name}")
                     jobs.add(scope.async {
-                        GatewayLoader.loadOrgSettingsAsync(org.id).await()
+                        serviceConfig.orgService.loadOrgSettings(org.id)
                     })
                 }
-                jobs.add(scope.async {
-                    GatewayLoader.loadOrgSettingsAsync(null).await()
-                    logOrgStats()
-                })
 
                 jobs.add(scope.async {
                     GatewayLoader.loadSMSCarriersAsync()
@@ -190,10 +187,13 @@ class PlaceHoldActivity : BaseActivity() {
                             val isPossibleResult = Gateway.circ.fetchTitleHoldIsPossible(App.getAccount(), record.id, App.getAccount().pickupOrg ?: 1)
                             onTitleHoldIsPossibleResult(isPossibleResult)
                         }
+                        Result.Success(Unit)
                     })
                 }
 
-                jobs.joinAll()
+                // await all deferred (see awaitAll doc for differences)
+                jobs.map { it.await() }
+                logOrgStats()
                 initPartControls()
                 initSMSControls()
                 placeHold?.isEnabled = true
