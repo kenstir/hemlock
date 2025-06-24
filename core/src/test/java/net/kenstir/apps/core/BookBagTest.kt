@@ -25,6 +25,7 @@ import org.junit.Test
 import org.opensrf.util.OSRFObject
 
 class BookBagTest {
+    // TODO(data): refactor to XOSRFObject and move to different package
 
     val cbrebObj = OSRFObject(
         jsonMapOf(

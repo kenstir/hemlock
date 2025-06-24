@@ -27,6 +27,7 @@ private val TAG = VolleyTest::class.java.simpleName
  */
 @RunWith(AndroidJUnit4::class)
 class VolleyTest {
+    // TODO(data): delete once Volley is dead
     private var mServer: String? = null
     private var mVolley: Volley? = null
     private var mVolleyErrorListener: Response.ErrorListener? = null

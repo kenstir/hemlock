@@ -28,6 +28,7 @@ import org.opensrf.util.JSONReader
 import org.opensrf.util.OSRFRegistry
 
 class JSONReaderTest {
+    // TODO(data): delete once JSONReader is dead
 
     val iterations = 100
     val gapines_org_tree_json = """
