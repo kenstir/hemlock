@@ -23,12 +23,6 @@ import net.kenstir.hemlock.data.Result
 import org.opensrf.util.OSRFObject
 
 interface ActorService {
-    suspend fun fetchServerVersion(): Result<String>
-    suspend fun fetchServerCacheKey(): Result<String?>
-    suspend fun fetchOrgTypes(): Result<List<OSRFObject>>
-    suspend fun fetchOrgTree(): Result<OSRFObject>
-    suspend fun fetchOrg(orgID: Int): Result<OSRFObject>
-    suspend fun fetchOrgSettings(orgID: Int): Result<OSRFObject>
     suspend fun fetchOrgHours(account: Account, orgID: Int): Result<OSRFObject?>
     suspend fun fetchOrgClosures(account: Account, orgID: Int): Result<List<OSRFObject>>
     suspend fun fetchOrgAddress(addressID: Int?): Result<OSRFObject?>

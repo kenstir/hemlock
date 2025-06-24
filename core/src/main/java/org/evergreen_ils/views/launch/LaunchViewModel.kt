@@ -27,7 +27,7 @@ import kotlinx.coroutines.async
 import net.kenstir.hemlock.R
 import net.kenstir.hemlock.android.App
 import net.kenstir.hemlock.android.Log
-import net.kenstir.hemlock.net.InitServiceOptions
+import net.kenstir.hemlock.net.LoaderServiceOptions
 import net.kenstir.hemlock.data.Result
 import org.evergreen_ils.xdata.XGatewayClient
 import org.evergreen_ils.net.Gateway
@@ -76,8 +76,8 @@ class LaunchViewModel : ViewModel() {
                 errors.set(0)
 
                 // load the IDL etc.
-                val options = InitServiceOptions(App.getVersion(context), context.resources.getBoolean(R.bool.ou_hierarchical_org_tree))
-                when (val result = App.getServiceConfig().initService.loadServiceData(options)) {
+                val options = LoaderServiceOptions(App.getVersion(context), context.resources.getBoolean(R.bool.ou_hierarchical_org_tree))
+                when (val result = App.getServiceConfig().loaderService.loadServiceData(options)) {
                     is Result.Success -> {}
                     is Result.Error -> { onLoadError(result.exception) ; return@async }
                 }

@@ -101,24 +101,6 @@ object EgOrg {
         Log.d(TAG, "loadOrgs: ${orgs.size} orgs")
     }
 
-    fun loadOrgSettings(org: EvergreenOrganization, obj: XOSRFObject) {
-        org.email = obj.getString("email")
-        org.phone = obj.getString("phone")
-        org.isNotPickupLocationSetting = parseOrgBoolSetting(obj, Api.SETTING_ORG_UNIT_NOT_PICKUP_LIB)
-        org.isPaymentAllowed = parseOrgBoolSetting(obj, Api.SETTING_CREDIT_PAYMENTS_ALLOW) ?: false
-        org.eresourcesUrl = parseOrgStringSetting(obj, Api.SETTING_HEMLOCK_ERESOURCES_URL)
-        org.eventsURL = parseOrgStringSetting(obj, Api.SETTING_HEMLOCK_EVENTS_URL)
-        org.infoURL = parseOrgStringSetting(obj, Api.SETTING_INFO_URL)
-        org.meetingRoomsUrl = parseOrgStringSetting(obj, Api.SETTING_HEMLOCK_MEETING_ROOMS_URL)
-        org.museumPassesUrl = parseOrgStringSetting(obj, Api.SETTING_HEMLOCK_MUSEUM_PASSES_URL)
-
-        // this setting only appears on the consortium org
-        val smsEnableSetting = parseOrgBoolSetting(obj, Api.SETTING_SMS_ENABLE)
-        smsEnableSetting?.let { smsEnabled = smsEnableSetting }
-
-        org.settingsLoaded = true
-    }
-
     @JvmStatic
     fun findOrg(id: Int?): Organization? = orgs.firstOrNull { it.id == id }
 

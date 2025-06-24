@@ -18,11 +18,11 @@
 package net.kenstir.hemlock.net
 
 import org.evergreen_ils.net.EvergreenAuthService
-import org.evergreen_ils.net.EvergreenInitService
+import org.evergreen_ils.net.EvergreenLoaderService
 import org.evergreen_ils.net.EvergreenUserService
 
 class ServiceConfig(
-    val initService: InitService = EvergreenInitService(),
+    val loaderService: LoaderService = EvergreenLoaderService(),
     val authService: AuthService = EvergreenAuthService(),
     val userService: UserService = EvergreenUserService(),
 )

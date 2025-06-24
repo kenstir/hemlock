@@ -27,6 +27,7 @@ import android.widget.*
 import android.widget.AdapterView.OnItemSelectedListener
 import androidx.core.util.component1
 import androidx.core.util.component2
+import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.joinAll
@@ -346,36 +347,26 @@ class OrgDetailsActivity : BaseActivity() {
                 val orgID = orgID ?: return@async
 
                 val start = System.currentTimeMillis()
-                var jobs = mutableListOf<Job>()
+                var jobs = mutableListOf<Deferred<Any>>()
                 progress?.show(this@OrgDetailsActivity, getString(R.string.msg_loading_details))
 
                 Log.d(TAG, "[kcxxx] fetchData ... orgID=$orgID")
 
                 jobs.add(scope.async {
-                    GatewayLoader.loadOrgSettingsAsync(org).await()
+                    val result = App.getServiceConfig().loaderService.loadOrgSettings(orgID)
+                    if (result is Result.Error) {
+                        throw result.exception
+                    }
                 })
-
                 jobs.add(scope.async {
-                    GatewayLoader.loadOrgAsync(org).await()
+                    val result = App.getServiceConfig().loaderService.loadOrgDetails(orgID)
+                    if (result is Result.Error) {
+                        throw result.exception
+                    }
                 })
 
-                jobs.add(scope.async {
-                    val result = Gateway.actor.fetchOrgHours(App.getAccount(), orgID)
-                    onHoursResult(result)
-                })
-
-                jobs.add(scope.async {
-                    val result = Gateway.actor.fetchOrgClosures(App.getAccount(), orgID)
-                    onOrgClosuresResult(result)
-                })
-
-                jobs.add(scope.async {
-                    val evergreenOrg = org as? EvergreenOrganization
-                    val result = Gateway.actor.fetchOrgAddress(evergreenOrg?.addressID)
-                    onAddressResult(result)
-                })
-
-                jobs.joinAll()
+                // await all deferred (see awaitAll doc for differences)
+                jobs.map { it.await() }
                 onOrgLoaded()
                 Log.logElapsedTime(TAG, start, "[kcxxx] fetchData ... done")
             } catch (ex: Exception) {

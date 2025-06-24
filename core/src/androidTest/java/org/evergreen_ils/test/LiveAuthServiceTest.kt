@@ -22,11 +22,11 @@ import kotlinx.coroutines.test.runTest
 import net.kenstir.hemlock.data.Result
 import net.kenstir.hemlock.android.Log
 import net.kenstir.hemlock.android.StdoutLogProvider
-import net.kenstir.hemlock.net.InitServiceOptions
+import net.kenstir.hemlock.net.LoaderServiceOptions
 import org.evergreen_ils.xdata.XGatewayClient
 import org.evergreen_ils.model.EvergreenAccount
 import org.evergreen_ils.net.EvergreenAuthService
-import org.evergreen_ils.net.EvergreenInitService
+import org.evergreen_ils.net.EvergreenLoaderService
 import org.evergreen_ils.net.EvergreenUserService
 import org.junit.Assert.assertTrue
 import org.junit.BeforeClass
@@ -35,7 +35,7 @@ import org.junit.Test
 class LiveAuthServiceTest {
     companion object {
         val authService = EvergreenAuthService()
-        val initializationService = EvergreenInitService()
+        val initializationService = EvergreenLoaderService()
         val userService = EvergreenUserService()
 
         // See root build.gradle for notes on customizing instrumented test variables (hint: secret.gradle)
@@ -66,7 +66,7 @@ class LiveAuthServiceTest {
 
     suspend fun loadTestServiceData(): Result<Unit> {
         if (isServiceDataLoaded) return Result.Success(Unit)
-        val result = initializationService.loadServiceData(InitServiceOptions("42", true))
+        val result = initializationService.loadServiceData(LoaderServiceOptions("42", true))
         isServiceDataLoaded = true
         return result
     }
