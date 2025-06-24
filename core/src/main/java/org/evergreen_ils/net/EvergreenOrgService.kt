@@ -31,6 +31,7 @@ import org.evergreen_ils.xdata.XGatewayClient
 import org.evergreen_ils.xdata.paramListOf
 import org.evergreen_ils.xdata.payloadFirstAsObject
 import org.evergreen_ils.xdata.payloadFirstAsObjectList
+import org.evergreen_ils.xdata.payloadFirstAsObjectOrNull
 
 class EvergreenOrgService: OrgService {
 
@@ -92,7 +93,7 @@ class EvergreenOrgService: OrgService {
         Log.d(TAG, "loading org hours for org ${org.id} ...")
         val (authToken, _) = account.getCredentialsOrThrow()
         val response = XGatewayClient.fetch(Api.ACTOR, Api.HOURS_OF_OPERATION_RETRIEVE, paramListOf(authToken, org.id), false)
-        org.loadHours(response.payloadFirstAsObjectList().firstOrNull())
+        org.loadHours(response.payloadFirstAsObjectOrNull())
         Log.d(TAG, "loading org hours for org ${org.id} ... done")
     }
 
