@@ -27,14 +27,6 @@ import org.junit.Test
 
 class MiscTest {
 
-    companion object {
-        @JvmStatic
-        @BeforeClass
-        fun setUpClass() {
-            Log.setProvider(StdoutLogProvider())
-        }
-    }
-
     @Test
     fun test_Exception_customMessage_basic() {
         assertEquals("Timeout", java.util.concurrent.TimeoutException().getCustomMessage())

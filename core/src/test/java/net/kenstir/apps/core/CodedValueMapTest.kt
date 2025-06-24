@@ -34,13 +34,6 @@ import org.junit.BeforeClass
 import org.junit.Test
 
 class CodedValueMapTest {
-    companion object {
-        @JvmStatic
-        @BeforeClass
-        fun setUpClass(): Unit {
-            Log.setProvider(StdoutLogProvider())
-        }
-    }
 
     @Before
     fun setUp() {

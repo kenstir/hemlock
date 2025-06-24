@@ -50,12 +50,4 @@ class EvergreenServiceTest {
         assertNull(EgSms.findCarrier(1))
         assertEquals("T-Mobile", EgSms.findCarrier(48)?.name)
     }
-
-    companion object {
-        @BeforeClass
-        @JvmStatic
-        fun setUpClass() {
-            Log.setProvider(StdoutLogProvider())
-        }
-    }
 }

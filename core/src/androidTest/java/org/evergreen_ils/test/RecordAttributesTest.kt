@@ -25,13 +25,6 @@ import org.junit.BeforeClass
 import org.junit.Test
 
 class RecordAttributesTest {
-    companion object {
-        @JvmStatic
-        @BeforeClass
-        fun setUpClass() {
-            Log.setProvider(StdoutLogProvider())
-        }
-    }
 
     @Test
     fun test_parseAttributes_basic() {

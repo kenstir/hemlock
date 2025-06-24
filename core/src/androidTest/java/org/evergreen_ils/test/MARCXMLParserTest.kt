@@ -29,14 +29,6 @@ import org.junit.Test
 
 class MARCXMLParserTest {
 
-    companion object {
-        @BeforeClass
-        @JvmStatic
-        fun setUpClass() {
-            Log.setProvider(StdoutLogProvider())
-        }
-    }
-
     @Before
     fun setUp() {
     }

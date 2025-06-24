@@ -36,8 +36,6 @@ class MBRecordTest {
         @BeforeClass
         @JvmStatic
         fun setUpClass() {
-            Log.setProvider(StdoutLogProvider())
-
             val mvrFields = arrayOf("title","author","doc_id","doc_type","pubdate","isbn","publisher","tcn","subject","types_of_resource","call_numbers","edition","online_loc","synopsis","physical_description","toc","copy_count","series","serials","foreign_copy_maps")
             OSRFRegistry.registerObject("mvr", OSRFRegistry.WireProtocol.ARRAY, mvrFields)
         }

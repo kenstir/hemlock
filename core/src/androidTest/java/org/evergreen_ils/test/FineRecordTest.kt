@@ -34,8 +34,6 @@ class FineRecordTest {
         @BeforeClass
         @JvmStatic
         fun setUpClass() {
-            Log.setProvider(StdoutLogProvider())
-
             val circFields = arrayOf("checkin_lib","checkin_staff","checkin_time","circ_lib","circ_staff","desk_renewal","due_date","duration","duration_rule","fine_interval","id","max_fine","max_fine_rule","opac_renewal","phone_renewal","recurring_fine","recurring_fine_rule","renewal_remaining","grace_period","stop_fines","stop_fines_time","target_copy","usr","xact_finish","xact_start","create_time","workstation","checkin_workstation","checkin_scan_time","parent_circ","billings","payments","billable_transaction","circ_type","billing_total","payment_total","unrecovered","copy_location","aaactsc_entries","aaasc_entries","auto_renewal","auto_renewal_remaining")
             val mbtsFields = arrayOf("balance_owed","id","last_billing_note","last_billing_ts","last_billing_type","last_payment_note","last_payment_ts","last_payment_type","total_owed","total_paid","usr","xact_finish","xact_start","xact_type")
             val mvrFields = arrayOf("title","author","doc_id","doc_type","pubdate","isbn","publisher","tcn","subject","types_of_resource","call_numbers","edition","online_loc","synopsis","physical_description","toc","copy_count","series","serials","foreign_copy_maps")

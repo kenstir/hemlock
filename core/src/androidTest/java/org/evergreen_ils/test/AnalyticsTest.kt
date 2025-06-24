@@ -28,14 +28,6 @@ import org.junit.Test
 
 class AnalyticsTest {
 
-    companion object {
-        @JvmStatic
-        @BeforeClass
-        fun setUpClass() {
-            Log.setProvider(StdoutLogProvider())
-        }
-    }
-
     @Test
     fun test_Regex() {
         val authCompleteResponse = """

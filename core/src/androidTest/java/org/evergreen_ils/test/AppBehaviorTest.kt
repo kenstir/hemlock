@@ -127,14 +127,6 @@ object TestUtils {
 
 class AppBehaviorTest {
 
-    companion object {
-        @BeforeClass
-        @JvmStatic
-        fun setUpClass() {
-            Log.setProvider(StdoutLogProvider())
-        }
-    }
-
     @Before
     fun setUp() {
         TestUtils.loadExampleOrgs()
