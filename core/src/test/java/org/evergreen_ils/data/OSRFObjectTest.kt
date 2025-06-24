@@ -16,27 +16,19 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
-package net.kenstir.apps.core
+package org.evergreen_ils.data
 
 import net.kenstir.hemlock.data.jsonMapOf
+import org.evergreen_ils.xdata.XOSRFObject
 import org.junit.Assert.*
-import org.junit.BeforeClass
 import org.junit.Test
-import org.opensrf.util.OSRFObject
 import java.util.concurrent.TimeUnit
 
-class OSRFObjectTest {
-
-    companion object {
-        @BeforeClass
-        @JvmStatic
-        fun setUpClass() {
-        }
-    }
+class XOSRFObjectTest {
 
     @Test
     fun test_basic() {
-        val obj = OSRFObject(
+        val obj = XOSRFObject(
             jsonMapOf(
                 "id" to 42,
                 "home_ou" to 69,
@@ -50,7 +42,7 @@ class OSRFObjectTest {
 
     @Test
     fun test_getBoolean() {
-        val obj = OSRFObject(
+        val obj = XOSRFObject(
             jsonMapOf(
             "juvenile" to "f", "active" to "t"
         )
@@ -61,7 +53,7 @@ class OSRFObjectTest {
 
     @Test
     fun test_getInt() {
-        val obj = OSRFObject(
+        val obj = XOSRFObject(
             jsonMapOf(
             "id" to 42,
             "count" to "42",
@@ -75,8 +67,8 @@ class OSRFObjectTest {
 
     @Test
     fun test_getObject() {
-        val cardObj = OSRFObject(jsonMapOf("barcode" to "1234"))
-        val fleshedUserObj = OSRFObject(jsonMapOf("card" to cardObj))
+        val cardObj = XOSRFObject(jsonMapOf("barcode" to "1234"))
+        val fleshedUserObj = XOSRFObject(jsonMapOf("card" to cardObj))
         val obj = fleshedUserObj.getObject("card")
         assertEquals("1234", obj?.getString("barcode"))
         assertNull(obj?.getObject("na"))
@@ -84,7 +76,7 @@ class OSRFObjectTest {
 
     @Test
     fun test_getDate() {
-        val obj = OSRFObject(
+        val obj = XOSRFObject(
             jsonMapOf(
             "reason" to "Good Friday",
             "close_start" to "2024-03-29T12:00:47-0400",
@@ -108,46 +100,46 @@ class OSRFObjectTest {
         }
     }
 
-    // Test to understand warning: Unchecked cast: Any! to List<OSRFObject>
+    // Test to understand warning: Unchecked cast: Any! to List<XOSRFObject>
     @Test
     fun test_misc_uncheckedCast1() {
-        val obj = OSRFObject(
+        val obj = XOSRFObject(
             jsonMapOf(
             "settings" to "0"
         )
         )
-        val settings = obj.get("settings") as? List<OSRFObject>
+        val settings = obj.get("settings") as? List<XOSRFObject>
         assertNull(settings)
         // As Expected; as? returns null
     }
 
-    // Test to understand warning: Unchecked cast: Any! to List<OSRFObject>
+    // Test to understand warning: Unchecked cast: Any! to List<XOSRFObject>
     @Test
     fun test_misc_uncheckedCast2() {
-        val obj = OSRFObject(
+        val obj = XOSRFObject(
             jsonMapOf(
             "settings" to arrayListOf(
-                OSRFObject(jsonMapOf("id" to 1)),
-                OSRFObject(jsonMapOf("id" to 2))
+                XOSRFObject(jsonMapOf("id" to 1)),
+                XOSRFObject(jsonMapOf("id" to 2))
             )
         )
         )
-        val settings = obj.get("settings") as? List<OSRFObject>
+        val settings = obj.get("settings") as? List<XOSRFObject>
         assertNotNull(settings)
         assertEquals(2, settings?.size)
-        assertTrue(settings?.first() is OSRFObject)
+        assertTrue(settings?.first() is XOSRFObject)
         // As Expected; as? returns non-null
     }
 
-    // Test to understand warning: Unchecked cast: Any! to List<OSRFObject>
+    // Test to understand warning: Unchecked cast: Any! to List<XOSRFObject>
     @Test
     fun test_misc_uncheckedCast3() {
-        val obj = OSRFObject(
+        val obj = XOSRFObject(
             jsonMapOf(
             "settings" to arrayListOf(1,2,3)
         )
         )
-        val settings = obj.get("settings") as? List<OSRFObject>
+        val settings = obj.get("settings") as? List<XOSRFObject>
         assertNotNull(settings)
 //        val first = settings?.first()
 //        assertEquals(1, settings?.first())
@@ -158,14 +150,14 @@ class OSRFObjectTest {
     // Try to avoid unchecked cast using filterIsInstance
     @Test
     fun test_misc_uncheckedCast4() {
-        val obj = OSRFObject(
+        val obj = XOSRFObject(
             jsonMapOf(
             "settings" to arrayListOf(1,2,3)
         )
         )
         val settings = obj.get("settings") as? List<*>
         assertNotNull(settings)
-        val l = settings?.filterIsInstance<OSRFObject>()
+        val l = settings?.filterIsInstance<XOSRFObject>()
         assertEquals(0, l?.size)
         // As Expected; as? returns List, filterIsInstance returns empty.
     }
