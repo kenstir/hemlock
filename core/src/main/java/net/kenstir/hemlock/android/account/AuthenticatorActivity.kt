@@ -125,6 +125,7 @@ open class AuthenticatorActivity: AccountAuthenticatorActivity() {
         }
     }
 
+    @Deprecated("Deprecated in Java")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         log(TAG,"onActivityResult> requestCode=$requestCode resultCode=$resultCode")
         // The sign up activity returned that the user has successfully created
