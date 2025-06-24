@@ -21,7 +21,7 @@ import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 
-import net.kenstir.hemlock.net.InitService
+import net.kenstir.hemlock.net.LoaderService
 import net.kenstir.hemlock.data.Result
 import net.kenstir.hemlock.android.Log
 import org.evergreen_ils.xdata.XGatewayClient
@@ -30,17 +30,19 @@ import org.evergreen_ils.xdata.parseOrgStringSetting
 import org.evergreen_ils.xdata.payloadFirstAsObject
 import org.evergreen_ils.xdata.payloadFirstAsObjectList
 import org.evergreen_ils.xdata.payloadFirstAsString
-import net.kenstir.hemlock.net.InitServiceOptions
+import net.kenstir.hemlock.net.LoaderServiceOptions
 import net.kenstir.hemlock.data.jsonMapOf
+import net.kenstir.hemlock.data.model.Account
 import org.evergreen_ils.system.EgCodedValueMap
 import org.evergreen_ils.system.EgCopyStatus
 import org.evergreen_ils.system.EgOrg
 import org.evergreen_ils.Api
 import org.evergreen_ils.idl.IDLParser
+import org.evergreen_ils.model.EvergreenOrganization
 
-class EvergreenInitService: InitService {
+class EvergreenLoaderService: LoaderService {
 
-    override suspend fun loadServiceData(serviceOptions: InitServiceOptions): Result<Unit> {
+    override suspend fun loadServiceData(serviceOptions: LoaderServiceOptions): Result<Unit> {
         return try {
             return Result.Success(loadServiceDataImpl(serviceOptions))
         } catch (e: Exception) {
@@ -48,7 +50,7 @@ class EvergreenInitService: InitService {
         }
     }
 
-    private suspend fun loadServiceDataImpl(serviceOptions: InitServiceOptions): Unit = coroutineScope {
+    private suspend fun loadServiceDataImpl(serviceOptions: LoaderServiceOptions): Unit = coroutineScope {
         // sync: cache keys must be established first, before IDL is loaded
         XGatewayClient.clientCacheKey = serviceOptions.clientCacheKey
         XGatewayClient.serverCacheKey = fetchServerCacheKey()
@@ -120,7 +122,85 @@ class EvergreenInitService: InitService {
         Log.d(TAG, "loading coded value maps ... done")
     }
 
+    override suspend fun loadOrgSettings(orgID: Int): Result<Unit> {
+        return try {
+            return Result.Success(loadOrgSettingsImpl(orgID))
+        } catch (e: Exception) {
+            Result.Error(e)
+        }
+    }
+
+    private suspend fun loadOrgSettingsImpl(orgID: Int) {
+        Log.d(TAG, "loading org settings for org $orgID ...")
+        val org = EgOrg.findOrg(orgID) as? EvergreenOrganization
+            ?: throw IllegalArgumentException("Org $orgID not found")
+        val settings = mutableListOf(
+            Api.SETTING_CREDIT_PAYMENTS_ALLOW,
+            Api.SETTING_INFO_URL,
+            Api.SETTING_ORG_UNIT_NOT_PICKUP_LIB,
+            Api.SETTING_HEMLOCK_ERESOURCES_URL,
+            Api.SETTING_HEMLOCK_EVENTS_URL,
+            Api.SETTING_HEMLOCK_MEETING_ROOMS_URL,
+            Api.SETTING_HEMLOCK_MUSEUM_PASSES_URL,
+        )
+        if (orgID == EgOrg.consortiumID)
+            settings.add(Api.SETTING_SMS_ENABLE)
+        val response = XGatewayClient.fetch(Api.ACTOR, Api.ORG_UNIT_SETTING_BATCH, paramListOf(orgID, settings, Api.ANONYMOUS), true)
+        val obj = response.payloadFirstAsObject()
+        org.loadSettings(obj)
+        Log.d(TAG, "loading org settings for org $orgID ... done")
+    }
+
+    override suspend fun loadOrgDetails(orgID: Int): Result<Unit> {
+        return try {
+            return Result.Success(loadOrgDetailsImpl(orgID))
+        } catch (e: Exception) {
+            Result.Error(e)
+        }
+    }
+
+    private suspend fun loadOrgDetailsImpl(account: Account, orgID: Int) = coroutineScope {
+        Log.d(TAG, "loading org details for org $orgID ...")
+        val org = EgOrg.findOrg(orgID) as? EvergreenOrganization
+            ?: throw IllegalArgumentException("Org $orgID not found")
+
+        val jobs = mutableListOf<Deferred<Any>>()
+        jobs.add(async { loadOrgHours(account, org) })
+        jobs.add(async { loadOrgClosures(account, org) })
+        jobs.add(async { loadOrgAddress(account, org) })
+
+        // await all deferred (see awaitAll doc for differences)
+        jobs.map { it.await() }
+        Log.d(TAG, "loading org details for org $orgID ... done")
+    }
+
+    private suspend fun loadOrgHours(account: Account, org: EvergreenOrganization) {
+        Log.d(TAG, "loading org hours for org ${org.id} ...")
+        val (authToken, _) = account.getCredentialsOrThrow()
+        val response = XGatewayClient.fetch(Api.ACTOR, Api.HOURS_OF_OPERATION_RETRIEVE, paramListOf(authToken, org.id), false)
+        org.loadHours(response.payloadFirstAsOptionalObject())
+        Log.d(TAG, "loading org hours for org ${org.id} ... done")
+    }
+
+    private suspend fun loadOrgClosures(account: Account, org: EvergreenOrganization) {
+        Log.d(TAG, "loading org closures for org ${org.id} ...")
+        val (authToken, _) = account.getCredentialsOrThrow()
+        // Neither the default start_date in ClosedDates::fetch_dates nor the start_date
+        // in [param] is working to limit the results; we get all closures since day 1.
+        val options = jsonMapOf("orgid" to org.id)
+        val response = XGatewayClient.fetch(Api.ACTOR, Api.HOURS_CLOSED_RETRIEVE, paramListOf(authToken, options), false)
+        org.loadClosures(response.payloadFirstAsObjectList())
+        Log.d(TAG, "loading org closures for org ${org.id} ... done")
+    }
+
+    private suspend fun loadOrgAddress(org: EvergreenOrganization) {
+        Log.d(TAG, "loading org address for org ${org.id} ...")
+        val response = XGatewayClient.fetch(Api.ACTOR, Api.ADDRESS_RETRIEVE, paramListOf(org.addressID), false)
+        org.loadAddress(response.payloadFirstAsObject()))
+        Log.d(TAG, "loading org address for org ${org.id} ... done")
+    }
+
     companion object {
-        private val TAG = EvergreenInitService::class.java.simpleName
+        private val TAG = EvergreenLoaderService::class.java.simpleName
     }
 }

@@ -43,7 +43,6 @@ import net.kenstir.hemlock.android.Log.TAG_FCM
 import net.kenstir.hemlock.data.model.Account
 import net.kenstir.hemlock.android.pn.PushNotification
 import net.kenstir.hemlock.data.Result
-import org.evergreen_ils.net.Gateway
 import org.evergreen_ils.system.EgOrg
 import net.kenstir.hemlock.android.account.await
 import net.kenstir.hemlock.android.account.getAccountManagerResult
@@ -260,11 +259,9 @@ class LaunchActivity : AppCompatActivity() {
 
         // load the home org settings, used to control visibility of Events and other buttons
         EgOrg.findOrg(App.getAccount().homeOrg)?.let { org ->
-            val orgSettingsResult = Gateway.actor.fetchOrgSettings(org.id)
-            if (orgSettingsResult is Result.Success) {
-                TODO("fixme")
-                //org.loadSettings(orgSettingsResult.data)
-                Log.v(TAG, "org ${org.id} settings loaded")
+            val result = App.getServiceConfig().loaderService.loadOrgSettings(org.id)
+            if (result is Result.Error) {
+                throw result.exception
             }
         }
 

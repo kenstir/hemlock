@@ -19,23 +19,35 @@ package net.kenstir.hemlock.net
 
 import net.kenstir.hemlock.data.Result
 
-data class InitServiceOptions(
+data class LoaderServiceOptions(
     val clientCacheKey: String,
     val useHierarchicalOrgTree: Boolean,
 )
 
 /**
- * Service methods required to initialize the client.
- *
- * loadServiceDat must be called before other Service methods, except for AuthService.
+ * Service for loading global data
  */
-interface InitService {
+interface LoaderService {
     /**
-     * Initializes the service by loading any required data.
+     * Load any and all prerequisite data required for the client to function.
+     * With the exception of AuthService methods, this must be called before
+     * any other Service methods.
      *
-     * Requires the clientCacheKey, and as a side effect, this method fetches the server cache key.
+     * Requires the clientCacheKey, and as a side effect, fetches the server cache key.
      *
      * See <a href="https://kenstir.github.io/hemlock-docs/docs/admin-guide/notes-on-caching">Notes on Caching</a>
      */
-    suspend fun loadServiceData(serviceOptions: InitServiceOptions): Result<Unit>
+    suspend fun loadServiceData(serviceOptions: LoaderServiceOptions): Result<Unit>
+
+    /**
+     * Load org settings, e.g. eventsUrl and isPickupLocation.
+     * In Evergreen, this requires a specific round-trip for each org.
+     */
+    suspend fun loadOrgSettings(orgID: Int): Result<Unit>
+
+    /**
+     * Load the details required for the OrgDetails screen, e.g. address, hours, and closures.
+     * In Evergreen, this requires multiple round-trips per org.
+     */
+    suspend fun loadOrgDetails(orgID: Int): Result<Unit>
 }

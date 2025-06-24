@@ -53,20 +53,6 @@ object GatewayLoader {
         }
     }
 
-    // this function reloads the org, so we can be sure the hours of operation are up-to-date
-    // TODO: consider passing activity:BaseActivity param and using activity.scope
-    // because these org ops are happening on thread DefaultDispatcher-worker-1 :/
-    suspend fun loadOrgAsync(org: Organization?) = GlobalScope.async {
-        val id = org?.id ?: return@async
-        val result = Gateway.actor.fetchOrg(id)
-        if (result is Result.Success) {
-            // TODO: fixme
-//            org.aouObj = result.data
-            Log.v(TAG, "org id:${org.id} level:${org.level} vis:${org.opacVisible} shortname:${org.shortname} name:${org.name}")
-            //Log.v(TAG, "org ${org.id} aou loaded")
-        }
-    }
-
     suspend fun loadBookBagsAsync(account: Account): Result<Unit> {
         // do not cache bookbags
         Log.d(TAG, "[bookbag] loadBookBagsAsync...")
