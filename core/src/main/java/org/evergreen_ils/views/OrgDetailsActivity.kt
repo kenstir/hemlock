@@ -29,21 +29,18 @@ import androidx.core.util.component1
 import androidx.core.util.component2
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
-import org.evergreen_ils.data.OSRFUtils
 import net.kenstir.hemlock.R
 import net.kenstir.hemlock.android.App
 import net.kenstir.hemlock.logging.Log
 import net.kenstir.hemlock.data.model.Organization
 import net.kenstir.hemlock.data.Result
 import org.evergreen_ils.system.EgOrg
-import org.evergreen_ils.utils.JsonUtils
 import org.evergreen_ils.utils.ui.BaseActivity
 import org.evergreen_ils.utils.ui.OrgArrayAdapter
 import net.kenstir.hemlock.android.ui.ProgressDialogSupport
 import net.kenstir.hemlock.android.ui.showAlert
+import net.kenstir.hemlock.data.model.OrgClosure
 import net.kenstir.hemlock.data.model.OrgHours
-import org.opensrf.util.OSRFObject
-import java.util.Date
 
 class OrgDetailsActivity : BaseActivity() {
     private val TAG = OrgDetailsActivity::class.java.simpleName
@@ -166,22 +163,6 @@ class OrgDetailsActivity : BaseActivity() {
         map?.isEnabled = org?.hasAddress ?: false
     }
 
-    private fun hoursOfOperation(obj: OSRFObject?, day: Int): String? {
-        val openTimeApi = obj?.getString("dow_${day}_open")
-        val closeTimeApi = obj?.getString("dow_${day}_close")
-        val openTime = OSRFUtils.parseHours(openTimeApi)
-        val closeTime = OSRFUtils.parseHours(closeTimeApi)
-        if (openTime == null || closeTime == null) {
-            return null
-        }
-        if (openTimeApi == closeTimeApi) {
-            return "closed"
-        }
-        val openTimeLocal = OSRFUtils.formatHoursForOutput(openTime)
-        val closeTimeLocal = OSRFUtils.formatHoursForOutput(closeTime)
-        return "$openTimeLocal - $closeTimeLocal"
-    }
-
     private fun loadHours(hours: OrgHours) {
         day0Hours?.text = hours.day0Hours
         day1Hours?.text = hours.day1Hours
@@ -192,73 +173,33 @@ class OrgDetailsActivity : BaseActivity() {
         day6Hours?.text = hours.day6Hours
     }
 
-    private fun loadClosures(closures: List<OSRFObject>) {
-        val now = Date()
-        val upcomingClosures = mutableListOf<OSRFObject>()
-        for (it in closures) {
-            val end = it.getDate("close_end")
-            if (end != null && end > now && upcomingClosures.size < resources.getInteger(R.integer.ou_upcoming_closures_limit)) {
-                upcomingClosures.add(it)
-            }
-        }
+    private fun loadClosures(closures: List<OrgClosure>) {
         val rowCount = closuresTable.childCount
         if (rowCount > 2) {
             closuresTable.removeViews(2, rowCount - 2)
         }
-        if (upcomingClosures.isEmpty()) {
+        if (closures.isEmpty()) {
             findViewById<TableRow>(R.id.org_details_closures_header_row).visibility = View.GONE
             findViewById<TableRow>(R.id.org_details_closures_none_row).visibility = View.VISIBLE
         } else {
             findViewById<TableRow>(R.id.org_details_closures_header_row).visibility = View.VISIBLE
             findViewById<TableRow>(R.id.org_details_closures_none_row).visibility = View.GONE
-            addClosureRows(upcomingClosures)
+            addClosureRows(closures)
         }
     }
 
-    /** return Triple<dateString, reasonString, isDateRange> */
-    private fun getClosureInfo(obj: OSRFObject): Triple<String?, String?, Boolean> {
-        val nullReturn = Triple(null, null, false)
-        val start = obj.getDate("close_start") ?: return nullReturn
-        val end = obj.getDate("close_end") ?: return nullReturn
-        val reason = obj.getString("reason") ?: return nullReturn
-
-        val startDateString = OSRFUtils.formatDateForOutput(start)
-        val isFullDay = obj.getBoolean("full_day")
-        val isMultiDay = obj.getBoolean("multi_day")
-        var isDateRange = false
-        val dateString = when {
-            isMultiDay -> {
-                isDateRange = true
-                val endDateString = OSRFUtils.formatDateForOutput(end)
-                "$startDateString - $endDateString"
-            }
-            isFullDay -> {
-                startDateString
-            }
-            else -> {
-                isDateRange = true
-                val startDateTimeString = OSRFUtils.formatDateTimeForOutput(start)
-                val endDateTimeString = OSRFUtils.formatDateTimeForOutput(end)
-                "$startDateTimeString - $endDateTimeString"
-            }
-        }
-        return Triple(dateString, reason, isDateRange)
-    }
-
-    private fun addClosureRows(closures: List<OSRFObject>) {
+    private fun addClosureRows(closures: List<OrgClosure>) {
         // First, walk through the closures to see if any have date ranges.
         // If they do, we need to alter the layout params to make the columns look right.
         val anyClosuresWithDateRange = closures.any {
-            val (_, _, isDateRange) = getClosureInfo(it)
-            isDateRange
+            it.toInfo().isDateRange
         }
         val dateColumnWidth = if (anyClosuresWithDateRange) 53F else 28F
         val reasonColumnWidth = if (anyClosuresWithDateRange) 47F else 72F
 
         // Now, add closure rows and maybe tweak the layout
         for (closure in closures) {
-            Log.d(TAG, JsonUtils.toJSONString(closure))
-            val (dateString, reason, _) = getClosureInfo(closure)
+            val info = closure.toInfo()
 
             // create a row, inflate its contents, and add it to the table
             val row = TableRow(baseContext)
@@ -267,9 +208,9 @@ class OrgDetailsActivity : BaseActivity() {
 
             // fill out the details
             val dateTextView = row.findViewById<TextView>(R.id.org_details_closure_item_date)
-            dateTextView.text = dateString
+            dateTextView.text = info.dateString
             val reasonTextView = row.findViewById<TextView>(R.id.org_details_closure_item_reason)
-            reasonTextView.text = reason
+            reasonTextView.text = info.reason
 
             // tweak layout to give more space to the date column
             if (anyClosuresWithDateRange) {
@@ -296,6 +237,7 @@ class OrgDetailsActivity : BaseActivity() {
         phone?.text = org?.phone
         address?.text = org?.getAddress("\n")
         org?.hours?.let { loadHours(it) }
+        loadClosures(org?.closures ?: emptyList())
         enableButtonsWhenReady()
     }
 
