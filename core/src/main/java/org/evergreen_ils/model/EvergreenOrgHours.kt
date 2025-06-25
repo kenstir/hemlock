@@ -21,7 +21,15 @@ import net.kenstir.hemlock.data.model.OrgHours
 import org.evergreen_ils.data.OSRFUtils
 import org.evergreen_ils.xdata.XOSRFObject
 
-class EvergreenOrgHours: OrgHours() {
+class EvergreenOrgHours(
+    day0Hours: String?,
+    day1Hours: String?,
+    day2Hours: String?,
+    day3Hours: String?,
+    day4Hours: String?,
+    day5Hours: String?,
+    day6Hours: String?,
+): OrgHours(day0Hours, day1Hours, day2Hours, day3Hours, day4Hours, day5Hours, day6Hours) {
     companion object {
         // TODO: [Add Hours of Operation Note field](https://evergreen-ils.org/documentation/release/RELEASE_NOTES_3_10.html#_hours_of_operation_note_field)
         // Look for fields e.g. "dow_0_note"
@@ -33,7 +41,15 @@ class EvergreenOrgHours: OrgHours() {
             val day4Hours = hoursOfOperation(obj, 4)
             val day5Hours = hoursOfOperation(obj, 5)
             val day6Hours = hoursOfOperation(obj, 6)
-            return EvergreenOrgHours()
+            return EvergreenOrgHours(
+                day0Hours,
+                day1Hours,
+                day2Hours,
+                day3Hours,
+                day4Hours,
+                day5Hours,
+                day6Hours
+            )
         }
 
         private fun hoursOfOperation(obj: XOSRFObject?, day: Int): String? {
