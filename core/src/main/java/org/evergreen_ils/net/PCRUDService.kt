@@ -22,7 +22,6 @@ import org.opensrf.util.OSRFObject
 import net.kenstir.hemlock.data.Result
 
 interface PCRUDService {
-    suspend fun fetchCodedValueMaps(): Result<List<OSRFObject>>
     suspend fun fetchMARC(id: Int): Result<OSRFObject>
     suspend fun fetchMRA(id: Int): Result<OSRFObject>
     suspend fun fetchSMSCarriers(): Result<List<OSRFObject>>
