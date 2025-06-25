@@ -184,7 +184,7 @@ class OrgDetailsActivity : BaseActivity() {
         } else {
             findViewById<TableRow>(R.id.org_details_closures_header_row).visibility = View.VISIBLE
             findViewById<TableRow>(R.id.org_details_closures_none_row).visibility = View.GONE
-            addClosureRows(closures)
+            addClosureRows(closures.take(resources.getInteger(R.integer.ou_upcoming_closures_limit)))
         }
     }
 
