@@ -41,6 +41,7 @@ import org.evergreen_ils.utils.ui.BaseActivity
 import org.evergreen_ils.utils.ui.OrgArrayAdapter
 import net.kenstir.hemlock.android.ui.ProgressDialogSupport
 import net.kenstir.hemlock.android.ui.showAlert
+import net.kenstir.hemlock.data.model.OrgHours
 import org.opensrf.util.OSRFObject
 import java.util.Date
 
@@ -181,30 +182,14 @@ class OrgDetailsActivity : BaseActivity() {
         return "$openTimeLocal - $closeTimeLocal"
     }
 
-    // TODO: [Add Hours of Operation Note field](https://evergreen-ils.org/documentation/release/RELEASE_NOTES_3_10.html#_hours_of_operation_note_field)
-    // Look for fields e.g. "dow_0_note"
-    private fun loadHours(obj: OSRFObject?) {
-        day0Hours?.text = hoursOfOperation(obj, 0)
-        day1Hours?.text = hoursOfOperation(obj, 1)
-        day2Hours?.text = hoursOfOperation(obj, 2)
-        day3Hours?.text = hoursOfOperation(obj, 3)
-        day4Hours?.text = hoursOfOperation(obj, 4)
-        day5Hours?.text = hoursOfOperation(obj, 5)
-        day6Hours?.text = hoursOfOperation(obj, 6)
-    }
-
-    private fun onHoursResult(result: Result<OSRFObject?>) {
-        when (result) {
-            is Result.Success -> loadHours(result.data)
-            is Result.Error -> showAlert(result.exception)
-        }
-    }
-
-    private fun onOrgClosuresResult(result: Result<List<OSRFObject>>) {
-        when (result) {
-            is Result.Success -> loadClosures(result.data)
-            is Result.Error -> showAlert(result.exception)
-        }
+    private fun loadHours(hours: OrgHours) {
+        day0Hours?.text = hours.day0Hours
+        day1Hours?.text = hours.day1Hours
+        day2Hours?.text = hours.day2Hours
+        day3Hours?.text = hours.day3Hours
+        day4Hours?.text = hours.day4Hours
+        day5Hours?.text = hours.day5Hours
+        day6Hours?.text = hours.day6Hours
     }
 
     private fun loadClosures(closures: List<OSRFObject>) {
@@ -306,23 +291,11 @@ class OrgDetailsActivity : BaseActivity() {
         }
     }
 
-    private fun loadAddress(obj: OSRFObject?) {
-        TODO("fixme")
-        //org?.addressObj = obj
-        address?.text = org?.getAddress("\n")
-        enableButtonsWhenReady()
-    }
-
-    private fun onAddressResult(result: Result<OSRFObject?>) {
-        when (result) {
-            is Result.Success -> loadAddress(result.data)
-            is Result.Error -> showAlert(result.exception)
-        }
-    }
-
     private fun onOrgLoaded() {
         email?.text = org?.email
         phone?.text = org?.phone
+        address?.text = org?.getAddress("\n")
+        org?.hours?.let { loadHours(it) }
         enableButtonsWhenReady()
     }
 
