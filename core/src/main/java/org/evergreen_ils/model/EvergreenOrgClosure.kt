@@ -56,4 +56,20 @@ class EvergreenOrgClosure(
             isDateRange = isDateRange
         )
     }
+
+    companion object {
+        fun makeArray(objList: List<XOSRFObject>): List<OrgClosure> {
+            val now = Date()
+            val ret = mutableListOf<OrgClosure>()
+            for (obj in objList) {
+                val start = obj.getDate("close_start")
+                val end = obj.getDate("close_end")
+                val reason = obj.getString("reason")
+                if (start != null && end != null && reason != null && end > now) {
+                    ret.add(EvergreenOrgClosure(start, end, reason, obj))
+                }
+            }
+            return ret
+        }
+    }
 }

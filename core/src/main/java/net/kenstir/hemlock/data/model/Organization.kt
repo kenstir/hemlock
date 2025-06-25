@@ -41,6 +41,9 @@ open class Organization(
 
     var settingsLoaded = false
 
+    open var hours: OrgHours? = null
+    open var closures: List<OrgClosure> = emptyList()
+
     // display fields
     var indentedDisplayPrefix = ""
     val spinnerLabel: String

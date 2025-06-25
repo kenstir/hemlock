@@ -37,8 +37,6 @@ class EvergreenOrganization(
     private val orgType: OrgType? = EgOrg.findOrgType(obj.getInt("ou_type") ?: -1)
     val addressID: Int? = obj.getInt("mailing_address")
     private var addressObj: XOSRFObject? = null
-    private var hoursObj: XOSRFObject? = null
-    private var closures: List<XOSRFObject>? = null
 
     override val isConsortium: Boolean
         get() = id == CONSORTIUM_ID
@@ -90,11 +88,11 @@ class EvergreenOrganization(
     }
 
     fun loadHours(obj: XOSRFObject?) {
-        hoursObj = obj
+        this.hours = EvergreenOrgHours.make(obj)
     }
 
-    fun loadClosures(obj: List<XOSRFObject>) {
-        closures = obj
+    fun loadClosures(objList: List<XOSRFObject>) {
+        closures = EvergreenOrgClosure.makeArray(objList)
     }
 
     companion object {
