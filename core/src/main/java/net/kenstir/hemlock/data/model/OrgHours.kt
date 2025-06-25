@@ -17,12 +17,12 @@
 
 package net.kenstir.hemlock.data.model
 
-open class OrgHours {
-    val day0Hours: String? = null
-    val day1Hours: String? = null
-    val day2Hours: String? = null
-    val day3Hours: String? = null
-    val day4Hours: String? = null
-    val day5Hours: String? = null
-    val day6Hours: String? = null
-}
+open class OrgHours(
+    val day0Hours: String? = null,
+    val day1Hours: String? = null,
+    val day2Hours: String? = null,
+    val day3Hours: String? = null,
+    val day4Hours: String? = null,
+    val day5Hours: String? = null,
+    val day6Hours: String? = null,
+)
