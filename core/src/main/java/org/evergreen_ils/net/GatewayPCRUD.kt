@@ -24,16 +24,6 @@ import net.kenstir.hemlock.data.Result
 import org.opensrf.util.OSRFObject
 
 object GatewayPCRUD: PCRUDService {
-    override suspend fun fetchCodedValueMaps(): Result<List<OSRFObject>> {
-        return try {
-            val formats = arrayListOf(EgCodedValueMap.ICON_FORMAT, EgCodedValueMap.SEARCH_FORMAT)
-            val searchParams = mapOf<String, Any?>("ctype" to formats)
-            val ret = Gateway.fetchObjectArray(Api.PCRUD, Api.SEARCH_CCVM, arrayOf<Any?>(Api.ANONYMOUS, searchParams), true)
-            Result.Success(ret)
-        } catch (e: Exception) {
-            Result.Error(e)
-        }
-    }
 
     override suspend fun fetchMARC(id: Int): Result<OSRFObject> {
         return try {
