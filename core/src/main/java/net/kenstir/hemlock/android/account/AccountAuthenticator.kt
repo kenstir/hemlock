@@ -25,9 +25,12 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.text.TextUtils
+import kotlinx.coroutines.runBlocking
 import net.kenstir.hemlock.R
 import net.kenstir.hemlock.android.Analytics.log
 import net.kenstir.hemlock.android.Analytics.redactedString
+import net.kenstir.hemlock.android.App
+import org.evergreen_ils.xdata.XGatewayClient
 
 class AccountAuthenticator(private val context: Context): AbstractAccountAuthenticator(context) {
     private var authenticatorActivity: Class<*>? = null
@@ -100,8 +103,12 @@ class AccountAuthenticator(private val context: Context): AbstractAccountAuthent
             if (password != null) {
                 try {
                     log(TAG, "getAuthToken> attempting to sign in with existing password")
-                    TODO("replace with coroutines version")
-                    authToken = EvergreenAuthenticator.signIn(library_url, account.name, password)
+                    if (library_url != XGatewayClient.baseUrl) {
+                        throw AuthenticationException("Internal error: $library_url != ${XGatewayClient.baseUrl}")
+                    }
+                    authToken = runBlocking {
+                        App.getServiceConfig().authService.getAuthToken(account.name, password).get()
+                    }
                 } catch (e: AuthenticationException) {
                     //Analytics.logException(e);
                     am.clearPassword(account)
