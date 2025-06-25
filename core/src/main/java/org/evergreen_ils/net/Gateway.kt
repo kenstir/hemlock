@@ -40,13 +40,11 @@ object Gateway {
     lateinit var clientCacheKey: String
 
     var actor: ActorService = GatewayActor
-    var auth: AuthService = GatewayAuth
     var circ: CircService = GatewayCirc
     var fielder: FielderService = GatewayFielder
     var pcrud: PCRUDService = GatewayPCRUD
     var search: SearchService = GatewaySearch
 
-    val conn: HttpConnection by lazy { HttpConnection(baseUrl.plus("/osrf-gateway-v1")) }
     private var _serverCacheKey: String? = null
     private val startTime = System.currentTimeMillis()
     var serverCacheKey: String
