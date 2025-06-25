@@ -36,12 +36,18 @@ class EvergreenOrganization(
 ): Organization(id, level, name, shortname, opacVisible, parent) {
     private val orgType: OrgType? = EgOrg.findOrgType(obj.getInt("ou_type") ?: -1)
     val addressID: Int? = obj.getInt("mailing_address")
+
+    init {
+        email = obj.getString("email")
+        phone = obj.getString("phone")
+    }
+
     private var addressObj: XOSRFObject? = null
 
     override val isConsortium: Boolean
         get() = id == CONSORTIUM_ID
 
-    var isNotPickupLocationSetting: Boolean? = null
+    private var isNotPickupLocationSetting: Boolean? = null
     override val isPickupLocation: Boolean
         get() {
             isNotPickupLocationSetting?.let { return !it }
