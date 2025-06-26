@@ -14,14 +14,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, see <https://www.gnu.org/licenses/>.
  */
-package net.kenstir.hemlock.data.model
 
-class Record(val id: Int, val title: String? = null, val author: String? = null) {
-    constructor(id: Int): this(id, null, null)
+package org.evergreen_ils.net
 
-    override fun toString(): String {
-        return "Record(id=$id, title='$title', author=$author)"
-    }
-
-    var isDeleted = false
+class EvergreenBiblioService {
 }
