@@ -18,8 +18,12 @@
 package org.evergreen_ils
 
 import androidx.test.platform.app.InstrumentationRegistry
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
 import net.kenstir.hemlock.data.Result
+import net.kenstir.hemlock.logging.Log
 import net.kenstir.hemlock.net.LoaderServiceOptions
 import net.kenstir.hemlock.net.ServiceConfig
 import org.evergreen_ils.model.EvergreenAccount
@@ -28,6 +32,8 @@ import org.evergreen_ils.net.EvergreenLoaderService
 import org.evergreen_ils.net.EvergreenOrgService
 import org.evergreen_ils.net.EvergreenUserService
 import org.evergreen_ils.xdata.XGatewayClient
+import org.junit.AfterClass
+import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
 import org.junit.BeforeClass
 import org.junit.Test
@@ -48,6 +54,7 @@ class LiveAuthServiceTest {
 
         var account = EvergreenAccount(testUsername)
         var isServiceDataLoaded = false
+        var isSessionLoaded = false
 
         @JvmStatic
         @BeforeClass
@@ -56,13 +63,36 @@ class LiveAuthServiceTest {
             XGatewayClient.clientCacheKey = "42"
         }
 
+        @JvmStatic
+        @AfterClass
+        fun tearDownClass() {
+            println("Tearing down LiveAuthServiceTest: isSessionLoaded=$isSessionLoaded")
+            if (!isSessionLoaded) return
+            runBlocking {
+                launch(Dispatchers.Main) {
+                    val result = serviceConfig.userService.deleteSession(account)
+                    when (result) {
+                        is Result.Error -> Log.d("LiveAuthServiceTest", "Error deleting session", result.exception)
+                        is Result.Success -> Log.d("LiveAuthServiceTest", "Session deleted successfully")
+                    }
+                }
+            }
+        }
+
         fun getRequiredArg(name: String): String {
             return InstrumentationRegistry.getArguments().getString(name) ?: throw RuntimeException("Missing required arg: $name")
         }
     }
 
-    suspend fun getTestAuthToken(): Result<String> {
-        return serviceConfig.authService.getAuthToken(testUsername, testPassword)
+    suspend fun loadTestAuthToken(): Result<Unit> {
+        if (account.authToken != null) return Result.Success(Unit)
+        val result = serviceConfig.authService.getAuthToken(testUsername, testPassword)
+        when (result) {
+            is Result.Error -> return result
+            is Result.Success -> {}
+        }
+        account.authToken = result.get()
+        return Result.Success(Unit)
     }
 
     suspend fun loadTestServiceData(): Result<Unit> {
@@ -72,20 +102,41 @@ class LiveAuthServiceTest {
         return result
     }
 
-    @Test
-    fun test_getAuthToken() = runTest {
-        val result = getTestAuthToken()
-        println("Result: $result")
-        assertTrue(result.succeeded)
-
-        val authToken = result.get()
-        assertTrue(authToken.isNotEmpty())
+    suspend fun loadTestUserSession(): Result<Unit> {
+        if (isSessionLoaded) return Result.Success(Unit)
+        val authResult = loadTestAuthToken()
+        if (!authResult.succeeded) return authResult
+        val result = serviceConfig.userService.loadUserSession(account)
+        isSessionLoaded = true
+        return result
     }
 
     @Test
-    fun loadServiceData() = runTest {
+    fun test_getAuthToken() = runTest {
+        val result = loadTestAuthToken()
+        println("Result: $result")
+        assertTrue(result.succeeded)
+
+        assertNotNull(account.authToken)
+    }
+
+    @Test
+    fun test_loadServiceData() = runTest {
         val result = loadTestServiceData()
         println("Result: $result")
         assertTrue(result.succeeded)
+    }
+
+    @Test
+    fun test_loadUserSession() = runTest {
+        loadTestAuthToken()
+        loadTestServiceData()
+
+        val result = loadTestUserSession()
+        println("Result: $result")
+        assertTrue(result.succeeded)
+
+        assertNotNull(account.id)
+        assertNotNull(account.authToken)
     }
 }
