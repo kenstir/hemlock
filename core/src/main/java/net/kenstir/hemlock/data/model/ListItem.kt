@@ -18,6 +18,6 @@ package net.kenstir.hemlock.data.model
 
 data class ListItem(
     val id: Int,
-    val record: BibRecord,
+    val record: Int //BibRecord,
 ) {
 }

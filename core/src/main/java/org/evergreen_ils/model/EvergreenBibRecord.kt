@@ -17,25 +17,6 @@
 
 package org.evergreen_ils.model
 
-import net.kenstir.hemlock.data.model.BibRecord
 import org.evergreen_ils.xdata.XOSRFObject
 
-class EvergreenBibRecord(
-    id: Int,
-    title: String? = null,
-    author: String? = null
-): BibRecord(id, title, author) {
-    var modsObj: XOSRFObject? = null
-    constructor(id: Int): this(id, null, null)
-    constructor(modsObj: XOSRFObject): this(
-        id = modsObj.getInt("doc_id") ?: -1,
-        title = modsObj.getString("title"),
-        author = modsObj.getString("author")
-    ) {
-        this.modsObj = modsObj
-    }
-
-    override var description: String?
-        get() = modsObj?.getString("physical_description")
-        set(value) {}
-}
+class EvergreenBibRecord()
