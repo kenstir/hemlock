@@ -68,7 +68,7 @@ class MBRecordTest {
         assertEquals("Prado, Ric", record.author)
         assertEquals("2022", record.pubdate)
         assertEquals("\"A memoir\"", record.synopsis)
-        assertEquals("print xiv, 384 pages", record.physicalDescription)
+        assertEquals("print xiv, 384 pages", record.description)
         assertEquals("9781250271846", record.isbn)
 
         assertEquals("", record.series)
