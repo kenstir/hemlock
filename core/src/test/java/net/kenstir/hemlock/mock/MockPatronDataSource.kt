@@ -19,7 +19,6 @@ package net.kenstir.hemlock.mock
 
 import net.kenstir.hemlock.data.model.PatronList
 import net.kenstir.hemlock.data.model.ListItem
-import net.kenstir.hemlock.data.model.BibRecord
 
 object MockPatronDataSource {
     fun getLists(): List<PatronList> {

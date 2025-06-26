@@ -112,7 +112,7 @@ class GenericAuthenticatorActivity: AuthenticatorActivity() {
 
     private fun chooseNearestLibrary() {
         var location: Location? = null
-        val lm = getSystemService(LOCATION_SERVICE) as LocationManager
+        val lm = getSystemService(LOCATION_SERVICE) as? LocationManager
         if (lm != null) {
             try {
                 location = lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)

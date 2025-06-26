@@ -30,7 +30,7 @@ import org.evergreen_ils.utils.titleSortKey
 import org.opensrf.util.OSRFObject
 import java.io.Serializable
 
-class MBRecord(val id: Int, var modsObj: OSRFObject? = null) : Serializable {
+class MBRecord(val id: Int, var modsObj: OSRFObject? = null): Serializable {
     constructor(modsObj: OSRFObject) : this(modsObj.getInt("doc_id") ?: -1, modsObj)
 
     var copyCounts: ArrayList<CopyCount>? = null
