@@ -23,8 +23,10 @@ import org.evergreen_ils.xdata.paramListOf
 import org.evergreen_ils.xdata.payloadFirstAsObject
 import net.kenstir.hemlock.net.UserService
 import net.kenstir.hemlock.data.model.Account
+import net.kenstir.hemlock.logging.Log
 import org.evergreen_ils.Api
 import org.evergreen_ils.model.EvergreenAccount
+import org.evergreen_ils.xdata.payloadFirstAsString
 
 class EvergreenUserService: UserService {
 
@@ -53,6 +55,21 @@ class EvergreenUserService: UserService {
     }
 
     override suspend fun deleteSession(account: Account): Result<Unit> {
-        TODO("Not yet implemented")
+        return try {
+            account as? EvergreenAccount
+                ?: throw IllegalArgumentException("Expected EvergreenAccount, got ${account::class.java.simpleName}")
+
+            val params = paramListOf(account.authToken)
+            val response = XGatewayClient.fetch(Api.AUTH, Api.AUTH_SESSION_DELETE, params, false)
+            // the response is the authToken; we read it but we don't need it
+            response.payloadFirstAsString()
+            Result.Success(Unit)
+        } catch (e: Exception) {
+            Result.Error(e)
+        }
+    }
+
+    companion object {
+        const val tag = "EvergreenUserService"
     }
 }

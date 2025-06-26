@@ -429,6 +429,7 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
     fun logout() {
         Log.d(TAG, "[auth] logout")
         val account = App.getAccount()
+        // TODO: call UserService.deleteSession(account)
         AccountUtils.invalidateAuthToken(this, account.authToken)
         AccountUtils.clearPassword(this, account.username)
         account.clearAuthToken()
