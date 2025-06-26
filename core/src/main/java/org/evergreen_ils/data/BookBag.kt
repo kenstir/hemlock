@@ -46,19 +46,20 @@ class BookBag(
     }
 
     fun fleshFromObject(cbrebObj: XOSRFObject) {
-        TODO()
-//        val fleshedItems = cbrebObj.get("items") as? ArrayList<XOSRFObject> ?: ArrayList()
-//        val distinctItems = fleshedItems.distinctBy { it.getInt("target_biblio_record_entry") }
-//        for (item in distinctItems) {
-//            if (!filterToVisibleRecords) {
-//                items.add(BookBagItem(item))
-//            } else {
-//                val targetId = item.getInt("target_biblio_record_entry")
-//                if (visibleRecordIds.find { it == targetId } != null) {
-//                    items.add(BookBagItem(item))
-//                }
-//            }
-//        }
+        val newItems = ArrayList<ListItem>()
+        val fleshedItems = cbrebObj.get("items") as? ArrayList<XOSRFObject> ?: ArrayList()
+        val distinctItems = fleshedItems.distinctBy { it.getInt("target_biblio_record_entry") }
+        for (item in distinctItems) {
+            if (!filterToVisibleRecords) {
+                newItems.add(BookBagItem(item))
+            } else {
+                val targetId = item.getInt("target_biblio_record_entry")
+                if (visibleRecordIds.find { it == targetId } != null) {
+                    newItems.add(BookBagItem(item))
+                }
+            }
+        }
+        this.items = newItems
     }
 
     companion object {
