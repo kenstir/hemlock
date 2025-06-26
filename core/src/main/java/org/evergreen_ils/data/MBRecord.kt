@@ -20,6 +20,7 @@ package org.evergreen_ils.data
 
 import android.content.res.Resources
 import net.kenstir.hemlock.R
+import net.kenstir.hemlock.data.model.BibRecord
 import org.evergreen_ils.system.EgCodedValueMap
 import org.evergreen_ils.system.EgOrg.getOrgNameSafe
 import org.evergreen_ils.utils.MARCRecord
@@ -28,28 +29,27 @@ import org.evergreen_ils.utils.RecordAttributes
 import org.evergreen_ils.utils.TextUtils
 import org.evergreen_ils.utils.titleSortKey
 import org.opensrf.util.OSRFObject
-import java.io.Serializable
 
-class MBRecord(val id: Int, var modsObj: OSRFObject? = null): Serializable {
-    constructor(modsObj: OSRFObject) : this(modsObj.getInt("doc_id") ?: -1, modsObj)
+class MBRecord(override val id: Int, var mvrObj: OSRFObject? = null): BibRecord {
+    constructor(mvrObj: OSRFObject) : this(mvrObj.getInt("doc_id") ?: -1, mvrObj)
 
     var copyCounts: ArrayList<CopyCount>? = null
-    var marcRecord: MARCRecord? = null
+    override var marcRecord: MARCRecord? = null
     var attrs: HashMap<String, String>? = null
-    var isDeleted = false
+    override var isDeleted = false
 
-    val author: String
-        get() = modsObj?.getString("author") ?: ""
-    val isbn: String
-        get() = modsObj?.getString("isbn") ?: ""
+    override val author: String
+        get() = mvrObj?.getString("author") ?: ""
+    override val isbn: String
+        get() = mvrObj?.getString("isbn") ?: ""
     val pubdate: String
-        get() = modsObj?.getString("pubdate") ?: ""
-    val description: String
-        get() = modsObj?.getString("physical_description") ?: ""
-    val synopsis: String
-        get() = modsObj?.getString("synopsis") ?: ""
-    val title: String
-        get() = modsObj?.getString("title") ?: ""
+        get() = mvrObj?.getString("pubdate") ?: ""
+    override val description: String
+        get() = mvrObj?.getString("physical_description") ?: ""
+    override val synopsis: String
+        get() = mvrObj?.getString("synopsis") ?: ""
+    override val title: String
+        get() = mvrObj?.getString("title") ?: ""
     val titleSort: String
         get() {
             if (hasMarc()) {
@@ -80,12 +80,12 @@ class MBRecord(val id: Int, var modsObj: OSRFObject? = null): Serializable {
         get() {
             val s = TextUtils.join(" ", arrayOf<String>(
                 pubdate,
-                modsObj?.getString("publisher") ?: ""))
+                mvrObj?.getString("publisher") ?: ""))
             return s.trim()
         }
     val series: String
         get() {
-            val seriesList = modsObj?.get("series") as? List<String?>
+            val seriesList = mvrObj?.get("series") as? List<String?>
             return when (seriesList) {
                 null -> ""
                 else -> TextUtils.join("\n", seriesList)
@@ -93,7 +93,7 @@ class MBRecord(val id: Int, var modsObj: OSRFObject? = null): Serializable {
         }
     val subject: String
         get() {
-            val obj = modsObj?.getObject("subject") ?: return ""
+            val obj = mvrObj?.getObject("subject") ?: return ""
             return obj.keys.joinToString("\n")
         }
 
@@ -102,9 +102,9 @@ class MBRecord(val id: Int, var modsObj: OSRFObject? = null): Serializable {
     val iconFormatLabel: String
         get() = EgCodedValueMap.iconFormatLabel(iconFormat) ?: ""
 
-    fun hasAttributes() = (attrs != null)
-    fun hasMarc() = (marcRecord != null)
-    fun hasMetadata() = (modsObj != null)
+    override fun hasAttributes() = (attrs != null)
+    override fun hasMarc() = (marcRecord != null)
+    override fun hasMetadata() = (mvrObj != null)
 
     fun updateFromBREResponse(breObj: OSRFObject) {
         isDeleted = breObj.getBoolean("deleted")
@@ -123,7 +123,7 @@ class MBRecord(val id: Int, var modsObj: OSRFObject? = null): Serializable {
         attrs = RecordAttributes.parseAttributes(mraObj)
     }
 
-    fun getAttr(attrName: String?): String? {
+    override fun getAttr(attrName: String?): String? {
         return attrs?.get(attrName)
     }
 
@@ -154,7 +154,7 @@ class MBRecord(val id: Int, var modsObj: OSRFObject? = null): Serializable {
     }
 
     fun getFirstOnlineLocation(): String? {
-        val l = modsObj?.get("online_loc") as? List<*> ?: return null
+        val l = mvrObj?.get("online_loc") as? List<*> ?: return null
         return when(l.size) {
             0 -> null
             else -> l[0].toString()

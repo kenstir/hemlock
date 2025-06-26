@@ -14,10 +14,25 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, see <https://www.gnu.org/licenses/>.
  */
+
 package net.kenstir.hemlock.data.model
 
-data class ListItem(
-    val id: Int,
-    val record: BibRecord,
-) {
+import org.evergreen_ils.utils.MARCRecord
+import java.io.Serializable
+
+interface BibRecord: Serializable {
+    val id: Int
+    val title: String
+    val author: String
+    val description: String
+    val synopsis: String
+    val isbn: String
+
+    var marcRecord: MARCRecord?
+    var isDeleted: Boolean
+
+    fun hasAttributes(): Boolean
+    fun hasMarc(): Boolean
+    fun hasMetadata(): Boolean
+    fun getAttr(attrName: String?): String?
 }
