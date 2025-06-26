@@ -16,8 +16,14 @@
  */
 package net.kenstir.hemlock.data.model
 
-data class ListItem(
-    val id: Int,
-    val record: BibRecord,
-) {
+// TODO: make this an interface, not a class
+open class BibRecord(val id: Int, val title: String? = null, val author: String? = null) {
+    constructor(id: Int): this(id, null, null)
+
+    override fun toString(): String {
+        return "BibRecord(id=$id, title='$title', author=$author)"
+    }
+
+    open var description: String? = null
+    var isDeleted = false
 }

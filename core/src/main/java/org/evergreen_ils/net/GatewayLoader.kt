@@ -74,12 +74,12 @@ object GatewayLoader {
     }
 
     suspend fun loadRecordMetadataAsync(record: MBRecord): Result<Unit> {
-        if (record.mvrObj != null) return Result.Success(Unit)
+        if (record.modsObj != null) return Result.Success(Unit)
 
         val result = Gateway.search.fetchRecordMODS(record.id)
         if (result is Result.Error) return result
         val modsObj = result.get()
-        record.mvrObj = modsObj
+        record.modsObj = modsObj
 
         return Result.Success(Unit)
     }
