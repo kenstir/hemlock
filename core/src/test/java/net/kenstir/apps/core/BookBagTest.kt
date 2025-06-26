@@ -68,12 +68,14 @@ class BookBagTest {
         // a fleshed cbreb object has a non-empty items
         val map = cbrebObj.cloneMap()
         map["items"] = arrayListOf(
-            jsonMapOf(
-                "bucket" to 961216,
-                "create_time" to "2020-01-11T10:31:44-0500",
-                "pos" to null,
-                "id" to 51454078,
-                "target_biblio_record_entry" to 2914107
+            XOSRFObject(
+                jsonMapOf(
+                    "bucket" to 961216,
+                    "create_time" to "2020-01-11T10:31:44-0500",
+                    "pos" to null,
+                    "id" to 51454078,
+                    "target_biblio_record_entry" to 2914107
+                )
             )
         )
         val fleshedCbrebObj = XOSRFObject(map)
@@ -109,12 +111,14 @@ class BookBagTest {
         // a fleshed cbreb object has a non-empty items
         val map = cbrebObj.cloneMap()
         map["items"] = arrayListOf(
-            jsonMapOf(
-                "bucket" to 961216,
-                "create_time" to "2020-01-11T10:31:44-0500",
-                "pos" to null,
-                "id" to 51454078,
-                "target_biblio_record_entry" to recordId
+            XOSRFObject(
+                jsonMapOf(
+                    "bucket" to 961216,
+                    "create_time" to "2020-01-11T10:31:44-0500",
+                    "pos" to null,
+                    "id" to 51454078,
+                    "target_biblio_record_entry" to recordId
+                )
             )
         )
         val fleshedCbrebObj = XOSRFObject(map)

@@ -22,9 +22,9 @@ package org.evergreen_ils.data
 
 import net.kenstir.hemlock.data.model.BibRecord
 import net.kenstir.hemlock.data.model.ListItem
-import org.opensrf.util.OSRFObject
+import org.evergreen_ils.xdata.XOSRFObject
 
-class BookBagItem(val cbrebiObj: OSRFObject): ListItem {
+class BookBagItem(val cbrebiObj: XOSRFObject): ListItem {
     override val id: Int = cbrebiObj.getInt("id") ?: -1
     override val targetId: Int = cbrebiObj.getInt("target_biblio_record_entry") ?: -1
     override var record: BibRecord?
