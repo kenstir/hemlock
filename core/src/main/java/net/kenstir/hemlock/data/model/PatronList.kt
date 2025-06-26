@@ -16,20 +16,13 @@
  */
 package net.kenstir.hemlock.data.model
 
-class PatronList(
-    val id: Int,
-    val name: String,
-    val description: String,
-    val public: Boolean = false,
-) {
-    override fun toString(): String {
-        return "PatronList(id=$id, name='$name', description=$description, public=$public, items=${items?.size ?: 0})"
-    }
+import java.io.Serializable
 
-    var items: List<ListItem>? = null
+interface PatronList: Serializable {
+    val id: Int
+    val name: String
+    val description: String
+    val public: Boolean
 
-    val isFullyLoaded: Boolean
-        get() = items != null
-    var filterToVisibleRecords = false
-    var visibleRecordIds = ArrayList<Int>() // list of bre IDs used to filter out deleted items
+    var items: List<ListItem>
 }

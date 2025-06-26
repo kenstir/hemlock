@@ -23,9 +23,11 @@ import org.evergreen_ils.xdata.paramListOf
 import org.evergreen_ils.xdata.payloadFirstAsObject
 import net.kenstir.hemlock.net.UserService
 import net.kenstir.hemlock.data.model.Account
-import net.kenstir.hemlock.logging.Log
+import net.kenstir.hemlock.data.model.ListItem
+import net.kenstir.hemlock.data.model.PatronList
 import org.evergreen_ils.Api
 import org.evergreen_ils.model.EvergreenAccount
+import org.evergreen_ils.xdata.payloadFirstAsObjectList
 import org.evergreen_ils.xdata.payloadFirstAsString
 
 class EvergreenUserService: UserService {
@@ -67,6 +69,25 @@ class EvergreenUserService: UserService {
         } catch (e: Exception) {
             Result.Error(e)
         }
+    }
+
+    override suspend fun loadPatronLists(account: Account): Result<Unit> {
+        return try {
+            account as? EvergreenAccount
+                ?: throw IllegalArgumentException("Expected EvergreenAccount, got ${account::class.java.simpleName}")
+
+            val (authToken, userID) = account.getCredentialsOrThrow()
+            val params = paramListOf(authToken, userID, Api.CONTAINER_CLASS_BIBLIO, Api.CONTAINER_BUCKET_TYPE_BOOKBAG)
+            val response = XGatewayClient.fetch(Api.ACTOR, Api.CONTAINERS_BY_CLASS, params, false)
+            account.loadLists(response.payloadFirstAsObjectList())
+            return Result.Success(Unit)
+        } catch (e: Exception) {
+            Result.Error(e)
+        }
+    }
+
+    override suspend fun loadPatronListItems(account: Account, listId: Int): Result<Unit> {
+        TODO("Not yet implemented")
     }
 
     companion object {

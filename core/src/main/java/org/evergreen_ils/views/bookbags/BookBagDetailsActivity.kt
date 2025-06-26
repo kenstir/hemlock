@@ -26,9 +26,7 @@ import android.os.Bundle
 import android.view.*
 import android.widget.*
 import androidx.core.os.bundleOf
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
-import kotlinx.coroutines.joinAll
 import net.kenstir.hemlock.R
 import net.kenstir.hemlock.android.Analytics
 import net.kenstir.hemlock.android.App
@@ -40,11 +38,10 @@ import net.kenstir.hemlock.android.ui.showAlert
 import org.evergreen_ils.data.BookBag
 import org.evergreen_ils.data.BookBagItem
 import net.kenstir.hemlock.data.Result
+import net.kenstir.hemlock.data.model.ListItem
 import org.evergreen_ils.net.Gateway
-import org.evergreen_ils.net.GatewayLoader
-import org.evergreen_ils.views.search.RecordDetails
 import org.evergreen_ils.data.MBRecord
-import org.evergreen_ils.utils.pubdateSortKey
+import net.kenstir.hemlock.util.pubdateSortKey
 import org.evergreen_ils.utils.ui.*
 import java.text.Collator
 import java.util.*
@@ -57,10 +54,10 @@ class BookBagDetailsActivity : BaseActivity() {
     private val TAG = javaClass.simpleName
 
     private var lv: ListView? = null
-    private var listAdapter: BookBagItemsArrayAdapter? = null
+    private var listAdapter: ListItemArrayAdapter? = null
     private var progress: ProgressDialogSupport? = null
     private lateinit var bookBag: BookBag
-    private var sortedItems = ArrayList<BookBagItem>()
+    private var sortedItems = ArrayList<ListItem>()
     private var bookBagName: TextView? = null
     private var bookBagDescription: TextView? = null
 
@@ -93,17 +90,18 @@ class BookBagDetailsActivity : BaseActivity() {
         bookBagDescription?.text = bookBag.description
 
         lv = findViewById(R.id.bookbagitem_list)
-        listAdapter = BookBagItemsArrayAdapter(this, R.layout.bookbagitem_list_item, sortedItems)
+        listAdapter = ListItemArrayAdapter(this, R.layout.bookbagitem_list_item, sortedItems)
         lv?.adapter = listAdapter
         lv?.onItemClickListener = AdapterView.OnItemClickListener { parent, view, position, id ->
             //Analytics.logEvent("list_itemclick")
-            val records = ArrayList<MBRecord?>()
-            sortedItems.let {
-                for (item in it) {
-                    records.add(item.record)
-                }
-            }
-            RecordDetails.launchDetailsFlow(this@BookBagDetailsActivity, records, position)
+            TODO("fixme")
+//            val records = ArrayList<MBRecord?>()
+//            sortedItems.let {
+//                for (item in it) {
+//                    records.add(item.record)
+//                }
+//            }
+//            RecordDetails.launchDetailsFlow(this@BookBagDetailsActivity, records, position)
         }
 
         initSortBy()
@@ -169,23 +167,12 @@ class BookBagDetailsActivity : BaseActivity() {
             try {
                 Log.d(TAG, "[kcxxx] fetchData ...")
                 val start = System.currentTimeMillis()
-                var jobs = mutableListOf<Job>()
                 progress?.show(this@BookBagDetailsActivity, getString(R.string.msg_retrieving_list_contents))
 
-                // fetch bookBag contents
-                val result = GatewayLoader.loadBookBagContents(App.getAccount(), bookBag, resources.getBoolean(R.bool.ou_extra_bookbag_query))
+                // load bookBag contents
+                val result = App.getServiceConfig().userService.loadPatronListItems(App.getAccount(), bookBag.id)
                 if (result is Result.Error) { showAlert(result.exception); return@async }
 
-                // fetch item details
-                bookBag.items.let {
-                    for (item in it) {
-                        jobs.add(scope.async {
-                            fetchTargetDetails(item)
-                        })
-                    }
-                }
-
-                jobs.joinAll()
                 updateItemsList()
                 Log.logElapsedTime(TAG, start, "[kcxxx] fetchData ... done")
             } catch (ex: Exception) {
@@ -216,10 +203,10 @@ class BookBagDetailsActivity : BaseActivity() {
 
     private fun updateItemsList() {
         val comparator = when (sortByKeyword) {
-            SORT_BY_AUTHOR -> BookBagItemAuthorComparator(sortDescending)
-            SORT_BY_PUBDATE -> BookBagItemPubdateComparator(sortDescending)
-            SORT_BY_TITLE -> BookBagItemTitleComparator(sortDescending)
-            else -> BookBagItemPubdateComparator(sortDescending)
+            SORT_BY_AUTHOR -> ListItemAuthorComparator(sortDescending)
+            SORT_BY_PUBDATE -> ListItemPubdateComparator(sortDescending)
+            SORT_BY_TITLE -> ListItemTitleComparator(sortDescending)
+            else -> ListItemPubdateComparator(sortDescending)
         }
 
         sortedItems.clear()
@@ -285,10 +272,10 @@ class BookBagDetailsActivity : BaseActivity() {
         updateItemsList()
     }
 
-    internal class BookBagItemAuthorComparator(descending: Boolean): Comparator<BookBagItem> {
+    internal class ListItemAuthorComparator(descending: Boolean): Comparator<ListItem> {
         private val descending = descending
 
-        override fun compare(o1: BookBagItem?, o2: BookBagItem?): Int {
+        override fun compare(o1: ListItem?, o2: ListItem?): Int {
             val key1 = if (descending) o2?.record?.author else o1?.record?.author
             val key2 = if (descending) o1?.record?.author else o2?.record?.author
             return when {
@@ -300,10 +287,10 @@ class BookBagDetailsActivity : BaseActivity() {
         }
     }
 
-    internal class BookBagItemPubdateComparator(descending: Boolean): Comparator<BookBagItem> {
+    internal class ListItemPubdateComparator(descending: Boolean): Comparator<ListItem> {
         private val descending = descending
 
-        override fun compare(o1: BookBagItem?, o2: BookBagItem?): Int {
+        override fun compare(o1: ListItem?, o2: ListItem?): Int {
             val key1 = if (descending) pubdateSortKey(o2?.record?.pubdate) else pubdateSortKey(o1?.record?.pubdate)
             val key2 = if (descending) pubdateSortKey(o1?.record?.pubdate) else pubdateSortKey(o2?.record?.pubdate)
             return when {
@@ -315,11 +302,11 @@ class BookBagDetailsActivity : BaseActivity() {
         }
     }
 
-    internal class BookBagItemTitleComparator(descending: Boolean): Comparator<BookBagItem> {
+    internal class ListItemTitleComparator(descending: Boolean): Comparator<ListItem> {
         private val descending = descending
         private val collator = Collator.getInstance()
 
-        override fun compare(o1: BookBagItem?, o2: BookBagItem?): Int {
+        override fun compare(o1: ListItem?, o2: ListItem?): Int {
             val key1 = if (descending) o2?.record?.titleSort else o1?.record?.titleSort
             val key2 = if (descending) o1?.record?.titleSort else o2?.record?.titleSort
             return when {
@@ -331,11 +318,11 @@ class BookBagDetailsActivity : BaseActivity() {
         }
     }
 
-    internal inner class BookBagItemsArrayAdapter(
+    internal inner class ListItemArrayAdapter(
         context: Context,
         private val resourceId: Int,
-        items: ArrayList<BookBagItem>
-    ) : ArrayAdapter<BookBagItem>(context, resourceId, items) {
+        items: ArrayList<ListItem>
+    ) : ArrayAdapter<ListItem>(context, resourceId, items) {
 
         override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
             val row = when(convertView) {

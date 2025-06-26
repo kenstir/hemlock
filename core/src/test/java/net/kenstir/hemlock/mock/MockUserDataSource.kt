@@ -21,38 +21,37 @@ import net.kenstir.hemlock.data.jsonMapOf
 import net.kenstir.hemlock.data.model.PatronList
 import net.kenstir.hemlock.data.model.ListItem
 import org.evergreen_ils.data.MBRecord
-import org.evergreen_ils.xdata.XOSRFObject
 import org.opensrf.util.OSRFObject
 
-object MockPatronDataSource {
+object MockUserDataSource {
     var counter: Int = 0
 
-    fun getLists(): List<PatronList> {
-        return listOf(
-            PatronList(1, "Books to Read", ""),
-            PatronList(2, "Movies to Watch", "")
-        )
-    }
-
-    fun makeListItem(id: Int, title: String, author: String): ListItem {
-        val obj = MBRecord(OSRFObject(jsonMapOf(
-            "doc_id" to id,
-            "title" to title,
-            "author" to author
-        )))
-        return ListItem(id, obj)
-    }
-
-    fun getItems(listId: Int): List<ListItem> {
-        return when (listId) {
-            1 -> listOf(
-                makeListItem(253,"Ready Player Two", "Cline, Ernest")
-            )
-            2 -> listOf(
-                makeListItem(320, "The Matrix Revolutions", "Wachowski, Lana"),
-                makeListItem(222, "The Avengers", "Chechik, Jeremiah")
-            )
-            else -> emptyList()
-        }
-    }
+//    fun getLists(): List<PatronList> {
+//        return listOf(
+//            PatronList(1, "Books to Read", ""),
+//            PatronList(2, "Movies to Watch", "")
+//        )
+//    }
+//
+//    fun makeListItem(id: Int, title: String, author: String): ListItem {
+//        val obj = MBRecord(OSRFObject(jsonMapOf(
+//            "doc_id" to id,
+//            "title" to title,
+//            "author" to author
+//        )))
+//        return ListItem(id, obj)
+//    }
+//
+//    fun getItems(listId: Int): List<ListItem> {
+//        return when (listId) {
+//            1 -> listOf(
+//                makeListItem(253,"Ready Player Two", "Cline, Ernest")
+//            )
+//            2 -> listOf(
+//                makeListItem(320, "The Matrix Revolutions", "Wachowski, Lana"),
+//                makeListItem(222, "The Avengers", "Chechik, Jeremiah")
+//            )
+//            else -> emptyList()
+//        }
+//    }
 }

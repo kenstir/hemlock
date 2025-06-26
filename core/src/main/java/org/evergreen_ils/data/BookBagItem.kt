@@ -20,16 +20,14 @@
  */
 package org.evergreen_ils.data
 
+import net.kenstir.hemlock.data.model.BibRecord
+import net.kenstir.hemlock.data.model.ListItem
 import org.opensrf.util.OSRFObject
-import java.io.Serializable
-import java.util.*
 
-class BookBagItem(cbrebiObj: OSRFObject) : Serializable {
-    @JvmField
-    var id: Int = cbrebiObj.getInt("id") ?: -1
-    @JvmField
-    var targetId: Int = cbrebiObj.getInt("target_biblio_record_entry") ?: -1
-    var createTime: Date? = cbrebiObj.getDate("create_time")
-    @JvmField
-    var record: MBRecord? = null
+class BookBagItem(val cbrebiObj: OSRFObject): ListItem {
+    override val id: Int = cbrebiObj.getInt("id") ?: -1
+    override val targetId: Int = cbrebiObj.getInt("target_biblio_record_entry") ?: -1
+    override var record: BibRecord?
+        get() = TODO("Not yet implemented")
+        set(value) {}
 }

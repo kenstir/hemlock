@@ -29,23 +29,6 @@ import org.evergreen_ils.system.EgSms
 
 object GatewayLoader {
 
-    suspend fun loadBookBagsAsync(account: Account): Result<Unit> {
-        // do not cache bookbags
-        Log.d(TAG, "[bookbag] loadBookBagsAsync...")
-        val result = Gateway.actor.fetchBookBags(account)
-        return when (result) {
-            is Result.Error -> {
-                Log.d(TAG, "[bookbag] loadBookBagsAsync...error")
-                result
-            }
-            is Result.Success -> {
-                App.getAccount().loadBookBags(result.data)
-                Log.d(TAG, "[bookbag] loadBookBagsAsync...${App.getAccount().bookBags.size} bags")
-                Result.Success(Unit)
-            }
-        }
-    }
-
     suspend fun loadBookBagContents(account: Account, bookBag: BookBag, queryForVisibleItems: Boolean): Result<Unit> {
         // do not cache bookbag contents
         Log.d(TAG, "[bookbag] bag ${bookBag.id} name ${bookBag.name}")
@@ -56,7 +39,8 @@ object GatewayLoader {
             val query = "container(bre,bookbag,${bookBag.id},${account.authToken})"
             val queryResult = Gateway.search.fetchMulticlassQuery(query, 999)
             if (queryResult is Result.Error) return queryResult
-            bookBag.initVisibleIdsFromQuery(queryResult.get())
+            TODO("uncomment next line when ready")
+//            bookBag.initVisibleIdsFromQuery(queryResult.get())
             Log.d(TAG, "[bookbag] bag ${bookBag.id} has ${bookBag.visibleRecordIds.size} visible items")
         }
 
@@ -64,11 +48,12 @@ object GatewayLoader {
         val result = Gateway.actor.fleshBookBagAsync(account, bookBag.id)
         if (result is Result.Error) return result
         val obj = result.get()
-        bookBag.fleshFromObject(obj)
-        Log.d(TAG, "[bookbag] bag ${bookBag.id} has ${bookBag.items.size} items")
-        Analytics.logEvent(Analytics.Event.BOOKBAG_LOAD, bundleOf(
-            Analytics.Param.NUM_ITEMS to bookBag.items.size
-        ))
+        TODO("uncomment next line when ready")
+//        bookBag.fleshFromObject(obj)
+//        Log.d(TAG, "[bookbag] bag ${bookBag.id} has ${bookBag.items.size} items")
+//        Analytics.logEvent(Analytics.Event.BOOKBAG_LOAD, bundleOf(
+//            Analytics.Param.NUM_ITEMS to bookBag.items.size
+//        ))
 
         return Result.Success(Unit)
     }

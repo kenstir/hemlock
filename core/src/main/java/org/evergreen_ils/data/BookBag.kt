@@ -17,18 +17,25 @@
  */
 package org.evergreen_ils.data
 
-import org.opensrf.util.OSRFObject
-import java.io.Serializable
+import net.kenstir.hemlock.data.model.ListItem
+import net.kenstir.hemlock.data.model.PatronList
+import org.evergreen_ils.xdata.XOSRFObject
 import kotlin.collections.ArrayList
 
-class BookBag(val id: Int, val name: String, obj: OSRFObject) : Serializable {
-    var description: String? = obj.getString("description")
-    var public: Boolean = obj.getBoolean("pub")
-    var items = ArrayList<BookBagItem>()
+class BookBag(
+    override val id: Int,
+    override val name: String,
+    obj: XOSRFObject
+): PatronList {
+    override var description: String = obj.getString("description") ?: ""
+    override val public: Boolean = obj.getBoolean("pub") ?: false
+
+    override var items: List<ListItem> = ArrayList()
+
     var filterToVisibleRecords = false
     var visibleRecordIds = ArrayList<Int>() // list of bre IDs used to filter out deleted items
 
-    fun initVisibleIdsFromQuery(multiclassQueryObj: OSRFObject) {
+    fun initVisibleIdsFromQuery(multiclassQueryObj: XOSRFObject) {
         filterToVisibleRecords = true
 
         // ids is a list of lists of [record_id, ?, ?], e.g.:
@@ -38,24 +45,24 @@ class BookBag(val id: Int, val name: String, obj: OSRFObject) : Serializable {
         idList?.mapNotNullTo(visibleRecordIds) { it[0] as? Int }
     }
 
-    fun fleshFromObject(cbrebObj: OSRFObject) {
-        items.clear()
-        val fleshedItems = cbrebObj.get("items") as? ArrayList<OSRFObject> ?: ArrayList()
-        val distinctItems = fleshedItems.distinctBy { it.getInt("target_biblio_record_entry") }
-        for (item in distinctItems) {
-            if (!filterToVisibleRecords) {
-                items.add(BookBagItem(item))
-            } else {
-                val targetId = item.getInt("target_biblio_record_entry")
-                if (visibleRecordIds.find { it == targetId } != null) {
-                    items.add(BookBagItem(item))
-                }
-            }
-        }
+    fun fleshFromObject(cbrebObj: XOSRFObject) {
+        TODO()
+//        val fleshedItems = cbrebObj.get("items") as? ArrayList<XOSRFObject> ?: ArrayList()
+//        val distinctItems = fleshedItems.distinctBy { it.getInt("target_biblio_record_entry") }
+//        for (item in distinctItems) {
+//            if (!filterToVisibleRecords) {
+//                items.add(BookBagItem(item))
+//            } else {
+//                val targetId = item.getInt("target_biblio_record_entry")
+//                if (visibleRecordIds.find { it == targetId } != null) {
+//                    items.add(BookBagItem(item))
+//                }
+//            }
+//        }
     }
 
     companion object {
-        fun makeArray(objArray: List<OSRFObject>): ArrayList<BookBag> {
+        fun makeArray(objArray: List<XOSRFObject>): List<PatronList> {
             val ret = ArrayList<BookBag>()
             for (obj in objArray) {
                 val id = obj.getInt("id")

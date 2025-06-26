@@ -29,9 +29,7 @@ import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.*
 import androidx.core.os.bundleOf
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
-import kotlinx.coroutines.joinAll
 import net.kenstir.hemlock.R
 import net.kenstir.hemlock.android.Analytics
 import net.kenstir.hemlock.android.App
@@ -39,14 +37,14 @@ import net.kenstir.hemlock.logging.Log
 import org.evergreen_ils.data.BookBag
 import net.kenstir.hemlock.data.Result
 import org.evergreen_ils.net.Gateway
-import org.evergreen_ils.net.GatewayLoader
 import org.evergreen_ils.utils.ui.BaseActivity
 import net.kenstir.hemlock.android.ui.ProgressDialogSupport
 import net.kenstir.hemlock.android.ui.showAlert
+import net.kenstir.hemlock.data.model.PatronList
 
 class BookBagsActivity : BaseActivity() {
     private var lv: ListView? = null
-    private var listAdapter: BookBagsArrayAdapter? = null
+    private var listAdapter: PatronListArrayAdapter? = null
     private var progress: ProgressDialogSupport? = null
     private var bookBagName: EditText? = null
     private var createButton: Button? = null
@@ -67,7 +65,7 @@ class BookBagsActivity : BaseActivity() {
             createBookBag()
         })
         lv = findViewById(R.id.bookbag_list)
-        listAdapter = BookBagsArrayAdapter(this, R.layout.bookbag_list_item)
+        listAdapter = PatronListArrayAdapter(this, R.layout.bookbag_list_item)
         lv?.adapter = listAdapter
         lv?.onItemClickListener = AdapterView.OnItemClickListener { parent, view, position, id ->
             val item = lv?.getItemAtPosition(position) as BookBag
@@ -93,24 +91,16 @@ class BookBagsActivity : BaseActivity() {
             try {
                 Log.d(TAG, "[kcxxx] fetchData ...")
                 val start = System.currentTimeMillis()
-                var jobs = mutableListOf<Job>()
                 progress?.show(this@BookBagsActivity, getString(R.string.msg_retrieving_lists))
                 bookBagName?.text = null
 
-                // fetch bookbags
-                when (val result = GatewayLoader.loadBookBagsAsync(App.getAccount())) {
+                // load bookbags
+                val result = App.getServiceConfig().userService.loadPatronLists(App.getAccount())
+                when (result) {
                     is Result.Success -> {}
                     is Result.Error -> { showAlert(result.exception); return@async }
                 }
 
-                // flesh bookbags
-                for (bookBag in App.getAccount().bookBags) {
-                    jobs.add(scope.async {
-                        GatewayLoader.loadBookBagContents(App.getAccount(), bookBag, resources.getBoolean(R.bool.ou_extra_bookbag_query))
-                    })
-                }
-
-                jobs.joinAll()
                 updateListAdapter()
                 Log.logElapsedTime(TAG, start, "[kcxxx] fetchData ... done")
             } catch (ex: Exception) {
@@ -124,7 +114,7 @@ class BookBagsActivity : BaseActivity() {
 
     private fun updateListAdapter() {
         listAdapter?.clear()
-        listAdapter?.addAll(App.getAccount().bookBags)
+        listAdapter?.addAll(App.getAccount().patronLists)
         listAdapter?.notifyDataSetChanged()
     }
 
@@ -156,7 +146,7 @@ class BookBagsActivity : BaseActivity() {
         }
     }
 
-    internal inner class BookBagsArrayAdapter(context: Context, private val resourceId: Int) : ArrayAdapter<BookBag>(context, resourceId) {
+    internal inner class PatronListArrayAdapter(context: Context, private val resourceId: Int) : ArrayAdapter<PatronList>(context, resourceId) {
 
         override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
             var row = when(convertView) {

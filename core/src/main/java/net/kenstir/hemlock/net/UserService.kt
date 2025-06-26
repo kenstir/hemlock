@@ -24,4 +24,6 @@ interface UserService {
     fun makeAccount(username: String, authToken: String): Account
     suspend fun loadUserSession(account: Account): Result<Unit>
     suspend fun deleteSession(account: Account): Result<Unit>
+    suspend fun loadPatronLists(account: Account): Result<Unit>
+    suspend fun loadPatronListItems(account: Account, listId: Int): Result<Unit>
 }

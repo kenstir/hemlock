@@ -20,8 +20,6 @@ package net.kenstir.hemlock.data.model
 import androidx.core.os.bundleOf
 import net.kenstir.hemlock.android.Analytics
 import org.evergreen_ils.net.GatewayEventError
-import org.evergreen_ils.data.BookBag
-import org.opensrf.util.OSRFObject
 import java.text.DateFormat
 import java.util.Date
 
@@ -44,7 +42,7 @@ open class Account(val username: String, var authToken: String?) {
     var savedPushNotificationData: String? = null // last saved user setting, not the current token
     var savedPushNotificationEnabled: Boolean = false
 
-    var bookBags = ArrayList<BookBag>()
+    var patronLists = listOf<PatronList>()
 
     protected var dayPhone: String? = null
     protected var firstGivenName: String? = null
@@ -84,11 +82,9 @@ open class Account(val username: String, var authToken: String?) {
         authToken = null
     }
 
-    fun loadBookBags(objects: List<OSRFObject>) {
-        TODO("refactor to remove dependency on OSRFObject")
-        bookBags = BookBag.makeArray(objects)
+    protected fun onListsLoaded() {
         Analytics.logEvent(Analytics.Event.BOOKBAGS_LOAD, bundleOf(
-            Analytics.Param.NUM_ITEMS to bookBags.size
+            Analytics.Param.NUM_ITEMS to patronLists.size
         ))
     }
 

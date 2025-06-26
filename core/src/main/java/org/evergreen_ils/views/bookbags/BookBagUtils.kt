@@ -31,9 +31,10 @@ import org.evergreen_ils.data.MBRecord
 import org.evergreen_ils.utils.ui.BaseActivity
 import net.kenstir.hemlock.android.ui.ProgressDialogSupport
 import net.kenstir.hemlock.android.ui.showAlert
+import net.kenstir.hemlock.data.model.PatronList
 
 object BookBagUtils {
-    fun showAddToListDialog(activity: BaseActivity, bookBags: List<BookBag>, info: MBRecord) {
+    fun showAddToListDialog(activity: BaseActivity, bookBags: List<PatronList>, info: MBRecord) {
         val listNames = bookBags.map { it.name }.toTypedArray()
 
         val builder = AlertDialog.Builder(activity)
@@ -42,7 +43,7 @@ object BookBagUtils {
         builder.create().show()
     }
 
-    private fun addRecordToList(activity: BaseActivity, bookBag: BookBag, info: MBRecord) {
+    private fun addRecordToList(activity: BaseActivity, bookBag: PatronList, info: MBRecord) {
         activity.scope.async {
             val progress = ProgressDialogSupport()
             try {

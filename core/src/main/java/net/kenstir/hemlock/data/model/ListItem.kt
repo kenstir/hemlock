@@ -16,8 +16,10 @@
  */
 package net.kenstir.hemlock.data.model
 
-data class ListItem(
-    val id: Int,
-    val record: BibRecord,
-) {
+import java.io.Serializable
+
+interface ListItem: Serializable {
+    val id: Int
+    val targetId: Int
+    var record: BibRecord?
 }

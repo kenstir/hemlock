@@ -20,89 +20,104 @@ package net.kenstir.apps.core
 
 import org.evergreen_ils.data.BookBag
 import net.kenstir.hemlock.data.jsonMapOf
+import org.evergreen_ils.xdata.XOSRFObject
 import org.junit.Assert.*
+import org.junit.BeforeClass
 import org.junit.Test
 import org.opensrf.util.OSRFObject
 
 class BookBagTest {
-    // TODO(data): refactor to XOSRFObject and move to different package
 
-    val cbrebObj = OSRFObject(
+    val cbrebObj = XOSRFObject(
         jsonMapOf(
             "id" to 24919,
             "name" to "books to read",
             "description" to null,
             "pub" to "t",
             "items" to null
+        )
     )
-    )
+
+    init {
+        println("BookBagTest init ...")
+    }
+
+    companion object {
+        @JvmStatic
+        @BeforeClass
+        fun setUp() {
+            println("BookBagTest setUp ...")
+        }
+    }
 
     @Test
     fun test_makeArray() {
         val bookBags = BookBag.makeArray(arrayListOf(cbrebObj))
         assertEquals(1, bookBags.size)
         assertEquals("books to read", bookBags.first().name)
-        assertNull(bookBags.first().description)
+        assertEquals("", bookBags.first().description)
         assertTrue(bookBags.first().public)
     }
 
     @Test
     fun test_fleshFromObject() {
-        val bookBag = BookBag.makeArray(listOf(cbrebObj)).first()
-        assertEquals("books to read", bookBag.name)
-        assertEquals(0, bookBag.items.size)
+        val patronList = BookBag.makeArray(listOf(cbrebObj)).first()
+        assertEquals("books to read", patronList.name)
+        assertEquals(0, patronList.items.size)
 
-        val fleshedCbrebObj = cbrebObj.clone() as OSRFObject
-        fleshedCbrebObj["items"] = arrayListOf(
-            OSRFObject(
-                jsonMapOf(
+        // a fleshed cbreb object has a non-empty items
+        val map = cbrebObj.cloneMap()
+        map["items"] = arrayListOf(
+            jsonMapOf(
                 "bucket" to 961216,
                 "create_time" to "2020-01-11T10:31:44-0500",
                 "pos" to null,
                 "id" to 51454078,
                 "target_biblio_record_entry" to 2914107
             )
-            )
         )
+        val fleshedCbrebObj = XOSRFObject(map)
 
+        val bookBag = patronList as BookBag
         bookBag.fleshFromObject(fleshedCbrebObj)
-        assertEquals(1, bookBag.items.size)
-        assertEquals(2914107, bookBag.items.first().targetId)
+        assertEquals(1, patronList.items.size)
+        assertEquals(2914107, patronList.items.first().targetId)
     }
 
     @Test
     fun test_filterToVisibleRecords() {
-        val bookBag = BookBag.makeArray(listOf(cbrebObj)).first()
-        assertEquals("books to read", bookBag.name)
-        assertEquals(0, bookBag.items.size)
+        val patronList = BookBag.makeArray(listOf(cbrebObj)).first()
+        assertEquals("books to read", patronList.name)
+        assertEquals(0, patronList.items.size)
+        val bookBag = patronList as BookBag
 
         val recordId = 2914107
-        val queryPayload = OSRFObject(
+        val queryPayload = XOSRFObject(
             jsonMapOf(
-            "count" to 1,
-            "ids" to arrayListOf(
-                arrayListOf(recordId, "2", "4.0")
-            ))
+                "count" to 1,
+                "ids" to arrayListOf(
+                    arrayListOf(recordId, "2", "4.0")
+                ))
         )
-        val emptyQueryPayload = OSRFObject(
+        val emptyQueryPayload = XOSRFObject(
             jsonMapOf(
-            "count" to 0,
-            "ids" to arrayListOf<ArrayList<Any?>>()
-        )
+                "count" to 0,
+                "ids" to arrayListOf<ArrayList<Any?>>()
+            )
         )
 
-        val fleshedCbrebObj = cbrebObj.clone() as OSRFObject
-        fleshedCbrebObj["items"] = arrayListOf(
-            OSRFObject(
-                jsonMapOf(
+        // a fleshed cbreb object has a non-empty items
+        val map = cbrebObj.cloneMap()
+        map["items"] = arrayListOf(
+            jsonMapOf(
                 "bucket" to 961216,
                 "create_time" to "2020-01-11T10:31:44-0500",
                 "pos" to null,
                 "id" to 51454078,
                 "target_biblio_record_entry" to recordId
             )
-            )
         )
+        val fleshedCbrebObj = XOSRFObject(map)
 
         // case 1: recordId is in the visible list
         bookBag.initVisibleIdsFromQuery(queryPayload)
@@ -115,4 +130,12 @@ class BookBagTest {
         bookBag.fleshFromObject(fleshedCbrebObj)
         assertEquals(0, bookBag.items.size)
     }
+}
+
+fun XOSRFObject.cloneMap(): MutableMap<String, Any?> {
+    val map = mutableMapOf<String, Any?>()
+    for ((key, value) in this.map) {
+        map[key] = value
+    }
+    return map
 }
