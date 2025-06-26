@@ -21,6 +21,7 @@ import org.evergreen_ils.data.OSRFUtils
 import org.evergreen_ils.xdata.XOSRFObject
 import net.kenstir.hemlock.data.model.Account
 import org.evergreen_ils.Api
+import org.evergreen_ils.data.BookBag
 
 class EvergreenAccount(username: String, authToken: String? = null): Account(username, authToken) {
 
@@ -57,5 +58,10 @@ class EvergreenAccount(username: String, authToken: String? = null): Account(use
         this.circHistoryStart = map[Api.USER_SETTING_CIRC_HISTORY_START]
         this.savedPushNotificationData = map[Api.USER_SETTING_HEMLOCK_PUSH_NOTIFICATION_DATA]
         this.savedPushNotificationEnabled = map[Api.USER_SETTING_HEMLOCK_PUSH_NOTIFICATION_ENABLED] == "true"
+    }
+
+    fun loadLists(bags: List<XOSRFObject>) {
+        patronLists = BookBag.makeArray(bags)
+        onListsLoaded()
     }
 }

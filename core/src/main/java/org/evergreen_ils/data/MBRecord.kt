@@ -27,7 +27,7 @@ import org.evergreen_ils.utils.MARCRecord
 import org.evergreen_ils.utils.MARCXMLParser
 import org.evergreen_ils.utils.RecordAttributes
 import org.evergreen_ils.utils.TextUtils
-import org.evergreen_ils.utils.titleSortKey
+import net.kenstir.hemlock.util.titleSortKey
 import org.opensrf.util.OSRFObject
 
 class MBRecord(override val id: Int, var mvrObj: OSRFObject? = null): BibRecord {
@@ -42,7 +42,7 @@ class MBRecord(override val id: Int, var mvrObj: OSRFObject? = null): BibRecord 
         get() = mvrObj?.getString("author") ?: ""
     override val isbn: String
         get() = mvrObj?.getString("isbn") ?: ""
-    val pubdate: String
+    override val pubdate: String
         get() = mvrObj?.getString("pubdate") ?: ""
     override val description: String
         get() = mvrObj?.getString("physical_description") ?: ""
@@ -50,7 +50,7 @@ class MBRecord(override val id: Int, var mvrObj: OSRFObject? = null): BibRecord 
         get() = mvrObj?.getString("synopsis") ?: ""
     override val title: String
         get() = mvrObj?.getString("title") ?: ""
-    val titleSort: String
+    override val titleSort: String
         get() {
             if (hasMarc()) {
                 val skip = nonFilingCharacters
@@ -62,7 +62,7 @@ class MBRecord(override val id: Int, var mvrObj: OSRFObject? = null): BibRecord 
                 return titleSortKey(title) ?: ""
             }
         }
-    val nonFilingCharacters: Int?
+    private val nonFilingCharacters: Int?
         get() {
             marcRecord?.let {
                 for (df in it.datafields) {

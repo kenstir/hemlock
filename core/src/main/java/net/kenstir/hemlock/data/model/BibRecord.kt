@@ -24,9 +24,12 @@ interface BibRecord: Serializable {
     val id: Int
     val title: String
     val author: String
+    val pubdate: String
     val description: String
     val synopsis: String
     val isbn: String
+
+    val titleSort: String
 
     var marcRecord: MARCRecord?
     var isDeleted: Boolean

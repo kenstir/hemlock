@@ -17,21 +17,30 @@
 
 package net.kenstir.hemlock.mock
 
-import net.kenstir.hemlock.unused.PatronService
 import net.kenstir.hemlock.data.Result
+import net.kenstir.hemlock.data.model.Account
 import net.kenstir.hemlock.data.model.PatronList
 import net.kenstir.hemlock.data.model.ListItem
+import net.kenstir.hemlock.net.UserService
 
-class MockPatronService: PatronService {
-    override suspend fun fetchLists(patronId: Int, authToken: String): Result<List<PatronList>> {
-        return Result.Success(MockPatronDataSource.getLists())
+class MockUserService: UserService {
+    override fun makeAccount(username: String, authToken: String): Account {
+        TODO("Not yet implemented")
     }
 
-    override suspend fun fetchListItems(
-        patronId: Int,
-        authToken: String,
-        listId: Int
-    ): Result<List<ListItem>> {
-        return Result.Success(MockPatronDataSource.getItems(listId))
+    override suspend fun loadUserSession(account: Account): Result<Unit> {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun deleteSession(account: Account): Result<Unit> {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun loadPatronLists(account: Account): Result<Unit> {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun loadPatronListItems(account: Account, listId: Int): Result<Unit> {
+        TODO("Not yet implemented")
     }
 }

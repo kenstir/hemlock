@@ -230,8 +230,9 @@ class SearchActivity : BaseActivity(), ActivityCompat.OnRequestPermissionsResult
                 Log.d(TAG, "[kcxxx] fetchData ...")
                 val start = System.currentTimeMillis()
 
-                // fetch bookbags
-                when (val result = GatewayLoader.loadBookBagsAsync(App.getAccount())) {
+                // load bookbags
+                val result = App.getServiceConfig().userService.loadPatronLists(App.getAccount())
+                when (result) {
                     is Result.Success -> {}
                     is Result.Error -> { showAlert(result.exception); return@async }
                 }
@@ -416,9 +417,9 @@ class SearchActivity : BaseActivity(), ActivityCompat.OnRequestPermissionsResult
                 return true
             }
             ITEM_ADD_TO_LIST -> {
-                if (!App.getAccount().bookBags.isNullOrEmpty()) {
+                if (!App.getAccount().patronLists.isNullOrEmpty()) {
                     //Analytics.logEvent("lists_additem", "via", "results_long_press")
-                    showAddToListDialog(this, App.getAccount().bookBags, info.record!!)
+                    showAddToListDialog(this, App.getAccount().patronLists, info.record!!)
                 } else {
                     Toast.makeText(this, getText(R.string.msg_no_lists), Toast.LENGTH_SHORT).show()
                 }
