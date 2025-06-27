@@ -18,13 +18,14 @@
 
 package net.kenstir.apps.core
 
-import org.evergreen_ils.data.BookBag
 import net.kenstir.hemlock.data.jsonMapOf
+import net.kenstir.hemlock.data.model.PatronList
+import org.evergreen_ils.data.BookBag
 import org.evergreen_ils.xdata.XOSRFObject
-import org.junit.Assert.*
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.BeforeClass
 import org.junit.Test
-import org.opensrf.util.OSRFObject
 
 class BookBagTest {
 
@@ -35,11 +36,26 @@ class BookBagTest {
             "description" to null,
             "pub" to "t",
             "items" to null
-        )
+        ), "cbreb"
     )
+    val targetRecordId = 2914107
+    lateinit var fleshedCbrebObj: XOSRFObject
 
     init {
-        println("BookBagTest init ...")
+        // a fleshed cbreb object has a non-empty list of items
+        val map = cbrebObj.cloneMap()
+        map["items"] = arrayListOf(
+            XOSRFObject(
+                jsonMapOf(
+                    "bucket" to 961216,
+                    "create_time" to "2020-01-11T10:31:44-0500",
+                    "pos" to null,
+                    "id" to 51454078,
+                    "target_biblio_record_entry" to targetRecordId
+                ), "cbrebi"
+            )
+        )
+        fleshedCbrebObj = XOSRFObject(map)
     }
 
     companion object {
@@ -65,25 +81,10 @@ class BookBagTest {
         assertEquals("books to read", patronList.name)
         assertEquals(0, patronList.items.size)
 
-        // a fleshed cbreb object has a non-empty items
-        val map = cbrebObj.cloneMap()
-        map["items"] = arrayListOf(
-            XOSRFObject(
-                jsonMapOf(
-                    "bucket" to 961216,
-                    "create_time" to "2020-01-11T10:31:44-0500",
-                    "pos" to null,
-                    "id" to 51454078,
-                    "target_biblio_record_entry" to 2914107
-                )
-            )
-        )
-        val fleshedCbrebObj = XOSRFObject(map)
-
         val bookBag = patronList as BookBag
         bookBag.fleshFromObject(fleshedCbrebObj)
         assertEquals(1, patronList.items.size)
-        assertEquals(2914107, patronList.items.first().targetId)
+        assertEquals(targetRecordId, patronList.items.first().targetId)
     }
 
     @Test
@@ -93,12 +94,11 @@ class BookBagTest {
         assertEquals(0, patronList.items.size)
         val bookBag = patronList as BookBag
 
-        val recordId = 2914107
         val queryPayload = XOSRFObject(
             jsonMapOf(
                 "count" to 1,
                 "ids" to arrayListOf(
-                    arrayListOf(recordId, "2", "4.0")
+                    arrayListOf(targetRecordId, "2", "4.0")
                 ))
         )
         val emptyQueryPayload = XOSRFObject(
@@ -108,31 +108,35 @@ class BookBagTest {
             )
         )
 
-        // a fleshed cbreb object has a non-empty items
-        val map = cbrebObj.cloneMap()
-        map["items"] = arrayListOf(
-            XOSRFObject(
-                jsonMapOf(
-                    "bucket" to 961216,
-                    "create_time" to "2020-01-11T10:31:44-0500",
-                    "pos" to null,
-                    "id" to 51454078,
-                    "target_biblio_record_entry" to recordId
-                )
-            )
-        )
-        val fleshedCbrebObj = XOSRFObject(map)
-
         // case 1: recordId is in the visible list
         bookBag.initVisibleIdsFromQuery(queryPayload)
         bookBag.fleshFromObject(fleshedCbrebObj)
         assertEquals(1, bookBag.items.size)
-        assertEquals(recordId, bookBag.items.first().targetId)
+        assertEquals(targetRecordId, bookBag.items.first().targetId)
 
         // case 2: recordId is not in the visible list
         bookBag.initVisibleIdsFromQuery(emptyQueryPayload)
         bookBag.fleshFromObject(fleshedCbrebObj)
         assertEquals(0, bookBag.items.size)
+    }
+
+    @Test
+    fun test_isSerializable() {
+        // Ensure that BookBag is serializable
+        val bookBag = BookBag(1, "Test Bag", cbrebObj)
+        val serialized = java.io.ByteArrayOutputStream()
+        java.io.ObjectOutputStream(serialized).use { it.writeObject(bookBag) }
+        val deserialized = java.io.ByteArrayInputStream(serialized.toByteArray())
+        val restored = java.io.ObjectInputStream(deserialized).use { it.readObject() as BookBag }
+        println("Restored BookBag: $restored")
+
+        // Ensure that fleshed BookBag is serializable
+        bookBag.fleshFromObject(fleshedCbrebObj)
+        val serialized2 = java.io.ByteArrayOutputStream()
+        java.io.ObjectOutputStream(serialized2).use { it.writeObject(bookBag) }
+        val deserialized2 = java.io.ByteArrayInputStream(serialized.toByteArray())
+        val restored2 = java.io.ObjectInputStream(deserialized2).use { it.readObject() as PatronList }
+        println("Restored BookBag: $restored2")
     }
 }
 
