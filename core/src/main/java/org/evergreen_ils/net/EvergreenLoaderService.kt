@@ -26,7 +26,6 @@ import net.kenstir.hemlock.data.Result
 import net.kenstir.hemlock.logging.Log
 import org.evergreen_ils.xdata.XGatewayClient
 import org.evergreen_ils.xdata.paramListOf
-import org.evergreen_ils.xdata.parseOrgStringSetting
 import org.evergreen_ils.xdata.payloadFirstAsObject
 import org.evergreen_ils.xdata.payloadFirstAsObjectList
 import org.evergreen_ils.xdata.payloadFirstAsString
@@ -84,7 +83,7 @@ class EvergreenLoaderService: LoaderService {
         val params = paramListOf(EgOrg.consortiumID, settings, Api.ANONYMOUS)
         val obj = XGatewayClient.fetch(Api.ACTOR, Api.ORG_UNIT_SETTING_BATCH, params, false)
             .payloadFirstAsObject()
-        val hemlockCacheKey = parseOrgStringSetting(obj, Api.SETTING_HEMLOCK_CACHE_KEY)
+        val hemlockCacheKey = obj.getStringValueFromOrgSetting(Api.SETTING_HEMLOCK_CACHE_KEY)
 
         return if (hemlockCacheKey.isNullOrEmpty()) serverVersion else "$serverVersion-$hemlockCacheKey"
     }

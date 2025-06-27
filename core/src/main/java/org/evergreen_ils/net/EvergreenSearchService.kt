@@ -18,43 +18,56 @@
 package org.evergreen_ils.net
 
 import net.kenstir.hemlock.data.Result
+import net.kenstir.hemlock.data.jsonMapOf
 import net.kenstir.hemlock.net.SearchService
+import org.evergreen_ils.Api
+import org.evergreen_ils.xdata.XGatewayClient
 import org.evergreen_ils.xdata.XOSRFObject
+import org.evergreen_ils.xdata.paramListOf
+import org.evergreen_ils.xdata.payloadFirstAsObject
 
 class EvergreenSearchService: SearchService {
-    override suspend fun fetchAssetCopy(copyId: Int): Result<XOSRFObject> {
+    suspend fun fetchAssetCopy(copyId: Int): Result<XOSRFObject> {
         TODO("Not yet implemented")
     }
 
-    override suspend fun fetchAssetCallNumber(callNumber: Int): Result<XOSRFObject> {
+    suspend fun fetchAssetCallNumber(callNumber: Int): Result<XOSRFObject> {
         TODO("Not yet implemented")
     }
 
-    override suspend fun fetchCopyLocationCounts(id: Int, orgId: Int, orgLevel: Int): Result<List<Any>> {
+    suspend fun fetchCopyLocationCounts(id: Int, orgId: Int, orgLevel: Int): Result<List<Any>> {
         TODO("Not yet implemented")
     }
 
-    override suspend fun fetchCopyCount(id: Int, orgId: Int): Result<List<XOSRFObject>> {
+    suspend fun fetchCopyCount(id: Int, orgId: Int): Result<List<XOSRFObject>> {
         TODO("Not yet implemented")
     }
 
-    override suspend fun fetchCopyMODS(copyId: Int): Result<XOSRFObject> {
+    suspend fun fetchCopyMODS(copyId: Int): Result<XOSRFObject> {
         TODO("Not yet implemented")
     }
 
-    override suspend fun fetchRecordMODS(id: Int): Result<XOSRFObject> {
+    suspend fun fetchRecordMODS(id: Int): Result<XOSRFObject> {
         TODO("Not yet implemented")
     }
 
-    override suspend fun fetchMetarecordMODS(id: Int): Result<XOSRFObject> {
+    suspend fun fetchMetarecordMODS(id: Int): Result<XOSRFObject> {
         TODO("Not yet implemented")
     }
 
-    override suspend fun fetchHoldParts(id: Int): Result<List<XOSRFObject>> {
+    suspend fun fetchHoldParts(id: Int): Result<List<XOSRFObject>> {
         TODO("Not yet implemented")
     }
 
-    override suspend fun fetchMulticlassQuery(queryString: String, limit: Int): Result<XOSRFObject> {
-        TODO("Not yet implemented")
+    suspend fun fetchMulticlassQuery(queryString: String, limit: Int, shouldCache: Boolean): Result<XOSRFObject> {
+        return try {
+            val options = jsonMapOf("limit" to limit, "offset" to 0)
+            val requestServerSideCaching = 0
+            val params = paramListOf(options, queryString, requestServerSideCaching)
+            val response = XGatewayClient.fetch(Api.SEARCH, Api.MULTICLASS_QUERY, params, shouldCache)
+            Result.Success(response.payloadFirstAsObject())
+        } catch (e: Exception) {
+            Result.Error(e)
+        }
     }
 }

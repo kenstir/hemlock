@@ -40,7 +40,11 @@ class MockUserService: UserService {
         TODO("Not yet implemented")
     }
 
-    override suspend fun loadPatronListItems(account: Account, listId: Int): Result<Unit> {
+    override suspend fun loadPatronListItems(
+        account: Account,
+        patronList: PatronList,
+        queryForVisibleItems: Boolean
+    ): Result<Unit> {
         TODO("Not yet implemented")
     }
 }

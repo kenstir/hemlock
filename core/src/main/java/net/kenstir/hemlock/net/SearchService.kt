@@ -21,13 +21,4 @@ import net.kenstir.hemlock.data.Result
 import org.evergreen_ils.xdata.XOSRFObject
 
 interface SearchService {
-    suspend fun fetchAssetCopy(copyId: Int): Result<XOSRFObject>
-    suspend fun fetchAssetCallNumber(callNumber: Int): Result<XOSRFObject>
-    suspend fun fetchCopyLocationCounts(id: Int, orgId: Int, orgLevel: Int): Result<List<Any>>
-    suspend fun fetchCopyCount(id: Int, orgId: Int): Result<List<XOSRFObject>>
-    suspend fun fetchCopyMODS(copyId: Int): Result<XOSRFObject>
-    suspend fun fetchRecordMODS(id: Int): Result<XOSRFObject>
-    suspend fun fetchMetarecordMODS(id: Int): Result<XOSRFObject>
-    suspend fun fetchHoldParts(id: Int): Result<List<XOSRFObject>>
-    suspend fun fetchMulticlassQuery(queryString: String, limit: Int): Result<XOSRFObject>
 }

@@ -19,6 +19,8 @@ package org.evergreen_ils.data
 
 import net.kenstir.hemlock.data.model.ListItem
 import net.kenstir.hemlock.data.model.PatronList
+import net.kenstir.hemlock.logging.Log
+import org.evergreen_ils.EgConst
 import org.evergreen_ils.xdata.XOSRFObject
 import kotlin.collections.ArrayList
 
@@ -42,7 +44,10 @@ class BookBag(
         // [[1471992,"2","4.0"]]
         val idList = multiclassQueryObj.get("ids") as? ArrayList<ArrayList<Any?>>
         visibleRecordIds.clear()
-        idList?.mapNotNullTo(visibleRecordIds) { it[0] as? Int }
+        idList?.mapNotNullTo(visibleRecordIds) {
+            it[0] as? Int
+        }
+        Log.d(EgConst.TAG_DATA, "[bookbag] bag $id visibleRecordIds=${visibleRecordIds}")
     }
 
     fun fleshFromObject(cbrebObj: XOSRFObject) {
@@ -60,6 +65,7 @@ class BookBag(
             }
         }
         this.items = newItems
+        Log.d(EgConst.TAG_DATA, "[bookbag] bag $id ${items.size} items")
     }
 
     companion object {
