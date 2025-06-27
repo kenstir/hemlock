@@ -24,7 +24,7 @@ import org.evergreen_ils.data.OSRFUtils
 @Serializable(with = XOSRFObjectSerializer::class)
 data class XOSRFObject(
     val map: Map<String, Any?> = emptyMap(),
-    val netClass: String? = null)
+    val netClass: String? = null): java.io.Serializable
 {
     override fun toString(): String {
         return "XOSRFObject(netClass=$netClass, map${map.toString()})"
