@@ -22,8 +22,6 @@ import org.evergreen_ils.system.EgOrg
 import net.kenstir.hemlock.data.model.Organization
 import org.evergreen_ils.Api
 import org.evergreen_ils.data.OrgType
-import org.evergreen_ils.xdata.parseOrgBoolSetting
-import org.evergreen_ils.xdata.parseOrgStringSetting
 
 class EvergreenOrganization(
     id: Int,
@@ -77,14 +75,14 @@ class EvergreenOrganization(
     }
 
     fun loadSettings(obj: XOSRFObject) {
-        eventsURL = parseOrgStringSetting(obj, Api.SETTING_HEMLOCK_EVENTS_URL)
-        eresourcesUrl = parseOrgStringSetting(obj, Api.SETTING_HEMLOCK_ERESOURCES_URL)
-        meetingRoomsUrl = parseOrgStringSetting(obj, Api.SETTING_HEMLOCK_MEETING_ROOMS_URL)
-        museumPassesUrl = parseOrgStringSetting(obj, Api.SETTING_HEMLOCK_MUSEUM_PASSES_URL)
-        infoURL = parseOrgStringSetting(obj, Api.SETTING_INFO_URL)
-        isNotPickupLocationSetting = parseOrgBoolSetting(obj, Api.SETTING_ORG_UNIT_NOT_PICKUP_LIB)
-        isPaymentAllowed = parseOrgBoolSetting(obj, Api.SETTING_CREDIT_PAYMENTS_ALLOW) ?: false
-        val smsEnable = parseOrgBoolSetting(obj, Api.SETTING_SMS_ENABLE)
+        eventsURL = obj.getStringValueFromOrgSetting(Api.SETTING_HEMLOCK_EVENTS_URL)
+        eresourcesUrl = obj.getStringValueFromOrgSetting(Api.SETTING_HEMLOCK_ERESOURCES_URL)
+        meetingRoomsUrl = obj.getStringValueFromOrgSetting(Api.SETTING_HEMLOCK_MEETING_ROOMS_URL)
+        museumPassesUrl = obj.getStringValueFromOrgSetting(Api.SETTING_HEMLOCK_MUSEUM_PASSES_URL)
+        infoURL = obj.getStringValueFromOrgSetting(Api.SETTING_INFO_URL)
+        isNotPickupLocationSetting = obj.getBooleanValueFromOrgSetting(Api.SETTING_ORG_UNIT_NOT_PICKUP_LIB)
+        isPaymentAllowed = obj.getBooleanValueFromOrgSetting(Api.SETTING_CREDIT_PAYMENTS_ALLOW) ?: false
+        val smsEnable = obj.getBooleanValueFromOrgSetting(Api.SETTING_SMS_ENABLE)
         smsEnable?.let { EgOrg.smsEnabled = smsEnable }
         settingsLoaded = true
     }

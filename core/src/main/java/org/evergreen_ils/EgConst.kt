@@ -29,3 +29,7 @@ const val HOLD_TYPE_PART = "P"
 
 const val KEY_SEARCH_BY = "searchBy"
 const val KEY_SEARCH_TEXT = "searchText"
+
+object EgConst {
+    const val TAG_DATA = "EgData"
+}

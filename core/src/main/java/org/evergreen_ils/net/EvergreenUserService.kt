@@ -23,7 +23,6 @@ import org.evergreen_ils.xdata.paramListOf
 import org.evergreen_ils.xdata.payloadFirstAsObject
 import net.kenstir.hemlock.net.UserService
 import net.kenstir.hemlock.data.model.Account
-import net.kenstir.hemlock.data.model.ListItem
 import net.kenstir.hemlock.data.model.PatronList
 import org.evergreen_ils.Api
 import org.evergreen_ils.data.BookBag
@@ -99,12 +98,10 @@ class EvergreenUserService: UserService {
             // query first to find visible items; CONTAINER_FLESH returns the contents including
             // items that are marked deleted
             if (queryForVisibleItems) {
-                //TODO(data): uncomment when ready
-                //TODO()
-//                val query = "container(bre,bookbag,${bookBag.id},${account.authToken})"
-//                val queryResult = Gateway.search.fetchMulticlassQuery(query, 999)
-//                if (queryResult is Result.Error) return queryResult
-//                bookBag.initVisibleIdsFromQuery(queryResult.get())
+                val query = "container(bre,bookbag,${bookBag.id},${account.authToken})"
+                val queryResult = EvergreenSearchService().fetchMulticlassQuery(query, 999, false)
+                if (queryResult is Result.Error) return queryResult
+                bookBag.initVisibleIdsFromQuery(queryResult.get())
             }
 
             // then flesh the objects
