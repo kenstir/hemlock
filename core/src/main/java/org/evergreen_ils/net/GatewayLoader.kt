@@ -18,45 +18,11 @@
 
 package org.evergreen_ils.net
 
-import androidx.core.os.bundleOf
-import net.kenstir.hemlock.android.Analytics
-import net.kenstir.hemlock.android.App
-import net.kenstir.hemlock.logging.Log
 import net.kenstir.hemlock.data.Result
-import net.kenstir.hemlock.data.model.Account
 import org.evergreen_ils.data.*
 import org.evergreen_ils.system.EgSms
 
 object GatewayLoader {
-
-    suspend fun loadBookBagContents(account: Account, bookBag: BookBag, queryForVisibleItems: Boolean): Result<Unit> {
-        // do not cache bookbag contents
-        Log.d(TAG, "[bookbag] bag ${bookBag.id} name ${bookBag.name}")
-
-        // query first to find visible items; CONTAINER_FLESH returns the contents including
-        // items that are marked deleted
-        if (queryForVisibleItems) {
-            val query = "container(bre,bookbag,${bookBag.id},${account.authToken})"
-            val queryResult = Gateway.search.fetchMulticlassQuery(query, 999)
-            if (queryResult is Result.Error) return queryResult
-            TODO("uncomment next line when ready")
-//            bookBag.initVisibleIdsFromQuery(queryResult.get())
-//            Log.d(TAG, "[bookbag] bag ${bookBag.id} has ${bookBag.visibleRecordIds.size} visible items")
-        }
-
-        // then flesh the objects
-        val result = Gateway.actor.fleshBookBagAsync(account, bookBag.id)
-        if (result is Result.Error) return result
-        val obj = result.get()
-        TODO("uncomment next line when ready")
-//        bookBag.fleshFromObject(obj)
-//        Log.d(TAG, "[bookbag] bag ${bookBag.id} has ${bookBag.items.size} items")
-//        Analytics.logEvent(Analytics.Event.BOOKBAG_LOAD, bundleOf(
-//            Analytics.Param.NUM_ITEMS to bookBag.items.size
-//        ))
-
-        return Result.Success(Unit)
-    }
 
     suspend fun loadRecordMetadataAsync(record: MBRecord): Result<Unit> {
         if (record.mvrObj != null) return Result.Success(Unit)
