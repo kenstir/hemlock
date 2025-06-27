@@ -26,6 +26,7 @@ import net.kenstir.hemlock.data.model.Account
 import net.kenstir.hemlock.data.model.ListItem
 import net.kenstir.hemlock.data.model.PatronList
 import org.evergreen_ils.Api
+import org.evergreen_ils.data.BookBag
 import org.evergreen_ils.model.EvergreenAccount
 import org.evergreen_ils.xdata.payloadFirstAsObjectList
 import org.evergreen_ils.xdata.payloadFirstAsString
@@ -86,8 +87,34 @@ class EvergreenUserService: UserService {
         }
     }
 
-    override suspend fun loadPatronListItems(account: Account, listId: Int): Result<Unit> {
-        TODO("Not yet implemented")
+    override suspend fun loadPatronListItems(account: Account, patronList: PatronList, queryForVisibleItems: Boolean): Result<Unit> {
+        return try {
+            account as? EvergreenAccount
+                ?: throw IllegalArgumentException("Expected EvergreenAccount, got ${account::class.java.simpleName}")
+            val bookBag = patronList as? BookBag
+                ?: throw IllegalArgumentException("Expected BookBag, got ${patronList::class.java.simpleName}")
+
+            val (authToken, _) = account.getCredentialsOrThrow()
+
+            // query first to find visible items; CONTAINER_FLESH returns the contents including
+            // items that are marked deleted
+            if (queryForVisibleItems) {
+                //TODO(data): uncomment when ready
+                //TODO()
+//                val query = "container(bre,bookbag,${bookBag.id},${account.authToken})"
+//                val queryResult = Gateway.search.fetchMulticlassQuery(query, 999)
+//                if (queryResult is Result.Error) return queryResult
+//                bookBag.initVisibleIdsFromQuery(queryResult.get())
+            }
+
+            // then flesh the objects
+            val params = paramListOf(authToken, Api.CONTAINER_CLASS_BIBLIO, patronList.id)
+            val response = XGatewayClient.fetch(Api.ACTOR, Api.CONTAINER_FLESH, params, false)
+            bookBag.fleshFromObject(response.payloadFirstAsObject())
+            Result.Success(Unit)
+        } catch (e: Exception) {
+            Result.Error(e)
+        }
     }
 
     companion object {
