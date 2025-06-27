@@ -26,6 +26,8 @@ import kotlinx.serialization.json.boolean
 import kotlinx.serialization.json.booleanOrNull
 import kotlinx.serialization.json.double
 import kotlinx.serialization.json.doubleOrNull
+import kotlinx.serialization.json.int
+import kotlinx.serialization.json.intOrNull
 import kotlinx.serialization.json.jsonArray
 import kotlinx.serialization.json.jsonPrimitive
 import kotlinx.serialization.json.long
@@ -81,7 +83,9 @@ class XOSRFCoder(val netClass: String, val fields: List<String>) {
             return when {
                 element.isString -> element.content
                 element.booleanOrNull != null -> element.boolean
-                element.longOrNull != null -> element.long
+                element.intOrNull != null -> element.int
+                // At this point, the app is using Int everywhere, not Long
+                //element.longOrNull != null -> element.long
                 element.doubleOrNull != null -> element.double
                 else -> throw XDecodingException("Unsupported element type: ${element::class.simpleName}")
             }

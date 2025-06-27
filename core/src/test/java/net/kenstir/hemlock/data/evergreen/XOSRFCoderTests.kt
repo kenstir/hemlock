@@ -79,6 +79,9 @@ class XOSRFCoderTests {
         assertEquals(true, obj.getBoolean("can_haz_bacon"))
         assertEquals(1, obj.getInt("id"))
         assertEquals("Hormel", obj.getString("name"))
+
+        // check that "id" is an Int, not a Long.  At this time, the app is not expecting Longs
+        assertTrue(obj.getAny("id") is Int)
     }
 
     // Case: decode an OSRF object when the class hasn't been registered
