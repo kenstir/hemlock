@@ -41,7 +41,7 @@ object GatewayLoader {
             if (queryResult is Result.Error) return queryResult
             TODO("uncomment next line when ready")
 //            bookBag.initVisibleIdsFromQuery(queryResult.get())
-            Log.d(TAG, "[bookbag] bag ${bookBag.id} has ${bookBag.visibleRecordIds.size} visible items")
+//            Log.d(TAG, "[bookbag] bag ${bookBag.id} has ${bookBag.visibleRecordIds.size} visible items")
         }
 
         // then flesh the objects

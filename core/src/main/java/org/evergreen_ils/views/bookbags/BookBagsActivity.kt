@@ -29,10 +29,13 @@ import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.*
 import androidx.core.os.bundleOf
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
+import kotlinx.coroutines.joinAll
 import net.kenstir.hemlock.R
 import net.kenstir.hemlock.android.Analytics
 import net.kenstir.hemlock.android.App
+import net.kenstir.hemlock.android.IntentKeys
 import net.kenstir.hemlock.logging.Log
 import org.evergreen_ils.data.BookBag
 import net.kenstir.hemlock.data.Result
@@ -70,7 +73,7 @@ class BookBagsActivity : BaseActivity() {
         lv?.onItemClickListener = AdapterView.OnItemClickListener { parent, view, position, id ->
             val item = lv?.getItemAtPosition(position) as BookBag
             val intent = Intent(this@BookBagsActivity, BookBagDetailsActivity::class.java)
-            intent.putExtra("bookBag", item)
+            intent.putExtra(IntentKeys.PATRON_LIST, item)
             startActivityForResult(intent, 0)
         }
     }
@@ -100,6 +103,15 @@ class BookBagsActivity : BaseActivity() {
                     is Result.Success -> {}
                     is Result.Error -> { showAlert(result.exception); return@async }
                 }
+
+                // load bookbag items
+                val jobs = mutableListOf<Job>()
+                for (list in App.getAccount().patronLists) {
+                    jobs.add(scope.async {
+                        App.getServiceConfig().userService.loadPatronListItems(App.getAccount(), list, resources.getBoolean(R.bool.ou_extra_bookbag_query))
+                    })
+                }
+                jobs.joinAll()
 
                 updateListAdapter()
                 Log.logElapsedTime(TAG, start, "[kcxxx] fetchData ... done")

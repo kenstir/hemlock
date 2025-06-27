@@ -15,16 +15,12 @@
  * along with this program; if not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.kenstir.hemlock.net
+package net.kenstir.hemlock.android
 
-import net.kenstir.hemlock.data.Result
-import net.kenstir.hemlock.data.model.Account
-import net.kenstir.hemlock.data.model.PatronList
-
-interface UserService {
-    fun makeAccount(username: String, authToken: String): Account
-    suspend fun loadUserSession(account: Account): Result<Unit>
-    suspend fun deleteSession(account: Account): Result<Unit>
-    suspend fun loadPatronLists(account: Account): Result<Unit>
-    suspend fun loadPatronListItems(account: Account, patronList: PatronList, queryForVisibleItems: Boolean): Result<Unit>
+/**
+ * Keys for intent extras "must" use a package prefix, according to {@link android.content.Intent#putExtra()}.
+ * But AccountManager.* keys don't have a prefix, and I haven't seen any problems with omitting prefixes.
+ */
+object IntentKeys {
+    const val PATRON_LIST = "patronList"
 }

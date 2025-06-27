@@ -31,6 +31,7 @@ import net.kenstir.hemlock.R
 import net.kenstir.hemlock.android.Analytics
 import net.kenstir.hemlock.android.App
 import net.kenstir.hemlock.android.AppState
+import net.kenstir.hemlock.android.IntentKeys
 import net.kenstir.hemlock.logging.Log
 import net.kenstir.hemlock.android.ui.ActionBarUtils
 import net.kenstir.hemlock.android.ui.ProgressDialogSupport
@@ -39,6 +40,7 @@ import org.evergreen_ils.data.BookBag
 import org.evergreen_ils.data.BookBagItem
 import net.kenstir.hemlock.data.Result
 import net.kenstir.hemlock.data.model.ListItem
+import net.kenstir.hemlock.data.model.PatronList
 import org.evergreen_ils.net.Gateway
 import org.evergreen_ils.data.MBRecord
 import net.kenstir.hemlock.util.pubdateSortKey
@@ -56,7 +58,7 @@ class BookBagDetailsActivity : BaseActivity() {
     private var lv: ListView? = null
     private var listAdapter: ListItemArrayAdapter? = null
     private var progress: ProgressDialogSupport? = null
-    private lateinit var bookBag: BookBag
+    private lateinit var patronList: PatronList
     private var sortedItems = ArrayList<ListItem>()
     private var bookBagName: TextView? = null
     private var bookBagDescription: TextView? = null
@@ -81,13 +83,13 @@ class BookBagDetailsActivity : BaseActivity() {
         ActionBarUtils.initActionBarForActivity(this)
 
         progress = ProgressDialogSupport()
-        bookBag = intent.getSerializableExtra("bookBag") as BookBag
+        patronList = intent.getSerializableExtra(IntentKeys.PATRON_LIST) as PatronList
 
         bookBagName = findViewById(R.id.bookbag_name)
         bookBagDescription = findViewById(R.id.bookbag_description)
 
-        bookBagName?.text = bookBag.name
-        bookBagDescription?.text = bookBag.description
+        bookBagName?.text = patronList.name
+        bookBagDescription?.text = patronList.description
 
         lv = findViewById(R.id.bookbagitem_list)
         listAdapter = ListItemArrayAdapter(this, R.layout.bookbagitem_list_item, sortedItems)
@@ -170,7 +172,7 @@ class BookBagDetailsActivity : BaseActivity() {
                 progress?.show(this@BookBagDetailsActivity, getString(R.string.msg_retrieving_list_contents))
 
                 // load bookBag contents
-                val result = App.getServiceConfig().userService.loadPatronListItems(App.getAccount(), bookBag.id)
+                val result = App.getServiceConfig().userService.loadPatronListItems(App.getAccount(), patronList, resources.getBoolean(R.bool.ou_extra_bookbag_query))
                 if (result is Result.Error) { showAlert(result.exception); return@async }
 
                 updateItemsList()
@@ -210,7 +212,7 @@ class BookBagDetailsActivity : BaseActivity() {
         }
 
         sortedItems.clear()
-        sortedItems.addAll(bookBag.items.sortedWith(comparator))
+        sortedItems.addAll(patronList.items.sortedWith(comparator))
         listAdapter?.notifyDataSetChanged()
 
 //        val direction = if (sortDescending) { "desc" } else "asc"
@@ -233,12 +235,8 @@ class BookBagDetailsActivity : BaseActivity() {
     private fun deleteList() {
         scope.async {
             progress?.show(this@BookBagDetailsActivity, getString(R.string.msg_deleting_list))
-            val id = bookBag.id
-            val result = if (id != null) {
-                Gateway.actor.deleteBookBagAsync(App.getAccount(), id)
-            } else {
-                Result.Success(Unit)
-            }
+            val id = patronList.id
+            val result = Gateway.actor.deleteBookBagAsync(App.getAccount(), id)
             progress?.dismiss()
             Analytics.logEvent(Analytics.Event.BOOKBAGS_DELETE_LIST, bundleOf(
                 Analytics.Param.RESULT to Analytics.resultValue(result)
