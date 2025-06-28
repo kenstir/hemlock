@@ -26,5 +26,11 @@ interface UserService {
     suspend fun loadUserSession(account: Account): Result<Unit>
     suspend fun deleteSession(account: Account): Result<Unit>
     suspend fun loadPatronLists(account: Account): Result<Unit>
+
+    /**
+     * loads the items in a patron list, optionally filtering to only those items that are visible
+     *
+     * NB: it does not load the records for the items, see BiblioService#loadRecordDetails
+     */
     suspend fun loadPatronListItems(account: Account, patronList: PatronList, queryForVisibleItems: Boolean): Result<Unit>
 }
