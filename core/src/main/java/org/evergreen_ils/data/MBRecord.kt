@@ -54,7 +54,7 @@ class MBRecord(override val id: Int, var mvrObj: XOSRFObject? = null): BibRecord
         get() = mvrObj?.getString("synopsis") ?: ""
     override val title: String
         get() = mvrObj?.getString("title") ?: ""
-    override val titleSort: String
+    override val titleSortKey: String
         get() {
             if (hasMarc()) {
                 val skip = nonFilingCharacters
@@ -66,7 +66,7 @@ class MBRecord(override val id: Int, var mvrObj: XOSRFObject? = null): BibRecord
                 return titleSortKey(title) ?: ""
             }
         }
-    private val nonFilingCharacters: Int?
+    override val nonFilingCharacters: Int?
         get() {
             marcRecord?.let {
                 for (df in it.datafields) {

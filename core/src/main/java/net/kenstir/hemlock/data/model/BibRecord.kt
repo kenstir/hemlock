@@ -29,10 +29,11 @@ interface BibRecord: Serializable {
     val synopsis: String
     val isbn: String
 
-    val titleSort: String
+    val titleSortKey: String
 
     var marcRecord: MARCRecord?
     var isDeleted: Boolean
+    val nonFilingCharacters: Int?
 
     fun hasAttributes(): Boolean
     fun hasMarc(): Boolean
