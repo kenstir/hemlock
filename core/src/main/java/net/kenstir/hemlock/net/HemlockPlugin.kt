@@ -18,11 +18,9 @@
 package net.kenstir.hemlock.net
 
 import io.ktor.client.plugins.api.*
-import io.ktor.client.request.HttpRequest
-import io.ktor.client.request.HttpRequestBuilder
 import io.ktor.client.statement.HttpResponse
-import io.ktor.client.statement.request
 import io.ktor.util.*
+import net.kenstir.hemlock.android.Analytics
 import net.kenstir.hemlock.net.HemlockPluginAttributeKeys.debugTagKey
 import net.kenstir.hemlock.net.HemlockPluginAttributeKeys.debugUrlKey
 import net.kenstir.hemlock.net.HemlockPluginAttributeKeys.recvTimeKey
@@ -65,12 +63,13 @@ val HemlockPlugin = createClientPlugin("HemlockPlugin") {
         requestBuilder.attributes.put(debugUrlKey, debugUrl)
     }
 
-    on(SendingRequest) { request, content ->
+    on(SendingRequest) { request, _ ->
         val now = System.currentTimeMillis()
         request.attributes.put(sentTimeKey, now)
-//        val tag = request.attributes[debugTagKey]
-//        val debugUrl = request.attributes[debugUrlKey]
-//        println("%8s SendingRequest: %s".format(tag, debugUrl))
+        val debugTag = request.attributes[debugTagKey]
+        val debugUrl = request.attributes[debugUrlKey]
+//        println("[net] %8s SendingRequest: %s".format(debugTag, debugUrl))
+        Analytics.logRequest(debugTag, debugUrl)
     }
 
     onResponse { response ->
