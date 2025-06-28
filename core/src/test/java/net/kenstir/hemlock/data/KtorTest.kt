@@ -67,14 +67,14 @@ class KtorTest {
             install(HttpCache) {
                 println("plugin: HttpCache using in-memory cache")
             }
-            install(Logging) {
-                println("plugin: Logging")
-                logger = Logger.SIMPLE
-                level = LogLevel.INFO
-            }
             install(HemlockPlugin) {
                 println("plugin: HemlockPlugin")
             }
+//            install(Logging) {
+//                println("plugin: Logging")
+//                logger = Logger.SIMPLE
+//                level = LogLevel.INFO
+//            }
         }
     }
 
@@ -91,8 +91,8 @@ class KtorTest {
 
         // call bodyAsText to ensure the response is fully received before checking cache
         val responseBody1 = response1.bodyAsText()
-        val elapsed1 = elapsedTime(response1)
-        val cached1 = isCached(response1)
+        val elapsed1 = response1.elapsedTime()
+        val cached1 = response1.isCached()
         println("try1: ${elapsed1}ms: $responseBody1")
         assertFalse("First response should not be cached", cached1)
         assertTrue("Non-cached response should take non-zero time", elapsed1 > 0)
@@ -103,8 +103,8 @@ class KtorTest {
         val response2 = client.get(url)
 
         val responseBody2 = response2.bodyAsText()
-        val elapsed2 = elapsedTime(response2)
-        val cached2 = isCached(response2)
+        val elapsed2 = response2.elapsedTime()
+        val cached2 = response2.isCached()
         println("try2: ${elapsed2}ms: $responseBody2")
         assertTrue("Second response should be cached", cached2)
         assertEquals(0, elapsed2)
@@ -120,8 +120,8 @@ class KtorTest {
 
         // call bodyAsText to ensure the response is fully received before checking cache
         val responseBody1 = response1.bodyAsText()
-        val elapsed1 = elapsedTime(response1)
-        val cached1 = isCached(response1)
+        val elapsed1 = response1.elapsedTime()
+        val cached1 = response1.isCached()
         println("try1: ${elapsed1}ms: $responseBody1")
         assertFalse("First response should not be cached", cached1)
 
@@ -133,8 +133,8 @@ class KtorTest {
         }
 
         val responseBody2 = response2.bodyAsText()
-        val elapsed2 = elapsedTime(response2)
-        val cached2 = isCached(response2)
+        val elapsed2 = response2.elapsedTime()
+        val cached2 = response2.isCached()
         println("try2: ${elapsed2}ms: $responseBody2")
         assertFalse("Second response should not be cached", cached2)
     }
@@ -152,8 +152,8 @@ class KtorTest {
 
         // call bodyAsText to ensure the response is fully received before checking cache
         val responseBody1 = response1.bodyAsText()
-        val elapsed1 = elapsedTime(response1)
-        val cached1 = isCached(response1)
+        val elapsed1 = response1.elapsedTime()
+        val cached1 = response1.isCached()
         println("try1: ${elapsed1}ms: $responseBody1")
         assertFalse("First response should not be cached", cached1)
 
@@ -166,8 +166,8 @@ class KtorTest {
         }
 
         val responseBody2 = response2.bodyAsText()
-        val elapsed2 = elapsedTime(response2)
-        val cached2 = isCached(response2)
+        val elapsed2 = response2.elapsedTime()
+        val cached2 = response2.isCached()
         println("try2: ${elapsed2}ms: $responseBody2")
         assertFalse("Second response should not be cached", cached2)
     }
