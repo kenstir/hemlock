@@ -1,5 +1,13 @@
 #!/bin/sh
 
+while getopts "v" option; do
+    case $option in
+    v) verbose="-i";;
+    *) ;;
+    esac
+done
+shift $((OPTIND-1))
+
 case $# in
 1)
     app="$1"
@@ -63,4 +71,4 @@ use_authoritative)
 esac
 
 # fetch
-curl -sS "${url}" && echo
+curl $verbose -sS "${url}" && echo
