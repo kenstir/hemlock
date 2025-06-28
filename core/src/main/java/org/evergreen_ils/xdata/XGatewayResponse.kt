@@ -24,10 +24,12 @@ import net.kenstir.hemlock.net.isCached
 
 class XGatewayResponse(val response: HttpResponse) {
     val isCached: Boolean
-        get() = isCached(response)
+        //get() = isCached(response)
+        get() = response.isCached()
 
     val elapsed: Long
-        get() = elapsedTime(response)
+        //        get() = elapsedTime(response)
+        get() = response.elapsedTime()
 
     suspend fun bodyAsText(): String {
         return response.bodyAsText()
