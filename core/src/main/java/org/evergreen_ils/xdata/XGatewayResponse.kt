@@ -19,17 +19,24 @@ package org.evergreen_ils.xdata
 
 import io.ktor.client.statement.HttpResponse
 import io.ktor.client.statement.bodyAsText
+import net.kenstir.hemlock.android.Analytics
 import net.kenstir.hemlock.net.elapsedTime
 import net.kenstir.hemlock.net.isCached
+import net.kenstir.hemlock.net.debugTag
+import net.kenstir.hemlock.net.debugUrl
 
 class XGatewayResponse(val response: HttpResponse) {
     val isCached: Boolean
-        //get() = isCached(response)
         get() = response.isCached()
 
     val elapsed: Long
-        //        get() = elapsedTime(response)
         get() = response.elapsedTime()
+
+    val debugTag: String
+        get() = response.debugTag()
+
+    val debugUrl: String
+        get() = response.debugUrl()
 
     suspend fun bodyAsText(): String {
         return response.bodyAsText()
@@ -38,7 +45,9 @@ class XGatewayResponse(val response: HttpResponse) {
 
 /** given `"payload":[obj]` return `obj` */
 suspend fun XGatewayResponse.payloadFirstAsObject(): XOSRFObject {
+    Analytics.logRequest(debugTag, debugUrl)
     val json = bodyAsText()
+    Analytics.logResponseX(debugTag, debugUrl, isCached, json, elapsed)
     return XGatewayResult.create(json).payloadFirstAsObject()
 }
 

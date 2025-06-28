@@ -101,8 +101,11 @@ object Analytics {
     private const val mQueueSize = 64
     private val mEntries = ArrayDeque<String>(mQueueSize)
     private val mTimeFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS", Locale.US)
+//    val mRedactedResponseRegex = Regex("""
+//        ("__c":"aum?"|"__c":"aou"|"authtoken":)
+//    """.trimIndent())
     val mRedactedResponseRegex = Regex("""
-        ("__c":"aum?"|"__c":"aou"|"authtoken":)
+        ("__c":"aum?"|"authtoken":)
     """.trimIndent())
 
     @JvmStatic
@@ -202,25 +205,40 @@ object Analytics {
         logEvent(event, null)
     }
 
-    // Add request to the logBuffer to be available in an error report
     @JvmStatic
     fun logRequest(tag: String, url: String) {
-        addToLogBuffer("$tag send: $url")
+        val tag8 = tag.padStart(8)
+        val logMsg = "[net] $tag8 send:  $url"
+        Log.d(TAG, logMsg)
+        addToLogBuffer(logMsg)
     }
 
-    // Add response to the logBuffer to be available in an error report
     @JvmStatic
     fun logResponse(tag: String, url: String, cached: Boolean, data: String) {
-        // trim or redact certain responses
+        logResponseX(tag, url, cached, data, null)
+    }
+
+    fun logResponseX(tag: String, url: String, cached: Boolean, data: String, elapsed: Long? = null) {
+
         val tag8 = tag.padStart(8)
         val badge = if (cached) "*" else " "
-        if (data.startsWith("<IDL ")) {
-            addToLogBuffer("$tag recv:$badge <IDL>")
-        } else if (mRedactedResponseRegex.containsMatchIn(data)) {
-            addToLogBuffer("$tag recv:$badge ***")
-        } else {
-            addToLogBuffer("$tag recv:$badge $data")
-        }
+        val prefix =
+            if (elapsed != null) {
+                "[net] $tag8 recv:$badge %5d ms".format(elapsed)
+            } else {
+                "[net] $tag8 recv:$badge"
+            }
+        // trim or redact certain responses
+        val logMsg =
+            if (data.startsWith("<IDL ")) {
+                "$prefix <IDL>"
+            } else if (mRedactedResponseRegex.containsMatchIn(data)) {
+                "$prefix ***"
+            } else {
+                "$prefix ${data.take(256)}"
+            }
+        Log.d(TAG, logMsg)
+        addToLogBuffer(logMsg)
     }
 
     @Synchronized
