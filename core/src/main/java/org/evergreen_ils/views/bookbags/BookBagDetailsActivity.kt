@@ -25,11 +25,9 @@ import android.content.Context
 import android.os.Bundle
 import android.view.*
 import android.widget.*
-import androidx.core.os.bundleOf
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
 import net.kenstir.hemlock.R
-import net.kenstir.hemlock.android.Analytics
 import net.kenstir.hemlock.android.App
 import net.kenstir.hemlock.android.AppState
 import net.kenstir.hemlock.android.IntentKeys
@@ -93,7 +91,7 @@ class BookBagDetailsActivity : BaseActivity() {
         lv?.adapter = listAdapter
         lv?.onItemClickListener = AdapterView.OnItemClickListener { parent, view, position, id ->
             //Analytics.logEvent("list_itemclick")
-            TODO("fixme")
+            showAlert("TODO(data): not implemented yet")
 //            val records = ArrayList<MBRecord?>()
 //            sortedItems.let {
 //                for (item in it) {
@@ -207,14 +205,17 @@ class BookBagDetailsActivity : BaseActivity() {
         sortedItems.clear()
         sortedItems.addAll(patronList.items.sortedWith(comparator))
         listAdapter?.notifyDataSetChanged()
+        dumpListItems()
+    }
 
-//        val direction = if (sortDescending) { "desc" } else "asc"
-//        Log.d(TAG, "[sort] $sortByKeyword $direction")
-//        for (item in sortedItems) {
-//            item.record?.let {
-//                Log.d(TAG, "[sort] key <<${it.titleSort.take(32).padEnd(32)}>> title <<${it.title.take(32).padEnd(32)}>> nf ${it.nonFilingCharacters} id ${it.id}")
-//            }
-//        }
+    private fun dumpListItems() {
+        val direction = if (sortDescending) { "desc" } else "asc"
+        Log.d(TAG, "[sort] $sortByKeyword $direction")
+        for (item in sortedItems) {
+            item.record?.let {
+                Log.d(TAG, "[sort] key <<${it.titleSortKey.take(32).padEnd(32)}>> title <<${it.title.take(32).padEnd(32)}>> nf ${it.nonFilingCharacters} id ${it.id}")
+            }
+        }
     }
 
     private fun confirmDeleteList() {
@@ -299,8 +300,8 @@ class BookBagDetailsActivity : BaseActivity() {
         private val collator = Collator.getInstance()
 
         override fun compare(o1: ListItem?, o2: ListItem?): Int {
-            val key1 = if (descending) o2?.record?.titleSort else o1?.record?.titleSort
-            val key2 = if (descending) o1?.record?.titleSort else o2?.record?.titleSort
+            val key1 = if (descending) o2?.record?.titleSortKey else o1?.record?.titleSortKey
+            val key2 = if (descending) o1?.record?.titleSortKey else o2?.record?.titleSortKey
             return when {
                 key1 == null && key2 == null -> 0
                 key1 == null -> -1
