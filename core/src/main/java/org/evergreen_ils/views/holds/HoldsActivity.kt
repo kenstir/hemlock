@@ -359,11 +359,12 @@ class HoldsActivity : BaseActivity() {
 
         //TODO: replace with GatewayLoader.loadRecordAttributesAsync
         suspend fun fetchRecordAttrs(record: MBRecord, id: Int): Result<Unit> {
-            val mraResult = Gateway.pcrud.fetchMRA(id)
-            if (mraResult is Result.Error) return mraResult
-            val mraObj = mraResult.get()
-            record.updateFromMRAResponse(mraObj)
-            return Result.Success(Unit)
+//            val mraResult = Gateway.pcrud.fetchMRA(id)
+//            if (mraResult is Result.Error) return mraResult
+//            val mraObj = mraResult.get()
+//            record.updateFromMRAResponse(mraObj)
+//            return Result.Success(Unit)
+            return Result.Error(ShouldNotHappenException("fetchRecordAttrs not implemented"))
         }
     }
 }

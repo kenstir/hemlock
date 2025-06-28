@@ -20,15 +20,16 @@ package org.evergreen_ils.utils;
 
 import android.text.TextUtils;
 
+import org.evergreen_ils.xdata.XOSRFObject;
 import org.opensrf.util.OSRFObject;
 
 import java.util.HashMap;
 
 public class RecordAttributes {
-    public static HashMap<String, String> parseAttributes(OSRFObject mra_obj) {
-        if (mra_obj == null)
+    public static HashMap<String, String> parseAttributes(XOSRFObject mraObj) {
+        if (mraObj == null)
             return new HashMap<>();
-        String attrs = mra_obj.getString("attrs");
+        String attrs = mraObj.getString("attrs", null);
         if (TextUtils.isEmpty(attrs))
             return new HashMap<>();
         return parseAttributes(attrs);

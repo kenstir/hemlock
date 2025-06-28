@@ -26,6 +26,7 @@ import android.os.Bundle
 import android.view.*
 import android.widget.*
 import androidx.core.os.bundleOf
+import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
 import net.kenstir.hemlock.R
 import net.kenstir.hemlock.android.Analytics
@@ -36,13 +37,9 @@ import net.kenstir.hemlock.logging.Log
 import net.kenstir.hemlock.android.ui.ActionBarUtils
 import net.kenstir.hemlock.android.ui.ProgressDialogSupport
 import net.kenstir.hemlock.android.ui.showAlert
-import org.evergreen_ils.data.BookBag
-import org.evergreen_ils.data.BookBagItem
 import net.kenstir.hemlock.data.Result
 import net.kenstir.hemlock.data.model.ListItem
 import net.kenstir.hemlock.data.model.PatronList
-import org.evergreen_ils.net.Gateway
-import org.evergreen_ils.data.MBRecord
 import net.kenstir.hemlock.util.pubdateSortKey
 import org.evergreen_ils.utils.ui.*
 import java.text.Collator
@@ -175,6 +172,13 @@ class BookBagDetailsActivity : BaseActivity() {
                 val result = App.getServiceConfig().userService.loadPatronListItems(App.getAccount(), patronList, resources.getBoolean(R.bool.ou_extra_bookbag_query))
                 if (result is Result.Error) { showAlert(result.exception); return@async }
 
+                // fetch item details
+                val jobs = mutableListOf<Deferred<Result<Unit>>>()
+                for (item in patronList.items) {
+                    jobs.add(async { fetchTargetDetails(item) })
+                }
+                jobs.map { it.await() }
+
                 updateItemsList()
                 Log.logElapsedTime(TAG, start, "[kcxxx] fetchData ... done")
             } catch (ex: Exception) {
@@ -186,21 +190,10 @@ class BookBagDetailsActivity : BaseActivity() {
         }
     }
 
-    suspend fun fetchTargetDetails(item: BookBagItem): Result<Unit> {
-        val modsResult = Gateway.search.fetchRecordMODS(item.targetId)
-        if (modsResult is Result.Error) return modsResult
-        val modsObj = modsResult.get()
-        val record = MBRecord(modsObj)
-        item.record = record
-
-        if (resources.getBoolean(R.bool.ou_need_marc_record)) {
-            val result = Gateway.pcrud.fetchMARC(record.id)
-            if (result is Result.Error) return result
-            val breObj = result.get()
-            record.updateFromBREResponse(breObj)
-        }
-
-        return Result.Success(Unit)
+    suspend fun fetchTargetDetails(item: ListItem): Result<Unit> {
+        val record = item.record ?: return Result.Error(Exception("No record found for item ${item.id}"))
+        return App.getServiceConfig().biblioService.loadRecordDetails(record,
+            resources.getBoolean(R.bool.ou_need_marc_record))
     }
 
     private fun updateItemsList() {
@@ -233,22 +226,23 @@ class BookBagDetailsActivity : BaseActivity() {
     }
 
     private fun deleteList() {
-        scope.async {
-            progress?.show(this@BookBagDetailsActivity, getString(R.string.msg_deleting_list))
-            val id = patronList.id
-            val result = Gateway.actor.deleteBookBagAsync(App.getAccount(), id)
-            progress?.dismiss()
-            Analytics.logEvent(Analytics.Event.BOOKBAGS_DELETE_LIST, bundleOf(
-                Analytics.Param.RESULT to Analytics.resultValue(result)
-            ))
-            when (result) {
-                is Result.Error -> showAlert(result.exception)
-                is Result.Success -> {
-                    setResult(RESULT_CODE_UPDATE)
-                    finish()
-                }
-            }
-        }
+        TODO()
+//        scope.async {
+//            progress?.show(this@BookBagDetailsActivity, getString(R.string.msg_deleting_list))
+//            val id = patronList.id
+//            val result = Gateway.actor.deleteBookBagAsync(App.getAccount(), id)
+//            progress?.dismiss()
+//            Analytics.logEvent(Analytics.Event.BOOKBAGS_DELETE_LIST, bundleOf(
+//                Analytics.Param.RESULT to Analytics.resultValue(result)
+//            ))
+//            when (result) {
+//                is Result.Error -> showAlert(result.exception)
+//                is Result.Success -> {
+//                    setResult(RESULT_CODE_UPDATE)
+//                    finish()
+//                }
+//            }
+//        }
     }
 
     private fun showSortListDialog() {
@@ -343,22 +337,23 @@ class BookBagDetailsActivity : BaseActivity() {
             author.text = record?.record?.author
             pubdate.text = record?.record?.pubdate
             remove.setOnClickListener(View.OnClickListener {
-                val id = record?.id ?: return@OnClickListener
-                scope.async {
-                    progress?.show(this@BookBagDetailsActivity, getString(R.string.msg_removing_list_item))
-                    val result = Gateway.actor.removeItemFromBookBagAsync(App.getAccount(), id)
-                    progress?.dismiss()
-                    Analytics.logEvent(Analytics.Event.BOOKBAG_DELETE_ITEM, bundleOf(
-                        Analytics.Param.RESULT to Analytics.resultValue(result)
-                    ))
-                    when (result) {
-                        is Result.Error -> showAlert(result.exception)
-                        is Result.Success -> {
-                            setResult(RESULT_CODE_UPDATE)
-                            fetchData()
-                        }
-                    }
-                }
+                TODO()
+//                val id = record?.id ?: return@OnClickListener
+//                scope.async {
+//                    progress?.show(this@BookBagDetailsActivity, getString(R.string.msg_removing_list_item))
+//                    val result = Gateway.actor.removeItemFromBookBagAsync(App.getAccount(), id)
+//                    progress?.dismiss()
+//                    Analytics.logEvent(Analytics.Event.BOOKBAG_DELETE_ITEM, bundleOf(
+//                        Analytics.Param.RESULT to Analytics.resultValue(result)
+//                    ))
+//                    when (result) {
+//                        is Result.Error -> showAlert(result.exception)
+//                        is Result.Success -> {
+//                            setResult(RESULT_CODE_UPDATE)
+//                            fetchData()
+//                        }
+//                    }
+//                }
             })
 
             return row

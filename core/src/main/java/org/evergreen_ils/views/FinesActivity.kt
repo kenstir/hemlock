@@ -205,29 +205,30 @@ class FinesActivity : BaseActivity() {
 
     private fun onItemClick(position: Int) {
         //Analytics.logEvent("fines_itemclick", "have_grocery_bills", haveAnyGroceryBills)
-        val records = ArrayList<MBRecord>()
-        if (haveAnyGroceryBills) {
-            // If any of the fines are for non-circulation items ("grocery bills"), we
-            // start the details flow with only the one record, if a record was selected.
-            // The details flow can't handle nulls.
-            fineRecords[position].mvrObj?.let { mvrObj ->
-                mvrObj.getInt("doc_ic")?.let { id ->
-                    records.add(MBRecord(id, mvrObj))
-                }
-            }
-        } else {
-            for (item in fineRecords) {
-                item.mvrObj?.let { mvrObj ->
-                    mvrObj.getInt("doc_ic")?.let { id ->
-                        records.add(MBRecord(id, mvrObj))
-                    }
-                }
-            }
-        }
-        if (records.size > 0) {
-            val targetPosition = if (position > records.size - 1) records.size - 1 else position
-            RecordDetails.launchDetailsFlow(this@FinesActivity, records, targetPosition)
-        }
+        TODO()
+//        val records = ArrayList<MBRecord>()
+//        if (haveAnyGroceryBills) {
+//            // If any of the fines are for non-circulation items ("grocery bills"), we
+//            // start the details flow with only the one record, if a record was selected.
+//            // The details flow can't handle nulls.
+//            fineRecords[position].mvrObj?.let { mvrObj ->
+//                mvrObj.getInt("doc_ic")?.let { id ->
+//                    records.add(MBRecord(id, mvrObj))
+//                }
+//            }
+//        } else {
+//            for (item in fineRecords) {
+//                item.mvrObj?.let { mvrObj ->
+//                    mvrObj.getInt("doc_ic")?.let { id ->
+//                        records.add(MBRecord(id, mvrObj))
+//                    }
+//                }
+//            }
+//        }
+//        if (records.size > 0) {
+//            val targetPosition = if (position > records.size - 1) records.size - 1 else position
+//            RecordDetails.launchDetailsFlow(this@FinesActivity, records, targetPosition)
+//        }
     }
 
     internal inner class FinesArrayAdapter(context: Context, private val resourceId: Int, private val items: List<FineRecord>) : ArrayAdapter<FineRecord>(context, resourceId, items) {

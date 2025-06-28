@@ -17,5 +17,9 @@
 
 package net.kenstir.hemlock.net
 
+import net.kenstir.hemlock.data.Result
+import net.kenstir.hemlock.data.model.BibRecord
+
 interface BiblioService {
+    suspend fun loadRecordDetails(bibRecord: BibRecord, needMARC: Boolean): Result<Unit>
 }
