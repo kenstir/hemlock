@@ -28,6 +28,7 @@ import net.kenstir.hemlock.net.LoaderServiceOptions
 import net.kenstir.hemlock.net.ServiceConfig
 import org.evergreen_ils.model.EvergreenAccount
 import org.evergreen_ils.net.EvergreenAuthService
+import org.evergreen_ils.net.EvergreenBiblioService
 import org.evergreen_ils.net.EvergreenLoaderService
 import org.evergreen_ils.net.EvergreenOrgService
 import org.evergreen_ils.net.EvergreenUserService
@@ -43,6 +44,7 @@ class LiveAuthServiceTest {
         val serviceConfig = ServiceConfig(
             EvergreenLoaderService(),
             EvergreenAuthService(),
+            EvergreenBiblioService(),
             EvergreenUserService(),
             EvergreenOrgService(),
         )
