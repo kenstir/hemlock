@@ -45,7 +45,6 @@ class XGatewayResponse(val response: HttpResponse) {
 
 /** given `"payload":[obj]` return `obj` */
 suspend fun XGatewayResponse.payloadFirstAsObject(): XOSRFObject {
-    Analytics.logRequest(debugTag, debugUrl)
     val json = bodyAsText()
     Analytics.logResponseX(debugTag, debugUrl, isCached, json, elapsed)
     return XGatewayResult.create(json).payloadFirstAsObject()
@@ -54,17 +53,20 @@ suspend fun XGatewayResponse.payloadFirstAsObject(): XOSRFObject {
 /** given `"payload":[obj]` return `obj` or null if payload empty */
 suspend fun XGatewayResponse.payloadFirstAsObjectOrNull(): XOSRFObject? {
     val json = bodyAsText()
+    Analytics.logResponseX(debugTag, debugUrl, isCached, json, elapsed)
     return XGatewayResult.create(json).payloadFirstAsOptionalObject()
 }
 
 /** given `"payload":[[obj,obj]]` return `[obj,obj]` */
 suspend fun XGatewayResponse.payloadFirstAsObjectList(): List<XOSRFObject> {
     val json = bodyAsText()
+    Analytics.logResponseX(debugTag, debugUrl, isCached, json, elapsed)
     return XGatewayResult.create(json).payloadFirstAsObjectList()
 }
 
 /** given `"payload":["string"]` return `"string"` */
 suspend fun XGatewayResponse.payloadFirstAsString(): String {
     val json = bodyAsText()
+    Analytics.logResponseX(debugTag, debugUrl, isCached, json, elapsed)
     return XGatewayResult.create(json).payloadFirstAsString()
 }
