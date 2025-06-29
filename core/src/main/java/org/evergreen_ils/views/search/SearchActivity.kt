@@ -58,8 +58,7 @@ import net.kenstir.hemlock.android.ui.ProgressDialogSupport
 import net.kenstir.hemlock.android.ui.showAlert
 import org.evergreen_ils.data.MBRecord
 import net.kenstir.hemlock.data.Result
-import org.evergreen_ils.net.Gateway
-import org.evergreen_ils.net.GatewayLoader
+import net.kenstir.hemlock.net.SearchResults
 import org.evergreen_ils.system.EgCodedValueMap
 import org.evergreen_ils.system.EgOrg
 import org.evergreen_ils.system.EgSearch
@@ -67,7 +66,6 @@ import org.evergreen_ils.utils.getCustomMessage
 import org.evergreen_ils.utils.ui.*
 import org.evergreen_ils.views.bookbags.BookBagUtils.showAddToListDialog
 import org.evergreen_ils.views.holds.PlaceHoldActivity
-import org.opensrf.util.OSRFObject
 
 
 const val ITEM_PLACE_HOLD = 0
@@ -92,6 +90,7 @@ class SearchActivity : BaseActivity(), ActivityCompat.OnRequestPermissionsResult
     private var searchResultsFragment: SearchResultsFragment? = null
     private var progress: ProgressDialogSupport? = null
     private var haveSearched = false
+    private var searchResults: SearchResults? = null
     private var contextMenuRecordInfo: ContextMenuRecordInfo? = null
     private lateinit var searchClassKeywords: Array<String>
 
@@ -192,7 +191,7 @@ class SearchActivity : BaseActivity(), ActivityCompat.OnRequestPermissionsResult
 
     private fun clearResults() {
         haveSearched = false
-        EgSearch.clearResults()
+        searchResults = null
     }
 
     private fun initSearchButton() {
@@ -264,13 +263,13 @@ class SearchActivity : BaseActivity(), ActivityCompat.OnRequestPermissionsResult
                 val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                 imm.hideSoftInputFromWindow(searchTextView?.windowToken, 0)
 
-                // query returns a list of IDs
-                val queryString = EgSearch.makeQueryString(searchText, searchClass, searchFormatCode, getString(R.string.ou_sort_by))
-                val result = Gateway.search.fetchMulticlassQuery(queryString, EgSearch.searchLimit)
+                // submit the query
+                val queryString = App.getServiceConfig().searchService.makeQueryString(searchText, searchClass, searchFormatCode, getString(R.string.ou_sort_by))
+                val result = App.getServiceConfig().searchService.searchCatalog(queryString, resources.getInteger(R.integer.ou_search_limit))
                 when (result) {
                     is Result.Success -> {
                         haveSearched = true
-                        EgSearch.loadResults(result.data)
+                        searchResults = result.get()
                         logSearchEvent(result)
                     }
                     is Result.Error -> {
@@ -293,7 +292,7 @@ class SearchActivity : BaseActivity(), ActivityCompat.OnRequestPermissionsResult
         }
     }
 
-    private fun logSearchEvent(result: Result<OSRFObject>) {
+    private fun logSearchEvent(result: Result<SearchResults>) {
         val b = bundleOf(
                 Analytics.Param.SEARCH_CLASS to searchClass,
                 Analytics.Param.SEARCH_FORMAT to searchFormatCode,
@@ -306,7 +305,7 @@ class SearchActivity : BaseActivity(), ActivityCompat.OnRequestPermissionsResult
         when (result) {
             is Result.Success -> {
                 b.putString(Analytics.Param.RESULT, Analytics.Value.OK)
-                b.putInt(Analytics.Param.NUM_RESULTS, EgSearch.visible)
+                b.putInt(Analytics.Param.NUM_RESULTS, searchResults?.numResults ?: 0)
             }
             is Result.Error ->
                 b.putString(Analytics.Param.RESULT, result.exception.getCustomMessage())
@@ -316,13 +315,16 @@ class SearchActivity : BaseActivity(), ActivityCompat.OnRequestPermissionsResult
 
     private fun updateSearchResultsSummary() {
         var s: String? = null
-        val size = EgSearch.results.size
-        if (size < EgSearch.visible) {
-            s = getString(R.string.first_n_of_m_results, size, EgSearch.visible)
-        } else if (size == 0 && haveSearched) {
-            s = getString(R.string.no_results)
-        } else if (size > 0 || haveSearched) {
-            s = getString(R.string.n_results, EgSearch.visible)
+        searchResults?.let {
+            val size = it.numResults
+            val total = it.totalMatches
+            if (size < total) {
+                s = getString(R.string.first_n_of_m_results, size, total)
+            } else if (size == 0 && haveSearched) {
+                s = getString(R.string.no_results)
+            } else if (size > 0 || haveSearched) {
+                s = getString(R.string.n_results, total)
+            }
         }
         searchResultsSummary?.text = s
     }
@@ -380,7 +382,7 @@ class SearchActivity : BaseActivity(), ActivityCompat.OnRequestPermissionsResult
             val intent = Intent(baseContext, RecordDetailsActivity::class.java)
             intent.putExtra("orgID", EgSearch.selectedOrganization?.id)
             intent.putExtra("recordPosition", position)
-            intent.putExtra("numResults", EgSearch.visible)
+            intent.putExtra("numResults", searchResults?.numResults ?: 0)
             startActivityForResult(intent, 10)
         }
         searchResultsFragment?.setOnRecordLongClickListener { record, position ->
@@ -406,7 +408,7 @@ class SearchActivity : BaseActivity(), ActivityCompat.OnRequestPermissionsResult
                 val intent = Intent(baseContext, RecordDetailsActivity::class.java)
                 intent.putExtra("orgID", EgSearch.selectedOrganization?.id)
                 intent.putExtra("recordPosition", info.position)
-                intent.putExtra("numResults", EgSearch.visible)
+                intent.putExtra("numResults", searchResults.numResults ?: 0)
                 startActivity(intent)
                 return true
             }

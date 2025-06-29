@@ -23,7 +23,10 @@ package org.evergreen_ils.system
 import android.text.TextUtils
 import org.evergreen_ils.data.OSRFUtils
 import net.kenstir.hemlock.data.model.Organization
+import net.kenstir.hemlock.net.SearchResults
 import org.evergreen_ils.data.MBRecord
+import org.evergreen_ils.net.EvergreenSearchResults
+import org.evergreen_ils.xdata.XOSRFObject
 import org.opensrf.util.OSRFObject
 import kotlin.collections.ArrayList
 
@@ -35,28 +38,17 @@ object EgSearch {
 
     private val TAG = EgSearch::class.java.simpleName
 
-    fun loadResults(obj: OSRFObject) {
+    fun loadResults(obj: XOSRFObject): SearchResults {
         clearResults()
         visible = OSRFUtils.parseInt(obj["count"]) ?: 0
-        if (visible == 0) return
+        if (visible == 0) return EvergreenSearchResults()
 
         // parse ids list
         val record_ids_lol = obj["ids"] as List<List<*>>
 
         // add to existing array, because SearchResultsFragment has an Adapter on it
         results.addAll(MBRecord.makeArray(record_ids_lol))
-    }
-
-    // Build query string, taken with a grain of salt from
-    // https://wiki.evergreen-ils.org/doku.php?id=documentation:technical:search_grammar
-    // e.g. "title:Harry Potter chamber of secrets search_format(book) site(MARLBORO)"
-    fun makeQueryString(searchText: String?, searchClass: String?, searchFormat: String?, sort: String?): String {
-        val sb = StringBuilder()
-        sb.append(searchClass).append(":").append(searchText)
-        if (!TextUtils.isEmpty(searchFormat)) sb.append(" search_format(").append(searchFormat).append(")")
-        if (selectedOrganization != null) sb.append(" site(").append(selectedOrganization!!.shortname).append(")")
-        if (!TextUtils.isEmpty(sort)) sb.append(" sort(").append(sort).append(")")
-        return sb.toString()
+        return EvergreenSearchResults()
     }
 
     fun clearResults() {

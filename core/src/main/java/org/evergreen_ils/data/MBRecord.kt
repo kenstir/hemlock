@@ -173,7 +173,7 @@ class MBRecord(override val id: Int, var mvrObj: XOSRFObject? = null): BibRecord
          * [["1805532"],["2385399"]]                     // string id only
          */
         fun makeArray(idsList: List<List<*>>): ArrayList<MBRecord> {
-            val records = ArrayList<MBRecord>()
+            val records = ArrayList<MBRecord>(idsList.size)
             for (i in idsList.indices) {
                 OSRFUtils.parseInt(idsList[i][0])?.let { id ->
                     records.add(MBRecord(id))
