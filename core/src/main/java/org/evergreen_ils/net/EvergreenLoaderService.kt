@@ -26,9 +26,6 @@ import net.kenstir.hemlock.data.Result
 import net.kenstir.hemlock.logging.Log
 import org.evergreen_ils.xdata.XGatewayClient
 import org.evergreen_ils.xdata.paramListOf
-import org.evergreen_ils.xdata.payloadFirstAsObject
-import org.evergreen_ils.xdata.payloadFirstAsObjectList
-import org.evergreen_ils.xdata.payloadFirstAsString
 import net.kenstir.hemlock.net.LoaderServiceOptions
 import net.kenstir.hemlock.data.jsonMapOf
 import org.evergreen_ils.system.EgCodedValueMap

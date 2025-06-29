@@ -29,9 +29,6 @@ import org.evergreen_ils.model.EvergreenOrganization
 import org.evergreen_ils.system.EgOrg
 import org.evergreen_ils.xdata.XGatewayClient
 import org.evergreen_ils.xdata.paramListOf
-import org.evergreen_ils.xdata.payloadFirstAsObject
-import org.evergreen_ils.xdata.payloadFirstAsObjectList
-import org.evergreen_ils.xdata.payloadFirstAsObjectOrNull
 
 class EvergreenOrgService: OrgService {
 

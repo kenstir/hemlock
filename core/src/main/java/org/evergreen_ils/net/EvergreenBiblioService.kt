@@ -25,7 +25,6 @@ import org.evergreen_ils.data.MBRecord
 import org.evergreen_ils.xdata.XGatewayClient
 import org.evergreen_ils.xdata.XOSRFObject
 import org.evergreen_ils.xdata.paramListOf
-import org.evergreen_ils.xdata.payloadFirstAsObject
 
 class EvergreenBiblioService: BiblioService {
 
