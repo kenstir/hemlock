@@ -50,29 +50,36 @@ object XGatewayClient {
 
     private const val GATEWAY_PATH = "/osrf-gateway-v1"
     const val DEFAULT_TIMEOUT_MS = 30_000
+    private const val CACHE_SIZE = 10 * 1024 * 1024 // 10 MiB
 
     @JvmStatic
     lateinit var cacheDirectory: File
-    val client: HttpClient by lazy {
-        val okHttpCache = Cache(cacheDirectory, (10 * 1024 * 1024).toLong())
+    val client: HttpClient by lazy { makeHttpClient() }
+
+    fun makeHttpClient(): HttpClient {
+        val okHttpCache = Cache(cacheDirectory, CACHE_SIZE.toLong())
         val okHttpClient = OkHttpClient.Builder()
             .cache(okHttpCache)
             .connectTimeout(DEFAULT_TIMEOUT_MS.toLong(), java.util.concurrent.TimeUnit.MILLISECONDS)
+            .addInterceptor { chain ->
+                val response = chain.proceed(chain.request())
+                val modifiedResponse = response.newBuilder()
+                    .addHeader("X-From-Cache", if (response.cacheResponse != null) "true" else "false")
+                    .build()
+                modifiedResponse
+            }
             .build()
-        HttpClient(OkHttp) {
+        return HttpClient(OkHttp) {
             engine {
                 preconfigured = okHttpClient
             }
+            install(HemlockPlugin) {}
             install(ContentNegotiation) {
                 json(
                     Json { ignoreUnknownKeys = true },
                     contentType = ContentType.Any
                 )
             }
-            install(HttpCache) {
-                // TODO: configure caching options, to make it persistent in the application
-            }
-            install(HemlockPlugin)
         }
     }
 
