@@ -28,8 +28,6 @@ import android.widget.ArrayAdapter
 import android.widget.Spinner
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import io.ktor.client.HttpClient
-import io.ktor.client.engine.cio.CIO
 import io.ktor.client.request.get
 import io.ktor.client.statement.bodyAsText
 import kotlinx.coroutines.async
@@ -41,6 +39,7 @@ import net.kenstir.hemlock.android.Analytics
 import net.kenstir.hemlock.logging.Log
 import net.kenstir.hemlock.data.model.Library
 import net.kenstir.hemlock.android.ui.showAlert
+import org.evergreen_ils.xdata.XGatewayClient
 import java.util.Collections
 
 @Serializable
@@ -98,7 +97,7 @@ class GenericAuthenticatorActivity: AuthenticatorActivity() {
                 val start = System.currentTimeMillis()
 
                 val url = directoryUrl ?: return@async
-                val client = HttpClient(CIO)
+                val client = XGatewayClient.client
                 val json = client.get(url).bodyAsText()
                 loadLibrariesFromJson(json)
                 onLibrariesLoaded()
