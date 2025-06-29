@@ -18,11 +18,6 @@
 package net.kenstir.hemlock.data
 
 import io.ktor.client.HttpClient
-import io.ktor.client.engine.okhttp.OkHttp
-import io.ktor.client.plugins.logging.LogLevel
-import io.ktor.client.plugins.logging.Logger
-import io.ktor.client.plugins.logging.Logging
-import io.ktor.client.plugins.logging.SIMPLE
 import io.ktor.client.plugins.pluginOrNull
 import io.ktor.client.request.get
 import io.ktor.client.request.post
@@ -39,9 +34,6 @@ import org.evergreen_ils.xdata.paramListOf
 import net.kenstir.hemlock.net.HemlockPlugin
 import net.kenstir.hemlock.net.elapsedTime
 import net.kenstir.hemlock.net.isCached
-import okhttp3.OkHttpClient
-import org.evergreen_ils.xdata.XGatewayClient.DEFAULT_TIMEOUT_MS
-import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
@@ -50,7 +42,7 @@ import org.junit.Test
 import java.io.File
 
 // Tests for Ktor; client caching and HemlockPlugin functionality
-class KtorTest {
+class KtorClientTest {
     companion object {
         @JvmStatic
         @BeforeClass
@@ -59,37 +51,15 @@ class KtorTest {
 
             XGatewayClient.baseUrl = testServer
             XGatewayClient.clientCacheKey = System.currentTimeMillis().toString()
+            XGatewayClient.cacheDirectory = File(System.getProperty("java.io.tmpdir") ?: "/tmp")
+            client = XGatewayClient.makeHttpClient()
         }
 
         fun getRequiredProperty(name: String): String {
             return System.getProperty(name) ?: throw RuntimeException("Missing required system property: $name")
         }
 
-        val okHttpCache = okhttp3.Cache(File(System.getProperty("java.io.tmpdir") ?: "/tmp"), 10 * 1024 * 1024)
-        val okHttpClient = OkHttpClient.Builder()
-            .cache(okHttpCache)
-            .connectTimeout(DEFAULT_TIMEOUT_MS.toLong(), java.util.concurrent.TimeUnit.MILLISECONDS)
-            .addInterceptor { chain ->
-                val response = chain.proceed(chain.request())
-                val modifiedResponse = response.newBuilder()
-                    .addHeader("X-From-Cache", if (response.cacheResponse != null) "true" else "false")
-                    .build()
-                modifiedResponse
-            }
-            .build()
-        val client = HttpClient(OkHttp) {
-            engine {
-                preconfigured = okHttpClient
-            }
-            install(HemlockPlugin) {
-                println("plugin: HemlockPlugin")
-            }
-//            install(Logging) {
-//                println("plugin: Logging")
-//                logger = Logger.SIMPLE
-//                level = LogLevel.INFO
-//            }
-        }
+        lateinit var client: HttpClient
     }
 
     @Test
