@@ -24,7 +24,6 @@ import org.evergreen_ils.Api
 import org.evergreen_ils.xdata.XGatewayClient
 import org.evergreen_ils.xdata.XOSRFObject
 import org.evergreen_ils.xdata.paramListOf
-import org.evergreen_ils.xdata.payloadFirstAsObject
 
 class EvergreenSearchService: SearchService {
     suspend fun fetchAssetCopy(copyId: Int): Result<XOSRFObject> {

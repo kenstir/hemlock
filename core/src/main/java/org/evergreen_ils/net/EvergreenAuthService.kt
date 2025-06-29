@@ -20,9 +20,8 @@ package org.evergreen_ils.net
 import net.kenstir.hemlock.net.AuthService
 import net.kenstir.hemlock.data.Result
 import org.evergreen_ils.xdata.XGatewayClient
+import org.evergreen_ils.xdata.XGatewayResponse
 import org.evergreen_ils.xdata.paramListOf
-import org.evergreen_ils.xdata.payloadFirstAsObject
-import org.evergreen_ils.xdata.payloadFirstAsString
 import net.kenstir.hemlock.data.jsonMapOf
 import org.evergreen_ils.Api
 import java.security.MessageDigest

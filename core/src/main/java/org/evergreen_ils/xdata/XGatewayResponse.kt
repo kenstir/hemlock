@@ -39,34 +39,32 @@ class XGatewayResponse(val response: HttpResponse) {
         get() = response.debugUrl()
 
     suspend fun bodyAsText(): String {
+        val body = response.bodyAsText()
+        Analytics.logResponseX(debugTag, debugUrl, isCached, body, elapsed)
         return response.bodyAsText()
     }
-}
 
-/** given `"payload":[obj]` return `obj` */
-suspend fun XGatewayResponse.payloadFirstAsObject(): XOSRFObject {
-    val json = bodyAsText()
-    Analytics.logResponseX(debugTag, debugUrl, isCached, json, elapsed)
-    return XGatewayResult.create(json).payloadFirstAsObject()
-}
+    /** given `"payload":[obj]` return `obj` */
+    suspend fun payloadFirstAsObject(): XOSRFObject {
+        val json = bodyAsText()
+        return XGatewayResult.create(json).payloadFirstAsObject()
+    }
 
-/** given `"payload":[obj]` return `obj` or null if payload empty */
-suspend fun XGatewayResponse.payloadFirstAsObjectOrNull(): XOSRFObject? {
-    val json = bodyAsText()
-    Analytics.logResponseX(debugTag, debugUrl, isCached, json, elapsed)
-    return XGatewayResult.create(json).payloadFirstAsOptionalObject()
-}
+    /** given `"payload":[obj]` return `obj` or null if payload empty */
+    suspend fun payloadFirstAsObjectOrNull(): XOSRFObject? {
+        val json = bodyAsText()
+        return XGatewayResult.create(json).payloadFirstAsOptionalObject()
+    }
 
-/** given `"payload":[[obj,obj]]` return `[obj,obj]` */
-suspend fun XGatewayResponse.payloadFirstAsObjectList(): List<XOSRFObject> {
-    val json = bodyAsText()
-    Analytics.logResponseX(debugTag, debugUrl, isCached, json, elapsed)
-    return XGatewayResult.create(json).payloadFirstAsObjectList()
-}
+    /** given `"payload":[[obj,obj]]` return `[obj,obj]` */
+    suspend fun payloadFirstAsObjectList(): List<XOSRFObject> {
+        val json = bodyAsText()
+        return XGatewayResult.create(json).payloadFirstAsObjectList()
+    }
 
-/** given `"payload":["string"]` return `"string"` */
-suspend fun XGatewayResponse.payloadFirstAsString(): String {
-    val json = bodyAsText()
-    Analytics.logResponseX(debugTag, debugUrl, isCached, json, elapsed)
-    return XGatewayResult.create(json).payloadFirstAsString()
+    /** given `"payload":["string"]` return `"string"` */
+    suspend fun payloadFirstAsString(): String {
+        val json = bodyAsText()
+        return XGatewayResult.create(json).payloadFirstAsString()
+    }
 }
