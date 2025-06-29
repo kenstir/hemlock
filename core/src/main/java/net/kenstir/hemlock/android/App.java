@@ -39,6 +39,7 @@ import org.evergreen_ils.net.Volley;
 import org.evergreen_ils.utils.ui.BaseActivity;
 import org.evergreen_ils.views.launch.LaunchActivity;
 import org.evergreen_ils.views.MainActivity;
+import org.evergreen_ils.xdata.XGatewayClientKt;
 
 import java.io.File;
 
@@ -91,6 +92,10 @@ public class App {
     public static void enableCaching(Context context) {
         try {
             long httpCacheSize = 10 * 1024 * 1024; // 10 MiB
+
+            XGatewayClient.cacheDirectory = new File(context.getCacheDir(), "okhttp");
+
+            // TODO: clean up the volley cache directory if it exists
             File httpCacheDir = new File(context.getCacheDir(), "volley");//try to reuse same cache dir as volley
             Class.forName("android.net.http.HttpResponseCache")
                     .getMethod("install", File.class, long.class)

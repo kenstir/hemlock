@@ -18,8 +18,7 @@
 package net.kenstir.hemlock.data
 
 import io.ktor.client.HttpClient
-import io.ktor.client.engine.cio.CIO
-import io.ktor.client.plugins.cache.HttpCache
+import io.ktor.client.engine.okhttp.OkHttp
 import io.ktor.client.plugins.logging.LogLevel
 import io.ktor.client.plugins.logging.Logger
 import io.ktor.client.plugins.logging.Logging
@@ -40,12 +39,15 @@ import org.evergreen_ils.xdata.paramListOf
 import net.kenstir.hemlock.net.HemlockPlugin
 import net.kenstir.hemlock.net.elapsedTime
 import net.kenstir.hemlock.net.isCached
+import okhttp3.OkHttpClient
+import org.evergreen_ils.xdata.XGatewayClient.DEFAULT_TIMEOUT_MS
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
 import org.junit.BeforeClass
 import org.junit.Test
+import java.io.File
 
 // Tests for Ktor; client caching and HemlockPlugin functionality
 class KtorTest {
@@ -63,9 +65,21 @@ class KtorTest {
             return System.getProperty(name) ?: throw RuntimeException("Missing required system property: $name")
         }
 
-        val client = HttpClient(CIO) {
-            install(HttpCache) {
-                println("plugin: HttpCache using in-memory cache")
+        val okHttpCache = okhttp3.Cache(File(System.getProperty("java.io.tmpdir") ?: "/tmp"), 10 * 1024 * 1024)
+        val okHttpClient = OkHttpClient.Builder()
+            .cache(okHttpCache)
+            .connectTimeout(DEFAULT_TIMEOUT_MS.toLong(), java.util.concurrent.TimeUnit.MILLISECONDS)
+            .addInterceptor { chain ->
+                val response = chain.proceed(chain.request())
+                val modifiedResponse = response.newBuilder()
+                    .addHeader("X-From-Cache", if (response.cacheResponse != null) "true" else "false")
+                    .build()
+                modifiedResponse
+            }
+            .build()
+        val client = HttpClient(OkHttp) {
+            engine {
+                preconfigured = okHttpClient
             }
             install(HemlockPlugin) {
                 println("plugin: HemlockPlugin")
@@ -107,7 +121,7 @@ class KtorTest {
         val cached2 = response2.isCached()
         println("try2: ${elapsed2}ms: $responseBody2")
         assertTrue("Second response should be cached", cached2)
-        assertEquals(0, elapsed2)
+        //assertEquals(0, elapsed2)
     }
 
     @Test

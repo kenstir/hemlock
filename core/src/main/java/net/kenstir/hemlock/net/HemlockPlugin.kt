@@ -17,18 +17,25 @@
 
 package net.kenstir.hemlock.net
 
+import io.ktor.client.HttpClient
+import io.ktor.client.call.HttpClientCall
+import io.ktor.client.plugins.HttpClientPlugin
 import io.ktor.client.plugins.api.*
+import io.ktor.client.request.HttpSendPipeline
+import io.ktor.client.statement.HttpReceivePipeline
 import io.ktor.client.statement.HttpResponse
 import io.ktor.util.*
 import net.kenstir.hemlock.android.Analytics
 import net.kenstir.hemlock.net.HemlockPluginAttributeKeys.debugTagKey
 import net.kenstir.hemlock.net.HemlockPluginAttributeKeys.debugUrlKey
+import net.kenstir.hemlock.net.HemlockPluginAttributeKeys.fromCacheKey
 import net.kenstir.hemlock.net.HemlockPluginAttributeKeys.recvTimeKey
 import net.kenstir.hemlock.net.HemlockPluginAttributeKeys.sentTimeKey
 
 object HemlockPluginKeys {
     val debugTag = "h.debugTag"
     val debugUrl = "h.debugUrl"
+    val fromCache = "h.fromCache"
     val recvTime = "h.recvTime"
     val sentTime = "h.sentTime"
 }
@@ -38,6 +45,7 @@ object HemlockPluginAttributeKeys {
     val debugTagKey = AttributeKey<String>(HemlockPluginKeys.debugTag)
     /** URL of the request, for logging, with POST body expressed as parameters */
     val debugUrlKey = AttributeKey<String>(HemlockPluginKeys.debugUrl)
+    val fromCacheKey = AttributeKey<Boolean>(HemlockPluginKeys.fromCache)
     /** time the response was received */
     val recvTimeKey = AttributeKey<Long>(HemlockPluginKeys.recvTime)
     /** time the request was sent */
@@ -75,6 +83,10 @@ val HemlockPlugin = createClientPlugin("HemlockPlugin") {
     onResponse { response ->
         val now = System.currentTimeMillis()
         response.call.request.attributes.put(recvTimeKey, now)
+
+        val fromCacheHeader = response.headers["X-From-Cache"]
+        val fromCache = fromCacheHeader ==  "true"
+        response.call.request.attributes.put(HemlockPluginAttributeKeys.fromCacheKey, fromCache)
 //        val tag = response.call.request.attributes[debugTagKey]
 //        val debugUrl = response.call.request.attributes[debugUrlKey]
 //        println("%8s onResponse:     %s".format(tag, debugUrl))
@@ -82,12 +94,15 @@ val HemlockPlugin = createClientPlugin("HemlockPlugin") {
 }
 
 /**
- * return true if the response was cached by the HttpCache plugin.
- *
- * We infer that a response was cached if the `onResponse` hook was not called
+ * return true if the response was cached
  */
 fun HttpResponse.isCached(): Boolean {
-    return !this.call.attributes.contains(recvTimeKey)
+    // With the HttpCache plugin, we had to infer that the response was cached by noting that the
+    // onResponse hook was not called (i.e., recvTimeKey was not set).
+    //return !this.call.attributes.contains(recvTimeKey) // HttpCache plugin approach
+
+    // With the OkHttp engine, we use an interceptor to add a header to the response.
+    return this.call.request.attributes[fromCacheKey] // okhttp approach
 }
 
 /**

@@ -18,7 +18,7 @@
 package org.evergreen_ils.xdata
 
 import io.ktor.client.*
-import io.ktor.client.engine.cio.*
+import io.ktor.client.engine.okhttp.OkHttp
 import io.ktor.client.plugins.cache.HttpCache
 import io.ktor.client.request.*
 import io.ktor.client.plugins.contentnegotiation.*
@@ -28,7 +28,10 @@ import io.ktor.serialization.kotlinx.json.*
 import kotlinx.serialization.json.Json
 import net.kenstir.hemlock.net.RequestOptions
 import net.kenstir.hemlock.net.HemlockPlugin
+import okhttp3.Cache
+import okhttp3.OkHttpClient
 import org.evergreen_ils.Api
+import java.io.File
 import java.net.URLEncoder
 
 private const val INITIAL_URL_SIZE = 128
@@ -46,15 +49,19 @@ object XGatewayClient {
         set(value) { _serverCacheKey = value }
 
     private const val GATEWAY_PATH = "/osrf-gateway-v1"
-    private const val DEFAULT_TIMEOUT_MS = 30_000
+    const val DEFAULT_TIMEOUT_MS = 30_000
 
+    @JvmStatic
+    lateinit var cacheDirectory: File
     val client: HttpClient by lazy {
-        HttpClient(CIO) {
+        val okHttpCache = Cache(cacheDirectory, (10 * 1024 * 1024).toLong())
+        val okHttpClient = OkHttpClient.Builder()
+            .cache(okHttpCache)
+            .connectTimeout(DEFAULT_TIMEOUT_MS.toLong(), java.util.concurrent.TimeUnit.MILLISECONDS)
+            .build()
+        HttpClient(OkHttp) {
             engine {
-                requestTimeout = DEFAULT_TIMEOUT_MS.toLong()
-                endpoint {
-                    maxConnectionsPerRoute = 4 // this was the default size of the thread pool in Volley
-                }
+                preconfigured = okHttpClient
             }
             install(ContentNegotiation) {
                 json(
