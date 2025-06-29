@@ -46,10 +46,16 @@ object XGatewayClient {
         set(value) { _serverCacheKey = value }
 
     private const val GATEWAY_PATH = "/osrf-gateway-v1"
-    const val defaultTimeoutMs = 30_000
+    private const val DEFAULT_TIMEOUT_MS = 30_000
 
     val client: HttpClient by lazy {
         HttpClient(CIO) {
+            engine {
+                requestTimeout = DEFAULT_TIMEOUT_MS.toLong()
+                endpoint {
+                    maxConnectionsPerRoute = 4 // this was the default size of the thread pool in Volley
+                }
+            }
             install(ContentNegotiation) {
                 json(
                     Json { ignoreUnknownKeys = true },
@@ -108,7 +114,7 @@ object XGatewayClient {
     }
 
     suspend fun fetch(service: String, method: String, params: List<XGatewayParam>, shouldCache: Boolean): XGatewayResponse {
-        return fetch(service, method, params, RequestOptions(defaultTimeoutMs, shouldCache, true))
+        return fetch(service, method, params, RequestOptions(DEFAULT_TIMEOUT_MS, shouldCache, true))
     }
 
     suspend fun fetch(service: String, method: String, params: List<XGatewayParam>, options: RequestOptions): XGatewayResponse {
