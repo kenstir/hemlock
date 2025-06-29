@@ -228,7 +228,6 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
 
         Analytics.initialize(this)
         App.init(this)
-        EgSearch.searchLimit = resources.getInteger(R.integer.ou_search_limit)
 
         initMenuProvider()
         menuItemHandler?.onCreate(this)

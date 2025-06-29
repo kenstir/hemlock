@@ -18,7 +18,13 @@
 package net.kenstir.hemlock.net
 
 import net.kenstir.hemlock.data.Result
-import org.evergreen_ils.xdata.XOSRFObject
 
 interface SearchService {
+    suspend fun searchCatalog(queryString: String, limit: Int): Result<SearchResults>
+    fun makeQueryString(searchText: String, searchClass: String?, searchFormat: String?, sort: String?): String
+}
+
+interface SearchResults {
+    val numResults: Int
+    val totalMatches: Int
 }

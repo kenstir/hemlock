@@ -48,7 +48,6 @@ public class GatewayStringRequest extends StringRequest {
         mPriority = priority;
         mCacheTtlSeconds = cacheTtlSeconds;
         mDebugTag = Integer.toHexString(url.hashCode());
-        Log.d(TAG, String.format("[net] %1$8s send: %2$s", mDebugTag, url));
         Analytics.logRequest(mDebugTag, url);
         mStartTime = System.currentTimeMillis();
     }
@@ -78,7 +77,6 @@ public class GatewayStringRequest extends StringRequest {
             parsed = new String(response.data, Charset.defaultCharset());
         }
         String trimmed = StringUtils.take(parsed, 512);
-        Log.d(TAG, String.format("[net] %1$8s recv:%2$s %3$5d %4$s", mDebugTag, (mCacheHit?"*":" "), response.data.length, trimmed));
         Analytics.logResponse(mDebugTag, getUrl(), mCacheHit, trimmed);
 
         // decide whether to cache result

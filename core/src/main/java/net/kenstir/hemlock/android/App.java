@@ -97,6 +97,8 @@ public class App {
             // Clean up the legacy volley cache directory if it exists
             File volleyCacheDir = new File(context.getCacheDir(), "volley");
             deleteRecursively(volleyCacheDir);
+
+            // Configure HTTP response caching for Volley
 //            long httpCacheSize = 10 * 1024 * 1024; // 10 MiB
 //            Class.forName("android.net.http.HttpResponseCache")
 //                    .getMethod("install", File.class, long.class)

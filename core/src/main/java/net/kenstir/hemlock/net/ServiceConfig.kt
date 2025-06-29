@@ -21,6 +21,7 @@ import org.evergreen_ils.net.EvergreenAuthService
 import org.evergreen_ils.net.EvergreenBiblioService
 import org.evergreen_ils.net.EvergreenLoaderService
 import org.evergreen_ils.net.EvergreenOrgService
+import org.evergreen_ils.net.EvergreenSearchService
 import org.evergreen_ils.net.EvergreenUserService
 import org.evergreen_ils.net.OrgService
 
@@ -28,6 +29,7 @@ class ServiceConfig(
     val loaderService: LoaderService = EvergreenLoaderService(),
     val authService: AuthService = EvergreenAuthService(),
     val biblioService: BiblioService = EvergreenBiblioService(),
+    val searchService: SearchService = EvergreenSearchService(),
     val userService: UserService = EvergreenUserService(),
     val orgService: OrgService = EvergreenOrgService(),
 )
