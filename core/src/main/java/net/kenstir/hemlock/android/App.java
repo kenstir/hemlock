@@ -17,6 +17,8 @@
 
 package net.kenstir.hemlock.android;
 
+import static net.kenstir.hemlock.util.FileUtilsKt.deleteRecursively;
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -39,7 +41,6 @@ import org.evergreen_ils.net.Volley;
 import org.evergreen_ils.utils.ui.BaseActivity;
 import org.evergreen_ils.views.launch.LaunchActivity;
 import org.evergreen_ils.views.MainActivity;
-import org.evergreen_ils.xdata.XGatewayClientKt;
 
 import java.io.File;
 
@@ -91,15 +92,15 @@ public class App {
 
     public static void enableCaching(Context context) {
         try {
-            long httpCacheSize = 10 * 1024 * 1024; // 10 MiB
-
             XGatewayClient.cacheDirectory = new File(context.getCacheDir(), "okhttp");
 
-            // TODO: clean up the volley cache directory if it exists
-            File httpCacheDir = new File(context.getCacheDir(), "volley");//try to reuse same cache dir as volley
-            Class.forName("android.net.http.HttpResponseCache")
-                    .getMethod("install", File.class, long.class)
-                    .invoke(null, httpCacheDir, httpCacheSize);
+            // Clean up the legacy volley cache directory if it exists
+            File volleyCacheDir = new File(context.getCacheDir(), "volley");
+            deleteRecursively(volleyCacheDir);
+//            long httpCacheSize = 10 * 1024 * 1024; // 10 MiB
+//            Class.forName("android.net.http.HttpResponseCache")
+//                    .getMethod("install", File.class, long.class)
+//                    .invoke(null, volleyCacheDir, httpCacheSize);
         } catch (Exception httpResponseCacheNotAvailable) {
             Log.d(TAG, "HTTP response cache is unavailable.");
         }
