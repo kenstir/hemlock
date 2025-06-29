@@ -17,12 +17,7 @@
 
 package net.kenstir.hemlock.net
 
-import io.ktor.client.HttpClient
-import io.ktor.client.call.HttpClientCall
-import io.ktor.client.plugins.HttpClientPlugin
 import io.ktor.client.plugins.api.*
-import io.ktor.client.request.HttpSendPipeline
-import io.ktor.client.statement.HttpReceivePipeline
 import io.ktor.client.statement.HttpResponse
 import io.ktor.util.*
 import net.kenstir.hemlock.android.Analytics
@@ -31,6 +26,7 @@ import net.kenstir.hemlock.net.HemlockPluginAttributeKeys.debugUrlKey
 import net.kenstir.hemlock.net.HemlockPluginAttributeKeys.fromCacheKey
 import net.kenstir.hemlock.net.HemlockPluginAttributeKeys.recvTimeKey
 import net.kenstir.hemlock.net.HemlockPluginAttributeKeys.sentTimeKey
+import okhttp3.Interceptor
 
 object HemlockPluginKeys {
     val debugTag = "h.debugTag"
@@ -51,6 +47,8 @@ object HemlockPluginAttributeKeys {
     /** time the request was sent */
     val sentTimeKey = AttributeKey<Long>(HemlockPluginKeys.sentTime)
 }
+
+private const val X_FROM_CACHE = "X-From-Cache"
 
 /**
  * a ktor client plugin that tracks response times and detects responses cached by the HttpCache plugin.
@@ -84,12 +82,31 @@ val HemlockPlugin = createClientPlugin("HemlockPlugin") {
         val now = System.currentTimeMillis()
         response.call.request.attributes.put(recvTimeKey, now)
 
-        val fromCacheHeader = response.headers["X-From-Cache"]
-        val fromCache = fromCacheHeader ==  "true"
+        val fromCacheHeader = response.headers[X_FROM_CACHE]
+        val fromCache = fromCacheHeader != null
         response.call.request.attributes.put(HemlockPluginAttributeKeys.fromCacheKey, fromCache)
 //        val tag = response.call.request.attributes[debugTagKey]
 //        val debugUrl = response.call.request.attributes[debugUrlKey]
 //        println("%8s onResponse:     %s".format(tag, debugUrl))
+    }
+}
+
+/**
+ * An OkHttp interceptor that adds a header to cached responses
+ * so we can detect them in the HemlockPlugin.
+ */
+class HemlockOkHttpInterceptor: Interceptor {
+    override fun intercept(chain: Interceptor.Chain): okhttp3.Response {
+        val response = chain.proceed(chain.request())
+        val fromCache = response.cacheResponse != null
+        if (!fromCache) {
+            // If the response is not cached, we don't need to modify it.
+            return response
+        }
+        val modifiedResponse = response.newBuilder()
+            .addHeader(X_FROM_CACHE, "1")
+            .build()
+        return modifiedResponse
     }
 }
 
@@ -101,8 +118,8 @@ fun HttpResponse.isCached(): Boolean {
     // onResponse hook was not called (i.e., recvTimeKey was not set).
     //return !this.call.attributes.contains(recvTimeKey) // HttpCache plugin approach
 
-    // With the OkHttp engine, we use an interceptor to add a header to the response.
-    return this.call.request.attributes[fromCacheKey] // okhttp approach
+    // With the OkHttp engine, we need the HemlockOkHttpInterceptor to add a header to the response.
+    return this.call.request.attributes[fromCacheKey]
 }
 
 /**

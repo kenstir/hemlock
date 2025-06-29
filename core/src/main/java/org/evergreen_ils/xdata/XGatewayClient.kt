@@ -19,7 +19,6 @@ package org.evergreen_ils.xdata
 
 import io.ktor.client.*
 import io.ktor.client.engine.okhttp.OkHttp
-import io.ktor.client.plugins.cache.HttpCache
 import io.ktor.client.request.*
 import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.http.ContentType
@@ -28,6 +27,7 @@ import io.ktor.serialization.kotlinx.json.*
 import kotlinx.serialization.json.Json
 import net.kenstir.hemlock.net.RequestOptions
 import net.kenstir.hemlock.net.HemlockPlugin
+import net.kenstir.hemlock.net.HemlockOkHttpInterceptor
 import okhttp3.Cache
 import okhttp3.OkHttpClient
 import org.evergreen_ils.Api
@@ -61,13 +61,7 @@ object XGatewayClient {
         val okHttpClient = OkHttpClient.Builder()
             .cache(okHttpCache)
             .connectTimeout(DEFAULT_TIMEOUT_MS.toLong(), java.util.concurrent.TimeUnit.MILLISECONDS)
-            .addInterceptor { chain ->
-                val response = chain.proceed(chain.request())
-                val modifiedResponse = response.newBuilder()
-                    .addHeader("X-From-Cache", if (response.cacheResponse != null) "true" else "false")
-                    .build()
-                modifiedResponse
-            }
+            .addInterceptor(HemlockOkHttpInterceptor())
             .build()
         return HttpClient(OkHttp) {
             engine {
