@@ -51,7 +51,7 @@ class KtorClientTest {
 
             XGatewayClient.baseUrl = testServer
             XGatewayClient.clientCacheKey = System.currentTimeMillis().toString()
-            XGatewayClient.cacheDirectory = File(System.getProperty("java.io.tmpdir") ?: "/tmp", "hemlock")
+            XGatewayClient.cacheDirectory = File(System.getProperty("java.io.tmpdir") ?: "/tmp", "KtorClientTest")
             XGatewayClient.cacheDirectory.deleteRecursively()
 
             client = XGatewayClient.makeHttpClient()
