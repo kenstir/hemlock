@@ -95,9 +95,15 @@ val HemlockPlugin = createClientPlugin("HemlockPlugin") {
 class HemlockOkHttpInterceptor: Interceptor {
     override fun intercept(chain: Interceptor.Chain): okhttp3.Response {
         val response = chain.proceed(chain.request())
-        val fromCache = response.cacheResponse != null
-        if (!fromCache) {
-            // If the response is not cached, we don't need to modify it.
+
+        // response.cacheResponse is non-null if the response exists in the cache.
+        // But that does not mean it will be served from the cache.  In the absence
+        // of caching headers, OkHttp will send a request with If-Modified-Since,
+        // and that response is in response.networkResponse.  We only consider the
+        // response cached if we completely avoided the network.
+        val servedEntirelyFromCache = response.cacheResponse != null && response.networkResponse == null
+        if (!servedEntirelyFromCache) {
+            // If the response is not cached, we don't modify it.
             return response
         }
         val modifiedResponse = response.newBuilder()
