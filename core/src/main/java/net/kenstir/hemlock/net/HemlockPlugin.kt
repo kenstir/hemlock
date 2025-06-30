@@ -75,7 +75,7 @@ val HemlockPlugin = createClientPlugin("HemlockPlugin") {
         request.attributes.put(sentTimeKey, now)
         val debugTag = request.attributes[debugTagKey]
         val debugUrl = request.attributes[debugUrlKey]
-        Analytics.logRequest(debugTag, debugUrl)
+        Analytics.logRequest(debugTag, request.method.toString(), debugUrl)
     }
 
     onResponse { response ->
