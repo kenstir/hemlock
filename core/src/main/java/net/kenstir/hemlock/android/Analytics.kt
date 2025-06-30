@@ -206,9 +206,10 @@ object Analytics {
     }
 
     @JvmStatic
-    fun logRequest(tag: String, url: String) {
+    fun logRequest(tag: String, httpMethod: String, url: String) {
         val tag8 = tag.padStart(8)
-        val logMsg = "[net] $tag8 send:  $url"
+        val method = httpMethod.padEnd(4)
+        val logMsg = "[net] $tag8 $method  $url"
         Log.d(TAG, logMsg)
         addToLogBuffer(logMsg)
     }
@@ -224,9 +225,9 @@ object Analytics {
         val badge = if (cached) "*" else " "
         val prefix =
             if (elapsed != null) {
-                "[net] $tag8 recv:$badge %5d ms".format(elapsed)
+                "[net] $tag8 recv$badge %5d ms".format(elapsed)
             } else {
-                "[net] $tag8 recv:$badge"
+                "[net] $tag8 recv$badge"
             }
         // trim or redact certain responses
         val logMsg =

@@ -49,7 +49,7 @@ public class GatewayJsonRequest extends Request<GatewayResult> {
         mListener = listener;
         mCacheTtlSeconds = cacheTtlSeconds;
         mDebugTag = Integer.toHexString(url.hashCode());
-        Analytics.logRequest(mDebugTag, url);
+        Analytics.logRequest(mDebugTag, "GET", url);
         mStartTime = System.currentTimeMillis();
     }
 

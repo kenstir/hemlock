@@ -48,7 +48,7 @@ public class GatewayStringRequest extends StringRequest {
         mPriority = priority;
         mCacheTtlSeconds = cacheTtlSeconds;
         mDebugTag = Integer.toHexString(url.hashCode());
-        Analytics.logRequest(mDebugTag, url);
+        Analytics.logRequest(mDebugTag, "GET", url);
         mStartTime = System.currentTimeMillis();
     }
 
