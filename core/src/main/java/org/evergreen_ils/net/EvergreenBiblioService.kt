@@ -50,6 +50,19 @@ class EvergreenBiblioService: BiblioService {
         // TODO: fetch attributes (MRA)?
     }
 
+    override suspend fun loadRecordAttributes(bibRecord: BibRecord): Result<Unit> {
+        val record = bibRecord as? MBRecord
+            ?: throw IllegalArgumentException("Expected MBRecord, got ${bibRecord::class.java.simpleName}")
+
+        return try {
+            val mraObj = fetchMRA(record.id)
+            record.updateFromMRAResponse(mraObj)
+            Result.Success(Unit)
+        } catch (e: Exception) {
+            Result.Error(e)
+        }
+    }
+
     suspend fun fetchCopyMODS(copyId: Int): XOSRFObject {
         val response = XGatewayClient.fetch(Api.SEARCH, Api.MODS_FROM_COPY, paramListOf(copyId), true)
         return response.payloadFirstAsObject()
@@ -67,6 +80,11 @@ class EvergreenBiblioService: BiblioService {
 
     suspend fun fetchMARC(id: Int): XOSRFObject {
         val response = XGatewayClient.fetch(Api.PCRUD, Api.RETRIEVE_BRE, paramListOf(Api.ANONYMOUS, id), true)
+        return response.payloadFirstAsObject()
+    }
+
+    suspend fun fetchMRA(id: Int): XOSRFObject {
+        val response = XGatewayClient.fetch(Api.PCRUD, Api.RETRIEVE_MRA, paramListOf(Api.ANONYMOUS, id), true)
         return response.payloadFirstAsObject()
     }
 }

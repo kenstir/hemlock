@@ -59,6 +59,7 @@ import net.kenstir.hemlock.android.ui.ProgressDialogSupport
 import net.kenstir.hemlock.android.ui.showAlert
 import org.evergreen_ils.data.MBRecord
 import net.kenstir.hemlock.data.Result
+import net.kenstir.hemlock.data.model.BibRecord
 import net.kenstir.hemlock.net.SearchResults
 import org.evergreen_ils.system.EgCodedValueMap
 import org.evergreen_ils.system.EgOrg
@@ -118,7 +119,7 @@ class SearchActivity : BaseActivity(), ActivityCompat.OnRequestPermissionsResult
     private val accountIdKey = "accountId"
 
     private class ContextMenuRecordInfo : ContextMenu.ContextMenuInfo {
-        var record: MBRecord? = null
+        var record: BibRecord? = null
         var position = 0
     }
 

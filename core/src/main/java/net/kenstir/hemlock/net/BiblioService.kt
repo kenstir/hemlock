@@ -22,4 +22,5 @@ import net.kenstir.hemlock.data.model.BibRecord
 
 interface BiblioService {
     suspend fun loadRecordDetails(bibRecord: BibRecord, needMARC: Boolean): Result<Unit>
+    suspend fun loadRecordAttributes(bibRecord: BibRecord): Result<Unit>
 }
