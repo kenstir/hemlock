@@ -31,6 +31,7 @@ import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
 import net.kenstir.hemlock.R
 import net.kenstir.hemlock.android.App
+import net.kenstir.hemlock.android.Key
 import net.kenstir.hemlock.logging.Log
 import net.kenstir.hemlock.data.model.Organization
 import net.kenstir.hemlock.data.Result
@@ -70,8 +71,8 @@ class OrgDetailsActivity : BaseActivity() {
 
         setContentView(R.layout.activity_org_details)
 
-        orgID = if (intent.hasExtra("orgID")) {
-            intent.getIntExtra("orgID", 1)
+        orgID = if (intent.hasExtra(Key.ORG_ID)) {
+            intent.getIntExtra(Key.ORG_ID, 1)
         } else {
             App.getAccount().homeOrg
         }

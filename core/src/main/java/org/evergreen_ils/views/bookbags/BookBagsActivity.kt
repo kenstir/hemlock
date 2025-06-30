@@ -35,7 +35,7 @@ import kotlinx.coroutines.joinAll
 import net.kenstir.hemlock.R
 import net.kenstir.hemlock.android.Analytics
 import net.kenstir.hemlock.android.App
-import net.kenstir.hemlock.android.IntentKeys
+import net.kenstir.hemlock.android.Key
 import net.kenstir.hemlock.logging.Log
 import org.evergreen_ils.data.BookBag
 import net.kenstir.hemlock.data.Result
@@ -73,7 +73,7 @@ class BookBagsActivity : BaseActivity() {
         lv?.onItemClickListener = AdapterView.OnItemClickListener { parent, view, position, id ->
             val item = lv?.getItemAtPosition(position) as BookBag
             val intent = Intent(this@BookBagsActivity, BookBagDetailsActivity::class.java)
-            intent.putExtra(IntentKeys.PATRON_LIST, item)
+            intent.putExtra(Key.PATRON_LIST, item)
             startActivityForResult(intent, 0)
         }
     }
