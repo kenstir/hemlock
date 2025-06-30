@@ -48,6 +48,7 @@ import net.kenstir.hemlock.android.Key
 import net.kenstir.hemlock.logging.Log
 import net.kenstir.hemlock.logging.Log.TAG_ASYNC
 import net.kenstir.hemlock.android.ui.showAlert
+import net.kenstir.hemlock.data.model.BibRecord
 import org.evergreen_ils.net.Gateway.getUrl
 import org.evergreen_ils.net.GatewayLoader
 import org.evergreen_ils.net.Volley
@@ -60,7 +61,7 @@ import org.evergreen_ils.views.search.SearchActivity
 import org.evergreen_ils.views.search.SearchActivity.Companion.RESULT_CODE_SEARCH_BY_AUTHOR
 
 class DetailsFragment : Fragment() {
-    private var record: MBRecord? = null
+    private var record: BibRecord? = null
     private var orgID: Int = EgOrg.consortiumID
     private var position: Int? = null
     private var total: Int? = null
@@ -197,7 +198,7 @@ class DetailsFragment : Fragment() {
 
     private fun launchOnlineAccess() {
         val org = EgOrg.findOrg(orgID)
-        val links = App.getBehavior().getOnlineLocations(record, org!!.shortname)
+        val links = App.getBehavior().getOnlineLocations(record as MBRecord, org!!.shortname)
         if (links.isEmpty()) return // TODO: alert
 
         // if there's only one link, launch it without ceremony
@@ -226,9 +227,10 @@ class DetailsFragment : Fragment() {
             return
         }
 
+        val mbRecord = record as MBRecord
         val org = EgOrg.findOrg(orgID)
-        val links = App.getBehavior().getOnlineLocations(record, org!!.shortname)
-        val numCopies = record?.totalCopies(orgID) ?: 0
+        val links = App.getBehavior().getOnlineLocations(mbRecord, org!!.shortname)
+        val numCopies = mbRecord.totalCopies(orgID) ?: 0
         placeHoldButton?.isEnabled = (numCopies > 0)
         showCopiesButton?.isEnabled = (numCopies > 0)
         Log.d(TAG, "${record?.id}: updateButtonViews: title:${record?.title} links:${links.size} copies:${numCopies}")
@@ -282,9 +284,10 @@ class DetailsFragment : Fragment() {
     private fun loadCopySummary() {
         if (!isAdded) return  // discard late results
         val record = this.record ?: return
+        val mbRecord = record as MBRecord
         descriptionTextView?.text = when {
             record.isDeleted -> getString(R.string.item_marked_deleted_msg)
-            App.getBehavior().isOnlineResource(record) ?: false -> {
+            App.getBehavior().isOnlineResource(mbRecord) ?: false -> {
                 val onlineLocation = record.getFirstOnlineLocation()
                 if (resources.getBoolean(R.bool.ou_show_online_access_hostname) && !onlineLocation.isNullOrEmpty()) {
                     val uri = Uri.parse(onlineLocation)
@@ -297,11 +300,12 @@ class DetailsFragment : Fragment() {
         }
     }
 
-    private fun fetchData(record: MBRecord) {
+    private fun fetchData(record: BibRecord) {
         val scope = viewLifecycleOwner.lifecycleScope
         scope.async {
             try {
-                //Log.d(TAG_ASYNC, "fetchData ...")
+                TODO()
+                /*
                 Log.d(TAG_ASYNC, "${record.id}: fetchData")
                 val start = System.currentTimeMillis()
                 val jobs = mutableListOf<Job>()
@@ -337,6 +341,7 @@ class DetailsFragment : Fragment() {
                 updateButtonViews()
 
                 Log.logElapsedTime(TAG, start, "[kcxxx] fetchData ... done")
+                 */
             } catch (ex: Exception) {
                 activity?.showAlert(ex)
             }
@@ -346,7 +351,7 @@ class DetailsFragment : Fragment() {
     companion object {
         private val TAG = DetailsFragment::class.java.simpleName
 
-        fun create(record: MBRecord?, orgID: Int, position: Int, total: Int): DetailsFragment {
+        fun create(record: BibRecord?, orgID: Int, position: Int, total: Int): DetailsFragment {
             val fragment = DetailsFragment()
             fragment.record = record
             fragment.orgID = orgID

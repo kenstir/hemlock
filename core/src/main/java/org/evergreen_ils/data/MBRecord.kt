@@ -80,14 +80,14 @@ class MBRecord(override val id: Int, var mvrObj: XOSRFObject? = null): BibRecord
             return null
         }
 
-    val publishingInfo: String
+    override val publishingInfo: String
         get() {
             val s = TextUtils.join(" ", arrayOf<String>(
                 pubdate,
                 mvrObj?.getString("publisher") ?: ""))
             return s.trim()
         }
-    val series: String
+    override val series: String
         get() {
             val seriesList = mvrObj?.get("series") as? List<String?>
             return when (seriesList) {
@@ -95,7 +95,7 @@ class MBRecord(override val id: Int, var mvrObj: XOSRFObject? = null): BibRecord
                 else -> TextUtils.join("\n", seriesList)
             }
         }
-    val subject: String
+    override val subject: String
         get() {
             val obj = mvrObj?.getObject("subject") ?: return ""
             return obj.map.keys.joinToString("\n")
@@ -103,7 +103,7 @@ class MBRecord(override val id: Int, var mvrObj: XOSRFObject? = null): BibRecord
 
     val iconFormat: String?
         get() = attrs?.get("icon_format")
-    val iconFormatLabel: String
+    override val iconFormatLabel: String
         get() = EgCodedValueMap.iconFormatLabel(iconFormat) ?: ""
 
     override fun hasAttributes() = (attrs != null)

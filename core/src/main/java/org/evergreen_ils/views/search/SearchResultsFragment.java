@@ -26,6 +26,7 @@ import net.kenstir.hemlock.R;
 import org.evergreen_ils.data.MBRecord;
 import org.evergreen_ils.system.EgSearch;
 import net.kenstir.hemlock.android.ui.ItemClickSupport;
+import net.kenstir.hemlock.data.model.BibRecord;
 
 import java.util.ArrayList;
 
@@ -43,7 +44,7 @@ public class SearchResultsFragment extends Fragment {
     protected LayoutManagerType mCurrentLayoutManagerType;
     protected RecyclerView mRecyclerView;
     protected RecyclerView.LayoutManager mLayoutManager;
-    protected ArrayList<MBRecord> mDataset;
+    protected ArrayList<BibRecord> mDataset;
     protected RecordViewAdapter mAdapter;
     protected OnRecordClickListener mOnRecordClickListener;
     protected OnRecordLongClickListener mOnRecordLongClickListener;
@@ -80,7 +81,7 @@ public class SearchResultsFragment extends Fragment {
             @Override
             public void onItemClicked(RecyclerView recyclerView, int position, View v) {
                 if (mOnRecordClickListener != null) {
-                    MBRecord record = mDataset.get(position);
+                    BibRecord record = mDataset.get(position);
                     mOnRecordClickListener.onClick(record, position);
                 }
             }
@@ -89,7 +90,7 @@ public class SearchResultsFragment extends Fragment {
             @Override
             public boolean onItemLongClicked(RecyclerView recyclerView, int position, View v) {
                 if (mOnRecordLongClickListener != null) {
-                    MBRecord record = mDataset.get(position);
+                    BibRecord record = mDataset.get(position);
                     mOnRecordLongClickListener.onLongClick(record, position);
                     return true;
                 }
@@ -149,10 +150,10 @@ public class SearchResultsFragment extends Fragment {
     }
 
     public interface OnRecordClickListener {
-        void onClick(MBRecord record, int position);
+        void onClick(BibRecord record, int position);
     }
 
     public interface OnRecordLongClickListener {
-        void onLongClick(MBRecord record, int position);
+        void onLongClick(BibRecord record, int position);
     }
 }

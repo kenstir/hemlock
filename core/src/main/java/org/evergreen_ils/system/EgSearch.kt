@@ -20,23 +20,23 @@
  */
 package org.evergreen_ils.system
 
-import android.text.TextUtils
-import org.evergreen_ils.data.OSRFUtils
+import net.kenstir.hemlock.data.model.BibRecord
 import net.kenstir.hemlock.data.model.Organization
 import net.kenstir.hemlock.net.SearchResults
 import org.evergreen_ils.data.MBRecord
+import org.evergreen_ils.data.OSRFUtils
 import org.evergreen_ils.net.EvergreenSearchResults
 import org.evergreen_ils.xdata.XOSRFObject
-import org.opensrf.util.OSRFObject
-import kotlin.collections.ArrayList
+import java.util.ArrayList
 
 object EgSearch {
     var selectedOrganization: Organization? = null
     var visible = 0
     var searchLimit = 100
-    val results: ArrayList<MBRecord> = ArrayList(searchLimit)
 
-    private val TAG = EgSearch::class.java.simpleName
+    private val records: ArrayList<MBRecord> = ArrayList(searchLimit)
+    val results: ArrayList<BibRecord>
+        get() = records as ArrayList<BibRecord>
 
     fun loadResults(obj: XOSRFObject): SearchResults {
         clearResults()
@@ -47,12 +47,12 @@ object EgSearch {
         val record_ids_lol = obj["ids"] as List<List<*>>
 
         // add to existing array, because SearchResultsFragment has an Adapter on it
-        results.addAll(MBRecord.makeArray(record_ids_lol))
+        records.addAll(MBRecord.makeArray(record_ids_lol))
         return EvergreenSearchResults()
     }
 
     fun clearResults() {
-        results.clear()
+        records.clear()
         visible = 0
     }
 }

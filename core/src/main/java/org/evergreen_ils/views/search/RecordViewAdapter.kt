@@ -25,6 +25,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.android.volley.toolbox.NetworkImageView
 import kotlinx.coroutines.async
 import net.kenstir.hemlock.R
+import net.kenstir.hemlock.android.App
 import net.kenstir.hemlock.logging.Log
 import org.evergreen_ils.data.MBRecord
 import org.evergreen_ils.net.Gateway.getUrl
@@ -32,11 +33,12 @@ import org.evergreen_ils.net.GatewayLoader
 import org.evergreen_ils.net.Volley
 import org.evergreen_ils.utils.ui.BaseActivity
 import net.kenstir.hemlock.android.ui.showAlert
+import net.kenstir.hemlock.data.model.BibRecord
 
 /**
  * Provide views to RecyclerView with data from records.
  */
-class RecordViewAdapter(private val records: List<MBRecord>) : RecyclerView.Adapter<RecordViewAdapter.ViewHolder>() {
+class RecordViewAdapter(private val records: List<BibRecord>) : RecyclerView.Adapter<RecordViewAdapter.ViewHolder>() {
     /**
      * Provide a reference to the type of views that you are using (custom ViewHolder)
      */
@@ -47,11 +49,14 @@ class RecordViewAdapter(private val records: List<MBRecord>) : RecyclerView.Adap
         private val iconFormatText: TextView = v.findViewById(R.id.search_record_format)
         private val publisherText: TextView = v.findViewById(R.id.search_record_publishing)
 
-        fun bindView(record: MBRecord) {
+        fun bindView(record: BibRecord) {
             Log.d(TAG, "id:${record.id} bindView")
             val context = recordImage.context
 
+            // TODO: use a service method to get the image URL
             val url = getUrl("/opac/extras/ac/jacket/small/r/" + record.id)
+
+            // TODO: use Coil to load images
             recordImage.setImageUrl(url, Volley.getInstance(context).imageLoader)
             //recordImage.setDefaultImageResId(R.drawable.missing_art);//for screenshots
 
@@ -59,12 +64,12 @@ class RecordViewAdapter(private val records: List<MBRecord>) : RecyclerView.Adap
             scope.async {
                 try {
                     scope.async {
-                        GatewayLoader.loadRecordMetadataAsync(record)
+                        App.getServiceConfig().biblioService.loadRecordDetails(record, true)
                         loadMetadata(record)
                     }
 
                     scope.async {
-                        GatewayLoader.loadRecordAttributesAsync(record)
+                        App.getServiceConfig().biblioService.loadRecordAttributes(record)
                         loadFormat(record)
                     }
 
@@ -74,14 +79,14 @@ class RecordViewAdapter(private val records: List<MBRecord>) : RecyclerView.Adap
             }
         }
 
-        private fun loadMetadata(record: MBRecord) {
+        private fun loadMetadata(record: BibRecord) {
             Log.d(TAG, "id:${record.id} title:${record.title}")
             titleText.text = record.title
             authorText.text = record.author
             publisherText.text = record.publishingInfo
         }
 
-        private fun loadFormat(record: MBRecord) {
+        private fun loadFormat(record: BibRecord) {
             Log.d(TAG, "id:${record.id} format:${record.iconFormatLabel}")
             iconFormatText.text = record.iconFormatLabel
         }
