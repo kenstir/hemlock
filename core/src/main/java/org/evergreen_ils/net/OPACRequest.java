@@ -64,7 +64,7 @@ public class OPACRequest extends StringRequest {
     @Override
     public Map<String, String> getHeaders() throws AuthFailureError {
         Map<String, String> m = new HashMap<>();
-        String cookie = "ses=" + mAuthToken + "; eg_loggedin=1";
+        String cookie = "ses=" + mAuthToken + "; eg_loggedin=1; eg_nb=1";
         m.put("Cookie", cookie);
         return m;
     }
