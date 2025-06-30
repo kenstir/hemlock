@@ -30,6 +30,7 @@ import net.kenstir.hemlock.net.HemlockPlugin
 import net.kenstir.hemlock.net.HemlockOkHttpInterceptor
 import okhttp3.Cache
 import okhttp3.OkHttpClient
+//import okhttp3.logging.HttpLoggingInterceptor
 import org.evergreen_ils.Api
 import java.io.File
 import java.net.URLEncoder
@@ -58,10 +59,14 @@ object XGatewayClient {
 
     fun makeHttpClient(): HttpClient {
         val okHttpCache = Cache(cacheDirectory, CACHE_SIZE.toLong())
+//        val logging = HttpLoggingInterceptor().apply {
+//            level = HttpLoggingInterceptor.Level.HEADERS
+//        }
         val okHttpClient = OkHttpClient.Builder()
             .cache(okHttpCache)
             .connectTimeout(DEFAULT_TIMEOUT_MS.toLong(), java.util.concurrent.TimeUnit.MILLISECONDS)
             .addInterceptor(HemlockOkHttpInterceptor())
+//            .addInterceptor(logging)
             .build()
         return HttpClient(OkHttp) {
             engine {
