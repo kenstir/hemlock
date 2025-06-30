@@ -44,6 +44,7 @@ import org.evergreen_ils.KEY_SEARCH_BY
 import org.evergreen_ils.KEY_SEARCH_TEXT
 import net.kenstir.hemlock.R
 import net.kenstir.hemlock.android.App
+import net.kenstir.hemlock.android.Key
 import net.kenstir.hemlock.logging.Log
 import net.kenstir.hemlock.logging.Log.TAG_ASYNC
 import net.kenstir.hemlock.android.ui.showAlert
@@ -86,18 +87,18 @@ class DetailsFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         if (savedInstanceState != null) {
-            record = savedInstanceState.getSerializable("recordInfo") as MBRecord
-            orgID = savedInstanceState.getInt("orgID")
-            position = savedInstanceState.getInt("position")
-            total = savedInstanceState.getInt("total")
+            record = savedInstanceState.getSerializable(Key.RECORD_INFO) as MBRecord
+            orgID = savedInstanceState.getInt(Key.ORG_ID)
+            position = savedInstanceState.getInt(Key.POSITION)
+            total = savedInstanceState.getInt(Key.TOTAL)
         }
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
-        outState.putSerializable("recordInfo", record)
-        outState.putInt("orgID", orgID)
-        outState.putInt("position", position!!)
-        outState.putInt("total", total!!)
+        outState.putSerializable(Key.RECORD_INFO, record)
+        outState.putInt(Key.ORG_ID, orgID)
+        outState.putInt(Key.POSITION, position!!)
+        outState.putInt(Key.TOTAL, total!!)
         super.onSaveInstanceState(outState)
     }
 
@@ -149,13 +150,13 @@ class DetailsFragment : Fragment() {
         updateButtonViews()
         placeHoldButton?.setOnClickListener {
             val intent = Intent(activity?.applicationContext, PlaceHoldActivity::class.java)
-            intent.putExtra("recordInfo", record)
+            intent.putExtra(Key.RECORD_INFO, record)
             startActivity(intent)
         }
         showCopiesButton?.setOnClickListener {
             val intent = Intent(activity?.applicationContext, CopyInformationActivity::class.java)
-            intent.putExtra("recordInfo", record)
-            intent.putExtra("orgID", orgID)
+            intent.putExtra(Key.RECORD_INFO, record)
+            intent.putExtra(Key.ORG_ID, orgID)
             startActivity(intent)
         }
         onlineAccessButton?.setOnClickListener {

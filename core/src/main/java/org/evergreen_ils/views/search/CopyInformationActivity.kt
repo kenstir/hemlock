@@ -33,6 +33,7 @@ import android.view.ViewGroup
 import android.widget.*
 import kotlinx.coroutines.async
 import net.kenstir.hemlock.R
+import net.kenstir.hemlock.android.Key
 import net.kenstir.hemlock.logging.Log
 import org.evergreen_ils.data.CopyLocationCounts
 import org.evergreen_ils.data.MBRecord
@@ -67,11 +68,11 @@ class CopyInformationActivity : BaseActivity() {
         setContentView(R.layout.copy_information_list)
 
         if (savedInstanceState != null) {
-            record = savedInstanceState.getSerializable("recordInfo") as MBRecord
-            orgID = savedInstanceState.getInt("orgID")
+            record = savedInstanceState.getSerializable(Key.RECORD_INFO) as MBRecord
+            orgID = savedInstanceState.getInt(Key.ORG_ID)
         } else {
-            record = intent.getSerializableExtra("recordInfo") as MBRecord
-            orgID = intent.getIntExtra("orgID", EgOrg.consortiumID)
+            record = intent.getSerializableExtra(Key.RECORD_INFO) as MBRecord
+            orgID = intent.getIntExtra(Key.ORG_ID, EgOrg.consortiumID)
         }
 
         lv = findViewById(R.id.copy_information_list)
@@ -92,7 +93,7 @@ class CopyInformationActivity : BaseActivity() {
         placeHoldButton = findViewById(R.id.simple_place_hold_button)
         placeHoldButton?.setOnClickListener {
             val intent = Intent(this, PlaceHoldActivity::class.java)
-            intent.putExtra("recordInfo", record)
+            intent.putExtra(Key.RECORD_INFO, record)
             startActivity(intent)
         }
     }
@@ -106,8 +107,8 @@ class CopyInformationActivity : BaseActivity() {
 
     public override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        outState.putSerializable("recordInfo", record)
-        outState.putInt("orgID", orgID)
+        outState.putSerializable(Key.RECORD_INFO, record)
+        outState.putInt(Key.ORG_ID, orgID)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -121,7 +122,7 @@ class CopyInformationActivity : BaseActivity() {
 
     fun launchOrgDetails(orgID: Int?) {
         val intent = Intent(this, OrgDetailsActivity::class.java)
-        intent.putExtra("orgID", orgID)
+        intent.putExtra(Key.ORG_ID, orgID)
         startActivity(intent)
     }
 

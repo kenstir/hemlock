@@ -30,7 +30,7 @@ import kotlinx.coroutines.async
 import net.kenstir.hemlock.R
 import net.kenstir.hemlock.android.App
 import net.kenstir.hemlock.android.AppState
-import net.kenstir.hemlock.android.IntentKeys
+import net.kenstir.hemlock.android.Key
 import net.kenstir.hemlock.logging.Log
 import net.kenstir.hemlock.android.ui.ActionBarUtils
 import net.kenstir.hemlock.android.ui.ProgressDialogSupport
@@ -78,7 +78,7 @@ class BookBagDetailsActivity : BaseActivity() {
         ActionBarUtils.initActionBarForActivity(this)
 
         progress = ProgressDialogSupport()
-        patronList = intent.getSerializableExtra(IntentKeys.PATRON_LIST) as PatronList
+        patronList = intent.getSerializableExtra(Key.PATRON_LIST) as PatronList
 
         bookBagName = findViewById(R.id.bookbag_name)
         bookBagDescription = findViewById(R.id.bookbag_description)

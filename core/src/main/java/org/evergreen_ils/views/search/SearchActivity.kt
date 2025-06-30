@@ -53,6 +53,7 @@ import net.kenstir.hemlock.android.Analytics
 import net.kenstir.hemlock.android.Analytics.orgDimensionKey
 import net.kenstir.hemlock.android.App
 import net.kenstir.hemlock.android.AppState
+import net.kenstir.hemlock.android.Key
 import net.kenstir.hemlock.logging.Log
 import net.kenstir.hemlock.android.ui.ProgressDialogSupport
 import net.kenstir.hemlock.android.ui.showAlert
@@ -380,9 +381,9 @@ class SearchActivity : BaseActivity(), ActivityCompat.OnRequestPermissionsResult
         registerForContextMenu(findViewById(R.id.search_results_list))
         searchResultsFragment?.setOnRecordClickListener { _, position ->
             val intent = Intent(baseContext, RecordDetailsActivity::class.java)
-            intent.putExtra("orgID", EgSearch.selectedOrganization?.id)
-            intent.putExtra("recordPosition", position)
-            intent.putExtra("numResults", searchResults?.numResults ?: 0)
+            intent.putExtra(Key.ORG_ID, EgSearch.selectedOrganization?.id)
+            intent.putExtra(Key.RECORD_POSITION, position)
+            intent.putExtra(Key.NUM_RESULTS, searchResults?.numResults ?: 0)
             startActivityForResult(intent, 10)
         }
         searchResultsFragment?.setOnRecordLongClickListener { record, position ->
@@ -406,15 +407,15 @@ class SearchActivity : BaseActivity(), ActivityCompat.OnRequestPermissionsResult
         when (item.itemId) {
             ITEM_SHOW_DETAILS -> {
                 val intent = Intent(baseContext, RecordDetailsActivity::class.java)
-                intent.putExtra("orgID", EgSearch.selectedOrganization?.id)
-                intent.putExtra("recordPosition", info.position)
-                intent.putExtra("numResults", searchResults.numResults ?: 0)
+                intent.putExtra(Key.ORG_ID, EgSearch.selectedOrganization?.id)
+                intent.putExtra(Key.RECORD_POSITION, info.position)
+                intent.putExtra(Key.NUM_RESULTS, searchResults?.numResults ?: 0)
                 startActivity(intent)
                 return true
             }
             ITEM_PLACE_HOLD -> {
                 val intent = Intent(baseContext, PlaceHoldActivity::class.java)
-                intent.putExtra("recordInfo", info.record)
+                intent.putExtra(Key.RECORD_INFO, info.record)
                 startActivity(intent)
                 return true
             }

@@ -37,6 +37,7 @@ import kotlinx.coroutines.async
 import net.kenstir.hemlock.R
 import net.kenstir.hemlock.android.Analytics
 import net.kenstir.hemlock.android.App
+import net.kenstir.hemlock.android.Key
 import net.kenstir.hemlock.logging.Log
 import net.kenstir.hemlock.data.model.Account
 import net.kenstir.hemlock.data.Result
@@ -100,7 +101,7 @@ class PlaceHoldActivity : BaseActivity() {
 
         setContentView(R.layout.place_hold)
 
-        record = intent.getSerializableExtra("recordInfo") as MBRecord
+        record = intent.getSerializableExtra(Key.RECORD_INFO) as MBRecord
         account = App.getAccount()
         progress = ProgressDialogSupport()
         title = findViewById(R.id.hold_title)

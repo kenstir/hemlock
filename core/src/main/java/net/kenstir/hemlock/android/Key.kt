@@ -21,6 +21,12 @@ package net.kenstir.hemlock.android
  * Keys for intent extras "must" use a package prefix, according to {@link android.content.Intent#putExtra()}.
  * But AccountManager.* keys don't have a prefix, and I haven't seen any problems with omitting prefixes.
  */
-object IntentKeys {
+object Key {
+    const val NUM_RESULTS = "numResults"
+    const val ORG_ID = "orgID"
     const val PATRON_LIST = "patronList"
+    const val POSITION = "position"
+    const val RECORD_INFO = "recordInfo"
+    const val RECORD_POSITION = "recordPosition"
+    const val TOTAL = "total"
 }
