@@ -27,8 +27,10 @@ object Key {
     const val PATRON_LIST = "patronList"
     const val POSITION = "position"
     const val RECORD_INFO = "recordInfo"
+    const val RECORD_LIST = "recordList"
     const val RECORD_POSITION = "recordPosition"
     const val SEARCH_BY = "searchBy"
     const val SEARCH_TEXT = "searchText"
+    const val TITLE = "title"
     const val TOTAL = "total"
 }

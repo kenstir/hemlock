@@ -24,12 +24,16 @@ import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 
+import net.kenstir.hemlock.android.Key;
+import net.kenstir.hemlock.data.model.BibRecord;
+
 import org.evergreen_ils.data.MBRecord;
 
 import java.util.ArrayList;
 
 public class RecordDetails {
-    public static void launchDetailsFlow(Context context, ArrayList<MBRecord> recordList, int recordPosition) {
+
+    public static void launchDetailsFlow(Context context, ArrayList<BibRecord> recordList, int recordPosition) {
         // determine name of parent activity
         PackageManager pm = context.getPackageManager();
         String parentActivityLabel = null;
@@ -43,7 +47,7 @@ public class RecordDetails {
         // In my testing, 100 records ~= 100KB, well below the limit of ~500KB.  If the
         // list is too long, start the details flow with just the selected item.
         final int MAX_RECORDS_IN_TRANSACTION = 100;
-        ArrayList<MBRecord> recordListForTransaction = recordList;
+        ArrayList<BibRecord> recordListForTransaction = recordList;
         int recordPositionForTransaction = recordPosition;
         if (recordList.size() > MAX_RECORDS_IN_TRANSACTION) {
             recordListForTransaction = new ArrayList<>();
@@ -52,9 +56,9 @@ public class RecordDetails {
         }
 
         Intent intent = new Intent(context, RecordDetailsActivity.class);
-        intent.putExtra("recordList", recordListForTransaction);
-        intent.putExtra("recordPosition", recordPositionForTransaction);
-        intent.putExtra("title", parentActivityLabel);
+        intent.putExtra(Key.RECORD_LIST, recordListForTransaction);
+        intent.putExtra(Key.RECORD_POSITION, recordPositionForTransaction);
+        intent.putExtra(Key.TITLE, parentActivityLabel);
         context.startActivity(intent);
     }
 

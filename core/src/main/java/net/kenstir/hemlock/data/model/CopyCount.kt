@@ -14,14 +14,15 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, see <https://www.gnu.org/licenses/>.
  */
+package net.kenstir.hemlock.data.model
 
-package net.kenstir.hemlock.net
+import java.io.Serializable
 
-import net.kenstir.hemlock.data.Result
-import net.kenstir.hemlock.data.model.BibRecord
-
-interface BiblioService {
-    suspend fun loadRecordDetails(bibRecord: BibRecord, needMARC: Boolean): Result<Unit>
-    suspend fun loadRecordAttributes(bibRecord: BibRecord): Result<Unit>
-    suspend fun loadRecordCopyCounts(bibRecord: BibRecord, orgId: Int): Result<Unit>
+/**
+ * Copy summary for the given org_id, e.g. 1 available of 4 copies at PINES
+ */
+interface CopyCount: Serializable {
+    val orgId: Int
+    val count: Int
+    val available: Int
 }

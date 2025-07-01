@@ -21,6 +21,7 @@ package org.evergreen_ils.data
 import android.content.res.Resources
 import net.kenstir.hemlock.R
 import net.kenstir.hemlock.data.model.BibRecord
+import net.kenstir.hemlock.data.model.CopyCount
 import org.evergreen_ils.system.EgCodedValueMap
 import org.evergreen_ils.system.EgOrg.getOrgNameSafe
 import org.evergreen_ils.utils.MARCRecord
@@ -37,7 +38,7 @@ class MBRecord(override val id: Int, var mvrObj: XOSRFObject? = null): BibRecord
         TODO("MBRecord constructor from OSRFObject not implemented")
     }
 
-    var copyCounts: ArrayList<CopyCount>? = null
+    override var copyCounts: ArrayList<CopyCount>? = null
     override var marcRecord: MARCRecord? = null
     var attrs: HashMap<String, String>? = null
     override var isDeleted = false

@@ -35,6 +35,7 @@ interface BibRecord: Serializable {
     val subject: String
     val iconFormatLabel: String
 
+    var copyCounts: ArrayList<CopyCount>?
     var marcRecord: MARCRecord?
     var isDeleted: Boolean
 

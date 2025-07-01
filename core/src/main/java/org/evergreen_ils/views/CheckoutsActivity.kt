@@ -49,6 +49,7 @@ import net.kenstir.hemlock.logging.Log
 import org.evergreen_ils.utils.ui.BaseActivity
 import net.kenstir.hemlock.android.ui.ProgressDialogSupport
 import net.kenstir.hemlock.android.ui.showAlert
+import net.kenstir.hemlock.data.model.BibRecord
 import org.evergreen_ils.views.history.HistoryActivity
 import java.util.*
 
@@ -201,7 +202,7 @@ class CheckoutsActivity : BaseActivity() {
     }
 
     private fun onItemClick(position: Int) {
-        val records = ArrayList<MBRecord>()
+        val records = ArrayList<BibRecord>()
         for (circRecord in circRecords) {
             circRecord.record?.let { record ->
                 if (record.id != -1) {

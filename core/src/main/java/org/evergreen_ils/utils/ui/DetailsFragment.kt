@@ -302,24 +302,25 @@ class DetailsFragment : Fragment() {
                 Log.d(TAG, "${record.id}: fetchData")
                 val start = System.currentTimeMillis()
                 val jobs = mutableListOf<Deferred<Any>>()
+                val biblioService = App.getServiceConfig().biblioService
 
                 jobs.add(scope.async {
-                    App.getServiceConfig().biblioService.loadRecordDetails(record, resources.getBoolean(R.bool.ou_need_marc_record))
+                    biblioService.loadRecordDetails(record, resources.getBoolean(R.bool.ou_need_marc_record))
                     loadMetadata()
                     Log.d(TAG, "${record.id}: loadRecordMetadataAsync done")
                 })
 
                 jobs.add(scope.async {
-                    App.getServiceConfig().biblioService.loadRecordAttributes(record)
+                    biblioService.loadRecordAttributes(record)
                     loadFormat()
                     Log.d(TAG, "${record.id}: loadRecordAttributesAsync done")
                 })
 
-//                jobs.add(scope.async {
-//                    GatewayLoader.loadRecordCopyCountAsync(record, orgID)
-//                    // do not loadCopySummary yet, we need the MARC
-//                    Log.d(TAG, "${record.id}: loadRecordCopyCountAsync done")
-//                })
+                jobs.add(scope.async {
+                    biblioService.loadRecordCopyCounts(record, orgID)
+                    // do not loadCopySummary() yet, we need the MARC loaded
+                    Log.d(TAG, "${record.id}: loadRecordCopyCountAsync done")
+                })
 
                 jobs.map { it.await() }
 

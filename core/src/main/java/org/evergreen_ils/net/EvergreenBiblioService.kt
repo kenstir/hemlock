@@ -19,8 +19,10 @@ package org.evergreen_ils.net
 
 import net.kenstir.hemlock.data.Result
 import net.kenstir.hemlock.data.model.BibRecord
+import net.kenstir.hemlock.data.model.CopyCount
 import net.kenstir.hemlock.net.BiblioService
 import org.evergreen_ils.Api
+import org.evergreen_ils.data.EvergreenCopyCount
 import org.evergreen_ils.data.MBRecord
 import org.evergreen_ils.xdata.XGatewayClient
 import org.evergreen_ils.xdata.XOSRFObject
@@ -39,17 +41,6 @@ class EvergreenBiblioService: BiblioService {
         }
     }
 
-    private suspend fun loadRecordDetailsImpl(record: MBRecord, needMARC: Boolean) {
-        record.mvrObj = fetchRecordMODS(record.id)
-
-        if (needMARC) {
-            val breObj = fetchMARC(record.id)
-            record.updateFromBREResponse(breObj)
-        }
-
-        // TODO: fetch attributes (MRA)?
-    }
-
     override suspend fun loadRecordAttributes(bibRecord: BibRecord): Result<Unit> {
         val record = bibRecord as? MBRecord
             ?: throw IllegalArgumentException("Expected MBRecord, got ${bibRecord::class.java.simpleName}")
@@ -61,6 +52,34 @@ class EvergreenBiblioService: BiblioService {
         } catch (e: Exception) {
             Result.Error(e)
         }
+    }
+
+    override suspend fun loadRecordCopyCounts(bibRecord: BibRecord, orgId: Int): Result<Unit> {
+        val record = bibRecord as? MBRecord
+            ?: throw IllegalArgumentException("Expected MBRecord, got ${bibRecord::class.java.simpleName}")
+
+        return try {
+            Result.Success(loadRecordCopyCountImpl(record, orgId))
+        } catch (e: Exception) {
+            Result.Error(e)
+        }
+    }
+
+    private suspend fun loadRecordDetailsImpl(record: MBRecord, needMARC: Boolean) {
+        record.mvrObj = fetchRecordMODS(record.id)
+
+        if (needMARC) {
+            val breObj = fetchMARC(record.id)
+            record.updateFromBREResponse(breObj)
+        }
+    }
+
+    suspend fun loadRecordCopyCountImpl(record: MBRecord, orgId: Int) {
+        if (record.copyCounts != null) return
+
+        val response = XGatewayClient.fetch(Api.SEARCH, Api.COPY_COUNT, paramListOf(orgId, record.id), false)
+        val copyCounts = response.payloadFirstAsObjectList()
+        record.copyCounts = EvergreenCopyCount.makeArray(copyCounts)
     }
 
     suspend fun fetchCopyMODS(copyId: Int): XOSRFObject {
