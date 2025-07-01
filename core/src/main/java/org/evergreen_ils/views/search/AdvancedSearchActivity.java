@@ -1,25 +1,24 @@
 /*
  * Copyright (C) 2012 Evergreen Open-ILS
  * @author Daniel-Octavian Rizea
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * or the License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software 
+ * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
- * 
+ *
  */
 package org.evergreen_ils.views.search;
 
-import static org.evergreen_ils.EgConstKt.KEY_SEARCH_TEXT;
 import static org.evergreen_ils.views.search.SearchActivity.RESULT_CODE_SEARCH_BY_KEYWORD;
 
 import android.content.Intent;
@@ -38,6 +37,7 @@ import android.widget.TextView;
 
 import net.kenstir.hemlock.R;
 import net.kenstir.hemlock.android.App;
+import net.kenstir.hemlock.android.Key;
 import net.kenstir.hemlock.android.ui.ActionBarUtils;
 import net.kenstir.hemlock.android.Analytics;
 
@@ -125,7 +125,7 @@ public class AdvancedSearchActivity extends AppCompatActivity {
                 String types = TextUtils.join("|", searchTermTypes);
                 //Analytics.logEvent("advsearch_search", "search_type", types);//TODO
                 Intent returnIntent = new Intent();
-                returnIntent.putExtra(KEY_SEARCH_TEXT, TextUtils.join(" ", searchTerms));
+                returnIntent.putExtra(Key.SEARCH_TEXT, TextUtils.join(" ", searchTerms));
                 setResult(RESULT_CODE_SEARCH_BY_KEYWORD, returnIntent);
                 finish();
             }

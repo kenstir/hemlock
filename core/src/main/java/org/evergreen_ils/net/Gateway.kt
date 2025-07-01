@@ -42,7 +42,6 @@ object Gateway {
     var actor: ActorService = GatewayActor
     var circ: CircService = GatewayCirc
     var fielder: FielderService = GatewayFielder
-    var pcrud: PCRUDService = GatewayPCRUD
     var search: SearchService = GatewaySearch
 
     private var _serverCacheKey: String? = null

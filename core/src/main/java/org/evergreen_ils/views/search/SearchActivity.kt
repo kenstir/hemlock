@@ -46,8 +46,6 @@ import com.google.mlkit.vision.barcode.common.Barcode
 import com.google.mlkit.vision.codescanner.GmsBarcodeScanner
 import com.google.mlkit.vision.codescanner.GmsBarcodeScanning
 import kotlinx.coroutines.async
-import org.evergreen_ils.KEY_SEARCH_BY
-import org.evergreen_ils.KEY_SEARCH_TEXT
 import net.kenstir.hemlock.R
 import net.kenstir.hemlock.android.Analytics
 import net.kenstir.hemlock.android.Analytics.orgDimensionKey
@@ -57,7 +55,6 @@ import net.kenstir.hemlock.android.Key
 import net.kenstir.hemlock.logging.Log
 import net.kenstir.hemlock.android.ui.ProgressDialogSupport
 import net.kenstir.hemlock.android.ui.showAlert
-import org.evergreen_ils.data.MBRecord
 import net.kenstir.hemlock.data.Result
 import net.kenstir.hemlock.data.model.BibRecord
 import net.kenstir.hemlock.net.SearchResults
@@ -465,20 +462,20 @@ class SearchActivity : BaseActivity(), ActivityCompat.OnRequestPermissionsResult
             }
             RESULT_CODE_SEARCH_BY_AUTHOR -> {
                 // NOTREACHED
-                searchTextView?.setText(data?.getStringExtra(KEY_SEARCH_TEXT))
+                searchTextView?.setText(data?.getStringExtra(Key.SEARCH_TEXT))
                 setSearchClass(searchClassAuthorIndex)
                 fetchSearchResults()
             }
             RESULT_CODE_SEARCH_BY_KEYWORD -> {
-                searchTextView?.setText(data?.getStringExtra(KEY_SEARCH_TEXT))
+                searchTextView?.setText(data?.getStringExtra(Key.SEARCH_TEXT))
                 fetchSearchResults()
             }
         }
     }
 
     private fun doSearchOnStartup(data: Intent) {
-        val text = data.getStringExtra(KEY_SEARCH_TEXT)
-        val code = data.getIntExtra(KEY_SEARCH_BY, 0)
+        val text = data.getStringExtra(Key.SEARCH_TEXT)
+        val code = data.getIntExtra(Key.SEARCH_BY, 0)
         if (text?.isNotEmpty() == true && code == RESULT_CODE_SEARCH_BY_AUTHOR) {
             searchTextView?.setText(text)
             setSearchClass(searchClassAuthorIndex)

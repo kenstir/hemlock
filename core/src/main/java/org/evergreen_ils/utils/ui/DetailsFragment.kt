@@ -40,19 +40,17 @@ import androidx.lifecycle.lifecycleScope
 import coil3.load
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
-import org.evergreen_ils.KEY_SEARCH_BY
-import org.evergreen_ils.KEY_SEARCH_TEXT
 import net.kenstir.hemlock.R
 import net.kenstir.hemlock.android.App
 import net.kenstir.hemlock.android.Key
-import net.kenstir.hemlock.logging.Log
 import net.kenstir.hemlock.android.ui.showAlert
 import net.kenstir.hemlock.data.model.BibRecord
-import org.evergreen_ils.views.search.CopyInformationActivity
+import net.kenstir.hemlock.logging.Log
 import org.evergreen_ils.data.MBRecord
 import org.evergreen_ils.system.EgOrg
 import org.evergreen_ils.views.bookbags.BookBagUtils.showAddToListDialog
 import org.evergreen_ils.views.holds.PlaceHoldActivity
+import org.evergreen_ils.views.search.CopyInformationActivity
 import org.evergreen_ils.views.search.SearchActivity
 import org.evergreen_ils.views.search.SearchActivity.Companion.RESULT_CODE_SEARCH_BY_AUTHOR
 import org.evergreen_ils.xdata.XGatewayClient
@@ -273,8 +271,8 @@ class DetailsFragment : Fragment() {
         // Instead of setResult and finish, we clear the activity stack and push SearchActivity.
         // A finish would work only from Search Details, not from List Details.
         val intent = Intent(activity, SearchActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-        intent.putExtra(KEY_SEARCH_TEXT, author)
-        intent.putExtra(KEY_SEARCH_BY, RESULT_CODE_SEARCH_BY_AUTHOR)
+        intent.putExtra(Key.SEARCH_TEXT, author)
+        intent.putExtra(Key.SEARCH_BY, RESULT_CODE_SEARCH_BY_AUTHOR)
         startActivity(intent)
     }
 

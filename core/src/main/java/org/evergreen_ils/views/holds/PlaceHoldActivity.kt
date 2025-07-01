@@ -172,9 +172,7 @@ class PlaceHoldActivity : BaseActivity() {
                     })
                 }
 
-                jobs.add(scope.async {
-                    GatewayLoader.loadSMSCarriersAsync()
-                })
+                // TODO: fetchSMSCarriers, unless it's so fast that we just do it in loadServiceData
 
                 if (resources.getBoolean(R.bool.ou_enable_part_holds)) {
                     Log.d(TAG, "${record.title}: fetching parts")

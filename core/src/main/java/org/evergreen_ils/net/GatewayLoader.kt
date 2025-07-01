@@ -24,42 +24,6 @@ import org.evergreen_ils.system.EgSms
 
 object GatewayLoader {
 
-    suspend fun loadRecordMetadataAsync(record: MBRecord): Result<Unit> {
-//        if (record.mvrObj != null) return Result.Success(Unit)
-//
-//        val result = Gateway.search.fetchRecordMODS(record.id)
-//        if (result is Result.Error) return result
-//        val modsObj = result.get()
-//        record.mvrObj = modsObj
-//
-//        return Result.Success(Unit)
-        return Result.Error(Exception("Not implemented"))
-    }
-
-    suspend fun loadRecordAttributesAsync(record: MBRecord, id: Int = record.id): Result<Unit> {
-//        if (record.attrs != null) return Result.Success(Unit)
-//
-//        val mraResult = Gateway.pcrud.fetchMRA(id)
-//        if (mraResult is Result.Error) return mraResult
-//        val mraObj = mraResult.get()
-//        record.updateFromMRAResponse(mraObj)
-//
-//        return Result.Success(Unit)
-        return Result.Error(Exception("Not implemented"))
-    }
-
-    suspend fun loadRecordMarcAsync(record: MBRecord): Result<Unit> {
-//        if (record.marcRecord != null) return Result.Success(Unit)
-//
-//        val result = Gateway.pcrud.fetchMARC(record.id)
-//        if (result is Result.Error) return result
-//        val breObj = result.get()
-//        record.updateFromBREResponse(breObj)
-//
-//        return Result.Success(Unit)
-        return Result.Error(Exception("Not implemented"))
-    }
-
     suspend fun loadRecordCopyCountAsync(record: MBRecord, orgId: Int): Result<Unit> {
         if (record.copyCounts != null) return Result.Success(Unit)
 
@@ -68,15 +32,6 @@ object GatewayLoader {
         val objList = result.get()
         record.copyCounts = CopyCount.makeArray(objList)
 
-        return Result.Success(Unit)
-    }
-
-    suspend fun loadSMSCarriersAsync(): Result<Unit> {
-        if (EgSms.carriers.isNotEmpty()) return Result.Success(Unit)
-
-        val result = Gateway.pcrud.fetchSMSCarriers()
-        if (result is Result.Error) return result
-        EgSms.loadCarriers(result.get())
         return Result.Success(Unit)
     }
 }
