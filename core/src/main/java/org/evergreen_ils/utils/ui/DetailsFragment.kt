@@ -37,28 +37,25 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.android.volley.toolbox.NetworkImageView
-import kotlinx.coroutines.Job
+import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
-import kotlinx.coroutines.joinAll
 import org.evergreen_ils.KEY_SEARCH_BY
 import org.evergreen_ils.KEY_SEARCH_TEXT
 import net.kenstir.hemlock.R
 import net.kenstir.hemlock.android.App
 import net.kenstir.hemlock.android.Key
 import net.kenstir.hemlock.logging.Log
-import net.kenstir.hemlock.logging.Log.TAG_ASYNC
 import net.kenstir.hemlock.android.ui.showAlert
 import net.kenstir.hemlock.data.model.BibRecord
-import org.evergreen_ils.net.Gateway.getUrl
-import org.evergreen_ils.net.GatewayLoader
-import org.evergreen_ils.net.Volley
 import org.evergreen_ils.views.search.CopyInformationActivity
 import org.evergreen_ils.data.MBRecord
+import org.evergreen_ils.net.Volley
 import org.evergreen_ils.system.EgOrg
 import org.evergreen_ils.views.bookbags.BookBagUtils.showAddToListDialog
 import org.evergreen_ils.views.holds.PlaceHoldActivity
 import org.evergreen_ils.views.search.SearchActivity
 import org.evergreen_ils.views.search.SearchActivity.Companion.RESULT_CODE_SEARCH_BY_AUTHOR
+import org.evergreen_ils.xdata.XGatewayClient
 
 class DetailsFragment : Fragment() {
     private var record: BibRecord? = null
@@ -104,7 +101,7 @@ class DetailsFragment : Fragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        Log.d(TAG_ASYNC, "${record?.id}: oncreateview")
+        Log.d(TAG, "${record?.id}: oncreateview")
         val layout = inflater.inflate(
                 R.layout.record_details_fragment, container, false) as LinearLayout
 
@@ -133,8 +130,8 @@ class DetailsFragment : Fragment() {
         initButtons()
 
         // Start async image load
-        val url = getUrl("/opac/extras/ac/jacket/medium/r/" + record?.id)
-        Log.d(TAG_ASYNC, "${record?.id}: setimageurl $url")
+        val url = XGatewayClient.getUrl("/opac/extras/ac/jacket/medium/r/" + record?.id)
+        Log.d(TAG, "${record?.id}: setimageurl $url")
         recordImage?.setImageUrl(url, Volley.getInstance(activity).imageLoader)
         //recordImage?.setDefaultImageResId(R.drawable.missing_art);//for screenshots
 
@@ -304,44 +301,34 @@ class DetailsFragment : Fragment() {
         val scope = viewLifecycleOwner.lifecycleScope
         scope.async {
             try {
-                TODO()
-                /*
-                Log.d(TAG_ASYNC, "${record.id}: fetchData")
+                Log.d(TAG, "${record.id}: fetchData")
                 val start = System.currentTimeMillis()
-                val jobs = mutableListOf<Job>()
+                val jobs = mutableListOf<Deferred<Any>>()
 
                 jobs.add(scope.async {
-                    GatewayLoader.loadRecordMetadataAsync(record)
+                    App.getServiceConfig().biblioService.loadRecordDetails(record, resources.getBoolean(R.bool.ou_need_marc_record))
                     loadMetadata()
-                    Log.d(TAG_ASYNC, "${record.id}: loadRecordMetadataAsync done")
+                    Log.d(TAG, "${record.id}: loadRecordMetadataAsync done")
                 })
 
                 jobs.add(scope.async {
-                    GatewayLoader.loadRecordAttributesAsync(record)
+                    App.getServiceConfig().biblioService.loadRecordAttributes(record)
                     loadFormat()
-                    Log.d(TAG_ASYNC, "${record.id}: loadRecordAttributesAsync done")
+                    Log.d(TAG, "${record.id}: loadRecordAttributesAsync done")
                 })
 
-                jobs.add(scope.async {
-                    GatewayLoader.loadRecordCopyCountAsync(record, orgID)
-                    // do not loadCopySummary yet, we need the MARC
-                    Log.d(TAG_ASYNC, "${record.id}: loadRecordCopyCountAsync done")
-                })
+//                jobs.add(scope.async {
+//                    GatewayLoader.loadRecordCopyCountAsync(record, orgID)
+//                    // do not loadCopySummary yet, we need the MARC
+//                    Log.d(TAG, "${record.id}: loadRecordCopyCountAsync done")
+//                })
 
-                if (resources.getBoolean(R.bool.ou_need_marc_record)) {
-                    jobs.add(scope.async {
-                        GatewayLoader.loadRecordMarcAsync(record)
-                        Log.d(TAG_ASYNC, "${record.id}: loadRecordMarcAsync done")
-                    })
-                }
-
-                jobs.joinAll()
+                jobs.map { it.await() }
 
                 loadCopySummary()
                 updateButtonViews()
 
-                Log.logElapsedTime(TAG, start, "[kcxxx] fetchData ... done")
-                 */
+                Log.logElapsedTime(TAG, start, "${record.id}: fetchData")
             } catch (ex: Exception) {
                 activity?.showAlert(ex)
             }
@@ -352,6 +339,7 @@ class DetailsFragment : Fragment() {
         private val TAG = DetailsFragment::class.java.simpleName
 
         fun create(record: BibRecord?, orgID: Int, position: Int, total: Int): DetailsFragment {
+            Log.d(TAG, "${record?.id}: create DetailsFragment")
             val fragment = DetailsFragment()
             fragment.record = record
             fragment.orgID = orgID
