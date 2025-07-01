@@ -19,21 +19,19 @@ import android.app.Activity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
-import com.android.volley.toolbox.NetworkImageView
+import coil3.load
 import kotlinx.coroutines.async
 import net.kenstir.hemlock.R
 import net.kenstir.hemlock.android.App
 import net.kenstir.hemlock.logging.Log
-import org.evergreen_ils.data.MBRecord
-import org.evergreen_ils.net.Gateway.getUrl
-import org.evergreen_ils.net.GatewayLoader
-import org.evergreen_ils.net.Volley
 import org.evergreen_ils.utils.ui.BaseActivity
 import net.kenstir.hemlock.android.ui.showAlert
 import net.kenstir.hemlock.data.model.BibRecord
+import org.evergreen_ils.xdata.XGatewayClient
 
 /**
  * Provide views to RecyclerView with data from records.
@@ -43,7 +41,7 @@ class RecordViewAdapter(private val records: List<BibRecord>) : RecyclerView.Ada
      * Provide a reference to the type of views that you are using (custom ViewHolder)
      */
     class ViewHolder(v: View) : RecyclerView.ViewHolder(v) {
-        private val recordImage: NetworkImageView = v.findViewById(R.id.search_record_img)
+        private val recordImage: ImageView = v.findViewById(R.id.search_record_img)
         private val titleText: TextView = v.findViewById(R.id.search_record_title)
         private val authorText: TextView = v.findViewById(R.id.search_record_author)
         private val iconFormatText: TextView = v.findViewById(R.id.search_record_format)
@@ -54,11 +52,11 @@ class RecordViewAdapter(private val records: List<BibRecord>) : RecyclerView.Ada
             val context = recordImage.context
 
             // TODO: use a service method to get the image URL
-            val url = getUrl("/opac/extras/ac/jacket/small/r/" + record.id)
+            val url = XGatewayClient.getUrl("/opac/extras/ac/jacket/small/r/" + record.id)
 
             // TODO: use Coil to load images
-            recordImage.setImageUrl(url, Volley.getInstance(context).imageLoader)
-            //recordImage.setDefaultImageResId(R.drawable.missing_art);//for screenshots
+            //recordImage.setImageUrl(url, Volley.getInstance(context).imageLoader)
+            recordImage.load(url)
 
             val scope = (context as? BaseActivity)?.lifecycleScope ?: return
             scope.async {

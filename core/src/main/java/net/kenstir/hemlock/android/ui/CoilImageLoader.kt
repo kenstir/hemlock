@@ -17,23 +17,23 @@
 
 package net.kenstir.hemlock.android.ui
 
-// Not ready to use yet, but it looks like Coil is the right library to replace Volley's NetworkImageView.
-// 1. Add Coil dependency in build.gradle
-//    implementation 'io.coil-kt:coil:2.5.0'
-// 2. Create a custom ImageLoader
-// 3. Use Coil's ImageView extension to load images
+import android.content.Context
+import coil3.ImageLoader
+import coil3.SingletonImageLoader
+import coil3.network.okhttp.OkHttpNetworkFetcherFactory
+import okhttp3.OkHttpClient
+
 object CoilImageLoader {
-    // Example of a custom ImageLoader
-//    val imageLoader = ImageLoader.Builder(context)
-//        .okHttpClient { okHttpClient }
-//        .crossfade(true)
-//        .build()
-//    Coil.setImageLoader(imageLoader)
-
-    // Example of loading an image into an ImageView
-    // imageView.load("https://example.com/image.jpg") {
-    //     placeholder(R.drawable.placeholder)
-    //     error(R.drawable.error)
-    // }
-
+    fun setImageLoader(context: Context, okHttpClient: OkHttpClient) {
+        val imageLoader = ImageLoader.Builder(context)
+            .components {
+                add(OkHttpNetworkFetcherFactory(
+                    callFactory = {
+                        okHttpClient
+                    }
+                ))
+            }
+            .build()
+        SingletonImageLoader.setSafe { imageLoader }
+    }
 }

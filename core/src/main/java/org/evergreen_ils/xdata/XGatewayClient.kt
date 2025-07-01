@@ -21,6 +21,7 @@ import io.ktor.client.*
 import io.ktor.client.engine.okhttp.OkHttp
 import io.ktor.client.request.*
 import io.ktor.client.plugins.contentnegotiation.*
+import io.ktor.client.plugins.pluginOrNull
 import io.ktor.http.ContentType
 import io.ktor.http.contentType
 import io.ktor.serialization.kotlinx.json.*
@@ -55,14 +56,16 @@ object XGatewayClient {
 
     @JvmStatic
     lateinit var cacheDirectory: File
-    val client: HttpClient by lazy { makeHttpClient() }
 
+    // TODO: need to expose the okHttpClient so that it can be reused by Coil
+    val client: HttpClient by lazy { makeHttpClient() }
+    lateinit var okHttpClient: OkHttpClient
     fun makeHttpClient(): HttpClient {
         val okHttpCache = Cache(cacheDirectory, CACHE_SIZE.toLong())
 //        val logging = HttpLoggingInterceptor().apply {
 //            level = HttpLoggingInterceptor.Level.HEADERS
 //        }
-        val okHttpClient = OkHttpClient.Builder()
+        okHttpClient = OkHttpClient.Builder()
             .cache(okHttpCache)
             .connectTimeout(DEFAULT_TIMEOUT_MS.toLong(), java.util.concurrent.TimeUnit.MILLISECONDS)
             .addInterceptor(HemlockOkHttpInterceptor())
@@ -80,6 +83,10 @@ object XGatewayClient {
                 )
             }
         }
+    }
+    @JvmStatic
+    fun initHttpClient() {
+        client.pluginOrNull(HemlockPlugin)
     }
 
     fun buildQuery(service: String?, method: String?, params: List<XGatewayParam>, addCacheParams: Boolean = true): String {

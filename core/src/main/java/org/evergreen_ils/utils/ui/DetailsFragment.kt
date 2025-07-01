@@ -32,11 +32,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
-import com.android.volley.toolbox.NetworkImageView
+import coil3.load
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
 import org.evergreen_ils.KEY_SEARCH_BY
@@ -49,7 +50,6 @@ import net.kenstir.hemlock.android.ui.showAlert
 import net.kenstir.hemlock.data.model.BibRecord
 import org.evergreen_ils.views.search.CopyInformationActivity
 import org.evergreen_ils.data.MBRecord
-import org.evergreen_ils.net.Volley
 import org.evergreen_ils.system.EgOrg
 import org.evergreen_ils.views.bookbags.BookBagUtils.showAddToListDialog
 import org.evergreen_ils.views.holds.PlaceHoldActivity
@@ -80,7 +80,7 @@ class DetailsFragment : Fragment() {
     private var onlineAccessButton: Button? = null
     private var addToBookbagButton: Button? = null
     private var extrasButton: Button? = null
-    private var recordImage: NetworkImageView? = null
+    private var recordImage: ImageView? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -131,9 +131,9 @@ class DetailsFragment : Fragment() {
 
         // Start async image load
         val url = XGatewayClient.getUrl("/opac/extras/ac/jacket/medium/r/" + record?.id)
-        Log.d(TAG, "${record?.id}: setimageurl $url")
-        recordImage?.setImageUrl(url, Volley.getInstance(activity).imageLoader)
-        //recordImage?.setDefaultImageResId(R.drawable.missing_art);//for screenshots
+        Log.d(TAG, "${record?.id}: setimageurl $url on ${recordImage}")
+        //recordImage?.setImageUrl(url, Volley.getInstance(activity).imageLoader)
+        recordImage?.load(url)
 
         record?.let { fetchData(it) }
 
