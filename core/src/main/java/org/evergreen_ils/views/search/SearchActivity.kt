@@ -79,8 +79,6 @@ const val SEARCH_CLASS_AUTHOR = "author"
 const val SEARCH_CLASS_IDENTIFIER = "identifier"
 
 class SearchActivity : BaseActivity(), ActivityCompat.OnRequestPermissionsResultCallback {
-    private val TAG = javaClass.simpleName
-
     private var searchTextView: EditText? = null
     private var searchOptionsButton: SwitchCompat? = null
     private var searchOptionsLayout: View? = null
@@ -590,6 +588,8 @@ class SearchActivity : BaseActivity(), ActivityCompat.OnRequestPermissionsResult
     }
 
     companion object {
+        private val TAG = SearchActivity::class.java.simpleName
+
         const val RESULT_CODE_NORMAL = 10
         const val RESULT_CODE_SEARCH_BY_AUTHOR = 11
         const val RESULT_CODE_SEARCH_BY_KEYWORD = 12

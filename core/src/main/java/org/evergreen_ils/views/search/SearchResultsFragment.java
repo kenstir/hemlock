@@ -23,7 +23,6 @@ import android.view.*;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import net.kenstir.hemlock.R;
-import org.evergreen_ils.data.MBRecord;
 import org.evergreen_ils.system.EgSearch;
 import net.kenstir.hemlock.android.ui.ItemClickSupport;
 import net.kenstir.hemlock.data.model.BibRecord;
