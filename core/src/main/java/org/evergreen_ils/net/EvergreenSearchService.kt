@@ -43,26 +43,6 @@ class EvergreenSearchService: SearchService {
         TODO("Not yet implemented")
     }
 
-    suspend fun fetchCopyCount(id: Int, orgId: Int): Result<List<XOSRFObject>> {
-        TODO("Not yet implemented")
-    }
-
-    suspend fun fetchCopyMODS(copyId: Int): Result<XOSRFObject> {
-        TODO("Not yet implemented")
-    }
-
-    suspend fun fetchRecordMODS(id: Int): Result<XOSRFObject> {
-        TODO("Not yet implemented")
-    }
-
-    suspend fun fetchMetarecordMODS(id: Int): Result<XOSRFObject> {
-        TODO("Not yet implemented")
-    }
-
-    suspend fun fetchHoldParts(id: Int): Result<List<XOSRFObject>> {
-        TODO("Not yet implemented")
-    }
-
     suspend fun fetchMulticlassQuery(queryString: String, limit: Int, shouldCache: Boolean): Result<XOSRFObject> {
         return try {
             val options = jsonMapOf("limit" to limit, "offset" to 0)

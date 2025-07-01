@@ -18,7 +18,6 @@
 
 package org.evergreen_ils.net
 
-import net.kenstir.hemlock.net.RequestOptions
 import org.evergreen_ils.Api
 import net.kenstir.hemlock.data.Result
 import net.kenstir.hemlock.data.jsonMapOf
@@ -110,16 +109,4 @@ object GatewaySearch: SearchService {
         }
     }
 
-    override suspend fun fetchMulticlassQuery(queryString: String, limit: Int): Result<OSRFObject> {
-        return try {
-            val param = jsonMapOf("limit" to limit, "offset" to 0)
-            val options = RequestOptions(Gateway.searchTimeoutMs, false, true)
-            val ret = Gateway.fetch(Api.SEARCH, Api.MULTICLASS_QUERY, arrayOf<Any?>(param, queryString, 0), options) { result ->
-                result.payloadFirstAsObject()
-            }
-            Result.Success(ret)
-        } catch (e: Exception) {
-            Result.Error(e)
-        }
-    }
 }
