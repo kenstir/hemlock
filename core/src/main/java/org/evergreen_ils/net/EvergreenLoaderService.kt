@@ -33,6 +33,7 @@ import org.evergreen_ils.system.EgCopyStatus
 import org.evergreen_ils.system.EgOrg
 import org.evergreen_ils.Api
 import org.evergreen_ils.idl.IDLParser
+import org.evergreen_ils.system.EgSms
 
 class EvergreenLoaderService: LoaderService {
 
@@ -64,6 +65,7 @@ class EvergreenLoaderService: LoaderService {
         jobs.add(async { loadOrgTree(serviceOptions.useHierarchicalOrgTree) })
         jobs.add(async { loadCopyStatuses() })
         jobs.add(async { loadCodedValueMaps() })
+        jobs.add(async { loadSmsCarriers() })
 
         // await all deferred (see awaitAll doc for differences)
         jobs.map { it.await() }
@@ -86,34 +88,43 @@ class EvergreenLoaderService: LoaderService {
     }
 
     private suspend fun loadOrgTypes() {
-        Log.d(TAG, "loading org types ...")
+        Log.d(TAG, "loadOrgTypes ...")
         val response = XGatewayClient.fetch(Api.ACTOR, Api.ORG_TYPES_RETRIEVE, paramListOf(), true)
         EgOrg.loadOrgTypes(response.payloadFirstAsObjectList())
-        Log.d(TAG, "loading org types ... done")
+        Log.d(TAG, "loadOrgTypes ... done")
     }
 
     private suspend fun loadOrgTree(useHierarchicalOrgTree: Boolean) {
-        Log.d(TAG, "loading org tree ...")
+        Log.d(TAG, "loadOrgTree ...")
         val response = XGatewayClient.fetch(Api.ACTOR, Api.ORG_TREE_RETRIEVE, paramListOf(), true)
         EgOrg.loadOrgs(response.payloadFirstAsObject(), useHierarchicalOrgTree)
-        Log.d(TAG, "loading org tree ... done")
+        Log.d(TAG, "loadOrgTree ... done")
     }
 
     private suspend fun loadCopyStatuses() {
-        Log.d(TAG, "loading copy statuses ...")
+        Log.d(TAG, "loadCopyStatuses ...")
         val response = XGatewayClient.fetch(Api.SEARCH, Api.COPY_STATUS_ALL, paramListOf(), true)
         val ret = response.payloadFirstAsObjectList()
         EgCopyStatus.loadCopyStatuses(ret)
-        Log.d(TAG, "loading copy statuses ... done")
+        Log.d(TAG, "loadCopyStatuses ... done")
     }
 
     private suspend fun loadCodedValueMaps() {
-        Log.d(TAG, "loading coded value maps ...")
+        Log.d(TAG, "loadCodedValueMaps ...")
         val formats = listOf(EgCodedValueMap.ICON_FORMAT, EgCodedValueMap.SEARCH_FORMAT)
         val searchParams = jsonMapOf("ctype" to formats)
         val response = XGatewayClient.fetch(Api.PCRUD, Api.SEARCH_CCVM, paramListOf(Api.ANONYMOUS, searchParams), true)
         EgCodedValueMap.loadCodedValueMaps(response.payloadFirstAsObjectList())
-        Log.d(TAG, "loading coded value maps ... done")
+        Log.d(TAG, "loadCodedValueMaps ... done")
+    }
+
+    private suspend fun loadSmsCarriers() {
+        Log.d(TAG, "loadSmsCarriers ...")
+        val searchParams = jsonMapOf("active" to 1)
+        val response = XGatewayClient.fetch(Api.PCRUD, Api.SEARCH_SMS_CARRIERS, paramListOf(Api.ANONYMOUS, searchParams), true)
+        val carriers = response.payloadFirstAsObjectList()
+        EgSms.loadCarriers(carriers)
+        Log.d(TAG, "loadSmsCarriers ... done")
     }
 
     companion object {

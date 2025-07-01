@@ -28,5 +28,7 @@ object Key {
     const val POSITION = "position"
     const val RECORD_INFO = "recordInfo"
     const val RECORD_POSITION = "recordPosition"
+    const val SEARCH_BY = "searchBy"
+    const val SEARCH_TEXT = "searchText"
     const val TOTAL = "total"
 }
