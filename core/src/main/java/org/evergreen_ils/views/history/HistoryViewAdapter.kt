@@ -23,10 +23,11 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
-import com.android.volley.toolbox.NetworkImageView
+import coil3.load
 import kotlinx.coroutines.async
 import net.kenstir.hemlock.R
 import net.kenstir.hemlock.logging.Log
@@ -41,7 +42,7 @@ import net.kenstir.hemlock.android.ui.showAlert
 class HistoryViewAdapter(private val items: List<HistoryRecord>) : RecyclerView.Adapter<HistoryViewAdapter.ViewHolder>() {
 
     class ViewHolder(v: View) : RecyclerView.ViewHolder(v) {
-        private val recordImage: NetworkImageView = v.findViewById(R.id.search_record_img)
+        private val recordImage: ImageView = v.findViewById(R.id.search_record_img)
         private val title: TextView = v.findViewById(R.id.search_record_title)
         private val author: TextView = v.findViewById(R.id.search_record_author)
         private val checkoutDate: TextView = v.findViewById(R.id.item_checkout_date)
@@ -95,7 +96,7 @@ class HistoryViewAdapter(private val items: List<HistoryRecord>) : RecyclerView.
 
             historyRecord.record?.id.let { id ->
                 val url = Gateway.getUrl("/opac/extras/ac/jacket/small/r/" + id)
-                recordImage.setImageUrl(url, Volley.getInstance(context).imageLoader)
+                recordImage.load(url)
             }
         }
     }

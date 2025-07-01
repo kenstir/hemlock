@@ -30,6 +30,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import net.kenstir.hemlock.R;
+import net.kenstir.hemlock.android.ui.CoilImageLoader;
 import net.kenstir.hemlock.logging.Log;
 import net.kenstir.hemlock.net.ServiceConfig;
 import org.evergreen_ils.xdata.XGatewayClient;
@@ -41,6 +42,7 @@ import org.evergreen_ils.net.Volley;
 import org.evergreen_ils.utils.ui.BaseActivity;
 import org.evergreen_ils.views.launch.LaunchActivity;
 import org.evergreen_ils.views.MainActivity;
+import org.evergreen_ils.xdata.XGatewayClientKt;
 
 import java.io.File;
 
@@ -115,6 +117,8 @@ public class App {
         enableCaching(context);
         behavior = AppFactory.makeBehavior(context.getResources());
         Volley.init(context);
+        XGatewayClient.initHttpClient();
+        CoilImageLoader.INSTANCE.setImageLoader(context, XGatewayClient.okHttpClient);
         if (mServiceConfig == null) {
             mServiceConfig = new ServiceConfig();
         }
@@ -131,7 +135,7 @@ public class App {
 
     public static void setLibrary(Library library) {
         App.library = library;
-        // TODO: this should be in the Evergreen data layer, not here
+        // TODO: set baseUrl via Service method in the data layer
         XGatewayClient.baseUrl = library.getUrl();
         Gateway.baseUrl = library.getUrl();
     }
