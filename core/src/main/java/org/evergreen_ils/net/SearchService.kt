@@ -26,7 +26,6 @@ interface SearchService {
     suspend fun fetchAssetCallNumber(callNumber: Int): Result<OSRFObject>
     suspend fun fetchCopyLocationCounts(id: Int, orgId: Int, orgLevel: Int): Result<List<Any>>
     suspend fun fetchCopyStatuses(): Result<List<OSRFObject>>
-    suspend fun fetchCopyCount(id: Int, orgId: Int): Result<List<OSRFObject>>
     suspend fun fetchCopyMODS(copyId: Int): Result<OSRFObject>
     suspend fun fetchRecordMODS(id: Int): Result<OSRFObject>
     suspend fun fetchMetarecordMODS(id: Int): Result<OSRFObject>

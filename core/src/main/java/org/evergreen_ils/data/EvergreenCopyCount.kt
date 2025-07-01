@@ -1,40 +1,38 @@
 /*
  * Copyright (C) 2012 Evergreen Open-ILS
  * @author Daniel-Octavian Rizea
- * Kotlin conversion by Kenneth H. Cox
- * 
+ *
+ * Copyright (c) 2025 Kenneth H. Cox
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
- * or the License, or (at your option) any later version.
- * 
+ * of the License, or (at your option) any later version.
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software 
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
- * 
+ * along with this program; if not, see <https://www.gnu.org/licenses/>.
  */
+
 package org.evergreen_ils.data
 
-import org.opensrf.util.OSRFObject
-import java.io.Serializable
+import net.kenstir.hemlock.data.model.CopyCount
+import org.evergreen_ils.xdata.XOSRFObject
 
-/** Copy summary for the given org_id, e.g. 1 available of 4 copies at MPL
- */
-class CopyCount(obj: OSRFObject) : Serializable {
-    val orgId: Int = obj.getInt("org_unit") ?: 1
-    val count: Int = obj.getInt("count") ?: 0
-    val available: Int = obj.getInt("available") ?: 0
+class EvergreenCopyCount(obj: XOSRFObject): CopyCount {
+    override val orgId: Int = obj.getInt("org_unit") ?: 1
+    override val count: Int = obj.getInt("count") ?: 0
+    override val available: Int = obj.getInt("available") ?: 0
 
     companion object {
-        fun makeArray(l: List<OSRFObject>): ArrayList<CopyCount> {
+        fun makeArray(l: List<XOSRFObject>): ArrayList<CopyCount> {
             val ret = ArrayList<CopyCount>()
             for (obj in l) {
-                val info = CopyCount(obj)
+                val info = EvergreenCopyCount(obj)
                 ret.add(info)
             }
             return ret

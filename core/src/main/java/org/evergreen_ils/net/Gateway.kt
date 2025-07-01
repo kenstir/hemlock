@@ -175,7 +175,7 @@ object Gateway {
     }
 
     // fetchObjectArray - make gateway request and expect json payload of [OSRFObject]
-    suspend fun     fetchObjectArray(service: String, method: String, args: Array<Any?>, shouldCache: Boolean) = fetch(service, method, args, shouldCache) { result ->
+    suspend fun fetchObjectArray(service: String, method: String, args: Array<Any?>, shouldCache: Boolean) = fetch(service, method, args, shouldCache) { result ->
         result.payloadFirstAsObjectList()
     }
 

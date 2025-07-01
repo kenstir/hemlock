@@ -55,6 +55,7 @@ import net.kenstir.hemlock.android.ui.ProgressDialogSupport
 import net.kenstir.hemlock.android.ui.showAlert
 import org.evergreen_ils.views.search.RecordDetails
 import net.kenstir.hemlock.data.ShouldNotHappenException
+import net.kenstir.hemlock.data.model.BibRecord
 import java.util.ArrayList
 
 class HoldsActivity : BaseActivity() {
@@ -289,7 +290,7 @@ class HoldsActivity : BaseActivity() {
     }
 
     private fun showItemDetails(position: Int) {
-        val records = ArrayList<MBRecord>()
+        val records = ArrayList<BibRecord>()
         for (hold in holdRecords) {
             hold.record?.let { record ->
                 records.add(record)

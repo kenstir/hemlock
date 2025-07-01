@@ -36,10 +36,12 @@ import net.kenstir.hemlock.android.ui.ActionBarUtils
 import net.kenstir.hemlock.android.ui.ProgressDialogSupport
 import net.kenstir.hemlock.android.ui.showAlert
 import net.kenstir.hemlock.data.Result
+import net.kenstir.hemlock.data.model.BibRecord
 import net.kenstir.hemlock.data.model.ListItem
 import net.kenstir.hemlock.data.model.PatronList
 import net.kenstir.hemlock.util.pubdateSortKey
 import org.evergreen_ils.utils.ui.*
+import org.evergreen_ils.views.search.RecordDetails
 import java.text.Collator
 import java.util.*
 
@@ -91,14 +93,11 @@ class BookBagDetailsActivity : BaseActivity() {
         lv?.adapter = listAdapter
         lv?.onItemClickListener = AdapterView.OnItemClickListener { parent, view, position, id ->
             //Analytics.logEvent("list_itemclick")
-            showAlert("TODO(data): not implemented yet")
-//            val records = ArrayList<MBRecord?>()
-//            sortedItems.let {
-//                for (item in it) {
-//                    records.add(item.record)
-//                }
-//            }
-//            RecordDetails.launchDetailsFlow(this@BookBagDetailsActivity, records, position)
+            val records = ArrayList<BibRecord?>()
+            for (item in sortedItems) {
+                records.add(item.record)
+            }
+            RecordDetails.launchDetailsFlow(this@BookBagDetailsActivity, records, position)
         }
 
         initSortBy()

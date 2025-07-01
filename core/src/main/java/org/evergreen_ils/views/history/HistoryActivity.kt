@@ -36,6 +36,7 @@ import net.kenstir.hemlock.android.ui.showAlert
 import org.evergreen_ils.data.HistoryRecord
 import org.evergreen_ils.data.MBRecord
 import net.kenstir.hemlock.data.Result
+import net.kenstir.hemlock.data.model.BibRecord
 import org.evergreen_ils.net.Gateway
 import org.evergreen_ils.utils.ui.*
 import org.evergreen_ils.views.search.DividerItemDecoration
@@ -198,7 +199,7 @@ class HistoryActivity : BaseActivity() {
     private fun viewItemAtPosition(position: Int) {
         // The history list may be quite long; just look at this one item, or else we risk
         // a TransactionTooLargeException.
-        val records = ArrayList<MBRecord>()
+        val records = ArrayList<BibRecord>()
         items[position].record?.let { record ->
             if (record.id != -1) {
                 records.add(record)
