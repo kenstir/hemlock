@@ -46,7 +46,6 @@ import org.evergreen_ils.HOLD_TYPE_TITLE
 import org.evergreen_ils.data.OSRFUtils
 import org.evergreen_ils.data.SMSCarrier
 import org.evergreen_ils.net.Gateway
-import org.evergreen_ils.net.GatewayLoader
 import org.evergreen_ils.data.MBRecord
 import org.evergreen_ils.system.EgOrg
 import org.evergreen_ils.system.EgSms
@@ -166,13 +165,9 @@ class PlaceHoldActivity : BaseActivity() {
                 placeHold?.isEnabled = false
 
                 val serviceConfig = App.getServiceConfig()
-                for (org in EgOrg.visibleOrgs) {
-                    jobs.add(scope.async {
-                        serviceConfig.orgService.loadOrgSettings(org.id)
-                    })
-                }
-
-                // TODO: fetchSMSCarriers, unless it's so fast that we just do it in loadServiceData
+                jobs.add(scope.async {
+                    serviceConfig.loaderService.loadPlaceHoldPrerequisites()
+                })
 
                 if (resources.getBoolean(R.bool.ou_enable_part_holds)) {
                     Log.d(TAG, "${record.title}: fetching parts")

@@ -18,9 +18,8 @@
 package net.kenstir.hemlock.net
 
 import net.kenstir.hemlock.data.Result
-import net.kenstir.hemlock.data.model.Account
 
-data class LoaderServiceOptions(
+data class LoadStartupOptions(
     val clientCacheKey: String,
     val useHierarchicalOrgTree: Boolean,
 )
@@ -34,9 +33,18 @@ interface LoaderService {
      * With the exception of AuthService methods, this must be called before
      * any other Service methods.
      *
+     * In Evergreen, this includes the serverCacheKey and the IDL.
+     *
      * Requires the clientCacheKey, and as a side effect, fetches the server cache key.
      *
      * See <a href="https://kenstir.github.io/hemlock-docs/docs/admin-guide/notes-on-caching">Notes on Caching</a>
      */
-    suspend fun loadServiceData(serviceOptions: LoaderServiceOptions): Result<Unit>
+    suspend fun loadStartupPrerequisites(serviceOptions: LoadStartupOptions): Result<Unit>
+
+    /**
+     * Load any additional data that is required for the Place Hold activity.
+     *
+     * In Evergreen, this includes the settings of every org and the list of SMS Carriers.
+     */
+    suspend fun loadPlaceHoldPrerequisites(): Result<Unit>
 }
