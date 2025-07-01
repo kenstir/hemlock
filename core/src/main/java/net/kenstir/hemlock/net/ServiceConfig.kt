@@ -31,5 +31,5 @@ class ServiceConfig(
     val biblioService: BiblioService = EvergreenBiblioService(),
     val searchService: SearchService = EvergreenSearchService(),
     val userService: UserService = EvergreenUserService(),
-    val orgService: OrgService = EvergreenOrgService(),
+    val orgService: OrgService = EvergreenOrgService,
 )

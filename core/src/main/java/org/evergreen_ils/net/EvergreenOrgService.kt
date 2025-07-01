@@ -30,7 +30,7 @@ import org.evergreen_ils.system.EgOrg
 import org.evergreen_ils.xdata.XGatewayClient
 import org.evergreen_ils.xdata.paramListOf
 
-class EvergreenOrgService: OrgService {
+object EvergreenOrgService: OrgService {
 
     override suspend fun loadOrgSettings(orgID: Int): Result<Unit> {
         return try {
@@ -40,7 +40,7 @@ class EvergreenOrgService: OrgService {
         }
     }
 
-    private suspend fun loadOrgSettingsImpl(orgID: Int) {
+    suspend fun loadOrgSettingsImpl(orgID: Int) {
         Log.d(TAG, "loading org settings for org $orgID ...")
         val org = EgOrg.findOrg(orgID) as? EvergreenOrganization
             ?: throw IllegalArgumentException("Org $orgID not found")
@@ -112,7 +112,5 @@ class EvergreenOrgService: OrgService {
         Log.d(TAG, "loading org address for org ${org.id} ... done")
     }
 
-    companion object {
-        private val TAG = EvergreenLoaderService::class.java.simpleName
-    }
+    private val TAG = EvergreenLoaderService::class.java.simpleName
 }

@@ -26,7 +26,7 @@ import net.kenstir.hemlock.data.Result
 import net.kenstir.hemlock.logging.Log
 import org.evergreen_ils.xdata.XGatewayClient
 import org.evergreen_ils.xdata.paramListOf
-import net.kenstir.hemlock.net.LoaderServiceOptions
+import net.kenstir.hemlock.net.LoadStartupOptions
 import net.kenstir.hemlock.data.jsonMapOf
 import org.evergreen_ils.system.EgCodedValueMap
 import org.evergreen_ils.system.EgCopyStatus
@@ -37,15 +37,23 @@ import org.evergreen_ils.system.EgSms
 
 class EvergreenLoaderService: LoaderService {
 
-    override suspend fun loadServiceData(serviceOptions: LoaderServiceOptions): Result<Unit> {
+    override suspend fun loadStartupPrerequisites(serviceOptions: LoadStartupOptions): Result<Unit> {
         return try {
-            return Result.Success(loadServiceDataImpl(serviceOptions))
+            return Result.Success(loadStartupDataImpl(serviceOptions))
         } catch (e: Exception) {
             Result.Error(e)
         }
     }
 
-    private suspend fun loadServiceDataImpl(serviceOptions: LoaderServiceOptions): Unit = coroutineScope {
+    override suspend fun loadPlaceHoldPrerequisites(): Result<Unit> {
+        return try {
+            return Result.Success(loadPlaceHoldDataImpl())
+        } catch (e: Exception) {
+            Result.Error(e)
+        }
+    }
+
+    private suspend fun loadStartupDataImpl(serviceOptions: LoadStartupOptions): Unit = coroutineScope {
         // sync: cache keys must be established first, before IDL is loaded
         XGatewayClient.clientCacheKey = serviceOptions.clientCacheKey
         XGatewayClient.serverCacheKey = fetchServerCacheKey()
@@ -65,11 +73,27 @@ class EvergreenLoaderService: LoaderService {
         jobs.add(async { loadOrgTree(serviceOptions.useHierarchicalOrgTree) })
         jobs.add(async { loadCopyStatuses() })
         jobs.add(async { loadCodedValueMaps() })
+
+        // await all deferred (see awaitAll doc for differences)
+        jobs.map { it.await() }
+        Log.logElapsedTime(TAG, now, "loadServiceData ${jobs.size} deferreds completed")
+    }
+
+    private suspend fun loadPlaceHoldDataImpl(): Unit = coroutineScope {
+        var now = System.currentTimeMillis()
+
+        // async: Load all org settings and SMS carriers in parallel
+        val jobs = mutableListOf<Deferred<Any>>()
+        for (org in EgOrg.visibleOrgs) {
+            jobs.add(async {
+                EvergreenOrgService.loadOrgSettings(org.id)
+            })
+        }
         jobs.add(async { loadSmsCarriers() })
 
         // await all deferred (see awaitAll doc for differences)
         jobs.map { it.await() }
-        now = Log.logElapsedTime(TAG, now, "loadServiceData ${jobs.size} deferreds completed")
+        Log.logElapsedTime(TAG, now, "loadPlaceHoldData ${jobs.size} deferreds completed")
     }
 
     private suspend fun fetchServerCacheKey(): String {

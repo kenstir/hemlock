@@ -24,7 +24,7 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
 import net.kenstir.hemlock.data.Result
 import net.kenstir.hemlock.logging.Log
-import net.kenstir.hemlock.net.LoaderServiceOptions
+import net.kenstir.hemlock.net.LoadStartupOptions
 import net.kenstir.hemlock.net.ServiceConfig
 import org.evergreen_ils.model.EvergreenAccount
 import org.evergreen_ils.net.EvergreenAuthService
@@ -99,7 +99,7 @@ class LiveAuthServiceTest {
 
     suspend fun loadTestServiceData(): Result<Unit> {
         if (isServiceDataLoaded) return Result.Success(Unit)
-        val result = serviceConfig.loaderService.loadServiceData(LoaderServiceOptions("42", true))
+        val result = serviceConfig.loaderService.loadStartupPrerequisites(LoadStartupOptions("42", true))
         isServiceDataLoaded = true
         return result
     }
