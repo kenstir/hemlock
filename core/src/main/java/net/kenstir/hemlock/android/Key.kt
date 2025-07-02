@@ -22,9 +22,11 @@ package net.kenstir.hemlock.android
  * But AccountManager.* keys don't have a prefix, and I haven't seen any problems with omitting prefixes.
  */
 object Key {
+    const val HOLD_RECORD = "holdRecord"
     const val NUM_RESULTS = "numResults"
     const val ORG_ID = "orgID"
     const val PATRON_LIST = "patronList"
+    const val PATRON_MESSAGE = "patronMessage"
     const val POSITION = "position"
     const val RECORD_INFO = "recordInfo"
     const val RECORD_LIST = "recordList"
