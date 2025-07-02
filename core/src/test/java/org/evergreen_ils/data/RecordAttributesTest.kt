@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, see <https://www.gnu.org/licenses/>.
  */
-package org.evergreen_ils
+package org.evergreen_ils.data
 
 import org.evergreen_ils.utils.RecordAttributes
 import org.junit.Assert.assertEquals
@@ -24,7 +24,9 @@ class RecordAttributesTest {
 
     @Test
     fun test_parseAttributes_basic() {
-        val attrs = "\"item_form\"=>\" \", \"item_type\"=>\"a\", \"icon_format\"=>\"book\", \"content_type\"=>\"still image\", \"search_format\"=>\"book\", \"mr_hold_format\"=>\"book\""
+        val attrs = """
+            "item_form"=>" ", "item_type"=>"a", "icon_format"=>"book", "content_type"=>"still image", "search_format"=>"book", "mr_hold_format"=>"book"
+        """.trimIndent()
         val map = RecordAttributes.parseAttributes(attrs)
         assertEquals(6, map.size)
         assertEquals("book", map["icon_format"])
@@ -35,7 +37,9 @@ class RecordAttributesTest {
     /* from https://evergreen.cool-cat.org/osrf-gateway-v1?service=open-ils.pcrud&method=open-ils.pcrud.retrieve.mra&param=%22ANONYMOUS%22&param=1613894 */
     @Test
     fun test_parseAttributes_withEmbeddedComma() {
-        val attrs = "\"icon_format\"=>\"book\", \"marc21_biblio_300_sub_a\"=>\"xviii, 253 pages ;\""
+        val attrs = """
+            "icon_format"=>"book", "marc21_biblio_300_sub_a"=>"xviii, 253 pages ;"
+        """.trimIndent()
         val map = RecordAttributes.parseAttributes(attrs)
         assertEquals(2, map.size)
         assertEquals("book", map["icon_format"])
