@@ -26,6 +26,7 @@ import org.opensrf.util.JSONReader
 
 object JsonUtils {
 
+    // TODO(data): Remove try/catch and let it throw.  At least in the loadStringMap() case, throwing seems better.
     fun parseObject(json: String?): JSONDictionary? {
         return try {
             json?.let { Json.decodeFromString(JSONDictionarySerializer, it) }

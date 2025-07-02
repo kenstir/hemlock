@@ -18,28 +18,20 @@
 package org.evergreen_ils.net
 
 import net.kenstir.hemlock.data.model.Account
-import net.kenstir.hemlock.data.JSONDictionary
 import net.kenstir.hemlock.data.Result
 import org.opensrf.util.OSRFObject
 
 interface ActorService {
     suspend fun fetchUserCheckedOut(account: Account): Result<OSRFObject>
     suspend fun fetchCheckoutHistory(account: Account): Result<List<OSRFObject>>
-    suspend fun clearCheckoutHistory(account: Account, circIDs: List<Int>?): Result<String>
     suspend fun fetchMessages(account: Account): Result<List<OSRFObject>>
     suspend fun markMessageDeleted(account: Account, messageId: Int): Result<Unit>
     suspend fun markMessageRead(account: Account, messageId: Int): Result<Unit>
     suspend fun markMessageUnread(account: Account, messageId: Int): Result<Unit>
     suspend fun fetchUserFinesSummary(account: Account): Result<OSRFObject?>
     suspend fun fetchUserTransactionsWithCharges(account: Account): Result<List<OSRFObject>>
-    suspend fun fetchBookBags(account: Account): Result<List<OSRFObject>>
-    suspend fun fleshBookBagAsync(account: Account, bookBagId: Int): Result<OSRFObject>
     suspend fun createBookBagAsync(account: Account, name: String): Result<Unit>
     suspend fun deleteBookBagAsync(account: Account, bookBagId: Int): Result<Unit>
     suspend fun addItemToBookBagAsync(account: Account, bookBagId: Int, recordId: Int): Result<Unit>
     suspend fun removeItemFromBookBagAsync(account: Account, bookBagItemId: Int): Result<Unit>
-    suspend fun updatePatronSettings(account: Account, settings: JSONDictionary): Result<String>
-    suspend fun enableCheckoutHistory(account: Account): Result<Unit>
-    suspend fun disableCheckoutHistory(account: Account): Result<Unit>
-    suspend fun updatePushNotificationToken(account: Account, token: String?): Result<Unit>
 }

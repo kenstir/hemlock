@@ -109,11 +109,11 @@ class HistoryActivity : BaseActivity() {
         scope.async {
             try {
                 // first disable the patron setting
-                val result = Gateway.actor.disableCheckoutHistory(App.getAccount())
+                val result = App.getServiceConfig().userService.disableCheckoutHistory(App.getAccount())
                 if (result is Result.Error) { showAlert(result.exception); return@async }
 
                 // then clear history
-                val clearResult = Gateway.actor.clearCheckoutHistory(App.getAccount(), null)
+                val clearResult = App.getServiceConfig().userService.clearCheckoutHistory(App.getAccount())
                 if (clearResult is Result.Error) { showAlert(clearResult.exception); return@async }
 
                 finish()

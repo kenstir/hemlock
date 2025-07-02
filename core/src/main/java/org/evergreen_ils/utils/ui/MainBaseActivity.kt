@@ -80,7 +80,7 @@ open class MainBaseActivity : BaseActivity() {
             if ((currentToken != null && currentToken != storedToken) || !storedEnabledFlag)
             {
                 Log.d(TAG_FCM, "updating stored token")
-                val updateResult = Gateway.actor.updatePushNotificationToken(App.getAccount(), currentToken)
+                val updateResult = App.getServiceConfig().userService.updatePushNotificationToken(App.getAccount(), currentToken)
                 if (updateResult is Result.Error) {
                     showAlert(updateResult.exception)
                     return@async
