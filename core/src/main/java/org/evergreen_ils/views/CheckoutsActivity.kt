@@ -123,7 +123,7 @@ class CheckoutsActivity : BaseActivity() {
     private fun enableCheckoutHistory() {
         scope.async {
             try {
-                val result = Gateway.actor.enableCheckoutHistory(App.getAccount())
+                val result = App.getServiceConfig().userService.enableCheckoutHistory(App.getAccount())
                 if (result is Result.Error) {
                     showAlert(result.exception); return@async
                 }

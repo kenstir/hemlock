@@ -217,7 +217,6 @@ object Analytics {
     }
 
     fun logResponseX(debugTag: String, url: String, cached: Boolean, data: String, elapsed: Long? = null) {
-
         val tag8 = debugTag.padStart(8)
         val badge = if (cached) "*" else " "
         val prefix =

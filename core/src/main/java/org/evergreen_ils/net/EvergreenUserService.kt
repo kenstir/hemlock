@@ -17,15 +17,19 @@
 
 package org.evergreen_ils.net
 
+import net.kenstir.hemlock.data.JSONDictionary
 import net.kenstir.hemlock.data.Result
+import net.kenstir.hemlock.data.jsonMapOf
 import net.kenstir.hemlock.data.model.Account
 import net.kenstir.hemlock.data.model.PatronList
 import net.kenstir.hemlock.net.UserService
 import org.evergreen_ils.Api
 import org.evergreen_ils.data.BookBag
+import org.evergreen_ils.data.OSRFUtils
 import org.evergreen_ils.model.EvergreenAccount
 import org.evergreen_ils.xdata.XGatewayClient
 import org.evergreen_ils.xdata.paramListOf
+import java.util.Date
 
 class EvergreenUserService: UserService {
 
@@ -111,7 +115,67 @@ class EvergreenUserService: UserService {
         }
     }
 
+    override suspend fun enableCheckoutHistory(account: Account): Result<Unit>
+    {
+        return try {
+            val dateString = OSRFUtils.formatDateAsDayOnly(Date())
+            updatePatronSettings(account, jsonMapOf(Api.USER_SETTING_CIRC_HISTORY_START to dateString))
+            account.circHistoryStart = dateString
+            Result.Success(Unit)
+        } catch (e: Exception) {
+            Result.Error(e)
+        }
+    }
+
+    override suspend fun disableCheckoutHistory(account: Account): Result<Unit> {
+        return try {
+            updatePatronSettings(account, jsonMapOf(Api.USER_SETTING_CIRC_HISTORY_START to null))
+            account.circHistoryStart = null
+            Result.Success(Unit)
+        } catch (e: Exception) {
+            Result.Error(e)
+        }
+    }
+
+    override suspend fun clearCheckoutHistory(account: Account): Result<Unit> {
+        return try {
+            val (authToken, _) = account.getCredentialsOrThrow()
+//            if (circIDs != null) {
+//                val param = jsonMapOf("circ_ids" to circIDs)
+//                params = paramListOf(authToken, param)
+//            } else {
+//                params = paramListOf(authToken)
+//            }
+            val params = paramListOf(authToken)
+            val response = XGatewayClient.fetch(Api.ACTOR, Api.CLEAR_CHECKOUT_HISTORY, params, false)
+            response.payloadFirstAsString()
+            Result.Success(Unit)
+        } catch (e: Exception) {
+            Result.Error(e)
+        }
+    }
+
+    override suspend fun updatePushNotificationToken(account: Account, token: String?): Result<Unit> {
+        return try {
+            updatePatronSettings(account, jsonMapOf(
+                Api.USER_SETTING_HEMLOCK_PUSH_NOTIFICATION_DATA to token,
+                Api.USER_SETTING_HEMLOCK_PUSH_NOTIFICATION_ENABLED to true,
+            ))
+            account.savedPushNotificationData = token
+            account.savedPushNotificationEnabled = true
+            Result.Success(Unit)
+        } catch (e: Exception) {
+            Result.Error(e)
+        }
+    }
+
+    private suspend fun updatePatronSettings(account: Account, settings: JSONDictionary): String {
+        val (authToken, userID) = account.getCredentialsOrThrow()
+        val params = paramListOf(authToken, userID, settings)
+        val response = XGatewayClient.fetch(Api.ACTOR, Api.PATRON_SETTINGS_UPDATE, params, false)
+        return response.payloadFirstAsString()
+    }
+
     companion object {
-        const val tag = "EvergreenUserService"
     }
 }

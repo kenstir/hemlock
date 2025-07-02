@@ -18,15 +18,12 @@
 package org.evergreen_ils.net
 
 import org.evergreen_ils.Api
-import org.evergreen_ils.data.OSRFUtils
 import net.kenstir.hemlock.logging.Log
 import net.kenstir.hemlock.data.model.Account
-import net.kenstir.hemlock.data.JSONDictionary
 import net.kenstir.hemlock.net.RequestOptions
 import net.kenstir.hemlock.data.Result
 import net.kenstir.hemlock.data.jsonMapOf
 import org.opensrf.util.OSRFObject
-import java.util.Date
 
 object GatewayActor: ActorService {
 
@@ -46,24 +43,6 @@ object GatewayActor: ActorService {
             val (authToken, _) = account.getCredentialsOrThrow()
             val args = arrayOf<Any?>(authToken)
             val ret = Gateway.fetchMaybeEmptyArray(Api.ACTOR, Api.CHECKOUT_HISTORY, args, false)
-            Result.Success(ret)
-        } catch (e: Exception) {
-            Result.Error(e)
-        }
-    }
-
-    /** remove [circIDs] from history, or all if [circIDs] is null */
-    override suspend fun clearCheckoutHistory(account: Account, circIDs: List<Int>?): Result<String> {
-        return try {
-            val (authToken, _) = account.getCredentialsOrThrow()
-            val args: Array<Any?>
-            if (circIDs != null) {
-                val param = jsonMapOf("circ_ids" to circIDs)
-                args = arrayOf(authToken, param)
-            } else {
-                args = arrayOf(authToken)
-            }
-            val ret = Gateway.fetchString(Api.ACTOR, Api.CLEAR_CHECKOUT_HISTORY, args, false)
             Result.Success(ret)
         } catch (e: Exception) {
             Result.Error(e)
@@ -117,28 +96,6 @@ object GatewayActor: ActorService {
             val (authToken, userID) = account.getCredentialsOrThrow()
             val args = arrayOf<Any?>(authToken, userID)
             val ret = Gateway.fetchObjectArray(Api.ACTOR, Api.TRANSACTIONS_WITH_CHARGES, args, false)
-            Result.Success(ret)
-        } catch (e: Exception) {
-            Result.Error(e)
-        }
-    }
-
-    override suspend fun fetchBookBags(account: Account): Result<List<OSRFObject>> {
-        return try {
-            val (authToken, userID) = account.getCredentialsOrThrow()
-            val args = arrayOf<Any?>(authToken, userID, Api.CONTAINER_CLASS_BIBLIO, Api.CONTAINER_BUCKET_TYPE_BOOKBAG)
-            val ret = Gateway.fetchObjectArray(Api.ACTOR, Api.CONTAINERS_BY_CLASS, args, false)
-            Result.Success(ret)
-        } catch (e: Exception) {
-            Result.Error(e)
-        }
-    }
-
-    override suspend fun fleshBookBagAsync(account: Account, bookBagId: Int): Result<OSRFObject> {
-        return try {
-            val (authToken, _) = account.getCredentialsOrThrow()
-            val args = arrayOf<Any?>(authToken, Api.CONTAINER_CLASS_BIBLIO, bookBagId)
-            val ret = Gateway.fetchObject(Api.ACTOR, Api.CONTAINER_FLESH, args, false)
             Result.Success(ret)
         } catch (e: Exception) {
             Result.Error(e)
@@ -207,73 +164,6 @@ object GatewayActor: ActorService {
                 Log.d(TAG, "[bookbag] removeItem $bookBagItemId result ${it.payload}")
             }
             Result.Success(Unit)
-        } catch (e: Exception) {
-            Result.Error(e)
-        }
-    }
-
-    override suspend fun updatePatronSettings(account: Account, settings: JSONDictionary): Result<String> {
-        return try {
-            val (authToken, userID) = account.getCredentialsOrThrow()
-            val args = arrayOf<Any?>(authToken, userID, settings)
-            val ret = Gateway.fetchString(Api.ACTOR, Api.PATRON_SETTINGS_UPDATE, args, false)
-            Result.Success(ret)
-        } catch (e: Exception) {
-            Result.Error(e)
-        }
-    }
-
-    override suspend fun enableCheckoutHistory(account: Account): Result<Unit> {
-        return try {
-            val dateString = OSRFUtils.formatDateAsDayOnly(Date())
-            val result = updatePatronSettings(account, jsonMapOf(Api.USER_SETTING_CIRC_HISTORY_START to dateString))
-            when (result) {
-                is Result.Success -> {
-                    account.circHistoryStart = dateString
-                    return Result.Success(Unit)
-                }
-                is Result.Error -> {
-                    return result
-                }
-            }
-        } catch (e: Exception) {
-            Result.Error(e)
-        }
-    }
-
-    override suspend fun disableCheckoutHistory(account: Account): Result<Unit> {
-        return try {
-            val result = updatePatronSettings(account, jsonMapOf(Api.USER_SETTING_CIRC_HISTORY_START to null))
-            when (result) {
-                is Result.Success -> {
-                    account.circHistoryStart = null
-                    return Result.Success(Unit)
-                }
-                is Result.Error -> {
-                    return result
-                }
-            }
-        } catch (e: Exception) {
-            Result.Error(e)
-        }
-    }
-
-    override suspend fun updatePushNotificationToken(account: Account, token: String?): Result<Unit> {
-        return try {
-            val result = updatePatronSettings(account, jsonMapOf(
-                Api.USER_SETTING_HEMLOCK_PUSH_NOTIFICATION_DATA to token,
-                Api.USER_SETTING_HEMLOCK_PUSH_NOTIFICATION_ENABLED to true,
-            ))
-            when (result) {
-                is Result.Success -> {
-                    account.savedPushNotificationData = token
-                    account.savedPushNotificationEnabled = true
-                    return Result.Success(Unit)
-                }
-                is Result.Error -> {
-                    return result
-                }
-            }
         } catch (e: Exception) {
             Result.Error(e)
         }

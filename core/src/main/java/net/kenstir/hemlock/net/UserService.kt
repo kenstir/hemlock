@@ -33,4 +33,9 @@ interface UserService {
      * NB: it does not load the records for the items, see BiblioService#loadRecordDetails
      */
     suspend fun loadPatronListItems(account: Account, patronList: PatronList, queryForVisibleItems: Boolean): Result<Unit>
+
+    suspend fun enableCheckoutHistory(account: Account): Result<Unit>
+    suspend fun disableCheckoutHistory(account: Account): Result<Unit>
+    suspend fun clearCheckoutHistory(account: Account): Result<Unit>
+    suspend fun updatePushNotificationToken(account: Account, token: String?): Result<Unit>
 }
