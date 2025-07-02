@@ -27,7 +27,7 @@ import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Test
 
-class CodedValueMapTest {
+class EgCodedValueMapTest {
 
     @Before
     fun setUp() {
