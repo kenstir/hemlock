@@ -37,10 +37,11 @@ import net.kenstir.hemlock.data.Result
 import org.evergreen_ils.net.Gateway
 import org.evergreen_ils.views.search.SearchActivity
 import net.kenstir.hemlock.logging.Log
-import org.evergreen_ils.data.PatronMessage
+import org.evergreen_ils.data.EvergreenPatronMessage
 import org.evergreen_ils.system.EgOrg
 import org.evergreen_ils.utils.ui.MainBaseActivity
 import net.kenstir.hemlock.android.ui.showAlert
+import net.kenstir.hemlock.data.PatronMessage
 import org.opensrf.util.OSRFObject
 
 open class MainActivity : MainBaseActivity() {
@@ -107,18 +108,17 @@ open class MainActivity : MainBaseActivity() {
         scope.async {
             if (resources.getBoolean(R.bool.ou_enable_messages)) {
                 val start = System.currentTimeMillis()
-                val result = Gateway.actor.fetchMessages(App.getAccount())
+                val result = App.getServiceConfig().userService.fetchPatronMessages(App.getAccount())
                 Log.logElapsedTime(TAG, start, "[async] fetchUserMessages ... done")
                 when (result) {
-                    is Result.Success ->  updateMessagesBadge(result.data)
+                    is Result.Success ->  updateMessagesBadge(result.get())
                     is Result.Error -> showAlert(result.exception)
                 }
             }
         }
     }
 
-    private fun updateMessagesBadge(messageList: List<OSRFObject>) {
-        val messages = PatronMessage.makeArray(messageList)
+    private fun updateMessagesBadge(messages: List<PatronMessage>) {
         mUnreadMessageCount = messages.count {
             it.isPatronVisible && !it.isDeleted && !it.isRead
         }

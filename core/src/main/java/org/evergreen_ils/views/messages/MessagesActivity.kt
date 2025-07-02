@@ -33,7 +33,8 @@ import net.kenstir.hemlock.logging.Log
 import net.kenstir.hemlock.android.ui.ItemClickSupport
 import net.kenstir.hemlock.android.ui.ProgressDialogSupport
 import net.kenstir.hemlock.android.ui.showAlert
-import org.evergreen_ils.data.PatronMessage
+import net.kenstir.hemlock.data.PatronMessage
+import org.evergreen_ils.data.EvergreenPatronMessage
 import net.kenstir.hemlock.data.Result
 import org.evergreen_ils.net.Gateway
 import org.evergreen_ils.utils.ui.*
@@ -86,13 +87,13 @@ class MessagesActivity : BaseActivity() {
                 progress?.show(this@MessagesActivity, getString(R.string.msg_retrieving_data))
 
                 // fetch messages
-                val result = Gateway.actor.fetchMessages(App.getAccount())
+                val result = App.getServiceConfig().userService.fetchPatronMessages(App.getAccount())
                 if (result is Result.Error) {
                     showAlert(result.exception); return@async
                 }
                 val messageList = result.get()
 
-                loadVisibleMessages(PatronMessage.makeArray(messageList))
+                loadVisibleMessages(messageList)
                 updateList()
 
                 Log.logElapsedTime(TAG, start, "[kcxxx] fetchData ... done")
@@ -105,9 +106,9 @@ class MessagesActivity : BaseActivity() {
         }
     }
 
-    private fun loadVisibleMessages(messageList: List<PatronMessage>) {
+    private fun loadVisibleMessages(messages: List<PatronMessage>) {
         items.clear()
-        messageList.forEach {
+        messages.forEach {
             if (it.isPatronVisible && !it.isDeleted) {
                 items.add(it)
             }
@@ -179,7 +180,7 @@ class MessagesActivity : BaseActivity() {
 
     private fun markMessageDeleted(message: PatronMessage) {
         scope.async {
-            val result = Gateway.actor.markMessageDeleted(App.getAccount(), message.id)
+            val result = App.getServiceConfig().userService.markMessageDeleted(App.getAccount(), message.id)
             if (result is Result.Error) {
                 showAlert(result.exception); return@async
             }
@@ -189,7 +190,7 @@ class MessagesActivity : BaseActivity() {
 
     private fun markMessageRead(message: PatronMessage) {
         scope.async {
-            val result = Gateway.actor.markMessageRead(App.getAccount(), message.id)
+            val result = App.getServiceConfig().userService.markMessageRead(App.getAccount(), message.id)
             if (result is Result.Error) {
                 showAlert(result.exception); return@async
             }
@@ -199,7 +200,7 @@ class MessagesActivity : BaseActivity() {
 
     private fun markMessageUnread(message: PatronMessage) {
         scope.async {
-            val result = Gateway.actor.markMessageUnread(App.getAccount(), message.id)
+            val result = App.getServiceConfig().userService.markMessageUnread(App.getAccount(), message.id)
             if (result is Result.Error) {
                 showAlert(result.exception); return@async
             }

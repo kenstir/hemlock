@@ -18,26 +18,27 @@
 
 package org.evergreen_ils.data
 
+import net.kenstir.hemlock.data.PatronMessage
+import org.evergreen_ils.xdata.XOSRFObject
 import org.opensrf.util.OSRFObject
 import java.util.ArrayList
 
-data class PatronMessage(val id: Int, val obj: OSRFObject) : java.io.Serializable {
+data class EvergreenPatronMessage(override val id: Int, val obj: XOSRFObject) : PatronMessage {
 
-    val createDate = obj.getDate("create_date")
-    val readDate = obj.getDate("read_date")
-    val isRead = (obj.getDate("read_date") != null)
-    val isDeleted = obj.getBoolean("deleted")
-    val isPatronVisible = obj.getBoolean("pub")
-    val title = obj.getString("title") ?: ""
-    val message = obj.getString("message") ?: ""
+    override val title = obj.getString("title") ?: ""
+    override val message = obj.getString("message") ?: ""
+    override val createDate = obj.getDate("create_date")
+    override val isRead = (obj.getDate("read_date") != null)
+    override val isDeleted = obj.getBoolean("deleted")
+    override val isPatronVisible = obj.getBoolean("pub")
 
     companion object {
-        fun makeArray(messageList: List<OSRFObject>): ArrayList<PatronMessage> {
-            val ret = ArrayList<PatronMessage>()
+        fun makeArray(messageList: List<XOSRFObject>): ArrayList<EvergreenPatronMessage> {
+            val ret = ArrayList<EvergreenPatronMessage>()
             messageList.forEach { obj ->
                 val id = obj.getInt("id")
                 if (id != null) {
-                    ret.add(PatronMessage(id, obj))
+                    ret.add(EvergreenPatronMessage(id, obj))
                 }
             }
             return ret
