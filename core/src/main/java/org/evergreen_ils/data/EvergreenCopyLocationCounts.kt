@@ -1,7 +1,8 @@
 /*
  * Copyright (C) 2012 Evergreen Open-ILS
  * @author Daniel-Octavian Rizea
- * Kotlin conversion by Kenneth H. Cox
+ *
+ * Copyright (c) 2025 Kenneth H. Cox
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -14,24 +15,31 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ * along with this program; if not, see <https://www.gnu.org/licenses/>.
  */
 
 package org.evergreen_ils.data
 
+import net.kenstir.hemlock.data.model.CopyLocationCounts
 import org.evergreen_ils.system.EgCopyStatus
+import org.evergreen_ils.xdata.XOSRFObject
 
-class CopyLocationCounts(val orgId: Int, val callNumberPrefix: String, val callNumberLabel: String, val callNumberSuffix: String, val copyLocation: String) {
+class EvergreenCopyLocationCounts(
+    override val orgId: Int,
+    val callNumberPrefix: String,
+    val callNumberLabel: String,
+    val callNumberSuffix: String,
+    override val copyLocation: String
+): CopyLocationCounts {
     var countsByStatus = mutableListOf<Pair<Int, Int>>() // (copyStatusId, count)
 
-    val callNumber: String
+    override val callNumber: String
         get() {
             return listOf(callNumberPrefix, callNumberLabel, callNumberSuffix).joinToString(" ").trim()
         }
-    val countsByStatusLabel: String
+    override val countsByStatusLabel: String
         get() {
-            var arr = mutableListOf<String>()
+            val arr = mutableListOf<String>()
             for ((copyStatusId, copyCount) in countsByStatus) {
                 val copyStatus = EgCopyStatus.label(copyStatusId)
                 arr.add("$copyCount $copyStatus")
@@ -53,13 +61,14 @@ class CopyLocationCounts(val orgId: Int, val callNumberPrefix: String, val callN
                 val callNumberLabel = a[2] as? String ?: continue
                 val callNumberSuffix = a[3] as? String ?: continue
                 val copyLocation = a[4] as? String ?: continue
-                val countsByStatusMap = a[5] as? Map<String, Int> ?: continue
+                val countsByStatus = a[5] as? XOSRFObject ?: continue
 
-                val clc = CopyLocationCounts(orgId, callNumberPrefix, callNumberLabel, callNumberSuffix, copyLocation)
+                val clc = EvergreenCopyLocationCounts(orgId, callNumberPrefix, callNumberLabel, callNumberSuffix, copyLocation)
                 ret.add(clc)
-                for ((k, v) in countsByStatusMap) {
-                    val id = k.toIntOrNull() ?: continue
-                    clc.countsByStatus.add(Pair(id, v))
+                for ((k, v) in countsByStatus.map) {
+                    val copyStatusId = k.toIntOrNull() ?: continue
+                    val count = v as? Int ?: continue
+                    clc.countsByStatus.add(Pair(copyStatusId, count))
                 }
                 clc.countsByStatus.sortBy { it.first }
             }

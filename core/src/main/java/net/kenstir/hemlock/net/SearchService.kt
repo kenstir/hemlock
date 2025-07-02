@@ -18,10 +18,15 @@
 package net.kenstir.hemlock.net
 
 import net.kenstir.hemlock.data.Result
+import net.kenstir.hemlock.data.model.CopyLocationCounts
 
 interface SearchService {
     suspend fun searchCatalog(queryString: String, limit: Int): Result<SearchResults>
     fun makeQueryString(searchText: String, searchClass: String?, searchFormat: String?, sort: String?): String
+    /**
+     * find copy location counts for a given [record], at [orgId] level and below
+     */
+    suspend fun fetchCopyLocationCounts(recordId: Int, orgId: Int, orgLevel: Int): Result<List<CopyLocationCounts>>
 }
 
 interface SearchResults {

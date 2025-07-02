@@ -33,17 +33,18 @@ import android.view.ViewGroup
 import android.widget.*
 import kotlinx.coroutines.async
 import net.kenstir.hemlock.R
+import net.kenstir.hemlock.android.App
 import net.kenstir.hemlock.android.Key
-import net.kenstir.hemlock.logging.Log
-import org.evergreen_ils.data.CopyLocationCounts
-import org.evergreen_ils.data.MBRecord
+import net.kenstir.hemlock.android.ui.showAlert
 import net.kenstir.hemlock.data.Result
+import net.kenstir.hemlock.data.model.CopyLocationCounts
+import net.kenstir.hemlock.logging.Log
+import org.evergreen_ils.data.MBRecord
 import org.evergreen_ils.net.Gateway
 import org.evergreen_ils.system.EgOrg
 import org.evergreen_ils.system.EgOrg.findOrg
 import org.evergreen_ils.system.EgOrg.getOrgNameSafe
 import org.evergreen_ils.utils.ui.BaseActivity
-import net.kenstir.hemlock.android.ui.showAlert
 import org.evergreen_ils.views.OrgDetailsActivity
 import org.evergreen_ils.views.holds.PlaceHoldActivity
 import java.util.*
@@ -157,11 +158,10 @@ class CopyInformationActivity : BaseActivity() {
     private fun fetchData() {
         scope.async {
             try {
-                //val start_ms = System.currentTimeMillis()
                 val org = findOrg(orgID) ?: return@async
-                val result = Gateway.search.fetchCopyLocationCounts(record.id, org.id, org.level)
+                val result = App.getServiceConfig().searchService.fetchCopyLocationCounts(record.id, org.id, org.level)
                 if (result is Result.Error) { showAlert(result.exception); return@async }
-                updateCopyInfo(CopyLocationCounts.makeArray(result.get()))
+                updateCopyInfo(result.get())
             } catch (ex: Exception) {
                 showAlert(ex)
             }
