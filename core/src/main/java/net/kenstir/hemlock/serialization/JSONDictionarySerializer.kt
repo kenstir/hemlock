@@ -25,7 +25,7 @@ import kotlinx.serialization.descriptors.*
 import kotlinx.serialization.encoding.*
 
 @OptIn(ExperimentalSerializationApi::class)
-object MapStringAnySerializer : KSerializer<Map<String, Any?>> {
+object JSONDictionarySerializer : KSerializer<Map<String, Any?>> {
     override val descriptor: SerialDescriptor =
         MapSerializer(String.serializer(), JsonElement.serializer()).descriptor
 

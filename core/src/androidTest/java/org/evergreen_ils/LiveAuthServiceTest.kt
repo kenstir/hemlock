@@ -31,6 +31,7 @@ import org.evergreen_ils.net.EvergreenAuthService
 import org.evergreen_ils.net.EvergreenBiblioService
 import org.evergreen_ils.net.EvergreenLoaderService
 import org.evergreen_ils.net.EvergreenOrgService
+import org.evergreen_ils.net.EvergreenSearchService
 import org.evergreen_ils.net.EvergreenUserService
 import org.evergreen_ils.xdata.XGatewayClient
 import org.junit.AfterClass
@@ -45,8 +46,9 @@ class LiveAuthServiceTest {
             EvergreenLoaderService(),
             EvergreenAuthService(),
             EvergreenBiblioService(),
+            EvergreenSearchService(),
             EvergreenUserService(),
-            EvergreenOrgService(),
+            EvergreenOrgService,
         )
 
         // See root build.gradle for notes on customizing instrumented test variables (hint: secret.gradle)

@@ -46,7 +46,7 @@ import net.kenstir.hemlock.data.Result
 import org.evergreen_ils.system.EgOrg
 import net.kenstir.hemlock.android.account.await
 import net.kenstir.hemlock.android.account.getAccountManagerResult
-import org.evergreen_ils.utils.getCustomMessage
+import net.kenstir.hemlock.util.getCustomMessage
 import net.kenstir.hemlock.android.AppState
 import org.evergreen_ils.utils.ui.BaseActivity.Companion.activityForNotificationType
 import java.util.concurrent.TimeoutException

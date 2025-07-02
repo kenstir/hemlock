@@ -54,8 +54,6 @@ class RecordViewAdapter(private val records: List<BibRecord>) : RecyclerView.Ada
             // TODO: use a service method to get the image URL
             val url = XGatewayClient.getUrl("/opac/extras/ac/jacket/small/r/" + record.id)
 
-            // TODO: use Coil to load images
-            //recordImage.setImageUrl(url, Volley.getInstance(context).imageLoader)
             recordImage.load(url)
 
             val scope = (context as? BaseActivity)?.lifecycleScope ?: return

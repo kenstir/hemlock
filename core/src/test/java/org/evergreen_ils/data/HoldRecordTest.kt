@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Kenneth H. Cox
+ * Copyright (c) 2025 Kenneth H. Cox
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -12,16 +12,15 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ * along with this program; if not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.kenstir.apps.core
+package org.evergreen_ils.data
 
-import org.evergreen_ils.data.HoldRecord
 import net.kenstir.hemlock.data.jsonMapOf
 import org.junit.Assert.*
 import org.junit.Test
+import org.opensrf.util.JSONReader
 import org.opensrf.util.OSRFObject
 
 class HoldRecordTest {
@@ -184,5 +183,16 @@ class HoldRecordTest {
         hold.qstatsObj = qstatsObj
 
         assertEquals(2, hold.status)
+    }
+
+    @Test
+    fun test_JsonUtils_parseHoldableFormats() {
+        val holdable_formats = """
+            {"0":[{"_attr":"mr_hold_format","_val":"book"},{"_attr":"mr_hold_format","_val":"lpbook"}],"1":[{"_attr":"item_lang","_val":"eng"}]}
+            """
+        val map = JSONReader(holdable_formats).readObject()
+        val formats = HoldRecord.parseHoldableFormats(map)
+        assertEquals(2, formats.size)
+        assertEquals(arrayListOf("book","lpbook"), formats)
     }
 }

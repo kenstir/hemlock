@@ -22,7 +22,7 @@ import android.app.AlertDialog
 import net.kenstir.hemlock.android.App
 import net.kenstir.hemlock.logging.Log
 import org.evergreen_ils.net.GatewayError
-import org.evergreen_ils.utils.getCustomMessage
+import net.kenstir.hemlock.util.getCustomMessage
 
 fun Activity.showAlert(message: String, title: String? = "Error") {
     if (isFinishing) return

@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
- * 
+ *
  */
 package org.evergreen_ils.data
 
@@ -24,8 +24,8 @@ import android.annotation.SuppressLint
 import android.content.res.Resources
 import org.evergreen_ils.HOLD_TYPE_METARECORD
 import net.kenstir.hemlock.R
+import net.kenstir.hemlock.data.JSONDictionary
 import org.evergreen_ils.utils.JsonUtils.parseObject
-import org.evergreen_ils.utils.JsonUtils.parseHoldableFormats
 import org.evergreen_ils.system.EgCodedValueMap.iconFormatLabel
 import org.opensrf.util.OSRFObject
 import org.evergreen_ils.system.EgOrg
@@ -40,13 +40,13 @@ class HoldRecord(val ahr: OSRFObject) : Serializable {
     var partLabel: String? = null // only for HOLD_TYPE_PART
 
     private val transitFrom: String?
-        private get() {
+        get() {
             val transit = ahr["transit"] as? OSRFObject ?: return null
             val source = transit.getInt("source") ?: return null
             return EgOrg.getOrgNameSafe(source)
         }
     private val transitSince: String?
-        private get() {
+        get() {
             val transit = ahr["transit"] as? OSRFObject ?: return null
             val sent = transit.getDate("source_send_time") ?: return null
             return OSRFUtils.formatDateTimeForOutput(sent)
@@ -158,6 +158,28 @@ class HoldRecord(val ahr: OSRFObject) : Serializable {
                 ret.add(HoldRecord(ahr_obj))
             }
             return ret
+        }
+
+        /** Parse a metarecord hold attribute "holdable_formats" into a list of ccvm codes */
+        fun parseHoldableFormats(dict: JSONDictionary?): ArrayList<String> {
+            var formats = ArrayList<String>()
+            if (dict == null)
+                return formats
+            for ((_, v) in dict) {
+                val l = v as? ArrayList<*>
+                if (l != null) {
+                    for (elem in l) {
+                        TODO("verify code still works esp. the cast to Map<>")
+                        val e = elem as? Map<String, String>
+                        val attr = e?.get("_attr")
+                        val value = e?.get("_val")
+                        if (attr == "mr_hold_format" && value != null) {
+                            formats.add(value)
+                        }
+                    }
+                }
+            }
+            return formats
         }
     }
 }

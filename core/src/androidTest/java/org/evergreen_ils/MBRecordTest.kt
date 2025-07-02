@@ -17,6 +17,10 @@
 package org.evergreen_ils
 
 import org.evergreen_ils.data.MBRecord
+import org.evergreen_ils.utils.JsonUtils
+import org.evergreen_ils.xdata.XGatewayResult
+import org.evergreen_ils.xdata.XOSRFCoder
+import org.evergreen_ils.xdata.XOSRFObject
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Before
@@ -33,8 +37,8 @@ class MBRecordTest {
         @BeforeClass
         @JvmStatic
         fun setUpClass() {
-            val mvrFields = arrayOf("title","author","doc_id","doc_type","pubdate","isbn","publisher","tcn","subject","types_of_resource","call_numbers","edition","online_loc","synopsis","physical_description","toc","copy_count","series","serials","foreign_copy_maps")
-            OSRFRegistry.registerObject("mvr", OSRFRegistry.WireProtocol.ARRAY, mvrFields)
+            val mvrFields = listOf("title","author","doc_id","doc_type","pubdate","isbn","publisher","tcn","subject","types_of_resource","call_numbers","edition","online_loc","synopsis","physical_description","toc","copy_count","series","serials","foreign_copy_maps")
+            XOSRFCoder.registerClass("mvr", mvrFields)
         }
     }
 
@@ -58,8 +62,7 @@ class MBRecordTest {
 
     @Test
     fun test_withMvrObj() {
-        val result = GatewayResult.create(blackOpsMvrJson)
-        val mvrObj = result.payloadFirstAsObject()
+        val mvrObj = XGatewayResult.create(blackOpsMvrJson).payloadFirstAsObject()
         val record = MBRecord(4600952, mvrObj)
 
         assertEquals(true, record.hasMetadata())
@@ -83,14 +86,13 @@ class MBRecordTest {
     }
 
     @Test
-    fun test_searchResultsGetMvrObjLater() {
+    fun test_searchResultsSetMvrObjLater() {
         val record = MBRecord(4600952)
 
         assertEquals("", record.title)
         assertEquals("", record.author)
 
-        val result = GatewayResult.create(blackOpsMvrJson)
-        val mvrObj = result.payloadFirstAsObject()
+        val mvrObj = XGatewayResult.create(blackOpsMvrJson).payloadFirstAsObject()
         record.mvrObj = mvrObj
 
         assertEquals("Black ops", record.title)
@@ -98,14 +100,14 @@ class MBRecordTest {
     }
 
     private fun makeArrayFromJson(json: String): ArrayList<MBRecord> {
-        val idsList = JSONReader(json).readArray() as List<List<*>>
-        return MBRecord.makeArray(idsList)
+        val dict = JsonUtils.parseObject(json) ?: return ArrayList()
+        return MBRecord.makeArrayFromQueryResults(XOSRFObject(dict))
     }
 
     @Test
     fun test_makeArray1() {
         val json = """
-            [[32673,null,"0.0"],[886843,null,"0.0"]]
+            {"ids":[[32673,null,"0.0"],[886843,null,"0.0"]]}
             """
         val records = makeArrayFromJson(json)
         assertEquals(2, records.size.toLong())
@@ -115,7 +117,7 @@ class MBRecordTest {
     @Test
     fun test_makeArray2() {
         val json = """
-            [["503610",null,"0.0"],["502717",null,"0.0"]]
+            {"ids":[["503610",null,"0.0"],["502717",null,"0.0"]]}
             """
         val records = makeArrayFromJson(json)
         assertEquals(2, records.size.toLong())
@@ -126,7 +128,7 @@ class MBRecordTest {
     @Test
     fun test_makeArray3() {
         val json = """ 
-            [["1805532"],["2385399"]]
+            {"ids":[["1805532"],["2385399"]]}
             """
         val records = makeArrayFromJson(json)
         assertEquals(2, records.size.toLong())

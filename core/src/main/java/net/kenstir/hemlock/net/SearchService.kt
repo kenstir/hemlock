@@ -18,18 +18,41 @@
 package net.kenstir.hemlock.net
 
 import net.kenstir.hemlock.data.Result
+import net.kenstir.hemlock.data.model.BibRecord
 import net.kenstir.hemlock.data.model.CopyLocationCounts
 
 interface SearchService {
-    suspend fun searchCatalog(queryString: String, limit: Int): Result<SearchResults>
-    fun makeQueryString(searchText: String, searchClass: String?, searchFormat: String?, sort: String?): String
     /**
-     * find copy location counts for a given [record], at [orgId] level and below
+     * Construct a query string for [searchCatalog]
+     */
+    fun makeQueryString(searchText: String, searchClass: String?, searchFormat: String?, sort: String?): String
+
+    /**
+     * Search the catalog for records matching [queryString]
+     */
+    suspend fun searchCatalog(queryString: String, limit: Int): Result<SearchResults>
+
+    /**
+     * Return the results from the last search
+     */
+    fun getLastSearchResults(): SearchResults
+
+    /**
+     * find copy location counts for a given [recordId], at [orgId] level and below
      */
     suspend fun fetchCopyLocationCounts(recordId: Int, orgId: Int, orgLevel: Int): Result<List<CopyLocationCounts>>
 }
 
 interface SearchResults {
+    /** number of results returned */
     val numResults: Int
+
+    /** total number of matches in the catalog, may be higher than [numResults] if search was limited */
     val totalMatches: Int
+
+    /** matching records
+     *
+     * These records are skeletons, and do not have Details, Attributes, or CopyCounds loaded
+     */
+    val records: List<BibRecord>
 }

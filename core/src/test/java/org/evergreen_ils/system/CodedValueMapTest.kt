@@ -20,7 +20,6 @@ import org.evergreen_ils.xdata.XOSRFObject
 import net.kenstir.hemlock.data.jsonMapOf
 import org.evergreen_ils.system.EgCodedValueMap.ALL_SEARCH_FORMATS
 import org.evergreen_ils.system.EgCodedValueMap.iconFormatLabel
-import org.evergreen_ils.system.EgCodedValueMap.loadCodedValueMaps
 import org.evergreen_ils.system.EgCodedValueMap.searchFormatCode
 import org.evergreen_ils.system.EgCodedValueMap.searchFormatLabel
 import org.evergreen_ils.system.EgCodedValueMap.searchFormatSpinnerLabels
@@ -55,7 +54,7 @@ class CodedValueMapTest {
             )
             objects.add(obj)
         }
-        loadCodedValueMaps(objects)
+        EgCodedValueMap.loadCodedValueMaps(objects)
     }
 
     @Test

@@ -7,37 +7,36 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * or the License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software 
+ * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
  *
  */
 package org.evergreen_ils.views.search
 
-import org.evergreen_ils.utils.ui.BaseActivity
-import androidx.viewpager.widget.ViewPager
-import android.os.Bundle
-import net.kenstir.hemlock.R
-import net.kenstir.hemlock.android.ui.ActionBarUtils
-import org.evergreen_ils.system.EgSearch
-import org.evergreen_ils.system.EgOrg
 import android.content.Intent
+import android.os.Bundle
 import android.view.KeyEvent
 import android.view.MenuItem
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentStatePagerAdapter
+import androidx.viewpager.widget.ViewPager
+import net.kenstir.hemlock.R
+import net.kenstir.hemlock.android.App
 import net.kenstir.hemlock.android.Key
+import net.kenstir.hemlock.android.ui.ActionBarUtils
 import net.kenstir.hemlock.data.model.BibRecord
+import org.evergreen_ils.system.EgOrg
+import org.evergreen_ils.utils.ui.BaseActivity
 import org.evergreen_ils.utils.ui.DetailsFragment
 import org.evergreen_ils.views.search.SearchActivity.Companion.RESULT_CODE_NORMAL
-import java.util.ArrayList
 
 class RecordDetailsActivity : BaseActivity() {
     private var mPager: ViewPager? = null
@@ -50,19 +49,20 @@ class RecordDetailsActivity : BaseActivity() {
         if (isRestarting) return
 
         setContentView(R.layout.record_details)
-        ActionBarUtils.initActionBarForActivity(this, intent.getStringExtra("title"))
+        ActionBarUtils.initActionBarForActivity(this, intent.getStringExtra(Key.TITLE))
 
         // Copy either serialized recordList or search results into our own ArrayList.
         // This is an attempt to fix an IllegalStateException crash (see commit for details).
-        var recordList = intent.getSerializableExtra("recordList") as? ArrayList<BibRecord>
-        if (recordList == null) recordList = EgSearch.results
+        var recordList = intent.getSerializableExtra(Key.RECORD_LIST) as? List<BibRecord>
+        if (recordList == null)
+            recordList = App.getServiceConfig().searchService.getLastSearchResults().records
         records.clear()
         records.addAll(recordList)
 
         // Calculate numResults after records are loaded
         orgID = intent.getIntExtra(Key.ORG_ID, EgOrg.consortiumID)
-        val recordPosition = intent.getIntExtra("recordPosition", 0)
-        numResults = intent.getIntExtra("numResults", records.size)
+        val recordPosition = intent.getIntExtra(Key.RECORD_POSITION, 0)
+        numResults = intent.getIntExtra(Key.NUM_RESULTS, records.size)
         mPager = findViewById(R.id.pager)
         mPager?.adapter = SearchFragmentAdapter(supportFragmentManager)
         mPager?.currentItem = recordPosition

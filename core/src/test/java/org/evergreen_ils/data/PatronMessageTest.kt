@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Kenneth H. Cox
+ * Copyright (c) 2025 Kenneth H. Cox
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -12,13 +12,11 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
+ * along with this program; if not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.kenstir.apps.core
+package org.evergreen_ils.data
 
-import org.evergreen_ils.data.PatronMessage
 import net.kenstir.hemlock.data.jsonMapOf
 import org.junit.Assert.*
 import org.junit.Test
