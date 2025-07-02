@@ -29,15 +29,13 @@ import kotlinx.coroutines.async
 import net.kenstir.hemlock.R
 import net.kenstir.hemlock.android.App
 import net.kenstir.hemlock.android.Key
-import net.kenstir.hemlock.logging.Log
 import net.kenstir.hemlock.android.ui.ItemClickSupport
 import net.kenstir.hemlock.android.ui.ProgressDialogSupport
 import net.kenstir.hemlock.android.ui.showAlert
 import net.kenstir.hemlock.data.PatronMessage
-import org.evergreen_ils.data.EvergreenPatronMessage
 import net.kenstir.hemlock.data.Result
-import org.evergreen_ils.net.Gateway
-import org.evergreen_ils.utils.ui.*
+import net.kenstir.hemlock.logging.Log
+import org.evergreen_ils.utils.ui.BaseActivity
 import org.evergreen_ils.views.search.DividerItemDecoration
 
 const val MESSAGE_DELETE = 0

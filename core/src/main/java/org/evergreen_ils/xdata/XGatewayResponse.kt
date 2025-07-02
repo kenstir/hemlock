@@ -18,7 +18,10 @@
 package org.evergreen_ils.xdata
 
 import io.ktor.client.statement.HttpResponse
+import io.ktor.client.statement.bodyAsChannel
 import io.ktor.client.statement.bodyAsText
+import io.ktor.utils.io.discard
+import io.ktor.utils.io.readAvailable
 import net.kenstir.hemlock.android.Analytics
 import net.kenstir.hemlock.net.elapsedTime
 import net.kenstir.hemlock.net.isCached
@@ -42,6 +45,24 @@ class XGatewayResponse(val response: HttpResponse) {
         val body = response.bodyAsText()
         Analytics.logResponseX(debugTag, debugUrl, isCached, body, elapsed)
         return response.bodyAsText()
+    }
+
+    suspend fun discardResponseBody() {
+        // read a small amount of the body for logging purposes, discard the rest
+        val channel = response.bodyAsChannel()
+        val buffer = ByteArray(Analytics.MAX_DATA_SHOWN)
+        val bytesRead = channel.readAvailable(buffer, 0, Analytics.MAX_DATA_SHOWN)
+        channel.discard()
+        val str = if (bytesRead > 0) {
+            String(buffer, 0, bytesRead).trim()
+        } else {
+            ""
+        }
+        Analytics.logResponseX(debugTag, debugUrl, isCached, str, elapsed)
+
+        // to simply discard everything
+//        response.bodyAsChannel().discard()
+//        Analytics.logResponseX(debugTag, debugUrl, isCached, "(discarded)", elapsed)
     }
 
     /** given `"payload":["string"]` return `"string"` */

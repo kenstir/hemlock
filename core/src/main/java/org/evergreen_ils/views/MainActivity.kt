@@ -30,19 +30,16 @@ import android.widget.TextView
 import androidx.core.view.MenuItemCompat
 import kotlinx.coroutines.async
 import net.kenstir.hemlock.R
-import org.evergreen_ils.views.bookbags.BookBagsActivity
-import org.evergreen_ils.views.holds.HoldsActivity
 import net.kenstir.hemlock.android.App
-import net.kenstir.hemlock.data.Result
-import org.evergreen_ils.net.Gateway
-import org.evergreen_ils.views.search.SearchActivity
-import net.kenstir.hemlock.logging.Log
-import org.evergreen_ils.data.EvergreenPatronMessage
-import org.evergreen_ils.system.EgOrg
-import org.evergreen_ils.utils.ui.MainBaseActivity
 import net.kenstir.hemlock.android.ui.showAlert
 import net.kenstir.hemlock.data.PatronMessage
-import org.opensrf.util.OSRFObject
+import net.kenstir.hemlock.data.Result
+import net.kenstir.hemlock.logging.Log
+import org.evergreen_ils.system.EgOrg
+import org.evergreen_ils.utils.ui.MainBaseActivity
+import org.evergreen_ils.views.bookbags.BookBagsActivity
+import org.evergreen_ils.views.holds.HoldsActivity
+import org.evergreen_ils.views.search.SearchActivity
 
 open class MainActivity : MainBaseActivity() {
 
