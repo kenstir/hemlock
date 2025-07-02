@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 Kenneth H. Cox
+ * Copyright (c) 2025 Kenneth H. Cox
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -12,21 +12,18 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ * along with this program; if not, see <https://www.gnu.org/licenses/>.
  */
 
-package org.evergreen_ils
+package org.evergreen_ils.data
 
-import org.evergreen_ils.xdata.XOSRFObject
 import net.kenstir.hemlock.data.jsonMapOf
-import org.evergreen_ils.data.EvergreenCopyLocationCounts
 import org.evergreen_ils.system.EgCopyStatus
 import org.evergreen_ils.xdata.XGatewayResult
+import org.evergreen_ils.xdata.XOSRFObject
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
-import org.opensrf.util.GatewayResult
 
 class CopyLocationCountsTest {
 
@@ -49,7 +46,7 @@ class CopyLocationCountsTest {
         val cscJson = """
             {"payload":[[["7","","DVD HARRY","","AV",{"1":1}]]],"status":200}
             """
-        val payloadList = GatewayResult.create(cscJson).payloadFirstAsList()
+        val payloadList = XGatewayResult.create(cscJson).payloadFirstAsList()
         assertEquals(1, payloadList.size)
         val clcList = EvergreenCopyLocationCounts.makeArray(payloadList)
         val clc = clcList.first() as? EvergreenCopyLocationCounts
