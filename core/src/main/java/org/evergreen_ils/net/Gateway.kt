@@ -18,13 +18,10 @@
 package org.evergreen_ils.net
 
 import android.net.Uri
-import android.text.TextUtils
 import com.android.volley.DefaultRetryPolicy
 import com.android.volley.Request
 import net.kenstir.hemlock.net.RequestOptions
-import org.evergreen_ils.Api
 import net.kenstir.hemlock.logging.Log
-import org.opensrf.net.http.HttpConnection
 import org.opensrf.util.GatewayResult
 import org.opensrf.util.JSONWriter
 import kotlin.coroutines.resumeWithException
@@ -85,19 +82,6 @@ object Gateway {
         return baseUrl.plus(relativeUrl)
     }
 
-    fun getIDLUrl(shouldCache: Boolean = true): String {
-        val params = mutableListOf<String>()
-        for (className in TextUtils.split(Api.IDL_CLASSES_USED, ",")) {
-            params.add("class=$className")
-        }
-        if (shouldCache) {
-            params.add("_ck=$clientCacheKey")
-            params.add("_sk=$serverCacheKey")
-        }
-        return baseUrl.plus("/reports/fm_IDL.xml?")
-                .plus(TextUtils.join("&", params))
-    }
-
     // Make an OSRF Gateway request from inside a CoroutineScope.  `block` is expected to return T or throw
     suspend fun <T> fetch(service: String, method: String, args: Array<Any?>, options: RequestOptions, block: (GatewayResult) -> T) =
             fetchImpl(service, method, args, options, block)
@@ -123,22 +107,6 @@ object Gateway {
                 },
                 options.cacheMaxTtlSeconds
         )
-        enqueueRequest(r, options)
-    }
-
-    /** fetch url and return response body as a string */
-    suspend fun fetchBodyAsString(url: String, options: RequestOptions = RequestOptions(defaultTimeoutMs)) = suspendCoroutine<String> { cont ->
-        maybeInjectRandomError()
-        val r = GatewayStringRequest(
-            url,
-            Request.Priority.NORMAL,
-            { response ->
-                cont.resumeWith(Result.success(response))
-            },
-            { error ->
-                cont.resumeWithException(error)
-            },
-            options.cacheMaxTtlSeconds)
         enqueueRequest(r, options)
     }
 
