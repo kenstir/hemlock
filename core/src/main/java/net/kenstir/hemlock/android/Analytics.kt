@@ -33,7 +33,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.math.round
 
-/** Utils that wrap Crashlytics (and now Analytics)
+/** Utils that wrap Crashlytics (and now FirebaseAnalytics)
  */
 object Analytics {
     object Event {
@@ -101,9 +101,6 @@ object Analytics {
     private const val mQueueSize = 64
     private val mEntries = ArrayDeque<String>(mQueueSize)
     private val mTimeFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS", Locale.US)
-//    val mRedactedResponseRegex = Regex("""
-//        ("__c":"aum?"|"__c":"aou"|"authtoken":)
-//    """.trimIndent())
     val mRedactedResponseRegex = Regex("""
         ("__c":"aum?"|"authtoken":)
     """.trimIndent())
