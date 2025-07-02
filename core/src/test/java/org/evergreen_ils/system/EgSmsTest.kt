@@ -18,26 +18,22 @@
 package org.evergreen_ils.system
 
 import net.kenstir.hemlock.data.jsonMapOf
+import org.evergreen_ils.xdata.XOSRFObject
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Test
-import org.opensrf.util.OSRFObject
 
 class EgSmsTest {
 
-    fun makeObj(map: Map<String, Any?>): OSRFObject {
-        return OSRFObject(map)
-    }
-
-    fun make_csc_obj(id: Int, name: String): OSRFObject {
-        return OSRFObject(jsonMapOf("id" to id, "name" to name))
+    fun make_csc_obj(id: Int, name: String): XOSRFObject {
+        return XOSRFObject(jsonMapOf("id" to id, "name" to name))
     }
 
     @Test
     fun test_loadSMSCarriers() {
         val carriers = arrayListOf(
-                make_csc_obj(48, "T-Mobile"),
-                make_csc_obj(52, "Sprint (PCS)")
+            make_csc_obj(48, "T-Mobile"),
+            make_csc_obj(52, "Sprint (PCS)")
         )
 
         EgSms.loadCarriers(carriers)

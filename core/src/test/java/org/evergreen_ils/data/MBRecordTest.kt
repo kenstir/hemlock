@@ -14,9 +14,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, see <https://www.gnu.org/licenses/>.
  */
-package org.evergreen_ils
+package org.evergreen_ils.data
 
-import org.evergreen_ils.data.MBRecord
 import org.evergreen_ils.utils.JsonUtils
 import org.evergreen_ils.xdata.XGatewayResult
 import org.evergreen_ils.xdata.XOSRFCoder
@@ -26,9 +25,6 @@ import org.junit.Assert.assertNull
 import org.junit.Before
 import org.junit.BeforeClass
 import org.junit.Test
-import org.opensrf.util.GatewayResult
-import org.opensrf.util.JSONReader
-import org.opensrf.util.OSRFRegistry
 import java.util.ArrayList
 
 class MBRecordTest {
