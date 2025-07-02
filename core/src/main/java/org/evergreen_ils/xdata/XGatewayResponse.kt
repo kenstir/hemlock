@@ -44,6 +44,12 @@ class XGatewayResponse(val response: HttpResponse) {
         return response.bodyAsText()
     }
 
+    /** given `"payload":["string"]` return `"string"` */
+    suspend fun payloadFirstAsString(): String {
+        val json = bodyAsText()
+        return XGatewayResult.create(json).payloadFirstAsString()
+    }
+
     /** given `"payload":[obj]` return `obj` */
     suspend fun payloadFirstAsObject(): XOSRFObject {
         val json = bodyAsText()
@@ -56,15 +62,21 @@ class XGatewayResponse(val response: HttpResponse) {
         return XGatewayResult.create(json).payloadFirstAsOptionalObject()
     }
 
+    /** given `"payload":[obj,obj]` return `[obj,obj]` */
+    suspend fun payloadAsObjectList(): List<XOSRFObject> {
+        val json = bodyAsText()
+        return XGatewayResult.create(json).payloadAsObjectList()
+    }
+
     /** given `"payload":[[obj,obj]]` return `[obj,obj]` */
     suspend fun payloadFirstAsObjectList(): List<XOSRFObject> {
         val json = bodyAsText()
         return XGatewayResult.create(json).payloadFirstAsObjectList()
     }
 
-    /** given `"payload":["string"]` return `"string"` */
-    suspend fun payloadFirstAsString(): String {
+    /** given `"payload":[[any]]` return `[any]` */
+    suspend fun payloadFirstAsList(): List<Any> {
         val json = bodyAsText()
-        return XGatewayResult.create(json).payloadFirstAsString()
+        return XGatewayResult.create(json).payloadFirstAsList()
     }
 }

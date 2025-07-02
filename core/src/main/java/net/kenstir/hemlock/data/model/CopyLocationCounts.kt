@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Kenneth H. Cox
+ * Copyright (c) 2025 Kenneth H. Cox
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -12,22 +12,19 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ * along with this program; if not, see <https://www.gnu.org/licenses/>.
  */
 
-package org.evergreen_ils
+package net.kenstir.hemlock.data.model
 
-const val HOLD_TYPE_COPY = "C"
-const val HOLD_TYPE_FORCE = "F"
-const val HOLD_TYPE_RECALL = "R"
-const val HOLD_TYPE_ISSUANCE = "I"
-const val HOLD_TYPE_VOLUME = "V"
-const val HOLD_TYPE_TITLE = "T"
-const val HOLD_TYPE_METARECORD = "M"
-const val HOLD_TYPE_PART = "P"
-
-object EgConst {
-    const val TAG_DATA = "EgData"
-    const val TAG_LOADER = "EgLoader"
+/**
+ * summary of copies at a specific shelving location at a specific org, by status
+ */
+interface CopyLocationCounts {
+    val orgId: Int
+    /** shelving location */
+    val copyLocation: String
+    val callNumber: String
+    /** newline-separated list of "count status" labels, e.g. "1 Available\n1 Checked out" */
+    val countsByStatusLabel: String
 }

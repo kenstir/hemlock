@@ -17,13 +17,13 @@
 
 package org.evergreen_ils.net
 
-import android.text.TextUtils
 import net.kenstir.hemlock.data.Result
 import net.kenstir.hemlock.data.jsonMapOf
-import net.kenstir.hemlock.data.model.BibRecord
+import net.kenstir.hemlock.data.model.CopyLocationCounts
 import net.kenstir.hemlock.net.SearchResults
 import net.kenstir.hemlock.net.SearchService
 import org.evergreen_ils.Api
+import org.evergreen_ils.data.EvergreenCopyLocationCounts
 import org.evergreen_ils.system.EgSearch
 import org.evergreen_ils.system.EgSearch.selectedOrganization
 import org.evergreen_ils.xdata.XGatewayClient
@@ -31,30 +31,6 @@ import org.evergreen_ils.xdata.XOSRFObject
 import org.evergreen_ils.xdata.paramListOf
 
 class EvergreenSearchService: SearchService {
-    suspend fun fetchAssetCopy(copyId: Int): Result<XOSRFObject> {
-        TODO("Not yet implemented")
-    }
-
-    suspend fun fetchAssetCallNumber(callNumber: Int): Result<XOSRFObject> {
-        TODO("Not yet implemented")
-    }
-
-    suspend fun fetchCopyLocationCounts(id: Int, orgId: Int, orgLevel: Int): Result<List<Any>> {
-        TODO("Not yet implemented")
-    }
-
-    suspend fun fetchMulticlassQuery(queryString: String, limit: Int, shouldCache: Boolean): Result<XOSRFObject> {
-        return try {
-            val options = jsonMapOf("limit" to limit, "offset" to 0)
-            val requestServerSideCaching = 0
-            val params = paramListOf(options, queryString, requestServerSideCaching)
-            val response = XGatewayClient.fetch(Api.SEARCH, Api.MULTICLASS_QUERY, params, shouldCache)
-            Result.Success(response.payloadFirstAsObject())
-        } catch (e: Exception) {
-            Result.Error(e)
-        }
-    }
-
     override suspend fun searchCatalog(queryString: String, limit: Int): Result<SearchResults> {
         return try {
             EgSearch.searchLimit = limit
@@ -80,6 +56,29 @@ class EvergreenSearchService: SearchService {
         if (selectedOrganization != null) sb.append(" site(").append(selectedOrganization!!.shortname).append(")")
         if (!sort.isNullOrEmpty()) sb.append(" sort(").append(sort).append(")")
         return sb.toString()
+    }
+
+    override suspend fun fetchCopyLocationCounts(recordId: Int, orgId: Int, orgLevel: Int): Result<List<CopyLocationCounts>> {
+        return try {
+            val response = XGatewayClient.fetch(Api.SEARCH, Api.COPY_LOCATION_COUNTS, paramListOf(recordId, orgId, orgLevel), false)
+            val clcList = response.payloadFirstAsList()
+            val ret = EvergreenCopyLocationCounts.makeArray(clcList)
+            Result.Success(ret)
+        } catch (e: Exception) {
+            Result.Error(e)
+        }
+    }
+
+    suspend fun fetchMulticlassQuery(queryString: String, limit: Int, shouldCache: Boolean): Result<XOSRFObject> {
+        return try {
+            val options = jsonMapOf("limit" to limit, "offset" to 0)
+            val requestServerSideCaching = 0
+            val params = paramListOf(options, queryString, requestServerSideCaching)
+            val response = XGatewayClient.fetch(Api.SEARCH, Api.MULTICLASS_QUERY, params, shouldCache)
+            Result.Success(response.payloadFirstAsObject())
+        } catch (e: Exception) {
+            Result.Error(e)
+        }
     }
 }
 
