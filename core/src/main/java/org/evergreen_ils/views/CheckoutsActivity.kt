@@ -136,26 +136,27 @@ class CheckoutsActivity : BaseActivity() {
     private fun fetchData() {
         scope.async {
             try {
-                Log.d(TAG, "[kcxxx] fetchData ...")
-                val start = System.currentTimeMillis()
-                var jobs = mutableListOf<Job>()
-                progress?.show(this@CheckoutsActivity, getString(R.string.msg_retrieving_data))
-
-                // fetch checkouts
-                val result = Gateway.actor.fetchUserCheckedOut(App.getAccount())
-                if (result is Result.Error) { showAlert(result.exception); return@async }
-                val obj = result.get()
-
-                // fetch details
-                circRecords = CircRecord.makeArray(obj)
-                for (circRecord in circRecords) {
-                    jobs.add(scope.async { fetchCircDetails(circRecord) })
-                }
-                checkoutsSummary?.text = String.format(getString(R.string.checkout_items), circRecords.size)
-
-                jobs.joinAll()
-                updateCheckoutsList()
-                Log.logElapsedTime(TAG, start, "[kcxxx] fetchData ... done")
+                throw Exception("fetchData not implemented")
+//                Log.d(TAG, "[kcxxx] fetchData ...")
+//                val start = System.currentTimeMillis()
+//                var jobs = mutableListOf<Job>()
+//                progress?.show(this@CheckoutsActivity, getString(R.string.msg_retrieving_data))
+//
+//                // fetch checkouts
+//                val result = Gateway.actor.fetchUserCheckedOut(App.getAccount())
+//                if (result is Result.Error) { showAlert(result.exception); return@async }
+//                val obj = result.get()
+//
+//                // fetch details
+//                circRecords = CircRecord.makeArray(obj)
+//                for (circRecord in circRecords) {
+//                    jobs.add(scope.async { fetchCircDetails(circRecord) })
+//                }
+//                checkoutsSummary?.text = String.format(getString(R.string.checkout_items), circRecords.size)
+//
+//                jobs.joinAll()
+//                updateCheckoutsList()
+//                Log.logElapsedTime(TAG, start, "[kcxxx] fetchData ... done")
             } catch (ex: Exception) {
                 Log.d(TAG, "[kcxxx] fetchData ... caught", ex)
                 showAlert(ex)
@@ -166,23 +167,24 @@ class CheckoutsActivity : BaseActivity() {
     }
 
     private suspend fun fetchCircDetails(circRecord: CircRecord): Result<Unit> {
-        val circResult = Gateway.circ.fetchCirc(App.getAccount(), circRecord.circId)
-        if (circResult is Result.Error) return circResult
-        val circObj = circResult.get()
-        circRecord.circ = circObj
-
-        val targetCopy = circObj.getInt("target_copy") ?: return Result.Error(Exception("circ item has no target_copy"))
-        val modsResult = Gateway.search.fetchCopyMODS(targetCopy)
-        if (modsResult is Result.Error) return modsResult
-        val modsObj = modsResult.get()
-        val record = MBRecord(modsObj)
-        circRecord.record = record
-
-        if (record.id != -1) {
-            val mraResult = fetchRecordAttrs(record, record.id)
-        }
-
-        return Result.Success(Unit)
+//        val circResult = Gateway.circ.fetchCirc(App.getAccount(), circRecord.circId)
+//        if (circResult is Result.Error) return circResult
+//        val circObj = circResult.get()
+//        circRecord.circ = circObj
+//
+//        val targetCopy = circObj.getInt("target_copy") ?: return Result.Error(Exception("circ item has no target_copy"))
+//        val modsResult = Gateway.search.fetchCopyMODS(targetCopy)
+//        if (modsResult is Result.Error) return modsResult
+//        val modsObj = modsResult.get()
+//        val record = MBRecord(modsObj)
+//        circRecord.record = record
+//
+//        if (record.id != -1) {
+//            val mraResult = fetchRecordAttrs(record, record.id)
+//        }
+//
+//        return Result.Success(Unit)
+        return Result.Error(Exception("not implemented"))
     }
 
     suspend fun fetchRecordAttrs(record: MBRecord, id: Int): Result<Unit> {

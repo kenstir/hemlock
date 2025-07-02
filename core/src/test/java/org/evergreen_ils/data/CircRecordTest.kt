@@ -19,16 +19,15 @@
 package org.evergreen_ils.data
 
 import net.kenstir.hemlock.data.jsonMapOf
+import org.evergreen_ils.xdata.XOSRFObject
 import org.junit.Assert.assertEquals
 import org.junit.Test
-import org.opensrf.util.OSRFObject
 
 class CircRecordTest {
-    // TODO(data): refactor to XOSRFObject and move to different package
 
     @Test
     fun test_noRecordInfo() {
-        val circObj = OSRFObject(
+        val circObj = XOSRFObject(
             jsonMapOf(
                 "renewal_remaining" to 0,
                 "auto_renewal" to "f",
@@ -51,7 +50,7 @@ class CircRecordTest {
 
     @Test
     fun test_basic() {
-        val circObj = OSRFObject(
+        val circObj = XOSRFObject(
             jsonMapOf(
                 "renewal_remaining" to 0,
                 "auto_renewal" to "f",
@@ -63,7 +62,7 @@ class CircRecordTest {
                 "due_date" to "2020-02-05T23:59:59-0500"
         )
         )
-        val mvrObj = OSRFObject(
+        val mvrObj = XOSRFObject(
             jsonMapOf(
                 "doc_id" to 1234,
                 "title" to "The Testaments",
@@ -85,7 +84,7 @@ class CircRecordTest {
     // a record.id==-1, and the acp will have dummy_title and dummy_author
     @Test
     fun test_illCheckout() {
-        val circObj = OSRFObject(
+        val circObj = XOSRFObject(
             jsonMapOf(
                 "renewal_remaining" to 0,
                 "id" to 1,
@@ -93,14 +92,14 @@ class CircRecordTest {
                 "due_date" to "2020-02-05T23:59:59-0500"
         )
         )
-        val mvrObj = OSRFObject(
+        val mvrObj = XOSRFObject(
             jsonMapOf(
                 "doc_id" to -1,
                 "title" to null,
                 "author" to null
         )
         )
-        val acpObj = OSRFObject(
+        val acpObj = XOSRFObject(
             jsonMapOf(
                 "id" to 1507492,
                 "dummy_author" to "NO AUTHOR",
@@ -125,7 +124,7 @@ class CircRecordTest {
     @Test
     fun test_noDueDate() {
         // seen in the wild via Crashlytics
-        val circObj = OSRFObject(
+        val circObj = XOSRFObject(
             jsonMapOf(
                 "renewal_remaining" to 0,
                 "id" to 1,
@@ -141,7 +140,7 @@ class CircRecordTest {
 
     @Test
     fun test_makeArray() {
-        val circSlimObj = OSRFObject(
+        val circSlimObj = XOSRFObject(
             jsonMapOf(
                 "long_overdue" to arrayListOf<Any?>(),
                 "overdue" to arrayListOf<Any?>(),

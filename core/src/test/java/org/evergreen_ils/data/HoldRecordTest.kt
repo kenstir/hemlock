@@ -18,6 +18,7 @@
 package org.evergreen_ils.data
 
 import net.kenstir.hemlock.data.jsonMapOf
+import org.evergreen_ils.utils.JsonUtils
 import org.junit.Assert.*
 import org.junit.Test
 import org.opensrf.util.JSONReader
@@ -186,11 +187,11 @@ class HoldRecordTest {
     }
 
     @Test
-    fun test_JsonUtils_parseHoldableFormats() {
+    fun test_parseHoldableFormats() {
         val holdable_formats = """
             {"0":[{"_attr":"mr_hold_format","_val":"book"},{"_attr":"mr_hold_format","_val":"lpbook"}],"1":[{"_attr":"item_lang","_val":"eng"}]}
             """
-        val map = JSONReader(holdable_formats).readObject()
+        val map = JsonUtils.parseObject(holdable_formats)
         val formats = HoldRecord.parseHoldableFormats(map)
         assertEquals(2, formats.size)
         assertEquals(arrayListOf("book","lpbook"), formats)

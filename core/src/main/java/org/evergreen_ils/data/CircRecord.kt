@@ -21,11 +21,12 @@
 package org.evergreen_ils.data
 
 import org.evergreen_ils.utils.TextUtils
+import org.evergreen_ils.xdata.XOSRFObject
 import org.opensrf.util.OSRFObject
 import java.text.DateFormat
 import java.util.*
 
-class CircRecord(circ: OSRFObject?, circType: CircType, circId: Int) {
+class CircRecord(circ: XOSRFObject?, circType: CircType, circId: Int) {
 
     constructor(circId: Int) : this(null, CircType.OUT, circId)
 
@@ -34,11 +35,11 @@ class CircRecord(circ: OSRFObject?, circType: CircType, circId: Int) {
     }
 
     var circId = -1
-    var circ: OSRFObject?
+    var circ: XOSRFObject?
     @JvmField
-    var mvr: OSRFObject? = null
+    var mvr: XOSRFObject? = null
     @JvmField
-    var acp: OSRFObject? = null
+    var acp: XOSRFObject? = null
     @JvmField
     var record: MBRecord? = null
 
@@ -68,7 +69,7 @@ class CircRecord(circ: OSRFObject?, circType: CircType, circId: Int) {
         get() = circ?.getDate("due_date")
 
     val dueDateString: String
-        get() = if (dueDate != null) DateFormat.getDateInstance().format(dueDate) else ""
+        get() = dueDate?.let { DateFormat.getDateInstance().format(it) } ?: ""
 
     val renewals: Int
         get() = circ?.getInt("renewal_remaining") ?: 0
@@ -106,7 +107,7 @@ class CircRecord(circ: OSRFObject?, circType: CircType, circId: Int) {
     }
 
     companion object {
-        fun makeArray(circSlimObj: OSRFObject): ArrayList<CircRecord> {
+        fun makeArray(circSlimObj: XOSRFObject): ArrayList<CircRecord> {
             val ret = ArrayList<CircRecord>()
             for (id in OSRFUtils.parseIdsListAsInt(circSlimObj.get("out")))
                 ret.add(CircRecord(id))

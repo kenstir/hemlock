@@ -25,11 +25,12 @@ import android.content.res.Resources
 import org.evergreen_ils.HOLD_TYPE_METARECORD
 import net.kenstir.hemlock.R
 import net.kenstir.hemlock.data.JSONDictionary
-import org.evergreen_ils.utils.JsonUtils.parseObject
 import org.evergreen_ils.system.EgCodedValueMap.iconFormatLabel
 import org.opensrf.util.OSRFObject
 import org.evergreen_ils.system.EgOrg
+import org.evergreen_ils.utils.JsonUtils
 import org.evergreen_ils.utils.TextUtils
+import org.evergreen_ils.xdata.XOSRFObject
 import java.io.Serializable
 import java.text.DateFormat
 import java.util.*
@@ -139,7 +140,8 @@ class HoldRecord(val ahr: OSRFObject) : Serializable {
     val formatLabel: String?
         get() {
             if (holdType == HOLD_TYPE_METARECORD) {
-                val map = parseObject(
+                TODO("verify that this parsing still works for metarecord holds, then fix HoldRecordTest.kt")
+                val map = JsonUtils.parseObject(
                     ahr.getString("holdable_formats")
                 )
                 val labels: MutableList<String?> = ArrayList()
@@ -161,15 +163,15 @@ class HoldRecord(val ahr: OSRFObject) : Serializable {
         }
 
         /** Parse a metarecord hold attribute "holdable_formats" into a list of ccvm codes */
+        // TODO(data): Make sure this still works.  I don't remember how to place a Metarecord hold.
         fun parseHoldableFormats(dict: JSONDictionary?): ArrayList<String> {
-            var formats = ArrayList<String>()
+            val formats = ArrayList<String>()
             if (dict == null)
                 return formats
             for ((_, v) in dict) {
                 val l = v as? ArrayList<*>
                 if (l != null) {
                     for (elem in l) {
-                        TODO("verify code still works esp. the cast to Map<>")
                         val e = elem as? Map<String, String>
                         val attr = e?.get("_attr")
                         val value = e?.get("_val")
