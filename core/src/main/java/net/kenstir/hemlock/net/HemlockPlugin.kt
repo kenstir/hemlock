@@ -135,6 +135,9 @@ fun HttpResponse.elapsedTime(): Long {
     return recvTime - sentTime
 }
 
+/**
+ * return the debug tag aka requestId for the request, used to match requests and responses in the log
+ */
 fun HttpResponse.debugTag(): String {
     return this.call.request.attributes[debugTagKey]
 }

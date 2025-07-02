@@ -206,8 +206,8 @@ object Analytics {
     }
 
     @JvmStatic
-    fun logRequest(tag: String, httpMethod: String, url: String) {
-        val tag8 = tag.padStart(8)
+    fun logRequest(debugTag: String, httpMethod: String, url: String) {
+        val tag8 = debugTag.padStart(8)
         val method = httpMethod.padEnd(4)
         val logMsg = "[net] $tag8 $method  $url"
         Log.d(TAG, logMsg)
@@ -215,13 +215,13 @@ object Analytics {
     }
 
     @JvmStatic
-    fun logResponse(tag: String, url: String, cached: Boolean, data: String) {
-        logResponseX(tag, url, cached, data, null)
+    fun logResponse(debugTag: String, url: String, cached: Boolean, data: String) {
+        logResponseX(debugTag, url, cached, data, null)
     }
 
-    fun logResponseX(tag: String, url: String, cached: Boolean, data: String, elapsed: Long? = null) {
+    fun logResponseX(debugTag: String, url: String, cached: Boolean, data: String, elapsed: Long? = null) {
 
-        val tag8 = tag.padStart(8)
+        val tag8 = debugTag.padStart(8)
         val badge = if (cached) "*" else " "
         val prefix =
             if (elapsed != null) {
