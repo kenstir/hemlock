@@ -178,19 +178,18 @@ class FinesActivity : BaseActivity() {
     }
 
     private fun loadTransactions(objects: List<OSRFObject>) {
-//        Log.d(TAG, "[kcxxx] loadTransactions o:$objects")
-
-        listAdapter?.clear()
-        val fines = FineRecord.makeArray(objects)
-        haveAnyFines = fines.isNotEmpty()
-        haveAnyGroceryBills = false
-
-        for (fine in fines) {
-            listAdapter?.add(fine)
-            if (fine.mvrObj == null) haveAnyGroceryBills = true
-        }
-
-        listAdapter?.notifyDataSetChanged()
+        TODO("refactor to use List<AbstractFineRecord>")
+//        listAdapter?.clear()
+//        val fines = FineRecord.makeArray(objects)
+//        haveAnyFines = fines.isNotEmpty()
+//        haveAnyGroceryBills = false
+//
+//        for (fine in fines) {
+//            listAdapter?.add(fine)
+//            if (fine.mvrObj == null) haveAnyGroceryBills = true
+//        }
+//
+//        listAdapter?.notifyDataSetChanged()
     }
 
     private fun getFloat(o: OSRFObject?, field: String): Float {
