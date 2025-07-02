@@ -35,6 +35,7 @@ import org.evergreen_ils.data.OSRFUtils
 import net.kenstir.hemlock.R
 import net.kenstir.hemlock.android.Analytics
 import net.kenstir.hemlock.android.App
+import net.kenstir.hemlock.android.Key
 import net.kenstir.hemlock.android.ui.ActionBarUtils
 import net.kenstir.hemlock.android.ui.ProgressDialogSupport
 import net.kenstir.hemlock.android.ui.showAlert
@@ -64,7 +65,7 @@ class HoldDetailsActivity : BaseActivity() {
         ActionBarUtils.initActionBarForActivity(this)
         progress = ProgressDialogSupport()
 
-        val record = intent.getSerializableExtra("holdRecord") as HoldRecord
+        val record = intent.getSerializableExtra(Key.HOLD_RECORD) as HoldRecord
 
         val title = findViewById<TextView>(R.id.hold_title)
         val author = findViewById<TextView>(R.id.hold_author)

@@ -25,6 +25,7 @@ import android.widget.TextView
 import kotlinx.coroutines.async
 import net.kenstir.hemlock.R
 import net.kenstir.hemlock.android.App
+import net.kenstir.hemlock.android.Key
 import org.evergreen_ils.data.PatronMessage
 import net.kenstir.hemlock.data.Result
 import org.evergreen_ils.net.Gateway
@@ -46,7 +47,7 @@ class MessageDetailsActivity : BaseActivity() {
         setContentView(R.layout.activity_message_details)
         ActionBarUtils.initActionBarForActivity(this)
 
-        message = intent.getSerializableExtra("patronMessage") as PatronMessage
+        message = intent.getSerializableExtra(Key.PATRON_MESSAGE) as PatronMessage
 
         val title = findViewById<TextView>(R.id.message_title)
         val date = findViewById<TextView>(R.id.message_date)
