@@ -19,6 +19,7 @@ package org.evergreen_ils.net
 
 import net.kenstir.hemlock.data.Result
 import net.kenstir.hemlock.data.jsonMapOf
+import net.kenstir.hemlock.data.model.BibRecord
 import net.kenstir.hemlock.data.model.CopyLocationCounts
 import net.kenstir.hemlock.net.SearchResults
 import net.kenstir.hemlock.net.SearchService
@@ -31,6 +32,19 @@ import org.evergreen_ils.xdata.XOSRFObject
 import org.evergreen_ils.xdata.paramListOf
 
 class EvergreenSearchService: SearchService {
+
+    // Build query string, taken with a grain of salt from
+    // https://wiki.evergreen-ils.org/doku.php?id=documentation:technical:search_grammar
+    // e.g. "title:Harry Potter chamber of secrets search_format(book) site(MARLBORO)"
+    override fun makeQueryString(searchText: String, searchClass: String?, searchFormat: String?, sort: String?): String {
+        val sb = StringBuilder()
+        sb.append(searchClass).append(":").append(searchText)
+        if (!searchFormat.isNullOrEmpty()) sb.append(" search_format(").append(searchFormat).append(")")
+        if (selectedOrganization != null) sb.append(" site(").append(selectedOrganization!!.shortname).append(")")
+        if (!sort.isNullOrEmpty()) sb.append(" sort(").append(sort).append(")")
+        return sb.toString()
+    }
+
     override suspend fun searchCatalog(queryString: String, limit: Int): Result<SearchResults> {
         return try {
             EgSearch.searchLimit = limit
@@ -46,16 +60,8 @@ class EvergreenSearchService: SearchService {
         }
     }
 
-    // Build query string, taken with a grain of salt from
-    // https://wiki.evergreen-ils.org/doku.php?id=documentation:technical:search_grammar
-    // e.g. "title:Harry Potter chamber of secrets search_format(book) site(MARLBORO)"
-    override fun makeQueryString(searchText: String, searchClass: String?, searchFormat: String?, sort: String?): String {
-        val sb = StringBuilder()
-        sb.append(searchClass).append(":").append(searchText)
-        if (!searchFormat.isNullOrEmpty()) sb.append(" search_format(").append(searchFormat).append(")")
-        if (selectedOrganization != null) sb.append(" site(").append(selectedOrganization!!.shortname).append(")")
-        if (!sort.isNullOrEmpty()) sb.append(" sort(").append(sort).append(")")
-        return sb.toString()
+    override fun getLastSearchResults(): SearchResults {
+        return EgSearch.lastResults
     }
 
     override suspend fun fetchCopyLocationCounts(recordId: Int, orgId: Int, orgLevel: Int): Result<List<CopyLocationCounts>> {
@@ -80,12 +86,4 @@ class EvergreenSearchService: SearchService {
             Result.Error(e)
         }
     }
-}
-
-class EvergreenSearchResults: SearchResults {
-    override val numResults: Int
-        get() = EgSearch.results.size
-
-    override val totalMatches: Int
-        get() = EgSearch.visible
 }

@@ -61,7 +61,7 @@ import net.kenstir.hemlock.net.SearchResults
 import org.evergreen_ils.system.EgCodedValueMap
 import org.evergreen_ils.system.EgOrg
 import org.evergreen_ils.system.EgSearch
-import org.evergreen_ils.utils.getCustomMessage
+import net.kenstir.hemlock.util.getCustomMessage
 import org.evergreen_ils.utils.ui.*
 import org.evergreen_ils.views.bookbags.BookBagUtils.showAddToListDialog
 import org.evergreen_ils.views.holds.PlaceHoldActivity

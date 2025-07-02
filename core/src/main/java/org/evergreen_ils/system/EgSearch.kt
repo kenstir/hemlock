@@ -25,7 +25,6 @@ import net.kenstir.hemlock.data.model.Organization
 import net.kenstir.hemlock.net.SearchResults
 import org.evergreen_ils.data.MBRecord
 import org.evergreen_ils.data.OSRFUtils
-import org.evergreen_ils.net.EvergreenSearchResults
 import org.evergreen_ils.xdata.XOSRFObject
 import java.util.ArrayList
 
@@ -34,20 +33,20 @@ object EgSearch {
     var visible = 0
     var searchLimit = 100
 
+    val lastResults: SearchResults
+        get() = EvergreenSearchResults()
+
     private val records: ArrayList<MBRecord> = ArrayList(searchLimit)
-    val results: ArrayList<BibRecord>
-        get() = records as ArrayList<BibRecord>
+    val results: ArrayList<MBRecord>
+        get() = records
 
     fun loadResults(obj: XOSRFObject): SearchResults {
         clearResults()
         visible = OSRFUtils.parseInt(obj["count"]) ?: 0
         if (visible == 0) return EvergreenSearchResults()
 
-        // parse ids list
-        val record_ids_lol = obj["ids"] as List<List<*>>
-
         // add to existing array, because SearchResultsFragment has an Adapter on it
-        records.addAll(MBRecord.makeArray(record_ids_lol))
+        records.addAll(MBRecord.makeArrayFromQueryResults(obj))
         return EvergreenSearchResults()
     }
 
@@ -55,4 +54,15 @@ object EgSearch {
         records.clear()
         visible = 0
     }
+}
+
+class EvergreenSearchResults: SearchResults {
+    override val numResults: Int
+        get() = EgSearch.results.size
+
+    override val totalMatches: Int
+        get() = EgSearch.visible
+
+    override val records: List<BibRecord>
+        get() = EgSearch.results
 }

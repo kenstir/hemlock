@@ -32,7 +32,7 @@ import net.kenstir.hemlock.data.Result
 import org.evergreen_ils.xdata.XGatewayClient
 import org.evergreen_ils.net.Gateway
 import org.evergreen_ils.system.EgMessageMap
-import org.evergreen_ils.utils.getCustomMessage
+import net.kenstir.hemlock.util.getCustomMessage
 import java.util.concurrent.atomic.AtomicInteger
 
 private const val TAG = "LaunchViewModel"

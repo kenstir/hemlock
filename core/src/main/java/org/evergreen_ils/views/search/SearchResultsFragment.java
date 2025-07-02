@@ -24,10 +24,13 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import net.kenstir.hemlock.R;
 import org.evergreen_ils.system.EgSearch;
+
+import net.kenstir.hemlock.android.App;
 import net.kenstir.hemlock.android.ui.ItemClickSupport;
 import net.kenstir.hemlock.data.model.BibRecord;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class SearchResultsFragment extends Fragment {
 
@@ -43,7 +46,7 @@ public class SearchResultsFragment extends Fragment {
     protected LayoutManagerType mCurrentLayoutManagerType;
     protected RecyclerView mRecyclerView;
     protected RecyclerView.LayoutManager mLayoutManager;
-    protected ArrayList<BibRecord> mDataset;
+    protected List<BibRecord> mDataset;
     protected RecordViewAdapter mAdapter;
     protected OnRecordClickListener mOnRecordClickListener;
     protected OnRecordLongClickListener mOnRecordLongClickListener;
@@ -51,7 +54,7 @@ public class SearchResultsFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mDataset = EgSearch.INSTANCE.getResults();
+        mDataset = App.getServiceConfig().getSearchService().getLastSearchResults().getRecords();
         mAdapter = new RecordViewAdapter(mDataset);
     }
 

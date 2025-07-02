@@ -182,5 +182,9 @@ class MBRecord(override val id: Int, var mvrObj: XOSRFObject? = null): BibRecord
             }
             return records
         }
+
+        fun makeArrayFromQueryResults(obj: XOSRFObject): ArrayList<MBRecord> {
+            return makeArray(obj["ids"] as List<List<*>>)
+        }
     }
 }

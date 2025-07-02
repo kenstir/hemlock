@@ -18,46 +18,19 @@
 
 package org.evergreen_ils.utils
 
+import kotlinx.serialization.json.Json
 import net.kenstir.hemlock.data.JSONDictionary
-import org.json.JSONObject
+import net.kenstir.hemlock.serialization.JSONDictionarySerializer
 import org.opensrf.util.JSONException
 import org.opensrf.util.JSONReader
 
 object JsonUtils {
-    /** Parse a metarecord hold attribute "holdable_formats" into a list of ccvm codes */
-    @JvmStatic
-    fun parseHoldableFormats(dict: JSONDictionary?): ArrayList<String> {
-        var formats = ArrayList<String>()
-        if (dict == null)
-            return formats
-        for ((_, v) in dict) {
-            val l = v as? ArrayList<*>
-            if (l != null) {
-                for (elem in l) {
-                    val e = elem as? Map<String, String>
-                    val attr = e?.get("_attr")
-                    val value = e?.get("_val")
-                    if (attr == "mr_hold_format" && value != null) {
-                        formats.add(value)
-                    }
-                }
-            }
-        }
-        return formats
-    }
 
-    @JvmStatic
     fun parseObject(json: String?): JSONDictionary? {
         return try {
-            JSONReader(json).readObject()
+            json?.let { Json.decodeFromString(JSONDictionarySerializer, it) }
         } catch (e: JSONException) {
             null
         }
-    }
-
-    @JvmStatic
-    fun toJSONString(obj: JSONDictionary): String {
-        val jsonObject = JSONObject(obj)
-        return jsonObject.toString()
     }
 }

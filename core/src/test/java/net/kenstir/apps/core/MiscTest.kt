@@ -18,7 +18,7 @@
 
 package net.kenstir.apps.core
 
-import org.evergreen_ils.utils.getCustomMessage
+import net.kenstir.hemlock.util.getCustomMessage
 import org.junit.Assert.assertEquals
 import org.junit.Test
 

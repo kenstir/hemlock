@@ -19,11 +19,9 @@
 package org.evergreen_ils
 
 import org.evergreen_ils.utils.JsonUtils
-import org.evergreen_ils.utils.JsonUtils.parseHoldableFormats
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Test
-import org.opensrf.util.JSONReader
 
 class JsonUtilsTest {
 
@@ -43,16 +41,5 @@ class JsonUtilsTest {
         assertNull(JsonUtils.parseObject("[42]"))
         assertNull(JsonUtils.parseObject(""))
         assertNull(JsonUtils.parseObject(null))
-    }
-
-    @Test
-    fun test_JsonUtils_parseHoldableFormats() {
-        val holdable_formats = """
-            {"0":[{"_attr":"mr_hold_format","_val":"book"},{"_attr":"mr_hold_format","_val":"lpbook"}],"1":[{"_attr":"item_lang","_val":"eng"}]}
-            """
-        val map = JSONReader(holdable_formats).readObject()
-        val formats = parseHoldableFormats(map)
-        assertEquals(2, formats.size)
-        assertEquals(arrayListOf("book","lpbook"), formats)
     }
 }

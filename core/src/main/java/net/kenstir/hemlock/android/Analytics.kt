@@ -28,7 +28,7 @@ import net.kenstir.hemlock.R
 import net.kenstir.hemlock.logging.Log
 import net.kenstir.hemlock.data.model.Organization
 import net.kenstir.hemlock.data.Result
-import org.evergreen_ils.utils.getCustomMessage
+import net.kenstir.hemlock.util.getCustomMessage
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.math.round
