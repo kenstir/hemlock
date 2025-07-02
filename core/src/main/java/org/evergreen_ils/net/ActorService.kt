@@ -24,10 +24,6 @@ import org.opensrf.util.OSRFObject
 interface ActorService {
     suspend fun fetchUserCheckedOut(account: Account): Result<OSRFObject>
     suspend fun fetchCheckoutHistory(account: Account): Result<List<OSRFObject>>
-    suspend fun fetchMessages(account: Account): Result<List<OSRFObject>>
-    suspend fun markMessageDeleted(account: Account, messageId: Int): Result<Unit>
-    suspend fun markMessageRead(account: Account, messageId: Int): Result<Unit>
-    suspend fun markMessageUnread(account: Account, messageId: Int): Result<Unit>
     suspend fun fetchUserFinesSummary(account: Account): Result<OSRFObject?>
     suspend fun fetchUserTransactionsWithCharges(account: Account): Result<List<OSRFObject>>
     suspend fun createBookBagAsync(account: Account, name: String): Result<Unit>

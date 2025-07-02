@@ -35,13 +35,13 @@ interface UserService {
      */
     suspend fun loadPatronListItems(account: Account, patronList: PatronList, queryForVisibleItems: Boolean): Result<Unit>
 
+    suspend fun updatePushNotificationToken(account: Account, token: String?): Result<Unit>
     suspend fun enableCheckoutHistory(account: Account): Result<Unit>
     suspend fun disableCheckoutHistory(account: Account): Result<Unit>
     suspend fun clearCheckoutHistory(account: Account): Result<Unit>
-    suspend fun updatePushNotificationToken(account: Account, token: String?): Result<Unit>
 
     suspend fun fetchPatronMessages(account: Account): Result<List<PatronMessage>>
-    suspend fun markMessageRead(account: Account?, id: Int): Result<Unit>
-    suspend fun markMessageUnread(account: Account?, id: Int): Result<Unit>
-    suspend fun markMessageDeleted(account: Account?, id: Int): Result<Unit>
+    suspend fun markMessageRead(account: Account, id: Int): Result<Unit>
+    suspend fun markMessageUnread(account: Account, id: Int): Result<Unit>
+    suspend fun markMessageDeleted(account: Account, id: Int): Result<Unit>
 }

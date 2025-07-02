@@ -153,4 +153,12 @@ object XGatewayClient {
     suspend fun get(url: String): XGatewayResponse {
         return XGatewayResponse(client.get(url))
     }
+
+    suspend fun getOPAC(url: String, authToken: String, shouldCache: Boolean): XGatewayResponse {
+        return XGatewayResponse(client.get(url) {
+            header("Cache-Control", if (shouldCache) "max-age=3600" else "no-cache")
+            cookie(name = "ses", value = authToken)
+            cookie(name = "eg_loggedin", value = "1")
+        })
+    }
 }

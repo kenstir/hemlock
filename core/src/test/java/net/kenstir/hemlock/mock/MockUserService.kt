@@ -69,15 +69,15 @@ class MockUserService: UserService {
         TODO("Not yet implemented")
     }
 
-    override suspend fun markMessageRead(account: Account?, id: Int): Result<Unit> {
+    override suspend fun markMessageRead(account: Account, id: Int): Result<Unit> {
         TODO("Not yet implemented")
     }
 
-    override suspend fun markMessageUnread(account: Account?, id: Int): Result<Unit> {
+    override suspend fun markMessageUnread(account: Account, id: Int): Result<Unit> {
         TODO("Not yet implemented")
     }
 
-    override suspend fun markMessageDeleted(account: Account?, id: Int): Result<Unit> {
+    override suspend fun markMessageDeleted(account: Account, id: Int): Result<Unit> {
         TODO("Not yet implemented")
     }
 }

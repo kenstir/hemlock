@@ -26,12 +26,11 @@ import kotlinx.coroutines.async
 import net.kenstir.hemlock.R
 import net.kenstir.hemlock.android.App
 import net.kenstir.hemlock.android.Key
-import org.evergreen_ils.data.EvergreenPatronMessage
-import net.kenstir.hemlock.data.Result
-import org.evergreen_ils.net.Gateway
 import net.kenstir.hemlock.android.ui.ActionBarUtils
-import org.evergreen_ils.utils.ui.BaseActivity
 import net.kenstir.hemlock.android.ui.showAlert
+import net.kenstir.hemlock.data.Result
+import org.evergreen_ils.data.EvergreenPatronMessage
+import org.evergreen_ils.utils.ui.BaseActivity
 import org.evergreen_ils.views.messages.MessagesActivity.Companion.RESULT_MESSAGE_UPDATED
 import java.text.DateFormat
 
@@ -78,7 +77,7 @@ class MessageDetailsActivity : BaseActivity() {
 
     private fun markMessageDeletedAndFinish() {
         scope.async {
-            val result = Gateway.actor.markMessageDeleted(App.getAccount(), message.id)
+            val result = App.getServiceConfig().userService.markMessageDeleted(App.getAccount(), message.id)
             if (result is Result.Error) {
                 showAlert(result.exception); return@async
             }
@@ -89,7 +88,7 @@ class MessageDetailsActivity : BaseActivity() {
 
     private fun markMessageRead() {
         scope.async {
-            val result = Gateway.actor.markMessageRead(App.getAccount(), message.id)
+            val result = App.getServiceConfig().userService.markMessageRead(App.getAccount(), message.id)
             if (result is Result.Error) {
                 showAlert(result.exception); return@async
             }
@@ -99,7 +98,7 @@ class MessageDetailsActivity : BaseActivity() {
 
     private fun markMessageUnreadAndFinish() {
         scope.async {
-            val result = Gateway.actor.markMessageUnread(App.getAccount(), message.id)
+            val result = App.getServiceConfig().userService.markMessageUnread(App.getAccount(), message.id)
             if (result is Result.Error) {
                 showAlert(result.exception); return@async
             }

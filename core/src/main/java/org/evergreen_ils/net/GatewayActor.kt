@@ -20,7 +20,6 @@ package org.evergreen_ils.net
 import org.evergreen_ils.Api
 import net.kenstir.hemlock.logging.Log
 import net.kenstir.hemlock.data.model.Account
-import net.kenstir.hemlock.net.RequestOptions
 import net.kenstir.hemlock.data.Result
 import net.kenstir.hemlock.data.jsonMapOf
 import org.opensrf.util.OSRFObject
@@ -48,37 +47,6 @@ object GatewayActor: ActorService {
             Result.Error(e)
         }
     }
-
-    override suspend fun fetchMessages(account: Account): Result<List<OSRFObject>> {
-        return try {
-            val (authToken, userID) = account.getCredentialsOrThrow()
-            val args = arrayOf<Any?>(authToken, userID, null)
-            val ret = Gateway.fetchObjectArray(Api.ACTOR, Api.MESSAGES_RETRIEVE, args, false)
-            Result.Success(ret)
-        } catch (e: Exception) {
-            Result.Error(e)
-        }
-    }
-
-    private suspend fun markMessageAction(account: Account, messageId: Int, action: String): Result<Unit> {
-        return try {
-            val (authToken, _) = account.getCredentialsOrThrow()
-            val url = Gateway.getUrl("/eg/opac/myopac/messages?action=$action&message_id=$messageId")
-            Gateway.fetchOPAC(url, authToken, RequestOptions(Gateway.defaultTimeoutMs, false, true))
-            Result.Success(Unit)
-        } catch (e: Exception) {
-            Result.Error(e)
-        }
-    }
-
-    override suspend fun markMessageDeleted(account: Account, messageId: Int): Result<Unit> =
-        markMessageAction(account, messageId, "mark_deleted")
-
-    override suspend fun markMessageRead(account: Account, messageId: Int): Result<Unit> =
-        markMessageAction(account, messageId, "mark_read")
-
-    override suspend fun markMessageUnread(account: Account, messageId: Int): Result<Unit> =
-        markMessageAction(account, messageId, "mark_unread")
 
     override suspend fun fetchUserFinesSummary(account: Account): Result<OSRFObject?> {
         return try {

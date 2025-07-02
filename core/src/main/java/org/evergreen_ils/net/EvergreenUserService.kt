@@ -23,9 +23,11 @@ import net.kenstir.hemlock.data.Result
 import net.kenstir.hemlock.data.jsonMapOf
 import net.kenstir.hemlock.data.model.Account
 import net.kenstir.hemlock.data.model.PatronList
+import net.kenstir.hemlock.net.RequestOptions
 import net.kenstir.hemlock.net.UserService
 import org.evergreen_ils.Api
 import org.evergreen_ils.data.BookBag
+import org.evergreen_ils.data.EvergreenPatronMessage
 import org.evergreen_ils.data.OSRFUtils
 import org.evergreen_ils.model.EvergreenAccount
 import org.evergreen_ils.xdata.XGatewayClient
@@ -116,6 +118,20 @@ class EvergreenUserService: UserService {
         }
     }
 
+    override suspend fun updatePushNotificationToken(account: Account, token: String?): Result<Unit> {
+        return try {
+            updatePatronSettings(account, jsonMapOf(
+                Api.USER_SETTING_HEMLOCK_PUSH_NOTIFICATION_DATA to token,
+                Api.USER_SETTING_HEMLOCK_PUSH_NOTIFICATION_ENABLED to true,
+            ))
+            account.savedPushNotificationData = token
+            account.savedPushNotificationEnabled = true
+            Result.Success(Unit)
+        } catch (e: Exception) {
+            Result.Error(e)
+        }
+    }
+
     override suspend fun enableCheckoutHistory(account: Account): Result<Unit>
     {
         return try {
@@ -138,6 +154,13 @@ class EvergreenUserService: UserService {
         }
     }
 
+    private suspend fun updatePatronSettings(account: Account, settings: JSONDictionary): String {
+        val (authToken, userID) = account.getCredentialsOrThrow()
+        val params = paramListOf(authToken, userID, settings)
+        val response = XGatewayClient.fetch(Api.ACTOR, Api.PATRON_SETTINGS_UPDATE, params, false)
+        return response.payloadFirstAsString()
+    }
+
     override suspend fun clearCheckoutHistory(account: Account): Result<Unit> {
         return try {
             val (authToken, _) = account.getCredentialsOrThrow()
@@ -156,41 +179,40 @@ class EvergreenUserService: UserService {
         }
     }
 
-    override suspend fun updatePushNotificationToken(account: Account, token: String?): Result<Unit> {
+    override suspend fun fetchPatronMessages(account: Account): Result<List<PatronMessage>> {
         return try {
-            updatePatronSettings(account, jsonMapOf(
-                Api.USER_SETTING_HEMLOCK_PUSH_NOTIFICATION_DATA to token,
-                Api.USER_SETTING_HEMLOCK_PUSH_NOTIFICATION_ENABLED to true,
-            ))
-            account.savedPushNotificationData = token
-            account.savedPushNotificationEnabled = true
-            Result.Success(Unit)
+            Result.Success(fetchPatronMessagesImpl(account))
         } catch (e: Exception) {
             Result.Error(e)
         }
     }
 
-    override suspend fun fetchPatronMessages(account: Account): Result<List<PatronMessage>> {
-        TODO("Not yet implemented")
-    }
-
-    override suspend fun markMessageRead(account: Account?, id: Int): Result<Unit> {
-        TODO("Not yet implemented")
-    }
-
-    override suspend fun markMessageUnread(account: Account?, id: Int): Result<Unit> {
-        TODO("Not yet implemented")
-    }
-
-    override suspend fun markMessageDeleted(account: Account?, id: Int): Result<Unit> {
-        TODO("Not yet implemented")
-    }
-
-    private suspend fun updatePatronSettings(account: Account, settings: JSONDictionary): String {
+    private suspend fun fetchPatronMessagesImpl(account: Account): List<PatronMessage> {
         val (authToken, userID) = account.getCredentialsOrThrow()
-        val params = paramListOf(authToken, userID, settings)
-        val response = XGatewayClient.fetch(Api.ACTOR, Api.PATRON_SETTINGS_UPDATE, params, false)
-        return response.payloadFirstAsString()
+        val params = paramListOf(authToken, userID, null)
+        val response = XGatewayClient.fetch(Api.ACTOR, Api.MESSAGES_RETRIEVE, params, false)
+        return EvergreenPatronMessage.makeArray(response.payloadFirstAsObjectList())
+    }
+
+    override suspend fun markMessageRead(account: Account, id: Int): Result<Unit> =
+        markMessageAction(account, id, "mark_read")
+
+    override suspend fun markMessageUnread(account: Account, id: Int): Result<Unit> =
+        markMessageAction(account, id, "mark_unread")
+
+    override suspend fun markMessageDeleted(account: Account, id: Int): Result<Unit> =
+        markMessageAction(account, id, "mark_deleted")
+
+    private suspend fun markMessageAction(account: Account, messageId: Int, action: String): Result<Unit> {
+        return try {
+            val (authToken, _) = account.getCredentialsOrThrow()
+            val url = XGatewayClient.getUrl("/eg/opac/myopac/messages?action=$action&message_id=$messageId")
+            val response = XGatewayClient.getOPAC(url, authToken, false)
+            response.discardResponseBody()
+            Result.Success(Unit)
+        } catch (e: Exception) {
+            Result.Error(e)
+        }
     }
 
     companion object {
