@@ -17,6 +17,7 @@
 
 package net.kenstir.hemlock.net
 
+import net.kenstir.hemlock.data.PatronMessage
 import net.kenstir.hemlock.data.Result
 import net.kenstir.hemlock.data.model.Account
 import net.kenstir.hemlock.data.model.PatronList
@@ -38,4 +39,9 @@ interface UserService {
     suspend fun disableCheckoutHistory(account: Account): Result<Unit>
     suspend fun clearCheckoutHistory(account: Account): Result<Unit>
     suspend fun updatePushNotificationToken(account: Account, token: String?): Result<Unit>
+
+    suspend fun fetchPatronMessages(account: Account): Result<List<PatronMessage>>
+    suspend fun markMessageRead(account: Account?, id: Int): Result<Unit>
+    suspend fun markMessageUnread(account: Account?, id: Int): Result<Unit>
+    suspend fun markMessageDeleted(account: Account?, id: Int): Result<Unit>
 }

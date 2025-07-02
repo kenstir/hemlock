@@ -18,13 +18,13 @@
 package org.evergreen_ils.data
 
 import net.kenstir.hemlock.data.jsonMapOf
+import org.evergreen_ils.xdata.XOSRFObject
 import org.junit.Assert.*
 import org.junit.Test
-import org.opensrf.util.OSRFObject
 
 class PatronMessageTest {
 
-    val unreadMessage = OSRFObject(
+    val unreadMessage = XOSRFObject(
         jsonMapOf(
         "id" to 28295855,
         "deleted" to "f",
@@ -35,7 +35,7 @@ class PatronMessageTest {
         "read_date" to null
     )
     )
-    val readMessage = OSRFObject(
+    val readMessage = XOSRFObject(
         jsonMapOf(
         "id" to 28229453,
         "deleted" to "f",
@@ -46,7 +46,7 @@ class PatronMessageTest {
         "read_date" to "2022-05-28T12:17:47-0400"
     )
     )
-    val deletedMessage = OSRFObject(
+    val deletedMessage = XOSRFObject(
         jsonMapOf(
         "id" to 11777013,
         "deleted" to "t",
@@ -57,7 +57,7 @@ class PatronMessageTest {
         "read_date" to "2020-08-19T11:00:00-0400"
     )
     )
-    val hiddenMessage = OSRFObject(
+    val hiddenMessage = XOSRFObject(
         jsonMapOf(
         "id" to 20249966,
         "deleted" to "t",
@@ -71,7 +71,7 @@ class PatronMessageTest {
 
     @Test
     fun test_makeArray() {
-        val msgs = PatronMessage.makeArray(arrayListOf(unreadMessage, readMessage, deletedMessage, hiddenMessage))
+        val msgs = EvergreenPatronMessage.makeArray(arrayListOf(unreadMessage, readMessage, deletedMessage, hiddenMessage))
         assertEquals(4, msgs.size)
 
         var msg = msgs[0]

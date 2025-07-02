@@ -18,6 +18,7 @@
 package org.evergreen_ils.net
 
 import net.kenstir.hemlock.data.JSONDictionary
+import net.kenstir.hemlock.data.PatronMessage
 import net.kenstir.hemlock.data.Result
 import net.kenstir.hemlock.data.jsonMapOf
 import net.kenstir.hemlock.data.model.Account
@@ -167,6 +168,22 @@ class EvergreenUserService: UserService {
         } catch (e: Exception) {
             Result.Error(e)
         }
+    }
+
+    override suspend fun fetchPatronMessages(account: Account): Result<List<PatronMessage>> {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun markMessageRead(account: Account?, id: Int): Result<Unit> {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun markMessageUnread(account: Account?, id: Int): Result<Unit> {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun markMessageDeleted(account: Account?, id: Int): Result<Unit> {
+        TODO("Not yet implemented")
     }
 
     private suspend fun updatePatronSettings(account: Account, settings: JSONDictionary): String {

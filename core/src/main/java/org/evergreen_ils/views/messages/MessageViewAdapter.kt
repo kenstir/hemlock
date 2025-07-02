@@ -25,7 +25,8 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import net.kenstir.hemlock.R
-import org.evergreen_ils.data.PatronMessage
+import net.kenstir.hemlock.data.PatronMessage
+import org.evergreen_ils.data.EvergreenPatronMessage
 import java.text.DateFormat
 
 class MessageViewAdapter(private val items: List<PatronMessage>) : RecyclerView.Adapter<MessageViewAdapter.ViewHolder>() {
@@ -54,7 +55,7 @@ class MessageViewAdapter(private val items: List<PatronMessage>) : RecyclerView.
             }
         }
     }
-    
+
     // Create new views (invoked by the layout manager)
     override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): ViewHolder {
         val v = LayoutInflater.from(viewGroup.context)

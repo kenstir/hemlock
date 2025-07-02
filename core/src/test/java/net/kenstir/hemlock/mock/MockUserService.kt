@@ -17,6 +17,7 @@
 
 package net.kenstir.hemlock.mock
 
+import net.kenstir.hemlock.data.PatronMessage
 import net.kenstir.hemlock.data.Result
 import net.kenstir.hemlock.data.model.Account
 import net.kenstir.hemlock.data.model.PatronList
@@ -45,6 +46,38 @@ class MockUserService: UserService {
         patronList: PatronList,
         queryForVisibleItems: Boolean
     ): Result<Unit> {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun enableCheckoutHistory(account: Account): Result<Unit> {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun disableCheckoutHistory(account: Account): Result<Unit> {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun clearCheckoutHistory(account: Account): Result<Unit> {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun updatePushNotificationToken(account: Account, token: String?): Result<Unit> {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun fetchPatronMessages(account: Account): Result<List<PatronMessage>> {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun markMessageRead(account: Account?, id: Int): Result<Unit> {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun markMessageUnread(account: Account?, id: Int): Result<Unit> {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun markMessageDeleted(account: Account?, id: Int): Result<Unit> {
         TODO("Not yet implemented")
     }
 }

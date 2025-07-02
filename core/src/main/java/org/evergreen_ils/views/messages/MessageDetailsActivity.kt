@@ -26,7 +26,7 @@ import kotlinx.coroutines.async
 import net.kenstir.hemlock.R
 import net.kenstir.hemlock.android.App
 import net.kenstir.hemlock.android.Key
-import org.evergreen_ils.data.PatronMessage
+import org.evergreen_ils.data.EvergreenPatronMessage
 import net.kenstir.hemlock.data.Result
 import org.evergreen_ils.net.Gateway
 import net.kenstir.hemlock.android.ui.ActionBarUtils
@@ -38,7 +38,7 @@ import java.text.DateFormat
 class MessageDetailsActivity : BaseActivity() {
     val TAG = javaClass.simpleName
 
-    private lateinit var message: PatronMessage
+    private lateinit var message: EvergreenPatronMessage
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,7 +47,7 @@ class MessageDetailsActivity : BaseActivity() {
         setContentView(R.layout.activity_message_details)
         ActionBarUtils.initActionBarForActivity(this)
 
-        message = intent.getSerializableExtra(Key.PATRON_MESSAGE) as PatronMessage
+        message = intent.getSerializableExtra(Key.PATRON_MESSAGE) as EvergreenPatronMessage
 
         val title = findViewById<TextView>(R.id.message_title)
         val date = findViewById<TextView>(R.id.message_date)
