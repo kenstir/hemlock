@@ -49,6 +49,7 @@ import org.evergreen_ils.HOLD_TYPE_TITLE
 import org.evergreen_ils.HOLD_TYPE_VOLUME
 import org.evergreen_ils.data.MBRecord
 import net.kenstir.hemlock.android.Analytics
+import net.kenstir.hemlock.android.Key
 import net.kenstir.hemlock.logging.Log
 import org.evergreen_ils.utils.ui.BaseActivity
 import net.kenstir.hemlock.android.ui.ProgressDialogSupport
@@ -284,7 +285,7 @@ class HoldsActivity : BaseActivity() {
 
     private fun editHold(record: HoldRecord) {
         val intent = Intent(applicationContext, HoldDetailsActivity::class.java)
-        intent.putExtra("holdRecord", record)
+        intent.putExtra(Key.HOLD_RECORD, record)
         // request code does not matter, but we use the result code
         startActivityForResult(intent, 0)
     }

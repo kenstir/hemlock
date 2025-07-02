@@ -28,6 +28,7 @@ import androidx.recyclerview.widget.RecyclerView
 import kotlinx.coroutines.async
 import net.kenstir.hemlock.R
 import net.kenstir.hemlock.android.App
+import net.kenstir.hemlock.android.Key
 import net.kenstir.hemlock.logging.Log
 import net.kenstir.hemlock.android.ui.ItemClickSupport
 import net.kenstir.hemlock.android.ui.ProgressDialogSupport
@@ -172,7 +173,7 @@ class MessagesActivity : BaseActivity() {
 
     private fun viewMessage(message: PatronMessage) {
         val intent = Intent(this, MessageDetailsActivity::class.java)
-        intent.putExtra("patronMessage", message)
+        intent.putExtra(Key.PATRON_MESSAGE, message)
         startActivityForResult(intent, 0)
     }
 
