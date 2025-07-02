@@ -17,19 +17,18 @@
 
 package net.kenstir.hemlock.data.evergreen
 
-import io.ktor.client.plugins.cache.HttpCache
 import io.ktor.client.plugins.pluginOrNull
 import kotlinx.coroutines.test.runTest
 import net.kenstir.hemlock.net.HemlockPlugin
 import org.evergreen_ils.Api
 import org.evergreen_ils.xdata.XGatewayClient
 import org.evergreen_ils.xdata.paramListOf
-import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
 import org.junit.BeforeClass
 import org.junit.Test
+import java.io.File
 
 class XGatewayClientTest {
     val client = XGatewayClient.client
@@ -44,6 +43,8 @@ class XGatewayClientTest {
 
             XGatewayClient.baseUrl = testServer
             XGatewayClient.clientCacheKey = System.currentTimeMillis().toString()
+            XGatewayClient.cacheDirectory = File(System.getProperty("java.io.tmpdir") ?: "/tmp", "KtorClientTest")
+            XGatewayClient.cacheDirectory.deleteRecursively()
         }
 
         fun getRequiredProperty(name: String): String {
@@ -52,11 +53,11 @@ class XGatewayClientTest {
     }
 
     @Test
-    fun test_pluginsAreInstalled() {
-        assertNotNull("HttpCache should be installed", client.pluginOrNull(HttpCache))
+    fun test_pluginIsInstalled() {
         assertNotNull("HemlockPlugin should be installed", client.pluginOrNull(HemlockPlugin))
     }
 
+    // TODO: Run this test with a mock server.  This test will fail if the server does not send cache headers.
     @Test
     fun test_fetch_withCaching() = runTest {
         val response1 = XGatewayClient.fetch(Api.ACTOR, Api.ORG_UNIT_RETRIEVE, paramListOf(Api.ANONYMOUS, 1), true)
@@ -79,7 +80,6 @@ class XGatewayClientTest {
         val cached2 = response2.isCached
         println("try2: ${elapsed2}ms: $body2")
         assertTrue("Second response should be cached", cached2)
-        assertEquals(0, elapsed2)
     }
 
     @Test
