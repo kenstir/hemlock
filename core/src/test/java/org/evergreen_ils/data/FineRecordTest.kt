@@ -15,15 +15,14 @@
  * along with this program; if not, see <https://www.gnu.org/licenses/>.
  */
 
-package org.evergreen_ils
+package org.evergreen_ils.data
 
-import org.evergreen_ils.data.FineRecord
+import org.evergreen_ils.xdata.XGatewayResult
+import org.evergreen_ils.xdata.XOSRFCoder
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.BeforeClass
 import org.junit.Test
-import org.opensrf.util.GatewayResult
-import org.opensrf.util.OSRFRegistry
 
 class FineRecordTest {
 
@@ -31,12 +30,12 @@ class FineRecordTest {
         @BeforeClass
         @JvmStatic
         fun setUpClass() {
-            val circFields = arrayOf("checkin_lib","checkin_staff","checkin_time","circ_lib","circ_staff","desk_renewal","due_date","duration","duration_rule","fine_interval","id","max_fine","max_fine_rule","opac_renewal","phone_renewal","recurring_fine","recurring_fine_rule","renewal_remaining","grace_period","stop_fines","stop_fines_time","target_copy","usr","xact_finish","xact_start","create_time","workstation","checkin_workstation","checkin_scan_time","parent_circ","billings","payments","billable_transaction","circ_type","billing_total","payment_total","unrecovered","copy_location","aaactsc_entries","aaasc_entries","auto_renewal","auto_renewal_remaining")
-            val mbtsFields = arrayOf("balance_owed","id","last_billing_note","last_billing_ts","last_billing_type","last_payment_note","last_payment_ts","last_payment_type","total_owed","total_paid","usr","xact_finish","xact_start","xact_type")
-            val mvrFields = arrayOf("title","author","doc_id","doc_type","pubdate","isbn","publisher","tcn","subject","types_of_resource","call_numbers","edition","online_loc","synopsis","physical_description","toc","copy_count","series","serials","foreign_copy_maps")
-            OSRFRegistry.registerObject("circ", OSRFRegistry.WireProtocol.ARRAY, circFields)
-            OSRFRegistry.registerObject("mbts", OSRFRegistry.WireProtocol.ARRAY, mbtsFields)
-            OSRFRegistry.registerObject("mvr", OSRFRegistry.WireProtocol.ARRAY, mvrFields)
+            val circFields = listOf("checkin_lib","checkin_staff","checkin_time","circ_lib","circ_staff","desk_renewal","due_date","duration","duration_rule","fine_interval","id","max_fine","max_fine_rule","opac_renewal","phone_renewal","recurring_fine","recurring_fine_rule","renewal_remaining","grace_period","stop_fines","stop_fines_time","target_copy","usr","xact_finish","xact_start","create_time","workstation","checkin_workstation","checkin_scan_time","parent_circ","billings","payments","billable_transaction","circ_type","billing_total","payment_total","unrecovered","copy_location","aaactsc_entries","aaasc_entries","auto_renewal","auto_renewal_remaining")
+            val mbtsFields = listOf("balance_owed","id","last_billing_note","last_billing_ts","last_billing_type","last_payment_note","last_payment_ts","last_payment_type","total_owed","total_paid","usr","xact_finish","xact_start","xact_type")
+            val mvrFields = listOf("title","author","doc_id","doc_type","pubdate","isbn","publisher","tcn","subject","types_of_resource","call_numbers","edition","online_loc","synopsis","physical_description","toc","copy_count","series","serials","foreign_copy_maps")
+            XOSRFCoder.registerClass("circ", circFields)
+            XOSRFCoder.registerClass("mbts", mbtsFields)
+            XOSRFCoder.registerClass("mvr", mvrFields)
         }
     }
 
@@ -46,7 +45,7 @@ class FineRecordTest {
         val json = """
             {"payload":[[]],"status":200}
             """
-        val result = GatewayResult.create(json)
+        val result = XGatewayResult.create(json)
 
         val fines = FineRecord.makeArray(result.payloadFirstAsObjectList())
         assertNotNull(fines)
@@ -59,7 +58,7 @@ class FineRecordTest {
         val json = """
             {"payload":[[{"circ":{"__c":"circ","__p":[null,null,null,69,3788,"f","2019-11-21T23:59:59-0500","21 days","default","1 day",90763841,"1.00","overdue_1","f","f","0.02","02_cent_per_day",1,"00:00:00",null,null,19331811,409071,null,"2019-10-31T13:27:47-0400","2019-10-31T13:27:47-0400",6355,null,null,null,null,null,null,null,null,null,null,614,null,null,"f",1]},"copy":null,"transaction":{"__c":"mbts","__p":["0.42",90763841,"System Generated Overdue Fine","2019-12-14T23:59:59-0500","Overdue materials",null,null,null,"0.42","0.0",409071,null,"2019-10-31T13:27:47-0400","circulation"]},"record":{"__c":"mvr","__p":["The testaments","Atwood, Margaret",4286727,null,"2019","9780385543781",null,"4286727",{"Misogyny":1,"Surrogate mothers":1,"Women":1,"Man-woman relationships":1},["text"],[],"First edition.",[],"yadda yadda yadda.","print x, 419 pages ; 25 cm","Intro -- Finale -- Coda.",null,[]]}}]],"status":200}
             """
-        val result = GatewayResult.create(json)
+        val result = XGatewayResult.create(json)
 
         val fines = FineRecord.makeArray(result.payloadFirstAsObjectList())
         assertEquals(1, fines.size)
@@ -80,7 +79,7 @@ class FineRecordTest {
              {"transaction":{"__c":"mbts","__p":["3.75",221301316,"Photocopies","2021-03-15T09:50:15-0400","Miscellaneous",null,null,null,"3.75","0.0",4212142,null,"2021-03-15T09:50:15-0400","grocery"]}}
             ]],"status":200}
             """
-        val result = GatewayResult.create(json)
+        val result = XGatewayResult.create(json)
 
         val fines = FineRecord.makeArray(result.payloadFirstAsObjectList())
         assertEquals(2, fines.size)
@@ -99,7 +98,7 @@ class FineRecordTest {
         val json = """
             {"payload":[[{"circ":{"__c":"circ","__p":[null,null,null,69,3788,"f","2019-11-21T23:59:59-0500","21 days","default","1 day",90763841,"1.00","overdue_1","f","f","0.02","02_cent_per_day",1,"00:00:00",null,null,19331811,409071,null,"2019-10-31T13:27:47-0400","2019-10-31T13:27:47-0400",6355,null,null,null,null,null,null,null,null,null,null,614,null,null,"f",1]},"copy":null,"transaction":{"__c":"mbts","__p":["0.0",90763841,"System Generated Overdue Fine","2019-12-14T23:59:59-0500","Overdue materials",null,null,null,"0.0","0.0",409071,null,"2019-10-31T13:27:47-0400","circulation"]},"record":{"__c":"mvr","__p":["The testaments","Atwood, Margaret",4286727,null,"2019","9780385543781",null,"4286727",{"Misogyny":1,"Surrogate mothers":1,"Women":1,"Man-woman relationships":1},["text"],[],"First edition.",[],"yadda yadda yadda.","print x, 419 pages ; 25 cm","Intro -- Finale -- Coda.",null,[]]}}]],"status":200}
             """
-        val result = GatewayResult.create(json)
+        val result = XGatewayResult.create(json)
 
         val fines = FineRecord.makeArray(result.asArray())
         assertEquals(1, fines.size)

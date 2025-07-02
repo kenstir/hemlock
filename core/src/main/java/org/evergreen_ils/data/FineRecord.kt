@@ -19,14 +19,13 @@
  */
 package org.evergreen_ils.data
 
-import net.kenstir.hemlock.data.JSONDictionary
 import net.kenstir.hemlock.logging.Log
-import org.opensrf.util.OSRFObject
+import org.evergreen_ils.xdata.XOSRFObject
 import java.util.*
 
 private val TAG = FineRecord::class.java.simpleName
 
-class FineRecord(circ: OSRFObject?, val mvrObj: OSRFObject?, mbtsObj: OSRFObject) {
+class FineRecord(circ: XOSRFObject?, val mvrObj: XOSRFObject?, mbtsObj: XOSRFObject) {
     var title: String? = null
     var subtitle: String? = null
     var balanceOwed: Double? = null
@@ -64,17 +63,14 @@ class FineRecord(circ: OSRFObject?, val mvrObj: OSRFObject?, mbtsObj: OSRFObject
 
     companion object {
         @JvmStatic
-        fun makeArray(payload: List<Any>): List<FineRecord> {
+        fun makeArray(objects: List<XOSRFObject>): List<FineRecord> {
             val ret = mutableListOf<FineRecord>()
-            val records = payload as? List<JSONDictionary> // TODO X: use XOSRFObject instead of JSONDictionary
-            if (records != null) {
-                for (item in records) {
-                    val mbts = item["transaction"] as? OSRFObject ?: continue
-                    val circ = item["circ"] as? OSRFObject
-                    val mvr = item["record"] as? OSRFObject
-                    val record = FineRecord(circ, mvr, mbts)
-                    ret.add(record)
-                }
+            for (item in objects) {
+                val mbts = item["transaction"] as? XOSRFObject ?: continue
+                val circ = item["circ"] as? XOSRFObject
+                val mvr = item["record"] as? XOSRFObject
+                val record = FineRecord(circ, mvr, mbts)
+                ret.add(record)
             }
             return ret
         }
