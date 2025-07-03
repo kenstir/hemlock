@@ -40,7 +40,7 @@ import net.kenstir.hemlock.android.ui.ActionBarUtils
 import net.kenstir.hemlock.android.ui.ProgressDialogSupport
 import net.kenstir.hemlock.android.ui.showAlert
 import org.evergreen_ils.system.EgOrg
-import org.evergreen_ils.data.HoldRecord
+import org.evergreen_ils.data.EvergreenHoldRecord
 import net.kenstir.hemlock.data.Result
 import org.evergreen_ils.net.Gateway
 import org.evergreen_ils.utils.ui.*
@@ -65,7 +65,7 @@ class HoldDetailsActivity : BaseActivity() {
         ActionBarUtils.initActionBarForActivity(this)
         progress = ProgressDialogSupport()
 
-        val record = intent.getSerializableExtra(Key.HOLD_RECORD) as HoldRecord
+        val record = intent.getSerializableExtra(Key.HOLD_RECORD) as EvergreenHoldRecord
 
         val title = findViewById<TextView>(R.id.hold_title)
         val author = findViewById<TextView>(R.id.hold_author)
@@ -154,11 +154,11 @@ class HoldDetailsActivity : BaseActivity() {
         super.onDestroy()
     }
 
-    private fun cancelHold(record: HoldRecord) {
+    private fun cancelHold(record: EvergreenHoldRecord) {
         scope.async {
             progress?.show(this@HoldDetailsActivity, getString(R.string.msg_canceling_hold))
 
-            val holdId = record.ahr.getInt("id") ?: 0
+            val holdId = record.ahrObj.getInt("id") ?: 0
             val result = Gateway.circ.cancelHoldAsync(App.getAccount(), holdId)
             progress?.dismiss()
             Analytics.logEvent(Analytics.Event.HOLD_CANCEL_HOLD, bundleOf(
@@ -176,7 +176,7 @@ class HoldDetailsActivity : BaseActivity() {
         }
     }
 
-    private fun updateHold(record: HoldRecord) {
+    private fun updateHold(record: EvergreenHoldRecord) {
         scope.async {
             progress?.show(this@HoldDetailsActivity, getString(R.string.msg_updating_hold))
             var expireDateApi: String? = null
@@ -184,7 +184,7 @@ class HoldDetailsActivity : BaseActivity() {
             if (expireDate != null) expireDateApi = OSRFUtils.formatDate(expireDate)
             if (thawDate != null) thawDateApi = OSRFUtils.formatDate(thawDate)
 
-            val holdId = record.ahr.getInt("id") ?: 0
+            val holdId = record.ahrObj.getInt("id") ?: 0
             val orgId = EgOrg.visibleOrgs[selectedOrgPos].id
             val result = Gateway.circ.updateHoldAsync(App.getAccount(), holdId,
                     orgId, expireDateApi, suspendHold!!.isChecked, thawDateApi)

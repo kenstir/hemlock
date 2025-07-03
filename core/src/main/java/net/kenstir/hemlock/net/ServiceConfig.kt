@@ -19,6 +19,7 @@ package net.kenstir.hemlock.net
 
 import org.evergreen_ils.net.EvergreenAuthService
 import org.evergreen_ils.net.EvergreenBiblioService
+import org.evergreen_ils.net.EvergreenCircService
 import org.evergreen_ils.net.EvergreenLoaderService
 import org.evergreen_ils.net.EvergreenOrgService
 import org.evergreen_ils.net.EvergreenSearchService
@@ -29,6 +30,7 @@ class ServiceConfig(
     val loaderService: LoaderService = EvergreenLoaderService(),
     val authService: AuthService = EvergreenAuthService(),
     val biblioService: BiblioService = EvergreenBiblioService(),
+    val circService: CircService = EvergreenCircService(),
     val searchService: SearchService = EvergreenSearchService(),
     val userService: UserService = EvergreenUserService(),
     val orgService: OrgService = EvergreenOrgService,
