@@ -25,37 +25,39 @@ import android.content.res.Resources
 import org.evergreen_ils.HOLD_TYPE_METARECORD
 import net.kenstir.hemlock.R
 import net.kenstir.hemlock.data.JSONDictionary
+import net.kenstir.hemlock.data.model.BibRecord
+import net.kenstir.hemlock.data.model.HoldRecord
 import org.evergreen_ils.system.EgCodedValueMap.iconFormatLabel
-import org.opensrf.util.OSRFObject
 import org.evergreen_ils.system.EgOrg
 import org.evergreen_ils.utils.JsonUtils
 import org.evergreen_ils.utils.TextUtils
 import org.evergreen_ils.xdata.XOSRFObject
-import java.io.Serializable
 import java.text.DateFormat
 import java.util.*
 
-class HoldRecord(val ahr: OSRFObject) : Serializable {
-    var record: MBRecord? = null
-    var qstatsObj: OSRFObject? = null
+class EvergreenHoldRecord(val ahrObj: XOSRFObject) : HoldRecord {
+    override val id: Int
+        get() = ahrObj.getInt("id") ?: 0
+    override var record: BibRecord? = null
+    var qstatsObj: XOSRFObject? = null
     var partLabel: String? = null // only for HOLD_TYPE_PART
 
-    private val transitFrom: String?
+    override val transitFrom: String?
         get() {
-            val transit = ahr["transit"] as? OSRFObject ?: return null
+            val transit = ahrObj["transit"] as? XOSRFObject ?: return null
             val source = transit.getInt("source") ?: return null
             return EgOrg.getOrgNameSafe(source)
         }
-    private val transitSince: String?
+    override val transitSince: String?
         get() {
-            val transit = ahr["transit"] as? OSRFObject ?: return null
+            val transit = ahrObj["transit"] as? XOSRFObject ?: return null
             val sent = transit.getDate("source_send_time") ?: return null
             return OSRFUtils.formatDateTimeForOutput(sent)
         }
 
     // Retrieve hold status in text
     @SuppressLint("StringFormatInvalid")
-    fun getHoldStatus(res: Resources): String {
+    override fun getHoldStatus(res: Resources): String {
         // Constants from Holds.pm and logic from hold_status.tt2
         // -1 on error (for now),
         //  1 for 'waiting for copy to become available',
@@ -94,38 +96,38 @@ class HoldRecord(val ahr: OSRFObject) : Serializable {
         }
     }
 
-    val holdType: String
-        get() = ahr.getString("hold_type", "?")!!
+    override val holdType: String
+        get() = ahrObj.getString("hold_type", "?")!!
 
     private fun withPartLabel(title: String): String {
-        return if (!TextUtils.isEmpty(partLabel)) "$title ($partLabel)" else title
+        return if (!partLabel.isNullOrEmpty()) "$title ($partLabel)" else title
     }
 
-    val title: String
+    override val title: String
         get() = if (record != null && !TextUtils.isEmpty(record!!.title)) withPartLabel(
             record!!.title
         ) else "Unknown title"
-    val author: String
+    override val author: String
         get() = if (record != null && !TextUtils.isEmpty(record!!.author)) record!!.author else ""
-    val expireTime: Date?
-        get() = ahr.getDate("expire_time")
-    val shelfExpireTime: Date?
-        get() = ahr.getDate("shelf_expire_time")
-    val thawDate: Date?
-        get() = ahr.getDate("thaw_date")
-    val target: Int?
-        get() = ahr.getInt("target")
-    val isEmailNotify: Boolean
-        get() = ahr.getBoolean("email_notify")
-    val phoneNotify: String?
-        get() = ahr.getString("phone_notify")
-    val smsNotify: String?
-        get() = ahr.getString("sms_notify")
-    val isSuspended: Boolean
-        get() = ahr.getBoolean("frozen")
+    override val expireTime: Date?
+        get() = ahrObj.getDate("expire_time")
+    override val shelfExpireTime: Date?
+        get() = ahrObj.getDate("shelf_expire_time")
+    override val thawDate: Date?
+        get() = ahrObj.getDate("thaw_date")
+    override val target: Int?
+        get() = ahrObj.getInt("target")
+    override val isEmailNotify: Boolean
+        get() = ahrObj.getBoolean("email_notify")
+    override val phoneNotify: String?
+        get() = ahrObj.getString("phone_notify")
+    override val smsNotify: String?
+        get() = ahrObj.getString("sms_notify")
+    override val isSuspended: Boolean
+        get() = ahrObj.getBoolean("frozen")
     val pickupLib: Int?
-        get() = ahr.getInt("pickup_lib")
-    val pickupOrgName: String
+        get() = ahrObj.getInt("pickup_lib")
+    override val pickupOrgName: String
         get() = EgOrg.getOrgNameSafe(pickupLib)
     val status: Int?
         get() = qstatsObj?.getInt("status")
@@ -133,16 +135,16 @@ class HoldRecord(val ahr: OSRFObject) : Serializable {
         get() = qstatsObj?.getInt("potential_copies")
     val estimatedWaitInSeconds: Int?
         get() = qstatsObj?.getInt("estimated_wait")
-    val queuePosition: Int?
+    override val queuePosition: Int?
         get() = qstatsObj?.getInt("queue_position")
-    val totalHolds: Int?
+    override val totalHolds: Int?
         get() = qstatsObj?.getInt("total_holds")
-    val formatLabel: String?
+    override val formatLabel: String?
         get() {
             if (holdType == HOLD_TYPE_METARECORD) {
                 TODO("verify that this parsing still works for metarecord holds, then fix HoldRecordTest.kt")
                 val map = JsonUtils.parseObject(
-                    ahr.getString("holdable_formats")
+                    ahrObj.getString("holdable_formats")
                 )
                 val labels: MutableList<String?> = ArrayList()
                 for (format in parseHoldableFormats(map)) {
@@ -154,10 +156,10 @@ class HoldRecord(val ahr: OSRFObject) : Serializable {
         }
 
     companion object {
-        fun makeArray(ahr_objects: List<OSRFObject>): ArrayList<HoldRecord> {
-            val ret = ArrayList<HoldRecord>()
-            for (ahr_obj in ahr_objects) {
-                ret.add(HoldRecord(ahr_obj))
+        fun makeArray(ahr_objects: List<XOSRFObject>): ArrayList<EvergreenHoldRecord> {
+            val ret = ArrayList<EvergreenHoldRecord>()
+            for (obj in ahr_objects) {
+                ret.add(EvergreenHoldRecord(obj))
             }
             return ret
         }

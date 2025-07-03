@@ -75,11 +75,20 @@ object GatewayCirc : CircService {
     }
 
     // targetId - titleId for Title hold, partId for Part hold
-    override suspend fun placeHoldAsync(account: Account, holdType: String, targetId: Int,
-                                        pickupLib: Int, emailNotify: Boolean,
-                                        phoneNotify: String?, smsNotify: String?,
-                                        smsCarrierId: Int?, expireTime: String?, suspendHold: Boolean,
-                                        thawDate: String?, useOverride: Boolean): Result<OSRFObject> {
+    override suspend fun placeHoldAsync(
+        account: Account,
+        holdType: String,
+        targetId: Int,
+        pickupLib: Int,
+        emailNotify: Boolean,
+        phoneNotify: String?,
+        smsNotify: String?,
+        smsCarrierId: Int?,
+        expireTime: String?,
+        suspendHold: Boolean,
+        thawDate: String?,
+        useOverride: Boolean
+    ): Result<OSRFObject> {
         return try {
             val (authToken, userID) = account.getCredentialsOrThrow()
             var param = mutableMapOf(

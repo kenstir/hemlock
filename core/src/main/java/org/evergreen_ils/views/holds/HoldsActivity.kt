@@ -36,9 +36,7 @@ import kotlinx.coroutines.joinAll
 import net.kenstir.hemlock.R
 import net.kenstir.hemlock.android.App
 import net.kenstir.hemlock.data.model.Account
-import org.evergreen_ils.data.HoldRecord
 import net.kenstir.hemlock.data.Result
-import org.evergreen_ils.net.Gateway
 import org.evergreen_ils.net.GatewayError
 import org.evergreen_ils.HOLD_TYPE_COPY
 import org.evergreen_ils.HOLD_TYPE_FORCE
@@ -57,12 +55,13 @@ import net.kenstir.hemlock.android.ui.showAlert
 import org.evergreen_ils.views.search.RecordDetails
 import net.kenstir.hemlock.data.ShouldNotHappenException
 import net.kenstir.hemlock.data.model.BibRecord
+import net.kenstir.hemlock.data.model.HoldRecord
 import java.util.ArrayList
 
 class HoldsActivity : BaseActivity() {
     private var lv: ListView? = null
     private var listAdapter: HoldsArrayAdapter? = null
-    private var holdRecords = mutableListOf<HoldRecord>()
+    private var holdRecords = listOf<HoldRecord>()
     private var holdsSummary: TextView? = null
     private var progress: ProgressDialogSupport? = null
 
@@ -117,10 +116,10 @@ class HoldsActivity : BaseActivity() {
                 progress?.show(this@HoldsActivity, getString(R.string.msg_loading_holds))
 
                 // fetchHolds
-                val result = Gateway.circ.fetchHolds(App.getAccount())
+                val result = App.getServiceConfig().circService.fetchHolds(App.getAccount())
                 when (result) {
                     is Result.Success ->
-                        holdRecords = HoldRecord.makeArray(result.data)
+                        holdRecords = result.get()
                     is Result.Error -> {
                         showAlert(result.exception)
                         return@async
@@ -151,39 +150,42 @@ class HoldsActivity : BaseActivity() {
     }
 
     suspend fun fetchHoldQueueStats(hold: HoldRecord, account: Account): Result<Unit> {
-        val id = hold.ahr.getInt("id") ?: return Result.Error(GatewayError("null hold id"))
-        val result = Gateway.circ.fetchHoldQueueStats(account, id)
-        return when (result) {
-            is Result.Success -> {
-                hold.qstatsObj = result.data
-                Result.Success(Unit)
-            }
-            is Result.Error -> result
-        }
+//        val id = hold.ahrObj.getInt("id") ?: return Result.Error(GatewayError("null hold id"))
+//        val result = Gateway.circ.fetchHoldQueueStats(account, id)
+//        return when (result) {
+//            is Result.Success -> {
+//                hold.qstatsObj = result.data
+//                Result.Success(Unit)
+//            }
+//            is Result.Error -> result
+//        }
+        return Result.Success(Unit)
     }
 
     suspend fun fetchHoldTargetDetails(hold: HoldRecord, account: Account): Result<Unit> {
         val target = hold.target ?: return Result.Error(GatewayError("null hold target"))
-        val result = when (hold.holdType) {
-            HOLD_TYPE_TITLE ->
-                fetchTitleHoldTargetDetails(hold, target, account)
-            HOLD_TYPE_METARECORD ->
-                fetchMetarecordHoldTargetDetails(hold, target, account)
-            HOLD_TYPE_PART ->
-                fetchPartHoldTargetDetails(hold, target, account)
-            HOLD_TYPE_COPY, HOLD_TYPE_FORCE, HOLD_TYPE_RECALL ->
-                fetchCopyHoldTargetDetails(hold, target, account)
-            HOLD_TYPE_VOLUME ->
-                fetchVolumeHoldTargetDetails(hold, target, account)
-            else -> {
-                Analytics.logException(ShouldNotHappenException("unexpected holdType:${hold.holdType}"))
-                Result.Error(GatewayError("unexpected hold type: ${hold.holdType}"))
-            }
-        }
-        Log.d(TAG, "$target: holdType:${hold.holdType} format:${hold.formatLabel} title:${hold.record?.title}")
-        return result
+//        val result = when (hold.holdType) {
+//            HOLD_TYPE_TITLE ->
+//                fetchTitleHoldTargetDetails(hold, target, account)
+//            HOLD_TYPE_METARECORD ->
+//                fetchMetarecordHoldTargetDetails(hold, target, account)
+//            HOLD_TYPE_PART ->
+//                fetchPartHoldTargetDetails(hold, target, account)
+//            HOLD_TYPE_COPY, HOLD_TYPE_FORCE, HOLD_TYPE_RECALL ->
+//                fetchCopyHoldTargetDetails(hold, target, account)
+//            HOLD_TYPE_VOLUME ->
+//                fetchVolumeHoldTargetDetails(hold, target, account)
+//            else -> {
+//                Analytics.logException(ShouldNotHappenException("unexpected holdType:${hold.holdType}"))
+//                Result.Error(GatewayError("unexpected hold type: ${hold.holdType}"))
+//            }
+//        }
+//        Log.d(TAG, "$target: holdType:${hold.holdType} format:${hold.formatLabel} title:${hold.record?.title}")
+//        return result
+        return Result.Success(Unit)
     }
 
+    /*
     private suspend fun fetchTitleHoldTargetDetails(hold: HoldRecord, target: Int, account: Account): Result<Unit> {
         val modsResult = Gateway.search.fetchRecordMODS(target)
         if (modsResult is Result.Error) return modsResult
@@ -274,6 +276,7 @@ class HoldsActivity : BaseActivity() {
 
         return Result.Success(Unit)
     }
+*/
 
     private fun updateHoldsList() {
         listAdapter?.clear()

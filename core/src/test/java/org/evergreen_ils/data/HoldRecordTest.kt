@@ -19,15 +19,14 @@ package org.evergreen_ils.data
 
 import net.kenstir.hemlock.data.jsonMapOf
 import org.evergreen_ils.utils.JsonUtils
+import org.evergreen_ils.xdata.XOSRFObject
 import org.junit.Assert.*
 import org.junit.Test
-import org.opensrf.util.JSONReader
-import org.opensrf.util.OSRFObject
 
 class HoldRecordTest {
     @Test
     fun test_makeArray() {
-        val ahrObj = OSRFObject(
+        val ahrObj = XOSRFObject(
             jsonMapOf(
                 "id" to 14154079,
                 "email_notify" to "t",
@@ -41,9 +40,9 @@ class HoldRecordTest {
                 "target" to "4190606",
                 "thaw_date" to null,
                 "transit" to null
+            )
         )
-        )
-        val holdRecords = HoldRecord.makeArray(listOf(ahrObj))
+        val holdRecords = EvergreenHoldRecord.makeArray(listOf(ahrObj))
         assertEquals(1, holdRecords.size)
         val hold = holdRecords.firstOrNull()
         assertNotNull(hold)
@@ -68,25 +67,25 @@ class HoldRecordTest {
 
     @Test
     fun test_available() {
-        val transitObj = OSRFObject(
+        val transitObj = XOSRFObject(
             jsonMapOf(
                 "dest_recv_time" to "2020-01-06T11:49:20-0500",
                 "source_send_time" to "2020-01-03T10:33:22-0500",
                 "source" to 91,
                 "dest" to 69,
                 "id" to 27489477
+            )
         )
-        )
-        val qstatsObj = OSRFObject(
+        val qstatsObj = XOSRFObject(
             jsonMapOf(
                 "estimated_wait" to 0,
                 "potential_copies" to 12,
                 "queue_position" to 2,
                 "status" to 4,
                 "total_holds" to 3
+            )
         )
-        )
-        val ahrObj = OSRFObject(
+        val ahrObj = XOSRFObject(
             jsonMapOf(
                 "id" to 15427596,
                 "email_notify" to "t",
@@ -95,9 +94,9 @@ class HoldRecordTest {
                 "pickup_lib" to 69,
                 "target" to 3870376,
                 "transit" to transitObj
+            )
         )
-        )
-        val hold = HoldRecord(ahrObj)
+        val hold = EvergreenHoldRecord(ahrObj)
         hold.qstatsObj = qstatsObj
 
         assertEquals(0, hold.estimatedWaitInSeconds)
@@ -109,24 +108,24 @@ class HoldRecordTest {
 
     @Test
     fun test_inTransit() {
-        val transitObj = OSRFObject(
+        val transitObj = XOSRFObject(
             jsonMapOf(
                 "id" to 27468839,
                 "source" to 154,
                 "dest" to 69,
                 "source_send_time" to "2020-01-02T09:54:39-0500"
+            )
         )
-        )
-        val qstatsObj = OSRFObject(
+        val qstatsObj = XOSRFObject(
             jsonMapOf(
                 "estimated_wait" to 0,
                 "potential_copies" to 1,
                 "queue_position" to 1,
                 "status" to 3,
                 "total_holds" to 2
+            )
         )
-        )
-        val ahrObj = OSRFObject(
+        val ahrObj = XOSRFObject(
             jsonMapOf(
                 "id" to 15368911,
                 "email_notify" to "t",
@@ -137,9 +136,9 @@ class HoldRecordTest {
                 "sms_notify" to "5085551212",
                 "target" to 2722036,
                 "transit" to transitObj
+            )
         )
-        )
-        val hold = HoldRecord(ahrObj)
+        val hold = EvergreenHoldRecord(ahrObj)
         hold.qstatsObj = qstatsObj
 
         assertEquals("5085551212", hold.phoneNotify)
@@ -157,16 +156,16 @@ class HoldRecordTest {
 
     @Test
     fun test_waitingForCopy() {
-        val qstatsObj = OSRFObject(
+        val qstatsObj = XOSRFObject(
             jsonMapOf(
                 "estimated_wait" to 0,
                 "potential_copies" to 2,
                 "queue_position" to 1,
                 "status" to 2,
                 "total_holds" to 3
+            )
         )
-        )
-        val ahrObj = OSRFObject(
+        val ahrObj = XOSRFObject(
             jsonMapOf(
                 "id" to 15368911,
                 "email_notify" to "t",
@@ -178,9 +177,9 @@ class HoldRecordTest {
                 "shelf_expire_time" to null,
                 "sms_notify" to "5085551212",
                 "target" to 2722036
+            )
         )
-        )
-        val hold = HoldRecord(ahrObj)
+        val hold = EvergreenHoldRecord(ahrObj)
         hold.qstatsObj = qstatsObj
 
         assertEquals(2, hold.status)
@@ -192,7 +191,7 @@ class HoldRecordTest {
             {"0":[{"_attr":"mr_hold_format","_val":"book"},{"_attr":"mr_hold_format","_val":"lpbook"}],"1":[{"_attr":"item_lang","_val":"eng"}]}
             """
         val map = JsonUtils.parseObject(holdable_formats)
-        val formats = HoldRecord.parseHoldableFormats(map)
+        val formats = EvergreenHoldRecord.parseHoldableFormats(map)
         assertEquals(2, formats.size)
         assertEquals(arrayListOf("book","lpbook"), formats)
     }
