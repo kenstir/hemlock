@@ -142,30 +142,24 @@ class EvergreenHoldRecord(val ahrObj: XOSRFObject) : HoldRecord {
     override val formatLabel: String?
         get() {
             if (holdType == HOLD_TYPE_METARECORD) {
-                TODO("verify that this parsing still works for metarecord holds, then fix HoldRecordTest.kt")
-                val map = JsonUtils.parseObject(
-                    ahrObj.getString("holdable_formats")
-                )
-                val labels: MutableList<String?> = ArrayList()
-                for (format in parseHoldableFormats(map)) {
-                    labels.add(iconFormatLabel(format))
-                }
-                return android.text.TextUtils.join(" or ", labels)
+                val dict = JsonUtils.parseObject(ahrObj.getString("holdable_formats"))
+                val codes = parseHoldableFormats(dict)
+                val labels = codes.map { iconFormatLabel(it) }
+                return labels.joinToString(" or ")
             }
             return record?.iconFormatLabel
         }
 
     companion object {
-        fun makeArray(ahr_objects: List<XOSRFObject>): ArrayList<EvergreenHoldRecord> {
+        fun makeArray(objects: List<XOSRFObject>): ArrayList<EvergreenHoldRecord> {
             val ret = ArrayList<EvergreenHoldRecord>()
-            for (obj in ahr_objects) {
+            for (obj in objects) {
                 ret.add(EvergreenHoldRecord(obj))
             }
             return ret
         }
 
         /** Parse a metarecord hold attribute "holdable_formats" into a list of ccvm codes */
-        // TODO(data): Make sure this still works.  I don't remember how to place a Metarecord hold.
         fun parseHoldableFormats(dict: JSONDictionary?): ArrayList<String> {
             val formats = ArrayList<String>()
             if (dict == null)
