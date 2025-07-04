@@ -171,9 +171,9 @@ class BookBagsActivity : BaseActivity() {
                 }
             }
 
-            val nameText = row.findViewById<View>(R.id.bookbag_name) as TextView
-            val descText = row.findViewById<View>(R.id.bookbag_description) as TextView
-            val itemsText = row.findViewById<View>(R.id.bookbag_items) as TextView
+            val nameText = row.findViewById<TextView>(R.id.bookbag_name)
+            val descText = row.findViewById<TextView>(R.id.bookbag_description)
+            val itemsText = row.findViewById<TextView>(R.id.bookbag_items)
 
             val record = getItem(position)
             nameText.text = record?.name
