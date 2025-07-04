@@ -9,6 +9,7 @@
 <!--    <string name="ou_library_url">https://theory.biblio.org</string>-->
 <!--    <string name="ou_account_type">net.kenstir.apps.bibliomation.test</string>-->
 <!--    <string name="ou_app_label">Acorn Catalog TEST</string>-->
+    <string name="ou_developer_email">acornapp@biblio.org</string>
 
     <string name="ou_account_label">Acorn Catalog</string>
     <string name="ou_account_sign_in_message">Sign in to your Bibliomation account</string>
