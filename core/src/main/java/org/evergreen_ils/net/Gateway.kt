@@ -37,7 +37,7 @@ object Gateway {
     lateinit var clientCacheKey: String
 
     var actor: ActorService = GatewayActor
-    var circ: CircService = GatewayCirc
+    var circ: OldCircService = GatewayCirc
     var fielder: FielderService = GatewayFielder
     var search: SearchService = GatewaySearch
 

@@ -28,7 +28,7 @@ import org.evergreen_ils.xdata.XGatewayClient
 import org.evergreen_ils.xdata.XOSRFObject
 import org.evergreen_ils.xdata.paramListOf
 
-class EvergreenBiblioService: BiblioService {
+object EvergreenBiblioService: BiblioService {
 
     override suspend fun loadRecordDetails(bibRecord: BibRecord, needMARC: Boolean): Result<Unit> {
         val record = bibRecord as? MBRecord

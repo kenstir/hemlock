@@ -25,7 +25,7 @@ import net.kenstir.hemlock.data.Result
 import net.kenstir.hemlock.data.jsonMapOf
 import org.opensrf.util.OSRFObject
 
-object GatewayCirc : CircService {
+object GatewayCirc : OldCircService {
     override suspend fun cancelHoldAsync(account: Account, holdId: Int): Result<String?> {
         return try {
             val (authToken, userID) = account.getCredentialsOrThrow()

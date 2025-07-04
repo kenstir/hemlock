@@ -38,22 +38,12 @@ import net.kenstir.hemlock.android.App
 import net.kenstir.hemlock.data.model.Account
 import net.kenstir.hemlock.data.Result
 import org.evergreen_ils.net.GatewayError
-import org.evergreen_ils.HOLD_TYPE_COPY
-import org.evergreen_ils.HOLD_TYPE_FORCE
-import org.evergreen_ils.HOLD_TYPE_METARECORD
-import org.evergreen_ils.HOLD_TYPE_PART
-import org.evergreen_ils.HOLD_TYPE_RECALL
-import org.evergreen_ils.HOLD_TYPE_TITLE
-import org.evergreen_ils.HOLD_TYPE_VOLUME
-import org.evergreen_ils.data.MBRecord
-import net.kenstir.hemlock.android.Analytics
 import net.kenstir.hemlock.android.Key
 import net.kenstir.hemlock.logging.Log
 import org.evergreen_ils.utils.ui.BaseActivity
 import net.kenstir.hemlock.android.ui.ProgressDialogSupport
 import net.kenstir.hemlock.android.ui.showAlert
 import org.evergreen_ils.views.search.RecordDetails
-import net.kenstir.hemlock.data.ShouldNotHappenException
 import net.kenstir.hemlock.data.model.BibRecord
 import net.kenstir.hemlock.data.model.HoldRecord
 import java.util.ArrayList
@@ -130,10 +120,7 @@ class HoldsActivity : BaseActivity() {
                 // fetch hold target details and queue stats
                 for (hold in holdRecords) {
                     jobs.add(scope.async {
-                        fetchHoldTargetDetails(hold, App.getAccount())
-                    })
-                    jobs.add(scope.async {
-                        fetchHoldQueueStats(hold, App.getAccount())
+                        App.getServiceConfig().circService.loadHoldDetails(App.getAccount(), hold)
                     })
                 }
 
@@ -186,19 +173,6 @@ class HoldsActivity : BaseActivity() {
     }
 
     /*
-    private suspend fun fetchTitleHoldTargetDetails(hold: HoldRecord, target: Int, account: Account): Result<Unit> {
-        val modsResult = Gateway.search.fetchRecordMODS(target)
-        if (modsResult is Result.Error) return modsResult
-        val modsObj = modsResult.get()
-        val record = MBRecord(modsObj)
-        hold.record = record
-
-        if (record.id == null || record.id == -1) return Result.Success(Unit)
-        val mraResult = fetchRecordAttrs(record, record.id)
-
-        return Result.Success(Unit)
-    }
-
     private suspend fun fetchMetarecordHoldTargetDetails(hold: HoldRecord, target: Int, account: Account): Result<Unit> {
         val result = Gateway.search.fetchMetarecordMODS(target)
         if (result is Result.Error) return result
@@ -317,17 +291,17 @@ class HoldsActivity : BaseActivity() {
                 }
             }
 
-            val holdTitle = row.findViewById<TextView>(R.id.hold_title)
-            val holdAuthor = row.findViewById<TextView>(R.id.hold_author)
-            val holdFormat = row.findViewById<TextView>(R.id.hold_format)
-            val status = row.findViewById<TextView>(R.id.hold_status)
+            val titleText = row.findViewById<TextView>(R.id.hold_title)
+            val authorText = row.findViewById<TextView>(R.id.hold_author)
+            val formatText = row.findViewById<TextView>(R.id.hold_format)
+            val statusText = row.findViewById<TextView>(R.id.hold_status)
             val editButton = row.findViewById<Button>(R.id.edit_button)
 
             val record = getItem(position)
-            holdTitle?.text = record?.title
-            holdAuthor?.text = record?.author
-            holdFormat?.text = record?.formatLabel
-            status?.text = record?.getHoldStatus(resources)
+            titleText?.text = record?.title
+            authorText?.text = record?.author
+            formatText?.text = record?.formatLabel
+            statusText?.text = record?.getHoldStatus(resources)
 
             initEditButton(editButton, record)
 

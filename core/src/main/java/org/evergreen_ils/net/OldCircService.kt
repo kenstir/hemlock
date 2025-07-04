@@ -22,7 +22,7 @@ import net.kenstir.hemlock.data.model.Account
 import net.kenstir.hemlock.data.Result
 import org.opensrf.util.OSRFObject
 
-interface CircService {
+interface OldCircService {
     suspend fun fetchCirc(account: Account, circId: Int): Result<OSRFObject>
     suspend fun fetchHolds(account: Account): Result<List<OSRFObject>>
     suspend fun fetchHoldQueueStats(account: Account, holdId: Int): Result<OSRFObject>
