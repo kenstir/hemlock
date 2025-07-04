@@ -71,8 +71,7 @@ class EvergreenCircService: CircService {
                 HOLD_TYPE_TITLE ->
                     loadTitleHoldTargetDetails(account, hold, target)
                 HOLD_TYPE_METARECORD ->
-                    //loadMetarecordHoldTargetDetails(account, hold, target)
-                    Unit
+                    loadMetarecordHoldTargetDetails(account, hold, target)
                 HOLD_TYPE_PART ->
                     //loadPartHoldTargetDetails(account, hold, target)
                     Unit
@@ -111,6 +110,12 @@ class EvergreenCircService: CircService {
 
         val attrsObj = EvergreenBiblioService.fetchMRA(target)
         bibRecord?.updateFromMRAResponse(attrsObj)
+    }
+
+    private suspend fun loadMetarecordHoldTargetDetails(account: Account, hold: EvergreenHoldRecord, target: Int) {
+        val modsObj = EvergreenBiblioService.fetchMetarecordMODS(target)
+        val bibRecord = MBRecord(target, modsObj)
+        hold.record = bibRecord
     }
 
     override suspend fun placeHold(account: Account, targetId: Int, options: HoldOptions): Result<Int> {

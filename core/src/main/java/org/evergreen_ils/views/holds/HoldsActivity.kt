@@ -149,29 +149,6 @@ class HoldsActivity : BaseActivity() {
         return Result.Success(Unit)
     }
 
-    suspend fun fetchHoldTargetDetails(hold: HoldRecord, account: Account): Result<Unit> {
-        val target = hold.target ?: return Result.Error(GatewayError("null hold target"))
-//        val result = when (hold.holdType) {
-//            HOLD_TYPE_TITLE ->
-//                fetchTitleHoldTargetDetails(hold, target, account)
-//            HOLD_TYPE_METARECORD ->
-//                fetchMetarecordHoldTargetDetails(hold, target, account)
-//            HOLD_TYPE_PART ->
-//                fetchPartHoldTargetDetails(hold, target, account)
-//            HOLD_TYPE_COPY, HOLD_TYPE_FORCE, HOLD_TYPE_RECALL ->
-//                fetchCopyHoldTargetDetails(hold, target, account)
-//            HOLD_TYPE_VOLUME ->
-//                fetchVolumeHoldTargetDetails(hold, target, account)
-//            else -> {
-//                Analytics.logException(ShouldNotHappenException("unexpected holdType:${hold.holdType}"))
-//                Result.Error(GatewayError("unexpected hold type: ${hold.holdType}"))
-//            }
-//        }
-//        Log.d(TAG, "$target: holdType:${hold.holdType} format:${hold.formatLabel} title:${hold.record?.title}")
-//        return result
-        return Result.Success(Unit)
-    }
-
     /*
     private suspend fun fetchMetarecordHoldTargetDetails(hold: HoldRecord, target: Int, account: Account): Result<Unit> {
         val result = Gateway.search.fetchMetarecordMODS(target)
