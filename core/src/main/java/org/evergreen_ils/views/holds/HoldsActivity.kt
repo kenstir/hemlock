@@ -150,13 +150,6 @@ class HoldsActivity : BaseActivity() {
     }
 
     /*
-    private suspend fun fetchMetarecordHoldTargetDetails(hold: HoldRecord, target: Int, account: Account): Result<Unit> {
-        val result = Gateway.search.fetchMetarecordMODS(target)
-        if (result is Result.Error) return result
-        hold.record = MBRecord(result.get())
-        return Result.Success(Unit)
-    }
-
     private suspend fun fetchPartHoldTargetDetails(hold: HoldRecord, target: Int, account: Account): Result<Unit> {
         val bmpResult = Gateway.fielder.fetchBMP(target)
         if (bmpResult is Result.Error) return bmpResult
