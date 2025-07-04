@@ -24,8 +24,6 @@ import org.opensrf.util.OSRFObject
 
 interface OldCircService {
     suspend fun fetchCirc(account: Account, circId: Int): Result<OSRFObject>
-    suspend fun fetchHolds(account: Account): Result<List<OSRFObject>>
-    suspend fun fetchHoldQueueStats(account: Account, holdId: Int): Result<OSRFObject>
     suspend fun placeHoldAsync(account: Account, holdType: String, targetId: Int, pickupLib: Int, emailNotify: Boolean, phoneNotify: String?, smsNotify: String?, smsCarrierId: Int?, expireTime: String?, suspendHold: Boolean, thawDate: String?, useOverride: Boolean): Result<OSRFObject>
     suspend fun cancelHoldAsync(account: Account, holdId: Int): Result<String?>
     suspend fun fetchTitleHoldIsPossible(account: Account, targetId: Int, pickupLib: Int): Result<OSRFObject>

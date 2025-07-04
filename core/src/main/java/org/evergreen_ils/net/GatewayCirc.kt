@@ -52,28 +52,6 @@ object GatewayCirc : OldCircService {
         }
     }
 
-    override suspend fun fetchHolds(account: Account): Result<List<OSRFObject>> {
-        return try {
-            val (authToken, userID) = account.getCredentialsOrThrow()
-            val args = arrayOf<Any?>(authToken, userID)
-            val ret = Gateway.fetchObjectArray(Api.CIRC, Api.HOLDS_RETRIEVE, args, false)
-            Result.Success(ret)
-        } catch (e: Exception) {
-            Result.Error(e)
-        }
-    }
-
-    override suspend fun fetchHoldQueueStats(account: Account, holdId: Int): Result<OSRFObject> {
-        return try {
-            val (authToken, userID) = account.getCredentialsOrThrow()
-            val args = arrayOf<Any?>(authToken, holdId)
-            val ret = Gateway.fetchObject(Api.CIRC, Api.HOLD_QUEUE_STATS, args, false)
-            Result.Success(ret)
-        } catch (e: Exception) {
-            Result.Error(e)
-        }
-    }
-
     // targetId - titleId for Title hold, partId for Part hold
     override suspend fun placeHoldAsync(
         account: Account,
