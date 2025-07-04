@@ -75,7 +75,7 @@ class HoldsActivity : BaseActivity() {
         lv = findViewById(R.id.holds_item_list)
 
         progress = ProgressDialogSupport()
-        listAdapter = HoldsArrayAdapter(this, R.layout.holds_list_item, holdRecords)
+        listAdapter = HoldsArrayAdapter(this, R.layout.holds_list_item)
         lv?.adapter = listAdapter
         lv?.setOnItemClickListener { _, _, position, _ ->
             showItemDetails(position)
@@ -280,9 +280,7 @@ class HoldsActivity : BaseActivity() {
 
     private fun updateHoldsList() {
         listAdapter?.clear()
-        for (hold in holdRecords) {
-            listAdapter?.add(hold)
-        }
+        listAdapter?.addAll(holdRecords)
         listAdapter?.notifyDataSetChanged()
     }
 
@@ -305,22 +303,8 @@ class HoldsActivity : BaseActivity() {
         }
     }
 
-    internal inner class HoldsArrayAdapter(context: Context, private val resourceId: Int, private val items: List<HoldRecord>) :
-            ArrayAdapter<HoldRecord>(context, resourceId, items) {
-        lateinit var record: HoldRecord
-        private var holdTitle: TextView? = null
-        private var holdAuthor: TextView? = null
-        private var holdFormat: TextView? = null
-        private var status: TextView? = null
-        private var editButton: Button? = null
-
-        override fun getCount(): Int {
-            return items.size
-        }
-
-        override fun getItem(index: Int): HoldRecord {
-            return items[index]
-        }
+    internal inner class HoldsArrayAdapter(context: Context, private val resourceId: Int) :
+            ArrayAdapter<HoldRecord>(context, resourceId) {
 
         override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
             val row = when(convertView) {
@@ -333,43 +317,35 @@ class HoldsActivity : BaseActivity() {
                 }
             }
 
-            holdTitle = row.findViewById(R.id.hold_title)
-            holdAuthor = row.findViewById(R.id.hold_author)
-            holdFormat = row.findViewById(R.id.hold_format)
-            status = row.findViewById(R.id.hold_status)
-            editButton = row.findViewById(R.id.edit_button)
+            val holdTitle = row.findViewById<TextView>(R.id.hold_title)
+            val holdAuthor = row.findViewById<TextView>(R.id.hold_author)
+            val holdFormat = row.findViewById<TextView>(R.id.hold_format)
+            val status = row.findViewById<TextView>(R.id.hold_status)
+            val editButton = row.findViewById<Button>(R.id.edit_button)
 
-            record = getItem(position)
-            holdTitle?.text = record.title
-            holdAuthor?.text = record.author
-            holdFormat?.text = record.formatLabel
-            status?.text = record.getHoldStatus(resources)
+            val record = getItem(position)
+            holdTitle?.text = record?.title
+            holdAuthor?.text = record?.author
+            holdFormat?.text = record?.formatLabel
+            status?.text = record?.getHoldStatus(resources)
 
-            initEditButton(record)
+            initEditButton(editButton, record)
 
             return row
         }
 
         // This one-line function is necessary; doing setOnClickListener inside getView()
         // captures the wrong [record], and all edit buttons operate on the last hold.
-        fun initEditButton(record: HoldRecord) {
+        fun initEditButton(editButton: Button?, record: HoldRecord?) {
             editButton?.setOnClickListener {
-                editHold(record)
+                if (record != null) {
+                    editHold(record)
+                }
             }
         }
     }
 
     companion object {
         val TAG = HoldsActivity::class.java.simpleName
-
-        //TODO: replace with GatewayLoader.loadRecordAttributesAsync
-        suspend fun fetchRecordAttrs(record: MBRecord, id: Int): Result<Unit> {
-//            val mraResult = Gateway.pcrud.fetchMRA(id)
-//            if (mraResult is Result.Error) return mraResult
-//            val mraObj = mraResult.get()
-//            record.updateFromMRAResponse(mraObj)
-//            return Result.Success(Unit)
-            return Result.Error(ShouldNotHappenException("fetchRecordAttrs not implemented"))
-        }
     }
 }
