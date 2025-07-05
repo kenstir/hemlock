@@ -40,7 +40,6 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.joinAll
 import net.kenstir.hemlock.R
 import net.kenstir.hemlock.android.App
-import org.evergreen_ils.data.CircRecord
 import net.kenstir.hemlock.data.Result
 import org.evergreen_ils.net.Gateway
 import org.evergreen_ils.views.search.RecordDetails
@@ -50,6 +49,7 @@ import org.evergreen_ils.utils.ui.BaseActivity
 import net.kenstir.hemlock.android.ui.ProgressDialogSupport
 import net.kenstir.hemlock.android.ui.showAlert
 import net.kenstir.hemlock.data.model.BibRecord
+import net.kenstir.hemlock.data.model.CircRecord
 import org.evergreen_ils.views.history.HistoryActivity
 import java.util.*
 
@@ -267,13 +267,13 @@ class CheckoutsActivity : BaseActivity() {
         private fun dueDateText(record: CircRecord): String {
             return when {
                 record.isOverdue ->
-                    String.format(getString(R.string.label_due_date_overdue), record.dueDateString)
+                    String.format(getString(R.string.label_due_date_overdue), record.dueDateLabel)
                 record.isDueSoon && record.autoRenewals > 0 ->
-                    String.format(getString(R.string.label_due_date_may_autorenew), record.dueDateString)
+                    String.format(getString(R.string.label_due_date_may_autorenew), record.dueDateLabel)
                 record.wasAutorenewed ->
-                    String.format(getString(R.string.label_due_date_autorenewed), record.dueDateString)
+                    String.format(getString(R.string.label_due_date_autorenewed), record.dueDateLabel)
                 else ->
-                    String.format(getString(R.string.label_due_date), record.dueDateString)
+                    String.format(getString(R.string.label_due_date), record.dueDateLabel)
             }
         }
 
