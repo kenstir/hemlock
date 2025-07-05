@@ -31,13 +31,13 @@ import coil3.load
 import kotlinx.coroutines.async
 import net.kenstir.hemlock.R
 import net.kenstir.hemlock.logging.Log
-import org.evergreen_ils.data.HistoryRecord
+import org.evergreen_ils.data.EvergreenHistoryRecord
 import org.evergreen_ils.data.MBRecord
 import net.kenstir.hemlock.data.Result
 import org.evergreen_ils.net.Gateway
-import org.evergreen_ils.net.Volley
 import org.evergreen_ils.utils.ui.BaseActivity
 import net.kenstir.hemlock.android.ui.showAlert
+import net.kenstir.hemlock.data.model.HistoryRecord
 
 class HistoryViewAdapter(private val items: List<HistoryRecord>) : RecyclerView.Adapter<HistoryViewAdapter.ViewHolder>() {
 
@@ -54,8 +54,8 @@ class HistoryViewAdapter(private val items: List<HistoryRecord>) : RecyclerView.
 
             title.text = null
             author.text = null
-            checkoutDate.text = String.format(context.getString(R.string.label_checkout_date), historyRecord.checkoutDateString)
-            returnDate.text = String.format(context.getString(R.string.label_returned_date), historyRecord.returnedDateString)
+            checkoutDate.text = String.format(context.getString(R.string.label_checkout_date), historyRecord.checkoutDateLabel)
+            returnDate.text = String.format(context.getString(R.string.label_returned_date), historyRecord.returnedDateLabel)
             // TODO: clear recordImage?
 
             // TODO: alter returnDate appearance if not returned?
@@ -81,11 +81,11 @@ class HistoryViewAdapter(private val items: List<HistoryRecord>) : RecyclerView.
         }
 
         private suspend fun fetchCopyDetails(historyRecord: HistoryRecord): Result<Unit> {
-            val targetCopy = historyRecord.targetCopy ?: return Result.Success(Unit)
-            val modsResult = Gateway.search.fetchCopyMODS(targetCopy)
-            if (modsResult is Result.Error) return modsResult
-            val modsObj = modsResult.get()
-            historyRecord.record = MBRecord(modsObj)
+//            val targetCopy = historyRecord.targetCopy ?: return Result.Success(Unit)
+//            val modsResult = Gateway.search.fetchCopyMODS(targetCopy)
+//            if (modsResult is Result.Error) return modsResult
+//            val modsObj = modsResult.get()
+//            historyRecord.record = MBRecord(modsObj)
             return Result.Success(Unit)
         }
 
