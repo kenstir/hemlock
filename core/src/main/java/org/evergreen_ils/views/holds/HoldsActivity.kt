@@ -35,9 +35,7 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.joinAll
 import net.kenstir.hemlock.R
 import net.kenstir.hemlock.android.App
-import net.kenstir.hemlock.data.model.Account
 import net.kenstir.hemlock.data.Result
-import org.evergreen_ils.net.GatewayError
 import net.kenstir.hemlock.android.Key
 import net.kenstir.hemlock.logging.Log
 import org.evergreen_ils.utils.ui.BaseActivity
@@ -135,58 +133,6 @@ class HoldsActivity : BaseActivity() {
             }
         }
     }
-
-    /*
-    private suspend fun fetchCopyHoldTargetDetails(hold: HoldRecord, target: Int, account: Account): Result<Unit> {
-        // steps: hold target -> asset copy -> asset.call_number -> mods
-
-        val acpResult = Gateway.search.fetchAssetCopy(target)
-        if (acpResult is Result.Error) return acpResult
-        val acpObj = acpResult.get()
-        //Log.d(TAG, "acpObj:$acpObj")
-        val callNumber = acpObj.getInt("call_number") ?: return Result.Error(GatewayError("missing call_number in copy hold"))
-
-        val acnResult = Gateway.search.fetchAssetCallNumber(callNumber)
-        if (acnResult is Result.Error) return acnResult
-        val acnObj = acnResult.get()
-        //Log.d(TAG, "acnObj:$acnObj")
-        val id = acnObj.getInt("record") ?: return Result.Error(GatewayError("missing record number in asset call number"))
-
-        val modsResult = Gateway.search.fetchRecordMODS(id)
-        if (modsResult is Result.Error) return modsResult
-        val modsObj = modsResult.get()
-        //Log.d(TAG, "modsObj:$modsObj")
-        val record = MBRecord(modsObj)
-        hold.record = record
-
-        if (record.id == null) return Result.Success(Unit)
-        val mraResult = fetchRecordAttrs(record, record.id)
-
-        return Result.Success(Unit)
-    }
-
-    private suspend fun fetchVolumeHoldTargetDetails(hold: HoldRecord, target: Int, account: Account): Result<Unit> {
-        // steps: hold target -> asset call number -> mods
-
-        val acnResult = Gateway.search.fetchAssetCallNumber(target)
-        if (acnResult is Result.Error) return acnResult
-        val acnObj = acnResult.get()
-        //Log.d(TAG, "acnObj:$acnObj")
-        val id = acnObj.getInt("record") ?: return Result.Error(GatewayError("missing record number in asset call number"))
-
-        val modsResult = Gateway.search.fetchRecordMODS(id)
-        if (modsResult is Result.Error) return modsResult
-        val modsObj = modsResult.get()
-        //Log.d(TAG, "modsObj:$modsObj")
-        val record = MBRecord(modsObj)
-        hold.record = record
-
-        if (record.id == null) return Result.Success(Unit)
-        val mraResult = fetchRecordAttrs(record, record.id)
-
-        return Result.Success(Unit)
-    }
-*/
 
     private fun updateHoldsList() {
         listAdapter?.clear()

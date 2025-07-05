@@ -77,11 +77,9 @@ class EvergreenCircService: CircService {
                 HOLD_TYPE_PART ->
                     loadPartHoldTargetDetails(account, hold, target)
                 HOLD_TYPE_COPY, HOLD_TYPE_FORCE, HOLD_TYPE_RECALL ->
-                    //loadCopyHoldTargetDetails(account, hold, target)
-                    Unit
+                    loadCopyHoldTargetDetails(account, hold, target)
                 HOLD_TYPE_VOLUME ->
-                    //loadVolumeHoldTargetDetails(account, hold, target)
-                    Unit
+                    loadVolumeHoldTargetDetails(account, hold, target)
                 else -> {
                     Analytics.logException(ShouldNotHappenException("unexpected holdType:${hold.holdType}"))
                     Result.Error(GatewayError("unexpected hold type: ${hold.holdType}"))
@@ -141,6 +139,47 @@ class EvergreenCircService: CircService {
         val response = XGatewayClient.fetch(Api.FIELDER, Api.FIELDER_BMP_ATOMIC, paramListOf(param), false)
         val list = response.payloadFirstAsObjectList()
         return list.first()
+    }
+
+    private suspend fun loadCopyHoldTargetDetails(account: Account, hold: EvergreenHoldRecord, target: Int) {
+        // steps: hold target -> asset copy -> asset.call_number -> mods
+
+        val acpObj = fetchAssetCopy(target)
+        val callNumber = acpObj.getInt("call_number") ?: throw GatewayError("missing call_number in copy hold")
+
+        val acnObj = fetchAssetCallNumber(callNumber)
+        val id = acnObj.getInt("record") ?: throw GatewayError("missing record number in asset call number")
+
+        val modsObj = EvergreenBiblioService.fetchRecordMODS(id)
+        val bibRecord = MBRecord(modsObj)
+        hold.record = bibRecord
+
+        val mraObj = EvergreenBiblioService.fetchMRA(bibRecord.id)
+        bibRecord.updateFromMRAResponse(mraObj)
+    }
+
+    private suspend fun fetchAssetCopy(copyId: Int): XOSRFObject {
+        val response = XGatewayClient.fetch(Api.SEARCH, Api.ASSET_COPY_RETRIEVE, paramListOf(copyId), true)
+        return response.payloadFirstAsObject()
+    }
+
+    private suspend fun fetchAssetCallNumber(callNumber: Int): XOSRFObject {
+        val response = XGatewayClient.fetch(Api.SEARCH, Api.ASSET_CALL_NUMBER_RETRIEVE, paramListOf(callNumber), true)
+        return response.payloadFirstAsObject()
+    }
+
+    private suspend fun loadVolumeHoldTargetDetails(account: Account, hold: EvergreenHoldRecord, target: Int) {
+        // steps: hold target -> asset call number -> mods
+
+        val acnObj = fetchAssetCallNumber(target)
+        val id = acnObj.getInt("record") ?: throw GatewayError("missing record number in asset call number")
+
+        val modsObj = EvergreenBiblioService.fetchRecordMODS(id)
+        val bibRecord = MBRecord(modsObj)
+        hold.record = bibRecord
+
+        val mraObj = EvergreenBiblioService.fetchMRA(bibRecord.id)
+        bibRecord.updateFromMRAResponse(mraObj)
     }
 
     override suspend fun placeHold(account: Account, targetId: Int, options: HoldOptions): Result<Int> {
