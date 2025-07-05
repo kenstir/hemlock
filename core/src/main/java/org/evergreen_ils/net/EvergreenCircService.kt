@@ -42,7 +42,7 @@ import org.evergreen_ils.xdata.XGatewayClient
 import org.evergreen_ils.xdata.XOSRFObject
 import org.evergreen_ils.xdata.paramListOf
 
-class EvergreenCircService: CircService {
+object EvergreenCircService: CircService {
     override suspend fun fetchHolds(account: Account): Result<List<HoldRecord>> {
         return try {
             val (authToken, userID) = account.getCredentialsOrThrow()

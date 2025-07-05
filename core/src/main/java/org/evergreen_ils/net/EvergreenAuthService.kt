@@ -26,7 +26,7 @@ import net.kenstir.hemlock.data.jsonMapOf
 import org.evergreen_ils.Api
 import java.security.MessageDigest
 
-class EvergreenAuthService: AuthService {
+object EvergreenAuthService: AuthService {
 
     override suspend fun getAuthToken(username: String, password: String): Result<String> {
         return try {

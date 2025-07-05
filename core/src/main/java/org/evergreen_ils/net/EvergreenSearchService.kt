@@ -31,7 +31,7 @@ import org.evergreen_ils.xdata.XGatewayClient
 import org.evergreen_ils.xdata.XOSRFObject
 import org.evergreen_ils.xdata.paramListOf
 
-class EvergreenSearchService: SearchService {
+object EvergreenSearchService: SearchService {
 
     // Build query string, taken with a grain of salt from
     // https://wiki.evergreen-ils.org/doku.php?id=documentation:technical:search_grammar

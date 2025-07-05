@@ -34,7 +34,7 @@ import org.evergreen_ils.xdata.XGatewayClient
 import org.evergreen_ils.xdata.paramListOf
 import java.util.Date
 
-class EvergreenUserService: UserService {
+object EvergreenUserService: UserService {
 
     override fun makeAccount(username: String, authToken: String): Account {
         return EvergreenAccount(username, authToken)
@@ -103,7 +103,7 @@ class EvergreenUserService: UserService {
             // items that are marked deleted
             if (queryForVisibleItems) {
                 val query = "container(bre,bookbag,${bookBag.id},${account.authToken})"
-                val queryResult = EvergreenSearchService().fetchMulticlassQuery(query, 999, false)
+                val queryResult = EvergreenSearchService.fetchMulticlassQuery(query, 999, false)
                 if (queryResult is Result.Error) return queryResult
                 bookBag.initVisibleIdsFromQuery(queryResult.get())
             }
@@ -213,8 +213,5 @@ class EvergreenUserService: UserService {
         } catch (e: Exception) {
             Result.Error(e)
         }
-    }
-
-    companion object {
     }
 }
