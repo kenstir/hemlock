@@ -62,7 +62,6 @@ import net.kenstir.hemlock.android.ui.ThemeManager
 import net.kenstir.hemlock.android.ui.showAlert
 import net.kenstir.hemlock.data.Result
 import org.evergreen_ils.system.EgOrg
-import org.evergreen_ils.system.EgSearch
 import org.evergreen_ils.views.*
 import org.evergreen_ils.views.bookbags.BookBagsActivity
 import org.evergreen_ils.views.holds.HoldsActivity

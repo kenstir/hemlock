@@ -112,8 +112,8 @@ class EvergreenCircService: CircService {
     }
 
     private suspend fun loadMetarecordHoldTargetDetails(account: Account, hold: EvergreenHoldRecord, target: Int) {
-        val modsObj = EvergreenBiblioService.fetchMetarecordMODS(target)
-        val bibRecord = MBRecord(target, modsObj)
+        val mvrObj = EvergreenBiblioService.fetchMetarecordMODS(target)
+        val bibRecord = MBRecord(mvrObj.getInt("tcn") ?: -1, mvrObj)
         hold.record = bibRecord
     }
 
