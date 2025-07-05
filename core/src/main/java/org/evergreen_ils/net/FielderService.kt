@@ -18,9 +18,5 @@
 
 package org.evergreen_ils.net
 
-import net.kenstir.hemlock.data.Result
-import org.opensrf.util.OSRFObject
-
 interface FielderService {
-    suspend fun fetchBMP(holdTarget: Int): Result<OSRFObject>
 }
