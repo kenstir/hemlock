@@ -22,7 +22,6 @@ import net.kenstir.hemlock.data.Result
 import org.opensrf.util.OSRFObject
 
 interface ActorService {
-    suspend fun fetchUserCheckedOut(account: Account): Result<OSRFObject>
     suspend fun fetchCheckoutHistory(account: Account): Result<List<OSRFObject>>
     suspend fun fetchUserFinesSummary(account: Account): Result<OSRFObject?>
     suspend fun fetchUserTransactionsWithCharges(account: Account): Result<List<OSRFObject>>
