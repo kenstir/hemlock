@@ -20,32 +20,29 @@
 
 package org.evergreen_ils.data
 
+import net.kenstir.hemlock.data.model.BibRecord
+import net.kenstir.hemlock.data.model.CircRecord
 import org.evergreen_ils.utils.TextUtils
 import org.evergreen_ils.xdata.XOSRFObject
 import org.opensrf.util.OSRFObject
 import java.text.DateFormat
 import java.util.*
 
-class CircRecord(circ: XOSRFObject?, circType: CircType, circId: Int) {
+class EvergreenCircRecord(var circ: XOSRFObject?, override var circId: Int): CircRecord {
 
-    constructor(circId: Int) : this(null, CircType.OUT, circId)
+    constructor(circId: Int) : this(null, circId)
 
     enum class CircType {
         OUT, OVERDUE, LONG_OVERDUE, LOST, CLAIMS_RETURNED
     }
 
-    var circId = -1
-    var circ: XOSRFObject?
-    @JvmField
     var mvr: XOSRFObject? = null
-    @JvmField
     var acp: XOSRFObject? = null
-    @JvmField
-    var record: MBRecord? = null
+    override var record: BibRecord? = null
 
     // dummy_title is used for ILLs; in these cases
     // recordInfo.id == mvr.doc_id == -1
-    val title: String?
+    override val title: String?
         get() {
             if (!TextUtils.isEmpty(record?.title))
                 return record?.title
@@ -56,7 +53,7 @@ class CircRecord(circ: XOSRFObject?, circType: CircType, circId: Int) {
 
     // dummy_author is used for ILLs; in these cases
     // recordInfo.id == mvr.doc_id == -1
-    val author: String?
+    override val author: String?
         get() {
             if (!TextUtils.isEmpty(record?.author))
                 return record?.author
@@ -65,31 +62,31 @@ class CircRecord(circ: XOSRFObject?, circType: CircType, circId: Int) {
             return ""
         }
 
-    val dueDate: Date?
+    override val dueDate: Date?
         get() = circ?.getDate("due_date")
 
-    val dueDateString: String
+    override val dueDateLabel: String
         get() = dueDate?.let { DateFormat.getDateInstance().format(it) } ?: ""
 
-    val renewals: Int
+    override val renewals: Int
         get() = circ?.getInt("renewal_remaining") ?: 0
 
-    val autoRenewals: Int
+    override val autoRenewals: Int
         get() = circ?.getInt("auto_renewal_remaining") ?: 0
 
-    val wasAutorenewed: Boolean
+    override val wasAutorenewed: Boolean
         get() = circ?.getBoolean("auto_renewal") ?: false
 
-    val targetCopy: Int?
+    override val targetCopy: Int?
         get() = circ?.getInt("target_copy")
 
-    val isOverdue: Boolean
+    override val isOverdue: Boolean
         get() {
             val currentDate = Date()
             return dueDate?.before(currentDate) ?: false
         }
 
-    val isDueSoon: Boolean
+    override val isDueSoon: Boolean
         get() {
             if (dueDate == null) return false
             // this is effectively 3 days, because dueDate is at 23:59:59
@@ -101,18 +98,13 @@ class CircRecord(circ: XOSRFObject?, circType: CircType, circId: Int) {
             return currentDate > cal.time
         }
 
-    init {
-        this.circ = circ
-        this.circId = circId
-    }
-
     companion object {
         fun makeArray(circSlimObj: XOSRFObject): ArrayList<CircRecord> {
             val ret = ArrayList<CircRecord>()
             for (id in OSRFUtils.parseIdsListAsInt(circSlimObj.get("out")))
-                ret.add(CircRecord(id))
+                ret.add(EvergreenCircRecord(id))
             for (id in OSRFUtils.parseIdsListAsInt(circSlimObj.get("overdue")))
-                ret.add(CircRecord(id))
+                ret.add(EvergreenCircRecord(id))
             return ret
         }
     }

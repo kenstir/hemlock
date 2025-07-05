@@ -39,7 +39,7 @@ class CircRecordTest {
                 "due_date" to "2020-02-05T23:59:59-0500"
         )
         )
-        val circRecord = CircRecord(circObj, CircRecord.CircType.OUT, 93108558)
+        val circRecord = EvergreenCircRecord(circObj, 93108558)
 
         assertEquals("Unknown Title", circRecord.title)
         assertEquals("", circRecord.author)
@@ -69,7 +69,7 @@ class CircRecordTest {
                 "author" to "Margaret Atwood"
         )
         )
-        val circRecord = CircRecord(circObj, CircRecord.CircType.OUT, 93108558)
+        val circRecord = EvergreenCircRecord(circObj, 93108558)
         circRecord.mvr = mvrObj
         circRecord.record = MBRecord(mvrObj)
 
@@ -111,7 +111,7 @@ class CircRecordTest {
                 "status" to 1
         )
         )
-        val circRecord = CircRecord(circObj, CircRecord.CircType.OUT, 1)
+        val circRecord = EvergreenCircRecord(circObj, 1)
         circRecord.mvr = mvrObj
         circRecord.record = MBRecord(mvrObj)
         circRecord.acp = acpObj
@@ -130,9 +130,9 @@ class CircRecordTest {
                 "id" to 1,
                 "target_copy" to 1507492,
                 //"due_date" to "2020-02-05T23:59:59-0500"
+            )
         )
-        )
-        val circRecord = CircRecord(circObj, CircRecord.CircType.OUT, 1)
+        val circRecord = EvergreenCircRecord(circObj, 1)
 
         assertEquals(false, circRecord.isDueSoon)
         assertEquals(false, circRecord.isOverdue)
@@ -147,9 +147,9 @@ class CircRecordTest {
                 "lost" to arrayListOf<Any?>(),
                 "out" to arrayListOf<Any?>("93108558"),
                 "claims_returned" to arrayListOf<Any?>()
+            )
         )
-        )
-        val checkouts = CircRecord.makeArray(circSlimObj)
+        val checkouts = EvergreenCircRecord.makeArray(circSlimObj)
         assertEquals(1, checkouts.size)
         assertEquals(93108558, checkouts.first().circId)
     }
