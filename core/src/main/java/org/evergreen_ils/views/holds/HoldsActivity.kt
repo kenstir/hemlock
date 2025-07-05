@@ -136,41 +136,7 @@ class HoldsActivity : BaseActivity() {
         }
     }
 
-    suspend fun fetchHoldQueueStats(hold: HoldRecord, account: Account): Result<Unit> {
-//        val id = hold.ahrObj.getInt("id") ?: return Result.Error(GatewayError("null hold id"))
-//        val result = Gateway.circ.fetchHoldQueueStats(account, id)
-//        return when (result) {
-//            is Result.Success -> {
-//                hold.qstatsObj = result.data
-//                Result.Success(Unit)
-//            }
-//            is Result.Error -> result
-//        }
-        return Result.Success(Unit)
-    }
-
     /*
-    private suspend fun fetchPartHoldTargetDetails(hold: HoldRecord, target: Int, account: Account): Result<Unit> {
-        val bmpResult = Gateway.fielder.fetchBMP(target)
-        if (bmpResult is Result.Error) return bmpResult
-        val bmpObj = bmpResult.get()
-        //Log.d(TAG, "title:${hold.title} bmpObj:$bmpObj")
-        val id = bmpObj.getInt("record") ?: return Result.Error(GatewayError("missing record number in part hold bre"))
-        hold.partLabel = bmpObj.getString("label")
-
-        val modsResult = Gateway.search.fetchRecordMODS(id)
-        if (modsResult is Result.Error) return modsResult
-        val modsObj = modsResult.get()
-        //Log.d(TAG, "title:${hold.title} modsObj:$modsObj")
-        val record = MBRecord(modsObj)
-        hold.record = record
-
-        if (record.id == null) return Result.Success(Unit)
-        val mraResult = fetchRecordAttrs(record, record.id)
-
-        return Result.Success(Unit)
-    }
-
     private suspend fun fetchCopyHoldTargetDetails(hold: HoldRecord, target: Int, account: Account): Result<Unit> {
         // steps: hold target -> asset copy -> asset.call_number -> mods
 

@@ -23,6 +23,7 @@ import kotlinx.coroutines.coroutineScope
 import net.kenstir.hemlock.android.Analytics
 import net.kenstir.hemlock.data.Result
 import net.kenstir.hemlock.data.ShouldNotHappenException
+import net.kenstir.hemlock.data.jsonMapOf
 import net.kenstir.hemlock.data.model.Account
 import net.kenstir.hemlock.data.model.HoldRecord
 import net.kenstir.hemlock.net.CircService
@@ -38,6 +39,7 @@ import org.evergreen_ils.HOLD_TYPE_VOLUME
 import org.evergreen_ils.data.EvergreenHoldRecord
 import org.evergreen_ils.data.MBRecord
 import org.evergreen_ils.xdata.XGatewayClient
+import org.evergreen_ils.xdata.XOSRFObject
 import org.evergreen_ils.xdata.paramListOf
 
 class EvergreenCircService: CircService {
@@ -73,8 +75,7 @@ class EvergreenCircService: CircService {
                 HOLD_TYPE_METARECORD ->
                     loadMetarecordHoldTargetDetails(account, hold, target)
                 HOLD_TYPE_PART ->
-                    //loadPartHoldTargetDetails(account, hold, target)
-                    Unit
+                    loadPartHoldTargetDetails(account, hold, target)
                 HOLD_TYPE_COPY, HOLD_TYPE_FORCE, HOLD_TYPE_RECALL ->
                     //loadCopyHoldTargetDetails(account, hold, target)
                     Unit
@@ -116,6 +117,30 @@ class EvergreenCircService: CircService {
         val modsObj = EvergreenBiblioService.fetchMetarecordMODS(target)
         val bibRecord = MBRecord(target, modsObj)
         hold.record = bibRecord
+    }
+
+    private suspend fun loadPartHoldTargetDetails(account: Account, hold: EvergreenHoldRecord, target: Int) {
+        val bmpObj = fetchBMP(target)
+        val id = bmpObj.getInt("record") ?: throw GatewayError("missing record number in part hold bre")
+        hold.partLabel = bmpObj.getString("label")
+
+        val modsObj = EvergreenBiblioService.fetchRecordMODS(id)
+        val bibRecord = MBRecord(modsObj)
+        hold.record = bibRecord
+
+        val mraObj = EvergreenBiblioService.fetchMRA(bibRecord.id)
+        bibRecord.updateFromMRAResponse(mraObj)
+    }
+
+    private suspend fun fetchBMP(holdTarget: Int): XOSRFObject {
+        val param = jsonMapOf(
+            "cache" to 1,
+            "fields" to arrayListOf("label", "record"),
+            "query" to jsonMapOf("id" to holdTarget)
+        )
+        val response = XGatewayClient.fetch(Api.FIELDER, Api.FIELDER_BMP_ATOMIC, paramListOf(param), false)
+        val list = response.payloadFirstAsObjectList()
+        return list.first()
     }
 
     override suspend fun placeHold(account: Account, targetId: Int, options: HoldOptions): Result<Int> {
