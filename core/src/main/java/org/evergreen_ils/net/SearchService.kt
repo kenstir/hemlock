@@ -22,8 +22,6 @@ import net.kenstir.hemlock.data.Result
 import org.opensrf.util.OSRFObject
 
 interface SearchService {
-    suspend fun fetchAssetCopy(copyId: Int): Result<OSRFObject>
-    suspend fun fetchAssetCallNumber(callNumber: Int): Result<OSRFObject>
     suspend fun fetchCopyMODS(copyId: Int): Result<OSRFObject>
     suspend fun fetchRecordMODS(id: Int): Result<OSRFObject>
     suspend fun fetchMetarecordMODS(id: Int): Result<OSRFObject>
