@@ -70,8 +70,7 @@ class CheckoutsActivity : BaseActivity() {
         checkoutsSummary = findViewById(R.id.checkout_items_summary)
         progress = ProgressDialogSupport()
         lv = findViewById(R.id.checkout_items_list)
-        circRecords = ArrayList()
-        listAdapter = CheckoutsArrayAdapter(this, R.layout.checkout_list_item, circRecords)
+        listAdapter = CheckoutsArrayAdapter(this, R.layout.checkout_list_item)
         lv?.adapter = listAdapter
         lv?.setOnItemClickListener { _, _, position, _ -> onItemClick(position) }
     }
@@ -168,7 +167,7 @@ class CheckoutsActivity : BaseActivity() {
     private fun updateCheckoutsList() {
         listAdapter?.clear()
         circRecords.sortBy { it.dueDate }
-        for (circ in circRecords) listAdapter?.add(circ)
+        listAdapter?.addAll(circRecords)
         listAdapter?.notifyDataSetChanged()
     }
 
@@ -186,21 +185,13 @@ class CheckoutsActivity : BaseActivity() {
         }
     }
 
-    internal inner class CheckoutsArrayAdapter(context: Context, private val resourceId: Int, private val items: List<CircRecord>) : ArrayAdapter<CircRecord>(context, resourceId, items) {
+    internal inner class CheckoutsArrayAdapter(context: Context, private val resourceId: Int) : ArrayAdapter<CircRecord>(context, resourceId) {
         private var title: TextView? = null
         private var author: TextView? = null
         private var format: TextView? = null
         private var renewals: TextView? = null
         private var dueDate: TextView? = null
         private var renewButton: TextView? = null
-
-        override fun getCount(): Int {
-            return items.size
-        }
-
-        override fun getItem(index: Int): CircRecord {
-            return items[index]
-        }
 
         override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
             var row = when(convertView) {
@@ -220,7 +211,7 @@ class CheckoutsActivity : BaseActivity() {
             dueDate = row.findViewById(R.id.checkout_record_due_date)
             renewButton = row.findViewById(R.id.renew_button)
 
-            val record = getItem(position)
+            val record = getItem(position)!!
             title?.text = record.title
             author?.text = record.author
             format?.text = record.record?.iconFormatLabel
