@@ -18,49 +18,43 @@
 
 package org.evergreen_ils.data
 
-import org.evergreen_ils.utils.TextUtils
+import net.kenstir.hemlock.data.model.BibRecord
+import net.kenstir.hemlock.data.model.HistoryRecord
+import org.evergreen_ils.xdata.XOSRFObject
 import org.opensrf.util.OSRFObject
 import java.text.DateFormat
 import java.util.ArrayList
 
-data class HistoryRecord(val id: Int, val obj: OSRFObject) : java.io.Serializable {
+data class EvergreenHistoryRecord(override val id: Int, val obj: XOSRFObject) : HistoryRecord {
 
-    var record: MBRecord? = null
+    override var record: BibRecord? = null
 
-    val title: String?
+    override val title: String
         get() {
-            if (!TextUtils.isEmpty(record?.title))
-                return record?.title
-//            if (!TextUtils.isEmpty(acp?.getString("dummy_title")))
-//                return acp?.getString("dummy_title")
-            return "Unknown Title"
+            return record?.title?.takeIf { it.isNotEmpty() } ?: "Unknown Title"
         }
-    val author: String?
+    override val author: String
         get() {
-            if (!TextUtils.isEmpty(record?.author))
-                return record?.author
-//            if (!TextUtils.isEmpty(acp?.getString("dummy_author")))
-//                return acp?.getString("dummy_author")
-            return ""
+            return record?.author?.takeIf { it.isNotEmpty() } ?: ""
         }
-    val dueDate = obj.getDate("due_date")
-    val dueDateString: String
+    override val dueDate = obj.getDate("due_date")
+    override val dueDateLabel: String
         get() = if (dueDate != null) DateFormat.getDateInstance().format(dueDate) else ""
-    val checkoutDate = obj.getDate("xact_start")
-    val checkoutDateString: String
+    override val checkoutDate = obj.getDate("xact_start")
+    override val checkoutDateLabel: String
         get() = if (checkoutDate != null) DateFormat.getDateInstance().format(checkoutDate) else ""
-    val returnedDate = obj.getDate("checkin_time")
-    val returnedDateString: String
+    override val returnedDate = obj.getDate("checkin_time")
+    override val returnedDateLabel: String
         get() = if (returnedDate != null) DateFormat.getDateInstance().format(returnedDate) else "Not Returned"
-    val targetCopy = obj.getInt("target_copy")
+    override val targetCopy = obj.getInt("target_copy")
 
     companion object {
-        fun makeArray(objects: List<OSRFObject>): ArrayList<HistoryRecord> {
-            val ret = ArrayList<HistoryRecord>()
+        fun makeArray(objects: List<XOSRFObject>): ArrayList<EvergreenHistoryRecord> {
+            val ret = ArrayList<EvergreenHistoryRecord>()
             objects.forEach { obj ->
                 val id = obj.getInt("id")
                 if (id != null) {
-                    ret.add(HistoryRecord(id, obj))
+                    ret.add(EvergreenHistoryRecord(id, obj))
                 }
             }
             return ret
