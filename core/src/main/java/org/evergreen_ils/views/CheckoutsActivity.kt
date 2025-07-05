@@ -43,7 +43,6 @@ import net.kenstir.hemlock.android.App
 import net.kenstir.hemlock.data.Result
 import org.evergreen_ils.net.Gateway
 import org.evergreen_ils.views.search.RecordDetails
-import org.evergreen_ils.data.MBRecord
 import net.kenstir.hemlock.logging.Log
 import org.evergreen_ils.utils.ui.BaseActivity
 import net.kenstir.hemlock.android.ui.ProgressDialogSupport
@@ -58,7 +57,7 @@ class CheckoutsActivity : BaseActivity() {
 
     private var lv: ListView? = null
     private var listAdapter: CheckoutsArrayAdapter? = null
-    private var circRecords: ArrayList<CircRecord> = ArrayList()
+    private var circRecords = mutableListOf<CircRecord>()
     private var progress: ProgressDialogSupport? = null
     private var checkoutsSummary: TextView? = null
 
@@ -136,27 +135,27 @@ class CheckoutsActivity : BaseActivity() {
     private fun fetchData() {
         scope.async {
             try {
-                throw Exception("fetchData not implemented")
-//                Log.d(TAG, "[kcxxx] fetchData ...")
-//                val start = System.currentTimeMillis()
-//                var jobs = mutableListOf<Job>()
-//                progress?.show(this@CheckoutsActivity, getString(R.string.msg_retrieving_data))
-//
-//                // fetch checkouts
-//                val result = Gateway.actor.fetchUserCheckedOut(App.getAccount())
-//                if (result is Result.Error) { showAlert(result.exception); return@async }
-//                val obj = result.get()
-//
-//                // fetch details
-//                circRecords = CircRecord.makeArray(obj)
-//                for (circRecord in circRecords) {
-//                    jobs.add(scope.async { fetchCircDetails(circRecord) })
-//                }
-//                checkoutsSummary?.text = String.format(getString(R.string.checkout_items), circRecords.size)
-//
-//                jobs.joinAll()
-//                updateCheckoutsList()
-//                Log.logElapsedTime(TAG, start, "[kcxxx] fetchData ... done")
+                Log.d(TAG, "[kcxxx] fetchData ...")
+                val start = System.currentTimeMillis()
+                progress?.show(this@CheckoutsActivity, getString(R.string.msg_retrieving_data))
+                val account = App.getAccount()
+                val circService = App.getServiceConfig().circService
+
+                // fetch checkouts
+                val result = circService.fetchCheckouts(account)
+                if (result is Result.Error) { showAlert(result.exception); return@async }
+                circRecords = result.get().toMutableList()
+
+                // fetch details
+                var jobs = mutableListOf<Job>()
+                for (circRecord in circRecords) {
+                    jobs.add(scope.async { circService.loadCheckoutDetails(account, circRecord) })
+                }
+                checkoutsSummary?.text = String.format(getString(R.string.checkout_items), circRecords.size)
+
+                jobs.joinAll()
+                updateCheckoutsList()
+                Log.logElapsedTime(TAG, start, "[kcxxx] fetchData ... done")
             } catch (ex: Exception) {
                 Log.d(TAG, "[kcxxx] fetchData ... caught", ex)
                 showAlert(ex)
@@ -164,36 +163,6 @@ class CheckoutsActivity : BaseActivity() {
                 progress?.dismiss()
             }
         }
-    }
-
-    private suspend fun fetchCircDetails(circRecord: CircRecord): Result<Unit> {
-//        val circResult = Gateway.circ.fetchCirc(App.getAccount(), circRecord.circId)
-//        if (circResult is Result.Error) return circResult
-//        val circObj = circResult.get()
-//        circRecord.circ = circObj
-//
-//        val targetCopy = circObj.getInt("target_copy") ?: return Result.Error(Exception("circ item has no target_copy"))
-//        val modsResult = Gateway.search.fetchCopyMODS(targetCopy)
-//        if (modsResult is Result.Error) return modsResult
-//        val modsObj = modsResult.get()
-//        val record = MBRecord(modsObj)
-//        circRecord.record = record
-//
-//        if (record.id != -1) {
-//            val mraResult = fetchRecordAttrs(record, record.id)
-//        }
-//
-//        return Result.Success(Unit)
-        return Result.Error(Exception("not implemented"))
-    }
-
-    suspend fun fetchRecordAttrs(record: MBRecord, id: Int): Result<Unit> {
-//        val mraResult = Gateway.pcrud.fetchMRA(id)
-//        if (mraResult is Result.Error) return mraResult
-//        val mraObj = mraResult.get()
-//        record.updateFromMRAResponse(mraObj)
-//        return Result.Success(Unit)
-        return Result.Error(Exception("not implemented"))
     }
 
     private fun updateCheckoutsList() {

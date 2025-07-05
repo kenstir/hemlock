@@ -19,9 +19,22 @@ package net.kenstir.hemlock.net
 
 import net.kenstir.hemlock.data.Result
 import net.kenstir.hemlock.data.model.Account
+import net.kenstir.hemlock.data.model.CircRecord
 import net.kenstir.hemlock.data.model.HoldRecord
 
 interface CircService {
+    /**
+     * Fetches the current checkouts.
+     *
+     * @return list of skeleton circ records.  These records must be fleshed out with details using [loadCheckoutDetails].
+     */
+    suspend fun fetchCheckouts(account: Account): Result<List<CircRecord>>
+
+    /**
+     * Fetches the details for a circ record.
+     */
+    suspend fun loadCheckoutDetails(account: Account, circRecord: CircRecord): Result<Unit>
+
     /**
      * Fetches the current holds.
      *

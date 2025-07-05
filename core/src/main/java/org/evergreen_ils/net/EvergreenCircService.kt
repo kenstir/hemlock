@@ -25,6 +25,7 @@ import net.kenstir.hemlock.data.Result
 import net.kenstir.hemlock.data.ShouldNotHappenException
 import net.kenstir.hemlock.data.jsonMapOf
 import net.kenstir.hemlock.data.model.Account
+import net.kenstir.hemlock.data.model.CircRecord
 import net.kenstir.hemlock.data.model.HoldRecord
 import net.kenstir.hemlock.net.CircService
 import net.kenstir.hemlock.net.HoldOptions
@@ -36,6 +37,7 @@ import org.evergreen_ils.HOLD_TYPE_PART
 import org.evergreen_ils.HOLD_TYPE_RECALL
 import org.evergreen_ils.HOLD_TYPE_TITLE
 import org.evergreen_ils.HOLD_TYPE_VOLUME
+import org.evergreen_ils.data.EvergreenCircRecord
 import org.evergreen_ils.data.EvergreenHoldRecord
 import org.evergreen_ils.data.MBRecord
 import org.evergreen_ils.xdata.XGatewayClient
@@ -43,6 +45,45 @@ import org.evergreen_ils.xdata.XOSRFObject
 import org.evergreen_ils.xdata.paramListOf
 
 object EvergreenCircService: CircService {
+    override suspend fun fetchCheckouts(account: Account): Result<List<CircRecord>> {
+        return try {
+            val (authToken, userID) = account.getCredentialsOrThrow()
+            val params = paramListOf(authToken, userID)
+            val response = XGatewayClient.fetch(Api.ACTOR, Api.CHECKED_OUT, params, false)
+            Result.Success(EvergreenCircRecord.makeArray(response.payloadFirstAsObject()))
+        } catch (e: Exception) {
+            Result.Error(e)
+        }
+    }
+
+    override suspend fun loadCheckoutDetails(account: Account, circRecord: CircRecord): Result<Unit> {
+        circRecord as? EvergreenCircRecord ?: return Result.Error(IllegalArgumentException("Expected EvergreenCircRecord, got ${circRecord::class.java.name}"))
+
+        return try {
+            val circObj = fetchCircRecord(account,  circRecord.circId)
+            circRecord.circ = circObj
+
+            val targetCopy = circObj.getInt("target_copy") ?: throw GatewayError("circ item has no target_copy")
+            val modsObj = EvergreenBiblioService.fetchCopyMODS(targetCopy)
+            val record = MBRecord(modsObj)
+            circRecord.record = record
+
+            val mraObj = EvergreenBiblioService.fetchMRA(record.id)
+            record.updateFromMRAResponse(mraObj)
+
+            return Result.Success(Unit)
+        } catch (e: Exception) {
+            Result.Error(e)
+        }
+    }
+
+    private suspend fun fetchCircRecord(account: Account, circId: Int): XOSRFObject {
+        val (authToken, userID) = account.getCredentialsOrThrow()
+        val params = paramListOf(authToken, circId)
+        val response = XGatewayClient.fetch(Api.CIRC, Api.CIRC_RETRIEVE, params, false)
+        return response.payloadFirstAsObject()
+    }
+
     override suspend fun fetchHolds(account: Account): Result<List<HoldRecord>> {
         return try {
             val (authToken, userID) = account.getCredentialsOrThrow()
