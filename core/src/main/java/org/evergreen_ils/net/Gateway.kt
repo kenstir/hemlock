@@ -38,7 +38,6 @@ object Gateway {
 
     var actor: ActorService = GatewayActor
     var circ: OldCircService = GatewayCirc
-    var fielder: FielderService = GatewayFielder
     var search: SearchService = GatewaySearch
 
     private var _serverCacheKey: String? = null
