@@ -119,7 +119,6 @@ class FinesActivity : BaseActivity() {
                 jobs.add(scope.async {
                     val result = App.getServiceConfig().userService.fetchPatronCharges(App.getAccount())
                     onChargesResult(result)
-                    (Gateway.actor.fetchUserFinesSummary(App.getAccount()))
                 })
 
                 jobs.map { it.await() }

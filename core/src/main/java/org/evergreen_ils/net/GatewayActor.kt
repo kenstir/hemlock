@@ -37,28 +37,6 @@ object GatewayActor: ActorService {
         }
     }
 
-    override suspend fun fetchUserFinesSummary(account: Account): Result<OSRFObject?> {
-        return try {
-            val (authToken, userID) = account.getCredentialsOrThrow()
-            val args = arrayOf<Any?>(authToken, userID)
-            val ret = Gateway.fetchOptionalObject(Api.ACTOR, Api.FINES_SUMMARY, args, false)
-            Result.Success(ret)
-        } catch (e: Exception) {
-            Result.Error(e)
-        }
-    }
-
-    override suspend fun fetchUserTransactionsWithCharges(account: Account): Result<List<OSRFObject>> {
-        return try {
-            val (authToken, userID) = account.getCredentialsOrThrow()
-            val args = arrayOf<Any?>(authToken, userID)
-            val ret = Gateway.fetchObjectArray(Api.ACTOR, Api.TRANSACTIONS_WITH_CHARGES, args, false)
-            Result.Success(ret)
-        } catch (e: Exception) {
-            Result.Error(e)
-        }
-    }
-
     override suspend fun createBookBagAsync(account: Account, name: String): Result<Unit> {
         return try {
             val (authToken, userID) = account.getCredentialsOrThrow()
