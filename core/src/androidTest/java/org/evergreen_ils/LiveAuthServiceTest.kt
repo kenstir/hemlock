@@ -40,6 +40,7 @@ import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
 import org.junit.BeforeClass
 import org.junit.Test
+import java.io.File
 
 class LiveAuthServiceTest {
     companion object {
@@ -67,6 +68,8 @@ class LiveAuthServiceTest {
         fun setUpClass() {
             XGatewayClient.baseUrl = testServer
             XGatewayClient.clientCacheKey = "42"
+            XGatewayClient.cacheDirectory = File(System.getProperty("java.io.tmpdir") ?: "/tmp", "KtorClientTest")
+            XGatewayClient.cacheDirectory.deleteRecursively()
         }
 
         @JvmStatic
