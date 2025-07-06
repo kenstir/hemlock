@@ -47,6 +47,16 @@ data class XOSRFObject(
         }
     }
 
+    fun getDouble(key: String, defaultValue: Double = 0.0): Double {
+        return when (val value = map[key]) {
+            is Float -> value.toDouble()
+            is Double -> value
+            is Number -> value.toDouble()
+            is String -> value.toDoubleOrNull() ?: defaultValue
+            else -> defaultValue
+        }
+    }
+
     fun getBoolean(key: String): Boolean {
         return when (val value = map[key]) {
             is Boolean -> value

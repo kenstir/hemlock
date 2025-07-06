@@ -22,6 +22,7 @@ import net.kenstir.hemlock.data.Result
 import net.kenstir.hemlock.data.model.Account
 import net.kenstir.hemlock.data.model.PatronList
 import net.kenstir.hemlock.data.model.ListItem
+import net.kenstir.hemlock.data.model.PatronCharges
 import net.kenstir.hemlock.net.UserService
 
 class MockUserService: UserService {
@@ -78,6 +79,10 @@ class MockUserService: UserService {
     }
 
     override suspend fun markMessageDeleted(account: Account, id: Int): Result<Unit> {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun fetchPatronCharges(account: Account): Result<PatronCharges> {
         TODO("Not yet implemented")
     }
 }
