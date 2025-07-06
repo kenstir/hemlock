@@ -37,6 +37,14 @@ interface CircService {
     suspend fun loadCheckoutDetails(account: Account, circRecord: CircRecord): Result<Unit>
 
     /**
+     * Renews a checkout.
+     *
+     * @param targetCopy the ID of the copy to renew.
+     * @return true if the renewal was successful, false otherwise.
+     */
+    suspend fun renewCheckout(account: Account, targetCopy: Int): Result<Boolean>
+
+    /**
      * Fetches the current holds.
      *
      * @return list of skeleton hold records.  These records must be fleshed out with details using [loadHoldDetails].

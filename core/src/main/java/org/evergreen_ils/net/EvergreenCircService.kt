@@ -87,6 +87,24 @@ object EvergreenCircService: CircService {
         return response.payloadFirstAsObject()
     }
 
+    override suspend fun renewCheckout(account: Account, targetCopy: Int): Result<Boolean> {
+        return try {
+            val (authToken, userID) = account.getCredentialsOrThrow()
+            val param = jsonMapOf(
+                "patron" to userID,
+                "copyid" to targetCopy,
+                "opac_renewal" to 1
+            )
+            val params = paramListOf(authToken, param)
+            val response = XGatewayClient.fetch(Api.CIRC, Api.CIRC_RENEW, params, false)
+            // CIRC_RENEW returns a JSON object, but as long as it's not a failure event, the renewal succeeded.
+            val obj = response.payloadFirstAsObject()
+            Result.Success(true)
+        } catch (e: Exception) {
+            Result.Error(e)
+        }
+    }
+
     override suspend fun fetchHolds(account: Account): Result<List<HoldRecord>> {
         return try {
             val (authToken, userID) = account.getCredentialsOrThrow()
