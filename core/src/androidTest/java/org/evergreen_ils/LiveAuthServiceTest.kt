@@ -29,6 +29,7 @@ import net.kenstir.hemlock.net.ServiceConfig
 import org.evergreen_ils.model.EvergreenAccount
 import org.evergreen_ils.net.EvergreenAuthService
 import org.evergreen_ils.net.EvergreenBiblioService
+import org.evergreen_ils.net.EvergreenCircService
 import org.evergreen_ils.net.EvergreenLoaderService
 import org.evergreen_ils.net.EvergreenOrgService
 import org.evergreen_ils.net.EvergreenSearchService
@@ -43,11 +44,12 @@ import org.junit.Test
 class LiveAuthServiceTest {
     companion object {
         val serviceConfig = ServiceConfig(
-            EvergreenLoaderService(),
-            EvergreenAuthService(),
-            EvergreenBiblioService(),
-            EvergreenSearchService(),
-            EvergreenUserService(),
+            EvergreenLoaderService,
+            EvergreenAuthService,
+            EvergreenBiblioService,
+            EvergreenCircService,
+            EvergreenSearchService,
+            EvergreenUserService,
             EvergreenOrgService,
         )
 
