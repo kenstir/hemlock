@@ -14,14 +14,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, see <https://www.gnu.org/licenses/>.
  */
-
-package net.kenstir.hemlock.data;
+package net.kenstir.hemlock.data
 
 /**
  * Used to log unexpected events to Crashlytics.
  */
-public class ShouldNotHappenException extends Exception {
-    public ShouldNotHappenException(String message) {
-        super(message);
-    }
-}
+class ShouldNotHappenException(message: String?): Exception(message)
