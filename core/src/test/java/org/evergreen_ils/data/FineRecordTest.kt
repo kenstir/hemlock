@@ -66,7 +66,7 @@ class FineRecordTest {
         assertEquals("The testaments", fine.title)
         assertEquals("Atwood, Margaret", fine.subtitle)
         assertEquals(0.42, fine.balanceOwed)
-        assertEquals(1.0, fine.maxFine)
+        assertEquals(1.0, (fine as FineRecord).maxFine)
         assertEquals("fines accruing", fine.status)
     }
 
@@ -87,7 +87,7 @@ class FineRecordTest {
         assertEquals("Card: Lost Fee", fine.title)
         assertEquals(null, fine.subtitle)
         assertEquals(2.0, fine.balanceOwed)
-        assertEquals(null, fine.maxFine)
+        assertEquals(null, (fine as FineRecord).maxFine)
         assertEquals("", fine.status)
     }
 

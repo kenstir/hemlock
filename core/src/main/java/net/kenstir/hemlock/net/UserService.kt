@@ -20,6 +20,8 @@ package net.kenstir.hemlock.net
 import net.kenstir.hemlock.data.PatronMessage
 import net.kenstir.hemlock.data.Result
 import net.kenstir.hemlock.data.model.Account
+import net.kenstir.hemlock.data.model.ChargeRecord
+import net.kenstir.hemlock.data.model.PatronCharges
 import net.kenstir.hemlock.data.model.PatronList
 
 interface UserService {
@@ -44,4 +46,6 @@ interface UserService {
     suspend fun markMessageRead(account: Account, id: Int): Result<Unit>
     suspend fun markMessageUnread(account: Account, id: Int): Result<Unit>
     suspend fun markMessageDeleted(account: Account, id: Int): Result<Unit>
+
+    suspend fun fetchPatronCharges(account: Account): Result<PatronCharges>
 }

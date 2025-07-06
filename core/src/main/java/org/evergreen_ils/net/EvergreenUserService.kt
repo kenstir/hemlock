@@ -22,12 +22,13 @@ import net.kenstir.hemlock.data.PatronMessage
 import net.kenstir.hemlock.data.Result
 import net.kenstir.hemlock.data.jsonMapOf
 import net.kenstir.hemlock.data.model.Account
+import net.kenstir.hemlock.data.model.PatronCharges
 import net.kenstir.hemlock.data.model.PatronList
-import net.kenstir.hemlock.net.RequestOptions
 import net.kenstir.hemlock.net.UserService
 import org.evergreen_ils.Api
 import org.evergreen_ils.data.BookBag
 import org.evergreen_ils.data.EvergreenPatronMessage
+import org.evergreen_ils.data.FineRecord
 import org.evergreen_ils.data.OSRFUtils
 import org.evergreen_ils.model.EvergreenAccount
 import org.evergreen_ils.xdata.XGatewayClient
@@ -213,5 +214,34 @@ object EvergreenUserService: UserService {
         } catch (e: Exception) {
             Result.Error(e)
         }
+    }
+
+    override suspend fun fetchPatronCharges(account: Account): Result<PatronCharges> {
+        return try {
+            Result.Success(fetchPatronChargesImpl(account))
+        } catch (e: Exception) {
+            Result.Error(e)
+        }
+    }
+
+    private suspend fun fetchPatronChargesImpl(account: Account): PatronCharges {
+        val (authToken, userID) = account.getCredentialsOrThrow()
+
+        val params = paramListOf(authToken, userID)
+        val summaryResponse = XGatewayClient.fetch(Api.ACTOR, Api.FINES_SUMMARY, params, false)
+        val chargesSummary = summaryResponse.payloadFirstAsObjectOrNull()
+
+        if (chargesSummary == null) {
+            return PatronCharges(0.0, 0.0, 0.0, emptyList())
+        }
+
+        val transactionsResponse = XGatewayClient.fetch(Api.ACTOR, Api.TRANSACTIONS_WITH_CHARGES, params, false)
+        val objList = transactionsResponse.payloadFirstAsObjectList()
+        return PatronCharges(
+            totalCharges = chargesSummary.getDouble("total_owed"),
+            totalPaid = chargesSummary.getDouble("total_paid"),
+            balanceOwed = chargesSummary.getDouble("balance_owed"),
+            transactions = FineRecord.makeArray(objList)
+        )
     }
 }

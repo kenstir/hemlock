@@ -19,20 +19,21 @@
  */
 package org.evergreen_ils.data
 
+import net.kenstir.hemlock.data.model.BibRecord
+import net.kenstir.hemlock.data.model.ChargeRecord
 import net.kenstir.hemlock.logging.Log
 import org.evergreen_ils.xdata.XOSRFObject
 import java.util.*
 
-private val TAG = FineRecord::class.java.simpleName
-
-class FineRecord(circ: XOSRFObject?, val mvrObj: XOSRFObject?, mbtsObj: XOSRFObject) {
-    var title: String? = null
-    var subtitle: String? = null
-    var balanceOwed: Double? = null
+class FineRecord(circ: XOSRFObject?, val mvrObj: XOSRFObject?, mbtsObj: XOSRFObject): ChargeRecord {
+    override var title: String? = null
+    override var subtitle: String? = null
+    override var balanceOwed: Double? = null
     var maxFine: Double? = null
     private var checkinTime: Date? = null
+    override var record: BibRecord? = null
 
-    val status: String
+    override val status: String
         get() {
             if (mvrObj == null) return ""
             if (checkinTime != null) return "returned"
@@ -41,6 +42,9 @@ class FineRecord(circ: XOSRFObject?, val mvrObj: XOSRFObject?, mbtsObj: XOSRFObj
         }
 
     init {
+        if (mvrObj != null) {
+            record = MBRecord(mvrObj)
+        }
         if (mbtsObj["xact_type"].toString() == "circulation") {
             title = mvrObj?.getString("title")
             subtitle = mvrObj?.getString("author")
@@ -62,9 +66,10 @@ class FineRecord(circ: XOSRFObject?, val mvrObj: XOSRFObject?, mbtsObj: XOSRFObj
     }
 
     companion object {
-        @JvmStatic
-        fun makeArray(objects: List<XOSRFObject>): List<FineRecord> {
-            val ret = mutableListOf<FineRecord>()
+        private val TAG = FineRecord::class.java.simpleName
+
+        fun makeArray(objects: List<XOSRFObject>): List<ChargeRecord> {
+            val ret = mutableListOf<ChargeRecord>()
             for (item in objects) {
                 val mbts = item["transaction"] as? XOSRFObject ?: continue
                 val circ = item["circ"] as? XOSRFObject

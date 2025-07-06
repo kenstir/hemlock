@@ -44,6 +44,8 @@ import net.kenstir.hemlock.logging.Log
 import org.evergreen_ils.utils.ui.BaseActivity
 import net.kenstir.hemlock.android.ui.ProgressDialogSupport
 import net.kenstir.hemlock.android.ui.showAlert
+import net.kenstir.hemlock.data.model.ChargeRecord
+import net.kenstir.hemlock.data.model.PatronCharges
 import org.opensrf.util.OSRFObject
 import java.net.URLEncoder
 import java.text.DecimalFormat
@@ -57,7 +59,8 @@ class FinesActivity : BaseActivity() {
     private var pay_fines_button: Button? = null
     private var lv: ListView? = null
     private var listAdapter: FinesArrayAdapter? = null
-    private var fineRecords: ArrayList<FineRecord> = ArrayList()
+    private var charges: PatronCharges? = null
+    private var fineRecords: List<ChargeRecord> = emptyList()
     private var haveAnyGroceryBills = false
     private var haveAnyFines = false
     private var progress: ProgressDialogSupport? = null
@@ -77,7 +80,7 @@ class FinesActivity : BaseActivity() {
         pay_fines_button = findViewById(R.id.pay_fines)
         progress = ProgressDialogSupport()
         fineRecords = ArrayList()
-        listAdapter = FinesArrayAdapter(this, R.layout.fines_list_item, fineRecords)
+        listAdapter = FinesArrayAdapter(this, R.layout.fines_list_item)
         lv?.adapter = listAdapter
         lv?.setOnItemClickListener { parent, view, position, id -> onItemClick(position) }
         updatePayFinesButtonState(false)
@@ -114,10 +117,9 @@ class FinesActivity : BaseActivity() {
                     })
                 }
                 jobs.add(scope.async {
-                    onSummaryResult(Gateway.actor.fetchUserFinesSummary(App.getAccount()))
-                })
-                jobs.add(scope.async {
-                    onTransactionsResult(Gateway.actor.fetchUserTransactionsWithCharges(App.getAccount()))
+                    val result = App.getServiceConfig().userService.fetchPatronCharges(App.getAccount())
+                    onChargesResult(result)
+                    (Gateway.actor.fetchUserFinesSummary(App.getAccount()))
                 })
 
                 jobs.map { it.await() }
@@ -155,95 +157,77 @@ class FinesActivity : BaseActivity() {
         pay_fines_button?.isEnabled = enabled
     }
 
-    private fun onSummaryResult(result: Result<OSRFObject?>) {
+    private fun onChargesResult(result: Result<PatronCharges>) {
         when (result) {
-            is Result.Success -> loadSummary(result.data)
-            is Result.Error -> showAlert(result.exception)
+            is Result.Success -> {
+                charges = result.data
+                loadSummary()
+                loadTransactions()
+            }
+            is Result.Error ->
+                showAlert(result.exception)
         }
     }
 
-    private fun loadSummary(obj: OSRFObject?) {
-//        Log.d(TAG, "[kcxxx] updateSummary: o:$obj")
-        total_owed?.text = decimalFormatter?.format(getFloat(obj, "total_owed"))
-        total_paid?.text = decimalFormatter?.format(getFloat(obj, "total_paid"))
-        val balance = getFloat(obj, "balance_owed")
-        balance_owed?.text = decimalFormatter?.format(balance)
-        updatePayFinesButtonState(balance > 0)
-    }
-
-    private fun onTransactionsResult(result: Result<List<OSRFObject>>) {
-        when (result) {
-            is Result.Success -> loadTransactions(result.data)
-            is Result.Error -> showAlert(result.exception)
+    private fun loadSummary() {
+        if (charges == null) {
+            return
         }
+        total_owed?.text = decimalFormatter?.format(charges!!.totalCharges)
+        total_paid?.text = decimalFormatter?.format(charges!!.totalPaid)
+        balance_owed?.text = decimalFormatter?.format(charges!!.balanceOwed)
+        updatePayFinesButtonState(charges!!.balanceOwed > 0)
     }
 
-    private fun loadTransactions(objects: List<OSRFObject>) {
-        throw Exception("refactor to use List<AbstractFineRecord>")
-//        listAdapter?.clear()
-//        val fines = FineRecord.makeArray(objects)
-//        haveAnyFines = fines.isNotEmpty()
-//        haveAnyGroceryBills = false
-//
-//        for (fine in fines) {
-//            listAdapter?.add(fine)
-//            if (fine.mvrObj == null) haveAnyGroceryBills = true
-//        }
-//
-//        listAdapter?.notifyDataSetChanged()
-    }
-
-    private fun getFloat(o: OSRFObject?, field: String): Float {
-        var ret = 0.0f
-        try {
-            ret = o?.getString(field)?.toFloat() ?: 0.0f
-        } catch (e: Exception) {
-            Analytics.logException(e)
+    private fun loadTransactions() {
+        listAdapter?.clear()
+        haveAnyFines = charges?.transactions?.isNotEmpty() ?: false
+        haveAnyGroceryBills = false
+        charges?.transactions?.let {
+            for (fine in it) {
+                listAdapter?.add(fine)
+                if (fine.record == null) haveAnyGroceryBills = true
+            }
         }
-        return ret
+        listAdapter?.notifyDataSetChanged()
     }
 
     private fun onItemClick(position: Int) {
         //Analytics.logEvent("fines_itemclick", "have_grocery_bills", haveAnyGroceryBills)
-        TODO()
-//        val records = ArrayList<MBRecord>()
-//        if (haveAnyGroceryBills) {
-//            // If any of the fines are for non-circulation items ("grocery bills"), we
-//            // start the details flow with only the one record, if a record was selected.
-//            // The details flow can't handle nulls.
-//            fineRecords[position].mvrObj?.let { mvrObj ->
-//                mvrObj.getInt("doc_ic")?.let { id ->
-//                    records.add(MBRecord(id, mvrObj))
-//                }
-//            }
-//        } else {
-//            for (item in fineRecords) {
-//                item.mvrObj?.let { mvrObj ->
-//                    mvrObj.getInt("doc_ic")?.let { id ->
-//                        records.add(MBRecord(id, mvrObj))
-//                    }
-//                }
-//            }
-//        }
-//        if (records.size > 0) {
-//            val targetPosition = if (position > records.size - 1) records.size - 1 else position
-//            RecordDetails.launchDetailsFlow(this@FinesActivity, records, targetPosition)
-//        }
+        showAlert("not implemented yet")
+/*
+        val records = ArrayList<MBRecord>()
+        if (haveAnyGroceryBills) {
+            // If any of the fines are for non-circulation items ("grocery bills"), we
+            // start the details flow with only the one record, if a record was selected.
+            // The details flow can't handle nulls.
+            fineRecords[position].mvrObj?.let { mvrObj ->
+                mvrObj.getInt("doc_ic")?.let { id ->
+                    records.add(MBRecord(id, mvrObj))
+                }
+            }
+        } else {
+            for (item in fineRecords) {
+                item.mvrObj?.let { mvrObj ->
+                    mvrObj.getInt("doc_ic")?.let { id ->
+                        records.add(MBRecord(id, mvrObj))
+                    }
+                }
+            }
+        }
+        if (records.size > 0) {
+            val targetPosition = if (position > records.size - 1) records.size - 1 else position
+            RecordDetails.launchDetailsFlow(this@FinesActivity, records, targetPosition)
+        }
+
+ */
     }
 
-    internal inner class FinesArrayAdapter(context: Context, private val resourceId: Int, private val items: List<FineRecord>) : ArrayAdapter<FineRecord>(context, resourceId, items) {
+    internal inner class FinesArrayAdapter(context: Context, private val resourceId: Int) : ArrayAdapter<ChargeRecord>(context, resourceId) {
         private var fineTitle: TextView? = null
         private var fineAuthor: TextView? = null
         private var fineBalanceOwed: TextView? = null
         private var fineStatus: TextView? = null
-
-        override fun getCount(): Int {
-            return items.size
-        }
-
-        override fun getItem(index: Int): FineRecord {
-            return items[index]
-        }
 
         override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
             val row = when(convertView) {
@@ -262,10 +246,10 @@ class FinesActivity : BaseActivity() {
             fineStatus = row.findViewById(R.id.fines_status)
 
             val record = getItem(position)
-            fineTitle?.text = record.title
-            fineAuthor?.text = record.subtitle
-            fineBalanceOwed?.text = decimalFormatter!!.format(record.balanceOwed)
-            fineStatus?.text = record.status
+            fineTitle?.text = record?.title
+            fineAuthor?.text = record?.subtitle
+            fineBalanceOwed?.text = decimalFormatter!!.format(record?.balanceOwed)
+            fineStatus?.text = record?.status
 
             return row
         }
