@@ -54,6 +54,7 @@ import org.evergreen_ils.utils.ui.BaseActivity
 import org.evergreen_ils.utils.ui.OrgArrayAdapter
 import net.kenstir.hemlock.android.ui.ProgressDialogSupport
 import net.kenstir.hemlock.android.ui.showAlert
+import net.kenstir.hemlock.data.model.HoldPart
 import org.opensrf.util.OSRFObject
 import java.util.*
 
@@ -85,7 +86,7 @@ class PlaceHoldActivity : BaseActivity() {
     private var selectedOrgPos = 0
     private var selectedSMSPos = 0
     private var progress: ProgressDialogSupport? = null
-    private var parts: List<OSRFObject>? = null
+    private var parts: List<HoldPart>? = null
     private var titleHoldIsPossible: Boolean? = null
     private lateinit var record: MBRecord
 
@@ -172,7 +173,7 @@ class PlaceHoldActivity : BaseActivity() {
                 if (resources.getBoolean(R.bool.ou_enable_part_holds)) {
                     Log.d(TAG, "${record.title}: fetching parts")
                     jobs.add(scope.async {
-                        val result = Gateway.search.fetchHoldParts(record.id)
+                        val result = serviceConfig.circService.fetchHoldParts(record.id)
                         onPartsResult(result)
                         if (hasParts && resources.getBoolean(R.bool.ou_enable_title_hold_on_item_with_parts)) {
                             Log.d(TAG, "${record.title}: checking titleHoldIsPossible")
@@ -205,7 +206,7 @@ class PlaceHoldActivity : BaseActivity() {
         }
     }
 
-    private fun onPartsResult(result: Result<List<OSRFObject>>) {
+    private fun onPartsResult(result: Result<List<HoldPart>>) {
         when (result) {
             is Result.Success -> {
                 parts = result.data
@@ -444,13 +445,7 @@ class PlaceHoldActivity : BaseActivity() {
     private fun initPartSpinner() {
         val sentinelLabel = if (partRequired) "" else "- ${resources.getString(R.string.label_hold_any_part)} -"
         val labels = mutableListOf(sentinelLabel)
-        parts?.let {
-            for (elem in it) {
-                elem.getString("label")?.let { label ->
-                    labels.add(label)
-                }
-            }
-        }
+        parts?.forEach { labels.add(it.label) }
         val adapter = ArrayAdapter(this, R.layout.org_item_layout, labels)
         partSpinner?.adapter = adapter
     }
@@ -459,8 +454,8 @@ class PlaceHoldActivity : BaseActivity() {
         // partSpinner[1] is parts[0] because we added a blank first entry
         //val index = partSpinner?.selectedItemPosition
         val label = partSpinner?.selectedItem.toString()
-        val partObj = parts?.find { it.getString("label") == label }
-        val partId = partObj?.getInt("id")
+        val holdPart = parts?.find { it.label == label }
+        val partId = holdPart?.id
         return partId ?: -1
     }
 

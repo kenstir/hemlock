@@ -38,7 +38,6 @@ object Gateway {
 
     var actor: ActorService = GatewayActor
     var circ: OldCircService = GatewayCirc
-    var search: SearchService = GatewaySearch
 
     private var _serverCacheKey: String? = null
     private val startTime = System.currentTimeMillis()

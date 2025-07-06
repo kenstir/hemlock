@@ -26,6 +26,7 @@ import net.kenstir.hemlock.data.ShouldNotHappenException
 import net.kenstir.hemlock.data.jsonMapOf
 import net.kenstir.hemlock.data.model.Account
 import net.kenstir.hemlock.data.model.CircRecord
+import net.kenstir.hemlock.data.model.HoldPart
 import net.kenstir.hemlock.data.model.HoldRecord
 import net.kenstir.hemlock.net.CircService
 import net.kenstir.hemlock.net.HoldOptions
@@ -221,6 +222,19 @@ object EvergreenCircService: CircService {
 
         val mraObj = EvergreenBiblioService.fetchMRA(bibRecord.id)
         bibRecord.updateFromMRAResponse(mraObj)
+    }
+
+    override suspend fun fetchHoldParts(targetId: Int): Result<List<HoldPart>> {
+        return try {
+            val query = jsonMapOf("record" to targetId)
+            val response = XGatewayClient.fetch(Api.SEARCH,Api.HOLD_PARTS, paramListOf(query), true)
+            val parts = response.payloadFirstAsObjectList()
+            Result.Success(parts.map { HoldPart(it.getInt("id") ?: -1, it.getString("label") ?: "Unknown part") })
+        } catch (e: Exception) {
+            Result.Error(e)
+        } catch (e: Exception) {
+            Result.Error(e)
+        }
     }
 
     override suspend fun placeHold(account: Account, targetId: Int, options: HoldOptions): Result<Int> {
