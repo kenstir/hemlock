@@ -68,7 +68,7 @@ interface CircService {
     /**
      * Updates an existing hold with new options.
      */
-    suspend fun updateHold(account: Account, holdId: Int, options: HoldOptions): Result<Boolean>
+    suspend fun updateHold(account: Account, holdId: Int, options: HoldUpdateOptions): Result<Boolean>
 
     /**
      * Cancels a hold.
@@ -101,4 +101,11 @@ data class HoldOptions(
     var expireTime: String? = null,
     var suspendHold: Boolean = false,
     var thawDate: String? = null,
+)
+
+data class HoldUpdateOptions(
+    val pickupLib: Int,
+    val expireTime: String? = null,
+    val suspendHold: Boolean,
+    val thawDate: String? = null,
 )

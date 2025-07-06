@@ -42,28 +42,4 @@ object GatewayCirc : OldCircService {
         }
     }
 
-    override suspend fun updateHoldAsync(account: Account, holdId: Int, pickupLib: Int, expireTime: String?, suspendHold: Boolean, thawDate: String?): Result<String> {
-        return try {
-            val (authToken, userID) = account.getCredentialsOrThrow()
-            val param = jsonMapOf(
-                    "id" to holdId,
-                    //"email_notify" to emailNotify,
-                    "pickup_lib" to pickupLib,
-                    "frozen" to suspendHold,
-                    //"phone_notify" to phoneNotify,
-                    //"sms_notify" to smsNotify,
-                    //"sms_carrier" to smsCarrierId,
-                    "expire_time" to expireTime,
-                    "thaw_date" to thawDate
-            )
-            val args = arrayOf<Any?>(authToken, null, param)
-            val ret = Gateway.fetch(Api.CIRC, Api.HOLD_UPDATE, args, false) {
-                // HOLD_UPDATE returns holdId as string on success
-                it.payloadFirstAsString()
-            }
-            Result.Success(ret)
-        } catch (e: Exception) {
-            Result.Error(e)
-        }
-    }
 }
