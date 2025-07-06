@@ -25,15 +25,6 @@ import org.opensrf.util.OSRFObject
 
 object GatewaySearch: SearchService {
 
-    override suspend fun fetchCopyMODS(copyId: Int): Result<OSRFObject> {
-        return try {
-            val ret = Gateway.fetchObject(Api.SEARCH, Api.MODS_FROM_COPY, arrayOf(copyId), true)
-            Result.Success(ret)
-        } catch (e: Exception) {
-            Result.Error(e)
-        }
-    }
-
     override suspend fun fetchHoldParts(id: Int): Result<List<OSRFObject>> {
         return try {
             val param = jsonMapOf("record" to id)
