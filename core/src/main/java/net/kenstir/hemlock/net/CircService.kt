@@ -73,7 +73,7 @@ interface CircService {
     /**
      * Cancels a hold.
      */
-    suspend fun cancelHold(account: Account, holdId: String): Result<Unit>
+    suspend fun cancelHold(account: Account, holdId: Int): Result<Boolean>
 }
 
 /**

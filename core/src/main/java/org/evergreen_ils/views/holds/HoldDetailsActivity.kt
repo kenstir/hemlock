@@ -159,7 +159,7 @@ class HoldDetailsActivity : BaseActivity() {
             progress?.show(this@HoldDetailsActivity, getString(R.string.msg_canceling_hold))
 
             val holdId = record.ahrObj.getInt("id") ?: 0
-            val result = Gateway.circ.cancelHoldAsync(App.getAccount(), holdId)
+            val result = App.getServiceConfig().circService.cancelHold(App.getAccount(), holdId)
             progress?.dismiss()
             Analytics.logEvent(Analytics.Event.HOLD_CANCEL_HOLD, bundleOf(
                 Analytics.Param.RESULT to Analytics.resultValue(result)
