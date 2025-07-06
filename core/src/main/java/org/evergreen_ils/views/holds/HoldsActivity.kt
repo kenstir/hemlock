@@ -30,6 +30,7 @@ import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.ListView
 import android.widget.TextView
+import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.joinAll
@@ -100,7 +101,7 @@ class HoldsActivity : BaseActivity() {
             try {
                 Log.d(TAG, "[kcxxx] fetchData ...")
                 val start = System.currentTimeMillis()
-                var jobs = mutableListOf<Job>()
+                var jobs = mutableListOf<Deferred<Any>>()
                 progress?.show(this@HoldsActivity, getString(R.string.msg_loading_holds))
 
                 // fetchHolds
@@ -122,7 +123,7 @@ class HoldsActivity : BaseActivity() {
                     })
                 }
 
-                jobs.joinAll()
+                jobs.map { it.await() }
                 updateHoldsList()
                 Log.logElapsedTime(TAG, start, "[kcxxx] fetchData ... done")
             } catch (ex: Exception) {

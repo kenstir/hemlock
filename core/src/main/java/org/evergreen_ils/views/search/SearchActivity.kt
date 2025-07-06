@@ -245,7 +245,7 @@ class SearchActivity : BaseActivity(), ActivityCompat.OnRequestPermissionsResult
         scope.async {
             try {
                 val start = System.currentTimeMillis()
-                //var jobs = mutableListOf<Job>()
+                //var jobs = mutableListOf<Deferred<Any>()
                 progress?.show(this@SearchActivity, getString(R.string.dialog_fetching_data_message))
 
                 Log.d(TAG, "[kcxxx] fetchSearchResults ...")
@@ -278,7 +278,7 @@ class SearchActivity : BaseActivity(), ActivityCompat.OnRequestPermissionsResult
                 updateSearchResultsSummary()
                 searchResultsFragment?.notifyDatasetChanged()
 
-                //jobs.joinAll()
+//                jobs.map { it.await() }
                 Log.logElapsedTime(TAG, start, "[kcxxx] fetchSearchResults ... done")
             } catch (ex: Exception) {
                 Log.d(TAG, "[kcxxx] fetchSearchResults ... caught", ex)

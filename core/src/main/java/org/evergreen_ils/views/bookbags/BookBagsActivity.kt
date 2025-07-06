@@ -29,6 +29,7 @@ import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.*
 import androidx.core.os.bundleOf
+import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.joinAll
@@ -105,13 +106,13 @@ class BookBagsActivity : BaseActivity() {
                 }
 
                 // load bookbag items
-                val jobs = mutableListOf<Job>()
+                val jobs = mutableListOf<Deferred<Any>>()
                 for (list in App.getAccount().patronLists) {
                     jobs.add(scope.async {
                         App.getServiceConfig().userService.loadPatronListItems(App.getAccount(), list, resources.getBoolean(R.bool.ou_extra_bookbag_query))
                     })
                 }
-                jobs.joinAll()
+                jobs.map { it.await() }
 
                 updateListAdapter()
                 Log.logElapsedTime(TAG, start, "[kcxxx] fetchData ... done")
