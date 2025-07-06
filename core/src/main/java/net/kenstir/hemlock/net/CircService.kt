@@ -20,6 +20,7 @@ package net.kenstir.hemlock.net
 import net.kenstir.hemlock.data.Result
 import net.kenstir.hemlock.data.model.Account
 import net.kenstir.hemlock.data.model.CircRecord
+import net.kenstir.hemlock.data.model.HoldPart
 import net.kenstir.hemlock.data.model.HoldRecord
 
 interface CircService {
@@ -46,6 +47,11 @@ interface CircService {
     * Fetches the details for a hold record.
     */
     suspend fun loadHoldDetails(account: Account, holdRecord: HoldRecord): Result<Unit>
+
+    /**
+     * Fetches the parts available to place a hold.
+     */
+    suspend fun fetchHoldParts(targetId: Int): Result<List<HoldPart>>
 
     /**
      * Places a hold on the specified target.
