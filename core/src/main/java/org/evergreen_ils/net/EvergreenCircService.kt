@@ -21,6 +21,7 @@ import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import net.kenstir.hemlock.android.Analytics
+import net.kenstir.hemlock.data.MutableJSONDictionary
 import net.kenstir.hemlock.data.Result
 import net.kenstir.hemlock.data.ShouldNotHappenException
 import net.kenstir.hemlock.data.jsonMapOf
@@ -248,19 +249,52 @@ object EvergreenCircService: CircService {
             )
             val params = paramListOf(authToken, param)
             val response = XGatewayClient.fetch(Api.CIRC, Api.TITLE_HOLD_IS_POSSIBLE, params, false)
-            // If a title hold is not posssible, the response includes an event and an error is thrown here
-            val obj = response.payloadFirstAsObject()
+            // The response is a JSON object with details, e.g. "success":1.  But if a title hold is not posssible,
+            // the response includes an event and an error is thrown while deserializing.
+            response.payloadFirstAsObject()
             Result.Success(true)
         } catch (e: Exception) {
             Result.Error(e)
         }
     }
 
-    override suspend fun placeHold(account: Account, targetId: Int, options: HoldOptions): Result<Int> {
-        TODO("Not yet implemented")
+    override suspend fun placeHold(account: Account, targetId: Int, options: HoldOptions): Result<Boolean> {
+        return try {
+            Result.Success(placeHoldImpl(account, targetId, options))
+        } catch (e: Exception) {
+            Result.Error(e)
+        }
     }
 
-    override suspend fun updateHold(account: Account, holdId: Int, options: HoldOptions): Result<Int> {
+    private suspend fun placeHoldImpl(account: Account, targetId: Int, options: HoldOptions): Boolean {
+        val (authToken, userID) = account.getCredentialsOrThrow()
+        val param: MutableJSONDictionary = mutableMapOf(
+            "patronid" to userID,
+            "pickup_lib" to options.pickupLib,
+            "hold_type" to options.holdType,
+            "email_notify" to options.emailNotify,
+            "expire_time" to options.expireTime,
+            "frozen" to options.suspendHold
+        )
+        if (!options.phoneNotify.isNullOrEmpty()) {
+            param["phone_notify"] = options.phoneNotify
+        }
+        if (options.smsCarrierId != null && !options.smsNotify.isNullOrEmpty()) {
+            param["sms_carrier"] = options.smsCarrierId
+            param["sms_notify"] = options.smsNotify
+        }
+        if (!options.thawDate.isNullOrEmpty()) {
+            param["thaw_date"] = options.thawDate
+        }
+
+        val params = paramListOf(authToken, param, arrayListOf(targetId))
+        val method = if (options.useOverride) Api.HOLD_TEST_AND_CREATE_OVERRIDE else Api.HOLD_TEST_AND_CREATE
+        val response = XGatewayClient.fetch(Api.CIRC, method, params, false)
+        val obj = response.payloadFirstAsObject()
+        return true
+    }
+
+    override suspend fun updateHold(account: Account, holdId: Int, options: HoldOptions): Result<Boolean> {
         TODO("Not yet implemented")
     }
 

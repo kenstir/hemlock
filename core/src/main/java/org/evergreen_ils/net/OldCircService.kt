@@ -23,7 +23,6 @@ import net.kenstir.hemlock.data.Result
 import org.opensrf.util.OSRFObject
 
 interface OldCircService {
-    suspend fun placeHoldAsync(account: Account, holdType: String, targetId: Int, pickupLib: Int, emailNotify: Boolean, phoneNotify: String?, smsNotify: String?, smsCarrierId: Int?, expireTime: String?, suspendHold: Boolean, thawDate: String?, useOverride: Boolean): Result<OSRFObject>
     suspend fun cancelHoldAsync(account: Account, holdId: Int): Result<String?>
     suspend fun renewCircAsync(account: Account, targetCopy: Int): Result<OSRFObject>
     suspend fun updateHoldAsync(account: Account, holdId: Int, pickupLib: Int, expireTime: String?, suspendHold: Boolean, thawDate: String?): Result<String>

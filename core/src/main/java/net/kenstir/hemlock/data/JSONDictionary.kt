@@ -18,6 +18,7 @@
 package net.kenstir.hemlock.data
 
 typealias JSONDictionary = Map<String, Any?>
+typealias MutableJSONDictionary = MutableMap<String, Any?>
 
 fun jsonMapOf(vararg pairs: Pair<String, Any?>): JSONDictionary =
         if (pairs.size > 0) pairs.toMap(LinkedHashMap(pairs.size + 1)) else emptyMap()

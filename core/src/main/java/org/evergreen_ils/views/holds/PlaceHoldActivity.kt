@@ -28,8 +28,15 @@ import android.text.TextUtils
 import android.text.format.DateFormat
 import android.view.MenuItem
 import android.view.View
-import android.widget.*
+import android.widget.AdapterView
 import android.widget.AdapterView.OnItemSelectedListener
+import android.widget.ArrayAdapter
+import android.widget.Button
+import android.widget.CheckBox
+import android.widget.EditText
+import android.widget.Spinner
+import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.core.os.bundleOf
 import kotlinx.coroutines.Deferred
@@ -38,24 +45,25 @@ import net.kenstir.hemlock.R
 import net.kenstir.hemlock.android.Analytics
 import net.kenstir.hemlock.android.App
 import net.kenstir.hemlock.android.Key
-import net.kenstir.hemlock.logging.Log
-import net.kenstir.hemlock.data.model.Account
-import net.kenstir.hemlock.data.Result
-import org.evergreen_ils.HOLD_TYPE_PART
-import org.evergreen_ils.HOLD_TYPE_TITLE
-import org.evergreen_ils.data.OSRFUtils
-import org.evergreen_ils.data.SMSCarrier
-import org.evergreen_ils.net.Gateway
-import org.evergreen_ils.data.MBRecord
-import org.evergreen_ils.system.EgOrg
-import org.evergreen_ils.system.EgSms
-import net.kenstir.hemlock.util.getCustomMessage
-import org.evergreen_ils.utils.ui.BaseActivity
-import org.evergreen_ils.utils.ui.OrgArrayAdapter
 import net.kenstir.hemlock.android.ui.ProgressDialogSupport
 import net.kenstir.hemlock.android.ui.showAlert
+import net.kenstir.hemlock.data.Result
+import net.kenstir.hemlock.data.model.Account
 import net.kenstir.hemlock.data.model.HoldPart
-import java.util.*
+import net.kenstir.hemlock.logging.Log
+import net.kenstir.hemlock.net.HoldOptions
+import net.kenstir.hemlock.util.getCustomMessage
+import org.evergreen_ils.HOLD_TYPE_PART
+import org.evergreen_ils.HOLD_TYPE_TITLE
+import org.evergreen_ils.data.MBRecord
+import org.evergreen_ils.data.OSRFUtils
+import org.evergreen_ils.data.SMSCarrier
+import org.evergreen_ils.system.EgOrg
+import org.evergreen_ils.system.EgSms
+import org.evergreen_ils.utils.ui.BaseActivity
+import org.evergreen_ils.utils.ui.OrgArrayAdapter
+import java.util.Calendar
+import java.util.Date
 
 class PlaceHoldActivity : BaseActivity() {
     private var title: TextView? = null
@@ -316,11 +324,19 @@ class PlaceHoldActivity : BaseActivity() {
                 else -> { holdType = HOLD_TYPE_TITLE; itemId = record.id }
             }
             progress?.show(this@PlaceHoldActivity, "Placing hold")
-            val result = Gateway.circ.placeHoldAsync(App.getAccount(), holdType, itemId,
-                    selectedOrgID, emailNotification?.isChecked == true, getPhoneNotify(), getSMSNotify(),
-                    getSMSNotifyCarrier(selectedSMSCarrierID), getExpireDate(),
-                    suspendHold?.isChecked == true, getThawDate(),
-                    resources.getBoolean(R.bool.ou_enable_hold_use_override))
+            val options = HoldOptions(
+                holdType = holdType,
+                emailNotify = emailNotification?.isChecked == true,
+                phoneNotify = getPhoneNotify(),
+                smsNotify = getSMSNotify(),
+                smsCarrierId = getSMSNotifyCarrier(selectedSMSCarrierID),
+                useOverride = resources.getBoolean(R.bool.ou_enable_hold_use_override),
+                pickupLib = selectedOrgID,
+                expireTime = getExpireDate(),
+                suspendHold = suspendHold?.isChecked == true,
+                thawDate = getThawDate()
+            )
+            val result = App.getServiceConfig().circService.placeHold(App.getAccount(), record.id, options)
             Log.d(TAG, "[kcxxx] placeHold: $result")
             progress?.dismiss()
             when (result) {
