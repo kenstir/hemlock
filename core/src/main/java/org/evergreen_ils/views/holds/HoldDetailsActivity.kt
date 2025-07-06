@@ -42,6 +42,8 @@ import net.kenstir.hemlock.android.ui.showAlert
 import org.evergreen_ils.system.EgOrg
 import org.evergreen_ils.data.EvergreenHoldRecord
 import net.kenstir.hemlock.data.Result
+import net.kenstir.hemlock.net.HoldOptions
+import net.kenstir.hemlock.net.HoldUpdateOptions
 import org.evergreen_ils.net.Gateway
 import org.evergreen_ils.utils.ui.*
 import java.util.*
@@ -186,8 +188,13 @@ class HoldDetailsActivity : BaseActivity() {
 
             val holdId = record.ahrObj.getInt("id") ?: 0
             val orgId = EgOrg.visibleOrgs[selectedOrgPos].id
-            val result = Gateway.circ.updateHoldAsync(App.getAccount(), holdId,
-                    orgId, expireDateApi, suspendHold!!.isChecked, thawDateApi)
+            val holdOptions = HoldUpdateOptions(
+                pickupLib = orgId,
+                suspendHold = suspendHold!!.isChecked,
+                expireTime = expireDateApi,
+                thawDate = thawDateApi,
+            )
+            val result = App.getServiceConfig().circService.updateHold(App.getAccount(), holdId, holdOptions)
             progress?.dismiss()
             Analytics.logEvent(Analytics.Event.HOLD_UPDATE_HOLD, bundleOf(
                 Analytics.Param.RESULT to Analytics.resultValue(result),

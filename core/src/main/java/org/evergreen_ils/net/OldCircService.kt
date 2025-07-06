@@ -24,5 +24,4 @@ import org.opensrf.util.OSRFObject
 
 interface OldCircService {
     suspend fun renewCircAsync(account: Account, targetCopy: Int): Result<OSRFObject>
-    suspend fun updateHoldAsync(account: Account, holdId: Int, pickupLib: Int, expireTime: String?, suspendHold: Boolean, thawDate: String?): Result<String>
 }

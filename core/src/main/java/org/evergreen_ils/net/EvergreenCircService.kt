@@ -31,6 +31,7 @@ import net.kenstir.hemlock.data.model.HoldPart
 import net.kenstir.hemlock.data.model.HoldRecord
 import net.kenstir.hemlock.net.CircService
 import net.kenstir.hemlock.net.HoldOptions
+import net.kenstir.hemlock.net.HoldUpdateOptions
 import org.evergreen_ils.Api
 import org.evergreen_ils.HOLD_TYPE_COPY
 import org.evergreen_ils.HOLD_TYPE_FORCE
@@ -294,8 +295,25 @@ object EvergreenCircService: CircService {
         return true
     }
 
-    override suspend fun updateHold(account: Account, holdId: Int, options: HoldOptions): Result<Boolean> {
-        TODO("Not yet implemented")
+    override suspend fun updateHold(account: Account, holdId: Int, options: HoldUpdateOptions): Result<Boolean> {
+        return try {
+            val (authToken, _) = account.getCredentialsOrThrow()
+            val param = jsonMapOf(
+                "id" to holdId,
+                "pickup_lib" to options.pickupLib,
+                "frozen" to options.suspendHold,
+                "expire_time" to options.expireTime,
+                "thaw_date" to options.thawDate,
+            )
+
+            val params = paramListOf(authToken, null, param)
+            val response = XGatewayClient.fetch(Api.CIRC, Api.HOLD_UPDATE, params, false)
+            // HOLD_UPDATE returns holdId as string on success
+            val str = response.payloadFirstAsString()
+            Result.Success(true)
+        } catch (e: Exception) {
+            Result.Error(e)
+        }
     }
 
     override suspend fun cancelHold(account: Account, holdId: Int): Result<Boolean> {
