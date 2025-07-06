@@ -237,6 +237,25 @@ object EvergreenCircService: CircService {
         }
     }
 
+    override suspend fun fetchTitleHoldIsPossible(account: Account, targetId: Int, pickupLib: Int): Result<Boolean> {
+        return try {
+            val (authToken, userID) = account.getCredentialsOrThrow()
+            val param = jsonMapOf(
+                "patronid" to userID,
+                "pickup_lib" to pickupLib,
+                "hold_type" to HOLD_TYPE_TITLE,
+                "titleid" to targetId
+            )
+            val params = paramListOf(authToken, param)
+            val response = XGatewayClient.fetch(Api.CIRC, Api.TITLE_HOLD_IS_POSSIBLE, params, false)
+            // If a title hold is not posssible, the response includes an event and an error is thrown here
+            val obj = response.payloadFirstAsObject()
+            Result.Success(true)
+        } catch (e: Exception) {
+            Result.Error(e)
+        }
+    }
+
     override suspend fun placeHold(account: Account, targetId: Int, options: HoldOptions): Result<Int> {
         TODO("Not yet implemented")
     }

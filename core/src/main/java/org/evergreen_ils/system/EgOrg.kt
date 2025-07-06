@@ -155,5 +155,10 @@ object EgOrg {
         Log.d(TAG, String.format("%3d have meeting rooms URLs", numWithMeetingRooms))
         Log.d(TAG, String.format("%3d have museum passes URLs", numWithMuseumPasses))
         print("")
+
+//        for (org in allOrgs) {
+//            Log.d(TAG, String.format("%d,%s,%s", org.id, org.shortname, org.name))
+//        }
+//        print("")
     }
 }
