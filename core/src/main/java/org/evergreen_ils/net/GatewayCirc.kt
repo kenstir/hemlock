@@ -25,20 +25,6 @@ import net.kenstir.hemlock.data.jsonMapOf
 import org.opensrf.util.OSRFObject
 
 object GatewayCirc : OldCircService {
-    override suspend fun cancelHoldAsync(account: Account, holdId: Int): Result<String?> {
-        return try {
-            val (authToken, userID) = account.getCredentialsOrThrow()
-            val note = "Cancelled by mobile app"
-            val args = arrayOf<Any?>(authToken, holdId, null, note)
-            val ret = Gateway.fetch(Api.CIRC, Api.HOLD_CANCEL, args, false) {
-                // HOLD_CANCEL returns "1" on success
-                it.payloadFirstAsString()
-            }
-            Result.Success(ret)
-        } catch (e: Exception) {
-            Result.Error(e)
-        }
-    }
 
     override suspend fun renewCircAsync(account: Account, targetCopy: Int): Result<OSRFObject> {
         return try {

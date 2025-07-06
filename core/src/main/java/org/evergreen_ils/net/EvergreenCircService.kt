@@ -298,7 +298,17 @@ object EvergreenCircService: CircService {
         TODO("Not yet implemented")
     }
 
-    override suspend fun cancelHold(account: Account, holdId: String): Result<Unit> {
-        TODO("Not yet implemented")
+    override suspend fun cancelHold(account: Account, holdId: Int): Result<Boolean> {
+        return try {
+            val (authToken, _) = account.getCredentialsOrThrow()
+            val note = "Cancelled by mobile app"
+            val params = paramListOf(authToken, holdId, null, note)
+            val response = XGatewayClient.fetch(Api.CIRC, Api.HOLD_CANCEL, params, false)
+            // HOLD_CANCEL returns "1" on success, and an error event if it fails.
+            val str = response.payloadFirstAsString()
+            Result.Success(true)
+        } catch (e: Exception) {
+            Result.Error(e)
+        }
     }
 }
