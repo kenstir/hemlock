@@ -40,51 +40,6 @@ object GatewayCirc : OldCircService {
         }
     }
 
-    // targetId - titleId for Title hold, partId for Part hold
-    override suspend fun placeHoldAsync(
-        account: Account,
-        holdType: String,
-        targetId: Int,
-        pickupLib: Int,
-        emailNotify: Boolean,
-        phoneNotify: String?,
-        smsNotify: String?,
-        smsCarrierId: Int?,
-        expireTime: String?,
-        suspendHold: Boolean,
-        thawDate: String?,
-        useOverride: Boolean
-    ): Result<OSRFObject> {
-        return try {
-            val (authToken, userID) = account.getCredentialsOrThrow()
-            var param = mutableMapOf(
-                    "patronid" to userID,
-                    "pickup_lib" to pickupLib,
-                    "hold_type" to holdType,
-                    "email_notify" to emailNotify,
-                    "expire_time" to expireTime,
-                    "frozen" to suspendHold
-            )
-            if (phoneNotify != null && phoneNotify.isNotEmpty()) {
-                param["phone_notify"] = phoneNotify
-            }
-            if (smsCarrierId != null && smsNotify != null && smsNotify.isNotEmpty()) {
-                param["sms_carrier"] = smsCarrierId
-                param["sms_notify"] = smsNotify
-            }
-            if (thawDate != null && thawDate.isNotEmpty()) {
-                param["thaw_date"] = thawDate
-            }
-
-            val args = arrayOf<Any?>(authToken, param, arrayListOf(targetId))
-            val method = if (useOverride) Api.HOLD_TEST_AND_CREATE_OVERRIDE else Api.HOLD_TEST_AND_CREATE
-            val ret = Gateway.fetchObject(Api.CIRC, method, args, false)
-            Result.Success(ret)
-        } catch (e: Exception) {
-            Result.Error(e)
-        }
-    }
-
     override suspend fun renewCircAsync(account: Account, targetCopy: Int): Result<OSRFObject> {
         return try {
             val (authToken, userID) = account.getCredentialsOrThrow()

@@ -60,13 +60,15 @@ interface CircService {
 
     /**
      * Places a hold on the specified target.
+     *
+     * @param targetId titleId for Title hold, partId for Part hold
      */
-    suspend fun placeHold(account: Account, targetId: Int, options: HoldOptions): Result<Int>
+    suspend fun placeHold(account: Account, targetId: Int, options: HoldOptions): Result<Boolean>
 
     /**
      * Updates an existing hold with new options.
      */
-    suspend fun updateHold(account: Account, holdId: Int, options: HoldOptions): Result<Int>
+    suspend fun updateHold(account: Account, holdId: Int, options: HoldOptions): Result<Boolean>
 
     /**
      * Cancels a hold.
