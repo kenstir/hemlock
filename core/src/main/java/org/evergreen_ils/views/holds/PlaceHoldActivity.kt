@@ -55,7 +55,6 @@ import org.evergreen_ils.utils.ui.OrgArrayAdapter
 import net.kenstir.hemlock.android.ui.ProgressDialogSupport
 import net.kenstir.hemlock.android.ui.showAlert
 import net.kenstir.hemlock.data.model.HoldPart
-import org.opensrf.util.OSRFObject
 import java.util.*
 
 class PlaceHoldActivity : BaseActivity() {
@@ -177,7 +176,7 @@ class PlaceHoldActivity : BaseActivity() {
                         onPartsResult(result)
                         if (hasParts && resources.getBoolean(R.bool.ou_enable_title_hold_on_item_with_parts)) {
                             Log.d(TAG, "${record.title}: checking titleHoldIsPossible")
-                            val isPossibleResult = Gateway.circ.fetchTitleHoldIsPossible(App.getAccount(), record.id, App.getAccount().pickupOrg ?: 1)
+                            val isPossibleResult = serviceConfig.circService.fetchTitleHoldIsPossible(App.getAccount(), record.id, App.getAccount().pickupOrg ?: 1)
                             onTitleHoldIsPossibleResult(isPossibleResult)
                         }
                         Result.Success(Unit)
@@ -218,7 +217,7 @@ class PlaceHoldActivity : BaseActivity() {
         }
     }
 
-    private fun onTitleHoldIsPossibleResult(result: Result<OSRFObject>) {
+    private fun onTitleHoldIsPossibleResult(result: Result<Boolean>) {
         titleHoldIsPossible = when (result) {
             is Result.Success -> true
             is Result.Error -> false

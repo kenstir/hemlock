@@ -19,7 +19,6 @@
 package org.evergreen_ils.net
 
 import org.evergreen_ils.Api
-import org.evergreen_ils.HOLD_TYPE_TITLE
 import net.kenstir.hemlock.data.model.Account
 import net.kenstir.hemlock.data.Result
 import net.kenstir.hemlock.data.jsonMapOf
@@ -80,23 +79,6 @@ object GatewayCirc : OldCircService {
             val args = arrayOf<Any?>(authToken, param, arrayListOf(targetId))
             val method = if (useOverride) Api.HOLD_TEST_AND_CREATE_OVERRIDE else Api.HOLD_TEST_AND_CREATE
             val ret = Gateway.fetchObject(Api.CIRC, method, args, false)
-            Result.Success(ret)
-        } catch (e: Exception) {
-            Result.Error(e)
-        }
-    }
-
-    override suspend fun fetchTitleHoldIsPossible(account: Account, targetId: Int, pickupLib: Int): Result<OSRFObject> {
-        return try {
-            val (authToken, userID) = account.getCredentialsOrThrow()
-            val param = mutableMapOf(
-                    "patronid" to userID,
-                    "pickup_lib" to pickupLib,
-                    "hold_type" to HOLD_TYPE_TITLE,
-                    "titleid" to targetId
-            )
-            val args = arrayOf<Any?>(authToken, param)
-            val ret = Gateway.fetchObject(Api.CIRC, Api.TITLE_HOLD_IS_POSSIBLE, args, false)
             Result.Success(ret)
         } catch (e: Exception) {
             Result.Error(e)

@@ -54,6 +54,11 @@ interface CircService {
     suspend fun fetchHoldParts(targetId: Int): Result<List<HoldPart>>
 
     /**
+     * Fetches whether a title hold is possible for the given item with parts for the specified pickup library.
+     */
+    suspend fun fetchTitleHoldIsPossible(account: Account, targetId: Int, pickupLib: Int): Result<Boolean>
+
+    /**
      * Places a hold on the specified target.
      */
     suspend fun placeHold(account: Account, targetId: Int, options: HoldOptions): Result<Int>
