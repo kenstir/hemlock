@@ -22,6 +22,5 @@ import net.kenstir.hemlock.data.Result
 import org.opensrf.util.OSRFObject
 
 interface SearchService {
-    suspend fun fetchCopyMODS(copyId: Int): Result<OSRFObject>
     suspend fun fetchHoldParts(id: Int): Result<List<OSRFObject>>
 }
