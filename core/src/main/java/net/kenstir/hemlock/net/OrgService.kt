@@ -15,7 +15,7 @@
  * along with this program; if not, see <https://www.gnu.org/licenses/>.
  */
 
-package org.evergreen_ils.net
+package net.kenstir.hemlock.net
 
 import net.kenstir.hemlock.data.Result
 import net.kenstir.hemlock.data.model.Account
