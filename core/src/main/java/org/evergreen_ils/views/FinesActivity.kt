@@ -26,6 +26,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.joinAll
@@ -101,7 +102,7 @@ class FinesActivity : BaseActivity() {
                 progress?.show(this@FinesActivity, getString(R.string.msg_retrieving_fines))
                 Log.d(TAG, "[kcxxx] fetchData ...")
 
-                val jobs = mutableListOf<Job>()
+                val jobs = mutableListOf<Deferred<Any>>()
                 val homeOrg = EgOrg.findOrg(App.getAccount().homeOrg)
                 homeOrg?.let {
                     jobs.add(scope.async {
@@ -119,7 +120,7 @@ class FinesActivity : BaseActivity() {
                     onTransactionsResult(Gateway.actor.fetchUserTransactionsWithCharges(App.getAccount()))
                 })
 
-                jobs.joinAll()
+                jobs.map { it.await() }
                 Log.logElapsedTime(TAG, start, "[kcxxx] fetchData ... done")
             } catch (ex: Exception) {
                 Log.d(TAG, "[kcxxx] fetchData ... caught", ex)
@@ -178,7 +179,7 @@ class FinesActivity : BaseActivity() {
     }
 
     private fun loadTransactions(objects: List<OSRFObject>) {
-        TODO("refactor to use List<AbstractFineRecord>")
+        throw Exception("refactor to use List<AbstractFineRecord>")
 //        listAdapter?.clear()
 //        val fines = FineRecord.makeArray(objects)
 //        haveAnyFines = fines.isNotEmpty()
