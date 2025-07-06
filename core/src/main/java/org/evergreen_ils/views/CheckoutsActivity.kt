@@ -273,12 +273,10 @@ class CheckoutsActivity : BaseActivity() {
 
             record.targetCopy?.let {
                 progress?.show(this@CheckoutsActivity, getString(R.string.msg_renewing_item))
-                val result = Gateway.circ.renewCircAsync(App.getAccount(), it)
+                val result = App.getServiceConfig().circService.renewCheckout(App.getAccount(), it)
                 progress?.dismiss()
                 when (result) {
                     is Result.Success -> {
-                        // The response is a SUCCESS event, but we just care that it isn't an error
-//                        Log.d(TAG, "[kcxxx] ${result.data}")
                         Toast.makeText(this@CheckoutsActivity, getString(R.string.toast_item_renewed), Toast.LENGTH_LONG).show()
                         fetchData()
                     }
