@@ -30,6 +30,7 @@ import androidx.recyclerview.widget.RecyclerView
 import coil3.load
 import kotlinx.coroutines.async
 import net.kenstir.hemlock.R
+import net.kenstir.hemlock.android.App
 import net.kenstir.hemlock.logging.Log
 import org.evergreen_ils.data.EvergreenHistoryRecord
 import org.evergreen_ils.data.MBRecord
@@ -81,12 +82,8 @@ class HistoryViewAdapter(private val items: List<HistoryRecord>) : RecyclerView.
         }
 
         private suspend fun fetchCopyDetails(historyRecord: HistoryRecord): Result<Unit> {
-//            val targetCopy = historyRecord.targetCopy ?: return Result.Success(Unit)
-//            val modsResult = Gateway.search.fetchCopyMODS(targetCopy)
-//            if (modsResult is Result.Error) return modsResult
-//            val modsObj = modsResult.get()
-//            historyRecord.record = MBRecord(modsObj)
-            return Result.Success(Unit)
+            val targetCopy = historyRecord.targetCopy ?: return Result.Success(Unit)
+            return App.getServiceConfig().circService.loadHistoryDetails(historyRecord)
         }
 
         private fun loadMetadata(context: Context, historyRecord: HistoryRecord) {

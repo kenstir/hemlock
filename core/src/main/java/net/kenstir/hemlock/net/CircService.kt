@@ -20,6 +20,7 @@ package net.kenstir.hemlock.net
 import net.kenstir.hemlock.data.Result
 import net.kenstir.hemlock.data.model.Account
 import net.kenstir.hemlock.data.model.CircRecord
+import net.kenstir.hemlock.data.model.HistoryRecord
 import net.kenstir.hemlock.data.model.HoldPart
 import net.kenstir.hemlock.data.model.HoldRecord
 
@@ -43,6 +44,18 @@ interface CircService {
      * @return true if the renewal was successful, false otherwise.
      */
     suspend fun renewCheckout(account: Account, targetCopy: Int): Result<Boolean>
+
+    /**
+     * Fetches the checkout history.
+     *
+     * @return list of skeleton history records.  These records must be fleshed out with details using [loadHistoryDetails].
+     */
+    suspend fun fetchCheckoutHistory(account: Account): Result<List<HistoryRecord>>
+
+    /**
+     * Fetches the details for a history record.
+     */
+    suspend fun loadHistoryDetails(historyRecord: HistoryRecord): Result<Unit>
 
     /**
      * Fetches the current holds.

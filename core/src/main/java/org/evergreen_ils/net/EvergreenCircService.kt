@@ -27,6 +27,7 @@ import net.kenstir.hemlock.data.ShouldNotHappenException
 import net.kenstir.hemlock.data.jsonMapOf
 import net.kenstir.hemlock.data.model.Account
 import net.kenstir.hemlock.data.model.CircRecord
+import net.kenstir.hemlock.data.model.HistoryRecord
 import net.kenstir.hemlock.data.model.HoldPart
 import net.kenstir.hemlock.data.model.HoldRecord
 import net.kenstir.hemlock.net.CircService
@@ -41,6 +42,7 @@ import org.evergreen_ils.HOLD_TYPE_RECALL
 import org.evergreen_ils.HOLD_TYPE_TITLE
 import org.evergreen_ils.HOLD_TYPE_VOLUME
 import org.evergreen_ils.data.EvergreenCircRecord
+import org.evergreen_ils.data.EvergreenHistoryRecord
 import org.evergreen_ils.data.EvergreenHoldRecord
 import org.evergreen_ils.data.MBRecord
 import org.evergreen_ils.xdata.XGatewayClient
@@ -100,6 +102,35 @@ object EvergreenCircService: CircService {
             // CIRC_RENEW returns a JSON object, but as long as it's not a failure event, the renewal succeeded.
             val obj = response.payloadFirstAsObject()
             Result.Success(true)
+        } catch (e: Exception) {
+            Result.Error(e)
+        }
+    }
+
+    override suspend fun fetchCheckoutHistory(account: Account): Result<List<HistoryRecord>> {
+        return try {
+            val (authToken, _) = account.getCredentialsOrThrow()
+            val params = paramListOf(authToken)
+            val response = XGatewayClient.fetch(Api.ACTOR, Api.CHECKOUT_HISTORY, params, false)
+            Result.Success(EvergreenHistoryRecord.makeArray(response.payloadAsObjectList()))
+        } catch (e: Exception) {
+            Result.Error(e)
+        }
+    }
+
+    override suspend fun loadHistoryDetails(historyRecord: HistoryRecord): Result<Unit> {
+        historyRecord as? EvergreenHistoryRecord ?: return Result.Error(IllegalArgumentException("Expected EvergreenHistoryRecord, got ${historyRecord::class.java.name}"))
+
+        return try {
+            val targetCopy = historyRecord.targetCopy ?: throw GatewayError("circ item has no target_copy")
+            val modsObj = EvergreenBiblioService.fetchCopyMODS(targetCopy)
+            val record = MBRecord(modsObj)
+            historyRecord.record = record
+//
+//            val mraObj = EvergreenBiblioService.fetchMRA(record.id)
+//            record.updateFromMRAResponse(mraObj)
+
+            Result.Success(Unit)
         } catch (e: Exception) {
             Result.Error(e)
         }
