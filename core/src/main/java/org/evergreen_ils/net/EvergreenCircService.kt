@@ -121,6 +121,11 @@ object EvergreenCircService: CircService {
     override suspend fun loadHistoryDetails(historyRecord: HistoryRecord): Result<Unit> {
         historyRecord as? EvergreenHistoryRecord ?: return Result.Error(IllegalArgumentException("Expected EvergreenHistoryRecord, got ${historyRecord::class.java.name}"))
 
+        if (historyRecord.record != null) {
+            // already loaded
+            return Result.Success(Unit)
+        }
+
         return try {
             val targetCopy = historyRecord.targetCopy ?: throw GatewayError("circ item has no target_copy")
             val modsObj = EvergreenBiblioService.fetchCopyMODS(targetCopy)
