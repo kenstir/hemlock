@@ -50,6 +50,22 @@ class MockUserService: UserService {
         TODO("Not yet implemented")
     }
 
+    override suspend fun createPatronList(account: Account, name: String): Result<Unit> {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun deletePatronList(account: Account, listId: Int): Result<Unit> {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun addItemToPatronList(account: Account, listId: Int, recordId: Int): Result<Unit> {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun removeItemFromPatronList(account: Account, listId: Int, itemId: Int): Result<Unit> {
+        TODO("Not yet implemented")
+    }
+
     override suspend fun enableCheckoutHistory(account: Account): Result<Unit> {
         TODO("Not yet implemented")
     }
