@@ -27,14 +27,25 @@ interface UserService {
     fun makeAccount(username: String, authToken: String): Account
     suspend fun loadUserSession(account: Account): Result<Unit>
     suspend fun deleteSession(account: Account): Result<Unit>
+
+    /**
+     * loads the patron lists for the account
+     *
+     * NB: it does not load the items in the lists, see [loadPatronListItems]
+     */
     suspend fun loadPatronLists(account: Account): Result<Unit>
 
     /**
      * loads the items in a patron list, optionally filtering to only those items that are visible
      *
-     * NB: it does not load the records for the items, see BiblioService#loadRecordDetails
+     * NB: it does not load the records for the items, see [BiblioService.loadRecordDetails]
      */
     suspend fun loadPatronListItems(account: Account, patronList: PatronList, queryForVisibleItems: Boolean): Result<Unit>
+
+    suspend fun createPatronList(account: Account, name: String): Result<Unit>
+    suspend fun deletePatronList(account: Account, listId: Int): Result<Unit>
+    suspend fun addItemToPatronList(account: Account, listId: Int, recordId: Int): Result<Unit>
+    suspend fun removeItemFromPatronList(account: Account, listId: Int, itemId: Int): Result<Unit>
 
     suspend fun updatePushNotificationToken(account: Account, token: String?): Result<Unit>
     suspend fun enableCheckoutHistory(account: Account): Result<Unit>

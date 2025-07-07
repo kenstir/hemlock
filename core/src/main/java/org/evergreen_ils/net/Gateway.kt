@@ -36,8 +36,6 @@ object Gateway {
     lateinit var baseUrl: String
     lateinit var clientCacheKey: String
 
-    var actor: ActorService = GatewayActor
-
     private var _serverCacheKey: String? = null
     private val startTime = System.currentTimeMillis()
     var serverCacheKey: String

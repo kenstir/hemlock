@@ -24,6 +24,7 @@ import net.kenstir.hemlock.data.jsonMapOf
 import net.kenstir.hemlock.data.model.Account
 import net.kenstir.hemlock.data.model.PatronCharges
 import net.kenstir.hemlock.data.model.PatronList
+import net.kenstir.hemlock.logging.Log
 import net.kenstir.hemlock.net.UserService
 import org.evergreen_ils.Api
 import org.evergreen_ils.data.BookBag
@@ -32,6 +33,7 @@ import org.evergreen_ils.data.FineRecord
 import org.evergreen_ils.data.OSRFUtils
 import org.evergreen_ils.model.EvergreenAccount
 import org.evergreen_ils.xdata.XGatewayClient
+import org.evergreen_ils.xdata.XOSRFObject
 import org.evergreen_ils.xdata.paramListOf
 import java.util.Date
 
@@ -113,6 +115,79 @@ object EvergreenUserService: UserService {
             val params = paramListOf(authToken, Api.CONTAINER_CLASS_BIBLIO, patronList.id)
             val response = XGatewayClient.fetch(Api.ACTOR, Api.CONTAINER_FLESH, params, false)
             bookBag.fleshFromObject(response.payloadFirstAsObject())
+            Result.Success(Unit)
+        } catch (e: Exception) {
+            Result.Error(e)
+        }
+    }
+
+    override suspend fun createPatronList(account: Account, name: String): Result<Unit> {
+        return try {
+            account as? EvergreenAccount
+                ?: throw IllegalArgumentException("Expected EvergreenAccount, got ${account::class.java.simpleName}")
+
+            val (authToken, userID) = account.getCredentialsOrThrow()
+            val param = XOSRFObject(netClass = "cbreb", map = jsonMapOf(
+                "btype" to Api.CONTAINER_BUCKET_TYPE_BOOKBAG,
+                "name" to name,
+                "pub" to false,
+                "owner" to userID
+            ))
+            val params = paramListOf(authToken, Api.CONTAINER_CLASS_BIBLIO, param)
+            val response = XGatewayClient.fetch(Api.ACTOR, Api.CONTAINER_CREATE, params, false)
+            // payload contains the listId as a string, we read it but we don't need it
+            val ret = response.payloadFirstAsString()
+            Log.d(TAG, "[bookbag] createBag $name result $ret")
+            Result.Success(Unit)
+        } catch (e: Exception) {
+            Result.Error(e)
+        }
+    }
+
+    override suspend fun deletePatronList(account: Account, listId: Int): Result<Unit> {
+        return try {
+            account as? EvergreenAccount
+                ?: throw IllegalArgumentException("Expected EvergreenAccount, got ${account::class.java.simpleName}")
+
+            val (authToken, _) = account.getCredentialsOrThrow()
+            val params = paramListOf(authToken, Api.CONTAINER_CLASS_BIBLIO, listId)
+            val response = XGatewayClient.fetch(Api.ACTOR, Api.CONTAINER_FULL_DELETE, params, false)
+            // payload contains the listId as a string, we read it but we don't need it
+            val ret = response.payloadFirstAsString()
+            Log.d(TAG, "[bookbag] bag $listId deleteBag result $ret")
+            Result.Success(Unit)
+        } catch (e: Exception) {
+            Result.Error(e)
+        }
+    }
+
+    override suspend fun addItemToPatronList(account: Account, listId: Int, recordId: Int): Result<Unit> {
+        return try {
+            val (authToken, _) = account.getCredentialsOrThrow()
+            val param = XOSRFObject(netClass = "cbrebi", map = jsonMapOf(
+                "bucket" to listId,
+                "target_biblio_record_entry" to recordId,
+                "id" to null
+            ))
+            val params = paramListOf(authToken, Api.CONTAINER_CLASS_BIBLIO, param)
+            val response = XGatewayClient.fetch(Api.ACTOR, Api.CONTAINER_ITEM_CREATE, params, false)
+            // payload contains the itemId as a string, we read it but we don't need it
+            val ret = response.payloadFirstAsString()
+            Log.d(TAG, "[bookbag] bag $listId addItem $recordId result $ret")
+            Result.Success(Unit)
+        } catch (e: Exception) {
+            Result.Error(e)
+        }
+    }
+
+    override suspend fun removeItemFromPatronList(account: Account, listId: Int, itemId: Int): Result<Unit> {
+        return try {
+            val (authToken, _) = account.getCredentialsOrThrow()
+            val params = paramListOf(authToken, Api.CONTAINER_CLASS_BIBLIO, itemId)
+            val response = XGatewayClient.fetch(Api.ACTOR, Api.CONTAINER_ITEM_DELETE, params, false)
+            // payload contains the itemId as a string, we read it but we don't need it
+            val ret = response.payloadFirstAsString()
+            Log.d(TAG, "[bookbag] removeItem $itemId result $ret")
             Result.Success(Unit)
         } catch (e: Exception) {
             Result.Error(e)

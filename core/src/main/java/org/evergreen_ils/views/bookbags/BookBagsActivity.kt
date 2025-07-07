@@ -147,7 +147,7 @@ class BookBagsActivity : BaseActivity() {
         }
         scope.async {
             progress?.show(this@BookBagsActivity, getString(R.string.msg_creating_list))
-            val result = Gateway.actor.createBookBagAsync(App.getAccount(), name)
+            val result = App.getServiceConfig().userService.createPatronList(App.getAccount(), name)
             progress?.dismiss()
             Analytics.logEvent(Analytics.Event.BOOKBAGS_CREATE_LIST, bundleOf(
                 Analytics.Param.RESULT to Analytics.resultValue(result)

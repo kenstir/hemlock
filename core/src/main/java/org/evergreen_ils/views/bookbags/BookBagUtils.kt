@@ -50,7 +50,11 @@ object BookBagUtils {
             try {
                 progress.show(activity, activity.getString(R.string.adding_to_list_message))
 
-                val result = Gateway.actor.addItemToBookBagAsync(App.getAccount(), bookBag.id, info.id)
+                val result = App.getServiceConfig().userService.addItemToPatronList(
+                    App.getAccount(),
+                    bookBag.id,
+                    info.id
+                )
                 Analytics.logEvent(Analytics.Event.BOOKBAG_ADD_ITEM, bundleOf(
                     Analytics.Param.RESULT to Analytics.resultValue(result)
                 ))

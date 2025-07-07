@@ -112,43 +112,43 @@ object EvergreenLoaderService: LoaderService {
     }
 
     private suspend fun loadOrgTypes() {
-        Log.d(TAG, "loadOrgTypes ...")
+        Log.v(TAG, "loadOrgTypes ...")
         val response = XGatewayClient.fetch(Api.ACTOR, Api.ORG_TYPES_RETRIEVE, paramListOf(), true)
         EgOrg.loadOrgTypes(response.payloadFirstAsObjectList())
-        Log.d(TAG, "loadOrgTypes ... done")
+        Log.v(TAG, "loadOrgTypes ... done")
     }
 
     private suspend fun loadOrgTree(useHierarchicalOrgTree: Boolean) {
-        Log.d(TAG, "loadOrgTree ...")
+        Log.v(TAG, "loadOrgTree ...")
         val response = XGatewayClient.fetch(Api.ACTOR, Api.ORG_TREE_RETRIEVE, paramListOf(), true)
         EgOrg.loadOrgs(response.payloadFirstAsObject(), useHierarchicalOrgTree)
-        Log.d(TAG, "loadOrgTree ... done")
+        Log.v(TAG, "loadOrgTree ... done")
     }
 
     private suspend fun loadCopyStatuses() {
-        Log.d(TAG, "loadCopyStatuses ...")
+        Log.v(TAG, "loadCopyStatuses ...")
         val response = XGatewayClient.fetch(Api.SEARCH, Api.COPY_STATUS_ALL, paramListOf(), true)
         val ret = response.payloadFirstAsObjectList()
         EgCopyStatus.loadCopyStatuses(ret)
-        Log.d(TAG, "loadCopyStatuses ... done")
+        Log.v(TAG, "loadCopyStatuses ... done")
     }
 
     private suspend fun loadCodedValueMaps() {
-        Log.d(TAG, "loadCodedValueMaps ...")
+        Log.v(TAG, "loadCodedValueMaps ...")
         val formats = listOf(EgCodedValueMap.ICON_FORMAT, EgCodedValueMap.SEARCH_FORMAT)
         val searchParams = jsonMapOf("ctype" to formats)
         val response = XGatewayClient.fetch(Api.PCRUD, Api.SEARCH_CCVM, paramListOf(Api.ANONYMOUS, searchParams), true)
         EgCodedValueMap.loadCodedValueMaps(response.payloadFirstAsObjectList())
-        Log.d(TAG, "loadCodedValueMaps ... done")
+        Log.v(TAG, "loadCodedValueMaps ... done")
     }
 
     private suspend fun loadSmsCarriers() {
-        Log.d(TAG, "loadSmsCarriers ...")
+        Log.v(TAG, "loadSmsCarriers ...")
         val searchParams = jsonMapOf("active" to 1)
         val response = XGatewayClient.fetch(Api.PCRUD, Api.SEARCH_SMS_CARRIERS, paramListOf(Api.ANONYMOUS, searchParams), true)
         val carriers = response.payloadFirstAsObjectList()
         EgSms.loadCarriers(carriers)
-        Log.d(TAG, "loadSmsCarriers ... done")
+        Log.v(TAG, "loadSmsCarriers ... done")
     }
 
     private val TAG = EvergreenLoaderService::class.java.simpleName
