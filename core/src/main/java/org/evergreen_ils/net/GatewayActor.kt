@@ -26,17 +26,6 @@ import org.opensrf.util.OSRFObject
 
 object GatewayActor: ActorService {
 
-    override suspend fun fetchCheckoutHistory(account: Account): Result<List<OSRFObject>> {
-        return try {
-            val (authToken, _) = account.getCredentialsOrThrow()
-            val args = arrayOf<Any?>(authToken)
-            val ret = Gateway.fetchMaybeEmptyArray(Api.ACTOR, Api.CHECKOUT_HISTORY, args, false)
-            Result.Success(ret)
-        } catch (e: Exception) {
-            Result.Error(e)
-        }
-    }
-
     override suspend fun createBookBagAsync(account: Account, name: String): Result<Unit> {
         return try {
             val (authToken, userID) = account.getCredentialsOrThrow()

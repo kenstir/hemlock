@@ -33,11 +33,9 @@ import net.kenstir.hemlock.logging.Log
 import net.kenstir.hemlock.android.ui.ItemClickSupport
 import net.kenstir.hemlock.android.ui.ProgressDialogSupport
 import net.kenstir.hemlock.android.ui.showAlert
-import org.evergreen_ils.data.EvergreenHistoryRecord
 import net.kenstir.hemlock.data.Result
 import net.kenstir.hemlock.data.model.BibRecord
 import net.kenstir.hemlock.data.model.HistoryRecord
-import org.evergreen_ils.net.Gateway
 import org.evergreen_ils.utils.ui.*
 import org.evergreen_ils.views.search.DividerItemDecoration
 import org.evergreen_ils.views.search.RecordDetails
@@ -130,21 +128,14 @@ class HistoryActivity : BaseActivity() {
                 val start = System.currentTimeMillis()
                 progress?.show(this@HistoryActivity, getString(R.string.msg_retrieving_data))
 
-                throw Exception("not implemented yet")
+                // fetch history
+                val result = App.getServiceConfig().circService.fetchCheckoutHistory(App.getAccount())
+                if (result is Result.Error) {
+                    showAlert(result.exception); return@async
+                }
+                loadHistory(result.get())
 
-//                // fetch history
-//                val result = Gateway.actor.fetchCheckoutHistory(App.getAccount())
-//                if (result is Result.Error) {
-//                    showAlert(result.exception); return@async
-//                }
-//                val objects = result.get()
-//
-//                val historyList = EvergreenHistoryRecord.makeArray(objects)
-//                loadHistory(historyList)
-//                historySummary?.text = String.format(getString(R.string.history_items), historyList.size, App.getAccount().circHistoryStart)
-//                updateList()
-//
-//                Log.logElapsedTime(TAG, start, "[kcxxx] fetchData ... done")
+                Log.logElapsedTime(TAG, start, "[kcxxx] fetchData ... done")
             } catch (ex: Exception) {
                 Log.d(TAG, "[kcxxx] fetchData ... caught", ex)
                 showAlert(ex)
@@ -155,11 +146,10 @@ class HistoryActivity : BaseActivity() {
     }
 
     private fun loadHistory(historyList: List<HistoryRecord>) {
+        historySummary?.text = String.format(getString(R.string.history_items), historyList.size, App.getAccount().circHistoryStart)
+
         items.clear()
         items.addAll(historyList)
-    }
-
-    private fun updateList() {
         adapter?.notifyDataSetChanged()
     }
 
