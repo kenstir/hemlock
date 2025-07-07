@@ -28,7 +28,6 @@ import net.kenstir.hemlock.logging.Log
 import net.kenstir.hemlock.logging.Log.TAG_FCM
 import net.kenstir.hemlock.android.ui.showAlert
 import net.kenstir.hemlock.data.Result
-import org.evergreen_ils.net.Gateway
 
 open class MainBaseActivity : BaseActivity() {
     private val TAG = javaClass.simpleName

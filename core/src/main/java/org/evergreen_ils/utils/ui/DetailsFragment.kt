@@ -130,7 +130,6 @@ class DetailsFragment : Fragment() {
         // Start async image load
         val url = XGatewayClient.getUrl("/opac/extras/ac/jacket/medium/r/" + record?.id)
         Log.d(TAG, "${record?.id}: setimageurl $url on ${recordImage}")
-        //recordImage?.setImageUrl(url, Volley.getInstance(activity).imageLoader)
         recordImage?.load(url)
 
         record?.let { fetchData(it) }

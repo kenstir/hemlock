@@ -30,7 +30,6 @@ import net.kenstir.hemlock.logging.Log
 import net.kenstir.hemlock.net.LoadStartupOptions
 import net.kenstir.hemlock.data.Result
 import org.evergreen_ils.xdata.XGatewayClient
-import org.evergreen_ils.net.Gateway
 import org.evergreen_ils.system.EgMessageMap
 import net.kenstir.hemlock.util.getCustomMessage
 import java.util.concurrent.atomic.AtomicInteger
@@ -81,10 +80,6 @@ class LaunchViewModel : ViewModel() {
                     is Result.Success -> {}
                     is Result.Error -> { onLoadError(result.exception) ; return@async }
                 }
-
-                // xxcompat: set old Gateway vars
-                Gateway.clientCacheKey = XGatewayClient.clientCacheKey
-                Gateway.serverCacheKey = XGatewayClient.serverCacheKey
 
                 // load custom messages from resources
                 // TODO: move Evergreen-specific init to some evergreen-specific package

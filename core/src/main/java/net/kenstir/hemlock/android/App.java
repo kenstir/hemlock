@@ -37,12 +37,9 @@ import org.evergreen_ils.xdata.XGatewayClient;
 import net.kenstir.hemlock.data.model.Account;
 import net.kenstir.hemlock.data.model.Library;
 
-import org.evergreen_ils.net.Gateway;
-import org.evergreen_ils.net.Volley;
 import org.evergreen_ils.utils.ui.BaseActivity;
 import org.evergreen_ils.views.launch.LaunchActivity;
 import org.evergreen_ils.views.MainActivity;
-import org.evergreen_ils.xdata.XGatewayClientKt;
 
 import java.io.File;
 
@@ -96,16 +93,10 @@ public class App {
         try {
             XGatewayClient.cacheDirectory = new File(context.getCacheDir(), "okhttp");
 
-            // Clean up the legacy volley cache directory if it exists
+            // Delete the legacy cache directory if it exists
             File volleyCacheDir = new File(context.getCacheDir(), "volley");
             deleteRecursively(volleyCacheDir);
-
-            // Configure HTTP response caching for Volley
-//            long httpCacheSize = 10 * 1024 * 1024; // 10 MiB
-//            Class.forName("android.net.http.HttpResponseCache")
-//                    .getMethod("install", File.class, long.class)
-//                    .invoke(null, volleyCacheDir, httpCacheSize);
-        } catch (Exception httpResponseCacheNotAvailable) {
+        } catch (Exception e) {
             Log.d(TAG, "HTTP response cache is unavailable.");
         }
     }
@@ -116,7 +107,6 @@ public class App {
         }
         enableCaching(context);
         behavior = AppFactory.makeBehavior(context.getResources());
-        Volley.init(context);
         XGatewayClient.initHttpClient();
         CoilImageLoader.INSTANCE.setImageLoader(context, XGatewayClient.okHttpClient);
         if (mServiceConfig == null) {
@@ -137,7 +127,6 @@ public class App {
         App.library = library;
         // TODO: set baseUrl via Service method in the data layer
         XGatewayClient.baseUrl = library.getUrl();
-        Gateway.baseUrl = library.getUrl();
     }
 
     @Nullable

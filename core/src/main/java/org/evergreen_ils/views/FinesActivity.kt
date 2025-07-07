@@ -25,28 +25,25 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.*
+import android.widget.ArrayAdapter
+import android.widget.Button
+import android.widget.ListView
+import android.widget.TextView
+import android.widget.Toast
 import kotlinx.coroutines.Deferred
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
-import kotlinx.coroutines.joinAll
 import net.kenstir.hemlock.R
-import net.kenstir.hemlock.android.account.AccountUtils
 import net.kenstir.hemlock.android.App
-import org.evergreen_ils.system.EgOrg
-import org.evergreen_ils.data.FineRecord
-import net.kenstir.hemlock.data.Result
-import org.evergreen_ils.net.Gateway
-import org.evergreen_ils.views.search.RecordDetails
-import org.evergreen_ils.data.MBRecord
-import net.kenstir.hemlock.android.Analytics
-import net.kenstir.hemlock.logging.Log
-import org.evergreen_ils.utils.ui.BaseActivity
+import net.kenstir.hemlock.android.account.AccountUtils
 import net.kenstir.hemlock.android.ui.ProgressDialogSupport
 import net.kenstir.hemlock.android.ui.showAlert
+import net.kenstir.hemlock.data.Result
 import net.kenstir.hemlock.data.model.ChargeRecord
 import net.kenstir.hemlock.data.model.PatronCharges
-import org.opensrf.util.OSRFObject
+import net.kenstir.hemlock.logging.Log
+import org.evergreen_ils.system.EgOrg
+import org.evergreen_ils.utils.ui.BaseActivity
+import org.evergreen_ils.xdata.XGatewayClient
 import java.net.URLEncoder
 import java.text.DecimalFormat
 
@@ -141,7 +138,7 @@ class FinesActivity : BaseActivity() {
                 //Analytics.logEvent("fines_payfines", "num_fines", fineRecords.size)
                 val username = App.getAccount().username
                 val password = AccountUtils.getPassword(this@FinesActivity, username)
-                var url = (Gateway.baseUrl
+                var url = (XGatewayClient.baseUrl
                         + "/eg/opac/login"
                         + "?redirect_to=" + URLEncoder.encode("/eg/opac/myopac/main_payment_form#pay_fines_now"))
                 launchURL(url)

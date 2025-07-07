@@ -36,6 +36,7 @@ import org.evergreen_ils.idl.IDLParser
 import org.evergreen_ils.system.EgSms
 
 object EvergreenLoaderService: LoaderService {
+    const val TAG = "LoaderService"
 
     override suspend fun loadStartupPrerequisites(serviceOptions: LoadStartupOptions): Result<Unit> {
         return try {
@@ -150,6 +151,4 @@ object EvergreenLoaderService: LoaderService {
         EgSms.loadCarriers(carriers)
         Log.v(TAG, "loadSmsCarriers ... done")
     }
-
-    private val TAG = EvergreenLoaderService::class.java.simpleName
 }

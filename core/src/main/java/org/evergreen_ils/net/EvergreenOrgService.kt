@@ -32,6 +32,7 @@ import org.evergreen_ils.xdata.XGatewayClient
 import org.evergreen_ils.xdata.paramListOf
 
 object EvergreenOrgService: OrgService {
+    const val TAG = "OrgService"
 
     override suspend fun loadOrgSettings(orgID: Int): Result<Unit> {
         return try {
@@ -112,6 +113,4 @@ object EvergreenOrgService: OrgService {
         org.loadAddress(response.payloadFirstAsObject())
         Log.d(TAG, "loading org address for org ${org.id} ... done")
     }
-
-    private val TAG = EvergreenLoaderService::class.java.simpleName
 }
