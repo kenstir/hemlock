@@ -25,9 +25,11 @@ import android.content.Context
 import android.os.Bundle
 import android.view.*
 import android.widget.*
+import androidx.core.os.bundleOf
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
 import net.kenstir.hemlock.R
+import net.kenstir.hemlock.android.Analytics
 import net.kenstir.hemlock.android.App
 import net.kenstir.hemlock.android.AppState
 import net.kenstir.hemlock.android.Key
@@ -226,23 +228,22 @@ class BookBagDetailsActivity : BaseActivity() {
     }
 
     private fun deleteList() {
-        TODO()
-//        scope.async {
-//            progress?.show(this@BookBagDetailsActivity, getString(R.string.msg_deleting_list))
-//            val id = patronList.id
-//            val result = Gateway.actor.deleteBookBagAsync(App.getAccount(), id)
-//            progress?.dismiss()
-//            Analytics.logEvent(Analytics.Event.BOOKBAGS_DELETE_LIST, bundleOf(
-//                Analytics.Param.RESULT to Analytics.resultValue(result)
-//            ))
-//            when (result) {
-//                is Result.Error -> showAlert(result.exception)
-//                is Result.Success -> {
-//                    setResult(RESULT_CODE_UPDATE)
-//                    finish()
-//                }
-//            }
-//        }
+        scope.async {
+            progress?.show(this@BookBagDetailsActivity, getString(R.string.msg_deleting_list))
+            val id = patronList.id
+            val result = App.getServiceConfig().userService.deletePatronList(App.getAccount(), id)
+            progress?.dismiss()
+            Analytics.logEvent(Analytics.Event.BOOKBAGS_DELETE_LIST, bundleOf(
+                Analytics.Param.RESULT to Analytics.resultValue(result)
+            ))
+            when (result) {
+                is Result.Error -> showAlert(result.exception)
+                is Result.Success -> {
+                    setResult(RESULT_CODE_UPDATE)
+                    finish()
+                }
+            }
+        }
     }
 
     private fun showSortListDialog() {
@@ -337,23 +338,22 @@ class BookBagDetailsActivity : BaseActivity() {
             author.text = record?.record?.author
             pubdate.text = record?.record?.pubdate
             remove.setOnClickListener(View.OnClickListener {
-                TODO()
-//                val id = record?.id ?: return@OnClickListener
-//                scope.async {
-//                    progress?.show(this@BookBagDetailsActivity, getString(R.string.msg_removing_list_item))
-//                    val result = Gateway.actor.removeItemFromBookBagAsync(App.getAccount(), id)
-//                    progress?.dismiss()
-//                    Analytics.logEvent(Analytics.Event.BOOKBAG_DELETE_ITEM, bundleOf(
-//                        Analytics.Param.RESULT to Analytics.resultValue(result)
-//                    ))
-//                    when (result) {
-//                        is Result.Error -> showAlert(result.exception)
-//                        is Result.Success -> {
-//                            setResult(RESULT_CODE_UPDATE)
-//                            fetchData()
-//                        }
-//                    }
-//                }
+                val id = record?.id ?: return@OnClickListener
+                scope.async {
+                    progress?.show(this@BookBagDetailsActivity, getString(R.string.msg_removing_list_item))
+                    val result = App.getServiceConfig().userService.removeItemFromPatronList(App.getAccount(), patronList.id, id)
+                    progress?.dismiss()
+                    Analytics.logEvent(Analytics.Event.BOOKBAG_DELETE_ITEM, bundleOf(
+                        Analytics.Param.RESULT to Analytics.resultValue(result)
+                    ))
+                    when (result) {
+                        is Result.Error -> showAlert(result.exception)
+                        is Result.Success -> {
+                            setResult(RESULT_CODE_UPDATE)
+                            fetchData()
+                        }
+                    }
+                }
             })
 
             return row
