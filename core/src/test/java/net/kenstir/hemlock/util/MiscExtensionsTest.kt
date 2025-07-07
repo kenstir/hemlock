@@ -25,21 +25,7 @@ class MiscExtensionsTest {
     @Test
     fun test_Exception_customMessage_basic() {
         assertEquals("Timeout", java.util.concurrent.TimeoutException().getCustomMessage())
-        assertEquals("Operation timed out", com.android.volley.TimeoutError().getCustomMessage())
         assertEquals("Cancelled", java.lang.Exception().getCustomMessage())
         assertEquals("Cancelled", java.lang.Exception("").getCustomMessage())
-    }
-
-    // During system maintenance, the server can be up but responding 404 to gateway URLs.
-    @Test
-    fun test_Exception_customMessage_volleyNotFound() {
-        assertEquals("Unknown client error.  The server may be offline.",
-                com.android.volley.ClientError().getCustomMessage())
-
-        val data = byteArrayOf(0x20, 0x0d, 0x0a)
-        val response = com.android.volley.NetworkResponse(404, data, false, 200L, null)
-        val ex = com.android.volley.ClientError(response)
-        assertEquals("Not found.  The server may be down for maintenance.",
-                ex.getCustomMessage())
     }
 }

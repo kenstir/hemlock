@@ -27,11 +27,17 @@ import android.os.Bundle
 import android.text.format.DateFormat
 import android.view.MenuItem
 import android.view.View
-import android.widget.*
+import android.widget.AdapterView
 import android.widget.AdapterView.OnItemSelectedListener
+import android.widget.ArrayAdapter
+import android.widget.Button
+import android.widget.CheckBox
+import android.widget.EditText
+import android.widget.Spinner
+import android.widget.TextView
+import android.widget.Toast
 import androidx.core.os.bundleOf
 import kotlinx.coroutines.async
-import org.evergreen_ils.data.OSRFUtils
 import net.kenstir.hemlock.R
 import net.kenstir.hemlock.android.Analytics
 import net.kenstir.hemlock.android.App
@@ -39,14 +45,15 @@ import net.kenstir.hemlock.android.Key
 import net.kenstir.hemlock.android.ui.ActionBarUtils
 import net.kenstir.hemlock.android.ui.ProgressDialogSupport
 import net.kenstir.hemlock.android.ui.showAlert
-import org.evergreen_ils.system.EgOrg
-import org.evergreen_ils.data.EvergreenHoldRecord
 import net.kenstir.hemlock.data.Result
-import net.kenstir.hemlock.net.HoldOptions
 import net.kenstir.hemlock.net.HoldUpdateOptions
-import org.evergreen_ils.net.Gateway
-import org.evergreen_ils.utils.ui.*
-import java.util.*
+import org.evergreen_ils.data.EvergreenHoldRecord
+import org.evergreen_ils.data.OSRFUtils
+import org.evergreen_ils.system.EgOrg
+import org.evergreen_ils.utils.ui.BaseActivity
+import org.evergreen_ils.utils.ui.OrgArrayAdapter
+import java.util.Calendar
+import java.util.Date
 
 class HoldDetailsActivity : BaseActivity() {
     private var expirationDate: EditText? = null

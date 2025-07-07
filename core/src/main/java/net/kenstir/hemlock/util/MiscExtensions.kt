@@ -24,17 +24,6 @@ package net.kenstir.hemlock.util
 fun Exception.getCustomMessage(): String {
     when (this) {
         is java.util.concurrent.TimeoutException -> return "Timeout"
-        is com.android.volley.TimeoutError ->
-            return "Operation timed out"
-        is com.android.volley.ClientError -> {
-            this.networkResponse?.statusCode.let {
-                return when (it) {
-                    404 -> "Not found.  The server may be down for maintenance."
-                    null -> "Unknown client error.  The server may be offline."
-                    else -> "Error $it.  The server may be offline."
-                }
-            }
-        }
     }
     this.message?.let { if (it.isNotEmpty()) return it }
     return "Cancelled"

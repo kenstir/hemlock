@@ -38,6 +38,7 @@ import org.evergreen_ils.xdata.paramListOf
 import java.util.Date
 
 object EvergreenUserService: UserService {
+    const val TAG = "UserService"
 
     override fun makeAccount(username: String, authToken: String): Account {
         return EvergreenAccount(username, authToken)

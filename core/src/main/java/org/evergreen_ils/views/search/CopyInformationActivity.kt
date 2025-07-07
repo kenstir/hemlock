@@ -30,7 +30,11 @@ import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import android.widget.*
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
+import android.widget.Button
+import android.widget.ListView
+import android.widget.TextView
 import kotlinx.coroutines.async
 import net.kenstir.hemlock.R
 import net.kenstir.hemlock.android.App
@@ -40,14 +44,12 @@ import net.kenstir.hemlock.data.Result
 import net.kenstir.hemlock.data.model.CopyLocationCounts
 import net.kenstir.hemlock.logging.Log
 import org.evergreen_ils.data.MBRecord
-import org.evergreen_ils.net.Gateway
 import org.evergreen_ils.system.EgOrg
 import org.evergreen_ils.system.EgOrg.findOrg
 import org.evergreen_ils.system.EgOrg.getOrgNameSafe
 import org.evergreen_ils.utils.ui.BaseActivity
 import org.evergreen_ils.views.OrgDetailsActivity
 import org.evergreen_ils.views.holds.PlaceHoldActivity
-import java.util.*
 
 class CopyInformationActivity : BaseActivity() {
     private val TAG = CopyInformationActivity::class.java.simpleName

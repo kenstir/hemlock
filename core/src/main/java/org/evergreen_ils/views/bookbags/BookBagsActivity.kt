@@ -27,24 +27,26 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
-import android.widget.*
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
+import android.widget.Button
+import android.widget.EditText
+import android.widget.ListView
+import android.widget.TextView
 import androidx.core.os.bundleOf
 import kotlinx.coroutines.Deferred
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
-import kotlinx.coroutines.joinAll
 import net.kenstir.hemlock.R
 import net.kenstir.hemlock.android.Analytics
 import net.kenstir.hemlock.android.App
 import net.kenstir.hemlock.android.Key
-import net.kenstir.hemlock.logging.Log
-import org.evergreen_ils.data.BookBag
-import net.kenstir.hemlock.data.Result
-import org.evergreen_ils.net.Gateway
-import org.evergreen_ils.utils.ui.BaseActivity
 import net.kenstir.hemlock.android.ui.ProgressDialogSupport
 import net.kenstir.hemlock.android.ui.showAlert
+import net.kenstir.hemlock.data.Result
 import net.kenstir.hemlock.data.model.PatronList
+import net.kenstir.hemlock.logging.Log
+import org.evergreen_ils.data.BookBag
+import org.evergreen_ils.utils.ui.BaseActivity
 
 class BookBagsActivity : BaseActivity() {
     private var lv: ListView? = null

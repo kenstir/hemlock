@@ -31,14 +31,12 @@ import coil3.load
 import kotlinx.coroutines.async
 import net.kenstir.hemlock.R
 import net.kenstir.hemlock.android.App
-import net.kenstir.hemlock.logging.Log
-import org.evergreen_ils.data.EvergreenHistoryRecord
-import org.evergreen_ils.data.MBRecord
-import net.kenstir.hemlock.data.Result
-import org.evergreen_ils.net.Gateway
-import org.evergreen_ils.utils.ui.BaseActivity
 import net.kenstir.hemlock.android.ui.showAlert
+import net.kenstir.hemlock.data.Result
 import net.kenstir.hemlock.data.model.HistoryRecord
+import net.kenstir.hemlock.logging.Log
+import org.evergreen_ils.utils.ui.BaseActivity
+import org.evergreen_ils.xdata.XGatewayClient
 
 class HistoryViewAdapter(private val items: List<HistoryRecord>) : RecyclerView.Adapter<HistoryViewAdapter.ViewHolder>() {
 
@@ -92,7 +90,7 @@ class HistoryViewAdapter(private val items: List<HistoryRecord>) : RecyclerView.
             author.text = historyRecord.author
 
             historyRecord.record?.id.let { id ->
-                val url = Gateway.getUrl("/opac/extras/ac/jacket/small/r/" + id)
+                val url = XGatewayClient.getUrl("/opac/extras/ac/jacket/small/r/" + id)
                 recordImage.load(url)
             }
         }

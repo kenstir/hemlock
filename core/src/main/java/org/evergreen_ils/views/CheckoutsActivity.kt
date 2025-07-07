@@ -40,17 +40,15 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.joinAll
 import net.kenstir.hemlock.R
 import net.kenstir.hemlock.android.App
-import net.kenstir.hemlock.data.Result
-import org.evergreen_ils.net.Gateway
-import org.evergreen_ils.views.search.RecordDetails
-import net.kenstir.hemlock.logging.Log
-import org.evergreen_ils.utils.ui.BaseActivity
 import net.kenstir.hemlock.android.ui.ProgressDialogSupport
 import net.kenstir.hemlock.android.ui.showAlert
+import net.kenstir.hemlock.data.Result
 import net.kenstir.hemlock.data.model.BibRecord
 import net.kenstir.hemlock.data.model.CircRecord
+import net.kenstir.hemlock.logging.Log
+import org.evergreen_ils.utils.ui.BaseActivity
 import org.evergreen_ils.views.history.HistoryActivity
-import java.util.*
+import org.evergreen_ils.views.search.RecordDetails
 
 class CheckoutsActivity : BaseActivity() {
     private val TAG = "Checkouts"
