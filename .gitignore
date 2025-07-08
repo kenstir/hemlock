@@ -6,12 +6,14 @@ fm_IDL.*
 /secrets.*
 /local.gradle
 /local.properties
+/.idea/AndroidProjectSystem.xml
 /.idea/androidTestResultsUserPreferences.xml
 /.idea/appInsightsSettings.xml
 /.idea/assetWizardSettings.xml
 /.idea/caches
 /.idea/deploymentTargetDropDown.xml
 /.idea/deploymentTargetSelector.xml
+/.idea/deviceManager.xml
 /.idea/misc.xml
 /.idea/modules.xml
 /.idea/other.xml
@@ -19,6 +21,7 @@ fm_IDL.*
 /.idea/vcs.xml
 /.idea/workspace.xml
 /.idea/libraries
+/.kotlin/
 /projectFilesBackup/
 .DS_Store
 /build
