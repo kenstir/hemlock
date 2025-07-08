@@ -23,7 +23,7 @@ import kotlinx.serialization.SerializationException
 import kotlinx.serialization.descriptors.*
 import kotlinx.serialization.encoding.*
 import kotlinx.serialization.json.*
-import net.kenstir.hemlock.serialization.jsonArrayOrNull
+import net.kenstir.hemlock.data.jsonArrayOrNull
 
 /** internal data object to facilitate deserialization of the raw gateway response body */
 @Serializable(with = XGatewayResponseContentSerializer::class)

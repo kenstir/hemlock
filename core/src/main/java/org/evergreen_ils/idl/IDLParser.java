@@ -116,8 +116,7 @@ public class IDLParser {
                 }
             }
 
-            XOSRFCoder.registerClass(
-                current.getIDLClass(), List.of(fieldNames));
+            XOSRFCoder.registerClass(current.getIDLClass(), List.of(fieldNames));
 
             parsedObjectCount++;
 

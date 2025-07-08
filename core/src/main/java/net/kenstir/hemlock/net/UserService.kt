@@ -17,7 +17,7 @@
 
 package net.kenstir.hemlock.net
 
-import net.kenstir.hemlock.data.PatronMessage
+import net.kenstir.hemlock.data.model.PatronMessage
 import net.kenstir.hemlock.data.Result
 import net.kenstir.hemlock.data.model.Account
 import net.kenstir.hemlock.data.model.PatronCharges

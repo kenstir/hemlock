@@ -32,7 +32,7 @@ import net.kenstir.hemlock.android.Key
 import net.kenstir.hemlock.android.ui.ItemClickSupport
 import net.kenstir.hemlock.android.ui.ProgressDialogSupport
 import net.kenstir.hemlock.android.ui.showAlert
-import net.kenstir.hemlock.data.PatronMessage
+import net.kenstir.hemlock.data.model.PatronMessage
 import net.kenstir.hemlock.data.Result
 import net.kenstir.hemlock.logging.Log
 import org.evergreen_ils.utils.ui.BaseActivity

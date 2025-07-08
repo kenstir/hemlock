@@ -20,7 +20,7 @@ package org.evergreen_ils.utils
 
 import kotlinx.serialization.json.Json
 import net.kenstir.hemlock.data.JSONDictionary
-import net.kenstir.hemlock.serialization.JSONDictionarySerializer
+import net.kenstir.hemlock.data.JSONDictionarySerializer
 
 object JsonUtils {
 
