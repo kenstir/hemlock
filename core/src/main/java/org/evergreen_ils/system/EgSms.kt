@@ -18,9 +18,9 @@
 
 package org.evergreen_ils.system
 
-import net.kenstir.hemlock.logging.Log
+import net.kenstir.logging.Log
 import org.evergreen_ils.data.SMSCarrier
-import org.evergreen_ils.xdata.XOSRFObject
+import org.evergreen_ils.gateway.OSRFObject
 
 
 object EgSms {
@@ -29,7 +29,7 @@ object EgSms {
 
     private const val TAG = "EgSms"
 
-    fun loadCarriers(carriers: List<XOSRFObject>) {
+    fun loadCarriers(carriers: List<OSRFObject>) {
         synchronized(this) {
             EgSms.carriers.clear()
             for (obj in carriers) {

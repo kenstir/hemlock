@@ -18,7 +18,7 @@
 
 package net.kenstir.hemlock.model
 
-import net.kenstir.hemlock.data.model.Link
+import net.kenstir.data.model.Link
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test

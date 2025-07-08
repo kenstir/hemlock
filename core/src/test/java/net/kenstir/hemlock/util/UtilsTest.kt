@@ -17,6 +17,8 @@
 
 package net.kenstir.hemlock.util
 
+import net.kenstir.util.pubdateSortKey
+import net.kenstir.util.titleSortKey
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Test

@@ -18,10 +18,10 @@
 package net.kenstir.hemlock.data.evergreen
 
 import kotlinx.serialization.json.Json
-import net.kenstir.hemlock.data.jsonMapOf
-import org.evergreen_ils.xdata.XGatewayParam
-import org.evergreen_ils.xdata.XOSRFObject
-import org.evergreen_ils.xdata.paramListOf
+import net.kenstir.data.jsonMapOf
+import org.evergreen_ils.gateway.XGatewayParam
+import org.evergreen_ils.gateway.OSRFObject
+import org.evergreen_ils.gateway.paramListOf
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -55,7 +55,7 @@ class GatewayParamTest {
 
     @Test
     fun test_serialization_XOSRFObject() {
-        val obj = XOSRFObject(jsonMapOf(
+        val obj = OSRFObject(jsonMapOf(
             "id" to 1,
             "name" to "Yanni",
             "juvenile" to "t",

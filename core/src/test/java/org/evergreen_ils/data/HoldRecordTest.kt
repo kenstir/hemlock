@@ -17,16 +17,17 @@
 
 package org.evergreen_ils.data
 
-import net.kenstir.hemlock.data.jsonMapOf
-import org.evergreen_ils.utils.JsonUtils
-import org.evergreen_ils.xdata.XOSRFObject
+import net.kenstir.data.jsonMapOf
+import org.evergreen_ils.data.model.EvergreenHoldRecord
+import net.kenstir.util.JsonUtils
+import org.evergreen_ils.gateway.OSRFObject
 import org.junit.Assert.*
 import org.junit.Test
 
 class HoldRecordTest {
     @Test
     fun test_makeArray() {
-        val ahrObj = XOSRFObject(
+        val ahrObj = OSRFObject(
             jsonMapOf(
                 "id" to 14154079,
                 "email_notify" to "t",
@@ -67,7 +68,7 @@ class HoldRecordTest {
 
     @Test
     fun test_available() {
-        val transitObj = XOSRFObject(
+        val transitObj = OSRFObject(
             jsonMapOf(
                 "dest_recv_time" to "2020-01-06T11:49:20-0500",
                 "source_send_time" to "2020-01-03T10:33:22-0500",
@@ -76,7 +77,7 @@ class HoldRecordTest {
                 "id" to 27489477
             )
         )
-        val qstatsObj = XOSRFObject(
+        val qstatsObj = OSRFObject(
             jsonMapOf(
                 "estimated_wait" to 0,
                 "potential_copies" to 12,
@@ -85,7 +86,7 @@ class HoldRecordTest {
                 "total_holds" to 3
             )
         )
-        val ahrObj = XOSRFObject(
+        val ahrObj = OSRFObject(
             jsonMapOf(
                 "id" to 15427596,
                 "email_notify" to "t",
@@ -108,7 +109,7 @@ class HoldRecordTest {
 
     @Test
     fun test_inTransit() {
-        val transitObj = XOSRFObject(
+        val transitObj = OSRFObject(
             jsonMapOf(
                 "id" to 27468839,
                 "source" to 154,
@@ -116,7 +117,7 @@ class HoldRecordTest {
                 "source_send_time" to "2020-01-02T09:54:39-0500"
             )
         )
-        val qstatsObj = XOSRFObject(
+        val qstatsObj = OSRFObject(
             jsonMapOf(
                 "estimated_wait" to 0,
                 "potential_copies" to 1,
@@ -125,7 +126,7 @@ class HoldRecordTest {
                 "total_holds" to 2
             )
         )
-        val ahrObj = XOSRFObject(
+        val ahrObj = OSRFObject(
             jsonMapOf(
                 "id" to 15368911,
                 "email_notify" to "t",
@@ -156,7 +157,7 @@ class HoldRecordTest {
 
     @Test
     fun test_waitingForCopy() {
-        val qstatsObj = XOSRFObject(
+        val qstatsObj = OSRFObject(
             jsonMapOf(
                 "estimated_wait" to 0,
                 "potential_copies" to 2,
@@ -165,7 +166,7 @@ class HoldRecordTest {
                 "total_holds" to 3
             )
         )
-        val ahrObj = XOSRFObject(
+        val ahrObj = OSRFObject(
             jsonMapOf(
                 "id" to 15368911,
                 "email_notify" to "t",

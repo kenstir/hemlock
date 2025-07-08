@@ -18,19 +18,18 @@
 package org.evergreen_ils
 
 import androidx.test.platform.app.InstrumentationRegistry
-import net.kenstir.hemlock.android.AppBehavior
-import org.evergreen_ils.xdata.XOSRFObject
-import org.evergreen_ils.data.MBRecord
-import net.kenstir.hemlock.data.jsonMapOf
+import org.evergreen_ils.gateway.OSRFObject
+import org.evergreen_ils.data.model.MBRecord
+import net.kenstir.data.jsonMapOf
 import org.evergreen_ils.system.EgOrg
-import net.kenstir.hemlock.data.model.Link
-import org.evergreen_ils.utils.MARCRecord
-import org.evergreen_ils.utils.MARCXMLParser
+import net.kenstir.data.model.Link
+import org.evergreen_ils.data.MARCRecord
+import org.evergreen_ils.data.MARCXMLParser
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
 
-class TestAppBehavior: AppBehavior() {
+class TestAppBehavior: net.kenstir.ui.AppBehavior() {
     override fun isVisibleToOrg(df: MARCRecord.MARCDatafield, orgShortName: String): Boolean {
         return isVisibleViaLocatedURI(df, orgShortName)
     }
@@ -43,7 +42,7 @@ class TestAppBehavior: AppBehavior() {
 object TestUtils {
 
     fun loadExampleOrgs() {
-        val br1 = XOSRFObject(
+        val br1 = OSRFObject(
             jsonMapOf(
                 "id" to 4,
                 "ou_type" to 3,
@@ -54,7 +53,7 @@ object TestUtils {
                 "children" to null
             )
         )
-        val br2 = XOSRFObject(
+        val br2 = OSRFObject(
             jsonMapOf(
                 "id" to 5,
                 "ou_type" to 3,
@@ -65,7 +64,7 @@ object TestUtils {
                 "children" to null
             )
         )
-        val sys1 = XOSRFObject(
+        val sys1 = OSRFObject(
             jsonMapOf(
                 "id" to 2,
                 "ou_type" to 2,
@@ -76,7 +75,7 @@ object TestUtils {
                 "children" to arrayListOf(br1, br2)
             )
         )
-        val br3 = XOSRFObject(
+        val br3 = OSRFObject(
             jsonMapOf(
                 "id" to 6,
                 "ou_type" to 3,
@@ -87,7 +86,7 @@ object TestUtils {
                 "children" to null
             )
         )
-        val sys2 = XOSRFObject(
+        val sys2 = OSRFObject(
             jsonMapOf(
                 "id" to 3,
                 "ou_type" to 2,
@@ -98,7 +97,7 @@ object TestUtils {
                 "children" to arrayListOf(br3)
             )
         )
-        val cons = XOSRFObject(
+        val cons = OSRFObject(
             jsonMapOf(
                 "id" to 1,
                 "ou_type" to 1,

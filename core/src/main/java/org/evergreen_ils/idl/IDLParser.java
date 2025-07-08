@@ -1,6 +1,6 @@
 package org.evergreen_ils.idl;
 
-import org.evergreen_ils.xdata.XOSRFCoder;
+import org.evergreen_ils.gateway.OSRFCoder;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -116,7 +116,7 @@ public class IDLParser {
                 }
             }
 
-            XOSRFCoder.registerClass(current.getIDLClass(), List.of(fieldNames));
+            OSRFCoder.registerClass(current.getIDLClass(), List.of(fieldNames));
 
             parsedObjectCount++;
 

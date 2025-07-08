@@ -17,12 +17,12 @@
 
 package net.kenstir.hemlock.mock
 
-import net.kenstir.hemlock.data.model.PatronMessage
-import net.kenstir.hemlock.data.Result
-import net.kenstir.hemlock.data.model.Account
-import net.kenstir.hemlock.data.model.PatronList
-import net.kenstir.hemlock.data.model.PatronCharges
-import net.kenstir.hemlock.net.UserService
+import net.kenstir.data.model.PatronMessage
+import net.kenstir.data.Result
+import net.kenstir.data.model.Account
+import net.kenstir.data.model.PatronList
+import net.kenstir.data.model.PatronCharges
+import net.kenstir.data.service.UserService
 
 class MockUserService: UserService {
     override fun makeAccount(username: String, authToken: String): Account {

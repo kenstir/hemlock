@@ -16,11 +16,11 @@
  */
 package org.evergreen_ils.system
 
-import org.evergreen_ils.data.OSRFUtils
-import net.kenstir.hemlock.android.Analytics
-import net.kenstir.hemlock.logging.Log
-import net.kenstir.hemlock.data.ShouldNotHappenException
-import org.evergreen_ils.xdata.XOSRFObject
+import org.evergreen_ils.util.OSRFUtils
+import net.kenstir.ui.Analytics
+import net.kenstir.logging.Log
+import net.kenstir.data.ShouldNotHappenException
+import org.evergreen_ils.gateway.OSRFObject
 import java.util.*
 
 object EgCodedValueMap {
@@ -35,7 +35,7 @@ object EgCodedValueMap {
     private var iconFormats = ArrayList<CodedValue>()
 
     @JvmStatic
-    fun loadCodedValueMaps(objects: List<XOSRFObject>) {
+    fun loadCodedValueMaps(objects: List<OSRFObject>) {
         searchFormats = ArrayList()
         iconFormats = ArrayList()
         for (obj in objects) {

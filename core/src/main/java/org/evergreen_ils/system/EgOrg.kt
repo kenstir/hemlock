@@ -18,11 +18,11 @@ package org.evergreen_ils.system
 
 import android.annotation.SuppressLint
 import androidx.core.util.Pair
-import net.kenstir.hemlock.logging.Log
-import org.evergreen_ils.xdata.XOSRFObject
-import org.evergreen_ils.data.OrgType
-import net.kenstir.hemlock.data.model.Organization
-import org.evergreen_ils.model.EvergreenOrganization
+import net.kenstir.logging.Log
+import org.evergreen_ils.gateway.OSRFObject
+import org.evergreen_ils.data.model.OrgType
+import net.kenstir.data.model.Organization
+import org.evergreen_ils.data.model.EvergreenOrganization
 import java.util.*
 import kotlin.Comparator
 
@@ -38,7 +38,7 @@ object EgOrg {
     val visibleOrgs: List<Organization>
         get() = orgs.filter { it.opacVisible }
 
-    fun loadOrgTypes(objArray: List<XOSRFObject>) {
+    fun loadOrgTypes(objArray: List<OSRFObject>) {
         synchronized(this) {
             orgTypes.clear()
             objArray.forEach { obj ->
@@ -61,7 +61,7 @@ object EgOrg {
         return orgTypes.firstOrNull { it.id == id }
     }
 
-    private fun addOrganization(obj: XOSRFObject, level: Int) {
+    private fun addOrganization(obj: OSRFObject, level: Int) {
         val id = obj.getInt("id") ?: return
         val name = obj.getString("name") ?: return
         val shortName = obj.getString("shortname") ?: return
@@ -71,14 +71,14 @@ object EgOrg {
         org.indentedDisplayPrefix = String(CharArray(level)).replace("\u0000", "   ")
         Log.v(TAG, "org id:${org.id} level:${org.level} vis:${org.opacVisible} shortname:${org.shortname} name:${org.name}")
         orgs.add(org)
-        val children = obj.get("children") as? List<XOSRFObject>
+        val children = obj.get("children") as? List<OSRFObject>
         children?.forEach { child ->
             val child_level = if (opacVisible) level + 1 else level
             addOrganization(child, child_level)
         }
     }
 
-    fun loadOrgs(orgTree: XOSRFObject, hierarchical_org_tree: Boolean) {
+    fun loadOrgs(orgTree: OSRFObject, hierarchical_org_tree: Boolean) {
         synchronized(this) {
             orgs.clear()
             addOrganization(orgTree, 0)

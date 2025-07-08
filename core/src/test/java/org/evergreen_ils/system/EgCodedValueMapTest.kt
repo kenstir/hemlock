@@ -16,8 +16,8 @@
  */
 package org.evergreen_ils.system
 
-import org.evergreen_ils.xdata.XOSRFObject
-import net.kenstir.hemlock.data.jsonMapOf
+import org.evergreen_ils.gateway.OSRFObject
+import net.kenstir.data.jsonMapOf
 import org.evergreen_ils.system.EgCodedValueMap.ALL_SEARCH_FORMATS
 import org.evergreen_ils.system.EgCodedValueMap.iconFormatLabel
 import org.evergreen_ils.system.EgCodedValueMap.searchFormatCode
@@ -31,9 +31,9 @@ class EgCodedValueMapTest {
 
     @Before
     fun setUp() {
-        val objects = ArrayList<XOSRFObject>()
+        val objects = ArrayList<OSRFObject>()
         run {
-            val obj = XOSRFObject(
+            val obj = OSRFObject(
                 jsonMapOf(
                     "ctype" to EgCodedValueMap.SEARCH_FORMAT,
                     "opac_visible" to true,
@@ -44,7 +44,7 @@ class EgCodedValueMapTest {
             objects.add(obj)
         }
         run {
-            val obj = XOSRFObject(
+            val obj = OSRFObject(
                 jsonMapOf(
                     "ctype" to EgCodedValueMap.ICON_FORMAT,
                     "opac_visible" to true,

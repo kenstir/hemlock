@@ -17,15 +17,15 @@
 
 package org.evergreen_ils.system
 
-import net.kenstir.hemlock.logging.Log
-import org.evergreen_ils.xdata.XOSRFObject
+import net.kenstir.logging.Log
+import org.evergreen_ils.gateway.OSRFObject
 import org.evergreen_ils.data.CopyStatus
 
 object EgCopyStatus {
     var copyStatusList = mutableListOf<CopyStatus>()
     private const val TAG = "CopyStatus"
 
-    fun loadCopyStatuses(ccs_list: List<XOSRFObject>) {
+    fun loadCopyStatuses(ccs_list: List<OSRFObject>) {
         synchronized(this) {
             copyStatusList.clear()
             for (ccs_obj in ccs_list) {

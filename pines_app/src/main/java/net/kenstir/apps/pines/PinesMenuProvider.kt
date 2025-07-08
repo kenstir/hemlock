@@ -20,10 +20,9 @@ package net.kenstir.apps.pines
 import android.app.Activity
 import android.content.Intent
 import androidx.annotation.Keep
-import net.kenstir.hemlock.android.App.REQUEST_MESSAGES
-import net.kenstir.hemlock.android.ui.ActivityUtils
-import org.evergreen_ils.views.MenuProvider
-import org.evergreen_ils.views.messages.MessagesActivity
+import net.kenstir.ui.App.REQUEST_MESSAGES
+import net.kenstir.ui.view.MenuProvider
+import net.kenstir.ui.view.messages.MessagesActivity
 
 @Keep
 class PinesMenuProvider : MenuProvider() {
@@ -35,15 +34,15 @@ class PinesMenuProvider : MenuProvider() {
         if (id == R.id.open_full_catalog_button) {
             //Analytics.logEvent("fullcatalog_click", "via", via);
             val url = activity.getString(R.string.ou_library_url)
-            ActivityUtils.launchURL(activity, url)
+            net.kenstir.ui.util.ActivityUtils.launchURL(activity, url)
         } else if (id == R.id.library_locator_button) {
             //Analytics.logEvent("librarylocator_click", "via", via);
             val url = "https://pines.georgialibraries.org/pinesLocator/locator.html"
-            ActivityUtils.launchURL(activity, url)
+            net.kenstir.ui.util.ActivityUtils.launchURL(activity, url)
         } else if (id == R.id.galileo_button) {
             //Analytics.logEvent("galileo_click", "via", via);
             val url = "https://www.galileo.usg.edu"
-            ActivityUtils.launchURL(activity, url)
+            net.kenstir.ui.util.ActivityUtils.launchURL(activity, url)
         } else if (id == R.id.patron_message_center) {
             //Analytics.logEvent("messages_click", "via", "options_menu");
             activity.startActivityForResult(Intent(activity, MessagesActivity::class.java), REQUEST_MESSAGES)

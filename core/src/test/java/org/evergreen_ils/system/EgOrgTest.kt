@@ -16,15 +16,15 @@
  */
 package org.evergreen_ils.system
 
-import net.kenstir.hemlock.data.jsonMapOf
-import org.evergreen_ils.xdata.XOSRFObject
+import net.kenstir.data.jsonMapOf
+import org.evergreen_ils.gateway.OSRFObject
 import org.junit.Assert.*
 import org.junit.Test
 
 class EgOrgTest {
 
     fun setUpOrgTypes() {
-        val orgTypeConsortium = XOSRFObject(
+        val orgTypeConsortium = OSRFObject(
             jsonMapOf(
                 "id" to 1,
                 "name" to "Consortium",
@@ -33,7 +33,7 @@ class EgOrgTest {
                 "can_have_vols" to "f"
             )
         )
-        val orgTypeLibrary = XOSRFObject(
+        val orgTypeLibrary = OSRFObject(
             jsonMapOf(
                 "id" to 3,
                 "name" to "Library",
@@ -42,7 +42,7 @@ class EgOrgTest {
                 "can_have_vols" to "t"
             )
         )
-        val orgTypeSystem = XOSRFObject(
+        val orgTypeSystem = OSRFObject(
             jsonMapOf(
                 "id" to 2,
                 "name" to "System",
@@ -56,7 +56,7 @@ class EgOrgTest {
     }
 
     fun setUpOrgs() {
-        val branchObj = XOSRFObject(
+        val branchObj = OSRFObject(
             jsonMapOf(
                 "id" to 29,
                 "ou_type" to 3,
@@ -67,7 +67,7 @@ class EgOrgTest {
                 "children" to null
             )
         )
-        val systemObj = XOSRFObject(
+        val systemObj = OSRFObject(
             jsonMapOf(
                 "id" to 28,
                 "ou_type" to 2,
@@ -78,7 +78,7 @@ class EgOrgTest {
                 "children" to arrayListOf(branchObj)
             )
         )
-        val consortiumObj = XOSRFObject(
+        val consortiumObj = OSRFObject(
             jsonMapOf(
                 "id" to 1,
                 "ou_type" to 1,

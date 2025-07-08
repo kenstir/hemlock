@@ -17,9 +17,9 @@
 package org.evergreen_ils
 
 import androidx.test.platform.app.InstrumentationRegistry
-import net.kenstir.hemlock.logging.Log
-import org.evergreen_ils.utils.MARCRecord
-import org.evergreen_ils.utils.MARCXMLParser
+import net.kenstir.logging.Log
+import org.evergreen_ils.data.MARCRecord
+import org.evergreen_ils.data.MARCXMLParser
 import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Test

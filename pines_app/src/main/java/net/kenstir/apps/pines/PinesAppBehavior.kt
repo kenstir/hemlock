@@ -18,14 +18,13 @@
 package net.kenstir.apps.pines
 
 import androidx.annotation.Keep
-import net.kenstir.hemlock.android.AppBehavior
-import org.evergreen_ils.data.MBRecord
-import net.kenstir.hemlock.data.model.Link
-import org.evergreen_ils.utils.MARCRecord.MARCDatafield
+import org.evergreen_ils.data.model.MBRecord
+import net.kenstir.data.model.Link
+import org.evergreen_ils.data.MARCRecord.MARCDatafield
 
 @Keep
 @Suppress("unused")
-class PinesAppBehavior : AppBehavior() {
+class PinesAppBehavior : net.kenstir.ui.AppBehavior() {
     override fun isVisibleToOrg(df: MARCDatafield, orgShortName: String): Boolean {
         return isVisibleViaLocatedURI(df, orgShortName)
     }

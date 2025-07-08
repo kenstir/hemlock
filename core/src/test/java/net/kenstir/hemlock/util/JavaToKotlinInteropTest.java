@@ -17,7 +17,9 @@
 
 package net.kenstir.hemlock.util;
 
-import net.kenstir.hemlock.data.model.Link;
+import net.kenstir.data.model.Link;
+import net.kenstir.util.IntUtils;
+
 import org.junit.Test;
 
 import static org.junit.Assert.assertFalse;

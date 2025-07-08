@@ -17,6 +17,7 @@
 
 package net.kenstir.hemlock.util
 
+import net.kenstir.util.StringUtils
 import org.junit.Assert
 import org.junit.Test
 
