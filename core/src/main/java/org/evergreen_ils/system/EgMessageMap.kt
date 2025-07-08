@@ -19,8 +19,8 @@ package org.evergreen_ils.system
 
 import android.content.res.Resources
 import net.kenstir.hemlock.R
-import org.evergreen_ils.utils.JsonUtils
-import org.evergreen_ils.data.Event
+import net.kenstir.util.JsonUtils
+import org.evergreen_ils.gateway.Event
 
 /** Emulate the behavior of OPAC messages customized in hold_error_messages.tt2.
  *

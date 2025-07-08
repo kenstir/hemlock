@@ -17,15 +17,17 @@
 
 package org.evergreen_ils.data
 
-import net.kenstir.hemlock.data.jsonMapOf
-import org.evergreen_ils.xdata.XOSRFObject
+import net.kenstir.data.jsonMapOf
+import org.evergreen_ils.data.model.EvergreenHistoryRecord
+import org.evergreen_ils.data.model.MBRecord
+import org.evergreen_ils.gateway.OSRFObject
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
 class HistoryRecordTest {
     @Test
     fun test_noBibRecord() {
-        val auchObj = XOSRFObject(
+        val auchObj = OSRFObject(
             mapOf(
                 "id" to 10178625,
                 "target_copy" to 409071,
@@ -41,7 +43,7 @@ class HistoryRecordTest {
 
     @Test
     fun test_withRecord() {
-        val auchObj = XOSRFObject(
+        val auchObj = OSRFObject(
             mapOf(
                 "id" to 10178625,
                 "target_copy" to 409071,
@@ -49,7 +51,7 @@ class HistoryRecordTest {
             )
         )
         val historyRecord = EvergreenHistoryRecord(10178625, auchObj)
-        historyRecord.record = MBRecord(12345, XOSRFObject(jsonMapOf(
+        historyRecord.record = MBRecord(12345, OSRFObject(jsonMapOf(
             "title" to "Record Title",
             "author" to "Record Author",
         )))

@@ -17,9 +17,10 @@
 
 package org.evergreen_ils.data
 
-import net.kenstir.hemlock.data.jsonMapOf
-import net.kenstir.hemlock.data.model.PatronList
-import org.evergreen_ils.xdata.XOSRFObject
+import net.kenstir.data.jsonMapOf
+import net.kenstir.data.model.PatronList
+import org.evergreen_ils.data.model.BookBag
+import org.evergreen_ils.gateway.OSRFObject
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.BeforeClass
@@ -27,7 +28,7 @@ import org.junit.Test
 
 class BookBagTest {
 
-    val cbrebObj = XOSRFObject(
+    val cbrebObj = OSRFObject(
         jsonMapOf(
             "id" to 24919,
             "name" to "books to read",
@@ -37,13 +38,13 @@ class BookBagTest {
         ), "cbreb"
     )
     val targetRecordId = 2914107
-    lateinit var fleshedCbrebObj: XOSRFObject
+    lateinit var fleshedCbrebObj: OSRFObject
 
     init {
         // a fleshed cbreb object has a non-empty list of items
         val map = cbrebObj.cloneMap()
         map["items"] = arrayListOf(
-            XOSRFObject(
+            OSRFObject(
                 jsonMapOf(
                     "bucket" to 961216,
                     "create_time" to "2020-01-11T10:31:44-0500",
@@ -53,7 +54,7 @@ class BookBagTest {
                 ), "cbrebi"
             )
         )
-        fleshedCbrebObj = XOSRFObject(map)
+        fleshedCbrebObj = OSRFObject(map)
     }
 
     companion object {
@@ -92,14 +93,14 @@ class BookBagTest {
         assertEquals(0, patronList.items.size)
         val bookBag = patronList as BookBag
 
-        val queryPayload = XOSRFObject(
+        val queryPayload = OSRFObject(
             jsonMapOf(
                 "count" to 1,
                 "ids" to arrayListOf(
                     arrayListOf(targetRecordId, "2", "4.0")
                 ))
         )
-        val emptyQueryPayload = XOSRFObject(
+        val emptyQueryPayload = OSRFObject(
             jsonMapOf(
                 "count" to 0,
                 "ids" to arrayListOf<ArrayList<Any?>>()
@@ -142,7 +143,7 @@ class BookBagTest {
     }
 }
 
-fun XOSRFObject.cloneMap(): MutableMap<String, Any?> {
+fun OSRFObject.cloneMap(): MutableMap<String, Any?> {
     val map = mutableMapOf<String, Any?>()
     for ((key, value) in this.map) {
         map[key] = value

@@ -17,23 +17,23 @@
 
 package net.kenstir.hemlock.data.evergreen
 
-import net.kenstir.hemlock.data.jsonMapOf
-import net.kenstir.hemlock.data.model.Account
+import net.kenstir.data.jsonMapOf
+import net.kenstir.data.model.Account
 import org.evergreen_ils.Api
-import org.evergreen_ils.xdata.XOSRFObject
-import org.evergreen_ils.model.EvergreenAccount
+import org.evergreen_ils.gateway.OSRFObject
+import org.evergreen_ils.data.model.EvergreenAccount
 import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Test
 
 class EvergreenAccountTest {
 
-    var sessionObj = XOSRFObject(jsonMapOf(
+    var sessionObj = OSRFObject(jsonMapOf(
         "id" to 42,
         "home_ou" to 69,
         "day_phone" to "508-555-1212"
     ))
-    var cardObj = XOSRFObject(mapOf<String, Any?>("barcode" to "1234"))
+    var cardObj = OSRFObject(mapOf<String, Any?>("barcode" to "1234"))
 
     @Before
     fun setUp() {
@@ -56,8 +56,8 @@ class EvergreenAccountTest {
         assertEquals("508-555-1212", account.phoneNumber)
     }
 
-    fun makeSetting(name: String, value: Any?): XOSRFObject {
-        return XOSRFObject(mapOf<String, Any?>("name" to name, "value" to value))
+    fun makeSetting(name: String, value: Any?): OSRFObject {
+        return OSRFObject(mapOf<String, Any?>("name" to name, "value" to value))
     }
 
     @Test
@@ -69,7 +69,7 @@ class EvergreenAccountTest {
             makeSetting(Api.USER_SETTING_DEFAULT_PHONE, "617-555-1212"),
             makeSetting(Api.USER_SETTING_HOLD_NOTIFY, "email|sms")
         )
-        val fleshedUserSettingsObj = XOSRFObject(jsonMapOf(
+        val fleshedUserSettingsObj = OSRFObject(jsonMapOf(
             "card" to cardObj,
             "settings" to settingsObj
         ))

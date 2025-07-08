@@ -20,13 +20,12 @@ package net.kenstir.apps.noble
 
 import android.text.TextUtils
 import androidx.annotation.Keep
-import net.kenstir.hemlock.android.AppBehavior
-import org.evergreen_ils.data.MBRecord
-import net.kenstir.hemlock.data.model.Link
-import org.evergreen_ils.utils.MARCRecord.MARCDatafield
+import org.evergreen_ils.data.model.MBRecord
+import net.kenstir.data.model.Link
+import org.evergreen_ils.data.MARCRecord.MARCDatafield
 
 @Keep
-class NobleAppBehavior : AppBehavior() {
+class NobleAppBehavior : net.kenstir.ui.AppBehavior() {
     override fun isOnlineResource(record: MBRecord?): Boolean? {
         if (record == null) return null
         if (!record.hasMetadata()) return null

@@ -18,8 +18,8 @@
 package net.kenstir.hemlock.data.evergreen
 
 import kotlinx.serialization.json.Json
-import org.evergreen_ils.xdata.XGatewayResponseContent
-import org.evergreen_ils.xdata.XOSRFCoder
+import org.evergreen_ils.gateway.XGatewayResponseContent
+import org.evergreen_ils.gateway.OSRFCoder
 import org.junit.Assert.assertNotNull
 import org.junit.Before
 import org.junit.Test
@@ -38,8 +38,8 @@ class XSerializationPerformanceTest {
             ?.getResource("largeOrgTree.json")!!
             .readText(StandardCharsets.UTF_8)
 
-        XOSRFCoder.clearRegistry()
-        XOSRFCoder.registerClass("aou", listOf("children","billing_address","holds_address","id","ill_address","mailing_address","name","ou_type","parent_ou","shortname","email","phone","opac_visible","fiscal_calendar","users","closed_dates","circulations","settings","addresses","checkins","workstations","fund_alloc_pcts","copy_location_orders","atc_prev_dests","resv_requests","resv_pickups","rsrc_types","resources","rsrc_attrs","attr_vals","hours_of_operation","fscskey","fscs_seq","libpas","library_logo","oclc_symbol"))
+        OSRFCoder.clearRegistry()
+        OSRFCoder.registerClass("aou", listOf("children","billing_address","holds_address","id","ill_address","mailing_address","name","ou_type","parent_ou","shortname","email","phone","opac_visible","fiscal_calendar","users","closed_dates","circulations","settings","addresses","checkins","workstations","fund_alloc_pcts","copy_location_orders","atc_prev_dests","resv_requests","resv_pickups","rsrc_types","resources","rsrc_attrs","attr_vals","hours_of_operation","fscskey","fscs_seq","libpas","library_logo","oclc_symbol"))
     }
 
     @Test
@@ -47,7 +47,7 @@ class XSerializationPerformanceTest {
         val json = largeOrgTreeJson
         for (i in 0 until iterations) {
             val resp = Json.decodeFromString<XGatewayResponseContent>(json)
-            val list = XOSRFCoder.decodePayload(resp.payload)
+            val list = OSRFCoder.decodePayload(resp.payload)
             assertNotNull(list)
         }
     }

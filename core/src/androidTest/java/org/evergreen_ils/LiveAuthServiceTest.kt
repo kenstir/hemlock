@@ -22,19 +22,19 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
-import net.kenstir.hemlock.data.Result
-import net.kenstir.hemlock.logging.Log
-import net.kenstir.hemlock.net.LoadStartupOptions
-import net.kenstir.hemlock.net.ServiceConfig
-import org.evergreen_ils.model.EvergreenAccount
-import org.evergreen_ils.net.EvergreenAuthService
-import org.evergreen_ils.net.EvergreenBiblioService
-import org.evergreen_ils.net.EvergreenCircService
-import org.evergreen_ils.net.EvergreenLoaderService
-import org.evergreen_ils.net.EvergreenOrgService
-import org.evergreen_ils.net.EvergreenSearchService
-import org.evergreen_ils.net.EvergreenUserService
-import org.evergreen_ils.xdata.XGatewayClient
+import net.kenstir.data.Result
+import net.kenstir.logging.Log
+import net.kenstir.data.service.LoadStartupOptions
+import net.kenstir.data.service.ServiceConfig
+import org.evergreen_ils.data.model.EvergreenAccount
+import org.evergreen_ils.data.service.EvergreenAuthService
+import org.evergreen_ils.data.service.EvergreenBiblioService
+import org.evergreen_ils.data.service.EvergreenCircService
+import org.evergreen_ils.data.service.EvergreenLoaderService
+import org.evergreen_ils.data.service.EvergreenOrgService
+import org.evergreen_ils.data.service.EvergreenSearchService
+import org.evergreen_ils.data.service.EvergreenUserService
+import org.evergreen_ils.gateway.GatewayClient
 import org.junit.AfterClass
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
@@ -49,9 +49,9 @@ class LiveAuthServiceTest {
             EvergreenAuthService,
             EvergreenBiblioService,
             EvergreenCircService,
+            EvergreenOrgService,
             EvergreenSearchService,
             EvergreenUserService,
-            EvergreenOrgService,
         )
 
         // See root build.gradle for notes on customizing instrumented test variables (hint: secret.gradle)
@@ -66,10 +66,10 @@ class LiveAuthServiceTest {
         @JvmStatic
         @BeforeClass
         fun setUpClass() {
-            XGatewayClient.baseUrl = testServer
-            XGatewayClient.clientCacheKey = "42"
-            XGatewayClient.cacheDirectory = File(System.getProperty("java.io.tmpdir") ?: "/tmp", "KtorClientTest")
-            XGatewayClient.cacheDirectory.deleteRecursively()
+            GatewayClient.baseUrl = testServer
+            GatewayClient.clientCacheKey = "42"
+            GatewayClient.cacheDirectory = File(System.getProperty("java.io.tmpdir") ?: "/tmp", "KtorClientTest")
+            GatewayClient.cacheDirectory.deleteRecursively()
         }
 
         @JvmStatic

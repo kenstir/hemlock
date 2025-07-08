@@ -29,11 +29,11 @@ import io.ktor.http.HttpHeaders
 import io.ktor.http.contentType
 import kotlinx.coroutines.test.runTest
 import org.evergreen_ils.Api
-import org.evergreen_ils.xdata.XGatewayClient
-import org.evergreen_ils.xdata.paramListOf
-import net.kenstir.hemlock.net.HemlockPlugin
-import net.kenstir.hemlock.net.elapsedTime
-import net.kenstir.hemlock.net.isCached
+import org.evergreen_ils.gateway.GatewayClient
+import org.evergreen_ils.gateway.paramListOf
+import net.kenstir.data.HemlockPlugin
+import net.kenstir.data.elapsedTime
+import net.kenstir.data.isCached
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
@@ -49,12 +49,12 @@ class KtorClientTest {
         fun setUpClass() {
             val testServer = getRequiredProperty("testEvergreenServer")
 
-            XGatewayClient.baseUrl = testServer
-            XGatewayClient.clientCacheKey = System.currentTimeMillis().toString()
-            XGatewayClient.cacheDirectory = File(System.getProperty("java.io.tmpdir") ?: "/tmp", "KtorClientTest")
-            XGatewayClient.cacheDirectory.deleteRecursively()
+            GatewayClient.baseUrl = testServer
+            GatewayClient.clientCacheKey = System.currentTimeMillis().toString()
+            GatewayClient.cacheDirectory = File(System.getProperty("java.io.tmpdir") ?: "/tmp", "KtorClientTest")
+            GatewayClient.cacheDirectory.deleteRecursively()
 
-            client = XGatewayClient.makeHttpClient()
+            client = GatewayClient.makeHttpClient()
         }
 
         fun getRequiredProperty(name: String): String {
@@ -71,7 +71,7 @@ class KtorClientTest {
 
     @Test
     fun test_get_withCaching() = runTest {
-        val url = XGatewayClient.buildUrl(Api.ACTOR, Api.ORG_UNIT_RETRIEVE, paramListOf(Api.ANONYMOUS, 1))
+        val url = GatewayClient.buildUrl(Api.ACTOR, Api.ORG_UNIT_RETRIEVE, paramListOf(Api.ANONYMOUS, 1))
 
         val response1 = client.get(url)
 
@@ -98,7 +98,7 @@ class KtorClientTest {
 
     @Test
     fun test_get_withCachingDisabled() = runTest {
-        val url = XGatewayClient.buildUrl(Api.ACTOR, Api.ILS_VERSION, paramListOf(), false)
+        val url = GatewayClient.buildUrl(Api.ACTOR, Api.ILS_VERSION, paramListOf(), false)
 
         val response1 = client.get(url) {
             headers.append(HttpHeaders.CacheControl, CacheControl.NO_STORE)
@@ -128,8 +128,8 @@ class KtorClientTest {
     // Verify that POST requests are not cached
     @Test
     fun test_post_withParams() = runTest {
-        val url = XGatewayClient.gatewayUrl()
-        val body = XGatewayClient.buildQuery(Api.ACTOR, Api.ILS_VERSION, paramListOf(), false)
+        val url = GatewayClient.gatewayUrl()
+        val body = GatewayClient.buildQuery(Api.ACTOR, Api.ILS_VERSION, paramListOf(), false)
 
         val response1 = client.post(url) {
             setBody(body)

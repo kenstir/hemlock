@@ -18,8 +18,8 @@
 
 package org.evergreen_ils.data
 
-import org.evergreen_ils.xdata.XGatewayResult
-import org.evergreen_ils.xdata.XOSRFCoder
+import org.evergreen_ils.gateway.GatewayResult
+import org.evergreen_ils.gateway.OSRFCoder
 import org.evergreen_ils.system.EgCopyStatus
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
@@ -42,13 +42,13 @@ class CopyStatusTest {
         @BeforeClass
         fun setUpClass() {
             val ccsFields = listOf("holdable","id","name","opac_visible","copy_active","restrict_copy_delete","is_available")
-            XOSRFCoder.registerClass("ccs", ccsFields)
+            OSRFCoder.registerClass("ccs", ccsFields)
         }
     }
 
     @Test
     fun test_load() {
-        val result = XGatewayResult.create(ccsListJson)
+        val result = GatewayResult.create(ccsListJson)
         val ccsList = result.payloadFirstAsObjectList()
         EgCopyStatus.loadCopyStatuses(ccsList)
 

@@ -17,6 +17,7 @@
 
 package net.kenstir.hemlock.util
 
+import net.kenstir.util.getCustomMessage
 import org.junit.Assert.assertEquals
 import org.junit.Test
 

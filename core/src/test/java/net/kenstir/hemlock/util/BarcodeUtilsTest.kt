@@ -17,6 +17,7 @@
 package net.kenstir.hemlock.util
 
 import com.google.zxing.BarcodeFormat
+import net.kenstir.util.BarcodeUtils
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
 import org.junit.Test

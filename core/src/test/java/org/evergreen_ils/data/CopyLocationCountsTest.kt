@@ -17,18 +17,19 @@
 
 package org.evergreen_ils.data
 
-import net.kenstir.hemlock.data.jsonMapOf
+import net.kenstir.data.jsonMapOf
+import org.evergreen_ils.data.model.EvergreenCopyLocationCounts
 import org.evergreen_ils.system.EgCopyStatus
-import org.evergreen_ils.xdata.XGatewayResult
-import org.evergreen_ils.xdata.XOSRFObject
+import org.evergreen_ils.gateway.GatewayResult
+import org.evergreen_ils.gateway.OSRFObject
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
 
 class CopyLocationCountsTest {
 
-    fun make_ccs(id: Int, name: String, opac_visible: String): XOSRFObject {
-        return XOSRFObject(jsonMapOf("id" to id, "name" to name, "opac_visible" to opac_visible))
+    fun make_ccs(id: Int, name: String, opac_visible: String): OSRFObject {
+        return OSRFObject(jsonMapOf("id" to id, "name" to name, "opac_visible" to opac_visible))
     }
 
     @Before
@@ -46,7 +47,7 @@ class CopyLocationCountsTest {
         val cscJson = """
             {"payload":[[["7","","DVD HARRY","","AV",{"1":1}]]],"status":200}
             """
-        val payloadList = XGatewayResult.create(cscJson).payloadFirstAsList()
+        val payloadList = GatewayResult.create(cscJson).payloadFirstAsList()
         assertEquals(1, payloadList.size)
         val clcList = EvergreenCopyLocationCounts.makeArray(payloadList)
         val clc = clcList.first() as? EvergreenCopyLocationCounts
@@ -66,7 +67,7 @@ class CopyLocationCountsTest {
         val cscJson = """
             {"payload":[[["7","","J ROWLING","","JUV",{"1":2,"7":1}],["7","","YA ROWLING","","YA",{"1":1,"0":3}]]],"status":200}
             """
-        val payloadList = XGatewayResult.create(cscJson).payloadFirstAsList()
+        val payloadList = GatewayResult.create(cscJson).payloadFirstAsList()
         val clcList = EvergreenCopyLocationCounts.makeArray(payloadList)
         assertEquals(2, clcList.size)
         val clc1 = clcList[0] as EvergreenCopyLocationCounts

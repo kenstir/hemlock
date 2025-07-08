@@ -18,9 +18,9 @@
 
 package net.kenstir.apps.owwl;
 
-import net.kenstir.hemlock.android.AppBehavior;
-import org.evergreen_ils.data.MBRecord;
-import net.kenstir.hemlock.data.model.Link;
+import net.kenstir.ui.AppBehavior;
+import org.evergreen_ils.data.model.MBRecord;
+import net.kenstir.data.model.Link;
 
 import java.util.List;
 

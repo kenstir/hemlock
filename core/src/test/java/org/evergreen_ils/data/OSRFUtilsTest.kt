@@ -17,6 +17,7 @@
 
 package org.evergreen_ils.data
 
+import org.evergreen_ils.util.OSRFUtils
 import org.junit.Assert
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull

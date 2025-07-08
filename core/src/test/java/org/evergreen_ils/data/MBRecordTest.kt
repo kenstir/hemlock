@@ -16,10 +16,11 @@
  */
 package org.evergreen_ils.data
 
-import org.evergreen_ils.utils.JsonUtils
-import org.evergreen_ils.xdata.XGatewayResult
-import org.evergreen_ils.xdata.XOSRFCoder
-import org.evergreen_ils.xdata.XOSRFObject
+import org.evergreen_ils.data.model.MBRecord
+import net.kenstir.util.JsonUtils
+import org.evergreen_ils.gateway.GatewayResult
+import org.evergreen_ils.gateway.OSRFCoder
+import org.evergreen_ils.gateway.OSRFObject
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Before
@@ -34,7 +35,7 @@ class MBRecordTest {
         @JvmStatic
         fun setUpClass() {
             val mvrFields = listOf("title","author","doc_id","doc_type","pubdate","isbn","publisher","tcn","subject","types_of_resource","call_numbers","edition","online_loc","synopsis","physical_description","toc","copy_count","series","serials","foreign_copy_maps")
-            XOSRFCoder.registerClass("mvr", mvrFields)
+            OSRFCoder.registerClass("mvr", mvrFields)
         }
     }
 
@@ -58,7 +59,7 @@ class MBRecordTest {
 
     @Test
     fun test_withMvrObj() {
-        val mvrObj = XGatewayResult.create(blackOpsMvrJson).payloadFirstAsObject()
+        val mvrObj = GatewayResult.create(blackOpsMvrJson).payloadFirstAsObject()
         val record = MBRecord(4600952, mvrObj)
 
         assertEquals(true, record.hasMetadata())
@@ -88,7 +89,7 @@ class MBRecordTest {
         assertEquals("", record.title)
         assertEquals("", record.author)
 
-        val mvrObj = XGatewayResult.create(blackOpsMvrJson).payloadFirstAsObject()
+        val mvrObj = GatewayResult.create(blackOpsMvrJson).payloadFirstAsObject()
         record.mvrObj = mvrObj
 
         assertEquals("Black ops", record.title)
@@ -97,7 +98,7 @@ class MBRecordTest {
 
     private fun makeArrayFromJson(json: String): ArrayList<MBRecord> {
         val dict = JsonUtils.parseObject(json) ?: return ArrayList()
-        return MBRecord.makeArrayFromQueryResults(XOSRFObject(dict))
+        return MBRecord.makeArrayFromQueryResults(OSRFObject(dict))
     }
 
     @Test

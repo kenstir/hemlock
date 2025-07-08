@@ -17,8 +17,8 @@
 
 package org.evergreen_ils.data
 
-import net.kenstir.hemlock.data.jsonMapOf
-import org.evergreen_ils.utils.fromApiToIntOrNull
+import net.kenstir.data.jsonMapOf
+import org.evergreen_ils.util.fromApiToIntOrNull
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
