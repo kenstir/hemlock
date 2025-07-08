@@ -19,7 +19,6 @@ package org.evergreen_ils.data.model
 import net.kenstir.data.model.ListItem
 import net.kenstir.data.model.PatronList
 import net.kenstir.logging.Log
-import org.evergreen_ils.EgConst
 import org.evergreen_ils.gateway.OSRFObject
 import kotlin.collections.ArrayList
 
@@ -29,6 +28,7 @@ class BookBag(
     obj: OSRFObject
 ): PatronList {
     override var description: String = obj.getString("description") ?: ""
+
     override val public: Boolean = obj.getBoolean("pub") ?: false
 
     override var items: List<ListItem> = ArrayList()
@@ -46,7 +46,7 @@ class BookBag(
         idList?.mapNotNullTo(visibleRecordIds) {
             it[0] as? Int
         }
-        Log.d(EgConst.TAG_DATA, "[bookbag] bag $id visibleRecordIds=${visibleRecordIds}")
+        Log.d(TAG, "[bookbag] bag $id visibleRecordIds=${visibleRecordIds}")
     }
 
     fun fleshFromObject(cbrebObj: OSRFObject) {
@@ -64,10 +64,12 @@ class BookBag(
             }
         }
         this.items = newItems
-        Log.d(EgConst.TAG_DATA, "[bookbag] bag $id ${items.size} items")
+        Log.d(TAG, "[bookbag] bag $id ${items.size} items")
     }
 
     companion object {
+        const val TAG = "BookBag"
+
         fun makeArray(objArray: List<OSRFObject>): List<PatronList> {
             val ret = ArrayList<BookBag>()
             for (obj in objArray) {

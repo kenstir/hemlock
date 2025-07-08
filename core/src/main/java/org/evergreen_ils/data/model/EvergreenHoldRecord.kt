@@ -22,7 +22,6 @@ package org.evergreen_ils.data.model
 
 import android.annotation.SuppressLint
 import android.content.res.Resources
-import org.evergreen_ils.HOLD_TYPE_METARECORD
 import net.kenstir.hemlock.R
 import net.kenstir.data.JSONDictionary
 import net.kenstir.data.model.BibRecord
@@ -31,6 +30,7 @@ import org.evergreen_ils.system.EgCodedValueMap.iconFormatLabel
 import org.evergreen_ils.system.EgOrg
 import org.evergreen_ils.util.OSRFUtils
 import net.kenstir.util.JsonUtils
+import org.evergreen_ils.Api
 import org.evergreen_ils.util.TextUtils
 import org.evergreen_ils.gateway.OSRFObject
 import java.text.DateFormat
@@ -142,7 +142,7 @@ class EvergreenHoldRecord(val ahrObj: OSRFObject) : HoldRecord {
         get() = qstatsObj?.getInt("total_holds")
     override val formatLabel: String?
         get() {
-            if (holdType == HOLD_TYPE_METARECORD) {
+            if (holdType == Api.HoldType.METARECORD) {
                 val dict = JsonUtils.parseObject(ahrObj.getString("holdable_formats"))
                 val codes = parseHoldableFormats(dict)
                 val labels = codes.map { iconFormatLabel(it) }
