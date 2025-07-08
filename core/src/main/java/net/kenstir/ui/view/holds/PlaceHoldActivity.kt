@@ -50,8 +50,6 @@ import net.kenstir.data.model.HoldPart
 import net.kenstir.logging.Log
 import net.kenstir.data.service.HoldOptions
 import net.kenstir.util.getCustomMessage
-import org.evergreen_ils.HOLD_TYPE_PART
-import org.evergreen_ils.HOLD_TYPE_TITLE
 import org.evergreen_ils.data.model.MBRecord
 import org.evergreen_ils.util.OSRFUtils
 import org.evergreen_ils.data.SMSCarrier
@@ -59,6 +57,7 @@ import org.evergreen_ils.system.EgOrg
 import org.evergreen_ils.system.EgSms
 import net.kenstir.ui.BaseActivity
 import net.kenstir.ui.util.OrgArrayAdapter
+import org.evergreen_ils.Api
 import java.util.Calendar
 import java.util.Date
 
@@ -317,8 +316,8 @@ class PlaceHoldActivity : BaseActivity() {
             val holdType: String
             val itemId: Int
             when {
-                partRequired || getPartId() > 0 -> { holdType = HOLD_TYPE_PART; itemId = getPartId() }
-                else -> { holdType = HOLD_TYPE_TITLE; itemId = record.id }
+                partRequired || getPartId() > 0 -> { holdType = Api.HoldType.PART; itemId = getPartId() }
+                else -> { holdType = Api.HoldType.TITLE; itemId = record.id }
             }
             progress?.show(this@PlaceHoldActivity, "Placing hold")
             val options = HoldOptions(

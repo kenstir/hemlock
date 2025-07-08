@@ -34,13 +34,6 @@ import net.kenstir.data.service.CircService
 import net.kenstir.data.service.HoldOptions
 import net.kenstir.data.service.HoldUpdateOptions
 import org.evergreen_ils.Api
-import org.evergreen_ils.HOLD_TYPE_COPY
-import org.evergreen_ils.HOLD_TYPE_FORCE
-import org.evergreen_ils.HOLD_TYPE_METARECORD
-import org.evergreen_ils.HOLD_TYPE_PART
-import org.evergreen_ils.HOLD_TYPE_RECALL
-import org.evergreen_ils.HOLD_TYPE_TITLE
-import org.evergreen_ils.HOLD_TYPE_VOLUME
 import org.evergreen_ils.gateway.GatewayError
 import org.evergreen_ils.data.model.EvergreenCircRecord
 import org.evergreen_ils.data.model.EvergreenHistoryRecord
@@ -169,15 +162,15 @@ object EvergreenCircService: CircService {
         val jobs = mutableListOf<Deferred<Any>>()
         jobs.add(async {
             when (hold.holdType) {
-                HOLD_TYPE_TITLE ->
+                Api.HoldType.TITLE ->
                     loadTitleHoldTargetDetails(account, hold, target)
-                HOLD_TYPE_METARECORD ->
+                Api.HoldType.METARECORD ->
                     loadMetarecordHoldTargetDetails(account, hold, target)
-                HOLD_TYPE_PART ->
+                Api.HoldType.PART ->
                     loadPartHoldTargetDetails(account, hold, target)
-                HOLD_TYPE_COPY, HOLD_TYPE_FORCE, HOLD_TYPE_RECALL ->
+                Api.HoldType.COPY, Api.HoldType.FORCE, Api.HoldType.RECALL ->
                     loadCopyHoldTargetDetails(account, hold, target)
-                HOLD_TYPE_VOLUME ->
+                Api.HoldType.VOLUME ->
                     loadVolumeHoldTargetDetails(account, hold, target)
                 else -> {
                     Analytics.logException(ShouldNotHappenException("unexpected holdType:${hold.holdType}"))
@@ -300,7 +293,7 @@ object EvergreenCircService: CircService {
             val param = jsonMapOf(
                 "patronid" to userID,
                 "pickup_lib" to pickupLib,
-                "hold_type" to HOLD_TYPE_TITLE,
+                "hold_type" to Api.HoldType.TITLE,
                 "titleid" to targetId
             )
             val params = paramListOf(authToken, param)
