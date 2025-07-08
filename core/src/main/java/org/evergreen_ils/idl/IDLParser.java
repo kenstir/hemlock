@@ -9,7 +9,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
-import org.opensrf.util.OSRFRegistry;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 import org.xmlpull.v1.XmlPullParserFactory;
@@ -49,7 +48,7 @@ public class IDLParser {
     * Parses the IDL XML
     */
     public void parse() throws IOException, IDLException {
-    
+
         try {
             XmlPullParserFactory factory = XmlPullParserFactory.newInstance();
             factory.setNamespaceAware(true);
@@ -79,14 +78,14 @@ public class IDLParser {
 
         if(!OILS_NS_BASE.equals(reader.getNamespace())) return;
         String localpart = reader.getName();
-    
+
         if( "class".equals(localpart) ) {
             fieldIndex = 0;
             current = new IDLObject();
             current.setIDLClass(reader.getAttributeValue(null, "id"));
             return;
         }
-    
+
         if( "field".equals(localpart) ) {
             IDLField field = new IDLField();
             field.setName(reader.getAttributeValue(null, "name"));
@@ -119,8 +118,6 @@ public class IDLParser {
 
             XOSRFCoder.registerClass(
                 current.getIDLClass(), List.of(fieldNames));
-            OSRFRegistry.registerObject(
-                current.getIDLClass(), OSRFRegistry.WireProtocol.ARRAY, fieldNames);
 
             parsedObjectCount++;
 

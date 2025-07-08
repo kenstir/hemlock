@@ -21,7 +21,6 @@ package org.evergreen_ils.system
 import net.kenstir.hemlock.logging.Log
 import org.evergreen_ils.data.SMSCarrier
 import org.evergreen_ils.xdata.XOSRFObject
-import org.opensrf.util.OSRFObject
 
 
 object EgSms {

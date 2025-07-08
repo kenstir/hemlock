@@ -25,7 +25,6 @@ import org.evergreen_ils.model.EvergreenAccount
 import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Test
-import org.opensrf.util.OSRFObject
 
 class EvergreenAccountTest {
 

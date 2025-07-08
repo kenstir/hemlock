@@ -17,12 +17,6 @@
 
 package net.kenstir.hemlock.mock
 
-import net.kenstir.hemlock.data.jsonMapOf
-import net.kenstir.hemlock.data.model.PatronList
-import net.kenstir.hemlock.data.model.ListItem
-import org.evergreen_ils.data.MBRecord
-import org.opensrf.util.OSRFObject
-
 object MockUserDataSource {
     var counter: Int = 0
 

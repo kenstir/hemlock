@@ -30,13 +30,9 @@ import org.evergreen_ils.utils.RecordAttributes
 import org.evergreen_ils.utils.TextUtils
 import net.kenstir.hemlock.util.titleSortKey
 import org.evergreen_ils.xdata.XOSRFObject
-import org.opensrf.util.OSRFObject
 
 class MBRecord(override val id: Int, var mvrObj: XOSRFObject? = null): BibRecord {
     constructor(mvrObj: XOSRFObject) : this(mvrObj.getInt("doc_id") ?: -1, mvrObj)
-    constructor(ogObj: OSRFObject) : this(ogObj.getInt("doc_id") ?: -1) {
-        TODO("MBRecord constructor from OSRFObject not implemented")
-    }
 
     override var copyCounts: ArrayList<CopyCount>? = null
     override var marcRecord: MARCRecord? = null

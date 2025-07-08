@@ -20,7 +20,6 @@ package org.evergreen_ils.data
 
 import net.kenstir.hemlock.data.PatronMessage
 import org.evergreen_ils.xdata.XOSRFObject
-import org.opensrf.util.OSRFObject
 import java.util.ArrayList
 
 data class EvergreenPatronMessage(override val id: Int, val obj: XOSRFObject) : PatronMessage {
