@@ -119,7 +119,7 @@ class BookBagTest {
     }
 
     @Test
-    fun test_isSerializable() {
+    fun test_skeletonBookbagIsSerializable() {
         // Ensure that BookBag is serializable
         val bookBag = BookBag(1, "Test Bag", cbrebObj)
         val serialized = java.io.ByteArrayOutputStream()
@@ -127,14 +127,18 @@ class BookBagTest {
         val deserialized = java.io.ByteArrayInputStream(serialized.toByteArray())
         val restored = java.io.ObjectInputStream(deserialized).use { it.readObject() as BookBag }
         println("Restored BookBag: $restored")
+    }
 
+    @Test
+    fun test_fleshedBookbagIsSerializable() {
         // Ensure that fleshed BookBag is serializable
+        val bookBag = BookBag(1, "Test Bag", cbrebObj)
         bookBag.fleshFromObject(fleshedCbrebObj)
-        val serialized2 = java.io.ByteArrayOutputStream()
-        java.io.ObjectOutputStream(serialized2).use { it.writeObject(bookBag) }
-        val deserialized2 = java.io.ByteArrayInputStream(serialized.toByteArray())
-        val restored2 = java.io.ObjectInputStream(deserialized2).use { it.readObject() as PatronList }
-        println("Restored BookBag: $restored2")
+        val serialized = java.io.ByteArrayOutputStream()
+        java.io.ObjectOutputStream(serialized).use { it.writeObject(bookBag) }
+        val deserialized = java.io.ByteArrayInputStream(serialized.toByteArray())
+        val restored = java.io.ObjectInputStream(deserialized).use { it.readObject() as PatronList }
+        println("Restored BookBag: $restored")
     }
 }
 
