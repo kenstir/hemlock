@@ -23,7 +23,7 @@ import org.evergreen_ils.data.CopyStatus
 
 object EgCopyStatus {
     var copyStatusList = mutableListOf<CopyStatus>()
-    private const val TAG = "EgCopyStatus"
+    private const val TAG = "CopyStatus"
 
     fun loadCopyStatuses(ccs_list: List<XOSRFObject>) {
         synchronized(this) {
@@ -34,7 +34,7 @@ object EgCopyStatus {
                     val name = ccs_obj.getString("name")
                     if (id != null && name != null) {
                         copyStatusList.add(CopyStatus(id, name))
-                        Log.d(TAG, "loadCopyStatuses id:$id name:$name")
+                        Log.v(TAG, "loadCopyStatuses id:$id name:$name")
                     }
                 }
             }

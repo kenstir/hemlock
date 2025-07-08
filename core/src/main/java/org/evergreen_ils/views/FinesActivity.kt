@@ -38,11 +38,13 @@ import net.kenstir.hemlock.android.account.AccountUtils
 import net.kenstir.hemlock.android.ui.ProgressDialogSupport
 import net.kenstir.hemlock.android.ui.showAlert
 import net.kenstir.hemlock.data.Result
+import net.kenstir.hemlock.data.model.BibRecord
 import net.kenstir.hemlock.data.model.ChargeRecord
 import net.kenstir.hemlock.data.model.PatronCharges
 import net.kenstir.hemlock.logging.Log
 import org.evergreen_ils.system.EgOrg
 import org.evergreen_ils.utils.ui.BaseActivity
+import org.evergreen_ils.views.search.RecordDetails
 import org.evergreen_ils.xdata.XGatewayClient
 import java.net.URLEncoder
 import java.text.DecimalFormat
@@ -57,7 +59,6 @@ class FinesActivity : BaseActivity() {
     private var lv: ListView? = null
     private var listAdapter: FinesArrayAdapter? = null
     private var charges: PatronCharges? = null
-    private var fineRecords: List<ChargeRecord> = emptyList()
     private var haveAnyGroceryBills = false
     private var haveAnyFines = false
     private var progress: ProgressDialogSupport? = null
@@ -76,7 +77,6 @@ class FinesActivity : BaseActivity() {
         balance_owed = findViewById(R.id.fines_balance_owed)
         pay_fines_button = findViewById(R.id.pay_fines)
         progress = ProgressDialogSupport()
-        fineRecords = ArrayList()
         listAdapter = FinesArrayAdapter(this, R.layout.fines_list_item)
         lv?.adapter = listAdapter
         lv?.setOnItemClickListener { parent, view, position, id -> onItemClick(position) }
@@ -190,24 +190,20 @@ class FinesActivity : BaseActivity() {
 
     private fun onItemClick(position: Int) {
         //Analytics.logEvent("fines_itemclick", "have_grocery_bills", haveAnyGroceryBills)
-        showAlert("not implemented yet")
-/*
-        val records = ArrayList<MBRecord>()
+        val records = ArrayList<BibRecord>()
+        val transactions = charges?.transactions ?: return
         if (haveAnyGroceryBills) {
             // If any of the fines are for non-circulation items ("grocery bills"), we
             // start the details flow with only the one record, if a record was selected.
             // The details flow can't handle nulls.
-            fineRecords[position].mvrObj?.let { mvrObj ->
-                mvrObj.getInt("doc_ic")?.let { id ->
-                    records.add(MBRecord(id, mvrObj))
-                }
+            val fineRecord = listAdapter?.getItem(position) ?: return
+            fineRecord.record?.let {
+                records.add(it)
             }
         } else {
-            for (item in fineRecords) {
-                item.mvrObj?.let { mvrObj ->
-                    mvrObj.getInt("doc_ic")?.let { id ->
-                        records.add(MBRecord(id, mvrObj))
-                    }
+            for (item in transactions) {
+                item.record?.let {
+                    records.add(it)
                 }
             }
         }
@@ -215,8 +211,6 @@ class FinesActivity : BaseActivity() {
             val targetPosition = if (position > records.size - 1) records.size - 1 else position
             RecordDetails.launchDetailsFlow(this@FinesActivity, records, targetPosition)
         }
-
- */
     }
 
     internal inner class FinesArrayAdapter(context: Context, private val resourceId: Int) : ArrayAdapter<ChargeRecord>(context, resourceId) {

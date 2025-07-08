@@ -24,8 +24,7 @@ import org.evergreen_ils.xdata.XOSRFObject
 import java.util.*
 
 object EgCodedValueMap {
-    private val TAG = EgCodedValueMap::class.java.simpleName
-
+    const val TAG = "CodedValueMap"
     const val SEARCH_FORMAT = "search_format"
     const val ICON_FORMAT = "icon_format"
     const val ALL_SEARCH_FORMATS = "All Formats"
@@ -46,7 +45,7 @@ object EgCodedValueMap {
             val search_label = obj.getString("search_label") ?: ""
             val value = obj.getString("value") ?: ""
             val cv = CodedValue(code, if (search_label.isNotBlank()) search_label else value, opac_visible)
-            Log.d(TAG, "ccvm ctype:" + ctype + " code:" + code + " label:" + cv.value)
+            Log.v(TAG, "ccvm ctype:" + ctype + " code:" + code + " label:" + cv.value)
             if (ctype == SEARCH_FORMAT) {
                 searchFormats.add(cv)
             } else if (ctype == ICON_FORMAT) {
