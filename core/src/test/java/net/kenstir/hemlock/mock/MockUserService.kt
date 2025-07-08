@@ -17,11 +17,10 @@
 
 package net.kenstir.hemlock.mock
 
-import net.kenstir.hemlock.data.PatronMessage
+import net.kenstir.hemlock.data.model.PatronMessage
 import net.kenstir.hemlock.data.Result
 import net.kenstir.hemlock.data.model.Account
 import net.kenstir.hemlock.data.model.PatronList
-import net.kenstir.hemlock.data.model.ListItem
 import net.kenstir.hemlock.data.model.PatronCharges
 import net.kenstir.hemlock.net.UserService
 

@@ -18,7 +18,7 @@
 package org.evergreen_ils.net
 
 import net.kenstir.hemlock.data.JSONDictionary
-import net.kenstir.hemlock.data.PatronMessage
+import net.kenstir.hemlock.data.model.PatronMessage
 import net.kenstir.hemlock.data.Result
 import net.kenstir.hemlock.data.jsonMapOf
 import net.kenstir.hemlock.data.model.Account

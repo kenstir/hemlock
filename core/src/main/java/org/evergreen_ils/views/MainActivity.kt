@@ -32,7 +32,7 @@ import kotlinx.coroutines.async
 import net.kenstir.hemlock.R
 import net.kenstir.hemlock.android.App
 import net.kenstir.hemlock.android.ui.showAlert
-import net.kenstir.hemlock.data.PatronMessage
+import net.kenstir.hemlock.data.model.PatronMessage
 import net.kenstir.hemlock.data.Result
 import net.kenstir.hemlock.logging.Log
 import org.evergreen_ils.system.EgOrg

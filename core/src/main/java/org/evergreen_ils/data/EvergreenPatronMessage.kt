@@ -18,7 +18,7 @@
 
 package org.evergreen_ils.data
 
-import net.kenstir.hemlock.data.PatronMessage
+import net.kenstir.hemlock.data.model.PatronMessage
 import org.evergreen_ils.xdata.XOSRFObject
 import java.util.ArrayList
 

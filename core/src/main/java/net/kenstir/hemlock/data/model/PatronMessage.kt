@@ -14,14 +14,18 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, see <https://www.gnu.org/licenses/>.
  */
+
 package net.kenstir.hemlock.data.model
 
-data class RecordMetadata(
-    val title: String,
-    val author: String,
-    val isbn: String
-) {
-    override fun toString(): String {
-        return "RecordMetadata(title='$title', author='$author', isbn='$isbn')"
-    }
+import java.io.Serializable
+import java.util.Date
+
+interface PatronMessage: Serializable {
+    val id: Int
+    val title: String
+    val message: String
+    val createDate: Date?
+    val isRead: Boolean
+    val isDeleted: Boolean
+    val isPatronVisible: Boolean
 }

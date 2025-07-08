@@ -25,7 +25,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import net.kenstir.hemlock.R
-import net.kenstir.hemlock.data.PatronMessage
+import net.kenstir.hemlock.data.model.PatronMessage
 import java.text.DateFormat
 
 class MessageViewAdapter(private val items: List<PatronMessage>) : RecyclerView.Adapter<MessageViewAdapter.ViewHolder>() {
