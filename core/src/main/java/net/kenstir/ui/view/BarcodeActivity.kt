@@ -31,6 +31,7 @@ import android.widget.Toast
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.common.BitMatrix
 import net.kenstir.hemlock.R
+import net.kenstir.ui.App
 import net.kenstir.util.BarcodeUtils
 import net.kenstir.ui.BaseActivity
 
@@ -89,7 +90,7 @@ class BarcodeActivity : BaseActivity() {
     }
 
     private fun initBarcodeViews() {
-        val barcode = net.kenstir.ui.App.getAccount().barcode
+        val barcode = App.getAccount().barcode
         val imageWidth = getDisplayWidth() * 8 / 10
         val imageHeight = imageWidth * 4 / 10
         val bitmap = createBitmap(barcode, imageWidth, imageHeight)
@@ -102,7 +103,7 @@ class BarcodeActivity : BaseActivity() {
         }
 
         if (resources.getBoolean(R.bool.ou_enable_barcode_expiration)) {
-            val date = net.kenstir.ui.App.getAccount().expireDateString
+            val date = App.getAccount().expireDateString
             barcodeWarning?.text = resources.getString(R.string.barcode_expires_msg, date)
         } else {
             barcodeWarning?.visibility = View.GONE
@@ -140,7 +141,7 @@ class BarcodeActivity : BaseActivity() {
 
     private fun copyBarcodeToClipboard() {
         val clipboard =  getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-        val clip = ClipData.newPlainText(getString(R.string.label_barcode), net.kenstir.ui.App.getAccount().barcode)
+        val clip = ClipData.newPlainText(getString(R.string.label_barcode), App.getAccount().barcode)
         clipboard.setPrimaryClip(clip)
         Toast.makeText(this, getString(R.string.msg_barcode_copied), Toast.LENGTH_SHORT).show()
     }

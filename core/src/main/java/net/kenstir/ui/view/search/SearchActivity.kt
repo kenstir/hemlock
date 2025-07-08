@@ -54,8 +54,11 @@ import net.kenstir.ui.util.showAlert
 import net.kenstir.data.Result
 import net.kenstir.data.model.BibRecord
 import net.kenstir.data.service.SearchResults
+import net.kenstir.ui.App
+import net.kenstir.ui.AppState
 import net.kenstir.ui.BaseActivity
 import net.kenstir.ui.util.OrgArrayAdapter
+import net.kenstir.ui.util.ProgressDialogSupport
 import org.evergreen_ils.system.EgCodedValueMap
 import org.evergreen_ils.system.EgOrg
 import org.evergreen_ils.system.EgSearch
@@ -82,7 +85,7 @@ class SearchActivity : BaseActivity(), ActivityCompat.OnRequestPermissionsResult
     private var searchFormatSpinner: Spinner? = null
     private var searchResultsSummary: TextView? = null
     private var searchResultsFragment: SearchResultsFragment? = null
-    private var progress: net.kenstir.ui.util.ProgressDialogSupport? = null
+    private var progress: ProgressDialogSupport? = null
     private var haveSearched = false
     private var searchResults: SearchResults? = null
     private var contextMenuRecordInfo: ContextMenuRecordInfo? = null
@@ -120,11 +123,11 @@ class SearchActivity : BaseActivity(), ActivityCompat.OnRequestPermissionsResult
         if (isRestarting) return
 
         setContentView(R.layout.activity_search)
-        progress = net.kenstir.ui.util.ProgressDialogSupport()
+        progress = ProgressDialogSupport()
 
         // clear prior search results unless this is the same user and we just rotated
         val lastAccountId = savedInstanceState?.getInt(accountIdKey)
-        val accountId = net.kenstir.ui.App.getAccount().id ?: -1
+        val accountId = App.getAccount().id ?: -1
         Log.d(TAG, "lastAccountId = $lastAccountId")
         Log.d(TAG, "accountId = $accountId")
         if (lastAccountId == null || lastAccountId != accountId) {
@@ -166,7 +169,7 @@ class SearchActivity : BaseActivity(), ActivityCompat.OnRequestPermissionsResult
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        net.kenstir.ui.App.getAccount().id?.let { id ->
+        App.getAccount().id?.let { id ->
             outState.putInt(accountIdKey, id)
         }
     }
@@ -193,14 +196,14 @@ class SearchActivity : BaseActivity(), ActivityCompat.OnRequestPermissionsResult
     }
 
     private fun initSearchOptionsVisibility() {
-        val lastState = net.kenstir.ui.AppState.getBoolean(SEARCH_OPTIONS_VISIBLE_STATE_KEY, true)
+        val lastState = AppState.getBoolean(SEARCH_OPTIONS_VISIBLE_STATE_KEY, true)
         searchOptionsButton?.isChecked = lastState
         setSearchOptionsVisibility(lastState)
     }
 
     private fun setSearchOptionsVisibility(visible: Boolean) {
         searchOptionsLayout?.visibility = if (visible) View.VISIBLE else View.GONE
-        net.kenstir.ui.AppState.setBoolean(SEARCH_OPTIONS_VISIBLE_STATE_KEY, visible)
+        AppState.setBoolean(SEARCH_OPTIONS_VISIBLE_STATE_KEY, visible)
     }
 
     private fun initSearchOptionsButton() {
@@ -224,8 +227,8 @@ class SearchActivity : BaseActivity(), ActivityCompat.OnRequestPermissionsResult
                 val start = System.currentTimeMillis()
 
                 // load bookbags
-                val result = net.kenstir.ui.App.getServiceConfig().userService.loadPatronLists(
-                    net.kenstir.ui.App.getAccount())
+                val result = App.getServiceConfig().userService.loadPatronLists(
+                    App.getAccount())
                 when (result) {
                     is Result.Success -> {}
                     is Result.Error -> { showAlert(result.exception); return@async }
@@ -259,8 +262,8 @@ class SearchActivity : BaseActivity(), ActivityCompat.OnRequestPermissionsResult
                 imm.hideSoftInputFromWindow(searchTextView?.windowToken, 0)
 
                 // submit the query
-                val queryString = net.kenstir.ui.App.getServiceConfig().searchService.makeQueryString(searchText, searchClass, searchFormatCode, getString(R.string.ou_sort_by))
-                val result = net.kenstir.ui.App.getServiceConfig().searchService.searchCatalog(queryString, resources.getInteger(R.integer.ou_search_limit))
+                val queryString = App.getServiceConfig().searchService.makeQueryString(searchText, searchClass, searchFormatCode, getString(R.string.ou_sort_by))
+                val result = App.getServiceConfig().searchService.searchCatalog(queryString, resources.getInteger(R.integer.ou_search_limit))
                 when (result) {
                     is Result.Success -> {
                         haveSearched = true
@@ -293,8 +296,8 @@ class SearchActivity : BaseActivity(), ActivityCompat.OnRequestPermissionsResult
                 Analytics.Param.SEARCH_FORMAT to searchFormatCode,
                 Analytics.Param.SEARCH_ORG_KEY to
                         orgDimensionKey(EgSearch.selectedOrganization,
-                                EgOrg.findOrg(net.kenstir.ui.App.getAccount().searchOrg),
-                                EgOrg.findOrg(net.kenstir.ui.App.getAccount().homeOrg)),
+                                EgOrg.findOrg(App.getAccount().searchOrg),
+                                EgOrg.findOrg(App.getAccount().homeOrg)),
         )
         b.putAll(Analytics.searchTextStats(searchText))
         when (result) {
@@ -326,7 +329,7 @@ class SearchActivity : BaseActivity(), ActivityCompat.OnRequestPermissionsResult
 
     private fun initOrgSpinner() {
         var selectedOrgPos = 0
-        val defaultOrgId = net.kenstir.ui.App.getAccount().searchOrg
+        val defaultOrgId = App.getAccount().searchOrg
         val list = ArrayList<String>()
         for ((index, org) in EgOrg.visibleOrgs.withIndex()) {
             list.add(org.spinnerLabel)
@@ -414,9 +417,9 @@ class SearchActivity : BaseActivity(), ActivityCompat.OnRequestPermissionsResult
                 return true
             }
             ITEM_ADD_TO_LIST -> {
-                if (!net.kenstir.ui.App.getAccount().patronLists.isNullOrEmpty()) {
+                if (!App.getAccount().patronLists.isNullOrEmpty()) {
                     //Analytics.logEvent("lists_additem", "via", "results_long_press")
-                    showAddToListDialog(this, net.kenstir.ui.App.getAccount().patronLists, info.record!!)
+                    showAddToListDialog(this, App.getAccount().patronLists, info.record!!)
                 } else {
                     Toast.makeText(this, getText(R.string.msg_no_lists), Toast.LENGTH_SHORT).show()
                 }
@@ -442,7 +445,7 @@ class SearchActivity : BaseActivity(), ActivityCompat.OnRequestPermissionsResult
         } else if (id == R.id.action_logout) {
             Analytics.logEvent(Analytics.Event.ACCOUNT_LOGOUT)
             logout()
-            net.kenstir.ui.App.restartApp(this)
+            App.restartApp(this)
             return true
         } else if (id == R.id.action_barcode_search) {
             startScanning()

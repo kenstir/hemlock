@@ -24,13 +24,13 @@ object ThemeManager {
     private val TAG = ThemeManager::class.java.simpleName
 
     fun applyNightMode(): Boolean {
-        val nightMode = net.kenstir.ui.AppState.getInt(net.kenstir.ui.AppState.NIGHT_MODE, AppCompatDelegate.MODE_NIGHT_YES)
+        val nightMode = AppState.getInt(AppState.NIGHT_MODE, AppCompatDelegate.MODE_NIGHT_YES)
         Log.d(TAG, "applyNightMode:$nightMode")
         return applyNightMode(nightMode)
     }
 
     fun saveAndApplyNightMode(nightMode: Int): Boolean {
-        net.kenstir.ui.AppState.setInt(net.kenstir.ui.AppState.NIGHT_MODE, nightMode)
+        AppState.setInt(AppState.NIGHT_MODE, nightMode)
         Log.d(TAG, "saveAndApplyNightMode:$nightMode")
         return applyNightMode(nightMode)
     }

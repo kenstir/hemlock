@@ -40,11 +40,14 @@ import net.kenstir.logging.Log.TAG_FCM
 import net.kenstir.data.model.Account
 import net.kenstir.ui.pn.PushNotification
 import net.kenstir.data.Result
+import net.kenstir.ui.App
+import net.kenstir.ui.AppState
 import org.evergreen_ils.system.EgOrg
 import net.kenstir.ui.account.await
 import net.kenstir.ui.account.getAccountManagerResult
 import net.kenstir.util.getCustomMessage
 import net.kenstir.ui.BaseActivity.Companion.activityForNotificationType
+import net.kenstir.ui.account.AccountUtils
 import java.util.concurrent.TimeoutException
 
 class LaunchActivity : AppCompatActivity() {
@@ -64,7 +67,7 @@ class LaunchActivity : AppCompatActivity() {
         setContentView(R.layout.activity_splash)
 
         Analytics.initialize(this)
-        net.kenstir.ui.App.init(this)
+        App.init(this)
 
         mProgressText = findViewById(R.id.action_in_progress)
         mProgressBar = findViewById(R.id.activity_splash_progress_bar)
@@ -136,12 +139,12 @@ class LaunchActivity : AppCompatActivity() {
             Log.d(TAG_FCM, "[onLaunchSuccess] notification: $notification")
             if (notification.isNotGeneral()) {
                 val targetActivityClass = activityForNotificationType(notification)
-                net.kenstir.ui.App.startAppFromPushNotification(this, targetActivityClass)
+                App.startAppFromPushNotification(this, targetActivityClass)
                 return
             }
         }
 
-        net.kenstir.ui.App.startApp(this)
+        App.startApp(this)
     }
 
     private fun launchLoginFlow() {
@@ -165,7 +168,7 @@ class LaunchActivity : AppCompatActivity() {
         val i = Intent(Intent.ACTION_SENDTO)
         i.data = Uri.parse("mailto:") // only email apps should handle this
         i.putExtra(Intent.EXTRA_EMAIL, arrayOf(resources.getString(R.string.ou_developer_email)))
-        val appInfo = net.kenstir.ui.App.getAppInfo(this)
+        val appInfo = App.getAppInfo(this)
         i.putExtra(Intent.EXTRA_SUBJECT, "[Hemlock] error report - $appInfo")
         //TODO: append as attachment
         i.putExtra(Intent.EXTRA_TEXT, Analytics.getLogBuffer())
@@ -184,7 +187,7 @@ class LaunchActivity : AppCompatActivity() {
     private fun loadAccountData() {
         lifecycleScope.launch {
             try {
-                if (getSession(net.kenstir.ui.App.getAccount())) {
+                if (getSession(App.getAccount())) {
                     onLaunchSuccess()
                 } else {
                     onLaunchFailure()
@@ -203,7 +206,7 @@ class LaunchActivity : AppCompatActivity() {
     // needs an Activity.
     private suspend fun getAccount() {
         // get auth token
-        val future = net.kenstir.ui.account.AccountUtils.getAuthTokenFuture(this)
+        val future = AccountUtils.getAuthTokenFuture(this)
         Log.d(TAG, "[auth] getAuthTokenFuture ...")
         val bnd = future.await(3_600_000) // long to allow authenticator activity
         Log.d(TAG, "[auth] getAuthTokenFuture ... $bnd")
@@ -215,12 +218,12 @@ class LaunchActivity : AppCompatActivity() {
 
         // turn that into a Library and Account
         val accountType: String = applicationContext.getString(R.string.ou_account_type)
-        val library = net.kenstir.ui.account.AccountUtils.getLibraryForAccount(applicationContext, result.accountName, accountType)
-        net.kenstir.ui.AppState.setString(net.kenstir.ui.AppState.LIBRARY_NAME, library.name)
-        net.kenstir.ui.AppState.setString(net.kenstir.ui.AppState.LIBRARY_URL, library.url)
-        net.kenstir.ui.App.setLibrary(library)
-        val account = net.kenstir.ui.App.getServiceConfig().userService.makeAccount(result.accountName, result.authToken)
-        net.kenstir.ui.App.setAccount(account)
+        val library = AccountUtils.getLibraryForAccount(applicationContext, result.accountName, accountType)
+        AppState.setString(AppState.LIBRARY_NAME, library.name)
+        AppState.setString(AppState.LIBRARY_URL, library.url)
+        App.setLibrary(library)
+        val account = App.getServiceConfig().userService.makeAccount(result.accountName, result.authToken)
+        App.setAccount(account)
     }
 
     // Again we have to do this here and not in a ViewModel because it needs an Activity.
@@ -231,10 +234,10 @@ class LaunchActivity : AppCompatActivity() {
         var sessionResult = fetchSession(account)
         Log.d(TAG, "[auth] sessionResult.succeeded:${sessionResult.succeeded}")
         if (sessionResult is Result.Error) {
-            net.kenstir.ui.account.AccountUtils.invalidateAuthToken(this, account.authToken)
+            AccountUtils.invalidateAuthToken(this, account.authToken)
             account.authToken = null
             Log.d(TAG, "[auth] getAuthTokenForAccountFuture ...")
-            val future = net.kenstir.ui.account.AccountUtils.getAuthTokenForAccountFuture(this, account.username)
+            val future = AccountUtils.getAuthTokenForAccountFuture(this, account.username)
             Log.d(TAG, "[auth] getAuthTokenForAccountFuture ... await")
             val bnd = future.await(3_600_000) // long to allow authenticator activity
             Log.d(TAG, "[auth] getAuthTokenForAccountFuture ... $bnd")
@@ -254,15 +257,15 @@ class LaunchActivity : AppCompatActivity() {
         }
 
         // load the home org settings, used to control visibility of Events and other buttons
-        EgOrg.findOrg(net.kenstir.ui.App.getAccount().homeOrg)?.let { org ->
-            val result = net.kenstir.ui.App.getServiceConfig().orgService.loadOrgSettings(org.id)
+        EgOrg.findOrg(App.getAccount().homeOrg)?.let { org ->
+            val result = App.getServiceConfig().orgService.loadOrgSettings(org.id)
             if (result is Result.Error) {
                 throw result.exception
             }
         }
 
         // record analytics
-        val numAccounts = net.kenstir.ui.account.AccountUtils.getAccountsByType(this).size
+        val numAccounts = AccountUtils.getAccountsByType(this).size
         if (resources.getBoolean(R.bool.ou_is_generic_app)) {
             // For Hemlock, we only care to track the user's consortium
             Analytics.logSuccessfulLogin(account.username, account.barcode,
@@ -277,7 +280,7 @@ class LaunchActivity : AppCompatActivity() {
     }
 
     private suspend fun fetchSession(account: Account): Result<Unit> {
-        return net.kenstir.ui.App.getServiceConfig().userService.loadUserSession(account)
+        return App.getServiceConfig().userService.loadUserSession(account)
     }
 
     @Deprecated("Deprecated in Java")

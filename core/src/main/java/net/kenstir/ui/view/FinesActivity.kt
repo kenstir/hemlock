@@ -37,7 +37,10 @@ import net.kenstir.data.model.ChargeRecord
 import net.kenstir.data.model.PatronCharges
 import net.kenstir.hemlock.R
 import net.kenstir.logging.Log
+import net.kenstir.ui.App
 import net.kenstir.ui.BaseActivity
+import net.kenstir.ui.account.AccountUtils
+import net.kenstir.ui.util.ProgressDialogSupport
 import net.kenstir.ui.util.showAlert
 import net.kenstir.ui.view.search.RecordDetails
 import org.evergreen_ils.gateway.GatewayClient
@@ -57,7 +60,7 @@ class FinesActivity : BaseActivity() {
     private var charges: PatronCharges? = null
     private var haveAnyGroceryBills = false
     private var haveAnyFines = false
-    private var progress: net.kenstir.ui.util.ProgressDialogSupport? = null
+    private var progress: ProgressDialogSupport? = null
     private var decimalFormatter: DecimalFormat? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -72,7 +75,7 @@ class FinesActivity : BaseActivity() {
         total_paid = findViewById(R.id.fines_total_paid)
         balance_owed = findViewById(R.id.fines_balance_owed)
         pay_fines_button = findViewById(R.id.pay_fines)
-        progress = net.kenstir.ui.util.ProgressDialogSupport()
+        progress = ProgressDialogSupport()
         listAdapter = FinesArrayAdapter(this, R.layout.fines_list_item)
         lv?.adapter = listAdapter
         lv?.setOnItemClickListener { parent, view, position, id -> onItemClick(position) }
@@ -99,10 +102,10 @@ class FinesActivity : BaseActivity() {
                 Log.d(TAG, "[kcxxx] fetchData ...")
 
                 val jobs = mutableListOf<Deferred<Any>>()
-                val homeOrg = EgOrg.findOrg(net.kenstir.ui.App.getAccount().homeOrg)
+                val homeOrg = EgOrg.findOrg(App.getAccount().homeOrg)
                 homeOrg?.let {
                     jobs.add(scope.async {
-                        val result = net.kenstir.ui.App.getServiceConfig().orgService.loadOrgSettings(homeOrg.id)
+                        val result = App.getServiceConfig().orgService.loadOrgSettings(homeOrg.id)
                         if (result is Result.Error) {
                             throw result.exception
                         }
@@ -110,8 +113,8 @@ class FinesActivity : BaseActivity() {
                     })
                 }
                 jobs.add(scope.async {
-                    val result = net.kenstir.ui.App.getServiceConfig().userService.fetchPatronCharges(
-                        net.kenstir.ui.App.getAccount())
+                    val result = App.getServiceConfig().userService.fetchPatronCharges(
+                        App.getAccount())
                     onChargesResult(result)
                 })
 
@@ -127,14 +130,14 @@ class FinesActivity : BaseActivity() {
     }
 
     private fun updatePayFinesButtonVisibility() {
-        val homeOrg = EgOrg.findOrg(net.kenstir.ui.App.getAccount().homeOrg)
+        val homeOrg = EgOrg.findOrg(App.getAccount().homeOrg)
         if (resources.getBoolean(R.bool.ou_enable_pay_fines)
                 && homeOrg?.isPaymentAllowed == true) {
             pay_fines_button?.visibility = View.VISIBLE
             pay_fines_button?.setOnClickListener {
                 //Analytics.logEvent("fines_payfines", "num_fines", fineRecords.size)
-                val username = net.kenstir.ui.App.getAccount().username
-                val password = net.kenstir.ui.account.AccountUtils.getPassword(this@FinesActivity, username)
+                val username = App.getAccount().username
+                val password = AccountUtils.getPassword(this@FinesActivity, username)
                 var url = (GatewayClient.baseUrl
                         + "/eg/opac/login"
                         + "?redirect_to=" + URLEncoder.encode("/eg/opac/myopac/main_payment_form#pay_fines_now"))

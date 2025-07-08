@@ -27,6 +27,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import net.kenstir.hemlock.R
 import net.kenstir.logging.Log
+import net.kenstir.ui.App
 import net.kenstir.ui.util.GridButton
 import org.evergreen_ils.system.EgOrg
 import net.kenstir.ui.view.bookbags.BookBagsActivity
@@ -135,7 +136,7 @@ class MainGridActivity : MainBaseActivity() {
         })
 
         // Events
-        val homeOrg = EgOrg.findOrg(net.kenstir.ui.App.getAccount().homeOrg)
+        val homeOrg = EgOrg.findOrg(App.getAccount().homeOrg)
         val eventsUrl = homeOrg?.eventsURL
         if (!eventsUrl.isNullOrEmpty() || forceButton["events"] == true) {
             items.add(GridButton(resources.getString(R.string.title_events),
@@ -147,7 +148,7 @@ class MainGridActivity : MainBaseActivity() {
     }
 
     fun setupBottomRowButtons() {
-        val homeOrg = EgOrg.findOrg(net.kenstir.ui.App.getAccount().homeOrg)
+        val homeOrg = EgOrg.findOrg(App.getAccount().homeOrg)
 
         // E-books
         val ebooksUrl = homeOrg?.eresourcesUrl

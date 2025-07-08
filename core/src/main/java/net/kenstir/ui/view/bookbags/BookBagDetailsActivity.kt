@@ -42,8 +42,12 @@ import net.kenstir.data.model.PatronList
 import net.kenstir.hemlock.R
 import net.kenstir.logging.Log
 import net.kenstir.ui.Analytics
+import net.kenstir.ui.App
+import net.kenstir.ui.AppState
 import net.kenstir.ui.BaseActivity
 import net.kenstir.ui.Key
+import net.kenstir.ui.util.ActionBarUtils
+import net.kenstir.ui.util.ProgressDialogSupport
 import net.kenstir.ui.util.showAlert
 import net.kenstir.ui.view.search.RecordDetails
 import net.kenstir.util.pubdateSortKey
@@ -58,7 +62,7 @@ class BookBagDetailsActivity : BaseActivity() {
 
     private var lv: ListView? = null
     private var listAdapter: ListItemArrayAdapter? = null
-    private var progress: net.kenstir.ui.util.ProgressDialogSupport? = null
+    private var progress: ProgressDialogSupport? = null
     private lateinit var patronList: PatronList
     private var sortedItems = ArrayList<ListItem>()
     private var bookBagName: TextView? = null
@@ -81,9 +85,9 @@ class BookBagDetailsActivity : BaseActivity() {
         if (isRestarting) return
 
         setContentView(R.layout.bookbagitem_list)
-        net.kenstir.ui.util.ActionBarUtils.initActionBarForActivity(this)
+        ActionBarUtils.initActionBarForActivity(this)
 
-        progress = net.kenstir.ui.util.ProgressDialogSupport()
+        progress = ProgressDialogSupport()
         patronList = intent.getSerializableExtra(Key.PATRON_LIST) as PatronList
 
         bookBagName = findViewById(R.id.bookbag_name)
@@ -156,8 +160,8 @@ class BookBagDetailsActivity : BaseActivity() {
         SORT_BY_TITLE = resources.getString(R.string.sort_by_title_keyword)
 
         // the default sort is whatever was last selected; pubdate descending by default
-        sortDescending = net.kenstir.ui.AppState.getBoolean(SORT_DESC_STATE_KEY, true)
-        val keyword = net.kenstir.ui.AppState.getString(SORT_BY_STATE_KEY, SORT_BY_PUBDATE)
+        sortDescending = AppState.getBoolean(SORT_DESC_STATE_KEY, true)
+        val keyword = AppState.getString(SORT_BY_STATE_KEY, SORT_BY_PUBDATE)
         val index = if (keyword in sortByKeywords) sortByKeywords.indexOf(keyword) else sortByKeywords.indexOf(SORT_BY_PUBDATE)
         sortBySelectedIndex = index
     }
@@ -170,8 +174,8 @@ class BookBagDetailsActivity : BaseActivity() {
                 progress?.show(this@BookBagDetailsActivity, getString(R.string.msg_retrieving_list_contents))
 
                 // load bookBag contents
-                val result = net.kenstir.ui.App.getServiceConfig().userService.loadPatronListItems(
-                    net.kenstir.ui.App.getAccount(), patronList, resources.getBoolean(R.bool.ou_extra_bookbag_query))
+                val result = App.getServiceConfig().userService.loadPatronListItems(
+                    App.getAccount(), patronList, resources.getBoolean(R.bool.ou_extra_bookbag_query))
                 if (result is Result.Error) { showAlert(result.exception); return@async }
 
                 // fetch item details
@@ -194,7 +198,7 @@ class BookBagDetailsActivity : BaseActivity() {
 
     suspend fun fetchTargetDetails(item: ListItem): Result<Unit> {
         val record = item.record ?: return Result.Error(Exception("No record found for item ${item.id}"))
-        return net.kenstir.ui.App.getServiceConfig().biblioService.loadRecordDetails(record,
+        return App.getServiceConfig().biblioService.loadRecordDetails(record,
             resources.getBoolean(R.bool.ou_need_marc_record))
     }
 
@@ -234,8 +238,8 @@ class BookBagDetailsActivity : BaseActivity() {
         scope.async {
             progress?.show(this@BookBagDetailsActivity, getString(R.string.msg_deleting_list))
             val id = patronList.id
-            val result = net.kenstir.ui.App.getServiceConfig().userService.deletePatronList(
-                net.kenstir.ui.App.getAccount(), id)
+            val result = App.getServiceConfig().userService.deletePatronList(
+                App.getAccount(), id)
             progress?.dismiss()
             Analytics.logEvent(Analytics.Event.BOOKBAGS_DELETE_LIST, bundleOf(
                 Analytics.Param.RESULT to Analytics.resultValue(result)
@@ -255,7 +259,7 @@ class BookBagDetailsActivity : BaseActivity() {
         builder.setTitle(R.string.msg_sort_by)
         builder.setSingleChoiceItems(R.array.sort_by, sortBySelectedIndex) { dialog, which ->
             this.sortBySelectedIndex = which
-            net.kenstir.ui.AppState.setString(SORT_BY_STATE_KEY, sortByKeyword)
+            AppState.setString(SORT_BY_STATE_KEY, sortByKeyword)
             updateItemsList()
             dialog.dismiss()
         }
@@ -264,7 +268,7 @@ class BookBagDetailsActivity : BaseActivity() {
 
     private fun reverseSortOrder() {
         sortDescending = !sortDescending
-        net.kenstir.ui.AppState.setBoolean(SORT_DESC_STATE_KEY, sortDescending)
+        AppState.setBoolean(SORT_DESC_STATE_KEY, sortDescending)
         invalidateOptionsMenu()
         updateItemsList()
     }
@@ -345,8 +349,8 @@ class BookBagDetailsActivity : BaseActivity() {
                 val id = record?.id ?: return@OnClickListener
                 scope.async {
                     progress?.show(this@BookBagDetailsActivity, getString(R.string.msg_removing_list_item))
-                    val result = net.kenstir.ui.App.getServiceConfig().userService.removeItemFromPatronList(
-                        net.kenstir.ui.App.getAccount(), patronList.id, id)
+                    val result = App.getServiceConfig().userService.removeItemFromPatronList(
+                        App.getAccount(), patronList.id, id)
                     progress?.dismiss()
                     Analytics.logEvent(Analytics.Event.BOOKBAG_DELETE_ITEM, bundleOf(
                         Analytics.Param.RESULT to Analytics.resultValue(result)

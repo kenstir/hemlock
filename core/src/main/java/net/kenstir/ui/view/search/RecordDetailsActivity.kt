@@ -30,8 +30,10 @@ import androidx.viewpager.widget.ViewPager
 import net.kenstir.hemlock.R
 import net.kenstir.ui.Key
 import net.kenstir.data.model.BibRecord
+import net.kenstir.ui.App
 import org.evergreen_ils.system.EgOrg
 import net.kenstir.ui.BaseActivity
+import net.kenstir.ui.util.ActionBarUtils
 import net.kenstir.ui.view.details.DetailsFragment
 import net.kenstir.ui.view.search.SearchActivity.Companion.RESULT_CODE_NORMAL
 
@@ -46,13 +48,13 @@ class RecordDetailsActivity : BaseActivity() {
         if (isRestarting) return
 
         setContentView(R.layout.record_details)
-        net.kenstir.ui.util.ActionBarUtils.initActionBarForActivity(this, intent.getStringExtra(Key.TITLE))
+        ActionBarUtils.initActionBarForActivity(this, intent.getStringExtra(Key.TITLE))
 
         // Copy either serialized recordList or search results into our own ArrayList.
         // This is an attempt to fix an IllegalStateException crash (see commit for details).
         var recordList = intent.getSerializableExtra(Key.RECORD_LIST) as? List<BibRecord>
         if (recordList == null)
-            recordList = net.kenstir.ui.App.getServiceConfig().searchService.getLastSearchResults().records
+            recordList = App.getServiceConfig().searchService.getLastSearchResults().records
         records.clear()
         records.addAll(recordList)
 

@@ -24,7 +24,9 @@ import net.kenstir.hemlock.R
 import net.kenstir.logging.Log
 import net.kenstir.logging.Log.TAG_FCM
 import net.kenstir.data.Result
+import net.kenstir.ui.App
 import net.kenstir.ui.BaseActivity
+import net.kenstir.ui.account.AccountUtils
 import net.kenstir.ui.util.showAlert
 
 open class MainBaseActivity : BaseActivity() {
@@ -70,15 +72,15 @@ open class MainBaseActivity : BaseActivity() {
 
             // If the current FCM token is different from the one we got from the user settings,
             // we need to update the user setting in Evergreen
-            val storedToken = net.kenstir.ui.App.getAccount().savedPushNotificationData
-            val storedEnabledFlag = net.kenstir.ui.App.getAccount().savedPushNotificationEnabled
-            val currentToken = net.kenstir.ui.App.getFcmNotificationToken()
+            val storedToken = App.getAccount().savedPushNotificationData
+            val storedEnabledFlag = App.getAccount().savedPushNotificationEnabled
+            val currentToken = App.getFcmNotificationToken()
             Log.d(TAG_FCM, "stored token was:  $storedToken")
             if ((currentToken != null && currentToken != storedToken) || !storedEnabledFlag)
             {
                 Log.d(TAG_FCM, "updating stored token")
-                val updateResult = net.kenstir.ui.App.getServiceConfig().userService.updatePushNotificationToken(
-                    net.kenstir.ui.App.getAccount(), currentToken)
+                val updateResult = App.getServiceConfig().userService.updatePushNotificationToken(
+                    App.getAccount(), currentToken)
                 if (updateResult is Result.Error) {
                     showAlert(updateResult.exception)
                     return@async
@@ -89,7 +91,7 @@ open class MainBaseActivity : BaseActivity() {
 
     override fun onPrepareOptionsMenu(menu: Menu): Boolean {
         val item = menu.findItem(R.id.action_switch_account)
-        val numAccounts = net.kenstir.ui.account.AccountUtils.getAccountsByType(this).size
+        val numAccounts = AccountUtils.getAccountsByType(this).size
         item?.isEnabled = (numAccounts > 1)
         return true
     }

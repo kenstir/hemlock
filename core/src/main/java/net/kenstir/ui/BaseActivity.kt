@@ -50,9 +50,10 @@ import net.kenstir.hemlock.R
 import net.kenstir.logging.Log
 import net.kenstir.logging.Log.TAG_FCM
 import net.kenstir.logging.Log.TAG_PERM
-import net.kenstir.ui.App.REQUEST_MESSAGES
+import net.kenstir.ui.account.AccountUtils
 import net.kenstir.ui.pn.NotificationType
 import net.kenstir.ui.pn.PushNotification
+import net.kenstir.ui.util.ActionBarUtils
 import net.kenstir.ui.util.ThemeManager
 import net.kenstir.ui.util.showAlert
 import net.kenstir.ui.view.BarcodeActivity
@@ -80,7 +81,7 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
     protected val toolbar: Toolbar?
         get() {
             if (_toolbar == null) {
-                _toolbar = net.kenstir.ui.util.ActionBarUtils.initActionBarForActivity(this, null, true)
+                _toolbar = ActionBarUtils.initActionBarForActivity(this, null, true)
             }
             return _toolbar
         }
@@ -151,17 +152,17 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
 
     private fun resetDenyCount() {
         Log.d(TAG_PERM, "Resetting deny count")
-        net.kenstir.ui.AppState.setInt(net.kenstir.ui.AppState.NOTIFICATIONS_DENY_COUNT, 0)
+        AppState.setInt(AppState.NOTIFICATIONS_DENY_COUNT, 0)
     }
 
     private fun incrementDenyCount() {
-        val count = net.kenstir.ui.AppState.getInt(net.kenstir.ui.AppState.NOTIFICATIONS_DENY_COUNT) + 1
+        val count = AppState.getInt(AppState.NOTIFICATIONS_DENY_COUNT) + 1
         Log.d(TAG_PERM, "Incrementing deny count to $count")
-        net.kenstir.ui.AppState.setInt(net.kenstir.ui.AppState.NOTIFICATIONS_DENY_COUNT, count)
+        AppState.setInt(AppState.NOTIFICATIONS_DENY_COUNT, count)
     }
 
     private fun getDenyCount(): Int {
-        val count = net.kenstir.ui.AppState.getInt(net.kenstir.ui.AppState.NOTIFICATIONS_DENY_COUNT)
+        val count = AppState.getInt(AppState.NOTIFICATIONS_DENY_COUNT)
         return count
     }
 
@@ -173,7 +174,7 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         }
         val token = task.result
         Log.d(TAG_FCM, "fetched fcm token: $token")
-        net.kenstir.ui.App.setFcmNotificationToken(token)
+        App.setFcmNotificationToken(token)
         return Result.Success(Unit)
     }
 
@@ -217,15 +218,15 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        if (!net.kenstir.ui.App.isStarted()) {
-            net.kenstir.ui.App.restartApp(this)
+        if (!App.isStarted()) {
+            App.restartApp(this)
             isRestarting = true
             return
         }
         isRestarting = false
 
         Analytics.initialize(this)
-        net.kenstir.ui.App.init(this)
+        App.init(this)
 
         initMenuProvider()
         menuItemHandler?.onCreate(this)
@@ -285,19 +286,19 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
     }
 
     fun getEbooksUrl(): String? {
-        return EgOrg.findOrg(net.kenstir.ui.App.getAccount().homeOrg)?.eresourcesUrl
+        return EgOrg.findOrg(App.getAccount().homeOrg)?.eresourcesUrl
     }
 
     fun getEventsUrl(): String? {
-        return EgOrg.findOrg(net.kenstir.ui.App.getAccount().homeOrg)?.eventsURL
+        return EgOrg.findOrg(App.getAccount().homeOrg)?.eventsURL
     }
 
     fun getMeetingRoomsUrl(): String? {
-        return EgOrg.findOrg(net.kenstir.ui.App.getAccount().homeOrg)?.meetingRoomsUrl
+        return EgOrg.findOrg(App.getAccount().homeOrg)?.meetingRoomsUrl
     }
 
     fun getMuseumPassesUrl(): String? {
-        return EgOrg.findOrg(net.kenstir.ui.App.getAccount().homeOrg)?.museumPassesUrl
+        return EgOrg.findOrg(App.getAccount().homeOrg)?.museumPassesUrl
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
@@ -308,7 +309,7 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
     protected fun onNavigationAction(id: Int): Boolean {
         var ret = true
         if (id == R.id.nav_header) {
-            startActivity(net.kenstir.ui.App.getMainActivityIntent(this).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
+            startActivity(App.getMainActivityIntent(this).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
         } else if (id == R.id.main_search_button) {
             startActivity(Intent(this, SearchActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
         } else if (id == R.id.main_checkouts_button) {
@@ -339,21 +340,21 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
     fun handleMenuAction(id: Int): Boolean {
         if (id == R.id.action_switch_account) {
             Analytics.logEvent(Analytics.Event.ACCOUNT_SWITCH)
-            net.kenstir.ui.App.restartApp(this)
+            App.restartApp(this)
             return true
         } else if (id == R.id.action_add_account) {
             Analytics.logEvent(Analytics.Event.ACCOUNT_ADD)
             invalidateOptionsMenu()
-            net.kenstir.ui.account.AccountUtils.addAccount(this) { net.kenstir.ui.App.restartApp(this@BaseActivity) }
+            AccountUtils.addAccount(this) { App.restartApp(this@BaseActivity) }
             return true
         } else if (id == R.id.action_logout) {
             Analytics.logEvent(Analytics.Event.ACCOUNT_LOGOUT)
             logout()
-            net.kenstir.ui.App.restartApp(this)
+            App.restartApp(this)
             return true
         } else if (id == R.id.action_messages) {
             Analytics.logEvent(Analytics.Event.MESSAGES_OPEN)
-            startActivityForResult(Intent(this, MessagesActivity::class.java), REQUEST_MESSAGES)
+            startActivityForResult(Intent(this, MessagesActivity::class.java), App.REQUEST_MESSAGES)
             return true
         } else if (id == R.id.action_dark_mode) {
             ThemeManager.saveAndApplyNightMode(AppCompatDelegate.MODE_NIGHT_YES)
@@ -425,10 +426,10 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
 
     fun logout() {
         Log.d(TAG, "[auth] logout")
-        val account = net.kenstir.ui.App.getAccount()
+        val account = App.getAccount()
         // TODO: call UserService.deleteSession(account)
-        net.kenstir.ui.account.AccountUtils.invalidateAuthToken(this, account.authToken)
-        net.kenstir.ui.account.AccountUtils.clearPassword(this, account.username)
+        AccountUtils.invalidateAuthToken(this, account.authToken)
+        AccountUtils.clearPassword(this, account.username)
         account.clearAuthToken()
     }
 

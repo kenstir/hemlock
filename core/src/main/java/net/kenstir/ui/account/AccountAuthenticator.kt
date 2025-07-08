@@ -29,6 +29,7 @@ import kotlinx.coroutines.runBlocking
 import net.kenstir.hemlock.R
 import net.kenstir.ui.Analytics.log
 import net.kenstir.ui.Analytics.redactedString
+import net.kenstir.ui.App
 import org.evergreen_ils.gateway.GatewayClient
 
 class AccountAuthenticator(private val context: Context): AbstractAccountAuthenticator(context) {
@@ -106,7 +107,7 @@ class AccountAuthenticator(private val context: Context): AbstractAccountAuthent
                         throw AuthenticationException("Internal error: $library_url != ${GatewayClient.baseUrl}")
                     }
                     authToken = runBlocking {
-                        net.kenstir.ui.App.getServiceConfig().authService.getAuthToken(account.name, password).get()
+                        App.getServiceConfig().authService.getAuthToken(account.name, password).get()
                     }
                 } catch (e: AuthenticationException) {
                     //Analytics.logException(e);

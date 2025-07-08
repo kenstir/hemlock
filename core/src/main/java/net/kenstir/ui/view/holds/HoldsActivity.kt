@@ -40,6 +40,8 @@ import net.kenstir.ui.util.showAlert
 import net.kenstir.ui.view.search.RecordDetails
 import net.kenstir.data.model.BibRecord
 import net.kenstir.data.model.HoldRecord
+import net.kenstir.ui.App
+import net.kenstir.ui.util.ProgressDialogSupport
 import java.util.ArrayList
 
 class HoldsActivity : BaseActivity() {
@@ -47,7 +49,7 @@ class HoldsActivity : BaseActivity() {
     private var listAdapter: HoldsArrayAdapter? = null
     private var holdRecords = listOf<HoldRecord>()
     private var holdsSummary: TextView? = null
-    private var progress: net.kenstir.ui.util.ProgressDialogSupport? = null
+    private var progress: ProgressDialogSupport? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -58,7 +60,7 @@ class HoldsActivity : BaseActivity() {
         holdsSummary = findViewById(R.id.holds_summary)
         lv = findViewById(R.id.holds_item_list)
 
-        progress = net.kenstir.ui.util.ProgressDialogSupport()
+        progress = ProgressDialogSupport()
         listAdapter = HoldsArrayAdapter(this, R.layout.holds_list_item)
         lv?.adapter = listAdapter
         lv?.setOnItemClickListener { _, _, position, _ ->
@@ -100,8 +102,8 @@ class HoldsActivity : BaseActivity() {
                 progress?.show(this@HoldsActivity, getString(R.string.msg_loading_holds))
 
                 // fetchHolds
-                val result = net.kenstir.ui.App.getServiceConfig().circService.fetchHolds(
-                    net.kenstir.ui.App.getAccount())
+                val result = App.getServiceConfig().circService.fetchHolds(
+                    App.getAccount())
                 when (result) {
                     is Result.Success ->
                         holdRecords = result.get()
@@ -115,8 +117,8 @@ class HoldsActivity : BaseActivity() {
                 // fetch hold target details and queue stats
                 for (hold in holdRecords) {
                     jobs.add(scope.async {
-                        net.kenstir.ui.App.getServiceConfig().circService.loadHoldDetails(
-                            net.kenstir.ui.App.getAccount(), hold)
+                        App.getServiceConfig().circService.loadHoldDetails(
+                            App.getAccount(), hold)
                     })
                 }
 

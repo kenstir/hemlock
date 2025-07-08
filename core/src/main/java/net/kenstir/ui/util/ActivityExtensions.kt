@@ -20,6 +20,7 @@ package net.kenstir.ui.util
 import android.app.Activity
 import android.app.AlertDialog
 import net.kenstir.logging.Log
+import net.kenstir.ui.App
 import org.evergreen_ils.gateway.GatewayError
 import net.kenstir.util.getCustomMessage
 
@@ -52,7 +53,7 @@ fun Activity.showSessionExpiredAlert(ex: Exception) {
             }
             .setPositiveButton("Login Again") { _, _ ->
                 Log.d("sessionexpired", "relog")
-                net.kenstir.ui.App.restartApp(this)
+                App.restartApp(this)
             }
     val alertDialog = builder.create()
     alertDialog.show()

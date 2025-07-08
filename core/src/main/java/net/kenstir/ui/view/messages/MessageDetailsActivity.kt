@@ -26,8 +26,10 @@ import net.kenstir.hemlock.R
 import net.kenstir.ui.Key
 import net.kenstir.ui.util.showAlert
 import net.kenstir.data.Result
+import net.kenstir.ui.App
 import org.evergreen_ils.data.model.EvergreenPatronMessage
 import net.kenstir.ui.BaseActivity
+import net.kenstir.ui.util.ActionBarUtils
 import net.kenstir.ui.view.messages.MessagesActivity.Companion.RESULT_MESSAGE_UPDATED
 import java.text.DateFormat
 
@@ -41,7 +43,7 @@ class MessageDetailsActivity : BaseActivity() {
         if (isRestarting) return
 
         setContentView(R.layout.activity_message_details)
-        net.kenstir.ui.util.ActionBarUtils.initActionBarForActivity(this)
+        ActionBarUtils.initActionBarForActivity(this)
 
         message = intent.getSerializableExtra(Key.PATRON_MESSAGE) as EvergreenPatronMessage
 
@@ -74,8 +76,8 @@ class MessageDetailsActivity : BaseActivity() {
 
     private fun markMessageDeletedAndFinish() {
         scope.async {
-            val result = net.kenstir.ui.App.getServiceConfig().userService.markMessageDeleted(
-                net.kenstir.ui.App.getAccount(), message.id)
+            val result = App.getServiceConfig().userService.markMessageDeleted(
+                App.getAccount(), message.id)
             if (result is Result.Error) {
                 showAlert(result.exception); return@async
             }
@@ -86,8 +88,8 @@ class MessageDetailsActivity : BaseActivity() {
 
     private fun markMessageRead() {
         scope.async {
-            val result = net.kenstir.ui.App.getServiceConfig().userService.markMessageRead(
-                net.kenstir.ui.App.getAccount(), message.id)
+            val result = App.getServiceConfig().userService.markMessageRead(
+                App.getAccount(), message.id)
             if (result is Result.Error) {
                 showAlert(result.exception); return@async
             }
@@ -97,8 +99,8 @@ class MessageDetailsActivity : BaseActivity() {
 
     private fun markMessageUnreadAndFinish() {
         scope.async {
-            val result = net.kenstir.ui.App.getServiceConfig().userService.markMessageUnread(
-                net.kenstir.ui.App.getAccount(), message.id)
+            val result = App.getServiceConfig().userService.markMessageUnread(
+                App.getAccount(), message.id)
             if (result is Result.Error) {
                 showAlert(result.exception); return@async
             }

@@ -73,8 +73,8 @@ class LaunchViewModel : ViewModel() {
                 errors.set(0)
 
                 // load the IDL etc.
-                val options = LoadStartupOptions(net.kenstir.ui.App.getVersion(context), context.resources.getBoolean(R.bool.ou_hierarchical_org_tree))
-                when (val result = net.kenstir.ui.App.getServiceConfig().loaderService.loadStartupPrerequisites(options)) {
+                val options = LoadStartupOptions(App.getVersion(context), context.resources.getBoolean(R.bool.ou_hierarchical_org_tree))
+                when (val result = App.getServiceConfig().loaderService.loadStartupPrerequisites(options)) {
                     is Result.Success -> {}
                     is Result.Error -> { onLoadError(result.exception) ; return@async }
                 }
