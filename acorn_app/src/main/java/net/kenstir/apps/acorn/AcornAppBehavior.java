@@ -26,7 +26,7 @@ import net.kenstir.ui.AppBehavior;
 import org.evergreen_ils.data.model.MBRecord;
 import net.kenstir.logging.Log;
 import net.kenstir.data.model.Link;
-import org.evergreen_ils.data.MARCRecord;
+import org.evergreen_ils.data.model.MARCRecord;
 
 import java.util.Arrays;
 import java.util.List;

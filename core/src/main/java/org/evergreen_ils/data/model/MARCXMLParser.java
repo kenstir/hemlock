@@ -15,7 +15,7 @@
  * along with this program; if not, see <https://www.gnu.org/licenses/>.
  */
 
-package org.evergreen_ils.data;
+package org.evergreen_ils.data.model;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;

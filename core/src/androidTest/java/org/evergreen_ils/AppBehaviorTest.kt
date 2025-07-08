@@ -23,8 +23,8 @@ import org.evergreen_ils.data.model.MBRecord
 import net.kenstir.data.jsonMapOf
 import org.evergreen_ils.system.EgOrg
 import net.kenstir.data.model.Link
-import org.evergreen_ils.data.MARCRecord
-import org.evergreen_ils.data.MARCXMLParser
+import org.evergreen_ils.data.model.MARCRecord
+import org.evergreen_ils.data.model.MARCXMLParser
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test

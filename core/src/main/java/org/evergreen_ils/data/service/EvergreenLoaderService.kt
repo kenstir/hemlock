@@ -32,7 +32,7 @@ import org.evergreen_ils.system.EgCodedValueMap
 import org.evergreen_ils.system.EgCopyStatus
 import org.evergreen_ils.system.EgOrg
 import org.evergreen_ils.Api
-import org.evergreen_ils.idl.IDLParser
+import org.evergreen_ils.gateway.idl.IDLParser
 import org.evergreen_ils.system.EgSms
 
 object EvergreenLoaderService: LoaderService {

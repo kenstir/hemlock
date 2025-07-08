@@ -16,6 +16,7 @@
  */
 package org.evergreen_ils.data
 
+import org.evergreen_ils.data.model.RecordAttributes
 import org.junit.Assert.assertEquals
 import org.junit.Test
 

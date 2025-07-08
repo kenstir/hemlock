@@ -22,7 +22,7 @@ import android.text.TextUtils
 import androidx.annotation.Keep
 import org.evergreen_ils.data.model.MBRecord
 import net.kenstir.data.model.Link
-import org.evergreen_ils.data.MARCRecord.MARCDatafield
+import org.evergreen_ils.data.model.MARCRecord.MARCDatafield
 
 @Keep
 class NobleAppBehavior : net.kenstir.ui.AppBehavior() {

@@ -52,7 +52,7 @@ import net.kenstir.data.service.HoldOptions
 import net.kenstir.util.getCustomMessage
 import org.evergreen_ils.data.model.MBRecord
 import org.evergreen_ils.util.OSRFUtils
-import org.evergreen_ils.data.SMSCarrier
+import org.evergreen_ils.data.model.SMSCarrier
 import org.evergreen_ils.system.EgOrg
 import org.evergreen_ils.system.EgSms
 import net.kenstir.ui.BaseActivity

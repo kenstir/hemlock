@@ -19,7 +19,7 @@
 package org.evergreen_ils.system
 
 import net.kenstir.logging.Log
-import org.evergreen_ils.data.SMSCarrier
+import org.evergreen_ils.data.model.SMSCarrier
 import org.evergreen_ils.gateway.OSRFObject
 
 
