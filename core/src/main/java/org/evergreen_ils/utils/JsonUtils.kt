@@ -21,8 +21,6 @@ package org.evergreen_ils.utils
 import kotlinx.serialization.json.Json
 import net.kenstir.hemlock.data.JSONDictionary
 import net.kenstir.hemlock.serialization.JSONDictionarySerializer
-import org.opensrf.util.JSONException
-import org.opensrf.util.JSONReader
 
 object JsonUtils {
 

@@ -19,7 +19,6 @@ package org.evergreen_ils.data
 
 import net.kenstir.hemlock.data.JSONDictionary
 import org.evergreen_ils.xdata.XOSRFObject
-import org.opensrf.util.OSRFObject
 import java.util.*
 
 class Event : HashMap<String, Any?> {
@@ -64,9 +63,6 @@ class Event : HashMap<String, Any?> {
             (get("payload") as? XOSRFObject)?.let {
                 return it["fail_part"] as String?
             }
-            (get("payload") as? OSRFObject)?.let {
-                return it["fail_part"] as String?
-            }
             return null
         }
 
@@ -89,16 +85,9 @@ class Event : HashMap<String, Any?> {
             val desc = obj.getString("desc")
             return (ilsevent != null && textcode != null && textcode != "SUCCESS" && desc != null)
         }
-        private fun isEvent(obj: OSRFObject): Boolean {
-            val ilsevent = obj.get("ilsevent")
-            val textcode = obj.getString("textcode")
-            val desc = obj.getString("desc")
-            return (ilsevent != null && textcode != null && textcode != "SUCCESS" && desc != null)
-        }
 
         fun parseEvent(payload: Any?): Event? {
             (payload as? XOSRFObject)?.let { return parseEvent(it) }
-            (payload as? OSRFObject)?.let { return parseEvent(it) }
             (payload as? JSONDictionary)?.let {
                 // TODO X: I think this is never hit
                 return parseEvent(XOSRFObject(it))
@@ -131,34 +120,6 @@ class Event : HashMap<String, Any?> {
 
             // case: obj has a result that is an array of events
             val objList = obj.get("result") as? List<XOSRFObject>
-            val firstObj = objList?.firstOrNull()
-            if (firstObj != null) {
-                return parseEvent(firstObj)
-            }
-
-            return null
-        }
-        fun parseEvent(obj: OSRFObject): Event? {
-            // case: obj is an event
-            if (isEvent(obj)) {
-                return Event(obj)
-            }
-
-            // case: obj has a last_event, or a result with a last_event
-            val resultObj = obj.getObject("result")
-            val lastEvent = resultObj?.getObject("last_event")
-                ?: obj.getObject("last_event")
-            if (lastEvent != null) {
-                return parseEvent(lastEvent)
-            }
-
-            // case: obj has a result which is an event
-            if (resultObj != null && isEvent(resultObj)) {
-                return Event(resultObj)
-            }
-
-            // case: obj has a result that is an array of events
-            val objList = obj.get("result") as? List<OSRFObject>
             val firstObj = objList?.firstOrNull()
             if (firstObj != null) {
                 return parseEvent(firstObj)

@@ -24,7 +24,6 @@ import net.kenstir.hemlock.data.model.BibRecord
 import net.kenstir.hemlock.data.model.CircRecord
 import org.evergreen_ils.utils.TextUtils
 import org.evergreen_ils.xdata.XOSRFObject
-import org.opensrf.util.OSRFObject
 import java.text.DateFormat
 import java.util.*
 
