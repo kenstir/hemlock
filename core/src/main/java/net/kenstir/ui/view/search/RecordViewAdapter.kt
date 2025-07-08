@@ -30,6 +30,7 @@ import net.kenstir.logging.Log
 import net.kenstir.ui.BaseActivity
 import net.kenstir.ui.util.showAlert
 import net.kenstir.data.model.BibRecord
+import net.kenstir.ui.App
 import org.evergreen_ils.gateway.GatewayClient
 
 /**
@@ -59,12 +60,12 @@ class RecordViewAdapter(private val records: List<BibRecord>) : RecyclerView.Ada
             scope.async {
                 try {
                     scope.async {
-                        net.kenstir.ui.App.getServiceConfig().biblioService.loadRecordDetails(record, true)
+                        App.getServiceConfig().biblioService.loadRecordDetails(record, true)
                         loadMetadata(record)
                     }
 
                     scope.async {
-                        net.kenstir.ui.App.getServiceConfig().biblioService.loadRecordAttributes(record)
+                        App.getServiceConfig().biblioService.loadRecordAttributes(record)
                         loadFormat(record)
                     }
 

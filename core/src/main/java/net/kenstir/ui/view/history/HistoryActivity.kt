@@ -31,7 +31,10 @@ import net.kenstir.data.model.BibRecord
 import net.kenstir.data.model.HistoryRecord
 import net.kenstir.hemlock.R
 import net.kenstir.logging.Log
+import net.kenstir.ui.App
 import net.kenstir.ui.BaseActivity
+import net.kenstir.ui.util.ItemClickSupport
+import net.kenstir.ui.util.ProgressDialogSupport
 import net.kenstir.ui.util.showAlert
 import net.kenstir.ui.view.search.DividerItemDecoration
 import net.kenstir.ui.view.search.RecordDetails
@@ -43,7 +46,7 @@ class HistoryActivity : BaseActivity() {
     private var rv: RecyclerView? = null
     private var adapter: HistoryViewAdapter? = null
     private var items = ArrayList<HistoryRecord>()
-    private var progress: net.kenstir.ui.util.ProgressDialogSupport? = null
+    private var progress: ProgressDialogSupport? = null
     private var contextMenuInfo: ContextMenuItemInfo? = null
 
     private class ContextMenuItemInfo(val position: Int, val item: HistoryRecord) : ContextMenu.ContextMenuInfo {
@@ -54,7 +57,7 @@ class HistoryActivity : BaseActivity() {
         if (isRestarting) return
 
         setContentView(R.layout.activity_history)
-        progress = net.kenstir.ui.util.ProgressDialogSupport()
+        progress = ProgressDialogSupport()
 
         historySummary = findViewById(R.id.history_items_summary)
         rv = findViewById(R.id.recycler_view)
@@ -103,13 +106,13 @@ class HistoryActivity : BaseActivity() {
         scope.async {
             try {
                 // first disable the patron setting
-                val result = net.kenstir.ui.App.getServiceConfig().userService.disableCheckoutHistory(
-                    net.kenstir.ui.App.getAccount())
+                val result = App.getServiceConfig().userService.disableCheckoutHistory(
+                    App.getAccount())
                 if (result is Result.Error) { showAlert(result.exception); return@async }
 
                 // then clear history
-                val clearResult = net.kenstir.ui.App.getServiceConfig().userService.clearCheckoutHistory(
-                    net.kenstir.ui.App.getAccount())
+                val clearResult = App.getServiceConfig().userService.clearCheckoutHistory(
+                    App.getAccount())
                 if (clearResult is Result.Error) { showAlert(clearResult.exception); return@async }
 
                 finish()
@@ -127,8 +130,8 @@ class HistoryActivity : BaseActivity() {
                 progress?.show(this@HistoryActivity, getString(R.string.msg_retrieving_data))
 
                 // fetch history
-                val result = net.kenstir.ui.App.getServiceConfig().circService.fetchCheckoutHistory(
-                    net.kenstir.ui.App.getAccount())
+                val result = App.getServiceConfig().circService.fetchCheckoutHistory(
+                    App.getAccount())
                 if (result is Result.Error) {
                     showAlert(result.exception); return@async
                 }
@@ -145,7 +148,7 @@ class HistoryActivity : BaseActivity() {
     }
 
     private fun loadHistory(historyList: List<HistoryRecord>) {
-        historySummary?.text = String.format(getString(R.string.history_items), historyList.size, net.kenstir.ui.App.getAccount().circHistoryStart)
+        historySummary?.text = String.format(getString(R.string.history_items), historyList.size, App.getAccount().circHistoryStart)
 
         items.clear()
         items.addAll(historyList)
@@ -154,7 +157,7 @@ class HistoryActivity : BaseActivity() {
 
     private fun initClickListener() {
         registerForContextMenu(rv)
-        val cs = net.kenstir.ui.util.ItemClickSupport.addTo(rv)
+        val cs = ItemClickSupport.addTo(rv)
         cs.setOnItemClickListener { _, position, _ ->
             viewItemAtPosition(position)
         }

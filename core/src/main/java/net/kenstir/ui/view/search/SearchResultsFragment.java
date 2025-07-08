@@ -25,8 +25,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import net.kenstir.hemlock.R;
 
 import net.kenstir.ui.App;
-import net.kenstir.ui.util.ItemClickSupport;
 import net.kenstir.data.model.BibRecord;
+import net.kenstir.ui.util.ItemClickSupport;
 
 import java.util.List;
 

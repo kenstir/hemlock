@@ -40,15 +40,17 @@ import net.kenstir.data.model.PatronList
 import net.kenstir.hemlock.R
 import net.kenstir.logging.Log
 import net.kenstir.ui.Analytics
+import net.kenstir.ui.App
 import net.kenstir.ui.BaseActivity
 import net.kenstir.ui.Key
+import net.kenstir.ui.util.ProgressDialogSupport
 import net.kenstir.ui.util.showAlert
 import org.evergreen_ils.data.model.BookBag
 
 class BookBagsActivity : BaseActivity() {
     private var lv: ListView? = null
     private var listAdapter: PatronListArrayAdapter? = null
-    private var progress: net.kenstir.ui.util.ProgressDialogSupport? = null
+    private var progress: ProgressDialogSupport? = null
     private var bookBagName: EditText? = null
     private var createButton: Button? = null
 
@@ -61,7 +63,7 @@ class BookBagsActivity : BaseActivity() {
         // prevent soft keyboard from popping up when the activity starts
         this.window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN)
 
-        progress = net.kenstir.ui.util.ProgressDialogSupport()
+        progress = ProgressDialogSupport()
         bookBagName = findViewById(R.id.bookbag_create_name)
         createButton = findViewById(R.id.bookbag_create_button)
         createButton?.setOnClickListener(View.OnClickListener {
@@ -98,8 +100,8 @@ class BookBagsActivity : BaseActivity() {
                 bookBagName?.text = null
 
                 // load bookbags
-                val result = net.kenstir.ui.App.getServiceConfig().userService.loadPatronLists(
-                    net.kenstir.ui.App.getAccount())
+                val result = App.getServiceConfig().userService.loadPatronLists(
+                    App.getAccount())
                 when (result) {
                     is Result.Success -> {}
                     is Result.Error -> { showAlert(result.exception); return@async }
@@ -107,10 +109,10 @@ class BookBagsActivity : BaseActivity() {
 
                 // load bookbag items
                 val jobs = mutableListOf<Deferred<Any>>()
-                for (list in net.kenstir.ui.App.getAccount().patronLists) {
+                for (list in App.getAccount().patronLists) {
                     jobs.add(scope.async {
-                        net.kenstir.ui.App.getServiceConfig().userService.loadPatronListItems(
-                            net.kenstir.ui.App.getAccount(), list, resources.getBoolean(R.bool.ou_extra_bookbag_query))
+                        App.getServiceConfig().userService.loadPatronListItems(
+                            App.getAccount(), list, resources.getBoolean(R.bool.ou_extra_bookbag_query))
                     })
                 }
                 jobs.map { it.await() }
@@ -128,7 +130,7 @@ class BookBagsActivity : BaseActivity() {
 
     private fun updateListAdapter() {
         listAdapter?.clear()
-        listAdapter?.addAll(net.kenstir.ui.App.getAccount().patronLists)
+        listAdapter?.addAll(App.getAccount().patronLists)
         listAdapter?.notifyDataSetChanged()
     }
 
@@ -148,8 +150,8 @@ class BookBagsActivity : BaseActivity() {
         }
         scope.async {
             progress?.show(this@BookBagsActivity, getString(R.string.msg_creating_list))
-            val result = net.kenstir.ui.App.getServiceConfig().userService.createPatronList(
-                net.kenstir.ui.App.getAccount(), name)
+            val result = App.getServiceConfig().userService.createPatronList(
+                App.getAccount(), name)
             progress?.dismiss()
             Analytics.logEvent(Analytics.Event.BOOKBAGS_CREATE_LIST, bundleOf(
                 Analytics.Param.RESULT to Analytics.resultValue(result)

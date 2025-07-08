@@ -32,6 +32,8 @@ import net.kenstir.hemlock.R
 import net.kenstir.ui.Analytics
 import net.kenstir.data.Result
 import net.kenstir.data.model.Library
+import net.kenstir.ui.App
+import net.kenstir.ui.AppState
 import net.kenstir.ui.util.ActivityUtils.launchURL
 import net.kenstir.ui.util.showAlert
 
@@ -56,7 +58,7 @@ open class AuthenticatorActivity: AccountAuthenticatorActivity() {
         Analytics.initialize(this)
         setContentViewImpl()
 
-        net.kenstir.ui.App.init(this)
+        App.init(this)
 
         accountManager = AccountManager.get(baseContext)
 
@@ -67,8 +69,8 @@ open class AuthenticatorActivity: AccountAuthenticatorActivity() {
         Analytics.log(TAG, "authTokenType=$authTokenType")
 
         val signInText = findViewById<TextView>(R.id.account_sign_in_text)
-        signInText.text = String.format(getString(R.string.ou_account_sign_in_message), net.kenstir.ui.AppState.getString(
-            net.kenstir.ui.AppState.LIBRARY_NAME))
+        signInText.text = String.format(getString(R.string.ou_account_sign_in_message), AppState.getString(
+            AppState.LIBRARY_NAME))
 
         // Turn off suggestions for the accountName field.  Turning them off with setInputType worked on my phone
         // whereas using android:inputType="text|textNoSuggestions" in xml did not.
@@ -104,7 +106,7 @@ open class AuthenticatorActivity: AccountAuthenticatorActivity() {
             submitButton?.setEnabled(false)
         } else {
             submitButton?.setEnabled(true)
-            net.kenstir.ui.App.setLibrary(library)
+            App.setLibrary(library)
             Analytics.log(TAG, "onLibrarySelected ${library.name} ${library.url}")
         }
     }
@@ -146,7 +148,7 @@ open class AuthenticatorActivity: AccountAuthenticatorActivity() {
                 val accountType = this@AuthenticatorActivity.getString(R.string.ou_account_type)
                 val data = Bundle()
 
-                val result = net.kenstir.ui.App.getServiceConfig().authService.getAuthToken(username, password)
+                val result = App.getServiceConfig().authService.getAuthToken(username, password)
                 when (result) {
                     is Result.Success -> authtoken = result.get()
                     is Result.Error -> {

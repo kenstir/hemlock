@@ -33,6 +33,7 @@ import net.kenstir.ui.util.showAlert
 import net.kenstir.data.model.PatronMessage
 import net.kenstir.data.Result
 import net.kenstir.logging.Log
+import net.kenstir.ui.App
 import org.evergreen_ils.system.EgOrg
 import net.kenstir.ui.view.bookbags.BookBagsActivity
 import net.kenstir.ui.view.holds.HoldsActivity
@@ -97,7 +98,7 @@ open class MainActivity : MainBaseActivity() {
     }
 
     private fun homeOrgHasEvents(): Boolean {
-        val url = EgOrg.findOrg(net.kenstir.ui.App.getAccount().homeOrg)?.eventsURL
+        val url = EgOrg.findOrg(App.getAccount().homeOrg)?.eventsURL
         return resources.getBoolean(R.bool.ou_enable_events_button) && !url.isNullOrEmpty()
     }
 
@@ -106,8 +107,8 @@ open class MainActivity : MainBaseActivity() {
         scope.async {
             if (resources.getBoolean(R.bool.ou_enable_messages)) {
                 val start = System.currentTimeMillis()
-                val result = net.kenstir.ui.App.getServiceConfig().userService.fetchPatronMessages(
-                    net.kenstir.ui.App.getAccount())
+                val result = App.getServiceConfig().userService.fetchPatronMessages(
+                    App.getAccount())
                 Log.logElapsedTime(TAG, start, "[async] fetchUserMessages ... done")
                 when (result) {
                     is Result.Success ->  updateMessagesBadge(result.get())
@@ -128,7 +129,7 @@ open class MainActivity : MainBaseActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         Log.d(TAG, "onActivityResult req=$requestCode result=$resultCode")
-        if (requestCode == net.kenstir.ui.App.REQUEST_MESSAGES) {
+        if (requestCode == App.REQUEST_MESSAGES) {
             loadUnreadMessageCount()
         }
     }

@@ -27,7 +27,7 @@ class Application : androidx.multidex.MultiDexApplication() {
         Log.d(TAG, object {}.javaClass.enclosingMethod?.name ?: "")
         super.onCreate()
 
-        net.kenstir.ui.AppState.init(this)
+        AppState.init(this)
         val changed = ThemeManager.applyNightMode()
         Log.d(TAG, "applyNightMode returned $changed")
     }

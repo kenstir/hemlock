@@ -41,7 +41,9 @@ import net.kenstir.data.model.BibRecord
 import net.kenstir.data.model.CircRecord
 import net.kenstir.hemlock.R
 import net.kenstir.logging.Log
+import net.kenstir.ui.App
 import net.kenstir.ui.BaseActivity
+import net.kenstir.ui.util.ProgressDialogSupport
 import net.kenstir.ui.util.showAlert
 import net.kenstir.ui.view.history.HistoryActivity
 import net.kenstir.ui.view.search.RecordDetails
@@ -52,7 +54,7 @@ class CheckoutsActivity : BaseActivity() {
     private var lv: ListView? = null
     private var listAdapter: CheckoutsArrayAdapter? = null
     private var circRecords = mutableListOf<CircRecord>()
-    private var progress: net.kenstir.ui.util.ProgressDialogSupport? = null
+    private var progress: ProgressDialogSupport? = null
     private var checkoutsSummary: TextView? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -62,7 +64,7 @@ class CheckoutsActivity : BaseActivity() {
         setContentView(R.layout.activity_checkouts)
 
         checkoutsSummary = findViewById(R.id.checkout_items_summary)
-        progress = net.kenstir.ui.util.ProgressDialogSupport()
+        progress = ProgressDialogSupport()
         lv = findViewById(R.id.checkout_items_list)
         listAdapter = CheckoutsArrayAdapter(this, R.layout.checkout_list_item)
         lv?.adapter = listAdapter
@@ -89,7 +91,7 @@ class CheckoutsActivity : BaseActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.action_history -> {
-                if (net.kenstir.ui.App.getAccount().circHistoryStart != null) {
+                if (App.getAccount().circHistoryStart != null) {
                     startActivity(Intent(this, HistoryActivity::class.java))
                 } else {
                     maybeEnableHistory()
@@ -115,8 +117,8 @@ class CheckoutsActivity : BaseActivity() {
     private fun enableCheckoutHistory() {
         scope.async {
             try {
-                val result = net.kenstir.ui.App.getServiceConfig().userService.enableCheckoutHistory(
-                    net.kenstir.ui.App.getAccount())
+                val result = App.getServiceConfig().userService.enableCheckoutHistory(
+                    App.getAccount())
                 if (result is Result.Error) {
                     showAlert(result.exception); return@async
                 }
@@ -132,8 +134,8 @@ class CheckoutsActivity : BaseActivity() {
                 Log.d(TAG, "[kcxxx] fetchData ...")
                 val start = System.currentTimeMillis()
                 progress?.show(this@CheckoutsActivity, getString(R.string.msg_retrieving_data))
-                val account = net.kenstir.ui.App.getAccount()
-                val circService = net.kenstir.ui.App.getServiceConfig().circService
+                val account = App.getAccount()
+                val circService = App.getServiceConfig().circService
 
                 // fetch checkouts
                 val result = circService.fetchCheckouts(account)
@@ -268,8 +270,8 @@ class CheckoutsActivity : BaseActivity() {
 
             record.targetCopy?.let {
                 progress?.show(this@CheckoutsActivity, getString(R.string.msg_renewing_item))
-                val result = net.kenstir.ui.App.getServiceConfig().circService.renewCheckout(
-                    net.kenstir.ui.App.getAccount(), it)
+                val result = App.getServiceConfig().circService.renewCheckout(
+                    App.getAccount(), it)
                 progress?.dismiss()
                 when (result) {
                     is Result.Success -> {

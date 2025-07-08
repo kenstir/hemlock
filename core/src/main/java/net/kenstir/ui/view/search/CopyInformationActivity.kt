@@ -41,6 +41,7 @@ import net.kenstir.ui.util.showAlert
 import net.kenstir.data.Result
 import net.kenstir.data.model.CopyLocationCounts
 import net.kenstir.logging.Log
+import net.kenstir.ui.App
 import org.evergreen_ils.data.model.MBRecord
 import org.evergreen_ils.system.EgOrg
 import org.evergreen_ils.system.EgOrg.findOrg
@@ -159,7 +160,7 @@ class CopyInformationActivity : BaseActivity() {
         scope.async {
             try {
                 val org = findOrg(orgID) ?: return@async
-                val result = net.kenstir.ui.App.getServiceConfig().searchService.fetchCopyLocationCounts(record.id, org.id, org.level)
+                val result = App.getServiceConfig().searchService.fetchCopyLocationCounts(record.id, org.id, org.level)
                 if (result is Result.Error) { showAlert(result.exception); return@async }
                 updateCopyInfo(result.get())
             } catch (ex: Exception) {

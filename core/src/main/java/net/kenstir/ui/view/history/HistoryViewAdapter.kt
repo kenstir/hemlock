@@ -32,6 +32,7 @@ import net.kenstir.data.Result
 import net.kenstir.data.model.HistoryRecord
 import net.kenstir.hemlock.R
 import net.kenstir.logging.Log
+import net.kenstir.ui.App
 import net.kenstir.ui.BaseActivity
 import net.kenstir.ui.util.showAlert
 import org.evergreen_ils.gateway.GatewayClient
@@ -79,7 +80,7 @@ class HistoryViewAdapter(private val items: List<HistoryRecord>) : RecyclerView.
 
         private suspend fun fetchCopyDetails(historyRecord: HistoryRecord): Result<Unit> {
             val targetCopy = historyRecord.targetCopy ?: return Result.Success(Unit)
-            return net.kenstir.ui.App.getServiceConfig().circService.loadHistoryDetails(historyRecord)
+            return App.getServiceConfig().circService.loadHistoryDetails(historyRecord)
         }
 
         private fun loadMetadata(context: Context, historyRecord: HistoryRecord) {

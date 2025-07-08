@@ -49,6 +49,7 @@ import net.kenstir.data.model.Account
 import net.kenstir.data.model.HoldPart
 import net.kenstir.logging.Log
 import net.kenstir.data.service.HoldOptions
+import net.kenstir.ui.App
 import net.kenstir.util.getCustomMessage
 import org.evergreen_ils.data.model.MBRecord
 import org.evergreen_ils.util.OSRFUtils
@@ -57,6 +58,7 @@ import org.evergreen_ils.system.EgOrg
 import org.evergreen_ils.system.EgSms
 import net.kenstir.ui.BaseActivity
 import net.kenstir.ui.util.OrgArrayAdapter
+import net.kenstir.ui.util.ProgressDialogSupport
 import org.evergreen_ils.Api
 import java.util.Calendar
 import java.util.Date
@@ -88,7 +90,7 @@ class PlaceHoldActivity : BaseActivity() {
     private var thawDate: Date? = null
     private var selectedOrgPos = 0
     private var selectedSMSPos = 0
-    private var progress: net.kenstir.ui.util.ProgressDialogSupport? = null
+    private var progress: ProgressDialogSupport? = null
     private var parts: List<HoldPart>? = null
     private var titleHoldIsPossible: Boolean? = null
     private lateinit var record: MBRecord
@@ -105,8 +107,8 @@ class PlaceHoldActivity : BaseActivity() {
         setContentView(R.layout.place_hold)
 
         record = intent.getSerializableExtra(Key.RECORD_INFO) as MBRecord
-        account = net.kenstir.ui.App.getAccount()
-        progress = net.kenstir.ui.util.ProgressDialogSupport()
+        account = App.getAccount()
+        progress = ProgressDialogSupport()
         title = findViewById(R.id.hold_title)
         author = findViewById(R.id.hold_author)
         format = findViewById(R.id.hold_format)
@@ -168,7 +170,7 @@ class PlaceHoldActivity : BaseActivity() {
                 progress?.show(this@PlaceHoldActivity, getString(R.string.msg_loading_place_hold))
                 placeHold?.isEnabled = false
 
-                val serviceConfig = net.kenstir.ui.App.getServiceConfig()
+                val serviceConfig = App.getServiceConfig()
                 jobs.add(scope.async {
                     serviceConfig.loaderService.loadPlaceHoldPrerequisites()
                 })
@@ -180,7 +182,7 @@ class PlaceHoldActivity : BaseActivity() {
                         onPartsResult(result)
                         if (hasParts && resources.getBoolean(R.bool.ou_enable_title_hold_on_item_with_parts)) {
                             Log.d(TAG, "${record.title}: checking titleHoldIsPossible")
-                            val isPossibleResult = serviceConfig.circService.fetchTitleHoldIsPossible(net.kenstir.ui.App.getAccount(), record.id, net.kenstir.ui.App.getAccount().pickupOrg ?: 1)
+                            val isPossibleResult = serviceConfig.circService.fetchTitleHoldIsPossible(App.getAccount(), record.id, App.getAccount().pickupOrg ?: 1)
                             onTitleHoldIsPossibleResult(isPossibleResult)
                         }
                         Result.Success(Unit)
@@ -244,8 +246,8 @@ class PlaceHoldActivity : BaseActivity() {
                     Analytics.Param.HOLD_NOTIFY to notifyTypes,
                     Analytics.Param.HOLD_EXPIRES_KEY to (expireDate != null),
                     Analytics.Param.HOLD_PICKUP_KEY to Analytics.orgDimensionKey(EgOrg.visibleOrgs[selectedOrgPos],
-                            EgOrg.findOrg(net.kenstir.ui.App.getAccount().pickupOrg),
-                            EgOrg.findOrg(net.kenstir.ui.App.getAccount().homeOrg)),
+                            EgOrg.findOrg(App.getAccount().pickupOrg),
+                            EgOrg.findOrg(App.getAccount().homeOrg)),
             ))
         } catch (e: Exception) {
             Analytics.logException(e)
@@ -332,8 +334,8 @@ class PlaceHoldActivity : BaseActivity() {
                 suspendHold = suspendHold?.isChecked == true,
                 thawDate = getThawDate()
             )
-            val result = net.kenstir.ui.App.getServiceConfig().circService.placeHold(
-                net.kenstir.ui.App.getAccount(), record.id, options)
+            val result = App.getServiceConfig().circService.placeHold(
+                App.getAccount(), record.id, options)
             Log.d(TAG, "[kcxxx] placeHold: $result")
             progress?.dismiss()
             when (result) {

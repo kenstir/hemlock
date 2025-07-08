@@ -31,7 +31,10 @@ import net.kenstir.ui.util.showAlert
 import net.kenstir.data.model.PatronMessage
 import net.kenstir.data.Result
 import net.kenstir.logging.Log
+import net.kenstir.ui.App
 import net.kenstir.ui.BaseActivity
+import net.kenstir.ui.util.ItemClickSupport
+import net.kenstir.ui.util.ProgressDialogSupport
 import net.kenstir.ui.view.search.DividerItemDecoration
 
 const val MESSAGE_DELETE = 0
@@ -45,7 +48,7 @@ class MessagesActivity : BaseActivity() {
     private var rv: RecyclerView? = null
     private var adapter: MessageViewAdapter? = null
     private var items = ArrayList<PatronMessage>()
-    private var progress: net.kenstir.ui.util.ProgressDialogSupport? = null
+    private var progress: ProgressDialogSupport? = null
     private var contextMenuInfo: ContextMenuMessageInfo? = null
 
     private class ContextMenuMessageInfo(val position: Int, val message: PatronMessage) : ContextMenu.ContextMenuInfo {
@@ -56,7 +59,7 @@ class MessagesActivity : BaseActivity() {
         if (isRestarting) return
 
         setContentView(R.layout.activity_messages)
-        progress = net.kenstir.ui.util.ProgressDialogSupport()
+        progress = ProgressDialogSupport()
 
         rv = findViewById(R.id.recycler_view)
         adapter = MessageViewAdapter(items)
@@ -81,8 +84,8 @@ class MessagesActivity : BaseActivity() {
                 progress?.show(this@MessagesActivity, getString(R.string.msg_retrieving_data))
 
                 // fetch messages
-                val result = net.kenstir.ui.App.getServiceConfig().userService.fetchPatronMessages(
-                    net.kenstir.ui.App.getAccount())
+                val result = App.getServiceConfig().userService.fetchPatronMessages(
+                    App.getAccount())
                 if (result is Result.Error) {
                     showAlert(result.exception); return@async
                 }
@@ -116,7 +119,7 @@ class MessagesActivity : BaseActivity() {
 
     private fun initClickListener() {
         registerForContextMenu(rv)
-        val cs = net.kenstir.ui.util.ItemClickSupport.addTo(rv)
+        val cs = ItemClickSupport.addTo(rv)
         cs.setOnItemClickListener { _, position, _ ->
             viewMessage(items[position])
         }
@@ -175,8 +178,8 @@ class MessagesActivity : BaseActivity() {
 
     private fun markMessageDeleted(message: PatronMessage) {
         scope.async {
-            val result = net.kenstir.ui.App.getServiceConfig().userService.markMessageDeleted(
-                net.kenstir.ui.App.getAccount(), message.id)
+            val result = App.getServiceConfig().userService.markMessageDeleted(
+                App.getAccount(), message.id)
             if (result is Result.Error) {
                 showAlert(result.exception); return@async
             }
@@ -186,8 +189,8 @@ class MessagesActivity : BaseActivity() {
 
     private fun markMessageRead(message: PatronMessage) {
         scope.async {
-            val result = net.kenstir.ui.App.getServiceConfig().userService.markMessageRead(
-                net.kenstir.ui.App.getAccount(), message.id)
+            val result = App.getServiceConfig().userService.markMessageRead(
+                App.getAccount(), message.id)
             if (result is Result.Error) {
                 showAlert(result.exception); return@async
             }
@@ -197,8 +200,8 @@ class MessagesActivity : BaseActivity() {
 
     private fun markMessageUnread(message: PatronMessage) {
         scope.async {
-            val result = net.kenstir.ui.App.getServiceConfig().userService.markMessageUnread(
-                net.kenstir.ui.App.getAccount(), message.id)
+            val result = App.getServiceConfig().userService.markMessageUnread(
+                App.getAccount(), message.id)
             if (result is Result.Error) {
                 showAlert(result.exception); return@async
             }

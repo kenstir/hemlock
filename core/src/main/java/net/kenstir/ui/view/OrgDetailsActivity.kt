@@ -40,9 +40,11 @@ import net.kenstir.data.model.OrgHours
 import net.kenstir.data.model.Organization
 import net.kenstir.hemlock.R
 import net.kenstir.logging.Log
+import net.kenstir.ui.App
 import net.kenstir.ui.BaseActivity
 import net.kenstir.ui.Key
 import net.kenstir.ui.util.OrgArrayAdapter
+import net.kenstir.ui.util.ProgressDialogSupport
 import net.kenstir.ui.util.showAlert
 import org.evergreen_ils.system.EgOrg
 
@@ -63,7 +65,7 @@ class OrgDetailsActivity : BaseActivity() {
     private var phone: Button? = null
     private var map: Button? = null
     private var address: TextView? = null
-    private var progress: net.kenstir.ui.util.ProgressDialogSupport? = null
+    private var progress: ProgressDialogSupport? = null
 
     private var orgID: Int? = null
     private var org: Organization? = null
@@ -77,7 +79,7 @@ class OrgDetailsActivity : BaseActivity() {
         orgID = if (intent.hasExtra(Key.ORG_ID)) {
             intent.getIntExtra(Key.ORG_ID, 1)
         } else {
-            net.kenstir.ui.App.getAccount().homeOrg
+            App.getAccount().homeOrg
         }
         org = EgOrg.findOrg(orgID)
 
@@ -99,7 +101,7 @@ class OrgDetailsActivity : BaseActivity() {
         val hours_header: View? = findViewById(R.id.org_details_opening_hours_header)
         val hours_table: View? = findViewById(R.id.org_details_opening_hours_table)
 
-        progress = net.kenstir.ui.util.ProgressDialogSupport()
+        progress = ProgressDialogSupport()
 
         initOrgSpinner()
         initHoursViews(hours_header, hours_table)
@@ -257,7 +259,7 @@ class OrgDetailsActivity : BaseActivity() {
     private fun fetchData() {
         scope.async {
             try {
-                val account = net.kenstir.ui.App.getAccount()
+                val account = App.getAccount()
                 val org = org ?: return@async
                 val orgID = orgID ?: return@async
 
@@ -268,13 +270,13 @@ class OrgDetailsActivity : BaseActivity() {
 
                 val jobs = mutableListOf<Deferred<Any>>()
                 jobs.add(scope.async {
-                    val result = net.kenstir.ui.App.getServiceConfig().orgService.loadOrgSettings(orgID)
+                    val result = App.getServiceConfig().orgService.loadOrgSettings(orgID)
                     if (result is Result.Error) {
                         throw result.exception
                     }
                 })
                 jobs.add(scope.async {
-                    val result = net.kenstir.ui.App.getServiceConfig().orgService.loadOrgDetails(account, orgID)
+                    val result = App.getServiceConfig().orgService.loadOrgDetails(account, orgID)
                     if (result is Result.Error) {
                         throw result.exception
                     }

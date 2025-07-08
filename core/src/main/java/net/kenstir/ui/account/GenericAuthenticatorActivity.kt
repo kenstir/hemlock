@@ -163,10 +163,10 @@ class GenericAuthenticatorActivity: AuthenticatorActivity() {
     private fun onLibrariesLoaded() {
         // if the user has any existing accounts, then we can select a reasonable default library
         var default_library: Library? = null
-        val existing_accounts = net.kenstir.ui.account.AccountUtils.getAccountsByType(this@GenericAuthenticatorActivity)
+        val existing_accounts = AccountUtils.getAccountsByType(this@GenericAuthenticatorActivity)
         Log.d(net.kenstir.ui.account.Const.AUTH_TAG, "there are " + existing_accounts.size + " existing accounts")
         if (existing_accounts.size > 0) {
-            default_library = net.kenstir.ui.account.AccountUtils.getLibraryForAccount(this@GenericAuthenticatorActivity,
+            default_library = AccountUtils.getLibraryForAccount(this@GenericAuthenticatorActivity,
                 existing_accounts[0])
             Log.d(net.kenstir.ui.account.Const.AUTH_TAG,
                 "default_library=$default_library")

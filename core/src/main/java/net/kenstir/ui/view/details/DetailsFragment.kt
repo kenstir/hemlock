@@ -42,6 +42,7 @@ import kotlinx.coroutines.async
 import net.kenstir.data.model.BibRecord
 import net.kenstir.hemlock.R
 import net.kenstir.logging.Log
+import net.kenstir.ui.App
 import net.kenstir.ui.BaseActivity
 import net.kenstir.ui.Key
 import net.kenstir.ui.util.showAlert
@@ -160,7 +161,7 @@ class DetailsFragment : Fragment() {
             //Analytics.logEvent("lists_addtolist", "via", "details_button")
             (activity as? BaseActivity)?.let {
                 record?.let { record ->
-                    showAddToListDialog(it, net.kenstir.ui.App.getAccount().patronLists, record)
+                    showAddToListDialog(it, App.getAccount().patronLists, record)
                 }
             }
         }
@@ -191,7 +192,7 @@ class DetailsFragment : Fragment() {
 
     private fun launchOnlineAccess() {
         val org = EgOrg.findOrg(orgID)
-        val links = net.kenstir.ui.App.getBehavior().getOnlineLocations(record as MBRecord, org!!.shortname)
+        val links = App.getBehavior().getOnlineLocations(record as MBRecord, org!!.shortname)
         if (links.isEmpty()) return // TODO: alert
 
         // if there's only one link, launch it without ceremony
@@ -222,7 +223,7 @@ class DetailsFragment : Fragment() {
 
         val mbRecord = record as MBRecord
         val org = EgOrg.findOrg(orgID)
-        val links = net.kenstir.ui.App.getBehavior().getOnlineLocations(mbRecord, org!!.shortname)
+        val links = App.getBehavior().getOnlineLocations(mbRecord, org!!.shortname)
         val numCopies = mbRecord.totalCopies(orgID) ?: 0
         placeHoldButton?.isEnabled = (numCopies > 0)
         showCopiesButton?.isEnabled = (numCopies > 0)
@@ -280,7 +281,7 @@ class DetailsFragment : Fragment() {
         val mbRecord = record as MBRecord
         descriptionTextView?.text = when {
             record.isDeleted -> getString(R.string.item_marked_deleted_msg)
-            net.kenstir.ui.App.getBehavior().isOnlineResource(mbRecord) ?: false -> {
+            App.getBehavior().isOnlineResource(mbRecord) ?: false -> {
                 val onlineLocation = record.getFirstOnlineLocation()
                 if (resources.getBoolean(R.bool.ou_show_online_access_hostname) && !onlineLocation.isNullOrEmpty()) {
                     val uri = Uri.parse(onlineLocation)
@@ -300,7 +301,7 @@ class DetailsFragment : Fragment() {
                 Log.d(TAG, "${record.id}: fetchData")
                 val start = System.currentTimeMillis()
                 val jobs = mutableListOf<Deferred<Any>>()
-                val biblioService = net.kenstir.ui.App.getServiceConfig().biblioService
+                val biblioService = App.getServiceConfig().biblioService
 
                 jobs.add(scope.async {
                     biblioService.loadRecordDetails(record, resources.getBoolean(R.bool.ou_need_marc_record))

@@ -43,11 +43,14 @@ import net.kenstir.ui.Key
 import net.kenstir.ui.util.showAlert
 import net.kenstir.data.Result
 import net.kenstir.data.service.HoldUpdateOptions
+import net.kenstir.ui.App
 import org.evergreen_ils.data.model.EvergreenHoldRecord
 import org.evergreen_ils.util.OSRFUtils
 import org.evergreen_ils.system.EgOrg
 import net.kenstir.ui.BaseActivity
+import net.kenstir.ui.util.ActionBarUtils
 import net.kenstir.ui.util.OrgArrayAdapter
+import net.kenstir.ui.util.ProgressDialogSupport
 import java.util.Calendar
 import java.util.Date
 
@@ -60,15 +63,15 @@ class HoldDetailsActivity : BaseActivity() {
     private var expireDate: Date? = null
     private var thawDate: Date? = null
     private var selectedOrgPos = 0
-    private var progress: net.kenstir.ui.util.ProgressDialogSupport? = null
+    private var progress: ProgressDialogSupport? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         if (isRestarting) return
 
         setContentView(R.layout.hold_details)
-        net.kenstir.ui.util.ActionBarUtils.initActionBarForActivity(this)
-        progress = net.kenstir.ui.util.ProgressDialogSupport()
+        ActionBarUtils.initActionBarForActivity(this)
+        progress = ProgressDialogSupport()
 
         val record = intent.getSerializableExtra(Key.HOLD_RECORD) as EvergreenHoldRecord
 
@@ -164,8 +167,8 @@ class HoldDetailsActivity : BaseActivity() {
             progress?.show(this@HoldDetailsActivity, getString(R.string.msg_canceling_hold))
 
             val holdId = record.ahrObj.getInt("id") ?: 0
-            val result = net.kenstir.ui.App.getServiceConfig().circService.cancelHold(
-                net.kenstir.ui.App.getAccount(), holdId)
+            val result = App.getServiceConfig().circService.cancelHold(
+                App.getAccount(), holdId)
             progress?.dismiss()
             Analytics.logEvent(Analytics.Event.HOLD_CANCEL_HOLD, bundleOf(
                 Analytics.Param.RESULT to Analytics.resultValue(result)
@@ -198,8 +201,8 @@ class HoldDetailsActivity : BaseActivity() {
                 expireTime = expireDateApi,
                 thawDate = thawDateApi,
             )
-            val result = net.kenstir.ui.App.getServiceConfig().circService.updateHold(
-                net.kenstir.ui.App.getAccount(), holdId, holdOptions)
+            val result = App.getServiceConfig().circService.updateHold(
+                App.getAccount(), holdId, holdOptions)
             progress?.dismiss()
             Analytics.logEvent(Analytics.Event.HOLD_UPDATE_HOLD, bundleOf(
                 Analytics.Param.RESULT to Analytics.resultValue(result),
