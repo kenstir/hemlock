@@ -34,7 +34,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import net.kenstir.hemlock.R
-import net.kenstir.ui.Analytics
+import net.kenstir.util.Analytics
 import net.kenstir.logging.Log
 import net.kenstir.logging.Log.TAG_FCM
 import net.kenstir.data.model.Account

@@ -46,8 +46,8 @@ import com.google.mlkit.vision.codescanner.GmsBarcodeScanner
 import com.google.mlkit.vision.codescanner.GmsBarcodeScanning
 import kotlinx.coroutines.async
 import net.kenstir.hemlock.R
-import net.kenstir.ui.Analytics
-import net.kenstir.ui.Analytics.orgDimensionKey
+import net.kenstir.util.Analytics
+import net.kenstir.util.Analytics.orgDimensionKey
 import net.kenstir.ui.Key
 import net.kenstir.logging.Log
 import net.kenstir.ui.util.showAlert

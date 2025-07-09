@@ -15,9 +15,8 @@
  * along with this program; if not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.kenstir.hemlock.android
+package net.kenstir.util
 
-import net.kenstir.ui.Analytics
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test

@@ -20,7 +20,7 @@ package org.evergreen_ils.data.service
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
-import net.kenstir.ui.Analytics
+import net.kenstir.util.Analytics
 import net.kenstir.data.MutableJSONDictionary
 import net.kenstir.data.Result
 import net.kenstir.data.ShouldNotHappenException

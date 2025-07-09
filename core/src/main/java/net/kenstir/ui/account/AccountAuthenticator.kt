@@ -27,8 +27,8 @@ import android.os.Bundle
 import android.text.TextUtils
 import kotlinx.coroutines.runBlocking
 import net.kenstir.hemlock.R
-import net.kenstir.ui.Analytics.log
-import net.kenstir.ui.Analytics.redactedString
+import net.kenstir.util.Analytics.log
+import net.kenstir.util.Analytics.redactedString
 import net.kenstir.ui.App
 import org.evergreen_ils.gateway.GatewayClient
 

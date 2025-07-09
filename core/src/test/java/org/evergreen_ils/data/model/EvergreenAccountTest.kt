@@ -15,13 +15,12 @@
  * along with this program; if not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.kenstir.hemlock.data.evergreen
+package org.evergreen_ils.data.model
 
 import net.kenstir.data.jsonMapOf
 import net.kenstir.data.model.Account
 import org.evergreen_ils.Api
 import org.evergreen_ils.gateway.OSRFObject
-import org.evergreen_ils.data.model.EvergreenAccount
 import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Test

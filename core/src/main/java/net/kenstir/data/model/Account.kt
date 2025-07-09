@@ -18,7 +18,7 @@
 package net.kenstir.data.model
 
 import androidx.core.os.bundleOf
-import net.kenstir.ui.Analytics
+import net.kenstir.util.Analytics
 import org.evergreen_ils.gateway.GatewayEventError
 import java.text.DateFormat
 import java.util.Date

@@ -21,6 +21,7 @@ import android.content.res.Resources;
 import android.text.TextUtils;
 
 import net.kenstir.hemlock.R;
+import net.kenstir.util.Analytics;
 
 public class AppFactory {
     private static final String TAG = AppFactory.class.getSimpleName();

@@ -37,7 +37,7 @@ import kotlinx.serialization.json.Json
 import net.kenstir.data.model.Library
 import net.kenstir.hemlock.R
 import net.kenstir.logging.Log
-import net.kenstir.ui.Analytics
+import net.kenstir.util.Analytics
 import net.kenstir.ui.util.showAlert
 import org.evergreen_ils.gateway.GatewayClient
 import java.util.Collections

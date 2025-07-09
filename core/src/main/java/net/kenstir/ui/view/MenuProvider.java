@@ -20,7 +20,7 @@ package net.kenstir.ui.view;
 import android.app.Activity;
 import android.text.TextUtils;
 
-import net.kenstir.ui.Analytics;
+import net.kenstir.util.Analytics;
 
 /** Interface to get extra buttons provided by the main main of a custom app.
  * Concrete implementation is provided by the app

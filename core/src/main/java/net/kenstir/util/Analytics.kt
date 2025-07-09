@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, see <https://www.gnu.org/licenses/>.
  */
-package net.kenstir.ui
+package net.kenstir.util
 
 import android.content.Context
 import android.content.pm.ApplicationInfo
@@ -28,7 +28,6 @@ import net.kenstir.hemlock.R
 import net.kenstir.logging.Log
 import net.kenstir.data.model.Organization
 import net.kenstir.data.Result
-import net.kenstir.util.getCustomMessage
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.math.round

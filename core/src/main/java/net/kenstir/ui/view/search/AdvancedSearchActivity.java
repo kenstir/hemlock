@@ -39,7 +39,7 @@ import net.kenstir.hemlock.R;
 import net.kenstir.ui.App;
 import net.kenstir.ui.Key;
 import net.kenstir.ui.util.ActionBarUtils;
-import net.kenstir.ui.Analytics;
+import net.kenstir.util.Analytics;
 
 import java.util.ArrayList;
 import java.util.StringTokenizer;
