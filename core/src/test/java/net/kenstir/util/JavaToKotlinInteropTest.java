@@ -15,10 +15,9 @@
  * along with this program; if not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.kenstir.hemlock.util;
+package net.kenstir.util;
 
 import net.kenstir.data.model.Link;
-import net.kenstir.util.IntUtils;
 
 import org.junit.Test;
 

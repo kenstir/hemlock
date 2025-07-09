@@ -15,11 +15,9 @@
  * along with this program; if not, see <https://www.gnu.org/licenses/>.
  */
 
-package org.evergreen_ils.data
+package org.evergreen_ils.data.model
 
 import net.kenstir.data.jsonMapOf
-import org.evergreen_ils.data.model.EvergreenHistoryRecord
-import org.evergreen_ils.data.model.MBRecord
 import org.evergreen_ils.gateway.OSRFObject
 import org.junit.Assert.assertEquals
 import org.junit.Test

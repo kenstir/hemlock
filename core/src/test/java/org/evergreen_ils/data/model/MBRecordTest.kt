@@ -14,9 +14,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, see <https://www.gnu.org/licenses/>.
  */
-package org.evergreen_ils.data
+package org.evergreen_ils.data.model
 
-import org.evergreen_ils.data.model.MBRecord
 import net.kenstir.util.JsonUtils
 import org.evergreen_ils.gateway.GatewayResult
 import org.evergreen_ils.gateway.OSRFCoder

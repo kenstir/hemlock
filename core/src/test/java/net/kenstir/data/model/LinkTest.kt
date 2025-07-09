@@ -15,21 +15,21 @@
  * along with this program; if not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.kenstir.hemlock.util
+package net.kenstir.data.model
 
-import net.kenstir.util.StringUtils
-import org.junit.Assert
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertTrue
 import org.junit.Test
 
-class StringUtilsTest {
-
+class LinkTest {
     @Test
-    fun test_take() {
-        val s1: String? = null
-        Assert.assertEquals("", StringUtils.take(s1, 4))
-        val s2 = "abcdef"
-        Assert.assertEquals("abcd", StringUtils.take(s2, 4))
-        Assert.assertEquals(s2, StringUtils.take(s2, 6))
-        Assert.assertEquals(s2, StringUtils.take(s2, 8))
+    fun test_equals() {
+        val a = Link("http://google.com", "Link to somewhere")
+        val b = Link("http://google.com", "Link to somewhere")
+        val c = Link("http://google.com", "Different text same href")
+        assertTrue(a == b)
+        assertTrue(a != c)
+        assertFalse(a == c)
+        assertFalse(b == c)
     }
 }

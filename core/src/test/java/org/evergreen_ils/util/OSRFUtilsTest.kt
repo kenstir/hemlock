@@ -15,9 +15,8 @@
  * along with this program; if not, see <https://www.gnu.org/licenses/>.
  */
 
-package org.evergreen_ils.data
+package org.evergreen_ils.util
 
-import org.evergreen_ils.util.OSRFUtils
 import org.junit.Assert
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
