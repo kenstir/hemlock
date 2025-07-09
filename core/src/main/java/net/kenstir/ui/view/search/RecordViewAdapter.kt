@@ -30,8 +30,8 @@ import net.kenstir.logging.Log
 import net.kenstir.ui.BaseActivity
 import net.kenstir.ui.util.showAlert
 import net.kenstir.data.model.BibRecord
+import net.kenstir.data.service.ImageSize
 import net.kenstir.ui.App
-import org.evergreen_ils.gateway.GatewayClient
 
 /**
  * Provide views to RecyclerView with data from records.
@@ -51,9 +51,7 @@ class RecordViewAdapter(private val records: List<BibRecord>) : RecyclerView.Ada
             Log.d(TAG, "id:${record.id} bindView")
             val context = recordImage.context
 
-            // TODO: use a service method to get the image URL
-            val url = GatewayClient.getUrl("/opac/extras/ac/jacket/small/r/" + record.id)
-
+            val url = App.getServiceConfig().biblioService.imageUrl(record, ImageSize.SMALL)
             recordImage.load(url)
 
             val scope = (context as? BaseActivity)?.lifecycleScope ?: return

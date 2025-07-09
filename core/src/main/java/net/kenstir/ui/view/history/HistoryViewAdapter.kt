@@ -30,12 +30,12 @@ import coil3.load
 import kotlinx.coroutines.async
 import net.kenstir.data.Result
 import net.kenstir.data.model.HistoryRecord
+import net.kenstir.data.service.ImageSize
 import net.kenstir.hemlock.R
 import net.kenstir.logging.Log
 import net.kenstir.ui.App
 import net.kenstir.ui.BaseActivity
 import net.kenstir.ui.util.showAlert
-import org.evergreen_ils.gateway.GatewayClient
 
 class HistoryViewAdapter(private val items: List<HistoryRecord>) : RecyclerView.Adapter<HistoryViewAdapter.ViewHolder>() {
 
@@ -88,8 +88,8 @@ class HistoryViewAdapter(private val items: List<HistoryRecord>) : RecyclerView.
             title.text = historyRecord.title
             author.text = historyRecord.author
 
-            historyRecord.record?.id.let { id ->
-                val url = GatewayClient.getUrl("/opac/extras/ac/jacket/small/r/" + id)
+            historyRecord.record?.let {
+                val url = App.getServiceConfig().biblioService.imageUrl(it, ImageSize.SMALL)
                 recordImage.load(url)
             }
         }

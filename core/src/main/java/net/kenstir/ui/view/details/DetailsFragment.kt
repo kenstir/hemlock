@@ -40,6 +40,7 @@ import coil3.load
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
 import net.kenstir.data.model.BibRecord
+import net.kenstir.data.service.ImageSize
 import net.kenstir.hemlock.R
 import net.kenstir.logging.Log
 import net.kenstir.ui.App
@@ -51,9 +52,10 @@ import net.kenstir.ui.view.holds.PlaceHoldActivity
 import net.kenstir.ui.view.search.CopyInformationActivity
 import net.kenstir.ui.view.search.SearchActivity
 import net.kenstir.ui.view.search.SearchActivity.Companion.RESULT_CODE_SEARCH_BY_AUTHOR
+import net.kenstir.util.getCopySummary
 import org.evergreen_ils.data.model.MBRecord
-import org.evergreen_ils.gateway.GatewayClient
 import org.evergreen_ils.system.EgOrg
+import androidx.core.net.toUri
 
 class DetailsFragment : Fragment() {
     private var record: BibRecord? = null
@@ -83,7 +85,7 @@ class DetailsFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         if (savedInstanceState != null) {
-            record = savedInstanceState.getSerializable(Key.RECORD_INFO) as MBRecord
+            record = savedInstanceState.getSerializable(Key.RECORD_INFO) as BibRecord
             orgID = savedInstanceState.getInt(Key.ORG_ID)
             position = savedInstanceState.getInt(Key.POSITION)
             total = savedInstanceState.getInt(Key.TOTAL)
@@ -127,12 +129,13 @@ class DetailsFragment : Fragment() {
         descriptionTextView?.text = ""
         initButtons()
 
-        // Start async image load
-        val url = GatewayClient.getUrl("/opac/extras/ac/jacket/medium/r/" + record?.id)
-        Log.d(TAG, "${record?.id}: setimageurl $url on ${recordImage}")
-        recordImage?.load(url)
-
-        record?.let { fetchData(it) }
+        // Start async load
+        record?.let {
+            val url = App.getServiceConfig().biblioService.imageUrl(it, ImageSize.MEDIUM)
+            Log.d(TAG, "${it.id}: setimageurl $url on ${recordImage}")
+            recordImage?.load(url)
+            fetchData(it)
+        }
 
         return layout
     }
@@ -236,7 +239,7 @@ class DetailsFragment : Fragment() {
             onlineAccessButton?.visibility = View.VISIBLE
 
             if (resources.getBoolean(R.bool.ou_show_online_access_hostname)) {
-                val uri = Uri.parse(links[0].href)
+                val uri = links[0].href.toUri()
                 descriptionTextView?.text = uri.host
             }
         }
