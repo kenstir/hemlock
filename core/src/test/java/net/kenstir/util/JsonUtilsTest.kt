@@ -15,18 +15,29 @@
  * along with this program; if not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.kenstir.hemlock.util
+package net.kenstir.util
 
-import net.kenstir.util.getCustomMessage
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNull
 import org.junit.Test
 
-class MiscExtensionsTest {
+class JsonUtilsTest {
 
     @Test
-    fun test_Exception_customMessage_basic() {
-        assertEquals("Timeout", java.util.concurrent.TimeoutException().getCustomMessage())
-        assertEquals("Cancelled", java.lang.Exception().getCustomMessage())
-        assertEquals("Cancelled", java.lang.Exception("").getCustomMessage())
+    fun test_parseObjectOK() {
+        val json = """
+            {"_attr":"mr_hold_format","_val":"book"}
+            """
+        val obj = JsonUtils.parseObject(json)
+        assertEquals("book", obj?.get("_val"))
+    }
+
+    @Test
+    fun test_parseNonObject() {
+        assertNull(JsonUtils.parseObject(""""bare string""""))
+        assertNull(JsonUtils.parseObject("8"))
+        assertNull(JsonUtils.parseObject("[42]"))
+        assertNull(JsonUtils.parseObject(""))
+        assertNull(JsonUtils.parseObject(null))
     }
 }

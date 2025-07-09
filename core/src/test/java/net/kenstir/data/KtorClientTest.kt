@@ -15,7 +15,7 @@
  * along with this program; if not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.kenstir.hemlock.data
+package net.kenstir.data
 
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.pluginOrNull
@@ -31,9 +31,6 @@ import kotlinx.coroutines.test.runTest
 import org.evergreen_ils.Api
 import org.evergreen_ils.gateway.GatewayClient
 import org.evergreen_ils.gateway.paramListOf
-import net.kenstir.data.HemlockPlugin
-import net.kenstir.data.elapsedTime
-import net.kenstir.data.isCached
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue

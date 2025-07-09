@@ -15,9 +15,8 @@
  * along with this program; if not, see <https://www.gnu.org/licenses/>.
  */
 
-package org.evergreen_ils.data
+package org.evergreen_ils.data.model
 
-import org.evergreen_ils.data.model.FineRecord
 import org.evergreen_ils.gateway.GatewayResult
 import org.evergreen_ils.gateway.OSRFCoder
 import org.junit.Assert.assertEquals

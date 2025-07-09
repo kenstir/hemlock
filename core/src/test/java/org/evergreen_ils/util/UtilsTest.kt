@@ -15,30 +15,18 @@
  * along with this program; if not, see <https://www.gnu.org/licenses/>.
  */
 
-package org.evergreen_ils.data
+package org.evergreen_ils.util
 
-import net.kenstir.util.JsonUtils
+import net.kenstir.data.jsonMapOf
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertNull
 import org.junit.Test
 
-class JsonUtilsTest {
-
+class UtilsTest {
     @Test
-    fun test_parseObjectOK() {
-        val json = """
-            {"_attr":"mr_hold_format","_val":"book"}
-            """
-        val obj = JsonUtils.parseObject(json)
-        assertEquals("book", obj?.get("_val"))
-    }
-
-    @Test
-    fun test_parseNonObject() {
-        assertNull(JsonUtils.parseObject(""""bare string""""))
-        assertNull(JsonUtils.parseObject("8"))
-        assertNull(JsonUtils.parseObject("[42]"))
-        assertNull(JsonUtils.parseObject(""))
-        assertNull(JsonUtils.parseObject(null))
+    fun test_fromApiToIntOrNull() {
+        val map = jsonMapOf("id" to 1)
+        assertEquals(null, map.fromApiToIntOrNull())
+        assertEquals(42, 42.fromApiToIntOrNull())
+        assertEquals(42, "42".fromApiToIntOrNull())
     }
 }

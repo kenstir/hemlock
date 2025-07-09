@@ -15,7 +15,7 @@
  * along with this program; if not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.kenstir.hemlock.mock
+package net.kenstir.mock
 
 import net.kenstir.data.model.PatronMessage
 import net.kenstir.data.Result

@@ -16,11 +16,9 @@
  */
 
 
-package org.evergreen_ils.data
+package org.evergreen_ils.data.model
 
 import net.kenstir.data.jsonMapOf
-import org.evergreen_ils.data.model.EvergreenCircRecord
-import org.evergreen_ils.data.model.MBRecord
 import org.evergreen_ils.util.OSRFUtils
 import org.evergreen_ils.gateway.OSRFObject
 import org.junit.Assert.assertEquals
