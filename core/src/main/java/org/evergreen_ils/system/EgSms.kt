@@ -18,9 +18,9 @@
 
 package org.evergreen_ils.system
 
-import org.evergreen_ils.android.Log
-import org.evergreen_ils.data.SMSCarrier
-import org.opensrf.util.OSRFObject
+import net.kenstir.logging.Log
+import org.evergreen_ils.data.model.SMSCarrier
+import org.evergreen_ils.gateway.OSRFObject
 
 
 object EgSms {

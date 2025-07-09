@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Kenneth H. Cox
+ * Copyright (c) 2025 Kenneth H. Cox
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -12,21 +12,19 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ * along with this program; if not, see <https://www.gnu.org/licenses/>.
  */
 package org.evergreen_ils.system
 
-import org.evergreen_ils.OSRFUtils
-import org.evergreen_ils.android.Analytics
-import org.evergreen_ils.android.Log
-import org.opensrf.ShouldNotHappenException
-import org.opensrf.util.OSRFObject
+import org.evergreen_ils.util.OSRFUtils
+import net.kenstir.util.Analytics
+import net.kenstir.logging.Log
+import net.kenstir.data.ShouldNotHappenException
+import org.evergreen_ils.gateway.OSRFObject
 import java.util.*
 
 object EgCodedValueMap {
-    private val TAG = EgCodedValueMap::class.java.simpleName
-
+    const val TAG = "CodedValueMap"
     const val SEARCH_FORMAT = "search_format"
     const val ICON_FORMAT = "icon_format"
     const val ALL_SEARCH_FORMATS = "All Formats"
@@ -47,7 +45,7 @@ object EgCodedValueMap {
             val search_label = obj.getString("search_label") ?: ""
             val value = obj.getString("value") ?: ""
             val cv = CodedValue(code, if (search_label.isNotBlank()) search_label else value, opac_visible)
-            Log.d(TAG, "ccvm ctype:" + ctype + " code:" + code + " label:" + cv.value)
+            Log.v(TAG, "ccvm ctype:" + ctype + " code:" + code + " label:" + cv.value)
             if (ctype == SEARCH_FORMAT) {
                 searchFormats.add(cv)
             } else if (ctype == ICON_FORMAT) {

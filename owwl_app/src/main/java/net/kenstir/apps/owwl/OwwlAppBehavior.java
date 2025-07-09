@@ -18,12 +18,9 @@
 
 package net.kenstir.apps.owwl;
 
-import android.text.TextUtils;
-
-import org.evergreen_ils.android.AppBehavior;
-import org.evergreen_ils.data.MBRecord;
-import org.evergreen_ils.utils.Link;
-import org.evergreen_ils.utils.MARCRecord;
+import net.kenstir.ui.AppBehavior;
+import org.evergreen_ils.data.model.MBRecord;
+import net.kenstir.data.model.Link;
 
 import java.util.List;
 

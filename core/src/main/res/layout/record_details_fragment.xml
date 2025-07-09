@@ -77,7 +77,7 @@
                         tools:text="c2000 Arthur A. Levine Books" />
                 </LinearLayout>
 
-                <com.android.volley.toolbox.NetworkImageView
+                <ImageView
                     android:id="@+id/record_details_simple_image"
                     android:layout_width="140dp"
                     android:layout_height="180dp"

@@ -20,12 +20,10 @@ package net.kenstir.apps.pines
 import android.app.Activity
 import android.content.Intent
 import androidx.annotation.Keep
-import androidx.core.app.ActivityCompat.startActivityForResult
-import org.evergreen_ils.android.App.REQUEST_MESSAGES
-import org.evergreen_ils.net.Gateway.getUrl
-import org.evergreen_ils.utils.ui.ActivityUtils
-import org.evergreen_ils.views.MenuProvider
-import org.evergreen_ils.views.messages.MessagesActivity
+import net.kenstir.ui.App.REQUEST_MESSAGES
+import net.kenstir.ui.util.ActivityUtils
+import net.kenstir.ui.view.MenuProvider
+import net.kenstir.ui.view.messages.MessagesActivity
 
 @Keep
 class PinesMenuProvider : MenuProvider() {
@@ -36,7 +34,7 @@ class PinesMenuProvider : MenuProvider() {
     override fun onItemSelected(activity: Activity, id: Int, via: String): Boolean {
         if (id == R.id.open_full_catalog_button) {
             //Analytics.logEvent("fullcatalog_click", "via", via);
-            val url = activity.getString(org.evergreen_ils.R.string.ou_library_url)
+            val url = activity.getString(R.string.ou_library_url)
             ActivityUtils.launchURL(activity, url)
         } else if (id == R.id.library_locator_button) {
             //Analytics.logEvent("librarylocator_click", "via", via);
