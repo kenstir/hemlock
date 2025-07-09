@@ -17,6 +17,11 @@
 
 package net.kenstir.util
 
+import android.content.res.Resources
+import net.kenstir.data.model.BibRecord
+import net.kenstir.hemlock.R
+import org.evergreen_ils.system.EgOrg.getOrgNameSafe
+
 // Given a pubdate like "2000", "c2002", "2003-", or "2007-2014",
 // extract the first number as an Int for sorting.
 fun pubdateSortKey(pubdate: String?): Int? {
@@ -46,4 +51,21 @@ fun titleSortKey(title: String?): String? {
     // filter out punctuation
     // modeled after code in misc_util.tt2 block get_marc_attrs
     return t2.replace("^[^A-Z0-9]*".toRegex(), "")
+}
+
+fun BibRecord.getCopySummary(resources: Resources, orgID: Int?): String {
+    var total = 0
+    var available = 0
+    if (copyCounts == null) return ""
+    if (orgID == null) return ""
+    for (copyCount in copyCounts.orEmpty()) {
+        if (copyCount.orgId == orgID) {
+            total = copyCount.count
+            available = copyCount.available
+            break
+        }
+    }
+    val totalCopies = resources.getQuantityString(R.plurals.number_of_copies, total, total)
+    return String.format(resources.getString(R.string.n_of_m_available),
+        available, totalCopies, getOrgNameSafe(orgID))
 }

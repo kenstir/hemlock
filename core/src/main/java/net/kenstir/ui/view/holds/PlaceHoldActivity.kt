@@ -46,12 +46,12 @@ import net.kenstir.ui.Key
 import net.kenstir.ui.util.showAlert
 import net.kenstir.data.Result
 import net.kenstir.data.model.Account
+import net.kenstir.data.model.BibRecord
 import net.kenstir.data.model.HoldPart
 import net.kenstir.logging.Log
 import net.kenstir.data.service.HoldOptions
 import net.kenstir.ui.App
 import net.kenstir.util.getCustomMessage
-import org.evergreen_ils.data.model.MBRecord
 import org.evergreen_ils.util.OSRFUtils
 import org.evergreen_ils.data.model.SMSCarrier
 import org.evergreen_ils.system.EgOrg
@@ -93,7 +93,7 @@ class PlaceHoldActivity : BaseActivity() {
     private var progress: ProgressDialogSupport? = null
     private var parts: List<HoldPart>? = null
     private var titleHoldIsPossible: Boolean? = null
-    private lateinit var record: MBRecord
+    private lateinit var record: BibRecord
 
     private val hasParts: Boolean
         get() = !(parts.isNullOrEmpty())
@@ -106,7 +106,7 @@ class PlaceHoldActivity : BaseActivity() {
 
         setContentView(R.layout.place_hold)
 
-        record = intent.getSerializableExtra(Key.RECORD_INFO) as MBRecord
+        record = intent.getSerializableExtra(Key.RECORD_INFO) as BibRecord
         account = App.getAccount()
         progress = ProgressDialogSupport()
         title = findViewById(R.id.hold_title)

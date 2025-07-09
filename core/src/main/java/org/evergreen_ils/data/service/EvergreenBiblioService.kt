@@ -20,6 +20,7 @@ package org.evergreen_ils.data.service
 import net.kenstir.data.Result
 import net.kenstir.data.model.BibRecord
 import net.kenstir.data.service.BiblioService
+import net.kenstir.data.service.ImageSize
 import org.evergreen_ils.Api
 import org.evergreen_ils.data.model.EvergreenCopyCount
 import org.evergreen_ils.data.model.MBRecord
@@ -28,6 +29,14 @@ import org.evergreen_ils.gateway.OSRFObject
 import org.evergreen_ils.gateway.paramListOf
 
 object EvergreenBiblioService: BiblioService {
+
+    override fun imageUrl(record: BibRecord, size: ImageSize): String? {
+        return when (size) {
+            ImageSize.SMALL -> GatewayClient.getUrl("/opac/extras/ac/jacket/small/r/" + record.id)
+            ImageSize.MEDIUM -> GatewayClient.getUrl("/opac/extras/ac/jacket/medium/r/" + record.id)
+            ImageSize.LARGE -> GatewayClient.getUrl("/opac/extras/ac/jacket/large/r/" + record.id)
+        }
+    }
 
     override suspend fun loadRecordDetails(bibRecord: BibRecord, needMARC: Boolean): Result<Unit> {
         val record = bibRecord as? MBRecord

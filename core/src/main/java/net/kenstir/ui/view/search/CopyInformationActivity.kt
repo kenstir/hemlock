@@ -39,21 +39,22 @@ import net.kenstir.hemlock.R
 import net.kenstir.ui.Key
 import net.kenstir.ui.util.showAlert
 import net.kenstir.data.Result
+import net.kenstir.data.model.BibRecord
 import net.kenstir.data.model.CopyLocationCounts
 import net.kenstir.logging.Log
 import net.kenstir.ui.App
-import org.evergreen_ils.data.model.MBRecord
 import org.evergreen_ils.system.EgOrg
 import org.evergreen_ils.system.EgOrg.findOrg
 import org.evergreen_ils.system.EgOrg.getOrgNameSafe
 import net.kenstir.ui.BaseActivity
 import net.kenstir.ui.view.OrgDetailsActivity
 import net.kenstir.ui.view.holds.PlaceHoldActivity
+import net.kenstir.util.getCopySummary
 
 class CopyInformationActivity : BaseActivity() {
     private val TAG = CopyInformationActivity::class.java.simpleName
 
-    private lateinit var record: MBRecord
+    private lateinit var record: BibRecord
     private var orgID: Int = EgOrg.consortiumID
     private var lv: ListView? = null
     private var placeHoldButton: Button? = null
@@ -70,10 +71,10 @@ class CopyInformationActivity : BaseActivity() {
         setContentView(R.layout.copy_information_list)
 
         if (savedInstanceState != null) {
-            record = savedInstanceState.getSerializable(Key.RECORD_INFO) as MBRecord
+            record = savedInstanceState.getSerializable(Key.RECORD_INFO) as BibRecord
             orgID = savedInstanceState.getInt(Key.ORG_ID)
         } else {
-            record = intent.getSerializableExtra(Key.RECORD_INFO) as MBRecord
+            record = intent.getSerializableExtra(Key.RECORD_INFO) as BibRecord
             orgID = intent.getIntExtra(Key.ORG_ID, EgOrg.consortiumID)
         }
 

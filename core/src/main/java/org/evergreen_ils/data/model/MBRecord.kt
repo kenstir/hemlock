@@ -17,7 +17,6 @@
 
 package org.evergreen_ils.data.model
 
-import android.content.res.Resources
 import net.kenstir.data.model.BibRecord
 import net.kenstir.data.model.CopyCount
 import net.kenstir.hemlock.R
@@ -123,23 +122,6 @@ class MBRecord(override val id: Int, var mvrObj: OSRFObject? = null): BibRecord 
 
     override fun getAttr(attrName: String?): String? {
         return attrs?.get(attrName)
-    }
-
-    fun getCopySummary(resources: Resources, orgID: Int?): String {
-        var total = 0
-        var available = 0
-        if (copyCounts == null) return ""
-        if (orgID == null) return ""
-        for (copyCount in copyCounts.orEmpty()) {
-            if (copyCount.orgId == orgID) {
-                total = copyCount.count
-                available = copyCount.available
-                break
-            }
-        }
-        val totalCopies = resources.getQuantityString(R.plurals.number_of_copies, total, total)
-        return String.format(resources.getString(R.string.n_of_m_available),
-            available, totalCopies, getOrgNameSafe(orgID))
     }
 
     fun totalCopies(orgID: Int?): Int {
