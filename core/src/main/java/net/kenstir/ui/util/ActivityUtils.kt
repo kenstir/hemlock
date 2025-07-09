@@ -25,6 +25,7 @@ import net.kenstir.hemlock.R
 
 object ActivityUtils {
     @JvmStatic
+    // TODO: Move to ActivityExtensions.kt once there are no Java usages.
     fun launchURL(activity: Activity, url: String?) {
         if (url.isNullOrEmpty()) {
             Toast.makeText(activity, R.string.msg_null_url, Toast.LENGTH_LONG).show()

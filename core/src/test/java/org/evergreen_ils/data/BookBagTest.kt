@@ -121,7 +121,6 @@ class BookBagTest {
 
     @Test
     fun test_skeletonBookbagIsSerializable() {
-        // Ensure that BookBag is serializable
         val bookBag = BookBag(1, "Test Bag", cbrebObj)
         val serialized = java.io.ByteArrayOutputStream()
         java.io.ObjectOutputStream(serialized).use { it.writeObject(bookBag) }
@@ -132,7 +131,6 @@ class BookBagTest {
 
     @Test
     fun test_fleshedBookbagIsSerializable() {
-        // Ensure that fleshed BookBag is serializable
         val bookBag = BookBag(1, "Test Bag", cbrebObj)
         bookBag.fleshFromObject(fleshedCbrebObj)
         val serialized = java.io.ByteArrayOutputStream()

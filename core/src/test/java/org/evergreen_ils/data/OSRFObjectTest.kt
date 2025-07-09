@@ -100,7 +100,7 @@ class OSRFObjectTest {
         }
     }
 
-    // Test to understand warning: Unchecked cast: Any! to List<XOSRFObject>
+    // Test to understand warning: Unchecked cast: Any! to List<OSRFObject>
     @Test
     fun test_misc_uncheckedCast1() {
         val obj = OSRFObject(
@@ -113,7 +113,7 @@ class OSRFObjectTest {
         // As Expected; as? returns null
     }
 
-    // Test to understand warning: Unchecked cast: Any! to List<XOSRFObject>
+    // Test to understand warning: Unchecked cast: Any! to List<OSRFObject>
     @Test
     fun test_misc_uncheckedCast2() {
         val obj = OSRFObject(
@@ -131,7 +131,7 @@ class OSRFObjectTest {
         // As Expected; as? returns non-null
     }
 
-    // Test to understand warning: Unchecked cast: Any! to List<XOSRFObject>
+    // Test to understand warning: Unchecked cast: Any! to List<OSRFObject>
     @Test
     fun test_misc_uncheckedCast3() {
         val obj = OSRFObject(

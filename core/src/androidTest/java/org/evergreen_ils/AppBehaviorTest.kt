@@ -23,13 +23,14 @@ import org.evergreen_ils.data.model.MBRecord
 import net.kenstir.data.jsonMapOf
 import org.evergreen_ils.system.EgOrg
 import net.kenstir.data.model.Link
+import net.kenstir.ui.AppBehavior
 import org.evergreen_ils.data.model.MARCRecord
 import org.evergreen_ils.data.model.MARCXMLParser
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
 
-class TestAppBehavior: net.kenstir.ui.AppBehavior() {
+class TestAppBehavior: AppBehavior() {
     override fun isVisibleToOrg(df: MARCRecord.MARCDatafield, orgShortName: String): Boolean {
         return isVisibleViaLocatedURI(df, orgShortName)
     }

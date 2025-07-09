@@ -128,7 +128,6 @@ object EgOrg {
     }
 
     // return list of spinner labels and the index at which defaultOrgId appears else (0)
-    // TODO: move to .android package
     fun orgSpinnerLabelsAndSelectedIndex(defaultOrgId: Int?): Pair<ArrayList<String>, Int> {
         val labels: ArrayList<String> = ArrayList<String>(visibleOrgs.size)
         var selectedIndex = 0

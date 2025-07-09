@@ -25,7 +25,7 @@ import org.junit.Before
 import org.junit.Test
 import java.nio.charset.StandardCharsets
 
-class XSerializationPerformanceTest {
+class SerializationPerformanceTest {
     companion object {
         const val iterations = 100
         lateinit var largeOrgTreeJson: String

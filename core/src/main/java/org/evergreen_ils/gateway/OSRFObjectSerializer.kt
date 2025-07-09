@@ -40,7 +40,7 @@ import kotlinx.serialization.json.jsonObject
  *
  * This class is useful for encoding gateway parameters, but it alone is not
  * sufficiently flexible for decoding gateway payloads.  That is because
- * Json.decodeFromString<XOSRFObject>() requires that you know you want
+ * Json.decodeFromString<OSRFObject>() requires that you know you want
  * an XOSRFObject.  When decoding a gateway payload, all you know is that
  * payload is an array.  Thus we ended up with GatewayResponseContent
  * and the deserialization happening in XOSRFCoder.
