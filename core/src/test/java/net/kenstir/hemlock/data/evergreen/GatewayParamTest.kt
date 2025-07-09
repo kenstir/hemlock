@@ -39,7 +39,7 @@ class GatewayParamTest {
     }
 
     @Test
-    fun test_gatewayParamSerialization_primitives() {
+    fun test_serializationOfPrimitives() {
         val tests = mapOf<String, Any?>(
             "\"test\"" to "test",
             "123" to 123,
@@ -54,7 +54,7 @@ class GatewayParamTest {
     }
 
     @Test
-    fun test_serialization_XOSRFObject() {
+    fun test_serializationOfOSRFObject() {
         val obj = OSRFObject(jsonMapOf(
             "id" to 1,
             "name" to "Yanni",

@@ -34,15 +34,15 @@ class PinesMenuProvider : MenuProvider() {
         if (id == R.id.open_full_catalog_button) {
             //Analytics.logEvent("fullcatalog_click", "via", via);
             val url = activity.getString(R.string.ou_library_url)
-            net.kenstir.ui.util.ActivityUtils.launchURL(activity, url)
+            ActivityUtils.launchURL(activity, url)
         } else if (id == R.id.library_locator_button) {
             //Analytics.logEvent("librarylocator_click", "via", via);
             val url = "https://pines.georgialibraries.org/pinesLocator/locator.html"
-            net.kenstir.ui.util.ActivityUtils.launchURL(activity, url)
+            ActivityUtils.launchURL(activity, url)
         } else if (id == R.id.galileo_button) {
             //Analytics.logEvent("galileo_click", "via", via);
             val url = "https://www.galileo.usg.edu"
-            net.kenstir.ui.util.ActivityUtils.launchURL(activity, url)
+            ActivityUtils.launchURL(activity, url)
         } else if (id == R.id.patron_message_center) {
             //Analytics.logEvent("messages_click", "via", "options_menu");
             activity.startActivityForResult(Intent(activity, MessagesActivity::class.java), REQUEST_MESSAGES)

@@ -22,10 +22,11 @@ import android.text.TextUtils
 import androidx.annotation.Keep
 import org.evergreen_ils.data.model.MBRecord
 import net.kenstir.data.model.Link
+import net.kenstir.ui.AppBehavior
 import org.evergreen_ils.data.model.MARCRecord.MARCDatafield
 
 @Keep
-class NobleAppBehavior : net.kenstir.ui.AppBehavior() {
+class NobleAppBehavior : AppBehavior() {
     override fun isOnlineResource(record: MBRecord?): Boolean? {
         if (record == null) return null
         if (!record.hasMetadata()) return null
