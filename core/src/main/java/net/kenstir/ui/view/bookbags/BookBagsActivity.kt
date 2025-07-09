@@ -45,7 +45,6 @@ import net.kenstir.ui.BaseActivity
 import net.kenstir.ui.Key
 import net.kenstir.ui.util.ProgressDialogSupport
 import net.kenstir.ui.util.showAlert
-import org.evergreen_ils.data.model.BookBag
 
 class BookBagsActivity : BaseActivity() {
     private var lv: ListView? = null
@@ -73,7 +72,7 @@ class BookBagsActivity : BaseActivity() {
         listAdapter = PatronListArrayAdapter(this, R.layout.bookbag_list_item)
         lv?.adapter = listAdapter
         lv?.onItemClickListener = AdapterView.OnItemClickListener { parent, view, position, id ->
-            val item = lv?.getItemAtPosition(position) as BookBag
+            val item = lv?.getItemAtPosition(position) as PatronList
             val intent = Intent(this@BookBagsActivity, BookBagDetailsActivity::class.java)
             intent.putExtra(Key.PATRON_LIST, item)
             startActivityForResult(intent, 0)
