@@ -1,9 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <network-security-config>
-<!--    <domain-config cleartextTrafficPermitted="true">-->
-<!--        <domain includeSubdomains="true">192.168.1.4</domain>-->
-<!--&lt;!&ndash;        <domain includeSubdomains="true">192.168.1.4:8080</domain> local httpbin&ndash;&gt;-->
-<!--        <domain includeSubdomains="true">192.168.1.8</domain>-->
-<!--&lt;!&ndash;        <domain includeSubdomains="true">httpbin.org</domain>&ndash;&gt;-->
-<!--    </domain-config>-->
+    <domain-config cleartextTrafficPermitted="true">
+        <domain includeSubdomains="true">192.168.1.8</domain>
+    </domain-config>
 </network-security-config>
