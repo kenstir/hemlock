@@ -45,7 +45,7 @@
 
 	</LinearLayout>
 
-	<com.android.volley.toolbox.NetworkImageView
+	<ImageView
 		android:id="@+id/search_record_img"
 		android:layout_width="64dip"
 		android:layout_height="96dip"

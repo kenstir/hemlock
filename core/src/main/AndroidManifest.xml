@@ -10,7 +10,7 @@
     <uses-permission android:name="android.permission.WAKE_LOCK" />
 
     <application
-        android:name="org.evergreen_ils.android.Application"
+        android:name="net.kenstir.ui.Application"
         android:allowBackup="true"
         android:label="@string/ou_app_label"
         android:networkSecurityConfig="@xml/network_security_config">

@@ -34,7 +34,7 @@
         <!-- launch and main -->
 
         <activity
-            android:name="org.evergreen_ils.views.launch.LaunchActivity"
+            android:name="net.kenstir.ui.view.launch.LaunchActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -42,92 +42,92 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="org.evergreen_ils.views.MainActivity"
+            android:name="net.kenstir.ui.view.main.MainActivity"
             android:launchMode="singleTask">
         </activity>
         <activity
-            android:name="org.evergreen_ils.views.MainGridActivity"
+            android:name="net.kenstir.ui.view.main.MainGridActivity"
             android:launchMode="singleTask">
         </activity>
 
         <!-- top-level activities -->
 
         <activity
-            android:name="org.evergreen_ils.views.BarcodeActivity"
+            android:name="net.kenstir.ui.view.BarcodeActivity"
             android:label="@string/barcode_title"
-            android:parentActivityName="org.evergreen_ils.views.MainActivity">
+            android:parentActivityName="net.kenstir.ui.view.main.MainActivity">
         </activity>
         <activity
-            android:name="org.evergreen_ils.views.bookbags.BookBagsActivity"
+            android:name="net.kenstir.ui.view.bookbags.BookBagsActivity"
             android:label="@string/title_my_lists"
-            android:parentActivityName="org.evergreen_ils.views.MainActivity">
+            android:parentActivityName="net.kenstir.ui.view.main.MainActivity">
         </activity>
         <activity
-            android:name="org.evergreen_ils.views.CheckoutsActivity"
+            android:name="net.kenstir.ui.view.CheckoutsActivity"
             android:label="@string/checkout_items_title"
-            android:parentActivityName="org.evergreen_ils.views.MainActivity">
+            android:parentActivityName="net.kenstir.ui.view.main.MainActivity">
         </activity>
         <activity
-            android:name="org.evergreen_ils.views.FinesActivity"
+            android:name="net.kenstir.ui.view.FinesActivity"
             android:label="@string/title_fines"
-            android:parentActivityName="org.evergreen_ils.views.MainActivity">
+            android:parentActivityName="net.kenstir.ui.view.main.MainActivity">
         </activity>
         <activity
-            android:name="org.evergreen_ils.views.holds.HoldsActivity"
+            android:name="net.kenstir.ui.view.holds.HoldsActivity"
             android:label="@string/hold_items_title"
-            android:parentActivityName="org.evergreen_ils.views.MainActivity">
+            android:parentActivityName="net.kenstir.ui.view.main.MainActivity">
         </activity>
         <activity
-            android:name="org.evergreen_ils.views.OrgDetailsActivity"
+            android:name="net.kenstir.ui.view.OrgDetailsActivity"
             android:label="@string/title_library_info"
-            android:parentActivityName="org.evergreen_ils.views.MainActivity">
+            android:parentActivityName="net.kenstir.ui.view.main.MainActivity">
         </activity>
         <activity
-            android:name="org.evergreen_ils.views.search.SearchActivity"
+            android:name="net.kenstir.ui.view.search.SearchActivity"
             android:label="@string/title_search"
-            android:parentActivityName="org.evergreen_ils.views.MainActivity">
+            android:parentActivityName="net.kenstir.ui.view.main.MainActivity">
         </activity>
 
         <!-- secondary activities -->
 
         <activity
-            android:name="org.evergreen_ils.views.bookbags.BookBagDetailsActivity"
+            android:name="net.kenstir.ui.view.bookbags.BookBagDetailsActivity"
             android:label="@string/title_list_details"
-            android:parentActivityName="org.evergreen_ils.views.bookbags.BookBagsActivity">
+            android:parentActivityName="net.kenstir.ui.view.bookbags.BookBagsActivity">
         </activity>
         <activity
-            android:name="org.evergreen_ils.views.history.HistoryActivity"
+            android:name="net.kenstir.ui.view.history.HistoryActivity"
             android:label="@string/title_checkout_history">
         </activity>
         <activity
-            android:name="org.evergreen_ils.views.holds.HoldDetailsActivity"
+            android:name="net.kenstir.ui.view.holds.HoldDetailsActivity"
             android:label="@string/hold_details_title">
         </activity>
         <activity
-            android:name="org.evergreen_ils.views.holds.PlaceHoldActivity"
+            android:name="net.kenstir.ui.view.holds.PlaceHoldActivity"
             android:label="@string/hold_place_title">
         </activity>
         <activity
-            android:name="org.evergreen_ils.views.search.AdvancedSearchActivity"
+            android:name="net.kenstir.ui.view.search.AdvancedSearchActivity"
             android:label="@string/advanced_search">
         </activity>
         <activity
-            android:name="org.evergreen_ils.views.search.CopyInformationActivity"
+            android:name="net.kenstir.ui.view.search.CopyInformationActivity"
             android:label="@string/copy_information_title">
         </activity>
         <activity
-            android:name="org.evergreen_ils.views.search.RecordDetailsActivity"
+            android:name="net.kenstir.ui.view.search.RecordDetailsActivity"
             android:label="@string/search_details_title">
         </activity>
 
         <!-- auth stuff -->
 
         <activity
-            android:name="org.evergreen_ils.auth.AuthenticatorActivity"
+            android:name="net.kenstir.ui.account.AuthenticatorActivity"
             android:label="@string/ou_account_label">
         </activity>
         <service
-            android:name="org.evergreen_ils.auth.AuthenticatorService"
+            android:name="net.kenstir.ui.account.AuthenticatorService"
             android:exported="false" >
             <intent-filter>
                 <action android:name="android.accounts.AccountAuthenticator" />

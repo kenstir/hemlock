@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Kenneth H. Cox
+ * Copyright (c) 2025 Kenneth H. Cox
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -12,18 +12,17 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ * along with this program; if not, see <https://www.gnu.org/licenses/>.
  */
 package org.evergreen_ils.system
 
 import android.annotation.SuppressLint
 import androidx.core.util.Pair
-import org.evergreen_ils.android.Log
-import org.evergreen_ils.data.OrgType
-import org.evergreen_ils.data.Organization
-import org.evergreen_ils.net.Gateway
-import org.opensrf.util.OSRFObject
+import net.kenstir.logging.Log
+import org.evergreen_ils.gateway.OSRFObject
+import org.evergreen_ils.data.model.OrgType
+import net.kenstir.data.model.Organization
+import org.evergreen_ils.data.model.EvergreenOrganization
 import java.util.*
 import kotlin.Comparator
 
@@ -36,7 +35,6 @@ object EgOrg {
 
     val allOrgs: List<Organization>
         get() = orgs
-    @JvmStatic
     val visibleOrgs: List<Organization>
         get() = orgs.filter { it.opacVisible }
 
@@ -67,9 +65,9 @@ object EgOrg {
         val id = obj.getInt("id") ?: return
         val name = obj.getString("name") ?: return
         val shortName = obj.getString("shortname") ?: return
-        val ouType = obj.getInt("ou_type") ?: return
         val opacVisible = obj.getBoolean("opac_visible")
-        val org = Organization(id, level, name, shortName, ouType, opacVisible, obj)
+        val parent = obj.getInt("parent_ou")
+        val org = EvergreenOrganization(id, level, name, shortName, opacVisible, parent, obj)
         org.indentedDisplayPrefix = String(CharArray(level)).replace("\u0000", "   ")
         Log.v(TAG, "org id:${org.id} level:${org.level} vis:${org.opacVisible} shortname:${org.shortname} name:${org.name}")
         orgs.add(org)
@@ -149,14 +147,17 @@ object EgOrg {
         val numWithEresources = visibleOrgs.count { !it.eresourcesUrl.isNullOrEmpty() }
         val numWithMeetingRooms = visibleOrgs.count { !it.meetingRoomsUrl.isNullOrEmpty() }
         val numWithMuseumPasses = visibleOrgs.count { !it.museumPassesUrl.isNullOrEmpty() }
-        val numRequireMonographicPart = orgs.count { it.requireMonographicPart != null }
         Log.d(TAG, String.format("%3d visible orgs", visibleOrgs.size))
         Log.d(TAG, String.format("%3d are pickup locations", numPickupLocations))
         Log.d(TAG, String.format("%3d have events URLs", numWithEvents))
         Log.d(TAG, String.format("%3d have eresources URLs", numWithEresources))
         Log.d(TAG, String.format("%3d have meeting rooms URLs", numWithMeetingRooms))
         Log.d(TAG, String.format("%3d have museum passes URLs", numWithMuseumPasses))
-        Log.d(TAG, String.format("%3d have require_monographic_part set", numRequireMonographicPart))
         print("")
+
+//        for (org in allOrgs) {
+//            Log.d(TAG, String.format("%d,%s,%s", org.id, org.shortname, org.name))
+//        }
+//        print("")
     }
 }
