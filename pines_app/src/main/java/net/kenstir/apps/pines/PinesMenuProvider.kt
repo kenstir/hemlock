@@ -20,7 +20,8 @@ package net.kenstir.apps.pines
 import android.app.Activity
 import android.content.Intent
 import androidx.annotation.Keep
-import App.REQUEST_MESSAGES
+import net.kenstir.ui.App.REQUEST_MESSAGES
+import net.kenstir.ui.util.ActivityUtils
 import net.kenstir.ui.view.MenuProvider
 import net.kenstir.ui.view.messages.MessagesActivity
 
