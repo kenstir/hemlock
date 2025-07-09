@@ -17,7 +17,7 @@
 package org.evergreen_ils.system
 
 import org.evergreen_ils.util.OSRFUtils
-import net.kenstir.ui.Analytics
+import net.kenstir.util.Analytics
 import net.kenstir.logging.Log
 import net.kenstir.data.ShouldNotHappenException
 import org.evergreen_ils.gateway.OSRFObject

@@ -25,7 +25,7 @@ import net.kenstir.data.HemlockPluginAttributeKeys.debugUrlKey
 import net.kenstir.data.HemlockPluginAttributeKeys.fromCacheKey
 import net.kenstir.data.HemlockPluginAttributeKeys.recvTimeKey
 import net.kenstir.data.HemlockPluginAttributeKeys.sentTimeKey
-import net.kenstir.ui.Analytics
+import net.kenstir.util.Analytics
 import okhttp3.Interceptor
 
 object HemlockPluginKeys {

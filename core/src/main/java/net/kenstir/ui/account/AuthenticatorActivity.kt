@@ -29,7 +29,7 @@ import android.widget.TextView
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.async
 import net.kenstir.hemlock.R
-import net.kenstir.ui.Analytics
+import net.kenstir.util.Analytics
 import net.kenstir.data.Result
 import net.kenstir.data.model.Library
 import net.kenstir.ui.App

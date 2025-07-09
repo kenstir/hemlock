@@ -15,14 +15,12 @@
  * along with this program; if not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.kenstir.hemlock.data.evergreen
+package org.evergreen_ils.gateway
 
 import io.ktor.client.plugins.pluginOrNull
 import kotlinx.coroutines.test.runTest
 import net.kenstir.data.HemlockPlugin
 import org.evergreen_ils.Api
-import org.evergreen_ils.gateway.GatewayClient
-import org.evergreen_ils.gateway.paramListOf
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue

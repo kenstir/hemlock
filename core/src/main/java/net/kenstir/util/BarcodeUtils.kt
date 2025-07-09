@@ -19,7 +19,7 @@ package net.kenstir.util
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.MultiFormatWriter
 import com.google.zxing.common.BitMatrix
-import net.kenstir.ui.Analytics.logException
+import net.kenstir.util.Analytics.logException
 
 object BarcodeUtils {
     // Try to encode the barcode data using the given format

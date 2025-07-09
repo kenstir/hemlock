@@ -39,6 +39,7 @@ import net.kenstir.data.model.Library;
 
 import net.kenstir.ui.view.launch.LaunchActivity;
 import net.kenstir.ui.view.main.MainActivity;
+import net.kenstir.util.Analytics;
 
 import java.io.File;
 

@@ -20,7 +20,7 @@ package org.evergreen_ils.util;
 import android.annotation.SuppressLint;
 
 import net.kenstir.data.ShouldNotHappenException;
-import net.kenstir.ui.Analytics;
+import net.kenstir.util.Analytics;
 
 import java.text.DateFormat;
 import java.text.ParseException;

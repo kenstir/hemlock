@@ -15,11 +15,9 @@
  * along with this program; if not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.kenstir.hemlock.data.evergreen
+package org.evergreen_ils.gateway
 
 import kotlinx.serialization.json.Json
-import org.evergreen_ils.gateway.XGatewayResponseContent
-import org.evergreen_ils.gateway.OSRFCoder
 import org.junit.Assert.assertNotNull
 import org.junit.Before
 import org.junit.Test

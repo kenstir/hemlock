@@ -18,7 +18,10 @@ package net.kenstir.logging
 
 import android.annotation.SuppressLint
 
-/** private logging class that allows substituting different behaviors
+/**
+ * Logger that automatically uses Android logging when available, stdout when not.
+ *
+ * This allows liberal use of logging while still allowing unit tests to run without an emulator.
  */
 object Log {
     // defining these statics here allows me to unit test code that logs / calls analytics

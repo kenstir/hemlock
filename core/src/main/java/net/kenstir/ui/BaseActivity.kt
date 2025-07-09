@@ -66,6 +66,7 @@ import net.kenstir.ui.view.holds.HoldsActivity
 import net.kenstir.ui.view.main.MainActivity
 import net.kenstir.ui.view.messages.MessagesActivity
 import net.kenstir.ui.view.search.SearchActivity
+import net.kenstir.util.Analytics
 import org.evergreen_ils.system.EgOrg
 import java.net.URLEncoder
 

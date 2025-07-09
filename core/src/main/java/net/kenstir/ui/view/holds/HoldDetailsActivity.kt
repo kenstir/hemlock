@@ -38,7 +38,7 @@ import android.widget.Toast
 import androidx.core.os.bundleOf
 import kotlinx.coroutines.async
 import net.kenstir.hemlock.R
-import net.kenstir.ui.Analytics
+import net.kenstir.util.Analytics
 import net.kenstir.ui.Key
 import net.kenstir.ui.util.showAlert
 import net.kenstir.data.Result

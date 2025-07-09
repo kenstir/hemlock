@@ -39,7 +39,7 @@ import net.kenstir.data.Result
 import net.kenstir.data.model.PatronList
 import net.kenstir.hemlock.R
 import net.kenstir.logging.Log
-import net.kenstir.ui.Analytics
+import net.kenstir.util.Analytics
 import net.kenstir.ui.App
 import net.kenstir.ui.BaseActivity
 import net.kenstir.ui.Key

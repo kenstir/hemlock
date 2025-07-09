@@ -22,7 +22,7 @@ import io.ktor.client.statement.bodyAsChannel
 import io.ktor.client.statement.bodyAsText
 import io.ktor.utils.io.discard
 import io.ktor.utils.io.readAvailable
-import net.kenstir.ui.Analytics
+import net.kenstir.util.Analytics
 import net.kenstir.data.elapsedTime
 import net.kenstir.data.isCached
 import net.kenstir.data.debugTag
