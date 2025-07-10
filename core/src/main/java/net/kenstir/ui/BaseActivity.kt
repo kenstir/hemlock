@@ -40,6 +40,10 @@ import androidx.appcompat.widget.Toolbar
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updatePadding
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.navigation.NavigationView
@@ -83,6 +87,25 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         get() {
             if (_toolbar == null) {
                 _toolbar = ActionBarUtils.initActionBarForActivity(this, null, true)
+                _toolbar?.let { tb -> // Ensure toolbar is not null
+                    ViewCompat.setOnApplyWindowInsetsListener(tb) { view, windowInsets ->
+                        val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
+                        // Apply top padding to the Toolbar to account for the status bar
+                        view.updatePadding(top = insets.top)
+
+                        // If your toolbar needs to account for display cutouts (notches)
+                        val displayCutout = windowInsets.displayCutout
+                        if (displayCutout != null) {
+                            view.updatePadding(
+                                left = displayCutout.safeInsetLeft,
+                                right = displayCutout.safeInsetRight
+                            )
+                        }
+
+                        // Return the insets for other views to consume if needed
+                        WindowInsetsCompat.CONSUMED // Or return windowInsets if not fully consumed
+                    }
+                }
             }
             return _toolbar
         }
@@ -218,6 +241,7 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        WindowCompat.setDecorFitsSystemWindows(window, false) // enable edge-to-edge mode
 
         if (!App.isStarted()) {
             App.restartApp(this)
@@ -248,8 +272,19 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
 
         val navigationView = findViewById<NavigationView>(R.id.nav_view)
         if (navigationView != null) {
+            //???
+            // Handle insets for the NavigationView itself if it extends to edges
+            // ViewCompat.setOnApplyWindowInsetsListener(navView) { ... }
+
             navigationView.setNavigationItemSelectedListener(this)
             val navHeader = navigationView.getHeaderView(0)
+            navHeader?.let { header ->
+                ViewCompat.setOnApplyWindowInsetsListener(header) { view, windowInsets ->
+                    val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
+                    view.updatePadding(top = insets.top) // Apply top padding to the header
+                    WindowInsetsCompat.CONSUMED
+                }
+            }
             navHeader?.setOnClickListener { v -> onNavigationAction(v.id) }
             if (!resources.getBoolean(R.bool.ou_enable_events_button)) {
                 navigationView.menu.removeItem(R.id.main_events_button)
@@ -267,7 +302,7 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         }
     }
 
-    private fun initMenuProvider() {
+    fun initMenuProvider() {
         menuItemHandler = MenuProvider.create(getString(R.string.ou_menu_provider))
     }
 
@@ -307,7 +342,7 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         return onNavigationAction(id)
     }
 
-    protected fun onNavigationAction(id: Int): Boolean {
+    fun onNavigationAction(id: Int): Boolean {
         var ret = true
         if (id == R.id.nav_header) {
             startActivity(App.getMainActivityIntent(this).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
@@ -390,7 +425,7 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         }
     }
 
-    protected open fun launchMap(address: String?) {
+    open fun launchMap(address: String?) {
         val encodedAddress = URLEncoder.encode(address)
         //val url = "google.navigation:q=" + encodedAddress
         val url = "https://www.google.com/maps/search/?api=1&query=$encodedAddress"
