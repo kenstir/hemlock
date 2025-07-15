@@ -140,10 +140,4 @@ class BookBagTest {
     }
 }
 
-fun OSRFObject.cloneMap(): MutableMap<String, Any?> {
-    val map = mutableMapOf<String, Any?>()
-    for ((key, value) in this.map) {
-        map[key] = value
-    }
-    return map
-}
+fun OSRFObject.cloneMap(): MutableMap<String, Any?> = this.map.toMutableMap()
