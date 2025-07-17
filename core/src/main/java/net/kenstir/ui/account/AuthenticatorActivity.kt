@@ -162,8 +162,8 @@ open class AuthenticatorActivity: AccountAuthenticatorActivity() {
                 data.putString(AccountManager.KEY_ACCOUNT_TYPE, accountType)
                 data.putString(AccountManager.KEY_AUTHTOKEN, authtoken)
                 data.putString(PARAM_USER_PASS, password)
-                data.putString(net.kenstir.ui.account.Const.KEY_LIBRARY_NAME, selectedLibrary!!.name)
-                data.putString(net.kenstir.ui.account.Const.KEY_LIBRARY_URL, selectedLibrary!!.url)
+                data.putString(Const.KEY_LIBRARY_NAME, selectedLibrary!!.name)
+                data.putString(Const.KEY_LIBRARY_URL, selectedLibrary!!.url)
 
                 val intent = Intent()
                 intent.putExtras(data)
@@ -175,11 +175,11 @@ open class AuthenticatorActivity: AccountAuthenticatorActivity() {
     }
 
     private fun onAuthSuccess(intent: Intent) {
-        val accountName = intent.getStringExtra(AccountManager.KEY_ACCOUNT_NAME)
-        val accountType = intent.getStringExtra(AccountManager.KEY_ACCOUNT_TYPE)
+        val accountName = intent.getStringExtra(AccountManager.KEY_ACCOUNT_NAME)!!
+        val accountType = intent.getStringExtra(AccountManager.KEY_ACCOUNT_TYPE)!!
         val accountPassword = intent.getStringExtra(PARAM_USER_PASS)
-        val library_name = intent.getStringExtra(net.kenstir.ui.account.Const.KEY_LIBRARY_NAME)
-        val library_url = intent.getStringExtra(net.kenstir.ui.account.Const.KEY_LIBRARY_URL)
+        val library_name = intent.getStringExtra(Const.KEY_LIBRARY_NAME)
+        val library_url = intent.getStringExtra(Const.KEY_LIBRARY_URL)
         val account = Account(accountName, accountType)
         Analytics.log(TAG, ("onAuthSuccess> accountName=" + Analytics.redactedString(accountName)
                 + " accountType=" + accountType
@@ -196,8 +196,8 @@ open class AuthenticatorActivity: AccountAuthenticatorActivity() {
         var userdata: Bundle? = null
         if (!TextUtils.isEmpty(library_url)) {
             userdata = Bundle()
-            userdata.putString(net.kenstir.ui.account.Const.KEY_LIBRARY_NAME, library_name)
-            userdata.putString(net.kenstir.ui.account.Const.KEY_LIBRARY_URL, library_url)
+            userdata.putString(Const.KEY_LIBRARY_NAME, library_name)
+            userdata.putString(Const.KEY_LIBRARY_URL, library_url)
             Analytics.log(TAG,
                 "onAuthSuccess> userdata, name=$library_name url=$library_url")
         }
@@ -210,11 +210,11 @@ open class AuthenticatorActivity: AccountAuthenticatorActivity() {
             // Probably the account already existed, in which case update the password
             Analytics.log(TAG, "onAuthSuccess> false, setPassword, setUserData")
             accountManager!!.setPassword(account, accountPassword)
-            accountManager!!.setUserData(account, net.kenstir.ui.account.Const.KEY_LIBRARY_NAME, library_name)
-            accountManager!!.setUserData(account, net.kenstir.ui.account.Const.KEY_LIBRARY_URL, library_url)
+            accountManager!!.setUserData(account, Const.KEY_LIBRARY_NAME, library_name)
+            accountManager!!.setUserData(account, Const.KEY_LIBRARY_URL, library_url)
             Analytics.log(TAG,
                 "onAuthSuccess> now getUserData library_url=" + accountManager!!.getUserData(account,
-                    net.kenstir.ui.account.Const.KEY_LIBRARY_URL))
+                    Const.KEY_LIBRARY_URL))
         }
 
         setAccountAuthenticatorResult(intent.extras)

@@ -20,8 +20,10 @@ package net.kenstir.ui.util;
 import android.text.TextUtils;
 
 import net.kenstir.hemlock.R;
+import net.kenstir.logging.Log;
 import net.kenstir.ui.App;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -30,11 +32,16 @@ import net.kenstir.ui.AppState;
 
 public class ActionBarUtils {
 
-    public static Toolbar initActionBarForActivity(AppCompatActivity activity, String title, boolean isMainActivity) {
+    public static Toolbar initActionBarForActivity(
+            AppCompatActivity activity,
+            @Nullable String title,
+            boolean isMainActivity
+    ) {
         Toolbar toolbar = activity.findViewById(R.id.toolbar);
         activity.setSupportActionBar(toolbar);
 
         ActionBar actionBar = activity.getSupportActionBar();
+        Log.d("ActionBarUtils", "[tb] title=" + title + " main=" + isMainActivity + " actionBar=" + actionBar);
         if (actionBar == null)
             return toolbar;
         String username = App.getAccount().getDisplayName();
@@ -45,6 +52,7 @@ public class ActionBarUtils {
         if (!TextUtils.isEmpty(title))
             actionBar.setTitle(title);
         if (true || !isMainActivity) {
+            Log.d("ActionBarUtils", "[tb] setHomeAsUpEnabled");
             actionBar.setDisplayHomeAsUpEnabled(true);
             //actionBar.setHomeAsUpIndicator(R.drawable.ic_arrow_back_white_24dp);
             actionBar.setHomeAsUpIndicator(0);
