@@ -70,6 +70,7 @@ import net.kenstir.ui.view.holds.HoldsActivity
 import net.kenstir.ui.view.main.MainActivity
 import net.kenstir.ui.view.messages.MessagesActivity
 import net.kenstir.ui.view.search.SearchActivity
+import net.kenstir.ui.view.TestActivity
 import net.kenstir.util.Analytics
 import org.evergreen_ils.system.EgOrg
 import java.net.URLEncoder
@@ -238,7 +239,8 @@ open class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         } else if (id == R.id.main_events_button) {
             launchURL(getEventsUrl())
         } else if (id == R.id.main_showcard_button) {
-            startActivity(Intent(this, BarcodeActivity::class.java))
+//            startActivity(Intent(this, BarcodeActivity::class.java))
+            startActivity(Intent(this, TestActivity::class.java))
         } else if (menuItemHandler != null) {
             ret = menuItemHandler!!.onItemSelected(this, id, "nav_drawer")
         } else {
