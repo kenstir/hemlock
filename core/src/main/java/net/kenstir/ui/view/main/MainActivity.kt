@@ -41,6 +41,7 @@ import net.kenstir.ui.view.BarcodeActivity
 import net.kenstir.ui.view.CheckoutsActivity
 import net.kenstir.ui.view.FinesActivity
 import net.kenstir.ui.view.OrgDetailsActivity
+import net.kenstir.ui.view.TestActivity
 import net.kenstir.ui.view.search.SearchActivity
 
 open class MainActivity : MainBaseActivity() {
@@ -198,7 +199,8 @@ open class MainActivity : MainBaseActivity() {
         } else if (id == R.id.main_events_button) {
             launchURL(getEventsUrl())
         } else if (id == R.id.main_showcard_button) {
-            startActivity(Intent(this, BarcodeActivity::class.java))
+            //startActivity(Intent(this, BarcodeActivity::class.java))
+            startActivity(Intent(this, TestActivity::class.java))
         } else if (menuItemHandler != null) {
             menuItemHandler?.onItemSelected(this, id, "main_button")
         }
